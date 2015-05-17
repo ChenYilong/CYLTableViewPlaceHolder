@@ -1,9 +1,8 @@
 //
 //  CYLNoresultTableViewController.h
-//  红人在哪儿
 //
-//  Created by CHENYI LONG on 14/12/24.
-//  Copyright (c) 2014年 Roman Efimov. All rights reserved.
+//  Created by https://github.com/ChenYilong on 14/12/24.
+//  Copyright (c) 2015年 http://weibo.com/luohanchenyilong/ . All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

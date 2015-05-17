@@ -1,15 +1,17 @@
 //
-//  CYLNoresultTableViewController.m
-//  红人在哪儿
+//  CYLNoresultTableViewController.h
 //
-//  Created by CHENYI LONG on 14/12/24.
-//  Copyright (c) 2014年 Roman Efimov. All rights reserved.
+//  Created by https://github.com/ChenYilong on 14/12/24.
+//  Copyright (c) 2015年 http://weibo.com/luohanchenyilong/ . All rights reserved.
 //
-#define kUIemptyOverlayLabelX       0
-#define kUIemptyOverlayLabelY          0
-#define kUIemptyOverlayLabel2Upstairs  10
-#define kUIemptyOverlayLabelWidth      [UIScreen mainScreen].bounds.size.width
-#define kUIemptyOverlayLabelHeight     20
+
+static float const kUIemptyOverlayLabelX         = 0;
+static float const kUIemptyOverlayLabelY         = 0;
+static float const kUIemptyOverlayLabel2Upstairs = 10;
+static float const kUIemptyOverlayLabelWidth     = [UIScreen mainScreen].bounds.size.width;
+static float const kUIemptyOverlayLabelHeight    = 20;
+
+
 #import "CYLNoresultTableViewController.h"
 @interface CYLNoresultTableViewController ()
 {
@@ -106,10 +108,10 @@
     if (!_emptyOverlay) {
         _emptyOverlay = [[UIView  alloc] init];
         _emptyOverlay.backgroundColor = [UIColor whiteColor];
-        //    _emptyOverlay.frame  = CGRectMake(0,64, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.hight-49-64);
-        _emptyOverlay.frame  = CGRectMake(0,0, [UIScreen mainScreen].bounds.size.width, self.tableView.frame.size.height);
+        //    _emptyOverlay.frame  = CGRectMake(0,64, UI_SCREEN_WIDTH, UI_SCREEN_HEIGHT-49-64);
+        _emptyOverlay.frame  = CGRectMake(0,0, UI_SCREEN_WIDTH, ViewHeight(self.tableView));
         _emptyOverlay.contentMode =   UIViewContentModeTop;
-
+        
         [self addUIemptyOverlayImageView];
         [self addUIemptyOverlayLabel];
         [self setupUIemptyOverlay];
@@ -119,7 +121,7 @@
 
 - (void)addUIemptyOverlayImageView {
     _emptyOverlayImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 150)];
-    _emptyOverlayImageView.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2,self.tableView.frame.size.height/2 -100);
+    _emptyOverlayImageView.center = CGPointMake(UI_SCREEN_WIDTH/2, ViewHeight(self.tableView)/2 -100);
     _emptyOverlayImageView.image = [UIImage imageNamed:@"WebView_LoadFail_Refresh_Icon@2x"];
     [_emptyOverlay addSubview:_emptyOverlayImageView];
 }
@@ -132,8 +134,7 @@
     emptyOverlayLabel.backgroundColor = [UIColor clearColor];
     emptyOverlayLabel.text = @"暂无数据,轻触屏幕重新加载";
     emptyOverlayLabel.font= [UIFont boldSystemFontOfSize:15];
-    //仅修改emptyOverlayLabel的y,xwh值不变
-    emptyOverlayLabel.frame = CGRectMake(emptyOverlayLabel.frame.origin.x,  _emptyOverlayImageView.frame.size.height + _emptyOverlayImageView.frame.origin.y+10, emptyOverlayLabel.frame.size.width, emptyOverlayLabel.frame.size.height);
+    RectMakeSetY(emptyOverlayLabel, height_y(_emptyOverlayImageView)+10);
     emptyOverlayLabel.textColor = RGB_TextDarkGray;
     [_emptyOverlay addSubview:emptyOverlayLabel];
 }
