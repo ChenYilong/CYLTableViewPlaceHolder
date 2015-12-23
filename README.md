@@ -1,8 +1,8 @@
 # CYLTableViewPlaceHolder【一行代码完成“空TableView占位视图”管理】
 
 <p align="center">
-![enter image description here](https://img.shields.io/badge/pod-v1.0.2-brightgreen.svg)
-![enter image description here](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![enter image description here](https://img.shields.io/badge/platform-iOS%206.0%2B-ff69b4.svg)
+![pod-v1.0.3](https://img.shields.io/badge/pod-v1.0.3-brightgreen.svg)
+![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-6.0+](https://img.shields.io/badge/platform-iOS%206.0%2B-ff69b4.svg)
 </a>
 
 ## 导航
@@ -85,8 +85,8 @@ pod update --verbose
  ```Objective-C
 @required
 /*!
- @brief  make a emptyOverlay when the tableView is empty
- @return a emptyOverlay
+ @brief  make an empty overlay view when the tableView is empty
+ @return an empty overlay view
  */
 - (UIView *)makePlaceHolderView;
  ```
