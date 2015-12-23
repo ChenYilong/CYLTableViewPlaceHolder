@@ -9,7 +9,9 @@
 
   1.  [ 与其他框架的区别 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#与其他框架的区别) 
   2.  [ 集成后的效果 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#集成后的效果) 
-  3.  [ 使用CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#使用CYLTableViewPlaceHolder) 
+  3.  [ 使用CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#使用cyltableviewplaceholder) 
+  3.  [ 运行Demo ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#运行demo) 
+
 
 ## 与其他框架的区别
  -| 特点 |解释
@@ -30,9 +32,9 @@
 
 三步完成：
 
-  1.  [ 第一步：使用cocoaPods导入CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第一步使用cocoapods导入CYLTableViewPlaceHolder) 
-  2.  [第二步：遵循协议](https://github.com/ChenYilong/CYLTableViewPlaceHolder#遵循协议) 
-  3.  [第三步：使用cyl_reloadData代替reloadData](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第三步使用cyl_reloadData代替reloadData) 
+  1.  [ 第一步：使用cocoaPods导入CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第一步使用cocoapods导入cyltableviewplaceholder) 
+  2.  [第二步：遵循协议](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第二步遵循协议) 
+  3.  [第三步：使用cyl_reloadData代替reloadData](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第三步使用cyl_reloaddata代替reloaddata) 
 
 ### 第一步：使用cocoaPods导入CYLTableViewPlaceHolder
 
@@ -96,6 +98,19 @@ pod update --verbose
 
 注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法。不要重复调用。
 
+## 运行Demo
+
+demo 的刷新组件使用的是 MJRresh，所以导入 CocoaPods 库 
+
+
+
+ ```Objective-C
+# 打开终端，进入 clone 的文件夹
+cd /Users/YourUserName/Documents/CYLTableViewPlaceHolder
+# 如果提示找不到库，则可去掉 --no-repo-update
+pod install --verbose --no-repo-update 
+open CYLTableViewPlaceHolder.xcworkspace
+ ```
 
 （更多iOS开发干货，欢迎关注  [微博@iOS程序犭袁](http://weibo.com/luohanchenyilong/) ）
 
