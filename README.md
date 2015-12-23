@@ -19,7 +19,7 @@
 1 | 轻量级、无污染 | 基于 UITableView 分类，无污染，比基于子类化、继承的框架更加轻量级
 2 | 低耦合 | 自定义占位视图的可自行实现，通过协议传递，对上层接口透明
 3 | 简单，无学习成本 | 一行代码完成，仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。自动检测是否需要 `addSubview` 和 `removeFromSuperview` ，省去学习繁琐的 add 和 remove 的调用时机。
-4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所有只需操作  `dataSource`  数据源，即可即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。
+4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所有只需操作  `dataSource`  数据源，即可即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。搭配 MJRefresh 使用十分方便。demo 中给出了搭配使用方法。
 5 |支持CocoaPods |容易集成
 
 （学习交流群：523070828）
@@ -27,6 +27,8 @@
 
 
 ## 集成后的效果
+
+![集成后的效果](http://i64.tinypic.com/708hl4.jpg)
 
 ## 使用[CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder)
 
@@ -81,7 +83,7 @@ pod update --verbose
 - (UIView *)makePlceHolederView;
  ```
 
-这里注意：无需设置 frame，在内部已将该占位视图设置为与对应的 tableView 一致。即使外部设置了 frame 也是无效的。
+这里注意：在 [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 内部会重新将该占位视图的 frame 进行设置，设置为与对应的 tableView 一致。包括 xy 坐标。和 宽高。
 
 点击事件等，请自行在该自定义 View 中实现。
 
