@@ -10,8 +10,8 @@
 
 @required
 /*!
- @brief  make a emptyOverlay when the tableView is empty
- @return a emptyOverlay
+ @brief  make an empty overlay view when the tableView is empty
+ @return an empty overlay view
  */
 - (UIView *)makePlaceHolderView;
 
