@@ -105,17 +105,29 @@ static const CGFloat CYLDuration = 1.0;
 
 #pragma mark - CYLTableViewPlaceHolderDelegate Method
 
-- (UIView *)makePlceHolederView {
-//    __block XTNetReloader *netReloader = [[XTNetReloader alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
-//                                                                  reloadBlock:^{
-//                                                                      NSLog(@"click") ;
-//                                                                      [self.tableView.mj_header beginRefreshing];
-//                                                                  }] ;
-//    return netReloader;
+- (UIView *)makePlaceHolderView {
+    UIView *taobaoStyle = [self taoBaoStylePlaceHolder];
+    UIView *weChatStyle = [self weChatStylePlaceHolder];
+    return (arc4random_uniform(2)==0)?taobaoStyle:weChatStyle;
+}
+
+- (UIView *)taoBaoStylePlaceHolder {
+    __block XTNetReloader *netReloader = [[XTNetReloader alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                                  reloadBlock:^{
+                                                                      [self.tableView.mj_header beginRefreshing];
+                                                                  }] ;
+    return netReloader;
+}
+
+- (UIView *)weChatStylePlaceHolder {
     WeChatStylePlaceHolder *weChatStylePlaceHolder = [[WeChatStylePlaceHolder alloc] initWithFrame:self.tableView.frame];
     weChatStylePlaceHolder.delegate = self;
     return weChatStylePlaceHolder;
 }
+
+//- (BOOL)enableScrollWhenPlaceHolderViewShowing {
+//    return YES;
+//}
 
 #pragma mark - WeChatStylePlaceHolderDelegate Method
 

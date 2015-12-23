@@ -1,7 +1,7 @@
 # CYLTableViewPlaceHolder【一行代码完成“空TableView占位视图”管理】
 
 <p align="center">
-![enter image description here](https://img.shields.io/badge/pod-v1.0.0-brightgreen.svg)
+![enter image description here](https://img.shields.io/badge/pod-v1.0.1-brightgreen.svg)
 ![enter image description here](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![enter image description here](https://img.shields.io/badge/platform-iOS%206.0%2B-ff69b4.svg)
 </a>
 
@@ -83,13 +83,18 @@ pod update --verbose
 创建一个自定义的占位视图并返回
 
  ```Objective-C
-- (UIView *)makePlceHolederView;
+@required
+/*!
+ @brief  make a emptyOverlay when the tableView is empty
+ @return a emptyOverlay
+ */
+- (UIView *)makePlaceHolderView;
  ```
 
 这里注意两点：
 
 
- 1. 在 [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 内部会重新将该占位视图的 frame 进行设置，设置为与对应的  `TableView`  一致：包括 xy 坐标和宽高。
+ 1.   [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 的 `cyl_reloadData`方法内部会重新将该占位视图的 frame 进行设置，设置为与当前的的  `TableView`  一致：包括 xy 坐标和宽高。防止 `TableView`  位置或尺寸的变更。
  2. 以上步骤，包括遵循协议实现协议方法，既可以在自定义的  `TableView`  中去做，也可以在  `TableView`  的代理中去做。
 
  既可以让代理遵循协议，实现协议方法：
@@ -106,7 +111,19 @@ pod update --verbose
 
  这里推荐在自定义的 `TableView` 中实现，以降低耦合性，同时也可以为 Controller 瘦身。
 
-占位视图的点击事件等，请自行在 `- (UIView *)makePlceHolederView;` 中所创建的 View 中实现。
+占位视图的点击事件等，请自行在 `- (UIView *)makePlaceHolderView;` 中所创建的 View 中实现。
+
+另外，占位视图默认的设置是不能滚动的，也就不能下拉刷新了，但是如果想让占位视图可以滚动，则需要实现下面的可选代理方法。
+
+ ```Objective-C
+@optional
+/*!
+ @brief  enable tableView scroll or not when place holder view is showing,it is disabled by default.
+ @return enable tableView scroll or not
+ */
+- (BOOL)enableScrollWhenPlaceHolderViewShowing;
+ ```
+
 
 
 ### 第三步：使用cyl_reloadData代替reloadData
