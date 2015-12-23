@@ -140,7 +140,7 @@ pod update --verbose
 
 ## 运行Demo
 
-demo 的刷新组件使用的是 MJRresh，所以需要导入相应的 CocoaPods 库 
+demo 的刷新组件使用的是 MJRefresh，所以需要导入相应的 CocoaPods 库 
 
 
 
