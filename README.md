@@ -61,6 +61,7 @@ pod update --verbose
 ### 第二步：遵循协议
 
 
+
 导入头文件
 
  ```Objective-C
@@ -73,6 +74,8 @@ pod update --verbose
  @interface ViewController ()<CYLTableViewPlaceHolderDelegate>
  ```
 
+
+
 实现协议方法：
 
 仅一个必须实现的协议方法：
@@ -83,9 +86,27 @@ pod update --verbose
 - (UIView *)makePlceHolederView;
  ```
 
-这里注意：在 [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 内部会重新将该占位视图的 frame 进行设置，设置为与对应的 tableView 一致。包括 xy 坐标。和 宽高。
+这里注意两点：
 
-点击事件等，请自行在该自定义 View 中实现。
+
+ 1. 在 [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 内部会重新将该占位视图的 frame 进行设置，设置为与对应的  `TableView`  一致：包括 xy 坐标和宽高。
+ 2. 以上步骤，包括遵循协议实现协议方法，既可以在自定义的  `TableView`  中去做，也可以在  `TableView`  的代理中去做。
+
+ 既可以让代理遵循协议，实现协议方法：
+
+ ```Objective-C
+ @interface ViewController ()<CYLTableViewPlaceHolderDelegate>
+ ```
+
+ 也可以让自定义的  `TableView` 遵循协议，实现协议方法：
+
+ ```Objective-C
+ @interface MyTableView ()<CYLTableViewPlaceHolderDelegate>
+ ```
+
+ 这里推荐在自定义的 `TableView` 中实现，以降低耦合性，同时也可以为 Controller 瘦身。
+
+占位视图的点击事件等，请自行在 `- (UIView *)makePlceHolederView;` 中所创建的 View 中实现。
 
 
 ### 第三步：使用cyl_reloadData代替reloadData
