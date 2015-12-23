@@ -125,10 +125,6 @@ static const CGFloat CYLDuration = 1.0;
     return weChatStylePlaceHolder;
 }
 
-//- (BOOL)enableScrollWhenPlaceHolderViewShowing {
-//    return YES;
-//}
-
 #pragma mark - WeChatStylePlaceHolderDelegate Method
 
 - (void)emptyOverlayClicked:(id)sender {

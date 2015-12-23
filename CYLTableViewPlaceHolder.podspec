@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "CYLTableViewPlaceHolder"
-  s.version      = "1.0.1"
+  s.version      = "1.0.2"
   s.summary      = "When iOS-UITableView be empty,then it can automaticely make a EmptyOverlayView"
   s.description  = "It can observe iOS-UITableView being empty,then automaticely make a EmptyOverlayView as a place holder. CYLTableViewPlaceHolder is iPad and iPhone compatible."
   s.homepage     = "https://github.com/ChenYilong/CYLTableViewPlaceHolder"

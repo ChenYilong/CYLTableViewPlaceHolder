@@ -37,32 +37,28 @@
     objc_setAssociatedObject(self, @selector(placeHolderView), placeHolderView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (void)cyl_reloadData
-{
+- (void)cyl_reloadData {
     [self reloadData];
     [self cyl_checkEmpty];
 }
 
-- (void)cyl_checkEmpty
-{
+- (void)cyl_checkEmpty {
     BOOL isEmpty = YES;
     
     id<UITableViewDataSource> src = self.dataSource;
     NSInteger sections = 1;
     if ([src respondsToSelector: @selector(numberOfSectionsInTableView:)]) {
-        sections = [src numberOfSectionsInTableView: self];
+        sections = [src numberOfSectionsInTableView:self];
     }
-    for (int i =0; i<sections; ++i) {
+    for (int i = 0; i<sections; ++i) {
         NSInteger rows = [src tableView:self numberOfRowsInSection:i];
         if (rows) {
             isEmpty = NO;
         }
         
     }
-    
     if (!isEmpty != !self.placeHolderView) {
-        if (isEmpty)
-        {
+        if (isEmpty) {
             self.scrollWasEnabled = self.scrollEnabled;
             self.scrollEnabled = NO;
             if ([self respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
@@ -70,14 +66,13 @@
             } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
                 self.scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
             }
-            
             if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
                 self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
             } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
                 self.placeHolderView = [self.delegate performSelector:@selector(makePlaceHolderView)];
-            } else  {
+            } else {
                 NSString *selectorName = NSStringFromSelector(_cmd);
-                NSString *reason = [NSString stringWithFormat:@"You must implement makePlaceHolderView method in your custom tableView or its delegate class if you want to use %@",selectorName];
+                NSString *reason = [NSString stringWithFormat:@"You must implement makePlaceHolderView method in your custom tableView or its delegate class if you want to use %@", selectorName];
                 @throw [NSException exceptionWithName:NSGenericException
                                                reason:reason
                                              userInfo:nil];
@@ -87,13 +82,13 @@
         } else {
             self.scrollEnabled = self.scrollWasEnabled;
             [self.placeHolderView removeFromSuperview];
-            [[self.placeHolderView subviews] makeObjectsPerformSelector: @selector(removeFromSuperview)];
+            [[self.placeHolderView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             self.placeHolderView = nil;
         }
     } else if (isEmpty) {
         // Make sure it is still above all siblings.
         [self.placeHolderView removeFromSuperview];
-        [[self.placeHolderView subviews] makeObjectsPerformSelector: @selector(removeFromSuperview)];
+        [[self.placeHolderView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [self addSubview:self.placeHolderView];
     }
 }
