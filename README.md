@@ -19,7 +19,7 @@
 1 | 轻量级、无污染 | 基于 UITableView 分类，无污染，比基于子类化、继承的框架更加轻量级
 2 | 低耦合 | 自定义占位视图的可自行实现，通过协议传递，对上层接口透明
 3 | 简单，无学习成本 | 一行代码完成，仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。自动检测是否需要 `addSubview` 和 `removeFromSuperview` ，省去学习繁琐的 add 和 remove 的调用时机。
-4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所有只需操作  `dataSource`  数据源，即可即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。搭配 MJRefresh 使用十分方便。demo 中给出了搭配使用方法。
+4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所以只需操作  `dataSource`  数据源，即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。搭配 MJRefresh 使用十分方便，demo 中也给出了搭配使用方法。
 5 |支持CocoaPods |容易集成
 
 （学习交流群：523070828）
@@ -98,11 +98,11 @@ pod update --verbose
     [self.tableView cyl_reloadData];
  ```
 
-注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法。不要重复调用。
+注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法，请避免重复调用。
 
 ## 运行Demo
 
-demo 的刷新组件使用的是 MJRresh，所以导入 CocoaPods 库 
+demo 的刷新组件使用的是 MJRresh，所以需要导入相应的 CocoaPods 库 
 
 
 
