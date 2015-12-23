@@ -1,7 +1,7 @@
 # CYLTableViewPlaceHolder【一行代码完成“空TableView占位视图”管理】
 
 <p align="center">
-![pod-v1.0.3](https://img.shields.io/badge/pod-v1.0.3-brightgreen.svg)
+![pod-v1.0.4](https://img.shields.io/badge/pod-v1.0.4-brightgreen.svg)
 ![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-6.0+](https://img.shields.io/badge/platform-iOS%206.0%2B-ff69b4.svg)
 </a>
 
