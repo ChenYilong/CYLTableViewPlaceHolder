@@ -69,7 +69,6 @@
                                                    reason:reason
                                                  userInfo:nil];
                 }
-                self.scrollEnabled = scrollEnabled;
             } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
                 scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
                 if (!scrollEnabled) {
