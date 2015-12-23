@@ -60,12 +60,26 @@
     if (!isEmpty != !self.placeHolderView) {
         if (isEmpty) {
             self.scrollWasEnabled = self.scrollEnabled;
-            self.scrollEnabled = NO;
+            BOOL scrollEnabled = NO;
             if ([self respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
-                self.scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+                 scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+                if (!scrollEnabled) {
+                    NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
+                    @throw [NSException exceptionWithName:NSGenericException
+                                                   reason:reason
+                                                 userInfo:nil];
+                }
+                self.scrollEnabled = scrollEnabled;
             } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
-                self.scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+                scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+                if (!scrollEnabled) {
+                    NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
+                    @throw [NSException exceptionWithName:NSGenericException
+                                                   reason:reason
+                                                 userInfo:nil];
+                }
             }
+            self.scrollEnabled = scrollEnabled;
             if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
                 self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
             } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
