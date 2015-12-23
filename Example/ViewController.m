@@ -96,10 +96,8 @@ static const CGFloat CYLDuration = 1.0;
     }
     // 2.模拟2秒后刷新表格UI（真实开发中，可以移除这段gcd代码）
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(CYLDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.tableView cyl_reloadData];
         // 刷新表格
-        [self.tableView reloadData];
-        
+        [self.tableView cyl_reloadData];
         // 拿到当前的下拉刷新控件，结束刷新状态
         [self.tableView.mj_header endRefreshing];
     });
