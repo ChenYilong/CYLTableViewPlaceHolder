@@ -41,22 +41,45 @@
   2.  [第二步：遵循协议](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第二步遵循协议) 
   3.  [第三步：使用cyl_reloadData代替reloadData](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第三步使用cyl_reloaddata代替reloaddata) 
 
-### 第一步：使用cocoaPods导入CYLTableViewPlaceHolder
+
+### 第一步：使用CocoaPods进行导入CYLTableViewPlaceHolder
+
 
 在 `Podfile` 中如下导入：
 
 
  ```Objective-C
- pod 'CYLTableViewPlaceHolder'
+pod 'CYLTableViewPlaceHolder'
  ```
+
+
 
 然后使用 `cocoaPods` 进行安装：
 
-建议使用如下方式：
+如果尚未安装 Cocoapods, 运行以下命令进行安装:
+
 
  ```Objective-C
- # 不升级CocoaPods的spec仓库
-pod update --verbose 
+gem install cocoapods
+ ```
+
+
+安装成功后就可以安装依赖了：
+
+建议使用如下方式：
+
+
+ ```Objective-C
+ # 禁止升级CocoaPods的spec仓库，否则会卡在 Analyzing dependencies ，非常慢 
+ pod update --verbose --no-repo-update
+ ```
+
+
+如果提示找不到库，则可去掉 --no-repo-update
+
+
+ ```Objective-C
+pod update
  ```
 
 
