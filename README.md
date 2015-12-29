@@ -42,10 +42,10 @@
   3.  [第三步：使用cyl_reloadData代替reloadData](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第三步使用cyl_reloaddata代替reloaddata) 
 
 
-### 第一步：使用CocoaPods进行导入CYLTableViewPlaceHolder
+### 第一步：使用CocoaPods导入CYLTableViewPlaceHolder
 
 
-在 `Podfile` 中如下导入：
+在 `Podfile` 中进行如下导入：
 
 
  ```Objective-C
