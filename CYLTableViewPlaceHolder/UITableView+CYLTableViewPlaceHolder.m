@@ -96,13 +96,11 @@
         } else {
             self.scrollEnabled = self.scrollWasEnabled;
             [self.placeHolderView removeFromSuperview];
-            [[self.placeHolderView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             self.placeHolderView = nil;
         }
     } else if (isEmpty) {
         // Make sure it is still above all siblings.
         [self.placeHolderView removeFromSuperview];
-        [[self.placeHolderView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [self addSubview:self.placeHolderView];
     }
 }
