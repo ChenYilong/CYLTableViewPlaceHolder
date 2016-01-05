@@ -21,7 +21,8 @@
 @implementation UITableView (CYLTableViewPlaceHolder)
 
 - (BOOL)scrollWasEnabled {
-    return objc_getAssociatedObject(self, @selector(scrollWasEnabled));
+    NSNumber *scrollWasEnabledObject = objc_getAssociatedObject(self, @selector(scrollWasEnabled));
+    return [scrollWasEnabledObject boolValue];
 }
 
 - (void)setScrollWasEnabled:(BOOL)scrollWasEnabled {
