@@ -55,6 +55,7 @@
         NSInteger rows = [src tableView:self numberOfRowsInSection:i];
         if (rows) {
             isEmpty = NO;
+            break;
         }
         
     }
@@ -100,8 +101,7 @@
         }
     } else if (isEmpty) {
         // Make sure it is still above all siblings.
-        [self.placeHolderView removeFromSuperview];
-        [self addSubview:self.placeHolderView];
+         [self bringSubviewToFront:self.placeHolderView];
     }
 }
 
