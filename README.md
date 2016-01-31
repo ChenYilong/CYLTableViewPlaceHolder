@@ -25,7 +25,7 @@
 4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所以只需操作  `dataSource`  数据源，即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。搭配 MJRefresh 使用十分方便，demo 中也给出了搭配使用方法。
 5 |支持CocoaPods |容易集成
 
-（学习交流群：523070828）
+（学习交流群：465239521）
 
 
 
