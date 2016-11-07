@@ -55,6 +55,7 @@
         NSInteger rows = [src tableView:self numberOfRowsInSection:i];
         if (rows) {
             isEmpty = NO;
+            break;
         }
         
     }
