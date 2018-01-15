@@ -63,7 +63,11 @@
             self.scrollWasEnabled = self.scrollEnabled;
             BOOL scrollEnabled = NO;
             if ([self respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
-                 scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wint-conversion"
+                scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+#pragma clang diagnostic pop
+                
                 if (!scrollEnabled) {
                     NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
                     @throw [NSException exceptionWithName:NSGenericException
@@ -71,7 +75,11 @@
                                                  userInfo:nil];
                 }
             } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wint-conversion"
                 scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
+#pragma clang diagnostic pop
+                
                 if (!scrollEnabled) {
                     NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
                     @throw [NSException exceptionWithName:NSGenericException
@@ -101,8 +109,15 @@
     } else if (isEmpty) {
         // Make sure it is still above all siblings.
         [self.placeHolderView removeFromSuperview];
+        if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
+            self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
+        } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
+            self.placeHolderView = [self.delegate performSelector:@selector(makePlaceHolderView)];
+        }
+        self.placeHolderView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
         [self addSubview:self.placeHolderView];
     }
 }
 
 @end
+
