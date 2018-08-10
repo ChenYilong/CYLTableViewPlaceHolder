@@ -15,12 +15,14 @@
 		9A68F2FC1C2A67F700D2E9B0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A68F2F21C2A67F700D2E9B0 /* ViewController.m */; };
 		9A91C46D1C2A88020007284C /* XTNetReloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A91C46C1C2A88020007284C /* XTNetReloader.m */; };
 		9A91C4701C2A88290007284C /* WeChatStylePlaceHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A91C46F1C2A88290007284C /* WeChatStylePlaceHolder.m */; };
-		C35C0E09425C0A796AE8F4E9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74224AFF19B3C33D313756FC /* libPods.a */; };
+		F4A926DFC982A7AEB98E1B12 /* libPods-CYLTableViewPlaceHolder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB4DBA5E44F2D283EDB316C /* libPods-CYLTableViewPlaceHolder.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F359A443CF30F79AB578C54 /* Pods-CYLTableViewPlaceHolder.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLTableViewPlaceHolder.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder.debug.xcconfig"; sourceTree = "<group>"; };
 		74224AFF19B3C33D313756FC /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F27CE38CFEAC36D07942C50 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		8BD37F2AD1CB081E05776118 /* Pods-CYLTableViewPlaceHolder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLTableViewPlaceHolder.release.xcconfig"; path = "Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder.release.xcconfig"; sourceTree = "<group>"; };
 		9A68F2E21C2A67E800D2E9B0 /* CYLTableViewPlaceHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CYLTableViewPlaceHolder.h; sourceTree = "<group>"; };
 		9A68F2E31C2A67E800D2E9B0 /* CYLTableViewPlaceHolderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CYLTableViewPlaceHolderDelegate.h; sourceTree = "<group>"; };
 		9A68F2E41C2A67E800D2E9B0 /* UITableView+CYLTableViewPlaceHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+CYLTableViewPlaceHolder.h"; sourceTree = "<group>"; };
@@ -38,6 +40,7 @@
 		9A91C46E1C2A88290007284C /* WeChatStylePlaceHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatStylePlaceHolder.h; sourceTree = "<group>"; };
 		9A91C46F1C2A88290007284C /* WeChatStylePlaceHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatStylePlaceHolder.m; sourceTree = "<group>"; };
 		9ADE6FD51C29A0C500214C69 /* CYLTableViewPlaceHolder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CYLTableViewPlaceHolder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EB4DBA5E44F2D283EDB316C /* libPods-CYLTableViewPlaceHolder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CYLTableViewPlaceHolder.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7015287120658EA03D5FB8C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -46,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C35C0E09425C0A796AE8F4E9 /* libPods.a in Frameworks */,
+				F4A926DFC982A7AEB98E1B12 /* libPods-CYLTableViewPlaceHolder.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				74224AFF19B3C33D313756FC /* libPods.a */,
+				9EB4DBA5E44F2D283EDB316C /* libPods-CYLTableViewPlaceHolder.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -66,6 +70,8 @@
 			children = (
 				7F27CE38CFEAC36D07942C50 /* Pods.debug.xcconfig */,
 				A7015287120658EA03D5FB8C /* Pods.release.xcconfig */,
+				5F359A443CF30F79AB578C54 /* Pods-CYLTableViewPlaceHolder.debug.xcconfig */,
+				8BD37F2AD1CB081E05776118 /* Pods-CYLTableViewPlaceHolder.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -150,12 +156,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9ADE6FEC1C29A0C500214C69 /* Build configuration list for PBXNativeTarget "CYLTableViewPlaceHolder" */;
 			buildPhases = (
+				990C3B2C4C20ECB5C082754B /* [CP] Check Pods Manifest.lock */,
 				3CAD2691A4D273A850EB2119 /* Check Pods Manifest.lock */,
 				9ADE6FD11C29A0C500214C69 /* Sources */,
 				9ADE6FD21C29A0C500214C69 /* Frameworks */,
 				9ADE6FD31C29A0C500214C69 /* Resources */,
-				34428561817C4E62EE861128 /* Embed Pods Frameworks */,
-				C86D826F99BA51BB05D61D84 /* Copy Pods Resources */,
+				7EFDAA84B6F015EC7B8FDCFE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -177,6 +183,7 @@
 				TargetAttributes = {
 					9ADE6FD41C29A0C500214C69 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 2NJT7K4VZ7;
 					};
 				};
 			};
@@ -211,21 +218,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		34428561817C4E62EE861128 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3CAD2691A4D273A850EB2119 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -241,19 +233,40 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		C86D826F99BA51BB05D61D84 /* Copy Pods Resources */ = {
+		7EFDAA84B6F015EC7B8FDCFE /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		990C3B2C4C20ECB5C082754B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CYLTableViewPlaceHolder-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -370,13 +383,15 @@
 		};
 		9ADE6FED1C29A0C500214C69 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F27CE38CFEAC36D07942C50 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 5F359A443CF30F79AB578C54 /* Pods-CYLTableViewPlaceHolder.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = 2NJT7K4VZ7;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = ChenYilong.CYLNoResultTableViewController;
 				PRODUCT_NAME = CYLTableViewPlaceHolder;
 			};
@@ -384,13 +399,15 @@
 		};
 		9ADE6FEE1C29A0C500214C69 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A7015287120658EA03D5FB8C /* Pods.release.xcconfig */;
+			baseConfigurationReference = 8BD37F2AD1CB081E05776118 /* Pods-CYLTableViewPlaceHolder.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = 2NJT7K4VZ7;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = ChenYilong.CYLNoResultTableViewController;
 				PRODUCT_NAME = CYLTableViewPlaceHolder;
 			};
