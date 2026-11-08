@@ -45,6 +45,14 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     self.cyl_h = CYLRefreshHeaderHeight;
 }
 
+- (void)willMoveToSuperview:(UIView *)newSuperview
+{
+    [super willMoveToSuperview:newSuperview];
+    if (self.scrollView) {
+        self.cyl_y = -self.cyl_h - self.ignoredScrollViewContentInsetTop;
+    }
+}
+
 - (void)placeSubviews
 {
     [super placeSubviews];
@@ -201,11 +209,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 }
 
 - (void)headerRefreshingAction {
+    self.insetTDelta = 0;
     // 默认使用 UIViewAnimation 动画
     if (!self.isCollectionViewAnimationBug) {
         [UIView animateWithDuration:self.fastAnimationDuration animations:^{
             if (self.scrollView.panGestureRecognizer.state != UIGestureRecognizerStateCancelled) {
                 CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
+                self.insetTDelta = self.scrollView.cyl_insetT - top;
                 // 增加滚动区域top
                 self.scrollView.cyl_insetT = top;
                 // 设置滚动位置
@@ -263,6 +273,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         // 避免出现 end 先于 Refreshing 状态
         if (self.state != CYLRefreshStateIdle) {
             CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
+            self.insetTDelta = self.scrollView.cyl_insetT - top;
             self.scrollView.cyl_insetT = top;
             // 设置最终滚动位置
             CGPoint offset = self.scrollView.contentOffset;

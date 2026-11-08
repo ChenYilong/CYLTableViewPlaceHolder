@@ -260,6 +260,64 @@
     window.hidden = YES;
 }
 
+- (void)testHiddenHeaderRestoresInsetAfterProgrammaticRefresh {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    self.table.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    self.table.contentInset = UIEdgeInsetsMake(20, 0, 0, 0);
+    [window makeKeyAndVisible];
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    header.hidden = YES;
+    self.table.cyl_header = header;
+    XCTAssertEqualWithAccuracy(header.cyl_y, -header.cyl_h, 0.001);
+    for (NSUInteger index = 0; index < 3; index++) {
+        XCTestExpectation *started = [self expectationWithDescription:@"hidden header started"];
+        [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+        [self waitForExpectations:@[started] timeout:5];
+        XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20 + header.cyl_h, 0.001);
+        XCTestExpectation *ended = [self expectationWithDescription:@"hidden header ended"];
+        [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+        [self waitForExpectations:@[ended] timeout:5];
+        XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
+    }
+    self.table.cyl_header = nil;
+    window.hidden = YES;
+}
+
+- (void)testCollectionHeaderRestoresInsetForVisibleAndHiddenRefreshes {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:window.bounds
+                                                      collectionViewLayout:layout];
+    collection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    collection.contentInset = UIEdgeInsetsMake(20, 0, 0, 0);
+    [window.rootViewController.view addSubview:collection];
+    [window makeKeyAndVisible];
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.isCollectionViewAnimationBug = YES;
+    header.fastAnimationDuration = 0.01;
+    header.slowAnimationDuration = 0.01;
+    collection.cyl_header = header;
+    for (NSUInteger index = 0; index < 4; index++) {
+        header.hidden = index % 2 == 0;
+        XCTestExpectation *started = [self expectationWithDescription:@"collection header started"];
+        [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+        [self waitForExpectations:@[started] timeout:5];
+        XCTAssertEqualWithAccuracy(collection.cyl_insetT, 20 + header.cyl_h, 0.001);
+        XCTestExpectation *ended = [self expectationWithDescription:@"collection header ended"];
+        [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+        [self waitForExpectations:@[ended] timeout:5];
+        XCTAssertEqualWithAccuracy(collection.cyl_insetT, 20, 0.001);
+        XCTAssertTrue(collection.userInteractionEnabled);
+    }
+    collection.cyl_header = nil;
+    window.hidden = YES;
+}
+
 - (void)testRefreshLocaleCanChange {
     CYLRefreshConfig.defaultConfig.languageCode = @"zh-Hans";
     NSString *chinese = [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText];
