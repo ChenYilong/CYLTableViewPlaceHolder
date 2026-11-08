@@ -1,7 +1,7 @@
 # CYLTableViewPlaceHolder【一行代码完成“空TableView占位视图”管理】
 
 <p align="center">
-![pod-v1.0.6](https://img.shields.io/badge/pod-v1.0.6-brightgreen.svg)
+![pod-v1.1.0](https://img.shields.io/badge/pod-v1.1.0-brightgreen.svg)
 ![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-12.0+](https://img.shields.io/badge/platform-iOS%2012.0%2B-ff69b4.svg)
 </a>
 
@@ -49,12 +49,14 @@
 
 
  ```Objective-C
-pod 'CYLTableViewPlaceHolder', :git => 'https://github.com/ChenYilong/CYLTableViewPlaceHolder.git', :branch => 'master'
+pod 'CYLTableViewPlaceHolder', '~> 1.1.0'
  ```
 
 
 
-新版本尚未发布到 CocoaPods 时，请使用上述 Git 分支或本地 `:path`；历史版本不会自动包含新功能。本库最低支持 **iOS 12**，不再需要单独添加刷新库。
+1.1.0 内置 `CYLRefresh`；历史版本不会自动包含新功能。本库最低支持 **iOS 12**，不再需要单独添加刷新库。使用旧刷新库的项目需将原有类名和分类接口迁移到 `CYLRefresh` / `cyl_`。
+
+开发版本也可通过 Git 分支或本地 `:path` 集成。分页刷新等已知限制及验证状态见 [`docs/issue-progress.md`](docs/issue-progress.md)。
 
 然后使用 `cocoaPods` 进行安装：
 
