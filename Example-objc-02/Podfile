@@ -1,0 +1,7 @@
+platform :ios, '12.0'
+project 'Example-objc-02.xcodeproj'
+use_frameworks!
+
+target 'ExampleObjC02' do
+  pod 'CYLTableViewPlaceHolder', :path => '..'
+end

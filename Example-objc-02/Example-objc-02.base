@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Example files
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/Example-objc-02")
+    order:
+      - file.name

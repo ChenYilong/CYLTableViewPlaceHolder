@@ -1,0 +1,16 @@
+PODS:
+  - CYLTableViewPlaceHolder (1.0.9)
+
+DEPENDENCIES:
+  - CYLTableViewPlaceHolder (from `..`)
+
+EXTERNAL SOURCES:
+  CYLTableViewPlaceHolder:
+    :path: ".."
+
+SPEC CHECKSUMS:
+  CYLTableViewPlaceHolder: 12ff1a2a164be338c6f397509e48271e52cc0c5b
+
+PODFILE CHECKSUM: 12a5e2be295f99337f1ad6bbfdf2e9fc899f727c
+
+COCOAPODS: 1.17.0

@@ -760,6 +760,26 @@
     scrollView.cyl_footer = nil;
 }
 
+- (void)testPagingAutoFooterAcceptsReportedFloatingPointValues {
+    CYLTestScrollView *scrollView = [[CYLTestScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.cyl_testPan = [CYLTestPanGestureRecognizer new];
+    scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateEnded;
+    scrollView.pagingEnabled = YES;
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    scrollView.cyl_footer = footer;
+
+    CGFloat reportedThreshold = 1367.666666666698;
+    CGFloat reportedOffset = 1367.666666666687;
+    scrollView.contentSize = CGSizeMake(320, reportedThreshold + scrollView.cyl_h - scrollView.cyl_insetB);
+    CGFloat actualThreshold = scrollView.cyl_contentH + scrollView.cyl_insetB - scrollView.cyl_h;
+    XCTAssertEqualWithAccuracy(actualThreshold, reportedThreshold, 1e-12);
+    XCTAssertLessThan(reportedOffset, actualThreshold);
+    scrollView.cyl_testOffset = CGPointMake(0, reportedOffset);
+    [footer scrollViewPanStateDidChange:nil];
+    XCTAssertTrue(footer.isRefreshing);
+    scrollView.cyl_footer = nil;
+}
+
 - (void)testPagingAutoFooterEndPreservesValidAndInteractiveOffsets {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
