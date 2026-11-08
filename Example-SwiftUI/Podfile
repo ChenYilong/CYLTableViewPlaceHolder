@@ -1,0 +1,8 @@
+platform :ios, '13.0'
+project 'Example-SwiftUI.xcodeproj'
+use_frameworks!
+
+target 'ExampleSwiftUI' do
+  pod 'CYLTableViewPlaceHolder', :path => '..'
+  pod 'SwiftUIIntrospect', '26.0.0'
+end

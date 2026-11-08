@@ -222,6 +222,32 @@
     XCTAssertNil(self.table.cyl_header);
 }
 
+- (void)testNormalHeaderAndArrowViewDeallocateAfterRemoval {
+    __weak CYLRefreshNormalHeader *weakHeader;
+    __weak UIImageView *weakArrow;
+    UIImage *cachedArrow = [NSBundle cyl_arrowImage];
+    XCTAssertNotNil(cachedArrow);
+    @autoreleasepool {
+        CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        self.table.cyl_header = header;
+        [header layoutIfNeeded];
+        UIImageView *arrow = nil;
+        for (UIView *view in header.subviews) {
+            if ([view isKindOfClass:UIImageView.class] && ((UIImageView *)view).image == cachedArrow) {
+                arrow = (UIImageView *)view;
+                break;
+            }
+        }
+        XCTAssertNotNil(arrow);
+        weakHeader = header;
+        weakArrow = arrow;
+        self.table.cyl_header = nil;
+    }
+    XCTAssertNil(weakHeader);
+    XCTAssertNil(weakArrow);
+    XCTAssertEqual([NSBundle cyl_arrowImage], cachedArrow);
+}
+
 - (void)testHeaderRefreshingCallbackAndCompletion {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];

@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Example files
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/Example-SwiftUI")
+    order:
+      - file.name

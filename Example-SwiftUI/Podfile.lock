@@ -1,0 +1,23 @@
+PODS:
+  - CYLTableViewPlaceHolder (1.0.9)
+  - SwiftUIIntrospect (26.0.0)
+
+DEPENDENCIES:
+  - CYLTableViewPlaceHolder (from `..`)
+  - SwiftUIIntrospect (= 26.0.0)
+
+SPEC REPOS:
+  trunk:
+    - SwiftUIIntrospect
+
+EXTERNAL SOURCES:
+  CYLTableViewPlaceHolder:
+    :path: ".."
+
+SPEC CHECKSUMS:
+  CYLTableViewPlaceHolder: 12ff1a2a164be338c6f397509e48271e52cc0c5b
+  SwiftUIIntrospect: 74b21afe4589aa3979192844ac1cbba381712e61
+
+PODFILE CHECKSUM: 0e0fcdb71572e3789f8a87cf189a3d4afc24e197
+
+COCOAPODS: 1.17.0
