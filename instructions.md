@@ -20,3 +20,36 @@ instructions. Read `AGENTS.md` before changing the project.
 - Retain required third-party copyright notices, licenses, and source
   attribution even when they contain original names or URLs. Never claim
   third-party code as original work.
+
+## Xcode and CocoaPods project checks
+
+When working on a runnable Xcode project, check its Podfile. At the top, use
+the `.xcodeproj` filename in the same folder:
+
+```ruby
+platform :ios, '15.0'
+ENV['SWIFT_VERSION'] = '5'
+project '<projectname>.xcodeproj'
+```
+
+At the bottom, ensure the following `post_install` logic is present. If a
+`post_install` hook already exists, incorporate the logic into that hook
+instead of adding a second hook:
+
+```ruby
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "15.0"
+    end
+  end
+end
+```
+
+These settings apply to the runnable project's CocoaPods integration; they do
+not by themselves change the library podspec's supported iOS version.
+
+Check whether the app has a launch screen and an app icon with image assets.
+If either is missing, copy the corresponding icon and custom launch screen from
+`CYLTabBarController`, include their dependent assets and target membership,
+and verify the result builds. Do not overwrite existing project assets.

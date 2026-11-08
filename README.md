@@ -225,7 +225,9 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 ## 运行Demo
 
-Demo 已直接编译刷新源码，打开 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。较新的 Xcode 可能需要在构建时指定其支持的模拟器 deployment target。
+主 Demo 直接编译刷新源码，打开 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。Xcode 27 的模拟器 SDK 使用 iOS 15 构建设置，真机最低版本仍为 iOS 12。
+
+三个 `Example-*` 复现工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
 
 
 ## 适用于多种应用应用场景

@@ -15,6 +15,7 @@
 		B0CF6D8747CAB8A83D6EA142 /* Color+CYLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73042ED353292E4EFF721F9C /* Color+CYLExtension.swift */; };
 		B20D5DE005A5C2B7E08C5113 /* CYLExampleSwiftUIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A654295E82B68D2AD3654961 /* CYLExampleSwiftUIUITests.swift */; };
 		C3613978218B3FE96B4AE824 /* CYLSongViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93526619133A9BF1BBCFF56E /* CYLSongViewModel.swift */; };
+		CF0481FAC531BB4288789F69 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23932273A569440C26002DB3 /* LaunchScreen.storyboard */; };
 		D0A8308B640F6A5C234B47FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EBDC8B59FF03DC0292CD50C /* Foundation.framework */; };
 		E4C7D85239B83F2FE7B8BED5 /* Pods_ExampleSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6468501FDA443E3B77F78CB /* Pods_ExampleSwiftUI.framework */; };
 /* End PBXBuildFile section */
@@ -30,8 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0EBDC8B59FF03DC0292CD50C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		0EBDC8B59FF03DC0292CD50C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1F4D2EF1AC90F82B57B60FBD /* ExampleSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		23932273A569440C26002DB3 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3106722B7D4DCC7126341A4E /* ExampleSwiftUIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleSwiftUIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73042ED353292E4EFF721F9C /* Color+CYLExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Color+CYLExtension.swift"; sourceTree = "<group>"; };
 		7EEA6858E3DAB356D080267D /* CYLExampleSwiftUIApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLExampleSwiftUIApp.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				93526619133A9BF1BBCFF56E /* CYLSongViewModel.swift */,
 				73042ED353292E4EFF721F9C /* Color+CYLExtension.swift */,
 				C3879896277DDC2A209B0A49 /* Assets.xcassets */,
+				23932273A569440C26002DB3 /* LaunchScreen.storyboard */,
 			);
 			name = Sources;
 			path = Sources;
@@ -219,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E7F214F1E776EE2A0D2F61B /* Assets.xcassets in Resources */,
+				CF0481FAC531BB4288789F69 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +373,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleSwiftUIUITests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -387,7 +391,8 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleSwiftUI;
 				SDKROOT = iphoneos;
@@ -406,7 +411,8 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleSwiftUI;
 				SDKROOT = iphoneos;
@@ -421,7 +427,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGNING_ALLOWED = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleSwiftUIUITests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;

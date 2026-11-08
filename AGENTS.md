@@ -23,9 +23,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   assessing compatibility and obtaining approval for breaking changes.
 - Preserve third-party copyright, license text, and original attribution. Do
   not replace an author's name with the project author's name.
-- The minimum supported iOS version is 12.0. Preserve it in the podspec,
-  Podfile, and Xcode target unless a change is explicitly approved. Guard APIs
-  unavailable on supported systems.
+- The library supports iOS 12.0; preserve that minimum in the podspec and
+  guard newer APIs. Runnable projects' Podfiles follow the iOS 15.0 rules in
+  `instructions.md`; their CocoaPods dependencies consequently require iOS 15.
 - Preserve the Xcode project format: `objectVersion = 46`,
   `compatibilityVersion = "Xcode 3.2"`, explicit file references, and a shared
   scheme. Do not copy device identifiers or signing credentials from another
