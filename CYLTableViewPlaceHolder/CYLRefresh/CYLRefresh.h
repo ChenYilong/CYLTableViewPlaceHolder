@@ -5,6 +5,7 @@
 #import "UIScrollView+CYLRefresh.h"
 #import "UIScrollView+CYLExtension.h"
 #import "UIView+CYLExtension.h"
+#import "UICollectionViewLayout+CYLRefresh.h"
 
 #import "CYLRefreshNormalHeader.h"
 #import "CYLRefreshGifHeader.h"

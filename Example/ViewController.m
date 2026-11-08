@@ -10,6 +10,7 @@
 #import "CYLRefresh.h"
 #import "XTNetReloader.h"
 #import "WeChatStylePlaceHolder.h"
+#import "CYLPlaceholderDemoViewController.h"
 
 static const CGFloat CYLDuration = 1.0;
 #define CYLRandomData [NSString stringWithFormat:@"随机数据---%d", arc4random_uniform(1000000)]
@@ -42,6 +43,8 @@ static const CGFloat CYLDuration = 1.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"CYLTableViewPlaceHolder";
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Auto"
+        style:UIBarButtonItemStylePlain target:self action:@selector(cyl_showPlaceholderDemo)];
     self.tableView.frame = self.view.bounds;
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.backgroundColor = [UIColor yellowColor];
@@ -49,6 +52,10 @@ static const CGFloat CYLDuration = 1.0;
     [self setUpCYLRefresh];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
+}
+
+- (void)cyl_showPlaceholderDemo {
+    [self.navigationController pushViewController:[CYLPlaceholderDemoViewController new] animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

@@ -8,4 +8,7 @@
 
 #import "UITableView+CYLTableViewPlaceHolder.h"
 #import "CYLTableViewPlaceHolderDelegate.h"
+#import "UITableView+CYLPlaceholder.h"
+#import "UICollectionView+CYLPlaceholder.h"
+#import "CYLPlaceholderView.h"
 #import "CYLRefresh.h"

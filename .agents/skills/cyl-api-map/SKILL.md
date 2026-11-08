@@ -12,11 +12,16 @@ source of truth; update the README and issue tracker if they become stale.
 | --- | --- |
 | Public umbrella | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h` |
 | Placeholder reload | `CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h` |
+| Automatic table and collection placeholders | `CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`, `CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`, `CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m` |
+| Default placeholder and localized resources | `CYLTableViewPlaceHolder/CYLPlaceholderView.h`, `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle` |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |
+| Refresh header inset updates | `CYLTableViewPlaceHolder/CYLRefresh/Base/CYLRefreshHeader.m` |
 | Example | `Example/ViewController.m` |
+| Automatic placeholder example | `Example/CYLPlaceholderDemoViewController.m` |
 | Regression tests | `Tests/PlaceholderTests.m` |
+| Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
 | Integration and usage | `README.md` |
 | Issue history | `docs/issue-progress.md` |
 

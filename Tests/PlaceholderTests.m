@@ -415,7 +415,7 @@
     window.hidden = YES;
 }
 
-- (void)testHeaderInsetFeedbackDoesNotReenterInsetSetter {
+- (void)testHeaderInsetFeedbackDuringStartAndResetDoesNotReenterSetter {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
     CYLTestReentrantScrollView *scrollView = [[CYLTestReentrantScrollView alloc] initWithFrame:window.bounds];
@@ -426,15 +426,23 @@
     header.fastAnimationDuration = 0;
     header.slowAnimationDuration = 0;
     scrollView.cyl_header = header;
+    scrollView.cyl_triggerInsetFeedback = YES;
     XCTestExpectation *started = [self expectationWithDescription:@"header started"];
     [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
     [self waitForExpectations:@[started] timeout:5];
+    scrollView.cyl_triggerInsetFeedback = NO;
+    XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetT, header.cyl_h, 0.001);
+
     scrollView.cyl_maxInsetDepth = 0;
     scrollView.cyl_triggerInsetFeedback = YES;
     scrollView.contentOffset = CGPointMake(0, -20);
     scrollView.cyl_triggerInsetFeedback = NO;
     XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1);
-    [header endRefreshing];
+    XCTestExpectation *ended = [self expectationWithDescription:@"header ended"];
+    [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetT, 0, 0.001);
     scrollView.cyl_header = nil;
     window.hidden = YES;
 }

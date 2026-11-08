@@ -62,6 +62,18 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     self.cyl_y = - self.cyl_h - self.ignoredScrollViewContentInsetTop;
 }
 
+- (void)setRefreshingInsetTop:(CGFloat)insetTop
+{
+    if (self.updatingRefreshInset || !self.scrollView) return;
+
+    self.updatingRefreshInset = YES;
+    @try {
+        self.scrollView.cyl_insetT = insetTop;
+    } @finally {
+        self.updatingRefreshInset = NO;
+    }
+}
+
 - (void)resetInset {
     if (self.updatingRefreshInset) return;
     if (@available(iOS 11.0, *)) {
@@ -75,12 +87,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     insetT = insetT > self.cyl_h + _scrollViewOriginalInset.top ? self.cyl_h + _scrollViewOriginalInset.top : insetT;
     // 避免 CollectionView 在使用根据 Autolayout 和 内容自动伸缩 Cell, 刷新时导致的 Layout 异常渲染问题
     if (fabs(self.scrollView.cyl_insetT - insetT) > FLT_EPSILON) {
-        self.updatingRefreshInset = YES;
-        @try {
-            self.scrollView.cyl_insetT = insetT;
-        } @finally {
-            self.updatingRefreshInset = NO;
-        }
+        [self setRefreshingInsetTop:insetT];
     }
     self.insetTDelta = _scrollViewOriginalInset.top - self.scrollView.cyl_insetT;
 }
@@ -151,7 +158,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (!self.isCollectionViewAnimationBug) {
         // 恢复inset和offset
         [UIView animateWithDuration:self.slowAnimationDuration animations:^{
-            self.scrollView.cyl_insetT += self.insetTDelta;
+            [self setRefreshingInsetTop:self.scrollView.cyl_insetT + self.insetTDelta];
 
             if (self.endRefreshingAnimationBeginAction) {
                 self.endRefreshingAnimationBeginAction();
@@ -181,7 +188,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 由于修改 Inset 会导致 self.pullingPercent 联动设置 self.alpha, 故提前获取 alpha 值, 后续用于还原 alpha 动画
     CGFloat viewAlpha = self.alpha;
 
-    self.scrollView.cyl_insetT += self.insetTDelta;
+    [self setRefreshingInsetTop:self.scrollView.cyl_insetT + self.insetTDelta];
     // 禁用交互, 如果不禁用可能会引起渲染问题.
     self.scrollView.userInteractionEnabled = NO;
 
@@ -224,7 +231,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
                 CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
                 self.insetTDelta = self.scrollView.cyl_insetT - top;
                 // 增加滚动区域top
-                self.scrollView.cyl_insetT = top;
+                [self setRefreshingInsetTop:top];
                 // 设置滚动位置
                 CGPoint offset = self.scrollView.contentOffset;
                 offset.y = -top;
@@ -281,7 +288,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         if (self.state != CYLRefreshStateIdle) {
             CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
             self.insetTDelta = self.scrollView.cyl_insetT - top;
-            self.scrollView.cyl_insetT = top;
+            [self setRefreshingInsetTop:top];
             // 设置最终滚动位置
             CGPoint offset = self.scrollView.contentOffset;
             offset.y = -top;

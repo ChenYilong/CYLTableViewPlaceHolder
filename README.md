@@ -35,6 +35,54 @@
 
 ## 使用[CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder)
 
+### 自动占位视图（开发版本）
+
+新增的 block API 支持 `UITableView` 和 `UICollectionView`，无需替换已有的
+`reloadData`；旧的 `cyl_reloadData` 和 delegate API 保持可用。以下功能尚未包含在
+已发布的 1.1.0 中，使用时请集成包含这些改动的开发版本。
+
+```objc
+#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
+
+[self.tableView cyl_placeholderViewBlock:^UIView *(UITableView *tableView) {
+    tableView.scrollEnabled = NO;
+    return [CYLPlaceholderView new]; // 也可返回自定义视图
+} backToNormalBlock:^(UITableView *tableView) {
+    tableView.scrollEnabled = YES;
+}];
+
+// 取消自动占位；若占位视图正在显示，会调用恢复 block。
+[self.tableView cyl_placeholderViewBlock:nil];
+```
+
+```swift
+tableView.cyl_placeholderViewBlock({ tableView in
+    tableView.isScrollEnabled = false
+    return CYLPlaceholderView()
+}, backToNormalBlock: { tableView in
+    tableView.isScrollEnabled = true
+})
+```
+
+`UICollectionView` 使用同名接口和对应的 collection view block 参数。空状态以所有
+section 的行或 item 数为准；没有 data source 时不显示占位。支持 `reloadData`、
+data source 更换、section/row/item 的插入、删除、刷新和移动、批量更新，以及
+iOS 15 的 reconfigure 操作。更新会在主队列合并处理；请在主线程配置并更新 UI。
+占位视图使用 frame layout guide 约束，随列表可视区域及尺寸变化调整。
+block 若引用控制器，请使用弱引用避免循环引用。内置 `CYLPlaceholderView` 的图片及
+中英文文本位于 `CYLTableViewPlaceHolder.bundle`，可自行调整其 imageView 和 textLabel。
+
+实现通过 method swizzling 拦截 UIKit 方法，影响进程中对应类的方法分发；未启用
+block 的列表不安装占位视图。子类覆盖更新方法而不调用 `super`、以及 diffable
+data source 的内部更新不保证触发检查。示例应用右上角的 **Auto** 可体验两种列表、
+数据更新及取消功能。不要在同一个列表上同时依赖旧 API 与新 API；启用新 API
+会移除旧占位视图。
+
+开发版本可用 CocoaPods 本地路径或 Git 分支集成，例如
+`pod 'CYLTableViewPlaceHolder', :path => '../CYLTableViewPlaceHolder'`。
+Carthage 可使用 `github "ChenYilong/CYLTableViewPlaceHolder" "<branch-or-commit>"`，
+将构建出的 framework 链接并嵌入应用；资源 bundle 已包含在 framework 中。
+
 三步完成：
 
   1.  [ 第一步：使用cocoaPods导入CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第一步使用cocoapods导入cyltableviewplaceholder) 

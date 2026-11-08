@@ -12,7 +12,10 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.tests'
     config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
   end
-  ['Tests/PlaceholderTests.m', 'CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m'].each do |path|
+  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
+   'CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
+   'CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
+   'CYLTableViewPlaceHolder/CYLPlaceholderView.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
@@ -25,6 +28,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   end
   resource = project.main_group.new_file(File.join(refresh_dir, 'CYLRefresh.bundle'))
   target.resources_build_phase.add_file_reference(resource)
+  placeholder_bundle = project.main_group.new_file(File.join(root, 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle'))
+  target.resources_build_phase.add_file_reference(placeholder_bundle)
   project.save
   scheme = Xcodeproj::XCScheme.new
   scheme.add_build_target(target)

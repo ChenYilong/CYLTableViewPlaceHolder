@@ -11,6 +11,8 @@
 
 #import <objc/runtime.h>
 
+extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
+
 @interface UITableView ()
 
 @property (nonatomic, assign) BOOL scrollWasEnabled;
@@ -40,7 +42,14 @@
 
 - (void)cyl_reloadData {
     [self reloadData];
-    [self cyl_checkEmpty];
+    if (!CYLAutomaticPlaceholderEnabled(self)) [self cyl_checkEmpty];
+}
+
+- (void)cyl_removeLegacyPlaceholder {
+    if (!self.placeHolderView) return;
+    self.scrollEnabled = self.scrollWasEnabled;
+    [self.placeHolderView removeFromSuperview];
+    self.placeHolderView = nil;
 }
 
 - (void)cyl_checkEmpty {
