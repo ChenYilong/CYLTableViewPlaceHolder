@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Placeholder files
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder")
+    order:
+      - file.name
