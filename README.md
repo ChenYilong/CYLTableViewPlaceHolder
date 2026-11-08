@@ -81,7 +81,10 @@ data source 的内部更新不保证触发检查。示例应用右上角的 **Au
 开发版本可用 CocoaPods 本地路径或 Git 分支集成，例如
 `pod 'CYLTableViewPlaceHolder', :path => '../CYLTableViewPlaceHolder'`。
 Carthage 可使用 `github "ChenYilong/CYLTableViewPlaceHolder" "<branch-or-commit>"`，
-将构建出的 framework 链接并嵌入应用；资源 bundle 已包含在 framework 中。
+以 `carthage update --use-xcframeworks --platform iOS` 构建，将
+`CYLTableViewPlaceHolder.xcframework` 链接并嵌入应用；资源 bundle 已包含在 framework
+中。仓库中的 `Examples/Example-placeholder` 草稿也会被 Carthage 发现并构建，其生成的
+`KLTableViewAndCollectionViewPlaceholder.xcframework` 不需要集成。
 
 三步完成：
 
@@ -261,9 +264,9 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 开启分页时，自动 footer 结束刷新不会再直接减去整个底部 inset：静止时只将超出正常内容范围的 offset 限制回边界；拖拽或减速期间不主动改写 offset，由滚动视图完成回弹。
 
-`Example-SwiftUI/` 是改编自上游 #1628 报告者示例的 SwiftUI 调查工程，也包含 #1589 的 `UIViewRepresentable` footer 生命周期页面。`Example-objc-01/` 是改编自上游 #1575 报告者示例的 UIKit collection 工程；虽然目录名为 objc，原示例使用 Swift。两个工程分别在各自目录运行 `pod install` 后打开对应的 `.xcworkspace`，都通过 `:path => '..'` 使用本地库。SwiftUI 示例默认避免重复安装刷新控件；以启动参数 `-reproduce-1628` 可运行原始重复配置场景。真实下拉时的刷新可见性仍在调查，不能将默认示例视为完整修复。
+`Examples/Example-SwiftUI/` 是改编自上游 #1628 报告者示例的 SwiftUI 调查工程，也包含 #1589 的 `UIViewRepresentable` footer 生命周期页面。`Examples/Example-objc-01/` 是改编自上游 #1575 报告者示例的 UIKit collection 工程；虽然目录名为 objc，原示例使用 Swift。两个工程分别在各自目录运行 `pod install` 后打开对应的 `.xcworkspace`，都通过 `:path => '../..'` 使用本地库。SwiftUI 示例默认避免重复安装刷新控件；以启动参数 `-reproduce-1628` 可运行原始重复配置场景。真实下拉时的刷新可见性仍在调查，不能将默认示例视为完整修复。
 
-`Example-objc-02/` 目前移植了 #1523 原工程的 collection 控制器，而非原工程全部页面；增加 back footer 用于检查 #1506，并支持连续下拉检查 #1483。运行 `pod install` 后打开该目录下的 workspace；手势完成及静止位置测试不能替代对动画闪烁或漂移的逐帧验证。
+`Examples/Example-objc-02/` 目前移植了 #1523 原工程的 collection 控制器，而非原工程全部页面；增加 back footer 用于检查 #1506，并支持连续下拉检查 #1483。运行 `pod install` 后打开该目录下的 workspace；手势完成及静止位置测试不能替代对动画闪烁或漂移的逐帧验证。
 
 从横向刷新切换到纵向刷新时，应先设置 `scrollView.cyl_trailer = nil`，再配置纵向 footer。移除正在刷新的 trailer 会先结束刷新，撤回它增加的右侧 inset，并恢复之前的横向弹性滚动设置；同时保留调用方之后对 inset 所做的修改。如果在开始动画完成前结束或移除 trailer，该次刷新回调和开始完成回调不会执行，结束完成回调仍会执行。复用 trailer 时，旧动画不会触发新一轮刷新回调或重置新一轮的拉动进度；重叠的结束动画分别调用各自开始时的完成回调。
 
@@ -273,7 +276,7 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 ## 运行Demo
 
-主 Demo 直接编译刷新源码，打开 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。Xcode 27 的模拟器 SDK 使用 iOS 15 构建设置，真机最低版本仍为 iOS 12。
+主 Demo 源码位于 `Examples/Example/`，直接编译刷新源码，打开根目录的 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。发布源码和资源集中在 `CYLTableViewPlaceHolder/`，由根目录的 podspec 指定。Xcode 27 的模拟器 SDK 使用 iOS 15 构建设置，真机最低版本仍为 iOS 12。
 
 三个 `Example-*` 复现工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
 

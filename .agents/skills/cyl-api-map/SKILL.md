@@ -18,8 +18,9 @@ source of truth; update the README and issue tracker if they become stale.
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |
 | Refresh header inset updates | `CYLTableViewPlaceHolder/CYLRefresh/Base/CYLRefreshHeader.m` |
-| Example | `Example/ViewController.m` |
-| Automatic placeholder example | `Example/CYLPlaceholderDemoViewController.m` |
+| Example | `Examples/Example/ViewController.m` |
+| Automatic placeholder example | `Examples/Example/CYLPlaceholderDemoViewController.m` |
+| Reproduction examples | `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-objc-02/` |
 | Regression tests | `Tests/PlaceholderTests.m` |
 | Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
 | Integration and usage | `README.md` |

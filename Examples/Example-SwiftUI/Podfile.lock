@@ -3,7 +3,7 @@ PODS:
   - SwiftUIIntrospect (26.0.0)
 
 DEPENDENCIES:
-  - CYLTableViewPlaceHolder (from `..`)
+  - CYLTableViewPlaceHolder (from `../..`)
   - SwiftUIIntrospect (= 26.0.0)
 
 SPEC REPOS:
@@ -12,12 +12,12 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   CYLTableViewPlaceHolder:
-    :path: ".."
+    :path: "../.."
 
 SPEC CHECKSUMS:
-  CYLTableViewPlaceHolder: 34ff77fd220973e37bfeb2d655682fd0ad691ba2
+  CYLTableViewPlaceHolder: ef921457e1ea58cbc8268a07ed4f76e8001e11c8
   SwiftUIIntrospect: 74b21afe4589aa3979192844ac1cbba381712e61
 
-PODFILE CHECKSUM: 5290cf3d0466ab251899bca910dcff4a79dc816b
+PODFILE CHECKSUM: c6dc31301d090a9d9ad36adba6a76e6c9fef9b75
 
 COCOAPODS: 1.17.0

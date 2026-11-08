@@ -323,7 +323,7 @@
 				8FAE779A3B8ADC66CFFE868C /* CYLPlaceholderDemoViewController.h */,
 				09F7B8CAE40DDB10D095B26A /* CYLPlaceholderDemoViewController.m */,
 			);
-			path = Example;
+			path = Examples/Example;
 			sourceTree = "<group>";
 		};
 		9A91C4681C2A88020007284C /* PlaceHolderView */ = {
@@ -783,7 +783,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -803,7 +803,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

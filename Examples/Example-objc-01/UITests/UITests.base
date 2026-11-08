@@ -3,6 +3,6 @@ views:
     name: UI tests
     filters:
       and:
-        - file.inFolder("CYLTableViewPlaceHolder/Example-objc-01/UITests")
+        - file.inFolder("CYLTableViewPlaceHolder/Examples/Example-objc-01/UITests")
     order:
       - file.name

@@ -4,7 +4,7 @@ project 'Example-objc-02.xcodeproj'
 use_frameworks!
 
 target 'ExampleObjC02' do
-  pod 'CYLTableViewPlaceHolder', :path => '..'
+  pod 'CYLTableViewPlaceHolder', :path => '../..'
 end
 
 post_install do |installer|

@@ -3,6 +3,6 @@ views:
     name: Sources
     filters:
       and:
-        - file.inFolder("CYLTableViewPlaceHolder/Example-objc-02/Sources")
+        - file.inFolder("CYLTableViewPlaceHolder/Examples/Example-objc-02/Sources")
     order:
       - file.name

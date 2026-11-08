@@ -1,10 +1,11 @@
 platform :ios, '15.0'
 ENV['SWIFT_VERSION'] = '5'
-project 'Example-objc-01.xcodeproj'
+project 'Example-SwiftUI.xcodeproj'
 use_frameworks!
 
-target 'ExampleObjC01' do
-  pod 'CYLTableViewPlaceHolder', :path => '..'
+target 'ExampleSwiftUI' do
+  pod 'CYLTableViewPlaceHolder', :path => '../..'
+  pod 'SwiftUIIntrospect', '26.0.0'
 end
 
 post_install do |installer|

@@ -3,6 +3,6 @@ views:
     name: Example files
     filters:
       and:
-        - file.inFolder("CYLTableViewPlaceHolder/Example-objc-01")
+        - file.inFolder("CYLTableViewPlaceHolder/Examples/Example-SwiftUI")
     order:
       - file.name
