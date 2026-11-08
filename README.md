@@ -71,6 +71,32 @@ iOS 15 的 reconfigure 操作。更新会在主队列合并处理；请在主线
 占位视图使用 frame layout guide 约束，随列表可视区域及尺寸变化调整。
 block 若引用控制器，请使用弱引用避免循环引用。内置 `CYLPlaceholderView` 的图片及
 中英文文本位于 `CYLTableViewPlaceHolder.bundle`，可自行调整其 imageView 和 textLabel。
+`CYLPlaceholderStyle` 提供 51 种离线图片，`CYLPlaceholderMessage` 提供 9 种
+可独立组合的提示；内置英文、简体中文、繁体中文和日文，按应用语言选择并回退英文。
+初始化或自定义图片与文字：
+
+```objc
+CYLPlaceholderView *offline =
+    [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleNoInternet
+                                     message:CYLPlaceholderMessageNoInternet];
+CYLPlaceholderView *customText =
+    [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleWarning
+                                        text:@"请稍后再试"];
+CYLPlaceholderView *customBoth =
+    [[CYLPlaceholderView alloc] initWithImage:myImage text:@"自定义提示"];
+// 继续按需修改，例如 customBoth.textLabel.font 或 customBoth.imageView.tintColor。
+```
+
+```swift
+let offline = CYLPlaceholderView(style: .noInternet, message: .noInternet)
+let custom = CYLPlaceholderView(image: myImage, text: "自定义提示")
+```
+
+传入 `nil` 图片或文字会隐藏相应内容。内置 Material 图标使用模板渲染，可通过
+`imageView.tintColor` 自定义颜色；默认 Empty 图保持原样。可调用
+`imageForStyle:`、`imageNameForStyle:` 和 `localizedTextForMessage:` 单独获取资源。
+内置图标及许可随资源包离线提供，不需要网络。示例中打开 **Auto → Styles**，
+点击样式和文案即可预览任意组合；也可输入自定义文案并体验自定义图片。
 资源包还提供 `CYLPlaceholderNoResults`、`CYLPlaceholderNoInternet`、
 `CYLPlaceholderError`、`CYLPlaceholderWarning` 和 `CYLPlaceholderInbox` 图标，
 分别适用于无搜索结果、无网络、错误、警告和空收件箱；它们不改变默认图片。
