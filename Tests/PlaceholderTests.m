@@ -36,6 +36,17 @@
 - (BOOL)isDecelerating { return self.cyl_testDecelerating; }
 @end
 
+@interface CYLTestCollectionSource : NSObject <UICollectionViewDataSource>
+@end
+@implementation CYLTestCollectionSource
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return 40;
+}
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    return [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
+}
+@end
+
 @interface CYLTestSource : NSObject <UITableViewDataSource, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic) NSInteger rows;
 @property (nonatomic) BOOL allowScroll;
@@ -440,6 +451,149 @@
     XCTAssertGreaterThan(self.table.cyl_insetB, initialInset);
     self.table.cyl_footer = nil;
     XCTAssertEqualWithAccuracy(self.table.cyl_insetB, initialInset, 0.001);
+}
+
+- (void)testRemovingActiveTrailerRestoresHorizontalInsetAndBounce {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:window.bounds
+                                                      collectionViewLayout:layout];
+    collection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    collection.contentInset = UIEdgeInsetsMake(0, 0, 0, 17);
+    [window.rootViewController.view addSubview:collection];
+    [window makeKeyAndVisible];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    collection.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    XCTestExpectation *started = [self expectationWithDescription:@"trailer started"];
+    [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTAssertGreaterThan(collection.cyl_insetR, 17);
+    collection.cyl_insetR += 8;
+    collection.cyl_trailer = nil;
+    XCTAssertEqualWithAccuracy(collection.cyl_insetR, 25, 0.001);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    XCTAssertFalse(collection.alwaysBounceHorizontal);
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    collection.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    XCTAssertTrue(collection.alwaysBounceVertical);
+    XCTAssertFalse(collection.alwaysBounceHorizontal);
+    collection.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testTrailerRemovalRestoresPriorBounceWithoutDoubleInsetReset {
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.alwaysBounceHorizontal = YES;
+    scrollView.alwaysBounceVertical = YES;
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 15);
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    scrollView.cyl_trailer = trailer;
+    scrollView.cyl_trailer = nil;
+    XCTAssertTrue(scrollView.alwaysBounceHorizontal);
+    XCTAssertTrue(scrollView.alwaysBounceVertical);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 15, 0.001);
+    [trailer beginRefreshing];
+    XCTAssertEqual(trailer.state, CYLRefreshStateWillRefresh);
+    scrollView.cyl_trailer = trailer;
+    scrollView.cyl_trailer = nil;
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 15, 0.001);
+}
+
+- (void)testReparentingActiveTrailerRestoresOldScrollView {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *oldView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    UIScrollView *newView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    oldView.contentInset = UIEdgeInsetsMake(0, 0, 0, 12);
+    newView.contentInset = UIEdgeInsetsMake(0, 0, 0, 24);
+    [window.rootViewController.view addSubview:oldView];
+    [window.rootViewController.view addSubview:newView];
+    [window makeKeyAndVisible];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    [oldView addSubview:trailer];
+    [trailer layoutIfNeeded];
+    XCTestExpectation *started = [self expectationWithDescription:@"active trailer"];
+    [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    [newView addSubview:trailer];
+    XCTAssertEqualWithAccuracy(oldView.cyl_insetR, 12, 0.001);
+    XCTAssertEqualWithAccuracy(newView.cyl_insetR, 24, 0.001);
+    XCTAssertFalse(oldView.alwaysBounceHorizontal);
+    XCTAssertTrue(newView.alwaysBounceHorizontal);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    [trailer removeFromSuperview];
+    XCTAssertFalse(newView.alwaysBounceHorizontal);
+    window.hidden = YES;
+}
+
+- (void)testCollectionContentSizeAfterRemovingTrailerAndChangingDirection {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+    layout.itemSize = CGSizeMake(80, 80);
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:window.bounds
+                                                      collectionViewLayout:layout];
+    collection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    CYLTestCollectionSource *source = [CYLTestCollectionSource new];
+    collection.dataSource = source;
+    [collection registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:@"cell"];
+    [window.rootViewController.view addSubview:collection];
+    [window makeKeyAndVisible];
+    [collection reloadData];
+    [collection layoutIfNeeded];
+    XCTAssertGreaterThan(collection.contentSize.width, collection.bounds.size.width);
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    collection.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    XCTestExpectation *started = [self expectationWithDescription:@"collection trailer started"];
+    [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    collection.cyl_trailer = nil;
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    [layout invalidateLayout];
+    collection.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    [collection layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(collection.contentSize.width, collection.bounds.size.width, 0.001);
+    XCTAssertEqualWithAccuracy(collection.cyl_insetR, 0, 0.001);
+    XCTAssertFalse(collection.alwaysBounceHorizontal);
+    XCTAssertGreaterThan(collection.contentSize.height, collection.bounds.size.height);
+    collection.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testRemovingTrailerAfterEndingDoesNotRestoreInsetTwice {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 18);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    XCTestExpectation *started = [self expectationWithDescription:@"trailer began"];
+    [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTestExpectation *ended = [self expectationWithDescription:@"trailer ended"];
+    [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 18, 0.001);
+    scrollView.cyl_trailer = nil;
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 18, 0.001);
+    window.hidden = YES;
 }
 
 - (void)testAutoFooterPanEndToleratesFloatingPointRounding {

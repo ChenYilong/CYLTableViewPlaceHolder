@@ -14,6 +14,8 @@
 @interface CYLRefreshTrailer()
 @property (assign, nonatomic) NSInteger lastRefreshCount;
 @property (assign, nonatomic) CGFloat lastRightDelta;
+@property (assign, nonatomic) BOOL previousHorizontalBounce;
+@property (assign, nonatomic) BOOL previousVerticalBounce;
 @end
 
 @implementation CYLRefreshTrailer
@@ -144,12 +146,32 @@
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
+    UIScrollView *oldScrollView = self.scrollView;
+    if (oldScrollView) {
+        if (self.state == CYLRefreshStateRefreshing) {
+            [self endRefreshing];
+        } else if (self.state == CYLRefreshStateWillRefresh) {
+            [super setState:CYLRefreshStateIdle];
+        }
+        if (oldScrollView.alwaysBounceHorizontal) {
+            oldScrollView.alwaysBounceHorizontal = self.previousHorizontalBounce;
+        }
+        if (!oldScrollView.alwaysBounceVertical) {
+            oldScrollView.alwaysBounceVertical = self.previousVerticalBounce || oldScrollView.cyl_header != nil || oldScrollView.cyl_footer != nil;
+        }
+    }
+
+    UIScrollView *newScrollView = [newSuperview isKindOfClass:UIScrollView.class] ? (UIScrollView *)newSuperview : nil;
+    if (newScrollView) {
+        self.previousHorizontalBounce = newScrollView.alwaysBounceHorizontal;
+        self.previousVerticalBounce = newScrollView.alwaysBounceVertical;
+    }
     [super willMoveToSuperview:newSuperview];
 
-    if (newSuperview) {
+    if (newScrollView) {
         // 设置支持水平弹簧效果
-        _scrollView.alwaysBounceHorizontal = YES;
-        _scrollView.alwaysBounceVertical = NO;
+        newScrollView.alwaysBounceHorizontal = YES;
+        newScrollView.alwaysBounceVertical = NO;
     }
 }
 

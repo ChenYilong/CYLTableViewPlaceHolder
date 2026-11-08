@@ -211,6 +211,8 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 开启分页时，自动 footer 结束刷新不会再直接减去整个底部 inset：静止时只将超出正常内容范围的 offset 限制回边界；拖拽或减速期间不主动改写 offset，由滚动视图完成回弹。
 
+从横向刷新切换到纵向刷新时，应先设置 `scrollView.cyl_trailer = nil`，再配置纵向 footer。移除正在刷新的 trailer 会先结束刷新，撤回它增加的右侧 inset，并恢复之前的横向弹性滚动设置；同时保留调用方之后对 inset 所做的修改。
+
 需要跟踪滚动方向时，先调用一次 `[scrollView cyl_updateScrollMetrics]` 建立基准，再在每次 `scrollViewDidScroll:` 中调用一次；`cyl_scrollDistance` 和 `cyl_scrollDirection` 可重复读取同一次采样。距离为主导轴上的带符号点数，方向表示 content offset 的变化方向；首次采样距离为零，方向为 `CYLScrollDirectionNone`。
 
 刷新组件依据本地源码中声明的 3.7.9 版本改造，适用第三方 MIT 许可证；原版权声明、许可证及来源说明保留在源码和 `CYLRefresh/LICENSE.third-party` 中。
