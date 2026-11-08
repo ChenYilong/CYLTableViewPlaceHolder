@@ -54,8 +54,25 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSString *text = indexPath.row == CYLPlaceholderMessageCount ? @"Your custom message" :
-        [CYLPlaceholderView localizedTextForMessage:(CYLPlaceholderMessage)indexPath.row];
+    if (indexPath.row == CYLPlaceholderMessageCount) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Custom text"
+            message:nil preferredStyle:UIAlertControllerStyleAlert];
+        [alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
+            field.placeholder = @"Your custom message";
+        }];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        __weak typeof(self) weakSelf = self;
+        __weak UIAlertController *weakAlert = alert;
+        [alert addAction:[UIAlertAction actionWithTitle:@"Preview" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [weakSelf cyl_showPreviewWithText:weakAlert.textFields.firstObject.text message:CYLPlaceholderMessageCount];
+        }]];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    [self cyl_showPreviewWithText:[CYLPlaceholderView localizedTextForMessage:(CYLPlaceholderMessage)indexPath.row]
+                         message:(CYLPlaceholderMessage)indexPath.row];
+}
+- (void)cyl_showPreviewWithText:(NSString *)text message:(CYLPlaceholderMessage)message {
     CYLPlaceholderView *placeholder;
     if (self.customImage) {
         UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(80, 80)];
@@ -64,10 +81,10 @@
             [[UIBezierPath bezierPathWithOvalInRect:CGRectMake(8, 8, 64, 64)] fill];
         }];
         placeholder = [[CYLPlaceholderView alloc] initWithImage:image text:text];
-    } else if (indexPath.row == CYLPlaceholderMessageCount) {
+    } else if (message == CYLPlaceholderMessageCount) {
         placeholder = [[CYLPlaceholderView alloc] initWithStyle:self.style text:text];
     } else {
-        placeholder = [[CYLPlaceholderView alloc] initWithStyle:self.style message:(CYLPlaceholderMessage)indexPath.row];
+        placeholder = [[CYLPlaceholderView alloc] initWithStyle:self.style message:message];
     }
     UIViewController *preview = [UIViewController new];
     preview.title = @"Preview";
