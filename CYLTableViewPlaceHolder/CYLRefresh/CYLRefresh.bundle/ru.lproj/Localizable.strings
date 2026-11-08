@@ -1,0 +1,16 @@
+"CYLRefreshHeaderIdleText" = "Потяните чтобы обновить";
+"CYLRefreshHeaderPullingText" = "Отпустите чтобы обновить";
+"CYLRefreshHeaderRefreshingText" = "Загрузка...";
+
+"CYLRefreshAutoFooterIdleText" = "Нажмите или потяните чтобы загрузить еще";
+"CYLRefreshAutoFooterRefreshingText" = "Загрузка...";
+"CYLRefreshAutoFooterNoMoreDataText" = "Больше нет данных";
+
+"CYLRefreshBackFooterIdleText" = "Потяните чтобы загрузить еще";
+"CYLRefreshBackFooterPullingText" = "Отпустите чтобы загрузить еще";
+"CYLRefreshBackFooterRefreshingText" = "Загрузка...";
+"CYLRefreshBackFooterNoMoreDataText" = "Больше нет данных";
+
+"CYLRefreshHeaderLastTimeText" = "Последнее обновление: ";
+"CYLRefreshHeaderDateTodayText" = "Сегодня";
+"CYLRefreshHeaderNoneLastDateText" = "Нет записи";

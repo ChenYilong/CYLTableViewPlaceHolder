@@ -1,9 +1,15 @@
 #import <XCTest/XCTest.h>
+#import <objc/runtime.h>
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
-#if CYL_TEST_MJREFRESH
-#import "MJRefresh.h"
-#endif
+#import "CYLRefresh.h"
+
+@interface NSBundle (CYLTestMissingRefreshBundle)
++ (NSBundle *)cyl_testMissingRefreshBundle;
+@end
+@implementation NSBundle (CYLTestMissingRefreshBundle)
++ (NSBundle *)cyl_testMissingRefreshBundle { return nil; }
+@end
 
 @interface CYLTestSource : NSObject <UITableViewDataSource, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic) NSInteger rows;
@@ -11,17 +17,15 @@
 @property (nonatomic, strong) UIView *view;
 @end
 
-#if CYL_TEST_MJREFRESH
 @interface CYLRefreshSource : CYLTestSource
 @end
 @implementation CYLRefreshSource
 - (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
-    CGFloat top = CGRectGetMaxY(tableView.mj_footer.frame);
+    CGFloat top = CGRectGetMaxY(tableView.cyl_footer.frame);
     return CGRectMake(0, top, CGRectGetWidth(tableView.bounds),
                       MAX(0, CGRectGetHeight(tableView.bounds) - top));
 }
 @end
-#endif
 
 @implementation CYLTestSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -158,17 +162,171 @@
     XCTAssertEqual(source.view.superview, self.table);
 }
 
-#if CYL_TEST_MJREFRESH
-- (void)testMJRefreshFooterCanRemainOutsidePlaceholder {
+- (void)testRefreshFooterCanRemainOutsidePlaceholder {
     CYLRefreshSource *source = [CYLRefreshSource new];
     source.view = [UIView new];
     self.table.dataSource = source;
-    self.table.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    self.table.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
     [self.table cyl_reloadData];
     [self.table layoutIfNeeded];
-    XCTAssertGreaterThan(CGRectGetHeight(self.table.mj_footer.frame), 0);
-    XCTAssertFalse(CGRectIntersectsRect(source.view.frame, self.table.mj_footer.frame));
-    XCTAssertEqual(self.table.mj_footer.superview, self.table);
+    XCTAssertGreaterThan(CGRectGetHeight(self.table.cyl_footer.frame), 0);
+    XCTAssertFalse(CGRectIntersectsRect(source.view.frame, self.table.cyl_footer.frame));
+    XCTAssertEqual(self.table.cyl_footer.superview, self.table);
 }
-#endif
+
+- (void)testRefreshResourcesAndCategoryAccessors {
+    self.table.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    XCTAssertEqual(self.table.cyl_header.superview, self.table);
+    XCTAssertNotNil([NSBundle cyl_refreshBundle]);
+    XCTAssertNotNil([NSBundle cyl_arrowImage]);
+    CYLRefreshConfig.defaultConfig.languageCode = @"en";
+    XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText], @"Pull down to refresh");
+    CYLRefreshConfig.defaultConfig.languageCode = nil;
+    self.table.cyl_header = nil;
+    XCTAssertNil(self.table.cyl_header);
+}
+
+- (void)testHeaderRefreshingCallbackAndCompletion {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    [window makeKeyAndVisible];
+    XCTestExpectation *started = [self expectationWithDescription:@"refresh callback"];
+    self.table.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
+        [started fulfill];
+    }];
+    self.table.cyl_header.fastAnimationDuration = 0;
+    self.table.cyl_header.slowAnimationDuration = 0;
+    [self.table.cyl_header beginRefreshing];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTAssertTrue(self.table.cyl_header.isRefreshing);
+    XCTestExpectation *ended = [self expectationWithDescription:@"refresh completion"];
+    [self.table.cyl_header endRefreshingWithCompletionBlock:^{
+        [ended fulfill];
+    }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertFalse(self.table.cyl_header.isRefreshing);
+    self.table.cyl_header = nil;
+    window.hidden = YES;
+}
+
+- (void)testRefreshLocaleCanChange {
+    CYLRefreshConfig.defaultConfig.languageCode = @"zh-Hans";
+    NSString *chinese = [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText];
+    CYLRefreshConfig.defaultConfig.languageCode = @"en";
+    NSString *english = [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText];
+    XCTAssertNotEqualObjects(chinese, english);
+    XCTAssertEqualObjects(english, @"Pull down to refresh");
+    CYLRefreshConfig.defaultConfig.languageCode = nil;
+}
+
+- (void)testRefreshUnsupportedLocaleFallsBackToEnglish {
+    CYLRefreshConfig.defaultConfig.languageCode = @"zz-XX";
+    XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText], @"Pull down to refresh");
+    CYLRefreshConfig.defaultConfig.languageCode = nil;
+}
+
+- (void)testMissingRefreshBundleFallsBackWithoutException {
+    Method original = class_getClassMethod(NSBundle.class, @selector(cyl_refreshBundle));
+    Method missing = class_getClassMethod(NSBundle.class, @selector(cyl_testMissingRefreshBundle));
+    method_exchangeImplementations(original, missing);
+    @try {
+        CYLRefreshConfig.defaultConfig.languageCode = @"zz-test-missing";
+        XCTAssertNoThrow(XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText
+                                                                           value:@"Fallback"],
+                                              @"Fallback"));
+    } @finally {
+        method_exchangeImplementations(original, missing);
+        CYLRefreshConfig.defaultConfig.languageCode = nil;
+    }
+}
+
+- (void)testResetNoMoreDataBeforeBeginningRefresh {
+    CYLRefreshFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    self.table.cyl_footer = footer;
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+    [footer resetNoMoreData];
+    [footer beginRefreshing];
+    XCTAssertTrue(footer.isRefreshing);
+    self.table.cyl_footer = nil;
+}
+
+- (void)testAutoFooterDoesNotTriggerWhileHeaderRefreshes {
+    self.table.contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
+    self.table.contentSize = CGSizeMake(320, 390);
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    self.table.cyl_header = header;
+    self.table.cyl_footer = footer;
+    [header beginRefreshing];
+    self.table.contentOffset = CGPointMake(0, -30);
+    self.table.contentOffset = CGPointMake(0, -20);
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertFalse(footer.isRefreshing);
+    header.state = CYLRefreshStateIdle;
+    self.table.contentOffset = CGPointMake(0, -30);
+    self.table.contentOffset = CGPointMake(0, -20);
+    XCTAssertTrue(footer.isRefreshing);
+    self.table.cyl_footer = nil;
+    self.table.cyl_header = nil;
+}
+
+- (void)testScrollMetricsAreStableAndUseOffsetDeltas {
+    UIScrollView *scrollView = [UIScrollView new];
+    scrollView.contentOffset = CGPointMake(10, -20);
+    [scrollView cyl_updateScrollMetrics];
+    XCTAssertEqual(scrollView.cyl_scrollDirection, CYLScrollDirectionNone);
+    XCTAssertEqual(scrollView.cyl_scrollDistance, 0);
+    CGFloat previousY = scrollView.contentOffset.y;
+    scrollView.contentOffset = CGPointMake(10, -17.5);
+    CGFloat expectedDistance = scrollView.contentOffset.y - previousY;
+    [scrollView cyl_updateScrollMetrics];
+    XCTAssertEqual(scrollView.cyl_scrollDirection, CYLScrollDirectionDown);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_scrollDistance, expectedDistance, 0.001);
+    XCTAssertEqual(scrollView.cyl_scrollDirection, CYLScrollDirectionDown);
+    scrollView.contentOffset = CGPointMake(5, -17);
+    [scrollView cyl_updateScrollMetrics];
+    XCTAssertEqual(scrollView.cyl_scrollDirection, CYLScrollDirectionLeft);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_scrollDistance, -5, 0.001);
+    [scrollView cyl_updateScrollMetrics];
+    XCTAssertEqual(scrollView.cyl_scrollDirection, CYLScrollDirectionNone);
+    XCTAssertEqual(scrollView.cyl_scrollDistance, 0);
+}
+
+- (void)testRefreshComponentMovesBetweenScrollAndOrdinaryViews {
+    CYLRefreshComponent *component = [CYLRefreshComponent new];
+    UIView *container = [UIView new];
+    XCTAssertNoThrow([container addSubview:component]);
+    XCTAssertNoThrow([component removeFromSuperview]);
+    XCTAssertNoThrow([self.table addSubview:component]);
+    XCTAssertEqual(component.scrollView, self.table);
+    XCTAssertNoThrow([container addSubview:component]);
+    XCTAssertNil(component.scrollView);
+    XCTAssertNoThrow([component removeFromSuperview]);
+    XCTAssertNoThrow([self.table addSubview:component]);
+    XCTAssertNoThrow([component removeFromSuperview]);
+}
+
+- (void)testAutoFooterRestoresInsetWhenRemoved {
+    self.table.contentInset = UIEdgeInsetsMake(0, 0, 12, 0);
+    CGFloat initialInset = self.table.cyl_insetB;
+    self.table.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    XCTAssertGreaterThan(self.table.cyl_insetB, initialInset);
+    self.table.cyl_footer = nil;
+    XCTAssertEqualWithAccuracy(self.table.cyl_insetB, initialInset, 0.001);
+}
+
+- (void)testEndRefreshingDoesNotOverrideImmediateStateChange {
+    CYLRefreshFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    self.table.cyl_footer = footer;
+    [footer beginRefreshing];
+    [footer endRefreshing];
+    footer.state = CYLRefreshStateNoMoreData;
+    XCTestExpectation *nextTurn = [self expectationWithDescription:@"main queue turn"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
+    [self waitForExpectations:@[nextTurn] timeout:5];
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+    self.table.cyl_footer = nil;
+}
 @end

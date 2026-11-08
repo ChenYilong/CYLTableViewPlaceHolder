@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "MJRefresh.h"
+#import "CYLRefresh.h"
 #import "XTNetReloader.h"
 #import "WeChatStylePlaceHolder.h"
 
@@ -46,7 +46,7 @@ static const CGFloat CYLDuration = 1.0;
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.backgroundColor = [UIColor yellowColor];
     self.dataSource = nil;
-    [self setUpMJRefresh];
+    [self setUpCYLRefresh];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
 }
@@ -55,16 +55,16 @@ static const CGFloat CYLDuration = 1.0;
     [self.tableView cyl_reloadData];
 }
 
-- (void)setUpMJRefresh {
+- (void)setUpCYLRefresh {
     __unsafe_unretained __typeof(self) weakSelf = self;
     
     // 设置回调（一旦进入刷新状态就会调用这个refreshingBlock）
-    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+    self.tableView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadNewData];
     }];
     
     // 马上进入刷新状态
-    [self.tableView.mj_header beginRefreshing];
+    [self.tableView.cyl_header beginRefreshing];
 }
 
 #pragma mark - UITableViewDataSource
@@ -100,7 +100,7 @@ static const CGFloat CYLDuration = 1.0;
         // 刷新表格
         [self.tableView cyl_reloadData];
         // 拿到当前的下拉刷新控件，结束刷新状态
-        [self.tableView.mj_header endRefreshing];
+        [self.tableView.cyl_header endRefreshing];
     });
 }
 
@@ -115,7 +115,7 @@ static const CGFloat CYLDuration = 1.0;
 - (UIView *)taoBaoStylePlaceHolder {
     __block XTNetReloader *netReloader = [[XTNetReloader alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
                                                                   reloadBlock:^{
-                                                                      [self.tableView.mj_header beginRefreshing];
+                                                                      [self.tableView.cyl_header beginRefreshing];
                                                                   }] ;
     return netReloader;
 }
@@ -129,7 +129,7 @@ static const CGFloat CYLDuration = 1.0;
 #pragma mark - WeChatStylePlaceHolderDelegate Method
 
 - (void)emptyOverlayClicked:(id)sender {
-    [self.tableView.mj_header beginRefreshing];
+    [self.tableView.cyl_header beginRefreshing];
 }
 
 @end

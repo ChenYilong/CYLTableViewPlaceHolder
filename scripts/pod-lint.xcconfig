@@ -1,0 +1,3 @@
+// Xcode 27 simulator SDKs require iOS 15 or newer. This is a validation-only
+// override; the supported library deployment target remains iOS 12.
+IPHONEOS_DEPLOYMENT_TARGET = 15.0

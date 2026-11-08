@@ -1,6 +1,6 @@
 //
 //  XTNetReloader.h
-//  Demo_MjRefresh
+//  CYLTableViewPlaceHolder
 //
 //  Created by TuTu on 15/12/8.
 //  Copyright © 2015年 teason. All rights reserved.
@@ -20,4 +20,3 @@ typedef void(^ReloadButtonClickBlock)() ;
 - (void)dismiss ;
 
 @end
-

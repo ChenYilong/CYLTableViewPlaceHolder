@@ -1,0 +1,19 @@
+"CYLRefreshHeaderIdleText" = "下拉可以刷新";
+"CYLRefreshHeaderPullingText" = "松开立即刷新";
+"CYLRefreshHeaderRefreshingText" = "正在刷新数据中...";
+
+"CYLRefreshTrailerIdleText" = "滑动查看图文详情";
+"CYLRefreshTrailerPullingText" = "释放查看图文详情";
+
+"CYLRefreshAutoFooterIdleText" = "点击或上拉加载更多";
+"CYLRefreshAutoFooterRefreshingText" = "正在加载更多的数据...";
+"CYLRefreshAutoFooterNoMoreDataText" = "已经全部加载完毕";
+
+"CYLRefreshBackFooterIdleText" = "上拉可以加载更多";
+"CYLRefreshBackFooterPullingText" = "松开立即加载更多";
+"CYLRefreshBackFooterRefreshingText" = "正在加载更多的数据...";
+"CYLRefreshBackFooterNoMoreDataText" = "已经全部加载完毕";
+
+"CYLRefreshHeaderLastTimeText" = "最后更新：";
+"CYLRefreshHeaderDateTodayText" = "今天";
+"CYLRefreshHeaderNoneLastDateText" = "无记录";

@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Scripts
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/scripts")
+    order:
+      - file.name

@@ -16,16 +16,15 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
-  refresh_dir = File.join(root, 'Pods/MJRefresh/MJRefresh')
-  if Dir.exist?(refresh_dir)
-    target.build_configurations.each do |config|
-      config.build_settings['HEADER_SEARCH_PATHS'] = "#{refresh_dir}/**"
-      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'CYL_TEST_MJREFRESH=1']
-    end
-    Dir.glob(File.join(refresh_dir, '**/*.m')).each do |path|
-      target.source_build_phase.add_file_reference(project.main_group.new_file(path))
-    end
+  refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
+  target.build_configurations.each do |config|
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\""
   end
+  Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
+    target.source_build_phase.add_file_reference(project.main_group.new_file(path))
+  end
+  resource = project.main_group.new_file(File.join(refresh_dir, 'CYLRefresh.bundle'))
+  target.resources_build_phase.add_file_reference(resource)
   project.save
   scheme = Xcodeproj::XCScheme.new
   scheme.add_build_target(target)

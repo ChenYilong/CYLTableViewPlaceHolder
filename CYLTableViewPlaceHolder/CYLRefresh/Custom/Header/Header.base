@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Files
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLRefresh/Custom/Header")
+    order:
+      - file.name

@@ -1,0 +1,16 @@
+"CYLRefreshHeaderIdleText" = "Потягніть для оновлення";
+"CYLRefreshHeaderPullingText" = "Відпустіть для оновлення";
+"CYLRefreshHeaderRefreshingText" = "Завантаження...";
+
+"CYLRefreshAutoFooterIdleText" = "Натисніть або потягніть щоб завантажити ще";
+"CYLRefreshAutoFooterRefreshingText" = "Завантаження...";
+"CYLRefreshAutoFooterNoMoreDataText" = "Більше немає даних";
+
+"CYLRefreshBackFooterIdleText" = "Потягніть щоб завантажити ще";
+"CYLRefreshBackFooterPullingText" = "Відпустіть щоб завантажити ще";
+"CYLRefreshBackFooterRefreshingText" = "Завантаження...";
+"CYLRefreshBackFooterNoMoreDataText" = "Більше немає даних";
+
+"CYLRefreshHeaderLastTimeText" = "Останнє оновлення: ";
+"CYLRefreshHeaderDateTodayText" = "Сьогодні";
+"CYLRefreshHeaderNoneLastDateText" = "Немає запису";

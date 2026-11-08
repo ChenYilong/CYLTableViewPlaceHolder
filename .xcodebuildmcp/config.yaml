@@ -1,0 +1,18 @@
+schemaVersion: 3
+enabledWorkflows:
+  - simulator
+  - debugging
+  - ui-automation
+debug: false
+sentryDisabled: true
+setupPreferences:
+  platforms:
+    - iOS
+sessionDefaults:
+  projectPath: CYLTableViewPlaceHolder.xcodeproj
+  scheme: CYLTableViewPlaceHolder
+  simulatorPlatform: iOS Simulator
+  configuration: Debug
+  extraArgs:
+    - -derivedDataPath
+    - ./DerivedData

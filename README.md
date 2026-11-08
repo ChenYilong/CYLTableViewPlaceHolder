@@ -2,7 +2,7 @@
 
 <p align="center">
 ![pod-v1.0.6](https://img.shields.io/badge/pod-v1.0.6-brightgreen.svg)
-![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-6.0+](https://img.shields.io/badge/platform-iOS%206.0%2B-ff69b4.svg)
+![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-12.0+](https://img.shields.io/badge/platform-iOS%2012.0%2B-ff69b4.svg)
 </a>
 
 ## 导航
@@ -22,7 +22,7 @@
 1 | 轻量级、无污染 | 基于 UITableView 分类，无污染，比基于子类化、继承的框架更加轻量级
 2 | 低耦合 | 自定义占位视图的可自行实现，通过协议传递，耦合性极低。
 3 | 简单，无学习成本 | 一行代码完成，仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。自动检测是否需要 `addSubview` 和 `removeFromSuperview` ，省去学习繁琐的 add 和 remove 的调用时机。
-4 | 使用方法简单 |  [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 基于  `dataSource`  数据源，所以只需操作  `dataSource`  数据源，即可完成占位视图的 `addSubview` 和 `removeFromSuperview` 的时机，更加直观。搭配 MJRefresh 使用十分方便，demo 中也给出了搭配使用方法。
+4 | 使用方法简单 | 基于 `dataSource` 管理占位视图；内置的 `CYLRefresh` 提供下拉、上拉和横向刷新功能。
 5 |支持CocoaPods |容易集成
 
 （学习交流群：465239521）
@@ -49,10 +49,12 @@
 
 
  ```Objective-C
-pod 'CYLTableViewPlaceHolder'
+pod 'CYLTableViewPlaceHolder', :git => 'https://github.com/ChenYilong/CYLTableViewPlaceHolder.git', :branch => 'master'
  ```
 
 
+
+新版本尚未发布到 CocoaPods 时，请使用上述 Git 分支或本地 `:path`；历史版本不会自动包含新功能。本库最低支持 **iOS 12**，不再需要单独添加刷新库。
 
 然后使用 `cocoaPods` 进行安装：
 
@@ -133,13 +135,13 @@ pod update
 }
 ```
 
-自定义 frame 不会自动跟随尺寸变化，必要时请为返回的视图设置 autoresizing mask，或在布局变化后重新加载。对于 section header 和 MJRefresh footer，需根据它们在 table view 内容坐标系中的实际 frame 计算不重叠区域；例如空数据时 MJRefresh 自动 footer 不一定在屏幕底部。占位图仍位于其 frame 内其他子视图之上。
+自定义 frame 不会自动跟随尺寸变化，必要时请为返回的视图设置 autoresizing mask，或在布局变化后重新加载。对于 section header 和刷新 footer，需根据它们在 table view 内容坐标系中的实际 frame 计算不重叠区域；空数据时自动 footer 不一定在屏幕底部。占位图仍位于其 frame 内其他子视图之上。
 
-例如，在使用 `MJRefreshAutoNormalFooter` 且 footer 位于内容顶部的场景中，可在导入 MJRefresh 后将占位图放在 footer 之后：
+例如，在使用 `CYLRefreshAutoNormalFooter` 且 footer 位于内容顶部的场景中，可将占位图放在 footer 之后：
 
 ```Objective-C
 - (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
-    CGFloat top = CGRectGetMaxY(tableView.mj_footer.frame);
+    CGFloat top = CGRectGetMaxY(tableView.cyl_footer.frame);
     return CGRectMake(0, top, CGRectGetWidth(tableView.bounds),
                       MAX(0, CGRectGetHeight(tableView.bounds) - top));
 }
@@ -188,23 +190,32 @@ pod update
 
 注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法，请避免重复调用。
 
-本库只管理 `UITableView`，不管理 `UICollectionView` 或普通页面；这些场景需要各自的空状态实现。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
+占位图功能只管理 `UITableView`，不管理 `UICollectionView` 或普通页面；这些场景需要各自的空状态实现。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
+
+## 内置刷新组件
+
+`CYLRefresh` 源码位于 `CYLTableViewPlaceHolder/CYLRefresh/`，可直接修改，无需安装额外的刷新 Pod。导入 `CYLTableViewPlaceHolder.h` 后：
+
+```Objective-C
+self.tableView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
+    // 加载数据，完成后调用 endRefreshing
+}];
+self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+    // 加载更多数据，完成后调用 endRefreshing
+}];
+```
+
+原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLRefresh.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。
+
+`endRefreshing`、`endRefreshingWithNoMoreData` 和 `resetNoMoreData` 在主线程立即更新状态；从后台线程调用时仍异步提交到主队列。自动 footer 在 header 正在刷新时不会自动触发，但这不是所有 header/footer 类型的双向互斥。
+
+需要跟踪滚动方向时，先调用一次 `[scrollView cyl_updateScrollMetrics]` 建立基准，再在每次 `scrollViewDidScroll:` 中调用一次；`cyl_scrollDistance` 和 `cyl_scrollDirection` 可重复读取同一次采样。距离为主导轴上的带符号点数，方向表示 content offset 的变化方向；首次采样距离为零，方向为 `CYLScrollDirectionNone`。
+
+刷新组件依据本地源码中声明的 3.7.9 版本改造，适用第三方 MIT 许可证；原版权声明、许可证及来源说明保留在源码和 `CYLRefresh/LICENSE.third-party` 中。
 
 ## 运行Demo
 
-demo 的刷新组件使用的是 MJRefresh，所以需要导入相应的 CocoaPods 库 
-
-使用 `pod install` 后打开 `CYLTableViewPlaceHolder.xcworkspace`，不要打开 `.xcodeproj`。若遇到 `library not found for -lPods`，检查 workspace、Podfile 中的 target 与应用 target 是否一致，并重新执行 `pod install`；这是 CocoaPods 集成问题，不应手动链接旧的 `libPods.a`。较新的 Xcode 可能需要在构建时指定受支持的 iOS deployment target。
-
-
-
- ```Objective-C
-# 打开终端，进入 clone 的文件夹
-cd /Users/YourUserName/Documents/CYLTableViewPlaceHolder
-# 如果提示找不到库，则可去掉 --no-repo-update
-pod install --verbose --no-repo-update 
-open CYLTableViewPlaceHolder.xcworkspace
- ```
+Demo 已直接编译刷新源码，打开 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。较新的 Xcode 可能需要在构建时指定其支持的模拟器 deployment target。
 
 
 ## 适用于多种应用应用场景

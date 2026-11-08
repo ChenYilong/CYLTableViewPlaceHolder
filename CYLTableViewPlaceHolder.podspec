@@ -6,8 +6,9 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/ChenYilong/CYLTableViewPlaceHolder"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { "ChenYilong" => "luohanchenyilong@163.com" }
-  s.platform     = :ios, '6.0'
+  s.platform     = :ios, '12.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
   s.source_files  = 'CYLTableViewPlaceHolder', 'CYLTableViewPlaceHolder/**/*.{h,m}'
+  s.resources     = 'CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.bundle', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy'
   s.requires_arc = true
 end
