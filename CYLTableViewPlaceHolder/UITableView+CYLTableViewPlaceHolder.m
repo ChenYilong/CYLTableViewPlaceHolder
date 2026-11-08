@@ -55,6 +55,7 @@
         NSInteger rows = [src tableView:self numberOfRowsInSection:i];
         if (rows) {
             isEmpty = NO;
+            break;
         }
         
     }
@@ -67,12 +68,9 @@
 #pragma clang diagnostic ignored "-Wint-conversion"
                 scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
 #pragma clang diagnostic pop
-                
                 if (!scrollEnabled) {
                     NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
-                    @throw [NSException exceptionWithName:NSGenericException
-                                                   reason:reason
-                                                 userInfo:nil];
+                    NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
                 }
             } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
 #pragma clang diagnostic push
@@ -82,22 +80,24 @@
                 
                 if (!scrollEnabled) {
                     NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
-                    @throw [NSException exceptionWithName:NSGenericException
-                                                   reason:reason
-                                                 userInfo:nil];
+                   NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
                 }
             }
             self.scrollEnabled = scrollEnabled;
             if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wint-conversion"
                 self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
+#pragma clang diagnostic pop
             } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wint-conversion"
                 self.placeHolderView = [self.delegate performSelector:@selector(makePlaceHolderView)];
+#pragma clang diagnostic pop
             } else {
                 NSString *selectorName = NSStringFromSelector(_cmd);
                 NSString *reason = [NSString stringWithFormat:@"You must implement makePlaceHolderView method in your custom tableView or its delegate class if you want to use %@", selectorName];
-                @throw [NSException exceptionWithName:NSGenericException
-                                               reason:reason
-                                             userInfo:nil];
+                NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
             }
             self.placeHolderView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
             [self addSubview:self.placeHolderView];
@@ -120,4 +120,3 @@
 }
 
 @end
-
