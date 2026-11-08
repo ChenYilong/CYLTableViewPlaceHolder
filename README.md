@@ -103,6 +103,41 @@ let custom = CYLPlaceholderView(image: myImage, text: "自定义提示")
 可使用 `UIImage` 的 `imageNamed:inBundle:compatibleWithTraitCollection:` 从该资源包加载。
 图标来自 Google Material Design，许可及来源记录随资源包分发。
 
+也可以用字典或本地 plist 创建静态 FlatDesign 风格的图片与标题组合：
+
+```objc
+NSDictionary *item = @{
+    CYLPlaceholderItemStyle: @(CYLPlaceholderStyleNoInternet),
+    CYLPlaceholderItemMessage: @(CYLPlaceholderMessageNoInternet),
+    CYLPlaceholderItemImagePositionAdjustment: @[@8, @(-6)],
+    CYLPlaceholderItemTitlePositionAdjustment: @[@0, @6],
+    CYLPlaceholderItemAnimationFilePath: @"future-animation.json"
+};
+NSError *error = nil;
+CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:item
+                                                                 imageBundle:nil
+                                                                       error:&error];
+// 或使用 initWithItemContentsOfURL:imageBundle:error: 读取本地 plist。
+```
+
+配置项兼容 `CYLTabBarItemTitle`、`CYLTabBarItemImage`、`CYLTabBarItemImageInsets`、
+`CYLTabBarItemImagePositionAdjustment` 和 `CYLTabBarItemTitlePositionAdjustment`
+的序列化名称；本库导出的常量使用 `CYLPlaceholderItem` 前缀，避免与
+CYLTabBarController 冲突。图片可传 `UIImage` 或指定 bundle 中的图片名；bundle
+为 nil 时使用本库资源包。显式图片和标题优先于预设样式和文案。偏移量支持
+`[horizontal, vertical]`、包含 `horizontal`/`vertical` 或 `x`/`y` 的字典，以及
+代码传入的 `NSValue`；内边距支持四元素数组、`top`/`left`/`bottom`/`right`
+字典或 `NSValue`。错误通过 `NSError` 返回，不加载网络资源。
+普通状态的文字、图标、背景颜色支持 `UIColor` 或 `#RGB`、`#RRGGBB`、
+`#RRGGBBAA`；文字字体支持 `UIFont`、字号、`bold:18` 或包含 `name`、`size`、
+`weight` 的字典。图片名也支持 iOS 13 及以上的 `system:` SF Symbols。可配置
+无障碍标识、标签和提示。
+
+图片与标题作为一个居中的整体布局；参考 FlatDesign 的相对位置计算，并可分别
+设置偏移。`itemAttributes` 保留传入的其他键，供将来使用：动效、选中态、深色
+图片及其他 TabBar 配置目前不会生效，也不会播放动画。示例 **Auto → Styles**
+底部提供代码和 plist 两种配置演示。布局参考 CYLTabBarController；其 MIT 许可随资源包提供。
+
 实现通过 method swizzling 拦截 UIKit 方法，影响进程中对应类的方法分发；未启用
 block 的列表不安装占位视图。子类覆盖更新方法而不调用 `super`、以及 diffable
 data source 的内部更新不保证触发检查。示例应用右上角的 **Auto** 可体验两种列表、

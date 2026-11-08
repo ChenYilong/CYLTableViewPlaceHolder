@@ -15,20 +15,56 @@
     self.title = @"Placeholder styles";
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return CYLPlaceholderStyleCount + 1;
+    return CYLPlaceholderStyleCount + 3;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"style"];
     if (!cell) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"style"];
-    BOOL custom = indexPath.row == CYLPlaceholderStyleCount;
-    cell.textLabel.text = custom ? @"Custom image" : [CYLPlaceholderView imageNameForStyle:(CYLPlaceholderStyle)indexPath.row];
-    cell.imageView.image = custom ? nil : [CYLPlaceholderView imageForStyle:(CYLPlaceholderStyle)indexPath.row];
+    BOOL preset = indexPath.row < CYLPlaceholderStyleCount;
+    NSArray *extras = @[@"Custom image", @"FlatDesign: code configuration", @"FlatDesign: plist configuration"];
+    cell.textLabel.text = preset ? [CYLPlaceholderView imageNameForStyle:(CYLPlaceholderStyle)indexPath.row] :
+        extras[indexPath.row - CYLPlaceholderStyleCount];
+    cell.imageView.image = preset ? [CYLPlaceholderView imageForStyle:(CYLPlaceholderStyle)indexPath.row] : nil;
     cell.imageView.tintColor = UIColor.grayColor;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.row > CYLPlaceholderStyleCount) {
+        NSError *error = nil;
+        CYLPlaceholderView *placeholder;
+        if (indexPath.row == CYLPlaceholderStyleCount + 1) {
+            NSDictionary *attributes = @{CYLPlaceholderItemStyle: @(CYLPlaceholderStyleWarning),
+                CYLPlaceholderItemMessage: @(CYLPlaceholderMessageError),
+                CYLPlaceholderItemImagePositionAdjustment: @[@8, @(-6)],
+                CYLPlaceholderItemTitlePositionAdjustment: @[@0, @6],
+                CYLPlaceholderItemAnimationFilePath: @"reserved-animation.json"};
+            placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
+        } else {
+            NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
+            NSURL *bundleURL = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"] ?:
+                [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+            NSBundle *bundle = bundleURL ? [NSBundle bundleWithURL:bundleURL] : nil;
+            NSURL *url = [bundle URLForResource:@"CYLPlaceholderItemDemo" withExtension:@"plist"];
+            placeholder = [[CYLPlaceholderView alloc] initWithItemContentsOfURL:url imageBundle:nil error:&error];
+        }
+        if (!placeholder) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Configuration error"
+                message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            return;
+        }
+        UIViewController *preview = [UIViewController new];
+        preview.title = @"FlatDesign item";
+        preview.view.backgroundColor = UIColor.whiteColor;
+        placeholder.frame = preview.view.bounds;
+        placeholder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [preview.view addSubview:placeholder];
+        [self.navigationController pushViewController:preview animated:YES];
+        return;
+    }
     CYLPlaceholderMessageDemoViewController *next = [[CYLPlaceholderMessageDemoViewController alloc] initWithStyle:UITableViewStylePlain];
     next.customImage = indexPath.row == CYLPlaceholderStyleCount;
     next.style = next.customImage ? CYLPlaceholderStyleEmpty : (CYLPlaceholderStyle)indexPath.row;

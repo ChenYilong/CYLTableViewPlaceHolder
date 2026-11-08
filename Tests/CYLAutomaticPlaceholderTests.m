@@ -169,6 +169,108 @@
     XCTAssertTrue(placeholder.textLabel.text.length > 0);
 }
 
+- (void)testConfiguredPlaceholderLayoutAndValidation {
+    UIImage *image = [UIImage new];
+    NSDictionary *base = @{@"CYLTabBarItemImage": image, @"CYLTabBarItemTitle": @"Example",
+                           @"CYLTabBarAnimationURL": @"future-animation.json"};
+    NSError *error = nil;
+    CYLPlaceholderView *plain = [[CYLPlaceholderView alloc] initWithItemAttributes:base imageBundle:nil error:&error];
+    XCTAssertNotNil(plain);
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(plain.itemAttributes[@"CYLTabBarAnimationURL"], @"future-animation.json");
+    NSMutableDictionary *adjusted = base.mutableCopy;
+    adjusted[@"CYLTabBarItemTitlePositionAdjustment"] = @[@4, @6];
+    adjusted[@"CYLTabBarItemImagePositionAdjustment"] = @{@"x": @8, @"y": @10};
+    adjusted[@"CYLTabBarItemImageInsets"] = @[@1, @2, @3, @4];
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:adjusted imageBundle:nil error:&error];
+    plain.frame = view.frame = CGRectMake(0, 0, 320, 480);
+    [plain layoutIfNeeded];
+    [view layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetMinX(view.textLabel.frame) - CGRectGetMinX(plain.textLabel.frame), 4, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(view.textLabel.frame) - CGRectGetMinY(plain.textLabel.frame), 6, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinX(view.imageView.frame) - CGRectGetMinX(plain.imageView.frame), 8, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(view.imageView.frame) - CGRectGetMinY(plain.imageView.frame), 13, 0.01);
+    XCTAssertEqualWithAccuracy(view.imageView.frame.size.width, 74, 0.01);
+    XCTAssertEqualWithAccuracy(view.imageView.frame.size.height, 76, 0.01);
+    adjusted[@"CYLTabBarItemImagePositionAdjustment"] = @[@"bad", @0];
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:adjusted imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemContentsOfURL:[NSURL URLWithString:@"https://example.com/item.plist"] imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+}
+
+- (void)testConfiguredPlaceholderPropertyListAndPresets {
+    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
+    NSURL *bundleURL = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"] ?:
+        [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
+    NSURL *url = [bundle URLForResource:@"CYLPlaceholderItemDemo" withExtension:@"plist"];
+    XCTAssertNotNil(url);
+    NSError *error = nil;
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemContentsOfURL:url imageBundle:nil error:&error];
+    XCTAssertNotNil(view);
+    XCTAssertNil(error);
+    XCTAssertNotNil(view.imageView.image);
+    XCTAssertEqualObjects(view.textLabel.text, [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageNoInternet]);
+    XCTAssertEqualObjects(view.itemAttributes[CYLPlaceholderItemAnimationFilePath], @"reserved-animation.json");
+    UIImage *custom = [UIImage new];
+    view = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemStyle: @(CYLPlaceholderStyleWarning),
+        CYLPlaceholderItemMessage: @(CYLPlaceholderMessageError),
+        CYLPlaceholderItemImage: custom,
+        CYLPlaceholderItemTitle: @"Custom"
+    } imageBundle:nil error:&error];
+    XCTAssertEqual(view.imageView.image, custom);
+    XCTAssertEqualObjects(view.textLabel.text, @"Custom");
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemStyle: @(-1)} imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemMessage: NSNull.null} imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"missing-image"} imageBundle:bundle error:&error]);
+    XCTAssertNotNil(error);
+}
+
+- (void)testConfiguredPlaceholderAppearance {
+    NSError *error = nil;
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemStyle: @(CYLPlaceholderStyleWarning),
+        CYLPlaceholderItemTitle: @"Example",
+        CYLPlaceholderItemTitleColor: @"#123",
+        CYLPlaceholderItemIconColor: UIColor.redColor,
+        CYLPlaceholderItemBackgroundColor: @"#44556680",
+        CYLPlaceholderItemTitleFont: @"bold:18",
+        CYLPlaceholderItemAccessibilityLabel: @"Offline",
+        CYLPlaceholderItemAccessibilityHint: @"Try again later"
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(view);
+    XCTAssertNil(error);
+    CGFloat red = 0, green = 0, blue = 0, alpha = 0;
+    XCTAssertTrue([view.textLabel.textColor getRed:&red green:&green blue:&blue alpha:&alpha]);
+    XCTAssertEqualWithAccuracy(red, 0x11 / 255.0, 0.001);
+    XCTAssertEqualWithAccuracy(green, 0x22 / 255.0, 0.001);
+    XCTAssertEqualWithAccuracy(blue, 0x33 / 255.0, 0.001);
+    XCTAssertEqualObjects(view.imageView.tintColor, UIColor.redColor);
+    XCTAssertEqualWithAccuracy(view.textLabel.font.pointSize, 18, 0.001);
+    XCTAssertEqualObjects(view.accessibilityLabel, @"Offline");
+    XCTAssertEqualObjects(view.accessibilityHint, @"Try again later");
+    XCTAssertTrue(view.isAccessibilityElement);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemTitleColor: @"#ZZZ"} imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemTitleFont: @"bold:-1"} imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    if (@available(iOS 13.0, *)) {
+        view = [[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"system:house"} imageBundle:nil error:&error];
+        XCTAssertNotNil(view.imageView.image);
+    }
+}
+
 - (void)testAdditionalPlaceholderImagesLoadFromResourceBundle {
     NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
     NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
