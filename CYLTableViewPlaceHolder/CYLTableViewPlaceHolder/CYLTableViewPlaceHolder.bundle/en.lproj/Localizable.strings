@@ -1,1 +1,9 @@
 "CYLPlaceholderEmptyText" = "Nothing here yet";
+"CYLPlaceholderNoResultsText" = "No results found";
+"CYLPlaceholderNoInternetText" = "No internet connection";
+"CYLPlaceholderServerUnavailableText" = "Server unavailable";
+"CYLPlaceholderErrorText" = "Something went wrong";
+"CYLPlaceholderLoadingText" = "Loading";
+"CYLPlaceholderNoPermissionText" = "Access unavailable";
+"CYLPlaceholderEmptyCartText" = "Your cart is empty";
+"CYLPlaceholderNoNotificationsText" = "No notifications";

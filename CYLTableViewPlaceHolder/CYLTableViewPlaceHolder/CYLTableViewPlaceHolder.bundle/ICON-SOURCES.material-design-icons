@@ -1,0 +1,44 @@
+All files below are unmodified PNGs from google/material-design-icons at
+revision 10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7, Apache License 2.0.
+For each entry, the upstream path is
+png/<category>/<icon>/materialicons/48dp/2x/baseline_<icon>_black_48dp.png.
+Local filenames append @2x.png to the name shown.
+
+CYLSearchWifiOff notification/wifi_off
+CYLSearchSignalWifiOff device/signal_wifi_off
+CYLSearchNoInternet device/signal_wifi_connected_no_internet_4
+CYLSearchCloudOff file/cloud_off
+CYLSearchSyncProblem notification/sync_problem
+CYLSearchSyncDisabled notification/sync_disabled
+CYLSearchNetworkLocked notification/network_locked
+CYLSearchBluetoothDisabled device/bluetooth_disabled
+CYLSearchLocationOff communication/location_off
+CYLSearchPublicOff social/public_off
+CYLSearchErrorOutline alert/error_outline
+CYLSearchWarning alert/warning
+CYLSearchReportProblem action/report_problem
+CYLSearchBlocked content/block
+CYLSearchHelp action/help_outline
+CYLSearchHourglass action/hourglass_empty
+CYLSearchLocked action/lock_outline
+CYLSearchVisibilityOff action/visibility_off
+CYLSearchSearchOff action/search_off
+CYLSearchFolderOff file/folder_off
+CYLSearchFolderOpen file/folder_open
+CYLSearchDownloadOff file/file_download_off
+CYLSearchUploadOff file/file_upload_off
+CYLSearchInbox content/inbox
+CYLSearchBrokenImage image/broken_image
+CYLSearchImageUnavailable image/image_not_supported
+CYLSearchPhotoLibrary image/photo_library
+CYLSearchMusicOff image/music_off
+CYLSearchVideoOff av/videocam_off
+CYLSearchPersonOff social/person_off
+CYLSearchGroupOff social/group_off
+CYLSearchEventBusy notification/event_busy
+CYLSearchEmptyCart action/remove_shopping_cart
+CYLSearchFavorite action/favorite_border
+CYLSearchBatteryAlert device/battery_alert
+CYLSearchUnknownDevice hardware/device_unknown
+CYLSearchPhoneDisabled communication/phone_disabled
+CYLSearchWrongLocation maps/wrong_location

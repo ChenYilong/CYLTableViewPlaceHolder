@@ -83,6 +83,8 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderMessage) {
 - (instancetype)initWithImage:(nullable UIImage *)image text:(nullable NSString *)text;
 /// Images are loaded from the library's offline bundle. Invalid styles return nil and log an error.
 + (nullable UIImage *)imageForStyle:(CYLPlaceholderStyle)style;
+/// The corresponding bundle image name, without the scale suffix or extension.
++ (nullable NSString *)imageNameForStyle:(CYLPlaceholderStyle)style;
 /// Uses the current app language, with an English fallback.
 + (nullable NSString *)localizedTextForMessage:(CYLPlaceholderMessage)message;
 @end

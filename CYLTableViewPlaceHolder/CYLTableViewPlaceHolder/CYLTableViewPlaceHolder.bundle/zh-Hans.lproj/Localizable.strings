@@ -1,1 +1,9 @@
 "CYLPlaceholderEmptyText" = "暂无内容";
+"CYLPlaceholderNoResultsText" = "没有找到结果";
+"CYLPlaceholderNoInternetText" = "网络连接不可用";
+"CYLPlaceholderServerUnavailableText" = "服务器暂不可用";
+"CYLPlaceholderErrorText" = "出了点问题";
+"CYLPlaceholderLoadingText" = "加载中";
+"CYLPlaceholderNoPermissionText" = "暂无访问权限";
+"CYLPlaceholderEmptyCartText" = "购物车是空的";
+"CYLPlaceholderNoNotificationsText" = "暂无通知";

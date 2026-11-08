@@ -1,6 +1,84 @@
 #import "CYLPlaceholderDemoViewController.h"
 #import "CYLTableViewPlaceHolder.h"
 
+@interface CYLPlaceholderMessageDemoViewController : UITableViewController
+@property (nonatomic) CYLPlaceholderStyle style;
+@property (nonatomic) BOOL customImage;
+@end
+
+@interface CYLPlaceholderStyleDemoViewController : UITableViewController
+@end
+
+@implementation CYLPlaceholderStyleDemoViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Placeholder styles";
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return CYLPlaceholderStyleCount + 1;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"style"];
+    if (!cell) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"style"];
+    BOOL custom = indexPath.row == CYLPlaceholderStyleCount;
+    cell.textLabel.text = custom ? @"Custom image" : [CYLPlaceholderView imageNameForStyle:(CYLPlaceholderStyle)indexPath.row];
+    cell.imageView.image = custom ? nil : [CYLPlaceholderView imageForStyle:(CYLPlaceholderStyle)indexPath.row];
+    cell.imageView.tintColor = UIColor.grayColor;
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    CYLPlaceholderMessageDemoViewController *next = [[CYLPlaceholderMessageDemoViewController alloc] initWithStyle:UITableViewStylePlain];
+    next.customImage = indexPath.row == CYLPlaceholderStyleCount;
+    next.style = next.customImage ? CYLPlaceholderStyleEmpty : (CYLPlaceholderStyle)indexPath.row;
+    [self.navigationController pushViewController:next animated:YES];
+}
+@end
+
+@implementation CYLPlaceholderMessageDemoViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Choose message";
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return CYLPlaceholderMessageCount + 1;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"message"];
+    if (!cell) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"message"];
+    cell.textLabel.text = indexPath.row == CYLPlaceholderMessageCount ? @"Custom text" :
+        [CYLPlaceholderView localizedTextForMessage:(CYLPlaceholderMessage)indexPath.row];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSString *text = indexPath.row == CYLPlaceholderMessageCount ? @"Your custom message" :
+        [CYLPlaceholderView localizedTextForMessage:(CYLPlaceholderMessage)indexPath.row];
+    CYLPlaceholderView *placeholder;
+    if (self.customImage) {
+        UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(80, 80)];
+        UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+            [UIColor.blueColor setFill];
+            [[UIBezierPath bezierPathWithOvalInRect:CGRectMake(8, 8, 64, 64)] fill];
+        }];
+        placeholder = [[CYLPlaceholderView alloc] initWithImage:image text:text];
+    } else if (indexPath.row == CYLPlaceholderMessageCount) {
+        placeholder = [[CYLPlaceholderView alloc] initWithStyle:self.style text:text];
+    } else {
+        placeholder = [[CYLPlaceholderView alloc] initWithStyle:self.style message:(CYLPlaceholderMessage)indexPath.row];
+    }
+    UIViewController *preview = [UIViewController new];
+    preview.title = @"Preview";
+    preview.view.backgroundColor = UIColor.whiteColor;
+    placeholder.frame = preview.view.bounds;
+    placeholder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [preview.view addSubview:placeholder];
+    [self.navigationController pushViewController:preview animated:YES];
+}
+@end
+
 @interface CYLPlaceholderDemoViewController () <UITableViewDataSource, UICollectionViewDataSource>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -17,6 +95,9 @@
     mode.selectedSegmentIndex = 0;
     [mode addTarget:self action:@selector(cyl_changeMode:) forControlEvents:UIControlEventValueChanged];
     self.navigationItem.titleView = mode;
+    self.navigationItem.leftItemsSupplementBackButton = YES;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Styles"
+        style:UIBarButtonItemStylePlain target:self action:@selector(cyl_showStyles)];
     self.navigationItem.rightBarButtonItems = @[
         [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(cyl_add)],
         [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStylePlain target:self action:@selector(cyl_clear)],
@@ -41,6 +122,10 @@
     [self cyl_enablePlaceholder];
     [self.tableView reloadData];
     [self.collectionView reloadData];
+}
+- (void)cyl_showStyles {
+    CYLPlaceholderStyleDemoViewController *styles = [[CYLPlaceholderStyleDemoViewController alloc] initWithStyle:UITableViewStylePlain];
+    [self.navigationController pushViewController:styles animated:YES];
 }
 - (void)cyl_enablePlaceholder {
     [self.tableView cyl_placeholderViewBlock:^UIView *(UITableView *tableView) {

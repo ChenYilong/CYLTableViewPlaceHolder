@@ -183,6 +183,55 @@
     XCTAssertNotNil([bundle URLForResource:@"NOTICE" withExtension:@"material-design-icons"]);
 }
 
+- (void)testEveryPlaceholderStyleAndMessage {
+    NSMutableSet<NSString *> *names = [NSMutableSet set];
+    for (NSInteger i = 0; i < CYLPlaceholderStyleCount; i++) {
+        NSString *name = [CYLPlaceholderView imageNameForStyle:(CYLPlaceholderStyle)i];
+        XCTAssertNotNil(name, @"Missing style name %ld", (long)i);
+        XCTAssertFalse([names containsObject:name], @"Duplicate style %@", name);
+        [names addObject:name];
+        XCTAssertNotNil([CYLPlaceholderView imageForStyle:(CYLPlaceholderStyle)i], @"Missing image %@", name);
+    }
+    for (NSInteger i = 0; i < CYLPlaceholderMessageCount; i++) {
+        XCTAssertTrue([CYLPlaceholderView localizedTextForMessage:(CYLPlaceholderMessage)i].length > 0);
+    }
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleNoInternet
+                                                                 message:CYLPlaceholderMessageServerUnavailable];
+    XCTAssertNotNil(view.imageView.image);
+    XCTAssertEqualObjects(view.textLabel.text, [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageServerUnavailable]);
+    UIImage *custom = [UIImage new];
+    view = [[CYLPlaceholderView alloc] initWithImage:custom text:@"Custom message"];
+    XCTAssertEqual(view.imageView.image, custom);
+    XCTAssertEqualObjects(view.textLabel.text, @"Custom message");
+    view = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleWarning text:nil];
+    XCTAssertTrue(view.textLabel.hidden);
+    XCTAssertNotNil(view.imageView.image);
+    view = [[CYLPlaceholderView alloc] initWithImage:nil text:@"Text only"];
+    XCTAssertTrue(view.imageView.hidden);
+}
+
+- (void)testPlaceholderLocalizationsHaveAllMessageKeys {
+    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
+    NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+    if (!url) url = [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithURL:url];
+    NSArray<NSString *> *keys = @[@"CYLPlaceholderEmptyText", @"CYLPlaceholderNoResultsText",
+        @"CYLPlaceholderNoInternetText", @"CYLPlaceholderServerUnavailableText", @"CYLPlaceholderErrorText",
+        @"CYLPlaceholderLoadingText", @"CYLPlaceholderNoPermissionText", @"CYLPlaceholderEmptyCartText",
+        @"CYLPlaceholderNoNotificationsText"];
+    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja"]) {
+        NSString *path = [bundle pathForResource:language ofType:@"lproj"];
+        XCTAssertNotNil(path, @"Missing localization %@", language);
+        if (!path) continue;
+        NSBundle *languageBundle = [NSBundle bundleWithPath:path];
+        for (NSString *key in keys) {
+            NSString *text = [languageBundle localizedStringForKey:key value:nil table:nil];
+            XCTAssertNotEqualObjects(text, key, @"Missing %@ in %@", key, language);
+            XCTAssertTrue(text.length > 0);
+        }
+    }
+}
+
 - (void)testTableBatchAndSectionUpdatesAcrossMultipleSections {
     CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
     source.sections = 2;
