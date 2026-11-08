@@ -84,7 +84,7 @@
 | [#1238](https://github.com/CoderMJLee/MJRefresh/issues/1238) | 表头搜索控制器影响刷新显示 | 0/100：未调查，未修复。 |
 | [#1146](https://github.com/CoderMJLee/MJRefresh/issues/1146) | 自适应行高加载后回滚异常 | 0/100：未调查，未修复。 |
 | [#1067](https://github.com/CoderMJLee/MJRefresh/issues/1067) | 带内边距的 collection 下拉时跳动 | 0/100：未调查，未修复。 |
-| [#1041](https://github.com/CoderMJLee/MJRefresh/issues/1041) | drawRect 额外内存开销 | 0/100：未调查，未修复。 |
+| [#1041](https://github.com/CoderMJLee/MJRefresh/issues/1041) | drawRect 额外内存开销 | 80/100：审阅原 issue 和引用的 Stack Overflow 文章；组件的 `drawRect:` 不绘图，仅把待刷新状态切换为刷新，因此删除该重写及 `setNeedsDisplay`，使用现有 `WillRefresh` 状态和入窗后主线程布局切换，不增加破坏兼容性的公开 `init` 状态。入窗后即使控件隐藏也可启动待刷新，不再依赖实际绘制，时机可能比旧实现更早。模拟器回归验证四类控件延迟启动、重复请求只回调一次和取消待刷新，以及不再重写绘图方法；尚未在真机用 Instruments 对比内存或覆盖所有转场及真实手势，无法量化内存收益，也未完成三轮独立修复尝试。 |
 | [#1029](https://github.com/CoderMJLee/MJRefresh/issues/1029) | 大标题导航栏刷新崩溃 | 0/100：未调查，未修复。 |
 | [#920](https://github.com/CoderMJLee/MJRefresh/issues/920) | 表格 section index 随刷新跳动 | 0/100：未调查，未修复。 |
 | [#862](https://github.com/CoderMJLee/MJRefresh/issues/862) | viewDidLoad 初始刷新动画影响转场 | 0/100：未调查，未修复。 |

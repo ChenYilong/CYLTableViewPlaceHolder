@@ -91,14 +91,21 @@
     }
 }
 
-- (void)drawRect:(CGRect)rect
+- (void)didMoveToWindow
 {
-    [super drawRect:rect];
+    [super didMoveToWindow];
 
-    if (self.state == CYLRefreshStateWillRefresh) {
-        // 预防view还没显示出来就调用了beginRefreshing
-        self.state = CYLRefreshStateRefreshing;
-    }
+    if (!self.window || self.state != CYLRefreshStateWillRefresh) return;
+
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self.window || self.state != CYLRefreshStateWillRefresh) return;
+        [self layoutIfNeeded];
+        if (self.window && self.state == CYLRefreshStateWillRefresh) {
+            self.state = CYLRefreshStateRefreshing;
+        }
+    });
 }
 
 #pragma mark - KVO监听
@@ -181,8 +188,6 @@
         // 预防正在刷新中时，调用本方法使得header inset回置失败
         if (self.state != CYLRefreshStateRefreshing) {
             self.state = CYLRefreshStateWillRefresh;
-            // 刷新(预防从另一个控制器回到这个控制器的情况，回来要重新刷新一下)
-            [self setNeedsDisplay];
         }
     }
 }

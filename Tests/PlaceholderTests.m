@@ -272,6 +272,106 @@
     window.hidden = YES;
 }
 
+- (void)testRefreshComponentDoesNotOverrideDrawing {
+    unsigned int count = 0;
+    Method *methods = class_copyMethodList(CYLRefreshComponent.class, &count);
+    BOOL overridesDrawRect = NO;
+    for (unsigned int index = 0; index < count; index++) {
+        if (method_getName(methods[index]) == @selector(drawRect:)) {
+            overridesDrawRect = YES;
+            break;
+        }
+    }
+    free(methods);
+    XCTAssertFalse(overridesDrawRect);
+}
+
+- (void)testPendingRefreshStartsOnceAfterWindowAttachment {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window makeKeyAndVisible];
+    NSArray<CYLRefreshComponent *> *components = @[
+        [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}],
+        [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}],
+        [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}],
+        [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}]
+    ];
+    for (CYLRefreshComponent *component in components) {
+        UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+        component.fastAnimationDuration = 0;
+        component.slowAnimationDuration = 0;
+        __block NSUInteger callbacks = 0;
+        XCTestExpectation *started = [self expectationWithDescription:@"pending refresh started"];
+        component.refreshingBlock = ^{
+            callbacks++;
+            [started fulfill];
+        };
+        [scrollView addSubview:component];
+        [component beginRefreshing];
+        [component beginRefreshing];
+        XCTAssertEqual(component.state, CYLRefreshStateWillRefresh);
+        XCTAssertEqual(callbacks, 0u);
+        [window.rootViewController.view addSubview:scrollView];
+        [self waitForExpectations:@[started] timeout:5];
+        XCTAssertEqual(component.state, CYLRefreshStateRefreshing);
+        XCTAssertEqual(callbacks, 1u);
+        [component endRefreshing];
+        [component removeFromSuperview];
+        [scrollView removeFromSuperview];
+    }
+    window.hidden = YES;
+}
+
+- (void)testPendingRefreshCanBeCancelledBeforeWindowAttachment {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window makeKeyAndVisible];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{ callbacks++; }];
+    [scrollView addSubview:footer];
+    [footer beginRefreshing];
+    [window.rootViewController.view addSubview:scrollView];
+    [footer endRefreshing];
+    XCTestExpectation *nextTurn = [self expectationWithDescription:@"pending transition processed"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
+    [self waitForExpectations:@[nextTurn] timeout:5];
+    XCTAssertEqual(footer.state, CYLRefreshStateIdle);
+    XCTAssertEqual(callbacks, 0u);
+    [footer removeFromSuperview];
+    window.hidden = YES;
+}
+
+- (void)testPendingRefreshWaitsForReattachmentAndWorksWhenHidden {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window makeKeyAndVisible];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    XCTestExpectation *started = [self expectationWithDescription:@"reattached refresh started"];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+        callbacks++;
+        [started fulfill];
+    }];
+    footer.hidden = YES;
+    [scrollView addSubview:footer];
+    [footer beginRefreshing];
+    [window.rootViewController.view addSubview:scrollView];
+    [scrollView removeFromSuperview];
+    XCTestExpectation *nextTurn = [self expectationWithDescription:@"detached transition processed"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
+    [self waitForExpectations:@[nextTurn] timeout:5];
+    XCTAssertEqual(footer.state, CYLRefreshStateWillRefresh);
+    XCTAssertEqual(callbacks, 0u);
+    [window.rootViewController.view addSubview:scrollView];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTAssertEqual(callbacks, 1u);
+    [footer endRefreshing];
+    [footer removeFromSuperview];
+    [scrollView removeFromSuperview];
+    window.hidden = YES;
+}
+
 - (void)testHeaderRestoresInsetAcrossRepeatedRefreshes {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
