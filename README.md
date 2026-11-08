@@ -103,7 +103,7 @@ let custom = CYLPlaceholderView(image: myImage, text: "自定义提示")
 可使用 `UIImage` 的 `imageNamed:inBundle:compatibleWithTraitCollection:` 从该资源包加载。
 图标来自 Google Material Design，许可及来源记录随资源包分发。
 
-也可以用字典或本地 plist 创建静态 FlatDesign 风格的图片与标题组合：
+也可以用字典或本地 plist 创建 FlatDesign 风格的图片与标题组合：
 
 ```objc
 NSDictionary *item = @{
@@ -127,15 +127,65 @@ CYLTabBarController 冲突。图片可传 `UIImage` 或指定 bundle 中的图�
 为 nil 时使用本库资源包。显式图片和标题优先于预设样式和文案。偏移量支持
 `[horizontal, vertical]`、包含 `horizontal`/`vertical` 或 `x`/`y` 的字典，以及
 代码传入的 `NSValue`；内边距支持四元素数组、`top`/`left`/`bottom`/`right`
-字典或 `NSValue`。错误通过 `NSError` 返回，不加载网络资源。
+字典或 `NSValue`。静态配置错误通过 `NSError` 返回，动画加载错误记录日志并回退；
+不加载网络资源。
 普通状态的文字、图标、背景颜色支持 `UIColor` 或 `#RGB`、`#RRGGBB`、
 `#RRGGBBAA`；文字字体支持 `UIFont`、字号、`bold:18` 或包含 `name`、`size`、
 `weight` 的字典。图片名也支持 iOS 13 及以上的 `system:` SF Symbols。可配置
 无障碍标识、标签和提示。
+可设置 `view.selected = YES` 使用 `CYLPlaceholderItemSelectedImage`、
+`CYLPlaceholderItemSelectedTitle` 以及选中态颜色和字体；恢复普通态时保留进入
+选中态前对普通图片、文字和样式的修改。选中状态设置 VoiceOver 的 selected trait。
+`CYLPlaceholderItemDarkImage` 和 `CYLPlaceholderItemSelectedDarkImage` 支持
+`UIImage` 或资源名，在 iOS 13 及以上按界面外观选择相应图片；只提供其中一个
+图片时，该图片作为所有外观的回退。
+设置 `selectionIndicatorImage` 可在选中项后方显示指示图，另可设置
+`selectionIndicatorTintColor`。
 
-图片与标题作为一个居中的整体布局；参考 FlatDesign 的相对位置计算，并可分别
-设置偏移。`itemAttributes` 保留传入的其他键，供将来使用：动效、选中态、深色
-图片及其他 TabBar 配置目前不会生效，也不会播放动画。示例 **Auto → Styles**
+角标可通过 `showBadgeWithStyle:value:` 选择隐藏、红点、数字或自定义文字；
+数字大于 99 显示为 `99+`，不大于 0 时隐藏。也可直接设置 `badgeValue`
+（`nil` 隐藏，空字符串显示红点）、`badgeCenterOffset` 和 `badgeLabel` 的字体与颜色。
+角标会作为占位视图的无障碍值；红点使用本地化的“有新内容”。占位视图本身不是
+无障碍元素时，角标标签可独立朗读；若外层容器本身是无障碍元素，应由调用方
+提供包含角标含义的标签或值。示例的 Styles 列表包含三种角标预览。
+
+图片与标题作为一个居中的整体布局；item 内移植 FlatDesign 的图片和标题定位、
+图片原始尺寸及偏移计算，长文案在可用宽度内换行；只有图片或文字时单独居中。
+图片与标题可分别设置偏移。通过 `CYLPlaceholderItemGIFURL` 或
+`CYLPlaceholderItemGIFFilePath` 可传入本地 GIF；`CYLPlaceholderItemGIFSize`
+支持 `[width, height]`、尺寸字典或 `NSValue`。GIF 在进入窗口时播放一次，
+离开窗口时停止；启用“减弱动态效果”时保持首帧。GIF 不支持网络地址。
+GIF 输入最大 16 MB、最多 500 帧，解码帧合计最多 64 MB；无效资源或超限时
+记录错误并保留静态占位图。可通过 `playPlaceholderAnimation`、
+`stopPlaceholderAnimation` 和 `showPlaceholderAnimationLastFrame` 重播、停止或显示末帧；
+停止状态在离开并重新进入窗口后保留。Rive 状态机没有通用末帧，显示其静止状态。
+`setPlaceholderAnimationProgress:` 可暂停并定位 Lottie 或 PAG 到 0–1 的进度；
+`setPlaceholderAnimationSpeed:` 可设置 Lottie 的正数播放速度。方法返回 `NO` 表示
+参数无效或当前后端不支持；PAG 定位到最近的帧。显式进度和速度在支持的后端
+重新加载时会尝试恢复。
+可选的 CocoaPods 子规格 `CYLTableViewPlaceHolder/Lottie`、`/PAG` 和 `/Rive`
+分别引入 Lottie、libpag 和 RiveRuntime；默认 `Core` 不引入这些依赖。对应的
+`CYLPlaceholderItemLottieFilePath`、`CYLPlaceholderItemPAGFilePath`、
+`CYLPlaceholderItemRiveFilePath` 或通用动画路径可指定本地文件；支持对应的
+尺寸键。Lottie 要求 iOS 13，Rive 要求 iOS 14。加载失败时记录错误并保留
+静态图片。动画 URL 与路径支持各格式对应的 `DarkURL`/`DarkFilePath`，
+深浅色切换时重新加载。Rive 的 `CYLPlaceholderItemAnimationOptions` 支持
+`artboard`、`stateMachine`、数据绑定的 `active`、`trigger` 和 `duration`
+（秒，0–60），也可通过 `input`、`triggerInput` 或 `animation` 选择旧版 Rive
+状态机输入、触发器或线性动画。Lottie 和 PAG 已验证进度推进，Rive 已验证
+画板加载、旧版布尔输入和离屏暂停；数据绑定播放效果尚未验证。
+Carthage framework 暂未集成这三个后端。
+其他本地动画格式可通过 `registerAnimationFactory:forFileExtension:` 注册实现
+`CYLPlaceholderAnimationPlayer` 的 `UIView`；工厂按扩展名匹配，可覆盖可选后端，
+但 GIF 使用内置解码器。传入 `nil` 可取消注册。工厂及其回调在主线程使用；
+资源加载失败时应通过 `errorHandler` 报告，加载完成时通过 `readyHandler` 通知。
+Lottie 支持 `CYLPlaceholderItemAnimationColors`、`CYLPlaceholderItemAnimationDarkColors`
+以及 `CYLPlaceholderItemLottieDarkColors`：字典的键是 Lottie keypath，值为
+`UIColor` 或十六进制颜色字符串。深色配置覆盖普通配置，格式专属配置优先。
+自定义播放器可实现 `setAnimationColors:`；PAG、Rive 与 GIF 目前不支持颜色覆盖。
+这些 keypath 的实际绘制效果尚未经过视觉验证。
+
+`itemAttributes` 保留传入的其他键，供将来使用；其他未实现的 TabBar 配置目前不会生效。示例 **Auto → Styles**
 底部提供代码和 plist 两种配置演示。布局参考 CYLTabBarController；其 MIT 许可随资源包提供。
 
 实现通过 method swizzling 拦截 UIKit 方法，影响进程中对应类的方法分发；未启用

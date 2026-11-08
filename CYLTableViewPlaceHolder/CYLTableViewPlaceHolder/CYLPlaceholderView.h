@@ -70,6 +70,13 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderMessage) {
     CYLPlaceholderMessageCount
 };
 
+typedef NS_ENUM(NSInteger, CYLPlaceholderBadgeStyle) {
+    CYLPlaceholderBadgeStyleNone,
+    CYLPlaceholderBadgeStyleDot,
+    CYLPlaceholderBadgeStyleNumber,
+    CYLPlaceholderBadgeStyleText
+};
+
 /// Item keys use CYLTabBarController's serialized names without exporting its symbols.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitle;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImage;
@@ -89,10 +96,12 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleFont;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityIdentifier;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityLabel;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityHint;
-/// The following keys are reserved for future compatibility and are not rendered.
+/// Selected appearance keys are used when the placeholder's selected property is set.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedImage;
+/// Dark static image variants follow the view's appearance on iOS 13 and later.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemDarkImage;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedDarkImage;
+/// Remote-image and navigation keys are reserved for compatibility.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImageURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedImageURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImageURLSize;
@@ -106,6 +115,8 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedTitleColor;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedIconColor;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedBackgroundColor;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedTitleFont;
+/// Local animation sources, sizes, and Lottie color overrides are supported.
+/// Other backend-specific options are retained for compatibility; see the README.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationDarkURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationDarkFilePath;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationColors;
@@ -135,14 +146,64 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFSize;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkFilePath;
 
+/// Animation views supplied by custom factories must invoke handlers on the main thread.
+@protocol CYLPlaceholderAnimationPlayer <NSObject>
+@property (nonatomic, readonly, getter=isReady) BOOL ready;
+@property (nonatomic, copy, nullable) void (^errorHandler)(NSError *error);
+@property (nonatomic, copy, nullable) void (^readyHandler)(void);
+- (void)play;
+- (void)stop;
+- (void)showLastFrame;
+@optional
+- (BOOL)setAnimationProgress:(CGFloat)progress;
+- (BOOL)setAnimationSpeed:(CGFloat)speed;
+/// Replace all keypath color overrides. Return NO when unsupported.
+- (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;
+@end
+
+typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimationFactory)(
+    NSURL *fileURL, CGSize size, UIViewContentMode contentMode,
+    NSDictionary<NSString *, id> *options, NSError * _Nullable * _Nullable error);
+
 /// A reusable, localized empty-state view. Customize its image and label as needed.
 @interface CYLPlaceholderView : UIView
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) UILabel *textLabel;
+/// A nil value hides the badge; an empty string displays a dot.
+@property (nonatomic, copy, nullable) NSString *badgeValue;
+/// Badge appearance can be customized directly. VoiceOver can read it separately
+/// when the placeholder is not itself an accessibility element.
+@property (nonatomic, strong, readonly) UILabel *badgeLabel;
+/// Offset from the top-right of the image (or title when there is no image).
+@property (nonatomic) CGPoint badgeCenterOffset;
+/// Number badges use a maximum of 99; nonpositive numbers hide the badge.
+/// Text badges require a nonempty string. Returns NO on invalid input.
+- (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value;
+/// Enables the configured selected image, title, font and colors. Defaults to NO.
+@property (nonatomic, getter=isSelected) BOOL selected;
+/// Drawn behind the selected item. Resizable images fill the item; others are centered.
+@property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage;
+@property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor;
 
-/// Original item attributes, including reserved animation keys. Animations are not played.
+/// Original item attributes. Local GIF animations play once when the view enters a window.
+/// Optional Lottie, PAG and Rive backends require their corresponding CocoaPods subspec.
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *itemAttributes;
-/// Creates a static FlatDesign-style item from CYLTabBarController-compatible item keys.
+/// Registers or removes a factory for a local file extension, without a leading dot.
+/// Extensions are case-insensitive. GIF remains reserved for the built-in decoder.
+/// Existing views keep their current player until their configuration is reloaded.
++ (BOOL)registerAnimationFactory:(nullable CYLPlaceholderAnimationFactory)factory
+                forFileExtension:(NSString *)fileExtension;
+/// Replay the configured animation when visible. Honors Reduce Motion.
+- (void)playPlaceholderAnimation;
+/// Stop playback and show the resting frame until explicitly replayed.
+- (void)stopPlaceholderAnimation;
+/// Stop and show the last frame when supported; Rive returns to its resting state.
+- (void)showPlaceholderAnimationLastFrame;
+/// Stops and seeks when supported. Returns NO for invalid values or unsupported players.
+- (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress;
+/// Sets a positive finite playback speed when supported. Returns NO otherwise.
+- (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed;
+/// Creates a FlatDesign-style item from CYLTabBarController-compatible item keys.
 /// Images may be UIImage objects or names in imageBundle (nil uses the placeholder bundle).
 - (nullable instancetype)initWithItemAttributes:(NSDictionary<NSString *, id> *)attributes
                                    imageBundle:(nullable NSBundle *)imageBundle

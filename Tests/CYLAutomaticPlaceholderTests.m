@@ -1,9 +1,27 @@
 #import <XCTest/XCTest.h>
+#import <ImageIO/ImageIO.h>
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
+#import "../CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h"
+
+@interface CYLTestAnimationPlayer : UIView <CYLPlaceholderAnimationPlayer>
+@property (nonatomic, getter=isReady) BOOL ready;
+@property (nonatomic, copy) void (^errorHandler)(NSError *error);
+@property (nonatomic, copy) void (^readyHandler)(void);
+@property (nonatomic) NSInteger plays;
+@property (nonatomic) NSInteger stops;
+@property (nonatomic) NSInteger lastFrames;
+@property (nonatomic, copy) NSDictionary<NSString *, UIColor *> *colors;
+@end
+@implementation CYLTestAnimationPlayer
+- (void)play { self.plays++; }
+- (void)stop { self.stops++; }
+- (void)showLastFrame { self.lastFrames++; }
+- (BOOL)setAnimationColors:(NSDictionary<NSString *,UIColor *> *)colors { self.colors = colors; return YES; }
+@end
 
 @interface CYLAutomaticTestSource : NSObject <UITableViewDataSource, UICollectionViewDataSource, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic) NSInteger count;
@@ -39,6 +57,285 @@
 @interface CYLAutomaticPlaceholderTests : XCTestCase
 @end
 @implementation CYLAutomaticPlaceholderTests
+- (void)testConfiguredSelectedAppearanceRestoresLiveNormalValues {
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(20, 20)];
+    UIImage *normal = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.blueColor setFill]; UIRectFill(CGRectMake(0, 0, 20, 20));
+    }];
+    UIImage *selected = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.redColor setFill]; UIRectFill(CGRectMake(0, 0, 20, 20));
+    }];
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemImage: normal,
+        CYLPlaceholderItemTitle: @"Normal",
+        CYLPlaceholderItemSelectedImage: selected,
+        CYLPlaceholderItemSelectedTitle: @"Selected",
+        CYLPlaceholderItemSelectedTitleColor: UIColor.redColor,
+        CYLPlaceholderItemSelectedIconColor: UIColor.blueColor,
+        CYLPlaceholderItemSelectedBackgroundColor: UIColor.yellowColor,
+        CYLPlaceholderItemSelectedTitleFont: @22
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    placeholder.textLabel.text = @"Changed";
+    UIColor *originalColor = placeholder.textLabel.textColor;
+    UIFont *originalFont = placeholder.textLabel.font;
+    placeholder.selected = YES;
+    XCTAssertEqual(placeholder.imageView.image, selected);
+    XCTAssertEqualObjects(placeholder.textLabel.text, @"Selected");
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.redColor);
+    XCTAssertEqualObjects(placeholder.imageView.tintColor, UIColor.blueColor);
+    XCTAssertEqualObjects(placeholder.backgroundColor, UIColor.yellowColor);
+    XCTAssertEqualWithAccuracy(placeholder.textLabel.font.pointSize, 22, 0.01);
+    XCTAssertTrue((placeholder.accessibilityTraits & UIAccessibilityTraitSelected) != 0);
+    placeholder.selected = NO;
+    XCTAssertEqual(placeholder.imageView.image, normal);
+    XCTAssertEqualObjects(placeholder.textLabel.text, @"Changed");
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, originalColor);
+    XCTAssertEqualObjects(placeholder.textLabel.font, originalFont);
+    XCTAssertFalse((placeholder.accessibilityTraits & UIAccessibilityTraitSelected) != 0);
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemSelectedTitleColor: @"not-a-color"
+    } imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+}
+
+- (void)testSelectedAppearancePreservesEmptyAndHiddenNormalContent {
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemSelectedTitle: @"Selected"
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    XCTAssertNil(error);
+    placeholder.imageView.image = nil;
+    placeholder.imageView.hidden = YES;
+    placeholder.textLabel.text = nil;
+    placeholder.textLabel.hidden = YES;
+    placeholder.backgroundColor = nil;
+    placeholder.accessibilityTraits |= UIAccessibilityTraitSelected | UIAccessibilityTraitButton;
+    for (NSInteger i = 0; i < 2; i++) {
+        placeholder.selected = YES;
+        XCTAssertEqualObjects(placeholder.textLabel.text, @"Selected");
+        XCTAssertFalse(placeholder.textLabel.hidden);
+        placeholder.selected = YES;
+        placeholder.selected = NO;
+        XCTAssertNil(placeholder.imageView.image);
+        XCTAssertTrue(placeholder.imageView.hidden);
+        XCTAssertNil(placeholder.textLabel.text);
+        XCTAssertTrue(placeholder.textLabel.hidden);
+        XCTAssertNil(placeholder.backgroundColor);
+        XCTAssertTrue((placeholder.accessibilityTraits & UIAccessibilityTraitSelected) != 0);
+        XCTAssertTrue((placeholder.accessibilityTraits & UIAccessibilityTraitButton) != 0);
+    }
+}
+
+- (void)testConfiguredImagesResolveForLightDarkAndSelection {
+    if (@available(iOS 13.0, *)) {
+        UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(12, 12)];
+        UIImage *(^image)(UIColor *) = ^UIImage *(UIColor *color) {
+            return [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+                [color setFill]; UIRectFill(CGRectMake(0, 0, 12, 12));
+            }];
+        };
+        UIImage *light = image(UIColor.redColor), *dark = image(UIColor.blueColor);
+        UIImage *selected = image(UIColor.greenColor), *selectedDark = image(UIColor.yellowColor);
+        NSError *error = nil;
+        CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+            CYLPlaceholderItemImage: light, CYLPlaceholderItemDarkImage: dark,
+            CYLPlaceholderItemSelectedImage: selected, CYLPlaceholderItemSelectedDarkImage: selectedDark
+        } imageBundle:nil error:&error];
+        XCTAssertNotNil(placeholder);
+        XCTAssertNil(error);
+        UITraitCollection *lightTraits = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+            [UITraitCollection traitCollectionWithDisplayScale:light.scale],
+            [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight]]];
+        UITraitCollection *darkTraits = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+            [UITraitCollection traitCollectionWithDisplayScale:dark.scale],
+            [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark]]];
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:lightTraits].CGImage, light.CGImage);
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:darkTraits].CGImage, dark.CGImage);
+        placeholder.selected = YES;
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:lightTraits].CGImage, selected.CGImage);
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:darkTraits].CGImage, selectedDark.CGImage);
+        placeholder.selected = NO;
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:darkTraits].CGImage, dark.CGImage);
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+        [window addSubview:placeholder];
+        XCTAssertEqual(placeholder.imageView.traitCollection.userInterfaceStyle, UIUserInterfaceStyleLight);
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:placeholder.imageView.traitCollection].CGImage, light.CGImage);
+        window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+        [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+            return placeholder.imageView.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+        }] evaluatedWithObject:placeholder handler:nil];
+        [self waitForExpectationsWithTimeout:3 handler:nil];
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:placeholder.imageView.traitCollection].CGImage, dark.CGImage);
+        placeholder.selected = YES;
+        XCTAssertEqual([placeholder.imageView.image.imageAsset imageWithTraitCollection:placeholder.imageView.traitCollection].CGImage, selectedDark.CGImage);
+        [placeholder removeFromSuperview];
+        error = nil;
+        XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{
+            CYLPlaceholderItemDarkImage: @42
+        } imageBundle:nil error:&error]);
+        XCTAssertNotNil(error);
+    }
+}
+
+- (void)testBadgeDotTextLayoutAndAccessibility {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:image text:@"Empty"];
+    placeholder.frame = CGRectMake(0, 0, 320, 480);
+    placeholder.accessibilityValue = @"Existing";
+    placeholder.badgeCenterOffset = CGPointMake(3, 5);
+    placeholder.badgeValue = @"";
+    [placeholder layoutIfNeeded];
+    [placeholder.imageView.superview layoutIfNeeded];
+    XCTAssertFalse(placeholder.badgeLabel.hidden);
+    XCTAssertEqualWithAccuracy(placeholder.badgeLabel.bounds.size.width, 8, 0.01);
+    XCTAssertEqualWithAccuracy(placeholder.badgeLabel.center.x, CGRectGetMaxX(placeholder.imageView.frame) + 5, 0.01);
+    XCTAssertEqualWithAccuracy(placeholder.badgeLabel.center.y, CGRectGetMinY(placeholder.imageView.frame) + 5, 0.01);
+    XCTAssertGreaterThan(placeholder.accessibilityValue.length, 0);
+    XCTAssertEqualObjects(placeholder.badgeLabel.accessibilityLabel, placeholder.accessibilityValue);
+    XCTAssertTrue(placeholder.badgeLabel.isAccessibilityElement);
+    placeholder.badgeValue = @"123";
+    [placeholder.imageView.superview layoutIfNeeded];
+    XCTAssertGreaterThan(placeholder.badgeLabel.bounds.size.width, 8);
+    XCTAssertEqualObjects(placeholder.accessibilityValue, @"123");
+    placeholder.badgeValue = nil;
+    XCTAssertTrue(placeholder.badgeLabel.hidden);
+    XCTAssertEqualObjects(placeholder.accessibilityValue, @"Existing");
+    placeholder.badgeValue = @"New";
+    placeholder.accessibilityValue = @"Custom";
+    placeholder.badgeValue = @"Updated";
+    placeholder.badgeValue = nil;
+    XCTAssertEqualObjects(placeholder.accessibilityValue, @"Custom");
+    placeholder.badgeCenterOffset = CGPointMake(NAN, 1);
+    XCTAssertEqualWithAccuracy(placeholder.badgeCenterOffset.x, 3, 0.01);
+    XCTAssertTrue([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleDot value:nil]);
+    XCTAssertEqualObjects(placeholder.badgeValue, @"");
+    XCTAssertTrue([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleNumber value:@"105"]);
+    XCTAssertEqualObjects(placeholder.badgeValue, @"99+");
+    XCTAssertFalse([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleNumber value:@"3x"]);
+    XCTAssertEqualObjects(placeholder.badgeValue, @"99+");
+    XCTAssertTrue([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleText value:@"New"]);
+    XCTAssertEqualObjects(placeholder.badgeValue, @"New");
+    XCTAssertTrue([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleNumber value:@"0"]);
+    XCTAssertNil(placeholder.badgeValue);
+    XCTAssertFalse([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleText value:@""]);
+    XCTAssertTrue([placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleNone value:nil]);
+}
+
+- (void)testSelectionIndicatorFollowsStateAndItemBounds {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:image text:@"Empty"];
+    placeholder.frame = CGRectMake(0, 0, 320, 480);
+    placeholder.selectionIndicatorImage = image;
+    placeholder.selectionIndicatorTintColor = UIColor.blueColor;
+    UIView *item = placeholder.imageView.superview;
+    XCTAssertEqual(item.subviews.count, 2);
+    placeholder.selected = YES;
+    [placeholder layoutIfNeeded];
+    UIImageView *indicator = (UIImageView *)item.subviews.firstObject;
+    XCTAssertNotEqual(indicator, placeholder.imageView);
+    XCTAssertEqual(indicator.image.renderingMode, UIImageRenderingModeAlwaysTemplate);
+    XCTAssertEqualObjects(indicator.tintColor, UIColor.blueColor);
+    XCTAssertEqual(indicator.contentMode, UIViewContentModeCenter);
+    XCTAssertTrue(CGRectEqualToRect(indicator.frame, item.bounds));
+    placeholder.frame = CGRectMake(0, 0, 480, 320);
+    [placeholder layoutIfNeeded];
+    XCTAssertTrue(CGRectEqualToRect(indicator.frame, item.bounds));
+    placeholder.selectionIndicatorImage = [image resizableImageWithCapInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
+    XCTAssertEqual(indicator.contentMode, UIViewContentModeScaleToFill);
+    placeholder.selectionIndicatorImage = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    XCTAssertEqual(indicator.image.renderingMode, UIImageRenderingModeAlwaysOriginal);
+    placeholder.selected = NO;
+    XCTAssertNil(indicator.superview);
+    XCTAssertEqual(item.subviews.count, 2);
+}
+
+- (void)testRegisteredAnimationFactoryLifecycleAndFailure {
+    __block CYLTestAnimationPlayer *player;
+    __block NSInteger calls = 0;
+    XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:^UIView<CYLPlaceholderAnimationPlayer> *(
+        NSURL *url, CGSize size, UIViewContentMode mode, NSDictionary *options, NSError **error) {
+        calls++;
+        XCTAssertEqualObjects(url.pathExtension.lowercaseString, @"cyltest");
+        XCTAssertEqualWithAccuracy(size.width, 40, 0.01);
+        XCTAssertEqualObjects(options[@"setting"], @"value");
+        player = [CYLTestAnimationPlayer new];
+        return player;
+    } forFileExtension:@"CYLTEST"]);
+    XCTAssertFalse([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"gif"]);
+    XCTAssertFalse([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@".cyltest"]);
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
+    NSDictionary *attributes = @{
+        CYLPlaceholderItemAnimationFilePath: @"/local/example.cyltest",
+        CYLPlaceholderItemAnimationSize: @[@40, @30],
+        CYLPlaceholderItemAnimationOptions: @{@"setting": @"value"},
+        CYLPlaceholderItemImage: image
+    };
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes
+        imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    XCTAssertEqual(calls, 1);
+    XCTAssertFalse(placeholder.imageView.layer.hidden);
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    [window addSubview:placeholder];
+    if (!UIAccessibilityIsReduceMotionEnabled()) XCTAssertEqual(player.plays, 1);
+    player.ready = YES;
+    player.readyHandler();
+    XCTAssertTrue(placeholder.imageView.layer.hidden);
+    [placeholder showPlaceholderAnimationLastFrame];
+    XCTAssertEqual(player.lastFrames, 1);
+    [placeholder stopPlaceholderAnimation];
+    XCTAssertGreaterThan(player.stops, 0);
+    player.errorHandler([NSError errorWithDomain:@"CYLTest" code:1 userInfo:nil]);
+    XCTAssertFalse(placeholder.imageView.layer.hidden);
+    XCTAssertNil(player.superview);
+    NSMutableDictionary *invalidSize = [attributes mutableCopy];
+    invalidSize[CYLPlaceholderItemAnimationSize] = @[@0, @30];
+    [[CYLPlaceholderView alloc] initWithItemAttributes:invalidSize imageBundle:nil error:&error];
+    XCTAssertEqual(calls, 1);
+    XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"cyltest"]);
+}
+
+- (void)testRegisteredAnimationReceivesResolvedAppearanceColors {
+    __block CYLTestAnimationPlayer *player;
+    XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:^UIView<CYLPlaceholderAnimationPlayer> *(
+        NSURL *url, CGSize size, UIViewContentMode mode, NSDictionary *options, NSError **error) {
+        player = [CYLTestAnimationPlayer new];
+        player.ready = YES;
+        return player;
+    } forFileExtension:@"cylcolors"]);
+    NSDictionary *attributes = @{
+        CYLPlaceholderItemAnimationFilePath: @"/local/example.cylcolors",
+        CYLPlaceholderItemAnimationColors: @{@"Shape.Color": @"#ff0000", @"Other": UIColor.greenColor},
+        CYLPlaceholderItemAnimationDarkColors: @{@"Shape.Color": @"#0000ff"}
+    };
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    [window addSubview:placeholder];
+    XCTAssertEqualObjects(player.colors[@"Shape.Color"], UIColor.redColor);
+    XCTAssertEqualObjects(player.colors[@"Other"], UIColor.greenColor);
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return [player.colors[@"Shape.Color"] isEqual:UIColor.blueColor];
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
+    XCTAssertEqualObjects(player.colors[@"Other"], UIColor.greenColor);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemAnimationColors: @{@"Shape.Color": @"invalid"}
+    } imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    [placeholder removeFromSuperview];
+    XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"cylcolors"]);
+}
+
 - (void)drainUpdates {
     XCTestExpectation *done = [self expectationWithDescription:@"placeholder update"];
     dispatch_async(dispatch_get_main_queue(), ^{ [done fulfill]; });
@@ -170,7 +467,11 @@
 }
 
 - (void)testConfiguredPlaceholderLayoutAndValidation {
-    UIImage *image = [UIImage new];
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(80, 80)];
+    UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.redColor setFill];
+        UIRectFill(CGRectMake(0, 0, 80, 80));
+    }];
     NSDictionary *base = @{@"CYLTabBarItemImage": image, @"CYLTabBarItemTitle": @"Example",
                            @"CYLTabBarAnimationURL": @"future-animation.json"};
     NSError *error = nil;
@@ -199,6 +500,162 @@
     error = nil;
     XCTAssertNil([[CYLPlaceholderView alloc] initWithItemContentsOfURL:[NSURL URLWithString:@"https://example.com/item.plist"] imageBundle:nil error:&error]);
     XCTAssertNotNil(error);
+}
+
+- (void)testGIFAnimationUsesConfiguredSizeAndStopsOffscreen {
+    NSMutableData *data = [NSMutableData data];
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)data,
+        CFSTR("com.compuserve.gif"), 2, NULL);
+    XCTAssertNotEqual(destination, NULL);
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(20, 20)];
+    for (UIColor *color in @[UIColor.redColor, UIColor.blueColor]) {
+        UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+            [color setFill];
+            UIRectFill(CGRectMake(0, 0, 20, 20));
+        }];
+        NSDictionary *properties = @{(__bridge NSString *)kCGImagePropertyGIFDictionary:
+            @{(__bridge NSString *)kCGImagePropertyGIFDelayTime: @0.2}};
+        CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef)properties);
+    }
+    XCTAssertTrue(CGImageDestinationFinalize(destination));
+    CFRelease(destination);
+    NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:
+        [NSString stringWithFormat:@"CYLPlaceholder-%@.gif", NSUUID.UUID.UUIDString]]];
+    NSError *error = nil;
+    XCTAssertTrue([data writeToURL:url options:NSDataWritingAtomic error:&error]);
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemGIFURL: url, CYLPlaceholderItemGIFSize: @[@40, @30],
+        CYLPlaceholderItemTitle: @"Offline"
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    placeholder.frame = window.bounds;
+    [window addSubview:placeholder];
+    [placeholder layoutIfNeeded];
+    UIImageView *animationView = nil;
+    for (UIView *child in placeholder.imageView.superview.subviews) {
+        if ([child isKindOfClass:UIImageView.class] && child != placeholder.imageView) animationView = (UIImageView *)child;
+    }
+    XCTAssertNotNil(animationView);
+    XCTAssertEqualWithAccuracy(CGRectGetWidth(animationView.frame), 40, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(animationView.frame), 30, 0.01);
+    if (!UIAccessibilityIsReduceMotionEnabled()) {
+        CAKeyframeAnimation *animation = (CAKeyframeAnimation *)[animationView.layer animationForKey:@"CYLPlaceholderGIF"];
+        XCTAssertNotNil(animation);
+        XCTAssertEqual(animation.values.count, 3);
+        XCTAssertEqual(animation.keyTimes.count, animation.values.count);
+        XCTAssertEqualWithAccuracy(animation.duration, 0.4, 0.02);
+        placeholder.hidden = YES;
+        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        placeholder.hidden = NO;
+        XCTAssertNotNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        [placeholder stopPlaceholderAnimation];
+        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        UIImage *first = animationView.image;
+        [placeholder showPlaceholderAnimationLastFrame];
+        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        XCTAssertNotEqual(first, animationView.image);
+        [placeholder removeFromSuperview];
+        [window addSubview:placeholder];
+        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        [placeholder playPlaceholderAnimation];
+        XCTAssertNotNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+    }
+    [placeholder removeFromSuperview];
+    XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+    XCTAssertTrue([[NSFileManager defaultManager] removeItemAtURL:url error:&error]);
+}
+
+- (void)testUnavailableAnimationBackendPreservesStaticImage {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
+    for (NSString *key in @[CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemPAGFilePath,
+                             CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemAnimationFilePath]) {
+        NSString *extension = [key isEqualToString:CYLPlaceholderItemPAGFilePath] ? @"pag" :
+            ([key isEqualToString:CYLPlaceholderItemRiveFilePath] ? @"riv" : @"json");
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:
+            [@"missing-placeholder-animation" stringByAppendingPathExtension:extension]];
+        NSError *error = nil;
+        CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+            key: path, CYLPlaceholderItemImage: image, CYLPlaceholderItemAnimationSize: @[@40, @30]
+        } imageBundle:nil error:&error];
+        XCTAssertNotNil(placeholder);
+        XCTAssertNil(error);
+        XCTAssertEqual(placeholder.imageView.image, image);
+        XCTAssertFalse(placeholder.imageView.layer.hidden);
+        XCTAssertEqual(placeholder.imageView.superview.subviews.count, 2);
+    }
+}
+
+- (void)testAnimationAdapterRejectsInvalidInputs {
+    NSError *error = nil;
+    NSURL *url = [NSURL fileURLWithPath:@"/missing.json"];
+    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:url size:CGSizeZero
+        contentMode:UIViewContentModeScaleAspectFit error:&error]);
+    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorInvalidSize);
+    error = nil;
+    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:url size:CGSizeMake(40, 40)
+        contentMode:UIViewContentModeScaleAspectFit error:&error]);
+    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorBackendUnavailable);
+}
+
+- (void)testGIFFailureKeepsStaticImage {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemGIFURL: [NSURL URLWithString:@"https://example.com/image.gif"],
+        CYLPlaceholderItemImage: image,
+        CYLPlaceholderItemTitle: @"Offline"
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder);
+    XCTAssertEqual(placeholder.imageView.image, image);
+    XCTAssertFalse(placeholder.imageView.layer.hidden);
+    XCTAssertEqual(placeholder.imageView.superview.subviews.count, 2);
+}
+
+- (void)testFlatDesignItemUsesSourceGeometryAndUpdates {
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(40, 30)];
+    UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.blueColor setFill];
+        UIRectFill(CGRectMake(0, 0, 40, 30));
+    }];
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithImage:image text:@"Offline"];
+    view.frame = CGRectMake(0, 0, 320, 480);
+    [view layoutIfNeeded];
+    UIView *item = view.imageView.superview;
+    XCTAssertEqual(item, view.textLabel.superview);
+    XCTAssertEqualWithAccuracy(CGRectGetWidth(view.imageView.frame), 40, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(view.imageView.frame), 30, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(view.imageView.frame),
+        (CGRectGetMinY(view.textLabel.frame) - 30) / 2, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMaxY(view.textLabel.frame), CGRectGetHeight(item.bounds) - 2, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), CGRectGetMidY(view.bounds), 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidX(view.imageView.frame), CGRectGetMidX(item.bounds), 0.01);
+
+    view.textLabel.hidden = YES;
+    [view layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.imageView.frame), CGRectGetMidY(item.bounds), 0.01);
+    view.textLabel.hidden = NO;
+    view.imageView.hidden = YES;
+    [view layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.textLabel.frame), CGRectGetMidY(item.bounds), 0.01);
+    view.imageView.hidden = NO;
+    view.textLabel.text = @"A longer message that should wrap in a narrow placeholder";
+    view.frame = CGRectMake(0, 0, 160, 300);
+    [view layoutIfNeeded];
+    XCTAssertLessThanOrEqual(CGRectGetWidth(view.textLabel.frame), 128);
+    XCTAssertGreaterThan(CGRectGetHeight(view.textLabel.frame), view.textLabel.font.lineHeight);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), 150, 0.01);
+    view.textLabel.text = @"Short";
+    view.textLabel.font = [UIFont systemFontOfSize:24];
+    UIGraphicsImageRenderer *secondRenderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(60, 50)];
+    view.imageView.image = [secondRenderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        UIRectFill(CGRectMake(0, 0, 60, 50));
+    }];
+    [view layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetWidth(view.imageView.frame), 60, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(view.imageView.frame), 50, 0.01);
+    XCTAssertGreaterThan(CGRectGetHeight(view.textLabel.frame), 20);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), 150, 0.01);
 }
 
 - (void)testConfiguredPlaceholderPropertyListAndPresets {

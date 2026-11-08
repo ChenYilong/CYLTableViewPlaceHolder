@@ -1,5 +1,6 @@
 #import "CYLPlaceholderView.h"
 #import <math.h>
+#import <ImageIO/ImageIO.h>
 
 NSString *const CYLPlaceholderItemTitle = @"CYLTabBarItemTitle";
 NSString *const CYLPlaceholderItemImage = @"CYLTabBarItemImage";
@@ -72,9 +73,65 @@ static NSBundle *CYLPlaceholderResourceBundle(void) {
     return bundle;
 }
 
+static NSString *CYLPlaceholderLocalizedString(NSString *key, NSString *fallback) {
+    NSBundle *bundle = CYLPlaceholderResourceBundle();
+    if (!bundle) return fallback;
+    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja"];
+    NSString *language = [NSBundle preferredLocalizationsFromArray:languages
+                                                    forPreferences:NSLocale.preferredLanguages].firstObject;
+    NSString *path = [bundle pathForResource:language ofType:@"lproj"];
+    NSBundle *localizedBundle = path ? [NSBundle bundleWithPath:path] : nil;
+    if (!localizedBundle) {
+        NSLog(@"CYLTableViewPlaceHolder: localization %@ is missing.", language);
+        return fallback;
+    }
+    return [localizedBundle localizedStringForKey:key value:fallback table:nil];
+}
+
 static NSError *CYLPlaceholderConfigurationError(NSString *description) {
     return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:1
                           userInfo:@{NSLocalizedDescriptionKey: description}];
+}
+
+static UIImage *CYLPlaceholderConfiguredImage(id value, NSBundle *imageBundle) {
+    if ([value isKindOfClass:UIImage.class]) return value;
+    if (![value isKindOfClass:NSString.class]) return nil;
+    if ([value hasPrefix:@"system:"]) {
+        if (@available(iOS 13.0, *)) return [UIImage systemImageNamed:[value substringFromIndex:7]];
+        return nil;
+    }
+    NSBundle *bundle = imageBundle ?: CYLPlaceholderResourceBundle();
+    return bundle ? [UIImage imageNamed:value inBundle:bundle compatibleWithTraitCollection:nil] : nil;
+}
+
+static UIImage *CYLPlaceholderAppearanceImage(UIImage *light, UIImage *dark) {
+    if (!light || !dark) return light ?: dark;
+    if (@available(iOS 13.0, *)) {
+        UITraitCollection *lightStyle = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+            [UITraitCollection traitCollectionWithDisplayScale:light.scale],
+            [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight]
+        ]];
+        UITraitCollection *darkStyle = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+            [UITraitCollection traitCollectionWithDisplayScale:dark.scale],
+            [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark]
+        ]];
+        UIImage *lightVariant = [light.imageAsset imageWithTraitCollection:lightStyle] ?: light;
+        UIImage *darkVariant = [dark.imageAsset imageWithTraitCollection:darkStyle] ?: dark;
+        if (lightVariant.CGImage) {
+            lightVariant = [[UIImage imageWithCGImage:lightVariant.CGImage scale:lightVariant.scale
+                                           orientation:lightVariant.imageOrientation] imageWithRenderingMode:light.renderingMode];
+        }
+        if (darkVariant.CGImage) {
+            darkVariant = [[UIImage imageWithCGImage:darkVariant.CGImage scale:darkVariant.scale
+                                          orientation:darkVariant.imageOrientation] imageWithRenderingMode:dark.renderingMode];
+        }
+        UIImageAsset *asset = [UIImageAsset new];
+        UITraitCollection *lightTraits = [UITraitCollection traitCollectionWithDisplayScale:lightVariant.scale];
+        [asset registerImage:lightVariant withTraitCollection:lightTraits];
+        [asset registerImage:darkVariant withTraitCollection:darkStyle];
+        return [asset imageWithTraitCollection:UITraitCollection.currentTraitCollection];
+    }
+    return light;
 }
 
 static UIColor *CYLPlaceholderColor(id value) {
@@ -174,17 +231,193 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
     return YES;
 }
 
-@interface CYLPlaceholderView ()
-@property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *itemAttributes;
-@property (nonatomic, strong) UIStackView *contentStack;
-@property (nonatomic, copy) NSArray<NSLayoutConstraint *> *imageSizeConstraints;
-@property (nonatomic) BOOL usesItemLayout;
+@interface CYLPlaceholderItemImageView : UIImageView
+@end
+
+@implementation CYLPlaceholderItemImageView
+- (void)setImage:(UIImage *)image {
+    [super setImage:image];
+    [self.superview.superview setNeedsLayout];
+}
+- (void)setHidden:(BOOL)hidden {
+    [super setHidden:hidden];
+    [self.superview.superview setNeedsLayout];
+}
+@end
+
+@interface CYLPlaceholderItemLabel : UILabel
+@end
+
+@implementation CYLPlaceholderItemLabel
+- (void)setText:(NSString *)text {
+    [super setText:text];
+    [self.superview.superview setNeedsLayout];
+}
+- (void)setAttributedText:(NSAttributedString *)attributedText {
+    [super setAttributedText:attributedText];
+    [self.superview.superview setNeedsLayout];
+}
+- (void)setFont:(UIFont *)font {
+    [super setFont:font];
+    [self.superview.superview setNeedsLayout];
+}
+- (void)setHidden:(BOOL)hidden {
+    [super setHidden:hidden];
+    [self.superview.superview setNeedsLayout];
+}
+@end
+
+// UI adapted from CYLFlatDesignTabBarButton, CYLTabBarController (MIT).
+// Copyright (c) 2026 CYLTabBarController, https://github.com/ChenYilong/CYLTabBarController.
+@interface CYLPlaceholderItemView : UIView
+@property (nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) UILabel *titleLabel;
 @property (nonatomic) UIOffset itemTitleOffset;
 @property (nonatomic) UIOffset itemImageOffset;
 @property (nonatomic) UIEdgeInsets itemImageInsets;
+@property (nonatomic, strong) UIView *animationView;
+@property (nonatomic) CGSize animationSize;
+@property (nonatomic, strong) UILabel *badgeLabel;
+@property (nonatomic) CGPoint badgeCenterOffset;
+@end
+
+@implementation CYLPlaceholderItemView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        _imageView = [[CYLPlaceholderItemImageView alloc] init];
+        _imageView.clipsToBounds = NO;
+        [self addSubview:_imageView];
+
+        _titleLabel = [[CYLPlaceholderItemLabel alloc] init];
+        _titleLabel.clipsToBounds = NO;
+        [self addSubview:_titleLabel];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (CGRectIsEmpty(self.bounds)) return;
+
+    self.animationView.hidden = self.imageView.image != nil && self.imageView.hidden;
+    BOOL isShowImageView = (self.imageView.image != nil && !self.imageView.hidden) ||
+        (self.animationView != nil && !self.animationView.hidden);
+    BOOL isShowTitleLabel = self.titleLabel.text.length > 0 && !self.titleLabel.hidden;
+    if (self.animationView && !self.animationView.hidden) {
+        self.imageView.frame = (CGRect){CGPointZero, self.animationSize};
+    } else if (isShowImageView) {
+        [self.imageView sizeToFit];
+    }
+
+    NSString *title = isShowTitleLabel ? self.titleLabel.text : @"height";
+    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX)
+                                           options:NSStringDrawingUsesLineFragmentOrigin
+                                        attributes:@{NSFontAttributeName: self.titleLabel.font}
+                                           context:nil].size;
+    CGFloat titleLabelWidth = MIN(CGRectGetWidth(self.bounds), ceil(titleSize.width));
+    CGFloat titleLabelHeight = ceil(titleSize.height);
+    CGFloat titleLabelX = (CGRectGetWidth(self.bounds) - titleLabelWidth) / 2;
+    CGFloat titleLabelY = CGRectGetHeight(self.bounds) - titleLabelHeight - 2;
+    if (!isShowImageView) titleLabelY = (CGRectGetHeight(self.bounds) - titleLabelHeight) / 2;
+    titleLabelX += self.itemTitleOffset.horizontal;
+    titleLabelY += self.itemTitleOffset.vertical;
+    self.titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelWidth, titleLabelHeight);
+
+    if (isShowImageView) {
+        CGFloat imageViewWidth = CGRectGetWidth(self.imageView.frame);
+        CGFloat imageViewHeight = CGRectGetHeight(self.imageView.frame);
+        CGFloat imageViewX = (CGRectGetWidth(self.bounds) - imageViewWidth) / 2;
+        CGFloat imageViewY = (CGRectGetMinY(self.titleLabel.frame) - imageViewHeight) / 2;
+        if (!isShowTitleLabel) imageViewY = (CGRectGetHeight(self.bounds) - imageViewHeight) / 2;
+        imageViewX += self.itemImageOffset.horizontal;
+        imageViewY += self.itemImageOffset.vertical;
+        self.imageView.frame = CGRectMake(imageViewX, imageViewY,
+            MAX(0, imageViewWidth - self.itemImageInsets.left - self.itemImageInsets.right),
+            MAX(0, imageViewHeight - self.itemImageInsets.top - self.itemImageInsets.bottom));
+        self.animationView.frame = self.imageView.frame;
+    } else {
+        self.imageView.frame = CGRectZero;
+    }
+    // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
+    if (self.badgeLabel && !self.badgeLabel.hidden) {
+        BOOL dot = self.badgeLabel.text.length == 0;
+        CGSize size = dot ? CGSizeMake(8, 8) : [self.badgeLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        if (!dot) {
+            size.height = ceil(size.height) + 8;
+            size.width = MAX(size.height, ceil(size.width) + 8);
+        }
+        CGRect anchor = isShowImageView ? self.imageView.frame : self.titleLabel.frame;
+        self.badgeLabel.bounds = (CGRect){CGPointZero, size};
+        self.badgeLabel.center = CGPointMake(CGRectGetMaxX(anchor) + 2 + self.badgeCenterOffset.x,
+                                              CGRectGetMinY(anchor) + self.badgeCenterOffset.y);
+        self.badgeLabel.layer.cornerRadius = size.height / 2;
+        [self bringSubviewToFront:self.badgeLabel];
+    }
+}
+@end
+
+@protocol CYLPlaceholderAnimationHosting <CYLPlaceholderAnimationPlayer>
++ (instancetype)alloc;
+- (instancetype)initWithFileURL:(NSURL *)fileURL size:(CGSize)size
+                   contentMode:(UIViewContentMode)contentMode options:(NSDictionary *)options error:(NSError **)error;
+@end
+
+@interface CYLPlaceholderView ()
+@property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *itemAttributes;
+@property (nonatomic, strong) CYLPlaceholderItemView *itemView;
+@property (nonatomic, copy) NSArray<UIImage *> *gifFrames;
+@property (nonatomic, copy) NSArray<NSNumber *> *gifDelays;
+@property (nonatomic, strong) UIView<CYLPlaceholderAnimationPlayer> *backendView;
+@property (nonatomic, strong) NSBundle *animationImageBundle;
+@property (nonatomic) BOOL animationStopped;
+@property (nonatomic) BOOL animationShowsLastFrame;
+@property (nonatomic, strong) NSNumber *animationSeekProgress;
+@property (nonatomic, strong) NSNumber *animationSpeed;
+@property (nonatomic, strong) UIImage *selectedImage;
+@property (nonatomic, copy) NSString *selectedTitle;
+@property (nonatomic, strong) UIColor *selectedTitleColor;
+@property (nonatomic, strong) UIColor *selectedIconColor;
+@property (nonatomic, strong) UIColor *selectedBackgroundColor;
+@property (nonatomic, strong) UIFont *selectedTitleFont;
+@property (nonatomic, strong) UIImage *normalImage;
+@property (nonatomic, copy) NSString *normalTitle;
+@property (nonatomic, strong) UIColor *normalTitleColor;
+@property (nonatomic, strong) UIColor *normalIconColor;
+@property (nonatomic, strong) UIColor *normalBackgroundColor;
+@property (nonatomic, strong) UIFont *normalTitleFont;
+@property (nonatomic) BOOL normalImageHidden;
+@property (nonatomic) BOOL normalTitleHidden;
+@property (nonatomic) BOOL normalHasSelectedTrait;
+@property (nonatomic, copy) NSString *accessibilityValueBeforeBadge;
+@property (nonatomic, copy) NSString *appliedBadgeAccessibilityValue;
+@property (nonatomic, strong) UIImageView *selectionIndicatorView;
 @end
 
 @implementation CYLPlaceholderView
+
+static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlaceholderAnimationFactories(void) {
+    static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *factories;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{ factories = [NSMutableDictionary dictionary]; });
+    return factories;
+}
+
++ (BOOL)registerAnimationFactory:(CYLPlaceholderAnimationFactory)factory forFileExtension:(NSString *)fileExtension {
+    NSCharacterSet *invalid = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+    if (![fileExtension isKindOfClass:NSString.class] || !fileExtension.length ||
+        [fileExtension rangeOfCharacterFromSet:invalid].location != NSNotFound ||
+        [fileExtension.lowercaseString isEqualToString:@"gif"]) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid or reserved animation extension.");
+        return NO;
+    }
+    NSMutableDictionary *factories = CYLPlaceholderAnimationFactories();
+    @synchronized (factories) {
+        if (factory) factories[fileExtension.lowercaseString] = [factory copy];
+        else [factories removeObjectForKey:fileExtension.lowercaseString];
+    }
+    return YES;
+}
 
 - (instancetype)initWithItemContentsOfURL:(NSURL *)url imageBundle:(NSBundle *)imageBundle error:(NSError **)error {
     if (!url.isFileURL) {
@@ -267,7 +500,9 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
         return nil;
     }
     NSMutableDictionary *colors = [NSMutableDictionary dictionary];
-    for (NSString *key in @[CYLPlaceholderItemTitleColor, CYLPlaceholderItemIconColor, CYLPlaceholderItemBackgroundColor]) {
+    for (NSString *key in @[CYLPlaceholderItemTitleColor, CYLPlaceholderItemIconColor, CYLPlaceholderItemBackgroundColor,
+                             CYLPlaceholderItemSelectedTitleColor, CYLPlaceholderItemSelectedIconColor,
+                             CYLPlaceholderItemSelectedBackgroundColor]) {
         if (attributes[key]) {
             UIColor *color = CYLPlaceholderColor(attributes[key]);
             if (!color) {
@@ -277,11 +512,53 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
             colors[key] = color;
         }
     }
+    for (NSString *key in @[CYLPlaceholderItemAnimationColors, CYLPlaceholderItemAnimationDarkColors,
+                             CYLPlaceholderItemLottieDarkColors, CYLPlaceholderItemRiveDarkColors]) {
+        id values = attributes[key];
+        if (!values) continue;
+        if (![values isKindOfClass:NSDictionary.class]) {
+            if (error) *error = CYLPlaceholderConfigurationError([NSString stringWithFormat:@"Invalid animation colors for %@.", key]);
+            return nil;
+        }
+        for (id path in values) {
+            if (![path isKindOfClass:NSString.class] || ![path length] || !CYLPlaceholderColor(values[path])) {
+                if (error) *error = CYLPlaceholderConfigurationError([NSString stringWithFormat:@"Invalid animation color entry for %@.", key]);
+                return nil;
+            }
+        }
+    }
     UIFont *font = attributes[CYLPlaceholderItemTitleFont] ? CYLPlaceholderFont(attributes[CYLPlaceholderItemTitleFont]) : nil;
     if (attributes[CYLPlaceholderItemTitleFont] && !font) {
         if (error) *error = CYLPlaceholderConfigurationError(@"Invalid title font.");
         return nil;
     }
+    UIFont *selectedFont = attributes[CYLPlaceholderItemSelectedTitleFont] ?
+        CYLPlaceholderFont(attributes[CYLPlaceholderItemSelectedTitleFont]) : nil;
+    if (attributes[CYLPlaceholderItemSelectedTitleFont] && !selectedFont) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"Invalid selected title font.");
+        return nil;
+    }
+    id selectedTitle = attributes[CYLPlaceholderItemSelectedTitle];
+    if (selectedTitle && ![selectedTitle isKindOfClass:NSString.class]) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The selected title must be a string.");
+        return nil;
+    }
+    id selectedImageValue = attributes[CYLPlaceholderItemSelectedImage];
+    UIImage *selectedImage = selectedImageValue ? CYLPlaceholderConfiguredImage(selectedImageValue, imageBundle) : nil;
+    if (selectedImageValue && !selectedImage) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The selected image could not be loaded.");
+        return nil;
+    }
+    id darkImageValue = attributes[CYLPlaceholderItemDarkImage];
+    id selectedDarkImageValue = attributes[CYLPlaceholderItemSelectedDarkImage];
+    UIImage *darkImage = darkImageValue ? CYLPlaceholderConfiguredImage(darkImageValue, imageBundle) : nil;
+    UIImage *selectedDarkImage = selectedDarkImageValue ? CYLPlaceholderConfiguredImage(selectedDarkImageValue, imageBundle) : nil;
+    if ((darkImageValue && !darkImage) || (selectedDarkImageValue && !selectedDarkImage)) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"A dark image could not be loaded.");
+        return nil;
+    }
+    image = CYLPlaceholderAppearanceImage(image, darkImage);
+    selectedImage = CYLPlaceholderAppearanceImage(selectedImage, selectedDarkImage);
     for (NSString *key in @[CYLPlaceholderItemAccessibilityIdentifier, CYLPlaceholderItemAccessibilityLabel, CYLPlaceholderItemAccessibilityHint]) {
         if (attributes[key] && ![attributes[key] isKindOfClass:NSString.class]) {
             if (error) *error = CYLPlaceholderConfigurationError([NSString stringWithFormat:@"Invalid accessibility value for %@.", key]);
@@ -291,10 +568,16 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
     self = [self initWithImage:image text:title];
     if (self) {
         _itemAttributes = [attributes copy];
-        _usesItemLayout = YES;
-        _itemTitleOffset = titleOffset;
-        _itemImageOffset = imageOffset;
-        _itemImageInsets = insets;
+        _animationImageBundle = imageBundle;
+        _selectedImage = selectedImage;
+        _selectedTitle = [selectedTitle copy];
+        _selectedTitleColor = colors[CYLPlaceholderItemSelectedTitleColor];
+        _selectedIconColor = colors[CYLPlaceholderItemSelectedIconColor];
+        _selectedBackgroundColor = colors[CYLPlaceholderItemSelectedBackgroundColor];
+        _selectedTitleFont = selectedFont;
+        self.itemView.itemTitleOffset = titleOffset;
+        self.itemView.itemImageOffset = imageOffset;
+        self.itemView.itemImageInsets = insets;
         if (colors[CYLPlaceholderItemTitleColor]) self.textLabel.textColor = colors[CYLPlaceholderItemTitleColor];
         if (colors[CYLPlaceholderItemIconColor]) self.imageView.tintColor = colors[CYLPlaceholderItemIconColor];
         if (colors[CYLPlaceholderItemBackgroundColor]) self.backgroundColor = colors[CYLPlaceholderItemBackgroundColor];
@@ -305,42 +588,561 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
             self.accessibilityLabel = attributes[CYLPlaceholderItemAccessibilityLabel] ?: title;
             self.accessibilityHint = attributes[CYLPlaceholderItemAccessibilityHint];
         }
-        [NSLayoutConstraint deactivateConstraints:self.imageSizeConstraints];
-        [self.contentStack removeArrangedSubview:self.imageView];
-        [self.contentStack removeArrangedSubview:self.textLabel];
-        [self.imageView removeFromSuperview];
-        [self.textLabel removeFromSuperview];
-        [self.contentStack removeFromSuperview];
-        [self addSubview:self.imageView];
-        [self addSubview:self.textLabel];
-        self.imageView.translatesAutoresizingMaskIntoConstraints = YES;
-        self.textLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        [self cyl_configureAnimations];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(cyl_reduceMotionChanged:)
+            name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
         [self setNeedsLayout];
     }
     return self;
 }
 
+- (void)setSelected:(BOOL)selected {
+    if (_selected == selected) return;
+    if (selected) {
+        self.normalImage = self.imageView.image;
+        self.normalTitle = self.textLabel.text;
+        self.normalTitleColor = self.textLabel.textColor;
+        self.normalIconColor = self.imageView.tintColor;
+        self.normalBackgroundColor = self.backgroundColor;
+        self.normalTitleFont = self.textLabel.font;
+        self.normalImageHidden = self.imageView.hidden;
+        self.normalTitleHidden = self.textLabel.hidden;
+        self.normalHasSelectedTrait = (self.accessibilityTraits & UIAccessibilityTraitSelected) != 0;
+        if (self.selectedImage) {
+            self.imageView.image = self.selectedImage;
+            self.imageView.hidden = NO;
+        }
+        if (self.selectedTitle) {
+            self.textLabel.text = self.selectedTitle;
+            self.textLabel.hidden = NO;
+        }
+        if (self.selectedTitleColor) self.textLabel.textColor = self.selectedTitleColor;
+        if (self.selectedIconColor) self.imageView.tintColor = self.selectedIconColor;
+        if (self.selectedBackgroundColor) self.backgroundColor = self.selectedBackgroundColor;
+        if (self.selectedTitleFont) self.textLabel.font = self.selectedTitleFont;
+        self.accessibilityTraits |= UIAccessibilityTraitSelected;
+    } else {
+        self.imageView.image = self.normalImage;
+        self.imageView.hidden = self.normalImageHidden;
+        self.textLabel.text = self.normalTitle;
+        self.textLabel.hidden = self.normalTitleHidden;
+        self.textLabel.textColor = self.normalTitleColor;
+        self.imageView.tintColor = self.normalIconColor;
+        self.backgroundColor = self.normalBackgroundColor;
+        self.textLabel.font = self.normalTitleFont;
+        if (!self.normalHasSelectedTrait) self.accessibilityTraits &= ~UIAccessibilityTraitSelected;
+    }
+    _selected = selected;
+    [self cyl_updateSelectionIndicator];
+    [self setNeedsLayout];
+}
+
+- (void)setSelectionIndicatorImage:(UIImage *)image {
+    _selectionIndicatorImage = image;
+    [self cyl_updateSelectionIndicator];
+}
+
+- (void)setSelectionIndicatorTintColor:(UIColor *)color {
+    _selectionIndicatorTintColor = color;
+    [self cyl_updateSelectionIndicator];
+}
+
+- (void)cyl_updateSelectionIndicator {
+    if (!self.selected || !self.selectionIndicatorImage) {
+        [self.selectionIndicatorView removeFromSuperview];
+        self.selectionIndicatorView = nil;
+        return;
+    }
+    if (!self.selectionIndicatorView) {
+        self.selectionIndicatorView = [UIImageView new];
+        self.selectionIndicatorView.userInteractionEnabled = NO;
+        self.selectionIndicatorView.isAccessibilityElement = NO;
+        self.selectionIndicatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.itemView insertSubview:self.selectionIndicatorView atIndex:0];
+    }
+    UIImage *image = self.selectionIndicatorImage;
+    if (self.selectionIndicatorTintColor && image.renderingMode != UIImageRenderingModeAlwaysOriginal) {
+        image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    self.selectionIndicatorView.image = image;
+    self.selectionIndicatorView.tintColor = self.selectionIndicatorTintColor;
+    self.selectionIndicatorView.contentMode = UIEdgeInsetsEqualToEdgeInsets(image.capInsets, UIEdgeInsetsZero) ?
+        UIViewContentModeCenter : UIViewContentModeScaleToFill;
+    self.selectionIndicatorView.frame = self.itemView.bounds;
+}
+
+- (void)setBadgeValue:(NSString *)badgeValue {
+    if (_badgeValue == badgeValue || [_badgeValue isEqualToString:badgeValue]) return;
+    if (badgeValue && ![badgeValue isKindOfClass:NSString.class]) {
+        NSLog(@"CYLTableViewPlaceHolder: badge value must be a string.");
+        return;
+    }
+    if (!_badgeValue && badgeValue) {
+        self.accessibilityValueBeforeBadge = self.accessibilityValue;
+    } else if (_badgeValue && self.appliedBadgeAccessibilityValue &&
+               ![self.accessibilityValue isEqualToString:self.appliedBadgeAccessibilityValue]) {
+        self.accessibilityValueBeforeBadge = self.accessibilityValue;
+    }
+    _badgeValue = [badgeValue copy];
+    self.badgeLabel.text = badgeValue;
+    self.badgeLabel.hidden = badgeValue == nil;
+    if (badgeValue) {
+        if (self.badgeLabel.superview != self.itemView) [self.itemView addSubview:self.badgeLabel];
+    } else {
+        [self.badgeLabel removeFromSuperview];
+    }
+    if (badgeValue) {
+        NSString *description = badgeValue.length ? badgeValue :
+            CYLPlaceholderLocalizedString(@"CYLPlaceholderBadgeNewContent", @"New content");
+        self.badgeLabel.accessibilityLabel = description;
+        self.accessibilityValue = description;
+        self.appliedBadgeAccessibilityValue = description;
+    } else {
+        if (self.appliedBadgeAccessibilityValue &&
+            [self.accessibilityValue isEqualToString:self.appliedBadgeAccessibilityValue]) {
+            self.accessibilityValue = self.accessibilityValueBeforeBadge;
+        }
+        self.appliedBadgeAccessibilityValue = nil;
+        if (!badgeValue) self.accessibilityValueBeforeBadge = nil;
+    }
+    [self.itemView setNeedsLayout];
+}
+
+- (void)setBadgeCenterOffset:(CGPoint)badgeCenterOffset {
+    if (!isfinite(badgeCenterOffset.x) || !isfinite(badgeCenterOffset.y)) {
+        NSLog(@"CYLTableViewPlaceHolder: badge offset must be finite.");
+        return;
+    }
+    _badgeCenterOffset = badgeCenterOffset;
+    self.itemView.badgeCenterOffset = badgeCenterOffset;
+    [self.itemView setNeedsLayout];
+}
+
+- (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(NSString *)value {
+    switch (style) {
+        case CYLPlaceholderBadgeStyleNone:
+            self.badgeValue = nil;
+            return YES;
+        case CYLPlaceholderBadgeStyleDot:
+            self.badgeValue = @"";
+            return YES;
+        case CYLPlaceholderBadgeStyleText:
+            if ([value isKindOfClass:NSString.class] && value.length) {
+                self.badgeValue = value;
+                return YES;
+            }
+            break;
+        case CYLPlaceholderBadgeStyleNumber: {
+            if (![value isKindOfClass:NSString.class] || !value.length) break;
+            NSScanner *scanner = [NSScanner scannerWithString:value];
+            scanner.charactersToBeSkipped = nil;
+            long long number;
+            if (![scanner scanLongLong:&number] || !scanner.isAtEnd) break;
+            self.badgeValue = number <= 0 ? nil : (number > 99 ? @"99+" : [NSString stringWithFormat:@"%lld", number]);
+            return YES;
+        }
+        default:
+            break;
+    }
+    NSLog(@"CYLTableViewPlaceHolder: invalid badge style or value.");
+    return NO;
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (self.itemAttributes && previousTraitCollection &&
+        self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
+        [self cyl_configureAnimations];
+        [self cyl_updateAnimationPlayback];
+    }
+}
+
+- (void)cyl_configureAnimations {
+    [self.backendView stop];
+    [self.itemView.animationView.layer removeAnimationForKey:@"CYLPlaceholderGIF"];
+    [self.itemView.animationView removeFromSuperview];
+    self.backendView = nil;
+    self.itemView.animationView = nil;
+    self.gifFrames = nil;
+    self.gifDelays = nil;
+    self.imageView.layer.hidden = NO;
+    NSMutableDictionary *attributes = [self.itemAttributes mutableCopy];
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        NSArray *pairs = @[
+            @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFDarkURL, CYLPlaceholderItemGIFDarkFilePath],
+            @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieDarkURL, CYLPlaceholderItemLottieDarkFilePath],
+            @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGDarkURL, CYLPlaceholderItemPAGDarkFilePath],
+            @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveDarkURL, CYLPlaceholderItemRiveDarkFilePath],
+            @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationDarkURL, CYLPlaceholderItemAnimationDarkFilePath]
+        ];
+        for (NSArray *keys in pairs) {
+            id darkURL = attributes[keys[2]];
+            id darkPath = attributes[keys[3]];
+            if (darkURL || darkPath) {
+                [attributes removeObjectForKey:keys[0]];
+                [attributes removeObjectForKey:keys[1]];
+                if (darkURL) attributes[keys[0]] = darkURL;
+                else attributes[keys[1]] = darkPath;
+            }
+        }
+    }
+    [self cyl_configureGIFWithAttributes:attributes imageBundle:self.animationImageBundle];
+    if (!self.itemView.animationView) {
+        [self cyl_configureBackendWithAttributes:attributes imageBundle:self.animationImageBundle];
+    } else if (attributes[CYLPlaceholderItemAnimationColors] ||
+               (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark &&
+                attributes[CYLPlaceholderItemAnimationDarkColors])) {
+        NSLog(@"CYLTableViewPlaceHolder: GIF color overrides are not supported.");
+    }
+    [self setNeedsLayout];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
-    if (!self.usesItemLayout || CGRectIsEmpty(self.bounds)) return;
-    BOOL hasImage = self.imageView.image != nil && !self.imageView.hidden;
+    if (CGRectIsEmpty(self.bounds)) return;
+    BOOL showAnimation = self.itemView.animationView && (!self.imageView.image || !self.imageView.hidden);
+    BOOL hasImage = (self.imageView.image != nil && !self.imageView.hidden) || showAnimation;
     BOOL hasTitle = self.textLabel.text.length > 0 && !self.textLabel.hidden;
     CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 32);
-    CGSize titleSize = hasTitle ? [self.textLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)] : CGSizeZero;
-    titleSize.width = MIN(width, ceil(titleSize.width));
-    titleSize.height = ceil(titleSize.height);
-    CGFloat imageWidth = hasImage ? 80 : 0;
-    CGFloat imageHeight = hasImage ? 80 : 0;
-    CGFloat itemHeight = imageHeight + (hasImage && hasTitle ? 12 : 0) + titleSize.height + (hasImage && hasTitle ? 2 : 0);
-    CGFloat itemTop = (CGRectGetHeight(self.bounds) - itemHeight) / 2;
-    CGFloat titleY = itemTop + itemHeight - titleSize.height - (hasImage && hasTitle ? 2 : 0);
-    self.textLabel.frame = hasTitle ? CGRectMake((CGRectGetWidth(self.bounds) - titleSize.width) / 2 + self.itemTitleOffset.horizontal,
-        titleY + self.itemTitleOffset.vertical, titleSize.width, titleSize.height) : CGRectZero;
-    // Adapted from CYLFlatDesignTabBarButton in CYLTabBarController (MIT license).
-    CGFloat imageY = hasTitle ? itemTop + (CGRectGetMinY(self.textLabel.frame) - itemTop - imageHeight) / 2 : itemTop;
-    self.imageView.frame = hasImage ? CGRectMake((CGRectGetWidth(self.bounds) - imageWidth) / 2 + self.itemImageOffset.horizontal,
-        imageY + self.itemImageOffset.vertical, MAX(0, imageWidth - self.itemImageInsets.left - self.itemImageInsets.right),
-        MAX(0, imageHeight - self.itemImageInsets.top - self.itemImageInsets.bottom)) : CGRectZero;
+    CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
+        options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
+    CGFloat imageHeight = showAnimation ? self.itemView.animationSize.height :
+        (hasImage ? self.imageView.image.size.height : 0);
+    CGFloat itemHeight = imageHeight + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0);
+    self.itemView.frame = CGRectMake((CGRectGetWidth(self.bounds) - width) / 2,
+        (CGRectGetHeight(self.bounds) - itemHeight) / 2, width, itemHeight);
+    [self.itemView setNeedsLayout];
+}
+
+// GIF frame timing adapted from CYLGIFTabBarItemAnimator, CYLTabBarController (MIT).
+- (void)cyl_configureGIFWithAttributes:(NSDictionary *)attributes imageBundle:(NSBundle *)imageBundle {
+    id value = attributes[CYLPlaceholderItemGIFURL] ?: attributes[CYLPlaceholderItemGIFFilePath];
+    if (!value) {
+        id generic = attributes[CYLPlaceholderItemAnimationURL] ?: attributes[CYLPlaceholderItemAnimationFilePath];
+        NSString *extension = [generic isKindOfClass:NSURL.class] ? [generic pathExtension] :
+            ([generic isKindOfClass:NSString.class] ? [generic pathExtension] : nil);
+        if ([extension.lowercaseString isEqualToString:@"gif"]) value = generic;
+    }
+    if (!value) return;
+    NSURL *url = nil;
+    if ([value isKindOfClass:NSURL.class]) {
+        url = value;
+    } else if ([value isKindOfClass:NSString.class] && [value length] > 0) {
+        NSString *path = value;
+        if (![path isAbsolutePath]) {
+            NSBundle *bundle = imageBundle ?: NSBundle.mainBundle;
+            path = [bundle pathForResource:[path stringByDeletingPathExtension] ofType:path.pathExtension] ?: path;
+        }
+        url = [NSURL fileURLWithPath:path];
+    }
+    if (!url.isFileURL || ![url.pathExtension.lowercaseString isEqualToString:@"gif"]) {
+        NSLog(@"CYLTableViewPlaceHolder: GIF animation requires a local .gif file.");
+        return;
+    }
+    NSNumber *fileSize = nil;
+    NSError *fileError = nil;
+    if (![url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:&fileError]) {
+        NSLog(@"CYLTableViewPlaceHolder: cannot read GIF metadata: %@.", fileError.localizedDescription);
+        return;
+    }
+    if (fileSize.unsignedLongLongValue > 16 * 1024 * 1024) {
+        NSLog(@"CYLTableViewPlaceHolder: GIF animation exceeds the 16 MB input limit.");
+        return;
+    }
+    NSData *data = [NSData dataWithContentsOfURL:url options:0 error:NULL];
+    if (data.length > 16 * 1024 * 1024) {
+        NSLog(@"CYLTableViewPlaceHolder: GIF animation exceeds the 16 MB input limit.");
+        return;
+    }
+    CGImageSourceRef source = data ? CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL) : NULL;
+    if (!source || !CGImageSourceGetType(source) || !CFEqual(CGImageSourceGetType(source), CFSTR("com.compuserve.gif")) ||
+        CGImageSourceGetCount(source) == 0 || CGImageSourceGetCount(source) > 500) {
+        if (source) CFRelease(source);
+        NSLog(@"CYLTableViewPlaceHolder: cannot decode GIF animation at %@.", url);
+        return;
+    }
+    NSMutableArray<UIImage *> *frames = [NSMutableArray array];
+    NSMutableArray<NSNumber *> *delays = [NSMutableArray array];
+    uint64_t pixelBytes = 0;
+    for (size_t i = 0; i < CGImageSourceGetCount(source); i++) {
+        NSDictionary *properties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(source, i, NULL));
+        uint64_t width = [properties[(__bridge NSString *)kCGImagePropertyPixelWidth] unsignedLongLongValue];
+        uint64_t height = [properties[(__bridge NSString *)kCGImagePropertyPixelHeight] unsignedLongLongValue];
+        if (width == 0 || height == 0 || width > 4096 || height > 4096 ||
+            width * height * 4 > 64 * 1024 * 1024 - pixelBytes) {
+            CFRelease(source);
+            NSLog(@"CYLTableViewPlaceHolder: GIF frame dimensions exceed the memory limit or are invalid.");
+            return;
+        }
+        NSDictionary *options = @{(__bridge NSString *)kCGImageSourceShouldCacheImmediately: @YES};
+        CGImageRef image = CGImageSourceCreateImageAtIndex(source, i, (__bridge CFDictionaryRef)options);
+        if (!image) {
+            CFRelease(source);
+            NSLog(@"CYLTableViewPlaceHolder: GIF frame %zu could not be decoded.", i);
+            return;
+        }
+        pixelBytes += width * height * 4;
+        [frames addObject:[UIImage imageWithCGImage:image]];
+        CGImageRelease(image);
+        NSDictionary *gif = properties[(__bridge NSString *)kCGImagePropertyGIFDictionary];
+        NSNumber *delay = gif[(__bridge NSString *)kCGImagePropertyGIFUnclampedDelayTime] ?:
+            gif[(__bridge NSString *)kCGImagePropertyGIFDelayTime];
+        double seconds = delay.doubleValue;
+        [delays addObject:@(isfinite(seconds) && seconds >= 0.02 ? seconds : 0.1)];
+    }
+    CFRelease(source);
+    if (frames.count == 0) {
+        NSLog(@"CYLTableViewPlaceHolder: GIF animation contains no decodable frames.");
+        return;
+    }
+    CGSize size = frames.firstObject.size;
+    id sizeValue = attributes[CYLPlaceholderItemGIFSize] ?: attributes[CYLPlaceholderItemAnimationSize];
+    double numbers[2];
+    if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
+        size = [sizeValue CGSizeValue];
+    } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
+        size = CGSizeMake(numbers[0], numbers[1]);
+    } else if (sizeValue) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid GIF animation size.");
+        return;
+    }
+    if (!isfinite(size.width) || !isfinite(size.height) || size.width <= 0 || size.height <= 0 || size.width > 1000 || size.height > 1000) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid GIF animation size.");
+        return;
+    }
+    self.gifFrames = frames;
+    self.gifDelays = delays;
+    UIImageView *view = [[UIImageView alloc] initWithImage:frames.firstObject];
+    view.contentMode = UIViewContentModeScaleAspectFit;
+    self.itemView.animationView = view;
+    self.itemView.animationSize = size;
+    self.imageView.layer.hidden = YES;
+    [self.itemView insertSubview:view aboveSubview:self.imageView];
+}
+
+- (void)cyl_configureBackendWithAttributes:(NSDictionary *)attributes imageBundle:(NSBundle *)imageBundle {
+   NSArray *sources = @[
+       @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieSize],
+       @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGSize],
+       @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveSize],
+       @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationSize]
+   ];
+   id value = nil, sizeValue = nil;
+   for (NSArray *keys in sources) {
+       value = attributes[keys[0]] ?: attributes[keys[1]];
+       if (value) {
+           sizeValue = attributes[keys[2]] ?: attributes[CYLPlaceholderItemAnimationSize];
+           break;
+       }
+   }
+   if (!value) return;
+   NSURL *url = nil;
+   if ([value isKindOfClass:NSURL.class]) {
+       url = value;
+   } else if ([value isKindOfClass:NSString.class] && [value length]) {
+       NSString *path = value;
+       if ([path containsString:@"://"]) {
+           url = [NSURL URLWithString:path];
+       } else {
+           if (![path isAbsolutePath]) {
+               NSBundle *bundle = imageBundle ?: NSBundle.mainBundle;
+               path = [bundle pathForResource:path.stringByDeletingPathExtension ofType:path.pathExtension] ?: path;
+           }
+           url = [NSURL fileURLWithPath:path];
+       }
+   }
+   if (!url.isFileURL) {
+       NSLog(@"CYLTableViewPlaceHolder: animation requires a local file.");
+       return;
+   }
+   CGSize size = self.imageView.image ? self.imageView.image.size : CGSizeMake(80, 80);
+   double numbers[2];
+   if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
+       size = [sizeValue CGSizeValue];
+   } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
+       size = CGSizeMake(numbers[0], numbers[1]);
+   } else if (sizeValue) {
+       NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
+       return;
+   }
+   if (!isfinite(size.width) || !isfinite(size.height) || size.width <= 0 || size.height <= 0 ||
+       size.width > 1000 || size.height > 1000) {
+       NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
+       return;
+   }
+   NSError *error = nil;
+   id options = attributes[CYLPlaceholderItemAnimationOptions] ?: @{};
+   if (![options isKindOfClass:NSDictionary.class]) {
+       NSLog(@"CYLTableViewPlaceHolder: animation options must be a dictionary.");
+       return;
+   }
+   NSMutableDictionary *factories = CYLPlaceholderAnimationFactories();
+   CYLPlaceholderAnimationFactory factory;
+   @synchronized (factories) {
+       factory = [factories[url.pathExtension.lowercaseString] copy];
+   }
+   UIView<CYLPlaceholderAnimationPlayer> *view;
+   if (factory) {
+       view = factory(url, size, UIViewContentModeScaleAspectFit, options, &error);
+   } else {
+       Class<CYLPlaceholderAnimationHosting> backendClass = NSClassFromString(@"CYLPlaceholderAnimationView");
+       if (!backendClass) {
+           NSLog(@"CYLTableViewPlaceHolder: animation backend is not installed; showing the static image.");
+           return;
+       }
+       view = (UIView<CYLPlaceholderAnimationPlayer> *)[[backendClass alloc] initWithFileURL:url size:size
+           contentMode:UIViewContentModeScaleAspectFit options:options error:&error];
+   }
+   if (!view) {
+       NSLog(@"CYLTableViewPlaceHolder: animation could not be loaded: %@.", error.localizedDescription ?: @"factory returned no view");
+       return;
+   }
+   __weak typeof(self) weakSelf = self;
+   __weak UIView<CYLPlaceholderAnimationPlayer> *weakView = view;
+   view.errorHandler = ^(NSError *backendError) {
+       NSLog(@"CYLTableViewPlaceHolder: animation failed: %@.", backendError.localizedDescription);
+       CYLPlaceholderView *strongSelf = weakSelf;
+       if (!strongSelf || strongSelf.backendView != weakView) return;
+       [strongSelf.backendView removeFromSuperview];
+       strongSelf.backendView = nil;
+       strongSelf.itemView.animationView = nil;
+       strongSelf.imageView.layer.hidden = NO;
+       [strongSelf setNeedsLayout];
+   };
+   view.readyHandler = ^{
+       CYLPlaceholderView *strongSelf = weakSelf;
+       if (strongSelf.backendView == weakView && weakView) {
+           strongSelf.imageView.layer.hidden = YES;
+           if (strongSelf.animationStopped) [strongSelf cyl_updateAnimationPlayback];
+       }
+   };
+   self.backendView = view;
+   self.itemView.animationView = view;
+   self.itemView.animationSize = size;
+   self.imageView.layer.hidden = view.isReady;
+   [self.itemView insertSubview:view aboveSubview:self.imageView];
+   NSMutableDictionary<NSString *, UIColor *> *animationColors = [NSMutableDictionary dictionary];
+   NSMutableArray *colorSources = [NSMutableArray array];
+   if (attributes[CYLPlaceholderItemAnimationColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationColors]];
+   if (@available(iOS 13.0, *)) {
+       if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+           if (attributes[CYLPlaceholderItemAnimationDarkColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationDarkColors]];
+           NSString *specificKey = [url.pathExtension.lowercaseString isEqualToString:@"json"] ? CYLPlaceholderItemLottieDarkColors :
+               ([url.pathExtension.lowercaseString isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil);
+           if (specificKey && attributes[specificKey]) [colorSources addObject:attributes[specificKey]];
+       }
+   }
+   for (NSDictionary *source in colorSources) {
+       [source enumerateKeysAndObjectsUsingBlock:^(NSString *path, id value, BOOL *stop) {
+           UIColor *color = CYLPlaceholderColor(value);
+           if (@available(iOS 13.0, *)) color = [color resolvedColorWithTraitCollection:self.traitCollection];
+           animationColors[path] = color;
+       }];
+   }
+   if (animationColors.count &&
+       (![view respondsToSelector:@selector(setAnimationColors:)] || ![view setAnimationColors:animationColors])) {
+       NSLog(@"CYLTableViewPlaceHolder: animation color overrides are not supported by this player.");
+   }
+   if (self.animationSpeed &&
+       (![view respondsToSelector:@selector(setAnimationSpeed:)] ||
+        ![view setAnimationSpeed:self.animationSpeed.doubleValue])) {
+       NSLog(@"CYLTableViewPlaceHolder: the replacement animation does not support playback speed.");
+   }
+}
+
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)cyl_reduceMotionChanged:(NSNotification *)notification {
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)setHidden:(BOOL)hidden {
+    [super setHidden:hidden];
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)playPlaceholderAnimation {
+    self.animationStopped = NO;
+    self.animationShowsLastFrame = NO;
+    self.animationSeekProgress = nil;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)stopPlaceholderAnimation {
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = NO;
+    self.animationSeekProgress = nil;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)showPlaceholderAnimationLastFrame {
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = YES;
+    self.animationSeekProgress = nil;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress {
+    if (!NSThread.isMainThread || !isfinite(progress) || progress < 0 || progress > 1 ||
+        ![self.backendView respondsToSelector:@selector(setAnimationProgress:)]) return NO;
+    if (![self.backendView setAnimationProgress:progress]) return NO;
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = NO;
+    self.animationSeekProgress = @(progress);
+    return YES;
+}
+
+- (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed {
+    if (!NSThread.isMainThread || !isfinite(speed) || speed <= 0 ||
+        ![self.backendView respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
+    if (![self.backendView setAnimationSpeed:speed]) return NO;
+    self.animationSpeed = @(speed);
+    return YES;
+}
+
+- (void)cyl_updateAnimationPlayback {
+    if (self.backendView) {
+        if (self.animationShowsLastFrame) [self.backendView showLastFrame];
+        else if (self.animationSeekProgress) {
+            if (![self.backendView respondsToSelector:@selector(setAnimationProgress:)] ||
+                ![self.backendView setAnimationProgress:self.animationSeekProgress.doubleValue]) {
+                NSLog(@"CYLTableViewPlaceHolder: the replacement animation does not support seeking.");
+            }
+        }
+        else if (!self.animationStopped && self.window && !self.hidden && !UIAccessibilityIsReduceMotionEnabled()) [self.backendView play];
+        else [self.backendView stop];
+        return;
+    }
+    UIImageView *view = (UIImageView *)self.itemView.animationView;
+    if (!view) return;
+    [view.layer removeAnimationForKey:@"CYLPlaceholderGIF"];
+    view.image = self.animationShowsLastFrame ? self.gifFrames.lastObject : self.gifFrames.firstObject;
+    if (self.animationStopped || !self.window || self.hidden || UIAccessibilityIsReduceMotionEnabled() || self.gifFrames.count < 2) return;
+    double duration = [[self.gifDelays valueForKeyPath:@"@sum.self"] doubleValue];
+    NSMutableArray *contents = [NSMutableArray array];
+    NSMutableArray *times = [NSMutableArray array];
+    double elapsed = 0;
+    for (NSUInteger i = 0; i < self.gifFrames.count; i++) {
+        [contents addObject:(__bridge id)self.gifFrames[i].CGImage];
+        [times addObject:@(elapsed / duration)];
+        elapsed += self.gifDelays[i].doubleValue;
+    }
+    [contents addObject:(__bridge id)self.gifFrames.lastObject.CGImage];
+    [times addObject:@1];
+    view.image = self.gifFrames.lastObject;
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"contents"];
+    animation.calculationMode = kCAAnimationDiscrete;
+    animation.values = contents;
+    animation.keyTimes = times;
+    animation.duration = duration;
+    [view.layer addAnimation:animation forKey:@"CYLPlaceholderGIF"];
 }
 
 + (NSString *)imageNameForStyle:(CYLPlaceholderStyle)style {
@@ -395,18 +1197,7 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
         NSLog(@"CYLTableViewPlaceHolder: invalid placeholder message %ld.", (long)message);
         return nil;
     }
-    NSBundle *bundle = CYLPlaceholderResourceBundle();
-    if (!bundle) return fallbacks[message];
-    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja"];
-    NSString *language = [NSBundle preferredLocalizationsFromArray:languages
-                                                    forPreferences:NSLocale.preferredLanguages].firstObject;
-    NSString *path = [bundle pathForResource:language ofType:@"lproj"];
-    NSBundle *localizedBundle = path ? [NSBundle bundleWithPath:path] : nil;
-    if (!localizedBundle) {
-        NSLog(@"CYLTableViewPlaceHolder: localization %@ is missing.", language);
-        return fallbacks[message];
-    }
-    return [localizedBundle localizedStringForKey:keys[message] value:fallbacks[message] table:nil];
+    return CYLPlaceholderLocalizedString(keys[message], fallbacks[message]);
 }
 
 - (instancetype)initWithStyle:(CYLPlaceholderStyle)style message:(CYLPlaceholderMessage)message {
@@ -432,34 +1223,27 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _imageView = [[UIImageView alloc] initWithImage:[CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty]];
+        _itemView = [[CYLPlaceholderItemView alloc] initWithFrame:CGRectZero];
+        [self addSubview:_itemView];
+        _imageView = _itemView.imageView;
+        _imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;
         _imageView.tintColor = UIColor.grayColor;
-        _textLabel = [UILabel new];
+        _textLabel = _itemView.titleLabel;
         _textLabel.text = [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageEmpty];
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 0;
         _textLabel.textColor = UIColor.grayColor;
-        UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[_imageView, _textLabel]];
-        _contentStack = stack;
+        _badgeLabel = [CYLPlaceholderItemLabel new];
+        _badgeLabel.textAlignment = NSTextAlignmentCenter;
+        _badgeLabel.font = [UIFont boldSystemFontOfSize:9];
+        _badgeLabel.textColor = UIColor.whiteColor;
+        _badgeLabel.backgroundColor = UIColor.redColor;
+        _badgeLabel.clipsToBounds = YES;
+        _badgeLabel.hidden = YES;
+        _badgeLabel.isAccessibilityElement = YES;
+        _itemView.badgeLabel = _badgeLabel;
         _itemAttributes = @{};
-        stack.axis = UILayoutConstraintAxisVertical;
-        stack.spacing = 12;
-        stack.alignment = UIStackViewAlignmentCenter;
-        stack.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:stack];
-        NSLayoutConstraint *imageHeight = [_imageView.heightAnchor constraintEqualToConstant:80];
-        imageHeight.priority = UILayoutPriorityDefaultHigh;
-        NSLayoutConstraint *imageWidth = [_imageView.widthAnchor constraintEqualToConstant:80];
-        _imageSizeConstraints = @[imageWidth, imageHeight];
-        [NSLayoutConstraint activateConstraints:@[
-            [stack.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
-            [stack.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
-            [stack.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.leadingAnchor constant:16],
-            [stack.trailingAnchor constraintLessThanOrEqualToAnchor:self.trailingAnchor constant:-16],
-            imageWidth,
-            imageHeight
-        ]];
     }
     return self;
 }

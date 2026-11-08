@@ -15,7 +15,9 @@ source of truth; update the README and issue tracker if they become stale.
 | Automatic table and collection placeholders | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`, `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`, `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m` |
 | Default placeholder and localized resources | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h`, `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle` |
 | Placeholder style and message selection | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h` (`CYLPlaceholderStyle`, `CYLPlaceholderMessage`, custom image/text initializers) |
-| Static FlatDesign-style item configuration | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h` (`initWithItemAttributes:imageBundle:error:` and `initWithItemContentsOfURL:imageBundle:error:`); additional animation and tab keys are retained but not rendered |
+| FlatDesign-style item configuration | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h` (`initWithItemAttributes:imageBundle:error:` and `initWithItemContentsOfURL:imageBundle:error:`); local GIF and optional Lottie/PAG/Rive adapters, with limitations documented in the README and FlatDesign comparison |
+| Placeholder badge and selection indicator | `CYLPlaceholderView.h` (`showBadgeWithStyle:value:`, `badgeValue`, `badgeLabel`, `selectionIndicatorImage`) |
+| Custom placeholder animation | `CYLPlaceholderView.h` (`CYLPlaceholderAnimationPlayer`, `registerAnimationFactory:forFileExtension:`) |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |

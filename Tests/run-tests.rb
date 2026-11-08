@@ -15,7 +15,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
+   'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end

@@ -15,13 +15,14 @@
     self.title = @"Placeholder styles";
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return CYLPlaceholderStyleCount + 3;
+    return CYLPlaceholderStyleCount + 6;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"style"];
     if (!cell) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"style"];
     BOOL preset = indexPath.row < CYLPlaceholderStyleCount;
-    NSArray *extras = @[@"Custom image", @"FlatDesign: code configuration", @"FlatDesign: plist configuration"];
+    NSArray *extras = @[@"Custom image", @"FlatDesign: code configuration", @"FlatDesign: plist configuration",
+                        @"Badge: dot", @"Badge: number", @"Badge: custom text"];
     cell.textLabel.text = preset ? [CYLPlaceholderView imageNameForStyle:(CYLPlaceholderStyle)indexPath.row] :
         extras[indexPath.row - CYLPlaceholderStyleCount];
     cell.imageView.image = preset ? [CYLPlaceholderView imageForStyle:(CYLPlaceholderStyle)indexPath.row] : nil;
@@ -31,6 +32,22 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.row >= CYLPlaceholderStyleCount + 3) {
+        CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleNotificationsOff
+            message:CYLPlaceholderMessageNoNotifications];
+        NSInteger badgeIndex = indexPath.row - CYLPlaceholderStyleCount - 3;
+        if (badgeIndex == 0) [placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleDot value:nil];
+        if (badgeIndex == 1) [placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleNumber value:@"105"];
+        if (badgeIndex == 2) [placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleText value:@"New"];
+        UIViewController *preview = [UIViewController new];
+        preview.title = @"Badge preview";
+        preview.view.backgroundColor = UIColor.whiteColor;
+        placeholder.frame = preview.view.bounds;
+        placeholder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [preview.view addSubview:placeholder];
+        [self.navigationController pushViewController:preview animated:YES];
+        return;
+    }
     if (indexPath.row > CYLPlaceholderStyleCount) {
         NSError *error = nil;
         CYLPlaceholderView *placeholder;
