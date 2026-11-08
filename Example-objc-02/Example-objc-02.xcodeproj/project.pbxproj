@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02045564CBB70CBD96D6A85A /* CYLPagingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */; };
 		27C9228D5CD79A859BD6B3B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4F0A147668D440C2ECF07 /* main.m */; };
 		2DE6CCFEC4B4779D14496AA9 /* CYLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 008B40FD8C60E048824DC77A /* CYLAppDelegate.m */; };
 		8AE695DD0D4AC85713261AB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A7C2CF6519A8467F8BAE14 /* Foundation.framework */; };
@@ -14,6 +15,7 @@
 		B124B6E09CD3FA5176C1ECE7 /* CYLCollectionAnimationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */; };
 		CBB9D6D45072E01EA68BA8A6 /* CYLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 087FB690A8CD354B8C504D91 /* CYLCollectionViewController.m */; };
 		DD31FD6120F730C275F12AB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A7C2CF6519A8467F8BAE14 /* Foundation.framework */; };
+		DE54793E1625C7D2366E35E4 /* CYLPagingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,8 +39,11 @@
 		A03074983DBA9D307E2ECC40 /* CYLAppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLAppDelegate.h; sourceTree = "<group>"; };
 		A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLCollectionAnimationUITests.swift; sourceTree = "<group>"; };
 		A408587300F69FA986562CEB /* Pods-ExampleObjC02.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleObjC02.debug.xcconfig"; path = "Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02.debug.xcconfig"; sourceTree = "<group>"; };
+		BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPagingUITests.swift; sourceTree = "<group>"; };
+		CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPagingViewController.m; sourceTree = "<group>"; };
 		D2B509827356F35D2D76E332 /* Pods-ExampleObjC02.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleObjC02.release.xcconfig"; path = "Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02.release.xcconfig"; sourceTree = "<group>"; };
 		EBE0B4D2ADC14DCC33169243 /* CYLCollectionViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLCollectionViewController.h; sourceTree = "<group>"; };
+		ECA9A4A9F5CC7544D1DB23BF /* CYLPagingViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPagingViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +104,8 @@
 				008B40FD8C60E048824DC77A /* CYLAppDelegate.m */,
 				087FB690A8CD354B8C504D91 /* CYLCollectionViewController.m */,
 				4CC4F0A147668D440C2ECF07 /* main.m */,
+				ECA9A4A9F5CC7544D1DB23BF /* CYLPagingViewController.h */,
+				CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */,
 			);
 			name = Sources;
 			path = Sources;
@@ -116,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */,
+				BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */,
 			);
 			name = UITests;
 			path = UITests;
@@ -269,6 +277,7 @@
 				2DE6CCFEC4B4779D14496AA9 /* CYLAppDelegate.m in Sources */,
 				CBB9D6D45072E01EA68BA8A6 /* CYLCollectionViewController.m in Sources */,
 				27C9228D5CD79A859BD6B3B8 /* main.m in Sources */,
+				02045564CBB70CBD96D6A85A /* CYLPagingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B124B6E09CD3FA5176C1ECE7 /* CYLCollectionAnimationUITests.swift in Sources */,
+				DE54793E1625C7D2366E35E4 /* CYLPagingUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

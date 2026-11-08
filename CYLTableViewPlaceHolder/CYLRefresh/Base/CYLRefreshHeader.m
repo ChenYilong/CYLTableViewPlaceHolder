@@ -16,6 +16,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
 @interface CYLRefreshHeader() <CAAnimationDelegate>
 @property (assign, nonatomic) CGFloat insetTDelta;
+@property (assign, nonatomic) BOOL updatingRefreshInset;
 @end
 
 @implementation CYLRefreshHeader
@@ -62,6 +63,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 }
 
 - (void)resetInset {
+    if (self.updatingRefreshInset) return;
     if (@available(iOS 11.0, *)) {
     } else {
         // 如果 iOS 10 及以下系统在刷新时, push 新的 VC, 等待刷新完成后回来, 会导致顶部 Insets.top 异常, 不能 resetInset, 检查一下这种特殊情况
@@ -71,11 +73,16 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // sectionheader停留解决
     CGFloat insetT = - self.scrollView.cyl_offsetY > _scrollViewOriginalInset.top ? - self.scrollView.cyl_offsetY : _scrollViewOriginalInset.top;
     insetT = insetT > self.cyl_h + _scrollViewOriginalInset.top ? self.cyl_h + _scrollViewOriginalInset.top : insetT;
-    self.insetTDelta = _scrollViewOriginalInset.top - insetT;
     // 避免 CollectionView 在使用根据 Autolayout 和 内容自动伸缩 Cell, 刷新时导致的 Layout 异常渲染问题
     if (fabs(self.scrollView.cyl_insetT - insetT) > FLT_EPSILON) {
-        self.scrollView.cyl_insetT = insetT;
+        self.updatingRefreshInset = YES;
+        @try {
+            self.scrollView.cyl_insetT = insetT;
+        } @finally {
+            self.updatingRefreshInset = NO;
+        }
     }
+    self.insetTDelta = _scrollViewOriginalInset.top - self.scrollView.cyl_insetT;
 }
 
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change

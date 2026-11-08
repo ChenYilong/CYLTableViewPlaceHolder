@@ -15,6 +15,8 @@
 @interface CYLRefreshBackFooter()
 @property (assign, nonatomic) NSInteger lastRefreshCount;
 @property (assign, nonatomic) CGFloat lastBottomDelta;
+@property (assign, nonatomic) CGFloat pagingRestingOffset;
+@property (assign, nonatomic) CGFloat pagingRefreshOffset;
 @end
 
 @implementation CYLRefreshBackFooter
@@ -97,12 +99,18 @@
     if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
         // 刷新完毕
         if (CYLRefreshStateRefreshing == oldState) {
+            BOOL restorePagingOffset = self.scrollView.pagingEnabled &&
+                !self.scrollView.isDragging && !self.scrollView.isDecelerating &&
+                fabs(self.scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001;
             [UIView animateWithDuration:self.slowAnimationDuration animations:^{
                 if (self.endRefreshingAnimationBeginAction) {
                     self.endRefreshingAnimationBeginAction();
                 }
 
                 self.scrollView.cyl_insetB -= self.lastBottomDelta;
+                if (restorePagingOffset) {
+                    self.scrollView.cyl_offsetY = self.pagingRestingOffset;
+                }
                 // 自动调整透明度
                 if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
             } completion:^(BOOL finished) {
@@ -122,6 +130,7 @@
     } else if (state == CYLRefreshStateRefreshing) {
         // 记录刷新前的数量
         self.lastRefreshCount = self.scrollView.cyl_totalDataCount;
+        self.pagingRestingOffset = [self happenOffsetY];
 
         [UIView animateWithDuration:self.fastAnimationDuration animations:^{
             CGFloat bottom = self.cyl_h + self.scrollViewOriginalInset.bottom;
@@ -131,7 +140,8 @@
             }
             self.lastBottomDelta = bottom - self.scrollView.cyl_insetB;
             self.scrollView.cyl_insetB = bottom;
-            self.scrollView.cyl_offsetY = [self happenOffsetY] + self.cyl_h;
+            self.pagingRefreshOffset = [self happenOffsetY] + self.cyl_h;
+            self.scrollView.cyl_offsetY = self.pagingRefreshOffset;
         } completion:^(BOOL finished) {
             [self executeRefreshingCallback];
         }];

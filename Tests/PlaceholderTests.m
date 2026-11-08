@@ -36,6 +36,24 @@
 - (BOOL)isDecelerating { return self.cyl_testDecelerating; }
 @end
 
+@interface CYLTestReentrantScrollView : UIScrollView
+@property (nonatomic) BOOL cyl_triggerInsetFeedback;
+@property (nonatomic) NSInteger cyl_insetDepth;
+@property (nonatomic) NSInteger cyl_maxInsetDepth;
+@end
+@implementation CYLTestReentrantScrollView
+- (void)setContentInset:(UIEdgeInsets)contentInset {
+    self.cyl_insetDepth++;
+    self.cyl_maxInsetDepth = MAX(self.cyl_maxInsetDepth, self.cyl_insetDepth);
+    [super setContentInset:contentInset];
+    if (self.cyl_triggerInsetFeedback && self.cyl_insetDepth < 8) {
+        CGFloat offset = self.contentOffset.y < -15 ? -10 : -20;
+        self.contentOffset = CGPointMake(self.contentOffset.x, offset);
+    }
+    self.cyl_insetDepth--;
+}
+@end
+
 @interface CYLTestCollectionSource : NSObject <UICollectionViewDataSource>
 @end
 @implementation CYLTestCollectionSource
@@ -394,6 +412,58 @@
         XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
     }
     self.table.cyl_header = nil;
+    window.hidden = YES;
+}
+
+- (void)testHeaderInsetFeedbackDoesNotReenterInsetSetter {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestReentrantScrollView *scrollView = [[CYLTestReentrantScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    scrollView.cyl_header = header;
+    XCTestExpectation *started = [self expectationWithDescription:@"header started"];
+    [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    scrollView.cyl_maxInsetDepth = 0;
+    scrollView.cyl_triggerInsetFeedback = YES;
+    scrollView.contentOffset = CGPointMake(0, -20);
+    scrollView.cyl_triggerInsetFeedback = NO;
+    XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1);
+    [header endRefreshing];
+    scrollView.cyl_header = nil;
+    window.hidden = YES;
+}
+
+- (void)testHeaderRefreshWithNavigationSearchController {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIViewController *controller = [UIViewController new];
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:controller];
+    controller.navigationItem.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    controller.navigationItem.hidesSearchBarWhenScrolling = YES;
+    window.rootViewController = navigation;
+    UITableView *table = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+    table.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [controller.view addSubview:table];
+    [window makeKeyAndVisible];
+    [controller.view layoutIfNeeded];
+    CGFloat initialInset = table.contentInset.top;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    table.cyl_header = header;
+    XCTestExpectation *started = [self expectationWithDescription:@"search header started"];
+    [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    table.contentOffset = CGPointMake(0, 100);
+    [controller.view layoutIfNeeded];
+    [header endRefreshing];
+    XCTAssertEqualWithAccuracy(table.contentInset.top, initialInset, 0.01);
+    table.cyl_header = nil;
     window.hidden = YES;
 }
 
@@ -919,6 +989,93 @@
     XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 550, 0.001);
     scrollView.cyl_testDecelerating = NO;
 
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testPagingBackFooterReturnsToLastPageAfterRefresh {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTAssertGreaterThan(scrollView.contentOffset.y, 960);
+    XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01);
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testPagingBackFooterPreservesPreviousPageWhenContentGrows {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    scrollView.contentSize = CGSizeMake(320, 1920);
+    XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01);
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testPagingBackFooterDoesNotOverrideCallerOrActiveScrolling {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    for (NSInteger scenario = 0; scenario < 3; scenario++) {
+        scrollView.cyl_testDragging = NO;
+        scrollView.cyl_testDecelerating = NO;
+        scrollView.contentSize = CGSizeMake(320, 1440);
+        scrollView.contentOffset = CGPointMake(0, 960);
+        XCTestExpectation *started = [self expectationWithDescription:@"paging footer started"];
+        [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+        [self waitForExpectations:@[started] timeout:5];
+        scrollView.contentSize = CGSizeMake(320, 1920);
+        if (scenario == 0) scrollView.contentOffset = CGPointMake(0, 1440);
+        if (scenario == 1) scrollView.cyl_testDragging = YES;
+        if (scenario == 2) scrollView.cyl_testDecelerating = YES;
+        CGFloat expectedOffset = scrollView.contentOffset.y;
+        XCTestExpectation *ended = [self expectationWithDescription:@"paging footer ended"];
+        [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+        [self waitForExpectations:@[ended] timeout:5];
+        XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, expectedOffset, 0.01);
+    }
     scrollView.cyl_footer = nil;
     window.hidden = YES;
 }
