@@ -1,0 +1,13 @@
+The following unmodified images are Material Design icons by Google, from
+https://github.com/google/material-design-icons/tree/10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7
+and are distributed under the Apache License, Version 2.0. See
+LICENSE.material-design-icons.
+
+CYLPlaceholderNoResults@2x.png was named CYLSearchNoResults@2x.png.
+CYLPlaceholderNoInternet@2x.png was named CYLSearchNoInternet@2x.png:
+  png/device/signal_wifi_connected_no_internet_4/materialicons/48dp/2x/baseline_signal_wifi_connected_no_internet_4_black_48dp.png
+CYLPlaceholderError@2x.png was named CYLSearchError@2x.png.
+CYLPlaceholderWarning@2x.png was named CYLSearchWarning@2x.png:
+  png/alert/warning/materialicons/48dp/2x/baseline_warning_black_48dp.png
+CYLPlaceholderInbox@2x.png was named CYLSearchInbox@2x.png:
+  png/content/inbox/materialicons/48dp/2x/baseline_inbox_black_48dp.png

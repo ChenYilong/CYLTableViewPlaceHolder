@@ -169,6 +169,20 @@
     XCTAssertTrue(placeholder.textLabel.text.length > 0);
 }
 
+- (void)testAdditionalPlaceholderImagesLoadFromResourceBundle {
+    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
+    NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+    if (!url) url = [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+    XCTAssertNotNil(url);
+    NSBundle *bundle = [NSBundle bundleWithURL:url];
+    for (NSString *name in @[@"CYLPlaceholderNoResults", @"CYLPlaceholderNoInternet",
+                              @"CYLPlaceholderError", @"CYLPlaceholderWarning", @"CYLPlaceholderInbox"]) {
+        XCTAssertNotNil([UIImage imageNamed:name inBundle:bundle compatibleWithTraitCollection:nil], @"%@", name);
+    }
+    XCTAssertNotNil([bundle URLForResource:@"LICENSE" withExtension:@"material-design-icons"]);
+    XCTAssertNotNil([bundle URLForResource:@"NOTICE" withExtension:@"material-design-icons"]);
+}
+
 - (void)testTableBatchAndSectionUpdatesAcrossMultipleSections {
     CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
     source.sections = 2;

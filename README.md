@@ -71,6 +71,11 @@ iOS 15 的 reconfigure 操作。更新会在主队列合并处理；请在主线
 占位视图使用 frame layout guide 约束，随列表可视区域及尺寸变化调整。
 block 若引用控制器，请使用弱引用避免循环引用。内置 `CYLPlaceholderView` 的图片及
 中英文文本位于 `CYLTableViewPlaceHolder.bundle`，可自行调整其 imageView 和 textLabel。
+资源包还提供 `CYLPlaceholderNoResults`、`CYLPlaceholderNoInternet`、
+`CYLPlaceholderError`、`CYLPlaceholderWarning` 和 `CYLPlaceholderInbox` 图标，
+分别适用于无搜索结果、无网络、错误、警告和空收件箱；它们不改变默认图片。
+可使用 `UIImage` 的 `imageNamed:inBundle:compatibleWithTraitCollection:` 从该资源包加载。
+图标来自 Google Material Design，许可及来源记录随资源包分发。
 
 实现通过 method swizzling 拦截 UIKit 方法，影响进程中对应类的方法分发；未启用
 block 的列表不安装占位视图。子类覆盖更新方法而不调用 `super`、以及 diffable
