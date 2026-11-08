@@ -239,7 +239,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -248,7 +248,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		990C3B2C4C20ECB5C082754B /* [CP] Check Pods Manifest.lock */ = {

@@ -120,8 +120,32 @@ pod update
 这里注意两点：
 
 
- 1.   [CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 的 `cyl_reloadData`方法内部会重新将该占位视图的 frame 进行设置，设置为与当前的的  `TableView`  一致：包括 xy 坐标和宽高。防止 `TableView`  位置或尺寸的变更。
- 2. 以上步骤，包括遵循协议实现协议方法，既可以在自定义的  `TableView`  中去做，也可以在  `TableView`  的代理中去做。
+ 1. 默认占位视图填满 table view 的 bounds，宽高随 table view 调整。每次空数据刷新都会重新调用 `makePlaceHolderView`，因此可以切换网络错误与无数据视图。
+ 2. `makePlaceHolderView` 可由自定义 table view、delegate 或独立的 data source 实现，按此顺序查找；应返回非空视图。
+
+如果表头或刷新 footer 需要保持可见，可在提供占位图的对象中实现可选方法，返回 table view 坐标系中的区域；每次布局需求变化时调用 `cyl_reloadData` 更新区域：
+
+```Objective-C
+- (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
+    CGFloat top = CGRectGetMaxY(tableView.tableHeaderView.frame);
+    return CGRectMake(0, top, CGRectGetWidth(tableView.bounds),
+                      MAX(0, CGRectGetHeight(tableView.bounds) - top));
+}
+```
+
+自定义 frame 不会自动跟随尺寸变化，必要时请为返回的视图设置 autoresizing mask，或在布局变化后重新加载。对于 section header 和 MJRefresh footer，需根据它们在 table view 内容坐标系中的实际 frame 计算不重叠区域；例如空数据时 MJRefresh 自动 footer 不一定在屏幕底部。占位图仍位于其 frame 内其他子视图之上。
+
+例如，在使用 `MJRefreshAutoNormalFooter` 且 footer 位于内容顶部的场景中，可在导入 MJRefresh 后将占位图放在 footer 之后：
+
+```Objective-C
+- (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
+    CGFloat top = CGRectGetMaxY(tableView.mj_footer.frame);
+    return CGRectMake(0, top, CGRectGetWidth(tableView.bounds),
+                      MAX(0, CGRectGetHeight(tableView.bounds) - top));
+}
+```
+
+此示例不是所有布局的通用解：footer 位置变化后应重新计算；若还有表头或 section header，也需结合它们的实际位置。
 
  既可以让代理遵循协议，实现协议方法：
 
@@ -145,8 +169,7 @@ pod update
 @optional
 /*!
  @brief enable tableView scroll when place holder view is showing,it is disabled by default.
- @attention There is no need to return  NO , it will be NO by default
- @return enable tableView scroll, you can only return YES
+ @return YES 表示可滚动，NO 表示不可滚动
  */
 - (BOOL)enableScrollWhenPlaceHolderViewShowing;
  ```
@@ -165,9 +188,13 @@ pod update
 
 注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法，请避免重复调用。
 
+本库只管理 `UITableView`，不管理 `UICollectionView` 或普通页面；这些场景需要各自的空状态实现。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
+
 ## 运行Demo
 
 demo 的刷新组件使用的是 MJRefresh，所以需要导入相应的 CocoaPods 库 
+
+使用 `pod install` 后打开 `CYLTableViewPlaceHolder.xcworkspace`，不要打开 `.xcodeproj`。若遇到 `library not found for -lPods`，检查 workspace、Podfile 中的 target 与应用 target 是否一致，并重新执行 `pod install`；这是 CocoaPods 集成问题，不应手动链接旧的 `libPods.a`。较新的 Xcode 可能需要在构建时指定受支持的 iOS deployment target。
 
 
 
@@ -275,4 +302,3 @@ App | 暂无数据 | 网络故障
 ----------
 Posted by [微博@iOS程序犭袁](http://weibo.com/luohanchenyilong/)  
 原创文章，版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)
-

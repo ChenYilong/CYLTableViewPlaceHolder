@@ -42,7 +42,8 @@ static const CGFloat CYLDuration = 1.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"CYLTableViewPlaceHolder";
-    self.tableView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+    self.tableView.frame = self.view.bounds;
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.backgroundColor = [UIColor yellowColor];
     self.dataSource = nil;
     [self setUpMJRefresh];

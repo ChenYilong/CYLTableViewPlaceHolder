@@ -45,78 +45,73 @@
 
 - (void)cyl_checkEmpty {
     BOOL isEmpty = YES;
-    
+
     id<UITableViewDataSource> src = self.dataSource;
     NSInteger sections = 1;
-    if ([src respondsToSelector: @selector(numberOfSectionsInTableView:)]) {
+    if ([src respondsToSelector:@selector(numberOfSectionsInTableView:)]) {
         sections = [src numberOfSectionsInTableView:self];
     }
-    for (int i = 0; i<sections; ++i) {
+    for (NSInteger i = 0; i < sections; ++i) {
         NSInteger rows = [src tableView:self numberOfRowsInSection:i];
-        if (rows) {
+        if (rows > 0) {
             isEmpty = NO;
             break;
         }
-        
     }
-    if (!isEmpty != !self.placeHolderView) {
-        if (isEmpty) {
-            self.scrollWasEnabled = self.scrollEnabled;
-            BOOL scrollEnabled = NO;
-            if ([self respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-conversion"
-                scrollEnabled = [self performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
-#pragma clang diagnostic pop
-                if (!scrollEnabled) {
-                    NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
-                    NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
-                }
-            } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-conversion"
-                scrollEnabled = [self.delegate performSelector:@selector(enableScrollWhenPlaceHolderViewShowing)];
-#pragma clang diagnostic pop
-                
-                if (!scrollEnabled) {
-                    NSString *reason = @"There is no need to return  NO for `-enableScrollWhenPlaceHolderViewShowing`, it will be NO by default";
-                   NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
-                }
-            }
-            self.scrollEnabled = scrollEnabled;
-            if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-conversion"
-                self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
-#pragma clang diagnostic pop
-            } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-conversion"
-                self.placeHolderView = [self.delegate performSelector:@selector(makePlaceHolderView)];
-#pragma clang diagnostic pop
-            } else {
-                NSString *selectorName = NSStringFromSelector(_cmd);
-                NSString *reason = [NSString stringWithFormat:@"You must implement makePlaceHolderView method in your custom tableView or its delegate class if you want to use %@", selectorName];
-                NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), reason);
-            }
-            self.placeHolderView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-            [self addSubview:self.placeHolderView];
-        } else {
+
+    if (!isEmpty) {
+        if (self.placeHolderView) {
             self.scrollEnabled = self.scrollWasEnabled;
             [self.placeHolderView removeFromSuperview];
             self.placeHolderView = nil;
         }
-    } else if (isEmpty) {
-        // Make sure it is still above all siblings.
-        [self.placeHolderView removeFromSuperview];
-        if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
-            self.placeHolderView = [self performSelector:@selector(makePlaceHolderView)];
-        } else if ( [self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
-            self.placeHolderView = [self.delegate performSelector:@selector(makePlaceHolderView)];
-        }
-        self.placeHolderView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-        [self addSubview:self.placeHolderView];
+        return;
     }
-}
 
+    id<CYLTableViewPlaceHolderDelegate> provider = nil;
+    if ([self respondsToSelector:@selector(makePlaceHolderView)]) {
+        provider = (id<CYLTableViewPlaceHolderDelegate>)self;
+    } else if ([self.delegate respondsToSelector:@selector(makePlaceHolderView)]) {
+        provider = (id<CYLTableViewPlaceHolderDelegate>)self.delegate;
+    } else if ([src respondsToSelector:@selector(makePlaceHolderView)]) {
+        provider = (id<CYLTableViewPlaceHolderDelegate>)src;
+    }
+
+    UIView *view = [provider makePlaceHolderView];
+    if (!view) {
+        NSLog(@"CYLTableViewPlaceHolder: makePlaceHolderView must return a view when the table is empty.");
+        if (self.placeHolderView) {
+            self.scrollEnabled = self.scrollWasEnabled;
+            [self.placeHolderView removeFromSuperview];
+            self.placeHolderView = nil;
+        }
+        return;
+    }
+
+    if (!self.placeHolderView) {
+        self.scrollWasEnabled = self.scrollEnabled;
+        id<CYLTableViewPlaceHolderDelegate> scrollProvider = nil;
+        if ([self respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
+            scrollProvider = (id<CYLTableViewPlaceHolderDelegate>)self;
+        } else if ([self.delegate respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
+            scrollProvider = (id<CYLTableViewPlaceHolderDelegate>)self.delegate;
+        } else if ([src respondsToSelector:@selector(enableScrollWhenPlaceHolderViewShowing)]) {
+            scrollProvider = (id<CYLTableViewPlaceHolderDelegate>)src;
+        }
+        self.scrollEnabled = scrollProvider ? [scrollProvider enableScrollWhenPlaceHolderViewShowing] : NO;
+    } else if (self.placeHolderView != view) {
+        [self.placeHolderView removeFromSuperview];
+    }
+    self.placeHolderView = view;
+    if ([provider respondsToSelector:@selector(frameForPlaceHolderViewInTableView:)]) {
+        view.frame = [provider frameForPlaceHolderViewInTableView:self];
+    } else {
+        view.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+        view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    if (view.superview != self) {
+        [self addSubview:view];
+    }
+    [self bringSubviewToFront:view];
+}
 @end

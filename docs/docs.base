@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Documents
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/docs")
+    order:
+      - file.name

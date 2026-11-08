@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Project files
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder")
+    order:
+      - file.name

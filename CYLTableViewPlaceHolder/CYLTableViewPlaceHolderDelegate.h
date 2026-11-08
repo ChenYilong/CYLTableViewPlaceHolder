@@ -6,6 +6,8 @@
 //  Copyright © 2015年 https://github.com/ChenYilong . All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 @protocol CYLTableViewPlaceHolderDelegate <NSObject>
 
 @required
@@ -18,9 +20,15 @@
 @optional
 /*!
  @brief enable tableView scroll when place holder view is showing, it is disabled by default.
- @attention There is no need to return  NO, it will be NO by default
- @return enable tableView scroll, you can only return YES
+ @return YES to enable scrolling, or NO to disable it.
  */
 - (BOOL)enableScrollWhenPlaceHolderViewShowing;
+
+/*!
+ @brief Customize the placeholder frame in the table view's coordinate system.
+ @discussion Return a frame below a table header or above a refresh footer when
+ those views must remain visible. By default the placeholder fills the table.
+ */
+- (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView;
 
 @end

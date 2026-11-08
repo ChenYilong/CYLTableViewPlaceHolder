@@ -1,0 +1,8 @@
+views:
+  - type: table
+    name: Tests
+    filters:
+      and:
+        - file.inFolder("CYLTableViewPlaceHolder/Tests")
+    order:
+      - file.name

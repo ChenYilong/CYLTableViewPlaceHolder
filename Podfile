@@ -1,4 +1,4 @@
-source 'git@github.com:CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 
 target 'CYLTableViewPlaceHolder' do
   platform :ios , '8.0'
