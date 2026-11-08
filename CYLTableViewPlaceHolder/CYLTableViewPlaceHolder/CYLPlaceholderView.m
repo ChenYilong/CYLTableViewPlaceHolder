@@ -64,7 +64,17 @@ static NSBundle *CYLPlaceholderResourceBundle(void) {
         return nil;
     }
     NSBundle *bundle = CYLPlaceholderResourceBundle();
-    return bundle ? [bundle localizedStringForKey:keys[message] value:fallbacks[message] table:nil] : fallbacks[message];
+    if (!bundle) return fallbacks[message];
+    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja"];
+    NSString *language = [NSBundle preferredLocalizationsFromArray:languages
+                                                    forPreferences:NSLocale.preferredLanguages].firstObject;
+    NSString *path = [bundle pathForResource:language ofType:@"lproj"];
+    NSBundle *localizedBundle = path ? [NSBundle bundleWithPath:path] : nil;
+    if (!localizedBundle) {
+        NSLog(@"CYLTableViewPlaceHolder: localization %@ is missing.", language);
+        return fallbacks[message];
+    }
+    return [localizedBundle localizedStringForKey:keys[message] value:fallbacks[message] table:nil];
 }
 
 - (instancetype)initWithStyle:(CYLPlaceholderStyle)style message:(CYLPlaceholderMessage)message {
