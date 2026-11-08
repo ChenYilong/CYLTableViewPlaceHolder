@@ -11,6 +11,31 @@
 + (NSBundle *)cyl_testMissingRefreshBundle { return nil; }
 @end
 
+@interface CYLTestPanGestureRecognizer : UIPanGestureRecognizer
+@property (nonatomic) UIGestureRecognizerState cyl_testState;
+@end
+@implementation CYLTestPanGestureRecognizer
+- (UIGestureRecognizerState)state { return self.cyl_testState; }
+@end
+
+@interface CYLTestScrollView : UIScrollView
+@property (nonatomic) CGPoint cyl_testOffset;
+@property (nonatomic, strong) CYLTestPanGestureRecognizer *cyl_testPan;
+@end
+@implementation CYLTestScrollView
+- (CGPoint)contentOffset { return self.cyl_testOffset; }
+- (UIPanGestureRecognizer *)panGestureRecognizer { return self.cyl_testPan; }
+@end
+
+@interface CYLTestPagingScrollView : UIScrollView
+@property (nonatomic) BOOL cyl_testDragging;
+@property (nonatomic) BOOL cyl_testDecelerating;
+@end
+@implementation CYLTestPagingScrollView
+- (BOOL)isDragging { return self.cyl_testDragging; }
+- (BOOL)isDecelerating { return self.cyl_testDecelerating; }
+@end
+
 @interface CYLTestSource : NSObject <UITableViewDataSource, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic) NSInteger rows;
 @property (nonatomic) BOOL allowScroll;
@@ -210,6 +235,31 @@
     window.hidden = YES;
 }
 
+- (void)testHeaderRestoresInsetAcrossRepeatedRefreshes {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    self.table.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    self.table.contentInset = UIEdgeInsetsMake(20, 0, 12, 0);
+    [window makeKeyAndVisible];
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    self.table.cyl_header = header;
+    for (NSUInteger index = 0; index < 3; index++) {
+        XCTestExpectation *started = [self expectationWithDescription:@"header started"];
+        [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+        [self waitForExpectations:@[started] timeout:5];
+        XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20 + header.cyl_h, 0.001);
+        XCTestExpectation *ended = [self expectationWithDescription:@"header ended"];
+        [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+        [self waitForExpectations:@[ended] timeout:5];
+        XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
+    }
+    self.table.cyl_header = nil;
+    window.hidden = YES;
+}
+
 - (void)testRefreshLocaleCanChange {
     CYLRefreshConfig.defaultConfig.languageCode = @"zh-Hans";
     NSString *chinese = [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText];
@@ -308,6 +358,23 @@
     XCTAssertNoThrow([component removeFromSuperview]);
 }
 
+- (void)testRefreshFooterRepeatedlyMovesBetweenContainerAndScrollViews {
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    UIView *container = [UIView new];
+    UIScrollView *secondScrollView = [[UIScrollView alloc] initWithFrame:self.table.frame];
+    CGFloat initialInset = self.table.cyl_insetB;
+    for (NSUInteger index = 0; index < 100; index++) {
+        [container addSubview:footer];
+        XCTAssertNil(footer.scrollView);
+        [self.table addSubview:footer];
+        XCTAssertEqual(footer.scrollView, self.table);
+        [secondScrollView addSubview:footer];
+        XCTAssertEqualWithAccuracy(self.table.cyl_insetB, initialInset, 0.001);
+        [footer removeFromSuperview];
+        XCTAssertNil(footer.scrollView);
+    }
+}
+
 - (void)testAutoFooterRestoresInsetWhenRemoved {
     self.table.contentInset = UIEdgeInsetsMake(0, 0, 12, 0);
     CGFloat initialInset = self.table.cyl_insetB;
@@ -315,6 +382,75 @@
     XCTAssertGreaterThan(self.table.cyl_insetB, initialInset);
     self.table.cyl_footer = nil;
     XCTAssertEqualWithAccuracy(self.table.cyl_insetB, initialInset, 0.001);
+}
+
+- (void)testAutoFooterPanEndToleratesFloatingPointRounding {
+    CYLTestScrollView *scrollView = [[CYLTestScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.cyl_testPan = [CYLTestPanGestureRecognizer new];
+    scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateEnded;
+    scrollView.contentSize = CGSizeMake(320, 1800);
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    scrollView.cyl_footer = footer;
+    CGFloat threshold = scrollView.cyl_contentH + scrollView.cyl_insetB - scrollView.cyl_h;
+
+    scrollView.cyl_testOffset = CGPointMake(0, threshold - 0.01);
+    [footer scrollViewPanStateDidChange:nil];
+    XCTAssertFalse(footer.isRefreshing);
+
+    scrollView.cyl_testOffset = CGPointMake(0, threshold - 1e-11);
+    [footer scrollViewPanStateDidChange:nil];
+    XCTAssertTrue(footer.isRefreshing);
+    footer.state = CYLRefreshStateIdle;
+    scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateBegan;
+    [footer scrollViewPanStateDidChange:nil];
+    scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateEnded;
+    scrollView.cyl_testOffset = CGPointMake(0, threshold);
+    [footer scrollViewPanStateDidChange:nil];
+    XCTAssertTrue(footer.isRefreshing);
+    scrollView.cyl_footer = nil;
+}
+
+- (void)testPagingAutoFooterEndPreservesValidAndInteractiveOffsets {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 30, 0);
+    scrollView.contentSize = CGSizeMake(320, 960);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+
+    [footer beginRefreshing];
+    scrollView.contentOffset = CGPointMake(0, 480);
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 480, 0.001);
+
+    [footer beginRefreshing];
+    scrollView.contentOffset = CGPointMake(0, 550);
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 510, 0.001);
+
+    [footer beginRefreshing];
+    scrollView.contentOffset = CGPointMake(0, 550);
+    scrollView.cyl_testDragging = YES;
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 550, 0.001);
+    scrollView.cyl_testDragging = NO;
+
+    [footer beginRefreshing];
+    scrollView.contentOffset = CGPointMake(0, 550);
+    scrollView.cyl_testDecelerating = YES;
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 550, 0.001);
+    scrollView.cyl_testDecelerating = NO;
+
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
 }
 
 - (void)testEndRefreshingDoesNotOverrideImmediateStateChange {

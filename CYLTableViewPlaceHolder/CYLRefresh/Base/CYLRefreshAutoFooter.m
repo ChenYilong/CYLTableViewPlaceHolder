@@ -12,6 +12,8 @@
 #import "UIScrollView+CYLExtension.h"
 #import "UIScrollView+CYLRefresh.h"
 #import "CYLRefreshHeader.h"
+#import <float.h>
+#import <math.h>
 
 @interface CYLRefreshAutoFooter()
 /** 一个新的拖拽 */
@@ -109,7 +111,12 @@
                     [self beginRefreshing];
                 }
             } else { // 超出一个屏幕
-                if (_scrollView.cyl_offsetY >= _scrollView.cyl_contentH + _scrollView.cyl_insetB - _scrollView.cyl_h) {
+                CGFloat threshold = _scrollView.cyl_contentH + _scrollView.cyl_insetB - _scrollView.cyl_h;
+                CGFloat offset = _scrollView.cyl_offsetY;
+                CGFloat epsilon = sizeof(CGFloat) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+                // Allow arithmetic rounding error without treating a visible gap as the bottom.
+                CGFloat tolerance = 64 * epsilon * MAX(1, MAX(fabs(offset), fabs(threshold)));
+                if (offset >= threshold - tolerance) {
                     self.triggerByDrag = YES;
                     [self beginRefreshing];
                 }
@@ -156,10 +163,17 @@
 
         if (CYLRefreshStateRefreshing == oldState) {
             if (self.scrollView.pagingEnabled) {
-                CGPoint offset = self.scrollView.contentOffset;
-                offset.y -= self.scrollView.cyl_insetB;
                 [UIView animateWithDuration:self.slowAnimationDuration animations:^{
-                    self.scrollView.contentOffset = offset;
+                    if (!self.scrollView.isDragging && !self.scrollView.isDecelerating) {
+                        CGPoint offset = self.scrollView.contentOffset;
+                        CGFloat bottomInset = self.scrollView.cyl_insetB - (self.hidden ? 0 : self.cyl_h);
+                        CGFloat maximumOffset = MAX(-self.scrollView.cyl_insetT,
+                                                    self.scrollView.cyl_contentH + bottomInset - self.scrollView.cyl_h);
+                        if (offset.y > maximumOffset) {
+                            offset.y = maximumOffset;
+                            self.scrollView.contentOffset = offset;
+                        }
+                    }
 
                     if (self.endRefreshingAnimationBeginAction) {
                         self.endRefreshingAnimationBeginAction();

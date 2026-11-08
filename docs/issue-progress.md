@@ -37,7 +37,7 @@
 
 | Issue 地址 | Issue 描述 | 修复近况 |
 | --- | --- | --- |
-| [#1630](https://github.com/CoderMJLee/MJRefresh/issues/1630) | 偶发移除 KVO 观察者崩溃 | 45/100：阅读报告、检查注册/解绑路径、按实际注册对象解绑并测试容器切换；报告未能复现偶发崩溃，根因及修复效果仍待确认，尚未进行三轮独立修复。 |
+| [#1630](https://github.com/CoderMJLee/MJRefresh/issues/1630) | 偶发移除 KVO 观察者崩溃 | 60/100：按实际注册对象解绑，并在 iOS 26.3.1 模拟器让自动 footer 在普通容器及两个滚动视图之间切换 100 次；原偶发崩溃及真实控制器销毁场景仍未复现，不能确认根因，尚未进行三轮独立修复。 |
 | [#1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | SwiftUI 刷新动画消失 | 0/100：未调查，未修复。 |
 | [#1627](https://github.com/CoderMJLee/MJRefresh/issues/1627) | Plain 表格 section header 回弹异常 | 0/100：未调查，未修复。 |
 | [#1626](https://github.com/CoderMJLee/MJRefresh/issues/1626) | 本地化 bundle 路径为空 | 100/100：对语言目录和资源 bundle 路径进行空值防护；模拟器验证未知语言回退英文，以及整个资源 bundle 缺失时保留调用方提供的回退文本。 |
@@ -47,17 +47,17 @@
 | [#1615](https://github.com/CoderMJLee/MJRefresh/issues/1615) | 自定义 header 快速下拉崩溃 | 0/100：未调查，未修复。 |
 | [#1614](https://github.com/CoderMJLee/MJRefresh/issues/1614) | SwiftUI 兼容功能 | 0/100：未调查，未修复。 |
 | [#1613](https://github.com/CoderMJLee/MJRefresh/issues/1613) | 偶发上拉刷新无法恢复 | 0/100：未调查，未修复。 |
-| [#1610](https://github.com/CoderMJLee/MJRefresh/issues/1610) | 自动 footer 结束时 contentOffset 复位异常 | 0/100：未调查，未修复。 |
+| [#1610](https://github.com/CoderMJLee/MJRefresh/issues/1610) | 自动 footer 结束时 contentOffset 复位异常 | 75/100：分页模式结束刷新时不再减去整个底部 inset；静止时仅限制越界 offset，拖拽或减速时不强制移动。模拟器以受控状态验证正常位置、越界、拖拽和减速分支；真实手势减速、数据变化及分页对齐尚未验证，未完成三轮独立修复。 |
 | [#1607](https://github.com/CoderMJLee/MJRefresh/issues/1607) | Plain 表格的 section footer 悬空 | 0/100：未调查，未修复。 |
 | [#1600](https://github.com/CoderMJLee/MJRefresh/issues/1600) | 自适应 collection cell 加载后抖动 | 0/100：未调查，未修复。 |
 | [#1598](https://github.com/CoderMJLee/MJRefresh/issues/1598) | scrollToRowAtIndexPath 后 footer 露出 | 0/100：未调查，未修复。 |
 | [#1597](https://github.com/CoderMJLee/MJRefresh/issues/1597) | JXCategoryView 中 header 子控件不显示 | 0/100：未调查，未修复。 |
 | [#1595](https://github.com/CoderMJLee/MJRefresh/issues/1595) | collection 悬浮 header 加载更多时闪烁 | 0/100：未调查，未修复。 |
-| [#1593](https://github.com/CoderMJLee/MJRefresh/issues/1593) | 真机编译时消息发送参数错误 | 0/100：未调查，未修复。 |
+| [#1593](https://github.com/CoderMJLee/MJRefresh/issues/1593) | 真机编译时消息发送参数错误 | 45/100：检查原报告及评论，当前代码在开启 strict objc_msgSend 时可编译通用 iOS 真机目标；缺少原始工程、报错文本和实际设备验证，不能确认根因或完成三轮独立修复。 |
 | [#1592](https://github.com/CoderMJLee/MJRefresh/issues/1592) | 自定义 collection layout 固定 header 动画异常 | 0/100：未调查，未修复。 |
 | [#1591](https://github.com/CoderMJLee/MJRefresh/issues/1591) | pagingEnabled 时加载结束偏移和闪烁 | 0/100：未调查，未修复。 |
 | [#1590](https://github.com/CoderMJLee/MJRefresh/issues/1590) | WKWebView Auto Layout 初次显示不全 | 0/100：未调查，未修复。 |
-| [#1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | SwiftUI 非 scroll view 容器移除 KVO 崩溃 | 80/100：检查非 scroll view 容器的解绑路径、按实际注册对象解绑、测试普通 UIView 和 scroll view 之间多次切换；尚未在真实 SwiftUI 容器复现，未进行三轮独立修复。 |
+| [#1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | SwiftUI 非 scroll view 容器移除 KVO 崩溃 | 85/100：按实际注册对象解绑；模拟器让真实自动 footer 在普通 UIView 和两个 scroll view 间切换 100 次，并检查底部 inset 恢复；尚未在真实 SwiftUI 容器复现，未进行三轮独立修复。 |
 | [#1587](https://github.com/CoderMJLee/MJRefresh/issues/1587) | 下拉刷新和上拉加载互斥 | 40/100：检查自动 footer 两个触发路径、阻止 header 刷新时自动触发、测试 header 刷新前后状态；反向互斥、其他 footer 类型和状态提示未实现，未进行三轮独立修复。 |
 | [#1586](https://github.com/CoderMJLee/MJRefresh/issues/1586) | 隐藏 header 时开始刷新位置异常 | 0/100：未调查，未修复。 |
 | [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 0/100：未调查，未修复。 |
@@ -75,7 +75,7 @@
 | [#1523](https://github.com/CoderMJLee/MJRefresh/issues/1523) | collection 防动画异常选项导致 item 闪烁 | 0/100：未调查，未修复。 |
 | [#1507](https://github.com/CoderMJLee/MJRefresh/issues/1507) | Plain section header 加载结束跳动 | 0/100：未调查，未修复。 |
 | [#1506](https://github.com/CoderMJLee/MJRefresh/issues/1506) | collection 大幅度加载动画异常 | 0/100：未调查，未修复。 |
-| [#1488](https://github.com/CoderMJLee/MJRefresh/issues/1488) | 浮点误差导致自动 footer 不触发 | 0/100：未调查，未修复。 |
+| [#1488](https://github.com/CoderMJLee/MJRefresh/issues/1488) | 浮点误差导致自动 footer 不触发 | 100/100：松手判定加入按数值大小缩放的浮点误差容限；模拟器针对临界点相差约 1e-11、恰好相等和差 0.01 分别验证触发、触发和不触发。原 iOS 13.6 环境未复测。 |
 | [#1483](https://github.com/CoderMJLee/MJRefresh/issues/1483) | collection 连续刷新位置上移 | 0/100：未调查，未修复。 |
 | [#1481](https://github.com/CoderMJLee/MJRefresh/issues/1481) | trailer 转 footer 后横向内容尺寸残留 | 0/100：已阅读报告和源码，尚未复现或修复。 |
 | [#1430](https://github.com/CoderMJLee/MJRefresh/issues/1430) | 刷新后设置 offset 并滑动时跳到首项 | 0/100：未调查，未修复。 |
@@ -95,7 +95,7 @@
 | --- | --- | --- |
 | [#1629](https://github.com/CoderMJLee/MJRefresh/pull/1629) | 本地化 bundle 路径为空防护 | 已适配空路径处理并验证语言目录及资源 bundle 缺失场景，见 #1626。 |
 | [#1606](https://github.com/CoderMJLee/MJRefresh/pull/1606) | 主线程同步状态更新 | 已对结束和重置刷新状态定向适配，保留原本用于延迟布局的异步宏；未照搬会改变所有调用点的补丁。 |
-| [#1444](https://github.com/CoderMJLee/MJRefresh/pull/1444) | header inset、section header 与动画 | 尚未移植：补丁改变 inset delta 的正负含义和两条动画路径，缺少可重复的真实拖拽、旋转及 collection 动画验证，不能安全宣称兼容。 |
+| [#1444](https://github.com/CoderMJLee/MJRefresh/pull/1444) | header inset、section header 与动画 | 尚未移植：已增加普通 table view 三次刷新后顶部 inset 复位测试；补丁改变 inset delta 的正负含义和两条动画路径，仍缺少可重复的真实拖拽、旋转及 collection 动画验证，不能安全宣称兼容。 |
 | [#1329](https://github.com/CoderMJLee/MJRefresh/pull/1329) | 同步执行 header 刷新动画 | 当前版本已经直接调用 header 刷新动作；未声称所有旧系统的回弹问题已解决。 |
 | [#1328](https://github.com/CoderMJLee/MJRefresh/pull/1328) | 下拉时避免自动触发 footer | 已适配 adjusted inset 边界及 header 刷新期间的保护；其他互斥需求见 #1587。 |
 | [#1181](https://github.com/CoderMJLee/MJRefresh/pull/1181) | 滚动距离及方向 | 已改为显式采样、`CGFloat` 距离及 `CYL` 类型，避免原补丁的读取副作用和方向计算错误；调用方式不同，见 README。 |
