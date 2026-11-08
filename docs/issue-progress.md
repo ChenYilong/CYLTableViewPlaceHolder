@@ -77,7 +77,7 @@
 | [#1506](https://github.com/CoderMJLee/MJRefresh/issues/1506) | collection 大幅度加载动画异常 | 0/100：未调查，未修复。 |
 | [#1488](https://github.com/CoderMJLee/MJRefresh/issues/1488) | 浮点误差导致自动 footer 不触发 | 100/100：松手判定加入按数值大小缩放的浮点误差容限；模拟器针对临界点相差约 1e-11、恰好相等和差 0.01 分别验证触发、触发和不触发。原 iOS 13.6 环境未复测。 |
 | [#1483](https://github.com/CoderMJLee/MJRefresh/issues/1483) | collection 连续刷新位置上移 | 40/100：阅读报告并修复刷新开始时 inset 恢复量未初始化的问题；模拟器在 collection 动画分支连续四次刷新，验证顶部 inset 恢复和交互恢复。尚未复现原视频中的实际内容布局和滑动，未完成三轮独立修复。 |
-| [#1481](https://github.com/CoderMJLee/MJRefresh/issues/1481) | trailer 转 footer 后横向内容尺寸残留 | 85/100：复现并修复移除正在刷新的 trailer 后右侧 inset 和横向弹性滚动残留；模拟器验证真实 collection 从横向切到纵向后的内容宽度，以及原有弹性设置、调用方更改 inset 和换父视图。需先明确移除 trailer；原 issue 缺少切换代码，保留 trailer 的场景仍未确认，未完成三轮独立修复。 |
+| [#1481](https://github.com/CoderMJLee/MJRefresh/issues/1481) | trailer 转 footer 后横向内容尺寸残留 | 85/100：三项相关修复及验证：①恢复移除时的右侧 inset 和横向弹性，模拟真实 collection 切换方向；②防止开始动画未完成时结束或复用导致旧开始回调重复触发，并避免旧结束动画重置新刷新进度；③为重叠的结束动画分别保存完成回调，修复旧回调丢失和新回调重复执行。②③分别先复现失败，再于 iOS 17.5 模拟器验证修复。仍需先移除 trailer；原 issue 缺少切换代码，保留 trailer 的场景仍未确认，这三项修复不代表对该未知场景进行了三次独立修复尝试。 |
 | [#1430](https://github.com/CoderMJLee/MJRefresh/issues/1430) | 刷新后设置 offset 并滑动时跳到首项 | 0/100：未调查，未修复。 |
 | [#1317](https://github.com/CoderMJLee/MJRefresh/issues/1317) | navigation 搜索控制器引发 inset 递归崩溃 | 0/100：未调查，未修复。 |
 | [#1258](https://github.com/CoderMJLee/MJRefresh/issues/1258) | 异步结束刷新覆盖调用方设置的状态 | 100/100：主线程立即结束刷新，模拟器验证随后设置的无更多数据状态不会被排队任务覆盖；后台调用仍异步派发到主线程。 |

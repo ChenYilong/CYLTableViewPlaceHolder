@@ -16,6 +16,7 @@
 @property (assign, nonatomic) CGFloat lastRightDelta;
 @property (assign, nonatomic) BOOL previousHorizontalBounce;
 @property (assign, nonatomic) BOOL previousVerticalBounce;
+@property (assign, nonatomic) NSUInteger refreshGeneration;
 @end
 
 @implementation CYLRefreshTrailer
@@ -81,6 +82,8 @@
     if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
         // 刷新完毕
         if (CYLRefreshStateRefreshing == oldState) {
+            NSUInteger generation = self.refreshGeneration;
+            CYLRefreshComponentAction completion = self.endRefreshingCompletionBlock;
             [UIView animateWithDuration:self.slowAnimationDuration animations:^{
                 if (self.endRefreshingAnimationBeginAction) {
                     self.endRefreshingAnimationBeginAction();
@@ -90,10 +93,12 @@
                 // 自动调整透明度
                 if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
             } completion:^(BOOL finished) {
-                self.pullingPercent = 0.0;
+                if (self.refreshGeneration == generation && !self.isRefreshing) {
+                    self.pullingPercent = 0.0;
+                }
 
-                if (self.endRefreshingCompletionBlock) {
-                    self.endRefreshingCompletionBlock();
+                if (completion) {
+                    completion();
                 }
             }];
         }
@@ -104,6 +109,7 @@
             self.scrollView.cyl_offsetX = self.scrollView.cyl_offsetX;
         }
     } else if (state == CYLRefreshStateRefreshing) {
+        NSUInteger generation = ++self.refreshGeneration;
         // 记录刷新前的数量
         self.lastRefreshCount = self.scrollView.cyl_totalDataCount;
 
@@ -121,7 +127,9 @@
             offset.x = [self happenOffsetX] + self.cyl_w;
             [self.scrollView setContentOffset:offset animated:NO];
         } completion:^(BOOL finished) {
-            [self executeRefreshingCallback];
+            if (self.refreshGeneration == generation && self.state == CYLRefreshStateRefreshing) {
+                [self executeRefreshingCallback];
+            }
         }];
     }
 }

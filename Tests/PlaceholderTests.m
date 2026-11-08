@@ -596,6 +596,118 @@
     window.hidden = YES;
 }
 
+- (void)testReusingTrailerDuringStartAnimationDoesNotRunOldRefreshCallback {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *oldView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    UIScrollView *newView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    [window.rootViewController.view addSubview:oldView];
+    [window.rootViewController.view addSubview:newView];
+    [window makeKeyAndVisible];
+    __block NSInteger callbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ callbacks++; }];
+    trailer.fastAnimationDuration = 0.5;
+    trailer.slowAnimationDuration = 0.2;
+    [oldView addSubview:trailer];
+    [trailer layoutIfNeeded];
+    [trailer beginRefreshing];
+    XCTAssertEqual(trailer.state, CYLRefreshStateRefreshing);
+    [newView addSubview:trailer];
+    [trailer layoutIfNeeded];
+    [trailer beginRefreshing];
+    XCTestExpectation *animationsFinished = [self expectationWithDescription:@"both start animations finished"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [animationsFinished fulfill];
+    });
+    [self waitForExpectations:@[animationsFinished] timeout:5];
+    XCTAssertEqual(callbacks, 1);
+    [trailer removeFromSuperview];
+    window.hidden = YES;
+}
+
+- (void)testRemovingTrailerDuringStartCancelsStartCallbacksButCompletesEnding {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 19);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    __block NSInteger refreshCallbacks = 0;
+    __block NSInteger beginCallbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ refreshCallbacks++; }];
+    trailer.fastAnimationDuration = 0.5;
+    trailer.slowAnimationDuration = 0.2;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    XCTestExpectation *ended = [self expectationWithDescription:@"detached refresh ended"];
+    trailer.endRefreshingCompletionBlock = ^{ [ended fulfill]; };
+    [trailer beginRefreshingWithCompletionBlock:^{ beginCallbacks++; }];
+    scrollView.cyl_trailer = nil;
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 19, 0.001);
+    XCTestExpectation *startAnimationFinished = [self expectationWithDescription:@"cancelled start animation finished"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [startAnimationFinished fulfill];
+    });
+    [self waitForExpectations:@[ended, startAnimationFinished] timeout:5];
+    XCTAssertEqual(refreshCallbacks, 0);
+    XCTAssertEqual(beginCallbacks, 0);
+    window.hidden = YES;
+}
+
+- (void)testOldTrailerEndAnimationDoesNotResetNewRefreshProgress {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0.5;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    XCTestExpectation *started = [self expectationWithDescription:@"first refresh started"];
+    [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:5];
+    XCTestExpectation *ended = [self expectationWithDescription:@"first refresh ended"];
+    [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    trailer.beginRefreshingCompletionBlock = nil;
+    [trailer beginRefreshing];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertTrue(trailer.isRefreshing);
+    XCTAssertEqualWithAccuracy(trailer.pullingPercent, 1, 0.001);
+    trailer.endRefreshingCompletionBlock = nil;
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+- (void)testOverlappingTrailerEndsCallTheirOwnCompletions {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0.5;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    __block NSInteger firstEnds = 0;
+    __block NSInteger secondEnds = 0;
+    [trailer beginRefreshing];
+    [trailer endRefreshingWithCompletionBlock:^{ firstEnds++; }];
+    [trailer beginRefreshing];
+    [trailer endRefreshingWithCompletionBlock:^{ secondEnds++; }];
+    XCTestExpectation *finished = [self expectationWithDescription:@"end animations finished"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [finished fulfill];
+    });
+    [self waitForExpectations:@[finished] timeout:5];
+    XCTAssertEqual(firstEnds, 1);
+    XCTAssertEqual(secondEnds, 1);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
 - (void)testAutoFooterPanEndToleratesFloatingPointRounding {
     CYLTestScrollView *scrollView = [[CYLTestScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     scrollView.cyl_testPan = [CYLTestPanGestureRecognizer new];
