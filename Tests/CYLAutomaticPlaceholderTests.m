@@ -1,9 +1,9 @@
 #import <XCTest/XCTest.h>
-#import "../CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h"
-#import "../CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h"
-#import "../CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
-#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
-#import "../CYLTableViewPlaceHolder/CYLPlaceholderView.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
 
 @interface CYLAutomaticTestSource : NSObject <UITableViewDataSource, UICollectionViewDataSource, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic) NSInteger count;

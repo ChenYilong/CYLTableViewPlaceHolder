@@ -1,7 +1,7 @@
 #import <XCTest/XCTest.h>
 #import <objc/runtime.h>
-#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
-#import "../CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
+#import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "CYLRefresh.h"
 
 @interface NSBundle (CYLTestMissingRefreshBundle)

@@ -241,7 +241,7 @@
 				BC5FFE1C7556568F92CA58F6 /* PrivacyInfo.xcprivacy */,
 				AC9A11EEA1254D7B84FA0002 /* LICENSE.third-party */,
 			);
-			path = CYLRefresh;
+			path = CYLTableViewPlaceHolder/CYLRefresh;
 			sourceTree = "<group>";
 		};
 		5B0EA6D4B478301B17518048 /* iOS */ = {
@@ -296,7 +296,6 @@
 				9A68F2E31C2A67E800D2E9B0 /* CYLTableViewPlaceHolderDelegate.h */,
 				9A68F2E41C2A67E800D2E9B0 /* UITableView+CYLTableViewPlaceHolder.h */,
 				9A68F2E51C2A67E800D2E9B0 /* UITableView+CYLTableViewPlaceHolder.m */,
-				08B6590E7E0200E1B3277CC3 /* CYLRefresh */,
 				8F62EC6AEAE2B6224D9DEEF1 /* UITableView+CYLPlaceholder.h */,
 				AE03F9B2739CC6716E553C0D /* UICollectionView+CYLPlaceholder.h */,
 				0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.m */,
@@ -305,7 +304,7 @@
 				4BE61ED4452D6B1EA21864EB /* CYLTableViewPlaceHolder.bundle */,
 				F6E43C3F1D07C1925B84A94E /* LICENSE.placeholder-third-party */,
 			);
-			path = CYLTableViewPlaceHolder;
+			path = CYLTableViewPlaceHolder/CYLTableViewPlaceHolder;
 			sourceTree = "<group>";
 		};
 		9A68F2E71C2A67F600D2E9B0 /* Example */ = {
@@ -357,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				9A68F2E11C2A67E800D2E9B0 /* CYLTableViewPlaceHolder */,
+				08B6590E7E0200E1B3277CC3 /* CYLRefresh */,
 				9A68F2E71C2A67F600D2E9B0 /* Example */,
 				9ADE6FD61C29A0C500214C69 /* Products */,
 				C9239322DA10EA8D2E9B5808 /* Frameworks */,
@@ -677,6 +677,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
+					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -782,6 +783,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
+					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Examples/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -802,6 +804,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
+					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Examples/Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -825,6 +828,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLRefresh/**\"",
+					"\"$(SRCROOT)/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
