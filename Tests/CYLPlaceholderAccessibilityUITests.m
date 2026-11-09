@@ -63,13 +63,25 @@
 
 - (void)auditCurrentApp {
     if (@available(iOS 17.0, *)) {
-        NSError *error = nil;
-        BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll
-            issueHandler:^BOOL(XCUIAccessibilityAuditIssue *issue) {
-            NSLog(@"CYLAccessibilityAudit: %@ | %@ | %@", issue.compactDescription, issue.detailedDescription, issue.element);
-            return NO;
-        } error:&error];
-        XCTAssertTrue(passed, @"%@", error);
+        // Every reported issue fails. An audit that errors out without reporting any issue (seen on CI as
+        // com.apple.xcode.xctest.accessibilityAudit -56 right after a relaunch) is a tool failure: retry it.
+        for (NSInteger attempt = 1; attempt <= 3; attempt++) {
+            __block NSInteger issues = 0;
+            NSError *error = nil;
+            BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll
+                issueHandler:^BOOL(XCUIAccessibilityAuditIssue *issue) {
+                issues++;
+                NSLog(@"CYLAccessibilityAudit: %@ | %@ | %@", issue.compactDescription, issue.detailedDescription, issue.element);
+                return NO;
+            } error:&error];
+            if (passed) return;
+            if (issues > 0 || attempt == 3) {
+                XCTFail(@"Accessibility audit failed (%ld issues): %@", (long)issues, error);
+                return;
+            }
+            NSLog(@"CYLAccessibilityAudit: audit error without issues, retrying (%@)", error);
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+        }
     }
 }
 
