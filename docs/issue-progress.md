@@ -43,7 +43,7 @@
 | [#1626](https://github.com/CoderMJLee/MJRefresh/issues/1626) | 本地化 bundle 路径为空 | 100/100：对语言目录和资源 bundle 路径进行空值防护；模拟器验证未知语言回退英文，以及整个资源 bundle 缺失时保留调用方提供的回退文本。 |
 | [#1625](https://github.com/CoderMJLee/MJRefresh/issues/1625) | SPM 包解析失败 | 0/100：未调查，未修复。 |
 | [#1624](https://github.com/CoderMJLee/MJRefresh/issues/1624) | 安全改进建议 | 0/100：未调查，未修复。 |
-| [#1623](https://github.com/CoderMJLee/MJRefresh/issues/1623) | 自动加载 trailer | 50/100：`CYLRefreshTrailer` 新增可选的 `automaticallyRefresh`（默认 NO，保持原行为）、`triggerAutomaticallyRefreshPercent` 和 `autoTriggerTimes`，语义与自动 footer 一致，State/Normal trailer 自动继承。新增三项模拟器测试（阈值触发与结束复原、默认不自动触发、回弹/header 刷新中/内容不足一屏不触发），但本次在 Linux 编写，尚未在 Xcode 中编译或运行；未阅读原 issue 原文核对需求，拖拽次数限制和真实手势未测试。 |
+| [#1623](https://github.com/CoderMJLee/MJRefresh/issues/1623) | 自动加载 trailer | 70/100：`CYLRefreshTrailer` 新增可选的 `automaticallyRefresh`（默认 NO，保持原行为）、`triggerAutomaticallyRefreshPercent` 和 `autoTriggerTimes`，语义与自动 footer 一致，State/Normal trailer 自动继承。三项新增模拟器测试（阈值触发与结束复原、默认不自动触发、回弹/header 刷新中/内容不足一屏不触发）在 PR #20 的 CI（macOS 26 runner）中通过，全部 80 项单元测试通过；iOS 12 部署构建通过。未阅读原 issue 原文核对需求，拖拽次数限制和真实手势未测试。 |
 | [#1615](https://github.com/CoderMJLee/MJRefresh/issues/1615) | 自定义 header 快速下拉崩溃 | 0/100：未调查，未修复。 |
 | [#1614](https://github.com/CoderMJLee/MJRefresh/issues/1614) | SwiftUI 兼容功能 | 0/100：未调查，未修复。 |
 | [#1613](https://github.com/CoderMJLee/MJRefresh/issues/1613) | 偶发上拉刷新无法恢复 | 0/100：未调查，未修复。 |
@@ -137,7 +137,7 @@
 | TODO — #1430 刷新后设 offset 跳首项（45） | 分页 footer 增长数据后仍偏移约 190 点，修复未完成。 | 修复偏移后在全屏分页 table 示例中通过真实上拉测试。 |
 | TODO — #1317 搜索控制器 inset 递归（80） | 重入保护已覆盖四条路径；未在真实手势和 iOS 12.3 复现。 | XCUITest 搜索控制器 + 下拉刷新；iOS 12 真机。 |
 | TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
-| TODO — #1623 自动加载 trailer（50） | 实现已加入 `CYLRefreshTrailer`，默认关闭。需在 macOS 上编译并运行新增测试；阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。 | `ruby Tests/run-tests.rb` 通过新增三项测试；横向 collection 示例中真实滑动验证一次拖拽只触发一次。 |
+| TODO — #1623 自动加载 trailer（70） | 实现已加入 `CYLRefreshTrailer`，默认关闭；新增测试已在 CI 通过。阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。已知风险：CI 曾在一次异常缓慢的 runner 上让本测试和既有的 `testReparentingActiveTrailerRestoresOldScrollView` 同时因 5 秒等待超时失败，重跑通过；若再次出现，应改为确定性地等待开始动画，而不是只延长超时。 | 横向 collection 示例中真实滑动验证一次拖拽只触发一次；核对原 issue 后更新分数。 |
 | TODO — PR #1444 header inset 部分移植 | 拖拽时重新计算 inset 及 delta 语义未移植。 | 真实拖拽、旋转与悬浮 section header 测试。 |
 
 ### 上游刷新组件（未开始，0/100）
