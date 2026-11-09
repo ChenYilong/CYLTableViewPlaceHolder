@@ -521,7 +521,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     id message = attributes[CYLPlaceholderItemMessage];
     for (NSString *key in @[CYLPlaceholderItemStyle, CYLPlaceholderItemMessage]) {
         id value = attributes[key];
-        NSInteger count = [key isEqualToString:CYLPlaceholderItemStyle] ? CYLPlaceholderStyleCount : CYLPlaceholderMessageCount;
+        NSInteger count = [key isEqualToString:CYLPlaceholderItemStyle] ? (NSInteger)CYLPlaceholderStyleCount : (NSInteger)CYLPlaceholderMessageCount;
         if (value && (![value isKindOfClass:NSNumber.class] ||
             !isfinite([value doubleValue]) || [value doubleValue] != floor([value doubleValue]) ||
             [value doubleValue] < 0 || [value doubleValue] >= count)) {

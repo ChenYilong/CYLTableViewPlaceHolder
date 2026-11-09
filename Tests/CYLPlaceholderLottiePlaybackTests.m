@@ -6,7 +6,11 @@ static UIColor *CYLRenderedCenterColor(UIView *view) {
     format.scale = 1;
     UIImage *image = [[[UIGraphicsImageRenderer alloc] initWithSize:view.bounds.size format:format]
         imageWithActions:^(UIGraphicsImageRendererContext *context) {
-        [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+        // Lottie's Core Animation renderer animates its layers, so draw what is on screen.
+        [CATransaction flush];
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+        CALayer *layer = view.layer.presentationLayer ?: view.layer;
+        [layer renderInContext:context.CGContext];
     }];
     unsigned char pixel[4] = {0};
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();

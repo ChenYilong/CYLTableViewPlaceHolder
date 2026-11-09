@@ -49,13 +49,20 @@ compilation or unverified visual behavior do not count.
 - `ruby Tests/run-tests.rb`: 76 tests pass (Core, built-in GIF, shared
   animation module without engines, layout geometry, rendered selection,
   appearance proxy, badge appearance and accessibility).
-- `ruby Tests/run-animation-tests.rb` (LottieSwift, GIF, PAG, Rive): passes
-  with `LINKAGE=static` and `LINKAGE=dynamic`, and with
-  `PAG_SUBSPEC=PAGEnterprise`.
+- `ruby Tests/run-animation-tests.rb` (LottieSwift, GIF, PAG, Rive): 16 tests
+  pass with `LINKAGE=static` and `LINKAGE=dynamic`, and with
+  `PAG_SUBSPEC=PAGEnterprise`. They cover the registry contents and lookup,
+  GIF through the registry, a custom view animator receiving options, Lottie
+  playback/seek/speed, Lottie keypath colors drawn in light and dark (rendered
+  presentation layer), speed and seek kept across the dark-mode replacement,
+  PAG progress, Rive load/pause/fallback, legacy input/trigger/linear, and Rive
+  colors following the appearance.
 - Example app builds through the workspace; `carthage build --no-skip-current
   --use-xcframeworks` builds `CYLTableViewPlaceHolder.xcframework`.
-- `pod lib lint` with `scripts/pod-lint.xcconfig`; the upstream `libpag` pod
-  warns about a missing license file.
+- `pod lib lint --allow-warnings` with `scripts/pod-lint.xcconfig`: every
+  subspec passes validation. Remaining warnings are upstream (`libpag` license
+  file, OpenGL ES deprecations, umbrella header) and pre-existing CYLRefresh
+  deprecations.
 
 The baseline `master` (826c07e) did not compile: three property
 redeclarations, `title.length` on `id`, and an undeclared
