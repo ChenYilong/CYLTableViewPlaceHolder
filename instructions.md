@@ -135,8 +135,11 @@ a directory and Git uses its default hooks path; linked worktrees and custom
 Before every Commitizen-style (`git cz`) commit, run this first in the repository root:
 
 ```sh
-touch .git/hooks/NO_AUTO_SYNC
+mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
 ```
+
+If the directory does not exist (for example in a fresh clone or a container
+without sample hooks), `mkdir -p` creates it first so `touch` always succeeds.
 
 ## Committing on branches
 

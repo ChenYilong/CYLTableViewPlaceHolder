@@ -50,8 +50,11 @@ the integrated `CYLRefresh` component, and an example application. Read
 - **Before every Commitizen-style (`git cz`) commit**, run this first in the repository root, so the vault's auto sync does not commit or push in the middle of it:
 
   ```sh
-  touch .git/hooks/NO_AUTO_SYNC
+  mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
   ```
+
+  If `.git/hooks` does not exist, `mkdir -p` creates it first so `touch`
+  always succeeds.
 
 - Before a Commitizen-style commit, follow the commit-message hook instructions
   in `instructions.md`; inspect an existing hook before replacing it.
@@ -97,7 +100,7 @@ the integrated `CYLRefresh` component, and an example application. Read
   readiness rules above. On `master` or `main`, do not commit or push unless
   the user asks.
 - Commit through a branch and a pull request by default, so CI runs
-  (`docs/CI-CD.md`): branch from `master`, `touch .git/hooks/NO_AUTO_SYNC`,
+  (`docs/CI-CD.md`): branch from `master`, `mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`,
   commit, push the branch, and open a pull request against `master`. Do not
   commit directly to `master` unless the user asks. Do not merge a pull request
   without the user's approval, and not before the `iOS` workflow is green.
