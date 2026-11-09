@@ -347,7 +347,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 
 此示例不是所有布局的通用解：footer 位置变化后应重新计算；若还有表头或 section header，也需结合它们的实际位置。
 
-有自定义 section header 时（[#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16)），可从最后一个 section header 的底部开始放置占位图；`rectForHeaderInSection:` 已包含表头高度，旋转或尺寸变化后再次调用 `cyl_reloadData` 即可重新计算：
+有自定义 section header 时（[#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16)），可从最后一个 section header 的底部开始放置占位图；`rectForHeaderInSection:` 已包含表头高度。调用该回调前库会先布局 table view，因此读到的是最终位置（包括 iOS 15 起 plain 样式的 section header 顶部间距）；旋转或尺寸变化后再次调用 `cyl_reloadData` 即可重新计算：
 
 ```objc
 - (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {

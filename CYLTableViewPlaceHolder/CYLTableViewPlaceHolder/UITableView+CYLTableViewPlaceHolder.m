@@ -114,6 +114,9 @@ extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeho
     }
     self.placeHolderView = view;
     if ([provider respondsToSelector:@selector(frameForPlaceHolderViewInTableView:)]) {
+        // Lay out first so header and section rects include final geometry, such as
+        // iOS 15 section header padding, when the provider reads them (issue #16).
+        [self layoutIfNeeded];
         view.frame = [provider frameForPlaceHolderViewInTableView:self];
     } else {
         view.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);

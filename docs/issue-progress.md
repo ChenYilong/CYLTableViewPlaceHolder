@@ -32,7 +32,7 @@
 | [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | 为什么只基于 tableView | 100 | collection view 由 block API 支持，`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过；README 过时说法已修正；普通页面按设计不自动管理（无 data source），文档给出直接使用 `CYLPlaceholderView` 的做法。 | PR #20 Closes |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `-lPods` | 100 | 判定为集成环境问题（手动改动 Podfile 后未正确重新集成）；README 增加排查步骤。CI 的 `pod lib lint` 与三个 Pod 集成示例（`pod install` + workspace 构建）通过。原工程不可得，未复现原始报错。 | PR #20 Closes |
 | [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡刷新 footer | 处理中 | 默认行为修复：占位图置前后，再把 `CYLRefreshComponent`/`MJRefreshComponent` 子视图移到其上方，两套 API 共用；新增 `testDefaultPlaceholderKeepsRefreshControlsVisible`、`testAutomaticPlaceholderStaysBelowRefreshControls`，等待 CI。 | — |
-| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 处理中 | frame 回调从最后一个 section header 底部开始；新增 `testCustomFrameLeavesSectionHeadersOutsidePlaceholder`（表头 + 两个自定义 section header，竖屏和横屏尺寸各验证一次不重叠），README 增加示例，等待 CI。 | — |
+| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 处理中 | frame 回调从最后一个 section header 底部开始；新增 `testCustomFrameLeavesSectionHeadersOutsidePlaceholder`（表头 + 两个自定义 section header，竖屏和横屏尺寸各验证一次不重叠），README 增加示例。首轮 CI 中该测试失败：回调在布局前读取位置，未计入 iOS 15 的 section header 顶部间距。修复：调用 frame 回调前先 `layoutIfNeeded`。等待 CI。 | — |
 
 ## 验证与决定
 

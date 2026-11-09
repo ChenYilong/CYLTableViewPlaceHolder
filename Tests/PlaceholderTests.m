@@ -272,11 +272,14 @@
         XCTAssertEqual(source.view.superview, self.table);
         XCTAssertEqualWithAccuracy(CGRectGetWidth(placeholder), size.CGSizeValue.width, 0.001);
         XCTAssertGreaterThan(CGRectGetHeight(placeholder), 0);
-        XCTAssertFalse(CGRectIntersectsRect(placeholder, tableHeader.frame));
+        XCTAssertFalse(CGRectIntersectsRect(placeholder, tableHeader.frame), @"%@ vs table header %@",
+                       NSStringFromCGRect(placeholder), NSStringFromCGRect(tableHeader.frame));
         for (NSInteger section = 0; section < 2; section++) {
             CGRect header = [self.table rectForHeaderInSection:section];
             XCTAssertGreaterThan(CGRectGetHeight(header), 0);
-            XCTAssertFalse(CGRectIntersectsRect(placeholder, header));
+            XCTAssertFalse(CGRectIntersectsRect(placeholder, header), @"%@ vs section %ld header %@ at %@",
+                           NSStringFromCGRect(placeholder), (long)section, NSStringFromCGRect(header),
+                           NSStringFromCGSize(size.CGSizeValue));
         }
     }
 }
@@ -967,7 +970,10 @@
     [window.rootViewController.view addSubview:newView];
     [window makeKeyAndVisible];
     __block NSInteger callbacks = 0;
-    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ callbacks++; }];
+    XCTestExpectation *newRefresh = [self expectationWithDescription:@"new start animation finished"];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+        if (++callbacks == 1) [newRefresh fulfill];
+    }];
     trailer.fastAnimationDuration = 0.5;
     trailer.slowAnimationDuration = 0.2;
     [oldView addSubview:trailer];
@@ -977,11 +983,14 @@
     [newView addSubview:trailer];
     [trailer layoutIfNeeded];
     [trailer beginRefreshing];
-    XCTestExpectation *animationsFinished = [self expectationWithDescription:@"both start animations finished"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [animationsFinished fulfill];
+    // Wait for the new refresh's callback itself rather than a fixed delay, which slow CI runners miss.
+    [self waitForExpectations:@[newRefresh] timeout:10];
+    // The old animation finishes no later than the new one; give a stale callback time to show up.
+    XCTestExpectation *settled = [self expectationWithDescription:@"no stale callback"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [settled fulfill];
     });
-    [self waitForExpectations:@[animationsFinished] timeout:5];
+    [self waitForExpectations:@[settled] timeout:5];
     XCTAssertEqual(callbacks, 1);
     [trailer removeFromSuperview];
     window.hidden = YES;
