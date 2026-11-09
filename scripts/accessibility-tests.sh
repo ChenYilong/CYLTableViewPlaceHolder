@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # Usage: scripts/accessibility-tests.sh [simulator name]
 #
 # Runs Tests/run-accessibility-tests.rb: XCUITests that read the accessibility tree VoiceOver reads, and Apple's
 # accessibility audit (needs an iOS 17 or later simulator). The log is build/accessibility-tests.log.
-set -eu
+set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build
 DESTINATION=$(scripts/ci-destination.sh "${1:-}" 17)

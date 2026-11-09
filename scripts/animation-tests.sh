@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 # Usage: scripts/animation-tests.sh [static|dynamic] [PAG|PAGEnterprise] [simulator name]
 #
 # Runs Tests/run-animation-tests.rb: LottieSwift, GIF, PAG (or PAGEnterprise) and Rive installed with CocoaPods into a
 # temporary project. Fixtures come from a CYLTabBarController checkout: ../CYLTabBarController, or CYL_FIXTURES_ROOT
 # (CI checks it out inside the workspace). The log is build/animation-tests-<linkage>-<pag>.log.
-set -eu
+set -euo pipefail
 cd "$(dirname "$0")/.."
 LINKAGE="${1:-static}"
 PAG_SUBSPEC="${2:-PAG}"

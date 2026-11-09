@@ -33,3 +33,6 @@ Pods/
 *.DS_Store
 ._*
 *.base
+
+# CI: CYLTabBarController animation fixtures checked out by .github/workflows/ios.yml
+.fixtures/

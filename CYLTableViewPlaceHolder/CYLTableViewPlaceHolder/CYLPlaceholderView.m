@@ -218,7 +218,7 @@ static BOOL CYLPlaceholderOffset(id value, UIOffset *offset) {
         return isfinite(offset->horizontal) && isfinite(offset->vertical) &&
             fabs(offset->horizontal) <= 1000 && fabs(offset->vertical) <= 1000;
     }
-    double numbers[2];
+    double numbers[2] = {0};
     if (!CYLPlaceholderNumbers(value, @[@[@"horizontal", @"x"], @[@"vertical", @"y"]], numbers)) return NO;
     *offset = UIOffsetMake(numbers[0], numbers[1]);
     return YES;
@@ -231,7 +231,7 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
             isfinite(insets->right) && fabs(insets->top) <= 1000 && fabs(insets->left) <= 1000 &&
             fabs(insets->bottom) <= 1000 && fabs(insets->right) <= 1000;
     }
-    double numbers[4];
+    double numbers[4] = {0};
     if (!CYLPlaceholderNumbers(value, @[@[@"top"], @[@"left"], @[@"bottom"], @[@"right"]], numbers)) return NO;
     *insets = UIEdgeInsetsMake(numbers[0], numbers[1], numbers[2], numbers[3]);
     return YES;
@@ -1210,7 +1210,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     }
     CGSize size = frames.firstObject.size;
     id sizeValue = attributes[CYLPlaceholderItemGIFSize] ?: attributes[CYLPlaceholderItemAnimationSize];
-    double numbers[2];
+    double numbers[2] = {0};
     if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
         size = [sizeValue CGSizeValue];
     } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
@@ -1324,7 +1324,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
        return;
    }
    CGSize size = self.imageView.image ? self.imageView.image.size : CGSizeMake(80, 80);
-   double numbers[2];
+   double numbers[2] = {0};
    if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
        size = [sizeValue CGSizeValue];
    } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {

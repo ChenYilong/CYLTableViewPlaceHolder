@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # Usage: scripts/unit-tests.sh [simulator name]
 #
 # Runs Tests/run-tests.rb (placeholder, refresh, built-in GIF and the shared animation module) on an iOS simulator.
 # Without a name, the first iPhone of the newest runtime. The log is build/unit-tests.log.
-set -eu
+set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build
 DESTINATION=$(scripts/ci-destination.sh "${1:-}" 15)
