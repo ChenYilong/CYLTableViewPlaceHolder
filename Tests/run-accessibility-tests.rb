@@ -27,6 +27,7 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
   app.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.accessibility.host'
     config.build_settings['INFOPLIST_KEY_UILaunchScreen_Generation'] = 'YES'
+    config.build_settings['INFOPLIST_KEY_UIApplicationSceneManifest_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UISupportedInterfaceOrientations'] = 'UIInterfaceOrientationPortrait'
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\""
   end

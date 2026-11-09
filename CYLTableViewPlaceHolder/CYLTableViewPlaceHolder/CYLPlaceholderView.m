@@ -404,8 +404,9 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         // for small text (pure red is 4.0:1 and fails the accessibility audit).
         shared.backgroundColor = [UIColor colorWithRed:0xD7 / 255.0 green:0x00 / 255.0 blue:0x15 / 255.0 alpha:1];
         shared.textColor = UIColor.whiteColor;
-        // A bold caption 2 text-style font (11 points at the default text size), so badges follow Dynamic Type.
-        UIFontDescriptor *caption = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleCaption2];
+        // A bold caption 1 text-style font (12 points at the default text size), so badges follow Dynamic Type.
+        // Not caption 2: Apple's accessibility audit reports caption 2 as only partially scaling.
+        UIFontDescriptor *caption = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleCaption1];
         caption = [caption fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold] ?: caption;
         shared.font = [UIFont fontWithDescriptor:caption size:0];
         shared.cornerRadius = 0; // 0 means auto (height/2)

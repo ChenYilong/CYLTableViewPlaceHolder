@@ -50,17 +50,17 @@
     self.grouped.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [group addSubview:self.grouped];
 
-    UIButton *toggle = [UIButton buttonWithType:UIButtonTypeSystem];
-    [toggle setTitle:@"Toggle selection" forState:UIControlStateNormal];
-    toggle.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    toggle.titleLabel.adjustsFontForContentSizeCategory = YES;
+    // A button configuration wraps its title at large text sizes instead of clipping it.
+    UIButtonConfiguration *toggleConfiguration = [UIButtonConfiguration plainButtonConfiguration];
+    toggleConfiguration.title = @"Toggle selection";
+    UIButton *toggle = [UIButton buttonWithConfiguration:toggleConfiguration primaryAction:nil];
     toggle.accessibilityIdentifier = @"toggle";
     [toggle addTarget:self action:@selector(toggleSelection) forControlEvents:UIControlEventTouchUpInside];
 
-    UIButton *clear = [UIButton buttonWithType:UIButtonTypeSystem];
-    [clear setTitle:@"Clear badges" forState:UIControlStateNormal];
-    clear.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    clear.titleLabel.adjustsFontForContentSizeCategory = YES;
+    // A button configuration wraps its title at large text sizes instead of clipping it.
+    UIButtonConfiguration *clearConfiguration = [UIButtonConfiguration plainButtonConfiguration];
+    clearConfiguration.title = @"Clear badges";
+    UIButton *clear = [UIButton buttonWithConfiguration:clearConfiguration primaryAction:nil];
     clear.accessibilityIdentifier = @"clear";
     [clear addTarget:self action:@selector(clearBadges) forControlEvents:UIControlEventTouchUpInside];
 
@@ -99,17 +99,33 @@
 
 @end
 
-@interface CYLAccessibilityHostAppDelegate : UIResponder <UIApplicationDelegate>
+// UIScene lifecycle: iOS 26 traps apps that do not adopt it.
+@interface CYLAccessibilityHostSceneDelegate : UIResponder <UIWindowSceneDelegate>
 @property (nonatomic, strong) UIWindow *window;
+@end
+
+@implementation CYLAccessibilityHostSceneDelegate
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
+    self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
+    self.window.rootViewController = [[CYLAccessibilityHostViewController alloc] init];
+    [self.window makeKeyAndVisible];
+}
+
+@end
+
+@interface CYLAccessibilityHostAppDelegate : UIResponder <UIApplicationDelegate>
 @end
 
 @implementation CYLAccessibilityHostAppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    self.window.rootViewController = [[CYLAccessibilityHostViewController alloc] init];
-    [self.window makeKeyAndVisible];
-    return YES;
+- (UISceneConfiguration *)application:(UIApplication *)application
+configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession
+                              options:(UISceneConnectionOptions *)options {
+    UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:@"Default"
+                                                                         sessionRole:connectingSceneSession.role];
+    configuration.delegateClass = CYLAccessibilityHostSceneDelegate.class;
+    return configuration;
 }
 
 @end

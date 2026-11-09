@@ -100,6 +100,26 @@ jobs:
             build/analyzer
           if-no-files-found: ignore
 
+  # The podspec still declares iOS 12. Xcode 26/27 cannot target it, so build Core at iOS 12.0 with the newest Xcode 16
+  # on the macos-15 image, failing on any newer API not guarded by @available. (No hosted runner has an iOS 12
+  # simulator: those runtimes are Intel-only.)
+  ios12:
+    name: iOS 12 deployment build
+    needs: changes
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode 16
+        if: needs.changes.outputs.code == 'true'
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_16*.app' | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+      - name: Build at iOS 12.0
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/ios12-build.sh
+
   # Tests/run-tests.rb: placeholder, refresh, built-in GIF and the shared animation module on a simulator.
   unit-tests:
     name: Unit tests
@@ -145,7 +165,8 @@ jobs:
           if-no-files-found: ignore
 
   # The optional animation libraries installed with CocoaPods, like CYLTabBarController's animation-tests.yml:
-  # static and dynamic frameworks with PAG, and PAGEnterprise. Fixtures come from CYLTabBarController.
+  # static and dynamic frameworks with PAG, and PAGEnterprise. Rive fixtures come from CYLTabBarController master; the
+  # PAG fixture is downloaded from Tencent/libpag at a pinned commit and checked by SHA-256.
   animation:
     name: Animation ${{ matrix.linkage }} ${{ matrix.pag }}
     needs: changes
@@ -165,10 +186,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ChenYilong/CYLTabBarController
-          ref: feat/cross-platform-components
+          ref: master
           path: .fixtures/CYLTabBarController
+          # The Rive fixtures; the PAG fixture is downloaded by scripts/animation-tests.sh (not kept in git upstream).
           sparse-checkout: |
-            Example-Shared/PAGResources/tab-icons
             Example-SwiftUI-Rive/AnimatedApp/RiveAssets
           sparse-checkout-cone-mode: true
       - name: CocoaPods cache

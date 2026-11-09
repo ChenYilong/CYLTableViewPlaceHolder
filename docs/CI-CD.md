@@ -55,10 +55,12 @@ Carthage binary JSON or SPM manifest to update yet.
 
 ## Known limits
 
-- The accessibility audit tolerates one known issue: it reports the badge
-  labels as "partially" supporting Dynamic Type although
-  `testBadgeAndTitleFollowAccessibilityTextSizes` measures them growing and
-  fitting. See the accessibility TODO in
-  [flatdesign-item-comparison.md](flatdesign-item-comparison.md).
+- iOS 12 runs nowhere in CI: Apple's iOS 12.4 simulator runtime refuses hosts after
+  macOS 12.99 (tried on `macos-15-intel`), so the `iOS 12 deployment build` job only
+  builds at iOS 12.0 with unguarded-availability errors. Runtime evidence comes from a
+  physical device: `scripts/device-tests.sh <device UDID> <team ID>` (Xcode 16 or earlier).
+- The accessibility audit runs with no exceptions. The default badge font is
+  bold caption 1, because the audit reports caption 2 as only partially
+  scaling.
 - The upstream `libpag` pod warns about a missing license file; `pod lib lint`
   runs with `--allow-warnings`.

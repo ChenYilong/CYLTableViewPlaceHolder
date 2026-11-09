@@ -32,7 +32,9 @@
     XCTAssertFalse(element.isSelected);
 
     [[self element:@"clear"] tap];
-    XCTAssertEqualObjects(element.value, @"Synced");
+    XCTNSPredicateExpectation *cleared = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:[NSPredicate predicateWithFormat:@"value == %@", @"Synced"] object:element];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[cleared] timeout:10], XCTWaiterResultCompleted);
 }
 
 - (void)testBadgeInAccessibleContainerIsReadOnItsOwn {
@@ -41,7 +43,10 @@
     XCTAssertEqualObjects(badge.label, @"New");
     XCTAssertTrue([self element:@"groupTitle"].exists);
     [[self element:@"clear"] tap];
-    XCTAssertFalse([self element:@"groupBadge"].exists);
+    // The accessibility tree refreshes asynchronously after the badge view is removed.
+    XCTNSPredicateExpectation *gone = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:[NSPredicate predicateWithFormat:@"exists == NO"] object:[self element:@"groupBadge"]];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[gone] timeout:10], XCTWaiterResultCompleted);
 }
 
 - (void)testAccessibilityAudit {
@@ -63,23 +68,25 @@
 
 - (void)auditCurrentApp {
     if (@available(iOS 17.0, *)) {
-        NSError *error = nil;
-        BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll
-            issueHandler:^BOOL(XCUIAccessibilityAuditIssue *issue) {
-            NSLog(@"CYLAccessibilityAudit: %@ | %@ | %@", issue.compactDescription, issue.detailedDescription, issue.element);
-            // Known, tracked in docs/flatdesign-item-comparison.md (TODO accessibility): the audit reports the badge
-            // labels as "partially" scaling although testBadgeAndTitleFollowAccessibilityTextSizes measures the badge font growing at
-            // AX-XXXL with the text fitting. Only that issue on a badge (or the hidden, unnamed badge of the element
-            // placeholder) is tolerated; every other issue fails.
-            BOOL badge = issue.element == nil || [issue.element.identifier hasSuffix:@"Badge"];
-            if (issue.auditType == XCUIAccessibilityAuditTypeDynamicType && badge &&
-                [issue.compactDescription containsString:@"partially"]) {
-                NSLog(@"CYLAccessibilityAudit: tolerated known badge issue");
-                return YES;
+        // Every reported issue fails. An audit that errors out without reporting any issue (seen on CI as
+        // com.apple.xcode.xctest.accessibilityAudit -56 right after a relaunch) is a tool failure: retry it.
+        for (NSInteger attempt = 1; attempt <= 3; attempt++) {
+            __block NSInteger issues = 0;
+            NSError *error = nil;
+            BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll
+                issueHandler:^BOOL(XCUIAccessibilityAuditIssue *issue) {
+                issues++;
+                NSLog(@"CYLAccessibilityAudit: %@ | %@ | %@", issue.compactDescription, issue.detailedDescription, issue.element);
+                return NO;
+            } error:&error];
+            if (passed) return;
+            if (issues > 0 || attempt == 3) {
+                XCTFail(@"Accessibility audit failed (%ld issues): %@", (long)issues, error);
+                return;
             }
-            return NO;
-        } error:&error];
-        XCTAssertTrue(passed, @"%@", error);
+            NSLog(@"CYLAccessibilityAudit: audit error without issues, retrying (%@)", error);
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+        }
     }
 }
 

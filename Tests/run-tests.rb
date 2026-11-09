@@ -5,12 +5,23 @@ require 'xcodeproj'
 root = File.expand_path('..', __dir__)
 Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   project = Xcodeproj::Project.new(File.join(dir, 'Tests.xcodeproj'))
-  target = project.new_target(:unit_test_bundle, 'PlaceholderTests', :ios, '17.0')
+  # TEST_DEPLOYMENT_TARGET builds the suite at another deployment target (e.g. 15.0, the lowest Xcode 27 allows).
+  deployment = ENV.fetch('TEST_DEPLOYMENT_TARGET', '17.0')
+  target = project.new_target(:unit_test_bundle, 'PlaceholderTests', :ios, deployment)
   target.build_configurations.each do |config|
     config.build_settings['CLANG_ENABLE_OBJC_ARC'] = 'YES'
     config.build_settings['GENERATE_INFOPLIST_FILE'] = 'YES'
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.tests'
-    config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+    # DEVELOPMENT_TEAM signs the bundle for a physical device (scripts/device-tests.sh); simulators need no signing.
+    if ENV['DEVELOPMENT_TEAM'].to_s.empty?
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+    else
+      config.build_settings['DEVELOPMENT_TEAM'] = ENV['DEVELOPMENT_TEAM']
+      config.build_settings['CODE_SIGN_STYLE'] = 'Automatic'
+      config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "org.cyl.placeholder.tests.#{ENV['DEVELOPMENT_TEAM'].downcase}"
+    end
+    # Any newer API the suite or the library uses without @available fails the build at a low deployment target.
+    config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Werror=unguarded-availability-new'
   end
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
@@ -41,8 +52,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   scheme.add_test_target(target)
   scheme.save_as(project.path, 'PlaceholderTests', true)
   destination = ENV.fetch('DESTINATION', 'platform=iOS Simulator,name=iPhone 15,OS=17.5')
+  signing = ENV['DEVELOPMENT_TEAM'].to_s.empty? ? ['CODE_SIGNING_ALLOWED=NO'] : ['-allowProvisioningUpdates']
   success = system('xcodebuild', 'test', '-project', project.path.to_s, '-scheme', 'PlaceholderTests',
-                   '-destination', destination, '-derivedDataPath', File.join(dir, 'DerivedData'),
-                   'CODE_SIGNING_ALLOWED=NO')
+                   '-destination', destination, '-derivedDataPath', File.join(dir, 'DerivedData'), *signing)
   exit(success ? 0 : 1)
 end

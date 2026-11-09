@@ -308,6 +308,7 @@
 }
 
 - (void)testRegisteredAnimationReceivesResolvedAppearanceColors {
+    if (@available(iOS 13.0, *)) {} else { return; } // Dark Mode needs iOS 13; iOS 12 runs the rest of the suite.
     __block CYLTestAnimationPlayer *player;
     XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:^UIView<CYLPlaceholderAnimationPlayer> *(
         NSURL *url, CGSize size, UIViewContentMode mode, NSDictionary *options, NSError **error) {

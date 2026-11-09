@@ -21,11 +21,19 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
       build_file.settings = { 'COMPILER_FLAGS' => '-fno-modules' }
     end
   end
+  # An Objective-C-only test target linking static Swift pods needs the Swift compatibility libraries; Xcode 26
+  # adds them only when the target itself compiles Swift (Xcode 27 does not need this).
+  swift_file = File.join(dir, 'SwiftRuntime.swift')
+  File.write(swift_file, "// Links the Swift runtime libraries into the test bundle.\n")
+  target.source_build_phase.add_file_reference(project.main_group.new_file(swift_file))
+  target.build_configurations.each { |config| config.build_settings['SWIFT_VERSION'] = '5.0' }
   fixtures = {
     'CYLPlaceholderTest.pag' => ENV.fetch('PAG_FIXTURE', File.expand_path('../CYLTabBarController/Example-Shared/PAGResources/tab-icons/tab_home.pag', root)),
     'CYLPlaceholderTest.riv' => ENV.fetch('RIVE_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/icons.riv', root)),
     'CYLPlaceholderTrigger.riv' => ENV.fetch('RIVE_TRIGGER_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv', root)),
-    'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root))
+    'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root)),
+    # rive-app/rive-ios Tests/Assets/data_binding_test.riv (MIT); scripts/animation-tests.sh downloads it.
+    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv'))
   }
   fixtures.each do |name, path|
     abort "Missing animation fixture: #{path}" unless File.file?(path)
