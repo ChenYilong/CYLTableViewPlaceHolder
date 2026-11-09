@@ -43,7 +43,7 @@
 | [#1626](https://github.com/CoderMJLee/MJRefresh/issues/1626) | 本地化 bundle 路径为空 | 100/100：对语言目录和资源 bundle 路径进行空值防护；模拟器验证未知语言回退英文，以及整个资源 bundle 缺失时保留调用方提供的回退文本。 |
 | [#1625](https://github.com/CoderMJLee/MJRefresh/issues/1625) | SPM 包解析失败 | 0/100：未调查，未修复。 |
 | [#1624](https://github.com/CoderMJLee/MJRefresh/issues/1624) | 安全改进建议 | 0/100：未调查，未修复。 |
-| [#1623](https://github.com/CoderMJLee/MJRefresh/issues/1623) | 自动加载 trailer | 0/100：未调查，未修复。 |
+| [#1623](https://github.com/CoderMJLee/MJRefresh/issues/1623) | 自动加载 trailer | 50/100：`CYLRefreshTrailer` 新增可选的 `automaticallyRefresh`（默认 NO，保持原行为）、`triggerAutomaticallyRefreshPercent` 和 `autoTriggerTimes`，语义与自动 footer 一致，State/Normal trailer 自动继承。新增三项模拟器测试（阈值触发与结束复原、默认不自动触发、回弹/header 刷新中/内容不足一屏不触发），但本次在 Linux 编写，尚未在 Xcode 中编译或运行；未阅读原 issue 原文核对需求，拖拽次数限制和真实手势未测试。 |
 | [#1615](https://github.com/CoderMJLee/MJRefresh/issues/1615) | 自定义 header 快速下拉崩溃 | 0/100：未调查，未修复。 |
 | [#1614](https://github.com/CoderMJLee/MJRefresh/issues/1614) | SwiftUI 兼容功能 | 0/100：未调查，未修复。 |
 | [#1613](https://github.com/CoderMJLee/MJRefresh/issues/1613) | 偶发上拉刷新无法恢复 | 0/100：未调查，未修复。 |
@@ -137,13 +137,17 @@
 | TODO — #1430 刷新后设 offset 跳首项（45） | 分页 footer 增长数据后仍偏移约 190 点，修复未完成。 | 修复偏移后在全屏分页 table 示例中通过真实上拉测试。 |
 | TODO — #1317 搜索控制器 inset 递归（80） | 重入保护已覆盖四条路径；未在真实手势和 iOS 12.3 复现。 | XCUITest 搜索控制器 + 下拉刷新；iOS 12 真机。 |
 | TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
+| TODO — #1623 自动加载 trailer（50） | 实现已加入 `CYLRefreshTrailer`，默认关闭。需在 macOS 上编译并运行新增测试；阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。 | `ruby Tests/run-tests.rb` 通过新增三项测试；横向 collection 示例中真实滑动验证一次拖拽只触发一次。 |
 | TODO — PR #1444 header inset 部分移植 | 拖拽时重新计算 inset 及 delta 语义未移植。 | 真实拖拽、旋转与悬浮 section header 测试。 |
 
 ### 上游刷新组件（未开始，0/100）
 
-TODO — 以下 32 项尚未调查：#1627、#1625、#1624、#1623、#1615、#1614、#1613、#1607、#1600、#1598、#1597、#1595、#1592、#1591、#1590、#1585、#1583、#1582、#1572、#1571、#1570、#1568、#1564、#1540、#1535、#1507、#1238、#1146、#1067、#1029、#920、#862。每项需：阅读原 issue 与评论、在示例工程复现、修复或记录不修复的决定、补模拟器回归测试，再按上方规则评分。
+TODO — 以下 31 项尚未调查：#1627、#1625、#1624、#1615、#1614、#1613、#1607、#1600、#1598、#1597、#1595、#1592、#1591、#1590、#1585、#1583、#1582、#1572、#1571、#1570、#1568、#1564、#1540、#1535、#1507、#1238、#1146、#1067、#1029、#920、#862。每项需：阅读原 issue 与评论、在示例工程复现、修复或记录不修复的决定、补模拟器回归测试，再按上方规则评分。
 
 已知 API 与范围决定（需维护者确认，不属于代码缺陷）：
 
 - #1625 SPM：本仓库没有 `Package.swift`，只提供 CocoaPods 和 Carthage。是否支持 SPM 需单独决策；支持时须保留 refresh bundle、隐私清单和第三方许可证。
-- #1570 纯 Swift 版本、#1614 SwiftUI 兼容、#1582 按距离触发不同操作、#1623 自动加载 trailer 属于新功能，需要先确定 API 设计和兼容性。
+- #1570 纯 Swift 版本：建议不重写；改为审查公开头文件的 `NS_SWIFT_NAME` 与 nullability 标注，改善 Swift 调用体验。
+- #1614 SwiftUI 兼容：建议在 #1628 修复后，以独立的可选子规格（iOS 13+）提供修饰符，重点覆盖加载更多；iOS 15+ 下拉刷新可用系统 `.refreshable`。
+- #1582 按距离触发不同操作：现有 `pullingPercent` 与 `cyl_scrollDistance` 已可实现；建议先补示例与 README，必要时再增加 API。
+- #1623 自动加载 trailer：已按上述方式实现为默认关闭的可选属性，见上方 TODO。

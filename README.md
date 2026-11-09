@@ -401,6 +401,16 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 从横向刷新切换到纵向刷新时，应先设置 `scrollView.cyl_trailer = nil`，再配置纵向 footer。移除正在刷新的 trailer 会先结束刷新，撤回它增加的右侧 inset，并恢复之前的横向弹性滚动设置；同时保留调用方之后对 inset 所做的修改。如果在开始动画完成前结束或移除 trailer，该次刷新回调和开始完成回调不会执行，结束完成回调仍会执行。复用 trailer 时，旧动画不会触发新一轮刷新回调或重置新一轮的拉动进度；重叠的结束动画分别调用各自开始时的完成回调。
 
+trailer 默认需要拉出后松手才刷新。设置 `automaticallyRefresh = YES` 后，内容宽于滚动视图时，向末端滚动到 trailer 露出 `triggerAutomaticallyRefreshPercent`（默认 1.0，即完全露出）即自动刷新，与自动 footer 的属性同名同义；每次拖拽最多自动触发 `autoTriggerTimes` 次（默认 1，-1 为不限），非拖拽滚动不受次数限制。回弹（向起点方向移动）、header 或 footer 正在刷新时不会自动触发；内容不足一屏宽时仍为拉出松手刷新。
+
+```objc
+CYLRefreshNormalTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+    // 加载更多数据，完成后调用 endRefreshing
+}];
+trailer.automaticallyRefresh = YES;
+collectionView.cyl_trailer = trailer;
+```
+
 需要跟踪滚动方向时，先调用一次 `[scrollView cyl_updateScrollMetrics]` 建立基准，再在每次 `scrollViewDidScroll:` 中调用一次；`cyl_scrollDistance` 和 `cyl_scrollDirection` 可重复读取同一次采样。距离为主导轴上的带符号点数，方向表示 content offset 的变化方向；首次采样距离为零，方向为 `CYLScrollDirectionNone`。
 
 刷新组件依据本地源码中声明的 3.7.9 版本改造，适用第三方 MIT 许可证；原版权声明、许可证及来源说明保留在源码和 `CYLRefresh/LICENSE.third-party` 中。

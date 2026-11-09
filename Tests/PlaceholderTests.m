@@ -800,6 +800,99 @@
     window.hidden = YES;
 }
 
+- (UIScrollView *)cyl_wideScrollViewInWindow:(UIWindow *)window contentWidth:(CGFloat)contentWidth {
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(contentWidth, window.bounds.size.height);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    return scrollView;
+}
+
+- (void)testTrailerRefreshesAutomaticallyAtTheEndWhenEnabled {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    XCTestExpectation *refreshed = [self expectationWithDescription:@"automatic trailer refresh"];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+        callbacks++;
+        [refreshed fulfill];
+    }];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    XCTAssertFalse(trailer.isAutomaticallyRefresh);
+    XCTAssertEqualWithAccuracy(trailer.triggerAutomaticallyRefreshPercent, 1.0, 0.001);
+    XCTAssertEqual(trailer.autoTriggerTimes, 1);
+    trailer.automaticallyRefresh = YES;
+    trailer.triggerAutomaticallyRefreshPercent = 0.5;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    // The end of the content is at 680; half of the 60 pt trailer is 30 pt.
+    scrollView.contentOffset = CGPointMake(700, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    scrollView.contentOffset = CGPointMake(711, 0);
+    [self waitForExpectations:@[refreshed] timeout:5];
+    XCTAssertEqual(trailer.state, CYLRefreshStateRefreshing);
+    XCTAssertEqual(callbacks, 1u);
+    XCTestExpectation *ended = [self expectationWithDescription:@"automatic trailer ended"];
+    [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:5];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 0, 0.001);
+    XCTAssertEqual(callbacks, 1u);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+- (void)testTrailerKeepsPullAndReleaseBehaviorByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ callbacks++; }];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    scrollView.contentOffset = CGPointMake(760, 0);
+    XCTestExpectation *nextTurn = [self expectationWithDescription:@"no automatic refresh"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
+    [self waitForExpectations:@[nextTurn] timeout:5];
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    XCTAssertEqual(callbacks, 0u);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+- (void)testAutomaticTrailerIgnoresBounceBackShortContentAndActiveHeader {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    // Moving back toward the start must not trigger, even past the threshold.
+    scrollView.contentOffset = CGPointMake(780, 0);
+    trailer.automaticallyRefresh = YES;
+    scrollView.contentOffset = CGPointMake(770, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    // While the header refreshes, the trailer waits.
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    scrollView.cyl_header = header;
+    [header beginRefreshing];
+    scrollView.contentOffset = CGPointMake(790, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    [header endRefreshing];
+    scrollView.cyl_header = nil;
+    // Content narrower than the view keeps pull-and-release.
+    scrollView.contentOffset = CGPointZero;
+    scrollView.contentSize = CGSizeMake(200, 480);
+    scrollView.contentOffset = CGPointMake(80, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
 - (void)testReusingTrailerDuringStartAnimationDoesNotRunOldRefreshCallback {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
