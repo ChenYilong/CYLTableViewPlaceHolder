@@ -100,3 +100,50 @@
 | [#1328](https://github.com/CoderMJLee/MJRefresh/pull/1328) | 下拉时避免自动触发 footer | 已适配 adjusted inset 边界及 header 刷新期间的保护；其他互斥需求见 #1587。 |
 | [#1181](https://github.com/CoderMJLee/MJRefresh/pull/1181) | 滚动距离及方向 | 已改为显式采样、`CGFloat` 距离及 `CYL` 类型，避免原补丁的读取副作用和方向计算错误；调用方式不同，见 README。 |
 | [#759](https://github.com/CoderMJLee/MJRefresh/pull/759) | 同步执行 header 刷新动画 | 当前版本已直接执行动画；未验证报告中的全部历史系统与场景。 |
+
+## TODO
+
+汇总上文所有低于 100 分的条目（2026-11-09 核对）。分数与剩余工作以上方表格为准，此处列出完成所需的工作和验证方式。所有验证都需要 macOS、Xcode 和 iOS 模拟器（部分需真机）；Linux 环境只能核对文档，不能计入完成度。
+
+### 占位组件
+
+| TODO | 剩余工作与实现说明 | 所需验证 |
+| --- | --- | --- |
+| TODO — #16 section header 遮挡（65） | frame 回调已可避开 table header；缺少 section header 场景。需新增带自定义 section header 的回归用例，确认占位图与 section header 的层级和布局。 | 模拟器测试：自定义 `viewForHeaderInSection` 时占位图不遮挡 section header，旋转后仍正确。 |
+| TODO — #15 XR/XS 适配（80） | 已改用容器 bounds，仅在 XS Max 上验证。 | 在 iPhone XR、iPhone XS 模拟器运行 `DESTINATION=... ruby Tests/run-tests.rb` 并记录结果。 |
+| TODO — #11 UICollectionView / 普通页面（60） | 库只支持 table view。需维护者决定是否扩展为通用组件；若扩展，需新增 collection 分类并保持现有 API 不变。 | 决策记录；如实现，补 collection 空数据回归测试。 |
+| TODO — #10 CocoaPods 链接失败（80） | 当前 CDN 安装可构建；缺报告者的 Podfile 与工程，无法证明原错误已解决。 | 获取原工程复现，或在 issue 中请报告者确认后关闭。 |
+| TODO — #8 遮挡刷新 footer（75） | 默认仍覆盖 footer（保持兼容），只验证了自动 footer 的自定义区域。 | 补 back footer 与滚动中状态的回归测试；在 README 给出计算区域的示例。 |
+| TODO — #6 再次空刷新后消失（85） | iOS 17.5 回归通过；原 iOS 9 环境无法复测。 | 若坚持旧系统证据，需在最低支持的 iOS 12 真机运行 `scripts/device-tests.sh`；否则说明 iOS 9 已不在支持范围并改为 100。 |
+| TODO — #1 “NewTableVIew”（10） | 原文无法确定期望行为。 | 需报告者补充信息；issue 已关闭，可由维护者决定标记为无法处理。 |
+
+### 上游刷新组件（部分完成）
+
+| TODO | 剩余工作与实现说明 | 所需验证 |
+| --- | --- | --- |
+| TODO — #1630 KVO 移除崩溃（60） | 已按注册对象解绑；未复现原偶发崩溃。 | 真实控制器销毁场景的压力测试；Zombie/ASan 下运行。 |
+| TODO — #1628 SwiftUI 刷新动画消失（50） | 程序触发刷新可见；真实下拉时可见性检查失败。 | 修复后用 XCUITest 真实下拉验证刷新控件全程可见。 |
+| TODO — #1610 自动 footer 复位（75） | 受控状态分支已测；真实减速、数据变化、分页对齐未测。 | XCUITest 真实手势 + 分页数据增长场景。 |
+| TODO — #1593 真机编译参数错误（45） | strict objc_msgSend 下通用真机目标可编译；缺原始报错。 | 获取原工程或报错文本，在真机构建确认。 |
+| TODO — #1589 SwiftUI 非 scroll view KVO 崩溃（90） | iOS 17.5 往返未崩溃；未在 iOS 15.4 验证。 | iOS 15 模拟器运行同一 SwiftUI 页面测试。 |
+| TODO — #1587 下拉与上拉互斥（40） | 只实现 header 刷新时阻止自动 footer；反向互斥、其他 footer 类型和状态提示未实现。 | 新增反向互斥实现及 back/auto footer 双向测试。 |
+| TODO — #1586 隐藏 header 刷新位置（85） | iOS 26.3.1 测试未完成；未比对原截图。 | 在 iOS 26 模拟器跑完整套件并记录。 |
+| TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
+| TODO — #1563 箭头图片泄漏疑问（50） | 静态分析与释放测试无泄漏；未在 Instruments Leaks 复现。 | 真机 Instruments Leaks 记录，确认或排除 `NSPathStore2`。 |
+| TODO — #1523 collection 动画选项闪烁（30） | 手势测试通过，但不检测闪烁；原视觉问题未复现。 | 截帧或录屏比对的视觉测试；移植原 demo 其余页面。 |
+| TODO — #1506 collection 大幅加载动画（25） | 仅验证能触发和结束刷新。 | 同 #1523 的视觉测试，确认是否同一根因。 |
+| TODO — #1483 collection 连续刷新上移（50） | inset 恢复已修；刷新中反复拖动未复现。 | XCUITest 刷新中反复拖动并检查首项位置。 |
+| TODO — #1481 trailer 转 footer 残留（85） | 需先移除 trailer；保留 trailer 的场景未确认。 | 获取切换代码后补用例。 |
+| TODO — #1430 刷新后设 offset 跳首项（45） | 分页 footer 增长数据后仍偏移约 190 点，修复未完成。 | 修复偏移后在全屏分页 table 示例中通过真实上拉测试。 |
+| TODO — #1317 搜索控制器 inset 递归（80） | 重入保护已覆盖四条路径；未在真实手势和 iOS 12.3 复现。 | XCUITest 搜索控制器 + 下拉刷新；iOS 12 真机。 |
+| TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
+| TODO — PR #1444 header inset 部分移植 | 拖拽时重新计算 inset 及 delta 语义未移植。 | 真实拖拽、旋转与悬浮 section header 测试。 |
+
+### 上游刷新组件（未开始，0/100）
+
+TODO — 以下 32 项尚未调查：#1627、#1625、#1624、#1623、#1615、#1614、#1613、#1607、#1600、#1598、#1597、#1595、#1592、#1591、#1590、#1585、#1583、#1582、#1572、#1571、#1570、#1568、#1564、#1540、#1535、#1507、#1238、#1146、#1067、#1029、#920、#862。每项需：阅读原 issue 与评论、在示例工程复现、修复或记录不修复的决定、补模拟器回归测试，再按上方规则评分。
+
+已知 API 与范围决定（需维护者确认，不属于代码缺陷）：
+
+- #1625 SPM：本仓库没有 `Package.swift`，只提供 CocoaPods 和 Carthage。是否支持 SPM 需单独决策；支持时须保留 refresh bundle、隐私清单和第三方许可证。
+- #1570 纯 Swift 版本、#1614 SwiftUI 兼容、#1582 按距离触发不同操作、#1623 自动加载 trailer 属于新功能，需要先确定 API 设计和兼容性。
