@@ -31,7 +31,9 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     'CYLPlaceholderTest.pag' => ENV.fetch('PAG_FIXTURE', File.expand_path('../CYLTabBarController/Example-Shared/PAGResources/tab-icons/tab_home.pag', root)),
     'CYLPlaceholderTest.riv' => ENV.fetch('RIVE_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/icons.riv', root)),
     'CYLPlaceholderTrigger.riv' => ENV.fetch('RIVE_TRIGGER_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv', root)),
-    'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root))
+    'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root)),
+    # rive-app/rive-ios Tests/Assets/data_binding_test.riv (MIT); scripts/animation-tests.sh downloads it.
+    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv'))
   }
   fixtures.each do |name, path|
     abort "Missing animation fixture: #{path}" unless File.file?(path)

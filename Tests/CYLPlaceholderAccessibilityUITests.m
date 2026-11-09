@@ -67,16 +67,6 @@
         BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll
             issueHandler:^BOOL(XCUIAccessibilityAuditIssue *issue) {
             NSLog(@"CYLAccessibilityAudit: %@ | %@ | %@", issue.compactDescription, issue.detailedDescription, issue.element);
-            // Known, tracked in docs/flatdesign-item-comparison.md (TODO accessibility): the audit reports the badge
-            // labels as "partially" scaling although testBadgeAndTitleFollowAccessibilityTextSizes measures the badge font growing at
-            // AX-XXXL with the text fitting. Only that issue on a badge (or the hidden, unnamed badge of the element
-            // placeholder) is tolerated; every other issue fails.
-            BOOL badge = issue.element == nil || [issue.element.identifier hasSuffix:@"Badge"];
-            if (issue.auditType == XCUIAccessibilityAuditTypeDynamicType && badge &&
-                [issue.compactDescription containsString:@"partially"]) {
-                NSLog(@"CYLAccessibilityAudit: tolerated known badge issue");
-                return YES;
-            }
             return NO;
         } error:&error];
         XCTAssertTrue(passed, @"%@", error);

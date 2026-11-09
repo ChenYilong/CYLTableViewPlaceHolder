@@ -110,6 +110,35 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
     @objc var cyl_isPaused: Bool { riveView?.isPaused ?? true }
     /// The colors last asked for (test probe); nil restores the original colors.
     @objc var cyl_requestedColors: [String: UIColor]? { requestedColors }
+    /// Test probes: the data-bound values the state machine reads, after queued color updates.
+    @objc func cyl_readBoolean(_ path: String, completion: @escaping (NSNumber?) -> Void) {
+        guard let instance = viewModelInstance else { completion(nil); return }
+        let previous = colorTask
+        Task { @MainActor in
+            await previous?.value
+            let value = try? await instance.value(of: BoolProperty(path: path))
+            completion(value.map { NSNumber(value: $0) })
+        }
+    }
+    @objc func cyl_readColor(_ path: String, completion: @escaping (UIColor?) -> Void) {
+        guard let instance = viewModelInstance else { completion(nil); return }
+        let previous = colorTask
+        Task { @MainActor in
+            await previous?.value
+            guard let color = try? await instance.value(of: ColorProperty(path: path)) else { completion(nil); return }
+            completion(UIColor(red: CGFloat(color.red) / 255, green: CGFloat(color.green) / 255,
+                               blue: CGFloat(color.blue) / 255, alpha: CGFloat(color.alpha) / 255))
+        }
+    }
+    /// Counts fires of a trigger from now on (test probe).
+    @objc func cyl_observeTrigger(_ path: String, onFire: @escaping () -> Void) {
+        guard let instance = viewModelInstance else { return }
+        Task { @MainActor in
+            do {
+                for try await _ in instance.stream(of: TriggerProperty(path: path)) { onFire() }
+            } catch {}
+        }
+    }
 
     public static func makeAnimationView(fileURL: URL, options: [String: String], contentMode: UIView.ContentMode) -> (UIView & CYLPlaceholderItemAnimationPlayableView)? {
         let configuration = CYLPlaceholderRiveItemAnimationConfiguration(fileURL: fileURL, options: options)

@@ -2,6 +2,12 @@
 #import <libpag/PAGView.h>
 #import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
 
+@interface UIView (CYLPlaceholderRiveProbes)
+- (void)cyl_readBoolean:(NSString *)path completion:(void (^)(NSNumber *))completion;
+- (void)cyl_readColor:(NSString *)path completion:(void (^)(UIColor *))completion;
+- (void)cyl_observeTrigger:(NSString *)path onFire:(void (^)(void))onFire;
+@end
+
 @interface CYLPlaceholderBackendPlaybackTests : XCTestCase
 @end
 
@@ -205,5 +211,111 @@
     [placeholder removeFromSuperview];
 }
 
+/// Loads data_binding_test.riv (rive-ios tests, MIT) and waits until the Rive view has its view model instance.
+- (UIView *)bindingRiveViewInPlaceholder:(CYLPlaceholderView **)placeholderOut window:(UIWindow *)window
+                                 options:(NSDictionary *)options extra:(NSDictionary *)extra {
+    NSMutableDictionary *attributes = [@{
+        CYLPlaceholderItemRiveURL: [self fixture:@"data_binding_test" extension:@"riv"],
+        CYLPlaceholderItemRiveSize: @[@80, @80], CYLPlaceholderItemAnimationOptions: options
+    } mutableCopy];
+    [attributes addEntriesFromDictionary:extra ?: @{}];
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder, @"%@", error);
+    UIView *backend = [placeholder valueForKey:@"backendView"];
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return [[backend valueForKey:@"ready"] boolValue];
+    }] evaluatedWithObject:backend handler:nil];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+    *placeholderOut = placeholder;
+    (void)window;
+    return backend.subviews.firstObject;
+}
+
+- (NSNumber *)readBoolean:(NSString *)path from:(UIView *)rive {
+    __block NSNumber *result = nil;
+    XCTestExpectation *read = [self expectationWithDescription:path];
+    [(id)rive cyl_readBoolean:path completion:^(NSNumber *value) { result = value; [read fulfill]; }];
+    [self waitForExpectations:@[read] timeout:5];
+    return result;
+}
+
+- (UIColor *)readColor:(NSString *)path from:(UIView *)rive {
+    __block UIColor *result = nil;
+    XCTestExpectation *read = [self expectationWithDescription:path];
+    [(id)rive cyl_readColor:path completion:^(UIColor *value) { result = value; [read fulfill]; }];
+    [self waitForExpectations:@[read] timeout:5];
+    return result;
+}
+
+- (void)testRiveDataBindingBooleanFollowsPlayback {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLPlaceholderView *placeholder = nil;
+    UIView *rive = [self bindingRiveViewInPlaceholder:&placeholder window:window
+                                              options:@{@"active": @"Boolean", @"duration": @"0"} extra:nil];
+    XCTAssertEqualObjects([self readBoolean:@"Boolean" from:rive], @NO);
+    [window addSubview:placeholder]; // entering a window plays
+    [placeholder playPlaceholderAnimation];
+    XCTAssertEqualObjects([self readBoolean:@"Boolean" from:rive], @YES);
+    XCTAssertFalse([[rive valueForKey:@"cyl_isPaused"] boolValue]);
+    [placeholder stopPlaceholderAnimation];
+    XCTAssertEqualObjects([self readBoolean:@"Boolean" from:rive], @NO);
+    XCTAssertTrue([[rive valueForKey:@"cyl_isPaused"] boolValue]);
+    [placeholder removeFromSuperview];
+}
+
+- (void)testRiveDataBindingTriggerFiresOnPlay {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLPlaceholderView *placeholder = nil;
+    UIView *rive = [self bindingRiveViewInPlaceholder:&placeholder window:window
+                                              options:@{@"trigger": @"Trigger Red"} extra:nil];
+    __block NSInteger fires = 0;
+    [(id)rive cyl_observeTrigger:@"Trigger Red" onFire:^{ fires++; }];
+    [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+    [window addSubview:placeholder];
+    [placeholder playPlaceholderAnimation];
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return fires >= 1;
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [placeholder removeFromSuperview];
+}
+
+- (void)testRiveDataBindingColorOverrideAndRestore {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    CYLPlaceholderView *placeholder = nil;
+    UIView *rive = [self bindingRiveViewInPlaceholder:&placeholder window:window options:@{}
+        extra:@{CYLPlaceholderItemRiveDarkColors: @{@"Color": UIColor.blueColor}}];
+    UIColor *original = [self readColor:@"Color" from:rive];
+    XCTAssertNotNil(original);
+    [window addSubview:placeholder];
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    // The dark swap rebuilds the backend; wait for the new Rive view to apply blue.
+    __block UIView *darkRive = nil;
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        UIView *backend = [placeholder valueForKey:@"backendView"];
+        darkRive = backend.subviews.firstObject;
+        return darkRive != rive && [[backend valueForKey:@"ready"] boolValue];
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+    UIColor *dark = [self readColor:@"Color" from:darkRive];
+    CGFloat r = 0, g = 0, b = 0, a = 0;
+    XCTAssertTrue([dark getRed:&r green:&g blue:&b alpha:&a]);
+    XCTAssertEqualWithAccuracy(b, 1, 0.01);
+    XCTAssertEqualWithAccuracy(r, 0, 0.01);
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    __block UIView *lightRive = nil;
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        UIView *backend = [placeholder valueForKey:@"backendView"];
+        lightRive = backend.subviews.firstObject;
+        return lightRive != darkRive && [[backend valueForKey:@"ready"] boolValue];
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:10 handler:nil];
+    XCTAssertEqualObjects([self readColor:@"Color" from:lightRive], original);
+    [placeholder removeFromSuperview];
+}
+
 @end
+
 
