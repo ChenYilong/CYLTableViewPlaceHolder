@@ -42,7 +42,7 @@ compilation or unverified visual behavior do not count.
 | Dark URL, generic/dark/engine colors, live appearance swap | Yes — dark URLs per engine; generic colors below dark/engine colors; Lottie colors drawn (pixel test); Rive colors reach the view on light/dark switches. PAG and GIF have no color override, as in the reference. | Lottie, Rive | 100 |
 | Speed/progress carried across replacement (`copyAnimationStateFromView:toView:`) | Yes — speed and seek survive the dark-mode replacement (tested); unsupported operations return `NO`. | Lottie, PAG | 100 |
 | CocoaPods organization (`CYLTabBarItemAnimation`, `<Library>/` folders, per-library subspecs, `static_framework`, `DEFINES_MODULE`) | Yes — same layout and subspec names; static and dynamic integrations pass; `pod lib lint` passes for every subspec (see verification). | All | 100 |
-| Carthage and iOS 12 | Carthage builds the core xcframework with its bundles, as the reference's Carthage demo (backends are CocoaPods-only in both). iOS 12 runtime is not verifiable with Xcode 27. | — | 90 |
+| Carthage and iOS 12 | Carthage builds the core xcframework with its bundles, as the reference's Carthage demo (backends are CocoaPods-only in both); CI builds it on every pull request. CI also builds Core at iOS 12.0 with Xcode 16, failing on any newer API not guarded by `@available`. Running on iOS 12 is not verified: no hosted runner has an iOS 12 simulator. | — | 95 |
 
 ## Verification (2026-11-10, Xcode 27.2 locally; Xcode 26 on GitHub Actions)
 
@@ -79,7 +79,7 @@ were therefore never verified; this document replaces them.
 
 | TODO | Current gap and implementation notes | Verification needed |
 | --- | --- | --- |
-| TODO — Carthage and iOS 12 (90) | Xcode 27 SDKs require iOS 15, and no iOS 12 simulator is installed, so the declared iOS 12 minimum is unverified at runtime. Carthage parity (core framework only) matches the reference. | Build and test Core with an older Xcode against an iOS 12 simulator or device. |
+| TODO — Carthage and iOS 12 (95) | Carthage packaging and an iOS 12.0 deployment build (Xcode 16, unguarded-availability errors) pass in CI. iOS 12 simulators are Intel-only and no longer exist on GitHub-hosted runners, and local Xcode 27 cannot target iOS 12, so runtime behavior on iOS 12 is unverified. | Either run the unit tests once on an iOS 12 device or Intel Mac simulator, or raise the podspec minimum to iOS 15 (what the CI runtimes cover) after approving that compatibility change. |
 
 Known risks: `registerAnimationFactory:` (block API) and the registry coexist;
 a block factory wins for its extension. The Lottie animator only takes
