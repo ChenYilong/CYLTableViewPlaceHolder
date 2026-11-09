@@ -50,17 +50,17 @@
     self.grouped.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [group addSubview:self.grouped];
 
-    UIButton *toggle = [UIButton buttonWithType:UIButtonTypeSystem];
-    [toggle setTitle:@"Toggle selection" forState:UIControlStateNormal];
-    toggle.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    toggle.titleLabel.adjustsFontForContentSizeCategory = YES;
+    // A button configuration wraps its title at large text sizes instead of clipping it.
+    UIButtonConfiguration *toggleConfiguration = [UIButtonConfiguration plainButtonConfiguration];
+    toggleConfiguration.title = @"Toggle selection";
+    UIButton *toggle = [UIButton buttonWithConfiguration:toggleConfiguration primaryAction:nil];
     toggle.accessibilityIdentifier = @"toggle";
     [toggle addTarget:self action:@selector(toggleSelection) forControlEvents:UIControlEventTouchUpInside];
 
-    UIButton *clear = [UIButton buttonWithType:UIButtonTypeSystem];
-    [clear setTitle:@"Clear badges" forState:UIControlStateNormal];
-    clear.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    clear.titleLabel.adjustsFontForContentSizeCategory = YES;
+    // A button configuration wraps its title at large text sizes instead of clipping it.
+    UIButtonConfiguration *clearConfiguration = [UIButtonConfiguration plainButtonConfiguration];
+    clearConfiguration.title = @"Clear badges";
+    UIButton *clear = [UIButton buttonWithConfiguration:clearConfiguration primaryAction:nil];
     clear.accessibilityIdentifier = @"clear";
     [clear addTarget:self action:@selector(clearBadges) forControlEvents:UIControlEventTouchUpInside];
 

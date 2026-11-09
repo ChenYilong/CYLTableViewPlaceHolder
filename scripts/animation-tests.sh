@@ -11,6 +11,16 @@ PAG_SUBSPEC="${2:-PAG}"
 mkdir -p build
 FIXTURES="${CYL_FIXTURES_ROOT:-../CYLTabBarController}"
 export PAG_FIXTURE="${PAG_FIXTURE:-$FIXTURES/Example-Shared/PAGResources/tab-icons/tab_home.pag}"
+# CYLTabBarController does not keep .pag files in git: like its scripts/fetch-animation-resources.py, download the
+# pinned file (Tencent/libpag assets/refreshing.pag, Apache-2.0, Git LFS) and check its SHA-256.
+PAG_SHA256=069f7cf1b54f5d7a896deffc6fafd622e3ed439550a64df2ec329e1b99a6d72f
+if [[ ! -f "$PAG_FIXTURE" ]]; then
+  PAG_FIXTURE="$PWD/build/fixtures/tab_home.pag"
+  mkdir -p build/fixtures
+  curl -fsSL -o "$PAG_FIXTURE" \
+    "https://media.githubusercontent.com/media/Tencent/libpag/5faac72964023cc3ebc2f4395d78023d3a187ae4/assets/refreshing.pag"
+fi
+echo "$PAG_SHA256  $PAG_FIXTURE" | shasum -a 256 -c -
 export RIVE_FIXTURE="${RIVE_FIXTURE:-$FIXTURES/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/icons.riv}"
 export RIVE_TRIGGER_FIXTURE="${RIVE_TRIGGER_FIXTURE:-$FIXTURES/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv}"
 export RIVE_LINEAR_FIXTURE="${RIVE_LINEAR_FIXTURE:-$FIXTURES/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv}"
