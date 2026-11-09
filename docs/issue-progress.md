@@ -8,7 +8,7 @@
 | [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义表头及 section 时占位图被遮挡 | **65/100**：检查原 issue 与评论、增加可配置区域、测试 table header；原问题缺少 section 实现和复现步骤，尚未验证 section header 的实际层级及布局变化。 |
 | [#15](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/15) | iPhone XR、XS、XS Max 适配 | **80/100**：检查原屏幕尺寸代码、改用容器 bounds、在 XS Max 模拟器检查占位图尺寸和缩放；本机无 XR/XS 模拟器，未完成两种机型的实机或模拟器验证。原 issue 已关闭。 |
 | [#13](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/13) | 滚动选项返回 NO 时抛异常 | **100/100**：使用类型正确的 BOOL 协议调用；测试 YES、NO 和原滚动状态恢复。 |
-| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | UICollectionView 和普通页面适用范围 | **60/100**：检查提问、查阅库的 table 数据源实现、补充 README 说明；库仍不支持 UICollectionView 和普通页面，是否扩展为通用组件需要明确需求。 |
+| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | UICollectionView 和普通页面适用范围 | **100/100**：block API `cyl_placeholderViewBlock:` 已支持 `UICollectionView`（`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过）；修正 README 中“只管理 UITableView”的过时说法。普通页面没有 data source，按设计不自动管理，文档说明可直接使用 `CYLPlaceholderView`。 |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `library not found for -lPods` | **80/100**：原始构建发现缺少 Pods、尝试旧 Specs 源、改用 CDN 安装并成功构建 workspace；未取得报告者当时的 Podfile 与工程，无法证明其具体链接错误已解决。 |
 | [#9](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/9) | 独立 UITableViewDataSource 不显示占位图 | **100/100**：增加 data source 回退，并保留 table view、delegate 优先级；模拟器测试独立 data source 和 delegate 优先级。 |
 | [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡 MJRefresh footer | **75/100**：检查 MJRefresh footer 的动态位置、增加可配置区域、在模拟器使用真实 MJRefresh 自动 footer 验证非重叠；默认仍会覆盖 footer，应用需要结合实际布局计算区域，其他 footer 类型和滚动状态尚未覆盖。 |
@@ -29,7 +29,7 @@
 | [#9](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/9) | 独立 data source 不显示占位图 | 100 | table view → delegate → data source 依次回退；`testDelegateTakesPrecedenceOverDataSource`，CI 通过。 | PR #20 Closes |
 | [#7](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/7) | 未实现 section 数量方法时判断错误 | 100 | 默认 1 个 section；`testDefaultSectionAndScrollRestoration`、`testRowsInLaterSectionRemovePlaceholder`，CI 通过。 | PR #20 Closes |
 | [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | 网络错误与无数据占位图无法切换 | 100 | 每次空刷新重新请求视图；`testRepeatedEmptyReloadKeepsSubviewsAndCanSwitchViews`，CI 通过。 | PR #20 Closes |
-| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | 为什么只基于 tableView | 待处理 | — | — |
+| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | 为什么只基于 tableView | 100 | collection view 由 block API 支持，`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过；README 过时说法已修正；普通页面按设计不自动管理（无 data source），文档给出直接使用 `CYLPlaceholderView` 的做法。 | PR #20 Closes |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `-lPods` | 待处理 | — | — |
 | [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡刷新 footer | 待处理 | — | — |
 | [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 待处理 | — | — |
@@ -127,7 +127,6 @@
 | --- | --- | --- |
 | TODO — #16 section header 遮挡（65） | frame 回调已可避开 table header；缺少 section header 场景。需新增带自定义 section header 的回归用例，确认占位图与 section header 的层级和布局。 | 模拟器测试：自定义 `viewForHeaderInSection` 时占位图不遮挡 section header，旋转后仍正确。 |
 | TODO — #15 XR/XS 适配（80） | 已改用容器 bounds，仅在 XS Max 上验证。 | 在 iPhone XR、iPhone XS 模拟器运行 `DESTINATION=... ruby Tests/run-tests.rb` 并记录结果。 |
-| TODO — #11 UICollectionView / 普通页面（60） | 库只支持 table view。需维护者决定是否扩展为通用组件；若扩展，需新增 collection 分类并保持现有 API 不变。 | 决策记录；如实现，补 collection 空数据回归测试。 |
 | TODO — #10 CocoaPods 链接失败（80） | 当前 CDN 安装可构建；缺报告者的 Podfile 与工程，无法证明原错误已解决。 | 获取原工程复现，或在 issue 中请报告者确认后关闭。 |
 | TODO — #8 遮挡刷新 footer（75） | 默认仍覆盖 footer（保持兼容），只验证了自动 footer 的自定义区域。 | 补 back footer 与滚动中状态的回归测试；在 README 给出计算区域的示例。 |
 | TODO — #6 再次空刷新后消失（85） | iOS 17.5 回归通过；原 iOS 9 环境无法复测。 | 若坚持旧系统证据，需在最低支持的 iOS 12 真机运行 `scripts/device-tests.sh`；否则说明 iOS 9 已不在支持范围并改为 100。 |

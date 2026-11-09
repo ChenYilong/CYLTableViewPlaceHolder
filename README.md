@@ -374,7 +374,7 @@ pod update
 
 注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法，请避免重复调用。
 
-占位图功能只管理 `UITableView`，不管理 `UICollectionView` 或普通页面；这些场景需要各自的空状态实现。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
+旧的 `cyl_reloadData` 与 delegate API 只管理 `UITableView`；`UICollectionView` 请使用上文的 block API（`cyl_placeholderViewBlock:`）。普通页面没有 data source 可供判断空状态，库不自动管理；可以直接把 `CYLPlaceholderView` 当作普通 `UIView` 加到页面上，由应用决定何时显示。需要全局统一的断网或空状态处理时，可在列表基类中统一配置 block。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
 
 ## 内置刷新组件
 
