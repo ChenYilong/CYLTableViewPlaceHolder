@@ -65,6 +65,19 @@ the integrated `CYLRefresh` component, and an example application. Read
   If the detailed description exceeds 50 characters, create or update a
   suitable document under `docs/` and link it in the commit body. Reuse the
   existing tracker and avoid duplicate documents.
+- Follow the Commitizen defaults: `{type}{scope}: {emoji}{subject}`, emojis
+  enabled, no predefined scopes, and a 3–64 character message. The interactive
+ examples separate the emoji from the subject with a space. The
+  type list is `test`, `feat`, `fix`, `chore`, `docs`, `refactor`, `style`,
+  `ci`, `perf`; `release` is defined but not listed. Default emojis are
+  `chore` 🤖, `ci` 🎡, `docs` ✏️, `feat` 🎸, `fix` 🐛, `perf` ⚡️,
+  `refactor` 💡, `style` 💄, `test` 💍, and `release` 🏹. Follow established
+  project emoji mappings where they differ (e.g. CYLTabBarController uses
+  `feat: ✨`, `docs: 📝`, `chore: 🔧`, and `refactor: ♻️`). The question
+  sequence is `type`, `scope`, `subject`, `body`, `breaking`, `issues`, and
+  `lerna`;
+  prompts cover optional scope, imperative subject, longer description,
+  breaking changes, issue references, and affected packages.
 
 ## Git
 

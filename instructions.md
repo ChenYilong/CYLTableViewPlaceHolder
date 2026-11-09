@@ -83,3 +83,25 @@ subject summarizes completed work; use the body for details and pending tasks.
 If the detailed description exceeds 50 characters, create or update a suitable
 document under `docs/` and link it in the commit body. Reuse the relevant
 existing tracker and avoid duplicate documents.
+
+### Commitizen defaults
+
+- Use `{type}{scope}: {emoji}{subject}` with emojis enabled. Omit an unnecessary
+  scope; no scopes are preconfigured. The configured message length is 3–64
+  characters. In readable subjects, separate the emoji and subject with a
+  space as shown in the project examples below.
+- The interactive type choices, in order, are `test`, `feat`, `fix`, `chore`,
+  `docs`, `refactor`, `style`, `ci`, and `perf`. `release` has a type definition
+  but is not an interactive choice; use it only for an intentional release.
+- Default meanings and emojis: `chore` (build or auxiliary-tool changes, 🤖),
+  `ci` (CI changes, 🎡), `docs` (documentation only, ✏️), `feat` (new feature,
+  🎸), `fix` (bug fix, 🐛), `perf` (performance improvement, ⚡️), `refactor`
+  (neither a feature nor a fix, 💡), `style` (markup or formatting only, 💄),
+  `test` (adding missing tests, 💍), and `release` (release commit, 🏹).
+- The question sequence is `type`, `scope`, `subject`, `body`, `breaking`,
+  `issues`, and `lerna`. Prompts request the type, optional scope, short
+  imperative subject, longer description, breaking changes, issues closed
+  (for example `#123`), and affected packages.
+- Respect established repository history when it uses project-specific
+  mappings. CYLTabBarController examples include `feat: ✨`, `fix: 🐛`,
+  `docs: 📝`, `chore: 🔧`, and `refactor: ♻️`. Commit text must remain English.
