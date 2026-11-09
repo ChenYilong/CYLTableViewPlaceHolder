@@ -53,3 +53,33 @@ Check whether the app has a launch screen and an app icon with image assets.
 If either is missing, copy the corresponding icon and custom launch screen from
 `CYLTabBarController`, include their dependent assets and target membership,
 and verify the result builds. Do not overwrite existing project assets.
+
+## Commit readiness and TODO tracking
+
+Before every commit, review the current changes and all project comparison,
+parity, issue-progress, and implementation-status documents. For every item
+that is not fully complete and verified at 100%, ensure a corresponding entry
+exists under a `TODO` heading in the most relevant document under `docs/`.
+Use an existing relevant document when possible; do not create duplicate
+tracking documents.
+
+Each `TODO` entry must identify the incomplete behavior and current score,
+describe the remaining work and implementation constraints, and state how it
+will be verified. Explicitly document known defects, compatibility risks, and
+optimization opportunities. Review public and serialized API design in
+particular: identify missing behaviors, inconsistent keys, ambiguous values,
+unsupported backends, lifecycle or accessibility gaps, and migration concerns.
+Do not treat reserved keys, stubs, successful compilation, or unverified visual
+behavior as complete.
+
+After addressing an item, update its status and score from code and test
+evidence. Keep every remaining sub-100 item listed with the literal keyword
+`TODO`; do not remove a limitation merely because it was attempted. Before
+staging, confirm that the documentation covers every sub-100 row in the
+relevant score tables and that the descriptions match the current code.
+
+Use an English Conventional Commit subject compatible with Commitizen. The
+subject summarizes completed work; use the body for details and pending tasks.
+If the detailed description exceeds 50 characters, create or update a suitable
+document under `docs/` and link it in the commit body. Reuse the relevant
+existing tracker and avoid duplicate documents.

@@ -32,3 +32,4 @@ Pods/
 
 *.DS_Store
 ._*
+*.base

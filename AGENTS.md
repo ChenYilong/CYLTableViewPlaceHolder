@@ -45,6 +45,27 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Update relevant documentation and skills with user-visible changes. Explain
   what could not be verified; do not claim a visual behavior from compilation.
 
+## Commit readiness
+
+- Before every commit, audit the changed code and the project's comparison,
+  issue-progress, and implementation-status documents.
+- In the most relevant existing document under `docs/`, keep a `TODO` entry for
+  every tracked item below 100% complete and verified. Include its current
+  score, concrete remaining work, implementation and verification notes, and
+  any known defects or optimization opportunities.
+- Review API design explicitly: record compatibility and migration risks,
+  ambiguous or inconsistent keys, unsupported behavior, and lifecycle or
+  accessibility gaps. Reserved keys, stubs, compilation, and unverified visual
+  behavior do not qualify as completion.
+- Update scores only when supported by implementation and test evidence. Before
+  staging, verify that each sub-100 item in the relevant score tables has a
+  matching `TODO` entry and that the documented limitations match the code.
+- Use an English Conventional Commit subject compatible with Commitizen. The
+  subject summarizes completed work; put details and pending work in the body.
+  If the detailed description exceeds 50 characters, create or update a
+  suitable document under `docs/` and link it in the commit body. Reuse the
+  existing tracker and avoid duplicate documents.
+
 ## Git
 
 - Never commit AppleDouble files named `._*`. Follow the vault's cleanup rule

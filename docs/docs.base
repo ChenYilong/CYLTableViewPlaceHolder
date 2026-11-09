@@ -1,6 +1,6 @@
 views:
   - type: table
-    name: Documents
+    name: Documents and commit records
     filters:
       and:
         - file.inFolder("CYLTableViewPlaceHolder/docs")
