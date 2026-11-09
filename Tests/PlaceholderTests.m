@@ -109,6 +109,28 @@
 }
 @end
 
+/// Two empty sections with custom section headers; the placeholder starts below the last one (issue #16).
+@interface CYLSectionHeaderSource : NSObject <UITableViewDataSource, UITableViewDelegate, CYLTableViewPlaceHolderDelegate>
+@property (nonatomic, strong) UIView *view;
+@end
+@implementation CYLSectionHeaderSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 2; }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return 0; }
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section { return 30; }
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(tableView.bounds), 30)];
+}
+- (UIView *)makePlaceHolderView { return self.view; }
+- (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
+    NSInteger lastSection = [tableView numberOfSections] - 1;
+    CGFloat top = lastSection >= 0 ? CGRectGetMaxY([tableView rectForHeaderInSection:lastSection]) : 0;
+    return CGRectMake(0, top, CGRectGetWidth(tableView.bounds), MAX(0, CGRectGetHeight(tableView.bounds) - top));
+}
+@end
+
 @interface CYLTestDelegate : NSObject <UITableViewDelegate, CYLTableViewPlaceHolderDelegate>
 @property (nonatomic, strong) UIView *view;
 @end
@@ -231,6 +253,31 @@
         XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_footer], placeholderIndex);
         XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_header], placeholderIndex);
         XCTAssertTrue(CGRectEqualToRect(self.source.view.frame, CGRectMake(0, 0, 320, 480)));
+    }
+}
+
+- (void)testCustomFrameLeavesSectionHeadersOutsidePlaceholder {
+    CYLSectionHeaderSource *source = [CYLSectionHeaderSource new];
+    source.view = [UIView new];
+    self.table.dataSource = source;
+    self.table.delegate = source;
+    UIView *tableHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+    self.table.tableHeaderView = tableHeader;
+    for (NSValue *size in @[[NSValue valueWithCGSize:CGSizeMake(320, 480)], [NSValue valueWithCGSize:CGSizeMake(480, 320)]]) {
+        // Rotation: the app reloads after the size changes and the frame is recomputed.
+        self.table.frame = (CGRect){CGPointZero, size.CGSizeValue};
+        [self.table cyl_reloadData];
+        [self.table layoutIfNeeded];
+        CGRect placeholder = source.view.frame;
+        XCTAssertEqual(source.view.superview, self.table);
+        XCTAssertEqualWithAccuracy(CGRectGetWidth(placeholder), size.CGSizeValue.width, 0.001);
+        XCTAssertGreaterThan(CGRectGetHeight(placeholder), 0);
+        XCTAssertFalse(CGRectIntersectsRect(placeholder, tableHeader.frame));
+        for (NSInteger section = 0; section < 2; section++) {
+            CGRect header = [self.table rectForHeaderInSection:section];
+            XCTAssertGreaterThan(CGRectGetHeight(header), 0);
+            XCTAssertFalse(CGRectIntersectsRect(placeholder, header));
+        }
     }
 }
 
