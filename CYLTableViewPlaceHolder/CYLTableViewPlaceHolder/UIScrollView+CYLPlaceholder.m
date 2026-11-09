@@ -25,6 +25,21 @@ static CYLPlaceholderController *CYLController(UIScrollView *scrollView) {
     return objc_getAssociatedObject(scrollView, CYLPlaceholderControllerKey);
 }
 
+/// Brings the placeholder to the front, then keeps refresh controls above it so a
+/// header, footer or trailer stays visible over an empty list (issue #8).
+void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder) {
+    [scrollView bringSubviewToFront:placeholder];
+    Class refreshClass = NSClassFromString(@"CYLRefreshComponent");
+    Class legacyRefreshClass = NSClassFromString(@"MJRefreshComponent");
+    for (UIView *subview in [scrollView.subviews copy]) {
+        if (subview == placeholder) continue;
+        if ((refreshClass && [subview isKindOfClass:refreshClass]) ||
+            (legacyRefreshClass && [subview isKindOfClass:legacyRefreshClass])) {
+            [scrollView bringSubviewToFront:subview];
+        }
+    }
+}
+
 @implementation CYLPlaceholderController
 
 - (void)removeView {
@@ -96,7 +111,7 @@ static CYLPlaceholderController *CYLController(UIScrollView *scrollView) {
             ];
             [NSLayoutConstraint activateConstraints:controller.constraints];
         }
-        [scrollView bringSubviewToFront:view];
+        CYLBringPlaceholderToFront(scrollView, view);
     });
 }
 @end

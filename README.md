@@ -333,7 +333,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 }
 ```
 
-自定义 frame 不会自动跟随尺寸变化，必要时请为返回的视图设置 autoresizing mask，或在布局变化后重新加载。对于 section header 和刷新 footer，需根据它们在 table view 内容坐标系中的实际 frame 计算不重叠区域；空数据时自动 footer 不一定在屏幕底部。占位图仍位于其 frame 内其他子视图之上。
+自定义 frame 不会自动跟随尺寸变化，必要时请为返回的视图设置 autoresizing mask，或在布局变化后重新加载。对于 section header 和刷新 footer，需根据它们在 table view 内容坐标系中的实际 frame 计算不重叠区域；空数据时自动 footer 不一定在屏幕底部。占位图位于其 frame 内其他子视图之上，但 `CYLRefresh`（以及仍在使用的 `MJRefresh`）的 header、footer 和 trailer 始终保持在占位图之上，因此默认全屏占位时刷新控件也不会被遮挡（[#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8)）；旧版 block API 和 `cyl_reloadData` 均如此。
 
 例如，在使用 `CYLRefreshAutoNormalFooter` 且 footer 位于内容顶部的场景中，可将占位图放在 footer 之后：
 

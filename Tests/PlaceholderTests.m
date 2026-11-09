@@ -216,6 +216,24 @@
     XCTAssertEqual(source.view.superview, self.table);
 }
 
+- (void)testDefaultPlaceholderKeepsRefreshControlsVisible {
+    UIView *tableHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+    self.table.tableHeaderView = tableHeader;
+    self.table.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    self.table.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    for (NSUInteger pass = 0; pass < 2; pass++) {
+        [self.table cyl_reloadData];
+        NSArray<UIView *> *subviews = self.table.subviews;
+        NSUInteger placeholderIndex = [subviews indexOfObject:self.source.view];
+        XCTAssertNotEqual(placeholderIndex, NSNotFound);
+        // The placeholder still covers ordinary content but stays below refresh controls (issue #8).
+        XCTAssertGreaterThan(placeholderIndex, [subviews indexOfObject:tableHeader]);
+        XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_footer], placeholderIndex);
+        XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_header], placeholderIndex);
+        XCTAssertTrue(CGRectEqualToRect(self.source.view.frame, CGRectMake(0, 0, 320, 480)));
+    }
+}
+
 - (void)testRefreshFooterCanRemainOutsidePlaceholder {
     CYLRefreshSource *source = [CYLRefreshSource new];
     source.view = [UIView new];

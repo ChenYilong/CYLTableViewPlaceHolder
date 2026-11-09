@@ -12,6 +12,7 @@
 #import <objc/runtime.h>
 
 extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
+extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder);
 
 @interface UITableView ()
 
@@ -121,6 +122,6 @@ extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
     if (view.superview != self) {
         [self addSubview:view];
     }
-    [self bringSubviewToFront:view];
+    CYLBringPlaceholderToFront(self, view);
 }
 @end

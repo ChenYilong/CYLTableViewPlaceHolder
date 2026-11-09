@@ -6,6 +6,7 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
 #import "../CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h"
+#import "CYLRefresh.h"
 
 
 /// Scopes appearance-proxy values to these tests.
@@ -828,6 +829,26 @@
     [table cyl_placeholderViewBlock:nil];
 }
 
+- (void)testAutomaticPlaceholderStaysBelowRefreshControls {
+    CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
+    source.sections = 1;
+    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)
+                                                      collectionViewLayout:[UICollectionViewFlowLayout new]];
+    collection.dataSource = source;
+    [collection registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:@"cell"];
+    collection.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    collection.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    UIView *view = [UIView new];
+    [collection cyl_placeholderViewBlock:^UIView *(UICollectionView *collectionView) { return view; }];
+    [collection reloadData];
+    [self drainUpdates];
+    NSArray<UIView *> *subviews = collection.subviews;
+    NSUInteger placeholderIndex = [subviews indexOfObject:view];
+    XCTAssertNotEqual(placeholderIndex, NSNotFound);
+    XCTAssertGreaterThan([subviews indexOfObject:collection.cyl_footer], placeholderIndex);
+    XCTAssertGreaterThan([subviews indexOfObject:collection.cyl_header], placeholderIndex);
+    [collection cyl_placeholderViewBlock:nil];
+}
 - (void)testCollectionSectionsAndFrameLayoutWithOffset {
     CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
     source.sections = 2;
