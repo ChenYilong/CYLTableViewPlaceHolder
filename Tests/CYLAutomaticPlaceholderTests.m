@@ -1032,6 +1032,41 @@ static BOOL CYLColorIsClose(UIColor *color, CGFloat r, CGFloat g, CGFloat b) {
     window.hidden = YES;
 }
 
+- (void)testBadgeAndTitleFollowAccessibilityTextSizes {
+    UIViewController *parent = [[UIViewController alloc] init];
+    UIViewController *child = [[UIViewController alloc] init];
+    [parent addChildViewController:child];
+    [parent.view addSubview:child.view];
+    [child didMoveToParentViewController:parent];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 390, 844)];
+    window.rootViewController = parent;
+    window.hidden = NO;
+    child.view.frame = parent.view.bounds;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:nil text:@"Nothing new"];
+    placeholder.frame = child.view.bounds;
+    [child.view addSubview:placeholder];
+    [placeholder showBadgeWithStyle:CYLPlaceholderBadgeStyleText value:@"New"];
+    [placeholder layoutIfNeeded];
+    [placeholder.imageView.superview layoutIfNeeded];
+    CGFloat smallBadge = placeholder.badgeLabel.font.pointSize, smallTitle = placeholder.textLabel.font.pointSize;
+    [parent setOverrideTraitCollection:[UITraitCollection traitCollectionWithPreferredContentSizeCategory:
+        UIContentSizeCategoryAccessibilityExtraExtraExtraLarge] forChildViewController:child];
+    [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+    [placeholder layoutIfNeeded];
+    [placeholder.imageView.superview layoutIfNeeded];
+    UILabel *badge = placeholder.badgeLabel;
+    CGSize needed = [badge.text sizeWithAttributes:@{NSFontAttributeName: badge.font}];
+    NSLog(@"CYLDynamicType badge %.1f->%.1f title %.1f->%.1f badgeBounds %@ needed %@ titleFrame %@",
+          smallBadge, badge.font.pointSize, smallTitle, placeholder.textLabel.font.pointSize,
+          NSStringFromCGRect(badge.bounds), NSStringFromCGSize(needed), NSStringFromCGRect(placeholder.textLabel.frame));
+    XCTAssertGreaterThan(badge.font.pointSize, smallBadge);
+    XCTAssertGreaterThan(placeholder.textLabel.font.pointSize, smallTitle);
+    XCTAssertGreaterThanOrEqual(CGRectGetWidth(badge.bounds), ceil(needed.width));
+    XCTAssertGreaterThanOrEqual(CGRectGetHeight(badge.bounds), ceil(needed.height));
+    window.hidden = YES;
+}
+
 @end
+
 
 

@@ -1,0 +1,63 @@
+# Release (CD), modeled on CYLTabBarController's .github/workflows/release.yml. Pushing a tag equal to s.version
+# (e.g. 1.2.0) publishes the podspec to CocoaPods trunk, creates the GitHub release and attaches the Carthage
+# XCFramework. Needs the repository secret COCOAPODS_TRUNK_TOKEN. See docs/CI-CD.md.
+name: Release
+
+on:
+  push:
+    tags: [ '[0-9]+.[0-9]+.[0-9]+' ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish ${{ github.ref_name }}
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 60
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag matches the podspec version
+        run: scripts/pod-lint.sh check-tag "$TAG" || { echo "::error::The tag $TAG does not match s.version in CYLTableViewPlaceHolder.podspec. Bump the version in a pull request first."; exit 1; }
+
+      - name: Versions
+        run: |
+          xcodebuild -version
+          pod --version || sudo gem install cocoapods
+
+      - name: Publish to CocoaPods trunk
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          if [[ -z "$COCOAPODS_TRUNK_TOKEN" ]]; then
+            echo "::error::The repository secret COCOAPODS_TRUNK_TOKEN is not set."
+            exit 1
+          fi
+          scripts/pod-lint.sh push
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists."
+          else
+            gh release create "$TAG" --verify-tag --generate-notes --title "$TAG"
+          fi
+
+      - name: Carthage XCFramework on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          carthage version || brew install carthage
+          scripts/pod-lint.sh xcframework
+          gh release upload "$TAG" build/CYLTableViewPlaceHolder.xcframework.zip --clobber

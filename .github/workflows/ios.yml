@@ -1,0 +1,257 @@
+# iOS CI on GitHub-hosted macOS runners, modeled on CYLTabBarController's .github/workflows/ios.yml. See docs/CI-CD.md.
+# Runner: `macos-26` by default; set the repository variable MACOS_RUNNER (Settings → Secrets and variables → Actions →
+# Variables) to use another, e.g. `xcode-27`.
+name: iOS
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Decides whether the macOS jobs need to build. A pull request that only changes docs (docs/, *.md, assets/) skips
+  # their steps; the jobs still run and report success, so required checks pass. Pushes and manual runs always build.
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        name: Code changed?
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CODE=$(git diff --name-only "$BASE"...HEAD | grep -vE '^(docs/|assets/)|\.md$|\.base$' || true)
+          echo "Code files changed:"
+          echo "${CODE:-(none)}"
+          if [[ -n "$CODE" ]]; then echo "code=true"; else echo "code=false"; fi >> "$GITHUB_OUTPUT"
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck scripts/*.sh
+
+  # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
+  lint:
+    name: pod lib lint
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: CocoaPods cache
+        if: needs.changes.outputs.code == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cocoapods/repos
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-lint-${{ hashFiles('CYLTableViewPlaceHolder.podspec') }}
+          restore-keys: pods-${{ runner.os }}-lint-
+      - name: Versions
+        if: needs.changes.outputs.code == 'true'
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcodebuild -showsdks | grep -i iphone
+          pod --version || sudo gem install cocoapods
+      - name: pod lib lint
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/pod-lint.sh lib
+
+  # The framework target Carthage builds, then the static analyzer; a warning in the placeholder's sources fails the job.
+  framework:
+    name: Framework build and analyze
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and analyze CYLTableViewPlaceHolderFramework
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/framework-build.sh
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always() && needs.changes.outputs.code == 'true'
+        with:
+          name: framework-logs
+          path: |
+            build/*.log
+            build/analyzer
+          if-no-files-found: ignore
+
+  # Tests/run-tests.rb: placeholder, refresh, built-in GIF and the shared animation module on a simulator.
+  unit-tests:
+    name: Unit tests
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: xcodeproj gem
+        if: needs.changes.outputs.code == 'true'
+        run: ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+      - name: Unit tests
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/unit-tests.sh
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always() && needs.changes.outputs.code == 'true'
+        with:
+          name: unit-tests-log
+          path: build/unit-tests.log
+          if-no-files-found: ignore
+
+  # XCUITests that read the accessibility tree VoiceOver reads, plus Apple's accessibility audit (iOS 17+).
+  accessibility:
+    name: Accessibility
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: xcodeproj gem
+        if: needs.changes.outputs.code == 'true'
+        run: ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+      - name: Accessibility tests
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/accessibility-tests.sh
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always() && needs.changes.outputs.code == 'true'
+        with:
+          name: accessibility-log
+          path: build/accessibility-tests.log
+          if-no-files-found: ignore
+
+  # The optional animation libraries installed with CocoaPods, like CYLTabBarController's animation-tests.yml:
+  # static and dynamic frameworks with PAG, and PAGEnterprise. Fixtures come from CYLTabBarController.
+  animation:
+    name: Animation ${{ matrix.linkage }} ${{ matrix.pag }}
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { linkage: static, pag: PAG }
+          - { linkage: dynamic, pag: PAG }
+          - { linkage: static, pag: PAGEnterprise }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Animation fixtures (CYLTabBarController)
+        if: needs.changes.outputs.code == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ChenYilong/CYLTabBarController
+          ref: feat/cross-platform-components
+          path: .fixtures/CYLTabBarController
+          sparse-checkout: |
+            Example-Shared/PAGResources/tab-icons
+            Example-SwiftUI-Rive/AnimatedApp/RiveAssets
+          sparse-checkout-cone-mode: true
+      - name: CocoaPods cache
+        if: needs.changes.outputs.code == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cocoapods/repos
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-animation-${{ matrix.pag }}-${{ hashFiles('CYLTableViewPlaceHolder.podspec') }}
+          restore-keys: pods-${{ runner.os }}-animation-${{ matrix.pag }}-
+      - name: Tools
+        if: needs.changes.outputs.code == 'true'
+        run: |
+          pod --version || sudo gem install cocoapods
+          ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+      - name: Animation tests
+        if: needs.changes.outputs.code == 'true'
+        env:
+          CYL_FIXTURES_ROOT: ${{ github.workspace }}/.fixtures/CYLTabBarController
+        run: scripts/animation-tests.sh "${{ matrix.linkage }}" "${{ matrix.pag }}"
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always() && needs.changes.outputs.code == 'true'
+        with:
+          name: animation-${{ matrix.linkage }}-${{ matrix.pag }}-log
+          path: build/animation-tests-*.log
+          if-no-files-found: ignore
+
+  # Carthage: the XCFramework a release attaches, built as the Release workflow builds it.
+  carthage:
+    name: Carthage
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Carthage
+        if: needs.changes.outputs.code == 'true'
+        run: carthage version || brew install carthage
+      - name: XCFramework
+        if: needs.changes.outputs.code == 'true'
+        run: |
+          scripts/pod-lint.sh xcframework
+          unzip -l build/CYLTableViewPlaceHolder.xcframework.zip | grep -q "CYLTableViewPlaceHolder.xcframework/Info.plist"
+          unzip -l build/CYLTableViewPlaceHolder.xcframework.zip | grep -q "CYLTableViewPlaceHolder.bundle"
+
+  # Every demo, one job each; one failing demo does not stop the others.
+  examples:
+    name: Demo ${{ matrix.demo }}
+    needs: changes
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        demo:
+          - .
+          - Examples/Example-objc-01
+          - Examples/Example-objc-02
+          - Examples/Example-SwiftUI
+    steps:
+      - uses: actions/checkout@v4
+      - name: CocoaPods
+        if: needs.changes.outputs.code == 'true'
+        run: pod --version || sudo gem install cocoapods
+      - name: CocoaPods cache
+        if: needs.changes.outputs.code == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cocoapods/repos
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-demo-${{ hashFiles('CYLTableViewPlaceHolder.podspec', '**/Podfile', '**/Podfile.lock') }}
+          restore-keys: pods-${{ runner.os }}-demo-
+      - name: Build
+        if: needs.changes.outputs.code == 'true'
+        run: scripts/ci-build-example.sh "${{ matrix.demo }}"
+      - name: Summary
+        if: always() && needs.changes.outputs.code == 'true'
+        run: |
+          {
+            echo "| Demo | Scheme | Build | Warnings |"
+            echo "|:---|:---|:---:|---:|"
+            cat build/summary.md 2>/dev/null || echo "| ${{ matrix.demo }} | - | ❌ | - |"
+          } >> "$GITHUB_STEP_SUMMARY"

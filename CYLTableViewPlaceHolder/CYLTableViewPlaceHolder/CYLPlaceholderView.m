@@ -404,8 +404,10 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         // for small text (pure red is 4.0:1 and fails the accessibility audit).
         shared.backgroundColor = [UIColor colorWithRed:0xD7 / 255.0 green:0x00 / 255.0 blue:0x15 / 255.0 alpha:1];
         shared.textColor = UIColor.whiteColor;
-        // 9 points at the default text size, scaled with Dynamic Type.
-        shared.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleCaption2] scaledFontForFont:[UIFont boldSystemFontOfSize:9]];
+        // A bold caption 2 text-style font (11 points at the default text size), so badges follow Dynamic Type.
+        UIFontDescriptor *caption = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleCaption2];
+        caption = [caption fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold] ?: caption;
+        shared.font = [UIFont fontWithDescriptor:caption size:0];
         shared.cornerRadius = 0; // 0 means auto (height/2)
         shared.contentInsets = UIEdgeInsetsMake(4, 4, 4, 4); // CYLBadgeView: 8 points wider and taller than the text
         shared.animationDuration = 0.2;
@@ -917,6 +919,11 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
+    // A text-size change can arrive as a trait change only (no notification): re-measure title and badge.
+    if (![self.traitCollection.preferredContentSizeCategory isEqualToString:previousTraitCollection.preferredContentSizeCategory]) {
+        [self setNeedsLayout];
+        [self.itemView setNeedsLayout];
+    }
     if (self.itemAttributes && previousTraitCollection &&
         self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
         [self cyl_configureAnimations];
