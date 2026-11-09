@@ -448,19 +448,6 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
 @property (nonatomic, copy) NSString *appliedBadgeAccessibilityValue;
 @property (nonatomic, strong) UIImageView *selectionIndicatorView;
 
-// Appearance proxy support - default values for normal state
-@property (nonatomic, strong, nullable) UIColor *defaultTitleColor;
-@property (nonatomic, strong, nullable) UIColor *defaultIconColor;
-@property (nonatomic, strong, nullable) UIColor *defaultBackgroundColor;
-@property (nonatomic, strong, nullable) UIFont *defaultTitleFont;
-// Appearance proxy support - default values for selected state
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedTitleColor;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedIconColor;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedBackgroundColor;
-@property (nonatomic, strong, nullable) UIFont *defaultSelectedTitleFont;
-// Default selection indicator
-@property (nonatomic, strong, nullable) UIImage *defaultSelectionIndicatorImage;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectionIndicatorTintColor;
 @end
 
 @implementation CYLPlaceholderView
@@ -657,7 +644,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         // if it has meaningful content (image or text) and no explicit accessibility
         // label is provided by the container.
         BOOL hasExplicitAccessibility = attributes[CYLPlaceholderItemAccessibilityLabel] || attributes[CYLPlaceholderItemAccessibilityHint];
-        BOOL hasContent = (image != nil) || (title && title.length > 0);
+        BOOL hasContent = (image != nil) || ([title isKindOfClass:NSString.class] && [(NSString *)title length] > 0);
         if (hasExplicitAccessibility || hasContent) {
             self.isAccessibilityElement = YES;
             self.accessibilityLabel = attributes[CYLPlaceholderItemAccessibilityLabel] ?: title;
@@ -1291,8 +1278,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
        if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
            if (attributes[CYLPlaceholderItemAnimationDarkColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationDarkColors]];
            NSString *specificKey = [url.pathExtension.lowercaseString isEqualToString:@"json"] ? CYLPlaceholderItemLottieDarkColors :
-               ([url.pathExtension.lowercaseString isEqualToString:@"pag"] ? CYLPlaceholderItemPAGDarkColors :
-               ([url.pathExtension.lowercaseString isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil));
+               ([url.pathExtension.lowercaseString isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil);
            if (specificKey && attributes[specificKey]) [colorSources addObject:attributes[specificKey]];
        }
    }
