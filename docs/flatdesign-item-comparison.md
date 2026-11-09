@@ -79,7 +79,7 @@ were therefore never verified; this document replaces them.
 
 | TODO | Current gap and implementation notes | Verification needed |
 | --- | --- | --- |
-| TODO — Carthage and iOS 12 (95) | Carthage packaging and an iOS 12.0 deployment build (Xcode 16, unguarded-availability errors) pass in CI. iOS 12 simulators are Intel-only and no longer exist on GitHub-hosted runners, and local Xcode 27 cannot target iOS 12, so runtime behavior on iOS 12 is unverified. | Either run the unit tests once on an iOS 12 device or Intel Mac simulator, or raise the podspec minimum to iOS 15 (what the CI runtimes cover) after approving that compatibility change. |
+| TODO — Carthage and iOS 12 (95) | Carthage packaging and an iOS 12.0 deployment build (Xcode 16, unguarded-availability errors) pass in CI; the unit suite also builds at 15.0 with those errors and passes. Running on iOS 12 is impossible with any available machine: Apple's iOS 12.4 simulator runtime refuses hosts after macOS 12.99 (tried on GitHub's `macos-15-intel` runner, PR #19), GitHub has no macOS 12 runner, and this Mac runs macOS 27. | Run the unit suite once on an iOS 12 device or a macOS 12 Intel Mac, or, with the user's approval, raise the podspec minimum to a runtime CI can run (a compatibility change for iOS 12–14 users). |
 
 Known risks: `registerAnimationFactory:` (block API) and the registry coexist;
 a block factory wins for its extension. The Lottie animator only takes

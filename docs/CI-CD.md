@@ -55,6 +55,10 @@ Carthage binary JSON or SPM manifest to update yet.
 
 ## Known limits
 
+- iOS 12 runs nowhere in CI: Apple's iOS 12.4 simulator runtime refuses hosts after
+  macOS 12.99 (tried on `macos-15-intel`), so the `iOS 12 deployment build` job only
+  builds at iOS 12.0 with unguarded-availability errors.
+
 - The accessibility audit tolerates one known issue: it reports the badge
   labels as "partially" supporting Dynamic Type although
   `testBadgeAndTitleFollowAccessibilityTextSizes` measures them growing and
