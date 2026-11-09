@@ -268,6 +268,20 @@ gem install cocoapods
 pod update
  ```
 
+如果链接时报 `ld: library not found for -lPods`（见 [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10)），通常是工程与 Pods 的集成状态不一致，而不是本库的问题：
+
+1. 用 `pod install` 生成的 `.xcworkspace` 打开工程，不要直接打开 `.xcodeproj`。
+2. `Podfile` 须保持为纯文本（UTF-8）且文件名就是 `Podfile`；改过扩展名或编码后，应确认已恢复。
+3. 重新集成并清理缓存：
+
+ ```sh
+pod deintegrate
+pod install
+rm -rf ~/Library/Developer/Xcode/DerivedData
+ ```
+
+然后在 Xcode 中执行 Product › Clean Build Folder 后重新编译。
+
 
 
 ### 第二步：遵循协议
