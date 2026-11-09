@@ -16,11 +16,12 @@ common=(-project CYLTableViewPlaceHolder.xcodeproj -scheme CYLTableViewPlaceHold
 xcodebuild build "${common[@]}" 2>&1 | tee build/framework.log
 xcodebuild analyze "${common[@]}" CLANG_ANALYZER_OUTPUT=plist-html \
   CLANG_ANALYZER_OUTPUT_DIR="$PWD/build/analyzer" 2>&1 | tee build/analyze.log
+# Repository-relative paths: the checkout folder is itself named CYLTableViewPlaceHolder.
 warnings() {
-  grep -h '\.[mh]:[0-9]*:[0-9]*: warning: ' build/framework.log build/analyze.log | grep "$1" | sort -u || true
+  grep -h '\.[mh]:[0-9]*:[0-9]*: warning: ' build/framework.log build/analyze.log | sed "s|^$PWD/||" | grep -E "$1" | sort -u || true
 }
-own=$(warnings 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/\|CYLPlaceholderAnimation/')
-refresh=$(warnings 'CYLRefresh/')
+own=$(warnings '^CYLTableViewPlaceHolder/(CYLTableViewPlaceHolder|CYLPlaceholderAnimation)/')
+refresh=$(warnings '^CYLTableViewPlaceHolder/CYLRefresh/')
 echo "Placeholder source warnings: $(printf '%s' "$own" | grep -c . || true)"
 echo "CYLRefresh source warnings (reported only): $(printf '%s' "$refresh" | grep -c . || true)"
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
@@ -28,7 +29,7 @@ if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
     echo "### Framework warnings"
     echo
     echo '```'
-    printf '%s\n%s\n' "$own" "$refresh" | sed "s|$PWD/||" | grep . | head -200 || true
+    printf '%s\n%s\n' "$own" "$refresh" | grep . | head -200 || true
     echo '```'
   } >> "$GITHUB_STEP_SUMMARY"
 fi

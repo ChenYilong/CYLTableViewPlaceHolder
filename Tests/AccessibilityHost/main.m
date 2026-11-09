@@ -99,17 +99,33 @@
 
 @end
 
-@interface CYLAccessibilityHostAppDelegate : UIResponder <UIApplicationDelegate>
+// UIScene lifecycle: iOS 26 traps apps that do not adopt it.
+@interface CYLAccessibilityHostSceneDelegate : UIResponder <UIWindowSceneDelegate>
 @property (nonatomic, strong) UIWindow *window;
+@end
+
+@implementation CYLAccessibilityHostSceneDelegate
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
+    self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
+    self.window.rootViewController = [[CYLAccessibilityHostViewController alloc] init];
+    [self.window makeKeyAndVisible];
+}
+
+@end
+
+@interface CYLAccessibilityHostAppDelegate : UIResponder <UIApplicationDelegate>
 @end
 
 @implementation CYLAccessibilityHostAppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    self.window.rootViewController = [[CYLAccessibilityHostViewController alloc] init];
-    [self.window makeKeyAndVisible];
-    return YES;
+- (UISceneConfiguration *)application:(UIApplication *)application
+configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession
+                              options:(UISceneConnectionOptions *)options {
+    UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:@"Default"
+                                                                         sessionRole:connectingSceneSession.role];
+    configuration.delegateClass = CYLAccessibilityHostSceneDelegate.class;
+    return configuration;
 }
 
 @end
