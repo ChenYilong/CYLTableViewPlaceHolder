@@ -129,3 +129,11 @@ This overwrites the existing `commit-msg` hook and removes every line containing
 Inspect any existing hook before replacing it. The command assumes `.git` is
 a directory and Git uses its default hooks path; linked worktrees and custom
 `core.hooksPath` require the appropriate hooks path instead.
+
+## Commitizen commits
+
+Before every Commitizen-style (`git cz`) commit, run this first in the repository root:
+
+```sh
+touch .git/hooks/NO_AUTO_SYNC
+```

@@ -47,6 +47,12 @@ the integrated `CYLRefresh` component, and an example application. Read
 
 ## Commit readiness
 
+- **Before every Commitizen-style (`git cz`) commit**, run this first in the repository root, so the vault's auto sync does not commit or push in the middle of it:
+
+  ```sh
+  touch .git/hooks/NO_AUTO_SYNC
+  ```
+
 - Before a Commitizen-style commit, follow the commit-message hook instructions
   in `instructions.md`; inspect an existing hook before replacing it.
 - Before every commit, audit the changed code and the project's comparison,
