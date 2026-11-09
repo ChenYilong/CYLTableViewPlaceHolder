@@ -1,6 +1,23 @@
 #import <XCTest/XCTest.h>
 #import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
 
+static UIColor *CYLRenderedCenterColor(UIView *view) {
+    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat preferredFormat];
+    format.scale = 1;
+    UIImage *image = [[[UIGraphicsImageRenderer alloc] initWithSize:view.bounds.size format:format]
+        imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    }];
+    unsigned char pixel[4] = {0};
+    CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pixel, 1, 1, 8, 4, space, kCGImageAlphaPremultipliedLast);
+    CGContextDrawImage(context, CGRectMake(-floor(image.size.width / 2), -floor(image.size.height / 2),
+                                           image.size.width, image.size.height), image.CGImage);
+    CGContextRelease(context);
+    CGColorSpaceRelease(space);
+    return [UIColor colorWithRed:pixel[0] / 255.0 green:pixel[1] / 255.0 blue:pixel[2] / 255.0 alpha:pixel[3] / 255.0];
+}
+
 @interface CYLPlaceholderLottiePlaybackTests : XCTestCase
 @end
 
@@ -36,6 +53,14 @@
     CGFloat red = 0, green = 0, blue = 0, alpha = 0;
     XCTAssertTrue([light getRed:&red green:&green blue:&blue alpha:&alpha]);
     XCTAssertEqualWithAccuracy(green, 1, 0.02);
+    // The override is drawn: the ellipse at the center renders green, not its own red.
+    window.hidden = NO;
+    [placeholder stopPlaceholderAnimation];
+    [lottie layoutIfNeeded];
+    UIColor *drawn = CYLRenderedCenterColor(lottie);
+    XCTAssertTrue([drawn getRed:&red green:&green blue:&blue alpha:&alpha]);
+    XCTAssertGreaterThan(green, 0.8, @"rendered %@", drawn);
+    XCTAssertLessThan(red, 0.2, @"rendered %@", drawn);
     window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         UIView *newLottie = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
@@ -46,6 +71,12 @@
         return [color getRed:&r green:&g blue:&b alpha:&a] && b > 0.98;
     }] evaluatedWithObject:placeholder handler:nil];
     [self waitForExpectationsWithTimeout:3 handler:nil];
+    UIView *darkLottie = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
+    [darkLottie layoutIfNeeded];
+    UIColor *darkDrawn = CYLRenderedCenterColor(darkLottie);
+    XCTAssertTrue([darkDrawn getRed:&red green:&green blue:&blue alpha:&alpha]);
+    XCTAssertGreaterThan(blue, 0.8, @"rendered %@", darkDrawn);
+    window.hidden = YES;
     [placeholder removeFromSuperview];
     XCTAssertTrue([[NSFileManager defaultManager] removeItemAtURL:url error:&error]);
 }
@@ -148,4 +179,40 @@
     XCTAssertTrue([[NSFileManager defaultManager] removeItemAtURL:url error:&error]);
 }
 
+- (void)testOptionsAndStateSurviveDarkModeReplacement {
+    NSString *json = @"{\"v\":\"5.7.4\",\"fr\":30,\"ip\":0,\"op\":30,\"w\":80,\"h\":80,\"nm\":\"Test\",\"ddd\":0,\"assets\":[],\"layers\":[]}";
+    NSString *prefix = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    NSURL *light = [NSURL fileURLWithPath:[prefix stringByAppendingString:@"-light.json"]];
+    NSURL *dark = [NSURL fileURLWithPath:[prefix stringByAppendingString:@"-dark.json"]];
+    NSError *error = nil;
+    XCTAssertTrue([json writeToURL:light atomically:YES encoding:NSUTF8StringEncoding error:&error]);
+    XCTAssertTrue([json writeToURL:dark atomically:YES encoding:NSUTF8StringEncoding error:&error]);
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemLottieURL: light, CYLPlaceholderItemLottieDarkURL: dark,
+        CYLPlaceholderItemAnimationOptions: @{@"animationSpeed": @3, @"contentMode": @"scaleAspectFill"}
+    } imageBundle:nil error:&error];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    [window addSubview:placeholder];
+    UIView *backend = [placeholder valueForKey:@"backendView"];
+    UIView *lottie = backend.subviews.firstObject;
+    XCTAssertEqualWithAccuracy([[lottie valueForKey:@"cyl_animationSpeed"] doubleValue], 3, 0.01);
+    XCTAssertEqual(lottie.contentMode, UIViewContentModeScaleAspectFill);
+    XCTAssertTrue([placeholder setPlaceholderAnimationSpeed:2]);
+    XCTAssertTrue([placeholder setPlaceholderAnimationProgress:0.5]);
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return [placeholder valueForKey:@"backendView"] != backend;
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
+    UIView *replacement = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
+    XCTAssertNotEqual(replacement, lottie);
+    XCTAssertEqualWithAccuracy([[replacement valueForKey:@"cyl_animationSpeed"] doubleValue], 2, 0.01);
+    XCTAssertEqualWithAccuracy([[replacement valueForKey:@"cyl_realtimeAnimationProgress"] doubleValue], 0.5, 0.01);
+    [placeholder removeFromSuperview];
+    [[NSFileManager defaultManager] removeItemAtURL:light error:NULL];
+    [[NSFileManager defaultManager] removeItemAtURL:dark error:NULL];
+}
+
 @end
+

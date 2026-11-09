@@ -1,3 +1,8 @@
+> **Superseded (2026-11-09).** The scores below were written while `CYLPlaceholderView.m`
+> did not compile, so none of them were verified. The current, test-backed comparison and the
+> open TODO items are in [flatdesign-item-comparison.md](flatdesign-item-comparison.md).
+> This page is kept as history.
+
 # FlatDesign TabBarItem vs Placeholder Implementation Comparison
 
 > **Reference**: CYLTabBarController branch `feat/cross-platform-components`, commit `ca8beda38c2ca49b81b1782bd932da35ad16640e`

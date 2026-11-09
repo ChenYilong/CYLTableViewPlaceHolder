@@ -1,5 +1,8 @@
 #import "CYLPlaceholderView.h"
 #import "CYLPlaceholderItemAnimationService.h"
+
+static NSArray<NSString *> *CYLPlaceholderAppearanceKeys(void);
+static BOOL CYLPlaceholderSameValue(id a, id b);
 #import <math.h>
 #import <ImageIO/ImageIO.h>
 
@@ -298,6 +301,8 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) UILabel *titleLabel;
 @property (nonatomic) UIOffset itemTitleOffset;
+/// Used when the item has no title offset of its own (the FlatDesign `_appearanceTitlePositionAdjustment`).
+@property (nonatomic) UIOffset appearanceTitleOffset;
 @property (nonatomic) UIOffset itemImageOffset;
 @property (nonatomic) UIEdgeInsets itemImageInsets;
 @property (nonatomic, strong) UIView *animationView;
@@ -335,83 +340,52 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         [self.imageView sizeToFit];
     }
 
-    // Use proper margins for text wrapping to handle narrow widths and dynamic type.
-    // Reserve horizontal margins so text wraps within the item bounds, not the full view.
-    CGFloat horizontalMargin = 16;
-    CGFloat maxTitleWidth = MAX(0, CGRectGetWidth(self.bounds) - 2 * horizontalMargin);
     NSString *title = isShowTitleLabel ? self.titleLabel.text : @"height";
-    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(maxTitleWidth, CGFLOAT_MAX)
+    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX)
                                            options:NSStringDrawingUsesLineFragmentOrigin
                                         attributes:@{NSFontAttributeName: self.titleLabel.font}
                                            context:nil].size;
-    CGFloat titleLabelWidth = MIN(maxTitleWidth, ceil(titleSize.width));
+    CGFloat titleLabelWidth = MIN(CGRectGetWidth(self.bounds), ceil(titleSize.width));
     CGFloat titleLabelHeight = ceil(titleSize.height);
+    CGFloat titleLabelX = (CGRectGetWidth(self.bounds) - titleLabelWidth) / 2;
+    CGFloat titleLabelY = CGRectGetHeight(self.bounds) - titleLabelHeight - 2;
+    if (!isShowImageView) titleLabelY = (CGRectGetHeight(self.bounds) - titleLabelHeight) / 2;
+    // The item's own offset wins, else the appearance's, as in CYLFlatDesignTabBarButton.
+    UIOffset titleOffset = UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.appearanceTitleOffset : self.itemTitleOffset;
+    titleLabelX += titleOffset.horizontal;
+    titleLabelY += titleOffset.vertical;
+    self.titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelWidth, titleLabelHeight);
 
-    // Vertical spacing between image and title follows the reference (24 pts when both present).
-    CGFloat verticalSpacing = (isShowImageView && isShowTitleLabel) ? 24 : 0;
-
-    // Total item height for centering
-    CGFloat imageHeight = 0;
-    if (isShowImageView) {
-        imageHeight = CGRectGetHeight(self.imageView.frame);
-        if (self.animationView && !self.animationView.hidden) {
-            imageHeight = self.animationSize.height;
-        }
-    }
-    CGFloat totalItemHeight = imageHeight + verticalSpacing + titleLabelHeight;
-
-    // Center the item vertically in bounds
-    CGFloat itemOriginY = (CGRectGetHeight(self.bounds) - totalItemHeight) / 2;
-
-    // Layout image view
     if (isShowImageView) {
         CGFloat imageViewWidth = CGRectGetWidth(self.imageView.frame);
-        if (self.animationView && !self.animationView.hidden) {
-            imageViewWidth = self.animationSize.width;
-        }
-        CGFloat imageViewX = (CGRectGetWidth(self.bounds) - imageViewWidth) / 2 + self.itemImageOffset.horizontal;
-        CGFloat imageViewY = itemOriginY + self.itemImageOffset.vertical;
-        // Apply image insets - reduce the visible frame by insets
-        CGFloat visibleImageWidth = MAX(0, imageViewWidth - self.itemImageInsets.left - self.itemImageInsets.right);
-        CGFloat visibleImageHeight = MAX(0, imageHeight - self.itemImageInsets.top - self.itemImageInsets.bottom);
-        self.imageView.frame = CGRectMake(imageViewX + self.itemImageInsets.left,
-                                          imageViewY + self.itemImageInsets.top,
-                                          visibleImageWidth, visibleImageHeight);
+        CGFloat imageViewHeight = CGRectGetHeight(self.imageView.frame);
+        CGFloat imageViewX = (CGRectGetWidth(self.bounds) - imageViewWidth) / 2;
+        CGFloat imageViewY = (CGRectGetMinY(self.titleLabel.frame) - imageViewHeight) / 2;
+        if (!isShowTitleLabel) imageViewY = (CGRectGetHeight(self.bounds) - imageViewHeight) / 2;
+        imageViewX += self.itemImageOffset.horizontal;
+        imageViewY += self.itemImageOffset.vertical;
+        self.imageView.frame = CGRectMake(imageViewX, imageViewY,
+            MAX(0, imageViewWidth - self.itemImageInsets.left - self.itemImageInsets.right),
+            MAX(0, imageViewHeight - self.itemImageInsets.top - self.itemImageInsets.bottom));
         self.animationView.frame = self.imageView.frame;
     } else {
         self.imageView.frame = CGRectZero;
     }
-
-    // Layout title label - centered horizontally, below image (or centered if no image)
-    CGFloat titleLabelX = (CGRectGetWidth(self.bounds) - titleLabelWidth) / 2 + self.itemTitleOffset.horizontal;
-    CGFloat titleLabelY;
-    if (isShowImageView) {
-        titleLabelY = itemOriginY + imageHeight + verticalSpacing + self.itemTitleOffset.vertical;
-    } else {
-        titleLabelY = (CGRectGetHeight(self.bounds) - titleLabelHeight) / 2 + self.itemTitleOffset.vertical;
-    }
-    self.titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelWidth, titleLabelHeight);
-
     // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
     if (self.badgeLabel && !self.badgeLabel.hidden) {
         CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
+        UIEdgeInsets insets = appearance.contentInsets;
         BOOL dot = self.badgeLabel.text.length == 0;
-        CGSize size;
-        if (dot) {
-            size = CGSizeMake(8, 8);
-        } else {
-            size = [self.badgeLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-            size.height = ceil(size.height) + appearance.contentInsets.top + appearance.contentInsets.bottom;
-            size.width = MAX(size.height, ceil(size.width) + appearance.contentInsets.left + appearance.contentInsets.right);
+        CGSize size = dot ? CGSizeMake(8, 8) : [self.badgeLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        if (!dot) {
+            size.height = ceil(size.height) + insets.top + insets.bottom;
+            size.width = MAX(size.height, ceil(size.width) + insets.left + insets.right);
         }
         CGRect anchor = isShowImageView ? self.imageView.frame : self.titleLabel.frame;
         self.badgeLabel.bounds = (CGRect){CGPointZero, size};
         self.badgeLabel.center = CGPointMake(CGRectGetMaxX(anchor) + 2 + self.badgeCenterOffset.x,
                                               CGRectGetMinY(anchor) + self.badgeCenterOffset.y);
-        self.badgeLabel.layer.cornerRadius = appearance.cornerRadius > 0 ? appearance.cornerRadius : size.height / 2;
-        self.badgeLabel.backgroundColor = appearance.backgroundColor;
-        self.badgeLabel.textColor = appearance.textColor;
-        self.badgeLabel.font = appearance.font;
+        self.badgeLabel.layer.cornerRadius = appearance.cornerRadius > 0 ? MIN(appearance.cornerRadius, size.height / 2) : size.height / 2;
         [self bringSubviewToFront:self.badgeLabel];
     }
 }
@@ -428,7 +402,7 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         shared.textColor = UIColor.whiteColor;
         shared.font = [UIFont boldSystemFontOfSize:9];
         shared.cornerRadius = 0; // 0 means auto (height/2)
-        shared.contentInsets = UIEdgeInsetsMake(4, 8, 4, 8);
+        shared.contentInsets = UIEdgeInsetsMake(4, 4, 4, 4); // CYLBadgeView: 8 points wider and taller than the text
         shared.animationDuration = 0.2;
         shared.animatesChanges = YES;
     });
@@ -480,6 +454,15 @@ id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(voi
 @property (nonatomic, copy) NSString *accessibilityValueBeforeBadge;
 @property (nonatomic, copy) NSString *appliedBadgeAccessibilityValue;
 @property (nonatomic, strong) UIImageView *selectionIndicatorView;
+// Appearance layers (see -cyl_applyAppearance), keyed by titleColor / iconColor / backgroundColor / titleFont.
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *appearanceBaselineValues;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *appearanceExplicitValues;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *appearanceAppliedValues;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *appearanceNormalValues;
+// The shared badge appearance values last applied; a label value that differs was set by the caller and is kept.
+@property (nonatomic, strong) UIFont *appliedBadgeFont;
+@property (nonatomic, strong) UIColor *appliedBadgeTextColor;
+@property (nonatomic, strong) UIColor *appliedBadgeBackgroundColor;
 
 @end
 
@@ -671,6 +654,18 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         if (colors[CYLPlaceholderItemIconColor]) self.imageView.tintColor = colors[CYLPlaceholderItemIconColor];
         if (colors[CYLPlaceholderItemBackgroundColor]) self.backgroundColor = colors[CYLPlaceholderItemBackgroundColor];
         if (font) self.textLabel.font = font;
+        NSDictionary<NSString *, id> *explicitValues = @{
+            @"titleColor": colors[CYLPlaceholderItemTitleColor] ?: NSNull.null,
+            @"iconColor": colors[CYLPlaceholderItemIconColor] ?: NSNull.null,
+            @"backgroundColor": colors[CYLPlaceholderItemBackgroundColor] ?: NSNull.null,
+            @"titleFont": font ?: NSNull.null
+        };
+        [explicitValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+            if (value == NSNull.null) return;
+            self.appearanceExplicitValues[key] = value;
+            self.appearanceAppliedValues[key] = value;
+            self.appearanceNormalValues[key] = value;
+        }];
         self.accessibilityIdentifier = attributes[CYLPlaceholderItemAccessibilityIdentifier];
         // Determine if the placeholder should be an accessibility element.
         // It should be an element if it has explicit accessibility attributes or
@@ -715,11 +710,13 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
             self.textLabel.text = self.selectedTitle;
             self.textLabel.hidden = NO;
         }
-        // Use explicit selected colors, then appearance proxy defaults, then normal colors
-        self.textLabel.textColor = self.selectedTitleColor ?: self.defaultSelectedTitleColor ?: self.normalTitleColor;
-        self.imageView.tintColor = self.selectedIconColor ?: self.defaultSelectedIconColor ?: self.normalIconColor;
-        self.backgroundColor = self.selectedBackgroundColor ?: self.defaultSelectedBackgroundColor ?: self.normalBackgroundColor;
-        self.textLabel.font = self.selectedTitleFont ?: self.defaultSelectedTitleFont ?: self.normalTitleFont;
+        // Explicit selected values, then the selected appearance defaults, then the normal values.
+        _selected = YES;
+        for (NSString *key in CYLPlaceholderAppearanceKeys()) {
+            id value = [self cyl_desiredAppearanceValueForKey:key];
+            [self cyl_setAppearanceTargetValue:value forKey:key];
+            self.appearanceAppliedValues[key] = value ?: NSNull.null;
+        }
         self.accessibilityTraits |= UIAccessibilityTraitSelected;
     } else {
         self.imageView.image = self.normalImage;
@@ -730,6 +727,20 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.imageView.tintColor = self.normalIconColor;
         self.backgroundColor = self.normalBackgroundColor;
         self.textLabel.font = self.normalTitleFont;
+        _selected = NO;
+        for (NSString *key in CYLPlaceholderAppearanceKeys()) {
+            id restored = [self cyl_appearanceTargetValueForKey:key] ?: NSNull.null;
+            id normal = self.appearanceNormalValues[key];
+            // Owned again only when the restored value is the one the appearance layers produced.
+            if (CYLPlaceholderSameValue(restored, normal) ||
+                ([key isEqualToString:@"iconColor"] && normal == NSNull.null && CYLPlaceholderSameValue(restored, self.tintColor))) {
+                self.appearanceAppliedValues[key] = normal;
+                if (normal == NSNull.null) [self cyl_setAppearanceTargetValue:nil forKey:key];
+            } else {
+                self.appearanceAppliedValues[key] = @"CYLPlaceholderCustomized";
+            }
+        }
+        [self cyl_applyAppearance];
         if (!self.normalHasSelectedTrait) self.accessibilityTraits &= ~UIAccessibilityTraitSelected;
     }
     _selected = selected;
@@ -775,6 +786,26 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     self.selectionIndicatorView.frame = self.itemView.bounds;
 }
 
+// Applies `CYLPlaceholderBadgeAppearance` like CYLTabBarController's `_updateBadgeAppearance`: a value still equal to
+// the one applied before follows the shared appearance; one the caller changed on `badgeLabel` is left alone.
+- (void)cyl_applyBadgeAppearance {
+    CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
+    UILabel *label = self.badgeLabel;
+    if (appearance.font && [label.font isEqual:self.appliedBadgeFont] && ![label.font isEqual:appearance.font]) {
+        label.font = appearance.font;
+    }
+    if (appearance.textColor && [label.textColor isEqual:self.appliedBadgeTextColor] && ![label.textColor isEqual:appearance.textColor]) {
+        label.textColor = appearance.textColor;
+    }
+    if (appearance.backgroundColor && (label.backgroundColor == self.appliedBadgeBackgroundColor ||
+        [label.backgroundColor isEqual:self.appliedBadgeBackgroundColor]) && ![label.backgroundColor isEqual:appearance.backgroundColor]) {
+        label.backgroundColor = appearance.backgroundColor;
+    }
+    if ([label.font isEqual:appearance.font]) self.appliedBadgeFont = label.font;
+    if ([label.textColor isEqual:appearance.textColor]) self.appliedBadgeTextColor = label.textColor;
+    if ([label.backgroundColor isEqual:appearance.backgroundColor]) self.appliedBadgeBackgroundColor = label.backgroundColor;
+}
+
 - (void)setBadgeValue:(NSString *)badgeValue {
     if (_badgeValue == badgeValue || [_badgeValue isEqualToString:badgeValue]) return;
     if (badgeValue && ![badgeValue isKindOfClass:NSString.class]) {
@@ -782,69 +813,60 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         return;
     }
     CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
-    BOOL animate = appearance.animatesChanges && badgeValue != nil && _badgeValue != nil;
-    // Determine if we should announce badge separately or include in placeholder's accessibilityValue
-    BOOL placeholderIsAccessibilityElement = self.isAccessibilityElement;
+    BOOL animate = appearance.animatesChanges && appearance.animationDuration > 0 && badgeValue != nil &&
+        self.window != nil && !UIAccessibilityIsReduceMotionEnabled();
     if (!_badgeValue && badgeValue) {
         self.accessibilityValueBeforeBadge = self.accessibilityValue;
     } else if (_badgeValue && self.appliedBadgeAccessibilityValue &&
                ![self.accessibilityValue isEqualToString:self.appliedBadgeAccessibilityValue]) {
+        // The caller replaced the value while the badge was shown: keep theirs.
         self.accessibilityValueBeforeBadge = self.accessibilityValue;
     }
     _badgeValue = [badgeValue copy];
 
-    void (^updateBadge)(void) = ^{
-        self.badgeLabel.text = badgeValue;
-        self.badgeLabel.hidden = badgeValue == nil;
-        if (badgeValue) {
-            if (self.badgeLabel.superview != self.itemView) [self.itemView addSubview:self.badgeLabel];
-        } else {
-            [self.badgeLabel removeFromSuperview];
-        }
-        if (badgeValue) {
-            NSString *description = badgeValue.length ? badgeValue :
-                CYLPlaceholderLocalizedString(@"CYLPlaceholderBadgeNewContent", @"New content");
-            self.badgeLabel.accessibilityLabel = description;
-            // Only set accessibilityValue on badgeLabel if placeholder is not an accessibility element
-            // If placeholder is an accessibility element, include badge in its accessibilityValue
-            if (!placeholderIsAccessibilityElement) {
-                self.badgeLabel.accessibilityValue = description;
-            }
-            // Update placeholder's accessibilityValue to include badge info
-            if (placeholderIsAccessibilityElement) {
-                NSString *baseValue = self.accessibilityValueBeforeBadge ?: self.accessibilityLabel;
-                self.accessibilityValue = [NSString stringWithFormat:@"%@, %@", baseValue, description];
-                self.appliedBadgeAccessibilityValue = self.accessibilityValue;
-            } else {
-                self.accessibilityValue = description;
-                self.appliedBadgeAccessibilityValue = description;
-            }
-        } else {
-            if (self.appliedBadgeAccessibilityValue &&
-                [self.accessibilityValue isEqualToString:self.appliedBadgeAccessibilityValue]) {
-                self.accessibilityValue = self.accessibilityValueBeforeBadge;
-            }
-            self.appliedBadgeAccessibilityValue = nil;
-            if (!badgeValue) self.accessibilityValueBeforeBadge = nil;
-        }
-        [self.itemView setNeedsLayout];
-    };
-
-    if (animate) {
-        [UIView animateWithDuration:appearance.animationDuration
-                         animations:^{
-                             self.badgeLabel.transform = CGAffineTransformMakeScale(0.8, 0.8);
-                             self.badgeLabel.alpha = 0.5;
-                         } completion:^(BOOL finished) {
-                             updateBadge();
-                             [UIView animateWithDuration:appearance.animationDuration
-                                              animations:^{
-                                                  self.badgeLabel.transform = CGAffineTransformIdentity;
-                                                  self.badgeLabel.alpha = 1.0;
-                                              }];
-                         }];
+    // State changes are synchronous; only the pop below is animated.
+    self.badgeLabel.text = badgeValue;
+    self.badgeLabel.hidden = badgeValue == nil;
+    if (badgeValue) {
+        [self cyl_applyBadgeAppearance];
+        if (self.badgeLabel.superview != self.itemView) [self.itemView addSubview:self.badgeLabel];
     } else {
-        updateBadge();
+        [self.badgeLabel.layer removeAllAnimations];
+        self.badgeLabel.transform = CGAffineTransformIdentity;
+        self.badgeLabel.alpha = 1;
+        [self.badgeLabel removeFromSuperview];
+    }
+    // One announcement, no duplicates: when the placeholder is itself an accessibility element, the badge joins its
+    // value and the badge label is hidden from VoiceOver; otherwise the badge label is read on its own.
+    BOOL placeholderIsAccessibilityElement = self.isAccessibilityElement;
+    self.badgeLabel.isAccessibilityElement = !placeholderIsAccessibilityElement;
+    if (badgeValue) {
+        NSString *description = badgeValue.length ? badgeValue :
+            CYLPlaceholderLocalizedString(@"CYLPlaceholderBadgeNewContent", @"New content");
+        self.badgeLabel.accessibilityLabel = description;
+        NSString *baseValue = self.accessibilityValueBeforeBadge;
+        NSString *value = (placeholderIsAccessibilityElement && baseValue.length) ?
+            [NSString stringWithFormat:@"%@, %@", baseValue, description] : description;
+        self.accessibilityValue = value;
+        self.appliedBadgeAccessibilityValue = value;
+    } else {
+        if (self.appliedBadgeAccessibilityValue &&
+            [self.accessibilityValue isEqualToString:self.appliedBadgeAccessibilityValue]) {
+            self.accessibilityValue = self.accessibilityValueBeforeBadge;
+        }
+        self.appliedBadgeAccessibilityValue = nil;
+        self.accessibilityValueBeforeBadge = nil;
+    }
+    [self.itemView setNeedsLayout];
+    if (animate) {
+        self.badgeLabel.transform = CGAffineTransformMakeScale(0.6, 0.6);
+        self.badgeLabel.alpha = 0.5;
+        [UIView animateWithDuration:appearance.animationDuration delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+                         animations:^{
+            self.badgeLabel.transform = CGAffineTransformIdentity;
+            self.badgeLabel.alpha = 1;
+        } completion:nil];
     }
 }
 
@@ -895,64 +917,144 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         [self cyl_configureAnimations];
         [self cyl_updateAnimationPlayback];
     }
-    // Update colors for trait changes if using default colors
-    if (previousTraitCollection && self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
-        [self cyl_updateColorsForTraitChange];
-    }
     // Update selection indicator for trait changes when selected
-    if (self.selected && self.selectionIndicatorImage) {
+    if (self.selected && (self.selectionIndicatorImage || self.defaultSelectionIndicatorImage)) {
         [self cyl_updateSelectionIndicator];
     }
 }
 
 - (void)tintColorDidChange {
     [super tintColorDidChange];
-    // If no explicit icon color was set, follow the view's tintColor
-    if (!self.normalIconColor && !self.selectedIconColor) {
-        self.imageView.tintColor = self.tintColor;
-    }
+    // Like the FlatDesign button: an icon without an explicit or appearance color follows the tint color.
+    [self cyl_applyAppearance];
 }
 
-- (void)cyl_updateColorsForTraitChange {
-    // Re-resolve any colors that depend on trait collection
-    // Normal state colors
-    UIColor *effectiveNormalTitleColor = self.normalTitleColor ?: self.defaultTitleColor;
-    if (effectiveNormalTitleColor && [effectiveNormalTitleColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-        self.textLabel.textColor = [effectiveNormalTitleColor resolvedColorWithTraitCollection:self.traitCollection];
-    }
-    UIColor *effectiveNormalIconColor = self.normalIconColor ?: self.defaultIconColor;
-    if (effectiveNormalIconColor && [effectiveNormalIconColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-        self.imageView.tintColor = [effectiveNormalIconColor resolvedColorWithTraitCollection:self.traitCollection];
-    }
-    UIColor *effectiveNormalBackgroundColor = self.normalBackgroundColor ?: self.defaultBackgroundColor;
-    if (effectiveNormalBackgroundColor && [effectiveNormalBackgroundColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-        self.backgroundColor = [effectiveNormalBackgroundColor resolvedColorWithTraitCollection:self.traitCollection];
-    }
-    // Selected state colors
-    if (self.selected) {
-        UIColor *effectiveSelectedTitleColor = self.selectedTitleColor ?: self.defaultSelectedTitleColor ?: effectiveNormalTitleColor;
-        if (effectiveSelectedTitleColor && [effectiveSelectedTitleColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-            self.textLabel.textColor = [effectiveSelectedTitleColor resolvedColorWithTraitCollection:self.traitCollection];
-        }
-        UIColor *effectiveSelectedIconColor = self.selectedIconColor ?: self.defaultSelectedIconColor ?: effectiveNormalIconColor;
-        if (effectiveSelectedIconColor && [effectiveSelectedIconColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-            self.imageView.tintColor = [effectiveSelectedIconColor resolvedColorWithTraitCollection:self.traitCollection];
-        }
-        UIColor *effectiveSelectedBackgroundColor = self.selectedBackgroundColor ?: self.defaultSelectedBackgroundColor ?: effectiveNormalBackgroundColor;
-        if (effectiveSelectedBackgroundColor && [effectiveSelectedBackgroundColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-            self.backgroundColor = [effectiveSelectedBackgroundColor resolvedColorWithTraitCollection:self.traitCollection];
-        }
-    }
-    // Update selection indicator tint color for trait changes
-    UIColor *effectiveIndicatorTintColor = self.selectionIndicatorTintColor ?: self.defaultSelectionIndicatorTintColor;
-    if (self.selected && effectiveIndicatorTintColor && [effectiveIndicatorTintColor respondsToSelector:@selector(resolvedColorWithTraitCollection:)]) {
-        self.selectionIndicatorView.tintColor = [effectiveIndicatorTintColor resolvedColorWithTraitCollection:self.traitCollection];
-    }
-    // Also update animation colors if they support it
-    if (self.backendView && [self.backendView respondsToSelector:@selector(setAnimationColors:)]) {
-        // Animation colors are reconfigured in cyl_configureAnimations
-    }
+#pragma mark - Appearance layers
+
+static NSArray<NSString *> *CYLPlaceholderAppearanceKeys(void) {
+    return @[@"titleColor", @"iconColor", @"backgroundColor", @"titleFont"];
 }
+
+static BOOL CYLPlaceholderSameValue(id a, id b) {
+    if (a == NSNull.null) a = nil;
+    if (b == NSNull.null) b = nil;
+    return a == b || [a isEqual:b];
+}
+
+static id CYLPlaceholderNilIfNull(id value) {
+    return value == NSNull.null ? nil : value;
+}
+
+- (id)cyl_appearanceTargetValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"titleColor"]) return self.textLabel.textColor;
+    if ([key isEqualToString:@"iconColor"]) return self.imageView.tintColor;
+    if ([key isEqualToString:@"backgroundColor"]) return self.backgroundColor;
+    return self.textLabel.font;
+}
+
+- (void)cyl_setAppearanceTargetValue:(id)value forKey:(NSString *)key {
+    value = CYLPlaceholderNilIfNull(value);
+    if ([key isEqualToString:@"titleColor"]) self.textLabel.textColor = value;
+    else if ([key isEqualToString:@"iconColor"]) self.imageView.tintColor = value;
+    else if ([key isEqualToString:@"backgroundColor"]) self.backgroundColor = value;
+    else if (value) self.textLabel.font = value;
+}
+
+/// YES when the value is still the one the appearance layers set (or the inherited tint for the icon).
+- (BOOL)cyl_ownsAppearanceValue:(id)current forKey:(NSString *)key {
+    id applied = self.appearanceAppliedValues[key];
+    if ([key isEqualToString:@"iconColor"] && applied == NSNull.null) {
+        return CYLPlaceholderSameValue(current, self.tintColor);
+    }
+    return CYLPlaceholderSameValue(current, applied);
+}
+
+/// Normal: explicit item value, appearance default, built-in value (the icon follows the tint color).
+- (id)cyl_normalAppearanceValueForKey:(NSString *)key {
+    id explicitValue = self.appearanceExplicitValues[key];
+    if (explicitValue) return explicitValue;
+    NSDictionary<NSString *, id> *defaults = @{
+        @"titleColor": self.defaultTitleColor ?: NSNull.null, @"iconColor": self.defaultIconColor ?: NSNull.null,
+        @"backgroundColor": self.defaultBackgroundColor ?: NSNull.null, @"titleFont": self.defaultTitleFont ?: NSNull.null
+    };
+    id defaultValue = CYLPlaceholderNilIfNull(defaults[key]);
+    if (defaultValue) return defaultValue;
+    return CYLPlaceholderNilIfNull(self.appearanceBaselineValues[key]);
+}
+
+/// Selected: explicit selected value, selected appearance default, the normal value.
+- (id)cyl_desiredAppearanceValueForKey:(NSString *)key {
+    if (!self.selected) return [self cyl_normalAppearanceValueForKey:key];
+    NSDictionary<NSString *, id> *selectedValues = @{
+        @"titleColor": self.selectedTitleColor ?: self.defaultSelectedTitleColor ?: NSNull.null,
+        @"iconColor": self.selectedIconColor ?: self.defaultSelectedIconColor ?: NSNull.null,
+        @"backgroundColor": self.selectedBackgroundColor ?: self.defaultSelectedBackgroundColor ?: NSNull.null,
+        @"titleFont": self.selectedTitleFont ?: self.defaultSelectedTitleFont ?: NSNull.null
+    };
+    id value = CYLPlaceholderNilIfNull(selectedValues[key]);
+    if (value) return value;
+    NSDictionary<NSString *, id> *snapshot = @{
+        @"titleColor": self.normalTitleColor ?: NSNull.null, @"iconColor": self.normalIconColor ?: NSNull.null,
+        @"backgroundColor": self.normalBackgroundColor ?: NSNull.null, @"titleFont": self.normalTitleFont ?: NSNull.null
+    };
+    return CYLPlaceholderNilIfNull(snapshot[key]);
+}
+
+/// Re-applies the layers to every value the library still owns: one the caller set directly is left alone.
+- (void)cyl_applyAppearance {
+    if (!self.appearanceAppliedValues) return;
+    for (NSString *key in CYLPlaceholderAppearanceKeys()) {
+        id normal = [self cyl_normalAppearanceValueForKey:key];
+        if (self.selected) {
+            // Keep the normal snapshot current, so deselecting shows the latest appearance.
+            NSDictionary<NSString *, NSString *> *snapshotKeys = @{
+                @"titleColor": @"normalTitleColor", @"iconColor": @"normalIconColor",
+                @"backgroundColor": @"normalBackgroundColor", @"titleFont": @"normalTitleFont"
+            };
+            id snapshot = [self valueForKey:snapshotKeys[key]];
+            if (CYLPlaceholderSameValue(snapshot, self.appearanceNormalValues[key]) && (normal || ![key isEqualToString:@"titleFont"])) {
+                [self setValue:normal forKey:snapshotKeys[key]];
+                self.appearanceNormalValues[key] = normal ?: NSNull.null;
+            }
+        }
+        id current = [self cyl_appearanceTargetValueForKey:key];
+        if (![self cyl_ownsAppearanceValue:current forKey:key]) continue;
+        id desired = [self cyl_desiredAppearanceValueForKey:key];
+        if ([key isEqualToString:@"titleFont"] && !desired) continue;
+        if (!CYLPlaceholderSameValue(current, desired)) [self cyl_setAppearanceTargetValue:desired forKey:key];
+        self.appearanceAppliedValues[key] = desired ?: NSNull.null;
+        if (!self.selected) self.appearanceNormalValues[key] = desired ?: NSNull.null;
+    }
+    [self cyl_updateSelectionIndicator];
+}
+
+- (void)didMoveToSuperview {
+    [super didMoveToSuperview];
+    [self cyl_applyAppearance];
+}
+
+#define CYL_PLACEHOLDER_APPEARANCE_SETTER(Setter, Type, ivar) \
+- (void)Setter:(Type)value { ivar = value; [self cyl_applyAppearance]; }
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultTitleColor, UIColor *, _defaultTitleColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultIconColor, UIColor *, _defaultIconColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultBackgroundColor, UIColor *, _defaultBackgroundColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultTitleFont, UIFont *, _defaultTitleFont)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedTitleColor, UIColor *, _defaultSelectedTitleColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedIconColor, UIColor *, _defaultSelectedIconColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedBackgroundColor, UIColor *, _defaultSelectedBackgroundColor)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedTitleFont, UIFont *, _defaultSelectedTitleFont)
+- (void)setDefaultTitlePositionAdjustment:(UIOffset)adjustment {
+    if (!isfinite(adjustment.horizontal) || !isfinite(adjustment.vertical)) {
+        NSLog(@"CYLTableViewPlaceHolder: title position adjustment must be finite.");
+        return;
+    }
+    _defaultTitlePositionAdjustment = adjustment;
+    self.itemView.appearanceTitleOffset = adjustment;
+    [self.itemView setNeedsLayout];
+}
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorImage, UIImage *, _defaultSelectionIndicatorImage)
+CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor *, _defaultSelectionIndicatorTintColor)
+#undef CYL_PLACEHOLDER_APPEARANCE_SETTER
 
 - (void)cyl_configureAnimations {
     [self.backendView stop];
@@ -1000,23 +1102,12 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     BOOL showAnimation = self.itemView.animationView && (!self.imageView.image || !self.imageView.hidden);
     BOOL hasImage = (self.imageView.image != nil && !self.imageView.hidden) || showAnimation;
     BOOL hasTitle = self.textLabel.text.length > 0 && !self.textLabel.hidden;
-    // Use 16pt horizontal margins on each side for text wrapping (matching itemView layout)
-    CGFloat horizontalMargin = 16;
-    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 2 * horizontalMargin);
+    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 32);
     CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
         options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
-    CGFloat imageHeight = 0;
-    if (hasImage) {
-        if (showAnimation) {
-            imageHeight = self.itemView.animationSize.height;
-        } else {
-            // Account for image insets when calculating height
-            imageHeight = MAX(0, self.imageView.image.size.height - self.itemView.itemImageInsets.top - self.itemView.itemImageInsets.bottom);
-        }
-    }
-    // Vertical spacing: 24pts between image and title when both present (matching itemView layout)
-    CGFloat verticalSpacing = (hasImage && hasTitle) ? 24 : 0;
-    CGFloat itemHeight = imageHeight + verticalSpacing + ceil(titleSize.height);
+    CGFloat imageHeight = showAnimation ? self.itemView.animationSize.height :
+        (hasImage ? self.imageView.image.size.height : 0);
+    CGFloat itemHeight = imageHeight + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0);
     self.itemView.frame = CGRectMake((CGRectGetWidth(self.bounds) - width) / 2,
         (CGRectGetHeight(self.bounds) - itemHeight) / 2, width, itemHeight);
     [self.itemView setNeedsLayout];
@@ -1139,8 +1230,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     if ([extension isEqualToString:@"json"]) {
         // Lottie options: loopMode, animationSpeed, etc.
         for (NSString *key in options) {
-            if (![key isEqualToString:@"loopMode"] &&
-                ![key isEqualToString:@"animationSpeed"] &&
+            if (![key isEqualToString:@"animationSpeed"] &&
                 ![key isEqualToString:@"contentMode"]) {
                 NSLog(@"CYLTableViewPlaceHolder: Lottie animation option '%@' is not supported.", key);
                 isValid = NO;
@@ -1149,8 +1239,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     } else if ([extension isEqualToString:@"pag"]) {
         // PAG options: loopMode, etc.
         for (NSString *key in options) {
-            if (![key isEqualToString:@"loopMode"] &&
-                ![key isEqualToString:@"contentMode"]) {
+            if (![key isEqualToString:@"contentMode"]) {
                 NSLog(@"CYLTableViewPlaceHolder: PAG animation option '%@' is not supported.", key);
                 isValid = NO;
             }
@@ -1166,6 +1255,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
                 ![key isEqualToString:@"triggerInput"] &&
                 ![key isEqualToString:@"animation"] &&
                 ![key isEqualToString:@"legacy"] &&
+                ![key isEqualToString:@"color"] &&
                 ![key isEqualToString:@"duration"]) {
                 NSLog(@"CYLTableViewPlaceHolder: Rive animation option '%@' is not supported.", key);
                 isValid = NO;
@@ -1311,6 +1401,16 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
    if (animationColors.count &&
        (![view respondsToSelector:@selector(setAnimationColors:)] || ![view setAnimationColors:animationColors])) {
        NSLog(@"CYLTableViewPlaceHolder: animation color overrides are not supported by this player.");
+   }
+   // The `animationSpeed` option is the per-item form of CYLTabBarController's `tabBarItemAnimationSpeed`;
+   // a speed set later with -setPlaceholderAnimationSpeed: wins.
+   id speedOption = options[@"animationSpeed"];
+   if (speedOption && !self.animationSpeed) {
+       double speed = [speedOption respondsToSelector:@selector(doubleValue)] ? [speedOption doubleValue] : NAN;
+       if (!isfinite(speed) || speed <= 0 || ![view respondsToSelector:@selector(setAnimationSpeed:)] ||
+           ![view setAnimationSpeed:speed]) {
+           NSLog(@"CYLTableViewPlaceHolder: animationSpeed must be positive and supported by the player.");
+       }
    }
    if (self.animationSpeed &&
        (![view respondsToSelector:@selector(setAnimationSpeed:)] ||
@@ -1501,25 +1601,27 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         _imageView = _itemView.imageView;
         _imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;
-        // Use appearance proxy default icon color, fallback to tintColor, then gray
-        _imageView.tintColor = self.defaultIconColor ?: self.tintColor ?: UIColor.grayColor;
         _textLabel = _itemView.titleLabel;
         _textLabel.text = [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageEmpty];
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 0;
-        // Use appearance proxy default title color, fallback to gray
-        _textLabel.textColor = self.defaultTitleColor ?: UIColor.grayColor;
-        // Use appearance proxy default title font if available
-        if (self.defaultTitleFont) {
-            _textLabel.font = self.defaultTitleFont;
-        }
+        _textLabel.textColor = UIColor.grayColor;
         // Enable dynamic type for the default font
         _textLabel.adjustsFontForContentSizeCategory = YES;
-        // Apply appearance proxy default background color
-        if (self.defaultBackgroundColor) {
-            self.backgroundColor = self.defaultBackgroundColor;
+        // The built-in values are the bottom appearance layer; values set directly on the labels later win.
+        _appearanceBaselineValues = [NSMutableDictionary dictionary];
+        _appearanceExplicitValues = [NSMutableDictionary dictionary];
+        _appearanceAppliedValues = [NSMutableDictionary dictionary];
+        _appearanceNormalValues = [NSMutableDictionary dictionary];
+        for (NSString *key in CYLPlaceholderAppearanceKeys()) {
+            // The icon inherits the tint color unless a color is configured.
+            id value = [key isEqualToString:@"iconColor"] ? NSNull.null : ([self cyl_appearanceTargetValueForKey:key] ?: NSNull.null);
+            _appearanceBaselineValues[key] = value;
+            _appearanceAppliedValues[key] = value;
+            _appearanceNormalValues[key] = value;
         }
-        _badgeLabel = [CYLPlaceholderItemLabel new];
+        // A plain label: badge changes lay the item out explicitly, so the label must not invalidate layout itself.
+        _badgeLabel = [UILabel new];
         _badgeLabel.textAlignment = NSTextAlignmentCenter;
         // Apply shared badge appearance
         CYLPlaceholderBadgeAppearance *badgeAppearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
@@ -1527,18 +1629,14 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         _badgeLabel.adjustsFontForContentSizeCategory = YES;
         _badgeLabel.textColor = badgeAppearance.textColor;
         _badgeLabel.backgroundColor = badgeAppearance.backgroundColor;
+        _appliedBadgeFont = _badgeLabel.font;
+        _appliedBadgeTextColor = _badgeLabel.textColor;
+        _appliedBadgeBackgroundColor = _badgeLabel.backgroundColor;
         _badgeLabel.clipsToBounds = YES;
         _badgeLabel.hidden = YES;
         _badgeLabel.isAccessibilityElement = YES;
         _itemView.badgeLabel = _badgeLabel;
         _itemAttributes = @{};
-        // Apply appearance proxy default selection indicator
-        if (self.defaultSelectionIndicatorImage) {
-            self.selectionIndicatorImage = self.defaultSelectionIndicatorImage;
-        }
-        if (self.defaultSelectionIndicatorTintColor) {
-            self.selectionIndicatorTintColor = self.defaultSelectionIndicatorTintColor;
-        }
         // Observe dynamic type changes
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(cyl_contentSizeCategoryChanged:)

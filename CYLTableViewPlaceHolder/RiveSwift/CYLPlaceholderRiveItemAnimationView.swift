@@ -108,6 +108,8 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
     @objc public var animationErrorHandler: ((Error) -> Void)?
     @objc public var isAnimationReady: Bool { isLoaded }
     @objc var cyl_isPaused: Bool { riveView?.isPaused ?? true }
+    /// The colors last asked for (test probe); nil restores the original colors.
+    @objc var cyl_requestedColors: [String: UIColor]? { requestedColors }
 
     public static func makeAnimationView(fileURL: URL, options: [String: String], contentMode: UIView.ContentMode) -> (UIView & CYLPlaceholderItemAnimationPlayableView)? {
         let configuration = CYLPlaceholderRiveItemAnimationConfiguration(fileURL: fileURL, options: options)

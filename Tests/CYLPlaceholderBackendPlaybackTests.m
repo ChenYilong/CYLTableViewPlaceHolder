@@ -177,4 +177,33 @@
     XCTAssertFalse([[rive valueForKey:@"cyl_isPlaying"] boolValue]);
     [placeholder removeFromSuperview];
 }
+- (void)testRiveColorOverridesFollowAppearance {
+    NSURL *url = [self fixture:@"icons" extension:@"riv"];
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemRiveURL: url, CYLPlaceholderItemRiveSize: @[@80, @80],
+        CYLPlaceholderItemAnimationOptions: @{@"artboard": @"CHAT", @"stateMachine": @"CHAT_Interactivity"},
+        CYLPlaceholderItemAnimationColors: @{@"color": UIColor.redColor},
+        CYLPlaceholderItemRiveDarkColors: @{@"color": UIColor.blueColor}
+    } imageBundle:nil error:&error];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    [window addSubview:placeholder];
+    UIView *rive = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
+    UIColor *light = [rive valueForKey:@"cyl_requestedColors"][@"color"];
+    CGFloat r = 0, g = 0, b = 0, a = 0;
+    XCTAssertTrue([light getRed:&r green:&g blue:&b alpha:&a]);
+    XCTAssertEqualWithAccuracy(r, 1, 0.02);
+    window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        UIView *current = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
+        UIColor *color = [current valueForKey:@"cyl_requestedColors"][@"color"];
+        CGFloat red, green, blue, alpha;
+        return [color getRed:&red green:&green blue:&blue alpha:&alpha] && blue > 0.98;
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [placeholder removeFromSuperview];
+}
+
 @end
+

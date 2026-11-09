@@ -2,97 +2,77 @@
 
 ## Baseline and scoring
 
-The reference is `CYLTabBarController` branch `feat/cross-platform-components`,
-commit `ca8beda38c2ca49b81b1782bd932da35ad16640e`. The UI baseline is
-`CYLFlatDesignTabBarButton.m`; animation behavior and optional dependencies
-are in `CYLTabBarItemAnimation/` and `CYLTabBarController.podspec`. The
-placeholder implementation is `CYLPlaceholderView.m` in this repository.
-This table compares item UI and the existing placeholder configuration API,
-not tab navigation or the tab controller itself.
+The reference is `CYLTabBarController` branch `feat/cross-platform-components`
+(HEAD `a6e8c36eb3f46feadf325ff1d1bc60ee082c0cb7` on 2026-11-09). The UI
+baseline is `CYLFlatDesignTabBarButton.m`; the animation baseline is
+`CYLTabBarItemAnimation/`, `LottieSwift/`, `RiveSwift/` and the subspecs in
+`CYLTabBarController.podspec`. The placeholder implementation is
+`CYLPlaceholderView.m`, `CYLPlaceholderAnimation/`, `LottieSwift/`,
+`RiveSwift/` and `CYLTableViewPlaceHolder.podspec`.
 
+Scope: only item UI and its animation, measured against the placeholder's
+public item API (the `CYLPlaceholderItem…` keys, appearance properties and
+playback methods). Tab navigation, the tab controller and the plus button are
+out of scope.
 
-TODO：
-进入 同一级目录的/CYLTableViewPlaceHolder 文件夹， 进入 CYLTableViewPlaceHolder 文件夹， 阅读docs下所有的文档， 搜索关键词 TODO， 继续完成代码编写  在docs目录下的文档， 用以对比， 根目录下的CYLTabBarController文件夹 同一级目录的/CYLTabBarController ， 这是一个git项目， 其 **The **branch `feat/cross-platform-components` 下 扁平样式里的tabbar item UI相关   代码 与 本仓库内部实现，如果完全 模仿 CYLTabBarController 扁平样式里的tabbar item UI相关  满分是100分，  那么从模仿满足刚刚我们添加的所有接口。仅仅改 ui 实现ui。的角度来看， 给模仿的各个方法制作表格 ，第一列为 扁平样式item 有的，第二为 占位图实现有没有。 动画支持。 打分。 一直修复到100分。  动画部分， 参考CYLTabBarController 引入第三方库， 包括第三方库组织方式 ， 也完全参考。 一直修复到100分。  动画部分，包括 lottie 动画支持， pag gif ， rive。 参考CYLTabBarController 仓库 **T**he ** branch `feat/cross-platform-components` 下的动画实现。
+Scoring per row: 100 = implemented the way the reference does it (or with a
+placeholder equivalent where the reference reads a tab-bar-only object) **and**
+verified by simulator tests; lower scores list the concrete gap. Reserved keys,
+compilation or unverified visual behavior do not count.
 
-j
+## Method-by-method comparison
 
-Scores are per row, not a claim that the entire project has reached 100:
-100 means the relevant behavior is implemented and verified; partial scores
-identify concrete gaps; 0 means no implementation. A reserved configuration
-key alone is not playback support. Where a tab-only behavior has no equivalent
-placeholder state, it remains a gap rather than being counted as complete.
+| FlatDesign item (reference) | Placeholder implementation | Animation support | Score |
+| --- | --- | --- | ---: |
+| `initWithFrame:` creates image and title views | Yes — `CYLPlaceholderItemView` creates both; every initializer uses it. | — | 100 |
+| `layoutSubviews` / `_updateLayout`: title at the bottom (−2 pt), image centered above it, item and appearance title offsets, image offset, insets change size only | Yes — same geometry (restored after an untested rewrite had replaced it with 24 pt spacing); the item's title offset wins, else `defaultTitlePositionAdjustment`. Frame tests plus a rendered-pixel test. | Animation-only item: the image slot takes the animation size, as `isLottieOnlyItem`. | 100 |
+| `_updateLayout` image-only / title-only centering (`layoutCentered`) | Yes — always centered when alone. | — | 100 |
+| `_updateTabBarButton`: image, title, colors, font, background | Yes — from item keys; light/dark image assets follow trait changes. | — | 100 |
+| `setSelected:`, selected image/title/colors/font, `_updateSelectionIndicator` (resizable fills, others centered, tinted) | Yes — explicit selected values, then selected appearance defaults, then normal values; indicator from the view or its appearance default. Rendered-pixel test checks selected image and indicator, and restoration. | — | 100 |
+| `_effectiveAppearance`, `_stateAppearance`, `_iconColorForState`, `_appearanceTitlePositionAdjustment`, `tintColorDidChange` | Equivalent — `UI_APPEARANCE_SELECTOR` defaults (title/icon/background color, font, selected variants, title position, indicator image/tint) applied live, including through the appearance proxy. Explicit item values win; values set directly on `textLabel`/`imageView` are kept; an icon without a color follows `tintColor`. | — | 100 |
+| `_updateBadgeAppearance`, `actualBadgeSuperView`, `CYLBadgeAppearance` | Equivalent — `CYLPlaceholderBadgeAppearance` (colors, font, insets, corner radius, animation) with the reference's "applied appearance" rule: values set on `badgeLabel` are kept. Dot/number/text styles, offset, synchronous state with a cosmetic pop animation. The badge lives inside the item, so no accessible-ancestor lookup is needed. | Badge pop honors Reduce Motion. | 100 |
+| `isAccessibilityElement`, `accessibilityLabel`, `accessibilityTraits` | Yes — element when it has content or explicit labels; label = explicit label or title; selected trait follows selection. Badge announced once: inside the placeholder's value when it is an element, otherwise by the badge label. | — | 95 |
+| `initTabBarItemAnimation` / `updateTabBarItemAnimation`, `_animationURL`, `_animationFilePath`, `_animationSizeValue`, `_animationContentMode`, `_animationSpeed` | Yes — generic and engine-specific URL/path/size keys; `contentMode` and `animationSpeed` options are the per-item form of the controller-level settings. Options travel in the URL fragment, as in the reference. | All engines | 100 |
+| GIF `CYLGIFTabBarItemAnimator` view provider (`cyl_animationViewWithFileURL:options:contentMode:`) | Yes — `GIF` subspec with `CYLGIFPlaceholderItemAnimator` (ImageIO, per-frame delays, 16 MB / 500 frames / 64 MB caps). Core keeps its built-in decoder when the subspec is absent. | GIF | 100 |
+| GIF `cyl_playAnimationView` / `cyl_stopAnimationView` / `cyl_showAnimationViewLastFrame` | Yes — plays once on entering a window, replay/stop/last frame, stop survives reattachment, Reduce Motion. | GIF | 100 |
+| Lottie: `LottieSwift` subspec (Swift bridge + Objective-C animator), `lottie-ios` ≥ 4.5.1, iOS 13 | Yes — `LottieSwift/CYLPlaceholderCompatibleLottie.swift` + `CYLLottiePlaceholderItemAnimator` (fallback priority); `Lottie` is an alias. Swift-only by decision: no Objective-C Lottie 2.x flavor. Keypath colors verified by rendered pixels. | Lottie | 100 |
+| PAG: `PAG` and `PAGEnterprise` subspecs (`-fno-modules` for enterprise) | Yes — `CYLPAGPlaceholderItemAnimator`; both subspecs pass the runtime suite. | PAG | 100 |
+| Rive: `CYLRiveTabBarItemAnimator` + `RiveSwift` views (data binding, legacy inputs/triggers/linear, colors) | Yes — ported views, plus offscreen pause and load/failure callbacks. Load, legacy input/trigger/linear lifecycle, offscreen pause, fallback and color delivery are tested. | Rive | 95 |
+| `CYLTabBarItemAnimator` protocols, `CYLTabBarItemAnimatorRegistry`, `CYLTabBarItemAnimationFactory`, `CYLTabBarItemAnimationPlayer`, `CYLTabBarItemAnimationPlayableView`, `CYLTabBarItemViewAnimator`, engine + Core service | Yes — `CYLPlaceholderItem…` equivalents; the engine installs itself into Core's private `CYLPlaceholderItemAnimationService`; custom animators register at runtime (tested). The block-based `registerAnimationFactory:` API is kept and has the highest precedence. | All engines | 100 |
+| Dark URL, generic/dark/engine colors, live appearance swap | Yes — dark URLs per engine; generic colors below dark/engine colors; Lottie colors drawn (pixel test); Rive colors reach the view on light/dark switches. PAG and GIF have no color override, as in the reference. | Lottie, Rive | 100 |
+| Speed/progress carried across replacement (`copyAnimationStateFromView:toView:`) | Yes — speed and seek survive the dark-mode replacement (tested); unsupported operations return `NO`. | Lottie, PAG | 100 |
+| CocoaPods organization (`CYLTabBarItemAnimation`, `<Library>/` folders, per-library subspecs, `static_framework`, `DEFINES_MODULE`) | Yes — same layout and subspec names; static and dynamic integrations pass; `pod lib lint` passes for every subspec (see verification). | All | 100 |
+| Carthage and iOS 12 | Carthage builds the core xcframework with its bundles, as the reference's Carthage demo (backends are CocoaPods-only in both). iOS 12 runtime is not verifiable with Xcode 27. | — | 90 |
 
-| FlatDesign item method or behavior | Placeholder implementation | Score |
-| --- | --- | ---: |
-| `initWithFrame:` creates image and title views | `CYLPlaceholderItemView` creates both; legacy and configured initializers use it. | 100 |
-| `layoutSubviews` / `_updateLayout`: image, title, offsets, insets | Image and title share a centered item; original image dimensions, relative positioning and offsets are implemented. The placeholder constrains long text and uses a separate centered container. | 85 |
-| `_updateLayout`: image-only and title-only centering | Both center within the item. | 100 |
-| `_updateTabBarButton`: image, title, normal appearance | Image, title, colors, font and background are set from configuration. | 85 |
-| `setSelected:`, selected image/title/colors and selection indicator | Explicit selected state switches configured image/title/font/colors and restores normal values; an optional indicator centers or stretches behind the item. Normal and selected light/dark image assets resolve during live trait changes. On-screen rendering has not been visually verified, and indicator configuration does not yet follow `UITabBarAppearance`. | 80 |
-| `_effectiveAppearance`, `_stateAppearance`, `_appearanceTitlePositionAdjustment`, `tintColorDidChange` | Explicit normal-state values work; `UITabBarAppearance` state mapping and appearance fallback do not. | 25 |
-| `_updateBadgeAppearance`, `actualBadgeSuperView` | Dot, number, and text badges support colors, font, offset and an accessibility value, with localized dot descriptions. No reference `CYLBadgeAppearance` global defaults, animations, full customization, accessible-ancestor handling, or `UITabBarAppearance` state mapping. | 40 |
-| `isAccessibilityElement`, `accessibilityLabel`, `accessibilityTraits` | Explicit identifier, label and hint work; selected trait follows explicit selected state. Tab-button accessibility behavior is not fully replicated. | 75 |
-| `initTabBarItemAnimation`, `updateTabBarItemAnimation`, `_animationURL`, `_animationSizeValue` | Local GIF and optional or registered backend URL/path and size are recognized; generic keys work. Registration uses a placeholder-specific player protocol rather than the reference engine. | 75 |
-| GIF `cyl_animationViewWithFileURL:options:contentMode:` | ImageIO decodes local frames and individual frame delays; capped input/frame memory. It does not use the reference's independently installed GIF subspec. | 65 |
-| GIF `cyl_playAnimationView`, `cyl_stopAnimationView`, `cyl_showAnimationViewLastFrame` | Plays once on entering a window; public replay, stop and last-frame controls are tested, including stop across reattachment. Reduce Motion suppresses playback. | 95 |
-| Lottie adapter, (not Objective-C) only Swift subspecs | Swift adapter and optional Lottie subspec play and advance with both static and dynamic CocoaPods integration; (not Objective-C) only Swift  Lottie variant is absent. | 70 |
-| PAG adapter and PAG/PAGEnterprise subspecs | libpag adapter and optional PAG subspec play and advance with both static and dynamic integration; PAGEnterprise is absent. | 70 |
-| Rive adapter, Swift bridge and Rive subspec | Optional Swift adapter loads a named artboard and state machine, pauses offscreen and falls back on invalid input. Legacy boolean, trigger and linear fixtures start and stop; trigger effects, linear visual progression and data binding remain unverified. | 65 |
-| Animation engine registry, factory, custom player registration | Case-insensitive custom extension factories and player lifecycle/error callbacks are available and tested; GIF remains built-in. Registry and engine are not API-equivalent to the reference. | 65 |
-| Dark animation URL, dark colors, live appearance swap | Format-specific and generic dark assets switch on trait changes, with static fallback and light recovery tested for Lottie. Generic and Lottie-specific colors reach the Lottie value-provider bridge and custom players; rendered colors and other formats are not yet verified, and PAG/Rive/GIF color overrides are unsupported. | 55 |
-| Animation options, playback speed, progress, state preservation | Rive options are wired; Lottie speed and Lottie/PAG seek are exposed and tested. Seek is preserved across window reattachment; cross-format replacement and other option/state parity remain incomplete. | 55 |
-| CocoaPods optional animation subspecs and library organization | GIF uses ImageIO in core; Lottie, PAG and Rive have optional subspecs. Static and dynamic combined installations pass runtime tests; reference subspec variants remain absent. | 75 |
-| Carthage and iOS 12 compatibility | Existing framework and static UI remain buildable; four-backend animation packaging and runtime behavior are not verified. | 30 |
+## Verification (2026-11-09, Xcode 27.2, iOS 17.5 simulators)
 
-## Verification and remaining work
+- `ruby Tests/run-tests.rb`: 76 tests pass (Core, built-in GIF, shared
+  animation module without engines, layout geometry, rendered selection,
+  appearance proxy, badge appearance and accessibility).
+- `ruby Tests/run-animation-tests.rb` (LottieSwift, GIF, PAG, Rive): passes
+  with `LINKAGE=static` and `LINKAGE=dynamic`, and with
+  `PAG_SUBSPEC=PAGEnterprise`.
+- Example app builds through the workspace; `carthage build --no-skip-current
+  --use-xcframeworks` builds `CYLTableViewPlaceHolder.xcframework`.
+- `pod lib lint` with `scripts/pod-lint.xcconfig`; the upstream `libpag` pod
+  warns about a missing license file.
 
-The regression suite exercises local GIF decoding, duration, sizing, hiding,
-explicit playback/last-frame controls and removal from a window, static layout,
-custom animation factory registration, failure fallback and configuration.
-It also verifies selection restoration and image-asset resolution during a live
-trait transition; the latter is not a visual test.
-Badge sizing, selected indicator layout and accessibility-value restoration
-are covered by simulator tests, not visual inspection.
-Lottie color tests verify the resolved colors reach the provider bridge on
-light/dark transitions, not that a particular keypath renders in those colors.
-The separate CocoaPods simulator suite checks combined static and
-dynamic integration, Lottie and PAG progress, playback controls and last frames,
-Lottie dark/light recovery, and
-Rive loading, legacy boolean input, trigger and linear playback lifecycle,
-pausing and invalid-file fallback. It uses
-local fixtures from the sibling reference checkout; it does not verify Rive
-visual progression or data-binding effects.
-The branch uses a registry, player and factory with separate adapters:
-Lottie (`lottie-ios`), PAG (`libpag`), Rive (`RiveRuntime`), and GIF (ImageIO).
-Completing the rows above requires Rive data-binding and visual trigger/linear tests,
-remaining reference behavior and packaging verification for each format.
-Carthage does not yet include the optional animation backends. The upstream
-`libpag` pod emitted a missing license-file warning during lint and needs
-separate licensing review before distribution.
+The baseline `master` (826c07e) did not compile: three property
+redeclarations, `title.length` on `id`, and an undeclared
+`CYLPlaceholderItemPAGDarkColors`. The scores in
+[flatdesign-vs-placeholder-comparison.md](flatdesign-vs-placeholder-comparison.md)
+were therefore never verified; this document replaces them.
 
 ## TODO: outstanding work before 100%
 
-Each entry below maps to a comparison row scoring below 100. Keep these TODOs
-until implementation and the stated evidence support a 100 score. Do not raise a
-score because a key is reserved, code compiles, or behavior is assumed from a
-reference implementation.
-
-| TODO | Current gap and implementation notes | API, defect, or verification considerations |
+| TODO | Current gap and implementation notes | Verification needed |
 | --- | --- | --- |
-| TODO — item layout (85) | Compare image/title geometry, insets, offsets, clipping, and long-text sizing against `_updateLayout`; cover dynamic type, narrow widths, and orientation changes. | Preserve placeholder-specific centering and wrapping; verify actual frames and rendered layouts, not only helper calculations. |
-| TODO — normal item appearance (85) | Implement the supported normal-state appearance behavior that is relevant to a placeholder, including tint updates and fallback behavior. | Avoid depending on tab-controller-only state; define precedence between explicit placeholder attributes and UIKit appearance before adding configuration keys. |
-| TODO — selection and indicator (80) | Verify selected image/title/color/font transitions and the indicator through live trait changes and rendered UI; decide whether indicator appearance fallback is needed. | Current indicator is an explicit view property, not `UITabBarAppearance` state mapping. Preserve direct customization and normal values across repeated selection. |
-| TODO — appearance and state fallback (25) | Add only meaningful placeholder equivalents of `_effectiveAppearance`, `_stateAppearance`, title-position adjustment, and tint updates. | Define precedence and reset semantics before exposing more keys; avoid importing tab-bar-only APIs without a placeholder use case. |
-| TODO — badge behavior (40) | Add a shared/configurable appearance model, supported badge animation behavior, and complete badge state/accessibility handling where appropriate. | Current public interface exposes a label, raw value, style helper and offset but no global appearance object; assess whether label mutation is the intended stable API. Handle accessible ancestors without overwriting user-owned accessibility values, and test hide/show/reuse. |
-| TODO — accessibility parity (75) | Verify the view and badge with VoiceOver, including a placeholder that is itself an accessibility element and one hosted inside an accessible container. | Current badge value is assigned to the placeholder while the badge label is also accessible; determine a single non-duplicating announcement strategy and preserve caller-provided labels/values. |
-| TODO — animation item configuration (75) | Complete reference-compatible local source, size, and options behavior and document which generic keys are supported by each backend. | Validate plist and code input equivalently; avoid accepting network URLs as local files or silently treating unsupported option values as active features. |
-| TODO — GIF adapter parity (65) | Verify frame timing, content modes, image sizing, decode limits, and rendered behavior against the reference GIF player. | GIF is intentionally decoded with ImageIO in Core rather than a third-party library. Keep input/memory caps and static fallback; decide whether a separate optional subspec has a real packaging benefit before adding one. |
-| TODO — GIF lifecycle (95) | Perform a visual playback pass for first-frame, per-frame timing, last-frame, replay, stop, removal/re-attachment, hidden state, and Reduce Motion. | Current simulator checks cover lifecycle and decoded frames but do not constitute visual verification. Keep playback one-shot and ensure animations do not restart after explicit stop. |
-| TODO — (not Objective-C) only Swift  Lottie variant (70) | Decide whether supporting the reference's (not Objective-C) only Swift  Lottie variant is required; if so, add an isolated adapter/subspec and integration fixture. | Keep legacy Lottie versions optional and ensure Core does not acquire a Lottie dependency; test static and dynamic linkage and minimum iOS requirements. |
-| TODO — PAG enterprise variant (70) | Evaluate and, if justified, add the reference-compatible `PAGEnterprise` subspec alongside the existing PAG adapter. | Do not install `libpag` and `libpag-enterprise` together if they provide conflicting modules. Resolve and document the existing upstream license-file warning before distribution. |
-| TODO — Rive playback (65) | Verify visible trigger effects, linear animation progression, data-binding values, async load/failure, offscreen pause, and state restoration with real fixtures. | Current trigger and linear tests establish start/stop lifecycle only; they do not prove visible progression or data-binding effects. Validate option names, types, defaults, and unsupported combinations. |
-| TODO — animation registry/engine parity (65) | Decide whether to replace or extend the custom extension-factory registry to provide reference-like matcher, factory, player, and engine lifecycle semantics. | The current factory API is simpler and not equivalent. Specify registration precedence, duplicate registration/replacement, thread guarantees, cancellation, errors, and behavior of already-created views before changing the public interface. |
-| TODO — dark animation and colors (55) | Verify rendered Lottie keypath overrides and support color overrides for PAG, Rive, and GIF only where those engines expose a reliable facility. | Current tests verify color dictionaries reach the Lottie bridge, not rendered pixels. Keep generic colors below dark/specific overrides, clear stale keypaths on replacement, and log unsupported backend behavior explicitly. |
-| TODO — options and playback state (55) | Define and test state transfer across animation source/backend changes, including progress, speed, last-frame, stop, and Rive options. | Capabilities differ by backend. Public methods must return `NO` for unsupported operations and avoid stale state silently affecting replacement animations. |
-| TODO — CocoaPods parity (75) | Verify package boundaries and add only justified reference variants, including GIF or enterprise/Objective-C flavors if supported. | Keep optional engines out of Core, preserve the library's iOS 12 minimum, declare newer minimums only on the relevant subspecs, and lint static and dynamic integrations. |
-| TODO — Carthage and iOS 12 (30) | Add reproducible Carthage packaging for optional adapters if supported, then build and test Core at its declared iOS 12 deployment target. | Current combined CocoaPods integration does not prove Carthage support or iOS 12 runtime compatibility. Document toolchain limitations and verify resource bundles, Swift module embedding, and dependency linkage. |
+| TODO — accessibility parity (95) | Behavior matches the reference and is asserted programmatically (element, label, traits, one badge announcement, caller values preserved). No VoiceOver speech session or Accessibility Inspector audit has been run. | Run VoiceOver (or an XCUITest accessibility audit) on the example for a placeholder that is an element and one inside an accessible container. |
+| TODO — Rive playback (95) | Implementation is the reference port. Visible trigger effects, linear progression and data-binding color rendering are not pixel-verified; the `icons.riv` fixture has no `color` view-model property, so color delivery is tested, not drawing. | Add a fixture with a bound color and a trigger, then compare rendered frames before and after. |
+| TODO — Carthage and iOS 12 (90) | Xcode 27 SDKs require iOS 15, and no iOS 12 simulator is installed, so the declared iOS 12 minimum is unverified at runtime. Carthage parity (core framework only) matches the reference. | Build and test Core with an older Xcode against an iOS 12 simulator or device. |
+
+Known risks: `registerAnimationFactory:` (block API) and the registry coexist;
+a block factory wins for its extension. The Lottie animator only takes
+`.json`/`.lottie` (the reference takes any file) so unknown formats still
+report `CYLPlaceholderAnimationErrorUnsupportedFormat`. `libpag` license-file
+warning needs review before distribution.

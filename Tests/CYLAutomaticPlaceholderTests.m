@@ -7,6 +7,13 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
 #import "../CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h"
 
+
+/// Scopes appearance-proxy values to these tests.
+@interface CYLAppearanceTestContainer : UIView
+@end
+@implementation CYLAppearanceTestContainer
+@end
+
 @interface CYLTestAnimationPlayer : UIView <CYLPlaceholderAnimationPlayer>
 @property (nonatomic, getter=isReady) BOOL ready;
 @property (nonatomic, copy) void (^errorHandler)(NSError *error);
@@ -846,4 +853,185 @@
     XCTAssertEqual(view.superview, collection);
     [collection cyl_placeholderViewBlock:nil];
 }
+- (void)testAppearanceDefaultsApplyLiveAndKeepExplicitValues {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:image text:@"Empty"];
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.grayColor);
+    XCTAssertEqualObjects(placeholder.imageView.tintColor, placeholder.tintColor);
+    placeholder.defaultTitleColor = UIColor.redColor;
+    placeholder.defaultIconColor = UIColor.greenColor;
+    placeholder.defaultTitleFont = [UIFont systemFontOfSize:21];
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.redColor);
+    XCTAssertEqualObjects(placeholder.imageView.tintColor, UIColor.greenColor);
+    XCTAssertEqualWithAccuracy(placeholder.textLabel.font.pointSize, 21, 0.01);
+    placeholder.defaultIconColor = nil;
+    XCTAssertEqualObjects(placeholder.imageView.tintColor, placeholder.tintColor);
+    // Selected defaults sit above the normal values and below explicit selected values.
+    placeholder.defaultSelectedTitleColor = UIColor.blueColor;
+    placeholder.selected = YES;
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.blueColor);
+    placeholder.defaultTitleColor = UIColor.orangeColor;
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.blueColor);
+    placeholder.selected = NO;
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.orangeColor);
+    // A value set directly on the label wins over later appearance changes.
+    placeholder.textLabel.textColor = UIColor.purpleColor;
+    placeholder.defaultTitleColor = UIColor.brownColor;
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, UIColor.purpleColor);
+    // An explicit item color wins over the appearance default.
+    NSError *error = nil;
+    CYLPlaceholderView *configured = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemTitle: @"Item", CYLPlaceholderItemTitleColor: UIColor.cyanColor,
+        CYLPlaceholderItemSelectedTitleColor: UIColor.magentaColor
+    } imageBundle:nil error:&error];
+    configured.defaultTitleColor = UIColor.redColor;
+    configured.defaultSelectedTitleColor = UIColor.yellowColor;
+    XCTAssertEqualObjects(configured.textLabel.textColor, UIColor.cyanColor);
+    configured.selected = YES;
+    XCTAssertEqualObjects(configured.textLabel.textColor, UIColor.magentaColor);
+    configured.selected = NO;
+    XCTAssertEqualObjects(configured.textLabel.textColor, UIColor.cyanColor);
+}
+
+- (void)testAppearanceProxyAndTintFollowTheHierarchy {
+    UIColor *proxyColor = [UIColor colorWithRed:0.1 green:0.2 blue:0.3 alpha:1];
+    [[CYLPlaceholderView appearanceWhenContainedInInstancesOfClasses:@[CYLAppearanceTestContainer.class]] setDefaultTitleColor:proxyColor];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLAppearanceTestContainer *container = [[CYLAppearanceTestContainer alloc] initWithFrame:window.bounds];
+    [window addSubview:container];
+    window.hidden = NO;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:nil text:@"Proxy"];
+    placeholder.frame = container.bounds;
+    [container addSubview:placeholder];
+    [placeholder layoutIfNeeded];
+    XCTAssertEqualObjects(placeholder.textLabel.textColor, proxyColor);
+    window.tintColor = UIColor.orangeColor;
+    XCTAssertEqualObjects(placeholder.imageView.tintColor, UIColor.orangeColor);
+    CGRect titleFrame = placeholder.textLabel.frame;
+    placeholder.defaultTitlePositionAdjustment = UIOffsetMake(3, -4);
+    [placeholder layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetMinX(placeholder.textLabel.frame) - CGRectGetMinX(titleFrame), 3, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(placeholder.textLabel.frame) - CGRectGetMinY(titleFrame), -4, 0.01);
+    placeholder.defaultTitlePositionAdjustment = UIOffsetZero;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(4, 4)];
+    UIImage *indicator = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        UIRectFill(CGRectMake(0, 0, 4, 4));
+    }];
+    placeholder.defaultSelectionIndicatorImage = indicator;
+    XCTAssertNil([placeholder valueForKey:@"selectionIndicatorView"]);
+    placeholder.selected = YES;
+    UIImageView *indicatorView = [placeholder valueForKey:@"selectionIndicatorView"];
+    XCTAssertNotNil(indicatorView);
+    placeholder.selected = NO;
+    XCTAssertNil([placeholder valueForKey:@"selectionIndicatorView"]);
+    window.hidden = YES;
+}
+
+- (void)testBadgeSharedAppearanceAndSingleAnnouncement {
+    CYLPlaceholderBadgeAppearance *shared = [CYLPlaceholderBadgeAppearance sharedAppearance];
+    UIColor *savedText = shared.textColor;
+    UIFont *savedFont = shared.font;
+    shared.textColor = UIColor.redColor;
+    shared.font = [UIFont boldSystemFontOfSize:15];
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithImage:nil text:@"Inbox"];
+    placeholder.badgeValue = @"3";
+    XCTAssertEqualObjects(placeholder.badgeLabel.textColor, UIColor.redColor);
+    XCTAssertEqualWithAccuracy(placeholder.badgeLabel.font.pointSize, 15, 0.01);
+    placeholder.badgeLabel.textColor = UIColor.greenColor; // customized directly
+    shared.textColor = UIColor.blueColor;
+    shared.font = [UIFont boldSystemFontOfSize:11];
+    placeholder.badgeValue = @"4";
+    XCTAssertEqualObjects(placeholder.badgeLabel.textColor, UIColor.greenColor);
+    XCTAssertEqualWithAccuracy(placeholder.badgeLabel.font.pointSize, 11, 0.01);
+    shared.textColor = savedText;
+    shared.font = savedFont;
+
+    // A placeholder that is itself an accessibility element announces the badge in its own value only.
+    NSError *error = nil;
+    CYLPlaceholderView *element = [[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemTitle: @"Inbox"}
+                                                                       imageBundle:nil error:&error];
+    XCTAssertTrue(element.isAccessibilityElement);
+    element.accessibilityValue = @"Synced";
+    element.badgeValue = @"2";
+    XCTAssertEqualObjects(element.accessibilityValue, @"Synced, 2");
+    XCTAssertFalse(element.badgeLabel.isAccessibilityElement);
+    element.badgeValue = nil;
+    XCTAssertEqualObjects(element.accessibilityValue, @"Synced");
+
+    // Badge state changes are synchronous even when the change is animated.
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    [window addSubview:element];
+    element.badgeValue = @"5";
+    element.badgeValue = @"6";
+    XCTAssertEqualObjects(element.badgeLabel.text, @"6");
+    XCTAssertFalse(element.badgeLabel.hidden);
+    element.badgeValue = nil;
+    XCTAssertTrue(element.badgeLabel.hidden);
+    XCTAssertTrue(CGAffineTransformIsIdentity(element.badgeLabel.transform));
+}
+
+static UIColor *CYLPixelColor(UIImage *image, CGPoint point) {
+    unsigned char pixel[4] = {0};
+    CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pixel, 1, 1, 8, 4, space, kCGImageAlphaPremultipliedLast);
+    CGFloat scale = image.scale;
+    CGContextDrawImage(context, CGRectMake(-point.x * scale, -(image.size.height - point.y) * scale + 1,
+                                           image.size.width * scale, image.size.height * scale), image.CGImage);
+    CGContextRelease(context);
+    CGColorSpaceRelease(space);
+    return [UIColor colorWithRed:pixel[0] / 255.0 green:pixel[1] / 255.0 blue:pixel[2] / 255.0 alpha:pixel[3] / 255.0];
+}
+
+static BOOL CYLColorIsClose(UIColor *color, CGFloat r, CGFloat g, CGFloat b) {
+    CGFloat red, green, blue, alpha;
+    return [color getRed:&red green:&green blue:&blue alpha:&alpha] &&
+        fabs(red - r) < 0.1 && fabs(green - g) < 0.1 && fabs(blue - b) < 0.1;
+}
+
+- (void)testRenderedItemShowsSelectedImageAndIndicator {
+    UIImage *(^solid)(UIColor *, CGSize) = ^UIImage *(UIColor *color, CGSize size) {
+        UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat preferredFormat];
+        format.scale = 1;
+        return [[[UIGraphicsImageRenderer alloc] initWithSize:size format:format] imageWithActions:^(UIGraphicsImageRendererContext *context) {
+            [color setFill];
+            UIRectFill(CGRectMake(0, 0, size.width, size.height));
+        }];
+    };
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemImage: [solid(UIColor.blueColor, CGSizeMake(40, 30)) imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal],
+        CYLPlaceholderItemSelectedImage: [solid(UIColor.greenColor, CGSizeMake(40, 30)) imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal],
+        CYLPlaceholderItemTitle: @"Rendered", CYLPlaceholderItemBackgroundColor: UIColor.whiteColor
+    } imageBundle:nil error:&error];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    placeholder.frame = window.bounds;
+    [window addSubview:placeholder];
+    window.hidden = NO;
+    [placeholder layoutIfNeeded];
+    UIImage *(^render)(void) = ^UIImage *{
+        [placeholder layoutIfNeeded];
+        UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat preferredFormat];
+        format.scale = 1;
+        return [[[UIGraphicsImageRenderer alloc] initWithSize:placeholder.bounds.size format:format] imageWithActions:^(UIGraphicsImageRendererContext *context) {
+            [placeholder.layer renderInContext:context.CGContext];
+        }];
+    };
+    CGPoint imageCenter = [placeholder convertPoint:CGPointMake(CGRectGetMidX(placeholder.imageView.bounds), CGRectGetMidY(placeholder.imageView.bounds))
+                                           fromView:placeholder.imageView];
+    XCTAssertTrue(CYLColorIsClose(CYLPixelColor(render(), imageCenter), 0, 0, 1));
+    placeholder.selectionIndicatorImage = [solid(UIColor.redColor, CGSizeMake(4, 4)) resizableImageWithCapInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
+    placeholder.selected = YES;
+    UIImage *selected = render();
+    XCTAssertTrue(CYLColorIsClose(CYLPixelColor(selected, imageCenter), 0, 1, 0));
+    CGRect item = [placeholder convertRect:placeholder.imageView.superview.bounds fromView:placeholder.imageView.superview];
+    XCTAssertTrue(CYLColorIsClose(CYLPixelColor(selected, CGPointMake(CGRectGetMinX(item) + 2, CGRectGetMinY(item) + 2)), 1, 0, 0));
+    placeholder.selected = NO;
+    UIImage *normal = render();
+    XCTAssertTrue(CYLColorIsClose(CYLPixelColor(normal, imageCenter), 0, 0, 1));
+    XCTAssertTrue(CYLColorIsClose(CYLPixelColor(normal, CGPointMake(CGRectGetMinX(item) + 2, CGRectGetMinY(item) + 2)), 1, 1, 1));
+    window.hidden = YES;
+}
+
 @end
+
+

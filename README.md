@@ -163,8 +163,20 @@ GIF 输入最大 16 MB、最多 500 帧，解码帧合计最多 64 MB；无效�
 `setPlaceholderAnimationSpeed:` 可设置 Lottie 的正数播放速度。方法返回 `NO` 表示
 参数无效或当前后端不支持；PAG 定位到最近的帧。显式进度和速度在支持的后端
 重新加载时会尝试恢复。
-可选的 CocoaPods 子规格 `CYLTableViewPlaceHolder/Lottie`、`/PAG` 和 `/Rive`
-分别引入 Lottie、libpag 和 RiveRuntime；默认 `Core` 不引入这些依赖。对应的
+动画库的组织方式与 CYLTabBarController（`feat/cross-platform-components`）一致：
+
+| 子规格 | 依赖 | 最低系统 | 说明 |
+| --- | --- | --- | --- |
+| `CYLPlaceholderItemAnimation` | 无 | iOS 12 | 共用的 animator 协议、播放器、注册表、工厂与引擎，只由下列动画库子规格引入；旧名称 `Animation` 仍可用 |
+| `LottieSwift`（`Lottie` 为别名） | `lottie-ios` ≥ 4.5.1 | iOS 13 | Swift 桥接（`LottieSwift/`）加 Objective-C animator；不提供 Objective-C 版 Lottie 2.x |
+| `PAG` / `PAGEnterprise` | `libpag` / `libpag-enterprise` ≥ 4.0 | iOS 12 | 二选一，不能同时引入 |
+| `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | Swift 视图（`RiveSwift/`）遵守可播放视图协议 |
+| `GIF` | ImageIO | iOS 12 | 通过注册表播放一次；未引入时 `Core` 内置解码器照常播放 GIF |
+
+每个动画库的 animator 位于 `CYLPlaceholderAnimation/<库名>/`，在 `+load` 中向
+`CYLPlaceholderItemAnimatorRegistry` 注册。应用可注册自己的 animator：实现
+`CYLPlaceholderItemAnimator`，或用 `CYLPlaceholderItemViewAnimator` 包装一个遵守
+`CYLPlaceholderItemAnimationPlayableView` 的视图。`Core` 不依赖任何动画库，默认不引入这些依赖。对应的
 `CYLPlaceholderItemLottieFilePath`、`CYLPlaceholderItemPAGFilePath`、
 `CYLPlaceholderItemRiveFilePath` 或通用动画路径可指定本地文件；支持对应的
 尺寸键。Lottie 要求 iOS 13，Rive 要求 iOS 14。加载失败时记录错误并保留
@@ -174,7 +186,9 @@ GIF 输入最大 16 MB、最多 500 帧，解码帧合计最多 64 MB；无效�
 （秒，0–60），也可通过 `input`、`triggerInput` 或 `animation` 选择旧版 Rive
 状态机输入、触发器或线性动画。Lottie 和 PAG 已验证进度推进，Rive 已验证
 画板加载、旧版布尔输入和离屏暂停；数据绑定播放效果尚未验证。
-Carthage framework 暂未集成这三个后端。
+与 CYLTabBarController 相同，Carthage 只构建核心 framework；Lottie、PAG、Rive 与 GIF 子规格只通过 CocoaPods 提供。
+`CYLPlaceholderItemAnimationOptions` 的 `contentMode`（数值或 `scaleAspectFit` 等名称）对所有动画库生效，
+`animationSpeed` 设置初始播放速度（Lottie）。选项值必须是字符串或数字，以 URL fragment 传给 animator。
 其他本地动画格式可通过 `registerAnimationFactory:forFileExtension:` 注册实现
 `CYLPlaceholderAnimationPlayer` 的 `UIView`；工厂按扩展名匹配，可覆盖可选后端，
 但 GIF 使用内置解码器。传入 `nil` 可取消注册。工厂及其回调在主线程使用；
@@ -182,8 +196,9 @@ Carthage framework 暂未集成这三个后端。
 Lottie 支持 `CYLPlaceholderItemAnimationColors`、`CYLPlaceholderItemAnimationDarkColors`
 以及 `CYLPlaceholderItemLottieDarkColors`：字典的键是 Lottie keypath，值为
 `UIColor` 或十六进制颜色字符串。深色配置覆盖普通配置，格式专属配置优先。
-自定义播放器可实现 `setAnimationColors:`；PAG、Rive 与 GIF 目前不支持颜色覆盖。
-这些 keypath 的实际绘制效果尚未经过视觉验证。
+Rive 支持 `CYLPlaceholderItemAnimationColors`、`CYLPlaceholderItemRiveDarkColors`，键为 view model
+颜色属性路径；`color` 选项设置浅色颜色。自定义播放器可实现 `setAnimationColors:`；PAG 与 GIF 与
+CYLTabBarController 一样不支持颜色覆盖。Lottie keypath 颜色已通过渲染像素测试验证。
 
 `itemAttributes` 保留传入的其他键，供将来使用；其他未实现的 TabBar 配置目前不会生效。示例 **Auto → Styles**
 底部提供代码和 plist 两种配置演示。布局参考 CYLTabBarController；其 MIT 许可随资源包提供。

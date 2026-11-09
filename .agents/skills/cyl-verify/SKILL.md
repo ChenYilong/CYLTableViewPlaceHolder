@@ -20,7 +20,9 @@ The animation runner installs the optional CocoaPods backends into an isolated
 temporary project. It uses PAG and Rive fixtures from the sibling
 `CYLTabBarController` checkout; override them with `PAG_FIXTURE` and
 `RIVE_FIXTURE`, `RIVE_TRIGGER_FIXTURE`, and `RIVE_LINEAR_FIXTURE`. Set `LINKAGE=dynamic` to test dynamic frameworks; static is
-the default. The fixtures must be named `tab_home.pag` and `icons.riv` and
+the default. Set `PAG_SUBSPEC=PAGEnterprise` to test the enterprise PAG
+subspec instead of `PAG`. CocoaPods needs `LANG=en_US.UTF-8`. Build the
+example through `CYLTableViewPlaceHolder.xcworkspace`, not the project. The fixtures must be named `tab_home.pag` and `icons.riv` and
 have the expected Rive artboard and state machine. Trigger and linear fixtures
 must be named `check.riv` and `button.riv` and contain the corresponding
 `Check` trigger and `active` animation used by the tests.

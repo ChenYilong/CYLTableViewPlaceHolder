@@ -14,7 +14,12 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
   end
   %w[CYLPlaceholderLottiePlaybackTests.m CYLPlaceholderBackendPlaybackTests.m CYLPlaceholderAnimationRegistryTests.m].each do |filename|
     ref = project.main_group.new_file(File.join(root, 'Tests', filename))
-    target.source_build_phase.add_file_reference(ref)
+    build_file = target.source_build_phase.add_file_reference(ref)
+    # libpag-enterprise 4.4.x-4.5.98 ships an umbrella header that imports a missing header, so files that import
+    # libpag are compiled without modules (as the PAGEnterprise subspec does).
+    if ENV['PAG_SUBSPEC'] == 'PAGEnterprise' && filename == 'CYLPlaceholderBackendPlaybackTests.m'
+      build_file.settings = { 'COMPILER_FLAGS' => '-fno-modules' }
+    end
   end
   fixtures = {
     'CYLPlaceholderTest.pag' => ENV.fetch('PAG_FIXTURE', File.expand_path('../CYLTabBarController/Example-Shared/PAGResources/tab-icons/tab_home.pag', root)),

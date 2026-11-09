@@ -200,11 +200,17 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 @property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
 
-/// Default appearance values for normal state. Can be customized via UIAppearance proxy.
+/// Appearance layers, as in CYLFlatDesignTabBarButton: explicit item attributes win, then these
+/// values (directly or through the UIAppearance proxy, applied live), then the built-in values.
+/// A value set directly on `textLabel` or `imageView` is never overwritten. Without an icon color
+/// the icon follows `tintColor`.
+/// Default appearance values for normal state.
 @property (nonatomic, strong, nullable) UIColor *defaultTitleColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultIconColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultBackgroundColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIFont *defaultTitleFont UI_APPEARANCE_SELECTOR;
+/// Title offset used when the item has no `CYLPlaceholderItemTitlePositionAdjustment` of its own.
+@property (nonatomic) UIOffset defaultTitlePositionAdjustment UI_APPEARANCE_SELECTOR;
 
 /// Default appearance values for selected state. Can be customized via UIAppearance proxy.
 @property (nonatomic, strong, nullable) UIColor *defaultSelectedTitleColor UI_APPEARANCE_SELECTOR;
