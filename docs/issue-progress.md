@@ -5,13 +5,13 @@
 | Issue 地址 | Issue 描述 | 修复近况 |
 | --- | --- | --- |
 | [#17](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/17) | 自定义占位位置，避免遮挡表头 | **100/100**：新增可选 frame 回调，保留默认全屏行为；模拟器回归验证表头不重叠。 |
-| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义表头及 section 时占位图被遮挡 | **65/100**：检查原 issue 与评论、增加可配置区域、测试 table header；原问题缺少 section 实现和复现步骤，尚未验证 section header 的实际层级及布局变化。 |
+| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义表头及 section 时占位图被遮挡 | **100/100**：frame 回调可避开表头和 section header；调用回调前先布局，读到含 iOS 15 顶部间距的最终位置。回归测试覆盖两个自定义 section header 及横竖屏尺寸，CI 通过。默认仍全屏覆盖以保持兼容。 |
 | [#15](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/15) | iPhone XR、XS、XS Max 适配 | **80/100**：检查原屏幕尺寸代码、改用容器 bounds、在 XS Max 模拟器检查占位图尺寸和缩放；本机无 XR/XS 模拟器，未完成两种机型的实机或模拟器验证。原 issue 已关闭。 |
 | [#13](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/13) | 滚动选项返回 NO 时抛异常 | **100/100**：使用类型正确的 BOOL 协议调用；测试 YES、NO 和原滚动状态恢复。 |
 | [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | UICollectionView 和普通页面适用范围 | **100/100**：block API `cyl_placeholderViewBlock:` 已支持 `UICollectionView`（`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过）；修正 README 中“只管理 UITableView”的过时说法。普通页面没有 data source，按设计不自动管理，文档说明可直接使用 `CYLPlaceholderView`。 |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `library not found for -lPods` | **100/100**：结论为集成环境问题而非库缺陷（报告者手动改过 Podfile 扩展名）。README 新增排查步骤（打开 workspace、恢复纯文本 Podfile、`pod deintegrate && pod install`、清理 DerivedData）。CocoaPods 集成由 CI 验证：`pod lib lint` 全部子规格通过，三个使用本地 Pod 的示例（Example-objc-01、Example-objc-02、Example-SwiftUI）经 `pod install` 后通过 workspace 构建成功。报告者原工程不可得，未复现其具体错误。 |
 | [#9](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/9) | 独立 UITableViewDataSource 不显示占位图 | **100/100**：增加 data source 回退，并保留 table view、delegate 优先级；模拟器测试独立 data source 和 delegate 优先级。 |
-| [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡 MJRefresh footer | **75/100**：检查 MJRefresh footer 的动态位置、增加可配置区域、在模拟器使用真实 MJRefresh 自动 footer 验证非重叠；默认仍会覆盖 footer，应用需要结合实际布局计算区域，其他 footer 类型和滚动状态尚未覆盖。 |
+| [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡 MJRefresh footer | **100/100**：默认全屏占位时，刷新 header/footer/trailer（含 MJRefresh）始终位于占位图之上，delegate API 与 block API 均有回归测试，CI 通过；需要完全不重叠时仍可用 frame 回调。 |
 | [#7](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/7) | 未实现 section 数量方法时空数据判断 | **100/100**：默认按一个 section 判断行数；模拟器测试默认 section 和后续 section 有数据的情况。 |
 | [#6](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/6) | 再次空刷新后占位图消失 | **85/100**：检查历史修复、调整重复刷新逻辑、在 iOS 17.5 模拟器通过回归测试；原 issue 已关闭，但无法在最初的 iOS 9 环境复测。 |
 | [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | 网络错误和无数据占位图无法切换 | **100/100**：每次空刷新重新请求视图，模拟器验证旧视图移除并显示新视图；PR #14 已合并。 |
@@ -31,8 +31,8 @@
 | [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | 网络错误与无数据占位图无法切换 | 100 | 每次空刷新重新请求视图；`testRepeatedEmptyReloadKeepsSubviewsAndCanSwitchViews`，CI 通过。 | PR #20 Closes |
 | [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | 为什么只基于 tableView | 100 | collection view 由 block API 支持，`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过；README 过时说法已修正；普通页面按设计不自动管理（无 data source），文档给出直接使用 `CYLPlaceholderView` 的做法。 | PR #20 Closes |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `-lPods` | 100 | 判定为集成环境问题（手动改动 Podfile 后未正确重新集成）；README 增加排查步骤。CI 的 `pod lib lint` 与三个 Pod 集成示例（`pod install` + workspace 构建）通过。原工程不可得，未复现原始报错。 | PR #20 Closes |
-| [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡刷新 footer | 处理中 | 默认行为修复：占位图置前后，再把 `CYLRefreshComponent`/`MJRefreshComponent` 子视图移到其上方，两套 API 共用；新增 `testDefaultPlaceholderKeepsRefreshControlsVisible`、`testAutomaticPlaceholderStaysBelowRefreshControls`，等待 CI。 | — |
-| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 处理中 | frame 回调从最后一个 section header 底部开始；新增 `testCustomFrameLeavesSectionHeadersOutsidePlaceholder`（表头 + 两个自定义 section header，竖屏和横屏尺寸各验证一次不重叠），README 增加示例。首轮 CI 中该测试失败：回调在布局前读取位置，未计入 iOS 15 的 section header 顶部间距。修复：调用 frame 回调前先 `layoutIfNeeded`。等待 CI。 | — |
+| [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡刷新 footer | 100 | 默认行为修复：占位图置前后，再把 `CYLRefreshComponent`/`MJRefreshComponent` 子视图移到其上方，两套 API 共用；`testDefaultPlaceholderKeepsRefreshControlsVisible`、`testAutomaticPlaceholderStaysBelowRefreshControls` 在 CI（f425754）通过。行为变化：刷新控件始终显示在占位图之上。 | PR #20 Closes |
+| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 100 | frame 回调从最后一个 section header 底部开始，README 给出示例；修复回调在布局前读取位置、漏算 iOS 15 section header 顶部间距的问题（调用前先 `layoutIfNeeded`）。`testCustomFrameLeavesSectionHeadersOutsidePlaceholder`（表头 + 两个 section header，竖屏和横屏）在 CI（f425754）通过。 | PR #20 Closes |
 
 ## 验证与决定
 
@@ -125,9 +125,7 @@
 
 | TODO | 剩余工作与实现说明 | 所需验证 |
 | --- | --- | --- |
-| TODO — #16 section header 遮挡（65） | frame 回调已可避开 table header；缺少 section header 场景。需新增带自定义 section header 的回归用例，确认占位图与 section header 的层级和布局。 | 模拟器测试：自定义 `viewForHeaderInSection` 时占位图不遮挡 section header，旋转后仍正确。 |
 | TODO — #15 XR/XS 适配（80） | 已改用容器 bounds，仅在 XS Max 上验证。 | 在 iPhone XR、iPhone XS 模拟器运行 `DESTINATION=... ruby Tests/run-tests.rb` 并记录结果。 |
-| TODO — #8 遮挡刷新 footer（75） | 默认仍覆盖 footer（保持兼容），只验证了自动 footer 的自定义区域。 | 补 back footer 与滚动中状态的回归测试；在 README 给出计算区域的示例。 |
 | TODO — #6 再次空刷新后消失（85） | iOS 17.5 回归通过；原 iOS 9 环境无法复测。 | 若坚持旧系统证据，需在最低支持的 iOS 12 真机运行 `scripts/device-tests.sh`；否则说明 iOS 9 已不在支持范围并改为 100。 |
 | TODO — #1 “NewTableVIew”（10） | 原文无法确定期望行为。 | 需报告者补充信息；issue 已关闭，可由维护者决定标记为无法处理。 |
 
