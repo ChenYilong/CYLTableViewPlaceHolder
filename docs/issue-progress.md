@@ -18,6 +18,22 @@
 | [#2](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/2) | 重复刷新导致占位图子视图消失 | **100/100**：相同视图不再反复移除，模拟器验证子视图保留；原 issue 已关闭。 |
 | [#1](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/1) | “NewTableVIew”，内容仅为“下载到桌面” | **10/100**：检查原文和评论、搜索相关 issue、检查相关提交历史；均无法确定期望行为或复现方式，需报告者补充信息。原 issue 已关闭。 |
 
+## 开放 issue 处理进度
+
+2026-11-09 快照：本仓库 9 个开放 issue。100 分须同时具备实现和针对性测试；证据列出测试名，CI 指 PR #20 的 `iOS` 工作流（run 42714531428 重跑，80 项单元测试全部通过）。PR #20 合并时以 `Closes` 关联并关闭达到 100 分的 issue。
+
+| Issue | 问题 | 分数 | 处理与验证证据 | 关联 |
+| --- | --- | ---: | --- | --- |
+| [#17](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/17) | 自定义占位位置，避免遮挡表头 | 100 | `frameForPlaceHolderViewInTableView:` 回调；`testCustomFrameLeavesHeaderOutsidePlaceholder`、`testDefaultFrameFollowsTableResize`，CI 通过。 | PR #20 Closes |
+| [#13](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/13) | 滚动选项返回 NO 时抛异常 | 100 | 按 BOOL 正确调用；`testOptionalScrollAndNilPlaceholder`、`testDefaultSectionAndScrollRestoration`、`testInitiallyDisabledScrollIsRestored`，CI 通过。 | PR #20 Closes |
+| [#9](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/9) | 独立 data source 不显示占位图 | 100 | table view → delegate → data source 依次回退；`testDelegateTakesPrecedenceOverDataSource`，CI 通过。 | PR #20 Closes |
+| [#7](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/7) | 未实现 section 数量方法时判断错误 | 100 | 默认 1 个 section；`testDefaultSectionAndScrollRestoration`、`testRowsInLaterSectionRemovePlaceholder`，CI 通过。 | PR #20 Closes |
+| [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | 网络错误与无数据占位图无法切换 | 100 | 每次空刷新重新请求视图；`testRepeatedEmptyReloadKeepsSubviewsAndCanSwitchViews`，CI 通过。 | PR #20 Closes |
+| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | 为什么只基于 tableView | 待处理 | — | — |
+| [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `-lPods` | 待处理 | — | — |
+| [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡刷新 footer | 待处理 | — | — |
+| [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义 header/section 后被遮挡 | 待处理 | — | — |
+
 ## 验证与决定
 
 - PR [#14](https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/14) 的冲突已解决并合并。
