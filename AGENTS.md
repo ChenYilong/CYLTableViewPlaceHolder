@@ -92,6 +92,10 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Never commit AppleDouble files named `._*`. Follow the vault's cleanup rule
   before Git commands and check staged paths before committing.
 - Do not overwrite another person's changes or rewrite pushed history.
+- On any branch other than `master` or `main`, commit and push as soon as the
+  work is written, without asking the user first. Still follow the commit
+  readiness rules above. On `master` or `main`, do not commit or push unless
+  the user asks.
 - Commit through a branch and a pull request by default, so CI runs
   (`docs/CI-CD.md`): branch from `master`, `touch .git/hooks/NO_AUTO_SYNC`,
   commit, push the branch, and open a pull request against `master`. Do not
