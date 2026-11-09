@@ -32,7 +32,9 @@
     XCTAssertFalse(element.isSelected);
 
     [[self element:@"clear"] tap];
-    XCTAssertEqualObjects(element.value, @"Synced");
+    XCTNSPredicateExpectation *cleared = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:[NSPredicate predicateWithFormat:@"value == %@", @"Synced"] object:element];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[cleared] timeout:10], XCTWaiterResultCompleted);
 }
 
 - (void)testBadgeInAccessibleContainerIsReadOnItsOwn {
@@ -41,7 +43,10 @@
     XCTAssertEqualObjects(badge.label, @"New");
     XCTAssertTrue([self element:@"groupTitle"].exists);
     [[self element:@"clear"] tap];
-    XCTAssertFalse([self element:@"groupBadge"].exists);
+    // The accessibility tree refreshes asynchronously after the badge view is removed.
+    XCTNSPredicateExpectation *gone = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:[NSPredicate predicateWithFormat:@"exists == NO"] object:[self element:@"groupBadge"]];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[gone] timeout:10], XCTWaiterResultCompleted);
 }
 
 - (void)testAccessibilityAudit {
