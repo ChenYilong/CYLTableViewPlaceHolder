@@ -36,3 +36,11 @@ jobs:
               if "iOS 12" in name or "iOS 13" in name:
                   print(name, d.get("identifier"), d.get("source"), d.get("fileSize"))
           PY
+      - name: Select Xcode 16
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_16*.app' | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+      - name: Install and boot an iOS 12.4 simulator
+        run: scripts/install-ios12-simulator.sh
