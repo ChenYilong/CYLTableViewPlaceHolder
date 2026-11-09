@@ -1,0 +1,38 @@
+# Runs Core's unit tests on an iOS 12.4 simulator, the podspec's minimum. iOS 12 simulator runtimes are Intel-only,
+# so this uses the Intel image and Apple's public simulator runtime download. See docs/CI-CD.md.
+name: iOS 12 runtime
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios12-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    name: iOS 12 runtime
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Environment
+        run: |
+          uname -m
+          ls -d /Applications/Xcode*.app
+          xcrun simctl list runtimes
+      - name: Apple's simulator runtime index (iOS 12-13)
+        run: |
+          curl -fsSL -o index.plist https://devimages-cdn.apple.com/downloads/xcode/simulators/index2.dvtdownloadableindex
+          python3 - <<'PY'
+          import plistlib
+          index = plistlib.load(open("index.plist", "rb"))
+          for d in index.get("downloadables", []):
+              name = d.get("name", "")
+              if "iOS 12" in name or "iOS 13" in name:
+                  print(name, d.get("identifier"), d.get("source"), d.get("fileSize"))
+          PY
