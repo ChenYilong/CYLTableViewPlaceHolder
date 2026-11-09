@@ -17,6 +17,10 @@ if ! xcrun simctl list runtimes | grep -q "$RUNTIME"; then
   pkgutil --expand-full "$pkg" "$work/expanded"
   hdiutil detach "$mount" >/dev/null || true
   simruntime=$(find "$work/expanded" -maxdepth 6 -name '*.simruntime' -type d | head -1)
+  # In this package the payload itself is the runtime bundle (Payload/Contents/MacOS/iOS 12.4).
+  if [[ -z "$simruntime" && -d "$work/expanded/Payload/Contents" ]]; then
+    simruntime="$work/expanded/Payload"
+  fi
   if [[ -z "$simruntime" ]]; then
     payload=$(find "$work/expanded" -maxdepth 3 -name Payload -type d | head -1)
     echo "No .simruntime in the package; payload: $payload" >&2

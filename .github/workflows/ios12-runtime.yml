@@ -43,4 +43,21 @@ jobs:
           sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
       - name: Install and boot an iOS 12.4 simulator
-        run: scripts/install-ios12-simulator.sh
+        id: simulator
+        run: echo "destination=$(scripts/install-ios12-simulator.sh | tail -1)" >> "$GITHUB_OUTPUT"
+      - name: Unit tests on iOS 12.4, built at deployment target 12.0
+        env:
+          DESTINATION: ${{ steps.simulator.outputs.destination }}
+          TEST_DEPLOYMENT_TARGET: "12.0"
+        run: |
+          ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+          set -o pipefail
+          mkdir -p build
+          ruby Tests/run-tests.rb 2>&1 | tee build/ios12-unit-tests.log
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always()
+        with:
+          name: ios12-unit-tests-log
+          path: build/ios12-unit-tests.log
+          if-no-files-found: ignore
