@@ -46,6 +46,22 @@
 
 - (void)testAccessibilityAudit {
     XCTAssertTrue([[self element:@"element"] waitForExistenceWithTimeout:5]);
+    [self auditCurrentApp];
+}
+
+/// The same audit with one part of the host at a time, so an issue names its view.
+- (void)testAccessibilityAuditPerPart {
+    self.continueAfterFailure = YES;
+    for (NSString *part in @[@"element", @"group", @"buttons"]) {
+        [self.app terminate];
+        self.app.launchArguments = @[@"-CYLShow", part];
+        [self.app launch];
+        NSLog(@"CYLAccessibilityAudit: part %@", part);
+        [self auditCurrentApp];
+    }
+}
+
+- (void)auditCurrentApp {
     if (@available(iOS 17.0, *)) {
         NSError *error = nil;
         BOOL passed = [self.app performAccessibilityAuditWithAuditTypes:XCUIAccessibilityAuditTypeAll

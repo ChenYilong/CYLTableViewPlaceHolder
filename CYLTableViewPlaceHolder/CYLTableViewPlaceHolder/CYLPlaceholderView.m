@@ -187,8 +187,10 @@ static UIFont *CYLPlaceholderFont(id value) {
         @"black": @(UIFontWeightBlack)};
     NSNumber *weight = weights[(weightName ?: name ?: @"regular").lowercaseString];
     if (weightName && !weight) return nil;
-    if (name.length && !weight) return [UIFont fontWithName:name size:size];
-    return [UIFont systemFontOfSize:size weight:weight.doubleValue];
+    UIFont *font = (name.length && !weight) ? [UIFont fontWithName:name size:size] :
+        [UIFont systemFontOfSize:size weight:weight.doubleValue];
+    // Configured sizes are the default-text-size values; they scale with Dynamic Type.
+    return font ? [[UIFontMetrics defaultMetrics] scaledFontForFont:font] : nil;
 }
 
 static BOOL CYLPlaceholderNumbers(id value, NSArray<NSArray<NSString *> *> *keys, double *numbers) {
@@ -398,9 +400,12 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shared = [[CYLPlaceholderBadgeAppearance alloc] init];
-        shared.backgroundColor = UIColor.redColor;
+        // Apple's high-contrast system red (#D70015): white text on it is about 5.4:1, above WCAG AA's 4.5:1
+        // for small text (pure red is 4.0:1 and fails the accessibility audit).
+        shared.backgroundColor = [UIColor colorWithRed:0xD7 / 255.0 green:0x00 / 255.0 blue:0x15 / 255.0 alpha:1];
         shared.textColor = UIColor.whiteColor;
-        shared.font = [UIFont boldSystemFontOfSize:9];
+        // 9 points at the default text size, scaled with Dynamic Type.
+        shared.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleCaption2] scaledFontForFont:[UIFont boldSystemFontOfSize:9]];
         shared.cornerRadius = 0; // 0 means auto (height/2)
         shared.contentInsets = UIEdgeInsetsMake(4, 4, 4, 4); // CYLBadgeView: 8 points wider and taller than the text
         shared.animationDuration = 0.2;
@@ -1606,7 +1611,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 0;
         _textLabel.textColor = UIColor.grayColor;
-        // Enable dynamic type for the default font
+        // A text-style font (17 points at the default size), so the title follows Dynamic Type.
+        _textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         _textLabel.adjustsFontForContentSizeCategory = YES;
         // The built-in values are the bottom appearance layer; values set directly on the labels later win.
         _appearanceBaselineValues = [NSMutableDictionary dictionary];

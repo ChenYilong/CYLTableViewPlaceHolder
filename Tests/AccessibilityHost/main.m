@@ -46,6 +46,8 @@
     self.grouped.textLabel.accessibilityIdentifier = @"groupTitle";
     [self.grouped showBadgeWithStyle:CYLPlaceholderBadgeStyleText value:@"New"];
     self.grouped.badgeLabel.accessibilityIdentifier = @"groupBadge";
+    self.grouped.frame = CGRectMake(0, 0, 320, 220);
+    self.grouped.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [group addSubview:self.grouped];
 
     UIButton *toggle = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -62,7 +64,13 @@
     clear.accessibilityIdentifier = @"clear";
     [clear addTarget:self action:@selector(clearBadges) forControlEvents:UIControlEventTouchUpInside];
 
-    UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[self.element, group, toggle, clear]];
+    // `-CYLShow element|group|buttons` shows one part only, so an audit issue can be attributed.
+    NSString *only = [NSUserDefaults.standardUserDefaults stringForKey:@"CYLShow"];
+    NSMutableArray<UIView *> *parts = [NSMutableArray array];
+    if (!only || [only isEqualToString:@"element"]) [parts addObject:self.element];
+    if (!only || [only isEqualToString:@"group"]) [parts addObject:group];
+    if (!only || [only isEqualToString:@"buttons"]) [parts addObjectsFromArray:@[toggle, clear]];
+    UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:parts];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.distribution = UIStackViewDistributionFill;
     stack.spacing = 12;
@@ -74,14 +82,10 @@
         [stack.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-16],
         [stack.topAnchor constraintEqualToAnchor:safe.topAnchor constant:16],
         [stack.bottomAnchor constraintLessThanOrEqualToAnchor:safe.bottomAnchor constant:-16],
-        [self.element.heightAnchor constraintEqualToConstant:220],
-        [group.heightAnchor constraintEqualToConstant:220],
     ]];
-}
-
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    self.grouped.frame = self.grouped.superview.bounds;
+    for (UIView *view in @[self.element, group]) {
+        if (view.superview) [view.heightAnchor constraintEqualToConstant:220].active = YES;
+    }
 }
 
 - (void)toggleSelection {
