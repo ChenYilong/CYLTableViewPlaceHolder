@@ -77,6 +77,21 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderBadgeStyle) {
     CYLPlaceholderBadgeStyleText
 };
 
+/// Badge appearance configuration for shared/customizable badge styling.
+/// Use with UIAppearance proxy for global defaults.
+@interface CYLPlaceholderBadgeAppearance : NSObject
+@property (nonatomic, strong, nullable) UIColor *backgroundColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *textColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIFont *font UI_APPEARANCE_SELECTOR;
+@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
+/// Animation duration for badge show/hide. Default 0.2s.
+@property (nonatomic) CGFloat animationDuration UI_APPEARANCE_SELECTOR;
+/// Whether to animate badge changes. Default YES.
+@property (nonatomic) BOOL animatesChanges UI_APPEARANCE_SELECTOR;
++ (instancetype)sharedAppearance;
+@end
+
 /// Item keys use CYLTabBarController's serialized names without exporting its symbols.
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitle;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImage;
@@ -170,20 +185,36 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) UILabel *textLabel;
 /// A nil value hides the badge; an empty string displays a dot.
-@property (nonatomic, copy, nullable) NSString *badgeValue;
+@property (nonatomic, copy, nullable) NSString *badgeValue UI_APPEARANCE_SELECTOR;
 /// Badge appearance can be customized directly. VoiceOver can read it separately
 /// when the placeholder is not itself an accessibility element.
 @property (nonatomic, strong, readonly) UILabel *badgeLabel;
 /// Offset from the top-right of the image (or title when there is no image).
-@property (nonatomic) CGPoint badgeCenterOffset;
+@property (nonatomic) CGPoint badgeCenterOffset UI_APPEARANCE_SELECTOR;
 /// Number badges use a maximum of 99; nonpositive numbers hide the badge.
 /// Text badges require a nonempty string. Returns NO on invalid input.
 - (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value;
 /// Enables the configured selected image, title, font and colors. Defaults to NO.
 @property (nonatomic, getter=isSelected) BOOL selected;
 /// Drawn behind the selected item. Resizable images fill the item; others are centered.
-@property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage;
-@property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor;
+@property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
+
+/// Default appearance values for normal state. Can be customized via UIAppearance proxy.
+@property (nonatomic, strong, nullable) UIColor *defaultTitleColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *defaultIconColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *defaultBackgroundColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIFont *defaultTitleFont UI_APPEARANCE_SELECTOR;
+
+/// Default appearance values for selected state. Can be customized via UIAppearance proxy.
+@property (nonatomic, strong, nullable) UIColor *defaultSelectedTitleColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *defaultSelectedIconColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *defaultSelectedBackgroundColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIFont *defaultSelectedTitleFont UI_APPEARANCE_SELECTOR;
+
+/// Default selection indicator appearance.
+@property (nonatomic, strong, nullable) UIImage *defaultSelectionIndicatorImage UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong, nullable) UIColor *defaultSelectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
 
 /// Original item attributes. Local GIF animations play once when the view enters a window.
 /// Optional Lottie, PAG and Rive backends require their corresponding CocoaPods subspec.
