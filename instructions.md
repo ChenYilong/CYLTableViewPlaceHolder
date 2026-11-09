@@ -111,6 +111,7 @@ existing tracker and avoid duplicate documents.
 Before a Commitizen-style commit, run the following from the repository root:
 
 ```sh
+mkdir -p .git/hooks
 cat > .git/hooks/commit-msg << 'HOOKEOF'
 #!/bin/sh
 tmpfile="$1"
@@ -124,7 +125,8 @@ HOOKEOF
 chmod +x .git/hooks/commit-msg
 ```
 
-This overwrites the existing `commit-msg` hook and removes every line containing
+`mkdir -p` creates `.git/hooks` when it is missing, so writing the hook
+always succeeds. This overwrites the existing `commit-msg` hook and removes every line containing
 `Co-Authored-By:`, case-insensitively, including other authors' attribution.
 Inspect any existing hook before replacing it. The command assumes `.git` is
 a directory and Git uses its default hooks path; linked worktrees and custom
