@@ -10,6 +10,10 @@ placeholder implementation is `CYLPlaceholderView.m` in this repository.
 This table compares item UI and the existing placeholder configuration API,
 not tab navigation or the tab controller itself.
 
+进入 同一级目录的/CYLTableViewPlaceHolder 文件夹， 进入 CYLTableViewPlaceHolder 文件夹， 阅读docs下所有的文档， 搜索关键词 TODO， 继续完成代码编写  在docs目录下的文档， 用以对比， 根目录下的CYLTabBarController文件夹 同一级目录的/CYLTabBarController ， 这是一个git项目， 其 **The **branch `feat/cross-platform-components` 下 扁平样式里的tabbar item UI相关   代码 与 本仓库内部实现，如果完全 模仿 CYLTabBarController 扁平样式里的tabbar item UI相关  满分是100分，  那么从模仿满足刚刚我们添加的所有接口。仅仅改 ui 实现ui。的角度来看， 给模仿的各个方法制作表格 ，第一列为 扁平样式item 有的，第二为 占位图实现有没有。 动画支持。 打分。 一直修复到100分。  动画部分， 参考CYLTabBarController 引入第三方库， 包括第三方库组织方式 ， 也完全参考。 一直修复到100分。  动画部分，包括 lottie 动画支持， pag gif ， rive。 参考CYLTabBarController 仓库 **T**he ** branch `feat/cross-platform-components` 下的动画实现。
+
+j
+
 Scores are per row, not a claim that the entire project has reached 100:
 100 means the relevant behavior is implemented and verified; partial scores
 identify concrete gaps; 0 means no implementation. A reserved configuration
