@@ -47,6 +47,8 @@ the integrated `CYLRefresh` component, and an example application. Read
 
 ## Commit readiness
 
+- Before a Commitizen-style commit, follow the commit-message hook instructions
+  in `instructions.md`; inspect an existing hook before replacing it.
 - Before every commit, audit the changed code and the project's comparison,
   issue-progress, and implementation-status documents.
 - In the most relevant existing document under `docs/`, keep a `TODO` entry for

@@ -105,3 +105,27 @@ existing tracker and avoid duplicate documents.
 - Respect established repository history when it uses project-specific
   mappings. CYLTabBarController examples include `feat: ✨`, `fix: 🐛`,
   `docs: 📝`, `chore: 🔧`, and `refactor: ♻️`. Commit text must remain English.
+
+### Commit-message hook before Commitizen commits
+
+Before a Commitizen-style commit, run the following from the repository root:
+
+```sh
+cat > .git/hooks/commit-msg << 'HOOKEOF'
+#!/bin/sh
+tmpfile="$1"
+if grep -qi "Co-Authored-By:" "$tmpfile" 2>/dev/null; then
+  tmp_clean=$(mktemp)
+  grep -vi "Co-Authored-By:" "$tmpfile" > "$tmp_clean"
+  cat "$tmp_clean" > "$tmpfile"
+  rm -f "$tmp_clean"
+fi
+HOOKEOF
+chmod +x .git/hooks/commit-msg
+```
+
+This overwrites the existing `commit-msg` hook and removes every line containing
+`Co-Authored-By:`, case-insensitively, including other authors' attribution.
+Inspect any existing hook before replacing it. The command assumes `.git` is
+a directory and Git uses its default hooks path; linked worktrees and custom
+`core.hooksPath` require the appropriate hooks path instead.
