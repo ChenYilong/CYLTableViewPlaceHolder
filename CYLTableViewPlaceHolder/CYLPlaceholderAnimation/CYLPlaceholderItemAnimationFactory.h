@@ -1,0 +1,67 @@
+//
+//  CYLPlaceholderItemAnimationFactory.h
+//  CYLTableViewPlaceHolder
+//
+//  Adapted from CYLTabBarController (`CYLTabBarItemAnimation/`, branch
+//  feat/cross-platform-components), MIT License,
+//  Copyright © 2026 https://github.com/ChenYilong . All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CYLPlaceholderItemAnimator.h"
+#import "CYLPlaceholderItemAnimatorRegistry.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+/*!
+ * [EN] What the engine needs to make animation views and find their players. `CYLPlaceholderItemAnimationFactory` is the
+ *      default; it can be replaced (e.g. in tests).
+ * [CN] 引擎创建动画视图、查找其播放器所需的全部能力。默认实现为 `CYLPlaceholderItemAnimationFactory`，可替换（例如在测试中）。
+ */
+@protocol CYLPlaceholderItemAnimationViewMaking <NSObject>
+- (nullable UIView *)animationViewWithURL:(NSURL *)URL size:(CGSize)size contentMode:(UIViewContentMode)contentMode
+    NS_SWIFT_NAME(animationView(url:size:contentMode:));
+- (nullable id<CYLPlaceholderItemAnimationPlayer>)playerForView:(nullable UIView *)view NS_SWIFT_NAME(player(for:));
+- (BOOL)isAnimationView:(nullable UIView *)view NS_SWIFT_NAME(isAnimationView(_:));
+@end
+
+/*!
+ * FIX: issue #604 — public API of the `CYLPlaceholderItemAnimation` subspec.
+ * [EN] Makes tab icon animation views, whatever their library: it picks the library of the file from
+ *      `CYLPlaceholderItemAnimatorRegistry`, asks it for the view, sets the view up for a tab button (frame, no touches, content
+ *      mode, frame-based layout, #653), and attaches the view's `CYLPlaceholderItemAnimationPlayer`. It also finds the player of
+ *      any view. The engine creates views only here; apps can use it too, e.g. for an animated plus button.
+ *
+ *          UIView *view = [CYLPlaceholderItemAnimationFactory animationViewWithURL:url size:CGSizeMake(30, 30)
+ *                                                                contentMode:UIViewContentModeScaleAspectFit];
+ *          [[CYLPlaceholderItemAnimationFactory playerForView:view] play];
+ * [CN] 创建 Tab 图标动画视图，与动画库无关：从 `CYLPlaceholderItemAnimatorRegistry` 找到文件对应的动画库，由它创建视图，再按 Tab 按钮的需要设置视图（frame、
+ *      不响应触摸、内容模式、基于 frame 的布局，#653），并绑定该视图的 `CYLPlaceholderItemAnimationPlayer`。也可以找到任意视图的播放器。引擎只在这里创建视图；
+ *      App 也可以使用，例如制作带动画的 PlusButton。示例见上。
+ */
+@interface CYLPlaceholderItemAnimationFactory : NSObject <CYLPlaceholderItemAnimationViewMaking>
+
+/// [EN] The animators this factory chooses from. [CN] 本工厂从中选择 animator 的注册表。
+@property (nonatomic, strong, readonly) id<CYLPlaceholderItemAnimatorRegistering> registry;
+
+/// [EN] A factory over `registry`. [CN] 基于 `registry` 的工厂。
+- (instancetype)initWithRegistry:(id<CYLPlaceholderItemAnimatorRegistering>)registry NS_DESIGNATED_INITIALIZER;
+/// [EN] A factory over the shared registry. [CN] 基于共享注册表的工厂。
+- (instancetype)init;
+
+/// [EN] The factory over the shared registry; the class methods below forward to it. [CN] 基于共享注册表的工厂；下面的类方法都转发给它。
++ (instancetype)sharedFactory;
+
+/// [EN] A ready view for the animation at `URL`, with its player attached; nil when no library plays it. [CN] `URL` 动画的视图（已绑定播放器）；没有动画库能播放时返回 nil。
++ (nullable UIView *)animationViewWithURL:(NSURL *)URL size:(CGSize)size contentMode:(UIViewContentMode)contentMode
+    NS_SWIFT_NAME(animationView(url:size:contentMode:));
+
+/// [EN] The player of `view`, nil when it is no library's view. [CN] `view` 的播放器；不是任何动画库的视图时返回 nil。
++ (nullable id<CYLPlaceholderItemAnimationPlayer>)playerForView:(nullable UIView *)view NS_SWIFT_NAME(player(for:));
+
+/// [EN] YES for a view of any library. [CN] 任意动画库的视图返回 YES。
++ (BOOL)isAnimationView:(nullable UIView *)view NS_SWIFT_NAME(isAnimationView(_:));
+
+@end
+
+NS_ASSUME_NONNULL_END

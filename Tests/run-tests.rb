@@ -15,14 +15,18 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
-   'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.m'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
+  # The shared animation subspec (registry, factory, engine, host view), without any engine adapter, so Core's
+  # built-in GIF decoder and the "backend unavailable" paths are exercised.
+  Dir.glob(File.join(root, 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/*.m')).reject { |path| File.basename(path).start_with?('._') }.sort.each do |path|
+    target.source_build_phase.add_file_reference(project.main_group.new_file(path))
+  end
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderAnimation\""
   end
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))

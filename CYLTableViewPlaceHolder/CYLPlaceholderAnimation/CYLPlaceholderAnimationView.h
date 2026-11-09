@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CYLPlaceholderView.h"
+#import "CYLPlaceholderItemAnimationPlayer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,22 +19,31 @@ typedef NS_ERROR_ENUM(CYLPlaceholderAnimationErrorDomain, CYLPlaceholderAnimatio
     CYLPlaceholderAnimationErrorInvalidSize,
     CYLPlaceholderAnimationErrorUnsupportedFormat,
     CYLPlaceholderAnimationErrorBackendUnavailable,
-    CYLPlaceholderAnimationErrorAssetLoadFailed
+    CYLPlaceholderAnimationErrorAssetLoadFailed,
+    CYLPlaceholderAnimationErrorInvalidOptions
 };
 
 typedef NS_ENUM(NSInteger, CYLPlaceholderAnimationBackend) {
     CYLPlaceholderAnimationBackendLottie,
     CYLPlaceholderAnimationBackendPAG,
-    CYLPlaceholderAnimationBackendRive
+    CYLPlaceholderAnimationBackendRive,
+    CYLPlaceholderAnimationBackendGIF,
+    /// An animator registered by the app with `CYLPlaceholderItemAnimatorRegistry`.
+    CYLPlaceholderAnimationBackendCustom
 };
 
 typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
 
-/// A typed host view for an optional Lottie, PAG, or Rive animation backend.
-/// The URL must point to a local `.json`, `.pag`, or `.riv` file.
-@interface CYLPlaceholderAnimationView : UIView
+/// Hosts the view made by the animator that `CYLPlaceholderItemAnimatorRegistry`
+/// picks for a local file, and drives it through that view's
+/// `CYLPlaceholderItemAnimationPlayer`. Lottie, PAG, Rive and GIF animators come
+/// from their own subspecs.
+@interface CYLPlaceholderAnimationView : UIView <CYLPlaceholderAnimationPlayer>
 
 @property (nonatomic, strong, readonly) UIView *animationView;
+@property (nonatomic, strong, readonly) id<CYLPlaceholderItemAnimationPlayer> player;
+/// The identifier of the animator that made `animationView` ("Lottie", "PAG", "Rive", "GIF", or a custom one).
+@property (nonatomic, copy, readonly) NSString *animatorIdentifier;
 @property (nonatomic, readonly) CYLPlaceholderAnimationBackend backend;
 @property (nonatomic, readonly, getter=isPlaying) BOOL playing;
 @property (nonatomic, readonly, getter=isReady) BOOL ready;
@@ -44,6 +55,8 @@ typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
                                     size:(CGSize)size
                              contentMode:(UIViewContentMode)contentMode
                                    error:(NSError * _Nullable * _Nullable)error;
+/// Option values must be strings or numbers; they reach the animator in the URL fragment,
+/// as in CYLTabBarController (`#artboard=Main&duration=1`).
 - (nullable instancetype)initWithFileURL:(NSURL *)fileURL
                                     size:(CGSize)size
                              contentMode:(UIViewContentMode)contentMode
@@ -53,13 +66,13 @@ typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
-/// Starts or resumes playback. Call on the main thread.
+/// Plays once from the start. Call on the main thread.
 - (void)play;
-/// Stops playback and restores the backend's resting frame/state. Call on the main thread.
+/// Stops and restores the resting frame/state.
 - (void)stop;
-/// Stops playback and displays the last frame where the backend supports it.
+/// Stops and displays the last frame where the engine supports it.
 - (void)showLastFrame;
-/// Return NO when this backend does not support the requested operation.
+/// Return NO when the engine does not support the requested operation.
 - (BOOL)setAnimationProgress:(CGFloat)progress;
 - (BOOL)setAnimationSpeed:(CGFloat)speed;
 - (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;

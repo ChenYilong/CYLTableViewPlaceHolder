@@ -12,7 +12,7 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.animation.tests'
     config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
   end
-  %w[CYLPlaceholderLottiePlaybackTests.m CYLPlaceholderBackendPlaybackTests.m].each do |filename|
+  %w[CYLPlaceholderLottiePlaybackTests.m CYLPlaceholderBackendPlaybackTests.m CYLPlaceholderAnimationRegistryTests.m].each do |filename|
     ref = project.main_group.new_file(File.join(root, 'Tests', filename))
     target.source_build_phase.add_file_reference(ref)
   end
@@ -40,8 +40,9 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     project 'AnimationTests.xcodeproj'
     use_frameworks! :linkage => :#{linkage}
     target 'AnimationTests' do
-      pod 'CYLTableViewPlaceHolder/Lottie', :path => #{root.dump}
-      pod 'CYLTableViewPlaceHolder/PAG', :path => #{root.dump}
+      pod 'CYLTableViewPlaceHolder/LottieSwift', :path => #{root.dump}
+      pod 'CYLTableViewPlaceHolder/GIF', :path => #{root.dump}
+      pod 'CYLTableViewPlaceHolder/#{ENV.fetch('PAG_SUBSPEC', 'PAG')}', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/Rive', :path => #{root.dump}
     end
     post_install do |installer|

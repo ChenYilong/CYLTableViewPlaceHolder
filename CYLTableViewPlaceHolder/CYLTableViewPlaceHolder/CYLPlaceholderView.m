@@ -1,4 +1,5 @@
 #import "CYLPlaceholderView.h"
+#import "CYLPlaceholderItemAnimationService.h"
 #import <math.h>
 #import <ImageIO/ImageIO.h>
 
@@ -231,6 +232,30 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
     return YES;
 }
 
+// The `contentMode` animation option, as a number or a UIViewContentMode case name; aspect fit by default.
+static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
+    UIViewContentMode contentMode = UIViewContentModeScaleAspectFit;
+    id contentModeValue = [options isKindOfClass:NSDictionary.class] ? options[@"contentMode"] : nil;
+    if ([contentModeValue isKindOfClass:NSNumber.class]) {
+        NSInteger value = [contentModeValue integerValue];
+        if (value >= UIViewContentModeScaleToFill && value <= UIViewContentModeBottomRight &&
+            value != UIViewContentModeRedraw) contentMode = value;
+    } else if ([contentModeValue isKindOfClass:NSString.class]) {
+        NSDictionary<NSString *, NSNumber *> *names = @{
+            @"scaleToFill": @(UIViewContentModeScaleToFill), @"scaleAspectFit": @(UIViewContentModeScaleAspectFit),
+            @"scaleAspectFill": @(UIViewContentModeScaleAspectFill), @"center": @(UIViewContentModeCenter),
+            @"top": @(UIViewContentModeTop), @"bottom": @(UIViewContentModeBottom),
+            @"left": @(UIViewContentModeLeft), @"right": @(UIViewContentModeRight),
+            @"topLeft": @(UIViewContentModeTopLeft), @"topRight": @(UIViewContentModeTopRight),
+            @"bottomLeft": @(UIViewContentModeBottomLeft), @"bottomRight": @(UIViewContentModeBottomRight)
+        };
+        NSNumber *mode = names[contentModeValue];
+        if (mode) contentMode = mode.integerValue;
+        else NSLog(@"CYLTableViewPlaceHolder: unknown animation contentMode '%@'.", contentModeValue);
+    }
+    return contentMode;
+}
+
 @interface CYLPlaceholderItemImageView : UIImageView
 @end
 
@@ -412,11 +437,19 @@ static BOOL CYLPlaceholderInsets(id value, UIEdgeInsets *insets) {
 
 @end
 
-@protocol CYLPlaceholderAnimationHosting <CYLPlaceholderAnimationPlayer>
-+ (instancetype)alloc;
-- (instancetype)initWithFileURL:(NSURL *)fileURL size:(CGSize)size
-                   contentMode:(UIViewContentMode)contentMode options:(NSDictionary *)options error:(NSError **)error;
-@end
+static id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationCurrentService;
+
+void CYLPlaceholderItemAnimationSetService(id<CYLPlaceholderItemAnimationService> service) {
+    @synchronized ([CYLPlaceholderBadgeAppearance class]) {
+        CYLPlaceholderItemAnimationCurrentService = service;
+    }
+}
+
+id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(void) {
+    @synchronized ([CYLPlaceholderBadgeAppearance class]) {
+        return CYLPlaceholderItemAnimationCurrentService;
+    }
+}
 
 @interface CYLPlaceholderView ()
 @property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *itemAttributes;
@@ -1014,6 +1047,8 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         NSLog(@"CYLTableViewPlaceHolder: GIF animation requires a local .gif file.");
         return;
     }
+    // With the GIF subspec, the registered GIF animator plays it, like the other engines.
+    if ([CYLPlaceholderItemAnimationGetService() canAnimateFileAtURL:url]) return;
     NSNumber *fileSize = nil;
     NSError *fileError = nil;
     if (![url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:&fileError]) {
@@ -1087,25 +1122,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     }
     self.gifFrames = frames;
     self.gifDelays = delays;
-    // Support contentMode from animation options (default to ScaleAspectFit)
-    UIViewContentMode contentMode = UIViewContentModeScaleAspectFit;
-    id contentModeValue = attributes[CYLPlaceholderItemAnimationOptions][@"contentMode"];
-    if ([contentModeValue isKindOfClass:NSNumber.class]) {
-        contentMode = [contentModeValue integerValue];
-    } else if ([contentModeValue isKindOfClass:NSString.class]) {
-        if ([contentModeValue isEqualToString:@"scaleToFill"]) contentMode = UIViewContentModeScaleToFill;
-        else if ([contentModeValue isEqualToString:@"scaleAspectFit"]) contentMode = UIViewContentModeScaleAspectFit;
-        else if ([contentModeValue isEqualToString:@"scaleAspectFill"]) contentMode = UIViewContentModeScaleAspectFill;
-        else if ([contentModeValue isEqualToString:@"center"]) contentMode = UIViewContentModeCenter;
-        else if ([contentModeValue isEqualToString:@"top"]) contentMode = UIViewContentModeTop;
-        else if ([contentModeValue isEqualToString:@"bottom"]) contentMode = UIViewContentModeBottom;
-        else if ([contentModeValue isEqualToString:@"left"]) contentMode = UIViewContentModeLeft;
-        else if ([contentModeValue isEqualToString:@"right"]) contentMode = UIViewContentModeRight;
-        else if ([contentModeValue isEqualToString:@"topLeft"]) contentMode = UIViewContentModeTopLeft;
-        else if ([contentModeValue isEqualToString:@"topRight"]) contentMode = UIViewContentModeTopRight;
-        else if ([contentModeValue isEqualToString:@"bottomLeft"]) contentMode = UIViewContentModeBottomLeft;
-        else if ([contentModeValue isEqualToString:@"bottomRight"]) contentMode = UIViewContentModeBottomRight;
-    }
+    UIViewContentMode contentMode = CYLPlaceholderAnimationContentMode(attributes[CYLPlaceholderItemAnimationOptions]);
     UIImageView *view = [[UIImageView alloc] initWithImage:frames.firstObject];
     view.contentMode = contentMode;
     self.itemView.animationView = view;
@@ -1170,6 +1187,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
 
 - (void)cyl_configureBackendWithAttributes:(NSDictionary *)attributes imageBundle:(NSBundle *)imageBundle {
    NSArray *sources = @[
+       @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFSize],
        @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieSize],
        @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGSize],
        @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveSize],
@@ -1232,16 +1250,17 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
        factory = [factories[url.pathExtension.lowercaseString] copy];
    }
    UIView<CYLPlaceholderAnimationPlayer> *view;
+   UIViewContentMode contentMode = CYLPlaceholderAnimationContentMode(options);
    if (factory) {
-       view = factory(url, size, UIViewContentModeScaleAspectFit, options, &error);
+       view = factory(url, size, contentMode, options, &error);
    } else {
-       Class<CYLPlaceholderAnimationHosting> backendClass = NSClassFromString(@"CYLPlaceholderAnimationView");
-       if (!backendClass) {
+       id<CYLPlaceholderItemAnimationService> service = CYLPlaceholderItemAnimationGetService();
+       if (!service) {
            NSLog(@"CYLTableViewPlaceHolder: animation backend is not installed; showing the static image.");
            return;
        }
-       view = (UIView<CYLPlaceholderAnimationPlayer> *)[[backendClass alloc] initWithFileURL:url size:size
-           contentMode:UIViewContentModeScaleAspectFit options:options error:&error];
+       view = [service animationViewWithFileURL:url size:size contentMode:contentMode
+                                        options:options error:&error];
    }
    if (!view) {
        NSLog(@"CYLTableViewPlaceHolder: animation could not be loaded: %@.", error.localizedDescription ?: @"factory returned no view");

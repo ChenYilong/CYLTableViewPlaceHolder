@@ -7,41 +7,17 @@
 //
 
 #import "CYLPlaceholderAnimationView.h"
+#import "CYLPlaceholderItemAnimatorRegistry.h"
+#import "CYLPlaceholderItemAnimationFactory.h"
+#import "CYLPlaceholderItemAnimationPlayableView.h"
 #import <math.h>
-
-#if __has_include(<libpag/PAGView.h>)
-#import <libpag/PAGView.h>
-#define CYL_PLACEHOLDER_HAS_PAG 1
-#else
-#define CYL_PLACEHOLDER_HAS_PAG 0
-#endif
-
-#if __has_include(<CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>)
-#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>
-#define CYL_PLACEHOLDER_HAS_SWIFT_BACKENDS 1
-#elif __has_include("CYLTableViewPlaceHolder-Swift.h")
-#import "CYLTableViewPlaceHolder-Swift.h"
-#define CYL_PLACEHOLDER_HAS_SWIFT_BACKENDS 1
-#else
-#define CYL_PLACEHOLDER_HAS_SWIFT_BACKENDS 0
-#endif
 
 NSErrorDomain const CYLPlaceholderAnimationErrorDomain = @"CYLPlaceholderAnimationErrorDomain";
 
-@interface UIView (CYLPlaceholderAnimationBackendControls)
-- (void)playAnimation;
-- (void)stopAnimation;
-- (void)showAnimationLastFrame;
-- (BOOL)setAnimationProgress:(CGFloat)progress;
-- (BOOL)setAnimationSpeed:(CGFloat)speed;
-- (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;
-- (void)setErrorHandler:(CYLPlaceholderAnimationErrorHandler _Nullable)errorHandler;
-- (void)setReadyHandler:(void (^ _Nullable)(void))readyHandler;
-- (BOOL)isReady;
-@end
-
 @interface CYLPlaceholderAnimationView ()
 @property (nonatomic, strong, readwrite) UIView *animationView;
+@property (nonatomic, strong, readwrite) id<CYLPlaceholderItemAnimationPlayer> player;
+@property (nonatomic, copy, readwrite) NSString *animatorIdentifier;
 @property (nonatomic, readwrite) CYLPlaceholderAnimationBackend backend;
 @property (nonatomic, readwrite, getter=isPlaying) BOOL playing;
 @end
@@ -50,6 +26,30 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
     return [NSError errorWithDomain:CYLPlaceholderAnimationErrorDomain
                                code:code
                            userInfo:@{NSLocalizedDescriptionKey: description}];
+}
+
+/// The engines this library ships as subspecs; a missing one is "unavailable", not "unsupported".
+static NSString *CYLPlaceholderAnimationKnownEngine(NSString *extension) {
+    NSDictionary<NSString *, NSString *> *engines = @{
+        @"json": @"Lottie", @"lottie": @"Lottie", @"pag": @"PAG", @"riv": @"Rive", @"gif": @"GIF"
+    };
+    return engines[extension];
+}
+
+/// Encodes options into the URL fragment that `CYLPlaceholderItemViewAnimator` reads.
+static NSURL *CYLPlaceholderAnimationURLWithOptions(NSURL *URL, NSDictionary<NSString *, NSString *> *options) {
+    if (options.count == 0) return URL;
+    NSMutableCharacterSet *allowed = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
+    [allowed removeCharactersInString:@"&=#"];
+    NSMutableArray<NSString *> *items = [NSMutableArray array];
+    for (NSString *name in [options.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
+        [items addObject:[NSString stringWithFormat:@"%@=%@",
+            [name stringByAddingPercentEncodingWithAllowedCharacters:allowed],
+            [options[name] stringByAddingPercentEncodingWithAllowedCharacters:allowed]]];
+    }
+    NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:YES];
+    components.percentEncodedFragment = [items componentsJoinedByString:@"&"];
+    return components.URL ?: URL;
 }
 
 @implementation CYLPlaceholderAnimationView
@@ -66,7 +66,7 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
                              contentMode:(UIViewContentMode)contentMode
                                  options:(NSDictionary<NSString *, id> *)options
                                    error:(NSError **)error {
-    if (!fileURL.isFileURL || fileURL.path.length == 0) {
+    if (![fileURL isKindOfClass:NSURL.class] || !fileURL.isFileURL || fileURL.path.length == 0) {
         if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorInvalidURL,
                                                              @"Animation files must use a local file URL.");
         return nil;
@@ -77,106 +77,83 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
                                                              @"Animation size must be finite, positive, and no larger than 1000 points.");
         return nil;
     }
-
+    NSMutableDictionary<NSString *, NSString *> *stringOptions = [NSMutableDictionary dictionary];
+    for (id name in options) {
+        id value = options[name];
+        if (![name isKindOfClass:NSString.class] ||
+            !([value isKindOfClass:NSString.class] || [value isKindOfClass:NSNumber.class])) {
+            if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorInvalidOptions,
+                                                                 @"Animation option names must be strings and values strings or numbers.");
+            return nil;
+        }
+        if ([name isEqualToString:@"contentMode"]) continue; // applied through `contentMode`
+        stringOptions[name] = [value isKindOfClass:NSNumber.class] ? [value stringValue] : value;
+    }
     NSString *extension = fileURL.pathExtension.lowercaseString;
-    CYLPlaceholderAnimationBackend backend;
-    if ([extension isEqualToString:@"json"]) {
-        backend = CYLPlaceholderAnimationBackendLottie;
-    } else if ([extension isEqualToString:@"pag"]) {
-        backend = CYLPlaceholderAnimationBackendPAG;
-    } else if ([extension isEqualToString:@"riv"]) {
-        backend = CYLPlaceholderAnimationBackendRive;
-    } else {
-        if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorUnsupportedFormat,
-                                                             @"Supported animation files are .json, .pag, and .riv.");
+    if ([extension isEqualToString:@"riv"] && stringOptions[@"duration"]) {
+        NSScanner *scanner = [NSScanner scannerWithString:stringOptions[@"duration"]];
+        double duration = NAN;
+        if (![scanner scanDouble:&duration] || !scanner.isAtEnd || !isfinite(duration) || duration < 0 || duration > 60) {
+            if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorInvalidOptions,
+                                                                 @"Rive duration must be between 0 and 60 seconds.");
+            return nil;
+        }
+    }
+
+    id<CYLPlaceholderItemAnimator> animator = [CYLPlaceholderItemAnimatorRegistry animatorForURL:fileURL];
+    if (!animator) {
+        NSString *engine = CYLPlaceholderAnimationKnownEngine(extension);
+        if (error) *error = engine ?
+            CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorBackendUnavailable,
+                [NSString stringWithFormat:@"%@ support is not linked. Add the CYLTableViewPlaceHolder/%@ subspec.", engine, engine]) :
+            CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorUnsupportedFormat,
+                @"No registered animator plays this file type.");
         return nil;
     }
 
     self = [super initWithFrame:(CGRect){CGPointZero, size}];
     if (!self) return nil;
-    _backend = backend;
-    _animationView = [self cyl_animationViewWithURL:fileURL contentMode:contentMode options:options error:error];
-    if (!_animationView) return nil;
-
-    _animationView.frame = self.bounds;
-    _animationView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _animationView.userInteractionEnabled = NO;
-    _animationView.backgroundColor = UIColor.clearColor;
-    [self addSubview:_animationView];
-    return self;
-}
-
-- (nullable UIView *)cyl_animationViewWithURL:(NSURL *)fileURL
-                                 contentMode:(UIViewContentMode)contentMode
-                                     options:(NSDictionary<NSString *, id> *)options
-                                       error:(NSError **)error {
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) {
-#if CYL_PLACEHOLDER_HAS_PAG
-        PAGFile *file = [PAGFile Load:fileURL.path];
-        if (!file) {
-            if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorAssetLoadFailed,
-                                                                 @"The PAG file could not be decoded.");
-            return nil;
-        }
-        PAGView *view = [[PAGView alloc] initWithFrame:CGRectZero];
-        [view setSync:YES];
-        [view setComposition:file];
-        [view setRepeatCount:1];
-        switch (contentMode) {
-            case UIViewContentModeScaleToFill:
-                [view setScaleMode:PAGScaleModeStretch];
-                break;
-            case UIViewContentModeScaleAspectFill:
-                [view setScaleMode:PAGScaleModeZoom];
-                break;
-            default:
-                [view setScaleMode:PAGScaleModeLetterBox];
-                break;
-        }
-        [view setProgress:0];
-        [view flush];
-        return view;
-#else
-        if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorBackendUnavailable,
-                                                             @"PAG support is not linked. Add the libpag-backed placeholder animation subspec.");
+    NSURL *URL = CYLPlaceholderAnimationURLWithOptions(fileURL, stringOptions);
+    UIView *view = [[CYLPlaceholderItemAnimationFactory sharedFactory] animationViewWithURL:URL size:size contentMode:contentMode];
+    id<CYLPlaceholderItemAnimationPlayer> player = view ? [[CYLPlaceholderItemAnimationFactory sharedFactory] playerForView:view] : nil;
+    if (!view || !player) {
+        if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorAssetLoadFailed,
+            [NSString stringWithFormat:@"The %@ animator could not load %@.", animator.identifier, fileURL.lastPathComponent]);
         return nil;
-#endif
     }
-
-#if CYL_PLACEHOLDER_HAS_SWIFT_BACKENDS
-    NSError *backendError = nil;
-    UIView *view = [CYLPlaceholderAnimationBackendFactory makeBackendViewWithFileURL:fileURL
-                                                                         contentMode:contentMode
-                                                                             options:options
-                                                                               error:&backendError];
-    if (!view && error) *error = backendError ?: CYLPlaceholderAnimationMakeError(
-        CYLPlaceholderAnimationErrorBackendUnavailable, @"The requested animation backend is unavailable.");
-    return view;
-#else
-    if (error) *error = CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorBackendUnavailable,
-                                                         @"Lottie and Rive support requires the Swift animation adapters.");
-    return nil;
-#endif
+    _animatorIdentifier = [animator.identifier copy];
+    NSDictionary<NSString *, NSNumber *> *backends = @{
+        @"Lottie": @(CYLPlaceholderAnimationBackendLottie), @"PAG": @(CYLPlaceholderAnimationBackendPAG),
+        @"Rive": @(CYLPlaceholderAnimationBackendRive), @"GIF": @(CYLPlaceholderAnimationBackendGIF)
+    };
+    _backend = backends[animator.identifier] ? backends[animator.identifier].integerValue : CYLPlaceholderAnimationBackendCustom;
+    _animationView = view;
+    _player = player;
+    view.frame = self.bounds;
+    view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    view.backgroundColor = UIColor.clearColor;
+    [self addSubview:view];
+    return self;
 }
 
 - (void)setErrorHandler:(CYLPlaceholderAnimationErrorHandler)errorHandler {
     _errorHandler = [errorHandler copy];
-    if ([self.animationView respondsToSelector:@selector(setErrorHandler:)]) {
-        [self.animationView setErrorHandler:_errorHandler];
+    if ([self.animationView respondsToSelector:@selector(setCyl_animationViewErrorHandler:)]) {
+        [(id<CYLPlaceholderItemAnimationPlayableView>)self.animationView setCyl_animationViewErrorHandler:_errorHandler];
     }
 }
 
 - (BOOL)isReady {
-    if ([self.animationView respondsToSelector:@selector(isReady)]) {
-        return [self.animationView isReady];
+    if ([self.animationView respondsToSelector:@selector(cyl_isAnimationViewReady)]) {
+        return [(id<CYLPlaceholderItemAnimationPlayableView>)self.animationView cyl_isAnimationViewReady];
     }
     return YES;
 }
 
 - (void)setReadyHandler:(void (^)(void))readyHandler {
     _readyHandler = [readyHandler copy];
-    if ([self.animationView respondsToSelector:@selector(setReadyHandler:)]) {
-        [self.animationView setReadyHandler:_readyHandler];
+    if ([self.animationView respondsToSelector:@selector(setCyl_animationViewReadyHandler:)]) {
+        [(id<CYLPlaceholderItemAnimationPlayableView>)self.animationView setCyl_animationViewReadyHandler:_readyHandler];
     }
 }
 
@@ -185,15 +162,7 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
         dispatch_async(dispatch_get_main_queue(), ^{ [self play]; });
         return;
     }
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) {
-#if CYL_PLACEHOLDER_HAS_PAG
-        PAGView *view = (PAGView *)self.animationView;
-        [view setProgress:0];
-        [view play];
-#endif
-    } else if ([self.animationView respondsToSelector:@selector(playAnimation)]) {
-        [self.animationView playAnimation];
-    }
+    [self.player play];
     self.playing = YES;
 }
 
@@ -202,16 +171,7 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
         dispatch_async(dispatch_get_main_queue(), ^{ [self stop]; });
         return;
     }
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) {
-#if CYL_PLACEHOLDER_HAS_PAG
-        PAGView *view = (PAGView *)self.animationView;
-        [view stop];
-        [view setProgress:0];
-        [view flush];
-#endif
-    } else if ([self.animationView respondsToSelector:@selector(stopAnimation)]) {
-        [self.animationView stopAnimation];
-    }
+    [self.player stop];
     self.playing = NO;
 }
 
@@ -220,54 +180,30 @@ static NSError *CYLPlaceholderAnimationMakeError(CYLPlaceholderAnimationErrorCod
         dispatch_async(dispatch_get_main_queue(), ^{ [self showLastFrame]; });
         return;
     }
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) {
-#if CYL_PLACEHOLDER_HAS_PAG
-        PAGView *view = (PAGView *)self.animationView;
-        [view stop];
-        [view setProgress:1];
-        [view flush];
-#endif
-    } else if ([self.animationView respondsToSelector:@selector(showAnimationLastFrame)]) {
-        [self.animationView showAnimationLastFrame];
-    } else {
-        [self stop];
-    }
+    [self.player showLastFrame];
     self.playing = NO;
 }
 
 - (BOOL)setAnimationProgress:(CGFloat)progress {
-    if (![NSThread isMainThread] || !isfinite(progress) || progress < 0 || progress > 1) return NO;
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) {
-#if CYL_PLACEHOLDER_HAS_PAG
-        PAGView *view = (PAGView *)self.animationView;
-        [view stop];
-        [view setProgress:progress];
-        [view flush];
-        self.playing = NO;
-        return YES;
-#else
-        return NO;
-#endif
-    }
-    if ([self.animationView respondsToSelector:@selector(setAnimationProgress:)] &&
-        [self.animationView setAnimationProgress:progress]) {
-        self.playing = NO;
-        return YES;
-    }
-    return NO;
+    if (![NSThread isMainThread] || !isfinite(progress) || progress < 0 || progress > 1 ||
+        ![self.player respondsToSelector:@selector(setProgress:)]) return NO;
+    [self.player stop];
+    self.player.progress = progress;
+    self.playing = NO;
+    return YES;
 }
 
 - (BOOL)setAnimationSpeed:(CGFloat)speed {
-    if (![NSThread isMainThread] || !isfinite(speed) || speed <= 0) return NO;
-    if (self.backend == CYLPlaceholderAnimationBackendPAG) return NO;
-    return [self.animationView respondsToSelector:@selector(setAnimationSpeed:)] &&
-        [self.animationView setAnimationSpeed:speed];
+    if (![NSThread isMainThread] || !isfinite(speed) || speed <= 0 ||
+        ![self.player respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
+    self.player.animationSpeed = speed;
+    return YES;
 }
 
-- (BOOL)setAnimationColors:(NSDictionary<NSString *,UIColor *> *)colors {
-    if (![NSThread isMainThread]) return NO;
-    return [self.animationView respondsToSelector:@selector(setAnimationColors:)] &&
-        [self.animationView setAnimationColors:colors];
+- (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors {
+    if (![NSThread isMainThread] || ![self.player respondsToSelector:@selector(applyColors:traitCollection:)]) return NO;
+    [self.player applyColors:colors traitCollection:self.traitCollection];
+    return YES;
 }
 
 @end
