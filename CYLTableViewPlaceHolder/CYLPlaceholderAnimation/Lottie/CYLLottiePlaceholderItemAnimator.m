@@ -10,8 +10,10 @@
 #import "CYLLottiePlaceholderItemAnimator.h"
 #if __has_include("../CYLPlaceholderItemAnimatorRegistry.h")
 #import "../CYLPlaceholderItemAnimatorRegistry.h"
+#import "../CYLPlaceholderItemAnimationPlayableView.h"
 #else
 #import "CYLPlaceholderItemAnimatorRegistry.h"
+#import "CYLPlaceholderItemAnimationPlayableView.h"
 #endif
 #if __has_include("../../CYLTableViewPlaceHolder/CYLPlaceholderView.h")
 #import "../../CYLTableViewPlaceHolder/CYLPlaceholderView.h"
