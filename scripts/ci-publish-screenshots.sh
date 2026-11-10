@@ -5,7 +5,7 @@
 # commits them to the `ci-screenshots` branch under <pr-N or branch name>/ (replacing that folder's previous
 # screenshots), then shows them inline in the job summary and in one pull request comment that is updated in place.
 # When the token cannot push (a pull request from a fork), it only links the artifacts.
-# Needs GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY; PR_NUMBER for pull requests.
+# Needs GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_STEP_SUMMARY; PR_NUMBER and HEAD_SHA for pull requests.
 set -euo pipefail
 SOURCE=$(cd "${1:?usage: scripts/ci-publish-screenshots.sh <folder>}" && pwd)
 BRANCH=ci-screenshots
@@ -13,6 +13,8 @@ MARKER="<!-- cyl-example-screenshots -->"
 RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 if [[ -n "${PR_NUMBER:-}" ]]; then FOLDER="pr-$PR_NUMBER"; else FOLDER="${GITHUB_REF_NAME:-manual}"; fi
 FOLDER=${FOLDER//\//-}
+# The pull request's head commit; GITHUB_SHA is the temporary merge commit on pull_request runs.
+HEAD=${HEAD_SHA:-${GITHUB_SHA:-unknown}}
 
 mapfile -t SHOTS < <(find "$SOURCE" -maxdepth 1 -name "*.png" -size +0 -exec basename {} \; | sort)
 echo "Found ${#SHOTS[@]} screenshot(s): ${SHOTS[*]:-none}"
@@ -63,7 +65,7 @@ else
   for shot in "${SHOTS[@]}"; do
     BODY+="<img src=\"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$SHA/$FOLDER/$shot\" width=\"180\" alt=\"${shot%.png}\"> | "
   done
-  BODY+=$'\n\n'"From [run $GITHUB_RUN_ID]($RUN_URL), commit ${GITHUB_SHA:0:7}. Full size: the \`example-screenshot-*\` artifacts."$'\n'
+  BODY+=$'\n\n'"From [run $GITHUB_RUN_ID]($RUN_URL), commit ${HEAD:0:7}. Full size: the \`example-screenshot-*\` artifacts."$'\n'
 fi
 printf '%s' "$BODY" >> "$GITHUB_STEP_SUMMARY"
 
