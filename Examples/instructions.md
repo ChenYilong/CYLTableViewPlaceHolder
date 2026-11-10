@@ -5,6 +5,20 @@ Each example inherits the repository instructions and any instructions in its
 own folder. Keep upstream attribution and use the repository root as the local
 CocoaPods dependency path.
 
+## Language
+
+Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples
+and a Swift-friendly core" in the root `instructions.md`). Current state:
+
+| Example | Source language | Status |
+| --- | --- | --- |
+| `Example-SwiftUI` | Swift | Done |
+| `Example-objc-01` | Swift (the name is historical) | Done |
+| `Example-objc-02` | Objective-C sources, Swift UI tests | To migrate |
+| `Example-Scenarios` | Objective-C sources (12 files), one Swift file | To migrate |
+| `Example` (main app, root workspace) | Objective-C (6 files) | To migrate |
+| `Example-placeholder` | Objective-C (third-party reference draft) | To migrate or retire |
+
 ## Examples and the issues they reproduce
 
 Each example's `instructions.md` links its issues and gives step-by-step

@@ -32,6 +32,7 @@ source of truth; update the README and issue tracker if they become stale.
 | Reproduction examples | `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-objc-02/` |
 | Regression tests | `Tests/PlaceholderTests.m` |
 | Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
+| Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/` |
 | Integration and usage | `README.md` |
 | Issue history | `docs/issue-progress.md` |
 

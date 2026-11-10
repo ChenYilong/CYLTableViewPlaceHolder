@@ -36,6 +36,12 @@ the integrated `CYLRefresh` component, and an example application. Read
 - The example compiles local refresh sources directly and does not require the
   former external refresh Pod. Keep the source files, the resource bundle,
   privacy manifest, and third-party license in both the project and podspec.
+- iOS examples are written in Swift (the library stays Objective-C). When a Swift call
+  reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
+  declarations, `cyl_` members keep their prefix, and underscored protocol methods get an
+  underscore-free sibling instead of a rename. Follow CYLTabBarController's
+  `docs/Swift-Guide.md` and record verified spellings in `docs/Swift-Guide.md`. See
+  "Swift examples and a Swift-friendly core" in `instructions.md`.
 - Localization is several files and always needs a file structure: on iOS,
   `<language>.lproj` folders inside a `.bundle`, never loose `.strings` files
   or hard-coded user-facing text. Several bundles are allowed, one per owner.

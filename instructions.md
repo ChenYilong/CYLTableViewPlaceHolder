@@ -54,6 +54,60 @@ If either is missing, copy the corresponding icon and custom launch screen from
 `CYLTabBarController`, include their dependent assets and target membership,
 and verify the result builds. Do not overwrite existing project assets.
 
+## Swift examples and a Swift-friendly core
+
+iOS examples are written in Swift; the library stays Objective-C. The core adapts to the Swift call site, not the other way round.
+
+### Examples
+
+- Every iOS example under `Examples/` is Swift: new examples start in Swift, and an
+  existing Objective-C example is migrated (tracked in `docs/issue-progress.md`).
+  Do not add Objective-C source to an example. Use `@main` or a `UIApplicationDelegate`
+  and scene delegate in Swift, never `main.m`.
+- The rule covers example apps and their UI tests. It does not cover the library
+  source, its Objective-C header API, or the library's XCTest suite under `Tests/`, which
+  exercises that API.
+- Examples import the library as a module (`import CYLTableViewPlaceHolder`; the
+  Podfiles already use `use_frameworks!`) and need no bridging header.
+- Directory names such as `Example-objc-01` are tied to schemes, CI matrix entries and
+  artifact names. Do not rename a folder because its language changed; note the mismatch in
+  the folder's `instructions.md`.
+- A Swift example must follow the Swift API Design Guidelines. If calling the
+  library reads like Objective-C, fix the API in the core (below) instead of wrapping it in
+  every example.
+
+### Making the Objective-C core Swift-friendly
+
+1. **Nullability.** Wrap every public header in `NS_ASSUME_NONNULL_BEGIN/END` and mark the
+   exceptions `nullable`, so Swift sees `T` and `T?` rather than `T!`. Use lightweight
+   generics on collections and `NS_ENUM`/`NS_OPTIONS`/`NS_STRING_ENUM` for constants.
+2. **Names.** Add `NS_SWIFT_NAME` to *new* declarations whose imported name is not idiomatic.
+   Follow the pattern in CYLTabBarController's Swift guide
+   ([`docs/Swift-Guide.md`, section "Objective-C → Swift 命名对照"](https://github.com/ChenYilong/CYLTabBarController/blob/master/docs/Swift-Guide.md)):
+   `With…`/`For…`/`At…`/`Of…` become argument labels, enum values drop the type prefix,
+   notification names drop the `Notification` suffix, and factory methods become initializers
+   or `static` members. Example from that guide: `-cyl_showBadgeValue:animationType:` is
+   called as `cyl_showBadgeValue(_:animationType:)`.
+3. **`cyl_` members stay `cyl_` in Swift.** Category methods and properties keep the prefix
+   (`scrollView.cyl_header`, `scrollView.cyl_footer`, `beginRefreshing()`), and so do
+   Swift extensions of system types written in this repository (`Color(cyl_hexString:)`).
+   Look up how CYLTabBarController adapted the equivalent method before inventing a
+   spelling, and record the result in `docs/Swift-Guide.md`.
+4. **Underscores in protocol methods.** Swift method names should not contain underscores.
+   For a method that has already shipped, never rename it and never add `NS_SWIFT_NAME` to
+   it, which would change an existing Swift API. Add a second method whose name is the same
+   without the underscore (keep the `cyl` prefix, for example `-cyl_playX` and
+   `-cylPlayX`), give only the new one `NS_SWIFT_NAME`, make the old one `@optional`, and have
+   the library call the new one when it is implemented and the old one otherwise. For a
+   method introduced in the same unreleased change, name it correctly once.
+5. **Compatibility.** Existing public symbols, serialized keys and resources are not renamed
+   or removed to please Swift without approval; add the Swift-friendly spelling beside them
+   (see "English naming rules").
+6. **Prove it from Swift.** A Swift call site that compiles is the test. Use it in an example
+   (the `Demo` jobs build every example) or a Swift test, and add the verified spelling to
+   `docs/Swift-Guide.md`. Do not document a Swift spelling that no Swift code in the
+   repository has compiled.
+
 ## Localization
 
 Localization is always several files: one per language, often several tables
