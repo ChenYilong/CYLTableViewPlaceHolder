@@ -17,6 +17,12 @@
     return [[self.app descendantsMatchingType:XCUIElementTypeAny] matchingIdentifier:identifier].firstMatch;
 }
 
+- (BOOL)waitForElement:(XCUIElement *)element selected:(BOOL)selected {
+    XCTNSPredicateExpectation *expectation = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:[NSPredicate predicateWithFormat:@"selected == %@", @(selected)] object:element];
+    return [XCTWaiter waitForExpectations:@[expectation] timeout:10] == XCTWaiterResultCompleted;
+}
+
 - (void)testPlaceholderElementAnnouncesBadgeOnce {
     XCUIElement *element = [self element:@"element"];
     XCTAssertTrue([element waitForExistenceWithTimeout:5]);
@@ -26,10 +32,12 @@
     // The badge label is not a second VoiceOver stop.
     XCTAssertFalse([self element:@"elementBadge"].exists);
 
+    // Wait for the accessibility tree to report the new state; on loaded CI runners it can
+    // lag behind the tap, as the badge-clearing check below already allows for.
     [[self element:@"toggle"] tap];
-    XCTAssertTrue(element.isSelected);
+    XCTAssertTrue([self waitForElement:element selected:YES]);
     [[self element:@"toggle"] tap];
-    XCTAssertFalse(element.isSelected);
+    XCTAssertTrue([self waitForElement:element selected:NO]);
 
     [[self element:@"clear"] tap];
     XCTNSPredicateExpectation *cleared = [[XCTNSPredicateExpectation alloc]
