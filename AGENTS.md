@@ -42,6 +42,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   underscore-free sibling instead of a rename. Follow CYLTabBarController's
   `docs/Swift-Guide.md` and record verified spellings in `docs/Swift-Guide.md`. See
   "Swift examples and a Swift-friendly core" in `instructions.md`.
+- `README.md` and every document in `docs/` are bilingual (`中文 | English` two-column tables,
+  `## 中文 / English` headings, `[CN]` / `[EN]` code comments); read only the English part. Attachments go
+  in an `assets/` folder next to the document and are linked relatively. Run
+  `python3 scripts/update-docs-navigation.py` after any change to them and never edit the generated
+  navigation by hand. See "Bilingual documentation" in `instructions.md`.
 - Localization is several files and always needs a file structure: on iOS,
   `<language>.lproj` folders inside a `.bundle`, never loose `.strings` files
   or hard-coded user-facing text. Several bundles are allowed, one per owner.

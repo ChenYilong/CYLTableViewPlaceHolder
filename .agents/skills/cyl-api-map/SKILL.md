@@ -33,6 +33,7 @@ source of truth; update the README and issue tracker if they become stale.
 | Regression tests | `Tests/PlaceholderTests.m` |
 | Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
 | Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/` |
+| Bilingual README and docs, generated navigation | `README.md`, `docs/`, `scripts/update-docs-navigation.py`, `.markdownlint.json`; rules in `instructions.md` ("Bilingual documentation") |
 | Integration and usage | `README.md` |
 | Issue history | `docs/issue-progress.md` |
 

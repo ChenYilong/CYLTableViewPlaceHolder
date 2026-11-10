@@ -61,6 +61,16 @@ jobs:
       - uses: actions/checkout@v4
       - run: python3 scripts/check_localizations.py
 
+  # The navigation and binding tables of the bilingual README and docs are generated; fail when one is stale
+  # (instructions.md, "Bilingual documentation"). Runs on every pull request, including documentation-only ones.
+  docs-navigation:
+    name: Docs navigation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/update-docs-navigation.py --check
+
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:
     name: pod lib lint

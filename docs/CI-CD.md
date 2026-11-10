@@ -26,6 +26,7 @@ macOS steps; the jobs still report success, so required checks pass.
 | --- | --- | --- |
 | Changes | — | Whether code changed (Ubuntu) |
 | shellcheck | `shellcheck scripts/*.sh` | The CI and release scripts (Ubuntu) |
+| Docs navigation | `python3 scripts/update-docs-navigation.py --check` | The generated navigation and binding tables of the bilingual README and docs are current (Ubuntu); run the script without `--check` to fix |
 | Localization files | `python3 scripts/check_localizations.py` | Every `.bundle`: same keys and format specifiers in every language, localization-header macros match the keys, no loose `.strings` files (Ubuntu) |
 | pod lib lint | `scripts/pod-lint.sh lib` | Every subspec: Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF |
 | Framework build and analyze | `scripts/framework-build.sh` | The Carthage framework target; fails on a build or analyzer warning in the placeholder's sources; CYLRefresh warnings are reported only |
