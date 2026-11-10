@@ -1341,6 +1341,8 @@ static const NSTimeInterval CYLTestTimeout = 30;
     XCTestExpectation *started = [self expectationWithDescription:@"back footer started"];
     [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
     [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    // The block stays attached and would fulfill the finished expectation again on every later start.
+    footer.beginRefreshingCompletionBlock = nil;
     *footerOut = footer;
     return scrollView;
 }
