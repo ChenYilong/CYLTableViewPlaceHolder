@@ -37,27 +37,28 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
 /// The scenario's components, with handlers for its actions (for example `CYLPlaceholderActionRetry` and
 /// `CYLPlaceholderActionContactSupport`). An action without a handler does nothing.
 - (instancetype)initWithScenario:(CYLPlaceholderScenario)scenario
-                         actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions;
+                         actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
+    NS_SWIFT_NAME(init(scenario:actions:));
 /// Custom components; the first is the reserved one (a default icon and title when the array is empty or the
 /// first component's attributes are invalid).
 - (instancetype)initWithComponents:(NSArray<CYLPlaceholderComponent *> *)components
                            actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
-    NS_DESIGNATED_INITIALIZER;
+    NS_DESIGNATED_INITIALIZER NS_SWIFT_NAME(init(components:actions:));
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 /// Appends a component under the last one and returns its view; nil, with a log, when its attributes are invalid.
-- (nullable CYLPlaceholderView *)appendComponent:(CYLPlaceholderComponent *)component;
+- (nullable CYLPlaceholderView *)appendComponent:(CYLPlaceholderComponent *)component NS_SWIFT_NAME(append(_:));
 /// Appends a view the app made itself; a tap on it performs `action` when that is not nil.
 - (void)appendComponentView:(CYLPlaceholderView *)view
                      action:(nullable CYLPlaceholderAction)action
-              spacingBefore:(CGFloat)spacingBefore;
+              spacingBefore:(CGFloat)spacingBefore NS_SWIFT_NAME(append(_:action:spacingBefore:));
 /// Sets or, with nil, removes the handler of an action.
-- (void)setHandler:(nullable CYLPlaceholderActionHandler)handler forAction:(CYLPlaceholderAction)action;
+- (void)setHandler:(nullable CYLPlaceholderActionHandler)handler forAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(setHandler(_:for:));
 /// The first component whose tap performs `action`.
-- (nullable CYLPlaceholderView *)componentViewForAction:(CYLPlaceholderAction)action;
+- (nullable CYLPlaceholderView *)componentViewForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(componentView(for:));
 /// Runs the handler of `action`; NO when it has none.
-- (BOOL)performAction:(CYLPlaceholderAction)action;
+- (BOOL)performAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(performAction(_:));
 
 @end
 

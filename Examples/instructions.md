@@ -22,7 +22,7 @@ and a Swift-friendly core" in the root `instructions.md`). Current state:
 | `Example-SwiftUI` | Swift | Done |
 | `Example-objc-01` | Swift (the name is historical) | Done |
 | `Example-objc-02` | Objective-C sources, Swift UI tests | To migrate |
-| `Example-Scenarios` | Objective-C sources (12 files), one Swift file | To migrate |
+| `Example-Scenarios` | Swift (9 files), core API only | Done (CI compile pending) |
 | `Example` (main app, root workspace) | Objective-C (6 files) | To migrate |
 | `Example-placeholder` | Objective-C (third-party reference draft) | To migrate or retire |
 

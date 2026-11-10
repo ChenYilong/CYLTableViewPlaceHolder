@@ -13,9 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Posted on the main thread after `CYLPlaceholderLocalization.language` changes.
-FOUNDATION_EXPORT NSNotificationName const CYLPlaceholderLocalizationLanguageDidChangeNotification;
-
 /// Language selection for the core bundle's tables.
 @interface CYLPlaceholderLocalization : NSObject
 
@@ -32,12 +29,18 @@ FOUNDATION_EXPORT NSNotificationName const CYLPlaceholderLocalizationLanguageDid
 
 /// The text for a key of the core `Localizable.strings` in `effectiveLanguage`; the fallback (or the key) when the
 /// bundle, the language or the key is missing.
-+ (NSString *)localizedStringForKey:(NSString *)key fallback:(nullable NSString *)fallback;
++ (NSString *)localizedStringForKey:(NSString *)key fallback:(nullable NSString *)fallback
+    NS_SWIFT_NAME(localizedString(forKey:fallback:));
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
 @end
+
+/// Posted on the main thread after `CYLPlaceholderLocalization.language` changes.
+/// Swift: `CYLPlaceholderLocalization.languageDidChangeNotification`.
+FOUNDATION_EXPORT NSNotificationName const CYLPlaceholderLocalizationLanguageDidChangeNotification
+    NS_SWIFT_NAME(CYLPlaceholderLocalization.languageDidChangeNotification);
 
 /// The function the core lookup macro expands to. Swift, which cannot call function-like macros, calls it
 /// (`CYLPlaceholderLocalizedStringForKey(key, fallback)`) or `CYLPlaceholderLocalization.localizedString(forKey:fallback:)`.

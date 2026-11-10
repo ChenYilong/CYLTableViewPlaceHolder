@@ -5,7 +5,8 @@
 - Every table of a bundle has the same keys in every language as in `en`, no duplicates, no empty values, and the
   same format specifiers (`%ld`, `%@`) as `en`.
 - A localization header next to a bundle (`#define <Prefix>L10n<Name> @"<key>"`) names only keys of its table, and
-  every key of the table has a macro.
+  every key of the table has a macro. A Swift example's `*Localization.swift` next to a bundle does the same with
+  the cases of its `<Prefix>L10n` key enum (`case name = "<key>"`), as Swift cannot use function-like macros.
 
 Usage: python3 scripts/check_localizations.py [repository root]. Exits 1 and lists every problem otherwise.
 """
@@ -19,6 +20,8 @@ SKIP = {'.git', 'Pods', 'build', 'DerivedData', 'node_modules'}
 ENTRY = re.compile(r'^\s*"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;\s*$')
 FORMAT = re.compile(r'%(?:\d+\$)?[-+ #0]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?[@dDiuUxXoOfeEgGcCsSp]')
 MACRO = re.compile(r'^\s*#define\s+\w+L10n\w+\s+@"([^"]+)"', re.M)
+SWIFT_ENUM = re.compile(r'^\s*enum\s+\w+L10n\b[^{]*\{(.*?)^\}', re.M | re.S)
+SWIFT_CASE = re.compile(r'^\s*case\s+\w+\s*=\s*"([^"]+)"', re.M)
 problems = []
 
 
@@ -83,6 +86,15 @@ for bundle in bundles:
                 problems.append(f'{header.relative_to(ROOT)}: macro key {key} is not in {table}.strings')
             for key in sorted(reference.keys() - macros):
                 problems.append(f'{header.relative_to(ROOT)}: no macro for {table}.strings key {key}')
+        for source in sorted(bundle.parent.glob('*Localization.swift')):
+            text = source.read_text(encoding='utf-8')
+            cases = {key for body in SWIFT_ENUM.findall(text) for key in SWIFT_CASE.findall(body)}
+            if not cases or f'"{table}"' not in text:
+                continue  # This file belongs to another table.
+            for key in sorted(cases - reference.keys()):
+                problems.append(f'{source.relative_to(ROOT)}: key {key} is not in {table}.strings')
+            for key in sorted(reference.keys() - cases):
+                problems.append(f'{source.relative_to(ROOT)}: no case for {table}.strings key {key}')
     print(f'{bundle.relative_to(ROOT)}: {len(tables)} table(s), '
           f'{len(list(bundle.glob("*.lproj")))} language(s)')
 

@@ -9,8 +9,10 @@ target 'ExampleScenarios' do
   # The original library CYLRefresh is adapted from, always at its latest version (scripts/resolve-mjrefresh-version.sh
   # sets it before every build; instructions.md, "Depending on MJRefresh in the examples").
   pod 'MJRefresh', '3.7.9'
-  # The tab bar with the plus button, as in CYLTabBarController's Objective-C demo.
-  pod 'CYLTabBarController', '~> 1.99.72'
+  # The tab bar with the plus button and the language rebuild (`cyl_setRootViewControllerProvider`), as in
+  # CYLTabBarController's Objective-C demo. Always its newest commit on any branch (instructions.md, "Depending on
+  # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh rewrites the commit before every build.
+  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3'
 end
 
 post_install do |installer|

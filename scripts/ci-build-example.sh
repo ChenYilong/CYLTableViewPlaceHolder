@@ -27,6 +27,10 @@ if grep -q "pod 'MJRefresh'" Podfile; then
   MJREFRESH_VERSION=$("$ROOT/scripts/resolve-mjrefresh-version.sh" --write "$PWD/Podfile")
   echo "MJRefresh latest version: $MJREFRESH_VERSION"
 fi
+# CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
+if grep -q "pod 'CYLTabBarController'.*:commit" Podfile; then
+  "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
+fi
 pod install
 WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
 LOG="$ROOT/build/$SCHEME.log"

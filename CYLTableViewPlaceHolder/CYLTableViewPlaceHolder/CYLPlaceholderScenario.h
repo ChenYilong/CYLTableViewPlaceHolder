@@ -107,22 +107,24 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 @property (nonatomic) CGFloat spacingBefore;
 
 + (instancetype)componentWithAttributes:(NSDictionary<NSString *, id> *)attributes
-                                 action:(nullable CYLPlaceholderAction)action;
+                                 action:(nullable CYLPlaceholderAction)action
+    NS_SWIFT_NAME(init(attributes:action:));
 /// An icon (a bundled animation, see `+[CYLPlaceholderView bundledAnimationFileNames]`, with a static style shown
 /// before it plays or when its engine is not installed) and an optional title.
 + (instancetype)componentWithBundledAnimation:(nullable NSString *)fileName
                                 fallbackStyle:(CYLPlaceholderStyle)fallbackStyle
                                         title:(nullable NSString *)title
                                          size:(CGSize)size
-                                       action:(nullable CYLPlaceholderAction)action;
+                                       action:(nullable CYLPlaceholderAction)action
+    NS_SWIFT_NAME(init(bundledAnimation:fallbackStyle:title:size:action:));
 /// A secondary line of text under the title.
-+ (instancetype)hintComponentWithText:(NSString *)text;
++ (instancetype)hintComponentWithText:(NSString *)text NS_SWIFT_NAME(hint(text:));
 /// A title drawn as a button.
 + (instancetype)buttonComponentWithTitle:(NSString *)title
                                    style:(CYLPlaceholderButtonStyle)style
-                                  action:(CYLPlaceholderAction)action;
+                                  action:(CYLPlaceholderAction)action NS_SWIFT_NAME(button(title:style:action:));
 /// A title showing a separator, such as "——  or  ——".
-+ (instancetype)separatorComponentWithText:(NSString *)text;
++ (instancetype)separatorComponentWithText:(NSString *)text NS_SWIFT_NAME(separator(text:));
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
@@ -135,16 +137,19 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 /// Every scenario, in declaration order, as NSNumber values of CYLPlaceholderScenario.
 @property (class, nonatomic, copy, readonly) NSArray<NSNumber *> *allScenarios;
 /// The components of a scenario, the reserved icon-and-title component first; empty for an invalid value.
-+ (NSArray<CYLPlaceholderComponent *> *)componentsForScenario:(CYLPlaceholderScenario)scenario;
++ (NSArray<CYLPlaceholderComponent *> *)componentsForScenario:(CYLPlaceholderScenario)scenario
+    NS_SWIFT_NAME(components(for:));
 /// The action of a tap anywhere outside a tappable component ("tap the screen to reload"), or nil.
-+ (nullable CYLPlaceholderAction)backgroundActionForScenario:(CYLPlaceholderScenario)scenario;
++ (nullable CYLPlaceholderAction)backgroundActionForScenario:(CYLPlaceholderScenario)scenario
+    NS_SWIFT_NAME(backgroundAction(for:));
 /// A short localized name for lists.
-+ (NSString *)localizedNameForScenario:(CYLPlaceholderScenario)scenario;
++ (NSString *)localizedNameForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(localizedName(for:));
 /// The README screenshot numbers (`assets/cyl-placeholder-scenario-NN-*.jpg`) the scenario reproduces; empty for
 /// the business cases.
-+ (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario;
++ (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario
+    NS_SWIFT_NAME(readmeScreenshotNumbers(for:));
 /// The localized title of an action, such as "Retry"; nil for an action the library does not define.
-+ (nullable NSString *)localizedTitleForAction:(CYLPlaceholderAction)action;
++ (nullable NSString *)localizedTitleForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(localizedTitle(for:));
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;

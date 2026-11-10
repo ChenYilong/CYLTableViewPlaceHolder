@@ -201,12 +201,17 @@ jobs:
           - { linkage: static, pag: PAGEnterprise }
     steps:
       - uses: actions/checkout@v4
+      # CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
+      - name: Newest CYLTabBarController commit
+        id: cyltabbarcontroller
+        if: needs.changes.outputs.code == 'true'
+        run: echo "sha=$(scripts/resolve-cyltabbarcontroller-commit.sh | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
       - name: Animation fixtures (CYLTabBarController)
         if: needs.changes.outputs.code == 'true'
         uses: actions/checkout@v4
         with:
           repository: ChenYilong/CYLTabBarController
-          ref: master
+          ref: ${{ steps.cyltabbarcontroller.outputs.sha }}
           path: .fixtures/CYLTabBarController
           # The Rive fixtures; the PAG fixture is downloaded by scripts/animation-tests.sh (not kept in git upstream).
           sparse-checkout: |

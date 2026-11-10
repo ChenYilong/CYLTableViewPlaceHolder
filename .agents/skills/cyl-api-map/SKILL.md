@@ -23,6 +23,8 @@ source of truth; update the README and issue tracker if they become stale.
 | Engine adapters | `CYLPlaceholderAnimation/{GIF,Lottie,PAG,Rive}/`, Swift bridges `CYLTableViewPlaceHolder/LottieSwift/`, `CYLTableViewPlaceHolder/RiveSwift/`; subspecs in `CYLTableViewPlaceHolder.podspec` |
 | Animation integration tests | `Tests/run-animation-tests.rb`, `Tests/CYLPlaceholderAnimationRegistryTests.m`, `Tests/CYLPlaceholder{Lottie,Backend}PlaybackTests.m` |
 | FlatDesign parity tracker | `docs/flatdesign-item-comparison.md` |
+| Scenario placeholders (component stack, scenario enum, actions) | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`, `CYLPlaceholderScenario.h` (`CYLPlaceholderScenario`, `CYLPlaceholderAction`, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`); title chrome keys in `CYLPlaceholderView.h`; tests `Tests/CYLPlaceholderScenarioTests.m`; doc `docs/Placeholder-Scenarios.md`; demo `Examples/Example-Scenarios/` (Swift) |
+| Core localization macro and run-time language | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h` (`CYLPlaceholderLocalizedString`, `CYLPlaceholderLocalization.language`) |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |
@@ -32,7 +34,7 @@ source of truth; update the README and issue tracker if they become stale.
 | Reproduction examples | `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-objc-02/` |
 | Regression tests | `Tests/PlaceholderTests.m` |
 | Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
-| Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/` |
+| Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-Scenarios/` |
 | Bilingual README and docs, generated navigation | `README.md`, `docs/`, `scripts/update-docs-navigation.py`, `.markdownlint.json`; rules in `instructions.md` ("Bilingual documentation") |
 | MJRefresh in every example Podfile (latest version) | `scripts/resolve-mjrefresh-version.sh`, `Examples/*/Podfile`, `scripts/ci-build-example.sh`; rule in `instructions.md` ("Depending on MJRefresh in the examples") |
 | CYLTabBarController dependency (latest commit, any branch) | `scripts/resolve-cyltabbarcontroller-commit.sh`, `Examples/Example-Scenarios/Podfile`; rule in `instructions.md` ("Depending on CYLTabBarController") |

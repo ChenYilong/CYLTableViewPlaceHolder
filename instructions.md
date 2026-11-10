@@ -296,7 +296,7 @@ only.
   search, review and translate:
 
   ```objc
-  // CYLScenarioLocalization.h
+  // CYLScenarioLocalization.h (an Objective-C example; Swift examples use the function below)
   #define CYLScenarioLocalizedString(key) \
       [CYLScenarioLocalizationBundle() localizedStringForKey:(key) value:(key) table:@"CYLScenarioExample"]
   #define CYLScenarioL10nEmptyTitle      @"CYLScenarioEmptyTitle"
@@ -306,6 +306,23 @@ only.
   Code uses only these macros, never raw key strings or literal text. One key
   macro per string; the lookup macro names its table. This lookup macro is the
   example's half of the two-macro acceptance criterion above.
+- A Swift example, which cannot define function-like macros, uses a lookup
+  function plus a key enum in `<Prefix>Localization.swift` next to the bundle;
+  `Example-Scenarios` is the reference:
+
+  ```swift
+  // CYLScenarioLocalization.swift
+  func CYLScenarioLocalizedString(_ key: CYLScenarioL10n) -> String   // reads table "CYLScenarioExample"
+  enum CYLScenarioL10n: String {
+      case language = "CYLScenarioLanguage"
+  }
+  ```
+
+  The function counts as the example's lookup macro, and
+  `scripts/check_localizations.py` checks the enum's cases against the table as
+  it checks key macros. When the core language can change at run time
+  (`CYLPlaceholderLocalization.language`), the example function follows
+  `CYLPlaceholderLocalization.effectiveLanguage`, so one switch changes both layers.
 - The example's languages follow the core bundle's list where practical.
   `scripts/check_localizations.py` (CI job "Localization files") checks every
   bundle in the repository: same keys and format specifiers in every language,

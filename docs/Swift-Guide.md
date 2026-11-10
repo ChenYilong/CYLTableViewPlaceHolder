@@ -47,5 +47,10 @@ underscore-free sibling (see the rule in `instructions.md`).
 
 ## Open items
 
+The scenario API (`CYLPlaceholderStackView`, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`,
+`CYLPlaceholderLocalization`) declares its Swift names with `NS_SWIFT_NAME`; the list is in
+`docs/Placeholder-Scenarios.md` and moves into the table above once `Examples/Example-Scenarios` (Swift) has compiled in
+CI.
+
 Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C
 examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods).
