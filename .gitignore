@@ -88,3 +88,9 @@ fastlane/screenshots
 
 # Python bytecode of the scripts
 __pycache__/
+
+# Synced from CYLTabBarController .gitignore (its example folders; harmless here)
+Example-Shared/PAGResources/*/
+Example-SwiftUI-Rive/AnimatedApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+Example-SwiftUI-Rive/SwiftUI Animations/
+Example-loadTabBarIconsFroNework/

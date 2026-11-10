@@ -101,7 +101,7 @@
 | [#1563](https://github.com/CoderMJLee/MJRefresh/issues/1563) | 箭头图片内存泄漏疑问 | 50/100：静态检查 bundle 路径和箭头图片使用 ARC，静态缓存是进程生命周期内有意持有的共享对象；Clang 静态分析未报告这条路径的泄漏，模拟器验证移除 header 后 header 与箭头视图释放且缓存复用。尚未在报告的真机、iOS 13.7 和 Instruments Leaks 复现 `NSPathStore2`，无法断言泄漏不存在或已修复；未做无证据的所有权改动。 |
 | [#1540](https://github.com/CoderMJLee/MJRefresh/issues/1540) | 全屏分页 collection 加载结束偏移 | 0/100：未调查，未修复。 |
 | [#1535](https://github.com/CoderMJLee/MJRefresh/issues/1535) | 不同机型上拉不调用 footer block | 0/100：未调查，未修复。 |
-| [#1523](https://github.com/CoderMJLee/MJRefresh/issues/1523) | collection 防动画异常选项导致 item 闪烁 | 30/100：将原 demo 中的 collection 控制器适配至 `Examples/Example-objc-02`，启用 `isCollectionViewAnimationBug` 并接入本地 pod；iOS 17.5 模拟器通过下拉刷新和加载完成的手势测试。测试未检测画面闪烁，原 demo 的其他页面尚未全部移植，也未验证 #225 悬浮 header；尚未复现或修复原视觉问题。 |
+| [#1523](https://github.com/CoderMJLee/MJRefresh/issues/1523) | collection 防动画异常选项导致 item 闪烁 | 70/100：`Examples/Example-objc-02` 启用 `isCollectionViewAnimationBug`。2026-11-11 验证：①另报的“滑到底加载（含 `endRefreshingWithNoMoreData`）后顶部刷新控件无法归位、y 轴从导航栏下方算起”已解决：根因是 f01ddb4 的 `edgesForExtendedLayout = UIRectEdgeNone` 把视图原点移到导航栏下方，8fd14c8 已撤回；`testHeaderReturnsAfterFooterLoad`、`...WithNoMoreData` 新增绝对布局断言（collection 与导航栏同一 y 起点、首个 item 紧贴导航栏下方、空闲刷新头不在导航栏下方露出），在 iOS 26.1 通过，在重新加入该行的 f01ddb4 构建上 4 处断言失败（collection y=58 > 导航栏 y=24）；加入断言前的两个测试在 iOS 26.1、17.5、27.2（iPhone 18 Pro）通过，27.2 上的断言运行因测试模拟器无法启动 app 未完成。真实拖拽回顶部的诊断测试位置与启动一致。②原闪烁：在 iOS 26.1 录屏三次大幅下拉，逐帧（约 24–27 fps）统计底部 item 区亮度，无闪烁；未在原报告的 iOS 14.5 / iPhone XR 及 60 fps 下验证，原 demo 其他页面未移植，#225 悬浮 header 未验证。 |
 | [#1507](https://github.com/CoderMJLee/MJRefresh/issues/1507) | Plain section header 加载结束跳动 | 0/100：未调查，未修复。 |
 | [#1506](https://github.com/CoderMJLee/MJRefresh/issues/1506) | collection 大幅度加载动画异常 | 25/100：`Examples/Example-objc-02` 增加 back footer，iOS 17.5 模拟器验证大幅上拉能触发并结束刷新；该测试不检测 cell 漂移或闪烁，也不证明其与 #1523 根因相同。视觉复现及修复尚未完成。 |
 | [#1488](https://github.com/CoderMJLee/MJRefresh/issues/1488) | 浮点误差导致自动 footer 不触发 | 100/100：松手判定加入按数值大小缩放的浮点误差容限；模拟器针对临界点相差约 1e-11、恰好相等和差 0.01 分别验证触发、触发和不触发；另以报告中的 1367.666666666687 / 1367.666666666698 原值和分页开启状态验证触发。原 iOS 13.6 环境未复测。 |
@@ -155,7 +155,7 @@
 | TODO — #1586 隐藏 header 刷新位置（85） | iOS 26.3.1 测试未完成；未比对原截图。 | 在 iOS 26 模拟器跑完整套件并记录。 |
 | TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
 | TODO — #1563 箭头图片泄漏疑问（50） | 静态分析与释放测试无泄漏；未在 Instruments Leaks 复现。 | 真机 Instruments Leaks 记录，确认或排除 `NSPathStore2`。 |
-| TODO — #1523 collection 动画选项闪烁（30） | 手势测试通过，但不检测闪烁；原视觉问题未复现。另报问题（2026-11-10，用户）：滑到底上拉加载、没有新数据（含 `endRefreshingWithNoMoreData`）后，顶部刷新控件无法归位，y 坐标从导航栏下方算起，而应与导航栏同一 y 轴起点。曾误用 `edgesForExtendedLayout = UIRectEdgeNone` 隐藏 objc-02 标题下透出的刷新头（f01ddb4），该做法改变了视图原点，已撤回。阅读代码未找到确定原因，且本机无法运行模拟器：新增 `testHeaderReturnsAfterFooterLoad` 与 `...WithNoMoreData`（demo 启动参数 `-noMoreData`），比较回到顶部后首个 item 与刷新头文字的位置是否与启动时一致，并在 CI（objc-02 Demo job）保存三步截图到 PR 截图评论。 | 先用 CI 截图和测试结果复现，再修复根因并让两个测试通过；截帧或录屏比对的闪烁测试；移植原 demo 其余页面。 |
+| TODO — #1523 collection 动画选项闪烁（70） | 已解决：底部加载（含无更多数据）后刷新头归位，collection 与导航栏同一 y 轴起点，绝对布局断言防回归（iOS 26.1 通过，f01ddb4 构建失败；27.2 断言运行未完成，待 CI 或本机复测）。录屏逐帧检测（约 25 fps，iOS 26.1）未见闪烁。注意：空闲刷新头位于半透明导航栏后方（与标题同一区域），用户确认这是正常状态。 | 60 fps 录屏或真机复测闪烁；原报告 iOS 14.5 / iPhone XR 环境；移植原 demo 其余页面并验证 #225 悬浮 header。 |
 | TODO — #1506 collection 大幅加载动画（25） | 仅验证能触发和结束刷新。 | 同 #1523 的视觉测试，确认是否同一根因。 |
 | TODO — #1483 collection 连续刷新上移（50） | inset 恢复已修；刷新中反复拖动未复现。 | XCUITest 刷新中反复拖动并检查首项位置。 |
 | TODO — #1481 trailer 转 footer 残留（85） | 需先移除 trailer；保留 trailer 的场景未确认。 | 获取切换代码后补用例。 |

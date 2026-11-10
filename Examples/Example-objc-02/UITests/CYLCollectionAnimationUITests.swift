@@ -64,6 +64,7 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         let header = app.staticTexts["Pull down to refresh"]
         let initialHeaderY: CGFloat? = header.exists ? header.frame.minY : nil
         saveScreenshot("\(name)-1-launch")
+        assertRestingLayout(app: app, collection: collection, first: first, header: header, step: "launch")
 
         let top = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
         let bottom = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
@@ -84,6 +85,25 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         if let initialHeaderY {
             XCTAssertTrue(header.exists)
             XCTAssertEqual(header.frame.minY, initialHeaderY, accuracy: 2, "the header returns to its launch position")
+        }
+        assertRestingLayout(app: app, collection: collection, first: first, header: header, step: "back at top")
+    }
+
+    /// The resting layout the issue reporter expects, in absolute terms (not only "same as launch"): the content is
+    /// laid out from the navigation bar's origin, so the first item sits just below the bar (bar bottom + the 20 pt
+    /// section inset), and the idle header stays behind the bar instead of showing below it.
+    @MainActor
+    private func assertRestingLayout(app: XCUIApplication, collection: XCUIElement, first: XCUIElement,
+                                     header: XCUIElement, step: String) {
+        let bar = app.navigationBars.firstMatch
+        XCTAssertTrue(bar.exists, "\(step): navigation bar")
+        XCTAssertLessThanOrEqual(collection.frame.minY, bar.frame.minY,
+                                 "\(step): the collection view shares the navigation bar's y origin, not below it")
+        XCTAssertEqual(first.frame.minY, bar.frame.maxY + 20, accuracy: 2,
+                       "\(step): the first item sits right below the navigation bar")
+        if header.exists {
+            XCTAssertLessThanOrEqual(header.frame.maxY, bar.frame.maxY + 1,
+                                     "\(step): the idle header must not show below the navigation bar")
         }
     }
 
