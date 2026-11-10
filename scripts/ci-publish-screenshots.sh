@@ -16,7 +16,10 @@ FOLDER=${FOLDER//\//-}
 # The pull request's head commit; GITHUB_SHA is the temporary merge commit on pull_request runs.
 HEAD=${HEAD_SHA:-${GITHUB_SHA:-unknown}}
 
-mapfile -t SHOTS < <(find "$SOURCE" -maxdepth 1 -name "*.png" -size +0 -exec basename {} \; | sort)
+# An artifact that also holds logs keeps its PNGs one folder down (screenshots/<scheme>.png), so search a few levels.
+mapfile -t SHOT_PATHS < <(find "$SOURCE" -maxdepth 3 -name "*.png" -size +0 | sort)
+SHOTS=()
+for path in "${SHOT_PATHS[@]}"; do SHOTS+=("$(basename "$path")"); done
 echo "Found ${#SHOTS[@]} screenshot(s): ${SHOTS[*]:-none}"
 
 publish() {
@@ -37,7 +40,7 @@ publish() {
     fi
     rm -rf "${work:?}/$FOLDER"
     mkdir -p "$work/$FOLDER"
-    cp "$SOURCE"/*.png "$work/$FOLDER/"
+    cp "${SHOT_PATHS[@]}" "$work/$FOLDER/"
     git -C "$work" add -A
     git -C "$work" commit -q -m "Screenshots of $FOLDER from run $GITHUB_RUN_ID" || true
     if git -C "$work" push -q origin "$BRANCH" 2>/dev/null; then

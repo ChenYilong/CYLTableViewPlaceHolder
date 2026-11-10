@@ -313,7 +313,8 @@ jobs:
   screenshots:
     name: Example screenshots
     needs: [ changes, examples ]
-    if: always() && needs.changes.outputs.code == 'true'
+    # Not on a cancelled run: its finished demos would replace the folder with a partial set.
+    if: ${{ !cancelled() && needs.changes.outputs.code == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
