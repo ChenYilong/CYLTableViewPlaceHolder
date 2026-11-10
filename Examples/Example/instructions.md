@@ -21,7 +21,7 @@ UIScene lifecycle (`CYLSceneDelegate`, named in `Info.plist`).
 | [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | Network-error and no-data placeholders cannot be switched | 100/100 |
 | [#2](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/2) | Repeated refreshes make the placeholder's subviews disappear | 100/100 |
 | [#6](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/6) | The placeholder disappears after another empty refresh | 85/100 (original iOS 9 environment not retested) |
-| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | Placeholders for UICollectionView and plain pages | 60/100 in docs/issue-progress.md; the **Auto → Collection** mode below shows the automatic collection placeholder, plain pages are still unsupported |
+| [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | Placeholders for UICollectionView and plain pages | 85/100: collection views supported and tested; plain pages still have no automatic integration |
 | [#15](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/15) | Layout on iPhone XR, XS and XS Max | 80/100 (only XS Max checked) |
 
 ### #3: switching placeholders
