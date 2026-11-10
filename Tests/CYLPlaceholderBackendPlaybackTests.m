@@ -10,6 +10,9 @@
 
 /// Upper bound for asynchronous loads: CI simulators can compile Metal shaders for seconds before the first Rive or PAG frame.
 static const NSTimeInterval CYLTestTimeout = 30;
+/// The first data-bound Rive load also compiles Metal shaders: on CI's paravirtualized GPU that took about 45 s
+/// (run 42845968876: the "Metal Compiler" log line came just after a 30 s wait expired; the next test loaded in 7 s).
+static const NSTimeInterval CYLRiveFirstLoadTimeout = 120;
 
 @interface CYLPlaceholderBackendPlaybackTests : XCTestCase
 @end
@@ -229,7 +232,7 @@ static const NSTimeInterval CYLTestTimeout = 30;
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [[backend valueForKey:@"ready"] boolValue];
     }] evaluatedWithObject:backend handler:nil];
-    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
+    [self waitForExpectationsWithTimeout:CYLRiveFirstLoadTimeout handler:nil];
     *placeholderOut = placeholder;
     (void)window;
     return backend.subviews.firstObject;
