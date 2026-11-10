@@ -1325,6 +1325,88 @@ static const NSTimeInterval CYLTestTimeout = 30;
     window.hidden = YES;
 }
 
+// CoderMJLee/MJRefresh#1585 (case 2): keep "no more data" visible for a while after the last load, then rebound.
+- (UIScrollView *)cyl_scrollViewAtBottomWithBackFooter:(CYLRefreshBackFooter **)footerOut inWindow:(UIWindow *)window {
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    *footerOut = footer;
+    return scrollView;
+}
+
+- (void)testBackFooterHoldsNoMoreDataForTheConfiguredDuration {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    footer.noMoreDataDisplayDuration = 0.6;
+    CGFloat refreshingInset = scrollView.cyl_insetB;
+    XCTAssertGreaterThan(refreshingInset, 0);
+    CFTimeInterval began = CACurrentMediaTime();
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01, @"the footer stays held open");
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return fabs(scrollView.cyl_insetB) < 0.01;
+    }] evaluatedWithObject:scrollView handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
+    XCTAssertGreaterThanOrEqual(CACurrentMediaTime() - began, 0.5, @"released only after the configured time");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData, @"the state itself is unchanged");
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testBackFooterNoMoreDataReboundsAtOnceByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    XCTAssertEqualWithAccuracy(footer.noMoreDataDisplayDuration, 0, 0.0001);
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"unchanged default");
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testBackFooterNoMoreDataHoldEndsOnResetNewLoadAndRemoval {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    footer.noMoreDataDisplayDuration = 60;
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertGreaterThan(scrollView.cyl_insetB, 0);
+    [footer resetNoMoreData];
+    XCTAssertEqual(footer.state, CYLRefreshStateIdle);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"reset gives the held inset back");
+
+    // A new load after the hold: the inset is neither lost nor doubled.
+    [footer beginRefreshing];
+    CGFloat refreshingInset = scrollView.cyl_insetB;
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01);
+    [footer beginRefreshing];
+    XCTAssertEqual(footer.state, CYLRefreshStateRefreshing);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01, @"one footer height, not two");
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01);
+
+    [footer beginRefreshing];
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertGreaterThan(scrollView.cyl_insetB, 0);
+    scrollView.cyl_footer = nil;
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"removing the footer gives the held inset back");
+    window.hidden = YES;
+}
+
 - (void)testPagingBackFooterReturnsToLastPageAfterRefresh {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];

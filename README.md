@@ -465,6 +465,14 @@ footer.exclusiveWithOtherRefresh = YES;
 footer.blockedByOtherRefreshBlock = notify;
 ```
 
+上拉加载到最后一页时，`endRefreshingWithNoMoreData` 默认让滚动视图立即回弹。给 back footer 设置 `noMoreDataDisplayDuration`（秒，默认 0，行为不变；上游 #1585 场景二）后，该次加载以“无更多数据”结束时，footer 保持展开并显示提示文字这么久再回弹；在此期间调用 `resetNoMoreData`、开始新的加载或移除 footer，会立即归还展开的底部 inset。它只作用于“刚结束一次加载”的无更多数据；进入页面时就已处于无更多数据、再上拉显示 N 秒的场景一尚未实现。
+
+```objc
+CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{ /* 加载下一页 */ }];
+footer.noMoreDataDisplayDuration = 3;
+// 加载完最后一页后：[footer endRefreshingWithNoMoreData];  提示显示 3 秒后回弹
+```
+
 开启分页时，自动 footer 结束刷新不会再直接减去整个底部 inset：静止时只将超出正常内容范围的 offset 限制回边界；拖拽或减速期间不主动改写 offset，由滚动视图完成回弹。
 
 `Examples/Example-SwiftUI/` 是改编自上游 #1628 报告者示例的 SwiftUI 调查工程，也包含 #1589 的 `UIViewRepresentable` footer 生命周期页面。`Examples/Example-objc-01/` 是改编自上游 #1575 报告者示例的 UIKit collection 工程；虽然目录名为 objc，原示例使用 Swift。两个工程分别在各自目录运行 `pod install` 后打开对应的 `.xcworkspace`，都通过 `:path => '../..'` 使用本地库。SwiftUI 示例默认避免重复安装刷新控件；以启动参数 `-reproduce-1628` 可运行原始重复配置场景。真实下拉时的刷新可见性仍在调查，不能将默认示例视为完整修复。

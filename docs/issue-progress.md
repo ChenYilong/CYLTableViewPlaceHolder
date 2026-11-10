@@ -87,9 +87,9 @@
 | [#1591](https://github.com/CoderMJLee/MJRefresh/issues/1591) | pagingEnabled 时加载结束偏移和闪烁 | 0/100：未调查，未修复。 |
 | [#1590](https://github.com/CoderMJLee/MJRefresh/issues/1590) | WKWebView Auto Layout 初次显示不全 | 0/100：未调查，未修复。 |
 | [#1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | SwiftUI 非 scroll view 容器移除 KVO 崩溃 | 90/100：按实际注册对象解绑；模拟器让自动 footer 在普通 UIView 和两个 scroll view 间切换 100 次，检查底部 inset 恢复；新增 `UIViewRepresentable` 包装 back footer 的 SwiftUI 页面，在 iOS 17.5 上往返五次未崩溃。尚未在报告的 iOS 15.4 环境验证或用原代码重现崩溃，未进行三轮独立修复。 |
-| [#1587](https://github.com/CoderMJLee/MJRefresh/issues/1587) | 下拉刷新和上拉加载互斥 | 75/100：原 issue 只有一句话（下拉刷新中上拉应显示“刷新数据中”，反之亦然），无示例。新增 `CYLRefreshComponent` 的 `exclusiveWithOtherRefresh`（默认 NO，行为不变）和 `blockedByOtherRefreshBlock`：设置后同一滚动视图的 header/footer/trailer 任一正在刷新时，该组件不开始刷新，被中断的“松开加载”回到空闲，并回调提示。保留此前自动 footer 在 header 刷新时不触发的行为。新增 `testHeaderAndFooterExcludeEachOtherWhenEnabled`（两个方向、回调次数、拉动状态）与 `testHeaderAndFooterRunIndependentlyByDefault`，待 CI 验证。未实现：内置的“刷新中”提示文字（交给回调）、真实手势验证；未完成三轮独立修复。 |
+| [#1587](https://github.com/CoderMJLee/MJRefresh/issues/1587) | 下拉刷新和上拉加载互斥 | 75/100：原 issue 只有一句话（下拉刷新中上拉应显示“刷新数据中”，反之亦然），无示例。新增 `CYLRefreshComponent` 的 `exclusiveWithOtherRefresh`（默认 NO，行为不变）和 `blockedByOtherRefreshBlock`：设置后同一滚动视图的 header/footer/trailer 任一正在刷新时，该组件不开始刷新，被中断的“松开加载”回到空闲，并回调提示。保留此前自动 footer 在 header 刷新时不触发的行为。新增 `testHeaderAndFooterExcludeEachOtherWhenEnabled`（两个方向、回调次数、拉动状态）与 `testHeaderAndFooterRunIndependentlyByDefault`，已在 CI run 42891797252（448b6aa，Unit tests 89 项 0 失败）通过。未实现：内置的“刷新中”提示文字（交给回调）、真实手势验证；未完成三轮独立修复。 |
 | [#1586](https://github.com/CoderMJLee/MJRefresh/issues/1586) | 隐藏 header 时开始刷新位置异常 | 85/100：复现并修复隐藏时首次加入未定位以及刷新结束后顶部 inset 未恢复；iOS 17.5 模拟器验证隐藏 table header 连续三次刷新，以及隐藏和可见 collection header 交替刷新。iOS 26.3.1 测试停在另一条用例，未完成；尚未比对原报告截图或验证真实页面，未完成三轮独立修复。 |
-| [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 0/100：未调查，未修复。 |
+| [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 40/100：原 issue 两个场景——①进入页面时已是无更多数据，上拉时显示 3 秒再回弹；②上拉加载到全部数据后显示 3 秒再回弹。已实现场景②：`CYLRefreshBackFooter.noMoreDataDisplayDuration`（默认 0，行为不变），加载以 `endRefreshingWithNoMoreData` 结束后保持 footer 展开这么久再回弹；`resetNoMoreData`、新的加载、移除 footer 立即归还 inset。新增 `testBackFooterHoldsNoMoreDataForTheConfiguredDuration`、`...ReboundsAtOnceByDefault`、`...HoldEndsOnResetNewLoadAndRemoval`，待 CI 验证。场景①未实现（需要在松手时判断拉出距离并保持 inset）；真实手势、auto footer 未验证；未完成三轮独立修复。 |
 | [#1583](https://github.com/CoderMJLee/MJRefresh/issues/1583) | 空表 reloadData 后 footer 上移 | 0/100：未调查，未修复。 |
 | [#1582](https://github.com/CoderMJLee/MJRefresh/issues/1582) | 不同下拉距离触发不同操作 | 0/100：未调查，未修复。 |
 | [#1575](https://github.com/CoderMJLee/MJRefresh/issues/1575) | JXSegmentedView 场景崩溃 | 50/100：检查原报告、上游 PR #1576 和报告者的 collection demo；当前 header 的 inset 判断已包含浮点容差。将 demo 改为 SceneDelegate 并指向本地 pod 后，在 iPhone 15 / iOS 17.5 模拟器通过一次下拉刷新，未复现崩溃。iPhone 14 Pro Max / iOS 26.4 模拟器测试启动停滞，未得结果；原 iOS 16、iPhone 14 Pro 和 JXSegmentedView 场景未验证，未完成三轮独立修复。 |
@@ -151,7 +151,8 @@
 | TODO — #1610 自动 footer 复位（75） | 受控状态分支已测；真实减速、数据变化、分页对齐未测。 | XCUITest 真实手势 + 分页数据增长场景。 |
 | TODO — #1593 真机编译参数错误（45） | strict objc_msgSend 下通用真机目标可编译；缺原始报错。 | 获取原工程或报错文本，在真机构建确认。 |
 | TODO — #1589 SwiftUI 非 scroll view KVO 崩溃（90） | iOS 17.5 往返未崩溃；未在 iOS 15.4 验证。 | iOS 15 模拟器运行同一 SwiftUI 页面测试。 |
-| TODO — #1587 下拉与上拉互斥（75） | 开始刷新的双向互斥已实现为可选属性，单元测试待 CI；无内置提示文字（`blockedByOtherRefreshBlock` 交给调用方）；原报告没有示例，是否满足其期望（尤其是“显示刷新数据中”）未经报告者确认。 | CI 通过两个新测试；在 Example 中接入并用真实拖拽验证两个方向；必要时增加默认提示文本。 |
+| TODO — #1585 无更多数据停留（40） | 场景②（加载到最后一页后停留再回弹）已实现为 back footer 的可选属性，单元测试待 CI；场景①（进入页面即无更多数据，上拉后停留）未实现；auto footer 不支持；原报告无示例，期望是否一致未经报告者确认。 | CI 通过三个新测试；实现场景①并用真实拖拽验证；评估 auto footer。 |
+| TODO — #1587 下拉与上拉互斥（75） | 开始刷新的双向互斥已实现为可选属性，单元测试已在 CI 通过；无内置提示文字（`blockedByOtherRefreshBlock` 交给调用方）；原报告没有示例，是否满足其期望（尤其是“显示刷新数据中”）未经报告者确认。 | 在 Example 中接入并用真实拖拽验证两个方向；必要时增加默认提示文本；报告者确认。 |
 | TODO — #1586 隐藏 header 刷新位置（85） | iOS 26.3.1 测试未完成；未比对原截图。 | 在 iOS 26 模拟器跑完整套件并记录。 |
 | TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
 | TODO — #1563 箭头图片泄漏疑问（50） | 静态分析与释放测试无泄漏；未在 Instruments Leaks 复现。 | 真机 Instruments Leaks 记录，确认或排除 `NSPathStore2`。 |

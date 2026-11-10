@@ -17,6 +17,8 @@
 @property (assign, nonatomic) CGFloat lastBottomDelta;
 @property (assign, nonatomic) CGFloat pagingRestingOffset;
 @property (assign, nonatomic) CGFloat pagingRefreshOffset;
+@property (assign, nonatomic) BOOL holdingNoMoreData;
+@property (assign, nonatomic) NSUInteger noMoreDataHoldToken;
 @end
 
 @implementation CYLRefreshBackFooter
@@ -24,6 +26,10 @@
 #pragma mark - 初始化
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
+    if (!newSuperview) {
+        // Give back the held-open bottom inset while the scroll view is still known.
+        [self cyl_endNoMoreDataHold];
+    }
     [super willMoveToSuperview:newSuperview];
 
     [self scrollViewContentSizeDidChange:nil];
@@ -36,6 +42,8 @@
 
     // 如果正在刷新，直接返回
     if (self.state == CYLRefreshStateRefreshing) return;
+    // The inset is held open while "no more data" stays visible; it is not the original inset.
+    if (self.holdingNoMoreData) return;
 
     _scrollViewOriginalInset = self.scrollView.cyl_inset;
 
@@ -95,31 +103,20 @@
 {
     CYLRefreshCheckState
 
+    // Leaving the held "no more data" state (reset, a new load) gives the bottom inset back first.
+    if (state != CYLRefreshStateNoMoreData) {
+        [self cyl_endNoMoreDataHold];
+    }
+
     // 根据状态来设置属性
     if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
         // 刷新完毕
         if (CYLRefreshStateRefreshing == oldState) {
-            BOOL restorePagingOffset = self.scrollView.pagingEnabled &&
-                !self.scrollView.isDragging && !self.scrollView.isDecelerating &&
-                fabs(self.scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001;
-            [UIView animateWithDuration:self.slowAnimationDuration animations:^{
-                if (self.endRefreshingAnimationBeginAction) {
-                    self.endRefreshingAnimationBeginAction();
-                }
-
-                self.scrollView.cyl_insetB -= self.lastBottomDelta;
-                if (restorePagingOffset) {
-                    self.scrollView.cyl_offsetY = self.pagingRestingOffset;
-                }
-                // 自动调整透明度
-                if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
-            } completion:^(BOOL finished) {
-                self.pullingPercent = 0.0;
-
-                if (self.endRefreshingCompletionBlock) {
-                    self.endRefreshingCompletionBlock();
-                }
-            }];
+            if (state == CYLRefreshStateNoMoreData && self.noMoreDataDisplayDuration > 0) {
+                [self cyl_holdNoMoreDataForDuration:self.noMoreDataDisplayDuration];
+            } else {
+                [self cyl_restoreBottomInsetAfterRefresh];
+            }
         }
 
         CGFloat deltaH = [self heightForContentBreakView];
@@ -148,6 +145,54 @@
     }
 }
 #pragma mark - 私有方法
+#pragma mark 刷新结束：归还底部 inset
+- (void)cyl_restoreBottomInsetAfterRefresh
+{
+    BOOL restorePagingOffset = self.scrollView.pagingEnabled &&
+        !self.scrollView.isDragging && !self.scrollView.isDecelerating &&
+        fabs(self.scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001;
+    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        if (self.endRefreshingAnimationBeginAction) {
+            self.endRefreshingAnimationBeginAction();
+        }
+
+        self.scrollView.cyl_insetB -= self.lastBottomDelta;
+        if (restorePagingOffset) {
+            self.scrollView.cyl_offsetY = self.pagingRestingOffset;
+        }
+        // 自动调整透明度
+        if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.pullingPercent = 0.0;
+
+        if (self.endRefreshingCompletionBlock) {
+            self.endRefreshingCompletionBlock();
+        }
+    }];
+}
+
+#pragma mark 无更多数据：保持显示一段时间再回弹
+- (void)cyl_holdNoMoreDataForDuration:(NSTimeInterval)duration
+{
+    self.holdingNoMoreData = YES;
+    NSUInteger token = ++self.noMoreDataHoldToken;
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CYLRefreshBackFooter *strongSelf = weakSelf;
+        if (!strongSelf || !strongSelf.holdingNoMoreData || strongSelf.noMoreDataHoldToken != token) return;
+        strongSelf.holdingNoMoreData = NO;
+        [strongSelf cyl_restoreBottomInsetAfterRefresh];
+    });
+}
+
+- (void)cyl_endNoMoreDataHold
+{
+    if (!self.holdingNoMoreData) return;
+    self.holdingNoMoreData = NO;
+    self.noMoreDataHoldToken += 1;
+    [self cyl_restoreBottomInsetAfterRefresh];
+}
+
 #pragma mark 获得scrollView的内容 超出 view 的高度
 - (CGFloat)heightForContentBreakView
 {
