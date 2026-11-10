@@ -8,6 +8,9 @@
 - (void)cyl_observeTrigger:(NSString *)path onFire:(void (^)(void))onFire;
 @end
 
+/// Upper bound for asynchronous loads: CI simulators can compile Metal shaders for seconds before the first Rive or PAG frame.
+static const NSTimeInterval CYLTestTimeout = 30;
+
 @interface CYLPlaceholderBackendPlaybackTests : XCTestCase
 @end
 
@@ -80,7 +83,7 @@
         return [[backend valueForKey:@"ready"] boolValue];
     }];
     [self expectationForPredicate:ready evaluatedWithObject:backend handler:nil];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     XCTAssertTrue(placeholder.imageView.layer.hidden);
     UIView *rive = backend.subviews.firstObject;
     if (!UIAccessibilityIsReduceMotionEnabled()) {
@@ -103,7 +106,7 @@
         return [placeholder valueForKey:@"backendView"] == nil;
     }];
     [self expectationForPredicate:failed evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     XCTAssertFalse(placeholder.imageView.layer.hidden);
     XCTAssertEqual(placeholder.imageView.image, image);
     XCTAssertTrue([[NSFileManager defaultManager] removeItemAtURL:url error:&error]);
@@ -207,7 +210,7 @@
         CGFloat red, green, blue, alpha;
         return [color getRed:&red green:&green blue:&blue alpha:&alpha] && blue > 0.98;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     [placeholder removeFromSuperview];
 }
 
@@ -226,7 +229,7 @@
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [[backend valueForKey:@"ready"] boolValue];
     }] evaluatedWithObject:backend handler:nil];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     *placeholderOut = placeholder;
     (void)window;
     return backend.subviews.firstObject;
@@ -236,7 +239,7 @@
     __block NSNumber *result = nil;
     XCTestExpectation *read = [self expectationWithDescription:path];
     [(id)rive cyl_readBoolean:path completion:^(NSNumber *value) { result = value; [read fulfill]; }];
-    [self waitForExpectations:@[read] timeout:5];
+    [self waitForExpectations:@[read] timeout:CYLTestTimeout];
     return result;
 }
 
@@ -244,7 +247,7 @@
     __block UIColor *result = nil;
     XCTestExpectation *read = [self expectationWithDescription:path];
     [(id)rive cyl_readColor:path completion:^(UIColor *value) { result = value; [read fulfill]; }];
-    [self waitForExpectations:@[read] timeout:5];
+    [self waitForExpectations:@[read] timeout:CYLTestTimeout];
     return result;
 }
 
@@ -277,7 +280,7 @@
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return fires >= 1;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     [placeholder removeFromSuperview];
 }
 
@@ -298,7 +301,7 @@
         darkRive = backend.subviews.firstObject;
         return darkRive != rive && [[backend valueForKey:@"ready"] boolValue];
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     UIColor *dark = [self readColor:@"Color" from:darkRive];
     CGFloat r = 0, g = 0, b = 0, a = 0;
     XCTAssertTrue([dark getRed:&r green:&g blue:&b alpha:&a]);
@@ -311,7 +314,7 @@
         lightRive = backend.subviews.firstObject;
         return lightRive != darkRive && [[backend valueForKey:@"ready"] boolValue];
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     XCTAssertEqualObjects([self readColor:@"Color" from:lightRive], original);
     [placeholder removeFromSuperview];
 }
