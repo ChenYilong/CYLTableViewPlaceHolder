@@ -31,4 +31,8 @@ The 15.0 override is for Xcode 27; use the supported minimum for the toolchain
 in use. When CocoaPods packaging changes, also lint with `--use-libraries`.
 Confirm refresh bundle images, localized strings, privacy manifest and license
 are included in the applicable built product. A successful build alone does not
-verify on-screen behavior.
+verify on-screen behavior. Every CI build must also provide a screenshot of each
+example running: `scripts/ci-build-example.sh <folder>` captures it (artifact
+`example-screenshot-<folder>` in CI); report the artifacts with the CI result,
+or fix the CI, or give the concrete reason none could be produced
+(`instructions.md`, "CI example screenshots").

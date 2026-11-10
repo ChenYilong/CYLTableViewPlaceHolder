@@ -265,14 +265,31 @@ jobs:
             ~/Library/Caches/CocoaPods
           key: pods-${{ runner.os }}-demo-${{ hashFiles('CYLTableViewPlaceHolder.podspec', '**/Podfile', '**/Podfile.lock') }}
           restore-keys: pods-${{ runner.os }}-demo-
-      - name: Build
+      # Builds, then launches the app on a simulator and saves build/screenshots/<scheme>.png;
+      # a build without a screenshot fails (instructions.md, "CI example screenshots").
+      - name: Build and screenshot
         if: needs.changes.outputs.code == 'true'
         run: scripts/ci-build-example.sh "${{ matrix.demo }}"
+      - name: Artifact name
+        id: artifact
+        if: always() && needs.changes.outputs.code == 'true'
+        run: |
+          slug=$(echo "${{ matrix.demo }}" | sed -e 's|^\.$|Example|' -e 's|/|-|g')
+          echo "name=example-screenshot-$slug" >> "$GITHUB_OUTPUT"
+      - name: Upload screenshot
+        if: always() && needs.changes.outputs.code == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: build/screenshots/*.png
+          if-no-files-found: warn
       - name: Summary
         if: always() && needs.changes.outputs.code == 'true'
         run: |
           {
-            echo "| Demo | Scheme | Build | Warnings |"
-            echo "|:---|:---|:---:|---:|"
-            cat build/summary.md 2>/dev/null || echo "| ${{ matrix.demo }} | - | ❌ | - |"
+            echo "| Demo | Scheme | Build | Warnings | Screenshot |"
+            echo "|:---|:---|:---:|---:|:---:|"
+            cat build/summary.md 2>/dev/null || echo "| ${{ matrix.demo }} | - | ❌ | - | ❌ |"
+            echo
+            echo "Screenshot artifact: \`${{ steps.artifact.outputs.name }}\` on the [run page](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
           } >> "$GITHUB_STEP_SUMMARY"

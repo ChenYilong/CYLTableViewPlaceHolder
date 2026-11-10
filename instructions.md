@@ -54,6 +54,30 @@ If either is missing, copy the corresponding icon and custom launch screen from
 `CYLTabBarController`, include their dependent assets and target membership,
 and verify the result builds. Do not overwrite existing project assets.
 
+## CI example screenshots
+
+Every CI run that builds code must provide a screenshot of each example app
+running. The `Demo` jobs in `.github/workflows/ios.yml` run
+`scripts/ci-build-example.sh <folder>`, which builds the example, installs and
+launches it on an iPhone simulator, and saves `build/screenshots/<scheme>.png`.
+The workflow uploads it as the artifact `example-screenshot-<folder>` (`.`
+becomes `Example`, `/` becomes `-`), and the job summary shows a Screenshot
+column. A build that produces no screenshot fails the job. Runs that change only
+documentation skip the macOS builds and need no screenshot.
+
+- When reporting CI results for a change that triggers a build, give the run
+  link and the screenshot artifact names for every example. Describe a
+  screenshot only if you have actually viewed it; a launch screenshot shows the
+  first screen and does not verify interactions or animations.
+- If a screenshot cannot be produced, first change the CI script or workflow
+  so that it is produced. Only if that still fails, state the concrete reason
+  (for example, the runner has no iOS simulator runtime, or the app crashes on
+  launch, with the relevant log lines) and record it under Known limits in
+  `docs/CI-CD.md`.
+- On a Mac, `scripts/ci-build-example.sh <folder>` produces the same
+  screenshot locally; `SCREENSHOT_DELAY` (seconds, default 8) waits longer for
+  the first frame.
+
 ## Commit readiness and TODO tracking
 
 Before every commit, review the current changes and all project comparison,
