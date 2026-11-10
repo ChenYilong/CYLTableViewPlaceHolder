@@ -36,6 +36,11 @@ the integrated `CYLRefresh` component, and an example application. Read
 - The example compiles local refresh sources directly and does not require the
   former external refresh Pod. Keep the source files, the resource bundle,
   privacy manifest, and third-party license in both the project and podspec.
+- CYLTabBarController is always a CocoaPods dependency. This project depends on its **latest commit by
+  timestamp across all branches** (often not `master`), as `:git` plus `:commit`, never a version, tag or
+  branch; resolve it with `scripts/resolve-cyltabbarcontroller-commit.sh` before every build. A project
+  named CYLTabBarController uses `:path` relative to the folder holding its podspec instead. See
+  "Depending on CYLTabBarController" in `instructions.md`.
 - iOS examples are written in Swift (the library stays Objective-C). When a Swift call
   reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
   declarations, `cyl_` members keep their prefix, and underscored protocol methods get an

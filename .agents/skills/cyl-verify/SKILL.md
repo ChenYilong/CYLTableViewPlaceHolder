@@ -15,6 +15,11 @@ xcodebuild -project CYLTableViewPlaceHolder.xcodeproj -scheme CYLTableViewPlaceH
 XCODE_XCCONFIG_FILE="$PWD/scripts/pod-lint.xcconfig" pod lib lint CYLTableViewPlaceHolder.podspec --allow-warnings --platforms=ios
 ```
 
+Before building anything that depends on CYLTabBarController (the demos), run
+`scripts/resolve-cyltabbarcontroller-commit.sh --write Examples/*/Podfile` so the Podfiles point at its newest
+commit on any branch, then `pod install` (`pod update CYLTabBarController` if a lock pins an older commit);
+report the commit that was used.
+
 The test runner requires the `xcodeproj` Ruby gem and an available simulator.
 The animation runner installs the optional CocoaPods backends into an isolated
 temporary project. It uses PAG and Rive fixtures from the sibling

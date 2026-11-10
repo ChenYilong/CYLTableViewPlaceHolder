@@ -12,6 +12,13 @@ deployment target, or podspec.
   the iOS 15.0 and CocoaPods `post_install` checks in `instructions.md`;
   these settings do not change the library's published minimum. Availability-check
   newer APIs.
+- CYLTabBarController is a CocoaPods dependency in every Podfile that uses it: by commit
+  (`:git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '<40 characters>'`), the
+  newest commit by committer timestamp on any branch, found before every build with
+  `scripts/resolve-cyltabbarcontroller-commit.sh [--write <Podfile>...]`; never a version, tag or branch.
+  Only a project named CYLTabBarController uses `:path` (relative, to the folder containing the podspec).
+  Run `pod install`, or `pod update CYLTabBarController` when a lock pins an older commit
+  (`instructions.md`, "Depending on CYLTabBarController").
 - `CYLTableViewPlaceHolder.xcodeproj/project.pbxproj` uses object version 46
   and compatibility version `Xcode 3.2`. Keep explicit file references; do not
   silently switch to synchronized groups or a newer project format.

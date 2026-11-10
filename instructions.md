@@ -54,6 +54,56 @@ If either is missing, copy the corresponding icon and custom launch screen from
 `CYLTabBarController`, include their dependent assets and target membership,
 and verify the result builds. Do not overwrite existing project assets.
 
+## Depending on CYLTabBarController
+
+This project always integrates CYLTabBarController through CocoaPods: never Swift Package Manager,
+Carthage, copied or vendored sources. Which form the `pod` line takes depends on the project's name.
+
+### Not named CYLTabBarController (this project, and every other): by commit
+
+Depend on the **latest commit** of CYLTabBarController, written as a commit, never as a version, tag
+or branch name (`'~> 1.99.72'`, `:tag`, `:branch`, and a bare `pod 'CYLTabBarController'` are not allowed):
+
+```ruby
+pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git',
+                           :commit => '<40-character commit>'
+```
+
+- **"Latest" means the newest timestamp on any branch.** The newest work often lives on a feature or
+  `claude/…` branch, not on `master` or `main`; the default branch's tip, `HEAD`, a release tag and
+  `git ls-remote` order are all wrong. Compare the committer date of the branch tips as instants (the
+  dates carry different time zone offsets, `+13:00` next to `+00:00`).
+- **Find it before every build**, local or CI, in every Podfile that names CYLTabBarController (examples,
+  scratch projects), and write the full 40-character commit into it. Never leave an older commit in place:
+
+  ```sh
+  scripts/resolve-cyltabbarcontroller-commit.sh                      # prints: <sha> <date> <branch>
+  scripts/resolve-cyltabbarcontroller-commit.sh --write Examples/*/Podfile
+  ```
+
+  The script does what this by hand does: it clones only the commit history,
+  `git clone --bare --filter=blob:none <repo> r`, and takes
+  `git -C r for-each-ref --sort=-committerdate --count=1 refs/heads`.
+- Then run `pod install`; when a `Podfile.lock` already pins an older commit, run
+  `pod update CYLTabBarController` instead. The lock's `CHECKOUT OPTIONS` records the commit.
+- Put the adopted commit (sha, branch, date) in the commit message body of a change that moves it, and
+  print it in the CI log.
+- Everything else this project takes from CYLTabBarController (CI fixture checkouts, a sibling
+  `../CYLTabBarController` clone) uses the same resolved commit, not `master`.
+- If the newest commit does not install or build, do not quietly pin an older one: report the commit and
+  the error. Moving off "latest" needs the user's approval.
+
+### Named CYLTabBarController: local path
+
+When the project is CYLTabBarController itself, depend on the local copy instead, with a path relative
+to the Podfile, to the folder that contains `CYLTabBarController.podspec`:
+
+```ruby
+pod 'CYLTabBarController', :path => '../..'
+```
+
+Find that folder by searching upward from the Podfile for the podspec; never write an absolute path.
+
 ## Swift examples and a Swift-friendly core
 
 iOS examples are written in Swift; the library stays Objective-C. The core adapts to the Swift call site, not the other way round.
