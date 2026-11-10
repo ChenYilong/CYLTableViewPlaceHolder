@@ -1,37 +1,33 @@
 # CYLTableViewPlaceHolder【一行代码完成“空TableView占位视图”管理】
 
-<p align="center">
-![pod-v1.1.0](https://img.shields.io/badge/pod-v1.1.0-brightgreen.svg)
-![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-12.0+](https://img.shields.io/badge/platform-iOS%2012.0%2B-ff69b4.svg)
-</a>
+![pod-v1.1.0](https://img.shields.io/badge/pod-v1.1.0-brightgreen.svg)  ![Objective--C-compatible](https://img.shields.io/badge/Objective--C-compatible-orange.svg)   ![platform-iOS-12.0+](https://img.shields.io/badge/platform-iOS%2012.0%2B-ff69b4.svg)
 
 ## 导航
 
-  1.  [ 与其他框架的区别 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#与其他框架的区别) 
-  2.  [ 集成后的效果 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#集成后的效果) 
-  3.  [ 使用CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#使用cyltableviewplaceholder) 
-  4.  [ 运行Demo ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#运行demo) 
-  5.  [ 适用于多种应用应用场景 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#适用于多种应用应用场景) 
-   1.  [ 网络故障 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#网络故障) 
-   2.  [ 暂无数据 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#暂无数据) 
-
+1. [与其他框架的区别](#与其他框架的区别)
+2. [集成后的效果](#集成后的效果)
+3. [使用CYLTableViewPlaceHolder](#使用cyltableviewplaceholder)
+4. [运行Demo](#运行demo)
+5. [适用于多种应用应用场景](#适用于多种应用应用场景)
+   1. [网络故障](#网络故障)
+   2. [暂无数据](#暂无数据)
+   3. [网络不可达场景](#网络不可达场景)
 
 ## 与其他框架的区别
- -| 特点 |解释
--------------|-------------|-------------
-1 | 轻量级、无污染 | 基于 UITableView 分类，无污染，比基于子类化、继承的框架更加轻量级
-2 | 低耦合 | 自定义占位视图的可自行实现，通过协议传递，耦合性极低。
-3 | 简单，无学习成本 | 一行代码完成，仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。自动检测是否需要 `addSubview` 和 `removeFromSuperview` ，省去学习繁琐的 add 和 remove 的调用时机。
-4 | 使用方法简单 | 基于 `dataSource` 管理占位视图；内置的 `CYLRefresh` 提供下拉、上拉和横向刷新功能。
-5 |支持CocoaPods |容易集成
+
+| 编号 | 特点 | 解释 |
+| --- | --- | --- |
+| 1 | 轻量级、无污染 | 基于 UITableView 分类，无污染，比基于子类化、继承的框架更加轻量级 |
+| 2 | 低耦合 | 自定义占位视图的可自行实现，通过协议传递，耦合性极低。 |
+| 3 | 简单，无学习成本 | 一行代码完成，仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。自动检测是否需要 `addSubview` 和 `removeFromSuperview` ，省去学习繁琐的 add 和 remove 的调用时机。 |
+| 4 | 使用方法简单 | 基于 `dataSource` 管理占位视图；内置的 `CYLRefresh` 提供下拉、上拉和横向刷新功能。 |
+| 5 | 支持CocoaPods | 容易集成 |
 
 （学习交流群：465239521）
 
-
-
 ## 集成后的效果
 
-![集成后的效果](http://i64.tinypic.com/708hl4.jpg)
+![集成后的效果](assets/cyl_placeholder_effect.gif)
 
 ## 使用[CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder)
 
@@ -242,22 +238,17 @@ Carthage 可使用 `github "ChenYilong/CYLTableViewPlaceHolder" "<branch-or-comm
 
 三步完成：
 
-  1.  [ 第一步：使用cocoaPods导入CYLTableViewPlaceHolder ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第一步使用cocoapods导入cyltableviewplaceholder) 
-  2.  [第二步：遵循协议](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第二步遵循协议) 
-  3.  [第三步：使用cyl_reloadData代替reloadData](https://github.com/ChenYilong/CYLTableViewPlaceHolder#第三步使用cyl_reloaddata代替reloaddata) 
-
+1. [第一步：使用cocoaPods导入CYLTableViewPlaceHolder](#第一步使用cocoapods导入cyltableviewplaceholder)
+2. [第二步：遵循协议](#第二步遵循协议)
+3. [第三步：使用cyl_reloadData代替reloadData](#第三步使用cyl_reloaddata代替reloaddata)
 
 ### 第一步：使用CocoaPods导入CYLTableViewPlaceHolder
 
-
 在 `Podfile` 中进行如下导入：
 
-
- ```Objective-C
+```Objective-C
 pod 'CYLTableViewPlaceHolder', '~> 1.1.0'
- ```
-
-
+```
 
 1.1.0 内置 `CYLRefresh`；历史版本不会自动包含新功能。本库最低支持 **iOS 12**，不再需要单独添加刷新库。使用旧刷新库的项目需将原有类名和分类接口迁移到 `CYLRefresh` / `cyl_`。
 
@@ -267,29 +258,24 @@ pod 'CYLTableViewPlaceHolder', '~> 1.1.0'
 
 如果尚未安装 CocoaPods, 运行以下命令进行安装:
 
-
- ```Objective-C
+```Objective-C
 gem install cocoapods
- ```
-
+```
 
 安装成功后就可以安装依赖了：
 
 建议使用如下方式：
 
-
- ```Objective-C
+```Objective-C
  # 禁止升级CocoaPods的spec仓库，否则会卡在 Analyzing dependencies ，非常慢 
  pod update --verbose --no-repo-update
- ```
-
+```
 
 如果提示找不到库，则可去掉 --no-repo-update
 
-
- ```Objective-C
+```Objective-C
 pod update
- ```
+```
 
 如果链接时报 `ld: library not found for -lPods`（见 [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10)），通常是工程与 Pods 的集成状态不一致，而不是本库的问题：
 
@@ -301,29 +287,23 @@ pod update
 pod deintegrate
 pod install
 rm -rf ~/Library/Developer/Xcode/DerivedData
- ```
+```
 
 然后在 Xcode 中执行 Product › Clean Build Folder 后重新编译。
 
-
-
 ### 第二步：遵循协议
-
-
 
 导入头文件
 
- ```Objective-C
+```Objective-C
 #import "CYLTableViewPlaceHolder.h"
- ```
+```
 
 遵循协议
 
- ```Objective-C
+```Objective-C
  @interface ViewController ()<CYLTableViewPlaceHolderDelegate>
- ```
-
-
+```
 
 实现协议方法：
 
@@ -331,7 +311,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 
 创建一个自定义的占位视图并返回
 
- ```Objective-C
+```Objective-C
 @required
 /*!
  @brief  make an empty overlay view when the tableView is empty
@@ -341,7 +321,6 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
  ```
 
 这里注意两点：
-
 
  1. 默认占位视图填满 table view 的 bounds，宽高随 table view 调整。每次空数据刷新都会重新调用 `makePlaceHolderView`，因此可以切换网络错误与无数据视图。
  2. `makePlaceHolderView` 可由自定义 table view、delegate 或独立的 data source 实现，按此顺序查找；应返回非空视图。
@@ -383,15 +362,15 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 
  既可以让代理遵循协议，实现协议方法：
 
- ```Objective-C
+```Objective-C
  @interface ViewController ()<CYLTableViewPlaceHolderDelegate>
- ```
+```
 
  也可以让自定义的  `TableView` 遵循协议，实现协议方法：
 
- ```Objective-C
+```Objective-C
  @interface MyTableView ()<CYLTableViewPlaceHolderDelegate>
- ```
+```
 
  这里推荐在自定义的 `TableView` 中实现，以降低耦合性，同时也可以为 Controller 瘦身。
 
@@ -399,7 +378,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 
 另外，占位视图默认的设置是不能滚动的，也就不能下拉刷新了，但是如果想让占位视图可以滚动，则需要实现下面的可选代理方法。
 
- ```Objective-C
+```Objective-C
 @optional
 /*!
  @brief enable tableView scroll when place holder view is showing,it is disabled by default.
@@ -408,19 +387,17 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 - (BOOL)enableScrollWhenPlaceHolderViewShowing;
  ```
 
-
-
 ### 第三步：使用cyl_reloadData代替reloadData
 
 使用方法：
 
 仅需使用  `cyl_reloadData`  代替  `reloadData` 即可。
 
- ```Objective-C
+```Objective-C
     [self.tableView cyl_reloadData];
- ```
+```
 
-注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData]; ` 方法，请避免重复调用。
+注意：  `cyl_reloadData`  内部已经实现了   `[self.tableView reloadData];` 方法，请避免重复调用。
 
 旧的 `cyl_reloadData` 与 delegate API 只管理 `UITableView`；`UICollectionView` 请使用上文的 block API（`cyl_placeholderViewBlock:`）。普通页面没有 data source 可供判断空状态，库不自动管理；可以直接把 `CYLPlaceholderView` 当作普通 `UIView` 加到页面上，由应用决定何时显示。需要全局统一的断网或空状态处理时，可在列表基类中统一配置 block。使用独立 data source 时，delegate 或 table view 仍可负责创建占位图，也可以让 data source 实现该协议。
 
@@ -439,7 +416,7 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。
 
-#### 国际化与资源包
+### 国际化与资源包
 
 本库的全部本地化文件和图片统一放在一个资源包 `CYLTableViewPlaceHolder.bundle` 中，不再有单独的 `CYLRefresh.bundle`：
 
@@ -511,14 +488,14 @@ collectionView.cyl_trailer = trailer;
 
 四个 `Example-*` 工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
 
-
 ## 适用于多种应用应用场景
 
-[CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 是基于  `dataSource`  数据源是否为空，所以只需操作  `dataSource`  数据源，即可完成占位视图的 `。只要为空就会触发。并且每次在操作占位视图的 `addSubview` 和 `removeFromSuperview` 时，每次都会将旧的销毁，并触发 `- (UIView *)makePlaceHolderView` 创建一个新的视图。如果在该方法中进行 if 判断，也就能适用于不同的场景。
+[CYLTableViewPlaceHolder](https://github.com/ChenYilong/CYLTableViewPlaceHolder) 是基于  `dataSource`  数据源是否为空，所以只需操作  `dataSource`  数据源，即可完成占位视图的。只要为空就会触发。并且每次在操作占位视图的 `addSubview` 和 `removeFromSuperview` 时，每次都会将旧的销毁，并触发 `- (UIView *)makePlaceHolderView` 创建一个新的视图。如果在该方法中进行 if 判断，也就能适用于不同的场景。
 
-   1.  [ 网络故障 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#网络故障) 
-    1.  [ 网络不可用，禁止重新加载 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#网络不可用禁止重新加载) 
-   2.  [ 暂无数据 ](https://github.com/ChenYilong/CYLTableViewPlaceHolder#暂无数据) 
+   1. [网络故障](#网络故障)
+      1. [网络不可用，禁止重新加载](#网络不可用禁止重新加载)
+   2. [暂无数据](#暂无数据)
+   3. [网络不可达场景](#网络不可达场景)
 
 ### 网络故障
 
@@ -526,53 +503,41 @@ collectionView.cyl_trailer = trailer;
 
 比如
 
-携程 网络故障 | 携程 网络故障 | 携程 网络故障
--------------|-------------|-------------
-![应用场景之加载失败--携程](http://a66.tinypic.com/309791e.jpg) | ![应用场景之加载失败--携程](http://a67.tinypic.com/2druukl.jpg) | ![应用场景之加载失败--携程](http://a68.tinypic.com/11kz5vd.jpg)
+| 携程 网络故障 | 携程 网络故障 | 携程 网络故障 |
+| --- | --- | --- |
+| ![应用场景之加载失败--携程](assets/cyl_placeholder_scenario_01_load_failed.jpg) | ![应用场景之加载失败--携程](assets/cyl_placeholder_scenario_02_load_failed.jpg) | ![应用场景之加载失败--携程](assets/cyl_placeholder_scenario_03_load_failed.jpg) |
 
 代码实现时直接返回网络故障占位视图，用伪代码表示则是：
 
- ```Objective-C
+```Objective-C
 - (UIView *)makePlaceHolderView {
         return NetNotAvailableView;
 }
- ```
-
-
+```
 
 #### 网络不可用，禁止重新加载
 
 如果此时检测到网络断开可以禁止用户刷新的行为，比如：
 
-QQ空间 | 苏宁易购 | 嘟嘟美甲
--------------|-------------|-------------
-![应用场景之加载失败](http://a64.tinypic.com/2ltrh3p.jpg) |![应用场景之加载失败](http://a66.tinypic.com/f2sx9g.jpg) |![应用场景之加载失败](http://a65.tinypic.com/w9e71d.jpg)|
-
-
-
+| QQ空间 | 苏宁易购 | 嘟嘟美甲 |
+| --- | --- | --- |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_04_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_05_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_06_load_failed.jpg) |
 
 ### 暂无数据
 
 适用于那些造成 dataSource 为空的原因不仅有网络故障，也可能是确实是服务端也没有数据，这种场景下需要判断下当前网络再返回占位视图，比如：
 
+| App | 暂无数据 | 网络故障 |
+| --- | --- | --- |
+| 百度传课 | ![应用场景之暂无数据](assets/cyl_placeholder_scenario_07_no_data.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_08_load_failed.jpg) |
 
-
-
-App | 暂无数据 | 网络故障
- -------------|------------- | ---------
-百度传课 | ![应用场景之暂无数据](http://a63.tinypic.com/24x2jh1.jpg) |![应用场景之加载失败](http://a68.tinypic.com/34qnx8w.jpg)
-
-
-
- 暂无数据 | 暂无数据（美团）
--------------|-------------
-![应用场景之暂无数据](http://a64.tinypic.com/2i6dqtl.jpg) | ![应用场景之暂无数据](http://a67.tinypic.com/bhefd5.jpg)
-
+| 暂无数据 | 暂无数据（美团） |
+| --- | --- |
+| ![应用场景之暂无数据](assets/cyl_placeholder_scenario_09_no_data.jpg) | ![应用场景之暂无数据](assets/cyl_placeholder_scenario_10_no_data.jpg) |
 
 代码实现，用伪代码表示则是：
 
-
- ```Objective-C
+```Objective-C
 - (UIView *)makePlaceHolderView {
     if (NetNotAvailable) {
         return NetNotAvailableView;
@@ -580,30 +545,26 @@ App | 暂无数据 | 网络故障
         return NoDataView;
     }
 }
- ```
-
+```
 
 ### 网络不可达场景
 
-
-- | 应用场景之加载失败 |  ---
--------------|-------------|-------------
-![应用场景之加载失败](http://a65.tinypic.com/2nqbors.jpg) | ![应用场景之加载失败](http://a64.tinypic.com/17edlv.jpg) | ![应用场景之加载失败](http://a67.tinypic.com/2zg5hrr.jpg)
-![应用场景之加载失败](http://a67.tinypic.com/2qx2ryo.jpg) | ![应用场景之加载失败](http://a64.tinypic.com/ms198y.jpg) | ![应用场景之加载失败](http://a66.tinypic.com/2r5eoig.jpg)
-![应用场景之加载失败](http://a68.tinypic.com/sblk02.jpg) | ![应用场景之加载失败](http://a64.tinypic.com/2lvfq4y.jpg) | ![应用场景之加载失败](http://a63.tinypic.com/i70g13.jpg)
-![应用场景之加载失败](http://a67.tinypic.com/px93s.jpg) | ![应用场景之加载失败](http://a66.tinypic.com/2ai1di.jpg) | ![应用场景之加载失败](http://a68.tinypic.com/mlmukm.jpg)
-![应用场景之加载失败](http://a66.tinypic.com/6qxq36.jpg) | ![应用场景之加载失败](http://a66.tinypic.com/68bz7q.jpg) | ![应用场景之加载失败](http://a64.tinypic.com/2qu0yo1.jpg)
-![应用场景之加载失败](http://a66.tinypic.com/2h3q4wh.jpg) | ![应用场景之加载失败](http://a65.tinypic.com/2w4b6ag.jpg) | ![应用场景之加载失败](http://a68.tinypic.com/28v9fdw.jpg)
-![应用场景之加载失败](http://a65.tinypic.com/311xa9j.jpg) | ![应用场景之加载失败](http://a65.tinypic.com/2zf1g1l.jpg) | ![应用场景之加载失败](http://a63.tinypic.com/11udmbs.jpg)
-![应用场景之加载失败](http://a63.tinypic.com/zx703l.jpg) | ![应用场景之加载失败](http://a63.tinypic.com/2chs3uc.jpg) | ![应用场景之加载失败](http://a68.tinypic.com/2a68kty.jpg)
-![应用场景之加载失败](http://a67.tinypic.com/htfh1w.jpg) | ![应用场景之加载失败](http://a68.tinypic.com/1zgpykw.jpg)| ![应用场景之加载失败](http://a64.tinypic.com/xgfgi1.jpg)
-![应用场景之加载失败](http://a65.tinypic.com/34gk4gm.jpg) | ![应用场景之加载失败](http://a68.tinypic.com/20abals.jpg)|![应用场景之加载失败](http://a68.tinypic.com/2up75hw.jpg)
-![应用场景之加载失败](http://a66.tinypic.com/4l0bnt.jpg)| ![应用场景之加载失败](http://a67.tinypic.com/20q11th.jpg) |![应用场景之加载失败](http://a63.tinypic.com/o9o3cw.jpg)
-
-
+| 应用场景之加载失败 | 应用场景之加载失败 | 应用场景之加载失败 |
+| --- | --- | --- |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_11_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_12_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_13_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_14_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_15_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_16_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_17_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_18_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_19_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_20_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_21_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_22_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_23_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_24_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_25_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_26_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_27_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_28_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_29_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_30_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_31_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_32_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_33_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_34_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_35_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_36_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_37_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_38_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_39_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_40_load_failed.jpg) |
+| ![应用场景之加载失败](assets/cyl_placeholder_scenario_41_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_42_load_failed.jpg) | ![应用场景之加载失败](assets/cyl_placeholder_scenario_43_load_failed.jpg) |
 
 （更多iOS开发干货，欢迎关注  [微博@iOS程序犭袁](http://weibo.com/luohanchenyilong/) ）
 
-----------
+---
 Posted by [微博@iOS程序犭袁](http://weibo.com/luohanchenyilong/)  
 原创文章，版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)

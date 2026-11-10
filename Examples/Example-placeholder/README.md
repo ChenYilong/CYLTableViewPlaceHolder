@@ -46,7 +46,7 @@ tableView.kl_placeholderViewBlock({ (tableView) -> UIView in
 ```
 
 ## 适用场景
-| ![](Images/image1.jpg) | ![](Images/image2.jpg) |
+| ![](assets/image1.jpg) | ![](assets/image2.jpg) |
 |-------------|-------------|
 
 # License
