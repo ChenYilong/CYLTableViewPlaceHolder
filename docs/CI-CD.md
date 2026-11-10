@@ -79,3 +79,9 @@ Carthage binary JSON or SPM manifest to update yet.
   scaling.
 - The upstream `libpag` pod warns about a missing license file; `pod lib lint`
   runs with `--allow-warnings`.
+- Loaded macOS runners can stall for tens of seconds. The tests wait on
+  conditions rather than fixed delays (refresh tests share a 30 s bound; the
+  accessibility tests wait for the tree to update after a tap), but an
+  XCUITest can still fail with "Timed out while launching application via
+  Xcode" before any test code runs (seen in the `Accessibility` job). That is
+  the runner, not the library: re-run the job once; a second failure is real.
