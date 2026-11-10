@@ -20,8 +20,8 @@ Before building anything that depends on CYLTabBarController (the demos), run
 commit on any branch, then `pod install` (`pod update CYLTabBarController` if a lock pins an older commit);
 report the commit that was used.
 Examples also depend on the latest MJRefresh: run `scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile`
-before building them (`scripts/ci-build-example.sh` does it) and report the version; a build that fails with the
-newest version is reported, not worked around by pinning an older one.
+before building them (`scripts/ci-build-example.sh` does it) and report the version. A build that fails with the
+newest version is fixed in `CYLTableViewPlaceHolder/CYLRefresh/` and rebuilt until it passes; never pin an older MJRefresh.
 
 The test runner requires the `xcodeproj` Ruby gem and an available simulator.
 The animation runner installs the optional CocoaPods backends into an isolated

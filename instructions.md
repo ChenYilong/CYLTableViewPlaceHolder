@@ -127,8 +127,13 @@ pod 'MJRefresh', '<latest version>'
   `scripts/ci-build-example.sh` runs it before `pod install`, so CI always builds with the newest version.
 - Run `pod install`; when a `Podfile.lock` pins an older version, `pod update MJRefresh`.
 - **Check that the example still compiles and launches**: the `Demo` CI job builds it and saves a screenshot
-  (`instructions.md`, "CI example screenshots"). Report the version that was built. If the newest version does
-  not compile, report the version and the error; do not quietly pin an older one.
+  ("CI example screenshots"). Report the version that was built.
+- **If it does not compile, link or launch, change the code in `CYLTableViewPlaceHolder/CYLRefresh/`** (the
+  adapted copy of MJRefresh) and build again, repeating until every example builds and launches. Never pin
+  an older MJRefresh to get green. Keep each fix compatible (the public API rules still apply), record the
+  cause and the change in `docs/issue-progress.md`, and add a test when the failure can be reproduced. A
+  cause outside `CYLRefresh/` is fixed where it is and named in the report; a defect inside MJRefresh itself
+  is worked around on our side and reported.
 - The main app at the repository root (`Examples/Example`, built through the root `Podfile`) compiles the
   refresh source directly and promises no `pod install`; it is not covered by this rule.
 

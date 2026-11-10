@@ -43,8 +43,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   "Depending on CYLTabBarController" in `instructions.md`.
 - Every example Podfile (`Examples/*/Podfile`) also contains `pod 'MJRefresh', '<latest version>'`, the
   highest stable version on the CocoaPods trunk, set with `scripts/resolve-mjrefresh-version.sh` before every
-  build (CI does it in `scripts/ci-build-example.sh`); check the example still compiles. See "Depending on
-  MJRefresh in the examples" in `instructions.md`.
+  build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
+  breaks a build, fix the code in `CYLRefresh/` until it builds; never pin an older MJRefresh. See "Depending
+  on MJRefresh in the examples" in `instructions.md`.
 - iOS examples are written in Swift (the library stays Objective-C). When a Swift call
   reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
   declarations, `cyl_` members keep their prefix, and underscored protocol methods get an
