@@ -48,8 +48,12 @@ the integrated `CYLRefresh` component, and an example application. Read
   The core bundle, `CYLTableViewPlaceHolder.bundle` (placeholder table
   `Localizable.strings`, refresh table `CYLRefresh.strings`), always stays and
   changes only additively. Each example keeps its text in its own bundle in the
-  example folder, read through macros defined in a localization header. Every
-  language must have every key of `en`. Other platforms follow the same
+  example folder, read through macros defined in a localization header. The core
+  also has its own lookup macro. A project must define at least two different
+  lookup macros, one per layer (core and example), each reading its own bundle;
+  names carry the owner's prefix and never reuse another library's, such as
+  CYLTabBarController's `CYLLocalizedString`. Every language must have every key
+  of `en`. Other platforms follow the same
   structure. See "Localization" in `instructions.md`.
 - Ready-made placeholder animations live in
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.

@@ -29,6 +29,9 @@ must be named `check.riv` and `button.riv` and contain the corresponding
 Select a real device and runtime with `xcrun simctl list devices available`.
 The 15.0 override is for Xcode 27; use the supported minimum for the toolchain
 in use. When CocoaPods packaging changes, also lint with `--use-libraries`.
+Run `python3 scripts/check_localizations.py` after any localization change, and confirm
+the project still defines at least two different lookup macros (the core's and an
+example's), each reading its own bundle (`instructions.md`, "Lookup macros").
 Confirm `CYLTableViewPlaceHolder.bundle` (all images and both strings tables), privacy manifest and license
 are included in the applicable built product. A successful build alone does not
 verify on-screen behavior. Every CI build must also provide a screenshot of each

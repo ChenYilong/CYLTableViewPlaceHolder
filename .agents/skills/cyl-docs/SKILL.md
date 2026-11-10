@@ -14,6 +14,9 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 - Localized text follows "Localization" in `instructions.md`: `.lproj`
   folders in a `.bundle` per owner, the core bundle kept and changed only
   additively, example text in an example-level bundle read through macros.
+  Each layer reads its bundle through one lookup macro (the core has its own,
+  each example has its own, named with the owner's prefix); a project needs at
+  least two different ones.
   Document new tables, languages and keys in the README.
 - Instructions and skills are written in English. Preserve required third-party
   copyright notices, licenses, and source attribution.

@@ -152,6 +152,55 @@ in manual integrations, look it up by name, and override its tables through
   Bundle Resources phases and the test runners only through this bundle.
 - Only the library's own text belongs here; example text never does.
 
+### Lookup macros: one per layer, at least two per project
+
+Every layer that ships localized text reads it through exactly one lookup macro
+that resolves that layer's bundle. A *layer* is an owner of a bundle: the core
+library and each example. Code never reads a bundle any other way.
+
+- **Core macro (required).** The core defines one macro in a header of the library
+  folder. It reads only the core bundle, `CYLTableViewPlaceHolder.bundle`, names the
+  strings table, and takes a fallback, so a missing bundle, language or key still shows
+  text. All core code (placeholder and refresh) reads its strings through it; helpers
+  such as `+[NSBundle cyl_localizedStringForKey:]` may stay only as thin wrappers over
+  the same function.
+- **Example macro (required for every example with text).** Each example defines its
+  own macro in its localization header (see below). It reads only that example's bundle.
+- **Same shape everywhere.** The macro expands to an exported function, so Swift code
+  (examples are Swift) can call the function; function-like macros are not imported into
+  Swift. Declare the function with `NS_FORMAT_ARGUMENT` when the value is used as a
+  format string, as CYLTabBarController does for `CYLLocalizedString`. The function picks
+  the language explicitly with `+[NSBundle preferredLocalizationsFromArray:forPreferences:]`
+  over the layer's fixed language list, then falls back to English, then to the fallback or
+  the key.
+- **Names.** Each macro carries its owner's prefix and must never reuse another library's
+  name. `CYLLocalizedString` belongs to CYLTabBarController, and `Example-Scenarios`
+  links both libraries, so neither this core nor an example may define that name. Use
+  names such as `CYLPlaceholderLocalizedString` (core) and `CYL<Example>LocalizedString`
+  (example).
+- **Other platforms.** The same rule with the platform's nearest construct, one per layer,
+  always reading a folder or package of per-language files: an `R.string` accessor per
+  module on Android, the generated localizations class per package on Flutter, one exported
+  lookup function per package on Web and React Native.
+
+**Acceptance criterion.** A project passes only if it defines at least two different
+lookup macros, each reading a different layer's bundle: the core macro and at least one
+example macro. One macro that serves both layers, or two macros that read the same
+bundle, do not count. In addition:
+
+1. each layer has a test that the macro returns a translated string for a non-English
+   language and falls back to English for an unknown one;
+2. every key a macro reads exists in every language of its table (checked by
+   `scripts/check_localizations.py`, which must also report a layer that has no lookup
+   macro); and
+3. no layer's strings live in another layer's bundle.
+
+CYLTabBarController is the reference: one `CYLLocalizedString` entry point, tables in
+`CYLTabBarController.bundle/<language>.lproj` with identical keys in every table, and
+app-level tables owned by the app (`docs/Configuration-Localization.md` there). It
+publishes no separate acceptance checklist, so the criterion above is this repository's
+own.
+
 ### Example-level bundles, always with macros
 
 Each example keeps its own text in its own bundle inside the example folder,
@@ -172,7 +221,8 @@ only.
   ```
 
   Code uses only these macros, never raw key strings or literal text. One key
-  macro per string; the lookup macro names its table.
+  macro per string; the lookup macro names its table. This lookup macro is the
+  example's half of the two-macro acceptance criterion above.
 - The example's languages follow the core bundle's list where practical.
   `scripts/check_localizations.py` (CI job "Localization files") checks every
   bundle in the repository: same keys and format specifiers in every language,
@@ -187,6 +237,7 @@ Apply the same structure: per-language files grouped in one resource
 container per owner, the library's container kept and changed additively, each
 example with its own container, and a single generated or hand-written key map.
 
+- Each platform also needs the lookup construct from "Lookup macros" above for the library and for every example.
 - Android: `res/values-<locale>/strings.xml` in the library module and in each
   sample app module; `R.string.*` is the key map.
 - Flutter: `lib/l10n/*.arb` per package with the generated localizations class.
