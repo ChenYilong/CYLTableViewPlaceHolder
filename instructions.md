@@ -167,11 +167,14 @@ running. The `Demo` jobs in `.github/workflows/ios.yml` run
 launches it on an iPhone simulator, and saves `build/screenshots/<scheme>.png`.
 The workflow uploads it as the artifact `example-screenshot-<folder>` (`.`
 becomes `Example`, `/` becomes `-`), and the job summary shows a Screenshot
-column. A build that produces no screenshot fails the job. Runs that change only
+column. The `Example screenshots` job then shows all of them inline in its
+summary and in one pull request comment, from the `ci-screenshots` branch
+(`docs/CI-CD.md`). A build that produces no screenshot fails the job. Runs that change only
 documentation skip the macOS builds and need no screenshot.
 
 - When reporting CI results for a change that triggers a build, give the run
-  link and the screenshot artifact names for every example. Describe a
+  link, the screenshot artifact names for every example, and the pull
+  request's screenshot comment when there is one. Describe a
   screenshot only if you have actually viewed it; a launch screenshot shows the
   first screen and does not verify interactions or animations.
 - If a screenshot cannot be produced, first change the CI script or workflow

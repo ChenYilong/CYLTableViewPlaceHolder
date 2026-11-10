@@ -51,8 +51,15 @@ and uploads it as `example-screenshot-Example`,
 `example-screenshot-Examples-Example-SwiftUI` or
 `example-screenshot-Examples-Example-Scenarios`. Download them from the run page
 (Summary → Artifacts); the job summary lists the artifact name and a Screenshot
-column. GitHub job summaries cannot embed images from artifacts, so the
-screenshots are not shown inline. A screenshot shows the first screen about
+column. GitHub cannot show an image from an artifact inline, so the
+`Example screenshots` job (`scripts/ci-publish-screenshots.sh`) downloads all of
+them, commits them to the `ci-screenshots` branch under `pr-<number>/` (or the
+branch name for pushes), replacing that folder's previous screenshots, and shows
+them inline in its job summary and in one pull request comment that it updates
+in place (marked `<!-- cyl-example-screenshots -->`). The job has
+`contents: write` and `pull-requests: write`; a pull request from a fork gets a
+read-only token, so its run only links the artifacts. The branch keeps every
+earlier screenshot in its history; prune it if it grows. A screenshot shows the first screen about
 8 seconds after launch, not interactions. The rule for reporting them is in
 `instructions.md` ("CI example screenshots").
 

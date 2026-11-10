@@ -304,3 +304,31 @@ jobs:
             echo
             echo "Screenshot artifact: \`${{ steps.artifact.outputs.name }}\` on the [run page](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Shows every demo's screenshot inline: in this job's summary and in one pull request comment updated in place.
+  # The images are committed to the `ci-screenshots` branch, one folder per pull request or branch; a fork's
+  # read-only token cannot push, so its run only links the artifacts. See docs/CI-CD.md.
+  screenshots:
+    name: Example screenshots
+    needs: [ changes, examples ]
+    if: always() && needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: example-screenshot-*
+          merge-multiple: true
+          path: build/screenshots
+      - name: Publish screenshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p build/screenshots
+          scripts/ci-publish-screenshots.sh build/screenshots
