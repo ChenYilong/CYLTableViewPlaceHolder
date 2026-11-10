@@ -50,7 +50,12 @@ static const CGFloat CYLDuration = 0.8;
         weakSelf.title = @"Footer refreshing";
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(CYLDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
-            [weakSelf.collectionView.cyl_footer endRefreshing];
+            // `-noMoreData` (UI tests): the load returns nothing new and the footer shows "no more data".
+            if ([NSProcessInfo.processInfo.arguments containsObject:@"-noMoreData"]) {
+                [weakSelf.collectionView.cyl_footer endRefreshingWithNoMoreData];
+            } else {
+                [weakSelf.collectionView.cyl_footer endRefreshing];
+            }
             weakSelf.title = @"Footer completed";
         });
     }];
@@ -85,10 +90,6 @@ static NSString *const CYLCollectionViewCellIdentifier = @"color";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // The navigation bar is translucent from iOS 15 (scroll-edge appearance) and glass on iOS 26, so a collection view
-    // laid out under it shows the idle refresh header, which waits just above the content, behind the title. Starting
-    // the view below the bar keeps that header clipped until the user pulls.
-    self.edgesForExtendedLayout = UIRectEdgeNone;
 
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:CYLCollectionViewCellIdentifier];
     self.collectionView.backgroundColor = UIColor.whiteColor;

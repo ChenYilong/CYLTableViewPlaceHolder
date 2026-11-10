@@ -292,7 +292,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.artifact.outputs.name }}
-          path: build/screenshots/*.png
+          path: |
+            build/screenshots/*.png
+            build/*-uitests.log
           if-no-files-found: warn
       - name: Summary
         if: always() && needs.changes.outputs.code == 'true'

@@ -4,6 +4,7 @@
 # Installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
 # then installs and launches the app on a booted simulator and saves a screenshot to build/screenshots/<scheme>.png.
 # A build without a screenshot fails: every CI build must show the example running (see instructions.md).
+# ExampleObjC02 then runs its collection UI tests, which save step screenshots to build/screenshots too.
 # Writes a row to build/summary.md for the job summary. SCREENSHOT_DELAY (seconds, default 8) waits for the first frame.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -47,6 +48,22 @@ capture_screenshot() {
   [[ -s "$SCREENSHOT" ]]
 }
 
+# Demos with UI tests that also save step screenshots next to the launch screenshot (CYL_SCREENSHOT_DIR).
+ui_tests_for_scheme() {
+  case "$SCHEME" in
+    ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests" ;;
+  esac
+}
+
+run_ui_tests() {
+  local only
+  only=$(ui_tests_for_scheme)
+  [[ -n "$only" ]] || return 0
+  echo "UI tests: $only on $UDID"
+  TEST_RUNNER_CYL_SCREENSHOT_DIR="$ROOT/build/screenshots" xcodebuild test -workspace "$WORKSPACE" -scheme "$SCHEME" \
+    -destination "id=$UDID" -derivedDataPath "$DERIVED_DATA" -only-testing:"$only" 2>&1 | tee "$ROOT/build/$SCHEME-uitests.log"
+}
+
 build_status=0
 xcodebuild build -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' -derivedDataPath "$DERIVED_DATA" \
@@ -58,6 +75,10 @@ if [[ $build_status -eq 0 ]]; then
   if capture_screenshot; then
     shot="✅"
     echo "Screenshot: $SCREENSHOT"
+    if ! run_ui_tests; then
+      echo "error: $SCHEME UI tests failed; see build/$SCHEME-uitests.log" >&2
+      status=1
+    fi
   else
     echo "error: $SCHEME built but no screenshot of it running could be captured" >&2
     status=1
