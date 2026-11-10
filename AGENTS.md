@@ -77,6 +77,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   If `.git/hooks` does not exist, `mkdir -p` creates it first so `touch`
   always succeeds.
 
+- Before every commit, update `.gitignore`: add any ignore pattern from
+  CYLTabBarController's `.gitignore` that is missing (changing only its project
+  name to `CYLTableViewPlaceHolder`), and make sure every generated or
+  machine-local file of the change is ignored. Already tracked files stay
+  tracked. See "`.gitignore` before every commit" in `instructions.md`.
 - Before a Commitizen-style commit, follow the commit-message hook instructions
   in `instructions.md`; inspect an existing hook before replacing it.
 - Before every commit, audit the changed code and the project's comparison,

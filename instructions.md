@@ -188,6 +188,28 @@ documentation skip the macOS builds and need no screenshot.
 
 ## Commit readiness and TODO tracking
 
+### `.gitignore` before every commit
+
+Before every commit, update `.gitignore`:
+
+1. Compare it with CYLTabBarController's `.gitignore`
+   (https://github.com/ChenYilong/CYLTabBarController/blob/master/.gitignore).
+   Add every ignored file and folder pattern it has that this file lacks, in
+   the section "Synced from CYLTabBarController's .gitignore". Change only
+   what does not match this project: replace `CYLTabBarController` with
+   `CYLTableViewPlaceHolder` in paths. Leave out paths that exist only in
+   CYLTabBarController (its example folders) and say so in the section's
+   comment.
+2. Run `git status --short` and `git ls-files -o --exclude-standard`. Every
+   generated or machine-local file the change produced (build products,
+   `Pods/`, user data, caches, `._*`) must be ignored; add a pattern for any that
+   is not.
+3. `.gitignore` does not untrack committed files. The `Podfile.lock` files and
+   workspaces already in the repository stay tracked although `*.lock` and
+   `*.xcworkspace` are ignored; do not remove them from the index without the
+   user's approval. Use `git add -f` only for a file that must be committed
+   despite a rule, and say why in the commit body.
+
 Before every commit, review the current changes and all project comparison,
 parity, issue-progress, and implementation-status documents. For every item
 that is not fully complete and verified at 100%, ensure a corresponding entry
