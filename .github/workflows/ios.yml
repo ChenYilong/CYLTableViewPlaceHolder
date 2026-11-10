@@ -51,6 +51,16 @@ jobs:
       - uses: actions/checkout@v4
       - run: shellcheck scripts/*.sh
 
+  # Every .bundle's tables: same keys and format specifiers in every language, macros match keys, no loose .strings
+  # (instructions.md, "Localization"). Runs on every pull request, including documentation-only ones.
+  localization:
+    name: Localization files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_localizations.py
+
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:
     name: pod lib lint

@@ -489,7 +489,7 @@ collectionView.cyl_trailer = trailer;
 - **资源**：列出资源包中的动画文件、引擎、大小及来源说明。
 - **加号按钮**：弹出“上传中”GIF 占位，随后显示“发布成功”Lottie 动画。
 
-在该目录运行 `pod install` 后打开 `Example-Scenarios.xcworkspace`；它通过本地 Pod 引入全部动画子规格，并引入 CYLTabBarController 1.99.x。
+在该目录运行 `pod install` 后打开 `Example-Scenarios.xcworkspace`；它通过本地 Pod 引入全部动画子规格，并引入 CYLTabBarController 1.99.x。Demo 的界面文案放在示例自己的 `Sources/CYLScenarioExample.bundle`（七种语言），代码只通过 `CYLScenarioLocalization.h` 中的宏读取，不使用本库的核心资源包；`python3 scripts/check_localizations.py` 检查所有资源包的 key 是否完整。
 
 四个 `Example-*` 工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
 

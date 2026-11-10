@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D44AA49BF91920B08FC32DDE"
+               BlueprintIdentifier = "EB5F1253224F005DB4BCD9C2"
                BuildableName = "ExampleScenarios.app"
                BlueprintName = "ExampleScenarios"
                ReferencedContainer = "container:Example-Scenarios.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D44AA49BF91920B08FC32DDE"
+            BlueprintIdentifier = "EB5F1253224F005DB4BCD9C2"
             BuildableName = "ExampleScenarios.app"
             BlueprintName = "ExampleScenarios"
             ReferencedContainer = "container:Example-Scenarios.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D44AA49BF91920B08FC32DDE"
+            BlueprintIdentifier = "EB5F1253224F005DB4BCD9C2"
             BuildableName = "ExampleScenarios.app"
             BlueprintName = "ExampleScenarios"
             ReferencedContainer = "container:Example-Scenarios.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D44AA49BF91920B08FC32DDE"
+            BlueprintIdentifier = "EB5F1253224F005DB4BCD9C2"
             BuildableName = "ExampleScenarios.app"
             BlueprintName = "ExampleScenarios"
             ReferencedContainer = "container:Example-Scenarios.xcodeproj">

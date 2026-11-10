@@ -8,6 +8,7 @@
 //
 
 #import "CYLScenarioDetailViewController.h"
+#import "CYLScenarioLocalization.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 typedef NS_ENUM(NSInteger, CYLDemoState) {
@@ -67,12 +68,12 @@ static NSString *const CYLDetailCellIdentifier = @"row";
             [self installPlaceholderBlock];
             break;
         case CYLScenarioFlowAnimation:
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"重播 · Replay"
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:CYLScenarioLocalizedString(CYLScenarioL10nActionReplay)
                 style:UIBarButtonItemStylePlain target:self action:@selector(replayAnimation)];
             [self installPlaceholderBlock];
             break;
         case CYLScenarioFlowRetry:
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"清空 · Clear"
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:CYLScenarioLocalizedString(CYLScenarioL10nActionClear)
                 style:UIBarButtonItemStylePlain target:self action:@selector(clearRows)];
             [self installPlaceholderBlock];
             break;
@@ -182,7 +183,8 @@ static NSString *const CYLDetailCellIdentifier = @"row";
 #pragma mark - Switch states (issue #3)
 
 - (void)setUpStateSwitcher {
-    UISegmentedControl *control = [[UISegmentedControl alloc] initWithItems:@[@"空", @"失败", @"断网", @"数据"]];
+    UISegmentedControl *control = [[UISegmentedControl alloc] initWithItems:@[CYLScenarioLocalizedString(CYLScenarioL10nStateEmpty), CYLScenarioLocalizedString(CYLScenarioL10nStateFailed),
+        CYLScenarioLocalizedString(CYLScenarioL10nStateOffline), CYLScenarioLocalizedString(CYLScenarioL10nStateData)]];
     control.selectedSegmentIndex = 0;
     control.accessibilityIdentifier = @"stateSwitcher";
     [control addTarget:self action:@selector(stateChanged:) forControlEvents:UIControlEventValueChanged];
@@ -229,7 +231,7 @@ static NSString *const CYLDetailCellIdentifier = @"row";
 
 - (void)setUpTableHeader {
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), 56)];
-    searchBar.placeholder = @"搜索 · Search";
+    searchBar.placeholder = CYLScenarioLocalizedString(CYLScenarioL10nSearchPlaceholder);
     self.tableView.tableHeaderView = searchBar;
 }
 
@@ -264,13 +266,13 @@ static NSString *const CYLDetailCellIdentifier = @"row";
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (self.scenario.flow != CYLScenarioFlowKeepSectionHeaders) return nil;
-    return section == 0 ? @"置顶 · Pinned" : @"全部 · All";
+    return section == 0 ? CYLScenarioLocalizedString(CYLScenarioL10nSectionPinned) : CYLScenarioLocalizedString(CYLScenarioL10nSectionAll);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CYLDetailCellIdentifier forIndexPath:indexPath];
     UIListContentConfiguration *content = [UIListContentConfiguration cellConfiguration];
-    content.text = [NSString stringWithFormat:@"数据 · Item %ld", (long)indexPath.row + 1];
+    content.text = [NSString stringWithFormat:CYLScenarioLocalizedString(CYLScenarioL10nFormatItem), (long)indexPath.row + 1];
     content.image = [UIImage systemImageNamed:@"doc.text"];
     cell.contentConfiguration = content;
     return cell;

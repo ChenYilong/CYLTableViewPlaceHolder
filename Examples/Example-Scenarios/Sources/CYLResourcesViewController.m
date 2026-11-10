@@ -4,6 +4,7 @@
 //
 
 #import "CYLResourcesViewController.h"
+#import "CYLScenarioLocalization.h"
 #import "CYLScenario.h"
 #import "CYLScenarioDetailViewController.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
@@ -24,11 +25,11 @@ static NSString *const CYLResourceCellIdentifier = @"resource";
     [super viewDidLoad];
     self.fileNames = [CYLPlaceholderView bundledAnimationFileNames];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:CYLResourceCellIdentifier];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"来源 · Sources"
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:CYLScenarioLocalizedString(CYLScenarioL10nActionSources)
         style:UIBarButtonItemStylePlain target:self action:@selector(showNotice)];
     // The empty state of this list, should the bundle be missing.
     [self.tableView cyl_placeholderViewBlock:^UIView *(UITableView *tableView) {
-        return [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleFolderOff text:@"未找到动画资源\nNo bundled animations"];
+        return [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleFolderOff text:CYLScenarioLocalizedString(CYLScenarioL10nTextNoAnimations)];
     }];
 }
 
@@ -41,7 +42,7 @@ static NSString *const CYLResourceCellIdentifier = @"resource";
     UITextView *textView = [UITextView new];
     textView.editable = NO;
     textView.font = [UIFont monospacedSystemFontOfSize:12 weight:UIFontWeightRegular];
-    textView.text = notice ?: @"NOTICE.animations not found";
+    textView.text = notice ?: CYLScenarioLocalizedString(CYLScenarioL10nTextNoticeMissing);
     controller.view = textView;
     controller.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:controller animated:YES];

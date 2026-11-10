@@ -5,6 +5,7 @@
 
 #import "CYLScenarioPlusButton.h"
 #import "CYLPublishViewController.h"
+#import "CYLScenarioLocalization.h"
 
 @implementation CYLScenarioPlusButton
 
@@ -18,7 +19,7 @@
             forState:UIControlStateNormal];
     button.tintColor = UIColor.systemTealColor;
     button.frame = CGRectMake(0, 0, 56, 56);
-    button.accessibilityLabel = @"发布 · Publish";
+    button.accessibilityLabel = CYLScenarioLocalizedString(CYLScenarioL10nActionPublish);
     button.accessibilityIdentifier = @"plusButton";
     [button addTarget:button action:@selector(publish) forControlEvents:UIControlEventTouchUpInside];
     return button;

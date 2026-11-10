@@ -8,6 +8,7 @@
 #import "CYLScenarioListViewController.h"
 #import "CYLFeedViewController.h"
 #import "CYLResourcesViewController.h"
+#import "CYLScenarioLocalization.h"
 
 @implementation CYLScenarioTabBarController
 
@@ -34,21 +35,21 @@
     return @[
         // The first tab: every scenario in a table; each row pushes its placeholder.
         [self navigationWithRoot:[[CYLScenarioListViewController alloc] initWithSections:[CYLScenario scenarioSections]]
-                           title:@"场景 · Scenarios"],
+                           title:CYLScenarioLocalizedString(CYLScenarioL10nTabScenarios)],
         [self navigationWithRoot:[[CYLScenarioListViewController alloc] initWithSections:[CYLScenario animationSections]]
-                           title:@"动画 · Animations"],
-        [self navigationWithRoot:[CYLFeedViewController new] title:@"动态 · Feed"],
-        [self navigationWithRoot:[CYLResourcesViewController new] title:@"资源 · Resources"],
+                           title:CYLScenarioLocalizedString(CYLScenarioL10nTabAnimations)],
+        [self navigationWithRoot:[CYLFeedViewController new] title:CYLScenarioLocalizedString(CYLScenarioL10nTabFeed)],
+        [self navigationWithRoot:[CYLResourcesViewController new] title:CYLScenarioLocalizedString(CYLScenarioL10nTabResources)],
     ];
 }
 
 + (NSArray<NSDictionary *> *)demoTabBarItemsAttributes {
     // SF Symbols as UIImage objects; CYLTabBarItemImage accepts names or images.
     NSArray *items = @[
-        @[@"场景", @"rectangle.stack", @"rectangle.stack.fill"],
-        @[@"动画", @"sparkles", @"sparkles"],
-        @[@"动态", @"bubble.left.and.bubble.right", @"bubble.left.and.bubble.right.fill"],
-        @[@"资源", @"shippingbox", @"shippingbox.fill"],
+        @[CYLScenarioLocalizedString(CYLScenarioL10nTabScenarios), @"rectangle.stack", @"rectangle.stack.fill"],
+        @[CYLScenarioLocalizedString(CYLScenarioL10nTabAnimations), @"sparkles", @"sparkles"],
+        @[CYLScenarioLocalizedString(CYLScenarioL10nTabFeed), @"bubble.left.and.bubble.right", @"bubble.left.and.bubble.right.fill"],
+        @[CYLScenarioLocalizedString(CYLScenarioL10nTabResources), @"shippingbox", @"shippingbox.fill"],
     ];
     NSMutableArray<NSDictionary *> *attributes = [NSMutableArray array];
     for (NSArray *item in items) {

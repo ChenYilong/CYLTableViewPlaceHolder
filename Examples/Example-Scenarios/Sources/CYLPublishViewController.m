@@ -4,6 +4,7 @@
 //
 
 #import "CYLPublishViewController.h"
+#import "CYLScenarioLocalization.h"
 #import "CYLScenario.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
@@ -15,12 +16,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"发布 · Publish";
+    self.title = CYLScenarioLocalizedString(CYLScenarioL10nActionPublish);
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
         initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close)];
     NSMutableDictionary *attributes = [@{
-        CYLPlaceholderItemTitle: @"上传中 · Uploading",
+        CYLPlaceholderItemTitle: CYLScenarioLocalizedString(CYLScenarioL10nAnimUploading),
         CYLPlaceholderItemStyle: @(CYLPlaceholderStyleUploadOff),
         CYLPlaceholderItemAnimationSize: @[@120, @120],
     } mutableCopy];

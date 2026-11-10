@@ -4,6 +4,7 @@
 //
 
 #import "CYLScenario.h"
+#import "CYLScenarioLocalization.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 #pragma mark - Placeholder builders
@@ -22,7 +23,7 @@ static UIView *CYLConfigurationErrorView(NSError *error) {
     label.numberOfLines = 0;
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = UIColor.systemRedColor;
-    label.text = error.localizedDescription ?: @"Configuration error";
+    label.text = error.localizedDescription ?: CYLScenarioLocalizedString(CYLScenarioL10nTextConfigurationError);
     return label;
 }
 
@@ -78,77 +79,77 @@ static CYLScenario *CYLAnimation(NSString *fileName, NSString *title, CYLPlaceho
 
 + (NSArray<NSDictionary *> *)scenarioSections {
     NSArray *basic = @[
-        CYLStatic(@"暂无内容 · Empty", @"initWithStyle:message: Empty", @"tray", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleEmpty), @"initWithStyle:message: Empty", @"tray", ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleEmpty, CYLPlaceholderMessageEmpty);
         }),
-        CYLStatic(@"无搜索结果 · No results", @"SearchOff + NoResults", @"magnifyingglass", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoResults), @"SearchOff + NoResults", @"magnifyingglass", ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleSearchOff, CYLPlaceholderMessageNoResults);
         }),
-        CYLRetry(@"无网络 · No internet", @"NoInternet + retry button", @"wifi.slash", @"重新加载 · Retry", ^UIView *{
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoInternet), @"NoInternet + UIButton", @"wifi.slash", CYLScenarioLocalizedString(CYLScenarioL10nActionRetry), ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleNoInternet, CYLPlaceholderMessageNoInternet);
         }),
-        CYLRetry(@"服务器不可用 · Server unavailable", @"CloudOff + ServerUnavailable", @"icloud.slash", @"重试 · Retry", ^UIView *{
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleServerUnavailable), @"CloudOff + ServerUnavailable", @"icloud.slash", CYLScenarioLocalizedString(CYLScenarioL10nActionRetry), ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleCloudOff, CYLPlaceholderMessageServerUnavailable);
         }),
-        CYLRetry(@"加载失败 · Error", @"ErrorOutline + Error", @"exclamationmark.triangle", @"重试 · Retry", ^UIView *{
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleError), @"ErrorOutline + Error", @"exclamationmark.triangle", CYLScenarioLocalizedString(CYLScenarioL10nActionRetry), ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleErrorOutline, CYLPlaceholderMessageError);
         }),
-        CYLStatic(@"加载中 · Loading", @"Hourglass + Loading", @"hourglass", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleLoading), @"Hourglass + Loading", @"hourglass", ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleHourglass, CYLPlaceholderMessageLoading);
         }),
-        CYLRetry(@"无权限 · No permission", @"Locked + NoPermission", @"lock", @"申请权限 · Request access", ^UIView *{
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoPermission), @"Locked + NoPermission", @"lock", CYLScenarioLocalizedString(CYLScenarioL10nActionRequestAccess), ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleLocked, CYLPlaceholderMessageNoPermission);
         }),
-        CYLRetry(@"购物车为空 · Empty cart", @"EmptyCart + EmptyCart", @"cart", @"去逛逛 · Shop now", ^UIView *{
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleEmptyCart), @"EmptyCart + EmptyCart", @"cart", CYLScenarioLocalizedString(CYLScenarioL10nActionShopNow), ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleEmptyCart, CYLPlaceholderMessageEmptyCart);
         }),
-        CYLStatic(@"暂无通知 · No notifications", @"NotificationsOff + NoNotifications", @"bell.slash", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoNotifications), @"NotificationsOff + NoNotifications", @"bell.slash", ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleNotificationsOff, CYLPlaceholderMessageNoNotifications);
         }),
     ];
     NSArray *business = @[
-        CYLRetry(@"定位已关闭 · Location off", @"LocationOff + custom text", @"location.slash", @"打开设置 · Open Settings", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleLocationOff, @"开启定位后查看附近内容\nTurn on Location to see nearby places");
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleLocationOff), @"initWithStyle:text: LocationOff", @"location.slash", CYLScenarioLocalizedString(CYLScenarioL10nActionOpenSettings), ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleLocationOff, CYLScenarioLocalizedString(CYLScenarioL10nTextLocationOff));
         }),
-        CYLStatic(@"蓝牙已关闭 · Bluetooth off", @"BluetoothDisabled", @"antenna.radiowaves.left.and.right.slash", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleBluetoothDisabled, @"请开启蓝牙以连接设备\nTurn on Bluetooth to connect");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleBluetoothOff), @"BluetoothDisabled", @"antenna.radiowaves.left.and.right.slash", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleBluetoothDisabled, CYLScenarioLocalizedString(CYLScenarioL10nTextBluetoothOff));
         }),
-        CYLStatic(@"账号受限 · Account blocked", @"Blocked", @"nosign", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleBlocked, @"该账号暂时无法查看\nThis account is unavailable");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleBlocked), @"Blocked", @"nosign", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleBlocked, CYLScenarioLocalizedString(CYLScenarioL10nTextBlocked));
         }),
-        CYLStatic(@"内容已删除 · Deleted", @"Delete", @"trash", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleDelete, @"内容已被作者删除\nThis post was deleted");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleDeleted), @"Delete", @"trash", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleDelete, CYLScenarioLocalizedString(CYLScenarioL10nTextDeleted));
         }),
-        CYLRetry(@"图片加载失败 · Broken image", @"BrokenImage", @"photo", @"重新加载 · Reload", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleBrokenImage, @"图片加载失败\nThe image could not be loaded");
+        CYLRetry(CYLScenarioLocalizedString(CYLScenarioL10nTitleBrokenImage), @"BrokenImage", @"photo", CYLScenarioLocalizedString(CYLScenarioL10nActionReload), ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleBrokenImage, CYLScenarioLocalizedString(CYLScenarioL10nTextBrokenImage));
         }),
-        CYLStatic(@"暂无收藏 · No favorites", @"Favorite", @"heart", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleFavorite, @"还没有收藏任何内容\nNo favorites yet");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoFavorites), @"Favorite", @"heart", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleFavorite, CYLScenarioLocalizedString(CYLScenarioL10nTextNoFavorites));
         }),
-        CYLStatic(@"暂无订单 · No orders", @"Archive", @"shippingbox", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleArchive, @"暂无订单\nNo orders yet");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoOrders), @"Archive", @"shippingbox", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleArchive, CYLScenarioLocalizedString(CYLScenarioL10nTextNoOrders));
         }),
-        CYLStatic(@"收件箱为空 · Empty inbox", @"Inbox", @"envelope", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleInbox, @"收件箱为空\nYour inbox is empty");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleEmptyInbox), @"Inbox", @"envelope", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleInbox, CYLScenarioLocalizedString(CYLScenarioL10nTextEmptyInbox));
         }),
-        CYLStatic(@"无浏览记录 · No history", @"History", @"clock.arrow.circlepath", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleHistory, @"暂无浏览记录\nNo browsing history");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleNoHistory), @"History", @"clock.arrow.circlepath", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleHistory, CYLScenarioLocalizedString(CYLScenarioL10nTextNoHistory));
         }),
-        CYLStatic(@"日程已满 · Busy", @"EventBusy", @"calendar.badge.exclamationmark", ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleEventBusy, @"今天没有可预约的时间\nNo free slots today");
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleBusy), @"EventBusy", @"calendar.badge.exclamationmark", ^UIView *{
+            return CYLTextPlaceholder(CYLPlaceholderStyleEventBusy, CYLScenarioLocalizedString(CYLScenarioL10nTextBusy));
         }),
-        CYLStatic(@"自定义图片 · Custom image", @"initWithImage:text:", @"photo.on.rectangle", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleCustomImage), @"initWithImage:text:", @"photo.on.rectangle", ^UIView *{
             UIImage *image = [UIImage systemImageNamed:@"moon.zzz"
                                      withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:72]];
-            return [[CYLPlaceholderView alloc] initWithImage:image text:@"夜深了，明天再来看看\nCome back tomorrow"];
+            return [[CYLPlaceholderView alloc] initWithImage:image text:CYLScenarioLocalizedString(CYLScenarioL10nTextCustomImage)];
         }),
-        CYLStatic(@"角标 · Badge", @"showBadgeWithStyle:value:", @"app.badge", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitleBadge), @"showBadgeWithStyle:value:", @"app.badge", ^UIView *{
             CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleNotificationsOff
                                                                          message:CYLPlaceholderMessageNoNotifications];
             [view showBadgeWithStyle:CYLPlaceholderBadgeStyleNumber value:@"12"];
             return view;
         }),
-        CYLStatic(@"plist 配置 · Property list", @"initWithItemContentsOfURL:", @"doc.text", ^UIView *{
+        CYLStatic(CYLScenarioLocalizedString(CYLScenarioL10nTitlePlist), @"initWithItemContentsOfURL:", @"doc.text", ^UIView *{
             NSString *bundlePath = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
             NSString *root = bundlePath.stringByDeletingLastPathComponent.stringByDeletingLastPathComponent;
             NSURL *url = root ? [NSURL fileURLWithPath:[root stringByAppendingPathComponent:@"CYLPlaceholderItemDemo.plist"]] : nil;
@@ -158,67 +159,67 @@ static CYLScenario *CYLAnimation(NSString *fileName, NSString *title, CYLPlaceho
         }),
     ];
     NSArray *flows = @[
-        CYLMakeScenario(@"空 / 失败 / 断网 / 有数据切换", @"Switch states (issue #3)", @"arrow.triangle.2.circlepath",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleSwitchStates), @"reloadData #3", @"arrow.triangle.2.circlepath",
                         CYLScenarioFlowSwitchStates, nil, ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleEmpty, CYLPlaceholderMessageEmpty);
         }),
-        CYLMakeScenario(@"保留表头 · Keep table header", @"frameForPlaceHolderViewInTableView: (issue #17)", @"rectangle.topthird.inset.filled",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleKeepTableHeader), @"frameForPlaceHolderViewInTableView: #17", @"rectangle.topthird.inset.filled",
                         CYLScenarioFlowKeepTableHeader, nil, ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleSearchOff, CYLPlaceholderMessageNoResults);
         }),
-        CYLMakeScenario(@"保留分组头 · Keep section headers", @"Custom frame below section headers (issue #16)", @"list.bullet.indent",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleKeepSectionHeaders), @"rectForHeaderInSection: #16", @"list.bullet.indent",
                         CYLScenarioFlowKeepSectionHeaders, nil, ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleFolderOpen, CYLPlaceholderMessageEmpty);
         }),
-        CYLMakeScenario(@"下拉刷新 + 上拉加载 · Refresh controls", @"CYLRefresh stays above the placeholder (issue #8)", @"arrow.down.circle",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleRefreshControls), @"cyl_header + cyl_footer #8", @"arrow.down.circle",
                         CYLScenarioFlowRefreshControls, nil, ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStyleInbox, CYLPlaceholderMessageEmpty);
         }),
-        CYLMakeScenario(@"占位时可滚动 · Scrollable", @"enableScrollWhenPlaceHolderViewShowing", @"arrow.up.and.down",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleScrollable), @"enableScrollWhenPlaceHolderViewShowing", @"arrow.up.and.down",
                         CYLScenarioFlowScrollable, nil, ^UIView *{
-            return CYLTextPlaceholder(CYLPlaceholderStyleRefresh, @"下拉试试\nPull down to try");
+            return CYLTextPlaceholder(CYLPlaceholderStyleRefresh, CYLScenarioLocalizedString(CYLScenarioL10nTextPullToTry));
         }),
-        CYLMakeScenario(@"UICollectionView 占位", @"cyl_placeholderViewBlock: (issue #11)", @"square.grid.2x2",
+        CYLMakeScenario(CYLScenarioLocalizedString(CYLScenarioL10nTitleCollection), @"cyl_placeholderViewBlock: #11", @"square.grid.2x2",
                         CYLScenarioFlowCollectionView, nil, ^UIView *{
             return CYLMessagePlaceholder(CYLPlaceholderStylePhotoLibrary, CYLPlaceholderMessageEmpty);
         }),
     ];
     return @[
-        @{@"title": @"基础文案 · Built-in messages", @"items": basic},
-        @{@"title": @"业务场景 · Real-world cases", @"items": business},
-        @{@"title": @"交互流程 · Flows", @"items": flows},
+        @{@"title": CYLScenarioLocalizedString(CYLScenarioL10nSectionMessages), @"items": basic},
+        @{@"title": CYLScenarioLocalizedString(CYLScenarioL10nSectionCases), @"items": business},
+        @{@"title": CYLScenarioLocalizedString(CYLScenarioL10nSectionFlows), @"items": flows},
     ];
 }
 
 + (NSArray<NSDictionary *> *)animationSections {
     NSDictionary *legacyRive = @{@"legacy": @"1"};
     NSArray *lottie = @[
-        CYLAnimation(@"CYLPlaceholderLoading.json", @"加载中 · Loading", CYLPlaceholderStyleHourglass, nil),
-        CYLAnimation(@"CYLPlaceholderLoadingInfinity.json", @"同步中 · Syncing", CYLPlaceholderStyleRefresh, nil),
-        CYLAnimation(@"CYLPlaceholderEmpty.json", @"这里什么都没有 · Nothing here", CYLPlaceholderStyleEmpty, nil),
-        CYLAnimation(@"CYLPlaceholderEmptyCart.json", @"购物车为空 · Empty cart", CYLPlaceholderStyleEmptyCart, nil),
-        CYLAnimation(@"CYLPlaceholderNoDrafts.json", @"暂无草稿 · No drafts", CYLPlaceholderStyleFolderOpen, nil),
-        CYLAnimation(@"CYLPlaceholderNoFavorites.json", @"暂无收藏 · No favorites", CYLPlaceholderStyleFavorite, nil),
-        CYLAnimation(@"CYLPlaceholderLocation.json", @"正在定位 · Locating", CYLPlaceholderStyleLocationOff, nil),
-        CYLAnimation(@"CYLPlaceholderSuccess.json", @"提交成功 · Done", CYLPlaceholderStyleInfo, nil),
-        CYLAnimation(@"CYLPlaceholderCelebrate.json", @"全部完成 · All done", CYLPlaceholderStyleInfo, nil),
+        CYLAnimation(@"CYLPlaceholderLoading.json", CYLScenarioLocalizedString(CYLScenarioL10nTitleLoading), CYLPlaceholderStyleHourglass, nil),
+        CYLAnimation(@"CYLPlaceholderLoadingInfinity.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimSyncing), CYLPlaceholderStyleRefresh, nil),
+        CYLAnimation(@"CYLPlaceholderEmpty.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimNothingHere), CYLPlaceholderStyleEmpty, nil),
+        CYLAnimation(@"CYLPlaceholderEmptyCart.json", CYLScenarioLocalizedString(CYLScenarioL10nTitleEmptyCart), CYLPlaceholderStyleEmptyCart, nil),
+        CYLAnimation(@"CYLPlaceholderNoDrafts.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimNoDrafts), CYLPlaceholderStyleFolderOpen, nil),
+        CYLAnimation(@"CYLPlaceholderNoFavorites.json", CYLScenarioLocalizedString(CYLScenarioL10nTitleNoFavorites), CYLPlaceholderStyleFavorite, nil),
+        CYLAnimation(@"CYLPlaceholderLocation.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimLocating), CYLPlaceholderStyleLocationOff, nil),
+        CYLAnimation(@"CYLPlaceholderSuccess.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimDone), CYLPlaceholderStyleInfo, nil),
+        CYLAnimation(@"CYLPlaceholderCelebrate.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimAllDone), CYLPlaceholderStyleInfo, nil),
     ];
     NSArray *pag = @[
-        CYLAnimation(@"CYLPlaceholderLoading.pag", @"加载中 · Loading", CYLPlaceholderStyleHourglass, nil),
-        CYLAnimation(@"CYLPlaceholderNoFavorites.pag", @"暂无点赞 · No likes", CYLPlaceholderStyleFavorite, nil),
-        CYLAnimation(@"CYLPlaceholderPullHint.pag", @"下拉刷新 · Pull to refresh", CYLPlaceholderStyleRefresh, nil),
-        CYLAnimation(@"CYLPlaceholderProgress.pag", @"处理中 · Processing", CYLPlaceholderStyleHourglass, nil),
+        CYLAnimation(@"CYLPlaceholderLoading.pag", CYLScenarioLocalizedString(CYLScenarioL10nTitleLoading), CYLPlaceholderStyleHourglass, nil),
+        CYLAnimation(@"CYLPlaceholderNoFavorites.pag", CYLScenarioLocalizedString(CYLScenarioL10nAnimNoLikes), CYLPlaceholderStyleFavorite, nil),
+        CYLAnimation(@"CYLPlaceholderPullHint.pag", CYLScenarioLocalizedString(CYLScenarioL10nAnimPullToRefresh), CYLPlaceholderStyleRefresh, nil),
+        CYLAnimation(@"CYLPlaceholderProgress.pag", CYLScenarioLocalizedString(CYLScenarioL10nAnimProcessing), CYLPlaceholderStyleHourglass, nil),
     ];
     NSArray *rive = @[
-        CYLAnimation(@"CYLPlaceholderLoading.riv", @"加载中 · Loading", CYLPlaceholderStyleHourglass, legacyRive),
-        CYLAnimation(@"CYLPlaceholderPullToRefresh.riv", @"下拉刷新 · Pull to refresh", CYLPlaceholderStyleRefresh, legacyRive),
-        CYLAnimation(@"CYLPlaceholderSuccess.riv", @"提交成功 · Done", CYLPlaceholderStyleInfo,
+        CYLAnimation(@"CYLPlaceholderLoading.riv", CYLScenarioLocalizedString(CYLScenarioL10nTitleLoading), CYLPlaceholderStyleHourglass, legacyRive),
+        CYLAnimation(@"CYLPlaceholderPullToRefresh.riv", CYLScenarioLocalizedString(CYLScenarioL10nAnimPullToRefresh), CYLPlaceholderStyleRefresh, legacyRive),
+        CYLAnimation(@"CYLPlaceholderSuccess.riv", CYLScenarioLocalizedString(CYLScenarioL10nAnimDone), CYLPlaceholderStyleInfo,
                      @{@"stateMachine": @"State Machine 1"}),
-        CYLAnimation(@"CYLPlaceholderNoOrders.riv", @"暂无物流 · No shipments", CYLPlaceholderStyleArchive, legacyRive),
-        CYLAnimation(@"CYLPlaceholderNoReviews.riv", @"暂无评价 · No reviews", CYLPlaceholderStyleFavorite, legacyRive),
+        CYLAnimation(@"CYLPlaceholderNoOrders.riv", CYLScenarioLocalizedString(CYLScenarioL10nAnimNoShipments), CYLPlaceholderStyleArchive, legacyRive),
+        CYLAnimation(@"CYLPlaceholderNoReviews.riv", CYLScenarioLocalizedString(CYLScenarioL10nAnimNoReviews), CYLPlaceholderStyleFavorite, legacyRive),
     ];
     NSArray *gif = @[
-        CYLAnimation(@"CYLPlaceholderUploading.gif", @"上传中 · Uploading", CYLPlaceholderStyleUploadOff, nil),
+        CYLAnimation(@"CYLPlaceholderUploading.gif", CYLScenarioLocalizedString(CYLScenarioL10nAnimUploading), CYLPlaceholderStyleUploadOff, nil),
     ];
     return @[
         @{@"title": @"Lottie · CYLTableViewPlaceHolder/LottieSwift", @"items": lottie},
@@ -229,7 +230,7 @@ static CYLScenario *CYLAnimation(NSString *fileName, NSString *title, CYLPlaceho
 }
 
 + (CYLScenario *)celebrationScenario {
-    return CYLAnimation(@"CYLPlaceholderCelebrate.json", @"发布成功 · Published", CYLPlaceholderStyleInfo, nil);
+    return CYLAnimation(@"CYLPlaceholderCelebrate.json", CYLScenarioLocalizedString(CYLScenarioL10nAnimPublished), CYLPlaceholderStyleInfo, nil);
 }
 
 @end

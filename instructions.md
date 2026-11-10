@@ -119,8 +119,13 @@ only.
 
   Code uses only these macros, never raw key strings or literal text. One key
   macro per string; the lookup macro names its table.
-- The example's languages follow the core bundle's list where practical, and a
-  test or script checks that every language has every key.
+- The example's languages follow the core bundle's list where practical.
+  `scripts/check_localizations.py` (CI job "Localization files") checks every
+  bundle in the repository: same keys and format specifiers in every language,
+  macros that match the keys, and no loose `.strings` files. Run it before
+  committing a localization change.
+- API, file and subspec names shown as technical hints are identifiers, not
+  text, and stay as literals.
 
 ### Other platforms
 

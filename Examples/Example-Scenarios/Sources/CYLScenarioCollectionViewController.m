@@ -4,6 +4,7 @@
 //
 
 #import "CYLScenarioCollectionViewController.h"
+#import "CYLScenarioLocalization.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 static NSString *const CYLGridCellIdentifier = @"photo";
@@ -33,7 +34,7 @@ static NSString *const CYLGridCellIdentifier = @"photo";
     [super viewDidLoad];
     self.collectionView.backgroundColor = UIColor.systemBackgroundColor;
     [self.collectionView registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:CYLGridCellIdentifier];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加 · Add"
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:CYLScenarioLocalizedString(CYLScenarioL10nActionAdd)
         style:UIBarButtonItemStylePlain target:self action:@selector(toggleItems)];
     __weak typeof(self) weakSelf = self;
     [self.collectionView cyl_placeholderViewBlock:^UIView *(UICollectionView *collectionView) {
@@ -44,7 +45,7 @@ static NSString *const CYLGridCellIdentifier = @"photo";
 
 - (void)toggleItems {
     self.items = self.items > 0 ? 0 : 18;
-    self.navigationItem.rightBarButtonItem.title = self.items > 0 ? @"清空 · Clear" : @"添加 · Add";
+    self.navigationItem.rightBarButtonItem.title = self.items > 0 ? CYLScenarioLocalizedString(CYLScenarioL10nActionClear) : CYLScenarioLocalizedString(CYLScenarioL10nActionAdd);
     [self.collectionView reloadData];
 }
 

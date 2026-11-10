@@ -4,6 +4,7 @@
 //
 
 #import "CYLFeedViewController.h"
+#import "CYLScenarioLocalization.h"
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 typedef NS_ENUM(NSInteger, CYLFeedState) {
@@ -46,7 +47,7 @@ static NSString *const CYLFeedCellIdentifier = @"feed";
 - (UIView *)placeholderForState {
     if (self.state == CYLFeedStateLoading) {
         NSMutableDictionary *attributes = [@{
-            CYLPlaceholderItemTitle: [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageLoading] ?: @"Loading",
+            CYLPlaceholderItemTitle: [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageLoading] ?: CYLScenarioLocalizedString(CYLScenarioL10nTitleLoading),
             CYLPlaceholderItemStyle: @(CYLPlaceholderStyleHourglass),
             CYLPlaceholderItemAnimationSize: @[@200, @120],
         } mutableCopy];
@@ -63,7 +64,7 @@ static NSString *const CYLFeedCellIdentifier = @"feed";
     [container addSubview:failed];
     UIButton *retry = [UIButton buttonWithType:UIButtonTypeSystem];
     UIButtonConfiguration *configuration = [UIButtonConfiguration filledButtonConfiguration];
-    configuration.title = @"重试 · Retry";
+    configuration.title = CYLScenarioLocalizedString(CYLScenarioL10nActionRetry);
     configuration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
     retry.configuration = configuration;
     retry.translatesAutoresizingMaskIntoConstraints = NO;
@@ -131,8 +132,8 @@ static NSString *const CYLFeedCellIdentifier = @"feed";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CYLFeedCellIdentifier forIndexPath:indexPath];
     UIListContentConfiguration *content = [UIListContentConfiguration subtitleCellConfiguration];
-    content.text = [NSString stringWithFormat:@"动态 · Post %ld", (long)indexPath.row + 1];
-    content.secondaryText = @"下拉刷新会交替失败，展示错误占位图 · Every other refresh fails";
+    content.text = [NSString stringWithFormat:CYLScenarioLocalizedString(CYLScenarioL10nFormatPost), (long)indexPath.row + 1];
+    content.secondaryText = CYLScenarioLocalizedString(CYLScenarioL10nTextFeedHint);
     content.image = [UIImage systemImageNamed:@"person.crop.circle"];
     cell.contentConfiguration = content;
     return cell;
