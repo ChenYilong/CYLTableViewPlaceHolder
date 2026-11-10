@@ -56,26 +56,83 @@ and verify the result builds. Do not overwrite existing project assets.
 
 ## Localization
 
-All localization files and images of the library live in one resource bundle,
-`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle`.
-There is no other `.bundle`; `CYLRefresh.bundle` was merged into it.
+Localization is always several files: one per language, often several tables
+per language. Never leave them loose in a target or folder; package them in a
+defined file structure.
 
-- Each component has its own strings table so keys cannot collide: the
-  placeholder uses `<language>.lproj/Localizable.strings` (`CYLPlaceholder…`
-  keys) and the refresh component uses `<language>.lproj/CYLRefresh.strings`
-  (`CYLRefresh…` keys). A new component adds its own table in the same bundle.
-- Both tables support the same languages: `en`, `zh-Hans`, `zh-Hant`, `ja`,
-  `ko`, `ru`, `uk`. Adding a key means adding it to every language; adding a
-  language means adding both tables and listing it in
+### iOS: `.lproj` folders inside a `.bundle`
+
+- Put each language's files in a `<language>.lproj` folder and all of those
+  folders in one `.bundle`. One bundle may hold several strings tables; give
+  each component its own table (`<Table>.strings`) so keys cannot collide.
+- Several bundles are allowed, one per owner (library, example). Never add
+  loose `.strings`, `.stringsdict` or `.xcstrings` files to a target, and never
+  put one owner's strings in another owner's bundle.
+- Keep `.strings` files UTF-8, one `"key" = "value";` per line. Every language
+  of a table has every key of `en`; add a test that checks it.
+- Do not hard-code user-facing text in code; read it from the bundle with a
+  fallback.
+
+### The core bundle is permanent
+
+`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle`
+is the library's bundle. Always keep it and update it cautiously: apps copy it
+in manual integrations, look it up by name, and override its tables through
+`CYLRefreshConfig` (`i18nBundle`, `i18nFilename`).
+
+- Changes are additive: new keys, languages or tables. Do not rename or remove
+  the bundle, a table or a key without assessing compatibility, getting
+  approval, and writing migration notes in `README.md`.
+- Current tables: `<language>.lproj/Localizable.strings` (placeholder,
+  `CYLPlaceholder…` keys) and `<language>.lproj/CYLRefresh.strings` (refresh,
+  `CYLRefresh…` keys; key constants in `CYLRefreshConst.h`). `CYLRefresh.bundle`
+  was merged into this bundle.
+- Both tables support `en`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `ru`, `uk`.
+  Adding a language means adding both tables and listing it in
   `CYLPlaceholderLocalizedString` (`CYLPlaceholderView.m`) and
   `cyl_defaultI18nBundleWithLanguage:` (`NSBundle+CYLRefresh.m`).
   `testPlaceholderLocalizationsHaveAllMessageKeys` and
   `testRefreshResourcesLiveInTheSingleLibraryBundle` check every key in every
   language.
-- Do not hard-code user-facing text in library code; read it from the bundle
-  with a fallback. Keep `.strings` files UTF-8, one `"key" = "value";` per line.
-- Resources go into the podspec `resources`, the Xcode project's Copy Bundle
-  Resources phases, and the test runners only through this bundle.
+- Library resources reach the podspec `resources`, the Xcode project's Copy
+  Bundle Resources phases and the test runners only through this bundle.
+- Only the library's own text belongs here; example text never does.
+
+### Example-level bundles, always with macros
+
+Each example keeps its own text in its own bundle inside the example folder,
+for example `Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/
+<language>.lproj/CYLScenarioExample.strings`, added to that example's target
+only.
+
+- Always create a localization header next to it that defines macros, so the
+  mapping between code, keys and translations is in one place and easy to
+  search, review and translate:
+
+  ```objc
+  // CYLScenarioLocalization.h
+  #define CYLScenarioLocalizedString(key) \
+      [CYLScenarioLocalizationBundle() localizedStringForKey:(key) value:(key) table:@"CYLScenarioExample"]
+  #define CYLScenarioL10nEmptyTitle      @"CYLScenarioEmptyTitle"
+  #define CYLScenarioL10nRetry           @"CYLScenarioRetry"
+  ```
+
+  Code uses only these macros, never raw key strings or literal text. One key
+  macro per string; the lookup macro names its table.
+- The example's languages follow the core bundle's list where practical, and a
+  test or script checks that every language has every key.
+
+### Other platforms
+
+Apply the same structure: per-language files grouped in one resource
+container per owner, the library's container kept and changed additively, each
+example with its own container, and a single generated or hand-written key map.
+
+- Android: `res/values-<locale>/strings.xml` in the library module and in each
+  sample app module; `R.string.*` is the key map.
+- Flutter: `lib/l10n/*.arb` per package with the generated localizations class.
+- Web and React Native: a `locales/<locale>.json` folder per package with one
+  exported constant object of keys.
 
 ## Bundled animations
 

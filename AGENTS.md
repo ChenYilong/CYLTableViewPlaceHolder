@@ -36,12 +36,15 @@ the integrated `CYLRefresh` component, and an example application. Read
 - The example compiles local refresh sources directly and does not require the
   former external refresh Pod. Keep the source files, the resource bundle,
   privacy manifest, and third-party license in both the project and podspec.
-- All localization files and images live in one resource bundle,
-  `CYLTableViewPlaceHolder.bundle`: placeholder strings in
-  `<language>.lproj/Localizable.strings`, refresh strings in
-  `<language>.lproj/CYLRefresh.strings`. Do not add another `.bundle`, loose
-  `.strings` files, or hard-coded user-facing text. Every language must have
-  every key of `en`. See "Localization" in `instructions.md`.
+- Localization is several files and always needs a file structure: on iOS,
+  `<language>.lproj` folders inside a `.bundle`, never loose `.strings` files
+  or hard-coded user-facing text. Several bundles are allowed, one per owner.
+  The core bundle, `CYLTableViewPlaceHolder.bundle` (placeholder table
+  `Localizable.strings`, refresh table `CYLRefresh.strings`), always stays and
+  changes only additively. Each example keeps its text in its own bundle in the
+  example folder, read through macros defined in a localization header. Every
+  language must have every key of `en`. Other platforms follow the same
+  structure. See "Localization" in `instructions.md`.
 - Ready-made placeholder animations live in
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
   Add only files with a redistributable license, unmodified, and record each
