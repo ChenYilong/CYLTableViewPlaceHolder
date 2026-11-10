@@ -1,4 +1,5 @@
 #import "CYLPlaceholderView.h"
+#import "CYLPlaceholderLocalization.h"
 #import "CYLPlaceholderItemAnimationService.h"
 
 static NSArray<NSString *> *CYLPlaceholderAppearanceKeys(void);
@@ -67,6 +68,13 @@ NSString *const CYLPlaceholderItemGIFFilePath = @"CYLTabBarGIFFilePath";
 NSString *const CYLPlaceholderItemGIFSize = @"CYLTabBarGIFSize";
 NSString *const CYLPlaceholderItemGIFDarkURL = @"CYLTabBarGIFDarkURL";
 NSString *const CYLPlaceholderItemGIFDarkFilePath = @"CYLTabBarGIFDarkFilePath";
+NSString *const CYLPlaceholderItemTitleBackgroundImage = @"CYLPlaceholderItemTitleBackgroundImage";
+NSString *const CYLPlaceholderItemTitleBackgroundColor = @"CYLPlaceholderItemTitleBackgroundColor";
+NSString *const CYLPlaceholderItemTitleBorderColor = @"CYLPlaceholderItemTitleBorderColor";
+NSString *const CYLPlaceholderItemTitleBorderWidth = @"CYLPlaceholderItemTitleBorderWidth";
+NSString *const CYLPlaceholderItemTitleCornerRadius = @"CYLPlaceholderItemTitleCornerRadius";
+NSString *const CYLPlaceholderItemTitleContentInsets = @"CYLPlaceholderItemTitleContentInsets";
+NSString *const CYLPlaceholderItemTitleMinimumWidth = @"CYLPlaceholderItemTitleMinimumWidth";
 
 static NSBundle *CYLPlaceholderResourceBundle(void) {
     NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
@@ -78,22 +86,6 @@ static NSBundle *CYLPlaceholderResourceBundle(void) {
 }
 
 static NSString *const CYLPlaceholderAnimationsDirectory = @"Animations";
-
-static NSString *CYLPlaceholderLocalizedString(NSString *key, NSString *fallback) {
-    NSBundle *bundle = CYLPlaceholderResourceBundle();
-    if (!bundle) return fallback;
-    // Same languages as the refresh component; both tables live in CYLTableViewPlaceHolder.bundle.
-    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"];
-    NSString *language = [NSBundle preferredLocalizationsFromArray:languages
-                                                    forPreferences:NSLocale.preferredLanguages].firstObject;
-    NSString *path = [bundle pathForResource:language ofType:@"lproj"];
-    NSBundle *localizedBundle = path ? [NSBundle bundleWithPath:path] : nil;
-    if (!localizedBundle) {
-        NSLog(@"CYLTableViewPlaceHolder: localization %@ is missing.", language);
-        return fallback;
-    }
-    return [localizedBundle localizedStringForKey:key value:fallback table:nil];
-}
 
 static NSError *CYLPlaceholderConfigurationError(NSString *description) {
     return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:1
@@ -314,6 +306,13 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 @property (nonatomic) CGSize animationSize;
 @property (nonatomic, strong) UILabel *badgeLabel;
 @property (nonatomic) CGPoint badgeCenterOffset;
+// Title chrome (CYLPlaceholderItemTitle... keys); nil background view means a plain title.
+@property (nonatomic, strong) UIImageView *titleBackgroundView;
+@property (nonatomic) UIEdgeInsets titleContentInsets;
+@property (nonatomic) CGFloat titleMinimumWidth;
+@property (nonatomic) CGFloat titleCornerRadius;
+@property (nonatomic, strong) UIColor *titleBorderColor;
+@property (nonatomic) CGFloat titleBorderWidth;
 @end
 
 @implementation CYLPlaceholderItemView
@@ -345,27 +344,54 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         [self.imageView sizeToFit];
     }
 
+    // [EN] Title chrome (background, border, padding) applies only to a shown title; with zero insets the layout is
+    // the same as without chrome.
+    // [CN] 标题装饰（背景、边框、内边距）只作用于显示中的标题；内边距为零时布局与没有装饰时相同。
+    UIEdgeInsets titleInsets = isShowTitleLabel ? self.titleContentInsets : UIEdgeInsetsZero;
+    CGFloat titleAreaWidth = MAX(0, CGRectGetWidth(self.bounds) - titleInsets.left - titleInsets.right);
     NSString *title = isShowTitleLabel ? self.titleLabel.text : @"height";
-    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX)
+    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(titleAreaWidth, CGFLOAT_MAX)
                                            options:NSStringDrawingUsesLineFragmentOrigin
                                         attributes:@{NSFontAttributeName: self.titleLabel.font}
                                            context:nil].size;
-    CGFloat titleLabelWidth = MIN(CGRectGetWidth(self.bounds), ceil(titleSize.width));
+    CGFloat titleLabelWidth = MIN(titleAreaWidth, ceil(titleSize.width));
     CGFloat titleLabelHeight = ceil(titleSize.height);
     CGFloat titleLabelX = (CGRectGetWidth(self.bounds) - titleLabelWidth) / 2;
-    CGFloat titleLabelY = CGRectGetHeight(self.bounds) - titleLabelHeight - 2;
-    if (!isShowImageView) titleLabelY = (CGRectGetHeight(self.bounds) - titleLabelHeight) / 2;
+    CGFloat titleLabelY = CGRectGetHeight(self.bounds) - titleLabelHeight - 2 - titleInsets.bottom;
+    if (!isShowImageView) {
+        titleLabelY = titleInsets.top +
+            (CGRectGetHeight(self.bounds) - titleInsets.top - titleInsets.bottom - titleLabelHeight) / 2;
+    }
     // The item's own offset wins, else the appearance's, as in CYLFlatDesignTabBarButton.
     UIOffset titleOffset = UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.appearanceTitleOffset : self.itemTitleOffset;
     titleLabelX += titleOffset.horizontal;
     titleLabelY += titleOffset.vertical;
     self.titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelWidth, titleLabelHeight);
+    if (self.titleBackgroundView) {
+        self.titleBackgroundView.hidden = !isShowTitleLabel;
+        if (isShowTitleLabel) {
+            CGFloat chromeWidth = MIN(CGRectGetWidth(self.bounds),
+                                      MAX(titleLabelWidth + titleInsets.left + titleInsets.right, self.titleMinimumWidth));
+            CGRect chrome = CGRectMake(CGRectGetMidX(self.titleLabel.frame) - chromeWidth / 2,
+                                       CGRectGetMinY(self.titleLabel.frame) - titleInsets.top,
+                                       chromeWidth, titleLabelHeight + titleInsets.top + titleInsets.bottom);
+            self.titleBackgroundView.frame = chrome;
+            self.titleBackgroundView.layer.cornerRadius = MIN(MAX(0, self.titleCornerRadius), CGRectGetHeight(chrome) / 2);
+            self.titleBackgroundView.layer.borderWidth = self.titleBorderWidth;
+            UIColor *borderColor = self.titleBorderColor;
+            if (@available(iOS 13.0, *)) {
+                borderColor = [borderColor resolvedColorWithTraitCollection:self.traitCollection];
+            }
+            self.titleBackgroundView.layer.borderColor = borderColor.CGColor;
+            [self insertSubview:self.titleBackgroundView belowSubview:self.titleLabel];
+        }
+    }
 
     if (isShowImageView) {
         CGFloat imageViewWidth = CGRectGetWidth(self.imageView.frame);
         CGFloat imageViewHeight = CGRectGetHeight(self.imageView.frame);
         CGFloat imageViewX = (CGRectGetWidth(self.bounds) - imageViewWidth) / 2;
-        CGFloat imageViewY = (CGRectGetMinY(self.titleLabel.frame) - imageViewHeight) / 2;
+        CGFloat imageViewY = (CGRectGetMinY(self.titleLabel.frame) - titleInsets.top - imageViewHeight) / 2;
         if (!isShowTitleLabel) imageViewY = (CGRectGetHeight(self.bounds) - imageViewHeight) / 2;
         imageViewX += self.itemImageOffset.horizontal;
         imageViewY += self.itemImageOffset.vertical;
@@ -585,7 +611,8 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     NSMutableDictionary *colors = [NSMutableDictionary dictionary];
     for (NSString *key in @[CYLPlaceholderItemTitleColor, CYLPlaceholderItemIconColor, CYLPlaceholderItemBackgroundColor,
                              CYLPlaceholderItemSelectedTitleColor, CYLPlaceholderItemSelectedIconColor,
-                             CYLPlaceholderItemSelectedBackgroundColor]) {
+                             CYLPlaceholderItemSelectedBackgroundColor, CYLPlaceholderItemTitleBackgroundColor,
+                             CYLPlaceholderItemTitleBorderColor]) {
         if (attributes[key]) {
             UIColor *color = CYLPlaceholderColor(attributes[key]);
             if (!color) {
@@ -648,9 +675,55 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
             return nil;
         }
     }
+    id titleBackgroundImageValue = attributes[CYLPlaceholderItemTitleBackgroundImage];
+    UIImage *titleBackgroundImage = titleBackgroundImageValue ?
+        CYLPlaceholderConfiguredImage(titleBackgroundImageValue, imageBundle) : nil;
+    if (titleBackgroundImageValue && !titleBackgroundImage) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The title background image could not be loaded.");
+        return nil;
+    }
+    CGFloat titleChromeNumbers[3] = {0, 0, 0};
+    NSArray<NSString *> *titleChromeNumberKeys = @[CYLPlaceholderItemTitleBorderWidth, CYLPlaceholderItemTitleCornerRadius,
+                                                   CYLPlaceholderItemTitleMinimumWidth];
+    for (NSUInteger index = 0; index < titleChromeNumberKeys.count; index++) {
+        id value = attributes[titleChromeNumberKeys[index]];
+        if (!value) continue;
+        if (![value isKindOfClass:NSNumber.class] || !isfinite([value doubleValue]) ||
+            [value doubleValue] < 0 || [value doubleValue] > 1000) {
+            if (error) *error = CYLPlaceholderConfigurationError([NSString stringWithFormat:@"Invalid value for %@.",
+                                                                  titleChromeNumberKeys[index]]);
+            return nil;
+        }
+        titleChromeNumbers[index] = [value doubleValue];
+    }
+    UIEdgeInsets titleContentInsets = UIEdgeInsetsZero;
+    id titleInsetsValue = attributes[CYLPlaceholderItemTitleContentInsets];
+    if (titleInsetsValue && (!CYLPlaceholderInsets(titleInsetsValue, &titleContentInsets) ||
+        titleContentInsets.top < 0 || titleContentInsets.left < 0 ||
+        titleContentInsets.bottom < 0 || titleContentInsets.right < 0)) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"Invalid title content insets.");
+        return nil;
+    }
+    BOOL hasTitleChrome = titleBackgroundImage || colors[CYLPlaceholderItemTitleBackgroundColor] ||
+        colors[CYLPlaceholderItemTitleBorderColor] || titleChromeNumbers[0] > 0 || titleChromeNumbers[1] > 0 ||
+        titleChromeNumbers[2] > 0 || !UIEdgeInsetsEqualToEdgeInsets(titleContentInsets, UIEdgeInsetsZero);
     self = [self initWithImage:image text:title];
     if (self) {
         _itemAttributes = [attributes copy];
+        if (hasTitleChrome) {
+            UIImageView *chrome = [[UIImageView alloc] initWithImage:titleBackgroundImage];
+            chrome.contentMode = UIViewContentModeScaleToFill;
+            chrome.backgroundColor = colors[CYLPlaceholderItemTitleBackgroundColor];
+            chrome.clipsToBounds = YES;
+            chrome.isAccessibilityElement = NO;
+            self.itemView.titleBackgroundView = chrome;
+            [self.itemView insertSubview:chrome belowSubview:self.textLabel];
+            self.itemView.titleBorderColor = colors[CYLPlaceholderItemTitleBorderColor];
+            self.itemView.titleBorderWidth = titleChromeNumbers[0];
+            self.itemView.titleCornerRadius = titleChromeNumbers[1];
+            self.itemView.titleMinimumWidth = titleChromeNumbers[2];
+            self.itemView.titleContentInsets = titleContentInsets;
+        }
         _animationImageBundle = imageBundle;
         _selectedImage = selectedImage;
         _selectedTitle = [selectedTitle copy];
@@ -1112,21 +1185,54 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     [self setNeedsLayout];
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    if (CGRectIsEmpty(self.bounds)) return;
+/// The item's content (image or animation, gap, title with its chrome) measured for a width, shared by the layout and
+/// the intrinsic content size so the two cannot disagree.
+- (CGSize)cyl_itemSizeForWidth:(CGFloat)width {
     BOOL showAnimation = self.itemView.animationView && (!self.imageView.image || !self.imageView.hidden);
     BOOL hasImage = (self.imageView.image != nil && !self.imageView.hidden) || showAnimation;
     BOOL hasTitle = self.textLabel.text.length > 0 && !self.textLabel.hidden;
-    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 32);
-    CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
+    UIEdgeInsets insets = hasTitle ? self.itemView.titleContentInsets : UIEdgeInsetsZero;
+    CGFloat textWidth = MAX(0, width - insets.left - insets.right);
+    CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(textWidth, CGFLOAT_MAX)
         options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
-    CGFloat imageHeight = showAnimation ? self.itemView.animationSize.height :
-        (hasImage ? self.imageView.image.size.height : 0);
-    CGFloat itemHeight = imageHeight + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0);
+    CGSize imageSize = showAnimation ? self.itemView.animationSize :
+        (hasImage ? self.imageView.image.size : CGSizeZero);
+    CGFloat height = imageSize.height + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0);
+    CGFloat titleWidth = 0;
+    if (hasTitle) {
+        height += insets.top + insets.bottom;
+        titleWidth = MAX(ceil(titleSize.width) + insets.left + insets.right, self.itemView.titleMinimumWidth);
+    }
+    return CGSizeMake(MAX(imageSize.width, titleWidth), height);
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (CGRectIsEmpty(self.bounds)) return;
+    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 32);
+    CGFloat itemHeight = [self cyl_itemSizeForWidth:width].height;
     self.itemView.frame = CGRectMake((CGRectGetWidth(self.bounds) - width) / 2,
         (CGRectGetHeight(self.bounds) - itemHeight) / 2, width, itemHeight);
     [self.itemView setNeedsLayout];
+}
+
+- (CGSize)intrinsicContentSize {
+    if (!self.reportsContentSize) return [super intrinsicContentSize];
+    CGFloat maxWidth = self.preferredMaxLayoutWidth > 0 ? self.preferredMaxLayoutWidth : CGRectGetWidth(UIScreen.mainScreen.bounds);
+    CGSize size = [self cyl_itemSizeForWidth:MAX(0, maxWidth - 32)];
+    if (size.height <= 0) return CGSizeZero;
+    return CGSizeMake(MIN(maxWidth, ceil(size.width) + 32), ceil(size.height));
+}
+
+- (void)setReportsContentSize:(BOOL)reportsContentSize {
+    _reportsContentSize = reportsContentSize;
+    [self invalidateIntrinsicContentSize];
+}
+
+- (void)setPreferredMaxLayoutWidth:(CGFloat)preferredMaxLayoutWidth {
+    if (_preferredMaxLayoutWidth == preferredMaxLayoutWidth) return;
+    _preferredMaxLayoutWidth = preferredMaxLayoutWidth;
+    [self invalidateIntrinsicContentSize];
 }
 
 // GIF frame timing adapted from CYLGIFTabBarItemAnimator, CYLTabBarController (MIT).

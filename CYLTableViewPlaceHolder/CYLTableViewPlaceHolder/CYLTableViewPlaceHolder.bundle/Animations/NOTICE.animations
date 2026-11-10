@@ -123,3 +123,84 @@ CYLPlaceholderUploading.gif
   path:    Example-GIF/GIFApp/Resources/tab_rocket.gif
   license: MIT (../LICENSE.CYLTabBarController)
   sha256:  1857f59624bc5a6a579ce9c9ae68885a17834da704a63c601ecbbf18a33f854a
+
+Line icons from useAnimations (MIT). They draw black strokes on a 32 x 32 canvas; the scenarios scale them and tint
+them through Lottie keypath colors.
+
+CYLPlaceholderNoInternet.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/wifiOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  08b9dc7ca30a8a52f7621e7e2a03df794975a4363bb8290b35ac98f6235f9511
+
+CYLPlaceholderLoadFailed.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/alertCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  44c61ede9d21bc71dfdf0283985549898cff767e83f619375ee6553fcb5781b2
+
+CYLPlaceholderServerError.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/server.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  2e36fbc857da2d313001cce997222916f568440c64dd0afb54057521a8b7e9bb
+
+CYLPlaceholderRefresh.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d45036f9c9af5ce0f1070300170bc505af3ee1eadcf85879b4bac83e1f7c066e
+
+CYLPlaceholderNoResults.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/searchToX.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  de5a5c24bd652571b707e447c95a39a83123701ffb1b351ea0411109f820a718
+
+CYLPlaceholderNoPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/lock.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  83ceee9f6a3efe301226f92371529194a3c7620863ddbf140e4f86f7d801eeff
+
+CYLPlaceholderContactSupport.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/headphones.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  26323794dc284b1b707e83bbbeecc92911493b5d4214cbe57173afa857e9e244
+
+CYLPlaceholderNoMessages.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/inbox.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  a2998f6e73eadd26a9d71b7f63d094f173df76ff7ff94920b6d99ea4b0358adc
+
+CYLPlaceholderNoNotifications.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/notification.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d3ded55782dbbbb983119fd3c701663389290bbdcdd94b7ed2db562b92244fa5
+
+CYLPlaceholderSad.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/frown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  216edab5ddc268b02ed757412f267a262ce324136a5203c34c0bcd0f3310c909
+
+CYLPlaceholderCloudOff.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/cloudOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  7c57b2778c3c2adb3a2f3048f3e4193931cd5a04735b140190c40d6de5f0b881
+
+CYLPlaceholderTapHint.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/chevronsDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  c99ecb8f64b36d2805db4b39d11a9cbea1aa20c109d4885189db23b978af4528
+
+CYLPlaceholderSettings.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/settings.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  379db9d7b1788b1c6977fc40e1d06db6a0426f5ec8018659fb42940a7ab41ae1

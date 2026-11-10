@@ -160,6 +160,17 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFFilePath;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFSize;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkFilePath;
+/// Title chrome, for components that read as buttons (see CYLPlaceholderStackView): an image (UIImage or name, drawn
+/// stretched; give it cap insets for a resizable look) or color behind the title, a border, a corner radius (clamped to
+/// half the height, so a large value draws a capsule), padding around the text (insets: array, dictionary or NSValue)
+/// and a minimum width (points). Without these keys the title stays plain text and the layout is unchanged.
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleBackgroundImage;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleBackgroundColor;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleBorderColor;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleBorderWidth;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleCornerRadius;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleContentInsets;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleMinimumWidth;
 
 /// Animation views supplied by custom factories must invoke handlers on the main thread.
 @protocol CYLPlaceholderAnimationPlayer <NSObject>
@@ -225,6 +236,13 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 /// Original item attributes. Local GIF animations play once when the view enters a window.
 /// Optional Lottie, PAG and Rive backends require their corresponding CocoaPods subspec.
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *itemAttributes;
+/// NO (the default): the view fills the frame it is given and centers its content, as before. YES: it also reports its
+/// content size as `intrinsicContentSize`, so a UIStackView or Auto Layout can size it. CYLPlaceholderStackView sets it
+/// on its components.
+@property (nonatomic) BOOL reportsContentSize;
+/// The widest the content may be when `reportsContentSize` is YES, padding included; 0 uses the screen width. Long
+/// titles wrap within it.
+@property (nonatomic) CGFloat preferredMaxLayoutWidth;
 /// Registers or removes a factory for a local file extension, without a leading dot.
 /// Extensions are case-insensitive. GIF remains reserved for the built-in decoder.
 /// Existing views keep their current player until their configuration is reloaded.

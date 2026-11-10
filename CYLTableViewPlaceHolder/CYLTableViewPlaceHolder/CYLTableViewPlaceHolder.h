@@ -11,4 +11,7 @@
 #import "UITableView+CYLPlaceholder.h"
 #import "UICollectionView+CYLPlaceholder.h"
 #import "CYLPlaceholderView.h"
+#import "CYLPlaceholderLocalization.h"
+#import "CYLPlaceholderScenario.h"
+#import "CYLPlaceholderStackView.h"
 #import "CYLRefresh.h"

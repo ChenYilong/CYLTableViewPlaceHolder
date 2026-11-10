@@ -23,10 +23,13 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     # Any newer API the suite or the library uses without @available fails the build at a low deployment target.
     config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Werror=unguarded-availability-new'
   end
-  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
+  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
