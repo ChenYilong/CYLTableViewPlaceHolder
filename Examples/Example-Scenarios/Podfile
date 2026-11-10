@@ -1,0 +1,19 @@
+platform :ios, '15.0'
+ENV['SWIFT_VERSION'] = '5'
+project 'Example-Scenarios.xcodeproj'
+use_frameworks!
+
+target 'ExampleScenarios' do
+  # Every animation engine, so the demo can play the bundled Lottie, PAG, Rive and GIF placeholders.
+  pod 'CYLTableViewPlaceHolder', :path => '../..', :subspecs => ['Core', 'LottieSwift', 'PAG', 'Rive', 'GIF']
+  # The tab bar with the plus button, as in CYLTabBarController's Objective-C demo.
+  pod 'CYLTabBarController', '~> 1.99.72'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "15.0"
+    end
+  end
+end

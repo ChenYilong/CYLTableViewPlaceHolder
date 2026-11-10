@@ -262,6 +262,13 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 + (nullable NSString *)imageNameForStyle:(CYLPlaceholderStyle)style;
 /// Uses the current app language, with an English fallback.
 + (nullable NSString *)localizedTextForMessage:(CYLPlaceholderMessage)message;
+/// File names of the ready-made animations in the library's resource bundle (`Animations/`), sorted:
+/// Lottie (.json), PAG (.pag), Rive (.riv) and GIF (.gif) files named after their scenario, such as
+/// "CYLPlaceholderLoading.json" or "CYLPlaceholderEmptyCart.json". Sources and licenses: NOTICE.animations.
++ (NSArray<NSString *> *)bundledAnimationFileNames;
+/// Full path of a bundled animation, for CYLPlaceholderItemAnimationFilePath and the engine-specific file
+/// path keys; nil when there is no such file. Lottie, PAG and Rive playback needs the matching subspec.
++ (nullable NSString *)pathForBundledAnimation:(NSString *)fileName;
 @end
 
 NS_ASSUME_NONNULL_END

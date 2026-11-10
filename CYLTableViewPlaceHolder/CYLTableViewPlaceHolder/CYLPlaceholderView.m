@@ -77,6 +77,8 @@ static NSBundle *CYLPlaceholderResourceBundle(void) {
     return bundle;
 }
 
+static NSString *const CYLPlaceholderAnimationsDirectory = @"Animations";
+
 static NSString *CYLPlaceholderLocalizedString(NSString *key, NSString *fallback) {
     NSBundle *bundle = CYLPlaceholderResourceBundle();
     if (!bundle) return fallback;
@@ -1659,6 +1661,24 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
                                                    object:nil];
     }
     return self;
+}
+
++ (NSArray<NSString *> *)bundledAnimationFileNames {
+    NSBundle *bundle = CYLPlaceholderResourceBundle();
+    NSString *directory = [bundle.resourcePath stringByAppendingPathComponent:CYLPlaceholderAnimationsDirectory];
+    NSSet<NSString *> *extensions = [NSSet setWithObjects:@"json", @"lottie", @"pag", @"riv", @"gif", nil];
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (NSString *name in [NSFileManager.defaultManager contentsOfDirectoryAtPath:directory error:NULL]) {
+        if ([extensions containsObject:name.pathExtension.lowercaseString]) [names addObject:name];
+    }
+    return [names sortedArrayUsingSelector:@selector(compare:)];
+}
+
++ (NSString *)pathForBundledAnimation:(NSString *)fileName {
+    if (fileName.length == 0 || fileName.lastPathComponent.length != fileName.length) return nil;
+    NSString *path = [CYLPlaceholderResourceBundle() pathForResource:fileName ofType:nil
+                                                          inDirectory:CYLPlaceholderAnimationsDirectory];
+    return [NSFileManager.defaultManager fileExistsAtPath:path] ? path : nil;
 }
 
 @end

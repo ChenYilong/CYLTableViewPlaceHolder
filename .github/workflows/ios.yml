@@ -251,6 +251,7 @@ jobs:
           - Examples/Example-objc-01
           - Examples/Example-objc-02
           - Examples/Example-SwiftUI
+          - Examples/Example-Scenarios
     steps:
       - uses: actions/checkout@v4
       - name: CocoaPods

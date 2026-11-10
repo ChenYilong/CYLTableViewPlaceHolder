@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: scripts/ci-build-example.sh <demo folder>    e.g. . or Examples/Example-objc-01
+# Usage: scripts/ci-build-example.sh <demo folder>    e.g. . or Examples/Example-Scenarios
 #
 # Installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
 # then installs and launches the app on a booted simulator and saves a screenshot to build/screenshots/<scheme>.png.
@@ -17,6 +17,7 @@ case "$DEMO" in
   Examples/Example-objc-01) SCHEME=ExampleObjC01 ;;
   Examples/Example-objc-02) SCHEME=ExampleObjC02 ;;
   Examples/Example-SwiftUI) SCHEME=ExampleSwiftUI ;;
+  Examples/Example-Scenarios) SCHEME=ExampleScenarios ;;
   *) echo "Unknown demo: $DEMO" >&2; exit 2 ;;
 esac
 cd "$DEMO"

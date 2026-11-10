@@ -42,6 +42,12 @@ the integrated `CYLRefresh` component, and an example application. Read
   `<language>.lproj/CYLRefresh.strings`. Do not add another `.bundle`, loose
   `.strings` files, or hard-coded user-facing text. Every language must have
   every key of `en`. See "Localization" in `instructions.md`.
+- Ready-made placeholder animations live in
+  `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
+  Add only files with a redistributable license, unmodified, and record each
+  one's source repository, commit, path, license and SHA-256 in
+  `Animations/NOTICE.animations`, shipping the license text next to it.
+  Keep the total small: every app that uses Core carries these files.
 - Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION`
   to select an installed simulator. Build the example and validate the
   podspec when their integration changes; see `cyl-verify`.

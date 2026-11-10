@@ -32,7 +32,7 @@ macOS steps; the jobs still report success, so required checks pass.
 | Accessibility | `scripts/accessibility-tests.sh` | `Tests/run-accessibility-tests.rb`: the accessibility tree VoiceOver reads, plus Apple's accessibility audit (iOS 17+) |
 | Animation (3 jobs) | `scripts/animation-tests.sh <static\|dynamic> <PAG\|PAGEnterprise>` | LottieSwift, GIF, PAG/PAGEnterprise and Rive through CocoaPods; fixtures are sparse-checked-out from CYLTabBarController `feat/cross-platform-components` |
 | Carthage | `scripts/pod-lint.sh xcframework` | The XCFramework a release attaches, with its resource bundle |
-| Demo (4 jobs) | `scripts/ci-build-example.sh <folder>` | Builds `.`, `Examples/Example-objc-01`, `Examples/Example-objc-02`, `Examples/Example-SwiftUI`, then launches each on a simulator and uploads a screenshot (artifact `example-screenshot-<folder>`); fails if no screenshot is captured |
+| Demo (5 jobs) | `scripts/ci-build-example.sh <folder>` | Builds `.`, `Examples/Example-objc-01`, `Examples/Example-objc-02`, `Examples/Example-SwiftUI`, `Examples/Example-Scenarios` (the aggregated demo), then launches each on a simulator and uploads a screenshot (artifact `example-screenshot-<folder>`); fails if no screenshot is captured |
 
 Runner: `macos-26` by default. To change it without editing the workflow, set
 the repository variable `MACOS_RUNNER` (Settings → Secrets and variables →
@@ -46,8 +46,9 @@ iPhone simulator with `scripts/ci-destination.sh`; validation builds use
 Each `Demo` job saves `build/screenshots/<scheme>.png` after launching the app
 and uploads it as `example-screenshot-Example`,
 `example-screenshot-Examples-Example-objc-01`,
-`example-screenshot-Examples-Example-objc-02` or
-`example-screenshot-Examples-Example-SwiftUI`. Download them from the run page
+`example-screenshot-Examples-Example-objc-02`,
+`example-screenshot-Examples-Example-SwiftUI` or
+`example-screenshot-Examples-Example-Scenarios`. Download them from the run page
 (Summary → Artifacts); the job summary lists the artifact name and a Screenshot
 column. GitHub job summaries cannot embed images from artifacts, so the
 screenshots are not shown inline. A screenshot shows the first screen about

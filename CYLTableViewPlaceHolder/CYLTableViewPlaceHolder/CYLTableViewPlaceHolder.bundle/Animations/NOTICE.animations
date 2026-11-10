@@ -1,0 +1,125 @@
+Placeholder animations bundled with CYLTableViewPlaceHolder
+===========================================================
+
+Each file below was downloaded unmodified from the named open-source repository and commit, and renamed
+for its placeholder scenario. The license of the source repository applies; its full text ships next to
+this file. Playing Lottie, PAG and Rive files needs the CYLTableViewPlaceHolder/LottieSwift, /PAG and /Rive
+subspecs; GIF plays with Core.
+
+* Files that lottie-ios keeps under Tests/Samples/LottieFiles/ were contributed to that repository from
+  lottiefiles.com. They are distributed here as part of the Apache-2.0 lottie-ios repository; replace them
+  if your distribution requires a separate review of their original terms.
+
+CYLPlaceholderLoading.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_1.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  4829c3f86ac4daecaf749d88086e8c103cfd0ed06fc959600f6c22605b02bd68
+
+CYLPlaceholderLoadingInfinity.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/infinity_loader.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  c1d87f28017a30df0748e481161081a5b06d7694bb6dfcdf65297ab6a2aab642
+
+CYLPlaceholderEmpty.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/cactus.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  ebcf52c4ce325e606e0c8c85a9e2c0174615c6432da61e6a672bdd31ddaa4e33
+
+CYLPlaceholderEmptyCart.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/shop.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  d70ec3cfea07800875e7e964c0795d85df63330f1391b31c2087486aba408eb7
+
+CYLPlaceholderNoDrafts.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/draft_icon.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  c9388ccb2c654bf003b582315840edf6e3a59c308af97cf88a25a665cd455cd5
+
+CYLPlaceholderNoFavorites.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/TwitterHeart.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  d4c529dcd7d948c30da383e9e9de843d187b576f88fee2fdf0b7c5d1be19e9ee
+
+CYLPlaceholderLocation.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/PinJump.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  05dcbb0e237d05cc20714820a98ea282f47dca817e8dce226cf253b24fa10a1b
+
+CYLPlaceholderSuccess.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/success.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  6830cfcc4188edceefae881bb51cf9e67cae6031a173111b33a89d6fe80f07e3
+
+CYLPlaceholderCelebrate.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/fireworks.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  fda965c402f74cb209d6aa5b0bf120d3c0ded42ffa0bb5bfbea317d126b694da
+
+CYLPlaceholderLoading.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/refreshing.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  069f7cf1b54f5d7a896deffc6fafd622e3ed439550a64df2ec329e1b99a6d72f
+
+CYLPlaceholderNoFavorites.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/like.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  bc40511dc95bf2452a89fda2d494e2d3c3d74aacf39623fcbe22f7a242bbe1b0
+
+CYLPlaceholderPullHint.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/guide_hand_drag.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  28419e808fea51e96dddbb492b02e9647b9bf3ac64776476ec1ff712c3f49570
+
+CYLPlaceholderProgress.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/wstask_circle.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  abfac793abe73ef23a3cb4464b1dda573fd1a64cf3f36c9d4076a0e271c2d864
+
+CYLPlaceholderLoading.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/progress.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  5e11544033eccde437d658e240eb84b03032f3380ed020947012d5c5262c6b96
+
+CYLPlaceholderPullToRefresh.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/pull.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  f1e434fd80dc6d41bce3b35546d36e6c25e23cffe242bcbef24e2c6480476d2f
+
+CYLPlaceholderSuccess.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Demo-App/RiveExampleSPM/Rive Files/confetti.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  efdbdcb87ef4a9e937e4dd7e1c7f112de651b10fea3b5667921cfeb8f5eae49d
+
+CYLPlaceholderNoOrders.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/truck.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  af37da1ba63af80a7cbbfeed520acdb070b547f2fdff2e1d37c2b3e0d8b2714b
+
+CYLPlaceholderNoReviews.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/rating_animation.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  2a85d71429e69424415a552fade7b590724c4c03a2426d5fdacc949dc12570f0
+
+CYLPlaceholderUploading.gif
+  source:  https://github.com/ChenYilong/CYLTabBarController (4209e37da86a3b0f14334f5573d152ac938908c7)
+  path:    Example-GIF/GIFApp/Resources/tab_rocket.gif
+  license: MIT (../LICENSE.CYLTabBarController)
+  sha256:  1857f59624bc5a6a579ce9c9ae68885a17834da704a63c601ecbbf18a33f854a

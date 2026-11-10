@@ -54,6 +54,12 @@
 - 刷新 header 的“最后更新”时间改为按 locale 模板格式化（日期顺序、12/24 小时制），并修复只比较“日”导致上月同一天显示“今天”的问题。
 - 兼容性：CocoaPods、Carthage 集成无需改动；手动集成需删除工程中的 `CYLRefresh.bundle`；直接读取旧 bundle 路径或旧图片名的代码需改用 `cyl_refreshBundle` / `cyl_arrowImage` / `cyl_trailArrowImage`。时间显示格式随 locale 变化。
 
+### 2026-11-10 内置动画资源与聚合 Demo
+
+- 从开源仓库下载 19 个占位动画（未修改，约 300 KB），放入 `CYLTableViewPlaceHolder.bundle/Animations/`：Lottie 9 个（airbnb/lottie-ios，Apache-2.0）、PAG 4 个（Tencent/libpag，Apache-2.0，经 Git LFS 下载并核对 SHA-256）、Rive 5 个（rive-app/rive-ios，MIT）、GIF 1 个（CYLTabBarController，MIT）。`NOTICE.animations` 记录逐个文件的来源、提交、路径、许可证与 SHA-256，许可证全文随资源包分发。
+- 新增公开 API `+[CYLPlaceholderView bundledAnimationFileNames]`、`+pathForBundledAnimation:`，以及测试 `testBundledAnimationsAreListedValidAndAttributed`（数量、各格式文件头、NOTICE 条目、拒绝路径穿越）。
+- 新增聚合 Demo `Examples/Example-Scenarios`：仿照 CYLTabBarController Objective-C Demo 的带加号按钮 TabBar；“场景”Tab 分三组列出 28 个场景，每个 cell push 到对应占位图；“动画”Tab 播放全部内置动画；“动态”Tab 演示加载、失败重试、下拉刷新与上拉加载；“资源”Tab 列出资源与来源。已加入 CI 的 Demo 矩阵并上传截图。
+
 ## 上游刷新组件开放 issues
 
 快照：2026-11-08，以下为上游 issue 页面中的 51 个开放 issue，不包含已关闭 issue 或 PR。旧名称 `MJRefresh`/`mj_` 对应本项目的 `CYLRefresh`/`cyl_`。**0/100** 表示尚未完成调查和验证，不表示已尝试修复；不得把尚未进行的尝试记为已完成。
@@ -158,6 +164,7 @@
 | TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
 | TODO — #1623 自动加载 trailer（70） | 实现已加入 `CYLRefreshTrailer`，默认关闭；新增测试已在 CI 通过。阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。已知风险：CI 曾在一次异常缓慢的 runner 上让本测试和既有的 `testReparentingActiveTrailerRestoresOldScrollView` 同时因 5 秒等待超时失败，重跑通过；若再次出现，应改为确定性地等待开始动画，而不是只延长超时。 | 横向 collection 示例中真实滑动验证一次拖拽只触发一次；核对原 issue 后更新分数。 |
 | TODO — 国际化资源合并（待 CI） | 资源合并、七种语言补齐、时间格式化已实现；新增 `testRefreshResourcesLiveInTheSingleLibraryBundle`、`testRefreshTrailerAndJapaneseTextsAreLocalized`、`testLastUpdatedTimeIsLocaleAwareAndComparesWholeDates`，占位语言测试扩展到七种语言。在 Linux 编写，尚待 CI 编译和运行。新增的韩、俄、乌克兰、日文译文未经母语者审校。 | PR #20 CI 中单元测试、Carthage（资源包随 framework）、`pod lib lint` 和四个示例截图全部通过；请母语者审校译文。 |
+| TODO — 内置动画资源与聚合 Demo（待 CI） | 资源、API、测试与 Demo 已提交，均在 Linux 编写，尚待 CI 编译、运行单元测试并上传 `example-screenshot-Examples-Example-Scenarios`。截图只能证明首页启动，各场景页面和动画是否实际播放（尤其 Rive 文件使用 `legacy` 或 `State Machine 1` 选项）需在设备或模拟器上逐个查看。已知限制：占位动画只播放一次，没有循环选项（Demo 用定时器重播），建议为 Lottie/PAG/Rive/GIF 增加统一的循环键；lottie-ios 中 `Tests/Samples/LottieFiles/` 下的 6 个文件原始来自 lottiefiles.com，随 Apache-2.0 仓库分发，若发行需要可替换。 | CI 中单元测试与 Demo 截图通过；在模拟器逐个打开“动画”Tab 的 19 项确认播放；评估循环选项的 API。 |
 | TODO — PR #1444 header inset 部分移植 | 拖拽时重新计算 inset 及 delta 语义未移植。 | 真实拖拽、旋转与悬浮 section header 测试。 |
 
 ### 上游刷新组件（未开始，0/100）

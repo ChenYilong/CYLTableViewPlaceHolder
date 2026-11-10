@@ -77,6 +77,26 @@ There is no other `.bundle`; `CYLRefresh.bundle` was merged into it.
 - Resources go into the podspec `resources`, the Xcode project's Copy Bundle
   Resources phases, and the test runners only through this bundle.
 
+## Bundled animations
+
+`CYLTableViewPlaceHolder.bundle/Animations/` ships ready-made placeholder
+animations with Core: Lottie `.json`, PAG `.pag`, Rive `.riv` and GIF `.gif`,
+named `CYLPlaceholder<Scenario>.<ext>` and found with
+`+[CYLPlaceholderView pathForBundledAnimation:]`.
+
+- Download only from sources whose license allows redistribution (for example
+  the engines' own Apache-2.0 or MIT repositories); community marketplaces with
+  unclear terms are not acceptable sources. Keep the files unmodified.
+- For every file, add an entry to `Animations/NOTICE.animations` (source
+  repository, commit, original path, license, SHA-256) and ship the license
+  text as `Animations/LICENSE.<source>`. Verify Git LFS files against their
+  pointer's SHA-256 after downloading.
+- Every app that uses Core carries these files; keep each small (well under
+  100 KB) and the total around 300 KB. Prefer vector Lottie without images.
+- `testBundledAnimationsAreListedValidAndAttributed` checks the count, each
+  format's header and the NOTICE entry; update its expected count when adding
+  a file. The aggregated demo (`Examples/Example-Scenarios`) lists every file.
+
 ## CI example screenshots
 
 Every CI run that builds code must provide a screenshot of each example app

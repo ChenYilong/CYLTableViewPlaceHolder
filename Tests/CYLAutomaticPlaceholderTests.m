@@ -778,6 +778,41 @@
     XCTAssertTrue(view.imageView.hidden);
 }
 
+- (void)testBundledAnimationsAreListedValidAndAttributed {
+    NSArray<NSString *> *names = [CYLPlaceholderView bundledAnimationFileNames];
+    XCTAssertEqual(names.count, 19u, @"%@", names);
+    NSDictionary<NSString *, NSString *> *magic = @{@"pag": @"PAG", @"riv": @"RIVE", @"gif": @"GIF8"};
+    NSString *notice = nil;
+    for (NSString *name in names) {
+        NSString *path = [CYLPlaceholderView pathForBundledAnimation:name];
+        XCTAssertNotNil(path, @"%@", name);
+        NSData *data = path ? [NSData dataWithContentsOfFile:path] : nil;
+        XCTAssertGreaterThan(data.length, 64u, @"%@", name);
+        NSString *extension = name.pathExtension;
+        if ([extension isEqualToString:@"json"]) {
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            XCTAssertNotNil(json[@"layers"], @"%@ is not a Lottie animation", name);
+        } else {
+            NSString *prefix = magic[extension];
+            XCTAssertNotNil(prefix, @"Unexpected file %@", name);
+            NSData *head = [data subdataWithRange:NSMakeRange(0, MIN(prefix.length, data.length))];
+            XCTAssertEqualObjects([[NSString alloc] initWithData:head encoding:NSASCIIStringEncoding], prefix, @"%@", name);
+        }
+        if (!notice && path) {
+            NSString *noticePath = [path.stringByDeletingLastPathComponent stringByAppendingPathComponent:@"NOTICE.animations"];
+            notice = [NSString stringWithContentsOfFile:noticePath encoding:NSUTF8StringEncoding error:NULL];
+        }
+        XCTAssertTrue([notice containsString:name], @"%@ has no attribution in NOTICE.animations", name);
+    }
+    for (NSString *scenario in @[@"CYLPlaceholderLoading.json", @"CYLPlaceholderLoading.pag", @"CYLPlaceholderLoading.riv",
+                                 @"CYLPlaceholderUploading.gif", @"CYLPlaceholderEmptyCart.json"]) {
+        XCTAssertTrue([names containsObject:scenario], @"%@", scenario);
+    }
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@"Missing.json"]);
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@"../Animations/CYLPlaceholderLoading.json"]);
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@""]);
+}
+
 - (void)testPlaceholderLocalizationsHaveAllMessageKeys {
     NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
     NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];

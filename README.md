@@ -173,6 +173,29 @@ GIF 输入最大 16 MB、最多 500 帧，解码帧合计最多 64 MB；无效�
 | `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | Swift 视图（`RiveSwift/`）遵守可播放视图协议 |
 | `GIF` | ImageIO | iOS 12 | 通过注册表播放一次；未引入时 `Core` 内置解码器照常播放 GIF |
 
+#### 内置动画资源
+
+`CYLTableViewPlaceHolder.bundle/Animations/` 随 `Core` 提供 19 个按场景命名的动画（共约 300 KB），可直接用于占位图；播放 Lottie、PAG、Rive 需要引入对应子规格，GIF 由 `Core` 播放：
+
+| 格式 | 文件 | 场景 |
+| --- | --- | --- |
+| Lottie (`.json`) | `CYLPlaceholderLoading`、`LoadingInfinity`、`Empty`、`EmptyCart`、`NoDrafts`、`NoFavorites`、`Location`、`Success`、`Celebrate` | 加载、同步、空列表、空购物车、无草稿、无收藏、定位、成功、完成 |
+| PAG (`.pag`) | `CYLPlaceholderLoading`、`NoFavorites`、`PullHint`、`Progress` | 加载、无点赞、下拉提示、处理中 |
+| Rive (`.riv`) | `CYLPlaceholderLoading`、`PullToRefresh`、`Success`、`NoOrders`、`NoReviews` | 加载、下拉刷新、成功、无物流、无评价 |
+| GIF (`.gif`) | `CYLPlaceholderUploading` | 上传中 |
+
+```objc
+NSString *path = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
+CYLPlaceholderView *loading = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+    CYLPlaceholderItemTitle: @"加载中",
+    CYLPlaceholderItemStyle: @(CYLPlaceholderStyleHourglass),   // 动画加载前或缺少子规格时显示的图片
+    CYLPlaceholderItemAnimationFilePath: path,
+    CYLPlaceholderItemAnimationSize: @[@180, @180],
+} imageBundle:nil error:NULL];
+```
+
+`+bundledAnimationFileNames` 列出全部文件名。文件均下载自开源仓库且未修改：Lottie 来自 `airbnb/lottie-ios`（Apache-2.0），PAG 来自 `Tencent/libpag`（Apache-2.0），Rive 来自 `rive-app/rive-ios`（MIT），GIF 来自 CYLTabBarController（MIT）；逐个文件的来源路径、提交和 SHA-256 记录在 `Animations/NOTICE.animations`，许可证全文随资源包分发。占位动画按 tab 图标的方式只播放一次，尚无循环选项；需要持续播放时可定时调用 `playPlaceholderAnimation`（聚合 Demo 即如此）。
+
 每个动画库的 animator 位于 `CYLPlaceholderAnimation/<库名>/`，在 `+load` 中向
 `CYLPlaceholderItemAnimatorRegistry` 注册。应用可注册自己的 animator：实现
 `CYLPlaceholderItemAnimator`，或用 `CYLPlaceholderItemViewAnimator` 包装一个遵守
@@ -458,7 +481,17 @@ collectionView.cyl_trailer = trailer;
 
 主 Demo 源码位于 `Examples/Example/`，直接编译刷新源码，打开根目录的 `CYLTableViewPlaceHolder.xcodeproj` 或 workspace 即可，无需运行 `pod install`。发布源码和资源集中在 `CYLTableViewPlaceHolder/`：占位组件位于 `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/`，刷新组件位于 `CYLTableViewPlaceHolder/CYLRefresh/`，均由根目录的 podspec 指定。Xcode 27 的模拟器 SDK 使用 iOS 15 构建设置，真机最低版本仍为 iOS 12。
 
-三个 `Example-*` 复现工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
+`Examples/Example-Scenarios/` 是聚合 Demo：仿照 CYLTabBarController 的 Objective-C Demo，首页为带中间加号按钮的 CYLTabBarController。
+
+- **场景**：按“基础文案 / 业务场景 / 交互流程”分组列出各种占位场景（空列表、无搜索结果、无网络并重试、服务器不可用、无权限、空购物车、定位关闭、账号受限、内容已删除、图片加载失败、自定义图片、角标、plist 配置，以及空 / 失败 / 断网 / 有数据切换、保留表头和分组头、下拉刷新与上拉加载、可滚动占位、UICollectionView 占位）；点击每一行 push 到对应的占位图页面。
+- **动画**：逐个播放内置的 Lottie、PAG、Rive、GIF 动画。
+- **动态**：模拟真实列表：首次加载显示 Lottie 加载动画，下拉刷新交替失败并显示带“重试”按钮的错误占位，上拉加载到底显示“没有更多”。
+- **资源**：列出资源包中的动画文件、引擎、大小及来源说明。
+- **加号按钮**：弹出“上传中”GIF 占位，随后显示“发布成功”Lottie 动画。
+
+在该目录运行 `pod install` 后打开 `Example-Scenarios.xcworkspace`；它通过本地 Pod 引入全部动画子规格，并引入 CYLTabBarController 1.99.x。
+
+四个 `Example-*` 工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。
 
 
 ## 适用于多种应用应用场景
