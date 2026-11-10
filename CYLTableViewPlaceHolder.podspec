@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author       = { "ChenYilong" => "luohanchenyilong@163.com" }
   s.platform     = :ios, '12.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
-  s.resources     = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle', 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party', 'CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.bundle', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy', 'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
+  s.resources     = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle', 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy', 'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
   s.requires_arc = true
   s.frameworks = 'ImageIO', 'QuartzCore'
   s.swift_version = '5.0'

@@ -70,9 +70,9 @@ data source 更换、section/row/item 的插入、删除、刷新和移动、批
 iOS 15 的 reconfigure 操作。更新会在主队列合并处理；请在主线程配置并更新 UI。
 占位视图使用 frame layout guide 约束，随列表可视区域及尺寸变化调整。
 block 若引用控制器，请使用弱引用避免循环引用。内置 `CYLPlaceholderView` 的图片及
-中英文文本位于 `CYLTableViewPlaceHolder.bundle`，可自行调整其 imageView 和 textLabel。
+多语言文本位于 `CYLTableViewPlaceHolder.bundle`，可自行调整其 imageView 和 textLabel。
 `CYLPlaceholderStyle` 提供 51 种离线图片，`CYLPlaceholderMessage` 提供 9 种
-可独立组合的提示；内置英文、简体中文、繁体中文和日文，按应用语言选择并回退英文。
+可独立组合的提示；内置英文、简体中文、繁体中文、日文、韩文、俄文和乌克兰文，按应用语言选择并回退英文。
 初始化或自定义图片与文字：
 
 ```objc
@@ -414,7 +414,21 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 }];
 ```
 
-原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLRefresh.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。
+原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。
+
+#### 国际化与资源包
+
+本库的全部本地化文件和图片统一放在一个资源包 `CYLTableViewPlaceHolder.bundle` 中，不再有单独的 `CYLRefresh.bundle`：
+
+| 内容 | 位置 |
+| --- | --- |
+| 占位文案（`CYLPlaceholder…` key） | `<语言>.lproj/Localizable.strings` |
+| 刷新控件文案（`CYLRefresh…` key） | `<语言>.lproj/CYLRefresh.strings` |
+| 占位图标、刷新箭头（`CYLRefreshArrow@2x.png`、`CYLRefreshTrailArrow@2x.png`） | 资源包根目录 |
+
+两张字符串表都提供 `en`、`zh-Hans`、`zh-Hant`、`ja`、`ko`、`ru`、`uk` 七种语言，key 完全一致（单元测试逐项检查）；其他语言回退英文。`[NSBundle cyl_refreshBundle]` 仍可使用，返回该统一资源包。刷新文案仍可用 `CYLRefreshConfig` 的 `languageCode` 指定语言，或用 `i18nBundle` / `i18nFilename` 在应用自己的 bundle 中覆盖。
+
+从旧版本升级：CocoaPods 和 Carthage 集成无需改动；手动集成需从工程中删除 `CYLRefresh.bundle`，只保留 `CYLTableViewPlaceHolder.bundle`。直接读取 `CYLRefresh.bundle` 路径或旧图片名 `arrow@2x.png` / `trail_arrow@2x.png` 的代码，请改用 `cyl_refreshBundle`、`cyl_arrowImage`、`cyl_trailArrowImage`。
 
 `endRefreshing`、`endRefreshingWithNoMoreData` 和 `resetNoMoreData` 在主线程立即更新状态；从后台线程调用时仍异步提交到主队列。自动 footer 在 header 正在刷新时不会自动触发，但这不是所有 header/footer 类型的双向互斥。
 

@@ -786,8 +786,8 @@
     NSArray<NSString *> *keys = @[@"CYLPlaceholderEmptyText", @"CYLPlaceholderNoResultsText",
         @"CYLPlaceholderNoInternetText", @"CYLPlaceholderServerUnavailableText", @"CYLPlaceholderErrorText",
         @"CYLPlaceholderLoadingText", @"CYLPlaceholderNoPermissionText", @"CYLPlaceholderEmptyCartText",
-        @"CYLPlaceholderNoNotificationsText"];
-    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja"]) {
+        @"CYLPlaceholderNoNotificationsText", @"CYLPlaceholderBadgeNewContent"];
+    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"]) {
         NSString *path = [bundle pathForResource:language ofType:@"lproj"];
         XCTAssertNotNil(path, @"Missing localization %@", language);
         if (!path) continue;

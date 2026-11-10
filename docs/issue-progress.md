@@ -47,6 +47,13 @@
 - 原外部刷新 Pod 已从示例工程移除，改为使用本仓库中的 `CYLRefresh` 源码；旧接口需迁移到 `CYL` 类名及 `cyl_` 分类接口。
 - 最低系统版本调整为 iOS 12；原始组件版权、许可证及来源说明予以保留。历史测试结果保留在上文，新版本以当前回归测试为准。
 
+### 2026-11-10 国际化资源合并
+
+- 全部本地化文件和图片统一放入 `CYLTableViewPlaceHolder.bundle`，删除 `CYLRefresh.bundle`：刷新文案移入 `<语言>.lproj/CYLRefresh.strings`（与占位的 `Localizable.strings` 分表，避免 key 冲突），箭头图片改名为 `CYLRefreshArrow@2x.png`、`CYLRefreshTrailArrow@2x.png`。`cyl_refreshBundle` 保留并返回统一资源包；podspec、Xcode 工程和两个测试 runner 只引用这一个资源包。
+- 两张字符串表统一为 en、zh-Hans、zh-Hant、ja、ko、ru、uk 七种语言：补齐占位文案的韩、俄、乌克兰文，刷新文案的日文，以及此前只有中文的 trailer 文案（英、韩、俄、乌克兰文下原会显示 key 名）。
+- 刷新 header 的“最后更新”时间改为按 locale 模板格式化（日期顺序、12/24 小时制），并修复只比较“日”导致上月同一天显示“今天”的问题。
+- 兼容性：CocoaPods、Carthage 集成无需改动；手动集成需删除工程中的 `CYLRefresh.bundle`；直接读取旧 bundle 路径或旧图片名的代码需改用 `cyl_refreshBundle` / `cyl_arrowImage` / `cyl_trailArrowImage`。时间显示格式随 locale 变化。
+
 ## 上游刷新组件开放 issues
 
 快照：2026-11-08，以下为上游 issue 页面中的 51 个开放 issue，不包含已关闭 issue 或 PR。旧名称 `MJRefresh`/`mj_` 对应本项目的 `CYLRefresh`/`cyl_`。**0/100** 表示尚未完成调查和验证，不表示已尝试修复；不得把尚未进行的尝试记为已完成。
@@ -150,6 +157,7 @@
 | TODO — #1317 搜索控制器 inset 递归（80） | 重入保护已覆盖四条路径；未在真实手势和 iOS 12.3 复现。 | XCUITest 搜索控制器 + 下拉刷新；iOS 12 真机。 |
 | TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
 | TODO — #1623 自动加载 trailer（70） | 实现已加入 `CYLRefreshTrailer`，默认关闭；新增测试已在 CI 通过。阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。已知风险：CI 曾在一次异常缓慢的 runner 上让本测试和既有的 `testReparentingActiveTrailerRestoresOldScrollView` 同时因 5 秒等待超时失败，重跑通过；若再次出现，应改为确定性地等待开始动画，而不是只延长超时。 | 横向 collection 示例中真实滑动验证一次拖拽只触发一次；核对原 issue 后更新分数。 |
+| TODO — 国际化资源合并（待 CI） | 资源合并、七种语言补齐、时间格式化已实现；新增 `testRefreshResourcesLiveInTheSingleLibraryBundle`、`testRefreshTrailerAndJapaneseTextsAreLocalized`、`testLastUpdatedTimeIsLocaleAwareAndComparesWholeDates`，占位语言测试扩展到七种语言。在 Linux 编写，尚待 CI 编译和运行。新增的韩、俄、乌克兰、日文译文未经母语者审校。 | PR #20 CI 中单元测试、Carthage（资源包随 framework）、`pod lib lint` 和四个示例截图全部通过；请母语者审校译文。 |
 | TODO — PR #1444 header inset 部分移植 | 拖拽时重新计算 inset 及 delta 语义未移植。 | 真实拖拽、旋转与悬浮 section header 测试。 |
 
 ### 上游刷新组件（未开始，0/100）

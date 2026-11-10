@@ -2,6 +2,9 @@
 "CYLRefreshHeaderPullingText" = "Release to refresh";
 "CYLRefreshHeaderRefreshingText" = "Loading...";
 
+"CYLRefreshTrailerIdleText" = "Swipe to see details";
+"CYLRefreshTrailerPullingText" = "Release to see details";
+
 "CYLRefreshAutoFooterIdleText" = "Tap or pull up to load more";
 "CYLRefreshAutoFooterRefreshingText" = "Loading...";
 "CYLRefreshAutoFooterNoMoreDataText" = "No more data";

@@ -10,7 +10,6 @@
 		07ADFDE610D5199E0C94241A /* CYLRefreshBackFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32597B8F56F991E5387282A0 /* CYLRefreshBackFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		07C5367EDC37F1D266015DA8 /* CYLRefreshStateHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DB015E2E6BFE95F884FC89C3 /* CYLRefreshStateHeader.m */; };
 		091FB0A2CB38717C5B2B488C /* CYLRefreshBackNormalFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = DBA63BB3B45CC5DF101B047B /* CYLRefreshBackNormalFooter.m */; };
-		0A40D9295B019D468E5AFB3C /* CYLRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6DF30AFB755F46D6EF99B2FE /* CYLRefresh.bundle */; };
 		0A5321684126919BCFECA27F /* CYLRefreshBackFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.m */; };
 		0AD793BCCBFAC8E6188FF51E /* CYLRefreshGifHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = E983A503B14E7B98A412EF7F /* CYLRefreshGifHeader.m */; };
 		0DC9143802E5B023FF8FDE29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA61E0CD2256E8875499E5B2 /* Foundation.framework */; };
@@ -61,7 +60,6 @@
 		7AD84A1DDCCC5A25CA5E6CB3 /* CYLRefreshStateHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB2E2B5116BACD4EFB63967 /* CYLRefreshStateHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7AE392C9F3F6BF9B2D84E3DF /* CYLRefreshComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DC946F59994EFA472714224 /* CYLRefreshComponent.m */; };
 		7B4FC072C0A1EAB0F617FE71 /* CYLRefreshFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C697B7279BF082BB2B6AE1D /* CYLRefreshFooter.m */; };
-		7BCDE7574D212DE196F9E070 /* CYLRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6DF30AFB755F46D6EF99B2FE /* CYLRefresh.bundle */; };
 		7BFEAD7D32E403C060603A07 /* CYLRefreshAutoStateFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 44110D2AADB1242C0FFE50B1 /* CYLRefreshAutoStateFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7C8671F67A5EABB7876A55EE /* UIScrollView+CYLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CF19EAF1DA21AF31CE1C3C5 /* UIScrollView+CYLExtension.m */; };
 		7CC93F05C99D87B2A2295E2C /* CYLRefreshTrailer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCB3D19D840E95F5F9D4DF8 /* CYLRefreshTrailer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -150,7 +148,6 @@
 		5FF4D93FBBB2508A8E616092 /* CYLRefreshStateTrailer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshStateTrailer.m; sourceTree = "<group>"; };
 		6576D12C43227964CA968B67 /* UIScrollView+CYLRefresh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+CYLRefresh.h"; sourceTree = "<group>"; };
 		6DB8709EF9D83AAA7FC30E89 /* CYLPlaceholderView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderView.h; sourceTree = "<group>"; };
-		6DF30AFB755F46D6EF99B2FE /* CYLRefresh.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; path = CYLRefresh.bundle; sourceTree = "<group>"; };
 		7CF19EAF1DA21AF31CE1C3C5 /* UIScrollView+CYLExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+CYLExtension.m"; sourceTree = "<group>"; };
 		8129BF296C70EB39FA09680B /* CYLRefreshNormalTrailer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshNormalTrailer.m; sourceTree = "<group>"; };
 		826667871FE358BC57925A15 /* CYLRefresh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefresh.h; sourceTree = "<group>"; };
@@ -242,7 +239,6 @@
 				25A59E5B4697CAC615B4B7CF /* UIScrollView+CYLRefresh.m */,
 				BB9A20E7EEA55177480AEB87 /* UIView+CYLExtension.h */,
 				23ED1838B37A7E229CD569A7 /* UIView+CYLExtension.m */,
-				6DF30AFB755F46D6EF99B2FE /* CYLRefresh.bundle */,
 				BC5FFE1C7556568F92CA58F6 /* PrivacyInfo.xcprivacy */,
 				AC9A11EEA1254D7B84FA0002 /* LICENSE.third-party */,
 			);
@@ -569,7 +565,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7BCDE7574D212DE196F9E070 /* CYLRefresh.bundle in Resources */,
 				B2FEB27E58A56D4CEB7F0C89 /* PrivacyInfo.xcprivacy in Resources */,
 				5BBEEABE448AC404BC890AB4 /* LICENSE.third-party in Resources */,
 				750B1D56D797FB580510FC50 /* CYLTableViewPlaceHolder.bundle in Resources */,
@@ -584,7 +579,6 @@
 			files = (
 				9A68F2F71C2A67F700D2E9B0 /* Assets.xcassets in Resources */,
 				9A68F2F81C2A67F700D2E9B0 /* LaunchScreen.storyboard in Resources */,
-				0A40D9295B019D468E5AFB3C /* CYLRefresh.bundle in Resources */,
 				360BF9B9BAE89C6D62182339 /* PrivacyInfo.xcprivacy in Resources */,
 				AC9A11EEA1254D7B84FA0001 /* LICENSE.third-party in Resources */,
 				D084AEC3E0AD7100CD288663 /* CYLTableViewPlaceHolder.bundle in Resources */,

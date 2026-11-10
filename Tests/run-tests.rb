@@ -42,8 +42,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))
   end
-  resource = project.main_group.new_file(File.join(refresh_dir, 'CYLRefresh.bundle'))
-  target.resources_build_phase.add_file_reference(resource)
+  # One resource bundle holds the placeholder and refresh localizations and images.
   placeholder_bundle = project.main_group.new_file(File.join(root, 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle'))
   target.resources_build_phase.add_file_reference(placeholder_bundle)
   project.save

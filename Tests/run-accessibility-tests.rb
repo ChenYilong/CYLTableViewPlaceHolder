@@ -40,9 +40,8 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
             Dir.glob(File.join(core_dir, '*.m')).select(&visible) +
             Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible)
   sources.sort.each { |path| app.source_build_phase.add_file_reference(project.main_group.new_file(path)) }
-  [File.join(core_dir, 'CYLTableViewPlaceHolder.bundle'), File.join(refresh_dir, 'CYLRefresh.bundle')].each do |path|
-    app.resources_build_phase.add_file_reference(project.main_group.new_file(path))
-  end
+  # One resource bundle holds the placeholder and refresh localizations and images.
+  app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
   ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.m')))
   project.save
 

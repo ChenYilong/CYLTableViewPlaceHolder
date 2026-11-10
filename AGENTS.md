@@ -34,8 +34,14 @@ the integrated `CYLRefresh` component, and an example application. Read
 ## Project and verification
 
 - The example compiles local refresh sources directly and does not require the
-  former external refresh Pod. Keep the source files, refresh bundle, privacy
-  manifest, and third-party license in both the project and podspec.
+  former external refresh Pod. Keep the source files, the resource bundle,
+  privacy manifest, and third-party license in both the project and podspec.
+- All localization files and images live in one resource bundle,
+  `CYLTableViewPlaceHolder.bundle`: placeholder strings in
+  `<language>.lproj/Localizable.strings`, refresh strings in
+  `<language>.lproj/CYLRefresh.strings`. Do not add another `.bundle`, loose
+  `.strings` files, or hard-coded user-facing text. Every language must have
+  every key of `en`. See "Localization" in `instructions.md`.
 - Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION`
   to select an installed simulator. Build the example and validate the
   podspec when their integration changes; see `cyl-verify`.

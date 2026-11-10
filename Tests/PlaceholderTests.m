@@ -622,6 +622,80 @@ static const NSTimeInterval CYLTestTimeout = 30;
     CYLRefreshConfig.defaultConfig.languageCode = nil;
 }
 
+- (void)testRefreshResourcesLiveInTheSingleLibraryBundle {
+    NSBundle *bundle = [NSBundle cyl_refreshBundle];
+    XCTAssertNotNil(bundle);
+    XCTAssertEqualObjects(bundle.bundlePath.lastPathComponent, @"CYLTableViewPlaceHolder.bundle");
+    // The former separate resource bundle is gone everywhere it used to be copied.
+    NSBundle *container = [NSBundle bundleForClass:CYLRefreshComponent.class];
+    XCTAssertNil([container pathForResource:@"CYLRefresh" ofType:@"bundle"]);
+    XCTAssertNil([NSBundle.mainBundle pathForResource:@"CYLRefresh" ofType:@"bundle"]);
+    XCTAssertNotNil([NSBundle cyl_arrowImage]);
+    XCTAssertNotNil([NSBundle cyl_trailArrowImage]);
+    NSArray<NSString *> *keys = @[@"CYLRefreshHeaderIdleText", @"CYLRefreshHeaderPullingText",
+        @"CYLRefreshHeaderRefreshingText", @"CYLRefreshTrailerIdleText", @"CYLRefreshTrailerPullingText",
+        @"CYLRefreshAutoFooterIdleText", @"CYLRefreshAutoFooterRefreshingText", @"CYLRefreshAutoFooterNoMoreDataText",
+        @"CYLRefreshBackFooterIdleText", @"CYLRefreshBackFooterPullingText", @"CYLRefreshBackFooterRefreshingText",
+        @"CYLRefreshBackFooterNoMoreDataText", @"CYLRefreshHeaderLastTimeText", @"CYLRefreshHeaderDateTodayText",
+        @"CYLRefreshHeaderNoneLastDateText"];
+    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"]) {
+        NSString *path = [bundle pathForResource:language ofType:@"lproj"];
+        XCTAssertNotNil(path, @"Missing localization %@", language);
+        if (!path) continue;
+        NSBundle *languageBundle = [NSBundle bundleWithPath:path];
+        for (NSString *key in keys) {
+            NSString *text = [languageBundle localizedStringForKey:key value:nil table:@"CYLRefresh"];
+            XCTAssertNotEqualObjects(text, key, @"Missing %@ in %@", key, language);
+            XCTAssertTrue(text.length > 0);
+        }
+    }
+}
+
+- (void)testRefreshTrailerAndJapaneseTextsAreLocalized {
+    @try {
+        // Before the bundles were merged, the trailer texts existed only in Chinese.
+        CYLRefreshConfig.defaultConfig.languageCode = @"en";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshTrailerIdleText], @"Swipe to see details");
+        CYLRefreshConfig.defaultConfig.languageCode = @"ja-JP";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText], @"下に引っ張って更新");
+        CYLRefreshConfig.defaultConfig.languageCode = @"ko";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshTrailerPullingText], @"놓으면 상세 정보 보기");
+    } @finally {
+        CYLRefreshConfig.defaultConfig.languageCode = nil;
+    }
+}
+
+- (void)testLastUpdatedTimeIsLocaleAwareAndComparesWholeDates {
+    NSString *key = @"CYLTestLastUpdatedTime";
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    @try {
+        CYLRefreshConfig.defaultConfig.languageCode = @"en-US";
+        [NSUserDefaults.standardUserDefaults setObject:[NSDate date] forKey:key];
+        header.lastUpdatedTimeKey = key;
+        XCTAssertTrue([header.lastUpdatedTimeLabel.text containsString:@"Today"], @"%@", header.lastUpdatedTimeLabel.text);
+
+        // A month ago is usually the same day of the month; it used to be shown as "Today".
+        NSDate *lastMonth = [calendar dateByAddingUnit:NSCalendarUnitMonth value:-1 toDate:[NSDate date] options:0];
+        [NSUserDefaults.standardUserDefaults setObject:lastMonth forKey:key];
+        header.lastUpdatedTimeKey = key;
+        NSString *english = header.lastUpdatedTimeLabel.text;
+        XCTAssertFalse([english containsString:@"Today"], @"%@", english);
+        // en-US uses a 12-hour clock.
+        XCTAssertTrue([english containsString:@"AM"] || [english containsString:@"PM"], @"%@", english);
+
+        // German has no built-in strings (English is used) but its locale formats a 24-hour clock.
+        CYLRefreshConfig.defaultConfig.languageCode = @"de-DE";
+        header.lastUpdatedTimeKey = key;
+        NSString *german = header.lastUpdatedTimeLabel.text;
+        XCTAssertTrue([german hasPrefix:@"Last update: "], @"%@", german);
+        XCTAssertFalse([german containsString:@"AM"] || [german containsString:@"PM"], @"%@", german);
+    } @finally {
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:key];
+        CYLRefreshConfig.defaultConfig.languageCode = nil;
+    }
+}
+
 - (void)testMissingRefreshBundleFallsBackWithoutException {
     Method original = class_getClassMethod(NSBundle.class, @selector(cyl_refreshBundle));
     Method missing = class_getClassMethod(NSBundle.class, @selector(cyl_testMissingRefreshBundle));

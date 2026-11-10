@@ -54,6 +54,29 @@ If either is missing, copy the corresponding icon and custom launch screen from
 `CYLTabBarController`, include their dependent assets and target membership,
 and verify the result builds. Do not overwrite existing project assets.
 
+## Localization
+
+All localization files and images of the library live in one resource bundle,
+`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle`.
+There is no other `.bundle`; `CYLRefresh.bundle` was merged into it.
+
+- Each component has its own strings table so keys cannot collide: the
+  placeholder uses `<language>.lproj/Localizable.strings` (`CYLPlaceholder…`
+  keys) and the refresh component uses `<language>.lproj/CYLRefresh.strings`
+  (`CYLRefresh…` keys). A new component adds its own table in the same bundle.
+- Both tables support the same languages: `en`, `zh-Hans`, `zh-Hant`, `ja`,
+  `ko`, `ru`, `uk`. Adding a key means adding it to every language; adding a
+  language means adding both tables and listing it in
+  `CYLPlaceholderLocalizedString` (`CYLPlaceholderView.m`) and
+  `cyl_defaultI18nBundleWithLanguage:` (`NSBundle+CYLRefresh.m`).
+  `testPlaceholderLocalizationsHaveAllMessageKeys` and
+  `testRefreshResourcesLiveInTheSingleLibraryBundle` check every key in every
+  language.
+- Do not hard-code user-facing text in library code; read it from the bundle
+  with a fallback. Keep `.strings` files UTF-8, one `"key" = "value";` per line.
+- Resources go into the podspec `resources`, the Xcode project's Copy Bundle
+  Resources phases, and the test runners only through this bundle.
+
 ## CI example screenshots
 
 Every CI run that builds code must provide a screenshot of each example app

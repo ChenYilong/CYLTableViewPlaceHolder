@@ -11,6 +11,7 @@
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
+#import "CYLRefreshConfig.h"
 
 @interface CYLRefreshStateHeader()
 {
@@ -81,24 +82,22 @@
     }
 
     if (lastUpdatedTime) {
-        // 1.获得年月日
+        // 1.判断今天、今年（比较完整日期，而不只是“日”）
         NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
-        NSUInteger unitFlags = NSCalendarUnitYear| NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute;
-        NSDateComponents *cmp1 = [calendar components:unitFlags fromDate:lastUpdatedTime];
-        NSDateComponents *cmp2 = [calendar components:unitFlags fromDate:[NSDate date]];
+        BOOL isToday = [calendar isDateInToday:lastUpdatedTime];
+        BOOL isThisYear = [calendar component:NSCalendarUnitYear fromDate:lastUpdatedTime] ==
+                          [calendar component:NSCalendarUnitYear fromDate:[NSDate date]];
 
-        // 2.格式化日期
+        // 2.按语言格式化日期：顺序、分隔符和 12/24 小时制随 locale 变化（j 为该 locale 偏好的小时格式）
+        NSString *language = CYLRefreshConfig.defaultConfig.languageCode;
+        NSLocale *locale = language ? [NSLocale localeWithLocaleIdentifier:language] : NSLocale.currentLocale;
+        NSString *formatTemplate = isToday ? @"jmm" : (isThisYear ? @"MMddjmm" : @"yyyyMMddjmm");
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        BOOL isToday = NO;
-        if ([cmp1 day] == [cmp2 day]) { // 今天
-            formatter.dateFormat = @" HH:mm";
-            isToday = YES;
-        } else if ([cmp1 year] == [cmp2 year]) { // 今年
-            formatter.dateFormat = @"MM-dd HH:mm";
-        } else {
-            formatter.dateFormat = @"yyyy-MM-dd HH:mm";
-        }
+        formatter.calendar = calendar;
+        formatter.locale = locale;
+        formatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:formatTemplate options:0 locale:locale];
         NSString *time = [formatter stringFromDate:lastUpdatedTime];
+        if (isToday) time = [@" " stringByAppendingString:time];
 
         // 3.显示日期
         self.lastUpdatedTimeLabel.text = [NSString stringWithFormat:@"%@%@%@",

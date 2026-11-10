@@ -2,6 +2,9 @@
 "CYLRefreshHeaderPullingText" = "Отпустите чтобы обновить";
 "CYLRefreshHeaderRefreshingText" = "Загрузка...";
 
+"CYLRefreshTrailerIdleText" = "Проведите, чтобы увидеть подробности";
+"CYLRefreshTrailerPullingText" = "Отпустите, чтобы увидеть подробности";
+
 "CYLRefreshAutoFooterIdleText" = "Нажмите или потяните чтобы загрузить еще";
 "CYLRefreshAutoFooterRefreshingText" = "Загрузка...";
 "CYLRefreshAutoFooterNoMoreDataText" = "Больше нет данных";

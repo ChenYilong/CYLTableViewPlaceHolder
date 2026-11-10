@@ -80,7 +80,8 @@ static NSBundle *CYLPlaceholderResourceBundle(void) {
 static NSString *CYLPlaceholderLocalizedString(NSString *key, NSString *fallback) {
     NSBundle *bundle = CYLPlaceholderResourceBundle();
     if (!bundle) return fallback;
-    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja"];
+    // Same languages as the refresh component; both tables live in CYLTableViewPlaceHolder.bundle.
+    NSArray<NSString *> *languages = @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"];
     NSString *language = [NSBundle preferredLocalizationsFromArray:languages
                                                     forPreferences:NSLocale.preferredLanguages].firstObject;
     NSString *path = [bundle pathForResource:language ofType:@"lproj"];
