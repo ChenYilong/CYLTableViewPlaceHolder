@@ -26,11 +26,8 @@ LOG="$ROOT/build/$SCHEME.log"
 SCREENSHOT="$ROOT/build/screenshots/$SCHEME.png"
 DERIVED_DATA=$(mktemp -d "${TMPDIR:-/tmp}/cyl-example.XXXXXX")
 UDID=""
-cleanup() {
-  [[ -n "$UDID" ]] && xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true
-  rm -rf "$DERIVED_DATA"
-}
-trap cleanup EXIT
+# Shut the simulator down (if one was booted) and remove the build products on exit.
+trap '[[ -n "$UDID" ]] && xcrun simctl shutdown "$UDID" >/dev/null 2>&1; rm -rf "$DERIVED_DATA"' EXIT
 
 # set -e does not apply inside a function called from an if, so every step returns on failure explicitly.
 capture_screenshot() {
