@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage: scripts/ci-build-example.sh <demo folder>    e.g. . or Examples/Example-Scenarios
 #
-# Installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
+# Resolves the latest MJRefresh version into the demo's Podfile, installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
 # then installs and launches the app on a booted simulator and saves a screenshot to build/screenshots/<scheme>.png.
 # A build without a screenshot fails: every CI build must show the example running (see instructions.md).
 # ExampleObjC02 then runs its collection UI tests, which save step screenshots to build/screenshots too.
@@ -22,6 +22,11 @@ case "$DEMO" in
   *) echo "Unknown demo: $DEMO" >&2; exit 2 ;;
 esac
 cd "$DEMO"
+# Examples depend on the latest MJRefresh next to CYLRefresh (instructions.md, "Depending on MJRefresh in the examples").
+if grep -q "pod 'MJRefresh'" Podfile; then
+  MJREFRESH_VERSION=$("$ROOT/scripts/resolve-mjrefresh-version.sh" --write "$PWD/Podfile")
+  echo "MJRefresh latest version: $MJREFRESH_VERSION"
+fi
 pod install
 WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
 LOG="$ROOT/build/$SCHEME.log"

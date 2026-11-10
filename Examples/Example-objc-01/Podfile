@@ -5,6 +5,9 @@ use_frameworks!
 
 target 'ExampleObjC01' do
   pod 'CYLTableViewPlaceHolder', :path => '../..'
+  # The original library CYLRefresh is adapted from, always at its latest version (scripts/resolve-mjrefresh-version.sh
+  # sets it before every build; instructions.md, "Depending on MJRefresh in the examples").
+  pod 'MJRefresh', '3.7.9'
 end
 
 post_install do |installer|

@@ -5,6 +5,13 @@ Each example inherits the repository instructions and any instructions in its
 own folder. Keep upstream attribution and use the repository root as the local
 CocoaPods dependency path.
 
+## Dependencies
+
+Every example's Podfile also contains `pod 'MJRefresh', '<latest version>'` (the highest stable version on the
+CocoaPods trunk), so each example is built with the original library next to `CYLRefresh`. Set it with
+`scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile` before building (`scripts/ci-build-example.sh`
+does it in CI). See "Depending on MJRefresh in the examples" in the root `instructions.md`.
+
 ## Language
 
 Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples

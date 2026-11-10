@@ -19,6 +19,11 @@ deployment target, or podspec.
   Only a project named CYLTabBarController uses `:path` (relative, to the folder containing the podspec).
   Run `pod install`, or `pod update CYLTabBarController` when a lock pins an older commit
   (`instructions.md`, "Depending on CYLTabBarController").
+- Every example Podfile (`Examples/*/Podfile`) also has `pod 'MJRefresh', '<latest version>'` in the app target:
+  the highest stable version on the CocoaPods trunk, set before every build with
+  `scripts/resolve-mjrefresh-version.sh [--write <Podfile>...]`. Run `pod install` (`pod update MJRefresh` when a
+  lock pins an older version) and check the example compiles; the root `Podfile` of the main app is excluded
+  (`instructions.md`, "Depending on MJRefresh in the examples").
 - `CYLTableViewPlaceHolder.xcodeproj/project.pbxproj` uses object version 46
   and compatibility version `Xcode 3.2`. Keep explicit file references; do not
   silently switch to synchronized groups or a newer project format.

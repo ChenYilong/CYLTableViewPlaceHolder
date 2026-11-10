@@ -104,6 +104,34 @@ pod 'CYLTabBarController', :path => '../..'
 
 Find that folder by searching upward from the Podfile for the podspec; never write an absolute path.
 
+## Depending on MJRefresh in the examples
+
+`CYLRefresh` is adapted from MJRefresh. So that an example always builds and runs with the original library
+next to it (name clashes, duplicate symbols, the "MJRefresh controls stay above the placeholder" behavior),
+**every example's Podfile also contains MJRefresh at its latest version**, in the app target:
+
+```ruby
+pod 'MJRefresh', '<latest version>'
+```
+
+- **"Latest version" means the highest stable version on the CocoaPods trunk** (digits and dots only, no
+  pre-release), not a `~>` range and not the newest GitHub tag. Find it before every build and write the exact
+  version into every example Podfile:
+
+  ```sh
+  scripts/resolve-mjrefresh-version.sh                           # prints the version
+  scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile
+  ```
+
+  The script reads the CocoaPods CDN index, the one `pod` resolves from, so it needs only `curl`.
+  `scripts/ci-build-example.sh` runs it before `pod install`, so CI always builds with the newest version.
+- Run `pod install`; when a `Podfile.lock` pins an older version, `pod update MJRefresh`.
+- **Check that the example still compiles and launches**: the `Demo` CI job builds it and saves a screenshot
+  (`instructions.md`, "CI example screenshots"). Report the version that was built. If the newest version does
+  not compile, report the version and the error; do not quietly pin an older one.
+- The main app at the repository root (`Examples/Example`, built through the root `Podfile`) compiles the
+  refresh source directly and promises no `pod install`; it is not covered by this rule.
+
 ## Swift examples and a Swift-friendly core
 
 iOS examples are written in Swift; the library stays Objective-C. The core adapts to the Swift call site, not the other way round.

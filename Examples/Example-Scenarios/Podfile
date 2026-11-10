@@ -6,6 +6,9 @@ use_frameworks!
 target 'ExampleScenarios' do
   # Every animation engine, so the demo can play the bundled Lottie, PAG, Rive and GIF placeholders.
   pod 'CYLTableViewPlaceHolder', :path => '../..', :subspecs => ['Core', 'LottieSwift', 'PAG', 'Rive', 'GIF']
+  # The original library CYLRefresh is adapted from, always at its latest version (scripts/resolve-mjrefresh-version.sh
+  # sets it before every build; instructions.md, "Depending on MJRefresh in the examples").
+  pod 'MJRefresh', '3.7.9'
   # The tab bar with the plus button, as in CYLTabBarController's Objective-C demo.
   pod 'CYLTabBarController', '~> 1.99.72'
 end
