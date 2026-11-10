@@ -108,38 +108,6 @@ final class CYLCollectionAnimationUITests: XCTestCase {
     }
 
 
-    // TEMPORARY diagnostic (not committed).
-    @MainActor func testDiagDragBackNoMore() { diag(["-noMoreData"], "nomore") }
-    @MainActor func testDiagDragBackMore() { diag([], "more") }
-    @MainActor
-    private func diag(_ arguments: [String], _ name: String) {
-        let app = XCUIApplication()
-        app.launchArguments = arguments
-        app.launch()
-        let collection = app.collectionViews["issue1523Collection"]
-        XCTAssertTrue(collection.waitForExistence(timeout: 10))
-        let first = app.cells["item-0"]
-        XCTAssertTrue(first.waitForExistence(timeout: 5))
-        sleep(1)
-        func log(_ step: String) {
-            let header = app.staticTexts["Pull down to refresh"]
-            let bar = app.navigationBars.firstMatch
-            print("CYLDIAG \(name) \(step) nav=\(bar.frame) first=\(first.exists ? first.frame : .zero) header=\(header.exists ? header.frame : .zero) title=\(bar.identifier)")
-            saveScreenshot("diag-\(name)-\(step)")
-        }
-        log("1-launch")
-        let top = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.16))
-        let bottom = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
-        for _ in 0..<4 { collection.swipeUp() }
-        bottom.press(forDuration: 0.1, thenDragTo: top)
-        _ = app.navigationBars["Footer completed"].waitForExistence(timeout: 8)
-        sleep(2)
-        log("2-after-footer")
-        for _ in 0..<3 { collection.swipeDown(velocity: .slow); sleep(1) }
-        sleep(2)
-        log("3-dragged-to-top")
-    }
-
     /// Saves a screenshot to CYL_SCREENSHOT_DIR (set by scripts/ci-build-example.sh through TEST_RUNNER_) and attaches it.
     private func saveScreenshot(_ name: String) {
         let screenshot = XCUIScreen.main.screenshot()
