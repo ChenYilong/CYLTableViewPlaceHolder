@@ -89,7 +89,7 @@
 | [#1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | SwiftUI 非 scroll view 容器移除 KVO 崩溃 | 90/100：按实际注册对象解绑；模拟器让自动 footer 在普通 UIView 和两个 scroll view 间切换 100 次，检查底部 inset 恢复；新增 `UIViewRepresentable` 包装 back footer 的 SwiftUI 页面，在 iOS 17.5 上往返五次未崩溃。尚未在报告的 iOS 15.4 环境验证或用原代码重现崩溃，未进行三轮独立修复。 |
 | [#1587](https://github.com/CoderMJLee/MJRefresh/issues/1587) | 下拉刷新和上拉加载互斥 | 75/100：原 issue 只有一句话（下拉刷新中上拉应显示“刷新数据中”，反之亦然），无示例。新增 `CYLRefreshComponent` 的 `exclusiveWithOtherRefresh`（默认 NO，行为不变）和 `blockedByOtherRefreshBlock`：设置后同一滚动视图的 header/footer/trailer 任一正在刷新时，该组件不开始刷新，被中断的“松开加载”回到空闲，并回调提示。保留此前自动 footer 在 header 刷新时不触发的行为。新增 `testHeaderAndFooterExcludeEachOtherWhenEnabled`（两个方向、回调次数、拉动状态）与 `testHeaderAndFooterRunIndependentlyByDefault`，已在 CI run 42891797252（448b6aa，Unit tests 89 项 0 失败）通过。未实现：内置的“刷新中”提示文字（交给回调）、真实手势验证；未完成三轮独立修复。 |
 | [#1586](https://github.com/CoderMJLee/MJRefresh/issues/1586) | 隐藏 header 时开始刷新位置异常 | 85/100：复现并修复隐藏时首次加入未定位以及刷新结束后顶部 inset 未恢复；iOS 17.5 模拟器验证隐藏 table header 连续三次刷新，以及隐藏和可见 collection header 交替刷新。iOS 26.3.1 测试停在另一条用例，未完成；尚未比对原报告截图或验证真实页面，未完成三轮独立修复。 |
-| [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 40/100：原 issue 两个场景——①进入页面时已是无更多数据，上拉时显示 3 秒再回弹；②上拉加载到全部数据后显示 3 秒再回弹。已实现场景②：`CYLRefreshBackFooter.noMoreDataDisplayDuration`（默认 0，行为不变），加载以 `endRefreshingWithNoMoreData` 结束后保持 footer 展开这么久再回弹；`resetNoMoreData`、新的加载、移除 footer 立即归还 inset。新增 `testBackFooterHoldsNoMoreDataForTheConfiguredDuration`、`...ReboundsAtOnceByDefault`、`...HoldEndsOnResetNewLoadAndRemoval`，待 CI 验证。场景①未实现（需要在松手时判断拉出距离并保持 inset）；真实手势、auto footer 未验证；未完成三轮独立修复。 |
+| [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 40/100：原 issue 两个场景——①进入页面时已是无更多数据，上拉时显示 3 秒再回弹；②上拉加载到全部数据后显示 3 秒再回弹。已实现场景②：`CYLRefreshBackFooter.noMoreDataDisplayDuration`（默认 0，行为不变），加载以 `endRefreshingWithNoMoreData` 结束后保持 footer 展开这么久再回弹；`resetNoMoreData`、新的加载、移除 footer 立即归还 inset。新增 `testBackFooterHoldsNoMoreDataForTheConfiguredDuration`、`...ReboundsAtOnceByDefault`、`...HoldEndsOnResetNewLoadAndRemoval`，已在 CI run 42900334454（5f08663，Unit tests 92 项 0 失败）通过，既有分页 back footer 测试同样通过。场景①未实现（需要在松手时判断拉出距离并保持 inset）；真实手势、auto footer 未验证；未完成三轮独立修复。 |
 | [#1583](https://github.com/CoderMJLee/MJRefresh/issues/1583) | 空表 reloadData 后 footer 上移 | 0/100：未调查，未修复。 |
 | [#1582](https://github.com/CoderMJLee/MJRefresh/issues/1582) | 不同下拉距离触发不同操作 | 0/100：未调查，未修复。 |
 | [#1575](https://github.com/CoderMJLee/MJRefresh/issues/1575) | JXSegmentedView 场景崩溃 | 50/100：检查原报告、上游 PR #1576 和报告者的 collection demo；当前 header 的 inset 判断已包含浮点容差。将 demo 改为 SceneDelegate 并指向本地 pod 后，在 iPhone 15 / iOS 17.5 模拟器通过一次下拉刷新，未复现崩溃。iPhone 14 Pro Max / iOS 26.4 模拟器测试启动停滞，未得结果；原 iOS 16、iPhone 14 Pro 和 JXSegmentedView 场景未验证，未完成三轮独立修复。 |
@@ -151,7 +151,7 @@
 | TODO — #1610 自动 footer 复位（75） | 受控状态分支已测；真实减速、数据变化、分页对齐未测。 | XCUITest 真实手势 + 分页数据增长场景。 |
 | TODO — #1593 真机编译参数错误（45） | strict objc_msgSend 下通用真机目标可编译；缺原始报错。 | 获取原工程或报错文本，在真机构建确认。 |
 | TODO — #1589 SwiftUI 非 scroll view KVO 崩溃（90） | iOS 17.5 往返未崩溃；未在 iOS 15.4 验证。 | iOS 15 模拟器运行同一 SwiftUI 页面测试。 |
-| TODO — #1585 无更多数据停留（40） | 场景②（加载到最后一页后停留再回弹）已实现为 back footer 的可选属性，单元测试待 CI；场景①（进入页面即无更多数据，上拉后停留）未实现；auto footer 不支持；原报告无示例，期望是否一致未经报告者确认。 | CI 通过三个新测试；实现场景①并用真实拖拽验证；评估 auto footer。 |
+| TODO — #1585 无更多数据停留（40） | 场景②（加载到最后一页后停留再回弹）已实现为 back footer 的可选属性，单元测试已在 CI 通过；场景①（进入页面即无更多数据，上拉后停留）未实现；auto footer 不支持；原报告无示例，期望是否一致未经报告者确认。 | 实现场景①并用真实拖拽验证；评估 auto footer；报告者确认。 |
 | TODO — #1587 下拉与上拉互斥（75） | 开始刷新的双向互斥已实现为可选属性，单元测试已在 CI 通过；无内置提示文字（`blockedByOtherRefreshBlock` 交给调用方）；原报告没有示例，是否满足其期望（尤其是“显示刷新数据中”）未经报告者确认。 | 在 Example 中接入并用真实拖拽验证两个方向；必要时增加默认提示文本；报告者确认。 |
 | TODO — #1586 隐藏 header 刷新位置（85） | iOS 26.3.1 测试未完成；未比对原截图。 | 在 iOS 26 模拟器跑完整套件并记录。 |
 | TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
@@ -160,7 +160,7 @@
 | TODO — #1506 collection 大幅加载动画（25） | 仅验证能触发和结束刷新。 | 同 #1523 的视觉测试，确认是否同一根因。 |
 | TODO — #1483 collection 连续刷新上移（50） | inset 恢复已修；刷新中反复拖动未复现。 | XCUITest 刷新中反复拖动并检查首项位置。 |
 | TODO — #1481 trailer 转 footer 残留（85） | 需先移除 trailer；保留 trailer 的场景未确认。 | 获取切换代码后补用例。 |
-| TODO — #1430 刷新后设 offset 跳首项（45） | 分页 footer 增长数据后仍偏移约 190 点，修复未完成。 | 修复偏移后在全屏分页 table 示例中通过真实上拉测试。 |
+| TODO — #1430 刷新后设 offset 跳首项（45） | 分页 footer 增长数据后仍偏移约 190 点，修复未完成（此前结论，来自本机 iOS 17.5 运行）。`Examples/Example-objc-02/UITests/CYLPagingUITests` 两个用例此前不在 CI 中运行；现已纳入 objc-02 Demo job，并在“最后一页”和“上拉加载后”两步打印表格与 page-7 的 frame、保存截图（`ExampleObjC02-paging-*.png`），用 CI 数据定位偏移原因后再修复。注意：若该测试仍失败，objc-02 Demo job 会变红，这是有意暴露未修复的问题，不是回归。 | 用 CI 的 frame 数据和截图确定偏移原因；修复后两个分页 UI 测试通过；原 iOS 13 和真机未验证。 |
 | TODO — #1317 搜索控制器 inset 递归（80） | 重入保护已覆盖四条路径；未在真实手势和 iOS 12.3 复现。 | XCUITest 搜索控制器 + 下拉刷新；iOS 12 真机。 |
 | TODO — #1041 drawRect 内存（80） | 已删除 `drawRect:`；启动时机可能比旧实现早。 | 真机 Instruments 内存对比；转场与真实手势回归。 |
 | TODO — #1623 自动加载 trailer（70） | 实现已加入 `CYLRefreshTrailer`，默认关闭；新增测试已在 CI 通过。阅读原 issue 核对期望（是否需要单独的 `CYLRefreshAutoTrailer` 类）；为拖拽次数限制补测试（需真实拖拽或 XCUITest）。已知差异：自动 footer 常驻底部 inset，trailer 未刷新时不占右侧 inset，因此只在越过内容末端（回弹区）时触发，而非提前预加载。已知风险：CI 曾在一次异常缓慢的 runner 上让本测试和既有的 `testReparentingActiveTrailerRestoresOldScrollView` 同时因 5 秒等待超时失败，重跑通过；若再次出现，应改为确定性地等待开始动画，而不是只延长超时。 | 横向 collection 示例中真实滑动验证一次拖拽只触发一次；核对原 issue 后更新分数。 |

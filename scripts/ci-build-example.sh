@@ -51,17 +51,18 @@ capture_screenshot() {
 # Demos with UI tests that also save step screenshots next to the launch screenshot (CYL_SCREENSHOT_DIR).
 ui_tests_for_scheme() {
   case "$SCHEME" in
-    ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests" ;;
+    ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests ExampleObjC02UITests/CYLPagingUITests" ;;
   esac
 }
 
 run_ui_tests() {
-  local only
+  local only selection=()
   only=$(ui_tests_for_scheme)
   [[ -n "$only" ]] || return 0
+  for name in $only; do selection+=("-only-testing:$name"); done
   echo "UI tests: $only on $UDID"
   TEST_RUNNER_CYL_SCREENSHOT_DIR="$ROOT/build/screenshots" xcodebuild test -workspace "$WORKSPACE" -scheme "$SCHEME" \
-    -destination "id=$UDID" -derivedDataPath "$DERIVED_DATA" -only-testing:"$only" 2>&1 | tee "$ROOT/build/$SCHEME-uitests.log"
+    -destination "id=$UDID" -derivedDataPath "$DERIVED_DATA" "${selection[@]}" 2>&1 | tee "$ROOT/build/$SCHEME-uitests.log"
 }
 
 build_status=0

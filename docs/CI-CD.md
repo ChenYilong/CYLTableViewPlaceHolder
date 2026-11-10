@@ -44,7 +44,7 @@ iPhone simulator with `scripts/ci-destination.sh`; validation builds use
 
 ### Example screenshots
 
-The `Examples/Example-objc-02` job also runs `CYLCollectionAnimationUITests` after the launch screenshot (#1523).
+The `Examples/Example-objc-02` job also runs `CYLCollectionAnimationUITests` (#1523) and `CYLPagingUITests` (#1430) after the launch screenshot.
 Its footer-load tests save step screenshots (`ExampleObjC02-<case>-<step>.png`) through `CYL_SCREENSHOT_DIR`,
 so they appear in the same artifact and pull request comment; the log is `build/ExampleObjC02-uitests.log`.
 
