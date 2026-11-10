@@ -174,9 +174,37 @@
     CYLRefreshDispatchAsyncOnMainQueue([self setNeedsLayout];)
 }
 
+#pragma mark 与其他刷新控件互斥
+- (BOOL)cyl_otherComponentIsRefreshing
+{
+    UIScrollView *scrollView = self.scrollView;
+    NSMutableArray<CYLRefreshComponent *> *others = [NSMutableArray array];
+    if (scrollView.cyl_header) [others addObject:scrollView.cyl_header];
+    if (scrollView.cyl_footer) [others addObject:scrollView.cyl_footer];
+    if (scrollView.cyl_trailer) [others addObject:scrollView.cyl_trailer];
+    for (CYLRefreshComponent *other in others) {
+        if (other != self && other.isRefreshing) return YES;
+    }
+    return NO;
+}
+
+/// Returns YES, after dropping the pull and telling the caller, when this start must wait for another component.
+- (BOOL)cyl_holdsBackStartForOtherRefresh
+{
+    if (!self.exclusiveWithOtherRefresh || self.isRefreshing || ![self cyl_otherComponentIsRefreshing]) return NO;
+    if (self.state == CYLRefreshStatePulling) {
+        self.state = CYLRefreshStateIdle;
+    }
+    if (self.blockedByOtherRefreshBlock) {
+        self.blockedByOtherRefreshBlock();
+    }
+    return YES;
+}
+
 #pragma mark 进入刷新状态
 - (void)beginRefreshing
 {
+    if ([self cyl_holdsBackStartForOtherRefresh]) return;
     [UIView animateWithDuration:self.fastAnimationDuration animations:^{
         self.alpha = 1.0;
     }];

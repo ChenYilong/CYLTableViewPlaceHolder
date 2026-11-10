@@ -991,6 +991,80 @@ static const NSTimeInterval CYLTestTimeout = 30;
     window.hidden = YES;
 }
 
+// CoderMJLee/MJRefresh#1587: pull-down refresh and pull-up load exclude each other when asked to.
+- (void)testHeaderAndFooterExcludeEachOtherWhenEnabled {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    [window makeKeyAndVisible];
+    __block NSUInteger headerCalls = 0, footerCalls = 0, blocked = 0;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{ headerCalls++; }];
+    CYLRefreshFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{ footerCalls++; }];
+    for (CYLRefreshComponent *component in @[header, footer]) {
+        component.fastAnimationDuration = 0;
+        component.slowAnimationDuration = 0;
+        component.exclusiveWithOtherRefresh = YES;
+        component.blockedByOtherRefreshBlock = ^{ blocked++; };
+    }
+    self.table.cyl_header = header;
+    self.table.cyl_footer = footer;
+
+    // The header refreshes: loading more is held back and reported.
+    XCTestExpectation *headerStarted = [self expectationWithDescription:@"header started"];
+    header.refreshingBlock = ^{ headerCalls++; [headerStarted fulfill]; };
+    [header beginRefreshing];
+    [self waitForExpectations:@[headerStarted] timeout:CYLTestTimeout];
+    footer.state = CYLRefreshStatePulling;
+    [footer beginRefreshing];
+    XCTAssertEqual(footer.state, CYLRefreshStateIdle, @"the held-back pull is dropped, not left on 'release to load'");
+    XCTAssertEqual(footerCalls, 0u);
+    XCTAssertEqual(blocked, 1u);
+    XCTAssertTrue(header.isRefreshing);
+
+    // After the header ends, loading more works; now the header is held back.
+    XCTestExpectation *headerEnded = [self expectationWithDescription:@"header ended"];
+    [header endRefreshingWithCompletionBlock:^{ [headerEnded fulfill]; }];
+    [self waitForExpectations:@[headerEnded] timeout:CYLTestTimeout];
+    XCTestExpectation *footerStarted = [self expectationWithDescription:@"footer started"];
+    footer.refreshingBlock = ^{ footerCalls++; [footerStarted fulfill]; };
+    [footer beginRefreshing];
+    [self waitForExpectations:@[footerStarted] timeout:CYLTestTimeout];
+    XCTAssertEqual(footerCalls, 1u);
+    NSUInteger headerCallsBefore = headerCalls;
+    [header beginRefreshing];
+    XCTAssertFalse(header.isRefreshing);
+    XCTAssertEqual(headerCalls, headerCallsBefore);
+    XCTAssertEqual(blocked, 2u);
+
+    XCTestExpectation *footerEnded = [self expectationWithDescription:@"footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [footerEnded fulfill]; }];
+    [self waitForExpectations:@[footerEnded] timeout:CYLTestTimeout];
+    self.table.cyl_header = nil;
+    self.table.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testHeaderAndFooterRunIndependentlyByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    [window makeKeyAndVisible];
+    XCTAssertFalse(CYLRefreshNormalHeader.new.isExclusiveWithOtherRefresh);
+    __block NSUInteger footerCalls = 0;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{ footerCalls++; }];
+    header.fastAnimationDuration = footer.fastAnimationDuration = 0;
+    self.table.cyl_header = header;
+    self.table.cyl_footer = footer;
+    [header beginRefreshing];
+    [footer beginRefreshing];
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertTrue(footer.isRefreshing, @"unchanged default: the footer starts while the header refreshes");
+    self.table.cyl_header = nil;
+    self.table.cyl_footer = nil;
+    window.hidden = YES;
+}
+
 - (void)testTrailerKeepsPullAndReleaseBehaviorByDefault {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];

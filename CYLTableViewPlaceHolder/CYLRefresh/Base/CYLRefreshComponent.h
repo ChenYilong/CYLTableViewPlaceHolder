@@ -82,6 +82,15 @@ typedef void (^CYLRefreshComponentAction)(void);
 /** 是否正在刷新 */
 @property (assign, nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
 
+/** Mutual exclusion with the other refresh components of the same scroll view (header, footer, trailer). Default NO:
+ they run independently, except that a header refresh already holds back the automatic footer. YES: while another
+ component is refreshing, this one does not start; the pull is dropped and `blockedByOtherRefreshBlock` runs.
+ Set it on both components for a two-way exclusion. */
+@property (assign, nonatomic, getter=isExclusiveWithOtherRefresh) BOOL exclusiveWithOtherRefresh;
+/** Runs on the main thread each time a start was held back by `exclusiveWithOtherRefresh`, for example to show
+ "refreshing, please wait". */
+@property (copy, nonatomic, nullable) CYLRefreshComponentAction blockedByOtherRefreshBlock;
+
 /** 刷新状态 一般交给子类内部实现 */
 @property (assign, nonatomic) CYLRefreshState state;
 

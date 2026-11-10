@@ -453,7 +453,17 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 从旧版本升级：CocoaPods 和 Carthage 集成无需改动；手动集成需从工程中删除 `CYLRefresh.bundle`，只保留 `CYLTableViewPlaceHolder.bundle`。直接读取 `CYLRefresh.bundle` 路径或旧图片名 `arrow@2x.png` / `trail_arrow@2x.png` 的代码，请改用 `cyl_refreshBundle`、`cyl_arrowImage`、`cyl_trailArrowImage`。
 
-`endRefreshing`、`endRefreshingWithNoMoreData` 和 `resetNoMoreData` 在主线程立即更新状态；从后台线程调用时仍异步提交到主队列。自动 footer 在 header 正在刷新时不会自动触发，但这不是所有 header/footer 类型的双向互斥。
+`endRefreshing`、`endRefreshingWithNoMoreData` 和 `resetNoMoreData` 在主线程立即更新状态；从后台线程调用时仍异步提交到主队列。自动 footer 在 header 正在刷新时不会自动触发；其余组合默认互不影响，可各自刷新。
+
+需要“下拉刷新与上拉加载互斥”（上游 #1587）时，在 header、footer（或 trailer）上设置 `exclusiveWithOtherRefresh = YES`（默认 NO，行为不变）：同一个滚动视图上的另一个组件正在刷新时，该组件不会开始刷新，被中断的拉动会回到空闲状态，并在主线程调用 `blockedByOtherRefreshBlock`，可用来提示“正在刷新数据，请稍候”。两个组件都设置才是双向互斥；只给一个设置，则只有它自己会被另一个挡住。这是开始刷新的互斥，不改变刷新控件的外观，也没有内置提示文字。
+
+```objc
+void (^notify)(void) = ^{ /* 例如 Toast：正在刷新数据 */ };
+header.exclusiveWithOtherRefresh = YES;
+header.blockedByOtherRefreshBlock = notify;
+footer.exclusiveWithOtherRefresh = YES;
+footer.blockedByOtherRefreshBlock = notify;
+```
 
 开启分页时，自动 footer 结束刷新不会再直接减去整个底部 inset：静止时只将超出正常内容范围的 offset 限制回边界；拖拽或减速期间不主动改写 offset，由滚动视图完成回弹。
 
