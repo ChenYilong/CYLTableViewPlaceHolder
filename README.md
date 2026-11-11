@@ -402,6 +402,46 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 | --- | --- |
 | 原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。 | The original refresh library's API has been renamed: the class prefix is now `CYL`, and category properties and methods use `cyl_`. This is an API-incompatible migration: old class names, properties, category methods and custom localization keys in an app must be changed accordingly. The old unprefixed `header` / `footer` on the category are no longer provided. For manual source integration, besides all `.h` and `.m` files, add the `CYLRefresh` directory and its subdirectories to Header Search Paths, and copy `CYLTableViewPlaceHolder.bundle`, `PrivacyInfo.xcprivacy` and `LICENSE.third-party` into the app's resources. Static library integration needs `-ObjC` to link the categories. |
 
+### 下拉刷新 02：动画图片 / Pull-down refresh 02: animated images
+
+| 中文 | English |
+| --- | --- |
+| 与 MJRefresh 文档中的 [“下拉刷新02-动画图片”](https://github.com/CoderMJLee/MJRefresh#the-drop-down-refresh-02-animation-image) 相同，`MJ` 改为 `CYL`：`CYLRefreshGifHeader` 用 `setImages:forState:` 显示各状态的动画图片。 | The same as ["The drop-down refresh 02-Animation image"](https://github.com/CoderMJLee/MJRefresh#the-drop-down-refresh-02-animation-image) of the MJRefresh documentation, with `MJ` changed to `CYL`: `CYLRefreshGifHeader` shows the animated images of each state with `setImages:forState:`. |
+
+```objc
+CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+// [CN] 普通、松开即刷新、刷新中三种状态的动画图片
+// [EN] The animated images of the idle, pulling and refreshing states
+[header setImages:idleImages forState:CYLRefreshStateIdle];
+[header setImages:pullingImages forState:CYLRefreshStatePulling];
+[header setImages:refreshingImages forState:CYLRefreshStateRefreshing];
+self.tableView.cyl_header = header;
+```
+
+| 中文 | English |
+| --- | --- |
+| 同一个控件也可以用本库已有的 GIF、Lottie、PAG、Rive 动画代替这些图片（`CYLRefreshIconAnimating`），布局与显示时机不变；Lottie、PAG、Rive 需要对应的子规格（`LottieSwift` 或 `Lottie`、`PAG`、`Rive`），GIF 由 Core 播放。`CYLRefreshBackGifFooter`、`CYLRefreshAutoGifFooter` 用法相同。箭头样式的 `CYLRefreshNormalHeader` 等保持不变。 | The same control can draw the library's existing GIF, Lottie, PAG and Rive animations instead of the images (`CYLRefreshIconAnimating`), with the same layout and show/hide timing; Lottie, PAG and Rive need their subspec (`LottieSwift` or `Lottie`, `PAG`, `Rive`), and Core plays GIF. `CYLRefreshBackGifFooter` and `CYLRefreshAutoGifFooter` work the same way. The arrow controls such as `CYLRefreshNormalHeader` are unchanged. |
+
+```objc
+CGSize size = CGSizeMake(32, 32);
+// [CN] GIF：所有状态使用同一个图标（未单独设置的状态使用空闲状态的图标）
+// [EN] GIF: one icon for every state (a state without its own uses the idle icon)
+[header setBundledIconAnimation:@"CYLRefreshArrows.gif" size:size forState:CYLRefreshStateIdle];
+// [CN] Lottie：刷新中换成渐变加载圈
+// [EN] Lottie: a gradient spinner while refreshing
+[header setBundledIconAnimation:@"CYLRefreshGradientSpinner.json" size:size forState:CYLRefreshStateRefreshing];
+// [CN] PAG、Rive：同样传入内置文件名，或用 setIconAnimationFilePath:size:forState: 传入任意本地文件
+// [EN] PAG and Rive: pass a bundled name the same way, or any local file with setIconAnimationFilePath:size:forState:
+[footer setBundledIconAnimation:@"CYLPlaceholderLoading.pag" size:size forState:CYLRefreshStateRefreshing];
+[otherHeader setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(36, 36) forState:CYLRefreshStateIdle];
+// [CN] 所有可用的内置文件 / [EN] Every bundled file you can use
+NSArray<NSString *> *names = CYLRefreshGifHeader.bundledIconAnimationFileNames;
+```
+
+| 中文 | English |
+| --- | --- |
+| Swift：`header.setIconAnimation(bundled: "CYLRefreshArrows.gif", size: CGSize(width: 32, height: 32), for: .idle)`。`Examples/Example-Scenarios` 的“刷新图标”页按 GIF、Lottie、PAG、Rive 分组列出每个内置文件。详见 [docs/Refresh-Icon-Animation.md](docs/Refresh-Icon-Animation.md)。 | Swift: `header.setIconAnimation(bundled: "CYLRefreshArrows.gif", size: CGSize(width: 32, height: 32), for: .idle)`. The "Refresh icons" page of `Examples/Example-Scenarios` lists every bundled file, grouped by GIF, Lottie, PAG and Rive. See [docs/Refresh-Icon-Animation.md](docs/Refresh-Icon-Animation.md). |
+
 ### 国际化与资源包 / Localization and the resource bundle
 
 | 中文 | English |
