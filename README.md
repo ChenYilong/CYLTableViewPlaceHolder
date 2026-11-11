@@ -430,6 +430,18 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 ![刷新图标动画：下拉刷新与上拉加载 / Refresh icon animations: headers and footers](assets/cyl-refresh-icon-animations.png)
 
+| 中文 | English |
+| --- | --- |
+| 空闲时隐藏刷新头（`hidesWhenIdle`，默认 YES，与 MJRefresh 不同）：iOS 26 起导航栏是透明的玻璃效果，收回后的刷新头正好在导航栏下方，会透过导航栏显示在标题上。刷新头在空闲且完全收回时被遮住，下拉、刷新中和收回动画期间照常显示；`hidden`、`alpha` 与 `automaticallyChangeAlpha` 不受影响。设为 NO 恢复 MJRefresh 的行为。下图从上到下：example01、04、11 刷新结束后的导航栏。 | Hidden while idle (`hidesWhenIdle`, default YES, unlike MJRefresh): since iOS 26 the navigation bar is transparent glass, and a retracted header sits right under it, showing through over the title. The header is masked out while idle and fully retracted, and shows as usual while pulled, refreshing and retracting; `hidden`, `alpha` and `automaticallyChangeAlpha` are untouched. Set NO for MJRefresh's behavior. Below, top to bottom: the navigation bar of example01, 04 and 11 after the refresh ends. |
+
+```objc
+// [CN] 恢复 MJRefresh 的行为：收回后的刷新头保持可见
+// [EN] MJRefresh's behavior: the retracted header stays visible
+self.tableView.cyl_header.hidesWhenIdle = NO;
+```
+
+![刷新结束后导航栏下没有刷新头：example01、04、11 / No header under the navigation bar after the refresh: example01, 04, 11](assets/cyl-refresh-idle-hidden.png)
+
 #### 下拉刷新 01：默认 / Pull-down refresh 01: Default
 
 ```objc
@@ -703,7 +715,7 @@ self.webView.scrollView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshin
 
 | 中文 | English |
 | --- | --- |
-| example52 的 Lottie 加载圈第一帧几乎是空的，所以截图中图标只有一个点。example55 用 MJRefresh 的 `setImages`，图片仍由原来的图片视图按 MJRefresh 的方式排在文字左侧。 | The first frame of example52's Lottie spinner is almost empty, so its icon shows only a dot in the screenshot. example55 uses MJRefresh's `setImages`, so its images are still drawn by the original image view, to the left of the text as in MJRefresh. |
+| example52 的 Lottie 加载圈第一帧几乎是空的，所以截图中图标只有一个点。example55 用 MJRefresh 的 `setImages`：图片序列与其他图标一样由图标的 `CYLPlaceholderView` 绘制，与状态文字合为一个整体居中。 | The first frame of example52's Lottie spinner is almost empty, so its icon shows only a dot in the screenshot. example55 uses MJRefresh's `setImages`: like every other icon, the image sequence is drawn by the icon's `CYLPlaceholderView`, centered as one with the state text. |
 
 ### 下拉刷新 02：动画图片 / Pull-down refresh 02: animated images
 
