@@ -515,8 +515,8 @@ static BOOL CYLPlaceholderTapHighlightStyleFromValue(id value, NSInteger *style)
     }
     if (![value isKindOfClass:NSNumber.class]) return NO;
     double number = [value doubleValue];
-    if (!isfinite(number) || number != floor(number) || number < CYLPlaceholderTapHighlightStyleDim ||
-        number > CYLPlaceholderTapHighlightStyleNone) return NO;
+    if (!isfinite(number) || number != floor(number) || number < (double)CYLPlaceholderTapHighlightStyleDim ||
+        number > (double)CYLPlaceholderTapHighlightStyleNone) return NO;
     *style = (NSInteger)number;
     return YES;
 }
