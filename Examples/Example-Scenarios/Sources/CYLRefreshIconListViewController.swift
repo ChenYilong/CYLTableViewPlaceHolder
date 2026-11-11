@@ -3,20 +3,36 @@
 //  Example-Scenarios
 //
 //  Every refresh icon animation of the core bundle (`CYLRefreshAnimationHeader.bundledIconAnimationFileNames`: the
-//  `CYLRefresh*` files plus the placeholder animations that suit a refresh control), grouped by engine. Each row opens a
-//  list whose CYLRefresh header and footer draw that file. A second section shows the other ways to set an icon at init:
+//  `CYLRefresh*` files plus the two placeholder animations that also mean refresh), grouped by engine. Each row opens a
+//  list whose CYLRefresh header and footer draw that file. A second section shows every API of the animated-image
+//  controls (MJRefresh's "animated images", under general names):
 //
-//  - bundled file name:  `setIconAnimation(bundled:size:for:)`, one page per file
+//  - image sequence:     `setAnimationImages(_:for:)` / `(_:duration:for:)`, frames of a bundled refresh GIF
+//  - bundled file name:  `setIconAnimation(bundled:size:for:)`, one icon per state
+//  - back footer:        `CYLRefreshBackAnimationFooter`, icon per state including "no more data"
 //  - file path:          `setIconAnimation(filePath:size:for:)` with a full path
-//  - item attributes:    `setIconAnimation(attributes:for:)`, here a Rive state machine and its trigger input
+//  - item attributes:    `setIconAnimation(attributes:for:)`, here a Rive artboard and its animations
 //  - configuration file: CYLScenarioExample.bundle/RefreshIcons/refresh-icons.json names the file of every state
+//  - MJRefresh names:    `CYLRefreshGifHeader` / `CYLRefreshAutoGifFooter` with `setImages(_:for:)` still work
 //
 
 import UIKit
+import ImageIO
 import CYLTableViewPlaceHolder
 
-/// How a demo page sets the icons of its header and footer.
-private typealias CYLRefreshIconSetup = (_ header: CYLRefreshAnimationHeader, _ footer: CYLRefreshAutoAnimationFooter) -> Void
+/// Builds the header and footer of a demo page; the page adds the refreshing actions.
+private typealias CYLRefreshIconSetup = () -> (header: CYLRefreshHeader, footer: CYLRefreshFooter)
+
+/// The frames of a bundled refresh GIF, for the image-sequence API (`setAnimationImages`).
+enum CYLRefreshFrames {
+    static func images(ofBundledGIF name: String) -> [UIImage] {
+        guard let path = CYLPlaceholderView.path(forBundledAnimation: name),
+              let source = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil) else { return [] }
+        return (0..<CGImageSourceGetCount(source)).compactMap { index in
+            CGImageSourceCreateImageAtIndex(source, index, nil).map { UIImage(cgImage: $0) }
+        }
+    }
+}
 
 final class CYLRefreshIconListViewController: UITableViewController {
 
@@ -38,14 +54,15 @@ final class CYLRefreshIconListViewController: UITableViewController {
         ("riv", "Rive · CYLTableViewPlaceHolder/Rive"),
     ]
 
-    /// The size of an icon: line icons and spinners read well at about the arrow's height, wide loaders need room.
+    /// The size of an icon: line icons and spinners read well at about the arrow's height, dots need width.
     private static func iconSize(for fileName: String) -> CGSize {
         switch fileName {
-        case "CYLPlaceholderLoadingInfinity.json", "CYLRefreshDots.json", "CYLRefreshDotsPulse.json",
-             "CYLRefreshStepLoader.json":
-            return CGSize(width: 48, height: 28)
-        case "CYLPlaceholderPullHint.pag", "CYLPlaceholderLoading.riv", "CYLPlaceholderPullToRefresh.riv":
-            return CGSize(width: 40, height: 40)
+        case "CYLRefreshDots.json", "CYLRefreshDotsPulse.json", "CYLRefreshMoreDots.json":
+            return CGSize(width: 40, height: 24)
+        case "CYLRefreshThrobber.gif":
+            return CGSize(width: 20, height: 20)
+        case "CYLRefreshMaterialSpinner.json", "CYLRefreshDonePop.json", "CYLPlaceholderProgress.pag":
+            return CGSize(width: 36, height: 36)
         default:
             return CGSize(width: 32, height: 32)
         }
@@ -55,45 +72,106 @@ final class CYLRefreshIconListViewController: UITableViewController {
         let names = CYLRefreshAnimationHeader.bundledIconAnimationFileNames
         var sections: [Section] = engines.compactMap { engine in
             let rows = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }.map { name in
-                Row(title: name, subtitle: "setIconAnimation(bundled:size:for:)") { header, footer in
+                Row(title: name, subtitle: "setIconAnimation(bundled:size:for:)") {
                     let size = CYLRefreshIconListViewController.iconSize(for: name)
+                    let header = CYLRefreshAnimationHeader()
+                    let footer = CYLRefreshAutoAnimationFooter()
                     // One call per control: the idle icon is used by every state without its own.
                     header.setIconAnimation(bundled: name, size: size, for: .idle)
                     footer.setIconAnimation(bundled: name, size: size, for: .idle)
+                    return (header, footer)
                 }
             }
             return rows.isEmpty ? nil : Section(title: engine.title, rows: rows)
         }
         sections.append(Section(title: CYLScenarioLocalizedString(.sectionRefreshInit), rows: [
+            Row(title: CYLScenarioLocalizedString(.refreshByImages), subtitle: "setAnimationImages(_:duration:for:)") {
+                // MJRefresh's "animated images", general names: an image sequence per state. The frames come from
+                // bundled refresh GIFs; the controls grow to the first image's height.
+                let arrows = CYLRefreshFrames.images(ofBundledGIF: "CYLRefreshArrows.gif")
+                let ring = CYLRefreshFrames.images(ofBundledGIF: "CYLRefreshRing.gif")
+                let header = CYLRefreshAnimationHeader()
+                header.setAnimationImages(arrows, for: .idle)
+                header.setAnimationImages(arrows, duration: 0.6, for: .pulling)
+                header.setAnimationImages(ring, duration: 0.8, for: .refreshing)
+                let footer = CYLRefreshAutoAnimationFooter()
+                footer.setAnimationImages(ring, for: .refreshing)
+                return (header, footer)
+            },
+            Row(title: CYLScenarioLocalizedString(.refreshByStates), subtitle: "setIconAnimation(bundled:size:for:)") {
+                // A different bundled icon for each state, one engine per state.
+                let header = CYLRefreshAnimationHeader()
+                header.setIconAnimation(bundled: "CYLRefreshPullCircle.json", size: CGSize(width: 28, height: 28), for: .idle)
+                header.setIconAnimation(bundled: "CYLRefreshCounterClockwise.json", size: CGSize(width: 28, height: 28),
+                                        for: .pulling)
+                header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32),
+                                        for: .refreshing)
+                let footer = CYLRefreshAutoAnimationFooter()
+                footer.setIconAnimation(bundled: "CYLRefreshActivity.gif", size: CGSize(width: 28, height: 28),
+                                        for: .refreshing)
+                return (header, footer)
+            },
+            Row(title: CYLScenarioLocalizedString(.refreshBackFooter), subtitle: "CYLRefreshBackAnimationFooter") {
+                // The back footer shows its icon while idle and pulling too; "no more data" shows the text only.
+                let header = CYLRefreshAnimationHeader()
+                header.setIconAnimation(bundled: "CYLRefreshCycle.json", size: CGSize(width: 28, height: 28), for: .idle)
+                let footer = CYLRefreshBackAnimationFooter()
+                footer.setIconAnimation(bundled: "CYLRefreshLoadMore.json", size: CGSize(width: 28, height: 28), for: .idle)
+                footer.setIconAnimation(bundled: "CYLRefreshClockwise.json", size: CGSize(width: 28, height: 28),
+                                        for: .pulling)
+                footer.setIconAnimation(bundled: "CYLRefreshPetals.gif", size: CGSize(width: 28, height: 28),
+                                        for: .refreshing)
+                return (header, footer)
+            },
             Row(title: CYLScenarioLocalizedString(.refreshByFilePath), subtitle: "setIconAnimation(filePath:size:for:)") {
-                header, footer in
                 // Any file on disk: here the full paths of two bundled files, one for pulling and one for refreshing.
+                let header = CYLRefreshAnimationHeader()
+                let footer = CYLRefreshAutoAnimationFooter()
                 if let arrow = CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshArrows.gif"),
                    let spinner = CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshGradientSpinner.json") {
                     header.setIconAnimation(filePath: arrow, size: CGSize(width: 32, height: 32), for: .idle)
                     header.setIconAnimation(filePath: spinner, size: CGSize(width: 36, height: 36), for: .refreshing)
                     footer.setIconAnimation(filePath: spinner, size: CGSize(width: 32, height: 32), for: .refreshing)
                 }
+                return (header, footer)
             },
             Row(title: CYLScenarioLocalizedString(.refreshByAttributes), subtitle: "setIconAnimation(attributes:for:)") {
-                header, footer in
-                guard let check = CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshCheck.riv") else { return }
-                // Raw item attributes: the circle fills while pulling and refreshing ("Loading" animation); released,
-                // the header plays the "Check" trigger of the file's state machine.
-                let loading: [String: Any] = [
-                    CYLPlaceholderItemAnimationFilePath: check,
-                    CYLPlaceholderItemAnimationSize: [36, 36],
-                    CYLPlaceholderItemAnimationOptions: ["legacy": "1", "animation": "Loading"],
+                let header = CYLRefreshAnimationHeader()
+                let footer = CYLRefreshAutoAnimationFooter()
+                guard let icon = CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshIcon.riv") else {
+                    return (header, footer)
+                }
+                // Raw item attributes: the "refresh" artboard of the Rive file rests on its "idle" animation and
+                // turns with its "active" animation while refreshing.
+                let resting: [String: Any] = [
+                    CYLPlaceholderItemAnimationFilePath: icon,
+                    CYLPlaceholderItemAnimationSize: [32, 32],
+                    CYLPlaceholderItemAnimationOptions: ["legacy": "1", "artboard": "refresh", "animation": "idle"],
                 ]
-                var done = loading
-                done[CYLPlaceholderItemAnimationOptions] = ["stateMachine": "State Machine 1", "triggerInput": "Check"]
-                header.setIconAnimation(attributes: loading, for: .idle)
-                header.setIconAnimation(attributes: done, for: .refreshing)
-                footer.setIconAnimation(attributes: loading, for: .refreshing)
+                var turning = resting
+                turning[CYLPlaceholderItemAnimationOptions] = ["legacy": "1", "artboard": "refresh", "animation": "active"]
+                header.setIconAnimation(attributes: resting, for: .idle)
+                header.setIconAnimation(attributes: turning, for: .refreshing)
+                footer.setIconAnimation(attributes: turning, for: .refreshing)
+                return (header, footer)
             },
             Row(title: CYLScenarioLocalizedString(.refreshByConfiguration), subtitle: "RefreshIcons/refresh-icons.json") {
-                header, footer in
+                let header = CYLRefreshAnimationHeader()
+                let footer = CYLRefreshAutoAnimationFooter()
                 CYLRefreshIconConfiguration.apply(fileNamed: "refresh-icons.json", header: header, footer: footer)
+                return (header, footer)
+            },
+            Row(title: CYLScenarioLocalizedString(.refreshGifNames), subtitle: "CYLRefreshGifHeader · setImages(_:for:)") {
+                // Code written for MJRefresh's names keeps working: the Gif classes are subclasses whose gifView and
+                // setImages call animationView and setAnimationImages.
+                let arrows = CYLRefreshFrames.images(ofBundledGIF: "CYLRefreshArrows.gif")
+                let header = CYLRefreshGifHeader()
+                header.setImages(arrows, for: .idle)
+                header.setImages(arrows, duration: 0.6, for: .refreshing)
+                let footer = CYLRefreshAutoGifFooter()
+                footer.setIconAnimation(bundled: "CYLRefreshThrobber.gif", size: CGSize(width: 20, height: 20),
+                                        for: .refreshing)
+                return (header, footer)
             },
         ]))
         return sections
@@ -218,7 +296,9 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         tableView.accessibilityIdentifier = "refreshIconDemo"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self,
                                                             action: #selector(beginRefreshing))
-        let header = CYLRefreshAnimationHeader { [weak self] in
+        // Only the icon changes: the texts, layout and show/hide timing stay CYLRefresh's own.
+        let (header, footer) = setup()
+        header.refreshingBlock = { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 self.rows = 15
@@ -227,7 +307,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
                 self.tableView.cyl_footer?.resetNoMoreData()
             }
         }
-        let footer = CYLRefreshAutoAnimationFooter { [weak self] in
+        footer.refreshingBlock = { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 if self.rows >= 45 {
@@ -239,8 +319,6 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
                 self.tableView.cyl_footer?.endRefreshing()
             }
         }
-        // Only the icon changes: the texts, layout and show/hide timing stay CYLRefresh's own.
-        setup(header, footer)
         tableView.cyl_header = header
         tableView.cyl_footer = footer
     }

@@ -37,11 +37,11 @@
 | 在 `CYLRefreshIconAnimating`（三个“动画图片”控件采用，与 `setAnimationImages:forState:` 并列）上：`-setIconAnimationAttributes:forState:` 接受 `CYLPlaceholderView` 的 item 属性（动画文件、尺寸、选项、颜色等）；`-setIconAnimationFilePath:size:forState:` 接受任意本地动画文件；`-setBundledIconAnimation:size:forState:` 使用核心 bundle 中的内置动画并自动带上所需选项；类属性 `bundledIconAnimationFileNames` 列出适合刷新图标的内置动画。没有单独设置的状态使用空闲状态的图标，所以调用一次即可；也可以为下拉、刷新中等状态分别设置不同的图标。`iconView` 返回图标组件，`usesIconView` 表示是否已设置图标动画。自定义子类可以使用 `CYLRefreshComponent (CYLRefreshIconLayout)` 中的 `cyl_` 方法实现同样的替换。 | On `CYLRefreshIconAnimating` (adopted by the three animated-image controls, next to `setAnimationImages:forState:`): `-setIconAnimationAttributes:forState:` takes `CYLPlaceholderView` item attributes (animation file, size, options, colors…); `-setIconAnimationFilePath:size:forState:` takes any local animation file; `-setBundledIconAnimation:size:forState:` uses a bundled animation of the core and adds the options it needs; the class property `bundledIconAnimationFileNames` lists the bundled animations meant for a refresh icon. A state without its own icon uses the idle state's, so one call is enough; pulling, refreshing and other states can also each have their own icon. `iconView` returns the icon component, and `usesIconView` says whether an icon animation is set. Custom subclasses can do the same replacement with the `cyl_` methods of `CYLRefreshComponent (CYLRefreshIconLayout)`. |
 
 ```swift
-// [CN] 下拉时显示 Lottie 箭头，刷新中显示 PAG 菊花；布局与文字仍由 CYLRefresh 决定
-// [EN] A Lottie arrow while pulling, a PAG spinner while refreshing; layout and texts stay CYLRefresh's own
+// [CN] 下拉时显示 Lottie 箭头，刷新中显示 PAG 圆环；布局与文字仍由 CYLRefresh 决定
+// [EN] A Lottie arrow while pulling, a PAG ring while refreshing; layout and texts stay CYLRefresh's own
 let header = CYLRefreshAnimationHeader { [weak self] in self?.reload() }
 header.setIconAnimation(bundled: "CYLPlaceholderRefresh.json", size: CGSize(width: 28, height: 28), for: .idle)
-header.setIconAnimation(bundled: "CYLPlaceholderLoading.pag", size: CGSize(width: 36, height: 36), for: .refreshing)
+header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32), for: .refreshing)
 tableView.cyl_header = header
 
 let footer = CYLRefreshAutoAnimationFooter { [weak self] in self?.loadMore() }
@@ -80,17 +80,21 @@ tableView.cyl_footer = footer
 | 文件 / File | 内容 / Content | 来源 / Source |
 | --- | --- | --- |
 | `CYLRefreshArrows.gif` | 旋转的刷新箭头 / turning refresh arrows | Kingfisher (MIT) |
-| `CYLRefreshDots.json`, `CYLRefreshDotsPulse.json` | 跳动的圆点 / bouncing dots | lottie-ios (Apache-2.0) |
-| `CYLRefreshStepLoader.json`, `CYLRefreshGradientSpinner.json` | 步进加载、渐变加载圈 / step loader, gradient spinner | lottie-ios (Apache-2.0) |
-| `CYLRefreshSpinner.json`, `CYLRefreshSpinnerDots.json`, `CYLRefreshSpinnerRing.json` | 线条加载圈 / line spinners | useAnimations (MIT) |
-| `CYLRefreshPullArrow.json`, `CYLRefreshLoadMore.json` | 下拉箭头、加载更多 / pull arrow, load more | useAnimations (MIT) |
-| `CYLRefreshCycle.json`, `CYLRefreshDone.json` | 循环箭头、完成对勾 / cycle arrows, done check | useAnimations (MIT) |
-| `CYLRefreshCheck.riv` | 填充的圆环（`animation: Loading`），状态机触发 `Check`/`Error` / a filling circle (`animation: Loading`); its state machine fires `Check` / `Error` | CYLTabBarController (MIT) |
-| `CYLPlaceholderRefresh.json`, `CYLPlaceholderLoading.json`, `CYLPlaceholderLoadingInfinity.json`, `CYLPlaceholderLoading.pag`, `CYLPlaceholderPullHint.pag`, `CYLPlaceholderLoading.riv`, `CYLPlaceholderPullToRefresh.riv` | 同样适合刷新控件的占位动画 / placeholder animations that also suit a refresh control | 见 / see `NOTICE.animations` |
+| `CYLRefreshRing.gif`, `CYLRefreshActivity.gif`, `CYLRefreshPetals.gif`, `CYLRefreshThrobber.gif` | 渐变圆环、灰色辐条、橙色花瓣、小号辐条加载圈 / gradient ring, grey spokes, orange petals and small spoke spinners | lightbox2, blueimp Gallery, colorbox, jstree (MIT) |
+| `CYLRefreshPullArrow.json`, `CYLRefreshPullCircle.json` | 下拉箭头、圆圈中的下拉箭头 / pull arrow, pull arrow in a circle | useAnimations (MIT) |
+| `CYLRefreshCycle.json`, `CYLRefreshClockwise.json`, `CYLRefreshCounterClockwise.json` | 循环、顺时针、逆时针刷新箭头 / cycle, clockwise and counter-clockwise refresh arrows | useAnimations (MIT) |
+| `CYLRefreshSpinnerRing.json`, `CYLRefreshArc.json` | 辐条加载圈、弧形加载圈 / spoke spinner, arc spinner | useAnimations (MIT) |
+| `CYLRefreshGradientSpinner.json`, `CYLRefreshDots.json`, `CYLRefreshDotsPulse.json` | 渐变加载圈、跳动的圆点 / gradient spinner, bouncing dots | lottie-ios (Apache-2.0) |
+| `CYLRefreshMaterialSpinner.json`, `CYLRefreshDonePop.json` | Material 弧形加载圈、弹出的完成对勾 / Material arc spinner, popping done check | lottie-android (Apache-2.0) |
+| `CYLRefreshLoadMore.json`, `CYLRefreshMoreDots.json` | 加载更多的箭头与圆点 / load-more chevrons and dots | useAnimations (MIT) |
+| `CYLRefreshDone.json`, `CYLRefreshDoneCircle.json` | 完成对勾、圆圈中的对勾 / done check, check in a circle | useAnimations (MIT) |
+| `CYLRefreshIcon.riv` | 刷新图标画板 `refresh`：`idle` 静止，`active` 旋转 / the `refresh` artboard: `idle` rests, `active` turns | rive-flutter (MIT) |
+| `CYLPlaceholderRefresh.json`, `CYLPlaceholderProgress.pag` | 同样表示刷新的两个占位动画：旋转箭头、随进度填满的圆环 / the two placeholder animations that also mean refresh: turning arrows, a ring that fills with progress | useAnimations (MIT), libpag (Apache-2.0) |
 
 | 中文 | English |
 | --- | --- |
-| PAG：libpag 仓库中唯一有刷新含义的文件 `refreshing.pag` 已作为 `CYLPlaceholderLoading.pag` 提供，没有重复加入；其余 PAG 文件是场景或特效演示，不符合内置资源规则。 | PAG: the only file with a refresh meaning in the libpag repository, `refreshing.pag`, already ships as `CYLPlaceholderLoading.pag` and is not added twice; the other PAG files are scenes or effect demos, which the bundled-resource rule excludes. |
+| 2026-11-11 清理：只保留内容表示刷新状态的文件。删除了 `CYLRefreshSpinner.json`（方块网格）、`CYLRefreshSpinnerDots.json`（单个圆点）、`CYLRefreshStepLoader.json`（彩色台阶）与 `CYLRefreshCheck.riv`（默认显示红色叉号）；`CYLPlaceholderLoading.pag`（紫色播放箭头）、`CYLPlaceholderPullHint.pag`（手势）、`CYLPlaceholderLoading.riv`（深色方块）、`CYLPlaceholderPullToRefresh.riv`（墓地场景）与 `CYLPlaceholderLoadingInfinity.json` 不再列入刷新图标（仍是占位动画）。新增 13 个刷新文件（见上表）。每个文件都逐帧渲染查看过。 | 2026-11-11 cleanup: only files whose content means a refresh state stay. Removed `CYLRefreshSpinner.json` (a block grid), `CYLRefreshSpinnerDots.json` (a single dot), `CYLRefreshStepLoader.json` (coloured steps) and `CYLRefreshCheck.riv` (a red cross by default); `CYLPlaceholderLoading.pag` (purple play arrows), `CYLPlaceholderPullHint.pag` (a hand), `CYLPlaceholderLoading.riv` (a dark tile), `CYLPlaceholderPullToRefresh.riv` (a graveyard scene) and `CYLPlaceholderLoadingInfinity.json` are no longer listed as refresh icons (they stay placeholder animations). Added 13 refresh files (table above). Every file was rendered frame by frame and looked at. |
+| PAG：libpag 及其 iOS、Android、Web、文档、Flutter 仓库的全部历史中，只有 `refreshing.pag`（即 `CYLPlaceholderLoading.pag`，实际画面是播放箭头）与 `wstask_circle.pag`（即 `CYLPlaceholderProgress.pag`，进度圆环）名称与刷新有关；其余约 35 个文件是吉祥物、贴纸、表情、文字测试或标志。所以 PAG 刷新图标目前只有 `CYLPlaceholderProgress.pag`。 | PAG: in the whole history of libpag and its iOS, Android, Web, docs and Flutter repositories, only `refreshing.pag` (that is `CYLPlaceholderLoading.pag`, which actually shows play arrows) and `wstask_circle.pag` (that is `CYLPlaceholderProgress.pag`, a progress ring) have refresh-like names; the other ~35 files are mascots, stickers, emoji, text tests or logos. So the only PAG refresh icon for now is `CYLPlaceholderProgress.pag`. |
 
 ```swift
 // [CN] 按内置文件名 / [EN] by bundled file name
@@ -98,12 +102,14 @@ header.setIconAnimation(bundled: "CYLRefreshPullArrow.json", size: CGSize(width:
 header.setIconAnimation(bundled: "CYLRefreshArrows.gif", size: CGSize(width: 32, height: 32), for: .refreshing)
 // [CN] 按文件路径 / [EN] by file path
 footer.setIconAnimation(filePath: path, size: CGSize(width: 32, height: 32), for: .refreshing)
-// [CN] 按 item 属性：Rive 状态机与触发输入 / [EN] by item attributes: a Rive state machine and its trigger input
+// [CN] 按 item 属性：Rive 画板与动画 / [EN] by item attributes: a Rive artboard and animation
 header.setIconAnimation(attributes: [
-    CYLPlaceholderItemAnimationFilePath: CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshCheck.riv")!,
-    CYLPlaceholderItemAnimationSize: [36, 36],
-    CYLPlaceholderItemAnimationOptions: ["stateMachine": "State Machine 1", "triggerInput": "Check"],
+    CYLPlaceholderItemAnimationFilePath: CYLPlaceholderView.path(forBundledAnimation: "CYLRefreshIcon.riv")!,
+    CYLPlaceholderItemAnimationSize: [32, 32],
+    CYLPlaceholderItemAnimationOptions: ["legacy": "1", "artboard": "refresh", "animation": "active"],
 ], for: .refreshing)
+// [CN] 图片序列（MJRefresh 的“动画图片”），这里取自内置刷新 GIF 的帧 / [EN] an image sequence (MJRefresh's "animated images"), here the frames of a bundled refresh GIF
+header.setAnimationImages(frames, duration: 0.6, for: .refreshing)
 ```
 
 | 中文 | English |
@@ -114,5 +120,5 @@ header.setIconAnimation(attributes: [
 
 | 中文 | English |
 | --- | --- |
-| `Examples/Example-Scenarios` 的“动态”Tab 使用 Lottie 下拉图标、PAG 刷新图标和 Lottie 加载尾；“交互流程 → 下拉刷新与上拉加载”使用 Rive 下拉图标和 GIF 加载尾；“动态”Tab 右上角的“刷新图标”页（`CYLRefreshIconListViewController`）按引擎分组列出 `bundledIconAnimationFileNames` 中的每一个文件，每个文件一个页面（刷新头与加载尾都使用该文件，右上角按钮可直接开始刷新），另有按文件路径、item 属性和配置文件设置的三个页面。单元测试见 `Tests/CYLRefreshIconTests.m`。 | The Feed tab of `Examples/Example-Scenarios` uses a Lottie pull icon, a PAG refreshing icon and a Lottie loading footer; "Flows → Refresh controls" uses a Rive pull icon and a GIF loading footer; the "Refresh icons" page at the top right of the Feed tab (`CYLRefreshIconListViewController`) lists every file of `bundledIconAnimationFileNames` grouped by engine, one page per file (header and footer both use it; the top-right button starts refreshing), plus three pages that set icons by file path, item attributes and a configuration file. Unit tests are in `Tests/CYLRefreshIconTests.m`. |
+| `Examples/Example-Scenarios` 只使用刷新资源：“动态”Tab 的刷新头下拉时显示 Lottie 下拉箭头、松开时显示顺时针刷新箭头、刷新中显示 PAG 进度圆环，加载尾显示 GIF 圆环；“交互流程 → 下拉刷新与上拉加载”保留默认箭头刷新头，加载尾显示 GIF 辐条加载圈。“动态”Tab 右上角的“刷新图标”页（`CYLRefreshIconListViewController`）按引擎分组列出 `bundledIconAnimationFileNames` 中的每个文件（每个文件一个演示页），第二组演示动画图片控件的全部接口：按状态设置图片序列 `setAnimationImages(_:for:)` / `(_:duration:for:)`（帧取自内置刷新 GIF）、每个状态不同的内置图标、返回式刷新尾 `CYLRefreshBackAnimationFooter`、按文件路径、按 item 属性（Rive 画板与动画）、按配置文件，以及 MJRefresh 名称 `CYLRefreshGifHeader` / `CYLRefreshAutoGifFooter` 的 `setImages(_:for:)` 兼容写法。 | `Examples/Example-Scenarios` uses refresh resources only: the Feed tab header shows a Lottie pull arrow while pulling, clockwise refresh arrows when released and a PAG progress ring while refreshing, and its footer loads with a GIF ring; "Flows → Pull to refresh and load more" keeps the default arrow header and its footer loads with a GIF spoke spinner. The "Refresh icons" page (top right of the Feed tab, `CYLRefreshIconListViewController`) lists every file of `bundledIconAnimationFileNames` grouped by engine (one demo page per file), and its second section shows every API of the animated-image controls: an image sequence per state with `setAnimationImages(_:for:)` / `(_:duration:for:)` (frames of bundled refresh GIFs), a different bundled icon per state, the back footer `CYLRefreshBackAnimationFooter`, by file path, by item attributes (a Rive artboard and animation), by configuration file, and the MJRefresh names `CYLRefreshGifHeader` / `CYLRefreshAutoGifFooter` with `setImages(_:for:)`. |
 | 未验证：本机无法编译或运行，等待 CI；各引擎在刷新控件中的实际播放效果（尤其是 Rive 状态机文件与拖动定位）需要在模拟器中人工查看。箭头的旋转动画不适用于图标动画（图标由动画本身表达状态）。 | Not verified: nothing could be compiled or run here, so CI comes first; how each engine actually plays inside a refresh control (especially Rive state-machine files and scrubbing while pulling) needs a look in the simulator. The arrow's rotation does not apply to icon animations: the animation itself shows the state. |

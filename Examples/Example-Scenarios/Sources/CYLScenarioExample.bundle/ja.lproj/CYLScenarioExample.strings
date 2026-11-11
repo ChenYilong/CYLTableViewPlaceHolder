@@ -56,8 +56,12 @@
 "CYLScenarioRefreshIcons" = "更新アイコン";
 "CYLScenarioSectionRefreshInit" = "ほかの設定方法";
 "CYLScenarioRefreshByFilePath" = "ファイルパスで";
-"CYLScenarioRefreshByAttributes" = "item 属性で（Rive ステートマシン）";
+"CYLScenarioRefreshByAttributes" = "item 属性で（Rive アートボード）";
 "CYLScenarioRefreshByConfiguration" = "設定ファイルで";
+"CYLScenarioRefreshByImages" = "状態ごとの画像シーケンス";
+"CYLScenarioRefreshByStates" = "状態ごとに別のアイコン";
+"CYLScenarioRefreshBackFooter" = "戻り型フッター、状態ごとのアイコン";
+"CYLScenarioRefreshGifNames" = "MJRefresh の Gif 名（互換）";
 "CYLScenarioTextRefreshHint" = "下に引いて更新、上に引いてさらに読み込み";
 
 /* Status bar */

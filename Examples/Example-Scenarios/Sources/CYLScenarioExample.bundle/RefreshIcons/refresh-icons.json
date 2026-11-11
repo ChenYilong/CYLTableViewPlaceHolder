@@ -1,12 +1,12 @@
 {
   "header": {
     "idle": { "file": "CYLRefreshPullArrow.json", "size": [28, 28] },
-    "pulling": { "file": "CYLRefreshCycle.json", "size": [28, 28] },
-    "refreshing": { "file": "CYLRefreshSpinner.json", "size": [32, 32] }
+    "pulling": { "file": "CYLRefreshClockwise.json", "size": [28, 28] },
+    "refreshing": { "file": "CYLRefreshMaterialSpinner.json", "size": [36, 36] }
   },
   "footer": {
     "idle": { "file": "CYLRefreshLoadMore.json", "size": [28, 28] },
-    "refreshing": { "file": "CYLRefreshCheck.riv", "size": [32, 32], "options": { "legacy": "1", "animation": "Loading" } },
-    "noMoreData": { "file": "CYLRefreshDone.json", "size": [28, 28] }
+    "refreshing": { "file": "CYLRefreshIcon.riv", "size": [32, 32], "options": { "legacy": "1", "artboard": "refresh", "animation": "active" } },
+    "noMoreData": { "file": "CYLRefreshDoneCircle.json", "size": [28, 28] }
   }
 }

@@ -190,12 +190,11 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
 }
 
 + (NSArray<NSString *> *)bundledAnimationFileNames {
-    // [EN] Placeholder animations whose content is also a refresh state (pulling, refreshing).
-    // [CN] 内容同样表示刷新状态（下拉、刷新中）的占位动画。
+    // [EN] The two placeholder animations whose content is also a refresh state: turning arrows and a ring that fills
+    //      while pulling. Other placeholder files (scenes, hands, play arrows) are not refresh icons.
+    // [CN] 内容同样表示刷新状态的两个占位动画：旋转箭头，以及随下拉填满的圆环。其他占位文件（场景、手势、播放箭头）不是刷新图标。
     NSSet<NSString *> *placeholderNames = [NSSet setWithArray:@[
-        @"CYLPlaceholderRefresh.json", @"CYLPlaceholderLoading.json", @"CYLPlaceholderLoadingInfinity.json",
-        @"CYLPlaceholderLoading.pag", @"CYLPlaceholderPullHint.pag", @"CYLPlaceholderLoading.riv",
-        @"CYLPlaceholderPullToRefresh.riv",
+        @"CYLPlaceholderRefresh.json", @"CYLPlaceholderProgress.pag",
     ]];
     NSMutableArray<NSString *> *names = [NSMutableArray array];
     for (NSString *name in [CYLPlaceholderView bundledAnimationFileNames]) {

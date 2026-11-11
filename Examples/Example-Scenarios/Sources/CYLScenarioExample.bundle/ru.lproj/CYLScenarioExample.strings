@@ -56,8 +56,12 @@
 "CYLScenarioRefreshIcons" = "Иконки обновления";
 "CYLScenarioSectionRefreshInit" = "Другие способы задать иконку";
 "CYLScenarioRefreshByFilePath" = "По пути к файлу";
-"CYLScenarioRefreshByAttributes" = "По атрибутам item (машина состояний Rive)";
+"CYLScenarioRefreshByAttributes" = "По атрибутам item (артборд Rive)";
 "CYLScenarioRefreshByConfiguration" = "По файлу конфигурации";
+"CYLScenarioRefreshByImages" = "Последовательность изображений для каждого состояния";
+"CYLScenarioRefreshByStates" = "Своя иконка для каждого состояния";
+"CYLScenarioRefreshBackFooter" = "Возвращающийся футер, иконка для каждого состояния";
+"CYLScenarioRefreshGifNames" = "Имена Gif из MJRefresh (совместимость)";
 "CYLScenarioTextRefreshHint" = "Потяните вниз, чтобы обновить, вверх — чтобы загрузить ещё";
 
 /* Status bar */

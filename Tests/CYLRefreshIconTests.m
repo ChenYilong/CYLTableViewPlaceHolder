@@ -129,7 +129,7 @@
 
 - (void)testAnimationFootersShowTheIconWhenTheirImagesWouldShow {
     CYLRefreshAutoAnimationFooter *autoFooter = [CYLRefreshAutoAnimationFooter footerWithRefreshingBlock:^{}];
-    [autoFooter setBundledIconAnimation:@"CYLRefreshSpinner.json" size:CGSizeMake(24, 24) forState:CYLRefreshStateIdle];
+    [autoFooter setBundledIconAnimation:@"CYLRefreshSpinnerRing.json" size:CGSizeMake(24, 24) forState:CYLRefreshStateIdle];
     [self layOut:autoFooter];
     XCTAssertTrue(autoFooter.iconView.hidden, @"an auto GIF footer shows its images only while loading");
     autoFooter.state = CYLRefreshStateRefreshing;
@@ -170,17 +170,24 @@
         NSDictionary *attributes = [header.iconView animationAttributesForState:CYLRefreshStateIdle];
         XCTAssertEqualObjects([attributes[CYLPlaceholderItemAnimationFilePath] lastPathComponent], name);
     }
-    XCTAssertEqual(refreshFiles, 13u, @"%@", names);
-    XCTAssertTrue([names containsObject:@"CYLPlaceholderLoading.pag"], @"PAG comes from the placeholder set");
+    XCTAssertEqual(refreshFiles, 22u, @"%@", names);
+    XCTAssertEqual(names.count, 24u, @"the CYLRefresh files plus two refresh-like placeholder files: %@", names);
+    XCTAssertTrue([names containsObject:@"CYLPlaceholderProgress.pag"], @"PAG comes from the placeholder set");
+    // [EN] Scenes, hands and play arrows are placeholder art, not refresh icons. [CN] 场景、手势与播放箭头是占位插画，不是刷新图标。
+    for (NSString *name in @[@"CYLPlaceholderPullToRefresh.riv", @"CYLPlaceholderLoading.pag", @"CYLPlaceholderPullHint.pag",
+                             @"CYLPlaceholderLoading.riv", @"CYLPlaceholderUploading.gif"]) {
+        XCTAssertFalse([names containsObject:name], @"%@", name);
+    }
     for (NSString *extension in @[@"gif", @"json", @"pag", @"riv"]) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"pathExtension == %@", extension];
         NSUInteger count = [names filteredArrayUsingPredicate:predicate].count;
         XCTAssertGreaterThan(count, 0u, @"%@", extension);
     }
     CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
-    [header setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
+    [header setBundledIconAnimation:@"CYLRefreshIcon.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
     NSDictionary *options = [header.iconView animationAttributesForState:CYLRefreshStateIdle][CYLPlaceholderItemAnimationOptions];
-    XCTAssertEqualObjects(options[@"animation"], @"Loading", @"the bundled Rive file brings its options");
+    XCTAssertEqualObjects(options[@"artboard"], @"refresh", @"the bundled Rive file brings its options");
+    XCTAssertEqualObjects(options[@"animation"], @"active");
 }
 
 - (void)testAPlaceholderGivesUpItsMarginsOnlyWhenTooNarrow {

@@ -56,8 +56,12 @@
 "CYLScenarioRefreshIcons" = "更新圖示";
 "CYLScenarioSectionRefreshInit" = "其他設定方式";
 "CYLScenarioRefreshByFilePath" = "依檔案路徑";
-"CYLScenarioRefreshByAttributes" = "依 item 屬性（Rive 狀態機）";
+"CYLScenarioRefreshByAttributes" = "依 item 屬性（Rive 畫板）";
 "CYLScenarioRefreshByConfiguration" = "依設定檔";
+"CYLScenarioRefreshByImages" = "依狀態設定圖片序列";
+"CYLScenarioRefreshByStates" = "每個狀態使用不同圖示";
+"CYLScenarioRefreshBackFooter" = "返回式重新整理尾，依狀態設定圖示";
+"CYLScenarioRefreshGifNames" = "MJRefresh 的 Gif 名稱（相容）";
 "CYLScenarioTextRefreshHint" = "下拉更新，上拉載入更多";
 
 /* Status bar */

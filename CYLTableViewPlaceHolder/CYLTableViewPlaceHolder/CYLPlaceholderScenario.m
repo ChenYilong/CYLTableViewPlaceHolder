@@ -123,9 +123,9 @@ static NSDictionary<NSString *, NSString *> *CYLScenarioAnimationOptions(NSStrin
             @"CYLPlaceholderLoading.riv": legacy,
             @"CYLPlaceholderPullToRefresh.riv": legacy,
             @"CYLPlaceholderSuccess.riv": @{@"stateMachine": @"State Machine 1"},
-            // [EN] The filling circle of check.riv; its state machine plays "Check" or "Error" instead.
-            // [CN] check.riv 中填充的圆环；其状态机则播放 "Check" 或 "Error"。
-            @"CYLRefreshCheck.riv": @{@"legacy": @"1", @"animation": @"Loading"},
+            // [EN] The "refresh" artboard of rive-flutter's web_icons_pack.riv, playing its "active" (turning) animation.
+            // [CN] rive-flutter web_icons_pack.riv 中的 "refresh" 画板，播放其 "active"（旋转）动画。
+            @"CYLRefreshIcon.riv": @{@"legacy": @"1", @"artboard": @"refresh", @"animation": @"active"},
         };
     });
     return options[fileName];
@@ -146,8 +146,9 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
             @"CYLPlaceholderPhotoLibraryPermission.json", @"CYLPlaceholderMicrophonePermission.json",
             @"CYLPlaceholderContactsPermission.json", @"CYLPlaceholderCalendarPermission.json",
             @"CYLPlaceholderBluetoothPermission.json", @"CYLPlaceholderNotificationPermission.json",
-            @"CYLRefreshSpinner.json", @"CYLRefreshSpinnerDots.json", @"CYLRefreshSpinnerRing.json",
-            @"CYLRefreshPullArrow.json", @"CYLRefreshLoadMore.json", @"CYLRefreshCycle.json", @"CYLRefreshDone.json",
+            @"CYLRefreshSpinnerRing.json", @"CYLRefreshArc.json", @"CYLRefreshClockwise.json",
+            @"CYLRefreshCounterClockwise.json", @"CYLRefreshPullCircle.json", @"CYLRefreshMoreDots.json",
+            @"CYLRefreshDoneCircle.json", @"CYLRefreshPullArrow.json", @"CYLRefreshLoadMore.json", @"CYLRefreshCycle.json", @"CYLRefreshDone.json",
             @"CYLPlaceholderNoOrders.json"]];
     });
     return [names containsObject:fileName];

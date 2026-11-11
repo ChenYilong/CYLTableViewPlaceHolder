@@ -56,8 +56,12 @@
 "CYLScenarioRefreshIcons" = "Refresh icons";
 "CYLScenarioSectionRefreshInit" = "Other ways to set an icon";
 "CYLScenarioRefreshByFilePath" = "By file path";
-"CYLScenarioRefreshByAttributes" = "By item attributes (Rive state machine)";
+"CYLScenarioRefreshByAttributes" = "By item attributes (Rive artboard)";
 "CYLScenarioRefreshByConfiguration" = "By configuration file";
+"CYLScenarioRefreshByImages" = "Image sequence per state";
+"CYLScenarioRefreshByStates" = "A different icon for each state";
+"CYLScenarioRefreshBackFooter" = "Back footer, icon per state";
+"CYLScenarioRefreshGifNames" = "MJRefresh Gif names (compatible)";
 "CYLScenarioTextRefreshHint" = "Pull down to refresh, pull up to load more";
 
 /* Status bar */

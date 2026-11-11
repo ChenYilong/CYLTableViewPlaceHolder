@@ -56,8 +56,12 @@
 "CYLScenarioRefreshIcons" = "새로고침 아이콘";
 "CYLScenarioSectionRefreshInit" = "다른 설정 방법";
 "CYLScenarioRefreshByFilePath" = "파일 경로로";
-"CYLScenarioRefreshByAttributes" = "item 속성으로 (Rive 상태 머신)";
+"CYLScenarioRefreshByAttributes" = "item 속성으로 (Rive 아트보드)";
 "CYLScenarioRefreshByConfiguration" = "설정 파일로";
+"CYLScenarioRefreshByImages" = "상태별 이미지 시퀀스";
+"CYLScenarioRefreshByStates" = "상태마다 다른 아이콘";
+"CYLScenarioRefreshBackFooter" = "되돌아가는 푸터, 상태별 아이콘";
+"CYLScenarioRefreshGifNames" = "MJRefresh Gif 이름(호환)";
 "CYLScenarioTextRefreshHint" = "아래로 당겨 새로고침, 위로 당겨 더 불러오기";
 
 /* Status bar */

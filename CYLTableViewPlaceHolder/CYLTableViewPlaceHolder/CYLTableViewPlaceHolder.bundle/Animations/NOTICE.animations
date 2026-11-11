@@ -266,9 +266,14 @@ CYLPlaceholderNoOrders.json
 Refresh icons (CYLRefresh)
 --------------------------
 
-Animations made for the icon of a refresh control: pulling, refreshing, loading more, done. Set them with
-`-[CYLRefreshComponent setBundledIconAnimation:size:forState:]`; `+[CYLRefreshComponent bundledIconAnimationFileNames]`
-lists them together with the placeholder animations above that also suit a refresh control.
+Animations made for the icon of a refresh control: pulling, refreshing, loading more, done. Set them on the
+animated-image controls (CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter, CYLRefreshAutoAnimationFooter)
+with `-setBundledIconAnimation:size:forState:`; `+bundledIconAnimationFileNames` lists them together with the two
+placeholder animations above that also mean refresh (CYLPlaceholderRefresh.json, CYLPlaceholderProgress.pag).
+Only files whose content means a refresh state are kept here.
+
+* The lottie-android files below come from its snapshot-tests/.../lottiefiles/ folder, contributed from
+  lottiefiles.com, with the same status as the lottie-ios LottieFiles samples above.
 
 CYLRefreshArrows.gif
   source:  https://github.com/onevcat/Kingfisher (503d8e875623dcc3c1482370c4cd54579b9fa5ce)
@@ -288,11 +293,6 @@ CYLRefreshDotsPulse.json
   license: Apache-2.0 (LICENSE.lottie-ios)*
   sha256:  00aed74cb0a551d7e240c256e6608d29180651535fa438bf2121d3896828a2be
 
-CYLRefreshStepLoader.json
-  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
-  path:    Tests/Samples/LottieFiles/step_loader.json
-  license: Apache-2.0 (LICENSE.lottie-ios)*
-  sha256:  b4fadbe5eb6b338cf795180b34b2ff79b7db0ef726b3d91db845c528c20a42da
 
 CYLRefreshGradientSpinner.json
   source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
@@ -300,17 +300,7 @@ CYLRefreshGradientSpinner.json
   license: Apache-2.0 (LICENSE.lottie-ios)*
   sha256:  9d4db8fecfc8eff46a6509c81a07c48d954335c7f1ca8ab1a6be11eecbd1f085
 
-CYLRefreshSpinner.json
-  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
-  path:    icons/loading2.json
-  license: MIT (LICENSE.useanimations)
-  sha256:  5343e9ccfb0dc681057f571cc48881a5fcff228b5d1899f52fe44d3f6a732a45
 
-CYLRefreshSpinnerDots.json
-  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
-  path:    icons/loading3.json
-  license: MIT (LICENSE.useanimations)
-  sha256:  48ec8c80cb7ceac672321f80f1402610565b1005bba0888b774caa044dd1253a
 
 CYLRefreshSpinnerRing.json
   source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
@@ -342,8 +332,80 @@ CYLRefreshDone.json
   license: MIT (LICENSE.useanimations)
   sha256:  785f9a805f1ba9c949850bc5ebc2637e0882f9a81fdf3b41c9dc74760fd4526e
 
-CYLRefreshCheck.riv
-  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
-  path:    Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv
-  license: MIT (../LICENSE.CYLTabBarController)
-  sha256:  1397e16b93789a3bbdc6838d8fed8b2f89b0fc6b105b2432d5399e5665c8f13f
+CYLRefreshClockwise.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d45036f9c9af5ce0f1070300170bc505af3ee1eadcf85879b4bac83e1f7c066e
+
+CYLRefreshCounterClockwise.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refreshCcw.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  5f172683e08ab6d81f34b47c5a31017f12ec718e2d73645414c809d9845422fe
+
+CYLRefreshPullCircle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/arrowDownCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  ff70f3c41c967b3ad682292dc312f25f28c1350aef8f7d074f5aa87d3ebce582
+
+CYLRefreshMoreDots.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/moreHorizontal.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  8c7ee8f346308c4b93005c14e984f0544d3990a3091b58d417832a006e2d5e9a
+
+CYLRefreshArc.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  25f016f046497a8ad3d1301987938fc4c27561c5cbf56ce2386aa13dfa706443
+
+CYLRefreshDoneCircle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/checkCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  be3f0a05435e8c5a586ce2dd346c2a046fcacdfd5eaa89ebf3e0aa201545ca8c
+
+CYLRefreshMaterialSpinner.json
+  source:  https://github.com/airbnb/lottie-android (05ea92e90381eb8a8ae06855ea2b74f322bebbec)
+  path:    snapshot-tests/src/main/assets/lottiefiles/material_loader.json
+  license: Apache-2.0 (LICENSE.lottie-android)*
+  sha256:  c08869527e0577500d9205dd7d0586e917b7f0088cd5f7745aee16723fa37de7
+
+CYLRefreshDonePop.json
+  source:  https://github.com/airbnb/lottie-android (05ea92e90381eb8a8ae06855ea2b74f322bebbec)
+  path:    snapshot-tests/src/main/assets/lottiefiles/check_pop.json
+  license: Apache-2.0 (LICENSE.lottie-android)*
+  sha256:  4a639c930cc40cd256849129bf292d6f723ddcc3cb557bce924e50e380e840a9
+
+CYLRefreshRing.gif
+  source:  https://github.com/lokesh/lightbox2 (3e5c15622759a38534b219c1def6b331185b8567)
+  path:    dist/images/loading.gif
+  license: MIT (LICENSE.lightbox2)
+  sha256:  225aa88b6ab02c06222ec9468d62e15fa188e39cdb9431d1f55401ad380753ed
+
+CYLRefreshActivity.gif
+  source:  https://github.com/blueimp/Gallery (beddb391b0fd89959ac2a9607f3b6e59551ba0ef)
+  path:    img/loading.gif
+  license: MIT (LICENSE.blueimp-Gallery)
+  sha256:  d3392bf20045832b864377d90961d6d34e066c0dc3098bf9585e2fabed40283c
+
+CYLRefreshThrobber.gif
+  source:  https://github.com/vakata/jstree (6256df013ebd98aea138402d8ac96db3efe0c0da)
+  path:    dist/themes/default/throbber.gif
+  license: MIT (LICENSE.jstree)
+  sha256:  28e3fcaacae52189201f54a20576ee63c7450be82a0ee55398ac2f51bed98fac
+
+CYLRefreshPetals.gif
+  source:  https://github.com/jackmoore/colorbox (d6490ea29cfe6ce80908011b52d5aff58114facc)
+  path:    example1/images/loading.gif
+  license: MIT (LICENSE.colorbox)
+  sha256:  b91986fe9ef769912225701b0accfa89edb3e8344bc8e98f92a89ccdb1f4a2cc
+
+CYLRefreshIcon.riv
+  source:  https://github.com/rive-app/rive-flutter (e419fe847c19e79302c3e5facc90f676b06e174d)
+  path:    example/assets/web_icons_pack.riv (artboard "refresh", animation "active")
+  license: MIT (LICENSE.rive-flutter)
+  sha256:  958fcf52a87b0ea0cdacbd312af1625c101fa3071a22ffaa5037334a1d7f8b71
