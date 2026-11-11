@@ -73,6 +73,22 @@
     return [self setIconAnimationAttributes:component.attributes forState:state];
 }
 
++ (NSArray<NSString *> *)bundledIconAnimationFileNames
+{
+    // [EN] Placeholder animations whose content is also a refresh state (pulling, refreshing).
+    // [CN] 内容同样表示刷新状态（下拉、刷新中）的占位动画。
+    NSSet<NSString *> *placeholderNames = [NSSet setWithArray:@[
+        @"CYLPlaceholderRefresh.json", @"CYLPlaceholderLoading.json", @"CYLPlaceholderLoadingInfinity.json",
+        @"CYLPlaceholderLoading.pag", @"CYLPlaceholderPullHint.pag", @"CYLPlaceholderLoading.riv",
+        @"CYLPlaceholderPullToRefresh.riv",
+    ]];
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (NSString *name in [CYLPlaceholderView bundledAnimationFileNames]) {
+        if ([name hasPrefix:@"CYLRefresh"] || [placeholderNames containsObject:name]) [names addObject:name];
+    }
+    return [names copy];
+}
+
 /// [EN] For subclasses: places the icon at `center` with its size and hides the views it replaces.
 /// [CN] 供子类调用：把图标以其尺寸放在 `center`，并隐藏它所替换的视图。
 - (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views

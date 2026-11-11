@@ -96,6 +96,12 @@ enum CYLScenarioL10n: String, CaseIterable {
     case configPlaybackLoop = "CYLScenarioConfigPlaybackLoop"
     case configPlaybackOnce = "CYLScenarioConfigPlaybackOnce"
     case configPlaybackThree = "CYLScenarioConfigPlaybackThree"
+    case refreshIcons = "CYLScenarioRefreshIcons"
+    case sectionRefreshInit = "CYLScenarioSectionRefreshInit"
+    case refreshByFilePath = "CYLScenarioRefreshByFilePath"
+    case refreshByAttributes = "CYLScenarioRefreshByAttributes"
+    case refreshByConfiguration = "CYLScenarioRefreshByConfiguration"
+    case textRefreshHint = "CYLScenarioTextRefreshHint"
 }
 
 private enum CYLScenarioLocalizationBundle {

@@ -51,3 +51,11 @@
 "CYLScenarioConfigPlaybackLoop" = "Loops (default)";
 "CYLScenarioConfigPlaybackOnce" = "Plays once";
 "CYLScenarioConfigPlaybackThree" = "Plays 3 times";
+
+/* Refresh icons */
+"CYLScenarioRefreshIcons" = "Refresh icons";
+"CYLScenarioSectionRefreshInit" = "Other ways to set an icon";
+"CYLScenarioRefreshByFilePath" = "By file path";
+"CYLScenarioRefreshByAttributes" = "By item attributes (Rive state machine)";
+"CYLScenarioRefreshByConfiguration" = "By configuration file";
+"CYLScenarioTextRefreshHint" = "Pull down to refresh, pull up to load more";

@@ -123,6 +123,9 @@ static NSDictionary<NSString *, NSString *> *CYLScenarioAnimationOptions(NSStrin
             @"CYLPlaceholderLoading.riv": legacy,
             @"CYLPlaceholderPullToRefresh.riv": legacy,
             @"CYLPlaceholderSuccess.riv": @{@"stateMachine": @"State Machine 1"},
+            // [EN] The filling circle of check.riv; its state machine plays "Check" or "Error" instead.
+            // [CN] check.riv 中填充的圆环；其状态机则播放 "Check" 或 "Error"。
+            @"CYLRefreshCheck.riv": @{@"legacy": @"1", @"animation": @"Loading"},
         };
     });
     return options[fileName];
@@ -143,6 +146,8 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
             @"CYLPlaceholderPhotoLibraryPermission.json", @"CYLPlaceholderMicrophonePermission.json",
             @"CYLPlaceholderContactsPermission.json", @"CYLPlaceholderCalendarPermission.json",
             @"CYLPlaceholderBluetoothPermission.json", @"CYLPlaceholderNotificationPermission.json",
+            @"CYLRefreshSpinner.json", @"CYLRefreshSpinnerDots.json", @"CYLRefreshSpinnerRing.json",
+            @"CYLRefreshPullArrow.json", @"CYLRefreshLoadMore.json", @"CYLRefreshCycle.json", @"CYLRefreshDone.json",
             @"CYLPlaceholderNoOrders.json"]];
     });
     return [names containsObject:fileName];

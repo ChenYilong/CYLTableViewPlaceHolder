@@ -51,3 +51,11 @@
 "CYLScenarioConfigPlaybackLoop" = "Повтор (типово)";
 "CYLScenarioConfigPlaybackOnce" = "Один раз";
 "CYLScenarioConfigPlaybackThree" = "Тричі";
+
+/* Refresh icons */
+"CYLScenarioRefreshIcons" = "Іконки оновлення";
+"CYLScenarioSectionRefreshInit" = "Інші способи задати іконку";
+"CYLScenarioRefreshByFilePath" = "За шляхом до файлу";
+"CYLScenarioRefreshByAttributes" = "За атрибутами item (машина станів Rive)";
+"CYLScenarioRefreshByConfiguration" = "За файлом конфігурації";
+"CYLScenarioTextRefreshHint" = "Потягніть вниз, щоб оновити, вгору — щоб завантажити ще";

@@ -262,3 +262,88 @@ CYLPlaceholderNoOrders.json
   path:    icons/package.json
   license: MIT (LICENSE.useanimations)
   sha256:  1768af35c517ad24bb612e9a57d87151c529538e3ed3aa4ae74e93e0e0093c90
+
+Refresh icons (CYLRefresh)
+--------------------------
+
+Animations made for the icon of a refresh control: pulling, refreshing, loading more, done. Set them with
+`-[CYLRefreshComponent setBundledIconAnimation:size:forState:]`; `+[CYLRefreshComponent bundledIconAnimationFileNames]`
+lists them together with the placeholder animations above that also suit a refresh control.
+
+CYLRefreshArrows.gif
+  source:  https://github.com/onevcat/Kingfisher (503d8e875623dcc3c1482370c4cd54579b9fa5ce)
+  path:    Demo/Demo/Kingfisher-Demo/Resources/loader.gif
+  license: MIT (LICENSE.Kingfisher)
+  sha256:  5ec89345eebd5f504a0b2efac4dbbb8fe24408ffb674417255c2be95e7cd443f
+
+CYLRefreshDots.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_2.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  3a19f9910e77d06f471c3300041323786f0777906fccf35f130a29b1c39f1606
+
+CYLRefreshDotsPulse.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_3.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  00aed74cb0a551d7e240c256e6608d29180651535fa438bf2121d3896828a2be
+
+CYLRefreshStepLoader.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/step_loader.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  b4fadbe5eb6b338cf795180b34b2ff79b7db0ef726b3d91db845c528c20a42da
+
+CYLRefreshGradientSpinner.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_gradient_strokes.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  9d4db8fecfc8eff46a6509c81a07c48d954335c7f1ca8ab1a6be11eecbd1f085
+
+CYLRefreshSpinner.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading2.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  5343e9ccfb0dc681057f571cc48881a5fcff228b5d1899f52fe44d3f6a732a45
+
+CYLRefreshSpinnerDots.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading3.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  48ec8c80cb7ceac672321f80f1402610565b1005bba0888b774caa044dd1253a
+
+CYLRefreshSpinnerRing.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading4.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  956b31f62ff1f460a64cd324885da4b826ab01c8d26d40dffa10327d01e8c577
+
+CYLRefreshPullArrow.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/arrowDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  b69d7dc994bd64e28d58e1a4ebe5bc0bb865cf742d54526b202ca6b692cf3289
+
+CYLRefreshLoadMore.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/chevronsDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  c99ecb8f64b36d2805db4b39d11a9cbea1aa20c109d4885189db23b978af4528
+
+CYLRefreshCycle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh2.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  2ee0051d6769e0c41ac690a6abad7ea11600f46b6a0234bb1161510043f7b8ae
+
+CYLRefreshDone.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/checkmark.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  785f9a805f1ba9c949850bc5ebc2637e0882f9a81fdf3b41c9dc74760fd4526e
+
+CYLRefreshCheck.riv
+  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
+  path:    Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv
+  license: MIT (../LICENSE.CYLTabBarController)
+  sha256:  1397e16b93789a3bbdc6838d8fed8b2f89b0fc6b105b2432d5399e5665c8f13f

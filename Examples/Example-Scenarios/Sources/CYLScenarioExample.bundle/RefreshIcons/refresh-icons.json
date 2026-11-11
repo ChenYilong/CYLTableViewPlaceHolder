@@ -1,0 +1,12 @@
+{
+  "header": {
+    "idle": { "file": "CYLRefreshPullArrow.json", "size": [28, 28] },
+    "pulling": { "file": "CYLRefreshCycle.json", "size": [28, 28] },
+    "refreshing": { "file": "CYLRefreshSpinner.json", "size": [32, 32] }
+  },
+  "footer": {
+    "idle": { "file": "CYLRefreshLoadMore.json", "size": [28, 28] },
+    "refreshing": { "file": "CYLRefreshCheck.riv", "size": [32, 32], "options": { "legacy": "1", "animation": "Loading" } },
+    "noMoreData": { "file": "CYLRefreshDone.json", "size": [28, 28] }
+  }
+}

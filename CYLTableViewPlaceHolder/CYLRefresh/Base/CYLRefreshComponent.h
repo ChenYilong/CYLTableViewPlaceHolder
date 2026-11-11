@@ -165,6 +165,16 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 - (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
     NS_SWIFT_NAME(setIconAnimation(bundled:size:for:));
+/*!
+ * [EN] The animations of the core bundle meant for a refresh icon, sorted: the `CYLRefresh*` files (pull arrows,
+ *      spinners, loading more, done; GIF, Lottie and Rive) and the placeholder animations that also suit a refresh
+ *      control (CYLPlaceholderRefresh.json, CYLPlaceholderLoading.pag, CYLPlaceholderPullHint.pag,
+ *      CYLPlaceholderPullToRefresh.riv…). Each name can be passed to `-setBundledIconAnimation:size:forState:`.
+ * [CN] 核心 bundle 中适合作为刷新图标的动画（已排序）：`CYLRefresh*` 文件（下拉箭头、加载圈、加载更多、完成；GIF、Lottie、Rive），
+ *      以及同样适合刷新控件的占位动画（如 CYLPlaceholderRefresh.json、CYLPlaceholderLoading.pag）。每个名称都可传给
+ *      `-setBundledIconAnimation:size:forState:`。
+ */
+@property (class, nonatomic, readonly) NSArray<NSString *> *bundledIconAnimationFileNames;
 
 #pragma mark - 其他
 /** 拉拽的百分比(交给子类重写) */

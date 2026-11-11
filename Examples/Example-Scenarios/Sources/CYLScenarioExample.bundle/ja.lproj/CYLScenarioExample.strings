@@ -51,3 +51,11 @@
 "CYLScenarioConfigPlaybackLoop" = "ループ再生（既定）";
 "CYLScenarioConfigPlaybackOnce" = "1回再生";
 "CYLScenarioConfigPlaybackThree" = "3回再生";
+
+/* Refresh icons */
+"CYLScenarioRefreshIcons" = "更新アイコン";
+"CYLScenarioSectionRefreshInit" = "ほかの設定方法";
+"CYLScenarioRefreshByFilePath" = "ファイルパスで";
+"CYLScenarioRefreshByAttributes" = "item 属性で（Rive ステートマシン）";
+"CYLScenarioRefreshByConfiguration" = "設定ファイルで";
+"CYLScenarioTextRefreshHint" = "下に引いて更新、上に引いてさらに読み込み";

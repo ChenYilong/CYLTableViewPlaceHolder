@@ -51,3 +51,11 @@
 "CYLScenarioConfigPlaybackLoop" = "循環播放（預設）";
 "CYLScenarioConfigPlaybackOnce" = "播放一次";
 "CYLScenarioConfigPlaybackThree" = "播放 3 次";
+
+/* Refresh icons */
+"CYLScenarioRefreshIcons" = "更新圖示";
+"CYLScenarioSectionRefreshInit" = "其他設定方式";
+"CYLScenarioRefreshByFilePath" = "依檔案路徑";
+"CYLScenarioRefreshByAttributes" = "依 item 屬性（Rive 狀態機）";
+"CYLScenarioRefreshByConfiguration" = "依設定檔";
+"CYLScenarioTextRefreshHint" = "下拉更新，上拉載入更多";

@@ -121,4 +121,27 @@
     XCTAssertFalse(trailer.usesIconView);
 }
 
+- (void)testEveryBundledRefreshAnimationBuildsAnIcon {
+    NSArray<NSString *> *names = CYLRefreshComponent.bundledIconAnimationFileNames;
+    NSUInteger refreshFiles = 0;
+    for (NSString *name in names) {
+        if ([name hasPrefix:@"CYLRefresh"]) refreshFiles++;
+        CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        [header setBundledIconAnimation:name size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
+        XCTAssertTrue(header.usesIconView, @"%@", name);
+        NSDictionary *attributes = [header.iconView animationAttributesForState:CYLRefreshStateIdle];
+        XCTAssertEqualObjects([attributes[CYLPlaceholderItemAnimationFilePath] lastPathComponent], name);
+    }
+    XCTAssertEqual(refreshFiles, 13u, @"%@", names);
+    XCTAssertTrue([names containsObject:@"CYLPlaceholderLoading.pag"], @"PAG comes from the placeholder set");
+    for (NSString *extension in @[@"gif", @"json", @"pag", @"riv"]) {
+        XCTAssertGreaterThan([names filteredArrayUsingPredicate:
+            [NSPredicate predicateWithFormat:@"pathExtension == %@", extension]].count, 0u, @"%@", extension);
+    }
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    [header setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
+    NSDictionary *options = [header.iconView animationAttributesForState:CYLRefreshStateIdle][CYLPlaceholderItemAnimationOptions];
+    XCTAssertEqualObjects(options[@"animation"], @"Loading", @"the bundled Rive file brings its options");
+}
+
 @end

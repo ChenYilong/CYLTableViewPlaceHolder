@@ -49,7 +49,17 @@ final class CYLFeedViewController: UITableViewController {
         footer.setIconAnimation(bundled: "CYLPlaceholderLoadingInfinity.json", size: CGSize(width: 40, height: 24),
                                 for: .refreshing)
         tableView.cyl_footer = footer
+        // Every refresh icon animation of the core bundle, each on its own page, and the ways to set one at init.
+        let icons = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise.circle"), style: .plain, target: self,
+                                    action: #selector(showRefreshIcons))
+        icons.accessibilityLabel = CYLScenarioLocalizedString(.refreshIcons)
+        icons.accessibilityIdentifier = "refreshIcons"
+        navigationItem.rightBarButtonItem = icons
         loadFirstPage()
+    }
+
+    @objc private func showRefreshIcons() {
+        navigationController?.pushViewController(CYLRefreshIconListViewController(), animated: true)
     }
 
     private func makePlaceholder() -> UIView {

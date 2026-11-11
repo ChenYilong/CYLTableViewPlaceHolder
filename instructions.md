@@ -442,7 +442,12 @@ existing code you review: fix what is missing when you meet it. Use the `ios-acc
 `CYLTableViewPlaceHolder.bundle/Animations/` ships ready-made placeholder
 animations with Core: Lottie `.json`, PAG `.pag`, Rive `.riv` and GIF `.gif`,
 named `CYLPlaceholder<Scenario>.<ext>` and found with
-`+[CYLPlaceholderView pathForBundledAnimation:]`.
+`+[CYLPlaceholderView pathForBundledAnimation:]`. Icons made for a refresh
+control (pull arrows, spinners, loading more, done) are named
+`CYLRefresh<State>.<ext>` in the same folder; `+[CYLRefreshComponent
+bundledIconAnimationFileNames]` lists them with the placeholder animations that
+also suit a refresh control, and the Example-Scenarios "Refresh icons" page
+(Feed tab) demonstrates every one of them.
 
 - Add only animations whose content means a placeholder state: loading,
   progress, empty, no results, no network or a failed request, a missing
@@ -467,10 +472,11 @@ named `CYLPlaceholder<Scenario>.<ext>` and found with
   text as `Animations/LICENSE.<source>`. Verify Git LFS files against their
   pointer's SHA-256 after downloading.
 - Every app that uses Core carries these files; keep each small (well under
-  100 KB) and the total around 300 KB. Prefer vector Lottie without images.
+  100 KB) and the total around 500 KB. Prefer vector Lottie without images.
 - `testBundledAnimationsAreListedValidAndAttributed` checks the count, each
   format's header and the NOTICE entry; update its expected count when adding
-  a file. The aggregated demo (`Examples/Example-Scenarios`) lists every file.
+  a file, and `testEveryBundledRefreshAnimationBuildsAnIcon` the number of
+`CYLRefresh*` files. The aggregated demo (`Examples/Example-Scenarios`) lists every file.
 
 ## CI example screenshots
 

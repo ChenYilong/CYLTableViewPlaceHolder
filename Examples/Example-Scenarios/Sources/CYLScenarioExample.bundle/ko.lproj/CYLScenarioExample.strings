@@ -51,3 +51,11 @@
 "CYLScenarioConfigPlaybackLoop" = "반복 재생(기본)";
 "CYLScenarioConfigPlaybackOnce" = "한 번 재생";
 "CYLScenarioConfigPlaybackThree" = "3번 재생";
+
+/* Refresh icons */
+"CYLScenarioRefreshIcons" = "새로고침 아이콘";
+"CYLScenarioSectionRefreshInit" = "다른 설정 방법";
+"CYLScenarioRefreshByFilePath" = "파일 경로로";
+"CYLScenarioRefreshByAttributes" = "item 속성으로 (Rive 상태 머신)";
+"CYLScenarioRefreshByConfiguration" = "설정 파일로";
+"CYLScenarioTextRefreshHint" = "아래로 당겨 새로고침, 위로 당겨 더 불러오기";
