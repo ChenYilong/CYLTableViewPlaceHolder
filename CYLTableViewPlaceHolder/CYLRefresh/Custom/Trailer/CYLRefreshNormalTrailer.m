@@ -56,9 +56,12 @@
     // 状态
     if (noConstrainsOnStatusLabel) {
         BOOL arrowHidden = self.arrowView.isHidden && !self.usesIconView;
-        CGFloat stateCenterX = (self.cyl_w + arrowSize.width + iconExtraWidth) * 0.5;
-        self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
+        // [EN] The full extra width keeps the arrow's gap between the icon and the text; the text stays inside the trailer.
+        // [CN] 右移整个多出的宽度，保持箭头原有的图标与文字间距；文字不超出 trailer。
+        CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5 + iconExtraWidth;
+        if (iconExtraWidth > 0) stateCenterX = MIN(stateCenterX, self.cyl_w - stateLabelW * 0.5);
         self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;
+        self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
     }
 }
 
