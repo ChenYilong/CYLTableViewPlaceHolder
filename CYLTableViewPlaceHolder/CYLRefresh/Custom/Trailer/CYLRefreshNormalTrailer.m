@@ -7,7 +7,6 @@
 //
 
 #import "CYLRefreshNormalTrailer.h"
-#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 
@@ -30,9 +29,6 @@
     [super placeSubviews];
 
     CGSize arrowSize = self.arrowView.image.size;
-    // [EN] An icon wider than the arrow takes its place at the same 5-point inset, and the text moves over by the extra
-    //      width, so the two never overlap. [CN] 比箭头宽的图标以相同的 5 点边距替换箭头，文字随多出的宽度右移，二者不会重叠。
-    CGFloat iconExtraWidth = self.usesIconView ? MAX(0, self.iconView.iconSize.width - arrowSize.width) : 0;
     // 箭头的中心点
     CGPoint selfCenter = CGPointMake(self.cyl_w * 0.5, self.cyl_h * 0.5);
     CGPoint arrowCenter = CGPointMake(arrowSize.width * 0.5 + 5, self.cyl_h * 0.5);
@@ -43,11 +39,6 @@
         self.arrowView.center = stateHidden ?  selfCenter : arrowCenter ;
     }
     self.arrowView.tintColor = self.stateLabel.textColor;
-    // [EN] An icon animation takes the arrow's place; the label moves over by the icon's extra width.
-    // [CN] 图标动画替换箭头；文字随图标多出的宽度右移。
-    CGPoint iconCenter = (stateHidden || self.arrowView.constraints.count) ? self.arrowView.center :
-        CGPointMake(arrowSize.width * 0.5 + 5 + iconExtraWidth * 0.5, self.cyl_h * 0.5);
-    [self cyl_placeIconViewAtCenter:iconCenter visible:YES replacingViews:@[self.arrowView]];
 
     if (stateHidden) return;
 
@@ -55,13 +46,10 @@
     CGFloat stateLabelW = ceil(self.stateLabel.font.pointSize);
     // 状态
     if (noConstrainsOnStatusLabel) {
-        BOOL arrowHidden = self.arrowView.isHidden && !self.usesIconView;
-        // [EN] The full extra width keeps the arrow's gap between the icon and the text; the text stays inside the trailer.
-        // [CN] 右移整个多出的宽度，保持箭头原有的图标与文字间距；文字不超出 trailer。
-        CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5 + iconExtraWidth;
-        if (iconExtraWidth > 0) stateCenterX = MIN(stateCenterX, self.cyl_w - stateLabelW * 0.5);
-        self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;
+        BOOL arrowHidden = self.arrowView.isHidden;
+        CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
         self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
+        self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;
     }
 }
 

@@ -15,19 +15,20 @@
 #import "NSBundle+CYLRefresh.h"
 #import "CYLRefreshIconView.h"
 #import "CYLPlaceholderView.h"
-#import "CYLPlaceholderScenario.h"
 
-@interface CYLRefreshComponent()
-@property (strong, nonatomic, readwrite) CYLRefreshIconView *iconView;
+@interface CYLRefreshComponent() {
+    /// [EN] The icon behind `cyl_iconView`, created on first use. [CN] `cyl_iconView` 的存储，首次使用时创建。
+    CYLRefreshIconView *_iconView;
+}
 @property (strong, nonatomic) UIPanGestureRecognizer *pan;
 @property (weak, nonatomic) UIScrollView *observedScrollView;
 @end
 
 @implementation CYLRefreshComponent
 
-#pragma mark - Icon animation
+#pragma mark - Icon animation (plumbing for CYLRefreshIconAnimating)
 
-- (CYLRefreshIconView *)iconView
+- (CYLRefreshIconView *)cyl_iconView
 {
     if (!_iconView) {
         CYLRefreshIconView *iconView = [[CYLRefreshIconView alloc] initWithFrame:CGRectZero];
@@ -38,82 +39,33 @@
     return _iconView;
 }
 
-- (BOOL)usesIconView
+- (BOOL)cyl_usesIconView
 {
     return _iconView.hasAnimations;
 }
 
-- (instancetype)setIconAnimationAttributes:(NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
+- (void)cyl_setIconAnimationAttributes:(NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
 {
-    if (!attributes && !_iconView) return self;
-    [self.iconView setAnimationAttributes:attributes forState:state];
+    if (!attributes && !_iconView) return;
+    [self.cyl_iconView setAnimationAttributes:attributes forState:state];
     [self setNeedsLayout];
-    return self;
-}
-
-- (instancetype)setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
-{
-    if (!filePath.length) return self;
-    return [self setIconAnimationAttributes:@{
-        CYLPlaceholderItemAnimationFilePath: filePath,
-        CYLPlaceholderItemAnimationSize: @[@(size.width), @(size.height)],
-    } forState:state];
-}
-
-- (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
-{
-    if (![CYLPlaceholderView pathForBundledAnimation:fileName]) {
-        NSLog(@"CYLRefresh: bundled animation %@ not found.", fileName);
-        return self;
-    }
-    // [EN] The scenario builder adds the options a bundled file needs (Rive state machines, line icon colors).
-    // [CN] 由场景组件构建方法补充内置文件需要的选项（Rive 状态机、线条图标颜色）。
-    CYLPlaceholderComponent *component = [CYLPlaceholderComponent componentWithBundledAnimation:fileName
-        fallbackStyle:CYLPlaceholderStyleRefresh title:nil size:size action:nil];
-    return [self setIconAnimationAttributes:component.attributes forState:state];
-}
-
-+ (NSArray<NSString *> *)bundledIconAnimationFileNames
-{
-    // [EN] Placeholder animations whose content is also a refresh state (pulling, refreshing).
-    // [CN] 内容同样表示刷新状态（下拉、刷新中）的占位动画。
-    NSSet<NSString *> *placeholderNames = [NSSet setWithArray:@[
-        @"CYLPlaceholderRefresh.json", @"CYLPlaceholderLoading.json", @"CYLPlaceholderLoadingInfinity.json",
-        @"CYLPlaceholderLoading.pag", @"CYLPlaceholderPullHint.pag", @"CYLPlaceholderLoading.riv",
-        @"CYLPlaceholderPullToRefresh.riv",
-    ]];
-    NSMutableArray<NSString *> *names = [NSMutableArray array];
-    for (NSString *name in [CYLPlaceholderView bundledAnimationFileNames]) {
-        if ([name hasPrefix:@"CYLRefresh"] || [placeholderNames containsObject:name]) [names addObject:name];
-    }
-    return [names copy];
 }
 
 /// [EN] For subclasses: places the icon at `center` with its size and hides the views it replaces.
 /// [CN] 供子类调用：把图标以其尺寸放在 `center`，并隐藏它所替换的视图。
 - (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
 {
-    if (!self.usesIconView) return;
-    CGSize size = self.iconView.iconSize;
-    self.iconView.bounds = CGRectMake(0, 0, size.width, size.height);
-    self.iconView.center = center;
+    if (!self.cyl_usesIconView) return;
+    CGSize size = self.cyl_iconView.iconSize;
+    self.cyl_iconView.bounds = CGRectMake(0, 0, size.width, size.height);
+    self.cyl_iconView.center = center;
     [self cyl_updateIconViewVisible:visible replacingViews:views];
-}
-
-- (CGPoint)cyl_iconCenterReplacingCenter:(CGPoint)center replacedWidth:(CGFloat)replacedWidth
-{
-    if (!self.usesIconView) return center;
-    CGFloat extra = self.iconView.iconSize.width - MAX(0, replacedWidth);
-    if (extra <= 0) return center;
-    // [EN] CYLRefresh always puts the arrow to the left of its text (it does not mirror), so the icon grows leftward.
-    // [CN] CYLRefresh 总是把箭头放在文字左侧（不做镜像），因此图标向左扩展。
-    return CGPointMake(center.x - extra * 0.5, center.y);
 }
 
 - (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
 {
-    if (!self.usesIconView) return;
-    self.iconView.hidden = !visible;
+    if (!self.cyl_usesIconView) return;
+    self.cyl_iconView.hidden = !visible;
     for (UIView *view in views) {
         if ([view isKindOfClass:UIActivityIndicatorView.class]) [(UIActivityIndicatorView *)view stopAnimating];
         view.hidden = YES;

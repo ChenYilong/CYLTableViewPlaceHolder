@@ -185,10 +185,9 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             installPlaceholderBlock()
         case .refreshControls:
             setUpRefreshHeader(usesDelegateAPI: false)
-            // A Rive pull-to-refresh icon in the header (see setUpRefreshHeader) and a GIF icon in the footer.
-            tableView.cyl_header?.setIconAnimation(bundled: "CYLPlaceholderPullToRefresh.riv",
-                                                   size: CGSize(width: 40, height: 40), for: .idle)
-            let footer = CYLRefreshAutoNormalFooter { [weak self] in
+            // The header keeps CYLRefresh's default arrow (see setUpRefreshHeader); the footer is the animated-images
+            // footer, whose images are replaced by a GIF icon animation (CYLRefreshIconAnimating).
+            let footer = CYLRefreshAutoGifFooter { [weak self] in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self?.tableView.cyl_footer?.endRefreshingWithNoMoreData()
                 }

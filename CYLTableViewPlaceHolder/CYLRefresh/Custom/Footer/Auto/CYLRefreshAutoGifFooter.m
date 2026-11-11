@@ -24,6 +24,43 @@
 @end
 
 @implementation CYLRefreshAutoGifFooter
+
+#pragma mark - CYLRefreshIconAnimating
+
+- (CYLRefreshIconView *)iconView
+{
+    return self.cyl_iconView;
+}
+
+- (BOOL)usesIconView
+{
+    return self.cyl_usesIconView;
+}
+
+- (instancetype)setIconAnimationAttributes:(NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
+{
+    [self cyl_setIconAnimationAttributes:attributes forState:state];
+    return self;
+}
+
+- (instancetype)setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
+{
+    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForAnimationFilePath:filePath size:size];
+    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+    return self;
+}
+
+- (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
+{
+    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForBundledAnimation:fileName size:size];
+    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+    return self;
+}
+
++ (NSArray<NSString *> *)bundledIconAnimationFileNames
+{
+    return CYLRefreshIconView.bundledAnimationFileNames;
+}
 #pragma mark - 懒加载
 - (UIImageView *)gifView
 {

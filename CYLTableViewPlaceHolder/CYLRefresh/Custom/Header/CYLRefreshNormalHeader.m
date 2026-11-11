@@ -7,7 +7,6 @@
 //
 
 #import "CYLRefreshNormalHeader.h"
-#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIScrollView+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
@@ -95,14 +94,6 @@
     }
 
     self.arrowView.tintColor = self.stateLabel.textColor;
-
-    // [EN] An icon animation takes the arrow's and spinner's place, with the same center.
-    // [CN] 图标动画以相同的中心点替换箭头与菊花。
-    // [EN] Measured like the arrow, keeping its gap to the text when the icon is wider (CYLRefreshIconView.h).
-    // [CN] 与箭头一样计算位置；图标更宽时保持箭头与文字的间距（见 CYLRefreshIconView.h）。
-    CGPoint iconCenter = self.stateLabel.hidden ? arrowCenter : [self cyl_iconCenterReplacingCenter:arrowCenter
-        replacedWidth:MAX(self.arrowView.image.size.width, CGRectGetWidth(self.loadingView.bounds))];
-    [self cyl_placeIconViewAtCenter:iconCenter visible:YES replacingViews:@[self.arrowView, self.loadingView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -122,7 +113,7 @@
 
                 self.loadingView.alpha = 1.0;
                 [self.loadingView stopAnimating];
-                self.arrowView.hidden = self.usesIconView;
+                self.arrowView.hidden = NO;
             }];
         } else {
             [self.loadingView stopAnimating];
@@ -142,7 +133,6 @@
         [self.loadingView startAnimating];
         self.arrowView.hidden = YES;
     }
-    [self cyl_updateIconViewVisible:YES replacingViews:@[self.arrowView, self.loadingView]];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {

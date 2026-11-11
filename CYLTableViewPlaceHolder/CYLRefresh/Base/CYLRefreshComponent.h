@@ -210,53 +210,6 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 - (void)i18nDidChange NS_REQUIRES_SUPER;
 
-#pragma mark - Icon animation / 图标动画
-/*!
- * [EN] The icon drawn by the library's icon component (CYLRefreshIconView): GIF, Lottie, PAG or Rive. Created when an
- *      icon animation is first set; the arrow, spinner or GIF view of the control is then hidden and the icon takes its
- *      place, with the same layout. It plays by a fixed policy (pulling plays, refreshing loops, ending stops; see
- *      CYLRefreshIconView.h). Without an icon animation the control is unchanged.
- * [CN] 由本库图标组件（CYLRefreshIconView）绘制的图标：GIF、Lottie、PAG 或 Rive。首次设置图标动画时创建；控件原有的箭头、菊花
- *      或 GIF 视图随之隐藏，图标按相同的布局放在原位置，并按固定策略播放（拖动播放、刷新中循环、结束停止，见 CYLRefreshIconView.h）。
- *      不设置图标动画时控件保持不变。
- */
-@property (strong, nonatomic, readonly) CYLRefreshIconView *iconView;
-/*!
- * [EN] YES once any icon animation is set. [CN] 设置了任意图标动画后为 YES。
- */
-@property (nonatomic, readonly) BOOL usesIconView;
-/*!
- * [EN] The icon for a state, as CYLPlaceholderView item attributes (`CYLPlaceholderItemAnimationFilePath`,
- *      `CYLPlaceholderItemAnimationSize`, `CYLPlaceholderItemAnimationOptions`, `CYLPlaceholderItemAnimationColors`…);
- *      nil removes it. A state without attributes uses the idle state's, so one call sets the icon for every state.
- * [CN] 某个状态的图标，使用 CYLPlaceholderView 的 item 属性；nil 表示移除。没有属性的状态使用空闲状态的属性，因此调用一次即可设置所有状态的图标。
- */
-- (instancetype)setIconAnimationAttributes:(nullable NSDictionary<NSString *, id> *)attributes
-                                  forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(setIconAnimation(attributes:for:));
-/*!
- * [EN] An animation file (.gif, .json Lottie, .pag, .riv) at `size` for a state. [CN] 某个状态使用 `size` 大小的动画文件。
- */
-- (instancetype)setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(setIconAnimation(filePath:size:for:));
-/*!
- * [EN] An animation of the core bundle (`+[CYLPlaceholderView bundledAnimationFileNames]`, such as
- *      "CYLPlaceholderLoading.json") at `size` for a state, with the options it needs.
- * [CN] 某个状态使用核心 bundle 中 `size` 大小的内置动画（如 "CYLPlaceholderLoading.json"），并带上它需要的选项。
- */
-- (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(setIconAnimation(bundled:size:for:));
-/*!
- * [EN] The animations of the core bundle meant for a refresh icon, sorted: the `CYLRefresh*` files (pull arrows,
- *      spinners, loading more, done; GIF, Lottie and Rive) and the placeholder animations that also suit a refresh
- *      control (CYLPlaceholderRefresh.json, CYLPlaceholderLoading.pag, CYLPlaceholderPullHint.pag,
- *      CYLPlaceholderPullToRefresh.riv…). Each name can be passed to `-setBundledIconAnimation:size:forState:`.
- * [CN] 核心 bundle 中适合作为刷新图标的动画（已排序）：`CYLRefresh*` 文件（下拉箭头、加载圈、加载更多、完成；GIF、Lottie、Rive），
- *      以及同样适合刷新控件的占位动画（如 CYLPlaceholderRefresh.json、CYLPlaceholderLoading.pag）。每个名称都可传给
- *      `-setBundledIconAnimation:size:forState:`。
- */
-@property (class, nonatomic, readonly) NSArray<NSString *> *bundledIconAnimationFileNames;
-
 #pragma mark - 其他
 /*!
  * 拉拽的百分比(交给子类重写)

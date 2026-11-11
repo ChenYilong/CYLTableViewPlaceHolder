@@ -5,6 +5,7 @@
 
 #import "CYLRefreshIconView.h"
 #import "CYLPlaceholderView.h"
+#import "CYLPlaceholderScenario.h"
 
 /// [EN] The default icon size, about the arrow's height. [CN] 默认图标尺寸，约为箭头的高度。
 static const CGFloat CYLRefreshIconDefaultSide = 30;
@@ -35,6 +36,15 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
         self.accessibilityElementsHidden = YES;
     }
     return self;
+}
+
+/*!
+ * [EN] The component always fills the icon, centered in it, whatever size the control gives the icon.
+ * [CN] 组件始终铺满图标并在其中居中，无论控件给图标的尺寸是多少。
+ */
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.placeholderView.frame = self.bounds;
 }
 
 #pragma mark - Attributes
@@ -153,6 +163,45 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
 - (void)cyl_stop {
     [self.placeholderView stopPlaceholderAnimation];
     self.playing = NO;
+}
+
+@end
+
+@implementation CYLRefreshIconView (CYLRefreshIconAttributes)
+
++ (NSDictionary<NSString *, id> *)attributesForAnimationFilePath:(NSString *)filePath size:(CGSize)size {
+    if (!filePath.length) return nil;
+    return @{
+        CYLPlaceholderItemAnimationFilePath: filePath,
+        CYLPlaceholderItemAnimationSize: @[@(size.width), @(size.height)],
+    };
+}
+
++ (NSDictionary<NSString *, id> *)attributesForBundledAnimation:(NSString *)fileName size:(CGSize)size {
+    if (![CYLPlaceholderView pathForBundledAnimation:fileName]) {
+        NSLog(@"CYLRefresh: bundled animation %@ not found.", fileName);
+        return nil;
+    }
+    // [EN] The scenario builder adds the options a bundled file needs (Rive state machines, line icon colors).
+    // [CN] 由场景组件构建方法补充内置文件需要的选项（Rive 状态机、线条图标颜色）。
+    CYLPlaceholderComponent *component = [CYLPlaceholderComponent componentWithBundledAnimation:fileName
+        fallbackStyle:CYLPlaceholderStyleRefresh title:nil size:size action:nil];
+    return component.attributes;
+}
+
++ (NSArray<NSString *> *)bundledAnimationFileNames {
+    // [EN] Placeholder animations whose content is also a refresh state (pulling, refreshing).
+    // [CN] 内容同样表示刷新状态（下拉、刷新中）的占位动画。
+    NSSet<NSString *> *placeholderNames = [NSSet setWithArray:@[
+        @"CYLPlaceholderRefresh.json", @"CYLPlaceholderLoading.json", @"CYLPlaceholderLoadingInfinity.json",
+        @"CYLPlaceholderLoading.pag", @"CYLPlaceholderPullHint.pag", @"CYLPlaceholderLoading.riv",
+        @"CYLPlaceholderPullToRefresh.riv",
+    ]];
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (NSString *name in [CYLPlaceholderView bundledAnimationFileNames]) {
+        if ([name hasPrefix:@"CYLRefresh"] || [placeholderNames containsObject:name]) [names addObject:name];
+    }
+    return [names copy];
 }
 
 @end

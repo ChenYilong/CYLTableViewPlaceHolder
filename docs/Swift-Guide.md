@@ -50,9 +50,6 @@ icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), whe
 | `+[CYLPlaceholderComponent componentWithBundledAnimation:fallbackStyle:title:size:action:]`, `+hintComponentWithText:` | `CYLPlaceholderComponent(bundledAnimation:fallbackStyle:title:size:action:)`, `CYLPlaceholderComponent.hint(text:)` |
 | `CYLPlaceholderScenarioCatalog` class methods | `CYLPlaceholderScenarioCatalog.allScenarios`, `.localizedName(for:)`, `.localizedTitle(for:)`, `.components(for:)`, `.category(for:)`, `.permission(for:)` |
 | `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.language` (`String?`), `.effectiveLanguage` |
-| `-[CYLRefreshComponent setBundledIconAnimation:size:forState:]` | `setIconAnimation(bundled:size:for:)` |
-| `-setIconAnimationFilePath:size:forState:`, `-setIconAnimationAttributes:forState:` | `setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)` |
-| `+[CYLRefreshComponent bundledIconAnimationFileNames]` | `CYLRefreshComponent.bundledIconAnimationFileNames` |
 | `UIViewController.cyl_statusView` (`null_resettable`) | `cyl_statusView` (`CYLPlaceholderStatusView!`) |
 | `cyl_statusDisplay`, `-cyl_setStatusDisplay:animated:` | `cyl_statusDisplay`, `cyl_setStatusDisplay(_:animated:)`; options `.all`, `.statusBar`, `.placeholder` |
 | `cyl_showsStatusViewWhenOffline` | `cyl_showsStatusViewWhenOffline` |
@@ -62,7 +59,10 @@ icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), whe
 
 Add a row only after Swift code that uses it has compiled in CI. APIs without a Swift call site yet (for example
 `exclusiveWithOtherRefresh`, `setHandler(_:for:)`, `performAction(_:)`, `componentView(for:)`,
-`CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed.
+`CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed. The refresh icon
+spellings moved to `CYLRefreshIconAnimating` on the GIF header and footers (`setIconAnimation(bundled:size:for:)`,
+`setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)`,
+`CYLRefreshGifHeader.bundledIconAnimationFileNames`); they return to the table once CI compiles them there.
 
 ## Protocol methods that contain underscores
 

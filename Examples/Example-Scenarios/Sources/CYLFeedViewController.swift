@@ -35,15 +35,16 @@ final class CYLFeedViewController: UITableViewController {
         tableView.cyl_placeholderViewBlock({ [weak self] _ in
             self?.makePlaceholder()
         })
-        // The refresh controls draw their icon with the library's icon component: a Lottie arrow while pulling and a PAG
-        // spinner while refreshing; the footer loads with a Lottie spinner. Layout and texts stay CYLRefresh's own.
-        let header = CYLRefreshNormalHeader { [weak self] in
+        // The animated-images header and footer (MJRefresh's GIF controls) draw their images with the library's icon
+        // component: a Lottie arrow while pulling and a PAG spinner while refreshing; the footer loads with a Lottie
+        // spinner. Layout and texts stay CYLRefresh's own (CYLRefreshIconAnimating).
+        let header = CYLRefreshGifHeader { [weak self] in
             self?.refresh()
         }
         header.setIconAnimation(bundled: "CYLPlaceholderRefresh.json", size: CGSize(width: 28, height: 28), for: .idle)
         header.setIconAnimation(bundled: "CYLPlaceholderLoading.pag", size: CGSize(width: 36, height: 36), for: .refreshing)
         tableView.cyl_header = header
-        let footer = CYLRefreshAutoNormalFooter { [weak self] in
+        let footer = CYLRefreshAutoGifFooter { [weak self] in
             self?.loadMore()
         }
         footer.setIconAnimation(bundled: "CYLPlaceholderLoadingInfinity.json", size: CGSize(width: 40, height: 24),
