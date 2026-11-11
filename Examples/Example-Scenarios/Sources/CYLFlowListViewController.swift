@@ -187,7 +187,7 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             setUpRefreshHeader(usesDelegateAPI: false)
             // The header keeps CYLRefresh's default arrow (see setUpRefreshHeader); the footer is the animated-images
             // footer, whose images are replaced by a GIF icon animation (CYLRefreshIconAnimating).
-            let footer = CYLRefreshAutoGifFooter { [weak self] in
+            let footer = CYLRefreshAutoAnimationFooter { [weak self] in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self?.tableView.cyl_footer?.endRefreshingWithNoMoreData()
                 }

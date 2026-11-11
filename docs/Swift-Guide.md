@@ -60,9 +60,9 @@ icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), whe
 Add a row only after Swift code that uses it has compiled in CI. APIs without a Swift call site yet (for example
 `exclusiveWithOtherRefresh`, `setHandler(_:for:)`, `performAction(_:)`, `componentView(for:)`,
 `CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed. The refresh icon
-spellings moved to `CYLRefreshIconAnimating` on the GIF header and footers (`setIconAnimation(bundled:size:for:)`,
+spellings moved to `CYLRefreshIconAnimating` on the animation header and footers (`CYLRefreshAnimationHeader` and friends; the MJRefresh `Gif` names are subclasses) (`setIconAnimation(bundled:size:for:)`,
 `setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)`,
-`CYLRefreshGifHeader.bundledIconAnimationFileNames`); they return to the table once CI compiles them there.
+`CYLRefreshAnimationHeader.bundledIconAnimationFileNames`); they return to the table once CI compiles them there.
 
 ## Protocol methods that contain underscores
 

@@ -8,11 +8,14 @@
 #import "UICollectionViewLayout+CYLRefresh.h"
 
 #import "CYLRefreshNormalHeader.h"
+#import "CYLRefreshAnimationHeader.h"
 #import "CYLRefreshGifHeader.h"
 
 #import "CYLRefreshBackNormalFooter.h"
+#import "CYLRefreshBackAnimationFooter.h"
 #import "CYLRefreshBackGifFooter.h"
 #import "CYLRefreshAutoNormalFooter.h"
+#import "CYLRefreshAutoAnimationFooter.h"
 #import "CYLRefreshAutoGifFooter.h"
 
 #import "CYLRefreshNormalTrailer.h"

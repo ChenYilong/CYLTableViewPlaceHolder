@@ -22,9 +22,9 @@
     XCTAssertFalse([CYLRefreshBackNormalFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
     XCTAssertFalse([CYLRefreshAutoNormalFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
     XCTAssertFalse([CYLRefreshNormalTrailer conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
-    XCTAssertTrue([CYLRefreshGifHeader conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
-    XCTAssertTrue([CYLRefreshBackGifFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
-    XCTAssertTrue([CYLRefreshAutoGifFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
+    XCTAssertTrue([CYLRefreshAnimationHeader conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
+    XCTAssertTrue([CYLRefreshBackAnimationFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
+    XCTAssertTrue([CYLRefreshAutoAnimationFooter conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
     CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
     [self layOut:header];
     XCTAssertFalse(header.arrowView.hidden, @"the default arrow, as in MJRefresh");
@@ -33,28 +33,57 @@
     }
 }
 
-- (void)testWithoutAnIconAnimationTheGifHeaderIsUnchanged {
+- (void)testTheMJRefreshGifNamesCallTheGeneralAnimationMethods {
+    // [EN] The old names are subclasses of the general classes, so old code compiles and behaves the same.
+    // [CN] 旧名称是通用类的子类，旧代码照常编译、行为不变。
+    XCTAssertTrue([CYLRefreshGifHeader isSubclassOfClass:CYLRefreshAnimationHeader.class]);
+    XCTAssertTrue([CYLRefreshBackGifFooter isSubclassOfClass:CYLRefreshBackAnimationFooter.class]);
+    XCTAssertTrue([CYLRefreshAutoGifFooter isSubclassOfClass:CYLRefreshAutoAnimationFooter.class]);
+    XCTAssertTrue([CYLRefreshGifHeader conformsToProtocol:@protocol(CYLRefreshIconAnimating)]);
+
+    UIImage *small = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleRefresh];
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(10, 120)];
+    UIImage *tall = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {}];
+    NSArray<UIImage *> *images = @[small, tall];
+
     CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+    XCTAssertEqual(header.gifView, header.animationView, @"gifView is the animation view");
+    XCTAssertEqual([header setImages:images forState:CYLRefreshStateRefreshing], header);
+    XCTAssertEqualWithAccuracy(header.frame.size.height, 120, 0.5, @"setImages: grows the control like setAnimationImages:");
+
+    CYLRefreshAutoGifFooter *autoFooter = [CYLRefreshAutoGifFooter footerWithRefreshingBlock:^{}];
+    XCTAssertEqual(autoFooter.gifView, autoFooter.animationView);
+    XCTAssertEqual([autoFooter setImages:images duration:1 forState:CYLRefreshStateRefreshing], autoFooter);
+    XCTAssertEqualWithAccuracy(autoFooter.frame.size.height, 120, 0.5);
+
+    CYLRefreshBackGifFooter *backFooter = [CYLRefreshBackGifFooter footerWithRefreshingBlock:^{}];
+    XCTAssertEqual(backFooter.gifView, backFooter.animationView);
+    XCTAssertEqual([backFooter setImages:images forState:CYLRefreshStatePulling], backFooter);
+    XCTAssertEqualWithAccuracy(backFooter.frame.size.height, 120, 0.5);
+}
+
+- (void)testWithoutAnIconAnimationTheAnimationHeaderIsUnchanged {
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleRefresh];
-    XCTAssertEqual([header setImages:@[image] forState:CYLRefreshStateIdle], header, @"the animated images API is unchanged");
+    XCTAssertEqual([header setAnimationImages:@[image] forState:CYLRefreshStateIdle], header, @"the animated images API is unchanged");
     [self layOut:header];
     XCTAssertFalse(header.usesIconView);
-    XCTAssertFalse(header.gifView.hidden);
+    XCTAssertFalse(header.animationView.hidden);
     [header setIconAnimationAttributes:nil forState:CYLRefreshStateIdle];
     XCTAssertFalse(header.usesIconView, @"removing nothing creates nothing");
 }
 
-- (void)testAnIconAnimationTakesTheGifViewsPlaceCenteredVertically {
-    CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+- (void)testAnIconAnimationTakesTheAnimationViewsPlaceCenteredVertically {
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
     [header setBundledIconAnimation:@"CYLRefreshArrows.gif" size:CGSizeMake(36, 36) forState:CYLRefreshStateIdle];
     [self layOut:header];
     XCTAssertTrue(header.usesIconView);
     XCTAssertEqual(header.iconView.superview, header);
-    XCTAssertTrue(header.gifView.hidden);
+    XCTAssertTrue(header.animationView.hidden);
     XCTAssertFalse(header.iconView.hidden);
     XCTAssertTrue(CGSizeEqualToSize(header.iconView.bounds.size, CGSizeMake(36, 36)));
     XCTAssertEqualWithAccuracy(header.iconView.center.y, CGRectGetMidY(header.bounds), 0.5, @"centered in the height");
-    XCTAssertEqualWithAccuracy(CGRectGetMaxX(header.iconView.frame), CGRectGetMaxX(header.gifView.frame), 0.5,
+    XCTAssertEqualWithAccuracy(CGRectGetMaxX(header.iconView.frame), CGRectGetMaxX(header.animationView.frame), 0.5,
                                @"right-aligned where the GIF view draws its images");
     CGFloat textWidth = MAX(header.stateLabel.cyl_textWidth, header.lastUpdatedTimeLabel.cyl_textWidth);
     CGFloat textStart = header.cyl_w * 0.5 - textWidth * 0.5;
@@ -76,7 +105,7 @@
 }
 
 - (void)testThePlaybackFollowsTheControlState {
-    CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
     NSString *loading = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
     [header setIconAnimationFilePath:loading size:CGSizeMake(30, 30) forState:CYLRefreshStateIdle];
     CYLPlaceholderView *icon = header.iconView.placeholderView;
@@ -97,31 +126,31 @@
     XCTAssertNil([header.iconView animationAttributesForState:CYLRefreshStateRefreshing]);
 }
 
-- (void)testGifFootersShowTheIconWhenTheirImagesWouldShow {
-    CYLRefreshAutoGifFooter *autoFooter = [CYLRefreshAutoGifFooter footerWithRefreshingBlock:^{}];
+- (void)testAnimationFootersShowTheIconWhenTheirImagesWouldShow {
+    CYLRefreshAutoAnimationFooter *autoFooter = [CYLRefreshAutoAnimationFooter footerWithRefreshingBlock:^{}];
     [autoFooter setBundledIconAnimation:@"CYLRefreshSpinner.json" size:CGSizeMake(24, 24) forState:CYLRefreshStateIdle];
     [self layOut:autoFooter];
     XCTAssertTrue(autoFooter.iconView.hidden, @"an auto GIF footer shows its images only while loading");
     autoFooter.state = CYLRefreshStateRefreshing;
     [self layOut:autoFooter];
     XCTAssertFalse(autoFooter.iconView.hidden);
-    XCTAssertTrue(autoFooter.gifView.hidden);
+    XCTAssertTrue(autoFooter.animationView.hidden);
     XCTAssertEqualWithAccuracy(autoFooter.iconView.center.y, CGRectGetMidY(autoFooter.bounds), 0.5);
     autoFooter.state = CYLRefreshStateNoMoreData;
     XCTAssertTrue(autoFooter.iconView.hidden);
 
-    CYLRefreshBackGifFooter *backFooter = [CYLRefreshBackGifFooter footerWithRefreshingBlock:^{}];
+    CYLRefreshBackAnimationFooter *backFooter = [CYLRefreshBackAnimationFooter footerWithRefreshingBlock:^{}];
     [backFooter setBundledIconAnimation:@"CYLRefreshPullArrow.json" size:CGSizeMake(24, 24) forState:CYLRefreshStateIdle];
     [self layOut:backFooter];
     XCTAssertFalse(backFooter.iconView.hidden);
-    XCTAssertTrue(backFooter.gifView.hidden);
+    XCTAssertTrue(backFooter.animationView.hidden);
     XCTAssertEqualWithAccuracy(backFooter.iconView.center.y, CGRectGetMidY(backFooter.bounds), 0.5);
     backFooter.state = CYLRefreshStateNoMoreData;
     XCTAssertTrue(backFooter.iconView.hidden, @"no more data shows the text only, as before");
 }
 
 - (void)testMissingBundledAnimationsAreIgnored {
-    CYLRefreshBackGifFooter *footer = [CYLRefreshBackGifFooter footerWithRefreshingBlock:^{}];
+    CYLRefreshBackAnimationFooter *footer = [CYLRefreshBackAnimationFooter footerWithRefreshingBlock:^{}];
     [footer setBundledIconAnimation:@"Missing.json" size:CGSizeMake(20, 20) forState:CYLRefreshStateIdle];
     XCTAssertFalse(footer.usesIconView);
     [footer setIconAnimationFilePath:@"" size:CGSizeMake(20, 20) forState:CYLRefreshStateIdle];
@@ -129,12 +158,12 @@
 }
 
 - (void)testEveryBundledRefreshAnimationBuildsAnIcon {
-    NSArray<NSString *> *names = CYLRefreshGifHeader.bundledIconAnimationFileNames;
-    XCTAssertEqualObjects(names, CYLRefreshAutoGifFooter.bundledIconAnimationFileNames);
+    NSArray<NSString *> *names = CYLRefreshAnimationHeader.bundledIconAnimationFileNames;
+    XCTAssertEqualObjects(names, CYLRefreshAutoAnimationFooter.bundledIconAnimationFileNames);
     NSUInteger refreshFiles = 0;
     for (NSString *name in names) {
         if ([name hasPrefix:@"CYLRefresh"]) refreshFiles++;
-        CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+        CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
         [header setBundledIconAnimation:name size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
         XCTAssertTrue(header.usesIconView, @"%@", name);
         NSDictionary *attributes = [header.iconView animationAttributesForState:CYLRefreshStateIdle];
@@ -147,7 +176,7 @@
         NSUInteger count = [names filteredArrayUsingPredicate:predicate].count;
         XCTAssertGreaterThan(count, 0u, @"%@", extension);
     }
-    CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
     [header setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
     NSDictionary *options = [header.iconView animationAttributesForState:CYLRefreshStateIdle][CYLPlaceholderItemAnimationOptions];
     XCTAssertEqualObjects(options[@"animation"], @"Loading", @"the bundled Rive file brings its options");

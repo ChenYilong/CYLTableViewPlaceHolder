@@ -4,8 +4,8 @@
 //
 //  [EN] The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or
 //       an animation file, GIF, Lottie, PAG or Rive (the last three need the matching subspec). The animated-image
-//       controls (CYLRefreshGifHeader, CYLRefreshBackGifFooter, CYLRefreshAutoGifFooter, `CYLRefreshIconAnimating`) create
-//       it only when an icon animation is set, place it where the GIF view draws its images and hide that view; without an
+//       controls (CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter, CYLRefreshAutoAnimationFooter, `CYLRefreshIconAnimating`) create
+//       it only when an icon animation is set, place it where the animation view draws its images and hide that view; without an
 //       icon animation nothing changes. The arrow and spinner controls keep their arrow and spinner.
 //       The icon plays by a fixed policy that follows the control:
 //       - idle, not pulled:          stopped on its resting frame
@@ -14,8 +14,8 @@
 //       - refreshing / will refresh: plays, looping
 //       - no more data:              stopped
 //  [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片，或 GIF、Lottie、PAG、Rive 动画文件（后三者需要对应的子规格）。
-//       只有设置了图标动画时，“动画图片”控件（CYLRefreshGifHeader、CYLRefreshBackGifFooter、CYLRefreshAutoGifFooter，见
-//       `CYLRefreshIconAnimating`）才创建它，把它放在 GIF 视图绘制图片的位置并隐藏该视图；不设置时行为不变。箭头与菊花控件保持原样。图标按固定策略随控件状态播放：
+//       只有设置了图标动画时，“动画图片”控件（CYLRefreshAnimationHeader、CYLRefreshBackAnimationFooter、CYLRefreshAutoAnimationFooter，见
+//       `CYLRefreshIconAnimating`）才创建它，把它放在 动画视图绘制图片的位置并隐藏该视图；不设置时行为不变。箭头与菊花控件保持原样。图标按固定策略随控件状态播放：
 //       空闲未拖动时停在静止帧；拖动中按下拉百分比定位（Lottie、PAG 可定位），否则播放；松开即可刷新时循环播放；
 //       刷新中循环播放；没有更多数据时停止。
 //
@@ -74,18 +74,19 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /*!
- * [EN] The icon animation of MJRefresh's animated images: CYLRefreshGifHeader, CYLRefreshBackGifFooter and
- *      CYLRefreshAutoGifFooter adopt it, next to `setImages:forState:`. The icon takes the place of the GIF view and
+ * [EN] The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and
+ *      CYLRefreshAutoAnimationFooter adopt it, next to `setAnimationImages:forState:`. The icon takes the place of the animation view and
  *      keeps its layout (centered in the control's height; centered, or right-aligned next to the text) and its show/hide
- *      timing. The arrow and spinner controls (Normal header, footers, trailer) keep their arrow and spinner.
- * [CN] MJRefresh“动画图片”的图标动画：CYLRefreshGifHeader、CYLRefreshBackGifFooter、CYLRefreshAutoGifFooter 采用本协议，与
- *      `setImages:forState:` 并列。图标替换 GIF 视图并沿用其布局（在控件高度内垂直居中；水平居中，或靠右紧挨文字）与显示时机。箭头与
- *      菊花控件（Normal 刷新头、刷新尾、trailer）保持原有的箭头与菊花。
+ *      timing. The MJRefresh names (CYLRefreshGifHeader, CYLRefreshBackGifFooter, CYLRefreshAutoGifFooter) are subclasses
+ *      and adopt it too. The arrow and spinner controls (Normal header, footers, trailer) keep their arrow and spinner.
+ * [CN] MJRefresh“动画图片”的图标动画：CYLRefreshAnimationHeader、CYLRefreshBackAnimationFooter、CYLRefreshAutoAnimationFooter 采用本协议，与
+ *      `setAnimationImages:forState:` 并列。图标替换 动画视图并沿用其布局（在控件高度内垂直居中；水平居中，或靠右紧挨文字）与显示时机。箭头与
+ *      菊花控件（Normal 刷新头、刷新尾、trailer）保持原有的箭头与菊花。MJRefresh 名称的子类（CYLRefreshGifHeader 等）同样采用本协议。
  */
 @protocol CYLRefreshIconAnimating <NSObject>
 /*!
- * [EN] The icon, created when an icon animation is first set; the GIF view is then hidden. Without an icon animation the
- *      control draws its images as before. [CN] 图标，首次设置图标动画时创建，GIF 视图随之隐藏。不设置图标动画时控件照常绘制动画图片。
+ * [EN] The icon, created when an icon animation is first set; the animation view is then hidden. Without an icon animation the
+ *      control draws its images as before. [CN] 图标，首次设置图标动画时创建，动画视图随之隐藏。不设置图标动画时控件照常绘制动画图片。
  */
 @property (strong, nonatomic, readonly) CYLRefreshIconView *iconView;
 /*!
@@ -157,8 +158,8 @@ NS_ASSUME_NONNULL_BEGIN
     NS_SWIFT_NAME(cyl_setIconAnimation(attributes:for:));
 /*!
  * [EN] When an icon animation is set: places the icon at `center` with `iconView.iconSize`, shows it when `visible`
- *      and hides `views` (the GIF view it replaces). Call at the end of `placeSubviews`. Does nothing otherwise.
- * [CN] 设置了图标动画时：把图标以 `iconView.iconSize` 放在 `center`，`visible` 为 YES 时显示，并隐藏被替换的 `views`（GIF 视图）。
+ *      and hides `views` (the animation view it replaces). Call at the end of `placeSubviews`. Does nothing otherwise.
+ * [CN] 设置了图标动画时：把图标以 `iconView.iconSize` 放在 `center`，`visible` 为 YES 时显示，并隐藏被替换的 `views`（动画视图）。
  *      在 `placeSubviews` 末尾调用；未设置时不做任何事。
  */
 - (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views

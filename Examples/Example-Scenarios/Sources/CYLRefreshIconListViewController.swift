@@ -2,7 +2,7 @@
 //  CYLRefreshIconListViewController.swift
 //  Example-Scenarios
 //
-//  Every refresh icon animation of the core bundle (`CYLRefreshGifHeader.bundledIconAnimationFileNames`: the
+//  Every refresh icon animation of the core bundle (`CYLRefreshAnimationHeader.bundledIconAnimationFileNames`: the
 //  `CYLRefresh*` files plus the placeholder animations that suit a refresh control), grouped by engine. Each row opens a
 //  list whose CYLRefresh header and footer draw that file. A second section shows the other ways to set an icon at init:
 //
@@ -16,7 +16,7 @@ import UIKit
 import CYLTableViewPlaceHolder
 
 /// How a demo page sets the icons of its header and footer.
-private typealias CYLRefreshIconSetup = (_ header: CYLRefreshGifHeader, _ footer: CYLRefreshAutoGifFooter) -> Void
+private typealias CYLRefreshIconSetup = (_ header: CYLRefreshAnimationHeader, _ footer: CYLRefreshAutoAnimationFooter) -> Void
 
 final class CYLRefreshIconListViewController: UITableViewController {
 
@@ -52,7 +52,7 @@ final class CYLRefreshIconListViewController: UITableViewController {
     }
 
     private let sections: [Section] = {
-        let names = CYLRefreshGifHeader.bundledIconAnimationFileNames
+        let names = CYLRefreshAnimationHeader.bundledIconAnimationFileNames
         var sections: [Section] = engines.compactMap { engine in
             let rows = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }.map { name in
                 Row(title: name, subtitle: "setIconAnimation(bundled:size:for:)") { header, footer in
@@ -218,7 +218,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         tableView.accessibilityIdentifier = "refreshIconDemo"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self,
                                                             action: #selector(beginRefreshing))
-        let header = CYLRefreshGifHeader { [weak self] in
+        let header = CYLRefreshAnimationHeader { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 self.rows = 15
@@ -227,7 +227,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
                 self.tableView.cyl_footer?.resetNoMoreData()
             }
         }
-        let footer = CYLRefreshAutoGifFooter { [weak self] in
+        let footer = CYLRefreshAutoAnimationFooter { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 if self.rows >= 45 {
