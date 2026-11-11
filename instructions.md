@@ -879,6 +879,12 @@ work is written, without asking for confirmation. Follow the commit readiness
 and Commitizen rules above. On `master` or `main`, commit or push only when the
 user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
 
+**Record every task in `docs/` before starting it (added 2026-11-12)**: before any task, find the most relevant
+existing document in `docs/` (create one only when none fits) and add a `TODO` entry with the task's full context,
+the user's requirements, and the user's prompt quoted verbatim. Then start the work. When the task is finished,
+change that entry to `DONE` with the result and its evidence (commits, tests, screenshots). Purpose: if the work
+is interrupted, the next session can find the context again.
+
 **Every new branch gets a pull request, automatically (added 2026-11-12)**: after creating a branch and pushing
 its first commit, open a pull request right away, without asking. Target branch: the branch it was created from
 (preferred); otherwise `main` or `master`.

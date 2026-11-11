@@ -212,6 +212,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   commit, push the branch, and open a pull request (target: see the next rule). Do not
   commit directly to `master` unless the user asks. Do not merge a pull request
   without the user's approval, and not before the `iOS` workflow is green.
+- **Record every task in `docs/` before starting it (added 2026-11-12)**: before any task, find the most relevant
+  existing document in `docs/` (create one only when none fits) and add a `TODO` entry with the task's full context,
+  the user's requirements, and the user's prompt quoted verbatim. Then start the work. When the task is finished,
+  change that entry to `DONE` with the result and its evidence (commits, tests, screenshots). Purpose: if the work
+  is interrupted, the next session can find the context again.
 - **Every new branch gets a pull request, automatically (added 2026-11-12)**: after creating a branch and pushing
   its first commit, open a pull request right away, without asking. Target branch: the branch it was created from
   (preferred); otherwise `main` or `master`.
