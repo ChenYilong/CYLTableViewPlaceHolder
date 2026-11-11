@@ -27,7 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Registers itself for ".pag" files when linked.
+/*! Registers itself for ".pag" files when linked. */
 @interface CYLPAGPlaceholderItemAnimator : NSObject <CYLPlaceholderItemAnimator>
 @end
 

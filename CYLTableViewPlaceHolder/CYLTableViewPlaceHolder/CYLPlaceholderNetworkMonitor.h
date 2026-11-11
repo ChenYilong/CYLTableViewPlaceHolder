@@ -29,25 +29,25 @@ NS_ASSUME_NONNULL_BEGIN
  * [CN] 网络状态；前四个值与 CYLChatKit 使用的 AFNetworkReachabilityStatus 相同。
  */
 typedef NS_ENUM(NSInteger, CYLPlaceholderNetworkStatus) {
-    /// [EN] Not known yet (before the first update, or not monitoring). [CN] 尚未知道（首次更新之前，或未在监测）。
+    /*! [EN] Not known yet (before the first update, or not monitoring). [CN] 尚未知道（首次更新之前，或未在监测）。 */
     CYLPlaceholderNetworkStatusUnknown = -1,
-    /// [EN] No usable path: offline, airplane mode, or a path that needs a connection first. [CN] 没有可用路径。
+    /*! [EN] No usable path: offline, airplane mode, or a path that needs a connection first. [CN] 没有可用路径。 */
     CYLPlaceholderNetworkStatusNotReachable = 0,
-    /// [EN] Through cellular data. [CN] 通过蜂窝数据。
+    /*! [EN] Through cellular data. [CN] 通过蜂窝数据。 */
     CYLPlaceholderNetworkStatusReachableViaWWAN = 1,
-    /// [EN] Through Wi-Fi. [CN] 通过 Wi-Fi。
+    /*! [EN] Through Wi-Fi. [CN] 通过 Wi-Fi。 */
     CYLPlaceholderNetworkStatusReachableViaWiFi = 2,
-    /// [EN] Through wired Ethernet (an adapter, or a Mac running the app). [CN] 通过有线以太网。
+    /*! [EN] Through wired Ethernet (an adapter, or a Mac running the app). [CN] 通过有线以太网。 */
     CYLPlaceholderNetworkStatusReachableViaWiredEthernet = 3,
-    /// [EN] Through another interface (a VPN, a loopback). [CN] 通过其他接口（如 VPN）。
+    /*! [EN] Through another interface (a VPN, a loopback). [CN] 通过其他接口（如 VPN）。 */
     CYLPlaceholderNetworkStatusReachableViaOther = 4,
 };
 
-/// [EN] Posted on the main queue when `networkStatus` changes; `object` is the monitor. [CN] 网络状态变化时在主队列发送。
+/*! [EN] Posted on the main queue when `networkStatus` changes; `object` is the monitor. [CN] 网络状态变化时在主队列发送。 */
 FOUNDATION_EXPORT NSNotificationName const CYLPlaceholderNetworkStatusDidChangeNotification
     NS_SWIFT_NAME(CYLPlaceholderNetworkMonitor.statusDidChangeNotification);
 
-/// [EN] Runs on the main queue with the new status. [CN] 在主队列执行，参数为新状态。
+/*! [EN] Runs on the main queue with the new status. [CN] 在主队列执行，参数为新状态。 */
 typedef void (^CYLPlaceholderNetworkStatusBlock)(CYLPlaceholderNetworkStatus status);
 
 @interface CYLPlaceholderNetworkMonitor : NSObject
@@ -58,23 +58,23 @@ typedef void (^CYLPlaceholderNetworkStatusBlock)(CYLPlaceholderNetworkStatus sta
  */
 @property (class, nonatomic, readonly) CYLPlaceholderNetworkMonitor *sharedMonitor NS_SWIFT_NAME(shared);
 
-/// [EN] The current status; `CYLPlaceholderNetworkStatusUnknown` before the first update. [CN] 当前状态；首次更新前为未知。
+/*! [EN] The current status; `CYLPlaceholderNetworkStatusUnknown` before the first update. [CN] 当前状态；首次更新前为未知。 */
 @property (nonatomic, readonly) CYLPlaceholderNetworkStatus networkStatus;
 /*!
  * [EN] NO only when the status is `NotReachable`, as `-[AVIMWebSocketWrapper isReachable]`; an unknown status counts as
  *      reachable. [CN] 只有状态为不可达时为 NO，与 `-[AVIMWebSocketWrapper isReachable]` 相同；未知状态视为可达。
  */
 @property (nonatomic, readonly, getter=isReachable) BOOL reachable;
-/// [EN] Low Data Mode is on for the path (iOS 13 and later; NO before). [CN] 当前路径开启了低数据模式（iOS 13 起）。
+/*! [EN] Low Data Mode is on for the path (iOS 13 and later; NO before). [CN] 当前路径开启了低数据模式（iOS 13 起）。 */
 @property (nonatomic, readonly, getter=isConstrained) BOOL constrained;
-/// [EN] The path is expensive: cellular, or a personal hotspot. [CN] 当前路径费用较高：蜂窝或个人热点。
+/*! [EN] The path is expensive: cellular, or a personal hotspot. [CN] 当前路径费用较高：蜂窝或个人热点。 */
 @property (nonatomic, readonly, getter=isExpensive) BOOL expensive;
-/// [EN] Whether it is monitoring. [CN] 是否正在监测。
+/*! [EN] Whether it is monitoring. [CN] 是否正在监测。 */
 @property (nonatomic, readonly, getter=isMonitoring) BOOL monitoring;
 
-/// [EN] Starts monitoring; the status arrives soon after on the main queue. [CN] 开始监测；状态随后在主队列到达。
+/*! [EN] Starts monitoring; the status arrives soon after on the main queue. [CN] 开始监测；状态随后在主队列到达。 */
 - (void)startMonitoring;
-/// [EN] Stops monitoring; the status becomes unknown. [CN] 停止监测；状态变为未知。
+/*! [EN] Stops monitoring; the status becomes unknown. [CN] 停止监测；状态变为未知。 */
 - (void)stopMonitoring;
 /*!
  * [EN] The block run on every change, as `-setReachabilityStatusChangeBlock:`; nil removes it. Notifications are posted
@@ -82,7 +82,7 @@ typedef void (^CYLPlaceholderNetworkStatusBlock)(CYLPlaceholderNetworkStatus sta
  */
 - (void)setNetworkStatusChangeBlock:(nullable CYLPlaceholderNetworkStatusBlock)block
     NS_SWIFT_NAME(setNetworkStatusChangeBlock(_:));
-/// [EN] A short English name of a status, for logs. [CN] 状态的英文简称，用于日志。
+/*! [EN] A short English name of a status, for logs. [CN] 状态的英文简称，用于日志。 */
 + (NSString *)nameForStatus:(CYLPlaceholderNetworkStatus)status NS_SWIFT_NAME(name(for:));
 
 @end

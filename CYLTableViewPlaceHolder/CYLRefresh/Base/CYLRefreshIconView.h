@@ -36,10 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setAnimationAttributes:(nullable NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
     NS_SWIFT_NAME(setAnimationAttributes(_:for:));
-/// [EN] The attributes set for a state, without the idle fallback. [CN] 某个状态设置的属性（不含空闲状态的回退）。
+/*! [EN] The attributes set for a state, without the idle fallback. [CN] 某个状态设置的属性（不含空闲状态的回退）。 */
 - (nullable NSDictionary<NSString *, id> *)animationAttributesForState:(CYLRefreshState)state
     NS_SWIFT_NAME(animationAttributes(for:));
-/// [EN] YES when any state has attributes. [CN] 任意状态设置了属性时为 YES。
+/*! [EN] YES when any state has attributes. [CN] 任意状态设置了属性时为 YES。 */
 @property (nonatomic, readonly) BOOL hasAnimations;
 /*!
  * [EN] The icon component showing the current state's attributes; nil before any is set or when they are invalid.
@@ -57,14 +57,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) BOOL scrubsWhilePulling;
 
-/// [EN] Applies the playback policy for the control's state; the control calls it. [CN] 按控件状态应用播放策略；由控件调用。
+/*! [EN] Applies the playback policy for the control's state; the control calls it. [CN] 按控件状态应用播放策略；由控件调用。 */
 - (void)updateForState:(CYLRefreshState)state NS_SWIFT_NAME(update(for:));
-/// [EN] Follows the pulling percent while idle; the control calls it. [CN] 空闲状态下跟随下拉百分比；由控件调用。
+/*! [EN] Follows the pulling percent while idle; the control calls it. [CN] 空闲状态下跟随下拉百分比；由控件调用。 */
 - (void)updateForPullingPercent:(CGFloat)pullingPercent NS_SWIFT_NAME(update(pullingPercent:));
 
 @end
 
-/// [EN] For refresh controls (and custom subclasses) that draw an icon. [CN] 供绘制图标的刷新控件（及自定义子类）使用。
+/*! [EN] For refresh controls (and custom subclasses) that draw an icon. [CN] 供绘制图标的刷新控件（及自定义子类）使用。 */
 @interface CYLRefreshComponent (CYLRefreshIconLayout)
 /*!
  * [EN] When an icon animation is set: places the icon at `center` with `iconView.iconSize`, shows it when `visible`
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
     NS_SWIFT_NAME(cyl_placeIconView(at:visible:replacing:));
-/// [EN] The same without moving the icon, for the end of `setState:`. [CN] 同上但不移动图标，在 `setState:` 末尾调用。
+/*! [EN] The same without moving the icon, for the end of `setState:`. [CN] 同上但不移动图标，在 `setState:` 末尾调用。 */
 - (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
     NS_SWIFT_NAME(cyl_updateIconView(visible:replacing:));
 @end

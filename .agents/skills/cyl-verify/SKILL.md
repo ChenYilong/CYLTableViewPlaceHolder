@@ -66,5 +66,6 @@ or fix the CI, or give the concrete reason none could be produced
 Before committing a verified change, check the message contains the author line
 `By @ChenYilong <luohanchenyilong@163.com>` on its own line before the trailers (`instructions.md`,
 "Author line in every commit message").
-Run `python3 scripts/check_doc_comments.py` after changing a public header or a Swift file of the library: multi-line
-documentation comments must be one `/*! */` (Objective-C) or `/** */` (Swift) block (`instructions.md`, "Code conventions").
+Run `python3 scripts/check_doc_comments.py` after changing a public header or a Swift file of the library: every
+documentation comment, single-line or multi-line, is one `/*! */` (Objective-C) or `/** */` (Swift) block, and a file
+never mixes formats (`instructions.md`, "Code conventions").

@@ -36,6 +36,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   placed directly above it. Several lines are one block comment, never stacked `///` lines: `/*! … */` in
   Objective-C headers (shown for Objective-C and the generated Swift interface), `/** … */` in Swift (Swift does
   not read `/*!`); other platforms follow their official style (KDoc / Javadoc / TSDoc `/** */`, Dart `///`).
+  Single-line documentation comments of the public API use the same block format (`/*! One sentence. */`,
+  `/** One sentence. */`), never `///`: every file that holds public API uses one comment format throughout, on every
+  platform and in every language (Dart keeps `///`, its only documentation form).
   `scripts/check_doc_comments.py` checks it in CI.
 
 ## Project and verification

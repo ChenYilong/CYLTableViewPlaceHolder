@@ -44,21 +44,28 @@ spans several lines must reach them as one comment.
   ```
 
   Clang attaches `/*! … */` to the declaration that follows, so Xcode shows it for the Objective-C API and for the
-  Swift interface generated from the header. A one-line description may stay `/// …` or `/*! … */` on one line.
-- **Swift sources of the library**: Swift's documentation parser reads `///` and `/** … */`, not `/*!`. Write a
-  multi-line comment as one `/** … */` block (each line starting with ` * `); a one-line description may use `///`.
+  Swift interface generated from the header.
+- **Single-line comments follow the same format.** The block format above applies to a one-line documentation comment
+  of the public API too: in an Objective-C header write `/*! One sentence. */`, not `/// One sentence.` or
+  `/** One sentence. */`. A file that holds public API uses one documentation-comment format throughout, for every
+  comment, one line or several, so callers and readers see the same form everywhere. This applies to every platform
+  and language: each uses its block format from the list below for single-line comments as well, except where the
+  platform's official style has no block form (Dart).
+- **Swift sources of the library**: Swift's documentation parser reads `///` and `/** … */`, not `/*!`. Every
+  documentation comment is a `/** … */` block, one line (`/** One sentence. */`) or several (each line starting with
+  ` * `); no `///`.
 - **Placement**: directly above the declaration, with no blank line or other code in between; the first sentence
   summarizes. Keep the `[EN]` / `[CN]` pair of a bilingual comment inside the same block. Never put `*/` in the text.
 - **Other platforms**, from their official documentation:
   - Kotlin (Android): KDoc, `/** … */` ([KDoc](https://kotlinlang.org/docs/kotlin-doc.html)); Java: Javadoc,
-    `/** … */`.
+    `/** … */`; one line is `/** One sentence. */`.
   - TypeScript / JavaScript (React Native, web): TSDoc / JSDoc, `/** … */`.
   - C / C++: Doxygen, `/** … */` or `/*! … */`.
   - Dart (Flutter): the official style is `///` for every documentation comment, including multi-line ones
     ([Effective Dart](https://dart.dev/effective-dart/documentation)); block comments are not used for documentation.
     Follow the platform where it differs from the iOS rule.
-- **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on stacked `///` lines in the
-  public Objective-C headers and the library's Swift files. Review new public declarations for a missing
+- **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a
+  `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review new public declarations for a missing
   documentation comment by hand.
 
 ## Xcode and CocoaPods project checks

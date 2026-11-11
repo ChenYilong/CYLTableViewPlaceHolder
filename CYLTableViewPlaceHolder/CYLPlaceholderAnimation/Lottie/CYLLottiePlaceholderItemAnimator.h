@@ -20,7 +20,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Registers itself when linked; looked up last (fallback priority), for ".json" and ".lottie" files.
+/*! Registers itself when linked; looked up last (fallback priority), for ".json" and ".lottie" files. */
 @interface CYLLottiePlaceholderItemAnimator : NSObject <CYLPlaceholderItemAnimator>
 @end
 

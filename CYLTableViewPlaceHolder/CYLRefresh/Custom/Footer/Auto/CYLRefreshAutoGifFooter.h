@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CYLRefreshAutoGifFooter : CYLRefreshAutoStateFooter
 @property (weak, nonatomic, readonly) UIImageView *gifView;
 
-/** 设置state状态下的动画图片images 动画持续时间duration*/
+/*! 设置state状态下的动画图片images 动画持续时间duration*/
 - (instancetype)setImages:(NSArray *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state;
 - (instancetype)setImages:(NSArray *)images forState:(CYLRefreshState)state;
 @end

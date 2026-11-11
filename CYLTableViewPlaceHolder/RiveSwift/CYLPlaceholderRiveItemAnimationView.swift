@@ -19,7 +19,7 @@
 import UIKit
 import RiveRuntime
 
-/// Where Rive files come from: the view depends on this interface, not on a cache.
+/** Where Rive files come from: the view depends on this interface, not on a cache. */
 @available(iOS 14.0, *)
 @MainActor
 protocol CYLPlaceholderRiveItemAnimationFileProviding: AnyObject {
@@ -34,7 +34,7 @@ struct CYLPlaceholderRiveItemAnimationConfiguration {
     let activeDuration: TimeInterval
     let triggerPropertyPath: String?
     let lightColor: UIColor?
-    /// Legacy runtime (files without a view model): a state machine input, a trigger input, or a linear animation.
+    /** Legacy runtime (files without a view model): a state machine input, a trigger input, or a linear animation. */
     let stateMachineInput: String?
     let triggerInput: String?
     let animationName: String?
@@ -105,16 +105,16 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
      * `CYLRivePlaceholderItemAnimator`; nil: legacy options show nothing.
      */
     @objc public static var legacyViewProvider: AnyClass?
-    /// Where the views made by `makeAnimationView` load their files; injectable.
+    /** Where the views made by `makeAnimationView` load their files; injectable. */
     static var fileProvider: CYLPlaceholderRiveItemAnimationFileProviding = CYLPlaceholderRiveItemAnimationFileCache.shared
 
     @objc public var animationReadyHandler: (() -> Void)?
     @objc public var animationErrorHandler: ((Error) -> Void)?
     @objc public var isAnimationReady: Bool { isLoaded }
     @objc var cyl_isPaused: Bool { riveView?.isPaused ?? true }
-    /// The colors last asked for (test probe); nil restores the original colors.
+    /** The colors last asked for (test probe); nil restores the original colors. */
     @objc var cyl_requestedColors: [String: UIColor]? { requestedColors }
-    /// Test probes: the data-bound values the state machine reads, after queued color updates.
+    /** Test probes: the data-bound values the state machine reads, after queued color updates. */
     @objc func cyl_readBoolean(_ path: String, completion: @escaping (NSNumber?) -> Void) {
         guard let instance = viewModelInstance else { completion(nil); return }
         let previous = colorTask
@@ -134,7 +134,7 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
                                blue: CGFloat(color.blue) / 255, alpha: CGFloat(color.alpha) / 255))
         }
     }
-    /// Counts fires of a trigger from now on (test probe).
+    /** Counts fires of a trigger from now on (test probe). */
     @objc func cyl_observeTrigger(_ path: String, onFire: @escaping () -> Void) {
         guard let instance = viewModelInstance else { return }
         Task { @MainActor in
@@ -204,7 +204,7 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
         }
     }
 
-    /// A state machine has no last frame: the view stays in its resting state.
+    /** A state machine has no last frame: the view stays in its resting state. */
     public func showAnimationLastFrame() {
         stopAnimation()
     }
@@ -219,7 +219,7 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
         riveView?.isPaused = true
     }
 
-    /// Color property path -> color; nil restores the original colors.
+    /** Color property path -> color; nil restores the original colors. */
     public func applyAnimationColors(_ colors: [String: UIColor]?) {
         requestedColors = colors
         if isLoaded {
@@ -277,7 +277,7 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
         }
     }
 
-    /// Applies `requestedColors` after the updates already queued, so they keep their order.
+    /** Applies `requestedColors` after the updates already queued, so they keep their order. */
     private func enqueueRequestedColors() {
         guard let instance = viewModelInstance else {
             return
@@ -340,7 +340,7 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
     }
 }
 
-/// One `Worker` for every Rive placeholder, and each .riv file loaded once.
+/** One `Worker` for every Rive placeholder, and each .riv file loaded once. */
 @available(iOS 14.0, *)
 @MainActor
 final class CYLPlaceholderRiveItemAnimationFileCache: CYLPlaceholderRiveItemAnimationFileProviding {

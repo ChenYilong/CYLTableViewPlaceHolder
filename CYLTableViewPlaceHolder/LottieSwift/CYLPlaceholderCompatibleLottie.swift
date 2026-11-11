@@ -27,7 +27,7 @@ public final class CYLPlaceholderCompatibleLOTAnimation: NSObject {
         super.init()
     }
 
-    /// NO when the file could not be read or decoded.
+    /** NO when the file could not be read or decoded. */
     @objc public var isLoaded: Bool { animation != nil }
 
     let animation: LottieAnimation?
@@ -109,7 +109,7 @@ public final class CYLPlaceholderCompatibleLOTAnimationView: UIView {
         animationView.forceDisplayUpdate()
     }
 
-    /// Sets a color value provider for a keypath string, e.g. "Icon.**.Color".
+    /** Sets a color value provider for a keypath string, e.g. "Icon.**.Color". */
     @objc
     public func setColorValue(_ color: UIColor, forKeypathString keypath: String) {
         var red: CGFloat = 0
@@ -131,7 +131,7 @@ public final class CYLPlaceholderCompatibleLOTAnimationView: UIView {
         appliedColors[keypath] = color
     }
 
-    /// Removes the value provider set for `keypath`, restoring the animation's own value.
+    /** Removes the value provider set for `keypath`, restoring the animation's own value. */
     @objc
     public func removeValueProvider(forKeypathString keypath: String) {
         animationView.removeValueProvider(for: AnimationKeypath(keypath: keypath))
@@ -143,7 +143,7 @@ public final class CYLPlaceholderCompatibleLOTAnimationView: UIView {
     @objc var cyl_isAnimationPlaying: Bool { animationView.isAnimationPlaying }
     @objc var cyl_realtimeAnimationProgress: CGFloat { animationView.realtimeAnimationProgress }
     @objc var cyl_animationSpeed: CGFloat { animationView.animationSpeed }
-    /// The color overrides currently set, by keypath.
+    /** The color overrides currently set, by keypath. */
     @objc private(set) var cyl_appliedColors: [String: UIColor] = [:]
 
     // MARK: Private

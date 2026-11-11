@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CYLRefreshAutoNormalFooter : CYLRefreshAutoStateFooter
 @property (weak, nonatomic, readonly) UIActivityIndicatorView *loadingView;
 
-/** 菊花的样式 */
+/*! 菊花的样式 */
 @property (assign, nonatomic) UIActivityIndicatorViewStyle activityIndicatorViewStyle CYLRefreshDeprecated("first deprecated in 3.2.2 - Use `loadingView` property");
 @end
 

@@ -14,12 +14,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIScrollView (CYLRefresh)
-/** 下拉刷新控件 */
+/*! 下拉刷新控件 */
 @property (strong, nonatomic, nullable) CYLRefreshHeader *cyl_header;
-/** 上拉刷新控件 */
+/*! 上拉刷新控件 */
 @property (strong, nonatomic, nullable) CYLRefreshFooter *cyl_footer;
 
-/** 左滑刷新控件 */
+/*! 左滑刷新控件 */
 @property (strong, nonatomic, nullable) CYLRefreshTrailer *cyl_trailer;
 
 #pragma mark - other

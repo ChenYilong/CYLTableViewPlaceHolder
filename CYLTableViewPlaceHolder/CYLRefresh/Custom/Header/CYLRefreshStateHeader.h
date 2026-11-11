@@ -12,17 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CYLRefreshStateHeader : CYLRefreshHeader
 #pragma mark - 刷新时间相关
-/** 利用这个block来决定显示的更新时间文字 */
+/*! 利用这个block来决定显示的更新时间文字 */
 @property (copy, nonatomic, nullable) NSString *(^lastUpdatedTimeText)(NSDate * _Nullable lastUpdatedTime);
-/** 显示上一次刷新时间的label */
+/*! 显示上一次刷新时间的label */
 @property (weak, nonatomic, readonly) UILabel *lastUpdatedTimeLabel;
 
 #pragma mark - 状态相关
-/** 文字距离圈圈、箭头的距离 */
+/*! 文字距离圈圈、箭头的距离 */
 @property (assign, nonatomic) CGFloat labelLeftInset;
-/** 显示刷新状态的label */
+/*! 显示刷新状态的label */
 @property (weak, nonatomic, readonly) UILabel *stateLabel;
-/** 设置state状态下的文字 */
+/*! 设置state状态下的文字 */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
 @end
 
