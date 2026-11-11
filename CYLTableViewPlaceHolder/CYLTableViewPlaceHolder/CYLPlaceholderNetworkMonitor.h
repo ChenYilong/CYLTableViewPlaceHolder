@@ -11,13 +11,18 @@
 //       could leave the device, so this uses Network.framework's NWPathMonitor (iOS 12+, the library's minimum),
 //       which also reports wired Ethernet, Low Data Mode (`constrained`, iOS 13+) and expensive paths (cellular or a
 //       personal hotspot). An unknown status (before the first update) does not count as offline, so no bar flashes
-//       at launch; ChatKit treated it as unreachable.
+//       at launch; ChatKit treated it as unreachable. As in Sentry's replacement of SCNetworkReachability
+//       (getsentry/sentry-cocoa#5440): no host name is watched, so no DNS query is made on network changes; every start
+//       creates a new monitor and stop cancels it; updates of a cancelled monitor are ignored. Use it from the main
+//       thread: the status, the block and the notification change there.
 //  [CN] 监测设备是否有可用的网络路径，供网络失败占位图与状态条（`CYLPlaceholderStatusView`）使用。移植自 CYLChatKit 状态条所依赖的检测：
 //       AVIMWebSocketWrapper（LeanCloud，随 CYLChatKit 的 ChatKit-OC/Pods 提供）通过 LCNetworkReachabilityManager
 //       （AFNetworkReachabilityManager 的变体）进行的可达性监测：相同的状态（未知、不可达、蜂窝、Wi-Fi）、状态变化回调、开始/停止监测与
 //       `reachable`。适配新系统：SCNetworkReachability 自 iOS 17 起已废弃，且只表示数据包能否离开设备，因此改用 Network.framework 的
 //       NWPathMonitor（iOS 12 起可用，即本库的最低版本），并报告有线以太网、低数据模式（`constrained`，iOS 13 起）与昂贵网络（蜂窝或个人热点）。
-//       未知状态（首次更新之前）不算离线，避免启动时状态条闪现；ChatKit 曾把它当作不可达。
+//       未知状态（首次更新之前）不算离线，避免启动时状态条闪现；ChatKit 曾把它当作不可达。与 Sentry 替换 SCNetworkReachability 的做法相同
+//       （getsentry/sentry-cocoa#5440）：不监测主机名，网络变化时不发起 DNS 查询；每次启动新建监测器、停止时取消；忽略已取消监测器的更新。
+//       请在主线程使用：状态、回调与通知都在主线程变化。
 //
 
 #import <Foundation/Foundation.h>
