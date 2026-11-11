@@ -26,11 +26,17 @@ private typealias CYLRefreshIconSetup = () -> (header: CYLRefreshHeader, footer:
 
 /// The frames of a bundled refresh GIF, for the image-sequence API (`setAnimationImages`).
 enum CYLRefreshFrames {
+    /// The icon height of a frame, as MJRefresh's own image sequences: the GIF header draws images at their size, so a
+    /// 128-pixel frame at scale 1 covered the header and its text.
+    static let iconHeight: CGFloat = 40
+
     static func images(ofBundledGIF name: String) -> [UIImage] {
         guard let path = CYLPlaceholderView.path(forBundledAnimation: name),
               let source = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil) else { return [] }
         return (0..<CGImageSourceGetCount(source)).compactMap { index in
-            CGImageSourceCreateImageAtIndex(source, index, nil).map { UIImage(cgImage: $0) }
+            CGImageSourceCreateImageAtIndex(source, index, nil).map { frame in
+                UIImage(cgImage: frame, scale: max(CGFloat(frame.height) / iconHeight, 1), orientation: .up)
+            }
         }
     }
 }

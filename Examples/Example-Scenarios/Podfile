@@ -12,7 +12,7 @@ target 'ExampleScenarios' do
   # The tab bar with the plus button and the language rebuild (`cyl_setRootViewControllerProvider`), as in
   # CYLTabBarController's Objective-C demo. Always its newest commit on any branch (instructions.md, "Depending on
   # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh rewrites the commit before every build.
-  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3'
+  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '77099dedf4f535fd9e440d8201887d780ff96fe0'
 end
 
 post_install do |installer|

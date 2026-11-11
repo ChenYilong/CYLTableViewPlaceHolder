@@ -70,6 +70,11 @@ final class CYLScenarioPlusButton: CYLPlusButton, CYLPlusButtonSubclassing {
         return button
     }
 
+    /// Five tabs are an odd count, so CYLTabBarController needs the position: after Scenarios, Animations and Flows.
+    static func indexOfPlusButtonInTabBar() -> UInt {
+        3
+    }
+
     /// Raises the button a little above the tab bar's center.
     static func constantOfPlusButtonCenterYOffset(forTabBarHeight tabBarHeight: CGFloat) -> CGFloat {
         -6

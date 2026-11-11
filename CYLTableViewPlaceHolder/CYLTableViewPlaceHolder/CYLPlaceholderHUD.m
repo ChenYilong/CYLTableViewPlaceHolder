@@ -24,8 +24,6 @@ NSString *const CYLPlaceholderHUDStatusUserInfoKey = @"CYLPlaceholderHUDStatusUs
 static const CGFloat CYLPlaceholderHUDMaximumWidth = 260;
 /// The margin the stack view keeps around its components (CYLPlaceholderStackMargin).
 static const CGFloat CYLPlaceholderHUDStackMargin = 16;
-/// The side of the drawn progress ring.
-static const CGFloat CYLPlaceholderHUDRingSide = 40;
 
 /// Runs `block` on the main thread, now when already there.
 static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
@@ -36,64 +34,13 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     }
 }
 
-/// A determinate ring, drawn when no animation can show the progress.
-@interface CYLPlaceholderHUDRingView : UIView
-@property (nonatomic, strong) CAShapeLayer *trackLayer;
-@property (nonatomic, strong) CAShapeLayer *ringLayer;
-@property (nonatomic) CGFloat progress;
-@end
-
-@implementation CYLPlaceholderHUDRingView
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        _trackLayer = [CAShapeLayer layer];
-        _ringLayer = [CAShapeLayer layer];
-        for (CAShapeLayer *layer in @[_trackLayer, _ringLayer]) {
-            layer.fillColor = UIColor.clearColor.CGColor;
-            layer.lineWidth = 3;
-            layer.lineCap = kCALineCapRound;
-            [self.layer addSublayer:layer];
-        }
-        _ringLayer.strokeEnd = 0;
-        self.isAccessibilityElement = NO;
-    }
-    return self;
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    CGFloat radius = MIN(self.bounds.size.width, self.bounds.size.height) / 2 - 2;
-    CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:center radius:MAX(radius, 1) startAngle:-M_PI_2
-                                                      endAngle:M_PI * 1.5 clockwise:YES];
-    self.trackLayer.path = path.CGPath;
-    self.ringLayer.path = path.CGPath;
-}
-
-- (void)tintColorDidChange {
-    [super tintColorDidChange];
-    self.ringLayer.strokeColor = self.tintColor.CGColor;
-    self.trackLayer.strokeColor = [self.tintColor colorWithAlphaComponent:0.2].CGColor;
-}
-
-- (void)setProgress:(CGFloat)progress {
-    _progress = MIN(MAX(progress, 0), 1);
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    self.ringLayer.strokeEnd = _progress;
-    [CATransaction commit];
-}
-
-@end
-
 @interface CYLPlaceholderHUD ()
 @property (nonatomic, strong, readwrite, nullable) CYLPlaceholderStackView *placeholderView;
 @property (nonatomic, strong, readwrite) UIView *hudView;
-@property (nonatomic, strong) UIVisualEffectView *blurView;
+/// The box's size on the single CYLPlaceholderView of an icon state, which is the box itself.
+@property (nonatomic, strong, nullable) NSLayoutConstraint *boxWidthConstraint;
+@property (nonatomic, strong, nullable) NSLayoutConstraint *boxHeightConstraint;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
-@property (nonatomic, strong) CYLPlaceholderHUDRingView *ringView;
 @property (nonatomic, readwrite) CYLPlaceholderHUDState state;
 /// [EN] Written through `_status`: the public `-setStatus:` is also this property's setter.
 /// [CN] 通过 `_status` 写入：公开的 `-setStatus:` 同时是该属性的 setter。
@@ -157,16 +104,13 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
         _gradientLayer.hidden = YES;
         [self.layer addSublayer:_gradientLayer];
 
+        // [EN] The box only positions the content: the background belongs to the CYLPlaceholderView (one icon and
+        //      title) or to the stack view of CYLPlaceholderViews, so icon and background cannot drift apart.
+        // [CN] 方框只负责定位：背景属于 CYLPlaceholderView（一个图标与标题）或由 CYLPlaceholderView 组成的组件栈，
+        //      图标与背景不会错位。
         _hudView = [[UIView alloc] initWithFrame:CGRectZero];
-        _hudView.clipsToBounds = YES;
         _hudView.accessibilityIdentifier = @"CYLPlaceholderHUD";
         [self addSubview:_hudView];
-        _blurView = [[UIVisualEffectView alloc] initWithEffect:nil];
-        _blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [_hudView addSubview:_blurView];
-        _ringView = [[CYLPlaceholderHUDRingView alloc] initWithFrame:CGRectZero];
-        _ringView.hidden = YES;
-        [_hudView addSubview:_ringView];
     }
     return self;
 }
@@ -254,7 +198,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 - (void)setCornerRadius:(CGFloat)cornerRadius {
     _cornerRadius = cornerRadius;
-    self.hudView.layer.cornerRadius = cornerRadius;
+    [self cyl_applyAppearance];
 }
 
 - (BOOL)isVisible {
@@ -291,9 +235,15 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
             return;
         }
         self.progress = determinate ? MIN(MAX(progress, 0), 1) : 0;
-        NSString *file = determinate ? self.progressAnimationFileName : self.loadingAnimationFileName;
+        // [EN] Progress scrubs `progressAnimationFileName` when set; otherwise the loading animation keeps looping and
+        //      the title carries the percentage. Only the icon and title component is used, no extra view.
+        // [CN] 设置了 `progressAnimationFileName` 时按进度定位该动画；否则循环播放加载动画，由标题显示百分比。
+        //      只使用图标与标题组件，不添加其他视图。
+        NSString *file = determinate && self.progressAnimationFileName.length ? self.progressAnimationFileName
+                                                                             : self.loadingAnimationFileName;
         NSArray *components = @[[self cyl_iconComponentWithAnimation:file image:nil style:CYLPlaceholderStyleHourglass
-                                                              status:status repeatCount:0]];
+                                                              status:[self cyl_titleForStatus:status determinate:determinate]
+                                                         repeatCount:0]];
         [self cyl_present:components state:state status:status dismissAfter:0];
     });
 }
@@ -303,8 +253,10 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
         self->_status = [status copy];
         CYLPlaceholderView *view = self.placeholderView.placeholderView;
         if (!view) return;
-        view.textLabel.text = status;
-        view.textLabel.hidden = status.length == 0;
+        NSString *title = [self cyl_titleForStatus:status
+                                      determinate:self.state == CYLPlaceholderHUDStateProgress];
+        view.textLabel.text = title;
+        view.textLabel.hidden = title.length == 0;
         view.accessibilityLabel = status;
         [view invalidateIntrinsicContentSize];
         [self cyl_layoutBox];
@@ -399,7 +351,6 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     placeholder.accessibilityIdentifier = @"CYLPlaceholderHUDContent";
     self.placeholderView = placeholder;
     [self.hudView addSubview:placeholder];
-    self.ringView.hidden = YES;
     [self cyl_applyAppearance];
     [self cyl_updateProgress];
 
@@ -515,22 +466,21 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 #pragma mark - Progress
 
+/// The title: the status, followed in the Progress state by the percentage when no animation is scrubbed.
+- (NSString *)cyl_titleForStatus:(NSString *)status determinate:(BOOL)determinate {
+    if (!determinate || self.progressAnimationFileName.length) return status;
+    NSString *percent = [NSNumberFormatter localizedStringFromNumber:@(self.progress)
+                                                         numberStyle:NSNumberFormatterPercentStyle];
+    return status.length ? [NSString stringWithFormat:@"%@ %@", status, percent] : percent;
+}
+
 - (void)cyl_updateProgress {
-    if (self.state != CYLPlaceholderHUDStateProgress) {
-        self.ringView.hidden = YES;
-        return;
-    }
+    if (self.state != CYLPlaceholderHUDStateProgress) return;
     CYLPlaceholderView *view = self.placeholderView.placeholderView;
-    BOOL seeked = NO;
     if (self.progressAnimationFileName.length) {
         [view stopPlaceholderAnimation];
-        seeked = [view setPlaceholderAnimationProgress:self.progress];
+        [view setPlaceholderAnimationProgress:self.progress];
     }
-    // [EN] Without a seekable animation the ring shows the progress over the icon.
-    // [CN] 没有可定位的动画时，用圆环在图标位置显示进度。
-    self.ringView.hidden = seeked;
-    view.imageView.alpha = seeked ? 1 : 0;
-    self.ringView.progress = self.progress;
     NSString *percent = [NSNumberFormatter localizedStringFromNumber:@(self.progress)
                                                          numberStyle:NSNumberFormatterPercentStyle];
     view.accessibilityValue = percent;
@@ -625,7 +575,6 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     self.progress = 0;
     [self.placeholderView removeFromSuperview];
     self.placeholderView = nil;
-    self.ringView.hidden = YES;
     [self removeFromSuperview];
 }
 
@@ -648,45 +597,41 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     }
 }
 
-- (void)cyl_applyAppearance {
-    UIBlurEffect *effect = nil;
-    UIColor *boxColor = UIColor.clearColor;
+/// The view that draws the box: the single CYLPlaceholderView of an icon state, else the stack view.
+- (UIView *)cyl_boxView {
+    CYLPlaceholderStackView *placeholder = self.placeholderView;
+    return placeholder.componentViews.count == 1 ? placeholder.placeholderView : placeholder;
+}
+
+- (UIColor *)cyl_boxColor {
+    BOOL solid = UIAccessibilityIsReduceTransparencyEnabled();
     switch (self.style) {
         case CYLPlaceholderHUDStyleLight:
-            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-            boxColor = [UIColor colorWithWhite:1 alpha:0.6];
-            break;
+            return [UIColor colorWithWhite:1 alpha:solid ? 1 : 0.94];
         case CYLPlaceholderHUDStyleDark:
-            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-            boxColor = [UIColor colorWithWhite:0 alpha:0.6];
-            break;
+            return [UIColor colorWithWhite:solid ? 0.1 : 0 alpha:solid ? 1 : 0.8];
         case CYLPlaceholderHUDStyleCustom:
-            boxColor = self.hudBackgroundColor;
-            break;
+            return self.hudBackgroundColor;
         case CYLPlaceholderHUDStyleAutomatic:
         default:
             if (@available(iOS 13.0, *)) {
-                effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
-            } else {
-                effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+                return solid ? UIColor.secondarySystemBackgroundColor
+                             : [UIColor.secondarySystemBackgroundColor colorWithAlphaComponent:0.94];
             }
-            break;
+            return [UIColor colorWithWhite:0.96 alpha:solid ? 1 : 0.94];
     }
-    // [EN] Reduce Transparency: a solid box instead of a blur. [CN] “降低透明度”：用实色方框代替模糊。
-    if (UIAccessibilityIsReduceTransparencyEnabled() && effect) {
-        effect = nil;
-        if (self.style == CYLPlaceholderHUDStyleDark) {
-            boxColor = [UIColor colorWithWhite:0.1 alpha:1];
-        } else if (@available(iOS 13.0, *)) {
-            boxColor = self.style == CYLPlaceholderHUDStyleLight ? UIColor.whiteColor : UIColor.secondarySystemBackgroundColor;
-        } else {
-            boxColor = UIColor.whiteColor;
-        }
+}
+
+- (void)cyl_applyAppearance {
+    UIView *box = self.placeholderView ? [self cyl_boxView] : nil;
+    for (UIView *view in self.placeholderView ? [@[self.placeholderView] arrayByAddingObjectsFromArray:
+                                                 self.placeholderView.componentViews] : @[]) {
+        BOOL isBox = view == box;
+        view.backgroundColor = isBox ? [self cyl_boxColor] : UIColor.clearColor;
+        view.layer.cornerRadius = isBox ? self.cornerRadius : 0;
+        view.clipsToBounds = isBox;
     }
-    self.blurView.effect = effect;
-    self.hudView.backgroundColor = boxColor;
-    self.hudView.layer.cornerRadius = self.cornerRadius;
-    self.ringView.tintColor = [self cyl_contentColor];
+    self.hudView.backgroundColor = UIColor.clearColor;
 
     switch (self.maskType) {
         case CYLPlaceholderHUDMaskTypeBlack:
@@ -723,28 +668,49 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     CYLPlaceholderStackView *placeholder = self.placeholderView;
     if (!placeholder) return;
     CGFloat maxWidth = MIN(CYLPlaceholderHUDMaximumWidth, MAX(self.bounds.size.width - 32, self.minimumSize.width));
-    placeholder.frame = CGRectMake(0, 0, maxWidth, 1000);
-    [placeholder layoutIfNeeded];
-    CGSize content = [placeholder.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    UIView *box = [self cyl_boxView];
+    CGSize content;
+    if (box == placeholder.placeholderView) {
+        // [EN] An icon state: the CYLPlaceholderView is the box, measured by itself with its content margin.
+        // [CN] 图标状态：CYLPlaceholderView 就是方框，按其内容边距自行测量。
+        CYLPlaceholderView *view = placeholder.placeholderView;
+        view.contentMargin = CYLPlaceholderHUDStackMargin;
+        view.preferredMaxLayoutWidth = maxWidth;
+        CGSize size = view.intrinsicContentSize;
+        content = CGSizeMake(ceil(size.width) - 2 * CYLPlaceholderHUDStackMargin, ceil(size.height));
+    } else {
+        placeholder.frame = CGRectMake(0, 0, maxWidth, 1000);
+        [placeholder layoutIfNeeded];
+        content = [placeholder.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    }
     CGFloat width = MIN(maxWidth, MAX(self.minimumSize.width, ceil(content.width) + 2 * CYLPlaceholderHUDStackMargin));
     CGFloat height = MAX(self.minimumSize.height, ceil(content.height) + 2 * CYLPlaceholderHUDStackMargin);
     CGPoint center = CGPointMake(CGRectGetMidX(self.bounds) + self.offsetFromCenter.horizontal,
                                  CGRectGetMidY(self.bounds) + self.offsetFromCenter.vertical);
     self.hudView.bounds = CGRectMake(0, 0, width, height);
     self.hudView.center = center;
-    self.blurView.frame = self.hudView.bounds;
-    placeholder.frame = self.hudView.bounds;
-    [placeholder layoutIfNeeded];
-    if (!self.ringView.hidden) {
-        CYLPlaceholderView *icon = placeholder.placeholderView;
-        CGRect iconFrame = [icon.imageView convertRect:icon.imageView.bounds toView:self.hudView];
-        CGPoint ringCenter = CGRectIsEmpty(iconFrame) ?
-            CGPointMake(width / 2, CYLPlaceholderHUDStackMargin + CYLPlaceholderHUDRingSide / 2) :
-            CGPointMake(CGRectGetMidX(iconFrame), CGRectGetMidY(iconFrame));
-        self.ringView.bounds = CGRectMake(0, 0, CYLPlaceholderHUDRingSide, CYLPlaceholderHUDRingSide);
-        self.ringView.center = ringCenter;
-        [self.hudView bringSubviewToFront:self.ringView];
+    if (box == placeholder.placeholderView) {
+        // [EN] The stack view keeps its margin around the box, so it extends past the box by that margin.
+        // [CN] 组件栈在方框四周保留边距，因此比方框大出该边距。
+        CYLPlaceholderView *view = placeholder.placeholderView;
+        if (self.boxWidthConstraint.firstItem != view) {
+            // [EN] The stack view makes components hug their content at the required priority; the box is larger
+            //      (minimum size, margins), so it gives up hugging and keeps its exact size.
+            // [CN] 组件栈让组件以 required 优先级贴合内容；方框更大（最小尺寸、边距），因此放弃贴合，保持精确尺寸。
+            for (NSNumber *axis in @[@(UILayoutConstraintAxisHorizontal), @(UILayoutConstraintAxisVertical)]) {
+                [view setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:axis.integerValue];
+            }
+            self.boxWidthConstraint = [view.widthAnchor constraintEqualToConstant:width];
+            self.boxHeightConstraint = [view.heightAnchor constraintEqualToConstant:height];
+            [NSLayoutConstraint activateConstraints:@[self.boxWidthConstraint, self.boxHeightConstraint]];
+        }
+        self.boxWidthConstraint.constant = width;
+        self.boxHeightConstraint.constant = height;
+        placeholder.frame = CGRectInset(self.hudView.bounds, -CYLPlaceholderHUDStackMargin, -CYLPlaceholderHUDStackMargin);
+    } else {
+        placeholder.frame = self.hudView.bounds;
     }
+    [placeholder layoutIfNeeded];
 }
 
 #pragma mark - Touches and haptics

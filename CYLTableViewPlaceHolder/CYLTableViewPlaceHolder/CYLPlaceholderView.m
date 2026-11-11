@@ -304,6 +304,9 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 @property (nonatomic) UIEdgeInsets itemImageInsets;
 @property (nonatomic, strong) UIView *animationView;
 @property (nonatomic) CGSize animationSize;
+/// YES while the animation covers the static image. The image view is hidden then, which on iOS is the same flag as
+/// a caller hiding the icon, so the layout must not read it as "no icon" and hide the animation too.
+@property (nonatomic) BOOL imageCoveredByAnimation;
 @property (nonatomic, strong) UILabel *badgeLabel;
 @property (nonatomic) CGPoint badgeCenterOffset;
 // Title chrome (CYLPlaceholderItemTitle... keys); nil background view means a plain title.
@@ -336,7 +339,8 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
     [super layoutSubviews];
     if (CGRectIsEmpty(self.bounds)) return;
 
-    self.animationView.hidden = self.imageView.image != nil && self.imageView.hidden;
+    BOOL imageHiddenByCaller = self.imageView.hidden && !self.imageCoveredByAnimation;
+    self.animationView.hidden = self.imageView.image != nil && imageHiddenByCaller;
     BOOL isShowImageView = (self.imageView.image != nil && !self.imageView.hidden) ||
         (self.animationView != nil && !self.animationView.hidden);
     BOOL isShowTitleLabel = self.titleLabel.text.length > 0 && !self.titleLabel.hidden;
@@ -1269,7 +1273,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     self.itemView.animationView = nil;
     self.gifFrames = nil;
     self.gifDelays = nil;
-    self.imageView.layer.hidden = NO;
+    [self cyl_setImageCoveredByAnimation:NO];
     NSMutableDictionary *attributes = [self.itemAttributes mutableCopy];
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         NSArray *pairs = @[
@@ -1304,7 +1308,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 /// The item's content (image or animation, gap, title with its chrome) measured for a width, shared by the layout and
 /// the intrinsic content size so the two cannot disagree.
 - (CGSize)cyl_itemSizeForWidth:(CGFloat)width {
-    BOOL showAnimation = self.itemView.animationView && (!self.imageView.image || !self.imageView.hidden);
+    BOOL showAnimation = self.itemView.animationView &&
+        (!self.imageView.image || !self.imageView.hidden || self.itemView.imageCoveredByAnimation);
     BOOL hasImage = (self.imageView.image != nil && !self.imageView.hidden) || showAnimation;
     BOOL hasTitle = self.textLabel.text.length > 0 && !self.textLabel.hidden;
     UIEdgeInsets insets = hasTitle ? self.itemView.titleContentInsets : UIEdgeInsetsZero;
@@ -1345,6 +1350,14 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     CGFloat content = ceil([self cyl_itemSizeForWidth:MAX(0, width - 2 * margin)].width);
     if (content <= width - 2 * margin) return margin;
     return MAX(0, (width - content) / 2);
+}
+
+/// Hides the static image under a playing animation (or shows it again) without the layout reading it as "no icon".
+- (void)cyl_setImageCoveredByAnimation:(BOOL)covered {
+    self.itemView.imageCoveredByAnimation = covered;
+    self.imageView.layer.hidden = covered;
+    [self invalidateIntrinsicContentSize];
+    [self setNeedsLayout];
 }
 
 - (void)setContentMargin:(CGFloat)contentMargin {
@@ -1489,7 +1502,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     view.contentMode = contentMode;
     self.itemView.animationView = view;
     self.itemView.animationSize = size;
-    self.imageView.layer.hidden = YES;
+    [self cyl_setImageCoveredByAnimation:YES];
     [self.itemView insertSubview:view aboveSubview:self.imageView];
 }
 
@@ -1636,20 +1649,20 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
        [strongSelf.backendView removeFromSuperview];
        strongSelf.backendView = nil;
        strongSelf.itemView.animationView = nil;
-       strongSelf.imageView.layer.hidden = NO;
+       [strongSelf cyl_setImageCoveredByAnimation:NO];
        [strongSelf setNeedsLayout];
    };
    view.readyHandler = ^{
        CYLPlaceholderView *strongSelf = weakSelf;
        if (strongSelf.backendView == weakView && weakView) {
-           strongSelf.imageView.layer.hidden = YES;
+           [strongSelf cyl_setImageCoveredByAnimation:YES];
            if (strongSelf.animationStopped) [strongSelf cyl_updateAnimationPlayback];
        }
    };
    self.backendView = view;
    self.itemView.animationView = view;
    self.itemView.animationSize = size;
-   self.imageView.layer.hidden = view.isReady;
+   [self cyl_setImageCoveredByAnimation:view.isReady];
    [self.itemView insertSubview:view aboveSubview:self.imageView];
    NSMutableDictionary<NSString *, UIColor *> *animationColors = [NSMutableDictionary dictionary];
    NSMutableArray *colorSources = [NSMutableArray array];

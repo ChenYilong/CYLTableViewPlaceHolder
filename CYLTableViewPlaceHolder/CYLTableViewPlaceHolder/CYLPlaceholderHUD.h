@@ -269,9 +269,10 @@ typedef void (^CYLPlaceholderHUDDismissCompletion)(void);
  */
 @property (nonatomic, copy, null_resettable) NSString *loadingAnimationFileName;
 /*!
- * [EN] A bundled animation scrubbed to the progress in the Progress state (nil by default: a drawn ring). The ring
- *      is used too when the animation's engine cannot seek. [CN] Progress 状态中按进度定位的内置动画（默认 nil：绘制的圆环）。
- *      动画引擎无法定位时也使用圆环。
+ * [EN] A bundled animation scrubbed to the progress in the Progress state. nil by default: the icon keeps looping
+ *      `loadingAnimationFileName` and the title shows the percentage. The HUD only uses the icon and title component.
+ *      [CN] Progress 状态中按进度定位的内置动画。默认 nil：图标循环播放 `loadingAnimationFileName`，标题显示百分比。
+ *      HUD 只使用图标与标题组件。
  */
 @property (nonatomic, copy, nullable) NSString *progressAnimationFileName;
 /*!

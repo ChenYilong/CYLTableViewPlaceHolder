@@ -202,7 +202,15 @@
     hud.hudBackgroundColor = UIColor.darkGrayColor;
     [hud showWithStatus:@"Loading"];
     XCTAssertEqualObjects(hud.placeholderView.placeholderView.textLabel.textColor, UIColor.redColor);
-    XCTAssertEqualObjects(hud.hudView.backgroundColor, UIColor.darkGrayColor);
+    CYLPlaceholderView *box = hud.placeholderView.placeholderView;
+    XCTAssertEqualObjects(box.backgroundColor, UIColor.darkGrayColor,
+                          @"the CYLPlaceholderView of an icon state is the box: icon and background are one view");
+    XCTAssertEqualWithAccuracy(CGRectGetWidth([box convertRect:box.bounds toView:hud]), CGRectGetWidth(hud.hudView.bounds), 0.5);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY([box convertRect:box.bounds toView:hud]), hud.hudView.center.y, 0.5);
+    XCTAssertEqualWithAccuracy(CGRectGetHeight([box convertRect:box.bounds toView:hud]), CGRectGetHeight(hud.hudView.bounds), 0.5);
+    UIImageView *icon = box.imageView;
+    XCTAssertEqualWithAccuracy(CGRectGetMidX([icon convertRect:icon.bounds toView:box]), CGRectGetMidX(box.bounds), 0.5,
+                               @"the icon is centered in the box");
     hud.foregroundColor = nil;
     XCTAssertNotNil(hud.foregroundColor, @"null_resettable");
     [hud dismiss];
