@@ -715,7 +715,7 @@ self.webView.scrollView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshin
 
 | 中文 | English |
 | --- | --- |
-| example52 的 Lottie 加载圈第一帧几乎是空的，所以截图中图标只有一个点。example55 用 MJRefresh 的 `setImages`：图片序列与其他图标一样由图标的 `CYLPlaceholderView` 绘制，与状态文字合为一个整体居中。 | The first frame of example52's Lottie spinner is almost empty, so its icon shows only a dot in the screenshot. example55 uses MJRefresh's `setImages`: like every other icon, the image sequence is drawn by the icon's `CYLPlaceholderView`, centered as one with the state text. |
+| example54 的 Rive 图标（`CYLRefreshIcon.riv`）在透明背景上旋转：该文件原本每个画板自带深灰色圆角方块（`BG` 填充 `#ff6f6e6e`），2026-11-12 起这 6 个填充的 alpha 改为 0，详见 `docs/Refresh-Icon-Animation.md` 的“Rive 刷新图标的背景”。example52 的 Lottie 加载圈第一帧几乎是空的，所以截图中图标只有一个点。example55 用 MJRefresh 的 `setImages`：图片序列与其他图标一样由图标的 `CYLPlaceholderView` 绘制，与状态文字合为一个整体居中。 | example54's Rive icon (`CYLRefreshIcon.riv`) turns on a transparent background: every artboard of the file had a dark grey rounded square (`BG`, filled `#ff6f6e6e`), and since 2026-11-12 the alpha of those 6 fills is 0; see "Background of the Rive refresh icon" in `docs/Refresh-Icon-Animation.md`. The first frame of example52's Lottie spinner is almost empty, so its icon shows only a dot in the screenshot. example55 uses MJRefresh's `setImages`: like every other icon, the image sequence is drawn by the icon's `CYLPlaceholderView`, centered as one with the state text. |
 
 ### 下拉刷新 02：动画图片 / Pull-down refresh 02: animated images
 
