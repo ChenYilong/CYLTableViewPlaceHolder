@@ -1,0 +1,15 @@
+/* Example-objc-02 text (zh-Hant). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. */
+"CYLObjC02TitleCollection" = "集合視圖動畫";
+"CYLObjC02TitleHeaderRefreshing" = "頂部重新整理中";
+"CYLObjC02FormatHeaderCompleted" = "頂部重新整理完成 %ld";
+"CYLObjC02TitleFooterRefreshing" = "底部載入中";
+"CYLObjC02TitleFooterCompleted" = "底部載入完成";
+"CYLObjC02FormatItem" = "第 %ld 項";
+"CYLObjC02TitlePaging" = "分頁";
+"CYLObjC02TitleRefreshCompleted" = "重新整理完成";
+"CYLObjC02TitleLoadCompleted" = "載入完成";
+"CYLObjC02ActionRefresh" = "重新整理";
+"CYLObjC02ActionLastPage" = "最後一頁";
+"CYLObjC02HintRefresh" = "重新整理列表並回到第 2 頁。";
+"CYLObjC02HintLastPage" = "捲動到最後一頁。";
+"CYLObjC02FormatPage" = "第 %ld 頁";

@@ -68,7 +68,8 @@ typedef void (^CYLRefreshComponentAction)(void);
 #pragma mark - 刷新状态控制
 /** 进入刷新状态 */
 - (void)beginRefreshing;
-- (void)beginRefreshingWithCompletionBlock:(void (^)(void))completionBlock;
+- (void)beginRefreshingWithCompletionBlock:(void (^)(void))completionBlock
+    NS_SWIFT_NAME(beginRefreshing(completionBlock:));
 /** 开始刷新后的回调(进入刷新状态后的回调) */
 @property (copy, nonatomic, nullable) CYLRefreshComponentAction beginRefreshingCompletionBlock;
 /** 带动画的结束刷新的回调 */
@@ -78,7 +79,8 @@ typedef void (^CYLRefreshComponentAction)(void);
 @property (copy, nonatomic, nullable) CYLRefreshComponentAction endRefreshingCompletionBlock;
 /** 结束刷新状态 */
 - (void)endRefreshing;
-- (void)endRefreshingWithCompletionBlock:(void (^)(void))completionBlock;
+- (void)endRefreshingWithCompletionBlock:(void (^)(void))completionBlock
+    NS_SWIFT_NAME(endRefreshing(completionBlock:));
 /** 是否正在刷新 */
 @property (assign, nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
 

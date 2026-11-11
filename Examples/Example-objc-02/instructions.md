@@ -4,6 +4,14 @@ This folder contains the issue 1523 collection reproduction adapted from the
 upstream example, plus a paging table. Preserve the upstream copyright and
 license; inherit the repository instructions.
 
+The app and its UI tests are Swift (translated from Objective-C on 2026-11-11);
+the folder name and the `ExampleObjC02` scheme and targets keep "objc" because
+CI and artifact names depend on them. User-facing text lives in
+`Sources/CYLObjC02Example.bundle/<language>.lproj/CYLObjC02Example.strings`,
+read through `CYLObjC02LocalizedString(_:)` and the `CYLObjC02L10n` keys in
+`Sources/CYLObjC02Localization.swift`. The UI tests run in English and match
+the English values exactly, so change them only together with the tests.
+
 ## Linked issues
 
 | Issue | Problem | Screen | Status (docs/issue-progress.md) |
