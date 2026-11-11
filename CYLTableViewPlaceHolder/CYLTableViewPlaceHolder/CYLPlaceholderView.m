@@ -79,14 +79,8 @@ NSString *const CYLPlaceholderItemInteractionEnabled = @"CYLPlaceholderItemInter
 NSString *const CYLPlaceholderItemTapHighlightStyle = @"CYLPlaceholderItemTapHighlightStyle";
 NSString *const CYLPlaceholderItemAnimationRepeatCount = @"CYLPlaceholderItemAnimationRepeatCount";
 
-static NSBundle *CYLPlaceholderResourceBundle(void) {
-    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
-    NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-    if (!url) url = [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-    NSBundle *bundle = url ? [NSBundle bundleWithURL:url] : nil;
-    if (!bundle) NSLog(@"CYLTableViewPlaceHolder: placeholder resource bundle not found.");
-    return bundle;
-}
+// [EN] CYLPlaceholderResourceBundle() is the core resource lookup, declared in CYLPlaceholderLocalization.h.
+// [CN] CYLPlaceholderResourceBundle() 是核心层的资源查找函数，声明在 CYLPlaceholderLocalization.h 中。
 
 static NSString *const CYLPlaceholderAnimationsDirectory = @"Animations";
 
@@ -477,8 +471,9 @@ id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(voi
 @property (nonatomic, strong) NSNumber *animationSeekProgress;
 @property (nonatomic, strong) NSNumber *animationSpeed;
 @property (nonatomic, readwrite, getter=isTapHighlighted) BOOL tapHighlighted;
-/// The accessibility traits before the button trait was added for taps.
+/// Whether the tap API added the button trait, and the not-enabled trait, so it removes only what it added.
 @property (nonatomic) BOOL tapAddedButtonTrait;
+@property (nonatomic) BOOL tapAddedNotEnabledTrait;
 @property (nonatomic, strong) UIImage *selectedImage;
 @property (nonatomic, copy) NSString *selectedTitle;
 @property (nonatomic, strong) UIColor *selectedTitleColor;
@@ -1636,17 +1631,32 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     [self cyl_updateTapAccessibility];
 }
 
-/// A tappable placeholder is a button for VoiceOver; the trait is removed again when it stops being tappable.
+/// A placeholder with a tap event is a button for VoiceOver, Voice Control and Switch Control; with interaction
+/// turned off it is a dimmed ("not enabled") button, as a disabled UIButton. Without a tap event the traits it added
+/// are removed again.
 - (void)cyl_updateTapAccessibility {
-    BOOL interactive = self.isTapInteractive;
-    if (interactive && !self.tapAddedButtonTrait && !(self.accessibilityTraits & UIAccessibilityTraitButton)) {
-        self.accessibilityTraits |= UIAccessibilityTraitButton;
-        self.tapAddedButtonTrait = YES;
+    UIAccessibilityTraits traits = self.accessibilityTraits;
+    if (self.tapHandler) {
+        if (!(traits & UIAccessibilityTraitButton)) {
+            traits |= UIAccessibilityTraitButton;
+            self.tapAddedButtonTrait = YES;
+        }
+        if (!self.tapInteractionEnabled && !(traits & UIAccessibilityTraitNotEnabled)) {
+            traits |= UIAccessibilityTraitNotEnabled;
+            self.tapAddedNotEnabledTrait = YES;
+        } else if (self.tapInteractionEnabled && self.tapAddedNotEnabledTrait) {
+            traits &= ~UIAccessibilityTraitNotEnabled;
+            self.tapAddedNotEnabledTrait = NO;
+        }
         self.isAccessibilityElement = YES;
-    } else if (!interactive && self.tapAddedButtonTrait) {
-        self.accessibilityTraits &= ~UIAccessibilityTraitButton;
+        self.accessibilityElementsHidden = NO;
+    } else {
+        if (self.tapAddedButtonTrait) traits &= ~UIAccessibilityTraitButton;
+        if (self.tapAddedNotEnabledTrait) traits &= ~UIAccessibilityTraitNotEnabled;
         self.tapAddedButtonTrait = NO;
+        self.tapAddedNotEnabledTrait = NO;
     }
+    self.accessibilityTraits = traits;
 }
 
 - (BOOL)performTap {
@@ -1665,7 +1675,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     self.tapHighlighted = highlighted;
     // [EN] Only the content changes, so an alpha or transform the app set on the view itself is kept.
     // [CN] 只改变内容视图，保留应用对本视图设置的 alpha 或 transform。
-    BOOL shrink = self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleShrink;
+    // [EN] Reduce Motion: the shrink style only dims. [CN] 开启“减弱动态效果”时，缩小样式只变暗。
+    BOOL shrink = self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleShrink && !UIAccessibilityIsReduceMotionEnabled();
     CGFloat alpha = highlighted ? (shrink ? 0.8 : 0.5) : 1;
     CGAffineTransform transform = highlighted && shrink ? CGAffineTransformMakeScale(0.96, 0.96) : CGAffineTransformIdentity;
     [UIView animateWithDuration:highlighted ? 0.08 : 0.2 delay:0

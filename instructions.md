@@ -331,6 +331,27 @@ only.
 - API, file and subspec names shown as technical hints are identifiers, not
   text, and stay as literals.
 
+### Resource lookups: the same split for files
+
+Images, animations, configuration files and other resources follow the same rule as strings: each layer reads only
+its own bundle, through one lookup of its own.
+
+- **Core:** `CYLPlaceholderResourceBundle()` and the macro `CYLPlaceholderResourceURL(path)` (function
+  `CYLPlaceholderResourceURLForPath`, callable from Swift), declared in `CYLPlaceholderLocalization.h` next to
+  `CYLPlaceholderLocalizedString`. Core code never looks the bundle up another way.
+- **Example:** each example defines its own, reading only its bundle; in Swift, a function such as
+  `CYLScenarioExampleResourceURL(_:)` in `Examples/Example-Scenarios/Sources/CYLScenarioLocalization.swift`.
+- A path may not leave its bundle (no leading `/`, no `..`). What belongs in which bundle is in "Bundled animations".
+
+### Right-to-left and locale formatting
+
+- Lay out with leading/trailing (`NSLayoutConstraint` leading/trailing anchors, `NSTextAlignmentNatural` or centered
+  text), never left/right, so a right-to-left language mirrors correctly once it is added.
+- Format numbers, dates and counts with the locale (`NSNumberFormatter`, `NSDateFormatter`, `String(format:)` with a
+  localized format string and `%ld` / `%@` placeholders); never concatenate translated fragments.
+- The `ios-localization` skill (from CYLTabBarController) recommends String Catalogs; in this repository the file
+  structure above wins: `.strings` in `<language>.lproj` folders inside a `.bundle`.
+
 ### Other platforms
 
 Apply the same structure: per-language files grouped in one resource
@@ -343,6 +364,38 @@ example with its own container, and a single generated or hand-written key map.
 - Flutter: `lib/l10n/*.arb` per package with the generated localizations class.
 - Web and React Native: a `locales/<locale>.json` folder per package with one
   exported constant object of keys.
+
+## Accessibility (VoiceOver, Voice Control, Switch Control, Dynamic Type)
+
+Adapted from CYLTabBarController's rule "Accessibility is required everywhere". The library code shipped to CocoaPods,
+Carthage and the framework, and every example, fully support accessibility: VoiceOver, Voice Control, Switch Control,
+Full Keyboard Access, Dynamic Type, Reduce Motion and Bold Text. This applies to new code, to code you change and to
+existing code you review: fix what is missing when you meet it. Use the `ios-accessibility` skill to implement and the
+`accessibility-audit` skill to check.
+
+- **Every control and every piece of text is an accessibility element** with a meaningful, localized label, the right
+  trait (button, header, selected, not enabled), a value for state (on/off, the current language) and a hint when
+  useful. A placeholder reads as one element: its title (and badge) in one label. A list row reads its title and
+  subtitle together.
+- **Decorations are hidden**: an icon or illustration without text, label or tap event
+  (`isAccessibilityElement = NO`, `accessibilityElementsHidden = YES`). An interactive view always has a label: an
+  icon-only button is named after its action.
+- **Tappable placeholders are buttons**: a component with a tap event has the button trait; with interaction turned off
+  it also has the not-enabled trait and cannot be activated (`CYLPlaceholderView.tapHandler`,
+  `tapInteractionEnabled`). `accessibilityActivate` runs the same action as a tap. Separators read their word, not the
+  dashes. A placeholder made of several components groups them (`shouldGroupAccessibilityChildren`) and reads top to
+  bottom.
+- **Language**: when the core language is overridden at run time (`CYLPlaceholderLocalization.language`), components set
+  `accessibilityLanguage` so VoiceOver pronounces the chosen language. Language menus read language names, never flags.
+- **Dynamic Type**: text uses text styles or `UIFontMetrics`-scaled fonts with `adjustsFontForContentSizeCategory`; long
+  text wraps instead of truncating.
+- **Motion**: honor Reduce Motion. Placeholder animations stop and the shrink highlight only dims; looping animations
+  still respect it.
+- **Feedback**: a message that disappears by itself is also posted as a VoiceOver announcement and stays longer while
+  VoiceOver runs.
+- **Tests**: automated tests and UI tests find elements by accessibility label or identifier first; coordinates are a
+  last resort, and a missing label is a bug to fix. Unit tests check labels, traits and hidden decorations.
+- A change that adds a control or a text without accessibility is not done.
 
 ## Bundled animations
 

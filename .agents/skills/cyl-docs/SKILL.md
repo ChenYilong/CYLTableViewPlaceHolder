@@ -47,7 +47,10 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
   Each layer reads its bundle through one lookup macro (the core has its own,
   each example has its own, named with the owner's prefix); a project needs at
   least two different ones.
-  Document new tables, languages and keys in the README.
+  Document new tables, languages and keys in the README. Resources follow the
+  same split (`CYLPlaceholderResourceURL` for the core, each example's own lookup).
+- Document accessibility with every user-visible control: its label, trait and
+  state, and what is hidden as decoration (`instructions.md`, "Accessibility").
 - Instructions and skills are written in English. Preserve required third-party
   copyright notices, licenses, and source attribution.
 - Use relative paths for local references. Place attachments in an `assets/`

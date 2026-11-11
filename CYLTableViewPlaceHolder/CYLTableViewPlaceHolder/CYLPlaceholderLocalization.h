@@ -50,3 +50,15 @@ NS_ASSUME_NONNULL_END
 
 /// The core layer's lookup macro: reads only the core bundle. Examples define their own macro or function.
 #define CYLPlaceholderLocalizedString(key, fallback) CYLPlaceholderLocalizedStringForKey((key), (fallback))
+
+NS_ASSUME_NONNULL_BEGIN
+/// The core resource bundle, CYLTableViewPlaceHolder.bundle (placeholder icons and animations, the refresh arrows, the
+/// core strings); nil, with a log, when the app does not ship it. Examples read their own bundles, never this one.
+FOUNDATION_EXPORT NSBundle * _Nullable CYLPlaceholderResourceBundle(void);
+/// A file in the core bundle by its path inside it, such as "Animations/CYLPlaceholderLoading.json"; nil when it is
+/// missing or the path leaves the bundle. Swift calls it directly; Objective-C uses the macro below.
+FOUNDATION_EXPORT NSURL * _Nullable CYLPlaceholderResourceURLForPath(NSString *path);
+NS_ASSUME_NONNULL_END
+
+/// The core layer's resource macro: a file of the core bundle only.
+#define CYLPlaceholderResourceURL(path) CYLPlaceholderResourceURLForPath((path))

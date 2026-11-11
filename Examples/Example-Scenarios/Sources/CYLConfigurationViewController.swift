@@ -17,8 +17,7 @@ import CYLTableViewPlaceHolder
 enum CYLConfigurationFiles {
     /// The configuration files in the example bundle, sorted by name.
     static func urls() -> [URL] {
-        guard let bundle = Bundle.main.url(forResource: "CYLScenarioExample", withExtension: "bundle") else { return [] }
-        let folder = bundle.appendingPathComponent("Configurations")
+        guard let folder = CYLScenarioExampleResourceURL("Configurations") else { return [] }
         let files = (try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
         return files.filter { ["json", "plist"].contains($0.pathExtension) }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
@@ -62,7 +61,7 @@ final class CYLConfigurationViewController: UIViewController {
         for action in names {
             handlers[action] = { [weak self] _, action in
                 let title = CYLPlaceholderScenarioCatalog.localizedTitle(for: action) ?? action.rawValue
-                self?.showFeedback(CYLScenarioLocalizedFormat(.formatActionTapped, title))
+                self?.cyl_showFeedback(CYLScenarioLocalizedFormat(.formatActionTapped, title))
             }
         }
         return handlers
@@ -124,11 +123,4 @@ final class CYLConfigurationViewController: UIViewController {
         navigationController?.pushViewController(controller, animated: true)
     }
 
-    private func showFeedback(_ message: String) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak alert] in
-            alert?.dismiss(animated: true)
-        }
-    }
 }

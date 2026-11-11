@@ -25,6 +25,8 @@ source of truth; update the README and issue tracker if they become stale.
 | FlatDesign parity tracker | `docs/flatdesign-item-comparison.md` |
 | Scenario placeholders (component stack, scenario enum, actions) | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`, `CYLPlaceholderScenario.h` (`CYLPlaceholderScenario`, `CYLPlaceholderAction`, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`); title chrome keys in `CYLPlaceholderView.h`; tests `Tests/CYLPlaceholderScenarioTests.m`; doc `docs/Placeholder-Scenarios.md`; demo `Examples/Example-Scenarios/` (Swift) |
 | Core localization macro and run-time language | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h` (`CYLPlaceholderLocalizedString`, `CYLPlaceholderLocalization.language`) |
+| Core resource lookup | `CYLPlaceholderLocalization.h` (`CYLPlaceholderResourceBundle()`, `CYLPlaceholderResourceURL(path)`); example lookups `CYLScenarioLocalizedString` / `CYLScenarioExampleResourceURL` in `Examples/Example-Scenarios/Sources/CYLScenarioLocalization.swift` |
+| Accessibility of placeholders and components | `CYLPlaceholderView.m` (`-cyl_updateTapAccessibility`, `accessibilityActivate`, Reduce Motion highlight), `CYLPlaceholderStackView.m` (`-cyl_updateAccessibilityOfComponent:`, grouping); rules in `instructions.md` ("Accessibility"); skills `ios-accessibility`, `accessibility-audit` |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |

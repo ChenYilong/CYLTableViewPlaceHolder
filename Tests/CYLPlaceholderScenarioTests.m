@@ -293,10 +293,14 @@
     XCTAssertFalse([view performTap]);
     [view touchesBegan:[NSSet set] withEvent:nil];
     XCTAssertFalse(view.isTapHighlighted);
-    XCTAssertFalse(view.accessibilityTraits & UIAccessibilityTraitButton);
+    // [EN] A disabled button for VoiceOver, as a disabled UIButton. [CN] 对 VoiceOver 而言是禁用的按钮，与禁用的 UIButton 相同。
+    XCTAssertTrue(view.accessibilityTraits & UIAccessibilityTraitButton);
+    XCTAssertTrue(view.accessibilityTraits & UIAccessibilityTraitNotEnabled);
+    XCTAssertFalse([view accessibilityActivate], @"VoiceOver cannot activate it either");
     XCTAssertEqual(taps, 1u);
     // [EN] Style None: the tap runs without a highlight. [CN] 无高亮样式：点击照常执行，但不高亮。
     view.tapInteractionEnabled = YES;
+    XCTAssertFalse(view.accessibilityTraits & UIAccessibilityTraitNotEnabled);
     view.tapHighlightStyle = CYLPlaceholderTapHighlightStyleNone;
     [view touchesBegan:[NSSet set] withEvent:nil];
     XCTAssertFalse(view.isTapHighlighted);
@@ -452,6 +456,52 @@
         XCTAssertNil([[CYLPlaceholderStackView alloc] initWithConfiguration:invalid actions:nil error:&error], @"%@", invalid);
         XCTAssertNotNil(error, @"%@", invalid);
     }
+}
+
+#pragma mark - Accessibility and resources
+
+- (void)testComponentsSpeakTextAndControlsAndHideDecorations {
+    CYLPlaceholderLocalization.language = @"ja";
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc]
+        initWithScenario:CYLPlaceholderScenarioIllustrationRetry
+                 actions:@{CYLPlaceholderActionRetry: ^(CYLPlaceholderStackView *placeholder, CYLPlaceholderAction action) {}}];
+    XCTAssertTrue(stack.shouldGroupAccessibilityChildren);
+    // [EN] The illustration has no text or action: decorative. [CN] 插图没有文字也没有动作：装饰性内容。
+    XCTAssertFalse(stack.placeholderView.isAccessibilityElement);
+    XCTAssertTrue(stack.placeholderView.accessibilityElementsHidden);
+    CYLPlaceholderView *button = stack.componentViews[1];
+    XCTAssertTrue(button.isAccessibilityElement);
+    XCTAssertTrue(button.accessibilityTraits & UIAccessibilityTraitButton);
+    XCTAssertGreaterThan(button.accessibilityLabel.length, 0u);
+    XCTAssertEqualObjects(button.accessibilityLanguage, @"ja", @"VoiceOver pronounces the chosen language");
+    // [EN] The separator reads only its word. [CN] 分隔符只朗读文字。
+    CYLPlaceholderLocalization.language = @"en";
+    CYLPlaceholderStackView *support = [[CYLPlaceholderStackView alloc]
+        initWithScenario:CYLPlaceholderScenarioRetryOrContactSupport actions:nil];
+    XCTAssertEqualObjects(support.componentViews[2].accessibilityLabel, @"or");
+    // [EN] A tap-anywhere scenario's reserved component is a button even without a title.
+    // [CN] “点击屏幕重试”场景的保留组件即使没有标题也是按钮。
+    CYLPlaceholderStackView *reload = [[CYLPlaceholderStackView alloc] initWithComponents:@[
+        [CYLPlaceholderComponent componentWithBundledAnimation:@"CYLPlaceholderRefresh.json"
+            fallbackStyle:CYLPlaceholderStyleRefresh title:nil size:CGSizeMake(64, 64) action:nil]] actions:nil];
+    XCTAssertTrue(reload.placeholderView.accessibilityElementsHidden);
+    reload.backgroundAction = CYLPlaceholderActionRetry;
+    XCTAssertFalse(reload.placeholderView.accessibilityElementsHidden);
+    XCTAssertEqualObjects(reload.placeholderView.accessibilityLabel, @"Retry");
+    XCTAssertTrue(reload.placeholderView.accessibilityTraits & UIAccessibilityTraitButton);
+}
+
+- (void)testCoreResourceLookupReadsOnlyTheCoreBundle {
+    NSBundle *bundle = CYLPlaceholderResourceBundle();
+    XCTAssertNotNil(bundle);
+    XCTAssertEqualObjects(bundle.bundleURL.lastPathComponent, @"CYLTableViewPlaceHolder.bundle");
+    NSURL *animation = CYLPlaceholderResourceURL(@"Animations/CYLPlaceholderLoading.json");
+    XCTAssertNotNil(animation);
+    XCTAssertEqualObjects(animation.path, [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"]);
+    XCTAssertNotNil(CYLPlaceholderResourceURL(@"en.lproj/Localizable.strings"));
+    XCTAssertNil(CYLPlaceholderResourceURL(@"Animations/Missing.json"));
+    XCTAssertNil(CYLPlaceholderResourceURL(@"../Info.plist"), @"a path may not leave the bundle");
+    XCTAssertNil(CYLPlaceholderResourceURL(@"CYLPlaceholderItemDemo.plist"), @"example data is not in the core bundle");
 }
 
 - (void)testEveryScenarioIsTranslated {

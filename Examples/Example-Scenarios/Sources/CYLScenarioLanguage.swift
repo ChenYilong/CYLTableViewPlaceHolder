@@ -18,15 +18,21 @@ enum CYLScenarioLanguage {
     /// Each language in its own name (language names are not translated).
     static func nativeName(of language: String) -> String {
         let names = [
-            "en": "🇺🇸 English",
-            "zh-Hans": "🇨🇳 简体中文",
-            "zh-Hant": "🇭🇰 繁體中文",
-            "ja": "🇯🇵 日本語",
-            "ko": "🇰🇷 한국어",
-            "ru": "🇷🇺 Русский",
-            "uk": "🇺🇦 Українська",
+            "en": "English",
+            "zh-Hans": "简体中文",
+            "zh-Hant": "繁體中文",
+            "ja": "日本語",
+            "ko": "한국어",
+            "ru": "Русский",
+            "uk": "Українська",
         ]
         return names[language] ?? language
+    }
+
+    /// A flag for the button's title only; menus and VoiceOver use the name alone, so VoiceOver never reads flags.
+    static func flag(of language: String) -> String {
+        let flags = ["en": "🇺🇸", "zh-Hans": "🇨🇳", "zh-Hant": "🇭🇰", "ja": "🇯🇵", "ko": "🇰🇷", "ru": "🇷🇺", "uk": "🇺🇦"]
+        return flags[language] ?? ""
     }
 
     /// A bar button showing 🌐 and the current language; its menu lists every core language and "Follow system".
@@ -42,7 +48,8 @@ enum CYLScenarioLanguage {
             select(nil)
         })
         let menu = UIMenu(title: CYLScenarioLocalizedString(.language), children: actions)
-        let title = "🌐 " + nativeName(of: CYLPlaceholderLocalization.effectiveLanguage)
+        let language = CYLPlaceholderLocalization.effectiveLanguage
+        let title = "🌐 " + flag(of: language) + " " + nativeName(of: language)
         let item = UIBarButtonItem(title: title, image: nil, primaryAction: nil, menu: menu)
         item.accessibilityIdentifier = "languageButton"
         item.accessibilityLabel = CYLScenarioLocalizedString(.language)

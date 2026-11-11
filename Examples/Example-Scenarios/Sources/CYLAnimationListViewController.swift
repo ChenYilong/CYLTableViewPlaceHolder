@@ -34,8 +34,7 @@ final class CYLAnimationListViewController: UITableViewController {
         }
         // The example's own animations: no placeholder meaning (a mascot, a scene, widget demos), so they live in the
         // example bundle, not in the core bundle (CYLScenarioExample.bundle/Animations/NOTICE.animations).
-        if let folder = Bundle.main.url(forResource: "CYLScenarioExample", withExtension: "bundle")?
-            .appendingPathComponent("Animations") {
+        if let folder = CYLScenarioExampleResourceURL("Animations") {
             let files = ((try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? [])
                 .filter { ["json", "pag", "riv", "gif"].contains(($0 as NSString).pathExtension) }
                 .sorted()

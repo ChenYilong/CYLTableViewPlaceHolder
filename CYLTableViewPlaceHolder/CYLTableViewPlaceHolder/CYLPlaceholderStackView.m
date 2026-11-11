@@ -4,6 +4,7 @@
 //
 
 #import "CYLPlaceholderStackView.h"
+#import "CYLPlaceholderLocalization.h"
 
 /// Side margin between the view and its components.
 static const CGFloat CYLPlaceholderStackMargin = 16;
@@ -149,6 +150,9 @@ static NSError *CYLStackConfigurationError(NSString *description) {
         _stackView.spacing = 16;
         _stackView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_stackView];
+        // [EN] VoiceOver reads the components together, top to bottom, before what is behind the placeholder.
+        // [CN] VoiceOver 自上而下连续朗读这些组件，再朗读占位视图后面的内容。
+        self.shouldGroupAccessibilityChildren = YES;
         [NSLayoutConstraint activateConstraints:@[
             [_stackView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
             [_stackView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
@@ -227,6 +231,21 @@ static NSError *CYLStackConfigurationError(NSString *description) {
             [weakSelf performAction:copiedAction];
         };
     }
+    [self cyl_updateAccessibilityOfComponent:view];
+}
+
+/// [EN] Decorative components (an icon or illustration with no title, label or tap event) are hidden from VoiceOver,
+///      so it reads only text and controls; every component speaks the language the core texts use.
+/// [CN] 装饰性组件（没有标题、无障碍标签或点击事件的图标、插图）对 VoiceOver 隐藏，只朗读文字与控件；所有组件都使用核心文案的语言朗读。
+- (void)cyl_updateAccessibilityOfComponent:(CYLPlaceholderView *)view {
+    if (CYLPlaceholderLocalization.language) view.accessibilityLanguage = CYLPlaceholderLocalization.effectiveLanguage;
+    BOOL speaks = view.textLabel.text.length > 0 && !view.textLabel.hidden;
+    BOOL labeled = view.accessibilityLabel.length > 0 || speaks;
+    BOOL actsOnBackground = view == self.placeholderView && self.backgroundAction != nil;
+    if (!view.tapHandler && !labeled && !actsOnBackground) {
+        view.isAccessibilityElement = NO;
+        view.accessibilityElementsHidden = YES;
+    }
 }
 
 - (CYLPlaceholderView *)componentViewForAction:(CYLPlaceholderAction)action {
@@ -269,9 +288,15 @@ static NSError *CYLStackConfigurationError(NSString *description) {
     if (reserved && !reserved.isTapInteractive) {
         if (backgroundAction) {
             reserved.isAccessibilityElement = YES;
+            reserved.accessibilityElementsHidden = NO;
             reserved.accessibilityTraits |= UIAccessibilityTraitButton;
+            // [EN] An icon-only reserved component is named after the action. [CN] 只有图标的保留组件以动作名称命名。
+            if (!reserved.accessibilityLabel.length) {
+                reserved.accessibilityLabel = [CYLPlaceholderScenarioCatalog localizedTitleForAction:backgroundAction];
+            }
         } else {
             reserved.accessibilityTraits &= ~UIAccessibilityTraitButton;
+            [self cyl_updateAccessibilityOfComponent:reserved];
         }
     }
 }

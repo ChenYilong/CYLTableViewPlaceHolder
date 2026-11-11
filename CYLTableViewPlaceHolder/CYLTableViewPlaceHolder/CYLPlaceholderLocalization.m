@@ -71,15 +71,7 @@ static NSString *CYLPlaceholderLocalizationOverride;
 }
 
 + (nullable NSBundle *)cyl_resourceBundle {
-    static NSBundle *bundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderLocalization.class];
-        NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-        if (!url) url = [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-        bundle = url ? [NSBundle bundleWithURL:url] : nil;
-    });
-    return bundle;
+    return CYLPlaceholderResourceBundle();
 }
 
 + (NSString *)localizedStringForKey:(NSString *)key fallback:(NSString *)fallback {
@@ -100,6 +92,30 @@ static NSString *CYLPlaceholderLocalizationOverride;
 }
 
 @end
+
+NSBundle *CYLPlaceholderResourceBundle(void) {
+    static NSBundle *bundle;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // [EN] Next to the library's code (a framework or the static library's host app), else in the main bundle.
+        // [CN] 先在库代码所在的 bundle（framework 或静态库的宿主 App）中查找，找不到再查找 main bundle。
+        NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderLocalization.class];
+        NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+        if (!url) url = [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+        bundle = url ? [NSBundle bundleWithURL:url] : nil;
+        if (!bundle) NSLog(@"CYLTableViewPlaceHolder: placeholder resource bundle not found.");
+    });
+    return bundle;
+}
+
+NSURL *CYLPlaceholderResourceURLForPath(NSString *path) {
+    if (![path isKindOfClass:NSString.class] || !path.length || [path hasPrefix:@"/"] ||
+        [path.pathComponents containsObject:@".."]) return nil;
+    NSBundle *bundle = CYLPlaceholderResourceBundle();
+    if (!bundle) return nil;
+    NSURL *url = [bundle.bundleURL URLByAppendingPathComponent:path];
+    return [NSFileManager.defaultManager fileExistsAtPath:url.path] ? url : nil;
+}
 
 NSString *CYLPlaceholderLocalizedStringForKey(NSString *key, NSString *fallback) {
     return [CYLPlaceholderLocalization localizedStringForKey:key fallback:fallback];

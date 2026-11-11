@@ -12,7 +12,8 @@ the integrated `CYLRefresh` component, and an example application. Read
   the affected documentation.
 - Use the project skills in `.agents/skills/`: `cyl-api-map` for API locations,
   `cyl-xcode-compat` for project settings, `cyl-verify` for verification, and
-  `cyl-docs` for documentation changes.
+  `cyl-docs` for documentation changes; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
+  CYLTabBarController, with their upstream licenses) for accessibility and localization work.
 
 ## Naming and compatibility
 
@@ -70,6 +71,13 @@ the integrated `CYLRefresh` component, and an example application. Read
   CYLTabBarController's `CYLLocalizedString`. Every language must have every key
   of `en`. Other platforms follow the same
   structure. See "Localization" in `instructions.md`.
+- Accessibility is required everywhere (VoiceOver, Voice Control, Switch Control, Dynamic Type, Reduce Motion): every
+  control and text is an element with a localized label, trait and value; decorations are hidden; tappable placeholders
+  are buttons (not enabled when interaction is off); Reduce Motion is honored; tests find elements by label first. A
+  change without it is not done. See "Accessibility" in `instructions.md` and the `ios-accessibility` and
+  `accessibility-audit` skills.
+- Resources follow the localization split: the core reads only its bundle through `CYLPlaceholderResourceBundle()` /
+  `CYLPlaceholderResourceURL(path)`, each example only its own bundle through its own lookup.
 - Ready-made placeholder animations live in
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
   Add only animations whose content means a placeholder state (loading, empty,

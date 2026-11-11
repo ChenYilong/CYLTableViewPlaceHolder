@@ -7,116 +7,119 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09B0DE20354FEC1DE9A6C410 /* CYLConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A878FD4563E57D5ABB274F /* CYLConfigurationViewController.swift */; };
-		37A9496497364B6451F4DC1C /* CYLAnimationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676139C4E0AB5AD7D81518F2 /* CYLAnimationListViewController.swift */; };
-		48140DAD1D69474DF6469701 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF9F9A973E9031AF4CB6D933 /* LaunchScreen.storyboard */; };
-		74439A30E7872152321A070F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD4669EF7D9EE13847A6A6D5 /* Foundation.framework */; };
-		9149B16C854E987269C7018E /* CYLScenarioAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5D4B51D6E618BA5FE6FA59 /* CYLScenarioAppDelegate.swift */; };
-		A2DE349B589E84F89C817F31 /* CYLScenarioListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF136687C4DDF9E35A36914 /* CYLScenarioListViewController.swift */; };
-		B82F2728484A3A9D31B43EDE /* CYLScenarioTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72405AA78A545DEAB777E201 /* CYLScenarioTabBarController.swift */; };
-		C2E452D74282E4492BCDBEC2 /* CYLFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA1A6AA3DBFC550449D3346 /* CYLFeedViewController.swift */; };
-		D1581D208CE194EE3382A457 /* CYLScenarioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62631A8EFDD91079630BD517 /* CYLScenarioLocalization.swift */; };
-		D7BFBBBA56384BDC9A5117EC /* CYLFlowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A67E562042C8A83730B726 /* CYLFlowListViewController.swift */; };
-		DAC1DC0939B160A1BF657A86 /* CYLScenarioDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF703CE476658C8757B6DD81 /* CYLScenarioDetailViewController.swift */; };
-		DD97FFDAE92D53790D5F1BAB /* CYLScenarioLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A4613C9C83F47AA116443E /* CYLScenarioLanguage.swift */; };
-		EF302399F65C895FC5D638CD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1ABCDE710D90CFD66CAD774 /* Assets.xcassets */; };
-		FEAE1D279B35CFCE54A773A4 /* CYLScenarioExample.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75DB75856E31CAFDE1542794 /* CYLScenarioExample.bundle */; };
+		0046BE4832B3E1EED88B085F /* CYLScenarioAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */; };
+		0B8DC7AAF1A0D398D9E021EB /* CYLScenarioDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69719CCA062B14DEFBBA57F /* CYLScenarioDetailViewController.swift */; };
+		145423A5B74DCE562295D8AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 088621BE87DFB283F98D1F37 /* Foundation.framework */; };
+		1E4EDAF863C06F44FA7260F2 /* CYLConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */; };
+		20D18BBAC6B51A8CD38E887D /* CYLScenarioListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3DA852BAE6058FB57F2A0F /* CYLScenarioListViewController.swift */; };
+		27AF429E11B4A7B32924E04B /* CYLScenarioFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D310BE0FC2B59B42C561C71C /* CYLScenarioFeedback.swift */; };
+		3856846840AA69594D3834B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1284517433ABCD0882ECA9B1 /* Assets.xcassets */; };
+		578333D417A39E43D3C7692A /* CYLScenarioTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */; };
+		7538D35FA21DDBD53A000917 /* CYLScenarioExample.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8479F51753F34B13BCFB2EBD /* CYLScenarioExample.bundle */; };
+		81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */; };
+		991513E249BFF9872B395F81 /* CYLScenarioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1211FEE6636FFFBFD912631E /* CYLScenarioLocalization.swift */; };
+		A0F7A49ADC9AF1865FF9BDFF /* CYLFlowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5434BB5F136056AEEFE1251A /* CYLFlowListViewController.swift */; };
+		AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */; };
+		AD0329B913AA04ECFA3B5E10 /* CYLScenarioLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */; };
+		CACFD6DEBF91775C4A3CA561 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		44A67E562042C8A83730B726 /* CYLFlowListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFlowListViewController.swift; sourceTree = "<group>"; };
-		62631A8EFDD91079630BD517 /* CYLScenarioLocalization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLocalization.swift; sourceTree = "<group>"; };
-		65A878FD4563E57D5ABB274F /* CYLConfigurationViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLConfigurationViewController.swift; sourceTree = "<group>"; };
-		676139C4E0AB5AD7D81518F2 /* CYLAnimationListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLAnimationListViewController.swift; sourceTree = "<group>"; };
-		72405AA78A545DEAB777E201 /* CYLScenarioTabBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioTabBarController.swift; sourceTree = "<group>"; };
-		75DB75856E31CAFDE1542794 /* CYLScenarioExample.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; path = CYLScenarioExample.bundle; sourceTree = "<group>"; };
-		7B5D4B51D6E618BA5FE6FA59 /* CYLScenarioAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioAppDelegate.swift; sourceTree = "<group>"; };
-		7FF136687C4DDF9E35A36914 /* CYLScenarioListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioListViewController.swift; sourceTree = "<group>"; };
-		8067CEE064D596DB660C0361 /* Base */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8CA1A6AA3DBFC550449D3346 /* CYLFeedViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFeedViewController.swift; sourceTree = "<group>"; };
-		94A4613C9C83F47AA116443E /* CYLScenarioLanguage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLanguage.swift; sourceTree = "<group>"; };
-		DD4669EF7D9EE13847A6A6D5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		DF703CE476658C8757B6DD81 /* CYLScenarioDetailViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioDetailViewController.swift; sourceTree = "<group>"; };
-		E77DB1C0B93B37931124F89D /* ExampleScenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleScenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1ABCDE710D90CFD66CAD774 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		088621BE87DFB283F98D1F37 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		1211FEE6636FFFBFD912631E /* CYLScenarioLocalization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLocalization.swift; sourceTree = "<group>"; };
+		1284517433ABCD0882ECA9B1 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioTabBarController.swift; sourceTree = "<group>"; };
+		13B14D1EAFCCE253B346514C /* ExampleScenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleScenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLanguage.swift; sourceTree = "<group>"; };
+		3366DF2ABC933AE677B3C275 /* Base */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3A3DA852BAE6058FB57F2A0F /* CYLScenarioListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioListViewController.swift; sourceTree = "<group>"; };
+		5434BB5F136056AEEFE1251A /* CYLFlowListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFlowListViewController.swift; sourceTree = "<group>"; };
+		7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLAnimationListViewController.swift; sourceTree = "<group>"; };
+		825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLConfigurationViewController.swift; sourceTree = "<group>"; };
+		8479F51753F34B13BCFB2EBD /* CYLScenarioExample.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; path = CYLScenarioExample.bundle; sourceTree = "<group>"; };
+		A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFeedViewController.swift; sourceTree = "<group>"; };
+		B69719CCA062B14DEFBBA57F /* CYLScenarioDetailViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioDetailViewController.swift; sourceTree = "<group>"; };
+		D310BE0FC2B59B42C561C71C /* CYLScenarioFeedback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioFeedback.swift; sourceTree = "<group>"; };
+		EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioAppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E4820E544D5DE6A1DBF31A6C /* Frameworks */ = {
+		47F7E1EC4D7615FCF0562B56 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74439A30E7872152321A070F /* Foundation.framework in Frameworks */,
+				145423A5B74DCE562295D8AD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		05A957B67D138CFDA14267F4 /* iOS */ = {
+		216E0ADC48FF6A47BDF1F7F0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				DD4669EF7D9EE13847A6A6D5 /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		06385C5FAD44CEBF1A5C5831 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				05A957B67D138CFDA14267F4 /* iOS */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		25D9AF947DEC9D78CC718CEE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E77DB1C0B93B37931124F89D /* ExampleScenarios.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		57732D82536943C65635434B = {
-			isa = PBXGroup;
-			children = (
-				25D9AF947DEC9D78CC718CEE /* Products */,
-				06385C5FAD44CEBF1A5C5831 /* Frameworks */,
-				D6BEB998B90D6EAB22EBAC3A /* Sources */,
-			);
-			sourceTree = "<group>";
-		};
-		D6BEB998B90D6EAB22EBAC3A /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				F1ABCDE710D90CFD66CAD774 /* Assets.xcassets */,
-				676139C4E0AB5AD7D81518F2 /* CYLAnimationListViewController.swift */,
-				65A878FD4563E57D5ABB274F /* CYLConfigurationViewController.swift */,
-				8CA1A6AA3DBFC550449D3346 /* CYLFeedViewController.swift */,
-				44A67E562042C8A83730B726 /* CYLFlowListViewController.swift */,
-				7B5D4B51D6E618BA5FE6FA59 /* CYLScenarioAppDelegate.swift */,
-				DF703CE476658C8757B6DD81 /* CYLScenarioDetailViewController.swift */,
-				75DB75856E31CAFDE1542794 /* CYLScenarioExample.bundle */,
-				94A4613C9C83F47AA116443E /* CYLScenarioLanguage.swift */,
-				7FF136687C4DDF9E35A36914 /* CYLScenarioListViewController.swift */,
-				62631A8EFDD91079630BD517 /* CYLScenarioLocalization.swift */,
-				72405AA78A545DEAB777E201 /* CYLScenarioTabBarController.swift */,
-				FF9F9A973E9031AF4CB6D933 /* LaunchScreen.storyboard */,
+				1284517433ABCD0882ECA9B1 /* Assets.xcassets */,
+				7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */,
+				825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */,
+				A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */,
+				5434BB5F136056AEEFE1251A /* CYLFlowListViewController.swift */,
+				EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */,
+				B69719CCA062B14DEFBBA57F /* CYLScenarioDetailViewController.swift */,
+				8479F51753F34B13BCFB2EBD /* CYLScenarioExample.bundle */,
+				D310BE0FC2B59B42C561C71C /* CYLScenarioFeedback.swift */,
+				13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */,
+				3A3DA852BAE6058FB57F2A0F /* CYLScenarioListViewController.swift */,
+				1211FEE6636FFFBFD912631E /* CYLScenarioLocalization.swift */,
+				131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */,
+				9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */,
 			);
 			name = Sources;
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		843C9FF0B236597AF431A903 = {
+			isa = PBXGroup;
+			children = (
+				EEDA71BF2BFE777547CBA419 /* Products */,
+				ACF8783C5B6A89EAB073978B /* Frameworks */,
+				216E0ADC48FF6A47BDF1F7F0 /* Sources */,
+			);
+			sourceTree = "<group>";
+		};
+		ACF8783C5B6A89EAB073978B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F39A046A36511C136793F900 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EEDA71BF2BFE777547CBA419 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B14D1EAFCCE253B346514C /* ExampleScenarios.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F39A046A36511C136793F900 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				088621BE87DFB283F98D1F37 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		43F3B133D769265C59910D0E /* ExampleScenarios */ = {
+		760222702D766C476B466EC1 /* ExampleScenarios */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D9DA5DC4DF53132382904812 /* Build configuration list for PBXNativeTarget "ExampleScenarios" */;
+			buildConfigurationList = 48FD634C25576A2D8ADEDFF3 /* Build configuration list for PBXNativeTarget "ExampleScenarios" */;
 			buildPhases = (
-				966AD65B2E4659479BC4D291 /* Sources */,
-				E4820E544D5DE6A1DBF31A6C /* Frameworks */,
-				0B4EB1074E6FAF6EC8AD4E64 /* Resources */,
+				D503889C432A707F64D21879 /* Sources */,
+				47F7E1EC4D7615FCF0562B56 /* Frameworks */,
+				3A8EEB61B1F3C035ABAB7A0C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -124,19 +127,19 @@
 			);
 			name = ExampleScenarios;
 			productName = ExampleScenarios;
-			productReference = E77DB1C0B93B37931124F89D /* ExampleScenarios.app */;
+			productReference = 13B14D1EAFCCE253B346514C /* ExampleScenarios.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		2AED0EFA5E18967315D6FF4A /* Project object */ = {
+		9CAEB5969737A4F1C24565BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 			};
-			buildConfigurationList = 1DBDC17DA97A24CCF35EB7F7 /* Build configuration list for PBXProject "Example-Scenarios" */;
+			buildConfigurationList = B3103B0B8B4E00F3F8FDDC2B /* Build configuration list for PBXProject "Example-Scenarios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -144,56 +147,57 @@
 				en,
 				Base,
 			);
-			mainGroup = 57732D82536943C65635434B;
+			mainGroup = 843C9FF0B236597AF431A903;
 			minimizedProjectReferenceProxies = 0;
 			preferredProjectObjectVersion = 100;
-			productRefGroup = 25D9AF947DEC9D78CC718CEE /* Products */;
+			productRefGroup = EEDA71BF2BFE777547CBA419 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				43F3B133D769265C59910D0E /* ExampleScenarios */,
+				760222702D766C476B466EC1 /* ExampleScenarios */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0B4EB1074E6FAF6EC8AD4E64 /* Resources */ = {
+		3A8EEB61B1F3C035ABAB7A0C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF302399F65C895FC5D638CD /* Assets.xcassets in Resources */,
-				FEAE1D279B35CFCE54A773A4 /* CYLScenarioExample.bundle in Resources */,
-				48140DAD1D69474DF6469701 /* LaunchScreen.storyboard in Resources */,
+				3856846840AA69594D3834B3 /* Assets.xcassets in Resources */,
+				7538D35FA21DDBD53A000917 /* CYLScenarioExample.bundle in Resources */,
+				CACFD6DEBF91775C4A3CA561 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		966AD65B2E4659479BC4D291 /* Sources */ = {
+		D503889C432A707F64D21879 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37A9496497364B6451F4DC1C /* CYLAnimationListViewController.swift in Sources */,
-				09B0DE20354FEC1DE9A6C410 /* CYLConfigurationViewController.swift in Sources */,
-				C2E452D74282E4492BCDBEC2 /* CYLFeedViewController.swift in Sources */,
-				D7BFBBBA56384BDC9A5117EC /* CYLFlowListViewController.swift in Sources */,
-				9149B16C854E987269C7018E /* CYLScenarioAppDelegate.swift in Sources */,
-				DAC1DC0939B160A1BF657A86 /* CYLScenarioDetailViewController.swift in Sources */,
-				DD97FFDAE92D53790D5F1BAB /* CYLScenarioLanguage.swift in Sources */,
-				A2DE349B589E84F89C817F31 /* CYLScenarioListViewController.swift in Sources */,
-				D1581D208CE194EE3382A457 /* CYLScenarioLocalization.swift in Sources */,
-				B82F2728484A3A9D31B43EDE /* CYLScenarioTabBarController.swift in Sources */,
+				AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */,
+				1E4EDAF863C06F44FA7260F2 /* CYLConfigurationViewController.swift in Sources */,
+				81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */,
+				A0F7A49ADC9AF1865FF9BDFF /* CYLFlowListViewController.swift in Sources */,
+				0046BE4832B3E1EED88B085F /* CYLScenarioAppDelegate.swift in Sources */,
+				0B8DC7AAF1A0D398D9E021EB /* CYLScenarioDetailViewController.swift in Sources */,
+				27AF429E11B4A7B32924E04B /* CYLScenarioFeedback.swift in Sources */,
+				AD0329B913AA04ECFA3B5E10 /* CYLScenarioLanguage.swift in Sources */,
+				20D18BBAC6B51A8CD38E887D /* CYLScenarioListViewController.swift in Sources */,
+				991513E249BFF9872B395F81 /* CYLScenarioLocalization.swift in Sources */,
+				578333D417A39E43D3C7692A /* CYLScenarioTabBarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		FF9F9A973E9031AF4CB6D933 /* LaunchScreen.storyboard */ = {
+		9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8067CEE064D596DB660C0361 /* Base */,
+				3366DF2ABC933AE677B3C275 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -201,32 +205,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		39F714D79044CA4C812A3E4E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Placeholder Scenarios";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleScenarios;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		640854F1FD51E25655EEF666 /* Debug */ = {
+		007D03709C8A85026C9AD380 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -287,33 +266,7 @@
 			};
 			name = Debug;
 		};
-		6F1618A8C4B709F9A1F3F40D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Placeholder Scenarios";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleScenarios;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		ACDE918D49FB30897619225B /* Release */ = {
+		01386527F4B8FDE5F81AB117 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -367,28 +320,79 @@
 			};
 			name = Release;
 		};
+		8BF1ABEF8FE1407BD3BF3BCC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Placeholder Scenarios";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleScenarios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B8B61C18F91C3D23802DF6B9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Placeholder Scenarios";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleScenarios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DBDC17DA97A24CCF35EB7F7 /* Build configuration list for PBXProject "Example-Scenarios" */ = {
+		48FD634C25576A2D8ADEDFF3 /* Build configuration list for PBXNativeTarget "ExampleScenarios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				640854F1FD51E25655EEF666 /* Debug */,
-				ACDE918D49FB30897619225B /* Release */,
+				B8B61C18F91C3D23802DF6B9 /* Release */,
+				8BF1ABEF8FE1407BD3BF3BCC /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D9DA5DC4DF53132382904812 /* Build configuration list for PBXNativeTarget "ExampleScenarios" */ = {
+		B3103B0B8B4E00F3F8FDDC2B /* Build configuration list for PBXProject "Example-Scenarios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6F1618A8C4B709F9A1F3F40D /* Release */,
-				39F714D79044CA4C812A3E4E /* Debug */,
+				007D03709C8A85026C9AD380 /* Debug */,
+				01386527F4B8FDE5F81AB117 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 2AED0EFA5E18967315D6FF4A /* Project object */;
+	rootObject = 9CAEB5969737A4F1C24565BB /* Project object */;
 }

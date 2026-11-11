@@ -436,6 +436,8 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
 + (instancetype)separatorComponentWithText:(NSString *)text {
     CYLPlaceholderComponent *component = [self componentWithAttributes:@{
         CYLPlaceholderItemTitle: [NSString stringWithFormat:@"———   %@   ———", text ?: @""],
+        // [EN] VoiceOver reads the word ("or"), not the dashes. [CN] VoiceOver 只朗读文字（如“或”），不朗读横线。
+        CYLPlaceholderItemAccessibilityLabel: text ?: @"",
         CYLPlaceholderItemTitleColor: CYLScenarioSecondaryTextColor(),
         CYLPlaceholderItemTitleFont: [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote],
     } action:nil];

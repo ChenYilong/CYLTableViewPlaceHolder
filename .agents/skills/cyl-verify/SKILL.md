@@ -41,7 +41,12 @@ Run `python3 scripts/update-docs-navigation.py --check` after any change to `REA
 `--check` to regenerate), and lint the Markdown with `.markdownlint.json`.
 Run `python3 scripts/check_localizations.py` after any localization change, and confirm
 the project still defines at least two different lookup macros (the core's and an
-example's), each reading its own bundle (`instructions.md`, "Lookup macros").
+example's), each reading its own bundle (`instructions.md`, "Lookup macros"), and that resources are read the
+same way (`CYLPlaceholderResourceURL` for the core, each example's own lookup).
+Check accessibility for every changed control and text (`instructions.md`, "Accessibility"): unit tests for labels,
+traits, hidden decorations and the not-enabled state; UI tests find elements by label or identifier; then follow the
+`accessibility-audit` skill (VoiceOver, Dynamic Type at the largest sizes, Reduce Motion) on a simulator. Compilation
+does not verify accessibility.
 Confirm `CYLTableViewPlaceHolder.bundle` (all images and both strings tables), privacy manifest and license
 are included in the applicable built product. A successful build alone does not
 verify on-screen behavior. Every CI build must also provide a screenshot of each

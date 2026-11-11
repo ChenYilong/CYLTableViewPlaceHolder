@@ -88,10 +88,10 @@ final class CYLScenarioDetailViewController: UITableViewController {
                 UIApplication.shared.open(url)
             },
             .goShopping: { [weak self] _, _ in
-                self?.showFeedback(CYLScenarioLocalizedString(.feedbackGoShopping))
+                self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackGoShopping))
             },
             .chooseManually: { [weak self] _, _ in
-                self?.showFeedback(CYLScenarioLocalizedString(.feedbackChooseManually))
+                self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackChooseManually))
             },
             .done: { [weak self] _, _ in self?.navigationController?.popViewController(animated: true) },
         ])
@@ -105,7 +105,7 @@ final class CYLScenarioDetailViewController: UITableViewController {
             self.isLoading = false
             self.rows = 12
             self.tableView.reloadData()
-            self.showFeedback(CYLScenarioLocalizedString(.feedbackRetry))
+            self.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackRetry))
         }
     }
 
@@ -115,13 +115,6 @@ final class CYLScenarioDetailViewController: UITableViewController {
         tableView.reloadData()
     }
 
-    private func showFeedback(_ message: String) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak alert] in
-            alert?.dismiss(animated: true)
-        }
-    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         rows

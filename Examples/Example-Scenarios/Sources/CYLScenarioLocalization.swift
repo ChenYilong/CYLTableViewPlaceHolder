@@ -11,6 +11,10 @@
 //
 //  Both follow `CYLPlaceholderLocalization.effectiveLanguage`, so the language button switches both at once.
 //
+//  Resources follow the same split: the core's `CYLPlaceholderResourceURL(path)` (Swift:
+//  `CYLPlaceholderResourceURLForPath(_:)`) reads only the core bundle; `CYLScenarioExampleResourceURL(_:)` below reads
+//  only CYLScenarioExample.bundle (configuration files, the example's own animations).
+//
 
 import Foundation
 import CYLTableViewPlaceHolder
@@ -23,6 +27,19 @@ func CYLScenarioLocalizedString(_ key: CYLScenarioL10n) -> String {
 /// A format string of the example table, filled with `arguments`.
 func CYLScenarioLocalizedFormat(_ key: CYLScenarioL10n, _ arguments: CVarArg...) -> String {
     String(format: CYLScenarioLocalizedString(key), arguments: arguments)
+}
+
+/// The example's own resource bundle, CYLScenarioExample.bundle; nil, with a log, when it is missing.
+func CYLScenarioExampleBundle() -> Bundle? {
+    CYLScenarioLocalizationBundle.container
+}
+
+/// A file or folder of the example bundle by its path inside it, such as "Configurations" or
+/// "Animations/CYLScenarioExampleMascot.riv"; nil when it does not exist.
+func CYLScenarioExampleResourceURL(_ path: String) -> URL? {
+    guard let bundle = CYLScenarioExampleBundle(), !path.hasPrefix("/"), !path.contains("..") else { return nil }
+    let url = bundle.bundleURL.appendingPathComponent(path)
+    return FileManager.default.fileExists(atPath: url.path) ? url : nil
 }
 
 /// Every key of CYLScenarioExample.strings, so code, keys and translations map in one place.
@@ -84,7 +101,7 @@ enum CYLScenarioL10n: String, CaseIterable {
 private enum CYLScenarioLocalizationBundle {
     static let table = "CYLScenarioExample"
 
-    private static let container: Bundle? = {
+    static let container: Bundle? = {
         guard let url = Bundle.main.url(forResource: table, withExtension: "bundle") else {
             NSLog("Example-Scenarios: %@.bundle is missing from the app.", table)
             return nil
