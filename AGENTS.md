@@ -207,9 +207,13 @@ the integrated `CYLRefresh` component, and an example application. Read
   work is written, without asking the user first. Still follow the commit
   readiness rules above. On `master` or `main`, do not commit or push unless
   the user asks.
+- Every time you create a branch, open a pull request for it right away, without
+  asking (`instructions.md`, "A pull request for every new branch"). The base is
+  the branch it was created from, first; `main` or `master` only when that is the
+  source branch or the source branch is gone. Pass `--base` explicitly.
 - Commit through a branch and a pull request by default, so CI runs
   (`docs/CI-CD.md`): branch from `master`, `mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`,
-  commit, push the branch, and open a pull request against `master`. Do not
+  commit, push the branch, and open a pull request against its source branch (here `master`). Do not
   commit directly to `master` unless the user asks. Do not merge a pull request
   without the user's approval, and not before the `iOS` workflow is green.
 - Follow the current task's instructions for commits, branches, and pull

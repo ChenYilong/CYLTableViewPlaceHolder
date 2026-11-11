@@ -7,6 +7,15 @@ description: Build and test the placeholder library, refresh component, resource
 
 Use the smallest relevant test set and state any unverified behavior.
 
+New branch: open its pull request right away, without asking, with the source branch as the base (`main` or
+`master` only when that is the source, or the source is gone); see `instructions.md`, "A pull request for every new
+branch":
+
+```sh
+git push -u origin <new-branch>
+gh pr create --base <source-branch> --head <new-branch> --fill
+```
+
 Image audit (every change to the core or the examples): search for image-setting code and check each hit uses
 `CYLPlaceholderView`'s image API, or carries a comment that says why it uses a system `UIImage` / `UIImageView`
 instead (`instructions.md`, "Reuse CYLPlaceholderView in the core"):

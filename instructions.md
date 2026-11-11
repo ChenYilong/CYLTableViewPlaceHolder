@@ -878,3 +878,14 @@ On any branch other than `master` or `main`, commit and push as soon as the
 work is written, without asking for confirmation. Follow the commit readiness
 and Commitizen rules above. On `master` or `main`, commit or push only when the
 user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
+
+### A pull request for every new branch
+
+- Every time you create a branch, open a pull request for it right away, without asking: push the branch and run
+  `gh pr create` in the same step. Do not wait for the work to be finished; a draft-quality pull request is fine and
+  later commits update it.
+- Target branch: the branch the new branch was created from (its source branch) comes first. Use `main` or `master`
+  only when the source branch is `main` or `master` itself, or when the source branch no longer exists on the remote.
+  Pass it explicitly (`gh pr create --base <source branch>`); never rely on the repository's default.
+- Write the source branch into the pull request description, so a reviewer knows where it will merge.
+- Still do not merge the pull request without the user's approval.
