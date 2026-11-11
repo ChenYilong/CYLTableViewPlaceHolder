@@ -1029,6 +1029,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         // The caller replaced the value while the badge was shown: keep theirs.
         self.accessibilityValueBeforeBadge = self.accessibilityValue;
     }
+    BOOL showsChange = (_badgeValue == nil) != (badgeValue == nil);
     _badgeValue = [badgeValue copy];
 
     // State changes are synchronous; only the pop below is animated.
@@ -1065,6 +1066,14 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.accessibilityValueBeforeBadge = nil;
     }
     [self.itemView setNeedsLayout];
+    if (showsChange) {
+        // [EN] A badge that appears or disappears changes the accessibility tree: tell assistive technologies, or a
+        //      cached tree (inside a semantic-group container, for example) keeps reading the old badge.
+        //      nil keeps VoiceOver's focus where it is.
+        // [CN] 角标出现或消失会改变无障碍树：通知辅助技术，否则缓存的树（例如语义分组容器中）会继续朗读旧角标。
+        //      参数为 nil，VoiceOver 焦点保持不动。
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
+    }
     if (animate) {
         self.badgeLabel.transform = CGAffineTransformMakeScale(0.6, 0.6);
         self.badgeLabel.alpha = 0.5;
