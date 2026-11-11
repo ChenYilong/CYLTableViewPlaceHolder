@@ -4,6 +4,29 @@ This repository contains an Objective-C table-view placeholder library, an
 integrated refresh component, and an iOS example. It inherits the vault's root
 instructions. Read `AGENTS.md` before changing the project.
 
+## Record every task in docs before starting it
+
+Before starting any task, write it down in `docs/`, so an interrupted task never loses its context: the next session
+(or another agent) finds what was asked, why, and how far it got.
+
+1. **Find the fitting document** in `docs/` (the feature's document, `issue-progress.md` for an issue,
+   `Refresh-Icon-Animation.md` for refresh icons, and so on). When no document fits (process, instruction or
+   tooling tasks), use `docs/Task-Log.md`.
+2. **Record the task as a TODO** there before any other change: a `TODO` heading or table row with
+   - the date and the branch;
+   - the user's original prompt, verbatim (keep the user's language);
+   - the user's requirements, one by one;
+   - the detailed context: related files, commits, decisions already made, what is known and what is not yet
+     verified.
+3. **Commit and push that TODO right away** (on a branch other than `main` or `master`), before the work itself, so
+   it survives an interrupted session.
+4. **Do the task.** Add progress notes to the same entry when a step finishes or the plan changes.
+5. **When the task ends, mark the TODO done** in the same entry: change `TODO` to done (`已完成 / Done`) with the
+   date, the commits and the verification (tests, screenshots). Keep the entry; do not delete it. A task that ends
+   unfinished stays `TODO`, with what remains.
+
+Follow the bilingual documentation rules for the entry; the user's prompt is quoted as written.
+
 ## English naming rules
 
 - Write repository instructions, skill instructions, and new identifier names in English.

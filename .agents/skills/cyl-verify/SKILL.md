@@ -7,6 +7,9 @@ description: Build and test the placeholder library, refresh component, resource
 
 Use the smallest relevant test set and state any unverified behavior.
 
+Before verifying, the task must already have its `TODO` entry in `docs/` (`instructions.md`, "Record every task in
+docs before starting it"); after verifying, write the results into that entry and mark it done.
+
 New branch: open its pull request right away, without asking, with the source branch as the base (`main` or
 `master` only when that is the source, or the source is gone); see `instructions.md`, "A pull request for every new
 branch":

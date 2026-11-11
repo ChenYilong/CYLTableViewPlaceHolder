@@ -4,6 +4,14 @@ This repository contains an Objective-C iOS table-view placeholder library,
 the integrated `CYLRefresh` component, and an example application. Read
 `instructions.md` and the relevant project skill before changing code.
 
+## Record every task in docs first
+
+- Before starting any task, record it as a `TODO` in the fitting document in `docs/` (`docs/Task-Log.md` when none
+  fits): date, branch, the user's original prompt verbatim, the user's requirements and the detailed context. Commit
+  and push that entry before the work, so an interrupted task keeps its context. When the task ends, mark the entry
+  done with the commits and the verification; keep it. See `instructions.md`, "Record every task in docs before
+  starting it".
+
 ## Source of truth
 
 - Public headers under `CYLTableViewPlaceHolder/` define the current API.

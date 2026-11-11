@@ -5,6 +5,11 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 
 # Documentation
 
+**Every task starts in `docs/`.** Before any change, record the task as a `TODO` in the fitting document
+(`docs/Task-Log.md` when none fits) with the date, the branch, the user's original prompt verbatim, the user's
+requirements and the detailed context; commit and push it first. Mark it done (`已完成 / Done`, date, commits,
+verification) when the task ends. See `instructions.md`, "Record every task in docs before starting it".
+
 `README.md` and every document in `docs/` are bilingual, following CYLTabBarController's
 `docs/Bilingual-Documentation.md`. The full rules are "Bilingual documentation (Chinese and English)" in
 `instructions.md`; the working summary:
