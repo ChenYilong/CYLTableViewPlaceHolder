@@ -32,7 +32,8 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 - **Public API comments:** every public declaration has a documentation comment directly above it; several lines
   are one block, `/*! … */` in Objective-C headers and `/** … */` in Swift, never stacked `///`; a single-line comment
   is the same three-line block (`/*!`, ` * text`, ` */`), never `/*! text */` on one line or a trailing `///<` /
-  `/*!< */` / `//` after a declaration; each public file has one format, on every platform and language
+  `/*!< */` / `//` after a declaration; each public file has one format, on every platform and language, and
+  each language's official documentation rules win where they differ (Go `//`, Rust `///`, C# `///`, Python PEP 257)
   (`instructions.md`, "Code conventions"). Run `python3 scripts/check_doc_comments.py`.
 - **Every commit message** ends its body with the line `By @ChenYilong <luohanchenyilong@163.com>`
   (before trailers, exactly once; `instructions.md`, "Author line in every commit message").

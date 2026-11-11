@@ -41,7 +41,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   declaration or enum value. Each public file uses one comment format for short and long comments. Every platform and
   language uses its documentation tool's block form the same way: `/** */` for Kotlin, Java, TypeScript, JavaScript,
   Rust and C# (with XML tags), a triple-quoted docstring on its own lines for Python, `/* */` for Go; a language
-  without a block form (Dart) uses its only documentation form throughout the file.
+  without a block form (Dart) uses its only documentation form throughout the file. **The official rules decide**:
+  where an item differs from a language's official documentation rules, the official rule wins (Go `//` doc comments
+  per go.dev/doc/comment, Rust `///` per the Rust Style Guide, C# `///` with XML tags per Microsoft Learn, Python
+  docstrings per PEP 257; Objective-C, Swift, Kotlin, Java, TypeScript, JavaScript and Dart agree with the rule). See
+  the table in `instructions.md`, "Documentation comments on public API".
   `scripts/check_doc_comments.py` checks it in CI.
 
 ## Project and verification

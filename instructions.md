@@ -71,8 +71,24 @@ spans several lines must reach them as one comment.
   - C#: `/** … */` with XML documentation tags (`<summary>`, `<param>`, `<returns>`).
   - Rust: `/** … */`.
   - C / C++: Doxygen `/** … */` or `/*! … */`, one of them per file.
-  - A language without a block form for documentation (Dart, whose only form is `///`) uses its single documentation
-    form throughout the file.
+  - A language without a block form for documentation uses its single documentation form throughout the file.
+- **The official rules decide.** Every comment format follows the official documentation rules of its language;
+  where an item above differs from them, the official rule wins, and the file still uses one format throughout.
+  Checked against the official sources (2026-11-11):
+
+  | Language | Official source | What it says | Format used |
+  | --- | --- | --- | --- |
+  | Objective-C | Clang documentation comments, Apple HeaderDoc | `/*! */`, `/** */` and `///` are all documentation comments | the three-line `/*!` block (no conflict) |
+  | Swift | DocC, "Writing symbol documentation in your source files" | `///` or a block starting with `/**` and ending with `*/` | the three-line `/**` block (no conflict) |
+  | Kotlin, Java | KDoc, Javadoc | comments start with `/**` and end with `*/` | the three-line `/**` block (no conflict) |
+  | TypeScript, JavaScript | TSDoc, JSDoc | `/** */` | the three-line `/**` block (no conflict) |
+  | Dart | Effective Dart, "DON'T use block comments for documentation" | `///`, never `/** */` | `///` throughout the file |
+  | Go | go.dev/doc/comment | doc comments are the `//` comments right before a declaration; `/* */` appears only for long package or command comments; short end-of-line comments may document struct fields and grouped constants | `//` doc comments as the page shows |
+  | Rust | Rust Style Guide, "Doc comments" | "Prefer line comments (`///`) to block comments (`/** ... */`)"; outer `///`, inner `//!` only for modules and crates | `///` throughout the file |
+  | C# | Microsoft Learn, "XML documentation comments" | the `///` delimiter is what the documentation and the project templates use; `/** */` is also accepted | `///` with XML tags throughout the file |
+  | Python | PEP 257 | a one-line docstring keeps the closing quotes on the same line as the opening ones; in a multi-line docstring the summary may sit on the opening line and the closing quotes go on a line of their own | PEP 257 docstrings |
+
+  When a platform's official rule changes, update this table and follow it.
 - **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a one-line
   block, an opening marker with text after it, a line inside a block that does not start with `*`, a trailing comment
   after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review
