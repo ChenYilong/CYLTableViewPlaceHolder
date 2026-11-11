@@ -18,6 +18,7 @@
 		578333D417A39E43D3C7692A /* CYLScenarioTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */; };
 		7538D35FA21DDBD53A000917 /* CYLScenarioExample.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8479F51753F34B13BCFB2EBD /* CYLScenarioExample.bundle */; };
 		81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */; };
+		4C7F7F2D8F9D079A07C5B3AF /* CYLHUDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3F5991C8A84CF73BE6C377 /* CYLHUDViewController.swift */; };
 		FC5CBB7EAF462C5CD6BF58AD /* CYLRefreshExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85CCC1B51A41D3CE36A524 /* CYLRefreshExampleViewController.swift */; };
 		1651E134D9BD7EC69A6275BB /* CYLRefreshTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623D7D8C1C3530FC88F60EF /* CYLRefreshTableViewController.swift */; };
 		A8CEBA6497955B412C75D526 /* CYLRefreshCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F29ACD8CBF66125D7275B22 /* CYLRefreshCollectionViewController.swift */; };
@@ -46,6 +47,7 @@
 		825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLConfigurationViewController.swift; sourceTree = "<group>"; };
 		8479F51753F34B13BCFB2EBD /* CYLScenarioExample.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; path = CYLScenarioExample.bundle; sourceTree = "<group>"; };
 		A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFeedViewController.swift; sourceTree = "<group>"; };
+		2F3F5991C8A84CF73BE6C377 /* CYLHUDViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLHUDViewController.swift; sourceTree = "<group>"; };
 		0A85CCC1B51A41D3CE36A524 /* CYLRefreshExampleViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshExampleViewController.swift; sourceTree = "<group>"; };
 		2623D7D8C1C3530FC88F60EF /* CYLRefreshTableViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshTableViewController.swift; sourceTree = "<group>"; };
 		1F29ACD8CBF66125D7275B22 /* CYLRefreshCollectionViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshCollectionViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */,
 				825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */,
 				A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */,
+				2F3F5991C8A84CF73BE6C377 /* CYLHUDViewController.swift */,
 				0A85CCC1B51A41D3CE36A524 /* CYLRefreshExampleViewController.swift */,
 				2623D7D8C1C3530FC88F60EF /* CYLRefreshTableViewController.swift */,
 				1F29ACD8CBF66125D7275B22 /* CYLRefreshCollectionViewController.swift */,
@@ -201,6 +204,7 @@
 				AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */,
 				1E4EDAF863C06F44FA7260F2 /* CYLConfigurationViewController.swift in Sources */,
 				81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */,
+				4C7F7F2D8F9D079A07C5B3AF /* CYLHUDViewController.swift in Sources */,
 				FC5CBB7EAF462C5CD6BF58AD /* CYLRefreshExampleViewController.swift in Sources */,
 				1651E134D9BD7EC69A6275BB /* CYLRefreshTableViewController.swift in Sources */,
 				A8CEBA6497955B412C75D526 /* CYLRefreshCollectionViewController.swift in Sources */,

@@ -159,6 +159,13 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
      * Success animation, title and a "Done" button.
      */
     CYLPlaceholderScenarioSuccess,
+    /*!
+     * [EN] The HUD style: a looping refresh animation and "Loading…", for a page that is loading. `CYLPlaceholderHUD`
+     *      shows it in a box over the screen with SVProgressHUD's API (progress, success, error, dismiss).
+     * [CN] HUD 样式：循环播放的刷新动画与“加载中…”，用于正在加载的页面。`CYLPlaceholderHUD` 以 SVProgressHUD 的接口把它显示在
+     *      页面上方的方框中（进度、成功、错误、关闭）。
+     */
+    CYLPlaceholderScenarioHUD,
     CYLPlaceholderScenarioCount
 };
 

@@ -41,6 +41,7 @@
 "CYLPlaceholderScenarioLoadingName" = "로딩 중";
 "CYLPlaceholderScenarioUploadingName" = "업로드 중";
 "CYLPlaceholderScenarioSuccessName" = "성공";
+"CYLPlaceholderScenarioHUDName" = "로딩 HUD";
 "CYLPlaceholderScenarioNetworkUnavailableTitle" = "네트워크가 불안정한 것 같아요. 연결을 확인한 뒤 다시 시도해 주세요.";
 "CYLPlaceholderScenarioNoContentTitle" = "아직 내용이 없어요";
 "CYLPlaceholderScenarioTapToReloadTitle" = "네트워크에 연결할 수 없어요. 화면을 탭해 새로고침하세요.";
@@ -79,6 +80,7 @@
 "CYLPlaceholderScenarioLoadingTitle" = "불러오는 중…";
 "CYLPlaceholderScenarioUploadingTitle" = "업로드 중…";
 "CYLPlaceholderScenarioSuccessTitle" = "제출했어요";
+"CYLPlaceholderScenarioHUDTitle" = "불러오는 중…";
 "CYLPlaceholderActionChooseManuallyTitle" = "직접 선택";
 "CYLPlaceholderScenarioChooseAddressTitle" = "주소 직접 선택";
 "CYLPlaceholderScenarioLocationPermissionDeniedName" = "위치 권한 없음";

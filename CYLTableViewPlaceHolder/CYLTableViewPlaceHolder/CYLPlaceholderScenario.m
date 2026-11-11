@@ -515,6 +515,7 @@ static NSArray<NSArray<NSString *> *> *CYLScenarioNameEntries(void) {
             @[@"CYLPlaceholderScenarioLoadingName", @"Loading"],
             @[@"CYLPlaceholderScenarioUploadingName", @"Uploading"],
             @[@"CYLPlaceholderScenarioSuccessName", @"Success"],
+            @[@"CYLPlaceholderScenarioHUDName", @"HUD"],
         ];
     });
     return names;
@@ -638,6 +639,9 @@ static NSArray<NSArray<NSString *> *> *CYLScenarioNameEntries(void) {
                                                 @"CYLPlaceholderLoadingInfinity.json", @"CYLPlaceholderProgress.pag"],
             @(CYLPlaceholderScenarioUploading): @[@"CYLPlaceholderProgress.pag"],
             @(CYLPlaceholderScenarioSuccess): @[@"CYLPlaceholderSuccess.json", @"CYLPlaceholderCelebrate.json"],
+            // [EN] The refresh animations that suit a loading HUD, in every format. [CN] 适合加载 HUD 的刷新动画，覆盖所有格式。
+            @(CYLPlaceholderScenarioHUD): @[@"CYLRefreshMaterialSpinner.json", @"CYLRefreshGradientSpinner.json",
+                                            @"CYLRefreshRing.gif", @"CYLPlaceholderProgress.pag", @"CYLRefreshIcon.riv"],
         };
     });
     NSMutableArray<NSString *> *names = [NSMutableArray array];
@@ -666,6 +670,7 @@ static NSArray<NSArray<NSString *> *> *CYLScenarioNameEntries(void) {
             return CYLPlaceholderScenarioCategoryEmpty;
         case CYLPlaceholderScenarioLoading:
         case CYLPlaceholderScenarioUploading:
+        case CYLPlaceholderScenarioHUD:
             return CYLPlaceholderScenarioCategoryProgress;
         case CYLPlaceholderScenarioSuccess:
             return CYLPlaceholderScenarioCategorySuccess;
@@ -909,6 +914,11 @@ static NSArray<CYLPlaceholderComponent *> *CYLScenarioPermissionComponents(NSStr
             return @[CYLScenarioIcon(@"CYLPlaceholderSuccess.riv", CYLPlaceholderStyleInfo,
                          CYLScenarioText(@"CYLPlaceholderScenarioSuccessTitle", @"Submitted"), art),
                      CYLScenarioButton(CYLPlaceholderActionDone, CYLPlaceholderButtonStyleFilled)];
+        case CYLPlaceholderScenarioHUD:
+            // [EN] A refresh-bundle spinner that Core plays (GIF), looping like every scenario icon.
+            // [CN] Core 即可播放的刷新资源加载圈（GIF），与所有场景图标一样循环播放。
+            return @[CYLScenarioIcon(@"CYLRefreshActivity.gif", CYLPlaceholderStyleHourglass,
+                CYLScenarioText(@"CYLPlaceholderScenarioHUDTitle", @"Loading…"), 56)];
         case CYLPlaceholderScenarioCount:
         default:
             return @[];

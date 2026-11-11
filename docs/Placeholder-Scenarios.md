@@ -42,7 +42,7 @@
 
 | 中文 | English |
 | --- | --- |
-| 共 35 个场景。README 的 43 张截图归纳为 15 个场景（14 种结构 + 截图 #20 的定位权限缺失），每张截图恰好对应一个场景（`Tests/CYLPlaceholderScenarioTests.m` 检查）；其余 20 个是常见业务场景，其中 8 个是权限缺失。35 个场景中 34 个使用内置动画（`TextOnly` 没有图标）。下表按枚举顺序排列。 | 35 scenarios in all. The README's 43 screenshots are distilled into 15 scenarios (14 structures plus the missing location permission of screenshot #20), each screenshot mapping to exactly one scenario (checked by `Tests/CYLPlaceholderScenarioTests.m`); the other 20 are common business cases, 8 of them missing permissions. 34 of the 35 scenarios use a built-in animation (`TextOnly` has no icon). The tables follow the enum order. |
+| 共 36 个场景（含新增的 HUD 场景 `CYLPlaceholderScenarioHUD`，见 [Placeholder-HUD.md](Placeholder-HUD.md)）。README 的 43 张截图归纳为 15 个场景（14 种结构 + 截图 #20 的定位权限缺失），每张截图恰好对应一个场景（`Tests/CYLPlaceholderScenarioTests.m` 检查）；其余 20 个是常见业务场景，其中 8 个是权限缺失。35 个场景中 34 个使用内置动画（`TextOnly` 没有图标）。下表按枚举顺序排列。 | 36 scenarios in all (including the new HUD scenario `CYLPlaceholderScenarioHUD`, see [Placeholder-HUD.md](Placeholder-HUD.md)). The README's 43 screenshots are distilled into 15 scenarios (14 structures plus the missing location permission of screenshot #20), each screenshot mapping to exactly one scenario (checked by `Tests/CYLPlaceholderScenarioTests.m`); the other 20 are common business cases, 8 of them missing permissions. 34 of the 35 scenarios use a built-in animation (`TextOnly` has no icon). The tables follow the enum order. |
 
 | 场景（Objective-C / Swift） | 组件 | README 截图 |
 | --- | --- | --- |
@@ -80,6 +80,7 @@
 | `CYLPlaceholderScenarioLoading` / `.loading` | 加载动画加标题 | — |
 | `CYLPlaceholderScenarioUploading` / `.uploading` | 上传动画（GIF）加标题 | — |
 | `CYLPlaceholderScenarioSuccess` / `.success` | 成功动画、标题加“完成”按钮 | — |
+| `CYLPlaceholderScenarioHUD` / `.hud` | HUD 样式：循环播放的刷新加载圈（`CYLRefreshActivity.gif`）加“加载中…”；`CYLPlaceholderHUD` 把它显示在页面上方的方框中，见 [Placeholder-HUD.md](Placeholder-HUD.md) | — |
 
 | Scenario (Objective-C / Swift) | Components | README screenshots |
 | --- | --- | --- |
@@ -117,6 +118,7 @@
 | `CYLPlaceholderScenarioLoading` / `.loading` | Loading animation and title | — |
 | `CYLPlaceholderScenarioUploading` / `.uploading` | Uploading animation (GIF) and title | — |
 | `CYLPlaceholderScenarioSuccess` / `.success` | Success animation, title and a "Done" button | — |
+| `CYLPlaceholderScenarioHUD` / `.hud` | The HUD style: a looping refresh spinner (`CYLRefreshActivity.gif`) and "Loading…"; `CYLPlaceholderHUD` shows it in a box over the page, see [Placeholder-HUD.md](Placeholder-HUD.md) | — |
 
 ## 权限缺失与场景类别 / Missing permissions and scenario categories
 

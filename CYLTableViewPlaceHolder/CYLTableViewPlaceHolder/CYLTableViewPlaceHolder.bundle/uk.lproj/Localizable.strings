@@ -41,6 +41,7 @@
 "CYLPlaceholderScenarioLoadingName" = "Завантаження";
 "CYLPlaceholderScenarioUploadingName" = "Вивантаження";
 "CYLPlaceholderScenarioSuccessName" = "Успіх";
+"CYLPlaceholderScenarioHUDName" = "HUD завантаження";
 "CYLPlaceholderScenarioNetworkUnavailableTitle" = "Схоже, мережа працює повільно. Перевірте з'єднання і спробуйте ще раз.";
 "CYLPlaceholderScenarioNoContentTitle" = "Тут поки порожньо";
 "CYLPlaceholderScenarioTapToReloadTitle" = "Мережа недоступна. Торкніться екрана, щоб оновити.";
@@ -79,6 +80,7 @@
 "CYLPlaceholderScenarioLoadingTitle" = "Завантаження…";
 "CYLPlaceholderScenarioUploadingTitle" = "Вивантаження…";
 "CYLPlaceholderScenarioSuccessTitle" = "Надіслано";
+"CYLPlaceholderScenarioHUDTitle" = "Завантаження…";
 "CYLPlaceholderActionChooseManuallyTitle" = "Вибрати вручну";
 "CYLPlaceholderScenarioChooseAddressTitle" = "Вибрати адресу вручну";
 "CYLPlaceholderScenarioLocationPermissionDeniedName" = "Немає доступу до геолокації";

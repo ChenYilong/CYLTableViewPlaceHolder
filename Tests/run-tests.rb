@@ -24,7 +24,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Werror=unguarded-availability-new'
   end
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
-   'Tests/CYLRefreshIconTests.m', 'Tests/CYLPlaceholderStatusViewTests.m',
+   'Tests/CYLRefreshIconTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
@@ -32,6 +32,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))

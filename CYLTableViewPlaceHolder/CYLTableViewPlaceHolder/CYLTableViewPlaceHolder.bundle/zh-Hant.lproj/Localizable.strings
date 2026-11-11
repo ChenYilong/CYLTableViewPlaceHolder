@@ -41,6 +41,7 @@
 "CYLPlaceholderScenarioLoadingName" = "載入中";
 "CYLPlaceholderScenarioUploadingName" = "上傳中";
 "CYLPlaceholderScenarioSuccessName" = "成功";
+"CYLPlaceholderScenarioHUDName" = "載入提示框（HUD）";
 "CYLPlaceholderScenarioNetworkUnavailableTitle" = "網路好像不太給力哦，檢查一下網路再試吧！";
 "CYLPlaceholderScenarioNoContentTitle" = "暫無內容";
 "CYLPlaceholderScenarioTapToReloadTitle" = "網路不給力，點擊螢幕重新載入";
@@ -79,6 +80,7 @@
 "CYLPlaceholderScenarioLoadingTitle" = "正在載入中…";
 "CYLPlaceholderScenarioUploadingTitle" = "正在上傳…";
 "CYLPlaceholderScenarioSuccessTitle" = "提交成功";
+"CYLPlaceholderScenarioHUDTitle" = "載入中…";
 "CYLPlaceholderActionChooseManuallyTitle" = "手動選擇";
 "CYLPlaceholderScenarioChooseAddressTitle" = "手動選擇地址";
 "CYLPlaceholderScenarioLocationPermissionDeniedName" = "定位權限未開啟";

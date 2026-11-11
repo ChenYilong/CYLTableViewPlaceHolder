@@ -82,3 +82,9 @@ underscore-free sibling (see the rule in `instructions.md`).
 
 Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C
 examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods).
+
+The HUD (`CYLPlaceholderHUD`, `docs/Placeholder-HUD.md`) adds these spellings, pending CI: `CYLPlaceholderHUD.shared`,
+`CYLPlaceholderHUD(containerView:)`, `show()`, `show(status:)`, `show(progress:status:)`, `setStatus(_:)`,
+`showSuccess(status:)`, `showError(status:)`, `showInfo(status:)`, `show(image:status:)`, `show(components:actions:)`,
+`show(scenario:actions:)`, `popActivity()`, `dismiss(withDelay:)`, `isHapticsEnabled`, the scenario `.hud`, and
+`CYLPlaceholderScenarioCatalog.animationFileNames(for:)` / `components(for:)`.

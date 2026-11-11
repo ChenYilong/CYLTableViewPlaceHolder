@@ -89,7 +89,7 @@ final class CYLFlowListViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -97,11 +97,28 @@ final class CYLFlowListViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        section == 0 ? nil : CYLScenarioLocalizedString(.sectionStatusBar)
+        switch section {
+        case 1: return CYLScenarioLocalizedString(.sectionStatusBar)
+        case 2: return CYLScenarioLocalizedString(.sectionHUD)
+        default: return nil
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "flow", for: indexPath)
+        if indexPath.section == 2 {
+            // The HUD style: the page's loading progress, with SVProgressHUD's API.
+            var content = UIListContentConfiguration.subtitleCell()
+            content.text = CYLScenarioLocalizedString(.titleHUD)
+            content.secondaryText = "CYLPlaceholderHUD · .hud"
+            content.secondaryTextProperties.color = .secondaryLabel
+            content.image = UIImage(systemName: "hourglass")
+            content.imageProperties.tintColor = .systemTeal
+            cell.contentConfiguration = content
+            cell.accessoryType = .disclosureIndicator
+            cell.accessibilityIdentifier = "hudFlow"
+            return cell
+        }
         if indexPath.section == 1 {
             // The red bar ported from CYLChatKit, alone or with a placeholder.
             var content = UIListContentConfiguration.subtitleCell()
@@ -129,6 +146,10 @@ final class CYLFlowListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 2 {
+            navigationController?.pushViewController(CYLHUDViewController(), animated: true)
+            return
+        }
         if indexPath.section == 1 {
             navigationController?.pushViewController(CYLStatusBarViewController(), animated: true)
             return

@@ -41,6 +41,7 @@
 "CYLPlaceholderScenarioLoadingName" = "Loading";
 "CYLPlaceholderScenarioUploadingName" = "Uploading";
 "CYLPlaceholderScenarioSuccessName" = "Success";
+"CYLPlaceholderScenarioHUDName" = "HUD";
 "CYLPlaceholderScenarioNetworkUnavailableTitle" = "The network seems slow. Check your connection and try again.";
 "CYLPlaceholderScenarioNoContentTitle" = "Nothing here yet";
 "CYLPlaceholderScenarioTapToReloadTitle" = "Network unavailable. Tap the screen to reload.";
@@ -79,6 +80,7 @@
 "CYLPlaceholderScenarioLoadingTitle" = "Loading…";
 "CYLPlaceholderScenarioUploadingTitle" = "Uploading…";
 "CYLPlaceholderScenarioSuccessTitle" = "Submitted";
+"CYLPlaceholderScenarioHUDTitle" = "Loading…";
 "CYLPlaceholderActionChooseManuallyTitle" = "Choose manually";
 "CYLPlaceholderScenarioChooseAddressTitle" = "Choose an address manually";
 "CYLPlaceholderScenarioLocationPermissionDeniedName" = "Location permission denied";

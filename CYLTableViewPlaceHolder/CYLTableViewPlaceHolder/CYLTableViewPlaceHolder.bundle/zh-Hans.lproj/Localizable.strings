@@ -41,6 +41,7 @@
 "CYLPlaceholderScenarioLoadingName" = "加载中";
 "CYLPlaceholderScenarioUploadingName" = "上传中";
 "CYLPlaceholderScenarioSuccessName" = "成功";
+"CYLPlaceholderScenarioHUDName" = "加载提示框（HUD）";
 "CYLPlaceholderScenarioNetworkUnavailableTitle" = "网络好像不太给力哦，检查一下网络再试吧！";
 "CYLPlaceholderScenarioNoContentTitle" = "暂无内容";
 "CYLPlaceholderScenarioTapToReloadTitle" = "网络不给力，点击屏幕重新加载";
@@ -79,6 +80,7 @@
 "CYLPlaceholderScenarioLoadingTitle" = "正在加载中…";
 "CYLPlaceholderScenarioUploadingTitle" = "正在上传…";
 "CYLPlaceholderScenarioSuccessTitle" = "提交成功";
+"CYLPlaceholderScenarioHUDTitle" = "加载中…";
 "CYLPlaceholderActionChooseManuallyTitle" = "手动选择";
 "CYLPlaceholderScenarioChooseAddressTitle" = "手动选择地址";
 "CYLPlaceholderScenarioLocationPermissionDeniedName" = "定位权限未开启";
