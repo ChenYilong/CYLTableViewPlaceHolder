@@ -432,9 +432,12 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 | 中文 | English |
 | --- | --- |
-| 空闲时隐藏刷新头（`autoHideRefresh`，默认 YES，与 MJRefresh 不同）：iOS 26 起导航栏是透明的玻璃效果，收回后的刷新头正好在导航栏下方，会透过导航栏显示在标题上。刷新头在空闲且完全收回时被遮住，下拉、刷新中和收回动画期间照常显示；`hidden`、`alpha` 与 `automaticallyChangeAlpha` 不受影响。设为 NO 恢复 MJRefresh 的行为。下图从上到下：example01、04、11 刷新结束后的导航栏。 | Hidden while idle (`autoHideRefresh`, default YES, unlike MJRefresh): since iOS 26 the navigation bar is transparent glass, and a retracted header sits right under it, showing through over the title. The header is masked out while idle and fully retracted, and shows as usual while pulled, refreshing and retracting; `hidden`, `alpha` and `automaticallyChangeAlpha` are untouched. Set NO for MJRefresh's behavior. Below, top to bottom: the navigation bar of example01, 04 and 11 after the refresh ends. |
+| 刷新结束自动隐藏刷新头（`autoHideRefresh`）：iOS 26 起导航栏默认是透明的玻璃效果，收回后的刷新头正好在导航栏下方，会透过导航栏显示在标题上。开启后，刷新头只在有动作时显示（下拉、刷新中、刷新结束后的收回），刷新结束、空闲且完全收回后自动隐藏；`hidden`、`alpha` 与 `automaticallyChangeAlpha` 不受影响。在导航栏默认透明的系统上（iOS 26 及以后）默认开启，与 MJRefresh 不同；更早的系统默认关闭，需要时手动设为 YES。下图从上到下：example01、04、11 刷新结束后的导航栏。 | Auto-hide after refreshing (`autoHideRefresh`): since iOS 26 the navigation bar is transparent glass by default, and a retracted header sits right under it, showing through over the title. When on, the header shows only while an action is under way (pulling, refreshing, retracting after the refresh) and hides again once the refresh has ended and it is idle and fully retracted; `hidden`, `alpha` and `automaticallyChangeAlpha` are untouched. On by default where the navigation bar is transparent by default (iOS 26 and later), unlike MJRefresh; off by default on earlier systems, where you set it to YES yourself. Below, top to bottom: the navigation bar of example01, 04 and 11 after the refresh ends. |
 
 ```objc
+// [CN] iOS 26 之前的系统上手动开启：刷新结束后自动隐藏刷新头
+// [EN] Turn it on yourself before iOS 26: the header hides once the refresh ends
+self.tableView.cyl_header.autoHideRefresh = YES;
 // [CN] 恢复 MJRefresh 的行为：收回后的刷新头保持可见
 // [EN] MJRefresh's behavior: the retracted header stays visible
 self.tableView.cyl_header.autoHideRefresh = NO;
@@ -677,7 +680,11 @@ self.collectionView.cyl_trailer = [CYLRefreshNormalTrailer trailerWithRefreshing
 }];
 ```
 
-![左拉刷新：拉过最后一页时显示“松开查看”/ Pull left: “Release to see” past the last page](assets/cyl-refresh-example42.png)
+| 中文 | English |
+| --- | --- |
+| 状态文字是箭头右侧的竖列，任何语言都完整、可读：中日韩文字放得下时与 MJRefresh 一样逐字竖排、保持正立；英文、俄文等文字（或放不下的中日韩文字）顺时针旋转 90° 从上往下读，过长时换行而不是截断（MJRefresh 一个字宽的竖列会把英文单词逐字母拆开并截断）。自定义 trailer 可调用 `-cyl_placeStateLabelAtCenterX:` 使用同样的排版。下图：拉过最后一页时显示完整的 “Release to see details”。 | The state text is a vertical column right of the arrow, complete and readable in every language: CJK text stands upright one character per line, as in MJRefresh, when it fits; English, Russian and other text (or CJK text that does not fit) is rotated 90° clockwise to read top to bottom, and wraps instead of being cut off (MJRefresh's one-character-wide column splits English words letter by letter and cuts them off). Custom trailers get the same layout from `-cyl_placeStateLabelAtCenterX:`. Below: the full "Release to see details" past the last page. |
+
+![左拉刷新：拉过最后一页时完整显示旋转后的 “Release to see details” / Pull left: the full, rotated “Release to see details” past the last page](assets/cyl-refresh-example42.png)
 
 #### WKWebView 01：下拉刷新 / WKWebView 01: Pull-down refresh
 

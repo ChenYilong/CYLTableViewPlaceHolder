@@ -49,7 +49,10 @@
     // [CN] 状态文字是箭头右侧的竖列，任何语言都可读。
     BOOL arrowHidden = self.arrowView.isHidden;
     CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
-    [self cyl_placeStateLabelAtCenterX:arrowHidden ? selfCenter.x : stateCenterX];
+    CGFloat width = [self cyl_placeStateLabelAtCenterX:arrowHidden ? selfCenter.x : stateCenterX];
+    // [EN] A wrapped column is wider: keep its left edge right of the arrow. [CN] 换行后竖列更宽：保持其左边缘在箭头右侧。
+    CGFloat minX = CGRectGetMaxX(self.arrowView.frame) + 2;
+    if (!arrowHidden && stateCenterX - width * 0.5 < minX) [self cyl_placeStateLabelAtCenterX:minX + width * 0.5];
 }
 
 - (void)setState:(CYLRefreshState)state {

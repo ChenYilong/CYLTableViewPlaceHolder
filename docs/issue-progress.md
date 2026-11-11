@@ -168,7 +168,7 @@
 | TODO — #1586 隐藏 header 刷新位置（90） | iOS 26.3.1 完整套件已通过（2026-11-12）；未比对原报告截图，未验证真实页面。 | 按原报告的页面结构在示例中复现并截图比对。 |
 | TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
 | TODO — #1563 箭头图片泄漏疑问（50） | 静态分析与释放测试无泄漏；未在 Instruments Leaks 复现。 | 真机 Instruments Leaks 记录，确认或排除 `NSPathStore2`。 |
-| TODO — #1523 collection 动画选项闪烁（70） | 已解决：底部加载（含无更多数据）后刷新头归位，collection 与导航栏同一 y 轴起点，绝对布局断言防回归（iOS 26.1 通过，f01ddb4 构建失败；27.2 断言运行未完成，待 CI 或本机复测）。录屏逐帧检测（约 25 fps，iOS 26.1）未见闪烁。2026-11-12 起空闲且完全收回的刷新头默认隐藏（`CYLRefreshHeader.autoHideRefresh`，默认 YES），不再透过 iOS 26 的玻璃导航栏显示（example01、04、11 截图验证）。 | 60 fps 录屏或真机复测闪烁；原报告 iOS 14.5 / iPhone XR 环境；移植原 demo 其余页面并验证 #225 悬浮 header。 |
+| TODO — #1523 collection 动画选项闪烁（70） | 已解决：底部加载（含无更多数据）后刷新头归位，collection 与导航栏同一 y 轴起点，绝对布局断言防回归（iOS 26.1 通过，f01ddb4 构建失败；27.2 断言运行未完成，待 CI 或本机复测）。录屏逐帧检测（约 25 fps，iOS 26.1）未见闪烁。2026-11-12 起空闲且完全收回的刷新头默认隐藏（`CYLRefreshHeader.autoHideRefresh`，在导航栏默认透明的 iOS 26 及以后默认开启，更早的系统需手动开启），不再透过 iOS 26 的玻璃导航栏显示（example01、04、11 截图验证）。 | 60 fps 录屏或真机复测闪烁；原报告 iOS 14.5 / iPhone XR 环境；移植原 demo 其余页面并验证 #225 悬浮 header。 |
 | TODO — #1506 collection 大幅加载动画（25） | 仅验证能触发和结束刷新。 | 同 #1523 的视觉测试，确认是否同一根因。 |
 | TODO — #1483 collection 连续刷新上移（50） | inset 恢复已修；刷新中反复拖动未复现。 | XCUITest 刷新中反复拖动并检查首项位置。 |
 | TODO — #1481 trailer 转 footer 残留（85） | 需先移除 trailer；保留 trailer 的场景未确认。 | 获取切换代码后补用例。 |
