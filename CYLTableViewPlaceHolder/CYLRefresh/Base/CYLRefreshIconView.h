@@ -199,6 +199,23 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cyl_placeIconViewWithTitle:(nullable NSString *)title labels:(NSArray<UILabel *> *)labels visible:(BOOL)visible
                     replacingViews:(NSArray<UIView *> *)views
     NS_SWIFT_NAME(cyl_placeIconView(title:labels:visible:replacing:));
+/*!
+ * [EN] MJRefresh's image sequences (`setAnimationImages:` / `setImages:`) as the icon of a state, drawn by the icon's
+ *      CYLPlaceholderView like any other icon: several images play as one animated image of `duration` seconds; the
+ *      idle state shows one frame, chosen by `cyl_showIconImageFrameOf:pullingPercent:`. The idle state, when it has no
+ *      icon yet, gets the first image as a still frame. With Reduce Motion on, the first image stays still.
+ * [CN] MJRefresh 的图片序列（`setAnimationImages:` / `setImages:`）作为某个状态的图标，与其他图标一样由图标的 CYLPlaceholderView
+ *      绘制：多张图片作为一张时长 `duration` 秒的动画图片播放；空闲状态只显示一帧，由 `cyl_showIconImageFrameOf:pullingPercent:`
+ *      选择。空闲状态尚无图标时，以第一张图片作为静止帧。开启“减弱动态效果”时，第一张图片保持静止。
+ */
+- (void)cyl_setIconImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
+    NS_SWIFT_NAME(cyl_setIconImages(_:duration:for:));
+/*!
+ * [EN] While idle, shows the frame of `images` that matches `pullingPercent`, as MJRefresh does while pulling.
+ * [CN] 空闲时显示 `images` 中与 `pullingPercent` 对应的那一帧，与 MJRefresh 下拉时的做法相同。
+ */
+- (void)cyl_showIconImageFrameOf:(nullable NSArray<UIImage *> *)images pullingPercent:(CGFloat)pullingPercent
+    NS_SWIFT_NAME(cyl_showIconImageFrame(of:pullingPercent:));
 @end
 
 NS_ASSUME_NONNULL_END

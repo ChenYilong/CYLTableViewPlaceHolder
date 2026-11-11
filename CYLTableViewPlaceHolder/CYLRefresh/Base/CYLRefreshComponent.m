@@ -99,6 +99,27 @@
     [self cyl_updateIconViewVisible:visible replacingViews:views];
 }
 
+- (void)cyl_setIconImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
+{
+    UIImage *first = images.firstObject;
+    if (![first isKindOfClass:UIImage.class]) return;
+    BOOL still = state == CYLRefreshStateIdle || images.count == 1 || UIAccessibilityIsReduceMotionEnabled();
+    UIImage *image = still ? first : [UIImage animatedImageWithImages:images duration:duration > 0 ? duration : images.count * 0.1];
+    if (!image) return;
+    if (state != CYLRefreshStateIdle && ![self.cyl_iconView animationAttributesForState:CYLRefreshStateIdle]) {
+        [self.cyl_iconView setAnimationAttributes:@{CYLPlaceholderItemImage: first} forState:CYLRefreshStateIdle];
+    }
+    [self cyl_setIconAnimationAttributes:@{CYLPlaceholderItemImage: image} forState:state];
+}
+
+- (void)cyl_showIconImageFrameOf:(NSArray<UIImage *> *)images pullingPercent:(CGFloat)pullingPercent
+{
+    if (self.state != CYLRefreshStateIdle || images.count == 0 || !_iconView) return;
+    CGFloat percent = isfinite(pullingPercent) ? MAX(0, pullingPercent) : 0;
+    NSUInteger index = MIN((NSUInteger)(images.count * percent), images.count - 1);
+    _iconView.placeholderView.imageView.image = images[index];
+}
+
 #pragma mark - 初始化
 - (instancetype)initWithFrame:(CGRect)frame
 {

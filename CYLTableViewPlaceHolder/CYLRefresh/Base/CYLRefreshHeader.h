@@ -38,6 +38,17 @@ NS_ASSUME_NONNULL_BEGIN
  * 默认是关闭状态, 如果遇到 CollectionView 的动画异常问题可以尝试打开
  */
 @property (nonatomic) BOOL isCollectionViewAnimationBug;
+
+/*!
+ * [EN] Hides the header while it is idle and fully retracted (not pulled, not refreshing, not retracting). Default YES.
+ *      Since iOS 26 the navigation bar is transparent glass, and a retracted header sits right under it, showing
+ *      through over the title. The header is masked out, so its `hidden` and `alpha` (and `automaticallyChangeAlpha`)
+ *      stay as the caller set them. Set NO for MJRefresh's behavior, where the retracted header stays visible.
+ * [CN] 空闲且完全收回（未下拉、未刷新、未在收回动画中）时隐藏刷新头，默认 YES。iOS 26 起导航栏是透明的玻璃效果，收回的刷新头正好位于
+ *      导航栏下方，会透过导航栏显示在标题上。隐藏通过遮罩实现，`hidden`、`alpha`（及 `automaticallyChangeAlpha`）保持调用方的设置。
+ *      设为 NO 恢复 MJRefresh 的行为：收回后的刷新头保持可见。
+ */
+@property (nonatomic) BOOL hidesWhenIdle;
 @end
 
 NS_ASSUME_NONNULL_END

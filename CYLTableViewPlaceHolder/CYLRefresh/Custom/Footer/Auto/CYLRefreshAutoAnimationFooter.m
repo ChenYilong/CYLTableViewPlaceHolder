@@ -100,6 +100,10 @@
     if (image.size.height > self.cyl_h) {
         self.cyl_h = image.size.height;
     }
+    // [EN] The images are drawn by the icon's CYLPlaceholderView, like every other icon, with the state text in the
+    //      same view; `animationView` stays for compatibility and is hidden.
+    // [CN] 图片由图标的 CYLPlaceholderView 绘制（与其他图标相同），状态文字在同一视图中；`animationView` 为兼容保留并隐藏。
+    [self cyl_setIconImages:images duration:duration forState:state];
     return self;
 }
 
@@ -143,24 +147,6 @@
 {
     CYLRefreshCheckState
 
-    // 根据状态做事情
-    if (state == CYLRefreshStateRefreshing) {
-        NSArray *images = self.stateImages[@(state)];
-        if (images.count == 0) return;
-        [self.animationView stopAnimating];
-
-        self.animationView.hidden = NO;
-        if (images.count == 1) { // 单张图片
-            self.animationView.image = [images lastObject];
-        } else { // 多张图片
-            self.animationView.animationImages = images;
-            self.animationView.animationDuration = [self.stateDurations[@(state)] doubleValue];
-            [self.animationView startAnimating];
-        }
-    } else if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
-        [self.animationView stopAnimating];
-        self.animationView.hidden = YES;
-    }
     [self setNeedsLayout];
     [self cyl_updateIconViewVisible:state == CYLRefreshStateRefreshing replacingViews:@[self.animationView]];
 }

@@ -100,6 +100,10 @@
     if (image.size.height > self.cyl_h) {
         self.cyl_h = image.size.height;
     }
+    // [EN] The images are drawn by the icon's CYLPlaceholderView, like every other icon, with the state text in the
+    //      same view; `animationView` stays for compatibility and is hidden.
+    // [CN] 图片由图标的 CYLPlaceholderView 绘制（与其他图标相同），状态文字在同一视图中；`animationView` 为兼容保留并隐藏。
+    [self cyl_setIconImages:images duration:duration forState:state];
     return self;
 }
 
@@ -120,12 +124,7 @@
 - (void)setPullingPercent:(CGFloat)pullingPercent
 {
     [super setPullingPercent:pullingPercent];
-    NSArray *images = self.stateImages[@(CYLRefreshStateIdle)];
-    if (self.state != CYLRefreshStateIdle || images.count == 0) return;
-    [self.animationView stopAnimating];
-    NSUInteger index =  images.count * pullingPercent;
-    if (index >= images.count) index = images.count - 1;
-    self.animationView.image = images[index];
+    [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:pullingPercent];
 }
 
 - (void)placeSubviews
@@ -153,24 +152,8 @@
 {
     CYLRefreshCheckState
 
-    // 根据状态做事情
-    if (state == CYLRefreshStatePulling || state == CYLRefreshStateRefreshing) {
-        NSArray *images = self.stateImages[@(state)];
-        if (images.count == 0) return;
-
-        self.animationView.hidden = NO;
-        [self.animationView stopAnimating];
-        if (images.count == 1) { // 单张图片
-            self.animationView.image = [images lastObject];
-        } else { // 多张图片
-            self.animationView.animationImages = images;
-            self.animationView.animationDuration = [self.stateDurations[@(state)] doubleValue];
-            [self.animationView startAnimating];
-        }
-    } else if (state == CYLRefreshStateIdle) {
-        self.animationView.hidden = NO;
-    } else if (state == CYLRefreshStateNoMoreData) {
-        self.animationView.hidden = YES;
+    if (state == CYLRefreshStateIdle) {
+        [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:self.pullingPercent];
     }
     [self setNeedsLayout];
     [self cyl_updateIconViewVisible:state != CYLRefreshStateNoMoreData replacingViews:@[self.animationView]];

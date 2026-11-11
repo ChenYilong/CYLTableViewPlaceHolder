@@ -17,6 +17,10 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @interface CYLRefreshHeader() <CAAnimationDelegate>
 @property (assign, nonatomic) CGFloat insetTDelta;
 @property (assign, nonatomic) BOOL updatingRefreshInset;
+/// [EN] YES while the header retracts after a refresh. [CN] 刷新结束后刷新头收回期间为 YES。
+@property (assign, nonatomic) BOOL retracting;
+/// [EN] The empty mask that hides the idle header (`hidesWhenIdle`). [CN] 隐藏空闲刷新头（`hidesWhenIdle`）的空遮罩。
+@property (strong, nonatomic) CALayer *idleMask;
 @end
 
 @implementation CYLRefreshHeader
@@ -44,6 +48,50 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // 设置高度
     self.cyl_h = CYLRefreshHeaderHeight;
+
+    _hidesWhenIdle = YES;
+    [self cyl_updateIdleVisibility];
+}
+
+#pragma mark - Hidden while idle
+
+- (void)setHidesWhenIdle:(BOOL)hidesWhenIdle
+{
+    _hidesWhenIdle = hidesWhenIdle;
+    [self cyl_updateIdleVisibility];
+}
+
+- (void)setPullingPercent:(CGFloat)pullingPercent
+{
+    [super setPullingPercent:pullingPercent];
+    [self cyl_updateIdleVisibility];
+}
+
+/// [EN] Idle and fully retracted: the content's top edge is at or above the header's bottom edge.
+/// [CN] 空闲且完全收回：内容顶边位于刷新头底边或其上方。
+- (BOOL)cyl_isIdleAndRetracted
+{
+    if (self.state != CYLRefreshStateIdle || self.retracting) return NO;
+    if (!self.scrollView) return YES;
+    return self.scrollView.cyl_offsetY >= -self.scrollViewOriginalInset.top - 0.5;
+}
+
+- (void)cyl_updateIdleVisibility
+{
+    BOOL hide = self.hidesWhenIdle && [self cyl_isIdleAndRetracted];
+    BOOL hidden = self.idleMask && self.layer.mask == self.idleMask;
+    if (hide == hidden) return;
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    if (hide) {
+        if (!self.idleMask) self.idleMask = [CALayer layer];
+        self.layer.mask = self.idleMask;
+    } else {
+        self.layer.mask = nil;
+    }
+    [CATransaction commit];
+    // [EN] What is not shown is not read either. [CN] 不显示的内容也不让 VoiceOver 读取。
+    self.accessibilityElementsHidden = hide;
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
@@ -95,6 +143,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change
 {
     [super scrollViewContentOffsetDidChange:change];
+    [self cyl_updateIdleVisibility];
 
     // 在刷新的refreshing状态
     if (self.state == CYLRefreshStateRefreshing) {
@@ -141,18 +190,23 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // 根据状态做事情
     if (state == CYLRefreshStateIdle) {
-        if (oldState != CYLRefreshStateRefreshing) return;
+        if (oldState != CYLRefreshStateRefreshing) {
+            [self cyl_updateIdleVisibility];
+            return;
+        }
 
         [self headerEndingAction];
     } else if (state == CYLRefreshStateRefreshing) {
         [self headerRefreshingAction];
     }
+    [self cyl_updateIdleVisibility];
 }
 
 - (void)headerEndingAction {
     // 保存刷新时间
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:self.lastUpdatedTimeKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    self.retracting = YES;
 
     // 默认使用 UIViewAnimation 动画
     if (!self.isCollectionViewAnimationBug) {
@@ -166,6 +220,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
             // 自动调整透明度
             if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
         } completion:^(BOOL finished) {
+            self.retracting = NO;
             self.pullingPercent = 0.0;
 
             if (self.endRefreshingCompletionBlock) {
@@ -278,6 +333,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
     NSString *identity = [anim valueForKey:@"identity"];
     if ([identity isEqualToString:CYLRefreshHeaderRefreshing2IdleBoundsKey]) {
+        self.retracting = NO;
         self.pullingPercent = 0.0;
         self.scrollView.userInteractionEnabled = YES;
         if (self.endRefreshingCompletionBlock) {

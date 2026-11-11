@@ -97,6 +97,10 @@
     if (image.size.height > self.cyl_h) {
         self.cyl_h = image.size.height;
     }
+    // [EN] The images are drawn by the icon's CYLPlaceholderView, like every other icon, with the state text in the
+    //      same view; `animationView` stays for compatibility and is hidden.
+    // [CN] 图片由图标的 CYLPlaceholderView 绘制（与其他图标相同），状态文字在同一视图中；`animationView` 为兼容保留并隐藏。
+    [self cyl_setIconImages:images duration:duration forState:state];
     return self;
 }
 
@@ -117,14 +121,7 @@
 - (void)setPullingPercent:(CGFloat)pullingPercent
 {
     [super setPullingPercent:pullingPercent];
-    NSArray *images = self.stateImages[@(CYLRefreshStateIdle)];
-    if (self.state != CYLRefreshStateIdle || images.count == 0) return;
-    // 停止动画
-    [self.animationView stopAnimating];
-    // 设置当前需要显示的图片
-    NSUInteger index =  images.count * pullingPercent;
-    if (index >= images.count) index = images.count - 1;
-    self.animationView.image = images[index];
+    [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:pullingPercent];
 }
 
 - (void)placeSubviews
@@ -175,22 +172,9 @@
 {
     CYLRefreshCheckState
 
-    // 根据状态做事情
-    if (state == CYLRefreshStatePulling || state == CYLRefreshStateRefreshing) {
-        NSArray *images = self.stateImages[@(state)];
-        // [EN] No images (an icon animation, for example): nothing to animate, but the icon's text still follows the
-        //      state below. [CN] 没有图片（如使用图标动画）：无需播放图片，但下面图标中的文字仍要跟随状态。
-        if (images.count == 1) { // 单张图片
-            [self.animationView stopAnimating];
-            self.animationView.image = [images lastObject];
-        } else if (images.count > 1) { // 多张图片
-            [self.animationView stopAnimating];
-            self.animationView.animationImages = images;
-            self.animationView.animationDuration = [self.stateDurations[@(state)] doubleValue];
-            [self.animationView startAnimating];
-        }
-    } else if (state == CYLRefreshStateIdle) {
-        [self.animationView stopAnimating];
+    // [EN] Back to idle: the frame for the current pull. [CN] 回到空闲：显示与当前下拉距离对应的帧。
+    if (state == CYLRefreshStateIdle) {
+        [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:self.pullingPercent];
     }
     [self cyl_placeAnimationIconView];
 }

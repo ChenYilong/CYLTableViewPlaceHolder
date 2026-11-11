@@ -112,15 +112,88 @@
     XCTAssertEqualWithAccuracy(backFooter.frame.size.height, 120, 0.5);
 }
 
-- (void)testWithoutAnIconAnimationTheAnimationHeaderIsUnchanged {
+- (void)testWithoutImagesOrAnIconTheAnimationHeaderCreatesNothing {
     CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
-    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleRefresh];
-    XCTAssertEqual([header setAnimationImages:@[image] forState:CYLRefreshStateIdle], header, @"the animated images API is unchanged");
     [self layOut:header];
     XCTAssertFalse(header.usesIconView);
-    XCTAssertFalse(header.animationView.hidden);
     [header setIconAnimationAttributes:nil forState:CYLRefreshStateIdle];
     XCTAssertFalse(header.usesIconView, @"removing nothing creates nothing");
+    [self assertNoIconIn:header];
+}
+
+- (void)testImageSequencesAreDrawnByTheIconsPlaceholderViewWithTheStateText {
+    // [EN] MJRefresh's setImages: / setAnimationImages: go through the same CYLPlaceholderView as every other icon.
+    // [CN] MJRefresh 的 setImages: / setAnimationImages: 与其他图标一样经过同一个 CYLPlaceholderView。
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(40, 40)];
+    NSMutableArray<UIImage *> *frames = [NSMutableArray array];
+    for (NSInteger i = 0; i < 4; i++) {
+        [frames addObject:[renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+            [[UIColor colorWithWhite:i / 4.0 alpha:1] setFill];
+            [context fillRect:CGRectMake(0, 0, 40, 40)];
+        }]];
+    }
+    CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
+    [header setImages:frames forState:CYLRefreshStateIdle];
+    [header setImages:frames duration:0.8 forState:CYLRefreshStateRefreshing];
+    [self layOut:header];
+    XCTAssertTrue(header.usesIconView);
+    XCTAssertTrue(header.gifView.hidden, @"the image view stays for compatibility, hidden");
+    CYLPlaceholderView *view = header.iconView.placeholderView;
+    XCTAssertEqual(view.imageView.image, frames.firstObject, @"idle: a still frame");
+    XCTAssertTrue([view.textLabel.text hasPrefix:header.stateLabel.text], @"the state text is in the same view");
+    XCTAssertEqualWithAccuracy(header.iconView.iconSize.width, 40, 0.01, @"the icon has the image's size");
+    header.pullingPercent = 0.6;
+    XCTAssertEqual(header.iconView.placeholderView.imageView.image, frames[2], @"pulling picks the frame, as in MJRefresh");
+    header.state = CYLRefreshStateRefreshing;
+    [self layOut:header];
+    UIImage *playing = header.iconView.placeholderView.imageView.image;
+    XCTAssertEqual(playing.images.count, 4u, @"refreshing: the frames play as one animated image");
+    XCTAssertEqualWithAccuracy(playing.duration, 0.8, 0.001);
+
+    CYLRefreshAutoGifFooter *autoFooter = [CYLRefreshAutoGifFooter footerWithRefreshingBlock:^{}];
+    [autoFooter setImages:frames forState:CYLRefreshStateRefreshing];
+    [self layOut:autoFooter];
+    XCTAssertTrue(autoFooter.iconView.hidden, @"the auto footer shows its icon only while loading");
+    autoFooter.state = CYLRefreshStateRefreshing;
+    [self layOut:autoFooter];
+    XCTAssertFalse(autoFooter.iconView.hidden);
+    XCTAssertTrue(autoFooter.gifView.hidden);
+    XCTAssertEqual(autoFooter.iconView.placeholderView.imageView.image.images.count, 4u);
+
+    CYLRefreshBackGifFooter *backFooter = [CYLRefreshBackGifFooter footerWithRefreshingBlock:^{}];
+    [backFooter setImages:frames forState:CYLRefreshStatePulling];
+    [self layOut:backFooter];
+    XCTAssertEqual(backFooter.iconView.placeholderView.imageView.image, frames.firstObject,
+                   @"idle without its own images: the first image, still");
+    backFooter.state = CYLRefreshStatePulling;
+    XCTAssertEqual(backFooter.iconView.placeholderView.imageView.image.images.count, 4u);
+}
+
+- (void)testTheHeaderIsHiddenWhileIdleAndRetracted {
+    // [EN] iOS 26's glass navigation bar shows what is under it: the retracted header is masked out while idle.
+    // [CN] iOS 26 的玻璃导航栏会透出下方内容：空闲时把收回的刷新头遮住。
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.contentSize = CGSizeMake(320, 1000);
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    scrollView.cyl_header = header;
+    [self layOut:header];
+    XCTAssertTrue(header.hidesWhenIdle, @"on by default");
+    XCTAssertNotNil(header.layer.mask, @"idle and retracted: masked out");
+    XCTAssertTrue(header.accessibilityElementsHidden);
+    XCTAssertFalse(header.hidden, @"the caller's hidden is not touched");
+    XCTAssertEqual(header.alpha, 1, @"nor alpha");
+    scrollView.contentOffset = CGPointMake(0, -20);
+    XCTAssertNil(header.layer.mask, @"pulled down: shown");
+    XCTAssertFalse(header.accessibilityElementsHidden);
+    scrollView.contentOffset = CGPointMake(0, 200);
+    XCTAssertNotNil(header.layer.mask, @"scrolled away: hidden again");
+    header.state = CYLRefreshStateRefreshing;
+    XCTAssertNil(header.layer.mask, @"refreshing: shown");
+    header.state = CYLRefreshStateIdle;
+    XCTAssertNil(header.layer.mask, @"retracting after the refresh: still shown");
+    header.hidesWhenIdle = NO;
+    header.pullingPercent = 0;
+    XCTAssertNil(header.layer.mask, @"NO: MJRefresh's behavior");
 }
 
 - (void)testAnIconAnimationAndTheStateTextAreOneCenteredPlaceholderView {

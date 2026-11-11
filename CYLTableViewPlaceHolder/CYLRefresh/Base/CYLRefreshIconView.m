@@ -72,6 +72,9 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
         CGFloat width = [[size firstObject] doubleValue], height = [[size lastObject] doubleValue];
         if (width > 0 && height > 0) return CGSizeMake(width, height);
     }
+    // [EN] An image icon (MJRefresh's image sequences) has the image's size. [CN] 图片图标（MJRefresh 的图片序列）使用图片尺寸。
+    id image = attributes[CYLPlaceholderItemImage];
+    if ([image isKindOfClass:UIImage.class] && [image size].width > 0 && [image size].height > 0) return [image size];
     return CGSizeMake(CYLRefreshIconDefaultSide, CYLRefreshIconDefaultSide);
 }
 
