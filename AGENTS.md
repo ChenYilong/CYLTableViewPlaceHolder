@@ -209,8 +209,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   the user asks.
 - Commit through a branch and a pull request by default, so CI runs
   (`docs/CI-CD.md`): branch from `master`, `mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`,
-  commit, push the branch, and open a pull request against `master`. Do not
+  commit, push the branch, and open a pull request (target: see the next rule). Do not
   commit directly to `master` unless the user asks. Do not merge a pull request
   without the user's approval, and not before the `iOS` workflow is green.
+- **Every new branch gets a pull request, automatically (added 2026-11-12)**: after creating a branch and pushing
+  its first commit, open a pull request right away, without asking. Target branch: the branch it was created from
+  (preferred); otherwise `main` or `master`.
 - Follow the current task's instructions for commits, branches, and pull
   requests when they differ from the default above.

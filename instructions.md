@@ -878,3 +878,7 @@ On any branch other than `master` or `main`, commit and push as soon as the
 work is written, without asking for confirmation. Follow the commit readiness
 and Commitizen rules above. On `master` or `main`, commit or push only when the
 user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
+
+**Every new branch gets a pull request, automatically (added 2026-11-12)**: after creating a branch and pushing
+its first commit, open a pull request right away, without asking. Target branch: the branch it was created from
+(preferred); otherwise `main` or `master`.

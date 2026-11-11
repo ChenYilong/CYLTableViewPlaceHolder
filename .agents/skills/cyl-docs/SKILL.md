@@ -37,6 +37,9 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
   (`instructions.md`, "Code conventions"). Run `python3 scripts/check_doc_comments.py`.
 - **Every commit message** ends its body with the line `By @ChenYilong <luohanchenyilong@163.com>`
   (before trailers, exactly once; `instructions.md`, "Author line in every commit message").
+- **Every new branch gets a pull request, automatically (added 2026-11-12)**: after creating a branch and pushing
+  its first commit, open a pull request right away, without asking. Target branch: the branch it was created from
+  (preferred); otherwise `main` or `master`.
 - **Before every commit:** run the navigation script and `scripts/check_localizations.py`, lint the Markdown
   with `.markdownlint.json`, and grep `docs` and `README.md` for stale notes
   (`TODO|Linux|without Xcode|no (iOS )?simulator|no screenshots?|无法(编译|运行)|没有截图|暂无(测试)?截图`);
