@@ -472,7 +472,7 @@ also suit a refresh control, and the Example-Scenarios "Refresh icons" page
   text as `Animations/LICENSE.<source>`. Verify Git LFS files against their
   pointer's SHA-256 after downloading.
 - Every app that uses Core carries these files; keep each small (well under
-  100 KB) and the total around 500 KB. Prefer vector Lottie without images.
+  100 KB) and the total under about 1 MB (about 450 KB today). Prefer vector Lottie without images.
 - `testBundledAnimationsAreListedValidAndAttributed` checks the count, each
   format's header and the NOTICE entry; update its expected count when adding
   a file, and `testEveryBundledRefreshAnimationBuildsAnIcon` the number of
