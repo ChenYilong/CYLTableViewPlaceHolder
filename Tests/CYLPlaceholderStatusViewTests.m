@@ -88,9 +88,9 @@
     XCTAssertEqualObjects(bar.backgroundColor, UIColor.orangeColor);
     XCTAssertEqualObjects(bar.text, @"Offline mode");
     XCTAssertNotNil(bar.placeholderView.imageView.image, @"the failure icon stays without a custom image");
-    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemTitle: @"x",
-                                                                      CYLPlaceholderItemContentAxis: @"diagonal"}
-                                                        imageBundle:nil error:&error]);
+    // A dictionary literal's commas would split the XCTest macro's arguments, so it is a local.
+    NSDictionary *diagonal = @{CYLPlaceholderItemTitle: @"x", CYLPlaceholderItemContentAxis: @"diagonal"};
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:diagonal imageBundle:nil error:&error]);
     XCTAssertNotNil(error);
 }
 
@@ -204,8 +204,8 @@
     XCTAssertNil([[CYLPlaceholderStatusView alloc] initWithConfiguration:@{@"text": @7} error:&error]);
 
     UITableViewController *controller = [self hostedTableController];
-    XCTAssertTrue([controller cyl_applyStatusConfiguration:@{@"statusBar": @{@"text": @"Server busy"}, @"display": @"status"}
-                                                     error:&error], @"%@", error);
+    NSDictionary *statusOnly = @{@"statusBar": @{@"text": @"Server busy"}, @"display": @"status"};
+    XCTAssertTrue([controller cyl_applyStatusConfiguration:statusOnly error:&error], @"%@", error);
     XCTAssertEqualObjects(controller.cyl_statusView.text, @"Server busy");
     XCTAssertTrue(controller.tableView.cyl_placeholderHidden);
     XCTAssertTrue([controller cyl_applyStatusConfiguration:@{@"statusBar": @YES} error:&error]);
