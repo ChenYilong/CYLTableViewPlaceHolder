@@ -20,6 +20,7 @@
 		81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */; };
 		991513E249BFF9872B395F81 /* CYLScenarioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1211FEE6636FFFBFD912631E /* CYLScenarioLocalization.swift */; };
 		A0F7A49ADC9AF1865FF9BDFF /* CYLFlowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5434BB5F136056AEEFE1251A /* CYLFlowListViewController.swift */; };
+		A5FA56E2E441E7263D7D3315 /* CYLStatusBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30056CFC95D1F9EC8F0AB3D5 /* CYLStatusBarViewController.swift */; };
 		AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */; };
 		AD0329B913AA04ECFA3B5E10 /* CYLScenarioLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */; };
 		CACFD6DEBF91775C4A3CA561 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */; };
@@ -32,6 +33,7 @@
 		131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioTabBarController.swift; sourceTree = "<group>"; };
 		13B14D1EAFCCE253B346514C /* ExampleScenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleScenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLanguage.swift; sourceTree = "<group>"; };
+		30056CFC95D1F9EC8F0AB3D5 /* CYLStatusBarViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLStatusBarViewController.swift; sourceTree = "<group>"; };
 		3366DF2ABC933AE677B3C275 /* Base */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3A3DA852BAE6058FB57F2A0F /* CYLScenarioListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioListViewController.swift; sourceTree = "<group>"; };
 		5434BB5F136056AEEFE1251A /* CYLFlowListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFlowListViewController.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				131C9625AC464973F7A03EC7 /* CYLScenarioTabBarController.swift */,
 				9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */,
 				F0E9BBC4FD0ADE2C11ED085E /* CYLRefreshIconListViewController.swift */,
+				30056CFC95D1F9EC8F0AB3D5 /* CYLStatusBarViewController.swift */,
 			);
 			name = Sources;
 			path = Sources;
@@ -192,6 +195,7 @@
 				991513E249BFF9872B395F81 /* CYLScenarioLocalization.swift in Sources */,
 				578333D417A39E43D3C7692A /* CYLScenarioTabBarController.swift in Sources */,
 				03D504A0D2534EC7F552DD2D /* CYLRefreshIconListViewController.swift in Sources */,
+				A5FA56E2E441E7263D7D3315 /* CYLStatusBarViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

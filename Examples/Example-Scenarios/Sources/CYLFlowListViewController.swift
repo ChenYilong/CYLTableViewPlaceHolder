@@ -88,12 +88,33 @@ final class CYLFlowListViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "flow")
     }
 
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        CYLFlow.allCases.count
+        section == 0 ? CYLFlow.allCases.count : 1
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        section == 0 ? nil : CYLScenarioLocalizedString(.sectionStatusBar)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "flow", for: indexPath)
+        if indexPath.section == 1 {
+            // The red bar ported from CYLChatKit, alone or with a placeholder.
+            var content = UIListContentConfiguration.subtitleCell()
+            content.text = CYLScenarioLocalizedString(.titleStatusBar)
+            content.secondaryText = "CYLPlaceholderStatusView · statusView"
+            content.secondaryTextProperties.color = .secondaryLabel
+            content.image = UIImage(systemName: "exclamationmark.circle")
+            content.imageProperties.tintColor = .systemRed
+            cell.contentConfiguration = content
+            cell.accessoryType = .disclosureIndicator
+            cell.accessibilityIdentifier = "statusBarFlow"
+            return cell
+        }
         let flow = CYLFlow.allCases[indexPath.row]
         var content = UIListContentConfiguration.subtitleCell()
         content.text = flow.title
@@ -108,6 +129,10 @@ final class CYLFlowListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 1 {
+            navigationController?.pushViewController(CYLStatusBarViewController(), animated: true)
+            return
+        }
         let flow = CYLFlow.allCases[indexPath.row]
         let next: UIViewController = flow == .collection
             ? CYLCollectionFlowViewController(flow: flow)

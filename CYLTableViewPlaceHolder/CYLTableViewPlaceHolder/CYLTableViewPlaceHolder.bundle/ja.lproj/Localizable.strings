@@ -105,3 +105,6 @@
 "CYLPlaceholderScenarioBluetoothPermissionDeniedHint" = "近くのデバイスに接続するには、設定でBluetoothを許可してください。";
 "CYLPlaceholderScenarioNotificationPermissionDeniedTitle" = "通知がオフです";
 "CYLPlaceholderScenarioNotificationPermissionDeniedHint" = "メッセージをすぐに受け取るには、設定で通知をオンにしてください。";
+
+/* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
+"CYLPlaceholderStatusNetworkUnavailable" = "ネットワークに接続できません。ネットワーク設定を確認してください";

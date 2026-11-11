@@ -105,3 +105,6 @@
 "CYLPlaceholderScenarioBluetoothPermissionDeniedHint" = "Allow Bluetooth in Settings to connect to nearby devices.";
 "CYLPlaceholderScenarioNotificationPermissionDeniedTitle" = "Notifications are off";
 "CYLPlaceholderScenarioNotificationPermissionDeniedHint" = "Turn on notifications in Settings to get messages in time.";
+
+/* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
+"CYLPlaceholderStatusNetworkUnavailable" = "Network unavailable, Check network";

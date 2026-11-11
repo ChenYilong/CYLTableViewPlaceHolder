@@ -1,0 +1,4 @@
+{
+  "statusBar": { "textKey": "CYLPlaceholderStatusNetworkUnavailable", "action": "retry", "accessibilityIdentifier": "statusBarOnly" },
+  "display": "status"
+}

@@ -105,3 +105,6 @@
 "CYLPlaceholderScenarioBluetoothPermissionDeniedHint" = "请在设置中允许使用蓝牙，才能连接附近的设备。";
 "CYLPlaceholderScenarioNotificationPermissionDeniedTitle" = "通知已关闭";
 "CYLPlaceholderScenarioNotificationPermissionDeniedHint" = "请在设置中开启通知，才能及时收到消息。";
+
+/* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
+"CYLPlaceholderStatusNetworkUnavailable" = "当前网络不可用，请检查你的网络设置";

@@ -1,0 +1,6 @@
+{
+  "scenario": "NetworkUnavailable",
+  "statusBar": "networkUnavailable",
+  "display": "statusAndPlaceholder",
+  "accessibilityIdentifier": "statusBarAndPlaceholder"
+}

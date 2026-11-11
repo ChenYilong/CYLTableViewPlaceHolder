@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "By item attributes (Rive state machine)";
 "CYLScenarioRefreshByConfiguration" = "By configuration file";
 "CYLScenarioTextRefreshHint" = "Pull down to refresh, pull up to load more";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "Status bar";
+"CYLScenarioTitleStatusBar" = "Network status bar";
+"CYLScenarioStatusModeBoth" = "Bar + placeholder";
+"CYLScenarioStatusModeBar" = "Bar only";
+"CYLScenarioStatusModePlaceholder" = "Placeholder only";
+"CYLScenarioStatusModeList" = "Bar + list";
+"CYLScenarioFeedbackReconnect" = "Reconnecting…";
+"CYLScenarioActionCancel" = "Cancel";

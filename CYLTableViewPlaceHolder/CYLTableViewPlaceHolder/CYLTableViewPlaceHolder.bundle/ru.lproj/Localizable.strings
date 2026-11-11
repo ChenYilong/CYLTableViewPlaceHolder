@@ -105,3 +105,6 @@
 "CYLPlaceholderScenarioBluetoothPermissionDeniedHint" = "Чтобы подключаться к устройствам поблизости, разрешите Bluetooth в настройках.";
 "CYLPlaceholderScenarioNotificationPermissionDeniedTitle" = "Уведомления выключены";
 "CYLPlaceholderScenarioNotificationPermissionDeniedHint" = "Чтобы вовремя получать сообщения, включите уведомления в настройках.";
+
+/* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
+"CYLPlaceholderStatusNetworkUnavailable" = "Сеть недоступна. Проверьте подключение";

@@ -75,6 +75,9 @@ NSString *const CYLPlaceholderItemTitleBorderWidth = @"CYLPlaceholderItemTitleBo
 NSString *const CYLPlaceholderItemTitleCornerRadius = @"CYLPlaceholderItemTitleCornerRadius";
 NSString *const CYLPlaceholderItemTitleContentInsets = @"CYLPlaceholderItemTitleContentInsets";
 NSString *const CYLPlaceholderItemTitleMinimumWidth = @"CYLPlaceholderItemTitleMinimumWidth";
+NSString *const CYLPlaceholderItemContentAxis = @"CYLPlaceholderItemContentAxis";
+/// [EN] The gap between the icon and the title of a horizontal item. [CN] 横向排列时图标与标题的间距。
+static const CGFloat CYLPlaceholderHorizontalSpacing = 5;
 NSString *const CYLPlaceholderItemInteractionEnabled = @"CYLPlaceholderItemInteractionEnabled";
 NSString *const CYLPlaceholderItemTapHighlightStyle = @"CYLPlaceholderItemTapHighlightStyle";
 NSString *const CYLPlaceholderItemAnimationRepeatCount = @"CYLPlaceholderItemAnimationRepeatCount";
@@ -307,6 +310,8 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 @property (nonatomic, strong) UIImageView *titleBackgroundView;
 @property (nonatomic) UIEdgeInsets titleContentInsets;
 @property (nonatomic) CGFloat titleMinimumWidth;
+/// [EN] YES: the icon at the leading edge, the title after it (`CYLPlaceholderItemContentAxis`). [CN] YES：横向排列。
+@property (nonatomic) BOOL horizontal;
 @property (nonatomic) CGFloat titleCornerRadius;
 @property (nonatomic, strong) UIColor *titleBorderColor;
 @property (nonatomic) CGFloat titleBorderWidth;
@@ -339,6 +344,12 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
         self.imageView.frame = (CGRect){CGPointZero, self.animationSize};
     } else if (isShowImageView) {
         [self.imageView sizeToFit];
+    }
+
+    if (self.horizontal) {
+        [self cyl_layoutHorizontallyShowingImage:isShowImageView title:isShowTitleLabel];
+        [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
+        return;
     }
 
     // [EN] Title chrome (background, border, padding) applies only to a shown title; with zero insets the layout is
@@ -399,6 +410,43 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
     } else {
         self.imageView.frame = CGRectZero;
     }
+    [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
+}
+
+/// [EN] The icon at the leading edge, then the title; both centered vertically. [CN] 图标在前缘，标题在后，二者垂直居中。
+- (void)cyl_layoutHorizontallyShowingImage:(BOOL)showImage title:(BOOL)showTitle {
+    CGFloat width = CGRectGetWidth(self.bounds), height = CGRectGetHeight(self.bounds);
+    CGSize imageSize = CGSizeZero;
+    if (showImage) {
+        imageSize = CGSizeMake(MAX(0, CGRectGetWidth(self.imageView.frame) - self.itemImageInsets.left - self.itemImageInsets.right),
+                               MAX(0, CGRectGetHeight(self.imageView.frame) - self.itemImageInsets.top - self.itemImageInsets.bottom));
+    }
+    CGFloat titleX = showImage ? imageSize.width + CYLPlaceholderHorizontalSpacing : 0;
+    CGFloat titleWidth = MAX(0, width - titleX);
+    CGFloat titleHeight = 0;
+    if (showTitle) {
+        titleHeight = ceil([self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
+            options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.titleLabel.font}
+            context:nil].size.height);
+    }
+    BOOL rightToLeft = self.effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
+    CGRect imageFrame = CGRectMake(0, (height - imageSize.height) / 2, imageSize.width, imageSize.height);
+    CGRect titleFrame = CGRectMake(titleX, (height - titleHeight) / 2, titleWidth, titleHeight);
+    if (rightToLeft) {
+        imageFrame.origin.x = width - CGRectGetMaxX(imageFrame);
+        titleFrame.origin.x = width - CGRectGetMaxX(titleFrame);
+    }
+    imageFrame = CGRectOffset(imageFrame, self.itemImageOffset.horizontal, self.itemImageOffset.vertical);
+    UIOffset titleOffset = UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.appearanceTitleOffset : self.itemTitleOffset;
+    titleFrame = CGRectOffset(titleFrame, titleOffset.horizontal, titleOffset.vertical);
+    self.imageView.frame = showImage ? imageFrame : CGRectZero;
+    self.animationView.frame = self.imageView.frame;
+    self.titleLabel.textAlignment = NSTextAlignmentNatural;
+    self.titleLabel.frame = showTitle ? titleFrame : CGRectZero;
+    self.titleBackgroundView.hidden = YES;
+}
+
+- (void)cyl_layoutBadgeAnchoredToImage:(BOOL)isShowImageView {
     // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
     if (self.badgeLabel && !self.badgeLabel.hidden) {
         CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
@@ -751,6 +799,19 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         if (error) *error = CYLPlaceholderConfigurationError(@"The tap highlight style must be dim, shrink or none.");
         return nil;
     }
+    BOOL horizontal = NO;
+    id axisValue = attributes[CYLPlaceholderItemContentAxis];
+    if ([axisValue isKindOfClass:NSString.class] &&
+        ([axisValue isEqualToString:@"horizontal"] || [axisValue isEqualToString:@"vertical"])) {
+        horizontal = [axisValue isEqualToString:@"horizontal"];
+    } else if ([axisValue isKindOfClass:NSNumber.class] &&
+               ([axisValue integerValue] == UILayoutConstraintAxisHorizontal ||
+                [axisValue integerValue] == UILayoutConstraintAxisVertical)) {
+        horizontal = [axisValue integerValue] == UILayoutConstraintAxisHorizontal;
+    } else if (axisValue) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The content axis must be \"horizontal\" or \"vertical\".");
+        return nil;
+    }
     NSInteger repeatCount = 1;
     id repeatValue = attributes[CYLPlaceholderItemAnimationRepeatCount];
     if (repeatValue && !CYLPlaceholderRepeatCountFromValue(repeatValue, &repeatCount)) {
@@ -787,6 +848,8 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.itemView.itemTitleOffset = titleOffset;
         self.itemView.itemImageOffset = imageOffset;
         self.itemView.itemImageInsets = insets;
+        self.itemView.horizontal = horizontal;
+        if (horizontal) self.textLabel.textAlignment = NSTextAlignmentNatural;
         if (colors[CYLPlaceholderItemTitleColor]) self.textLabel.textColor = colors[CYLPlaceholderItemTitleColor];
         if (colors[CYLPlaceholderItemIconColor]) self.imageView.tintColor = colors[CYLPlaceholderItemIconColor];
         if (colors[CYLPlaceholderItemBackgroundColor]) self.backgroundColor = colors[CYLPlaceholderItemBackgroundColor];
@@ -1250,6 +1313,15 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
     CGSize imageSize = showAnimation ? self.itemView.animationSize :
         (hasImage ? self.imageView.image.size : CGSizeZero);
+    if (self.itemView.horizontal) {
+        UIEdgeInsets imageInsets = self.itemView.itemImageInsets;
+        CGSize icon = hasImage ? CGSizeMake(MAX(0, imageSize.width - imageInsets.left - imageInsets.right),
+                                            MAX(0, imageSize.height - imageInsets.top - imageInsets.bottom)) : CGSizeZero;
+        CGFloat gap = hasImage && hasTitle ? CYLPlaceholderHorizontalSpacing : 0;
+        CGSize text = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(MAX(0, width - icon.width - gap), CGFLOAT_MAX)
+            options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
+        return CGSizeMake(icon.width + gap + ceil(text.width), MAX(icon.height, ceil(text.height)));
+    }
     CGFloat height = imageSize.height + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0);
     CGFloat titleWidth = 0;
     if (hasTitle) {

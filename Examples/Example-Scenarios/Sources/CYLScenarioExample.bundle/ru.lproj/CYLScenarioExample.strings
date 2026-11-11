@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "По атрибутам item (машина состояний Rive)";
 "CYLScenarioRefreshByConfiguration" = "По файлу конфигурации";
 "CYLScenarioTextRefreshHint" = "Потяните вниз, чтобы обновить, вверх — чтобы загрузить ещё";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "Строка состояния";
+"CYLScenarioTitleStatusBar" = "Строка состояния сети";
+"CYLScenarioStatusModeBoth" = "Строка + заглушка";
+"CYLScenarioStatusModeBar" = "Только строка";
+"CYLScenarioStatusModePlaceholder" = "Только заглушка";
+"CYLScenarioStatusModeList" = "Строка + список";
+"CYLScenarioFeedbackReconnect" = "Переподключение…";
+"CYLScenarioActionCancel" = "Отмена";

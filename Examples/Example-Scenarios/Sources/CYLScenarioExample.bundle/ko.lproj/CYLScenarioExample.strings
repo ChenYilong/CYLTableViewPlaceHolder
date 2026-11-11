@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "item 속성으로 (Rive 상태 머신)";
 "CYLScenarioRefreshByConfiguration" = "설정 파일로";
 "CYLScenarioTextRefreshHint" = "아래로 당겨 새로고침, 위로 당겨 더 불러오기";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "상태 표시줄";
+"CYLScenarioTitleStatusBar" = "네트워크 상태 표시줄";
+"CYLScenarioStatusModeBoth" = "표시줄 + 플레이스홀더";
+"CYLScenarioStatusModeBar" = "표시줄만";
+"CYLScenarioStatusModePlaceholder" = "플레이스홀더만";
+"CYLScenarioStatusModeList" = "표시줄 + 목록";
+"CYLScenarioFeedbackReconnect" = "다시 연결하는 중…";
+"CYLScenarioActionCancel" = "취소";

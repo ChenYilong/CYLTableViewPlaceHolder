@@ -14,4 +14,5 @@
 #import "CYLPlaceholderLocalization.h"
 #import "CYLPlaceholderScenario.h"
 #import "CYLPlaceholderStackView.h"
+#import "CYLPlaceholderStatusView.h"
 #import "CYLRefresh.h"

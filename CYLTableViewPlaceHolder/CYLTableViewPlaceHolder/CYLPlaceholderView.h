@@ -188,6 +188,15 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleCornerRadius;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleContentInsets;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleMinimumWidth;
 /*!
+ * [EN] How the icon and the title are arranged: "vertical" (the default, the icon above the centered title, as before)
+ *      or "horizontal" (the icon at the leading edge and the title after it, both centered vertically and aligned to
+ *      the leading edge, mirrored for right-to-left languages), or a `UILayoutConstraintAxis` number. A horizontal item
+ *      suits a one-line bar such as `CYLPlaceholderStatusView`.
+ * [CN] 图标与标题的排列方式："vertical"（默认，图标在居中的标题上方，与以前相同）或 "horizontal"（图标在前缘，标题在其后，二者垂直居中并
+ *      靠前缘对齐，右到左语言自动镜像），也可以是 `UILayoutConstraintAxis` 数值。横向排列适合单行提示条，如 `CYLPlaceholderStatusView`。
+ */
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemContentAxis;
+/*!
  * Tap interaction (see `tapInteractionEnabled`): a boolean; NO turns off both the tap handler and the highlight.
  * Absent means YES.
  */

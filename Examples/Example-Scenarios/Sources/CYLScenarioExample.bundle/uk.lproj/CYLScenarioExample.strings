@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "За атрибутами item (машина станів Rive)";
 "CYLScenarioRefreshByConfiguration" = "За файлом конфігурації";
 "CYLScenarioTextRefreshHint" = "Потягніть вниз, щоб оновити, вгору — щоб завантажити ще";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "Рядок стану";
+"CYLScenarioTitleStatusBar" = "Рядок стану мережі";
+"CYLScenarioStatusModeBoth" = "Рядок + заглушка";
+"CYLScenarioStatusModeBar" = "Лише рядок";
+"CYLScenarioStatusModePlaceholder" = "Лише заглушка";
+"CYLScenarioStatusModeList" = "Рядок + список";
+"CYLScenarioFeedbackReconnect" = "Повторне підключення…";
+"CYLScenarioActionCancel" = "Скасувати";

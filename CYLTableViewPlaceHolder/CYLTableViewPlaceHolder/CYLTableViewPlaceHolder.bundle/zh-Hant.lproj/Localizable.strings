@@ -105,3 +105,6 @@
 "CYLPlaceholderScenarioBluetoothPermissionDeniedHint" = "請在設定中允許使用藍牙，才能連接附近的裝置。";
 "CYLPlaceholderScenarioNotificationPermissionDeniedTitle" = "通知已關閉";
 "CYLPlaceholderScenarioNotificationPermissionDeniedHint" = "請在設定中開啟通知，才能及時收到訊息。";
+
+/* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
+"CYLPlaceholderStatusNetworkUnavailable" = "目前網路無法使用，請檢查你的網路設定";

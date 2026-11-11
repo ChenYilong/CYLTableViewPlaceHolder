@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "item 属性で（Rive ステートマシン）";
 "CYLScenarioRefreshByConfiguration" = "設定ファイルで";
 "CYLScenarioTextRefreshHint" = "下に引いて更新、上に引いてさらに読み込み";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "ステータスバー";
+"CYLScenarioTitleStatusBar" = "ネットワークステータスバー";
+"CYLScenarioStatusModeBoth" = "バー + プレースホルダー";
+"CYLScenarioStatusModeBar" = "バーのみ";
+"CYLScenarioStatusModePlaceholder" = "プレースホルダーのみ";
+"CYLScenarioStatusModeList" = "バー + リスト";
+"CYLScenarioFeedbackReconnect" = "再接続しています…";
+"CYLScenarioActionCancel" = "キャンセル";

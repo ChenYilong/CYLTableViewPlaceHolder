@@ -59,3 +59,13 @@
 "CYLScenarioRefreshByAttributes" = "依 item 屬性（Rive 狀態機）";
 "CYLScenarioRefreshByConfiguration" = "依設定檔";
 "CYLScenarioTextRefreshHint" = "下拉更新，上拉載入更多";
+
+/* Status bar */
+"CYLScenarioSectionStatusBar" = "狀態條";
+"CYLScenarioTitleStatusBar" = "網路狀態條";
+"CYLScenarioStatusModeBoth" = "紅條 + 佔位圖";
+"CYLScenarioStatusModeBar" = "只顯示紅條";
+"CYLScenarioStatusModePlaceholder" = "只顯示佔位圖";
+"CYLScenarioStatusModeList" = "紅條 + 列表";
+"CYLScenarioFeedbackReconnect" = "正在重新連線…";
+"CYLScenarioActionCancel" = "取消";

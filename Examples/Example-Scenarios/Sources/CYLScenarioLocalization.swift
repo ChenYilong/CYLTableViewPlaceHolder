@@ -102,6 +102,14 @@ enum CYLScenarioL10n: String, CaseIterable {
     case refreshByAttributes = "CYLScenarioRefreshByAttributes"
     case refreshByConfiguration = "CYLScenarioRefreshByConfiguration"
     case textRefreshHint = "CYLScenarioTextRefreshHint"
+    case sectionStatusBar = "CYLScenarioSectionStatusBar"
+    case titleStatusBar = "CYLScenarioTitleStatusBar"
+    case statusModeBoth = "CYLScenarioStatusModeBoth"
+    case statusModeBar = "CYLScenarioStatusModeBar"
+    case statusModePlaceholder = "CYLScenarioStatusModePlaceholder"
+    case statusModeList = "CYLScenarioStatusModeList"
+    case feedbackReconnect = "CYLScenarioFeedbackReconnect"
+    case actionCancel = "CYLScenarioActionCancel"
 }
 
 private enum CYLScenarioLocalizationBundle {
