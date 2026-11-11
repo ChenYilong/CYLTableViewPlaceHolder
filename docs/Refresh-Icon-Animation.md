@@ -12,6 +12,7 @@
 | [布局](#布局--layout) | [Layout](#布局--layout) |
 | [内置刷新动画](#内置刷新动画--bundled-refresh-animations) | [Bundled refresh animations](#内置刷新动画--bundled-refresh-animations) |
 | [演示与限制](#演示与限制--demo-and-limits) | [Demo and limits](#演示与限制--demo-and-limits) |
+| [Rive 刷新图标的背景](#rive-刷新图标的背景--background-of-the-rive-refresh-icon) | [Background of the Rive refresh icon](#rive-刷新图标的背景--background-of-the-rive-refresh-icon) |
 
 <!-- docs-navigation:end -->
 
@@ -89,7 +90,7 @@ tableView.cyl_footer = footer
 | `CYLRefreshMaterialSpinner.json`, `CYLRefreshDonePop.json` | Material 弧形加载圈、弹出的完成对勾 / Material arc spinner, popping done check | lottie-android (Apache-2.0) |
 | `CYLRefreshLoadMore.json`, `CYLRefreshMoreDots.json` | 加载更多的箭头与圆点 / load-more chevrons and dots | useAnimations (MIT) |
 | `CYLRefreshDone.json`, `CYLRefreshDoneCircle.json` | 完成对勾、圆圈中的对勾 / done check, check in a circle | useAnimations (MIT) |
-| `CYLRefreshIcon.riv` | 刷新图标画板 `refresh`：`idle` 静止，`active` 旋转 / the `refresh` artboard: `idle` rests, `active` turns | rive-flutter (MIT) |
+| `CYLRefreshIcon.riv` | 刷新图标画板 `refresh`：`idle` 静止，`active` 旋转；背景透明（2026-11-12 起，原文件的灰色 `BG` 圆角矩形填充改为透明，见下方说明）/ the `refresh` artboard: `idle` rests, `active` turns; transparent background (since 2026-11-12 the grey `BG` rounded rectangle of the original file is transparent, see the note below) | rive-flutter (MIT) |
 | `CYLPlaceholderRefresh.json`, `CYLPlaceholderProgress.pag` | 同样表示刷新的两个占位动画：旋转箭头、随进度填满的圆环 / the two placeholder animations that also mean refresh: turning arrows, a ring that fills with progress | useAnimations (MIT), libpag (Apache-2.0) |
 
 | 中文 | English |
@@ -126,3 +127,11 @@ header.setAnimationImages(frames, duration: 0.6, for: .refreshing)
 | 图片序列（2026-11-12）：`setAnimationImages:forState:` / `setImages:forState:` 的图片不再由 `animationView`（`gifView`）绘制，而是作为该状态的图标交给 `CYLPlaceholderView`（`CYLPlaceholderItemImage`），与状态文字合为一个整体居中，和 GIF/Lottie/PAG/Rive 图标走同一条路径（`-cyl_setIconImages:duration:forState:`）。多张图片作为一张动画图片（`+[UIImage animatedImageWithImages:duration:]`）播放；空闲状态显示静止帧，下拉时按 `pullingPercent` 选帧，与 MJRefresh 相同；空闲状态没有自己的图片时使用第一张图片；开启“减弱动态效果”时第一张图片保持静止。兼容性：`animationView` / `gifView` 仍然存在但隐藏，直接修改它（`contentMode`、约束、`image`）不再影响显示。 | Image sequences (2026-11-12): the images of `setAnimationImages:forState:` / `setImages:forState:` are no longer drawn by `animationView` (`gifView`); they become the state's icon in a `CYLPlaceholderView` (`CYLPlaceholderItemImage`), centered as one with the state text, on the same path as GIF, Lottie, PAG and Rive icons (`-cyl_setIconImages:duration:forState:`). Several images play as one animated image (`+[UIImage animatedImageWithImages:duration:]`); the idle state shows a still frame picked by `pullingPercent` while pulling, as in MJRefresh; an idle state without its own images uses the first image; with Reduce Motion on, the first image stays still. Compatibility: `animationView` / `gifView` still exist but are hidden, so changing them directly (`contentMode`, constraints, `image`) no longer affects what is shown. |
 
 ![刷新图标动画：example51–56 的刷新头与加载尾 / Refresh icon animations: the headers and footers of example51–56](assets/cyl-refresh-icon-animations.png)
+
+## Rive 刷新图标的背景 / Background of the Rive refresh icon
+
+| 中文 | English |
+|:---|:---|
+| **修复（2026-11-12）**：`CYLRefreshIcon.riv` 作为刷新图标时显示深灰色方块（CYLTabBarController 示例「消息」页）。原因在文件本身：rive-flutter 的 `web_icons_pack.riv` 每个画板都有名为 `BG` 的 408×408 圆角矩形，填充为 `#ff6f6e6e`；视图层（`RiveView` / `RiveUIView`）的背景已经是透明的，RiveRuntime 也没有隐藏某个形状的 API。修复：只把这 6 个 `BG` 填充颜色的 alpha 改为 0（文件中 6 个字节），其他内容不变；`NOTICE.animations` 记录修改与新旧 SHA-256。`AGENTS.md` 与 `instructions.md` 中「资源保持原样」的规则增加了这一例外（经维护者同意）：文件自带的背景填充可以改为透明，其他不改。验证：本地 macOS 27.3、Xcode 27.2，iOS 26.1 iPhone 17 Pro，CYLTabBarController 示例「消息」页刷新中，箭头在透明背景上旋转（下图）。其他 Rive 文件（如 `CYLPlaceholderLoading.riv` 的画板填充）同样自带背景，作为占位图时不受影响，未修改。 | **Fix (2026-11-12)**: `CYLRefreshIcon.riv` as a refresh icon showed a dark grey square (the Messages page of the CYLTabBarController example). The cause is the file itself: every artboard of rive-flutter's `web_icons_pack.riv` has a 408 × 408 rounded rectangle named `BG`, filled `#ff6f6e6e`; the views (`RiveView` / `RiveUIView`) already have a clear background, and RiveRuntime has no API to hide a shape. Fix: only the alpha of these 6 `BG` fill colors is set to 0 (6 bytes in the file), nothing else changes; `NOTICE.animations` records the change and the old and new SHA-256. The "keep resources unmodified" rule in `AGENTS.md` and `instructions.md` gets this exception (approved by the maintainer): a background fill baked into a file may be made transparent, nothing else. Verified locally on macOS 27.3 with Xcode 27.2, iOS 26.1 iPhone 17 Pro: on the CYLTabBarController example's Messages page, while refreshing, the arrow turns on a transparent background (picture below). Other Rive files (such as the artboard fill of `CYLPlaceholderLoading.riv`) have backgrounds too; as placeholders they are not affected and are left unmodified. |
+
+![Rive refresh icon with a transparent background](assets/refresh-icon-rive-transparent-ios.png)

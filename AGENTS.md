@@ -115,7 +115,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   widget demos, which go to the example that uses them, in its own `.bundle`. The core bundle holds
   only placeholder resources. Add only files with a redistributable license, unmodified, and record each
   one's source repository, commit, path, license and SHA-256 in
-  `Animations/NOTICE.animations`, shipping the license text next to it.
+  `Animations/NOTICE.animations`, shipping the license text next to it. One exception (approved 2026-11-12):
+  a background fill baked into a file (an artboard fill, a "BG" shape) may be made transparent by setting
+  its alpha to 0 and nothing else, when the license allows modification; NOTICE then records the change
+  and both the original and the new SHA-256 (e.g. `CYLRefreshIcon.riv`).
   Keep the total small: every app that uses Core carries these files.
 - Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION`
   to select an installed simulator. Build the example and validate the
