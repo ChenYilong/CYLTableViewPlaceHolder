@@ -9,6 +9,7 @@
 //  - contactSupport: pushes the support page
 //  - openSettings:   opens the app's page in Settings
 //  - goShopping:     a short confirmation
+//  - chooseManually: a short confirmation (the location permission scenario offers to pick an address by hand)
 //  - done:           goes back
 //
 
@@ -61,6 +62,9 @@ final class CYLScenarioDetailViewController: UITableViewController {
             },
             .goShopping: { [weak self] _, _ in
                 self?.showFeedback(CYLScenarioLocalizedString(.feedbackGoShopping))
+            },
+            .chooseManually: { [weak self] _, _ in
+                self?.showFeedback(CYLScenarioLocalizedString(.feedbackChooseManually))
             },
             .done: { [weak self] _, _ in self?.navigationController?.popViewController(animated: true) },
         ])

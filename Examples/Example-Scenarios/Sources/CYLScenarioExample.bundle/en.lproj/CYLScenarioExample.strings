@@ -36,3 +36,5 @@
 "CYLScenarioStateFailed" = "Failed";
 "CYLScenarioStateOffline" = "Offline";
 "CYLScenarioStateData" = "Data";
+"CYLScenarioSectionPermissions" = "Permission missing (not a network failure)";
+"CYLScenarioFeedbackChooseManually" = "Opening the address list…";

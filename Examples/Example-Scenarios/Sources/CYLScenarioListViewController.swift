@@ -19,10 +19,15 @@ final class CYLScenarioListViewController: UITableViewController {
 
     private let sections: [Section] = {
         let all = CYLPlaceholderScenarioCatalog.allScenarios.compactMap { CYLPlaceholderScenario(rawValue: $0.intValue) }
-        let readme = all.filter { !CYLPlaceholderScenarioCatalog.readmeScreenshotNumbers(for: $0).isEmpty }
-        let business = all.filter { CYLPlaceholderScenarioCatalog.readmeScreenshotNumbers(for: $0).isEmpty }
+        // A missing permission is its own category, not a network failure; it gets its own section.
+        let isPermission = { CYLPlaceholderScenarioCatalog.category(for: $0) == .permission }
+        let hasScreenshots = { !CYLPlaceholderScenarioCatalog.readmeScreenshotNumbers(for: $0).isEmpty }
+        let readme = all.filter { hasScreenshots($0) && !isPermission($0) }
+        let permissions = all.filter(isPermission)
+        let business = all.filter { !hasScreenshots($0) && !isPermission($0) }
         return [
             Section(title: CYLScenarioLocalizedString(.sectionReadme), scenarios: readme),
+            Section(title: CYLScenarioLocalizedString(.sectionPermissions), scenarios: permissions),
             Section(title: CYLScenarioLocalizedString(.sectionBusiness), scenarios: business),
         ]
     }()
@@ -86,8 +91,20 @@ final class CYLScenarioListViewController: UITableViewController {
         return CYLScenarioLocalizedFormat(.formatReadmeNumbers, list) + " · " + components
     }
 
-    /// The action a scenario offers decides its list icon.
+    /// The permission, else the action a scenario offers, decides its list icon.
     private static func symbol(for scenario: CYLPlaceholderScenario) -> String {
+        switch CYLPlaceholderScenarioCatalog.permission(for: scenario) {
+        case .location: return "location.slash"
+        case .camera: return "camera"
+        case .photoLibrary: return "photo.on.rectangle"
+        case .microphone: return "mic.slash"
+        case .contacts: return "person.2"
+        case .calendar: return "calendar"
+        case .bluetooth: return "antenna.radiowaves.left.and.right"
+        case .notifications: return "bell.slash"
+        default: break
+        }
+        if CYLPlaceholderScenarioCatalog.category(for: scenario) == .permission { return "lock.shield" }
         let actions = Set(CYLPlaceholderScenarioCatalog.components(for: scenario).compactMap(\.action))
         if actions.contains(.contactSupport) { return "headphones" }
         if actions.contains(.openSettings) { return "gearshape" }

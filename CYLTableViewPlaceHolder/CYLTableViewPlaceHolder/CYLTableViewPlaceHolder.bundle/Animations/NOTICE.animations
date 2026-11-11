@@ -204,3 +204,53 @@ CYLPlaceholderSettings.json
   path:    icons/settings.json
   license: MIT (LICENSE.useanimations)
   sha256:  379db9d7b1788b1c6977fc40e1d06db6a0426f5ec8018659fb42940a7ab41ae1
+
+Permission line icons from the same useAnimations commit (MIT), one per permission scenario.
+
+CYLPlaceholderLocationPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/mapPin.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  84c09ced558f6c38282525a6081850160c86a48e3721c455f885273d2b0957f8
+
+CYLPlaceholderCameraPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/cameraOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  b20af2270be0e49f1c23c6a3a6baa11eae8bf5083f27bfe988ba18cb66d967bd
+
+CYLPlaceholderPhotoLibraryPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/image.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  e9ae85fa5e5de8813ab6ee67d8e355d222008130747e4a3a1c47aac6504f6ff1
+
+CYLPlaceholderMicrophonePermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/micOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  6fa934dc53fd15834ba45e67ab2e416edee955ae370a4df7805b1edc4290d755
+
+CYLPlaceholderContactsPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/users.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  4a0435d3a99467e551fe5ec0902eb7211d35ebaedcd466645f7ac116395f9ea5
+
+CYLPlaceholderCalendarPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/calendar.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  efc0a075571d96d7a7af218193e29445c9326e85a815713e5a61863b32619d00
+
+CYLPlaceholderBluetoothPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/bluetooth.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  4a0635167d86ba39340f1a356defb85ddeb4acbc85dc34f584a52d93cb4771ce
+
+CYLPlaceholderNotificationPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/notification2.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  a8a588a6828f925defb168062dc85734efe17dab03d8fba3e242c3f11b8fd2b6

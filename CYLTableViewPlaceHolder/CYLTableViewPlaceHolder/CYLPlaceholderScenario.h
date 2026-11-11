@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
     CYLPlaceholderScenarioLoadFailedWithHint,
     /// Icon, title and a hint; tapping anywhere retries. README #08.
     CYLPlaceholderScenarioTapToReconnect,
-    /// Icon, title and a filled "Retry" button (Ctrip). README #01, #02, #11, #19, #20.
+    /// Icon, title and a filled "Retry" button (Ctrip). README #01, #02, #11, #19.
     CYLPlaceholderScenarioRetryButton,
     /// Icon, title and an outlined "Retry" button. README #33, #38, #39.
     CYLPlaceholderScenarioRetryOutlinedButton,
@@ -47,6 +47,10 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
     CYLPlaceholderScenarioTextOnly,
     /// "Tap me", an arrow, a filled "Reload" button and a mascot. README #34, #35.
     CYLPlaceholderScenarioTapMeRetry,
+    /// Permission missing, not a network failure: the app may not use the location, so nearby content cannot load.
+    /// Location icon, title, a hint, an "Open Settings" button and "Choose address manually". README #20, which shows
+    /// "Can't get the address, please choose manually" above a misleading "network error".
+    CYLPlaceholderScenarioLocationPermissionDenied,
     /// Icon, title and a hint.
     CYLPlaceholderScenarioNoSearchResults,
     /// Icon, title and a "Go shopping" button.
@@ -59,10 +63,22 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
     CYLPlaceholderScenarioNoMessages,
     /// Icon, title and a hint.
     CYLPlaceholderScenarioNoNotifications,
-    /// Icon, title, a hint and an "Open Settings" button.
+    /// Permission missing, of no particular kind: lock icon, title, a hint and an "Open Settings" button.
     CYLPlaceholderScenarioNoPermission,
-    /// Icon, title and an "Open Settings" button.
-    CYLPlaceholderScenarioLocationOff,
+    /// Permission missing: camera. Icon, title, a hint and an "Open Settings" button, as every permission scenario.
+    CYLPlaceholderScenarioCameraPermissionDenied,
+    /// Permission missing: photo library.
+    CYLPlaceholderScenarioPhotoLibraryPermissionDenied,
+    /// Permission missing: microphone.
+    CYLPlaceholderScenarioMicrophonePermissionDenied,
+    /// Permission missing: contacts.
+    CYLPlaceholderScenarioContactsPermissionDenied,
+    /// Permission missing: calendar.
+    CYLPlaceholderScenarioCalendarPermissionDenied,
+    /// Permission missing: Bluetooth.
+    CYLPlaceholderScenarioBluetoothPermissionDenied,
+    /// Permission missing: notifications.
+    CYLPlaceholderScenarioNotificationPermissionDenied,
     /// Icon, title, a hint and a "Retry" button.
     CYLPlaceholderScenarioServerError,
     /// Icon, title and a "Retry" button.
@@ -76,6 +92,34 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
     CYLPlaceholderScenarioCount
 };
 
+/// What kind of problem a scenario shows, so an app can tell, for example, a missing permission from a network failure.
+typedef NS_ENUM(NSInteger, CYLPlaceholderScenarioCategory) {
+    /// The request failed: offline, slow network or server error. Retrying may help.
+    CYLPlaceholderScenarioCategoryLoadFailed,
+    /// Loaded, with nothing to show.
+    CYLPlaceholderScenarioCategoryEmpty,
+    /// The app may not access what it needs; retrying does not help until the user allows it in Settings.
+    CYLPlaceholderScenarioCategoryPermission,
+    /// Work in progress: loading, uploading.
+    CYLPlaceholderScenarioCategoryProgress,
+    /// A finished task.
+    CYLPlaceholderScenarioCategorySuccess,
+};
+
+/// The system permission a permission scenario is about.
+typedef NS_ENUM(NSInteger, CYLPlaceholderPermission) {
+    /// Not a permission scenario, or a permission of no particular kind (CYLPlaceholderScenarioNoPermission).
+    CYLPlaceholderPermissionNone,
+    CYLPlaceholderPermissionLocation,
+    CYLPlaceholderPermissionCamera,
+    CYLPlaceholderPermissionPhotoLibrary,
+    CYLPlaceholderPermissionMicrophone,
+    CYLPlaceholderPermissionContacts,
+    CYLPlaceholderPermissionCalendar,
+    CYLPlaceholderPermissionBluetooth,
+    CYLPlaceholderPermissionNotifications,
+};
+
 /// What a tap on a component asks the app to do. Apps may define their own values.
 typedef NSString *CYLPlaceholderAction NS_TYPED_EXTENSIBLE_ENUM;
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionRetry;
@@ -83,6 +127,8 @@ FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionContactSupport;
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionOpenSettings;
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionGoShopping;
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionDone;
+/// Go on without the permission by entering the value by hand, such as choosing an address instead of locating.
+FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionChooseManually;
 
 /// How a button-like component draws its title.
 typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
@@ -148,6 +194,12 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 /// the business cases.
 + (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario
     NS_SWIFT_NAME(readmeScreenshotNumbers(for:));
+/// The kind of problem a scenario shows.
++ (CYLPlaceholderScenarioCategory)categoryForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(category(for:));
+/// The permission a scenario is about; CYLPlaceholderPermissionNone for other scenarios and for NoPermission.
++ (CYLPlaceholderPermission)permissionForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(permission(for:));
+/// The scenario for a missing permission: CYLPlaceholderScenarioNoPermission for CYLPlaceholderPermissionNone.
++ (CYLPlaceholderScenario)scenarioForPermission:(CYLPlaceholderPermission)permission NS_SWIFT_NAME(scenario(for:));
 /// The localized title of an action, such as "Retry"; nil for an action the library does not define.
 + (nullable NSString *)localizedTitleForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(localizedTitle(for:));
 

@@ -36,3 +36,5 @@
 "CYLScenarioStateFailed" = "실패";
 "CYLScenarioStateOffline" = "오프라인";
 "CYLScenarioStateData" = "데이터";
+"CYLScenarioSectionPermissions" = "권한 없음(네트워크 오류 아님)";
+"CYLScenarioFeedbackChooseManually" = "주소 목록을 여는 중…";

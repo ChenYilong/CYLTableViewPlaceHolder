@@ -11,6 +11,7 @@ CYLPlaceholderAction const CYLPlaceholderActionContactSupport = @"CYLPlaceholder
 CYLPlaceholderAction const CYLPlaceholderActionOpenSettings = @"CYLPlaceholderActionOpenSettings";
 CYLPlaceholderAction const CYLPlaceholderActionGoShopping = @"CYLPlaceholderActionGoShopping";
 CYLPlaceholderAction const CYLPlaceholderActionDone = @"CYLPlaceholderActionDone";
+CYLPlaceholderAction const CYLPlaceholderActionChooseManually = @"CYLPlaceholderActionChooseManually";
 
 #pragma mark - Look
 
@@ -84,7 +85,11 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
             @"CYLPlaceholderRefresh.json", @"CYLPlaceholderNoResults.json", @"CYLPlaceholderNoPermission.json",
             @"CYLPlaceholderContactSupport.json", @"CYLPlaceholderNoMessages.json",
             @"CYLPlaceholderNoNotifications.json", @"CYLPlaceholderSad.json", @"CYLPlaceholderCloudOff.json",
-            @"CYLPlaceholderTapHint.json", @"CYLPlaceholderSettings.json"]];
+            @"CYLPlaceholderTapHint.json", @"CYLPlaceholderSettings.json",
+            @"CYLPlaceholderLocationPermission.json", @"CYLPlaceholderCameraPermission.json",
+            @"CYLPlaceholderPhotoLibraryPermission.json", @"CYLPlaceholderMicrophonePermission.json",
+            @"CYLPlaceholderContactsPermission.json", @"CYLPlaceholderCalendarPermission.json",
+            @"CYLPlaceholderBluetoothPermission.json", @"CYLPlaceholderNotificationPermission.json"]];
     });
     return [names containsObject:fileName];
 }
@@ -251,6 +256,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
             CYLPlaceholderActionOpenSettings: @[@"CYLPlaceholderActionOpenSettingsTitle", @"Open Settings"],
             CYLPlaceholderActionGoShopping: @[@"CYLPlaceholderActionGoShoppingTitle", @"Go shopping"],
             CYLPlaceholderActionDone: @[@"CYLPlaceholderActionDoneTitle", @"Done"],
+            CYLPlaceholderActionChooseManually: @[@"CYLPlaceholderActionChooseManuallyTitle", @"Choose manually"],
         };
     });
     NSArray<NSString *> *text = action ? texts[action] : nil;
@@ -276,6 +282,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
             @[@"CYLPlaceholderScenarioTitleAboveIllustrationName", @"Title above the illustration"],
             @[@"CYLPlaceholderScenarioTextOnlyName", @"Text only"],
             @[@"CYLPlaceholderScenarioTapMeRetryName", @"Tap me and reload"],
+            @[@"CYLPlaceholderScenarioLocationPermissionDeniedName", @"Location permission denied"],
             @[@"CYLPlaceholderScenarioNoSearchResultsName", @"No search results"],
             @[@"CYLPlaceholderScenarioEmptyCartName", @"Empty cart"],
             @[@"CYLPlaceholderScenarioNoOrdersName", @"No orders"],
@@ -283,7 +290,13 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
             @[@"CYLPlaceholderScenarioNoMessagesName", @"No messages"],
             @[@"CYLPlaceholderScenarioNoNotificationsName", @"No notifications"],
             @[@"CYLPlaceholderScenarioNoPermissionName", @"No permission"],
-            @[@"CYLPlaceholderScenarioLocationOffName", @"Location off"],
+            @[@"CYLPlaceholderScenarioCameraPermissionDeniedName", @"Camera permission denied"],
+            @[@"CYLPlaceholderScenarioPhotoLibraryPermissionDeniedName", @"Photo permission denied"],
+            @[@"CYLPlaceholderScenarioMicrophonePermissionDeniedName", @"Microphone permission denied"],
+            @[@"CYLPlaceholderScenarioContactsPermissionDeniedName", @"Contacts permission denied"],
+            @[@"CYLPlaceholderScenarioCalendarPermissionDeniedName", @"Calendar permission denied"],
+            @[@"CYLPlaceholderScenarioBluetoothPermissionDeniedName", @"Bluetooth permission denied"],
+            @[@"CYLPlaceholderScenarioNotificationPermissionDeniedName", @"Notification permission denied"],
             @[@"CYLPlaceholderScenarioServerErrorName", @"Server error"],
             @[@"CYLPlaceholderScenarioSyncFailedName", @"Sync failed"],
             @[@"CYLPlaceholderScenarioLoadingName", @"Loading"],
@@ -302,7 +315,8 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
         case CYLPlaceholderScenarioTapToReload: return @[@13, @14, @15, @24, @26, @28, @31, @32, @37, @42, @43];
         case CYLPlaceholderScenarioLoadFailedWithHint: return @[@21, @22, @27, @29];
         case CYLPlaceholderScenarioTapToReconnect: return @[@8];
-        case CYLPlaceholderScenarioRetryButton: return @[@1, @2, @11, @19, @20];
+        case CYLPlaceholderScenarioRetryButton: return @[@1, @2, @11, @19];
+        case CYLPlaceholderScenarioLocationPermissionDenied: return @[@20];
         case CYLPlaceholderScenarioRetryOutlinedButton: return @[@33, @38, @39];
         case CYLPlaceholderScenarioRetryWithHint: return @[@16, @23, @40];
         case CYLPlaceholderScenarioRetryOrContactSupport: return @[@3];
@@ -325,6 +339,68 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
         default:
             return nil;
     }
+}
+
++ (CYLPlaceholderScenarioCategory)categoryForScenario:(CYLPlaceholderScenario)scenario {
+    if (scenario == CYLPlaceholderScenarioNoPermission || [self permissionForScenario:scenario] != CYLPlaceholderPermissionNone) {
+        return CYLPlaceholderScenarioCategoryPermission;
+    }
+    switch (scenario) {
+        case CYLPlaceholderScenarioNoContent:
+        case CYLPlaceholderScenarioNoSearchResults:
+        case CYLPlaceholderScenarioEmptyCart:
+        case CYLPlaceholderScenarioNoOrders:
+        case CYLPlaceholderScenarioNoFavorites:
+        case CYLPlaceholderScenarioNoMessages:
+        case CYLPlaceholderScenarioNoNotifications:
+            return CYLPlaceholderScenarioCategoryEmpty;
+        case CYLPlaceholderScenarioLoading:
+        case CYLPlaceholderScenarioUploading:
+            return CYLPlaceholderScenarioCategoryProgress;
+        case CYLPlaceholderScenarioSuccess:
+            return CYLPlaceholderScenarioCategorySuccess;
+        default:
+            return CYLPlaceholderScenarioCategoryLoadFailed;
+    }
+}
+
+/// Every permission scenario, indexed by CYLPlaceholderPermission (None maps to the generic NoPermission).
+static const CYLPlaceholderScenario CYLScenarioPermissionScenarios[] = {
+    CYLPlaceholderScenarioNoPermission,
+    CYLPlaceholderScenarioLocationPermissionDenied,
+    CYLPlaceholderScenarioCameraPermissionDenied,
+    CYLPlaceholderScenarioPhotoLibraryPermissionDenied,
+    CYLPlaceholderScenarioMicrophonePermissionDenied,
+    CYLPlaceholderScenarioContactsPermissionDenied,
+    CYLPlaceholderScenarioCalendarPermissionDenied,
+    CYLPlaceholderScenarioBluetoothPermissionDenied,
+    CYLPlaceholderScenarioNotificationPermissionDenied,
+};
+static const NSInteger CYLScenarioPermissionCount =
+    (NSInteger)(sizeof(CYLScenarioPermissionScenarios) / sizeof(CYLScenarioPermissionScenarios[0]));
+
++ (CYLPlaceholderPermission)permissionForScenario:(CYLPlaceholderScenario)scenario {
+    for (NSInteger permission = CYLPlaceholderPermissionLocation; permission < CYLScenarioPermissionCount; permission++) {
+        if (CYLScenarioPermissionScenarios[permission] == scenario) return (CYLPlaceholderPermission)permission;
+    }
+    return CYLPlaceholderPermissionNone;
+}
+
++ (CYLPlaceholderScenario)scenarioForPermission:(CYLPlaceholderPermission)permission {
+    if (permission < 0 || permission >= CYLScenarioPermissionCount) return CYLPlaceholderScenarioNoPermission;
+    return CYLScenarioPermissionScenarios[permission];
+}
+
+/// A permission scenario: the permission's icon and title, a hint saying what is missing and that it is not a
+/// network problem, then "Open Settings".
+static NSArray<CYLPlaceholderComponent *> *CYLScenarioPermissionComponents(NSString *name, NSString *fileName,
+                                                                         CYLPlaceholderStyle style,
+                                                                         NSString *title, NSString *hint) {
+    NSString *prefix = [NSString stringWithFormat:@"CYLPlaceholderScenario%@PermissionDenied", name];
+    return @[CYLScenarioIcon(fileName, style, CYLScenarioText([prefix stringByAppendingString:@"Title"], title),
+                             CYLScenarioIconSide),
+             CYLScenarioHint([prefix stringByAppendingString:@"Hint"], hint),
+             CYLScenarioButton(CYLPlaceholderActionOpenSettings, CYLPlaceholderButtonStyleFilled)];
 }
 
 + (NSArray<CYLPlaceholderComponent *> *)componentsForScenario:(CYLPlaceholderScenario)scenario {
@@ -458,10 +534,50 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
                          CYLScenarioText(@"CYLPlaceholderScenarioNoPermissionTitle", @"Permission required"), icon),
                      CYLScenarioHint(@"CYLPlaceholderScenarioNoPermissionHint", @"Allow access in Settings to continue"),
                      CYLScenarioButton(CYLPlaceholderActionOpenSettings, CYLPlaceholderButtonStyleFilled)];
-        case CYLPlaceholderScenarioLocationOff:
-            return @[CYLScenarioIcon(@"CYLPlaceholderLocation.json", CYLPlaceholderStyleLocationOff,
-                         CYLScenarioText(@"CYLPlaceholderScenarioLocationOffTitle", @"Location services are off"), art),
-                     CYLScenarioButton(CYLPlaceholderActionOpenSettings, CYLPlaceholderButtonStyleOutlined)];
+        case CYLPlaceholderScenarioLocationPermissionDenied: {
+            // [EN] README #20: the address could not be found, so the user may also pick one by hand.
+            // [CN] README #20：无法获取地址，因此也可以手动选择地址。
+            NSMutableArray<CYLPlaceholderComponent *> *components = [CYLScenarioPermissionComponents(
+                @"Location", @"CYLPlaceholderLocationPermission.json", CYLPlaceholderStyleLocationOff,
+                @"Can't get your location",
+                @"Location access is off, so nearby content can't load. This isn't a network problem: allow location "
+                @"access in Settings.") mutableCopy];
+            CYLPlaceholderComponent *manual = [CYLPlaceholderComponent
+                buttonComponentWithTitle:CYLScenarioText(@"CYLPlaceholderScenarioChooseAddressTitle",
+                                                         @"Choose an address manually")
+                                   style:CYLPlaceholderButtonStyleOutlined action:CYLPlaceholderActionChooseManually];
+            manual.spacingBefore = 12;
+            [components addObject:manual];
+            return components;
+        }
+        case CYLPlaceholderScenarioCameraPermissionDenied:
+            return CYLScenarioPermissionComponents(@"Camera", @"CYLPlaceholderCameraPermission.json",
+                CYLPlaceholderStyleVideoOff, @"Camera access is off",
+                @"Allow camera access in Settings to scan codes or take photos.");
+        case CYLPlaceholderScenarioPhotoLibraryPermissionDenied:
+            return CYLScenarioPermissionComponents(@"PhotoLibrary", @"CYLPlaceholderPhotoLibraryPermission.json",
+                CYLPlaceholderStylePhotoLibrary, @"Photo access is off",
+                @"Allow photo access in Settings to choose pictures.");
+        case CYLPlaceholderScenarioMicrophonePermissionDenied:
+            return CYLScenarioPermissionComponents(@"Microphone", @"CYLPlaceholderMicrophonePermission.json",
+                CYLPlaceholderStyleMusicOff, @"Microphone access is off",
+                @"Allow microphone access in Settings to record or make voice calls.");
+        case CYLPlaceholderScenarioContactsPermissionDenied:
+            return CYLScenarioPermissionComponents(@"Contacts", @"CYLPlaceholderContactsPermission.json",
+                CYLPlaceholderStyleGroupOff, @"Contacts access is off",
+                @"Allow contacts access in Settings to find your friends.");
+        case CYLPlaceholderScenarioCalendarPermissionDenied:
+            return CYLScenarioPermissionComponents(@"Calendar", @"CYLPlaceholderCalendarPermission.json",
+                CYLPlaceholderStyleEventBusy, @"Calendar access is off",
+                @"Allow calendar access in Settings to add events and reminders.");
+        case CYLPlaceholderScenarioBluetoothPermissionDenied:
+            return CYLScenarioPermissionComponents(@"Bluetooth", @"CYLPlaceholderBluetoothPermission.json",
+                CYLPlaceholderStyleBluetoothDisabled, @"Bluetooth access is off",
+                @"Allow Bluetooth in Settings to connect to nearby devices.");
+        case CYLPlaceholderScenarioNotificationPermissionDenied:
+            return CYLScenarioPermissionComponents(@"Notification", @"CYLPlaceholderNotificationPermission.json",
+                CYLPlaceholderStyleNotificationsOff, @"Notifications are off",
+                @"Turn on notifications in Settings to get messages in time.");
         case CYLPlaceholderScenarioServerError:
             return @[CYLScenarioIcon(@"CYLPlaceholderServerError.json", CYLPlaceholderStyleCloudOff,
                          CYLScenarioText(@"CYLPlaceholderScenarioServerErrorTitle", @"The server is taking a break"), icon),

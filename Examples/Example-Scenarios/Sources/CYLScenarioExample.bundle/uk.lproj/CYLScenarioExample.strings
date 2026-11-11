@@ -36,3 +36,5 @@
 "CYLScenarioStateFailed" = "Помилка";
 "CYLScenarioStateOffline" = "Офлайн";
 "CYLScenarioStateData" = "Дані";
+"CYLScenarioSectionPermissions" = "Немає дозволу (не збій мережі)";
+"CYLScenarioFeedbackChooseManually" = "Відкриваємо список адрес…";

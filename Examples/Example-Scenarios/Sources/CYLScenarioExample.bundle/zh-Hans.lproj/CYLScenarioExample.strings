@@ -36,3 +36,5 @@
 "CYLScenarioStateFailed" = "失败";
 "CYLScenarioStateOffline" = "断网";
 "CYLScenarioStateData" = "数据";
+"CYLScenarioSectionPermissions" = "权限缺失（非网络失败）";
+"CYLScenarioFeedbackChooseManually" = "正在打开地址列表…";

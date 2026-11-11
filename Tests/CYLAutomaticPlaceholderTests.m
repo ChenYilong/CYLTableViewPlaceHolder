@@ -780,7 +780,7 @@
 
 - (void)testBundledAnimationsAreListedValidAndAttributed {
     NSArray<NSString *> *names = [CYLPlaceholderView bundledAnimationFileNames];
-    XCTAssertEqual(names.count, 32u, @"%@", names);
+    XCTAssertEqual(names.count, 40u, @"%@", names);
     NSDictionary<NSString *, NSString *> *magic = @{@"pag": @"PAG", @"riv": @"RIVE", @"gif": @"GIF8"};
     NSString *notice = nil;
     for (NSString *name in names) {

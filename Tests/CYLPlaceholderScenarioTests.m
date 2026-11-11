@@ -237,6 +237,44 @@
     XCTAssertTrue([CYLPlaceholderLocalization.supportedLanguages containsObject:CYLPlaceholderLocalization.effectiveLanguage]);
 }
 
+- (void)testPermissionScenariosAreTheirOwnCategoryAndOfferSettings {
+    // [EN] A missing permission is not a network failure: its own category, an icon of its own, "Open Settings".
+    // [CN] 权限缺失不是网络失败：有自己的类别和图标，并提供“去设置”。
+    XCTAssertEqual([CYLPlaceholderScenarioCatalog categoryForScenario:CYLPlaceholderScenarioRetryButton],
+                   CYLPlaceholderScenarioCategoryLoadFailed);
+    XCTAssertEqual([CYLPlaceholderScenarioCatalog categoryForScenario:CYLPlaceholderScenarioNoContent],
+                   CYLPlaceholderScenarioCategoryEmpty);
+    XCTAssertEqual([CYLPlaceholderScenarioCatalog scenarioForPermission:CYLPlaceholderPermissionNone],
+                   CYLPlaceholderScenarioNoPermission);
+    NSMutableSet<NSString *> *icons = [NSMutableSet set];
+    NSInteger permissions = 0;
+    for (NSInteger permission = CYLPlaceholderPermissionLocation; permission <= CYLPlaceholderPermissionNotifications;
+         permission++) {
+        CYLPlaceholderScenario scenario = [CYLPlaceholderScenarioCatalog scenarioForPermission:permission];
+        XCTAssertNotEqual(scenario, CYLPlaceholderScenarioNoPermission, @"%ld", (long)permission);
+        XCTAssertEqual([CYLPlaceholderScenarioCatalog permissionForScenario:scenario], permission);
+        XCTAssertEqual([CYLPlaceholderScenarioCatalog categoryForScenario:scenario], CYLPlaceholderScenarioCategoryPermission);
+        NSArray<CYLPlaceholderComponent *> *components = [CYLPlaceholderScenarioCatalog componentsForScenario:scenario];
+        XCTAssertGreaterThanOrEqual(components.count, 3u);
+        NSString *path = components.firstObject.attributes[CYLPlaceholderItemAnimationFilePath];
+        XCTAssertTrue([path.lastPathComponent hasSuffix:@"Permission.json"], @"%@", path);
+        if (path) [icons addObject:path.lastPathComponent];
+        XCTAssertGreaterThan([components.firstObject.attributes[CYLPlaceholderItemTitle] length], 0u);
+        XCTAssertGreaterThan([components[1].attributes[CYLPlaceholderItemTitle] length], 0u);
+        XCTAssertEqualObjects(components[2].action, CYLPlaceholderActionOpenSettings);
+        permissions++;
+    }
+    XCTAssertEqual(permissions, 8);
+    XCTAssertEqual(icons.count, 8u, @"every permission has its own icon: %@", icons);
+    // [EN] README #20: location also offers to choose an address by hand.
+    // [CN] README #20：定位还提供手动选择地址。
+    NSArray<CYLPlaceholderComponent *> *location =
+        [CYLPlaceholderScenarioCatalog componentsForScenario:CYLPlaceholderScenarioLocationPermissionDenied];
+    XCTAssertEqualObjects(location.lastObject.action, CYLPlaceholderActionChooseManually);
+    XCTAssertEqualObjects([CYLPlaceholderScenarioCatalog readmeScreenshotNumbersForScenario:
+                              CYLPlaceholderScenarioLocationPermissionDenied], @[@20]);
+}
+
 - (void)testEveryScenarioIsTranslated {
     NSMutableArray<NSString *> *english = [NSMutableArray array];
     for (NSNumber *value in CYLPlaceholderScenarioCatalog.allScenarios) {

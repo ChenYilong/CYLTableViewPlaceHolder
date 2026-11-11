@@ -36,3 +36,5 @@
 "CYLScenarioStateFailed" = "失敗";
 "CYLScenarioStateOffline" = "オフライン";
 "CYLScenarioStateData" = "データ";
+"CYLScenarioSectionPermissions" = "権限がない（ネットワーク障害ではない）";
+"CYLScenarioFeedbackChooseManually" = "住所一覧を開いています…";
