@@ -1461,6 +1461,35 @@ static const NSTimeInterval CYLTestTimeout = 30;
     window.hidden = YES;
 }
 
+- (void)testPagingBackFooterReturnsToItsPageWhenLeftBetweenPages {
+    // MJRefresh #1430: UIKit's paging deceleration left the table about 0.22 of a page off the page boundary after the
+    // footer's refresh, so the restore (which needed the refresh's exact offset) was skipped.
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    scrollView.contentSize = CGSizeMake(320, 1920);
+    scrollView.contentOffset = CGPointMake(0, 960 - 0.22 * 480);
+    XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01, @"back on the page shown before the refresh");
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
 - (void)testPagingBackFooterDoesNotOverrideCallerOrActiveScrolling {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];

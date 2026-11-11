@@ -74,6 +74,7 @@ xcodebuild test -workspace Examples/Example-objc-02/Example-objc-02.xcworkspace 
 
 `CYLCollectionAnimationUITests` covers #1523/#1506 (header and footer complete)
 and #1483 (first item position after four refreshes). `CYLPagingUITests`
-covers #1430; `testAppendingPageRestoresPreviousPageAfterFooterRefresh` is
-expected to fail until the footer case is fixed (also with the old app
-delegate, on iOS 17.5 and 26.1).
+covers #1430. `testAppendingPageRestoresPreviousPageAfterFooterRefresh` failed
+with the page 194 points off after the footer load (CI run 42978002507); the
+back footer now returns a paging scroll view left between pages to its page
+(`docs/issue-progress.md`, "#1430"), pending CI confirmation.

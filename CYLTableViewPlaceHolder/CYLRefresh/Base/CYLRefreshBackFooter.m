@@ -146,11 +146,46 @@
 }
 #pragma mark - 私有方法
 #pragma mark 刷新结束：归还底部 inset
+/*!
+ * [EN] YES when a paging scroll view rests between two pages, as UIKit's paging deceleration can leave it after the
+ *      footer's refresh animation moved the offset (MJRefresh #1430: the page ended about 0.22 of a page off).
+ * [CN] 分页滚动视图停在两页之间时为 YES；刷新尾的动画改动 offset 后，UIKit 的分页减速可能把它留在这种位置（MJRefresh #1430）。
+ */
+- (BOOL)cyl_isBetweenPages
+{
+    UIScrollView *scrollView = self.scrollView;
+    CGFloat page = scrollView.cyl_h;
+    if (page <= 0) return NO;
+    CGFloat position = (scrollView.cyl_offsetY + scrollView.cyl_insetT) / page;
+    return fabs(position - round(position)) > 0.001;
+}
+
+/*!
+ * [EN] Moves a paging scroll view onto the nearest page inside its content. [CN] 把分页滚动视图移到内容范围内最近的一页。
+ */
+- (void)cyl_alignToNearestPage
+{
+    UIScrollView *scrollView = self.scrollView;
+    CGFloat page = scrollView.cyl_h;
+    if (page <= 0) return;
+    CGFloat top = -scrollView.cyl_insetT;
+    CGFloat maxOffset = MAX(top, scrollView.cyl_contentH - page + scrollView.cyl_insetB);
+    CGFloat aligned = top + round((scrollView.cyl_offsetY - top) / page) * page;
+    aligned = MIN(MAX(aligned, top), maxOffset);
+    if (fabs(aligned - scrollView.cyl_offsetY) > 0.001) {
+        [scrollView setContentOffset:CGPointMake(scrollView.cyl_offsetX, aligned) animated:NO];
+    }
+}
+
 - (void)cyl_restoreBottomInsetAfterRefresh
 {
-    BOOL restorePagingOffset = self.scrollView.pagingEnabled &&
-        !self.scrollView.isDragging && !self.scrollView.isDecelerating &&
-        fabs(self.scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001;
+    UIScrollView *scrollView = self.scrollView;
+    // [EN] A paging scroll view goes back to the page it showed before the refresh when the offset is still the
+    //      refresh's own, or when it rests between pages (#1430); a page the caller chose, a drag or a deceleration is
+    //      left alone. [CN] 分页滚动视图在 offset 仍是刷新设置的值、或停在两页之间时（#1430）回到刷新前的页面；调用方选定的页面、
+    //      拖动中或减速中不做处理。
+    BOOL restorePagingOffset = scrollView.pagingEnabled && !scrollView.isDragging && !scrollView.isDecelerating &&
+        (fabs(scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001 || [self cyl_isBetweenPages]);
     [UIView animateWithDuration:self.slowAnimationDuration animations:^{
         if (self.endRefreshingAnimationBeginAction) {
             self.endRefreshingAnimationBeginAction();
@@ -164,6 +199,12 @@
         if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
     } completion:^(BOOL finished) {
         self.pullingPercent = 0.0;
+        // [EN] Anything that moved it during the animation cannot leave it between pages.
+        // [CN] 动画期间的其他改动也不会让它停在两页之间。
+        UIScrollView *current = self.scrollView;
+        if (restorePagingOffset && current.pagingEnabled && !current.isDragging && !current.isDecelerating) {
+            [self cyl_alignToNearestPage];
+        }
 
         if (self.endRefreshingCompletionBlock) {
             self.endRefreshingCompletionBlock();
