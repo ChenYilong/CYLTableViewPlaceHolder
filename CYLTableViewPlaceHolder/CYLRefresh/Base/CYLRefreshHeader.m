@@ -19,7 +19,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) BOOL updatingRefreshInset;
 /// [EN] YES while the header retracts after a refresh. [CN] 刷新结束后刷新头收回期间为 YES。
 @property (assign, nonatomic) BOOL retracting;
-/// [EN] The empty mask that hides the idle header (`hidesWhenIdle`). [CN] 隐藏空闲刷新头（`hidesWhenIdle`）的空遮罩。
+/// [EN] The empty mask that hides the idle header (`autoHideRefresh`). [CN] 隐藏空闲刷新头（`autoHideRefresh`）的空遮罩。
 @property (strong, nonatomic) CALayer *idleMask;
 @end
 
@@ -49,15 +49,18 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 设置高度
     self.cyl_h = CYLRefreshHeaderHeight;
 
-    _hidesWhenIdle = YES;
+    // [EN] On where the navigation bar is transparent by default. [CN] 在导航栏默认透明的系统上开启。
+    if (@available(iOS 26.0, *)) {
+        _autoHideRefresh = YES;
+    }
     [self cyl_updateIdleVisibility];
 }
 
 #pragma mark - Hidden while idle
 
-- (void)setHidesWhenIdle:(BOOL)hidesWhenIdle
+- (void)setAutoHideRefresh:(BOOL)autoHideRefresh
 {
-    _hidesWhenIdle = hidesWhenIdle;
+    _autoHideRefresh = autoHideRefresh;
     [self cyl_updateIdleVisibility];
 }
 
@@ -78,7 +81,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
 - (void)cyl_updateIdleVisibility
 {
-    BOOL hide = self.hidesWhenIdle && [self cyl_isIdleAndRetracted];
+    BOOL hide = self.autoHideRefresh && [self cyl_isIdleAndRetracted];
     BOOL hidden = self.idleMask && self.layer.mask == self.idleMask;
     if (hide == hidden) return;
     [CATransaction begin];

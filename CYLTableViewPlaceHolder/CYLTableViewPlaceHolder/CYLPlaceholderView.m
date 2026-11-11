@@ -588,6 +588,9 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
     return YES;
 }
 
+// [EN] System image setting in this file is CYLPlaceholderView's own implementation (its image view, GIF frames,
+//      selection indicator and title chrome); every other part of the project sets images through it.
+// [CN] 本文件中的系统图片设置是 CYLPlaceholderView 自身的实现（图片视图、GIF 帧、选中指示与标题底图）；项目其他部分都通过它设置图片。
 @implementation CYLPlaceholderView
 
 static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlaceholderAnimationFactories(void) {

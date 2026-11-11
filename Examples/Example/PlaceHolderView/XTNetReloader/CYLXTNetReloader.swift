@@ -27,6 +27,8 @@ final class CYLXTNetReloader: UIView {
     private static let buttonSize = CGSize(width: 100, height: 30)
     private static let buttonFontSize: CGFloat = 15
 
+    // System image view: this example shows a placeholder view built entirely by the app (CYLTableViewPlaceHolderDelegate
+    // accepts any view), so it deliberately does not use CYLPlaceholderView.
     private let noWifiImageView: UIImageView
     private let messageLabel: UILabel
     private let reloadButton: UIButton

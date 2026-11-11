@@ -124,6 +124,7 @@ final class CYLFeedViewController: UITableViewController {
         var content = UIListContentConfiguration.subtitleCell()
         content.text = CYLScenarioLocalizedFormat(.formatPost, indexPath.row + 1)
         content.secondaryText = CYLScenarioLocalizedString(.textFeedHint)
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: "person.crop.circle")
         cell.contentConfiguration = content
         return cell

@@ -63,6 +63,10 @@
 - (UIImageView *)animationView
 {
     if (!_animationView) {
+        // [EN] System image view: public API (`animationView`, `gifView`) kept for source compatibility. It stays hidden; the
+        //      images are drawn by the icon's CYLPlaceholderView (`-cyl_setIconImages:duration:forState:`).
+        // [CN] 系统图片视图：为源码兼容保留的公开接口（`animationView`、`gifView`），始终隐藏；图片由图标的 CYLPlaceholderView 绘制
+        //      （`-cyl_setIconImages:duration:forState:`）。
         UIImageView *animationView = [[UIImageView alloc] init];
         [self addSubview:_animationView = animationView];
     }

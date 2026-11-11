@@ -107,6 +107,14 @@ spans several lines must reach them as one comment.
   user's explicit approval.
 - Example: `CYLPlaceholderHUD` shows loading, progress and results in one `CYLPlaceholderView` inside its stack view;
   progress scrubs an animation or adds the percentage to the title, with no drawn ring.
+- Images go through `CYLPlaceholderView` too. Always search the project for image-setting code (`setImages`,
+  `setImage`, `.image =`, `animationImages`, `UIImageView`) before and after a change, and prefer the image API that
+  `CYLPlaceholderView` already wraps (`CYLPlaceholderItemImage` and the other item attributes, `CYLPlaceholderComponent`,
+  the refresh controls' `-cyl_setIconImages:duration:forState:`) over setting a `UIImage` on a `UIImageView` yourself.
+- When system image setting cannot be avoided (a `UIImage` on a `UIImageView`, `UIButton` or layer), write a comment
+  next to it that says why `CYLPlaceholderView` is not used there, for example: the view is MJRefresh's original arrow,
+  kept unchanged by the owner's decision; the image view is public API kept for source compatibility; the code is
+  inside `CYLPlaceholderView` itself. Code without such a comment is treated as a defect to fix.
 
 ## Xcode and CocoaPods project checks
 

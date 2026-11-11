@@ -26,6 +26,8 @@ final class CYLWeChatStylePlaceHolder: UIView {
 
     weak var delegate: CYLWeChatStylePlaceHolderDelegate?
 
+    // System image view: this example shows a placeholder view built entirely by the app (CYLTableViewPlaceHolderDelegate
+    // accepts any view), so it deliberately does not use CYLPlaceholderView.
     private let emptyOverlayImageView: UIImageView
     private let emptyOverlayLabel: UILabel
 

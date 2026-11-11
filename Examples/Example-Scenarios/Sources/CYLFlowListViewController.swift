@@ -112,6 +112,7 @@ final class CYLFlowListViewController: UITableViewController {
             content.text = CYLScenarioLocalizedString(.titleHUD)
             content.secondaryText = "CYLPlaceholderHUD · .hud"
             content.secondaryTextProperties.color = .secondaryLabel
+            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
             content.image = UIImage(systemName: "hourglass")
             content.imageProperties.tintColor = .systemTeal
             cell.contentConfiguration = content
@@ -125,6 +126,7 @@ final class CYLFlowListViewController: UITableViewController {
             content.text = CYLScenarioLocalizedString(.titleStatusBar)
             content.secondaryText = "CYLPlaceholderStatusView · statusView"
             content.secondaryTextProperties.color = .secondaryLabel
+            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
             content.image = UIImage(systemName: "exclamationmark.circle")
             content.imageProperties.tintColor = .systemRed
             cell.contentConfiguration = content
@@ -137,6 +139,7 @@ final class CYLFlowListViewController: UITableViewController {
         content.text = flow.title
         content.secondaryText = flow.detail
         content.secondaryTextProperties.color = .secondaryLabel
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: flow.symbol)
         content.imageProperties.tintColor = .systemTeal
         cell.contentConfiguration = content
@@ -333,6 +336,7 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
         let cell = tableView.dequeueReusableCell(withIdentifier: "row", for: indexPath)
         var content = UIListContentConfiguration.cell()
         content.text = CYLScenarioLocalizedFormat(.formatItem, indexPath.row + 1)
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: "doc.text")
         cell.contentConfiguration = content
         return cell

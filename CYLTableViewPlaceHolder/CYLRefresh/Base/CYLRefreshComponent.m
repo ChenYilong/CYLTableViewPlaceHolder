@@ -117,6 +117,9 @@
     if (self.state != CYLRefreshStateIdle || images.count == 0 || !_iconView) return;
     CGFloat percent = isfinite(pullingPercent) ? MAX(0, pullingPercent) : 0;
     NSUInteger index = MIN((NSUInteger)(images.count * percent), images.count - 1);
+    // [EN] The frame goes straight into CYLPlaceholderView's own image view: rebuilding the view from attributes on every
+    //      pull step would restart it many times a second. [CN] 帧直接写入 CYLPlaceholderView 自己的图片视图：每次下拉都用属性
+    //      重建视图，每秒会重建很多次。
     _iconView.placeholderView.imageView.image = images[index];
 }
 

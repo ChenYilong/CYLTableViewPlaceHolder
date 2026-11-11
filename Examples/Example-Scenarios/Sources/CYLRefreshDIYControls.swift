@@ -64,6 +64,7 @@ private struct CYLRefreshDIYViews {
     let label = UILabel()
     /// Only for show ("打酱油"), so it is hidden from assistive technologies.
     let toggle = UISwitch()
+    // System image view: MJRefresh's DIY-control example builds its own subviews on purpose, so CYLPlaceholderView is not used.
     let logo = UIImageView(image: UIImage(systemName: "arrow.triangle.2.circlepath.circle.fill"))
     let loading = UIActivityIndicatorView(style: .medium)
 

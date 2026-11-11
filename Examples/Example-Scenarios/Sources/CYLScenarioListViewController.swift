@@ -77,6 +77,7 @@ final class CYLScenarioListViewController: UITableViewController {
             content.secondaryText = url.pathExtension == "plist" ? "CYLPlaceholderStackView(contentsOf:actions:) · plist"
                 : "CYLPlaceholderStackView(contentsOf:) / (configuration:) · JSON"
             content.secondaryTextProperties.color = .secondaryLabel
+            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
             content.image = UIImage(systemName: "doc.text")
             content.imageProperties.tintColor = .systemTeal
             cell.contentConfiguration = content
@@ -89,6 +90,7 @@ final class CYLScenarioListViewController: UITableViewController {
         content.text = CYLPlaceholderScenarioCatalog.localizedName(for: scenario)
         content.secondaryText = Self.detail(for: scenario)
         content.secondaryTextProperties.color = .secondaryLabel
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: Self.symbol(for: scenario))
         content.imageProperties.tintColor = .systemTeal
         cell.contentConfiguration = content

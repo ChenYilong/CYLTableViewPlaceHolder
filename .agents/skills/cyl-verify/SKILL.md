@@ -7,6 +7,14 @@ description: Build and test the placeholder library, refresh component, resource
 
 Use the smallest relevant test set and state any unverified behavior.
 
+Image audit (every change to the core or the examples): search for image-setting code and check each hit uses
+`CYLPlaceholderView`'s image API, or carries a comment that says why it uses a system `UIImage` / `UIImageView`
+instead (`instructions.md`, "Reuse CYLPlaceholderView in the core"):
+
+```sh
+grep -rnE 'setImages|setImage|\.image *=|animationImages|UIImageView' CYLTableViewPlaceHolder Examples --include='*.m' --include='*.swift'
+```
+
 ```sh
 ruby Tests/run-tests.rb
 DESTINATION='platform=iOS Simulator,name=iPhone 15,OS=17.5' ruby Tests/run-animation-tests.rb

@@ -180,8 +180,8 @@ final class CYLRefreshIconListViewController: UITableViewController {
                 return (header, footer)
             },
             Row(title: CYLScenarioLocalizedString(.refreshGifNames), subtitle: "CYLRefreshGifHeader · setImages(_:for:)") {
-                // Code written for MJRefresh's names keeps working: the Gif classes are subclasses whose gifView and
-                // setImages call animationView and setAnimationImages.
+                // Code written for MJRefresh's names keeps working: the Gif classes are subclasses whose setImages call
+                // setAnimationImages, and the images are drawn by the icon's CYLPlaceholderView.
                 let arrows = CYLRefreshFrames.images(ofBundledGIF: "CYLRefreshArrows.gif")
                 let header = CYLRefreshGifHeader()
                 header.setImages(arrows, for: .idle)
@@ -354,6 +354,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         var content = UIListContentConfiguration.subtitleCell()
         content.text = CYLScenarioLocalizedFormat(.formatItem, indexPath.row + 1)
         content.secondaryText = CYLScenarioLocalizedString(.textRefreshHint)
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: "arrow.up.arrow.down")
         cell.contentConfiguration = content
         return cell

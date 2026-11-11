@@ -52,6 +52,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   features show icons and text through `CYLPlaceholderView`, the packaged icon-and-title view, instead of fully
   custom views. "The packaged icon and title" means `CYLPlaceholderView`, not `CYLPlaceholderStackView`; every element
   inside a stack view is a `CYLPlaceholderView`. A custom view needs explicit approval.
+- Always search for image-setting code (`setImages`, `setImage`, `.image =`, `animationImages`, `UIImageView`) and
+  prefer `CYLPlaceholderView`'s image API (`CYLPlaceholderItemImage`, `CYLPlaceholderComponent`,
+  `-cyl_setIconImages:duration:forState:`) over a system `UIImage` on a `UIImageView`. Where system image setting is
+  unavoidable, a comment next to it says why `CYLPlaceholderView` is not used.
 
 ## Project and verification
 

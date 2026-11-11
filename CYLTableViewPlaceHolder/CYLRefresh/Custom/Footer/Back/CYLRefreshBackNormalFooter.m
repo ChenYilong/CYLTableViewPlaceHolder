@@ -22,6 +22,9 @@
 - (UIImageView *)arrowView
 {
     if (!_arrowView) {
+        // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
+        //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
+        // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
         UIImageView *arrowView = [[UIImageView alloc] initWithImage:[NSBundle cyl_arrowImage]];
         [self addSubview:_arrowView = arrowView];
     }

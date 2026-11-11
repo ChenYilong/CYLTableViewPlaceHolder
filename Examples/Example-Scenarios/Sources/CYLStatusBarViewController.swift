@@ -169,6 +169,7 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
         let cell = tableView.dequeueReusableCell(withIdentifier: "row", for: indexPath)
         var content = UIListContentConfiguration.cell()
         content.text = CYLScenarioLocalizedFormat(.formatItem, indexPath.row + 1)
+        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
         content.image = UIImage(systemName: "bubble.left")
         cell.contentConfiguration = content
         return cell

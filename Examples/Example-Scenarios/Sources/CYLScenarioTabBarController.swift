@@ -61,6 +61,7 @@ final class CYLScenarioPlusButton: CYLPlusButton, CYLPlusButtonSubclassing {
     static func plusButton() -> Any {
         let button = CYLScenarioPlusButton()
         let configuration = UIImage.SymbolConfiguration(pointSize: 38, weight: .bold)
+        // System image on the plus button: a CYLTabBarController UIButton, not a placeholder, so CYLPlaceholderView does not apply.
         button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: configuration), for: .normal)
         button.tintColor = .systemTeal
         button.frame = CGRect(x: 0, y: 0, width: 56, height: 56)

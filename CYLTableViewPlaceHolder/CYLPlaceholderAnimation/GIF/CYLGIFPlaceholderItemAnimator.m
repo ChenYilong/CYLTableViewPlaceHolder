@@ -39,6 +39,10 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
 @property (nonatomic, copy) NSArray<NSNumber *> *frameDelays;
 @end
 
+// [EN] System image setting: this animator is CYLPlaceholderView's GIF backend (the image view that draws a GIF item
+//      inside a CYLPlaceholderView), so it sets frames on itself rather than going through CYLPlaceholderView.
+// [CN] 系统图片设置：这个 animator 是 CYLPlaceholderView 的 GIF 后端（在 CYLPlaceholderView 内绘制 GIF 的图片视图），
+//      因此直接设置自己的帧，而不经过 CYLPlaceholderView。
 @implementation CYLGIFPlaceholderItemAnimationView
 
 + (nullable UIView<CYLPlaceholderItemAnimationPlayableView> *)cyl_animationViewWithFileURL:(NSURL *)fileURL

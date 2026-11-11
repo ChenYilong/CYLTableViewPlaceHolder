@@ -169,6 +169,37 @@
     XCTAssertEqual(backFooter.iconView.placeholderView.imageView.image.images.count, 4u);
 }
 
+- (void)testTheTrailerTextIsCompleteAndReadableInEveryLanguage {
+    // [EN] MJRefresh's one-character-wide column breaks English words letter by letter and cuts them off; CJK text
+    //      stays upright, other text is rotated to read top to bottom and wraps instead of being cut off.
+    // [CN] MJRefresh 一个字宽的竖列会把英文单词逐字母拆开并截断；中日韩文字保持正立，其他文字旋转后从上往下读，过长时换行而不截断。
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 200)];
+    scrollView.contentSize = CGSizeMake(1600, 200);
+    CYLRefreshNormalTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    scrollView.cyl_trailer = trailer;
+    UILabel *label = trailer.stateLabel;
+
+    [trailer setTitle:@"释放查看图文详情" forState:CYLRefreshStateIdle];
+    [trailer setNeedsLayout];
+    [trailer layoutIfNeeded];
+    XCTAssertTrue(CGAffineTransformIsIdentity(label.transform), @"CJK: upright, as in MJRefresh");
+    XCTAssertEqualWithAccuracy(CGRectGetWidth(label.bounds), ceil(label.font.pointSize), 0.5);
+
+    for (NSString *text in @[@"Release to see more", @"Отпустите, чтобы посмотреть подробности",
+                             @"Release to see the details of this page, and keep reading what comes next"]) {
+        [trailer setTitle:text forState:CYLRefreshStateIdle];
+        [trailer setNeedsLayout];
+        [trailer layoutIfNeeded];
+        XCTAssertEqualWithAccuracy(atan2(label.transform.b, label.transform.a), M_PI_2, 0.001, @"%@: rotated", text);
+        CGSize needed = [label sizeThatFits:CGSizeMake(CGRectGetWidth(label.bounds), CGFLOAT_MAX)];
+        XCTAssertLessThanOrEqual(needed.height, CGRectGetHeight(label.bounds) + 0.5, @"%@: shown in full", text);
+        XCTAssertLessThanOrEqual(CGRectGetHeight(label.frame), CGRectGetHeight(trailer.bounds) + 0.5,
+                                 @"%@: within the control's height", text);
+        XCTAssertGreaterThan(CGRectGetMinX(label.frame), CGRectGetMaxX(trailer.arrowView.frame) - 0.5,
+                             @"%@: right of the arrow", text);
+    }
+}
+
 - (void)testTheHeaderIsHiddenWhileIdleAndRetracted {
     // [EN] iOS 26's glass navigation bar shows what is under it: the retracted header is masked out while idle.
     // [CN] iOS 26 的玻璃导航栏会透出下方内容：空闲时把收回的刷新头遮住。
@@ -177,7 +208,12 @@
     CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
     scrollView.cyl_header = header;
     [self layOut:header];
-    XCTAssertTrue(header.hidesWhenIdle, @"on by default");
+    if (@available(iOS 26.0, *)) {
+        XCTAssertTrue(header.autoHideRefresh, @"on by default where the navigation bar is transparent by default");
+    } else {
+        XCTAssertFalse(header.autoHideRefresh, @"off by default on earlier systems");
+        header.autoHideRefresh = YES;
+    }
     XCTAssertNotNil(header.layer.mask, @"idle and retracted: masked out");
     XCTAssertTrue(header.accessibilityElementsHidden);
     XCTAssertFalse(header.hidden, @"the caller's hidden is not touched");
@@ -191,7 +227,7 @@
     XCTAssertNil(header.layer.mask, @"refreshing: shown");
     header.state = CYLRefreshStateIdle;
     XCTAssertNil(header.layer.mask, @"retracting after the refresh: still shown");
-    header.hidesWhenIdle = NO;
+    header.autoHideRefresh = NO;
     header.pullingPercent = 0;
     XCTAssertNil(header.layer.mask, @"NO: MJRefresh's behavior");
 }

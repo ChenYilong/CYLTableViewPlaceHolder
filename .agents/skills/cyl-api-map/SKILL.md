@@ -10,7 +10,9 @@ source of truth; update the README and issue tracker if they become stale.
 
 Core features reuse `CYLPlaceholderView` (the packaged icon and title) for every icon and text instead of custom
 views; every element inside a `CYLPlaceholderStackView` is a `CYLPlaceholderView` (`instructions.md`, "Reuse
-CYLPlaceholderView in the core").
+CYLPlaceholderView in the core"). Images too: set them through `CYLPlaceholderView`'s item attributes
+(`CYLPlaceholderItemImage`, `CYLPlaceholderComponent`, the refresh controls' `-cyl_setIconImages:duration:forState:`),
+not as a system `UIImage` on a `UIImageView`; where that cannot be avoided, a comment says why.
 
 | Area | Source |
 | --- | --- |
