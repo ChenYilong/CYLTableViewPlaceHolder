@@ -144,6 +144,44 @@ pod 'CYLTabBarController', :path => '../..'
 
 Find that folder by searching upward from the Podfile for the podspec; never write an absolute path.
 
+### Integrating CYLTabBarController in the examples
+
+Unless a task says otherwise, every example that shows a CYLTabBarController
+integrates it the same way:
+
+- **With a PlusButton that has a plus child view controller**: the plus button
+  owns a page of its own (`plusChildViewController`), so tapping it selects that
+  page like a tab instead of only running an action.
+  `-[CYLTabBarController hasPlusChildViewController]` is YES once it is set up.
+- **Initialized from a local configuration file**: the tabs, their titles and
+  images, and the plus button are described in a file inside the example's own
+  `.bundle` (for example
+  `CYLScenarioExample.bundle/TabBar/tabbar.json`), read through the example's
+  resource lookup, and passed to CYLTabBarController's configuration
+  initializer: Swift `try CYLTabBarController(configurationFile: path)`,
+  Objective-C `+tabBarControllerWithConfigurationFile:error:`. The file uses
+  CYLTabBarController's configuration keys (`docs/Configuration-File.md` in
+  that repository): `CYLTabBarControllerPlusButton` describes the plus button
+  (`CYLTabBarItemTitle`, `CYLTabBarItemImage`, and `CYLTabBarItemPageIdentifier`
+  for the plus button's own page), and each tab names its page with
+  `CYLTabBarItemPageIdentifier`, resolved through CYLTabBarController's page
+  registry.
+- Code only adds what a file cannot hold: registering the pages for the page
+  identifiers, a `CYLTabBarControllerPlusButtonAction` block, or a
+  `CYLPlusButton` subclass when the layout needs one (it then still implements
+  `+plusChildViewController`).
+- The titles in the file are localization keys of the example's bundle, read
+  through the example's lookup macro; the plus button gets a localized
+  accessibility label (see "Localization" and "Accessibility").
+- Before writing the file or the code, read the API in the CYLTabBarController
+  commit the example resolves (`scripts/resolve-cyltabbarcontroller-commit.sh`):
+  `CYLTabBarController.h` (configuration keys, `CYLTabBarController(configurationFile:)`)
+  and `CYLPlusButton.h` (`+plusChildViewController`,
+  `+cyl_registerPlusButtonWithAttributes:action:context:`).
+- An example that differs (no plus button, a plus button without a page, tabs
+  built in code) does so only when the task asks for it, and says why in a
+  comment where the tab bar controller is created.
+
 ## Depending on MJRefresh in the examples
 
 `CYLRefresh` is adapted from MJRefresh. So that an example always builds and runs with the original library

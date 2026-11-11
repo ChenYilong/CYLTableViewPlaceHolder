@@ -35,6 +35,10 @@ have the expected Rive artboard and state machine. Trigger and linear fixtures
 must be named `check.riv` and `button.riv` and contain the corresponding
 `Check` trigger and `active` animation used by the tests.
 Select a real device and runtime with `xcrun simctl list devices available`.
+When an example shows CYLTabBarController, check it follows the default integration (`instructions.md`,
+"Integrating CYLTabBarController in the examples"): built from a configuration file in the example's bundle,
+a PlusButton whose `plusChildViewController` page is selectable (`hasPlusChildViewController` is YES), localized
+titles and plus button label.
 Where it runs (`instructions.md`, "CI/CD"): GitHub CI/CD runs iOS jobs on macOS 26
 (`vars.MACOS_RUNNER || 'macos-26'`); read CYLTabBarController's
 `https://github.com/ChenYilong/CYLTabBarController/blob/master/.github/workflows/ios.yml`

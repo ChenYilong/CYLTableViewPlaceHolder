@@ -42,6 +42,7 @@ source of truth; update the README and issue tracker if they become stale.
 | Bilingual README and docs, generated navigation | `README.md`, `docs/`, `scripts/update-docs-navigation.py`, `.markdownlint.json`; rules in `instructions.md` ("Bilingual documentation") |
 | MJRefresh in every example Podfile (latest version) | `scripts/resolve-mjrefresh-version.sh`, `Examples/*/Podfile`, `scripts/ci-build-example.sh`; rule in `instructions.md` ("Depending on MJRefresh in the examples") |
 | CYLTabBarController dependency (latest commit, any branch) | `scripts/resolve-cyltabbarcontroller-commit.sh`, `Examples/Example-Scenarios/Podfile`; rule in `instructions.md` ("Depending on CYLTabBarController") |
+| CYLTabBarController in the examples (default integration) | A PlusButton with a plus child view controller, initialized from a configuration file in the example's own `.bundle` with `CYLTabBarController(configurationFile:)`; rule in `instructions.md` "Integrating CYLTabBarController in the examples"; API in CYLTabBarController's `CYLTabBarController.h` and `CYLPlusButton.h`; current example `Examples/Example-Scenarios/Sources/CYLScenarioTabBarController.swift` |
 | Integration and usage | `README.md` |
 | Issue history | `docs/issue-progress.md` |
 
