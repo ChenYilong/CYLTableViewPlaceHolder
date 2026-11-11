@@ -165,7 +165,7 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
      * [CN] HUD 样式：循环播放的刷新动画与“加载中…”，用于正在加载的页面。`CYLPlaceholderHUD` 以 SVProgressHUD 的接口把它显示在
      *      页面上方的方框中（进度、成功、错误、关闭）。
      */
-    CYLPlaceholderScenarioHUD,
+    CYLPlaceholderScenarioHUD NS_SWIFT_NAME(hud),
     CYLPlaceholderScenarioCount
 };
 
