@@ -122,11 +122,6 @@ static NSDictionary<NSString *, NSString *> *CYLScenarioAnimationOptions(NSStrin
         options = @{
             @"CYLPlaceholderLoading.riv": legacy,
             @"CYLPlaceholderPullToRefresh.riv": legacy,
-            @"CYLPlaceholderNoOrders.riv": legacy,
-            @"CYLPlaceholderNoReviews.riv": legacy,
-            @"CYLPlaceholderNoResults.riv": legacy,
-            @"CYLPlaceholderSettings.riv": legacy,
-            @"CYLPlaceholderMascot.riv": legacy,
             @"CYLPlaceholderSuccess.riv": @{@"stateMachine": @"State Machine 1"},
         };
     });
@@ -147,7 +142,8 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
             @"CYLPlaceholderLocationPermission.json", @"CYLPlaceholderCameraPermission.json",
             @"CYLPlaceholderPhotoLibraryPermission.json", @"CYLPlaceholderMicrophonePermission.json",
             @"CYLPlaceholderContactsPermission.json", @"CYLPlaceholderCalendarPermission.json",
-            @"CYLPlaceholderBluetoothPermission.json", @"CYLPlaceholderNotificationPermission.json"]];
+            @"CYLPlaceholderBluetoothPermission.json", @"CYLPlaceholderNotificationPermission.json",
+            @"CYLPlaceholderNoOrders.json"]];
     });
     return [names containsObject:fileName];
 }
@@ -620,16 +616,15 @@ static NSArray<NSArray<NSString *> *> *CYLScenarioNameEntries(void) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         variants = @{
-            @(CYLPlaceholderScenarioNoContent): @[@"CYLPlaceholderNoContent.pag", @"CYLPlaceholderNoDrafts.json"],
+            @(CYLPlaceholderScenarioNoContent): @[@"CYLPlaceholderNoDrafts.json"],
             @(CYLPlaceholderScenarioTapToReload): @[@"CYLPlaceholderPullToRefresh.riv"],
             @(CYLPlaceholderScenarioRetryOrContactSupport): @[@"CYLPlaceholderContactSupport.json"],
             @(CYLPlaceholderScenarioRefreshIcon): @[@"CYLPlaceholderRefresh.json", @"CYLPlaceholderPullToRefresh.riv"],
             @(CYLPlaceholderScenarioTitleAboveIllustration): @[@"CYLPlaceholderPullToRefresh.riv"],
-            @(CYLPlaceholderScenarioTapMeRetry): @[@"CYLPlaceholderMascot.riv", @"CYLPlaceholderTapHint.json"],
+            @(CYLPlaceholderScenarioTapMeRetry): @[@"CYLPlaceholderNoInternet.json"],
             @(CYLPlaceholderScenarioLocationPermissionDenied): @[@"CYLPlaceholderLocation.json"],
-            @(CYLPlaceholderScenarioNoSearchResults): @[@"CYLPlaceholderNoResults.riv"],
             @(CYLPlaceholderScenarioNoFavorites): @[@"CYLPlaceholderNoFavorites.gif", @"CYLPlaceholderNoFavorites.json"],
-            @(CYLPlaceholderScenarioNoPermission): @[@"CYLPlaceholderSettings.riv", @"CYLPlaceholderSettings.json"],
+            @(CYLPlaceholderScenarioNoPermission): @[@"CYLPlaceholderSettings.json"],
             @(CYLPlaceholderScenarioSyncFailed): @[@"CYLPlaceholderLoadingInfinity.json"],
             @(CYLPlaceholderScenarioLoading): @[@"CYLPlaceholderLoading.pag", @"CYLPlaceholderLoading.riv",
                                                 @"CYLPlaceholderLoadingInfinity.json", @"CYLPlaceholderProgress.pag"],
@@ -807,10 +802,12 @@ static NSArray<CYLPlaceholderComponent *> *CYLScenarioPermissionComponents(NSStr
                 buttonComponentWithTitle:CYLScenarioText(@"CYLPlaceholderScenarioReloadNowTitle", @"Reload now…")
                                    style:CYLPlaceholderButtonStyleFilled action:CYLPlaceholderActionRetry];
             reload.spacingBefore = 4;
-            CYLPlaceholderComponent *mascot = CYLScenarioIcon(@"CYLPlaceholderNoReviews.riv", CYLPlaceholderStyleFavorite,
-                                                              nil, 120);
-            mascot.spacingBefore = 4;
-            return @[tapMe, arrow, reload, mascot];
+            // [EN] README #34, #35 end with a decorative mascot; the offline cloud says what went wrong instead.
+            // [CN] README #34、#35 末尾是装饰性的吉祥物；这里改用表示离线的云图标，说明出了什么问题。
+            CYLPlaceholderComponent *offline = CYLScenarioIcon(@"CYLPlaceholderCloudOff.json", CYLPlaceholderStyleCloudOff,
+                                                               nil, 96);
+            offline.spacingBefore = 12;
+            return @[tapMe, arrow, reload, offline];
         }
         case CYLPlaceholderScenarioNoSearchResults:
             return @[CYLScenarioIcon(@"CYLPlaceholderNoResults.json", CYLPlaceholderStyleSearchOff,
@@ -821,8 +818,8 @@ static NSArray<CYLPlaceholderComponent *> *CYLScenarioPermissionComponents(NSStr
                          CYLScenarioText(@"CYLPlaceholderScenarioEmptyCartTitle", @"Your cart is empty"), art),
                      CYLScenarioButton(CYLPlaceholderActionGoShopping, CYLPlaceholderButtonStyleOutlined)];
         case CYLPlaceholderScenarioNoOrders:
-            return @[CYLScenarioIcon(@"CYLPlaceholderNoOrders.riv", CYLPlaceholderStyleArchive,
-                         CYLScenarioText(@"CYLPlaceholderScenarioNoOrdersTitle", @"No orders yet"), art),
+            return @[CYLScenarioIcon(@"CYLPlaceholderNoOrders.json", CYLPlaceholderStyleArchive,
+                         CYLScenarioText(@"CYLPlaceholderScenarioNoOrdersTitle", @"No orders yet"), icon),
                      CYLScenarioButton(CYLPlaceholderActionGoShopping, CYLPlaceholderButtonStyleFilled)];
         case CYLPlaceholderScenarioNoFavorites:
             return @[CYLScenarioIcon(@"CYLPlaceholderNoFavorites.pag", CYLPlaceholderStyleFavorite,

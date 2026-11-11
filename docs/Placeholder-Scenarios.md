@@ -58,7 +58,7 @@
 | `CYLPlaceholderScenarioRefreshIcon` / `.refreshIcon` | 图标加标题，下面是可点击的刷新图标 | 12 |
 | `CYLPlaceholderScenarioTitleAboveIllustration` / `.titleAboveIllustration` | 标题在插图上方；点击任意处重试 | 17 |
 | `CYLPlaceholderScenarioTextOnly` / `.textOnly` | 只有标题和提示，没有图标；点击任意处重试 | 30, 41 |
-| `CYLPlaceholderScenarioTapMeRetry` / `.tapMeRetry` | “点我”、箭头、实心“重新加载”按钮和吉祥物 | 34, 35 |
+| `CYLPlaceholderScenarioTapMeRetry` / `.tapMeRetry` | “点我”、箭头、实心“重新加载”按钮和离线云图标 | 34, 35 |
 | `CYLPlaceholderScenarioLocationPermissionDenied` / `.locationPermissionDenied` | 定位权限缺失（不是网络失败）：定位图标、标题、提示、“去设置”和“手动选择地址” | 20 |
 | `CYLPlaceholderScenarioNoSearchResults` / `.noSearchResults` | 图标、标题加提示 | — |
 | `CYLPlaceholderScenarioEmptyCart` / `.emptyCart` | 图标、标题加“去逛逛”按钮 | — |
@@ -95,7 +95,7 @@
 | `CYLPlaceholderScenarioRefreshIcon` / `.refreshIcon` | Icon and title, then a tappable refresh icon | 12 |
 | `CYLPlaceholderScenarioTitleAboveIllustration` / `.titleAboveIllustration` | A title above an illustration; tapping anywhere retries | 17 |
 | `CYLPlaceholderScenarioTextOnly` / `.textOnly` | A title and a hint, no icon; tapping anywhere retries | 30, 41 |
-| `CYLPlaceholderScenarioTapMeRetry` / `.tapMeRetry` | "Tap me", an arrow, a filled "Reload" button and a mascot | 34, 35 |
+| `CYLPlaceholderScenarioTapMeRetry` / `.tapMeRetry` | "Tap me", an arrow, a filled "Reload" button and an offline cloud icon | 34, 35 |
 | `CYLPlaceholderScenarioLocationPermissionDenied` / `.locationPermissionDenied` | Permission missing (not a network failure): location icon, title, a hint, "Open Settings" and "Choose an address manually" | 20 |
 | `CYLPlaceholderScenarioNoSearchResults` / `.noSearchResults` | Icon, title and a hint | — |
 | `CYLPlaceholderScenarioEmptyCart` / `.emptyCart` | Icon, title and a "Go shopping" button | — |
@@ -246,6 +246,6 @@ custom.setHandler({ _, _ in }, for: .contactSupport)
 | 中文 | English |
 | --- | --- |
 | 组件是 `CYLPlaceholderView`，按钮由标题装饰键绘制，不是 `UIButton`：按下样式只有变暗、缩小和无三种，不支持 `UIButton.Configuration`，也没有禁用状态的外观（关闭交互只是不响应）。 | Components are `CYLPlaceholderView`s and buttons are drawn with the title chrome keys, not `UIButton`s: the pressed look is dim, shrink or none, `UIButton.Configuration` is not supported, and there is no disabled appearance (turning interaction off only stops responding). |
-| 新加入的 PAG（`NoContent.pag`）和 Rive（`NoResults.riv`、`Settings.riv`、`Mascot.riv`）按文件名选取，画面未经人工查看；Rive 文件按 `legacy` 方式播放，若无法播放会显示静态样式。可用的小体积、可再分发 GIF 很少，GIF 只有 `Uploading`、`NoFavorites` 两个。`CYLPlaceholderStyle` 的 56 种静态样式没有一一对应的动画。 | The newly added PAG (`NoContent.pag`) and Rive files (`NoResults.riv`, `Settings.riv`, `Mascot.riv`) were chosen by file name and have not been looked at; the Rive files play in `legacy` mode and fall back to the static style if they cannot play. Few small, redistributable GIFs exist, so there are only two GIFs, `Uploading` and `NoFavorites`. The 56 static `CYLPlaceholderStyle` images have no one-to-one animations. |
+| 只收录内容本身表示占位状态的动画：加载、进度、空、无结果、无网络或请求失败、权限缺失、占位图提供的操作（重试、刷新、设置、联系客服）、完成。按文件实际显示的内容判断，不看文件名；吉祥物、场景、角色和控件演示（开关、评分、车辆）都已移除（`Mascot.riv`、`Settings.riv`、`NoContent.pag`、`NoResults.riv`、`NoReviews.riv`、`NoOrders.riv`），“暂无订单”改用包裹线条图标，README #34、#35 的吉祥物改为离线云图标。可再分发的小体积 GIF 很少，GIF 只有 `Uploading`、`NoFavorites` 两个；`CYLPlaceholderStyle` 的 56 种静态样式没有一一对应的动画。 | Only animations whose content means a placeholder state are bundled: loading, progress, empty, no results, no network or a failed request, a missing permission, an action the placeholder offers (retry, refresh, settings, contact support), done. Files are judged by what they show, not by their names; mascots, scenes, characters and widget demos (switches, ratings, vehicles) were removed (`Mascot.riv`, `Settings.riv`, `NoContent.pag`, `NoResults.riv`, `NoReviews.riv`, `NoOrders.riv`), "No orders" now uses a parcel line icon, and the mascot of README #34 and #35 became an offline cloud icon. Few small, redistributable GIFs exist, so there are only two, `Uploading` and `NoFavorites`; the 56 static `CYLPlaceholderStyle` images have no one-to-one animations. |
 | 切换语言不会更新已创建的视图；需要重新创建。 | A language change does not update views already created; recreate them. |
 | 日、韩、俄、乌克兰文译文未经母语者审校；动画的实际渲染（包括 Lottie 线条图标的 `**.Color` 着色）需在模拟器中人工查看，CI 只截取首页。 | The Japanese, Korean, Russian and Ukrainian translations have not been reviewed by native speakers; actual animation rendering (including the `**.Color` tint of the Lottie line icons) needs a manual look in the simulator, as CI only captures the first screen. |

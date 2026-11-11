@@ -351,6 +351,13 @@ animations with Core: Lottie `.json`, PAG `.pag`, Rive `.riv` and GIF `.gif`,
 named `CYLPlaceholder<Scenario>.<ext>` and found with
 `+[CYLPlaceholderView pathForBundledAnimation:]`.
 
+- Add only animations whose content means a placeholder state: loading,
+  progress, empty, no results, no network or a failed request, a missing
+  permission, an action the placeholder offers (retry, refresh, settings, contact
+  support) or a finished task. Judge by what the file shows, not its file name;
+  do not add mascots, scenes, characters or widget demos (switches, ratings,
+  vehicles), or a file you could not inspect. When nothing fits, use a line icon
+  with that meaning instead.
 - Download only from sources whose license allows redistribution (for example
   the engines' own Apache-2.0 or MIT repositories); community marketplaces with
   unclear terms are not acceptable sources. Keep the files unmodified.

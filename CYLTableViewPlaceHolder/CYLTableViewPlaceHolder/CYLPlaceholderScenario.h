@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
     CYLPlaceholderScenarioTitleAboveIllustration,
     /// A title and a hint, no icon; tapping anywhere retries. README #30, #41.
     CYLPlaceholderScenarioTextOnly,
-    /// "Tap me", an arrow, a filled "Reload" button and a mascot. README #34, #35.
+    /// "Tap me", an arrow, a filled "Reload" button and an offline cloud icon. README #34, #35.
     CYLPlaceholderScenarioTapMeRetry,
     /// Permission missing, not a network failure: the app may not use the location, so nearby content cannot load.
     /// Location icon, title, a hint, an "Open Settings" button and "Choose address manually". README #20, which shows

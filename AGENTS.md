@@ -72,7 +72,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   structure. See "Localization" in `instructions.md`.
 - Ready-made placeholder animations live in
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
-  Add only files with a redistributable license, unmodified, and record each
+  Add only animations whose content means a placeholder state (loading, empty,
+  failed, missing permission, an offered action, done), never mascots, scenes or
+  widget demos; add only files with a redistributable license, unmodified, and record each
   one's source repository, commit, path, license and SHA-256 in
   `Animations/NOTICE.animations`, shipping the license text next to it.
   Keep the total small: every app that uses Core carries these files.
