@@ -7,7 +7,7 @@ import UIKit
 import CYLTabBarController
 import CYLTableViewPlaceHolder
 
-/// Four tabs and a plus button, modeled on CYLTabBarController's Objective-C demo.
+/// Five tabs and a plus button, modeled on CYLTabBarController's Objective-C demo.
 final class CYLScenarioTabBarController: CYLTabBarController {
 
     private struct Tab {
@@ -30,6 +30,9 @@ final class CYLScenarioTabBarController: CYLTabBarController {
             // A feed that loads, fails and refreshes with CYLRefresh.
             Tab(root: CYLFeedViewController(), title: .tabFeed,
                 image: "bubble.left.and.bubble.right", selectedImage: "bubble.left.and.bubble.right.fill"),
+            // MJRefresh's example layer in Swift on the CYLRefresh API, plus GIF, Lottie, PAG and Rive icons.
+            Tab(root: CYLRefreshExampleViewController(), title: .tabRefresh,
+                image: "arrow.clockwise.circle", selectedImage: "arrow.clockwise.circle.fill"),
         ]
         let viewControllers: [UIViewController] = tabs.map { tab in
             tab.root.title = CYLScenarioLocalizedString(tab.title)

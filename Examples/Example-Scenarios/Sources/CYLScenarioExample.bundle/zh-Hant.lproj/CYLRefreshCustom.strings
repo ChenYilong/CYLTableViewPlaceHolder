@@ -1,0 +1,4 @@
+/* Overrides CYLRefresh.strings when CYLRefreshConfig.default.i18nFilename is "CYLRefreshCustom". */
+"CYLRefreshHeaderIdleText" = "🍬 下拉（自訂文字表）";
+"CYLRefreshHeaderPullingText" = "🍬 放開（自訂文字表）";
+"CYLRefreshHeaderRefreshingText" = "🍬 載入中（自訂文字表）";

@@ -236,7 +236,7 @@ typedef void (^CYLRefreshComponentAction)(void);
 /*!
  * 自动变化透明度
  */
-- (instancetype)cyl_autoChangeTransparency:(BOOL)isAutoChange;
+- (instancetype)cyl_autoChangeTransparency:(BOOL)isAutoChange NS_SWIFT_NAME(cyl_autoChangeTransparency(_:));
 /*!
  * 刷新开始后立即调用的回调
  */
@@ -255,7 +255,7 @@ typedef void (^CYLRefreshComponentAction)(void);
  * 需要子类必须实现
  * @param scrollView 赋值给的 ScrollView 的 Header/Footer/Trailer
  */
-- (instancetype)cyl_linkTo:(UIScrollView *)scrollView;
+- (instancetype)cyl_linkTo:(UIScrollView *)scrollView NS_SWIFT_NAME(cyl_link(to:));
 
 @end
 

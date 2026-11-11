@@ -63,6 +63,13 @@ Add a row only after Swift code that uses it has compiled in CI. APIs without a 
 spellings moved to `CYLRefreshIconAnimating` on the animation header and footers (`CYLRefreshAnimationHeader` and friends; the MJRefresh `Gif` names are subclasses) (`setIconAnimation(bundled:size:for:)`,
 `setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)`,
 `CYLRefreshAnimationHeader.bundledIconAnimationFileNames`); they return to the table once CI compiles them there.
+The MJRefresh example port in `Examples/Example-Scenarios` (the "Refresh" tab) adds these spellings, also pending CI:
+`cyl_link(to:)` and `cyl_autoChangeTransparency(_:)` (new `NS_SWIFT_NAME` on `-cyl_linkTo:` and
+`-cyl_autoChangeTransparency:`), `CYLRefreshConfig.default` (`NS_SWIFT_NAME(default)` on `defaultConfig`),
+`init(refreshingTarget:refreshingAction:)`, `setTitle(_:for:)`, `setRefreshingTarget(_:refreshingAction:)`,
+`setAnimationDisabled()`, `isAutomaticallyChangeAlpha`, `isAutomaticallyRefresh`, `isRefreshingTitleHidden`,
+`isCollectionViewAnimationBug`, `autoTriggerTimes`, `ignoredScrollViewContentInsetBottom`, `cyl_trailer`, and
+subclasses that override `prepare()`, `placeSubviews()` and observe `state` / `pullingPercent` with `didSet`.
 
 ## Protocol methods that contain underscores
 

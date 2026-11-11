@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  * Singleton Config instance
  */
-@property (class, nonatomic, readonly) CYLRefreshConfig *defaultConfig;
+@property (class, nonatomic, readonly) CYLRefreshConfig *defaultConfig NS_SWIFT_NAME(default);
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
