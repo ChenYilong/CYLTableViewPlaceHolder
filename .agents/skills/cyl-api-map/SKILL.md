@@ -8,6 +8,10 @@ description: Map the placeholder and refresh APIs to their headers, example, tes
 Inspect the headers and implementation before changing behavior. Code is the
 source of truth; update the README and issue tracker if they become stale.
 
+Core features reuse `CYLPlaceholderView` (the packaged icon and title) for every icon and text instead of custom
+views; every element inside a `CYLPlaceholderStackView` is a `CYLPlaceholderView` (`instructions.md`, "Reuse
+CYLPlaceholderView in the core").
+
 | Area | Source |
 | --- | --- |
 | Public umbrella | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h` |

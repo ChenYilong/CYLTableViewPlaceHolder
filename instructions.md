@@ -94,6 +94,20 @@ spans several lines must reach them as one comment.
   after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review
   new public declarations for a missing documentation comment by hand.
 
+### Reuse CYLPlaceholderView in the core
+
+- The core reuses its existing views as far as possible instead of building fully custom ones. A new core feature
+  (a HUD, a status view, a refresh state, a component) shows its icon and text through `CYLPlaceholderView`, the
+  packaged icon-and-title view, configured with item attributes (`CYLPlaceholderComponent`,
+  `initWithItemAttributes:imageBundle:error:`), not through new drawing views, shape layers or hand-made labels.
+- "The packaged icon and title" means `CYLPlaceholderView`, not `CYLPlaceholderStackView`. The stack view only
+  arranges components: every element inside a `CYLPlaceholderStackView` is a `CYLPlaceholderView`, nothing else.
+- When `CYLPlaceholderView` cannot show something yet (a percentage, a new state), extend it through its attributes
+  or put the information into its title, rather than adding a custom view beside it. A custom view needs the
+  user's explicit approval.
+- Example: `CYLPlaceholderHUD` shows loading, progress and results in one `CYLPlaceholderView` inside its stack view;
+  progress scrubs an animation or adds the percentage to the title, with no drawn ring.
+
 ## Xcode and CocoaPods project checks
 
 When working on a runnable Xcode project, check its Podfile. At the top, use

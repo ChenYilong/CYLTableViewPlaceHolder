@@ -48,6 +48,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   the table in `instructions.md`, "Documentation comments on public API".
   `scripts/check_doc_comments.py` checks it in CI.
 
+- Reuse `CYLPlaceholderView` in the core (`instructions.md`, "Reuse CYLPlaceholderView in the core"): core
+  features show icons and text through `CYLPlaceholderView`, the packaged icon-and-title view, instead of fully
+  custom views. "The packaged icon and title" means `CYLPlaceholderView`, not `CYLPlaceholderStackView`; every element
+  inside a stack view is a `CYLPlaceholderView`. A custom view needs explicit approval.
+
 ## Project and verification
 
 - The main example (`Examples/Example`, Swift) embeds the project's own framework target
