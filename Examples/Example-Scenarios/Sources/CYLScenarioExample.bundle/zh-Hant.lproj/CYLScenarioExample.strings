@@ -62,6 +62,9 @@
 "CYLScenarioRefreshByStates" = "每個狀態使用不同圖示";
 "CYLScenarioRefreshBackFooter" = "返回式重新整理尾，依狀態設定圖示";
 "CYLScenarioRefreshGifNames" = "MJRefresh 的 Gif 名稱（相容）";
+"CYLScenarioSectionRefreshArrow" = "預設箭頭樣式（保持原樣）";
+"CYLScenarioRefreshArrowAuto" = "箭頭重新整理頭 + 自動重新整理尾";
+"CYLScenarioRefreshArrowBack" = "箭頭重新整理頭 + 返回式重新整理尾";
 "CYLScenarioTextRefreshHint" = "下拉更新，上拉載入更多";
 
 /* Status bar */

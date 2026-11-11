@@ -62,6 +62,9 @@
 "CYLScenarioRefreshByStates" = "Своя іконка для кожного стану";
 "CYLScenarioRefreshBackFooter" = "Футер, що повертається, іконка для кожного стану";
 "CYLScenarioRefreshGifNames" = "Імена Gif з MJRefresh (сумісність)";
+"CYLScenarioSectionRefreshArrow" = "Стрілка за замовчуванням (без змін)";
+"CYLScenarioRefreshArrowAuto" = "Заголовок зі стрілкою, автоматичний футер";
+"CYLScenarioRefreshArrowBack" = "Заголовок зі стрілкою, футер, що повертається";
 "CYLScenarioTextRefreshHint" = "Потягніть вниз, щоб оновити, вгору — щоб завантажити ще";
 
 /* Status bar */

@@ -33,6 +33,55 @@
     }
 }
 
+- (void)assertNoIconIn:(UIView *)control {
+    for (UIView *subview in control.subviews) {
+        XCTAssertFalse([subview isKindOfClass:CYLRefreshIconView.class], @"%@ never creates an icon view", control.class);
+    }
+}
+
+- (void)testTheDefaultArrowControlsKeepMJRefreshsArrowLogic {
+    // [EN] The arrow controls are the pre-icon code: the arrow image, its rotation and the spinner per state.
+    // [CN] 箭头控件是图标改造前的代码：箭头图片、按状态旋转箭头与菊花。
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    [self layOut:header];
+    XCTAssertEqualObjects(header.arrowView.image, [NSBundle cyl_arrowImage]);
+    XCTAssertFalse(header.arrowView.hidden);
+    XCTAssertTrue(CGAffineTransformIsIdentity(header.arrowView.transform), @"idle: the arrow points down");
+    header.state = CYLRefreshStatePulling;
+    XCTAssertEqualWithAccuracy(header.arrowView.transform.a, -1, 0.001, @"pulling: the arrow turns up");
+    XCTAssertFalse(header.loadingView.isAnimating);
+    header.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(header.arrowView.hidden, @"refreshing: the spinner replaces the arrow");
+    XCTAssertTrue(header.loadingView.isAnimating);
+    [self assertNoIconIn:header];
+
+    CYLRefreshBackNormalFooter *backFooter = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    [self layOut:backFooter];
+    XCTAssertEqualObjects(backFooter.arrowView.image, [NSBundle cyl_arrowImage]);
+    backFooter.state = CYLRefreshStatePulling;
+    XCTAssertTrue(CGAffineTransformIsIdentity(backFooter.arrowView.transform), @"pulling: the footer arrow turns down");
+    backFooter.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(backFooter.arrowView.hidden);
+    XCTAssertTrue(backFooter.loadingView.isAnimating);
+    backFooter.state = CYLRefreshStateNoMoreData;
+    XCTAssertTrue(backFooter.arrowView.hidden);
+    XCTAssertFalse(backFooter.loadingView.isAnimating);
+    [self assertNoIconIn:backFooter];
+
+    CYLRefreshAutoNormalFooter *autoFooter = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    [self layOut:autoFooter];
+    autoFooter.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(autoFooter.loadingView.isAnimating);
+    autoFooter.state = CYLRefreshStateNoMoreData;
+    XCTAssertFalse(autoFooter.loadingView.isAnimating);
+    [self assertNoIconIn:autoFooter];
+
+    CYLRefreshNormalTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    [self layOut:trailer];
+    XCTAssertEqualObjects(trailer.arrowView.image, [NSBundle cyl_trailArrowImage]);
+    [self assertNoIconIn:trailer];
+}
+
 - (void)testTheMJRefreshGifNamesCallTheGeneralAnimationMethods {
     // [EN] The old names are subclasses of the general classes, so old code compiles and behaves the same.
     // [CN] 旧名称是通用类的子类，旧代码照常编译、行为不变。

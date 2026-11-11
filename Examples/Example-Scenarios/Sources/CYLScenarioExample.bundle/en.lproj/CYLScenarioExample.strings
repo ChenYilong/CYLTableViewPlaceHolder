@@ -62,6 +62,9 @@
 "CYLScenarioRefreshByStates" = "A different icon for each state";
 "CYLScenarioRefreshBackFooter" = "Back footer, icon per state";
 "CYLScenarioRefreshGifNames" = "MJRefresh Gif names (compatible)";
+"CYLScenarioSectionRefreshArrow" = "Default arrow style (unchanged)";
+"CYLScenarioRefreshArrowAuto" = "Arrow header, auto footer";
+"CYLScenarioRefreshArrowBack" = "Arrow header, back footer";
 "CYLScenarioTextRefreshHint" = "Pull down to refresh, pull up to load more";
 
 /* Status bar */

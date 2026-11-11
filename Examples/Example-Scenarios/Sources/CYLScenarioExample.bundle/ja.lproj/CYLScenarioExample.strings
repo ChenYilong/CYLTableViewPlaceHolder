@@ -62,6 +62,9 @@
 "CYLScenarioRefreshByStates" = "状態ごとに別のアイコン";
 "CYLScenarioRefreshBackFooter" = "戻り型フッター、状態ごとのアイコン";
 "CYLScenarioRefreshGifNames" = "MJRefresh の Gif 名（互換）";
+"CYLScenarioSectionRefreshArrow" = "デフォルトの矢印スタイル（変更なし）";
+"CYLScenarioRefreshArrowAuto" = "矢印ヘッダー + 自動フッター";
+"CYLScenarioRefreshArrowBack" = "矢印ヘッダー + 戻り型フッター";
 "CYLScenarioTextRefreshHint" = "下に引いて更新、上に引いてさらに読み込み";
 
 /* Status bar */

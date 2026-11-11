@@ -4,7 +4,8 @@
 //
 //  Every refresh icon animation of the core bundle (`CYLRefreshAnimationHeader.bundledIconAnimationFileNames`: the
 //  `CYLRefresh*` files plus the two placeholder animations that also mean refresh), grouped by engine. Each row opens a
-//  list whose CYLRefresh header and footer draw that file. A second section shows every API of the animated-image
+//  list whose CYLRefresh header and footer draw that file. The first section shows the default arrow style, unchanged
+//  (CYLRefreshNormalHeader with the back and auto footers). A later section shows every API of the animated-image
 //  controls (MJRefresh's "animated images", under general names):
 //
 //  - image sequence:     `setAnimationImages(_:for:)` / `(_:duration:for:)`, frames of a bundled refresh GIF
@@ -70,7 +71,17 @@ final class CYLRefreshIconListViewController: UITableViewController {
 
     private let sections: [Section] = {
         let names = CYLRefreshAnimationHeader.bundledIconAnimationFileNames
-        var sections: [Section] = engines.compactMap { engine in
+        // MJRefresh's default style, unchanged: the arrow turns while pulling and a spinner replaces it while
+        // refreshing. These controls have no icon API; the icons below belong to the animated-image controls only.
+        let arrowSection = Section(title: CYLScenarioLocalizedString(.sectionRefreshArrow), rows: [
+            Row(title: CYLScenarioLocalizedString(.refreshArrowAuto), subtitle: "CYLRefreshNormalHeader · CYLRefreshAutoNormalFooter") {
+                (CYLRefreshNormalHeader(), CYLRefreshAutoNormalFooter())
+            },
+            Row(title: CYLScenarioLocalizedString(.refreshArrowBack), subtitle: "CYLRefreshNormalHeader · CYLRefreshBackNormalFooter") {
+                (CYLRefreshNormalHeader(), CYLRefreshBackNormalFooter())
+            },
+        ])
+        let engineSections: [Section] = engines.compactMap { engine in
             let rows = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }.map { name in
                 Row(title: name, subtitle: "setIconAnimation(bundled:size:for:)") {
                     let size = CYLRefreshIconListViewController.iconSize(for: name)
@@ -84,6 +95,7 @@ final class CYLRefreshIconListViewController: UITableViewController {
             }
             return rows.isEmpty ? nil : Section(title: engine.title, rows: rows)
         }
+        var sections: [Section] = [arrowSection] + engineSections
         sections.append(Section(title: CYLScenarioLocalizedString(.sectionRefreshInit), rows: [
             Row(title: CYLScenarioLocalizedString(.refreshByImages), subtitle: "setAnimationImages(_:duration:for:)") {
                 // MJRefresh's "animated images", general names: an image sequence per state. The frames come from
