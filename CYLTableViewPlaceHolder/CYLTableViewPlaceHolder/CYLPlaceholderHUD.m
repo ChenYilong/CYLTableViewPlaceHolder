@@ -95,6 +95,8 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @property (nonatomic, strong) CYLPlaceholderHUDRingView *ringView;
 @property (nonatomic, readwrite) CYLPlaceholderHUDState state;
+/// [EN] Written through `_status`: the public `-setStatus:` is also this property's setter.
+/// [CN] 通过 `_status` 写入：公开的 `-setStatus:` 同时是该属性的 setter。
 @property (nonatomic, copy, readwrite, nullable) NSString *status;
 @property (nonatomic, readwrite) CGFloat progress;
 @property (nonatomic, readwrite) NSUInteger activityCount;
@@ -104,6 +106,9 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 @property (nonatomic) BOOL presented;
 /// YES while a show is waiting for its grace time.
 @property (nonatomic) BOOL pendingShow;
+/// YES while the box is being measured and laid out: measuring lays out the content, which must not lay out the
+/// HUD again.
+@property (nonatomic) BOOL layingOutBox;
 @end
 
 @implementation CYLPlaceholderHUD
@@ -295,7 +300,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 - (void)setStatus:(NSString *)status {
     CYLPlaceholderHUDOnMain(^{
-        self.status = status;
+        self->_status = [status copy];
         CYLPlaceholderView *view = self.placeholderView.placeholderView;
         if (!view) return;
         view.textLabel.text = status;
@@ -385,7 +390,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     self.generation += 1;
     NSUInteger generation = self.generation;
     self.state = state;
-    self.status = status;
+    self->_status = [status copy];
 
     [self.placeholderView removeFromSuperview];
     CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc] initWithComponents:components actions:actions];
@@ -616,7 +621,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     self.hidden = NO;
     self.alpha = 0;
     self.state = CYLPlaceholderHUDStateHidden;
-    self.status = nil;
+    self->_status = nil;
     self.progress = 0;
     [self.placeholderView removeFromSuperview];
     self.placeholderView = nil;
@@ -705,7 +710,15 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 }
 
 - (void)cyl_layoutBox {
-    if (self.superview) self.frame = self.superview.bounds;
+    // [EN] `layoutIfNeeded` on the content can lay out this view again; a nested call returns at once.
+    // [CN] 对内容调用 `layoutIfNeeded` 可能再次布局本视图；嵌套调用直接返回。
+    if (self.layingOutBox) return;
+    self.layingOutBox = YES;
+    [self cyl_measureAndPlaceBox];
+    self.layingOutBox = NO;
+}
+
+- (void)cyl_measureAndPlaceBox {
     self.gradientLayer.frame = self.bounds;
     CYLPlaceholderStackView *placeholder = self.placeholderView;
     if (!placeholder) return;
