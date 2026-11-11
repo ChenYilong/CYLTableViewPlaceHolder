@@ -137,6 +137,9 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Update scores only when supported by implementation and test evidence. Before
   staging, verify that each sub-100 item in the relevant score tables has a
   matching `TODO` entry and that the documented limitations match the code.
+- Every commit message must contain the owner's line `By @ChenYilong <luohanchenyilong@163.com>`, on
+  its own line at the end of the body (before trailers such as `Co-Authored-By:`), exactly once. See
+  "Author line in every commit message" in `instructions.md`; the commit-msg hook there appends it.
 - Use an English Conventional Commit subject compatible with Commitizen. The
   subject summarizes completed work; put details and pending work in the body.
   If the detailed description exceeds 50 characters, create or update a

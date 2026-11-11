@@ -54,3 +54,6 @@ example running: `scripts/ci-build-example.sh <folder>` captures it (artifact
 `example-screenshot-<folder>` in CI); report the artifacts with the CI result,
 or fix the CI, or give the concrete reason none could be produced
 (`instructions.md`, "CI example screenshots").
+Before committing a verified change, check the message contains the author line
+`By @ChenYilong <luohanchenyilong@163.com>` on its own line before the trailers (`instructions.md`,
+"Author line in every commit message").

@@ -626,6 +626,21 @@ existing tracker and avoid duplicate documents.
   mappings. CYLTabBarController examples include `feat: ✨`, `fix: 🐛`,
   `docs: 📝`, `chore: 🔧`, and `refactor: ♻️`. Commit text must remain English.
 
+### Author line in every commit message
+
+Every commit message carries the owner's line, exactly:
+
+```text
+By @ChenYilong <luohanchenyilong@163.com>
+```
+
+- Put it on its own line at the end of the body, after the details and before any trailers (such as
+  `Co-Authored-By:` or `Claude-Session:`), separated from the body by a blank line.
+- It applies to every commit in this repository, whoever or whatever writes it (people, Commitizen,
+  agents), on every branch, including fixups and merge commits you author.
+- Do not change its spelling, the handle or the address, and do not add it twice. The commit-msg hook
+  below appends it when it is missing.
+
 ### Commit-message hook before Commitizen commits
 
 Before a Commitizen-style commit, run the following from the repository root:
@@ -641,13 +656,38 @@ if grep -qi "Co-Authored-By:" "$tmpfile" 2>/dev/null; then
   cat "$tmp_clean" > "$tmpfile"
   rm -f "$tmp_clean"
 fi
+# The owner's author line ("Author line in every commit message"), added once when missing: before the
+# trailer block (Co-Authored-By:, Claude-Session:, ...) so Git still reads the trailers, else at the end.
+author_line='By @ChenYilong <luohanchenyilong@163.com>'
+if ! grep -qxF "$author_line" "$tmpfile" 2>/dev/null; then
+  tmp_author=$(mktemp)
+  awk -v line="$author_line" '
+    { lines[NR] = $0 }
+    END {
+      n = NR
+      while (n > 0 && lines[n] ~ /^[[:space:]]*$/) n--
+      start = n
+      while (start > 0 && lines[start] ~ /^[A-Za-z][A-Za-z0-9-]*: /) start--
+      if (start < n && start > 1 && lines[start] ~ /^[[:space:]]*$/) {
+        for (i = 1; i <= start; i++) print lines[i]
+        print line; print ""
+        for (i = start + 1; i <= n; i++) print lines[i]
+      } else {
+        for (i = 1; i <= n; i++) print lines[i]
+        print ""; print line
+      }
+    }' "$tmpfile" > "$tmp_author" && cat "$tmp_author" > "$tmpfile"
+  rm -f "$tmp_author"
+fi
 HOOKEOF
 chmod +x .git/hooks/commit-msg
 ```
 
 `mkdir -p` creates `.git/hooks` when it is missing, so writing the hook
 always succeeds. This overwrites the existing `commit-msg` hook and removes every line containing
-`Co-Authored-By:`, case-insensitively, including other authors' attribution.
+`Co-Authored-By:`, case-insensitively, including other authors' attribution, and appends the author line
+`By @ChenYilong <luohanchenyilong@163.com>` when the message does not contain it yet. Without the hook
+(for example a commit written with `git commit -F`), add the line yourself.
 Inspect any existing hook before replacing it. The command assumes `.git` is
 a directory and Git uses its default hooks path; linked worktrees and custom
 `core.hooksPath` require the appropriate hooks path instead.
