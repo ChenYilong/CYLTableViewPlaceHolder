@@ -551,7 +551,10 @@ also suit a refresh control, and the Example-Scenarios "Refresh icons" page
   data write it themselves instead of reading an example bundle.
 - Download only from sources whose license allows redistribution (for example
   the engines' own Apache-2.0 or MIT repositories); community marketplaces with
-  unclear terms are not acceptable sources. Keep the files unmodified.
+  unclear terms are not acceptable sources. Keep the files unmodified, with one exception (approved
+  2026-11-12): a background fill baked into a file (an artboard fill, a "BG" shape) may be made
+  transparent by setting its alpha to 0 and nothing else, when the license allows modification; the
+  `NOTICE.animations` entry then records the change and both the original and the new SHA-256.
 - For every file, add an entry to `Animations/NOTICE.animations` (source
   repository, commit, original path, license, SHA-256) and ship the license
   text as `Animations/LICENSE.<source>`. Verify Git LFS files against their

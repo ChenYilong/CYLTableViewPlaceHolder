@@ -408,4 +408,7 @@ CYLRefreshIcon.riv
   source:  https://github.com/rive-app/rive-flutter (e419fe847c19e79302c3e5facc90f676b06e174d)
   path:    example/assets/web_icons_pack.riv (artboard "refresh", animation "active")
   license: MIT (LICENSE.rive-flutter)
-  sha256:  958fcf52a87b0ea0cdacbd312af1625c101fa3071a22ffaa5037334a1d7f8b71
+  modified: 2026-11-12, the fill of each artboard's "BG" rounded rectangle made transparent (alpha 0, was #ff6f6e6e),
+            so the icon has no dark square behind it; nothing else changed (6 bytes; original sha256
+            958fcf52a87b0ea0cdacbd312af1625c101fa3071a22ffaa5037334a1d7f8b71)
+  sha256:  5d2f453cf68113aaa85e3f266b4ca1be201d5e7150a92b0a31d85cde034401c3
