@@ -478,6 +478,33 @@ also suit a refresh control, and the Example-Scenarios "Refresh icons" page
   a file, and `testEveryBundledRefreshAnimationBuildsAnIcon` the number of
 `CYLRefresh*` files. The aggregated demo (`Examples/Example-Scenarios`) lists every file.
 
+## CI/CD
+
+The default runner environment for iOS on GitHub CI/CD is **macOS 26**
+(`runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}`, the stable image with its
+default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
+`ubuntu-latest`.
+
+- Before changing or diagnosing a workflow, always read CYLTabBarController's
+  current
+  [`.github/workflows/ios.yml`](https://github.com/ChenYilong/CYLTabBarController/blob/master/.github/workflows/ios.yml)
+  first, to confirm the runner image and Xcode it uses, and follow it when it
+  differs from this repository's `ios.yml`. Last checked: master `4209e37`
+  (2026-11-10) uses `macos-26`, overridable with the repository variable
+  `MACOS_RUNNER`.
+- Jobs that need an older toolchain on purpose keep their own runner (for
+  example the iOS 12 Core build on `macos-15` with Xcode 16); say why in a
+  comment next to `runs-on`.
+- **Local runs ignore this restriction.** A local run does not go through
+  GitHub CI/CD: it uses the developer's own Mac directly, where the simulator
+  and Xcode can be started for testing. Assume that Mac runs **macOS 27 with
+  Xcode 27**, so builds there need the deployment-target override for Xcode 27
+  (at least iOS 15.0 for the build; the library's iOS 12.0 minimum stays). Run
+  the same scripts as CI (`scripts/`, `ruby Tests/run-tests.rb` with
+  `DESTINATION`), choosing an installed simulator with
+  `xcrun simctl list devices available`.
+- Details of every job: `docs/CI-CD.md`.
+
 ## CI example screenshots
 
 Every CI run that builds code must provide a screenshot of each example app

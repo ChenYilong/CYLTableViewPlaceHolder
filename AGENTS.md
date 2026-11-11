@@ -100,6 +100,12 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION`
   to select an installed simulator. Build the example and validate the
   podspec when their integration changes; see `cyl-verify`.
+- CI/CD (`instructions.md`, "CI/CD"): iOS jobs on GitHub run on macOS 26 by default
+  (`vars.MACOS_RUNNER || 'macos-26'`). Always read CYLTabBarController's
+  [`.github/workflows/ios.yml`](https://github.com/ChenYilong/CYLTabBarController/blob/master/.github/workflows/ios.yml)
+  first to confirm the runner environment. Local runs (the developer's own Mac,
+  not GitHub CI/CD, running the simulator and Xcode directly) ignore this and
+  assume macOS 27 with Xcode 27.
 - Xcode 27's simulator SDK requires a deployment target of at least 15.0 during
   builds. Override the build target for that toolchain instead of changing the
   library's iOS 12.0 minimum.

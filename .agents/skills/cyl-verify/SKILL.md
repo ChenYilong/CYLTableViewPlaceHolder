@@ -35,6 +35,11 @@ have the expected Rive artboard and state machine. Trigger and linear fixtures
 must be named `check.riv` and `button.riv` and contain the corresponding
 `Check` trigger and `active` animation used by the tests.
 Select a real device and runtime with `xcrun simctl list devices available`.
+Where it runs (`instructions.md`, "CI/CD"): GitHub CI/CD runs iOS jobs on macOS 26
+(`vars.MACOS_RUNNER || 'macos-26'`); read CYLTabBarController's
+`https://github.com/ChenYilong/CYLTabBarController/blob/master/.github/workflows/ios.yml`
+first to confirm the runner, and match it. A local run (your own Mac, no GitHub CI/CD,
+simulator and Xcode started directly) ignores that and assumes macOS 27 with Xcode 27.
 The 15.0 override is for Xcode 27; use the supported minimum for the toolchain
 in use. When CocoaPods packaging changes, also lint with `--use-libraries`.
 Run `python3 scripts/update-docs-navigation.py --check` after any change to `README.md` or `docs/` (drop
