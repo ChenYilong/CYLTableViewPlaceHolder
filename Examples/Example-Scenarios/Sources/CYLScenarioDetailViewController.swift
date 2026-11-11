@@ -72,7 +72,7 @@ final class CYLScenarioDetailViewController: UITableViewController {
         }
         let placeholder = makeScenarioPlaceholder()
         for component in placeholder.componentViews {
-            component.tapInteractionEnabled = interactionEnabled
+            component.isTapInteractionEnabled = interactionEnabled
         }
         return placeholder
     }

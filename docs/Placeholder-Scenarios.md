@@ -232,7 +232,7 @@ custom.setHandler({ _, _ in }, for: .contactSupport)
 | `-initWithContentsOfURL:actions:error:` / `-initWithConfiguration:actions:error:` | `CYLPlaceholderStackView(contentsOf:actions:)` / `(configuration:actions:)` (throws) |
 | `+componentWithDictionary:error:` | `CYLPlaceholderComponent(dictionary:)` (throws) |
 | `+nameForScenario:` / `+scenarioNamed:` / `+actionNamed:` / `+animationFileNamesForScenario:` | `name(for:)` / `scenario(named:)` / `action(named:)` / `animationFileNames(for:)` |
-| `CYLPlaceholderView.tapHandler` / `tapInteractionEnabled` / `tapHighlightStyle` / `-performTap` / `animationRepeatCount` | same names; `isTapInteractionEnabled`, `isTapInteractive`, `isTapHighlighted` getters |
+| `CYLPlaceholderView.tapHandler` / `tapInteractionEnabled` / `tapHighlightStyle` / `-performTap` / `animationRepeatCount` | `tapHandler`, `isTapInteractionEnabled` (the property takes its getter's name in Swift; verified by the CI compiler), `tapHighlightStyle`, `performTap()`, `animationRepeatCount`; read-only `isTapInteractive`, `isTapHighlighted` |
 | `CYLPlaceholderLocalizationLanguageDidChangeNotification` | `CYLPlaceholderLocalization.languageDidChangeNotification` |
 | `+localizedStringForKey:fallback:` | `CYLPlaceholderLocalization.localizedString(forKey:fallback:)` |
 
