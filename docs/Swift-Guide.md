@@ -23,8 +23,9 @@ header is needed. Open the `.xcworkspace`, not the `.xcodeproj`.
 
 ## Spellings verified by Swift code in this repository
 
-Each row appears in a Swift example that the `Demo` CI jobs compile (`Examples/Example-SwiftUI/`,
-`Examples/Example-objc-01/`).
+Each row appears in a Swift example that the `Demo` CI jobs compile (`Examples/Example`, `Examples/Example-Scenarios`,
+`Examples/Example-SwiftUI`, `Examples/Example-objc-01`, `Examples/Example-objc-02`). The placeholder, scenario, refresh
+icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), where all five demos compiled.
 
 | Objective-C | Swift |
 | --- | --- |
@@ -34,9 +35,34 @@ Each row appears in a Swift example that the `Demo` CI jobs compile (`Examples/E
 | `UIScrollView.cyl_header`, `.cyl_footer` | `scrollView.cyl_header`, `scrollView.cyl_footer` (optional) |
 | `-beginRefreshing`, `-endRefreshing` | `beginRefreshing()`, `endRefreshing()` |
 | Swift extension in `Example-SwiftUI` | `Color(cyl_hexString:)` (prefix kept on a system type) |
+| `-[CYLPlaceholderView initWithStyle:message:]`, `…Style:text:`, `…Image:text:` | `CYLPlaceholderView(style:message:)`, `(style:text:)`, `(image:text:)` |
+| `-initWithItemAttributes:imageBundle:error:`, `-initWithItemContentsOfURL:imageBundle:error:` | `try CYLPlaceholderView(itemAttributes:imageBundle:)`, `try CYLPlaceholderView(itemContentsOf:imageBundle:)` |
+| `-showBadgeWithStyle:value:` | `showBadge(with:value:)` |
+| `+imageNameForStyle:`, `+imageForStyle:`, `+localizedTextForMessage:` | `CYLPlaceholderView.imageName(for:)`, `.image(for:)`, `.localizedText(for:)` |
+| `+bundledAnimationFileNames`, `+pathForBundledAnimation:` | `CYLPlaceholderView.bundledAnimationFileNames()`, `.path(forBundledAnimation:)` |
+| `-playPlaceholderAnimation` | `placeholderView.playPlaceholderAnimation()` |
+| `tapInteractionEnabled` (`getter=isTapInteractionEnabled`) | `isTapInteractionEnabled` |
+| `-[UITableView cyl_reloadData]`, `-cyl_placeholderViewBlock:` | `tableView.cyl_reloadData()`, `cyl_placeholderViewBlock({ … })` (parentheses, not a trailing closure) |
+| `CYLTableViewPlaceHolderDelegate -makePlaceHolderView` | `@objc(makePlaceHolderView) func makePlaceHolderView() -> UIView` |
+| `-[CYLPlaceholderStackView initWithScenario:actions:]`, `…Components:actions:` | `CYLPlaceholderStackView(scenario:actions:)`, `(components:actions:)` |
+| `-initWithConfiguration:actions:error:`, `-initWithContentsOfURL:actions:error:` | `try CYLPlaceholderStackView(configuration:actions:)`, `try CYLPlaceholderStackView(contentsOf:actions:)` |
+| `-appendComponent:` | `append(_:)` |
+| `+[CYLPlaceholderComponent componentWithBundledAnimation:fallbackStyle:title:size:action:]`, `+hintComponentWithText:` | `CYLPlaceholderComponent(bundledAnimation:fallbackStyle:title:size:action:)`, `CYLPlaceholderComponent.hint(text:)` |
+| `CYLPlaceholderScenarioCatalog` class methods | `CYLPlaceholderScenarioCatalog.allScenarios`, `.localizedName(for:)`, `.localizedTitle(for:)`, `.components(for:)`, `.category(for:)`, `.permission(for:)` |
+| `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.language` (`String?`), `.effectiveLanguage` |
+| `-[CYLRefreshComponent setBundledIconAnimation:size:forState:]` | `setIconAnimation(bundled:size:for:)` |
+| `-setIconAnimationFilePath:size:forState:`, `-setIconAnimationAttributes:forState:` | `setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)` |
+| `+[CYLRefreshComponent bundledIconAnimationFileNames]` | `CYLRefreshComponent.bundledIconAnimationFileNames` |
+| `UIViewController.cyl_statusView` (`null_resettable`) | `cyl_statusView` (`CYLPlaceholderStatusView!`) |
+| `cyl_statusDisplay`, `-cyl_setStatusDisplay:animated:` | `cyl_statusDisplay`, `cyl_setStatusDisplay(_:animated:)`; options `.all`, `.statusBar`, `.placeholder` |
+| `cyl_showsStatusViewWhenOffline` | `cyl_showsStatusViewWhenOffline` |
+| `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `try cyl_applyStatusConfiguration(contentsOf:)` |
+| `CYLPlaceholderStatusViewDelegate -statusViewClicked:` | `@objc(statusViewClicked:) func statusViewClicked(_ sender: Any)` |
+| `+[CYLPlaceholderNetworkMonitor sharedMonitor]`, `+nameForStatus:` | `CYLPlaceholderNetworkMonitor.shared`, `.name(for:)` |
 
-Add a row only after Swift code that uses it has compiled in CI. Other APIs (placeholders, item attributes,
-newer refresh options such as `exclusiveWithOtherRefresh`) have no Swift call site yet and are not listed.
+Add a row only after Swift code that uses it has compiled in CI. APIs without a Swift call site yet (for example
+`exclusiveWithOtherRefresh`, `setHandler(_:for:)`, `performAction(_:)`, `componentView(for:)`,
+`CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed.
 
 ## Protocol methods that contain underscores
 
@@ -46,20 +72,6 @@ correct. A method that has already shipped is not renamed and does not get `NS_S
 underscore-free sibling (see the rule in `instructions.md`).
 
 ## Open items
-
-The scenario API (`CYLPlaceholderStackView`, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`,
-`CYLPlaceholderLocalization`) declares its Swift names with `NS_SWIFT_NAME`; the list is in
-`docs/Placeholder-Scenarios.md` and moves into the table above once `Examples/Example-Scenarios` (Swift) has compiled in
-CI.
-
-The main example `Examples/Example` (Swift since the migration) calls these placeholder APIs without
-`NS_SWIFT_NAME`; their spellings follow Clang's import rules and move into the table above once CI has compiled it:
-`CYLPlaceholderView(style:message:)`, `(style:text:)`, `(image:text:)`, `(itemAttributes:imageBundle:)` and
-`(itemContentsOf:imageBundle:)` (both throw), `showBadge(with:value:)`, `CYLPlaceholderView.imageName(for:)`,
-`image(for:)`, `localizedText(for:)`, `tableView.cyl_reloadData()`, `cyl_placeholderViewBlock(_:)` on table and
-collection views, `@objc(makePlaceHolderView) func makePlaceHolderView() -> UIView`, enum cases such as
-`CYLPlaceholderStyle.notificationsOff` / `.count` and `CYLPlaceholderBadgeStyle.dot`, and item keys as `String`
-constants (`CYLPlaceholderItemStyle`).
 
 Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C
 examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods).
