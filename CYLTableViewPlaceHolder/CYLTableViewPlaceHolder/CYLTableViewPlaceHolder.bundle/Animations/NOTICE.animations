@@ -92,7 +92,10 @@ CYLPlaceholderLoading.riv
   source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
   path:    Example-iOS/Assets/progress.riv
   license: MIT (LICENSE.rive-ios)
-  sha256:  5e11544033eccde437d658e240eb84b03032f3380ed020947012d5c5262c6b96
+  modified: 2026-11-12, the artboard's background fill made transparent (alpha 0, was #ff313131), so the placeholder
+            has no dark square behind it; nothing else changed (1 byte; original sha256
+            5e11544033eccde437d658e240eb84b03032f3380ed020947012d5c5262c6b96)
+  sha256:  33d258a3e5da35d0f1ec6068c9bd751a01829f84ae887161621cc4f0f3c5e8c3
 
 CYLPlaceholderPullToRefresh.riv
   source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
