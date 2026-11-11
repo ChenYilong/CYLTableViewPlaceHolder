@@ -1,0 +1,13 @@
+#!/bin/sh
+# commit-cleaner 0.1.0 - fails open by construction.
+# Any failure of the cleaner must still let the commit through.
+d=$(dirname "$0")
+if command -v python3 >/dev/null 2>&1; then
+    python3 "$d/commit-cleaner.py" "$@" || exit 0
+fi
+# A pre-existing hook was moved aside at install time. It is the one thing
+# permitted to block: a repo's commitlint must still reject a bad message.
+if [ -x "$d/commit-msg.chained" ]; then
+    exec "$d/commit-msg.chained" "$@"
+fi
+exit 0

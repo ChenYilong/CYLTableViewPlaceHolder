@@ -132,13 +132,11 @@
     }
     // [EN] An icon animation takes the animation view's place and, like it, shows only while loading.
     // [CN] 图标动画替换 动画视图，并与其一样只在加载时显示。
-    if (self.usesIconView) {
-        CGSize size = self.iconView.iconSize;
-        BOOL centered = self.animationView.contentMode == UIViewContentModeCenter;
-        CGFloat centerX = centered ? CGRectGetMidX(self.animationView.frame) : CGRectGetMaxX(self.animationView.frame) - size.width * 0.5;
-        [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5)
-                                visible:self.state == CYLRefreshStateRefreshing replacingViews:@[self.animationView]];
-    }
+    // [EN] The loading text goes into the icon's CYLPlaceholderView, so icon and text are one centered view.
+    // [CN] 加载文字放进图标的 CYLPlaceholderView，图标与文字是一个整体并居中。
+    [self cyl_placeIconViewWithTitle:(self.isRefreshingTitleHidden || self.stateLabel.hidden) ? nil : self.stateLabel.text
+                              labels:@[self.stateLabel] visible:self.state == CYLRefreshStateRefreshing
+                      replacingViews:@[self.animationView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -163,6 +161,7 @@
         [self.animationView stopAnimating];
         self.animationView.hidden = YES;
     }
+    [self setNeedsLayout];
     [self cyl_updateIconViewVisible:state == CYLRefreshStateRefreshing replacingViews:@[self.animationView]];
 }
 

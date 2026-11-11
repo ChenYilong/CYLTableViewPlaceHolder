@@ -179,9 +179,19 @@ typedef void (^CYLPlaceholderHUDDismissCompletion)(void);
 #pragma mark - Content
 
 /*!
- * [EN] The placeholder stack view inside the box, rebuilt for every new state; nil while hidden. Its components,
- *      handlers and `performAction:` work as on any placeholder. [CN] 方框内的占位图组件栈，每次切换状态时重建；隐藏时为 nil。
- *      其组件、处理与 `performAction:` 与普通占位图相同。
+ * [EN] The packaged icon and title in the box, rebuilt for every new state; nil while hidden. In a loading, progress
+ *      or result state it is the box itself (background, corner radius and size), with no stack view around it; while
+ *      components are shown it is the first component of `placeholderView`.
+ * [CN] 方框中的图标与标题（已封装的 CYLPlaceholderView），每次切换状态时重建；隐藏时为 nil。加载、进度与结果状态中它就是
+ *      方框本身（背景、圆角、尺寸），外面没有组件栈；显示组件时为 `placeholderView` 的第一个组件。
+ */
+@property (nonatomic, strong, readonly, nullable) CYLPlaceholderView *contentView;
+/*!
+ * [EN] The stack view of `showComponents:actions:` and `showScenario:actions:`, whose elements are all
+ *      CYLPlaceholderViews; nil in the other states, which need no stack view. Its handlers and `performAction:` work as
+ *      on any placeholder.
+ * [CN] `showComponents:actions:` 与 `showScenario:actions:` 的组件栈，其中元素都是 CYLPlaceholderView；其他状态不需要组件栈，
+ *      为 nil。其处理与 `performAction:` 与普通占位图相同。
  */
 @property (nonatomic, strong, readonly, nullable) CYLPlaceholderStackView *placeholderView;
 /*!

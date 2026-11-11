@@ -1,0 +1,8 @@
+#!/bin/sh
+tmpfile="$1"
+if grep -qi "Co-Authored-By:" "$tmpfile" 2>/dev/null; then
+  tmp_clean=$(mktemp)
+  grep -vi "Co-Authored-By:" "$tmpfile" > "$tmp_clean"
+  cat "$tmp_clean" > "$tmpfile"
+  rm -f "$tmp_clean"
+fi

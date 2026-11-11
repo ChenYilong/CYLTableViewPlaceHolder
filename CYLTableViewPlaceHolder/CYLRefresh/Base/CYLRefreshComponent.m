@@ -71,6 +71,34 @@
         view.hidden = YES;
     }
 }
+- (void)cyl_placeIconViewWithTitle:(NSString *)title labels:(NSArray<UILabel *> *)labels visible:(BOOL)visible
+                    replacingViews:(NSArray<UIView *> *)views
+{
+    if (!self.cyl_usesIconView) return;
+    CYLRefreshIconView *iconView = self.cyl_iconView;
+    UILabel *font = labels.firstObject;
+    iconView.titleFont = font.font;
+    iconView.titleColor = font.textColor;
+    iconView.title = visible ? title : nil;
+    // [EN] The labels' text is inside the icon's CYLPlaceholderView: fade them out (keeping `hidden`, the caller's
+    //      setting) while it shows, and back when it does not.
+    // [CN] 文字已在图标的 CYLPlaceholderView 中：显示时淡出这些文字（保留调用方设置的 `hidden`），不显示时恢复。
+    for (UILabel *label in labels) {
+        label.alpha = visible ? 0 : 1;
+        label.accessibilityElementsHidden = visible;
+    }
+    // [EN] VoiceOver reads the text from the one view that shows it. [CN] VoiceOver 从显示文字的那个视图读取文字。
+    BOOL speaks = visible && title.length > 0;
+    iconView.accessibilityElementsHidden = !speaks;
+    iconView.isAccessibilityElement = speaks;
+    iconView.accessibilityLabel = speaks ? title : nil;
+    iconView.accessibilityTraits = speaks ? UIAccessibilityTraitUpdatesFrequently : UIAccessibilityTraitNone;
+    CGSize size = iconView.fittingSize;
+    iconView.bounds = CGRectMake(0, 0, MIN(size.width, CGRectGetWidth(self.bounds)), size.height);
+    iconView.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    [self cyl_updateIconViewVisible:visible replacingViews:views];
+}
+
 #pragma mark - 初始化
 - (instancetype)initWithFrame:(CGRect)frame
 {

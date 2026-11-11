@@ -37,9 +37,8 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 @interface CYLPlaceholderHUD ()
 @property (nonatomic, strong, readwrite, nullable) CYLPlaceholderStackView *placeholderView;
 @property (nonatomic, strong, readwrite) UIView *hudView;
-/// The box's size on the single CYLPlaceholderView of an icon state, which is the box itself.
-@property (nonatomic, strong, nullable) NSLayoutConstraint *boxWidthConstraint;
-@property (nonatomic, strong, nullable) NSLayoutConstraint *boxHeightConstraint;
+/// The box of a loading, progress or result state: one CYLPlaceholderView, no stack view.
+@property (nonatomic, strong, nullable) CYLPlaceholderView *iconView;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @property (nonatomic, readwrite) CYLPlaceholderHUDState state;
 /// [EN] Written through `_status`: the public `-setStatus:` is also this property's setter.
@@ -226,7 +225,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
         // [CN] 每次不确定进度的显示都计为一次活动（供 `popActivity` 抵消）；进度更新不计数。
         if (!determinate || self.activityCount == 0) self.activityCount += 1;
         CYLPlaceholderHUDState state = determinate ? CYLPlaceholderHUDStateProgress : CYLPlaceholderHUDStateLoading;
-        if (self.placeholderView && self.state == state && self.isVisible) {
+        if (self.contentView && self.state == state && self.isVisible) {
             // [EN] The same kind of HUD: update in place so the animation does not restart.
             // [CN] 同一种 HUD：原地更新，动画不会重启。
             self.progress = determinate ? MIN(MAX(progress, 0), 1) : 0;
@@ -251,7 +250,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 - (void)setStatus:(NSString *)status {
     CYLPlaceholderHUDOnMain(^{
         self->_status = [status copy];
-        CYLPlaceholderView *view = self.placeholderView.placeholderView;
+        CYLPlaceholderView *view = self.contentView;
         if (!view) return;
         NSString *title = [self cyl_titleForStatus:status
                                       determinate:self.state == CYLPlaceholderHUDStateProgress];
@@ -345,12 +344,39 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     self->_status = [status copy];
 
     [self.placeholderView removeFromSuperview];
-    CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc] initWithComponents:components actions:actions];
-    placeholder.backgroundColor = UIColor.clearColor;
-    placeholder.backgroundAction = nil;
-    placeholder.accessibilityIdentifier = @"CYLPlaceholderHUDContent";
-    self.placeholderView = placeholder;
-    [self.hudView addSubview:placeholder];
+    [self.iconView removeFromSuperview];
+    self.placeholderView = nil;
+    self.iconView = nil;
+    if (state == CYLPlaceholderHUDStateCustom) {
+        // [EN] Several components with tap actions: a stack view of CYLPlaceholderViews.
+        // [CN] 多个带点击动作的组件：由 CYLPlaceholderView 组成的组件栈。
+        CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc] initWithComponents:components
+                                                                                          actions:actions];
+        placeholder.backgroundAction = nil;
+        placeholder.accessibilityIdentifier = @"CYLPlaceholderHUDContent";
+        self.placeholderView = placeholder;
+        [self.hudView addSubview:placeholder];
+    } else {
+        // [EN] One icon and title: the CYLPlaceholderView is the box itself, with no stack view around it.
+        // [CN] 一个图标与标题：CYLPlaceholderView 就是方框本身，外面没有组件栈。
+        CYLPlaceholderComponent *component = components.firstObject;
+        NSError *error = nil;
+        CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:component.attributes
+                                                                         imageBundle:component.imageBundle
+                                                                               error:&error];
+        if (!view) {
+            NSLog(@"CYLTableViewPlaceHolder: HUD content not shown: %@", error.localizedDescription);
+            view = [[CYLPlaceholderView alloc] initWithFrame:CGRectZero];
+        }
+        view.reportsContentSize = YES;
+        view.contentMargin = CYLPlaceholderHUDStackMargin;
+        view.animationRepeatCount = component.animationRepeatCount;
+        view.isAccessibilityElement = YES;
+        view.accessibilityLabel = status;
+        view.accessibilityIdentifier = @"CYLPlaceholderHUDContent";
+        self.iconView = view;
+        [self.hudView addSubview:view];
+    }
     [self cyl_applyAppearance];
     [self cyl_updateProgress];
 
@@ -428,7 +454,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 - (void)cyl_announce {
     if (self.status.length) UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.status);
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.placeholderView);
+    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.contentView);
 }
 
 - (NSDictionary *)cyl_userInfo {
@@ -476,7 +502,7 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 - (void)cyl_updateProgress {
     if (self.state != CYLPlaceholderHUDStateProgress) return;
-    CYLPlaceholderView *view = self.placeholderView.placeholderView;
+    CYLPlaceholderView *view = self.contentView;
     if (self.progressAnimationFileName.length) {
         [view stopPlaceholderAnimation];
         [view setPlaceholderAnimationProgress:self.progress];
@@ -574,7 +600,9 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     self->_status = nil;
     self.progress = 0;
     [self.placeholderView removeFromSuperview];
+    [self.iconView removeFromSuperview];
     self.placeholderView = nil;
+    self.iconView = nil;
     [self removeFromSuperview];
 }
 
@@ -597,10 +625,13 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
     }
 }
 
-/// The view that draws the box: the single CYLPlaceholderView of an icon state, else the stack view.
+- (CYLPlaceholderView *)contentView {
+    return self.iconView ?: self.placeholderView.placeholderView;
+}
+
+/// The view that draws the box: the CYLPlaceholderView of an icon state, else the stack view of components.
 - (UIView *)cyl_boxView {
-    CYLPlaceholderStackView *placeholder = self.placeholderView;
-    return placeholder.componentViews.count == 1 ? placeholder.placeholderView : placeholder;
+    return self.iconView ?: self.placeholderView;
 }
 
 - (UIColor *)cyl_boxColor {
@@ -623,13 +654,12 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 }
 
 - (void)cyl_applyAppearance {
-    UIView *box = self.placeholderView ? [self cyl_boxView] : nil;
-    for (UIView *view in self.placeholderView ? [@[self.placeholderView] arrayByAddingObjectsFromArray:
-                                                 self.placeholderView.componentViews] : @[]) {
-        BOOL isBox = view == box;
-        view.backgroundColor = isBox ? [self cyl_boxColor] : UIColor.clearColor;
-        view.layer.cornerRadius = isBox ? self.cornerRadius : 0;
-        view.clipsToBounds = isBox;
+    UIView *box = [self cyl_boxView];
+    box.backgroundColor = [self cyl_boxColor];
+    box.layer.cornerRadius = self.cornerRadius;
+    box.clipsToBounds = YES;
+    for (CYLPlaceholderView *component in self.placeholderView.componentViews) {
+        component.backgroundColor = UIColor.clearColor;
     }
     self.hudView.backgroundColor = UIColor.clearColor;
 
@@ -665,23 +695,20 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
 
 - (void)cyl_measureAndPlaceBox {
     self.gradientLayer.frame = self.bounds;
-    CYLPlaceholderStackView *placeholder = self.placeholderView;
-    if (!placeholder) return;
-    CGFloat maxWidth = MIN(CYLPlaceholderHUDMaximumWidth, MAX(self.bounds.size.width - 32, self.minimumSize.width));
     UIView *box = [self cyl_boxView];
+    if (!box) return;
+    CGFloat maxWidth = MIN(CYLPlaceholderHUDMaximumWidth, MAX(self.bounds.size.width - 32, self.minimumSize.width));
     CGSize content;
-    if (box == placeholder.placeholderView) {
-        // [EN] An icon state: the CYLPlaceholderView is the box, measured by itself with its content margin.
-        // [CN] 图标状态：CYLPlaceholderView 就是方框，按其内容边距自行测量。
-        CYLPlaceholderView *view = placeholder.placeholderView;
-        view.contentMargin = CYLPlaceholderHUDStackMargin;
-        view.preferredMaxLayoutWidth = maxWidth;
-        CGSize size = view.intrinsicContentSize;
+    if (self.iconView) {
+        // [EN] The CYLPlaceholderView measures itself; its content margin is the box's side padding.
+        // [CN] CYLPlaceholderView 自行测量；其内容边距就是方框左右的留白。
+        self.iconView.preferredMaxLayoutWidth = maxWidth;
+        CGSize size = self.iconView.intrinsicContentSize;
         content = CGSizeMake(ceil(size.width) - 2 * CYLPlaceholderHUDStackMargin, ceil(size.height));
     } else {
-        placeholder.frame = CGRectMake(0, 0, maxWidth, 1000);
-        [placeholder layoutIfNeeded];
-        content = [placeholder.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+        self.placeholderView.frame = CGRectMake(0, 0, maxWidth, 1000);
+        [self.placeholderView layoutIfNeeded];
+        content = [self.placeholderView.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
     }
     CGFloat width = MIN(maxWidth, MAX(self.minimumSize.width, ceil(content.width) + 2 * CYLPlaceholderHUDStackMargin));
     CGFloat height = MAX(self.minimumSize.height, ceil(content.height) + 2 * CYLPlaceholderHUDStackMargin);
@@ -689,28 +716,8 @@ static void CYLPlaceholderHUDOnMain(dispatch_block_t block) {
                                  CGRectGetMidY(self.bounds) + self.offsetFromCenter.vertical);
     self.hudView.bounds = CGRectMake(0, 0, width, height);
     self.hudView.center = center;
-    if (box == placeholder.placeholderView) {
-        // [EN] The stack view keeps its margin around the box, so it extends past the box by that margin.
-        // [CN] 组件栈在方框四周保留边距，因此比方框大出该边距。
-        CYLPlaceholderView *view = placeholder.placeholderView;
-        if (self.boxWidthConstraint.firstItem != view) {
-            // [EN] The stack view makes components hug their content at the required priority; the box is larger
-            //      (minimum size, margins), so it gives up hugging and keeps its exact size.
-            // [CN] 组件栈让组件以 required 优先级贴合内容；方框更大（最小尺寸、边距），因此放弃贴合，保持精确尺寸。
-            for (NSNumber *axis in @[@(UILayoutConstraintAxisHorizontal), @(UILayoutConstraintAxisVertical)]) {
-                [view setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:axis.integerValue];
-            }
-            self.boxWidthConstraint = [view.widthAnchor constraintEqualToConstant:width];
-            self.boxHeightConstraint = [view.heightAnchor constraintEqualToConstant:height];
-            [NSLayoutConstraint activateConstraints:@[self.boxWidthConstraint, self.boxHeightConstraint]];
-        }
-        self.boxWidthConstraint.constant = width;
-        self.boxHeightConstraint.constant = height;
-        placeholder.frame = CGRectInset(self.hudView.bounds, -CYLPlaceholderHUDStackMargin, -CYLPlaceholderHUDStackMargin);
-    } else {
-        placeholder.frame = self.hudView.bounds;
-    }
-    [placeholder layoutIfNeeded];
+    box.frame = self.hudView.bounds;
+    [box layoutIfNeeded];
 }
 
 #pragma mark - Touches and haptics

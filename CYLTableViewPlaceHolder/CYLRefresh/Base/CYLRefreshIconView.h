@@ -57,6 +57,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) CGSize iconSize;
 /*!
+ * [EN] The text shown after the icon inside the same CYLPlaceholderView (horizontal axis), so icon and text are one
+ *      view and cannot drift apart; nil shows the icon alone. The control sets it to its state text.
+ * [CN] 在同一个 CYLPlaceholderView 中显示在图标之后的文字（横向排列），图标与文字是同一个视图，不会错位；nil 只显示图标。
+ *      控件把它设为状态文字。
+ */
+@property (nonatomic, copy, nullable) NSString *title;
+/*!
+ * [EN] The font of `title` (the state label's font). [CN] `title` 的字体（状态文字的字体）。
+ */
+@property (nonatomic, strong, nullable) UIFont *titleFont;
+/*!
+ * [EN] The color of `title` (the state label's color). [CN] `title` 的颜色（状态文字的颜色）。
+ */
+@property (nonatomic, strong, nullable) UIColor *titleColor;
+/*!
+ * [EN] The size of the icon and its `title` together, as the CYLPlaceholderView measures them; `iconSize` without a
+ *      title. [CN] 图标与 `title` 合在一起的尺寸，由 CYLPlaceholderView 测量；没有 title 时为 `iconSize`。
+ */
+@property (nonatomic, readonly) CGSize fittingSize;
+/*!
  * [EN] YES (the default): while the idle control is pulled, the animation follows the pulling percent when the engine can
  *      seek. NO: it plays instead. [CN] YES（默认）：空闲状态下拖动时，可定位的动画跟随下拉百分比；NO：改为播放。
  */
@@ -169,6 +189,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
     NS_SWIFT_NAME(cyl_updateIconView(visible:replacing:));
+/*!
+ * [EN] When an icon animation is set: shows the icon and `title` as one CYLPlaceholderView centered in the control,
+ *      and fades out `labels` (the state and time labels whose text it carries) and hides `views` (the animation view).
+ *      When not `visible`, the labels come back and the icon hides. Call at the end of `placeSubviews` and `setState:`.
+ * [CN] 设置了图标动画时：把图标与 `title` 作为一个 CYLPlaceholderView 居中显示在控件中，淡出 `labels`（文字已由它显示的状态与时间
+ *      文字），并隐藏 `views`（动画视图）。`visible` 为 NO 时恢复文字并隐藏图标。在 `placeSubviews` 与 `setState:` 末尾调用。
+ */
+- (void)cyl_placeIconViewWithTitle:(nullable NSString *)title labels:(NSArray<UILabel *> *)labels visible:(BOOL)visible
+                    replacingViews:(NSArray<UIView *> *)views
+    NS_SWIFT_NAME(cyl_placeIconView(title:labels:visible:replacing:));
 @end
 
 NS_ASSUME_NONNULL_END

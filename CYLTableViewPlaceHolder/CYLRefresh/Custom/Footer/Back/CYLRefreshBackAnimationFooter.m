@@ -143,13 +143,10 @@
     }
     // [EN] An icon animation takes the animation view's place (centered or next to the text) and hides with it.
     // [CN] 图标动画替换 动画视图（居中或紧挨文字），并与其一同隐藏。
-    if (self.usesIconView) {
-        CGSize size = self.iconView.iconSize;
-        BOOL centered = self.animationView.contentMode == UIViewContentModeCenter;
-        CGFloat centerX = centered ? CGRectGetMidX(self.animationView.frame) : CGRectGetMaxX(self.animationView.frame) - size.width * 0.5;
-        [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5)
-                                visible:self.state != CYLRefreshStateNoMoreData replacingViews:@[self.animationView]];
-    }
+    // [EN] The state text goes into the icon's CYLPlaceholderView, so icon and text are one centered view.
+    // [CN] 状态文字放进图标的 CYLPlaceholderView，图标与文字是一个整体并居中。
+    [self cyl_placeIconViewWithTitle:self.stateLabel.hidden ? nil : self.stateLabel.text labels:@[self.stateLabel]
+                             visible:self.state != CYLRefreshStateNoMoreData replacingViews:@[self.animationView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -175,6 +172,7 @@
     } else if (state == CYLRefreshStateNoMoreData) {
         self.animationView.hidden = YES;
     }
+    [self setNeedsLayout];
     [self cyl_updateIconViewVisible:state != CYLRefreshStateNoMoreData replacingViews:@[self.animationView]];
 }
 

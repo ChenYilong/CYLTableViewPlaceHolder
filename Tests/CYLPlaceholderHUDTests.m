@@ -62,17 +62,19 @@
     XCTAssertTrue(hud.isVisible);
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateLoading);
     XCTAssertEqual(hud.superview, self.container);
-    XCTAssertEqualObjects(hud.placeholderView.placeholderView.textLabel.text, @"Loading");
-    NSString *file = [hud.placeholderView.placeholderView.itemAttributes[CYLPlaceholderItemAnimationFilePath] lastPathComponent];
+    XCTAssertEqualObjects(hud.contentView.textLabel.text, @"Loading");
+    NSString *file = [hud.contentView.itemAttributes[CYLPlaceholderItemAnimationFilePath] lastPathComponent];
     XCTAssertEqualObjects(file, @"CYLRefreshActivity.gif");
-    XCTAssertEqual(hud.placeholderView.placeholderView.animationRepeatCount, 0);
+    XCTAssertEqual(hud.contentView.animationRepeatCount, 0);
 
-    CYLPlaceholderStackView *first = hud.placeholderView;
+    XCTAssertNil(hud.placeholderView, @"one icon and title need no stack view");
+    XCTAssertEqual(hud.contentView.superview, hud.hudView, @"the CYLPlaceholderView is the box");
+    CYLPlaceholderView *first = hud.contentView;
     [hud show];
     XCTAssertEqual(hud.activityCount, 2u);
-    XCTAssertEqual(hud.placeholderView, first, @"the same state updates in place, so the animation keeps playing");
+    XCTAssertEqual(hud.contentView, first, @"the same state updates in place, so the animation keeps playing");
     [hud setStatus:@"Still loading"];
-    XCTAssertEqualObjects(hud.placeholderView.placeholderView.textLabel.text, @"Still loading");
+    XCTAssertEqualObjects(hud.contentView.textLabel.text, @"Still loading");
     XCTAssertEqualObjects(hud.status, @"Still loading");
 
     [hud popActivity];
@@ -82,6 +84,7 @@
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateHidden);
     XCTAssertNil(hud.superview);
     XCTAssertNil(hud.placeholderView);
+    XCTAssertNil(hud.contentView);
 }
 
 - (void)testProgressIsClampedAndShownWithoutRestartingTheHUD {
@@ -89,11 +92,13 @@
     [hud showProgress:0.3 status:@"Downloading"];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateProgress);
     XCTAssertEqualWithAccuracy(hud.progress, 0.3, 0.001);
-    CYLPlaceholderStackView *first = hud.placeholderView;
+    CYLPlaceholderView *first = hud.contentView;
+    XCTAssertTrue([first.textLabel.text hasPrefix:@"Downloading"]);
+    XCTAssertTrue([first.textLabel.text containsString:@"30"], @"the title carries the percentage");
     [hud showProgress:1.7];
     XCTAssertEqualWithAccuracy(hud.progress, 1, 0.001);
-    XCTAssertEqual(hud.placeholderView, first);
-    XCTAssertNotNil(hud.placeholderView.placeholderView.accessibilityValue, @"VoiceOver reads the percentage");
+    XCTAssertEqual(hud.contentView, first);
+    XCTAssertNotNil(hud.contentView.accessibilityValue, @"VoiceOver reads the percentage");
     [hud showProgress:-1];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateLoading, @"a negative progress is indeterminate");
     [hud dismiss];
@@ -119,10 +124,10 @@
 
     [hud showErrorWithStatus:@"Failed"];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateError);
-    XCTAssertNotNil(hud.placeholderView.placeholderView.imageView.image, @"the error image");
+    XCTAssertNotNil(hud.contentView.imageView.image, @"the error image");
     [hud showInfoWithStatus:nil];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateInfo);
-    XCTAssertTrue(hud.placeholderView.placeholderView.textLabel.text.length == 0, @"no status, no text");
+    XCTAssertTrue(hud.contentView.textLabel.text.length == 0, @"no status, no text");
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleWarning];
     [hud showImage:image status:@"Careful"];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateImage);
@@ -201,8 +206,8 @@
     XCTAssertEqual(hud.style, CYLPlaceholderHUDStyleCustom);
     hud.hudBackgroundColor = UIColor.darkGrayColor;
     [hud showWithStatus:@"Loading"];
-    XCTAssertEqualObjects(hud.placeholderView.placeholderView.textLabel.textColor, UIColor.redColor);
-    CYLPlaceholderView *box = hud.placeholderView.placeholderView;
+    XCTAssertEqualObjects(hud.contentView.textLabel.textColor, UIColor.redColor);
+    CYLPlaceholderView *box = hud.contentView;
     XCTAssertEqualObjects(box.backgroundColor, UIColor.darkGrayColor,
                           @"the CYLPlaceholderView of an icon state is the box: icon and background are one view");
     XCTAssertEqualWithAccuracy(CGRectGetWidth([box convertRect:box.bounds toView:hud]), CGRectGetWidth(hud.hudView.bounds), 0.5);
@@ -230,6 +235,7 @@
     [hud showComponents:components actions:@{@"cancel": handler}];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateCustom);
     XCTAssertEqual(hud.placeholderView.componentViews.count, 2u);
+    XCTAssertEqual(hud.contentView, hud.placeholderView.placeholderView);
     XCTAssertTrue([hud.placeholderView performAction:@"cancel"]);
     XCTAssertEqual(cancelled, 1u);
 

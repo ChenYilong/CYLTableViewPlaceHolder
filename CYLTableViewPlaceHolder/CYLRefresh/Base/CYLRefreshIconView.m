@@ -81,16 +81,63 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
                                               self.stateAttributes.allValues.firstObject);
 }
 
+- (CGSize)fittingSize {
+    if (!self.title.length || !self.placeholderView) return self.iconSize;
+    self.placeholderView.preferredMaxLayoutWidth = CGFLOAT_MAX;
+    CGSize size = self.placeholderView.intrinsicContentSize;
+    return CGSizeMake(ceil(size.width), MAX(ceil(size.height), self.iconSize.height));
+}
+
+- (void)setTitle:(NSString *)title {
+    if (title == _title || [title isEqualToString:_title]) return;
+    BOOL hadTitle = _title.length > 0;
+    _title = [title copy];
+    if (hadTitle != (title.length > 0)) {
+        // [EN] With or without a title is a different layout: rebuild. [CN] 有无标题是不同的布局：重建。
+        self.shownAttributes = nil;
+        [self cyl_showAttributesForState:self.state];
+        [self cyl_applyPlayback];
+    } else {
+        // [EN] A new text only: update it in place, so the animation keeps playing. [CN] 只换文字：原地更新，动画不中断。
+        self.placeholderView.textLabel.text = title;
+        [self.placeholderView invalidateIntrinsicContentSize];
+    }
+}
+
+- (void)setTitleFont:(UIFont *)titleFont {
+    _titleFont = titleFont;
+    if (titleFont) self.placeholderView.textLabel.font = titleFont;
+}
+
+- (void)setTitleColor:(UIColor *)titleColor {
+    _titleColor = titleColor;
+    if (titleColor) self.placeholderView.textLabel.textColor = titleColor;
+}
+
+/// The state's attributes with the title after the icon, laid out horizontally, when there is a title.
+- (NSDictionary<NSString *, id> *)cyl_displayAttributes:(NSDictionary<NSString *, id> *)attributes {
+    if (!attributes || !self.title.length) return attributes;
+    NSMutableDictionary<NSString *, id> *display = [attributes mutableCopy];
+    display[CYLPlaceholderItemTitle] = self.title;
+    display[CYLPlaceholderItemContentAxis] = @"horizontal";
+    if (self.titleFont) display[CYLPlaceholderItemTitleFont] = self.titleFont;
+    if (self.titleColor) display[CYLPlaceholderItemTitleColor] = self.titleColor;
+    return display;
+}
+
 - (void)cyl_showAttributesForState:(CYLRefreshState)state {
-    NSDictionary<NSString *, id> *attributes = [self cyl_attributesForState:state];
-    if (attributes == self.shownAttributes || [attributes isEqualToDictionary:self.shownAttributes]) return;
+    NSDictionary<NSString *, id> *stateAttributes = [self cyl_attributesForState:state];
+    NSDictionary<NSString *, id> *attributes = stateAttributes;
+    if (stateAttributes && [stateAttributes isEqualToDictionary:self.shownAttributes] && self.placeholderView) return;
+    if (!attributes && !self.shownAttributes && !self.placeholderView) return;
     [self.placeholderView removeFromSuperview];
     self.placeholderView = nil;
     self.shownAttributes = attributes;
     self.playing = NO;
     if (!attributes) return;
     NSError *error = nil;
-    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:[self cyl_displayAttributes:attributes]
+                                                                     imageBundle:nil error:&error];
     if (!view) {
         NSLog(@"CYLRefresh: icon animation not shown: %@", error.localizedDescription);
         return;
@@ -102,6 +149,7 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     // [EN] The icon fills its own frame: the component's 16-point placeholder margins left no room in a 30-point icon.
     // [CN] 图标铺满自身 frame：组件默认的 16 点占位图边距在 30 点的图标里没有空间。
     view.contentMargin = 0;
+    view.reportsContentSize = YES;
     view.userInteractionEnabled = NO;
     view.isAccessibilityElement = NO;
     view.accessibilityElementsHidden = YES;

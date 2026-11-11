@@ -150,15 +150,25 @@
     [self cyl_placeAnimationIconView];
 }
 
-/// [EN] An icon animation takes the animation view's place: centered, or right-aligned next to the text, as the animation view
-///      draws its images. [CN] 图标动画替换 动画视图：与 动画视图绘制图片的方式一致，居中或靠右紧挨文字。
+/// [EN] An icon animation takes the animation view's place, and the state and time text go into the same
+///      CYLPlaceholderView after the icon, centered as one: icon and text cannot drift apart.
+/// [CN] 图标动画替换 动画视图，状态与时间文字放进图标所在的同一个 CYLPlaceholderView，整体居中：图标与文字不会错位。
 - (void)cyl_placeAnimationIconView
 {
     if (!self.usesIconView) return;
-    CGSize size = self.iconView.iconSize;
-    BOOL centered = self.animationView.contentMode == UIViewContentModeCenter;
-    CGFloat centerX = centered ? CGRectGetMidX(self.animationView.frame) : CGRectGetMaxX(self.animationView.frame) - size.width * 0.5;
-    [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5) visible:YES replacingViews:@[self.animationView]];
+    [self cyl_placeIconViewWithTitle:[self cyl_iconTitle] labels:@[self.stateLabel, self.lastUpdatedTimeLabel]
+                             visible:YES replacingViews:@[self.animationView]];
+}
+
+/// The text shown after the icon: the visible state and time labels, one per line.
+- (NSString *)cyl_iconTitle
+{
+    NSMutableArray<NSString *> *lines = [NSMutableArray array];
+    if (!self.stateLabel.hidden && self.stateLabel.text.length) [lines addObject:self.stateLabel.text];
+    if (!self.lastUpdatedTimeLabel.hidden && self.lastUpdatedTimeLabel.text.length) {
+        [lines addObject:self.lastUpdatedTimeLabel.text];
+    }
+    return lines.count ? [lines componentsJoinedByString:@"\n"] : nil;
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -168,12 +178,13 @@
     // 根据状态做事情
     if (state == CYLRefreshStatePulling || state == CYLRefreshStateRefreshing) {
         NSArray *images = self.stateImages[@(state)];
-        if (images.count == 0) return;
-
-        [self.animationView stopAnimating];
+        // [EN] No images (an icon animation, for example): nothing to animate, but the icon's text still follows the
+        //      state below. [CN] 没有图片（如使用图标动画）：无需播放图片，但下面图标中的文字仍要跟随状态。
         if (images.count == 1) { // 单张图片
+            [self.animationView stopAnimating];
             self.animationView.image = [images lastObject];
-        } else { // 多张图片
+        } else if (images.count > 1) { // 多张图片
+            [self.animationView stopAnimating];
             self.animationView.animationImages = images;
             self.animationView.animationDuration = [self.stateDurations[@(state)] doubleValue];
             [self.animationView startAnimating];
@@ -181,7 +192,7 @@
     } else if (state == CYLRefreshStateIdle) {
         [self.animationView stopAnimating];
     }
-    [self cyl_updateIconViewVisible:YES replacingViews:@[self.animationView]];
+    [self cyl_placeAnimationIconView];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {
