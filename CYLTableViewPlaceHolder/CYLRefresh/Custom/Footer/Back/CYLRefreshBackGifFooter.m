@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshBackGifFooter.h"
+#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
@@ -103,6 +104,15 @@
         self.gifView.contentMode = UIViewContentModeRight;
         self.gifView.cyl_w = self.cyl_w * 0.5 - self.labelLeftInset - self.stateLabel.cyl_textWidth * 0.5;
     }
+    // [EN] An icon animation takes the GIF view's place (centered or next to the text) and hides with it.
+    // [CN] 图标动画替换 GIF 视图（居中或紧挨文字），并与其一同隐藏。
+    if (self.usesIconView) {
+        CGSize size = self.iconView.iconSize;
+        BOOL centered = self.gifView.contentMode == UIViewContentModeCenter;
+        CGFloat centerX = centered ? CGRectGetMidX(self.gifView.frame) : CGRectGetMaxX(self.gifView.frame) - size.width * 0.5;
+        [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5)
+                                visible:self.state != CYLRefreshStateNoMoreData replacingViews:@[self.gifView]];
+    }
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -128,6 +138,7 @@
     } else if (state == CYLRefreshStateNoMoreData) {
         self.gifView.hidden = YES;
     }
+    [self cyl_updateIconViewVisible:state != CYLRefreshStateNoMoreData replacingViews:@[self.gifView]];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {

@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshAutoNormalFooter.h"
+#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
@@ -64,6 +65,11 @@
     }
     CGFloat loadingCenterY = self.cyl_h * 0.5;
     self.loadingView.center = CGPointMake(loadingCenterX, loadingCenterY);
+
+    // [EN] An icon animation takes the spinner's place and, like it, shows only while loading.
+    // [CN] 图标动画替换菊花，并与菊花一样只在加载时显示。
+    [self cyl_placeIconViewAtCenter:self.loadingView.center visible:self.state == CYLRefreshStateRefreshing
+                     replacingViews:@[self.loadingView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -76,6 +82,7 @@
     } else if (state == CYLRefreshStateRefreshing) {
         [self.loadingView startAnimating];
     }
+    [self cyl_updateIconViewVisible:state == CYLRefreshStateRefreshing replacingViews:@[self.loadingView]];
 }
 
 @end

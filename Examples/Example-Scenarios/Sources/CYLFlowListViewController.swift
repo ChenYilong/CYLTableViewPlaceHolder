@@ -160,11 +160,17 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             installPlaceholderBlock()
         case .refreshControls:
             setUpRefreshHeader(usesDelegateAPI: false)
-            tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+            // A Rive pull-to-refresh icon in the header (see setUpRefreshHeader) and a GIF icon in the footer.
+            tableView.cyl_header?.setIconAnimation(bundled: "CYLPlaceholderPullToRefresh.riv",
+                                                   size: CGSize(width: 40, height: 40), for: .idle)
+            let footer = CYLRefreshAutoNormalFooter { [weak self] in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self?.tableView.cyl_footer?.endRefreshingWithNoMoreData()
                 }
             }
+            footer.setIconAnimation(bundled: "CYLPlaceholderUploading.gif", size: CGSize(width: 32, height: 32),
+                                    for: .refreshing)
+            tableView.cyl_footer = footer
             installPlaceholderBlock()
         case .collection:
             installPlaceholderBlock()

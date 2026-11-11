@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshNormalTrailer.h"
+#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 
@@ -39,6 +40,9 @@
         self.arrowView.center = stateHidden ?  selfCenter : arrowCenter ;
     }
     self.arrowView.tintColor = self.stateLabel.textColor;
+    // [EN] An icon animation takes the arrow's place; the label stays laid out as if the arrow showed.
+    // [CN] 图标动画替换箭头；文字仍按箭头显示时的位置布局。
+    [self cyl_placeIconViewAtCenter:self.arrowView.center visible:YES replacingViews:@[self.arrowView]];
 
     if (stateHidden) return;
 
@@ -46,7 +50,7 @@
     CGFloat stateLabelW = ceil(self.stateLabel.font.pointSize);
     // 状态
     if (noConstrainsOnStatusLabel) {
-        BOOL arrowHidden = self.arrowView.isHidden;
+        BOOL arrowHidden = self.arrowView.isHidden && !self.usesIconView;
         CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
         self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
         self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;

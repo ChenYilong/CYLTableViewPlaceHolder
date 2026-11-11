@@ -29,6 +29,7 @@ source of truth; update the README and issue tracker if they become stale.
 | Accessibility of placeholders and components | `CYLPlaceholderView.m` (`-cyl_updateTapAccessibility`, `accessibilityActivate`, Reduce Motion highlight), `CYLPlaceholderStackView.m` (`-cyl_updateAccessibilityOfComponent:`, grouping); rules in `instructions.md` ("Accessibility"); skills `ios-accessibility`, `accessibility-audit` |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
+| Refresh animated icons | `CYLTableViewPlaceHolder/CYLRefresh/Base/CYLRefreshIconView.h` (icon component, playback policy, layout helper category), `CYLRefreshComponent.h` (`iconView`, `setIconAnimation…:forState:`), used by the Normal/Gif headers, footers and the trailer; tests `Tests/CYLRefreshIconTests.m`; doc `docs/Refresh-Icon-Animation.md` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |
 | Refresh header inset updates | `CYLTableViewPlaceHolder/CYLRefresh/Base/CYLRefreshHeader.m` |
 | Example (Swift; issues #2, #3, #6; custom placeholders `PlaceHolderView/WeChatStyle/CYLWeChatStylePlaceHolder.swift`, `PlaceHolderView/XTNetReloader/CYLXTNetReloader.swift`) | `Examples/Example/CYLExampleViewController.swift`, app and scene delegates in `Examples/Example/CYLExampleAppDelegate.swift` |

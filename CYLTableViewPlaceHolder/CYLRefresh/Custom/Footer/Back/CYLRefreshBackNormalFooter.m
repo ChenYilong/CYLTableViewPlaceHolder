@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshBackNormalFooter.h"
+#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 
@@ -86,6 +87,11 @@
     }
 
     self.arrowView.tintColor = self.stateLabel.textColor;
+
+    // [EN] An icon animation takes the arrow's and spinner's place; hidden with them when there is no more data.
+    // [CN] 图标动画替换箭头与菊花；没有更多数据时与它们一样隐藏。
+    [self cyl_placeIconViewAtCenter:arrowCenter visible:self.state != CYLRefreshStateNoMoreData
+                     replacingViews:@[self.arrowView, self.loadingView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -105,7 +111,7 @@
                 self.loadingView.alpha = 1.0;
                 [self.loadingView stopAnimating];
 
-                self.arrowView.hidden = NO;
+                self.arrowView.hidden = self.usesIconView;
             }];
         } else {
             self.arrowView.hidden = NO;
@@ -127,6 +133,7 @@
         self.arrowView.hidden = YES;
         [self.loadingView stopAnimating];
     }
+    [self cyl_updateIconViewVisible:state != CYLRefreshStateNoMoreData replacingViews:@[self.arrowView, self.loadingView]];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {

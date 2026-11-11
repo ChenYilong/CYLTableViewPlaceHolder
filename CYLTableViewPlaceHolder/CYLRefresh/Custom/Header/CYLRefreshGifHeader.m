@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshGifHeader.h"
+#import "CYLRefreshIconView.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
 
@@ -109,6 +110,18 @@
         CGFloat textWidth = MAX(stateWidth, timeWidth);
         self.gifView.cyl_w = self.cyl_w * 0.5 - textWidth * 0.5 - self.labelLeftInset;
     }
+    [self cyl_placeGifIconView];
+}
+
+/// [EN] An icon animation takes the GIF view's place: centered, or right-aligned next to the text, as the GIF view
+///      draws its images. [CN] 图标动画替换 GIF 视图：与 GIF 视图绘制图片的方式一致，居中或靠右紧挨文字。
+- (void)cyl_placeGifIconView
+{
+    if (!self.usesIconView) return;
+    CGSize size = self.iconView.iconSize;
+    BOOL centered = self.gifView.contentMode == UIViewContentModeCenter;
+    CGFloat centerX = centered ? CGRectGetMidX(self.gifView.frame) : CGRectGetMaxX(self.gifView.frame) - size.width * 0.5;
+    [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5) visible:YES replacingViews:@[self.gifView]];
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -131,6 +144,7 @@
     } else if (state == CYLRefreshStateIdle) {
         [self.gifView stopAnimating];
     }
+    [self cyl_updateIconViewVisible:YES replacingViews:@[self.gifView]];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {

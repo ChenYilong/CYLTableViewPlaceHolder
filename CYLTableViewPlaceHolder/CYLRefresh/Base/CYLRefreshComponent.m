@@ -13,13 +13,86 @@
 #import "UIScrollView+CYLExtension.h"
 #import "UIScrollView+CYLRefresh.h"
 #import "NSBundle+CYLRefresh.h"
+#import "CYLRefreshIconView.h"
+#import "CYLPlaceholderView.h"
+#import "CYLPlaceholderScenario.h"
 
 @interface CYLRefreshComponent()
+@property (strong, nonatomic, readwrite) CYLRefreshIconView *iconView;
 @property (strong, nonatomic) UIPanGestureRecognizer *pan;
 @property (weak, nonatomic) UIScrollView *observedScrollView;
 @end
 
 @implementation CYLRefreshComponent
+
+#pragma mark - Icon animation
+
+- (CYLRefreshIconView *)iconView
+{
+    if (!_iconView) {
+        CYLRefreshIconView *iconView = [[CYLRefreshIconView alloc] initWithFrame:CGRectZero];
+        [iconView updateForState:self.state];
+        [self addSubview:iconView];
+        _iconView = iconView;
+    }
+    return _iconView;
+}
+
+- (BOOL)usesIconView
+{
+    return _iconView.hasAnimations;
+}
+
+- (instancetype)setIconAnimationAttributes:(NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
+{
+    if (!attributes && !_iconView) return self;
+    [self.iconView setAnimationAttributes:attributes forState:state];
+    [self setNeedsLayout];
+    return self;
+}
+
+- (instancetype)setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
+{
+    if (!filePath.length) return self;
+    return [self setIconAnimationAttributes:@{
+        CYLPlaceholderItemAnimationFilePath: filePath,
+        CYLPlaceholderItemAnimationSize: @[@(size.width), @(size.height)],
+    } forState:state];
+}
+
+- (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
+{
+    if (![CYLPlaceholderView pathForBundledAnimation:fileName]) {
+        NSLog(@"CYLRefresh: bundled animation %@ not found.", fileName);
+        return self;
+    }
+    // [EN] The scenario builder adds the options a bundled file needs (Rive state machines, line icon colors).
+    // [CN] 由场景组件构建方法补充内置文件需要的选项（Rive 状态机、线条图标颜色）。
+    CYLPlaceholderComponent *component = [CYLPlaceholderComponent componentWithBundledAnimation:fileName
+        fallbackStyle:CYLPlaceholderStyleRefresh title:nil size:size action:nil];
+    return [self setIconAnimationAttributes:component.attributes forState:state];
+}
+
+/// [EN] For subclasses: places the icon at `center` with its size and hides the views it replaces.
+/// [CN] 供子类调用：把图标以其尺寸放在 `center`，并隐藏它所替换的视图。
+- (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
+{
+    if (!self.usesIconView) return;
+    CGSize size = self.iconView.iconSize;
+    self.iconView.bounds = CGRectMake(0, 0, size.width, size.height);
+    self.iconView.center = center;
+    [self cyl_updateIconViewVisible:visible replacingViews:views];
+}
+
+- (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
+{
+    if (!self.usesIconView) return;
+    self.iconView.hidden = !visible;
+    for (UIView *view in views) {
+        if ([view isKindOfClass:UIActivityIndicatorView.class]) [(UIActivityIndicatorView *)view stopAnimating];
+        view.hidden = YES;
+    }
+}
 #pragma mark - 初始化
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -169,6 +242,9 @@
 - (void)setState:(CYLRefreshState)state
 {
     _state = state;
+    // [EN] The icon follows every state change of every subclass (CYLRefreshCheckState calls super).
+    // [CN] 图标随所有子类的每次状态变化更新（CYLRefreshCheckState 会调用 super）。
+    [_iconView updateForState:state];
 
     // 加入主队列的目的是等setState:方法调用完毕、设置完文字后再去布局子控件
     CYLRefreshDispatchAsyncOnMainQueue([self setNeedsLayout];)
@@ -278,6 +354,7 @@
 - (void)setPullingPercent:(CGFloat)pullingPercent
 {
     _pullingPercent = pullingPercent;
+    [_iconView updateForPullingPercent:pullingPercent];
 
     if (self.isRefreshing) return;
 

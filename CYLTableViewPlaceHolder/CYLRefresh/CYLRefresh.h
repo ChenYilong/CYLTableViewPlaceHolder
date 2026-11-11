@@ -16,6 +16,7 @@
 #import "CYLRefreshAutoGifFooter.h"
 
 #import "CYLRefreshNormalTrailer.h"
+#import "CYLRefreshIconView.h"
 #import "CYLRefreshConfig.h"
 #import "NSBundle+CYLRefresh.h"
 #import "CYLRefreshConst.h"

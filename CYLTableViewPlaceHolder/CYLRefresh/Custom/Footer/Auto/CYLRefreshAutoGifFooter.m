@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshAutoGifFooter.h"
+#import "CYLRefreshIconView.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
@@ -92,6 +93,15 @@
         self.gifView.contentMode = UIViewContentModeRight;
         self.gifView.cyl_w = self.cyl_w * 0.5 - self.labelLeftInset - self.stateLabel.cyl_textWidth * 0.5;
     }
+    // [EN] An icon animation takes the GIF view's place and, like it, shows only while loading.
+    // [CN] 图标动画替换 GIF 视图，并与其一样只在加载时显示。
+    if (self.usesIconView) {
+        CGSize size = self.iconView.iconSize;
+        BOOL centered = self.gifView.contentMode == UIViewContentModeCenter;
+        CGFloat centerX = centered ? CGRectGetMidX(self.gifView.frame) : CGRectGetMaxX(self.gifView.frame) - size.width * 0.5;
+        [self cyl_placeIconViewAtCenter:CGPointMake(centerX, self.cyl_h * 0.5)
+                                visible:self.state == CYLRefreshStateRefreshing replacingViews:@[self.gifView]];
+    }
 }
 
 - (void)setState:(CYLRefreshState)state
@@ -116,6 +126,7 @@
         [self.gifView stopAnimating];
         self.gifView.hidden = YES;
     }
+    [self cyl_updateIconViewVisible:state == CYLRefreshStateRefreshing replacingViews:@[self.gifView]];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {
