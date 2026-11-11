@@ -44,7 +44,8 @@
     UIImage *small = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleRefresh];
     UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(10, 120)];
     UIImage *tall = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {}];
-    NSArray<UIImage *> *images = @[small, tall];
+    // [EN] The control grows to the first image's height. [CN] 控件高度随第一张图片增大。
+    NSArray<UIImage *> *images = @[tall, small];
 
     CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingBlock:^{}];
     XCTAssertEqual(header.gifView, header.animationView, @"gifView is the animation view");
