@@ -386,13 +386,15 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 
 | 中文 | English |
 | --- | --- |
-| 场景 `CYLPlaceholderScenarioHUD` 与 `CYLPlaceholderHUD`：页面加载进度，以 [SVProgressHUD](https://github.com/SVProgressHUD/SVProgressHUD) 的接口（显示、进度、成功/错误/提示、`popActivity`、延迟关闭、样式、遮罩、通知）显示在页面上方的方框中；内容是 `CYLPlaceholderStackView`，组件与点击动作照常可用，加载动画复用刷新资源并默认循环播放。与占位图、CYLRefresh 一起覆盖页面的整个生命周期。详见 [docs/Placeholder-HUD.md](docs/Placeholder-HUD.md)。 | The scenario `CYLPlaceholderScenarioHUD` and `CYLPlaceholderHUD`: a page's loading progress in a box over the page, with [SVProgressHUD](https://github.com/SVProgressHUD/SVProgressHUD)'s API (show, progress, success / error / info, `popActivity`, delayed dismissal, styles, masks, notifications); its content is a `CYLPlaceholderStackView`, so components and tap actions work as usual, and the loading animation reuses the refresh resources and loops by default. With the placeholder and CYLRefresh it covers a page's whole life cycle. See [docs/Placeholder-HUD.md](docs/Placeholder-HUD.md). |
+| 场景 `CYLPlaceholderScenarioHUD` 与 `CYLPlaceholderHUD`：页面加载进度，以 [SVProgressHUD](https://github.com/SVProgressHUD/SVProgressHUD) 的接口（显示、进度、成功/错误/提示、`popActivity`、延迟关闭、样式、遮罩、通知）显示在页面上方的方框中；加载、进度和结果状态的方框本身就是一个 `CYLPlaceholderView`（图标与文字是一个整体，不用 stack view），只有 `showComponents` / `showScenario` 使用 `CYLPlaceholderStackView` 以支持多个组件和点击动作；加载动画复用刷新资源并默认循环播放。与占位图、CYLRefresh 一起覆盖页面的整个生命周期。详见 [docs/Placeholder-HUD.md](docs/Placeholder-HUD.md)。 | The scenario `CYLPlaceholderScenarioHUD` and `CYLPlaceholderHUD`: a page's loading progress in a box over the page, with [SVProgressHUD](https://github.com/SVProgressHUD/SVProgressHUD)'s API (show, progress, success / error / info, `popActivity`, delayed dismissal, styles, masks, notifications); in the loading, progress and result states the box itself is one `CYLPlaceholderView` (icon and text as one, no stack view); only `showComponents` / `showScenario` use a `CYLPlaceholderStackView`, for several components and tap actions; the loading animation reuses the refresh resources and loops by default. With the placeholder and CYLRefresh it covers a page's whole life cycle. See [docs/Placeholder-HUD.md](docs/Placeholder-HUD.md). |
 
 ```objc
 [CYLPlaceholderHUD showWithStatus:@"Loading…"];
 // [CN] 完成后 / [EN] When done
 [CYLPlaceholderHUD dismiss];  // [CN] 或 / [EN] or [CYLPlaceholderHUD showErrorWithStatus:@"Couldn't load"];
 ```
+
+![HUD 的 10 种状态：方框是一个 CYLPlaceholderView / The 10 HUD states: the box is one CYLPlaceholderView](assets/cyl-placeholder-hud-states.png)
 
 ## 内置刷新组件 / Built-in refresh components
 
@@ -414,6 +416,296 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 | 中文 | English |
 | --- | --- |
 | 原刷新库 API 已改名：类名前缀改为 `CYL`，分类属性和方法使用 `cyl_`。这是一次 API 不兼容的迁移：应用中的旧类名、属性、分类方法及自定义本地化 key 需要相应修改。分类上的旧版无前缀 `header` / `footer` 不再提供。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。 | The original refresh library's API has been renamed: the class prefix is now `CYL`, and category properties and methods use `cyl_`. This is an API-incompatible migration: old class names, properties, category methods and custom localization keys in an app must be changed accordingly. The old unprefixed `header` / `footer` on the category are no longer provided. For manual source integration, besides all `.h` and `.m` files, add the `CYLRefresh` directory and its subdirectories to Header Search Paths, and copy `CYLTableViewPlaceHolder.bundle`, `PrivacyInfo.xcprivacy` and `LICENSE.third-party` into the app's resources. Static library integration needs `-ObjC` to link the categories. |
+
+### 刷新样式一览 / All refresh styles
+
+| 中文 | English |
+| --- | --- |
+| 本节按 [MJRefresh 的 README](https://github.com/CoderMJLee/MJRefresh) 的顺序列出全部样式，`MJ` 改为 `CYL`、`mj_` 改为 `cyl_`。每个样式都对应 `Examples/Example-Scenarios` 的“刷新”页中的一个示例（`exampleNN`），截图是该示例在 iOS 27 模拟器上运行时、处于刷新中状态的控件。示例代码为 Swift，见 `Sources/CYLRefreshTableViewController.swift`；下文用 Objective-C 写出同样的调用。 | This section lists every style in the order of [MJRefresh's README](https://github.com/CoderMJLee/MJRefresh), with `MJ` changed to `CYL` and `mj_` to `cyl_`. Each style is one example (`exampleNN`) on the "Refresh" page of `Examples/Example-Scenarios`; each screenshot shows that example's control while refreshing, running on an iOS 27 simulator. The examples are Swift (`Sources/CYLRefreshTableViewController.swift`); the calls below are the same in Objective-C. |
+| 一览：下拉刷新 01–06、上拉加载 01–11、刷新图标动画（每组从上到下）。 | Overview: pull-down refresh 01–06, pull-up loading 01–11, refresh icon animations (each group from top to bottom). |
+
+![下拉刷新 01–06 / Pull-down refresh 01–06](assets/cyl-refresh-headers.png)
+
+![上拉加载 01–11 / Pull-up loading 01–11](assets/cyl-refresh-footers.png)
+
+![刷新图标动画：下拉刷新与上拉加载 / Refresh icon animations: headers and footers](assets/cyl-refresh-icon-animations.png)
+
+#### 下拉刷新 01：默认 / Pull-down refresh 01: Default
+
+```objc
+self.tableView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
+    // [CN] 进入刷新状态后会自动调用这个 block
+    // [EN] Called automatically once the control enters the refreshing state
+}];
+// [CN] 或者：进入刷新状态后调用 target 的 action，即 [self loadNewData]
+// [EN] Or: once it enters the refreshing state, call the target's action, that is [self loadNewData]
+self.tableView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+
+// [CN] 马上进入刷新状态
+// [EN] Enter the refreshing state right away
+[self.tableView.cyl_header beginRefreshing];
+```
+
+![下拉刷新 01：默认 / Pull-down refresh 01: Default](assets/cyl-refresh-example01.png)
+
+#### 下拉刷新 02：GIF 帧图片 / Pull-down refresh 02: GIF frame images
+
+| 中文 | English |
+| --- | --- |
+| 用法与通用名称见下文“[下拉刷新 02：动画图片](#下拉刷新-02动画图片--pull-down-refresh-02-animated-images)”。示例的图片取自本库内置刷新 GIF 的帧。 | For the usage and the general names, see "[Pull-down refresh 02: animated images](#下拉刷新-02动画图片--pull-down-refresh-02-animated-images)" below. The example's images are frames of this library's bundled refresh GIFs. |
+
+```objc
+CYLRefreshGifHeader *header = [CYLRefreshGifHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+[header setImages:idleImages forState:CYLRefreshStateIdle];
+[header setImages:pullingImages forState:CYLRefreshStatePulling];
+[header setImages:refreshingImages forState:CYLRefreshStateRefreshing];
+self.tableView.cyl_header = header;
+```
+
+![下拉刷新 02：GIF 帧图片 / Pull-down refresh 02: GIF frame images](assets/cyl-refresh-example02.png)
+
+#### 下拉刷新 03：隐藏时间 / Pull-down refresh 03: Hide the time
+
+```objc
+// [CN] 隐藏时间
+// [EN] Hide the time
+header.lastUpdatedTimeLabel.hidden = YES;
+```
+
+![下拉刷新 03：隐藏时间 / Pull-down refresh 03: Hide the time](assets/cyl-refresh-example03.png)
+
+#### 下拉刷新 04：隐藏状态和时间 / Pull-down refresh 04: Hide the state and time
+
+```objc
+// [CN] 隐藏时间
+// [EN] Hide the time
+header.lastUpdatedTimeLabel.hidden = YES;
+// [CN] 隐藏状态
+// [EN] Hide the state
+header.stateLabel.hidden = YES;
+```
+
+![下拉刷新 04：隐藏状态和时间 / Pull-down refresh 04: Hide the state and time](assets/cyl-refresh-example04.png)
+
+#### 下拉刷新 05：自定义文字 / Pull-down refresh 05: Custom text
+
+```objc
+// [CN] 设置文字
+// [EN] The texts
+[header setTitle:@"Pull down to refresh" forState:CYLRefreshStateIdle];
+[header setTitle:@"Release to refresh" forState:CYLRefreshStatePulling];
+[header setTitle:@"Loading ..." forState:CYLRefreshStateRefreshing];
+// [CN] 设置字体
+// [EN] The fonts
+header.stateLabel.font = [UIFont systemFontOfSize:15];
+header.lastUpdatedTimeLabel.font = [UIFont systemFontOfSize:14];
+// [CN] 设置颜色
+// [EN] The colors
+header.stateLabel.textColor = [UIColor redColor];
+header.lastUpdatedTimeLabel.textColor = [UIColor blueColor];
+```
+
+![下拉刷新 05：自定义文字 / Pull-down refresh 05: Custom text](assets/cyl-refresh-example05.png)
+
+#### 下拉刷新 06：自定义刷新控件 / Pull-down refresh 06: Custom refresh control
+
+```objc
+self.tableView.cyl_header = [CYLRefreshDIYHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+// [CN] 实现见示例中的 CYLRefreshDIYControls.swift（CYLRefreshHeader 的子类）
+// [EN] See CYLRefreshDIYControls.swift in the example (a subclass of CYLRefreshHeader)
+```
+
+![下拉刷新 06：自定义刷新控件 / Pull-down refresh 06: Custom refresh control](assets/cyl-refresh-example06.png)
+
+#### 上拉加载 01：默认 / Pull-up loading 01: Default
+
+```objc
+self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+    // [CN] 进入刷新状态后会自动调用这个 block
+    // [EN] Called automatically once the control enters the refreshing state
+}];
+// [CN] 或者：进入刷新状态后调用 [self loadMoreData]
+// [EN] Or: call [self loadMoreData] once it enters the refreshing state
+self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+```
+
+![上拉加载 01：默认 / Pull-up loading 01: Default](assets/cyl-refresh-example11-footer.png)
+
+#### 上拉加载 02：动画图片 / Pull-up loading 02: Animated images
+
+```objc
+CYLRefreshAutoGifFooter *footer = [CYLRefreshAutoGifFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+// [CN] 刷新中状态的动画图片
+// [EN] The animated images of the refreshing state
+[footer setImages:refreshingImages forState:CYLRefreshStateRefreshing];
+self.tableView.cyl_footer = footer;
+```
+
+![上拉加载 02：动画图片 / Pull-up loading 02: Animated images](assets/cyl-refresh-example12-footer.png)
+
+#### 上拉加载 03：隐藏刷新状态的文字 / Pull-up loading 03: Hide the refreshing text
+
+```objc
+// [CN] 隐藏刷新中状态的文字
+// [EN] Hide the text of the refreshing state
+footer.refreshingTitleHidden = YES;
+```
+
+![上拉加载 03：隐藏刷新状态的文字 / Pull-up loading 03: Hide the refreshing text](assets/cyl-refresh-example13-footer.png)
+
+#### 上拉加载 04：全部加载完毕 / Pull-up loading 04: Everything loaded
+
+```objc
+// [CN] 变为没有更多数据的状态；resetNoMoreData 恢复
+// [EN] Switch to the no-more-data state; resetNoMoreData switches back
+[footer endRefreshingWithNoMoreData];
+```
+
+![上拉加载 04：全部加载完毕 / Pull-up loading 04: Everything loaded](assets/cyl-refresh-example14-footer.png)
+
+#### 上拉加载 05：禁止自动加载 / Pull-up loading 05: No automatic loading
+
+```objc
+// [CN] 只有点击或拉动才加载
+// [EN] Loads only on a tap or a pull
+footer.automaticallyRefresh = NO;
+```
+
+![上拉加载 05：禁止自动加载 / Pull-up loading 05: No automatic loading](assets/cyl-refresh-example15-footer.png)
+
+#### 上拉加载 06：自定义文字 / Pull-up loading 06: Custom text
+
+```objc
+[footer setTitle:@"Tap or pull up to load more" forState:CYLRefreshStateIdle];
+[footer setTitle:@"Loading more ..." forState:CYLRefreshStateRefreshing];
+[footer setTitle:@"No more data" forState:CYLRefreshStateNoMoreData];
+footer.stateLabel.font = [UIFont systemFontOfSize:17];
+footer.stateLabel.textColor = [UIColor blueColor];
+```
+
+![上拉加载 06：自定义文字 / Pull-up loading 06: Custom text](assets/cyl-refresh-example16-footer.png)
+
+#### 上拉加载 07：加载后隐藏 / Pull-up loading 07: Hide after loading
+
+```objc
+// [CN] 隐藏上拉加载控件
+// [EN] Hide the pull-up control
+self.tableView.cyl_footer.hidden = YES;
+```
+
+![上拉加载 07：加载后隐藏 / Pull-up loading 07: Hide after loading](assets/cyl-refresh-example17-footer.png)
+
+#### 上拉加载 08：自动回弹 01 / Pull-up loading 08: Springing back 01
+
+```objc
+self.tableView.cyl_footer = [CYLRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+// [CN] 底部 inset 不计入控件位置
+// [EN] A bottom inset that the footer ignores
+self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 30, 0);
+self.tableView.cyl_footer.ignoredScrollViewContentInsetBottom = 30;
+```
+
+![上拉加载 08：自动回弹 01 / Pull-up loading 08: Springing back 01](assets/cyl-refresh-example18-footer.png)
+
+#### 上拉加载 09：自动回弹 02 / Pull-up loading 09: Springing back 02
+
+```objc
+CYLRefreshBackGifFooter *footer = [CYLRefreshBackGifFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+[footer setImages:idleImages forState:CYLRefreshStateIdle];
+[footer setImages:pullingImages forState:CYLRefreshStatePulling];
+[footer setImages:refreshingImages forState:CYLRefreshStateRefreshing];
+self.tableView.cyl_footer = footer;
+```
+
+![上拉加载 09：自动回弹 02 / Pull-up loading 09: Springing back 02](assets/cyl-refresh-example19-footer.png)
+
+#### 上拉加载 10：自定义控件（自动加载） / Pull-up loading 10: Custom control (loads automatically)
+
+```objc
+self.tableView.cyl_footer = [CYLRefreshDIYAutoFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+// [CN] CYLRefreshAutoFooter 的子类，见 CYLRefreshDIYControls.swift
+// [EN] A subclass of CYLRefreshAutoFooter; see CYLRefreshDIYControls.swift
+```
+
+![上拉加载 10：自定义控件（自动加载） / Pull-up loading 10: Custom control (loads automatically)](assets/cyl-refresh-example20-footer.png)
+
+#### 上拉加载 11：自定义控件（自动回弹） / Pull-up loading 11: Custom control (springs back)
+
+```objc
+self.tableView.cyl_footer = [CYLRefreshDIYBackFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+// [CN] CYLRefreshBackFooter 的子类，见 CYLRefreshDIYControls.swift
+// [EN] A subclass of CYLRefreshBackFooter; see CYLRefreshDIYControls.swift
+```
+
+![上拉加载 11：自定义控件（自动回弹） / Pull-up loading 11: Custom control (springs back)](assets/cyl-refresh-example21-footer.png)
+
+#### UICollectionView 01：上下拉刷新 / UICollectionView 01: Pull down and up
+
+```objc
+self.collectionView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
+    // [CN] 下拉刷新
+    // [EN] Pull down
+}];
+self.collectionView.cyl_footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{
+    // [CN] 上拉加载
+    // [EN] Pull up
+}];
+```
+
+![UICollectionView 01：上下拉刷新 / UICollectionView 01: Pull down and up](assets/cyl-refresh-example31.png)
+
+![UICollectionView 01：上拉加载 / UICollectionView 01: Pull up](assets/cyl-refresh-example31-footer.png)
+
+#### UICollectionView 02：左拉刷新 / UICollectionView 02: Pull left
+
+```objc
+self.collectionView.cyl_trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+    // [CN] 拉过最后一页后松手
+    // [EN] Pull past the last page and release
+}];
+```
+
+| 中文 | English |
+| --- | --- |
+| 暂无截图：自动化工具无法在拖动途中截屏，松手后示例立即打开下一页。见 `docs/Refresh-Icon-Animation.md` 的 TODO。 | No screenshot yet: the automation tool cannot take a screenshot during a drag, and the example opens the next page as soon as the drag ends. See the TODO in `docs/Refresh-Icon-Animation.md`. |
+
+#### WKWebView 01：下拉刷新 / WKWebView 01: Pull-down refresh
+
+```objc
+self.webView.scrollView.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{
+    [self.webView reload];
+}];
+```
+
+![WKWebView 01：下拉刷新 / WKWebView 01: Pull-down refresh](assets/cyl-refresh-example40.png)
+
+#### 刷新图标动画：GIF、Lottie、PAG、Rive / Refresh icon animations: GIF, Lottie, PAG, Rive
+
+| 中文 | English |
+| --- | --- |
+| MJRefresh 没有这一组。动画图片控件（`CYLRefreshAnimationHeader`、`CYLRefreshAutoAnimationFooter`、`CYLRefreshBackAnimationFooter`，即 GIF 类控件，不是箭头样式的 `CYLRefreshNormalHeader`）可以显示本库内置的 GIF、Lottie、PAG、Rive 动画。图标和状态文字放在同一个 `CYLPlaceholderView` 中，作为一个整体居中，所以图标和文字不会错位。用法见下文“[下拉刷新 02：动画图片](#下拉刷新-02动画图片--pull-down-refresh-02-animated-images)”和 [docs/Refresh-Icon-Animation.md](docs/Refresh-Icon-Animation.md)。 | MJRefresh has no such group. The animated-image controls (`CYLRefreshAnimationHeader`, `CYLRefreshAutoAnimationFooter`, `CYLRefreshBackAnimationFooter`: the GIF controls, not the arrow `CYLRefreshNormalHeader`) can show the library's bundled GIF, Lottie, PAG and Rive animations. The icon and the state text are in one `CYLPlaceholderView` and centered as one, so they cannot drift apart. For the usage, see "[Pull-down refresh 02: animated images](#下拉刷新-02动画图片--pull-down-refresh-02-animated-images)" below and [docs/Refresh-Icon-Animation.md](docs/Refresh-Icon-Animation.md). |
+
+| 示例 | 下拉刷新 | 上拉加载 |
+| --- | --- | --- |
+| example51：GIF 图标 | ![example51 下拉刷新](assets/cyl-refresh-example51.png) | ![example51 上拉加载](assets/cyl-refresh-example51-footer.png) |
+| example52：每个状态一个 Lottie 图标 | ![example52 下拉刷新](assets/cyl-refresh-example52.png) | ![example52 上拉加载](assets/cyl-refresh-example52-footer.png) |
+| example53：PAG 进度环 | ![example53 下拉刷新](assets/cyl-refresh-example53.png) | ![example53 上拉加载](assets/cyl-refresh-example53-footer.png) |
+| example54：Rive 刷新图标 | ![example54 下拉刷新](assets/cyl-refresh-example54.png) | ![example54 上拉加载](assets/cyl-refresh-example54-footer.png) |
+| example55：`setImages` 使用 GIF 帧 | ![example55 下拉刷新](assets/cyl-refresh-example55.png) | ![example55 上拉加载](assets/cyl-refresh-example55-footer.png) |
+| example56：每个状态换一种引擎 | ![example56 下拉刷新](assets/cyl-refresh-example56.png) | ![example56 上拉加载](assets/cyl-refresh-example56-footer.png) |
+
+| Example | Pull-down refresh | Pull-up loading |
+| --- | --- | --- |
+| example51: a GIF icon | ![example51 header](assets/cyl-refresh-example51.png) | ![example51 footer](assets/cyl-refresh-example51-footer.png) |
+| example52: a Lottie icon for each state | ![example52 header](assets/cyl-refresh-example52.png) | ![example52 footer](assets/cyl-refresh-example52-footer.png) |
+| example53: the PAG progress ring | ![example53 header](assets/cyl-refresh-example53.png) | ![example53 footer](assets/cyl-refresh-example53-footer.png) |
+| example54: the Rive refresh icon | ![example54 header](assets/cyl-refresh-example54.png) | ![example54 footer](assets/cyl-refresh-example54-footer.png) |
+| example55: `setImages` with GIF frames | ![example55 header](assets/cyl-refresh-example55.png) | ![example55 footer](assets/cyl-refresh-example55-footer.png) |
+| example56: a different engine for each state | ![example56 header](assets/cyl-refresh-example56.png) | ![example56 footer](assets/cyl-refresh-example56-footer.png) |
+
+| 中文 | English |
+| --- | --- |
+| example52 的 Lottie 加载圈第一帧几乎是空的，所以截图中图标只有一个点。example55 用 MJRefresh 的 `setImages`，图片仍由原来的图片视图按 MJRefresh 的方式排在文字左侧。 | The first frame of example52's Lottie spinner is almost empty, so its icon shows only a dot in the screenshot. example55 uses MJRefresh's `setImages`, so its images are still drawn by the original image view, to the left of the text as in MJRefresh. |
 
 ### 下拉刷新 02：动画图片 / Pull-down refresh 02: animated images
 
@@ -573,7 +865,6 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 | 顶部状态红条：`CYLPlaceholderStatusView` 移植自 CYLChatKit 的 `LCCKStatusView`（“当前网络不可用，请检查你的网络设置”），保留其接口（`initWithFrame:`、`delegate`、`statusViewClicked:`、44 点高度），内部改用本库的图标加标题组件横向排列（新 item 键 `CYLPlaceholderItemContentAxis`）。红条与占位图是独立组件：红条加在视图控制器的 view 顶端、导航栏下方，`cyl_statusDisplay` 选择同时显示、只显示红条或只显示占位图，`cyl_showsStatusViewWhenOffline` 由 `CYLPlaceholderNetworkMonitor`（移植 ChatKit 的可达性检测，改用 NWPathMonitor）在断网时显示红条；配置文件用 `statusBar`、`display`、`showsWhenOffline`。详见 [`docs/Status-Bar.md`](docs/Status-Bar.md)。 | Status bar: `CYLPlaceholderStatusView` is ported from CYLChatKit's `LCCKStatusView` ("Network unavailable, Check network") and keeps its API (`initWithFrame:`, `delegate`, `statusViewClicked:`, the 44-point height), drawing its icon and text with the library's icon-and-title component laid out horizontally (the new item key `CYLPlaceholderItemContentAxis`). The bar and the placeholder are independent: the bar goes at the top of the view controller's view, below the navigation bar; `cyl_statusDisplay` shows both, only the bar or only the placeholder, and `cyl_showsStatusViewWhenOffline` lets `CYLPlaceholderNetworkMonitor` (ChatKit's reachability detection, ported to NWPathMonitor) show the bar while offline; configuration files use `statusBar`, `display` and `showsWhenOffline`. See [`docs/Status-Bar.md`](docs/Status-Bar.md). |
 | 无障碍：每个组件都是有意义的无障碍元素（标题、按钮特征、关闭交互时的“不可用”特征），装饰性图标对 VoiceOver 隐藏，分隔符只朗读文字，组件按从上到下的顺序成组朗读，支持 Voice Control、Switch Control、动态字体与“减弱动态效果”；规则见 `instructions.md` 的 “Accessibility”。资源与文案一样分层查找：核心层 `CYLPlaceholderResourceURL(path)`，示例层各自的查找函数。 | Accessibility: every component is a meaningful element (its title, the button trait, the not-enabled trait when interaction is off), decorative icons are hidden from VoiceOver, separators read only their word, and components read as a group from top to bottom, with Voice Control, Switch Control, Dynamic Type and Reduce Motion supported; the rules are in `instructions.md`, "Accessibility". Resources are looked up per layer like strings: the core's `CYLPlaceholderResourceURL(path)` and each example's own lookup. |
 | 核心文字的语言可在运行时切换：设置 `CYLPlaceholderLocalization.language`（`nil` 跟随系统），之后创建的视图使用新语言，并发送 `CYLPlaceholderLocalizationLanguageDidChangeNotification`。核心层的查找宏是 `CYLPlaceholderLocalizedString(key, fallback)`；Swift 调用 `CYLPlaceholderLocalization.localizedString(forKey:fallback:)`。完整的场景表与 Swift 写法见 [docs/Placeholder-Scenarios.md](docs/Placeholder-Scenarios.md)。 | The language of core texts can change at run time: set `CYLPlaceholderLocalization.language` (`nil` follows the system); views created afterwards use the new language, and `CYLPlaceholderLocalizationLanguageDidChangeNotification` is posted. The core lookup macro is `CYLPlaceholderLocalizedString(key, fallback)`; Swift calls `CYLPlaceholderLocalization.localizedString(forKey:fallback:)`. The full scenario table and the Swift spellings are in [docs/Placeholder-Scenarios.md](docs/Placeholder-Scenarios.md). |
-
 
 | 中文 | English |
 | --- | --- |

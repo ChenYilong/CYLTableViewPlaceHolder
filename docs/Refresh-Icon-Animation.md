@@ -12,6 +12,7 @@
 | [布局](#布局--layout) | [Layout](#布局--layout) |
 | [内置刷新动画](#内置刷新动画--bundled-refresh-animations) | [Bundled refresh animations](#内置刷新动画--bundled-refresh-animations) |
 | [演示与限制](#演示与限制--demo-and-limits) | [Demo and limits](#演示与限制--demo-and-limits) |
+| [待办](#待办--todo) | [TODO](#待办--todo) |
 
 <!-- docs-navigation:end -->
 
@@ -122,4 +123,14 @@ header.setAnimationImages(frames, duration: 0.6, for: .refreshing)
 | 中文 | English |
 | --- | --- |
 | `Examples/Example-Scenarios` 只使用刷新资源：“动态”Tab 的刷新头下拉时显示 Lottie 下拉箭头、松开时显示顺时针刷新箭头、刷新中显示 PAG 进度圆环，加载尾显示 GIF 圆环；“交互流程 → 下拉刷新与上拉加载”保留默认箭头刷新头，加载尾显示 GIF 辐条加载圈。“动态”Tab 右上角的“刷新图标”页（`CYLRefreshIconListViewController`）按引擎分组第一组演示保持原样的默认箭头样式（`CYLRefreshNormalHeader` 搭配自动与返回式刷新尾：下拉时箭头翻转、刷新中菊花代替箭头），随后列出 `bundledIconAnimationFileNames` 中的每个文件（每个文件一个演示页），第二组演示动画图片控件的全部接口：按状态设置图片序列 `setAnimationImages(_:for:)` / `(_:duration:for:)`（帧取自内置刷新 GIF）、每个状态不同的内置图标、返回式刷新尾 `CYLRefreshBackAnimationFooter`、按文件路径、按 item 属性（Rive 画板与动画）、按配置文件，以及 MJRefresh 名称 `CYLRefreshGifHeader` / `CYLRefreshAutoGifFooter` 的 `setImages(_:for:)` 兼容写法。 | `Examples/Example-Scenarios` uses refresh resources only: the Feed tab header shows a Lottie pull arrow while pulling, clockwise refresh arrows when released and a PAG progress ring while refreshing, and its footer loads with a GIF ring; "Flows → Pull to refresh and load more" keeps the default arrow header and its footer loads with a GIF spoke spinner. The "Refresh icons" page (top right of the Feed tab, `CYLRefreshIconListViewController`) first shows the default arrow style, unchanged (`CYLRefreshNormalHeader` with the auto and back footers: the arrow flips while pulling and a spinner replaces it while refreshing), then lists every file of `bundledIconAnimationFileNames` grouped by engine (one demo page per file), and its second section shows every API of the animated-image controls: an image sequence per state with `setAnimationImages(_:for:)` / `(_:duration:for:)` (frames of bundled refresh GIFs), a different bundled icon per state, the back footer `CYLRefreshBackAnimationFooter`, by file path, by item attributes (a Rive artboard and animation), by configuration file, and the MJRefresh names `CYLRefreshGifHeader` / `CYLRefreshAutoGifFooter` with `setImages(_:for:)`. |
-| 未验证：本机无法编译或运行，等待 CI；各引擎在刷新控件中的实际播放效果（尤其是 Rive 状态机文件与拖动定位）需要在模拟器中人工查看。箭头的旋转动画不适用于图标动画（图标由动画本身表达状态）。 | Not verified: nothing could be compiled or run here, so CI comes first; how each engine actually plays inside a refresh control (especially Rive state-machine files and scrubbing while pulling) needs a look in the simulator. The arrow's rotation does not apply to icon animations: the animation itself shows the state. |
+| 已验证（2026-11-12，本机 Xcode 27、iOS 27.2 模拟器，Example-Scenarios › 刷新）：example51–56 的刷新头与加载尾在刷新中状态下，图标和状态文字在同一个 `CYLPlaceholderView` 中整体居中（截图如下，从上到下：example51–56 的刷新头，然后是它们的加载尾）；142 个单元测试通过。example52 的 Lottie 加载圈第一帧几乎是空的；example55 使用 `setImages`，图片仍由原图片视图绘制。箭头的旋转动画不适用于图标动画（图标由动画本身表达状态）。 | Verified (2026-11-12, local Xcode 27, iOS 27.2 simulator, Example-Scenarios › Refresh): in the refreshing state, the headers and footers of example51–56 show the icon and the state text centered as one `CYLPlaceholderView` (screenshot below, top to bottom: the headers of example51–56, then their footers); 142 unit tests pass. The first frame of example52's Lottie spinner is almost empty; example55 uses `setImages`, so its images are still drawn by the original image view. The arrow's rotation does not apply to icon animations: the animation itself shows the state. |
+
+![刷新图标动画：example51–56 的刷新头与加载尾 / Refresh icon animations: the headers and footers of example51–56](assets/cyl-refresh-icon-animations.png)
+
+## 待办 / TODO
+
+| 中文 | English |
+| --- | --- |
+| 左拉刷新（example42，`CYLRefreshNormalTrailer`）暂无截图：axe 无法在拖动途中截屏，松手后示例立即打开下一页。 | Pull left (example42, `CYLRefreshNormalTrailer`) has no screenshot: axe cannot take a screenshot during a drag, and the example opens the next page as soon as the drag ends. |
+| iOS 26 起导航栏是透明的玻璃效果：刷新结束、刷新头收回导航栏下方后，未设置 `automaticallyChangeAlpha` 的刷新头（如 example01、04、11）会透过导航栏显示在标题上。待决定：是否在空闲且完全收回时默认隐藏刷新头（这会改变默认行为）。 | Since iOS 26 the navigation bar is transparent glass: after a refresh ends and the header retracts under the bar, a header without `automaticallyChangeAlpha` (example01, 04 and 11, for example) shows through the bar over the title. To decide: whether to hide the header by default while it is idle and fully retracted (this changes the default behavior). |
+| example55 的 `setImages` 路径仍使用 MJRefresh 的图片视图，未改为 `CYLPlaceholderView`。 | example55's `setImages` path still uses MJRefresh's image view, not a `CYLPlaceholderView`. |
