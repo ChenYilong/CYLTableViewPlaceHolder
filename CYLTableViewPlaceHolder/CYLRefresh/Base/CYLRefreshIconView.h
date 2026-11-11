@@ -86,6 +86,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
     NS_SWIFT_NAME(cyl_placeIconView(at:visible:replacing:));
 /*!
+ * [EN] Where the icon goes when it replaces views of `replacedWidth` centered at `center` with text after them:
+ *      CYLRefresh measures `labelLeftInset` from the text to the center of its 15-point arrow, so a wider icon at the
+ *      same center would come closer to the text. The icon moves away from the text by half the extra width, keeping
+ *      the arrow's gap; no wider than the arrow, it stays at `center`.
+ * [CN] 图标替换以 `center` 为中心、宽度为 `replacedWidth` 且其后有文字的视图时的位置：CYLRefresh 的 `labelLeftInset` 是文字到 15 点箭头
+ *      中心的距离，更宽的图标放在同一中心会更靠近文字。图标向远离文字的方向移动多出宽度的一半，保持箭头原有的间距；不比箭头宽时位于 `center`。
+ */
+- (CGPoint)cyl_iconCenterReplacingCenter:(CGPoint)center replacedWidth:(CGFloat)replacedWidth
+    NS_SWIFT_NAME(cyl_iconCenter(replacing:replacedWidth:));
+/*!
  * [EN] The same without moving the icon, for the end of `setState:`. [CN] 同上但不移动图标，在 `setState:` 末尾调用。
  */
 - (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views

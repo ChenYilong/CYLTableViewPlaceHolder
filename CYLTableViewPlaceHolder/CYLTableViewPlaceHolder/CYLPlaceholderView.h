@@ -341,6 +341,15 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
  * titles wrap within it.
  */
 @property (nonatomic) CGFloat preferredMaxLayoutWidth;
+/*!
+ * [EN] The space kept between each side of the view and its content: 16 points by default, as a full-screen
+ *      placeholder needs. A view narrower than its content plus both margins gives up the margins first, so the content
+ *      stays centered and laid out instead of collapsing to zero width. A compact use, such as the icon of a refresh
+ *      control (CYLRefreshIconView), sets 0.
+ * [CN] 视图两侧与内容之间保留的距离：默认 16 点，适合全屏占位图。视图窄于内容加两侧边距时先放弃边距，内容保持居中并正常布局，而不会被压缩为
+ *      零宽度。紧凑场景（如刷新控件的图标 CYLRefreshIconView）设为 0。
+ */
+@property (nonatomic) CGFloat contentMargin;
 
 /*!
  * Runs when the placeholder is tapped. Called on the main thread.

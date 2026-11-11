@@ -90,7 +90,9 @@
 
     // [EN] An icon animation takes the arrow's and spinner's place; hidden with them when there is no more data.
     // [CN] 图标动画替换箭头与菊花；没有更多数据时与它们一样隐藏。
-    [self cyl_placeIconViewAtCenter:arrowCenter visible:self.state != CYLRefreshStateNoMoreData
+    CGPoint iconCenter = self.stateLabel.hidden ? arrowCenter : [self cyl_iconCenterReplacingCenter:arrowCenter
+        replacedWidth:MAX(self.arrowView.image.size.width, CGRectGetWidth(self.loadingView.bounds))];
+    [self cyl_placeIconViewAtCenter:iconCenter visible:self.state != CYLRefreshStateNoMoreData
                      replacingViews:@[self.arrowView, self.loadingView]];
 }
 

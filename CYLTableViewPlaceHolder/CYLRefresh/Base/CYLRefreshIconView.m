@@ -89,6 +89,9 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     // [CN] 在播放策略开始播放前保持停止；否则进入 window 时会自动播放。
     [view stopPlaceholderAnimation];
     view.backgroundColor = UIColor.clearColor;
+    // [EN] The icon fills its own frame: the component's 16-point placeholder margins left no room in a 30-point icon.
+    // [CN] 图标铺满自身 frame：组件默认的 16 点占位图边距在 30 点的图标里没有空间。
+    view.contentMargin = 0;
     view.userInteractionEnabled = NO;
     view.isAccessibilityElement = NO;
     view.accessibilityElementsHidden = YES;

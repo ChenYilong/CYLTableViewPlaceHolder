@@ -100,6 +100,16 @@
     [self cyl_updateIconViewVisible:visible replacingViews:views];
 }
 
+- (CGPoint)cyl_iconCenterReplacingCenter:(CGPoint)center replacedWidth:(CGFloat)replacedWidth
+{
+    if (!self.usesIconView) return center;
+    CGFloat extra = self.iconView.iconSize.width - MAX(0, replacedWidth);
+    if (extra <= 0) return center;
+    // [EN] CYLRefresh always puts the arrow to the left of its text (it does not mirror), so the icon grows leftward.
+    // [CN] CYLRefresh 总是把箭头放在文字左侧（不做镜像），因此图标向左扩展。
+    return CGPointMake(center.x - extra * 0.5, center.y);
+}
+
 - (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
 {
     if (!self.usesIconView) return;

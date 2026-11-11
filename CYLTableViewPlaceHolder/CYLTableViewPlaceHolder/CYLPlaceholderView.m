@@ -1331,10 +1331,33 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return CGSizeMake(MAX(imageSize.width, titleWidth), height);
 }
 
+/*!
+ * [EN] The margin used for a bounds width: `contentMargin`, reduced when the view is too narrow for the content plus
+ *      both margins. A refresh icon of 30 points left a zero-width item before, so its animation kept its first frame,
+ *      starting at the icon's center, and covered the text beside it.
+ * [CN] 某个宽度下实际使用的边距：`contentMargin`，视图放不下内容加两侧边距时缩小。之前 30 点的刷新图标会得到零宽度的 item，动画停留在
+ *      初始 frame（从图标中心开始），盖住旁边的文字。
+ */
+- (CGFloat)cyl_marginForWidth:(CGFloat)width {
+    CGFloat margin = MAX(0, self.contentMargin);
+    // [EN] Text wraps to the space inside the margins; only content that cannot shrink (an image or animation) wider
+    //      than that space takes margin away. [CN] 文字在边距内换行；只有无法缩小且超出该空间的内容（图片或动画）才会占用边距。
+    CGFloat content = ceil([self cyl_itemSizeForWidth:MAX(0, width - 2 * margin)].width);
+    if (content <= width - 2 * margin) return margin;
+    return MAX(0, (width - content) / 2);
+}
+
+- (void)setContentMargin:(CGFloat)contentMargin {
+    if (_contentMargin == contentMargin) return;
+    _contentMargin = contentMargin;
+    [self invalidateIntrinsicContentSize];
+    [self setNeedsLayout];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (CGRectIsEmpty(self.bounds)) return;
-    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 32);
+    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 2 * [self cyl_marginForWidth:CGRectGetWidth(self.bounds)]);
     CGFloat itemHeight = [self cyl_itemSizeForWidth:width].height;
     self.itemView.frame = CGRectMake((CGRectGetWidth(self.bounds) - width) / 2,
         (CGRectGetHeight(self.bounds) - itemHeight) / 2, width, itemHeight);
@@ -1344,9 +1367,10 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 - (CGSize)intrinsicContentSize {
     if (!self.reportsContentSize) return [super intrinsicContentSize];
     CGFloat maxWidth = self.preferredMaxLayoutWidth > 0 ? self.preferredMaxLayoutWidth : CGRectGetWidth(UIScreen.mainScreen.bounds);
-    CGSize size = [self cyl_itemSizeForWidth:MAX(0, maxWidth - 32)];
+    CGFloat margin = MAX(0, self.contentMargin);
+    CGSize size = [self cyl_itemSizeForWidth:MAX(0, maxWidth - 2 * margin)];
     if (size.height <= 0) return CGSizeZero;
-    return CGSizeMake(MIN(maxWidth, ceil(size.width) + 32), ceil(size.height));
+    return CGSizeMake(MIN(maxWidth, ceil(size.width) + 2 * margin), ceil(size.height));
 }
 
 - (void)setReportsContentSize:(BOOL)reportsContentSize {
@@ -1969,6 +1993,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         [self addSubview:_itemView];
         _tapInteractionEnabled = YES;
         _animationRepeatCount = 1;
+        _contentMargin = 16;
         _imageView = _itemView.imageView;
         _imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;

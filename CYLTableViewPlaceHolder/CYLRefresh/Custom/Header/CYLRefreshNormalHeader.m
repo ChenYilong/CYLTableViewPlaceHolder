@@ -98,7 +98,11 @@
 
     // [EN] An icon animation takes the arrow's and spinner's place, with the same center.
     // [CN] 图标动画以相同的中心点替换箭头与菊花。
-    [self cyl_placeIconViewAtCenter:arrowCenter visible:YES replacingViews:@[self.arrowView, self.loadingView]];
+    // [EN] Measured like the arrow, keeping its gap to the text when the icon is wider (CYLRefreshIconView.h).
+    // [CN] 与箭头一样计算位置；图标更宽时保持箭头与文字的间距（见 CYLRefreshIconView.h）。
+    CGPoint iconCenter = self.stateLabel.hidden ? arrowCenter : [self cyl_iconCenterReplacingCenter:arrowCenter
+        replacedWidth:MAX(self.arrowView.image.size.width, CGRectGetWidth(self.loadingView.bounds))];
+    [self cyl_placeIconViewAtCenter:iconCenter visible:YES replacingViews:@[self.arrowView, self.loadingView]];
 }
 
 - (void)setState:(CYLRefreshState)state

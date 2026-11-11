@@ -68,7 +68,9 @@
 
     // [EN] An icon animation takes the spinner's place and, like it, shows only while loading.
     // [CN] 图标动画替换菊花，并与菊花一样只在加载时显示。
-    [self cyl_placeIconViewAtCenter:self.loadingView.center visible:self.state == CYLRefreshStateRefreshing
+    CGPoint iconCenter = self.isRefreshingTitleHidden ? self.loadingView.center :
+        [self cyl_iconCenterReplacingCenter:self.loadingView.center replacedWidth:CGRectGetWidth(self.loadingView.bounds)];
+    [self cyl_placeIconViewAtCenter:iconCenter visible:self.state == CYLRefreshStateRefreshing
                      replacingViews:@[self.loadingView]];
 }
 

@@ -36,7 +36,7 @@
     XCTAssertFalse(header.usesIconView, @"removing nothing creates nothing");
 }
 
-- (void)testAnIconAnimationReplacesTheArrowAndSpinnerAtTheSameCenter {
+- (void)testAnIconAnimationReplacesTheArrowAndSpinnerKeepingTheirGap {
     CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
     [self layOut:header];
     CGPoint arrowCenter = header.arrowView.center;
@@ -47,7 +47,9 @@
     XCTAssertFalse(header.iconView.hidden);
     XCTAssertTrue(header.arrowView.hidden);
     XCTAssertTrue(header.loadingView.hidden);
-    XCTAssertEqualWithAccuracy(header.iconView.center.x, arrowCenter.x, 0.5, @"same layout as the arrow");
+    CGFloat replaced = MAX(header.arrowView.image.size.width, CGRectGetWidth(header.loadingView.bounds));
+    XCTAssertEqualWithAccuracy(CGRectGetMaxX(header.iconView.frame), arrowCenter.x + replaced * 0.5, 0.5,
+                               @"a wider icon keeps the arrow's gap to the text, growing away from it");
     XCTAssertEqualWithAccuracy(header.iconView.center.y, arrowCenter.y, 0.5);
     XCTAssertTrue(CGSizeEqualToSize(header.iconView.bounds.size, CGSizeMake(36, 36)));
     XCTAssertNotNil(header.iconView.placeholderView, @"the icon is drawn by the library's icon component");
@@ -143,6 +145,54 @@
     [header setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
     NSDictionary *options = [header.iconView animationAttributesForState:CYLRefreshStateIdle][CYLPlaceholderItemAnimationOptions];
     XCTAssertEqualObjects(options[@"animation"], @"Loading", @"the bundled Rive file brings its options");
+}
+
+- (void)testIconsNeverOverlapTheTextAndDrawInsideTheirFrame {
+    // Regression: the component's 16-point placeholder margins left a zero-width item inside a 30-point icon, so the
+    // animation started at the icon's center and covered "Last update…".
+    for (NSString *name in @[@"CYLRefreshArrows.gif", @"CYLRefreshDots.json", @"CYLPlaceholderLoading.json"]) {
+        CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        [header setBundledIconAnimation:name size:CGSizeMake(48, 32) forState:CYLRefreshStateIdle];
+        [self layOut:header];
+        CGFloat textWidth = MAX(header.stateLabel.cyl_textWidth, header.lastUpdatedTimeLabel.cyl_textWidth);
+        CGFloat textStart = header.cyl_w * 0.5 - textWidth * 0.5;
+        XCTAssertLessThan(CGRectGetMaxX(header.iconView.frame), textStart, @"%@ overlaps the text", name);
+        CYLPlaceholderView *view = header.iconView.placeholderView;
+        XCTAssertEqualWithAccuracy(view.contentMargin, 0, 0.01);
+        [view layoutIfNeeded];
+        UIView *drawn = view.imageView.superview;
+        XCTAssertGreaterThan(CGRectGetWidth(drawn.frame), 0, @"%@: the item has room", name);
+        // Core decodes GIF itself; Lottie needs its subspec, absent from this test bundle, so it shows a fallback.
+        if ([name.pathExtension isEqualToString:@"gif"]) {
+            CGRect content = [header.iconView convertRect:drawn.frame fromView:drawn.superview];
+            CGRect frame = CGRectInset(header.iconView.bounds, -0.5, -0.5);
+            XCTAssertTrue(CGRectContainsRect(frame, content), @"%@: %@", name, NSStringFromCGRect(content));
+        }
+    }
+    CYLRefreshNormalTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    [trailer setBundledIconAnimation:@"CYLRefreshSpinner.json" size:CGSizeMake(40, 40) forState:CYLRefreshStateIdle];
+    trailer.frame = CGRectMake(0, 0, 80, 300);
+    [trailer setNeedsLayout];
+    [trailer layoutIfNeeded];
+    XCTAssertFalse(trailer.stateLabel.hidden);
+    CGFloat iconRight = CGRectGetMaxX(trailer.iconView.frame);
+    XCTAssertLessThanOrEqual(iconRight, CGRectGetMinX(trailer.stateLabel.frame) + 0.5,
+                             @"the trailer's text moves over by the icon's extra width");
+}
+
+- (void)testAPlaceholderGivesUpItsMarginsOnlyWhenTooNarrow {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleRefresh];
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithImage:image text:nil];
+    XCTAssertEqualWithAccuracy(view.contentMargin, 16, 0.01, @"a full-screen placeholder keeps 16 points");
+    view.frame = CGRectMake(0, 0, image.size.width + 8, 100);
+    [view layoutIfNeeded];
+    UIView *item = view.imageView.superview;
+    XCTAssertGreaterThanOrEqual(CGRectGetWidth(item.frame), image.size.width - 0.5, @"no zero-width item");
+    XCTAssertEqualWithAccuracy(CGRectGetMidX(item.frame), CGRectGetMidX(view.bounds), 0.5);
+    CYLPlaceholderView *text = [[CYLPlaceholderView alloc] initWithImage:nil text:@"A long title that wraps over several lines of text"];
+    text.frame = CGRectMake(0, 0, 200, 300);
+    [text layoutIfNeeded];
+    XCTAssertGreaterThanOrEqual(CGRectGetMinX(text.textLabel.superview.frame), 16 - 0.5, @"wrapping text keeps the margins");
 }
 
 @end

@@ -30,6 +30,9 @@
     [super placeSubviews];
 
     CGSize arrowSize = self.arrowView.image.size;
+    // [EN] An icon wider than the arrow takes its place at the same 5-point inset, and the text moves over by the extra
+    //      width, so the two never overlap. [CN] 比箭头宽的图标以相同的 5 点边距替换箭头，文字随多出的宽度右移，二者不会重叠。
+    CGFloat iconExtraWidth = self.usesIconView ? MAX(0, self.iconView.iconSize.width - arrowSize.width) : 0;
     // 箭头的中心点
     CGPoint selfCenter = CGPointMake(self.cyl_w * 0.5, self.cyl_h * 0.5);
     CGPoint arrowCenter = CGPointMake(arrowSize.width * 0.5 + 5, self.cyl_h * 0.5);
@@ -40,9 +43,11 @@
         self.arrowView.center = stateHidden ?  selfCenter : arrowCenter ;
     }
     self.arrowView.tintColor = self.stateLabel.textColor;
-    // [EN] An icon animation takes the arrow's place; the label stays laid out as if the arrow showed.
-    // [CN] 图标动画替换箭头；文字仍按箭头显示时的位置布局。
-    [self cyl_placeIconViewAtCenter:self.arrowView.center visible:YES replacingViews:@[self.arrowView]];
+    // [EN] An icon animation takes the arrow's place; the label moves over by the icon's extra width.
+    // [CN] 图标动画替换箭头；文字随图标多出的宽度右移。
+    CGPoint iconCenter = (stateHidden || self.arrowView.constraints.count) ? self.arrowView.center :
+        CGPointMake(arrowSize.width * 0.5 + 5 + iconExtraWidth * 0.5, self.cyl_h * 0.5);
+    [self cyl_placeIconViewAtCenter:iconCenter visible:YES replacingViews:@[self.arrowView]];
 
     if (stateHidden) return;
 
@@ -51,7 +56,7 @@
     // 状态
     if (noConstrainsOnStatusLabel) {
         BOOL arrowHidden = self.arrowView.isHidden && !self.usesIconView;
-        CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
+        CGFloat stateCenterX = (self.cyl_w + arrowSize.width + iconExtraWidth) * 0.5;
         self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
         self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;
     }
