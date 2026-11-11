@@ -135,8 +135,9 @@
     XCTAssertEqual(refreshFiles, 13u, @"%@", names);
     XCTAssertTrue([names containsObject:@"CYLPlaceholderLoading.pag"], @"PAG comes from the placeholder set");
     for (NSString *extension in @[@"gif", @"json", @"pag", @"riv"]) {
-        XCTAssertGreaterThan([names filteredArrayUsingPredicate:
-            [NSPredicate predicateWithFormat:@"pathExtension == %@", extension]].count, 0u, @"%@", extension);
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"pathExtension == %@", extension];
+        NSUInteger count = [names filteredArrayUsingPredicate:predicate].count;
+        XCTAssertGreaterThan(count, 0u, @"%@", extension);
     }
     CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
     [header setBundledIconAnimation:@"CYLRefreshCheck.riv" size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
