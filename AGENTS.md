@@ -150,8 +150,10 @@ the integrated `CYLRefresh` component, and an example application. Read
 - **Before every Commitizen-style (`git cz`) commit**, run this first in the repository root, so the vault's auto sync does not commit or push in the middle of it:
 
   ```sh
-  mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
+  touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
   ```
+
+  The vault's `git_sync.py` checks `.git/NO_AUTO_SYNC`; the hooks path alone never paused it.
 
   If `.git/hooks` does not exist, `mkdir -p` creates it first so `touch`
   always succeeds.
@@ -212,7 +214,7 @@ the integrated `CYLRefresh` component, and an example application. Read
   the branch it was created from, first; `main` or `master` only when that is the
   source branch or the source branch is gone. Pass `--base` explicitly.
 - Commit through a branch and a pull request by default, so CI runs
-  (`docs/CI-CD.md`): branch from `master`, `mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`,
+  (`docs/CI-CD.md`): branch from `master`, `touch .git/NO_AUTO_SYNC` (the path the vault's auto sync checks),
   commit, push the branch, and open a pull request against its source branch (here `master`). Do not
   commit directly to `master` unless the user asks. Do not merge a pull request
   without the user's approval, and not before the `iOS` workflow is green.

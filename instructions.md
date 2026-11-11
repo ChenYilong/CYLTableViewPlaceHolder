@@ -866,11 +866,11 @@ a directory and Git uses its default hooks path; linked worktrees and custom
 Before every Commitizen-style (`git cz`) commit, run this first in the repository root:
 
 ```sh
-mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
+touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
 ```
 
-If the directory does not exist (for example in a fresh clone or a container
-without sample hooks), `mkdir -p` creates it first so `touch` always succeeds.
+The vault's auto sync (`.claude/hooks/git_sync.py` in the vault root) checks `.git/NO_AUTO_SYNC`, not `.git/hooks/NO_AUTO_SYNC`: the hooks path never paused it (verified 2026-11-12). Both files are kept so either reading works; delete them to turn the sync back on. If the hooks directory does not exist (for example in a fresh clone or a container without sample hooks),
+`mkdir -p` creates it first so `touch` always succeeds.
 
 ## Committing on branches
 

@@ -15,12 +15,15 @@ mainly `ios.yml` (CI) and `release.yml` (CD). Every job calls a script in
 ## Workflow: contribute through a branch and a pull request
 
 1. Create a branch from `master` (`feat/…`, `fix/…`, `docs/…`, `ci/…`).
-2. Before committing, run `mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`
+2. Before committing, run `touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC`
+   (the vault's `git_sync.py` checks `.git/NO_AUTO_SYNC`; the hooks path alone never paused it),
    so the vault's auto sync does not commit or push to `master` meanwhile.
    `mkdir -p` creates the hooks directory when it is missing, so `touch`
    always succeeds.
 3. Commit with a Commitizen-style English subject, push the branch, and open a
-   pull request against `master`.
+   pull request right away, without asking, against the branch it was created
+   from (here `master`; see "A pull request for every new branch" in
+   `instructions.md`).
 4. Merge only after the `iOS` workflow is green.
 
 ## CI: `.github/workflows/ios.yml`
