@@ -1,4 +1,5 @@
 #import <XCTest/XCTest.h>
+#import "CYLPlaceholderLocalization.h"
 #import <ImageIO/ImageIO.h>
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h"
@@ -702,7 +703,7 @@
     XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemMessage: NSNull.null} imageBundle:nil error:&error]);
     XCTAssertNotNil(error);
     error = nil;
-    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"missing-image"} imageBundle:bundle error:&error]);
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"missing-image"} imageBundle:CYLPlaceholderResourceBundle() error:&error]);
     XCTAssertNotNil(error);
 }
 

@@ -77,7 +77,7 @@
         }
     }
     // Only the text-only scenario (README #30, #41) has no icon at all.
-    XCTAssertGreaterThan((double)animated / CYLPlaceholderScenarioCount, 0.9);
+    XCTAssertGreaterThan((double)animated / (double)CYLPlaceholderScenarioCount, 0.9);
 }
 
 - (void)testRetryOrContactSupportStacksFourComponentsWithTwoActions {
