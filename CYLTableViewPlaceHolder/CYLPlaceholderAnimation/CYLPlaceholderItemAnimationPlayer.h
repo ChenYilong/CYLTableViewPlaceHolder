@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 0...1. Players without seeking do not implement it.
 @property (nonatomic, assign) CGFloat progress;
 @property (nonatomic, assign) CGFloat animationSpeed;
+/// How many times `-play` plays the animation: 0 loops until stopped, 1 plays once. NO when unsupported.
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount;
 /// Applies dark-only colors in Dark Mode and restores them in Light Mode.
 - (void)applyDarkColors:(NSDictionary<NSString *, UIColor *> *)darkColors traitCollection:(UITraitCollection *)traitCollection;
 /// Replaces every color override; nil or empty restores the animation's own colors.

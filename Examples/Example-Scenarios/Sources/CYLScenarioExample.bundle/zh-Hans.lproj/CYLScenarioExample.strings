@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "数据";
 "CYLScenarioSectionPermissions" = "权限缺失（非网络失败）";
 "CYLScenarioFeedbackChooseManually" = "正在打开地址列表…";
+"CYLScenarioSectionConfigurations" = "配置文件初始化（JSON / plist）";
+"CYLScenarioActionShowFile" = "文件";
+"CYLScenarioFormatActionTapped" = "已点击：%@";
+"CYLScenarioInteractionOn" = "交互：开";
+"CYLScenarioInteractionOff" = "交互：关";
+"CYLScenarioConfigTapEachButton" = "逐个点击下面的按钮";
+"CYLScenarioConfigHighlightDim" = "高亮：变暗";
+"CYLScenarioConfigHighlightShrink" = "高亮：缩小";
+"CYLScenarioConfigHighlightNone" = "高亮：无";
+"CYLScenarioConfigInteractionOff" = "交互关闭：不响应点击，也不高亮";
+"CYLScenarioConfigPlaybackLoop" = "循环播放（默认）";
+"CYLScenarioConfigPlaybackOnce" = "播放一次";
+"CYLScenarioConfigPlaybackThree" = "播放 3 次";

@@ -200,6 +200,12 @@ static NSURL *CYLPlaceholderAnimationURLWithOptions(NSURL *URL, NSDictionary<NSS
     return YES;
 }
 
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount {
+    if (![NSThread isMainThread] || repeatCount < 0 ||
+        ![self.player respondsToSelector:@selector(setAnimationRepeatCount:)]) return NO;
+    return [self.player setAnimationRepeatCount:repeatCount];
+}
+
 - (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors {
     if (![NSThread isMainThread] || ![self.player respondsToSelector:@selector(applyColors:traitCollection:)]) return NO;
     [self.player applyColors:colors traitCollection:self.traitCollection];

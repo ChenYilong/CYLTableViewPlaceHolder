@@ -66,6 +66,19 @@ enum CYLScenarioL10n: String, CaseIterable {
     case stateFailed = "CYLScenarioStateFailed"
     case stateOffline = "CYLScenarioStateOffline"
     case stateData = "CYLScenarioStateData"
+    case sectionConfigurations = "CYLScenarioSectionConfigurations"
+    case actionShowFile = "CYLScenarioActionShowFile"
+    case formatActionTapped = "CYLScenarioFormatActionTapped"
+    case interactionOn = "CYLScenarioInteractionOn"
+    case interactionOff = "CYLScenarioInteractionOff"
+    case configTapEachButton = "CYLScenarioConfigTapEachButton"
+    case configHighlightDim = "CYLScenarioConfigHighlightDim"
+    case configHighlightShrink = "CYLScenarioConfigHighlightShrink"
+    case configHighlightNone = "CYLScenarioConfigHighlightNone"
+    case configInteractionOff = "CYLScenarioConfigInteractionOff"
+    case configPlaybackLoop = "CYLScenarioConfigPlaybackLoop"
+    case configPlaybackOnce = "CYLScenarioConfigPlaybackOnce"
+    case configPlaybackThree = "CYLScenarioConfigPlaybackThree"
 }
 
 private enum CYLScenarioLocalizationBundle {

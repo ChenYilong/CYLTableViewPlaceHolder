@@ -48,20 +48,42 @@ final class CYLScenarioListViewController: UITableViewController {
         tableView.accessibilityIdentifier = "scenarioList"
     }
 
+    /// The last section lists the configuration files (CYLConfigurationViewController).
+    private let configurations = CYLConfigurationFiles.urls()
+
+    private func isConfigurationSection(_ section: Int) -> Bool {
+        section == sections.count
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
+        sections.count + 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].scenarios.count
+        isConfigurationSection(section) ? configurations.count : sections[section].scenarios.count
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section].title
+        isConfigurationSection(section) ? CYLScenarioLocalizedString(.sectionConfigurations) : sections[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "scenario", for: indexPath)
+        if isConfigurationSection(indexPath.section) {
+            // File names and initializer names are identifiers and are not translated.
+            let url = configurations[indexPath.row]
+            var content = UIListContentConfiguration.subtitleCell()
+            content.text = url.lastPathComponent
+            content.secondaryText = url.pathExtension == "plist" ? "CYLPlaceholderStackView(contentsOf:actions:) · plist"
+                : "CYLPlaceholderStackView(contentsOf:) / (configuration:) · JSON"
+            content.secondaryTextProperties.color = .secondaryLabel
+            content.image = UIImage(systemName: "doc.text")
+            content.imageProperties.tintColor = .systemTeal
+            cell.contentConfiguration = content
+            cell.accessoryType = .disclosureIndicator
+            cell.accessibilityIdentifier = "configuration-\(url.deletingPathExtension().lastPathComponent)"
+            return cell
+        }
         let scenario = sections[indexPath.section].scenarios[indexPath.row]
         var content = UIListContentConfiguration.subtitleCell()
         content.text = CYLPlaceholderScenarioCatalog.localizedName(for: scenario)
@@ -77,6 +99,11 @@ final class CYLScenarioListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if isConfigurationSection(indexPath.section) {
+            let next = CYLConfigurationViewController(url: configurations[indexPath.row])
+            navigationController?.pushViewController(next, animated: true)
+            return
+        }
         let scenario = sections[indexPath.section].scenarios[indexPath.row]
         navigationController?.pushViewController(CYLScenarioDetailViewController(scenario: scenario), animated: true)
     }

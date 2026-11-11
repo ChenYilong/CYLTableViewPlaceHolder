@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '12.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
   # The core bundle: <language>.lproj/Localizable.strings (placeholder, scenario and component texts) and
-  # CYLRefresh.strings, the images, and Animations/ (40 scenario animations: Lottie, PAG, Rive, GIF, with
+  # CYLRefresh.strings, the images, and Animations/ (45 scenario animations: Lottie, PAG, Rive, GIF, with
   # NOTICE.animations and the license of each source repository).
   s.resources     = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle', 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy', 'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
   s.requires_arc = true

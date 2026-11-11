@@ -34,6 +34,8 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
 
 @interface CYLGIFPlaceholderItemAnimationView : UIImageView <CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding>
 @property (nonatomic, copy) NSArray<UIImage *> *frames;
+/// 0 loops until stopped; 1 (the default) plays once.
+@property (nonatomic) NSInteger repeatCount;
 @property (nonatomic, copy) NSArray<NSNumber *> *frameDelays;
 @end
 
@@ -93,6 +95,7 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
     }
     CYLGIFPlaceholderItemAnimationView *view = [[self alloc] initWithImage:frames.firstObject];
     view.frames = frames;
+    view.repeatCount = 1;
     view.frameDelays = frameDelays;
     view.contentMode = contentMode;
     return view;
@@ -121,7 +124,14 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
     animation.values = contents;
     animation.keyTimes = keyTimes;
     animation.duration = duration;
+    animation.repeatCount = self.repeatCount == 0 ? HUGE_VALF : (float)self.repeatCount;
     [self.layer addAnimation:animation forKey:CYLGIFPlaceholderPlayAnimationKey];
+}
+
+- (BOOL)cyl_setAnimationViewRepeatCount:(NSInteger)repeatCount {
+    if (repeatCount < 0) return NO;
+    self.repeatCount = repeatCount;
+    return YES;
 }
 
 - (void)cyl_showAnimationViewLastFrame {

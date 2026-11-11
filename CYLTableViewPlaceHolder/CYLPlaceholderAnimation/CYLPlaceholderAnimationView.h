@@ -75,6 +75,8 @@ typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
 /// Return NO when the engine does not support the requested operation.
 - (BOOL)setAnimationProgress:(CGFloat)progress;
 - (BOOL)setAnimationSpeed:(CGFloat)speed;
+/// 0 loops until stopped; 1 plays once (the default).
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount;
 - (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;
 
 @end

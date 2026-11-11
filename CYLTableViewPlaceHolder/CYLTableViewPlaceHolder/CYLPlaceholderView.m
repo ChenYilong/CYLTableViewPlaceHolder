@@ -75,6 +75,9 @@ NSString *const CYLPlaceholderItemTitleBorderWidth = @"CYLPlaceholderItemTitleBo
 NSString *const CYLPlaceholderItemTitleCornerRadius = @"CYLPlaceholderItemTitleCornerRadius";
 NSString *const CYLPlaceholderItemTitleContentInsets = @"CYLPlaceholderItemTitleContentInsets";
 NSString *const CYLPlaceholderItemTitleMinimumWidth = @"CYLPlaceholderItemTitleMinimumWidth";
+NSString *const CYLPlaceholderItemInteractionEnabled = @"CYLPlaceholderItemInteractionEnabled";
+NSString *const CYLPlaceholderItemTapHighlightStyle = @"CYLPlaceholderItemTapHighlightStyle";
+NSString *const CYLPlaceholderItemAnimationRepeatCount = @"CYLPlaceholderItemAnimationRepeatCount";
 
 static NSBundle *CYLPlaceholderResourceBundle(void) {
     NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
@@ -473,6 +476,9 @@ id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(voi
 @property (nonatomic) BOOL animationShowsLastFrame;
 @property (nonatomic, strong) NSNumber *animationSeekProgress;
 @property (nonatomic, strong) NSNumber *animationSpeed;
+@property (nonatomic, readwrite, getter=isTapHighlighted) BOOL tapHighlighted;
+/// The accessibility traits before the button trait was added for taps.
+@property (nonatomic) BOOL tapAddedButtonTrait;
 @property (nonatomic, strong) UIImage *selectedImage;
 @property (nonatomic, copy) NSString *selectedTitle;
 @property (nonatomic, strong) UIColor *selectedTitleColor;
@@ -502,6 +508,38 @@ id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(voi
 @property (nonatomic, strong) UIColor *appliedBadgeBackgroundColor;
 
 @end
+
+/// A highlight style from a number or its name ("dim", "shrink", "none").
+static BOOL CYLPlaceholderTapHighlightStyleFromValue(id value, NSInteger *style) {
+    if ([value isKindOfClass:NSString.class]) {
+        NSArray<NSString *> *names = @[@"dim", @"shrink", @"none"];
+        NSUInteger index = [names indexOfObject:[value lowercaseString]];
+        if (index == NSNotFound) return NO;
+        *style = (NSInteger)index;
+        return YES;
+    }
+    if (![value isKindOfClass:NSNumber.class]) return NO;
+    double number = [value doubleValue];
+    if (!isfinite(number) || number != floor(number) || number < CYLPlaceholderTapHighlightStyleDim ||
+        number > CYLPlaceholderTapHighlightStyleNone) return NO;
+    *style = (NSInteger)number;
+    return YES;
+}
+
+/// A repeat count from a number (0 loops) or "loop" / "once".
+static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
+    if ([value isKindOfClass:NSString.class]) {
+        NSString *name = [value lowercaseString];
+        if ([name isEqualToString:@"loop"]) { *count = 0; return YES; }
+        if ([name isEqualToString:@"once"]) { *count = 1; return YES; }
+        return NO;
+    }
+    if (![value isKindOfClass:NSNumber.class]) return NO;
+    double number = [value doubleValue];
+    if (!isfinite(number) || number != floor(number) || number < 0 || number > 10000) return NO;
+    *count = (NSInteger)number;
+    return YES;
+}
 
 @implementation CYLPlaceholderView
 
@@ -707,9 +745,29 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     BOOL hasTitleChrome = titleBackgroundImage || colors[CYLPlaceholderItemTitleBackgroundColor] ||
         colors[CYLPlaceholderItemTitleBorderColor] || titleChromeNumbers[0] > 0 || titleChromeNumbers[1] > 0 ||
         titleChromeNumbers[2] > 0 || !UIEdgeInsetsEqualToEdgeInsets(titleContentInsets, UIEdgeInsetsZero);
+    id interactionValue = attributes[CYLPlaceholderItemInteractionEnabled];
+    if (interactionValue && ![interactionValue isKindOfClass:NSNumber.class]) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"Interaction enabled must be a boolean.");
+        return nil;
+    }
+    NSInteger highlightStyle = CYLPlaceholderTapHighlightStyleDim;
+    id highlightValue = attributes[CYLPlaceholderItemTapHighlightStyle];
+    if (highlightValue && !CYLPlaceholderTapHighlightStyleFromValue(highlightValue, &highlightStyle)) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The tap highlight style must be dim, shrink or none.");
+        return nil;
+    }
+    NSInteger repeatCount = 1;
+    id repeatValue = attributes[CYLPlaceholderItemAnimationRepeatCount];
+    if (repeatValue && !CYLPlaceholderRepeatCountFromValue(repeatValue, &repeatCount)) {
+        if (error) *error = CYLPlaceholderConfigurationError(@"The animation repeat count must be 0 (loop) or more, \"loop\" or \"once\".");
+        return nil;
+    }
     self = [self initWithImage:image text:title];
     if (self) {
         _itemAttributes = [attributes copy];
+        _tapInteractionEnabled = interactionValue ? [interactionValue boolValue] : YES;
+        _tapHighlightStyle = highlightStyle;
+        _animationRepeatCount = repeatCount;
         if (hasTitleChrome) {
             UIImageView *chrome = [[UIImageView alloc] initWithImage:titleBackgroundImage];
             chrome.contentMode = UIViewContentModeScaleToFill;
@@ -1539,6 +1597,111 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         ![view setAnimationSpeed:self.animationSpeed.doubleValue])) {
        NSLog(@"CYLTableViewPlaceHolder: the replacement animation does not support playback speed.");
    }
+   [self cyl_applyAnimationRepeatCount];
+}
+
+/// Passes `animationRepeatCount` to the player; the built-in GIF decoder reads it when it plays.
+- (void)cyl_applyAnimationRepeatCount {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.backendView;
+    if (!view) return;
+    BOOL applied = [view respondsToSelector:@selector(setAnimationRepeatCount:)] &&
+        [view setAnimationRepeatCount:self.animationRepeatCount];
+    if (!applied && self.animationRepeatCount != 1) {
+        NSLog(@"CYLTableViewPlaceHolder: this animation does not support a repeat count of %ld; it plays as its file "
+              @"defines.", (long)self.animationRepeatCount);
+    }
+}
+
+- (void)setAnimationRepeatCount:(NSInteger)animationRepeatCount {
+    if (animationRepeatCount < 0 || _animationRepeatCount == animationRepeatCount) return;
+    _animationRepeatCount = animationRepeatCount;
+    [self cyl_applyAnimationRepeatCount];
+    [self cyl_updateAnimationPlayback];
+}
+
+#pragma mark - Tap
+
+- (BOOL)isTapInteractive {
+    return self.tapInteractionEnabled && self.tapHandler != nil;
+}
+
+- (void)setTapHandler:(CYLPlaceholderTapHandler)tapHandler {
+    _tapHandler = [tapHandler copy];
+    [self cyl_updateTapAccessibility];
+}
+
+- (void)setTapInteractionEnabled:(BOOL)tapInteractionEnabled {
+    _tapInteractionEnabled = tapInteractionEnabled;
+    if (!tapInteractionEnabled) [self cyl_setTapHighlighted:NO];
+    [self cyl_updateTapAccessibility];
+}
+
+/// A tappable placeholder is a button for VoiceOver; the trait is removed again when it stops being tappable.
+- (void)cyl_updateTapAccessibility {
+    BOOL interactive = self.isTapInteractive;
+    if (interactive && !self.tapAddedButtonTrait && !(self.accessibilityTraits & UIAccessibilityTraitButton)) {
+        self.accessibilityTraits |= UIAccessibilityTraitButton;
+        self.tapAddedButtonTrait = YES;
+        self.isAccessibilityElement = YES;
+    } else if (!interactive && self.tapAddedButtonTrait) {
+        self.accessibilityTraits &= ~UIAccessibilityTraitButton;
+        self.tapAddedButtonTrait = NO;
+    }
+}
+
+- (BOOL)performTap {
+    if (!self.isTapInteractive) return NO;
+    self.tapHandler(self);
+    return YES;
+}
+
+- (BOOL)accessibilityActivate {
+    return [self performTap] || [super accessibilityActivate];
+}
+
+- (void)cyl_setTapHighlighted:(BOOL)highlighted {
+    if (highlighted && self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleNone) highlighted = NO;
+    if (self.tapHighlighted == highlighted) return;
+    self.tapHighlighted = highlighted;
+    // [EN] Only the content changes, so an alpha or transform the app set on the view itself is kept.
+    // [CN] 只改变内容视图，保留应用对本视图设置的 alpha 或 transform。
+    BOOL shrink = self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleShrink;
+    CGFloat alpha = highlighted ? (shrink ? 0.8 : 0.5) : 1;
+    CGAffineTransform transform = highlighted && shrink ? CGAffineTransformMakeScale(0.96, 0.96) : CGAffineTransformIdentity;
+    [UIView animateWithDuration:highlighted ? 0.08 : 0.2 delay:0
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+                     animations:^{
+        self.itemView.alpha = alpha;
+        self.itemView.transform = transform;
+    } completion:nil];
+}
+
+- (BOOL)cyl_touchIsInside:(NSSet<UITouch *> *)touches {
+    // [EN] A little slop around the view, as UIButton allows. [CN] 与 UIButton 一样，允许在视图外有少许容差。
+    CGPoint point = [touches.anyObject locationInView:self];
+    return CGRectContainsPoint(CGRectInset(self.bounds, -24, -24), point);
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (!self.isTapInteractive) { [super touchesBegan:touches withEvent:event]; return; }
+    [self cyl_setTapHighlighted:YES];
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (!self.isTapInteractive) { [super touchesMoved:touches withEvent:event]; return; }
+    [self cyl_setTapHighlighted:[self cyl_touchIsInside:touches]];
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (!self.isTapInteractive) { [super touchesEnded:touches withEvent:event]; return; }
+    BOOL inside = [self cyl_touchIsInside:touches];
+    [self cyl_setTapHighlighted:NO];
+    if (inside) [self performTap];
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self cyl_setTapHighlighted:NO];
+    if (!self.isTapInteractive) [super touchesCancelled:touches withEvent:event];
 }
 
 - (void)dealloc {
@@ -1637,6 +1800,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     animation.values = contents;
     animation.keyTimes = times;
     animation.duration = duration;
+    animation.repeatCount = self.animationRepeatCount == 0 ? HUGE_VALF : (float)self.animationRepeatCount;
     [view.layer addAnimation:animation forKey:@"CYLPlaceholderGIF"];
 }
 
@@ -1720,6 +1884,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     if (self) {
         _itemView = [[CYLPlaceholderItemView alloc] initWithFrame:CGRectZero];
         [self addSubview:_itemView];
+        _tapInteractionEnabled = YES;
+        _animationRepeatCount = 1;
         _imageView = _itemView.imageView;
         _imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;

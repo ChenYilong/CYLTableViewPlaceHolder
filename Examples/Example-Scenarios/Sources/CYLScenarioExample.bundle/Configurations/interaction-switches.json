@@ -1,0 +1,9 @@
+{
+  "components": [
+    { "type": "icon", "animation": "CYLPlaceholderTapHint.json", "style": "Info", "exampleTitleKey": "CYLScenarioConfigTapEachButton", "size": 72 },
+    { "type": "button", "buttonStyle": "filled", "action": "retry", "highlightStyle": "dim", "exampleTitleKey": "CYLScenarioConfigHighlightDim" },
+    { "type": "button", "buttonStyle": "filled", "action": "retry", "highlightStyle": "shrink", "exampleTitleKey": "CYLScenarioConfigHighlightShrink", "spacingBefore": 12 },
+    { "type": "button", "buttonStyle": "outlined", "action": "retry", "highlightStyle": "none", "exampleTitleKey": "CYLScenarioConfigHighlightNone", "spacingBefore": 12 },
+    { "type": "button", "buttonStyle": "outlined", "action": "retry", "interactionEnabled": false, "exampleTitleKey": "CYLScenarioConfigInteractionOff", "spacingBefore": 12 }
+  ]
+}

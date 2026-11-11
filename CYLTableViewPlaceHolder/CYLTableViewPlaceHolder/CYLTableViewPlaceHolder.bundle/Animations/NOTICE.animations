@@ -254,3 +254,35 @@ CYLPlaceholderNotificationPermission.json
   path:    icons/notification2.json
   license: MIT (LICENSE.useanimations)
   sha256:  a8a588a6828f925defb168062dc85734efe17dab03d8fba3e242c3f11b8fd2b6
+
+Format variants added for the scenarios (GIF, PAG, Rive), unmodified.
+
+CYLPlaceholderNoFavorites.gif
+  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
+  path:    Example-GIF/GIFApp/Resources/tab_star.gif
+  license: MIT (../LICENSE.CYLTabBarController)
+  sha256:  3090920e76bf4379d2646fe98e28ddabd44559bd80585b04f9d61ee354f25439
+
+CYLPlaceholderNoContent.pag
+  source:  https://github.com/Tencent/libpag (eb4412aa58d7e26d50c33689d7e3508dbc355528)
+  path:    assets/moonlight.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  747ac418aab921de3c22f9814fa74ec641bfcfaf99a0bddb8d11ff222166fc75
+
+CYLPlaceholderNoResults.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/explore.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  409f4d21b44c9793026955de88ef5c36d4a6fdb311085b2e9ce513a76f4750b4
+
+CYLPlaceholderSettings.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/light_switch.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  d1e4227b1c9817d07466bf52255d4aec22cf73654d0d875e48a7e2a0826a62c2
+
+CYLPlaceholderMascot.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/mascot.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  480e8c22c9df6b6f9f4c235455fd2b373fd9574c98a42d5af9411c70d124ebb4

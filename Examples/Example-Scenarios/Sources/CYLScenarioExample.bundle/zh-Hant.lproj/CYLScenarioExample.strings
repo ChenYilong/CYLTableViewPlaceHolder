@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "資料";
 "CYLScenarioSectionPermissions" = "權限缺失（非網路失敗）";
 "CYLScenarioFeedbackChooseManually" = "正在開啟地址列表…";
+"CYLScenarioSectionConfigurations" = "設定檔初始化（JSON / plist）";
+"CYLScenarioActionShowFile" = "檔案";
+"CYLScenarioFormatActionTapped" = "已點擊：%@";
+"CYLScenarioInteractionOn" = "互動：開";
+"CYLScenarioInteractionOff" = "互動：關";
+"CYLScenarioConfigTapEachButton" = "逐一點擊下方的按鈕";
+"CYLScenarioConfigHighlightDim" = "高亮：變暗";
+"CYLScenarioConfigHighlightShrink" = "高亮：縮小";
+"CYLScenarioConfigHighlightNone" = "高亮：無";
+"CYLScenarioConfigInteractionOff" = "互動關閉：不回應點擊，也不高亮";
+"CYLScenarioConfigPlaybackLoop" = "循環播放（預設）";
+"CYLScenarioConfigPlaybackOnce" = "播放一次";
+"CYLScenarioConfigPlaybackThree" = "播放 3 次";

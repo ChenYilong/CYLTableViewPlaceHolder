@@ -151,6 +151,14 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 @property (nonatomic, strong, nullable) NSBundle *imageBundle;
 /// Space above the component, from the one before it. Ignored for the first component.
 @property (nonatomic) CGFloat spacingBefore;
+/// Whether a tap performs `action` and highlights the component (`CYLPlaceholderItemInteractionEnabled` in
+/// `attributes`). Defaults to YES. NO keeps the component visible but inert, as a disabled button.
+@property (nonatomic) BOOL interactionEnabled;
+/// The pressed look (`CYLPlaceholderItemTapHighlightStyle`). Defaults to Dim.
+@property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
+/// How many times the icon animation plays each time it starts (`CYLPlaceholderItemAnimationRepeatCount`): 0 loops.
+/// Components made by `componentWithBundledAnimation:…` loop by default; others play once.
+@property (nonatomic) NSInteger animationRepeatCount;
 
 + (instancetype)componentWithAttributes:(NSDictionary<NSString *, id> *)attributes
                                  action:(nullable CYLPlaceholderAction)action
@@ -171,6 +179,15 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
                                   action:(CYLPlaceholderAction)action NS_SWIFT_NAME(button(title:style:action:));
 /// A title showing a separator, such as "——  or  ——".
 + (instancetype)separatorComponentWithText:(NSString *)text NS_SWIFT_NAME(separator(text:));
+/// A component from a configuration dictionary (JSON or property list), as described in
+/// docs/Placeholder-Scenarios.md: "type" is "icon", "hint", "button", "separator" or "item" (raw item attributes);
+/// "title"/"text" with an optional core localization key "titleKey"/"textKey"; "animation" (a bundled file name),
+/// "style" (a CYLPlaceholderStyle name or number), "size", "buttonStyle" ("filled", "outlined", "capsule"), "action",
+/// "interactionEnabled", "highlightStyle" ("dim", "shrink", "none"), "repeatCount" (0 or "loop", N, "once"),
+/// "spacingBefore" and "accessibilityIdentifier". nil, with an error, for an invalid dictionary.
++ (nullable instancetype)componentWithDictionary:(NSDictionary<NSString *, id> *)dictionary
+                                           error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(dictionary:));
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
@@ -194,12 +211,25 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 /// the business cases.
 + (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario
     NS_SWIFT_NAME(readmeScreenshotNumbers(for:));
+/// Every bundled animation that fits the scenario, in all formats (GIF, Lottie, PAG, Rive): the scenario's own icon
+/// first, then variants. Use one as a component's "animation" in a configuration, or with
+/// `componentWithBundledAnimation:…`. Empty for a scenario without an icon.
++ (NSArray<NSString *> *)animationFileNamesForScenario:(CYLPlaceholderScenario)scenario
+    NS_SWIFT_NAME(animationFileNames(for:));
 /// The kind of problem a scenario shows.
 + (CYLPlaceholderScenarioCategory)categoryForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(category(for:));
 /// The permission a scenario is about; CYLPlaceholderPermissionNone for other scenarios and for NoPermission.
 + (CYLPlaceholderPermission)permissionForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(permission(for:));
 /// The scenario for a missing permission: CYLPlaceholderScenarioNoPermission for CYLPlaceholderPermissionNone.
 + (CYLPlaceholderScenario)scenarioForPermission:(CYLPlaceholderPermission)permission NS_SWIFT_NAME(scenario(for:));
+/// The scenario's name in configuration files, such as "RetryOrContactSupport".
++ (NSString *)nameForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(name(for:));
+/// The scenario with this name ("RetryOrContactSupport", "retryOrContactSupport" or
+/// "CYLPlaceholderScenarioRetryOrContactSupport"); CYLPlaceholderScenarioCount when there is none.
++ (CYLPlaceholderScenario)scenarioNamed:(NSString *)name NS_SWIFT_NAME(scenario(named:));
+/// The action for a configuration name: "retry", "contactSupport", "openSettings", "goShopping", "done",
+/// "chooseManually", or the name itself for an action the app defines.
++ (CYLPlaceholderAction)actionNamed:(NSString *)name NS_SWIFT_NAME(action(named:));
 /// The localized title of an action, such as "Retry"; nil for an action the library does not define.
 + (nullable NSString *)localizedTitleForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(localizedTitle(for:));
 

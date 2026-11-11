@@ -49,6 +49,12 @@ NS_SWIFT_UI_ACTOR
 - (void)cyl_applyAnimationViewColors:(nullable NSDictionary<NSString *, UIColor *> *)colors NS_SWIFT_NAME(applyAnimationColors(_:));
 
 /// Placeholder addition: NO while an asynchronous load (Rive) is in progress. Views without it are ready at once.
+/*!
+ * [EN] How many times `cyl_playAnimationView` plays: 0 loops until stopped, 1 plays once. NO when unsupported.
+ * [CN] `cyl_playAnimationView` 播放的次数：0 表示循环直到停止，1 表示播放一次。不支持时返回 NO。
+ */
+- (BOOL)cyl_setAnimationViewRepeatCount:(NSInteger)repeatCount NS_SWIFT_NAME(setAnimationRepeatCount(_:));
+
 @property (nonatomic, readonly) BOOL cyl_isAnimationViewReady NS_SWIFT_NAME(isAnimationReady);
 /// Placeholder addition: called on the main thread when an asynchronous load finishes.
 @property (nonatomic, copy, nullable) void (^cyl_animationViewReadyHandler)(void) NS_SWIFT_NAME(animationReadyHandler);

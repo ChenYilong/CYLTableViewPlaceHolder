@@ -9,6 +9,9 @@
 | [结构](#结构--structure) | [Structure](#结构--structure) |
 | [场景表](#场景表--scenario-table) | [Scenario table](#场景表--scenario-table) |
 | [权限缺失与场景类别](#权限缺失与场景类别--missing-permissions-and-scenario-categories) | [Missing permissions and scenario categories](#权限缺失与场景类别--missing-permissions-and-scenario-categories) |
+| [组件点击事件与交互开关](#组件点击事件与交互开关--component-tap-events-and-the-interaction-switch) | [Component tap events and the interaction switch](#组件点击事件与交互开关--component-tap-events-and-the-interaction-switch) |
+| [动画播放策略](#动画播放策略--animation-playback) | [Animation playback](#动画播放策略--animation-playback) |
+| [配置文件初始化](#配置文件初始化--configuration-files) | [Configuration files](#配置文件初始化--configuration-files) |
 | [用法](#用法--usage) | [Usage](#用法--usage) |
 | [Swift 写法](#swift-写法--swift-spellings) | [Swift spellings](#swift-写法--swift-spellings) |
 | [本地化](#本地化--localization) | [Localization](#本地化--localization) |
@@ -136,6 +139,53 @@ let placeholder = CYLPlaceholderStackView(scenario: scenario, actions: [
 ])
 ```
 
+## 组件点击事件与交互开关 / Component tap events and the interaction switch
+
+| 中文 | English |
+| --- | --- |
+| 点击事件封装在图标加标题组件 `CYLPlaceholderView` 内部，每个组件都有自己的接口：`tapHandler`（点击事件）、`tapInteractionEnabled`（是否允许交互，默认 YES）、`tapHighlightStyle`（按下样式：`Dim` 变暗（默认）、`Shrink` 缩小、`None` 无变化）、只读的 `tapHighlighted` 与 `tapInteractive`，以及 `performTap`。只有在允许交互且设置了点击事件时，组件才响应点击：按下时显示高亮，抬起时执行点击事件，并为 VoiceOver 加上按钮特征；关闭交互后，点击事件不执行，也不显示高亮，触摸照常传给下层视图。 | The tap event lives inside the icon-and-title component, `CYLPlaceholderView`, and every component has its own API: `tapHandler` (the tap event), `tapInteractionEnabled` (whether taps are handled, YES by default), `tapHighlightStyle` (the pressed look: `Dim` (the default), `Shrink` or `None`), the read-only `tapHighlighted` and `tapInteractive`, and `performTap`. A component responds only when interaction is enabled and a handler is set: it highlights while pressed, runs the handler when the finger lifts, and carries the button trait for VoiceOver. With interaction off, the handler does not run, nothing highlights, and touches pass through as before. |
+| `CYLPlaceholderStackView` 在初始化时通过这个接口为每个带动作的组件设置点击事件（执行 `actions` 中对应的处理代码），不再自己添加手势。是否允许交互、按下样式也可以在组件上（`CYLPlaceholderComponent.interactionEnabled`、`tapHighlightStyle`）或 item 键（`CYLPlaceholderItemInteractionEnabled`、`CYLPlaceholderItemTapHighlightStyle`）中设置，创建之后还可以直接修改 `stack.componentViews[i].tapInteractionEnabled`。 | `CYLPlaceholderStackView` sets each component's tap event through this API when it is created (running the matching handler from `actions`) and no longer adds gesture recognizers of its own. Interaction and the pressed look can also be set on the component (`CYLPlaceholderComponent.interactionEnabled`, `tapHighlightStyle`) or with item keys (`CYLPlaceholderItemInteractionEnabled`, `CYLPlaceholderItemTapHighlightStyle`), and changed later through `stack.componentViews[i].tapInteractionEnabled`. |
+
+## 动画播放策略 / Animation playback
+
+| 中文 | English |
+| --- | --- |
+| `animationRepeatCount`（item 键 `CYLPlaceholderItemAnimationRepeatCount`，可写数字或 `"loop"`、`"once"`）决定每次开始播放时的播放次数：0 循环直到停止，N 播放 N 次。场景组件（`componentWithBundledAnimation:…` 创建的组件）默认循环；单独使用的 `CYLPlaceholderView` 默认仍播放一次，以保持原有行为。GIF、Lottie、PAG 支持所有次数；Rive 的具名动画支持 0 和 1，状态机按文件自身的设置播放。开启“减弱动态效果”时仍会停止动画。 | `animationRepeatCount` (item key `CYLPlaceholderItemAnimationRepeatCount`, a number or `"loop"` / `"once"`) sets how many times the animation plays each time it starts: 0 loops until stopped, N plays N times. Scenario components (those made by `componentWithBundledAnimation:…`) loop by default; a `CYLPlaceholderView` used on its own still plays once by default, so existing behavior is unchanged. GIF, Lottie and PAG support every count; a named Rive animation supports 0 and 1, and a state machine plays as its file defines. Reduce Motion still stops the animation. |
+| `+[CYLPlaceholderScenarioCatalog animationFileNamesForScenario:]` 列出适合某个场景的全部内置动画（GIF、Lottie、PAG、Rive），第一个是场景默认使用的图标。除纯文字场景外，每个场景至少有一个动画；四种格式都有覆盖。 | `+[CYLPlaceholderScenarioCatalog animationFileNamesForScenario:]` lists every bundled animation that fits a scenario (GIF, Lottie, PAG, Rive), the scenario's default icon first. Every scenario except the text-only one has at least one animation, and all four formats are represented. |
+
+## 配置文件初始化 / Configuration files
+
+| 中文 | English |
+| --- | --- |
+| `initWithContentsOfURL:actions:error:`（`.json` 或 `.plist`）与 `initWithConfiguration:actions:error:`（字典）用配置创建占位视图，Swift 中为可抛出错误的 `init(contentsOf:actions:)`、`init(configuration:actions:)`。配置无效时返回 nil 并给出错误说明。点击事件的处理代码不能写在文件里，仍通过 `actions` 按动作名传入。 | `initWithContentsOfURL:actions:error:` (`.json` or `.plist`) and `initWithConfiguration:actions:error:` (a dictionary) create a placeholder from a configuration; in Swift they are the throwing `init(contentsOf:actions:)` and `init(configuration:actions:)`. An invalid configuration returns nil with an error that says why. Tap handlers cannot live in a file: they are still passed through `actions`, by action name. |
+| 顶层键：`scenario`（场景名，如 `RetryOrContactSupport`、`retryOrContactSupport`，见 `+nameForScenario:`）；`components`（组件数组，替代场景的组件）；`overrides`（`{"index": n, …}`，修改场景中第 n 个组件）；`backgroundAction`（动作名，`""` 表示关闭）；`accessibilityIdentifier`。 | Top-level keys: `scenario` (a scenario name such as `RetryOrContactSupport` or `retryOrContactSupport`, see `+nameForScenario:`); `components` (an array of components, replacing the scenario's); `overrides` (`{"index": n, …}`, changing the scenario's n-th component); `backgroundAction` (an action name, `""` for none); `accessibilityIdentifier`. |
+| 组件键：`type`（`icon`、`hint`、`button`、`separator`、`item`）；`title`/`text`，或用 `titleKey`/`textKey` 读取核心本地化文案；`animation`（内置动画文件名）；`style`（`CYLPlaceholderStyle` 名称如 `WifiOff`，或数字）；`size`（`[宽, 高]` 或一个数字）；`buttonStyle`（`filled`、`outlined`、`capsule`）；`action`（`retry`、`contactSupport`、`openSettings`、`goShopping`、`done`、`chooseManually` 或应用自定义的名称）；`interactionEnabled`；`highlightStyle`（`dim`、`shrink`、`none`）；`repeatCount`（`0`/`"loop"`、N、`"once"`）；`spacingBefore`；`accessibilityIdentifier`；`item` 类型的 `attributes` 是原始 item 属性，键使用序列化名称（如 `CYLTabBarItemTitleColor`、`CYLPlaceholderItemTitleCornerRadius`）。 | Component keys: `type` (`icon`, `hint`, `button`, `separator`, `item`); `title`/`text`, or `titleKey`/`textKey` for core localized text; `animation` (a bundled animation file name); `style` (a `CYLPlaceholderStyle` name such as `WifiOff`, or a number); `size` (`[width, height]` or one number); `buttonStyle` (`filled`, `outlined`, `capsule`); `action` (`retry`, `contactSupport`, `openSettings`, `goShopping`, `done`, `chooseManually`, or a name the app defines); `interactionEnabled`; `highlightStyle` (`dim`, `shrink`, `none`); `repeatCount` (`0`/`"loop"`, N, `"once"`); `spacingBefore`; `accessibilityIdentifier`; for the `item` type, `attributes` holds raw item attributes under their serialized names (such as `CYLTabBarItemTitleColor` or `CYLPlaceholderItemTitleCornerRadius`). |
+
+```json
+{
+  "scenario": "RetryOrContactSupport",
+  "overrides": [
+    { "index": 0, "repeatCount": "loop" },
+    { "index": 1, "highlightStyle": "shrink" },
+    { "index": 3, "interactionEnabled": false }
+  ]
+}
+```
+
+```swift
+// [CN] 从配置文件创建；点击事件按动作名传入
+// [EN] From a configuration file; tap handlers are passed by action name
+let url = Bundle.main.url(forResource: "ctrip-retry-or-contact-support", withExtension: "json")!
+let placeholder = try CYLPlaceholderStackView(contentsOf: url, actions: [
+    .retry: { [weak self] _, _ in self?.reload() },
+    .contactSupport: { [weak self] _, _ in self?.showSupport() },
+])
+```
+
+| 中文 | English |
+| --- | --- |
+| 聚合 Demo 的 `CYLScenarioExample.bundle/Configurations/` 中有 7 个配置文件，分别演示：场景加覆盖项（携程）、plist 中的胶囊按钮（什么值得买）、三种按下样式与关闭交互、三种播放策略、GIF/Lottie/PAG/Rive 四种格式、定位权限缺失场景、原始 item 属性。场景 Tab 的“配置文件初始化”分组逐个打开它们，可查看文件内容。文件中的示例自有文案用 `exampleTitleKey` 标注，由示例从自己的 bundle 读取后再交给核心，核心从不读取示例的 bundle。 | The aggregate demo's `CYLScenarioExample.bundle/Configurations/` holds 7 configuration files, showing: a scenario with overrides (Ctrip), a capsule button in a plist (SMZDM), the three pressed looks and interaction turned off, the three playback policies, the GIF/Lottie/PAG/Rive formats, the missing-location-permission scenario, and raw item attributes. The "Configuration files" section of the Scenarios tab opens each one and can show the file. The demo's own texts in a file are marked `exampleTitleKey`; the example reads them from its own bundle before handing the configuration to the core, which never reads the example's bundle. |
+
 ## 用法 / Usage
 
 ```swift
@@ -178,6 +228,10 @@ custom.setHandler({ _, _ in }, for: .contactSupport)
 | `+categoryForScenario:` / `+permissionForScenario:` / `+scenarioForPermission:` | `category(for:)` / `permission(for:)` / `scenario(for:)` |
 | `CYLPlaceholderScenarioCategoryPermission` / `CYLPlaceholderPermissionLocation` … | `.permission` / `.location` … |
 | `CYLPlaceholderActionRetry` … | `.retry`, `.contactSupport`, `.openSettings`, `.goShopping`, `.done`, `.chooseManually` |
+| `-initWithContentsOfURL:actions:error:` / `-initWithConfiguration:actions:error:` | `CYLPlaceholderStackView(contentsOf:actions:)` / `(configuration:actions:)` (throws) |
+| `+componentWithDictionary:error:` | `CYLPlaceholderComponent(dictionary:)` (throws) |
+| `+nameForScenario:` / `+scenarioNamed:` / `+actionNamed:` / `+animationFileNamesForScenario:` | `name(for:)` / `scenario(named:)` / `action(named:)` / `animationFileNames(for:)` |
+| `CYLPlaceholderView.tapHandler` / `tapInteractionEnabled` / `tapHighlightStyle` / `-performTap` / `animationRepeatCount` | same names; `isTapInteractionEnabled`, `isTapInteractive`, `isTapHighlighted` getters |
 | `CYLPlaceholderLocalizationLanguageDidChangeNotification` | `CYLPlaceholderLocalization.languageDidChangeNotification` |
 | `+localizedStringForKey:fallback:` | `CYLPlaceholderLocalization.localizedString(forKey:fallback:)` |
 
@@ -191,6 +245,7 @@ custom.setHandler({ _, _ in }, for: .contactSupport)
 
 | 中文 | English |
 | --- | --- |
-| 组件是 `CYLPlaceholderView`，按钮由标题装饰键绘制，不是 `UIButton`：没有按下高亮（点击时有一次透明度闪烁），不支持 `UIButton.Configuration`。 | Components are `CYLPlaceholderView`s and buttons are drawn with the title chrome keys, not `UIButton`s: there is no pressed highlight (a tap flashes the alpha once), and `UIButton.Configuration` is not supported. |
+| 组件是 `CYLPlaceholderView`，按钮由标题装饰键绘制，不是 `UIButton`：按下样式只有变暗、缩小和无三种，不支持 `UIButton.Configuration`，也没有禁用状态的外观（关闭交互只是不响应）。 | Components are `CYLPlaceholderView`s and buttons are drawn with the title chrome keys, not `UIButton`s: the pressed look is dim, shrink or none, `UIButton.Configuration` is not supported, and there is no disabled appearance (turning interaction off only stops responding). |
+| 新加入的 PAG（`NoContent.pag`）和 Rive（`NoResults.riv`、`Settings.riv`、`Mascot.riv`）按文件名选取，画面未经人工查看；Rive 文件按 `legacy` 方式播放，若无法播放会显示静态样式。可用的小体积、可再分发 GIF 很少，GIF 只有 `Uploading`、`NoFavorites` 两个。`CYLPlaceholderStyle` 的 56 种静态样式没有一一对应的动画。 | The newly added PAG (`NoContent.pag`) and Rive files (`NoResults.riv`, `Settings.riv`, `Mascot.riv`) were chosen by file name and have not been looked at; the Rive files play in `legacy` mode and fall back to the static style if they cannot play. Few small, redistributable GIFs exist, so there are only two GIFs, `Uploading` and `NoFavorites`. The 56 static `CYLPlaceholderStyle` images have no one-to-one animations. |
 | 切换语言不会更新已创建的视图；需要重新创建。 | A language change does not update views already created; recreate them. |
 | 日、韩、俄、乌克兰文译文未经母语者审校；动画的实际渲染（包括 Lottie 线条图标的 `**.Color` 着色）需在模拟器中人工查看，CI 只截取首页。 | The Japanese, Korean, Russian and Ukrainian translations have not been reviewed by native speakers; actual animation rendering (including the `**.Color` tint of the Lottie line icons) needs a manual look in the simulator, as CI only captures the first screen. |

@@ -23,6 +23,12 @@ belong to the core.
   and are read only through `CYLScenarioLocalizedString(_:)` with a `CYLScenarioL10n` key
   (`Sources/CYLScenarioLocalization.swift`); add a key to the enum and to all seven `.strings` files, then run
   `python3 scripts/check_localizations.py`.
+- Configuration files: `Sources/CYLScenarioExample.bundle/Configurations/*.json|plist`, listed in the last section of the
+  Scenarios tab and opened by `Sources/CYLConfigurationViewController.swift` with `CYLPlaceholderStackView(contentsOf:actions:)`.
+  A file that uses the example's own texts marks them `exampleTitleKey` (a `CYLScenarioL10n` raw value); the example
+  resolves them and calls `CYLPlaceholderStackView(configuration:actions:)`. Add a file to add a demo; the format is in
+  `docs/Placeholder-Scenarios.md`.
+- The detail page's "Tap: on/off" button sets every component's `tapInteractionEnabled` (each component's own API).
 - To add a scenario, add it to the core (`CYLPlaceholderScenario.h/.m`, core strings, tests); the list picks it up.
 - The Xcode project (objectVersion 46) lists the Swift files explicitly; add a new file to the `ExampleScenarios`
   target.

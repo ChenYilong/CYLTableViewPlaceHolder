@@ -56,6 +56,61 @@ static UIImage *CYLScenarioCapsuleBackgroundImage(void) {
     return image;
 }
 
+#pragma mark - Configuration values
+
+static NSError *CYLScenarioConfigurationError(NSString *description) {
+    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:2
+                           userInfo:@{NSLocalizedDescriptionKey: description}];
+}
+
+static NSString *CYLScenarioString(id value) {
+    return [value isKindOfClass:NSString.class] ? value : nil;
+}
+
+/// A text from a configuration: the core localization of `keyName` when given, else the literal `literalName`.
+static NSString *CYLScenarioConfiguredText(NSDictionary *dictionary, NSString *literalName, NSString *keyName) {
+    NSString *literal = CYLScenarioString(dictionary[literalName]);
+    NSString *key = CYLScenarioString(dictionary[keyName]);
+    if (key.length) return CYLPlaceholderLocalizedString(key, literal);
+    return literal;
+}
+
+/// A style from a number or a name such as "WifiOff" or "CYLPlaceholderWifiOff" (any case).
+static BOOL CYLScenarioStyleFromValue(id value, CYLPlaceholderStyle *style) {
+    if ([value isKindOfClass:NSNumber.class]) {
+        NSInteger number = [value integerValue];
+        if (number < 0 || number >= CYLPlaceholderStyleCount || [value doubleValue] != number) return NO;
+        *style = number;
+        return YES;
+    }
+    NSString *name = CYLScenarioString(value).lowercaseString;
+    if (!name.length) return NO;
+    if (![name hasPrefix:@"cylplaceholder"]) name = [@"cylplaceholder" stringByAppendingString:name];
+    for (NSInteger candidate = 0; candidate < CYLPlaceholderStyleCount; candidate++) {
+        if ([[CYLPlaceholderView imageNameForStyle:candidate].lowercaseString isEqualToString:name]) {
+            *style = candidate;
+            return YES;
+        }
+    }
+    return NO;
+}
+
+static BOOL CYLScenarioSizeFromValue(id value, CGSize *size) {
+    double width = 0, height = 0;
+    if ([value isKindOfClass:NSNumber.class]) {
+        width = height = [value doubleValue];
+    } else if ([value isKindOfClass:NSArray.class] && [value count] == 2 &&
+               [[value firstObject] isKindOfClass:NSNumber.class] && [[value lastObject] isKindOfClass:NSNumber.class]) {
+        width = [[value firstObject] doubleValue];
+        height = [[value lastObject] doubleValue];
+    } else {
+        return NO;
+    }
+    if (!isfinite(width) || !isfinite(height) || width <= 0 || height <= 0 || width > 1000 || height > 1000) return NO;
+    *size = CGSizeMake(width, height);
+    return YES;
+}
+
 #pragma mark - Bundled animations
 
 /// Options some bundled Rive files need to play (the same as the aggregate demo used before).
@@ -69,6 +124,9 @@ static NSDictionary<NSString *, NSString *> *CYLScenarioAnimationOptions(NSStrin
             @"CYLPlaceholderPullToRefresh.riv": legacy,
             @"CYLPlaceholderNoOrders.riv": legacy,
             @"CYLPlaceholderNoReviews.riv": legacy,
+            @"CYLPlaceholderNoResults.riv": legacy,
+            @"CYLPlaceholderSettings.riv": legacy,
+            @"CYLPlaceholderMascot.riv": legacy,
             @"CYLPlaceholderSuccess.riv": @{@"stateMachine": @"State Machine 1"},
         };
     });
@@ -95,6 +153,11 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
 }
 
 #pragma mark - Component
+
+static NSString *CYLScenarioText(NSString *key, NSString *fallback);
+/// Line icons are drawn smaller than illustrations.
+static const CGFloat CYLScenarioIconSide = 96;
+static const CGFloat CYLScenarioIllustrationSide = 160;
 
 @interface CYLPlaceholderComponent ()
 @property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *attributes;
@@ -124,6 +187,177 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
     return copy;
 }
 
+- (void)cyl_setAttribute:(id)value forKey:(NSString *)key {
+    NSMutableDictionary<NSString *, id> *attributes = [self.attributes mutableCopy];
+    attributes[key] = value;
+    self.attributes = attributes;
+}
+
+- (BOOL)interactionEnabled {
+    id value = self.attributes[CYLPlaceholderItemInteractionEnabled];
+    return [value isKindOfClass:NSNumber.class] ? [value boolValue] : YES;
+}
+
+- (void)setInteractionEnabled:(BOOL)interactionEnabled {
+    [self cyl_setAttribute:@(interactionEnabled) forKey:CYLPlaceholderItemInteractionEnabled];
+}
+
+- (CYLPlaceholderTapHighlightStyle)tapHighlightStyle {
+    id value = self.attributes[CYLPlaceholderItemTapHighlightStyle];
+    if ([value isKindOfClass:NSString.class]) {
+        NSUInteger index = [@[@"dim", @"shrink", @"none"] indexOfObject:[value lowercaseString]];
+        return index == NSNotFound ? CYLPlaceholderTapHighlightStyleDim : (CYLPlaceholderTapHighlightStyle)index;
+    }
+    return [value isKindOfClass:NSNumber.class] ? [value integerValue] : CYLPlaceholderTapHighlightStyleDim;
+}
+
+- (void)setTapHighlightStyle:(CYLPlaceholderTapHighlightStyle)tapHighlightStyle {
+    [self cyl_setAttribute:@(tapHighlightStyle) forKey:CYLPlaceholderItemTapHighlightStyle];
+}
+
+- (NSInteger)animationRepeatCount {
+    id value = self.attributes[CYLPlaceholderItemAnimationRepeatCount];
+    if ([value isKindOfClass:NSString.class]) return [[value lowercaseString] isEqualToString:@"loop"] ? 0 : 1;
+    return [value isKindOfClass:NSNumber.class] ? [value integerValue] : 1;
+}
+
+- (void)setAnimationRepeatCount:(NSInteger)animationRepeatCount {
+    [self cyl_setAttribute:@(MAX(0, animationRepeatCount)) forKey:CYLPlaceholderItemAnimationRepeatCount];
+}
+
++ (instancetype)componentWithDictionary:(NSDictionary<NSString *, id> *)dictionary error:(NSError **)error {
+    if (![dictionary isKindOfClass:NSDictionary.class]) {
+        if (error) *error = CYLScenarioConfigurationError(@"A component must be a dictionary.");
+        return nil;
+    }
+    NSString *type = CYLScenarioString(dictionary[@"type"]) ?: @"icon";
+    NSString *title = CYLScenarioConfiguredText(dictionary, @"title", @"titleKey") ?:
+        CYLScenarioConfiguredText(dictionary, @"text", @"textKey");
+    CYLPlaceholderAction action = nil;
+    if (dictionary[@"action"]) {
+        NSString *name = CYLScenarioString(dictionary[@"action"]);
+        if (!name.length) {
+            if (error) *error = CYLScenarioConfigurationError(@"A component action must be a non-empty string.");
+            return nil;
+        }
+        action = [CYLPlaceholderScenarioCatalog actionNamed:name];
+    }
+    CYLPlaceholderComponent *component = nil;
+    if ([type isEqualToString:@"icon"]) {
+        CYLPlaceholderStyle style = CYLPlaceholderStyleEmpty;
+        if (dictionary[@"style"] && !CYLScenarioStyleFromValue(dictionary[@"style"], &style)) {
+            if (error) *error = CYLScenarioConfigurationError(@"Unknown placeholder style.");
+            return nil;
+        }
+        CGSize size = CGSizeMake(CYLScenarioIconSide, CYLScenarioIconSide);
+        if (dictionary[@"size"] && !CYLScenarioSizeFromValue(dictionary[@"size"], &size)) {
+            if (error) *error = CYLScenarioConfigurationError(@"A component size must be [width, height] or a number.");
+            return nil;
+        }
+        NSString *animation = CYLScenarioString(dictionary[@"animation"]);
+        if (animation && ![CYLPlaceholderView pathForBundledAnimation:animation]) {
+            if (error) *error = CYLScenarioConfigurationError([NSString stringWithFormat:
+                @"Bundled animation %@ was not found.", animation]);
+            return nil;
+        }
+        component = [self componentWithBundledAnimation:animation fallbackStyle:style title:title size:size action:action];
+    } else if ([type isEqualToString:@"hint"]) {
+        component = [self hintComponentWithText:title ?: @""];
+    } else if ([type isEqualToString:@"button"]) {
+        NSInteger buttonStyle = CYLPlaceholderButtonStyleFilled;
+        id styleValue = dictionary[@"buttonStyle"];
+        if (styleValue) {
+            NSUInteger index = [styleValue isKindOfClass:NSString.class] ?
+                [@[@"filled", @"outlined", @"capsule"] indexOfObject:[styleValue lowercaseString]] : NSNotFound;
+            if (index == NSNotFound) {
+                if (error) *error = CYLScenarioConfigurationError(@"A button style must be filled, outlined or capsule.");
+                return nil;
+            }
+            buttonStyle = (NSInteger)index;
+        }
+        if (!action) {
+            if (error) *error = CYLScenarioConfigurationError(@"A button needs an action.");
+            return nil;
+        }
+        component = [self buttonComponentWithTitle:title ?: ([CYLPlaceholderScenarioCatalog localizedTitleForAction:action] ?: @"")
+                                             style:buttonStyle action:action];
+    } else if ([type isEqualToString:@"separator"]) {
+        component = [self separatorComponentWithText:title ?: CYLScenarioText(@"CYLPlaceholderScenarioOrSeparator", @"or")];
+    } else if ([type isEqualToString:@"item"]) {
+        id attributes = dictionary[@"attributes"];
+        if (![attributes isKindOfClass:NSDictionary.class]) {
+            if (error) *error = CYLScenarioConfigurationError(@"An item component needs an \"attributes\" dictionary.");
+            return nil;
+        }
+        NSMutableDictionary *resolved = [attributes mutableCopy];
+        if (title) resolved[CYLPlaceholderItemTitle] = title;
+        component = [self componentWithAttributes:resolved action:action];
+    } else {
+        if (error) *error = CYLScenarioConfigurationError([NSString stringWithFormat:@"Unknown component type %@.", type]);
+        return nil;
+    }
+    if (![component cyl_applyConfiguration:dictionary error:error]) return nil;
+    return component;
+}
+
+/// The fields every component accepts, also used for a scenario's "overrides".
+- (BOOL)cyl_applyConfiguration:(NSDictionary<NSString *, id> *)dictionary error:(NSError **)error {
+    id interaction = dictionary[@"interactionEnabled"];
+    if (interaction) {
+        if (![interaction isKindOfClass:NSNumber.class]) {
+            if (error) *error = CYLScenarioConfigurationError(@"interactionEnabled must be a boolean.");
+            return NO;
+        }
+        self.interactionEnabled = [interaction boolValue];
+    }
+    id highlight = dictionary[@"highlightStyle"];
+    if (highlight) {
+        NSUInteger index = [highlight isKindOfClass:NSString.class] ?
+            [@[@"dim", @"shrink", @"none"] indexOfObject:[highlight lowercaseString]] : NSNotFound;
+        if (index == NSNotFound) {
+            if (error) *error = CYLScenarioConfigurationError(@"highlightStyle must be dim, shrink or none.");
+            return NO;
+        }
+        self.tapHighlightStyle = (CYLPlaceholderTapHighlightStyle)index;
+    }
+    id repeat = dictionary[@"repeatCount"];
+    if (repeat) {
+        NSInteger count = -1;
+        if ([repeat isKindOfClass:NSString.class]) {
+            NSString *name = [repeat lowercaseString];
+            count = [name isEqualToString:@"loop"] ? 0 : ([name isEqualToString:@"once"] ? 1 : -1);
+        } else if ([repeat isKindOfClass:NSNumber.class] && [repeat doubleValue] == floor([repeat doubleValue])) {
+            count = [repeat integerValue];
+        }
+        if (count < 0 || count > 10000) {
+            if (error) *error = CYLScenarioConfigurationError(@"repeatCount must be 0 (loop) or more, \"loop\" or \"once\".");
+            return NO;
+        }
+        self.animationRepeatCount = count;
+    }
+    id spacing = dictionary[@"spacingBefore"];
+    if (spacing) {
+        if (![spacing isKindOfClass:NSNumber.class] || !isfinite([spacing doubleValue]) || [spacing doubleValue] < 0) {
+            if (error) *error = CYLScenarioConfigurationError(@"spacingBefore must be a number of points.");
+            return NO;
+        }
+        self.spacingBefore = [spacing doubleValue];
+    }
+    id identifier = dictionary[@"accessibilityIdentifier"];
+    if (identifier) {
+        if (![identifier isKindOfClass:NSString.class]) {
+            if (error) *error = CYLScenarioConfigurationError(@"accessibilityIdentifier must be a string.");
+            return NO;
+        }
+        [self cyl_setAttribute:identifier forKey:CYLPlaceholderItemAccessibilityIdentifier];
+    }
+    if (dictionary[@"action"] && dictionary[@"type"] == nil) {
+        NSString *name = CYLScenarioString(dictionary[@"action"]);
+        self.action = name.length ? [CYLPlaceholderScenarioCatalog actionNamed:name] : nil;
+    }
+    return YES;
+}
+
 + (instancetype)componentWithBundledAnimation:(NSString *)fileName
                                 fallbackStyle:(CYLPlaceholderStyle)fallbackStyle
                                         title:(NSString *)title
@@ -135,6 +369,9 @@ static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
     if (path) {
         attributes[CYLPlaceholderItemAnimationFilePath] = path;
         attributes[CYLPlaceholderItemAnimationSize] = @[@(size.width), @(size.height)];
+        // [EN] Scenario icons loop by default; set `animationRepeatCount` to change it.
+        // [CN] 场景图标默认循环播放；可通过 `animationRepeatCount` 修改。
+        attributes[CYLPlaceholderItemAnimationRepeatCount] = @0;
         NSDictionary *options = CYLScenarioAnimationOptions(fileName);
         if (options) attributes[CYLPlaceholderItemAnimationOptions] = options;
         if (CYLScenarioIsLineIcon(fileName)) {
@@ -234,36 +471,8 @@ static CYLPlaceholderComponent *CYLScenarioHint(NSString *key, NSString *fallbac
     return [CYLPlaceholderComponent hintComponentWithText:CYLScenarioText(key, fallback)];
 }
 
-/// Line icons are drawn smaller than illustrations.
-static const CGFloat CYLScenarioIconSide = 96;
-static const CGFloat CYLScenarioIllustrationSide = 160;
-
-@implementation CYLPlaceholderScenarioCatalog
-
-+ (NSArray<NSNumber *> *)allScenarios {
-    NSMutableArray<NSNumber *> *scenarios = [NSMutableArray arrayWithCapacity:CYLPlaceholderScenarioCount];
-    for (NSInteger scenario = 0; scenario < CYLPlaceholderScenarioCount; scenario++) [scenarios addObject:@(scenario)];
-    return scenarios;
-}
-
-+ (NSString *)localizedTitleForAction:(CYLPlaceholderAction)action {
-    static NSDictionary<CYLPlaceholderAction, NSArray<NSString *> *> *texts;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        texts = @{
-            CYLPlaceholderActionRetry: @[@"CYLPlaceholderActionRetryTitle", @"Retry"],
-            CYLPlaceholderActionContactSupport: @[@"CYLPlaceholderActionContactSupportTitle", @"Contact support"],
-            CYLPlaceholderActionOpenSettings: @[@"CYLPlaceholderActionOpenSettingsTitle", @"Open Settings"],
-            CYLPlaceholderActionGoShopping: @[@"CYLPlaceholderActionGoShoppingTitle", @"Go shopping"],
-            CYLPlaceholderActionDone: @[@"CYLPlaceholderActionDoneTitle", @"Done"],
-            CYLPlaceholderActionChooseManually: @[@"CYLPlaceholderActionChooseManuallyTitle", @"Choose manually"],
-        };
-    });
-    NSArray<NSString *> *text = action ? texts[action] : nil;
-    return text ? CYLScenarioText(text[0], text[1]) : nil;
-}
-
-+ (NSString *)localizedNameForScenario:(CYLPlaceholderScenario)scenario {
+/// Each scenario's name key and English fallback, in declaration order.
+static NSArray<NSArray<NSString *> *> *CYLScenarioNameEntries(void) {
     static NSArray<NSArray<NSString *> *> *names;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -304,8 +513,71 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
             @[@"CYLPlaceholderScenarioSuccessName", @"Success"],
         ];
     });
+    return names;
+}
+
+@implementation CYLPlaceholderScenarioCatalog
+
++ (NSArray<NSNumber *> *)allScenarios {
+    NSMutableArray<NSNumber *> *scenarios = [NSMutableArray arrayWithCapacity:CYLPlaceholderScenarioCount];
+    for (NSInteger scenario = 0; scenario < CYLPlaceholderScenarioCount; scenario++) [scenarios addObject:@(scenario)];
+    return scenarios;
+}
+
++ (NSString *)localizedTitleForAction:(CYLPlaceholderAction)action {
+    static NSDictionary<CYLPlaceholderAction, NSArray<NSString *> *> *texts;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        texts = @{
+            CYLPlaceholderActionRetry: @[@"CYLPlaceholderActionRetryTitle", @"Retry"],
+            CYLPlaceholderActionContactSupport: @[@"CYLPlaceholderActionContactSupportTitle", @"Contact support"],
+            CYLPlaceholderActionOpenSettings: @[@"CYLPlaceholderActionOpenSettingsTitle", @"Open Settings"],
+            CYLPlaceholderActionGoShopping: @[@"CYLPlaceholderActionGoShoppingTitle", @"Go shopping"],
+            CYLPlaceholderActionDone: @[@"CYLPlaceholderActionDoneTitle", @"Done"],
+            CYLPlaceholderActionChooseManually: @[@"CYLPlaceholderActionChooseManuallyTitle", @"Choose manually"],
+        };
+    });
+    NSArray<NSString *> *text = action ? texts[action] : nil;
+    return text ? CYLScenarioText(text[0], text[1]) : nil;
+}
+
++ (NSString *)localizedNameForScenario:(CYLPlaceholderScenario)scenario {
+    NSArray<NSArray<NSString *> *> *names = CYLScenarioNameEntries();
     if (scenario < 0 || scenario >= (NSInteger)names.count) return @"";
     return CYLScenarioText(names[scenario][0], names[scenario][1]);
+}
+
++ (NSString *)nameForScenario:(CYLPlaceholderScenario)scenario {
+    NSArray<NSArray<NSString *> *> *names = CYLScenarioNameEntries();
+    if (scenario < 0 || scenario >= (NSInteger)names.count) return @"";
+    // [EN] "CYLPlaceholderScenarioRetryButtonName" -> "RetryButton". [CN] 去掉前缀与 "Name" 后缀。
+    NSString *key = names[scenario][0];
+    NSString *prefix = @"CYLPlaceholderScenario";
+    return [key substringWithRange:NSMakeRange(prefix.length, key.length - prefix.length - 4)];
+}
+
++ (CYLPlaceholderScenario)scenarioNamed:(NSString *)name {
+    if (![name isKindOfClass:NSString.class] || !name.length) return CYLPlaceholderScenarioCount;
+    NSString *lowercase = name.lowercaseString;
+    if ([lowercase hasPrefix:@"cylplaceholderscenario"]) lowercase = [lowercase substringFromIndex:22];
+    for (NSInteger scenario = 0; scenario < CYLPlaceholderScenarioCount; scenario++) {
+        if ([[self nameForScenario:scenario].lowercaseString isEqualToString:lowercase]) return scenario;
+    }
+    return CYLPlaceholderScenarioCount;
+}
+
++ (CYLPlaceholderAction)actionNamed:(NSString *)name {
+    NSDictionary<NSString *, CYLPlaceholderAction> *actions = @{
+        @"retry": CYLPlaceholderActionRetry,
+        @"contactsupport": CYLPlaceholderActionContactSupport,
+        @"opensettings": CYLPlaceholderActionOpenSettings,
+        @"goshopping": CYLPlaceholderActionGoShopping,
+        @"done": CYLPlaceholderActionDone,
+        @"choosemanually": CYLPlaceholderActionChooseManually,
+    };
+    NSString *lowercase = name.lowercaseString;
+    if ([lowercase hasPrefix:@"cylplaceholderaction"]) lowercase = [lowercase substringFromIndex:20];
+    return actions[lowercase] ?: name;
 }
 
 + (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario {
@@ -339,6 +611,41 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
         default:
             return nil;
     }
+}
+
++ (NSArray<NSString *> *)animationFileNamesForScenario:(CYLPlaceholderScenario)scenario {
+    // [EN] The scenario's own icon first (the one `componentsForScenario:` uses), then other formats that fit.
+    // [CN] 第一个是场景自己的图标（`componentsForScenario:` 使用的），其后是其他格式中合适的动画。
+    static NSDictionary<NSNumber *, NSArray<NSString *> *> *variants;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        variants = @{
+            @(CYLPlaceholderScenarioNoContent): @[@"CYLPlaceholderNoContent.pag", @"CYLPlaceholderNoDrafts.json"],
+            @(CYLPlaceholderScenarioTapToReload): @[@"CYLPlaceholderPullToRefresh.riv"],
+            @(CYLPlaceholderScenarioRetryOrContactSupport): @[@"CYLPlaceholderContactSupport.json"],
+            @(CYLPlaceholderScenarioRefreshIcon): @[@"CYLPlaceholderRefresh.json", @"CYLPlaceholderPullToRefresh.riv"],
+            @(CYLPlaceholderScenarioTitleAboveIllustration): @[@"CYLPlaceholderPullToRefresh.riv"],
+            @(CYLPlaceholderScenarioTapMeRetry): @[@"CYLPlaceholderMascot.riv", @"CYLPlaceholderTapHint.json"],
+            @(CYLPlaceholderScenarioLocationPermissionDenied): @[@"CYLPlaceholderLocation.json"],
+            @(CYLPlaceholderScenarioNoSearchResults): @[@"CYLPlaceholderNoResults.riv"],
+            @(CYLPlaceholderScenarioNoFavorites): @[@"CYLPlaceholderNoFavorites.gif", @"CYLPlaceholderNoFavorites.json"],
+            @(CYLPlaceholderScenarioNoPermission): @[@"CYLPlaceholderSettings.riv", @"CYLPlaceholderSettings.json"],
+            @(CYLPlaceholderScenarioSyncFailed): @[@"CYLPlaceholderLoadingInfinity.json"],
+            @(CYLPlaceholderScenarioLoading): @[@"CYLPlaceholderLoading.pag", @"CYLPlaceholderLoading.riv",
+                                                @"CYLPlaceholderLoadingInfinity.json", @"CYLPlaceholderProgress.pag"],
+            @(CYLPlaceholderScenarioUploading): @[@"CYLPlaceholderProgress.pag"],
+            @(CYLPlaceholderScenarioSuccess): @[@"CYLPlaceholderSuccess.json", @"CYLPlaceholderCelebrate.json"],
+        };
+    });
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (CYLPlaceholderComponent *component in [self componentsForScenario:scenario]) {
+        NSString *path = component.attributes[CYLPlaceholderItemAnimationFilePath];
+        if (path && ![names containsObject:path.lastPathComponent]) [names addObject:path.lastPathComponent];
+    }
+    for (NSString *name in variants[@(scenario)]) {
+        if (![names containsObject:name] && [CYLPlaceholderView pathForBundledAnimation:name]) [names addObject:name];
+    }
+    return names;
 }
 
 + (CYLPlaceholderScenarioCategory)categoryForScenario:(CYLPlaceholderScenario)scenario {

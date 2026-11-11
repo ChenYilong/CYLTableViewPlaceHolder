@@ -70,6 +70,16 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderMessage) {
     CYLPlaceholderMessageCount
 };
 
+/// How a tappable placeholder looks while it is pressed.
+typedef NS_ENUM(NSInteger, CYLPlaceholderTapHighlightStyle) {
+    /// The content dims to half opacity (the default).
+    CYLPlaceholderTapHighlightStyleDim,
+    /// The content shrinks slightly and dims a little.
+    CYLPlaceholderTapHighlightStyleShrink,
+    /// No visual change; the tap still runs the handler.
+    CYLPlaceholderTapHighlightStyleNone,
+};
+
 typedef NS_ENUM(NSInteger, CYLPlaceholderBadgeStyle) {
     CYLPlaceholderBadgeStyleNone,
     CYLPlaceholderBadgeStyleDot,
@@ -171,6 +181,14 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleBorderWidth;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleCornerRadius;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleContentInsets;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleMinimumWidth;
+/// Tap interaction (see `tapInteractionEnabled`): a boolean; NO turns off both the tap handler and the highlight.
+/// Absent means YES.
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemInteractionEnabled;
+/// The pressed look (see `tapHighlightStyle`): a CYLPlaceholderTapHighlightStyle number or "dim", "shrink", "none".
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTapHighlightStyle;
+/// Animation playback (see `animationRepeatCount`): a number, 0 loops until stopped, N plays N times; or the strings
+/// "loop" and "once". Absent means once, as before.
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationRepeatCount;
 
 /// Animation views supplied by custom factories must invoke handlers on the main thread.
 @protocol CYLPlaceholderAnimationPlayer <NSObject>
@@ -183,6 +201,8 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleMinimumWidth;
 @optional
 - (BOOL)setAnimationProgress:(CGFloat)progress;
 - (BOOL)setAnimationSpeed:(CGFloat)speed;
+/// 0 loops until stopped; N plays N times. Return NO when unsupported (the animation then plays once).
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount;
 /// Replace all keypath color overrides. Return NO when unsupported.
 - (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;
 @end
@@ -243,6 +263,29 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 /// The widest the content may be when `reportsContentSize` is YES, padding included; 0 uses the screen width. Long
 /// titles wrap within it.
 @property (nonatomic) CGFloat preferredMaxLayoutWidth;
+
+/// Runs when the placeholder is tapped. Called on the main thread.
+typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
+
+/// The placeholder's own tap event: runs only while `tapInteractionEnabled` is YES. Setting it makes the view
+/// respond to taps (with the highlight of `tapHighlightStyle` and the button trait for VoiceOver); nil removes it.
+@property (nonatomic, copy, nullable) CYLPlaceholderTapHandler tapHandler;
+/// Whether taps are handled. NO: the handler does not run and the pressed highlight does not show, and touches pass
+/// through as before. Defaults to YES, or to `CYLPlaceholderItemInteractionEnabled`.
+@property (nonatomic, getter=isTapInteractionEnabled) BOOL tapInteractionEnabled;
+/// The pressed look; defaults to Dim, or to `CYLPlaceholderItemTapHighlightStyle`.
+@property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
+/// YES while a finger is down on a tappable placeholder.
+@property (nonatomic, readonly, getter=isTapHighlighted) BOOL tapHighlighted;
+/// YES when a tap would run the handler: interaction is enabled and a handler is set.
+@property (nonatomic, readonly, getter=isTapInteractive) BOOL tapInteractive;
+/// Runs the handler as a tap would; NO when the placeholder is not tap-interactive.
+- (BOOL)performTap;
+/// How many times the animation plays each time it starts: 0 loops until stopped, N plays N times. Defaults to 1, or
+/// to `CYLPlaceholderItemAnimationRepeatCount`. GIF, Lottie and PAG support every value; Rive supports 0 and 1 for a
+/// named animation, while a state machine follows the file. Reduce Motion still stops the animation.
+@property (nonatomic) NSInteger animationRepeatCount;
+
 /// Registers or removes a factory for a local file extension, without a leading dot.
 /// Extensions are case-insensitive. GIF remains reserved for the built-in decoder.
 /// Existing views keep their current player until their configuration is reloaded.

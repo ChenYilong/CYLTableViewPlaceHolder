@@ -2,9 +2,8 @@
 #import "CYLPlaceholderStackView.h"
 #import "CYLPlaceholderLocalization.h"
 
-/// The stack view's tap handlers, called directly: a hostless test bundle has no UIApplication to send actions.
+/// The stack view's background tap handler, called directly: a hostless test bundle has no UIApplication.
 @interface CYLPlaceholderStackView (CYLScenarioTesting)
-- (void)cyl_componentTapped:(UITapGestureRecognizer *)recognizer;
 - (void)cyl_backgroundTapped:(UITapGestureRecognizer *)recognizer;
 @end
 
@@ -34,13 +33,9 @@
 }
 
 - (void)tap:(CYLPlaceholderView *)view inStack:(CYLPlaceholderStackView *)stack {
-    UITapGestureRecognizer *tap = nil;
-    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
-        if ([recognizer isKindOfClass:UITapGestureRecognizer.class]) tap = (UITapGestureRecognizer *)recognizer;
-    }
-    XCTAssertNotNil(tap, @"a tappable component has a tap recognizer");
-    // The recognizer's action, as UIKit calls it.
-    [stack cyl_componentTapped:tap];
+    XCTAssertTrue(view.isTapInteractive, @"a tappable component has its own tap event");
+    // The component's own tap, as a finished touch runs it.
+    XCTAssertTrue([view performTap]);
 }
 
 #pragma mark - Scenarios
@@ -273,6 +268,190 @@
     XCTAssertEqualObjects(location.lastObject.action, CYLPlaceholderActionChooseManually);
     XCTAssertEqualObjects([CYLPlaceholderScenarioCatalog readmeScreenshotNumbersForScenario:
                               CYLPlaceholderScenarioLocationPermissionDenied], @[@20]);
+}
+
+#pragma mark - Tap interaction, playback and configuration files
+
+- (void)testEachComponentOwnsItsTapEventAndInteractionSwitch {
+    __block NSUInteger taps = 0;
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleEmpty text:@"Tap"];
+    XCTAssertTrue(view.tapInteractionEnabled, @"enabled by default");
+    XCTAssertFalse(view.isTapInteractive, @"no handler yet");
+    XCTAssertFalse([view performTap]);
+    view.tapHandler = ^(CYLPlaceholderView *placeholderView) { taps++; };
+    XCTAssertTrue(view.isTapInteractive);
+    XCTAssertTrue(view.accessibilityTraits & UIAccessibilityTraitButton);
+    // [EN] A touch down highlights; lifting it outside the slop does not tap. [CN] 按下高亮；在容差外抬起不触发点击。
+    [view touchesBegan:[NSSet set] withEvent:nil];
+    XCTAssertTrue(view.isTapHighlighted);
+    [view touchesCancelled:[NSSet set] withEvent:nil];
+    XCTAssertFalse(view.isTapHighlighted);
+    XCTAssertTrue([view performTap]);
+    XCTAssertEqual(taps, 1u);
+    // [EN] Interaction off: no handler and no highlight. [CN] 关闭交互：不执行点击事件，也没有高亮。
+    view.tapInteractionEnabled = NO;
+    XCTAssertFalse([view performTap]);
+    [view touchesBegan:[NSSet set] withEvent:nil];
+    XCTAssertFalse(view.isTapHighlighted);
+    XCTAssertFalse(view.accessibilityTraits & UIAccessibilityTraitButton);
+    XCTAssertEqual(taps, 1u);
+    // [EN] Style None: the tap runs without a highlight. [CN] 无高亮样式：点击照常执行，但不高亮。
+    view.tapInteractionEnabled = YES;
+    view.tapHighlightStyle = CYLPlaceholderTapHighlightStyleNone;
+    [view touchesBegan:[NSSet set] withEvent:nil];
+    XCTAssertFalse(view.isTapHighlighted);
+    [view touchesCancelled:[NSSet set] withEvent:nil];
+    // [EN] The same switches as item keys. [CN] 同样的开关也可以用 item 键设置。
+    CYLPlaceholderView *configured = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemTitle: @"Off", CYLPlaceholderItemInteractionEnabled: @NO,
+        CYLPlaceholderItemTapHighlightStyle: @"shrink", CYLPlaceholderItemAnimationRepeatCount: @"loop",
+    } imageBundle:nil error:NULL];
+    XCTAssertFalse(configured.tapInteractionEnabled);
+    XCTAssertEqual(configured.tapHighlightStyle, CYLPlaceholderTapHighlightStyleShrink);
+    XCTAssertEqual(configured.animationRepeatCount, 0);
+    NSError *error = nil;
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemTapHighlightStyle: @"glow"}
+                                                       imageBundle:nil error:&error]);
+    XCTAssertNotNil(error);
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemAnimationRepeatCount: @(-1)}
+                                                       imageBundle:nil error:NULL]);
+}
+
+- (void)testDisabledComponentKeepsItsActionButDoesNotRunIt {
+    __block NSUInteger retries = 0;
+    CYLPlaceholderComponent *button = [CYLPlaceholderComponent buttonComponentWithTitle:@"Retry"
+        style:CYLPlaceholderButtonStyleFilled action:CYLPlaceholderActionRetry];
+    button.interactionEnabled = NO;
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithComponents:@[
+        [CYLPlaceholderComponent hintComponentWithText:@"Offline"], button]
+        actions:@{CYLPlaceholderActionRetry: ^(CYLPlaceholderStackView *placeholder, CYLPlaceholderAction action) {
+            retries++;
+        }}];
+    CYLPlaceholderView *view = [stack componentViewForAction:CYLPlaceholderActionRetry];
+    XCTAssertNotNil(view.tapHandler, @"the stack view sets the component's tap event at init");
+    XCTAssertFalse(view.isTapInteractive);
+    XCTAssertFalse([view performTap]);
+    view.tapInteractionEnabled = YES;
+    XCTAssertTrue([view performTap]);
+    XCTAssertEqual(retries, 1u);
+}
+
+- (void)testScenarioIconsLoopByDefault {
+    for (NSNumber *value in CYLPlaceholderScenarioCatalog.allScenarios) {
+        for (CYLPlaceholderComponent *component in [CYLPlaceholderScenarioCatalog componentsForScenario:value.integerValue]) {
+            if (!component.attributes[CYLPlaceholderItemAnimationFilePath]) continue;
+            XCTAssertEqual(component.animationRepeatCount, 0, @"scenario %@", value);
+        }
+    }
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithScenario:CYLPlaceholderScenarioLoading actions:nil];
+    XCTAssertEqual(stack.placeholderView.animationRepeatCount, 0);
+    stack.placeholderView.animationRepeatCount = 2;
+    XCTAssertEqual(stack.placeholderView.animationRepeatCount, 2);
+    XCTAssertEqual([CYLPlaceholderComponent hintComponentWithText:@"x"].animationRepeatCount, 1);
+}
+
+- (void)testEveryScenarioListsBundledAnimationsInEveryFormat {
+    NSMutableSet<NSString *> *formats = [NSMutableSet set];
+    for (NSNumber *value in CYLPlaceholderScenarioCatalog.allScenarios) {
+        NSArray<NSString *> *names = [CYLPlaceholderScenarioCatalog animationFileNamesForScenario:value.integerValue];
+        if (value.integerValue == CYLPlaceholderScenarioTextOnly) {
+            XCTAssertEqual(names.count, 0u, @"the text-only scenario has no icon");
+            continue;
+        }
+        XCTAssertGreaterThan(names.count, 0u, @"scenario %@", value);
+        for (NSString *name in names) {
+            XCTAssertNotNil([CYLPlaceholderView pathForBundledAnimation:name], @"%@", name);
+            [formats addObject:name.pathExtension];
+        }
+    }
+    XCTAssertEqualObjects(formats, ([NSSet setWithObjects:@"json", @"pag", @"riv", @"gif", nil]));
+}
+
+- (void)testScenarioNamesRoundTrip {
+    for (NSNumber *value in CYLPlaceholderScenarioCatalog.allScenarios) {
+        NSString *name = [CYLPlaceholderScenarioCatalog nameForScenario:value.integerValue];
+        XCTAssertGreaterThan(name.length, 0u);
+        XCTAssertEqual([CYLPlaceholderScenarioCatalog scenarioNamed:name], value.integerValue);
+        NSString *swift = [[name substringToIndex:1].lowercaseString stringByAppendingString:[name substringFromIndex:1]];
+        XCTAssertEqual([CYLPlaceholderScenarioCatalog scenarioNamed:swift], value.integerValue);
+        XCTAssertEqual([CYLPlaceholderScenarioCatalog scenarioNamed:[@"CYLPlaceholderScenario" stringByAppendingString:name]],
+                       value.integerValue);
+    }
+    XCTAssertEqual([CYLPlaceholderScenarioCatalog scenarioNamed:@"Nope"], CYLPlaceholderScenarioCount);
+    XCTAssertEqualObjects([CYLPlaceholderScenarioCatalog actionNamed:@"contactSupport"], CYLPlaceholderActionContactSupport);
+    XCTAssertEqualObjects([CYLPlaceholderScenarioCatalog actionNamed:@"share"], @"share");
+}
+
+- (void)testConfigurationBuildsComponentsWithEveryOption {
+    __block NSMutableArray<CYLPlaceholderAction> *performed = [NSMutableArray array];
+    CYLPlaceholderActionHandler record = ^(CYLPlaceholderStackView *placeholder, CYLPlaceholderAction action) {
+        [performed addObject:action];
+    };
+    NSDictionary *configuration = @{
+        @"backgroundAction": @"",
+        @"components": @[
+            @{@"type": @"icon", @"animation": @"CYLPlaceholderNoInternet.json", @"style": @"WifiOff",
+              @"titleKey": @"CYLPlaceholderScenarioRetryButtonTitle", @"size": @[@80, @80], @"repeatCount": @"once"},
+            @{@"type": @"hint", @"text": @"Literal hint"},
+            @{@"type": @"button", @"action": @"retry", @"buttonStyle": @"filled", @"highlightStyle": @"shrink"},
+            @{@"type": @"separator"},
+            @{@"type": @"button", @"action": @"contactSupport", @"buttonStyle": @"outlined", @"interactionEnabled": @NO},
+            @{@"type": @"item", @"attributes": @{CYLPlaceholderItemTitle: @"Raw item"}, @"action": @"share",
+              @"accessibilityIdentifier": @"rawItem", @"spacingBefore": @30},
+        ],
+    };
+    NSError *error = nil;
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithConfiguration:configuration
+        actions:@{CYLPlaceholderActionRetry: record, CYLPlaceholderActionContactSupport: record, @"share": record}
+          error:&error];
+    XCTAssertNotNil(stack, @"%@", error);
+    XCTAssertEqual(stack.componentViews.count, 6u);
+    XCTAssertEqualObjects(stack.placeholderView.textLabel.text, @"The network is slow. Please try again.",
+                          @"titleKey reads the core localization");
+    XCTAssertEqual(stack.placeholderView.animationRepeatCount, 1);
+    XCTAssertEqualObjects(stack.componentViews[1].textLabel.text, @"Literal hint");
+    XCTAssertEqualObjects(stack.componentViews[2].textLabel.text, @"Retry", @"a button without a title uses its action's");
+    XCTAssertEqual(stack.componentViews[2].tapHighlightStyle, CYLPlaceholderTapHighlightStyleShrink);
+    XCTAssertFalse(stack.componentViews[4].isTapInteractive);
+    XCTAssertEqualObjects(stack.componentViews[5].accessibilityIdentifier, @"rawItem");
+    XCTAssertNil(stack.backgroundAction);
+    [self tap:stack.componentViews[2] inStack:stack];
+    XCTAssertFalse([stack.componentViews[4] performTap]);
+    [self tap:stack.componentViews[5] inStack:stack];
+    XCTAssertEqualObjects(performed, (@[CYLPlaceholderActionRetry, @"share"]));
+}
+
+- (void)testConfigurationStartsFromAScenarioWithOverridesAndReadsFiles {
+    NSDictionary *configuration = @{
+        @"scenario": @"retryOrContactSupport",
+        @"overrides": @[@{@"index": @3, @"interactionEnabled": @NO}, @{@"index": @0, @"repeatCount": @2}],
+    };
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithConfiguration:configuration actions:nil error:NULL];
+    XCTAssertEqual(stack.scenario, CYLPlaceholderScenarioRetryOrContactSupport);
+    XCTAssertEqual(stack.componentViews.count, 4u);
+    XCTAssertFalse(stack.componentViews[3].tapInteractionEnabled);
+    XCTAssertEqual(stack.placeholderView.animationRepeatCount, 2);
+    // [EN] The catalog's components are copied, not changed. [CN] 目录中的组件被复制，而不是被修改。
+    XCTAssertTrue([CYLPlaceholderScenarioCatalog componentsForScenario:CYLPlaceholderScenarioRetryOrContactSupport][3].interactionEnabled);
+    NSString *directory = NSTemporaryDirectory();
+    NSURL *json = [NSURL fileURLWithPath:[directory stringByAppendingPathComponent:@"CYLScenarioConfig.json"]];
+    [[NSJSONSerialization dataWithJSONObject:@{@"scenario": @"TapToReload"} options:0 error:NULL] writeToURL:json atomically:YES];
+    CYLPlaceholderStackView *fromJSON = [[CYLPlaceholderStackView alloc] initWithContentsOfURL:json actions:nil error:NULL];
+    XCTAssertEqual(fromJSON.scenario, CYLPlaceholderScenarioTapToReload);
+    XCTAssertEqualObjects(fromJSON.backgroundAction, CYLPlaceholderActionRetry, @"the scenario's background action");
+    NSURL *plist = [NSURL fileURLWithPath:[directory stringByAppendingPathComponent:@"CYLScenarioConfig.plist"]];
+    [@{@"components": @[@{@"type": @"hint", @"text": @"plist"}]} writeToURL:plist atomically:YES];
+    CYLPlaceholderStackView *fromPlist = [[CYLPlaceholderStackView alloc] initWithContentsOfURL:plist actions:nil error:NULL];
+    XCTAssertEqualObjects(fromPlist.placeholderView.textLabel.text, @"plist");
+    for (NSDictionary *invalid in @[@{}, @{@"scenario": @"Nope"}, @{@"components": @[]},
+                                    @{@"components": @[@{@"type": @"button"}]},
+                                    @{@"components": @[@{@"type": @"icon", @"animation": @"Missing.json"}]},
+                                    @{@"scenario": @"TextOnly", @"overrides": @[@{@"index": @9}]},
+                                    @{@"components": @[@{@"type": @"hint", @"highlightStyle": @"glow"}]}]) {
+        NSError *error = nil;
+        XCTAssertNil([[CYLPlaceholderStackView alloc] initWithConfiguration:invalid actions:nil error:&error], @"%@", invalid);
+        XCTAssertNotNil(error, @"%@", invalid);
+    }
 }
 
 - (void)testEveryScenarioIsTranslated {

@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "データ";
 "CYLScenarioSectionPermissions" = "権限がない（ネットワーク障害ではない）";
 "CYLScenarioFeedbackChooseManually" = "住所一覧を開いています…";
+"CYLScenarioSectionConfigurations" = "設定ファイルから作成（JSON / plist）";
+"CYLScenarioActionShowFile" = "ファイル";
+"CYLScenarioFormatActionTapped" = "タップ：%@";
+"CYLScenarioInteractionOn" = "タップ：オン";
+"CYLScenarioInteractionOff" = "タップ：オフ";
+"CYLScenarioConfigTapEachButton" = "各ボタンをタップしてください";
+"CYLScenarioConfigHighlightDim" = "ハイライト：暗く";
+"CYLScenarioConfigHighlightShrink" = "ハイライト：縮小";
+"CYLScenarioConfigHighlightNone" = "ハイライト：なし";
+"CYLScenarioConfigInteractionOff" = "操作オフ：タップもハイライトもなし";
+"CYLScenarioConfigPlaybackLoop" = "ループ再生（既定）";
+"CYLScenarioConfigPlaybackOnce" = "1回再生";
+"CYLScenarioConfigPlaybackThree" = "3回再生";

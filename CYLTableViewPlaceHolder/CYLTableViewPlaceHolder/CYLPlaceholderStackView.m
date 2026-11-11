@@ -18,6 +18,16 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 @property (nonatomic, strong) UITapGestureRecognizer *backgroundTapRecognizer;
 @end
 
+/// Applies the shared component fields ("action", "interactionEnabled", "highlightStyle", "repeatCount", …).
+@interface CYLPlaceholderComponent (CYLStackConfiguration)
+- (BOOL)cyl_applyConfiguration:(NSDictionary<NSString *, id> *)dictionary error:(NSError **)error;
+@end
+
+static NSError *CYLStackConfigurationError(NSString *description) {
+    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:3
+                           userInfo:@{NSLocalizedDescriptionKey: description}];
+}
+
 @implementation CYLPlaceholderStackView
 
 - (instancetype)initWithScenario:(CYLPlaceholderScenario)scenario
@@ -27,6 +37,94 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
         _scenario = scenario;
         self.backgroundAction = [CYLPlaceholderScenarioCatalog backgroundActionForScenario:scenario];
         self.accessibilityIdentifier = [NSString stringWithFormat:@"CYLPlaceholderScenario%ld", (long)scenario];
+    }
+    return self;
+}
+
+- (instancetype)initWithContentsOfURL:(NSURL *)url
+                              actions:(NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
+                                error:(NSError **)error {
+    if (!url.isFileURL) {
+        if (error) *error = CYLStackConfigurationError(@"The configuration URL must be a local file.");
+        return nil;
+    }
+    NSData *data = [NSData dataWithContentsOfURL:url options:0 error:error];
+    if (!data) return nil;
+    id configuration = [url.pathExtension.lowercaseString isEqualToString:@"json"] ?
+        [NSJSONSerialization JSONObjectWithData:data options:0 error:error] :
+        [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:NULL error:error];
+    if (!configuration) return nil;
+    return [self initWithConfiguration:configuration actions:actions error:error];
+}
+
+- (instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
+                              actions:(NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
+                                error:(NSError **)error {
+    if (![configuration isKindOfClass:NSDictionary.class]) {
+        if (error) *error = CYLStackConfigurationError(@"The configuration must be a dictionary.");
+        return nil;
+    }
+    CYLPlaceholderScenario scenario = CYLPlaceholderScenarioCount;
+    id scenarioName = configuration[@"scenario"];
+    if (scenarioName) {
+        scenario = [scenarioName isKindOfClass:NSString.class] ? [CYLPlaceholderScenarioCatalog scenarioNamed:scenarioName] :
+            CYLPlaceholderScenarioCount;
+        if (scenario == CYLPlaceholderScenarioCount) {
+            if (error) *error = CYLStackConfigurationError([NSString stringWithFormat:@"Unknown scenario %@.", scenarioName]);
+            return nil;
+        }
+    }
+    NSMutableArray<CYLPlaceholderComponent *> *components = [NSMutableArray array];
+    id componentList = configuration[@"components"];
+    if (componentList) {
+        if (![componentList isKindOfClass:NSArray.class] || [componentList count] == 0) {
+            if (error) *error = CYLStackConfigurationError(@"\"components\" must be a non-empty array.");
+            return nil;
+        }
+        for (id dictionary in componentList) {
+            CYLPlaceholderComponent *component = [CYLPlaceholderComponent componentWithDictionary:dictionary error:error];
+            if (!component) return nil;
+            [components addObject:component];
+        }
+    } else if (scenario != CYLPlaceholderScenarioCount) {
+        for (CYLPlaceholderComponent *component in [CYLPlaceholderScenarioCatalog componentsForScenario:scenario]) {
+            [components addObject:[component copy]];
+        }
+    } else {
+        if (error) *error = CYLStackConfigurationError(@"The configuration needs a \"scenario\" or \"components\".");
+        return nil;
+    }
+    id overrides = configuration[@"overrides"];
+    if (overrides && ![overrides isKindOfClass:NSArray.class]) {
+        if (error) *error = CYLStackConfigurationError(@"\"overrides\" must be an array.");
+        return nil;
+    }
+    for (id override in overrides) {
+        id index = [override isKindOfClass:NSDictionary.class] ? override[@"index"] : nil;
+        if (![index isKindOfClass:NSNumber.class] || [index integerValue] < 0 ||
+            [index integerValue] >= (NSInteger)components.count) {
+            if (error) *error = CYLStackConfigurationError(@"Each override needs the \"index\" of an existing component.");
+            return nil;
+        }
+        NSMutableDictionary *fields = [override mutableCopy];
+        [fields removeObjectForKey:@"index"];
+        if (![components[[index integerValue]] cyl_applyConfiguration:fields error:error]) return nil;
+    }
+    id background = configuration[@"backgroundAction"];
+    if (background && ![background isKindOfClass:NSString.class]) {
+        if (error) *error = CYLStackConfigurationError(@"\"backgroundAction\" must be an action name.");
+        return nil;
+    }
+    self = [self initWithComponents:components actions:actions];
+    if (self) {
+        _scenario = scenario;
+        if (background) {
+            self.backgroundAction = [background length] ? [CYLPlaceholderScenarioCatalog actionNamed:background] : nil;
+        } else if (scenario != CYLPlaceholderScenarioCount) {
+            self.backgroundAction = [CYLPlaceholderScenarioCatalog backgroundActionForScenario:scenario];
+        }
+        id identifier = configuration[@"accessibilityIdentifier"];
+        if ([identifier isKindOfClass:NSString.class]) self.accessibilityIdentifier = identifier;
     }
     return self;
 }
@@ -119,12 +217,15 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
     [self.mutableComponentViews addObject:view];
     [self.componentActions addObject:action ?: (id)NSNull.null];
     if (action) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                              action:@selector(cyl_componentTapped:)];
-        [view addGestureRecognizer:tap];
-        view.userInteractionEnabled = YES;
-        view.isAccessibilityElement = YES;
-        view.accessibilityTraits |= UIAccessibilityTraitButton;
+        // [EN] The component's own tap event performs the action; whether it runs, and whether the tap highlights,
+        //      is the component's `tapInteractionEnabled` (`CYLPlaceholderItemInteractionEnabled`).
+        // [CN] 由组件自己的点击事件执行动作；是否执行、点击是否高亮，取决于组件的 `tapInteractionEnabled`
+        //      （`CYLPlaceholderItemInteractionEnabled`）。
+        __weak typeof(self) weakSelf = self;
+        CYLPlaceholderAction copiedAction = [action copy];
+        view.tapHandler = ^(CYLPlaceholderView *placeholderView) {
+            [weakSelf performAction:copiedAction];
+        };
     }
 }
 
@@ -153,19 +254,6 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
     return YES;
 }
 
-- (void)cyl_componentTapped:(UITapGestureRecognizer *)recognizer {
-    NSUInteger index = [self.mutableComponentViews indexOfObjectIdenticalTo:(CYLPlaceholderView *)recognizer.view];
-    if (index == NSNotFound) return;
-    id action = self.componentActions[index];
-    if (action == NSNull.null) return;
-    UIView *view = recognizer.view;
-    // [EN] Brief feedback, like a button's highlight.
-    // [CN] 短暂的点击反馈，类似按钮的高亮。
-    view.alpha = 0.5;
-    [UIView animateWithDuration:0.25 animations:^{ view.alpha = 1; }];
-    [self performAction:action];
-}
-
 - (void)setBackgroundAction:(CYLPlaceholderAction)backgroundAction {
     _backgroundAction = [backgroundAction copy];
     if (backgroundAction && !self.backgroundTapRecognizer) {
@@ -178,7 +266,7 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
     // [EN] VoiceOver users reach the background action through the reserved component.
     // [CN] VoiceOver 用户通过保留组件触发背景点击动作。
     CYLPlaceholderView *reserved = self.placeholderView;
-    if (reserved && self.componentActions.firstObject == NSNull.null) {
+    if (reserved && !reserved.isTapInteractive) {
         if (backgroundAction) {
             reserved.isAccessibilityElement = YES;
             reserved.accessibilityTraits |= UIAccessibilityTraitButton;
@@ -194,11 +282,10 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if (gestureRecognizer != self.backgroundTapRecognizer) return YES;
-    // [EN] A tappable component handles its own taps.
-    // [CN] 可点击的组件自己处理点击。
+    // [EN] A tappable component handles its own taps; one with interaction turned off lets the background act.
+    // [CN] 可点击的组件自己处理点击；关闭了交互的组件让背景处理。
     for (UIView *view = touch.view; view && view != self; view = view.superview) {
-        NSUInteger index = [self.mutableComponentViews indexOfObjectIdenticalTo:(CYLPlaceholderView *)view];
-        if (index != NSNotFound && self.componentActions[index] != NSNull.null) return NO;
+        if ([view isKindOfClass:CYLPlaceholderView.class] && ((CYLPlaceholderView *)view).isTapInteractive) return NO;
     }
     return YES;
 }

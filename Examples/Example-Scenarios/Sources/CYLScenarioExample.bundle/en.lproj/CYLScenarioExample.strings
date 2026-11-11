@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "Data";
 "CYLScenarioSectionPermissions" = "Permission missing (not a network failure)";
 "CYLScenarioFeedbackChooseManually" = "Opening the address list…";
+"CYLScenarioSectionConfigurations" = "Configuration files (JSON / plist)";
+"CYLScenarioActionShowFile" = "File";
+"CYLScenarioFormatActionTapped" = "Tapped: %@";
+"CYLScenarioInteractionOn" = "Tap: on";
+"CYLScenarioInteractionOff" = "Tap: off";
+"CYLScenarioConfigTapEachButton" = "Tap each button";
+"CYLScenarioConfigHighlightDim" = "Highlight: dim";
+"CYLScenarioConfigHighlightShrink" = "Highlight: shrink";
+"CYLScenarioConfigHighlightNone" = "Highlight: none";
+"CYLScenarioConfigInteractionOff" = "Interaction off: no tap, no highlight";
+"CYLScenarioConfigPlaybackLoop" = "Loops (default)";
+"CYLScenarioConfigPlaybackOnce" = "Plays once";
+"CYLScenarioConfigPlaybackThree" = "Plays 3 times";

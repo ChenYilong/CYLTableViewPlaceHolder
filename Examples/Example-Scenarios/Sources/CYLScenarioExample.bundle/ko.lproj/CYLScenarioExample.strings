@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "데이터";
 "CYLScenarioSectionPermissions" = "권한 없음(네트워크 오류 아님)";
 "CYLScenarioFeedbackChooseManually" = "주소 목록을 여는 중…";
+"CYLScenarioSectionConfigurations" = "설정 파일로 생성(JSON / plist)";
+"CYLScenarioActionShowFile" = "파일";
+"CYLScenarioFormatActionTapped" = "탭함: %@";
+"CYLScenarioInteractionOn" = "탭: 켜짐";
+"CYLScenarioInteractionOff" = "탭: 꺼짐";
+"CYLScenarioConfigTapEachButton" = "각 버튼을 눌러 보세요";
+"CYLScenarioConfigHighlightDim" = "강조: 어둡게";
+"CYLScenarioConfigHighlightShrink" = "강조: 축소";
+"CYLScenarioConfigHighlightNone" = "강조: 없음";
+"CYLScenarioConfigInteractionOff" = "상호작용 끔: 탭과 강조 없음";
+"CYLScenarioConfigPlaybackLoop" = "반복 재생(기본)";
+"CYLScenarioConfigPlaybackOnce" = "한 번 재생";
+"CYLScenarioConfigPlaybackThree" = "3번 재생";

@@ -44,6 +44,20 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
 - (instancetype)initWithComponents:(NSArray<CYLPlaceholderComponent *> *)components
                            actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
     NS_DESIGNATED_INITIALIZER NS_SWIFT_NAME(init(components:actions:));
+/// A placeholder from a configuration dictionary (JSON or property list), as described in
+/// docs/Placeholder-Scenarios.md: "scenario" (a name, see `+[CYLPlaceholderScenarioCatalog scenarioNamed:]`),
+/// "components" (component dictionaries, replacing the scenario's), "overrides" (dictionaries with an "index" and the
+/// component fields "action", "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore"), and
+/// "backgroundAction" (an action name, or "" for none). Handlers come from `actions`, keyed by action.
+- (nullable instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
+                                       actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
+                                         error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(configuration:actions:));
+/// The configuration in a local ".json" or ".plist" file.
+- (nullable instancetype)initWithContentsOfURL:(NSURL *)url
+                                       actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
+                                         error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(contentsOf:actions:));
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 

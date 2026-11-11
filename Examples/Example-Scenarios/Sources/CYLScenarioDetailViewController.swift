@@ -20,6 +20,8 @@ final class CYLScenarioDetailViewController: UITableViewController {
 
     private let scenario: CYLPlaceholderScenario
     private var isLoading = false
+    /// Every component's `tapInteractionEnabled`; off keeps the components visible but inert.
+    private var interactionEnabled = true
     private var rows = 0
 
     init(scenario: CYLPlaceholderScenario) {
@@ -39,11 +41,28 @@ final class CYLScenarioDetailViewController: UITableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "row")
         tableView.tableFooterView = UIView()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionClear),
-                                                            style: .plain, target: self, action: #selector(clear))
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionClear), style: .plain, target: self,
+                            action: #selector(clear)),
+            interactionItem(),
+        ]
         tableView.cyl_placeholderViewBlock({ [weak self] _ in
             self?.makePlaceholder()
         })
+        tableView.reloadData()
+    }
+
+    private func interactionItem() -> UIBarButtonItem {
+        let title = CYLScenarioLocalizedString(interactionEnabled ? .interactionOn : .interactionOff)
+        let item = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(toggleInteraction))
+        item.accessibilityIdentifier = "interactionToggle"
+        return item
+    }
+
+    /// Each component exposes its own switch: off, a tap neither runs the action nor highlights.
+    @objc private func toggleInteraction() {
+        interactionEnabled.toggle()
+        navigationItem.rightBarButtonItems?[1] = interactionItem()
         tableView.reloadData()
     }
 
@@ -51,6 +70,14 @@ final class CYLScenarioDetailViewController: UITableViewController {
         if isLoading {
             return CYLPlaceholderStackView(scenario: .loading, actions: nil)
         }
+        let placeholder = makeScenarioPlaceholder()
+        for component in placeholder.componentViews {
+            component.tapInteractionEnabled = interactionEnabled
+        }
+        return placeholder
+    }
+
+    private func makeScenarioPlaceholder() -> CYLPlaceholderStackView {
         return CYLPlaceholderStackView(scenario: scenario, actions: [
             .retry: { [weak self] _, _ in self?.retry() },
             .contactSupport: { [weak self] _, _ in

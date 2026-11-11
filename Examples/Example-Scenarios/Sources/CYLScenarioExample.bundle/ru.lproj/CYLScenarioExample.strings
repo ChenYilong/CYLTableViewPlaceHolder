@@ -38,3 +38,16 @@
 "CYLScenarioStateData" = "Данные";
 "CYLScenarioSectionPermissions" = "Нет разрешения (не сбой сети)";
 "CYLScenarioFeedbackChooseManually" = "Открываем список адресов…";
+"CYLScenarioSectionConfigurations" = "Файлы конфигурации (JSON / plist)";
+"CYLScenarioActionShowFile" = "Файл";
+"CYLScenarioFormatActionTapped" = "Нажато: %@";
+"CYLScenarioInteractionOn" = "Нажатия: вкл";
+"CYLScenarioInteractionOff" = "Нажатия: выкл";
+"CYLScenarioConfigTapEachButton" = "Нажмите каждую кнопку";
+"CYLScenarioConfigHighlightDim" = "Подсветка: затемнение";
+"CYLScenarioConfigHighlightShrink" = "Подсветка: уменьшение";
+"CYLScenarioConfigHighlightNone" = "Подсветка: нет";
+"CYLScenarioConfigInteractionOff" = "Взаимодействие выключено: без нажатия и подсветки";
+"CYLScenarioConfigPlaybackLoop" = "Повтор (по умолчанию)";
+"CYLScenarioConfigPlaybackOnce" = "Один раз";
+"CYLScenarioConfigPlaybackThree" = "Три раза";
