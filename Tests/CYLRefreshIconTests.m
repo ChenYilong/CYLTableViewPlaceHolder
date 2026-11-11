@@ -123,7 +123,7 @@
     XCTAssertFalse(header.usesIconView, @"removing nothing creates nothing");
 }
 
-- (void)testAnIconAnimationTakesTheAnimationViewsPlaceCenteredVertically {
+- (void)testAnIconAnimationAndTheStateTextAreOneCenteredPlaceholderView {
     CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
     [header setBundledIconAnimation:@"CYLRefreshArrows.gif" size:CGSizeMake(36, 36) forState:CYLRefreshStateIdle];
     [self layOut:header];
@@ -131,27 +131,38 @@
     XCTAssertEqual(header.iconView.superview, header);
     XCTAssertTrue(header.animationView.hidden);
     XCTAssertFalse(header.iconView.hidden);
-    XCTAssertTrue(CGSizeEqualToSize(header.iconView.bounds.size, CGSizeMake(36, 36)));
-    XCTAssertEqualWithAccuracy(header.iconView.center.y, CGRectGetMidY(header.bounds), 0.5, @"centered in the height");
-    XCTAssertEqualWithAccuracy(CGRectGetMaxX(header.iconView.frame), CGRectGetMaxX(header.animationView.frame), 0.5,
-                               @"right-aligned where the GIF view draws its images");
-    CGFloat textWidth = MAX(header.stateLabel.cyl_textWidth, header.lastUpdatedTimeLabel.cyl_textWidth);
-    CGFloat textStart = header.cyl_w * 0.5 - textWidth * 0.5;
-    XCTAssertLessThanOrEqual(CGRectGetMaxX(header.iconView.frame), textStart - header.labelLeftInset + 0.5,
-                             @"the GIF view's gap to the text");
-    // [EN] The component draws inside the icon. [CN] 组件在图标内绘制。
+    // [EN] One CYLPlaceholderView holds the icon and both lines of text. [CN] 一个 CYLPlaceholderView 同时包含图标与两行文字。
     CYLPlaceholderView *view = header.iconView.placeholderView;
+    NSString *expected = [NSString stringWithFormat:@"%@\n%@", header.stateLabel.text, header.lastUpdatedTimeLabel.text];
+    XCTAssertEqualObjects(view.textLabel.text, expected);
+    XCTAssertEqual(header.stateLabel.alpha, 0, @"the label's text is inside the icon's view");
+    XCTAssertEqual(header.lastUpdatedTimeLabel.alpha, 0);
+    XCTAssertFalse(header.stateLabel.hidden, @"the caller's hidden setting is kept");
+    XCTAssertEqualWithAccuracy(header.iconView.center.x, CGRectGetMidX(header.bounds), 0.5, @"icon and text centered as one");
+    XCTAssertEqualWithAccuracy(header.iconView.center.y, CGRectGetMidY(header.bounds), 0.5, @"centered in the height");
     XCTAssertTrue(CGRectEqualToRect(view.frame, header.iconView.bounds));
     [view layoutIfNeeded];
-    UIView *item = view.imageView.superview;
-    CGRect content = [header.iconView convertRect:item.frame fromView:item.superview];
-    XCTAssertTrue(CGRectContainsRect(CGRectInset(header.iconView.bounds, -0.5, -0.5), content), @"%@",
-                  NSStringFromCGRect(content));
-    XCTAssertTrue(header.iconView.accessibilityElementsHidden, @"decorative: the state label speaks");
+    CGRect icon = [header.iconView convertRect:view.imageView.frame fromView:view.imageView.superview];
+    CGRect text = [header.iconView convertRect:view.textLabel.frame fromView:view.textLabel.superview];
+    XCTAssertTrue(CGSizeEqualToSize(icon.size, CGSizeMake(36, 36)), @"%@", NSStringFromCGRect(icon));
+    XCTAssertLessThanOrEqual(CGRectGetMaxX(icon), CGRectGetMinX(text), @"the text follows the icon");
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(icon), CGRectGetMidY(text), 0.5, @"icon and text share a center line");
+    XCTAssertTrue(CGRectContainsRect(CGRectInset(header.iconView.bounds, -0.5, -0.5), CGRectUnion(icon, text)));
+    XCTAssertTrue(header.iconView.isAccessibilityElement, @"VoiceOver reads the text from the view that shows it");
+    XCTAssertEqualObjects(header.iconView.accessibilityLabel, expected);
+    XCTAssertTrue(header.stateLabel.accessibilityElementsHidden);
+
+    [header setState:CYLRefreshStateRefreshing];
+    [self layOut:header];
+    XCTAssertEqual(header.iconView.placeholderView, view, @"a new state text updates in place");
+    XCTAssertTrue([view.textLabel.text hasPrefix:header.stateLabel.text]);
+    [header setState:CYLRefreshStateIdle];
+
     header.stateLabel.hidden = YES;
     header.lastUpdatedTimeLabel.hidden = YES;
     [self layOut:header];
     XCTAssertEqualWithAccuracy(header.iconView.center.x, CGRectGetMidX(header.bounds), 0.5, @"centered without text");
+    XCTAssertTrue(CGSizeEqualToSize(header.iconView.bounds.size, CGSizeMake(36, 36)), @"the icon alone");
 }
 
 - (void)testThePlaybackFollowsTheControlState {
