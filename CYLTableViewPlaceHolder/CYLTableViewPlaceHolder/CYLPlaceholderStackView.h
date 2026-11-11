@@ -34,21 +34,27 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
 /// The action of a tap anywhere outside a tappable component; nil turns that off. Set from the scenario.
 @property (nonatomic, copy, nullable) CYLPlaceholderAction backgroundAction;
 
-/// The scenario's components, with handlers for its actions (for example `CYLPlaceholderActionRetry` and
-/// `CYLPlaceholderActionContactSupport`). An action without a handler does nothing.
+/*!
+ * The scenario's components, with handlers for its actions (for example `CYLPlaceholderActionRetry` and
+ * `CYLPlaceholderActionContactSupport`). An action without a handler does nothing.
+ */
 - (instancetype)initWithScenario:(CYLPlaceholderScenario)scenario
                          actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
     NS_SWIFT_NAME(init(scenario:actions:));
-/// Custom components; the first is the reserved one (a default icon and title when the array is empty or the
-/// first component's attributes are invalid).
+/*!
+ * Custom components; the first is the reserved one (a default icon and title when the array is empty or the
+ * first component's attributes are invalid).
+ */
 - (instancetype)initWithComponents:(NSArray<CYLPlaceholderComponent *> *)components
                            actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
     NS_DESIGNATED_INITIALIZER NS_SWIFT_NAME(init(components:actions:));
-/// A placeholder from a configuration dictionary (JSON or property list), as described in
-/// docs/Placeholder-Scenarios.md: "scenario" (a name, see `+[CYLPlaceholderScenarioCatalog scenarioNamed:]`),
-/// "components" (component dictionaries, replacing the scenario's), "overrides" (dictionaries with an "index" and the
-/// component fields "action", "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore"), and
-/// "backgroundAction" (an action name, or "" for none). Handlers come from `actions`, keyed by action.
+/*!
+ * A placeholder from a configuration dictionary (JSON or property list), as described in
+ * docs/Placeholder-Scenarios.md: "scenario" (a name, see `+[CYLPlaceholderScenarioCatalog scenarioNamed:]`),
+ * "components" (component dictionaries, replacing the scenario's), "overrides" (dictionaries with an "index" and the
+ * component fields "action", "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore"), and
+ * "backgroundAction" (an action name, or "" for none). Handlers come from `actions`, keyed by action.
+ */
 - (nullable instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                        actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
                                          error:(NSError * _Nullable * _Nullable)error

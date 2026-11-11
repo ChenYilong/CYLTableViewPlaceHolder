@@ -70,6 +70,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/update-docs-navigation.py --check
+      # Public API documentation comments: one block comment, not stacked /// lines (instructions.md, "Code conventions").
+      - run: python3 scripts/check_doc_comments.py
 
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:

@@ -29,6 +29,9 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 - **New feature or user-visible change:** a bilingual `docs/<feature>.md`, a README line linking to it,
   bug-free debugging screenshots in `docs/assets/` embedded in the document, final screenshots in the
   README. If the change could not be run, say so; never present a diagram as a screenshot.
+- **Public API comments:** every public declaration has a documentation comment directly above it; several lines
+  are one block, `/*! … */` in Objective-C headers and `/** … */` in Swift, never stacked `///`
+  (`instructions.md`, "Code conventions"). Run `python3 scripts/check_doc_comments.py`.
 - **Every commit message** ends its body with the line `By @ChenYilong <luohanchenyilong@163.com>`
   (before trailers, exactly once; `instructions.md`, "Author line in every commit message").
 - **Before every commit:** run the navigation script and `scripts/check_localizations.py`, lint the Markdown

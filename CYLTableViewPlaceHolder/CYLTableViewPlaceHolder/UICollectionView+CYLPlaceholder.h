@@ -7,8 +7,10 @@ typedef void (^CYLCollectionPlaceholderNormalBlock)(UICollectionView *collection
 
 @interface UICollectionView (CYLPlaceholder)
 
-/// Pass nil to disable automatic placeholder handling and restore the normal state.
-/// The blocks should not retain the collection view or its owner strongly.
+/*!
+ * Pass nil to disable automatic placeholder handling and restore the normal state.
+ * The blocks should not retain the collection view or its owner strongly.
+ */
 - (void)cyl_placeholderViewBlock:(nullable CYLCollectionPlaceholderViewBlock)placeholderViewBlock;
 - (void)cyl_placeholderViewBlock:(nullable CYLCollectionPlaceholderViewBlock)placeholderViewBlock
                backToNormalBlock:(nullable CYLCollectionPlaceholderNormalBlock)backToNormalBlock;

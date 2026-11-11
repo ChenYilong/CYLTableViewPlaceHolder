@@ -11,8 +11,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Plays one animation view. Mirrors `CYLTabBarItemAnimationPlayer`.
-/// Call on the main thread.
+/*!
+ * Plays one animation view. Mirrors `CYLTabBarItemAnimationPlayer`.
+ * Call on the main thread.
+ */
 @protocol CYLPlaceholderItemAnimationPlayer <NSObject>
 @property (nonatomic, weak, readonly, nullable) UIView *animationView;
 /// Plays once from the first frame.

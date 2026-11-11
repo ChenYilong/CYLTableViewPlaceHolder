@@ -32,6 +32,12 @@ the integrated `CYLRefresh` component, and an example application. Read
   scheme. Do not copy device identifiers or signing credentials from another
   machine.
 
+- Public API documentation comments (`instructions.md`, "Code conventions"): every public declaration has one,
+  placed directly above it. Several lines are one block comment, never stacked `///` lines: `/*! … */` in
+  Objective-C headers (shown for Objective-C and the generated Swift interface), `/** … */` in Swift (Swift does
+  not read `/*!`); other platforms follow their official style (KDoc / Javadoc / TSDoc `/** */`, Dart `///`).
+  `scripts/check_doc_comments.py` checks it in CI.
+
 ## Project and verification
 
 - The main example (`Examples/Example`, Swift) embeds the project's own framework target

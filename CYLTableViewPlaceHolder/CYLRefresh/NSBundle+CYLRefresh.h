@@ -11,9 +11,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSBundle (CYLRefresh)
-/// The library's single resource bundle, CYLTableViewPlaceHolder.bundle. It holds the refresh images and the
-/// refresh strings (`<language>.lproj/CYLRefresh.strings`) next to the placeholder's resources; CYLRefresh.bundle
-/// no longer exists.
+/*!
+ * The library's single resource bundle, CYLTableViewPlaceHolder.bundle. It holds the refresh images and the
+ * refresh strings (`<language>.lproj/CYLRefresh.strings`) next to the placeholder's resources; CYLRefresh.bundle
+ * no longer exists.
+ */
 + (instancetype)cyl_refreshBundle;
 + (UIImage *)cyl_arrowImage;
 + (UIImage *)cyl_trailArrowImage;

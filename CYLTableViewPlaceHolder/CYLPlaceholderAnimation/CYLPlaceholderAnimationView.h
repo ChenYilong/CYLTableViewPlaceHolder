@@ -34,10 +34,12 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderAnimationBackend) {
 
 typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
 
-/// Hosts the view made by the animator that `CYLPlaceholderItemAnimatorRegistry`
-/// picks for a local file, and drives it through that view's
-/// `CYLPlaceholderItemAnimationPlayer`. Lottie, PAG, Rive and GIF animators come
-/// from their own subspecs.
+/*!
+ * Hosts the view made by the animator that `CYLPlaceholderItemAnimatorRegistry`
+ * picks for a local file, and drives it through that view's
+ * `CYLPlaceholderItemAnimationPlayer`. Lottie, PAG, Rive and GIF animators come
+ * from their own subspecs.
+ */
 @interface CYLPlaceholderAnimationView : UIView <CYLPlaceholderAnimationPlayer>
 
 @property (nonatomic, strong, readonly) UIView *animationView;
@@ -55,8 +57,10 @@ typedef void (^CYLPlaceholderAnimationErrorHandler)(NSError *error);
                                     size:(CGSize)size
                              contentMode:(UIViewContentMode)contentMode
                                    error:(NSError * _Nullable * _Nullable)error;
-/// Option values must be strings or numbers; they reach the animator in the URL fragment,
-/// as in CYLTabBarController (`#artboard=Main&duration=1`).
+/*!
+ * Option values must be strings or numbers; they reach the animator in the URL fragment,
+ * as in CYLTabBarController (`#artboard=Main&duration=1`).
+ */
 - (nullable instancetype)initWithFileURL:(NSURL *)fileURL
                                     size:(CGSize)size
                              contentMode:(UIViewContentMode)contentMode

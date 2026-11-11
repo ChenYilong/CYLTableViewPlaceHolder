@@ -127,8 +127,10 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
         }
     }
 
-    /// [EN] 0 loops and 1 plays once a named animation; other counts, and state machines, are not supported.
-    /// [CN] 具名动画：0 循环，1 播放一次；其他次数以及状态机不支持。
+    /**
+     * [EN] 0 loops and 1 plays once a named animation; other counts, and state machines, are not supported.
+     * [CN] 具名动画：0 循环，1 播放一次；其他次数以及状态机不支持。
+     */
     public func setAnimationRepeatCount(_ repeatCount: Int) -> Bool {
         guard configuration.animationName != nil, repeatCount == 0 || repeatCount == 1 else {
             return false

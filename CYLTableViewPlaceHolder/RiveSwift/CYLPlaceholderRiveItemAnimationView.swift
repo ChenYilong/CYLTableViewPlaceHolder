@@ -78,8 +78,10 @@ struct CYLPlaceholderRiveItemAnimationConfiguration {
     }
 }
 
-/// Plays a Rive artboard through its view model: the boolean `active` property is set to true, then back to false
-/// after `duration` seconds, or the trigger `trigger` is fired.
+/**
+ * Plays a Rive artboard through its view model: the boolean `active` property is set to true, then back to false
+ * after `duration` seconds, or the trigger `trigger` is fired.
+ */
 @available(iOS 14.0, *)
 @objc(CYLPlaceholderRiveItemAnimationView)
 public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding {
@@ -98,8 +100,10 @@ public final class CYLPlaceholderRiveItemAnimationView: UIView, CYLPlaceholderIt
     private var originalColors: [String: RiveRuntime.Color] = [:]
     private var overriddenColorPaths: Set<String> = []
 
-    /// The renderer for legacy options (another strategy of the same interface). Injected by
-    /// `CYLRivePlaceholderItemAnimator`; nil: legacy options show nothing.
+    /**
+     * The renderer for legacy options (another strategy of the same interface). Injected by
+     * `CYLRivePlaceholderItemAnimator`; nil: legacy options show nothing.
+     */
     @objc public static var legacyViewProvider: AnyClass?
     /// Where the views made by `makeAnimationView` load their files; injectable.
     static var fileProvider: CYLPlaceholderRiveItemAnimationFileProviding = CYLPlaceholderRiveItemAnimationFileCache.shared
