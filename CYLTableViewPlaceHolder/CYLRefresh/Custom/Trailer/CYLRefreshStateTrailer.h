@@ -14,9 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CYLRefreshStateTrailer : CYLRefreshTrailer
 
 #pragma mark - 状态相关
-/*! 显示刷新状态的label */
+/*!
+ * 显示刷新状态的label
+ */
 @property (weak, nonatomic, readonly) UILabel *stateLabel;
-/*! 设置state状态下的文字 */
+/*!
+ * 设置state状态下的文字
+ */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
 
 @end

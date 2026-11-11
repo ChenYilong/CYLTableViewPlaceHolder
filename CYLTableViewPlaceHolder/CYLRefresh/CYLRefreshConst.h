@@ -3,10 +3,14 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 
-/*! [CN] 弱引用 [EN] A weak reference to self named weakSelf. */
+/*!
+ * [CN] 弱引用 [EN] A weak reference to self named weakSelf.
+ */
 #define CYLWeakSelf __weak typeof(self) weakSelf = self;
 
-/*! [CN] 日志输出（仅 DEBUG） [EN] Logging, in DEBUG builds only. */
+/*!
+ * [CN] 日志输出（仅 DEBUG） [EN] Logging, in DEBUG builds only.
+ */
 #ifdef DEBUG
 #define CYLRefreshLog(...) NSLog(__VA_ARGS__)
 #else
@@ -17,23 +21,35 @@
 #define cyl_cguard(X) if (X);
 #endif
 
-/*! [CN] 过期提醒 [EN] Marks a declaration as deprecated with a message. */
+/*!
+ * [CN] 过期提醒 [EN] Marks a declaration as deprecated with a message.
+ */
 #define CYLRefreshDeprecated(DESCRIPTION) __attribute__((deprecated(DESCRIPTION)))
 
-/*! [CN] 运行时 objc_msgSend [EN] Calls objc_msgSend with a view argument. */
+/*!
+ * [CN] 运行时 objc_msgSend [EN] Calls objc_msgSend with a view argument.
+ */
 #define CYLRefreshMsgSend(...) ((void (*)(void *, SEL, UIView *))objc_msgSend)(__VA_ARGS__)
 #define CYLRefreshMsgTarget(target) (__bridge void *)(target)
 
-/*! [CN] RGB 颜色 [EN] A color from 0–255 red, green and blue values. */
+/*!
+ * [CN] RGB 颜色 [EN] A color from 0–255 red, green and blue values.
+ */
 #define CYLRefreshColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
 
-/*! [CN] 文字颜色 [EN] The default text color of the refresh labels. */
+/*!
+ * [CN] 文字颜色 [EN] The default text color of the refresh labels.
+ */
 #define CYLRefreshLabelTextColor CYLRefreshColor(90, 90, 90)
 
-/*! [CN] 字体大小 [EN] The default font of the refresh labels. */
+/*!
+ * [CN] 字体大小 [EN] The default font of the refresh labels.
+ */
 #define CYLRefreshLabelFont [UIFont boldSystemFontOfSize:14]
 
-/*! [CN] 常量 [EN] Layout constants and keys of the refresh components. */
+/*!
+ * [CN] 常量 [EN] Layout constants and keys of the refresh components.
+ */
 UIKIT_EXTERN const CGFloat CYLRefreshLabelLeftInset;
 UIKIT_EXTERN const CGFloat CYLRefreshHeaderHeight;
 UIKIT_EXTERN const CGFloat CYLRefreshFooterHeight;
@@ -71,13 +87,17 @@ UIKIT_EXTERN NSString *const CYLRefreshHeaderNoneLastDateText;
 
 UIKIT_EXTERN NSString *const CYLRefreshDidChangeLanguageNotification;
 
-/*! [CN] 状态检查：状态未变时返回，否则调用 super [EN] Returns when the state did not change, else calls super. */
+/*!
+ * [CN] 状态检查：状态未变时返回，否则调用 super [EN] Returns when the state did not change, else calls super.
+ */
 #define CYLRefreshCheckState \
 CYLRefreshState oldState = self.state; \
 if (state == oldState) return; \
 [super setState:state];
 
-/*! [CN] 异步主线程执行，不强持有 self [EN] Runs the code asynchronously on the main queue without retaining self. */
+/*!
+ * [CN] 异步主线程执行，不强持有 self [EN] Runs the code asynchronously on the main queue without retaining self.
+ */
 #define CYLRefreshDispatchAsyncOnMainQueue(x) \
 __weak typeof(self) weakSelf = self; \
 dispatch_async(dispatch_get_main_queue(), ^{ \

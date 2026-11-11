@@ -11,14 +11,22 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CYLRefreshBackStateFooter : CYLRefreshBackFooter
-/*! 文字距离圈圈、箭头的距离 */
+/*!
+ * 文字距离圈圈、箭头的距离
+ */
 @property (assign, nonatomic) CGFloat labelLeftInset;
-/*! 显示刷新状态的label */
+/*!
+ * 显示刷新状态的label
+ */
 @property (weak, nonatomic, readonly) UILabel *stateLabel;
-/*! 设置state状态下的文字 */
+/*!
+ * 设置state状态下的文字
+ */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
 
-/*! 获取state状态下的title */
+/*!
+ * 获取state状态下的title
+ */
 - (NSString *)titleForState:(CYLRefreshState)state;
 @end
 

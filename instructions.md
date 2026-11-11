@@ -45,28 +45,38 @@ spans several lines must reach them as one comment.
 
   Clang attaches `/*! … */` to the declaration that follows, so Xcode shows it for the Objective-C API and for the
   Swift interface generated from the header.
-- **Single-line comments follow the same format.** The block format above applies to a one-line documentation comment
-  of the public API too: in an Objective-C header write `/*! One sentence. */`, not `/// One sentence.` or
-  `/** One sentence. */`. A file that holds public API uses one documentation-comment format throughout, for every
-  comment, one line or several, so callers and readers see the same form everywhere. This applies to every platform
-  and language: each uses its block format from the list below for single-line comments as well, except where the
-  platform's official style has no block form (Dart).
+- **Single-line comments use the block format too.** A one-line documentation comment of the public API is written
+  like a multi-line one, as a three-line block above the declaration:
+
+  ```objc
+  /*!
+   * One sentence.
+   */
+  - (void)example;
+  ```
+
+  Do not write `/*! One sentence. */` on one line, and do not put a trailing comment after a declaration or an enum
+  value (`/**< */`, `/*!< */`, `///<` or `//`); move it into a block above it.
+- **One format per public file.** A file that holds public API uses a single documentation-comment format for every
+  comment, short or long, so callers and readers see the same form everywhere.
 - **Swift sources of the library**: Swift's documentation parser reads `///` and `/** … */`, not `/*!`. Every
-  documentation comment is a `/** … */` block, one line (`/** One sentence. */`) or several (each line starting with
-  ` * `); no `///`.
+  documentation comment is the same three-line block with `/**` (`/**`, ` * text`, ` */`); no `///`.
 - **Placement**: directly above the declaration, with no blank line or other code in between; the first sentence
   summarizes. Keep the `[EN]` / `[CN]` pair of a bilingual comment inside the same block. Never put `*/` in the text.
-- **Other platforms**, from their official documentation:
-  - Kotlin (Android): KDoc, `/** … */` ([KDoc](https://kotlinlang.org/docs/kotlin-doc.html)); Java: Javadoc,
-    `/** … */`; one line is `/** One sentence. */`.
-  - TypeScript / JavaScript (React Native, web): TSDoc / JSDoc, `/** … */`.
-  - C / C++: Doxygen, `/** … */` or `/*! … */`.
-  - Dart (Flutter): the official style is `///` for every documentation comment, including multi-line ones
-    ([Effective Dart](https://dart.dev/effective-dart/documentation)); block comments are not used for documentation.
-    Follow the platform where it differs from the iOS rule.
-- **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a
-  `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review new public declarations for a missing
-  documentation comment by hand.
+- **Every platform and language** follows the same rule with the block form of its documentation tool, the opening
+  and closing markers on their own lines, one line of text or several:
+  - Kotlin (KDoc), Java (Javadoc), TypeScript and JavaScript (TSDoc / JSDoc): `/** … */`.
+  - Python: a docstring in triple quotes, the opening and closing `"""` on their own lines.
+  - Go: `/* … */`.
+  - C#: `/** … */` with XML documentation tags (`<summary>`, `<param>`, `<returns>`).
+  - Rust: `/** … */`.
+  - C / C++: Doxygen `/** … */` or `/*! … */`, one of them per file.
+  - A language without a block form for documentation (Dart, whose only form is `///`) uses its single documentation
+    form throughout the file.
+- **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a one-line
+  block, an opening marker with text after it, a line inside a block that does not start with `*`, a trailing comment
+  after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review
+  new public declarations for a missing documentation comment by hand.
 
 ## Xcode and CocoaPods project checks
 

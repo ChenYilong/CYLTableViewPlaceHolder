@@ -11,7 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! [EN] Main actor in Swift: views are used on the main thread. [CN] 在 Swift 中属于主 actor：视图只在主线程使用。 */
+/*!
+ * [EN] Main actor in Swift: views are used on the main thread. [CN] 在 Swift 中属于主 actor：视图只在主线程使用。
+ */
 #ifndef NS_SWIFT_UI_ACTOR
 #define NS_SWIFT_UI_ACTOR
 #endif
@@ -30,13 +32,19 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_UI_ACTOR
 @protocol CYLPlaceholderItemAnimationPlayableView <NSObject>
 
-/*! [EN] Plays once, from the start. [CN] 从头播放一次。 */
+/*!
+ * [EN] Plays once, from the start. [CN] 从头播放一次。
+ */
 - (void)cyl_playAnimationView NS_SWIFT_NAME(playAnimation());
 
-/*! [EN] Shows the end state without playing (the tab selected at launch, #389). [CN] 不播放，直接显示结束状态（启动时选中的 Tab，#389）。 */
+/*!
+ * [EN] Shows the end state without playing (the tab selected at launch, #389). [CN] 不播放，直接显示结束状态（启动时选中的 Tab，#389）。
+ */
 - (void)cyl_showAnimationViewLastFrame NS_SWIFT_NAME(showAnimationLastFrame());
 
-/*! [EN] Stops, back to the start. [CN] 停止并回到起始状态。 */
+/*!
+ * [EN] Stops, back to the start. [CN] 停止并回到起始状态。
+ */
 - (void)cyl_stopAnimationView NS_SWIFT_NAME(stopAnimation());
 
 @optional
@@ -48,7 +56,9 @@ NS_SWIFT_UI_ACTOR
  */
 - (void)cyl_applyAnimationViewColors:(nullable NSDictionary<NSString *, UIColor *> *)colors NS_SWIFT_NAME(applyAnimationColors(_:));
 
-/*! Placeholder addition: NO while an asynchronous load (Rive) is in progress. Views without it are ready at once. */
+/*!
+ * Placeholder addition: NO while an asynchronous load (Rive) is in progress. Views without it are ready at once.
+ */
 /*!
  * [EN] How many times `cyl_playAnimationView` plays: 0 loops until stopped, 1 plays once. NO when unsupported.
  * [CN] `cyl_playAnimationView` 播放的次数：0 表示循环直到停止，1 表示播放一次。不支持时返回 NO。
@@ -56,9 +66,13 @@ NS_SWIFT_UI_ACTOR
 - (BOOL)cyl_setAnimationViewRepeatCount:(NSInteger)repeatCount NS_SWIFT_NAME(setAnimationRepeatCount(_:));
 
 @property (nonatomic, readonly) BOOL cyl_isAnimationViewReady NS_SWIFT_NAME(isAnimationReady);
-/*! Placeholder addition: called on the main thread when an asynchronous load finishes. */
+/*!
+ * Placeholder addition: called on the main thread when an asynchronous load finishes.
+ */
 @property (nonatomic, copy, nullable) void (^cyl_animationViewReadyHandler)(void) NS_SWIFT_NAME(animationReadyHandler);
-/*! Placeholder addition: called on the main thread when an asynchronous load fails, so the host can fall back. */
+/*!
+ * Placeholder addition: called on the main thread when an asynchronous load fails, so the host can fall back.
+ */
 @property (nonatomic, copy, nullable) void (^cyl_animationViewErrorHandler)(NSError *error) NS_SWIFT_NAME(animationErrorHandler);
 
 @end

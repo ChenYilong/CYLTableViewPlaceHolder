@@ -18,20 +18,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class CYLPlaceholderStackView;
 
-/*! Runs on the main thread when a component's action is performed. */
+/*!
+ * Runs on the main thread when a component's action is performed.
+ */
 typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder, CYLPlaceholderAction action);
 
 @interface CYLPlaceholderStackView : UIView
 
-/*! The vertical stack holding the components: centered, sized by its components. */
+/*!
+ * The vertical stack holding the components: centered, sized by its components.
+ */
 @property (nonatomic, strong, readonly) UIStackView *stackView;
-/*! The reserved first component: the icon and title. */
+/*!
+ * The reserved first component: the icon and title.
+ */
 @property (nonatomic, strong, readonly) CYLPlaceholderView *placeholderView;
-/*! Every component, the reserved one first. */
+/*!
+ * Every component, the reserved one first.
+ */
 @property (nonatomic, copy, readonly) NSArray<CYLPlaceholderView *> *componentViews;
-/*! The scenario the view was created from; CYLPlaceholderScenarioCount when it was created from components. */
+/*!
+ * The scenario the view was created from; CYLPlaceholderScenarioCount when it was created from components.
+ */
 @property (nonatomic, readonly) CYLPlaceholderScenario scenario;
-/*! The action of a tap anywhere outside a tappable component; nil turns that off. Set from the scenario. */
+/*!
+ * The action of a tap anywhere outside a tappable component; nil turns that off. Set from the scenario.
+ */
 @property (nonatomic, copy, nullable) CYLPlaceholderAction backgroundAction;
 
 /*!
@@ -59,7 +71,9 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
                                        actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
                                          error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(init(configuration:actions:));
-/*! The configuration in a local ".json" or ".plist" file. */
+/*!
+ * The configuration in a local ".json" or ".plist" file.
+ */
 - (nullable instancetype)initWithContentsOfURL:(NSURL *)url
                                        actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
                                          error:(NSError * _Nullable * _Nullable)error
@@ -67,17 +81,27 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
-/*! Appends a component under the last one and returns its view; nil, with a log, when its attributes are invalid. */
+/*!
+ * Appends a component under the last one and returns its view; nil, with a log, when its attributes are invalid.
+ */
 - (nullable CYLPlaceholderView *)appendComponent:(CYLPlaceholderComponent *)component NS_SWIFT_NAME(append(_:));
-/*! Appends a view the app made itself; a tap on it performs `action` when that is not nil. */
+/*!
+ * Appends a view the app made itself; a tap on it performs `action` when that is not nil.
+ */
 - (void)appendComponentView:(CYLPlaceholderView *)view
                      action:(nullable CYLPlaceholderAction)action
               spacingBefore:(CGFloat)spacingBefore NS_SWIFT_NAME(append(_:action:spacingBefore:));
-/*! Sets or, with nil, removes the handler of an action. */
+/*!
+ * Sets or, with nil, removes the handler of an action.
+ */
 - (void)setHandler:(nullable CYLPlaceholderActionHandler)handler forAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(setHandler(_:for:));
-/*! The first component whose tap performs `action`. */
+/*!
+ * The first component whose tap performs `action`.
+ */
 - (nullable CYLPlaceholderView *)componentViewForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(componentView(for:));
-/*! Runs the handler of `action`; NO when it has none. */
+/*!
+ * Runs the handler of `action`; NO when it has none.
+ */
 - (BOOL)performAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(performAction(_:));
 
 @end

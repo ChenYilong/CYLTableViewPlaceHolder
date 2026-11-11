@@ -23,13 +23,21 @@ NS_ASSUME_NONNULL_BEGIN
  * [EN] What a view controller shows; combine the options. [CN] 视图控制器显示的内容；可以组合。
  */
 typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
-    /*! [EN] Neither the bar nor the placeholder. [CN] 都不显示。 */
+    /*!
+     * [EN] Neither the bar nor the placeholder. [CN] 都不显示。
+     */
     CYLPlaceholderStatusDisplayNone = 0,
-    /*! [EN] The status bar at the top. [CN] 顶部状态条。 */
+    /*!
+     * [EN] The status bar at the top. [CN] 顶部状态条。
+     */
     CYLPlaceholderStatusDisplayStatusBar = 1 << 0,
-    /*! [EN] The placeholder of `cyl_placeholderScrollView` when it is empty (the default). [CN] 列表为空时的占位图（默认）。 */
+    /*!
+     * [EN] The placeholder of `cyl_placeholderScrollView` when it is empty (the default). [CN] 列表为空时的占位图（默认）。
+     */
     CYLPlaceholderStatusDisplayPlaceholder = 1 << 1,
-    /*! [EN] Both. [CN] 两者都显示。 */
+    /*!
+     * [EN] Both. [CN] 两者都显示。
+     */
     CYLPlaceholderStatusDisplayAll = CYLPlaceholderStatusDisplayStatusBar | CYLPlaceholderStatusDisplayPlaceholder,
 };
 
@@ -80,7 +88,9 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
 - (BOOL)cyl_applyStatusConfiguration:(NSDictionary<NSString *, id> *)configuration
                                error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(cyl_applyStatusConfiguration(_:));
-/*! [EN] The same, from a local ".json" or ".plist" file. [CN] 同上，读取本地 ".json" 或 ".plist" 文件。 */
+/*!
+ * [EN] The same, from a local ".json" or ".plist" file. [CN] 同上，读取本地 ".json" 或 ".plist" 文件。
+ */
 - (BOOL)cyl_applyStatusConfigurationWithContentsOfURL:(NSURL *)url
                                                 error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(cyl_applyStatusConfiguration(contentsOf:));

@@ -29,7 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol CYLPlaceholderStatusViewDelegate <NSObject>
 
 @optional
-/*! [EN] The bar was tapped; `sender` is the status view. [CN] 状态条被点击；`sender` 是状态视图。 */
+/*!
+ * [EN] The bar was tapped; `sender` is the status view. [CN] 状态条被点击；`sender` 是状态视图。
+ */
 - (void)statusViewClicked:(id)sender;
 
 @end
@@ -40,15 +42,21 @@ NS_ASSUME_NONNULL_BEGIN
  *      较大的动态字体会让状态条变高（`intrinsicContentSize`）。
  */
 FOUNDATION_EXPORT const CGFloat CYLPlaceholderStatusViewHight;
-/*! [EN] The same height, correctly spelled. [CN] 同一高度，正确拼写。 */
+/*!
+ * [EN] The same height, correctly spelled. [CN] 同一高度，正确拼写。
+ */
 FOUNDATION_EXPORT const CGFloat CYLPlaceholderStatusViewHeight;
 
-/*! [EN] Runs on the main thread when the bar is tapped. [CN] 状态条被点击时在主线程执行。 */
+/*!
+ * [EN] Runs on the main thread when the bar is tapped. [CN] 状态条被点击时在主线程执行。
+ */
 typedef void (^CYLPlaceholderStatusViewTapHandler)(CYLPlaceholderStatusView *statusView);
 
 @interface CYLPlaceholderStatusView : UIView
 
-/*! [EN] Told about taps, as in CYLChatKit. [CN] 接收点击，与 CYLChatKit 相同。 */
+/*!
+ * [EN] Told about taps, as in CYLChatKit. [CN] 接收点击，与 CYLChatKit 相同。
+ */
 @property (nonatomic, weak, nullable) id<CYLPlaceholderStatusViewDelegate> delegate;
 
 /*!
@@ -84,9 +92,13 @@ typedef void (^CYLPlaceholderStatusViewTapHandler)(CYLPlaceholderStatusView *sta
     NS_SWIFT_NAME(init(configuration:));
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
-/*! [EN] The icon and the title, laid out horizontally; a subview filling the bar. [CN] 横向排列的图标与标题；铺满状态条的子视图。 */
+/*!
+ * [EN] The icon and the title, laid out horizontally; a subview filling the bar. [CN] 横向排列的图标与标题；铺满状态条的子视图。
+ */
 @property (nonatomic, strong, readonly) CYLPlaceholderView *placeholderView;
-/*! [EN] The title shown; setting it updates the bar. [CN] 显示的文字；设置后更新状态条。 */
+/*!
+ * [EN] The title shown; setting it updates the bar. [CN] 显示的文字；设置后更新状态条。
+ */
 @property (nonatomic, copy, nullable) NSString *text;
 /*!
  * [EN] Runs on a tap, after the delegate. With neither a handler nor a delegate, the bar is plain text for VoiceOver;

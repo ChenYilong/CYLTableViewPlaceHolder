@@ -13,10 +13,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! Language selection for the core bundle's tables. */
+/*!
+ * Language selection for the core bundle's tables.
+ */
 @interface CYLPlaceholderLocalization : NSObject
 
-/*! The languages the core tables provide: en, zh-Hans, zh-Hant, ja, ko, ru, uk. */
+/*!
+ * The languages the core tables provide: en, zh-Hans, zh-Hant, ja, ko, ru, uk.
+ */
 @property (class, nonatomic, copy, readonly) NSArray<NSString *> *supportedLanguages;
 
 /*!
@@ -26,7 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (class, nonatomic, copy, nullable) NSString *language;
 
-/*! The supported language actually in use. */
+/*!
+ * The supported language actually in use.
+ */
 @property (class, nonatomic, copy, readonly) NSString *effectiveLanguage;
 
 /*!
@@ -56,7 +62,9 @@ FOUNDATION_EXPORT NSString *CYLPlaceholderLocalizedStringForKey(NSString *key, N
 
 NS_ASSUME_NONNULL_END
 
-/*! The core layer's lookup macro: reads only the core bundle. Examples define their own macro or function. */
+/*!
+ * The core layer's lookup macro: reads only the core bundle. Examples define their own macro or function.
+ */
 #define CYLPlaceholderLocalizedString(key, fallback) CYLPlaceholderLocalizedStringForKey((key), (fallback))
 
 NS_ASSUME_NONNULL_BEGIN
@@ -72,5 +80,7 @@ FOUNDATION_EXPORT NSBundle * _Nullable CYLPlaceholderResourceBundle(void);
 FOUNDATION_EXPORT NSURL * _Nullable CYLPlaceholderResourceURLForPath(NSString *path);
 NS_ASSUME_NONNULL_END
 
-/*! The core layer's resource macro: a file of the core bundle only. */
+/*!
+ * The core layer's resource macro: a file of the core bundle only.
+ */
 #define CYLPlaceholderResourceURL(path) CYLPlaceholderResourceURLForPath((path))

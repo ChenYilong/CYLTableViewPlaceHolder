@@ -28,7 +28,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! Registers a `CYLPlaceholderItemViewAnimator` for ".gif" files when linked. */
+/*!
+ * Registers a `CYLPlaceholderItemViewAnimator` for ".gif" files when linked.
+ */
 @interface CYLGIFPlaceholderItemAnimator : NSObject
 @property (class, nonatomic, readonly) CYLPlaceholderItemViewAnimator *animator;
 @end

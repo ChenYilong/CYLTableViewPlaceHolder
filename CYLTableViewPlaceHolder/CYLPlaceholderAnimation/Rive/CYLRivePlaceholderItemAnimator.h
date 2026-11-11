@@ -21,7 +21,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! Rive option names, carried in `CYLPlaceholderItemAnimationOptions`. */
+/*!
+ * Rive option names, carried in `CYLPlaceholderItemAnimationOptions`.
+ */
 typedef NSString *CYLPlaceholderAnimationOption NS_TYPED_EXTENSIBLE_ENUM;
 FOUNDATION_EXTERN CYLPlaceholderAnimationOption const CYLPlaceholderAnimationOptionRiveArtboard;
 FOUNDATION_EXTERN CYLPlaceholderAnimationOption const CYLPlaceholderAnimationOptionRiveStateMachine;

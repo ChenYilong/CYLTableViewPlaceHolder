@@ -67,5 +67,6 @@ Before committing a verified change, check the message contains the author line
 `By @ChenYilong <luohanchenyilong@163.com>` on its own line before the trailers (`instructions.md`,
 "Author line in every commit message").
 Run `python3 scripts/check_doc_comments.py` after changing a public header or a Swift file of the library: every
-documentation comment, single-line or multi-line, is one `/*! */` (Objective-C) or `/** */` (Swift) block, and a file
-never mixes formats (`instructions.md`, "Code conventions").
+documentation comment, single-line or multi-line, is a three-line-or-longer `/*!` (Objective-C) or `/**` (Swift) block
+with the markers on their own lines, no trailing comment follows code, and a file never mixes formats
+(`instructions.md`, "Code conventions").

@@ -23,7 +23,9 @@ import RiveRuntime
 public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding {
     private let configuration: CYLPlaceholderRiveItemAnimationConfiguration
     private let viewModel: RiveViewModel
-    /** [EN] How a named animation plays: `.autoLoop` follows the file. [CN] 具名动画的播放方式：`.autoLoop` 跟随文件设置。 */
+    /**
+     * [EN] How a named animation plays: `.autoLoop` follows the file. [CN] 具名动画的播放方式：`.autoLoop` 跟随文件设置。
+     */
     private var loop: RiveLoop = .autoLoop
     private var deactivateTask: Task<Void, Never>?
 
@@ -98,7 +100,9 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
         }
     }
 
-    /** Plays the animation, fires the trigger, or sets the input to true (back to false after the duration, unless 0). */
+    /**
+     * Plays the animation, fires the trigger, or sets the input to true (back to false after the duration, unless 0).
+     */
     public func playAnimation() {
         deactivateTask?.cancel()
         if let animationName = configuration.animationName {

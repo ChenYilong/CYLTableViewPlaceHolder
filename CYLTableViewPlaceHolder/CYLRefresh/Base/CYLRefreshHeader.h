@@ -11,20 +11,32 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CYLRefreshHeader : CYLRefreshComponent
-/*! 创建header */
+/*!
+ * 创建header
+ */
 + (instancetype)headerWithRefreshingBlock:(CYLRefreshComponentAction)refreshingBlock;
-/*! 创建header */
+/*!
+ * 创建header
+ */
 + (instancetype)headerWithRefreshingTarget:(id)target refreshingAction:(SEL)action;
 
-/*! 这个key用来存储上一次下拉刷新成功的时间 */
+/*!
+ * 这个key用来存储上一次下拉刷新成功的时间
+ */
 @property (copy, nonatomic) NSString *lastUpdatedTimeKey;
-/*! 上一次下拉刷新成功的时间 */
+/*!
+ * 上一次下拉刷新成功的时间
+ */
 @property (strong, nonatomic, readonly, nullable) NSDate *lastUpdatedTime;
 
-/*! 忽略多少scrollView的contentInset的top */
+/*!
+ * 忽略多少scrollView的contentInset的top
+ */
 @property (assign, nonatomic) CGFloat ignoredScrollViewContentInsetTop;
 
-/*! 默认是关闭状态, 如果遇到 CollectionView 的动画异常问题可以尝试打开 */
+/*!
+ * 默认是关闭状态, 如果遇到 CollectionView 的动画异常问题可以尝试打开
+ */
 @property (nonatomic) BOOL isCollectionViewAnimationBug;
 @end
 

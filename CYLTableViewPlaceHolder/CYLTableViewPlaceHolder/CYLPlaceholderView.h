@@ -70,13 +70,21 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderMessage) {
     CYLPlaceholderMessageCount
 };
 
-/*! How a tappable placeholder looks while it is pressed. */
+/*!
+ * How a tappable placeholder looks while it is pressed.
+ */
 typedef NS_ENUM(NSInteger, CYLPlaceholderTapHighlightStyle) {
-    /*! The content dims to half opacity (the default). */
+    /*!
+     * The content dims to half opacity (the default).
+     */
     CYLPlaceholderTapHighlightStyleDim,
-    /*! The content shrinks slightly and dims a little. */
+    /*!
+     * The content shrinks slightly and dims a little.
+     */
     CYLPlaceholderTapHighlightStyleShrink,
-    /*! No visual change; the tap still runs the handler. */
+    /*!
+     * No visual change; the tap still runs the handler.
+     */
     CYLPlaceholderTapHighlightStyleNone,
 };
 
@@ -97,20 +105,28 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderBadgeStyle) {
 @property (nonatomic, strong, nullable) UIFont *font UI_APPEARANCE_SELECTOR;
 @property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 @property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
-/*! Animation duration for badge show/hide. Default 0.2s. */
+/*!
+ * Animation duration for badge show/hide. Default 0.2s.
+ */
 @property (nonatomic) CGFloat animationDuration UI_APPEARANCE_SELECTOR;
-/*! Whether to animate badge changes. Default YES. */
+/*!
+ * Whether to animate badge changes. Default YES.
+ */
 @property (nonatomic) BOOL animatesChanges UI_APPEARANCE_SELECTOR;
 + (instancetype)sharedAppearance;
 @end
 
-/*! Item keys use CYLTabBarController's serialized names without exporting its symbols. */
+/*!
+ * Item keys use CYLTabBarController's serialized names without exporting its symbols.
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitle;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImage;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImageInsets;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImagePositionAdjustment;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitlePositionAdjustment;
-/*! Optional preset indices. Explicit title and image take precedence. */
+/*!
+ * Optional preset indices. Explicit title and image take precedence.
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemStyle;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemMessage;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationURL;
@@ -123,12 +139,18 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTitleFont;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityIdentifier;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityLabel;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAccessibilityHint;
-/*! Selected appearance keys are used when the placeholder's selected property is set. */
+/*!
+ * Selected appearance keys are used when the placeholder's selected property is set.
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedImage;
-/*! Dark static image variants follow the view's appearance on iOS 13 and later. */
+/*!
+ * Dark static image variants follow the view's appearance on iOS 13 and later.
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemDarkImage;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedDarkImage;
-/*! Remote-image and navigation keys are reserved for compatibility. */
+/*!
+ * Remote-image and navigation keys are reserved for compatibility.
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImageURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemSelectedImageURL;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImageURLSize;
@@ -201,7 +223,9 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemContentAxis;
  * Absent means YES.
  */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemInteractionEnabled;
-/*! The pressed look (see `tapHighlightStyle`): a CYLPlaceholderTapHighlightStyle number or "dim", "shrink", "none". */
+/*!
+ * The pressed look (see `tapHighlightStyle`): a CYLPlaceholderTapHighlightStyle number or "dim", "shrink", "none".
+ */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTapHighlightStyle;
 /*!
  * Animation playback (see `animationRepeatCount`): a number, 0 loops until stopped, N plays N times; or the strings
@@ -209,7 +233,9 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTapHighlightStyle;
  */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationRepeatCount;
 
-/*! Animation views supplied by custom factories must invoke handlers on the main thread. */
+/*!
+ * Animation views supplied by custom factories must invoke handlers on the main thread.
+ */
 @protocol CYLPlaceholderAnimationPlayer <NSObject>
 @property (nonatomic, readonly, getter=isReady) BOOL ready;
 @property (nonatomic, copy, nullable) void (^errorHandler)(NSError *error);
@@ -220,9 +246,13 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationRepeatCount;
 @optional
 - (BOOL)setAnimationProgress:(CGFloat)progress;
 - (BOOL)setAnimationSpeed:(CGFloat)speed;
-/*! 0 loops until stopped; N plays N times. Return NO when unsupported (the animation then plays once). */
+/*!
+ * 0 loops until stopped; N plays N times. Return NO when unsupported (the animation then plays once).
+ */
 - (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount;
-/*! Replace all keypath color overrides. Return NO when unsupported. */
+/*!
+ * Replace all keypath color overrides. Return NO when unsupported.
+ */
 - (BOOL)setAnimationColors:(NSDictionary<NSString *, UIColor *> *)colors;
 @end
 
@@ -230,18 +260,24 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
     NSURL *fileURL, CGSize size, UIViewContentMode contentMode,
     NSDictionary<NSString *, id> *options, NSError * _Nullable * _Nullable error);
 
-/*! A reusable, localized empty-state view. Customize its image and label as needed. */
+/*!
+ * A reusable, localized empty-state view. Customize its image and label as needed.
+ */
 @interface CYLPlaceholderView : UIView
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @property (nonatomic, strong, readonly) UILabel *textLabel;
-/*! A nil value hides the badge; an empty string displays a dot. */
+/*!
+ * A nil value hides the badge; an empty string displays a dot.
+ */
 @property (nonatomic, copy, nullable) NSString *badgeValue UI_APPEARANCE_SELECTOR;
 /*!
  * Badge appearance can be customized directly. VoiceOver can read it separately
  * when the placeholder is not itself an accessibility element.
  */
 @property (nonatomic, strong, readonly) UILabel *badgeLabel;
-/*! Offset from the top-right of the image (or title when there is no image). */
+/*!
+ * Offset from the top-right of the image (or title when there is no image).
+ */
 @property (nonatomic) CGPoint badgeCenterOffset UI_APPEARANCE_SELECTOR;
 /*!
  * Number badges use a maximum of 99; nonpositive numbers hide the badge.
@@ -249,9 +285,13 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
  */
 - (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value
     NS_SWIFT_NAME(showBadge(with:value:));
-/*! Enables the configured selected image, title, font and colors. Defaults to NO. */
+/*!
+ * Enables the configured selected image, title, font and colors. Defaults to NO.
+ */
 @property (nonatomic, getter=isSelected) BOOL selected;
-/*! Drawn behind the selected item. Resizable images fill the item; others are centered. */
+/*!
+ * Drawn behind the selected item. Resizable images fill the item; others are centered.
+ */
 @property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
 
@@ -266,16 +306,22 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 @property (nonatomic, strong, nullable) UIColor *defaultIconColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultBackgroundColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIFont *defaultTitleFont UI_APPEARANCE_SELECTOR;
-/*! Title offset used when the item has no `CYLPlaceholderItemTitlePositionAdjustment` of its own. */
+/*!
+ * Title offset used when the item has no `CYLPlaceholderItemTitlePositionAdjustment` of its own.
+ */
 @property (nonatomic) UIOffset defaultTitlePositionAdjustment UI_APPEARANCE_SELECTOR;
 
-/*! Default appearance values for selected state. Can be customized via UIAppearance proxy. */
+/*!
+ * Default appearance values for selected state. Can be customized via UIAppearance proxy.
+ */
 @property (nonatomic, strong, nullable) UIColor *defaultSelectedTitleColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultSelectedIconColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultSelectedBackgroundColor UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIFont *defaultSelectedTitleFont UI_APPEARANCE_SELECTOR;
 
-/*! Default selection indicator appearance. */
+/*!
+ * Default selection indicator appearance.
+ */
 @property (nonatomic, strong, nullable) UIImage *defaultSelectionIndicatorImage UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong, nullable) UIColor *defaultSelectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
 
@@ -296,7 +342,9 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
  */
 @property (nonatomic) CGFloat preferredMaxLayoutWidth;
 
-/*! Runs when the placeholder is tapped. Called on the main thread. */
+/*!
+ * Runs when the placeholder is tapped. Called on the main thread.
+ */
 typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
 
 /*!
@@ -309,13 +357,21 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
  * through as before. Defaults to YES, or to `CYLPlaceholderItemInteractionEnabled`.
  */
 @property (nonatomic, getter=isTapInteractionEnabled) BOOL tapInteractionEnabled;
-/*! The pressed look; defaults to Dim, or to `CYLPlaceholderItemTapHighlightStyle`. */
+/*!
+ * The pressed look; defaults to Dim, or to `CYLPlaceholderItemTapHighlightStyle`.
+ */
 @property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
-/*! YES while a finger is down on a tappable placeholder. */
+/*!
+ * YES while a finger is down on a tappable placeholder.
+ */
 @property (nonatomic, readonly, getter=isTapHighlighted) BOOL tapHighlighted;
-/*! YES when a tap would run the handler: interaction is enabled and a handler is set. */
+/*!
+ * YES when a tap would run the handler: interaction is enabled and a handler is set.
+ */
 @property (nonatomic, readonly, getter=isTapInteractive) BOOL tapInteractive;
-/*! Runs the handler as a tap would; NO when the placeholder is not tap-interactive. */
+/*!
+ * Runs the handler as a tap would; NO when the placeholder is not tap-interactive.
+ */
 - (BOOL)performTap;
 /*!
  * How many times the animation plays each time it starts: 0 loops until stopped, N plays N times. Defaults to 1, or
@@ -331,15 +387,25 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
  */
 + (BOOL)registerAnimationFactory:(nullable CYLPlaceholderAnimationFactory)factory
                 forFileExtension:(NSString *)fileExtension;
-/*! Replay the configured animation when visible. Honors Reduce Motion. */
+/*!
+ * Replay the configured animation when visible. Honors Reduce Motion.
+ */
 - (void)playPlaceholderAnimation;
-/*! Stop playback and show the resting frame until explicitly replayed. */
+/*!
+ * Stop playback and show the resting frame until explicitly replayed.
+ */
 - (void)stopPlaceholderAnimation;
-/*! Stop and show the last frame when supported; Rive returns to its resting state. */
+/*!
+ * Stop and show the last frame when supported; Rive returns to its resting state.
+ */
 - (void)showPlaceholderAnimationLastFrame;
-/*! Stops and seeks when supported. Returns NO for invalid values or unsupported players. */
+/*!
+ * Stops and seeks when supported. Returns NO for invalid values or unsupported players.
+ */
 - (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress;
-/*! Sets a positive finite playback speed when supported. Returns NO otherwise. */
+/*!
+ * Sets a positive finite playback speed when supported. Returns NO otherwise.
+ */
 - (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed;
 /*!
  * Creates a FlatDesign-style item from CYLTabBarController-compatible item keys.
@@ -349,23 +415,37 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
                                    imageBundle:(nullable NSBundle *)imageBundle
                                          error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(init(itemAttributes:imageBundle:));
-/*! Reads one item dictionary from a local property list. */
+/*!
+ * Reads one item dictionary from a local property list.
+ */
 - (nullable instancetype)initWithItemContentsOfURL:(NSURL *)url
                                       imageBundle:(nullable NSBundle *)imageBundle
                                             error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(init(itemContentsOf:imageBundle:));
 
-/*! Uses independently selectable bundled art and localized text. */
+/*!
+ * Uses independently selectable bundled art and localized text.
+ */
 - (instancetype)initWithStyle:(CYLPlaceholderStyle)style message:(CYLPlaceholderMessage)message;
-/*! A custom string replaces the localized message; nil hides the label. */
+/*!
+ * A custom string replaces the localized message; nil hides the label.
+ */
 - (instancetype)initWithStyle:(CYLPlaceholderStyle)style text:(nullable NSString *)text;
-/*! Custom image and text; nil hides the corresponding content. */
+/*!
+ * Custom image and text; nil hides the corresponding content.
+ */
 - (instancetype)initWithImage:(nullable UIImage *)image text:(nullable NSString *)text;
-/*! Images are loaded from the library's offline bundle. Invalid styles return nil and log an error. */
+/*!
+ * Images are loaded from the library's offline bundle. Invalid styles return nil and log an error.
+ */
 + (nullable UIImage *)imageForStyle:(CYLPlaceholderStyle)style;
-/*! The corresponding bundle image name, without the scale suffix or extension. */
+/*!
+ * The corresponding bundle image name, without the scale suffix or extension.
+ */
 + (nullable NSString *)imageNameForStyle:(CYLPlaceholderStyle)style;
-/*! Uses the current app language, with an English fallback. */
+/*!
+ * Uses the current app language, with an English fallback.
+ */
 + (nullable NSString *)localizedTextForMessage:(CYLPlaceholderMessage)message;
 /*!
  * File names of the ready-made animations in the library's resource bundle (`Animations/`), sorted:
