@@ -30,7 +30,12 @@ deployment target, or podspec.
   silently switch to synchronized groups or a newer project format.
 - Keep the example's shared scheme and all source, bundle, privacy manifest,
   and license target memberships intact. Do not add a dependency on generated
-  `Pods/` for the example.
+  `Pods/` for the example. The main example app (target `CYLTableViewPlaceHolder`)
+  is Swift: it depends on, links and embeds the `CYLTableViewPlaceHolderFramework`
+  target and imports its module `CYLTableViewPlaceHolder` (the app's own Swift module is
+  `PRODUCT_MODULE_NAME = CYLTableViewPlaceHolderExample`, because both products are named
+  `CYLTableViewPlaceHolder`); it no longer compiles the core sources itself. The core bundle,
+  privacy manifest and licenses stay in both targets' Copy Bundle Resources.
 - Xcode 27 simulator SDKs require iOS 15 or later during builds. Project
   configurations use a simulator SDK-specific override; if needed, supply
   `IPHONEOS_DEPLOYMENT_TARGET=15.0` to `xcodebuild`, or set

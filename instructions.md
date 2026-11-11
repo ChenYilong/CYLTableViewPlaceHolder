@@ -134,8 +134,8 @@ pod 'MJRefresh', '<latest version>'
   cause and the change in `docs/issue-progress.md`, and add a test when the failure can be reproduced. A
   cause outside `CYLRefresh/` is fixed where it is and named in the report; a defect inside MJRefresh itself
   is worked around on our side and reported.
-- The main app at the repository root (`Examples/Example`, built through the root `Podfile`) compiles the
-  refresh source directly and promises no `pod install`; it is not covered by this rule.
+- The main app at the repository root (`Examples/Example`, built through the root `Podfile`) embeds the
+  project's own framework target and promises no `pod install`; it is not covered by this rule.
 
 ## Swift examples and a Swift-friendly core
 

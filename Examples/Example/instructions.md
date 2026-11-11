@@ -14,6 +14,28 @@ pod install && open CYLTableViewPlaceHolder.xcworkspace
 From the repository root, run the `CYLTableViewPlaceHolder` scheme. The app uses the
 UIScene lifecycle (`CYLSceneDelegate`, named in `Info.plist`).
 
+## Language and files
+
+The app is Swift (no Objective-C, no bridging header). The app target depends on, links
+and embeds the `CYLTableViewPlaceHolderFramework` target of the same project and calls
+`import CYLTableViewPlaceHolder`; its own Swift module is `CYLTableViewPlaceHolderExample`
+(`PRODUCT_MODULE_NAME`), because the app and the framework are both named
+`CYLTableViewPlaceHolder`.
+
+| File | Contents |
+| --- | --- |
+| `CYLExampleAppDelegate.swift` | `@main` app delegate (navigation bar appearance) and `CYLSceneDelegate` (`@objc(CYLSceneDelegate)`, the name in `Info.plist`) |
+| `CYLExampleViewController.swift` | Main screen: pull to refresh, `makePlaceHolderView()` (issues #2, #3, #6) |
+| `CYLPlaceholderDemoViewController.swift` | **Auto** (issue #11), **Styles**, message and badge previews |
+| `PlaceHolderView/XTNetReloader/CYLXTNetReloader.swift` | Taobao-style network reloader, Swift translation of TuTu's (teason) `XTNetReloader` |
+| `PlaceHolderView/WeChatStyle/CYLWeChatStylePlaceHolder.swift` | WeChat-style empty view, Swift translation of `WeChatStylePlaceHolder` |
+| `CYLPlaceholderExampleLocalization.swift` | The example's lookup function `CYLPlaceholderExampleLocalizedString(_:)`, key enum `CYLPlaceholderExampleL10n`, and `CYLPlaceholderExampleResourceURL(_:)` |
+
+All user-facing text is in `CYLPlaceholderExample.bundle/<language>.lproj/CYLPlaceholderExample.strings`
+(en, zh-Hans, zh-Hant, ja, ko, ru, uk), following `CYLPlaceholderLocalization.effectiveLanguage`;
+check it with `python3 scripts/check_localizations.py`. The bundled style names in **Styles** are
+image file names (technical identifiers) and stay untranslated.
+
 ## Linked issues and how to reproduce them
 
 | Issue | Problem | Status |
@@ -27,7 +49,7 @@ UIScene lifecycle (`CYLSceneDelegate`, named in `Info.plist`).
 ### #3: switching placeholders
 
 1. Launch: the table refreshes and ends empty, showing one of two placeholders
-   (`makePlaceHolderView` picks the Taobao-style network reloader or the
+   (`makePlaceHolderView()` picks the Taobao-style network reloader or the
    WeChat-style empty view at random).
 2. Tap the placeholder (or pull down) to refresh again; repeat several times.
 3. Bug: the first placeholder stays forever. Expected: each empty refresh can
@@ -70,4 +92,6 @@ FlatDesign item configured in code and from a plist, and dot, number and text
 badges. These are demos, not issue reproductions; parity is tracked in
 `docs/flatdesign-item-comparison.md`.
 - `CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist`: the property-list item the demo loads with
-  `initWithItemContentsOfURL:`. It is example data, so it lives in this example's own bundle, not in the core bundle.
+  `CYLPlaceholderView(itemContentsOf:imageBundle:)` (Objective-C `initWithItemContentsOfURL:imageBundle:error:`), found
+  through `CYLPlaceholderExampleResourceURL(_:)`. It is example data, so it lives in this example's own bundle, not in
+  the core bundle.

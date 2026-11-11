@@ -52,5 +52,14 @@ The scenario API (`CYLPlaceholderStackView`, `CYLPlaceholderComponent`, `CYLPlac
 `docs/Placeholder-Scenarios.md` and moves into the table above once `Examples/Example-Scenarios` (Swift) has compiled in
 CI.
 
+The main example `Examples/Example` (Swift since the migration) calls these placeholder APIs without
+`NS_SWIFT_NAME`; their spellings follow Clang's import rules and move into the table above once CI has compiled it:
+`CYLPlaceholderView(style:message:)`, `(style:text:)`, `(image:text:)`, `(itemAttributes:imageBundle:)` and
+`(itemContentsOf:imageBundle:)` (both throw), `showBadge(with:value:)`, `CYLPlaceholderView.imageName(for:)`,
+`image(for:)`, `localizedText(for:)`, `tableView.cyl_reloadData()`, `cyl_placeholderViewBlock(_:)` on table and
+collection views, `@objc(makePlaceHolderView) func makePlaceHolderView() -> UIView`, enum cases such as
+`CYLPlaceholderStyle.notificationsOff` / `.count` and `CYLPlaceholderBadgeStyle.dot`, and item keys as `String`
+constants (`CYLPlaceholderItemStyle`).
+
 Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C
 examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods).

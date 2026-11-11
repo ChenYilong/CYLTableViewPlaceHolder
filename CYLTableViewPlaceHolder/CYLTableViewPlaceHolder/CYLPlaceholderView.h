@@ -224,7 +224,8 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 @property (nonatomic) CGPoint badgeCenterOffset UI_APPEARANCE_SELECTOR;
 /// Number badges use a maximum of 99; nonpositive numbers hide the badge.
 /// Text badges require a nonempty string. Returns NO on invalid input.
-- (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value;
+- (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value
+    NS_SWIFT_NAME(showBadge(with:value:));
 /// Enables the configured selected image, title, font and colors. Defaults to NO.
 @property (nonatomic, getter=isSelected) BOOL selected;
 /// Drawn behind the selected item. Resizable images fill the item; others are centered.
@@ -305,11 +306,13 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
 /// Images may be UIImage objects or names in imageBundle (nil uses the placeholder bundle).
 - (nullable instancetype)initWithItemAttributes:(NSDictionary<NSString *, id> *)attributes
                                    imageBundle:(nullable NSBundle *)imageBundle
-                                         error:(NSError * _Nullable * _Nullable)error;
+                                         error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(itemAttributes:imageBundle:));
 /// Reads one item dictionary from a local property list.
 - (nullable instancetype)initWithItemContentsOfURL:(NSURL *)url
                                       imageBundle:(nullable NSBundle *)imageBundle
-                                            error:(NSError * _Nullable * _Nullable)error;
+                                            error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(itemContentsOf:imageBundle:));
 
 /// Uses independently selectable bundled art and localized text.
 - (instancetype)initWithStyle:(CYLPlaceholderStyle)style message:(CYLPlaceholderMessage)message;
@@ -329,7 +332,7 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
 + (NSArray<NSString *> *)bundledAnimationFileNames;
 /// Full path of a bundled animation, for CYLPlaceholderItemAnimationFilePath and the engine-specific file
 /// path keys; nil when there is no such file. Lottie, PAG and Rive playback needs the matching subspec.
-+ (nullable NSString *)pathForBundledAnimation:(NSString *)fileName;
++ (nullable NSString *)pathForBundledAnimation:(NSString *)fileName NS_SWIFT_NAME(path(forBundledAnimation:));
 @end
 
 NS_ASSUME_NONNULL_END

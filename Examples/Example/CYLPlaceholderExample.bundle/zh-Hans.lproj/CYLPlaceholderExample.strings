@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (zh-Hans): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "自动";
+"CYLPlaceholderExampleFormatRandomData" = "随机数据 - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "网络不太顺畅喔~";
+"CYLPlaceholderExampleNetReloaderReload" = "重新加载";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "暂无数据,轻触屏幕重新加载";
+"CYLPlaceholderExampleTitleAutomatic" = "自动占位图";
+"CYLPlaceholderExampleModeLabel" = "列表类型";
+"CYLPlaceholderExampleModeTable" = "表格";
+"CYLPlaceholderExampleModeCollection" = "集合视图";
+"CYLPlaceholderExampleActionStyles" = "样式";
+"CYLPlaceholderExampleActionClear" = "清空";
+"CYLPlaceholderExampleActionDisable" = "禁用";
+"CYLPlaceholderExampleActionEnable" = "启用";
+"CYLPlaceholderExampleFormatItem" = "第 %ld 项";
+"CYLPlaceholderExampleTitleStyles" = "占位图样式";
+"CYLPlaceholderExampleStyleCustomImage" = "自定义图片";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign：代码配置";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign：plist 配置";
+"CYLPlaceholderExampleStyleBadgeDot" = "角标：圆点";
+"CYLPlaceholderExampleStyleBadgeNumber" = "角标：数字";
+"CYLPlaceholderExampleStyleBadgeText" = "角标：自定义文字";
+"CYLPlaceholderExampleBadgeNew" = "新";
+"CYLPlaceholderExampleTitleBadgePreview" = "角标预览";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "FlatDesign 项";
+"CYLPlaceholderExampleTitleConfigurationError" = "配置错误";
+"CYLPlaceholderExampleFormatMissingFile" = "示例 bundle 中缺少 %@。";
+"CYLPlaceholderExampleActionOK" = "好";
+"CYLPlaceholderExampleTitleChooseMessage" = "选择文案";
+"CYLPlaceholderExampleCustomText" = "自定义文字";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "你的自定义文案";
+"CYLPlaceholderExampleActionCancel" = "取消";
+"CYLPlaceholderExampleActionPreview" = "预览";

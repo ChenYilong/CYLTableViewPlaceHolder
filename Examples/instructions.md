@@ -23,7 +23,7 @@ and a Swift-friendly core" in the root `instructions.md`). Current state:
 | `Example-objc-01` | Swift (the name is historical) | Done |
 | `Example-objc-02` | Swift (the name is historical) | Done (CI compile pending) |
 | `Example-Scenarios` | Swift (9 files), core API only | Done (CI compile pending) |
-| `Example` (main app, root workspace) | Objective-C (6 files) | To migrate |
+| `Example` (main app, root workspace) | Swift (6 files), embeds `CYLTableViewPlaceHolderFramework` | Done (CI compile pending) |
 | `Example-placeholder` | — | Retired (a copy of the third-party KLTableViewAndCollectionViewPlaceholder, Objective-C; upstream: https://github.com/klaus01/KLTableViewAndCollectionViewPlaceholder, MIT, credited in `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party`) |
 
 ## Examples and the issues they reproduce

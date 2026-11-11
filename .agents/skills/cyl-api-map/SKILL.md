@@ -25,18 +25,19 @@ source of truth; update the README and issue tracker if they become stale.
 | FlatDesign parity tracker | `docs/flatdesign-item-comparison.md` |
 | Scenario placeholders (component stack, scenario enum, actions) | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`, `CYLPlaceholderScenario.h` (`CYLPlaceholderScenario`, `CYLPlaceholderAction`, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`); title chrome keys in `CYLPlaceholderView.h`; tests `Tests/CYLPlaceholderScenarioTests.m`; doc `docs/Placeholder-Scenarios.md`; demo `Examples/Example-Scenarios/` (Swift) |
 | Core localization macro and run-time language | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h` (`CYLPlaceholderLocalizedString`, `CYLPlaceholderLocalization.language`) |
-| Core resource lookup | `CYLPlaceholderLocalization.h` (`CYLPlaceholderResourceBundle()`, `CYLPlaceholderResourceURL(path)`); example lookups `CYLScenarioLocalizedString` / `CYLScenarioExampleResourceURL` in `Examples/Example-Scenarios/Sources/CYLScenarioLocalization.swift` |
+| Core resource lookup | `CYLPlaceholderLocalization.h` (`CYLPlaceholderResourceBundle()`, `CYLPlaceholderResourceURL(path)`); example lookups `CYLScenarioLocalizedString` / `CYLScenarioExampleResourceURL` in `Examples/Example-Scenarios/Sources/CYLScenarioLocalization.swift`, `CYLPlaceholderExampleLocalizedString` / `CYLPlaceholderExampleResourceURL` in `Examples/Example/CYLPlaceholderExampleLocalization.swift` |
 | Accessibility of placeholders and components | `CYLPlaceholderView.m` (`-cyl_updateTapAccessibility`, `accessibilityActivate`, Reduce Motion highlight), `CYLPlaceholderStackView.m` (`-cyl_updateAccessibilityOfComponent:`, grouping); rules in `instructions.md` ("Accessibility"); skills `ios-accessibility`, `accessibility-audit` |
 | Placeholder provider and frame | `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h` |
 | Refresh public API | `CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.h` |
 | Refresh categories | `CYLTableViewPlaceHolder/CYLRefresh/UIScrollView+CYLRefresh.h` |
 | Refresh header inset updates | `CYLTableViewPlaceHolder/CYLRefresh/Base/CYLRefreshHeader.m` |
-| Example | `Examples/Example/ViewController.m` |
-| Automatic placeholder and style-combination example | `Examples/Example/CYLPlaceholderDemoViewController.m` |
+| Example (Swift; issues #2, #3, #6; custom placeholders `PlaceHolderView/WeChatStyle/CYLWeChatStylePlaceHolder.swift`, `PlaceHolderView/XTNetReloader/CYLXTNetReloader.swift`) | `Examples/Example/CYLExampleViewController.swift`, app and scene delegates in `Examples/Example/CYLExampleAppDelegate.swift` |
+| Automatic placeholder and style-combination example (Swift) | `Examples/Example/CYLPlaceholderDemoViewController.swift` |
+| Main example localization and resource lookup | `Examples/Example/CYLPlaceholderExampleLocalization.swift` (`CYLPlaceholderExampleLocalizedString`, `CYLPlaceholderExampleResourceURL`), table `Examples/Example/CYLPlaceholderExample.bundle/<language>.lproj/CYLPlaceholderExample.strings` |
 | Reproduction examples | `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-objc-02/` |
 | Regression tests | `Tests/PlaceholderTests.m` |
 | Automatic placeholder tests | `Tests/CYLAutomaticPlaceholderTests.m` |
-| Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-Scenarios/` |
+| Swift call sites and verified Swift spellings | `docs/Swift-Guide.md`; Swift examples `Examples/Example/`, `Examples/Example-SwiftUI/`, `Examples/Example-objc-01/`, `Examples/Example-Scenarios/` |
 | Bilingual README and docs, generated navigation | `README.md`, `docs/`, `scripts/update-docs-navigation.py`, `.markdownlint.json`; rules in `instructions.md` ("Bilingual documentation") |
 | MJRefresh in every example Podfile (latest version) | `scripts/resolve-mjrefresh-version.sh`, `Examples/*/Podfile`, `scripts/ci-build-example.sh`; rule in `instructions.md` ("Depending on MJRefresh in the examples") |
 | CYLTabBarController dependency (latest commit, any branch) | `scripts/resolve-cyltabbarcontroller-commit.sh`, `Examples/Example-Scenarios/Podfile`; rule in `instructions.md` ("Depending on CYLTabBarController") |

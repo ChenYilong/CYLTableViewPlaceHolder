@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (ru): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "Авто";
+"CYLPlaceholderExampleFormatRandomData" = "Случайные данные - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "Сеть работает не очень стабильно~";
+"CYLPlaceholderExampleNetReloaderReload" = "Перезагрузить";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "Данных пока нет. Коснитесь экрана, чтобы перезагрузить.";
+"CYLPlaceholderExampleTitleAutomatic" = "Автоматическая заглушка";
+"CYLPlaceholderExampleModeLabel" = "Тип списка";
+"CYLPlaceholderExampleModeTable" = "Таблица";
+"CYLPlaceholderExampleModeCollection" = "Коллекция";
+"CYLPlaceholderExampleActionStyles" = "Стили";
+"CYLPlaceholderExampleActionClear" = "Очистить";
+"CYLPlaceholderExampleActionDisable" = "Отключить";
+"CYLPlaceholderExampleActionEnable" = "Включить";
+"CYLPlaceholderExampleFormatItem" = "Элемент %ld";
+"CYLPlaceholderExampleTitleStyles" = "Стили заглушек";
+"CYLPlaceholderExampleStyleCustomImage" = "Своё изображение";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign: настройка в коде";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign: настройка в plist";
+"CYLPlaceholderExampleStyleBadgeDot" = "Бейдж: точка";
+"CYLPlaceholderExampleStyleBadgeNumber" = "Бейдж: число";
+"CYLPlaceholderExampleStyleBadgeText" = "Бейдж: свой текст";
+"CYLPlaceholderExampleBadgeNew" = "Новое";
+"CYLPlaceholderExampleTitleBadgePreview" = "Предпросмотр бейджа";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "Элемент FlatDesign";
+"CYLPlaceholderExampleTitleConfigurationError" = "Ошибка конфигурации";
+"CYLPlaceholderExampleFormatMissingFile" = "В bundle примера нет файла %@.";
+"CYLPlaceholderExampleActionOK" = "ОК";
+"CYLPlaceholderExampleTitleChooseMessage" = "Выберите сообщение";
+"CYLPlaceholderExampleCustomText" = "Свой текст";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "Ваше сообщение";
+"CYLPlaceholderExampleActionCancel" = "Отмена";
+"CYLPlaceholderExampleActionPreview" = "Предпросмотр";
