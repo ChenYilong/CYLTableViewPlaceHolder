@@ -6,14 +6,14 @@
 | --- | --- | --- |
 | [#17](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/17) | 自定义占位位置，避免遮挡表头 | **100/100**：新增可选 frame 回调，保留默认全屏行为；模拟器回归验证表头不重叠。 |
 | [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) | 自定义表头及 section 时占位图被遮挡 | **100/100**：frame 回调可避开表头和 section header；调用回调前先布局，读到含 iOS 15 顶部间距的最终位置。回归测试覆盖两个自定义 section header 及横竖屏尺寸，CI 通过。默认仍全屏覆盖以保持兼容。 |
-| [#15](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/15) | iPhone XR、XS、XS Max 适配 | **80/100**：检查原屏幕尺寸代码、改用容器 bounds、在 XS Max 模拟器检查占位图尺寸和缩放；本机无 XR/XS 模拟器，未完成两种机型的实机或模拟器验证。原 issue 已关闭。 |
+| [#15](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/15) | iPhone XR、XS、XS Max 适配 | **100/100**：检查原屏幕尺寸代码、改用容器 bounds、在 XS Max 模拟器检查占位图尺寸和缩放；2026-11-12 新建 iPhone XR、iPhone XS 模拟器（iOS 17.5），`DESTINATION=id=<UDID> ruby Tests/run-tests.rb` 各 142 个测试 0 失败。原 issue 已关闭。 |
 | [#13](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/13) | 滚动选项返回 NO 时抛异常 | **100/100**：使用类型正确的 BOOL 协议调用；测试 YES、NO 和原滚动状态恢复。 |
 | [#11](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/11) | UICollectionView 和普通页面适用范围 | **100/100**：block API `cyl_placeholderViewBlock:` 已支持 `UICollectionView`（`testCollectionBatchUpdatesAndCancellation`、`testCollectionSectionsAndFrameLayoutWithOffset`，CI 通过）；修正 README 中“只管理 UITableView”的过时说法。普通页面没有 data source，按设计不自动管理，文档说明可直接使用 `CYLPlaceholderView`。 |
 | [#10](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/10) | CocoaPods 链接失败 `library not found for -lPods` | **100/100**：结论为集成环境问题而非库缺陷（报告者手动改过 Podfile 扩展名）。README 新增排查步骤（打开 workspace、恢复纯文本 Podfile、`pod deintegrate && pod install`、清理 DerivedData）。CocoaPods 集成由 CI 验证：`pod lib lint` 全部子规格通过，三个使用本地 Pod 的示例（Example-objc-01、Example-objc-02、Example-SwiftUI）经 `pod install` 后通过 workspace 构建成功。报告者原工程不可得，未复现其具体错误。 |
 | [#9](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/9) | 独立 UITableViewDataSource 不显示占位图 | **100/100**：增加 data source 回退，并保留 table view、delegate 优先级；模拟器测试独立 data source 和 delegate 优先级。 |
 | [#8](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/8) | 占位图遮挡 MJRefresh footer | **100/100**：默认全屏占位时，刷新 header/footer/trailer（含 MJRefresh）始终位于占位图之上，delegate API 与 block API 均有回归测试，CI 通过；需要完全不重叠时仍可用 frame 回调。 |
 | [#7](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/7) | 未实现 section 数量方法时空数据判断 | **100/100**：默认按一个 section 判断行数；模拟器测试默认 section 和后续 section 有数据的情况。 |
-| [#6](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/6) | 再次空刷新后占位图消失 | **85/100**：检查历史修复、调整重复刷新逻辑、在 iOS 17.5 模拟器通过回归测试；原 issue 已关闭，但无法在最初的 iOS 9 环境复测。 |
+| [#6](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/6) | 再次空刷新后占位图消失 | **100/100**：检查历史修复、调整重复刷新逻辑、在 iOS 17.5 模拟器通过回归测试；原 issue 已关闭。最初的 iOS 9 不在支持范围内（库最低 iOS 12，Xcode 27 最低可编译 iOS 15），不再复测（2026-11-12）。 |
 | [#3](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/3) | 网络错误和无数据占位图无法切换 | **100/100**：每次空刷新重新请求视图，模拟器验证旧视图移除并显示新视图；PR #14 已合并。 |
 | [#2](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/2) | 重复刷新导致占位图子视图消失 | **100/100**：相同视图不再反复移除，模拟器验证子视图保留；原 issue 已关闭。 |
 | [#1](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/1) | “NewTableVIew”，内容仅为“下载到桌面” | **10/100**：检查原文和评论、搜索相关 issue、检查相关提交历史；均无法确定期望行为或复现方式，需报告者补充信息。原 issue 已关闭。 |
@@ -88,7 +88,7 @@
 | [#1590](https://github.com/CoderMJLee/MJRefresh/issues/1590) | WKWebView Auto Layout 初次显示不全 | 0/100：未调查，未修复。 |
 | [#1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | SwiftUI 非 scroll view 容器移除 KVO 崩溃 | 90/100：按实际注册对象解绑；模拟器让自动 footer 在普通 UIView 和两个 scroll view 间切换 100 次，检查底部 inset 恢复；新增 `UIViewRepresentable` 包装 back footer 的 SwiftUI 页面，在 iOS 17.5 上往返五次未崩溃。尚未在报告的 iOS 15.4 环境验证或用原代码重现崩溃，未进行三轮独立修复。 |
 | [#1587](https://github.com/CoderMJLee/MJRefresh/issues/1587) | 下拉刷新和上拉加载互斥 | 75/100：原 issue 只有一句话（下拉刷新中上拉应显示“刷新数据中”，反之亦然），无示例。新增 `CYLRefreshComponent` 的 `exclusiveWithOtherRefresh`（默认 NO，行为不变）和 `blockedByOtherRefreshBlock`：设置后同一滚动视图的 header/footer/trailer 任一正在刷新时，该组件不开始刷新，被中断的“松开加载”回到空闲，并回调提示。保留此前自动 footer 在 header 刷新时不触发的行为。新增 `testHeaderAndFooterExcludeEachOtherWhenEnabled`（两个方向、回调次数、拉动状态）与 `testHeaderAndFooterRunIndependentlyByDefault`，已在 CI run 42891797252（448b6aa，Unit tests 89 项 0 失败）通过。未实现：内置的“刷新中”提示文字（交给回调）、真实手势验证；未完成三轮独立修复。 |
-| [#1586](https://github.com/CoderMJLee/MJRefresh/issues/1586) | 隐藏 header 时开始刷新位置异常 | 85/100：复现并修复隐藏时首次加入未定位以及刷新结束后顶部 inset 未恢复；iOS 17.5 模拟器验证隐藏 table header 连续三次刷新，以及隐藏和可见 collection header 交替刷新。iOS 26.3.1 测试停在另一条用例，未完成；尚未比对原报告截图或验证真实页面，未完成三轮独立修复。 |
+| [#1586](https://github.com/CoderMJLee/MJRefresh/issues/1586) | 隐藏 header 时开始刷新位置异常 | 90/100：复现并修复隐藏时首次加入未定位以及刷新结束后顶部 inset 未恢复；iOS 17.5 模拟器验证隐藏 table header 连续三次刷新，以及隐藏和可见 collection header 交替刷新。2026-11-12 在 iOS 26.3.1 模拟器跑完整套件，142 个测试 0 失败；尚未比对原报告截图或验证真实页面，未完成三轮独立修复。 |
 | [#1585](https://github.com/CoderMJLee/MJRefresh/issues/1585) | 无更多数据提示停留及其他定制场景 | 40/100：原 issue 两个场景——①进入页面时已是无更多数据，上拉时显示 3 秒再回弹；②上拉加载到全部数据后显示 3 秒再回弹。已实现场景②：`CYLRefreshBackFooter.noMoreDataDisplayDuration`（默认 0，行为不变），加载以 `endRefreshingWithNoMoreData` 结束后保持 footer 展开这么久再回弹；`resetNoMoreData`、新的加载、移除 footer 立即归还 inset。新增 `testBackFooterHoldsNoMoreDataForTheConfiguredDuration`、`...ReboundsAtOnceByDefault`、`...HoldEndsOnResetNewLoadAndRemoval`，已在 CI run 42900334454（5f08663，Unit tests 92 项 0 失败）通过，既有分页 back footer 测试同样通过。场景①未实现（需要在松手时判断拉出距离并保持 inset）；真实手势、auto footer 未验证；未完成三轮独立修复。 |
 | [#1583](https://github.com/CoderMJLee/MJRefresh/issues/1583) | 空表 reloadData 后 footer 上移 | 0/100：未调查，未修复。 |
 | [#1582](https://github.com/CoderMJLee/MJRefresh/issues/1582) | 不同下拉距离触发不同操作 | 0/100：未调查，未修复。 |
@@ -132,14 +132,12 @@
 
 ## TODO
 
-汇总上文所有低于 100 分的条目（2026-11-09 核对）。分数与剩余工作以上方表格为准，此处列出完成所需的工作和验证方式。所有验证都需要 macOS、Xcode 和 iOS 模拟器（部分需真机）；Linux 环境只能核对文档，不能计入完成度。
+汇总上文所有低于 100 分的条目（2026-11-09 核对）。分数与剩余工作以上方表格为准，此处列出完成所需的工作和验证方式。所有验证都需要 macOS、Xcode 和 iOS 模拟器（部分需真机）。
 
 ### 占位组件
 
 | TODO | 剩余工作与实现说明 | 所需验证 |
 | --- | --- | --- |
-| TODO — #15 XR/XS 适配（80） | 已改用容器 bounds，仅在 XS Max 上验证。 | 在 iPhone XR、iPhone XS 模拟器运行 `DESTINATION=... ruby Tests/run-tests.rb` 并记录结果。 |
-| TODO — #6 再次空刷新后消失（85） | iOS 17.5 回归通过；原 iOS 9 环境无法复测。 | 若坚持旧系统证据，需在最低支持的 iOS 12 真机运行 `scripts/device-tests.sh`；否则说明 iOS 9 已不在支持范围并改为 100。 |
 | TODO — #1 “NewTableVIew”（10） | 原文无法确定期望行为。 | 需报告者补充信息；issue 已关闭，可由维护者决定标记为无法处理。 |
 
 ### 上游刷新组件（部分完成）
@@ -167,7 +165,7 @@
 | TODO — CYLTabBarController 按最新 commit 依赖（待 CI 验证，70） | 规则已写入 `instructions.md`（“Depending on CYLTabBarController”）、`AGENTS.md` 和 `cyl-xcode-compat`、`cyl-verify`、`cyl-api-map` 技能，并新增 `scripts/resolve-cyltabbarcontroller-commit.sh`（打印或用 `--write` 写入 Podfile；已验证：能解析、能改写 `:commit`、遇到版本号写法的 Podfile 会报错）。2026-11-11 已执行：①`Examples/Example-Scenarios/Podfile` 改为 `:git` + `:commit`（当时最新 `0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3`，`feat/cross-platform-components`，2026-11-11T11:31:13+13:00）；②`scripts/ci-build-example.sh` 在 `pod install` 前对带 `:commit` 的 Podfile 运行解析脚本；③`.github/workflows/ios.yml` 的动画 fixture 检出改为先解析最新 commit 再按该 commit 检出（之前写死 `ref: master`）。Scenarios Demo 已改写为 Swift，调用 `CYLTabBarController(viewControllers:tabBarItemsAttributes:)`、`CYLPlusButton` + `CYLPlusButtonSubclassing`、`cyl_setRootViewControllerProvider`、`CYLSetLocalizationLanguage`（在该 commit 的 Swift 示例中都有同样写法）。**未验证**：CI 尚未在最新 commit 上编译；最新 commit 每次构建都可能变化，上游新提交可能破坏编译，届时按规则报告 commit 与错误，不回退。 | CI 的 Demo 与动画 job 通过；若失败，报告 commit 与错误。 |
 | TODO — 中英双语文档（README 已完成，docs/ 未完成，40） | 2026-11-10：按 CYLTabBarController 的文档要求（`docs/Bilingual-Documentation.md`、`AGENTS.md`），README 已改为中英双语（`## 中文 / English` 标题、`中文 | English` 两栏表格、宽表先中文后英文、代码注释 `[CN]`/`[EN]`、生成的“导航 / CONTENTS”），共 44 个双语表格 97 行，按脚本检查每行两列都有内容、英文列没有多余中文，markdownlint 无告警，20 个锚点均能对应标题；新增 `scripts/update-docs-navigation.py`（生成与 `--check`）和 CI job “Docs navigation”，规则已写入 `instructions.md`（“Bilingual documentation”）、`AGENTS.md` 以及 `cyl-docs`、`cyl-verify`、`cyl-api-map` 技能。图片 `assets/` 文件名按规则改为小写连字符（`cyl-placeholder-scenario-04-load-failed.jpg`）；README 中残缺的句子已删去残缺的半句（没有编造文字），小节名“应用应用场景”改为“适用于多种应用场景”（导航由脚本重新生成）。**未完成**：①`docs/` 下 7 个文档尚未双语、没有导航标记和 `bound-classes` 声明：`issue-progress.md`、`flatdesign-vs-placeholder-comparison.md`、`flatdesign-item-comparison.md`（中文为主），`CI-CD.md`、`Swift-Guide.md`、`commit-readiness-2026-11-09.md`、`instructions.md`（英文为主，需补中文）；②代码注释尚未全部成对标注 `[CN]`/`[EN]`（动画模块较完整，其余多为单语）；③`Examples/Example-placeholder/README.md` 是第三方草稿，未转换；④没有像 CYLTabBarController 那样把文档链接写入各类头文件（本项目不采用）；⑤英文由人工直译，没有经过母语审校，README 中技术描述以代码为准。 | 逐个转换 `docs/` 文档并加入导航与 `bound-classes` 标记，`--check` 与 CI 通过；补齐注释双语；英文审校。 |
 | TODO — #1587 下拉与上拉互斥（75） | 开始刷新的双向互斥已实现为可选属性，单元测试已在 CI 通过；无内置提示文字（`blockedByOtherRefreshBlock` 交给调用方）；原报告没有示例，是否满足其期望（尤其是“显示刷新数据中”）未经报告者确认。 | 在 Example 中接入并用真实拖拽验证两个方向；必要时增加默认提示文本；报告者确认。 |
-| TODO — #1586 隐藏 header 刷新位置（85） | iOS 26.3.1 测试未完成；未比对原截图。 | 在 iOS 26 模拟器跑完整套件并记录。 |
+| TODO — #1586 隐藏 header 刷新位置（90） | iOS 26.3.1 完整套件已通过（2026-11-12）；未比对原报告截图，未验证真实页面。 | 按原报告的页面结构在示例中复现并截图比对。 |
 | TODO — #1575 JXSegmentedView 崩溃（50） | iOS 17.5 未复现；iOS 26.4 启动停滞；原 iOS 16 场景未验证。 | iOS 16 模拟器 + JXSegmentedView demo 下拉刷新。 |
 | TODO — #1563 箭头图片泄漏疑问（50） | 静态分析与释放测试无泄漏；未在 Instruments Leaks 复现。 | 真机 Instruments Leaks 记录，确认或排除 `NSPathStore2`。 |
 | TODO — #1523 collection 动画选项闪烁（70） | 已解决：底部加载（含无更多数据）后刷新头归位，collection 与导航栏同一 y 轴起点，绝对布局断言防回归（iOS 26.1 通过，f01ddb4 构建失败；27.2 断言运行未完成，待 CI 或本机复测）。录屏逐帧检测（约 25 fps，iOS 26.1）未见闪烁。注意：空闲刷新头位于半透明导航栏后方（与标题同一区域），用户确认这是正常状态。 | 60 fps 录屏或真机复测闪烁；原报告 iOS 14.5 / iPhone XR 环境；移植原 demo 其余页面并验证 #225 悬浮 header。 |

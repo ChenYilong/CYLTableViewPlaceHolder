@@ -131,6 +131,5 @@ header.setAnimationImages(frames, duration: 0.6, for: .refreshing)
 
 | 中文 | English |
 | --- | --- |
-| 左拉刷新（example42，`CYLRefreshNormalTrailer`）暂无截图：axe 无法在拖动途中截屏，松手后示例立即打开下一页。 | Pull left (example42, `CYLRefreshNormalTrailer`) has no screenshot: axe cannot take a screenshot during a drag, and the example opens the next page as soon as the drag ends. |
 | iOS 26 起导航栏是透明的玻璃效果：刷新结束、刷新头收回导航栏下方后，未设置 `automaticallyChangeAlpha` 的刷新头（如 example01、04、11）会透过导航栏显示在标题上。待决定：是否在空闲且完全收回时默认隐藏刷新头（这会改变默认行为）。 | Since iOS 26 the navigation bar is transparent glass: after a refresh ends and the header retracts under the bar, a header without `automaticallyChangeAlpha` (example01, 04 and 11, for example) shows through the bar over the title. To decide: whether to hide the header by default while it is idle and fully retracted (this changes the default behavior). |
 | example55 的 `setImages` 路径仍使用 MJRefresh 的图片视图，未改为 `CYLPlaceholderView`。 | example55's `setImages` path still uses MJRefresh's image view, not a `CYLPlaceholderView`. |

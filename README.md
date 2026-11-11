@@ -665,9 +665,7 @@ self.collectionView.cyl_trailer = [CYLRefreshNormalTrailer trailerWithRefreshing
 }];
 ```
 
-| 中文 | English |
-| --- | --- |
-| 暂无截图：自动化工具无法在拖动途中截屏，松手后示例立即打开下一页。见 `docs/Refresh-Icon-Animation.md` 的 TODO。 | No screenshot yet: the automation tool cannot take a screenshot during a drag, and the example opens the next page as soon as the drag ends. See the TODO in `docs/Refresh-Icon-Animation.md`. |
+![左拉刷新：拉过最后一页时显示“松开查看”/ Pull left: “Release to see” past the last page](assets/cyl-refresh-example42.png)
 
 #### WKWebView 01：下拉刷新 / WKWebView 01: Pull-down refresh
 
