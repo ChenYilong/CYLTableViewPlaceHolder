@@ -2,16 +2,19 @@
 //  CYLStatusBarViewController.swift
 //  Example-Scenarios
 //
-//  The status bar ported from CYLChatKit (`CYLPlaceholderStatusView`, "Network unavailable, Check network") and its
-//  combinations with the placeholder, chosen in the toolbar:
+//  The status bar ported from CYLChatKit (`CYLPlaceholderStatusView`, "Network unavailable, Check network") and the
+//  placeholder as two independent components of this view controller. The bar is added to the controller's view, right
+//  below the navigation bar; the placeholder stays the table's (`cyl_placeholderViewBlock`). One parameter,
+//  `cyl_statusDisplay`, chooses what shows (the toolbar):
 //
-//  - bar + placeholder:  `CYLPlaceholderStackView(scenario:actions:)` with `statusView`
-//  - bar only:           `CYLPlaceholderStackView(statusView:)` (`componentsHidden` is true)
-//  - placeholder only:   the scenario without `statusView`
-//  - bar + list:         rows are shown, so no placeholder; the bar is the table header, as CYLChatKit shows it
+//  - bar + placeholder:  `.all`
+//  - bar only:           `.statusBar` (the empty table shows no placeholder)
+//  - placeholder only:   `.placeholder` (the default)
+//  - bar + list:         `.statusBar` with rows
 //
-//  The bar keeps CYLChatKit's API: `CYLPlaceholderStatusView(frame:)`, `delegate` and `statusViewClicked(_:)`, the 44-point
-//  height. The same combinations come from configuration files: Configurations/status-bar-*.json ("File").
+//  "Network" turns on `cyl_showsStatusViewWhenOffline`: `CYLPlaceholderNetworkMonitor` (NWPathMonitor) adds the bar
+//  while the device is offline (try airplane mode). "File" applies StatusBar/*.json with
+//  `cyl_applyStatusConfiguration(contentsOf:)`. The bar keeps CYLChatKit's API: `delegate` and `statusViewClicked(_:)`.
 //
 
 import UIKit
@@ -30,6 +33,14 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
             case .barAndList: return CYLScenarioLocalizedString(.statusModeList)
             }
         }
+
+        var display: CYLPlaceholderStatusDisplay {
+            switch self {
+            case .barAndPlaceholder: return .all
+            case .barOnly, .barAndList: return .statusBar
+            case .placeholderOnly: return .placeholder
+            }
+        }
     }
 
     private var mode = Mode.barAndPlaceholder
@@ -40,6 +51,8 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
         control.addTarget(self, action: #selector(modeChanged), for: .valueChanged)
         return control
     }()
+    private lazy var networkItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.statusFollowNetwork), style: .plain,
+                                                   target: self, action: #selector(toggleNetwork))
 
     init() {
         super.init(style: .plain)
@@ -58,17 +71,27 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "row")
         tableView.tableFooterView = UIView()
         tableView.accessibilityIdentifier = "statusBarDemo"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionShowFile),
-                                                            style: .plain, target: self, action: #selector(showFiles))
+        networkItem.accessibilityIdentifier = "statusFollowNetwork"
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionShowFile), style: .plain, target: self,
+                            action: #selector(showFiles)),
+            networkItem,
+        ]
         toolbarItems = [
             UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
             UIBarButtonItem(customView: modeControl),
             UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
         ]
+        // The placeholder: the table's own, independent of the bar.
         tableView.cyl_placeholderViewBlock({ [weak self] _ in
-            self?.makePlaceholder()
+            CYLPlaceholderStackView(scenario: .networkUnavailable, actions: [
+                .retry: { _, _ in self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackReconnect)) },
+            ])
         })
-        apply()
+        // The bar: CYLChatKit's network bar; taps go to the delegate, as in CYLChatKit.
+        cyl_statusView.delegate = self
+        cyl_statusView.placeholderView.accessibilityHint = CYLScenarioLocalizedString(.feedbackReconnect)
+        apply(animated: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -81,45 +104,22 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
         navigationController?.setToolbarHidden(true, animated: animated)
     }
 
-    /// CYLChatKit's bar: the network message and icon, a 44-point height, taps sent to the delegate.
-    private func makeBar() -> CYLPlaceholderStatusView {
-        let bar = CYLPlaceholderStatusView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width,
-                                                         height: CYLPlaceholderStatusViewHeight))
-        bar.delegate = self
-        bar.placeholderView.accessibilityHint = CYLScenarioLocalizedString(.feedbackReconnect)
-        return bar
-    }
-
-    private func makePlaceholder() -> UIView? {
-        switch mode {
-        case .barAndPlaceholder:
-            let placeholder = makeScenario()
-            placeholder.statusView = makeBar()
-            return placeholder
-        case .barOnly:
-            return CYLPlaceholderStackView(statusView: makeBar())
-        case .placeholderOnly:
-            return makeScenario()
-        case .barAndList:
-            return nil
-        }
-    }
-
-    private func makeScenario() -> CYLPlaceholderStackView {
-        CYLPlaceholderStackView(scenario: .networkUnavailable, actions: [
-            .retry: { [weak self] _, _ in self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackReconnect)) },
-        ])
-    }
-
     @objc private func modeChanged() {
         mode = Mode(rawValue: modeControl.selectedSegmentIndex) ?? .barAndPlaceholder
-        apply()
+        apply(animated: true)
     }
 
-    private func apply() {
-        // With rows the table shows no placeholder, so the bar goes on top of the list, as in CYLChatKit.
-        tableView.tableHeaderView = mode == .barAndList ? makeBar() : nil
+    private func apply(animated: Bool) {
         tableView.reloadData()
+        cyl_setStatusDisplay(mode.display, animated: animated)
+    }
+
+    @objc private func toggleNetwork() {
+        cyl_showsStatusViewWhenOffline.toggle()
+        networkItem.title = CYLScenarioLocalizedString(cyl_showsStatusViewWhenOffline ? .statusFollowingNetwork
+                                                                                         : .statusFollowNetwork)
+        let status = CYLPlaceholderNetworkMonitor.name(for: CYLPlaceholderNetworkMonitor.shared.networkStatus)
+        cyl_showFeedback(CYLScenarioLocalizedFormat(.formatNetworkStatus, status))
     }
 
     // MARK: - CYLPlaceholderStatusViewDelegate
@@ -134,14 +134,29 @@ final class CYLStatusBarViewController: UITableViewController, CYLPlaceholderSta
 
     @objc private func showFiles() {
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        for url in CYLConfigurationFiles.urls() where url.lastPathComponent.hasPrefix("status-bar") {
+        let folder = CYLScenarioExampleResourceURL("StatusBar")
+        let files = folder.flatMap { try? FileManager.default.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil) } ?? []
+        for url in files.filter({ $0.pathExtension == "json" }).sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
             sheet.addAction(UIAlertAction(title: url.lastPathComponent, style: .default) { [weak self] _ in
-                self?.navigationController?.pushViewController(CYLConfigurationViewController(url: url), animated: true)
+                self?.applyFile(url)
             })
         }
         sheet.addAction(UIAlertAction(title: CYLScenarioLocalizedString(.actionCancel), style: .cancel))
-        sheet.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        sheet.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItems?.first
         present(sheet, animated: true)
+    }
+
+    private func applyFile(_ url: URL) {
+        do {
+            try cyl_applyStatusConfiguration(contentsOf: url)
+            cyl_statusView.delegate = self
+            mode = cyl_statusDisplay == .all ? .barAndPlaceholder :
+                (cyl_statusDisplay == .statusBar ? .barOnly : .placeholderOnly)
+            modeControl.selectedSegmentIndex = mode.rawValue
+            tableView.reloadData()
+        } catch {
+            cyl_showFeedback(error.localizedDescription)
+        }
     }
 
     // MARK: - Rows

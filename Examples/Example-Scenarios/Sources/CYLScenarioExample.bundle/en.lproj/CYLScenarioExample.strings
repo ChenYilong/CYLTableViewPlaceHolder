@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "Bar + list";
 "CYLScenarioFeedbackReconnect" = "Reconnecting…";
 "CYLScenarioActionCancel" = "Cancel";
+"CYLScenarioStatusFollowNetwork" = "Network";
+"CYLScenarioStatusFollowingNetwork" = "Network ✓";
+"CYLScenarioFormatNetworkStatus" = "Network: %@";

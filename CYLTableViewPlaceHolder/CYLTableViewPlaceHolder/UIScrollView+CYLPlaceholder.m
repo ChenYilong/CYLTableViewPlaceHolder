@@ -1,5 +1,6 @@
 #import "UITableView+CYLPlaceholder.h"
 #import "UICollectionView+CYLPlaceholder.h"
+#import "UIViewController+CYLPlaceholderStatus.h"
 #import <objc/runtime.h>
 
 typedef UIView * _Nullable (^CYLPlaceholderProvider)(UIScrollView *);
@@ -24,6 +25,8 @@ static const void *CYLPlaceholderControllerKey = &CYLPlaceholderControllerKey;
 static CYLPlaceholderController *CYLController(UIScrollView *scrollView) {
     return objc_getAssociatedObject(scrollView, CYLPlaceholderControllerKey);
 }
+
+static const void *CYLPlaceholderHiddenKey = &CYLPlaceholderHiddenKey;
 
 /// Brings the placeholder to the front, then keeps refresh controls above it so a
 /// header, footer or trailer stays visible over an empty list (issue #8).
@@ -84,7 +87,9 @@ void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder) {
         controller.scheduled = NO;
         UIScrollView *scrollView = controller.scrollView;
         if (!controller.provider || !scrollView || controller.batchDepth) return;
-        if (![controller isEmpty]) {
+        // [EN] `cyl_placeholderHidden` (set by `cyl_statusDisplay`) keeps it away even for an empty list.
+        // [CN] `cyl_placeholderHidden`（由 `cyl_statusDisplay` 设置）使空列表也不显示占位图。
+        if (![controller isEmpty] || scrollView.cyl_placeholderHidden) {
             [controller removeView];
             return;
         }
@@ -322,3 +327,17 @@ CYL_COLLECTION_UPDATE(reconfigureItemsAtIndexPaths, NSArray<NSIndexPath *> *)
 BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView) {
     return CYLController(scrollView).provider != nil;
 }
+
+@implementation UIScrollView (CYLPlaceholderVisibility)
+
+- (BOOL)cyl_placeholderHidden {
+    return [objc_getAssociatedObject(self, CYLPlaceholderHiddenKey) boolValue];
+}
+
+- (void)setCyl_placeholderHidden:(BOOL)hidden {
+    if (hidden == self.cyl_placeholderHidden) return;
+    objc_setAssociatedObject(self, CYLPlaceholderHiddenKey, hidden ? @YES : nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [CYLController(self) scheduleUpdate];
+}
+
+@end

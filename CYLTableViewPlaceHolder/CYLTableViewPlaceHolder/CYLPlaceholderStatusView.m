@@ -48,9 +48,14 @@ static UIColor *CYLPlaceholderStatusTextColor(void) {
     return light;
 }
 
+static NSError *CYLStatusConfigurationError(NSString *description) {
+    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:4
+                           userInfo:@{NSLocalizedDescriptionKey: description}];
+}
+
 @interface CYLPlaceholderStatusView ()
 @property (nonatomic, strong, readwrite) CYLPlaceholderView *placeholderView;
-- (nullable instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
                         itemAttributes:(NSDictionary<NSString *, id> *)attributes
                                  error:(NSError **)error;
 @end
@@ -93,7 +98,7 @@ static UIColor *CYLPlaceholderStatusTextColor(void) {
 }
 
 /// [EN] The shared initializer (in the init family, so it may assign self). [CN] 共用的初始化方法。
-- (nullable instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
                         itemAttributes:(NSDictionary<NSString *, id> *)attributes
                                  error:(NSError **)error {
     NSMutableDictionary<NSString *, id> *content = [attributes mutableCopy];
@@ -122,6 +127,32 @@ static UIColor *CYLPlaceholderStatusTextColor(void) {
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     return [self initWithFrame:CGRectMake(0, 0, 0, CYLPlaceholderStatusViewHight)];
+}
+
+- (instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration error:(NSError **)error {
+    if (![configuration isKindOfClass:NSDictionary.class]) {
+        if (error) *error = CYLStatusConfigurationError(@"The status bar configuration must be a dictionary.");
+        return nil;
+    }
+    NSDictionary<NSString *, NSString *> *keys = @{
+        @"image": CYLPlaceholderItemImage, @"titleColor": CYLPlaceholderItemTitleColor,
+        @"backgroundColor": CYLPlaceholderItemBackgroundColor,
+        @"accessibilityIdentifier": CYLPlaceholderItemAccessibilityIdentifier,
+    };
+    NSMutableDictionary<NSString *, id> *attributes = [NSMutableDictionary dictionary];
+    for (NSString *key in @[@"text", @"textKey", @"image", @"titleColor", @"backgroundColor", @"accessibilityIdentifier"]) {
+        id value = configuration[key];
+        if (!value) continue;
+        if (![value isKindOfClass:NSString.class]) {
+            if (error) *error = CYLStatusConfigurationError([NSString stringWithFormat:@"\"%@\" must be a string.", key]);
+            return nil;
+        }
+        if (keys[key]) attributes[keys[key]] = value;
+    }
+    NSString *text = configuration[@"text"];
+    if (configuration[@"textKey"]) text = CYLPlaceholderLocalizedString(configuration[@"textKey"], text);
+    if (text) attributes[CYLPlaceholderItemTitle] = text;
+    return [self initWithItemAttributes:attributes error:error];
 }
 
 #pragma mark - Text

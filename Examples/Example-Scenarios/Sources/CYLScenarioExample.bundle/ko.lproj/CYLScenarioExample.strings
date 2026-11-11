@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "표시줄 + 목록";
 "CYLScenarioFeedbackReconnect" = "다시 연결하는 중…";
 "CYLScenarioActionCancel" = "취소";
+"CYLScenarioStatusFollowNetwork" = "네트워크";
+"CYLScenarioStatusFollowingNetwork" = "네트워크 ✓";
+"CYLScenarioFormatNetworkStatus" = "네트워크: %@";

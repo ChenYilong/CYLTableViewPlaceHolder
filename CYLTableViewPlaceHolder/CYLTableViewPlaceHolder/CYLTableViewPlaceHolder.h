@@ -15,4 +15,6 @@
 #import "CYLPlaceholderScenario.h"
 #import "CYLPlaceholderStackView.h"
 #import "CYLPlaceholderStatusView.h"
+#import "CYLPlaceholderNetworkMonitor.h"
+#import "UIViewController+CYLPlaceholderStatus.h"
 #import "CYLRefresh.h"

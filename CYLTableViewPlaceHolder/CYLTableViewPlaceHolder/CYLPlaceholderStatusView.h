@@ -8,11 +8,11 @@
 //       its `statusViewClicked:`, the 44-point height, `-initWithFrame:` showing the network message), with the icon
 //       and the text drawn by the library's icon-and-title component, CYLPlaceholderView, laid out horizontally
 //       (`CYLPlaceholderItemContentAxis`). The red background is this view; the component is its subview.
-//       Show it alone, or with a placeholder through `CYLPlaceholderStackView.statusView`.
+//       A view controller shows it, independently of the placeholder, through `cyl_statusDisplay` (UIViewController+CYLPlaceholderStatus.h).
 //  [CN] 红色背景的单行状态提示条，如“当前网络不可用，请检查你的网络设置”。移植自 CYLChatKit 的 LCCKStatusView（MIT，许可证见资源包中的
 //       LICENSE.CYLChatKit）：保留相同的接口并改用本库前缀（代理及其 `statusViewClicked:`、44 点高度、`-initWithFrame:` 显示网络提示），
 //       图标与文字改由本库的图标加标题组件 CYLPlaceholderView 横向排列绘制（`CYLPlaceholderItemContentAxis`）。红色背景是本视图，
-//       组件是它的子视图。可以单独显示，也可以通过 `CYLPlaceholderStackView.statusView` 与占位图一起显示。
+//       组件是它的子视图。视图控制器通过 `cyl_statusDisplay`（UIViewController+CYLPlaceholderStatus.h）显示它，与占位图相互独立。
 //
 
 #import <UIKit/UIKit.h>
@@ -70,6 +70,18 @@ typedef void (^CYLPlaceholderStatusViewTapHandler)(CYLPlaceholderStatusView *sta
  * [EN] The item attributes of the network bar, to start a custom one from. [CN] 网络提示条的 item 属性，可在此基础上自定义。
  */
 @property (class, nonatomic, readonly) NSDictionary<NSString *, id> *networkUnavailableItemAttributes;
+/*!
+ * [EN] A bar from a configuration dictionary (JSON or property list): "text", "textKey" (a key of the core strings,
+ *      "text" being its fallback), "image" (an image name in the core bundle or "system:<SF Symbol>"), "titleColor" and
+ *      "backgroundColor" (color strings such as "#FFC7C7"), "accessibilityIdentifier"; missing keys keep the network
+ *      bar's values. Nil, with `error`, when a value is invalid. See docs/Status-Bar.md.
+ * [CN] 根据配置字典（JSON 或属性列表）创建状态条："text"、"textKey"（核心文案 key，"text" 为其后备）、"image"（核心 bundle 中的图片名或
+ *      "system:<SF Symbol>"）、"titleColor" 与 "backgroundColor"（颜色字符串，如 "#FFC7C7"）、"accessibilityIdentifier"；缺少的键使用
+ *      网络提示条的值。值无效时返回 nil 并设置 `error`。见 docs/Status-Bar.md。
+ */
+- (nullable instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
+                                         error:(NSError * _Nullable * _Nullable)error
+    NS_SWIFT_NAME(init(configuration:));
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 /// [EN] The icon and the title, laid out horizontally; a subview filling the bar. [CN] 横向排列的图标与标题；铺满状态条的子视图。

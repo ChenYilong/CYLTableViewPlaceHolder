@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "Рядок + список";
 "CYLScenarioFeedbackReconnect" = "Повторне підключення…";
 "CYLScenarioActionCancel" = "Скасувати";
+"CYLScenarioStatusFollowNetwork" = "Мережа";
+"CYLScenarioStatusFollowingNetwork" = "Мережа ✓";
+"CYLScenarioFormatNetworkStatus" = "Мережа: %@";

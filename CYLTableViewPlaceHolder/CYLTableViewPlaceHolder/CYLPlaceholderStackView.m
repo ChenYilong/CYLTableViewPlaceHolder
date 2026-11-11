@@ -17,9 +17,6 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 @property (nonatomic, strong) NSMutableArray *componentActions;
 @property (nonatomic, strong) NSMutableDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *handlers;
 @property (nonatomic, strong) UITapGestureRecognizer *backgroundTapRecognizer;
-/// [EN] The area under the status bar (the whole view without one); the stack centers in it. [CN] 状态条下方的区域。
-@property (nonatomic, strong) UILayoutGuide *contentGuide;
-@property (nonatomic, strong) NSLayoutConstraint *contentGuideTopConstraint;
 @end
 
 /// Applies the shared component fields ("action", "interactionEnabled", "highlightStyle", "repeatCount", …).
@@ -30,41 +27,6 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 static NSError *CYLStackConfigurationError(NSString *description) {
     return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:3
                            userInfo:@{NSLocalizedDescriptionKey: description}];
-}
-
-/*!
- * [EN] "statusBar": true or "networkUnavailable" for the network bar, or a dictionary ("text", "textKey", "image",
- *      "titleColor", "backgroundColor", "accessibilityIdentifier", "action"). [CN] "statusBar" 配置。
- */
-static CYLPlaceholderStatusView *CYLStackStatusViewFromConfiguration(id value, CYLPlaceholderAction *action, NSError **error) {
-    if ([value isKindOfClass:NSNumber.class] && [value boolValue]) return [[CYLPlaceholderStatusView alloc] initWithFrame:CGRectZero];
-    if ([value isKindOfClass:NSString.class] && [value isEqualToString:@"networkUnavailable"]) {
-        return [[CYLPlaceholderStatusView alloc] initWithFrame:CGRectZero];
-    }
-    if (![value isKindOfClass:NSDictionary.class]) {
-        if (error) *error = CYLStackConfigurationError(@"\"statusBar\" must be true, \"networkUnavailable\" or a dictionary.");
-        return nil;
-    }
-    NSDictionary *dictionary = value;
-    NSMutableDictionary<NSString *, id> *attributes = [NSMutableDictionary dictionary];
-    for (NSString *key in @[@"text", @"textKey", @"image", @"titleColor", @"backgroundColor", @"accessibilityIdentifier", @"action"]) {
-        if (dictionary[key] && ![dictionary[key] isKindOfClass:NSString.class]) {
-            if (error) *error = CYLStackConfigurationError([NSString stringWithFormat:@"\"statusBar.%@\" must be a string.", key]);
-            return nil;
-        }
-    }
-    NSString *text = dictionary[@"text"];
-    if (dictionary[@"textKey"]) text = CYLPlaceholderLocalizedString(dictionary[@"textKey"], text);
-    if (text) attributes[CYLPlaceholderItemTitle] = text;
-    if (dictionary[@"image"]) attributes[CYLPlaceholderItemImage] = dictionary[@"image"];
-    if (dictionary[@"titleColor"]) attributes[CYLPlaceholderItemTitleColor] = dictionary[@"titleColor"];
-    if (dictionary[@"backgroundColor"]) attributes[CYLPlaceholderItemBackgroundColor] = dictionary[@"backgroundColor"];
-    if (dictionary[@"accessibilityIdentifier"]) {
-        attributes[CYLPlaceholderItemAccessibilityIdentifier] = dictionary[@"accessibilityIdentifier"];
-    }
-    // [EN] A built-in action name, or the app's own action. [CN] 内置动作名称，或应用自己的动作。
-    if ([dictionary[@"action"] length]) *action = [CYLPlaceholderScenarioCatalog actionNamed:dictionary[@"action"]];
-    return [[CYLPlaceholderStatusView alloc] initWithItemAttributes:attributes error:error];
 }
 
 @implementation CYLPlaceholderStackView
@@ -154,34 +116,9 @@ static CYLPlaceholderStatusView *CYLStackStatusViewFromConfiguration(id value, C
         if (error) *error = CYLStackConfigurationError(@"\"backgroundAction\" must be an action name.");
         return nil;
     }
-    CYLPlaceholderAction statusAction = nil;
-    CYLPlaceholderStatusView *statusView = nil;
-    id statusValue = configuration[@"statusBar"];
-    id display = configuration[@"display"];
-    if (display && (![display isKindOfClass:NSString.class] ||
-                    ![@[@"placeholder", @"status", @"statusAndPlaceholder"] containsObject:display])) {
-        if (error) *error = CYLStackConfigurationError(@"\"display\" must be \"placeholder\", \"status\" or \"statusAndPlaceholder\".");
-        return nil;
-    }
-    if (statusValue || [display isEqualToString:@"status"]) {
-        statusView = CYLStackStatusViewFromConfiguration(statusValue ?: @YES, &statusAction, error);
-        if (!statusView) return nil;
-    }
     self = [self initWithComponents:components actions:actions];
     if (self) {
         _scenario = scenario;
-        if (statusView && ![display isEqualToString:@"placeholder"]) {
-            self.statusView = statusView;
-            if (statusAction) {
-                __weak typeof(self) weakSelf = self;
-                statusView.tapHandler = ^(CYLPlaceholderStatusView *view) {
-                    [weakSelf performAction:statusAction];
-                };
-                statusView.placeholderView.accessibilityHint =
-                    [CYLPlaceholderScenarioCatalog localizedTitleForAction:statusAction];
-            }
-        }
-        self.componentsHidden = [display isEqualToString:@"status"];
         if (background) {
             self.backgroundAction = [background length] ? [CYLPlaceholderScenarioCatalog actionNamed:background] : nil;
         } else if (scenario != CYLPlaceholderScenarioCount) {
@@ -216,21 +153,12 @@ static CYLPlaceholderStatusView *CYLStackStatusViewFromConfiguration(id value, C
         // [EN] VoiceOver reads the components together, top to bottom, before what is behind the placeholder.
         // [CN] VoiceOver 自上而下连续朗读这些组件，再朗读占位视图后面的内容。
         self.shouldGroupAccessibilityChildren = YES;
-        // [EN] Without a status bar the guide is the whole view, so the layout is the same as before.
-        // [CN] 没有状态条时该区域就是整个视图，布局与以前相同。
-        _contentGuide = [[UILayoutGuide alloc] init];
-        [self addLayoutGuide:_contentGuide];
-        _contentGuideTopConstraint = [_contentGuide.topAnchor constraintEqualToAnchor:self.topAnchor];
         [NSLayoutConstraint activateConstraints:@[
-            _contentGuideTopConstraint,
-            [_contentGuide.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-            [_contentGuide.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
-            [_contentGuide.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
             [_stackView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
-            [_stackView.centerYAnchor constraintEqualToAnchor:_contentGuide.centerYAnchor],
+            [_stackView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
             [_stackView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.leadingAnchor
                                                                   constant:CYLPlaceholderStackMargin],
-            [_stackView.topAnchor constraintGreaterThanOrEqualToAnchor:_contentGuide.topAnchor constant:CYLPlaceholderStackMargin],
+            [_stackView.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor constant:CYLPlaceholderStackMargin],
         ]];
 
         for (CYLPlaceholderComponent *component in components) {
@@ -246,54 +174,6 @@ static CYLPlaceholderStatusView *CYLStackStatusViewFromConfiguration(id value, C
         }
     }
     return self;
-}
-
-- (instancetype)initWithStatusView:(CYLPlaceholderStatusView *)statusView {
-    self = [self initWithComponents:@[] actions:nil];
-    if (self) {
-        self.statusView = statusView;
-        self.componentsHidden = YES;
-    }
-    return self;
-}
-
-#pragma mark - Status bar
-
-- (void)setStatusView:(CYLPlaceholderStatusView *)statusView {
-    if (_statusView == statusView) return;
-    [_statusView removeFromSuperview];
-    self.contentGuideTopConstraint.active = NO;
-    _statusView = statusView;
-    if (statusView) {
-        statusView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:statusView];
-        self.contentGuideTopConstraint = [self.contentGuide.topAnchor constraintEqualToAnchor:statusView.bottomAnchor];
-        [NSLayoutConstraint activateConstraints:@[
-            [statusView.topAnchor constraintEqualToAnchor:self.topAnchor],
-            [statusView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-            [statusView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
-            self.contentGuideTopConstraint,
-        ]];
-    } else {
-        self.contentGuideTopConstraint = [self.contentGuide.topAnchor constraintEqualToAnchor:self.topAnchor];
-        self.contentGuideTopConstraint.active = YES;
-    }
-    [self cyl_updateAccessibilityElements];
-}
-
-- (void)setComponentsHidden:(BOOL)componentsHidden {
-    _componentsHidden = componentsHidden;
-    self.stackView.hidden = componentsHidden;
-    [self cyl_updateAccessibilityElements];
-}
-
-/// [EN] The status bar is read first, then the visible components. [CN] 先朗读状态条，再朗读可见的组件。
-- (void)cyl_updateAccessibilityElements {
-    if (!self.statusView) {
-        self.accessibilityElements = nil;
-        return;
-    }
-    self.accessibilityElements = self.componentsHidden ? @[self.statusView] : @[self.statusView, self.stackView];
 }
 
 // [EN] Unavailable in the header; implemented so the superclass's designated initializers are covered.
@@ -427,8 +307,6 @@ static CYLPlaceholderStatusView *CYLStackStatusViewFromConfiguration(id value, C
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if (gestureRecognizer != self.backgroundTapRecognizer) return YES;
-    // [EN] The status bar is not part of the background. [CN] 状态条不属于背景。
-    if (self.statusView && [touch.view isDescendantOfView:self.statusView]) return NO;
     // [EN] A tappable component handles its own taps; one with interaction turned off lets the background act.
     // [CN] 可点击的组件自己处理点击；关闭了交互的组件让背景处理。
     for (UIView *view = touch.view; view && view != self; view = view.superview) {

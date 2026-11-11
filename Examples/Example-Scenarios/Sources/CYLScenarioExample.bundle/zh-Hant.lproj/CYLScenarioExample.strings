@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "紅條 + 列表";
 "CYLScenarioFeedbackReconnect" = "正在重新連線…";
 "CYLScenarioActionCancel" = "取消";
+"CYLScenarioStatusFollowNetwork" = "網路";
+"CYLScenarioStatusFollowingNetwork" = "網路 ✓";
+"CYLScenarioFormatNetworkStatus" = "網路：%@";

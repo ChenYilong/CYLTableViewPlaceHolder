@@ -81,16 +81,9 @@ final class CYLConfigurationViewController: UIViewController {
             label.text = error.localizedDescription
             made = label
         }
-        // A placeholder with a status bar spans the full width under the navigation bar, so the bar shows edge to edge.
-        let inset: CGFloat = (made as? CYLPlaceholderStackView)?.statusView == nil ? 16 : 0
-        made.translatesAutoresizingMaskIntoConstraints = false
+        made.frame = view.bounds.insetBy(dx: 16, dy: 0)
+        made.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(made)
-        NSLayoutConstraint.activate([
-            made.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            made.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            made.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset),
-            made.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -inset),
-        ])
         placeholder = made
     }
 

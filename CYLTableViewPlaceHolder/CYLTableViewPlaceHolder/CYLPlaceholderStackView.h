@@ -13,7 +13,6 @@
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderView.h"
 #import "CYLPlaceholderScenario.h"
-#import "CYLPlaceholderStatusView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,21 +33,6 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
 @property (nonatomic, readonly) CYLPlaceholderScenario scenario;
 /// The action of a tap anywhere outside a tappable component; nil turns that off. Set from the scenario.
 @property (nonatomic, copy, nullable) CYLPlaceholderAction backgroundAction;
-/*!
- * [EN] A status bar pinned to the top edge across the full width, such as the network bar of
- *      `CYLPlaceholderStatusView`; the components center in the space below it. nil (the default) removes it, and the
- *      layout is the same as before. With `componentsHidden` this gives three combinations: the bar and the
- *      placeholder, only the bar, only the placeholder.
- * [CN] 固定在顶部、铺满宽度的状态条，如 `CYLPlaceholderStatusView` 的网络提示条；组件在其下方的区域居中。nil（默认）表示移除，布局与以前相同。
- *      与 `componentsHidden` 组合可以得到三种显示方式：状态条加占位图、只显示状态条、只显示占位图。
- */
-@property (nonatomic, strong, nullable) CYLPlaceholderStatusView *statusView;
-/*!
- * [EN] YES hides every component (the icon, title, hints, buttons), so only the status bar shows; NO (the default)
- *      shows them. VoiceOver skips hidden components. [CN] YES 隐藏所有组件（图标、标题、提示、按钮），只显示状态条；NO（默认）显示。
- *      VoiceOver 会跳过隐藏的组件。
- */
-@property (nonatomic) BOOL componentsHidden;
 
 /*!
  * The scenario's components, with handlers for its actions (for example `CYLPlaceholderActionRetry` and
@@ -68,12 +52,8 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
  * A placeholder from a configuration dictionary (JSON or property list), as described in
  * docs/Placeholder-Scenarios.md: "scenario" (a name, see `+[CYLPlaceholderScenarioCatalog scenarioNamed:]`),
  * "components" (component dictionaries, replacing the scenario's), "overrides" (dictionaries with an "index" and the
- * component fields "action", "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore"),
- * "backgroundAction" (an action name, or "" for none), "statusBar" (true or "networkUnavailable" for the network
- * bar, or a dictionary: "text", "textKey" a core string key, "image" an image name in the core bundle or "system:<SF Symbol>",
- * "titleColor", "backgroundColor", "accessibilityIdentifier", "action" an action name run on a tap) and "display"
- * ("placeholder", "status" or "statusAndPlaceholder"; "status" without "statusBar" shows the network bar).
- * Handlers come from `actions`, keyed by action.
+ * component fields "action", "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore"), and
+ * "backgroundAction" (an action name, or "" for none). Handlers come from `actions`, keyed by action.
  */
 - (nullable instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                        actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
@@ -84,10 +64,6 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
                                        actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
                                          error:(NSError * _Nullable * _Nullable)error
     NS_SWIFT_NAME(init(contentsOf:actions:));
-/*!
- * [EN] Only a status bar: no visible components (`componentsHidden` is YES). [CN] 只显示状态条：没有可见组件（`componentsHidden` 为 YES）。
- */
-- (instancetype)initWithStatusView:(CYLPlaceholderStatusView *)statusView NS_SWIFT_NAME(init(statusView:));
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 

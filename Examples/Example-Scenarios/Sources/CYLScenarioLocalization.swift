@@ -110,6 +110,9 @@ enum CYLScenarioL10n: String, CaseIterable {
     case statusModeList = "CYLScenarioStatusModeList"
     case feedbackReconnect = "CYLScenarioFeedbackReconnect"
     case actionCancel = "CYLScenarioActionCancel"
+    case statusFollowNetwork = "CYLScenarioStatusFollowNetwork"
+    case statusFollowingNetwork = "CYLScenarioStatusFollowingNetwork"
+    case formatNetworkStatus = "CYLScenarioFormatNetworkStatus"
 }
 
 private enum CYLScenarioLocalizationBundle {

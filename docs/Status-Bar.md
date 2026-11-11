@@ -9,6 +9,8 @@
 | [来源](#来源--source) | [Source](#来源--source) |
 | [接口](#接口--api) | [API](#接口--api) |
 | [与占位图组合](#与占位图组合--combined-with-the-placeholder) | [Combined with the placeholder](#与占位图组合--combined-with-the-placeholder) |
+| [网络检测](#网络检测--network-detection) | [Network detection](#网络检测--network-detection) |
+| [演示](#演示--demo) | [Demo](#演示--demo) |
 | [限制](#限制--limits) | [Limits](#限制--limits) |
 
 <!-- docs-navigation:end -->
@@ -48,37 +50,58 @@
 
 ## 与占位图组合 / Combined with the placeholder
 
-| 显示 / Shows | 代码 / Code | 配置文件 / Configuration file |
+| 中文 | English |
+| --- | --- |
+| 红条与占位图是两个独立的组件，不放进 `CYLPlaceholderStackView`（与 UIStackView 无关）。红条按 CYLChatKit 的方式加在当前视图控制器的 view 上：位于顶端、导航栏正下方（底边固定在安全区域顶部，`zPosition` 高于列表内容），显示期间控制器的 `additionalSafeAreaInsets.top` 增加红条高度，使内容从红条下方开始；动态字体变大时红条与安全区域一起变高。占位图仍由 table / collection view 的 `cyl_placeholderViewBlock` 放置。二者的组合由一个参数决定：`UIViewController.cyl_statusDisplay`。 | The bar and the placeholder are two independent components; the bar is not put into `CYLPlaceholderStackView` (nothing to do with UIStackView). As in CYLChatKit, the bar is added to the current view controller's view: at the top, right below the navigation bar (its bottom edge on the safe area's top, its `zPosition` above the list's content), and while it shows the controller's `additionalSafeAreaInsets.top` grows by its height so the content starts below it; with a larger Dynamic Type size the bar and the safe area grow together. The placeholder stays where the table or collection view's `cyl_placeholderViewBlock` puts it. One parameter chooses the combination: `UIViewController.cyl_statusDisplay`. |
+
+| 显示 / Shows | `cyl_statusDisplay` | 配置文件 `display` / Configuration file `display` |
 | --- | --- | --- |
-| 红条 + 占位图 / bar and placeholder | `placeholder.statusView = CYLPlaceholderStatusView(frame: .zero)` | `"statusBar": true`（或 / or `"display": "statusAndPlaceholder"`） |
-| 只显示红条 / bar only | `CYLPlaceholderStackView(statusView:)`，或 / or `componentsHidden = true` | `"display": "status"` |
-| 只显示占位图 / placeholder only | `statusView = nil`（默认 / default） | 不写 `statusBar`，或 / omit `statusBar`, or `"display": "placeholder"` |
-| 有数据时的红条 / bar over a list | `tableView.tableHeaderView = CYLPlaceholderStatusView(frame:)`（与 ChatKit 相同 / as in ChatKit） | — |
+| 红条 + 占位图 / bar and placeholder | `.all` | `"statusAndPlaceholder"`（有 `statusBar` 时的默认 / the default with `statusBar`） |
+| 只显示红条 / bar only | `.statusBar` | `"status"` |
+| 只显示占位图 / placeholder only | `.placeholder`（默认 / default） | `"placeholder"` |
+| 都不显示 / neither | `[]` | `"none"` |
 
 ```swift
 // [CN] 红条 + 占位图 / [EN] the bar and the placeholder
-let placeholder = CYLPlaceholderStackView(scenario: .networkUnavailable, actions: [.retry: { _, _ in reload() }])
-let bar = CYLPlaceholderStatusView(frame: .zero)
-bar.delegate = self                       // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
-placeholder.statusView = bar
+tableView.cyl_placeholderViewBlock({ _ in CYLPlaceholderStackView(scenario: .networkUnavailable, actions: nil) })
+cyl_statusView.delegate = self            // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
+cyl_setStatusDisplay(.all, animated: true)
 // [CN] 只显示红条 / [EN] only the bar
-let barOnly = CYLPlaceholderStackView(statusView: CYLPlaceholderStatusView(frame: .zero))
+cyl_statusDisplay = .statusBar
+// [CN] 断网时自动显示红条 / [EN] the bar while offline
+cyl_showsStatusViewWhenOffline = true
+// [CN] 配置文件 / [EN] a configuration file
+try cyl_applyStatusConfiguration(contentsOf: url)
 ```
 
 ```json
 {
-  "scenario": "NetworkUnavailable",
-  "statusBar": { "textKey": "CYLPlaceholderStatusNetworkUnavailable", "action": "retry" },
-  "display": "statusAndPlaceholder"
+  "statusBar": { "textKey": "CYLPlaceholderStatusNetworkUnavailable" },
+  "display": "statusAndPlaceholder",
+  "showsWhenOffline": true
 }
 ```
 
 | 中文 | English |
 | --- | --- |
-| `statusView` 固定在顶部并铺满宽度，组件在其下方的区域居中；不设置时布局与以前相同。`"statusBar"` 可以是 `true`、`"networkUnavailable"` 或字典：`text`、`textKey`（核心文案 key）、`image`（核心 bundle 中的图片名或 `"system:<SF Symbol>"`）、`titleColor`、`backgroundColor`（颜色字符串）、`accessibilityIdentifier`、`action`（点击时执行的动作名）。示例：Example-Scenarios 的“交互流程 → 状态条 → 网络状态条”（`CYLStatusBarViewController`），底部切换四种显示方式，“文件”打开 `Configurations/status-bar-and-placeholder.json` 与 `status-bar-only.json`。 | `statusView` is pinned to the top across the full width, and the components center in the space below it; without it the layout is unchanged. `"statusBar"` is `true`, `"networkUnavailable"` or a dictionary: `text`, `textKey` (a core string key), `image` (an image name in the core bundle or `"system:<SF Symbol>"`), `titleColor`, `backgroundColor` (color strings), `accessibilityIdentifier`, `action` (the action name a tap runs). Demo: Example-Scenarios, "Flows → Status bar → Network status bar" (`CYLStatusBarViewController`), whose toolbar switches between the four ways, and "File" opens `Configurations/status-bar-and-placeholder.json` and `status-bar-only.json`. |
+| 其他接口：`cyl_statusView`（默认网络提示条，可赋值自定义状态条，赋 nil 恢复）、`cyl_placeholderScrollView`（受控的列表，默认是控制器的 view，如 UITableViewController）、`UIScrollView.cyl_placeholderHidden`（列表为空也不显示占位图，由 `cyl_statusDisplay` 设置，只作用于 block 接口）。`"statusBar"` 可以是 `true`、`"networkUnavailable"` 或字典（`-[CYLPlaceholderStatusView initWithConfiguration:error:]`：`text`、`textKey`、`image`、`titleColor`、`backgroundColor`、`accessibilityIdentifier`）。配置无效时返回错误且不做任何修改。 | Also: `cyl_statusView` (the network bar by default; assign your own, nil restores it), `cyl_placeholderScrollView` (the list it controls; by default the controller's view, as in a UITableViewController), `UIScrollView.cyl_placeholderHidden` (no placeholder even for an empty list; set by `cyl_statusDisplay`; block API only). `"statusBar"` is `true`, `"networkUnavailable"` or a dictionary (`-[CYLPlaceholderStatusView initWithConfiguration:error:]`: `text`, `textKey`, `image`, `titleColor`, `backgroundColor`, `accessibilityIdentifier`). An invalid configuration returns an error and changes nothing. |
+
+## 网络检测 / Network detection
+
+| 中文 | English |
+| --- | --- |
+| CYLChatKit 的红条跟随 IM 客户端的连接状态，而连接状态依赖 LeanCloud SDK 中 `AVIMWebSocketWrapper` 的可达性监测（`LCNetworkReachabilityManager`，AFNetworkReachabilityManager 的变体，基于 `SCNetworkReachability`）。`CYLPlaceholderNetworkMonitor` 移植这段逻辑，用于高内聚网络失败场景：相同的状态值（未知 -1、不可达 0、蜂窝 1、Wi-Fi 2）、状态变化回调 `setNetworkStatusChangeBlock:`、`startMonitoring` / `stopMonitoring`、`reachable`（只有不可达时为 NO），并发送 `CYLPlaceholderNetworkStatusDidChangeNotification`。 | CYLChatKit's bar follows the IM client's connection, which depends on the reachability monitoring of LeanCloud's `AVIMWebSocketWrapper` (`LCNetworkReachabilityManager`, an AFNetworkReachabilityManager variant on `SCNetworkReachability`). `CYLPlaceholderNetworkMonitor` ports that logic so the network-failure scenario is self-contained: the same status values (unknown -1, not reachable 0, cellular 1, Wi-Fi 2), the change block `setNetworkStatusChangeBlock:`, `startMonitoring` / `stopMonitoring`, `reachable` (NO only when not reachable), and `CYLPlaceholderNetworkStatusDidChangeNotification`. |
+| 适配新系统：`SCNetworkReachability` 自 iOS 17 起废弃，且只表示数据包能否离开设备；改用 Network.framework 的 `NWPathMonitor`（iOS 12 起，即本库最低版本，podspec 增加 `Network` framework）。新增有线以太网（`ReachableViaWiredEthernet`）与其他接口（`ReachableViaOther`，如 VPN）、低数据模式 `constrained`（iOS 13 起）与昂贵网络 `expensive`；“需要连接”（按需 VPN、需登录的网络）视为不可达；回调在主队列。未知状态不算离线，避免启动时红条闪现（ChatKit 把未知当作不可达）。 | Adapted to current systems: `SCNetworkReachability` is deprecated since iOS 17 and only says whether a packet could leave the device; this uses Network.framework's `NWPathMonitor` (iOS 12+, the library's minimum; the podspec adds the `Network` framework). New: wired Ethernet (`ReachableViaWiredEthernet`) and other interfaces (`ReachableViaOther`, such as a VPN), Low Data Mode `constrained` (iOS 13+) and `expensive` paths; "requires connection" (VPN on demand, a captive network) counts as not reachable; callbacks run on the main queue. An unknown status is not offline, so no bar flashes at launch (ChatKit treated unknown as unreachable). |
+| 限制：有可用路径不代表服务器可达（例如需要登录的 Wi-Fi 在登录前可能仍是 satisfied）；请求失败时仍应由应用显示网络失败占位图。 | Limit: a usable path does not mean the server is reachable (a captive Wi-Fi may report satisfied before login); a failed request should still show the network-failure placeholder. |
+
+## 演示 / Demo
+
+| 中文 | English |
+| --- | --- |
+| Example-Scenarios 的“交互流程 → 状态条 → 网络状态条”（`CYLStatusBarViewController`，UITableViewController）：底部切换红条 + 占位图、只显示红条、只显示占位图、红条 + 列表；“网络”打开 `cyl_showsStatusViewWhenOffline`（可用飞行模式验证）；“文件”应用 `CYLScenarioExample.bundle/StatusBar/` 中的三个配置文件。 | Example-Scenarios, "Flows → Status bar → Network status bar" (`CYLStatusBarViewController`, a UITableViewController): the toolbar switches between bar and placeholder, bar only, placeholder only, and bar over a list; "Network" turns on `cyl_showsStatusViewWhenOffline` (try airplane mode); "File" applies the three configuration files in `CYLScenarioExample.bundle/StatusBar/`. |
 
 ## 限制 / Limits
 
 | 中文 | English |
 | --- | --- |
-| 未验证：本机无法编译或运行，等待 CI；横向布局、红条高度、深色模式与右到左镜像的实际画面需要在模拟器中查看。红条作为 table 的占位图时，位置取决于占位图的 frame（在导航栏下方由 table 的内容边距决定）；有数据时的红条用 `tableHeaderView`，会随列表滚动（ChatKit 的聊天页则把它加在控制器的 view 上）。横向排列时不绘制标题装饰（背景、边框）。 | Not verified: nothing could be compiled or run here, so CI comes first; the horizontal layout, the bar's height, Dark Mode and right-to-left mirroring need a look in the simulator. As a table placeholder, the bar sits where the placeholder's frame starts (below the navigation bar through the table's content inset); over a list it is the `tableHeaderView` and scrolls with it (ChatKit's chat page adds it to the controller's view instead). A horizontal item draws no title chrome (background, border). |
+| 未验证：本机无法编译或运行，等待 CI；横向布局、红条在导航栏下方的位置（尤其控制器的 view 本身是 table 时，红条约束在 frame 布局参考与安全区域上）、深色模式、右到左与动态字体需要在模拟器中查看；网络切换需要在真机或模拟器中手动验证。`cyl_placeholderHidden` 只作用于 block 接口（`cyl_placeholderViewBlock`），不作用于旧的代理接口。横向排列时不绘制标题装饰（背景、边框）。 | Not verified: nothing could be compiled or run here, so CI comes first; the horizontal layout, the bar's place below the navigation bar (especially when the controller's view is the table itself, where the bar is pinned to the frame layout guide and the safe area), Dark Mode, right-to-left and Dynamic Type need a look in the simulator; network changes need a manual check on a device or simulator. `cyl_placeholderHidden` only affects the block API (`cyl_placeholderViewBlock`), not the older delegate API. A horizontal item draws no title chrome (background, border). |

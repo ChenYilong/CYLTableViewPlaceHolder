@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   # NOTICE.animations and the license of each source repository).
   s.resources     = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle', 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy', 'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
   s.requires_arc = true
-  s.frameworks = 'ImageIO', 'QuartzCore'
+  s.frameworks = 'ImageIO', 'QuartzCore', 'Network'
   s.swift_version = '5.0'
   s.default_subspecs = 'Core'
   s.static_framework = true

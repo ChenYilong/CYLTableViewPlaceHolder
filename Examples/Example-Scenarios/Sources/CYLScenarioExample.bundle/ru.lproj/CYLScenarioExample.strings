@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "Строка + список";
 "CYLScenarioFeedbackReconnect" = "Переподключение…";
 "CYLScenarioActionCancel" = "Отмена";
+"CYLScenarioStatusFollowNetwork" = "Сеть";
+"CYLScenarioStatusFollowingNetwork" = "Сеть ✓";
+"CYLScenarioFormatNetworkStatus" = "Сеть: %@";

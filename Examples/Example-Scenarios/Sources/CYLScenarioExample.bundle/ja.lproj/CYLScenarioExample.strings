@@ -69,3 +69,6 @@
 "CYLScenarioStatusModeList" = "バー + リスト";
 "CYLScenarioFeedbackReconnect" = "再接続しています…";
 "CYLScenarioActionCancel" = "キャンセル";
+"CYLScenarioStatusFollowNetwork" = "ネットワーク";
+"CYLScenarioStatusFollowingNetwork" = "ネットワーク ✓";
+"CYLScenarioFormatNetworkStatus" = "ネットワーク：%@";
