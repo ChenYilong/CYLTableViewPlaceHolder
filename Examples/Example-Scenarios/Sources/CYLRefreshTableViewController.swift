@@ -10,7 +10,8 @@
 import UIKit
 import CYLTableViewPlaceHolder
 
-private let CYLRefreshDuration: TimeInterval = 0.5
+/// MJRefresh's MJDuration: long enough to see the refreshing state.
+private let CYLRefreshDuration: TimeInterval = 2.0
 
 /// A label of a refresh control, whether Swift imports it as optional (a weak property) or not.
 private func label(_ label: UILabel?) -> UILabel? {
