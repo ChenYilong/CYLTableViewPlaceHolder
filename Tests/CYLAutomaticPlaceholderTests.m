@@ -668,12 +668,17 @@
 }
 
 - (void)testConfiguredPlaceholderPropertyListAndPresets {
-    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
-    NSURL *bundleURL = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"] ?:
-        [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-    NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
-    NSURL *url = [bundle URLForResource:@"CYLPlaceholderItemDemo" withExtension:@"plist"];
-    XCTAssertNotNil(url);
+    // [EN] The same item as the main example's CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist; the core
+    //      bundle holds only placeholder resources, so the test writes its own copy.
+    // [CN] 与主示例 CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist 相同；核心 bundle 只放占位资源，因此测试自己写一份。
+    NSDictionary *item = @{
+        @"CYLPlaceholderItemStyle": @5, @"CYLPlaceholderItemMessage": @2,
+        @"CYLTabBarItemImagePositionAdjustment": @{@"horizontal": @8, @"vertical": @(-6)},
+        @"CYLTabBarItemTitlePositionAdjustment": @[@0, @6],
+        @"CYLTabBarAnimationFilePath": @"reserved-animation.json",
+    };
+    NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CYLPlaceholderItemDemo.plist"]];
+    XCTAssertTrue([item writeToURL:url atomically:YES]);
     NSError *error = nil;
     CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemContentsOfURL:url imageBundle:nil error:&error];
     XCTAssertNotNil(view);

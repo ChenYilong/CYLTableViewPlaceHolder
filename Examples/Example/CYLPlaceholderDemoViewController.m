@@ -59,9 +59,9 @@
                 CYLPlaceholderItemAnimationFilePath: @"reserved-animation.json"};
             placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
         } else {
-            NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
-            NSURL *bundleURL = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"] ?:
-                [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
+            // [EN] The demo's configuration lives in the example's own bundle, not in the library's core bundle.
+            // [CN] 演示配置放在示例自己的 bundle 中，而不是本库的核心 bundle。
+            NSURL *bundleURL = [NSBundle.mainBundle URLForResource:@"CYLPlaceholderExample" withExtension:@"bundle"];
             NSBundle *bundle = bundleURL ? [NSBundle bundleWithURL:bundleURL] : nil;
             NSURL *url = [bundle URLForResource:@"CYLPlaceholderItemDemo" withExtension:@"plist"];
             placeholder = [[CYLPlaceholderView alloc] initWithItemContentsOfURL:url imageBundle:nil error:&error];

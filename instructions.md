@@ -358,6 +358,14 @@ named `CYLPlaceholder<Scenario>.<ext>` and found with
   do not add mascots, scenes, characters or widget demos (switches, ratings,
   vehicles), or a file you could not inspect. When nothing fits, use a line icon
   with that meaning instead.
+- The core bundle holds only placeholder resources: placeholder animations and
+  icons, the refresh arrows, the core strings and their licenses. Anything else
+  (demo configurations, mascots, scenes, widget demos, sample files) belongs to
+  the example that uses it, in that example's own `.bundle` (for example
+  `Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Animations/`, with
+  its own `NOTICE.animations` and license files, or
+  `Examples/Example/CYLPlaceholderExample.bundle/`). Core tests that need sample
+  data write it themselves instead of reading an example bundle.
 - Download only from sources whose license allows redistribution (for example
   the engines' own Apache-2.0 or MIT repositories); community marketplaces with
   unclear terms are not acceptable sources. Keep the files unmodified.

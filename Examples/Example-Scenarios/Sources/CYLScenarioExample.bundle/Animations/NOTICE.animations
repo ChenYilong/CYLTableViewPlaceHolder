@@ -1,0 +1,38 @@
+Animations of the Example-Scenarios demo that do not mean a placeholder state (a mascot, a scene, widget demos),
+so they stay out of the core bundle (instructions.md, "Bundled animations"). Unmodified; renamed after their content.
+
+CYLScenarioExampleMascot.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/mascot.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  480e8c22c9df6b6f9f4c235455fd2b373fd9574c98a42d5af9411c70d124ebb4
+
+CYLScenarioExampleLightSwitch.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/light_switch.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  d1e4227b1c9817d07466bf52255d4aec22cf73654d0d875e48a7e2a0826a62c2
+
+CYLScenarioExampleMoonlight.pag
+  source:  https://github.com/Tencent/libpag (eb4412aa58d7e26d50c33689d7e3508dbc355528)
+  path:    assets/moonlight.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  747ac418aab921de3c22f9814fa74ec641bfcfaf99a0bddb8d11ff222166fc75
+
+CYLScenarioExampleExplore.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/explore.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  409f4d21b44c9793026955de88ef5c36d4a6fdb311085b2e9ce513a76f4750b4
+
+CYLScenarioExampleRating.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/rating_animation.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  2a85d71429e69424415a552fade7b590724c4c03a2426d5fdacc949dc12570f0
+
+CYLScenarioExampleTruck.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/truck.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  af37da1ba63af80a7cbbfeed520acdb070b547f2fdff2e1d37c2b3e0d8b2714b

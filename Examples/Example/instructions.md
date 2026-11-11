@@ -69,3 +69,5 @@ covered by `Tests/PlaceholderTests.m` (`ruby Tests/run-tests.rb`), not by a demo
 FlatDesign item configured in code and from a plist, and dot, number and text
 badges. These are demos, not issue reproductions; parity is tracked in
 `docs/flatdesign-item-comparison.md`.
+- `CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist`: the property-list item the demo loads with
+  `initWithItemContentsOfURL:`. It is example data, so it lives in this example's own bundle, not in the core bundle.

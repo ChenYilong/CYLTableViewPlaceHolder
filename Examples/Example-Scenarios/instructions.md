@@ -28,6 +28,9 @@ belong to the core.
   A file that uses the example's own texts marks them `exampleTitleKey` (a `CYLScenarioL10n` raw value); the example
   resolves them and calls `CYLPlaceholderStackView(configuration:actions:)`. Add a file to add a demo; the format is in
   `docs/Placeholder-Scenarios.md`.
+- `Sources/CYLScenarioExample.bundle/Animations/`: animations without a placeholder meaning (a mascot, a scene,
+  widget demos), kept out of the core bundle; listed last in the Animations tab and played by file path. Record each
+  file in that folder's `NOTICE.animations`.
 - The detail page's "Tap: on/off" button sets every component's `tapInteractionEnabled` (each component's own API).
 - To add a scenario, add it to the core (`CYLPlaceholderScenario.h/.m`, core strings, tests); the list picks it up.
 - The Xcode project (objectVersion 46) lists the Swift files explicitly; add a new file to the `ExampleScenarios`

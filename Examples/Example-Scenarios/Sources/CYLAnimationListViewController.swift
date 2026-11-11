@@ -15,6 +15,8 @@ final class CYLAnimationListViewController: UITableViewController {
     private struct Section {
         let title: String
         let fileNames: [String]
+        /// nil: the core bundle (`CYLPlaceholderView.path(forBundledAnimation:)`); otherwise the folder of the files.
+        var folder: URL?
     }
 
     private static let engines: [(fileExtension: String, title: String)] = [
@@ -26,11 +28,30 @@ final class CYLAnimationListViewController: UITableViewController {
 
     private let sections: [Section] = {
         let names = CYLPlaceholderView.bundledAnimationFileNames()
-        return engines.compactMap { engine in
+        var sections: [Section] = engines.compactMap { engine in
             let files = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }
-            return files.isEmpty ? nil : Section(title: engine.title, fileNames: files)
+            return files.isEmpty ? nil : Section(title: engine.title, fileNames: files, folder: nil)
         }
+        // The example's own animations: no placeholder meaning (a mascot, a scene, widget demos), so they live in the
+        // example bundle, not in the core bundle (CYLScenarioExample.bundle/Animations/NOTICE.animations).
+        if let folder = Bundle.main.url(forResource: "CYLScenarioExample", withExtension: "bundle")?
+            .appendingPathComponent("Animations") {
+            let files = ((try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? [])
+                .filter { ["json", "pag", "riv", "gif"].contains(($0 as NSString).pathExtension) }
+                .sorted()
+            if !files.isEmpty {
+                sections.append(Section(title: "CYLScenarioExample.bundle/Animations", fileNames: files, folder: folder))
+            }
+        }
+        return sections
     }()
+
+    private func path(at indexPath: IndexPath) -> String? {
+        let section = sections[indexPath.section]
+        let name = section.fileNames[indexPath.row]
+        guard let folder = section.folder else { return CYLPlaceholderView.path(forBundledAnimation: name) }
+        return folder.appendingPathComponent(name).path
+    }
 
     init() {
         super.init(style: .insetGrouped)
@@ -83,7 +104,7 @@ final class CYLAnimationListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "animation", for: indexPath)
         let name = sections[indexPath.section].fileNames[indexPath.row]
-        let path = CYLPlaceholderView.path(forBundledAnimation: name)
+        let path = self.path(at: indexPath)
         let bytes = path.flatMap { try? FileManager.default.attributesOfItem(atPath: $0)[.size] as? NSNumber }
         var content = UIListContentConfiguration.subtitleCell()
         content.text = name
@@ -96,8 +117,11 @@ final class CYLAnimationListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let name = sections[indexPath.section].fileNames[indexPath.row]
-        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name), animated: true)
+        let section = sections[indexPath.section]
+        let name = section.fileNames[indexPath.row]
+        let examplePath = section.folder == nil ? nil : path(at: indexPath)
+        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
+                                                 animated: true)
     }
 }
 
@@ -105,11 +129,14 @@ final class CYLAnimationListViewController: UITableViewController {
 final class CYLAnimationDetailViewController: UIViewController {
 
     private let fileName: String
+    /// The full path of an example-bundle animation; nil for a core one.
+    private let examplePath: String?
     private var placeholder: CYLPlaceholderStackView?
     private var replayTimer: Timer?
 
-    init(fileName: String) {
+    init(fileName: String, examplePath: String? = nil) {
         self.fileName = fileName
+        self.examplePath = examplePath
         super.init(nibName: nil, bundle: nil)
         title = fileName
         hidesBottomBarWhenPushed = true
@@ -126,12 +153,28 @@ final class CYLAnimationDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionReplay),
                                                             style: .plain, target: self, action: #selector(replay))
-        // The component builder adds the options a bundled Rive file needs.
-        let title = (fileName as NSString).deletingPathExtension.replacingOccurrences(of: "CYLPlaceholder", with: "")
-        let placeholder = CYLPlaceholderStackView(components: [
-            CYLPlaceholderComponent(bundledAnimation: fileName, fallbackStyle: .image, title: title,
-                                    size: CGSize(width: 180, height: 180), action: nil),
-        ], actions: nil)
+        let title = (fileName as NSString).deletingPathExtension
+            .replacingOccurrences(of: "CYLPlaceholder", with: "").replacingOccurrences(of: "CYLScenarioExample", with: "")
+        let component: CYLPlaceholderComponent
+        if let examplePath = examplePath {
+            // A file outside the core bundle: the item attributes name its path; the old Rive files need `legacy`.
+            var attributes: [String: Any] = [
+                CYLPlaceholderItemTitle: title,
+                CYLPlaceholderItemStyle: CYLPlaceholderStyle.image.rawValue,
+                CYLPlaceholderItemAnimationFilePath: examplePath,
+                CYLPlaceholderItemAnimationSize: [180, 180],
+                CYLPlaceholderItemAnimationRepeatCount: 0,
+            ]
+            if (fileName as NSString).pathExtension == "riv" {
+                attributes[CYLPlaceholderItemAnimationOptions] = ["legacy": "1"]
+            }
+            component = CYLPlaceholderComponent(attributes: attributes, action: nil)
+        } else {
+            // The component builder adds the options a bundled Rive file needs.
+            component = CYLPlaceholderComponent(bundledAnimation: fileName, fallbackStyle: .image, title: title,
+                                                size: CGSize(width: 180, height: 180), action: nil)
+        }
+        let placeholder = CYLPlaceholderStackView(components: [component], actions: nil)
         placeholder.frame = view.bounds
         placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(placeholder)

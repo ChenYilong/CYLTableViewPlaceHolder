@@ -74,7 +74,8 @@ the integrated `CYLRefresh` component, and an example application. Read
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
   Add only animations whose content means a placeholder state (loading, empty,
   failed, missing permission, an offered action, done), never mascots, scenes or
-  widget demos; add only files with a redistributable license, unmodified, and record each
+  widget demos, which go to the example that uses them, in its own `.bundle`. The core bundle holds
+  only placeholder resources. Add only files with a redistributable license, unmodified, and record each
   one's source repository, commit, path, license and SHA-256 in
   `Animations/NOTICE.animations`, shipping the license text next to it.
   Keep the total small: every app that uses Core carries these files.
