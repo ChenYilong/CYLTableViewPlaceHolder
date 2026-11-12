@@ -36,6 +36,28 @@
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh>（Java） | MIT | `46fdc86`（2016-05-04） | 库约 128 KB、示例约 109 KB / library about 128 KB, demo about 109 KB | 23 | 151 |
 | <https://github.com/scwang90/SmartRefreshLayout>（Java） | Apache-2.0 | `224db48`（2024-11-26） | 库约 720 KB（kernel 276 KB、header 256 KB 等）、示例约 329 KB / library about 720 KB (kernel 276 KB, headers 256 KB, …), demo about 329 KB | 5 | 337 |
 
+### SVPullToRefresh → Kotlin（`android/SVPullToRefresh`，2026-11-13）
+
+| 中文 | English |
+| --- | --- |
+| 第一步已完成：模块 `:SVPullToRefresh`（包 `com.cyl.svpulltorefresh`，保留原库类名与 MIT 许可证 `LICENSE.txt`），文案七种语言；Robolectric 测试 11 个全部通过（`SVPullToRefreshLayoutTest`，在 `/tmp` 镜像里用 JDK 17 运行，因为 exFAT 卷上的 `._*` 文件会让 Gradle 失败）。iOS 的 UIScrollView 分类在 Android 上没有可扩展的滚动视图，改为包住一个滚动视图的容器；RecyclerView、NestedScrollView 通过嵌套滚动传递拖动，其他视图通过触摸拦截。剩余：#195 可继承的刷新视图、横向加载更多与 inset 的测试、示例与模拟器截图、PR 与 issue 表的逐行状态。 | Step one done: module `:SVPullToRefresh` (package `com.cyl.svpulltorefresh`, the source's class names and its MIT `LICENSE.txt`), texts in seven languages; 11 Robolectric tests pass (`SVPullToRefreshLayoutTest`, run in a `/tmp` mirror with JDK 17, since `._*` files on the exFAT volume break Gradle). Android has no scroll view to extend with a category, so the UIScrollView categories become a container around one scrolling view; RecyclerView and NestedScrollView drag through nested scrolling, other views through touch interception. Left: #195 subclassable refresh view, tests for horizontal infinite scrolling and the insets, the demo and emulator screenshots, and per-row statuses in the pull request and issue tables. |
+
+| iOS（SVPullToRefresh） | Kotlin |
+| --- | --- |
+| `UIScrollView (SVPullToRefresh)` | `SVPullToRefreshLayout`（包住一个滚动视图的容器 / a container around one scrolling view） |
+| `addPullToRefreshWithActionHandler:` / `…position:` | `addPullToRefresh(position = TOP) { }`；顶部与底部可同时存在 / top and bottom together (#158) |
+| `triggerPullToRefresh` | `triggerPullToRefresh(position = TOP)` |
+| `pullToRefreshView` / `showsPullToRefresh` | `pullToRefreshView`、`pullToRefreshView(position)` / `showsPullToRefresh` |
+| `SVPullToRefreshPosition` / `SVPullToRefreshState` | `SVPullToRefreshPosition` / `SVPullToRefreshState`（enum class） |
+| `SVPullToRefreshView`：`arrowColor` / `textColor` / `titleLabel` / `subtitleLabel` / `activityIndicatorViewColor` / `state` / `position` | 同名属性 / the same names |
+| `setTitle:forState:` / `setSubtitle:forState:` / `setCustomView:forState:` | `setTitle` / `setSubtitle` / `setCustomView(view, state)`；`ALL` 设置全部状态 / `ALL` sets every state |
+| `startAnimating` / `stopAnimating` | `startAnimating()` / `stopAnimating()` |
+| `activityIndicatorViewStyle` | 不适用：Android 的 ProgressBar 没有这种样式枚举，颜色用 `activityIndicatorViewColor` / not applicable: Android's ProgressBar has no such style enum; color through `activityIndicatorViewColor` |
+| `dateLabel` / `lastUpdatedDate` / `dateFormatter` / `triggerRefresh`（已弃用 / deprecated） | 不移植：原库已弃用，日期用 `setSubtitle` / not ported: deprecated in the source; show a date with `setSubtitle` |
+| `UIScrollView (SVInfiniteScrolling)` | `SVPullToRefreshLayout`：`addInfiniteScrolling(direction) { }`、`triggerInfiniteScrolling()`、`infiniteScrollingView`、`showsInfiniteScrolling` |
+| `SVInfiniteScrollingView`：`state` / `enabled` / `setCustomView:forState:` / `startAnimating` / `stopAnimating` | `state` / `isInfiniteScrollingEnabled` / `setCustomView` / `startAnimating()` / `stopAnimating()` |
+| 来自 PR 的新增 / added from pull requests | `customArrowView`（#107/#190）、`customViewKeepsOwnHeight`（#148）、`infiniteScrollingThreshold`（#154）、`SVPullToRefreshViewListener`（#159/#175/#223）、`contentInsetTop` / `contentInsetBottom`（#173/#177/#297/#300）、`pullThresholdFactor`（#269）、`SVInfiniteScrollingDirection`（#146/#180/#203） |
+
 ### SVPullToRefresh open PR（43 个，2026-11-13） / SVPullToRefresh open pull requests (43, 2026-11-13)
 
 | 中文 | English |

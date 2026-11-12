@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SVPullToRefresh texts (the iOS NSLocalizedString keys), in every language of this project. -->
+<resources>
+    <string name="sv_pull_to_refresh">Pull to refresh…</string>
+    <string name="sv_release_to_refresh">Release to refresh…</string>
+    <string name="sv_loading">Loading…</string>
+    <string name="sv_pull_up_to_refresh">Pull up to refresh…</string>
+    <string name="sv_loading_more">Loading more</string>
+</resources>

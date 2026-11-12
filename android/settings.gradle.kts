@@ -17,3 +17,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CYLTableViewPlaceHolderAndroid"
 include(":placeholder")
+// SVPullToRefresh in Kotlin (docs/Android-Port.md, the refresh port).
+include(":SVPullToRefresh")
