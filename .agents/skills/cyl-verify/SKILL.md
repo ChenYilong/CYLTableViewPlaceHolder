@@ -104,4 +104,6 @@ with the markers on their own lines, no trailing comment follows code, and a fil
   bug and no open issue. The README shows cropped key details, a full screen only when it is needed; several
   details go into one stitched image. Stitching order of preference: a vertical stack (one column, top to bottom),
   easiest to read on a phone; then two columns with several rows; last, a single horizontal row, at most three
-  images in a row.
+  images in a row. (Corrected by the maintainer on 2026-11-12: the original wording said both "prefer a horizontal
+  arrangement" and "a horizontal row is the worst", which contradict each other; the rule is to prefer a vertical
+  stack.)
