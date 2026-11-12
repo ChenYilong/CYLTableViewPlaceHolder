@@ -632,9 +632,6 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   single horizontal row, at most three images in a row. (Corrected by the
   maintainer on 2026-11-12: the original wording said both "prefer a
   horizontal arrangement" and "a horizontal row is the worst", which
-  contradict each other; the rule is to prefer a vertical stack.) (Corrected by the
-  maintainer on 2026-11-12: the original wording said both "prefer a
-  horizontal arrangement" and "a horizontal row is the worst", which
   contradict each other; the rule is to prefer a vertical stack.)
 
 ## CI example screenshots
