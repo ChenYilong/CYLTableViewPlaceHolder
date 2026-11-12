@@ -66,7 +66,20 @@ final class CYLRefreshExampleViewController: UITableViewController {
             methods: ["example51", "example52", "example53", "example54", "example55", "example56", "example32"],
             viewControllers: [table, table, table, table, table, table,
                               ("CYLRefreshCollectionViewController", { CYLRefreshCollectionViewController() })])
-        return [exam0, exam1, exam2, exam3, exam4, exam5]
+        // Beyond MJRefresh: SmartRefreshControl's demo (CYLSmartRefreshDemoViewController), one method per style.
+        let smart: (name: String, make: () -> CYLRefreshExampleRunning) =
+            ("CYLSmartRefreshDemoViewController", { CYLSmartRefreshDemoViewController() })
+        let styles: [(CYLScenarioL10n, String)] = [
+            (.smartDelivery, "smartDelivery"), (.smartClassics, "smartClassics"), (.smartDropBox, "smartDropBox"),
+            (.smartPhoenix, "smartPhoenix"), (.smartTaurus, "smartTaurus"), (.smartBezierRadar, "smartBezierRadar"),
+            (.smartBezierCircle, "smartBezierCircle"), (.smartStoreHouse, "smartStoreHouse"),
+            (.smartWaveSwipe, "smartWaveSwipe"), (.smartOriginal, "smartOriginal"), (.smartMaterial, "smartMaterial"),
+            (.smartGameHitBlock, "smartGameHitBlock"), (.smartGameBattleCity, "smartGameBattleCity"),
+            (.smartFly, "smartFly"), (.smartClassicsFooter, "smartClassicsFooter"),
+        ]
+        let exam6 = CYLRefreshExample(header: .smartSection, titles: styles.map { $0.0 },
+                                      methods: styles.map { $0.1 }, viewControllers: [smart])
+        return [exam0, exam1, exam2, exam3, exam4, exam5, exam6]
     }()
 
     init() {
