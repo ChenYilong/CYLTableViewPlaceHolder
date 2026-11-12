@@ -10,6 +10,7 @@
 | [SmartRefreshControl 对照表](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) | [SmartRefreshControl comparison](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) |
 | [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
+| [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
 | [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
 
 <!-- docs-navigation:end -->
@@ -132,7 +133,7 @@
 
 | 中文 | English |
 | --- | --- |
-| 评分：**94/100**（45/48 行有对应 API；二楼一行拆成刷新头与刷新尾两行；阻尼、弹簧与嵌套滚动 3 行改判为不适用；此前 92（`d29c511`）、84（`af17600`）、82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 7 行只属于 Flutter 或 UIKit 无对应概念，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：5 个刷新尾样式、6 个 Rive 样式包与 `easy_paging`。 | Score: **94/100** (45 of 48 rows have a counterpart; the second-floor row is split into header and footer; friction, springs and nested scrolling are now judged not applicable; before: 92 (`d29c511`), 84 (`af17600`), 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 7 rows belong to Flutter only or have no UIKit concept and are not scored; 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: 5 footer styles, the 6 Rive style packages and `easy_paging`. |
+| 评分：**96/100**（46/48 行有对应 API；二楼一行拆成刷新头与刷新尾两行；阻尼、弹簧与嵌套滚动 3 行改判为不适用；此前 94（`a890e12`）、92（`d29c511`）、84（`af17600`）、82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 7 行只属于 Flutter 或 UIKit 无对应概念，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：6 个 Rive 样式包与 `easy_paging`。 | Score: **96/100** (46 of 48 rows have a counterpart; the second-floor row is split into header and footer; friction, springs and nested scrolling are now judged not applicable; before: 94 (`a890e12`), 92 (`d29c511`), 84 (`af17600`), 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 7 rows belong to Flutter only or have no UIKit concept and are not scored; 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: the 6 Rive style packages and `easy_paging`. |
 
 | flutter_easy_refresh 公开 API / public API | CYLRefresh API | 对齐 / Aligned |
 | --- | --- | --- |
@@ -184,13 +185,21 @@
 | `isNested` / `nestedOuterController` / `nestedInnerController`（嵌套滚动） | 不适用：UIKit 没有 NestedScrollView；嵌套的滚动视图把控件挂在需要的那个滚动视图上即可 / not applicable: UIKit has no NestedScrollView; attach the control to the scroll view that should refresh | 不适用 / N/A |
 | `ClassicHeader` 的结果图标 `succeededIcon` / `failedIcon` / `noMoreIcon`、`pullIconBuilder`、`reverse`、`textBuilder` / `messageBuilder`、`spacing` / `iconDimension` | `succeededImage` / `failedImage`、经典刷新尾的 `noMoreDataImage`、`iconOnTrailingSide`、`iconSize`；`pullIconBuilder` → `arrowView.image`；`textBuilder` → `setTitle:forState:`；`messageBuilder` → `lastUpdatedTimeText`；`spacing` → `labelLeftInset` / the classic footers' `noMoreDataImage`, and the mappings listed | ✅ |
 | `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | ✅ |
-| `BezierFooter` / `MaterialFooter` / `DeliveryFooter` / `PhoenixFooter` / `TaurusFooter` | — | TODO |
+| `BezierFooter` / `MaterialFooter` / `DeliveryFooter` / `PhoenixFooter` / `TaurusFooter` | `CYLRefreshBezierRadarFooter` / `CYLRefreshMaterialFooter` / `CYLRefreshDeliveryFooter` / `CYLRefreshPhoenixFooter` / `CYLRefreshTaurusFooter`（`CYLRefreshDrawnFooter` 内嵌对应的手绘刷新头并驱动它；任何手绘刷新头都可用 `initWithStyle:` 变成刷新尾 / `CYLRefreshDrawnFooter` hosts and drives the matching drawn header; `initWithStyle:` turns any drawn header into a footer） | ✅ |
 | Rive 样式包 / Rive style packages：`easy_refresh_bow` / `bubbles` / `halloween` / `skating` / `space` / `squats` | 通用 Rive 图标 `setIconAnimation…`，但未带这 6 个文件 / generic Rive icons, without these 6 files | TODO |
 | `easy_paging`（`EasyPaging`：分页加载、空数据、错误状态） | 部分：占位图场景 + 自动加载尾 / partly: placeholder scenarios + auto footer | TODO |
 | `childBuilder`（把 physics 交给子组件） | 不适用：Flutter 组件树 / not applicable: Flutter widget tree | 不适用 / N/A |
 | `fit` / `clipBehavior` | 不适用：Flutter 布局 / not applicable: Flutter layout | 不适用 / N/A |
 | `scrollBehaviorBuilder` / `ERScrollBehavior` / `_ERScrollPhysics` | 不适用：UIKit 没有可替换的滚动物理 / not applicable: UIKit has no replaceable scroll physics | 不适用 / N/A |
 | `HeaderLocator` / `FooterLocator`（`IndicatorPosition.locator`，放进 sliver） | 不适用：Flutter slivers / not applicable: Flutter slivers | 不适用 / N/A |
+
+## flutter_easy_refresh 刷新尾截图 / flutter_easy_refresh footer screenshots
+
+| 中文 | English |
+| --- | --- |
+| 5 个手绘刷新尾的渲染（2026-11-12 23:05，NZDT）：左列为上拉到展开高度的 80%（手指按住），右列为加载中；从上到下依次为 BezierRadar、Material、Delivery、Phoenix、Taurus。由 `testDrawnFooterSnapshots` 在 iOS 27.2 模拟器（iPhone 17 Pro，24B5089g；macOS 27.3、Xcode 27.2、iOS SDK 27.2）上把窗口图层渲染成 PNG，基于 `a890e12` 的工作区（含本次的 `CYLRefreshDrawnFooter`），原图未缩小，只裁剪了列表底部。机器负载过高（load average 约 700），通过 UI 点击进入示例页截图不稳定，所以用测试渲染；示例页（刷新 › SmartRefreshControl 样式 › 各 footer 行）使用同一套控件。 | The 5 drawn footers rendered (2026-11-12 23:05, NZDT): left, pulled up to 80 % of the open height (finger down); right, loading; top to bottom BezierRadar, Material, Delivery, Phoenix, Taurus. `testDrawnFooterSnapshots` renders the window's layer to PNG on the iOS 27.2 simulator (iPhone 17 Pro, 24B5089g; macOS 27.3, Xcode 27.2, iOS SDK 27.2), on the `a890e12` working tree with this change's `CYLRefreshDrawnFooter`; originals, not downscaled, cropped to the bottom of the list. The machine was overloaded (load average about 700) and driving the example app through taps was unreliable, so the test renders them; the example page (Refresh › SmartRefreshControl styles › the footer rows) uses the same controls. |
+
+![5 个手绘刷新尾：上拉与加载中 / The 5 drawn footers: pulled and loading](assets/easyrefresh-drawn-footers-ios.png)
 
 ## 外部项目的 open PR 与 issue / Open pull requests and issues of the source projects
 

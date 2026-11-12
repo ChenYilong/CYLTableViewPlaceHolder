@@ -181,6 +181,11 @@
 "CYLScenarioSmartSection" = "SmartRefreshControl 样式";
 "CYLScenarioSmartClassics" = "经典";
 "CYLScenarioSmartClassicsFooter" = "经典加载尾";
+"CYLScenarioSmartBezierRadarFooter" = "BezierRadar 加载尾";
+"CYLScenarioSmartMaterialFooter" = "Material 加载尾";
+"CYLScenarioSmartDeliveryFooter" = "Delivery 加载尾";
+"CYLScenarioSmartPhoenixFooter" = "Phoenix 加载尾";
+"CYLScenarioSmartTaurusFooter" = "Taurus 加载尾";
 "CYLScenarioSmartThemeDefault" = "默认主题";
 "CYLScenarioSmartThemeOrange" = "橙色主题";
 "CYLScenarioSmartThemeRed" = "红色主题";

@@ -181,6 +181,11 @@
 "CYLScenarioSmartSection" = "SmartRefreshControl styles";
 "CYLScenarioSmartClassics" = "Classics";
 "CYLScenarioSmartClassicsFooter" = "Classics footer";
+"CYLScenarioSmartBezierRadarFooter" = "BezierRadar footer";
+"CYLScenarioSmartMaterialFooter" = "Material footer";
+"CYLScenarioSmartDeliveryFooter" = "Delivery footer";
+"CYLScenarioSmartPhoenixFooter" = "Phoenix footer";
+"CYLScenarioSmartTaurusFooter" = "Taurus footer";
 "CYLScenarioSmartThemeDefault" = "Default theme";
 "CYLScenarioSmartThemeOrange" = "Orange theme";
 "CYLScenarioSmartThemeRed" = "Red theme";

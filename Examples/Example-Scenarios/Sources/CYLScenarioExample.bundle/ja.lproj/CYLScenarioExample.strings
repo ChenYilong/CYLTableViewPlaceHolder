@@ -181,6 +181,11 @@
 "CYLScenarioSmartSection" = "SmartRefreshControl のスタイル";
 "CYLScenarioSmartClassics" = "クラシック";
 "CYLScenarioSmartClassicsFooter" = "クラシックなフッター";
+"CYLScenarioSmartBezierRadarFooter" = "BezierRadar フッター";
+"CYLScenarioSmartMaterialFooter" = "Material フッター";
+"CYLScenarioSmartDeliveryFooter" = "Delivery フッター";
+"CYLScenarioSmartPhoenixFooter" = "Phoenix フッター";
+"CYLScenarioSmartTaurusFooter" = "Taurus フッター";
 "CYLScenarioSmartThemeDefault" = "デフォルトのテーマ";
 "CYLScenarioSmartThemeOrange" = "オレンジのテーマ";
 "CYLScenarioSmartThemeRed" = "赤のテーマ";

@@ -16,6 +16,11 @@
 @property (nonatomic) CGFloat cyl_lastOffset;
 /// [EN] YES after a style turned user interaction off: touches pass through. [CN] 样式关闭用户交互后为 YES：触摸穿透。
 @property (nonatomic) BOOL cyl_passesTouches;
+/// [EN] Driven by a CYLRefreshDrawnFooter: the values below replace the scroll view's. [CN] 由 CYLRefreshDrawnFooter 驱动：下列值代替滚动视图的值。
+@property (nonatomic) BOOL cyl_driven;
+@property (nonatomic) CGFloat cyl_drivenOffset;
+@property (nonatomic) BOOL cyl_drivenSuccess;
+@property (nonatomic) CGRect cyl_drivenFrame;
 @end
 
 @implementation CYLRefreshDrawnHeader
@@ -86,6 +91,7 @@
 
 - (CGFloat)dragOffset
 {
+    if (self.cyl_driven) return self.cyl_drivenOffset;
     if (!self.scrollView) return 0;
     return MAX(0, -(self.scrollView.cyl_offsetY + self.scrollViewOriginalInset.top));
 }
@@ -97,7 +103,13 @@
 
 - (BOOL)isSuccess
 {
-    return self.lastRefreshSucceeded;
+    return self.cyl_driven ? self.cyl_drivenSuccess : self.lastRefreshSucceeded;
+}
+
+- (BOOL)isRefreshing
+{
+    if (self.cyl_driven) return self.status == CYLRefreshPhaseRefreshing;
+    return [super isRefreshing];
 }
 
 #pragma mark - Status
@@ -107,7 +119,7 @@
     CYLRefreshPhase old = _status;
     if (old == status) return;
     _status = status;
-    if (self.scrollView) [self onStatus:old changed:status];
+    if (self.scrollView || self.cyl_driven) [self onStatus:old changed:status];
 }
 
 - (void)onStatus:(CYLRefreshPhase)oldStatus changed:(CYLRefreshPhase)status
@@ -235,6 +247,51 @@
 - (NSTimeInterval)finishingDurationWithSuccess:(BOOL)success
 {
     return [self onRefreshFinishing:success];
+}
+
+#pragma mark - Driven by a footer
+
+/// [EN] The header's layout moves it above its superview; a driven header keeps the frame its footer gave it.
+/// [CN] 刷新头的布局会把它移到父视图上方；被驱动时保持刷新尾给它的 frame。
+- (void)placeSubviews
+{
+    [super placeSubviews];
+    if (self.cyl_driven && !CGRectEqualToRect(self.frame, self.cyl_drivenFrame)) self.frame = self.cyl_drivenFrame;
+}
+
+- (void)cyl_beginDriven
+{
+    self.cyl_driven = YES;
+    self.autoHideRefresh = NO;
+    self.userInteractionEnabled = NO;
+}
+
+- (void)cyl_driveFrame:(CGRect)frame
+{
+    self.cyl_drivenFrame = frame;
+    if (!CGRectEqualToRect(self.frame, frame)) self.frame = frame;
+}
+
+- (void)cyl_driveOffset:(CGFloat)offset drag:(BOOL)isDragging
+{
+    if (offset == self.cyl_drivenOffset && offset == self.cyl_lastOffset) return;
+    self.cyl_drivenOffset = offset;
+    self.cyl_lastOffset = offset;
+    [self scrollView:self.scrollView didScroll:offset percent:self.dragPercent drag:isDragging];
+    [self setNeedsDisplay];
+}
+
+- (void)cyl_driveStatus:(CYLRefreshPhase)status
+{
+    self.status = status;
+    [self setNeedsDisplay];
+}
+
+- (void)cyl_driveFinished:(BOOL)success
+{
+    self.cyl_drivenSuccess = success;
+    self.status = CYLRefreshPhaseFinishing;
+    [self onRefreshFinished:success];
 }
 
 @end

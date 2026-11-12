@@ -61,13 +61,12 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
             return
         }
         sections = [(nil, themeRows()), (CYLScenarioLocalizedString(.smartTestData), testRows(count: 8))]
-        if method == "smartClassicsFooter" {
-            let classics = CYLRefreshBackNormalFooter()
-            classics.attach(to: tableView)
-            classics.addTarget(self, action: #selector(onLoadMore))
-            footer = classics
-            defaultAccent = classics.colorAccent
-            defaultPrimary = classics.colorPrimary
+        if let loadMore = makeFooter() {
+            loadMore.attach(to: tableView)
+            loadMore.addTarget(self, action: #selector(onLoadMore))
+            footer = loadMore
+            defaultAccent = loadMore.colorAccent
+            defaultPrimary = loadMore.colorPrimary
             return
         }
         // SmartRefreshControl's way 3: create first, then attach and bind.
@@ -119,6 +118,19 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
         case "smartGameBattleCity": return CYLRefreshGameBattleCityHeader()
         case "smartFly": return CYLRefreshFlyHeader()
         default: return CYLRefreshNormalHeader()
+        }
+    }
+
+    /// The footer pages: the classic footer, and flutter_easy_refresh's drawn footers.
+    private func makeFooter() -> CYLRefreshFooter? {
+        switch method {
+        case "smartClassicsFooter": return CYLRefreshBackNormalFooter()
+        case "smartBezierRadarFooter": return CYLRefreshBezierRadarFooter()
+        case "smartMaterialFooter": return CYLRefreshMaterialFooter()
+        case "smartDeliveryFooter": return CYLRefreshDeliveryFooter()
+        case "smartPhoenixFooter": return CYLRefreshPhoenixFooter()
+        case "smartTaurusFooter": return CYLRefreshTaurusFooter()
+        default: return nil
         }
     }
 

@@ -26,6 +26,7 @@
 @property (strong, nonatomic) UIImageView *cyl_resultImageView;
 - (CGPoint)cyl_iconCenterBesideText;
 - (void)cyl_hideResultImage;
+- (void)cyl_showResultImage:(UIImage *)image;
 @end
 
 @implementation CYLRefreshStateHeader
@@ -208,45 +209,6 @@
         self.stateLabel, self.lastUpdatedTimeLabel
     ];
 }
-@end
-
-#pragma mark - <<< 为 Swift 扩展链式语法 >>> -
-@implementation CYLRefreshStateHeader (ChainingGrammar)
-
-- (instancetype)cyl_modifyLastUpdatedTimeText:(NSString * _Nonnull (^)(NSDate * _Nullable))handler {
-    self.lastUpdatedTimeText = handler;
-    return self;
-}
-
-#pragma mark - Finish result
-
-- (void)setLastUpdatedTimeFormatter:(NSDateFormatter *)lastUpdatedTimeFormatter
-{
-    _lastUpdatedTimeFormatter = lastUpdatedTimeFormatter;
-    self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;
-}
-
-- (NSString *)lastUpdatedTimeString
-{
-    return self.lastUpdatedTimeLabel.text;
-}
-
-- (void)setTitleTimeSpacing:(CGFloat)titleTimeSpacing
-{
-    _titleTimeSpacing = MAX(0, titleTimeSpacing);
-    [self setNeedsLayout];
-}
-
-/// [EN] While the control holds after the refresh (`finishDuration`), the state text shows the result.
-/// [CN] 刷新结束后停留期间（`finishDuration`），状态文字显示结果。
-- (void)refreshDidFinishWithSuccess:(BOOL)success
-{
-    [super refreshDidFinishWithSuccess:success];
-    if ([self finishingDurationWithSuccess:success] <= 0) return;
-    self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText];
-    [self cyl_showResultImage:success ? self.succeededImage : self.failedImage];
-    [self setNeedsLayout];
-}
 
 /// [EN] The result image takes the icon's place: the spinner and arrow hide while it shows.
 /// [CN] 结果图片代替图标：显示期间隐藏菊花与箭头。
@@ -297,6 +259,46 @@
         centerX += self.iconOnTrailingSide ? shift : -shift;
     }
     return CGPointMake(centerX, self.cyl_h * 0.5);
+}
+
+@end
+
+#pragma mark - <<< 为 Swift 扩展链式语法 >>> -
+@implementation CYLRefreshStateHeader (ChainingGrammar)
+
+- (instancetype)cyl_modifyLastUpdatedTimeText:(NSString * _Nonnull (^)(NSDate * _Nullable))handler {
+    self.lastUpdatedTimeText = handler;
+    return self;
+}
+
+#pragma mark - Finish result
+
+- (void)setLastUpdatedTimeFormatter:(NSDateFormatter *)lastUpdatedTimeFormatter
+{
+    _lastUpdatedTimeFormatter = lastUpdatedTimeFormatter;
+    self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;
+}
+
+- (NSString *)lastUpdatedTimeString
+{
+    return self.lastUpdatedTimeLabel.text;
+}
+
+- (void)setTitleTimeSpacing:(CGFloat)titleTimeSpacing
+{
+    _titleTimeSpacing = MAX(0, titleTimeSpacing);
+    [self setNeedsLayout];
+}
+
+/// [EN] While the control holds after the refresh (`finishDuration`), the state text shows the result.
+/// [CN] 刷新结束后停留期间（`finishDuration`），状态文字显示结果。
+- (void)refreshDidFinishWithSuccess:(BOOL)success
+{
+    [super refreshDidFinishWithSuccess:success];
+    if ([self finishingDurationWithSuccess:success] <= 0) return;
+    self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText];
+    [self cyl_showResultImage:success ? self.succeededImage : self.failedImage];
+    [self setNeedsLayout];
 }
 
 @end

@@ -181,6 +181,11 @@
 "CYLScenarioSmartSection" = "Стили SmartRefreshControl";
 "CYLScenarioSmartClassics" = "Классический";
 "CYLScenarioSmartClassicsFooter" = "Классический футер";
+"CYLScenarioSmartBezierRadarFooter" = "Футер BezierRadar";
+"CYLScenarioSmartMaterialFooter" = "Футер Material";
+"CYLScenarioSmartDeliveryFooter" = "Футер Delivery";
+"CYLScenarioSmartPhoenixFooter" = "Футер Phoenix";
+"CYLScenarioSmartTaurusFooter" = "Футер Taurus";
 "CYLScenarioSmartThemeDefault" = "Тема по умолчанию";
 "CYLScenarioSmartThemeOrange" = "Оранжевая тема";
 "CYLScenarioSmartThemeRed" = "Красная тема";

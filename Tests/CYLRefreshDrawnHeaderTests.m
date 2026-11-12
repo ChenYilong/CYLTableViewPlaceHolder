@@ -39,6 +39,16 @@
 }
 @end
 
+/// [EN] A scroll view that can claim a finger is down, so styles that draw only while dragging (BezierRadar) draw in a
+///      rendered pull. [CN] 可以声称手指按下的滚动视图，使只在拖动时绘制的样式（BezierRadar）在渲染的上拉中也绘制。
+@interface CYLDraggingScrollView : UIScrollView
+@property (nonatomic) BOOL cyl_fakeDragging;
+@end
+
+@implementation CYLDraggingScrollView
+- (BOOL)isDragging { return self.cyl_fakeDragging || [super isDragging]; }
+@end
+
 @implementation CYLRefreshDrawnHeaderTests
 
 - (void)setUp {
@@ -248,6 +258,97 @@
         XCTAssertEqual(header.state, CYLRefreshStateIdle);
         XCTAssertNotNil(header.layer.mask, @"%@ hides after the refresh", style);
         [scrollView removeFromSuperview];
+    }
+}
+
+- (void)testDrawnFootersLoadAndShowNoMoreData {
+    for (Class cls in @[CYLRefreshBezierRadarFooter.class, CYLRefreshMaterialFooter.class, CYLRefreshDeliveryFooter.class,
+                        CYLRefreshPhoenixFooter.class, CYLRefreshTaurusFooter.class]) {
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        window.hidden = NO;
+        // [EN] A plain scroll view: a table view with no rows resets its content size. [CN] 用普通滚动视图：没有行的表格会重置内容尺寸。
+        UIScrollView *tableView = [[UIScrollView alloc] initWithFrame:window.bounds];
+        tableView.contentSize = CGSizeMake(320, 1200);
+        [window addSubview:tableView];
+        CYLRefreshDrawnFooter *footer = [cls attach:tableView];
+        __block NSInteger loads = 0;
+        footer.refreshingBlock = ^{ loads++; };
+        XCTAssertNotNil(footer.style, @"%@", cls);
+        XCTAssertEqual(footer.style.superview, footer, @"%@ hosts its style", cls);
+        XCTAssertGreaterThan(footer.cyl_h, 0, @"%@ takes the style's height", cls);
+        XCTAssertNil(footer.style.layer.mask, @"%@: the hosted style is never auto-hidden", cls);
+
+        // Pull: the style follows the distance pulled past the content's bottom.
+        CGFloat bottom = 1200 - 480 + tableView.adjustedContentInset.bottom;
+        tableView.contentOffset = CGPointMake(0, bottom + 30);
+        XCTAssertEqualWithAccuracy(footer.style.dragOffset, 30, 1, @"%@", cls);
+        XCTAssertEqualWithAccuracy(CGRectGetMinY(footer.style.frame), 0, 0.01, @"%@ stays inside the footer", cls);
+
+        [footer beginRefreshing];
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.6]];
+        XCTAssertEqual(loads, 1, @"%@", cls);
+        XCTAssertEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
+        XCTAssertTrue(footer.style.isRefreshing, @"%@", cls);
+        XCTAssertTrue(footer.stateLabel.hidden, @"%@: no text while loading", cls);
+
+        [footer endRefreshing];
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2.5]];
+        XCTAssertEqual(footer.state, CYLRefreshStateIdle, @"%@", cls);
+        XCTAssertNotEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
+
+        [footer endRefreshingWithNoMoreData];
+        XCTAssertFalse(footer.stateLabel.hidden, @"%@: the no-more-data text shows", cls);
+        XCTAssertTrue(footer.style.hidden, @"%@", cls);
+        XCTAssertGreaterThan(footer.stateLabel.text.length, 0, @"%@", cls);
+        window.hidden = YES;
+    }
+}
+
+/// [EN] Renders each drawn footer pulled and loading into PNGs, only when CYL_SNAPSHOT_DIR is set (screenshots for
+///      docs; pass TEST_RUNNER_CYL_SNAPSHOT_DIR to xcodebuild). [CN] 仅在设置 CYL_SNAPSHOT_DIR 时，把每个手绘刷新尾在上拉与加载中的样子
+///      渲染为 PNG（用于文档截图；通过 xcodebuild 的 TEST_RUNNER_CYL_SNAPSHOT_DIR 传入）。
+- (void)testDrawnFooterSnapshots {
+    NSString *dir = NSProcessInfo.processInfo.environment[@"CYL_SNAPSHOT_DIR"];
+    if (dir.length == 0) return;
+    NSDictionary<NSString *, Class> *styles = @{ @"BezierRadar": CYLRefreshBezierRadarFooter.class,
+                                                 @"Material": CYLRefreshMaterialFooter.class,
+                                                 @"Delivery": CYLRefreshDeliveryFooter.class,
+                                                 @"Phoenix": CYLRefreshPhoenixFooter.class,
+                                                 @"Taurus": CYLRefreshTaurusFooter.class };
+    for (NSString *name in styles) {
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 402, 360)];
+        window.backgroundColor = UIColor.whiteColor;
+        window.hidden = NO;
+        CYLDraggingScrollView *scrollView = [[CYLDraggingScrollView alloc] initWithFrame:window.bounds];
+        scrollView.backgroundColor = UIColor.whiteColor;
+        scrollView.contentSize = CGSizeMake(402, 600);
+        for (NSInteger row = 0; row < 12; row++) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, row * 50, 362, 50)];
+            label.text = [NSString stringWithFormat:@"Row %ld", (long)row + 1];
+            [scrollView addSubview:label];
+        }
+        [window addSubview:scrollView];
+        CYLRefreshDrawnFooter *footer = [styles[name] attach:scrollView];
+        CGFloat bottom = 600 - 360;
+        for (NSString *moment in @[@"pull", @"loading"]) {
+            if ([moment isEqualToString:@"pull"]) {
+                scrollView.cyl_fakeDragging = YES;
+                scrollView.contentOffset = CGPointMake(0, bottom + footer.cyl_h * 0.8);
+            } else {
+                scrollView.cyl_fakeDragging = NO;
+                [footer beginRefreshing];
+            }
+            [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.8]];
+            [window layoutIfNeeded];
+            UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithBounds:window.bounds];
+            UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *c) {
+                [window.layer renderInContext:c.CGContext];
+            }];
+            NSString *path = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@-%@.png", name, moment]];
+            XCTAssertTrue([UIImagePNGRepresentation(image) writeToFile:path atomically:YES], @"%@", path);
+        }
+        [footer endRefreshing];
+        window.hidden = YES;
     }
 }
 

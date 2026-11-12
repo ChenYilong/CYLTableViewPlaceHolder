@@ -181,6 +181,11 @@
 "CYLScenarioSmartSection" = "SmartRefreshControl 스타일";
 "CYLScenarioSmartClassics" = "클래식";
 "CYLScenarioSmartClassicsFooter" = "클래식 푸터";
+"CYLScenarioSmartBezierRadarFooter" = "BezierRadar 푸터";
+"CYLScenarioSmartMaterialFooter" = "Material 푸터";
+"CYLScenarioSmartDeliveryFooter" = "Delivery 푸터";
+"CYLScenarioSmartPhoenixFooter" = "Phoenix 푸터";
+"CYLScenarioSmartTaurusFooter" = "Taurus 푸터";
 "CYLScenarioSmartThemeDefault" = "기본 테마";
 "CYLScenarioSmartThemeOrange" = "주황색 테마";
 "CYLScenarioSmartThemeRed" = "빨간색 테마";

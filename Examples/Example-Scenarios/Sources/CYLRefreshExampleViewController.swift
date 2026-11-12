@@ -76,6 +76,10 @@ final class CYLRefreshExampleViewController: UITableViewController {
             (.smartWaveSwipe, "smartWaveSwipe"), (.smartOriginal, "smartOriginal"), (.smartMaterial, "smartMaterial"),
             (.smartGameHitBlock, "smartGameHitBlock"), (.smartGameBattleCity, "smartGameBattleCity"),
             (.smartFly, "smartFly"), (.smartClassicsFooter, "smartClassicsFooter"),
+            // flutter_easy_refresh's drawn footers (CYLRefreshDrawnFooter), on the same page.
+            (.smartBezierRadarFooter, "smartBezierRadarFooter"), (.smartMaterialFooter, "smartMaterialFooter"),
+            (.smartDeliveryFooter, "smartDeliveryFooter"), (.smartPhoenixFooter, "smartPhoenixFooter"),
+            (.smartTaurusFooter, "smartTaurusFooter"),
         ]
         let exam6 = CYLRefreshExample(header: .smartSection, titles: styles.map { $0.0 },
                                       methods: styles.map { $0.1 }, viewControllers: [smart])

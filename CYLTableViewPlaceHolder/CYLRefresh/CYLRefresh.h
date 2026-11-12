@@ -11,6 +11,7 @@
 #import "CYLRefreshAnimationHeader.h"
 #import "CYLRefreshGifHeader.h"
 #import "CYLRefreshDrawnHeader.h"
+#import "CYLRefreshDrawnFooter.h"
 #import "CYLRefreshBezierCircleHeader.h"
 #import "CYLRefreshBezierRadarHeader.h"
 #import "CYLRefreshDeliveryHeader.h"

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		013ED51982451921ED54D3FD /* CYLRefreshDrawnFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = E337BCA0D7C9DDCCB86AB36D /* CYLRefreshDrawnFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		04D90AED0FAAF7FF4BD3D632 /* CYLRefreshMountainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D8B21BADBD6ECEDFE15E75 /* CYLRefreshMountainView.m */; };
 		074366D30423B1589E4D8DAC /* CYLRefreshIconView.h in Headers */ = {isa = PBXBuildFile; fileRef = FAB60554ECE553B28C5E57D1 /* CYLRefreshIconView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		07ADFDE610D5199E0C94241A /* CYLRefreshBackFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32597B8F56F991E5387282A0 /* CYLRefreshBackFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -104,6 +105,7 @@
 		8B87C1DA6708003141C28592 /* CYLRefreshStoreHouseLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 138FDD0CB0D15C78AF5BE266 /* CYLRefreshStoreHouseLine.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8CF81FD3E5CD3990C789FD5A /* CYLRefreshBezierRadarHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D3DF7B2676465F6A7A5D6E /* CYLRefreshBezierRadarHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8D4C11596E4D4AD17BA36C00 /* CYLTableViewPlaceHolder.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A2BFD9E03E1297946F866D2E /* CYLTableViewPlaceHolder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8D6D87C7F71BA15E0FB01CDD /* CYLRefreshDrawnFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = F768F733F5853A57648D2948 /* CYLRefreshDrawnFooter.m */; };
 		920626148BB0735AAB6DC807 /* CYLRefreshAutoNormalFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = E1D89441101D02AEE1DD795B /* CYLRefreshAutoNormalFooter.m */; };
 		965A3FF4E6634A4C39A7F979 /* CYLRefreshMountainView.h in Headers */ = {isa = PBXBuildFile; fileRef = 19972497CC6C1959E31D1B85 /* CYLRefreshMountainView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9679039473B09D3E06866648 /* NSBundle+CYLRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C8C968CFDDEFE69693C68A /* NSBundle+CYLRefresh.m */; };
@@ -332,6 +334,7 @@
 		E12DA508DC4E722A3C1D5D25 /* CYLPlaceholderNetworkMonitor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderNetworkMonitor.m; sourceTree = "<group>"; };
 		E1765A250F32BC1A95F9AC37 /* CYLRefreshNormalTrailer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshNormalTrailer.h; sourceTree = "<group>"; };
 		E1D89441101D02AEE1DD795B /* CYLRefreshAutoNormalFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshAutoNormalFooter.m; sourceTree = "<group>"; };
+		E337BCA0D7C9DDCCB86AB36D /* CYLRefreshDrawnFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshDrawnFooter.h; sourceTree = "<group>"; };
 		E3D982B458E456DEFD3ABC6B /* UICollectionViewLayout+CYLRefresh.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewLayout+CYLRefresh.m"; sourceTree = "<group>"; };
 		E3EDA34E4E26E1F41D6312DF /* CYLRefreshConfig.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshConfig.m; sourceTree = "<group>"; };
 		E4E052C621D0D5E801442F86 /* CYLRefreshAnimationHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshAnimationHeader.m; sourceTree = "<group>"; };
@@ -349,6 +352,7 @@
 		F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CYLPlaceholderStatus.m"; sourceTree = "<group>"; };
 		F6E43C3F1D07C1925B84A94E /* LICENSE.placeholder-third-party */ = {isa = PBXFileReference; includeInIndex = 1; path = "LICENSE.placeholder-third-party"; sourceTree = "<group>"; };
 		F73B232FB8AAE714E27D3876 /* CYLRefreshBackStateFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshBackStateFooter.h; sourceTree = "<group>"; };
+		F768F733F5853A57648D2948 /* CYLRefreshDrawnFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshDrawnFooter.m; sourceTree = "<group>"; };
 		F84069B9431B0F606B89FE07 /* CYLRefreshVectorImage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshVectorImage.m; sourceTree = "<group>"; };
 		F93B4C7B0348C886F781DC23 /* CYLPlaceholderScenario.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderScenario.h; sourceTree = "<group>"; };
 		FA49637A77B00AB2A0A1A54D /* CYLPlaceholderLocalization.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderLocalization.h; sourceTree = "<group>"; };
@@ -462,6 +466,8 @@
 				5E4B0589D8D9B4F97CF1F6B0 /* CYLRefreshTaurusHeader.m */,
 				07AD5C6D0036A5EDC387F48D /* CYLRefreshWaveSwipeHeader.h */,
 				AA72D969FC4EF3AAACE80581 /* CYLRefreshWaveSwipeHeader.m */,
+				E337BCA0D7C9DDCCB86AB36D /* CYLRefreshDrawnFooter.h */,
+				F768F733F5853A57648D2948 /* CYLRefreshDrawnFooter.m */,
 			);
 			name = Drawn;
 			path = Drawn;
@@ -794,6 +800,7 @@
 				CCC9793AD3DD8C948C34C40C /* CYLRefreshVectorView.h in Headers */,
 				AFB1D3F5C14B0510D36CC800 /* CYLRefreshCupertinoHeader.h in Headers */,
 				9691D4D21B930886EF9DE5BD /* CYLRefreshCupertinoFooter.h in Headers */,
+				013ED51982451921ED54D3FD /* CYLRefreshDrawnFooter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,6 +1015,7 @@
 				1C8CBDEC2954175F4723F6AB /* CYLRefreshVectorView.m in Sources */,
 				6C23B2AB2868B4E0BF6C35E2 /* CYLRefreshCupertinoHeader.m in Sources */,
 				27EADB8B343B475A28108766 /* CYLRefreshCupertinoFooter.m in Sources */,
+				8D6D87C7F71BA15E0FB01CDD /* CYLRefreshDrawnFooter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
