@@ -24,6 +24,22 @@
 - (void)refreshDidFinishWithSuccess:(BOOL)success { [super refreshDidFinishWithSuccess:success]; self.finishedWith = @(success); }
 @end
 
+/// [EN] A target for -addTarget:action: that ends whichever header is attached. [CN] -addTarget:action: 的目标，结束当前挂着的刷新头。
+@interface CYLStartHeaderTarget : NSObject
+@property (strong, nonatomic) NSMutableArray<NSString *> *log;
+@property (weak, nonatomic) UIScrollView *scrollView;
+- (void)refresh;
+@end
+
+@implementation CYLStartHeaderTarget
+- (void)refresh {
+    [self.log addObject:@"refresh"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.scrollView.cyl_header endRefreshing];
+    });
+}
+@end
+
 @implementation CYLRefreshSmartAPITests
 
 - (void)onRefresh:(id)sender {
@@ -533,6 +549,36 @@
     [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.5]];
     XCTAssertEqual(scrollView.cyl_header, regular, @"the regular header is back");
     XCTAssertEqual(refreshes, 1);
+    window.hidden = YES;
+}
+
+- (void)testStartHeaderInPushedTableViewController {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    window.rootViewController = nav;
+    window.hidden = NO;
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+    UITableViewController *page = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    NSMutableArray<NSString *> *log = [NSMutableArray array];
+    __block CYLRefreshNormalHeader *regular = nil;
+    __block CYLRefreshCupertinoHeader *start = nil;
+    // viewDidLoad equivalent: attach, then start with another header.
+    (void)page.view;
+    // [EN] attach:target:action:, as the example does: the callback is a target-action of -addTarget:action:.
+    // [CN] 与示例一样用 attach:target:action:：回调是 -addTarget:action: 的 target-action。
+    CYLStartHeaderTarget *target = [CYLStartHeaderTarget new];
+    target.log = log;
+    target.scrollView = page.tableView;
+    regular = [CYLRefreshNormalHeader attach:page.tableView target:target action:@selector(refresh)];
+    start = [CYLRefreshCupertinoHeader new];
+    [start addPhaseObserver:^(CYLRefreshComponent *c, CYLRefreshPhase old, CYLRefreshPhase phase) {
+        [log addObject:[NSString stringWithFormat:@"start %ld>%ld", (long)old, (long)phase]];
+    }];
+    [page.tableView cyl_beginRefreshingWithStartHeader:start];
+    [nav pushViewController:page animated:YES];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3]];
+    XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action");
+    XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh");
     window.hidden = YES;
 }
 

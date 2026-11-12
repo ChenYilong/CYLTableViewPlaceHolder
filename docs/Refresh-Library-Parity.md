@@ -11,6 +11,7 @@
 | [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
+| [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
 | [flutter_easy_refresh Rive 样式截图](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) | [flutter_easy_refresh Rive style screenshots](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) |
 | [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
@@ -211,8 +212,8 @@
 | `style/bow_page … squats_page（6 页 / 6 pages）` | Rive 样式 / Rive styles | SmartRefreshControl 样式 › Rive · …（6 个刷新头 + Space 刷新尾） | ✅ |
 | `style/cupertino_page` | Cupertino | flutter_easy_refresh 示例 › Cupertino 样式 / Cupertino style | ✅ |
 | `sample/secondary_page` | 二楼 / second floor | flutter_easy_refresh 示例 › 二楼 / Second floor | ✅ |
-| `sample/trigger_mode_page` | 触发模式 / trigger mode | flutter_easy_refresh 示例 › 触发模式 / Trigger mode | ✅ |
-| `sample/refresh_on_start_page` | 首次刷新专用刷新头 / start header | flutter_easy_refresh 示例 › 启动时刷新 / Refresh on start。单元测试 `testStartHeaderBeforeWindowRestoresRegularHeader` 通过，但 2026-11-13 在示例 App 中，刷新结束 6.5 秒后再下拉仍显示 Cupertino 刷新头，原因未查明 / the unit test passes, but on 2026-11-13 the example app still showed the Cupertino header on a pull 6.5 s after the refresh; cause not found yet | TODO |
+| `sample/trigger_mode_page` | 触发模式 / trigger mode | flutter_easy_refresh 示例 › 触发模式 / Trigger mode。在 App 中验证：刷新头设为只从边缘触发后，从列表中间开始一路拉过顶部不刷新（次数保持 4），从顶部边缘开始的下拉会刷新 / checked in the app: with the header set to the edge only, a drag that starts mid-list and goes past the top does not refresh (the count stays 4); a drag from the top edge does | ✅ |
+| `sample/refresh_on_start_page` | 首次刷新专用刷新头 / start header | flutter_easy_refresh 示例 › 启动时刷新 / Refresh on start。修复：用 `attach:target:action:`（`addTarget:action:`）设置回调时，起始刷新头没有复制这类回调，于是一直刷新、常规刷新头无法换回；现在一并复制（`testStartHeaderInPushedTableViewController`） / fixed: callbacks set with `attach:target:action:` (`addTarget:action:`) were not copied to the start header, so it never ended and the regular header never came back; they are copied now | ✅ |
 | `sample/paging_page` | easy_paging | flutter_easy_refresh 示例 › 分页 / Paging（`CYLRefreshPaging`） | ✅ |
 | `sample/listener_header_page` | 监听式刷新头 / listener header | flutter_easy_refresh 示例 › 监听式刷新头 / Listener header | ✅ |
 | `sample/chat_page` | 聊天：顶部加载更早消息 / chat: earlier messages at the top | flutter_easy_refresh 示例 › 聊天 / Chat | ✅ |
@@ -222,6 +223,14 @@
 | `sample/nested_scroll_view / easy_refresh_nested_page / nested_secondary_page` | 嵌套滚动 / nested scrolling | 不适用：UIKit 没有 NestedScrollView（对照表同一行） / not applicable: UIKit has no NestedScrollView (same row in the table) | 不适用 / N/A |
 | `sample/center_refresh_page` | 空列表居中显示指示器 / indicator centred in an empty list | 不适用：空列表由本库的占位图显示 / not applicable: this library's placeholder shows empty lists | 不适用 / N/A |
 | `sample/test_page、more/*` | 开发测试页、关于 / 赞助 / 主题等 App 页面 / developer test page and the app's about, support and theme pages | 不移植：不是刷新功能 / not ported: not refresh features | 不适用 / N/A |
+
+## flutter_easy_refresh 示例截图 / flutter_easy_refresh demo screenshots
+
+| 中文 | English |
+| --- | --- |
+| 示例 App 实拍（2026-11-13 02:11–04:47，NZDT；iOS 27.2 模拟器 iPhone 17 Pro，24B5089g；macOS 27.3、Xcode 27.2、iOS SDK 27.2；分支 `feat/smartrefresh-parity`，基于 `7e9a9ef` 及本次修复）：从上到下依次为 Cupertino 样式、二楼（右：二楼打开，刷新头文字不再盖在上面）、触发模式（左：从边缘下拉后刷新次数 2；右：只从边缘触发时，从列表中间拉过顶部，次数保持 4）、启动时刷新（第一次用 Cupertino 刷新头，之后的下拉换回经典刷新头）、分页、监听式刷新头（列表上方的进度条）、聊天（在顶部加载更早的消息）、个人主页（刷新头在内容后面）。左列为手指按住下拉，右列为松手后（触发模式除外）。原图未缩小，只裁剪到上半屏。 | Example app captures (2026-11-13 02:11–04:47, NZDT; iOS 27.2 simulator, iPhone 17 Pro, 24B5089g; macOS 27.3, Xcode 27.2, iOS SDK 27.2; branch `feat/smartrefresh-parity`, on `7e9a9ef` with this change's fixes): top to bottom Cupertino style, second floor (right: open, the header's text no longer over it), trigger mode (left: refresh count 2 after pulls from the edge; right: edge only, a drag from mid-list past the top leaves it at 4), refresh on start (the first refresh uses the Cupertino header, later pulls the classic one), paging, listener header (the bar above the list), chat (earlier messages loaded at the top), user profile (the header behind the content). Left, finger down while pulling; right, after the release (trigger mode aside). Originals, not downscaled, cropped to the top of the screen. |
+
+![flutter_easy_refresh 示例的 8 个页面 / The 8 flutter_easy_refresh demo pages](assets/easyrefresh-demo-ios.png)
 
 ## flutter_easy_refresh 刷新尾截图 / flutter_easy_refresh footer screenshots
 
