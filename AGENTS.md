@@ -147,6 +147,12 @@ the integrated `CYLRefresh` component, and an example application. Read
   environment: operating system version, simulator or emulator (device model and OS version), and the SDK version
   of that platform (iOS SDK / Xcode, Android SDK / API level, Flutter SDK, React Native, HarmonyOS SDK, WeChat
   Mini Program base library); this repository's version or commit (with its link); and the time it was taken.
+- **Screenshot moments and layout (added 2026-11-12)**: take and commit screenshots at key moments: when a TODO or
+  Linux note can be removed, when a pull request can be merged, or when the result is judged as expected with no
+  bug and no open issue. The README shows cropped key details, a full screen only when it is needed; several
+  details go into one stitched image. Stitching order of preference: a vertical stack (one column, top to bottom),
+  easiest to read on a phone; then two columns with several rows; last, a single horizontal row, at most three
+  images in a row.
 - Xcode 27's simulator SDK requires a deployment target of at least 15.0 during
   builds. Override the build target for that toolchain instead of changing the
   library's iOS 12.0 minimum.

@@ -622,6 +622,14 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   Android SDK / API level, Flutter SDK, React Native, HarmonyOS SDK, WeChat
   Mini Program base library); this repository's version or commit (with its
   link); and the time it was taken.
+- **Screenshot moments and layout (added 2026-11-12)**: take and commit
+  screenshots at key moments: when a TODO or Linux note can be removed, when a
+  pull request can be merged, or when the result is judged as expected with no
+  bug and no open issue. The README shows cropped key details, a full screen
+  only when it is needed; several details go into one stitched image.
+  Stitching order of preference: a vertical stack (one column, top to bottom),
+  easiest to read on a phone; then two columns with several rows; last, a
+  single horizontal row, at most three images in a row.
 
 ## CI example screenshots
 
