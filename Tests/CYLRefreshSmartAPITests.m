@@ -490,4 +490,28 @@
     XCTAssertEqualObjects(paging.items, (@[@1, @2]));
 }
 
+/// [EN] flutter_easy_refresh #631: a mouse wheel moves the offset without a drag and without overscroll; the auto footer
+///      must still load when the bottom is reached. [CN] flutter_easy_refresh #631：鼠标滚轮移动偏移时没有拖动、也不越界；
+///      到达底部时自动加载尾仍须加载。
+- (void)testAutoFooterLoadsWhenWheelReachesBottom {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshAutoNormalFooter *footer = [CYLRefreshAutoNormalFooter attach:scrollView];
+    __block NSInteger loads = 0;
+    footer.refreshingBlock = ^{ loads++; };
+    XCTAssertFalse(scrollView.isDragging);
+    CGFloat bottom = scrollView.contentSize.height + scrollView.adjustedContentInset.bottom - CGRectGetHeight(scrollView.bounds);
+    // Wheel steps of 40 points down to the bottom, never past it.
+    for (CGFloat y = bottom - 400; y <= bottom; y += 40) {
+        scrollView.contentOffset = CGPointMake(0, MIN(y, bottom));
+    }
+    scrollView.contentOffset = CGPointMake(0, bottom);
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+    XCTAssertEqual(footer.state, CYLRefreshStateRefreshing, @"loads without a drag");
+    XCTAssertEqual(loads, 1);
+    window.hidden = YES;
+}
+
 @end
