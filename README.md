@@ -432,12 +432,17 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 | 中文 | English |
 | --- | --- |
-| 刷新结束自动隐藏刷新头（`autoHideRefresh`）：iOS 26 起导航栏默认是透明的玻璃效果，收回后的刷新头正好在导航栏下方，会透过导航栏显示在标题上。开启后，刷新头只在有动作时显示（下拉、刷新中、刷新结束后的收回），刷新结束、空闲且完全收回后自动隐藏；`hidden`、`alpha` 与 `automaticallyChangeAlpha` 不受影响。在导航栏默认透明的系统上（iOS 26 及以后）默认开启，与 MJRefresh 不同；更早的系统默认关闭，需要时手动设为 YES。下图从上到下：example01、04、11 刷新结束后的导航栏。 | Auto-hide after refreshing (`autoHideRefresh`): since iOS 26 the navigation bar is transparent glass by default, and a retracted header sits right under it, showing through over the title. When on, the header shows only while an action is under way (pulling, refreshing, retracting after the refresh) and hides again once the refresh has ended and it is idle and fully retracted; `hidden`, `alpha` and `automaticallyChangeAlpha` are untouched. On by default where the navigation bar is transparent by default (iOS 26 and later), unlike MJRefresh; off by default on earlier systems, where you set it to YES yourself. Below, top to bottom: the navigation bar of example01, 04 and 11 after the refresh ends. |
+| 刷新结束自动隐藏刷新头（`autoHideRefresh`）：iOS 26 起导航栏默认是透明的玻璃效果，收回后的刷新头正好在导航栏下方，会透过导航栏显示在标题上。开启后，刷新头只在有动作时显示（下拉、刷新中、刷新结束后的收回），刷新结束、空闲且完全收回后自动隐藏；刷新尾同样只在上拉、加载、收回时显示，空闲（或显示“无更多数据”）且完全位于底部栏下方时隐藏，避免透过玻璃 tab bar 显示。刷新头与刷新尾各有开关（`header.autoHideRefresh`、`footer.autoHideRefresh`），也可以在滚动视图上分开或一起设置：`cyl_autoHideRefreshHeader`、`cyl_autoHideRefreshFooter`、`cyl_autoHideRefresh`（挂上控件之前设置也会生效）；`hidden`、`alpha` 与 `automaticallyChangeAlpha` 不受影响。在导航栏默认透明的系统上（iOS 26 及以后）默认开启，与 MJRefresh 不同；更早的系统默认关闭，需要时手动设为 YES。下图从上到下：example01、04、11 刷新结束后的导航栏。 | Auto-hide after refreshing (`autoHideRefresh`): since iOS 26 the navigation bar is transparent glass by default, and a retracted header sits right under it, showing through over the title. When on, the header shows only while an action is under way (pulling, refreshing, retracting after the refresh) and hides again once the refresh has ended and it is idle and fully retracted; the footer likewise shows only while pulled, loading or retracting, and hides when it is idle (or shows "no more data") and lies wholly below the bottom bars, so it no longer shows through a glass tab bar. Headers and footers have their own switch (`header.autoHideRefresh`, `footer.autoHideRefresh`), also settable on the scroll view, separately or together: `cyl_autoHideRefreshHeader`, `cyl_autoHideRefreshFooter`, `cyl_autoHideRefresh` (a value set before attaching applies when the control is attached); `hidden`, `alpha` and `automaticallyChangeAlpha` are untouched. On by default where the navigation bar is transparent by default (iOS 26 and later), unlike MJRefresh; off by default on earlier systems, where you set it to YES yourself. Below, top to bottom: the navigation bar of example01, 04 and 11 after the refresh ends. |
 
 ```objc
 // [CN] iOS 26 之前的系统上手动开启：刷新结束后自动隐藏刷新头
 // [EN] Turn it on yourself before iOS 26: the header hides once the refresh ends
 self.tableView.cyl_header.autoHideRefresh = YES;
+// [CN] 刷新头、刷新尾分开或一起设置（挂上控件之前设置也会生效）
+// [EN] Header and footer separately or together (also before the controls are attached)
+self.tableView.cyl_autoHideRefreshHeader = YES;
+self.tableView.cyl_autoHideRefreshFooter = NO;
+self.tableView.cyl_autoHideRefresh = YES;
 // [CN] 恢复 MJRefresh 的行为：收回后的刷新头保持可见
 // [EN] MJRefresh's behavior: the retracted header stays visible
 self.tableView.cyl_header.autoHideRefresh = NO;

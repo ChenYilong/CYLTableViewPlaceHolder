@@ -20,8 +20,6 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) BOOL updatingRefreshInset;
 /// [EN] YES while the header retracts after a refresh. [CN] 刷新结束后刷新头收回期间为 YES。
 @property (assign, nonatomic) BOOL retracting;
-/// [EN] The empty mask that hides the idle header (`autoHideRefresh`). [CN] 隐藏空闲刷新头（`autoHideRefresh`）的空遮罩。
-@property (strong, nonatomic) CALayer *idleMask;
 /// [EN] The open height kept while `scrollMode` changes the frame. [CN] `scrollMode` 改变 frame 时保留的展开高度。
 @property (assign, nonatomic) CGFloat cyl_storedExpandHeight;
 /// [EN] YES while this refresh added the header height to the top inset. [CN] 本次刷新把刷新头高度加到顶部 inset 期间为 YES。
@@ -54,26 +52,16 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 设置高度
     self.cyl_h = CYLRefreshHeaderHeight;
 
-    // [EN] On where the navigation bar is transparent by default. [CN] 在导航栏默认透明的系统上开启。
-    if (@available(iOS 26.0, *)) {
-        _autoHideRefresh = YES;
-    }
     _addsRefreshingInset = YES;
-    [self cyl_updateIdleVisibility];
+    [self updateAutoHideVisibility];
 }
 
 #pragma mark - Hidden while idle
 
-- (void)setAutoHideRefresh:(BOOL)autoHideRefresh
-{
-    _autoHideRefresh = autoHideRefresh;
-    [self cyl_updateIdleVisibility];
-}
-
 - (void)setPullingPercent:(CGFloat)pullingPercent
 {
     [super setPullingPercent:pullingPercent];
-    [self cyl_updateIdleVisibility];
+    [self updateAutoHideVisibility];
 }
 
 /// [EN] Idle and fully retracted: the content's top edge is at or above the header's bottom edge.
@@ -85,22 +73,9 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     return self.scrollView.cyl_offsetY >= -self.scrollViewOriginalInset.top - 0.5;
 }
 
-- (void)cyl_updateIdleVisibility
+- (BOOL)isReadyToAutoHide
 {
-    BOOL hide = self.autoHideRefresh && [self cyl_isIdleAndRetracted];
-    BOOL hidden = self.idleMask && self.layer.mask == self.idleMask;
-    if (hide == hidden) return;
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    if (hide) {
-        if (!self.idleMask) self.idleMask = [CALayer layer];
-        self.layer.mask = self.idleMask;
-    } else {
-        self.layer.mask = nil;
-    }
-    [CATransaction commit];
-    // [EN] What is not shown is not read either. [CN] 不显示的内容也不让 VoiceOver 读取。
-    self.accessibilityElementsHidden = hide;
+    return [self cyl_isIdleAndRetracted];
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
@@ -221,7 +196,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change
 {
     [super scrollViewContentOffsetDidChange:change];
-    [self cyl_updateIdleVisibility];
+    [self updateAutoHideVisibility];
     [self cyl_applyScrollMode];
 
     // 在刷新的refreshing状态
@@ -279,7 +254,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 根据状态做事情
     if (state == CYLRefreshStateIdle) {
         if (oldState != CYLRefreshStateRefreshing) {
-            [self cyl_updateIdleVisibility];
+            [self updateAutoHideVisibility];
             return;
         }
 
@@ -287,7 +262,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     } else if (state == CYLRefreshStateRefreshing) {
         [self headerRefreshingAction];
     }
-    [self cyl_updateIdleVisibility];
+    [self updateAutoHideVisibility];
 }
 
 - (void)headerEndingAction {

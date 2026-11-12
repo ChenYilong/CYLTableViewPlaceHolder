@@ -28,6 +28,23 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (strong, nonatomic, nullable) CYLRefreshTrailer *cyl_trailer;
 
+/*!
+ * [EN] `autoHideRefresh` for the header and the footer at once: setting it sets both; reading it is YES when both hide.
+ *      A value set before a control is attached is applied when it is attached.
+ * [CN] 同时设置刷新头与刷新尾的 `autoHideRefresh`：设置时两者一起设置；读取时两者都会隐藏才为 YES。在控件挂上之前设置的值会在挂上时生效。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefresh;
+/*!
+ * [EN] `autoHideRefresh` of the header alone (also applied to a header attached later).
+ * [CN] 仅刷新头的 `autoHideRefresh`（之后挂上的刷新头同样生效）。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefreshHeader;
+/*!
+ * [EN] `autoHideRefresh` of the footer alone (also applied to a footer attached later).
+ * [CN] 仅刷新尾的 `autoHideRefresh`（之后挂上的刷新尾同样生效）。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefreshFooter;
+
 #pragma mark - other
 - (NSInteger)cyl_totalDataCount;
 

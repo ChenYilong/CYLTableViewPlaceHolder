@@ -9,6 +9,7 @@
 #import "CYLRefreshFooter.h"
 #import "UIScrollView+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
+#import "UIScrollView+CYLExtension.h"
 
 @interface CYLRefreshFooter()
 
@@ -79,6 +80,43 @@
 - (BOOL)isNoMoreData
 {
     return self.state == CYLRefreshStateNoMoreData;
+}
+
+#pragma mark - Auto-hide
+
+/// [EN] Idle (or showing "no more data") and wholly below the bottom bars' edge, where a glass tab bar would show it.
+/// [CN] 空闲（或显示“无更多数据”）且完全位于底部栏边缘之下，即玻璃 tab bar 会透出它的位置。
+- (BOOL)isReadyToAutoHide
+{
+    if (self.state != CYLRefreshStateIdle && self.state != CYLRefreshStateNoMoreData) return NO;
+    UIScrollView *scrollView = self.scrollView;
+    if (!scrollView) return YES;
+    CGFloat visibleBottom = scrollView.cyl_offsetY + CGRectGetHeight(scrollView.bounds) - self.scrollViewOriginalInset.bottom;
+    return CGRectGetMinY(self.frame) >= visibleBottom - 0.5;
+}
+
+- (void)scrollViewContentOffsetDidChange:(NSDictionary *)change
+{
+    [super scrollViewContentOffsetDidChange:change];
+    [self updateAutoHideVisibility];
+}
+
+- (void)scrollViewContentSizeDidChange:(NSDictionary *)change
+{
+    [super scrollViewContentSizeDidChange:change];
+    [self updateAutoHideVisibility];
+}
+
+- (void)setState:(CYLRefreshState)state
+{
+    [super setState:state];
+    [self updateAutoHideVisibility];
+}
+
+- (void)placeSubviews
+{
+    [super placeSubviews];
+    [self updateAutoHideVisibility];
 }
 
 @end

@@ -33,6 +33,8 @@
 @property (assign, nonatomic) CYLRefreshPhase cyl_reportedPhase;
 /// [EN] Observers added with -addPhaseObserver:, by token. [CN] -addPhaseObserver: 添加的观察者，按标识保存。
 @property (strong, nonatomic) NSMutableDictionary<NSUUID *, id> *cyl_phaseObservers;
+/// [EN] The empty mask that hides the control (`autoHideRefresh`). [CN] 隐藏控件（`autoHideRefresh`）的空遮罩。
+@property (strong, nonatomic) CALayer *cyl_autoHideMask;
 @end
 
 @implementation CYLRefreshComponent
@@ -138,6 +140,11 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        // [EN] On where the bars are transparent by default (set before prepare, which subclasses lay out in).
+        // [CN] 在栏默认透明的系统上开启（在 prepare 之前设置，子类会在 prepare 中布局）。
+        if (@available(iOS 26.0, *)) {
+            _autoHideRefresh = YES;
+        }
         // 准备工作
         [self prepare];
 
@@ -649,6 +656,37 @@
             [views addObjectsFromArray:view.subviews];
         }
     }
+}
+
+#pragma mark - Auto-hide
+
+- (void)setAutoHideRefresh:(BOOL)autoHideRefresh
+{
+    _autoHideRefresh = autoHideRefresh;
+    [self updateAutoHideVisibility];
+}
+
+- (BOOL)isReadyToAutoHide
+{
+    return NO;
+}
+
+- (void)updateAutoHideVisibility
+{
+    BOOL hide = self.autoHideRefresh && [self isReadyToAutoHide];
+    BOOL hidden = self.cyl_autoHideMask && self.layer.mask == self.cyl_autoHideMask;
+    if (hide == hidden) return;
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    if (hide) {
+        if (!self.cyl_autoHideMask) self.cyl_autoHideMask = [CALayer layer];
+        self.layer.mask = self.cyl_autoHideMask;
+    } else {
+        self.layer.mask = nil;
+    }
+    [CATransaction commit];
+    // [EN] What is not shown is not read either. [CN] 不显示的内容也不让 VoiceOver 读取。
+    self.accessibilityElementsHidden = hide;
 }
 
 - (void)didAttachToScrollView:(UIScrollView *)scrollView {}

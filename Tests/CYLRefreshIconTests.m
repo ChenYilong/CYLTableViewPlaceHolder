@@ -374,4 +374,39 @@
     XCTAssertGreaterThanOrEqual(CGRectGetMinX(text.textLabel.superview.frame), 16 - 0.5, @"wrapping text keeps the margins");
 }
 
+- (void)testHeaderAndFooterAutoHideCanBeSetSeparatelyOrTogether {
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 50, 0);
+    scrollView.contentSize = CGSizeMake(320, 1000);
+    // [EN] Set before attaching: applied when the controls arrive. [CN] 挂上之前设置：控件挂上时生效。
+    scrollView.cyl_autoHideRefreshHeader = NO;
+    scrollView.cyl_autoHideRefreshFooter = YES;
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    scrollView.cyl_header = header;
+    scrollView.cyl_footer = footer;
+    XCTAssertFalse(header.autoHideRefresh);
+    XCTAssertTrue(footer.autoHideRefresh);
+    XCTAssertFalse(scrollView.cyl_autoHideRefresh, @"YES only when both hide");
+    [footer layoutIfNeeded];
+    scrollView.contentOffset = CGPointMake(0, 0);
+    XCTAssertNotNil(footer.layer.mask, @"idle footer below the bottom bar: hidden");
+    XCTAssertNil(header.layer.mask, @"header auto-hide is off");
+    // [EN] Scrolled to the end and pulled: the footer shows. [CN] 滚到底并上拉：刷新尾显示。
+    scrollView.contentOffset = CGPointMake(0, 1000 + 50 - 480 + 30);
+    XCTAssertNil(footer.layer.mask, @"pulled into view: shown");
+    footer.state = CYLRefreshStateRefreshing;
+    XCTAssertNil(footer.layer.mask, @"loading: shown");
+    footer.state = CYLRefreshStateIdle;
+    scrollView.contentOffset = CGPointMake(0, 0);
+    XCTAssertNotNil(footer.layer.mask, @"idle again and out of view: hidden");
+
+    scrollView.cyl_autoHideRefresh = YES;
+    XCTAssertTrue(header.autoHideRefresh && footer.autoHideRefresh && scrollView.cyl_autoHideRefresh);
+    scrollView.cyl_autoHideRefresh = NO;
+    XCTAssertFalse(header.autoHideRefresh || footer.autoHideRefresh);
+    XCTAssertNil(footer.layer.mask, @"off: never masked");
+    XCTAssertFalse(footer.hidden, @"hidden is never touched");
+}
+
 @end

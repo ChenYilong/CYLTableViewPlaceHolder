@@ -387,6 +387,34 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 @property (nonatomic, readonly) BOOL lastRefreshSucceeded;
 
+#pragma mark Auto-hide
+
+/*!
+ * [EN] Shows the control only while an action is under way (pulling, refreshing, retracting, loading) and hides it again
+ *      afterwards: a header once it is idle and fully retracted, a footer once it is idle (or shows "no more data") and
+ *      lies wholly below the bottom bars. On by default where the bars are transparent by default (iOS 26 and later,
+ *      the glass navigation and tab bars, under which a resting control shows through); off by default on earlier
+ *      systems, where you set it yourself. Headers and footers have their own switch, so set them separately or both
+ *      at once (`UIScrollView.cyl_autoHideRefresh`, `cyl_autoHideRefreshHeader`, `cyl_autoHideRefreshFooter`). The
+ *      control is masked out, so its `hidden` and `alpha` (and `automaticallyChangeAlpha`) stay as the caller set them.
+ * [CN] 只在有动作进行时显示控件（下拉、刷新、收回、加载），之后自动隐藏：刷新头在空闲且完全收回后隐藏，刷新尾在空闲（或显示“无更多数据”）
+ *      且完全位于底部栏下方时隐藏。在栏默认透明的系统上默认开启（iOS 26 及以后的玻璃导航栏与 tab bar，静止的控件会透过它们显示）；更早的系统
+ *      默认关闭，需要时自行设置。刷新头与刷新尾各有开关，可分开设置或一起设置（`UIScrollView.cyl_autoHideRefresh`、
+ *      `cyl_autoHideRefreshHeader`、`cyl_autoHideRefreshFooter`）。隐藏通过遮罩实现，`hidden`、`alpha`（及 `automaticallyChangeAlpha`）
+ *      保持调用方的设置。
+ */
+@property (nonatomic) BOOL autoHideRefresh;
+/*!
+ * [EN] Subclass hook: YES when the control may be hidden now (`autoHideRefresh`). Headers and footers override it;
+ *      the base returns NO. [CN] 子类钩子：控件此刻可以隐藏时返回 YES（`autoHideRefresh`）。刷新头与刷新尾重写它；基类返回 NO。
+ */
+- (BOOL)isReadyToAutoHide;
+/*!
+ * [EN] Applies `autoHideRefresh` again; call it when something `isReadyToAutoHide` reads has changed.
+ * [CN] 重新应用 `autoHideRefresh`；`isReadyToAutoHide` 依赖的条件变化时调用。
+ */
+- (void)updateAutoHideVisibility;
+
 #pragma mark flutter_easy_refresh-style options
 
 /*!
