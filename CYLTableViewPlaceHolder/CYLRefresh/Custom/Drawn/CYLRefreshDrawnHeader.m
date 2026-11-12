@@ -14,6 +14,8 @@
 @property (nonatomic, readwrite) CYLRefreshPhase status;
 /// [EN] The offset last passed to the scroll hooks. [CN] 上次传给滚动钩子的偏移。
 @property (nonatomic) CGFloat cyl_lastOffset;
+/// [EN] YES after a style turned user interaction off: touches pass through. [CN] 样式关闭用户交互后为 YES：触摸穿透。
+@property (nonatomic) BOOL cyl_passesTouches;
 @end
 
 @implementation CYLRefreshDrawnHeader
@@ -30,6 +32,35 @@
 }
 
 - (void)setUpComponent {}
+
+#pragma mark - Touches
+
+/// [EN] Styles turn user interaction off so touches reach the list (SmartRefreshControl's Material, WaveSwipe), but
+///      CYLRefresh, like MJRefresh, stops following the scroll view when it is off. Keep it on and let touches pass
+///      through instead. [CN] 样式关闭用户交互是为了让触摸到达列表（SmartRefreshControl 的 Material、WaveSwipe），但 CYLRefresh 与
+///      MJRefresh 一样，在交互关闭时停止跟随滚动视图。因此保持开启，改为让触摸穿透。
+- (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
+{
+    self.cyl_passesTouches = !userInteractionEnabled;
+    [super setUserInteractionEnabled:YES];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return self.cyl_passesTouches ? nil : [super hitTest:point withEvent:event];
+}
+
+#pragma mark - Colors
+
+/// [EN] In SmartRefreshControl `colorPrimary` is a color the styles draw with, not the view's background: keep the
+///      background clear, or a style's drawing (Material's spinner, WaveSwipe's wave) is covered by a solid rectangle.
+/// [CN] SmartRefreshControl 中 `colorPrimary` 是样式绘制时使用的颜色，不是视图背景：保持背景透明，否则样式的绘制（Material 的圆圈、
+///      WaveSwipe 的波浪）会被纯色矩形盖住。
+- (void)setColorPrimary:(UIColor *)colorPrimary
+{
+    [super setColorPrimary:colorPrimary];
+    self.backgroundColor = UIColor.clearColor;
+}
 
 #pragma mark - Size
 

@@ -254,7 +254,11 @@
             line.alpha = self.isRefreshing ? line.alpha:darkAlpha;
             line.transform = CGAffineTransformIdentity;
         } else if (progress == 0) {
-            self.transform = CGAffineTransformMakeTranslation(line.offset*self.width, -self.expandHeight);
+            // [EN] Fixed from SmartRefreshControl, which set `self.transform` here: the whole header moved sideways by the
+            //      last segment's offset and stayed narrower than the screen. Each segment starts off-screen instead.
+            // [CN] 修正 SmartRefreshControl 的错误：原代码在这里设置 `self.transform`，整个刷新头按最后一条线段的偏移横向移动，看起来比屏幕窄。
+            //      现改为每条线段从屏幕外开始。
+            line.transform = CGAffineTransformMakeTranslation(line.offset*self.width, -self.expandHeight);
         } else if (!self.isRefreshing) {
             CGFloat realProgress;
             if (progress <= paddingStart)

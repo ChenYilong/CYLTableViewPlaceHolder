@@ -81,7 +81,9 @@
                !isfinite(layer.cornerRadius) || !isfinite(layer.shadowRadius);
     if ([layer isKindOfClass:CAShapeLayer.class]) {
         CAShapeLayer *shape = (CAShapeLayer *)layer;
+        // [EN] An empty path's box is CGRectNull (infinite origin): not an error. [CN] 空路径的边界是 CGRectNull（原点无穷大）：不算错误。
         CGRect box = shape.path ? CGPathGetPathBoundingBox(shape.path) : CGRectZero;
+        if (CGRectIsNull(box)) box = CGRectZero;
         bad = bad || !isfinite(box.origin.x) || !isfinite(box.origin.y) || !isfinite(box.size.width) ||
               !isfinite(shape.lineWidth) || !isfinite(shape.strokeEnd) || !isfinite(shape.strokeStart);
     }
@@ -211,6 +213,30 @@
         [page.header endRefreshing];
         [self spin:0.6];
         self.window.rootViewController = nil;
+    }
+}
+
+- (void)testFrontModeStylesDrawWhilePulled {
+    for (Class style in @[CYLRefreshMaterialHeader.class, CYLRefreshWaveSwipeHeader.class]) {
+        UIScrollView *scrollView = [self scrollView];
+        scrollView.contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
+        scrollView.contentOffset = CGPointMake(0, -100);
+        CYLRefreshDrawnHeader *header = [style attach:scrollView];
+        [self spin:0.1];
+        scrollView.contentOffset = CGPointMake(0, -100 - 90);
+        [self spin:0.1];
+        // [EN] These styles turn user interaction off; the header must still follow the scroll view and show.
+        // [CN] 这些样式关闭了用户交互；刷新头仍须跟随滚动视图并显示。
+        XCTAssertNil(header.layer.mask, @"%@ shows while pulled", style);
+        XCTAssertEqualWithAccuracy(header.dragOffset, -(scrollView.contentOffset.y + scrollView.adjustedContentInset.top), 0.5);
+        XCTAssertEqualWithAccuracy(CGRectGetMinY(header.frame), scrollView.contentOffset.y + scrollView.adjustedContentInset.top, 0.5,
+                                   @"%@ is pinned at the visible top (front mode)", style);
+        XCTAssertNil([header hitTest:CGPointMake(10, 10) withEvent:nil], @"%@ lets touches through", style);
+        if (style == CYLRefreshMaterialHeader.class) {
+            CAShapeLayer *shape = [header valueForKey:@"shapeLayer"];
+            XCTAssertTrue(shape.path && !CGRectIsEmpty(CGPathGetBoundingBox(shape.path)), @"the spinner is drawn");
+        }
+        [scrollView removeFromSuperview];
     }
 }
 
