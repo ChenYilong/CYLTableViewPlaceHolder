@@ -48,7 +48,11 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
    start translating once the issues reach 60. After translating, fix the remaining issues on the translated code
    until 100. If the translation is already done: translate the open pull requests and merge them in, then fix the
    issues on the translated code until 100.
-5. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
+5. **Cross-language ports** (decided by the owner on 2026-11-13, for the Kotlin port of SVPullToRefresh): when the
+   translation is into another language, so an issue's fix can only be written in the translated code, an issue whose
+   fix is in an open pull request that was reviewed and taken for the translation counts as handled for the 60 needed
+   to start; it must still be implemented and tested in the translation before the score reaches 100.
+6. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
 
 ## English naming rules
 
