@@ -19,7 +19,16 @@
 @property (assign, nonatomic) CGFloat pagingRestingOffset;
 @property (assign, nonatomic) CGFloat pagingRefreshOffset;
 @property (assign, nonatomic) BOOL holdingNoMoreData;
+/// [EN] Second floor state. [CN] 二楼状态。
+@property (assign, nonatomic) BOOL cyl_secondaryArmed;
+@property (assign, nonatomic) BOOL cyl_secondaryClosePending;
+@property (assign, nonatomic) BOOL cyl_secondaryClosing;
+@property (assign, nonatomic, readwrite, getter=isSecondaryOpen) BOOL secondaryOpen;
 @property (assign, nonatomic) NSUInteger noMoreDataHoldToken;
+@end
+
+@interface CYLRefreshComponent (CYLPhaseReportingFooter)
+- (void)cyl_reportPhase;
 @end
 
 @interface CYLRefreshBackFooter (CYLTriggerMode)
@@ -50,6 +59,11 @@
     if (self.state == CYLRefreshStateRefreshing) return;
     // The inset is held open while "no more data" stays visible; it is not the original inset.
     if (self.holdingNoMoreData) return;
+    // [EN] The second floor holds its own inset. [CN] 二楼占用了自己的 inset。
+    if (self.secondaryOpen || self.cyl_secondaryClosing) {
+        [self cyl_followOpenSecondary];
+        return;
+    }
 
     _scrollViewOriginalInset = self.scrollView.cyl_inset;
 
@@ -70,6 +84,18 @@
             [self resetNoMoreData];
         } else {
             self.pullingPercent = pullingPercent;
+            return;
+        }
+    }
+
+    // [EN] Second floor: arm past its trigger while dragging, open on release. [CN] 二楼：拖动中越过触发点即就绪，松手打开。
+    if (self.secondaryTriggerOffset > 0 && self.state != CYLRefreshStateNoMoreData) {
+        BOOL armed = self.scrollView.isDragging && currentOffsetY - happenOffsetY >= self.secondaryTriggerOffset;
+        if (self.scrollView.isDragging && armed != self.cyl_secondaryArmed) {
+            self.cyl_secondaryArmed = armed;
+            [self cyl_reportPhase];
+        } else if (!self.scrollView.isDragging && self.cyl_secondaryArmed) {
+            [self openSecondary];
             return;
         }
     }
@@ -104,6 +130,7 @@
 - (void)scrollViewContentSizeDidChange:(NSDictionary *)change
 {
     [super scrollViewContentSizeDidChange:change];
+    [self cyl_placeSecondaryView];
 
     CGSize size = [change[NSKeyValueChangeNewKey] CGSizeValue];
     CGFloat contentHeight = size.height == 0 ? self.scrollView.cyl_contentH : size.height;
@@ -292,6 +319,111 @@
 {
     [super scrollViewPanStateDidChange:change];
     [self cyl_recordDragStart];
+}
+
+#pragma mark - Second floor
+
+- (CGFloat)secondaryCloseTriggerOffset
+{
+    return _secondaryCloseTriggerOffset > 0 ? _secondaryCloseTriggerOffset : 80;
+}
+
+- (CGFloat)cyl_secondaryHeight
+{
+    if (self.secondaryDimension > 0) return self.secondaryDimension;
+    return MAX(self.cyl_h, CGRectGetHeight(self.scrollView.bounds) - self.scrollViewOriginalInset.top - self.scrollViewOriginalInset.bottom);
+}
+
+- (CYLRefreshPhase)phase
+{
+    if (self.cyl_secondaryClosing) return CYLRefreshPhaseSecondaryClosing;
+    if (self.secondaryOpen) return CYLRefreshPhaseSecondaryOpen;
+    if (self.cyl_secondaryArmed) return CYLRefreshPhaseSecondaryArmed;
+    return [super phase];
+}
+
+- (void)setSecondaryView:(UIView *)secondaryView
+{
+    if (_secondaryView != secondaryView) [_secondaryView removeFromSuperview];
+    _secondaryView = secondaryView;
+    [self cyl_placeSecondaryView];
+}
+
+/// [EN] The floor's view sits right below the content, across the whole floor. [CN] 二楼视图紧贴内容下方，铺满整个二楼。
+- (void)cyl_placeSecondaryView
+{
+    UIView *view = self.secondaryView;
+    UIScrollView *scrollView = self.scrollView;
+    if (!view || !scrollView) return;
+    if (view.superview != scrollView) [scrollView insertSubview:view belowSubview:self];
+    CGFloat top = MAX(scrollView.cyl_contentH, CGRectGetHeight(scrollView.bounds) - self.scrollViewOriginalInset.top - self.scrollViewOriginalInset.bottom);
+    view.frame = CGRectMake(-scrollView.cyl_insetL, top, scrollView.cyl_w, [self cyl_secondaryHeight]);
+}
+
+- (void)didAttachToScrollView:(UIScrollView *)scrollView
+{
+    [super didAttachToScrollView:scrollView];
+    [self cyl_placeSecondaryView];
+}
+
+- (void)willDetachFromScrollView:(UIScrollView *)scrollView
+{
+    [self.secondaryView removeFromSuperview];
+    [super willDetachFromScrollView:scrollView];
+}
+
+- (void)openSecondary
+{
+    if (self.secondaryOpen || !self.scrollView || self.isRefreshing) return;
+    self.cyl_secondaryArmed = NO;
+    if (self.state == CYLRefreshStatePulling) self.state = CYLRefreshStateIdle;
+    [self cyl_placeSecondaryView];
+    self.secondaryOpen = YES;
+    [self cyl_reportPhase];
+    CGFloat height = [self cyl_secondaryHeight];
+    CGFloat bottom = self.scrollViewOriginalInset.bottom + height;
+    CGFloat target = [self happenOffsetY] + height;
+    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        self.scrollView.cyl_insetB = bottom;
+        self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, target);
+    } completion:^(BOOL finished) {
+        if (self.secondaryOpenedBlock) self.secondaryOpenedBlock();
+    }];
+}
+
+- (void)closeSecondary
+{
+    if (!self.secondaryOpen || self.cyl_secondaryClosing) return;
+    self.cyl_secondaryClosing = YES;
+    self.cyl_secondaryClosePending = NO;
+    [self cyl_reportPhase];
+    CGFloat bottom = self.scrollViewOriginalInset.bottom;
+    CGFloat target = MAX([self happenOffsetY], -self.scrollViewOriginalInset.top);
+    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        self.scrollView.cyl_insetB = bottom;
+        self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, target);
+    } completion:^(BOOL finished) {
+        self.cyl_secondaryClosing = NO;
+        self.secondaryOpen = NO;
+        self.pullingPercent = 0;
+        [self cyl_reportPhase];
+        [self updateAutoHideVisibility];
+        if (self.secondaryClosedBlock) self.secondaryClosedBlock();
+    }];
+}
+
+/// [EN] While open: pulling the content down past the close trigger and releasing closes the floor.
+/// [CN] 打开时：把内容下拉超过关闭触发距离再松手，即关闭二楼。
+- (void)cyl_followOpenSecondary
+{
+    if (self.cyl_secondaryClosing) return;
+    CGFloat openOffsetY = [self happenOffsetY] + [self cyl_secondaryHeight];
+    CGFloat pulled = openOffsetY - self.scrollView.cyl_offsetY;
+    if (self.scrollView.isDragging) {
+        self.cyl_secondaryClosePending = pulled >= self.secondaryCloseTriggerOffset;
+    } else if (self.cyl_secondaryClosePending) {
+        [self closeSecondary];
+    }
 }
 
 @end

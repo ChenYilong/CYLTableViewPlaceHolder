@@ -294,4 +294,35 @@
     window.hidden = YES;
 }
 
+- (void)testFooterSecondFloorOpensAndCloses {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    UIView *floor = [UIView new];
+    footer.secondaryTriggerOffset = 160;
+    footer.secondaryDimension = 260;
+    footer.secondaryView = floor;
+    XCTAssertEqual(floor.superview, scrollView);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(floor.frame), 2000, 0.5, @"right below the content");
+    XCTAssertEqualWithAccuracy(footer.secondaryCloseTriggerOffset, 80, 0.01);
+    CGFloat bottom = scrollView.adjustedContentInset.bottom;
+    __block BOOL opened = NO, closed = NO;
+    footer.secondaryOpenedBlock = ^{ opened = YES; };
+    footer.secondaryClosedBlock = ^{ closed = YES; };
+    [footer openSecondary];
+    XCTAssertEqual(footer.phase, CYLRefreshPhaseSecondaryOpen);
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    XCTAssertTrue(opened && footer.isSecondaryOpen);
+    XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.bottom, bottom + 260, 0.5);
+    [footer closeSecondary];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    XCTAssertTrue(closed);
+    XCTAssertFalse(footer.isSecondaryOpen);
+    XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.bottom, bottom, 0.5);
+    XCTAssertEqual(footer.phase, CYLRefreshPhaseIdle);
+    window.hidden = YES;
+}
+
 @end
