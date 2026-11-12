@@ -318,6 +318,17 @@
 - (void)scrollViewPanStateDidChange:(NSDictionary *)change
 {
     [super scrollViewPanStateDidChange:change];
+    UIPanGestureRecognizer *pan = self.scrollView.panGestureRecognizer;
+    if (pan.state == UIGestureRecognizerStateEnded && self.secondaryVelocity > 0 && self.secondaryTriggerOffset > 0 &&
+        !self.secondaryOpen && !self.isRefreshing && self.state != CYLRefreshStateNoMoreData) {
+        // [EN] A fast release past the load trigger opens the second floor. [CN] 越过加载触发点后快速松手即打开二楼。
+        CGFloat velocity = -[pan velocityInView:self.scrollView].y;
+        CGFloat pulled = self.scrollView.cyl_offsetY - [self happenOffsetY];
+        if (velocity >= self.secondaryVelocity && pulled >= self.cyl_h * self.triggerRate) {
+            [self openSecondary];
+            return;
+        }
+    }
     [self cyl_recordDragStart];
 }
 

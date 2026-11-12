@@ -365,6 +365,35 @@
     }
 }
 
+- (void)beginRefreshingWithDuration:(NSTimeInterval)duration overOffset:(CGFloat)overOffset force:(BOOL)force
+{
+    NSTimeInterval savedDuration = self.fastAnimationDuration;
+    BOOL savedExclusive = self.exclusiveWithOtherRefresh;
+    if (duration > 0) self.fastAnimationDuration = duration;
+    if (force) self.exclusiveWithOtherRefresh = NO;
+    [self beginRefreshing];
+    self.exclusiveWithOtherRefresh = savedExclusive;
+    NSTimeInterval move = self.fastAnimationDuration;
+    self.fastAnimationDuration = savedDuration;
+    if (overOffset <= 0 || !self.scrollView || !self.window) return;
+    // [EN] Overshoot past the refreshing position and spring back, as a real pull ends. [CN] 越过刷新位置再回弹，像真实拉动的结尾。
+    BOOL down = [self isKindOfClass:CYLRefreshHeader.class];
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(move * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) self = weakSelf;
+        UIScrollView *scrollView = self.scrollView;
+        if (!scrollView || !self.isRefreshing) return;
+        CGPoint rest = scrollView.contentOffset;
+        CGPoint over = CGPointMake(rest.x, rest.y + (down ? -overOffset : overOffset));
+        [UIView animateWithDuration:0.15 animations:^{
+            scrollView.contentOffset = over;
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0 options:0
+                             animations:^{ scrollView.contentOffset = rest; } completion:nil];
+        }];
+    });
+}
+
 - (void)beginRefreshingWithCompletionBlock:(void (^)(void))completionBlock
 {
     self.beginRefreshingCompletionBlock = completionBlock;

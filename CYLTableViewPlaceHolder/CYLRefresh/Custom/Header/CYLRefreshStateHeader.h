@@ -49,6 +49,22 @@ NS_ASSUME_NONNULL_BEGIN
  * [CN] 状态文字与时间文字之间的间距（点）；0（默认）表示照旧把高度一分为二。
  */
 @property (assign, nonatomic) CGFloat titleTimeSpacing;
+/*!
+ * [EN] Shown in place of the icon while the header holds after a successful refresh (`finishDuration` > 0)
+ *      (flutter_easy_refresh's `ClassicHeader.succeededIcon`). [CN] 刷新成功后停留期间（`finishDuration` > 0）代替图标显示
+ *      （对应 flutter_easy_refresh 的 `ClassicHeader.succeededIcon`）。
+ */
+@property (strong, nonatomic, nullable) UIImage *succeededImage;
+/*!
+ * [EN] Shown in place of the icon while the header holds after a failed refresh (`failedIcon`).
+ * [CN] 刷新失败后停留期间代替图标显示（对应 `failedIcon`）。
+ */
+@property (strong, nonatomic, nullable) UIImage *failedImage;
+/*!
+ * [EN] Puts the icon on the trailing side of the text instead of the leading side (flutter_easy_refresh's
+ *      `ClassicHeader.reverse`). Default NO. [CN] 把图标放在文字后面而不是前面（对应 flutter_easy_refresh 的 `ClassicHeader.reverse`）。默认 NO。
+ */
+@property (assign, nonatomic) BOOL iconOnTrailingSide;
 @end
 
 @interface CYLRefreshStateHeader (ChainingGrammar)

@@ -132,7 +132,7 @@
 
 | 中文 | English |
 | --- | --- |
-| 评分：**84/100**（43/51 行有对应 API；二楼一行拆成刷新头与刷新尾两行；此前 82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 4 行只属于 Flutter，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：阻尼与弹簧、`callRefresh` 参数、嵌套滚动、经典样式的结果图标等选项、5 个刷新尾样式、6 个 Rive 样式包与 `easy_paging`。 | Score: **84/100** (43 of 51 rows have a counterpart; the second-floor row is split into header and footer; before: 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: friction and springs, the `callRefresh` parameters, nested scrolling, the classic style's result icons and other options, 5 footer styles, the 6 Rive style packages and `easy_paging`. |
+| 评分：**92/100**（44/48 行有对应 API；二楼一行拆成刷新头与刷新尾两行；阻尼、弹簧与嵌套滚动 3 行改判为不适用；此前 84（`af17600`）、82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 7 行只属于 Flutter 或 UIKit 无对应概念，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：经典样式的刷新尾无更多数据图标与图标尺寸、5 个刷新尾样式、6 个 Rive 样式包与 `easy_paging`。 | Score: **92/100** (44 of 48 rows have a counterpart; the second-floor row is split into header and footer; friction, springs and nested scrolling are now judged not applicable; before: 84 (`af17600`), 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 7 rows belong to Flutter only or have no UIKit concept and are not scored; 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: the classic footer's no-more-data icon and the icon size, 5 footer styles, the 6 Rive style packages and `easy_paging`. |
 
 | flutter_easy_refresh 公开 API / public API | CYLRefresh API | 对齐 / Aligned |
 | --- | --- | --- |
@@ -163,13 +163,13 @@
 | `PhoenixHeader` | `CYLRefreshPhoenixHeader` | ✅ |
 | `TaurusHeader` | `CYLRefreshTaurusHeader` | ✅ |
 | `IndicatorMode`（inactive / drag / armed / ready / processing / processed / done） | `CYLRefreshPhase`（Idle / PullToRefresh / ReleaseToRefresh / Releasing / Refreshing / Finishing） | ✅ |
-| 刷新头二楼：`openHeaderSecondary` / `closeHeaderSecondary`、`SecondaryHeader` / `SecondaryBuilderHeader`、`secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`IndicatorMode.secondary*` | `openSecondary` / `closeSecondary`、`secondaryView`、`secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`secondaryOpenedBlock` / `secondaryClosedBlock`、`CYLRefreshPhaseSecondaryArmed` / `SecondaryOpen` / `SecondaryClosing`；`secondaryVelocity`（按松手速度打开）未实现 / not implemented | ✅ |
+| 刷新头二楼：`openHeaderSecondary` / `closeHeaderSecondary`、`SecondaryHeader` / `SecondaryBuilderHeader`、`secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`IndicatorMode.secondary*` | `openSecondary` / `closeSecondary`、`secondaryView`、`secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`secondaryOpenedBlock` / `secondaryClosedBlock`、`CYLRefreshPhaseSecondaryArmed` / `SecondaryOpen` / `SecondaryClosing`；`secondaryVelocity` | ✅ |
 | 刷新尾二楼：`openFooterSecondary` / `closeFooterSecondary`、`SecondaryBuilderFooter` | `CYLRefreshBackFooter`：`openSecondary` / `closeSecondary`、`secondaryView`、`secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`secondaryOpenedBlock` / `secondaryClosedBlock` | ✅ |
 | `IndicatorTriggerMode`（anywhere / onEdge） | `CYLRefreshTriggerMode` / `triggerMode`（刷新头、返回式尾） | ✅ |
 | `IndicatorPosition.behind`（指示器固定在内容后面） | `CYLRefreshScrollModeBehind` | ✅ |
 | `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`；松手即刷新是默认行为 / refreshing on release is the default | ✅ |
-| `frictionFactor` / `horizontalFrictionFactor`（拖动阻尼） | — | TODO |
-| `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound`（弹簧回弹） | — | TODO |
+| `frictionFactor` / `horizontalFrictionFactor`（拖动阻尼） | 不适用：UIScrollView 的越界阻尼由系统决定，不能替换；限制拉动距离用 `maxPullDistance` / not applicable: UIScrollView's overscroll resistance is the system's and cannot be replaced; `maxPullDistance` limits the pull | 不适用 / N/A |
+| `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound`（弹簧回弹） | 不适用：回弹动画由 UIScrollView 自身完成；进入刷新位置的时长用 `fastAnimationDuration` / not applicable: UIScrollView runs its own rebound; `fastAnimationDuration` sets the move to the refreshing position | 不适用 / N/A |
 | `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`（刷新头、返回式尾）；越过触发点继续拉动、无限加载重复触发是默认行为（`autoTriggerTimes`） / pulling past the trigger point and repeated infinite loading are the default (`autoTriggerTimes`) | ✅ |
 | `hapticFeedback` | `hapticFeedback` | ✅ |
 | `notifyWhenInvisible` | `notifiesWhenHidden` | ✅ |
@@ -178,11 +178,11 @@
 | `NotRefreshHeader` / `NotLoadFooter`（不刷新但保留回弹配置） | `refreshEnabled = NO` | ✅ |
 | `OverrideHeader` / `OverrideFooter`（覆盖已有指示器的属性） | 直接修改控件实例的属性（UIKit 不需要包装类） / set the properties on the control instance (UIKit needs no wrapper) | ✅ |
 | `refreshOnStartHeader`（首次刷新用另一个刷新头） | `-[UIScrollView cyl_beginRefreshingWithStartHeader:]` | ✅ |
-| `callRefreshOverOffset` / `callLoadOverOffset`；`callRefresh(overOffset:duration:curve:force:)` 的参数 | — | TODO |
+| `callRefreshOverOffset` / `callLoadOverOffset`；`callRefresh(overOffset:duration:curve:force:)` 的参数 | `beginRefreshingWithDuration:overOffset:force:`（`curve` 用 UIKit 默认曲线 / `curve` uses UIKit's default curve） | ✅ |
 | `canRefreshAfterNoMore` / `canLoadAfterNoMore` | 无更多数据时仍可下拉刷新（默认） / `loadsAfterNoMoreData` / refreshing is always allowed after no more data (default); `loadsAfterNoMoreData` | ✅ |
 | `resetAfterRefresh`（刷新后自动重置无更多数据） | `resetsFooterAfterRefresh` | ✅ |
-| `isNested` / `nestedOuterController` / `nestedInnerController`（嵌套滚动） | — | TODO |
-| `ClassicHeader` 的结果图标 `succeededIcon` / `failedIcon` / `noMoreIcon`、`pullIconBuilder`、`reverse`、`textBuilder` / `messageBuilder`、`spacing` / `iconDimension` | 部分：`arrowView`、`labelLeftInset` / partly: `arrowView`, `labelLeftInset` | TODO |
+| `isNested` / `nestedOuterController` / `nestedInnerController`（嵌套滚动） | 不适用：UIKit 没有 NestedScrollView；嵌套的滚动视图把控件挂在需要的那个滚动视图上即可 / not applicable: UIKit has no NestedScrollView; attach the control to the scroll view that should refresh | 不适用 / N/A |
+| `ClassicHeader` 的结果图标 `succeededIcon` / `failedIcon` / `noMoreIcon`、`pullIconBuilder`、`reverse`、`textBuilder` / `messageBuilder`、`spacing` / `iconDimension` | 部分：`succeededImage` / `failedImage`、`iconOnTrailingSide`、`arrowView`、`labelLeftInset`；缺刷新尾的 `noMoreIcon` 与图标尺寸 / partly: `succeededImage` / `failedImage`, `iconOnTrailingSide`, `arrowView`, `labelLeftInset`; the footer's `noMoreIcon` and the icon size are missing | TODO |
 | `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | ✅ |
 | `BezierFooter` / `MaterialFooter` / `DeliveryFooter` / `PhoenixFooter` / `TaurusFooter` | — | TODO |
 | Rive 样式包 / Rive style packages：`easy_refresh_bow` / `bubbles` / `halloween` / `skating` / `space` / `squats` | 通用 Rive 图标 `setIconAnimation…`，但未带这 6 个文件 / generic Rive icons, without these 6 files | TODO |

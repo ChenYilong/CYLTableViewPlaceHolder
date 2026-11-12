@@ -80,7 +80,12 @@
             timeWidth = self.lastUpdatedTimeLabel.cyl_textWidth;
         }
         CGFloat textWidth = MAX(stateWidth, timeWidth);
-        arrowCenterX -= textWidth / 2 + self.labelLeftInset;
+        // [EN] iconOnTrailingSide (default NO) puts the arrow after the text. [CN] iconOnTrailingSide（默认 NO）把箭头放到文字后面。
+        if (self.iconOnTrailingSide) {
+            arrowCenterX += textWidth / 2 + self.labelLeftInset;
+        } else {
+            arrowCenterX -= textWidth / 2 + self.labelLeftInset;
+        }
     }
     CGFloat arrowCenterY = self.cyl_h * 0.5;
     CGPoint arrowCenter = CGPointMake(arrowCenterX, arrowCenterY);

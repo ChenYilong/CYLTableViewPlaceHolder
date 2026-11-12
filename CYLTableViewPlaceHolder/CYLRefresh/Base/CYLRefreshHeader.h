@@ -81,6 +81,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) CGFloat secondaryCloseTriggerOffset;
 /*!
+ * [EN] Releasing a pull at least this fast (points per second) opens the second floor once the pull is past the refresh
+ *      trigger, even short of `secondaryTriggerOffset`; 0 (default) turns it off (flutter_easy_refresh's
+ *      `secondaryVelocity`). [CN] 拉过刷新触发点后，以至少这个速度（点/秒）松手即打开二楼，即使未达到 `secondaryTriggerOffset`；
+ *      0（默认）关闭（对应 flutter_easy_refresh 的 `secondaryVelocity`）。
+ */
+@property (nonatomic) CGFloat secondaryVelocity;
+/*!
  * [EN] The second floor's content, placed above the list across the whole second floor and revealed by the pull
  *      (flutter_easy_refresh's `SecondaryBuilderHeader`). [CN] 二楼的内容视图，放在列表上方、铺满整个二楼，随下拉露出
  *      （对应 flutter_easy_refresh 的 `SecondaryBuilderHeader`）。

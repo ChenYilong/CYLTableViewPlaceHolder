@@ -417,6 +417,17 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 - (void)endRefreshingWithSuccess:(BOOL)success NS_SWIFT_NAME(endRefreshing(success:));
 /*!
+ * [EN] `beginRefreshing` with options (flutter_easy_refresh's `callRefresh` / `callLoad`): `duration` (seconds, 0
+ *      keeps `fastAnimationDuration`) for moving to the refreshing position; `overOffset` (points) scrolls that much
+ *      further and springs back, as a pull would; `force` starts even while another control of the scroll view is
+ *      refreshing and `exclusiveWithOtherRefresh` would hold it back.
+ * [CN] 带选项的 `beginRefreshing`（对应 flutter_easy_refresh 的 `callRefresh` / `callLoad`）：`duration`（秒，0 表示沿用
+ *      `fastAnimationDuration`）为移到刷新位置的时长；`overOffset`（点）多滚动这么远再回弹，像真实拉动一样；`force` 即使同一滚动视图的
+ *      其他控件正在刷新、`exclusiveWithOtherRefresh` 会阻止时也开始刷新。
+ */
+- (void)beginRefreshingWithDuration:(NSTimeInterval)duration overOffset:(CGFloat)overOffset force:(BOOL)force
+    NS_SWIFT_NAME(beginRefreshing(duration:overOffset:force:));
+/*!
  * [EN] Whether the last refresh ended successfully. [CN] 上一次刷新是否成功结束。
  */
 @property (nonatomic, readonly) BOOL lastRefreshSucceeded;

@@ -22,6 +22,10 @@
 }
 /** 所有状态对应的文字 */
 @property (strong, nonatomic) NSMutableDictionary *stateTitles;
+/// [EN] Shows succeededImage / failedImage during the finish hold. [CN] 结束停留期间显示 succeededImage / failedImage。
+@property (strong, nonatomic) UIImageView *cyl_resultImageView;
+- (CGPoint)cyl_iconCenterBesideText;
+- (void)cyl_hideResultImage;
 @end
 
 @implementation CYLRefreshStateHeader
@@ -148,6 +152,10 @@
 {
     [super placeSubviews];
 
+    if (self.cyl_resultImageView && !self.cyl_resultImageView.hidden) {
+        self.cyl_resultImageView.cyl_size = self.cyl_resultImageView.image.size;
+        self.cyl_resultImageView.center = [self cyl_iconCenterBesideText];
+    }
     if (self.stateLabel.hidden) return;
 
     BOOL noConstrainsOnStatusLabel = self.stateLabel.constraints.count == 0;
@@ -186,6 +194,7 @@
 - (void)setState:(CYLRefreshState)state
 {
     CYLRefreshCheckState
+    if (state != CYLRefreshStateRefreshing) [self cyl_hideResultImage];
 
     // 设置状态文字
     self.stateLabel.text = self.stateTitles[@(state)];
@@ -235,7 +244,59 @@
     [super refreshDidFinishWithSuccess:success];
     if ([self finishingDurationWithSuccess:success] <= 0) return;
     self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText];
+    [self cyl_showResultImage:success ? self.succeededImage : self.failedImage];
     [self setNeedsLayout];
+}
+
+/// [EN] The result image takes the icon's place: the spinner and arrow hide while it shows.
+/// [CN] 结果图片代替图标：显示期间隐藏菊花与箭头。
+- (void)cyl_showResultImage:(UIImage *)image
+{
+    if (!image) return;
+    if (!self.cyl_resultImageView) {
+        // [EN] A system UIImageView, not CYLPlaceholderView: it takes the place of arrowView / loadingView, which are
+        //      system views laid out by the same code, and shows one small image with no title.
+        // [CN] 用系统 UIImageView 而不是 CYLPlaceholderView：它代替的 arrowView / loadingView 本身就是系统视图、由同一段代码布局，
+        //      且只显示一张小图、没有标题。
+        self.cyl_resultImageView = [[UIImageView alloc] init];
+        self.cyl_resultImageView.contentMode = UIViewContentModeCenter;
+        [self addSubview:self.cyl_resultImageView];
+    }
+    self.cyl_resultImageView.image = image;
+    self.cyl_resultImageView.hidden = NO;
+    for (UIView *view in self.subviews) {
+        if (view != self.cyl_resultImageView && ([view isKindOfClass:UIActivityIndicatorView.class] || [view isKindOfClass:UIImageView.class])) {
+            view.alpha = 0;
+        }
+    }
+}
+
+- (void)cyl_hideResultImage
+{
+    if (!self.cyl_resultImageView || self.cyl_resultImageView.hidden) return;
+    self.cyl_resultImageView.hidden = YES;
+    for (UIView *view in self.subviews) {
+        if (view != self.cyl_resultImageView) view.alpha = 1;
+    }
+}
+
+- (void)setIconOnTrailingSide:(BOOL)iconOnTrailingSide
+{
+    _iconOnTrailingSide = iconOnTrailingSide;
+    [self setNeedsLayout];
+}
+
+/// [EN] The icon's center beside the text, on the leading or trailing side. [CN] 图标在文字旁边的中心点（前面或后面）。
+- (CGPoint)cyl_iconCenterBesideText
+{
+    CGFloat centerX = self.cyl_w * 0.5;
+    if (!self.stateLabel.hidden) {
+        CGFloat textWidth = self.stateLabel.cyl_textWidth;
+        if (!self.lastUpdatedTimeLabel.hidden) textWidth = MAX(textWidth, self.lastUpdatedTimeLabel.cyl_textWidth);
+        CGFloat shift = textWidth / 2 + self.labelLeftInset;
+        centerX += self.iconOnTrailingSide ? shift : -shift;
+    }
+    return CGPointMake(centerX, self.cyl_h * 0.5);
 }
 
 @end

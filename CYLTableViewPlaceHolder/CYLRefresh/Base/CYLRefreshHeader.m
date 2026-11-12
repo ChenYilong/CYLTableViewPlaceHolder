@@ -214,6 +214,17 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (void)scrollViewPanStateDidChange:(NSDictionary *)change
 {
     [super scrollViewPanStateDidChange:change];
+    UIGestureRecognizer *pan = self.scrollView.panGestureRecognizer;
+    if (pan.state == UIGestureRecognizerStateEnded && self.secondaryVelocity > 0 && self.secondaryTriggerOffset > 0 &&
+        !self.secondaryOpen && !self.isRefreshing) {
+        // [EN] A fast release past the refresh trigger opens the second floor. [CN] 越过刷新触发点后快速松手即打开二楼。
+        CGFloat velocity = [self.scrollView.panGestureRecognizer velocityInView:self.scrollView].y;
+        CGFloat pulled = -(self.scrollView.cyl_offsetY + self.scrollViewOriginalInset.top);
+        if (velocity >= self.secondaryVelocity && pulled >= self.expandHeight * self.triggerRate) {
+            [self openSecondary];
+            return;
+        }
+    }
     if (self.scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         // [EN] At the top edge: the content's top is at (or below) the header's bottom. [CN] 位于顶部边缘：内容顶部在刷新头底边或其下方。
         self.cyl_dragStartedAtEdge = self.scrollView.cyl_offsetY <= -self.scrollViewOriginalInset.top + 0.5;

@@ -58,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  * [EN] Opens the second floor (flutter_easy_refresh's `openFooterSecondary`). [CN] 打开二楼（对应 flutter_easy_refresh 的 `openFooterSecondary`）。
  */
+/*!
+ * [EN] Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0
+ *      (default) turns it off. [CN] 越过加载触发点后，以至少这个速度（点/秒）松手即打开二楼；0（默认）关闭。
+ */
+@property (nonatomic) CGFloat secondaryVelocity;
 - (void)openSecondary;
 /*!
  * [EN] Closes the second floor (flutter_easy_refresh's `closeFooterSecondary`). [CN] 关闭二楼（对应 flutter_easy_refresh 的 `closeFooterSecondary`）。

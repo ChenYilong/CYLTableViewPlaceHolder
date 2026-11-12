@@ -325,4 +325,54 @@
     window.hidden = YES;
 }
 
+- (void)testCallRefreshOptionsResultImageAndTrailingIcon {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    NSTimeInterval fast = header.fastAnimationDuration;
+
+    // force: starts although the footer refreshes and the header is exclusive.
+    header.exclusiveWithOtherRefresh = YES;
+    [footer beginRefreshing];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.4]];
+    [header beginRefreshingWithDuration:0.5 overOffset:20 force:YES];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.2]];
+    XCTAssertTrue(header.isRefreshing, @"force starts the refresh");
+    XCTAssertTrue(header.exclusiveWithOtherRefresh, @"the option is restored");
+    XCTAssertEqualWithAccuracy(header.fastAnimationDuration, fast, 0.001, @"the duration is restored");
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, -(scrollView.adjustedContentInset.top), 1, @"back at rest after the overshoot");
+    [footer endRefreshing];
+
+    // succeededImage takes the icon's place while the header holds after success.
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(10, 10)];
+    UIImage *check = [renderer imageWithActions:^(UIGraphicsImageRendererContext *c) { [UIColor.greenColor setFill]; UIRectFill(CGRectMake(0, 0, 10, 10)); }];
+    header.succeededImage = check;
+    header.finishDuration = 1;
+    [header endRefreshingWithSuccess:YES];
+    [header layoutIfNeeded];
+    UIImageView *result = nil;
+    for (UIView *v in header.subviews) if ([v isKindOfClass:UIImageView.class] && ((UIImageView *)v).image == check) result = (UIImageView *)v;
+    XCTAssertNotNil(result);
+    XCTAssertFalse(result.hidden);
+    XCTAssertEqualWithAccuracy(header.loadingView.alpha, 0, 0.01, @"the spinner gives way");
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    XCTAssertEqual(header.state, CYLRefreshStateIdle);
+    XCTAssertTrue(result.hidden, @"gone when idle again");
+
+    // iconOnTrailingSide puts the arrow after the text.
+    header.lastUpdatedTimeLabel.hidden = YES;
+    [header layoutIfNeeded];
+    CGFloat leading = header.arrowView.center.x;
+    header.iconOnTrailingSide = YES;
+    [header layoutIfNeeded];
+    XCTAssertLessThan(leading, header.cyl_w * 0.5);
+    XCTAssertGreaterThan(header.arrowView.center.x, header.cyl_w * 0.5);
+    header.secondaryVelocity = 1500;
+    XCTAssertEqualWithAccuracy(header.secondaryVelocity, 1500, 0.01);
+    window.hidden = YES;
+}
+
 @end
