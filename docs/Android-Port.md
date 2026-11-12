@@ -88,6 +88,118 @@
 | <https://github.com/samvermette/SVPullToRefresh/pull/306> | hidesWhenStopped 时菊花不显示 / spinner hidden with hidesWhenStopped | 采用（修复逻辑） / Taken (fix logic) |
 | <https://github.com/samvermette/SVPullToRefresh/pull/308> | Swift Package Manager 支持 / Swift Package Manager | 不适用 / N/A：iOS 包管理 / iOS package manager |
 
+### SVPullToRefresh open issue（103 个，2026-11-13） / SVPullToRefresh open issues (103, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| 评分：**56/100**（58/103 已处理，全部为不适用：提问、维护请求、iOS 专属问题与 iOS KVO 崩溃）。其余 45 个的对应修复只能写在 Kotlin 版里，而 Kotlin 版要到翻译开始后才存在；本任务又不能改 iOS 代码。规则要求 issue 达到 60 分才开始翻译，这里卡住了，待用户决定（见下方说明）。 | Score: **56/100** (58 of 103 handled, all not applicable: questions, maintenance requests, iOS-only problems and iOS KVO crashes). The fixes for the other 45 can only be written in the Kotlin version, which exists only once translation starts, and this task may not change iOS code. The rule starts translation at 60, so this is blocked until the user decides (note below). |
+
+| issue | 标题 / Title | 状态 / Status |
+| --- | --- | --- |
+| <https://github.com/samvermette/SVPullToRefresh/issues/70> | Support for prepending items on pull to refresh | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/73> | update example with custom title and subtitle | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/88> | Issues when multiple tables are on screen | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/93> | SVPullToRefreshView is too wide after device orientation changes from landscape to portrait | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/96> | A Big Bug?! | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/101> | Prevent infinite scrolling when the table view is not full of entries | TODO：在 Kotlin 版中按采用的 PR #157 实现 / TODO: implemented in the Kotlin version through taken PR #157 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/103> | pull to refresh not working with custom view that has a height of 200 | TODO：在 Kotlin 版中按采用的 PR #148 实现 / TODO: implemented in the Kotlin version through taken PR #148 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/108> | Pull to refresh header doesn't show up when triggerPullToRefresh is called. | TODO：在 Kotlin 版中按采用的 PR #201 实现 / TODO: implemented in the Kotlin version through taken PR #201 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/117> | hide arrow or set an image instead | TODO：在 Kotlin 版中按采用的 PR #107/#190 实现 / TODO: implemented in the Kotlin version through taken PR #107/#190 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/119> | Pull to Refresh activates Infinite Scrolling | TODO：在 Kotlin 版中按采用的 PR #163/#254/#260 实现 / TODO: implemented in the Kotlin version through taken PR #163/#254/#260 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/120> | Feature Request: infinite scroll up | TODO：在 Kotlin 版中按采用的 PR #146/#180/#203 实现 / TODO: implemented in the Kotlin version through taken PR #146/#180/#203 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/121> | Does not respect contentInset | TODO：在 Kotlin 版中按采用的 PR #173/#177 实现 / TODO: implemented in the Kotlin version through taken PR #173/#177 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/124> | Can I invoke block handler after the PullToRefreshAnimating is done? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/128> | how to show the dateLabel? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/130> | Custom title | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/131> | Pull to refresh view doesn't always hide cleanly | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/138> | How to scroll to top ,when I trigger pulltorefresh programly? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/139> | PullToRefresh on top and bottom simultaneously | TODO：在 Kotlin 版中按采用的 PR #158 实现 / TODO: implemented in the Kotlin version through taken PR #158 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/141> | cannot pull to refresh if contentSize is smaller than frame | TODO：在 Kotlin 版中按采用的 PR #157/#264 实现 / TODO: implemented in the Kotlin version through taken PR #157/#264 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/142> | KVO bug when ScrollView is dealloced | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/147> | contentInset not suitable with iOS7 | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/150> | Ability To Use Built-In Pull To Refresh | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/153> | Sometimes, I get a white background on the refresh view | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/155> | Alignment | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/161> | ios7 sizeWithFont warning | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/162> | Add support for customizing fonts | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/167> | deprecated warnings in IOS7 | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/169> | custom view causes layoutIfNeeded go into infinite loop | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/174> | Resize Arrow | TODO：在 Kotlin 版中按采用的 PR #107 实现 / TODO: implemented in the Kotlin version through taken PR #107 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/179> | Is this library still supported? | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/181> | BUG: TableView section headers hide behind the Navigation bar in iOS 7 | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/184> | In iOS6, pullToRefreshView.activityIndicatorViewColor unavailable | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/185> | BUG: using SVPullToRefresh in UINavigationController | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/186> | When using setCustomView, app freezes | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/187> | SVInfiniteScrolling  bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/191> | When contentsize < scrollview size infinite scroll gets triggered when doing pull to refresh | TODO：在 Kotlin 版中按采用的 PR #163/#254/#260 实现 / TODO: implemented in the Kotlin version through taken PR #163/#254/#260 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/192> | [suggestion] declare the "pullToRefreshActionHandler" block property in .h file instead of .m to make it a public property | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/194> | update git tag & podspec | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/196> | Pull to refresh on UICollectionView not working | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/198> | last changes not updated in latest Pod version | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/199> | bug inside navigation view controller | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/205> | InfiniteScrollingView set custom view animation doesn't work. | TODO：在 Kotlin 版中按采用的 PR #140/#165 实现 / TODO: implemented in the Kotlin version through taken PR #140/#165 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/206> | update pod please! | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/208> | Maybe, this is a worth modify code. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/209> | Adding Horizontal Pull to Refresh | TODO：在 Kotlin 版中按采用的 PR #146 实现 / TODO: implemented in the Kotlin version through taken PR #146 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/210> | I see the arrow when i run code. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/211> | load more doesn't work good when using auto layout to adjust cell height | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/212> | How to use custom image for SVPullToRefresh library. | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/215> | How to custom subtitle to update dateLabel? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/217> | Configure at which row to initiate infinite scroll handler | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/219> | Pull to Refresh not working on UIScrollView with Auto Layout | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/220> | Stop activity indicator after receiving data from API | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/222> | observer leak | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/223> | Dragging callback for CustomView | TODO：在 Kotlin 版中按采用的 PR #159/#175 实现 / TODO: implemented in the Kotlin version through taken PR #159/#175 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/225> | 当cell只有几条，没有充满一个屏幕的时候，下拉刷新，同时执行了刷新和加载方法 | TODO：在 Kotlin 版中按采用的 PR #264/#283 实现 / TODO: implemented in the Kotlin version through taken PR #264/#283 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/230> | UITableView Top cell cut off my navigation bar | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/231> | How to show "refresh complete" text after refreshing it, and remain for a second, then disappear | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/232> | Disable show pull at first time the view has loaded. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/234> | issues  when I deleted  the "-ObjC" configuration  in Other Linker Flags | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/235> | Have a navigation bar, refresh will make the first message is hidden under the navigation bar | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/238> | Changing the pullToRefresh action handler? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/243> | addInfiniteScrollingWithActionHandler not getting called | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/246> | In infinite Scrolling, how to add a "Load More" button in the bottom, and "No more data" to disable load again. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/249> | App crash in KVO observing for frame | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/250> | showsInfiniteScrolling = NO causes jump stutter on UICollectionView | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/251> | Is SVPullToRefresh stopping development? | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/252> | ActivityIndicatorViewColor not available with cocoaPods | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/253> | 发错 | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/255> | Doesn't work well when the "pagingEnabled" attribute of scrollView is set YES | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/256> | fix cash on Observing | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/258> | Doesn't work for second time for Collection view | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/261> | Is there a way to remove infinite scrolling? | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/262> | In iOS7, the contentInsets of UISrollView can't be restored when using SVPullToRefresh in a UIViewController which is embedded in a UINavigationController | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/263> | Is the position method deprecated? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/265> | Loading animation going under NavigationBar | 不适用：iOS 专属（UIKit 布局、导航栏、弃用 API、编译警告） / N/A: iOS-only (UIKit layout, navigation bar, deprecated APIs, compiler warnings) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/266> | Triggered pull to refresh and infinite scroll | TODO：在 Kotlin 版中按采用的 PR #260 实现 / TODO: implemented in the Kotlin version through taken PR #260 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/267> | [Enhancement] Add a minimumHoldTimeBeforeTrigger property | TODO：在 Kotlin 版中按采用的 PR #269 实现 / TODO: implemented in the Kotlin version through taken PR #269 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/268> | I have a question about  willMoveToSuperview | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/270> | how to push to loadmore? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/271> | This repo has been inactive for 2 years. | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/272> | I can't use the " refresh from bottom"  function | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/273> | Please support carthage | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/275> | Cut a new release. | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/276> | should chang "wasTriggeredByUser = YES" when you stop animation. | TODO：在 Kotlin 版中按采用的 PR #176 实现 / TODO: implemented in the Kotlin version through taken PR #176 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/278> | Setting custom view on pull to refresh doesn't work? | TODO：在 Kotlin 版中按采用的 PR #165 实现 / TODO: implemented in the Kotlin version through taken PR #165 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/279> | 能不能更新下呀 | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/280> | 到了一家新公司 他们用这个没人维护的刷新控件真是醉了 有一个kvo的闪退  | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/284> | I think there's a bug need to fix  | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/287> | is there alternative for Swift | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/288> | Infinite Scrolling Issue | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/289> | 虽然很无情, 但是还是不要用了 | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/291> | SetTitle not work first pull | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/293> | Infinite Scroll Issue & Table Hide | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/294> | iOS10 - showsInfiniteScrolling = YES - Observers issue | 不适用：iOS KVO 观察者崩溃；Kotlin 版用监听器并在移除时注销（翻译时写测试） / N/A: an iOS KVO observer crash; the Kotlin version uses listeners removed on detach (tested in the translation) |
+| <https://github.com/samvermette/SVPullToRefresh/issues/295> | 我这里一直有更新，issue可以提到这里  | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/296> | For issues please go to my fork repo | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/298> | Why isn't this library ported to Swift? | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/300> | scrollOffsetThreshold needs consider originalBottomInset? | TODO：在 Kotlin 版中按采用的 PR #233/#297 实现 / TODO: implemented in the Kotlin version through taken PR #233/#297 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/301> | State will be triggered all the time, and not to be loading | TODO：在 Kotlin 版中按采用的 PR #200 实现 / TODO: implemented in the Kotlin version through taken PR #200 |
+| <https://github.com/samvermette/SVPullToRefresh/issues/302> | addPullToRefresh for WKWebView | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/samvermette/SVPullToRefresh/issues/304> | Can I replace the image that is refreshed by the drop-down? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/samvermette/SVPullToRefresh/issues/305> | Mobile Development | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+| <https://github.com/samvermette/SVPullToRefresh/issues/307> | SFRefresh, written with swift, fixed the KVO crash bug, support Lottie animation. | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
+
 ### TODO: HarmonyOS NEXT support for the Android and cross-platform (Flutter, then React Native) versions
 
 - **Status:** not started (recorded 2026-11-12, while branch `feat/smartrefresh-parity` was in progress). It follows
