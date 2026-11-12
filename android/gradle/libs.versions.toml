@@ -1,0 +1,21 @@
+# Versions of the Android placeholder module. The aliases match CYLSearchViewController's android/merged, which builds
+# this module from source at a pinned commit.
+[versions]
+agp = "8.7.3"
+kotlin = "2.0.21"
+appcompat = "1.7.0"
+core-ktx = "1.13.1"
+junit = "4.13.2"
+robolectric = "4.14.1"
+androidx-test-core = "1.6.1"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+junit = { module = "junit:junit", version.ref = "junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
