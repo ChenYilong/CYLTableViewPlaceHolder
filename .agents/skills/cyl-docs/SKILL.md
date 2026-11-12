@@ -37,6 +37,18 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
   (`instructions.md`, "Code conventions"). Run `python3 scripts/check_doc_comments.py`.
 - **Every commit message** ends its body with the line `By @ChenYilong <luohanchenyilong@163.com>`
   (before trailers, exactly once; `instructions.md`, "Author line in every commit message").
+- **Upstream projects used for translation (added 2026-11-12)**: when a document of this project links to another
+  project's GitHub repository that is the source of a translation or port (for example the projects ported to
+  Kotlin in the Android folder), do not translate only its default branch. (1) Pull requests: visit the upstream's
+  open pull requests and bring them in. If the translation has not started, merge the open pull requests into the
+  source first; if it is already done, translate each open pull request's change and merge it into our port. (2)
+  Issues: list the upstream's open issues in a table in the related document in `docs/` (create one when none
+  fits): column 1 the issue link, column 2 its description, column 3 the fix status (`TODO` by default). Find each
+  issue's counterpart in our code and try to fix it. (3) Score: 100 means every listed issue is resolved; give a
+  score after each fix and continue until 100. (4) Order: for a translation not started yet, merge the open pull
+  requests, fix issues until the score reaches 60, translate, then fix the remaining issues up to 100; for a
+  finished translation, translate and merge the open pull requests, then fix the issues on the translated code up
+  to 100. The same rule applies to every platform.
 - **Record every task in `docs/` before starting it (added 2026-11-12)**: before any task, find the most relevant
   existing document in `docs/` (create one only when none fits) and add a `TODO` entry with the task's full context,
   the user's requirements, and the user's prompt quoted verbatim. Then start the work. When the task is finished,
