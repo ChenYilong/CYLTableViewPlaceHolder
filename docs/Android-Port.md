@@ -36,6 +36,58 @@
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh>（Java） | MIT | `46fdc86`（2016-05-04） | 库约 128 KB、示例约 109 KB / library about 128 KB, demo about 109 KB | 23 | 151 |
 | <https://github.com/scwang90/SmartRefreshLayout>（Java） | Apache-2.0 | `224db48`（2024-11-26） | 库约 720 KB（kernel 276 KB、header 256 KB 等）、示例约 329 KB / library about 720 KB (kernel 276 KB, headers 256 KB, …), demo about 329 KB | 5 | 337 |
 
+### SVPullToRefresh open PR（43 个，2026-11-13） / SVPullToRefresh open pull requests (43, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| SVPullToRefresh 是 iOS 库，转写成 Android Kotlin 时没有可直接合并的源码分支；按规则先逐个审阅：采用的 PR（32 个）在 Kotlin 版中实现（功能）或保留其修复逻辑，其余为 iOS 专属（编译器警告、弃用 API、包管理、视觉风格、示例），记为不适用。翻译完成后在本表补上对应的提交与测试。 | SVPullToRefresh is an iOS library; a Kotlin port for Android has no source branch to merge them into, so each pull request is reviewed first: the 32 taken ones are implemented in the Kotlin version (features) or keep their fix logic; the rest are iOS-only (compiler warnings, deprecated APIs, package managers, look, the demo) and do not apply. After the translation, this table gets the commits and tests. |
+
+| PR | 内容 / Change | 处理 / Decision |
+| --- | --- | --- |
+| <https://github.com/samvermette/SVPullToRefresh/pull/107> | 自定义箭头视图 / custom arrow view | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/126> | 打开 -Warc-repeated-use-of-weak 并修警告 / ARC weak-use warnings | 不适用 / N/A：Objective-C 编译器警告 / an Objective-C compiler warning |
+| <https://github.com/samvermette/SVPullToRefresh/pull/140> | 空自定义视图不再用字符串占位 / empty custom views not stored as strings | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/146> | 加载更多可横向（左 / 右）及顶部修复 / horizontal infinite scrolling (left, right) and top fixes | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/148> | 固定自定义视图的原点，支持高于 60 的视图 / fixed custom view origin for views taller than 60 | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/151> | 下拉时不触发加载更多、停止惯性 / no infinite scrolling while pulling down; stop momentum | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/154> | 加载更多的灵敏度设置 / infinite scrolling sensitivity | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/157> | 内容不足一屏时禁用加载更多 / no infinite scrolling when the content is shorter than the frame | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/158> | 顶部与底部的下拉刷新可同时存在 / pull to refresh at the top and the bottom together | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/159> | 自定义子视图协议，接收状态变化 / a protocol for custom subviews to receive state changes | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/163> | 下拉刷新不触发加载更多 / pull to refresh no longer triggers infinite scrolling | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/165> | 替换自定义视图时移除旧视图 / the old custom view is removed when replaced | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/168> | iOS 7 弃用警告 / iOS 7 deprecation warnings | 不适用 / N/A：iOS API / iOS APIs |
+| <https://github.com/samvermette/SVPullToRefresh/pull/173> | 允许修改 contentInset / content inset can change | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/175> | 代理方法 / delegate methods | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/176> | 用户触发时修正偏移 / offset fix when triggered by the user | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/177> | 设置了 contentInset.top 时刷新视图不可见 / view hidden with contentInset.top set | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/180> | 加载更多支持横向滚动 / horizontal scrolling for infinite scrolling | 采用（功能） / Taken (feature)（与 #146、#203 合并 / merged with #146, #203） |
+| <https://github.com/samvermette/SVPullToRefresh/pull/188> | 更细的 iOS 7 风格箭头 / thinner iOS 7 style arrow | 不适用 / N/A：iOS 视觉风格；Android 用 Material 图标 / iOS look; Android uses a Material icon |
+| <https://github.com/samvermette/SVPullToRefresh/pull/190> | 自定义箭头视图 / custom arrow view | 采用（功能） / Taken (feature)（同 #107 / same as #107） |
+| <https://github.com/samvermette/SVPullToRefresh/pull/193> | sizeWithFont 弃用警告 / sizeWithFont deprecation | 不适用 / N/A：iOS API / iOS API |
+| <https://github.com/samvermette/SVPullToRefresh/pull/195> | 刷新视图拆成可继承的子类 / the refresh view as a subclassable class | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/200> | triggerPullToRefresh 后状态总是 Loading / state stuck at Loading after triggerPullToRefresh | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/201> | 手动触发的顺序 / manual trigger order | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/203> | 加载更多横向支持 / horizontal infinite scrolling | 采用（功能） / Taken (feature)（与 #146、#180 合并 / merged with #146, #180） |
+| <https://github.com/samvermette/SVPullToRefresh/pull/221> | 先设 showsPullToRefresh 再加回调时的观察者泄漏 / observer leak when shown before the handler is set | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/233> | contentSize 小时阈值为负导致误触发 / negative threshold triggers infinite scrolling wrongly | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/237> | 加载完成后未恢复 inset / inset not reset after loading more | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/240> | 修示例 / demo fix | 不适用 / N/A：示例另写 / the demo is rewritten |
+| <https://github.com/samvermette/SVPullToRefresh/pull/254> | 下拉会触发加载更多 / pulling to refresh triggers infinite scrolling | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/257> | 状态枚举改为 NS_OPTIONS / state enum as NS_OPTIONS | 不适用 / N/A：Kotlin 用 enum class / Kotlin uses an enum class |
+| <https://github.com/samvermette/SVPullToRefresh/pull/259> | UIFont 尺寸弃用 / UIFont size deprecations | 不适用 / N/A：iOS API / iOS API |
+| <https://github.com/samvermette/SVPullToRefresh/pull/260> | 只在上拉时触发加载更多、只在下拉时触发刷新 / load more only on pull-up, refresh only on pull-down | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/264> | 内容不足一屏时加载更多误触发下拉刷新 / infinite scrolling triggers pull to refresh on short content | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/269> | pullThresholdFactor 属性 / pullThresholdFactor property | 采用（功能） / Taken (feature) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/277> | 内容不足一屏时加载更多视图仍显示 / infinite scrolling view shown on short content | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/283> | 内容未满一屏时下拉触发上推 / pull-down triggers load more on short content | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/286> | 枚举适配 Swift / enums for Swift | 不适用 / N/A：Swift 命名 / Swift naming |
+| <https://github.com/samvermette/SVPullToRefresh/pull/292> | Carthage 支持 / Carthage support | 不适用 / N/A：iOS 包管理 / iOS package manager |
+| <https://github.com/samvermette/SVPullToRefresh/pull/297> | 允许修改底部 inset / bottom inset can change | 采用（功能） / Taken (feature)（与 #173 合并 / merged with #173） |
+| <https://github.com/samvermette/SVPullToRefresh/pull/303> | 删除弃用代码 / removed deprecated code | 不适用 / N/A：iOS API / iOS APIs |
+| <https://github.com/samvermette/SVPullToRefresh/pull/306> | hidesWhenStopped 时菊花不显示 / spinner hidden with hidesWhenStopped | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/samvermette/SVPullToRefresh/pull/308> | Swift Package Manager 支持 / Swift Package Manager | 不适用 / N/A：iOS 包管理 / iOS package manager |
+
 ### TODO: HarmonyOS NEXT support for the Android and cross-platform (Flutter, then React Native) versions
 
 - **Status:** not started (recorded 2026-11-12, while branch `feat/smartrefresh-parity` was in progress). It follows
