@@ -50,3 +50,25 @@
     existing Flutter or React Native tab bar and any HarmonyOS work before starting.
   - Scope boundaries: change no iOS code (as in the Android task); record the API alignment and its score in this
     document.
+
+### TODO: Android placeholder module for CYLSearchViewController's empty search results / TODO：为 CYLSearchViewController 的搜索空结果提供 Android 占位图模块
+
+- 日期 / Date: 2026-11-13; branch `feat/android-placeholder` (from `feat/smartrefresh-parity` `f38ce49`).
+- Context: CYLSearchViewController integrates this project as a sub-repository (its `docs/sub-repositories.md`, rule
+  "Sub-repositories" in its AGENTS.md): when a search has no results it shows this project's empty-content
+  placeholder, on every platform. iOS is done there (`CYLPlaceholderStackView(scenario:)`,
+  `CYLPlaceholderScenarioNoSearchResults`, pinned at `a049422`). This project has no Android code yet, so its
+  Android placeholder is added here first, then pinned by CYLSearchViewController's `android/merged`.
+- Requirements:
+  1. An Android library module (`android/placeholder`, Kotlin, package `com.cyl.placeholder`) with the iOS names:
+     `CYLPlaceholderScenario` and `CYLPlaceholderStackView(context, scenario)`.
+  2. First increment: the "empty" category of `CYLPlaceholderScenarioCategoryEmpty`, with the iOS components (icon
+     size, title, hint or "Go shopping" button) and texts: NoContent, NoSearchResults, EmptyCart, NoOrders,
+     NoFavorites, NoMessages, NoNotifications. Images and strings imported from `CYLTableViewPlaceHolder.bundle`
+     (all its languages), not retyped.
+  3. Static icons (the bundle's PNG fallback styles) in this increment; the Lottie / PAG animations of those scenarios,
+     and every other scenario category, stay `TODO` here.
+  4. Change no iOS code; a unit test; the module builds standalone (`android/`).
+- User prompt (verbatim, in CYLSearchViewController): "在instructions 相关文件，以及skills相关文件中找到 对CollectionViewClassifyMenu 作为子仓库的相关描述，全英文在后面追加以下内容，按照CollectionViewClassifyMenu 作为子仓库 的所有要求，集成CYLTableViewPlaceHolder 作为子仓库。对  CYLTableViewPlaceHolder 的要求是 搜索内容为空时展示 内容为空的 CYLTableViewPlaceHolder  样式。该要求同样适用于 所有平台包括iOS Android react native flutter 鸿蒙 小程序。 标注TODO continue"
+- Status: `TODO`.
+
