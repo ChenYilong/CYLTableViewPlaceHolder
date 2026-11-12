@@ -6,4 +6,7 @@
     <string name="sv_loading">Loading…</string>
     <string name="sv_pull_up_to_refresh">Pull up to refresh…</string>
     <string name="sv_loading_more">Loading more</string>
+    <string name="sv_load_more">Load more</string>
+    <string name="sv_no_more_data">No more data</string>
+    <string name="sv_refresh_completed">Updated</string>
 </resources>

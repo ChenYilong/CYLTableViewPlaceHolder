@@ -6,4 +6,7 @@
     <string name="sv_loading">加载中…</string>
     <string name="sv_pull_up_to_refresh">上拉刷新…</string>
     <string name="sv_loading_more">正在加载更多</string>
+    <string name="sv_load_more">加载更多</string>
+    <string name="sv_no_more_data">没有更多数据了</string>
+    <string name="sv_refresh_completed">刷新完成</string>
 </resources>

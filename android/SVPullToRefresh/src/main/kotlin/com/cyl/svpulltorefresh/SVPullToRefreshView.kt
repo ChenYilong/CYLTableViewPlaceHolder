@@ -16,9 +16,11 @@ import android.widget.TextView
 
 /**
  * The view above (or below) the content that shows the pull: an arrow, a title and a subtitle per state, and a spinner
- * while loading (`SVPullToRefreshView`). Made by [SVPullToRefreshLayout.addPullToRefresh]; customize it there.
+ * while loading (`SVPullToRefreshView`). Made by [SVPullToRefreshLayout.addPullToRefresh]; customize it there. Open,
+ * so an app can subclass it and pass a factory there (issue #195); a subclass overrides [updateForState] and [onPull]
+ * and calls super.
  */
-class SVPullToRefreshView internal constructor(
+open class SVPullToRefreshView(
     context: Context,
     /**
      * Above or below the content.
@@ -114,6 +116,41 @@ class SVPullToRefreshView internal constructor(
      */
     var customViewKeepsOwnHeight: Boolean = false
 
+    /**
+     * Where the arrow and the texts sit, as a [Gravity] (issue #155): [Gravity.CENTER] by default; for example
+     * `Gravity.START or Gravity.CENTER_VERTICAL` aligns them to the start.
+     */
+    var contentGravity: Int = Gravity.CENTER
+        set(value) {
+            field = value
+            defaultContent.gravity = value
+            val horizontal = value and Gravity.HORIZONTAL_GRAVITY_MASK
+            textColumn.gravity = horizontal or Gravity.CENTER_VERTICAL
+            titleLabel.gravity = horizontal or Gravity.CENTER_VERTICAL
+            subtitleLabel.gravity = horizontal or Gravity.CENTER_VERTICAL
+        }
+
+    /**
+     * Shown for [completedDisplayMillis] after loading ends, before the view hides (issue #231); null (the default)
+     * hides it at once. [R.string.sv_refresh_completed] is a localized "Updated".
+     */
+    var completedTitle: String? = null
+
+    /**
+     * How long [completedTitle] stays, in milliseconds. Default 1000.
+     */
+    var completedDisplayMillis: Long = 1000
+
+    /**
+     * YES while [completedTitle] is shown after loading.
+     */
+    var isShowingCompleted: Boolean = false
+        internal set(value) {
+            if (field == value) return
+            field = value
+            updateForState()
+        }
+
     private val titles = mutableMapOf<SVPullToRefreshState, String?>()
     private val subtitles = mutableMapOf<SVPullToRefreshState, String?>()
     private val customViews = mutableMapOf<SVPullToRefreshState, View?>()
@@ -143,7 +180,7 @@ class SVPullToRefreshView internal constructor(
         // Accessibility: the view reads as one element whose label is the current title.
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
         arrowView.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-        updateForState()
+        applyState()
     }
 
     /**
@@ -191,8 +228,15 @@ class SVPullToRefreshView internal constructor(
         // The arrow turns as the pull reaches the trigger distance.
         val turn = if (position == SVPullToRefreshPosition.TOP) 0f else 180f
         arrowView.rotation = turn + if (state == SVPullToRefreshState.TRIGGERED) 180f else 0f
+        onPull(distance, progress)
         listener?.onPull(this, distance, progress)
     }
+
+    /**
+     * The view was pulled [distance] pixels; [progress] is the distance over the trigger distance. A subclass that
+     * animates with the pull overrides it.
+     */
+    protected open fun onPull(distance: Float, progress: Float) {}
 
     private inline fun forStates(state: SVPullToRefreshState, block: (SVPullToRefreshState) -> Unit) {
         if (state == SVPullToRefreshState.ALL) {
@@ -210,7 +254,14 @@ class SVPullToRefreshView internal constructor(
         }
     )
 
-    private fun updateForState() {
+    /**
+     * Shows the view for [state]: the custom view, or the arrow, the spinner and the texts. A subclass that draws its
+     * own content overrides it and calls super. The constructor does not call it, since a subclass is not initialized
+     * yet then.
+     */
+    protected open fun updateForState() = applyState()
+
+    private fun applyState() {
         val custom = customViews[state]
         if (custom !== shownCustomView) {
             shownCustomView?.let { removeView(it) }
@@ -222,15 +273,15 @@ class SVPullToRefreshView internal constructor(
             }
         }
         defaultContent.visibility = if (custom == null) VISIBLE else GONE
-        val title = titles[state] ?: defaultTitle(state)
+        val title = if (isShowingCompleted) completedTitle ?: defaultTitle(state) else titles[state] ?: defaultTitle(state)
         titleLabel.text = title
         val subtitle = subtitles[state]
         subtitleLabel.text = subtitle
         subtitleLabel.visibility = if (subtitle.isNullOrEmpty()) GONE else VISIBLE
         val loading = state == SVPullToRefreshState.LOADING
         activityIndicatorView.visibility = if (loading) VISIBLE else GONE
-        arrowView.visibility = if (loading || customArrowView != null) GONE else VISIBLE
-        customArrowView?.visibility = if (loading) GONE else VISIBLE
+        arrowView.visibility = if (loading || isShowingCompleted || customArrowView != null) GONE else VISIBLE
+        customArrowView?.visibility = if (loading || isShowingCompleted) GONE else VISIBLE
         contentDescription = listOfNotNull(title, subtitle?.takeIf { it.isNotEmpty() }).joinToString(", ")
     }
 

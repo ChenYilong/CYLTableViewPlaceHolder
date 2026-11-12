@@ -94,16 +94,35 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     /**
      * Adds pull to refresh at [position] calling [actionHandler] when it starts loading
      * (`addPullToRefreshWithActionHandler:position:`). Top and bottom can both be added (pull request #158).
+     * [viewFactory] makes the view, for example a subclass of [SVPullToRefreshView] (issue #195).
      */
     @JvmOverloads
-    fun addPullToRefresh(position: SVPullToRefreshPosition = SVPullToRefreshPosition.TOP, actionHandler: () -> Unit) {
+    fun addPullToRefresh(
+        position: SVPullToRefreshPosition = SVPullToRefreshPosition.TOP,
+        viewFactory: (Context, SVPullToRefreshPosition) -> SVPullToRefreshView = ::SVPullToRefreshView,
+        actionHandler: () -> Unit,
+    ) {
         refreshViews[position]?.let { removeView(it) }
-        val view = SVPullToRefreshView(context, position)
+        val view = viewFactory(context, position)
         view.layout = this
         refreshViews[position] = view
         handlers[position] = actionHandler
         addView(view)
         observeTarget()
+        layoutChildrenForPull()
+    }
+
+    /**
+     * Removes pull to refresh at [position] (issue #261); [addPullToRefresh] adds it again.
+     */
+    @JvmOverloads
+    fun removePullToRefresh(position: SVPullToRefreshPosition = SVPullToRefreshPosition.TOP) {
+        val view = refreshViews.remove(position) ?: return
+        handlers.remove(position)
+        if (activePosition == position) activePosition = null
+        completedHiders.remove(position)?.let { mainHandler.removeCallbacks(it) }
+        removeView(view)
+        if (refreshViews.values.none { it.state == SVPullToRefreshState.LOADING }) animatePull(0f)
     }
 
     /**
@@ -123,8 +142,8 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     var showsPullToRefresh: Boolean = true
         set(value) {
             field = value
-            refreshViews.values.forEach { it.visibility = if (value) VISIBLE else GONE }
             if (!value) refreshViews.values.forEach { stopLoading(it) }
+            layoutChildrenForPull()
         }
 
     /**
@@ -139,6 +158,8 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         if (!showsPullToRefresh || view.state == SVPullToRefreshState.LOADING) return
         // One loading at a time: refresh and load more never run together (pull requests #163, #254, #260).
         if (infiniteView?.state == SVInfiniteScrollingState.LOADING) return
+        completedHiders.remove(view.position)?.let { mainHandler.removeCallbacks(it) }
+        view.isShowingCompleted = false
         // Set the state after the view is in place, so stopAnimating can never come first (pull request #201).
         val height = viewHeight.toFloat()
         animatePull(if (view.position == SVPullToRefreshPosition.TOP) height else -height)
@@ -150,31 +171,77 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     internal fun stopLoading(view: SVPullToRefreshView) {
         if (view.state == SVPullToRefreshState.STOPPED) return
         view.state = SVPullToRefreshState.STOPPED
+        if (view.completedTitle != null && showsPullToRefresh && refreshViews[view.position] === view) {
+            // Keep the view open with the completed text for a moment (issue #231).
+            view.isShowingCompleted = true
+            val hide = Runnable {
+                completedHiders.remove(view.position)
+                view.isShowingCompleted = false
+                if (activePosition == null || activePosition == view.position) animatePull(0f)
+            }
+            completedHiders[view.position] = hide
+            mainHandler.postDelayed(hide, view.completedDisplayMillis)
+            return
+        }
         if (activePosition == null || activePosition == view.position) animatePull(0f)
     }
+
+    private val completedHiders = mutableMapOf<SVPullToRefreshPosition, Runnable>()
+
+    // A handler, not View.postDelayed, which waits until the view is attached.
+    private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
 
     // MARK: - Infinite scrolling
 
     /**
      * Adds infinite scrolling calling [actionHandler] when the content's end is reached
      * (`addInfiniteScrollingWithActionHandler:`); [direction] HORIZONTAL loads to the right (pull requests #146, #180,
-     * #203).
+     * #203). [viewFactory] makes the view, for example a subclass of [SVInfiniteScrollingView] (issue #195).
      */
     @JvmOverloads
     fun addInfiniteScrolling(
         direction: SVInfiniteScrollingDirection = SVInfiniteScrollingDirection.VERTICAL,
+        viewFactory: (Context) -> SVInfiniteScrollingView = ::SVInfiniteScrollingView,
         actionHandler: () -> Unit,
     ) {
-        infiniteView?.let { removeView(it) }
-        val view = SVInfiniteScrollingView(context)
+        removeInfiniteScrolling()
+        val view = viewFactory(context)
         view.layout = this
         view.visibility = GONE
         infiniteView = view
         infiniteHandler = actionHandler
         infiniteDirection = direction
         addView(view)
+        view.refresh()
+        updateInfiniteScrollingRoom()
         observeTarget()
     }
+
+    /**
+     * Removes infinite scrolling and the room it took after the content (issue #261); [addInfiniteScrolling] adds it
+     * again.
+     */
+    fun removeInfiniteScrolling() {
+        val view = infiniteView ?: return
+        view.state = SVInfiniteScrollingState.STOPPED
+        infiniteView = null
+        infiniteHandler = null
+        updateInfiniteScrollingRoom()
+        view.layout = null
+        removeView(view)
+    }
+
+    /**
+     * NO stops infinite scrolling from starting when the content's end is reached: the view stays after the content
+     * as a "Load more" button (or the STOPPED custom view) and loads on a tap or [triggerInfiniteScrolling] (issues #217
+     * and #246). Default YES.
+     */
+    var automaticallyTriggersInfiniteScrolling: Boolean = true
+        set(value) {
+            field = value
+            infiniteView?.refresh()
+            updateInfiniteScrollingRoom()
+        }
 
     /**
      * The infinite-scrolling view (`infiniteScrollingView`); null before [addInfiniteScrolling].
@@ -189,6 +256,7 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         set(value) {
             field = value
             if (!value) stopInfiniteScrolling()
+            updateInfiniteScrollingRoom()
         }
 
     /**
@@ -200,24 +268,17 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
 
     internal fun startInfiniteScrolling(byUser: Boolean) {
         val view = infiniteView ?: return
-        if (!showsInfiniteScrolling || !view.isInfiniteScrollingEnabled || view.state == SVInfiniteScrollingState.LOADING) return
+        if (!showsInfiniteScrolling || !view.isInfiniteScrollingEnabled || view.showsNoMoreData) return
+        if (view.state == SVInfiniteScrollingState.LOADING) return
         if (refreshViews.values.any { it.state != SVPullToRefreshState.STOPPED } || pull != 0f) return
+        val hadRoom = originalPaddingBottom >= 0 || originalPaddingRight >= 0
         view.state = SVInfiniteScrollingState.LOADING
-        view.visibility = VISIBLE
-        target?.let { t ->
-            // Room for the view after the content, so the content can scroll above it.
-            if (t is ViewGroup) t.clipToPadding = false
-            if (infiniteDirection == SVInfiniteScrollingDirection.VERTICAL) {
-                if (originalPaddingBottom < 0) originalPaddingBottom = t.paddingBottom
-                t.setPadding(t.paddingLeft, t.paddingTop, t.paddingRight, originalPaddingBottom + viewHeight)
-                if (byUser) t.scrollBy(0, viewHeight)
-            } else {
-                if (originalPaddingRight < 0) originalPaddingRight = t.paddingRight
-                t.setPadding(t.paddingLeft, t.paddingTop, originalPaddingRight + viewHeight, t.paddingBottom)
-                if (byUser) t.scrollBy(viewHeight, 0)
-            }
+        updateInfiniteScrollingRoom()
+        if (byUser && !hadRoom) {
+            // Show the view that just got its room.
+            if (infiniteDirection == SVInfiniteScrollingDirection.VERTICAL) target?.scrollBy(0, viewHeight)
+            else target?.scrollBy(viewHeight, 0)
         }
-        requestLayout()
         infiniteHandler?.invoke()
     }
 
@@ -225,14 +286,40 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         val view = infiniteView ?: return
         if (view.state == SVInfiniteScrollingState.STOPPED) return
         view.state = SVInfiniteScrollingState.STOPPED
-        view.visibility = GONE
-        target?.let { t ->
-            // Back to the original padding (pull request #237: the inset is reset after loading more).
-            if (originalPaddingBottom >= 0) t.setPadding(t.paddingLeft, t.paddingTop, t.paddingRight, originalPaddingBottom)
-            if (originalPaddingRight >= 0) t.setPadding(t.paddingLeft, t.paddingTop, originalPaddingRight, t.paddingBottom)
+        updateInfiniteScrollingRoom()
+    }
+
+    /**
+     * Gives the infinite-scrolling view room after the content while it needs it (loading, "No more data", "Load more"),
+     * and gives the original padding back otherwise (pull request #237). Only the padding changes, never the scroll
+     * position, so hiding it does not jump (issue #250).
+     */
+    internal fun updateInfiniteScrollingRoom() {
+        val view = infiniteView
+        val needsRoom = view != null && showsInfiniteScrolling && view.needsRoom
+        view?.visibility = if (needsRoom) VISIBLE else GONE
+        val t = target
+        if (t != null) {
+            if (needsRoom) {
+                // Room for the view after the content, so the content can scroll above it.
+                if (t is ViewGroup) t.clipToPadding = false
+                if (infiniteDirection == SVInfiniteScrollingDirection.VERTICAL) {
+                    if (originalPaddingBottom < 0) originalPaddingBottom = t.paddingBottom
+                    t.setPadding(t.paddingLeft, t.paddingTop, t.paddingRight, originalPaddingBottom + viewHeight)
+                } else {
+                    if (originalPaddingRight < 0) originalPaddingRight = t.paddingRight
+                    t.setPadding(t.paddingLeft, t.paddingTop, originalPaddingRight + viewHeight, t.paddingBottom)
+                }
+            } else {
+                if (originalPaddingBottom >= 0) t.setPadding(t.paddingLeft, t.paddingTop, t.paddingRight, originalPaddingBottom)
+                if (originalPaddingRight >= 0) t.setPadding(t.paddingLeft, t.paddingTop, originalPaddingRight, t.paddingBottom)
+            }
         }
-        originalPaddingBottom = -1
-        originalPaddingRight = -1
+        if (!needsRoom) {
+            originalPaddingBottom = -1
+            originalPaddingRight = -1
+        }
+        layoutChildrenForPull()
     }
 
     override fun onViewAdded(child: View) {
@@ -252,7 +339,12 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         val t = target ?: return
         if (observedTarget === t) return
         observedTarget = t
-        t.setOnScrollChangeListener { _, _, _, _, _ -> checkInfiniteScrolling() }
+        t.setOnScrollChangeListener { _, x, y, oldX, oldY ->
+            layoutChildrenForPull()
+            // Only scrolling toward the end loads more, never scrolling back (issue #288).
+            val forward = if (infiniteDirection == SVInfiniteScrollingDirection.VERTICAL) y > oldY else x > oldX
+            if (forward) checkInfiniteScrolling()
+        }
     }
 
     /**
@@ -263,6 +355,7 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         val t = target ?: return
         val view = infiniteView ?: return
         if (!showsInfiniteScrolling || !view.isInfiniteScrollingEnabled || view.state != SVInfiniteScrollingState.STOPPED) return
+        if (!automaticallyTriggersInfiniteScrolling || view.showsNoMoreData) return
         if (pull != 0f || dragging && activePosition != null) return
         val vertical = infiniteDirection == SVInfiniteScrollingDirection.VERTICAL
         val canScrollBack = if (vertical) t.canScrollVertically(-1) else t.canScrollHorizontally(-1)
@@ -376,16 +469,18 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
                 lastY = ev.y
                 dragging = false
             }
-            MotionEvent.ACTION_MOVE -> {
-                val dy = ev.y - downY
-                if (abs(dy) > touchSlop && abs(dy) > abs(ev.x - downX)) {
-                    if (dy > 0 && canPullDown()) startDrag(SVPullToRefreshPosition.TOP, ev.y)
-                    else if (dy < 0 && canPullUp()) startDrag(SVPullToRefreshPosition.BOTTOM, ev.y)
-                }
-            }
+            MotionEvent.ACTION_MOVE -> startDragIfPulled(ev)
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> dragging = false
         }
         return dragging
+    }
+
+    private fun startDragIfPulled(ev: MotionEvent) {
+        val dy = ev.y - downY
+        if (abs(dy) > touchSlop && abs(dy) > abs(ev.x - downX)) {
+            if (dy > 0 && canPullDown()) startDrag(SVPullToRefreshPosition.TOP, ev.y)
+            else if (dy < 0 && canPullUp()) startDrag(SVPullToRefreshPosition.BOTTOM, ev.y)
+        }
     }
 
     private fun startDrag(position: SVPullToRefreshPosition, y: Float) {
@@ -396,7 +491,20 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (!dragging) return super.onTouchEvent(ev)
+        if (!dragging) {
+            // A touch no child took (an empty or not yet laid out target, issue #302) still pulls.
+            val t = target
+            if (!isEnabled || refreshViews.isEmpty() || t == null || ViewCompat.isNestedScrollingEnabled(t)) return super.onTouchEvent(ev)
+            when (ev.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = ev.x
+                    downY = ev.y
+                    lastY = ev.y
+                }
+                MotionEvent.ACTION_MOVE -> startDragIfPulled(ev)
+            }
+            return true
+        }
         when (ev.actionMasked) {
             MotionEvent.ACTION_MOVE -> {
                 dragBy(ev.y - lastY)
@@ -408,9 +516,10 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     }
 
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-        // Views with nested scrolling report through it; keep intercepting for the others only when not dragging.
+        // A target without nested scrolling (a ScrollView, a WebView, issue #302) asks on every touch down; ignoring it
+        // keeps the pull working, like SwipeRefreshLayout. Views with nested scrolling report through it instead.
         val t = target
-        if (t != null && !ViewCompat.isNestedScrollingEnabled(t) && dragging) return
+        if (t != null && !ViewCompat.isNestedScrollingEnabled(t)) return
         super.requestDisallowInterceptTouchEvent(disallowIntercept)
     }
 
@@ -484,9 +593,24 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
         target?.layout(0, offset, w, h + offset)
         refreshViews[SVPullToRefreshPosition.TOP]?.layout(0, offset - viewHeight, w, offset)
         refreshViews[SVPullToRefreshPosition.BOTTOM]?.layout(0, h + offset, w, h + offset + viewHeight)
-        infiniteView?.let {
-            if (infiniteDirection == SVInfiniteScrollingDirection.VERTICAL) it.layout(0, h - viewHeight, w, h)
-            else it.layout(w - viewHeight, 0, w, h)
+        // A view shows only while it is pulled into sight or loading, never before the first pull (issues #210 and
+        // #232), and accessibility services skip it then.
+        refreshViews.forEach { (position, view) ->
+            val inSight = if (position == SVPullToRefreshPosition.TOP) offset > 0 else offset < 0
+            view.visibility = when {
+                !showsPullToRefresh -> GONE
+                inSight || view.state == SVPullToRefreshState.LOADING || view.isShowingCompleted -> VISIBLE
+                else -> INVISIBLE
+            }
+        }
+        // The infinite-scrolling view follows the content's end, so a "Load more" or "No more data" view stays after
+        // the content instead of over it.
+        infiniteView?.takeIf { it.visibility == VISIBLE }?.let { view ->
+            val t = target
+            val vertical = infiniteDirection == SVInfiniteScrollingDirection.VERTICAL
+            val remaining = if (t == null) 0 else remainingDistance(t, vertical).coerceIn(0, if (vertical) h else w)
+            if (vertical) view.layout(0, h - viewHeight + remaining, w, h + remaining)
+            else view.layout(w - viewHeight + remaining, 0, w + remaining, h)
         }
     }
 }
