@@ -8,6 +8,7 @@
 | --- | --- |
 | [任务](#任务--tasks) | [Tasks](#任务--tasks) |
 | [SmartRefreshControl 对照表](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) | [SmartRefreshControl comparison](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) |
+| [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
 
 <!-- docs-navigation:end -->
@@ -110,6 +111,15 @@
 | `UIRefreshStoreHouseHeader`（`lineWidth`、`enableReverseFlash`、`enableFadeAnimation`、`newWithString:…`、`initLinesWith…`） | `CYLRefreshStoreHouseHeader`（`lineWidth`、`enableReverseFlash`、`enableFadeAnimation`、`newWithString:…`、`initLinesWith…`；Swift：`init(string:…)`、`setLines(…)`） | ✅ |
 | `UIRefreshTaurusHeader` | `CYLRefreshTaurusHeader` | ✅ |
 | `UIRefreshWaveSwipeHeader` | `CYLRefreshWaveSwipeHeader` | ✅ |
+
+## SmartRefreshControl 示例截图 / SmartRefreshControl demo screenshots
+
+| 中文 | English |
+| --- | --- |
+| 运行平台：iOS。环境：macOS 27.3（26C5035r）、Xcode 27.2（27B5028f）、iOS SDK 27.2、iPhone 17 Pro 模拟器 iOS 27.2（24B5089g）。版本：分支 `feat/smartrefresh-parity`，示例代码 `dc8e90b`，截图时为 `2ea8d2b`（<https://github.com/ChenYilong/CYLTableViewPlaceHolder/commit/2ea8d2b>）。时间：2026-11-12 16:50–17:00（NZDT）。页面：Example-Scenarios › 刷新 › SmartRefreshControl styles。截图方式：按住下拉（axe 连续按下事件）后截取下拉状态，或松手后截取刷新中状态；从左到右、从上到下：Delivery、Phoenix、Taurus、DropBox、BezierRadar、BezierCircle（刷新中）、Original、GameHitBlock（刷新中）、GameBattleCity（刷新中）、Fly、Classics（刷新中）、Classics 刷新尾（加载中）。 | Platform: iOS. Environment: macOS 27.3 (26C5035r), Xcode 27.2 (27B5028f), iOS SDK 27.2, iPhone 17 Pro simulator, iOS 27.2 (24B5089g). Version: branch `feat/smartrefresh-parity`, demo code `dc8e90b`, captured at `2ea8d2b` (<https://github.com/ChenYilong/CYLTableViewPlaceHolder/commit/2ea8d2b>). Time: 2026-11-12 16:50–17:00 (NZDT). Page: Example-Scenarios › Refresh › SmartRefreshControl styles. Method: a held pull (repeated axe touch-down events) for the pull state, or right after the release for the refreshing state; left to right, top to bottom: Delivery, Phoenix, Taurus, DropBox, BezierRadar, BezierCircle (refreshing), Original, GameHitBlock (refreshing), GameBattleCity (refreshing), Fly, Classics (refreshing), the Classics footer (loading). |
+| TODO：三个样式在模拟器上不正确，尚未修复：WaveSwipe 与 Material（两个前置模式样式）下拉和刷新中都看不到任何内容；StoreHouse 的深色背景比屏幕窄（约 345 点宽，文字按该宽度居中）。单元测试中三者都能完成刷新、绘制且没有 NaN 图层，所以问题出在真实页面的布局上。另外，主机负载很高（load average 约 180）时 `simctl` 截图会延迟数秒，按时间截取的刷新中状态不可靠，因此改用按住下拉截图。 | TODO: three styles are wrong on the simulator and not fixed yet: WaveSwipe and Material (the two front-mode styles) show nothing while pulling or refreshing; StoreHouse's dark background is narrower than the screen (about 345 points, with the text centered in that width). In unit tests all three finish a refresh, draw and have no NaN layer, so the problem is in the layout on a real page. Also, with the host heavily loaded (load average about 180), `simctl` screenshots lag by seconds and timed captures of the refreshing state are unreliable, so the captures use held pulls instead. |
+
+![SmartRefreshControl 样式示例：12 个样式（iOS 27.2 模拟器） / SmartRefreshControl styles demo: 12 styles (iOS 27.2 simulator)](assets/smartrefresh-styles-ios.png)
 
 ## flutter_easy_refresh 对照表 / flutter_easy_refresh comparison
 
