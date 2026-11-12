@@ -53,6 +53,19 @@ NS_ASSUME_NONNULL_BEGIN
  *      隐藏通过遮罩实现，`hidden`、`alpha`（及 `automaticallyChangeAlpha`）保持调用方的设置。NO 保持 MJRefresh 的行为：收回后的刷新头保持可见。
  */
 @property (nonatomic) BOOL autoHideRefresh;
+/*!
+ * [EN] Sets the open height (`expandHeight`). In `CYLRefreshScrollModeStretch` the frame follows the pull, so only the
+ *      open height changes; in the other modes the frame height changes too.
+ * [CN] 设置展开高度（`expandHeight`）。拉伸模式下 frame 跟随下拉，只改变展开高度；其他模式同时改变 frame 高度。
+ */
+- (void)setExpandHeight:(CGFloat)expandHeight NS_SWIFT_NAME(setExpandHeight(_:));
+/*!
+ * [EN] Whether refreshing adds the header's height to the top inset, pushing the content down. Default YES; NO (and
+ *      `CYLRefreshScrollModeFront`) keeps the content where it is, for headers that are always open or float in front.
+ * [CN] 刷新时是否把刷新头高度加到顶部 inset、把内容往下推。默认 YES；NO（以及 `CYLRefreshScrollModeFront`）让内容保持不动，
+ *      适用于常态展开或浮在内容前面的刷新头。
+ */
+@property (nonatomic) BOOL addsRefreshingInset;
 @end
 
 NS_ASSUME_NONNULL_END

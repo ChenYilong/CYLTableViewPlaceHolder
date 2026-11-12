@@ -29,7 +29,8 @@ PRIVATE_HEADERS = {'CYLPlaceholderItemAnimationService.h', 'CYLPlaceholderItemAn
 STRING = re.compile(r'"(?:\\.|[^"\\])*"')
 
 problems = []
-files = [p for p in LIBRARY.rglob('*.h') if p.name not in PRIVATE_HEADERS] + list(LIBRARY.rglob('*.swift'))
+# The drawn headers' support code is private (podspec private_header_files).
+files = [p for p in LIBRARY.rglob('*.h') if p.name not in PRIVATE_HEADERS and 'Drawn/Support' not in p.as_posix()] + list(LIBRARY.rglob('*.swift'))
 for path in sorted(files):
     if path.name.startswith('._'):
         continue

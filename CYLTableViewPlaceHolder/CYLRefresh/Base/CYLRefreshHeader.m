@@ -23,6 +23,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (strong, nonatomic) CALayer *idleMask;
 /// [EN] The open height kept while `scrollMode` changes the frame. [CN] `scrollMode` 改变 frame 时保留的展开高度。
 @property (assign, nonatomic) CGFloat cyl_storedExpandHeight;
+/// [EN] YES while this refresh added the header height to the top inset. [CN] 本次刷新把刷新头高度加到顶部 inset 期间为 YES。
+@property (assign, nonatomic) BOOL cyl_addedRefreshingInset;
 @end
 
 @implementation CYLRefreshHeader
@@ -55,6 +57,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (@available(iOS 26.0, *)) {
         _autoHideRefresh = YES;
     }
+    _addsRefreshingInset = YES;
     [self cyl_updateIdleVisibility];
 }
 
@@ -118,9 +121,29 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
 #pragma mark - Scroll mode
 
+/// [EN] Refreshing pushes the content down only when the header adds its inset and does not float in front.
+/// [CN] 只有刷新头会加 inset 且不是前置时，刷新才会把内容往下推。
+- (BOOL)cyl_movesContentWhileRefreshing
+{
+    return self.addsRefreshingInset && self.scrollMode != CYLRefreshScrollModeFront;
+}
+
 - (CGFloat)expandHeight
 {
     return self.cyl_storedExpandHeight > 0 ? self.cyl_storedExpandHeight : self.cyl_h;
+}
+
+- (void)setExpandHeight:(CGFloat)expandHeight
+{
+    expandHeight = MAX(0, expandHeight);
+    if (self.scrollMode == CYLRefreshScrollModeMove) {
+        self.cyl_storedExpandHeight = 0;
+        self.cyl_h = expandHeight;
+    } else {
+        self.cyl_storedExpandHeight = MAX(expandHeight, 1);
+        if (self.scrollMode == CYLRefreshScrollModeFront) self.cyl_h = expandHeight;
+    }
+    [self cyl_applyScrollMode];
 }
 
 - (void)setScrollMode:(CYLRefreshScrollMode)scrollMode
@@ -146,17 +169,21 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (self.scrollMode == CYLRefreshScrollModeMove || !self.scrollView) return;
     CGFloat height = self.expandHeight;
     CGFloat offsetY = self.scrollView.cyl_offsetY;
-    CGFloat pulled = MAX(0, -(offsetY + self.scrollViewOriginalInset.top));
+    CGFloat visibleTop = offsetY + self.scrollViewOriginalInset.top;
+    CGFloat pulled = MAX(0, -visibleTop);
     if (self.scrollMode == CYLRefreshScrollModeStretch) {
-        CGFloat stretched = MAX(height, pulled);
-        if (fabs(self.cyl_h - stretched) > 0.5) self.cyl_h = stretched;
-        self.cyl_y = -stretched - self.ignoredScrollViewContentInsetTop;
+        // [EN] Stretch, as in SmartRefreshControl: the header is exactly the pulled area, from 0 when idle.
+        // [CN] 拉伸（与 SmartRefreshControl 相同）：刷新头正好是被拉出的区域，空闲时高度为 0。
+        if (fabs(self.cyl_h - pulled) > 0.25) self.cyl_h = pulled;
+        self.cyl_y = -pulled - self.ignoredScrollViewContentInsetTop;
     } else {
-        // [EN] Front: slides down from above the visible top, at most its own height, in front of the cells.
-        // [CN] 前置：从可见区域顶部上方滑下，最多滑出自身高度，位于 cell 前面。
-        if (fabs(self.cyl_h - height) > 0.5) self.cyl_h = height;
-        self.cyl_y = offsetY + self.scrollViewOriginalInset.top - height + MIN(pulled, height);
+        // [EN] Front, as in SmartRefreshControl: pinned at the top of the visible area, in front of the content, which
+        //      never moves for it (no refreshing inset). [CN] 前置（与 SmartRefreshControl 相同）：固定在可见区域顶部、位于内容前面，
+        //      内容不会为它移动（不加刷新 inset）。
+        if (fabs(self.cyl_h - height) > 0.25) self.cyl_h = height;
+        self.cyl_y = visibleTop;
         self.layer.zPosition = 1;
+        if (self.superview.subviews.lastObject != self) [self.superview bringSubviewToFront:self];
     }
 }
 
@@ -198,7 +225,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // 在刷新的refreshing状态
     if (self.state == CYLRefreshStateRefreshing) {
-        [self resetInset];
+        if (self.cyl_addedRefreshingInset && self.scrollMode != CYLRefreshScrollModeFront) [self resetInset];
         return;
     }
 
@@ -259,6 +286,15 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:self.lastUpdatedTimeKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     self.retracting = YES;
+    BOOL addedInset = self.cyl_addedRefreshingInset;
+    self.cyl_addedRefreshingInset = NO;
+    if (!addedInset) {
+        // [EN] Front added no inset, so there is nothing to restore. [CN] 前置没有加 inset，无需恢复。
+        self.retracting = NO;
+        self.pullingPercent = 0.0;
+        if (self.endRefreshingCompletionBlock) self.endRefreshingCompletionBlock();
+        return;
+    }
 
     // 默认使用 UIViewAnimation 动画
     if (!self.isCollectionViewAnimationBug) {
@@ -331,6 +367,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
 - (void)headerRefreshingAction {
     self.insetTDelta = 0;
+    if (![self cyl_movesContentWhileRefreshing]) {
+        // [EN] Front: the content stays where it is. [CN] 前置：内容保持不动。
+        self.cyl_addedRefreshingInset = NO;
+        [self executeRefreshingCallback];
+        return;
+    }
+    self.cyl_addedRefreshingInset = YES;
     // 默认使用 UIViewAnimation 动画
     if (!self.isCollectionViewAnimationBug) {
         [UIView animateWithDuration:self.fastAnimationDuration animations:^{
