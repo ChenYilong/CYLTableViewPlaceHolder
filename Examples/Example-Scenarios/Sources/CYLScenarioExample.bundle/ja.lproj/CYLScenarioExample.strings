@@ -186,6 +186,13 @@
 "CYLScenarioSmartDeliveryFooter" = "Delivery フッター";
 "CYLScenarioSmartPhoenixFooter" = "Phoenix フッター";
 "CYLScenarioSmartTaurusFooter" = "Taurus フッター";
+"CYLScenarioSmartRiveBow" = "Rive · Bow";
+"CYLScenarioSmartRiveBubbles" = "Rive · Bubbles";
+"CYLScenarioSmartRiveHalloween" = "Rive · Halloween";
+"CYLScenarioSmartRiveSkating" = "Rive · Skating";
+"CYLScenarioSmartRiveSpace" = "Rive · Space";
+"CYLScenarioSmartRiveSquats" = "Rive · Squats";
+"CYLScenarioSmartRiveSpaceFooter" = "Rive · Space フッター";
 "CYLScenarioSmartThemeDefault" = "デフォルトのテーマ";
 "CYLScenarioSmartThemeOrange" = "オレンジのテーマ";
 "CYLScenarioSmartThemeRed" = "赤のテーマ";

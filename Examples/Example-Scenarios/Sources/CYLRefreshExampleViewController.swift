@@ -80,6 +80,11 @@ final class CYLRefreshExampleViewController: UITableViewController {
             (.smartBezierRadarFooter, "smartBezierRadarFooter"), (.smartMaterialFooter, "smartMaterialFooter"),
             (.smartDeliveryFooter, "smartDeliveryFooter"), (.smartPhoenixFooter, "smartPhoenixFooter"),
             (.smartTaurusFooter, "smartTaurusFooter"),
+            // flutter_easy_refresh's Rive style packages (CYLRefreshRiveHeader), with the example's own .riv files.
+            (.smartRiveBow, "smartRiveBow"), (.smartRiveBubbles, "smartRiveBubbles"),
+            (.smartRiveHalloween, "smartRiveHalloween"), (.smartRiveSkating, "smartRiveSkating"),
+            (.smartRiveSpace, "smartRiveSpace"), (.smartRiveSquats, "smartRiveSquats"),
+            (.smartRiveSpaceFooter, "smartRiveSpaceFooter"),
         ]
         let exam6 = CYLRefreshExample(header: .smartSection, titles: styles.map { $0.0 },
                                       methods: styles.map { $0.1 }, viewControllers: [smart])

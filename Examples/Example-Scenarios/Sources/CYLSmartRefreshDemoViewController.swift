@@ -117,6 +117,8 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
         case "smartGameHitBlock": return CYLRefreshGameHitBlockHeader()
         case "smartGameBattleCity": return CYLRefreshGameBattleCityHeader()
         case "smartFly": return CYLRefreshFlyHeader()
+        case _ where method.hasPrefix("smartRive"):
+            return riveStyle().flatMap { CYLRefreshRiveHeader(style: $0) } ?? CYLRefreshNormalHeader()
         default: return CYLRefreshNormalHeader()
         }
     }
@@ -130,8 +132,67 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
         case "smartDeliveryFooter": return CYLRefreshDeliveryFooter()
         case "smartPhoenixFooter": return CYLRefreshPhoenixFooter()
         case "smartTaurusFooter": return CYLRefreshTaurusFooter()
+        case "smartRiveSpaceFooter":
+            guard let style = riveStyle(), let rive = CYLRefreshRiveHeader(style: style) else { return nil }
+            return CYLRefreshDrawnFooter(style: rive)
         default: return nil
         }
+    }
+
+    /// flutter_easy_refresh's Rive style packages: the file in this example's bundle and the names each package's
+    /// indicator drives (packages/easy_refresh_*/lib/src/*_indicator.dart at dcdbb81).
+    private func riveStyle() -> CYLRefreshRiveStyle? {
+        let file: String
+        switch method {
+        case "smartRiveBow": file = "Bow"
+        case "smartRiveBubbles": file = "Bubbles"
+        case "smartRiveHalloween": file = "Halloween"
+        case "smartRiveSkating": file = "Skating"
+        case "smartRiveSpace", "smartRiveSpaceFooter": file = "Space"
+        case "smartRiveSquats": file = "Squats"
+        default: return nil
+        }
+        guard let url = CYLScenarioExampleResourceURL("Animations/CYLScenarioExampleRefresh\(file).riv") else { return nil }
+        let style = CYLRefreshRiveStyle(fileURL: url)
+        switch file {
+        case "Bow":
+            style.stateMachineName = "numberSimulation"
+            style.triggerOffset = 200
+            style.fitsWidth = true
+            style.pullInput = "pull"
+            style.pullInputMinimum = 10
+            style.releaseTrigger = "advance"
+            style.finishTrigger = "advance"
+            style.restartTrigger = "restart"
+        case "Bubbles":
+            style.stateMachineName = "Motion"
+            style.pullInput = "numDrag"
+            style.pullInputStart = 4.0 / 7.0
+            style.pullInputMaximum = 99
+            style.pullInputRefreshingValue = 100
+            style.loadingNumber = "numLoad"
+        case "Halloween":
+            style.triggerOffset = 200
+            style.pullAnimation = "Pull"
+            style.triggerAnimation = "Trigger"
+            style.loadingAnimation = "Loading"
+        case "Skating":
+            style.stateMachineName = "Reload"
+            style.minimumHeight = 140
+            style.pullInput = "pullAmount"
+            style.releaseTrigger = "pullRelease"
+            style.finishTrigger = "loadFinished"
+        case "Space":
+            style.stateMachineName = "Reload"
+            style.pullInput = "Pull Amount"
+            style.loadingBoolean = "Start"
+        default:
+            style.triggerOffset = 190
+            style.fitsWidth = true
+            style.idleAnimation = "Idle"
+            style.loadingAnimation = "Demo"
+        }
+        return style
     }
 
     private func themeRows() -> [Row] {

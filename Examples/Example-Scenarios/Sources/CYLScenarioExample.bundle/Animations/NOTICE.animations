@@ -36,3 +36,49 @@ CYLScenarioExampleTruck.riv
   path:    Example-iOS/Assets/truck.riv
   license: MIT (LICENSE.rive-ios)
   sha256:  af37da1ba63af80a7cbbfeed520acdb070b547f2fdff2e1d37c2b3e0d8b2714b
+
+Refresh animations of flutter_easy_refresh's Rive style packages (https://github.com/xuelongqy/flutter_easy_refresh,
+dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862; the packages are MIT, LICENSE.flutter_easy_refresh), played by the core's
+CYLRefreshRiveHeader on the Refresh tab. Each file keeps the license of its original author; unmodified; renamed.
+
+CYLScenarioExampleRefreshBow.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_bow/assets/bow.riv
+  origin:  "Bow Pull to Refresh", https://github.com/phucho2306/RivePullToRefresh (43af69a590196ba336e6134829d125d855c4de4b)
+  license: MIT (LICENSE.RivePullToRefresh, Copyright (c) 2024 phucho236)
+  sha256:  b3dc89ae9a64017655d0599347e22e025d0a32069d154c4c49919d6a42c28351
+
+CYLScenarioExampleRefreshBubbles.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_bubbles/assets/bubbles.riv
+  origin:  "Pull to Refresh" by JcToon, https://rive.app/community/3146-6725-pull-to-refresh/
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  e652f4afa6eea33728210e661fa474324f32a1bf5badd0ad7b72eb78af0d102d
+
+CYLScenarioExampleRefreshHalloween.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_halloween/assets/halloween.riv
+  origin:  "Pull to refresh halloween" by JcToon, https://rive.app/community/68-95-pull-to-refresh-halloween
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  f1e434fd80dc6d41bce3b35546d36e6c25e23cffe242bcbef24e2c6480476d2f
+
+CYLScenarioExampleRefreshSkating.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_skating/assets/skating.riv
+  origin:  "Pull-to-refresh Animation Example" by Dante, https://rive.app/community/2233-4412-pull-to-refresh-animation-example
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  e563f100cfa82b29e4af13e4ad887ae931725b50f87fc535c7f77b40ab6f9b92
+
+CYLScenarioExampleRefreshSpace.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_space/assets/space_reload.riv
+  origin:  Flare-Flutter, https://github.com/2d-inc/Flare-Flutter (3c3146429418eaae09b20704a48754f7b5b53e82)
+  license: MIT (LICENSE.Flare-Flutter, Copyright (c) 2018 2D, Inc)
+  sha256:  61bb12096756586208cc4d3899fc1d3f4f733d98d65af1ba96753f89bde16624
+
+CYLScenarioExampleRefreshSquats.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_squats/assets/lumberjack_squats.riv
+  origin:  "Lumberjack Squats" by Dante, https://rive.app/community/980-1894-lumberjack-squats
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  0f5cff48fe330a8daee360548b732e0e2fcf91166509d40917b45a3c68f133c9

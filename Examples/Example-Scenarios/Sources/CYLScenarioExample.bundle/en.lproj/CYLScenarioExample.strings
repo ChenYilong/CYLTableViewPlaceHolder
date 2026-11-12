@@ -186,6 +186,13 @@
 "CYLScenarioSmartDeliveryFooter" = "Delivery footer";
 "CYLScenarioSmartPhoenixFooter" = "Phoenix footer";
 "CYLScenarioSmartTaurusFooter" = "Taurus footer";
+"CYLScenarioSmartRiveBow" = "Rive · Bow";
+"CYLScenarioSmartRiveBubbles" = "Rive · Bubbles";
+"CYLScenarioSmartRiveHalloween" = "Rive · Halloween";
+"CYLScenarioSmartRiveSkating" = "Rive · Skating";
+"CYLScenarioSmartRiveSpace" = "Rive · Space";
+"CYLScenarioSmartRiveSquats" = "Rive · Squats";
+"CYLScenarioSmartRiveSpaceFooter" = "Rive · Space footer";
 "CYLScenarioSmartThemeDefault" = "Default theme";
 "CYLScenarioSmartThemeOrange" = "Orange theme";
 "CYLScenarioSmartThemeRed" = "Red theme";

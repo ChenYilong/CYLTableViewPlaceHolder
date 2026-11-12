@@ -186,6 +186,13 @@
 "CYLScenarioSmartDeliveryFooter" = "Delivery 푸터";
 "CYLScenarioSmartPhoenixFooter" = "Phoenix 푸터";
 "CYLScenarioSmartTaurusFooter" = "Taurus 푸터";
+"CYLScenarioSmartRiveBow" = "Rive · Bow";
+"CYLScenarioSmartRiveBubbles" = "Rive · Bubbles";
+"CYLScenarioSmartRiveHalloween" = "Rive · Halloween";
+"CYLScenarioSmartRiveSkating" = "Rive · Skating";
+"CYLScenarioSmartRiveSpace" = "Rive · Space";
+"CYLScenarioSmartRiveSquats" = "Rive · Squats";
+"CYLScenarioSmartRiveSpaceFooter" = "Rive · Space 푸터";
 "CYLScenarioSmartThemeDefault" = "기본 테마";
 "CYLScenarioSmartThemeOrange" = "주황색 테마";
 "CYLScenarioSmartThemeRed" = "빨간색 테마";

@@ -186,6 +186,13 @@
 "CYLScenarioSmartDeliveryFooter" = "Футер Delivery";
 "CYLScenarioSmartPhoenixFooter" = "Футер Phoenix";
 "CYLScenarioSmartTaurusFooter" = "Футер Taurus";
+"CYLScenarioSmartRiveBow" = "Rive · Bow";
+"CYLScenarioSmartRiveBubbles" = "Rive · Bubbles";
+"CYLScenarioSmartRiveHalloween" = "Rive · Halloween";
+"CYLScenarioSmartRiveSkating" = "Rive · Skating";
+"CYLScenarioSmartRiveSpace" = "Rive · Space";
+"CYLScenarioSmartRiveSquats" = "Rive · Squats";
+"CYLScenarioSmartRiveSpaceFooter" = "Rive · футер Space";
 "CYLScenarioSmartThemeDefault" = "Тема за замовчуванням";
 "CYLScenarioSmartThemeOrange" = "Помаранчева тема";
 "CYLScenarioSmartThemeRed" = "Червона тема";
