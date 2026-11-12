@@ -51,7 +51,7 @@
   - Scope boundaries: change no iOS code (as in the Android task); record the API alignment and its score in this
     document.
 
-### TODO: Android placeholder module for CYLSearchViewController's empty search results / TODO：为 CYLSearchViewController 的搜索空结果提供 Android 占位图模块
+### DONE: Android placeholder module for CYLSearchViewController's empty search results / 已完成：为 CYLSearchViewController 的搜索空结果提供 Android 占位图模块
 
 - 日期 / Date: 2026-11-13; branch `feat/android-placeholder` (from `feat/smartrefresh-parity` `f38ce49`).
 - Context: CYLSearchViewController integrates this project as a sub-repository (its `docs/sub-repositories.md`, rule
@@ -70,5 +70,15 @@
      and every other scenario category, stay `TODO` here.
   4. Change no iOS code; a unit test; the module builds standalone (`android/`).
 - User prompt (verbatim, in CYLSearchViewController): "在instructions 相关文件，以及skills相关文件中找到 对CollectionViewClassifyMenu 作为子仓库的相关描述，全英文在后面追加以下内容，按照CollectionViewClassifyMenu 作为子仓库 的所有要求，集成CYLTableViewPlaceHolder 作为子仓库。对  CYLTableViewPlaceHolder 的要求是 搜索内容为空时展示 内容为空的 CYLTableViewPlaceHolder  样式。该要求同样适用于 所有平台包括iOS Android react native flutter 鸿蒙 小程序。 标注TODO continue"
-- Status: `TODO`.
+- Status: DONE (2026-11-13, `8e23581`).
+  - `android/placeholder`: `CYLPlaceholderScenario` (the seven empty scenarios with the iOS icon size, title, hint or
+    button), `CYLPlaceholderButtonStyle`, `CYLPlaceholderAction.GoShopping`, `CYLPlaceholderStackView(context,
+    scenario, actions)`, `localizedNameForScenario`; images and all strings from the iOS bundle in seven languages
+    (`android/scripts/import-ios-resources.py`). 4 Robolectric tests pass. No iOS code changed.
+  - Used by CYLSearchViewController (`android/merged`, commit `062a1a3`): a search with no results shows NoSearchResults
+    under the search bar. Android 15 emulator (`CYL_API35_arm64`, API 35), macOS 27.3, 2026-11-13 00:4x NZDT:
 
+    ![NoSearchResults in CYLSearchViewController's Android example](assets/android-placeholder-no-search-results.png)
+
+  - Still `TODO`: the scenarios' Lottie / PAG animations on Android, and the other categories (load failed,
+    permission, progress, success, HUD).
