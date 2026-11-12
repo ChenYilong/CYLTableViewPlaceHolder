@@ -7,6 +7,7 @@
 //
 
 #import "CYLRefreshBackFooter.h"
+#import <objc/runtime.h>
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
@@ -19,6 +20,11 @@
 @property (assign, nonatomic) CGFloat pagingRefreshOffset;
 @property (assign, nonatomic) BOOL holdingNoMoreData;
 @property (assign, nonatomic) NSUInteger noMoreDataHoldToken;
+@end
+
+@interface CYLRefreshBackFooter (CYLTriggerMode)
+/// [EN] Whether the current drag started with the list at the bottom edge (triggerMode). [CN] 当前拖动开始时列表是否在底部边缘（triggerMode）。
+@property (assign, nonatomic) BOOL cyl_dragStartedAtEdge;
 @end
 
 @implementation CYLRefreshBackFooter
@@ -78,7 +84,8 @@
         self.pullingPercent = pullingPercent;
         // 普通 和 即将刷新 的临界点
 
-        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && currentOffsetY > normal2pullingOffsetY) {
+        BOOL mayArm = self.triggerMode == CYLRefreshTriggerModeAnywhere || self.cyl_dragStartedAtEdge;
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && currentOffsetY > normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
             if (self.triggersWhenReached) [self beginRefreshing];
@@ -263,4 +270,28 @@
         return - self.scrollViewOriginalInset.top;
     }
 }
+#pragma mark - Trigger mode
+
+- (void)setCyl_dragStartedAtEdge:(BOOL)value
+{
+    objc_setAssociatedObject(self, @selector(cyl_dragStartedAtEdge), @(value), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)cyl_dragStartedAtEdge
+{
+    return [objc_getAssociatedObject(self, @selector(cyl_dragStartedAtEdge)) boolValue];
+}
+
+- (void)cyl_recordDragStart
+{
+    if (self.scrollView.panGestureRecognizer.state != UIGestureRecognizerStateBegan) return;
+    self.cyl_dragStartedAtEdge = self.scrollView.cyl_offsetY >= [self happenOffsetY] - 0.5;
+}
+
+- (void)scrollViewPanStateDidChange:(NSDictionary *)change
+{
+    [super scrollViewPanStateDidChange:change];
+    [self cyl_recordDragStart];
+}
+
 @end

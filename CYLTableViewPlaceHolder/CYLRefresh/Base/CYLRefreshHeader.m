@@ -24,6 +24,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) CGFloat cyl_storedExpandHeight;
 /// [EN] YES while this refresh added the header height to the top inset. [CN] 本次刷新把刷新头高度加到顶部 inset 期间为 YES。
 @property (assign, nonatomic) BOOL cyl_addedRefreshingInset;
+/// [EN] Whether the current drag started with the list at the top edge (triggerMode). [CN] 当前拖动开始时列表是否在顶部边缘（triggerMode）。
+@property (assign, nonatomic) BOOL cyl_dragStartedAtEdge;
 @end
 
 @implementation CYLRefreshHeader
@@ -95,6 +97,17 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     [self cyl_applyScrollMode];
 }
 
+#pragma mark - Trigger mode
+
+- (void)scrollViewPanStateDidChange:(NSDictionary *)change
+{
+    [super scrollViewPanStateDidChange:change];
+    if (self.scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        // [EN] At the top edge: the content's top is at (or below) the header's bottom. [CN] 位于顶部边缘：内容顶部在刷新头底边或其下方。
+        self.cyl_dragStartedAtEdge = self.scrollView.cyl_offsetY <= -self.scrollViewOriginalInset.top + 0.5;
+    }
+}
+
 #pragma mark - Scroll mode
 
 /// [EN] Refreshing pushes the content down only when the header adds its inset and does not float in front.
@@ -152,6 +165,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         // [CN] 拉伸（与 SmartRefreshControl 相同）：刷新头正好是被拉出的区域，空闲时高度为 0。
         if (fabs(self.cyl_h - pulled) > 0.25) self.cyl_h = pulled;
         self.cyl_y = -pulled - self.ignoredScrollViewContentInsetTop;
+    } else if (self.scrollMode == CYLRefreshScrollModeBehind) {
+        // [EN] Behind: pinned at the visible top behind the content, revealed as the content moves down.
+        // [CN] 后置：固定在可见区域顶部、位于内容后面，内容下移时露出。
+        if (fabs(self.cyl_h - height) > 0.25) self.cyl_h = height;
+        self.cyl_y = MIN(visibleTop, -height);
+        self.layer.zPosition = -1;
+        if (self.superview.subviews.firstObject != self) [self.superview sendSubviewToBack:self];
     } else {
         // [EN] Front, as in SmartRefreshControl: pinned at the top of the visible area, in front of the content, which
         //      never moves for it (no refreshing inset). [CN] 前置（与 SmartRefreshControl 相同）：固定在可见区域顶部、位于内容前面，
@@ -230,7 +250,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
             self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, offsetY);
         }
         self.pullingPercent = pullingPercent;
-        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && offsetY < normal2pullingOffsetY) {
+        BOOL mayArm = self.triggerMode == CYLRefreshTriggerModeAnywhere || self.cyl_dragStartedAtEdge;
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && offsetY < normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
             // [EN] triggersWhenReached: refresh now, without waiting for the release. [CN] triggersWhenReached：立即刷新，不等松手。

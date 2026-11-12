@@ -45,6 +45,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign, nonatomic) BOOL cyl_autoHideRefreshFooter;
 
+/*!
+ * [EN] Refreshes once with `startHeader` in place of `cyl_header`, then puts `cyl_header` back when that refresh ends
+ *      (flutter_easy_refresh's `refreshOnStart` with `refreshOnStartHeader`). `startHeader` uses its own refreshing
+ *      callbacks, or the regular header's when it has none.
+ * [CN] 用 `startHeader` 代替 `cyl_header` 刷新一次，刷新结束后换回 `cyl_header`（对应 flutter_easy_refresh 的 `refreshOnStart` 与
+ *      `refreshOnStartHeader`）。`startHeader` 使用自己的刷新回调；没有时使用常规刷新头的回调。
+ */
+- (void)cyl_beginRefreshingWithStartHeader:(CYLRefreshHeader *)startHeader NS_SWIFT_NAME(cyl_beginRefreshing(startHeader:));
+
 #pragma mark - other
 - (NSInteger)cyl_totalDataCount;
 

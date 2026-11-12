@@ -33,6 +33,8 @@
 #import "CYLRefreshAutoGifFooter.h"
 
 #import "CYLRefreshNormalTrailer.h"
+#import "CYLRefreshCupertinoHeader.h"
+#import "CYLRefreshCupertinoFooter.h"
 #import "CYLRefreshIconView.h"
 #import "CYLRefreshConfig.h"
 #import "NSBundle+CYLRefresh.h"

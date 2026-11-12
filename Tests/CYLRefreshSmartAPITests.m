@@ -207,4 +207,52 @@
     XCTAssertFalse(header.isRefreshEnabled);
 }
 
+- (void)testTriggerModeBehindModeStartHeaderAndCupertino {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    XCTAssertEqual(header.triggerMode, CYLRefreshTriggerModeAnywhere, @"default");
+    header.triggerMode = CYLRefreshTriggerModeOnEdge;
+    XCTAssertEqual(header.triggerMode, CYLRefreshTriggerModeOnEdge);
+
+    // [EN] Behind: pinned behind the content. [CN] 后置：固定在内容后面。
+    header.scrollMode = CYLRefreshScrollModeBehind;
+    scrollView.contentOffset = CGPointMake(0, -120);
+    XCTAssertEqual(header.layer.zPosition, -1);
+    XCTAssertEqual(scrollView.subviews.firstObject, header, @"sent to the back");
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(header.frame), -120, 0.5, @"pinned at the visible top");
+    header.scrollMode = CYLRefreshScrollModeMove;
+    XCTAssertEqual(header.layer.zPosition, 0);
+
+    // [EN] A start header refreshes once, then the regular header comes back. [CN] 起始刷新头刷新一次后换回常规刷新头。
+    __block NSInteger calls = 0;
+    header.refreshingBlock = ^{ calls++; };
+    CYLRefreshCupertinoHeader *start = [CYLRefreshCupertinoHeader new];
+    [scrollView cyl_beginRefreshingWithStartHeader:start];
+    XCTAssertEqual(scrollView.cyl_header, start);
+    XCTAssertTrue(start.isRefreshing || start.state == CYLRefreshStateWillRefresh);
+    [start executeRefreshingCallback];
+    XCTAssertEqual(calls, 1, @"the regular header's callback runs");
+    XCTestExpectation *back = [self expectationWithDescription:@"regular header back"];
+    [start endRefreshingWithCompletionBlock:^{}];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        XCTAssertEqual(scrollView.cyl_header, header);
+        [back fulfill];
+    });
+    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    // [EN] Cupertino: the indicator spins only while refreshing. [CN] Cupertino：菊花只在刷新时旋转。
+    CYLRefreshCupertinoFooter *footer = [CYLRefreshCupertinoFooter attach:scrollView];
+    XCTAssertFalse(footer.activityIndicator.isAnimating);
+    footer.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(footer.activityIndicator.isAnimating);
+    footer.state = CYLRefreshStateIdle;
+    XCTAssertFalse(footer.activityIndicator.isAnimating);
+    CYLRefreshCupertinoHeader *cupertino = [CYLRefreshCupertinoHeader new];
+    cupertino.pullingPercent = 0.5;
+    XCTAssertEqualWithAccuracy(cupertino.activityIndicator.alpha, 0.5, 0.01, @"fades in with the pull");
+    cupertino.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(cupertino.activityIndicator.isAnimating);
+    XCTAssertNotNil(cupertino.activityIndicator.accessibilityLabel);
+}
+
 @end

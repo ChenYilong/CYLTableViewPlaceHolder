@@ -236,6 +236,17 @@
             CAShapeLayer *shape = [header valueForKey:@"shapeLayer"];
             XCTAssertTrue(shape.path && !CGRectIsEmpty(CGPathGetBoundingBox(shape.path)), @"the spinner is drawn");
         }
+        // [EN] After the refresh ends and the list is back at rest, the header hides again (autoHideRefresh).
+        // [CN] 刷新结束、列表回到静止后，刷新头再次隐藏（autoHideRefresh）。
+        header.autoHideRefresh = YES;
+        [header beginRefreshing];
+        [self spin:0.4];
+        XCTAssertNil(header.layer.mask, @"%@ shows while refreshing", style);
+        scrollView.contentOffset = CGPointMake(0, -scrollView.adjustedContentInset.top);
+        [header endRefreshing];
+        [self spin:1.0];
+        XCTAssertEqual(header.state, CYLRefreshStateIdle);
+        XCTAssertNotNil(header.layer.mask, @"%@ hides after the refresh", style);
         [scrollView removeFromSuperview];
     }
 }

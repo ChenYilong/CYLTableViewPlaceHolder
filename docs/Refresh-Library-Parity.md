@@ -9,8 +9,6 @@
 | [任务](#任务--tasks) | [Tasks](#任务--tasks) |
 | [SmartRefreshControl 对照表](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) | [SmartRefreshControl comparison](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) |
 | [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
-| [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
-| [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
 
 <!-- docs-navigation:end -->
 
@@ -122,81 +120,8 @@
 
 ![SmartRefreshControl 样式示例：全部 14 个刷新头与经典刷新尾（iOS 27.2 模拟器） / SmartRefreshControl styles demo: all 14 headers and the classic footer (iOS 27.2 simulator)](assets/smartrefresh-styles-ios.png)
 
-## flutter_easy_refresh 对照表 / flutter_easy_refresh comparison
-
 | 中文 | English |
 | --- | --- |
-| 评分：**72/100**（36/50 行有对应 API，此前 54/100（`08150a2`）；另有 4 行只属于 Flutter，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：二楼（secondary）、触发模式、`behind` 位置、阻尼与弹簧、覆盖类指示器、首次刷新专用刷新头、`callRefresh` 参数、嵌套滚动、经典样式的结果图标等选项、Cupertino 样式、5 个刷新尾样式、6 个 Rive 样式包与 `easy_paging`。 | Score: **72/100** (36 of 50 rows have a counterpart, 54/100 before (`08150a2`); 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: the second floor (secondary), trigger modes, the `behind` position, friction and springs, override indicators, a header for the first refresh, the `callRefresh` parameters, nested scrolling, the classic style's result icons and other options, the Cupertino style, 5 footer styles, the 6 Rive style packages and `easy_paging`. |
+| 核对（2026-11-12，用户询问 Material 刷新后为何不消失）：不是缺陷。上图中 Material 的“刷新中”截图是在松手后 0.35 秒、2.5 秒的刷新期间拍的，Material 的圆圈按设计（与 Android SwipeRefreshLayout 相同）在刷新期间浮在列表顶部。刷新结束后圆圈消失，刷新头被 `autoHideRefresh` 隐藏：下图从上到下为打开页面的首次刷新结束后、手动下拉刷新结束后约 6–8 秒（iOS 27.2 模拟器）。`testFrontModeStylesDrawWhilePulled` 也断言刷新结束后刷新头被隐藏。 | Checked (2026-11-12, the user asked why Material does not go away after refreshing): not a defect. The Material "refreshing" shot above was taken 0.35 seconds after the release, during the 2.5-second refresh, and by design (as in Android's SwipeRefreshLayout) Material's circle floats over the top of the list while refreshing. When the refresh ends the circle goes away and `autoHideRefresh` hides the header: below, top to bottom, about 6–8 seconds after the opening refresh and after a manual pull (iOS 27.2 simulator). `testFrontModeStylesDrawWhilePulled` also asserts that the header hides after the refresh. |
 
-| flutter_easy_refresh 公开 API / public API | CYLRefresh API | 对齐 / Aligned |
-| --- | --- | --- |
-| `EasyRefresh(child:)`：包住滚动视图 / wraps the scroll view | `UIScrollView.cyl_header` / `cyl_footer` / `cyl_trailer`、`+attach:` | ✅ |
-| `header` / `footer` | `cyl_header` / `cyl_footer` | ✅ |
-| `onRefresh` / `onLoad`（返回 `IndicatorResult`） | `refreshingBlock` / `refreshingHandler` / target-action；结果用 `endRefreshingWithSuccess:` / `endRefreshingWithNoMoreData` | ✅ |
-| `EasyRefreshController.callRefresh` / `callLoad` | `[header beginRefreshing]` / `[footer beginRefreshing]` | ✅ |
-| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshingWithSuccess:` / `endRefreshingWithNoMoreData` | ✅ |
-| `resetHeader` / `resetFooter` | `endRefreshing` / `resetNoMoreData` | ✅ |
-| `controlFinishRefresh` / `controlFinishLoad` | 总是由调用方结束 / always ended by the caller | ✅ |
-| `headerState` / `footerState`（`IndicatorState`：mode、result、offset） | `phase`、`dragOffset`、`pullingPercent`、`lastRefreshSucceeded` | ✅ |
-| `IndicatorResult`（none / success / fail / noMore） | `lastRefreshSucceeded` + `endRefreshingWithNoMoreData` / `isNoMoreData` | ✅ |
-| `simultaneously` | `exclusiveWithOtherRefresh`（默认允许同时 / both allowed by default） | ✅ |
-| `refreshOnStart` | 页面加载时调用 `beginRefreshing` / call `beginRefreshing` on load | ✅ |
-| `scrollController` / `triggerAxis` | `scrollView`；纵向 header / footer，横向 `CYLRefreshTrailer` | ✅ |
-| `triggerOffset` | `expandHeight` × `triggerRate` | ✅ |
-| `processedDuration` | `finishDuration` | ✅ |
-| `clamping`（内容不动，指示器浮在上面） | `CYLRefreshScrollModeFront` / `addsRefreshingInset = NO` | ✅ |
-| `safeArea` | `ignoredScrollViewContentInsetTop`、UIKit `adjustedContentInset` | ✅ |
-| `infiniteOffset`（自动加载） | `CYLRefreshAutoFooter.automaticallyRefresh` / `triggerAutomaticallyRefreshPercent` / `autoTriggerTimes` | ✅ |
-| `BuilderHeader` / `BuilderFooter`（自定义外观） | 子类化 `CYLRefreshComponent` / `CYLRefreshDrawnHeader`；图标动画 `setIconAnimation…` | ✅ |
-| `ClassicHeader` / `ClassicFooter` 的各状态文字（drag / armed / ready / processing / processed / noMore / failed） | `setTitle:forState:` + 完成 / 失败文字（`finishDuration`） | ✅ |
-| `ClassicHeader` 的时间信息 `messageText` / `showMessage` | `lastUpdatedTimeLabel` / `lastUpdatedTimeText` / `lastUpdatedTimeFormatter` | ✅ |
-| `BezierHeader` | `CYLRefreshBezierRadarHeader` | ✅ |
-| `BezierCircleHeader` | `CYLRefreshBezierCircleHeader` | ✅ |
-| `MaterialHeader` | `CYLRefreshMaterialHeader` | ✅ |
-| `DeliveryHeader` | `CYLRefreshDeliveryHeader` | ✅ |
-| `PhoenixHeader` | `CYLRefreshPhoenixHeader` | ✅ |
-| `TaurusHeader` | `CYLRefreshTaurusHeader` | ✅ |
-| `IndicatorMode`（inactive / drag / armed / ready / processing / processed / done） | `CYLRefreshPhase`（Idle / PullToRefresh / ReleaseToRefresh / Releasing / Refreshing / Finishing） | ✅ |
-| 二楼：`openHeaderSecondary` / `closeHeaderSecondary` / `openFooterSecondary` / `closeFooterSecondary`、`SecondaryHeader` / `SecondaryBuilderHeader` / `SecondaryBuilderFooter`、`secondaryTriggerOffset` / `secondaryVelocity` / `secondaryDimension` / `secondaryCloseTriggerOffset`、`IndicatorMode.secondary*` | — | TODO |
-| `IndicatorTriggerMode`（anywhere / onEdge） | — | TODO |
-| `IndicatorPosition.behind`（指示器固定在内容后面） | — | TODO |
-| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`；松手即刷新是默认行为 / refreshing on release is the default | ✅ |
-| `frictionFactor` / `horizontalFrictionFactor`（拖动阻尼） | — | TODO |
-| `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound`（弹簧回弹） | — | TODO |
-| `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`（刷新头、返回式尾）；越过触发点继续拉动、无限加载重复触发是默认行为（`autoTriggerTimes`） / pulling past the trigger point and repeated infinite loading are the default (`autoTriggerTimes`) | ✅ |
-| `hapticFeedback` | `hapticFeedback` | ✅ |
-| `notifyWhenInvisible` | `notifiesWhenHidden` | ✅ |
-| `listenable`（`IndicatorStateListenable`，外部监听状态） | `addPhaseObserver:` / `removePhaseObserver:`（另有子类钩子 / also the subclass hook `phaseDidChangeFrom:to:`） | ✅ |
-| `ListenerHeader` / `ListenerFooter`（不可见、只监听） | 不绘制内容的 `CYLRefreshHeader` / `CYLRefreshBackFooter` + `addPhaseObserver:` / a drawing-free `CYLRefreshHeader` / `CYLRefreshBackFooter` with `addPhaseObserver:` | ✅ |
-| `NotRefreshHeader` / `NotLoadFooter`（不刷新但保留回弹配置） | `refreshEnabled = NO` | ✅ |
-| `OverrideHeader` / `OverrideFooter`（覆盖已有指示器的属性） | — | TODO |
-| `refreshOnStartHeader`（首次刷新用另一个刷新头） | — | TODO |
-| `callRefreshOverOffset` / `callLoadOverOffset`；`callRefresh(overOffset:duration:curve:force:)` 的参数 | — | TODO |
-| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | 无更多数据时仍可下拉刷新（默认） / `loadsAfterNoMoreData` / refreshing is always allowed after no more data (default); `loadsAfterNoMoreData` | ✅ |
-| `resetAfterRefresh`（刷新后自动重置无更多数据） | `resetsFooterAfterRefresh` | ✅ |
-| `isNested` / `nestedOuterController` / `nestedInnerController`（嵌套滚动） | — | TODO |
-| `ClassicHeader` 的结果图标 `succeededIcon` / `failedIcon` / `noMoreIcon`、`pullIconBuilder`、`reverse`、`textBuilder` / `messageBuilder`、`spacing` / `iconDimension` | 部分：`arrowView`、`labelLeftInset` / partly: `arrowView`, `labelLeftInset` | TODO |
-| `CupertinoHeader` / `CupertinoFooter` | — | TODO |
-| `BezierFooter` / `MaterialFooter` / `DeliveryFooter` / `PhoenixFooter` / `TaurusFooter` | — | TODO |
-| Rive 样式包 / Rive style packages：`easy_refresh_bow` / `bubbles` / `halloween` / `skating` / `space` / `squats` | 通用 Rive 图标 `setIconAnimation…`，但未带这 6 个文件 / generic Rive icons, without these 6 files | TODO |
-| `easy_paging`（`EasyPaging`：分页加载、空数据、错误状态） | 部分：占位图场景 + 自动加载尾 / partly: placeholder scenarios + auto footer | TODO |
-| `childBuilder`（把 physics 交给子组件） | 不适用：Flutter 组件树 / not applicable: Flutter widget tree | 不适用 / N/A |
-| `fit` / `clipBehavior` | 不适用：Flutter 布局 / not applicable: Flutter layout | 不适用 / N/A |
-| `scrollBehaviorBuilder` / `ERScrollBehavior` / `_ERScrollPhysics` | 不适用：UIKit 没有可替换的滚动物理 / not applicable: UIKit has no replaceable scroll physics | 不适用 / N/A |
-| `HeaderLocator` / `FooterLocator`（`IndicatorPosition.locator`，放进 sliver） | 不适用：Flutter slivers / not applicable: Flutter slivers | 不适用 / N/A |
-
-## 外部项目的 open PR 与 issue / Open pull requests and issues of the source projects
-
-| 中文 | English |
-| --- | --- |
-| 规则见 `instructions.md` 的 “Translating or porting another project”（2026-11-12）：移植前后合并来源项目的 open PR，并把 open issue 列成表格、在本项目中修复、逐个打分到 100；未开始翻译时 issue 达到 60 分即可开始。查询时间：2026-11-12。 | The rule is "Translating or porting another project" in `instructions.md` (2026-11-12): bring in the source's open pull requests before or after porting, list its open issues, fix them here and rescore after each until 100; a translation not yet started may start at 60. Checked on 2026-11-12. |
-| SmartRefreshControl：0 个 open PR，0 个 open issue，**100/100**。 | SmartRefreshControl: 0 open pull requests, 0 open issues, **100/100**. |
-| flutter_easy_refresh：0 个 open PR；4 个 open issue，**50/100**（2 个不适用，2 个待核对）。 | flutter_easy_refresh: 0 open pull requests; 4 open issues, **50/100** (2 do not apply, 2 to check). |
-| SVPullToRefresh（43 个 open PR、103 个 open issue）、SmartRefreshLayout（5 个、337 个）、android-Ultra-Pull-To-Refresh（23 个、151 个）：在各自任务开始时建表（按任务顺序排在后面）。 | SVPullToRefresh (43 open pull requests, 103 open issues), SmartRefreshLayout (5, 337) and android-Ultra-Pull-To-Refresh (23, 151): tables when their tasks start (later in the task order). |
-
-| flutter_easy_refresh issue | 描述 / Description | 状态 / Status |
-| --- | --- | --- |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/752> | macOS 上双指滚动在列表中可用，在 EasyRefresh 中不可用。本项目对应：iPad 触控板 / 鼠标与 Mac（Designed for iPad / Catalyst）上的间接指针滚动能否触发刷新与加载。 / Two-finger scrolling works in a list but not in EasyRefresh on macOS. Counterpart here: whether indirect-pointer scrolling (iPad trackpad / mouse, Mac "Designed for iPad" / Catalyst) triggers refresh and loading. | TODO |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/631> | Web 上鼠标滚轮不能触发加载更多，只能拖拽。本项目对应：滚轮 / 触控板滚动到底部时自动加载尾是否触发（自动加载尾按偏移触发、不要求拖动，预计可用，待验证）。 / On the web a mouse wheel does not trigger load more, only a drag does. Counterpart here: whether the auto footer triggers when a wheel or trackpad scrolls to the end (it triggers on the offset without requiring a drag, so it should work; to verify). | TODO |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/145> | 置顶说明：如何提一条有用的 issue（英文）。 / Pinned note: how to write a useful issue (English). | 不适用（不是缺陷） / Does not apply (not a defect) |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/144> | 置顶说明：如何提一条有用的 issue（中文）。 / Pinned note: how to write a useful issue (Chinese). | 不适用（不是缺陷） / Does not apply (not a defect) |
+![Material 刷新结束后：刷新头已隐藏 / Material after the refresh: the header is hidden](assets/material-after-refresh-ios.png)

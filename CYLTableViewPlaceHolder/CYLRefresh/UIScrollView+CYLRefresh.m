@@ -149,4 +149,47 @@ static BOOL CYLRefreshDefaultAutoHide(void)
     self.cyl_autoHideRefreshFooter = autoHide;
 }
 
+#pragma mark - Start header
+
+- (void)cyl_beginRefreshingWithStartHeader:(CYLRefreshHeader *)startHeader
+{
+    CYLRefreshHeader *regular = self.cyl_header;
+    if (!startHeader || startHeader == regular) {
+        [regular beginRefreshing];
+        return;
+    }
+    // [EN] Without callbacks of its own, the start header uses the regular header's.
+    // [CN] 起始刷新头没有自己的回调时，使用常规刷新头的回调。
+    BOOL hasCallbacks = startHeader.refreshingBlock || startHeader.refreshingHandler || startHeader.refreshingTarget;
+    if (!hasCallbacks && regular) {
+        startHeader.refreshingBlock = regular.refreshingBlock;
+        [startHeader setRefreshingTarget:regular.refreshingTarget refreshingAction:regular.refreshingAction];
+        CYLRefreshComponentHandler handler = regular.refreshingHandler;
+        if (handler) {
+            __weak CYLRefreshHeader *weakRegular = regular;
+            // [EN] The regular header's handler gets the regular header. [CN] 常规刷新头的 handler 收到的是常规刷新头。
+            startHeader.refreshingHandler = ^(CYLRefreshComponent *component) { if (weakRegular) handler(weakRegular); };
+        }
+    }
+    // [EN] A phase observer, not endRefreshingCompletionBlock, so a caller's endRefreshingWithCompletionBlock: cannot
+    //      replace it. After the refresh, wait for the retract animation, then put the regular header back.
+    // [CN] 使用阶段观察者而非 endRefreshingCompletionBlock，调用方的 endRefreshingWithCompletionBlock: 不会覆盖它。刷新结束后等待收回动画，
+    //      再换回常规刷新头。
+    __weak typeof(self) weakSelf = self;
+    __block id token = nil;
+    __block BOOL refreshed = NO;
+    token = [startHeader addPhaseObserver:^(CYLRefreshComponent *component, CYLRefreshPhase oldPhase, CYLRefreshPhase phase) {
+        if (phase == CYLRefreshPhaseRefreshing || phase == CYLRefreshPhaseWillRefresh) refreshed = YES;
+        if (!refreshed || phase != CYLRefreshPhaseIdle) return;
+        [component removePhaseObserver:token];
+        NSTimeInterval delay = component.slowAnimationDuration + 0.05;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(weakSelf) self = weakSelf;
+            if (self && self.cyl_header == (CYLRefreshHeader *)component) self.cyl_header = regular;
+        });
+    }];
+    self.cyl_header = startHeader;
+    [startHeader beginRefreshing];
+}
+
 @end

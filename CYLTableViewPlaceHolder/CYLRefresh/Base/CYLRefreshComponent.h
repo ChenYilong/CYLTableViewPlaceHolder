@@ -58,6 +58,28 @@ typedef NS_ENUM(NSInteger, CYLRefreshScrollMode) {
      * [EN] The header slides in at the top of the visible area, in front of the content. [CN] 刷新头从可见区域顶部滑入，位于内容前面。
      */
     CYLRefreshScrollModeFront,
+    /*!
+     * [EN] The header stays pinned behind the content at the visible top and is revealed as the content moves down
+     *      (flutter_easy_refresh's `IndicatorPosition.behind`). [CN] 刷新头固定在可见区域顶部、位于内容后面，内容下移时露出
+     *      （对应 flutter_easy_refresh 的 `IndicatorPosition.behind`）。
+     */
+    CYLRefreshScrollModeBehind,
+};
+
+/*!
+ * [EN] When a pull may arm the control (flutter_easy_refresh's `IndicatorTriggerMode`).
+ * [CN] 拉动何时可以触发控件（对应 flutter_easy_refresh 的 `IndicatorTriggerMode`）。
+ */
+typedef NS_ENUM(NSInteger, CYLRefreshTriggerMode) {
+    /*!
+     * [EN] Any pull past the trigger point, also one that started in the middle of the list (default, MJRefresh's
+     *      behavior). [CN] 任何越过触发点的拉动都可以，包括从列表中间开始的拉动（默认，MJRefresh 的行为）。
+     */
+    CYLRefreshTriggerModeAnywhere = 0,
+    /*!
+     * [EN] Only a drag that started with the list already at the edge. [CN] 只有开始拖动时列表已在边缘的拖动才可以。
+     */
+    CYLRefreshTriggerModeOnEdge,
 };
 
 /*!
@@ -429,6 +451,12 @@ typedef void (^CYLRefreshComponentAction)(void);
  * [CN] 拉到触发点时立即开始刷新，不等待松手（对应 flutter_easy_refresh 的 `triggerWhenReach`）。默认 NO。
  */
 @property (nonatomic) BOOL triggersWhenReached;
+/*!
+ * [EN] When a pull may arm the control; default `CYLRefreshTriggerModeAnywhere` (flutter_easy_refresh's
+ *      `IndicatorTriggerMode`). Headers and back footers.
+ * [CN] 拉动何时可以触发控件；默认 `CYLRefreshTriggerModeAnywhere`（对应 flutter_easy_refresh 的 `IndicatorTriggerMode`）。适用于刷新头与返回式刷新尾。
+ */
+@property (nonatomic) CYLRefreshTriggerMode triggerMode;
 /*!
  * [EN] A light haptic tap when the pull crosses the trigger point (flutter_easy_refresh's `hapticFeedback`). Default NO.
  * [CN] 拉动越过触发点时轻触反馈（对应 flutter_easy_refresh 的 `hapticFeedback`）。默认 NO。
