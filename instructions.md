@@ -208,6 +208,13 @@ integrates it the same way:
   owns a page of its own (`plusChildViewController`), so tapping it selects that
   page like a tab instead of only running an action.
   `-[CYLTabBarController hasPlusChildViewController]` is YES once it is set up.
+- **A raised plus button (added 2026-11-12)**: when an example demonstrates
+  the plus button, always prefer the raised look: the top of the plus button
+  reaches above the top edge of the tab bar (an image taller than the bar,
+  and/or `+multiplierOfTabBarHeight:` below 0.5 or a negative
+  `+constantOfPlusButtonCenterYOffsetForTabBarHeight:`), in every style
+  (classic, Liquid Glass, FlatDesign). A demo that needs a flat plus button
+  (inside the bar) says so in its title or comment.
 - **Initialized from a local configuration file**: the tabs, their titles and
   images, and the plus button are described in a file inside the example's own
   `.bundle` (for example

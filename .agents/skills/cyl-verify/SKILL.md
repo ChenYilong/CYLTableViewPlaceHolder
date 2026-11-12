@@ -78,3 +78,11 @@ Run `python3 scripts/check_doc_comments.py` after changing a public header or a 
 documentation comment, single-line or multi-line, is a three-line-or-longer `/*!` (Objective-C) or `/**` (Swift) block
 with the markers on their own lines, no trailing comment follows code, and a file never mixes formats
 (`instructions.md`, "Code conventions").
+
+## Plus button in examples
+
+- **A raised plus button (added 2026-11-12)**: when an example demonstrates the plus button, always prefer the
+  raised look: the top of the plus button reaches above the top edge of the tab bar (an image taller than the bar,
+  and/or `+multiplierOfTabBarHeight:` below 0.5 or a negative
+  `+constantOfPlusButtonCenterYOffsetForTabBarHeight:`), in every style (classic, Liquid Glass, FlatDesign). A
+  demo that needs a flat plus button (inside the bar) says so in its title or comment.

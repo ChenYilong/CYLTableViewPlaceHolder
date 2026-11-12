@@ -76,6 +76,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   the example's own `.bundle` (`CYLTabBarController(configurationFile:)`; `CYLTabBarControllerPlusButton` with
   `CYLTabBarItemPageIdentifier`), unless a task says otherwise. See "Integrating CYLTabBarController in the
   examples" in `instructions.md`.
+- **A raised plus button (added 2026-11-12)**: when an example demonstrates the plus button, always prefer the
+  raised look: the top of the plus button reaches above the top edge of the tab bar (an image taller than the bar,
+  and/or `+multiplierOfTabBarHeight:` below 0.5 or a negative
+  `+constantOfPlusButtonCenterYOffsetForTabBarHeight:`), in every style (classic, Liquid Glass, FlatDesign). A
+  demo that needs a flat plus button (inside the bar) says so in its title or comment.
 - Every example Podfile (`Examples/*/Podfile`) also contains `pod 'MJRefresh', '<latest version>'`, the
   highest stable version on the CocoaPods trunk, set with `scripts/resolve-mjrefresh-version.sh` before every
   build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
