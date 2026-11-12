@@ -7,6 +7,10 @@ description: Build and test the placeholder library, refresh component, resource
 
 Use the smallest relevant test set and state any unverified behavior.
 
+For a translation or port of another project, verify the merged or translated open pull requests and each fixed open
+issue with a test, and update that project's issue table and score (`instructions.md`, "Translating or porting
+another project").
+
 Before verifying, the task must already have its `TODO` entry in `docs/` (`instructions.md`, "Record every task in
 docs before starting it"); after verifying, write the results into that entry and mark it done.
 

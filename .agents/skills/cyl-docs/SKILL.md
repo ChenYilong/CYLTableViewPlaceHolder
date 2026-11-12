@@ -10,6 +10,11 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 requirements and the detailed context; commit and push it first. Mark it done (`已完成 / Done`, date, commits,
 verification) when the task ends. See `instructions.md`, "Record every task in docs before starting it".
 
+**Another project as a source** (a translation or port of a linked GitHub repository): the task's document also
+lists that project's open pull requests (merged, translated or not taken, with why) and a table of its open issues
+(issue link, description, status `TODO` by default) with a score that rises after every fixed issue until 100;
+translation starts at 60. See `instructions.md`, "Translating or porting another project".
+
 `README.md` and every document in `docs/` are bilingual, following CYLTabBarController's
 `docs/Bilingual-Documentation.md`. The full rules are "Bilingual documentation (Chinese and English)" in
 `instructions.md`; the working summary:

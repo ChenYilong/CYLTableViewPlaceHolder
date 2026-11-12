@@ -12,6 +12,14 @@ the integrated `CYLRefresh` component, and an example application. Read
   done with the commits and the verification; keep it. See `instructions.md`, "Record every task in docs before
   starting it".
 
+## Another project as a source (translations and ports)
+
+- When the docs link to another project's GitHub repository as the source of a translation or port, bring in its open
+  pull requests (merge them before translating, or translate them afterwards and merge them in) and keep a table of
+  its open issues in the task's document (issue link, description, status, `TODO` by default); fix each issue's
+  counterpart here and rescore after every fix until 100. Translation starts once the issues reach 60. Every platform.
+  See "Translating or porting another project" in `instructions.md`.
+
 ## Source of truth
 
 - Public headers under `CYLTableViewPlaceHolder/` define the current API.

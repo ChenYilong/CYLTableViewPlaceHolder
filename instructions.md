@@ -27,6 +27,29 @@ Before starting any task, write it down in `docs/`, so an interrupted task never
 
 Follow the bilingual documentation rules for the entry; the user's prompt is quoted as written.
 
+## Translating or porting another project: its open pull requests and issues
+
+When a document in this repository links to another project's GitHub repository as the source of a translation, a
+port or a similar task (for example SmartRefreshControl or flutter_easy_refresh in `docs/Refresh-Library-Parity.md`,
+or the Kotlin translations planned in `docs/Android-Port.md`), the source is not only its default branch:
+
+1. **Open pull requests.** Read the source's open pull requests and bring their changes in, before or after the
+   translation:
+   - translation not started: merge the open pull requests into the source you translate first;
+   - translation already done: translate each open pull request on its own and merge the result into this project.
+   Record each pull request (link, what it changes, merged / translated / not taken and why) in the task's document.
+2. **Open issues.** In the task's document in `docs/` (create one when none fits), keep a table of the source's open
+   issues: column 1 the issue link, column 2 a short description, column 3 the fix status, `TODO` by default. Find
+   each issue's counterpart in this project's code and try to fix it there; a fixed row says how and links the commit
+   and the test.
+3. **Score.** All issues fixed is 100; recompute the score after every fixed issue, and keep going until 100. An issue
+   that does not apply to this project (another platform's bug, a question) says why and counts as handled.
+4. **Order.** If the translation has not started: merge the open pull requests, then work on the open issues, and
+   start translating once the issues reach 60. After translating, fix the remaining issues on the translated code
+   until 100. If the translation is already done: translate the open pull requests and merge them in, then fix the
+   issues on the translated code until 100.
+5. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
+
 ## English naming rules
 
 - Write repository instructions, skill instructions, and new identifier names in English.
