@@ -413,4 +413,81 @@
     window.hidden = YES;
 }
 
+- (void)testPagingRefreshLoadRetryAndNoMore {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    __block BOOL failNext = NO;
+    __block NSInteger total = 25;
+    NSMutableArray<NSNumber *> *requested = [NSMutableArray array];
+    CYLRefreshPaging *paging = [[CYLRefreshPaging alloc] initWithHeader:header footer:footer loader:^(NSInteger page, CYLRefreshPagingCompletion done) {
+        [requested addObject:@(page)];
+        if (failNext) { failNext = NO; done(nil, NSNotFound, NSNotFound, [NSError errorWithDomain:@"test" code:1 userInfo:nil]); return; }
+        NSMutableArray *items = [NSMutableArray array];
+        for (NSInteger i = (page - 1) * 10; i < MIN(page * 10, total); i++) [items addObject:@(i)];
+        done(items, total, NSNotFound, nil);
+    }];
+    __block NSInteger changes = 0;
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) { changes++; };
+    XCTAssertNil(paging.items);
+    XCTAssertFalse(paging.isEmpty);
+    XCTAssertFalse(paging.isNoMore, @"nothing known yet");
+
+    [paging refresh];
+    XCTAssertEqual(paging.count, 10);
+    XCTAssertEqual(paging.page, 1);
+    XCTAssertEqual(changes, 1);
+
+    failNext = YES;
+    [paging loadMore];
+    XCTAssertEqual(paging.count, 10, @"a failed load commits nothing");
+    XCTAssertEqual(paging.page, 1);
+    [paging loadMore];
+    XCTAssertEqualObjects(requested, (@[@1, @2, @2]), @"the failed page is asked for again");
+    XCTAssertEqual(paging.count, 20);
+    [paging loadMore];
+    XCTAssertEqual(paging.count, 25);
+    XCTAssertTrue(paging.isNoMore, @"count >= total");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+
+    failNext = YES;
+    [paging refresh];
+    XCTAssertEqual(paging.count, 25, @"a failed refresh keeps the items");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData, @"and the footer");
+    total = 40;
+    [paging refresh];
+    XCTAssertEqual(paging.count, 10, @"refresh replaces the items");
+    XCTAssertNotEqual(footer.state, CYLRefreshStateNoMoreData, @"reset after a successful refresh");
+
+    total = 0;
+    [paging refresh];
+    XCTAssertTrue(paging.isEmpty);
+    XCTAssertTrue(paging.isNoMore);
+    window.hidden = YES;
+}
+
+- (void)testPagingNoMoreByPageCountAndAsyncCompletion {
+    CYLRefreshPaging *paging = [[CYLRefreshPaging alloc] initWithHeader:nil footer:nil loader:^(NSInteger page, CYLRefreshPagingCompletion done) {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{ done(@[@(page)], NSNotFound, 2, nil); });
+    }];
+    XCTestExpectation *first = [self expectationWithDescription:@"first page"];
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) {
+        XCTAssertTrue(NSThread.isMainThread, @"reported on the main queue");
+        [first fulfill];
+    };
+    [paging start];
+    [self waitForExpectations:@[first] timeout:5];
+    XCTAssertFalse(paging.isNoMore, @"page 1 of 2");
+    XCTestExpectation *second = [self expectationWithDescription:@"second page"];
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) { [second fulfill]; };
+    [paging loadMore];
+    [self waitForExpectations:@[second] timeout:5];
+    XCTAssertEqual(paging.page, 2);
+    XCTAssertTrue(paging.isNoMore, @"page >= totalPage");
+    XCTAssertEqualObjects(paging.items, (@[@1, @2]));
+}
+
 @end
