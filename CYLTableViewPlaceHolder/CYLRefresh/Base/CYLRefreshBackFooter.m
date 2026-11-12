@@ -56,20 +56,32 @@
 
     CGFloat pullingPercent = (currentOffsetY - happenOffsetY) / (self.cyl_h * self.triggerRate);
 
+    CGFloat normal2pullingOffsetY = happenOffsetY + self.cyl_h * self.triggerRate;
     // 如果已全部加载，仅设置pullingPercent，然后返回
     if (self.state == CYLRefreshStateNoMoreData) {
-        self.pullingPercent = pullingPercent;
-        return;
+        // [EN] loadsAfterNoMoreData: pulling past the trigger point loads again. [CN] loadsAfterNoMoreData：拉过触发点再次加载。
+        if (self.loadsAfterNoMoreData && self.scrollView.isDragging && currentOffsetY > normal2pullingOffsetY) {
+            [self resetNoMoreData];
+        } else {
+            self.pullingPercent = pullingPercent;
+            return;
+        }
     }
 
     if (self.scrollView.isDragging) {
+        // [EN] maxPullDistance: hold the pull at the limit. [CN] maxPullDistance：把上拉停在上限。
+        if (self.maxPullDistance > 0 && currentOffsetY - happenOffsetY > self.maxPullDistance) {
+            currentOffsetY = happenOffsetY + self.maxPullDistance;
+            pullingPercent = self.maxPullDistance / (self.cyl_h * self.triggerRate);
+            self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, currentOffsetY);
+        }
         self.pullingPercent = pullingPercent;
         // 普通 和 即将刷新 的临界点
-        CGFloat normal2pullingOffsetY = happenOffsetY + self.cyl_h * self.triggerRate;
 
-        if (self.state == CYLRefreshStateIdle && currentOffsetY > normal2pullingOffsetY) {
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && currentOffsetY > normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
+            if (self.triggersWhenReached) [self beginRefreshing];
         } else if (self.state == CYLRefreshStatePulling && currentOffsetY <= normal2pullingOffsetY) {
             // 转为普通状态
             self.state = CYLRefreshStateIdle;

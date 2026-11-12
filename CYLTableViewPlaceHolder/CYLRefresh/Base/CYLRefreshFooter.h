@@ -35,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
  * [CN] 加载尾显示已全部加载（`CYLRefreshStateNoMoreData`）时为 YES。
  */
 @property (nonatomic, readonly, getter=isNoMoreData) BOOL noMoreData;
+/*!
+ * [EN] Pulling past the end loads again after "no more data": the footer resets and refreshes
+ *      (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO.
+ * [CN] “无更多数据”后拉过底部仍会再次加载：加载尾重置并开始刷新（对应 flutter_easy_refresh 的 `canLoadAfterNoMore`）。默认 NO。
+ */
+@property (nonatomic) BOOL loadsAfterNoMoreData;
 
 /*!
  * 忽略多少scrollView的contentInset的bottom

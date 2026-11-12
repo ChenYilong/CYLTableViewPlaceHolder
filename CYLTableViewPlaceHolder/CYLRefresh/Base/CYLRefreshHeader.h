@@ -66,6 +66,11 @@ NS_ASSUME_NONNULL_BEGIN
  *      适用于常态展开或浮在内容前面的刷新头。
  */
 @property (nonatomic) BOOL addsRefreshingInset;
+/*!
+ * [EN] After a successful refresh, resets the footer's "no more data" (flutter_easy_refresh's `resetAfterRefresh`).
+ *      Default NO. [CN] 刷新成功后重置加载尾的“无更多数据”（对应 flutter_easy_refresh 的 `resetAfterRefresh`）。默认 NO。
+ */
+@property (nonatomic) BOOL resetsFooterAfterRefresh;
 @end
 
 NS_ASSUME_NONNULL_END

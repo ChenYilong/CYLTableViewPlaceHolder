@@ -160,4 +160,51 @@
     XCTAssertEqual(footer.phase, CYLRefreshPhaseNoMoreData);
 }
 
+- (void)testFlutterEasyRefreshStyleOptions {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    XCTAssertTrue(header.isRefreshEnabled, @"on by default");
+
+    // [EN] External phase observers (listenable / ListenerHeader). [CN] 外部阶段观察者（listenable / ListenerHeader）。
+    NSMutableArray<NSNumber *> *seen = [NSMutableArray array];
+    id token = [header addPhaseObserver:^(CYLRefreshComponent *component, CYLRefreshPhase oldPhase, CYLRefreshPhase phase) {
+        XCTAssertEqual(component, header);
+        [seen addObject:@(phase)];
+    }];
+    header.state = CYLRefreshStateRefreshing;
+    XCTAssertEqualObjects(seen.lastObject, @(CYLRefreshPhaseRefreshing));
+    [header removePhaseObserver:token];
+    header.state = CYLRefreshStateIdle;
+    XCTAssertEqualObjects(seen.lastObject, @(CYLRefreshPhaseRefreshing), @"removed observers stay silent");
+
+    // [EN] resetsFooterAfterRefresh. [CN] 刷新后重置加载尾。
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertTrue(footer.isNoMoreData);
+    header.resetsFooterAfterRefresh = YES;
+    header.state = CYLRefreshStateRefreshing;
+    [header endRefreshingWithSuccess:YES];
+    XCTAssertFalse(footer.isNoMoreData, @"a successful refresh resets no more data");
+    [footer endRefreshingWithNoMoreData];
+    header.state = CYLRefreshStateRefreshing;
+    [header endRefreshingWithSuccess:NO];
+    XCTAssertTrue(footer.isNoMoreData, @"a failed refresh keeps it");
+
+    // [EN] notifiesWhenHidden: hooks still follow the scroll view. [CN] 隐藏时仍跟随滚动。
+    header.hidden = YES;
+    header.notifiesWhenHidden = YES;
+    scrollView.contentOffset = CGPointMake(0, -10);
+    XCTAssertGreaterThan(header.pullingPercent, 0, @"still followed while hidden");
+    header.hidden = NO;
+
+    header.triggersWhenReached = YES;
+    header.hapticFeedback = YES;
+    header.maxPullDistance = 120;
+    header.refreshEnabled = NO;
+    footer.loadsAfterNoMoreData = YES;
+    XCTAssertTrue(header.triggersWhenReached && header.hapticFeedback && footer.loadsAfterNoMoreData);
+    XCTAssertEqual(header.maxPullDistance, 120);
+    XCTAssertFalse(header.isRefreshEnabled);
+}
+
 @end

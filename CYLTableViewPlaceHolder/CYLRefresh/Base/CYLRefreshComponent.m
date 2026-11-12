@@ -31,6 +31,8 @@
 @property (assign, nonatomic) BOOL cyl_finishing;
 /// [EN] The phase last reported to -phaseDidChangeFrom:to:. [CN] 上次通知 -phaseDidChangeFrom:to: 的阶段。
 @property (assign, nonatomic) CYLRefreshPhase cyl_reportedPhase;
+/// [EN] Observers added with -addPhaseObserver:, by token. [CN] -addPhaseObserver: 添加的观察者，按标识保存。
+@property (strong, nonatomic) NSMutableDictionary<NSUUID *, id> *cyl_phaseObservers;
 @end
 
 @implementation CYLRefreshComponent
@@ -144,6 +146,7 @@
         self.fastAnimationDuration = 0.25;
         self.slowAnimationDuration = 0.4;
         _triggerRate = 1;
+        _refreshEnabled = YES;
         _cyl_reportedPhase = CYLRefreshPhaseIdle;
     }
     return self;
@@ -270,7 +273,7 @@
     }
 
     // 看不见
-    if (self.hidden) return;
+    if (self.hidden && !self.notifiesWhenHidden) return;
     if ([keyPath isEqualToString:CYLRefreshKeyPathContentOffset]) {
         [self scrollViewContentOffsetDidChange:change];
         [self didScrollWithOffset:self.dragOffset percent:self.pullingPercent dragging:self.scrollView.isDragging];
@@ -591,7 +594,28 @@
     if (phase == self.cyl_reportedPhase) return;
     CYLRefreshPhase old = self.cyl_reportedPhase;
     self.cyl_reportedPhase = phase;
+    if (self.hapticFeedback && phase == CYLRefreshPhaseReleaseToRefresh) {
+        UIImpactFeedbackGenerator *generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
+        [generator impactOccurred];
+    }
     [self phaseDidChangeFrom:old to:phase];
+    for (void (^observer)(CYLRefreshComponent *, CYLRefreshPhase, CYLRefreshPhase) in self.cyl_phaseObservers.allValues) {
+        observer(self, old, phase);
+    }
+}
+
+- (id)addPhaseObserver:(void (^)(__kindof CYLRefreshComponent *, CYLRefreshPhase, CYLRefreshPhase))observer
+{
+    NSUUID *token = [NSUUID UUID];
+    if (!observer) return token;
+    if (!self.cyl_phaseObservers) self.cyl_phaseObservers = [NSMutableDictionary dictionary];
+    self.cyl_phaseObservers[token] = [observer copy];
+    return token;
+}
+
+- (void)removePhaseObserver:(id)token
+{
+    if ([token isKindOfClass:NSUUID.class]) [self.cyl_phaseObservers removeObjectForKey:token];
 }
 
 - (void)setColorAccent:(UIColor *)colorAccent

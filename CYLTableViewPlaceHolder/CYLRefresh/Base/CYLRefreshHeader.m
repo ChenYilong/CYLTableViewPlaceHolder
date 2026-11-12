@@ -10,6 +10,7 @@
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
 #import "UIScrollView+CYLRefresh.h"
+#import "CYLRefreshFooter.h"
 
 NSString * const CYLRefreshHeaderRefreshing2IdleBoundsKey = @"CYLRefreshHeaderRefreshing2IdleBounds";
 NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefreshingBounds";
@@ -247,10 +248,18 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     CGFloat pullingPercent = (happenOffsetY - offsetY) / triggerDistance;
 
     if (self.scrollView.isDragging) { // 如果正在拖拽
+        // [EN] maxPullDistance: hold the pull at the limit. [CN] maxPullDistance：把下拉停在上限。
+        if (self.maxPullDistance > 0 && happenOffsetY - offsetY > self.maxPullDistance) {
+            offsetY = happenOffsetY - self.maxPullDistance;
+            pullingPercent = self.maxPullDistance / triggerDistance;
+            self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, offsetY);
+        }
         self.pullingPercent = pullingPercent;
-        if (self.state == CYLRefreshStateIdle && offsetY < normal2pullingOffsetY) {
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && offsetY < normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
+            // [EN] triggersWhenReached: refresh now, without waiting for the release. [CN] triggersWhenReached：立即刷新，不等松手。
+            if (self.triggersWhenReached) [self beginRefreshing];
         } else if (self.state == CYLRefreshStatePulling && offsetY >= normal2pullingOffsetY) {
             // 转为普通状态
             self.state = CYLRefreshStateIdle;
@@ -282,6 +291,10 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 }
 
 - (void)headerEndingAction {
+    // [EN] resetsFooterAfterRefresh: a successful refresh lets the footer load again. [CN] 刷新成功后加载尾可再次加载。
+    if (self.resetsFooterAfterRefresh && self.lastRefreshSucceeded && self.scrollView.cyl_footer.isNoMoreData) {
+        [self.scrollView.cyl_footer resetNoMoreData];
+    }
     // 保存刷新时间
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:self.lastUpdatedTimeKey];
     [[NSUserDefaults standardUserDefaults] synchronize];

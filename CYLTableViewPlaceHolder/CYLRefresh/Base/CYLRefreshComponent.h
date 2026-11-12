@@ -387,6 +387,51 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 @property (nonatomic, readonly) BOOL lastRefreshSucceeded;
 
+#pragma mark flutter_easy_refresh-style options
+
+/*!
+ * [EN] NO turns the refresh off while keeping the bounce: pulling never arms the control (flutter_easy_refresh's
+ *      `NotRefreshHeader` / `NotLoadFooter`). Default YES.
+ * [CN] NO 关闭刷新但保留回弹：拉动永远不会触发（对应 flutter_easy_refresh 的 `NotRefreshHeader` / `NotLoadFooter`）。默认 YES。
+ */
+@property (nonatomic, getter=isRefreshEnabled) BOOL refreshEnabled;
+/*!
+ * [EN] Starts refreshing as soon as the pull reaches the trigger point, without waiting for the release
+ *      (flutter_easy_refresh's `triggerWhenReach`). Default NO.
+ * [CN] 拉到触发点时立即开始刷新，不等待松手（对应 flutter_easy_refresh 的 `triggerWhenReach`）。默认 NO。
+ */
+@property (nonatomic) BOOL triggersWhenReached;
+/*!
+ * [EN] A light haptic tap when the pull crosses the trigger point (flutter_easy_refresh's `hapticFeedback`). Default NO.
+ * [CN] 拉动越过触发点时轻触反馈（对应 flutter_easy_refresh 的 `hapticFeedback`）。默认 NO。
+ */
+@property (nonatomic) BOOL hapticFeedback;
+/*!
+ * [EN] The farthest the user can pull the control open, in points; 0 (default) means no limit
+ *      (flutter_easy_refresh's `maxOverOffset`). Headers and back footers.
+ * [CN] 用户最多能把控件拉开的距离（点）；0（默认）表示不限制（对应 flutter_easy_refresh 的 `maxOverOffset`）。适用于刷新头与返回式刷新尾。
+ */
+@property (nonatomic) CGFloat maxPullDistance;
+/*!
+ * [EN] Keeps following the scroll view while the control is hidden, so hooks and observers still run
+ *      (flutter_easy_refresh's `notifyWhenInvisible`). Default NO.
+ * [CN] 控件隐藏时仍跟随滚动视图，钩子和观察者照常执行（对应 flutter_easy_refresh 的 `notifyWhenInvisible`）。默认 NO。
+ */
+@property (nonatomic) BOOL notifiesWhenHidden;
+/*!
+ * [EN] Calls `observer` on every phase change, with the old and the new phase (flutter_easy_refresh's `listenable`).
+ *      A plain `CYLRefreshHeader` draws nothing, so with an observer it is a listener header (`ListenerHeader`).
+ *      Returns a token for `removePhaseObserver:`.
+ * [CN] 每次阶段变化时调用 `observer`，参数为旧阶段与新阶段（对应 flutter_easy_refresh 的 `listenable`）。普通的 `CYLRefreshHeader`
+ *      不绘制任何内容，加上观察者就是监听刷新头（`ListenerHeader`）。返回用于 `removePhaseObserver:` 的标识。
+ */
+- (id)addPhaseObserver:(void (^)(__kindof CYLRefreshComponent *component, CYLRefreshPhase oldPhase, CYLRefreshPhase phase))observer
+    NS_SWIFT_NAME(addPhaseObserver(_:));
+/*!
+ * [EN] Removes an observer added with `addPhaseObserver:`. [CN] 移除 `addPhaseObserver:` 添加的观察者。
+ */
+- (void)removePhaseObserver:(id)token NS_SWIFT_NAME(removePhaseObserver(_:));
+
 #pragma mark Subclass hooks
 
 /*!
