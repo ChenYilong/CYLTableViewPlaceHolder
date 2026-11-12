@@ -223,6 +223,198 @@
 | <https://github.com/samvermette/SVPullToRefresh/issues/305> | Mobile Development | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
 | <https://github.com/samvermette/SVPullToRefresh/issues/307> | SFRefresh, written with swift, fixed the KVO crash bug, support Lottie animation. | 不适用：维护、发布或包管理请求 / N/A: maintenance, release or package-manager request |
 
+### android-Ultra-Pull-To-Refresh open PR（23 个，2026-11-13） / android-Ultra-Pull-To-Refresh open pull requests (23, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| 源码 `46fdc86`（Java，MIT）。翻译尚未开始，按规则先处理 open PR：Java 转写为 Kotlin 时逐个审阅，采用的 PR（20 个）在 Kotlin 版中实现，其余记为不适用或不采用并写明原因。翻译完成后在本表补上对应的测试。 | Source `46fdc86` (Java, MIT). Translation has not started, so the open pull requests come first: each is reviewed for the Java → Kotlin translation; the taken ones (20) are implemented in the Kotlin version, the others are marked N/A or not taken with the reason. The tests are added to this table after the translation. |
+
+| PR | 内容 / Change | 处理 / Decision |
+| --- | --- | --- |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/114> | RecyclerView 示例 / a RecyclerView demo | 采用（示例）：合并示例里有 RecyclerView 页 / Taken (demo): the merged example has a RecyclerView page |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/124> | 横向滑动交给子视图（ViewPager）/ horizontal moves go to the child (ViewPager) | 采用（修复逻辑） / Taken (fix logic)；由 #209/#270 的横向判断统一实现 / implemented with the horizontal checks of #209/#270 |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/144> | setHeaderView(null) 不再空指针 / setHeaderView(null) no longer crashes | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/157> | 上拉加载更多（PtrHandler2、底部视图）与 ViewPager 冲突 / pull up to load more (PtrHandler2, a footer) and the ViewPager conflict | 采用（功能） / Taken (feature) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/162> | 可覆写 layoutHeader / layoutContent / overridable layoutHeader / layoutContent | 采用（功能） / Taken (feature) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/175> | 核心库注释 / comments in the core library | 采用：Kotlin 版每个公开 API 都有 KDoc / Taken: every public API of the Kotlin version has KDoc |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/176> | 频繁 autoRefresh 时 enabledNextPtrAtOnce 失效 / enabledNextPtrAtOnce fails with frequent autoRefresh | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/177> | StoreHouse 头部重置后重绘 / the StoreHouse header redraws after a reset | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/178> | 嵌套 ViewPager：从按下点算距离、拖动阈值 / nested ViewPager: distances from the press point, a drag slop | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/184> | README 加作者文章链接 / a README link to the author's article | 不适用：原项目 README / N/A: the source's README |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/209> | 更好的横向判断（paging slop）与渐进阻尼 / better horizontal checks (paging slop) and progressive resistance | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/212> | 变量 offsetX 改名 offsetY / rename offsetX to offsetY | 采用（命名） / Taken (naming) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/236> | 固定头部 setPinHeader / setPinHeader keeps the header in place | 采用（功能） / Taken (feature) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/238> | 去掉横向判断的 slop / drop the slop from the horizontal check | 不采用：没有 slop 时轻微斜划也会挡住下拉；改用 #209/#270 / Not taken: without a slop a slightly diagonal move blocks the pull; #209/#270 instead |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/240> | 回弹结束时补到目标位置（#239）/ finish at the target position after the bounce (#239) | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/268> | onDetachedFromWindow 时头部收回 / the header retracts on onDetachedFromWindow | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/270> | 横向移动以按下点判断（#261）/ horizontal moves judged from the press point (#261) | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/273> | MaterialHeader 背景色 / the MaterialHeader background color | 采用（功能） / Taken (feature) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/280> | 升级 Gradle、打开调试日志、去掉多余计算 / Gradle upgrade, debug log, a redundant calculation | 部分：去掉多余计算；构建配置不适用 / Partly: the redundant calculation; the build changes do not apply |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/288> | 下拉死区 deadZone；叠放视图闪烁 / a pull dead zone; flicker of stacked views | 部分：采用 deadZone；不采用闪烁处理（快速拖动会被丢弃）/ Partly: deadZone taken; the flicker workaround not taken (it drops fast drags) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/319> | refreshComplete 的 long 转 int 溢出 / long-to-int overflow in refreshComplete | 采用（修复逻辑） / Taken (fix logic) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/336> | README 的 compile 改 implementation / README compile → implementation | 不适用：原项目 README / N/A: the source's README |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/pull/351> | 整理代码；onDetachedFromWindow 移除延迟任务 / cleanup; remove delayed tasks on onDetachedFromWindow | 采用（修复逻辑） / Taken (fix logic) |
+
+### android-Ultra-Pull-To-Refresh open issue（151 个，2026-11-13） / android-Ultra-Pull-To-Refresh open issues (151, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| 评分：**67/100**（101/151 已处理：56 个不适用（用法提问 26、维护构建 15、应用或系统问题 10、超出范围 5）；45 个的修复在已采用的 PR 里，按 `instructions.md` 的 “Cross-language ports” 计入开工分数，翻译时实现并测试）。已过 60，可以开始翻译；剩下 50 个在 Kotlin 版中修复，直到 100。 | Score: **67/100** (101 of 151 handled: 56 do not apply (26 usage questions, 15 maintenance or build, 10 app or system bugs, 5 out of scope); 45 have their fix in a taken pull request and count toward the start by `instructions.md`, "Cross-language ports", implemented and tested in the translation). Past 60, so translation can start; the other 50 are fixed in the Kotlin version until 100. |
+
+| issue | 标题 / Title | 状态 / Status |
+| --- | --- | --- |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/27> | it can't be compatible with RecyclerView | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/29> | 希望增加固定头部的配置 | 已处理（计入开工分数）：修复在已采用的 PR #236 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #236, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/41> | Multiple touch | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/42> | PtrDefaultHandler issue | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/48> | ScrollChecker.finish will be triggered twice. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/77> | drop-down refresh bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/83> | onInterceptTouchEvent() not work when I pull down | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/91> | RentalsSunHeaderView与disableWhenHorizontalMove有冲突 | 已处理（计入开工分数）：修复在已采用的 PR #209/#270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #209/#270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/105> | RecyclerView demo | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/106> | ViewPager有触摸事件冲突 | 已处理（计入开工分数）：修复在已采用的 PR #178/#209/#270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178/#209/#270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/108> | Drag or fling horizontally inside one item will trigger the item's click event | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/112> | java.lang.NullPointerException | 已处理（计入开工分数）：修复在已采用的 PR #144 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #144, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/115> | Use the Google Support Design 22.2.0 CoordinatorLayout and TabLayout event conflict. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/118> | 能否把底部加载更多整合进来？ | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/119> | disable pull to refresh when item clicking or touching? | 已处理（计入开工分数）：修复在已采用的 PR #178 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/122> | 使用 autoRefresh方法头部没效果 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/123> | autoRefresh can not work with setEnabledNextPtrAtOnce(true) | 已处理（计入开工分数）：修复在已采用的 PR #176 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #176, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/125> | Give time strings an argument so that it can work with french translation | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/126> | we intensity want a load more and it must be fit all view,thanks very much | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/128> | Soft keyboard adjust issue | 不适用：用法提问（windowSoftInputMode 与应用布局） / N/A: a usage question (windowSoftInputMode and the app's layout) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/129> | 在Material Style 的下拉刷新里面加上频繁的下拉刷新，连续下拉会出现头部空白情况 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/132> | 在ViewPager中嵌套Ptr，水平滑动的时候很容易触发下拉 | 已处理（计入开工分数）：修复在已采用的 PR #209/#270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #209/#270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/133> | 解决android-Ultra-Pull-To-Refresh下拉刷新组件中嵌套ViewPager的一个bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/135> | 不知道有类似SwipeRefreshLayout setProgressViewOffset 这个接口吗 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/136> | Pull to refresh still activated when scrolling horizontally and disableWhenHorizontalMove is true | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/137> | Allow "last updated" to accept a customized date instead of using duration period | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/139> | 下拉刷新完成后，可否让刷新完成的状态停留一段时间. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/141> | PtrFramLayout配合StoreHouseHeader的时候调用autorefresh字符串显示异常 | 已处理（计入开工分数）：修复在已采用的 PR #176/#177 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #176/#177, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/150> | StoreHouseHeader doesn't work. | 不适用：用法提问（StoreHouseHeader 需先 initWithString） / N/A: a usage question (StoreHouseHeader needs initWithString first) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/151> | dispatchTouchEvent()函数内部操作困惑 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/154> | setPinHeader to make header stick to the top | 已处理（计入开工分数）：修复在已采用的 PR #236 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #236, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/156> | Disable ptrClassicFrameLayout after first refresh complete | 不适用：用法提问（checkCanDoRefresh 返回 false 或 isEnabled = false） / N/A: a usage question (return false from checkCanDoRefresh or set isEnabled = false) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/164> | 支持嵌套ViewPager+RecyclerView吗? | 已处理（计入开工分数）：修复在已采用的 PR #114/#209/#270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114/#209/#270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/165> | Header start poin | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/167> | 点击listview里面的item经常会出现下拉拖动整个view从而和item的点击事件冲突，有什么好的解决方法吗 | 已处理（计入开工分数）：修复在已采用的 PR #178 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/171> | 把上拉加载更多也加上吧 | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/183> | 对demo的一些看法 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/186> | when PtrFrameLayout with MaterialHeader, method setEnabledNextPtrAtOnce(true) cannot work | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/189> | 很抱歉直接写中文。。。关于autoRefresh的 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/190> | 无法找到 "in.srain.cube:cube-sdk:1.0.44.39-SNAPSHOT@aar" | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/191> | 看到一个比较下拉刷新的开源项目，对作者项目默认下拉head有一个地方的性能进行测试，提出了意见，感觉蛮对的 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/192> | 【BUG】在material refresh中，下拉刷新状态，第一个圈转完后会有一个相对快速的圈，然后才会继续转 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/195> | QQ群已满，加不进去，另提点个人建议 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/196> | Where I can find a documentation and more examples? | 不适用：用法提问（loadingMinTime 可配置） / N/A: a usage question (loadingMinTime is configurable) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/197> | 使用此控件，做出回弹效果 | 不适用：用法提问（keepHeaderWhenRefresh 与上拉） / N/A: a usage question (keepHeaderWhenRefresh and pulling up) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/199> | 刷新，头在顶部不动 | 已处理（计入开工分数）：修复在已采用的 PR #236 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #236, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/200> | 切换Fragment，Header不回弹的问题 | 已处理（计入开工分数）：修复在已采用的 PR #268 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #268, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/201> | cube-sdk-master 中的LoadMoreContainerBase 中setLoadMoreView(View view) 方法有问题 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/202> | import in.srain.cube.mints.base.TitleBaseFragment; | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/204> | How I can user this with a CoordinatorLayout ? | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/205> | Error inflating class in.srain.cube.image.CubeImageView | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/206> | 下拉刷新时当遇到listview的第一个item高度特别高时bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/215> | ListView.addHeaderView(),滑动后header不见了 | 不适用：ListView 的 header 由应用管理 / N/A: the ListView header is the app's |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/216> | 关于adapter ViewType的处理 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/217> | （系统问题，请忽略。）列表快速上滑后会自动滑到最下面 | 不适用：Android 系统问题，原作者已注明忽略 / N/A: an Android system bug the reporter asked to ignore |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/220> | viewpager 时候有滑动事件感觉不好 | 已处理（计入开工分数）：修复在已采用的 PR #209 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #209, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/223> | The onUIRefreshPrepare will called twice when I use setEnabledNextPtrAtOnce | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/224> | RecyclerView外面嵌套一层Framelayout，然后在给PtrFrameLayout包住，就不行了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/227> | 请教一个问题 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/228> | Array data for specific word? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/229> | Content为LinearLayout，而LinearLayout包裹着ViewPager和ListView时遇到了问题 | 不适用：用法提问（自定义 checkCanDoRefresh） / N/A: a usage question (a custom checkCanDoRefresh) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/230> | No recycle TypedArray in PtrClassicDefaultHeader after initview | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/231> | 没有适配recyclerview么? | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/232> | listview自动刷新，用viewpager加3个fragment 作为容器，但是在刷新事切换头部，永远有一个fragment没有停止刷新 | 不适用：应用的 Fragment 生命周期 / N/A: the app's fragment lifecycle |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/233> | contentview 中有其他拖动控件求解决 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/234> | 直接new对象没有作用，只能通过xml的方式添加 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/235> | 编译出错 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/239> | 下拉松手后回弹有时无法回到初始位置，导致下拉动作没有完整完成，影响下一次下拉 | 已处理（计入开工分数）：修复在已采用的 PR #240 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #240, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/242> | 关闭头部回弹时间，不会立即回弹 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/245> | 把mDurationToClose和mDurationToCloseHeader设为0，为什么不能立即回弹？设为10也不行！！！ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/246> | 内存泄漏 | 已处理（计入开工分数）：修复在已采用的 PR #319 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #319, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/247> | autoRefresh有时不会触发自动刷新，header显示一半又收回去了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/248> | ViewPager嵌套在Fragment中TabPageIndicator不显示 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/249> | ListView 不会回到顶部 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/250> | RentalsStyle下拉跳动问题 | 不适用：Rentals 头部只在原示例里，不移植 / N/A: the Rentals header is only in the source demo and is not ported |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/251> | 如何改变下拉刷新时的背景色？ | 不适用：用法提问（给 PtrFrameLayout 设背景色） / N/A: a usage question (set the PtrFrameLayout's background) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/252> | 对PtrFrameLayout为了解决与可横向滑动组件冲突的判断有些不明白 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/254> | PtrClassicDefaultHeader | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/255> | How can i cancel refreshing event? | 不适用：用法提问（refreshComplete() 收起头部） / N/A: a usage question (refreshComplete() hides the header) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/256> | Horizontal swipe in tablets? | 不适用：横向刷新不在本库范围 / N/A: horizontal refresh is outside this library |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/257> | 当列表第一条在屏幕顶部时，条目点击事件可能会触发下拉刷新，怎么解决呢？ | 已处理（计入开工分数）：修复在已采用的 PR #178 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/258> | How do i want only the animation? | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/260> | 头部动画会一直闪 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/261> | 和ViewPager一起使用，ViewPager还是不能很好的滑动 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/262> | 没有上拉加载吗? | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/264> | 在刷新过程中，禁止内容点击，如何做合理 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/265> | 上滑加载更多有这个功能吗 | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/266> | recyclerview item点击手势稍微偏移一点就触发了刷新 | 已处理（计入开工分数）：修复在已采用的 PR #178 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/267> | 这么多pr为什么都合并失败了？ | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/269> | 你好  目前只有下拉刷新，没有上拉加载吗？ | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/272> | 在onCreate中动态addView失败 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/274> | 上拉加载更多时快速下滑下拉刷新会出现list越界异常 | 不适用：应用适配器的越界 / N/A: an index error in the app's adapter |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/275> | 如何让下拉的距离固定？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/276> | Content为ScrollView下拉时有时不立即回弹 | 已处理（计入开工分数）：修复在已采用的 PR #240 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #240, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/278> | have any body meet this?? Error: more than one library with package name 'in.srain.cube.views.ptr' | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/279> | viewpager 广告图不好滑,想重写dispatchTouchEvent ,结果触摸事件被拦截了,disableWhenHorizontalMove()这个方法没用 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/282> | 需要支持右滑的同志，请看这里，有解决方案 | 已处理（计入开工分数）：修复在已采用的 PR #209/#270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #209/#270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/283> | CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout+ViewPager问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/284> | 当在horizontalscrollview中包括ptrframelayout的时候基本无法滑动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/285> | Error inflating #51 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/286> | 谁知道有没支持垂直方向ViewPager的刷新控件啊 | 不适用：竖向 ViewPager 不在本库范围 / N/A: a vertical ViewPager is outside this library |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/287> | 套在 WebView外面，WebView  顶部有个 轮播控件， 会导致轮播控件左右滑动很不流畅 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/289> | how to get scrollY(content is recyclerView) | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/290> | 崩溃信息，全都跑到PtrFrameLayout里了，看不到原因啊 | 不适用：RecyclerView 数据不一致是应用的问题 / N/A: the RecyclerView inconsistency is the app's |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/291> | hi 刷新时间是默认显示的吗 为啥我的没显示 哪个方法控制的呢 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/292> | addview 不显示。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/294> | 为什么不提供加载更多了 | 已处理（计入开工分数）：修复在已采用的 PR #157 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #157, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/295> | 向下滑的事件处理不是很好，太敏感 | 已处理（计入开工分数）：修复在已采用的 PR #178/#209 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #178/#209, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/296> | 关于recyclerview。 | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/297> | 廖老师，什么时候能支持recycleView呀！！！期待 | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/299> | 解决（图片轮播和下拉刷新）出现的事件冲突问题 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/300> | 设置autoRefresh后出现两个还不正确的header | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/301> | 上拉加载更多完成之后，导致recyclerview最后的一项会被切掉 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/302> | 请问，我想在刷新完成后，下拉状态保持1-2s再回弹上去该怎么处理，谢谢 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/303> | 为什么吧不增加一个RecyclerView刷新呢 | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/304> | 期待考虑封装一个RN的版本？ | 不适用：React Native 版本不在本任务范围 / N/A: a React Native version is outside this task |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/305> | Error: app:transformClassesWithJarMergingForDebug | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/306> | 大神你好 请问StoreHouse风格的文字可以改变颜色吗？ | 不适用：用法提问（StoreHouseHeader.setTextColor） / N/A: a usage question (StoreHouseHeader.setTextColor) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/307> | 下拉与横向的RecycleView冲突 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/308> | 请教如何指定下拉距离啊？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/309> | IndexOutOfBoundsException Inconsistency detected | 不适用：RecyclerView 数据不一致是应用的问题 / N/A: the RecyclerView inconsistency is the app's |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/310> | PtrClassicDefaultHeader memory leak | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/311> | 添加了srcollView为其子组件，为什么上拉srcollview之后，srcollview被遮住不见了，求解 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/312> | 跟viewpager的轮播图使用，手势冲突太严重了，无法解决。 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/313> | How to change the loading spinner image? | 不适用：用法提问（自定义 PtrUIHandler 头部） / N/A: a usage question (a custom PtrUIHandler header) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/314> | java.lang.IllegalStateException: FragmentManager is already executing transactions | 不适用：应用的 FragmentManager 用法 / N/A: the app's FragmentManager use |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/315> | 在里面嵌套CoordinatorLayout+AppBarLayout+TabLayout+ViewPager的问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/317> | 嵌套WebView的问题，WebView网页中使用了滑动控件 | 不适用：用法提问（网页内的滑动控件无法通知原生，需自定义 checkCanDoRefresh） / N/A: a usage question (a slider inside a web page cannot tell native code; use a custom checkCanDoRefresh) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/318> | 上拉加载更多之后怎么滑倒底部啊，一直不行啊，用recyclerview的smothto | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/320> | 刷新content是listview时，怎么监听listview滚动Y坐标呢 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/321> | 请问这个库不再维护了嘛 | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/322> | Pull to left or right and show icon from left or right | 不适用：横向刷新不在本库范围 / N/A: horizontal refresh is outside this library |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/323> | 手指拖动刷新的bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/324> | PrtFrameLayout没有自带Scrollview的功能吗 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/325> | 解决框架和横向滑动控件的滑动冲突的办法 | 已处理（计入开工分数）：修复在已采用的 PR #270 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #270, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/326> | 能不能实现模仿朋友圈下拉刷新 | 不适用：用法提问（自定义头部） / N/A: a usage question (a custom header) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/327> | coordinatorlayout 嵌套 android-Ultra-Pull-To-Refresh 下拉刷新不灵敏 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/328> | Minimum drag pixels | 已处理（计入开工分数）：修复在已采用的 PR #288 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #288, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/331> | ViewHolder中无法跳转界面 | 不适用：用法提问 / N/A: a usage question |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/332> | 运行您的代码，去掉一个参数报错.IllegalArgumentException: ViewHolderClass can not be initiated | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/333> | viewpager + fragment 的 自动刷新 各种问题  ，这个库没人维护了吗 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/334> | viewpager+fragment ，只用下拉刷新功能没问题，把上拉加载功能加上 就不能展示全部数据了 | 不适用：另一个库的加载更多 / N/A: another library's load more |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/335> | 能不能设置禁止下拉刷新 | 不适用：用法提问（isEnabled = false） / N/A: a usage question (isEnabled = false) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/337> | 上拉加载完成列表位置回退如何禁止 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/338> | Not working with recyclerview | 已处理（计入开工分数）：修复在已采用的 PR #114 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #114, implemented and tested in the translation |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/339> | 类型转换异常，存在内存泄漏问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/340> | NestedScrollingChild ,NestedScrollingParent | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/342> | 嵌套WebView的问题，WebView网页中使用了滑动控件,滑动webView 然后下拉webView 不能滑动到顶部，直接下拉刷新了，请问怎么解决？ | 不适用：用法提问（同 #317） / N/A: a usage question (as #317) |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/344> | PtrClassicFrameLayout 嵌套RelativeLayout头部被裁减了 | 不适用：应用布局裁剪 / N/A: the app's layout clipping |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/345> | 闪退啊 | 不适用：系统字体日志，非本库 / N/A: a system font log, not this library |
+| <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/352> | You're on the SigRank board — claim your profile or remove it | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
+
 ### TODO: HarmonyOS NEXT support for the Android and cross-platform (Flutter, then React Native) versions
 
 - **Status:** not started (recorded 2026-11-12, while branch `feat/smartrefresh-parity` was in progress). It follows
