@@ -375,4 +375,42 @@
     window.hidden = YES;
 }
 
+- (void)testNoMoreDataImageAndIconSize {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(12, 12)];
+    UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *c) { [UIColor.grayColor setFill]; UIRectFill(CGRectMake(0, 0, 12, 12)); }];
+    for (Class cls in @[CYLRefreshBackNormalFooter.class, CYLRefreshAutoNormalFooter.class]) {
+        CYLRefreshFooter *footer = [cls attach:scrollView];
+        [footer setValue:image forKey:@"noMoreDataImage"];
+        UIImageView *(^find)(void) = ^UIImageView *{
+            for (UIView *v in footer.subviews) if ([v isKindOfClass:UIImageView.class] && ((UIImageView *)v).image == image) return (UIImageView *)v;
+            return nil;
+        };
+        XCTAssertTrue(find() == nil || find().hidden, @"%@: hidden before no more data", cls);
+        [footer endRefreshingWithNoMoreData];
+        [footer layoutIfNeeded];
+        XCTAssertNotNil(find(), @"%@", cls);
+        XCTAssertFalse(find().hidden, @"%@: shown with no more data", cls);
+        XCTAssertLessThan(find().center.x, footer.cyl_w * 0.5, @"%@: before the text", cls);
+        [footer resetNoMoreData];
+        XCTAssertTrue(find().hidden, @"%@: hidden again", cls);
+        scrollView.cyl_footer = nil;
+    }
+    CYLRefreshBackNormalFooter *back = [CYLRefreshBackNormalFooter attach:scrollView];
+    back.iconSize = CGSizeMake(30, 20);
+    [back layoutIfNeeded];
+    // [EN] The idle back-footer arrow is turned by almost pi, so its frame-set size carries float error.
+    // [CN] 空闲时返回式尾的箭头旋转了接近 π，按 frame 设置的尺寸有浮点误差。
+    XCTAssertEqualWithAccuracy(back.arrowView.bounds.size.width, 30, 0.01, @"%@", NSStringFromCGSize(back.arrowView.bounds.size));
+    XCTAssertEqualWithAccuracy(back.arrowView.bounds.size.height, 20, 0.01);
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    header.iconSize = CGSizeMake(24, 24);
+    [header layoutIfNeeded];
+    XCTAssertTrue(CGSizeEqualToSize(header.arrowView.bounds.size, CGSizeMake(24, 24)));
+    window.hidden = YES;
+}
+
 @end

@@ -12,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CYLRefreshAutoNormalFooter : CYLRefreshAutoStateFooter
 @property (weak, nonatomic, readonly) UIActivityIndicatorView *loadingView;
+/*!
+ * [EN] Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`).
+ * [CN] 没有更多数据时显示在文字旁边（对应 flutter_easy_refresh 的 `ClassicFooter.noMoreIcon`）。
+ */
+@property (strong, nonatomic, nullable) UIImage *noMoreDataImage;
 
 /*!
  * 菊花的样式

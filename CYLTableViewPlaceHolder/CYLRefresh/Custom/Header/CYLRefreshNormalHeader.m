@@ -92,7 +92,8 @@
 
     // 箭头
     if (self.arrowView.constraints.count == 0) {
-        self.arrowView.cyl_size = self.arrowView.image.size;
+        BOOL customSize = self.iconSize.width > 0 && self.iconSize.height > 0;
+        self.arrowView.cyl_size = customSize ? self.iconSize : self.arrowView.image.size;
         self.arrowView.center = arrowCenter;
     }
 
@@ -148,4 +149,10 @@
         self.arrowView
     ]];
 }
+- (void)setIconSize:(CGSize)iconSize
+{
+    _iconSize = iconSize;
+    [self setNeedsLayout];
+}
+
 @end
