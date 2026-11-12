@@ -624,6 +624,32 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   `xcrun simctl list devices available`.
 - Details of every job: `docs/CI-CD.md`.
 
+## Screenshots of local builds and CI/CD
+
+These rules cover every screenshot: local simulator or device runs and CI/CD artifacts.
+
+- **When to take them: at key moments.** A key moment is when a `TODO` or a "Linux" note in the docs can be removed,
+  when a pull request is ready to merge, or when you judge that the result meets the expectation with no bug and no
+  open issue.
+- **Show the key detail, not the whole screen.** Crop to the part that proves the point (the refresh header, the
+  footer, the badge); take the full screen only when the whole layout is the point.
+- **Stitch several details into one image**, in this order of preference:
+  1. stacked top to bottom (one column), the easiest to read on a phone;
+  2. two columns over several rows;
+  3. a single horizontal row, the last resort, with at most three images per row.
+- **Store every screenshot in `docs/`.** Put the image in `docs/assets/` (or the `assets/` folder next to the document)
+  and embed it in the document it belongs to; create a document when none fits. Commit the images to the repository;
+  never leave them only in a temporary folder or a CI artifact.
+- **Update the README when the result meets the expectation.** Put the latest images in the matching README section
+  (create the section when there is none), and label each image or group with:
+  - the platform: iOS, Android, Flutter, React Native, HarmonyOS or mini program;
+  - the environment: the operating system version, the simulator or emulator (device and version), and the platform
+    SDK version (iOS SDK / Xcode, Android SDK, Flutter, React Native, HarmonyOS SDK, mini program base library);
+  - this repository's version, or the commit with its link;
+  - the time the screenshot was taken.
+- **Use clear original images**: the simulator's or device's full-resolution capture, cropped but not scaled down or
+  recompressed until it blurs.
+
 ## CI example screenshots
 
 Every CI run that builds code must provide a screenshot of each example app

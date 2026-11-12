@@ -144,6 +144,12 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Xcode 27's simulator SDK requires a deployment target of at least 15.0 during
   builds. Override the build target for that toolchain instead of changing the
   library's iOS 12.0 minimum.
+- Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
+  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details top to
+  bottom first, then two columns, a single row last (at most three per row); store every image in `docs/` (embedded
+  in the fitting document, committed); when the result is right, update the README section with the platform, the
+  OS / simulator / SDK versions, the commit and the time; use clear original images. See "Screenshots of local
+  builds and CI/CD" in `instructions.md`.
 - Every CI run that builds code must provide a screenshot of each example
   running (artifacts `example-screenshot-*` from the `Demo` jobs, shown inline
   by the `Example screenshots` job and its pull request comment). Link them

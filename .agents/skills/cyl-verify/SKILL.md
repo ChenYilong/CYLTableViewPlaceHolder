@@ -83,6 +83,13 @@ example running: `scripts/ci-build-example.sh <folder>` captures it (artifact
 `example-screenshot-<folder>` in CI); report the artifacts with the CI result,
 or fix the CI, or give the concrete reason none could be produced
 (`instructions.md`, "CI example screenshots").
+
+Screenshots, local and CI/CD (`instructions.md`, "Screenshots of local builds and CI/CD"): take them at key moments
+(a `TODO` or "Linux" note can go, a pull request can be merged, or the result meets the expectation with no bug);
+crop to the key detail; stitch top to bottom first, then two columns, a single row last (at most three per row);
+store them in `docs/assets/` embedded in the fitting document and commit them; when the result is right, update the
+README with the platform (iOS, Android, Flutter, React Native, HarmonyOS, mini program), the OS, simulator and SDK
+versions, the commit link and the time; use clear original images.
 Before committing a verified change, check the message contains the author line
 `By @ChenYilong <luohanchenyilong@163.com>` on its own line before the trailers (`instructions.md`,
 "Author line in every commit message").

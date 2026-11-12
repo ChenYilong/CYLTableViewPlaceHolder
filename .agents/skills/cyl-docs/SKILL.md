@@ -33,7 +33,11 @@ verification) when the task ends. See `instructions.md`, "Record every task in d
   folders; lowercase hyphenated names that name the feature. Move assets with the document.
 - **New feature or user-visible change:** a bilingual `docs/<feature>.md`, a README line linking to it,
   bug-free debugging screenshots in `docs/assets/` embedded in the document, final screenshots in the
-  README. If the change could not be run, say so; never present a diagram as a screenshot.
+  README. If the change could not be run, say so; never present a diagram as a screenshot. Every screenshot, local
+  or CI/CD, lives in `docs/` (committed) and, once the result is right, in the README with the platform, the OS /
+  simulator / SDK versions, the commit link and the time; key details only, stitched top to bottom first, then two
+  columns, a single row last (at most three per row), from clear original images (`instructions.md`,
+  "Screenshots of local builds and CI/CD").
 - **Public API comments:** every public declaration has a documentation comment directly above it; several lines
   are one block, `/*! … */` in Objective-C headers and `/** … */` in Swift, never stacked `///`; a single-line comment
   is the same three-line block (`/*!`, ` * text`, ` */`), never `/*! text */` on one line or a trailing `///<` /
