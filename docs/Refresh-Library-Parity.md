@@ -201,6 +201,12 @@
 
 ![5 个手绘刷新尾：上拉与加载中 / The 5 drawn footers: pulled and loading](assets/easyrefresh-drawn-footers-ios.png)
 
+| 中文 | English |
+| --- | --- |
+| 示例 App 实拍（2026-11-12 23:40–23:55，NZDT；同一模拟器与环境；分支 `feat/smartrefresh-parity`，基于 `3c4ec11`）：刷新 › SmartRefreshControl 样式 › 各 footer 页面，手指按住上拉约 600 点时的截图，从上到下依次为 BezierRadar、Material、Delivery、Phoenix、Taurus，五个页面的导航标题都已核对。通过无障碍标签点击（`axe tap --label`）进入页面。加载中的样子以上面的测试渲染为准：机器负载过高，每张模拟器截图要数秒，松手后的 2.5 秒加载在截图前就已结束（只有 Material 拍到了加载中，与渲染一致）。 | Example app captures (2026-11-12 23:40–23:55, NZDT; same simulator and environment; branch `feat/smartrefresh-parity`, on `3c4ec11`): Refresh › SmartRefreshControl styles › each footer page, with the finger down after an upward pull of about 600 points; top to bottom BezierRadar, Material, Delivery, Phoenix, Taurus, each page's navigation title checked. Pages were opened by tapping accessibility labels (`axe tap --label`). For the loading look, the test renders above are the evidence: the machine was overloaded, each simulator screenshot took seconds, and the 2.5-second load after the release ended before the screenshot (only Material was caught loading, matching the render). |
+
+![示例 App 中 5 个手绘刷新尾的上拉 / The 5 drawn footers pulled in the example app](assets/easyrefresh-drawn-footers-app-ios.png)
+
 ## 外部项目的 open PR 与 issue / Open pull requests and issues of the source projects
 
 | 中文 | English |

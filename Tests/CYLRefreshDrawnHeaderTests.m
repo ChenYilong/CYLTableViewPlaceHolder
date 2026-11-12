@@ -352,4 +352,32 @@
     }
 }
 
+- (void)testDrawnFooterOffsetWhileLoadingWithInsets {
+    for (NSNumber *contentHeight in @[@300, @1200]) {
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 402, 874)];
+        window.hidden = NO;
+        CYLDraggingScrollView *scrollView = [[CYLDraggingScrollView alloc] initWithFrame:window.bounds];
+        scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        scrollView.contentInset = UIEdgeInsetsMake(116, 0, 83, 0);
+        scrollView.contentSize = CGSizeMake(402, contentHeight.doubleValue);
+        [window addSubview:scrollView];
+        CYLRefreshPhoenixFooter *footer = [CYLRefreshPhoenixFooter attach:scrollView];
+        scrollView.contentOffset = CGPointMake(0, -116);
+        // A real release: drag past the trigger, then let go.
+        CGFloat maxOffset = MAX(-116, contentHeight.doubleValue + 83 - 874);
+        scrollView.cyl_fakeDragging = YES;
+        scrollView.contentOffset = CGPointMake(0, maxOffset + footer.cyl_h * 1.3);
+        scrollView.cyl_fakeDragging = NO;
+        scrollView.contentOffset = CGPointMake(0, maxOffset + footer.cyl_h * 1.25);
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.8]];
+        NSLog(@"CYLDEBUG content=%@ state=%ld offset=%.1f insetB=%.1f drag=%.1f styleH=%.1f footerH=%.1f",
+              contentHeight, (long)footer.state, scrollView.contentOffset.y, scrollView.contentInset.bottom,
+              footer.style.dragOffset, footer.style.cyl_h, footer.cyl_h);
+        XCTAssertEqual(footer.state, CYLRefreshStateRefreshing, @"content %@", contentHeight);
+        XCTAssertGreaterThan(footer.style.dragOffset, footer.cyl_h * 0.5, @"content %@: the style still sees the open footer", contentHeight);
+        [footer endRefreshing];
+        window.hidden = YES;
+    }
+}
+
 @end
