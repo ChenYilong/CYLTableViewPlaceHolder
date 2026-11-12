@@ -28,6 +28,7 @@
 		AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */; };
 		AA90B2391470FF69B724B146 /* CYLSmartRefreshDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382C12DADB4445478112D5F /* CYLSmartRefreshDemoViewController.swift */; };
 		AD0329B913AA04ECFA3B5E10 /* CYLScenarioLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */; };
+		B26CABD477E78B83A3C5ADBF /* CYLEasyRefreshDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079331D57882E2E2E0DAD5EB /* CYLEasyRefreshDemoViewController.swift */; };
 		CACFD6DEBF91775C4A3CA561 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */; };
 		D960D5955233E789FE356921 /* CYLRefreshWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A50CB3F0F14BF0E059BE69E /* CYLRefreshWebViewController.swift */; };
 		E1857F161D5AA5D3C7A0A13D /* CYLRefreshDIYControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61718378A38CA7E2BFCD0272 /* CYLRefreshDIYControls.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		079331D57882E2E2E0DAD5EB /* CYLEasyRefreshDemoViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLEasyRefreshDemoViewController.swift; sourceTree = "<group>"; };
 		088621BE87DFB283F98D1F37 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		0A85CCC1B51A41D3CE36A524 /* CYLRefreshExampleViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshExampleViewController.swift; sourceTree = "<group>"; };
 		1211FEE6636FFFBFD912631E /* CYLScenarioLocalization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioLocalization.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				F0E9BBC4FD0ADE2C11ED085E /* CYLRefreshIconListViewController.swift */,
 				30056CFC95D1F9EC8F0AB3D5 /* CYLStatusBarViewController.swift */,
 				6382C12DADB4445478112D5F /* CYLSmartRefreshDemoViewController.swift */,
+				079331D57882E2E2E0DAD5EB /* CYLEasyRefreshDemoViewController.swift */,
 			);
 			name = Sources;
 			path = Sources;
@@ -321,6 +324,7 @@
 				03D504A0D2534EC7F552DD2D /* CYLRefreshIconListViewController.swift in Sources */,
 				A5FA56E2E441E7263D7D3315 /* CYLStatusBarViewController.swift in Sources */,
 				AA90B2391470FF69B724B146 /* CYLSmartRefreshDemoViewController.swift in Sources */,
+				B26CABD477E78B83A3C5ADBF /* CYLEasyRefreshDemoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

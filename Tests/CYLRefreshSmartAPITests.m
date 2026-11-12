@@ -282,6 +282,7 @@
     XCTAssertTrue(opened);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top + 300, 0.5, @"the content moved down by the floor");
     XCTAssertNil(header.layer.mask, @"not auto-hidden while the floor is open");
+    XCTAssertGreaterThan([scrollView.subviews indexOfObject:floor], [scrollView.subviews indexOfObject:header], @"the open floor is in front of the header");
 
     [header closeSecondary];
     XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryClosing);
@@ -289,6 +290,7 @@
     XCTAssertTrue(closed);
     XCTAssertFalse(header.isSecondaryOpen);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top, 0.5, @"the inset is back");
+    XCTAssertLessThan([scrollView.subviews indexOfObject:floor], [scrollView.subviews indexOfObject:header], @"closed: behind the header again");
     XCTAssertTrue([phases containsObject:@(CYLRefreshPhaseSecondaryOpen)]);
     XCTAssertEqualObjects(phases.lastObject, @(CYLRefreshPhaseIdle));
     window.hidden = YES;
@@ -511,6 +513,26 @@
     [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
     XCTAssertEqual(footer.state, CYLRefreshStateRefreshing, @"loads without a drag");
     XCTAssertEqual(loads, 1);
+    window.hidden = YES;
+}
+
+- (void)testStartHeaderBeforeWindowRestoresRegularHeader {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *regular = [CYLRefreshNormalHeader attach:scrollView];
+    __block NSInteger refreshes = 0;
+    regular.refreshingBlock = ^{ refreshes++; };
+    CYLRefreshCupertinoHeader *start = [CYLRefreshCupertinoHeader new];
+    [scrollView cyl_beginRefreshingWithStartHeader:start];   // viewDidLoad: not in a window yet
+    XCTAssertEqual(scrollView.cyl_header, start);
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    [window addSubview:scrollView];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.6]];
+    XCTAssertTrue(start.isRefreshing);
+    [scrollView.cyl_header endRefreshing];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.5]];
+    XCTAssertEqual(scrollView.cyl_header, regular, @"the regular header is back");
+    XCTAssertEqual(refreshes, 1);
     window.hidden = YES;
 }
 

@@ -10,6 +10,7 @@
 | [SmartRefreshControl 对照表](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) | [SmartRefreshControl comparison](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) |
 | [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
+| [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
 | [flutter_easy_refresh Rive 样式截图](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) | [flutter_easy_refresh Rive style screenshots](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) |
 | [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
@@ -193,6 +194,34 @@
 | `fit` / `clipBehavior` | 不适用：Flutter 布局 / not applicable: Flutter layout | 不适用 / N/A |
 | `scrollBehaviorBuilder` / `ERScrollBehavior` / `_ERScrollPhysics` | 不适用：UIKit 没有可替换的滚动物理 / not applicable: UIKit has no replaceable scroll physics | 不适用 / N/A |
 | `HeaderLocator` / `FooterLocator`（`IndicatorPosition.locator`，放进 sliver） | 不适用：Flutter slivers / not applicable: Flutter slivers | 不适用 / N/A |
+
+## flutter_easy_refresh 示例复刻 / flutter_easy_refresh demo port
+
+| 中文 | English |
+| --- | --- |
+| flutter_easy_refresh 的 `example/lib/page`（`dcdbb81`）移植到 Example-Scenarios（Swift）：样式页并入已有的 SmartRefreshControl 样式区，其余页面在“刷新 › flutter_easy_refresh 示例”，由 `CYLEasyRefreshDemoViewController` 按方法名实现，示例只传数据、选项与点击，控件都来自核心。 | flutter_easy_refresh's `example/lib/page` (`dcdbb81`) ported to Example-Scenarios (Swift): the style pages joined the existing SmartRefreshControl styles section; the other pages are under "Refresh › flutter_easy_refresh samples", implemented by `CYLEasyRefreshDemoViewController` per method name; the example passes only data, options and taps, and every control comes from the core. |
+
+| 原页面 / Page | 内容 / Content | 本项目 / Here | 状态 / Status |
+| --- | --- | --- | --- |
+| `style/classical_page` | 经典样式 / classic | SmartRefreshControl 样式 › Classics、Classics footer | ✅ |
+| `style/material_page` | Material | SmartRefreshControl 样式 › Material、Material footer | ✅ |
+| `style/bezier_page` | Bezier | SmartRefreshControl 样式 › BezierRadar、BezierRadar footer | ✅ |
+| `style/bezier_circle_page` | BezierCircle | SmartRefreshControl 样式 › BezierCircle | ✅ |
+| `style/delivery_page / phoenix_page / taurus_page` | Delivery / Phoenix / Taurus | SmartRefreshControl 样式 › 对应刷新头与刷新尾 / the matching headers and footers | ✅ |
+| `style/bow_page … squats_page（6 页 / 6 pages）` | Rive 样式 / Rive styles | SmartRefreshControl 样式 › Rive · …（6 个刷新头 + Space 刷新尾） | ✅ |
+| `style/cupertino_page` | Cupertino | flutter_easy_refresh 示例 › Cupertino 样式 / Cupertino style | ✅ |
+| `sample/secondary_page` | 二楼 / second floor | flutter_easy_refresh 示例 › 二楼 / Second floor | ✅ |
+| `sample/trigger_mode_page` | 触发模式 / trigger mode | flutter_easy_refresh 示例 › 触发模式 / Trigger mode | ✅ |
+| `sample/refresh_on_start_page` | 首次刷新专用刷新头 / start header | flutter_easy_refresh 示例 › 启动时刷新 / Refresh on start。单元测试 `testStartHeaderBeforeWindowRestoresRegularHeader` 通过，但 2026-11-13 在示例 App 中，刷新结束 6.5 秒后再下拉仍显示 Cupertino 刷新头，原因未查明 / the unit test passes, but on 2026-11-13 the example app still showed the Cupertino header on a pull 6.5 s after the refresh; cause not found yet | TODO |
+| `sample/paging_page` | easy_paging | flutter_easy_refresh 示例 › 分页 / Paging（`CYLRefreshPaging`） | ✅ |
+| `sample/listener_header_page` | 监听式刷新头 / listener header | flutter_easy_refresh 示例 › 监听式刷新头 / Listener header | ✅ |
+| `sample/chat_page` | 聊天：顶部加载更早消息 / chat: earlier messages at the top | flutter_easy_refresh 示例 › 聊天 / Chat | ✅ |
+| `sample/user_profile_page` | 指示器在内容后面 / indicator behind the content | flutter_easy_refresh 示例 › 个人主页 / User profile（`CYLRefreshScrollModeBehind`） | ✅ |
+| `sample/theme_switch_page` | 切换主题 / theme switch | SmartRefreshControl 样式页的主题行 / the theme rows of the SmartRefreshControl pages | ✅ |
+| `sample/carousel_page / page_view_page / tab_bar_view_page` | 横向翻页里的刷新 / refresh inside horizontal pages | 不适用：每页是独立的 UIScrollView，各自挂控件即可；横向拉动用已有的 `CYLRefreshTrailer`（示例 42） / not applicable: each page is its own UIScrollView with its own controls; horizontal pulls use the existing `CYLRefreshTrailer` (example 42) | 不适用 / N/A |
+| `sample/nested_scroll_view / easy_refresh_nested_page / nested_secondary_page` | 嵌套滚动 / nested scrolling | 不适用：UIKit 没有 NestedScrollView（对照表同一行） / not applicable: UIKit has no NestedScrollView (same row in the table) | 不适用 / N/A |
+| `sample/center_refresh_page` | 空列表居中显示指示器 / indicator centred in an empty list | 不适用：空列表由本库的占位图显示 / not applicable: this library's placeholder shows empty lists | 不适用 / N/A |
+| `sample/test_page、more/*` | 开发测试页、关于 / 赞助 / 主题等 App 页面 / developer test page and the app's about, support and theme pages | 不移植：不是刷新功能 / not ported: not refresh features | 不适用 / N/A |
 
 ## flutter_easy_refresh 刷新尾截图 / flutter_easy_refresh footer screenshots
 
