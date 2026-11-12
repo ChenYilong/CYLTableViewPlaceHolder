@@ -120,6 +120,18 @@ typedef NS_ENUM(NSInteger, CYLRefreshPhase) {
      * [EN] A footer showing that all data is loaded. [CN] 加载尾显示已全部加载。
      */
     CYLRefreshPhaseNoMoreData,
+    /*!
+     * [EN] Pulled past `secondaryTriggerOffset`: releasing opens the second floor. [CN] 已拉过 `secondaryTriggerOffset`：松手打开二楼。
+     */
+    CYLRefreshPhaseSecondaryArmed,
+    /*!
+     * [EN] The second floor is open. [CN] 二楼已打开。
+     */
+    CYLRefreshPhaseSecondaryOpen,
+    /*!
+     * [EN] The second floor is closing. [CN] 二楼正在关闭。
+     */
+    CYLRefreshPhaseSecondaryClosing,
 };
 
 /*!

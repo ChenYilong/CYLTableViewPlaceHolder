@@ -59,6 +59,53 @@ NS_ASSUME_NONNULL_BEGIN
  *      Default NO. [CN] 刷新成功后重置加载尾的“无更多数据”（对应 flutter_easy_refresh 的 `resetAfterRefresh`）。默认 NO。
  */
 @property (nonatomic) BOOL resetsFooterAfterRefresh;
+
+#pragma mark Second floor (flutter_easy_refresh's secondary)
+
+/*!
+ * [EN] Pulling at least this far (points) and releasing opens the second floor instead of refreshing; 0 (default)
+ *      turns the second floor off (flutter_easy_refresh's `secondaryTriggerOffset`).
+ * [CN] 至少拉动这么远（点）后松手，会打开二楼而不是刷新；0（默认）关闭二楼（对应 flutter_easy_refresh 的 `secondaryTriggerOffset`）。
+ */
+@property (nonatomic) CGFloat secondaryTriggerOffset;
+/*!
+ * [EN] Height of the open second floor (points); 0 (default) uses the scroll view's visible height
+ *      (flutter_easy_refresh's `secondaryDimension`).
+ * [CN] 打开后二楼的高度（点）；0（默认）表示使用滚动视图的可见高度（对应 flutter_easy_refresh 的 `secondaryDimension`）。
+ */
+@property (nonatomic) CGFloat secondaryDimension;
+/*!
+ * [EN] While the second floor is open, pushing the content up this far (points) and releasing closes it. Default 80
+ *      (flutter_easy_refresh's `secondaryCloseTriggerOffset`).
+ * [CN] 二楼打开时，把内容往上推这么远（点）再松手即关闭。默认 80（对应 flutter_easy_refresh 的 `secondaryCloseTriggerOffset`）。
+ */
+@property (nonatomic) CGFloat secondaryCloseTriggerOffset;
+/*!
+ * [EN] The second floor's content, placed above the list across the whole second floor and revealed by the pull
+ *      (flutter_easy_refresh's `SecondaryBuilderHeader`). [CN] 二楼的内容视图，放在列表上方、铺满整个二楼，随下拉露出
+ *      （对应 flutter_easy_refresh 的 `SecondaryBuilderHeader`）。
+ */
+@property (strong, nonatomic, nullable) UIView *secondaryView;
+/*!
+ * [EN] YES while the second floor is open. [CN] 二楼打开时为 YES。
+ */
+@property (nonatomic, readonly, getter=isSecondaryOpen) BOOL secondaryOpen;
+/*!
+ * [EN] Called when the second floor has opened. [CN] 二楼打开后调用。
+ */
+@property (copy, nonatomic, nullable) CYLRefreshComponentAction secondaryOpenedBlock;
+/*!
+ * [EN] Called when the second floor has closed. [CN] 二楼关闭后调用。
+ */
+@property (copy, nonatomic, nullable) CYLRefreshComponentAction secondaryClosedBlock;
+/*!
+ * [EN] Opens the second floor (flutter_easy_refresh's `openHeaderSecondary`). [CN] 打开二楼（对应 flutter_easy_refresh 的 `openHeaderSecondary`）。
+ */
+- (void)openSecondary;
+/*!
+ * [EN] Closes the second floor (flutter_easy_refresh's `closeHeaderSecondary`). [CN] 关闭二楼（对应 flutter_easy_refresh 的 `closeHeaderSecondary`）。
+ */
+- (void)closeSecondary;
 @end
 
 NS_ASSUME_NONNULL_END

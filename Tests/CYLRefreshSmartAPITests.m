@@ -255,4 +255,43 @@
     XCTAssertNotNil(cupertino.activityIndicator.accessibilityLabel);
 }
 
+- (void)testSecondFloorOpensAndCloses {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    UIView *floor = [UIView new];
+    header.secondaryTriggerOffset = 160;
+    header.secondaryDimension = 300;
+    header.secondaryView = floor;
+    XCTAssertEqual(floor.superview, scrollView, @"the second floor's view sits in the scroll view");
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(floor.frame), -300, 0.5, @"above the content");
+    XCTAssertEqualWithAccuracy(header.secondaryCloseTriggerOffset, 80, 0.01);
+    CGFloat top = scrollView.adjustedContentInset.top;
+
+    __block BOOL opened = NO, closed = NO;
+    NSMutableArray<NSNumber *> *phases = [NSMutableArray array];
+    [header addPhaseObserver:^(CYLRefreshComponent *c, CYLRefreshPhase old, CYLRefreshPhase phase) { [phases addObject:@(phase)]; }];
+    header.secondaryOpenedBlock = ^{ opened = YES; };
+    header.secondaryClosedBlock = ^{ closed = YES; };
+    [header openSecondary];
+    XCTAssertTrue(header.isSecondaryOpen);
+    XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryOpen);
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    XCTAssertTrue(opened);
+    XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top + 300, 0.5, @"the content moved down by the floor");
+    XCTAssertNil(header.layer.mask, @"not auto-hidden while the floor is open");
+
+    [header closeSecondary];
+    XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryClosing);
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    XCTAssertTrue(closed);
+    XCTAssertFalse(header.isSecondaryOpen);
+    XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top, 0.5, @"the inset is back");
+    XCTAssertTrue([phases containsObject:@(CYLRefreshPhaseSecondaryOpen)]);
+    XCTAssertEqualObjects(phases.lastObject, @(CYLRefreshPhaseIdle));
+    window.hidden = YES;
+}
+
 @end

@@ -15,6 +15,11 @@
 NSString * const CYLRefreshHeaderRefreshing2IdleBoundsKey = @"CYLRefreshHeaderRefreshing2IdleBounds";
 NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefreshingBounds";
 
+/// [EN] The component's private phase reporting, called when the second floor changes. [CN] 组件私有的阶段通知，二楼变化时调用。
+@interface CYLRefreshComponent (CYLPhaseReporting)
+- (void)cyl_reportPhase;
+@end
+
 @interface CYLRefreshHeader() <CAAnimationDelegate>
 @property (assign, nonatomic) CGFloat insetTDelta;
 @property (assign, nonatomic) BOOL updatingRefreshInset;
@@ -26,6 +31,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) BOOL cyl_addedRefreshingInset;
 /// [EN] Whether the current drag started with the list at the top edge (triggerMode). [CN] 当前拖动开始时列表是否在顶部边缘（triggerMode）。
 @property (assign, nonatomic) BOOL cyl_dragStartedAtEdge;
+/// [EN] Second floor: pulled past the trigger while dragging. [CN] 二楼：拖动中已拉过触发点。
+@property (assign, nonatomic) BOOL cyl_secondaryArmed;
+/// [EN] Second floor: pushed up far enough to close on release. [CN] 二楼：已上推足够距离，松手即关闭。
+@property (assign, nonatomic) BOOL cyl_secondaryClosePending;
+/// [EN] Second floor: the closing animation runs. [CN] 二楼：关闭动画进行中。
+@property (assign, nonatomic) BOOL cyl_secondaryClosing;
+@property (assign, nonatomic, readwrite, getter=isSecondaryOpen) BOOL secondaryOpen;
 @end
 
 @implementation CYLRefreshHeader
@@ -55,6 +67,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     self.cyl_h = CYLRefreshHeaderHeight;
 
     _addsRefreshingInset = YES;
+    _secondaryCloseTriggerOffset = 80;
     [self updateAutoHideVisibility];
 }
 
@@ -95,6 +108,105 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 设置y值(当自己的高度发生改变了，肯定要重新调整Y值，所以放到placeSubviews方法中设置y值)
     self.cyl_y = - self.cyl_h - self.ignoredScrollViewContentInsetTop;
     [self cyl_applyScrollMode];
+}
+
+#pragma mark - Second floor
+
+- (CGFloat)cyl_secondaryHeight
+{
+    if (self.secondaryDimension > 0) return self.secondaryDimension;
+    UIScrollView *scrollView = self.scrollView;
+    return MAX(self.expandHeight, CGRectGetHeight(scrollView.bounds) - self.scrollViewOriginalInset.top - self.scrollViewOriginalInset.bottom);
+}
+
+- (CYLRefreshPhase)phase
+{
+    if (self.cyl_secondaryClosing) return CYLRefreshPhaseSecondaryClosing;
+    if (self.secondaryOpen) return CYLRefreshPhaseSecondaryOpen;
+    if (self.cyl_secondaryArmed) return CYLRefreshPhaseSecondaryArmed;
+    return [super phase];
+}
+
+- (void)setSecondaryView:(UIView *)secondaryView
+{
+    if (_secondaryView != secondaryView) [_secondaryView removeFromSuperview];
+    _secondaryView = secondaryView;
+    [self cyl_placeSecondaryView];
+}
+
+/// [EN] The second floor's view sits above the content, across the whole second floor, behind the header.
+/// [CN] 二楼视图放在内容上方、铺满整个二楼，位于刷新头后面。
+- (void)cyl_placeSecondaryView
+{
+    UIView *view = self.secondaryView;
+    UIScrollView *scrollView = self.scrollView;
+    if (!view || !scrollView) return;
+    if (view.superview != scrollView) [scrollView insertSubview:view belowSubview:self];
+    CGFloat height = [self cyl_secondaryHeight];
+    view.frame = CGRectMake(-scrollView.cyl_insetL, -height - self.ignoredScrollViewContentInsetTop, scrollView.cyl_w, height);
+}
+
+- (void)didAttachToScrollView:(UIScrollView *)scrollView
+{
+    [super didAttachToScrollView:scrollView];
+    [self cyl_placeSecondaryView];
+}
+
+- (void)willDetachFromScrollView:(UIScrollView *)scrollView
+{
+    [self.secondaryView removeFromSuperview];
+    [super willDetachFromScrollView:scrollView];
+}
+
+- (void)openSecondary
+{
+    if (self.secondaryOpen || !self.scrollView || self.isRefreshing) return;
+    self.cyl_secondaryArmed = NO;
+    if (self.state == CYLRefreshStatePulling) self.state = CYLRefreshStateIdle;
+    [self cyl_placeSecondaryView];
+    self.secondaryOpen = YES;
+    [self cyl_reportPhase];
+    CGFloat top = self.scrollViewOriginalInset.top + [self cyl_secondaryHeight];
+    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        [self setRefreshingInsetTop:top];
+        self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, -top);
+    } completion:^(BOOL finished) {
+        if (self.secondaryOpenedBlock) self.secondaryOpenedBlock();
+    }];
+}
+
+- (void)closeSecondary
+{
+    if (!self.secondaryOpen || self.cyl_secondaryClosing) return;
+    self.cyl_secondaryClosing = YES;
+    self.cyl_secondaryClosePending = NO;
+    [self cyl_reportPhase];
+    CGFloat top = self.scrollViewOriginalInset.top;
+    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        [self setRefreshingInsetTop:top];
+        self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, -top);
+    } completion:^(BOOL finished) {
+        self.cyl_secondaryClosing = NO;
+        self.secondaryOpen = NO;
+        self.pullingPercent = 0;
+        [self cyl_reportPhase];
+        [self updateAutoHideVisibility];
+        if (self.secondaryClosedBlock) self.secondaryClosedBlock();
+    }];
+}
+
+/// [EN] While open: pushing the content up past the close trigger and releasing closes the second floor.
+/// [CN] 打开时：把内容上推超过关闭触发距离再松手，即关闭二楼。
+- (void)cyl_followOpenSecondary
+{
+    if (self.cyl_secondaryClosing) return;
+    CGFloat openOffsetY = -(self.scrollViewOriginalInset.top + [self cyl_secondaryHeight]);
+    CGFloat pushed = self.scrollView.cyl_offsetY - openOffsetY;
+    if (self.scrollView.isDragging) {
+        self.cyl_secondaryClosePending = pushed >= self.secondaryCloseTriggerOffset;
+    } else if (self.cyl_secondaryClosePending) {
+        [self closeSecondary];
+    }
 }
 
 #pragma mark - Trigger mode
@@ -225,6 +337,12 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         return;
     }
 
+    // [EN] The second floor holds its own inset; it is not the original inset. [CN] 二楼占用了自己的 inset，不是原始 inset。
+    if (self.secondaryOpen || self.cyl_secondaryClosing) {
+        [self cyl_followOpenSecondary];
+        return;
+    }
+
     // 跳转到下一个控制器时，contentInset可能会变
     _scrollViewOriginalInset = self.scrollView.cyl_inset;
 
@@ -241,6 +359,18 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     CGFloat triggerDistance = self.expandHeight * self.triggerRate;
     CGFloat normal2pullingOffsetY = happenOffsetY - triggerDistance;
     CGFloat pullingPercent = (happenOffsetY - offsetY) / triggerDistance;
+
+    // [EN] Second floor: arm past its trigger while dragging, open on release. [CN] 二楼：拖动中越过触发点即就绪，松手打开。
+    if (self.secondaryTriggerOffset > 0) {
+        BOOL armed = self.scrollView.isDragging && happenOffsetY - offsetY >= self.secondaryTriggerOffset;
+        if (self.scrollView.isDragging && armed != self.cyl_secondaryArmed) {
+            self.cyl_secondaryArmed = armed;
+            [self cyl_reportPhase];
+        } else if (!self.scrollView.isDragging && self.cyl_secondaryArmed) {
+            [self openSecondary];
+            return;
+        }
+    }
 
     if (self.scrollView.isDragging) { // 如果正在拖拽
         // [EN] maxPullDistance: hold the pull at the limit. [CN] maxPullDistance：把下拉停在上限。
