@@ -17,3 +17,7 @@
 "CYLRefreshHeaderLastTimeText" = "마지막 업데이트: ";
 "CYLRefreshHeaderDateTodayText" = "오늘";
 "CYLRefreshHeaderNoneLastDateText" = "기록 없음";
+"CYLRefreshHeaderFinishedText" = "새로고침 완료";
+"CYLRefreshHeaderFailedText" = "새로고침 실패";
+"CYLRefreshFooterFinishedText" = "로딩 완료";
+"CYLRefreshFooterFailedText" = "로딩 실패";

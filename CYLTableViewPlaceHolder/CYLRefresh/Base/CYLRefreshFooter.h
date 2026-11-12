@@ -30,6 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
  * 重置没有更多的数据（消除没有更多数据的状态）
  */
 - (void)resetNoMoreData;
+/*!
+ * [EN] YES while the footer shows that all data is loaded (`CYLRefreshStateNoMoreData`).
+ * [CN] 加载尾显示已全部加载（`CYLRefreshStateNoMoreData`）时为 YES。
+ */
+@property (nonatomic, readonly, getter=isNoMoreData) BOOL noMoreData;
 
 /*!
  * 忽略多少scrollView的contentInset的bottom

@@ -637,7 +637,8 @@ static const NSTimeInterval CYLTestTimeout = 30;
         @"CYLRefreshAutoFooterIdleText", @"CYLRefreshAutoFooterRefreshingText", @"CYLRefreshAutoFooterNoMoreDataText",
         @"CYLRefreshBackFooterIdleText", @"CYLRefreshBackFooterPullingText", @"CYLRefreshBackFooterRefreshingText",
         @"CYLRefreshBackFooterNoMoreDataText", @"CYLRefreshHeaderLastTimeText", @"CYLRefreshHeaderDateTodayText",
-        @"CYLRefreshHeaderNoneLastDateText"];
+        @"CYLRefreshHeaderNoneLastDateText", @"CYLRefreshHeaderFinishedText", @"CYLRefreshHeaderFailedText",
+        @"CYLRefreshFooterFinishedText", @"CYLRefreshFooterFailedText"];
     for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"]) {
         NSString *path = [bundle pathForResource:language ofType:@"lproj"];
         XCTAssertNotNil(path, @"Missing localization %@", language);

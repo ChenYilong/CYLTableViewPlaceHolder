@@ -81,6 +81,11 @@ UIKIT_EXTERN NSString *const CYLRefreshBackFooterPullingText;
 UIKIT_EXTERN NSString *const CYLRefreshBackFooterRefreshingText;
 UIKIT_EXTERN NSString *const CYLRefreshBackFooterNoMoreDataText;
 
+UIKIT_EXTERN NSString *const CYLRefreshHeaderFinishedText;
+UIKIT_EXTERN NSString *const CYLRefreshHeaderFailedText;
+UIKIT_EXTERN NSString *const CYLRefreshFooterFinishedText;
+UIKIT_EXTERN NSString *const CYLRefreshFooterFailedText;
+
 UIKIT_EXTERN NSString *const CYLRefreshHeaderLastTimeText;
 UIKIT_EXTERN NSString *const CYLRefreshHeaderDateTodayText;
 UIKIT_EXTERN NSString *const CYLRefreshHeaderNoneLastDateText;

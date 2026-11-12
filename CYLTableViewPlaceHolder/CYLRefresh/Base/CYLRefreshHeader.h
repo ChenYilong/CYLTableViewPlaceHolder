@@ -25,9 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (copy, nonatomic) NSString *lastUpdatedTimeKey;
 /*!
- * 上一次下拉刷新成功的时间
+ * [EN] When the last refresh succeeded, stored under `lastUpdatedTimeKey`. Setting it stores the date (nil removes it)
+ *      and updates the time label of state headers.
+ * [CN] 上一次刷新成功的时间，保存在 `lastUpdatedTimeKey` 下。设置后保存该日期（nil 表示删除），并更新带文字刷新头的时间文字。
  */
-@property (strong, nonatomic, readonly, nullable) NSDate *lastUpdatedTime;
+@property (strong, nonatomic, nullable) NSDate *lastUpdatedTime;
 
 /*!
  * 忽略多少scrollView的contentInset的top

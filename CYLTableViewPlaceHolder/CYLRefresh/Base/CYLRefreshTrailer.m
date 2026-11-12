@@ -61,7 +61,7 @@
     // 如果是向右滚动到看不见右边控件，直接返回
     if (currentOffsetX <= happenOffsetX) return;
 
-    CGFloat pullingPercent = (currentOffsetX - happenOffsetX) / self.cyl_w;
+    CGFloat pullingPercent = (currentOffsetX - happenOffsetX) / (self.cyl_w * self.triggerRate);
 
     // 如果已全部加载，仅设置pullingPercent，然后返回
     if (self.state == CYLRefreshStateNoMoreData) {
@@ -78,7 +78,7 @@
     if (self.scrollView.isDragging) {
         self.pullingPercent = pullingPercent;
         // 普通 和 即将刷新 的临界点
-        CGFloat normal2pullingOffsetX = happenOffsetX + self.cyl_w;
+        CGFloat normal2pullingOffsetX = happenOffsetX + self.cyl_w * self.triggerRate;
 
         if (self.state == CYLRefreshStateIdle && currentOffsetX > normal2pullingOffsetX) {
             self.state = CYLRefreshStatePulling;
@@ -259,6 +259,12 @@
 - (CGFloat)widthForContentBreakView {
     CGFloat w = self.scrollView.frame.size.width - self.scrollViewOriginalInset.right - self.scrollViewOriginalInset.left;
     return self.scrollView.contentSize.width - w;
+}
+
+/// [EN] A trailer opens sideways: its open size is its width. [CN] trailer 横向展开：展开尺寸是它的宽度。
+- (CGFloat)expandHeight
+{
+    return self.cyl_w;
 }
 
 @end

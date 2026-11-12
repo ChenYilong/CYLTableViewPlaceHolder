@@ -54,7 +54,7 @@
     // 如果是向下滚动到看不见尾部控件，直接返回
     if (currentOffsetY <= happenOffsetY) return;
 
-    CGFloat pullingPercent = (currentOffsetY - happenOffsetY) / self.cyl_h;
+    CGFloat pullingPercent = (currentOffsetY - happenOffsetY) / (self.cyl_h * self.triggerRate);
 
     // 如果已全部加载，仅设置pullingPercent，然后返回
     if (self.state == CYLRefreshStateNoMoreData) {
@@ -65,7 +65,7 @@
     if (self.scrollView.isDragging) {
         self.pullingPercent = pullingPercent;
         // 普通 和 即将刷新 的临界点
-        CGFloat normal2pullingOffsetY = happenOffsetY + self.cyl_h;
+        CGFloat normal2pullingOffsetY = happenOffsetY + self.cyl_h * self.triggerRate;
 
         if (self.state == CYLRefreshStateIdle && currentOffsetY > normal2pullingOffsetY) {
             // 转为即将刷新状态

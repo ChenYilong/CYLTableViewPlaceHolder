@@ -17,3 +17,7 @@
 "CYLRefreshHeaderLastTimeText" = "最后更新：";
 "CYLRefreshHeaderDateTodayText" = "今天";
 "CYLRefreshHeaderNoneLastDateText" = "无记录";
+"CYLRefreshHeaderFinishedText" = "刷新完成";
+"CYLRefreshHeaderFailedText" = "刷新失败";
+"CYLRefreshFooterFinishedText" = "加载完成";
+"CYLRefreshFooterFailedText" = "加载失败";

@@ -81,6 +81,14 @@
         return;
     }
 
+    if (self.lastUpdatedTimeFormatter) {
+        NSString *time = lastUpdatedTime ? [self.lastUpdatedTimeFormatter stringFromDate:lastUpdatedTime]
+                                         : [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderNoneLastDateText];
+        self.lastUpdatedTimeLabel.text = [NSString stringWithFormat:@"%@%@",
+                                          [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderLastTimeText], time ?: @""];
+        return;
+    }
+
     if (lastUpdatedTime) {
         // 1.判断今天、今年（比较完整日期，而不只是“日”）
         NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
@@ -149,10 +157,17 @@
         if (noConstrainsOnStatusLabel) self.stateLabel.frame = self.bounds;
     } else {
         CGFloat stateLabelH = self.cyl_h * 0.5;
+        CGFloat stateLabelY = 0;
+        if (self.titleTimeSpacing > 0) {
+            // [EN] Both lines centered as a block, `titleTimeSpacing` apart. [CN] 两行作为一个整体居中，间距 `titleTimeSpacing`。
+            CGFloat stateH = ceil(self.stateLabel.font.lineHeight), timeH = ceil(self.lastUpdatedTimeLabel.font.lineHeight);
+            stateLabelY = MAX(0, (self.cyl_h - stateH - self.titleTimeSpacing - timeH) * 0.5);
+            stateLabelH = stateH;
+        }
         // 状态
         if (noConstrainsOnStatusLabel) {
             self.stateLabel.cyl_x = 0;
-            self.stateLabel.cyl_y = 0;
+            self.stateLabel.cyl_y = stateLabelY;
             self.stateLabel.cyl_w = self.cyl_w;
             self.stateLabel.cyl_h = stateLabelH;
         }
@@ -160,9 +175,10 @@
         // 更新时间
         if (self.lastUpdatedTimeLabel.constraints.count == 0) {
             self.lastUpdatedTimeLabel.cyl_x = 0;
-            self.lastUpdatedTimeLabel.cyl_y = stateLabelH;
+            self.lastUpdatedTimeLabel.cyl_y = self.titleTimeSpacing > 0 ? stateLabelY + stateLabelH + self.titleTimeSpacing : stateLabelH;
             self.lastUpdatedTimeLabel.cyl_w = self.cyl_w;
-            self.lastUpdatedTimeLabel.cyl_h = self.cyl_h - self.lastUpdatedTimeLabel.cyl_y;
+            self.lastUpdatedTimeLabel.cyl_h = self.titleTimeSpacing > 0 ? ceil(self.lastUpdatedTimeLabel.font.lineHeight)
+                                                                      : self.cyl_h - self.lastUpdatedTimeLabel.cyl_y;
         }
     }
 }
@@ -191,6 +207,35 @@
 - (instancetype)cyl_modifyLastUpdatedTimeText:(NSString * _Nonnull (^)(NSDate * _Nullable))handler {
     self.lastUpdatedTimeText = handler;
     return self;
+}
+
+#pragma mark - Finish result
+
+- (void)setLastUpdatedTimeFormatter:(NSDateFormatter *)lastUpdatedTimeFormatter
+{
+    _lastUpdatedTimeFormatter = lastUpdatedTimeFormatter;
+    self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;
+}
+
+- (NSString *)lastUpdatedTimeString
+{
+    return self.lastUpdatedTimeLabel.text;
+}
+
+- (void)setTitleTimeSpacing:(CGFloat)titleTimeSpacing
+{
+    _titleTimeSpacing = MAX(0, titleTimeSpacing);
+    [self setNeedsLayout];
+}
+
+/// [EN] While the control holds after the refresh (`finishDuration`), the state text shows the result.
+/// [CN] 刷新结束后停留期间（`finishDuration`），状态文字显示结果。
+- (void)refreshDidFinishWithSuccess:(BOOL)success
+{
+    [super refreshDidFinishWithSuccess:success];
+    if ([self finishingDurationWithSuccess:success] <= 0) return;
+    self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText];
+    [self setNeedsLayout];
 }
 
 @end

@@ -17,3 +17,7 @@
 "CYLRefreshHeaderLastTimeText" = "Last update: ";
 "CYLRefreshHeaderDateTodayText" = "Today";
 "CYLRefreshHeaderNoneLastDateText" = "No record";
+"CYLRefreshHeaderFinishedText" = "Refresh complete";
+"CYLRefreshHeaderFailedText" = "Refresh failed";
+"CYLRefreshFooterFinishedText" = "Load complete";
+"CYLRefreshFooterFailedText" = "Load failed";

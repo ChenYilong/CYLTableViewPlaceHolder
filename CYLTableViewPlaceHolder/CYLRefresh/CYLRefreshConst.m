@@ -32,6 +32,11 @@ NSString *const CYLRefreshBackFooterPullingText = @"CYLRefreshBackFooterPullingT
 NSString *const CYLRefreshBackFooterRefreshingText = @"CYLRefreshBackFooterRefreshingText";
 NSString *const CYLRefreshBackFooterNoMoreDataText = @"CYLRefreshBackFooterNoMoreDataText";
 
+NSString *const CYLRefreshHeaderFinishedText = @"CYLRefreshHeaderFinishedText";
+NSString *const CYLRefreshHeaderFailedText = @"CYLRefreshHeaderFailedText";
+NSString *const CYLRefreshFooterFinishedText = @"CYLRefreshFooterFinishedText";
+NSString *const CYLRefreshFooterFailedText = @"CYLRefreshFooterFailedText";
+
 NSString *const CYLRefreshHeaderLastTimeText = @"CYLRefreshHeaderLastTimeText";
 NSString *const CYLRefreshHeaderDateTodayText = @"CYLRefreshHeaderDateTodayText";
 NSString *const CYLRefreshHeaderNoneLastDateText = @"CYLRefreshHeaderNoneLastDateText";

@@ -17,3 +17,7 @@
 "CYLRefreshHeaderLastTimeText" = "Останнє оновлення: ";
 "CYLRefreshHeaderDateTodayText" = "Сьогодні";
 "CYLRefreshHeaderNoneLastDateText" = "Немає запису";
+"CYLRefreshHeaderFinishedText" = "Оновлено";
+"CYLRefreshHeaderFailedText" = "Не вдалося оновити";
+"CYLRefreshFooterFinishedText" = "Завантажено";
+"CYLRefreshFooterFailedText" = "Не вдалося завантажити";

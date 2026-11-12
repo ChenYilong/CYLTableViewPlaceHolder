@@ -21,6 +21,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) BOOL retracting;
 /// [EN] The empty mask that hides the idle header (`autoHideRefresh`). [CN] 隐藏空闲刷新头（`autoHideRefresh`）的空遮罩。
 @property (strong, nonatomic) CALayer *idleMask;
+/// [EN] The open height kept while `scrollMode` changes the frame. [CN] `scrollMode` 改变 frame 时保留的展开高度。
+@property (assign, nonatomic) CGFloat cyl_storedExpandHeight;
 @end
 
 @implementation CYLRefreshHeader
@@ -111,6 +113,51 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // 设置y值(当自己的高度发生改变了，肯定要重新调整Y值，所以放到placeSubviews方法中设置y值)
     self.cyl_y = - self.cyl_h - self.ignoredScrollViewContentInsetTop;
+    [self cyl_applyScrollMode];
+}
+
+#pragma mark - Scroll mode
+
+- (CGFloat)expandHeight
+{
+    return self.cyl_storedExpandHeight > 0 ? self.cyl_storedExpandHeight : self.cyl_h;
+}
+
+- (void)setScrollMode:(CYLRefreshScrollMode)scrollMode
+{
+    if (scrollMode != CYLRefreshScrollModeMove && self.cyl_storedExpandHeight <= 0) {
+        self.cyl_storedExpandHeight = self.cyl_h;
+    }
+    [super setScrollMode:scrollMode];
+    if (scrollMode == CYLRefreshScrollModeMove && self.cyl_storedExpandHeight > 0) {
+        CGFloat height = self.cyl_storedExpandHeight;
+        self.cyl_storedExpandHeight = 0;
+        self.cyl_h = height;
+        self.cyl_y = -height - self.ignoredScrollViewContentInsetTop;
+        self.layer.zPosition = 0;
+    }
+    [self cyl_applyScrollMode];
+}
+
+/// [EN] Places the header for `scrollMode`: stretched over the whole pulled distance, or in front at the visible top.
+/// [CN] 按 `scrollMode` 放置刷新头：拉伸铺满整个下拉距离，或位于可见区域顶部的内容前面。
+- (void)cyl_applyScrollMode
+{
+    if (self.scrollMode == CYLRefreshScrollModeMove || !self.scrollView) return;
+    CGFloat height = self.expandHeight;
+    CGFloat offsetY = self.scrollView.cyl_offsetY;
+    CGFloat pulled = MAX(0, -(offsetY + self.scrollViewOriginalInset.top));
+    if (self.scrollMode == CYLRefreshScrollModeStretch) {
+        CGFloat stretched = MAX(height, pulled);
+        if (fabs(self.cyl_h - stretched) > 0.5) self.cyl_h = stretched;
+        self.cyl_y = -stretched - self.ignoredScrollViewContentInsetTop;
+    } else {
+        // [EN] Front: slides down from above the visible top, at most its own height, in front of the cells.
+        // [CN] 前置：从可见区域顶部上方滑下，最多滑出自身高度，位于 cell 前面。
+        if (fabs(self.cyl_h - height) > 0.5) self.cyl_h = height;
+        self.cyl_y = offsetY + self.scrollViewOriginalInset.top - height + MIN(pulled, height);
+        self.layer.zPosition = 1;
+    }
 }
 
 - (void)setRefreshingInsetTop:(CGFloat)insetTop
@@ -135,7 +182,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // sectionheader停留解决
     CGFloat insetT = - self.scrollView.cyl_offsetY > _scrollViewOriginalInset.top ? - self.scrollView.cyl_offsetY : _scrollViewOriginalInset.top;
-    insetT = insetT > self.cyl_h + _scrollViewOriginalInset.top ? self.cyl_h + _scrollViewOriginalInset.top : insetT;
+    insetT = insetT > self.expandHeight + _scrollViewOriginalInset.top ? self.expandHeight + _scrollViewOriginalInset.top : insetT;
     // 避免 CollectionView 在使用根据 Autolayout 和 内容自动伸缩 Cell, 刷新时导致的 Layout 异常渲染问题
     if (fabs(self.scrollView.cyl_insetT - insetT) > FLT_EPSILON) {
         [self setRefreshingInsetTop:insetT];
@@ -147,6 +194,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 {
     [super scrollViewContentOffsetDidChange:change];
     [self cyl_updateIdleVisibility];
+    [self cyl_applyScrollMode];
 
     // 在刷新的refreshing状态
     if (self.state == CYLRefreshStateRefreshing) {
@@ -167,8 +215,9 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (offsetY > happenOffsetY) return;
 
     // 普通 和 即将刷新 的临界点
-    CGFloat normal2pullingOffsetY = happenOffsetY - self.cyl_h;
-    CGFloat pullingPercent = (happenOffsetY - offsetY) / self.cyl_h;
+    CGFloat triggerDistance = self.expandHeight * self.triggerRate;
+    CGFloat normal2pullingOffsetY = happenOffsetY - triggerDistance;
+    CGFloat pullingPercent = (happenOffsetY - offsetY) / triggerDistance;
 
     if (self.scrollView.isDragging) { // 如果正在拖拽
         self.pullingPercent = pullingPercent;
@@ -286,7 +335,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (!self.isCollectionViewAnimationBug) {
         [UIView animateWithDuration:self.fastAnimationDuration animations:^{
             if (self.scrollView.panGestureRecognizer.state != UIGestureRecognizerStateCancelled) {
-                CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
+                CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
                 self.insetTDelta = self.scrollView.cyl_insetT - top;
                 // 增加滚动区域top
                 [self setRefreshingInsetTop:top];
@@ -302,7 +351,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     }
 
     if (self.scrollView.panGestureRecognizer.state != UIGestureRecognizerStateCancelled) {
-        CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
+        CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
         // 禁用交互, 如果不禁用可能会引起渲染问题.
         self.scrollView.userInteractionEnabled = NO;
 
@@ -345,7 +394,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     } else if ([identity isEqualToString:CYLRefreshHeaderRefreshingBoundsKey]) {
         // 避免出现 end 先于 Refreshing 状态
         if (self.state != CYLRefreshStateIdle) {
-            CGFloat top = self.scrollViewOriginalInset.top + self.cyl_h;
+            CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
             self.insetTDelta = self.scrollView.cyl_insetT - top;
             [self setRefreshingInsetTop:top];
             // 设置最终滚动位置
@@ -367,6 +416,17 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 }
 
 #pragma mark - 公共方法
+- (void)setLastUpdatedTime:(NSDate *)lastUpdatedTime
+{
+    if (lastUpdatedTime) {
+        [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedTime forKey:self.lastUpdatedTimeKey];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:self.lastUpdatedTimeKey];
+    }
+    // [EN] Re-setting the key makes state headers redraw the time. [CN] 重新设置 key，带文字的刷新头会重新显示时间。
+    self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;
+}
+
 - (NSDate *)lastUpdatedTime
 {
     return [[NSUserDefaults standardUserDefaults] objectForKey:self.lastUpdatedTimeKey];

@@ -17,3 +17,7 @@
 "CYLRefreshHeaderLastTimeText" = "最終更新：";
 "CYLRefreshHeaderDateTodayText" = "今日";
 "CYLRefreshHeaderNoneLastDateText" = "記録なし";
+"CYLRefreshHeaderFinishedText" = "更新完了";
+"CYLRefreshHeaderFailedText" = "更新に失敗しました";
+"CYLRefreshFooterFinishedText" = "読み込み完了";
+"CYLRefreshFooterFailedText" = "読み込みに失敗しました";

@@ -76,4 +76,9 @@
 {
     _automaticallyHidden = automaticallyHidden;
 }
+- (BOOL)isNoMoreData
+{
+    return self.state == CYLRefreshStateNoMoreData;
+}
+
 @end

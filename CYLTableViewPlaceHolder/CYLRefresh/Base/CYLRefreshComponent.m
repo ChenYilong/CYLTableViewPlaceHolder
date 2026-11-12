@@ -7,6 +7,9 @@
 //
 
 #import "CYLRefreshComponent.h"
+#import "CYLRefreshHeader.h"
+#import "CYLRefreshFooter.h"
+#import "CYLRefreshTrailer.h"
 #import "CYLRefreshConst.h"
 #import "CYLRefreshConfig.h"
 #import "UIView+CYLExtension.h"
@@ -22,6 +25,12 @@
 }
 @property (strong, nonatomic) UIPanGestureRecognizer *pan;
 @property (weak, nonatomic) UIScrollView *observedScrollView;
+/// [EN] Target-actions added with -addTarget:action:. [CN] -addTarget:action: 添加的 target-action。
+@property (strong, nonatomic) NSMutableArray<NSArray *> *cyl_targetActions;
+/// [EN] YES while the control holds after the refresh ends (finishDuration). [CN] 刷新结束后停留期间为 YES。
+@property (assign, nonatomic) BOOL cyl_finishing;
+/// [EN] The phase last reported to -phaseDidChangeFrom:to:. [CN] 上次通知 -phaseDidChangeFrom:to: 的阶段。
+@property (assign, nonatomic) CYLRefreshPhase cyl_reportedPhase;
 @end
 
 @implementation CYLRefreshComponent
@@ -134,6 +143,8 @@
         self.state = CYLRefreshStateIdle;
         self.fastAnimationDuration = 0.25;
         self.slowAnimationDuration = 0.4;
+        _triggerRate = 1;
+        _cyl_reportedPhase = CYLRefreshPhaseIdle;
     }
     return self;
 }
@@ -148,6 +159,7 @@
 - (void)layoutSubviews
 {
     [self placeSubviews];
+    [self cyl_applyThemeColors];
 
     [super layoutSubviews];
 
@@ -172,6 +184,7 @@
     [super willMoveToSuperview:newSuperview];
 
     // 旧的父控件移除监听
+    if (_scrollView && newSuperview != _scrollView) [self willDetachFromScrollView:_scrollView];
     [self removeObservers];
     _scrollView = nil;
 
@@ -192,6 +205,12 @@
         // 添加监听
         [self addObservers];
     }
+}
+
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    if (_scrollView && self.superview == _scrollView) [self didAttachToScrollView:_scrollView];
 }
 
 - (void)didMoveToWindow
@@ -217,6 +236,7 @@
     NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
     [self.scrollView addObserver:self forKeyPath:CYLRefreshKeyPathContentOffset options:options context:nil];
     [self.scrollView addObserver:self forKeyPath:CYLRefreshKeyPathContentSize options:options context:nil];
+    [self.scrollView addObserver:self forKeyPath:CYLRefreshKeyPathContentInset options:options context:nil];
     self.observedScrollView = self.scrollView;
     self.pan = self.scrollView.panGestureRecognizer;
     [self.pan addObserver:self forKeyPath:CYLRefreshKeyPathPanState options:options context:nil];
@@ -228,6 +248,7 @@
 {
     [self.observedScrollView removeObserver:self forKeyPath:CYLRefreshKeyPathContentOffset];
     [self.observedScrollView removeObserver:self forKeyPath:CYLRefreshKeyPathContentSize];
+    [self.observedScrollView removeObserver:self forKeyPath:CYLRefreshKeyPathContentInset];
     self.observedScrollView = nil;
     [self.pan removeObserver:self forKeyPath:CYLRefreshKeyPathPanState];
     self.pan = nil;
@@ -243,11 +264,17 @@
     if ([keyPath isEqualToString:CYLRefreshKeyPathContentSize]) {
         [self scrollViewContentSizeDidChange:change];
     }
+    if ([keyPath isEqualToString:CYLRefreshKeyPathContentInset]) {
+        [self scrollViewContentInsetDidChange:change];
+        return;
+    }
 
     // 看不见
     if (self.hidden) return;
     if ([keyPath isEqualToString:CYLRefreshKeyPathContentOffset]) {
         [self scrollViewContentOffsetDidChange:change];
+        [self didScrollWithOffset:self.dragOffset percent:self.pullingPercent dragging:self.scrollView.isDragging];
+        [self cyl_reportPhase];
     } else if ([keyPath isEqualToString:CYLRefreshKeyPathPanState]) {
         [self scrollViewPanStateDidChange:change];
     }
@@ -256,6 +283,7 @@
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change{}
 - (void)scrollViewContentSizeDidChange:(NSDictionary *)change{}
 - (void)scrollViewPanStateDidChange:(NSDictionary *)change{}
+- (void)scrollViewContentInsetDidChange:(NSDictionary *)change{}
 
 - (void)i18nDidChange {
     [self placeSubviews];
@@ -275,6 +303,7 @@
     // [EN] The icon follows every state change of every subclass (CYLRefreshCheckState calls super).
     // [CN] 图标随所有子类的每次状态变化更新（CYLRefreshCheckState 会调用 super）。
     [_iconView updateForState:state];
+    [self cyl_reportPhase];
 
     // 加入主队列的目的是等setState:方法调用完毕、设置完文字后再去布局子控件
     CYLRefreshDispatchAsyncOnMainQueue([self setNeedsLayout];)
@@ -336,11 +365,45 @@
 #pragma mark 结束刷新状态
 - (void)endRefreshing
 {
-    if (NSThread.isMainThread) {
-        self.state = CYLRefreshStateIdle;
-    } else {
-        CYLRefreshDispatchAsyncOnMainQueue(self.state = CYLRefreshStateIdle;)
+    [self endRefreshingWithSuccess:YES];
+}
+
+- (void)endRefreshingWithSuccess:(BOOL)success
+{
+    if (!NSThread.isMainThread) {
+        CYLRefreshDispatchAsyncOnMainQueue([self endRefreshingWithSuccess:success];)
+        return;
     }
+    if (self.cyl_finishing) return;
+    if (!self.isRefreshing) {
+        self.state = CYLRefreshStateIdle;
+        return;
+    }
+    _lastRefreshSucceeded = success;
+    [self refreshDidFinishWithSuccess:success];
+    NSTimeInterval duration = [self finishingDurationWithSuccess:success];
+    if (duration <= 0 || !isfinite(duration)) {
+        self.state = CYLRefreshStateIdle;
+        return;
+    }
+    // [EN] Hold open for `duration`, showing the result, then retract. [CN] 停留 `duration` 显示结果，然后收回。
+    self.cyl_finishing = YES;
+    [self cyl_reportPhase];
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) return;
+        self.cyl_finishing = NO;
+        if (self.isRefreshing) self.state = CYLRefreshStateIdle;
+        [self cyl_reportPhase];
+    });
+}
+
+- (void)refreshDidFinishWithSuccess:(BOOL)success {}
+
+- (NSTimeInterval)finishingDurationWithSuccess:(BOOL)success
+{
+    return self.finishDuration;
 }
 
 - (void)endRefreshingWithCompletionBlock:(void (^)(void))completionBlock
@@ -385,6 +448,7 @@
 {
     _pullingPercent = pullingPercent;
     [_iconView updateForPullingPercent:pullingPercent];
+    [self cyl_reportPhase];
 
     if (self.isRefreshing) return;
 
@@ -399,6 +463,14 @@
     if (self.refreshingBlock) {
         self.refreshingBlock();
     }
+    if (self.refreshingHandler) {
+        self.refreshingHandler(self);
+    }
+    for (NSArray *pair in [self.cyl_targetActions copy]) {
+        id target = [pair.firstObject nonretainedObjectValue];
+        SEL action = NSSelectorFromString(pair.lastObject);
+        if ([target respondsToSelector:action]) CYLRefreshMsgSend(CYLRefreshMsgTarget(target), action, self);
+    }
     if ([self.refreshingTarget respondsToSelector:self.refreshingAction]) {
         CYLRefreshMsgSend(CYLRefreshMsgTarget(self.refreshingTarget), self.refreshingAction, self);
     }
@@ -406,6 +478,159 @@
         self.beginRefreshingCompletionBlock();
     }
 }
+
+#pragma mark - SmartRefreshControl-style API
+
++ (instancetype)attach:(UIScrollView *)scrollView
+{
+    CYLRefreshComponent *component = [[self alloc] init];
+    [component attach:scrollView];
+    return component;
+}
+
++ (instancetype)attach:(UIScrollView *)scrollView target:(id)target action:(SEL)action
+{
+    CYLRefreshComponent *component = [self attach:scrollView];
+    [component addTarget:target action:action];
+    return component;
+}
+
+- (void)attach:(UIScrollView *)scrollView
+{
+    if ([self isKindOfClass:CYLRefreshHeader.class]) {
+        scrollView.cyl_header = (CYLRefreshHeader *)self;
+    } else if ([self isKindOfClass:CYLRefreshFooter.class]) {
+        scrollView.cyl_footer = (CYLRefreshFooter *)self;
+    } else if ([self isKindOfClass:CYLRefreshTrailer.class]) {
+        scrollView.cyl_trailer = (CYLRefreshTrailer *)self;
+    } else {
+        [scrollView addSubview:self];
+    }
+}
+
+- (void)addTarget:(id)target action:(SEL)action
+{
+    if (!target || !action) return;
+    if (!self.cyl_targetActions) self.cyl_targetActions = [NSMutableArray array];
+    [self.cyl_targetActions addObject:@[[NSValue valueWithNonretainedObject:target], NSStringFromSelector(action)]];
+}
+
+- (void)removeTarget:(id)target action:(SEL)action
+{
+    NSString *name = action ? NSStringFromSelector(action) : nil;
+    NSIndexSet *matches = [self.cyl_targetActions indexesOfObjectsPassingTest:^BOOL(NSArray *pair, NSUInteger idx, BOOL *stop) {
+        return [pair.firstObject nonretainedObjectValue] == target && (!name || [pair.lastObject isEqualToString:name]);
+    }];
+    [self.cyl_targetActions removeObjectsAtIndexes:matches];
+}
+
+- (BOOL)isAttached
+{
+    return self.scrollView != nil;
+}
+
+- (void)setTriggerRate:(CGFloat)triggerRate
+{
+    _triggerRate = (isfinite(triggerRate) && triggerRate > 0) ? triggerRate : 1;
+}
+
+- (BOOL)isExpanded
+{
+    return self.isRefreshing;
+}
+
+- (CGFloat)expandHeight
+{
+    return self.cyl_h;
+}
+
+- (CGFloat)dragOffset
+{
+    return self.pullingPercent * self.expandHeight * self.triggerRate;
+}
+
+- (CYLRefreshPhase)phase
+{
+    if (self.state == CYLRefreshStateNoMoreData) return CYLRefreshPhaseNoMoreData;
+    if (self.cyl_finishing) return CYLRefreshPhaseFinishing;
+    switch (self.state) {
+        case CYLRefreshStateRefreshing: return CYLRefreshPhaseRefreshing;
+        case CYLRefreshStateWillRefresh: return CYLRefreshPhaseWillRefresh;
+        case CYLRefreshStatePulling:
+            return self.scrollView.isDragging ? CYLRefreshPhaseReleaseToRefresh : CYLRefreshPhaseReleasing;
+        default:
+            return (self.pullingPercent > 0 && self.scrollView.isDragging) ? CYLRefreshPhasePullToRefresh : CYLRefreshPhaseIdle;
+    }
+}
+
+- (BOOL)isInAnyPhase:(NSArray<NSNumber *> *)phases
+{
+    return [phases containsObject:@(self.phase)];
+}
+
+- (BOOL)isInPhases:(CYLRefreshPhase)phase, ...
+{
+    if (phase == 0) return NO;
+    CYLRefreshPhase current = self.phase;
+    if (phase == current) return YES;
+    // [EN] Enum arguments are promoted to int in a variadic call; the list ends with 0.
+    // [CN] 可变参数中的枚举会提升为 int；列表以 0 结尾。
+    va_list args;
+    va_start(args, phase);
+    BOOL found = NO;
+    for (int next = va_arg(args, int); next != 0; next = va_arg(args, int)) {
+        if (next == (int)current) { found = YES; break; }
+    }
+    va_end(args);
+    return found;
+}
+
+- (void)cyl_reportPhase
+{
+    CYLRefreshPhase phase = self.phase;
+    if (phase == self.cyl_reportedPhase) return;
+    CYLRefreshPhase old = self.cyl_reportedPhase;
+    self.cyl_reportedPhase = phase;
+    [self phaseDidChangeFrom:old to:phase];
+}
+
+- (void)setColorAccent:(UIColor *)colorAccent
+{
+    _colorAccent = colorAccent;
+    [self setNeedsLayout];
+}
+
+- (void)setColorPrimary:(UIColor *)colorPrimary
+{
+    _colorPrimary = colorPrimary;
+    self.backgroundColor = colorPrimary ?: UIColor.clearColor;
+}
+
+/// [EN] Applies `colorAccent` to every label, image view and spinner inside the control.
+/// [CN] 把 `colorAccent` 应用到控件内的所有文字、图片视图与菊花。
+- (void)cyl_applyThemeColors
+{
+    UIColor *accent = self.colorAccent;
+    if (!accent) return;
+    NSMutableArray<UIView *> *views = [NSMutableArray arrayWithArray:self.subviews];
+    while (views.count) {
+        UIView *view = views.lastObject;
+        [views removeLastObject];
+        if ([view isKindOfClass:UILabel.class]) {
+            ((UILabel *)view).textColor = accent;
+        } else if ([view isKindOfClass:UIActivityIndicatorView.class]) {
+            ((UIActivityIndicatorView *)view).color = accent;
+        } else {
+            view.tintColor = accent;
+            [views addObjectsFromArray:view.subviews];
+        }
+    }
+}
+
+- (void)didAttachToScrollView:(UIScrollView *)scrollView {}
+- (void)willDetachFromScrollView:(UIScrollView *)scrollView {}
+- (void)didScrollWithOffset:(CGFloat)offset percent:(CGFloat)percent dragging:(BOOL)dragging {}
+- (void)phaseDidChangeFrom:(CYLRefreshPhase)oldPhase to:(CYLRefreshPhase)phase {}
 
 #pragma mark - 刷新动画时间控制
 - (instancetype)setAnimationDisabled {

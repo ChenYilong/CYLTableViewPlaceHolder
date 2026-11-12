@@ -39,6 +39,73 @@ typedef NS_ENUM(NSInteger, CYLRefreshState) {
     CYLRefreshStateNoMoreData
 };
 
+@class CYLRefreshComponent;
+
+/*!
+ * [EN] How the header moves while it is pulled (SmartRefreshControl's `UISmartScrollMode`).
+ * [CN] 下拉时刷新头的移动方式（对应 SmartRefreshControl 的 `UISmartScrollMode`）。
+ */
+typedef NS_ENUM(NSInteger, CYLRefreshScrollMode) {
+    /*!
+     * [EN] The header moves with the content (default, MJRefresh's behavior). [CN] 刷新头随内容移动（默认，MJRefresh 的行为）。
+     */
+    CYLRefreshScrollModeMove = 0,
+    /*!
+     * [EN] The header stretches to fill the whole pulled distance. [CN] 刷新头拉伸，铺满整个下拉距离。
+     */
+    CYLRefreshScrollModeStretch,
+    /*!
+     * [EN] The header slides in at the top of the visible area, in front of the content. [CN] 刷新头从可见区域顶部滑入，位于内容前面。
+     */
+    CYLRefreshScrollModeFront,
+};
+
+/*!
+ * [EN] The detailed phase of a refresh control: `state` plus whether the user is still dragging and the finishing hold
+ *      (SmartRefreshControl's `UIRefreshStatus` / `UISmartFooterStatus`).
+ * [CN] 刷新控件的细分阶段：`state` 加上是否仍在拖动以及结束停留（对应 SmartRefreshControl 的 `UIRefreshStatus` / `UISmartFooterStatus`）。
+ */
+typedef NS_ENUM(NSInteger, CYLRefreshPhase) {
+    /*!
+     * [EN] Idle, not pulled. [CN] 空闲，未拉动。
+     */
+    CYLRefreshPhaseIdle = 1,
+    /*!
+     * [EN] Pulled, not far enough to refresh yet. [CN] 已拉动，但还不够远，松手不会刷新。
+     */
+    CYLRefreshPhasePullToRefresh,
+    /*!
+     * [EN] Pulled far enough; releasing starts the refresh. [CN] 已拉够距离，松手即刷新。
+     */
+    CYLRefreshPhaseReleaseToRefresh,
+    /*!
+     * [EN] `beginRefreshing` was called before the control was on screen. [CN] 控件上屏前调用了 `beginRefreshing`。
+     */
+    CYLRefreshPhaseWillRefresh,
+    /*!
+     * [EN] Released past the trigger point, moving to the refreshing position. [CN] 已越过触发点松手，正移动到刷新位置。
+     */
+    CYLRefreshPhaseReleasing,
+    /*!
+     * [EN] Refreshing or loading. [CN] 正在刷新或加载。
+     */
+    CYLRefreshPhaseRefreshing,
+    /*!
+     * [EN] Finished, holding for `finishDuration` before retracting. [CN] 已结束，收回前停留 `finishDuration`。
+     */
+    CYLRefreshPhaseFinishing,
+    /*!
+     * [EN] A footer showing that all data is loaded. [CN] 加载尾显示已全部加载。
+     */
+    CYLRefreshPhaseNoMoreData,
+};
+
+/*!
+ * [EN] A refreshing callback that receives the control (SmartRefreshControl's `RefreshBlock`).
+ * [CN] 带控件参数的刷新回调（对应 SmartRefreshControl 的 `RefreshBlock`）。
+ */
+typedef void (^CYLRefreshComponentHandler)(__kindof CYLRefreshComponent *component);
+
 /*!
  * 进入刷新状态的回调
  */
@@ -223,6 +290,145 @@ typedef void (^CYLRefreshComponentAction)(void);
  * 根据拖拽比例自动切换透明度
  */
 @property (assign, nonatomic, getter=isAutomaticallyChangeAlpha) BOOL automaticallyChangeAlpha;
+
+#pragma mark - SmartRefreshControl-style API
+
+/*!
+ * [EN] Creates the control and attaches it to `scrollView` as its header, footer or trailer (by class).
+ * [CN] 创建控件，并按类型作为 `scrollView` 的刷新头、加载尾或 trailer 挂上。
+ */
++ (instancetype)attach:(UIScrollView *)scrollView NS_SWIFT_NAME(attach(to:));
+/*!
+ * [EN] Creates, attaches and adds a refreshing target in one call. [CN] 一次完成创建、挂上并添加刷新回调对象。
+ */
++ (instancetype)attach:(UIScrollView *)scrollView target:(id)target action:(SEL)action NS_SWIFT_NAME(attach(to:target:action:));
+/*!
+ * [EN] Attaches this control to `scrollView` as its header, footer or trailer (by class).
+ * [CN] 按类型把本控件作为 `scrollView` 的刷新头、加载尾或 trailer 挂上。
+ */
+- (void)attach:(UIScrollView *)scrollView NS_SWIFT_NAME(attach(to:));
+/*!
+ * [EN] Adds a target-action called on every refresh, besides `refreshingTarget` and the blocks; several can be added.
+ *      `action` may take no argument or the control. [CN] 添加每次刷新都会调用的 target-action（`refreshingTarget` 与 block 之外，可添加多个）；
+ *      `action` 可以不带参数或带控件参数。
+ */
+- (void)addTarget:(id)target action:(SEL)action NS_SWIFT_NAME(addTarget(_:action:));
+/*!
+ * [EN] Removes a target-action added with `addTarget:action:`. [CN] 移除 `addTarget:action:` 添加的 target-action。
+ */
+- (void)removeTarget:(id)target action:(SEL)action NS_SWIFT_NAME(removeTarget(_:action:));
+/*!
+ * [EN] Called on every refresh with the control. [CN] 每次刷新时调用，参数为控件本身。
+ */
+@property (copy, nonatomic, nullable) CYLRefreshComponentHandler refreshingHandler;
+/*!
+ * [EN] YES while the control is on a scroll view. [CN] 控件挂在滚动视图上时为 YES。
+ */
+@property (nonatomic, readonly, getter=isAttached) BOOL attached;
+/*!
+ * [EN] How far to pull, as a multiple of `expandHeight`, before releasing refreshes. Default 1.
+ * [CN] 松手刷新所需的拉动距离，为 `expandHeight` 的倍数，默认 1。
+ */
+@property (nonatomic) CGFloat triggerRate;
+/*!
+ * [EN] Seconds the control stays open after the refresh ends, before retracting. Default 0.
+ * [CN] 刷新结束后、收回前停留的秒数，默认 0。
+ */
+@property (nonatomic) NSTimeInterval finishDuration;
+/*!
+ * [EN] How the header moves while pulled (headers only). Default `CYLRefreshScrollModeMove`.
+ * [CN] 下拉时刷新头的移动方式（仅刷新头），默认 `CYLRefreshScrollModeMove`。
+ */
+@property (nonatomic) CYLRefreshScrollMode scrollMode;
+/*!
+ * [EN] Foreground color: every label, image tint and spinner of the control. nil keeps each view's own color.
+ * [CN] 前景色：控件中所有文字、图片着色与菊花。nil 保留各视图自己的颜色。
+ */
+@property (strong, nonatomic, nullable) UIColor *colorAccent;
+/*!
+ * [EN] Background color of the control. nil keeps a clear background.
+ * [CN] 控件背景色。nil 保持透明背景。
+ */
+@property (strong, nonatomic, nullable) UIColor *colorPrimary;
+/*!
+ * [EN] YES while the control holds its refreshing position (refreshing or about to). [CN] 控件处于刷新位置（刷新中或即将刷新）时为 YES。
+ */
+@property (nonatomic, readonly, getter=isExpanded) BOOL expanded;
+/*!
+ * [EN] The control's height when open; constant while `scrollMode` stretches the frame. [CN] 控件展开时的高度；`scrollMode` 拉伸 frame 时保持不变。
+ */
+@property (nonatomic, readonly) CGFloat expandHeight;
+/*!
+ * [EN] Points pulled, `pullingPercent` × `expandHeight` × `triggerRate`. [CN] 已拉动的点数，`pullingPercent` × `expandHeight` × `triggerRate`。
+ */
+@property (nonatomic, readonly) CGFloat dragOffset;
+/*!
+ * [EN] The detailed phase. [CN] 细分阶段。
+ */
+@property (nonatomic, readonly) CYLRefreshPhase phase;
+/*!
+ * [EN] YES when the control is in one of `phases` (NSNumber-wrapped `CYLRefreshPhase` values).
+ * [CN] 控件处于 `phases`（以 NSNumber 包装的 `CYLRefreshPhase`）之一时为 YES。
+ */
+- (BOOL)isInAnyPhase:(NSArray<NSNumber *> *)phases NS_SWIFT_NAME(isIn(phases:));
+/*!
+ * [EN] The same with a list of phases ending in 0, like SmartRefreshControl's `inStatus:`.
+ * [CN] 同上，参数为以 0 结尾的阶段列表，与 SmartRefreshControl 的 `inStatus:` 相同。
+ */
+- (BOOL)isInPhases:(CYLRefreshPhase)phase, ... NS_SWIFT_UNAVAILABLE("Use isIn(phases:)");
+/*!
+ * [EN] Ends the refresh and records whether it succeeded: the control can show it for `finishDuration`
+ *      (`-refreshDidFinishWithSuccess:`), then retracts. `endRefreshing` is the same with YES.
+ * [CN] 结束刷新并记录是否成功：控件可在 `finishDuration` 内显示结果（`-refreshDidFinishWithSuccess:`），然后收回。`endRefreshing` 相当于传 YES。
+ */
+- (void)endRefreshingWithSuccess:(BOOL)success NS_SWIFT_NAME(endRefreshing(success:));
+/*!
+ * [EN] Whether the last refresh ended successfully. [CN] 上一次刷新是否成功结束。
+ */
+@property (nonatomic, readonly) BOOL lastRefreshSucceeded;
+
+#pragma mark Subclass hooks
+
+/*!
+ * [EN] Starts observing the scroll view (content offset, size and inset, pan state); called on attach. Override to
+ *      observe more, and call super. [CN] 开始监听滚动视图（偏移、内容尺寸、inset、拖动手势）；挂上时调用。可重写以增加监听，并调用 super。
+ */
+- (void)addObservers NS_REQUIRES_SUPER;
+/*!
+ * [EN] Stops what `addObservers` started; called on detach. [CN] 停止 `addObservers` 开始的监听；离开时调用。
+ */
+- (void)removeObservers NS_REQUIRES_SUPER;
+
+/*!
+ * [EN] Called after the control is attached to `scrollView`. [CN] 控件挂到 `scrollView` 后调用。
+ */
+- (void)didAttachToScrollView:(UIScrollView *)scrollView NS_REQUIRES_SUPER;
+/*!
+ * [EN] Called before the control leaves `scrollView`. [CN] 控件离开 `scrollView` 前调用。
+ */
+- (void)willDetachFromScrollView:(UIScrollView *)scrollView NS_REQUIRES_SUPER;
+/*!
+ * [EN] Called when the scroll view's `contentInset` changes. [CN] 滚动视图的 `contentInset` 变化时调用。
+ */
+- (void)scrollViewContentInsetDidChange:(nullable NSDictionary *)change NS_REQUIRES_SUPER;
+/*!
+ * [EN] Called on every scroll with the pulled points, the percent and whether the user drags.
+ * [CN] 每次滚动时调用，参数为已拉动点数、百分比以及用户是否在拖动。
+ */
+- (void)didScrollWithOffset:(CGFloat)offset percent:(CGFloat)percent dragging:(BOOL)dragging;
+/*!
+ * [EN] Called when `phase` changes. [CN] `phase` 变化时调用。
+ */
+- (void)phaseDidChangeFrom:(CYLRefreshPhase)oldPhase to:(CYLRefreshPhase)phase;
+/*!
+ * [EN] Called when the refresh ends, with its result; state controls show it here. [CN] 刷新结束时调用并传入结果；带文字的控件在此显示结果。
+ */
+- (void)refreshDidFinishWithSuccess:(BOOL)success NS_REQUIRES_SUPER;
+/*!
+ * [EN] Seconds to stay open after the refresh ends; returns `finishDuration` by default.
+ * [CN] 刷新结束后停留的秒数；默认返回 `finishDuration`。
+ */
+- (NSTimeInterval)finishingDurationWithSuccess:(BOOL)success;
 @end
 
 @interface UILabel(CYLRefresh)
