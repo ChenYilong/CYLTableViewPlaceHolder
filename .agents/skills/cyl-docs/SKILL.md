@@ -35,7 +35,7 @@ verification) when the task ends. See `instructions.md`, "Record every task in d
   bug-free debugging screenshots in `docs/assets/` embedded in the document, final screenshots in the
   README. If the change could not be run, say so; never present a diagram as a screenshot. Every screenshot, local
   or CI/CD, lives in `docs/` (committed) and, once the result is right, in the README with the platform, the OS /
-  simulator / SDK versions, the commit link and the time; key details only, stitched top to bottom first, then two
+  simulator / SDK versions, the commit link and the time; key details only, stitched vertically (top to bottom) first, then two
   columns, a single row last (at most three per row), from clear original images (`instructions.md`,
   "Screenshots of local builds and CI/CD").
 - **Public API comments:** every public declaration has a documentation comment directly above it; several lines

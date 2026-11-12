@@ -244,6 +244,13 @@ integrates it the same way:
   for the plus button's own page), and each tab names its page with
   `CYLTabBarItemPageIdentifier`, resolved through CYLTabBarController's page
   registry.
+- **Prefer a bulged plus button.** When an example shows a PlusButton, it bulges: the plus button's top edge goes
+  above the tab bar's top edge, so it stands out of the bar. Raise it with the configuration keys
+  `CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset` (or `+multiplierOfTabBarHeight:` /
+  `+constantOfPlusButtonCenterYOffsetForTabBarHeight:` in a `CYLPlusButton` subclass); a negative offset or a
+  multiplier below 0.5 moves it up. Keep the raised part tappable with `touchableAreaOutsets`, and on Liquid Glass
+  follow the notes in `CYLPlusButton.h` (hide the glass lens when the button is moved). Check in a screenshot that the
+  top of the plus button is above the tab bar. A flat plus button needs the task to ask for it.
 - Code only adds what a file cannot hold: registering the pages for the page
   identifiers, a `CYLTabBarControllerPlusButtonAction` block, or a
   `CYLPlusButton` subclass when the layout needs one (it then still implements
@@ -633,8 +640,9 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
   open issue.
 - **Show the key detail, not the whole screen.** Crop to the part that proves the point (the refresh header, the
   footer, the badge); take the full screen only when the whole layout is the point.
-- **Stitch several details into one image**, in this order of preference:
-  1. stacked top to bottom (one column), the easiest to read on a phone;
+- **Stitch several details into one image**, in this order of preference (vertical first, confirmed by the owner on
+  2026-11-12; an earlier wording that put a horizontal layout first was a mistake):
+  1. stacked top to bottom (one column, vertical), the easiest to read on a phone;
   2. two columns over several rows;
   3. a single horizontal row, the last resort, with at most three images per row.
 - **Store every screenshot in `docs/`.** Put the image in `docs/assets/` (or the `assets/` folder next to the document)

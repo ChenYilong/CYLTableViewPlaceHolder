@@ -84,6 +84,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   the example's own `.bundle` (`CYLTabBarController(configurationFile:)`; `CYLTabBarControllerPlusButton` with
   `CYLTabBarItemPageIdentifier`), unless a task says otherwise. See "Integrating CYLTabBarController in the
   examples" in `instructions.md`.
+- The example's plus button bulges by default: its top edge is above the tab bar's top edge
+  (`CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset`, tappable through `touchableAreaOutsets`); a flat
+  plus button needs the task to ask for it.
 - Every example Podfile (`Examples/*/Podfile`) also contains `pod 'MJRefresh', '<latest version>'`, the
   highest stable version on the CocoaPods trunk, set with `scripts/resolve-mjrefresh-version.sh` before every
   build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
@@ -145,8 +148,8 @@ the integrated `CYLRefresh` component, and an example application. Read
   builds. Override the build target for that toolchain instead of changing the
   library's iOS 12.0 minimum.
 - Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
-  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details top to
-  bottom first, then two columns, a single row last (at most three per row); store every image in `docs/` (embedded
+  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details vertically
+  (top to bottom) first, then two columns, a single row last (at most three per row); store every image in `docs/` (embedded
   in the fitting document, committed); when the result is right, update the README section with the platform, the
   OS / simulator / SDK versions, the commit and the time; use clear original images. See "Screenshots of local
   builds and CI/CD" in `instructions.md`.

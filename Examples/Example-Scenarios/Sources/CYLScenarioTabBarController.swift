@@ -60,11 +60,13 @@ final class CYLScenarioPlusButton: CYLPlusButton, CYLPlusButtonSubclassing {
 
     static func plusButton() -> Any {
         let button = CYLScenarioPlusButton()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 38, weight: .bold)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 66, weight: .bold)
         // System image on the plus button: a CYLTabBarController UIButton, not a placeholder, so CYLPlaceholderView does not apply.
         button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: configuration), for: .normal)
         button.tintColor = .systemTeal
-        button.frame = CGRect(x: 0, y: 0, width: 56, height: 56)
+        // Taller than the tab bar, so it bulges: Liquid Glass raises a taller plus button until its bottom meets the bar's
+        // bottom, and the offset below raises it on the classic tab bar.
+        button.frame = CGRect(x: 0, y: 0, width: 84, height: 84)
         button.accessibilityLabel = CYLScenarioLocalizedString(.actionPublish)
         button.accessibilityIdentifier = "plusButton"
         button.addTarget(button, action: #selector(publish), for: .touchUpInside)
@@ -76,9 +78,10 @@ final class CYLScenarioPlusButton: CYLPlusButton, CYLPlusButtonSubclassing {
         3
     }
 
-    /// Raises the button a little above the tab bar's center.
+    /// Bulges the button: its top edge stands above the tab bar's top edge (the examples' default plus button,
+    /// "Integrating CYLTabBarController in the examples").
     static func constantOfPlusButtonCenterYOffset(forTabBarHeight tabBarHeight: CGFloat) -> CGFloat {
-        -6
+        -24
     }
 
     @objc private func publish() {

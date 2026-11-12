@@ -51,6 +51,7 @@ not as a system `UIImage` on a `UIImageView`; where that cannot be avoided, a co
 | MJRefresh in every example Podfile (latest version) | `scripts/resolve-mjrefresh-version.sh`, `Examples/*/Podfile`, `scripts/ci-build-example.sh`; rule in `instructions.md` ("Depending on MJRefresh in the examples") |
 | CYLTabBarController dependency (latest commit, any branch) | `scripts/resolve-cyltabbarcontroller-commit.sh`, `Examples/Example-Scenarios/Podfile`; rule in `instructions.md` ("Depending on CYLTabBarController") |
 | CYLTabBarController in the examples (default integration) | A PlusButton with a plus child view controller, initialized from a configuration file in the example's own `.bundle` with `CYLTabBarController(configurationFile:)`; rule in `instructions.md` "Integrating CYLTabBarController in the examples"; API in CYLTabBarController's `CYLTabBarController.h` and `CYLPlusButton.h`; current example `Examples/Example-Scenarios/Sources/CYLScenarioTabBarController.swift` |
+| Bulged plus button in the examples (default) | Its top edge above the tab bar: `CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset` in the configuration file, or `+multiplierOfTabBarHeight:` / `+constantOfPlusButtonCenterYOffsetForTabBarHeight:`; tappable raised part with `touchableAreaOutsets` (CYLTabBarController's `CYLTabBarController.h`, `CYLPlusButton.h`) |
 | Integration and usage | `README.md` |
 | Issue history | `docs/issue-progress.md` |
 
