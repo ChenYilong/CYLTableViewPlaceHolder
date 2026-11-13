@@ -405,6 +405,9 @@ public class MaterialHeader extends SimpleComponent implements RefreshHeader {
             return false;
         }
         final View circleView = mCircleView;
+        // The kernel of this open, kept for the end of the animation (issues #1547, #1584, #1589: a null kernel there
+        // crashed when animations end at once, for example with animations turned off).
+        final RefreshKernel kernel = mKernel;
         circleView.setAlpha(1);
         circleView.setScaleX(0);
         circleView.setScaleY(0);
@@ -414,7 +417,9 @@ public class MaterialHeader extends SimpleComponent implements RefreshHeader {
             public void onAnimationEnd(Animator animation) {
                 circleView.animate().setListener(null);
                 mProgress.start();
-                mKernel.onAutoRefreshAnimationEnd(animation, animationOnly);
+                if (kernel != null) {
+                    kernel.onAutoRefreshAnimationEnd(animation, animationOnly);
+                }
             }
         });
         return true;

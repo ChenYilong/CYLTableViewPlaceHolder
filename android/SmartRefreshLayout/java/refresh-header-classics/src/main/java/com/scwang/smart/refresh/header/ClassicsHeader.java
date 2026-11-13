@@ -205,7 +205,7 @@ public class ClassicsHeader extends ClassicsAbstract<ClassicsHeader> implements 
         } else {
             mTextUpdate = context.getString(R.string.srl_header_update);
         }
-        mLastUpdateFormat = new SimpleDateFormat(mTextUpdate, Locale.getDefault());
+        mLastUpdateFormat = safeDateFormat(mTextUpdate);
 
         ta.recycle();
 
@@ -234,11 +234,35 @@ public class ClassicsHeader extends ClassicsAbstract<ClassicsHeader> implements 
         }
 
         KEY_LAST_UPDATE_TIME += context.getClass().getName();
-        mShared = context.getSharedPreferences("ClassicsHeader", Context.MODE_PRIVATE);
-        setLastUpdateTime(new Date(mShared.getLong(KEY_LAST_UPDATE_TIME, System.currentTimeMillis())));
+        // The preferences are read off the main thread, so StrictMode's disk-read policy is not broken (issue #1591).
+        final Context appContext = context.getApplicationContext() != null ? context.getApplicationContext() : context;
+        final String key = KEY_LAST_UPDATE_TIME;
+        final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        new Thread(() -> {
+            final SharedPreferences shared = appContext.getSharedPreferences("ClassicsHeader", Context.MODE_PRIVATE);
+            final long time = shared.getLong(key, System.currentTimeMillis());
+            main.post(() -> {
+                mShared = shared;
+                setLastUpdateTime(new Date(time));
+            });
+        }, "ClassicsHeader-last-update").start();
 
     }
     //</editor-fold>
+
+    /**
+     * A date format for the last update text; a text that is not a valid pattern (letters such as "t" without quotes,
+     * from a translation or an app's string) falls back to the default instead of crashing (issues #1431, #1603).
+     * @param pattern 格式 / the pattern
+     * @return 格式化器 / the format
+     */
+    protected static DateFormat safeDateFormat(String pattern) {
+        try {
+            return new SimpleDateFormat(pattern, Locale.getDefault());
+        } catch (IllegalArgumentException e) {
+            return new SimpleDateFormat("'Last Update' M-d HH:mm", Locale.getDefault());
+        }
+    }
 
     //<editor-fold desc="RefreshHeader">
     @Override

@@ -1,6 +1,16 @@
 package com.scwang.smart.refresh
 
+import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.os.Handler
+import android.os.SystemClock
+import android.view.MotionEvent
+import android.widget.FrameLayout
+import java.util.Locale
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +29,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowToast
 import org.robolectric.annotation.Config
 import java.time.Duration
 
@@ -92,5 +103,156 @@ class SmartRefreshJavaTest {
         layout.setRefreshHeader(ClassicsHeader(activity))
         idle(100)
         assertFalse("the app's own setting stays", translationContent(layout))
+    }
+
+    private fun field(obj: Any, name: String): java.lang.reflect.Field {
+        var c: Class<*>? = obj.javaClass
+        while (c != null) {
+            try { return c.getDeclaredField(name).apply { isAccessible = true } } catch (_: NoSuchFieldException) { c = c.superclass }
+        }
+        throw NoSuchFieldException(name)
+    }
+
+    private fun method(obj: Any, name: String, vararg types: Class<*>): java.lang.reflect.Method {
+        var c: Class<*>? = obj.javaClass
+        while (c != null) {
+            try { return c.getDeclaredMethod(name, *types).apply { isAccessible = true } } catch (_: NoSuchMethodException) { c = c.superclass }
+        }
+        throw NoSuchMethodException(name)
+    }
+
+    /** A content that records the pointer ids of every event it gets. */
+    private class Recorder(context: Context) : FrameLayout(context) {
+        val pointerSets = mutableListOf<Pair<Int, Set<Int>>>()
+        override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+            pointerSets += ev.actionMasked to (0 until ev.pointerCount).map { ev.getPointerId(it) }.toSet()
+            return true
+        }
+    }
+
+    private fun twoFingers(down: Long, time: Long, action: Int, y: Float): MotionEvent {
+        val props = arrayOf(MotionEvent.PointerProperties().apply { id = 0 }, MotionEvent.PointerProperties().apply { id = 1 })
+        val coords = arrayOf(MotionEvent.PointerCoords().apply { x = 150f; this.y = y }, MotionEvent.PointerCoords().apply { x = 150f; this.y = y + 50f })
+        return MotionEvent.obtain(down, time, action, 2, props, coords, 0, 0, 1f, 1f, 0, 0, 0, 0)
+    }
+
+    @Test
+    fun eventsSentToChildrenKeepTheFingers() {
+        // #532, #1227, #1319, #1496: the events the layout sends to its children keep both fingers, so a ViewPager
+        // finds the pointer it tracks.
+        val layout = SmartRefreshLayout(activity)
+        val recorder = Recorder(activity)
+        layout.setRefreshContent(recorder)
+        layout.setRefreshHeader(ClassicsHeader(activity))
+        layout.setOnRefreshListener { }
+        activity.setContentView(layout)
+        idle(100)
+        val t = SystemClock.uptimeMillis()
+        // The first finger starts where the two fingers' middle will be, so the move reads as vertical.
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 150f, 300f, 0))
+        layout.dispatchTouchEvent(twoFingers(t, t + 10, MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 300f))
+        var y = 300f
+        var time = t + 10
+        repeat(20) { y += 15f; time += 16; layout.dispatchTouchEvent(twoFingers(t, time, MotionEvent.ACTION_MOVE, y)) }
+        repeat(40) { y -= 15f; time += 16; layout.dispatchTouchEvent(twoFingers(t, time, MotionEvent.ACTION_MOVE, y)) }
+        val afterSecond = recorder.pointerSets.dropWhile { it.first != MotionEvent.ACTION_POINTER_DOWN }.drop(1)
+        assertTrue("the content got events after the pull went back", afterSecond.isNotEmpty())
+        val moves = afterSecond.filter { it.first == MotionEvent.ACTION_MOVE }
+        assertTrue("the content got moves", moves.isNotEmpty())
+        assertTrue("every move keeps the second finger: $afterSecond", moves.all { 1 in it.second })
+    }
+
+    @Test
+    fun theHandlerRunsOnTheMainThreadWhenBuiltOnAnother() {
+        // #1129: AsyncLayoutInflater builds the layout on a background thread; finishing still works (fixed in the
+        // source since; checked here).
+        var built: SmartRefreshLayout? = null
+        val thread = Thread {
+            android.os.Looper.prepare()
+            built = SmartRefreshLayout(activity)
+        }
+        thread.start()
+        thread.join()
+        val handler = field(built!!, "mHandler").get(built) as Handler
+        assertEquals(android.os.Looper.getMainLooper(), handler.looper)
+    }
+
+    @Test
+    fun anInvalidLastUpdatePatternDoesNotCrash() {
+        // #1431, #1603: "Illegal pattern character 't'" from an unquoted last-update text.
+        val old = ClassicsHeader.REFRESH_HEADER_UPDATE
+        ClassicsHeader.REFRESH_HEADER_UPDATE = "Last update M-d HH:mm"
+        try {
+            ClassicsHeader(activity)
+        } finally {
+            ClassicsHeader.REFRESH_HEADER_UPDATE = old
+        }
+    }
+
+    @Test
+    fun lastUpdatePreferencesAreReadOffTheMainThread() {
+        // #1591: StrictMode disk reads.
+        val threads = mutableListOf<String>()
+        val context = object : ContextWrapper(activity) {
+            override fun getApplicationContext(): Context = this
+            override fun getSharedPreferences(name: String?, mode: Int): SharedPreferences {
+                threads += Thread.currentThread().name
+                return super.getSharedPreferences(name, mode)
+            }
+        }
+        ClassicsHeader(context)
+        Thread.sleep(300)
+        idle(100)
+        assertTrue("read at all", threads.isNotEmpty())
+        assertTrue("never on the main thread: $threads", threads.none { it == Thread.currentThread().name })
+    }
+
+    @Test
+    fun noEasterEggToast() {
+        // #1105, #1110: no surprise toast after a very long pull at the top left.
+        val layout = layout()
+        field(layout, "mLastTouchX").setFloat(layout, 1f)
+        field(layout, "mLastTouchY").setFloat(layout, 1f)
+        val screen = field(layout, "mScreenHeightPixels").getInt(layout)
+        method(layout, "moveSpinnerInfinitely", Float::class.javaPrimitiveType!!).invoke(layout, screen * 6f)
+        idle(100)
+        assertEquals(null, ShadowToast.getLatestToast())
+    }
+
+    @Test
+    fun materialAutoOpenEndsWithoutTheKernel() {
+        // #1547, #1584, #1589: a MaterialHeader whose kernel is gone when its open animation ends does not crash.
+        val layout = layout()
+        val material = MaterialHeader(activity)
+        layout.setRefreshHeader(material)
+        idle(100)
+        assertTrue(material.autoOpen(300, 1f, false))
+        field(material, "mKernel").set(material, null)
+        idle(1000)
+    }
+
+    @Test
+    fun noMoreDataWhileLoadingWithoutAFooterDoesNotRecurse() {
+        // #1350: StackOverflowError from setNoMoreData -> finishLoadMoreWithNoMoreData -> setNoMoreData.
+        val layout = layout()
+        method(layout, "notifyStateChanged", RefreshState::class.java).invoke(layout, RefreshState.Loading)
+        field(layout, "mRefreshFooter").set(layout, null)
+        layout.setNoMoreData(true)
+        idle(500)
+        assertEquals(RefreshState.None, layout.state)
+    }
+
+    @Test
+    fun classicsTextsInSevenLanguages() {
+        // #1291: languages beyond Chinese and English.
+        val expected = mapOf("ja" to "引っ張って更新", "ko" to "당겨서 새로고침", "ru" to "Потяните, чтобы обновить",
+            "uk" to "Потягніть, щоб оновити", "zh-Hant" to "下拉可以重新整理", "zh-Hans" to "下拉可以刷新", "en" to "Pull Down To Refresh")
+        for ((tag, text) in expected) {
+            val config = Configuration(activity.resources.configuration).apply { setLocale(Locale.forLanguageTag(tag)) }
+            val localized = activity.createConfigurationContext(config)
+            assertEquals(tag, text, localized.getString(com.scwang.smart.refresh.header.classics.R.string.srl_header_pulling))
+        }
+        val config = Configuration(activity.resources.configuration).apply { setLocale(Locale.forLanguageTag("ja")) }
+        assertEquals("これ以上データはありません", activity.createConfigurationContext(config).getString(com.scwang.smart.refresh.footer.classics.R.string.srl_footer_nothing))
     }
 }

@@ -1070,10 +1070,17 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
                         mLastSpinner = spinner;
                         long time = e.getEventTime();
                         if (mFalsifyEvent == null) {
-                            mFalsifyEvent = obtain(time, time, MotionEvent.ACTION_DOWN, mTouchX + dx, mTouchY, 0);
+                            mFalsifyEvent = obtainLike(e, MotionEvent.ACTION_DOWN, mTouchX + dx, mTouchY);
                             super.dispatchTouchEvent(mFalsifyEvent);
+                            // A parent hands a child only the first finger on ACTION_DOWN; the other fingers follow
+                            // as ACTION_POINTER_DOWN, so the child keeps every pointer (#532, #1227, #1319, #1496).
+                            for (int i = 1; i < e.getPointerCount(); i++) {
+                                MotionEvent pointerDown = obtainLike(e, MotionEvent.ACTION_POINTER_DOWN | (i << MotionEvent.ACTION_POINTER_INDEX_SHIFT), mTouchX + dx, mTouchY);
+                                super.dispatchTouchEvent(pointerDown);
+                                pointerDown.recycle();
+                            }
                         }
-                        MotionEvent em = obtain(time, time, MotionEvent.ACTION_MOVE, mTouchX + dx, mTouchY + spinner, 0);
+                        MotionEvent em = obtainLike(e, MotionEvent.ACTION_MOVE, mTouchX + dx, mTouchY + spinner);
                         super.dispatchTouchEvent(em);
                         if (mFooterLocked && dy > mTouchSlop && mSpinner < 0) {
                             mFooterLocked = false;//内容向下滚动时 解锁Footer 的锁定
@@ -1116,8 +1123,7 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
                 if (mFalsifyEvent != null) {
                     mFalsifyEvent.recycle();
                     mFalsifyEvent = null;
-                    long time = e.getEventTime();
-                    MotionEvent ec = obtain(time, time, action, mTouchX, touchY, 0);
+                    MotionEvent ec = obtainLike(e, action, mTouchX, touchY);
                     super.dispatchTouchEvent(ec);
                     ec.recycle();
                 }
@@ -1130,6 +1136,23 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
         }
         //-------------------------------------------------------------------------//
         return super.dispatchTouchEvent(e);
+    }
+
+    /**
+     * A copy of the finger event with its pointers (ids and count) moved to (x, y), for the events this layout sends
+     * to its children. A single-pointer event lost the pointer a child tracks (ViewPager's active pointer) and crashed
+     * it with "pointerIndex out of range" (issues #532, #1227, #1319, #1496).
+     * @param source 手指事件 / the finger event
+     * @param action 动作 / the action
+     * @param x 坐标 / x
+     * @param y 坐标 / y
+     * @return 事件 / the event
+     */
+    protected static MotionEvent obtainLike(MotionEvent source, int action, float x, float y) {
+        MotionEvent event = MotionEvent.obtain(source);
+        event.setAction(action);
+        event.setLocation(x, y);
+        return event;
     }
 
     /**
@@ -1750,11 +1773,8 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
          * 3.修改源码
          *          源码引用，然后删掉下面4行的代码
          */
-        if (spinner > mScreenHeightPixels * 5 && (thisView.getTag() == null && thisView.getTag(R.id.srl_tag) == null) && mLastTouchY < mScreenHeightPixels / 6f && mLastTouchX < mScreenHeightPixels / 16f) {
-            String egg = "不要再拉了，臣妾做不到啊！";
-            Toast.makeText(thisView.getContext(), egg, Toast.LENGTH_SHORT).show();
-            thisView.setTag(R.id.srl_tag, egg);
-        }
+        // The easter egg toast ("不要再拉了，臣妾做不到啊！") is removed: a library shows no surprise messages (issues #1105,
+        // #1110).
         if (mState == RefreshState.TwoLevel && spinner > 0) {
             mKernel.moveSpinner(Math.min((int) spinner, thisView.getMeasuredHeight()), true);
         } else if (mState == RefreshState.Refreshing && spinner >= 0) {
@@ -3207,6 +3227,11 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
                         return;
                     }
                     if (noMoreData) {
+                        // Still Loading without a footer or content: end it first, or setNoMoreData calls
+                        // finishLoadMoreWithNoMoreData again, forever (StackOverflowError, issue #1350).
+                        if (mState == RefreshState.Loading) {
+                            notifyStateChanged(RefreshState.None);
+                        }
                         setNoMoreData(true);
                     }
                 } else {

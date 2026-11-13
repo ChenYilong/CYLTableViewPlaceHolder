@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_footer_pulling">위로 당겨서 더 불러오기</string>
+    <string name="srl_footer_release">놓아서 더 불러오기</string>
+    <string name="srl_footer_loading">불러오는 중…</string>
+    <string name="srl_footer_refreshing">새로고침 대기 중…</string>
+    <string name="srl_footer_finish">불러오기 완료</string>
+    <string name="srl_footer_failed">불러오기 실패</string>
+    <string name="srl_footer_nothing">더 이상 데이터가 없습니다</string>
+</resources>
