@@ -77,10 +77,10 @@ class SmartRefreshKotlinIssuesTest {
         SmartRefreshLayout::class.java.getDeclaredField("mSpinner").apply { isAccessible = true }.getInt(layout)
 
     /** A finger drag of [dy] pixels in 20 steps 16 ms apart, resting before it lifts. */
-    private fun drag(view: View, dy: Float, release: Boolean = true, x: Float = 200f) {
+    private fun drag(view: View, dy: Float, release: Boolean = true, x: Float = 200f, fromY: Float = 300f) {
         val down = SystemClock.uptimeMillis()
         var time = down
-        var y = 300f
+        var y = fromY
         view.dispatchTouchEvent(MotionEvent.obtain(down, time, MotionEvent.ACTION_DOWN, x, y, 0))
         repeat(20) {
             y += dy / 20
@@ -1000,6 +1000,232 @@ class SmartRefreshKotlinIssuesTest {
         assertTrue(settled > 0)
         assertEquals("no more binding while idle", settled, binds)
     }
+
+    // MARK: - Lists inside lists
+
+    /** An outer RecyclerView of 10 rows 300 pixels tall; row 2 is an inner NestedScrollView. */
+    private fun listWithInnerList(): Pair<androidx.recyclerview.widget.RecyclerView, NestedScrollView> {
+        val inner = NestedScrollView(activity).apply {
+            addView(LinearLayout(activity).apply { addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1000)) })
+        }
+        val outer = androidx.recyclerview.widget.RecyclerView(activity).apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+            adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+                override fun getItemCount() = 10
+                override fun getItemViewType(position: Int) = if (position == 2) 1 else 0
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    object : androidx.recyclerview.widget.RecyclerView.ViewHolder((if (viewType == 1) inner else View(parent.context)).apply {
+                        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300)
+                    }) {}
+                override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {}
+            }
+        }
+        return outer to inner
+    }
+
+    @Test
+    fun anInnerListAtItsTopDoesNotRefreshAScrolledOuterList() {
+        // #1177, #1458: with the outer list scrolled away from its top, a pull on an inner list at its own top
+        // refreshed: through nested scrolling, the layout trusted the inner list's leftover pull without asking whether
+        // the content was at its top.
+        assumeKotlin()
+        val (outer, inner) = listWithInnerList()
+        val layout = show(layout(outer))
+        outer.scrollBy(0, 600)
+        idle(100)
+        assertTrue(outer.canScrollVertically(-1))
+        assertFalse(inner.canScrollVertically(-1))
+        // The inner list's leftover pull, as it reaches the layout through nested scrolling (the outer RecyclerView
+        // is no nested-scrolling parent, so it skips it).
+        assertTrue(inner.startNestedScroll(View.SCROLL_AXIS_VERTICAL))
+        repeat(10) { inner.dispatchNestedScroll(0, 0, 0, -40, null) }
+        assertEquals("no pull while the outer list is not at its top", 0, spinner(layout))
+        inner.stopNestedScroll()
+        idle()
+        assertEquals(0, refreshes)
+        assertEquals(RefreshState.None, layout.state)
+    }
+
+    @Test
+    fun aButtonDoesNotClickAfterThePull() {
+        // #1351: a short vertical drag that started on a button pulled the header and also clicked the button.
+        var clicks = 0
+        val button = android.widget.Button(activity).apply { text = "Tap"; setOnClickListener { clicks++ } }
+        val box = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL; addView(button, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600)) }
+        val layout = show(layout(box))
+        drag(layout, 120f, fromY = 100f)
+        idle()
+        assertEquals("no click after a pull", 0, clicks)
+        tap(layout, 100f)
+        idle()
+        assertEquals("a tap still clicks", 1, clicks)
+    }
+
+    /** A NestedScrollView that records the actions it gets. */
+    private class RecordingScroll(context: Context) : NestedScrollView(context) {
+        val actions = ArrayList<Int>()
+
+        override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+            actions += ev.actionMasked
+            return super.dispatchTouchEvent(ev)
+        }
+    }
+
+    @Test
+    fun aChildGetsNoLiftWhileTheFingerIsDown() {
+        // #1271: a refresh finished during a nested drag sent the list an ACTION_UP while the finger was still down.
+        assumeKotlin()
+        val list = RecordingScroll(activity).apply {
+            addView(LinearLayout(activity).apply { addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 3000)) })
+        }
+        val layout = show(layout(list))
+        layout.autoRefresh(0)
+        idle()
+        drag(layout, 100f, release = false)
+        assertTrue("a nested drag is in progress", field(layout, "mNestedInProgress") as Boolean)
+        list.actions.clear()
+        layout.finishRefresh(0)
+        idle()
+        assertFalse("no ACTION_UP before the finger lifts: ${list.actions}", list.actions.contains(MotionEvent.ACTION_UP))
+    }
+
+    @Test
+    fun aBottomSheetSeesWhetherTheListIsAtItsTop() {
+        // #1158: in a BottomSheetDialog the list could scroll down but not back up: the sheet asks its scrolling child
+        // (this layout) whether it can scroll up, and the layout said no even with the list scrolled.
+        assumeKotlin()
+        val list = content(3000)
+        val layout = show(layout(list))
+        layout.setEnableRefresh(false)
+        assertFalse("at the top with refreshing off", layout.canScrollVertically(-1))
+        list.scrollTo(0, 500)
+        idle(100)
+        assertTrue("the list scrolls up", layout.canScrollVertically(-1))
+    }
+
+    @Test
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    fun aFixedHeaderWrapsItsText() {
+        // #1138: with srlFixedHeaderViewId, a TextView in the fixed part did not wrap unless it had a fixed height.
+        // Native graphics: the legacy shadows measure every character 1 pixel wide, so no text ever wraps.
+        assumeKotlin()
+        val text = android.widget.TextView(activity).apply {
+            id = View.generateViewId()
+            text = "A long line of text that cannot fit on one line of a narrow screen, so it has to wrap onto more lines."
+        }
+        val box = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(text, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            addView(content(3000))
+        }
+        val layout = layout(box)
+        layout.setFixedHeaderViewId(text.id)
+        show(layout)
+        idle(100)
+        assertTrue("wraps: ${text.lineCount} lines, ${text.height} px", text.lineCount > 1 && text.height >= text.lineCount * text.lineHeight * 0.9)
+    }
+
+    @Test
+    fun theFooterMovesOnlyItsTranslationView() {
+        // #1406: with srlFooterTranslationViewId set to the list, a pinned part (a collapsing app bar) still moved up
+        // while loading more.
+        val pinned = View(activity)
+        val list = content(300).apply { id = View.generateViewId() }
+        val box = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(pinned, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100))
+            addView(list)
+        }
+        val layout = layout(box)
+        layout.setFooterTranslationViewId(list.id)
+        show(layout)
+        drag(layout, -400f, release = false)
+        assertTrue(spinner(layout) < 0)
+        assertEquals("the pinned part stays", 0f, pinned.translationY + box.translationY)
+        assertTrue("the list moves", list.translationY < 0)
+        drag(layout, 0f)
+        idle()
+    }
+
+    @Test
+    fun aSidewaysListInsideScrollsSideways() {
+        // #1500: a sideways list inside the content (in a list's header) could not be scrolled on its own.
+        val row = recycler(activity, 30).apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
+        }
+        val box = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL; addView(row, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)); addView(content(3000)) }
+        val layout = show(layout(box))
+        val t = SystemClock.uptimeMillis()
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 300f, 100f, 0))
+        repeat(10) { layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 16L * (it + 1), MotionEvent.ACTION_MOVE, 300f - 20f * (it + 1), 102f, 0)); idle(16) }
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 200, MotionEvent.ACTION_UP, 100f, 102f, 0))
+        idle()
+        assertTrue("scrolled sideways: ${row.computeHorizontalScrollOffset()}", row.computeHorizontalScrollOffset() > 0)
+        assertEquals(0, spinner(layout))
+    }
+
+    @Test
+    fun turningRefreshOffAfterSomeRefreshesLeavesScrollingNormal() {
+        // #1510: after a few refreshes, setEnableRefresh(false) left the list's scrolling erratic.
+        val list = content(3000)
+        val layout = show(layout(list))
+        repeat(3) {
+            drag(layout, 600f)
+            idle()
+            layout.finishRefresh(0)
+            idle()
+        }
+        layout.setEnableRefresh(false)
+        drag(layout, -300f)
+        idle()
+        val down = list.scrollY
+        assertTrue(down > 0)
+        drag(layout, 150f)
+        idle()
+        assertTrue("scrolls back: $down -> ${list.scrollY}", list.scrollY < down)
+        assertEquals(0, spinner(layout))
+    }
+
+    @Test
+    fun aPullDuringTheEndBounceWorks() {
+        // #1519: after a fling to the end, a pull down before the bounce settled did nothing.
+        val list = content(3000)
+        val layout = show(layout(list))
+        layout.setEnableOverScrollBounce(true)
+        list.scrollTo(0, 100000)
+        idle(100)
+        val t = SystemClock.uptimeMillis()
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 200f, 400f, 0))
+        repeat(4) { layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 8L * (it + 1), MotionEvent.ACTION_MOVE, 200f, 400f - 60f * (it + 1), 0)) }
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 40, MotionEvent.ACTION_UP, 200f, 160f, 0))
+        idle(30)
+        val before = list.scrollY
+        drag(layout, 200f)
+        idle()
+        assertTrue("the pull scrolled the list back: $before -> ${list.scrollY}", list.scrollY < before)
+    }
+
+    @Test
+    fun loadMoreTurnedOnLaterShowsTheFooter() {
+        // #1507: setEnableLoadMore(true) at run time (after starting with it off) left the footer hidden.
+        val layout = layout(content(300))
+        layout.setEnableLoadMore(false)
+        show(layout)
+        drag(layout, -400f)
+        idle()
+        assertEquals(0, loads)
+        layout.setEnableLoadMore(true)
+        idle(100)
+        drag(layout, -400f, release = false)
+        val footer = layout.refreshFooter!!.view
+        assertTrue("the footer has a height: ${footer.height}", footer.height > 0)
+        assertTrue("the footer comes into view", top(footer) < top(layout) + layout.height)
+        drag(layout, 0f)
+        idle()
+        assertEquals(1, loads)
+    }
+
+    private fun top(v: View): Int = IntArray(2).also { v.getLocationInWindow(it) }[1]
 
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass

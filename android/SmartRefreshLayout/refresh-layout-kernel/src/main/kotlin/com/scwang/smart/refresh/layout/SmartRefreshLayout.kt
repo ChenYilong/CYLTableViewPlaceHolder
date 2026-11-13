@@ -1526,10 +1526,12 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int) {
         val scrolled = mNestedChild.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow)
         val dy = dyUnconsumed + mParentOffsetInWindow[1]
-        val decider = mScrollBoundaryDecider
-        val contentView = mRefreshContent?.view
-        if ((dy < 0 && (mEnableRefresh || mEnableOverScrollDrag) && (mTotalUnconsumed != 0 || decider == null || (contentView != null && decider.canRefresh(contentView)))) ||
-            (dy > 0 && (mEnableLoadMore || mEnableOverScrollDrag) && (mTotalUnconsumed != 0 || decider == null || (contentView != null && decider.canLoadMore(contentView))))
+        // Issues #1177, #1458: with no decider of the app's, the content itself is asked whether it is at its top (or
+        // end). The leftover pull of an inner list at its own top no longer refreshes while the outer list (no
+        // nested-scrolling parent, so the inner list's nested scroll skips it) is scrolled away from its top.
+        val content = mRefreshContent
+        if ((dy < 0 && (mEnableRefresh || mEnableOverScrollDrag) && (mTotalUnconsumed != 0 || content == null || content.canRefresh())) ||
+            (dy > 0 && (mEnableLoadMore || mEnableOverScrollDrag) && (mTotalUnconsumed != 0 || content == null || content.canLoadMore()))
         ) {
             if (mViceState == RefreshState.None || mViceState.isOpening) {
                 mKernel.setState(if (dy > 0) RefreshState.PullUpToLoad else RefreshState.PullDownToRefresh)
@@ -1978,7 +1980,8 @@ open class SmartRefreshLayout @JvmOverloads constructor(
                             }
                             if (mNestedInProgress) {
                                 mTotalUnconsumed = 0
-                                superDispatch(MotionEvent.obtain(time, time, MotionEvent.ACTION_UP, mLastTouchX, mLastTouchY, 0))
+                                // Issue #1271: CANCEL, not UP: the finger is still down; the child only loses the gesture.
+                                superDispatch(MotionEvent.obtain(time, time, MotionEvent.ACTION_CANCEL, mLastTouchX, mLastTouchY, 0))
                                 mNestedInProgress = false
                                 mTouchSpinner = 0
                             }
@@ -2061,7 +2064,8 @@ open class SmartRefreshLayout @JvmOverloads constructor(
                             }
                             if (mNestedInProgress) {
                                 mTotalUnconsumed = 0
-                                superDispatch(MotionEvent.obtain(time, time, MotionEvent.ACTION_UP, mLastTouchX, mLastTouchY, 0))
+                                // Issue #1271: CANCEL, not UP: the finger is still down; the child only loses the gesture.
+                                superDispatch(MotionEvent.obtain(time, time, MotionEvent.ACTION_CANCEL, mLastTouchX, mLastTouchY, 0))
                                 mNestedInProgress = false
                                 mTouchSpinner = 0
                             }

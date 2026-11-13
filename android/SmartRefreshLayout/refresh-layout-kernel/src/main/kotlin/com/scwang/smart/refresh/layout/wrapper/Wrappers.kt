@@ -194,26 +194,37 @@ open class RefreshContentWrapper(view: View) : RefreshContent, CoordinatorLayout
         mContentView = frameLayout
         if (fixedHeader != null) {
             fixedHeader.setTag(R.id.srl_tag, "fixed-top")
-            val lp = fixedHeader.layoutParams
-            val parent = fixedHeader.parent as ViewGroup
-            index = parent.indexOfChild(fixedHeader)
-            parent.removeView(fixedHeader)
-            lp.height = SmartUtil.measureViewHeight(fixedHeader)
-            parent.addView(Space(mContentView.context), index, lp)
-            frameLayout.addView(fixedHeader, 1, lp)
+            frameLayout.addView(fixedHeader, 1, holdPlace(fixedHeader, Gravity.TOP))
         }
         if (fixedFooter != null) {
             fixedFooter.setTag(R.id.srl_tag, "fixed-bottom")
-            val lp = fixedFooter.layoutParams
-            val parent = fixedFooter.parent as ViewGroup
-            index = parent.indexOfChild(fixedFooter)
-            parent.removeView(fixedFooter)
-            val flp = FrameLayout.LayoutParams(lp)
-            lp.height = SmartUtil.measureViewHeight(fixedFooter)
-            parent.addView(Space(mContentView.context), index, lp)
-            flp.gravity = Gravity.BOTTOM
-            frameLayout.addView(fixedFooter, 1, flp)
+            frameLayout.addView(fixedFooter, 1, holdPlace(fixedFooter, Gravity.BOTTOM))
         }
+    }
+
+    /**
+     * Moves [fixed] out of its parent, leaving a Space of its height, and returns its layout parameters for the frame.
+     * Issue #1138: the fixed view keeps its own height (a wrapping TextView gets all its lines), and the Space follows
+     * the height it is laid out at, instead of a height measured once before layout without the real width.
+     */
+    private fun holdPlace(fixed: View, gravity: Int): FrameLayout.LayoutParams {
+        val lp = fixed.layoutParams
+        val parent = fixed.parent as ViewGroup
+        val index = parent.indexOfChild(fixed)
+        parent.removeView(fixed)
+        val flp = if (lp is ViewGroup.MarginLayoutParams) FrameLayout.LayoutParams(lp) else FrameLayout.LayoutParams(lp)
+        flp.gravity = gravity
+        lp.height = SmartUtil.measureViewHeight(fixed)
+        val space = Space(mContentView.context)
+        parent.addView(space, index, lp)
+        fixed.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            val params = space.layoutParams
+            if (params.height != v.height) {
+                params.height = v.height
+                space.layoutParams = params
+            }
+        }
+        return flp
     }
 
     override fun setScrollBoundaryDecider(boundary: ScrollBoundaryDecider?) {
