@@ -88,3 +88,10 @@ The HUD (`CYLPlaceholderHUD`, `docs/Placeholder-HUD.md`) adds these spellings, p
 `showSuccess(status:)`, `showError(status:)`, `showInfo(status:)`, `show(image:status:)`, `show(components:actions:)`,
 `show(scenario:actions:)`, `popActivity()`, `dismiss(withDelay:)`, `isHapticsEnabled`, the scenario `.hud`, and
 `CYLPlaceholderScenarioCatalog.animationFileNames(for:)` / `components(for:)`.
+
+## Examples follow the core (owner, 2026-11-13)
+
+The spellings above are the core's choice under the Swift coding standard. When the core's Swift API changes (the
+Swift migration in `docs/Swift-Migration.md`, or any refactor), the examples are updated to the new spelling in the
+same change; an example's old call site never keeps an old spelling, alias or shim in the core. See `instructions.md`,
+"Examples have the lowest weight".

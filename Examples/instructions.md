@@ -18,6 +18,13 @@ A page that shows animations has "Play all" (restarts from progress 0), a speed 
 live; see "Animation playback controls in examples" in the root `instructions.md` and
 `docs/Example-Animation-Playback.md` (the per-page TODO list).
 
+## Examples have the lowest weight
+
+When a core change (the Swift migration of the core, or a refactor) breaks an example, the example is fixed first:
+update its call sites to the core's new API in the same change. An example's usage never keeps an old spelling, an
+alias or a shim in the core, and never lowers the core's Swift quality; the Swift coding standard decides. See
+`instructions.md`, "Examples have the lowest weight", and `docs/Swift-Migration.md`.
+
 ## Language
 
 Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples

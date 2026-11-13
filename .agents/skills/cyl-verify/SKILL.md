@@ -109,3 +109,11 @@ When verifying an example page that shows animations, check its playback control
 `instructions.md` "Animation playback controls in examples"): "Play all" restarts every animation from progress 0, the
 speed slider (0.25x to 3x) and the loop switch change the playing animations live, and the three combine. Screenshot
 the page with a non-default speed and the loop state visible. A page without them stays a `TODO` row in that document.
+
+## Example build errors after a core change
+
+When the Swift migration of the core (or any core change) breaks an example's build, fix the example first: update
+its call sites to the core's new Swift API in the same change, then rebuild every example. Never add an alias, a shim,
+an extra `@objc` name or a wrapper to the core, or lower its Swift quality, so that an example keeps compiling
+unchanged; examples have the lowest weight (`instructions.md`, "Examples have the lowest weight";
+`docs/Swift-Migration.md`).

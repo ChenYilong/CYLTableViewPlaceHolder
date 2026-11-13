@@ -384,6 +384,24 @@ iOS examples are written in Swift; the library stays Objective-C. The core adapt
    `docs/Swift-Guide.md`. Do not document a Swift spelling that no Swift code in the
    repository has compiled.
 
+### Examples have the lowest weight (owner's rule, 2026-11-13)
+
+Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to every other core change.
+
+- When a core change (the Swift migration of the core, or any core refactor) breaks an example's build or
+  behavior, fix the example first: update its call sites to the core's new Swift API in the same change.
+- Every example has the lowest weight in the repository. An example's usage is never a compatibility constraint:
+  do not keep an old spelling, a deprecated alias, a shim, an extra `@objc` name, a wrapper or an overload in the
+  core only because an example calls it that way.
+- Change example code as freely as needed (rename, restructure, rewrite it) so the core carries no baggage.
+- Never lower the core's Swift code quality for an example. The Swift coding standard decides the core's API (the
+  Swift API Design Guidelines, `docs/Swift-Guide.md` and the project's Swift coding standard); examples follow it.
+- Compatibility still counts only for callers outside this repository (the published API that apps use through the
+  podspec), under "English naming rules" and "Compatibility" above; that is decided for the library's users, never
+  for an example.
+- Done means every example builds again (the `Demo` CI jobs) with the core's clean API, examples updated in the same
+  change.
+
 ## Localization
 
 Localization is always several files: one per language, often several tables

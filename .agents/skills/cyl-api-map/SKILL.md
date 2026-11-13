@@ -57,3 +57,10 @@ not as a system `UIImage` on a `UIImageView`; where that cannot be avoided, a co
 
 Preserve API compatibility and keep this map current when a mapped file or
 public API changes.
+
+## Examples follow the core's API
+
+The core's Swift API is decided by the Swift coding standard, not by how an example calls it. When the API changes
+(the Swift migration in `docs/Swift-Migration.md`, or a refactor), update the example call sites listed above in the
+same change; examples have the lowest weight and are no compatibility constraint (`instructions.md`, "Examples have
+the lowest weight").

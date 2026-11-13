@@ -100,6 +100,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
   breaks a build, fix the code in `CYLRefresh/` until it builds; never pin an older MJRefresh. See "Depending
   on MJRefresh in the examples" in `instructions.md`.
+- Examples have the lowest weight (`instructions.md`, "Examples have the lowest weight"; `docs/Swift-Migration.md`):
+  when a core change (the Swift migration or a refactor) breaks an example, fix the example first, freely and in the
+  same change. An example's usage is never a compatibility constraint and never a reason for an alias, a shim, a
+  wrapper or a lower-quality Swift API in the core; the Swift coding standard decides.
 - iOS examples are written in Swift (the library stays Objective-C). When a Swift call
   reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
   declarations, `cyl_` members keep their prefix, and underscored protocol methods get an

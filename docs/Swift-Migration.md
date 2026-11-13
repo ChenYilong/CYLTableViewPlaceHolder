@@ -37,3 +37,23 @@ Objective-C to Swift, and its score after every commit.
   - The parallel task in `docs/Refresh-Library-Parity.md` keeps adding Objective-C API to CYLRefresh; the two tasks
     touch the same files, so they must not run at the same time on different branches without a plan for merging.
 - **Progress and scores:** none yet.
+
+## Rule: examples have the lowest weight (owner, 2026-11-13)
+
+Added to the task above; the same rule is in `instructions.md`, "Examples have the lowest weight". It refines
+requirement 4 ("Change the example layer only when necessary"): the migration does not set out to change examples,
+but when it breaks one, the example changes, never the core for the example.
+
+- When a core change (the Swift migration of the core, or any core refactor) breaks an example's build or
+  behavior, fix the example first: update its call sites to the core's new Swift API in the same change.
+- Every example has the lowest weight in the repository. An example's usage is never a compatibility constraint:
+  do not keep an old spelling, a deprecated alias, a shim, an extra `@objc` name, a wrapper or an overload in the
+  core only because an example calls it that way.
+- Change example code as freely as needed (rename, restructure, rewrite it) so the core carries no baggage.
+- Never lower the core's Swift code quality for an example. The Swift coding standard decides the core's API (the
+  Swift API Design Guidelines, `docs/Swift-Guide.md` and the project's Swift coding standard); examples follow it.
+- Compatibility still counts only for callers outside this repository (the published API that apps use through the
+  podspec), under "English naming rules" and "Compatibility" above; that is decided for the library's users, never
+  for an example.
+- Done means every example builds again (the `Demo` CI jobs) with the core's clean API, examples updated in the same
+  change.
