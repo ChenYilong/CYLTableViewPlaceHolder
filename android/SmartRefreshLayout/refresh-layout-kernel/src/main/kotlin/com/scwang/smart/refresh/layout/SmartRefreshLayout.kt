@@ -23,6 +23,7 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.view.animation.Interpolator
 import android.widget.Scroller
@@ -291,9 +292,31 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Issues #1352, #1615: the "no more data" footer held open below the list stays after the list grows (items
+     * added or expanded); the list then scrolls on, so the footer is let go and the list scrolled by its height,
+     * leaving the items where they were and the footer after the last one.
+     */
+    private val mFollowingFooterCheck = ViewTreeObserver.OnGlobalLayoutListener { releaseFollowingFooterIfContentGrew() }
+
+    /**
+     * Lets go of the "no more data" footer held below the content once the content scrolls further (issue #1352).
+     */
+    protected open fun releaseFollowingFooterIfContentGrew() {
+        val content = mRefreshContent ?: return
+        val spinner = mSpinner
+        if (spinner >= 0 || mState != RefreshState.None || reboundAnimator != null || mIsBeingDragged || mNestedInProgress) return
+        if (!(mEnableFooterFollowWhenNoMoreData && mFooterNoMoreData && mFooterNoMoreDataEffective)) return
+        val scrollable = content.scrollableView
+        if (!scrollable.canScrollVertically(1)) return
+        mKernel.moveSpinner(0, false)
+        scrollable.scrollBy(0, -spinner)
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mAttachedToWindow = true
+        viewTreeObserver.addOnGlobalLayoutListener(mFollowingFooterCheck)
         if (!isInEditMode) {
             if (mRefreshHeader == null) sHeaderCreator?.let { setRefreshHeader(it.createRefreshHeader(context, this)) }
             if (mRefreshFooter == null) {
@@ -324,7 +347,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             val fixedHeaderView = findViewById<View>(mFixedHeaderViewId)
             val fixedFooterView = findViewById<View>(mFixedFooterViewId)
             content.setScrollBoundaryDecider(mScrollBoundaryDecider)
-            content.setEnableLoadMoreWhenContentNotFull(mEnableLoadMoreWhenContentNotFull)
+            content.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
             content.setUpComponent(mKernel, fixedHeaderView, fixedFooterView)
             if (mState == RefreshState.Refreshing || mState == RefreshState.Loading) {
                 resumeAfterReattach()
@@ -503,7 +526,8 @@ open class SmartRefreshLayout @JvmOverloads constructor(
                 ) {
                     val contentView = content.view
                     val topMargin = (contentView.layoutParams as? MarginLayoutParams)?.topMargin ?: 0
-                    top = paddingTop + paddingTop + topMargin + contentView.measuredHeight
+                    // Issue #1475: the top padding once (the source added it twice, so the footer sat lower by it).
+                    top = paddingTop + topMargin + contentView.measuredHeight
                 }
                 if (style == SpinnerStyle.MatchLayout) {
                     top = mlp.topMargin - mFooterInsetStart
@@ -520,6 +544,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         mAttachedToWindow = false
+        viewTreeObserver.removeOnGlobalLayoutListener(mFollowingFooterCheck)
         mManualLoadMore = true
         animationRunnable = null
         reboundAnimator?.let {
@@ -867,7 +892,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             val content = RefreshContentWrapper(child)
             mRefreshContent = content
             content.setScrollBoundaryDecider(mScrollBoundaryDecider)
-            content.setEnableLoadMoreWhenContentNotFull(mEnableLoadMoreWhenContentNotFull)
+            content.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
             content.setUpComponent(mKernel, null, null)
         }
     }
@@ -1276,7 +1301,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
      */
     protected open fun moveSpinnerInfinitely(spinner: Float) {
         var value = spinner
-        if (mNestedInProgress && !mEnableLoadMoreWhenContentNotFull && value < 0 && mRefreshContent?.canLoadMore() == false) {
+        if (mNestedInProgress && !isLoadMoreWhenContentNotFull() && value < 0 && mRefreshContent?.canLoadMore() == false) {
             // 2019-1-22: mEnableLoadMoreWhenContentNotFull = false in nested scrolling mode.
             value = 0f
         }
@@ -1586,12 +1611,22 @@ open class SmartRefreshLayout @JvmOverloads constructor(
 
     override fun setEnableLoadMoreWhenContentNotFull(enabled: Boolean): RefreshLayout = apply {
         mEnableLoadMoreWhenContentNotFull = enabled
-        mRefreshContent?.setEnableLoadMoreWhenContentNotFull(enabled)
+        mRefreshContent?.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
     }
+
+    /**
+     * Whether a content shorter than the layout can pull up the footer: also when the "no more data" footer follows
+     * the content, so a footer just below the screen can still be seen (issue #1427).
+     */
+    protected open fun isLoadMoreWhenContentNotFull(): Boolean =
+        mEnableLoadMoreWhenContentNotFull || (mFooterNoMoreData && mEnableFooterFollowWhenNoMoreData)
 
     override fun setEnableOverScrollDrag(enabled: Boolean): RefreshLayout = apply { mEnableOverScrollDrag = enabled }
 
-    override fun setEnableFooterFollowWhenNoMoreData(enabled: Boolean): RefreshLayout = apply { mEnableFooterFollowWhenNoMoreData = enabled }
+    override fun setEnableFooterFollowWhenNoMoreData(enabled: Boolean): RefreshLayout = apply {
+        mEnableFooterFollowWhenNoMoreData = enabled
+        mRefreshContent?.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
+    }
 
     override fun setEnableClipHeaderWhenFixedBehind(enabled: Boolean): RefreshLayout = apply { mEnableClipHeaderWhenFixedBehind = enabled }
 
@@ -1666,7 +1701,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             val fixedHeaderView = findViewById<View>(mFixedHeaderViewId)
             val fixedFooterView = findViewById<View>(mFixedFooterViewId)
             wrapper.setScrollBoundaryDecider(mScrollBoundaryDecider)
-            wrapper.setEnableLoadMoreWhenContentNotFull(mEnableLoadMoreWhenContentNotFull)
+            wrapper.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
             wrapper.setUpComponent(mKernel, fixedHeaderView, fixedFooterView)
         }
         mRefreshHeader?.takeIf { it.spinnerStyle.front }?.let { super.bringChildToFront(it.view) }
@@ -1723,6 +1758,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             finishLoadMoreWithNoMoreData()
         } else if (mFooterNoMoreData != noMoreData) {
             mFooterNoMoreData = noMoreData
+            mRefreshContent?.setEnableLoadMoreWhenContentNotFull(isLoadMoreWhenContentNotFull())
             val footer = mRefreshFooter
             if (footer is RefreshFooter) {
                 if (footer.setNoMoreData(noMoreData)) {

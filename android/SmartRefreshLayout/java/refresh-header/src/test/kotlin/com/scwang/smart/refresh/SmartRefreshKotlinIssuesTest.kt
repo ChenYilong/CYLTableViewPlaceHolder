@@ -242,6 +242,68 @@ class SmartRefreshKotlinIssuesTest {
         assertEquals(0, spinner(layout))
     }
 
+    // MARK: - The "no more data" footer
+
+    @Test
+    fun theFollowingFooterSitsRightBelowTheContent() {
+        // #1475 (also the how-to of #1243, #1471: a wrap_content content): the footer that follows the content after
+        // "no more data" sat lower by the layout's top padding, then jumped up to the last item.
+        assumeKotlin()
+        val layout = layout()
+        layout.setRefreshContent(content(300), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        layout.setPadding(0, 50, 0, 0)
+        layout.setEnableFooterFollowWhenNoMoreData(true)
+        show(layout)
+        layout.setNoMoreData(true)
+        layout.requestLayout()
+        idle(100)
+        val contentView = layout.refreshFooter!!.view.let { footer -> (0 until layout.childCount).map { layout.getChildAt(it) }.first { it is ScrollView } }
+        assertEquals(contentView.bottom, layout.refreshFooter!!.view.top)
+    }
+
+    @Test
+    fun theHeldFooterLetsGoWhenTheListGrows() {
+        // #1352, #1615: with "no more data" shown below the last item, items added (or expanded) left the footer
+        // floating over the list at the bottom until the list was scrolled to the end again.
+        assumeKotlin()
+        val list = content(3000)
+        val layout = show(layout(list))
+        layout.setEnableFooterFollowWhenNoMoreData(true)
+        list.scrollTo(0, 100000)
+        idle(100)
+        drag(layout, -400f)
+        idle()
+        assertEquals(RefreshState.Loading, layout.state)
+        layout.finishLoadMoreWithNoMoreData()
+        idle(3000)
+        val footerHeight = layout.refreshFooter!!.view.height
+        assertEquals("the footer is held below the last item", -footerHeight, spinner(layout))
+        val scrollBefore = list.scrollY
+        // The list grows by 500 pixels (the content's LinearLayout is horizontal: its one child gets taller).
+        (list.getChildAt(0) as ViewGroup).getChildAt(0).apply { layoutParams.height = 3500; requestLayout() }
+        idle(100)
+        assertEquals(0, spinner(layout))
+        assertEquals("the items stay where they were", scrollBefore + footerHeight, list.scrollY)
+        assertEquals(RefreshState.None, layout.state)
+    }
+
+    @Test
+    fun theNoMoreDataFooterCanBeSeenUnderShortContent() {
+        // #1427: with load more on short content turned off, the "no more data" footer just below the screen could
+        // never be pulled into view.
+        assumeKotlin()
+        val layout = layout(content(300))
+        layout.setEnableLoadMoreWhenContentNotFull(false)
+        layout.setEnableFooterFollowWhenNoMoreData(true)
+        show(layout)
+        layout.setNoMoreData(true)
+        drag(layout, -400f, release = false)
+        assertTrue("the footer comes into view", spinner(layout) < 0)
+        drag(layout, 0f)
+        idle()
+        assertEquals(0, loads)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {
