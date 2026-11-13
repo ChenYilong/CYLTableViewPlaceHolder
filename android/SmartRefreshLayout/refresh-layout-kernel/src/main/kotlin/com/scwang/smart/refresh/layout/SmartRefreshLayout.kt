@@ -376,7 +376,8 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         var minimumHeight = 0
         val needPreview = isInEditMode && mEnablePreviewInEditMode
         for (i in 0 until super.getChildCount()) {
-            val child = super.getChildAt(i)
+            // Issue #1544: a child removed while its sibling measures (or lays out) leaves no view at its index.
+            val child: View = super.getChildAt(i) ?: continue
             if (child.visibility == GONE || "GONE" == child.getTag(R.id.srl_tag)) continue
             val header = mRefreshHeader
             if (header != null && header.view === child) {
@@ -496,7 +497,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         for (i in 0 until super.getChildCount()) {
-            val child = super.getChildAt(i)
+            val child: View = super.getChildAt(i) ?: continue
             if (child.visibility == GONE || "GONE" == child.getTag(R.id.srl_tag)) continue
             val content = mRefreshContent
             val header = mRefreshHeader
@@ -553,11 +554,12 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         mManualLoadMore = true
         animationRunnable = null
         reboundAnimator?.let {
-            it.removeAllListeners()
-            it.removeAllUpdateListeners()
+            // Issue #1228: no removeAllUpdateListeners: a layout removed from inside an animation frame (a listener
+            // of the moving header) emptied the list ValueAnimator was walking, a NullPointerException. A duration of
+            // 0 tells this layout's listeners the animation was canceled.
+            reboundAnimator = null
             it.duration = 0
             it.cancel()
-            reboundAnimator = null
         }
         // Issues #1137, #1168, #1198, #1400, #1414, #1429: a layout that leaves the window while refreshing or loading
         // (a fragment switched away in a ViewPager2) keeps refreshing: a release whose opening animation was cut off
@@ -647,7 +649,15 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     }
 
     override fun computeScroll() {
-        if (mScroller.computeScrollOffset()) {
+        // Issue #1546: some devices' Scroller throws ArrayIndexOutOfBoundsException from its spline table for an
+        // elapsed time below 0; the fling then stops instead of crashing the app.
+        val scrolling = try {
+            mScroller.computeScrollOffset()
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            mScroller.forceFinished(true)
+            false
+        }
+        if (scrolling) {
             val finalY = mScroller.finalY
             val content = mRefreshContent
             if (content != null && ((finalY < 0 && (mEnableRefresh || mEnableOverScrollDrag) && content.canRefresh()) ||

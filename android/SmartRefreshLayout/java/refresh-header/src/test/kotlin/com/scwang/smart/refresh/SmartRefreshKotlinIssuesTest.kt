@@ -393,6 +393,91 @@ class SmartRefreshKotlinIssuesTest {
         assertEquals(RefreshState.None, layout.state)
     }
 
+    // MARK: - Crashes
+
+    @Test
+    fun aTranslucentPathsDrawableNeedsNoBitmap() {
+        // #1405, #1533, #1535: a translucent PathsDrawable cached a bitmap the size of its bounds: "trying to draw too
+        // large bitmap", or out of memory. Empty bounds scaled by setGeometricWidth also became huge.
+        assumeKotlin()
+        val drawable = com.scwang.smart.drawable.PathsDrawable()
+        drawable.parserPaths("M0,0 L10,0 L10,20 Z")
+        drawable.setBounds(0, 0, 20000, 20000)
+        drawable.alpha = 128
+        val canvas = android.graphics.Canvas(android.graphics.Bitmap.createBitmap(10, 10, android.graphics.Bitmap.Config.ARGB_8888))
+        drawable.draw(canvas)
+        assertEquals("the paint keeps its alpha", 128, (field(drawable, "mPaint") as android.graphics.Paint).alpha)
+        val empty = com.scwang.smart.drawable.PathsDrawable()
+        empty.setBounds(0, 0, 0, 0)
+        empty.setGeometricWidth(100)
+        assertEquals(0, empty.bounds.width())
+    }
+
+    /** A header that removes the layout's content while it is laid out, once. */
+    private class RemovingHeader(context: Context) : ClassicsHeader(context) {
+        var armed = false
+
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+            super.onLayout(changed, l, t, r, b)
+            if (!armed) return
+            armed = false
+            val layout = parent as ViewGroup
+            (0 until layout.childCount).map { layout.getChildAt(it) }.filter { it !== this }.forEach { layout.removeView(it) }
+        }
+    }
+
+    @Test
+    fun aChildRemovedDuringLayoutDoesNotCrash() {
+        // #1544: a child removed while the layout laid out its children: NullPointerException (resolveLayoutParams on
+        // a null child) in onLayout.
+        assumeKotlin()
+        val header = RemovingHeader(activity)
+        val layout = show(layout(header = header))
+        header.armed = true
+        header.requestLayout()
+        idle(100)
+        assertTrue("the header removed its siblings", layout.childCount == 1)
+    }
+
+    @Test
+    fun removedFromInsideAnAnimationFrameDoesNotCrash() {
+        // #1228: a layout removed from inside an animation frame (here a listener of the closing header) emptied the
+        // update listeners ValueAnimator was walking: NullPointerException in ValueAnimator.animateValue.
+        assumeKotlin()
+        val list = content(3000)
+        val layout = show(layout(list))
+        val parent = layout.parent as ViewGroup
+        layout.autoRefresh(0)
+        idle()
+        // A list scrolled from the top: the closing animation also scrolls it, so it has two update listeners.
+        list.scrollTo(0, 500)
+        var removed = false
+        layout.setOnMultiListener(object : com.scwang.smart.refresh.layout.simple.SimpleMultiListener() {
+            override fun onHeaderMoving(header: RefreshHeader?, isDragging: Boolean, percent: Float, offset: Int, headerHeight: Int, maxDragHeight: Int) {
+                if (!removed && !isDragging && offset in 1 until headerHeight) {
+                    removed = true
+                    parent.removeView(layout)
+                }
+            }
+        })
+        layout.finishRefresh(0)
+        idle()
+        assertTrue(removed)
+    }
+
+    @Test
+    fun aThrowingScrollerStopsTheFlingInsteadOfCrashing() {
+        // #1546: some devices' Scroller throws ArrayIndexOutOfBoundsException in computeScrollOffset.
+        assumeKotlin()
+        val layout = show(layout())
+        val throwing = object : android.widget.Scroller(activity) {
+            override fun computeScrollOffset(): Boolean = throw ArrayIndexOutOfBoundsException("length=101; index=-36")
+        }
+        SmartRefreshLayout::class.java.getDeclaredField("mScroller").apply { isAccessible = true }.set(layout, throwing)
+        layout.computeScroll()
+        assertTrue(throwing.isFinished)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {
