@@ -49,12 +49,15 @@ dependencies {
     testImplementation(libs.material)
 }
 
-// -PsrlKernel=kotlin runs this module's tests (and its Java headers and footers) on the Kotlin kernel
-// (SmartRefreshLayout/refresh-layout-kernel) instead of the Java one: the same tests check the translation.
+// -PsrlKernel=kotlin runs this module's tests (and its remaining Java headers and footers) on the modules already
+// translated to Kotlin (the kernel, the paint drawables, the classics header and footer): the same tests check them.
 if (project.findProperty("srlKernel") == "kotlin") {
     configurations.all {
         resolutionStrategy.dependencySubstitution {
             substitute(project(":srl-java-refresh-layout-kernel")).using(project(":srl-kernel"))
+            substitute(project(":srl-java-refresh-drawable-paint")).using(project(":srl-drawable-paint"))
+            substitute(project(":srl-java-refresh-footer-classics")).using(project(":srl-footer-classics"))
+            substitute(project(":srl-java-refresh-header-classics")).using(project(":srl-header-classics"))
         }
     }
 }

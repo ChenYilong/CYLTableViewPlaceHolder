@@ -121,7 +121,8 @@ abstract class SimpleComponent : RelativeLayout, RefreshComponent {
      * True while the current refresh was started by autoRefresh / autoLoadMore, false for a drag (pull request #1095,
      * #1268).
      */
-    open fun isAutoRefresh(): Boolean = mIsAutoRefresh
+    open val isAutoRefresh: Boolean
+        get() = mIsAutoRefresh
 
     override fun setPrimaryColors(@ColorInt vararg colors: Int) {
         wrapped?.setPrimaryColors(*colors)
