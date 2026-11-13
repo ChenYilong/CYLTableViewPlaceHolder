@@ -2,9 +2,7 @@
 // Kotlin; the JVM signatures match the Java version.
 package com.scwang.smart.drawable
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
@@ -65,9 +63,6 @@ open class PathsDrawable : PaintDrawable() {
      * The SVG path data.
      */
     @JvmField protected var mltOriginSvg: MutableList<String>? = null
-
-    private var mCachedBitmap: Bitmap? = null
-    private var mCacheDirty = false
 
     /**
      * Measures the paths' bounds; false when they are empty.
@@ -176,15 +171,18 @@ open class PathsDrawable : PaintDrawable() {
             }
             canvas.restore()
         } else {
-            val bitmap = cachedBitmap(bounds.width(), bounds.height())
-            if (mCacheDirty) {
-                bitmap.eraseColor(Color.TRANSPARENT)
-                val tmp = Canvas(bitmap)
-                tmp.translate(-mStartX.toFloat(), -mStartY.toFloat())
-                mPaths?.let { drawPaths(tmp, it) }
-                mCacheDirty = false
+            // Issues #1405, #1533, #1535: a translucent drawable draws through a layer of its alpha instead of a
+            // cached bitmap the size of its bounds. Large bounds no longer allocate a bitmap too large to draw (or run
+            // out of memory), and a changed path or color is no longer drawn from a stale cache.
+            val alpha = mPaint.alpha
+            canvas.saveLayerAlpha(bounds.left.toFloat(), bounds.top.toFloat(), bounds.right.toFloat(), bounds.bottom.toFloat(), alpha)
+            canvas.translate((bounds.left - mStartX).toFloat(), (bounds.top - mStartY).toFloat())
+            mPaths?.let { paths ->
+                mPaint.alpha = 0xFF
+                drawPaths(canvas, paths)
             }
-            canvas.drawBitmap(bitmap, bounds.left.toFloat(), bounds.top.toFloat(), mPaint)
+            mPaint.alpha = alpha
+            canvas.restore()
         }
     }
 
@@ -207,15 +205,10 @@ open class PathsDrawable : PaintDrawable() {
     open fun setGeometricHeight(height: Int) = scaleBounds(1f * height / bounds.height())
 
     private fun scaleBounds(rate: Float) {
+        // Empty bounds give an infinite rate, which made the bounds (and the drawing) huge.
+        if (rate.isNaN() || rate.isInfinite()) return
         val b = bounds
         setBounds((b.left * rate).toInt(), (b.top * rate).toInt(), (b.right * rate).toInt(), (b.bottom * rate).toInt())
-    }
-
-    private fun cachedBitmap(width: Int, height: Int): Bitmap {
-        val cached = mCachedBitmap
-        if (cached != null && width == cached.width && height == cached.height) return cached
-        mCacheDirty = true
-        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).also { mCachedBitmap = it }
     }
 
     /**

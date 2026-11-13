@@ -6,8 +6,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+// -PsrlKernel=kotlin (below) also swaps this module's own headers for the Kotlin module :srl-header.
+val srlKotlin = project.findProperty("srlKernel") == "kotlin"
+
 android {
-    namespace = "com.scwang.smart.refresh.header"
+    // In Kotlin mode the headers and their resources come from :srl-header, which owns this namespace's R class.
+    namespace = if (srlKotlin) "com.scwang.smart.refresh.header.javatests" else "com.scwang.smart.refresh.header"
     compileSdk = 35
 
     defaultConfig {
@@ -30,6 +34,13 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+
+    if (srlKotlin) {
+        sourceSets.getByName("main") {
+            java.setSrcDirs(emptyList<String>())
+            res.setSrcDirs(emptyList<String>())
+        }
+    }
 }
 
 dependencies {
@@ -49,9 +60,12 @@ dependencies {
     testImplementation(libs.material)
 }
 
-// -PsrlKernel=kotlin runs this module's tests (and its remaining Java headers and footers) on the modules already
-// translated to Kotlin (the kernel, the paint drawables, the classics header and footer): the same tests check them.
-if (project.findProperty("srlKernel") == "kotlin") {
+// -PsrlKernel=kotlin runs this module's tests on the Kotlin translation: every Java module is swapped for its Kotlin
+// module, and this module's own headers for :srl-header. The same tests check both versions.
+if (srlKotlin) {
+    dependencies {
+        api(project(":srl-header"))
+    }
     configurations.all {
         resolutionStrategy.dependencySubstitution {
             substitute(project(":srl-java-refresh-layout-kernel")).using(project(":srl-kernel"))
