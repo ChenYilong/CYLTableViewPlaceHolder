@@ -19,6 +19,7 @@ import android.widget.ScrollView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.header.MaterialHeader
+import com.scwang.smart.refresh.header.TwoLevelHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import org.junit.Assert.assertEquals
@@ -254,5 +255,29 @@ class SmartRefreshJavaTest {
         }
         val config = Configuration(activity.resources.configuration).apply { setLocale(Locale.forLanguageTag("ja")) }
         assertEquals("これ以上データはありません", activity.createConfigurationContext(config).getString(com.scwang.smart.refresh.footer.classics.R.string.srl_footer_nothing))
+    }
+
+    @Test
+    fun twoLevelHeaderOpensAndClosesTheSecondFloor() {
+        // The two-level header wraps a classics header by default, asks its listener, opens and closes the second floor.
+        val layout = layout()
+        val twoLevel = TwoLevelHeader(activity)
+        layout.setRefreshHeader(twoLevel)
+        idle(100)
+        assertTrue("wraps a ClassicsHeader", (0 until twoLevel.childCount).any { twoLevel.getChildAt(it) is ClassicsHeader })
+        var asked = 0
+        twoLevel.setOnTwoLevelListener { asked++; false }
+        twoLevel.openTwoLevel(true)
+        idle()
+        assertEquals(1, asked)
+        assertFalse("the listener kept it closed", layout.state == RefreshState.TwoLevel)
+        twoLevel.setOnTwoLevelListener { asked++; true }
+        twoLevel.openTwoLevel(true)
+        idle()
+        assertEquals(2, asked)
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        twoLevel.finishTwoLevel()
+        idle()
+        assertEquals(RefreshState.None, layout.state)
     }
 }
