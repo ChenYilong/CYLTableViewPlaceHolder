@@ -19,3 +19,5 @@ rootProject.name = "CYLTableViewPlaceHolderAndroid"
 include(":placeholder")
 // SVPullToRefresh in Kotlin (docs/Android-Port.md, the refresh port).
 include(":SVPullToRefresh")
+// android-Ultra-Pull-To-Refresh in Kotlin (docs/Android-Port.md, the refresh port).
+include(":android-Ultra-Pull-To-Refresh")

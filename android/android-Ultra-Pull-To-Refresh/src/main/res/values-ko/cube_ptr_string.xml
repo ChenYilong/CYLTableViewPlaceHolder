@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- android-Ultra-Pull-To-Refresh texts. The *_format strings take their number or time as an argument (issue #125);
+     the older fragments stay for apps that override them. -->
+<resources>
+    <string name="cube_ptr_pull_down">당기기</string>
+    <string name="cube_ptr_pull_down_to_refresh">당겨서 새로고침</string>
+    <string name="cube_ptr_release_to_refresh">놓아서 새로고침</string>
+    <string name="cube_ptr_refreshing">새로고침 중...</string>
+    <string name="cube_ptr_refresh_complete">업데이트됨.</string>
+    <string name="cube_ptr_last_update">마지막 업데이트:&#160;</string>
+    <string name="cube_ptr_seconds_ago">&#160;초 전</string>
+    <string name="cube_ptr_minutes_ago">&#160;분 전</string>
+    <string name="cube_ptr_hours_ago">&#160;시간 전</string>
+    <string name="cube_ptr_pull_up">위로 당기기</string>
+    <string name="cube_ptr_pull_up_to_load">위로 당겨서 불러오기</string>
+    <string name="cube_ptr_release_to_load">놓아서 불러오기</string>
+    <string name="cube_ptr_loading_more">불러오는 중...</string>
+    <string name="cube_ptr_load_more_complete">불러옴.</string>
+    <string name="cube_ptr_last_update_format">마지막 업데이트: %1$s</string>
+    <string name="cube_ptr_seconds_ago_format">%1$d초 전</string>
+    <string name="cube_ptr_minutes_ago_format">%1$d분 전</string>
+    <string name="cube_ptr_hours_ago_format">%1$d시간 전</string>
+</resources>
