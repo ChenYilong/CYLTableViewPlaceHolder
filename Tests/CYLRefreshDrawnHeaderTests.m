@@ -72,6 +72,16 @@
     [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:seconds]];
 }
 
+/// [EN] Runs the main run loop until `condition` holds or `timeout` passes; a slow CI machine needs longer than a fixed
+///      wait. [CN] 运行主循环，直到 `condition` 成立或超过 `timeout`；CI 机器较慢时，固定时长的等待不够。
+- (BOOL)spinUntil:(BOOL (^)(void))condition timeout:(NSTimeInterval)timeout {
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:timeout];
+    while (!condition() && deadline.timeIntervalSinceNow > 0) {
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+    }
+    return condition();
+}
+
 - (void)render:(UIView *)view {
     if (CGRectIsEmpty(view.bounds)) return;
     UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithBounds:view.bounds];
@@ -285,14 +295,14 @@
         XCTAssertEqualWithAccuracy(CGRectGetMinY(footer.style.frame), 0, 0.01, @"%@ stays inside the footer", cls);
 
         [footer beginRefreshing];
-        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.6]];
+        [self spinUntil:^BOOL { return loads > 0; } timeout:5];
         XCTAssertEqual(loads, 1, @"%@", cls);
         XCTAssertEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
         XCTAssertTrue(footer.style.isRefreshing, @"%@", cls);
         XCTAssertTrue(footer.stateLabel.hidden, @"%@: no text while loading", cls);
 
         [footer endRefreshing];
-        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2.5]];
+        [self spinUntil:^BOOL { return footer.state == CYLRefreshStateIdle; } timeout:5];
         XCTAssertEqual(footer.state, CYLRefreshStateIdle, @"%@", cls);
         XCTAssertNotEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
 
