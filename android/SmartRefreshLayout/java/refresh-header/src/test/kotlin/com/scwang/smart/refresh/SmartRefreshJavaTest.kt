@@ -24,6 +24,22 @@ import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.scwang.smart.refresh.header.FalsifyHeader
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.drawable.PathsDrawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import com.scwang.smart.refresh.header.BezierCircleHeader
+import com.scwang.smart.refresh.header.DeliveryHeader
+import com.scwang.smart.refresh.header.DropBoxHeader
+import com.scwang.smart.refresh.header.FlyRefreshHeader
+import com.scwang.smart.refresh.header.FunGameBattleCityHeader
+import com.scwang.smart.refresh.header.FunGameHitBlockHeader
+import com.scwang.smart.refresh.header.PhoenixHeader
+import com.scwang.smart.refresh.header.StoreHouseHeader
+import com.scwang.smart.refresh.header.TaurusHeader
+import com.scwang.smart.refresh.header.WaterDropHeader
+import com.scwang.smart.refresh.header.WaveSwipeHeader
+import com.scwang.smart.refresh.header.flyrefresh.FlyView
+import com.scwang.smart.refresh.header.flyrefresh.MountainSceneView
+import com.scwang.smart.refresh.layout.api.RefreshHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import org.junit.Assert.assertEquals
@@ -331,5 +347,75 @@ class SmartRefreshJavaTest {
         assertEquals(40, drawable.bounds.height())
         assertFalse("empty data", PathsDrawable().parserPaths(""))
         assertTrue("arcs parse", com.scwang.smart.drawable.path.PathParser.createPathFromPathData("M0,0 a5,5 0 1,1 10,0")?.isEmpty == false)
+    }
+
+    private fun drawFrame(view: View) {
+        val bitmap = Bitmap.createBitmap(maxOf(1, view.width), maxOf(1, view.height), Bitmap.Config.ARGB_8888)
+        view.draw(Canvas(bitmap))
+    }
+
+    @Test
+    fun everyHeaderInRefreshHeaderRefreshesDrawsAndFinishes() {
+        // The Kotlin headers also read "Refreshing" / "Refreshed" to accessibility services; the Java ones do not.
+        val kotlin = runCatching { Class.forName("com.scwang.smart.refresh.header.HeaderAccessibilityKt") }.isSuccess
+        val headers: List<Pair<String, (Context) -> RefreshHeader>> = listOf(
+            "StoreHouse" to { c -> StoreHouseHeader(c) }, "WaterDrop" to { c -> WaterDropHeader(c) }, "Delivery" to { c -> DeliveryHeader(c) },
+            "DropBox" to { c -> DropBoxHeader(c) }, "BezierCircle" to { c -> BezierCircleHeader(c) }, "Phoenix" to { c -> PhoenixHeader(c) },
+            "Taurus" to { c -> TaurusHeader(c) }, "WaveSwipe" to { c -> WaveSwipeHeader(c) }, "HitBlock" to { c -> FunGameHitBlockHeader(c) },
+            "BattleCity" to { c -> FunGameBattleCityHeader(c) },
+        )
+        // Frames only when the test advances the clock: DropBox animates without end while refreshing, and Robolectric
+        // otherwise advances the clock with each frame, so idle() never returned.
+        org.robolectric.shadows.ShadowChoreographer.setPaused(true)
+        try {
+            refreshDrawAndFinishEach(headers, kotlin)
+        } finally {
+            org.robolectric.shadows.ShadowChoreographer.setPaused(false)
+        }
+    }
+
+    // 16 ms frames: with the choreographer paused, one long idle would jump to the end in a single frame.
+    private fun frames(millis: Long) = repeat((millis / 16).toInt()) { idle(16) }
+
+    private fun refreshDrawAndFinishEach(headers: List<Pair<String, (Context) -> RefreshHeader>>, kotlin: Boolean) {
+        for ((name, create) in headers) {
+            val layout = layout()
+            val header = create(activity)
+            layout.setRefreshHeader(header)
+            frames(100)
+            layout.autoRefresh()
+            frames(1000)
+            assertEquals(name, RefreshState.Refreshing, layout.state)
+            drawFrame(layout)
+            if (kotlin) {
+                assertEquals(name, "Refreshing", header.view.contentDescription)
+                assertEquals(name, View.IMPORTANT_FOR_ACCESSIBILITY_YES, header.view.importantForAccessibility)
+            }
+            layout.finishRefresh(0)
+            frames(2000)
+            assertEquals(name, RefreshState.None, layout.state)
+            drawFrame(layout)
+            if (kotlin) assertEquals(name, View.IMPORTANT_FOR_ACCESSIBILITY_NO, header.view.importantForAccessibility)
+        }
+    }
+
+    @Test
+    fun flyRefreshHeaderFliesThePlaneAndLandsIt() {
+        val layout = layout()
+        val header = FlyRefreshHeader(activity)
+        val scene = MountainSceneView(activity)
+        val plane = FlyView(activity)
+        header.setUp(scene, plane)
+        layout.setRefreshHeader(header)
+        idle(100)
+        header.onMoving(true, 1f, 100, 100, 100)
+        assertTrue("the plane tilts with the pull", plane.rotation < 0)
+        header.onReleased(layout, 100, 100)
+        idle()
+        assertTrue("the plane flew off", plane.translationX > 0)
+        header.finishRefresh()
+        idle()
+        assertEquals("the plane is back", 0f, plane.translationX, 0.01f)
+        drawFrame(scene)
     }
 }
