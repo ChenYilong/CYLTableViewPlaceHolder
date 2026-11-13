@@ -19,6 +19,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshHeader
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Test
@@ -605,6 +606,144 @@ class SmartRefreshKotlinIssuesTest {
         drag(layout, -300f)
         idle()
         assertTrue("the content scrolled: ${list.scrollY}", list.scrollY > 0)
+    }
+
+    // MARK: - Localization
+
+    private fun title(component: View) = (field(component, "mTitleText") as android.widget.TextView).text.toString()
+
+    private fun inLocale(locale: java.util.Locale): Context =
+        activity.createConfigurationContext(android.content.res.Configuration(activity.resources.configuration).apply { setLocale(locale) })
+
+    @Test
+    fun theClassicTextFollowsTheDeviceLanguage() {
+        // #1318, #1434: the header and footer showed English on a phone set to Chinese. The text comes from the
+        // libraries' resources in the context's language; English means the app's resources lack Chinese (for
+        // example resourceConfigurations / resConfigs keeping only "en") or the app's locale was reset (a WebView
+        // resets it on some Android versions).
+        assertEquals("下拉可以刷新", title(ClassicsHeader(inLocale(java.util.Locale.SIMPLIFIED_CHINESE))))
+        assertEquals("上拉加载更多", title(ClassicsFooter(inLocale(java.util.Locale.SIMPLIFIED_CHINESE))))
+        assertEquals("下拉可以重新整理", title(ClassicsHeader(inLocale(java.util.Locale.forLanguageTag("zh-Hant-TW")))))
+    }
+
+    // MARK: - CoordinatorLayout contents
+
+    /** A RecyclerView of [count] rows 100 pixels tall. */
+    private fun recycler(context: Context, count: Int) = androidx.recyclerview.widget.RecyclerView(context).apply {
+        layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+            override fun getItemCount() = count
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                object : androidx.recyclerview.widget.RecyclerView.ViewHolder(View(parent.context).apply {
+                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100)
+                }) {}
+            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {}
+        }
+    }
+
+    /** A long drag of [dy] pixels in [steps] steps 16 ms apart, resting before it lifts. */
+    private fun longDrag(view: View, dy: Float, steps: Int = 80) {
+        val down = SystemClock.uptimeMillis()
+        var time = down
+        var y = if (dy < 0) 400f else 20f
+        view.dispatchTouchEvent(MotionEvent.obtain(down, time, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        repeat(steps) {
+            y += dy / steps
+            time += 16
+            view.dispatchTouchEvent(MotionEvent.obtain(down, time, MotionEvent.ACTION_MOVE, 200f, y, 0))
+            idle(16)
+        }
+        time += 300
+        view.dispatchTouchEvent(MotionEvent.obtain(down, time, MotionEvent.ACTION_MOVE, 200f, y, 0))
+        view.dispatchTouchEvent(MotionEvent.obtain(down, time + 16, MotionEvent.ACTION_UP, 200f, y, 0))
+    }
+
+    @Test
+    fun aCoordinatorContentLoadsMoreInTheSameGesture() {
+        // #406, #1323, #1456, #1464, #1526: with a CoordinatorLayout content, a drag that reached the end of the list
+        // did not pull the footer: the finger had to lift and pull again. The layout turns its nested scrolling off for
+        // such a content, so it sees only touches, and it obeyed the list's request not to intercept them.
+        assumeKotlin()
+        val coordinator = androidx.coordinatorlayout.widget.CoordinatorLayout(activity)
+        val list = recycler(activity, 8)
+        coordinator.addView(list, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        val layout = show(layout(coordinator))
+        longDrag(layout, -1600f)
+        idle()
+        assertFalse("the list reached its end", list.canScrollVertically(1))
+        assertEquals("loading more started in the same gesture", 1, loads)
+
+        layout.finishLoadMore(0)
+        idle()
+        refreshes = 0
+        longDrag(layout, 1600f)
+        idle()
+        assertEquals("and refreshing at the top", 1, refreshes)
+    }
+
+    // MARK: - Questions the existing API answers
+
+    @Test
+    fun autoLoadMoreStartsLoadingWithoutAPull() {
+        // #1144, #1484 (preloading n rows before the end): the app calls autoLoadMore() from its own scroll listener
+        // when the n-th last row shows; it loads at once, without a pull.
+        val layout = show(layout(content(3000)))
+        assertTrue(layout.autoLoadMore())
+        idle()
+        assertEquals(1, loads)
+        assertEquals(RefreshState.Loading, layout.state)
+    }
+
+    @Test
+    fun anInnerLayoutRefreshesAloneWhenNested() {
+        // #1531: with one SmartRefreshLayout inside another, a pull on the inner one refreshed the outer one.
+        assumeKotlin()
+        var outerRefreshes = 0
+        val inner = layout(content(3000))
+        val outer = SmartRefreshLayout(activity).apply {
+            setRefreshContent(inner)
+            setRefreshHeader(ClassicsHeader(activity))
+            setOnRefreshListener { outerRefreshes++ }
+        }
+        show(outer)
+        drag(outer, 600f)
+        idle()
+        assertEquals(1, refreshes)
+        assertEquals(0, outerRefreshes)
+    }
+
+    @Test
+    fun theFooterTriggerRateIsAShareOfTheFooterHeight() {
+        // #1478: setFooterTriggerRate is a share of the footer's height (not of the screen); #1494: onFooterMoving
+        // reports the pulled offset.
+        val layout = layout(content(300))
+        layout.setFooterTriggerRate(0.5f)
+        var offset = 0
+        layout.setOnMultiListener(object : com.scwang.smart.refresh.layout.simple.SimpleMultiListener() {
+            override fun onFooterMoving(footer: com.scwang.smart.refresh.layout.api.RefreshFooter?, isDragging: Boolean, percent: Float, offset2: Int, footerHeight: Int, maxDragHeight: Int) {
+                if (isDragging) offset = maxOf(offset, offset2)
+            }
+            override fun onLoadMore(refreshLayout: com.scwang.smart.refresh.layout.api.RefreshLayout) { loads++ }
+        })
+        show(layout)
+        val footerHeight = layout.refreshFooter!!.view.height
+        drag(layout, -footerHeight * 0.9f, release = false)
+        assertTrue("onFooterMoving reports the offset: $offset", offset > 0)
+        assertTrue("past half the footer: ${layout.state}", layout.state == RefreshState.ReleaseToLoad || layout.state == RefreshState.Loading)
+    }
+
+    @Test
+    fun aRefreshingHeaderCanBeKeptFromBeingPushedBack() {
+        // #1413: setDisableContentWhenRefresh(true) keeps the refreshing header from being pushed back up.
+        val layout = show(layout())
+        layout.setDisableContentWhenRefresh(true)
+        layout.autoRefresh(0)
+        idle()
+        val open = spinner(layout)
+        drag(layout, -300f)
+        idle()
+        assertEquals(open, spinner(layout))
+        assertEquals(RefreshState.Refreshing, layout.state)
     }
 
     private fun field(obj: Any, name: String): Any? {

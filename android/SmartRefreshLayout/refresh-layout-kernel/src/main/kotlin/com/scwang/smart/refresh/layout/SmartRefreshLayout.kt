@@ -922,13 +922,31 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Issue #1531: a pull this layout turns into a refresh (or a load) counts as a scroll it can make, so a parent that
+     * asks (another SmartRefreshLayout around it, a ViewPager2) leaves the gesture to it: with two layouts nested, a
+     * pull on the inner one refreshes the inner one only.
+     */
+    override fun canScrollVertically(direction: Int): Boolean {
+        if (mRefreshContent?.scrollableView?.canScrollVertically(direction) == true) return true
+        if (!isEnabled) return false
+        return if (direction < 0) {
+            isEnableRefreshOrLoadMore(mEnableRefresh) || mEnableOverScrollDrag
+        } else {
+            (isEnableRefreshOrLoadMore(mEnableLoadMore) && !mFooterNoMoreData) || mEnableOverScrollDrag
+        }
+    }
+
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
         // From SwipeRefreshLayout: a list before Lollipop, or another view without nested scrolling, cannot steal the
         // vertical scroll.
         // Issue #1241: the request still reaches the parents (a ViewPager around a WebView with a sideways scrolling
         // area), so only this layout ignores it.
+        // Issues #406, #1323, #1456, #1464, #1526: with this layout's nested scrolling off (a CoordinatorLayout content
+        // turns it off), the list's end reaches this layout only as touches, so the list's request must not stop
+        // the pull in the same gesture.
         val target = mRefreshContent?.scrollableView
-        if (target != null && ViewCompat.isNestedScrollingEnabled(target)) {
+        if (target != null && ViewCompat.isNestedScrollingEnabled(target) && isNestedScrollingEnabled) {
             mEnableDisallowIntercept = disallowIntercept
             super.requestDisallowInterceptTouchEvent(disallowIntercept)
         } else {
