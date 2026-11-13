@@ -31,8 +31,10 @@ Pod::Spec.new do |s|
     # root-level `resources` was not installed when a Podfile names subspecs, so every icon fell back to the default.
     core.resources = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle',
                      'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party',
-                     'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy',
                      'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
+    # The privacy manifest in a bundle of its own, as CocoaPods recommends: copied as a plain resource it landed at the
+    # app's root and clashed with the app's own PrivacyInfo.xcprivacy ("Multiple commands produce", a React Native app).
+    core.resource_bundles = { 'CYLTableViewPlaceHolderPrivacy' => 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy' }
   end
 
   # The animation shared by every animation library, pulled in only by a library's subspec (Lottie, PAG...), organized
