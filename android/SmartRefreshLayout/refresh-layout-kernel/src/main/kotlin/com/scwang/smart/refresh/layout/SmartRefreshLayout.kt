@@ -585,6 +585,8 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             if (mSpinner != 0) mKernel.moveSpinner(0, true)
             if (mState != RefreshState.None) notifyStateChanged(RefreshState.None)
             mHandler.removeCallbacksAndMessages(null)
+            mAutoFinishRefreshPending = false
+            mAutoFinishLoadMorePending = false
             // Issue #716: a finishLoadMore that never ran must not leave the footer locked.
             mFooterLocked = false
         }
@@ -1068,7 +1070,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         if (loadMore != null) {
             if (triggerLoadMoreEvent) loadMore.onLoadMore(this)
         } else if (mOnMultiListener == null) {
-            finishLoadMore(2000)
+            postAutoFinish(false, 2000)
         }
         val maxDragHeight = maxDragHeight(mFooterMaxDragRate, mFooterHeight)
         mRefreshFooter?.onStartAnimator(this, mFooterHeight, maxDragHeight)
@@ -1129,7 +1131,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         if (refresh != null) {
             if (notify) refresh.onRefresh(this)
         } else if (mOnMultiListener == null) {
-            finishRefresh(3000)
+            postAutoFinish(true, 3000)
         }
         val maxDragHeight = maxDragHeight(mHeaderMaxDragRate, mHeaderHeight)
         mRefreshHeader?.onStartAnimator(this, mHeaderHeight, maxDragHeight)
@@ -1443,7 +1445,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             // Auto load more calls the listener after the rebound duration, so the animation runs smoothly.
             mHandler.postDelayed({
                 val loadMore = mLoadMoreListener
-                if (loadMore != null) loadMore.onLoadMore(this) else if (mOnMultiListener == null) finishLoadMore(2000)
+                if (loadMore != null) loadMore.onLoadMore(this) else if (mOnMultiListener == null) postAutoFinish(false, 2000)
                 mOnMultiListener?.onLoadMore(this)
             }, mReboundDuration.toLong())
         }
@@ -1809,20 +1811,69 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     override val layout: ViewGroup
         get() = this
 
-    override fun setOnRefreshListener(listener: OnRefreshListener?): RefreshLayout = apply { mRefreshListener = listener }
+    /**
+     * Ends a refresh started with no listener, after a while, so a layout without one does not spin for ever.
+     */
+    private val mAutoFinishRefresh = Runnable { mAutoFinishRefreshPending = false; finishRefresh(0) }
+
+    /**
+     * Ends a load started with no listener, after a while.
+     */
+    private val mAutoFinishLoadMore = Runnable { mAutoFinishLoadMorePending = false; finishLoadMore(0) }
+
+    private var mAutoFinishRefreshPending = false
+    private var mAutoFinishLoadMorePending = false
+
+    private fun postAutoFinish(refresh: Boolean, delay: Long) {
+        if (refresh) {
+            mAutoFinishRefreshPending = true
+            mHandler.postDelayed(mAutoFinishRefresh, delay)
+        } else {
+            mAutoFinishLoadMorePending = true
+            mHandler.postDelayed(mAutoFinishLoadMore, delay)
+        }
+    }
+
+    /**
+     * Issues #1397, #1536: a refresh (or load) that started before its listener was set (an autoRefresh in onCreate)
+     * ended by itself after 3 seconds, before the data came, and the late listener was never called. A listener set
+     * while it runs now cancels that end and is called.
+     */
+    private fun adoptLateListener(refresh: Boolean, loadMore: Boolean) {
+        if (refresh && mState == RefreshState.Refreshing && mAutoFinishRefreshPending) {
+            mAutoFinishRefreshPending = false
+            mHandler.removeCallbacks(mAutoFinishRefresh)
+            mRefreshListener?.onRefresh(this) ?: mOnMultiListener?.onRefresh(this)
+        }
+        if (loadMore && mState == RefreshState.Loading && mAutoFinishLoadMorePending) {
+            mAutoFinishLoadMorePending = false
+            mHandler.removeCallbacks(mAutoFinishLoadMore)
+            mLoadMoreListener?.onLoadMore(this) ?: mOnMultiListener?.onLoadMore(this)
+        }
+    }
+
+    override fun setOnRefreshListener(listener: OnRefreshListener?): RefreshLayout = apply {
+        mRefreshListener = listener
+        if (listener != null) adoptLateListener(refresh = true, loadMore = false)
+    }
 
     override fun setOnLoadMoreListener(listener: OnLoadMoreListener?): RefreshLayout = apply {
         mLoadMoreListener = listener
         mEnableLoadMore = mEnableLoadMore || (!mManualLoadMore && listener != null)
+        if (listener != null) adoptLateListener(refresh = false, loadMore = true)
     }
 
     override fun setOnRefreshLoadMoreListener(listener: OnRefreshLoadMoreListener?): RefreshLayout = apply {
         mRefreshListener = listener
         mLoadMoreListener = listener
         mEnableLoadMore = mEnableLoadMore || (!mManualLoadMore && listener != null)
+        if (listener != null) adoptLateListener(refresh = true, loadMore = true)
     }
 
-    override fun setOnMultiListener(listener: OnMultiListener?): RefreshLayout = apply { mOnMultiListener = listener }
+    override fun setOnMultiListener(listener: OnMultiListener?): RefreshLayout = apply {
+        mOnMultiListener = listener
+        if (listener != null) adoptLateListener(refresh = true, loadMore = true)
+    }
 
     override fun setPrimaryColors(@ColorInt vararg primaryColors: Int): RefreshLayout {
         mRefreshHeader?.setPrimaryColors(*primaryColors)

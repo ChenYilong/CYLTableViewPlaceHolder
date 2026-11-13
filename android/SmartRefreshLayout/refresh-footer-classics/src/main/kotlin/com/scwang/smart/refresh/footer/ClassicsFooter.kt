@@ -139,7 +139,14 @@ open class ClassicsFooter @JvmOverloads constructor(context: Context, attrs: Att
 
     @Deprecated("Only called by the layout; use RefreshLayout.setPrimaryColorsId.")
     override fun setPrimaryColors(@ColorInt vararg colors: Int) {
-        if (mSpinnerStyle == SpinnerStyle.FixedBehind) super.setPrimaryColors(*colors)
+        if (mSpinnerStyle == SpinnerStyle.FixedBehind) {
+            super.setPrimaryColors(*colors)
+        } else if (colors.size > 1 && !mSetAccentColor) {
+            // Issue #1212: the layout's accent color (srlAccentColor) is the footer's text color in every style, as it
+            // is the header's; only the background stays the footer's own outside FixedBehind.
+            setAccentColor(colors[1])
+            mSetAccentColor = false
+        }
     }
 
     override fun setNoMoreData(noMoreData: Boolean): Boolean {

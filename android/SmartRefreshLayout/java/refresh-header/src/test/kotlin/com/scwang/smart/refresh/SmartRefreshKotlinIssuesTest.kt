@@ -866,6 +866,141 @@ class SmartRefreshKotlinIssuesTest {
         assertTrue("the layout was collected", ref.get() == null)
     }
 
+    // MARK: - Listeners, colors and repeated calls
+
+    @Test
+    fun aListenerSetAfterTheRefreshStartedKeepsIt() {
+        // #1397, #1536: an autoRefresh before its listener was set ended by itself after 3 seconds (before the data
+        // came), and the listener set a moment later was never called. The Choreographer is paused: the spinner's
+        // endless animation would otherwise move the test clock on by itself.
+        assumeKotlin()
+        fun bare() = SmartRefreshLayout(activity).apply {
+            setRefreshContent(content(3000))
+            setRefreshHeader(ClassicsHeader(activity))
+        }
+        val layout = show(bare())
+        paused {
+            layout.autoRefresh(0)
+            frames(1000)
+            assertEquals(RefreshState.Refreshing, layout.state)
+            layout.setOnRefreshListener { refreshes++ }
+            assertEquals("the late listener is called", 1, refreshes)
+            frames(4000)
+            assertEquals("and the refresh waits for it", RefreshState.Refreshing, layout.state)
+            layout.finishRefresh(0)
+            frames(1000)
+            assertEquals(RefreshState.None, layout.state)
+
+            val alone = show(bare())
+            alone.autoRefresh(0)
+            frames(1000)
+            assertEquals(RefreshState.Refreshing, alone.state)
+            frames(4000)
+            assertEquals("with no listener at all it still ends", RefreshState.None, alone.state)
+        }
+    }
+
+    @Test
+    fun theLayoutsAccentColorIsTheFootersTextColor() {
+        // #1212: srlAccentColor on the layout made the header's text white, but never the (Translate) footer's.
+        assumeKotlin()
+        val layout = show(layout())
+        layout.setPrimaryColors(0, android.graphics.Color.WHITE)
+        assertEquals(android.graphics.Color.WHITE, (field(layout.refreshHeader!!.view, "mTitleText") as android.widget.TextView).currentTextColor)
+        assertEquals(android.graphics.Color.WHITE, (field(layout.refreshFooter!!.view, "mTitleText") as android.widget.TextView).currentTextColor)
+    }
+
+    @Test
+    fun theDefaultFooterIsCreatedOnce() {
+        // #1296: with a default footer creator, the footer was created twice.
+        var created = 0
+        SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ -> created++; ClassicsFooter(context) }
+        try {
+            val layout = SmartRefreshLayout(activity)
+            layout.setRefreshContent(content(3000))
+            show(layout)
+            val parent = layout.parent as ViewGroup
+            parent.removeView(layout)
+            parent.addView(layout)
+            idle(100)
+            assertEquals(1, created)
+        } finally {
+            SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ -> ClassicsFooter(context) }
+        }
+    }
+
+    @Test
+    fun manyAutoRefreshCallsEndCleanly() {
+        // #1356: autoRefresh called from several places at once (also while finishing) froze the page with the
+        // header half shown.
+        val layout = show(layout())
+        repeat(3) { layout.autoRefresh() }
+        idle(100)
+        layout.autoRefresh()
+        idle()
+        layout.finishRefresh(0)
+        layout.autoRefresh()
+        idle(50)
+        layout.autoRefresh()
+        idle()
+        if (layout.state == RefreshState.Refreshing) {
+            layout.finishRefresh(0)
+            idle()
+        }
+        assertEquals(RefreshState.None, layout.state)
+        assertEquals(0, spinner(layout))
+        drag(layout, 600f)
+        idle()
+        assertEquals("still refreshes afterwards", RefreshState.Refreshing, layout.state)
+    }
+
+    @Test
+    fun aFocusedTextFieldKeepsFocusWhenRefreshingEnds() {
+        // #1157: finishRefresh / finishLoadMore closed the soft keyboard of a text field in the content.
+        val field = android.widget.EditText(activity)
+        val box = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL; addView(field); addView(content(3000)) }
+        val layout = show(layout(box))
+        field.requestFocus()
+        layout.autoRefresh(0)
+        idle()
+        layout.finishRefresh(0)
+        idle()
+        drag(layout, -600f)
+        idle()
+        layout.finishLoadMore(0)
+        idle()
+        assertTrue(field.isFocused)
+    }
+
+    @Test
+    fun aConstraintLayoutWithZeroHeightDoesNotRebindForEver() {
+        // #1425, #1270: in a ConstraintLayout with a 0dp height, the list inside kept measuring and binding rows.
+        var binds = 0
+        val list = androidx.recyclerview.widget.RecyclerView(activity).apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+            adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+                override fun getItemCount() = 100
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    object : androidx.recyclerview.widget.RecyclerView.ViewHolder(View(parent.context).apply {
+                        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100)
+                    }) {}
+                override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) { binds++ }
+            }
+        }
+        val constraint = androidx.constraintlayout.widget.ConstraintLayout(activity)
+        val layout = layout(list)
+        constraint.addView(layout, androidx.constraintlayout.widget.ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0).apply {
+            topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            bottomToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+        })
+        activity.setContentView(constraint)
+        idle(500)
+        val settled = binds
+        idle(2000)
+        assertTrue(settled > 0)
+        assertEquals("no more binding while idle", settled, binds)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {
