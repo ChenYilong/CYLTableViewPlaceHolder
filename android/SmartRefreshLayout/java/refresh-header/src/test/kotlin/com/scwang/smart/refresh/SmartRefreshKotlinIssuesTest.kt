@@ -478,6 +478,135 @@ class SmartRefreshKotlinIssuesTest {
         assertTrue(throwing.isFinished)
     }
 
+    // MARK: - The second floor (TwoLevelHeader)
+
+    private fun twoLevel(contentView: View = content(3000)): Pair<SmartRefreshLayout, com.scwang.smart.refresh.header.TwoLevelHeader> {
+        val header = com.scwang.smart.refresh.header.TwoLevelHeader(activity)
+        header.addView(View(activity), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        header.setRefreshHeader(ClassicsHeader(activity))
+        return show(layout(contentView, header)) to header
+    }
+
+    private fun tap(view: View, y: Float = 200f) {
+        val t = SystemClock.uptimeMillis()
+        view.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        view.dispatchTouchEvent(MotionEvent.obtain(t, t + 50, MotionEvent.ACTION_UP, 200f, y, 0))
+    }
+
+    /** A quick swipe of [dy] pixels in 4 steps 8 ms apart, from [fromY]. */
+    private fun swipe(view: View, dy: Float, fromY: Float) {
+        val t = SystemClock.uptimeMillis()
+        var y = fromY
+        view.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        repeat(4) { i ->
+            y += dy / 4
+            view.dispatchTouchEvent(MotionEvent.obtain(t, t + 8L * (i + 1), MotionEvent.ACTION_MOVE, 200f, y, 0))
+        }
+        view.dispatchTouchEvent(MotionEvent.obtain(t, t + 40, MotionEvent.ACTION_UP, 200f, y, 0))
+    }
+
+    @Test
+    fun aSecondFloorOpenedInCodeStaysOpenWhenTouched() {
+        // #1613: after openTwoLevel(true), one touch on the second floor closed it (opened by a pull, it stayed).
+        val (layout, header) = twoLevel()
+        header.openTwoLevel(true)
+        idle()
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        tap(layout)
+        idle()
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        assertEquals(layout.height, spinner(layout))
+    }
+
+    @Test
+    fun aSecondFloorThatCannotBePulledClosedStaysOpen() {
+        // #1213: with pull-to-close off, the first swipe up on the second floor still showed the main page.
+        val (layout, header) = twoLevel()
+        header.setEnablePullToCloseTwoLevel(false)
+        header.openTwoLevel(false)
+        idle()
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        swipe(layout, -400f, layout.height - 20f)
+        assertEquals("the main page does not show", layout.height, spinner(layout))
+        idle()
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        assertEquals(layout.height, spinner(layout))
+    }
+
+    @Test
+    fun aQuickSwipeUpClosesTheSecondFloor() {
+        // #1213, #1387: a quick swipe up (with pull-to-close on) could leave the page stuck on the second floor;
+        // finishTwoLevel sometimes left it open.
+        val (layout, header) = twoLevel()
+        header.openTwoLevel(false)
+        idle()
+        swipe(layout, -600f, layout.height - 20f)
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+        assertEquals(0, spinner(layout))
+        repeat(3) {
+            header.openTwoLevel(false)
+            idle(300)
+            header.finishTwoLevel()
+            idle()
+            assertEquals(RefreshState.None, layout.state)
+            assertEquals(0, spinner(layout))
+        }
+    }
+
+    /** Runs [block] with the Choreographer paused, so [frames] steps animations one frame at a time. */
+    private fun <T> paused(block: () -> T): T {
+        org.robolectric.shadows.ShadowChoreographer.setPaused(true)
+        try { return block() } finally { org.robolectric.shadows.ShadowChoreographer.setPaused(false) }
+    }
+
+    @Test
+    fun aTouchWhileTheFloorOpensInCodeKeepsItOpening() {
+        // #1613: a touch while openTwoLevel(true) still opened the floor stopped it halfway, and lifting the finger
+        // closed it.
+        assumeKotlin()
+        val (layout, header) = twoLevel()
+        paused {
+            header.openTwoLevel(true)
+            frames(200)
+            assertTrue(spinner(layout) in 1 until layout.height)
+            tap(layout)
+            frames(2000)
+        }
+        idle()
+        assertEquals(RefreshState.TwoLevel, layout.state)
+        assertEquals(layout.height, spinner(layout))
+    }
+
+    @Test
+    fun finishTwoLevelWhileTheFloorOpensClosesIt() {
+        // #1387: finishTwoLevel called while the floor still opened was ignored, and the floor stayed open.
+        assumeKotlin()
+        val (layout, header) = twoLevel()
+        paused {
+            header.openTwoLevel(false)
+            frames(200)
+            header.finishTwoLevel()
+            frames(2000)
+        }
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+        assertEquals(0, spinner(layout))
+    }
+
+    @Test
+    fun theContentScrollsWithASecondFloorHeader() {
+        // #1512: with a TwoLevelHeader, a content set by setRefreshContent (a CoordinatorLayout or NestedScrollView
+        // root) would not scroll.
+        val list = NestedScrollView(activity).apply {
+            addView(LinearLayout(activity).apply { addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 3000)) })
+        }
+        val (layout, _) = twoLevel(list)
+        drag(layout, -300f)
+        idle()
+        assertTrue("the content scrolled: ${list.scrollY}", list.scrollY > 0)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {

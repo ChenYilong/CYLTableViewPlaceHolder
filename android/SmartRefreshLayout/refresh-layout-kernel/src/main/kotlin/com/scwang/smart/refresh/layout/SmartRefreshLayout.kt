@@ -181,6 +181,11 @@ open class SmartRefreshLayout @JvmOverloads constructor(
      */
     private var mAutoOpenAnimator: ValueAnimator? = null
 
+    /**
+     * The animation that opens the second floor (issues #1387, #1613).
+     */
+    private var mTwoLevelAnimator: ValueAnimator? = null
+
     init {
         val configuration = ViewConfiguration.get(context)
         mHandler = Handler(Looper.getMainLooper())
@@ -2184,6 +2189,10 @@ open class SmartRefreshLayout @JvmOverloads constructor(
                 val toTwoLevel = { mKernel.setState(RefreshState.TwoLevel) }
                 val animator = animSpinner(measuredHeight)
                 if (animator != null && animator === reboundAnimator) {
+                    // Issue #1613: a touch while openTwoLevel opens the floor (the state is still None) no longer
+                    // stops it halfway, which closed the floor again on lifting the finger.
+                    mAutoOpenAnimator = animator
+                    mTwoLevelAnimator = animator
                     animator.duration = mFloorDuration.toLong()
                     animator.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
@@ -2201,6 +2210,15 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         }
 
         override fun finishTwoLevel(): RefreshKernel {
+            // Issue #1387: finishTwoLevel while the floor still opens closes it too, instead of being ignored and
+            // leaving the floor open when the opening ends.
+            val opening = mTwoLevelAnimator
+            if (mState != RefreshState.TwoLevel && opening != null && opening === reboundAnimator && opening.isRunning) {
+                reboundAnimator = null
+                opening.duration = 0
+                opening.cancel()
+                notifyStateChanged(RefreshState.TwoLevel)
+            }
             if (mState == RefreshState.TwoLevel) {
                 mKernel.setState(RefreshState.TwoLevelFinish)
                 if (mSpinner == 0) {
