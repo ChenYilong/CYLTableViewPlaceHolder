@@ -218,6 +218,13 @@ open class MaterialHeader @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     override fun onStartAnimator(refreshLayout: RefreshLayout, height: Int, maxDragHeight: Int) {
+        // Back in the window while still refreshing (issue #1429), the circle shrunk by onFinish shows again.
+        if (mFinished) {
+            mCircleView.animate().cancel()
+            mCircleView.scaleX = 1f
+            mCircleView.scaleY = 1f
+            mFinished = false
+        }
         mProgress.start()
         mCircleView.contentDescription = context.getString(R.string.srl_material_refreshing)
         mCircleView.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
@@ -234,6 +241,15 @@ open class MaterialHeader @JvmOverloads constructor(context: Context, attrs: Att
         } else if (newState == RefreshState.None) {
             mCircleView.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         }
+    }
+
+    /**
+     * Issue #1600: back from the background while refreshing, the spinner runs again; the system may have dropped its
+     * view animation, which froze the arc (often as a full circle).
+     */
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+        if (visibility == VISIBLE && mState == RefreshState.Refreshing && !mFinished && !mProgress.isRunning) mProgress.start()
     }
 
     override fun onFinish(refreshLayout: RefreshLayout, success: Boolean): Int {

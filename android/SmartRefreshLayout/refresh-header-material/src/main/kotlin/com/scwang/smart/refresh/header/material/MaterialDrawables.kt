@@ -196,10 +196,15 @@ open class MaterialProgressDrawable(private val mParent: View) : Drawable(), Ani
     @Deprecated("Deprecated in Drawable")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
-    override fun isRunning(): Boolean = mIsRunning
+    /**
+     * Running only while the parent still holds the animation: the system can drop a view animation (issue #1600), and
+     * a drawable that still said "running" was never started again, so its arc froze.
+     */
+    override fun isRunning(): Boolean = mIsRunning && mParent.animation === mAnimation
+
 
     override fun start() {
-        if (mIsRunning) return
+        if (isRunning) return
         mAnimation.reset()
         mRing.storeOriginals()
         if (mRing.mEndTrim != mRing.mStartTrim) {

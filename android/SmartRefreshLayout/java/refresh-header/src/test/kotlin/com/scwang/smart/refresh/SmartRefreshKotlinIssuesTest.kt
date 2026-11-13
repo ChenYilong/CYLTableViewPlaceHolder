@@ -185,6 +185,7 @@ class SmartRefreshKotlinIssuesTest {
         assertEquals(RefreshState.Refreshing, layout.state)
         assertEquals("the header is open again", height, spinner(layout))
         assertTrue("the spinner runs again", (field(header, "mProgress") as Animatable).isRunning)
+        assertEquals("the circle shows again", 1f, (field(header, "mCircleView") as View).scaleX)
         assertEquals(1, refreshes)
         layout.finishRefresh(0)
         idle()
@@ -744,6 +745,62 @@ class SmartRefreshKotlinIssuesTest {
         idle()
         assertEquals(open, spinner(layout))
         assertEquals(RefreshState.Refreshing, layout.state)
+    }
+
+    // MARK: - Accessibility
+
+    @Test
+    fun refreshAndLoadMoreAreAccessibilityActions() {
+        // #1380: no way to load more without a touch screen (a TV remote). "Refresh" and "Load more" are now
+        // accessibility actions with localized labels, for TalkBack, Switch Access, Voice Access and TV accessibility.
+        assumeKotlin()
+        val ids = Class.forName("com.scwang.smart.refresh.layout.kernel.R\$id")
+        val refreshId = ids.getField("srl_action_refresh").getInt(null)
+        val loadMoreId = ids.getField("srl_action_load_more").getInt(null)
+        val layout = show(layout(content(3000)))
+        val actions = layout.createAccessibilityNodeInfo().actionList.associate { it.id to it.label?.toString() }
+        assertEquals("Refresh", actions[refreshId])
+        assertEquals("Load more", actions[loadMoreId])
+        assertTrue(layout.performAccessibilityAction(loadMoreId, null))
+        idle()
+        assertEquals(1, loads)
+        layout.finishLoadMore(0)
+        idle()
+        assertTrue(layout.performAccessibilityAction(refreshId, null))
+        idle()
+        assertEquals(1, refreshes)
+        assertFalse("no actions while refreshing", layout.createAccessibilityNodeInfo().actionList.any { it.id == refreshId })
+    }
+
+    // MARK: - MaterialHeader
+
+    @Test
+    fun theMaterialSpinnerRunsAgainAfterTheBackground() {
+        // #1600: back from the background (Home) while refreshing, the spinner froze, often as a full circle: the
+        // system had dropped its view animation while the drawable still said it was running.
+        assumeKotlin()
+        val header = MaterialHeader(activity)
+        val layout = show(layout(header = header))
+        layout.autoRefresh(0)
+        idle()
+        val progress = field(header, "mProgress") as Animatable
+        val circle = field(progress, "mParent") as View
+        circle.clearAnimation()
+        assertFalse("a dropped animation is not running", progress.isRunning)
+        header.dispatchWindowVisibilityChanged(View.GONE)
+        header.dispatchWindowVisibilityChanged(View.VISIBLE)
+        assertTrue(progress.isRunning)
+        assertTrue("the circle animates again", circle.animation != null)
+    }
+
+    @Test
+    fun aMaterialHeaderPullsOverALongList() {
+        // #1523: with a long RecyclerView, the MaterialHeader could hardly be pulled down and did not refresh.
+        val list = recycler(activity, 1000)
+        val layout = show(layout(list, MaterialHeader(activity)))
+        drag(layout, 600f)
+        idle()
+        assertEquals(1, refreshes)
     }
 
     private fun field(obj: Any, name: String): Any? {

@@ -18,12 +18,14 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
+import android.os.Bundle
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.accessibility.AccessibilityNodeInfo
 import android.view.animation.AnimationUtils
 import android.view.animation.Interpolator
 import android.widget.Scroller
@@ -935,6 +937,27 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         } else {
             (isEnableRefreshOrLoadMore(mEnableLoadMore) && !mFooterNoMoreData) || mEnableOverScrollDrag
         }
+    }
+
+    /**
+     * Issue #1380 (and accessibility): "Refresh" and "Load more" are actions of this layout, so TalkBack, Switch
+     * Access, Voice Access and a TV remote's accessibility can refresh or load more without a pull.
+     */
+    override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        if (!isEnabled || mState != RefreshState.None) return
+        if (isEnableRefreshOrLoadMore(mEnableRefresh) && mRefreshHeader != null) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction(R.id.srl_action_refresh, context.getString(R.string.srl_action_refresh)))
+        }
+        if (isEnableRefreshOrLoadMore(mEnableLoadMore) && !mFooterNoMoreData && mRefreshFooter != null) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction(R.id.srl_action_load_more, context.getString(R.string.srl_action_load_more)))
+        }
+    }
+
+    override fun performAccessibilityAction(action: Int, arguments: Bundle?): Boolean = when (action) {
+        R.id.srl_action_refresh -> autoRefresh()
+        R.id.srl_action_load_more -> autoLoadMore()
+        else -> super.performAccessibilityAction(action, arguments)
     }
 
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
