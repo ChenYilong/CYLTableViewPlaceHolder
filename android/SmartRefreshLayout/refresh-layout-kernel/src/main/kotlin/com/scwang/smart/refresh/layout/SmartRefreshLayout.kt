@@ -326,7 +326,9 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             content.setScrollBoundaryDecider(mScrollBoundaryDecider)
             content.setEnableLoadMoreWhenContentNotFull(mEnableLoadMoreWhenContentNotFull)
             content.setUpComponent(mKernel, fixedHeaderView, fixedFooterView)
-            if (mSpinner != 0) {
+            if (mState == RefreshState.Refreshing || mState == RefreshState.Loading) {
+                resumeAfterReattach()
+            } else if (mSpinner != 0) {
                 notifyStateChanged(RefreshState.None)
                 mSpinner = 0
                 content.moveSpinner(0, mHeaderTranslationViewId, mFooterTranslationViewId)
@@ -527,14 +529,44 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             it.cancel()
             reboundAnimator = null
         }
-        // Issue #1166: a layout that leaves the window is reset, so no spinner stays frozen and no animation leaks.
-        if (mState == RefreshState.Refreshing) mRefreshHeader?.onFinish(this, false)
-        if (mState == RefreshState.Loading) mRefreshFooter?.onFinish(this, false)
-        if (mSpinner != 0) mKernel.moveSpinner(0, true)
-        if (mState != RefreshState.None) notifyStateChanged(RefreshState.None)
-        mHandler.removeCallbacksAndMessages(null)
-        // Issue #716: a finishLoadMore that never ran must not leave the footer locked.
-        mFooterLocked = false
+        // Issues #1137, #1168, #1198, #1400, #1414, #1429: a layout that leaves the window while refreshing or loading
+        // (a fragment switched away in a ViewPager2) keeps refreshing: a release whose opening animation was cut off
+        // still starts the refresh, the components' animations stop until it comes back (#1166: no frozen spinner,
+        // no animation running unseen), and a finish already asked for still runs.
+        when (mState) {
+            RefreshState.RefreshReleased -> setStateDirectRefreshing(true)
+            RefreshState.LoadReleased -> setStateDirectLoading(true)
+            else -> Unit
+        }
+        if (mState == RefreshState.Refreshing) {
+            mRefreshHeader?.onFinish(this, true)
+        } else if (mState == RefreshState.Loading) {
+            mRefreshFooter?.onFinish(this, true)
+        } else {
+            if (mSpinner != 0) mKernel.moveSpinner(0, true)
+            if (mState != RefreshState.None) notifyStateChanged(RefreshState.None)
+            mHandler.removeCallbacksAndMessages(null)
+            // Issue #716: a finishLoadMore that never ran must not leave the footer locked.
+            mFooterLocked = false
+        }
+    }
+
+    /**
+     * Back in the window while still refreshing or loading: shows the header (or the footer) open again and restarts
+     * its animation (issues #1137, #1168, #1198, #1429).
+     */
+    protected open fun resumeAfterReattach() {
+        if (mState == RefreshState.Refreshing) {
+            val header = mRefreshHeader ?: return
+            if (mSpinner != mHeaderHeight) mKernel.moveSpinner(mHeaderHeight, false)
+            header.onStateChanged(this, RefreshState.RefreshReleased, RefreshState.Refreshing)
+            header.onStartAnimator(this, mHeaderHeight, maxDragHeight(mHeaderMaxDragRate, mHeaderHeight))
+        } else if (mState == RefreshState.Loading) {
+            val footer = mRefreshFooter ?: return
+            if (mSpinner < 0 && mSpinner != -mFooterHeight) mKernel.moveSpinner(-mFooterHeight, false)
+            footer.onStateChanged(this, RefreshState.LoadReleased, RefreshState.Loading)
+            footer.onStartAnimator(this, mFooterHeight, maxDragHeight(mFooterMaxDragRate, mFooterHeight))
+        }
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
@@ -690,6 +722,10 @@ open class SmartRefreshLayout @JvmOverloads constructor(
                 mIsBeingDragged = false
                 mEnableDisallowIntercept = false
                 mSuperDispatchTouchEvent = super.dispatchTouchEvent(e)
+                // Issues #1258, #1260, #1305, #1432, #1534: while the header or the footer shows (a refresh or a load
+                // still running), a finger on the layout belongs to it, so a ViewPager or ViewPager2 around it does
+                // not switch pages.
+                if (mSpinner != 0) parent?.requestDisallowInterceptTouchEvent(true)
                 if (mState == RefreshState.TwoLevel && mTouchY < measuredHeight * (1 - mTwoLevelBottomPullUpToCloseRate)) {
                     mDragDirection = 'h'
                     return mSuperDispatchTouchEvent
@@ -839,10 +875,14 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
         // From SwipeRefreshLayout: a list before Lollipop, or another view without nested scrolling, cannot steal the
         // vertical scroll.
-        val target = mRefreshContent?.scrollableView ?: return
-        if (ViewCompat.isNestedScrollingEnabled(target)) {
+        // Issue #1241: the request still reaches the parents (a ViewPager around a WebView with a sideways scrolling
+        // area), so only this layout ignores it.
+        val target = mRefreshContent?.scrollableView
+        if (target != null && ViewCompat.isNestedScrollingEnabled(target)) {
             mEnableDisallowIntercept = disallowIntercept
             super.requestDisallowInterceptTouchEvent(disallowIntercept)
+        } else {
+            parent?.requestDisallowInterceptTouchEvent(disallowIntercept)
         }
     }
 
@@ -967,27 +1007,33 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     }
 
     /**
+     * Starts refreshing at once, calling the listener when [notify].
+     */
+    protected open fun setStateDirectRefreshing(notify: Boolean) {
+        if (mState == RefreshState.Refreshing) return
+        mLastOpenTime = System.currentTimeMillis()
+        notifyStateChanged(RefreshState.Refreshing)
+        val refresh = mRefreshListener
+        if (refresh != null) {
+            if (notify) refresh.onRefresh(this)
+        } else if (mOnMultiListener == null) {
+            finishRefresh(3000)
+        }
+        val maxDragHeight = maxDragHeight(mHeaderMaxDragRate, mHeaderHeight)
+        mRefreshHeader?.onStartAnimator(this, mHeaderHeight, maxDragHeight)
+        val multi = mOnMultiListener
+        val header = mRefreshHeader
+        if (multi != null && header is RefreshHeader) {
+            if (notify) multi.onRefresh(this)
+            multi.onHeaderStartAnimator(header, mHeaderHeight, maxDragHeight)
+        }
+    }
+
+    /**
      * Opens the header and starts refreshing.
      */
     protected open fun setStateRefreshing(notify: Boolean) {
-        val start = {
-            mLastOpenTime = System.currentTimeMillis()
-            notifyStateChanged(RefreshState.Refreshing)
-            val refresh = mRefreshListener
-            if (refresh != null) {
-                if (notify) refresh.onRefresh(this)
-            } else if (mOnMultiListener == null) {
-                finishRefresh(3000)
-            }
-            val maxDragHeight = maxDragHeight(mHeaderMaxDragRate, mHeaderHeight)
-            mRefreshHeader?.onStartAnimator(this, mHeaderHeight, maxDragHeight)
-            val multi = mOnMultiListener
-            val header = mRefreshHeader
-            if (multi != null && header is RefreshHeader) {
-                if (notify) multi.onRefresh(this)
-                multi.onHeaderStartAnimator(header, mHeaderHeight, maxDragHeight)
-            }
-        }
+        val start = { setStateDirectRefreshing(notify) }
         val listener = object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 if (animation.duration == 0L) return

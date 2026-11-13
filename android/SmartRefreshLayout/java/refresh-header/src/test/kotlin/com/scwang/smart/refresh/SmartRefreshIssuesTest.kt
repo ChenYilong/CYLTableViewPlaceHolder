@@ -394,6 +394,14 @@ class SmartRefreshIssuesTest {
         idle(300)
         parent.addView(layout)
         idle(300)
+        if (runCatching { Class.forName("com.scwang.smart.refresh.header.HeaderAccessibilityKt") }.isSuccess) {
+            // The Kotlin version keeps refreshing instead (#1429 and others, SmartRefreshKotlinIssuesTest): the
+            // spinner runs again and finishRefresh closes it.
+            assertEquals(RefreshState.Refreshing, layout.state)
+            assertTrue("the spinner runs again", (field(header, "mProgress") as Animatable).isRunning)
+            layout.finishRefresh(0)
+            idle()
+        }
         assertEquals(RefreshState.None, layout.state)
         assertFalse("no frozen spinner", (field(header, "mProgress") as Animatable).isRunning)
         assertEquals(0, spinner(layout))
