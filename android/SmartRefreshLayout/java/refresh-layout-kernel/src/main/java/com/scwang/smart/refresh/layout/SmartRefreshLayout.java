@@ -127,6 +127,7 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
     protected boolean mEnableOverScrollDrag = false;//是否启用越界拖动（仿苹果效果）1.0.4-6
     protected boolean mEnableAutoLoadMore = true;//是否在列表滚动到底部时自动加载更多
     protected boolean mEnablePureScrollMode = false;//是否开启纯滚动模式
+    protected boolean mLoadMoreByPureScrollMode = false;//issues #1109, #1199: pure scroll mode (not the app) enabled load more
     protected boolean mEnableScrollContentWhenLoaded = true;//是否在加载更多完成之后滚动内容显示新数据
     protected boolean mEnableScrollContentWhenRefreshed = true;//是否在刷新完成之后滚动内容显示新数据
     protected boolean mEnableLoadMoreWhenContentNotFull = true;//在内容不满一页的时候，是否可以上拉加载更多
@@ -328,6 +329,7 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
 
         if (mEnablePureScrollMode && !mManualLoadMore && !mEnableLoadMore) {
             mEnableLoadMore = true;
+            mLoadMoreByPureScrollMode = true;
         }
 
         ta.recycle();
@@ -1139,6 +1141,49 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
     }
 
     /**
+     * The height the drag damping is measured against: this layout's height, between minimum and maximum. A layout
+     * taller than the screen (inside a ScrollView or a NestedScrollView, or one that grows as pages load) no longer
+     * makes the pull ever harder, until it cannot reach the refresh height (issues #1197, #1200, #1236).
+     * @param minimum 最小值 / the minimum
+     * @param maximum 最大值 / the maximum
+     * @return 高度 / the height
+     */
+    protected double dampingHeight(double minimum, double maximum) {
+        final View thisView = this;
+        return Math.max(minimum, Math.min(thisView.getHeight(), maximum));
+    }
+
+    /**
+     * The content was removed (for example to wrap it in another view, issue #1235): the next child added becomes the
+     * content.
+     * @param child 子视图 / the child
+     */
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        if (mRefreshContent != null && child == mRefreshContent.getView()) {
+            mRefreshContent = null;
+        }
+    }
+
+    /**
+     * A child added while there is no content becomes the content (issue #1235).
+     * @param child 子视图 / the child
+     */
+    @Override
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+        if (mRefreshContent == null && mAttachedToWindow
+                && (mRefreshHeader == null || child != mRefreshHeader.getView())
+                && (mRefreshFooter == null || child != mRefreshFooter.getView())) {
+            mRefreshContent = new RefreshContentWrapper(child);
+            mRefreshContent.setScrollBoundaryDecider(mScrollBoundaryDecider);
+            mRefreshContent.setEnableLoadMoreWhenContentNotFull(mEnableLoadMoreWhenContentNotFull);
+            mRefreshContent.setUpComponent(mKernel, null, null);
+        }
+    }
+
+    /**
      * A copy of the finger event with its pointers (ids and count) moved to (x, y), for the events this layout sends
      * to its children. A single-pointer event lost the pointer a child tracks (ViewPager's active pointer) and crashed
      * it with "pointerIndex out of range" (issues #532, #1227, #1319, #1496).
@@ -1783,7 +1828,7 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
             } else {
                 final float maxDragHeight = mHeaderMaxDragRate < 10 ? mHeaderHeight * mHeaderMaxDragRate : mHeaderMaxDragRate;
                 final double M = maxDragHeight - mHeaderHeight;
-                final double H = Math.max(mScreenHeightPixels * 4 / 3, thisView.getHeight()) - mHeaderHeight;
+                final double H = dampingHeight(mScreenHeightPixels * 4 / 3, mScreenHeightPixels * 4 / 3) - mHeaderHeight;
                 final double x = Math.max(0, (spinner - mHeaderHeight) * mDragRate);
                 final double y = Math.min(M * (1 - Math.pow(100, -x / (H == 0 ? 1 : H))), x);// 公式 y = M(1-100^(-x/H))
                 mKernel.moveSpinner((int) y + mHeaderHeight, true);
@@ -1796,20 +1841,20 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
             } else {
                 final float maxDragHeight = mFooterMaxDragRate < 10 ? mFooterHeight * mFooterMaxDragRate : mFooterMaxDragRate;
                 final double M = maxDragHeight - mFooterHeight;
-                final double H = Math.max(mScreenHeightPixels * 4 / 3, thisView.getHeight()) - mFooterHeight;
+                final double H = dampingHeight(mScreenHeightPixels * 4 / 3, mScreenHeightPixels * 4 / 3) - mFooterHeight;
                 final double x = -Math.min(0, (spinner + mFooterHeight) * mDragRate);
                 final double y = -Math.min(M * (1 - Math.pow(100, -x / (H == 0 ? 1 : H))), x);// 公式 y = M(1-100^(-x/H))
                 mKernel.moveSpinner((int) y - mFooterHeight, true);
             }
         } else if (spinner >= 0) {
             final double M = mHeaderMaxDragRate < 10 ? mHeaderHeight * mHeaderMaxDragRate : mHeaderMaxDragRate;
-            final double H = Math.max(mScreenHeightPixels / 2, thisView.getHeight());
+            final double H = dampingHeight(mScreenHeightPixels / 2, mScreenHeightPixels);
             final double x = Math.max(0, spinner * mDragRate);
             final double y = Math.min(M * (1 - Math.pow(100, -x / (H == 0 ? 1 : H))), x);// 公式 y = M(1-100^(-x/H))
             mKernel.moveSpinner((int) y, true);
         } else {
             final double M = mFooterMaxDragRate < 10 ? mFooterHeight * mFooterMaxDragRate : mFooterMaxDragRate;
-            final double H = Math.max(mScreenHeightPixels / 2, thisView.getHeight());
+            final double H = dampingHeight(mScreenHeightPixels / 2, mScreenHeightPixels);
             final double x = -Math.min(0, spinner * mDragRate);
             final double y = -Math.min(M * (1 - Math.pow(100, -x / (H == 0 ? 1 : H))), x);// 公式 y = M(1-100^(-x/H))
             mKernel.moveSpinner((int) y, true);
@@ -2425,6 +2470,15 @@ public class SmartRefreshLayout extends ViewGroup implements RefreshLayout, Nest
     @Override
     public RefreshLayout setEnablePureScrollMode(boolean enabled) {
         this.mEnablePureScrollMode = enabled;
+        // Pure scroll mode pulls both ways: on, it allows the pull up as the XML attribute does (issue #1109); off, it
+        // takes back only what it allowed itself (issue #1199).
+        if (enabled && !mManualLoadMore && !mEnableLoadMore) {
+            mEnableLoadMore = true;
+            mLoadMoreByPureScrollMode = true;
+        } else if (!enabled && mLoadMoreByPureScrollMode) {
+            mEnableLoadMore = false;
+            mLoadMoreByPureScrollMode = false;
+        }
         return this;
     }
 
