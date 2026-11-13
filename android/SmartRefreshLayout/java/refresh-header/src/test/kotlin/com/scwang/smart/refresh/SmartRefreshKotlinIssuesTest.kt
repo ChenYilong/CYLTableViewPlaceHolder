@@ -803,6 +803,69 @@ class SmartRefreshKotlinIssuesTest {
         assertEquals(1, refreshes)
     }
 
+    // MARK: - Performance and leaks
+
+    @Test
+    fun anIdleLayoutDoesNotKeepRedrawing() {
+        // #1578, #1360, #1559: after refreshing and loading, an idle layout kept the CPU drawing.
+        val layout = show(layout(content(300)))
+        layout.autoRefresh(0)
+        idle()
+        layout.finishRefresh(0)
+        idle()
+        drag(layout, -600f)
+        idle()
+        layout.finishLoadMore(0)
+        idle(3000)
+        var draws = 0
+        val listener = android.view.ViewTreeObserver.OnPreDrawListener { draws++; true }
+        layout.viewTreeObserver.addOnPreDrawListener(listener)
+        idle(2000)
+        layout.viewTreeObserver.removeOnPreDrawListener(listener)
+        assertEquals("no drawing while idle", 0, draws)
+    }
+
+    @Test
+    fun loadingManyTimesClosesJustAsFast() {
+        // #1520, #1551: after many loads, the footer took longer and longer to close (up to an ANR).
+        val layout = show(layout(content(300)))
+        val steps = ArrayList<Int>()
+        repeat(30) {
+            drag(layout, -600f)
+            idle(500)
+            layout.finishLoadMore(0)
+            var n = 0
+            while (layout.state != RefreshState.None && n < 500) { idle(16); n++ }
+            steps += n
+        }
+        assertTrue("closing took $steps frames", steps.max() <= steps.first() + 2)
+    }
+
+    /** Shows a layout with a listener holding a page, starts an autoRefresh, removes it; returns a weak reference. */
+    private fun removedRefreshingLayout(): java.lang.ref.WeakReference<SmartRefreshLayout> {
+        val page = Any()
+        val layout = SmartRefreshLayout(activity)
+        layout.setRefreshContent(content(3000))
+        layout.setRefreshHeader(ClassicsHeader(activity))
+        layout.setOnRefreshListener { page.hashCode() }
+        activity.setContentView(layout)
+        idle(100)
+        layout.autoRefresh()
+        idle(100)
+        activity.setContentView(View(activity))
+        return java.lang.ref.WeakReference(layout)
+    }
+
+    @Test
+    fun aRemovedLayoutIsNotLeaked() {
+        // #1307, #1342: a layout with listeners (and an autoRefresh still opening) leaked after its page was gone.
+        // The setup runs in its own function, so no local variable of this test keeps the layout.
+        val ref = removedRefreshingLayout()
+        idle(5000)
+        repeat(5) { System.gc(); System.runFinalization(); idle(10) }
+        assertTrue("the layout was collected", ref.get() == null)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {
