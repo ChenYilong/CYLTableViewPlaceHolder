@@ -1227,6 +1227,39 @@ class SmartRefreshKotlinIssuesTest {
 
     private fun top(v: View): Int = IntArray(2).also { v.getLocationInWindow(it) }[1]
 
+    @Test
+    fun theListScrollsTheRightWayAfterLoadingEnds() {
+        // #1566: pulling at the list's end again and again while loading, then finishLoadMoreWithNoMoreData and
+        // setEnableLoadMore(false): a drag down scrolled the list the wrong way (RecyclerView's mScrollOffset).
+        val list = recycler(activity, 30)
+        val layout = show(layout(list))
+        list.scrollBy(0, 100000)
+        idle(100)
+        drag(layout, -300f)
+        idle(300)
+        assertEquals(RefreshState.Loading, layout.state)
+        repeat(3) { drag(layout, -200f); idle(100) }
+        val down = SystemClock.uptimeMillis()
+        var y = 400f
+        layout.dispatchTouchEvent(MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        repeat(5) { y -= 30f; layout.dispatchTouchEvent(MotionEvent.obtain(down, down + 16L * (it + 1), MotionEvent.ACTION_MOVE, 200f, y, 0)); idle(16) }
+        layout.finishLoadMoreWithNoMoreData()
+        layout.setEnableLoadMore(false)
+        idle(1000)
+        val offsets = ArrayList<Int>()
+        var time = down + 200
+        repeat(10) {
+            y += 10f
+            time += 16
+            layout.dispatchTouchEvent(MotionEvent.obtain(down, time, MotionEvent.ACTION_MOVE, 200f, y, 0))
+            idle(16)
+            offsets += list.computeVerticalScrollOffset()
+        }
+        layout.dispatchTouchEvent(MotionEvent.obtain(down, time + 16, MotionEvent.ACTION_UP, 200f, y, 0))
+        idle()
+        assertTrue("a drag down never scrolls toward the end: $offsets", offsets.zipWithNext().all { (a, b) -> b <= a })
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {
