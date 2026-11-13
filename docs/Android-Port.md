@@ -430,6 +430,366 @@
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/345> | 闪退啊 | 不适用：系统字体日志，非本库 / N/A: a system font log, not this library |
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/352> | You're on the SigRank board — claim your profile or remove it | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
 
+### SmartRefreshLayout open PR（5 个，2026-11-13） / SmartRefreshLayout open pull requests (5, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| 源码 `224db48`（Java，Apache-2.0，约 25,500 行，13 个模块；`SmartRefreshLayout.java` 一个文件 4,009 行）。翻译尚未开始；逐个审阅 open PR，采用的在 Kotlin 版中实现。 | Source `224db48` (Java, Apache-2.0, about 25,500 lines in 13 modules; `SmartRefreshLayout.java` alone is 4,009 lines). Translation has not started; each open pull request is reviewed and the taken ones are implemented in the Kotlin version. |
+
+| PR | 内容 / Change | 处理 / Decision |
+| --- | --- | --- |
+| <https://github.com/scwang90/SmartRefreshLayout/pull/1621> | 掉帧时向下回弹误触发自动加载（时间差取非负） / a bounce misfiring auto load more when frames drop (a non-negative time span) | 采用（修复逻辑），也覆盖 issue #1463 / Taken (fix logic); also covers issue #1463 |
+| <https://github.com/scwang90/SmartRefreshLayout/pull/1606> | 源仓库的 Scorecard 与 Dependabot 配置 / Scorecard and Dependabot for the source repository | 不适用：源仓库的 CI / N/A: the source repository's CI |
+| <https://github.com/scwang90/SmartRefreshLayout/pull/1605> | 源仓库的 SECURITY.md / the source repository's SECURITY.md | 不适用：源仓库的文档 / N/A: the source repository's document |
+| <https://github.com/scwang90/SmartRefreshLayout/pull/1564> | README 增加 Kotlin 示例 / Kotlin examples in the README | 不适用：源仓库的 README；本移植的文档本身用 Kotlin / N/A: the source's README; this port's documents use Kotlin |
+| <https://github.com/scwang90/SmartRefreshLayout/pull/1095> | MaterialHeader 修复（进度背景、只影响自身的内容平移、setProgressAlpha）与 RefreshComponent.onAutoRefresh 回调 / MaterialHeader fixes (the progress background, content translation only for itself, setProgressAlpha) and a RefreshComponent.onAutoRefresh callback | 部分采用：MaterialHeader 修复与 onAutoRefresh（覆盖 #1075、#1102、#1268、#1396）；示例与依赖改动不适用 / Partly taken: the MaterialHeader fixes and onAutoRefresh (covering #1075, #1102, #1268, #1396); the demo and dependency changes do not apply |
+
+### SmartRefreshLayout open issue（337 个，2026-11-13） / SmartRefreshLayout open issues (337, 2026-11-13)
+
+| 中文 | English |
+| --- | --- |
+| 评分：**41/100**（139/337 已处理：用法提问 54、构建发布 29、公告讨论与垃圾信息 16、应用或系统问题 14、超出范围 12、Kotlin / AndroidX 移植本身解决 9、修复在已采用的 PR 中 5）。剩余 198 个 TODO。未达到开工所需的 60 分，翻译开始前需要用户决定（见任务记录）。 | Score: **41/100** (139 of 337 handled: 54 usage questions, 29 build or release, 16 announcements, discussions or spam, 14 app or system bugs, 12 out of scope, 9 solved by the Kotlin / AndroidX port itself, 5 fixed by taken pull requests). 198 TODO left. Below the 60 needed to start; the owner decides before translation starts (see the task entry). |
+
+| issue | 标题 / Title | 状态 / Status |
+| --- | --- | --- |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/71> | 作者：常见问题 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/72> | 作者：建议收集 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/73> | 作者：提交新的 Issue ，请先看这个！ | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/406> | 用在CoordinatorLayout外部的时候 为什么不能加载更多了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/532> | pointerIndex out of range | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/687> | BaseRecyclerAdapter实现非常巧妙 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/791> | Wanted: who's using SmartRefresh/您在使用SmartRefresh吗？ | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/916> | 解决了，让HTML告诉APP webview是否到顶，然后在下拉刷新。希望对大家有用。 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1035> | 横向刷新，函数RefreshLayout.autoRefresh()会导致界面错位 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1075> | 动态设置不同刷新头部时，MaterialHeader刷新头部的SpinnerStyle会覆盖后续设置刷新头部的SpinnerStyle | 已处理（计入开工分数）：修复在已采用的 PR #1095 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #1095, implemented and tested in the translation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1081> | 当recyclerview的头部有webview时，webview不显示 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1102> | MaterialHeader的设置进度背景会覆盖进度条圆环图像，并且在改变圆环圆形背景不符合预期 | 已处理（计入开工分数）：修复在已采用的 PR #1095 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #1095, implemented and tested in the translation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1105> | 预埋彩蛋就是原子弹！！！强烈建议去掉这些“意外”！！！不然就会意外离职！！！ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1108> | 配合viewmodel 使用 横竖屏切换 后 刷新状态问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1109> | 2.0的srlEnablePureScrollMode不起作用 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1110> | 你这么死拉，臣妾做不到啊！彩蛋很无聊希望去掉 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1112> | 上拉加载可能出现多次触发 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1121> | cannot generate view binders com.sun.tools.javac.code.Symbol$CompletionFailure: android.su | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1125> | 上拉加载异常 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1129> | 使用AsyncLayoutInflater初始化SmartRefreshLayout导致无法刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1131> | 新版的布局无法预览，添加这个依赖就可以了 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1132> | 请问可以通过代码调用开启刷新功能吗？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1137> | fragment切换时refresh状态问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1138> | 当使用srlFixedHeaderViewId时候,如果固定部分包含TextView,textview不会换行,除非设置定高 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1140> | Androidx | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1143> | 2020了是否支持Kotlin呢 | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1144> | 请问有预加载功能吗？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1148> | 自动加载，头部会先从右边出现，然后再回到中间 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1150> | Fragment嵌套Fragment,在第二层Fragment中有一个SmartRefreshLayout,连续下拉,释放后,没有执行setOnRefreshListener()方 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1151> | [bug: 固定没有数据也有footer时，提示文案会覆盖在列表之上] | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1152> | 建议: Git仓库已经将近300M了,对于以后的开发维护,个人认为将是个不小的阻碍 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1153> | 调用方法setFooterHeight<60时，footer展示不完整 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1154> | 不确定是不是bug，加载更多完成或者没有更多数据，会延迟的显示在列表之上. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1155> | 2.0淘宝二楼功能异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1156> | Design assumption violated. | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1157> | 手动finishRefresh 和 finishLoadMore 之后软键盘自动 收起了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1158> | 和BottomSheetDialog不兼容 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1159> | setNoMoreData(true)刷新后还是会去加载 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1160> | recycview遮挡住最底部布局 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1163> | 切换fragment时候刷新按钮定着不动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1165> | android x 2.0报错 下载不下来了 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1166> | 在A fragemnt中转圈，此时转圈中，切到其他activity页面，再切回来fragment，调用finishRefresh还不消失 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1168> | 请问下多个fragment中，某个fragment转圈中，在切换fragment时候，原fragment的转圈状态能否保持？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1169> | [提问不要在这里请加群，有疑问请先查看常见问题、提问历史、阅读源码。] | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1171> | 在Header没有测量之前就调用autoRefresh进行刷新导致获取不到Header的正确高度 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1172> | Androidx 1.1.0环境 smart 1.1.2的下拉刷新和上拉加载不触发 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1174> | SmartRefreshLayout嵌套RecyclerView需求 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1175> | [使用经典加载尾布局时有BUG] | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1177> | SmartRefreshLayout内部的Recyclerview嵌套一个Recyclerview带来的刷新问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1178> | 嵌套滑动 > 瞬间跳动问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1181> | 自定义Footer的高度怎么根据布局内容自适应？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1182> | 多Fragment里面的Header的最近一次更新时间怎么持久化存储？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1184> | 下拉刷新背景是否可以设置圆角？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1187> | 刷新时 不断打印log | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1190> | 请问怎么设置一进来显示刷新头部视图的一半？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1192> | 添加禁用硬件加速的设置，如果列表数据没有满屏，点击列表的话底部会出现类似黑色的弹窗 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1193> | 能否结合paging使用？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1196> | 二楼效果可以出个使用文档么？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1197> | ScrollView嵌套SmartRefreshLayout 里面的布局在高度超过屏幕的情况下 下拉没反应 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1198> | 多个fragment切换之后不显示下拉动画，下拉监听还在 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1199> | 纯滚动模式问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1200> | SmartRefreshLayout加载几页数据后，最大下拉距离越来越小，最后导致不能刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1202> | Demo即时通讯 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1203> | 上拉加载更多，手指不松开屏幕一直滑动无法出现加载更多，需要手指松开重新向上滑动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1212> | 设置刷新文字颜色，有问题，不能更改文字颜色 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1213> | 二楼问题bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1214> | 全屏item加载更多的时候无法回弹 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1215> | 重复点击页面上的空布局，执行自动刷新方法，有时不执行刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1216> | androidx DesignUtil CoordinatorLayout 是support包的 | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1218> | 有没有监听阻尼回弹的下拉距离的方法 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1220> | 下拉手势滑动过程中，如何让列表不滑动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1222> | 关于在fragment中使用 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1223> | BallPulseFooter怎么设置球的颜色？通过setAnimatingColor设置并没有改变 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1224> | 自定义CoordinatorLayout问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1226> | SmartRefreshLayout 嵌套  ScrollView ,ScrollView中嵌套ConstraintLayout ，刷新时刷新布局出现透明，设置颜色无效 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1227> | 在使用1.1.3 版本的时候   偶尔会出现多点触碰的异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1228> | animateValue .ArrayList.get(int)  NullPointerException希望作者可以帮忙 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1229> | 二楼高度自适应 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1230> | 开启混淆后出现问题 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1234> | 使用MotionLayout时，添加Footer并enable后会优先响应MotionLayout | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1235> | SmartRefreshLayout中移除再添加View，内容区显示空白 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1236> | SmartRefreshLayout连续加载的问题？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1237> | 嵌套nestscrollview刷新的时候会自动上滑 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1239> | ClassicHeader构造方法中有句return让人费解 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1241> | SmartRefreshLayout重写了requestDisallowInterceptTouchEvent方法导致要求父容器不拦截事件失效 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1243> | 怎么 做到 内容不满一屏时让 “没有更多内容了” 紧跟列表item的下面 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1246> | 上拉加载时，内容会从悬浮在上面的view透出来 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1247> | 数据不满屏幕 我手动在最后一个数据添加间距可以正常滚动 但是下拉页面好像重置 又不可以滚动 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1248> | gradle-6.1.1 版本下xml无法预览布局，错误信息如下 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1250> | recycleview 嵌套recycleview，解决事件冲突，有没有好的解决方式 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1252> | 大佬，你好，我在使用淘宝二楼的过程中发现，二楼的图片会闪现一下，这个问题怎么解决？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1254> | 2.0版本demo basic加载失败时候,失败的尾部藏于列表之下,用户无法看到,只要一拖动尾部就会进入加载更多状态,不能像没有更多数据一样跟随 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1256> | java.lang.IndexOutOfBoundsException Index: 24, Size: 1 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1257> | 最新版本的refresh-header-material:2.0.1 在Android studio4.0.1 gradle版本6.1.1无法使用 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1258> | 上滑加载更多的时候,滑动显示出了加载更多的布局,会直接触发父布局(viewpager)de 横向滑动的事件 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1260> | ViewPager2嵌套SmartRefreshLayout时，在下拉刷新或者上拉加载过程中，如果横向滑动距离过大时事件就交给ViewPager2了会导致横向滑动。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1261> | 关于淘宝二楼的触发时机，求大佬指导下 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1262> | refresh-header-two-level | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1266> | autoRefreshAnimationOnly 小概率会触发onRefresh | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1267> | 使用AndroidX，demo滚动效果（使用示例-嵌套滚动-整体）不能滚动了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1268> | 触发刷新时，如何判断是手势下拉还是自动刷新(autoRefresh) | 已处理（计入开工分数）：修复在已采用的 PR #1095 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #1095, implemented and tested in the translation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1270> | smartRefreshLayout 嵌套listView导致adapter频繁刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1271> | 嵌套RecyclerViewX使用下拉刷新或者上拉加载时，手指未抬起（没有离开屏幕），RecyclerViewX却收到了ActionUp抬起事件 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1272> | com.scwang.smartrefresh.layout.SmartRefreshLayout$LayoutParams cannot be cast to androidx. | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1273> | 大佬，有没有出Flutter版本的下拉刷新库啊 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1275> | Didn't find class "com.scwang.smart.refresh.layout.listener.DefaultRefreshInitializer" | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1284> | Caused by: java.lang.ClassNotFoundException: Didn't find class "com.scwang.smartrefresh.la | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1285> | 应用长时间再后台，重启打开，无法下拉刷新！ | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1286> | SmartRefreshLayout内嵌套ViewPager的加载更多问题！ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1287> | WebView嵌套滑动冲突终极解决方案 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1288> | ClassicsFooter  srlTextRelease 不显示 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1289> | Demo 被华为BKL-AL20提醒成有毒软件 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1290> | 2.0.2版本无法更新，提示失败 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1291> | 多语言切换 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1293> | 谢谢作者无私开源和技术支持， | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1294> | 禁用refresh(代码app:srlEnableRefresh="false")后，下拉动作失效 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1295> | 可以像微信一下下拉刷新不主动滑动列表吗 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1296> | 2.0.3 版本设置默认 Footer 布局有问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1298> | 怎么提示为病毒软件呀 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1299> | 是否支持下拉刷新后，header不回弹 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1301> | 上拉加载的时候 有一定的几率与RecyclerView的item  重叠 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1302> | 如何修改下面的这个加载更多布局中加载动画的颜色及加载动画后面的白色背景？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1303> | 崩溃 android.widget.LinearLayout cannot be cast to android.widget.ImageView | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1305> | 和ViewPager2 的滑动冲突还么解决吗 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1307> | refreshLayout.setOnRefreshListener 内存泄漏 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1310> | 主题切换，界面activity会recreate，viewpager+fragment下拉刷新，fragment内部刷新问题，下拉高度变大 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1311> | 请问如何设置淘宝二楼上滑返回一楼的阻尼效果 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1314> | 用classic的header和footer模拟微信消息列表（默认不能加载更多，可以下拉加载历史数据），当历史数据加载完毕，禁用下拉刷新，会导致列表滑动冲突 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1315> | RecyclerView内嵌viewpager，viewpager内部Fragment的布局是RecyclerView，子RecyclerView无法上滑 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1317> | MaterialHeader刷新频率快时有几率不显示圆圈 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1318> | 手机设置的是中文，但项目的语言显示的是英文 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1319> | 在加载的时候会出现   一个触碰的  非法参数的异常！     1.1.3 版本的 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1320> | SmartRefreshLayout在哪个jar包里？ | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1321> | Demo中NestedScrollExampleFragmentViewPager里面加载第二页数据的时候回存在FooterView和Item显示重叠 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1322> | 配合 BaseRecyclerViewAdapterHelper，Fragment 使用会导致第一次Item无法加载，需要滑动再返回才能加载的问题 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1323> | CoordinatorLayout+AppBarLayout+SmartRefreshLayout+RecyclerView 上拉加载无效 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1324> | Tablayout + Viewpager + Fragment的场景下，翻动Viewpager，立马用手按住界面，调用autoRefresh无法触发刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1325> | 项目从1.x升级到2.0.3不触发下拉刷新的监听 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1326> | 调用autoRefresh不显示动画和回调，1.1.3版本 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1330> | 实例多个同一个Fragment,finish()两个都失效 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1331> | 与Bouncy库有事件冲突 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1332> | 不能套娃吗？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1334> | release 编译异常 Illegal invoke-super | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1335> | ANR | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1339> | 连续下拉刷新几次（不等刷新继续下拉），会出现一直停留在加载效果，不会走刷新的监听回调 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1342> | 内存泄漏 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1345> | recyclerview嵌套recyclerview | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1346> | 无法下拉刷新、上滑加载 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1347> | 如何将下拉进入二楼改成上拉进入？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1348> | 建议去gitee看看 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1349> | 头部跟随滚动的问题 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1350> | Fatal Exception: java.lang.StackOverflowError: stack size 8192KB | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1351> | 在内部子view如button按钮区域，小范围垂直滑动的时候，header滑动的情况下，button按钮事件跟着发生了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1352> | 没有更多数据，并且当前在最底部，RecyclerView列表发生改变时（比如展开更多或者添加item数据），footer不会跟随底部滑动。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1353> | 请教一下googleplay 警告API Landroid/os/Trace;->TRACE_TAG_APP:J | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1354> | Supertypes of the following classes cannot be resolved. Please make sure you have the requ | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1356> | autoRefresh导致页面卡死 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1357> | loadmore数据刷新后footer动画丢失 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1358> | 约束布局+Viewpager+fragment的问题 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1359> | 愿意出100米支持团队适配鸿蒙系统 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1360> | CPU，占用问题 ，自定执行了autoRefresh() 才会回收. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1361> | 初次请求接口列表数据为空，调用了finishRefreshWithNoMoreData，筛选其他条件后有数据，此时调用finishRefresh后，仍然无法触发加载更多 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1362> | SmartRefreshLayout 嵌套NestedScrollView 嵌套RecyclerView  屏幕最底部那个item只显示一部分 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1363> | 调用autoRefreshAnimationOnly后getState的状态为none | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1367> | setNoMoreData后再调用autoRefresh  体验问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1368> | CoordinatorLayout中嵌套smartRefreshLayout，上滑一段距离后调用autoRefresh后header是空白的，不显示动画 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1371> | AndroidX崩溃 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1372> | 如何在加载更多失败后，还能显示footer，然后点击footer可以重新加载更多？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1374> | 请问有知乎的上拉加载下一个回答的那种效果么？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1375> | 偶现在上拉加载过程中， Header没有及时隐藏。 和RecyclerView内容重叠 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1379> | 快速刷新多次，只会走一次刷新回调，下拉刷新 loading 图标会一直存在 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1380> | 底部加载更多请问支持非触屏的操作吗？比如遥控交互 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1382> | 是否是混淆的问题呢 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1385> | 什么时候能支持Jetpack Compose呀😄 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1386> | 下载最新Demo即时通讯功能问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1387> | TwoLevelHeader调用finishTwoLevel后，随机出现二楼没关闭问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1390> | 同时网络请求又刷新会出现这个问题，已经避免掉了 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1391> | 加上上拉加载组件后，recyclerview内容最后一项显示一半，上拉后动画会覆盖在最后一项上边。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1392> | 加上上拉加载组件后，recyclerview内容最后一项显示一半，上拉后动画会覆盖在最后一项上边。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1396> | AndroidX  下MaterialHeader会覆盖需要刷新的内容 | 已处理（计入开工分数）：修复在已采用的 PR #1095 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #1095, implemented and tested in the translation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1397> | 初始自动刷新，在网络很延迟的情况下。数据还没有请求到，就停止了刷新动画。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1398> | NullPointerException: Attempt to read from field '******.databinding.FragmentDiaryListBind | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1400> | fragment 被销毁重建时下拉刷新失效 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1401> | Autorefresh 做动画时header 闪动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1402> | 拉出二楼的时候，一楼可以不全部退出屏幕吗 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1405> | Canvas: trying to draw too large  bitmap. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1406> | SmartRefreshLayout+CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout+recyclreview上啦加载 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1409> | AutoRefresh 方法结束后视图状态不对 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1413> | 刷新中的header可以手动往上推回去？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1414> | 在刷新动画持续时点击到其他页面，返回时页面卡死 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1415> | 加载全部数据后，如何让Footer一直展示界面上？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1416> | 应用导包失败 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1417> | 是否可以设置回弹距离？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1418> | recycleView滚动条不准确 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1420> | 禁用下啦刷新功能无效 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1422> | 在设置了android:clipToPadding="false"和android:paddingBottom="@dimen/ui_dp70"的时候，加载更多footer显示异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1423> | 系统版本：5.1.1，autoRefresh()方法报错的：java.lang.NoClassDefFoundError: i.o.a.e.l.w.g.a | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1424> | 新版本文档问题 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1425> | ConstraintLayout下0dp高度问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1427> | 当设置了EnableLoadMoreWhenContentNotFull=false并且设置了NoMoreData=true的问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1428> | 横向刷新 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1429> | ViewPager2+Fragment 中使用时切换Fragment，动画消失 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1430> | 下拉刷新动画刚出现的时候页面网上滑动刷新事件就被取消了？？？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1431> | java.lang.IllegalArgumentException: Illegal pattern character 't' | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1432> | 外层ViewPager2下，上拉加载更多造成ViewPager2误切的解决方案 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1433> | java.lang.IndexOutOfBoundsException | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1434> | 上拉加载更多，释放立即加载等提示突然变成英文的提示了？？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1435> | RefreshFooter#onReleased 不触发 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1436> | RefreshFootView 怎么一直跟随内容显示在底部, 既可以点击加载更多,也可以拖拽加载更多 , 谢谢 ~ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1437> | 滑动到顶部有么有方法？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1440> | 有个疑问io.github.scwang90:跟com.scwang.smart有什么区别？io.github.scwang90:添加成功也无法调用 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1441> | 完美配合SmartRefreshLayout使用的RecyclerView的框架: BRV | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1442> | 双悬浮嵌套滑动问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1443> | README文档提到的  "implementation ..."  gradle 下载不了 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1444> | 为什么没有侧滑删除选卡的选项啊 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1445> | Crash when SmartRefreshLayout draw child in 2.0.3 version | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1447> | 卡顿 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1448> | 最新稳定版本AS | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1449> | autoRefresh()怎么去掉过渡下拉的动画？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1451> | 怎么设置下拉加载历史消息？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1452> | setEnableLoadMoreWhenContentNotFull方法无效 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1455> | 自定义head，在onReleased中覆盖回弹动画，会导致丢失刷新事件 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1456> | SmartRefreshLayout与AndroidX组件新版本存在兼容性问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1457> | 自定义二楼层 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1458> | RecyclerView 的 itemview 中使用了recyclerview 并设置了StagedLayoutManager遇到的问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1459> | 如何立即让Header刷新，就像mEnableAutoLoadMore这个参数实现的效果？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1460> | 2.0后的包名是变了？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1461> | 如何ScrollTo到边界外？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1463> | 无法刷新 | 已处理（计入开工分数）：修复在已采用的 PR #1621 中，翻译时实现并测试 / Handled (counted for the start): the fix is in taken PR #1621, implemented and tested in the translation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1464> | CoordinatorLayout嵌套SmartRefreshLayout嵌套RecyclerView冲突 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1466> | SmartRefreshLayout嵌套CoordinatorLayout滑动惯性问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1467> | 在有footer的情况下，怎么滑动回顶部，并且内容也回到顶部 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1469> | 加载更多 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1471> | 大大好,数据不一屏的时候,比如只有4条数据,底部foot不能跟随在数据后面显示,必须要上拉一下才能显示; | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1472> | 加载更多时松手监听 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1473> | RecycleView 显示不全 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1474> | 滚动条 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1475> | finishRefreshWithNoMoreData 问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1476> | 接入之后找不到这个包 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1477> | Fatal Exception: java.lang.NullPointerException | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1478> | 上拉加载 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1479> | SmartRefreshLayout 包含 RecyclerView，上拉加载更多偶现回到列表顶部 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1480> | 什么时候支持下Compose | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1482> | 一个 ClassNotFoundException | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1484> | 是否可以支持预加载？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1487> | React Native 的支持 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1488> | 能否去掉下拉刷新,只保留下拉二楼, | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1489> | 多模块 上传jitpack 怎么处理的？ | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1490> | 希望加入一个参数 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1491> | java.lang.NoSuchMethodError 闪退 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1492> | 依赖库版本问题 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1493> | 当我本地已准备好了下一页的数据的时候，如何直接让RecyclerView加载下一页的数据，而不触发加载更多的动画 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1494> | 上拉加载 onFooterMoving  有些机型 offset 偏移量为0 如何解决？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1495> | 动态阻尼 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1496> | com.scwang.smart.refresh.layout.SmartRefreshLayout.dispatchTouchEvent (SmartRefreshLayout. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1498> | 还会更新吗？ | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1500> | SmartRefreshLayout嵌套滑动问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1501> | 请问还会更新新版本吗 | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1502> | 如何隐藏掉负二楼？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1503> | 5.0.2手机发生OOM | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1505> | Please remove android support library dependencies, so jetifier can be disabled. | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1506> | OnStateChangedListener 可以单独监听么 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1507> | setEnableLoadMore(boolean)动态设置导致加载更多Footer出不来 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1508> | 下拉刷新ClassicsHeader在Viewbinding中使用问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1510> | 下拉刷新使用几次后再用代码关闭会导致recyclerView滑动处理出问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1512> | 二级刷新时，使用setRefreshContent将根布局为CoordinatorLayout的layout设置为刷新布局会导致无法滑动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1513> | Galaxy Note4 操作系统版本： android6.0.1 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1514> | 希望能支持compose | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1515> | SmartRefreshLayout +NestedScrollView+RecyclerView 刷新动画还没结束数据就显示了 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1519> | 往上滑，滑到底后有一个回弹，在回弹之前往下滑没反应 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1520> | onLoadMore 上拉加载过多后，加载中底部footer的布局消失 时间越来越长 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1521> | MotionLayout嵌套SmartRefreshLayout,Footer显示异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1522> | 源码中已经移除support迁移至androix，是否能同步至maven | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1523> | 数据量多的时候，material 下拉刷新会很难拉下来 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1524> | 下拉不执行刷新 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1526> | 嵌套滚动不会自动加载 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1529> | 下拉刷新 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1531> | 请问当有2层SmartRefreshLayout嵌套时，如何在child刷新时禁止parent刷新？ | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1533> | Canvas: trying to draw too large(256872448bytes) bitmap. | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1534> | 请问和viewpager2 的列表滑动冲突有解决的办法吗 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1535> | OutOfMemoryError | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1536> | 有时候refrash并没有执行。。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1537> | Activity滑动卡顿 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1538> | 页面上滑出现抖动，滑动不上去。 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1542> | 无法在布局文件中直接引用刷新等监听吗 | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1544> | 一个空指针异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1545> | bug反馈：Android12及以上默认开启的滚动拉伸效果偶尔会影响下拉刷新 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1546> | java.lang.ArrayIndexOutOfBoundsException | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1547> | 版本2.1.0 华为权限关闭后，空指针 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1549> | maven 最新版本未使用 Androidx | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1550> | 刷新header为什么和内容控件一直有一段距离如recycleview | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1551> | 一直不停的上拉加载，会出现ANR | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1552> | 有时候下拉刷新或者上来加载，没有反应 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1553> | MIUI设备滑动异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1554> | 一个非常诡异的问题，没有在iss找到这样的问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1556> | 并发修改异常 | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1557> | RecycleView添加HeaderView后，SmartRefreshLayout出现IndexOutOfBoundsException | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1558> | autoRefreshAnimationOnly  无法关闭 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1559> | 在Android 14上有点卡顿 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1560> | 请问怎么设置加载更多失败后不回弹，而是保持失败的footer一直显示 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1561> | 去除support | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1563> | 连续使用 autoRefresh() 方法刷新列表，会闪退 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1565> | 2.1.0版本的aar中依旧是用的android.support代码。 | 已处理：Kotlin 移植版只用 AndroidX、本身就是 Kotlin，没有 support 库 / Handled: the Kotlin port uses AndroidX only and is Kotlin itself, with no support library |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1566> | 上拉加载更多时多次拖动列表，加载完成后手指下滑时列表反向滚动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1568> | 使用StaggeredGridLayoutManager后会出现卡顿，滑动到最后一个时可能出现截取一半的情况 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1569> | android14 2.0.5版本 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1570> | MaterialHeader 下拉刷新时，有阴影，请查看截图 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1571> | Plz... Help me | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1572> | Help me plz .. | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1573> | Referring me | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1574> | onMeasure ArrayIndexOutOfBoundsException 索引越界 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1577> | 是否支持横向滑动的RecyclerView，左滑到最后的时候，加载更多数据 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1578> | 静置后，一直在触发CPU绘制 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1580> | 鸿蒙版本 | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1584> | 空指针 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1587> | main分支，编译app模块报错 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1589> | 抱歉作者大佬， 我发现2.1.1还是有空指针问题 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1591> | StrictMode严格模式下崩溃 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1593> | 如何在原生端解决 webview 滚动冲突问题？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1595> | PullUpCanceled或自动刷新PullDownToRefresh执行动画过程中，触摸子View时存在getParent().requestDisallowIntercept | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1596> | java.lang.NoSuchMethodError | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1599> | Potential Security Improvements | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1600> | MaterialHeader动画异常 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1602> | 调用finishiRefresh()方法无法关闭 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1603> | 关于打包生成app bundle格式 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1604> | Android Studio Meerkat Feature Drop新版本运行不起来 | 不适用：构建、发布、包管理、混淆或示例安装问题 / N/A: build, release, packaging, shrinking or demo installation |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1607> | 适配edge-to-edge问题，如何实现列表可以沉浸到底部导航栏，但是“加载更多”视图不沉浸 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1609> | compose adaptation | 不适用：超出本库范围（横向刷新、Compose、Flutter、React Native、鸿蒙等其他框架或功能） / N/A: outside this library (horizontal refresh, Compose, Flutter, React Native, HarmonyOS and other frameworks or features) |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1612> | 关闭下拉刷新，滑动事件没有传递给父组件 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1613> | 二楼bug | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1614> | finishLoadMoreWithNoMoreData（）回弹 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1615> | 当包裹recyclerview时，滑动到底部出现没有更多数据时，recyclerview内容子项动态增加高度时，没有更多数据布局会挡住布局并悬停在底部 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1616> | viewpager 2中  refreshlayout.finishLoadMoreWithNoMoreData(); 加载更多不显示为什么 ？ | 不适用：用法提问或现有接口已能做到 / N/A: a usage question, or the existing API already does it |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1617> | 没有滚动到顶部 调用autoRefresh()，数据更新完后列表会自动滚动 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1618> | SmartRefreshLayout套viewpager2+fragment+recyclerview，出现了item底部显示不全和上滑抢手势的情况 | TODO：在 Kotlin 版中处理并写测试 / TODO: handled and tested in the Kotlin version |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1619> | ANR | 不适用：应用自身、第三方库或系统的问题 / N/A: the app's own code, a third-party library or the system |
+| <https://github.com/scwang90/SmartRefreshLayout/issues/1622> | All | 不适用：作者公告、讨论、感谢或垃圾信息 / N/A: an announcement, a discussion, thanks or spam |
+
 ### TODO: HarmonyOS NEXT support for the Android and cross-platform (Flutter, then React Native) versions
 
 - **Status:** not started (recorded 2026-11-12, while branch `feat/smartrefresh-parity` was in progress). It follows
