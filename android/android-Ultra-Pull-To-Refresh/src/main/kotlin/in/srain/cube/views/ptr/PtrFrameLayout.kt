@@ -15,7 +15,13 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.AbsListView
 import android.widget.Scroller
 import android.widget.TextView
+import androidx.core.view.NestedScrollingChild3
+import androidx.core.view.NestedScrollingChildHelper
+import androidx.core.view.NestedScrollingParent
+import androidx.core.view.NestedScrollingParent3
+import androidx.core.view.NestedScrollingParentHelper
 import androidx.core.view.ScrollingView
+import androidx.core.view.ViewCompat
 import `in`.srain.cube.views.ptr.indicator.PtrIndicator
 import `in`.srain.cube.views.ptr.util.PtrCLog
 import kotlin.math.abs
@@ -31,7 +37,7 @@ open class PtrFrameLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
-) : ViewGroup(context, attrs, defStyle) {
+) : ViewGroup(context, attrs, defStyle), NestedScrollingParent3, NestedScrollingChild3 {
 
     /**
      * Which directions pull (pull request #157): refresh pulls down, load more pulls up.
@@ -406,6 +412,143 @@ open class PtrFrameLayout @JvmOverloads constructor(
         footer.layout(left, top, right, bottom)
     }
 
+    // MARK: - Nested scrolling (a CoordinatorLayout around the frame)
+
+    private val parentHelper = NestedScrollingParentHelper(this)
+    // Nested scrolling is on, so a CoordinatorLayout around the frame hears the content's scrolling (issue #340).
+    private val childHelper = NestedScrollingChildHelper(this).apply { isNestedScrollingEnabled = true }
+    private val parentConsumed = IntArray(2)
+    private val parentOffset = IntArray(2)
+    private var inNestedCallback = false
+
+    /**
+     * YES when pulls from the start come through nested scrolling: the frame has a nested-scrolling ancestor (a
+     * CoordinatorLayout) and its content scrolls with nested scrolling (a RecyclerView, a NestedScrollView). The
+     * ancestor then takes its share first: a collapsed app bar expands before the header comes down.
+     */
+    protected open fun usesNestedPull(): Boolean {
+        if (!isNestedScrollingEnabled) return false
+        var p = parent
+        var hasNestedAncestor = false
+        while (p != null) {
+            if (p is NestedScrollingParent) {
+                hasNestedAncestor = true
+                break
+            }
+            p = p.parent
+        }
+        return hasNestedAncestor && mContent?.let { hasNestedScrollingDescendant(it) } == true
+    }
+
+    private fun hasNestedScrollingDescendant(view: View): Boolean {
+        if (view is ScrollingView && ViewCompat.isNestedScrollingEnabled(view)) return true
+        if (view !is ViewGroup) return false
+        for (i in 0 until view.childCount) if (hasNestedScrollingDescendant(view.getChildAt(i))) return true
+        return false
+    }
+
+    // View's constructor may call these (android:nestedScrollingEnabled) before the helper exists.
+    @Suppress("USELESS_CAST", "SENSELESS_COMPARISON")
+    override fun setNestedScrollingEnabled(enabled: Boolean) {
+        (childHelper as NestedScrollingChildHelper?)?.isNestedScrollingEnabled = enabled
+    }
+
+    @Suppress("USELESS_CAST", "SENSELESS_COMPARISON")
+    override fun isNestedScrollingEnabled(): Boolean = (childHelper as NestedScrollingChildHelper?)?.isNestedScrollingEnabled ?: false
+
+    override fun startNestedScroll(axes: Int, type: Int): Boolean = childHelper.startNestedScroll(axes, type)
+
+    override fun stopNestedScroll(type: Int) = childHelper.stopNestedScroll(type)
+
+    override fun hasNestedScrollingParent(type: Int): Boolean = childHelper.hasNestedScrollingParent(type)
+
+    override fun dispatchNestedScroll(dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, offsetInWindow: IntArray?, type: Int, consumed: IntArray) =
+        childHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type, consumed)
+
+    override fun dispatchNestedScroll(dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, offsetInWindow: IntArray?, type: Int): Boolean =
+        childHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type)
+
+    override fun dispatchNestedPreScroll(dx: Int, dy: Int, consumed: IntArray?, offsetInWindow: IntArray?, type: Int): Boolean =
+        childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+
+    override fun dispatchNestedFling(velocityX: Float, velocityY: Float, consumed: Boolean): Boolean =
+        childHelper.dispatchNestedFling(velocityX, velocityY, consumed)
+
+    override fun dispatchNestedPreFling(velocityX: Float, velocityY: Float): Boolean =
+        childHelper.dispatchNestedPreFling(velocityX, velocityY)
+
+    override fun onStartNestedScroll(child: View, target: View, axes: Int, type: Int): Boolean =
+        isEnabled && axes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
+
+    override fun onNestedScrollAccepted(child: View, target: View, axes: Int, type: Int) {
+        parentHelper.onNestedScrollAccepted(child, target, axes, type)
+        startNestedScroll(axes and ViewCompat.SCROLL_AXIS_VERTICAL, type)
+    }
+
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
+        // While pulled, scrolling back closes the pull first; otherwise the ancestor (an app bar collapsing) goes first.
+        if (type == ViewCompat.TYPE_TOUCH && ptrIndicator.hasLeftStartPosition() && status != PTR_STATUS_LOADING) {
+            val back = if (ptrIndicator.isHeader) dy > 0 else dy < 0
+            if (back) {
+                val before = ptrIndicator.getCurrentPosY()
+                nestedMove(if (ptrIndicator.isHeader) -dy.toFloat() else dy.toFloat())
+                val moved = before - ptrIndicator.getCurrentPosY()
+                consumed[1] = if (ptrIndicator.isHeader) moved else -moved
+                return
+            }
+        }
+        parentConsumed[0] = 0
+        parentConsumed[1] = 0
+        if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
+            consumed[0] += parentConsumed[0]
+            consumed[1] += parentConsumed[1]
+        }
+    }
+
+    override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int, consumed: IntArray) {
+        // The ancestor first (an app bar expanding), then what is left pulls.
+        parentConsumed[0] = 0
+        parentConsumed[1] = 0
+        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffset, type, parentConsumed)
+        consumed[0] += parentConsumed[0]
+        consumed[1] += parentConsumed[1]
+        val left = dyUnconsumed - parentConsumed[1]
+        if (type != ViewCompat.TYPE_TOUCH || left == 0 || !ptrIndicator.isUnderTouch) return
+        val content = mContent ?: return
+        val canPull = if (left < 0) canHeaderPull(content) else canFooterPull(content)
+        if (!canPull || status == PTR_STATUS_LOADING && !ptrIndicator.hasLeftStartPosition()) return
+        isBeingDragged = true
+        if (ptrIndicator.isInStartPosition()) ptrIndicator.isHeader = left < 0
+        nestedMove(abs(left) / ptrIndicator.resistance)
+        consumed[1] += left
+    }
+
+    override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
+        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, IntArray(2))
+    }
+
+    override fun onStopNestedScroll(target: View, type: Int) {
+        parentHelper.onStopNestedScroll(target, type)
+        stopNestedScroll(type)
+    }
+
+    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean =
+        ptrIndicator.hasLeftStartPosition() || dispatchNestedPreFling(velocityX, velocityY)
+
+    override fun onNestedFling(target: View, velocityX: Float, velocityY: Float, consumed: Boolean): Boolean =
+        dispatchNestedFling(velocityX, velocityY, consumed)
+
+    override fun getNestedScrollAxes(): Int = parentHelper.nestedScrollAxes
+
+    private fun nestedMove(delta: Float) {
+        inNestedCallback = true
+        try {
+            movePos(delta)
+        } finally {
+            inNestedCallback = false
+        }
+    }
+
     // MARK: - Touches
 
     /**
@@ -497,6 +640,9 @@ open class PtrFrameLayout @JvmOverloads constructor(
                     if (status != PTR_STATUS_COMPLETE) moveFooterPos(offsetY)
                     return true
                 }
+                // Inside a CoordinatorLayout, a pull from the start comes through nested scrolling, after the app bar
+                // took its share (issues #115, #204, #283, #315, #327, #340).
+                if (usesNestedPull()) return dispatchTouchEventSupper(e)
                 if (moveDown && canHeaderPull(content)) {
                     startDragging()
                     moveHeaderPos(offsetY)
@@ -556,7 +702,7 @@ open class PtrFrameLayout @JvmOverloads constructor(
         if (change == 0) return
         val isUnderTouch = ptrIndicator.isUnderTouch
         // Once moved, the children get a cancel event.
-        if (isUnderTouch && !hasSendCancelEvent && ptrIndicator.hasMovedAfterPressedDown()) {
+        if (isUnderTouch && !inNestedCallback && !hasSendCancelEvent && ptrIndicator.hasMovedAfterPressedDown()) {
             hasSendCancelEvent = true
             sendCancelEvent()
         }

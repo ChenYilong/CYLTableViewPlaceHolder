@@ -44,4 +44,5 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.recyclerview)
+    testImplementation(libs.material)
 }

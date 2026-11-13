@@ -81,7 +81,8 @@ abstract class PtrDefaultHandler : PtrHandler {
         /**
          * YES when [view] can scroll up. A container that cannot scroll itself (a FrameLayout around a list) asks its
          * scrolling descendants (issue #224); lists use their own scrolling, also when the first item is taller than
-         * the view (issues #42 and #206).
+         * the view (issues #42 and #206); a child moved up out of its container (a collapsed app bar in a
+         * CoordinatorLayout) also counts (issues #115, #283, #315, #327).
          */
         @JvmStatic
         fun canChildScrollUp(view: View): Boolean = canScroll(view, -1)
@@ -97,7 +98,11 @@ abstract class PtrDefaultHandler : PtrHandler {
             if (view !is ViewGroup || view.visibility != View.VISIBLE) return false
             for (i in 0 until view.childCount) {
                 val child = view.getChildAt(i)
-                if (child.visibility == View.VISIBLE && canScroll(child, direction)) return true
+                if (child.visibility != View.VISIBLE) continue
+                // A child moved up out of its parent, like the collapsed app bar of a CoordinatorLayout, means the
+                // content is not at its top (issues #115, #283, #315, #327).
+                if (direction < 0 && child.top < view.paddingTop) return true
+                if (canScroll(child, direction)) return true
             }
             return false
         }
