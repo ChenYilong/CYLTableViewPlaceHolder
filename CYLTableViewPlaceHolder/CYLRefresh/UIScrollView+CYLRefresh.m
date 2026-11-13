@@ -15,6 +15,12 @@
 static const char CYLRefreshAutoHideHeaderKey = '\0';
 static const char CYLRefreshAutoHideFooterKey = '\0';
 
+/// [EN] CYLRefreshComponent's private callback helpers. [CN] CYLRefreshComponent 私有的回调辅助方法。
+@interface CYLRefreshComponent (CYLStartHeaderCallbacks)
+- (BOOL)cyl_hasCallbacks;
+- (void)cyl_copyTargetActionsFrom:(CYLRefreshComponent *)other;
+@end
+
 @implementation UIScrollView (CYLRefresh)
 
 #pragma mark - header
@@ -160,8 +166,10 @@ static BOOL CYLRefreshDefaultAutoHide(void)
     }
     // [EN] Without callbacks of its own, the start header uses the regular header's.
     // [CN] 起始刷新头没有自己的回调时，使用常规刷新头的回调。
-    BOOL hasCallbacks = startHeader.refreshingBlock || startHeader.refreshingHandler || startHeader.refreshingTarget;
-    if (!hasCallbacks && regular) {
+    // [EN] Target-actions of -addTarget:action: (the attach:target:action: family) count and are copied too.
+    // [CN] -addTarget:action:（attach:target:action: 系列）的 target-action 也计入并复制。
+    if (![startHeader cyl_hasCallbacks] && regular) {
+        [startHeader cyl_copyTargetActionsFrom:regular];
         startHeader.refreshingBlock = regular.refreshingBlock;
         [startHeader setRefreshingTarget:regular.refreshingTarget refreshingAction:regular.refreshingAction];
         CYLRefreshComponentHandler handler = regular.refreshingHandler;

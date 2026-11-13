@@ -165,6 +165,10 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (self.state == CYLRefreshStatePulling) self.state = CYLRefreshStateIdle;
     [self cyl_placeSecondaryView];
     self.secondaryOpen = YES;
+    // [EN] The open floor comes in front of the header, as flutter_easy_refresh's secondary page does; the header's
+    //      text would otherwise show over the floor. [CN] 打开的二楼移到刷新头前面（与 flutter_easy_refresh 的二楼页面相同），
+    //      否则刷新头的文字会显示在二楼上。
+    if (self.secondaryView) [self.scrollView insertSubview:self.secondaryView aboveSubview:self];
     [self cyl_reportPhase];
     CGFloat top = self.scrollViewOriginalInset.top + [self cyl_secondaryHeight];
     [UIView animateWithDuration:self.slowAnimationDuration animations:^{
@@ -189,6 +193,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         self.cyl_secondaryClosing = NO;
         self.secondaryOpen = NO;
         self.pullingPercent = 0;
+        // [EN] Closed: back behind the header, revealed by the next pull. [CN] 关闭后回到刷新头后面，由下次下拉露出。
+        if (self.secondaryView) [self.scrollView insertSubview:self.secondaryView belowSubview:self];
         [self cyl_reportPhase];
         [self updateAutoHideVisibility];
         if (self.secondaryClosedBlock) self.secondaryClosedBlock();

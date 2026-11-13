@@ -547,6 +547,24 @@
     }
 }
 
+/// [EN] Private (used by -[UIScrollView cyl_beginRefreshingWithStartHeader:]): whether any callback is set, the
+///      target-actions of -addTarget:action: included. [CN] 私有（供 -[UIScrollView cyl_beginRefreshingWithStartHeader:] 使用）：
+///      是否设置了任何回调，包括 -addTarget:action: 的 target-action。
+- (BOOL)cyl_hasCallbacks
+{
+    return self.refreshingBlock || self.refreshingHandler || self.refreshingTarget || self.cyl_targetActions.count > 0;
+}
+
+/// [EN] Private: adds `other`'s target-actions of -addTarget:action: to this component. [CN] 私有：把 `other` 通过
+///      -addTarget:action: 添加的 target-action 加到本控件。
+- (void)cyl_copyTargetActionsFrom:(CYLRefreshComponent *)other
+{
+    for (NSArray *pair in other.cyl_targetActions) {
+        id target = [pair.firstObject nonretainedObjectValue];
+        if (target) [self addTarget:target action:NSSelectorFromString(pair.lastObject)];
+    }
+}
+
 - (void)addTarget:(id)target action:(SEL)action
 {
     if (!target || !action) return;

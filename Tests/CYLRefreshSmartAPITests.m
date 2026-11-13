@@ -24,6 +24,22 @@
 - (void)refreshDidFinishWithSuccess:(BOOL)success { [super refreshDidFinishWithSuccess:success]; self.finishedWith = @(success); }
 @end
 
+/// [EN] A target for -addTarget:action: that ends whichever header is attached. [CN] -addTarget:action: 的目标，结束当前挂着的刷新头。
+@interface CYLStartHeaderTarget : NSObject
+@property (strong, nonatomic) NSMutableArray<NSString *> *log;
+@property (weak, nonatomic) UIScrollView *scrollView;
+- (void)refresh;
+@end
+
+@implementation CYLStartHeaderTarget
+- (void)refresh {
+    [self.log addObject:@"refresh"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.scrollView.cyl_header endRefreshing];
+    });
+}
+@end
+
 @implementation CYLRefreshSmartAPITests
 
 - (void)onRefresh:(id)sender {
@@ -282,6 +298,7 @@
     XCTAssertTrue(opened);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top + 300, 0.5, @"the content moved down by the floor");
     XCTAssertNil(header.layer.mask, @"not auto-hidden while the floor is open");
+    XCTAssertGreaterThan([scrollView.subviews indexOfObject:floor], [scrollView.subviews indexOfObject:header], @"the open floor is in front of the header");
 
     [header closeSecondary];
     XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryClosing);
@@ -289,6 +306,7 @@
     XCTAssertTrue(closed);
     XCTAssertFalse(header.isSecondaryOpen);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top, 0.5, @"the inset is back");
+    XCTAssertLessThan([scrollView.subviews indexOfObject:floor], [scrollView.subviews indexOfObject:header], @"closed: behind the header again");
     XCTAssertTrue([phases containsObject:@(CYLRefreshPhaseSecondaryOpen)]);
     XCTAssertEqualObjects(phases.lastObject, @(CYLRefreshPhaseIdle));
     window.hidden = YES;
@@ -410,6 +428,157 @@
     header.iconSize = CGSizeMake(24, 24);
     [header layoutIfNeeded];
     XCTAssertTrue(CGSizeEqualToSize(header.arrowView.bounds.size, CGSizeMake(24, 24)));
+    window.hidden = YES;
+}
+
+- (void)testPagingRefreshLoadRetryAndNoMore {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    __block BOOL failNext = NO;
+    __block NSInteger total = 25;
+    NSMutableArray<NSNumber *> *requested = [NSMutableArray array];
+    CYLRefreshPaging *paging = [[CYLRefreshPaging alloc] initWithHeader:header footer:footer loader:^(NSInteger page, CYLRefreshPagingCompletion done) {
+        [requested addObject:@(page)];
+        if (failNext) { failNext = NO; done(nil, NSNotFound, NSNotFound, [NSError errorWithDomain:@"test" code:1 userInfo:nil]); return; }
+        NSMutableArray *items = [NSMutableArray array];
+        for (NSInteger i = (page - 1) * 10; i < MIN(page * 10, total); i++) [items addObject:@(i)];
+        done(items, total, NSNotFound, nil);
+    }];
+    __block NSInteger changes = 0;
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) { changes++; };
+    XCTAssertNil(paging.items);
+    XCTAssertFalse(paging.isEmpty);
+    XCTAssertFalse(paging.isNoMore, @"nothing known yet");
+
+    [paging refresh];
+    XCTAssertEqual(paging.count, 10);
+    XCTAssertEqual(paging.page, 1);
+    XCTAssertEqual(changes, 1);
+
+    failNext = YES;
+    [paging loadMore];
+    XCTAssertEqual(paging.count, 10, @"a failed load commits nothing");
+    XCTAssertEqual(paging.page, 1);
+    [paging loadMore];
+    XCTAssertEqualObjects(requested, (@[@1, @2, @2]), @"the failed page is asked for again");
+    XCTAssertEqual(paging.count, 20);
+    [paging loadMore];
+    XCTAssertEqual(paging.count, 25);
+    XCTAssertTrue(paging.isNoMore, @"count >= total");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+
+    failNext = YES;
+    [paging refresh];
+    XCTAssertEqual(paging.count, 25, @"a failed refresh keeps the items");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData, @"and the footer");
+    total = 40;
+    [paging refresh];
+    XCTAssertEqual(paging.count, 10, @"refresh replaces the items");
+    XCTAssertNotEqual(footer.state, CYLRefreshStateNoMoreData, @"reset after a successful refresh");
+
+    total = 0;
+    [paging refresh];
+    XCTAssertTrue(paging.isEmpty);
+    XCTAssertTrue(paging.isNoMore);
+    window.hidden = YES;
+}
+
+- (void)testPagingNoMoreByPageCountAndAsyncCompletion {
+    CYLRefreshPaging *paging = [[CYLRefreshPaging alloc] initWithHeader:nil footer:nil loader:^(NSInteger page, CYLRefreshPagingCompletion done) {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{ done(@[@(page)], NSNotFound, 2, nil); });
+    }];
+    XCTestExpectation *first = [self expectationWithDescription:@"first page"];
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) {
+        XCTAssertTrue(NSThread.isMainThread, @"reported on the main queue");
+        [first fulfill];
+    };
+    [paging start];
+    [self waitForExpectations:@[first] timeout:5];
+    XCTAssertFalse(paging.isNoMore, @"page 1 of 2");
+    XCTestExpectation *second = [self expectationWithDescription:@"second page"];
+    paging.itemsDidChange = ^(CYLRefreshPaging *p) { [second fulfill]; };
+    [paging loadMore];
+    [self waitForExpectations:@[second] timeout:5];
+    XCTAssertEqual(paging.page, 2);
+    XCTAssertTrue(paging.isNoMore, @"page >= totalPage");
+    XCTAssertEqualObjects(paging.items, (@[@1, @2]));
+}
+
+/// [EN] flutter_easy_refresh #631: a mouse wheel moves the offset without a drag and without overscroll; the auto footer
+///      must still load when the bottom is reached. [CN] flutter_easy_refresh #631：鼠标滚轮移动偏移时没有拖动、也不越界；
+///      到达底部时自动加载尾仍须加载。
+- (void)testAutoFooterLoadsWhenWheelReachesBottom {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [self scrollView];
+    [window addSubview:scrollView];
+    CYLRefreshAutoNormalFooter *footer = [CYLRefreshAutoNormalFooter attach:scrollView];
+    __block NSInteger loads = 0;
+    footer.refreshingBlock = ^{ loads++; };
+    XCTAssertFalse(scrollView.isDragging);
+    CGFloat bottom = scrollView.contentSize.height + scrollView.adjustedContentInset.bottom - CGRectGetHeight(scrollView.bounds);
+    // Wheel steps of 40 points down to the bottom, never past it.
+    for (CGFloat y = bottom - 400; y <= bottom; y += 40) {
+        scrollView.contentOffset = CGPointMake(0, MIN(y, bottom));
+    }
+    scrollView.contentOffset = CGPointMake(0, bottom);
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+    XCTAssertEqual(footer.state, CYLRefreshStateRefreshing, @"loads without a drag");
+    XCTAssertEqual(loads, 1);
+    window.hidden = YES;
+}
+
+- (void)testStartHeaderBeforeWindowRestoresRegularHeader {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *regular = [CYLRefreshNormalHeader attach:scrollView];
+    __block NSInteger refreshes = 0;
+    regular.refreshingBlock = ^{ refreshes++; };
+    CYLRefreshCupertinoHeader *start = [CYLRefreshCupertinoHeader new];
+    [scrollView cyl_beginRefreshingWithStartHeader:start];   // viewDidLoad: not in a window yet
+    XCTAssertEqual(scrollView.cyl_header, start);
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    [window addSubview:scrollView];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.6]];
+    XCTAssertTrue(start.isRefreshing);
+    [scrollView.cyl_header endRefreshing];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.5]];
+    XCTAssertEqual(scrollView.cyl_header, regular, @"the regular header is back");
+    XCTAssertEqual(refreshes, 1);
+    window.hidden = YES;
+}
+
+- (void)testStartHeaderInPushedTableViewController {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    window.rootViewController = nav;
+    window.hidden = NO;
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+    UITableViewController *page = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    NSMutableArray<NSString *> *log = [NSMutableArray array];
+    __block CYLRefreshNormalHeader *regular = nil;
+    __block CYLRefreshCupertinoHeader *start = nil;
+    // viewDidLoad equivalent: attach, then start with another header.
+    (void)page.view;
+    // [EN] attach:target:action:, as the example does: the callback is a target-action of -addTarget:action:.
+    // [CN] 与示例一样用 attach:target:action:：回调是 -addTarget:action: 的 target-action。
+    CYLStartHeaderTarget *target = [CYLStartHeaderTarget new];
+    target.log = log;
+    target.scrollView = page.tableView;
+    regular = [CYLRefreshNormalHeader attach:page.tableView target:target action:@selector(refresh)];
+    start = [CYLRefreshCupertinoHeader new];
+    [start addPhaseObserver:^(CYLRefreshComponent *c, CYLRefreshPhase old, CYLRefreshPhase phase) {
+        [log addObject:[NSString stringWithFormat:@"start %ld>%ld", (long)old, (long)phase]];
+    }];
+    [page.tableView cyl_beginRefreshingWithStartHeader:start];
+    [nav pushViewController:page animated:YES];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3]];
+    XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action");
+    XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh");
     window.hidden = YES;
 }
 

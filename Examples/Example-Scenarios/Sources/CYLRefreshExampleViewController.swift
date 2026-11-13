@@ -88,7 +88,17 @@ final class CYLRefreshExampleViewController: UITableViewController {
         ]
         let exam6 = CYLRefreshExample(header: .smartSection, titles: styles.map { $0.0 },
                                       methods: styles.map { $0.1 }, viewControllers: [smart])
-        return [exam0, exam1, exam2, exam3, exam4, exam5, exam6]
+        // Beyond MJRefresh: flutter_easy_refresh's demo pages (CYLEasyRefreshDemoViewController), one method per page.
+        let easy: (name: String, make: () -> CYLRefreshExampleRunning) =
+            ("CYLEasyRefreshDemoViewController", { CYLEasyRefreshDemoViewController() })
+        let pages: [(CYLScenarioL10n, String)] = [
+            (.easyCupertino, "easyCupertino"), (.easySecondary, "easySecondary"), (.easyTriggerMode, "easyTriggerMode"),
+            (.easyRefreshOnStart, "easyRefreshOnStart"), (.easyPaging, "easyPaging"), (.easyListener, "easyListener"),
+            (.easyChat, "easyChat"), (.easyUserProfile, "easyUserProfile"),
+        ]
+        let exam7 = CYLRefreshExample(header: .easySection, titles: pages.map { $0.0 },
+                                      methods: pages.map { $0.1 }, viewControllers: [easy])
+        return [exam0, exam1, exam2, exam3, exam4, exam5, exam6, exam7]
     }()
 
     init() {

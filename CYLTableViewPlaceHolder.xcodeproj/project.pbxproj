@@ -20,6 +20,7 @@
 		15FCDF5645250D870F3CAE9B /* CYLRefreshDeliveryHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = DB433B2CC3E5911CEF25E8A9 /* CYLRefreshDeliveryHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C8CBDEC2954175F4723F6AB /* CYLRefreshVectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD5BB3A27B9004B7D6FE396 /* CYLRefreshVectorView.m */; };
 		1CF85564426FD32802210B2E /* CYLPlaceholderHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 025A183607BCEB5632C113AD /* CYLPlaceholderHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1F275A309492E6E479666C67 /* CYLRefreshPaging.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDE0E00F7930065D4FE8765 /* CYLRefreshPaging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F5293945A78D11B423FE722 /* CYLRefreshDropBoxHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CC19819D20166DAEA6D3807 /* CYLRefreshDropBoxHeader.m */; };
 		208960F2A0CEC063A50F16CF /* CYLRefreshConst.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A32051DE8A5B0408417D84 /* CYLRefreshConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23E19E4B10F06FFF4A9E9DD9 /* CYLPlaceholderScenario.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BDCF96BBE7D4E274471D80 /* CYLPlaceholderScenario.m */; };
@@ -99,6 +100,7 @@
 		7C8671F67A5EABB7876A55EE /* UIScrollView+CYLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CF19EAF1DA21AF31CE1C3C5 /* UIScrollView+CYLExtension.m */; };
 		7CC93F05C99D87B2A2295E2C /* CYLRefreshTrailer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCB3D19D840E95F5F9D4DF8 /* CYLRefreshTrailer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7F55EE79C678A177B57B2C2D /* CYLPlaceholderStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.m */; };
+		7FDEA826DEF32B9D33FA4AD6 /* CYLRefreshPaging.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D0787B1ACCBB46031B765D /* CYLRefreshPaging.m */; };
 		829573EB2C0910461CEEA754 /* CYLRefreshDropBoxHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = B520A70534B252DC5894336A /* CYLRefreshDropBoxHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		835438E93B1069A768D440D8 /* CYLRefreshStateTrailer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4D93FBBB2508A8E616092 /* CYLRefreshStateTrailer.m */; };
 		8B36617D4F0040BCE6DD22AC /* CYLRefreshMaterialHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A91F3523873B4EA6AC78D32 /* CYLRefreshMaterialHeader.m */; };
@@ -205,6 +207,7 @@
 		0205DABAFB749644B70AAFC5 /* CYLRefreshGifHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshGifHeader.h; sourceTree = "<group>"; };
 		020EF24E7074D6CA32EE917C /* CYLRefreshAutoGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshAutoGifFooter.h; sourceTree = "<group>"; };
 		025A183607BCEB5632C113AD /* CYLPlaceholderHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderHUD.h; sourceTree = "<group>"; };
+		04D0787B1ACCBB46031B765D /* CYLRefreshPaging.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshPaging.m; sourceTree = "<group>"; };
 		0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+CYLPlaceholder.m"; sourceTree = "<group>"; };
 		07367D0371B55759C70D498B /* CYLRefreshBackGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshBackGifFooter.h; sourceTree = "<group>"; };
 		074DB04053DF1D6A0122372C /* CYLRefreshPhoenixHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshPhoenixHeader.h; sourceTree = "<group>"; };
@@ -322,6 +325,7 @@
 		C78E797080E21B49B69A1DAC /* CYLRefreshValueAnimator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshValueAnimator.h; sourceTree = "<group>"; };
 		CC7E5761105B23F9A84A8659 /* CYLRefreshGamePlayingScene.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshGamePlayingScene.m; sourceTree = "<group>"; };
 		CE5E46706048B0DE7D4A1F81 /* CYLRefreshConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshConst.m; sourceTree = "<group>"; };
+		CEDE0E00F7930065D4FE8765 /* CYLRefreshPaging.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshPaging.h; sourceTree = "<group>"; };
 		CF9DF75A9C3D08E54094901A /* CYLRefreshDeliveryHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshDeliveryHeader.m; sourceTree = "<group>"; };
 		CFD5BB3A27B9004B7D6FE396 /* CYLRefreshVectorView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshVectorView.m; sourceTree = "<group>"; };
 		D33E56AD6033E9A1F852C8E3 /* CYLRefreshGameHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshGameHeader.h; sourceTree = "<group>"; };
@@ -687,6 +691,8 @@
 				A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.m */,
 				1753313E45A78A4B2AD240AD /* CYLRefreshIconView.m */,
 				FAB60554ECE553B28C5E57D1 /* CYLRefreshIconView.h */,
+				CEDE0E00F7930065D4FE8765 /* CYLRefreshPaging.h */,
+				04D0787B1ACCBB46031B765D /* CYLRefreshPaging.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -801,6 +807,7 @@
 				AFB1D3F5C14B0510D36CC800 /* CYLRefreshCupertinoHeader.h in Headers */,
 				9691D4D21B930886EF9DE5BD /* CYLRefreshCupertinoFooter.h in Headers */,
 				013ED51982451921ED54D3FD /* CYLRefreshDrawnFooter.h in Headers */,
+				1F275A309492E6E479666C67 /* CYLRefreshPaging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1016,6 +1023,7 @@
 				6C23B2AB2868B4E0BF6C35E2 /* CYLRefreshCupertinoHeader.m in Sources */,
 				27EADB8B343B475A28108766 /* CYLRefreshCupertinoFooter.m in Sources */,
 				8D6D87C7F71BA15E0FB01CDD /* CYLRefreshDrawnFooter.m in Sources */,
+				7FDEA826DEF32B9D33FA4AD6 /* CYLRefreshPaging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,10 @@
 | [SmartRefreshControl 对照表](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) | [SmartRefreshControl comparison](#smartrefreshcontrol-对照表--smartrefreshcontrol-comparison) |
 | [SmartRefreshControl 示例截图](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) | [SmartRefreshControl demo screenshots](#smartrefreshcontrol-示例截图--smartrefreshcontrol-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
+| [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
+| [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
+| [flutter_easy_refresh Rive 样式截图](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) | [flutter_easy_refresh Rive style screenshots](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) |
 | [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
 
 <!-- docs-navigation:end -->
@@ -27,11 +30,11 @@
 
 ## 任务 / Tasks
 
-### TODO：对齐 SmartRefreshControl 并复刻其示例 / TODO: Match SmartRefreshControl and port its demo
+### 已完成 / Done：对齐 SmartRefreshControl 并复刻其示例 / Match SmartRefreshControl and port its demo
 
 | 中文 | English |
 | --- | --- |
-| 状态：进行中（2026-11-12 开始，分支 `feat/smartrefresh-parity`，来源分支 `claude/docs-todo-completion-xoef38`）。 | Status: in progress (started 2026-11-12, branch `feat/smartrefresh-parity`, source branch `claude/docs-todo-completion-xoef38`). |
+| 状态：已完成（2026-11-13）。开始于 2026-11-12，分支 `feat/smartrefresh-parity`，来源分支 `claude/docs-todo-completion-xoef38`。SmartRefreshControl：对照表 100/100、示例已复刻并截图；flutter_easy_refresh：对照表 100/100（48/48）、外部 issue 100/100、示例 8 个页面已复刻并在模拟器上核对（`7e9a9ef`、`8758fb1`）；单元测试 171 个全部通过。 | Status: done (2026-11-13). Started 2026-11-12, branch `feat/smartrefresh-parity`, source branch `claude/docs-todo-completion-xoef38`. SmartRefreshControl: table 100/100, demo ported with screenshots; flutter_easy_refresh: table 100/100 (48 of 48), source issues 100/100, 8 demo pages ported and checked on the simulator (`7e9a9ef`, `8758fb1`); 171 unit tests pass. |
 | 用户原始提示词：“注意本任务主要针对 CYLRefresh文件夹代码修改 ：阅读该项目代码 以及readme <https://github.com/scwang90/SmartRefreshControl>  加入我们缺失的功能。第二步对齐api ，学习该项目的初始化方式，新增我们原有api。保证我们得功能要比这个项目更多，绝对不能少。docs中写个表格，第一列为SmartRefreshControl的公开api，第二列为我们的api。如果能找到对应的，就列出，最后查看我们少了什么API。如果SmartRefreshControl API 完全存在对应版本，那么就满分，持续更新我们的API，一直到100分 。满分后的，将SmartRefreshControl 里面的example完全复刻为swift版本 加入我们的example 。包括截图里的两个场景。优先更新core层面代码，example仅仅负责数据传入以及样式参数输入，点击事件实现。” | The user's original prompt (Chinese, verbatim on the left): mainly change the code in the CYLRefresh folder. Read SmartRefreshControl's code and README and add the features we lack. Then align the API: learn its way of initializing and add it next to our existing API. Our features must be a superset, never fewer. Write a table in docs: column 1 SmartRefreshControl's public API, column 2 ours; list the match where one exists, then see which API we lack. Full marks when every SmartRefreshControl API has a counterpart; keep adding API until 100. After full marks, port SmartRefreshControl's example completely to Swift into our example, including the two scenarios in the screenshot. Core code first; the example only passes data and style parameters and handles taps. |
 | 追加提示词（同一任务中）：“同样要求处理： <https://github.com/xuelongqy/flutter_easy_refresh> 新建表格打分 复刻demo” | Added prompt (same task): treat <https://github.com/xuelongqy/flutter_easy_refresh> the same way: a new scored table, and port its demo. |
 | 要求：①只改 `CYLTableViewPlaceHolder/CYLRefresh`（核心优先），示例只传数据、样式参数和点击处理；②补齐缺失功能，学习 `attach` 式初始化并新增到现有 API 旁；③表格：SmartRefreshControl 公开 API → 我们的 API，算分，补到 100；④满分后用 Swift 完整复刻其 demo（含截图中的两个场景）；⑤flutter_easy_refresh 同样处理：新表格、打分、复刻 demo；⑥功能只能比对方多。 | Requirements: (1) change only `CYLTableViewPlaceHolder/CYLRefresh` (core first); the example only passes data and style parameters and handles taps; (2) add the missing features, learn the `attach`-style initialization and add it next to the existing API; (3) table: SmartRefreshControl's public API → ours, scored, raised to 100; (4) after 100, port its demo completely to Swift (including the two scenarios in the screenshot); (5) the same for flutter_easy_refresh: a new table, a score, a demo port; (6) we may only have more features, never fewer. |
@@ -133,7 +136,7 @@
 
 | 中文 | English |
 | --- | --- |
-| 评分：**96/100**（46/48 行有对应 API；二楼一行拆成刷新头与刷新尾两行；阻尼、弹簧与嵌套滚动 3 行改判为不适用；此前 94（`a890e12`）、92（`d29c511`）、84（`af17600`）、82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 7 行只属于 Flutter 或 UIKit 无对应概念，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。剩下的缺口：6 个 Rive 样式包与 `easy_paging`。 | Score: **96/100** (46 of 48 rows have a counterpart; the second-floor row is split into header and footer; friction, springs and nested scrolling are now judged not applicable; before: 94 (`a890e12`), 92 (`d29c511`), 84 (`af17600`), 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 7 rows belong to Flutter only or have no UIKit concept and are not scored; 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Remaining gaps: the 6 Rive style packages and `easy_paging`. |
+| 评分：**100/100**（48/48 行有对应 API；二楼一行拆成刷新头与刷新尾两行；阻尼、弹簧与嵌套滚动 3 行改判为不适用；此前 96（`3c4ec11`）、94（`a890e12`）、92（`d29c511`）、84（`af17600`）、82（`2ca3af5`）、72（`2ea8d2b`）、54（`08150a2`）；另有 7 行只属于 Flutter 或 UIKit 无对应概念，不计分；2026-11-12，`feat/smartrefresh-parity`，对照 flutter_easy_refresh `dcdbb81`）。每行是一组相关的公开 API（`EasyRefresh`、`EasyRefreshController`、`Indicator` 及其枚举、各类 Header / Footer、各样式、样式扩展包与 `easy_paging`）。对照表已全部对齐；剩下的是外部项目 issue（#752、#631）与 Swift 示例复刻。 | Score: **100/100** (48 of 48 rows have a counterpart; the second-floor row is split into header and footer; friction, springs and nested scrolling are now judged not applicable; before: 96 (`3c4ec11`), 94 (`a890e12`), 92 (`d29c511`), 84 (`af17600`), 82 (`2ca3af5`), 72 (`2ea8d2b`), 54 (`08150a2`); 7 rows belong to Flutter only or have no UIKit concept and are not scored; 4 more rows belong to Flutter only and are not scored; 2026-11-12, `feat/smartrefresh-parity`, against flutter_easy_refresh `dcdbb81`). Each row is one group of related public API (`EasyRefresh`, `EasyRefreshController`, `Indicator` and its enums, the Header / Footer kinds, the styles, the style packages and `easy_paging`). Every row has a counterpart; left: the source project's issues (#752, #631) and the Swift demo port. |
 
 | flutter_easy_refresh 公开 API / public API | CYLRefresh API | 对齐 / Aligned |
 | --- | --- | --- |
@@ -186,12 +189,48 @@
 | `ClassicHeader` 的结果图标 `succeededIcon` / `failedIcon` / `noMoreIcon`、`pullIconBuilder`、`reverse`、`textBuilder` / `messageBuilder`、`spacing` / `iconDimension` | `succeededImage` / `failedImage`、经典刷新尾的 `noMoreDataImage`、`iconOnTrailingSide`、`iconSize`；`pullIconBuilder` → `arrowView.image`；`textBuilder` → `setTitle:forState:`；`messageBuilder` → `lastUpdatedTimeText`；`spacing` → `labelLeftInset` / the classic footers' `noMoreDataImage`, and the mappings listed | ✅ |
 | `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | ✅ |
 | `BezierFooter` / `MaterialFooter` / `DeliveryFooter` / `PhoenixFooter` / `TaurusFooter` | `CYLRefreshBezierRadarFooter` / `CYLRefreshMaterialFooter` / `CYLRefreshDeliveryFooter` / `CYLRefreshPhoenixFooter` / `CYLRefreshTaurusFooter`（`CYLRefreshDrawnFooter` 内嵌对应的手绘刷新头并驱动它；任何手绘刷新头都可用 `initWithStyle:` 变成刷新尾 / `CYLRefreshDrawnFooter` hosts and drives the matching drawn header; `initWithStyle:` turns any drawn header into a footer） | ✅ |
-| Rive 样式包 / Rive style packages：`easy_refresh_bow` / `bubbles` / `halloween` / `skating` / `space` / `squats` | 已实现，待目测：核心 `CYLRefreshRiveHeader` + `CYLRefreshRiveStyle`（状态机输入与线性动画两种驱动方式；刷新尾用 `CYLRefreshDrawnFooter(style:)`）；6 个 .riv 放在示例自己的 bundle（MIT / CC BY 4.0，来源、作者与 SHA-256 记录在 `NOTICE.animations`），示例 7 行（6 个刷新头 + Space 刷新尾）。示例可编译；模拟器在 2026-11-13 0:00 前后卡死（截图、关机都超时），还没有在屏幕上看过，所以不计分 / implemented, visual check pending: the core `CYLRefreshRiveHeader` + `CYLRefreshRiveStyle` (state machine inputs or linear animations; footers through `CYLRefreshDrawnFooter(style:)`); the 6 .riv files in the example's own bundle (MIT / CC BY 4.0, sources, authors and SHA-256 in `NOTICE.animations`), 7 example rows (6 headers + the Space footer). The example builds; the simulator hung around 0:00 on 2026-11-13 (screenshots and shutdown timed out), so nothing has been seen on screen yet and the row is not scored | TODO |
-| `easy_paging`（`EasyPaging`：分页加载、空数据、错误状态） | 部分：占位图场景 + 自动加载尾 / partly: placeholder scenarios + auto footer | TODO |
+| Rive 样式包 / Rive style packages：`easy_refresh_bow` / `bubbles` / `halloween` / `skating` / `space` / `squats` | 核心 `CYLRefreshRiveHeader` + `CYLRefreshRiveStyle`（状态机输入与线性动画两种驱动方式；刷新尾用 `CYLRefreshDrawnFooter(style:)`）；6 个 .riv 放在示例自己的 bundle（MIT / CC BY 4.0，来源、作者与 SHA-256 记录在 `NOTICE.animations`），示例 7 行（6 个刷新头 + Space 刷新尾），已在模拟器上目测（见下方截图） / the core `CYLRefreshRiveHeader` + `CYLRefreshRiveStyle` (state machine inputs or linear animations; footers through `CYLRefreshDrawnFooter(style:)`); the 6 .riv files in the example's own bundle (MIT / CC BY 4.0, sources, authors and SHA-256 in `NOTICE.animations`); 7 example rows (6 headers + the Space footer), checked on the simulator (screenshots below) | ✅ |
+| `easy_paging`（`EasyPaging`：分页加载、空数据、错误状态） | `CYLRefreshPaging`：`items` / `count` / `page` / `total` / `totalPage`、`isEmpty` / `isNoMore`（先看 total，再看页数）、刷新替换 / 加载追加、只在成功后提交（失败重试同一页）、`resetsFooterAfterRefresh`、`start`（refreshOnStart）、`itemsDidChange`；空数据用本库的占位图 / empty data uses this library's placeholder | ✅ |
 | `childBuilder`（把 physics 交给子组件） | 不适用：Flutter 组件树 / not applicable: Flutter widget tree | 不适用 / N/A |
 | `fit` / `clipBehavior` | 不适用：Flutter 布局 / not applicable: Flutter layout | 不适用 / N/A |
 | `scrollBehaviorBuilder` / `ERScrollBehavior` / `_ERScrollPhysics` | 不适用：UIKit 没有可替换的滚动物理 / not applicable: UIKit has no replaceable scroll physics | 不适用 / N/A |
 | `HeaderLocator` / `FooterLocator`（`IndicatorPosition.locator`，放进 sliver） | 不适用：Flutter slivers / not applicable: Flutter slivers | 不适用 / N/A |
+
+## flutter_easy_refresh 示例复刻 / flutter_easy_refresh demo port
+
+| 中文 | English |
+| --- | --- |
+| flutter_easy_refresh 的 `example/lib/page`（`dcdbb81`）移植到 Example-Scenarios（Swift）：样式页并入已有的 SmartRefreshControl 样式区，其余页面在“刷新 › flutter_easy_refresh 示例”，由 `CYLEasyRefreshDemoViewController` 按方法名实现，示例只传数据、选项与点击，控件都来自核心。 | flutter_easy_refresh's `example/lib/page` (`dcdbb81`) ported to Example-Scenarios (Swift): the style pages joined the existing SmartRefreshControl styles section; the other pages are under "Refresh › flutter_easy_refresh samples", implemented by `CYLEasyRefreshDemoViewController` per method name; the example passes only data, options and taps, and every control comes from the core. |
+
+| 原页面 / Page | 内容 / Content | 本项目 / Here | 状态 / Status |
+| --- | --- | --- | --- |
+| `style/classical_page` | 经典样式 / classic | SmartRefreshControl 样式 › Classics、Classics footer | ✅ |
+| `style/material_page` | Material | SmartRefreshControl 样式 › Material、Material footer | ✅ |
+| `style/bezier_page` | Bezier | SmartRefreshControl 样式 › BezierRadar、BezierRadar footer | ✅ |
+| `style/bezier_circle_page` | BezierCircle | SmartRefreshControl 样式 › BezierCircle | ✅ |
+| `style/delivery_page / phoenix_page / taurus_page` | Delivery / Phoenix / Taurus | SmartRefreshControl 样式 › 对应刷新头与刷新尾 / the matching headers and footers | ✅ |
+| `style/bow_page … squats_page（6 页 / 6 pages）` | Rive 样式 / Rive styles | SmartRefreshControl 样式 › Rive · …（6 个刷新头 + Space 刷新尾） | ✅ |
+| `style/cupertino_page` | Cupertino | flutter_easy_refresh 示例 › Cupertino 样式 / Cupertino style | ✅ |
+| `sample/secondary_page` | 二楼 / second floor | flutter_easy_refresh 示例 › 二楼 / Second floor | ✅ |
+| `sample/trigger_mode_page` | 触发模式 / trigger mode | flutter_easy_refresh 示例 › 触发模式 / Trigger mode。在 App 中验证：刷新头设为只从边缘触发后，从列表中间开始一路拉过顶部不刷新（次数保持 4），从顶部边缘开始的下拉会刷新 / checked in the app: with the header set to the edge only, a drag that starts mid-list and goes past the top does not refresh (the count stays 4); a drag from the top edge does | ✅ |
+| `sample/refresh_on_start_page` | 首次刷新专用刷新头 / start header | flutter_easy_refresh 示例 › 启动时刷新 / Refresh on start。修复：用 `attach:target:action:`（`addTarget:action:`）设置回调时，起始刷新头没有复制这类回调，于是一直刷新、常规刷新头无法换回；现在一并复制（`testStartHeaderInPushedTableViewController`） / fixed: callbacks set with `attach:target:action:` (`addTarget:action:`) were not copied to the start header, so it never ended and the regular header never came back; they are copied now | ✅ |
+| `sample/paging_page` | easy_paging | flutter_easy_refresh 示例 › 分页 / Paging（`CYLRefreshPaging`） | ✅ |
+| `sample/listener_header_page` | 监听式刷新头 / listener header | flutter_easy_refresh 示例 › 监听式刷新头 / Listener header | ✅ |
+| `sample/chat_page` | 聊天：顶部加载更早消息 / chat: earlier messages at the top | flutter_easy_refresh 示例 › 聊天 / Chat | ✅ |
+| `sample/user_profile_page` | 指示器在内容后面 / indicator behind the content | flutter_easy_refresh 示例 › 个人主页 / User profile（`CYLRefreshScrollModeBehind`） | ✅ |
+| `sample/theme_switch_page` | 切换主题 / theme switch | SmartRefreshControl 样式页的主题行 / the theme rows of the SmartRefreshControl pages | ✅ |
+| `sample/carousel_page / page_view_page / tab_bar_view_page` | 横向翻页里的刷新 / refresh inside horizontal pages | 不适用：每页是独立的 UIScrollView，各自挂控件即可；横向拉动用已有的 `CYLRefreshTrailer`（示例 42） / not applicable: each page is its own UIScrollView with its own controls; horizontal pulls use the existing `CYLRefreshTrailer` (example 42) | 不适用 / N/A |
+| `sample/nested_scroll_view / easy_refresh_nested_page / nested_secondary_page` | 嵌套滚动 / nested scrolling | 不适用：UIKit 没有 NestedScrollView（对照表同一行） / not applicable: UIKit has no NestedScrollView (same row in the table) | 不适用 / N/A |
+| `sample/center_refresh_page` | 空列表居中显示指示器 / indicator centred in an empty list | 不适用：空列表由本库的占位图显示 / not applicable: this library's placeholder shows empty lists | 不适用 / N/A |
+| `sample/test_page、more/*` | 开发测试页、关于 / 赞助 / 主题等 App 页面 / developer test page and the app's about, support and theme pages | 不移植：不是刷新功能 / not ported: not refresh features | 不适用 / N/A |
+
+## flutter_easy_refresh 示例截图 / flutter_easy_refresh demo screenshots
+
+| 中文 | English |
+| --- | --- |
+| 示例 App 实拍（2026-11-13 02:11–04:47，NZDT；iOS 27.2 模拟器 iPhone 17 Pro，24B5089g；macOS 27.3、Xcode 27.2、iOS SDK 27.2；分支 `feat/smartrefresh-parity`，基于 `7e9a9ef` 及本次修复）：从上到下依次为 Cupertino 样式、二楼（右：二楼打开，刷新头文字不再盖在上面）、触发模式（左：从边缘下拉后刷新次数 2；右：只从边缘触发时，从列表中间拉过顶部，次数保持 4）、启动时刷新（第一次用 Cupertino 刷新头，之后的下拉换回经典刷新头）、分页、监听式刷新头（列表上方的进度条）、聊天（在顶部加载更早的消息）、个人主页（刷新头在内容后面）。左列为手指按住下拉，右列为松手后（触发模式除外）。原图未缩小，只裁剪到上半屏。 | Example app captures (2026-11-13 02:11–04:47, NZDT; iOS 27.2 simulator, iPhone 17 Pro, 24B5089g; macOS 27.3, Xcode 27.2, iOS SDK 27.2; branch `feat/smartrefresh-parity`, on `7e9a9ef` with this change's fixes): top to bottom Cupertino style, second floor (right: open, the header's text no longer over it), trigger mode (left: refresh count 2 after pulls from the edge; right: edge only, a drag from mid-list past the top leaves it at 4), refresh on start (the first refresh uses the Cupertino header, later pulls the classic one), paging, listener header (the bar above the list), chat (earlier messages loaded at the top), user profile (the header behind the content). Left, finger down while pulling; right, after the release (trigger mode aside). Originals, not downscaled, cropped to the top of the screen. |
+
+![flutter_easy_refresh 示例的 8 个页面 / The 8 flutter_easy_refresh demo pages](assets/easyrefresh-demo-ios.png)
 
 ## flutter_easy_refresh 刷新尾截图 / flutter_easy_refresh footer screenshots
 
@@ -207,18 +246,26 @@
 
 ![示例 App 中 5 个手绘刷新尾的上拉 / The 5 drawn footers pulled in the example app](assets/easyrefresh-drawn-footers-app-ios.png)
 
+## flutter_easy_refresh Rive 样式截图 / flutter_easy_refresh Rive style screenshots
+
+| 中文 | English |
+| --- | --- |
+| 示例 App 实拍（2026-11-13 01:00–01:12，NZDT；iOS 27.2 模拟器 iPhone 17 Pro，24B5089g；macOS 27.3、Xcode 27.2、iOS SDK 27.2；分支 `feat/smartrefresh-parity`，基于 `f38ce49`）：刷新 › SmartRefreshControl 样式 › Rive 各行。左列为手指按住下拉时，右列为松手后加载中；从上到下依次为 Bow、Bubbles、Halloween、Skating、Space、Squats，最后一行是 Space 刷新尾（上拉）。每张都核对了导航标题；通过无障碍标签点击进入页面。原图未缩小，只裁剪到刷新区域。 | Example app captures (2026-11-13 01:00–01:12, NZDT; iOS 27.2 simulator, iPhone 17 Pro, 24B5089g; macOS 27.3, Xcode 27.2, iOS SDK 27.2; branch `feat/smartrefresh-parity`, on `f38ce49`): Refresh › SmartRefreshControl styles › the Rive rows. Left, finger down while pulling; right, loading after the release; top to bottom Bow, Bubbles, Halloween, Skating, Space, Squats, and last the Space footer (pulled up). Each navigation title was checked; pages were opened by tapping accessibility labels. Originals, not downscaled, cropped to the refresh area. |
+
+![flutter_easy_refresh 的 6 个 Rive 样式与 Space 刷新尾 / flutter_easy_refresh's 6 Rive styles and the Space footer](assets/easyrefresh-rive-styles-ios.png)
+
 ## 外部项目的 open PR 与 issue / Open pull requests and issues of the source projects
 
 | 中文 | English |
 | --- | --- |
 | 规则见 `instructions.md` 的 “Translating or porting another project”（2026-11-12）：移植前后合并来源项目的 open PR，并把 open issue 列成表格、在本项目中修复、逐个打分到 100；未开始翻译时 issue 达到 60 分即可开始。查询时间：2026-11-12。 | The rule is "Translating or porting another project" in `instructions.md` (2026-11-12): bring in the source's open pull requests before or after porting, list its open issues, fix them here and rescore after each until 100; a translation not yet started may start at 60. Checked on 2026-11-12. |
 | SmartRefreshControl：0 个 open PR，0 个 open issue，**100/100**。 | SmartRefreshControl: 0 open pull requests, 0 open issues, **100/100**. |
-| flutter_easy_refresh：0 个 open PR；4 个 open issue，**50/100**（2 个不适用，2 个待核对）。 | flutter_easy_refresh: 0 open pull requests; 4 open issues, **50/100** (2 do not apply, 2 to check). |
+| flutter_easy_refresh：0 个 open PR；4 个 open issue，**100/100**（2 个不适用；#631 已用测试验证；#752 设计上可用，未用真实触控板验证；此前 50/100）。 | flutter_easy_refresh: 0 open pull requests; 4 open issues, **100/100** (2 do not apply; #631 verified by a test; #752 works by design, not tried with a real trackpad; 50/100 before). |
 | SVPullToRefresh（43 个 open PR、103 个 open issue）、SmartRefreshLayout（5 个、337 个）、android-Ultra-Pull-To-Refresh（23 个、151 个）：在各自任务开始时建表（按任务顺序排在后面）。 | SVPullToRefresh (43 open pull requests, 103 open issues), SmartRefreshLayout (5, 337) and android-Ultra-Pull-To-Refresh (23, 151): tables when their tasks start (later in the task order). |
 
 | flutter_easy_refresh issue | 描述 / Description | 状态 / Status |
 | --- | --- | --- |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/752> | macOS 上双指滚动在列表中可用，在 EasyRefresh 中不可用。本项目对应：iPad 触控板 / 鼠标与 Mac（Designed for iPad / Catalyst）上的间接指针滚动能否触发刷新与加载。 / Two-finger scrolling works in a list but not in EasyRefresh on macOS. Counterpart here: whether indirect-pointer scrolling (iPad trackpad / mouse, Mac "Designed for iPad" / Catalyst) triggers refresh and loading. | TODO |
-| <https://github.com/xuelongqy/flutter_easy_refresh/issues/631> | Web 上鼠标滚轮不能触发加载更多，只能拖拽。本项目对应：滚轮 / 触控板滚动到底部时自动加载尾是否触发（自动加载尾按偏移触发、不要求拖动，预计可用，待验证）。 / On the web a mouse wheel does not trigger load more, only a drag does. Counterpart here: whether the auto footer triggers when a wheel or trackpad scrolls to the end (it triggers on the offset without requiring a drag, so it should work; to verify). | TODO |
+| <https://github.com/xuelongqy/flutter_easy_refresh/issues/752> | macOS 上双指滚动在列表中可用，在 EasyRefresh 中不可用。本项目对应：iPad 触控板 / 鼠标与 Mac（Designed for iPad / Catalyst）上的间接指针滚动能否触发刷新与加载。 / Two-finger scrolling works in a list but not in EasyRefresh on macOS. Counterpart here: whether indirect-pointer scrolling (iPad trackpad / mouse, Mac "Designed for iPad" / Catalyst) triggers refresh and loading. | 已处理（设计上可用，未用真实触控板验证） / Handled (works by design, not tried with a real trackpad)：UIKit 把触控板双指滚动交给滚动视图自己的 pan 手势，`isDragging` 为 YES、有越界回弹，与手指拖动走同一条路径，刷新头、返回式尾与自动加载尾都由现有拖动测试覆盖；模拟器自动化（axe）不能发送滚动事件，所以没有用真实触控板试过 / UIKit routes two-finger trackpad scrolling through the scroll view's own pan gesture (`isDragging` YES, rubber-banding), the same path as a finger drag, which the existing drag tests cover for the header, back footer and auto footer; simulator automation (axe) cannot send scroll events, so a real trackpad was not tried |
+| <https://github.com/xuelongqy/flutter_easy_refresh/issues/631> | Web 上鼠标滚轮不能触发加载更多，只能拖拽。本项目对应：滚轮 / 触控板滚动到底部时自动加载尾是否触发（自动加载尾按偏移触发、不要求拖动，预计可用，待验证）。 / On the web a mouse wheel does not trigger load more, only a drag does. Counterpart here: whether the auto footer triggers when a wheel or trackpad scrolls to the end (it triggers on the offset without requiring a drag, so it should work; to verify). | ✅ 已验证（`testAutoFooterLoadsWhenWheelReachesBottom`，`afb5735` 之后的提交） / Verified (`testAutoFooterLoadsWhenWheelReachesBottom`, in the commit after `afb5735`)：滚轮只移动偏移、不拖动也不越界；自动加载尾按偏移触发，到底部即加载。返回式尾与下拉刷新头需要越界再松手，滚轮做不到（与系统 `UIRefreshControl` 相同），用鼠标的页面应使用自动加载尾 / a wheel only moves the offset, with no drag and no overscroll; the auto footer triggers on the offset and loads at the bottom. The back footer and the pull-down header need an overscroll and a release, which a wheel cannot give (as with the system `UIRefreshControl`), so pages used with a mouse should use the auto footer |
 | <https://github.com/xuelongqy/flutter_easy_refresh/issues/145> | 置顶说明：如何提一条有用的 issue（英文）。 / Pinned note: how to write a useful issue (English). | 不适用（不是缺陷） / Does not apply (not a defect) |
 | <https://github.com/xuelongqy/flutter_easy_refresh/issues/144> | 置顶说明：如何提一条有用的 issue（中文）。 / Pinned note: how to write a useful issue (Chinese). | 不适用（不是缺陷） / Does not apply (not a defect) |
