@@ -161,6 +161,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   in the fitting document, committed); when the result is right, update the README section with the platform, the
   OS / simulator / SDK versions, the commit and the time; use clear original images. See "Screenshots of local
   builds and CI/CD" in `instructions.md`.
+- Animation examples (`instructions.md`, "Animation playback controls in examples"): every example page that shows
+  animations has a "Play all" that restarts them from progress 0, a speed slider and a loop switch, applied live and
+  combinable; every platform's examples (iOS, Android, React Native, Flutter, mini programs, HarmonyOS); change the
+  core when needed. Pages and status: `docs/Example-Animation-Playback.md`.
 - Every CI run that builds code must provide a screenshot of each example
   running (artifacts `example-screenshot-*` from the `Demo` jobs, shown inline
   by the `Example screenshots` job and its pull request comment). Link them

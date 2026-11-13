@@ -12,6 +12,12 @@ CocoaPods trunk), so each example is built with the original library next to `CY
 `scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile` before building (`scripts/ci-build-example.sh`
 does it in CI). See "Depending on MJRefresh in the examples" in the root `instructions.md`.
 
+## Animation playback controls
+
+A page that shows animations has "Play all" (restarts from progress 0), a speed slider and a loop switch, applied
+live; see "Animation playback controls in examples" in the root `instructions.md` and
+`docs/Example-Animation-Playback.md` (the per-page TODO list).
+
 ## Language
 
 Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples

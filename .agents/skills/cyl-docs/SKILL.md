@@ -77,3 +77,9 @@ translation starts at 60. See `instructions.md`, "Translating or porting another
   copyright notices, licenses, and source attribution.
 - Use relative paths for local references. Place attachments in an `assets/`
   subfolder next to their document.
+
+## Animation playback controls in examples
+
+Example pages that show animations are tracked in `docs/Example-Animation-Playback.md` (the rule, the engine table and
+one row per page and platform). When a page gains or changes its "Play all" / speed slider / loop switch, update its row
+and screenshot there; the rule itself is in `instructions.md`, "Animation playback controls in examples".

@@ -631,6 +631,23 @@ also suit a refresh control, and the Example-Scenarios "Refresh icons" page
   a file, and `testEveryBundledRefreshAnimationBuildsAnIcon` the number of
 `CYLRefresh*` files. The aggregated demo (`Examples/Example-Scenarios`) lists every file.
 
+## Animation playback controls in examples
+
+Every example page that shows animations (placeholder animations, refresh icons, tab bar item animations, any Lottie /
+Rive / PAG / GIF / frame animation) has, next to its one-shot "Play all", a speed slider and a loop switch
+(owner's request, 2026-11-13). Details, the engine table and the per-page TODO list are in
+`docs/Example-Animation-Playback.md`.
+
+- "Play all" restarts every animation on the page from progress 0, every time.
+- The speed slider (0.25x to 3x, default 1x, its value shown as "1x") and the loop switch apply live, to the playing
+  animations and the next ones; together with Play all they set the playback strategy.
+- Labels are localized in the example's bundle and accessible (the slider is adjustable with a value such as "1.5x";
+  the switch reads "Loop").
+- When the core or an engine cannot do it, change the core (Swift naming macros, a new core API) instead of hiding a
+  control.
+- Applies to the examples of every layer: iOS, Android, React Native, Flutter, mini programs, HarmonyOS. A page without
+  the controls is a `TODO` row in `docs/Example-Animation-Playback.md`.
+
 ## CI/CD
 
 The default runner environment for iOS on GitHub CI/CD is **macOS 26**

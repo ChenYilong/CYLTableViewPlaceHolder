@@ -102,3 +102,10 @@ Run `python3 scripts/check_doc_comments.py` after changing a public header or a 
 documentation comment, single-line or multi-line, is a three-line-or-longer `/*!` (Objective-C) or `/**` (Swift) block
 with the markers on their own lines, no trailing comment follows code, and a file never mixes formats
 (`instructions.md`, "Code conventions").
+
+## Animation playback controls
+
+When verifying an example page that shows animations, check its playback controls (`docs/Example-Animation-Playback.md`,
+`instructions.md` "Animation playback controls in examples"): "Play all" restarts every animation from progress 0, the
+speed slider (0.25x to 3x) and the loop switch change the playing animations live, and the three combine. Screenshot
+the page with a non-default speed and the loop state visible. A page without them stays a `TODO` row in that document.
