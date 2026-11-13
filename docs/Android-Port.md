@@ -430,6 +430,12 @@
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/345> | 闪退啊 | 不适用：系统字体日志，非本库 / N/A: a system font log, not this library |
 | <https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh/issues/352> | You're on the SigRank board — claim your profile or remove it | 不适用：维护、构建、示例依赖或包管理 / N/A: maintenance, build, demo dependency or packaging |
 
+### SmartRefreshLayout → Kotlin（`android/SmartRefreshLayout/`，2026-11-13 起）
+
+| 中文 | English |
+| --- | --- |
+| 进行中。第一步完成：核心模块 `refresh-layout-kernel` 已转写为 Kotlin（模块 `:srl-kernel`，`android/SmartRefreshLayout/refresh-layout-kernel/`，约 6,400 行 Java → 2,700 行 Kotlin），包含 Java 副本中已采用的 PR 与全部 issue 修复。包名、类名、字段名与 JVM 签名保持不变：接口的 getter 改为 Kotlin 属性（Java 仍是 `getState()` / `getView()`），默认方法用 `-Xjvm-default=all`，所以用 Java 写的头部与尾部不用改。验证：`-PsrlKernel=kotlin` 把 `java/refresh-header` 的依赖整体替换为 Kotlin 内核（依赖树确认 Java 内核已不在测试类路径），Java 头部、尾部加上 21 个测试全部通过。剩余：经典头部与尾部、Material、二楼、球形、雷达、伪造区与其余头部模块；然后在 Kotlin 版中修复剩余 133 个 issue。 | In progress. Step one done: the kernel module `refresh-layout-kernel` is in Kotlin (module `:srl-kernel`, `android/SmartRefreshLayout/refresh-layout-kernel/`, about 6,400 Java lines → 2,700 Kotlin lines), with the taken pull requests and every issue fix of the Java copy. Package, class and field names and the JVM signatures stay: interface getters became Kotlin properties (Java still sees `getState()` / `getView()`) and default methods use `-Xjvm-default=all`, so headers and footers written in Java need no change. Verification: `-PsrlKernel=kotlin` swaps `java/refresh-header`'s kernel dependency for the Kotlin kernel (the dependency tree confirms the Java kernel is off the test classpath); the Java headers and footers and all 21 tests pass on it. Left: the classics header and footer, Material, two-level, ball, radar, falsify and the other header modules; then the remaining 133 issues in the Kotlin version. |
+
 ### SmartRefreshLayout open PR（5 个，2026-11-13） / SmartRefreshLayout open pull requests (5, 2026-11-13)
 
 | 中文 | English |

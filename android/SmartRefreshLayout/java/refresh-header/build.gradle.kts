@@ -48,3 +48,13 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.material)
 }
+
+// -PsrlKernel=kotlin runs this module's tests (and its Java headers and footers) on the Kotlin kernel
+// (SmartRefreshLayout/refresh-layout-kernel) instead of the Java one: the same tests check the translation.
+if (project.findProperty("srlKernel") == "kotlin") {
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute(project(":srl-java-refresh-layout-kernel")).using(project(":srl-kernel"))
+        }
+    }
+}

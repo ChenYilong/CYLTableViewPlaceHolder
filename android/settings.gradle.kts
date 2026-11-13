@@ -46,3 +46,7 @@ include(":srl-java-refresh-header-two-level")
 project(":srl-java-refresh-header-two-level").projectDir = file("SmartRefreshLayout/java/refresh-header-two-level")
 include(":srl-java-refresh-header")
 project(":srl-java-refresh-header").projectDir = file("SmartRefreshLayout/java/refresh-header")
+
+// SmartRefreshLayout in Kotlin (docs/Android-Port.md): the kernel first.
+include(":srl-kernel")
+project(":srl-kernel").projectDir = file("SmartRefreshLayout/refresh-layout-kernel")
