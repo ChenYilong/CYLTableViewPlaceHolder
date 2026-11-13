@@ -304,6 +304,95 @@ class SmartRefreshKotlinIssuesTest {
         assertEquals(0, loads)
     }
 
+    // MARK: - Touches during animations
+
+    /** Steps the clock [millis] in 16 ms frames, calling [each] after every frame. */
+    private fun frames(millis: Long, each: () -> Unit = {}) = repeat((millis / 16).toInt()) { idle(16); each() }
+
+    @Test
+    fun aTouchDoesNotStopAnAutoRefresh() {
+        // #1326, #1401, #1595: touching the screen while autoRefresh opens the header stopped the animation halfway:
+        // the header jumped back (flashed), and with a child asking the parents not to intercept, no refresh came.
+        assumeKotlin()
+        val layout = show(layout())
+        org.robolectric.shadows.ShadowChoreographer.setPaused(true)
+        try {
+            layout.autoRefresh(0, 3000, 1f, false)
+            frames(160)
+        } finally {
+            org.robolectric.shadows.ShadowChoreographer.setPaused(false)
+        }
+        val before = spinner(layout)
+        assertTrue("before the refresh height: $before of ${layout.refreshHeader!!.view.height}", before > 0 && before < layout.refreshHeader!!.view.height)
+        val t = SystemClock.uptimeMillis()
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 200f, 300f, 0))
+        (layout.getChildAt(0) as? ViewGroup)?.requestDisallowInterceptTouchEvent(true)
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 16, MotionEvent.ACTION_MOVE, 200f, 305f, 0))
+        assertTrue("no jump back: $before -> ${spinner(layout)}", spinner(layout) >= before)
+        layout.dispatchTouchEvent(MotionEvent.obtain(t, t + 32, MotionEvent.ACTION_UP, 200f, 305f, 0))
+        idle()
+        assertEquals(RefreshState.Refreshing, layout.state)
+        assertEquals(1, refreshes)
+    }
+
+    @Test
+    fun aDragRateOfOneOpensTheHeaderWithoutOvershoot() {
+        // #1449: autoRefresh(delay, duration, 1f, animationOnly) opens the header to its height and no further.
+        val layout = show(layout())
+        var highest = 0
+        layout.autoRefresh(0, 300, 1f, false)
+        frames(1000) { highest = maxOf(highest, spinner(layout)) }
+        assertEquals(RefreshState.Refreshing, layout.state)
+        assertEquals(layout.refreshHeader!!.view.height, highest)
+    }
+
+    /** A header that, like WeChat Moments, springs back to 0 on release with the kernel's animSpinner. */
+    private class SpringBackHeader(context: Context) : ClassicsHeader(context) {
+        private var kernel: com.scwang.smart.refresh.layout.api.RefreshKernel? = null
+
+        override fun onInitialized(kernel: com.scwang.smart.refresh.layout.api.RefreshKernel, height: Int, maxDragHeight: Int) {
+            super.onInitialized(kernel, height, maxDragHeight)
+            this.kernel = kernel
+        }
+
+        override fun onReleased(refreshLayout: com.scwang.smart.refresh.layout.api.RefreshLayout, height: Int, maxDragHeight: Int) {
+            super.onReleased(refreshLayout, height, maxDragHeight)
+            kernel?.animSpinner(0)
+        }
+    }
+
+    @Test
+    fun aHeaderAnimatingItsOwnReleaseStillRefreshes() {
+        // #1455: a header that runs its own release animation (kernel.animSpinner in onReleased) lost the refresh.
+        assumeKotlin()
+        val layout = show(layout(header = SpringBackHeader(activity)))
+        drag(layout, 600f)
+        idle()
+        assertEquals(1, refreshes)
+        assertEquals(RefreshState.Refreshing, layout.state)
+        assertEquals(0, spinner(layout))
+    }
+
+    @Test
+    fun theListScrollsRightAfterLoadingMore() {
+        // #1169: after finishLoadMore the list would not scroll for about 300 ms, however it was swiped.
+        assumeKotlin()
+        val list = content(3000)
+        val layout = show(layout(list))
+        list.scrollTo(0, 100000)
+        idle(100)
+        drag(layout, -400f)
+        idle()
+        assertEquals(RefreshState.Loading, layout.state)
+        layout.finishLoadMore(0)
+        assertEquals(RefreshState.LoadFinish, layout.state)
+        val before = list.scrollY
+        drag(layout, 300f)
+        assertTrue("the list scrolled: $before -> ${list.scrollY}", list.scrollY < before)
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+    }
+
     private fun field(obj: Any, name: String): Any? {
         var c: Class<*>? = obj.javaClass
         while (c != null) {

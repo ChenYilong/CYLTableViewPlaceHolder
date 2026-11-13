@@ -176,6 +176,11 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     @JvmField protected var animationRunnable: Runnable? = null
     @JvmField protected var reboundAnimator: ValueAnimator? = null
 
+    /**
+     * The opening animation of an auto refresh or auto load; a touch does not stop it (issues #1326, #1401, #1595).
+     */
+    private var mAutoOpenAnimator: ValueAnimator? = null
+
     init {
         val configuration = ViewConfiguration.get(context)
         mHandler = Handler(Looper.getMainLooper())
@@ -713,6 +718,11 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             (mFooterNeedTouchEventWhenLoading && ((mState.isOpening || mState.isFinishing) && mState.isFooter))
         ) {
             return super.dispatchTouchEvent(e)
+        } else if (mState == RefreshState.LoadFinish) {
+            // Issue #1169: after loading more, the list scrolls at once instead of after the footer's close
+            // animation. The gesture stays the content's to the end, so it never turns into a pull.
+            if (action == MotionEvent.ACTION_DOWN) mDragDirection = 'h'
+            return super.dispatchTouchEvent(e)
         } else if (mState.isFinishing) {
             // Issue #1540: while the close animation runs the content does not scroll, but a tap still clicks.
             if (action == MotionEvent.ACTION_UP && System.currentTimeMillis() - mLastTimeOnActionDown < 500) {
@@ -944,6 +954,9 @@ open class SmartRefreshLayout @JvmOverloads constructor(
     protected open fun interceptAnimatorByAction(action: Int): Boolean {
         if (action == MotionEvent.ACTION_DOWN) {
             reboundAnimator?.let { animator ->
+                // Issues #1326, #1401, #1595: a finger on the layout while an auto refresh (or auto load) opens no
+                // longer stops it halfway, which made the header jump back and lost the refresh.
+                if (animator === mAutoOpenAnimator && animator.isRunning) return true
                 if (mState.isFinishing || mState == RefreshState.TwoLevelReleased || mState == RefreshState.RefreshReleased || mState == RefreshState.LoadReleased) {
                     return true
                 }
@@ -1024,11 +1037,29 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         notifyStateChanged(RefreshState.LoadReleased)
         val animator = mKernel.animSpinner(-mFooterHeight)
         animator?.addListener(listener)
+        val before = reboundAnimator
         val maxDragHeight = maxDragHeight(mFooterMaxDragRate, mFooterHeight)
         mRefreshFooter?.onReleased(this, mFooterHeight, maxDragHeight)
         val footer = mRefreshFooter
         if (footer is RefreshFooter) mOnMultiListener?.onFooterReleased(footer, mFooterHeight, maxDragHeight)
-        if (animator == null) setStateDirectLoading(notify)
+        followReplacedAnimator(animator, before, listener) { setStateDirectLoading(notify) }
+    }
+
+    /**
+     * Issue #1455: a header (or footer) whose onReleased runs its own animation through the kernel's animSpinner
+     * replaced the opening animation, and the refresh (or load) waiting for its end never started. [listener] now
+     * follows the replacement; with no animation left, [start] runs at once. [before] is the animation before the
+     * component's onReleased.
+     */
+    private fun followReplacedAnimator(animator: ValueAnimator?, before: ValueAnimator?, listener: Animator.AnimatorListener, start: () -> Unit) {
+        val current = reboundAnimator
+        when {
+            current === before -> if (animator == null) start()
+            // A component that ended the release itself (FalsifyHeader moves to None) keeps it ended.
+            mState != RefreshState.RefreshReleased && mState != RefreshState.LoadReleased -> Unit
+            current != null -> current.addListener(listener)
+            else -> start()
+        }
     }
 
     /**
@@ -1068,11 +1099,12 @@ open class SmartRefreshLayout @JvmOverloads constructor(
         notifyStateChanged(RefreshState.RefreshReleased)
         val animator = mKernel.animSpinner(mHeaderHeight)
         animator?.addListener(listener)
+        val before = reboundAnimator
         val maxDragHeight = maxDragHeight(mHeaderMaxDragRate, mHeaderHeight)
         mRefreshHeader?.onReleased(this, mHeaderHeight, maxDragHeight)
         val header = mRefreshHeader
         if (header is RefreshHeader) mOnMultiListener?.onHeaderReleased(header, mHeaderHeight, maxDragHeight)
-        if (animator == null) start()
+        followReplacedAnimator(animator, before, listener, start)
     }
 
     /**
@@ -2017,6 +2049,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             val dragHeight = if (dragRate < 10) height * dragRate else dragRate
             val animator = ValueAnimator.ofInt(mSpinner, dragHeight.toInt())
             reboundAnimator = animator
+            mAutoOpenAnimator = animator
             animator.duration = duration.toLong()
             animator.interpolator = SmartUtil(SmartUtil.INTERPOLATOR_VISCOUS_FLUID)
             animator.addUpdateListener { if (reboundAnimator != null) mKernel.moveSpinner(it.animatedValue as Int, true) }
@@ -2056,6 +2089,7 @@ open class SmartRefreshLayout @JvmOverloads constructor(
             val dragHeight = if (dragRate < 10) dragRate * height else dragRate
             val animator = ValueAnimator.ofInt(mSpinner, -dragHeight.toInt())
             reboundAnimator = animator
+            mAutoOpenAnimator = animator
             animator.duration = duration.toLong()
             animator.interpolator = SmartUtil(SmartUtil.INTERPOLATOR_VISCOUS_FLUID)
             animator.addUpdateListener { if (reboundAnimator != null && mRefreshFooter != null) mKernel.moveSpinner(it.animatedValue as Int, true) }
