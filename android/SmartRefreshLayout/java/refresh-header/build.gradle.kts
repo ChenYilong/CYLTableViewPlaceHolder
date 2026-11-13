@@ -60,6 +60,10 @@ if (project.findProperty("srlKernel") == "kotlin") {
             substitute(project(":srl-java-refresh-header-classics")).using(project(":srl-header-classics"))
             substitute(project(":srl-java-refresh-header-material")).using(project(":srl-header-material"))
             substitute(project(":srl-java-refresh-header-two-level")).using(project(":srl-header-two-level"))
+            substitute(project(":srl-java-refresh-drawable-path")).using(project(":srl-drawable-path"))
+            substitute(project(":srl-java-refresh-header-falsify")).using(project(":srl-header-falsify"))
+            substitute(project(":srl-java-refresh-header-radar")).using(project(":srl-header-radar"))
+            substitute(project(":srl-java-refresh-footer-ball")).using(project(":srl-footer-ball"))
         }
     }
 }

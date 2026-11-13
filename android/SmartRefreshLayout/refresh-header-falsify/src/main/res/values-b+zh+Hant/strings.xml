@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The edit-mode text of the falsify components. -->
+<resources>
+    <string name="srl_component_falsify" formatted="false">%s 虛假區域\n代表執行時拖動的高度【%.1fdp】\n不會顯示任何東西</string>
+</resources>

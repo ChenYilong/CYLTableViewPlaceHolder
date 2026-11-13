@@ -20,6 +20,10 @@ import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.header.TwoLevelHeader
+import com.scwang.smart.refresh.header.BezierRadarHeader
+import com.scwang.smart.refresh.header.FalsifyHeader
+import com.scwang.smart.refresh.footer.BallPulseFooter
+import com.scwang.smart.drawable.PathsDrawable
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import org.junit.Assert.assertEquals
@@ -32,6 +36,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowToast
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import java.time.Duration
 
 /**
@@ -279,5 +284,52 @@ class SmartRefreshJavaTest {
         twoLevel.finishTwoLevel()
         idle()
         assertEquals(RefreshState.None, layout.state)
+    }
+
+    @Test
+    fun radarHeaderAndBallFooterRefreshAndLoad() {
+        val layout = layout()
+        layout.setRefreshHeader(BezierRadarHeader(activity))
+        layout.setRefreshFooter(BallPulseFooter(activity))
+        idle(100)
+        layout.autoRefresh()
+        idle()
+        assertEquals(RefreshState.Refreshing, layout.state)
+        layout.finishRefresh(0)
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+        layout.autoLoadMore()
+        idle()
+        assertEquals(RefreshState.Loading, layout.state)
+        layout.finishLoadMore(0)
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+    }
+
+    @Test
+    fun falsifyHeaderNeverRefreshes() {
+        val layout = layout()
+        layout.setRefreshHeader(FalsifyHeader(activity))
+        idle(100)
+        layout.autoRefresh()
+        idle()
+        assertEquals(RefreshState.None, layout.state)
+        assertEquals(0, refreshes)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun pathsDrawableParsesAndScalesSvgPaths() {
+        // Native graphics: the legacy shadows do not compute a path's region.
+        val drawable = PathsDrawable()
+        // A path drawable measured every path empty on API 34 (a Region clipped to +/-Int.MAX_VALUE is empty in Skia).
+        assertTrue(drawable.parserPaths("M0,0 L10,0 L10,20 Z", "M2,2 h4 v4 h-4 z"))
+        assertEquals(10, drawable.bounds.width())
+        assertEquals(20, drawable.bounds.height())
+        drawable.setBounds(0, 0, 20, 40)
+        assertEquals(20, drawable.bounds.width())
+        assertEquals(40, drawable.bounds.height())
+        assertFalse("empty data", PathsDrawable().parserPaths(""))
+        assertTrue("arcs parse", com.scwang.smart.drawable.path.PathParser.createPathFromPathData("M0,0 a5,5 0 1,1 10,0")?.isEmpty == false)
     }
 }

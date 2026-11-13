@@ -39,8 +39,12 @@ public class PathsDrawable extends PaintDrawable {
         Integer top = null,left = null,right = null,bottom = null;
         if (mPaths != null) {
             for (Path path : mPaths) {
-                REGION.setPath(path, MAX_CLIP);
-                Rect bounds = REGION.getBounds();
+                // Path bounds instead of a Region clipped to MAX_CLIP: Skia rejects a clip of +/-Integer.MAX_VALUE and
+                // returns an empty region (seen on API 34 native graphics), so every path measured empty.
+                android.graphics.RectF rect = new android.graphics.RectF();
+                path.computeBounds(rect, true);
+                Rect bounds = new Rect();
+                rect.roundOut(bounds);
                 top = Math.min(top == null ? bounds.top : top, bounds.top);
                 left = Math.min(left == null ? bounds.left : left, bounds.left);
                 right = Math.max(right == null ? bounds.right : right, bounds.right);
