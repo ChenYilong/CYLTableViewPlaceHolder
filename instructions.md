@@ -52,6 +52,9 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
    translation is into another language, so an issue's fix can only be written in the translated code, an issue whose
    fix is in an open pull request that was reviewed and taken for the translation counts as handled for the 60 needed
    to start; it must still be implemented and tested in the translation before the score reaches 100.
+   For SmartRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
+   copy of the Java source in `android/SmartRefreshLayout/java/` gets the taken pull requests and issue fixes, each
+   with a test, until the issues reach 60; then translation starts and the remaining issues are fixed in Kotlin.
 6. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
 
 ## English naming rules

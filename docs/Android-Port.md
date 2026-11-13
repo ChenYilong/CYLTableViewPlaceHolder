@@ -448,7 +448,7 @@
 
 | 中文 | English |
 | --- | --- |
-| 评分：**41/100**（139/337 已处理：用法提问 54、构建发布 29、公告讨论与垃圾信息 16、应用或系统问题 14、超出范围 12、Kotlin / AndroidX 移植本身解决 9、修复在已采用的 PR 中 5）。剩余 198 个 TODO。未达到开工所需的 60 分，翻译开始前需要用户决定（见任务记录）。 | Score: **41/100** (139 of 337 handled: 54 usage questions, 29 build or release, 16 announcements, discussions or spam, 14 app or system bugs, 12 out of scope, 9 solved by the Kotlin / AndroidX port itself, 5 fixed by taken pull requests). 198 TODO left. Below the 60 needed to start; the owner decides before translation starts (see the task entry). |
+| 评分：**41/100**（139/337 已处理：用法提问 54、构建发布 29、公告讨论与垃圾信息 16、应用或系统问题 14、超出范围 12、Kotlin / AndroidX 移植本身解决 9、修复在已采用的 PR 中 5）。剩余 198 个 TODO。未达到开工所需的 60 分。用户决定（2026-11-13）：“Fix in Java first”——先在 `android/SmartRefreshLayout/java/` 的 Java 源码副本中合并采用的 PR、修复 issue（每个都有测试）到 60 分，再开始翻译；规则写入 `instructions.md` 第 5 条。 | Score: **41/100** (139 of 337 handled: 54 usage questions, 29 build or release, 16 announcements, discussions or spam, 14 app or system bugs, 12 out of scope, 9 solved by the Kotlin / AndroidX port itself, 5 fixed by taken pull requests). 198 TODO left. Below the 60 needed to start. The owner's decision (2026-11-13): "Fix in Java first": a copy of the Java source in `android/SmartRefreshLayout/java/` gets the taken pull requests and issue fixes (each with a test) until 60, then translation starts; the rule is in `instructions.md`, rule 5. |
 
 | issue | 标题 / Title | 状态 / Status |
 | --- | --- | --- |
