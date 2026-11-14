@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：90 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 610、partial 54、planned 45、n/a 195）。 | **Migration score: 90 / 100** (done + 0.5 × partial over 709 counted symbols; done 610, partial 54, planned 45, n/a 195). |
+| **迁移完成率：91 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 619、partial 58、planned 32、n/a 195）。 | **Migration score: 91 / 100** (done + 0.5 × partial over 709 counted symbols; done 619, partial 58, planned 32, n/a 195). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -466,15 +466,15 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshCupertinoFooter` | — | planned (TODO) |  |
-| `CYLRefreshCupertinoFooter` `activityIndicator` | — | planned (TODO) |  |
+| `CYLRefreshCupertinoFooter` | `com.cyl.refresh.CYLRefreshCupertinoFooter` | done |  |
+| `CYLRefreshCupertinoFooter` `activityIndicator` | `CYLRefreshCupertinoFooter.activityIndicator` | partial | CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshCupertinoHeader` | — | planned (TODO) |  |
-| `CYLRefreshCupertinoHeader` `activityIndicator` | — | planned (TODO) |  |
+| `CYLRefreshCupertinoHeader` | `com.cyl.refresh.CYLRefreshCupertinoHeader` | done |  |
+| `CYLRefreshCupertinoHeader` `activityIndicator` | `CYLRefreshCupertinoHeader.activityIndicator` | partial | CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`
 
@@ -498,15 +498,15 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshDrawnFooter` | — | planned (TODO) |  |
-| `CYLRefreshDrawnFooter` `styleClass` | — | planned (TODO) |  |
-| `CYLRefreshDrawnFooter` `-initWithStyle:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnFooter` `style` | — | planned (TODO) |  |
-| `CYLRefreshBezierRadarFooter` | — | planned (TODO) |  |
-| `CYLRefreshMaterialFooter` | — | planned (TODO) |  |
-| `CYLRefreshDeliveryFooter` | — | planned (TODO) |  |
-| `CYLRefreshPhoenixFooter` | — | planned (TODO) |  |
-| `CYLRefreshTaurusFooter` | — | planned (TODO) |  |
+| `CYLRefreshDrawnFooter` | `com.cyl.refresh.CYLRefreshDrawnFooter` | partial | extends CYLRefreshBackFooter, not the state footer (it shows no text) |
+| `CYLRefreshDrawnFooter` `styleClass` | `CYLRefreshDrawnFooter.styleClass` | partial | kept; each subclass builds its own style header |
+| `CYLRefreshDrawnFooter` `-initWithStyle:` | `CYLRefreshDrawnFooter(style)` | done |  |
+| `CYLRefreshDrawnFooter` `style` | `CYLRefreshDrawnFooter.style` | done |  |
+| `CYLRefreshBezierRadarFooter` | `com.cyl.refresh.CYLRefreshBezierRadarFooter` | done |  |
+| `CYLRefreshMaterialFooter` | `com.cyl.refresh.CYLRefreshMaterialFooter` | done |  |
+| `CYLRefreshDeliveryFooter` | `com.cyl.refresh.CYLRefreshDeliveryFooter` | done |  |
+| `CYLRefreshPhoenixFooter` | `com.cyl.refresh.CYLRefreshPhoenixFooter` | done |  |
+| `CYLRefreshTaurusFooter` | `com.cyl.refresh.CYLRefreshTaurusFooter` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 

@@ -419,4 +419,41 @@ class CYLRefreshComponentTest {
         assertEquals(1, refreshes)
     }
 
+
+    @Test
+    fun cupertinoAndDrawnFootersPullAndLoad() {
+        val layout = show(layout(300))
+        val header = CYLRefreshCupertinoHeader(activity)
+        layout.cyl_header = header
+        header.beginRefreshing()
+        idle(1500)
+        assertTrue(header.activityIndicator.isAnimating)
+        header.endRefreshing()
+        idle(2000)
+        assertFalse(header.activityIndicator.isAnimating)
+
+        val makers: List<(android.content.Context) -> CYLRefreshFooter> = listOf(
+            { CYLRefreshCupertinoFooter(it) }, { CYLRefreshMaterialFooter(it) }, { CYLRefreshBezierRadarFooter(it) },
+            { CYLRefreshDeliveryFooter(it) }, { CYLRefreshPhoenixFooter(it) }, { CYLRefreshTaurusFooter(it) },
+        )
+        org.robolectric.shadows.ShadowChoreographer.setPaused(true)
+        try {
+            for (make in makers) {
+                val footer = make(activity)
+                var loads = 0
+                footer.refreshingBlock = { loads++ }
+                layout.cyl_footer = footer
+                repeat(6) { idle(16) }
+                footer.beginRefreshing()
+                repeat(80) { idle(16) }
+                assertEquals(footer.javaClass.simpleName, 1, loads)
+                footer.endRefreshing()
+                repeat(200) { idle(16) }
+                assertEquals(footer.javaClass.simpleName, CYLRefreshState.Idle, footer.state)
+            }
+        } finally {
+            org.robolectric.shadows.ShadowChoreographer.setPaused(false)
+        }
+    }
+
 }

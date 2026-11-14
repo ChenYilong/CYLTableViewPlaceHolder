@@ -1715,6 +1715,10 @@
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBezierCircleHeader"
  },
+ "CYLRefreshBezierRadarFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierRadarFooter"
+ },
  "CYLRefreshBezierRadarHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBezierRadarHeader"
@@ -2133,10 +2137,32 @@
   "android": "CYLRefreshConfig.languageCode",
   "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
  },
+ "CYLRefreshCupertinoFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshCupertinoFooter"
+ },
+ "CYLRefreshCupertinoFooter activityIndicator": {
+  "status": "partial",
+  "android": "CYLRefreshCupertinoFooter.activityIndicator",
+  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+ },
+ "CYLRefreshCupertinoHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshCupertinoHeader"
+ },
+ "CYLRefreshCupertinoHeader activityIndicator": {
+  "status": "partial",
+  "android": "CYLRefreshCupertinoHeader.activityIndicator",
+  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+ },
  "CYLRefreshCurveType": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.path.PathParser",
   "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshDeliveryFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDeliveryFooter"
  },
  "CYLRefreshDeliveryHeader": {
   "status": "done",
@@ -2145,6 +2171,24 @@
  "CYLRefreshDidChangeLanguageNotification": {
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
+ },
+ "CYLRefreshDrawnFooter": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshDrawnFooter",
+  "note": "extends CYLRefreshBackFooter, not the state footer (it shows no text)"
+ },
+ "CYLRefreshDrawnFooter -initWithStyle:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnFooter(style)"
+ },
+ "CYLRefreshDrawnFooter style": {
+  "status": "done",
+  "android": "CYLRefreshDrawnFooter.style"
+ },
+ "CYLRefreshDrawnFooter styleClass": {
+  "status": "partial",
+  "android": "CYLRefreshDrawnFooter.styleClass",
+  "note": "kept; each subclass builds its own style header"
  },
  "CYLRefreshDrawnHeader": {
   "status": "done",
@@ -2633,6 +2677,10 @@
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshLabelLeftInset"
  },
+ "CYLRefreshMaterialFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshMaterialFooter"
+ },
  "CYLRefreshMaterialHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshMaterialHeader"
@@ -2766,6 +2814,10 @@
  "CYLRefreshPhase": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshPhase"
+ },
+ "CYLRefreshPhoenixFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhoenixFooter"
  },
  "CYLRefreshPhoenixHeader": {
   "status": "done",
@@ -2932,6 +2984,10 @@
  "CYLRefreshStoreHousePath +linesFromArray:": {
   "status": "n/a",
   "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshTaurusFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTaurusFooter"
  },
  "CYLRefreshTaurusHeader": {
   "status": "done",

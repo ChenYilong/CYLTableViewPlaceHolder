@@ -1,6 +1,7 @@
 package com.cyl.refresh
 
 import android.content.Context
+import com.scwang.smart.refresh.layout.api.RefreshFooter
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
@@ -216,7 +217,9 @@ open class CYLRefreshAnimationHeader(context: Context) : CYLRefreshGifHeader(con
 /**
  * A footer that loads by itself when it comes into view (iOS `CYLRefreshAutoFooter`).
  */
-open class CYLRefreshAutoFooter(context: Context) : CYLRefreshFooter(CYLClassicsFooterView(context)) {
+open class CYLRefreshAutoFooter internal constructor(view: RefreshFooter) : CYLRefreshFooter(view) {
+
+    constructor(context: Context) : this(CYLClassicsFooterView(context))
 
     internal val classics: CYLClassicsFooterView get() = view as CYLClassicsFooterView
 
@@ -345,7 +348,9 @@ open class CYLRefreshAutoAnimationFooter(context: Context) : CYLRefreshAutoGifFo
 /**
  * A footer that loads when pulled up and released (iOS `CYLRefreshBackFooter`).
  */
-open class CYLRefreshBackFooter(context: Context) : CYLRefreshFooter(CYLClassicsFooterView(context)) {
+open class CYLRefreshBackFooter internal constructor(view: RefreshFooter) : CYLRefreshFooter(view) {
+
+    constructor(context: Context) : this(CYLClassicsFooterView(context))
 
     internal val classics: CYLClassicsFooterView get() = view as CYLClassicsFooterView
 
