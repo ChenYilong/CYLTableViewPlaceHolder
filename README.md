@@ -947,6 +947,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program example: scenario list and scenario pages](docs/assets/wechat-miniprogram-example.png)
 
+| 中文 | English |
+| --- | --- |
+| `cyl-placeholder-hud`（`CYLPlaceholderHUD`）：加载中、进度、遮罩下的场景、深色错误提示。同一模拟器与基础库，提交 `dfc0495`，2026-11-15 12:29（+13:00）。 | `cyl-placeholder-hud` (`CYLPlaceholderHUD`): loading, progress, a scenario under the black mask, a dark error. Same simulator and base library, commit `dfc0495`, 2026-11-15 12:29 (+13:00). |
+
+![WeChat Mini Program HUD: loading, progress, scenario under a mask, dark error](docs/assets/wechat-miniprogram-hud.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |

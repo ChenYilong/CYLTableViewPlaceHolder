@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 75)
+### TODO: WeChat Mini Program placeholder package (score 82)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -53,8 +53,9 @@
   4. `node --test` unit tests for the catalog and the localization.
   5. Open the example with the DevTools skill (`project_import`, `open_project_window`, `simulator_screenshot`),
      store the screenshot in `docs/`, update the README.
-- **Score: 75 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
-  simulator; README section with screenshot added. Left: items 1–4 below.
+- **Score: 82 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
+  simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD) ported and checked in the simulator; README section with
+  screenshots added. Left: items 1–4 below.
 - **Remaining work (TODO):**
   1. Check on a real phone (preview). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
      times out with `connect_failed` even while logged in, so the simulator run used the classic CLI
@@ -65,8 +66,11 @@
      (`animationFileNamesForScenario`). The mini program shows the static icon only. When animations are added (for
      example with CYLTabBarController's `lottie-miniprogram`), the example page needs "Play all", a speed slider and
      a loop switch (`docs/Example-Animation-Playback.md`).
-  3. `CYLPlaceholderHUD`, `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not
-     ported yet.
+  3. `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not ported yet.
+     `CYLPlaceholderHUD` is ported (`dfc0495`) except: the appear / disappear / touch notifications (one `touch`
+     event instead), haptics, `offsetFromCenter`, `minimumSize`, colors / font / corner radius properties,
+     `loading/progress/successAnimationFileName` (the loading animation is the iOS `CYLRefreshActivity.gif`; success /
+     error / info use text glyphs instead of the iOS images), the Custom style and Custom mask type.
   4. Icon tinting: Android tints template icons; the mini program uses 45 % opacity (no `tintColor` on `<image>`).
   5. Done: branch pushed; pull request https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/31 targets
      `feat/android-refresh-port`.
@@ -80,13 +84,15 @@
 | `src/cyl-placeholder/index.{js,json,wxml,wxss}` | The `cyl-placeholder` component (CYLPlaceholderStackView): vertical, centered stack; background tap; `action` event; `interactive` |
 | `src/cyl-placeholder/cyl_scenario_catalog.js` | `CYLPlaceholderScenarioCatalog`, scenarios, categories, permissions, actions, button styles |
 | `src/cyl-placeholder/cyl_localization.js` | `CYLPlaceholderLocalization`: `setLanguage`, `resolveLanguage`, `localizedString` |
-| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting both |
+| `src/cyl-placeholder/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
+| `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
+| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting the catalog, the HUD and the localization |
 | `src/cyl-placeholder/locales/<locale>.json` (+ generated `.js` twin) | Strings of `android/placeholder` (7 languages, 108 keys) |
 | `src/cyl-placeholder/images/*.png` | Icons of `android/placeholder` (52), licenses copied alongside |
 | `scripts/import-android-resources.js` | Re-imports strings and icons from Android |
-| `scripts/sync-example.js` | Copies `src/cyl-placeholder` into the example (DevTools `beforeCompile` hook) |
-| `example/miniprogram` | Scenario list (grouped by category, language picker) and a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") |
-| `test/catalog.test.js` | `node --test` unit tests |
+| `scripts/sync-example.js` | Copies both components into the example (DevTools `beforeCompile` hook) |
+| `example/miniprogram` | Scenario list (grouped by category, language picker), a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") and a HUD page (every HUD call, mask type and style pickers) |
+| `test/catalog.test.js`, `test/hud.test.js` | `node --test` unit tests |
 
 ## API 对照 / API alignment
 
@@ -99,7 +105,8 @@
 | `CYLPlaceholderStackView` + action handlers | `<cyl-placeholder>` + `bind:action` | Handlers become one event with `{ action, scenario, index }` |
 | `CYLPlaceholderStackView.interactive` | `interactive` property | |
 | `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.setLanguage` or the `language` property | Falls back to the WeChat client language |
-| `animationFileNamesForScenario`, `CYLPlaceholderHUD`, `CYLPlaceholderConfiguration` | — | TODO (see above) |
+| `CYLPlaceholderHUD` `show`, `showWithStatus`, `showProgress(:status:)`, `setStatus`, `showInfo/Success/ErrorWithStatus`, `showImage`, `showScenario`, `showComponents`, `popActivity`, `dismiss(WithDelay)(completion)`, `visible`, `displayDurationForString`, `state`, `status`, `progress`, `activityCount`, `style`, `maskType`, `graceTimeInterval`, `minimum/maximumDismissTimeInterval`, `fadeIn/OutAnimationDuration` | same names on `selectComponent('#hud').hud` | Actions of components in the box arrive as the `action` event instead of an `actions` map |
+| `animationFileNamesForScenario`, `CYLPlaceholderConfiguration` | — | TODO (see above) |
 
 ## 验证 / Verification
 
@@ -111,6 +118,13 @@
   miniprogram-automator opened all 35 scenario pages and found the expected number of components on each; tapping
   Retry on RetryButton sent `CYLPlaceholderActionRetry (component 1)`, showed the Loading placeholder and returned.
   The simulator showed a stray backslash before apostrophes in the English texts (the importer had lost its regex
-  backslashes); fixed in `83c8bd0` with a unit test (9 / 9 pass). Screenshot:
+  backslashes); fixed in `83c8bd0` with a unit test (9 / 9 passed then). Screenshot:
   `docs/assets/wechat-miniprogram-example.png` (README section "WeChat Mini Program").
+- 2026-11-15 12:29 (+13:00), commit `dfc0495`, same simulator: `npm test` passes 16 / 16 (7 HUD tests on fake timers:
+  timed dismiss durations, cancelled dismiss, progress clamping, popActivity, grace time, scenario / components,
+  mask). Tapping the HUD page's rows: "Downloading…" then "Almost done…" then dismissed; progress "Uploading 20%"
+  then "Uploaded" then dismissed; showScenario(RetryButton) with the black mask shows 2 components and its Retry
+  button sends `CYLPlaceholderActionRetry` (the page dismisses the HUD); the dark error HUD shows "Couldn't load".
+  The simulator showed the HUD scenario box empty at first (a mini program turns a `null` Array property into `[]`,
+  which replaced the scenario's components); fixed in `dfc0495`. Screenshot: `docs/assets/wechat-miniprogram-hud.png`.
 - Not verified: a real phone.
