@@ -39,6 +39,10 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    // Only for the RecyclerView extensions (cyl_placeholderViewBlock, cyl_reloadData): an app that uses them has
+    // RecyclerView itself.
+    compileOnly(libs.androidx.recyclerview)
+    testImplementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)

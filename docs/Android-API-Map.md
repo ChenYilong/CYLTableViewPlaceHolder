@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：47 / 100**（done + 0.5 × partial，共 804 个计入的符号；done 352、partial 49、planned 403、n/a 100）。 | **Migration score: 47 / 100** (done + 0.5 × partial over 804 counted symbols; done 352, partial 49, planned 403, n/a 100). |
+| **迁移完成率：49 / 100**（done + 0.5 × partial，共 804 个计入的符号；done 370、partial 49、planned 385、n/a 100）。 | **Migration score: 49 / 100** (done + 0.5 × partial over 804 counted symbols; done 370, partial 49, planned 385, n/a 100). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -1276,37 +1276,37 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLTableViewPlaceHolderDelegate` | — | planned (TODO) |  |
-| `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | — | planned (TODO) |  |
-| `CYLTableViewPlaceHolderDelegate` `-enableScrollWhenPlaceHolderViewShowing` | — | planned (TODO) |  |
-| `CYLTableViewPlaceHolderDelegate` `-frameForPlaceHolderViewInTableView:` | — | planned (TODO) |  |
+| `CYLTableViewPlaceHolderDelegate` | `com.cyl.placeholder.CYLTableViewPlaceHolderDelegate` | done | implemented by the adapter |
+| `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | `CYLTableViewPlaceHolderDelegate.makePlaceHolderView()` | done |  |
+| `CYLTableViewPlaceHolderDelegate` `-enableScrollWhenPlaceHolderViewShowing` | `CYLTableViewPlaceHolderDelegate.enableScrollWhenPlaceHolderViewShowing()` | done |  |
+| `CYLTableViewPlaceHolderDelegate` `-frameForPlaceHolderViewInTableView:` | `CYLTableViewPlaceHolderDelegate.frameForPlaceHolderViewInTableView(tableView)` | done |  |
 
 ## `CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLCollectionPlaceholderViewBlock` | — | planned (TODO) |  |
-| `CYLCollectionPlaceholderNormalBlock` | — | planned (TODO) |  |
-| `UICollectionView(CYLPlaceholder)` | — | planned (TODO) |  |
-| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | — | planned (TODO) |  |
-| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | — | planned (TODO) |  |
+| `CYLCollectionPlaceholderViewBlock` | `com.cyl.placeholder.CYLCollectionPlaceholderViewBlock` | done |  |
+| `CYLCollectionPlaceholderNormalBlock` | `com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock` | done |  |
+| `UICollectionView(CYLPlaceholder)` | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` | done | on Android a table and a collection are both a RecyclerView |
+| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | `RecyclerView.cyl_placeholderViewBlock(block)` | done |  |
+| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` | done |  |
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLTablePlaceholderViewBlock` | — | planned (TODO) |  |
-| `CYLTablePlaceholderNormalBlock` | — | planned (TODO) |  |
-| `UITableView(CYLPlaceholder)` | — | planned (TODO) |  |
-| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | — | planned (TODO) |  |
-| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | — | planned (TODO) |  |
+| `CYLTablePlaceholderViewBlock` | `com.cyl.placeholder.CYLTablePlaceholderViewBlock` | done |  |
+| `CYLTablePlaceholderNormalBlock` | `com.cyl.placeholder.CYLTablePlaceholderNormalBlock` | done |  |
+| `UITableView(CYLPlaceholder)` | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` | done | on Android a table and a collection are both a RecyclerView |
+| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | `RecyclerView.cyl_placeholderViewBlock(block)` | done |  |
+| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` | done |  |
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `UITableView(CYLTableViewPlaceHolder)` | — | planned (TODO) |  |
-| `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | — | planned (TODO) |  |
+| `UITableView(CYLTableViewPlaceHolder)` | `RecyclerView extensions` | done | on Android a table and a collection are both a RecyclerView |
+| `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | `RecyclerView.cyl_reloadData()` | done | adapter changes also update the placeholder by themselves |
 
 ## `CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`
 
@@ -1321,5 +1321,5 @@
 | `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | — | planned (TODO) |  |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | — | planned (TODO) |  |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | — | planned (TODO) |  |
-| `UIScrollView(CYLPlaceholderVisibility)` | — | planned (TODO) |  |
-| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | — | planned (TODO) |  |
+| `UIScrollView(CYLPlaceholderVisibility)` | `RecyclerView extensions` | done |  |
+| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `RecyclerView.cyl_placeholderHidden` | done |  |

@@ -1,4 +1,12 @@
 {
+ "CYLCollectionPlaceholderNormalBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock"
+ },
+ "CYLCollectionPlaceholderViewBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLCollectionPlaceholderViewBlock"
+ },
  "CYLPlaceholderAction": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderAction",
@@ -1951,6 +1959,31 @@
   "android": "com.scwang.smart.refresh.header.WaveSwipeHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLTablePlaceholderNormalBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTablePlaceholderNormalBlock"
+ },
+ "CYLTablePlaceholderViewBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTablePlaceholderViewBlock"
+ },
+ "CYLTableViewPlaceHolderDelegate": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTableViewPlaceHolderDelegate",
+  "note": "implemented by the adapter"
+ },
+ "CYLTableViewPlaceHolderDelegate -enableScrollWhenPlaceHolderViewShowing": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.enableScrollWhenPlaceHolderViewShowing()"
+ },
+ "CYLTableViewPlaceHolderDelegate -frameForPlaceHolderViewInTableView:": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.frameForPlaceHolderViewInTableView(tableView)"
+ },
+ "CYLTableViewPlaceHolderDelegate -makePlaceHolderView": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.makePlaceHolderView()"
+ },
  "NSBundle(CYLRefresh)": {
   "status": "n/a",
   "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
@@ -1974,6 +2007,19 @@
  "NSBundle(CYLRefresh) +cyl_trailArrowImage": {
   "status": "n/a",
   "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "UICollectionView(CYLPlaceholder)": {
+  "status": "done",
+  "android": "RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UICollectionView(CYLPlaceholder) -cyl_placeholderViewBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block)"
+ },
+ "UICollectionView(CYLPlaceholder) -cyl_placeholderViewBlock:backToNormalBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)"
  },
  "UICollectionViewLayout(CYLRefresh)": {
   "status": "n/a",
@@ -2043,6 +2089,14 @@
   "status": "n/a",
   "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
  },
+ "UIScrollView(CYLPlaceholderVisibility)": {
+  "status": "done",
+  "android": "RecyclerView extensions"
+ },
+ "UIScrollView(CYLPlaceholderVisibility) cyl_placeholderHidden": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderHidden"
+ },
  "UIScrollView(CYLRefresh)": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
@@ -2055,6 +2109,29 @@
  "UIScrollView(CYLRefresh) cyl_header": {
   "status": "done",
   "android": "SmartRefreshLayout.cyl_header"
+ },
+ "UITableView(CYLPlaceholder)": {
+  "status": "done",
+  "android": "RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UITableView(CYLPlaceholder) -cyl_placeholderViewBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block)"
+ },
+ "UITableView(CYLPlaceholder) -cyl_placeholderViewBlock:backToNormalBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)"
+ },
+ "UITableView(CYLTableViewPlaceHolder)": {
+  "status": "done",
+  "android": "RecyclerView extensions",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UITableView(CYLTableViewPlaceHolder) -cyl_reloadData": {
+  "status": "done",
+  "android": "RecyclerView.cyl_reloadData()",
+  "note": "adapter changes also update the placeholder by themselves"
  },
  "UIView(CYLExtension)": {
   "status": "n/a",
