@@ -4,7 +4,9 @@
 Images: the static icons of the ported scenarios, CYLPlaceholderSearchOff@2x.png -> res/drawable-xhdpi/
 cyl_placeholder_search_off.png. Strings: every key of <lang>.lproj/Localizable.strings ("CYLPlaceholderX" ->
 <string name="cyl_placeholder_x">) in res/values[-<lang>]/cyl_placeholder_strings.xml, iOS format specifiers turned
-into Java ones. Run: python3 android/scripts/import-ios-resources.py
+into Java ones. Animations: every CYLPlaceholder*.json and *.gif of Animations/ with the licenses and notices, to
+assets/CYLPlaceholderAnimations/ (played when an animator for them is registered, such as module placeholder-lottie).
+Run: python3 android/scripts/import-ios-resources.py
 """
 import os, re, shutil
 from xml.sax.saxutils import escape
@@ -12,6 +14,7 @@ from xml.sax.saxutils import escape
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 BUNDLE = os.path.join(ROOT, 'CYLTableViewPlaceHolder', 'CYLTableViewPlaceHolder', 'CYLTableViewPlaceHolder.bundle')
 RES = os.path.join(ROOT, 'android', 'placeholder', 'src', 'main', 'res')
+ANIMATIONS = os.path.join(ROOT, 'android', 'placeholder', 'src', 'main', 'assets', 'CYLPlaceholderAnimations')
 IMAGES = [
     # Every CYLPlaceholderStyle, in the iOS order (CYLPlaceholderView.imageNameForStyle).
     'Empty', 'NoResults', 'Error', 'WifiOff', 'SignalWifiOff', 'NoInternet', 'CloudOff', 'SyncProblem', 'SyncDisabled',
@@ -62,7 +65,13 @@ def main():
         lines.append('</resources>')
         os.makedirs(os.path.join(RES, folder), exist_ok=True)
         open(os.path.join(RES, folder, 'cyl_placeholder_strings.xml'), 'w', encoding='utf-8').write('\n'.join(lines) + '\n')
-    print('images:', len(IMAGES), 'languages:', len(LANGS))
+    os.makedirs(ANIMATIONS, exist_ok=True)
+    source = os.path.join(BUNDLE, 'Animations')
+    animations = sorted(n for n in os.listdir(source) if not n.startswith('._') and (
+        (n.startswith('CYLPlaceholder') and n.endswith(('.json', '.gif'))) or n.startswith(('LICENSE', 'NOTICE'))))
+    for name in animations:
+        shutil.copyfile(os.path.join(source, name), os.path.join(ANIMATIONS, name))
+    print('images:', len(IMAGES), 'languages:', len(LANGS), 'animation files:', len(animations))
 
 
 if __name__ == '__main__':

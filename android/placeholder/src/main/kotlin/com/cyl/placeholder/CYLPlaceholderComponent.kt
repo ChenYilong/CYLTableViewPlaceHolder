@@ -118,7 +118,7 @@ class CYLPlaceholderComponent private constructor(
         /**
          * An icon of [side] dp with an optional [title] below it, running [action] when tapped. The iOS
          * `componentWithBundledAnimation:fallbackStyle:title:size:action:` plays an animation with this image as its
-         * fallback; Android shows the image.
+         * fallback; on Android a scenario's stack view plays its animation in place of this image.
          */
         @JvmStatic
         @JvmOverloads

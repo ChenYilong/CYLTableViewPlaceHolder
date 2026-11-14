@@ -17,6 +17,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CYLTableViewPlaceHolderAndroid"
 include(":placeholder")
+// The Lottie animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Lottie).
+include(":placeholder-lottie")
 // SVPullToRefresh in Kotlin (docs/Android-Port.md, the refresh port).
 include(":SVPullToRefresh")
 // android-Ultra-Pull-To-Refresh in Kotlin (docs/Android-Port.md, the refresh port).

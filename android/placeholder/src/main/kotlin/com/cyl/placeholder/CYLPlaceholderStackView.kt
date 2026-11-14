@@ -95,6 +95,13 @@ class CYLPlaceholderStackView internal constructor(
             updateBackgroundTap()
         }
 
+    /**
+     * The animation playing in place of the first icon, or null when no registered animator plays any of the
+     * scenario's files and the still image shows (`animationView`).
+     */
+    var animationView: CYLPlaceholderAnimationView? = null
+        private set
+
     private val density = resources.displayMetrics.density
 
     private fun dp(value: Float) = (value * density).toInt()
@@ -115,7 +122,37 @@ class CYLPlaceholderStackView internal constructor(
         hintLabel = componentViews.firstOrNull { it.tag == HINT_TAG } as? TextView
         button = componentViews.filterIsInstance<Button>().firstOrNull()
         scenario?.let { contentDescription = CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, it) }
+        scenario?.let { attachScenarioAnimation(it) }
         updateBackgroundTap()
+    }
+
+    // The first of the scenario's animation files (its own icon first) that is in the assets and has a registered
+    // animator replaces the first icon, at the icon's size; the still image stays as the fallback.
+    private fun attachScenarioAnimation(scenario: CYLPlaceholderScenario) {
+        val item = imageView.parent as? LinearLayout ?: return
+        if (imageView.visibility != VISIBLE || imageView.drawable == null) return
+        val side = imageView.layoutParams?.width?.takeIf { it > 0 } ?: return
+        val bundled = runCatching { context.assets.list(ANIMATION_FOLDER)?.toSet() }.getOrNull().orEmpty()
+        for (name in CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)) {
+            if (name !in bundled) continue
+            val view = CYLPlaceholderAnimationView.withFileURL(context, "asset:$ANIMATION_FOLDER/$name", side, side) ?: continue
+            view.contentDescription = imageView.contentDescription
+            view.importantForAccessibility = imageView.importantForAccessibility
+            item.addView(view, item.indexOfChild(imageView), LinearLayout.LayoutParams(side, side))
+            imageView.visibility = GONE
+            animationView = view
+            return
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        animationView?.play()
+    }
+
+    override fun onDetachedFromWindow() {
+        animationView?.stop()
+        super.onDetachedFromWindow()
     }
 
     private fun allViews(view: View): List<View> =
@@ -260,6 +297,11 @@ class CYLPlaceholderStackView internal constructor(
     companion object {
         private const val ITEM_TAG = "cyl_placeholder_item"
         private const val HINT_TAG = "cyl_placeholder_hint"
+
+        /**
+         * The assets folder of the bundled animations (iOS `CYLTableViewPlaceHolder.bundle/Animations`).
+         */
+        const val ANIMATION_FOLDER = "CYLPlaceholderAnimations"
 
         /**
          * The localized name of a scenario ("No search results"), for menus and accessibility.
