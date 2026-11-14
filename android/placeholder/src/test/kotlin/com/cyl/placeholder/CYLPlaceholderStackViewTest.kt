@@ -107,4 +107,20 @@ class CYLPlaceholderStackViewTest {
         val view = CYLPlaceholderStackView(context, CYLPlaceholderScenario.NoContent)
         assertEquals(context.getString(R.string.cyl_placeholder_scenario_no_content_title), view.titleLabel.text.toString())
     }
+
+    @Test
+    fun withoutALottieAnimatorTheStillImageShows() {
+        val view = CYLPlaceholderStackView(context, CYLPlaceholderScenario.NoContent)
+        assertNull(view.animationView)
+        assertEquals(android.view.View.VISIBLE, view.imageView.visibility)
+        assertNotNull(view.imageView.drawable)
+    }
+
+    @Test
+    fun theScenariosAnimationFilesAreInTheAssets() {
+        val bundled = context.assets.list(CYLPlaceholderStackView.ANIMATION_FOLDER)!!.toSet()
+        val played = CYLPlaceholderScenario.values().flatMap { CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(it) }
+            .filter { it.endsWith(".json") || it.endsWith(".gif") }.distinct()
+        assertEquals(emptyList<String>(), played.filter { it.startsWith("CYLPlaceholder") && it !in bundled })
+    }
 }
