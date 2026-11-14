@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：2 / 100**（done + 0.5 × partial，共 847 个计入的符号；done 2、partial 36、planned 809、n/a 57）。 | **Migration score: 2 / 100** (done + 0.5 × partial over 847 counted symbols; done 2, partial 36, planned 809, n/a 57). |
+| **迁移完成率：14 / 100**（done + 0.5 × partial，共 823 个计入的符号；done 99、partial 40、planned 684、n/a 81）。 | **Migration score: 14 / 100** (done + 0.5 × partial over 823 counted symbols; done 99, partial 40, planned 684, n/a 81). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -205,129 +205,129 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshState` | `com.scwang.smart.refresh.layout.constant.RefreshState` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshScrollMode` | — | planned (TODO) |  |
-| `CYLRefreshTriggerMode` | — | planned (TODO) |  |
-| `CYLRefreshPhase` | — | planned (TODO) |  |
-| `CYLRefreshComponentHandler` | — | planned (TODO) |  |
-| `CYLRefreshComponentRefreshingBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponentBeginRefreshingCompletionBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponentEndRefreshingCompletionBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponentAction` | — | planned (TODO) |  |
-| `CYLRefreshComponent` | `com.scwang.smart.refresh.layout.api.RefreshComponent` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshComponent` `fastAnimationDuration` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `slowAnimationDuration` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-setAnimationDisabled` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshingBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-setRefreshingTarget:refreshingAction:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshingTarget` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshingAction` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-executeRefreshingCallback` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-beginRefreshing` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-beginRefreshingWithCompletionBlock:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `beginRefreshingCompletionBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `CYLRefreshDeprecated` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `endRefreshingAnimationBeginAction` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `endRefreshingCompletionBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-endRefreshing` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshing` | — | planned (TODO) |  |
+| `CYLRefreshState` | `com.cyl.refresh.CYLRefreshState` | done |  |
+| `CYLRefreshScrollMode` | `com.cyl.refresh.CYLRefreshScrollMode` | done | maps to SmartRefreshLayout's SpinnerStyle |
+| `CYLRefreshTriggerMode` | `com.cyl.refresh.CYLRefreshTriggerMode` | partial | the enum exists; triggerMode is not wired yet (TODO) |
+| `CYLRefreshPhase` | `com.cyl.refresh.CYLRefreshPhase` | done |  |
+| `CYLRefreshComponentHandler` | `com.cyl.refresh.CYLRefreshComponentHandler` | done |  |
+| `CYLRefreshComponentRefreshingBlock` | `com.cyl.refresh.CYLRefreshComponentRefreshingBlock` | done |  |
+| `CYLRefreshComponentBeginRefreshingCompletionBlock` | `com.cyl.refresh.CYLRefreshComponentBeginRefreshingCompletionBlock` | done |  |
+| `CYLRefreshComponentEndRefreshingCompletionBlock` | `com.cyl.refresh.CYLRefreshComponentEndRefreshingCompletionBlock` | done |  |
+| `CYLRefreshComponentAction` | `com.cyl.refresh.CYLRefreshComponentAction` | done |  |
+| `CYLRefreshComponent` | `com.cyl.refresh.CYLRefreshComponent` | partial | wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content |
+| `CYLRefreshComponent` `fastAnimationDuration` | `CYLRefreshComponent.fastAnimationDuration` | done |  |
+| `CYLRefreshComponent` `slowAnimationDuration` | `CYLRefreshComponent.slowAnimationDuration` | done |  |
+| `CYLRefreshComponent` `-setAnimationDisabled` | `CYLRefreshComponent.setAnimationDisabled()` | done |  |
+| `CYLRefreshComponent` `refreshingBlock` | `CYLRefreshComponent.refreshingBlock` | done |  |
+| `CYLRefreshComponent` `-setRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `refreshingTarget` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `refreshingAction` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `-executeRefreshingCallback` | `CYLRefreshComponent.executeRefreshingCallback()` | done |  |
+| `CYLRefreshComponent` `-beginRefreshing` | `CYLRefreshComponent.beginRefreshing()` | done |  |
+| `CYLRefreshComponent` `-beginRefreshingWithCompletionBlock:` | `CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)` | done |  |
+| `CYLRefreshComponent` `beginRefreshingCompletionBlock` | `CYLRefreshComponent.beginRefreshingCompletionBlock` | done |  |
+| `CYLRefreshComponent` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
+| `CYLRefreshComponent` `endRefreshingAnimationBeginAction` | `CYLRefreshComponent.endRefreshingAnimationBeginAction` | done |  |
+| `CYLRefreshComponent` `endRefreshingCompletionBlock` | `CYLRefreshComponent.endRefreshingCompletionBlock` | done |  |
+| `CYLRefreshComponent` `-endRefreshing` | `CYLRefreshComponent.endRefreshing()` | done |  |
+| `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | `CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)` | done |  |
+| `CYLRefreshComponent` `refreshing` | `CYLRefreshComponent.isRefreshing` | done |  |
 | `CYLRefreshComponent` `exclusiveWithOtherRefresh` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `blockedByOtherRefreshBlock` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `state` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `scrollViewOriginalInset` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `scrollView` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `flipsHorizontallyInOppositeLayoutDirectionViews` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `additionalFlipsViews` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-prepare` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-placeSubviews` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-scrollViewContentOffsetDidChange:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-scrollViewContentSizeDidChange:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-scrollViewPanStateDidChange:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-i18nDidChange` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `pullingPercent` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `CYLRefreshDeprecated` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `automaticallyChangeAlpha` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `+attach:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `+attach:target:action:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-attach:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-addTarget:action:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-removeTarget:action:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshingHandler` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `attached` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `triggerRate` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `finishDuration` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `scrollMode` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `colorAccent` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `colorPrimary` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `state` | `CYLRefreshComponent.state` | done |  |
+| `CYLRefreshComponent` `scrollViewOriginalInset` | — | n/a | UIKit content insets |
+| `CYLRefreshComponent` `scrollView` | `CYLRefreshComponent.scrollView` | done |  |
+| `CYLRefreshComponent` `flipsHorizontallyInOppositeLayoutDirectionViews` | — | n/a | Android mirrors right-to-left layouts itself (layoutDirection) |
+| `CYLRefreshComponent` `additionalFlipsViews` | — | n/a | Android mirrors right-to-left layouts itself (layoutDirection) |
+| `CYLRefreshComponent` `-prepare` | — | n/a | UIKit setup hook; Android sets up in the constructor |
+| `CYLRefreshComponent` `-placeSubviews` | — | n/a | UIKit layout hook; Android lays out in onLayout |
+| `CYLRefreshComponent` `-scrollViewContentOffsetDidChange:` | — | n/a | UIKit KVO; use didScrollWithOffset(offset, percent, dragging) |
+| `CYLRefreshComponent` `-scrollViewContentSizeDidChange:` | — | n/a | UIKit KVO |
+| `CYLRefreshComponent` `-scrollViewPanStateDidChange:` | — | n/a | UIKit gesture KVO |
+| `CYLRefreshComponent` `-i18nDidChange` | — | n/a | Android recreates views on a language change |
+| `CYLRefreshComponent` `pullingPercent` | `CYLRefreshComponent.pullingPercent` | done |  |
+| `CYLRefreshComponent` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
+| `CYLRefreshComponent` `automaticallyChangeAlpha` | `CYLRefreshComponent.automaticallyChangeAlpha` | done |  |
+| `CYLRefreshComponent` `+attach:` | `CYLRefreshComponent.attach(layout)` | partial | Android creates the component with its view, then attaches it (an instance call) |
+| `CYLRefreshComponent` `+attach:target:action:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `-attach:` | `CYLRefreshComponent.attach(layout)` | done |  |
+| `CYLRefreshComponent` `-addTarget:action:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `-removeTarget:action:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshComponent` `refreshingHandler` | `CYLRefreshComponent.refreshingHandler` | done |  |
+| `CYLRefreshComponent` `attached` | `CYLRefreshComponent.attached` | done |  |
+| `CYLRefreshComponent` `triggerRate` | `CYLRefreshComponent.triggerRate` | done |  |
+| `CYLRefreshComponent` `finishDuration` | `CYLRefreshComponent.finishDuration` | partial | applied by the classic header and footer (ClassicsAbstract.setFinishDuration) |
+| `CYLRefreshComponent` `scrollMode` | `CYLRefreshComponent.scrollMode` | partial | read for every component; set for the classic header and footer |
+| `CYLRefreshComponent` `colorAccent` | `CYLRefreshComponent.colorAccent` | done |  |
+| `CYLRefreshComponent` `colorPrimary` | `CYLRefreshComponent.colorPrimary` | done |  |
 | `CYLRefreshComponent` `expanded` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `expandHeight` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `dragOffset` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `phase` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-isInAnyPhase:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-isInPhases:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-endRefreshingWithSuccess:` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `dragOffset` | `CYLRefreshComponent.dragOffset` | done |  |
+| `CYLRefreshComponent` `phase` | `CYLRefreshComponent.phase` | done |  |
+| `CYLRefreshComponent` `-isInAnyPhase:` | `CYLRefreshComponent.isInAnyPhase(vararg)` | done |  |
+| `CYLRefreshComponent` `-isInPhases:` | `CYLRefreshComponent.isInPhases(collection)` | done |  |
+| `CYLRefreshComponent` `-endRefreshingWithSuccess:` | `CYLRefreshComponent.endRefreshingWithSuccess(success)` | done |  |
 | `CYLRefreshComponent` `-beginRefreshingWithDuration:overOffset:force:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `lastRefreshSucceeded` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `lastRefreshSucceeded` | `CYLRefreshComponent.lastRefreshSucceeded` | done |  |
 | `CYLRefreshComponent` `autoHideRefresh` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `-isReadyToAutoHide` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `-updateAutoHideVisibility` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `refreshEnabled` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `refreshEnabled` | `CYLRefreshComponent.refreshEnabled` | done |  |
 | `CYLRefreshComponent` `triggersWhenReached` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `triggerMode` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `hapticFeedback` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `hapticFeedback` | `CYLRefreshComponent.hapticFeedback` | done |  |
 | `CYLRefreshComponent` `maxPullDistance` | — | planned (TODO) |  |
 | `CYLRefreshComponent` `notifiesWhenHidden` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-addPhaseObserver:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-removePhaseObserver:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-addObservers` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-removeObservers` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-didAttachToScrollView:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-willDetachFromScrollView:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-scrollViewContentInsetDidChange:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | — | planned (TODO) |  |
-| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | — | planned (TODO) |  |
+| `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponent.addPhaseObserver(observer)` | done |  |
+| `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponent.removePhaseObserver(observer)` | done |  |
+| `CYLRefreshComponent` `-addObservers` | — | n/a | UIKit KVO |
+| `CYLRefreshComponent` `-removeObservers` | — | n/a | UIKit KVO |
+| `CYLRefreshComponent` `-didAttachToScrollView:` | `CYLRefreshComponent.didAttachToScrollView(layout)` | done |  |
+| `CYLRefreshComponent` `-willDetachFromScrollView:` | `CYLRefreshComponent.willDetachFromScrollView(layout)` | done |  |
+| `CYLRefreshComponent` `-scrollViewContentInsetDidChange:` | — | n/a | UIKit KVO |
+| `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` | `CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)` | done |  |
+| `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` | done |  |
+| `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` | done |  |
+| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; SmartRefreshLayout reads the component's own finish duration |
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
-| `CYLRefreshComponent(ChainingGrammar)` | — | planned (TODO) |  |
-| `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterEndingAction:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(ChainingGrammar)` `-cyl_linkTo:` | — | planned (TODO) |  |
+| `CYLRefreshComponent(ChainingGrammar)` | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` | done |  |
+| `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` | done |  |
+| `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | `CYLRefreshComponent.cyl_afterBeginningAction(action)` | done |  |
+| `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` | `CYLRefreshComponent.cyl_endingAnimationBeginningAction(action)` | done |  |
+| `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterEndingAction:` | `CYLRefreshComponent.cyl_afterEndingAction(action)` | done |  |
+| `CYLRefreshComponent(ChainingGrammar)` `-cyl_linkTo:` | `CYLRefreshComponent.cyl_linkTo(layout)` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshFooter` | `com.scwang.smart.refresh.layout.api.RefreshFooter` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshFooter` `+footerWithRefreshingBlock:` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `+footerWithRefreshingTarget:refreshingAction:` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `-endRefreshingWithNoMoreData` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `-noticeNoMoreData` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `-resetNoMoreData` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `noMoreData` | — | planned (TODO) |  |
+| `CYLRefreshFooter` | `com.cyl.refresh.CYLRefreshFooter` | partial | pull up to load more; loadsAfterNoMoreData is TODO |
+| `CYLRefreshFooter` `+footerWithRefreshingBlock:` | `CYLRefreshFooter.footerWithRefreshingBlock(context, block)` | done |  |
+| `CYLRefreshFooter` `+footerWithRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshFooter` `-endRefreshingWithNoMoreData` | `CYLRefreshFooter.endRefreshingWithNoMoreData()` | done |  |
+| `CYLRefreshFooter` `-noticeNoMoreData` | `CYLRefreshFooter.noticeNoMoreData()` | done |  |
+| `CYLRefreshFooter` `-resetNoMoreData` | `CYLRefreshFooter.resetNoMoreData()` | done |  |
+| `CYLRefreshFooter` `noMoreData` | `CYLRefreshFooter.noMoreData` | done |  |
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | — | planned (TODO) |  |
-| `CYLRefreshFooter` `CYLRefreshDeprecated` | — | planned (TODO) |  |
+| `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` | done |  |
+| `CYLRefreshFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshHeader` | `com.scwang.smart.refresh.layout.api.RefreshHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshHeader` `+headerWithRefreshingBlock:` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `+headerWithRefreshingTarget:refreshingAction:` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `lastUpdatedTimeKey` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `lastUpdatedTime` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `ignoredScrollViewContentInsetTop` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `isCollectionViewAnimationBug` | — | planned (TODO) |  |
+| `CYLRefreshHeader` | `com.cyl.refresh.CYLRefreshHeader` | partial | pull to refresh; the second floor (secondary*) is TODO |
+| `CYLRefreshHeader` `+headerWithRefreshingBlock:` | `CYLRefreshHeader.headerWithRefreshingBlock(context, block)` | done |  |
+| `CYLRefreshHeader` `+headerWithRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
+| `CYLRefreshHeader` `lastUpdatedTimeKey` | `CYLRefreshHeader.lastUpdatedTimeKey` | done |  |
+| `CYLRefreshHeader` `lastUpdatedTime` | `CYLRefreshHeader.lastUpdatedTime` | done |  |
+| `CYLRefreshHeader` `ignoredScrollViewContentInsetTop` | `CYLRefreshHeader.ignoredScrollViewContentInsetTop` | done |  |
+| `CYLRefreshHeader` `isCollectionViewAnimationBug` | — | n/a | a UICollectionView workaround |
 | `CYLRefreshHeader` `-setExpandHeight:` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `addsRefreshingInset` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `resetsFooterAfterRefresh` | — | planned (TODO) |  |
+| `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeader.addsRefreshingInset` | done |  |
+| `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeader.resetsFooterAfterRefresh` | done |  |
 | `CYLRefreshHeader` `secondaryTriggerOffset` | — | planned (TODO) |  |
 | `CYLRefreshHeader` `secondaryDimension` | — | planned (TODO) |  |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | — | planned (TODO) |  |
@@ -430,37 +430,37 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshLabelLeftInset` | — | planned (TODO) |  |
-| `CYLRefreshHeaderHeight` | — | planned (TODO) |  |
-| `CYLRefreshFooterHeight` | — | planned (TODO) |  |
-| `CYLRefreshTrailWidth` | — | planned (TODO) |  |
-| `CYLRefreshFastAnimationDuration` | — | planned (TODO) |  |
-| `CYLRefreshSlowAnimationDuration` | — | planned (TODO) |  |
-| `CYLRefreshKeyPathContentOffset` | — | planned (TODO) |  |
-| `CYLRefreshKeyPathContentSize` | — | planned (TODO) |  |
-| `CYLRefreshKeyPathContentInset` | — | planned (TODO) |  |
-| `CYLRefreshKeyPathPanState` | — | planned (TODO) |  |
-| `CYLRefreshHeaderLastUpdatedTimeKey` | — | planned (TODO) |  |
-| `CYLRefreshHeaderIdleText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderPullingText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderRefreshingText` | — | planned (TODO) |  |
-| `CYLRefreshTrailerIdleText` | — | planned (TODO) |  |
-| `CYLRefreshTrailerPullingText` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooterIdleText` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooterRefreshingText` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooterNoMoreDataText` | — | planned (TODO) |  |
-| `CYLRefreshBackFooterIdleText` | — | planned (TODO) |  |
-| `CYLRefreshBackFooterPullingText` | — | planned (TODO) |  |
-| `CYLRefreshBackFooterRefreshingText` | — | planned (TODO) |  |
-| `CYLRefreshBackFooterNoMoreDataText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderFinishedText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderFailedText` | — | planned (TODO) |  |
-| `CYLRefreshFooterFinishedText` | — | planned (TODO) |  |
-| `CYLRefreshFooterFailedText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderLastTimeText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderDateTodayText` | — | planned (TODO) |  |
-| `CYLRefreshHeaderNoneLastDateText` | — | planned (TODO) |  |
-| `CYLRefreshDidChangeLanguageNotification` | — | planned (TODO) |  |
+| `CYLRefreshLabelLeftInset` | `CYLRefreshConst.CYLRefreshLabelLeftInset` | done |  |
+| `CYLRefreshHeaderHeight` | `CYLRefreshConst.CYLRefreshHeaderHeight` | done |  |
+| `CYLRefreshFooterHeight` | `CYLRefreshConst.CYLRefreshFooterHeight` | done |  |
+| `CYLRefreshTrailWidth` | `CYLRefreshConst.CYLRefreshTrailWidth` | done |  |
+| `CYLRefreshFastAnimationDuration` | `CYLRefreshConst.CYLRefreshFastAnimationDuration` | done |  |
+| `CYLRefreshSlowAnimationDuration` | `CYLRefreshConst.CYLRefreshSlowAnimationDuration` | done |  |
+| `CYLRefreshKeyPathContentOffset` | `CYLRefreshConst.CYLRefreshKeyPathContentOffset` | done |  |
+| `CYLRefreshKeyPathContentSize` | `CYLRefreshConst.CYLRefreshKeyPathContentSize` | done |  |
+| `CYLRefreshKeyPathContentInset` | `CYLRefreshConst.CYLRefreshKeyPathContentInset` | done |  |
+| `CYLRefreshKeyPathPanState` | `CYLRefreshConst.CYLRefreshKeyPathPanState` | done |  |
+| `CYLRefreshHeaderLastUpdatedTimeKey` | `CYLRefreshConst.CYLRefreshHeaderLastUpdatedTimeKey` | done |  |
+| `CYLRefreshHeaderIdleText` | `CYLRefreshConst.CYLRefreshHeaderIdleText` | done |  |
+| `CYLRefreshHeaderPullingText` | `CYLRefreshConst.CYLRefreshHeaderPullingText` | done |  |
+| `CYLRefreshHeaderRefreshingText` | `CYLRefreshConst.CYLRefreshHeaderRefreshingText` | done |  |
+| `CYLRefreshTrailerIdleText` | `CYLRefreshConst.CYLRefreshTrailerIdleText` | done |  |
+| `CYLRefreshTrailerPullingText` | `CYLRefreshConst.CYLRefreshTrailerPullingText` | done |  |
+| `CYLRefreshAutoFooterIdleText` | `CYLRefreshConst.CYLRefreshAutoFooterIdleText` | done |  |
+| `CYLRefreshAutoFooterRefreshingText` | `CYLRefreshConst.CYLRefreshAutoFooterRefreshingText` | done |  |
+| `CYLRefreshAutoFooterNoMoreDataText` | `CYLRefreshConst.CYLRefreshAutoFooterNoMoreDataText` | done |  |
+| `CYLRefreshBackFooterIdleText` | `CYLRefreshConst.CYLRefreshBackFooterIdleText` | done |  |
+| `CYLRefreshBackFooterPullingText` | `CYLRefreshConst.CYLRefreshBackFooterPullingText` | done |  |
+| `CYLRefreshBackFooterRefreshingText` | `CYLRefreshConst.CYLRefreshBackFooterRefreshingText` | done |  |
+| `CYLRefreshBackFooterNoMoreDataText` | `CYLRefreshConst.CYLRefreshBackFooterNoMoreDataText` | done |  |
+| `CYLRefreshHeaderFinishedText` | `CYLRefreshConst.CYLRefreshHeaderFinishedText` | done |  |
+| `CYLRefreshHeaderFailedText` | `CYLRefreshConst.CYLRefreshHeaderFailedText` | done |  |
+| `CYLRefreshFooterFinishedText` | `CYLRefreshConst.CYLRefreshFooterFinishedText` | done |  |
+| `CYLRefreshFooterFailedText` | `CYLRefreshConst.CYLRefreshFooterFailedText` | done |  |
+| `CYLRefreshHeaderLastTimeText` | `CYLRefreshConst.CYLRefreshHeaderLastTimeText` | done |  |
+| `CYLRefreshHeaderDateTodayText` | `CYLRefreshConst.CYLRefreshHeaderDateTodayText` | done |  |
+| `CYLRefreshHeaderNoneLastDateText` | `CYLRefreshConst.CYLRefreshHeaderNoneLastDateText` | done |  |
+| `CYLRefreshDidChangeLanguageNotification` | `CYLRefreshConst.CYLRefreshDidChangeLanguageNotification` | done |  |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`
 
@@ -978,9 +978,9 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | `com.scwang.smart.refresh.layout.SmartRefreshLayout` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `UIScrollView(CYLRefresh)` `cyl_header` | — | planned (TODO) |  |
-| `UIScrollView(CYLRefresh)` `cyl_footer` | — | planned (TODO) |  |
+| `UIScrollView(CYLRefresh)` | `com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)` | partial | the SmartRefreshLayout around the content is the scroll view's counterpart |
+| `UIScrollView(CYLRefresh)` `cyl_header` | `SmartRefreshLayout.cyl_header` | done |  |
+| `UIScrollView(CYLRefresh)` `cyl_footer` | `SmartRefreshLayout.cyl_footer` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | — | planned (TODO) |  |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefresh` | — | planned (TODO) |  |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | — | planned (TODO) |  |

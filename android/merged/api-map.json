@@ -35,6 +35,18 @@
   "status": "n/a",
   "note": "Android has ValueAnimator.RESTART / REVERSE"
  },
+ "CYLRefreshAutoFooterIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterIdleText"
+ },
+ "CYLRefreshAutoFooterNoMoreDataText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterNoMoreDataText"
+ },
+ "CYLRefreshAutoFooterRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterRefreshingText"
+ },
  "CYLRefreshAutoNormalFooter": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
@@ -44,6 +56,22 @@
   "status": "partial",
   "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshBackFooterIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterIdleText"
+ },
+ "CYLRefreshBackFooterNoMoreDataText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterNoMoreDataText"
+ },
+ "CYLRefreshBackFooterPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterPullingText"
+ },
+ "CYLRefreshBackFooterRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterRefreshingText"
  },
  "CYLRefreshBackNormalFooter": {
   "status": "partial",
@@ -67,18 +95,318 @@
  },
  "CYLRefreshComponent": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.api.RefreshComponent",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.cyl.refresh.CYLRefreshComponent",
+  "note": "wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content"
+ },
+ "CYLRefreshComponent +attach:": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.attach(layout)",
+  "note": "Android creates the component with its view, then attaches it (an instance call)"
+ },
+ "CYLRefreshComponent +attach:target:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -addObservers": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -addPhaseObserver:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.addPhaseObserver(observer)"
+ },
+ "CYLRefreshComponent -addTarget:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -attach:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.attach(layout)"
+ },
+ "CYLRefreshComponent -beginRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshing()"
+ },
+ "CYLRefreshComponent -beginRefreshingWithCompletionBlock:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)"
+ },
+ "CYLRefreshComponent -didAttachToScrollView:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.didAttachToScrollView(layout)"
+ },
+ "CYLRefreshComponent -didScrollWithOffset:percent:dragging:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)"
+ },
+ "CYLRefreshComponent -endRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshing()"
+ },
+ "CYLRefreshComponent -endRefreshingWithCompletionBlock:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)"
+ },
+ "CYLRefreshComponent -endRefreshingWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingWithSuccess(success)"
+ },
+ "CYLRefreshComponent -executeRefreshingCallback": {
+  "status": "done",
+  "android": "CYLRefreshComponent.executeRefreshingCallback()"
+ },
+ "CYLRefreshComponent -finishingDurationWithSuccess:": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.finishingDurationWithSuccess(success)",
+  "note": "an overridable hook; SmartRefreshLayout reads the component's own finish duration"
+ },
+ "CYLRefreshComponent -i18nDidChange": {
+  "status": "n/a",
+  "note": "Android recreates views on a language change"
+ },
+ "CYLRefreshComponent -isInAnyPhase:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isInAnyPhase(vararg)"
+ },
+ "CYLRefreshComponent -isInPhases:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isInPhases(collection)"
+ },
+ "CYLRefreshComponent -phaseDidChangeFrom:to:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.phaseDidChangeFrom(old, new)"
+ },
+ "CYLRefreshComponent -placeSubviews": {
+  "status": "n/a",
+  "note": "UIKit layout hook; Android lays out in onLayout"
+ },
+ "CYLRefreshComponent -prepare": {
+  "status": "n/a",
+  "note": "UIKit setup hook; Android sets up in the constructor"
+ },
+ "CYLRefreshComponent -refreshDidFinishWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshDidFinishWithSuccess(success)"
+ },
+ "CYLRefreshComponent -removeObservers": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -removePhaseObserver:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.removePhaseObserver(observer)"
+ },
+ "CYLRefreshComponent -removeTarget:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -scrollViewContentInsetDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -scrollViewContentOffsetDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO; use didScrollWithOffset(offset, percent, dragging)"
+ },
+ "CYLRefreshComponent -scrollViewContentSizeDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -scrollViewPanStateDidChange:": {
+  "status": "n/a",
+  "note": "UIKit gesture KVO"
+ },
+ "CYLRefreshComponent -setAnimationDisabled": {
+  "status": "done",
+  "android": "CYLRefreshComponent.setAnimationDisabled()"
+ },
+ "CYLRefreshComponent -setRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -willDetachFromScrollView:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.willDetachFromScrollView(layout)"
+ },
+ "CYLRefreshComponent CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshComponent additionalFlipsViews": {
+  "status": "n/a",
+  "note": "Android mirrors right-to-left layouts itself (layoutDirection)"
+ },
+ "CYLRefreshComponent attached": {
+  "status": "done",
+  "android": "CYLRefreshComponent.attached"
+ },
+ "CYLRefreshComponent automaticallyChangeAlpha": {
+  "status": "done",
+  "android": "CYLRefreshComponent.automaticallyChangeAlpha"
+ },
+ "CYLRefreshComponent beginRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponent colorAccent": {
+  "status": "done",
+  "android": "CYLRefreshComponent.colorAccent"
+ },
+ "CYLRefreshComponent colorPrimary": {
+  "status": "done",
+  "android": "CYLRefreshComponent.colorPrimary"
+ },
+ "CYLRefreshComponent dragOffset": {
+  "status": "done",
+  "android": "CYLRefreshComponent.dragOffset"
+ },
+ "CYLRefreshComponent endRefreshingAnimationBeginAction": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingAnimationBeginAction"
+ },
+ "CYLRefreshComponent endRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponent fastAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshComponent.fastAnimationDuration"
+ },
+ "CYLRefreshComponent finishDuration": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.finishDuration",
+  "note": "applied by the classic header and footer (ClassicsAbstract.setFinishDuration)"
+ },
+ "CYLRefreshComponent flipsHorizontallyInOppositeLayoutDirectionViews": {
+  "status": "n/a",
+  "note": "Android mirrors right-to-left layouts itself (layoutDirection)"
+ },
+ "CYLRefreshComponent hapticFeedback": {
+  "status": "done",
+  "android": "CYLRefreshComponent.hapticFeedback"
+ },
+ "CYLRefreshComponent lastRefreshSucceeded": {
+  "status": "done",
+  "android": "CYLRefreshComponent.lastRefreshSucceeded"
+ },
+ "CYLRefreshComponent phase": {
+  "status": "done",
+  "android": "CYLRefreshComponent.phase"
+ },
+ "CYLRefreshComponent pullingPercent": {
+  "status": "done",
+  "android": "CYLRefreshComponent.pullingPercent"
+ },
+ "CYLRefreshComponent refreshEnabled": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshEnabled"
+ },
+ "CYLRefreshComponent refreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isRefreshing"
+ },
+ "CYLRefreshComponent refreshingAction": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent refreshingBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshingBlock"
+ },
+ "CYLRefreshComponent refreshingHandler": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshingHandler"
+ },
+ "CYLRefreshComponent refreshingTarget": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent scrollMode": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.scrollMode",
+  "note": "read for every component; set for the classic header and footer"
+ },
+ "CYLRefreshComponent scrollView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.scrollView"
+ },
+ "CYLRefreshComponent scrollViewOriginalInset": {
+  "status": "n/a",
+  "note": "UIKit content insets"
+ },
+ "CYLRefreshComponent slowAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshComponent.slowAnimationDuration"
+ },
+ "CYLRefreshComponent state": {
+  "status": "done",
+  "android": "CYLRefreshComponent.state"
+ },
+ "CYLRefreshComponent triggerRate": {
+  "status": "done",
+  "android": "CYLRefreshComponent.triggerRate"
+ },
+ "CYLRefreshComponent(ChainingGrammar)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_afterBeginningAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_afterBeginningAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_afterEndingAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_afterEndingAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_autoChangeTransparency:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_autoChangeTransparency(enabled)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_endingAnimationBeginningAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_endingAnimationBeginningAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_linkTo:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_linkTo(layout)"
+ },
+ "CYLRefreshComponentAction": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentAction"
+ },
+ "CYLRefreshComponentBeginRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentBeginRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponentEndRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentEndRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponentHandler": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentHandler"
+ },
+ "CYLRefreshComponentRefreshingBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentRefreshingBlock"
  },
  "CYLRefreshDeliveryHeader": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.DeliveryHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshDidChangeLanguageNotification": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
+ },
  "CYLRefreshDropBoxHeader": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.DropBoxHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFastAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFastAnimationDuration"
  },
  "CYLRefreshFlyHeader": {
   "status": "partial",
@@ -92,8 +420,52 @@
  },
  "CYLRefreshFooter": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.api.RefreshFooter",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.cyl.refresh.CYLRefreshFooter",
+  "note": "pull up to load more; loadsAfterNoMoreData is TODO"
+ },
+ "CYLRefreshFooter +footerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshFooter.footerWithRefreshingBlock(context, block)"
+ },
+ "CYLRefreshFooter +footerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshFooter -endRefreshingWithNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.endRefreshingWithNoMoreData()"
+ },
+ "CYLRefreshFooter -noticeNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.noticeNoMoreData()"
+ },
+ "CYLRefreshFooter -resetNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.resetNoMoreData()"
+ },
+ "CYLRefreshFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshFooter ignoredScrollViewContentInsetBottom": {
+  "status": "done",
+  "android": "CYLRefreshFooter.ignoredScrollViewContentInsetBottom"
+ },
+ "CYLRefreshFooter noMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.noMoreData"
+ },
+ "CYLRefreshFooterFailedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterFailedText"
+ },
+ "CYLRefreshFooterFinishedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterFinishedText"
+ },
+ "CYLRefreshFooterHeight": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterHeight"
  },
  "CYLRefreshGameBattleCityHeader": {
   "status": "partial",
@@ -117,8 +489,100 @@
  },
  "CYLRefreshHeader": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.api.RefreshHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.cyl.refresh.CYLRefreshHeader",
+  "note": "pull to refresh; the second floor (secondary*) is TODO"
+ },
+ "CYLRefreshHeader +headerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshHeader.headerWithRefreshingBlock(context, block)"
+ },
+ "CYLRefreshHeader +headerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshHeader addsRefreshingInset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.addsRefreshingInset"
+ },
+ "CYLRefreshHeader ignoredScrollViewContentInsetTop": {
+  "status": "done",
+  "android": "CYLRefreshHeader.ignoredScrollViewContentInsetTop"
+ },
+ "CYLRefreshHeader isCollectionViewAnimationBug": {
+  "status": "n/a",
+  "note": "a UICollectionView workaround"
+ },
+ "CYLRefreshHeader lastUpdatedTime": {
+  "status": "done",
+  "android": "CYLRefreshHeader.lastUpdatedTime"
+ },
+ "CYLRefreshHeader lastUpdatedTimeKey": {
+  "status": "done",
+  "android": "CYLRefreshHeader.lastUpdatedTimeKey"
+ },
+ "CYLRefreshHeader resetsFooterAfterRefresh": {
+  "status": "done",
+  "android": "CYLRefreshHeader.resetsFooterAfterRefresh"
+ },
+ "CYLRefreshHeaderDateTodayText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderDateTodayText"
+ },
+ "CYLRefreshHeaderFailedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderFailedText"
+ },
+ "CYLRefreshHeaderFinishedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderFinishedText"
+ },
+ "CYLRefreshHeaderHeight": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderHeight"
+ },
+ "CYLRefreshHeaderIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderIdleText"
+ },
+ "CYLRefreshHeaderLastTimeText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderLastTimeText"
+ },
+ "CYLRefreshHeaderLastUpdatedTimeKey": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderLastUpdatedTimeKey"
+ },
+ "CYLRefreshHeaderNoneLastDateText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderNoneLastDateText"
+ },
+ "CYLRefreshHeaderPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderPullingText"
+ },
+ "CYLRefreshHeaderRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderRefreshingText"
+ },
+ "CYLRefreshKeyPathContentInset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentInset"
+ },
+ "CYLRefreshKeyPathContentOffset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentOffset"
+ },
+ "CYLRefreshKeyPathContentSize": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentSize"
+ },
+ "CYLRefreshKeyPathPanState": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathPanState"
+ },
+ "CYLRefreshLabelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshLabelLeftInset"
  },
  "CYLRefreshMaterialHeader": {
   "status": "partial",
@@ -135,15 +599,27 @@
   "android": "com.scwang.smart.refresh.header.ClassicsHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshPhase": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhase"
+ },
  "CYLRefreshPhoenixHeader": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.PhoenixHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshScrollMode": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshScrollMode",
+  "note": "maps to SmartRefreshLayout's SpinnerStyle"
+ },
+ "CYLRefreshSlowAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshSlowAnimationDuration"
+ },
  "CYLRefreshState": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.constant.RefreshState",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshState"
  },
  "CYLRefreshStateHeader": {
   "status": "partial",
@@ -169,6 +645,23 @@
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.TaurusHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshTrailWidth": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailWidth"
+ },
+ "CYLRefreshTrailerIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailerIdleText"
+ },
+ "CYLRefreshTrailerPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailerPullingText"
+ },
+ "CYLRefreshTriggerMode": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshTriggerMode",
+  "note": "the enum exists; triggerMode is not wired yet (TODO)"
  },
  "CYLRefreshValueAnimator": {
   "status": "n/a",
@@ -384,8 +877,16 @@
  },
  "UIScrollView(CYLRefresh)": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
+  "note": "the SmartRefreshLayout around the content is the scroll view's counterpart"
+ },
+ "UIScrollView(CYLRefresh) cyl_footer": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_footer"
+ },
+ "UIScrollView(CYLRefresh) cyl_header": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_header"
  },
  "UIView(CYLExtension)": {
   "status": "n/a",

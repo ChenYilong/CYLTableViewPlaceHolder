@@ -23,6 +23,19 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/kotlin")
+        }
+        getByName("test") {
+            java.srcDirs("src/test/kotlin")
+        }
+    }
 }
 
 dependencies {
@@ -44,4 +57,9 @@ dependencies {
     api(project(":srl-drawable-path"))
     api(project(":srl-drawable-paint"))
     api(project(":srl-header"))
+    // AndroidX for the iOS-named refresh API (SmartRefreshLayout's supertypes come from it).
+    implementation(libs.androidx.appcompat)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
 }
