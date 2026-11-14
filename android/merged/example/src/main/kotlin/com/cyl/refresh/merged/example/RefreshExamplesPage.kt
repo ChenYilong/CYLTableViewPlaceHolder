@@ -80,6 +80,12 @@ class RefreshExamplesPage : StackPage() {
             listOf("example31", "example31"),
             "CYLRefreshCollectionViewController",
         ),
+        RefreshExample(
+            R.string.merged_mj_section_web,
+            listOf(R.string.merged_mj_web_pull_old, R.string.merged_mj_web_pull),
+            listOf("example40", "example41"),
+            "CYLRefreshWKWebViewController",
+        ),
     )
 
     override fun root(): View {
@@ -91,8 +97,10 @@ class RefreshExamplesPage : StackPage() {
                 column.addView(row(context, context.t(title), "${exam.page} - ${exam.methods[i]}", "refresh-${exam.methods[i]}") {
                     val name = context.t(title)
                     push(when {
-                        exam.header != R.string.merged_mj_section_collection -> tablePage(name, exam.methods[i])
-                        else -> collectionPage(name, pinHeader = i == 1) { push(testPage()) }
+                        exam.header == R.string.merged_mj_section_collection ->
+                            collectionPage(name, pinHeader = i == 1) { push(testPage()) }
+                        exam.header == R.string.merged_mj_section_web -> webPage()
+                        else -> tablePage(name, exam.methods[i])
                     })
                 })
             }
@@ -337,7 +345,7 @@ private object ExampleImages {
 /**
  * MJChiBaoZiHeader: images for the idle, pulling and refreshing states.
  */
-private class ExampleImagesHeader(context: Context) : CYLRefreshAnimationHeader(context) {
+internal class ExampleImagesHeader(context: Context) : CYLRefreshAnimationHeader(context) {
     init {
         setAnimationImages(ExampleImages.idle(context), CYLRefreshState.Idle)
         setAnimationImages(ExampleImages.refreshing(context), CYLRefreshState.Pulling)
