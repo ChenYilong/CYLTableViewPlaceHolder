@@ -30,6 +30,9 @@ Page({
     this.setData({ languageIndex })
     this.build()
   },
+  onHUD() {
+    wx.navigateTo({ url: '/pages/hud/hud' })
+  },
   onOpen(e) {
     wx.navigateTo({ url: '/pages/scenario/scenario?scenario=' + e.currentTarget.dataset.scenario })
   },

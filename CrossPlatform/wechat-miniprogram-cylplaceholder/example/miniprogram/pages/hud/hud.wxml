@@ -1,0 +1,20 @@
+<view class="group">
+  <picker range="{{masks}}" value="{{maskIndex}}" bindchange="onMask">
+    <view class="row"><text>Mask type</text><text class="value">{{masks[maskIndex]}} ›</text></view>
+  </picker>
+  <picker range="{{styles}}" value="{{styleIndex}}" bindchange="onStyle">
+    <view class="row"><text>Style</text><text class="value">{{styles[styleIndex]}} ›</text></view>
+  </picker>
+</view>
+<view class="group">
+  <view class="row" hover-class="pressed" bindtap="onLoading"><text>show()</text></view>
+  <view class="row" hover-class="pressed" bindtap="onStatus"><text>showWithStatus + setStatus</text></view>
+  <view class="row" hover-class="pressed" bindtap="onProgress"><text>showProgress → success</text></view>
+  <view class="row" hover-class="pressed" bindtap="onSuccess"><text>showSuccessWithStatus</text></view>
+  <view class="row" hover-class="pressed" bindtap="onError"><text>showErrorWithStatus</text></view>
+  <view class="row" hover-class="pressed" bindtap="onInfo"><text>showInfoWithStatus</text></view>
+  <view class="row" hover-class="pressed" bindtap="onScenario"><text>showScenario(RetryButton)</text></view>
+  <view class="row" hover-class="pressed" bindtap="onActivities"><text>2 × showWithStatus, 2 × popActivity</text></view>
+</view>
+<view wx:if="{{lastEvent}}" class="event">Last event: {{lastEvent}}</view>
+<cyl-placeholder-hud id="hud" bind:action="onHUDAction" bind:touch="onHUDTouch" />

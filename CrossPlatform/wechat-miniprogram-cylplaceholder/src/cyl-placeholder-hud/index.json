@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "cyl-placeholder": "../cyl-placeholder/index"
+  }
+}
