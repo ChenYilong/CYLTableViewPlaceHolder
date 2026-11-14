@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment
 import com.cyl.placeholder.CYLPlaceholderScenario
 import com.cyl.placeholder.CYLPlaceholderStackView
 import com.cyl.svpulltorefresh.SVPullToRefreshLayout
-import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import `in`.srain.cube.views.ptr.PtrClassicFrameLayout
 import `in`.srain.cube.views.ptr.PtrDefaultHandler
@@ -125,23 +123,5 @@ class UltraPullToRefreshPage : Fragment() {
             }
         })
         return frame
-    }
-}
-
-/**
- * The SmartRefreshLayout tab: the classic header and footer.
- */
-class SmartRefreshPage : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val context = requireContext()
-        val list = RowList(context, R.string.merged_intro_smartrefresh)
-        val layout = SmartRefreshLayout(context)
-        layout.setRefreshHeader(ClassicsHeader(context))
-        layout.setRefreshFooter(ClassicsFooter(context))
-        layout.setRefreshContent(list)
-        layout.setOnRefreshListener { later { list.reload(20); layout.finishRefresh() } }
-        layout.setOnLoadMoreListener { later { list.more(10); layout.finishLoadMore() } }
-        return layout
     }
 }

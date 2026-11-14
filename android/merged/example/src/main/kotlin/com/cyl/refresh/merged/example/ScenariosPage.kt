@@ -46,12 +46,12 @@ internal fun Context.t(@StringRes id: Int, vararg args: Any): String =
 private fun Context.dp(value: Float) = (value * resources.displayMetrics.density).toInt()
 
 /**
- * The Scenarios tab (the iOS example's first tab): every scenario of the placeholder catalog in three sections, the
- * configuration files, and a language button. A row opens the scenario's page; the system back button returns.
+ * A tab with a stack of pages: [root] first, a row pushes a page, the bar's back button and the system back button pop
+ * it (the iOS navigation controller of each tab).
  */
-class ScenariosPage : Fragment() {
+abstract class StackPage : Fragment() {
 
-    private lateinit var host: FrameLayout
+    internal lateinit var host: FrameLayout
     private val pages = ArrayList<View>()
     private val back = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = pop()
@@ -61,7 +61,7 @@ class ScenariosPage : Fragment() {
         host = FrameLayout(requireContext())
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, back)
         pages.clear()
-        push(list())
+        push(root())
         return host
     }
 
@@ -79,7 +79,10 @@ class ScenariosPage : Fragment() {
         back.isEnabled = pages.size > 1
     }
 
-    // MARK: - The list
+    /**
+     * The tab's first page.
+     */
+    protected abstract fun root(): View
 
     internal fun row(context: Context, title: String, subtitle: String?, id: String, onClick: () -> Unit) = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
@@ -105,6 +108,33 @@ class ScenariosPage : Fragment() {
         setPadding(context.dp(16f), context.dp(18f), context.dp(16f), context.dp(6f))
         ViewCompat.setAccessibilityHeading(this, true)
     }
+
+    internal fun bar(context: Context, title: String, vararg buttons: Button): View = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        setPadding(context.dp(8f), 0, context.dp(8f), 0)
+        addView(Button(context).apply { text = "‹"; contentDescription = null; setOnClickListener { pop() } })
+        addView(TextView(context).apply { text = title; textSize = 18f; ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        buttons.forEach { addView(it) }
+    }
+
+    internal fun page(context: Context, bar: View, content: View): View = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setBackgroundColor(Color.WHITE)
+        addView(bar)
+        addView(content, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+    }
+}
+
+/**
+ * The Scenarios tab (the iOS example's first tab): every scenario of the placeholder catalog in three sections, the
+ * configuration files, and a language button. A row opens the scenario's page; the system back button returns.
+ */
+class ScenariosPage : StackPage() {
+
+    override fun root(): View = list()
+
+    // MARK: - The list
 
     private fun list(): View {
         val context = requireContext()
@@ -182,22 +212,6 @@ class ScenariosPage : Fragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             (holder.itemView as TextView).text = holder.itemView.context.t(R.string.merged_format_item, position + 1)
         }
-    }
-
-    internal fun bar(context: Context, title: String, vararg buttons: Button): View = LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
-        setPadding(context.dp(8f), 0, context.dp(8f), 0)
-        addView(Button(context).apply { text = "‹"; contentDescription = null; setOnClickListener { pop() } })
-        addView(TextView(context).apply { text = title; textSize = 18f; ViewCompat.setAccessibilityHeading(this, true) }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-        buttons.forEach { addView(it) }
-    }
-
-    internal fun page(context: Context, bar: View, content: View): View = LinearLayout(context).apply {
-        orientation = LinearLayout.VERTICAL
-        setBackgroundColor(Color.WHITE)
-        addView(bar)
-        addView(content, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
     }
 
     private fun detail(scenario: CYLPlaceholderScenario): View {

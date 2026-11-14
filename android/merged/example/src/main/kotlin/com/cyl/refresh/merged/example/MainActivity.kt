@@ -56,7 +56,7 @@ object ExamplePages {
         registry.registerPageProvider({ _, _ -> ScenariosPage() }, listOf("placeholder"))
         registry.registerPageProvider({ _, _ -> SVPullToRefreshPage() }, listOf("svpulltorefresh"))
         registry.registerPageProvider({ _, _ -> UltraPullToRefreshPage() }, listOf("ultraptr"))
-        registry.registerPageProvider({ _, _ -> SmartRefreshPage() }, listOf("smartrefresh"))
+        registry.registerPageProvider({ _, _ -> RefreshExamplesPage() }, listOf("refresh"))
         registry.registerPageProvider({ _, _ -> FeedPage() }, listOf("feed"))
     }
 }

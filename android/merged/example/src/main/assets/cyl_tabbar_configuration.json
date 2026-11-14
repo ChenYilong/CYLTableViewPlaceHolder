@@ -29,11 +29,11 @@
       "CYLTabBarItemSelectedImage": "system:arrow.clockwise"
     },
     {
-      "CYLTabBarItemIdentifier": "smartrefresh",
-      "CYLTabBarItemTitle": "tab.smartrefresh",
-      "CYLTabBarItemAccessibilityLabel": "tab.smartrefresh",
-      "CYLTabBarItemImage": "system:sparkles",
-      "CYLTabBarItemSelectedImage": "system:sparkles"
+      "CYLTabBarItemIdentifier": "refresh",
+      "CYLTabBarItemTitle": "tab.refresh",
+      "CYLTabBarItemAccessibilityLabel": "tab.refresh",
+      "CYLTabBarItemImage": "system:arrow.clockwise.circle",
+      "CYLTabBarItemSelectedImage": "system:arrow.clockwise.circle.fill"
     },
     {
       "CYLTabBarItemIdentifier": "feed",
