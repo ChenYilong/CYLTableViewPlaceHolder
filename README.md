@@ -953,6 +953,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program HUD: loading, progress, scenario under a mask, dark error](docs/assets/wechat-miniprogram-hud.png)
 
+| 中文 | English |
+| --- | --- |
+| Lottie 动效与播放控制（全部播放、倍速、循环）：无内容（2 倍速、不循环）、空购物车、提交成功。同一模拟器与基础库，提交 `f8089ef`，2026-11-15 12:37（+13:00）。 | Lottie animations with playback controls (Play all, speed, loop): no content (2×, no loop), empty cart, success. Same simulator and base library, commit `f8089ef`, 2026-11-15 12:37 (+13:00). |
+
+![WeChat Mini Program Lottie animations with Play all, speed and loop](docs/assets/wechat-miniprogram-animation.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |

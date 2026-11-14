@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 82)
+### TODO: WeChat Mini Program placeholder package (score 88)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -53,19 +53,22 @@
   4. `node --test` unit tests for the catalog and the localization.
   5. Open the example with the DevTools skill (`project_import`, `open_project_window`, `simulator_screenshot`),
      store the screenshot in `docs/`, update the README.
-- **Score: 82 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
-  simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD) ported and checked in the simulator; README section with
-  screenshots added. Left: items 1–4 below.
+- **Score: 88 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
+  simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD) ported; Lottie animations for 31 scenarios with "Play all",
+  speed and loop controls; all checked in the simulator; README section with screenshots added. Left: items 1–4
+  below.
 - **Remaining work (TODO):**
   1. Check on a real phone (preview). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
      times out with `connect_failed` even while logged in, so the simulator run used the classic CLI
      (`wechatidecli open` / `auto`) and miniprogram-automator instead of the skill tools. DevTools refuses
      `touristappid` ("There is no such AppID", code 10): set a real AppID in the git-ignored
      `project.private.config.json`.
-  2. Animated icons: iOS / Android play Lottie / PAG / Rive / GIF files per scenario
-     (`animationFileNamesForScenario`). The mini program shows the static icon only. When animations are added (for
-     example with CYLTabBarController's `lottie-miniprogram`), the example page needs "Play all", a speed slider and
-     a loop switch (`docs/Example-Animation-Playback.md`).
+  2. Animations (`f8089ef`): Lottie done for the 31 scenarios whose file list has a `CYLPlaceholder*.json`; the
+     example has "Play all", a speed slider and a loop switch. Left: PAG / Rive / GIF variants (TitleAboveIllustration
+     PAG, Uploading GIF, Success Rive; the mini program shows those scenarios' static icon or the first JSON variant),
+     choosing a variant per scenario, Lottie on the HUD (`loadingAnimationFileName`), Dark Mode colors (`colors` of
+     cyl-lottie). The example's player comes from a CYLTabBarController checkout (`CYL_TABBAR_DIR`, default: next to
+     this repository); the package itself has no dependency (the `animation` generic defaults to no player).
   3. `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not ported yet.
      `CYLPlaceholderHUD` is ported (`dfc0495`) except: the appear / disappear / touch notifications (one `touch`
      event instead), haptics, `offsetFromCenter`, `minimumSize`, colors / font / corner radius properties,
@@ -106,7 +109,9 @@
 | `CYLPlaceholderStackView.interactive` | `interactive` property | |
 | `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.setLanguage` or the `language` property | Falls back to the WeChat client language |
 | `CYLPlaceholderHUD` `show`, `showWithStatus`, `showProgress(:status:)`, `setStatus`, `showInfo/Success/ErrorWithStatus`, `showImage`, `showScenario`, `showComponents`, `popActivity`, `dismiss(WithDelay)(completion)`, `visible`, `displayDurationForString`, `state`, `status`, `progress`, `activityCount`, `style`, `maskType`, `graceTimeInterval`, `minimum/maximumDismissTimeInterval`, `fadeIn/OutAnimationDuration` | same names on `selectComponent('#hud').hud` | Actions of components in the box arrive as the `action` event instead of an `actions` map |
-| `animationFileNamesForScenario`, `CYLPlaceholderConfiguration` | — | TODO (see above) |
+| `animationFileNamesForScenario` | same name, plus `lottieFileNameForScenario` | Same lists as Kotlin; tested |
+| Animated placeholder icons (Lottie / PAG / Rive / GIF players) | `animated`, `speed`, `loop` properties, `playAll()`, `generic:animation="cyl-lottie"` | Lottie only |
+| `CYLPlaceholderConfiguration` | — | TODO (see above) |
 
 ## 验证 / Verification
 
@@ -127,4 +132,10 @@
   button sends `CYLPlaceholderActionRetry` (the page dismisses the HUD); the dark error HUD shows "Couldn't load".
   The simulator showed the HUD scenario box empty at first (a mini program turns a `null` Array property into `[]`,
   which replaced the scenario's components); fixed in `dfc0495`. Screenshot: `docs/assets/wechat-miniprogram-hud.png`.
+- 2026-11-15 12:37 (+13:00), commit `f8089ef`, same simulator: `npm test` passes 17 / 17 (new: the file lists match
+  the Kotlin `iconFiles`, every main icon carries a shipped Lottie file, the default generic exists). All 31 animated
+  scenario pages render a `cyl-lottie` player with no console errors; on NoContent, speed 2 and loop off reach the
+  lottie instance (`playSpeed` 2, `loop` false) and "Play all" restarts it (frame 387 → 9). Screenshot:
+  `docs/assets/wechat-miniprogram-animation.png`. `fs.cpSync` crashed Node 22 on Windows (0xC0000409) when copying
+  from the CYLTabBarController checkout; the sync script now copies file by file.
 - Not verified: a real phone.
