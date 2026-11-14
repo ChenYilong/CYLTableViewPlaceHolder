@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：49 / 100**（done + 0.5 × partial，共 804 个计入的符号；done 370、partial 49、planned 385、n/a 100）。 | **Migration score: 49 / 100** (done + 0.5 × partial over 804 counted symbols; done 370, partial 49, planned 385, n/a 100). |
+| **迁移完成率：54 / 100**（done + 0.5 × partial，共 801 个计入的符号；done 403、partial 52、planned 346、n/a 103）。 | **Migration score: 54 / 100** (done + 0.5 × partial over 801 counted symbols; done 403, partial 52, planned 346, n/a 103). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -1084,31 +1084,31 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderLocalization` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `supportedLanguages` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `language` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `effectiveLanguage` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderLocalization` `+new` | — | planned (TODO) |  |
+| `CYLPlaceholderLocalization` | `com.cyl.placeholder.CYLPlaceholderLocalization` | done |  |
+| `CYLPlaceholderLocalization` `supportedLanguages` | `CYLPlaceholderLocalization.supportedLanguages` | done |  |
+| `CYLPlaceholderLocalization` `language` | `CYLPlaceholderLocalization.language` | done |  |
+| `CYLPlaceholderLocalization` `effectiveLanguage` | `CYLPlaceholderLocalization.effectiveLanguage` | done |  |
+| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | `CYLPlaceholderLocalization.localizedStringForKey(context, key, fallback)` | done |  |
+| `CYLPlaceholderLocalization` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderLocalization` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderNetworkStatus` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkStatusBlock` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `networkStatus` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `reachable` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `constrained` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `expensive` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `monitoring` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | — | planned (TODO) |  |
-| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | — | planned (TODO) |  |
+| `CYLPlaceholderNetworkStatus` | `com.cyl.placeholder.CYLPlaceholderNetworkStatus` | done |  |
+| `CYLPlaceholderNetworkStatusBlock` | `com.cyl.placeholder.CYLPlaceholderNetworkStatusBlock` | done |  |
+| `CYLPlaceholderNetworkMonitor` | `com.cyl.placeholder.CYLPlaceholderNetworkMonitor` | done |  |
+| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | `CYLPlaceholderNetworkMonitor.sharedMonitor(context)` | done |  |
+| `CYLPlaceholderNetworkMonitor` `networkStatus` | `CYLPlaceholderNetworkMonitor.networkStatus` | done |  |
+| `CYLPlaceholderNetworkMonitor` `reachable` | `CYLPlaceholderNetworkMonitor.reachable` | done |  |
+| `CYLPlaceholderNetworkMonitor` `constrained` | `CYLPlaceholderNetworkMonitor.constrained` | done |  |
+| `CYLPlaceholderNetworkMonitor` `expensive` | `CYLPlaceholderNetworkMonitor.expensive` | done |  |
+| `CYLPlaceholderNetworkMonitor` `monitoring` | `CYLPlaceholderNetworkMonitor.monitoring` | done |  |
+| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | `CYLPlaceholderNetworkMonitor.startMonitoring` | done |  |
+| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | `CYLPlaceholderNetworkMonitor.stopMonitoring` | done |  |
+| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | `CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock` | done |  |
+| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | `CYLPlaceholderNetworkMonitor.nameForStatus` | done |  |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`
 
@@ -1179,19 +1179,19 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderStatusViewDelegate` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusViewTapHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `delegate` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `-initWithFrame:` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | — | planned (TODO) |  |
+| `CYLPlaceholderStatusViewDelegate` | `com.cyl.placeholder.CYLPlaceholderStatusViewDelegate` | done |  |
+| `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | `CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)` | done |  |
+| `CYLPlaceholderStatusViewTapHandler` | `com.cyl.placeholder.CYLPlaceholderStatusViewTapHandler` | done |  |
+| `CYLPlaceholderStatusView` | `com.cyl.placeholder.CYLPlaceholderStatusView` | partial | creating one from a configuration is TODO |
+| `CYLPlaceholderStatusView` `delegate` | `CYLPlaceholderStatusView.delegate` | done |  |
+| `CYLPlaceholderStatusView` `-initWithFrame:` | `CYLPlaceholderStatusView(context)` | done |  |
+| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusView(context, attributes)` | partial | the title, image and title color keys |
+| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | `CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)` | done |  |
 | `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `-initWithCoder:` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `placeholderView` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `text` | — | planned (TODO) |  |
-| `CYLPlaceholderStatusView` `tapHandler` | — | planned (TODO) |  |
+| `CYLPlaceholderStatusView` `-initWithCoder:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderStatusView` `placeholderView` | `CYLPlaceholderStatusView.placeholderView` | done |  |
+| `CYLPlaceholderStatusView` `text` | `CYLPlaceholderStatusView.text` | done |  |
+| `CYLPlaceholderStatusView` `tapHandler` | `CYLPlaceholderStatusView.tapHandler` | done |  |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderView.h`
 
@@ -1312,13 +1312,13 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderStatusDisplay` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | — | planned (TODO) |  |
+| `CYLPlaceholderStatusDisplay` | `com.cyl.placeholder.CYLPlaceholderStatusDisplay` | done | Int flags combined with or |
+| `UIViewController(CYLPlaceholderStatus)` | `Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)` | done | the Activity is the view controller's counterpart |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | `Activity.cyl_statusView` | done |  |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | `Activity.cyl_placeholderScrollView` | partial | kept; the placeholder covers the activity's content |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | `Activity.cyl_statusDisplay` | done |  |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | `Activity.cyl_setStatusDisplay(display, animated)` | done |  |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | `Activity.cyl_showsStatusViewWhenOffline` | done |  |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | — | planned (TODO) |  |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | — | planned (TODO) |  |
 | `UIScrollView(CYLPlaceholderVisibility)` | `RecyclerView extensions` | done |  |

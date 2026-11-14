@@ -494,9 +494,89 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderHUDStyle"
  },
+ "CYLPlaceholderLocalization": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderLocalization"
+ },
+ "CYLPlaceholderLocalization +localizedStringForKey:fallback:": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.localizedStringForKey(context, key, fallback)"
+ },
+ "CYLPlaceholderLocalization +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderLocalization -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderLocalization effectiveLanguage": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.effectiveLanguage"
+ },
+ "CYLPlaceholderLocalization language": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.language"
+ },
+ "CYLPlaceholderLocalization supportedLanguages": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.supportedLanguages"
+ },
  "CYLPlaceholderMessage": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderMessage"
+ },
+ "CYLPlaceholderNetworkMonitor": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkMonitor"
+ },
+ "CYLPlaceholderNetworkMonitor +nameForStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.nameForStatus"
+ },
+ "CYLPlaceholderNetworkMonitor -setNetworkStatusChangeBlock:": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock"
+ },
+ "CYLPlaceholderNetworkMonitor -startMonitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.startMonitoring"
+ },
+ "CYLPlaceholderNetworkMonitor -stopMonitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.stopMonitoring"
+ },
+ "CYLPlaceholderNetworkMonitor constrained": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.constrained"
+ },
+ "CYLPlaceholderNetworkMonitor expensive": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.expensive"
+ },
+ "CYLPlaceholderNetworkMonitor monitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.monitoring"
+ },
+ "CYLPlaceholderNetworkMonitor networkStatus": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.networkStatus"
+ },
+ "CYLPlaceholderNetworkMonitor reachable": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.reachable"
+ },
+ "CYLPlaceholderNetworkMonitor sharedMonitor": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.sharedMonitor(context)"
+ },
+ "CYLPlaceholderNetworkStatus": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkStatus"
+ },
+ "CYLPlaceholderNetworkStatusBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkStatusBlock"
  },
  "CYLPlaceholderPermission": {
   "status": "done",
@@ -631,6 +711,61 @@
  "CYLPlaceholderStackView stackView": {
   "status": "done",
   "android": "CYLPlaceholderStackView.stackView"
+ },
+ "CYLPlaceholderStatusDisplay": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusDisplay",
+  "note": "Int flags combined with or"
+ },
+ "CYLPlaceholderStatusView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusView",
+  "note": "creating one from a configuration is TODO"
+ },
+ "CYLPlaceholderStatusView -initWithCoder:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderStatusView -initWithFrame:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView(context)"
+ },
+ "CYLPlaceholderStatusView -initWithItemAttributes:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderStatusView(context, attributes)",
+  "note": "the title, image and title color keys"
+ },
+ "CYLPlaceholderStatusView delegate": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.delegate"
+ },
+ "CYLPlaceholderStatusView networkUnavailableItemAttributes": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)"
+ },
+ "CYLPlaceholderStatusView placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.placeholderView"
+ },
+ "CYLPlaceholderStatusView tapHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.tapHandler"
+ },
+ "CYLPlaceholderStatusView text": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.text"
+ },
+ "CYLPlaceholderStatusViewDelegate": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusViewDelegate"
+ },
+ "CYLPlaceholderStatusViewDelegate -statusViewClicked:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)"
+ },
+ "CYLPlaceholderStatusViewTapHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusViewTapHandler"
  },
  "CYLPlaceholderStyle": {
   "status": "done",
@@ -2160,5 +2295,31 @@
  "UIView(CYLExtension) cyl_y": {
   "status": "n/a",
   "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIViewController(CYLPlaceholderStatus)": {
+  "status": "done",
+  "android": "Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)",
+  "note": "the Activity is the view controller's counterpart"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_setStatusDisplay:animated:": {
+  "status": "done",
+  "android": "Activity.cyl_setStatusDisplay(display, animated)"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_placeholderScrollView": {
+  "status": "partial",
+  "android": "Activity.cyl_placeholderScrollView",
+  "note": "kept; the placeholder covers the activity's content"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_showsStatusViewWhenOffline": {
+  "status": "done",
+  "android": "Activity.cyl_showsStatusViewWhenOffline"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_statusDisplay": {
+  "status": "done",
+  "android": "Activity.cyl_statusDisplay"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_statusView": {
+  "status": "done",
+  "android": "Activity.cyl_statusView"
  }
 }

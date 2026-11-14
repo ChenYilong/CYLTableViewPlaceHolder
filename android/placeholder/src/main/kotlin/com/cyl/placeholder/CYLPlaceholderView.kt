@@ -620,7 +620,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
          * [message]'s localized text (`localizedTextForMessage:`).
          */
         @JvmStatic
-        fun localizedTextForMessage(context: Context, message: CYLPlaceholderMessage): String = context.getString(
+        fun localizedTextForMessage(context: Context, message: CYLPlaceholderMessage): String = CYLPlaceholderLocalization.localizedContext(context).getString(
             when (message) {
                 CYLPlaceholderMessage.Empty -> R.string.cyl_placeholder_empty_text
                 CYLPlaceholderMessage.NoResults -> R.string.cyl_placeholder_no_results_text

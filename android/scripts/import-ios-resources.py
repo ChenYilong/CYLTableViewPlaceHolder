@@ -20,6 +20,8 @@ IMAGES = [
     'Inbox', 'BrokenImage', 'ImageUnavailable', 'PhotoLibrary', 'MusicOff', 'VideoOff', 'PersonOff', 'GroupOff', 'EventBusy',
     'EmptyCart', 'Favorite', 'BatteryAlert', 'UnknownDevice', 'PhoneDisabled', 'WrongLocation', 'Archive', 'Info', 'Refresh',
     'Delete', 'Search', 'Mail', 'Image', 'Cloud', 'NotificationsOff', 'History',
+    # The status banner's icon (CYLPlaceholderStatusView).
+    'StatusFail',
 ]
 LANGS = {'en': 'values', 'ja': 'values-ja', 'ko': 'values-ko', 'ru': 'values-ru', 'uk': 'values-uk',
          'zh-Hans': 'values-b+zh+Hans', 'zh-Hant': 'values-b+zh+Hant'}

@@ -396,7 +396,9 @@ object CYLPlaceholderScenarioCatalog {
      * The localized title of an action's button, or null for an unknown action (`localizedTitleForAction:`).
      */
     @JvmStatic
-    fun localizedTitleForAction(context: Context, action: String): String? = when (action) {
+    fun localizedTitleForAction(context: Context, action: String): String? = localizedTitle(CYLPlaceholderLocalization.localizedContext(context), action)
+
+    private fun localizedTitle(context: Context, action: String): String? = when (action) {
         CYLPlaceholderAction.Retry -> context.getString(R.string.cyl_placeholder_action_retry_title)
         CYLPlaceholderAction.ContactSupport -> context.getString(R.string.cyl_placeholder_action_contact_support_title)
         CYLPlaceholderAction.OpenSettings -> context.getString(R.string.cyl_placeholder_action_open_settings_title)
@@ -414,7 +416,7 @@ object CYLPlaceholderScenarioCatalog {
         // The resource names of scripts/import-ios-resources.py: "NoContent" -> no_content ("HUD" -> h_u_d).
         val key = "cyl_placeholder_scenario_" + scenario.name.replace(Regex("(?<!^)(?=[A-Z])"), "_").lowercase() + "_name"
         val id = context.resources.getIdentifier(key, "string", context.packageName)
-        return if (id != 0) context.getString(id) else scenario.name
+        return if (id != 0) CYLPlaceholderLocalization.localizedContext(context).getString(id) else scenario.name
     }
 
     /**
@@ -553,7 +555,9 @@ object CYLPlaceholderScenarioCatalog {
      */
     @JvmStatic
     fun componentsForScenario(context: Context, scenario: CYLPlaceholderScenario): List<CYLPlaceholderComponent> {
-        fun t(@StringRes id: Int) = context.getString(id)
+        // The texts follow CYLPlaceholderLocalization.language when one is set.
+        val localized = CYLPlaceholderLocalization.localizedContext(context)
+        fun t(@StringRes id: Int) = localized.getString(id)
         fun icon(@DrawableRes image: Int, @StringRes title: Int?, side: Float = ICON_SIDE, tinted: Boolean = true) =
             CYLPlaceholderComponent.icon(image, title?.let { t(it) }, side, tinted)
         fun hint(@StringRes id: Int) = CYLPlaceholderComponent.hintComponentWithText(t(id))
