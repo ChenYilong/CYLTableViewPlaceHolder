@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (uk): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "Авто";
+"CYLPlaceholderExampleFormatRandomData" = "Випадкові дані - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "Мережа працює не дуже стабільно~";
+"CYLPlaceholderExampleNetReloaderReload" = "Перезавантажити";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "Даних поки немає. Торкніться екрана, щоб перезавантажити.";
+"CYLPlaceholderExampleTitleAutomatic" = "Автоматична заглушка";
+"CYLPlaceholderExampleModeLabel" = "Тип списку";
+"CYLPlaceholderExampleModeTable" = "Таблиця";
+"CYLPlaceholderExampleModeCollection" = "Колекція";
+"CYLPlaceholderExampleActionStyles" = "Стилі";
+"CYLPlaceholderExampleActionClear" = "Очистити";
+"CYLPlaceholderExampleActionDisable" = "Вимкнути";
+"CYLPlaceholderExampleActionEnable" = "Увімкнути";
+"CYLPlaceholderExampleFormatItem" = "Елемент %ld";
+"CYLPlaceholderExampleTitleStyles" = "Стилі заглушок";
+"CYLPlaceholderExampleStyleCustomImage" = "Власне зображення";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign: налаштування в коді";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign: налаштування в plist";
+"CYLPlaceholderExampleStyleBadgeDot" = "Бейдж: крапка";
+"CYLPlaceholderExampleStyleBadgeNumber" = "Бейдж: число";
+"CYLPlaceholderExampleStyleBadgeText" = "Бейдж: власний текст";
+"CYLPlaceholderExampleBadgeNew" = "Нове";
+"CYLPlaceholderExampleTitleBadgePreview" = "Попередній перегляд бейджа";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "Елемент FlatDesign";
+"CYLPlaceholderExampleTitleConfigurationError" = "Помилка конфігурації";
+"CYLPlaceholderExampleFormatMissingFile" = "У bundle прикладу немає файлу %@.";
+"CYLPlaceholderExampleActionOK" = "Гаразд";
+"CYLPlaceholderExampleTitleChooseMessage" = "Виберіть повідомлення";
+"CYLPlaceholderExampleCustomText" = "Власний текст";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "Ваше повідомлення";
+"CYLPlaceholderExampleActionCancel" = "Скасувати";
+"CYLPlaceholderExampleActionPreview" = "Перегляд";

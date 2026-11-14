@@ -1,0 +1,4 @@
+/* Overrides CYLRefresh.strings when CYLRefreshConfig.default.i18nFilename is "CYLRefreshCustom". */
+"CYLRefreshHeaderIdleText" = "🍬 Pull down, custom table";
+"CYLRefreshHeaderPullingText" = "🍬 Let go, custom table";
+"CYLRefreshHeaderRefreshingText" = "🍬 Loading, custom table";

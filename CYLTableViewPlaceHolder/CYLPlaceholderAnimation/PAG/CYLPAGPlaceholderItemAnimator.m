@@ -56,6 +56,14 @@
     [pagView flush];
 }
 
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount {
+    PAGView *pagView = self.pagView;
+    if (!pagView || repeatCount < 0 || repeatCount > INT_MAX) return NO;
+    // [EN] libpag: 0 repeats forever. [CN] libpag：0 表示无限循环。
+    [pagView setRepeatCount:(int)repeatCount];
+    return YES;
+}
+
 - (CGFloat)progress {
     return (CGFloat)[self.pagView getProgress];
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>components</key>
+	<array>
+		<dict>
+			<key>type</key>
+			<string>icon</string>
+			<key>animation</key>
+			<string>CYLPlaceholderCloudOff.json</string>
+			<key>style</key>
+			<string>CloudOff</string>
+			<key>size</key>
+			<array>
+				<integer>160</integer>
+				<integer>160</integer>
+			</array>
+			<key>repeatCount</key>
+			<string>loop</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<string>button</string>
+			<key>buttonStyle</key>
+			<string>capsule</string>
+			<key>titleKey</key>
+			<string>CYLPlaceholderScenarioTapToRetryTitle</string>
+			<key>action</key>
+			<string>retry</string>
+			<key>highlightStyle</key>
+			<string>shrink</string>
+		</dict>
+	</array>
+</dict>
+</plist>

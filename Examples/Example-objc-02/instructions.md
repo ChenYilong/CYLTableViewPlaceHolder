@@ -4,6 +4,14 @@ This folder contains the issue 1523 collection reproduction adapted from the
 upstream example, plus a paging table. Preserve the upstream copyright and
 license; inherit the repository instructions.
 
+The app and its UI tests are Swift (translated from Objective-C on 2026-11-11);
+the folder name and the `ExampleObjC02` scheme and targets keep "objc" because
+CI and artifact names depend on them. User-facing text lives in
+`Sources/CYLObjC02Example.bundle/<language>.lproj/CYLObjC02Example.strings`,
+read through `CYLObjC02LocalizedString(_:)` and the `CYLObjC02L10n` keys in
+`Sources/CYLObjC02Localization.swift`. The UI tests run in English and match
+the English values exactly, so change them only together with the tests.
+
 ## Linked issues
 
 | Issue | Problem | Screen | Status (docs/issue-progress.md) |
@@ -11,7 +19,7 @@ license; inherit the repository instructions.
 | [MJRefresh #1523](https://github.com/CoderMJLee/MJRefresh/issues/1523) | `isCollectionViewAnimationBug` makes collection items flicker | Collection (default) | 30/100: gestures tested; the flicker itself is not reproduced or fixed |
 | [MJRefresh #1506](https://github.com/CoderMJLee/MJRefresh/issues/1506) | Collection animation goes wrong when loading with a large pull | Collection (default) | 25/100: a large pull triggers and ends loading; drift and flicker not checked |
 | [MJRefresh #1483](https://github.com/CoderMJLee/MJRefresh/issues/1483) | Items move up after repeated header refreshes | Collection (default) | 50/100: inset restore fixed; dragging again while refreshing not reproduced |
-| [MJRefresh #1430](https://github.com/CoderMJLee/MJRefresh/issues/1430) | After a refresh restores the offset, the next swipe jumps to the first item | Paging (`-paging`) | 45/100: the jump is not reproduced; the footer case is still offset (fails) |
+| [MJRefresh #1430](https://github.com/CoderMJLee/MJRefresh/issues/1430) | After a refresh restores the offset, the next swipe jumps to the first item | Paging (`-paging`) | 85/100: the jump is not reproduced; the footer case is fixed (CI run 42982378759); iOS 13 and devices not checked |
 
 ## Run
 
@@ -53,9 +61,8 @@ launch argument `-paging` (Edit Scheme → Run → Arguments) for the paging tab
    restores to `page-2`.
 2. Swipe up once. Bug: it jumps back to `page-0`. Expected: `page-3`.
 3. Footer case: tap **Last page** (`page-7`), pull up to load more, wait for
-   **Load completed**. Bug (still open): the page is offset by about 140–190
-   points instead of staying in place, and the next swipe does not land on
-   `page-8`.
+   **Load completed**. The page stays in place and the next swipe lands on
+   `page-8` (it was offset by about 190 points before the fix).
 
 ## Automated tests
 
@@ -66,6 +73,7 @@ xcodebuild test -workspace Examples/Example-objc-02/Example-objc-02.xcworkspace 
 
 `CYLCollectionAnimationUITests` covers #1523/#1506 (header and footer complete)
 and #1483 (first item position after four refreshes). `CYLPagingUITests`
-covers #1430; `testAppendingPageRestoresPreviousPageAfterFooterRefresh` is
-expected to fail until the footer case is fixed (also with the old app
-delegate, on iOS 17.5 and 26.1).
+covers #1430. `testAppendingPageRestoresPreviousPageAfterFooterRefresh` failed
+with the page 194 points off after the footer load (CI run 42978002507); the
+back footer now returns a paging scroll view left between pages to its page,
+and the test passes (CI run 42982378759, `docs/issue-progress.md`, "#1430").

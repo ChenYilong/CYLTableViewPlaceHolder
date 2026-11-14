@@ -1,0 +1,15 @@
+/* Example-objc-02 text (uk). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. */
+"CYLObjC02TitleCollection" = "Анімація колекції";
+"CYLObjC02TitleHeaderRefreshing" = "Оновлення заголовка";
+"CYLObjC02FormatHeaderCompleted" = "Заголовок оновлено %ld";
+"CYLObjC02TitleFooterRefreshing" = "Завантаження внизу";
+"CYLObjC02TitleFooterCompleted" = "Завантаження внизу завершено";
+"CYLObjC02FormatItem" = "Елемент %ld";
+"CYLObjC02TitlePaging" = "Посторінкове гортання";
+"CYLObjC02TitleRefreshCompleted" = "Оновлення завершено";
+"CYLObjC02TitleLoadCompleted" = "Завантаження завершено";
+"CYLObjC02ActionRefresh" = "Оновити";
+"CYLObjC02ActionLastPage" = "Остання сторінка";
+"CYLObjC02HintRefresh" = "Оновлює таблицю й повертає на сторінку 2.";
+"CYLObjC02HintLastPage" = "Гортає до останньої сторінки.";
+"CYLObjC02FormatPage" = "Сторінка %ld";

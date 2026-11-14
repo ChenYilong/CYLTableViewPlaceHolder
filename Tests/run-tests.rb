@@ -23,10 +23,18 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     # Any newer API the suite or the library uses without @available fails the build at a low deployment target.
     config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Werror=unguarded-availability-new'
   end
-  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m',
+  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
+   'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshSmartAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
@@ -38,12 +46,13 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderAnimation\""
+    # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
+    config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
   end
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))
   end
-  resource = project.main_group.new_file(File.join(refresh_dir, 'CYLRefresh.bundle'))
-  target.resources_build_phase.add_file_reference(resource)
+  # One resource bundle holds the placeholder and refresh localizations and images.
   placeholder_bundle = project.main_group.new_file(File.join(root, 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle'))
   target.resources_build_phase.add_file_reference(placeholder_bundle)
   project.save

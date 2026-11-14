@@ -4,6 +4,11 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "CYLRefresh.h"
 
+/// Upper bound for condition-based waits. UIView animation completions, even for 0-second
+/// animations, have stalled for over 5 s on loaded CI runners; waits still end as soon as the
+/// expectation is fulfilled, so a generous bound costs nothing when tests pass.
+static const NSTimeInterval CYLTestTimeout = 30;
+
 @interface NSBundle (CYLTestMissingRefreshBundle)
 + (NSBundle *)cyl_testMissingRefreshBundle;
 @end
@@ -106,6 +111,28 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 2; }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return section == 1 ? self.rows : 0;
+}
+@end
+
+/// Two empty sections with custom section headers; the placeholder starts below the last one (issue #16).
+@interface CYLSectionHeaderSource : NSObject <UITableViewDataSource, UITableViewDelegate, CYLTableViewPlaceHolderDelegate>
+@property (nonatomic, strong) UIView *view;
+@end
+@implementation CYLSectionHeaderSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 2; }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return 0; }
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section { return 30; }
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(tableView.bounds), 30)];
+}
+- (UIView *)makePlaceHolderView { return self.view; }
+- (CGRect)frameForPlaceHolderViewInTableView:(UITableView *)tableView {
+    NSInteger lastSection = [tableView numberOfSections] - 1;
+    CGFloat top = lastSection >= 0 ? CGRectGetMaxY([tableView rectForHeaderInSection:lastSection]) : 0;
+    return CGRectMake(0, top, CGRectGetWidth(tableView.bounds), MAX(0, CGRectGetHeight(tableView.bounds) - top));
 }
 @end
 
@@ -216,6 +243,52 @@
     XCTAssertEqual(source.view.superview, self.table);
 }
 
+- (void)testDefaultPlaceholderKeepsRefreshControlsVisible {
+    UIView *tableHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+    self.table.tableHeaderView = tableHeader;
+    self.table.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    self.table.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    for (NSUInteger pass = 0; pass < 2; pass++) {
+        [self.table cyl_reloadData];
+        NSArray<UIView *> *subviews = self.table.subviews;
+        NSUInteger placeholderIndex = [subviews indexOfObject:self.source.view];
+        XCTAssertNotEqual(placeholderIndex, NSNotFound);
+        // The placeholder still covers ordinary content but stays below refresh controls (issue #8).
+        XCTAssertGreaterThan(placeholderIndex, [subviews indexOfObject:tableHeader]);
+        XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_footer], placeholderIndex);
+        XCTAssertGreaterThan([subviews indexOfObject:self.table.cyl_header], placeholderIndex);
+        XCTAssertTrue(CGRectEqualToRect(self.source.view.frame, CGRectMake(0, 0, 320, 480)));
+    }
+}
+
+- (void)testCustomFrameLeavesSectionHeadersOutsidePlaceholder {
+    CYLSectionHeaderSource *source = [CYLSectionHeaderSource new];
+    source.view = [UIView new];
+    self.table.dataSource = source;
+    self.table.delegate = source;
+    UIView *tableHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+    self.table.tableHeaderView = tableHeader;
+    for (NSValue *size in @[[NSValue valueWithCGSize:CGSizeMake(320, 480)], [NSValue valueWithCGSize:CGSizeMake(480, 320)]]) {
+        // Rotation: the app reloads after the size changes and the frame is recomputed.
+        self.table.frame = (CGRect){CGPointZero, size.CGSizeValue};
+        [self.table cyl_reloadData];
+        [self.table layoutIfNeeded];
+        CGRect placeholder = source.view.frame;
+        XCTAssertEqual(source.view.superview, self.table);
+        XCTAssertEqualWithAccuracy(CGRectGetWidth(placeholder), size.CGSizeValue.width, 0.001);
+        XCTAssertGreaterThan(CGRectGetHeight(placeholder), 0);
+        XCTAssertFalse(CGRectIntersectsRect(placeholder, tableHeader.frame), @"%@ vs table header %@",
+                       NSStringFromCGRect(placeholder), NSStringFromCGRect(tableHeader.frame));
+        for (NSInteger section = 0; section < 2; section++) {
+            CGRect header = [self.table rectForHeaderInSection:section];
+            XCTAssertGreaterThan(CGRectGetHeight(header), 0);
+            XCTAssertFalse(CGRectIntersectsRect(placeholder, header), @"%@ vs section %ld header %@ at %@",
+                           NSStringFromCGRect(placeholder), (long)section, NSStringFromCGRect(header),
+                           NSStringFromCGSize(size.CGSizeValue));
+        }
+    }
+}
+
 - (void)testRefreshFooterCanRemainOutsidePlaceholder {
     CYLRefreshSource *source = [CYLRefreshSource new];
     source.view = [UIView new];
@@ -278,13 +351,13 @@
     self.table.cyl_header.fastAnimationDuration = 0;
     self.table.cyl_header.slowAnimationDuration = 0;
     [self.table.cyl_header beginRefreshing];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTAssertTrue(self.table.cyl_header.isRefreshing);
     XCTestExpectation *ended = [self expectationWithDescription:@"refresh completion"];
     [self.table.cyl_header endRefreshingWithCompletionBlock:^{
         [ended fulfill];
     }];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertFalse(self.table.cyl_header.isRefreshing);
     self.table.cyl_header = nil;
     window.hidden = YES;
@@ -330,7 +403,7 @@
         XCTAssertEqual(component.state, CYLRefreshStateWillRefresh);
         XCTAssertEqual(callbacks, 0u);
         [window.rootViewController.view addSubview:scrollView];
-        [self waitForExpectations:@[started] timeout:5];
+        [self waitForExpectations:@[started] timeout:CYLTestTimeout];
         XCTAssertEqual(component.state, CYLRefreshStateRefreshing);
         XCTAssertEqual(callbacks, 1u);
         [component endRefreshing];
@@ -353,7 +426,7 @@
     [footer endRefreshing];
     XCTestExpectation *nextTurn = [self expectationWithDescription:@"pending transition processed"];
     dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
-    [self waitForExpectations:@[nextTurn] timeout:5];
+    [self waitForExpectations:@[nextTurn] timeout:CYLTestTimeout];
     XCTAssertEqual(footer.state, CYLRefreshStateIdle);
     XCTAssertEqual(callbacks, 0u);
     [footer removeFromSuperview];
@@ -378,11 +451,11 @@
     [scrollView removeFromSuperview];
     XCTestExpectation *nextTurn = [self expectationWithDescription:@"detached transition processed"];
     dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
-    [self waitForExpectations:@[nextTurn] timeout:5];
+    [self waitForExpectations:@[nextTurn] timeout:CYLTestTimeout];
     XCTAssertEqual(footer.state, CYLRefreshStateWillRefresh);
     XCTAssertEqual(callbacks, 0u);
     [window.rootViewController.view addSubview:scrollView];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTAssertEqual(callbacks, 1u);
     [footer endRefreshing];
     [footer removeFromSuperview];
@@ -404,11 +477,11 @@
     for (NSUInteger index = 0; index < 3; index++) {
         XCTestExpectation *started = [self expectationWithDescription:@"header started"];
         [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-        [self waitForExpectations:@[started] timeout:5];
+        [self waitForExpectations:@[started] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20 + header.cyl_h, 0.001);
         XCTestExpectation *ended = [self expectationWithDescription:@"header ended"];
         [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-        [self waitForExpectations:@[ended] timeout:5];
+        [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
     }
     self.table.cyl_header = nil;
@@ -429,7 +502,7 @@
     scrollView.cyl_triggerInsetFeedback = YES;
     XCTestExpectation *started = [self expectationWithDescription:@"header started"];
     [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     scrollView.cyl_triggerInsetFeedback = NO;
     XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1);
     XCTAssertEqualWithAccuracy(scrollView.cyl_insetT, header.cyl_h, 0.001);
@@ -441,7 +514,7 @@
     XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1);
     XCTestExpectation *ended = [self expectationWithDescription:@"header ended"];
     [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertEqualWithAccuracy(scrollView.cyl_insetT, 0, 0.001);
     scrollView.cyl_header = nil;
     window.hidden = YES;
@@ -466,7 +539,7 @@
     table.cyl_header = header;
     XCTestExpectation *started = [self expectationWithDescription:@"search header started"];
     [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     table.contentOffset = CGPointMake(0, 100);
     [controller.view layoutIfNeeded];
     [header endRefreshing];
@@ -491,11 +564,11 @@
     for (NSUInteger index = 0; index < 3; index++) {
         XCTestExpectation *started = [self expectationWithDescription:@"hidden header started"];
         [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-        [self waitForExpectations:@[started] timeout:5];
+        [self waitForExpectations:@[started] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20 + header.cyl_h, 0.001);
         XCTestExpectation *ended = [self expectationWithDescription:@"hidden header ended"];
         [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-        [self waitForExpectations:@[ended] timeout:5];
+        [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
     }
     self.table.cyl_header = nil;
@@ -521,11 +594,11 @@
         header.hidden = index % 2 == 0;
         XCTestExpectation *started = [self expectationWithDescription:@"collection header started"];
         [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-        [self waitForExpectations:@[started] timeout:5];
+        [self waitForExpectations:@[started] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(collection.cyl_insetT, 20 + header.cyl_h, 0.001);
         XCTestExpectation *ended = [self expectationWithDescription:@"collection header ended"];
         [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-        [self waitForExpectations:@[ended] timeout:5];
+        [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(collection.cyl_insetT, 20, 0.001);
         XCTAssertTrue(collection.userInteractionEnabled);
     }
@@ -547,6 +620,81 @@
     CYLRefreshConfig.defaultConfig.languageCode = @"zz-XX";
     XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText], @"Pull down to refresh");
     CYLRefreshConfig.defaultConfig.languageCode = nil;
+}
+
+- (void)testRefreshResourcesLiveInTheSingleLibraryBundle {
+    NSBundle *bundle = [NSBundle cyl_refreshBundle];
+    XCTAssertNotNil(bundle);
+    XCTAssertEqualObjects(bundle.bundlePath.lastPathComponent, @"CYLTableViewPlaceHolder.bundle");
+    // The former separate resource bundle is gone everywhere it used to be copied.
+    NSBundle *container = [NSBundle bundleForClass:CYLRefreshComponent.class];
+    XCTAssertNil([container pathForResource:@"CYLRefresh" ofType:@"bundle"]);
+    XCTAssertNil([NSBundle.mainBundle pathForResource:@"CYLRefresh" ofType:@"bundle"]);
+    XCTAssertNotNil([NSBundle cyl_arrowImage]);
+    XCTAssertNotNil([NSBundle cyl_trailArrowImage]);
+    NSArray<NSString *> *keys = @[@"CYLRefreshHeaderIdleText", @"CYLRefreshHeaderPullingText",
+        @"CYLRefreshHeaderRefreshingText", @"CYLRefreshTrailerIdleText", @"CYLRefreshTrailerPullingText",
+        @"CYLRefreshAutoFooterIdleText", @"CYLRefreshAutoFooterRefreshingText", @"CYLRefreshAutoFooterNoMoreDataText",
+        @"CYLRefreshBackFooterIdleText", @"CYLRefreshBackFooterPullingText", @"CYLRefreshBackFooterRefreshingText",
+        @"CYLRefreshBackFooterNoMoreDataText", @"CYLRefreshHeaderLastTimeText", @"CYLRefreshHeaderDateTodayText",
+        @"CYLRefreshHeaderNoneLastDateText", @"CYLRefreshHeaderFinishedText", @"CYLRefreshHeaderFailedText",
+        @"CYLRefreshFooterFinishedText", @"CYLRefreshFooterFailedText"];
+    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"]) {
+        NSString *path = [bundle pathForResource:language ofType:@"lproj"];
+        XCTAssertNotNil(path, @"Missing localization %@", language);
+        if (!path) continue;
+        NSBundle *languageBundle = [NSBundle bundleWithPath:path];
+        for (NSString *key in keys) {
+            NSString *text = [languageBundle localizedStringForKey:key value:nil table:@"CYLRefresh"];
+            XCTAssertNotEqualObjects(text, key, @"Missing %@ in %@", key, language);
+            XCTAssertTrue(text.length > 0);
+        }
+    }
+}
+
+- (void)testRefreshTrailerAndJapaneseTextsAreLocalized {
+    @try {
+        // Before the bundles were merged, the trailer texts existed only in Chinese.
+        CYLRefreshConfig.defaultConfig.languageCode = @"en";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshTrailerIdleText], @"Swipe to see details");
+        CYLRefreshConfig.defaultConfig.languageCode = @"ja-JP";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshHeaderIdleText], @"下に引っ張って更新");
+        CYLRefreshConfig.defaultConfig.languageCode = @"ko";
+        XCTAssertEqualObjects([NSBundle cyl_localizedStringForKey:CYLRefreshTrailerPullingText], @"놓으면 상세 정보 보기");
+    } @finally {
+        CYLRefreshConfig.defaultConfig.languageCode = nil;
+    }
+}
+
+- (void)testLastUpdatedTimeIsLocaleAwareAndComparesWholeDates {
+    NSString *key = @"CYLTestLastUpdatedTime";
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    @try {
+        CYLRefreshConfig.defaultConfig.languageCode = @"en-US";
+        [NSUserDefaults.standardUserDefaults setObject:[NSDate date] forKey:key];
+        header.lastUpdatedTimeKey = key;
+        XCTAssertTrue([header.lastUpdatedTimeLabel.text containsString:@"Today"], @"%@", header.lastUpdatedTimeLabel.text);
+
+        // A month ago is usually the same day of the month; it used to be shown as "Today".
+        NSDate *lastMonth = [calendar dateByAddingUnit:NSCalendarUnitMonth value:-1 toDate:[NSDate date] options:0];
+        [NSUserDefaults.standardUserDefaults setObject:lastMonth forKey:key];
+        header.lastUpdatedTimeKey = key;
+        NSString *english = header.lastUpdatedTimeLabel.text;
+        XCTAssertFalse([english containsString:@"Today"], @"%@", english);
+        // en-US uses a 12-hour clock.
+        XCTAssertTrue([english containsString:@"AM"] || [english containsString:@"PM"], @"%@", english);
+
+        // German has no built-in strings (English is used) but its locale formats a 24-hour clock.
+        CYLRefreshConfig.defaultConfig.languageCode = @"de-DE";
+        header.lastUpdatedTimeKey = key;
+        NSString *german = header.lastUpdatedTimeLabel.text;
+        XCTAssertTrue([german hasPrefix:@"Last update: "], @"%@", german);
+        XCTAssertFalse([german containsString:@"AM"] || [german containsString:@"PM"], @"%@", german);
+    } @finally {
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:key];
+        CYLRefreshConfig.defaultConfig.languageCode = nil;
+    }
 }
 
 - (void)testMissingRefreshBundleFallsBackWithoutException {
@@ -675,7 +823,7 @@
     [trailer layoutIfNeeded];
     XCTestExpectation *started = [self expectationWithDescription:@"trailer started"];
     [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTAssertGreaterThan(collection.cyl_insetR, 17);
     collection.cyl_insetR += 8;
     collection.cyl_trailer = nil;
@@ -726,7 +874,7 @@
     [trailer layoutIfNeeded];
     XCTestExpectation *started = [self expectationWithDescription:@"active trailer"];
     [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     [newView addSubview:trailer];
     XCTAssertEqualWithAccuracy(oldView.cyl_insetR, 12, 0.001);
     XCTAssertEqualWithAccuracy(newView.cyl_insetR, 24, 0.001);
@@ -762,7 +910,7 @@
     [trailer layoutIfNeeded];
     XCTestExpectation *started = [self expectationWithDescription:@"collection trailer started"];
     [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     collection.cyl_trailer = nil;
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     [layout invalidateLayout];
@@ -790,13 +938,180 @@
     [trailer layoutIfNeeded];
     XCTestExpectation *started = [self expectationWithDescription:@"trailer began"];
     [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTestExpectation *ended = [self expectationWithDescription:@"trailer ended"];
     [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 18, 0.001);
     scrollView.cyl_trailer = nil;
     XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 18, 0.001);
+    window.hidden = YES;
+}
+
+- (UIScrollView *)cyl_wideScrollViewInWindow:(UIWindow *)window contentWidth:(CGFloat)contentWidth {
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(contentWidth, window.bounds.size.height);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    return scrollView;
+}
+
+- (void)testTrailerRefreshesAutomaticallyAtTheEndWhenEnabled {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    XCTestExpectation *refreshed = [self expectationWithDescription:@"automatic trailer refresh"];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+        callbacks++;
+        [refreshed fulfill];
+    }];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    XCTAssertFalse(trailer.isAutomaticallyRefresh);
+    XCTAssertEqualWithAccuracy(trailer.triggerAutomaticallyRefreshPercent, 1.0, 0.001);
+    XCTAssertEqual(trailer.autoTriggerTimes, 1);
+    trailer.automaticallyRefresh = YES;
+    trailer.triggerAutomaticallyRefreshPercent = 0.5;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    // The end of the content is at 680; half of the 60 pt trailer is 30 pt.
+    scrollView.contentOffset = CGPointMake(700, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    scrollView.contentOffset = CGPointMake(711, 0);
+    [self waitForExpectations:@[refreshed] timeout:CYLTestTimeout];
+    XCTAssertEqual(trailer.state, CYLRefreshStateRefreshing);
+    XCTAssertEqual(callbacks, 1u);
+    XCTestExpectation *ended = [self expectationWithDescription:@"automatic trailer ended"];
+    [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 0, 0.001);
+    XCTAssertEqual(callbacks, 1u);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+// CoderMJLee/MJRefresh#1587: pull-down refresh and pull-up load exclude each other when asked to.
+- (void)testHeaderAndFooterExcludeEachOtherWhenEnabled {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    [window makeKeyAndVisible];
+    __block NSUInteger headerCalls = 0, footerCalls = 0, blocked = 0;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{ headerCalls++; }];
+    CYLRefreshFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{ footerCalls++; }];
+    for (CYLRefreshComponent *component in @[header, footer]) {
+        component.fastAnimationDuration = 0;
+        component.slowAnimationDuration = 0;
+        component.exclusiveWithOtherRefresh = YES;
+        component.blockedByOtherRefreshBlock = ^{ blocked++; };
+    }
+    self.table.cyl_header = header;
+    self.table.cyl_footer = footer;
+
+    // The header refreshes: loading more is held back and reported.
+    XCTestExpectation *headerStarted = [self expectationWithDescription:@"header started"];
+    header.refreshingBlock = ^{ headerCalls++; [headerStarted fulfill]; };
+    [header beginRefreshing];
+    [self waitForExpectations:@[headerStarted] timeout:CYLTestTimeout];
+    footer.state = CYLRefreshStatePulling;
+    [footer beginRefreshing];
+    XCTAssertEqual(footer.state, CYLRefreshStateIdle, @"the held-back pull is dropped, not left on 'release to load'");
+    XCTAssertEqual(footerCalls, 0u);
+    XCTAssertEqual(blocked, 1u);
+    XCTAssertTrue(header.isRefreshing);
+
+    // After the header ends, loading more works; now the header is held back.
+    XCTestExpectation *headerEnded = [self expectationWithDescription:@"header ended"];
+    [header endRefreshingWithCompletionBlock:^{ [headerEnded fulfill]; }];
+    [self waitForExpectations:@[headerEnded] timeout:CYLTestTimeout];
+    XCTestExpectation *footerStarted = [self expectationWithDescription:@"footer started"];
+    footer.refreshingBlock = ^{ footerCalls++; [footerStarted fulfill]; };
+    [footer beginRefreshing];
+    [self waitForExpectations:@[footerStarted] timeout:CYLTestTimeout];
+    XCTAssertEqual(footerCalls, 1u);
+    NSUInteger headerCallsBefore = headerCalls;
+    [header beginRefreshing];
+    XCTAssertFalse(header.isRefreshing);
+    XCTAssertEqual(headerCalls, headerCallsBefore);
+    XCTAssertEqual(blocked, 2u);
+
+    XCTestExpectation *footerEnded = [self expectationWithDescription:@"footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [footerEnded fulfill]; }];
+    [self waitForExpectations:@[footerEnded] timeout:CYLTestTimeout];
+    self.table.cyl_header = nil;
+    self.table.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testHeaderAndFooterRunIndependentlyByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    [window makeKeyAndVisible];
+    XCTAssertFalse(CYLRefreshNormalHeader.new.isExclusiveWithOtherRefresh);
+    __block NSUInteger footerCalls = 0;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{ footerCalls++; }];
+    header.fastAnimationDuration = footer.fastAnimationDuration = 0;
+    self.table.cyl_header = header;
+    self.table.cyl_footer = footer;
+    [header beginRefreshing];
+    [footer beginRefreshing];
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertTrue(footer.isRefreshing, @"unchanged default: the footer starts while the header refreshes");
+    self.table.cyl_header = nil;
+    self.table.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testTrailerKeepsPullAndReleaseBehaviorByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    __block NSUInteger callbacks = 0;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ callbacks++; }];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    scrollView.contentOffset = CGPointMake(760, 0);
+    XCTestExpectation *nextTurn = [self expectationWithDescription:@"no automatic refresh"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
+    [self waitForExpectations:@[nextTurn] timeout:CYLTestTimeout];
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    XCTAssertEqual(callbacks, 0u);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+- (void)testAutomaticTrailerIgnoresBounceBackShortContentAndActiveHeader {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIScrollView *scrollView = [self cyl_wideScrollViewInWindow:window contentWidth:1000];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{}];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+    // Moving back toward the start must not trigger, even past the threshold.
+    scrollView.contentOffset = CGPointMake(780, 0);
+    trailer.automaticallyRefresh = YES;
+    scrollView.contentOffset = CGPointMake(770, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    // While the header refreshes, the trailer waits.
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    scrollView.cyl_header = header;
+    [header beginRefreshing];
+    scrollView.contentOffset = CGPointMake(790, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    [header endRefreshing];
+    scrollView.cyl_header = nil;
+    // Content narrower than the view keeps pull-and-release.
+    scrollView.contentOffset = CGPointZero;
+    scrollView.contentSize = CGSizeMake(200, 480);
+    scrollView.contentOffset = CGPointMake(80, 0);
+    XCTAssertEqual(trailer.state, CYLRefreshStateIdle);
+    scrollView.cyl_trailer = nil;
     window.hidden = YES;
 }
 
@@ -809,7 +1124,10 @@
     [window.rootViewController.view addSubview:newView];
     [window makeKeyAndVisible];
     __block NSInteger callbacks = 0;
-    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{ callbacks++; }];
+    XCTestExpectation *newRefresh = [self expectationWithDescription:@"new start animation finished"];
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+        if (++callbacks == 1) [newRefresh fulfill];
+    }];
     trailer.fastAnimationDuration = 0.5;
     trailer.slowAnimationDuration = 0.2;
     [oldView addSubview:trailer];
@@ -819,11 +1137,14 @@
     [newView addSubview:trailer];
     [trailer layoutIfNeeded];
     [trailer beginRefreshing];
-    XCTestExpectation *animationsFinished = [self expectationWithDescription:@"both start animations finished"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [animationsFinished fulfill];
+    // Wait for the new refresh's callback itself rather than a fixed delay, which slow CI runners miss.
+    [self waitForExpectations:@[newRefresh] timeout:CYLTestTimeout];
+    // The old animation finishes no later than the new one; give a stale callback time to show up.
+    XCTestExpectation *settled = [self expectationWithDescription:@"no stale callback"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [settled fulfill];
     });
-    [self waitForExpectations:@[animationsFinished] timeout:5];
+    [self waitForExpectations:@[settled] timeout:CYLTestTimeout];
     XCTAssertEqual(callbacks, 1);
     [trailer removeFromSuperview];
     window.hidden = YES;
@@ -852,7 +1173,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [startAnimationFinished fulfill];
     });
-    [self waitForExpectations:@[ended, startAnimationFinished] timeout:5];
+    [self waitForExpectations:@[ended, startAnimationFinished] timeout:CYLTestTimeout];
     XCTAssertEqual(refreshCallbacks, 0);
     XCTAssertEqual(beginCallbacks, 0);
     window.hidden = YES;
@@ -871,12 +1192,12 @@
     [trailer layoutIfNeeded];
     XCTestExpectation *started = [self expectationWithDescription:@"first refresh started"];
     [trailer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTestExpectation *ended = [self expectationWithDescription:@"first refresh ended"];
     [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
     trailer.beginRefreshingCompletionBlock = nil;
     [trailer beginRefreshing];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertTrue(trailer.isRefreshing);
     XCTAssertEqualWithAccuracy(trailer.pullingPercent, 1, 0.001);
     trailer.endRefreshingCompletionBlock = nil;
@@ -897,15 +1218,19 @@
     [trailer layoutIfNeeded];
     __block NSInteger firstEnds = 0;
     __block NSInteger secondEnds = 0;
+    XCTestExpectation *firstEnded = [self expectationWithDescription:@"first end completion"];
+    XCTestExpectation *secondEnded = [self expectationWithDescription:@"second end completion"];
     [trailer beginRefreshing];
-    [trailer endRefreshingWithCompletionBlock:^{ firstEnds++; }];
+    [trailer endRefreshingWithCompletionBlock:^{ if (++firstEnds == 1) [firstEnded fulfill]; }];
     [trailer beginRefreshing];
-    [trailer endRefreshingWithCompletionBlock:^{ secondEnds++; }];
-    XCTestExpectation *finished = [self expectationWithDescription:@"end animations finished"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [finished fulfill];
+    [trailer endRefreshingWithCompletionBlock:^{ if (++secondEnds == 1) [secondEnded fulfill]; }];
+    // Wait for both completions themselves, then allow time for a duplicate call to show up.
+    [self waitForExpectations:@[firstEnded, secondEnded] timeout:CYLTestTimeout];
+    XCTestExpectation *settled = [self expectationWithDescription:@"no duplicate completion"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [settled fulfill];
     });
-    [self waitForExpectations:@[finished] timeout:5];
+    [self waitForExpectations:@[settled] timeout:CYLTestTimeout];
     XCTAssertEqual(firstEnds, 1);
     XCTAssertEqual(secondEnds, 1);
     scrollView.cyl_trailer = nil;
@@ -1001,6 +1326,90 @@
     window.hidden = YES;
 }
 
+// CoderMJLee/MJRefresh#1585 (case 2): keep "no more data" visible for a while after the last load, then rebound.
+- (UIScrollView *)cyl_scrollViewAtBottomWithBackFooter:(CYLRefreshBackFooter **)footerOut inWindow:(UIWindow *)window {
+    window.rootViewController = [UIViewController new];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    // The block stays attached and would fulfill the finished expectation again on every later start.
+    footer.beginRefreshingCompletionBlock = nil;
+    *footerOut = footer;
+    return scrollView;
+}
+
+- (void)testBackFooterHoldsNoMoreDataForTheConfiguredDuration {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    footer.noMoreDataDisplayDuration = 0.6;
+    CGFloat refreshingInset = scrollView.cyl_insetB;
+    XCTAssertGreaterThan(refreshingInset, 0);
+    CFTimeInterval began = CACurrentMediaTime();
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01, @"the footer stays held open");
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return fabs(scrollView.cyl_insetB) < 0.01;
+    }] evaluatedWithObject:scrollView handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
+    XCTAssertGreaterThanOrEqual(CACurrentMediaTime() - began, 0.5, @"released only after the configured time");
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData, @"the state itself is unchanged");
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testBackFooterNoMoreDataReboundsAtOnceByDefault {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    XCTAssertEqualWithAccuracy(footer.noMoreDataDisplayDuration, 0, 0.0001);
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"unchanged default");
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testBackFooterNoMoreDataHoldEndsOnResetNewLoadAndRemoval {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    CYLRefreshBackFooter *footer = nil;
+    UIScrollView *scrollView = [self cyl_scrollViewAtBottomWithBackFooter:&footer inWindow:window];
+    footer.noMoreDataDisplayDuration = 60;
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertGreaterThan(scrollView.cyl_insetB, 0);
+    [footer resetNoMoreData];
+    XCTAssertEqual(footer.state, CYLRefreshStateIdle);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"reset gives the held inset back");
+
+    // A new load after the hold: the inset is neither lost nor doubled.
+    [footer beginRefreshing];
+    CGFloat refreshingInset = scrollView.cyl_insetB;
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01);
+    [footer beginRefreshing];
+    XCTAssertEqual(footer.state, CYLRefreshStateRefreshing);
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, refreshingInset, 0.01, @"one footer height, not two");
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01);
+
+    [footer beginRefreshing];
+    [footer endRefreshingWithNoMoreData];
+    XCTAssertGreaterThan(scrollView.cyl_insetB, 0);
+    scrollView.cyl_footer = nil;
+    XCTAssertEqualWithAccuracy(scrollView.cyl_insetB, 0, 0.01, @"removing the footer gives the held inset back");
+    window.hidden = YES;
+}
+
 - (void)testPagingBackFooterReturnsToLastPageAfterRefresh {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
@@ -1017,11 +1426,11 @@
     scrollView.contentOffset = CGPointMake(0, 960);
     XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
     [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     XCTAssertGreaterThan(scrollView.contentOffset.y, 960);
     XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
     [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01);
     scrollView.cyl_footer = nil;
     window.hidden = YES;
@@ -1043,12 +1452,41 @@
     scrollView.contentOffset = CGPointMake(0, 960);
     XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
     [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-    [self waitForExpectations:@[started] timeout:5];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
     scrollView.contentSize = CGSizeMake(320, 1920);
     XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
     [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-    [self waitForExpectations:@[ended] timeout:5];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01);
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+- (void)testPagingBackFooterReturnsToItsPageWhenLeftBetweenPages {
+    // MJRefresh #1430: UIKit's paging deceleration left the table about 0.22 of a page off the page boundary after the
+    // footer's refresh, so the restore (which needed the refresh's exact offset) was skipped.
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    scrollView.contentOffset = CGPointMake(0, 960);
+    XCTestExpectation *started = [self expectationWithDescription:@"paging back footer started"];
+    [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    scrollView.contentSize = CGSizeMake(320, 1920);
+    scrollView.contentOffset = CGPointMake(0, 960 - 0.22 * 480);
+    XCTestExpectation *ended = [self expectationWithDescription:@"paging back footer ended"];
+    [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 960, 0.01, @"back on the page shown before the refresh");
     scrollView.cyl_footer = nil;
     window.hidden = YES;
 }
@@ -1073,7 +1511,7 @@
         scrollView.contentOffset = CGPointMake(0, 960);
         XCTestExpectation *started = [self expectationWithDescription:@"paging footer started"];
         [footer beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
-        [self waitForExpectations:@[started] timeout:5];
+        [self waitForExpectations:@[started] timeout:CYLTestTimeout];
         scrollView.contentSize = CGSizeMake(320, 1920);
         if (scenario == 0) scrollView.contentOffset = CGPointMake(0, 1440);
         if (scenario == 1) scrollView.cyl_testDragging = YES;
@@ -1081,7 +1519,7 @@
         CGFloat expectedOffset = scrollView.contentOffset.y;
         XCTestExpectation *ended = [self expectationWithDescription:@"paging footer ended"];
         [footer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
-        [self waitForExpectations:@[ended] timeout:5];
+        [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
         XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, expectedOffset, 0.01);
     }
     scrollView.cyl_footer = nil;
@@ -1096,7 +1534,7 @@
     footer.state = CYLRefreshStateNoMoreData;
     XCTestExpectation *nextTurn = [self expectationWithDescription:@"main queue turn"];
     dispatch_async(dispatch_get_main_queue(), ^{ [nextTurn fulfill]; });
-    [self waitForExpectations:@[nextTurn] timeout:5];
+    [self waitForExpectations:@[nextTurn] timeout:CYLTestTimeout];
     XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
     self.table.cyl_footer = nil;
 }

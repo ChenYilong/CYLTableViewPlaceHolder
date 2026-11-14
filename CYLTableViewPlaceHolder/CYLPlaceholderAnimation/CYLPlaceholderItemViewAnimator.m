@@ -64,6 +64,12 @@ static NSURL *CYLPlaceholderItemAnimationFileURLFromURL(NSURL *URL) {
     [self.playableView cyl_stopAnimationView];
 }
 
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount {
+    id<CYLPlaceholderItemAnimationPlayableView> view = self.playableView;
+    if (![view respondsToSelector:@selector(cyl_setAnimationViewRepeatCount:)]) return NO;
+    return [view cyl_setAnimationViewRepeatCount:repeatCount];
+}
+
 - (void)applyDarkColors:(NSDictionary<NSString *, UIColor *> *)darkColors traitCollection:(UITraitCollection *)traitCollection {
     id<CYLPlaceholderItemAnimationPlayableView> view = self.playableView;
     if (darkColors.count == 0 || ![view respondsToSelector:@selector(cyl_applyAnimationViewColors:)]) {

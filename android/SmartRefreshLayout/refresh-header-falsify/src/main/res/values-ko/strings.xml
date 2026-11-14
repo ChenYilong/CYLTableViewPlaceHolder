@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The edit-mode text of the falsify components. -->
+<resources>
+    <string name="srl_component_falsify" formatted="false">%s 가짜 영역\n실행 시 드래그 높이 [%.1fdp]\n아무것도 표시하지 않습니다</string>
+</resources>

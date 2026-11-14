@@ -1,0 +1,15 @@
+/* Example-objc-02 text (ru). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. */
+"CYLObjC02TitleCollection" = "Анимация коллекции";
+"CYLObjC02TitleHeaderRefreshing" = "Обновление заголовка";
+"CYLObjC02FormatHeaderCompleted" = "Заголовок обновлён %ld";
+"CYLObjC02TitleFooterRefreshing" = "Загрузка внизу";
+"CYLObjC02TitleFooterCompleted" = "Загрузка внизу завершена";
+"CYLObjC02FormatItem" = "Элемент %ld";
+"CYLObjC02TitlePaging" = "Постраничная прокрутка";
+"CYLObjC02TitleRefreshCompleted" = "Обновление завершено";
+"CYLObjC02TitleLoadCompleted" = "Загрузка завершена";
+"CYLObjC02ActionRefresh" = "Обновить";
+"CYLObjC02ActionLastPage" = "Последняя страница";
+"CYLObjC02HintRefresh" = "Обновляет таблицу и возвращает на страницу 2.";
+"CYLObjC02HintLastPage" = "Прокручивает к последней странице.";
+"CYLObjC02FormatPage" = "Страница %ld";

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_header_pulling">당겨서 새로고침</string>
+    <string name="srl_header_release">놓아서 새로고침</string>
+    <string name="srl_header_refreshing">새로고침 중…</string>
+    <string name="srl_header_loading">불러오기 대기 중…</string>
+    <string name="srl_header_finish">새로고침 완료</string>
+    <string name="srl_header_failed">새로고침 실패</string>
+    <string name="srl_header_update">\'마지막 업데이트\' M-d HH:mm</string>
+    <string name="srl_header_secondary">놓아서 2층으로</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_footer_pulling">上拉載入更多</string>
+    <string name="srl_footer_release">放開立即載入</string>
+    <string name="srl_footer_loading">正在載入…</string>
+    <string name="srl_footer_refreshing">正在等待重新整理…</string>
+    <string name="srl_footer_finish">載入完成</string>
+    <string name="srl_footer_failed">載入失敗</string>
+    <string name="srl_footer_nothing">沒有更多資料了</string>
+</resources>

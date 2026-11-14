@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_footer_pulling">Потягніть угору, щоб завантажити ще</string>
+    <string name="srl_footer_release">Відпустіть, щоб завантажити ще</string>
+    <string name="srl_footer_loading">Завантаження…</string>
+    <string name="srl_footer_refreshing">Очікування оновлення…</string>
+    <string name="srl_footer_finish">Завантажено</string>
+    <string name="srl_footer_failed">Не вдалося завантажити</string>
+    <string name="srl_footer_nothing">Більше немає даних</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- android-Ultra-Pull-To-Refresh texts. The *_format strings take their number or time as an argument (issue #125);
+     the older fragments stay for apps that override them. -->
+<resources>
+    <string name="cube_ptr_pull_down">引っ張る</string>
+    <string name="cube_ptr_pull_down_to_refresh">引っ張って更新</string>
+    <string name="cube_ptr_release_to_refresh">離して更新</string>
+    <string name="cube_ptr_refreshing">更新中...</string>
+    <string name="cube_ptr_refresh_complete">更新しました.</string>
+    <string name="cube_ptr_last_update">最終更新:&#160;</string>
+    <string name="cube_ptr_seconds_ago">&#160;秒前</string>
+    <string name="cube_ptr_minutes_ago">&#160;分前</string>
+    <string name="cube_ptr_hours_ago">&#160;時間前</string>
+    <string name="cube_ptr_pull_up">上に引っ張る</string>
+    <string name="cube_ptr_pull_up_to_load">上に引っ張って読み込む</string>
+    <string name="cube_ptr_release_to_load">離して読み込む</string>
+    <string name="cube_ptr_loading_more">読み込み中...</string>
+    <string name="cube_ptr_load_more_complete">読み込みました.</string>
+    <string name="cube_ptr_last_update_format">最終更新：%1$s</string>
+    <string name="cube_ptr_seconds_ago_format">%1$d 秒前</string>
+    <string name="cube_ptr_minutes_ago_format">%1$d 分前</string>
+    <string name="cube_ptr_hours_ago_format">%1$d 時間前</string>
+</resources>

@@ -1,0 +1,4 @@
+/* Overrides CYLRefresh.strings when CYLRefreshConfig.default.i18nFilename is "CYLRefreshCustom". */
+"CYLRefreshHeaderIdleText" = "🍬 Потягніть (власна таблиця)";
+"CYLRefreshHeaderPullingText" = "🍬 Відпустіть (власна таблиця)";
+"CYLRefreshHeaderRefreshingText" = "🍬 Завантаження (власна таблиця)";

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accessibility labels of the BezierRadarHeader (the Kotlin port). -->
+<resources>
+    <string name="srl_radar_refreshing">更新中</string>
+    <string name="srl_radar_refreshed">更新しました</string>
+</resources>

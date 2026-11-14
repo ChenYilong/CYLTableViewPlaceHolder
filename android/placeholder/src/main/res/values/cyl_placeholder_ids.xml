@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The tag that keeps a RecyclerView's placeholder state (cyl_placeholderViewBlock, cyl_reloadData). -->
+<resources>
+    <item name="cyl_placeholder_state" type="id" />
+</resources>

@@ -1,0 +1,23 @@
+"CYLRefreshHeaderIdleText" = "아래로 당겨 새로고침";
+"CYLRefreshHeaderPullingText" = "놓으면 새로고침";
+"CYLRefreshHeaderRefreshingText" = "로딩중...";
+
+"CYLRefreshTrailerIdleText" = "밀어서 상세 정보 보기";
+"CYLRefreshTrailerPullingText" = "놓으면 상세 정보 보기";
+
+"CYLRefreshAutoFooterIdleText" = "탭 또는 위로 당겨 로드함";
+"CYLRefreshAutoFooterRefreshingText" = "로딩중...";
+"CYLRefreshAutoFooterNoMoreDataText" = "더이상 데이터 없음";
+
+"CYLRefreshBackFooterIdleText" = "위로 당겨 더 로드 가능";
+"CYLRefreshBackFooterPullingText" = "놓으면 더 로드됨.";
+"CYLRefreshBackFooterRefreshingText" = "로딩중...";
+"CYLRefreshBackFooterNoMoreDataText" = "더이상 데이터 없음";
+
+"CYLRefreshHeaderLastTimeText" = "마지막 업데이트: ";
+"CYLRefreshHeaderDateTodayText" = "오늘";
+"CYLRefreshHeaderNoneLastDateText" = "기록 없음";
+"CYLRefreshHeaderFinishedText" = "새로고침 완료";
+"CYLRefreshHeaderFailedText" = "새로고침 실패";
+"CYLRefreshFooterFinishedText" = "로딩 완료";
+"CYLRefreshFooterFailedText" = "로딩 실패";

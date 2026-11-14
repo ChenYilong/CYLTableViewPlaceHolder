@@ -19,6 +19,9 @@
 #pragma mark - 懒加载子控件
 - (UIImageView *)arrowView {
     if (!_arrowView) {
+        // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
+        //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
+        // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
         UIImageView *arrowView = [[UIImageView alloc] initWithImage:[NSBundle cyl_trailArrowImage]];
         [self addSubview:_arrowView = arrowView];
     }
@@ -42,15 +45,14 @@
 
     if (stateHidden) return;
 
-    BOOL noConstrainsOnStatusLabel = self.stateLabel.constraints.count == 0;
-    CGFloat stateLabelW = ceil(self.stateLabel.font.pointSize);
-    // 状态
-    if (noConstrainsOnStatusLabel) {
-        BOOL arrowHidden = self.arrowView.isHidden;
-        CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
-        self.stateLabel.center = arrowHidden ? selfCenter : CGPointMake(stateCenterX, self.cyl_h * 0.5);
-        self.stateLabel.cyl_size = CGSizeMake(stateLabelW, self.cyl_h) ;
-    }
+    // [EN] The state text is a vertical column right of the arrow, readable in every language.
+    // [CN] 状态文字是箭头右侧的竖列，任何语言都可读。
+    BOOL arrowHidden = self.arrowView.isHidden;
+    CGFloat stateCenterX = (self.cyl_w + arrowSize.width) * 0.5;
+    CGFloat width = [self cyl_placeStateLabelAtCenterX:arrowHidden ? selfCenter.x : stateCenterX];
+    // [EN] A wrapped column is wider: keep its left edge right of the arrow. [CN] 换行后竖列更宽：保持其左边缘在箭头右侧。
+    CGFloat minX = CGRectGetMaxX(self.arrowView.frame) + 2;
+    if (!arrowHidden && stateCenterX - width * 0.5 < minX) [self cyl_placeStateLabelAtCenterX:minX + width * 0.5];
 }
 
 - (void)setState:(CYLRefreshState)state {

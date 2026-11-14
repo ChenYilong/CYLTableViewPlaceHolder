@@ -1,0 +1,15 @@
+/* Example-objc-02 text (en). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. The UI tests match these values. */
+"CYLObjC02TitleCollection" = "Collection animation";
+"CYLObjC02TitleHeaderRefreshing" = "Header refreshing";
+"CYLObjC02FormatHeaderCompleted" = "Header completed %ld";
+"CYLObjC02TitleFooterRefreshing" = "Footer refreshing";
+"CYLObjC02TitleFooterCompleted" = "Footer completed";
+"CYLObjC02FormatItem" = "Item %ld";
+"CYLObjC02TitlePaging" = "Paging";
+"CYLObjC02TitleRefreshCompleted" = "Refresh completed";
+"CYLObjC02TitleLoadCompleted" = "Load completed";
+"CYLObjC02ActionRefresh" = "Refresh";
+"CYLObjC02ActionLastPage" = "Last page";
+"CYLObjC02HintRefresh" = "Refreshes the table and returns to page 2.";
+"CYLObjC02HintLastPage" = "Scrolls to the last page.";
+"CYLObjC02FormatPage" = "Page %ld";

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- android-Ultra-Pull-To-Refresh texts. The *_format strings take their number or time as an argument (issue #125);
+     the older fragments stay for apps that override them. -->
+<resources>
+    <string name="cube_ptr_pull_down">Потягніть</string>
+    <string name="cube_ptr_pull_down_to_refresh">Потягніть, щоб оновити</string>
+    <string name="cube_ptr_release_to_refresh">Відпустіть, щоб оновити</string>
+    <string name="cube_ptr_refreshing">Оновлення...</string>
+    <string name="cube_ptr_refresh_complete">Оновлено.</string>
+    <string name="cube_ptr_last_update">оновлено:&#160;</string>
+    <string name="cube_ptr_seconds_ago">&#160;с тому</string>
+    <string name="cube_ptr_minutes_ago">&#160;хв тому</string>
+    <string name="cube_ptr_hours_ago">&#160;год тому</string>
+    <string name="cube_ptr_pull_up">Потягніть угору</string>
+    <string name="cube_ptr_pull_up_to_load">Потягніть угору, щоб завантажити</string>
+    <string name="cube_ptr_release_to_load">Відпустіть, щоб завантажити</string>
+    <string name="cube_ptr_loading_more">Завантаження...</string>
+    <string name="cube_ptr_load_more_complete">Завантажено.</string>
+    <string name="cube_ptr_last_update_format">Оновлено: %1$s</string>
+    <string name="cube_ptr_seconds_ago_format">%1$d с тому</string>
+    <string name="cube_ptr_minutes_ago_format">%1$d хв тому</string>
+    <string name="cube_ptr_hours_ago_format">%1$d год тому</string>
+</resources>

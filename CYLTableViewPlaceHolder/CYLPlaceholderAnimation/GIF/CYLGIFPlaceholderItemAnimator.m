@@ -34,9 +34,15 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
 
 @interface CYLGIFPlaceholderItemAnimationView : UIImageView <CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding>
 @property (nonatomic, copy) NSArray<UIImage *> *frames;
+/// 0 loops until stopped; 1 (the default) plays once.
+@property (nonatomic) NSInteger repeatCount;
 @property (nonatomic, copy) NSArray<NSNumber *> *frameDelays;
 @end
 
+// [EN] System image setting: this animator is CYLPlaceholderView's GIF backend (the image view that draws a GIF item
+//      inside a CYLPlaceholderView), so it sets frames on itself rather than going through CYLPlaceholderView.
+// [CN] 系统图片设置：这个 animator 是 CYLPlaceholderView 的 GIF 后端（在 CYLPlaceholderView 内绘制 GIF 的图片视图），
+//      因此直接设置自己的帧，而不经过 CYLPlaceholderView。
 @implementation CYLGIFPlaceholderItemAnimationView
 
 + (nullable UIView<CYLPlaceholderItemAnimationPlayableView> *)cyl_animationViewWithFileURL:(NSURL *)fileURL
@@ -93,6 +99,7 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
     }
     CYLGIFPlaceholderItemAnimationView *view = [[self alloc] initWithImage:frames.firstObject];
     view.frames = frames;
+    view.repeatCount = 1;
     view.frameDelays = frameDelays;
     view.contentMode = contentMode;
     return view;
@@ -121,7 +128,14 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
     animation.values = contents;
     animation.keyTimes = keyTimes;
     animation.duration = duration;
+    animation.repeatCount = self.repeatCount == 0 ? HUGE_VALF : (float)self.repeatCount;
     [self.layer addAnimation:animation forKey:CYLGIFPlaceholderPlayAnimationKey];
+}
+
+- (BOOL)cyl_setAnimationViewRepeatCount:(NSInteger)repeatCount {
+    if (repeatCount < 0) return NO;
+    self.repeatCount = repeatCount;
+    return YES;
 }
 
 - (void)cyl_showAnimationViewLastFrame {

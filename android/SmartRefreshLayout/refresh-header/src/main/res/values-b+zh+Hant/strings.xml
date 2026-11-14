@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The fun-game headers' texts (the Kotlin port). -->
+<resources>
+    <string name="fgh_mask_top_pull">下拉開始遊戲!</string>
+    <string name="fgh_mask_top_release">放開立刻開始!</string>
+    <string name="fgh_mask_bottom">上下滑動控制遊戲</string>
+    <string name="fgh_text_game_over">遊戲結束</string>
+    <string name="fgh_text_loading">玩個遊戲解解悶</string>
+    <string name="fgh_text_loading_finish">重新整理完成</string>
+    <string name="fgh_text_loading_failed">重新整理失敗</string>
+</resources>

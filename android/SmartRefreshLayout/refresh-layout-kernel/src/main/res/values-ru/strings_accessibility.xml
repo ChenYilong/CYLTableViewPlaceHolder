@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accessibility actions of SmartRefreshLayout (the Kotlin port, issue #1380): refresh or load more without a gesture. -->
+<resources>
+    <string name="srl_action_refresh">Обновить</string>
+    <string name="srl_action_load_more">Загрузить ещё</string>
+</resources>

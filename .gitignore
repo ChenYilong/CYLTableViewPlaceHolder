@@ -36,3 +36,61 @@ Pods/
 
 # CI: CYLTabBarController animation fixtures checked out by .github/workflows/ios.yml
 .fixtures/
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Synced from CYLTabBarController's .gitignore
+# (https://github.com/ChenYilong/CYLTabBarController/blob/master/.gitignore), with its project name replaced by
+# CYLTableViewPlaceHolder. Rules already listed above are repeated where CYLTabBarController lists them, so the two files
+# can be compared section by section. Paths that exist only in CYLTabBarController (Example-Shared/PAGResources,
+# Example-SwiftUI-Rive, Example-loadTabBarIconsFroNework) are left out. Re-check before every commit (instructions.md).
+# ---------------------------------------------------------------------------------------------------------------------
+.DS_Store
+CYLTableViewPlaceHolder.xcodeproj/project.xcworkspace/xcuserdata/chenyilong.xcuserdatad/UserInterfaceState.xcuserstate
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+!default.xcworkspace
+xcuserdata
+*.moved-aside
+*.mobileprovision
+DerivedData
+.idea/
+Pods
+# Lock files (*.lock: Podfile.lock, yarn.lock, pubspec.lock, Gemfile.lock) are not committed; this does not untrack the
+# Podfile.lock files already in the repository. Gradle's gradle.lockfile is not a *.lock file and stays committed.
+*.lock
+# New workspaces are not committed; the workspaces already in the repository stay tracked.
+*.xcworkspace
+
+CYLTableViewPlaceHolder.xcodeproj/xcuserdata/chenyilong.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+*.xcuserstate
+*.xcbkptlist
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+
+# Carthage
+Carthage/Build
+
+# fastlane
+fastlane/report.xml
+fastlane/screenshots
+
+# Python bytecode of the scripts
+__pycache__/
+
+# Synced from CYLTabBarController .gitignore (its example folders; harmless here)
+Example-Shared/PAGResources/*/
+Example-SwiftUI-Rive/AnimatedApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+Example-SwiftUI-Rive/SwiftUI Animations/
+Example-loadTabBarIconsFroNework/

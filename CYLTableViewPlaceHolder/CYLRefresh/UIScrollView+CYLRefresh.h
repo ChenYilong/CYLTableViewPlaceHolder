@@ -14,13 +14,45 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIScrollView (CYLRefresh)
-/** 下拉刷新控件 */
+/*!
+ * 下拉刷新控件
+ */
 @property (strong, nonatomic, nullable) CYLRefreshHeader *cyl_header;
-/** 上拉刷新控件 */
+/*!
+ * 上拉刷新控件
+ */
 @property (strong, nonatomic, nullable) CYLRefreshFooter *cyl_footer;
 
-/** 左滑刷新控件 */
+/*!
+ * 左滑刷新控件
+ */
 @property (strong, nonatomic, nullable) CYLRefreshTrailer *cyl_trailer;
+
+/*!
+ * [EN] `autoHideRefresh` for the header and the footer at once: setting it sets both; reading it is YES when both hide.
+ *      A value set before a control is attached is applied when it is attached.
+ * [CN] 同时设置刷新头与刷新尾的 `autoHideRefresh`：设置时两者一起设置；读取时两者都会隐藏才为 YES。在控件挂上之前设置的值会在挂上时生效。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefresh;
+/*!
+ * [EN] `autoHideRefresh` of the header alone (also applied to a header attached later).
+ * [CN] 仅刷新头的 `autoHideRefresh`（之后挂上的刷新头同样生效）。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefreshHeader;
+/*!
+ * [EN] `autoHideRefresh` of the footer alone (also applied to a footer attached later).
+ * [CN] 仅刷新尾的 `autoHideRefresh`（之后挂上的刷新尾同样生效）。
+ */
+@property (assign, nonatomic) BOOL cyl_autoHideRefreshFooter;
+
+/*!
+ * [EN] Refreshes once with `startHeader` in place of `cyl_header`, then puts `cyl_header` back when that refresh ends
+ *      (flutter_easy_refresh's `refreshOnStart` with `refreshOnStartHeader`). `startHeader` uses its own refreshing
+ *      callbacks, or the regular header's when it has none.
+ * [CN] 用 `startHeader` 代替 `cyl_header` 刷新一次，刷新结束后换回 `cyl_header`（对应 flutter_easy_refresh 的 `refreshOnStart` 与
+ *      `refreshOnStartHeader`）。`startHeader` 使用自己的刷新回调；没有时使用常规刷新头的回调。
+ */
+- (void)cyl_beginRefreshingWithStartHeader:(CYLRefreshHeader *)startHeader NS_SWIFT_NAME(cyl_beginRefreshing(startHeader:));
 
 #pragma mark - other
 - (NSInteger)cyl_totalDataCount;

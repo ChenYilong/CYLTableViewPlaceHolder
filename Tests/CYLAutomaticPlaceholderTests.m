@@ -1,4 +1,5 @@
 #import <XCTest/XCTest.h>
+#import "CYLPlaceholderLocalization.h"
 #import <ImageIO/ImageIO.h>
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h"
@@ -6,6 +7,7 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
 #import "../CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h"
+#import "CYLRefresh.h"
 
 
 /// Scopes appearance-proxy values to these tests.
@@ -667,12 +669,17 @@
 }
 
 - (void)testConfiguredPlaceholderPropertyListAndPresets {
-    NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
-    NSURL *bundleURL = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"] ?:
-        [NSBundle.mainBundle URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
-    NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
-    NSURL *url = [bundle URLForResource:@"CYLPlaceholderItemDemo" withExtension:@"plist"];
-    XCTAssertNotNil(url);
+    // [EN] The same item as the main example's CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist; the core
+    //      bundle holds only placeholder resources, so the test writes its own copy.
+    // [CN] 与主示例 CYLPlaceholderExample.bundle/CYLPlaceholderItemDemo.plist 相同；核心 bundle 只放占位资源，因此测试自己写一份。
+    NSDictionary *item = @{
+        @"CYLPlaceholderItemStyle": @5, @"CYLPlaceholderItemMessage": @2,
+        @"CYLTabBarItemImagePositionAdjustment": @{@"horizontal": @8, @"vertical": @(-6)},
+        @"CYLTabBarItemTitlePositionAdjustment": @[@0, @6],
+        @"CYLTabBarAnimationFilePath": @"reserved-animation.json",
+    };
+    NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CYLPlaceholderItemDemo.plist"]];
+    XCTAssertTrue([item writeToURL:url atomically:YES]);
     NSError *error = nil;
     CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemContentsOfURL:url imageBundle:nil error:&error];
     XCTAssertNotNil(view);
@@ -696,7 +703,7 @@
     XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemMessage: NSNull.null} imageBundle:nil error:&error]);
     XCTAssertNotNil(error);
     error = nil;
-    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"missing-image"} imageBundle:bundle error:&error]);
+    XCTAssertNil([[CYLPlaceholderView alloc] initWithItemAttributes:@{CYLPlaceholderItemImage: @"missing-image"} imageBundle:CYLPlaceholderResourceBundle() error:&error]);
     XCTAssertNotNil(error);
 }
 
@@ -777,6 +784,41 @@
     XCTAssertTrue(view.imageView.hidden);
 }
 
+- (void)testBundledAnimationsAreListedValidAndAttributed {
+    NSArray<NSString *> *names = [CYLPlaceholderView bundledAnimationFileNames];
+    XCTAssertEqual(names.count, 62u, @"%@", names);
+    NSDictionary<NSString *, NSString *> *magic = @{@"pag": @"PAG", @"riv": @"RIVE", @"gif": @"GIF8"};
+    NSString *notice = nil;
+    for (NSString *name in names) {
+        NSString *path = [CYLPlaceholderView pathForBundledAnimation:name];
+        XCTAssertNotNil(path, @"%@", name);
+        NSData *data = path ? [NSData dataWithContentsOfFile:path] : nil;
+        XCTAssertGreaterThan(data.length, 64u, @"%@", name);
+        NSString *extension = name.pathExtension;
+        if ([extension isEqualToString:@"json"]) {
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            XCTAssertNotNil(json[@"layers"], @"%@ is not a Lottie animation", name);
+        } else {
+            NSString *prefix = magic[extension];
+            XCTAssertNotNil(prefix, @"Unexpected file %@", name);
+            NSData *head = [data subdataWithRange:NSMakeRange(0, MIN(prefix.length, data.length))];
+            XCTAssertEqualObjects([[NSString alloc] initWithData:head encoding:NSASCIIStringEncoding], prefix, @"%@", name);
+        }
+        if (!notice && path) {
+            NSString *noticePath = [path.stringByDeletingLastPathComponent stringByAppendingPathComponent:@"NOTICE.animations"];
+            notice = [NSString stringWithContentsOfFile:noticePath encoding:NSUTF8StringEncoding error:NULL];
+        }
+        XCTAssertTrue([notice containsString:name], @"%@ has no attribution in NOTICE.animations", name);
+    }
+    for (NSString *scenario in @[@"CYLPlaceholderLoading.json", @"CYLPlaceholderLoading.pag", @"CYLPlaceholderLoading.riv",
+                                 @"CYLPlaceholderUploading.gif", @"CYLPlaceholderEmptyCart.json"]) {
+        XCTAssertTrue([names containsObject:scenario], @"%@", scenario);
+    }
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@"Missing.json"]);
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@"../Animations/CYLPlaceholderLoading.json"]);
+    XCTAssertNil([CYLPlaceholderView pathForBundledAnimation:@""]);
+}
+
 - (void)testPlaceholderLocalizationsHaveAllMessageKeys {
     NSBundle *container = [NSBundle bundleForClass:CYLPlaceholderView.class];
     NSURL *url = [container URLForResource:@"CYLTableViewPlaceHolder" withExtension:@"bundle"];
@@ -785,8 +827,8 @@
     NSArray<NSString *> *keys = @[@"CYLPlaceholderEmptyText", @"CYLPlaceholderNoResultsText",
         @"CYLPlaceholderNoInternetText", @"CYLPlaceholderServerUnavailableText", @"CYLPlaceholderErrorText",
         @"CYLPlaceholderLoadingText", @"CYLPlaceholderNoPermissionText", @"CYLPlaceholderEmptyCartText",
-        @"CYLPlaceholderNoNotificationsText"];
-    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja"]) {
+        @"CYLPlaceholderNoNotificationsText", @"CYLPlaceholderBadgeNewContent"];
+    for (NSString *language in @[@"en", @"zh-Hans", @"zh-Hant", @"ja", @"ko", @"ru", @"uk"]) {
         NSString *path = [bundle pathForResource:language ofType:@"lproj"];
         XCTAssertNotNil(path, @"Missing localization %@", language);
         if (!path) continue;
@@ -828,6 +870,26 @@
     [table cyl_placeholderViewBlock:nil];
 }
 
+- (void)testAutomaticPlaceholderStaysBelowRefreshControls {
+    CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
+    source.sections = 1;
+    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)
+                                                      collectionViewLayout:[UICollectionViewFlowLayout new]];
+    collection.dataSource = source;
+    [collection registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:@"cell"];
+    collection.cyl_header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    collection.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    UIView *view = [UIView new];
+    [collection cyl_placeholderViewBlock:^UIView *(UICollectionView *collectionView) { return view; }];
+    [collection reloadData];
+    [self drainUpdates];
+    NSArray<UIView *> *subviews = collection.subviews;
+    NSUInteger placeholderIndex = [subviews indexOfObject:view];
+    XCTAssertNotEqual(placeholderIndex, NSNotFound);
+    XCTAssertGreaterThan([subviews indexOfObject:collection.cyl_footer], placeholderIndex);
+    XCTAssertGreaterThan([subviews indexOfObject:collection.cyl_header], placeholderIndex);
+    [collection cyl_placeholderViewBlock:nil];
+}
 - (void)testCollectionSectionsAndFrameLayoutWithOffset {
     CYLMultipleAutomaticTestSource *source = [CYLMultipleAutomaticTestSource new];
     source.sections = 2;

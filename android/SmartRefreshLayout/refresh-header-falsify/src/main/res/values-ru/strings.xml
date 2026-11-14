@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The edit-mode text of the falsify components. -->
+<resources>
+    <string name="srl_component_falsify" formatted="false">%s фиктивная область,\n высота [%.1fdp] при перетаскивании,\n ничего не показывает.</string>
+</resources>

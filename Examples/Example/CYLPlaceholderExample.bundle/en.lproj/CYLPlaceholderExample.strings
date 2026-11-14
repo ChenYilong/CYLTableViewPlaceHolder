@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (en): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "Auto";
+"CYLPlaceholderExampleFormatRandomData" = "Random data - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "The network isn't very smooth~";
+"CYLPlaceholderExampleNetReloaderReload" = "Reload";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "No data yet. Tap the screen to reload.";
+"CYLPlaceholderExampleTitleAutomatic" = "Automatic placeholder";
+"CYLPlaceholderExampleModeLabel" = "List type";
+"CYLPlaceholderExampleModeTable" = "Table";
+"CYLPlaceholderExampleModeCollection" = "Collection";
+"CYLPlaceholderExampleActionStyles" = "Styles";
+"CYLPlaceholderExampleActionClear" = "Clear";
+"CYLPlaceholderExampleActionDisable" = "Disable";
+"CYLPlaceholderExampleActionEnable" = "Enable";
+"CYLPlaceholderExampleFormatItem" = "Item %ld";
+"CYLPlaceholderExampleTitleStyles" = "Placeholder styles";
+"CYLPlaceholderExampleStyleCustomImage" = "Custom image";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign: code configuration";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign: plist configuration";
+"CYLPlaceholderExampleStyleBadgeDot" = "Badge: dot";
+"CYLPlaceholderExampleStyleBadgeNumber" = "Badge: number";
+"CYLPlaceholderExampleStyleBadgeText" = "Badge: custom text";
+"CYLPlaceholderExampleBadgeNew" = "New";
+"CYLPlaceholderExampleTitleBadgePreview" = "Badge preview";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "FlatDesign item";
+"CYLPlaceholderExampleTitleConfigurationError" = "Configuration error";
+"CYLPlaceholderExampleFormatMissingFile" = "%@ is missing from the example bundle.";
+"CYLPlaceholderExampleActionOK" = "OK";
+"CYLPlaceholderExampleTitleChooseMessage" = "Choose message";
+"CYLPlaceholderExampleCustomText" = "Custom text";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "Your custom message";
+"CYLPlaceholderExampleActionCancel" = "Cancel";
+"CYLPlaceholderExampleActionPreview" = "Preview";

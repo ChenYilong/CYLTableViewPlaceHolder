@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_header_pulling">引っ張って更新</string>
+    <string name="srl_header_release">離して更新</string>
+    <string name="srl_header_refreshing">更新中…</string>
+    <string name="srl_header_loading">読み込み待ち…</string>
+    <string name="srl_header_finish">更新しました</string>
+    <string name="srl_header_failed">更新に失敗しました</string>
+    <string name="srl_header_update">\'最終更新\' M-d HH:mm</string>
+    <string name="srl_header_secondary">離して2階へ</string>
+</resources>

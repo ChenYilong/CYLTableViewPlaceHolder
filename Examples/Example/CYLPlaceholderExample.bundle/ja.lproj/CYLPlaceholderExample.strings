@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (ja): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "自動";
+"CYLPlaceholderExampleFormatRandomData" = "ランダムデータ - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "ネットワークの調子がよくないようです~";
+"CYLPlaceholderExampleNetReloaderReload" = "再読み込み";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "データがありません。画面をタップして再読み込みしてください";
+"CYLPlaceholderExampleTitleAutomatic" = "自動プレースホルダー";
+"CYLPlaceholderExampleModeLabel" = "リストの種類";
+"CYLPlaceholderExampleModeTable" = "テーブル";
+"CYLPlaceholderExampleModeCollection" = "コレクション";
+"CYLPlaceholderExampleActionStyles" = "スタイル";
+"CYLPlaceholderExampleActionClear" = "クリア";
+"CYLPlaceholderExampleActionDisable" = "無効にする";
+"CYLPlaceholderExampleActionEnable" = "有効にする";
+"CYLPlaceholderExampleFormatItem" = "項目 %ld";
+"CYLPlaceholderExampleTitleStyles" = "プレースホルダーのスタイル";
+"CYLPlaceholderExampleStyleCustomImage" = "カスタム画像";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign：コードで設定";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign：plist で設定";
+"CYLPlaceholderExampleStyleBadgeDot" = "バッジ：ドット";
+"CYLPlaceholderExampleStyleBadgeNumber" = "バッジ：数字";
+"CYLPlaceholderExampleStyleBadgeText" = "バッジ：カスタムテキスト";
+"CYLPlaceholderExampleBadgeNew" = "新着";
+"CYLPlaceholderExampleTitleBadgePreview" = "バッジのプレビュー";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "FlatDesign アイテム";
+"CYLPlaceholderExampleTitleConfigurationError" = "設定エラー";
+"CYLPlaceholderExampleFormatMissingFile" = "サンプルの bundle に %@ がありません。";
+"CYLPlaceholderExampleActionOK" = "OK";
+"CYLPlaceholderExampleTitleChooseMessage" = "メッセージを選択";
+"CYLPlaceholderExampleCustomText" = "カスタムテキスト";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "カスタムメッセージ";
+"CYLPlaceholderExampleActionCancel" = "キャンセル";
+"CYLPlaceholderExampleActionPreview" = "プレビュー";

@@ -96,4 +96,13 @@
         self.stateLabel
     ];
 }
+/// [EN] While the footer holds after loading (`finishDuration`), the state text shows the result.
+/// [CN] 加载结束后停留期间（`finishDuration`），状态文字显示结果。
+- (void)refreshDidFinishWithSuccess:(BOOL)success
+{
+    [super refreshDidFinishWithSuccess:success];
+    if ([self finishingDurationWithSuccess:success] <= 0) return;
+    self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshFooterFinishedText : CYLRefreshFooterFailedText];
+}
+
 @end

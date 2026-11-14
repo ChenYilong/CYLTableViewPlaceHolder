@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02045564CBB70CBD96D6A85A /* CYLPagingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */; };
-		27C9228D5CD79A859BD6B3B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC4F0A147668D440C2ECF07 /* main.m */; };
-		2DE6CCFEC4B4779D14496AA9 /* CYLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 008B40FD8C60E048824DC77A /* CYLAppDelegate.m */; };
+		22EA486320B5FF64A4562092 /* CYLObjC02Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C5D620B1DC99FD4B1014C2 /* CYLObjC02Localization.swift */; };
+		4922901D0C4C7B7642E87E52 /* CYLCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232B43C6112528CE2A1E4E25 /* CYLCollectionViewController.swift */; };
+		4A7C52697EB06E9C17AF7361 /* CYLAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45F7211CE5105CBF1EBD838 /* CYLAppDelegate.swift */; };
+		6CA03806ABC13F3F79BB3D49 /* CYLObjC02Example.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E1DB78E91DFFA91A5ECB2C5C /* CYLObjC02Example.bundle */; };
+		73D1598572461A7FE5EA5C16 /* CYLPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEC5561C7E5599A671296A6 /* CYLPagingViewController.swift */; };
 		8AE695DD0D4AC85713261AB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A7C2CF6519A8467F8BAE14 /* Foundation.framework */; };
 		A94F07DD83F1C7E0B19EC421 /* Pods_ExampleObjC02.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85FF1A4A5C498CE41555CBA6 /* Pods_ExampleObjC02.framework */; };
 		B124B6E09CD3FA5176C1ECE7 /* CYLCollectionAnimationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */; };
-		CBB9D6D45072E01EA68BA8A6 /* CYLCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 087FB690A8CD354B8C504D91 /* CYLCollectionViewController.m */; };
 		DD31FD6120F730C275F12AB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A7C2CF6519A8467F8BAE14 /* Foundation.framework */; };
 		DE54793E1625C7D2366E35E4 /* CYLPagingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */; };
 		E61C3DF55E2D88FF41CCEBD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0839F4828FF7C5E623CCED92 /* Assets.xcassets */; };
@@ -30,22 +31,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008B40FD8C60E048824DC77A /* CYLAppDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLAppDelegate.m; sourceTree = "<group>"; };
 		0839F4828FF7C5E623CCED92 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		087FB690A8CD354B8C504D91 /* CYLCollectionViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLCollectionViewController.m; sourceTree = "<group>"; };
-		4CC4F0A147668D440C2ECF07 /* main.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		232B43C6112528CE2A1E4E25 /* CYLCollectionViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLCollectionViewController.swift; sourceTree = "<group>"; };
 		59A7C2CF6519A8467F8BAE14 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6AB7DC22E731AD6DB42D2452 /* ExampleObjC02.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleObjC02.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85FF1A4A5C498CE41555CBA6 /* Pods_ExampleObjC02.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleObjC02.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		88C5D620B1DC99FD4B1014C2 /* CYLObjC02Localization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLObjC02Localization.swift; sourceTree = "<group>"; };
 		9DBF4DB313A43F8D69A3FD35 /* ExampleObjC02UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleObjC02UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A03074983DBA9D307E2ECC40 /* CYLAppDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLAppDelegate.h; sourceTree = "<group>"; };
 		A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLCollectionAnimationUITests.swift; sourceTree = "<group>"; };
 		A408587300F69FA986562CEB /* Pods-ExampleObjC02.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleObjC02.debug.xcconfig"; path = "Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02.debug.xcconfig"; sourceTree = "<group>"; };
+		B45F7211CE5105CBF1EBD838 /* CYLAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLAppDelegate.swift; sourceTree = "<group>"; };
 		BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPagingUITests.swift; sourceTree = "<group>"; };
-		CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPagingViewController.m; sourceTree = "<group>"; };
 		D2B509827356F35D2D76E332 /* Pods-ExampleObjC02.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleObjC02.release.xcconfig"; path = "Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02.release.xcconfig"; sourceTree = "<group>"; };
-		EBE0B4D2ADC14DCC33169243 /* CYLCollectionViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLCollectionViewController.h; sourceTree = "<group>"; };
-		ECA9A4A9F5CC7544D1DB23BF /* CYLPagingViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPagingViewController.h; sourceTree = "<group>"; };
+		E1DB78E91DFFA91A5ECB2C5C /* CYLObjC02Example.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; path = CYLObjC02Example.bundle; sourceTree = "<group>"; };
+		FAEC5561C7E5599A671296A6 /* CYLPagingViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPagingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,14 +100,12 @@
 		B87017090A94ED391DD38777 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				A03074983DBA9D307E2ECC40 /* CYLAppDelegate.h */,
-				EBE0B4D2ADC14DCC33169243 /* CYLCollectionViewController.h */,
-				008B40FD8C60E048824DC77A /* CYLAppDelegate.m */,
-				087FB690A8CD354B8C504D91 /* CYLCollectionViewController.m */,
-				4CC4F0A147668D440C2ECF07 /* main.m */,
-				ECA9A4A9F5CC7544D1DB23BF /* CYLPagingViewController.h */,
-				CE53511651C3A7DB26F11466 /* CYLPagingViewController.m */,
 				0839F4828FF7C5E623CCED92 /* Assets.xcassets */,
+				B45F7211CE5105CBF1EBD838 /* CYLAppDelegate.swift */,
+				232B43C6112528CE2A1E4E25 /* CYLCollectionViewController.swift */,
+				FAEC5561C7E5599A671296A6 /* CYLPagingViewController.swift */,
+				88C5D620B1DC99FD4B1014C2 /* CYLObjC02Localization.swift */,
+				E1DB78E91DFFA91A5ECB2C5C /* CYLObjC02Example.bundle */,
 			);
 			name = Sources;
 			path = Sources;
@@ -171,7 +168,7 @@
 				2BE753574093A130204C8DB1 /* Sources */,
 				B4CCA69515D8C5B162190AE6 /* Frameworks */,
 				1CE878C45F2A03D04ABC9C8C /* Resources */,
-				307EC3D759513C4376B08A64 /* [CP] Embed Pods Frameworks */,
+				E551DCA3A501AFB86725CF0F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -218,6 +215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E61C3DF55E2D88FF41CCEBD7 /* Assets.xcassets in Resources */,
+				6CA03806ABC13F3F79BB3D49 /* CYLObjC02Example.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,24 +229,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		307EC3D759513C4376B08A64 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CYLTableViewPlaceHolder.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		570AF51D47E64465C3A338F8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -271,6 +251,30 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E551DCA3A501AFB86725CF0F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02-resources.sh",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLTableViewPlaceHolder.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.placeholder-third-party",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PrivacyInfo.xcprivacy",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.third-party",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -278,10 +282,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DE6CCFEC4B4779D14496AA9 /* CYLAppDelegate.m in Sources */,
-				CBB9D6D45072E01EA68BA8A6 /* CYLCollectionViewController.m in Sources */,
-				27C9228D5CD79A859BD6B3B8 /* main.m in Sources */,
-				02045564CBB70CBD96D6A85A /* CYLPagingViewController.m in Sources */,
+				4A7C52697EB06E9C17AF7361 /* CYLAppDelegate.swift in Sources */,
+				4922901D0C4C7B7642E87E52 /* CYLCollectionViewController.swift in Sources */,
+				73D1598572461A7FE5EA5C16 /* CYLPagingViewController.swift in Sources */,
+				22EA486320B5FF64A4562092 /* CYLObjC02Localization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +392,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleObjC02;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -468,6 +473,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.ExampleObjC02;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

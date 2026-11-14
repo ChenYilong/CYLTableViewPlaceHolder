@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_header_pulling">下拉可以重新整理</string>
+    <string name="srl_header_release">放開立即重新整理</string>
+    <string name="srl_header_refreshing">正在重新整理…</string>
+    <string name="srl_header_loading">正在等待載入…</string>
+    <string name="srl_header_finish">重新整理完成</string>
+    <string name="srl_header_failed">重新整理失敗</string>
+    <string name="srl_header_update">\'上次更新\' M-d HH:mm</string>
+    <string name="srl_header_secondary">放開進入二樓</string>
+</resources>

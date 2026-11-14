@@ -15,6 +15,7 @@
     __unsafe_unretained UIImageView *_arrowView;
 }
 @property (weak, nonatomic) UIActivityIndicatorView *loadingView;
+@property (weak, nonatomic) UIImageView *cyl_noMoreDataImageView;
 @end
 
 @implementation CYLRefreshBackNormalFooter
@@ -22,6 +23,9 @@
 - (UIImageView *)arrowView
 {
     if (!_arrowView) {
+        // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
+        //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
+        // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
         UIImageView *arrowView = [[UIImageView alloc] initWithImage:[NSBundle cyl_arrowImage]];
         [self addSubview:_arrowView = arrowView];
     }
@@ -65,6 +69,7 @@
 - (void)placeSubviews
 {
     [super placeSubviews];
+    [self cyl_placeNoMoreDataImage];
 
     // 箭头的中心点
     CGFloat arrowCenterX = self.cyl_w * 0.5;
@@ -76,7 +81,8 @@
 
     // 箭头
     if (self.arrowView.constraints.count == 0) {
-        self.arrowView.cyl_size = self.arrowView.image.size;
+        BOOL customSize = self.iconSize.width > 0 && self.iconSize.height > 0;
+        self.arrowView.cyl_size = customSize ? self.iconSize : self.arrowView.image.size;
         self.arrowView.center = arrowCenter;
     }
 
@@ -91,6 +97,7 @@
 - (void)setState:(CYLRefreshState)state
 {
     CYLRefreshCheckState
+    [self cyl_updateNoMoreDataImage];
 
     // 根据状态做事情
     if (state == CYLRefreshStateIdle) {
@@ -133,6 +140,51 @@
     return [super.flipsHorizontallyInOppositeLayoutDirectionViews arrayByAddingObjectsFromArray:@[
         self.arrowView
     ]];
+}
+
+
+#pragma mark - No more data image
+
+- (void)setNoMoreDataImage:(UIImage *)noMoreDataImage
+{
+    _noMoreDataImage = noMoreDataImage;
+    [self cyl_updateNoMoreDataImage];
+}
+
+/// [EN] Shows noMoreDataImage beside the text only in the no-more-data state. [CN] 仅在无更多数据状态时，在文字旁显示 noMoreDataImage。
+- (void)cyl_updateNoMoreDataImage
+{
+    BOOL show = self.noMoreDataImage && self.state == CYLRefreshStateNoMoreData;
+    if (show && !self.cyl_noMoreDataImageView) {
+        // [EN] A system UIImageView, not CYLPlaceholderView: it sits beside stateLabel in place of the system
+        //      arrow / spinner views of this classic footer and shows one small image with no title.
+        // [CN] 用系统 UIImageView 而不是 CYLPlaceholderView：它代替经典刷新尾的系统箭头 / 菊花，放在 stateLabel 旁边，只显示一张小图、没有标题。
+        UIImageView *imageView = [[UIImageView alloc] init];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.isAccessibilityElement = NO;
+        [self addSubview:imageView];
+        self.cyl_noMoreDataImageView = imageView;
+    }
+    self.cyl_noMoreDataImageView.image = self.noMoreDataImage;
+    self.cyl_noMoreDataImageView.hidden = !show;
+    [self setNeedsLayout];
+}
+
+- (void)cyl_placeNoMoreDataImage
+{
+    UIImageView *imageView = self.cyl_noMoreDataImageView;
+    if (!imageView || imageView.hidden) return;
+    CGSize size = (self.iconSize.width > 0 && self.iconSize.height > 0) ? self.iconSize : imageView.image.size;
+    imageView.cyl_size = size;
+    CGFloat centerX = self.cyl_w * 0.5;
+    if (!self.stateLabel.hidden) centerX -= self.labelLeftInset + self.stateLabel.cyl_textWidth * 0.5;
+    imageView.center = CGPointMake(centerX, self.cyl_h * 0.5);
+}
+
+- (void)setIconSize:(CGSize)iconSize
+{
+    _iconSize = iconSize;
+    [self setNeedsLayout];
 }
 
 @end

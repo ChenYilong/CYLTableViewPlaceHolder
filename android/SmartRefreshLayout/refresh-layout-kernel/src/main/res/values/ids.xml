@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="srl_tag"/>
+    <item type="id" name="srl_action_refresh"/>
+    <item type="id" name="srl_action_load_more"/>
+</resources>

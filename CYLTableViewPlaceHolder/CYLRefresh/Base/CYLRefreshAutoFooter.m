@@ -73,7 +73,7 @@
 {
     [super scrollViewContentOffsetDidChange:change];
 
-    if (self.state != CYLRefreshStateIdle || !self.automaticallyRefresh || self.cyl_y == 0 ||
+    if (self.state != CYLRefreshStateIdle || !self.automaticallyRefresh || !self.refreshEnabled || self.cyl_y == 0 ||
         self.scrollView.cyl_header.isRefreshing) return;
 
     if (_scrollView.cyl_insetT + _scrollView.cyl_contentH > _scrollView.cyl_h) { // 内容超过一个屏幕
@@ -98,7 +98,12 @@
 {
     [super scrollViewPanStateDidChange:change];
 
-    if (self.state != CYLRefreshStateIdle || self.scrollView.cyl_header.isRefreshing) return;
+    // [EN] loadsAfterNoMoreData: a pull at the end loads again. [CN] loadsAfterNoMoreData：在底部上拉时再次加载。
+    if (self.state == CYLRefreshStateNoMoreData && self.loadsAfterNoMoreData &&
+        _scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        [self resetNoMoreData];
+    }
+    if (self.state != CYLRefreshStateIdle || !self.refreshEnabled || self.scrollView.cyl_header.isRefreshing) return;
 
     UIGestureRecognizerState panState = _scrollView.panGestureRecognizer.state;
 

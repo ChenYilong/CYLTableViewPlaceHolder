@@ -1,0 +1,34 @@
+/* CYLPlaceholderExample.strings (ko): text of the main example app. Keys: CYLPlaceholderExampleLocalization.swift. */
+
+"CYLPlaceholderExampleActionAuto" = "자동";
+"CYLPlaceholderExampleFormatRandomData" = "랜덤 데이터 - %ld";
+"CYLPlaceholderExampleNetReloaderMessage" = "네트워크가 원활하지 않아요~";
+"CYLPlaceholderExampleNetReloaderReload" = "다시 불러오기";
+"CYLPlaceholderExampleWeChatEmptyMessage" = "데이터가 없습니다. 화면을 탭하여 다시 불러오세요";
+"CYLPlaceholderExampleTitleAutomatic" = "자동 플레이스홀더";
+"CYLPlaceholderExampleModeLabel" = "목록 유형";
+"CYLPlaceholderExampleModeTable" = "테이블";
+"CYLPlaceholderExampleModeCollection" = "컬렉션";
+"CYLPlaceholderExampleActionStyles" = "스타일";
+"CYLPlaceholderExampleActionClear" = "지우기";
+"CYLPlaceholderExampleActionDisable" = "끄기";
+"CYLPlaceholderExampleActionEnable" = "켜기";
+"CYLPlaceholderExampleFormatItem" = "항목 %ld";
+"CYLPlaceholderExampleTitleStyles" = "플레이스홀더 스타일";
+"CYLPlaceholderExampleStyleCustomImage" = "사용자 지정 이미지";
+"CYLPlaceholderExampleStyleFlatDesignCode" = "FlatDesign: 코드로 구성";
+"CYLPlaceholderExampleStyleFlatDesignPlist" = "FlatDesign: plist로 구성";
+"CYLPlaceholderExampleStyleBadgeDot" = "배지: 점";
+"CYLPlaceholderExampleStyleBadgeNumber" = "배지: 숫자";
+"CYLPlaceholderExampleStyleBadgeText" = "배지: 사용자 지정 텍스트";
+"CYLPlaceholderExampleBadgeNew" = "신규";
+"CYLPlaceholderExampleTitleBadgePreview" = "배지 미리보기";
+"CYLPlaceholderExampleTitleFlatDesignItem" = "FlatDesign 항목";
+"CYLPlaceholderExampleTitleConfigurationError" = "구성 오류";
+"CYLPlaceholderExampleFormatMissingFile" = "예제 bundle에 %@ 파일이 없습니다.";
+"CYLPlaceholderExampleActionOK" = "확인";
+"CYLPlaceholderExampleTitleChooseMessage" = "메시지 선택";
+"CYLPlaceholderExampleCustomText" = "사용자 지정 텍스트";
+"CYLPlaceholderExampleCustomTextPlaceholder" = "사용자 지정 메시지";
+"CYLPlaceholderExampleActionCancel" = "취소";
+"CYLPlaceholderExampleActionPreview" = "미리보기";

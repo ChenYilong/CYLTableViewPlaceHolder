@@ -1,0 +1,23 @@
+"CYLRefreshHeaderIdleText" = "下に引っ張って更新";
+"CYLRefreshHeaderPullingText" = "離すと更新";
+"CYLRefreshHeaderRefreshingText" = "更新中...";
+
+"CYLRefreshTrailerIdleText" = "スワイプして詳細を表示";
+"CYLRefreshTrailerPullingText" = "離すと詳細を表示";
+
+"CYLRefreshAutoFooterIdleText" = "タップまたは上に引っ張って続きを読み込む";
+"CYLRefreshAutoFooterRefreshingText" = "読み込み中...";
+"CYLRefreshAutoFooterNoMoreDataText" = "すべて読み込みました";
+
+"CYLRefreshBackFooterIdleText" = "上に引っ張って続きを読み込む";
+"CYLRefreshBackFooterPullingText" = "離すと続きを読み込む";
+"CYLRefreshBackFooterRefreshingText" = "読み込み中...";
+"CYLRefreshBackFooterNoMoreDataText" = "すべて読み込みました";
+
+"CYLRefreshHeaderLastTimeText" = "最終更新：";
+"CYLRefreshHeaderDateTodayText" = "今日";
+"CYLRefreshHeaderNoneLastDateText" = "記録なし";
+"CYLRefreshHeaderFinishedText" = "更新完了";
+"CYLRefreshHeaderFailedText" = "更新に失敗しました";
+"CYLRefreshFooterFinishedText" = "読み込み完了";
+"CYLRefreshFooterFailedText" = "読み込みに失敗しました";

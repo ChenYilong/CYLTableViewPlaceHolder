@@ -1,5 +1,7 @@
 PODS:
-  - CYLTableViewPlaceHolder (1.1.0)
+  - CYLTableViewPlaceHolder (1.1.0):
+    - CYLTableViewPlaceHolder/Core (= 1.1.0)
+  - CYLTableViewPlaceHolder/Core (1.1.0)
 
 DEPENDENCIES:
   - CYLTableViewPlaceHolder (from `../..`)
@@ -9,7 +11,7 @@ EXTERNAL SOURCES:
     :path: "../.."
 
 SPEC CHECKSUMS:
-  CYLTableViewPlaceHolder: 9010940bbdf7596f6f79c5189027486600db7678
+  CYLTableViewPlaceHolder: 1b38326531501ef6f52a526f05877919d33e0c76
 
 PODFILE CHECKSUM: fc04102f1d6240072c4703af5849ab356b1125fc
 

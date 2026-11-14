@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accessibility labels of the headers in refresh-header (the Kotlin port). -->
+<resources>
+    <string name="srl_header_refreshing">正在重新整理</string>
+    <string name="srl_header_refreshed">重新整理完成</string>
+</resources>

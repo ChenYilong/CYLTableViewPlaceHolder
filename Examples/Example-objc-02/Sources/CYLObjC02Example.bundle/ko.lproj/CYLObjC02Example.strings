@@ -1,0 +1,15 @@
+/* Example-objc-02 text (ko). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. */
+"CYLObjC02TitleCollection" = "컬렉션 애니메이션";
+"CYLObjC02TitleHeaderRefreshing" = "헤더 새로 고치는 중";
+"CYLObjC02FormatHeaderCompleted" = "헤더 새로 고침 완료 %ld";
+"CYLObjC02TitleFooterRefreshing" = "푸터 불러오는 중";
+"CYLObjC02TitleFooterCompleted" = "푸터 불러오기 완료";
+"CYLObjC02FormatItem" = "항목 %ld";
+"CYLObjC02TitlePaging" = "페이징";
+"CYLObjC02TitleRefreshCompleted" = "새로 고침 완료";
+"CYLObjC02TitleLoadCompleted" = "불러오기 완료";
+"CYLObjC02ActionRefresh" = "새로 고침";
+"CYLObjC02ActionLastPage" = "마지막 페이지";
+"CYLObjC02HintRefresh" = "표를 새로 고치고 2페이지로 돌아갑니다.";
+"CYLObjC02HintLastPage" = "마지막 페이지로 스크롤합니다.";
+"CYLObjC02FormatPage" = "페이지 %ld";

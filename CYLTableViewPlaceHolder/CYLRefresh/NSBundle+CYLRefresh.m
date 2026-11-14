@@ -10,6 +10,9 @@
 #import "CYLRefreshComponent.h"
 #import "CYLRefreshConfig.h"
 
+/// The refresh component's strings table inside CYLTableViewPlaceHolder.bundle; the placeholder uses Localizable.
+static NSString *const CYLRefreshStringsTable = @"CYLRefresh";
+
 static NSBundle *cyl_defaultI18nBundle = nil;
 static NSBundle *cyl_systemI18nBundle = nil;
 
@@ -23,7 +26,12 @@ static NSBundle *cyl_systemI18nBundle = nil;
 #else
         NSBundle *containnerBundle = [NSBundle bundleForClass:[CYLRefreshComponent class]];
 #endif
-        NSString *bundlePath = [containnerBundle pathForResource:@"CYLRefresh" ofType:@"bundle"];
+        // Localizations and images live in the library's single resource bundle,
+        // CYLTableViewPlaceHolder.bundle, next to the placeholder's resources.
+        NSString *bundlePath = [containnerBundle pathForResource:@"CYLTableViewPlaceHolder" ofType:@"bundle"];
+        if (!bundlePath) {
+            bundlePath = [NSBundle.mainBundle pathForResource:@"CYLTableViewPlaceHolder" ofType:@"bundle"];
+        }
         if (bundlePath) {
             refreshBundle = [NSBundle bundleWithPath:bundlePath];
         }
@@ -35,7 +43,7 @@ static NSBundle *cyl_systemI18nBundle = nil;
 {
     static UIImage *arrowImage = nil;
     if (arrowImage == nil) {
-        arrowImage = [[UIImage imageWithContentsOfFile:[[self cyl_refreshBundle] pathForResource:@"arrow@2x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        arrowImage = [[UIImage imageWithContentsOfFile:[[self cyl_refreshBundle] pathForResource:@"CYLRefreshArrow@2x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     return arrowImage;
 }
@@ -43,7 +51,7 @@ static NSBundle *cyl_systemI18nBundle = nil;
 + (UIImage *)cyl_trailArrowImage {
     static UIImage *arrowImage = nil;
     if (arrowImage == nil) {
-        arrowImage = [[UIImage imageWithContentsOfFile:[[self cyl_refreshBundle] pathForResource:@"trail_arrow@2x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        arrowImage = [[UIImage imageWithContentsOfFile:[[self cyl_refreshBundle] pathForResource:@"CYLRefreshTrailArrow@2x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     return arrowImage;
 }
@@ -78,9 +86,9 @@ static NSBundle *cyl_systemI18nBundle = nil;
             cyl_systemI18nBundle = [self cyl_defaultI18nBundleWithLanguage:language];
         }
     }
-    // 首先在 CYLRefresh 内置语言文件中寻找
+    // 首先在 CYLRefresh 内置语言文件（统一资源包中的 CYLRefresh.strings）中寻找
     if (cyl_systemI18nBundle) {
-        value = [cyl_systemI18nBundle localizedStringForKey:key value:value table:nil];
+        value = [cyl_systemI18nBundle localizedStringForKey:key value:value table:CYLRefreshStringsTable];
     }
     // 然后在 MainBundle 对应语言文件中寻找
     value = [cyl_defaultI18nBundle localizedStringForKey:key value:value table:table];
@@ -96,6 +104,8 @@ static NSBundle *cyl_systemI18nBundle = nil;
         } else { // zh-Hant\zh-HK\zh-TW
             language = @"zh-Hant"; // 繁體中文
         }
+    } else if ([language hasPrefix:@"ja"]) {
+        language = @"ja";
     } else if ([language hasPrefix:@"ko"]) {
         language = @"ko";
     } else if ([language hasPrefix:@"ru"]) {
@@ -106,7 +116,7 @@ static NSBundle *cyl_systemI18nBundle = nil;
         language = @"en";
     }
 
-    // 从CYLRefresh.bundle中查找资源
+    // 从统一资源包 CYLTableViewPlaceHolder.bundle 中查找资源
     NSString *path = [[NSBundle cyl_refreshBundle] pathForResource:language ofType:@"lproj"];
     return path ? [NSBundle bundleWithPath:path] : nil;
 }

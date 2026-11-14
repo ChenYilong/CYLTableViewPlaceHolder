@@ -22,6 +22,9 @@ static UIColor *CYLRenderedCenterColor(UIView *view) {
     return [UIColor colorWithRed:pixel[0] / 255.0 green:pixel[1] / 255.0 blue:pixel[2] / 255.0 alpha:pixel[3] / 255.0];
 }
 
+/// Upper bound for asynchronous loads and fallbacks: loaded CI simulators can take seconds per main-queue turn.
+static const NSTimeInterval CYLTestTimeout = 30;
+
 @interface CYLPlaceholderLottiePlaybackTests : XCTestCase
 @end
 
@@ -74,7 +77,7 @@ static UIColor *CYLRenderedCenterColor(UIView *view) {
         CGFloat r, g, b, a;
         return [color getRed:&r green:&g blue:&b alpha:&a] && b > 0.98;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     UIView *darkLottie = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
     [darkLottie layoutIfNeeded];
     UIColor *darkDrawn = CYLRenderedCenterColor(darkLottie);
@@ -110,14 +113,14 @@ static UIColor *CYLRenderedCenterColor(UIView *view) {
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [placeholder valueForKey:@"backendView"] == nil;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     XCTAssertNil([placeholder valueForKey:@"backendView"]);
     XCTAssertFalse(placeholder.imageView.layer.hidden);
     window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [placeholder valueForKey:@"backendView"] != nil;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     XCTAssertNotNil([placeholder valueForKey:@"backendView"]);
     XCTAssertTrue(placeholder.imageView.layer.hidden);
     [placeholder removeFromSuperview];
@@ -208,7 +211,7 @@ static UIColor *CYLRenderedCenterColor(UIView *view) {
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [placeholder valueForKey:@"backendView"] != backend;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
     UIView *replacement = [[placeholder valueForKey:@"backendView"] subviews].firstObject;
     XCTAssertNotEqual(replacement, lottie);
     XCTAssertEqualWithAccuracy([[replacement valueForKey:@"cyl_animationSpeed"] doubleValue], 2, 0.01);

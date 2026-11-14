@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_header_pulling">Потягніть, щоб оновити</string>
+    <string name="srl_header_release">Відпустіть, щоб оновити</string>
+    <string name="srl_header_refreshing">Оновлення…</string>
+    <string name="srl_header_loading">Очікування завантаження…</string>
+    <string name="srl_header_finish">Оновлено</string>
+    <string name="srl_header_failed">Не вдалося оновити</string>
+    <string name="srl_header_update">\'Оновлено\' d.M HH:mm</string>
+    <string name="srl_header_secondary">Відпустіть, щоб перейти на другий поверх</string>
+</resources>

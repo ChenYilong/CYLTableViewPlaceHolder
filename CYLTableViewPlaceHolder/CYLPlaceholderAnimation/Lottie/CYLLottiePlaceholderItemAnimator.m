@@ -97,6 +97,14 @@
     self.lottieView.animationSpeed = animationSpeed;
 }
 
+- (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount {
+    CYLPlaceholderCompatibleLOTAnimationView *lottieView = self.lottieView;
+    if (!lottieView || repeatCount < 0) return NO;
+    // [EN] The bridge's -1 is Lottie's `.loop`. [CN] 桥接层的 -1 对应 Lottie 的 `.loop`。
+    lottieView.loopAnimationCount = repeatCount == 0 ? -1 : (CGFloat)repeatCount;
+    return YES;
+}
+
 - (void)applyDarkColors:(NSDictionary<NSString *, UIColor *> *)darkColors traitCollection:(UITraitCollection *)traitCollection {
     CYLPlaceholderCompatibleLOTAnimationView *view = self.lottieView;
     if (!view || darkColors.count == 0) {

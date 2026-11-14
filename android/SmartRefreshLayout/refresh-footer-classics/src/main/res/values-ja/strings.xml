@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Added for the Kotlin port (issue #1291: languages beyond Chinese and English). -->
+<resources>
+    <string name="srl_footer_pulling">上に引っ張ってさらに読み込む</string>
+    <string name="srl_footer_release">離してさらに読み込む</string>
+    <string name="srl_footer_loading">読み込み中…</string>
+    <string name="srl_footer_refreshing">更新待ち…</string>
+    <string name="srl_footer_finish">読み込みました</string>
+    <string name="srl_footer_failed">読み込みに失敗しました</string>
+    <string name="srl_footer_nothing">これ以上データはありません</string>
+</resources>

@@ -7,135 +7,25 @@
 //
 
 #import "CYLRefreshGifHeader.h"
-#import "UIView+CYLExtension.h"
-#import "UIScrollView+CYLExtension.h"
-
-@interface CYLRefreshGifHeader()
-{
-    __unsafe_unretained UIImageView *_gifView;
-}
-/** 所有状态对应的动画图片 */
-@property (strong, nonatomic) NSMutableDictionary *stateImages;
-/** 所有状态对应的动画时间 */
-@property (strong, nonatomic) NSMutableDictionary *stateDurations;
-@end
 
 @implementation CYLRefreshGifHeader
-#pragma mark - 懒加载
+
+// [EN] The MJRefresh names call the general methods of CYLRefreshAnimationHeader, so old code keeps working.
+// [CN] MJRefresh 的方法名调用 CYLRefreshAnimationHeader 的通用方法，旧代码照常工作。
+
 - (UIImageView *)gifView
 {
-    if (!_gifView) {
-        UIImageView *gifView = [[UIImageView alloc] init];
-        [self addSubview:_gifView = gifView];
-    }
-    return _gifView;
+    return self.animationView;
 }
 
-- (NSMutableDictionary *)stateImages
+- (instancetype)setImages:(NSArray *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
 {
-    if (!_stateImages) {
-        self.stateImages = [NSMutableDictionary dictionary];
-    }
-    return _stateImages;
-}
-
-- (NSMutableDictionary *)stateDurations
-{
-    if (!_stateDurations) {
-        self.stateDurations = [NSMutableDictionary dictionary];
-    }
-    return _stateDurations;
-}
-
-#pragma mark - 公共方法
-- (instancetype)setImages:(NSArray *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state {
-    if (images == nil) return self;
-
-    self.stateImages[@(state)] = images;
-    self.stateDurations[@(state)] = @(duration);
-
-    /* 根据图片设置控件的高度 */
-    UIImage *image = [images firstObject];
-    if (image.size.height > self.cyl_h) {
-        self.cyl_h = image.size.height;
-    }
-    return self;
+    return [self setAnimationImages:images duration:duration forState:state];
 }
 
 - (instancetype)setImages:(NSArray *)images forState:(CYLRefreshState)state
 {
-    return [self setImages:images duration:images.count * 0.1 forState:state];
+    return [self setAnimationImages:images forState:state];
 }
 
-#pragma mark - 实现父类的方法
-- (void)prepare
-{
-    [super prepare];
-
-    // 初始化间距
-    self.labelLeftInset = 20;
-}
-
-- (void)setPullingPercent:(CGFloat)pullingPercent
-{
-    [super setPullingPercent:pullingPercent];
-    NSArray *images = self.stateImages[@(CYLRefreshStateIdle)];
-    if (self.state != CYLRefreshStateIdle || images.count == 0) return;
-    // 停止动画
-    [self.gifView stopAnimating];
-    // 设置当前需要显示的图片
-    NSUInteger index =  images.count * pullingPercent;
-    if (index >= images.count) index = images.count - 1;
-    self.gifView.image = images[index];
-}
-
-- (void)placeSubviews
-{
-    [super placeSubviews];
-
-    if (self.gifView.constraints.count) return;
-
-    self.gifView.frame = self.bounds;
-    if (self.stateLabel.hidden && self.lastUpdatedTimeLabel.hidden) {
-        self.gifView.contentMode = UIViewContentModeCenter;
-    } else {
-        self.gifView.contentMode = UIViewContentModeRight;
-
-        CGFloat stateWidth = self.stateLabel.cyl_textWidth;
-        CGFloat timeWidth = 0.0;
-        if (!self.lastUpdatedTimeLabel.hidden) {
-            timeWidth = self.lastUpdatedTimeLabel.cyl_textWidth;
-        }
-        CGFloat textWidth = MAX(stateWidth, timeWidth);
-        self.gifView.cyl_w = self.cyl_w * 0.5 - textWidth * 0.5 - self.labelLeftInset;
-    }
-}
-
-- (void)setState:(CYLRefreshState)state
-{
-    CYLRefreshCheckState
-
-    // 根据状态做事情
-    if (state == CYLRefreshStatePulling || state == CYLRefreshStateRefreshing) {
-        NSArray *images = self.stateImages[@(state)];
-        if (images.count == 0) return;
-
-        [self.gifView stopAnimating];
-        if (images.count == 1) { // 单张图片
-            self.gifView.image = [images lastObject];
-        } else { // 多张图片
-            self.gifView.animationImages = images;
-            self.gifView.animationDuration = [self.stateDurations[@(state)] doubleValue];
-            [self.gifView startAnimating];
-        }
-    } else if (state == CYLRefreshStateIdle) {
-        [self.gifView stopAnimating];
-    }
-}
-
-- (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {
-    return [super.flipsHorizontallyInOppositeLayoutDirectionViews arrayByAddingObjectsFromArray:@[
-        self.gifView
-    ]];
-}
 @end
