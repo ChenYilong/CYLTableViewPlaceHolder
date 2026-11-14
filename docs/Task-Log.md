@@ -27,11 +27,11 @@
 
 ## 任务 / Tasks
 
-### TODO：修复 PR #29 的 CI 错误 / TODO: Fix the CI failures of pull request #29
+### 已完成：修复 PR #29 的 CI 错误 / Done: Fix the CI failures of pull request #29
 
 | 中文 | English |
 | --- | --- |
-| 状态：TODO（2026-11-14，分支 `fix/privacy-manifest-bundle`，PR #29）。 | Status: TODO (2026-11-14, branch `fix/privacy-manifest-bundle`, pull request #29). |
+| 状态：已完成（2026-11-14，分支 `fix/privacy-manifest-bundle`，PR #29）。①Unit tests：`f138707` 把固定等待改为等到加载（和回到空闲）发生，最多 5 秒；②Example-Scenarios：在 CYLTabBarController（分支 `feat/cross-platform-components`）修复 `CYLTabBarManifest.swift` 的可选类型混用，提交 `2ec9fa9`（本地 Xcode 27 构建通过；Xcode 27 的 Swift 6.4 本来就接受旧写法，Xcode 26 不接受）。验证：CI 运行 43524022935 全部通过。 | Status: done (2026-11-14, branch `fix/privacy-manifest-bundle`, pull request #29). (1) Unit tests: `f138707` replaces the fixed wait with a wait until the load (and the idle state) happens, up to 5 s. (2) Example-Scenarios: the mixed optional types in `CYLTabBarManifest.swift` are fixed in CYLTabBarController (branch `feat/cross-platform-components`), commit `2ec9fa9` (it builds locally with Xcode 27, whose Swift 6.4 accepted the old code anyway; Xcode 26 does not). Check: CI run 43524022935 passes every job. |
 | 用户原始提示词：“修复CI错误后 continue https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/43461720520/job/132010141898?pr=29” | The user's original prompt (verbatim on the left): fix the CI errors, then continue (link to run 43461720520, job 132010141898, pull request #29). |
 | 要求：①修好 PR #29 的失败任务；②之后继续进行中的任务（Android 移植：`android/merged` 合并示例）。 | Requirements: (1) fix the failing jobs of pull request #29; (2) then continue the task in progress (the Android port: the merged example in `android/merged`). |
 | 上下文：最新一次运行 43511586940 有两项失败。①Unit tests：`CYLRefreshDrawnHeaderTests testDrawnFootersLoadAndShowNoMoreData` 在 `beginRefreshing` 后固定等待 0.6 秒就断言已加载，每次失败的样式不同（Material / Phoenix / Taurus），是 CI 机器慢造成的时序不稳定；②Demo Examples/Example-Scenarios：CYLTabBarController 最新提交自身的 `CYLTabBarManifest.swift:812` 编译错误（`[String : Any]?` 不能转换为 `CYLTabBarManifest?`），在依赖库中。 | Context: the latest run, 43511586940, fails two jobs. (1) Unit tests: `CYLRefreshDrawnHeaderTests testDrawnFootersLoadAndShowNoMoreData` asserts the load 0.6 s after `beginRefreshing`, a fixed wait; a different style fails each run (Material / Phoenix / Taurus), timing flakiness on a slow CI machine. (2) Demo Examples/Example-Scenarios: a build error inside the dependency CYLTabBarController's latest commit, `CYLTabBarManifest.swift:812` (`[String : Any]?` cannot convert to `CYLTabBarManifest?`). |
