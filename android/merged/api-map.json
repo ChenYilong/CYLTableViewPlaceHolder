@@ -1586,6 +1586,10 @@
   "status": "done",
   "android": "CYLRefreshAutoNormalFooter.loadingView"
  },
+ "CYLRefreshAutoNormalFooter noMoreDataImage": {
+  "status": "done",
+  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage"
+ },
  "CYLRefreshAutoStateFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoStateFooter",
@@ -1728,6 +1732,10 @@
  "CYLRefreshBackNormalFooter loadingView": {
   "status": "done",
   "android": "CYLRefreshBackNormalFooter.loadingView"
+ },
+ "CYLRefreshBackNormalFooter noMoreDataImage": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.noMoreDataImage"
  },
  "CYLRefreshBackStateFooter": {
   "status": "done",
@@ -2884,6 +2892,14 @@
   "status": "done",
   "android": "CYLRefreshStateHeader.setTitle"
  },
+ "CYLRefreshStateHeader failedImage": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.failedImage"
+ },
+ "CYLRefreshStateHeader iconOnTrailingSide": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.iconOnTrailingSide"
+ },
  "CYLRefreshStateHeader labelLeftInset": {
   "status": "done",
   "android": "CYLRefreshStateHeader.labelLeftInset"
@@ -2907,6 +2923,10 @@
  "CYLRefreshStateHeader stateLabel": {
   "status": "done",
   "android": "CYLRefreshStateHeader.stateLabel"
+ },
+ "CYLRefreshStateHeader succeededImage": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.succeededImage"
  },
  "CYLRefreshStateHeader titleTimeSpacing": {
   "status": "done",

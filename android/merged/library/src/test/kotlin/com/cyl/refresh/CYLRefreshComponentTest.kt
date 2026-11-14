@@ -12,6 +12,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -455,5 +456,52 @@ class CYLRefreshComponentTest {
             org.robolectric.shadows.ShadowChoreographer.setPaused(false)
         }
     }
+
+
+    @Test
+    fun theStateClassesShowResultAndNoMoreDataImages() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        val ok = android.graphics.drawable.ColorDrawable(0xFF00AA00.toInt())
+        val bad = android.graphics.drawable.ColorDrawable(0xFFAA0000.toInt())
+        header.succeededImage = ok
+        header.failedImage = bad
+        // The layout finishes a refresh within one animation pass, so the view is driven the way the layout does.
+        val classics = header.view as CYLClassicsHeaderView
+        val spinner = header.loadingView!!.drawable
+        classics.onFinish(layout, true)
+        assertSame("the spinner shows the check", ok, header.loadingView!!.drawable)
+        assertEquals(View.VISIBLE, header.loadingView!!.visibility)
+        classics.onStateChanged(layout, com.scwang.smart.refresh.layout.constant.RefreshState.RefreshFinish, com.scwang.smart.refresh.layout.constant.RefreshState.None)
+        assertSame("the spinner is back and hidden", spinner, header.loadingView!!.drawable)
+        assertEquals(View.GONE, header.loadingView!!.visibility)
+        classics.onFinish(layout, false)
+        assertSame("the cross after a failure", bad, header.loadingView!!.drawable)
+        classics.onStartAnimator(layout, 100, 200)
+        assertSame("a new refresh shows the spinner again", spinner, header.loadingView!!.drawable)
+
+        val lp = { v: View -> v.layoutParams as android.widget.RelativeLayout.LayoutParams }
+        assertTrue(lp(header.arrowView!!).getRule(android.widget.RelativeLayout.LEFT_OF) != 0)
+        header.iconOnTrailingSide = true
+        assertEquals(0, lp(header.arrowView!!).getRule(android.widget.RelativeLayout.LEFT_OF))
+        assertTrue(lp(header.arrowView!!).getRule(android.widget.RelativeLayout.RIGHT_OF) != 0)
+        header.iconOnTrailingSide = false
+        assertTrue(lp(header.arrowView!!).getRule(android.widget.RelativeLayout.LEFT_OF) != 0)
+
+        val footer = CYLRefreshBackNormalFooter(activity)
+        layout.cyl_footer = footer
+        val done = android.graphics.drawable.ColorDrawable(0xFF0000AA.toInt())
+        footer.noMoreDataImage = done
+        footer.noticeNoMoreData()
+        idle(100)
+        assertSame(done, footer.arrowView!!.drawable)
+        assertEquals(View.VISIBLE, footer.arrowView!!.visibility)
+        footer.resetNoMoreData()
+        idle(100)
+        assertNotSame(done, footer.arrowView!!.drawable)
+    }
+
+
 
 }

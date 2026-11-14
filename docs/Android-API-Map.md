@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：93 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 626、partial 61、planned 22、n/a 195）。 | **Migration score: 93 / 100** (done + 0.5 × partial over 709 counted symbols; done 626, partial 61, planned 22, n/a 195). |
+| **迁移完成率：93 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 631、partial 61、planned 17、n/a 195）。 | **Migration score: 93 / 100** (done + 0.5 × partial over 709 counted symbols; done 631, partial 61, planned 17, n/a 195). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -823,7 +823,7 @@
 |:---|:---|:---|:---|
 | `CYLRefreshAutoNormalFooter` | `com.cyl.refresh.CYLRefreshAutoNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
 | `CYLRefreshAutoNormalFooter` `loadingView` | `CYLRefreshAutoNormalFooter.loadingView` | done |  |
-| `CYLRefreshAutoNormalFooter` `noMoreDataImage` | — | planned (TODO) |  |
+| `CYLRefreshAutoNormalFooter` `noMoreDataImage` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | done |  |
 | `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`
@@ -861,7 +861,7 @@
 | `CYLRefreshBackNormalFooter` | `com.cyl.refresh.CYLRefreshBackNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
 | `CYLRefreshBackNormalFooter` `arrowView` | `CYLRefreshBackNormalFooter.arrowView` | done |  |
 | `CYLRefreshBackNormalFooter` `loadingView` | `CYLRefreshBackNormalFooter.loadingView` | done |  |
-| `CYLRefreshBackNormalFooter` `noMoreDataImage` | — | planned (TODO) |  |
+| `CYLRefreshBackNormalFooter` `noMoreDataImage` | `CYLRefreshBackNormalFooter.noMoreDataImage` | done |  |
 | `CYLRefreshBackNormalFooter` `iconSize` | `CYLRefreshBackNormalFooter.iconSize` | done |  |
 | `CYLRefreshBackNormalFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
@@ -916,9 +916,9 @@
 | `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` | done |  |
 | `CYLRefreshStateHeader` `lastUpdatedTimeString` | `CYLRefreshStateHeader.lastUpdatedTimeString` | done |  |
 | `CYLRefreshStateHeader` `titleTimeSpacing` | `CYLRefreshStateHeader.titleTimeSpacing` | done |  |
-| `CYLRefreshStateHeader` `succeededImage` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `failedImage` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `iconOnTrailingSide` | — | planned (TODO) |  |
+| `CYLRefreshStateHeader` `succeededImage` | `CYLRefreshStateHeader.succeededImage` | done |  |
+| `CYLRefreshStateHeader` `failedImage` | `CYLRefreshStateHeader.failedImage` | done |  |
+| `CYLRefreshStateHeader` `iconOnTrailingSide` | `CYLRefreshStateHeader.iconOnTrailingSide` | done |  |
 | `CYLRefreshStateHeader(ChainingGrammar)` | `com.cyl.refresh.CYLRefreshStateHeader` | done |  |
 | `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` | done |  |
 
