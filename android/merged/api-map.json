@@ -1,23 +1,203 @@
 {
+ "CYLPlaceholderAction": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAction",
+  "note": "string constants with the iOS values"
+ },
+ "CYLPlaceholderActionHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
+ },
  "CYLPlaceholderButtonStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle"
+ },
+ "CYLPlaceholderComponent": {
   "status": "partial",
-  "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.cyl.placeholder.CYLPlaceholderComponent",
+  "note": "icons are the static fallback images; Android plays no animation yet"
+ },
+ "CYLPlaceholderComponent +buttonComponentWithTitle:style:action:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)"
+ },
+ "CYLPlaceholderComponent +componentWithAttributes:action:": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.componentWithAttributes(attributes, action)",
+  "note": "the keys of attributes"
+ },
+ "CYLPlaceholderComponent +componentWithBundledAnimation:fallbackStyle:title:size:action:": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
+  "note": "shows the fallback image (the iOS animation is not played)"
+ },
+ "CYLPlaceholderComponent +hintComponentWithText:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.hintComponentWithText(text)"
+ },
+ "CYLPlaceholderComponent +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderComponent +separatorComponentWithText:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.separatorComponentWithText(text)"
+ },
+ "CYLPlaceholderComponent -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderComponent action": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.action"
+ },
+ "CYLPlaceholderComponent animationRepeatCount": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.animationRepeatCount",
+  "note": "kept for apps that play the animation; Android shows the static icon"
+ },
+ "CYLPlaceholderComponent attributes": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.attributes",
+  "note": "title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO)"
+ },
+ "CYLPlaceholderComponent imageBundle": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android components take a drawable resource"
+ },
+ "CYLPlaceholderComponent interactionEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.interactionEnabled"
+ },
+ "CYLPlaceholderComponent spacingBefore": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.spacingBefore (dp)"
+ },
+ "CYLPlaceholderPermission": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderPermission"
  },
  "CYLPlaceholderScenario": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenario"
+ },
+ "CYLPlaceholderScenarioCatalog": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenarioCatalog"
+ },
+ "CYLPlaceholderScenarioCatalog +actionNamed:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.actionNamed(name)"
+ },
+ "CYLPlaceholderScenarioCatalog +animationFileNamesForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +backgroundActionForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +categoryForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +componentsForScenario:": {
   "status": "partial",
-  "android": "com.cyl.placeholder.CYLPlaceholderScenario",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)",
+  "note": "every scenario's components; icons are the static fallback images"
+ },
+ "CYLPlaceholderScenarioCatalog +localizedNameForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +localizedTitleForAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, action)"
+ },
+ "CYLPlaceholderScenarioCatalog +nameForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.nameForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderScenarioCatalog +permissionForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +readmeScreenshotNumbersForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +scenarioForPermission:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.scenarioForPermission(permission)"
+ },
+ "CYLPlaceholderScenarioCatalog +scenarioNamed:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.scenarioNamed(name)"
+ },
+ "CYLPlaceholderScenarioCatalog -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderScenarioCatalog allScenarios": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.allScenarios"
+ },
+ "CYLPlaceholderScenarioCategory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenarioCategory"
  },
  "CYLPlaceholderStackView": {
   "status": "partial",
   "android": "com.cyl.placeholder.CYLPlaceholderStackView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "no CYLPlaceholderView inside yet; built from components"
+ },
+ "CYLPlaceholderStackView -appendComponent:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.appendComponent(component)"
+ },
+ "CYLPlaceholderStackView -appendComponentView:action:spacingBefore:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.appendComponentView(view, action, spacingBefore)"
+ },
+ "CYLPlaceholderStackView -componentViewForAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.componentViewForAction(action)"
+ },
+ "CYLPlaceholderStackView -initWithCoder:": {
+  "status": "n/a",
+  "note": "UIKit initializers; Android views take a Context"
+ },
+ "CYLPlaceholderStackView -initWithComponents:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView(context, components, actions)"
+ },
+ "CYLPlaceholderStackView -initWithFrame:": {
+  "status": "n/a",
+  "note": "UIKit initializers; Android views take a Context"
  },
  "CYLPlaceholderStackView -initWithScenario:actions:": {
-  "status": "partial",
-  "android": "CYLPlaceholderStackView(context, scenario, actions)",
-  "note": "the action names follow CYLPlaceholderAction; the components of a scenario are a subset (see Android-Port.md)"
+  "status": "done",
+  "android": "CYLPlaceholderStackView(context, scenario, actions)"
+ },
+ "CYLPlaceholderStackView -performAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.performAction(action)"
+ },
+ "CYLPlaceholderStackView -setHandler:forAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.setHandler(handler, action)"
+ },
+ "CYLPlaceholderStackView backgroundAction": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.backgroundAction"
+ },
+ "CYLPlaceholderStackView componentViews": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.componentViews"
  },
  "CYLPlaceholderStackView scenario": {
   "status": "done",

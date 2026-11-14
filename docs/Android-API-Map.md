@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：14 / 100**（done + 0.5 × partial，共 823 个计入的符号；done 99、partial 40、planned 684、n/a 81）。 | **Migration score: 14 / 100** (done + 0.5 × partial over 823 counted symbols; done 99, partial 40, planned 684, n/a 81). |
+| **迁移完成率：19 / 100**（done + 0.5 × partial，共 816 个计入的符号；done 133、partial 43、planned 640、n/a 88）。 | **Migration score: 19 / 100** (done + 0.5 × partial over 816 counted symbols; done 133, partial 43, planned 640, n/a 88). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -1114,66 +1114,66 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderScenario` | `com.cyl.placeholder.CYLPlaceholderScenario` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLPlaceholderScenarioCategory` | — | planned (TODO) |  |
-| `CYLPlaceholderPermission` | — | planned (TODO) |  |
-| `CYLPlaceholderAction` | — | planned (TODO) |  |
-| `CYLPlaceholderButtonStyle` | `com.cyl.placeholder.CYLPlaceholderButtonStyle` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLPlaceholderComponent` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `attributes` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `action` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `imageBundle` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `spacingBefore` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `interactionEnabled` | — | planned (TODO) |  |
+| `CYLPlaceholderScenario` | `com.cyl.placeholder.CYLPlaceholderScenario` | done |  |
+| `CYLPlaceholderScenarioCategory` | `com.cyl.placeholder.CYLPlaceholderScenarioCategory` | done |  |
+| `CYLPlaceholderPermission` | `com.cyl.placeholder.CYLPlaceholderPermission` | done |  |
+| `CYLPlaceholderAction` | `com.cyl.placeholder.CYLPlaceholderAction` | done | string constants with the iOS values |
+| `CYLPlaceholderButtonStyle` | `com.cyl.placeholder.CYLPlaceholderButtonStyle` | done |  |
+| `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | partial | icons are the static fallback images; Android plays no animation yet |
+| `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` | partial | title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO) |
+| `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` | done |  |
+| `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
+| `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
+| `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` | done |  |
 | `CYLPlaceholderComponent` `tapHighlightStyle` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `animationRepeatCount` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+hintComponentWithText:` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+separatorComponentWithText:` | — | planned (TODO) |  |
+| `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | kept for apps that play the animation; Android shows the static icon |
+| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
+| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | shows the fallback image (the iOS animation is not played) |
+| `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` | done |  |
+| `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` | done |  |
+| `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` | done |  |
 | `CYLPlaceholderComponent` `+componentWithDictionary:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderComponent` `+new` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `allScenarios` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+animationFileNamesForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+categoryForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+permissionForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+scenarioForPermission:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+nameForScenario:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+scenarioNamed:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+actionNamed:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+localizedTitleForAction:` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderScenarioCatalog` `+new` | — | planned (TODO) |  |
+| `CYLPlaceholderComponent` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderComponent` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderScenarioCatalog` | `com.cyl.placeholder.CYLPlaceholderScenarioCatalog` | done |  |
+| `CYLPlaceholderScenarioCatalog` `allScenarios` | `CYLPlaceholderScenarioCatalog.allScenarios` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)` | partial | every scenario's components; icons are the static fallback images |
+| `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | `CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | `CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | `CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+animationFileNamesForScenario:` | `CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+categoryForScenario:` | `CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+permissionForScenario:` | `CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+scenarioForPermission:` | `CYLPlaceholderScenarioCatalog.scenarioForPermission(permission)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+nameForScenario:` | `CYLPlaceholderScenarioCatalog.nameForScenario(scenario)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+scenarioNamed:` | `CYLPlaceholderScenarioCatalog.scenarioNamed(name)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+actionNamed:` | `CYLPlaceholderScenarioCatalog.actionNamed(name)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `+localizedTitleForAction:` | `CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, action)` | done |  |
+| `CYLPlaceholderScenarioCatalog` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderScenarioCatalog` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderActionHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLPlaceholderActionHandler` | `com.cyl.placeholder.CYLPlaceholderActionHandler` | done |  |
+| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | no CYLPlaceholderView inside yet; built from components |
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackView.stackView` | done |  |
 | `CYLPlaceholderStackView` `placeholderView` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `componentViews` | — | planned (TODO) |  |
+| `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackView.componentViews` | done |  |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackView.scenario` | done |  |
-| `CYLPlaceholderStackView` `backgroundAction` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackView(context, scenario, actions)` | partial | the action names follow CYLPlaceholderAction; the components of a scenario are a subset (see Android-Port.md) |
-| `CYLPlaceholderStackView` `-initWithComponents:actions:` | — | planned (TODO) |  |
+| `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackView.backgroundAction` | done |  |
+| `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackView(context, scenario, actions)` | done |  |
+| `CYLPlaceholderStackView` `-initWithComponents:actions:` | `CYLPlaceholderStackView(context, components, actions)` | done |  |
 | `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | — | planned (TODO) |  |
 | `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-initWithFrame:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-initWithCoder:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-appendComponent:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-setHandler:forAction:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-componentViewForAction:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-performAction:` | — | planned (TODO) |  |
+| `CYLPlaceholderStackView` `-initWithFrame:` | — | n/a | UIKit initializers; Android views take a Context |
+| `CYLPlaceholderStackView` `-initWithCoder:` | — | n/a | UIKit initializers; Android views take a Context |
+| `CYLPlaceholderStackView` `-appendComponent:` | `CYLPlaceholderStackView.appendComponent(component)` | done |  |
+| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | `CYLPlaceholderStackView.appendComponentView(view, action, spacingBefore)` | done |  |
+| `CYLPlaceholderStackView` `-setHandler:forAction:` | `CYLPlaceholderStackView.setHandler(handler, action)` | done |  |
+| `CYLPlaceholderStackView` `-componentViewForAction:` | `CYLPlaceholderStackView.componentViewForAction(action)` | done |  |
+| `CYLPlaceholderStackView` `-performAction:` | `CYLPlaceholderStackView.performAction(action)` | done |  |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`
 
