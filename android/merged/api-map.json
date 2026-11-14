@@ -1,0 +1,3683 @@
+{
+ "CYLCollectionPlaceholderNormalBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock"
+ },
+ "CYLCollectionPlaceholderViewBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLCollectionPlaceholderViewBlock"
+ },
+ "CYLGIFPlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLGIFPlaceholderItemAnimator"
+ },
+ "CYLGIFPlaceholderItemAnimator animator": {
+  "status": "done",
+  "android": "CYLGIFPlaceholderItemAnimator.animator"
+ },
+ "CYLPlaceholderAction": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAction",
+  "note": "string constants with the iOS values"
+ },
+ "CYLPlaceholderActionHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
+ },
+ "CYLPlaceholderAnimationBackend": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationBackend"
+ },
+ "CYLPlaceholderAnimationErrorHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler"
+ },
+ "CYLPlaceholderAnimationFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationFactory"
+ },
+ "CYLPlaceholderAnimationOption": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationOption"
+ },
+ "CYLPlaceholderAnimationOptionRiveActiveDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveActiveDuration"
+ },
+ "CYLPlaceholderAnimationOptionRiveActiveProperty": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveActiveProperty"
+ },
+ "CYLPlaceholderAnimationOptionRiveAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveAnimation"
+ },
+ "CYLPlaceholderAnimationOptionRiveArtboard": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveArtboard"
+ },
+ "CYLPlaceholderAnimationOptionRiveColor": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveColor"
+ },
+ "CYLPlaceholderAnimationOptionRiveInput": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveInput"
+ },
+ "CYLPlaceholderAnimationOptionRiveLegacyRuntime": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveLegacyRuntime"
+ },
+ "CYLPlaceholderAnimationOptionRiveStateMachine": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveStateMachine"
+ },
+ "CYLPlaceholderAnimationOptionRiveTriggerInput": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveTriggerInput"
+ },
+ "CYLPlaceholderAnimationOptionRiveTriggerProperty": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveTriggerProperty"
+ },
+ "CYLPlaceholderAnimationPlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationPlayer"
+ },
+ "CYLPlaceholderAnimationPlayer -play": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.play"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationColors"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationProgress"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationSpeed"
+ },
+ "CYLPlaceholderAnimationPlayer -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.showLastFrame"
+ },
+ "CYLPlaceholderAnimationPlayer -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.stop"
+ },
+ "CYLPlaceholderAnimationPlayer errorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.errorHandler"
+ },
+ "CYLPlaceholderAnimationPlayer ready": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.ready"
+ },
+ "CYLPlaceholderAnimationPlayer readyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.readyHandler"
+ },
+ "CYLPlaceholderAnimationView": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationView"
+ },
+ "CYLPlaceholderAnimationView -initWithCoder:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
+  "note": "null when no animator plays the file"
+ },
+ "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:options:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
+  "note": "null when no animator plays the file"
+ },
+ "CYLPlaceholderAnimationView -initWithFrame:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderAnimationView -play": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.play"
+ },
+ "CYLPlaceholderAnimationView -setAnimationColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationColors"
+ },
+ "CYLPlaceholderAnimationView -setAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationProgress"
+ },
+ "CYLPlaceholderAnimationView -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderAnimationView -setAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationSpeed"
+ },
+ "CYLPlaceholderAnimationView -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.showLastFrame"
+ },
+ "CYLPlaceholderAnimationView -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.stop"
+ },
+ "CYLPlaceholderAnimationView animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.animationView"
+ },
+ "CYLPlaceholderAnimationView animatorIdentifier": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.animatorIdentifier"
+ },
+ "CYLPlaceholderAnimationView backend": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.backend"
+ },
+ "CYLPlaceholderAnimationView errorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.errorHandler"
+ },
+ "CYLPlaceholderAnimationView player": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.player"
+ },
+ "CYLPlaceholderAnimationView playing": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.playing"
+ },
+ "CYLPlaceholderAnimationView ready": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.ready"
+ },
+ "CYLPlaceholderAnimationView readyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.readyHandler"
+ },
+ "CYLPlaceholderBadgeAppearance": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderBadgeAppearance"
+ },
+ "CYLPlaceholderBadgeAppearance +sharedAppearance": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.sharedAppearance"
+ },
+ "CYLPlaceholderBadgeAppearance animatesChanges": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.animatesChanges",
+  "note": "kept; badge changes do not animate yet"
+ },
+ "CYLPlaceholderBadgeAppearance animationDuration": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.animationDuration",
+  "note": "kept; badge changes do not animate yet"
+ },
+ "CYLPlaceholderBadgeAppearance backgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.backgroundColor"
+ },
+ "CYLPlaceholderBadgeAppearance contentInsets": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.contentInsets"
+ },
+ "CYLPlaceholderBadgeAppearance cornerRadius": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.cornerRadius"
+ },
+ "CYLPlaceholderBadgeAppearance font": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.font",
+  "note": "the text size in sp (Android takes no UIFont)"
+ },
+ "CYLPlaceholderBadgeAppearance textColor": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.textColor"
+ },
+ "CYLPlaceholderBadgeStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderBadgeStyle"
+ },
+ "CYLPlaceholderButtonStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle"
+ },
+ "CYLPlaceholderComponent": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderComponent",
+  "note": "icons are the static fallback images; Android plays no animation yet"
+ },
+ "CYLPlaceholderComponent +buttonComponentWithTitle:style:action:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)"
+ },
+ "CYLPlaceholderComponent +componentWithAttributes:action:": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.componentWithAttributes(attributes, action)",
+  "note": "the keys of attributes"
+ },
+ "CYLPlaceholderComponent +componentWithBundledAnimation:fallbackStyle:title:size:action:": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
+  "note": "shows the fallback image (the iOS animation is not played)"
+ },
+ "CYLPlaceholderComponent +componentWithDictionary:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.componentWithDictionary(context, dictionary, error)",
+  "note": "the error is a callback with the reason"
+ },
+ "CYLPlaceholderComponent +hintComponentWithText:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.hintComponentWithText(text)"
+ },
+ "CYLPlaceholderComponent +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderComponent +separatorComponentWithText:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.separatorComponentWithText(text)"
+ },
+ "CYLPlaceholderComponent -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderComponent action": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.action"
+ },
+ "CYLPlaceholderComponent animationRepeatCount": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.animationRepeatCount",
+  "note": "kept for apps that play the animation; Android shows the static icon"
+ },
+ "CYLPlaceholderComponent attributes": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.attributes",
+  "note": "title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO)"
+ },
+ "CYLPlaceholderComponent imageBundle": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android components take a drawable resource"
+ },
+ "CYLPlaceholderComponent interactionEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.interactionEnabled"
+ },
+ "CYLPlaceholderComponent spacingBefore": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.spacingBefore (dp)"
+ },
+ "CYLPlaceholderComponent tapHighlightStyle": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.tapHighlightStyle",
+  "note": "kept; the stacked views show taps their own way"
+ },
+ "CYLPlaceholderHUD": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUD",
+  "note": "an overlay on a container view; the class-level calls use the shared HUD of a container"
+ },
+ "CYLPlaceholderHUD +dismiss": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismiss(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithCompletion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithCompletion(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithDelay:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithDelay:completion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +displayDurationForString:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.displayDurationForString(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +isVisible": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.isVisible(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +popActivity": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.popActivity(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +setStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.setStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +show": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.show(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showErrorWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showErrorWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showImage:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showImage(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showInfoWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showInfoWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showProgress:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showSuccessWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showSuccessWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD -dismiss": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismiss"
+ },
+ "CYLPlaceholderHUD -dismissWithCompletion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithCompletion"
+ },
+ "CYLPlaceholderHUD -dismissWithDelay:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay"
+ },
+ "CYLPlaceholderHUD -dismissWithDelay:completion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay"
+ },
+ "CYLPlaceholderHUD -displayDurationForString:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.displayDurationForString"
+ },
+ "CYLPlaceholderHUD -init": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -initWithCoder:": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -initWithContainerView:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD(context, container)"
+ },
+ "CYLPlaceholderHUD -initWithFrame:": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -popActivity": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.popActivity"
+ },
+ "CYLPlaceholderHUD -setStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.setStatus"
+ },
+ "CYLPlaceholderHUD -show": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.show"
+ },
+ "CYLPlaceholderHUD -showComponents:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showComponents"
+ },
+ "CYLPlaceholderHUD -showErrorWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showErrorWithStatus"
+ },
+ "CYLPlaceholderHUD -showImage:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showImage"
+ },
+ "CYLPlaceholderHUD -showInfoWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showInfoWithStatus"
+ },
+ "CYLPlaceholderHUD -showProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress"
+ },
+ "CYLPlaceholderHUD -showProgress:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress"
+ },
+ "CYLPlaceholderHUD -showScenario:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showScenario"
+ },
+ "CYLPlaceholderHUD -showSuccessWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showSuccessWithStatus"
+ },
+ "CYLPlaceholderHUD -showWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showWithStatus"
+ },
+ "CYLPlaceholderHUD actions": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.actions"
+ },
+ "CYLPlaceholderHUD activityCount": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.activityCount"
+ },
+ "CYLPlaceholderHUD animationSize": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.animationSize"
+ },
+ "CYLPlaceholderHUD backgroundLayerColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.backgroundLayerColor"
+ },
+ "CYLPlaceholderHUD containerView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.containerView"
+ },
+ "CYLPlaceholderHUD contentView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.contentView"
+ },
+ "CYLPlaceholderHUD cornerRadius": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.cornerRadius"
+ },
+ "CYLPlaceholderHUD errorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.errorImage"
+ },
+ "CYLPlaceholderHUD fadeInAnimationDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.fadeInAnimationDuration"
+ },
+ "CYLPlaceholderHUD fadeOutAnimationDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.fadeOutAnimationDuration"
+ },
+ "CYLPlaceholderHUD font": {
+  "status": "partial",
+  "android": "CYLPlaceholderHUD.font",
+  "note": "the status text size in sp (Android takes no UIFont)"
+ },
+ "CYLPlaceholderHUD foregroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.foregroundColor"
+ },
+ "CYLPlaceholderHUD graceTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.graceTimeInterval"
+ },
+ "CYLPlaceholderHUD hapticsEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hapticsEnabled"
+ },
+ "CYLPlaceholderHUD hudBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hudBackgroundColor"
+ },
+ "CYLPlaceholderHUD hudView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hudView"
+ },
+ "CYLPlaceholderHUD infoImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.infoImage"
+ },
+ "CYLPlaceholderHUD loadingAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.loadingAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD maskType": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.maskType"
+ },
+ "CYLPlaceholderHUD maximumDismissTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.maximumDismissTimeInterval"
+ },
+ "CYLPlaceholderHUD minimumDismissTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.minimumDismissTimeInterval"
+ },
+ "CYLPlaceholderHUD minimumSize": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.minimumSize"
+ },
+ "CYLPlaceholderHUD offsetFromCenter": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.offsetFromCenter"
+ },
+ "CYLPlaceholderHUD placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.placeholderView"
+ },
+ "CYLPlaceholderHUD progress": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.progress"
+ },
+ "CYLPlaceholderHUD progressAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.progressAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD sharedHUD": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.sharedHUD(container)",
+  "note": "set the container once"
+ },
+ "CYLPlaceholderHUD state": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.state"
+ },
+ "CYLPlaceholderHUD status": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.status"
+ },
+ "CYLPlaceholderHUD style": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.style"
+ },
+ "CYLPlaceholderHUD successAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.successAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD successImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.successImage"
+ },
+ "CYLPlaceholderHUD visible": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.visible"
+ },
+ "CYLPlaceholderHUDDismissCompletion": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDDismissCompletion"
+ },
+ "CYLPlaceholderHUDMaskType": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDMaskType"
+ },
+ "CYLPlaceholderHUDState": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDState"
+ },
+ "CYLPlaceholderHUDStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDStyle"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer -initWithAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationBasePlayer.animationView"
+ },
+ "CYLPlaceholderItemAnimationFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFactory"
+ },
+ "CYLPlaceholderItemAnimationFactory +animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.animationViewWithURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +isAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.isAnimationView",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +playerForView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.playerForView",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +sharedFactory": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.sharedFactory",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory -init": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.init"
+ },
+ "CYLPlaceholderItemAnimationFactory -initWithRegistry:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.initWithRegistry"
+ },
+ "CYLPlaceholderItemAnimationFactory registry": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.registry"
+ },
+ "CYLPlaceholderItemAnimationFileMatching": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching"
+ },
+ "CYLPlaceholderItemAnimationFileMatching -canAnimateFileAtURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationFileMatching attributeKeys": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.attributeKeys"
+ },
+ "CYLPlaceholderItemAnimationFileMatching fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.fileExtensions"
+ },
+ "CYLPlaceholderItemAnimationFileMatching identifier": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.identifier"
+ },
+ "CYLPlaceholderItemAnimationFileMatching priority": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.priority"
+ },
+ "CYLPlaceholderItemAnimationPlayableView": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_applyAnimationViewColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_playAnimationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_setAnimationViewRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_showAnimationViewLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_stopAnimationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_animationViewErrorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_animationViewReadyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_isAnimationViewReady": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady"
+ },
+ "CYLPlaceholderItemAnimationPlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer"
+ },
+ "CYLPlaceholderItemAnimationPlayer -applyColors:traitCollection:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.applyColors",
+  "note": "a night flag instead of a trait collection"
+ },
+ "CYLPlaceholderItemAnimationPlayer -applyDarkColors:traitCollection:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.applyDarkColors",
+  "note": "a night flag instead of a trait collection"
+ },
+ "CYLPlaceholderItemAnimationPlayer -play": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.play"
+ },
+ "CYLPlaceholderItemAnimationPlayer -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderItemAnimationPlayer -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.showLastFrame"
+ },
+ "CYLPlaceholderItemAnimationPlayer -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.stop"
+ },
+ "CYLPlaceholderItemAnimationPlayer animationSpeed": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.animationSpeed"
+ },
+ "CYLPlaceholderItemAnimationPlayer animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.animationView"
+ },
+ "CYLPlaceholderItemAnimationPlayer progress": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.progress"
+ },
+ "CYLPlaceholderItemAnimationViewFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory"
+ },
+ "CYLPlaceholderItemAnimationViewFactory -animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewFactory.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationViewFactory -playerForAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewFactory.playerForAnimationView"
+ },
+ "CYLPlaceholderItemAnimationViewMaking": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -isAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.isAnimationView"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -playerForView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.playerForView"
+ },
+ "CYLPlaceholderItemAnimationViewProviding": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding"
+ },
+ "CYLPlaceholderItemAnimationViewProviding +cyl_animationViewWithFileURL:options:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimator"
+ },
+ "CYLPlaceholderItemAnimatorPriority": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority"
+ },
+ "CYLPlaceholderItemAnimatorRegistering": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorForAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForAttributes"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorForURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animators": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animators"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -attributeKeyForGenericKey:inAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -attributeKeysForGenericKey:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -bindURL:toAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.bindURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.fileExtensions"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -registerAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.registerAnimator"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -unregisterAnimatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier"
+ },
+ "CYLPlaceholderItemAnimatorRegistry": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorForAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForAttributes",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorForURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animators": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animators",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +attributeKeyForGenericKey:inAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +attributeKeysForGenericKey:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +bindURL:toAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.bindURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.fileExtensions",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +registerAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.registerAnimator",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +sharedRegistry": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.sharedRegistry",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +unregisterAnimatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemViewAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemViewAnimator"
+ },
+ "CYLPlaceholderItemViewAnimator +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemViewAnimator -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemViewAnimator -initWithIdentifier:fileExtensions:attributeKeys:viewProvider:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemViewAnimator.initWithIdentifier"
+ },
+ "CYLPlaceholderItemViewAnimator viewProvider": {
+  "status": "done",
+  "android": "CYLPlaceholderItemViewAnimator.viewProvider"
+ },
+ "CYLPlaceholderLocalization": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderLocalization"
+ },
+ "CYLPlaceholderLocalization +localizedStringForKey:fallback:": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.localizedStringForKey(context, key, fallback)"
+ },
+ "CYLPlaceholderLocalization +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderLocalization -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderLocalization effectiveLanguage": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.effectiveLanguage"
+ },
+ "CYLPlaceholderLocalization language": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.language"
+ },
+ "CYLPlaceholderLocalization supportedLanguages": {
+  "status": "done",
+  "android": "CYLPlaceholderLocalization.supportedLanguages"
+ },
+ "CYLPlaceholderMessage": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderMessage"
+ },
+ "CYLPlaceholderNetworkMonitor": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkMonitor"
+ },
+ "CYLPlaceholderNetworkMonitor +nameForStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.nameForStatus"
+ },
+ "CYLPlaceholderNetworkMonitor -setNetworkStatusChangeBlock:": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock"
+ },
+ "CYLPlaceholderNetworkMonitor -startMonitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.startMonitoring"
+ },
+ "CYLPlaceholderNetworkMonitor -stopMonitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.stopMonitoring"
+ },
+ "CYLPlaceholderNetworkMonitor constrained": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.constrained"
+ },
+ "CYLPlaceholderNetworkMonitor expensive": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.expensive"
+ },
+ "CYLPlaceholderNetworkMonitor monitoring": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.monitoring"
+ },
+ "CYLPlaceholderNetworkMonitor networkStatus": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.networkStatus"
+ },
+ "CYLPlaceholderNetworkMonitor reachable": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.reachable"
+ },
+ "CYLPlaceholderNetworkMonitor sharedMonitor": {
+  "status": "done",
+  "android": "CYLPlaceholderNetworkMonitor.sharedMonitor(context)"
+ },
+ "CYLPlaceholderNetworkStatus": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkStatus"
+ },
+ "CYLPlaceholderNetworkStatusBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderNetworkStatusBlock"
+ },
+ "CYLPlaceholderPermission": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderPermission"
+ },
+ "CYLPlaceholderScenario": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenario"
+ },
+ "CYLPlaceholderScenarioCatalog": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenarioCatalog"
+ },
+ "CYLPlaceholderScenarioCatalog +actionNamed:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.actionNamed(name)"
+ },
+ "CYLPlaceholderScenarioCatalog +animationFileNamesForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +backgroundActionForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +categoryForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +componentsForScenario:": {
+  "status": "partial",
+  "android": "CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)",
+  "note": "every scenario's components; icons are the static fallback images"
+ },
+ "CYLPlaceholderScenarioCatalog +localizedNameForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +localizedTitleForAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, action)"
+ },
+ "CYLPlaceholderScenarioCatalog +nameForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.nameForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderScenarioCatalog +permissionForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +readmeScreenshotNumbersForScenario:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)"
+ },
+ "CYLPlaceholderScenarioCatalog +scenarioForPermission:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.scenarioForPermission(permission)"
+ },
+ "CYLPlaceholderScenarioCatalog +scenarioNamed:": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.scenarioNamed(name)"
+ },
+ "CYLPlaceholderScenarioCatalog -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderScenarioCatalog allScenarios": {
+  "status": "done",
+  "android": "CYLPlaceholderScenarioCatalog.allScenarios"
+ },
+ "CYLPlaceholderScenarioCategory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenarioCategory"
+ },
+ "CYLPlaceholderStackView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderStackView",
+  "note": "no CYLPlaceholderView inside yet; built from components"
+ },
+ "CYLPlaceholderStackView -appendComponent:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.appendComponent(component)"
+ },
+ "CYLPlaceholderStackView -appendComponentView:action:spacingBefore:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.appendComponentView(view, action, spacingBefore)"
+ },
+ "CYLPlaceholderStackView -componentViewForAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.componentViewForAction(action)"
+ },
+ "CYLPlaceholderStackView -initWithCoder:": {
+  "status": "n/a",
+  "note": "UIKit initializers; Android views take a Context"
+ },
+ "CYLPlaceholderStackView -initWithComponents:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView(context, components, actions)"
+ },
+ "CYLPlaceholderStackView -initWithConfiguration:actions:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.fromConfiguration(context, configuration, actions, error)"
+ },
+ "CYLPlaceholderStackView -initWithContentsOfURL:actions:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.fromContentsOfURL(context, path, actions, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format"
+ },
+ "CYLPlaceholderStackView -initWithFrame:": {
+  "status": "n/a",
+  "note": "UIKit initializers; Android views take a Context"
+ },
+ "CYLPlaceholderStackView -initWithScenario:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView(context, scenario, actions)"
+ },
+ "CYLPlaceholderStackView -performAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.performAction(action)"
+ },
+ "CYLPlaceholderStackView -setHandler:forAction:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.setHandler(handler, action)"
+ },
+ "CYLPlaceholderStackView backgroundAction": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.backgroundAction"
+ },
+ "CYLPlaceholderStackView componentViews": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.componentViews"
+ },
+ "CYLPlaceholderStackView placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.placeholderView",
+  "note": "the first component view"
+ },
+ "CYLPlaceholderStackView scenario": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.scenario"
+ },
+ "CYLPlaceholderStackView stackView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.stackView"
+ },
+ "CYLPlaceholderStatusDisplay": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusDisplay",
+  "note": "Int flags combined with or"
+ },
+ "CYLPlaceholderStatusView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusView",
+  "note": "creating one from a configuration is TODO"
+ },
+ "CYLPlaceholderStatusView -initWithCoder:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderStatusView -initWithConfiguration:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)",
+  "note": "\"image\" is a drawable name; \"system:\" names are iOS only"
+ },
+ "CYLPlaceholderStatusView -initWithFrame:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView(context)"
+ },
+ "CYLPlaceholderStatusView -initWithItemAttributes:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderStatusView(context, attributes)",
+  "note": "the title, image and title color keys"
+ },
+ "CYLPlaceholderStatusView delegate": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.delegate"
+ },
+ "CYLPlaceholderStatusView networkUnavailableItemAttributes": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)"
+ },
+ "CYLPlaceholderStatusView placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.placeholderView"
+ },
+ "CYLPlaceholderStatusView tapHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.tapHandler"
+ },
+ "CYLPlaceholderStatusView text": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.text"
+ },
+ "CYLPlaceholderStatusViewDelegate": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusViewDelegate"
+ },
+ "CYLPlaceholderStatusViewDelegate -statusViewClicked:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)"
+ },
+ "CYLPlaceholderStatusViewTapHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStatusViewTapHandler"
+ },
+ "CYLPlaceholderStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStyle"
+ },
+ "CYLPlaceholderTapHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderTapHandler"
+ },
+ "CYLPlaceholderTapHighlightStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderTapHighlightStyle"
+ },
+ "CYLPlaceholderView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderView",
+  "note": "creating one from an item configuration (dictionary or file) is TODO"
+ },
+ "CYLPlaceholderView +bundledAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)"
+ },
+ "CYLPlaceholderView +imageForStyle:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageForStyle(context, style)"
+ },
+ "CYLPlaceholderView +imageNameForStyle:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageNameForStyle(style)"
+ },
+ "CYLPlaceholderView +localizedTextForMessage:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.localizedTextForMessage(context, message)"
+ },
+ "CYLPlaceholderView +pathForBundledAnimation:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)"
+ },
+ "CYLPlaceholderView +registerAnimationFactory:forFileExtension:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.registerAnimationFactory(factory, extension)"
+ },
+ "CYLPlaceholderView -initWithImage:text:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, image, text)"
+ },
+ "CYLPlaceholderView -initWithItemAttributes:imageBundle:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.fromItemAttributes(context, attributes, error)",
+  "note": "no image bundle: names are drawable resources"
+ },
+ "CYLPlaceholderView -initWithItemContentsOfURL:imageBundle:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.fromItemContentsOfURL(context, path, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format; no image bundle"
+ },
+ "CYLPlaceholderView -initWithStyle:message:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, style, message)"
+ },
+ "CYLPlaceholderView -initWithStyle:text:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, style, text)"
+ },
+ "CYLPlaceholderView -performTap": {
+  "status": "done",
+  "android": "CYLPlaceholderView.performTap()"
+ },
+ "CYLPlaceholderView -playPlaceholderAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderView.playPlaceholderAnimation()"
+ },
+ "CYLPlaceholderView -setPlaceholderAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setPlaceholderAnimationProgress(progress)"
+ },
+ "CYLPlaceholderView -setPlaceholderAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)"
+ },
+ "CYLPlaceholderView -showBadgeWithStyle:value:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.showBadgeWithStyle(style, value)"
+ },
+ "CYLPlaceholderView -showPlaceholderAnimationLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderView.showPlaceholderAnimationLastFrame()"
+ },
+ "CYLPlaceholderView -stopPlaceholderAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderView.stopPlaceholderAnimation()"
+ },
+ "CYLPlaceholderView animationRepeatCount": {
+  "status": "done",
+  "android": "CYLPlaceholderView.animationRepeatCount"
+ },
+ "CYLPlaceholderView badgeCenterOffset": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeCenterOffset"
+ },
+ "CYLPlaceholderView badgeLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeLabel"
+ },
+ "CYLPlaceholderView badgeValue": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeValue"
+ },
+ "CYLPlaceholderView contentMargin": {
+  "status": "done",
+  "android": "CYLPlaceholderView.contentMargin"
+ },
+ "CYLPlaceholderView defaultBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultBackgroundColor"
+ },
+ "CYLPlaceholderView defaultIconColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultIconColor"
+ },
+ "CYLPlaceholderView defaultSelectedBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedBackgroundColor"
+ },
+ "CYLPlaceholderView defaultSelectedIconColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedIconColor"
+ },
+ "CYLPlaceholderView defaultSelectedTitleColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedTitleColor"
+ },
+ "CYLPlaceholderView defaultSelectedTitleFont": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedTitleFont (sp)"
+ },
+ "CYLPlaceholderView defaultSelectionIndicatorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectionIndicatorImage"
+ },
+ "CYLPlaceholderView defaultSelectionIndicatorTintColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectionIndicatorTintColor"
+ },
+ "CYLPlaceholderView defaultTitleColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitleColor"
+ },
+ "CYLPlaceholderView defaultTitleFont": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitleFont (sp)"
+ },
+ "CYLPlaceholderView defaultTitlePositionAdjustment": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitlePositionAdjustment"
+ },
+ "CYLPlaceholderView imageView": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageView"
+ },
+ "CYLPlaceholderView itemAttributes": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.itemAttributes",
+  "note": "the title, image and animation file keys"
+ },
+ "CYLPlaceholderView preferredMaxLayoutWidth": {
+  "status": "done",
+  "android": "CYLPlaceholderView.preferredMaxLayoutWidth"
+ },
+ "CYLPlaceholderView reportsContentSize": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.reportsContentSize",
+  "note": "kept; the view always measures to its content on Android"
+ },
+ "CYLPlaceholderView selected": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectedState",
+  "note": "named selectedState: View already has isSelected"
+ },
+ "CYLPlaceholderView selectionIndicatorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectionIndicatorImage"
+ },
+ "CYLPlaceholderView selectionIndicatorTintColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectionIndicatorTintColor"
+ },
+ "CYLPlaceholderView tapHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHandler"
+ },
+ "CYLPlaceholderView tapHighlightStyle": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHighlightStyle"
+ },
+ "CYLPlaceholderView tapHighlighted": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHighlighted"
+ },
+ "CYLPlaceholderView tapInteractionEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapInteractionEnabled"
+ },
+ "CYLPlaceholderView tapInteractive": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapInteractive"
+ },
+ "CYLPlaceholderView textLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderView.textLabel"
+ },
+ "CYLRefreshAnimationHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAnimationHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAnimationHeader -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.setAnimationImages"
+ },
+ "CYLRefreshAnimationHeader -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.setAnimationImages"
+ },
+ "CYLRefreshAnimationHeader animationView": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.animationView"
+ },
+ "CYLRefreshAnimatorInterpolator": {
+  "status": "n/a",
+  "note": "Android has android.view.animation interpolators"
+ },
+ "CYLRefreshAnimatorInterpolatorBlock": {
+  "status": "partial",
+  "android": "android.animation.ValueAnimator",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshAnimatorRepeatMode": {
+  "status": "n/a",
+  "note": "Android has ValueAnimator.RESTART / REVERSE"
+ },
+ "CYLRefreshAutoAnimationFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoAnimationFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoAnimationFooter -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshAutoAnimationFooter -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshAutoAnimationFooter animationView": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.animationView"
+ },
+ "CYLRefreshAutoFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoFooter autoTriggerTimes": {
+  "status": "partial",
+  "android": "CYLRefreshAutoFooter.autoTriggerTimes",
+  "note": "kept; SmartRefreshLayout loads once per drag"
+ },
+ "CYLRefreshAutoFooter automaticallyRefresh": {
+  "status": "done",
+  "android": "CYLRefreshAutoFooter.automaticallyRefresh"
+ },
+ "CYLRefreshAutoFooter triggerAutomaticallyRefreshPercent": {
+  "status": "done",
+  "android": "CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent"
+ },
+ "CYLRefreshAutoFooterIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterIdleText"
+ },
+ "CYLRefreshAutoFooterNoMoreDataText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterNoMoreDataText"
+ },
+ "CYLRefreshAutoFooterRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshAutoFooterRefreshingText"
+ },
+ "CYLRefreshAutoGifFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoGifFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoGifFooter -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.setImages"
+ },
+ "CYLRefreshAutoGifFooter -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.setImages"
+ },
+ "CYLRefreshAutoGifFooter gifView": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.gifView"
+ },
+ "CYLRefreshAutoNormalFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoNormalFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoNormalFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshAutoNormalFooter loadingView": {
+  "status": "done",
+  "android": "CYLRefreshAutoNormalFooter.loadingView"
+ },
+ "CYLRefreshAutoNormalFooter noMoreDataImage": {
+  "status": "done",
+  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage"
+ },
+ "CYLRefreshAutoStateFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoStateFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoStateFooter -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.setTitle"
+ },
+ "CYLRefreshAutoStateFooter labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.labelLeftInset"
+ },
+ "CYLRefreshAutoStateFooter refreshingTitleHidden": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.refreshingTitleHidden"
+ },
+ "CYLRefreshAutoStateFooter stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.stateLabel"
+ },
+ "CYLRefreshBackAnimationFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackAnimationFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackAnimationFooter -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshBackAnimationFooter -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshBackAnimationFooter animationView": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.animationView"
+ },
+ "CYLRefreshBackFooter": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshBackFooter",
+  "note": "the second floor (secondary*) is TODO"
+ },
+ "CYLRefreshBackFooter -closeSecondary": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.closeSecondary()"
+ },
+ "CYLRefreshBackFooter -openSecondary": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.openSecondary()"
+ },
+ "CYLRefreshBackFooter noMoreDataDisplayDuration": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.noMoreDataDisplayDuration"
+ },
+ "CYLRefreshBackFooter secondaryCloseTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryCloseTriggerOffset"
+ },
+ "CYLRefreshBackFooter secondaryClosedBlock": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryClosedBlock"
+ },
+ "CYLRefreshBackFooter secondaryDimension": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryDimension"
+ },
+ "CYLRefreshBackFooter secondaryOpen": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryOpen"
+ },
+ "CYLRefreshBackFooter secondaryOpenedBlock": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryOpenedBlock"
+ },
+ "CYLRefreshBackFooter secondaryTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryTriggerOffset"
+ },
+ "CYLRefreshBackFooter secondaryVelocity": {
+  "status": "partial",
+  "android": "CYLRefreshBackFooter.secondaryVelocity",
+  "note": "kept; the release speed is not measured on Android"
+ },
+ "CYLRefreshBackFooter secondaryView": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryView",
+  "note": "placed over the layout; the layout's parent should be a FrameLayout"
+ },
+ "CYLRefreshBackFooterIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterIdleText"
+ },
+ "CYLRefreshBackFooterNoMoreDataText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterNoMoreDataText"
+ },
+ "CYLRefreshBackFooterPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterPullingText"
+ },
+ "CYLRefreshBackFooterRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshBackFooterRefreshingText"
+ },
+ "CYLRefreshBackGifFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackGifFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackGifFooter -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.setImages"
+ },
+ "CYLRefreshBackGifFooter -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.setImages"
+ },
+ "CYLRefreshBackGifFooter gifView": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.gifView"
+ },
+ "CYLRefreshBackNormalFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackNormalFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackNormalFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshBackNormalFooter arrowView": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.arrowView"
+ },
+ "CYLRefreshBackNormalFooter iconSize": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.iconSize"
+ },
+ "CYLRefreshBackNormalFooter loadingView": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.loadingView"
+ },
+ "CYLRefreshBackNormalFooter noMoreDataImage": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.noMoreDataImage"
+ },
+ "CYLRefreshBackStateFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackStateFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackStateFooter -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.setTitle"
+ },
+ "CYLRefreshBackStateFooter -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.titleForState"
+ },
+ "CYLRefreshBackStateFooter labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.labelLeftInset"
+ },
+ "CYLRefreshBackStateFooter stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.stateLabel"
+ },
+ "CYLRefreshBezierCircleHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierCircleHeader"
+ },
+ "CYLRefreshBezierRadarFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierRadarFooter"
+ },
+ "CYLRefreshBezierRadarHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierRadarHeader"
+ },
+ "CYLRefreshComponent": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshComponent",
+  "note": "wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content"
+ },
+ "CYLRefreshComponent +attach:": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.attach(layout)",
+  "note": "Android creates the component with its view, then attaches it (an instance call)"
+ },
+ "CYLRefreshComponent +attach:target:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -addObservers": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -addPhaseObserver:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.addPhaseObserver(observer)"
+ },
+ "CYLRefreshComponent -addTarget:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -attach:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.attach(layout)"
+ },
+ "CYLRefreshComponent -beginRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshing()"
+ },
+ "CYLRefreshComponent -beginRefreshingWithCompletionBlock:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)"
+ },
+ "CYLRefreshComponent -beginRefreshingWithDuration:overOffset:force:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingWithDuration(duration, overOffset, force)"
+ },
+ "CYLRefreshComponent -didAttachToScrollView:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.didAttachToScrollView(layout)"
+ },
+ "CYLRefreshComponent -didScrollWithOffset:percent:dragging:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)"
+ },
+ "CYLRefreshComponent -endRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshing()"
+ },
+ "CYLRefreshComponent -endRefreshingWithCompletionBlock:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)"
+ },
+ "CYLRefreshComponent -endRefreshingWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingWithSuccess(success)"
+ },
+ "CYLRefreshComponent -executeRefreshingCallback": {
+  "status": "done",
+  "android": "CYLRefreshComponent.executeRefreshingCallback()"
+ },
+ "CYLRefreshComponent -finishingDurationWithSuccess:": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.finishingDurationWithSuccess(success)",
+  "note": "an overridable hook; SmartRefreshLayout reads the component's own finish duration"
+ },
+ "CYLRefreshComponent -i18nDidChange": {
+  "status": "n/a",
+  "note": "Android recreates views on a language change"
+ },
+ "CYLRefreshComponent -isInAnyPhase:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isInAnyPhase(vararg)"
+ },
+ "CYLRefreshComponent -isInPhases:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isInPhases(collection)"
+ },
+ "CYLRefreshComponent -isReadyToAutoHide": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isReadyToAutoHide()"
+ },
+ "CYLRefreshComponent -phaseDidChangeFrom:to:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.phaseDidChangeFrom(old, new)"
+ },
+ "CYLRefreshComponent -placeSubviews": {
+  "status": "n/a",
+  "note": "UIKit layout hook; Android lays out in onLayout"
+ },
+ "CYLRefreshComponent -prepare": {
+  "status": "n/a",
+  "note": "UIKit setup hook; Android sets up in the constructor"
+ },
+ "CYLRefreshComponent -refreshDidFinishWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshDidFinishWithSuccess(success)"
+ },
+ "CYLRefreshComponent -removeObservers": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -removePhaseObserver:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.removePhaseObserver(observer)"
+ },
+ "CYLRefreshComponent -removeTarget:action:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -scrollViewContentInsetDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -scrollViewContentOffsetDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO; use didScrollWithOffset(offset, percent, dragging)"
+ },
+ "CYLRefreshComponent -scrollViewContentSizeDidChange:": {
+  "status": "n/a",
+  "note": "UIKit KVO"
+ },
+ "CYLRefreshComponent -scrollViewPanStateDidChange:": {
+  "status": "n/a",
+  "note": "UIKit gesture KVO"
+ },
+ "CYLRefreshComponent -setAnimationDisabled": {
+  "status": "done",
+  "android": "CYLRefreshComponent.setAnimationDisabled()"
+ },
+ "CYLRefreshComponent -setRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent -updateAutoHideVisibility": {
+  "status": "done",
+  "android": "CYLRefreshComponent.updateAutoHideVisibility()"
+ },
+ "CYLRefreshComponent -willDetachFromScrollView:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.willDetachFromScrollView(layout)"
+ },
+ "CYLRefreshComponent CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshComponent additionalFlipsViews": {
+  "status": "n/a",
+  "note": "Android mirrors right-to-left layouts itself (layoutDirection)"
+ },
+ "CYLRefreshComponent attached": {
+  "status": "done",
+  "android": "CYLRefreshComponent.attached"
+ },
+ "CYLRefreshComponent autoHideRefresh": {
+  "status": "done",
+  "android": "CYLRefreshComponent.autoHideRefresh"
+ },
+ "CYLRefreshComponent automaticallyChangeAlpha": {
+  "status": "done",
+  "android": "CYLRefreshComponent.automaticallyChangeAlpha"
+ },
+ "CYLRefreshComponent beginRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponent blockedByOtherRefreshBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.blockedByOtherRefreshBlock"
+ },
+ "CYLRefreshComponent colorAccent": {
+  "status": "done",
+  "android": "CYLRefreshComponent.colorAccent"
+ },
+ "CYLRefreshComponent colorPrimary": {
+  "status": "done",
+  "android": "CYLRefreshComponent.colorPrimary"
+ },
+ "CYLRefreshComponent dragOffset": {
+  "status": "done",
+  "android": "CYLRefreshComponent.dragOffset"
+ },
+ "CYLRefreshComponent endRefreshingAnimationBeginAction": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingAnimationBeginAction"
+ },
+ "CYLRefreshComponent endRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.endRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponent exclusiveWithOtherRefresh": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.exclusiveWithOtherRefresh",
+  "note": "SmartRefreshLayout always excludes; it cannot be turned off"
+ },
+ "CYLRefreshComponent expandHeight": {
+  "status": "done",
+  "android": "CYLRefreshComponent.expandHeight"
+ },
+ "CYLRefreshComponent expanded": {
+  "status": "done",
+  "android": "CYLRefreshComponent.expanded"
+ },
+ "CYLRefreshComponent fastAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshComponent.fastAnimationDuration"
+ },
+ "CYLRefreshComponent finishDuration": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.finishDuration",
+  "note": "applied by the classic header and footer (ClassicsAbstract.setFinishDuration)"
+ },
+ "CYLRefreshComponent flipsHorizontallyInOppositeLayoutDirectionViews": {
+  "status": "n/a",
+  "note": "Android mirrors right-to-left layouts itself (layoutDirection)"
+ },
+ "CYLRefreshComponent hapticFeedback": {
+  "status": "done",
+  "android": "CYLRefreshComponent.hapticFeedback"
+ },
+ "CYLRefreshComponent lastRefreshSucceeded": {
+  "status": "done",
+  "android": "CYLRefreshComponent.lastRefreshSucceeded"
+ },
+ "CYLRefreshComponent maxPullDistance": {
+  "status": "done",
+  "android": "CYLRefreshComponent.maxPullDistance"
+ },
+ "CYLRefreshComponent notifiesWhenHidden": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.notifiesWhenHidden",
+  "note": "kept; SmartRefreshLayout always reports"
+ },
+ "CYLRefreshComponent phase": {
+  "status": "done",
+  "android": "CYLRefreshComponent.phase"
+ },
+ "CYLRefreshComponent pullingPercent": {
+  "status": "done",
+  "android": "CYLRefreshComponent.pullingPercent"
+ },
+ "CYLRefreshComponent refreshEnabled": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshEnabled"
+ },
+ "CYLRefreshComponent refreshing": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isRefreshing"
+ },
+ "CYLRefreshComponent refreshingAction": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent refreshingBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshingBlock"
+ },
+ "CYLRefreshComponent refreshingHandler": {
+  "status": "done",
+  "android": "CYLRefreshComponent.refreshingHandler"
+ },
+ "CYLRefreshComponent refreshingTarget": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshComponent scrollMode": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.scrollMode",
+  "note": "read for every component; set for the classic header and footer"
+ },
+ "CYLRefreshComponent scrollView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.scrollView"
+ },
+ "CYLRefreshComponent scrollViewOriginalInset": {
+  "status": "n/a",
+  "note": "UIKit content insets"
+ },
+ "CYLRefreshComponent slowAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshComponent.slowAnimationDuration"
+ },
+ "CYLRefreshComponent state": {
+  "status": "done",
+  "android": "CYLRefreshComponent.state"
+ },
+ "CYLRefreshComponent triggerMode": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.triggerMode",
+  "note": "kept; SmartRefreshLayout pulls from the content's edge"
+ },
+ "CYLRefreshComponent triggerRate": {
+  "status": "done",
+  "android": "CYLRefreshComponent.triggerRate"
+ },
+ "CYLRefreshComponent triggersWhenReached": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.triggersWhenReached",
+  "note": "a footer loads when reached; a header waits for the release"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponent (cyl_ icon extensions)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_placeIconViewAtCenter:visible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_placeIconViewAtCenter(x, y, visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_placeIconViewWithTitle:labels:visible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconImages(images, duration, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_showIconImageFrameOf:pullingPercent:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_updateIconViewVisible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_updateIconViewVisible(visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) cyl_iconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_iconView"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) cyl_usesIconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_usesIconView"
+ },
+ "CYLRefreshComponent(ChainingGrammar)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_afterBeginningAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_afterBeginningAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_afterEndingAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_afterEndingAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_autoChangeTransparency:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_autoChangeTransparency(enabled)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_endingAnimationBeginningAction:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_endingAnimationBeginningAction(action)"
+ },
+ "CYLRefreshComponent(ChainingGrammar) -cyl_linkTo:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_linkTo(layout)"
+ },
+ "CYLRefreshComponentAction": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentAction"
+ },
+ "CYLRefreshComponentBeginRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentBeginRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponentEndRefreshingCompletionBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentEndRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponentHandler": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentHandler"
+ },
+ "CYLRefreshComponentRefreshingBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponentRefreshingBlock"
+ },
+ "CYLRefreshConfig": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshConfig"
+ },
+ "CYLRefreshConfig +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshConfig -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshConfig defaultConfig": {
+  "status": "done",
+  "android": "CYLRefreshConfig.defaultConfig"
+ },
+ "CYLRefreshConfig i18nBundle": {
+  "status": "n/a",
+  "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
+ },
+ "CYLRefreshConfig i18nFilename": {
+  "status": "n/a",
+  "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
+ },
+ "CYLRefreshConfig languageCode": {
+  "status": "partial",
+  "android": "CYLRefreshConfig.languageCode",
+  "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
+ },
+ "CYLRefreshCupertinoFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshCupertinoFooter"
+ },
+ "CYLRefreshCupertinoFooter activityIndicator": {
+  "status": "partial",
+  "android": "CYLRefreshCupertinoFooter.activityIndicator",
+  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+ },
+ "CYLRefreshCupertinoHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshCupertinoHeader"
+ },
+ "CYLRefreshCupertinoHeader activityIndicator": {
+  "status": "partial",
+  "android": "CYLRefreshCupertinoHeader.activityIndicator",
+  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+ },
+ "CYLRefreshCurveType": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.path.PathParser",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshDeliveryFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDeliveryFooter"
+ },
+ "CYLRefreshDeliveryHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDeliveryHeader"
+ },
+ "CYLRefreshDidChangeLanguageNotification": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
+ },
+ "CYLRefreshDrawnFooter": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshDrawnFooter",
+  "note": "extends CYLRefreshBackFooter, not the state footer (it shows no text)"
+ },
+ "CYLRefreshDrawnFooter -initWithStyle:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnFooter(style)"
+ },
+ "CYLRefreshDrawnFooter style": {
+  "status": "done",
+  "android": "CYLRefreshDrawnFooter.style"
+ },
+ "CYLRefreshDrawnFooter styleClass": {
+  "status": "partial",
+  "android": "CYLRefreshDrawnFooter.styleClass",
+  "note": "kept; each subclass builds its own style header"
+ },
+ "CYLRefreshDrawnHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDrawnHeader",
+  "note": "the drawing is SmartRefreshLayout's header; the hooks are the iOS ones"
+ },
+ "CYLRefreshDrawnHeader -beginRefresh": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.beginRefresh()"
+ },
+ "CYLRefreshDrawnHeader -finishRefresh": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.finishRefresh()"
+ },
+ "CYLRefreshDrawnHeader -finishRefreshWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.finishRefreshWithSuccess(success)"
+ },
+ "CYLRefreshDrawnHeader -inStatus:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.inStatus(vararg)"
+ },
+ "CYLRefreshDrawnHeader -onRefreshFinished:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onRefreshFinished(success)"
+ },
+ "CYLRefreshDrawnHeader -onRefreshFinishing:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onRefreshFinishing(success)"
+ },
+ "CYLRefreshDrawnHeader -onScrollingWithOffset:percent:drag:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onScrollingWithOffset(offset, percent, drag)"
+ },
+ "CYLRefreshDrawnHeader -onStartAnimationWhenRealeasing": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStartAnimationWhenRealeasing()"
+ },
+ "CYLRefreshDrawnHeader -onStartAnimationWhenRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStartAnimationWhenRefreshing()"
+ },
+ "CYLRefreshDrawnHeader -onStatus:changed:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStatus(oldStatus, status)"
+ },
+ "CYLRefreshDrawnHeader -scrollView:attached:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.scrollView(scrollView, attached)"
+ },
+ "CYLRefreshDrawnHeader -scrollView:didScroll:percent:drag:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.scrollView(scrollView, didScroll, percent, drag)"
+ },
+ "CYLRefreshDrawnHeader -setUpComponent": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.setUpComponent()"
+ },
+ "CYLRefreshDrawnHeader dragOffset": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.dragOffset"
+ },
+ "CYLRefreshDrawnHeader dragPercent": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.dragPercent"
+ },
+ "CYLRefreshDrawnHeader durationFast": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.durationFast"
+ },
+ "CYLRefreshDrawnHeader durationNormal": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.durationNormal"
+ },
+ "CYLRefreshDrawnHeader height": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.height"
+ },
+ "CYLRefreshDrawnHeader isSuccess": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.isSuccess"
+ },
+ "CYLRefreshDrawnHeader status": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.status"
+ },
+ "CYLRefreshDrawnHeader width": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.width"
+ },
+ "CYLRefreshDropBoxHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDropBoxHeader"
+ },
+ "CYLRefreshFastAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFastAnimationDuration"
+ },
+ "CYLRefreshFlyHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshFlyHeader"
+ },
+ "CYLRefreshFlyView": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFlyView colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FlyView (its own API)"
+ },
+ "CYLRefreshFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshFooter"
+ },
+ "CYLRefreshFooter +footerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshFooter.footerWithRefreshingBlock(context, block)"
+ },
+ "CYLRefreshFooter +footerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshFooter -endRefreshingWithNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.endRefreshingWithNoMoreData()"
+ },
+ "CYLRefreshFooter -noticeNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.noticeNoMoreData()"
+ },
+ "CYLRefreshFooter -resetNoMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.resetNoMoreData()"
+ },
+ "CYLRefreshFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshFooter ignoredScrollViewContentInsetBottom": {
+  "status": "done",
+  "android": "CYLRefreshFooter.ignoredScrollViewContentInsetBottom"
+ },
+ "CYLRefreshFooter loadsAfterNoMoreData": {
+  "status": "partial",
+  "android": "CYLRefreshFooter.loadsAfterNoMoreData",
+  "note": "clears \"no more data\" shortly after it shows, so the next pull loads"
+ },
+ "CYLRefreshFooter noMoreData": {
+  "status": "done",
+  "android": "CYLRefreshFooter.noMoreData"
+ },
+ "CYLRefreshFooterFailedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterFailedText"
+ },
+ "CYLRefreshFooterFinishedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterFinishedText"
+ },
+ "CYLRefreshFooterHeight": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshFooterHeight"
+ },
+ "CYLRefreshGameBattleCityHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameBattleCityHeader"
+ },
+ "CYLRefreshGameHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameHeader"
+ },
+ "CYLRefreshGameHitBlockHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameHitBlockHeader"
+ },
+ "CYLRefreshGamePlayingScene": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGamePlayingScene -finishWithSuccess:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -gameOver": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -gameWin": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -moveHandle:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -reset": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -start": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene title": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGameStartScene": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshGameStartScene colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGameStartScene colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGifHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGifHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshGifHeader -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.setImages"
+ },
+ "CYLRefreshGifHeader -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.setImages"
+ },
+ "CYLRefreshGifHeader gifView": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.gifView"
+ },
+ "CYLRefreshHeader": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshHeader",
+  "note": "pull to refresh; the second floor (secondary*) is TODO"
+ },
+ "CYLRefreshHeader +headerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshHeader.headerWithRefreshingBlock(context, block)"
+ },
+ "CYLRefreshHeader +headerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshHeader -closeSecondary": {
+  "status": "done",
+  "android": "CYLRefreshHeader.closeSecondary()"
+ },
+ "CYLRefreshHeader -openSecondary": {
+  "status": "done",
+  "android": "CYLRefreshHeader.openSecondary()"
+ },
+ "CYLRefreshHeader -setExpandHeight:": {
+  "status": "done",
+  "android": "CYLRefreshHeader.setExpandHeight(dp)"
+ },
+ "CYLRefreshHeader addsRefreshingInset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.addsRefreshingInset"
+ },
+ "CYLRefreshHeader ignoredScrollViewContentInsetTop": {
+  "status": "done",
+  "android": "CYLRefreshHeader.ignoredScrollViewContentInsetTop"
+ },
+ "CYLRefreshHeader isCollectionViewAnimationBug": {
+  "status": "n/a",
+  "note": "a UICollectionView workaround"
+ },
+ "CYLRefreshHeader lastUpdatedTime": {
+  "status": "done",
+  "android": "CYLRefreshHeader.lastUpdatedTime"
+ },
+ "CYLRefreshHeader lastUpdatedTimeKey": {
+  "status": "done",
+  "android": "CYLRefreshHeader.lastUpdatedTimeKey"
+ },
+ "CYLRefreshHeader resetsFooterAfterRefresh": {
+  "status": "done",
+  "android": "CYLRefreshHeader.resetsFooterAfterRefresh"
+ },
+ "CYLRefreshHeader secondaryCloseTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryCloseTriggerOffset"
+ },
+ "CYLRefreshHeader secondaryClosedBlock": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryClosedBlock"
+ },
+ "CYLRefreshHeader secondaryDimension": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryDimension"
+ },
+ "CYLRefreshHeader secondaryOpen": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryOpen"
+ },
+ "CYLRefreshHeader secondaryOpenedBlock": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryOpenedBlock"
+ },
+ "CYLRefreshHeader secondaryTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryTriggerOffset"
+ },
+ "CYLRefreshHeader secondaryVelocity": {
+  "status": "partial",
+  "android": "CYLRefreshHeader.secondaryVelocity",
+  "note": "kept; the release speed is not measured on Android"
+ },
+ "CYLRefreshHeader secondaryView": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryView",
+  "note": "placed over the layout; the layout's parent should be a FrameLayout"
+ },
+ "CYLRefreshHeaderDateTodayText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderDateTodayText"
+ },
+ "CYLRefreshHeaderFailedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderFailedText"
+ },
+ "CYLRefreshHeaderFinishedText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderFinishedText"
+ },
+ "CYLRefreshHeaderHeight": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderHeight"
+ },
+ "CYLRefreshHeaderIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderIdleText"
+ },
+ "CYLRefreshHeaderLastTimeText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderLastTimeText"
+ },
+ "CYLRefreshHeaderLastUpdatedTimeKey": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderLastUpdatedTimeKey"
+ },
+ "CYLRefreshHeaderNoneLastDateText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderNoneLastDateText"
+ },
+ "CYLRefreshHeaderPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderPullingText"
+ },
+ "CYLRefreshHeaderRefreshingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshHeaderRefreshingText"
+ },
+ "CYLRefreshIconAnimating": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshIconAnimating",
+  "note": "an interface; every component gets the same calls as cyl_ extensions"
+ },
+ "CYLRefreshIconAnimating -setBundledIconAnimation:size:forState:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconAnimating -setIconAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshIconAnimating -setIconAnimationFilePath:size:forState:": {
+  "status": "done",
+  "android": "cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)"
+ },
+ "CYLRefreshIconAnimating bundledIconAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconAnimating iconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_iconView"
+ },
+ "CYLRefreshIconAnimating usesIconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_usesIconView"
+ },
+ "CYLRefreshIconView": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshIconView"
+ },
+ "CYLRefreshIconView -animationAttributesForState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.animationAttributesForState(state)"
+ },
+ "CYLRefreshIconView -setAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.setAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshIconView -updateForPullingPercent:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.updateForPullingPercent(percent)"
+ },
+ "CYLRefreshIconView -updateForState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.updateForState(state)"
+ },
+ "CYLRefreshIconView fittingSize": {
+  "status": "done",
+  "android": "CYLRefreshIconView.fittingSize"
+ },
+ "CYLRefreshIconView hasAnimations": {
+  "status": "done",
+  "android": "CYLRefreshIconView.hasAnimations"
+ },
+ "CYLRefreshIconView iconSize": {
+  "status": "done",
+  "android": "CYLRefreshIconView.iconSize"
+ },
+ "CYLRefreshIconView placeholderView": {
+  "status": "done",
+  "android": "CYLRefreshIconView.placeholderView"
+ },
+ "CYLRefreshIconView scrubsWhilePulling": {
+  "status": "done",
+  "android": "CYLRefreshIconView.scrubsWhilePulling"
+ },
+ "CYLRefreshIconView title": {
+  "status": "done",
+  "android": "CYLRefreshIconView.title"
+ },
+ "CYLRefreshIconView titleColor": {
+  "status": "done",
+  "android": "CYLRefreshIconView.titleColor"
+ },
+ "CYLRefreshIconView titleFont": {
+  "status": "partial",
+  "android": "CYLRefreshIconView.titleFont",
+  "note": "the size in sp"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshIconView (companion)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) +attributesForAnimationFilePath:size:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) +attributesForBundledAnimation:size:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) bundledAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshKeyPathContentInset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentInset"
+ },
+ "CYLRefreshKeyPathContentOffset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentOffset"
+ },
+ "CYLRefreshKeyPathContentSize": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathContentSize"
+ },
+ "CYLRefreshKeyPathPanState": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshKeyPathPanState"
+ },
+ "CYLRefreshLabelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshLabelLeftInset"
+ },
+ "CYLRefreshMaterialFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshMaterialFooter"
+ },
+ "CYLRefreshMaterialHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshMaterialHeader"
+ },
+ "CYLRefreshMountainView": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
+ },
+ "CYLRefreshMountainView colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
+ },
+ "CYLRefreshMountainView colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
+ },
+ "CYLRefreshNormalHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshNormalHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshNormalHeader CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshNormalHeader arrowView": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.arrowView"
+ },
+ "CYLRefreshNormalHeader iconSize": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.iconSize"
+ },
+ "CYLRefreshNormalHeader loadingView": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.loadingView"
+ },
+ "CYLRefreshOriginalHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshOriginalHeader"
+ },
+ "CYLRefreshOriginalHeader enableAutoRefresh": {
+  "status": "done",
+  "android": "CYLRefreshOriginalHeader.enableAutoRefresh"
+ },
+ "CYLRefreshPaging": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPaging"
+ },
+ "CYLRefreshPaging -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshPaging -initWithHeader:footer:loader:": {
+  "status": "done",
+  "android": "CYLRefreshPaging(header, footer, loader)"
+ },
+ "CYLRefreshPaging -loadMore": {
+  "status": "done",
+  "android": "CYLRefreshPaging.loadMore"
+ },
+ "CYLRefreshPaging -refresh": {
+  "status": "done",
+  "android": "CYLRefreshPaging.refresh"
+ },
+ "CYLRefreshPaging -start": {
+  "status": "done",
+  "android": "CYLRefreshPaging.start"
+ },
+ "CYLRefreshPaging count": {
+  "status": "done",
+  "android": "CYLRefreshPaging.count"
+ },
+ "CYLRefreshPaging firstPage": {
+  "status": "done",
+  "android": "CYLRefreshPaging.firstPage"
+ },
+ "CYLRefreshPaging footer": {
+  "status": "done",
+  "android": "CYLRefreshPaging.footer"
+ },
+ "CYLRefreshPaging header": {
+  "status": "done",
+  "android": "CYLRefreshPaging.header"
+ },
+ "CYLRefreshPaging isEmpty": {
+  "status": "done",
+  "android": "CYLRefreshPaging.isEmpty"
+ },
+ "CYLRefreshPaging isNoMore": {
+  "status": "done",
+  "android": "CYLRefreshPaging.isNoMore"
+ },
+ "CYLRefreshPaging items": {
+  "status": "done",
+  "android": "CYLRefreshPaging.items"
+ },
+ "CYLRefreshPaging itemsDidChange": {
+  "status": "done",
+  "android": "CYLRefreshPaging.itemsDidChange"
+ },
+ "CYLRefreshPaging page": {
+  "status": "done",
+  "android": "CYLRefreshPaging.page"
+ },
+ "CYLRefreshPaging resetsFooterAfterRefresh": {
+  "status": "done",
+  "android": "CYLRefreshPaging.resetsFooterAfterRefresh"
+ },
+ "CYLRefreshPaging total": {
+  "status": "done",
+  "android": "CYLRefreshPaging.total"
+ },
+ "CYLRefreshPaging totalPage": {
+  "status": "done",
+  "android": "CYLRefreshPaging.totalPage"
+ },
+ "CYLRefreshPagingCompletion": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPagingCompletion"
+ },
+ "CYLRefreshPagingLoader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPagingLoader"
+ },
+ "CYLRefreshPhase": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhase"
+ },
+ "CYLRefreshPhoenixFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhoenixFooter"
+ },
+ "CYLRefreshPhoenixHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhoenixHeader"
+ },
+ "CYLRefreshScrollMode": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshScrollMode",
+  "note": "maps to SmartRefreshLayout's SpinnerStyle"
+ },
+ "CYLRefreshSlowAnimationDuration": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshSlowAnimationDuration"
+ },
+ "CYLRefreshState": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshState"
+ },
+ "CYLRefreshStateHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshStateHeader -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.setTitle"
+ },
+ "CYLRefreshStateHeader failedImage": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.failedImage"
+ },
+ "CYLRefreshStateHeader iconOnTrailingSide": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.iconOnTrailingSide"
+ },
+ "CYLRefreshStateHeader labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.labelLeftInset"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeFormatter": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeFormatter"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeLabel"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeString": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeString"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeText": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeText"
+ },
+ "CYLRefreshStateHeader stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.stateLabel"
+ },
+ "CYLRefreshStateHeader succeededImage": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.succeededImage"
+ },
+ "CYLRefreshStateHeader titleTimeSpacing": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.titleTimeSpacing"
+ },
+ "CYLRefreshStateHeader(ChainingGrammar)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader"
+ },
+ "CYLRefreshStateHeader(ChainingGrammar) -cyl_modifyLastUpdatedTimeText:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)"
+ },
+ "CYLRefreshStoreHouseHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStoreHouseHeader"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:scale:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:scale:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithArray:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithArray:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:scale:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:scale:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader enableFadeAnimation": {
+  "status": "partial",
+  "android": "CYLRefreshStoreHouseHeader.enableFadeAnimation",
+  "note": "kept; the Android header always fades the lines in"
+ },
+ "CYLRefreshStoreHouseHeader enableReverseFlash": {
+  "status": "partial",
+  "android": "CYLRefreshStoreHouseHeader.enableReverseFlash",
+  "note": "kept; the Android header flashes one way"
+ },
+ "CYLRefreshStoreHouseHeader lineWidth": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.lineWidth"
+ },
+ "CYLRefreshStoreHouseLine": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStoreHouseLine alpha": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine end": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine index": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine middle": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine offset": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine start": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine transform": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHousePath": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStoreHousePath +arrayAkta": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +arrayStoreHouse": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +linesFrom:scale:space:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +linesFromArray:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshTaurusFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTaurusFooter"
+ },
+ "CYLRefreshTaurusHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTaurusHeader"
+ },
+ "CYLRefreshTrailWidth": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailWidth"
+ },
+ "CYLRefreshTrailerIdleText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailerIdleText"
+ },
+ "CYLRefreshTrailerPullingText": {
+  "status": "done",
+  "android": "CYLRefreshConst.CYLRefreshTrailerPullingText"
+ },
+ "CYLRefreshTriggerMode": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshTriggerMode",
+  "note": "the enum exists; triggerMode is not wired yet (TODO)"
+ },
+ "CYLRefreshValueAnimator": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator +newWithFrom:to:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator +newWithTarget:selector:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setFrom:to:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setFromToPoints:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setTarget:selector:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -start": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -stop": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator beginTime": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator delegate": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator duration": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator fromValue": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator interpolator": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator interpolatorBlock": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator isRunning": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator percent": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator repeatCount": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator repeatMode": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator speed": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator toValue": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator value": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimatorDelegate": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationEnd:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationRepeat:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationStart:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshVectorElement": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorElement -newLayer": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement changed": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement fill": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement identifier": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement layer": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement opacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement stroke": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement strokeOpacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement strokeWidth": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement viewport": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorImage -addElement:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -moveTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -parserColors:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -parserPaths:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -renderInContext:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -scaleToFitInside:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -setGeometricHeight:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -setGeometricWidth:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage elements": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage frame": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage opacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage size": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage viewport": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorPathElement": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorPathElement +newWith:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorPathElement pathForShape": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorPathsParser": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.path.PathParser",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurveToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurvetoArgument:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurvetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readEllipticalArcArguments:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readHorizontalLineToCmd:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readHorizontalLinetoArgumentSequence:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readLineToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readLinetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMoveto:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoDrawToCmdGroups:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoDrawto:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurveToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurvetoArgument:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurvetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurveToCmd:path:relativeTo:withPrevCurve:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurvetoArgument:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurvetoArgumentSequence:path:relativeTo:withPrevCurve:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurveToCmd:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurvetoArgument:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurvetoArgumentSequence:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readVerticalLineToCmd:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readVerticalLinetoArgumentSequence:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +startingCurve": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorUtilities": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorUtilities +newLayerForElement:withPath:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorView": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.view.PathsView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorView -parserColors:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
+ "CYLRefreshVectorView -parserPaths:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
+ "CYLRefreshVectorView image": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
+ "CYLRefreshWaveSwipeHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshWaveSwipeHeader"
+ },
+ "CYLScrollDirection": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scroll state"
+ },
+ "CYLTablePlaceholderNormalBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTablePlaceholderNormalBlock"
+ },
+ "CYLTablePlaceholderViewBlock": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTablePlaceholderViewBlock"
+ },
+ "CYLTableViewPlaceHolderDelegate": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLTableViewPlaceHolderDelegate",
+  "note": "implemented by the adapter"
+ },
+ "CYLTableViewPlaceHolderDelegate -enableScrollWhenPlaceHolderViewShowing": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.enableScrollWhenPlaceHolderViewShowing()"
+ },
+ "CYLTableViewPlaceHolderDelegate -frameForPlaceHolderViewInTableView:": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.frameForPlaceHolderViewInTableView(tableView)"
+ },
+ "CYLTableViewPlaceHolderDelegate -makePlaceHolderView": {
+  "status": "done",
+  "android": "CYLTableViewPlaceHolderDelegate.makePlaceHolderView()"
+ },
+ "NSBundle(CYLRefresh)": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_arrowImage": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_localizedStringForKey:": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_localizedStringForKey:value:": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_refreshBundle": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_trailArrowImage": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "UICollectionView(CYLPlaceholder)": {
+  "status": "done",
+  "android": "RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UICollectionView(CYLPlaceholder) -cyl_placeholderViewBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block)"
+ },
+ "UICollectionView(CYLPlaceholder) -cyl_placeholderViewBlock:backToNormalBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)"
+ },
+ "UICollectionViewLayout(CYLRefresh)": {
+  "status": "n/a",
+  "note": "a UICollectionView layout hook with no Android counterpart"
+ },
+ "UILabel(CYLRefresh)": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UILabel(CYLRefresh) +cyl_label": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UILabel(CYLRefresh) -cyl_textWidth": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UIScrollView(CYLExtension)": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) -cyl_updateScrollMetrics": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_contentH": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_contentW": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_inset": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetB": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetL": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetR": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetT": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_offsetX": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_offsetY": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_scrollDirection": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_scrollDistance": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLPlaceholderVisibility)": {
+  "status": "done",
+  "android": "RecyclerView extensions"
+ },
+ "UIScrollView(CYLPlaceholderVisibility) cyl_placeholderHidden": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderHidden"
+ },
+ "UIScrollView(CYLRefresh)": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
+  "note": "the SmartRefreshLayout around the content is the scroll view's counterpart"
+ },
+ "UIScrollView(CYLRefresh) -cyl_beginRefreshingWithStartHeader:": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
+ },
+ "UIScrollView(CYLRefresh) -cyl_totalDataCount": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_totalDataCount()"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefresh": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefresh"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefreshFooter": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefreshFooter"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefreshHeader": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefreshHeader"
+ },
+ "UIScrollView(CYLRefresh) cyl_footer": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_footer"
+ },
+ "UIScrollView(CYLRefresh) cyl_header": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_header"
+ },
+ "UITableView(CYLPlaceholder)": {
+  "status": "done",
+  "android": "RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UITableView(CYLPlaceholder) -cyl_placeholderViewBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block)"
+ },
+ "UITableView(CYLPlaceholder) -cyl_placeholderViewBlock:backToNormalBlock:": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)"
+ },
+ "UITableView(CYLTableViewPlaceHolder)": {
+  "status": "done",
+  "android": "RecyclerView extensions",
+  "note": "on Android a table and a collection are both a RecyclerView"
+ },
+ "UITableView(CYLTableViewPlaceHolder) -cyl_reloadData": {
+  "status": "done",
+  "android": "RecyclerView.cyl_reloadData()",
+  "note": "adapter changes also update the placeholder by themselves"
+ },
+ "UIView(CYLExtension)": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_h": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_origin": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_size": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_w": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_x": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_y": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIViewController(CYLPlaceholderStatus)": {
+  "status": "done",
+  "android": "Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)",
+  "note": "the Activity is the view controller's counterpart"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_applyStatusConfiguration:error:": {
+  "status": "done",
+  "android": "Activity.cyl_applyStatusConfiguration(configuration, error)"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_applyStatusConfigurationWithContentsOfURL:error:": {
+  "status": "done",
+  "android": "Activity.cyl_applyStatusConfigurationWithContentsOfURL(path, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_setStatusDisplay:animated:": {
+  "status": "done",
+  "android": "Activity.cyl_setStatusDisplay(display, animated)"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_placeholderScrollView": {
+  "status": "partial",
+  "android": "Activity.cyl_placeholderScrollView",
+  "note": "kept; the placeholder covers the activity's content"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_showsStatusViewWhenOffline": {
+  "status": "done",
+  "android": "Activity.cyl_showsStatusViewWhenOffline"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_statusDisplay": {
+  "status": "done",
+  "android": "Activity.cyl_statusDisplay"
+ },
+ "UIViewController(CYLPlaceholderStatus) cyl_statusView": {
+  "status": "done",
+  "android": "Activity.cyl_statusView"
+ }
+}

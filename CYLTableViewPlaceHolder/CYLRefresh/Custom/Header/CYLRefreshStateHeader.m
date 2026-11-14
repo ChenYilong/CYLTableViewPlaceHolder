@@ -11,6 +11,7 @@
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
+#import "CYLRefreshConfig.h"
 
 @interface CYLRefreshStateHeader()
 {
@@ -21,6 +22,11 @@
 }
 /** 所有状态对应的文字 */
 @property (strong, nonatomic) NSMutableDictionary *stateTitles;
+/// [EN] Shows succeededImage / failedImage during the finish hold. [CN] 结束停留期间显示 succeededImage / failedImage。
+@property (strong, nonatomic) UIImageView *cyl_resultImageView;
+- (CGPoint)cyl_iconCenterBesideText;
+- (void)cyl_hideResultImage;
+- (void)cyl_showResultImage:(UIImage *)image;
 @end
 
 @implementation CYLRefreshStateHeader
@@ -80,25 +86,31 @@
         return;
     }
 
-    if (lastUpdatedTime) {
-        // 1.获得年月日
-        NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
-        NSUInteger unitFlags = NSCalendarUnitYear| NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute;
-        NSDateComponents *cmp1 = [calendar components:unitFlags fromDate:lastUpdatedTime];
-        NSDateComponents *cmp2 = [calendar components:unitFlags fromDate:[NSDate date]];
+    if (self.lastUpdatedTimeFormatter) {
+        NSString *time = lastUpdatedTime ? [self.lastUpdatedTimeFormatter stringFromDate:lastUpdatedTime]
+                                         : [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderNoneLastDateText];
+        self.lastUpdatedTimeLabel.text = [NSString stringWithFormat:@"%@%@",
+                                          [NSBundle cyl_localizedStringForKey:CYLRefreshHeaderLastTimeText], time ?: @""];
+        return;
+    }
 
-        // 2.格式化日期
+    if (lastUpdatedTime) {
+        // 1.判断今天、今年（比较完整日期，而不只是“日”）
+        NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+        BOOL isToday = [calendar isDateInToday:lastUpdatedTime];
+        BOOL isThisYear = [calendar component:NSCalendarUnitYear fromDate:lastUpdatedTime] ==
+                          [calendar component:NSCalendarUnitYear fromDate:[NSDate date]];
+
+        // 2.按语言格式化日期：顺序、分隔符和 12/24 小时制随 locale 变化（j 为该 locale 偏好的小时格式）
+        NSString *language = CYLRefreshConfig.defaultConfig.languageCode;
+        NSLocale *locale = language ? [NSLocale localeWithLocaleIdentifier:language] : NSLocale.currentLocale;
+        NSString *formatTemplate = isToday ? @"jmm" : (isThisYear ? @"MMddjmm" : @"yyyyMMddjmm");
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        BOOL isToday = NO;
-        if ([cmp1 day] == [cmp2 day]) { // 今天
-            formatter.dateFormat = @" HH:mm";
-            isToday = YES;
-        } else if ([cmp1 year] == [cmp2 year]) { // 今年
-            formatter.dateFormat = @"MM-dd HH:mm";
-        } else {
-            formatter.dateFormat = @"yyyy-MM-dd HH:mm";
-        }
+        formatter.calendar = calendar;
+        formatter.locale = locale;
+        formatter.dateFormat = [NSDateFormatter dateFormatFromTemplate:formatTemplate options:0 locale:locale];
         NSString *time = [formatter stringFromDate:lastUpdatedTime];
+        if (isToday) time = [@" " stringByAppendingString:time];
 
         // 3.显示日期
         self.lastUpdatedTimeLabel.text = [NSString stringWithFormat:@"%@%@%@",
@@ -141,6 +153,10 @@
 {
     [super placeSubviews];
 
+    if (self.cyl_resultImageView && !self.cyl_resultImageView.hidden) {
+        self.cyl_resultImageView.cyl_size = self.cyl_resultImageView.image.size;
+        self.cyl_resultImageView.center = [self cyl_iconCenterBesideText];
+    }
     if (self.stateLabel.hidden) return;
 
     BOOL noConstrainsOnStatusLabel = self.stateLabel.constraints.count == 0;
@@ -150,10 +166,17 @@
         if (noConstrainsOnStatusLabel) self.stateLabel.frame = self.bounds;
     } else {
         CGFloat stateLabelH = self.cyl_h * 0.5;
+        CGFloat stateLabelY = 0;
+        if (self.titleTimeSpacing > 0) {
+            // [EN] Both lines centered as a block, `titleTimeSpacing` apart. [CN] 两行作为一个整体居中，间距 `titleTimeSpacing`。
+            CGFloat stateH = ceil(self.stateLabel.font.lineHeight), timeH = ceil(self.lastUpdatedTimeLabel.font.lineHeight);
+            stateLabelY = MAX(0, (self.cyl_h - stateH - self.titleTimeSpacing - timeH) * 0.5);
+            stateLabelH = stateH;
+        }
         // 状态
         if (noConstrainsOnStatusLabel) {
             self.stateLabel.cyl_x = 0;
-            self.stateLabel.cyl_y = 0;
+            self.stateLabel.cyl_y = stateLabelY;
             self.stateLabel.cyl_w = self.cyl_w;
             self.stateLabel.cyl_h = stateLabelH;
         }
@@ -161,9 +184,10 @@
         // 更新时间
         if (self.lastUpdatedTimeLabel.constraints.count == 0) {
             self.lastUpdatedTimeLabel.cyl_x = 0;
-            self.lastUpdatedTimeLabel.cyl_y = stateLabelH;
+            self.lastUpdatedTimeLabel.cyl_y = self.titleTimeSpacing > 0 ? stateLabelY + stateLabelH + self.titleTimeSpacing : stateLabelH;
             self.lastUpdatedTimeLabel.cyl_w = self.cyl_w;
-            self.lastUpdatedTimeLabel.cyl_h = self.cyl_h - self.lastUpdatedTimeLabel.cyl_y;
+            self.lastUpdatedTimeLabel.cyl_h = self.titleTimeSpacing > 0 ? ceil(self.lastUpdatedTimeLabel.font.lineHeight)
+                                                                      : self.cyl_h - self.lastUpdatedTimeLabel.cyl_y;
         }
     }
 }
@@ -171,6 +195,7 @@
 - (void)setState:(CYLRefreshState)state
 {
     CYLRefreshCheckState
+    if (state != CYLRefreshStateRefreshing) [self cyl_hideResultImage];
 
     // 设置状态文字
     self.stateLabel.text = self.stateTitles[@(state)];
@@ -184,6 +209,58 @@
         self.stateLabel, self.lastUpdatedTimeLabel
     ];
 }
+
+/// [EN] The result image takes the icon's place: the spinner and arrow hide while it shows.
+/// [CN] 结果图片代替图标：显示期间隐藏菊花与箭头。
+- (void)cyl_showResultImage:(UIImage *)image
+{
+    if (!image) return;
+    if (!self.cyl_resultImageView) {
+        // [EN] A system UIImageView, not CYLPlaceholderView: it takes the place of arrowView / loadingView, which are
+        //      system views laid out by the same code, and shows one small image with no title.
+        // [CN] 用系统 UIImageView 而不是 CYLPlaceholderView：它代替的 arrowView / loadingView 本身就是系统视图、由同一段代码布局，
+        //      且只显示一张小图、没有标题。
+        self.cyl_resultImageView = [[UIImageView alloc] init];
+        self.cyl_resultImageView.contentMode = UIViewContentModeCenter;
+        [self addSubview:self.cyl_resultImageView];
+    }
+    self.cyl_resultImageView.image = image;
+    self.cyl_resultImageView.hidden = NO;
+    for (UIView *view in self.subviews) {
+        if (view != self.cyl_resultImageView && ([view isKindOfClass:UIActivityIndicatorView.class] || [view isKindOfClass:UIImageView.class])) {
+            view.alpha = 0;
+        }
+    }
+}
+
+- (void)cyl_hideResultImage
+{
+    if (!self.cyl_resultImageView || self.cyl_resultImageView.hidden) return;
+    self.cyl_resultImageView.hidden = YES;
+    for (UIView *view in self.subviews) {
+        if (view != self.cyl_resultImageView) view.alpha = 1;
+    }
+}
+
+- (void)setIconOnTrailingSide:(BOOL)iconOnTrailingSide
+{
+    _iconOnTrailingSide = iconOnTrailingSide;
+    [self setNeedsLayout];
+}
+
+/// [EN] The icon's center beside the text, on the leading or trailing side. [CN] 图标在文字旁边的中心点（前面或后面）。
+- (CGPoint)cyl_iconCenterBesideText
+{
+    CGFloat centerX = self.cyl_w * 0.5;
+    if (!self.stateLabel.hidden) {
+        CGFloat textWidth = self.stateLabel.cyl_textWidth;
+        if (!self.lastUpdatedTimeLabel.hidden) textWidth = MAX(textWidth, self.lastUpdatedTimeLabel.cyl_textWidth);
+        CGFloat shift = textWidth / 2 + self.labelLeftInset;
+        centerX += self.iconOnTrailingSide ? shift : -shift;
+    }
+    return CGPointMake(centerX, self.cyl_h * 0.5);
+}
+
 @end
 
 #pragma mark - <<< 为 Swift 扩展链式语法 >>> -
@@ -192,6 +269,36 @@
 - (instancetype)cyl_modifyLastUpdatedTimeText:(NSString * _Nonnull (^)(NSDate * _Nullable))handler {
     self.lastUpdatedTimeText = handler;
     return self;
+}
+
+#pragma mark - Finish result
+
+- (void)setLastUpdatedTimeFormatter:(NSDateFormatter *)lastUpdatedTimeFormatter
+{
+    _lastUpdatedTimeFormatter = lastUpdatedTimeFormatter;
+    self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;
+}
+
+- (NSString *)lastUpdatedTimeString
+{
+    return self.lastUpdatedTimeLabel.text;
+}
+
+- (void)setTitleTimeSpacing:(CGFloat)titleTimeSpacing
+{
+    _titleTimeSpacing = MAX(0, titleTimeSpacing);
+    [self setNeedsLayout];
+}
+
+/// [EN] While the control holds after the refresh (`finishDuration`), the state text shows the result.
+/// [CN] 刷新结束后停留期间（`finishDuration`），状态文字显示结果。
+- (void)refreshDidFinishWithSuccess:(BOOL)success
+{
+    [super refreshDidFinishWithSuccess:success];
+    if ([self finishingDurationWithSuccess:success] <= 0) return;
+    self.stateLabel.text = [NSBundle cyl_localizedStringForKey:success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText];
+    [self cyl_showResultImage:success ? self.succeededImage : self.failedImage];
+    [self setNeedsLayout];
 }
 
 @end

@@ -1,0 +1,15 @@
+/* Example-objc-02 text (ja). Keys: CYLObjC02L10n in CYLObjC02Localization.swift. */
+"CYLObjC02TitleCollection" = "コレクションのアニメーション";
+"CYLObjC02TitleHeaderRefreshing" = "ヘッダーを更新中";
+"CYLObjC02FormatHeaderCompleted" = "ヘッダーの更新完了 %ld";
+"CYLObjC02TitleFooterRefreshing" = "フッターを読み込み中";
+"CYLObjC02TitleFooterCompleted" = "フッターの読み込み完了";
+"CYLObjC02FormatItem" = "項目 %ld";
+"CYLObjC02TitlePaging" = "ページング";
+"CYLObjC02TitleRefreshCompleted" = "更新完了";
+"CYLObjC02TitleLoadCompleted" = "読み込み完了";
+"CYLObjC02ActionRefresh" = "更新";
+"CYLObjC02ActionLastPage" = "最後のページ";
+"CYLObjC02HintRefresh" = "表を更新して 2 ページ目に戻ります。";
+"CYLObjC02HintLastPage" = "最後のページまでスクロールします。";
+"CYLObjC02FormatPage" = "ページ %ld";

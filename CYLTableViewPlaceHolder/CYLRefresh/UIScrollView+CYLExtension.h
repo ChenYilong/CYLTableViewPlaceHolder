@@ -32,9 +32,11 @@ typedef NS_ENUM(NSInteger, CYLScrollDirection) {
 @property (assign, nonatomic) CGFloat cyl_contentW;
 @property (assign, nonatomic) CGFloat cyl_contentH;
 
-/** Call once before scrolling, then once per scroll event, to sample contentOffset.
- The first sample has zero distance and no direction. Subsequent samples report
- the signed change along the dominant axis, in points, until the next sample. */
+/*!
+ * Call once before scrolling, then once per scroll event, to sample contentOffset.
+ * The first sample has zero distance and no direction. Subsequent samples report
+ * the signed change along the dominant axis, in points, until the next sample.
+ */
 - (void)cyl_updateScrollMetrics;
 @property (readonly, nonatomic) CGFloat cyl_scrollDistance;
 @property (readonly, nonatomic) CYLScrollDirection cyl_scrollDirection;

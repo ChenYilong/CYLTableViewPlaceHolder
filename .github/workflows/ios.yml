@@ -51,6 +51,28 @@ jobs:
       - uses: actions/checkout@v4
       - run: shellcheck scripts/*.sh
 
+  # Every .bundle's tables: same keys and format specifiers in every language, macros match keys, no loose .strings
+  # (instructions.md, "Localization"). Runs on every pull request, including documentation-only ones.
+  localization:
+    name: Localization files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_localizations.py
+
+  # The navigation and binding tables of the bilingual README and docs are generated; fail when one is stale
+  # (instructions.md, "Bilingual documentation"). Runs on every pull request, including documentation-only ones.
+  docs-navigation:
+    name: Docs navigation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/update-docs-navigation.py --check
+      # Public API documentation comments: one block comment, not stacked /// lines (instructions.md, "Code conventions").
+      - run: python3 scripts/check_doc_comments.py
+
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:
     name: pod lib lint
@@ -181,12 +203,17 @@ jobs:
           - { linkage: static, pag: PAGEnterprise }
     steps:
       - uses: actions/checkout@v4
+      # CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
+      - name: Newest CYLTabBarController commit
+        id: cyltabbarcontroller
+        if: needs.changes.outputs.code == 'true'
+        run: echo "sha=$(scripts/resolve-cyltabbarcontroller-commit.sh | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
       - name: Animation fixtures (CYLTabBarController)
         if: needs.changes.outputs.code == 'true'
         uses: actions/checkout@v4
         with:
           repository: ChenYilong/CYLTabBarController
-          ref: master
+          ref: ${{ steps.cyltabbarcontroller.outputs.sha }}
           path: .fixtures/CYLTabBarController
           # The Rive fixtures; the PAG fixture is downloaded by scripts/animation-tests.sh (not kept in git upstream).
           sparse-checkout: |
@@ -251,6 +278,7 @@ jobs:
           - Examples/Example-objc-01
           - Examples/Example-objc-02
           - Examples/Example-SwiftUI
+          - Examples/Example-Scenarios
     steps:
       - uses: actions/checkout@v4
       - name: CocoaPods
@@ -265,14 +293,63 @@ jobs:
             ~/Library/Caches/CocoaPods
           key: pods-${{ runner.os }}-demo-${{ hashFiles('CYLTableViewPlaceHolder.podspec', '**/Podfile', '**/Podfile.lock') }}
           restore-keys: pods-${{ runner.os }}-demo-
-      - name: Build
+      # Builds, then launches the app on a simulator and saves build/screenshots/<scheme>.png;
+      # a build without a screenshot fails (instructions.md, "CI example screenshots").
+      - name: Build and screenshot
         if: needs.changes.outputs.code == 'true'
         run: scripts/ci-build-example.sh "${{ matrix.demo }}"
+      - name: Artifact name
+        id: artifact
+        if: always() && needs.changes.outputs.code == 'true'
+        run: |
+          slug=$(echo "${{ matrix.demo }}" | sed -e 's|^\.$|Example|' -e 's|/|-|g')
+          echo "name=example-screenshot-$slug" >> "$GITHUB_OUTPUT"
+      - name: Upload screenshot
+        if: always() && needs.changes.outputs.code == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: |
+            build/screenshots/*.png
+            build/*-uitests.log
+          if-no-files-found: warn
       - name: Summary
         if: always() && needs.changes.outputs.code == 'true'
         run: |
           {
-            echo "| Demo | Scheme | Build | Warnings |"
-            echo "|:---|:---|:---:|---:|"
-            cat build/summary.md 2>/dev/null || echo "| ${{ matrix.demo }} | - | ❌ | - |"
+            echo "| Demo | Scheme | Build | Warnings | Screenshot |"
+            echo "|:---|:---|:---:|---:|:---:|"
+            cat build/summary.md 2>/dev/null || echo "| ${{ matrix.demo }} | - | ❌ | - | ❌ |"
+            echo
+            echo "Screenshot artifact: \`${{ steps.artifact.outputs.name }}\` on the [run page](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Shows every demo's screenshot inline: in this job's summary and in one pull request comment updated in place.
+  # The images are committed to the `ci-screenshots` branch, one folder per pull request or branch; a fork's
+  # read-only token cannot push, so its run only links the artifacts. See docs/CI-CD.md.
+  screenshots:
+    name: Example screenshots
+    needs: [ changes, examples ]
+    # Not on a cancelled run: its finished demos would replace the folder with a partial set.
+    if: ${{ !cancelled() && needs.changes.outputs.code == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: example-screenshot-*
+          merge-multiple: true
+          path: build/screenshots
+      - name: Publish screenshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p build/screenshots
+          scripts/ci-publish-screenshots.sh build/screenshots

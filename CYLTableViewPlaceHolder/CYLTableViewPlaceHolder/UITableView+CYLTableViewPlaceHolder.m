@@ -12,6 +12,7 @@
 #import <objc/runtime.h>
 
 extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
+extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder);
 
 @interface UITableView ()
 
@@ -113,6 +114,9 @@ extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
     }
     self.placeHolderView = view;
     if ([provider respondsToSelector:@selector(frameForPlaceHolderViewInTableView:)]) {
+        // Lay out first so header and section rects include final geometry, such as
+        // iOS 15 section header padding, when the provider reads them (issue #16).
+        [self layoutIfNeeded];
         view.frame = [provider frameForPlaceHolderViewInTableView:self];
     } else {
         view.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
@@ -121,6 +125,6 @@ extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
     if (view.superview != self) {
         [self addSubview:view];
     }
-    [self bringSubviewToFront:view];
+    CYLBringPlaceholderToFront(self, view);
 }
 @end

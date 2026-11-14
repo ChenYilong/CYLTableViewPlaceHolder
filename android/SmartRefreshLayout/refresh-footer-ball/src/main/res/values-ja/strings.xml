@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accessibility labels of the BallPulseFooter (the Kotlin port). -->
+<resources>
+    <string name="srl_ball_loading">読み込み中</string>
+    <string name="srl_ball_loaded">読み込みました</string>
+</resources>

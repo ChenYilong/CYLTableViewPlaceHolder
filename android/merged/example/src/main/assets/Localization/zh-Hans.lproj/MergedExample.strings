@@ -1,0 +1,7 @@
+/* The merged example's tab titles (docs/Android-Port.md, step 3). */
+"tab.placeholder" = "占位图";
+"tab.svpulltorefresh" = "SVPull";
+"tab.ultraptr" = "Ultra 刷新";
+"tab.smartrefresh" = "SmartRefresh";
+"tab.feed" = "动态";
+"tab.refresh" = "刷新";

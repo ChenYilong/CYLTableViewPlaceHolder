@@ -8,9 +8,9 @@ Pod::Spec.new do |s|
   s.author       = { "ChenYilong" => "luohanchenyilong@163.com" }
   s.platform     = :ios, '12.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
-  s.resources     = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle', 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party', 'CYLTableViewPlaceHolder/CYLRefresh/CYLRefresh.bundle', 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy', 'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
   s.requires_arc = true
-  s.frameworks = 'ImageIO', 'QuartzCore'
+  # SpriteKit draws the two game headers ported from SmartRefreshControl (BattleCity, HitBlock).
+  s.frameworks = 'ImageIO', 'QuartzCore', 'Network', 'SpriteKit'
   s.swift_version = '5.0'
   s.default_subspecs = 'Core'
   s.static_framework = true
@@ -22,7 +22,17 @@ Pod::Spec.new do |s|
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}'
     # The interface to the CYLPlaceholderItemAnimation subspec, internal, not public API. Core does not depend on
     # that subspec: the engine installs itself at load time (as `CYLTabBarItemAnimationService` in CYLTabBarController).
-    core.private_header_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationService.h'
+    # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal.
+    core.private_header_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationService.h',
+                                'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.h'
+    # The core bundle: <language>.lproj/Localizable.strings (placeholder, scenario and component texts) and
+    # CYLRefresh.strings, the images, and Animations/ (40 scenario animations and 22 CYLRefresh icons: Lottie, PAG, Rive,
+    # GIF, with NOTICE.animations and the license of each source repository). Declared on Core, which reads them: a
+    # root-level `resources` was not installed when a Podfile names subspecs, so every icon fell back to the default.
+    core.resources = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle',
+                     'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party',
+                     'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy',
+                     'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
   end
 
   # The animation shared by every animation library, pulled in only by a library's subspec (Lottie, PAG...), organized

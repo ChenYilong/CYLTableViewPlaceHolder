@@ -1,0 +1,126 @@
+//
+//  CYLScenarioTabBarController.swift
+//  Example-Scenarios
+//
+
+import UIKit
+import CYLTabBarController
+import CYLTableViewPlaceHolder
+
+/// Five tabs and a plus button, modeled on CYLTabBarController's Objective-C demo.
+final class CYLScenarioTabBarController: CYLTabBarController {
+
+    private struct Tab {
+        let root: UIViewController
+        let title: CYLScenarioL10n
+        let image: String
+        let selectedImage: String
+    }
+
+    static func makeForDemo() -> CYLScenarioTabBarController {
+        let tabs = [
+            // Every scenario of the core catalog (README screenshots and business cases); the language button is here.
+            Tab(root: CYLScenarioListViewController(), title: .tabScenarios,
+                image: "rectangle.stack", selectedImage: "rectangle.stack.fill"),
+            // Every animation bundled in CYLTableViewPlaceHolder.bundle/Animations.
+            Tab(root: CYLAnimationListViewController(), title: .tabAnimations, image: "sparkles", selectedImage: "sparkles"),
+            // Table and collection integration: switching states, custom frames, refresh controls.
+            Tab(root: CYLFlowListViewController(), title: .tabFlows,
+                image: "arrow.triangle.branch", selectedImage: "arrow.triangle.branch"),
+            // A feed that loads, fails and refreshes with CYLRefresh.
+            Tab(root: CYLFeedViewController(), title: .tabFeed,
+                image: "bubble.left.and.bubble.right", selectedImage: "bubble.left.and.bubble.right.fill"),
+            // MJRefresh's example layer in Swift on the CYLRefresh API, plus GIF, Lottie, PAG and Rive icons.
+            Tab(root: CYLRefreshExampleViewController(), title: .tabRefresh,
+                image: "arrow.clockwise.circle", selectedImage: "arrow.clockwise.circle.fill"),
+        ]
+        let viewControllers: [UIViewController] = tabs.map { tab in
+            tab.root.title = CYLScenarioLocalizedString(tab.title)
+            let navigation = UINavigationController(rootViewController: tab.root)
+            navigation.navigationBar.prefersLargeTitles = true
+            return navigation
+        }
+        let attributes: [[AnyHashable: Any]] = tabs.map { tab in
+            var item: [AnyHashable: Any] = [CYLTabBarItemTitle: CYLScenarioLocalizedString(tab.title)]
+            item[CYLTabBarItemImage] = UIImage(systemName: tab.image)
+            item[CYLTabBarItemSelectedImage] = UIImage(systemName: tab.selectedImage)
+            return item
+        }
+        return CYLScenarioTabBarController(viewControllers: viewControllers, tabBarItemsAttributes: attributes)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tabBar.tintColor = .systemTeal
+    }
+}
+
+/// The plus button opens the publish page: uploading, then success.
+final class CYLScenarioPlusButton: CYLPlusButton, CYLPlusButtonSubclassing {
+
+    static func plusButton() -> Any {
+        let button = CYLScenarioPlusButton()
+        let configuration = UIImage.SymbolConfiguration(pointSize: 66, weight: .bold)
+        // System image on the plus button: a CYLTabBarController UIButton, not a placeholder, so CYLPlaceholderView does not apply.
+        button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: configuration), for: .normal)
+        button.tintColor = .systemTeal
+        // Taller than the tab bar, so it bulges: Liquid Glass raises a taller plus button until its bottom meets the bar's
+        // bottom, and the offset below raises it on the classic tab bar.
+        button.frame = CGRect(x: 0, y: 0, width: 84, height: 84)
+        button.accessibilityLabel = CYLScenarioLocalizedString(.actionPublish)
+        button.accessibilityIdentifier = "plusButton"
+        button.addTarget(button, action: #selector(publish), for: .touchUpInside)
+        return button
+    }
+
+    /// Five tabs are an odd count, so CYLTabBarController needs the position: after Scenarios, Animations and Flows.
+    static func indexOfPlusButtonInTabBar() -> UInt {
+        3
+    }
+
+    /// Bulges the button: its top edge stands above the tab bar's top edge (the examples' default plus button,
+    /// "Integrating CYLTabBarController in the examples").
+    static func constantOfPlusButtonCenterYOffset(forTabBarHeight tabBarHeight: CGFloat) -> CGFloat {
+        -24
+    }
+
+    @objc private func publish() {
+        var presenter = window?.rootViewController
+        while let presented = presenter?.presentedViewController {
+            presenter = presented
+        }
+        presenter?.present(UINavigationController(rootViewController: CYLPublishViewController()), animated: true)
+    }
+}
+
+/// The Uploading scenario (GIF), then the Success scenario, whose "Done" button closes the page.
+final class CYLPublishViewController: UIViewController {
+
+    private var placeholder: CYLPlaceholderStackView?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = CYLScenarioLocalizedString(.actionPublish)
+        view.backgroundColor = .systemBackground
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self,
+                                                           action: #selector(close))
+        show(CYLPlaceholderStackView(scenario: .uploading, actions: nil))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.show(CYLPlaceholderStackView(scenario: .success, actions: [
+                .done: { [weak self] _, _ in self?.close() },
+            ]))
+        }
+    }
+
+    private func show(_ placeholder: CYLPlaceholderStackView) {
+        self.placeholder?.removeFromSuperview()
+        self.placeholder = placeholder
+        placeholder.frame = view.bounds
+        placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(placeholder)
+    }
+
+    @objc private func close() {
+        dismiss(animated: true)
+    }
+}

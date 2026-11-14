@@ -23,6 +23,9 @@
 - (UIImageView *)arrowView
 {
     if (!_arrowView) {
+        // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
+        //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
+        // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
         UIImageView *arrowView = [[UIImageView alloc] initWithImage:[NSBundle cyl_arrowImage]];
         [self addSubview:_arrowView = arrowView];
     }
@@ -77,14 +80,20 @@
             timeWidth = self.lastUpdatedTimeLabel.cyl_textWidth;
         }
         CGFloat textWidth = MAX(stateWidth, timeWidth);
-        arrowCenterX -= textWidth / 2 + self.labelLeftInset;
+        // [EN] iconOnTrailingSide (default NO) puts the arrow after the text. [CN] iconOnTrailingSide（默认 NO）把箭头放到文字后面。
+        if (self.iconOnTrailingSide) {
+            arrowCenterX += textWidth / 2 + self.labelLeftInset;
+        } else {
+            arrowCenterX -= textWidth / 2 + self.labelLeftInset;
+        }
     }
     CGFloat arrowCenterY = self.cyl_h * 0.5;
     CGPoint arrowCenter = CGPointMake(arrowCenterX, arrowCenterY);
 
     // 箭头
     if (self.arrowView.constraints.count == 0) {
-        self.arrowView.cyl_size = self.arrowView.image.size;
+        BOOL customSize = self.iconSize.width > 0 && self.iconSize.height > 0;
+        self.arrowView.cyl_size = customSize ? self.iconSize : self.arrowView.image.size;
         self.arrowView.center = arrowCenter;
     }
 
@@ -140,4 +149,10 @@
         self.arrowView
     ]];
 }
+- (void)setIconSize:(CGSize)iconSize
+{
+    _iconSize = iconSize;
+    [self setNeedsLayout];
+}
+
 @end

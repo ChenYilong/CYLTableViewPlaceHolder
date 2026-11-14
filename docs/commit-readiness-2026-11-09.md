@@ -18,6 +18,9 @@ repository commit instructions, alongside the existing pre-commit TODO audit.
 
 ## TODO
 
-- TODO: Complete and verify the 3 remaining sub-100 parity items (accessibility
-  95, Rive playback 95, Carthage and iOS 12 at 90) listed in
-  [the comparison tracker](flatdesign-item-comparison.md); the other 16 rows are at 100 with test evidence.
+- TODO: Complete and verify the last sub-100 parity item (Carthage and iOS 12,
+  95) listed in [the comparison tracker](flatdesign-item-comparison.md); it needs
+  `scripts/device-tests.sh` on a physical iOS 12 device. The other 18 rows are
+  at 100 with test evidence.
+- TODO: The placeholder and upstream-refresh issues below 100 are tracked in
+  the `TODO` section of [issue-progress.md](issue-progress.md).

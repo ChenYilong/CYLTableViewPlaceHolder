@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SVPullToRefresh texts (the iOS NSLocalizedString keys), in every language of this project. -->
+<resources>
+    <string name="sv_pull_to_refresh">Потягніть, щоб оновити…</string>
+    <string name="sv_release_to_refresh">Відпустіть, щоб оновити…</string>
+    <string name="sv_loading">Завантаження…</string>
+    <string name="sv_pull_up_to_refresh">Потягніть угору, щоб оновити…</string>
+    <string name="sv_loading_more">Завантаження ще</string>
+    <string name="sv_load_more">Завантажити ще</string>
+    <string name="sv_no_more_data">Більше немає даних</string>
+    <string name="sv_refresh_completed">Оновлено</string>
+</resources>

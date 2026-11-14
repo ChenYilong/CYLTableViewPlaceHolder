@@ -10,6 +10,8 @@
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLRefresh.h"
 #import "UIScrollView+CYLExtension.h"
+#import "CYLRefreshHeader.h"
+#import "CYLRefreshFooter.h"
 
 @interface CYLRefreshTrailer()
 @property (assign, nonatomic) NSInteger lastRefreshCount;
@@ -17,6 +19,9 @@
 @property (assign, nonatomic) BOOL previousHorizontalBounce;
 @property (assign, nonatomic) BOOL previousVerticalBounce;
 @property (assign, nonatomic) NSUInteger refreshGeneration;
+/** The current refresh was started automatically by a drag. */
+@property (assign, nonatomic) BOOL triggerByDrag;
+@property (assign, nonatomic) NSInteger leftTriggerTimes;
 @end
 
 @implementation CYLRefreshTrailer
@@ -34,6 +39,13 @@
     return cmp;
 }
 
+- (void)prepare {
+    [super prepare];
+
+    self.triggerAutomaticallyRefreshPercent = 1.0;
+    self.autoTriggerTimes = 1;
+}
+
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change {
     [super scrollViewContentOffsetDidChange:change];
 
@@ -49,7 +61,7 @@
     // 如果是向右滚动到看不见右边控件，直接返回
     if (currentOffsetX <= happenOffsetX) return;
 
-    CGFloat pullingPercent = (currentOffsetX - happenOffsetX) / self.cyl_w;
+    CGFloat pullingPercent = (currentOffsetX - happenOffsetX) / (self.cyl_w * self.triggerRate);
 
     // 如果已全部加载，仅设置pullingPercent，然后返回
     if (self.state == CYLRefreshStateNoMoreData) {
@@ -57,10 +69,16 @@
         return;
     }
 
+    if ([self shouldAutomaticallyRefreshWithChange:change pullingPercent:pullingPercent]) {
+        self.triggerByDrag = self.scrollView.isDragging;
+        [self beginRefreshing];
+        return;
+    }
+
     if (self.scrollView.isDragging) {
         self.pullingPercent = pullingPercent;
         // 普通 和 即将刷新 的临界点
-        CGFloat normal2pullingOffsetX = happenOffsetX + self.cyl_w;
+        CGFloat normal2pullingOffsetX = happenOffsetX + self.cyl_w * self.triggerRate;
 
         if (self.state == CYLRefreshStateIdle && currentOffsetX > normal2pullingOffsetX) {
             self.state = CYLRefreshStatePulling;
@@ -76,8 +94,45 @@
     }
 }
 
+- (BOOL)shouldAutomaticallyRefreshWithChange:(NSDictionary *)change pullingPercent:(CGFloat)pullingPercent {
+    if (!self.automaticallyRefresh) return NO;
+    if (self.state != CYLRefreshStateIdle && self.state != CYLRefreshStatePulling) return NO;
+    // Content narrower than the view keeps the pull-and-release behavior.
+    if ([self widthForContentBreakView] <= 0) return NO;
+    if (self.scrollView.cyl_header.isRefreshing || self.scrollView.cyl_footer.isRefreshing) return NO;
+    if (pullingPercent < self.triggerAutomaticallyRefreshPercent) return NO;
+
+    // Only while moving toward the end, so bouncing back does not trigger again.
+    id oldValue = change[NSKeyValueChangeOldKey];
+    id newValue = change[NSKeyValueChangeNewKey];
+    if ([oldValue isKindOfClass:NSValue.class] && [newValue isKindOfClass:NSValue.class] &&
+        [newValue CGPointValue].x <= [oldValue CGPointValue].x) return NO;
+
+    if (self.scrollView.isDragging && self.leftTriggerTimes != -1 && self.leftTriggerTimes <= 0) return NO;
+    return YES;
+}
+
+- (void)scrollViewPanStateDidChange:(NSDictionary *)change {
+    [super scrollViewPanStateDidChange:change];
+
+    if (self.scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        self.leftTriggerTimes = self.autoTriggerTimes;
+    }
+}
+
+- (void)setAutoTriggerTimes:(NSInteger)autoTriggerTimes {
+    _autoTriggerTimes = autoTriggerTimes;
+    self.leftTriggerTimes = autoTriggerTimes;
+}
+
 - (void)setState:(CYLRefreshState)state {
     CYLRefreshCheckState
+    if ((state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) && self.triggerByDrag) {
+        if (self.leftTriggerTimes != -1) {
+            self.leftTriggerTimes -= 1;
+        }
+        self.triggerByDrag = NO;
+    }
     // 根据状态来设置属性
     if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
         // 刷新完毕
@@ -204,6 +259,12 @@
 - (CGFloat)widthForContentBreakView {
     CGFloat w = self.scrollView.frame.size.width - self.scrollViewOriginalInset.right - self.scrollViewOriginalInset.left;
     return self.scrollView.contentSize.width - w;
+}
+
+/// [EN] A trailer opens sideways: its open size is its width. [CN] trailer 横向展开：展开尺寸是它的宽度。
+- (CGFloat)expandHeight
+{
+    return self.cyl_w;
 }
 
 @end

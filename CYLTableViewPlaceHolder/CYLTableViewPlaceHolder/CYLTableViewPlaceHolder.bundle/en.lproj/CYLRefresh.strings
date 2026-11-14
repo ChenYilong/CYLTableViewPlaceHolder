@@ -1,0 +1,23 @@
+"CYLRefreshHeaderIdleText" = "Pull down to refresh";
+"CYLRefreshHeaderPullingText" = "Release to refresh";
+"CYLRefreshHeaderRefreshingText" = "Loading...";
+
+"CYLRefreshTrailerIdleText" = "Swipe to see details";
+"CYLRefreshTrailerPullingText" = "Release to see details";
+
+"CYLRefreshAutoFooterIdleText" = "Tap or pull up to load more";
+"CYLRefreshAutoFooterRefreshingText" = "Loading...";
+"CYLRefreshAutoFooterNoMoreDataText" = "No more data";
+
+"CYLRefreshBackFooterIdleText" = "Pull up to load more";
+"CYLRefreshBackFooterPullingText" = "Release to load more";
+"CYLRefreshBackFooterRefreshingText" = "Loading...";
+"CYLRefreshBackFooterNoMoreDataText" = "No more data";
+
+"CYLRefreshHeaderLastTimeText" = "Last update: ";
+"CYLRefreshHeaderDateTodayText" = "Today";
+"CYLRefreshHeaderNoneLastDateText" = "No record";
+"CYLRefreshHeaderFinishedText" = "Refresh complete";
+"CYLRefreshHeaderFailedText" = "Refresh failed";
+"CYLRefreshFooterFinishedText" = "Load complete";
+"CYLRefreshFooterFailedText" = "Load failed";

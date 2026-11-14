@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accessibility labels of the MaterialHeader spinner (the Kotlin port). -->
+<resources>
+    <string name="srl_material_refreshing">Refreshing</string>
+    <string name="srl_material_refreshed">Refreshed</string>
+</resources>

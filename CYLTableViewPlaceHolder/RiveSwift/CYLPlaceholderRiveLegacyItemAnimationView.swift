@@ -23,6 +23,10 @@ import RiveRuntime
 public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding {
     private let configuration: CYLPlaceholderRiveItemAnimationConfiguration
     private let viewModel: RiveViewModel
+    /**
+     * [EN] How a named animation plays: `.autoLoop` follows the file. [CN] 具名动画的播放方式：`.autoLoop` 跟随文件设置。
+     */
+    private var loop: RiveLoop = .autoLoop
     private var deactivateTask: Task<Void, Never>?
 
     @objc var cyl_inputActive: Bool {
@@ -96,11 +100,13 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
         }
     }
 
-    /// Plays the animation, fires the trigger, or sets the input to true (back to false after the duration, unless 0).
+    /**
+     * Plays the animation, fires the trigger, or sets the input to true (back to false after the duration, unless 0).
+     */
     public func playAnimation() {
         deactivateTask?.cancel()
         if let animationName = configuration.animationName {
-            viewModel.play(animationName: animationName)
+            viewModel.play(animationName: animationName, loop: loop)
             return
         }
         viewModel.play()
@@ -123,6 +129,18 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
             }
             self.viewModel.setInput(input, value: false)
         }
+    }
+
+    /**
+     * [EN] 0 loops and 1 plays once a named animation; other counts, and state machines, are not supported.
+     * [CN] 具名动画：0 循环，1 播放一次；其他次数以及状态机不支持。
+     */
+    public func setAnimationRepeatCount(_ repeatCount: Int) -> Bool {
+        guard configuration.animationName != nil, repeatCount == 0 || repeatCount == 1 else {
+            return false
+        }
+        loop = repeatCount == 0 ? .loop : .oneShot
+        return true
     }
 
     public func showAnimationLastFrame() {
