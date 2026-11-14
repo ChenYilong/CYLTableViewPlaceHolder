@@ -80,4 +80,5 @@ TODO until each page has the three controls and a screenshot. The order follows 
 | Refresh demo pages with animated headers (Lottie / Rive / PAG / GIF styles) | iOS | TODO |
 | `android/merged` example, refresh styles and animations | Android | TODO (the example is being built) |
 | CYLTabBarController "Animated icons" page (Lottie tab bar items: "Animation engine: CYLTabBarItemAnimationFactory is linked", "1x", "Play all"), for example the Android ClassifyMenu demo in the owner's 2026-11-13 screenshot | Android, iOS (CYLTabBarController's examples) | TODO: an example of a page this rule applies to; record it in that repository too |
-| React Native, Flutter, mini program and HarmonyOS examples | cross-platform | TODO (when each example shows animations) |
+| WeChat Mini Program example, scenario page (`CrossPlatform/wechat-miniprogram-cylplaceholder/example/miniprogram/pages/scenario`): Lottie icon, "Play all" (`cyl-placeholder.playAll()`, restarts from frame 0), speed slider 0.25–3×, loop switch, all live and combinable | mini program | Done (`f8089ef`): checked in the DevTools simulator, see `docs/WeChat-MiniProgram.md` |
+| React Native, Flutter and HarmonyOS examples | cross-platform | TODO (when each example shows animations) |

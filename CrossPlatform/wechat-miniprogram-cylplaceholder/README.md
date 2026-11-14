@@ -38,6 +38,26 @@ Event `action`: `detail = { action, scenario, index }`, `index` is `-1` for a ba
 `CYLPlaceholderAction*` strings of iOS and Android (`CYLPlaceholderActionRetry`, `…ContactSupport`, `…OpenSettings`,
 `…GoShopping`, `…Done`, `…ChooseManually`).
 
+## Animations
+
+31 scenarios have a Lottie file for their main icon (`CYLPlaceholderScenarioCatalog.lottieFileNameForScenario`),
+shipped in `src/cyl-placeholder/animations`. The package has no player of its own; plug one in through the
+`animation` generic, for example `cyl-lottie` from
+[cyl-lottie-miniprogram](https://github.com/ChenYilong/CYLTabBarController/tree/master/CrossPlatform/lottie-miniprogram):
+
+```json
+{ "usingComponents": { "cyl-lottie": "cyl-lottie-miniprogram/cyl-lottie/index" } }
+```
+
+```html
+<cyl-placeholder id="placeholder" scenario="EmptyCart" generic:animation="cyl-lottie"
+                 animated loop="{{loop}}" speed="{{speed}}" />
+```
+
+`animated` switches between the animation and the static icon; `loop` and `speed` apply live;
+`this.selectComponent('#placeholder').playAll()` restarts every animation from frame 0. Any player with `path`,
+`loop`, `speed`, `autoplay` properties and a `cyl_playFromStart()` method works.
+
 ## HUD
 
 `cyl-placeholder-hud` is `CYLPlaceholderHUD` (the SVProgressHUD-style loading box) for mini programs:
@@ -70,7 +90,8 @@ when tapped), `graceTimeInterval`, `minimumDismissTimeInterval`, `maximumDismiss
 Open this folder (`CrossPlatform/wechat-miniprogram-cylplaceholder`) in WeChat DevTools. `project.config.json`
 points `miniprogramRoot` at `example/miniprogram/` and its `beforeCompile` hook runs `node scripts/sync-example.js`,
 which copies both components into the example (a mini program cannot load files outside its root). Run
-`npm run sync-example` yourself if the hook is disabled. DevTools refuses the committed `touristappid`: put your own
+`npm run sync-example` yourself if the hook is disabled. The script also copies the example's Lottie player
+from a CYLTabBarController checkout: `CYL_TABBAR_DIR`, else `../CYLTabBarController` next to this repository. DevTools refuses the committed `touristappid`: put your own
 AppID in `project.private.config.json` (git-ignored), for example `{ "appid": "wx…" }`.
 
 ## Development
@@ -80,4 +101,7 @@ AppID in `project.private.config.json` (git-ignored), for example `{ "appid": "w
 
 ## License
 
-MIT, see `LICENSE`. The icons in `src/cyl-placeholder/images` are copied unchanged from `android/placeholder` (file names without the `cyl_placeholder_` prefix) and keep their licenses: the Material Design icons listed in `NOTICE.material-design-icons` are Apache 2.0 (`LICENSE.material-design-icons`); `LICENSE.placeholder-third-party` covers the images from KLTableViewAndCollectionViewPlaceholder (MIT).
+MIT, see `LICENSE`. The icons in `src/cyl-placeholder/images` are copied unchanged from `android/placeholder` (file names without the `cyl_placeholder_` prefix) and keep their licenses: the Material Design icons listed in `NOTICE.material-design-icons` are Apache 2.0 (`LICENSE.material-design-icons`); `LICENSE.placeholder-third-party` covers the images from KLTableViewAndCollectionViewPlaceholder (MIT). The Lottie
+files in `src/cyl-placeholder/animations` come unchanged from the iOS bundle; `NOTICE.animations` there names each
+file's source (lottie-ios, Apache 2.0, `LICENSE.lottie-ios`; react-useanimations, MIT, `LICENSE.useanimations`).
+It also lists the PAG / Rive / GIF files of the iOS bundle, which this package does not ship.
