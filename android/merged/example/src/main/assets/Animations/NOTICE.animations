@@ -1,0 +1,13 @@
+Copied unmodified from CYLTableViewPlaceHolder.bundle/Animations (see its NOTICE.animations).
+
+CYLRefreshArrows.gif
+  source:  https://github.com/onevcat/Kingfisher (503d8e875623dcc3c1482370c4cd54579b9fa5ce)
+  path:    Demo/Demo/Kingfisher-Demo/Resources/loader.gif
+  license: MIT (LICENSE.Kingfisher)
+  sha256:  5ec89345eebd5f504a0b2efac4dbbb8fe24408ffb674417255c2be95e7cd443f
+
+CYLRefreshRing.gif
+  source:  https://github.com/lokesh/lightbox2 (3e5c15622759a38534b219c1def6b331185b8567)
+  path:    dist/images/loading.gif
+  license: MIT (LICENSE.lightbox2)
+  sha256:  225aa88b6ab02c06222ec9468d62e15fa188e39cdb9431d1f55401ad380753ed

@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.cyl.placeholder.CYLPlaceholderView
@@ -20,6 +21,12 @@ import com.cyl.refresh.merged.R
 class CYLRefreshIconView(context: Context) : FrameLayout(context) {
 
     private val attributes = HashMap<CYLRefreshState, Map<String, Any>>()
+
+    /**
+     * The component's own views the icon replaces (its arrow and spinner): kept hidden while the icon shows, also after
+     * the component's own state change shows them again.
+     */
+    internal var replacedViews: List<View> = emptyList()
     private var shownState: CYLRefreshState? = null
 
     /**
@@ -209,6 +216,12 @@ val CYLRefreshComponent.cyl_iconView: CYLRefreshIconView
             if (icon.hasAnimations) icon.visibility = View.VISIBLE
             icon.updateForState(component.state)
         }
+        // The classic views show their arrow and spinner again on their own state changes and animations, after any
+        // observer: they are hidden again before every frame while the icon shows.
+        host.viewTreeObserver.addOnPreDrawListener {
+            if (icon.visibility == View.VISIBLE) icon.replacedViews.forEach { if (it.visibility == View.VISIBLE) it.visibility = View.INVISIBLE }
+            true
+        }
         return icon
     }
 
@@ -255,8 +268,19 @@ fun CYLRefreshComponent.cyl_showIconImageFrameOf(images: List<Drawable>?, pullin
  */
 fun CYLRefreshComponent.cyl_updateIconViewVisible(visible: Boolean, views: List<View>) {
     val show = visible && cyl_usesIconView
-    cyl_iconView.visibility = if (show) View.VISIBLE else View.GONE
-    if (show) views.forEach { it.visibility = View.INVISIBLE }
+    val icon = cyl_iconView
+    icon.visibility = if (show) View.VISIBLE else View.GONE
+    if (!show) return
+    views.forEach { it.visibility = View.INVISIBLE }
+    icon.replacedViews = (icon.replacedViews + views).distinct()
+    // In the classic views (a RelativeLayout) the icon takes the place of the view it replaces, next to the texts.
+    val anchor = views.firstOrNull { it.layoutParams is RelativeLayout.LayoutParams }
+    if (anchor != null && icon.parent is RelativeLayout) {
+        icon.layoutParams = RelativeLayout.LayoutParams(anchor.layoutParams as RelativeLayout.LayoutParams).apply {
+            width = ViewGroup.LayoutParams.WRAP_CONTENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+    }
 }
 
 /**
