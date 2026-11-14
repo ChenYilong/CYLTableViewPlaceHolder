@@ -1,0 +1,418 @@
+{
+ "CYLPlaceholderButtonStyle": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLPlaceholderScenario": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderScenario",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLPlaceholderStackView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderStackView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLPlaceholderStackView -initWithScenario:actions:": {
+  "status": "partial",
+  "android": "CYLPlaceholderStackView(context, scenario, actions)",
+  "note": "the action names follow CYLPlaceholderAction; the components of a scenario are a subset (see Android-Port.md)"
+ },
+ "CYLPlaceholderStackView scenario": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.scenario"
+ },
+ "CYLPlaceholderStackView stackView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.stackView"
+ },
+ "CYLRefreshAnimatorInterpolator": {
+  "status": "n/a",
+  "note": "Android has android.view.animation interpolators"
+ },
+ "CYLRefreshAnimatorRepeatMode": {
+  "status": "n/a",
+  "note": "Android has ValueAnimator.RESTART / REVERSE"
+ },
+ "CYLRefreshAutoNormalFooter": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshAutoStateFooter": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshBackNormalFooter": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshBackStateFooter": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshBezierCircleHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.BezierCircleHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshBezierRadarHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.BezierRadarHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshComponent": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.api.RefreshComponent",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshDeliveryHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.DeliveryHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshDropBoxHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.DropBoxHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFlyHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.FlyRefreshHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFlyView": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFooter": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.api.RefreshFooter",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGameBattleCityHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.FunGameBattleCityHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGameHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.fungame.FunGameBase",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGameHitBlockHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.FunGameHitBlockHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGamePlayingScene": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.api.RefreshHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshMaterialHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.MaterialHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshMountainView": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshNormalHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.ClassicsHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshPhoenixHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.PhoenixHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshState": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.constant.RefreshState",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStateHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.ClassicsHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStoreHouseHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.StoreHouseHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStoreHouseLine": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshStoreHousePath": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshTaurusHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.TaurusHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshValueAnimator": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator +newWithFrom:to:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator +newWithTarget:selector:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setFrom:to:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setFromToPoints:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -setTarget:selector:": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -start": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator -stop": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator beginTime": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator delegate": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator duration": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator fromValue": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator interpolator": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator interpolatorBlock": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator isRunning": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator percent": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator repeatCount": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator repeatMode": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator speed": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator toValue": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimator value": {
+  "status": "n/a",
+  "note": "Android has the platform's android.animation.ValueAnimator"
+ },
+ "CYLRefreshValueAnimatorDelegate": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationEnd:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationRepeat:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshValueAnimatorDelegate -onAnimationStart:": {
+  "status": "n/a",
+  "note": "Android has android.animation.Animator.AnimatorListener"
+ },
+ "CYLRefreshVectorImage": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorPathsParser": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.path.PathParser",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorView": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.view.PathsView",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshWaveSwipeHeader": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.WaveSwipeHeader",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "NSBundle(CYLRefresh)": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_arrowImage": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_localizedStringForKey:": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_localizedStringForKey:value:": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_refreshBundle": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "NSBundle(CYLRefresh) +cyl_trailArrowImage": {
+  "status": "n/a",
+  "note": "the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module"
+ },
+ "UICollectionViewLayout(CYLRefresh)": {
+  "status": "n/a",
+  "note": "a UICollectionView layout hook with no Android counterpart"
+ },
+ "UILabel(CYLRefresh)": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UILabel(CYLRefresh) +cyl_label": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UILabel(CYLRefresh) -cyl_textWidth": {
+  "status": "n/a",
+  "note": "a UILabel helper; Android uses TextView directly"
+ },
+ "UIScrollView(CYLExtension)": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) -cyl_updateScrollMetrics": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_contentH": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_contentW": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_inset": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetB": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetL": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetR": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_insetT": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_offsetX": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_offsetY": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_scrollDirection": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLExtension) cyl_scrollDistance": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding"
+ },
+ "UIScrollView(CYLRefresh)": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout",
+  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "UIView(CYLExtension)": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_h": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_origin": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_size": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_w": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_x": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ },
+ "UIView(CYLExtension) cyl_y": {
+  "status": "n/a",
+  "note": "UIKit frame helpers; Android views have x / y / width / height"
+ }
+}
