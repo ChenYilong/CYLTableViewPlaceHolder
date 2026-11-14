@@ -130,6 +130,9 @@ class ScenariosPage : Fragment() {
         }
         column.addView(header(context, context.t(R.string.merged_section_flows)))
         column.addView(row(context, context.t(R.string.merged_title_hud), null, "flow-hud") { push(hudPage()) })
+        column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
+            startActivity(Intent(context, StatusBarActivity::class.java))
+        })
         column.addView(header(context, context.t(R.string.merged_section_configurations)))
         for (name in context.assets.list("Configurations").orEmpty().sorted()) {
             column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })

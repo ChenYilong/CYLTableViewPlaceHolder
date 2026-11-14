@@ -355,9 +355,11 @@ fun Activity.cyl_setStatusDisplay(display: Int, animated: Boolean) {
     if (showPlaceholder && state.placeholder == null) {
         val view = CYLPlaceholderStackView(this, CYLPlaceholderScenario.NetworkUnavailable).apply { setBackgroundColor(Color.WHITE) }
         state.placeholder = view
-        content.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        // Over the scrolling view's own container when one is set (`cyl_placeholderScrollView`), else over the content.
+        val host = (state.scrollView?.parent as? FrameLayout) ?: content
+        host.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     } else if (!showPlaceholder) {
-        state.placeholder?.let { content.removeView(it) }
+        state.placeholder?.let { (it.parent as? ViewGroup)?.removeView(it) }
         state.placeholder = null
     }
     val banner = cyl_statusView
