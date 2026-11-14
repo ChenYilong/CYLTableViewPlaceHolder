@@ -170,6 +170,73 @@ function backgroundActionForScenario(scenario) {
     : null
 }
 
+// The animation files of each scenario, as in CYLPlaceholderScenario.kt: the main icon's own files, then variants.
+const ICON_FILES = {
+  NetworkUnavailable: ['CYLPlaceholderNoInternet.json'],
+  NoContent: ['CYLPlaceholderEmpty.json'],
+  TapToReload: ['CYLPlaceholderRefresh.json'],
+  LoadFailedWithHint: ['CYLPlaceholderLoadFailed.json'],
+  TapToReconnect: ['CYLPlaceholderNoInternet.json'],
+  RetryButton: ['CYLPlaceholderSad.json'],
+  RetryOutlinedButton: ['CYLPlaceholderLoadFailed.json'],
+  RetryWithHint: ['CYLPlaceholderNoInternet.json'],
+  RetryOrContactSupport: ['CYLPlaceholderServerError.json'],
+  IllustrationRetry: ['CYLPlaceholderCloudOff.json'],
+  RefreshIcon: ['CYLPlaceholderSad.json', 'CYLPlaceholderRefresh.json'],
+  TitleAboveIllustration: ['CYLPlaceholderPullHint.pag'],
+  TapMeRetry: ['CYLPlaceholderTapHint.json', 'CYLPlaceholderCloudOff.json'],
+  NoSearchResults: ['CYLPlaceholderNoResults.json'],
+  EmptyCart: ['CYLPlaceholderEmptyCart.json'],
+  NoOrders: ['CYLPlaceholderNoOrders.json'],
+  NoFavorites: ['CYLPlaceholderNoFavorites.pag'],
+  NoMessages: ['CYLPlaceholderNoMessages.json'],
+  NoNotifications: ['CYLPlaceholderNoNotifications.json'],
+  NoPermission: ['CYLPlaceholderNoPermission.json'],
+  LocationPermissionDenied: ['CYLPlaceholderLocationPermission.json'],
+  CameraPermissionDenied: ['CYLPlaceholderCameraPermission.json'],
+  PhotoLibraryPermissionDenied: ['CYLPlaceholderPhotoLibraryPermission.json'],
+  MicrophonePermissionDenied: ['CYLPlaceholderMicrophonePermission.json'],
+  ContactsPermissionDenied: ['CYLPlaceholderContactsPermission.json'],
+  CalendarPermissionDenied: ['CYLPlaceholderCalendarPermission.json'],
+  BluetoothPermissionDenied: ['CYLPlaceholderBluetoothPermission.json'],
+  NotificationPermissionDenied: ['CYLPlaceholderNotificationPermission.json'],
+  ServerError: ['CYLPlaceholderServerError.json'],
+  SyncFailed: ['CYLPlaceholderCloudOff.json'],
+  Loading: ['CYLPlaceholderLoading.json'],
+  Uploading: ['CYLPlaceholderUploading.gif'],
+  Success: ['CYLPlaceholderSuccess.riv'],
+  HUD: ['CYLRefreshActivity.gif'],
+}
+const VARIANT_FILES = {
+  NoContent: ['CYLPlaceholderNoDrafts.json'],
+  TapToReload: ['CYLPlaceholderPullToRefresh.riv'],
+  RetryOrContactSupport: ['CYLPlaceholderContactSupport.json'],
+  RefreshIcon: ['CYLPlaceholderRefresh.json', 'CYLPlaceholderPullToRefresh.riv'],
+  TitleAboveIllustration: ['CYLPlaceholderPullToRefresh.riv'],
+  TapMeRetry: ['CYLPlaceholderNoInternet.json'],
+  LocationPermissionDenied: ['CYLPlaceholderLocation.json'],
+  NoFavorites: ['CYLPlaceholderNoFavorites.gif', 'CYLPlaceholderNoFavorites.json'],
+  NoPermission: ['CYLPlaceholderSettings.json'],
+  SyncFailed: ['CYLPlaceholderLoadingInfinity.json'],
+  Loading: ['CYLPlaceholderLoading.pag', 'CYLPlaceholderLoading.riv', 'CYLPlaceholderLoadingInfinity.json', 'CYLPlaceholderProgress.pag'],
+  Uploading: ['CYLPlaceholderProgress.pag'],
+  Success: ['CYLPlaceholderSuccess.json', 'CYLPlaceholderCelebrate.json'],
+  HUD: ['CYLRefreshMaterialSpinner.json', 'CYLRefreshGradientSpinner.json', 'CYLRefreshRing.gif', 'CYLPlaceholderProgress.pag', 'CYLRefreshIcon.riv'],
+}
+
+/** Every animation file of a scenario (Lottie / PAG / Rive / GIF), the main icon's first, as on iOS and Android. */
+function animationFileNamesForScenario(scenario) {
+  return [...new Set([...(ICON_FILES[scenario] || []), ...(VARIANT_FILES[scenario] || [])])]
+}
+
+/**
+ * The Lottie file the mini program plays for the scenario's main icon: the first `CYLPlaceholder*.json` of
+ * animationFileNamesForScenario (PAG, Rive and GIF need players the mini program package does not ship), or null.
+ */
+function lottieFileNameForScenario(scenario) {
+  return animationFileNamesForScenario(scenario).find((f) => /^CYLPlaceholder.*\.json$/.test(f)) || null
+}
+
 function permissionForScenario(scenario) {
   const index = PERMISSION_SCENARIOS.indexOf(scenario)
   return index <= 0 ? CYLPlaceholderPermission.None : PERMISSIONS[index]
@@ -217,6 +284,14 @@ function componentsForScenario(scenario, language) {
   const permission = (image) => [own(image), hint(s + 'hint'), button(CYLPlaceholderAction.OpenSettings, 'Filled')]
   const A = CYLPlaceholderAction
 
+  const components = staticComponents()
+  // The first icon is the scenario's main icon; it carries the Lottie file played when animations are on.
+  const animation = lottieFileNameForScenario(scenario)
+  const main = components.find((c) => c.type === 'icon')
+  if (main && animation) main.animation = animation
+  return components
+
+  function staticComponents() {
   switch (scenario) {
     case 'NetworkUnavailable': return [own('wifi_off')]
     case 'NoContent': return [icon('empty', s + 'title', ILLUSTRATION_SIDE, false)]
@@ -268,9 +343,12 @@ function componentsForScenario(scenario, language) {
     case 'HUD': return [own('hourglass', 56)]
     default: return []
   }
+  }
 }
 
 const CYLPlaceholderScenarioCatalog = {
+  animationFileNamesForScenario,
+  lottieFileNameForScenario,
   allScenarios: ALL_SCENARIOS,
   scenarioNamed,
   actionNamed,

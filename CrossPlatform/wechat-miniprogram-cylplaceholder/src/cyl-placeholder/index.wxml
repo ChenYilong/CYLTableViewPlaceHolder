@@ -1,4 +1,4 @@
-<view class="cyl-placeholder {{compact ? 'cyl-placeholder--compact' : ''}}" bindtap="onBackgroundTap" aria-role="{{_background ? 'button' : ''}}">
+<view class="cyl-placeholder {{compact ? 'cyl-placeholder--compact' : ''}}" bindtap="onBackgroundTap" aria-role="{{hasBackgroundAction ? 'button' : ''}}">
   <view class="cyl-placeholder__stack">
     <block wx:for="{{items}}" wx:key="index">
       <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">
@@ -6,7 +6,10 @@
         <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box"
               catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
               aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
-          <image class="cyl-placeholder__icon {{item.tinted ? 'cyl-placeholder__icon--tinted' : ''}}"
+          <animation wx:if="{{animated && item.animation}}" class="cyl-placeholder__animation"
+                     path="{{animationFolder}}{{item.animation}}" loop="{{loop}}" speed="{{speed}}" autoplay="{{true}}"
+                     style="display: block; width: {{item.side}}px; height: {{item.side}}px" />
+          <image wx:else class="cyl-placeholder__icon {{item.tinted ? 'cyl-placeholder__icon--tinted' : ''}}"
                  src="{{imageBase}}{{item.image}}.png" mode="aspectFit"
                  style="width: {{item.side}}px; height: {{item.side}}px" />
           <text wx:if="{{item.title}}" class="cyl-placeholder__title">{{item.title}}</text>

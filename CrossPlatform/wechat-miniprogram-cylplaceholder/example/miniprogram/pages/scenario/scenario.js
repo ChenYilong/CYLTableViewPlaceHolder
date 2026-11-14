@@ -3,11 +3,15 @@
 const { CYLPlaceholderScenarioCatalog, CYLPlaceholderAction } = require('../../components/cyl-placeholder/cyl_placeholder')
 
 Page({
-  data: { scenario: '', language: '', rows: [], loading: false, interactive: true, loadOnRetry: false, lastAction: '' },
+  data: {
+    scenario: '', language: '', rows: [], loading: false, interactive: true, loadOnRetry: false, lastAction: '',
+    hasAnimation: false, animated: true, loop: true, speed: 1, speedText: '1.00',
+  },
   onLoad(query) {
     const scenario = CYLPlaceholderScenarioCatalog.scenarioNamed(query.scenario) || 'NoContent'
     const language = getApp().globalData.language || ''
-    this.setData({ scenario, language })
+    const hasAnimation = !!CYLPlaceholderScenarioCatalog.lottieFileNameForScenario(scenario)
+    this.setData({ scenario, language, hasAnimation })
     wx.setNavigationBarTitle({ title: CYLPlaceholderScenarioCatalog.localizedNameForScenario(scenario, language || undefined) })
   },
   onUnload() {
@@ -37,5 +41,19 @@ Page({
   },
   onLoadOnRetryChange(e) {
     this.setData({ loadOnRetry: e.detail.value })
+  },
+  onAnimatedChange(e) {
+    this.setData({ animated: e.detail.value })
+  },
+  onSpeedChange(e) {
+    const speed = e.detail.value / 100
+    this.setData({ speed, speedText: speed.toFixed(2) })
+  },
+  onLoopChange(e) {
+    this.setData({ loop: e.detail.value })
+  },
+  /** Restarts every animation on the page from progress 0. */
+  onPlayAll() {
+    this.selectAllComponents('#placeholder, #loading').forEach((p) => p.playAll())
   },
 })
