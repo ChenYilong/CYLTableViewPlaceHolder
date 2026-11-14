@@ -1708,6 +1708,10 @@
   "status": "done",
   "android": "CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)"
  },
+ "CYLRefreshComponent -beginRefreshingWithDuration:overOffset:force:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.beginRefreshingWithDuration(duration, overOffset, force)"
+ },
  "CYLRefreshComponent -didAttachToScrollView:": {
   "status": "done",
   "android": "CYLRefreshComponent.didAttachToScrollView(layout)"
@@ -1748,6 +1752,10 @@
  "CYLRefreshComponent -isInPhases:": {
   "status": "done",
   "android": "CYLRefreshComponent.isInPhases(collection)"
+ },
+ "CYLRefreshComponent -isReadyToAutoHide": {
+  "status": "done",
+  "android": "CYLRefreshComponent.isReadyToAutoHide()"
  },
  "CYLRefreshComponent -phaseDidChangeFrom:to:": {
   "status": "done",
@@ -1801,6 +1809,10 @@
   "status": "n/a",
   "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
  },
+ "CYLRefreshComponent -updateAutoHideVisibility": {
+  "status": "done",
+  "android": "CYLRefreshComponent.updateAutoHideVisibility()"
+ },
  "CYLRefreshComponent -willDetachFromScrollView:": {
   "status": "done",
   "android": "CYLRefreshComponent.willDetachFromScrollView(layout)"
@@ -1817,6 +1829,10 @@
   "status": "done",
   "android": "CYLRefreshComponent.attached"
  },
+ "CYLRefreshComponent autoHideRefresh": {
+  "status": "done",
+  "android": "CYLRefreshComponent.autoHideRefresh"
+ },
  "CYLRefreshComponent automaticallyChangeAlpha": {
   "status": "done",
   "android": "CYLRefreshComponent.automaticallyChangeAlpha"
@@ -1824,6 +1840,10 @@
  "CYLRefreshComponent beginRefreshingCompletionBlock": {
   "status": "done",
   "android": "CYLRefreshComponent.beginRefreshingCompletionBlock"
+ },
+ "CYLRefreshComponent blockedByOtherRefreshBlock": {
+  "status": "done",
+  "android": "CYLRefreshComponent.blockedByOtherRefreshBlock"
  },
  "CYLRefreshComponent colorAccent": {
   "status": "done",
@@ -1845,6 +1865,19 @@
   "status": "done",
   "android": "CYLRefreshComponent.endRefreshingCompletionBlock"
  },
+ "CYLRefreshComponent exclusiveWithOtherRefresh": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.exclusiveWithOtherRefresh",
+  "note": "SmartRefreshLayout always excludes; it cannot be turned off"
+ },
+ "CYLRefreshComponent expandHeight": {
+  "status": "done",
+  "android": "CYLRefreshComponent.expandHeight"
+ },
+ "CYLRefreshComponent expanded": {
+  "status": "done",
+  "android": "CYLRefreshComponent.expanded"
+ },
  "CYLRefreshComponent fastAnimationDuration": {
   "status": "done",
   "android": "CYLRefreshComponent.fastAnimationDuration"
@@ -1865,6 +1898,15 @@
  "CYLRefreshComponent lastRefreshSucceeded": {
   "status": "done",
   "android": "CYLRefreshComponent.lastRefreshSucceeded"
+ },
+ "CYLRefreshComponent maxPullDistance": {
+  "status": "done",
+  "android": "CYLRefreshComponent.maxPullDistance"
+ },
+ "CYLRefreshComponent notifiesWhenHidden": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.notifiesWhenHidden",
+  "note": "kept; SmartRefreshLayout always reports"
  },
  "CYLRefreshComponent phase": {
   "status": "done",
@@ -1919,9 +1961,19 @@
   "status": "done",
   "android": "CYLRefreshComponent.state"
  },
+ "CYLRefreshComponent triggerMode": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.triggerMode",
+  "note": "kept; SmartRefreshLayout pulls from the content's edge"
+ },
  "CYLRefreshComponent triggerRate": {
   "status": "done",
   "android": "CYLRefreshComponent.triggerRate"
+ },
+ "CYLRefreshComponent triggersWhenReached": {
+  "status": "partial",
+  "android": "CYLRefreshComponent.triggersWhenReached",
+  "note": "a footer loads when reached; a header waits for the release"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout)": {
   "status": "done",
@@ -2003,6 +2055,35 @@
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshComponentRefreshingBlock"
  },
+ "CYLRefreshConfig": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshConfig"
+ },
+ "CYLRefreshConfig +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshConfig -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshConfig defaultConfig": {
+  "status": "done",
+  "android": "CYLRefreshConfig.defaultConfig"
+ },
+ "CYLRefreshConfig i18nBundle": {
+  "status": "n/a",
+  "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
+ },
+ "CYLRefreshConfig i18nFilename": {
+  "status": "n/a",
+  "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
+ },
+ "CYLRefreshConfig languageCode": {
+  "status": "partial",
+  "android": "CYLRefreshConfig.languageCode",
+  "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
+ },
  "CYLRefreshDeliveryHeader": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.DeliveryHeader",
@@ -2032,9 +2113,8 @@
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
  "CYLRefreshFooter": {
-  "status": "partial",
-  "android": "com.cyl.refresh.CYLRefreshFooter",
-  "note": "pull up to load more; loadsAfterNoMoreData is TODO"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshFooter"
  },
  "CYLRefreshFooter +footerWithRefreshingBlock:": {
   "status": "done",
@@ -2063,6 +2143,11 @@
  "CYLRefreshFooter ignoredScrollViewContentInsetBottom": {
   "status": "done",
   "android": "CYLRefreshFooter.ignoredScrollViewContentInsetBottom"
+ },
+ "CYLRefreshFooter loadsAfterNoMoreData": {
+  "status": "partial",
+  "android": "CYLRefreshFooter.loadsAfterNoMoreData",
+  "note": "clears \"no more data\" shortly after it shows, so the next pull loads"
  },
  "CYLRefreshFooter noMoreData": {
   "status": "done",
@@ -2129,6 +2214,10 @@
  "CYLRefreshHeader +headerWithRefreshingTarget:refreshingAction:": {
   "status": "n/a",
   "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
+ },
+ "CYLRefreshHeader -setExpandHeight:": {
+  "status": "done",
+  "android": "CYLRefreshHeader.setExpandHeight(dp)"
  },
  "CYLRefreshHeader addsRefreshingInset": {
   "status": "done",
@@ -2342,6 +2431,86 @@
  "CYLRefreshNormalHeader loadingView": {
   "status": "done",
   "android": "CYLRefreshNormalHeader.loadingView"
+ },
+ "CYLRefreshPaging": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPaging"
+ },
+ "CYLRefreshPaging -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLRefreshPaging -initWithHeader:footer:loader:": {
+  "status": "done",
+  "android": "CYLRefreshPaging(header, footer, loader)"
+ },
+ "CYLRefreshPaging -loadMore": {
+  "status": "done",
+  "android": "CYLRefreshPaging.loadMore"
+ },
+ "CYLRefreshPaging -refresh": {
+  "status": "done",
+  "android": "CYLRefreshPaging.refresh"
+ },
+ "CYLRefreshPaging -start": {
+  "status": "done",
+  "android": "CYLRefreshPaging.start"
+ },
+ "CYLRefreshPaging count": {
+  "status": "done",
+  "android": "CYLRefreshPaging.count"
+ },
+ "CYLRefreshPaging firstPage": {
+  "status": "done",
+  "android": "CYLRefreshPaging.firstPage"
+ },
+ "CYLRefreshPaging footer": {
+  "status": "done",
+  "android": "CYLRefreshPaging.footer"
+ },
+ "CYLRefreshPaging header": {
+  "status": "done",
+  "android": "CYLRefreshPaging.header"
+ },
+ "CYLRefreshPaging isEmpty": {
+  "status": "done",
+  "android": "CYLRefreshPaging.isEmpty"
+ },
+ "CYLRefreshPaging isNoMore": {
+  "status": "done",
+  "android": "CYLRefreshPaging.isNoMore"
+ },
+ "CYLRefreshPaging items": {
+  "status": "done",
+  "android": "CYLRefreshPaging.items"
+ },
+ "CYLRefreshPaging itemsDidChange": {
+  "status": "done",
+  "android": "CYLRefreshPaging.itemsDidChange"
+ },
+ "CYLRefreshPaging page": {
+  "status": "done",
+  "android": "CYLRefreshPaging.page"
+ },
+ "CYLRefreshPaging resetsFooterAfterRefresh": {
+  "status": "done",
+  "android": "CYLRefreshPaging.resetsFooterAfterRefresh"
+ },
+ "CYLRefreshPaging total": {
+  "status": "done",
+  "android": "CYLRefreshPaging.total"
+ },
+ "CYLRefreshPaging totalPage": {
+  "status": "done",
+  "android": "CYLRefreshPaging.totalPage"
+ },
+ "CYLRefreshPagingCompletion": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPagingCompletion"
+ },
+ "CYLRefreshPagingLoader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPagingLoader"
  },
  "CYLRefreshPhase": {
   "status": "done",
@@ -2567,6 +2736,10 @@
   "android": "com.scwang.smart.refresh.header.WaveSwipeHeader",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLScrollDirection": {
+  "status": "n/a",
+  "note": "UIKit scroll metrics; Android uses the scrolling view's own scroll state"
+ },
  "CYLTablePlaceholderNormalBlock": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLTablePlaceholderNormalBlock"
@@ -2709,6 +2882,26 @@
   "status": "partial",
   "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
   "note": "the SmartRefreshLayout around the content is the scroll view's counterpart"
+ },
+ "UIScrollView(CYLRefresh) -cyl_beginRefreshingWithStartHeader:": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
+ },
+ "UIScrollView(CYLRefresh) -cyl_totalDataCount": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_totalDataCount()"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefresh": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefresh"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefreshFooter": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefreshFooter"
+ },
+ "UIScrollView(CYLRefresh) cyl_autoHideRefreshHeader": {
+  "status": "done",
+  "android": "SmartRefreshLayout.cyl_autoHideRefreshHeader"
  },
  "UIScrollView(CYLRefresh) cyl_footer": {
   "status": "done",

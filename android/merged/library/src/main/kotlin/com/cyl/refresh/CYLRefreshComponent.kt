@@ -17,6 +17,7 @@ import com.scwang.smart.refresh.layout.constant.SpinnerStyle
 import com.scwang.smart.refresh.layout.simple.SimpleMultiListener
 import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
 
 /**
  * The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the
@@ -298,6 +299,94 @@ abstract class CYLRefreshComponent internal constructor(
     var hapticFeedback: Boolean = false
 
     /**
+     * Whether a refresh and a load exclude each other (`exclusiveWithOtherRefresh`); SmartRefreshLayout always does, so
+     * turning it off has no effect.
+     */
+    var exclusiveWithOtherRefresh: Boolean = true
+
+    /**
+     * Called when [beginRefreshing] is refused because the other component is busy (`blockedByOtherRefreshBlock`).
+     */
+    var blockedByOtherRefreshBlock: CYLRefreshComponentAction? = null
+
+    /**
+     * Whether the component holds its refreshing position (`expanded`).
+     */
+    val expanded: Boolean
+        get() = phase == CYLRefreshPhase.Releasing || phase == CYLRefreshPhase.Refreshing || phase == CYLRefreshPhase.WillRefresh
+
+    /**
+     * The component's height when open, in pixels (`expandHeight`).
+     */
+    val expandHeight: Int
+        get() = view.view.height
+
+    /**
+     * The farthest the component can be pulled open, in dp; 0 for no limit of its own (`maxPullDistance`).
+     */
+    var maxPullDistance: Float = 0f
+        set(value) {
+            field = value
+            refreshLayout?.let { applyMaxPullDistance(it) }
+        }
+
+    /**
+     * Whether the component keeps reporting while hidden (`notifiesWhenHidden`); SmartRefreshLayout always reports.
+     */
+    var notifiesWhenHidden: Boolean = true
+
+    /**
+     * Whether reaching the trigger starts at once, without a release (`triggersWhenReached`); a footer loads when
+     * reached (SmartRefreshLayout's auto load more), a header keeps waiting for the release.
+     */
+    var triggersWhenReached: Boolean = false
+        set(value) {
+            field = value
+            if (!isHeader) refreshLayout?.setEnableAutoLoadMore(value)
+        }
+
+    /**
+     * Where a pull may start (`triggerMode`); SmartRefreshLayout pulls once the content is at its edge.
+     */
+    var triggerMode: CYLRefreshTriggerMode = CYLRefreshTriggerMode.OnEdge
+
+    /**
+     * Whether the component hides while it has nothing to show (`autoHideRefresh`).
+     */
+    var autoHideRefresh: Boolean = false
+        set(value) {
+            field = value
+            updateAutoHideVisibility()
+        }
+
+    /**
+     * Whether the component is at rest and not pulled, so auto hide may hide it (`isReadyToAutoHide`).
+     */
+    fun isReadyToAutoHide(): Boolean = phase == CYLRefreshPhase.Idle && dragOffset == 0
+
+    /**
+     * Applies [autoHideRefresh] now (`updateAutoHideVisibility`).
+     */
+    fun updateAutoHideVisibility() {
+        view.view.visibility = if (autoHideRefresh && isReadyToAutoHide()) View.INVISIBLE else View.VISIBLE
+    }
+
+    /**
+     * Starts refreshing with an opening animation of [duration] seconds that overshoots by [overOffset] pixels; with
+     * [force], also when a pull is under way (`beginRefreshingWithDuration:overOffset:force:`).
+     */
+    fun beginRefreshingWithDuration(duration: Double, overOffset: Float, force: Boolean) {
+        val layout = refreshLayout ?: return
+        if (force && layout.state != RefreshState.None && !isRefreshing) layout.closeHeaderOrFooter()
+        val height = max(1, expandHeight)
+        val rate = 1f + overOffset / height
+        val started = if (isHeader) layout.autoRefresh(0, (duration * 1000).toInt(), rate, false) else layout.autoLoadMore(0, (duration * 1000).toInt(), rate, false)
+        if (!started && !isRefreshing) blockedByOtherRefreshBlock?.invoke()
+    }
+
+    internal abstract fun applyMaxPullDistance(layout: SmartRefreshLayout)
+
+    /**
      * Attaches the component to [layout] (`attach:`), replacing its header (or footer).
      */
     fun attach(layout: SmartRefreshLayout): CYLRefreshComponent = apply {
@@ -306,6 +395,8 @@ abstract class CYLRefreshComponent internal constructor(
         CYLRefreshBridge.of(layout).attach(this)
         applyEnabled(layout)
         applyTriggerRate(layout)
+        if (maxPullDistance > 0f) view.view.post { applyMaxPullDistance(layout) }
+        if (!isHeader && triggersWhenReached) layout.setEnableAutoLoadMore(true)
         didAttachToScrollView(layout)
     }
 
@@ -355,6 +446,7 @@ abstract class CYLRefreshComponent internal constructor(
     internal fun moved(offset: Int, percent: Float, dragging: Boolean) {
         dragOffset = offset
         pullingPercent = percent
+        if (autoHideRefresh) updateAutoHideVisibility()
         if (automaticallyChangeAlpha) {
             view.view.alpha = if (state == CYLRefreshState.Refreshing) 1f else percent.coerceIn(0f, 1f)
         }
@@ -366,6 +458,7 @@ abstract class CYLRefreshComponent internal constructor(
         if (old == new) return
         phase = new
         if (new == CYLRefreshPhase.ReleaseToRefresh && hapticFeedback) view.view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+        if (autoHideRefresh) updateAutoHideVisibility()
         phaseDidChangeFrom(old, new)
         phaseObservers.forEach { it(this, old, new) }
         when {
@@ -480,8 +573,24 @@ open class CYLRefreshHeader(view: RefreshHeader) : CYLRefreshComponent(view) {
 
     override fun beginRefreshing() {
         val layout = refreshLayout ?: return
+        if (layout.state.isFooter && layout.state != RefreshState.None) {
+            blockedByOtherRefreshBlock?.invoke()
+            return
+        }
         if (!layout.isAttachedToWindow) markWillRefresh()
         layout.autoRefresh()
+    }
+
+    /**
+     * The header's height, in dp (`setExpandHeight:`).
+     */
+    fun setExpandHeight(dp: Float) {
+        refreshLayout?.setHeaderHeight(dp)
+    }
+
+    override fun applyMaxPullDistance(layout: SmartRefreshLayout) {
+        val height = view.view.height
+        if (maxPullDistance > 0f && height > 0) layout.setHeaderMaxDragRate(max(1f, maxPullDistance * view.view.resources.displayMetrics.density / height))
     }
 
     override fun finish(success: Boolean) {
@@ -547,8 +656,23 @@ open class CYLRefreshFooter(view: RefreshFooter) : CYLRefreshComponent(view) {
 
     override fun beginRefreshing() {
         val layout = refreshLayout ?: return
+        if (layout.state.isHeader && layout.state != RefreshState.None) {
+            blockedByOtherRefreshBlock?.invoke()
+            return
+        }
         if (!layout.isAttachedToWindow) markWillRefresh()
         layout.autoLoadMore()
+    }
+
+    /**
+     * Whether a pull still loads after "no more data" (`loadsAfterNoMoreData`); when on, a pull clears "no more data"
+     * first.
+     */
+    var loadsAfterNoMoreData: Boolean = false
+
+    override fun applyMaxPullDistance(layout: SmartRefreshLayout) {
+        val height = view.view.height
+        if (maxPullDistance > 0f && height > 0) layout.setFooterMaxDragRate(max(1f, maxPullDistance * view.view.resources.displayMetrics.density / height))
     }
 
     override fun finish(success: Boolean) {
@@ -561,6 +685,7 @@ open class CYLRefreshFooter(view: RefreshFooter) : CYLRefreshComponent(view) {
     fun endRefreshingWithNoMoreData() {
         noMoreData = true
         refreshLayout?.finishLoadMoreWithNoMoreData()
+        if (loadsAfterNoMoreData) refreshLayout?.let { layout -> layout.postDelayed({ if (noMoreData) { noMoreData = false; layout.setNoMoreData(false) } }, 1500) }
     }
 
     /**
@@ -668,3 +793,48 @@ var SmartRefreshLayout.cyl_footer: CYLRefreshFooter?
     set(value) {
         if (value != null) value.attach(this) else CYLRefreshBridge.existing(this)?.let { it.footer?.detach(); it.footer = null }
     }
+
+/**
+ * Hides both components while they have nothing to show (the iOS `UIScrollView.cyl_autoHideRefresh`).
+ */
+var SmartRefreshLayout.cyl_autoHideRefresh: Boolean
+    get() = cyl_autoHideRefreshHeader && cyl_autoHideRefreshFooter
+    set(value) {
+        cyl_autoHideRefreshHeader = value
+        cyl_autoHideRefreshFooter = value
+    }
+
+/**
+ * Hides the header while it has nothing to show (`cyl_autoHideRefreshHeader`).
+ */
+var SmartRefreshLayout.cyl_autoHideRefreshHeader: Boolean
+    get() = cyl_header?.autoHideRefresh == true
+    set(value) { cyl_header?.autoHideRefresh = value }
+
+/**
+ * Hides the footer while it has nothing to show (`cyl_autoHideRefreshFooter`).
+ */
+var SmartRefreshLayout.cyl_autoHideRefreshFooter: Boolean
+    get() = cyl_footer?.autoHideRefresh == true
+    set(value) { cyl_footer?.autoHideRefresh = value }
+
+/**
+ * Attaches [startHeader] and starts refreshing with it (`cyl_beginRefreshingWithStartHeader:`).
+ */
+fun SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(startHeader: CYLRefreshHeader) {
+    cyl_header = startHeader
+    startHeader.beginRefreshing()
+}
+
+/**
+ * The number of rows of the list inside the layout, 0 when it holds no RecyclerView with an adapter
+ * (`cyl_totalDataCount`).
+ */
+fun SmartRefreshLayout.cyl_totalDataCount(): Int {
+    fun count(view: View): Int? {
+        if (view is androidx.recyclerview.widget.RecyclerView) return view.adapter?.itemCount ?: 0
+        if (view is android.view.ViewGroup) for (i in 0 until view.childCount) count(view.getChildAt(i))?.let { return it }
+        return null
+    }
+    return runCatching { count(this) }.getOrNull() ?: 0
+}

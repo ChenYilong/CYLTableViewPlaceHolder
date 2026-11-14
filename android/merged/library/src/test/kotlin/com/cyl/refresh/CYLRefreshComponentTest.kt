@@ -224,4 +224,72 @@ class CYLRefreshComponentTest {
         assertNotNull(gif.gifView)
     }
 
+
+    @Test
+    fun pagingRefreshesLoadsMoreAndStopsAtTheEnd() {
+        val layout = show(layout(300))
+        val header = CYLRefreshNormalHeader(activity)
+        val footer = CYLRefreshBackNormalFooter(activity)
+        layout.cyl_header = header
+        layout.cyl_footer = footer
+        val requested = ArrayList<Int>()
+        var changes = 0
+        val paging = CYLRefreshPaging(header, footer) { page, completion ->
+            requested += page
+            completion(List(10) { "p$page-$it" }, 25, 0, null)
+        }
+        paging.itemsDidChange = { changes++ }
+        paging.start()
+        idle()
+        assertEquals(listOf(1), requested)
+        assertEquals(10, paging.count)
+        assertFalse(paging.isNoMore)
+        assertEquals(CYLRefreshState.Idle, header.state)
+        paging.loadMore()
+        idle(3000)
+        paging.loadMore()
+        idle(3000)
+        assertEquals(listOf(1, 2, 3), requested)
+        assertEquals(30, paging.count)
+        assertTrue("25 items in all: the third page is the last", paging.isNoMore)
+        assertTrue(footer.noMoreData)
+        paging.loadMore()
+        idle()
+        assertEquals("nothing after the last page", 3, requested.size)
+        paging.refresh()
+        idle()
+        assertEquals(10, paging.count)
+        assertFalse("a refresh clears no-more-data", footer.noMoreData)
+        assertEquals("three pages and one refresh", 4, changes)
+    }
+
+    @Test
+    fun theLeftoverComponentOptions() {
+        val layout = show(layout())
+        val header = CYLRefreshHeader.headerWithRefreshingBlock(activity) { }
+        val footer = CYLRefreshFooter.footerWithRefreshingBlock(activity) { }
+        layout.cyl_header = header
+        layout.cyl_footer = footer
+        header.autoHideRefresh = true
+        assertTrue(header.isReadyToAutoHide())
+        assertEquals(View.INVISIBLE, header.view.view.visibility)
+        assertTrue(layout.cyl_autoHideRefreshHeader)
+        header.beginRefreshingWithDuration(0.2, 20f, false)
+        idle()
+        assertTrue(header.expanded)
+        assertEquals(View.VISIBLE, header.view.view.visibility)
+        assertTrue(header.expandHeight > 0)
+        var blocked = 0
+        footer.blockedByOtherRefreshBlock = { blocked++ }
+        footer.beginRefreshing()
+        assertEquals("a load is refused while refreshing", 1, blocked)
+        header.endRefreshing()
+        idle()
+        assertFalse(header.expanded)
+        assertEquals(0, layout.cyl_totalDataCount())
+        CYLRefreshConfig.defaultConfig.languageCode = "ko"
+        assertEquals("ko", com.cyl.placeholder.CYLPlaceholderLocalization.language)
+        CYLRefreshConfig.defaultConfig.languageCode = null
+    }
+
 }

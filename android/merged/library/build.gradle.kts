@@ -59,6 +59,9 @@ dependencies {
     api(project(":srl-header"))
     // AndroidX for the iOS-named refresh API (SmartRefreshLayout's supertypes come from it).
     implementation(libs.androidx.appcompat)
+    // Only for cyl_totalDataCount: an app that uses it has RecyclerView itself.
+    compileOnly(libs.androidx.recyclerview)
+    testImplementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
