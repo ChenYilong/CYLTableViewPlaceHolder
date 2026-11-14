@@ -65,14 +65,14 @@ class ScenariosPage : Fragment() {
         return host
     }
 
-    private fun push(view: View) {
+    internal fun push(view: View) {
         pages.lastOrNull()?.visibility = View.GONE
         pages += view
         host.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         back.isEnabled = pages.size > 1
     }
 
-    private fun pop() {
+    internal fun pop() {
         if (pages.size <= 1) return
         host.removeView(pages.removeAt(pages.size - 1))
         pages.last().visibility = View.VISIBLE
@@ -81,7 +81,7 @@ class ScenariosPage : Fragment() {
 
     // MARK: - The list
 
-    private fun row(context: Context, title: String, subtitle: String?, id: String, onClick: () -> Unit) = LinearLayout(context).apply {
+    internal fun row(context: Context, title: String, subtitle: String?, id: String, onClick: () -> Unit) = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(context.dp(16f), context.dp(10f), context.dp(16f), context.dp(10f))
         minimumHeight = context.dp(56f)
@@ -98,7 +98,7 @@ class ScenariosPage : Fragment() {
         setOnClickListener { onClick() }
     }
 
-    private fun header(context: Context, text: String) = TextView(context).apply {
+    internal fun header(context: Context, text: String) = TextView(context).apply {
         this.text = text
         textSize = 13f
         setTextColor(Color.GRAY)
@@ -128,6 +128,8 @@ class ScenariosPage : Fragment() {
                 column.addView(row(context, CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), detail, "scenario-${scenario.ordinal}") { push(detail(scenario)) })
             }
         }
+        column.addView(header(context, context.t(R.string.merged_section_flows)))
+        column.addView(row(context, context.t(R.string.merged_title_hud), null, "flow-hud") { push(hudPage()) })
         column.addView(header(context, context.t(R.string.merged_section_configurations)))
         for (name in context.assets.list("Configurations").orEmpty().sorted()) {
             column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })
@@ -176,7 +178,7 @@ class ScenariosPage : Fragment() {
         }
     }
 
-    private fun bar(context: Context, title: String, vararg buttons: Button): View = LinearLayout(context).apply {
+    internal fun bar(context: Context, title: String, vararg buttons: Button): View = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(context.dp(8f), 0, context.dp(8f), 0)
@@ -185,7 +187,7 @@ class ScenariosPage : Fragment() {
         buttons.forEach { addView(it) }
     }
 
-    private fun page(context: Context, bar: View, content: View): View = LinearLayout(context).apply {
+    internal fun page(context: Context, bar: View, content: View): View = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setBackgroundColor(Color.WHITE)
         addView(bar)
