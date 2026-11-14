@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 55)
+### TODO: WeChat Mini Program placeholder package (score 75)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -45,7 +45,7 @@
   - `instructions.md` localization: one `locales/<locale>.json` per package (the Web / React Native rule; used here).
 - **Plan:**
   1. `CrossPlatform/wechat-miniprogram-cylplaceholder/src/cyl-placeholder`: a custom component that renders one of
-     the 36 scenarios of `CYLPlaceholderScenarioCatalog` (translated from `android/placeholder`'s
+     the 35 scenarios of `CYLPlaceholderScenarioCatalog` (translated from `android/placeholder`'s
      `CYLPlaceholderScenario.kt`): icon / title / hint / button / separator components, background tap action,
      `action` event with the `CYLPlaceholderAction*` names, `interactive` switch.
   2. Localization from the Android strings (en, zh-Hans, zh-Hant, ja, ko, ru, uk) into `locales/*.json`.
@@ -53,16 +53,14 @@
   4. `node --test` unit tests for the catalog and the localization.
   5. Open the example with the DevTools skill (`project_import`, `open_project_window`, `simulator_screenshot`),
      store the screenshot in `docs/`, update the README.
-- **Blocked:** the DevTools CLI authorization (`wechatide auth -c Claude`) times out; `wechatidecli islogin` returns
-  `{"login":false}`, so the DevTools login must be renewed first.
-
-- **Score: 55 / 100.** Package, example and unit tests are done; nothing has run in the DevTools simulator yet.
+- **Score: 75 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
+  simulator; README section with screenshot added. Left: items 1–4 below.
 - **Remaining work (TODO):**
-  1. Renew the DevTools login, authorize the skill client (`wechatide auth -c Claude`), then `project_import` +
-     `open_project_window` this package, check that the compile succeeds, walk through all 35 scenarios and take
-     `simulator_screenshot`s; store the stitched screenshot in `docs/` and add a README section (platform, base
-     library version, commit, time). Blocker today: `wechatidecli open` refuses `touristappid` without a login
-     ("There is no such AppID", code 10).
+  1. Check on a real phone (preview). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
+     times out with `connect_failed` even while logged in, so the simulator run used the classic CLI
+     (`wechatidecli open` / `auto`) and miniprogram-automator instead of the skill tools. DevTools refuses
+     `touristappid` ("There is no such AppID", code 10): set a real AppID in the git-ignored
+     `project.private.config.json`.
   2. Animated icons: iOS / Android play Lottie / PAG / Rive / GIF files per scenario
      (`animationFileNamesForScenario`). The mini program shows the static icon only. When animations are added (for
      example with CYLTabBarController's `lottie-miniprogram`), the example page needs "Play all", a speed slider and
@@ -109,6 +107,10 @@
   scenario has components in all 7 languages, with every icon file present and every text resolved; the locale `.js`
   twins equal the `.json` tables; names, actions, categories, permissions, language tags; the wxml binds only
   handlers defined in `index.js`.
-- Not verified: rendering, taps and layout in the DevTools simulator or on a phone (see TODO 1). WeChat DevTools
-  2.02.2609250 is installed and its Skills are installed for Claude Code, but the CLI authorization is blocked by the
-  expired login.
+- 2026-11-15 12:14 (+13:00), commit `83c8bd0`, WeChat DevTools 2.02.2609250 simulator, base library 3.17.6:
+  miniprogram-automator opened all 35 scenario pages and found the expected number of components on each; tapping
+  Retry on RetryButton sent `CYLPlaceholderActionRetry (component 1)`, showed the Loading placeholder and returned.
+  The simulator showed a stray backslash before apostrophes in the English texts (the importer had lost its regex
+  backslashes); fixed in `83c8bd0` with a unit test (9 / 9 pass). Screenshot:
+  `docs/assets/wechat-miniprogram-example.png` (README section "WeChat Mini Program").
+- Not verified: a real phone.
