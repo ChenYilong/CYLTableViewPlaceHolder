@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：73 / 100**（done + 0.5 × partial，共 789 个计入的符号；done 545、partial 57、planned 187、n/a 115）。 | **Migration score: 73 / 100** (done + 0.5 × partial over 789 counted symbols; done 545, partial 57, planned 187, n/a 115). |
+| **迁移完成率：87 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 591、partial 52、planned 66、n/a 195）。 | **Migration score: 87 / 100** (done + 0.5 × partial over 709 counted symbols; done 591, partial 52, planned 66, n/a 195). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -480,19 +480,19 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBezierCircleHeader` | `com.scwang.smart.refresh.header.BezierCircleHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshBezierCircleHeader` | `com.cyl.refresh.CYLRefreshBezierCircleHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBezierRadarHeader` | `com.scwang.smart.refresh.header.BezierRadarHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshBezierRadarHeader` | `com.cyl.refresh.CYLRefreshBezierRadarHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshDeliveryHeader` | `com.scwang.smart.refresh.header.DeliveryHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshDeliveryHeader` | `com.cyl.refresh.CYLRefreshDeliveryHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`
 
@@ -512,168 +512,168 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshDrawnHeader` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `width` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `height` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `durationFast` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `durationNormal` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `status` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `dragOffset` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `dragPercent` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `isSuccess` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-setUpComponent` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onStatus:changed:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-scrollView:didScroll:percent:drag:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onScrollingWithOffset:percent:drag:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onRefreshFinished:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-onRefreshFinishing:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-scrollView:attached:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-beginRefresh` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-finishRefresh` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-finishRefreshWithSuccess:` | — | planned (TODO) |  |
-| `CYLRefreshDrawnHeader` `-inStatus:` | — | planned (TODO) |  |
+| `CYLRefreshDrawnHeader` | `com.cyl.refresh.CYLRefreshDrawnHeader` | done | the drawing is SmartRefreshLayout's header; the hooks are the iOS ones |
+| `CYLRefreshDrawnHeader` `width` | `CYLRefreshDrawnHeader.width` | done |  |
+| `CYLRefreshDrawnHeader` `height` | `CYLRefreshDrawnHeader.height` | done |  |
+| `CYLRefreshDrawnHeader` `durationFast` | `CYLRefreshDrawnHeader.durationFast` | done |  |
+| `CYLRefreshDrawnHeader` `durationNormal` | `CYLRefreshDrawnHeader.durationNormal` | done |  |
+| `CYLRefreshDrawnHeader` `status` | `CYLRefreshDrawnHeader.status` | done |  |
+| `CYLRefreshDrawnHeader` `dragOffset` | `CYLRefreshDrawnHeader.dragOffset` | done |  |
+| `CYLRefreshDrawnHeader` `dragPercent` | `CYLRefreshDrawnHeader.dragPercent` | done |  |
+| `CYLRefreshDrawnHeader` `isSuccess` | `CYLRefreshDrawnHeader.isSuccess` | done |  |
+| `CYLRefreshDrawnHeader` `-setUpComponent` | `CYLRefreshDrawnHeader.setUpComponent()` | done |  |
+| `CYLRefreshDrawnHeader` `-onStatus:changed:` | `CYLRefreshDrawnHeader.onStatus(oldStatus, status)` | done |  |
+| `CYLRefreshDrawnHeader` `-scrollView:didScroll:percent:drag:` | `CYLRefreshDrawnHeader.scrollView(scrollView, didScroll, percent, drag)` | done |  |
+| `CYLRefreshDrawnHeader` `-onScrollingWithOffset:percent:drag:` | `CYLRefreshDrawnHeader.onScrollingWithOffset(offset, percent, drag)` | done |  |
+| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` | `CYLRefreshDrawnHeader.onStartAnimationWhenRealeasing()` | done |  |
+| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing` | `CYLRefreshDrawnHeader.onStartAnimationWhenRefreshing()` | done |  |
+| `CYLRefreshDrawnHeader` `-onRefreshFinished:` | `CYLRefreshDrawnHeader.onRefreshFinished(success)` | done |  |
+| `CYLRefreshDrawnHeader` `-onRefreshFinishing:` | `CYLRefreshDrawnHeader.onRefreshFinishing(success)` | done |  |
+| `CYLRefreshDrawnHeader` `-scrollView:attached:` | `CYLRefreshDrawnHeader.scrollView(scrollView, attached)` | done |  |
+| `CYLRefreshDrawnHeader` `-beginRefresh` | `CYLRefreshDrawnHeader.beginRefresh()` | done |  |
+| `CYLRefreshDrawnHeader` `-finishRefresh` | `CYLRefreshDrawnHeader.finishRefresh()` | done |  |
+| `CYLRefreshDrawnHeader` `-finishRefreshWithSuccess:` | `CYLRefreshDrawnHeader.finishRefreshWithSuccess(success)` | done |  |
+| `CYLRefreshDrawnHeader` `-inStatus:` | `CYLRefreshDrawnHeader.inStatus(vararg)` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshDropBoxHeader` | `com.scwang.smart.refresh.header.DropBoxHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshDropBoxHeader` | `com.cyl.refresh.CYLRefreshDropBoxHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshFlyHeader` | `com.scwang.smart.refresh.header.FlyRefreshHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshFlyHeader` | `com.cyl.refresh.CYLRefreshFlyHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGameBattleCityHeader` | `com.scwang.smart.refresh.header.FunGameBattleCityHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshGameBattleCityHeader` | `com.cyl.refresh.CYLRefreshGameBattleCityHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGameHeader` | `com.scwang.smart.refresh.header.fungame.FunGameBase` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshGameHeader` | `com.cyl.refresh.CYLRefreshGameHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGameHitBlockHeader` | `com.scwang.smart.refresh.header.FunGameHitBlockHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshGameHitBlockHeader` | `com.cyl.refresh.CYLRefreshGameHitBlockHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshMaterialHeader` | `com.scwang.smart.refresh.header.MaterialHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshMaterialHeader` | `com.cyl.refresh.CYLRefreshMaterialHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshOriginalHeader` | — | planned (TODO) |  |
-| `CYLRefreshOriginalHeader` `enableAutoRefresh` | — | planned (TODO) |  |
+| `CYLRefreshOriginalHeader` | `com.cyl.refresh.CYLRefreshOriginalHeader` | done |  |
+| `CYLRefreshOriginalHeader` `enableAutoRefresh` | `CYLRefreshOriginalHeader.enableAutoRefresh` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshPhoenixHeader` | `com.scwang.smart.refresh.header.PhoenixHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshPhoenixHeader` | `com.cyl.refresh.CYLRefreshPhoenixHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStoreHouseHeader` | `com.scwang.smart.refresh.header.StoreHouseHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshStoreHouseHeader` `lineWidth` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `+newWithString:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `+newWithString:scale:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `+newWithString:scale:padding:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:padding:` | — | planned (TODO) |  |
+| `CYLRefreshStoreHouseHeader` | `com.cyl.refresh.CYLRefreshStoreHouseHeader` | done |  |
+| `CYLRefreshStoreHouseHeader` `lineWidth` | `CYLRefreshStoreHouseHeader.lineWidth` | done |  |
+| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | `CYLRefreshStoreHouseHeader.enableReverseFlash` | partial | kept; the Android header flashes one way |
+| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | `CYLRefreshStoreHouseHeader.enableFadeAnimation` | partial | kept; the Android header always fades the lines in |
+| `CYLRefreshStoreHouseHeader` `+newWithString:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `+newWithString:scale:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `+newWithString:scale:padding:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:` | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:` | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:` | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` | done |  |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:padding:` | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshTaurusHeader` | `com.scwang.smart.refresh.header.TaurusHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshTaurusHeader` | `com.cyl.refresh.CYLRefreshTaurusHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshWaveSwipeHeader` | `com.scwang.smart.refresh.header.WaveSwipeHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshWaveSwipeHeader` | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshFlyView` | `com.scwang.smart.refresh.header.flyrefresh.FlyView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshFlyView` `colorAccent` | — | planned (TODO) |  |
+| `CYLRefreshFlyView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FlyView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGamePlayingScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshGamePlayingScene` `title` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `colorAccent` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `colorPrimary` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-reset` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-start` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-gameWin` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-gameOver` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-moveHandle:` | — | planned (TODO) |  |
-| `CYLRefreshGamePlayingScene` `-finishWithSuccess:` | — | planned (TODO) |  |
+| `CYLRefreshGamePlayingScene` `title` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-reset` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-start` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-gameWin` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-gameOver` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-moveHandle:` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGamePlayingScene` `-finishWithSuccess:` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGameStartScene` | — | planned (TODO) |  |
-| `CYLRefreshGameStartScene` `colorAccent` | — | planned (TODO) |  |
-| `CYLRefreshGameStartScene` `colorPrimary` | — | planned (TODO) |  |
+| `CYLRefreshGameStartScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshGameStartScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
+| `CYLRefreshGameStartScene` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshMountainView` | `com.scwang.smart.refresh.header.flyrefresh.MountainSceneView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshMountainView` `colorAccent` | — | planned (TODO) |  |
-| `CYLRefreshMountainView` `colorPrimary` | — | planned (TODO) |  |
-| `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | — | planned (TODO) |  |
+| `CYLRefreshMountainView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
+| `CYLRefreshMountainView` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
+| `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHouseLine` | `com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshStoreHouseLine` `start` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `end` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `middle` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `alpha` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `offset` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `index` | — | planned (TODO) |  |
-| `CYLRefreshStoreHouseLine` `transform` | — | planned (TODO) |  |
+| `CYLRefreshStoreHouseLine` `start` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `end` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `middle` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `alpha` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `offset` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `index` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
+| `CYLRefreshStoreHouseLine` `transform` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHousePath` | `com.scwang.smart.refresh.header.storehouse.StoreHousePath` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshStoreHousePath` `+linesFromArray:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | — | planned (TODO) |  |
-| `CYLRefreshStoreHousePath` `+arrayAkta` | — | planned (TODO) |  |
-| `CYLRefreshStoreHousePath` `+arrayStoreHouse` | — | planned (TODO) |  |
+| `CYLRefreshStoreHousePath` `+linesFromArray:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
+| `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
+| `CYLRefreshStoreHousePath` `+arrayAkta` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
+| `CYLRefreshStoreHousePath` `+arrayStoreHouse` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`
 
@@ -685,7 +685,7 @@
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationStart:` | — | n/a | Android has android.animation.Animator.AnimatorListener |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationRepeat:` | — | n/a | Android has android.animation.Animator.AnimatorListener |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationEnd:` | — | n/a | Android has android.animation.Animator.AnimatorListener |
-| `CYLRefreshAnimatorInterpolatorBlock` | — | planned (TODO) |  |
+| `CYLRefreshAnimatorInterpolatorBlock` | `android.animation.ValueAnimator` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshValueAnimator` | — | n/a | Android has the platform's android.animation.ValueAnimator |
 | `CYLRefreshValueAnimator` `+newWithFrom:to:` | — | n/a | Android has the platform's android.animation.ValueAnimator |
 | `CYLRefreshValueAnimator` `+newWithTarget:selector:` | — | n/a | Android has the platform's android.animation.ValueAnimator |
@@ -712,92 +712,92 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorElement` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `identifier` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `stroke` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `fill` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `opacity` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `strokeWidth` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `strokeOpacity` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `viewport` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `changed` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `layer` | — | planned (TODO) |  |
-| `CYLRefreshVectorElement` `-newLayer` | — | planned (TODO) |  |
+| `CYLRefreshVectorElement` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorElement` `identifier` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `stroke` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `fill` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `opacity` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `strokeWidth` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `strokeOpacity` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `viewport` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `changed` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `layer` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorElement` `-newLayer` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorImage` | `com.scwang.smart.drawable.PathsDrawable` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshVectorImage` `elements` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `size` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `frame` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `viewport` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `opacity` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-addElement:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-parserPaths:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-parserColors:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-scaleToFitInside:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-renderInContext:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-setGeometricWidth:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-setGeometricHeight:` | — | planned (TODO) |  |
-| `CYLRefreshVectorImage` `-moveTo:` | — | planned (TODO) |  |
+| `CYLRefreshVectorImage` `elements` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `size` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `frame` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `viewport` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `opacity` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-addElement:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-parserPaths:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-parserColors:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-scaleToFitInside:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-renderInContext:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-setGeometricWidth:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-setGeometricHeight:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorImage` `-moveTo:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorPathElement` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathElement` `+newWith:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathElement` `pathForShape` | — | planned (TODO) |  |
+| `CYLRefreshVectorPathElement` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathElement` `+newWith:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
+| `CYLRefreshVectorPathElement` `pathForShape` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshCurveType` | — | planned (TODO) |  |
+| `CYLRefreshCurveType` | `com.scwang.smart.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathsParser` | `com.scwang.smart.drawable.path.PathParser` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshVectorPathsParser` `+startingCurve` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readMoveto:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readMovetoArgumentSequence:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readLineToCmd:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readLinetoArgumentSequence:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readVerticalLineToCmd:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readVerticalLinetoArgumentSequence:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readHorizontalLinetoArgumentSequence:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readHorizontalLineToCmd:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readQuadraticCurveToCmd:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readQuadraticCurvetoArgumentSequence:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readQuadraticCurvetoArgument:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurveToCmd:path:relativeTo:withPrevCurve:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurvetoArgumentSequence:path:relativeTo:withPrevCurve:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurvetoArgument:path:relativeTo:withPrevCurve:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readCurveToCmd:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readCurvetoArgumentSequence:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readCurvetoArgument:path:relativeTo:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothCurveToCmd:path:relativeTo:withPrevCurve:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothCurvetoArgumentSequence:path:relativeTo:withPrevCurve:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readSmoothCurvetoArgument:path:relativeTo:withPrevCurve:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readEllipticalArcArguments:path:relativeTo:isRelative:` | — | planned (TODO) |  |
-| `CYLRefreshVectorPathsParser` `+readCloseCommand:path:relativeTo:` | — | planned (TODO) |  |
+| `CYLRefreshVectorPathsParser` `+startingCurve` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readMoveto:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readMovetoArgumentSequence:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readLineToCmd:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readLinetoArgumentSequence:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readVerticalLineToCmd:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readVerticalLinetoArgumentSequence:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readHorizontalLinetoArgumentSequence:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readHorizontalLineToCmd:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readQuadraticCurveToCmd:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readQuadraticCurvetoArgumentSequence:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readQuadraticCurvetoArgument:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurveToCmd:path:relativeTo:withPrevCurve:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurvetoArgumentSequence:path:relativeTo:withPrevCurve:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothQuadraticCurvetoArgument:path:relativeTo:withPrevCurve:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readCurveToCmd:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readCurvetoArgumentSequence:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readCurvetoArgument:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothCurveToCmd:path:relativeTo:withPrevCurve:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothCurvetoArgumentSequence:path:relativeTo:withPrevCurve:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readSmoothCurvetoArgument:path:relativeTo:withPrevCurve:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readEllipticalArcArguments:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
+| `CYLRefreshVectorPathsParser` `+readCloseCommand:path:relativeTo:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorUtilities` | — | planned (TODO) |  |
-| `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | — | planned (TODO) |  |
+| `CYLRefreshVectorUtilities` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorView` | `com.scwang.smart.drawable.view.PathsView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshVectorView` `image` | — | planned (TODO) |  |
-| `CYLRefreshVectorView` `-parserPaths:` | — | planned (TODO) |  |
-| `CYLRefreshVectorView` `-parserColors:` | — | planned (TODO) |  |
+| `CYLRefreshVectorView` `image` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
+| `CYLRefreshVectorView` `-parserPaths:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
+| `CYLRefreshVectorView` `-parserColors:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`
 

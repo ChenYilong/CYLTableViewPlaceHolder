@@ -292,4 +292,54 @@ class CYLRefreshComponentTest {
         CYLRefreshConfig.defaultConfig.languageCode = null
     }
 
+
+    private class HookedMaterial(context: android.content.Context, val log: MutableList<String>) : CYLRefreshMaterialHeader(context) {
+        override fun setUpComponent() { log += "setUp" }
+        override fun onStartAnimationWhenRealeasing() { log += "releasing" }
+        override fun onStartAnimationWhenRefreshing() { log += "refreshing" }
+        override fun onRefreshFinishing(success: Boolean): Double { log += "finishing:$success"; return 0.0 }
+        override fun onRefreshFinished(success: Boolean) { log += "finished:$success" }
+    }
+
+    @Test
+    fun theDrawnHeadersRefreshAndCallTheirHooks() {
+        val log = ArrayList<String>()
+        val layout = show(layout())
+        val header = HookedMaterial(activity, log)
+        layout.cyl_header = header
+        header.beginRefresh()
+        idle()
+        assertTrue(header.inStatus(CYLRefreshPhase.Refreshing))
+        assertTrue(header.width > 0)
+        header.finishRefreshWithSuccess(false)
+        idle()
+        assertFalse(header.isSuccess)
+        assertEquals(listOf("setUp", "releasing", "refreshing", "finishing:false", "finished:false"), log)
+
+        // Every drawn header attaches, refreshes and ends.
+        val makers: List<(android.content.Context) -> CYLRefreshDrawnHeader> = listOf(
+            { CYLRefreshBezierCircleHeader(it) }, { CYLRefreshBezierRadarHeader(it) }, { CYLRefreshDeliveryHeader(it) },
+            { CYLRefreshPhoenixHeader(it) }, { CYLRefreshTaurusHeader(it) }, { CYLRefreshWaveSwipeHeader(it) },
+            { CYLRefreshStoreHouseHeader.newWithString(it, "CYL") }, { CYLRefreshOriginalHeader(it) },
+        )
+        org.robolectric.shadows.ShadowChoreographer.setPaused(true)
+        try {
+            for (make in makers) {
+                val drawn = make(activity)
+                var refreshes = 0
+                drawn.refreshingBlock = { refreshes++ }
+                layout.cyl_header = drawn
+                repeat(6) { idle(16) }
+                drawn.beginRefresh()
+                repeat(80) { idle(16) }
+                assertEquals(drawn.javaClass.simpleName, 1, refreshes)
+                drawn.finishRefresh()
+                repeat(200) { idle(16) }
+                assertEquals(drawn.javaClass.simpleName, CYLRefreshState.Idle, drawn.state)
+            }
+        } finally {
+            org.robolectric.shadows.ShadowChoreographer.setPaused(false)
+        }
+    }
+
 }

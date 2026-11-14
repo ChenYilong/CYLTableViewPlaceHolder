@@ -1461,6 +1461,11 @@
   "status": "n/a",
   "note": "Android has android.view.animation interpolators"
  },
+ "CYLRefreshAnimatorInterpolatorBlock": {
+  "status": "partial",
+  "android": "android.animation.ValueAnimator",
+  "note": "the Android class with the same role; its members are its own"
+ },
  "CYLRefreshAnimatorRepeatMode": {
   "status": "n/a",
   "note": "Android has ValueAnimator.RESTART / REVERSE"
@@ -1661,14 +1666,12 @@
   "android": "CYLRefreshBackStateFooter.stateLabel"
  },
  "CYLRefreshBezierCircleHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.BezierCircleHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierCircleHeader"
  },
  "CYLRefreshBezierRadarHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.BezierRadarHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBezierRadarHeader"
  },
  "CYLRefreshComponent": {
   "status": "partial",
@@ -2084,33 +2087,128 @@
   "android": "CYLRefreshConfig.languageCode",
   "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
  },
- "CYLRefreshDeliveryHeader": {
+ "CYLRefreshCurveType": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.DeliveryHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.scwang.smart.drawable.path.PathParser",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshDeliveryHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDeliveryHeader"
  },
  "CYLRefreshDidChangeLanguageNotification": {
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
  },
+ "CYLRefreshDrawnHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDrawnHeader",
+  "note": "the drawing is SmartRefreshLayout's header; the hooks are the iOS ones"
+ },
+ "CYLRefreshDrawnHeader -beginRefresh": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.beginRefresh()"
+ },
+ "CYLRefreshDrawnHeader -finishRefresh": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.finishRefresh()"
+ },
+ "CYLRefreshDrawnHeader -finishRefreshWithSuccess:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.finishRefreshWithSuccess(success)"
+ },
+ "CYLRefreshDrawnHeader -inStatus:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.inStatus(vararg)"
+ },
+ "CYLRefreshDrawnHeader -onRefreshFinished:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onRefreshFinished(success)"
+ },
+ "CYLRefreshDrawnHeader -onRefreshFinishing:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onRefreshFinishing(success)"
+ },
+ "CYLRefreshDrawnHeader -onScrollingWithOffset:percent:drag:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onScrollingWithOffset(offset, percent, drag)"
+ },
+ "CYLRefreshDrawnHeader -onStartAnimationWhenRealeasing": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStartAnimationWhenRealeasing()"
+ },
+ "CYLRefreshDrawnHeader -onStartAnimationWhenRefreshing": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStartAnimationWhenRefreshing()"
+ },
+ "CYLRefreshDrawnHeader -onStatus:changed:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.onStatus(oldStatus, status)"
+ },
+ "CYLRefreshDrawnHeader -scrollView:attached:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.scrollView(scrollView, attached)"
+ },
+ "CYLRefreshDrawnHeader -scrollView:didScroll:percent:drag:": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.scrollView(scrollView, didScroll, percent, drag)"
+ },
+ "CYLRefreshDrawnHeader -setUpComponent": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.setUpComponent()"
+ },
+ "CYLRefreshDrawnHeader dragOffset": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.dragOffset"
+ },
+ "CYLRefreshDrawnHeader dragPercent": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.dragPercent"
+ },
+ "CYLRefreshDrawnHeader durationFast": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.durationFast"
+ },
+ "CYLRefreshDrawnHeader durationNormal": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.durationNormal"
+ },
+ "CYLRefreshDrawnHeader height": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.height"
+ },
+ "CYLRefreshDrawnHeader isSuccess": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.isSuccess"
+ },
+ "CYLRefreshDrawnHeader status": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.status"
+ },
+ "CYLRefreshDrawnHeader width": {
+  "status": "done",
+  "android": "CYLRefreshDrawnHeader.width"
+ },
  "CYLRefreshDropBoxHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.DropBoxHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshDropBoxHeader"
  },
  "CYLRefreshFastAnimationDuration": {
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshFastAnimationDuration"
  },
  "CYLRefreshFlyHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.FlyRefreshHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshFlyHeader"
  },
  "CYLRefreshFlyView": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshFlyView colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FlyView (its own API)"
  },
  "CYLRefreshFooter": {
   "status": "done",
@@ -2166,24 +2264,70 @@
   "android": "CYLRefreshConst.CYLRefreshFooterHeight"
  },
  "CYLRefreshGameBattleCityHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.FunGameBattleCityHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameBattleCityHeader"
  },
  "CYLRefreshGameHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.fungame.FunGameBase",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameHeader"
  },
  "CYLRefreshGameHitBlockHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.FunGameHitBlockHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGameHitBlockHeader"
  },
  "CYLRefreshGamePlayingScene": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshGamePlayingScene -finishWithSuccess:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -gameOver": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -gameWin": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -moveHandle:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -reset": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene -start": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGamePlayingScene title": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGameStartScene": {
+  "status": "partial",
+  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshGameStartScene colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
+ },
+ "CYLRefreshGameStartScene colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
  },
  "CYLRefreshGifHeader": {
   "status": "done",
@@ -2402,14 +2546,25 @@
   "android": "CYLRefreshConst.CYLRefreshLabelLeftInset"
  },
  "CYLRefreshMaterialHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.MaterialHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshMaterialHeader"
  },
  "CYLRefreshMountainView": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
+ },
+ "CYLRefreshMountainView colorAccent": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
+ },
+ "CYLRefreshMountainView colorPrimary": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with MountainSceneView (its own API)"
  },
  "CYLRefreshNormalHeader": {
   "status": "done",
@@ -2431,6 +2586,14 @@
  "CYLRefreshNormalHeader loadingView": {
   "status": "done",
   "android": "CYLRefreshNormalHeader.loadingView"
+ },
+ "CYLRefreshOriginalHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshOriginalHeader"
+ },
+ "CYLRefreshOriginalHeader enableAutoRefresh": {
+  "status": "done",
+  "android": "CYLRefreshOriginalHeader.enableAutoRefresh"
  },
  "CYLRefreshPaging": {
   "status": "done",
@@ -2517,9 +2680,8 @@
   "android": "com.cyl.refresh.CYLRefreshPhase"
  },
  "CYLRefreshPhoenixHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.PhoenixHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshPhoenixHeader"
  },
  "CYLRefreshScrollMode": {
   "status": "done",
@@ -2580,24 +2742,112 @@
   "android": "CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)"
  },
  "CYLRefreshStoreHouseHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStoreHouseHeader"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:scale:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader +newWithString:scale:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithArray:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithArray:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:scale:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader -initLinesWithString:scale:padding:": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
+ },
+ "CYLRefreshStoreHouseHeader enableFadeAnimation": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.StoreHouseHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "CYLRefreshStoreHouseHeader.enableFadeAnimation",
+  "note": "kept; the Android header always fades the lines in"
+ },
+ "CYLRefreshStoreHouseHeader enableReverseFlash": {
+  "status": "partial",
+  "android": "CYLRefreshStoreHouseHeader.enableReverseFlash",
+  "note": "kept; the Android header flashes one way"
+ },
+ "CYLRefreshStoreHouseHeader lineWidth": {
+  "status": "done",
+  "android": "CYLRefreshStoreHouseHeader.lineWidth"
  },
  "CYLRefreshStoreHouseLine": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshStoreHouseLine alpha": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine end": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine index": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine middle": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine offset": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine start": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
+ "CYLRefreshStoreHouseLine transform": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
+ },
  "CYLRefreshStoreHousePath": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshStoreHousePath +arrayAkta": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +arrayStoreHouse": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +linesFrom:scale:space:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
+ "CYLRefreshStoreHousePath +linesFromArray:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with StoreHousePath (its own API)"
+ },
  "CYLRefreshTaurusHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.TaurusHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTaurusHeader"
  },
  "CYLRefreshTrailWidth": {
   "status": "done",
@@ -2716,25 +2966,255 @@
   "status": "n/a",
   "note": "Android has android.animation.Animator.AnimatorListener"
  },
+ "CYLRefreshVectorElement": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorElement -newLayer": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement changed": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement fill": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement identifier": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement layer": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement opacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement stroke": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement strokeOpacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement strokeWidth": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorElement viewport": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
  "CYLRefreshVectorImage": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.PathsDrawable",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+ },
+ "CYLRefreshVectorImage -addElement:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -moveTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -parserColors:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -parserPaths:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -renderInContext:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -scaleToFitInside:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -setGeometricHeight:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage -setGeometricWidth:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage elements": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage frame": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage opacity": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage size": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorImage viewport": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorPathElement": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorPathElement +newWith:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
+ "CYLRefreshVectorPathElement pathForShape": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorPathsParser": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.path.PathParser",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurveToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurvetoArgument:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readCurvetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readEllipticalArcArguments:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readHorizontalLineToCmd:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readHorizontalLinetoArgumentSequence:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readLineToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readLinetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMoveto:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoDrawToCmdGroups:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readMovetoDrawto:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurveToCmd:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurvetoArgument:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readQuadraticCurvetoArgumentSequence:path:relativeTo:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurveToCmd:path:relativeTo:withPrevCurve:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurvetoArgument:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothCurvetoArgumentSequence:path:relativeTo:withPrevCurve:isRelative:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurveToCmd:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurvetoArgument:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readSmoothQuadraticCurvetoArgumentSequence:path:relativeTo:withPrevCurve:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readVerticalLineToCmd:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +readVerticalLinetoArgumentSequence:path:relativeTo:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorPathsParser +startingCurve": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
+ },
+ "CYLRefreshVectorUtilities": {
+  "status": "partial",
+  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "note": "the Android class with the same role; its members are its own"
+ },
+ "CYLRefreshVectorUtilities +newLayerForElement:withPath:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
+ },
  "CYLRefreshVectorView": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.view.PathsView",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshVectorView -parserColors:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
+ "CYLRefreshVectorView -parserPaths:": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
+ "CYLRefreshVectorView image": {
+  "status": "n/a",
+  "note": "an iOS drawing internal; Android draws with PathsView (its own API)"
+ },
  "CYLRefreshWaveSwipeHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.WaveSwipeHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshWaveSwipeHeader"
  },
  "CYLScrollDirection": {
   "status": "n/a",
