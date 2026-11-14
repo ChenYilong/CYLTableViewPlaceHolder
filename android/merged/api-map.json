@@ -824,6 +824,23 @@
   "status": "done",
   "android": "CYLPlaceholderView.textLabel"
  },
+ "CYLRefreshAnimationHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAnimationHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAnimationHeader -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.setAnimationImages"
+ },
+ "CYLRefreshAnimationHeader -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.setAnimationImages"
+ },
+ "CYLRefreshAnimationHeader animationView": {
+  "status": "done",
+  "android": "CYLRefreshAnimationHeader.animationView"
+ },
  "CYLRefreshAnimatorInterpolator": {
   "status": "n/a",
   "note": "Android has android.view.animation interpolators"
@@ -831,6 +848,41 @@
  "CYLRefreshAnimatorRepeatMode": {
   "status": "n/a",
   "note": "Android has ValueAnimator.RESTART / REVERSE"
+ },
+ "CYLRefreshAutoAnimationFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoAnimationFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoAnimationFooter -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshAutoAnimationFooter -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshAutoAnimationFooter animationView": {
+  "status": "done",
+  "android": "CYLRefreshAutoAnimationFooter.animationView"
+ },
+ "CYLRefreshAutoFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoFooter autoTriggerTimes": {
+  "status": "partial",
+  "android": "CYLRefreshAutoFooter.autoTriggerTimes",
+  "note": "kept; SmartRefreshLayout loads once per drag"
+ },
+ "CYLRefreshAutoFooter automaticallyRefresh": {
+  "status": "done",
+  "android": "CYLRefreshAutoFooter.automaticallyRefresh"
+ },
+ "CYLRefreshAutoFooter triggerAutomaticallyRefreshPercent": {
+  "status": "done",
+  "android": "CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent"
  },
  "CYLRefreshAutoFooterIdleText": {
   "status": "done",
@@ -844,15 +896,78 @@
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshAutoFooterRefreshingText"
  },
+ "CYLRefreshAutoGifFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoGifFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoGifFooter -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.setImages"
+ },
+ "CYLRefreshAutoGifFooter -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.setImages"
+ },
+ "CYLRefreshAutoGifFooter gifView": {
+  "status": "done",
+  "android": "CYLRefreshAutoGifFooter.gifView"
+ },
  "CYLRefreshAutoNormalFooter": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoNormalFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoNormalFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshAutoNormalFooter loadingView": {
+  "status": "done",
+  "android": "CYLRefreshAutoNormalFooter.loadingView"
  },
  "CYLRefreshAutoStateFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshAutoStateFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshAutoStateFooter -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.setTitle"
+ },
+ "CYLRefreshAutoStateFooter labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.labelLeftInset"
+ },
+ "CYLRefreshAutoStateFooter refreshingTitleHidden": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.refreshingTitleHidden"
+ },
+ "CYLRefreshAutoStateFooter stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.stateLabel"
+ },
+ "CYLRefreshBackAnimationFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackAnimationFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackAnimationFooter -setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshBackAnimationFooter -setAnimationImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.setAnimationImages"
+ },
+ "CYLRefreshBackAnimationFooter animationView": {
+  "status": "done",
+  "android": "CYLRefreshBackAnimationFooter.animationView"
+ },
+ "CYLRefreshBackFooter": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "android": "com.cyl.refresh.CYLRefreshBackFooter",
+  "note": "the second floor (secondary*) is TODO"
  },
  "CYLRefreshBackFooterIdleText": {
   "status": "done",
@@ -870,15 +985,64 @@
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshBackFooterRefreshingText"
  },
+ "CYLRefreshBackGifFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackGifFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackGifFooter -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.setImages"
+ },
+ "CYLRefreshBackGifFooter -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.setImages"
+ },
+ "CYLRefreshBackGifFooter gifView": {
+  "status": "done",
+  "android": "CYLRefreshBackGifFooter.gifView"
+ },
  "CYLRefreshBackNormalFooter": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackNormalFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackNormalFooter CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshBackNormalFooter arrowView": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.arrowView"
+ },
+ "CYLRefreshBackNormalFooter iconSize": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.iconSize"
+ },
+ "CYLRefreshBackNormalFooter loadingView": {
+  "status": "done",
+  "android": "CYLRefreshBackNormalFooter.loadingView"
  },
  "CYLRefreshBackStateFooter": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.footer.ClassicsFooter",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshBackStateFooter",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshBackStateFooter -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.setTitle"
+ },
+ "CYLRefreshBackStateFooter -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.titleForState"
+ },
+ "CYLRefreshBackStateFooter labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.labelLeftInset"
+ },
+ "CYLRefreshBackStateFooter stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshBackStateFooter.stateLabel"
  },
  "CYLRefreshBezierCircleHeader": {
   "status": "partial",
@@ -1143,6 +1307,42 @@
   "status": "done",
   "android": "CYLRefreshComponent.triggerRate"
  },
+ "CYLRefreshComponent(CYLRefreshIconLayout)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshComponent (cyl_ icon extensions)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_placeIconViewAtCenter:visible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_placeIconViewAtCenter(x, y, visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_placeIconViewWithTitle:labels:visible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconImages(images, duration, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_showIconImageFrameOf:pullingPercent:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_updateIconViewVisible:replacingViews:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_updateIconViewVisible(visible, views)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) cyl_iconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_iconView"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) cyl_usesIconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_usesIconView"
+ },
  "CYLRefreshComponent(ChainingGrammar)": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)"
@@ -1284,6 +1484,23 @@
   "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
+ "CYLRefreshGifHeader": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshGifHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshGifHeader -setImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.setImages"
+ },
+ "CYLRefreshGifHeader -setImages:forState:": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.setImages"
+ },
+ "CYLRefreshGifHeader gifView": {
+  "status": "done",
+  "android": "CYLRefreshGifHeader.gifView"
+ },
  "CYLRefreshHeader": {
   "status": "partial",
   "android": "com.cyl.refresh.CYLRefreshHeader",
@@ -1361,6 +1578,104 @@
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshHeaderRefreshingText"
  },
+ "CYLRefreshIconAnimating": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshIconAnimating",
+  "note": "an interface; every component gets the same calls as cyl_ extensions"
+ },
+ "CYLRefreshIconAnimating -setBundledIconAnimation:size:forState:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconAnimating -setIconAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshIconAnimating -setIconAnimationFilePath:size:forState:": {
+  "status": "done",
+  "android": "cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)"
+ },
+ "CYLRefreshIconAnimating bundledIconAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconAnimating iconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_iconView"
+ },
+ "CYLRefreshIconAnimating usesIconView": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_usesIconView"
+ },
+ "CYLRefreshIconView": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshIconView"
+ },
+ "CYLRefreshIconView -animationAttributesForState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.animationAttributesForState(state)"
+ },
+ "CYLRefreshIconView -setAnimationAttributes:forState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.setAnimationAttributes(attributes, state)"
+ },
+ "CYLRefreshIconView -updateForPullingPercent:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.updateForPullingPercent(percent)"
+ },
+ "CYLRefreshIconView -updateForState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.updateForState(state)"
+ },
+ "CYLRefreshIconView fittingSize": {
+  "status": "done",
+  "android": "CYLRefreshIconView.fittingSize"
+ },
+ "CYLRefreshIconView hasAnimations": {
+  "status": "done",
+  "android": "CYLRefreshIconView.hasAnimations"
+ },
+ "CYLRefreshIconView iconSize": {
+  "status": "done",
+  "android": "CYLRefreshIconView.iconSize"
+ },
+ "CYLRefreshIconView placeholderView": {
+  "status": "done",
+  "android": "CYLRefreshIconView.placeholderView"
+ },
+ "CYLRefreshIconView scrubsWhilePulling": {
+  "status": "done",
+  "android": "CYLRefreshIconView.scrubsWhilePulling"
+ },
+ "CYLRefreshIconView title": {
+  "status": "done",
+  "android": "CYLRefreshIconView.title"
+ },
+ "CYLRefreshIconView titleColor": {
+  "status": "done",
+  "android": "CYLRefreshIconView.titleColor"
+ },
+ "CYLRefreshIconView titleFont": {
+  "status": "partial",
+  "android": "CYLRefreshIconView.titleFont",
+  "note": "the size in sp"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshIconView (companion)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) +attributesForAnimationFilePath:size:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) +attributesForBundledAnimation:size:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
+ "CYLRefreshIconView(CYLRefreshIconAttributes) bundledAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; pass a file path (attributesForAnimationFilePath)"
+ },
  "CYLRefreshKeyPathContentInset": {
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshKeyPathContentInset"
@@ -1392,9 +1707,25 @@
   "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
  },
  "CYLRefreshNormalHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.ClassicsHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshNormalHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshNormalHeader CYLRefreshDeprecated": {
+  "status": "n/a",
+  "note": "deprecated iOS aliases"
+ },
+ "CYLRefreshNormalHeader arrowView": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.arrowView"
+ },
+ "CYLRefreshNormalHeader iconSize": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.iconSize"
+ },
+ "CYLRefreshNormalHeader loadingView": {
+  "status": "done",
+  "android": "CYLRefreshNormalHeader.loadingView"
  },
  "CYLRefreshPhase": {
   "status": "done",
@@ -1419,9 +1750,49 @@
   "android": "com.cyl.refresh.CYLRefreshState"
  },
  "CYLRefreshStateHeader": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.ClassicsHeader",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader",
+  "note": "on SmartRefreshLayout's classic header / footer"
+ },
+ "CYLRefreshStateHeader -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.setTitle"
+ },
+ "CYLRefreshStateHeader labelLeftInset": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.labelLeftInset"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeFormatter": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeFormatter"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeLabel"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeString": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeString"
+ },
+ "CYLRefreshStateHeader lastUpdatedTimeText": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.lastUpdatedTimeText"
+ },
+ "CYLRefreshStateHeader stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.stateLabel"
+ },
+ "CYLRefreshStateHeader titleTimeSpacing": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.titleTimeSpacing"
+ },
+ "CYLRefreshStateHeader(ChainingGrammar)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader"
+ },
+ "CYLRefreshStateHeader(ChainingGrammar) -cyl_modifyLastUpdatedTimeText:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)"
  },
  "CYLRefreshStoreHouseHeader": {
   "status": "partial",

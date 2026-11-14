@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：36 / 100**（done + 0.5 × partial，共 811 个计入的符号；done 267、partial 51、planned 493、n/a 93）。 | **Migration score: 36 / 100** (done + 0.5 × partial over 811 counted symbols; done 267, partial 51, planned 493, n/a 93). |
+| **迁移完成率：47 / 100**（done + 0.5 × partial，共 804 个计入的符号；done 352、partial 49、planned 403、n/a 100）。 | **Migration score: 47 / 100** (done + 0.5 × partial over 804 counted symbols; done 352, partial 49, planned 403, n/a 100). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -179,16 +179,16 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoFooter` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooter` `automaticallyRefresh` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | — | planned (TODO) |  |
-| `CYLRefreshAutoFooter` `autoTriggerTimes` | — | planned (TODO) |  |
+| `CYLRefreshAutoFooter` | `com.cyl.refresh.CYLRefreshAutoFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooter.automaticallyRefresh` | done |  |
+| `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` | done |  |
+| `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooter.autoTriggerTimes` | partial | kept; SmartRefreshLayout loads once per drag |
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackFooter` | — | planned (TODO) |  |
+| `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | partial | the second floor (secondary*) is TODO |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | — | planned (TODO) |  |
 | `CYLRefreshBackFooter` `secondaryTriggerOffset` | — | planned (TODO) |  |
 | `CYLRefreshBackFooter` `secondaryDimension` | — | planned (TODO) |  |
@@ -343,39 +343,39 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshIconView` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `-setAnimationAttributes:forState:` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `-animationAttributesForState:` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `hasAnimations` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `placeholderView` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `iconSize` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `title` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `titleFont` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `titleColor` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `fittingSize` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `scrubsWhilePulling` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `-updateForState:` | — | planned (TODO) |  |
-| `CYLRefreshIconView` `-updateForPullingPercent:` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `iconView` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `usesIconView` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | — | planned (TODO) |  |
-| `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | — | planned (TODO) |  |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` | — | planned (TODO) |  |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` | — | planned (TODO) |  |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForBundledAnimation:size:` | — | planned (TODO) |  |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `bundledAnimationFileNames` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_iconView` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_usesIconView` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationAttributes:forState:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewAtCenter:visible:replacingViews:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_updateIconViewVisible:replacingViews:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | — | planned (TODO) |  |
+| `CYLRefreshIconView` | `com.cyl.refresh.CYLRefreshIconView` | done |  |
+| `CYLRefreshIconView` `-setAnimationAttributes:forState:` | `CYLRefreshIconView.setAnimationAttributes(attributes, state)` | done |  |
+| `CYLRefreshIconView` `-animationAttributesForState:` | `CYLRefreshIconView.animationAttributesForState(state)` | done |  |
+| `CYLRefreshIconView` `hasAnimations` | `CYLRefreshIconView.hasAnimations` | done |  |
+| `CYLRefreshIconView` `placeholderView` | `CYLRefreshIconView.placeholderView` | done |  |
+| `CYLRefreshIconView` `iconSize` | `CYLRefreshIconView.iconSize` | done |  |
+| `CYLRefreshIconView` `title` | `CYLRefreshIconView.title` | done |  |
+| `CYLRefreshIconView` `titleFont` | `CYLRefreshIconView.titleFont` | partial | the size in sp |
+| `CYLRefreshIconView` `titleColor` | `CYLRefreshIconView.titleColor` | done |  |
+| `CYLRefreshIconView` `fittingSize` | `CYLRefreshIconView.fittingSize` | done |  |
+| `CYLRefreshIconView` `scrubsWhilePulling` | `CYLRefreshIconView.scrubsWhilePulling` | done |  |
+| `CYLRefreshIconView` `-updateForState:` | `CYLRefreshIconView.updateForState(state)` | done |  |
+| `CYLRefreshIconView` `-updateForPullingPercent:` | `CYLRefreshIconView.updateForPullingPercent(percent)` | done |  |
+| `CYLRefreshIconAnimating` | `com.cyl.refresh.CYLRefreshIconAnimating` | partial | an interface; every component gets the same calls as cyl_ extensions |
+| `CYLRefreshIconAnimating` `iconView` | `CYLRefreshComponent.cyl_iconView` | done |  |
+| `CYLRefreshIconAnimating` `usesIconView` | `CYLRefreshComponent.cyl_usesIconView` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | `CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | `cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)` | done |  |
+| `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
+| `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` | `com.cyl.refresh.CYLRefreshIconView (companion)` | done |  |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` | `CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)` | done |  |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForBundledAnimation:size:` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `bundledAnimationFileNames` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` | `com.cyl.refresh.CYLRefreshComponent (cyl_ icon extensions)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_iconView` | `CYLRefreshComponent.cyl_iconView` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_usesIconView` | `CYLRefreshComponent.cyl_usesIconView` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationAttributes:forState:` | `CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewAtCenter:visible:replacingViews:` | `CYLRefreshComponent.cyl_placeIconViewAtCenter(x, y, visible, views)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_updateIconViewVisible:replacingViews:` | `CYLRefreshComponent.cyl_updateIconViewVisible(visible, views)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | `CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | `CYLRefreshComponent.cyl_setIconImages(images, duration, state)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | `CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshPaging.h`
 
@@ -803,124 +803,124 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoAnimationFooter` | — | planned (TODO) |  |
-| `CYLRefreshAutoAnimationFooter` `animationView` | — | planned (TODO) |  |
-| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshAutoAnimationFooter` | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoAnimationFooter` `animationView` | `CYLRefreshAutoAnimationFooter.animationView` | done |  |
+| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:` | `CYLRefreshAutoAnimationFooter.setAnimationImages` | done |  |
+| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` | `CYLRefreshAutoAnimationFooter.setAnimationImages` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoGifFooter` | — | planned (TODO) |  |
-| `CYLRefreshAutoGifFooter` `gifView` | — | planned (TODO) |  |
-| `CYLRefreshAutoGifFooter` `-setImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshAutoGifFooter` `-setImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshAutoGifFooter` | `com.cyl.refresh.CYLRefreshAutoGifFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoGifFooter` `gifView` | `CYLRefreshAutoGifFooter.gifView` | done |  |
+| `CYLRefreshAutoGifFooter` `-setImages:duration:forState:` | `CYLRefreshAutoGifFooter.setImages` | done |  |
+| `CYLRefreshAutoGifFooter` `-setImages:forState:` | `CYLRefreshAutoGifFooter.setImages` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoNormalFooter` | `com.scwang.smart.refresh.footer.ClassicsFooter` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshAutoNormalFooter` `loadingView` | — | planned (TODO) |  |
+| `CYLRefreshAutoNormalFooter` | `com.cyl.refresh.CYLRefreshAutoNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoNormalFooter` `loadingView` | `CYLRefreshAutoNormalFooter.loadingView` | done |  |
 | `CYLRefreshAutoNormalFooter` `noMoreDataImage` | — | planned (TODO) |  |
-| `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | — | planned (TODO) |  |
+| `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoStateFooter` | `com.scwang.smart.refresh.footer.ClassicsFooter` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshAutoStateFooter` `labelLeftInset` | — | planned (TODO) |  |
-| `CYLRefreshAutoStateFooter` `stateLabel` | — | planned (TODO) |  |
-| `CYLRefreshAutoStateFooter` `-setTitle:forState:` | — | planned (TODO) |  |
-| `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | — | planned (TODO) |  |
+| `CYLRefreshAutoStateFooter` | `com.cyl.refresh.CYLRefreshAutoStateFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoStateFooter` `labelLeftInset` | `CYLRefreshAutoStateFooter.labelLeftInset` | done |  |
+| `CYLRefreshAutoStateFooter` `stateLabel` | `CYLRefreshAutoStateFooter.stateLabel` | done |  |
+| `CYLRefreshAutoStateFooter` `-setTitle:forState:` | `CYLRefreshAutoStateFooter.setTitle` | done |  |
+| `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | `CYLRefreshAutoStateFooter.refreshingTitleHidden` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackAnimationFooter` | — | planned (TODO) |  |
-| `CYLRefreshBackAnimationFooter` `animationView` | — | planned (TODO) |  |
-| `CYLRefreshBackAnimationFooter` `-setAnimationImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshBackAnimationFooter` `-setAnimationImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshBackAnimationFooter` | `com.cyl.refresh.CYLRefreshBackAnimationFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackAnimationFooter` `animationView` | `CYLRefreshBackAnimationFooter.animationView` | done |  |
+| `CYLRefreshBackAnimationFooter` `-setAnimationImages:duration:forState:` | `CYLRefreshBackAnimationFooter.setAnimationImages` | done |  |
+| `CYLRefreshBackAnimationFooter` `-setAnimationImages:forState:` | `CYLRefreshBackAnimationFooter.setAnimationImages` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackGifFooter` | — | planned (TODO) |  |
-| `CYLRefreshBackGifFooter` `gifView` | — | planned (TODO) |  |
-| `CYLRefreshBackGifFooter` `-setImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshBackGifFooter` `-setImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshBackGifFooter` | `com.cyl.refresh.CYLRefreshBackGifFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackGifFooter` `gifView` | `CYLRefreshBackGifFooter.gifView` | done |  |
+| `CYLRefreshBackGifFooter` `-setImages:duration:forState:` | `CYLRefreshBackGifFooter.setImages` | done |  |
+| `CYLRefreshBackGifFooter` `-setImages:forState:` | `CYLRefreshBackGifFooter.setImages` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackNormalFooter` | `com.scwang.smart.refresh.footer.ClassicsFooter` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshBackNormalFooter` `arrowView` | — | planned (TODO) |  |
-| `CYLRefreshBackNormalFooter` `loadingView` | — | planned (TODO) |  |
+| `CYLRefreshBackNormalFooter` | `com.cyl.refresh.CYLRefreshBackNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackNormalFooter` `arrowView` | `CYLRefreshBackNormalFooter.arrowView` | done |  |
+| `CYLRefreshBackNormalFooter` `loadingView` | `CYLRefreshBackNormalFooter.loadingView` | done |  |
 | `CYLRefreshBackNormalFooter` `noMoreDataImage` | — | planned (TODO) |  |
-| `CYLRefreshBackNormalFooter` `iconSize` | — | planned (TODO) |  |
-| `CYLRefreshBackNormalFooter` `CYLRefreshDeprecated` | — | planned (TODO) |  |
+| `CYLRefreshBackNormalFooter` `iconSize` | `CYLRefreshBackNormalFooter.iconSize` | done |  |
+| `CYLRefreshBackNormalFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackStateFooter` | `com.scwang.smart.refresh.footer.ClassicsFooter` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshBackStateFooter` `labelLeftInset` | — | planned (TODO) |  |
-| `CYLRefreshBackStateFooter` `stateLabel` | — | planned (TODO) |  |
-| `CYLRefreshBackStateFooter` `-setTitle:forState:` | — | planned (TODO) |  |
-| `CYLRefreshBackStateFooter` `-titleForState:` | — | planned (TODO) |  |
+| `CYLRefreshBackStateFooter` | `com.cyl.refresh.CYLRefreshBackStateFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackStateFooter` `labelLeftInset` | `CYLRefreshBackStateFooter.labelLeftInset` | done |  |
+| `CYLRefreshBackStateFooter` `stateLabel` | `CYLRefreshBackStateFooter.stateLabel` | done |  |
+| `CYLRefreshBackStateFooter` `-setTitle:forState:` | `CYLRefreshBackStateFooter.setTitle` | done |  |
+| `CYLRefreshBackStateFooter` `-titleForState:` | `CYLRefreshBackStateFooter.titleForState` | done |  |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAnimationHeader` | — | planned (TODO) |  |
-| `CYLRefreshAnimationHeader` `animationView` | — | planned (TODO) |  |
-| `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshAnimationHeader` | `com.cyl.refresh.CYLRefreshAnimationHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAnimationHeader` `animationView` | `CYLRefreshAnimationHeader.animationView` | done |  |
+| `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | done |  |
+| `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | done |  |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGifHeader` | — | planned (TODO) |  |
-| `CYLRefreshGifHeader` `gifView` | — | planned (TODO) |  |
-| `CYLRefreshGifHeader` `-setImages:duration:forState:` | — | planned (TODO) |  |
-| `CYLRefreshGifHeader` `-setImages:forState:` | — | planned (TODO) |  |
+| `CYLRefreshGifHeader` | `com.cyl.refresh.CYLRefreshGifHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshGifHeader` `gifView` | `CYLRefreshGifHeader.gifView` | done |  |
+| `CYLRefreshGifHeader` `-setImages:duration:forState:` | `CYLRefreshGifHeader.setImages` | done |  |
+| `CYLRefreshGifHeader` `-setImages:forState:` | `CYLRefreshGifHeader.setImages` | done |  |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshNormalHeader` | `com.scwang.smart.refresh.header.ClassicsHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshNormalHeader` `arrowView` | — | planned (TODO) |  |
-| `CYLRefreshNormalHeader` `iconSize` | — | planned (TODO) |  |
-| `CYLRefreshNormalHeader` `loadingView` | — | planned (TODO) |  |
-| `CYLRefreshNormalHeader` `CYLRefreshDeprecated` | — | planned (TODO) |  |
+| `CYLRefreshNormalHeader` | `com.cyl.refresh.CYLRefreshNormalHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshNormalHeader` `arrowView` | `CYLRefreshNormalHeader.arrowView` | done |  |
+| `CYLRefreshNormalHeader` `iconSize` | `CYLRefreshNormalHeader.iconSize` | done |  |
+| `CYLRefreshNormalHeader` `loadingView` | `CYLRefreshNormalHeader.loadingView` | done |  |
+| `CYLRefreshNormalHeader` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStateHeader` | `com.scwang.smart.refresh.header.ClassicsHeader` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
-| `CYLRefreshStateHeader` `lastUpdatedTimeText` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `lastUpdatedTimeLabel` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `labelLeftInset` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `stateLabel` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `-setTitle:forState:` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `lastUpdatedTimeString` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader` `titleTimeSpacing` | — | planned (TODO) |  |
+| `CYLRefreshStateHeader` | `com.cyl.refresh.CYLRefreshStateHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshStateHeader` `lastUpdatedTimeText` | `CYLRefreshStateHeader.lastUpdatedTimeText` | done |  |
+| `CYLRefreshStateHeader` `lastUpdatedTimeLabel` | `CYLRefreshStateHeader.lastUpdatedTimeLabel` | done |  |
+| `CYLRefreshStateHeader` `labelLeftInset` | `CYLRefreshStateHeader.labelLeftInset` | done |  |
+| `CYLRefreshStateHeader` `stateLabel` | `CYLRefreshStateHeader.stateLabel` | done |  |
+| `CYLRefreshStateHeader` `-setTitle:forState:` | `CYLRefreshStateHeader.setTitle` | done |  |
+| `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` | done |  |
+| `CYLRefreshStateHeader` `lastUpdatedTimeString` | `CYLRefreshStateHeader.lastUpdatedTimeString` | done |  |
+| `CYLRefreshStateHeader` `titleTimeSpacing` | `CYLRefreshStateHeader.titleTimeSpacing` | done |  |
 | `CYLRefreshStateHeader` `succeededImage` | — | planned (TODO) |  |
 | `CYLRefreshStateHeader` `failedImage` | — | planned (TODO) |  |
 | `CYLRefreshStateHeader` `iconOnTrailingSide` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader(ChainingGrammar)` | — | planned (TODO) |  |
-| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | — | planned (TODO) |  |
+| `CYLRefreshStateHeader(ChainingGrammar)` | `com.cyl.refresh.CYLRefreshStateHeader` | done |  |
+| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` | done |  |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`
 

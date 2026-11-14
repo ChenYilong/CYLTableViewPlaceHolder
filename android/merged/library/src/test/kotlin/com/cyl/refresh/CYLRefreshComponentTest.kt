@@ -155,4 +155,73 @@ class CYLRefreshComponentTest {
         idle()
         assertEquals("rbea", order)
     }
+
+    @Test
+    fun anIconPerStateShowsAndScrubs() {
+        // CYLRefreshIconView through the component's cyl_ calls: image frames per state, scrubbed while pulling.
+        val layout = show(layout())
+        val header = CYLRefreshHeader.headerWithRefreshingBlock(activity) { }
+        layout.cyl_header = header
+        assertFalse(header.cyl_usesIconView)
+        val frames = listOf(android.graphics.drawable.ColorDrawable(1), android.graphics.drawable.ColorDrawable(2), android.graphics.drawable.ColorDrawable(3))
+        header.cyl_setIconImages(frames, 0.3, CYLRefreshState.Refreshing)
+        assertTrue(header.cyl_usesIconView)
+        val icon = header.cyl_iconView
+        assertSame(icon, header.cyl_iconView)
+        assertNotNull(icon.animationAttributesForState(CYLRefreshState.Refreshing))
+        assertEquals(40f, icon.iconSize[0])
+        header.beginRefreshing()
+        idle()
+        assertEquals(View.VISIBLE, icon.visibility)
+        assertTrue(icon.placeholderView.imageView.drawable is android.graphics.drawable.AnimationDrawable)
+        header.cyl_showIconImageFrameOf(frames, 1f)
+        assertSame(frames[2], icon.placeholderView.imageView.drawable)
+        icon.title = "Loading"
+        assertEquals("Loading", icon.placeholderView.textLabel.text.toString())
+        assertTrue(icon.fittingSize[0] > 0)
+        val attrs = CYLRefreshIconView.attributesForAnimationFilePath("a.json", 30f, 30f)
+        assertEquals("a.json", attrs[CYLRefreshIconView.ANIMATION_FILE_PATH])
+    }
+
+
+    @Test
+    fun theClassicHeadersAndFootersHaveTheIOSNames() {
+        val layout = show(layout(300))
+        val header = CYLRefreshNormalHeader(activity)
+        var refreshes = 0
+        header.refreshingBlock = { refreshes++ }
+        header.setTitle("Pull me", CYLRefreshState.Idle).setTitle("Working", CYLRefreshState.Refreshing)
+        header.cyl_modifyLastUpdatedTimeText { time -> if (time == null) "Never" else "Just now" }
+        layout.cyl_header = header
+        assertNotNull(header.stateLabel)
+        assertNotNull(header.arrowView)
+        assertNotNull(header.loadingView)
+        assertEquals("Never", header.lastUpdatedTimeString)
+        header.beginRefreshing()
+        idle()
+        assertEquals(1, refreshes)
+        assertEquals("Working", header.stateLabel!!.text.toString())
+        header.endRefreshing()
+        idle()
+        assertEquals("Just now", header.lastUpdatedTimeString)
+
+        var loads = 0
+        val footer = CYLRefreshAutoNormalFooter(activity)
+        footer.refreshingBlock = { loads++ }
+        footer.setTitle("That is all", CYLRefreshState.NoMoreData)
+        layout.cyl_footer = footer
+        assertEquals("That is all", footer.titleForState(CYLRefreshState.NoMoreData))
+        footer.beginRefreshing()
+        idle()
+        assertEquals(1, loads)
+        footer.endRefreshingWithNoMoreData()
+        idle(3000)
+        assertEquals("That is all", footer.stateLabel!!.text.toString())
+
+        val gif = CYLRefreshBackGifFooter(activity)
+        gif.setImages(listOf(android.graphics.drawable.ColorDrawable(1), android.graphics.drawable.ColorDrawable(2)), CYLRefreshState.Refreshing)
+        assertTrue(gif.cyl_usesIconView)
+        assertNotNull(gif.gifView)
+    }
+
 }

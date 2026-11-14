@@ -2,4 +2,5 @@
 <!-- The tag that keeps a SmartRefreshLayout's CYLRefreshBridge (the iOS-named refresh API, docs/Android-API-Map.md). -->
 <resources>
     <item name="cyl_refresh_bridge" type="id" />
+    <item name="cyl_refresh_icon_view" type="id" />
 </resources>
