@@ -164,6 +164,328 @@
   "status": "done",
   "android": "CYLPlaceholderComponent.spacingBefore (dp)"
  },
+ "CYLPlaceholderHUD": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUD",
+  "note": "an overlay on a container view; the class-level calls use the shared HUD of a container"
+ },
+ "CYLPlaceholderHUD +dismiss": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismiss(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithCompletion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithCompletion(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithDelay:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +dismissWithDelay:completion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +displayDurationForString:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.displayDurationForString(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +isVisible": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.isVisible(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +popActivity": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.popActivity(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +setStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.setStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +show": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.show(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showErrorWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showErrorWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showImage:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showImage(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showInfoWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showInfoWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showProgress:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showSuccessWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showSuccessWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD +showWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showWithStatus(…) (companion)",
+  "note": "on the shared HUD"
+ },
+ "CYLPlaceholderHUD -dismiss": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismiss"
+ },
+ "CYLPlaceholderHUD -dismissWithCompletion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithCompletion"
+ },
+ "CYLPlaceholderHUD -dismissWithDelay:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay"
+ },
+ "CYLPlaceholderHUD -dismissWithDelay:completion:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.dismissWithDelay"
+ },
+ "CYLPlaceholderHUD -displayDurationForString:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.displayDurationForString"
+ },
+ "CYLPlaceholderHUD -init": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -initWithCoder:": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -initWithContainerView:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD(context, container)"
+ },
+ "CYLPlaceholderHUD -initWithFrame:": {
+  "status": "n/a",
+  "note": "Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))"
+ },
+ "CYLPlaceholderHUD -popActivity": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.popActivity"
+ },
+ "CYLPlaceholderHUD -setStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.setStatus"
+ },
+ "CYLPlaceholderHUD -show": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.show"
+ },
+ "CYLPlaceholderHUD -showComponents:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showComponents"
+ },
+ "CYLPlaceholderHUD -showErrorWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showErrorWithStatus"
+ },
+ "CYLPlaceholderHUD -showImage:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showImage"
+ },
+ "CYLPlaceholderHUD -showInfoWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showInfoWithStatus"
+ },
+ "CYLPlaceholderHUD -showProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress"
+ },
+ "CYLPlaceholderHUD -showProgress:status:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showProgress"
+ },
+ "CYLPlaceholderHUD -showScenario:actions:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showScenario"
+ },
+ "CYLPlaceholderHUD -showSuccessWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showSuccessWithStatus"
+ },
+ "CYLPlaceholderHUD -showWithStatus:": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.showWithStatus"
+ },
+ "CYLPlaceholderHUD actions": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.actions"
+ },
+ "CYLPlaceholderHUD activityCount": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.activityCount"
+ },
+ "CYLPlaceholderHUD animationSize": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.animationSize"
+ },
+ "CYLPlaceholderHUD backgroundLayerColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.backgroundLayerColor"
+ },
+ "CYLPlaceholderHUD containerView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.containerView"
+ },
+ "CYLPlaceholderHUD contentView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.contentView"
+ },
+ "CYLPlaceholderHUD cornerRadius": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.cornerRadius"
+ },
+ "CYLPlaceholderHUD errorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.errorImage"
+ },
+ "CYLPlaceholderHUD fadeInAnimationDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.fadeInAnimationDuration"
+ },
+ "CYLPlaceholderHUD fadeOutAnimationDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.fadeOutAnimationDuration"
+ },
+ "CYLPlaceholderHUD font": {
+  "status": "partial",
+  "android": "CYLPlaceholderHUD.font",
+  "note": "the status text size in sp (Android takes no UIFont)"
+ },
+ "CYLPlaceholderHUD foregroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.foregroundColor"
+ },
+ "CYLPlaceholderHUD graceTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.graceTimeInterval"
+ },
+ "CYLPlaceholderHUD hapticsEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hapticsEnabled"
+ },
+ "CYLPlaceholderHUD hudBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hudBackgroundColor"
+ },
+ "CYLPlaceholderHUD hudView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.hudView"
+ },
+ "CYLPlaceholderHUD infoImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.infoImage"
+ },
+ "CYLPlaceholderHUD loadingAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.loadingAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD maskType": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.maskType"
+ },
+ "CYLPlaceholderHUD maximumDismissTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.maximumDismissTimeInterval"
+ },
+ "CYLPlaceholderHUD minimumDismissTimeInterval": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.minimumDismissTimeInterval"
+ },
+ "CYLPlaceholderHUD minimumSize": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.minimumSize"
+ },
+ "CYLPlaceholderHUD offsetFromCenter": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.offsetFromCenter"
+ },
+ "CYLPlaceholderHUD placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.placeholderView"
+ },
+ "CYLPlaceholderHUD progress": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.progress"
+ },
+ "CYLPlaceholderHUD progressAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.progressAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD sharedHUD": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.sharedHUD(container)",
+  "note": "set the container once"
+ },
+ "CYLPlaceholderHUD state": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.state"
+ },
+ "CYLPlaceholderHUD status": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.status"
+ },
+ "CYLPlaceholderHUD style": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.style"
+ },
+ "CYLPlaceholderHUD successAnimationFileName": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.successAnimationFileName",
+  "note": "played by the player registered with CYLPlaceholderView.registerAnimationFactory"
+ },
+ "CYLPlaceholderHUD successImage": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.successImage"
+ },
+ "CYLPlaceholderHUD visible": {
+  "status": "done",
+  "android": "CYLPlaceholderHUD.visible"
+ },
+ "CYLPlaceholderHUDDismissCompletion": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDDismissCompletion"
+ },
+ "CYLPlaceholderHUDMaskType": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDMaskType"
+ },
+ "CYLPlaceholderHUDState": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDState"
+ },
+ "CYLPlaceholderHUDStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderHUDStyle"
+ },
  "CYLPlaceholderMessage": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderMessage"
