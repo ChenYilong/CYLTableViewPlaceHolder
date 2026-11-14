@@ -1,0 +1,8 @@
+{
+  "components": [
+    { "type": "icon", "animation": "CYLPlaceholderNoFavorites.gif", "style": "Favorite", "size": 72, "title": "GIF" },
+    { "type": "icon", "animation": "CYLPlaceholderLoading.json", "style": "Hourglass", "size": 72, "title": "Lottie", "spacingBefore": 20 },
+    { "type": "icon", "animation": "CYLPlaceholderLoading.pag", "style": "Hourglass", "size": 72, "title": "PAG", "spacingBefore": 20 },
+    { "type": "icon", "animation": "CYLPlaceholderLoading.riv", "style": "Hourglass", "size": 72, "title": "Rive", "spacingBefore": 20 }
+  ]
+}

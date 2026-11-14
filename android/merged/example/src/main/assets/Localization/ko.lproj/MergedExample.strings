@@ -1,0 +1,5 @@
+/* The merged example's tab titles (docs/Android-Port.md, step 3). */
+"tab.placeholder" = "플레이스홀더";
+"tab.svpulltorefresh" = "SVPullToRefresh";
+"tab.ultraptr" = "Ultra 새로고침";
+"tab.smartrefresh" = "SmartRefresh";

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">Оновлення й заглушки</string>
+    <string name="merged_plus_button">Новий допис</string>
+    <string name="merged_plus_page">Окрема сторінка кнопки «плюс»</string>
+    <string name="merged_row">Рядок %1$d</string>
+    <string name="merged_empty">Потягніть униз, щоб завантажити рядки</string>
+    <string name="merged_loaded">Завантажено рядків: %1$d</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: потягніть униз, щоб оновити, прокрутіть до кінця, щоб завантажити ще</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: потягніть униз, щоб оновити</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: потягніть униз, щоб оновити, угору — щоб завантажити ще</string>
+    <string name="merged_action_clear">Очистити</string>
+    <string name="merged_config_highlight_dim">Підсвічування: затемнення</string>
+    <string name="merged_config_highlight_none">Підсвічування: немає</string>
+    <string name="merged_config_highlight_shrink">Підсвічування: зменшення</string>
+    <string name="merged_config_interaction_off">Взаємодію вимкнено: без натискання й підсвічування</string>
+    <string name="merged_config_playback_loop">Повтор (типово)</string>
+    <string name="merged_config_playback_once">Один раз</string>
+    <string name="merged_config_playback_three">Тричі</string>
+    <string name="merged_config_tap_each_button">Натисніть кожну кнопку</string>
+    <string name="merged_feedback_choose_manually">Відкриваємо список адрес…</string>
+    <string name="merged_feedback_go_shopping">Відкриваємо магазин…</string>
+    <string name="merged_feedback_retry">Завантажено знову</string>
+    <string name="merged_follow_system">Як у системі</string>
+    <string name="merged_format_components">Компонентів: %1$d</string>
+    <string name="merged_format_item">Елемент %1$d</string>
+    <string name="merged_format_readme_numbers">README %1$s</string>
+    <string name="merged_interaction_off">Натискання: вимк</string>
+    <string name="merged_interaction_on">Натискання: увімк</string>
+    <string name="merged_language">Мова</string>
+    <string name="merged_section_business">Типові бізнес-сценарії</string>
+    <string name="merged_section_configurations">Файли конфігурації (JSON / plist)</string>
+    <string name="merged_section_permissions">Немає дозволу (не збій мережі)</string>
+    <string name="merged_section_readme">Знімки екрана з README</string>
+    <string name="merged_support_text">Працівник підтримки скоро вам відповість.</string>
+    <string name="merged_support_title">Служба підтримки</string>
+    <string name="merged_format_action_tapped">Натиснуто: %1$s</string>
+</resources>

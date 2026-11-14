@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">刷新与占位图</string>
+    <string name="merged_plus_button">发布</string>
+    <string name="merged_plus_page">PlusButton 自己的页面</string>
+    <string name="merged_row">第 %1$d 行</string>
+    <string name="merged_empty">下拉加载数据</string>
+    <string name="merged_loaded">已加载 %1$d 行</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：下拉刷新，滚动到底部加载更多</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：下拉刷新</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout：下拉刷新，上拉加载更多</string>
+    <string name="merged_action_clear">清空</string>
+    <string name="merged_config_highlight_dim">高亮：变暗</string>
+    <string name="merged_config_highlight_none">高亮：无</string>
+    <string name="merged_config_highlight_shrink">高亮：缩小</string>
+    <string name="merged_config_interaction_off">交互关闭：不响应点击，也不高亮</string>
+    <string name="merged_config_playback_loop">循环播放（默认）</string>
+    <string name="merged_config_playback_once">播放一次</string>
+    <string name="merged_config_playback_three">播放 3 次</string>
+    <string name="merged_config_tap_each_button">逐个点击下面的按钮</string>
+    <string name="merged_feedback_choose_manually">正在打开地址列表…</string>
+    <string name="merged_feedback_go_shopping">正在前往商城…</string>
+    <string name="merged_feedback_retry">已重新加载</string>
+    <string name="merged_follow_system">跟随系统</string>
+    <string name="merged_format_components">%1$d 个组件</string>
+    <string name="merged_format_item">数据 %1$d</string>
+    <string name="merged_format_readme_numbers">README %1$s</string>
+    <string name="merged_interaction_off">交互：关</string>
+    <string name="merged_interaction_on">交互：开</string>
+    <string name="merged_language">语言</string>
+    <string name="merged_section_business">常见业务场景</string>
+    <string name="merged_section_configurations">配置文件初始化（JSON / plist）</string>
+    <string name="merged_section_permissions">权限缺失（非网络失败）</string>
+    <string name="merged_section_readme">README 截图场景</string>
+    <string name="merged_support_text">客服人员将尽快回复您。</string>
+    <string name="merged_support_title">联系客服</string>
+    <string name="merged_format_action_tapped">已点击：%1$s</string>
+</resources>

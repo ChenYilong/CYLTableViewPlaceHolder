@@ -582,15 +582,25 @@ class SVPullToRefreshLayout @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        layoutChildrenForPull()
+        layoutChildrenForPull(inLayoutPass = true)
     }
 
-    /** The target moves with the pull; the views sit just outside its moved edges. */
-    private fun layoutChildrenForPull() {
+    /**
+     * The target moves with the pull; the views sit just outside its moved edges. Outside a layout pass (the pull and
+     * its animation), a target waiting for a layout (rows added while loading) is measured again first: laying it out
+     * directly cleared its layout request without a measure, so the window's next pass skipped measuring it and the
+     * new rows stayed 0 x 0, a blank list (found by the merged example, docs/Android-Port.md).
+     */
+    private fun layoutChildrenForPull(inLayoutPass: Boolean = false) {
         val w = width
         val h = height
         val offset = pull.toInt()
-        target?.layout(0, offset, w, h + offset)
+        target?.let {
+            if (!inLayoutPass && it.isLayoutRequested) {
+                it.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY))
+            }
+            it.layout(0, offset, w, h + offset)
+        }
         refreshViews[SVPullToRefreshPosition.TOP]?.layout(0, offset - viewHeight, w, offset)
         refreshViews[SVPullToRefreshPosition.BOTTOM]?.layout(0, h + offset, w, h + offset + viewHeight)
         // A view shows only while it is pulled into sight or loading, never before the first pull (issues #210 and

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">Refresh &amp; Placeholder</string>
+    <string name="merged_plus_button">New post</string>
+    <string name="merged_plus_page">The plus button\'s own page</string>
+    <string name="merged_row">Row %1$d</string>
+    <string name="merged_empty">Pull down to load rows</string>
+    <string name="merged_loaded">%1$d rows loaded</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: pull down to refresh, scroll to the end to load more</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: pull down to refresh</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: pull down to refresh, pull up to load more</string>
+    <string name="merged_action_clear">Clear</string>
+    <string name="merged_config_highlight_dim">Highlight: dim</string>
+    <string name="merged_config_highlight_none">Highlight: none</string>
+    <string name="merged_config_highlight_shrink">Highlight: shrink</string>
+    <string name="merged_config_interaction_off">Interaction off: no tap, no highlight</string>
+    <string name="merged_config_playback_loop">Loops (default)</string>
+    <string name="merged_config_playback_once">Plays once</string>
+    <string name="merged_config_playback_three">Plays 3 times</string>
+    <string name="merged_config_tap_each_button">Tap each button</string>
+    <string name="merged_feedback_choose_manually">Opening the address list…</string>
+    <string name="merged_feedback_go_shopping">Opening the store…</string>
+    <string name="merged_feedback_retry">Reloaded</string>
+    <string name="merged_follow_system">Follow system</string>
+    <string name="merged_format_components">%1$d components</string>
+    <string name="merged_format_item">Item %1$d</string>
+    <string name="merged_format_readme_numbers">README %1$s</string>
+    <string name="merged_interaction_off">Tap: off</string>
+    <string name="merged_interaction_on">Tap: on</string>
+    <string name="merged_language">Language</string>
+    <string name="merged_section_business">Business cases</string>
+    <string name="merged_section_configurations">Configuration files (JSON / plist)</string>
+    <string name="merged_section_permissions">Permission missing (not a network failure)</string>
+    <string name="merged_section_readme">README screenshots</string>
+    <string name="merged_support_text">A support agent will reply to you soon.</string>
+    <string name="merged_support_title">Customer support</string>
+    <string name="merged_format_action_tapped">Tapped: %1$s</string>
+</resources>

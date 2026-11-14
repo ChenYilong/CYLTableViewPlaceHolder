@@ -70,3 +70,23 @@ include(":srl-drawable-path")
 project(":srl-drawable-path").projectDir = file("SmartRefreshLayout/refresh-drawable-path")
 include(":srl-header")
 project(":srl-header").projectDir = file("SmartRefreshLayout/refresh-header")
+
+// android/merged (docs/Android-Port.md, step 3): one library that brings the three Kotlin ports and the placeholder
+// together, and one example app with CYLTabBarController's Android tab bar, one tab per library.
+include(":merged")
+project(":merged").projectDir = file("merged/library")
+include(":merged-example")
+project(":merged-example").projectDir = file("merged/example")
+
+// CYLTabBarController for Android, built from source (a Gradle composite build): its repository has no Gradle build at
+// the root, so a JitPack commit reference cannot build it. The default is the vault's checkout next to this
+// repository; -PcylTabBarDir=<…/CYLTabBarController/Example-Android> points to a clone at the latest commit
+// (scripts/resolve-cyltabbarcontroller-commit.sh in the repository root finds it).
+val cylTabBarDir = providers.gradleProperty("cylTabBarDir").orNull ?: "../../CYLTabBarController/Example-Android"
+if (file(cylTabBarDir).resolve("settings.gradle.kts").exists()) {
+    includeBuild(cylTabBarDir) {
+        dependencySubstitution {
+            substitute(module("io.github.chenyilong:cyltabbar")).using(project(":cyltabbar"))
+        }
+    }
+}

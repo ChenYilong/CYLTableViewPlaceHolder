@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">새로고침과 플레이스홀더</string>
+    <string name="merged_plus_button">게시</string>
+    <string name="merged_plus_page">플러스 버튼 전용 페이지</string>
+    <string name="merged_row">%1$d번째 행</string>
+    <string name="merged_empty">당겨서 불러오기</string>
+    <string name="merged_loaded">%1$d개 행을 불러왔습니다</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: 당겨서 새로고침, 끝까지 스크롤하면 더 불러오기</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: 당겨서 새로고침</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: 당겨서 새로고침, 올려서 더 불러오기</string>
+    <string name="merged_action_clear">지우기</string>
+    <string name="merged_config_highlight_dim">강조: 어둡게</string>
+    <string name="merged_config_highlight_none">강조: 없음</string>
+    <string name="merged_config_highlight_shrink">강조: 축소</string>
+    <string name="merged_config_interaction_off">상호작용 끔: 탭과 강조 없음</string>
+    <string name="merged_config_playback_loop">반복 재생(기본)</string>
+    <string name="merged_config_playback_once">한 번 재생</string>
+    <string name="merged_config_playback_three">3번 재생</string>
+    <string name="merged_config_tap_each_button">각 버튼을 눌러 보세요</string>
+    <string name="merged_feedback_choose_manually">주소 목록을 여는 중…</string>
+    <string name="merged_feedback_go_shopping">스토어로 이동 중…</string>
+    <string name="merged_feedback_retry">다시 불러왔습니다</string>
+    <string name="merged_follow_system">시스템 설정 따르기</string>
+    <string name="merged_format_components">구성 요소 %1$d개</string>
+    <string name="merged_format_item">항목 %1$d</string>
+    <string name="merged_format_readme_numbers">README %1$s</string>
+    <string name="merged_interaction_off">탭: 꺼짐</string>
+    <string name="merged_interaction_on">탭: 켜짐</string>
+    <string name="merged_language">언어</string>
+    <string name="merged_section_business">일반 비즈니스 사례</string>
+    <string name="merged_section_configurations">설정 파일로 생성(JSON / plist)</string>
+    <string name="merged_section_permissions">권한 없음(네트워크 오류 아님)</string>
+    <string name="merged_section_readme">README 스크린샷</string>
+    <string name="merged_support_text">상담원이 곧 답변해 드립니다.</string>
+    <string name="merged_support_title">고객 지원</string>
+    <string name="merged_format_action_tapped">탭함: %1$s</string>
+</resources>

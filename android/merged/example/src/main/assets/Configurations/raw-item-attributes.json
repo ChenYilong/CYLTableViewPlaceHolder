@@ -1,0 +1,14 @@
+{
+  "components": [
+    { "type": "icon", "animation": "CYLPlaceholderServerError.json", "style": "CloudOff", "titleKey": "CYLPlaceholderScenarioServerErrorTitle" },
+    { "type": "item", "action": "contactSupport", "highlightStyle": "shrink", "accessibilityIdentifier": "rawItem",
+      "titleKey": "CYLPlaceholderActionContactSupportTitle",
+      "attributes": {
+        "CYLTabBarItemTitleColor": "#FFFFFF",
+        "CYLPlaceholderItemTitleBackgroundColor": "#34C759",
+        "CYLPlaceholderItemTitleCornerRadius": 22,
+        "CYLPlaceholderItemTitleContentInsets": [10, 28, 10, 28],
+        "CYLPlaceholderItemTitleMinimumWidth": 180
+      } }
+  ]
+}
