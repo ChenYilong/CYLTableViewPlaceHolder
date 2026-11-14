@@ -13,7 +13,7 @@ Component({
   properties: {
     /** A CYLPlaceholderScenario name ("RetryButton", "CYLPlaceholderScenarioRetryButton"). */
     scenario: { type: String, value: '' },
-    /** The app's own components; when set they replace the scenario's components. */
+    /** The app's own components; a non-empty list replaces the scenario's components. */
     components: { type: Array, value: null },
     /** A language of CYLPlaceholderLocalization ("en", "zh-Hans", …); empty follows the system and setLanguage. */
     language: { type: String, value: '' },
@@ -21,6 +21,8 @@ Component({
     interactive: { type: Boolean, value: true },
     /** The action of a tap on the background; empty uses the scenario's own (backgroundActionForScenario). */
     backgroundAction: { type: String, value: '' },
+    /** true drops the minimum height and padding (inside a HUD box or a small container). */
+    compact: { type: Boolean, value: false },
     /** The folder of the icons, for icons an app ships elsewhere. */
     imageBase: { type: String, value: './images/' },
   },
@@ -35,7 +37,9 @@ Component({
     reload() {
       const scenario = CYLPlaceholderScenarioCatalog.scenarioNamed(this.data.scenario)
       const language = this.data.language || undefined
-      const source = this.data.components || (scenario ? CYLPlaceholderScenarioCatalog.componentsForScenario(scenario, language) : [])
+      // An Array property turns null into [], so an empty list means "use the scenario".
+      const own = this.data.components
+      const source = own && own.length ? own : (scenario ? CYLPlaceholderScenarioCatalog.componentsForScenario(scenario, language) : [])
       const items = source.map((c, index) => ({ ...c, index, tappable: !!c.action }))
       const background = this.data.backgroundAction || (scenario ? CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario) : null)
       this.setData({ items, _background: background, _scenario: scenario })

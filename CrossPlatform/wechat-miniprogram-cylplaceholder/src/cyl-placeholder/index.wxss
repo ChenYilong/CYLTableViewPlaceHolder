@@ -19,3 +19,4 @@
 .cyl-placeholder__button--Outlined { border: 1px solid #007aff; color: #007aff; background: transparent; line-height: 38px; }
 .cyl-placeholder__button--Capsule { background: #f2f2f7; color: #333333; border-radius: 999px; height: 36px; line-height: 36px; }
 .cyl-placeholder__button--pressed { opacity: 0.6; }
+.cyl-placeholder--compact { min-height: 0; padding: 0; }

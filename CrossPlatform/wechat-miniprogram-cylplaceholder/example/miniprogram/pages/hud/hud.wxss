@@ -1,0 +1,6 @@
+.group { margin: 12px 16px; background: #fff; border-radius: 10px; overflow: hidden; }
+.row { display: flex; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #f2f2f7; font-size: 15px; color: #111; }
+.row:last-child { border-bottom: none; }
+.value { color: #007aff; }
+.pressed { background: #e5e5ea; }
+.event { margin: 0 20px; font-size: 12px; color: #8e8e93; }

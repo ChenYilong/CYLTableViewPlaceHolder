@@ -4,6 +4,10 @@
     <view class="toolbar__value">{{languageNames[languageIndex]}} ›</view>
   </picker>
 </view>
+<view class="toolbar" hover-class="row--pressed" bindtap="onHUD">
+  <text class="toolbar__label">CYLPlaceholderHUD</text>
+  <text class="toolbar__value">›</text>
+</view>
 <view wx:for="{{sections}}" wx:for-item="section" wx:key="category" class="section">
   <view class="section__header">{{section.category}}</view>
   <view class="section__body">

@@ -1,4 +1,4 @@
-<view class="cyl-placeholder" bindtap="onBackgroundTap" aria-role="{{_background ? 'button' : ''}}">
+<view class="cyl-placeholder {{compact ? 'cyl-placeholder--compact' : ''}}" bindtap="onBackgroundTap" aria-role="{{_background ? 'button' : ''}}">
   <view class="cyl-placeholder__stack">
     <block wx:for="{{items}}" wx:key="index">
       <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">

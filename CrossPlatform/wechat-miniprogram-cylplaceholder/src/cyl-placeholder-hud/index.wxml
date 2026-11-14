@@ -1,0 +1,24 @@
+<view wx:if="{{shown}}"
+      class="hud hud--mask-{{view.maskType}} {{view.visible ? 'hud--in' : 'hud--out'}} {{view.blocksTouches ? '' : 'hud--pass'}}"
+      style="transition-duration: {{view.visible ? view.fadeIn : view.fadeOut}}s"
+      catchtap="onMaskTap" catchtouchmove="{{view.blocksTouches ? 'noop' : ''}}">
+  <view class="hud__box hud__box--{{view.style}}" catchtap="noop"
+        aria-role="alert" aria-label="{{view.status || defaultStatus}}">
+    <block wx:if="{{view.state === 'Custom'}}">
+      <cyl-placeholder class="hud__custom" compact="{{true}}" scenario="{{view.scenario}}" components="{{view.components}}"
+                       language="{{language}}" bind:action="onAction" />
+    </block>
+    <block wx:else>
+      <image wx:if="{{view.state === 'Loading'}}" class="hud__icon" src="../cyl-placeholder/images/refresh_activity.gif" mode="aspectFit" />
+      <view wx:elif="{{view.state === 'Progress'}}" class="hud__progress">
+        <view class="hud__progress-bar" style="width: {{view.percent}}%" />
+      </view>
+      <text wx:elif="{{view.state === 'Success'}}" class="hud__glyph">✓</text>
+      <text wx:elif="{{view.state === 'Error'}}" class="hud__glyph">✕</text>
+      <text wx:elif="{{view.state === 'Info'}}" class="hud__glyph">i</text>
+      <image wx:elif="{{view.state === 'Image'}}" class="hud__icon" src="{{view.image}}" mode="aspectFit" />
+      <text wx:if="{{view.state === 'Progress'}}" class="hud__status">{{view.status ? view.status + ' ' : ''}}{{view.percent}}%</text>
+      <text wx:elif="{{view.status || view.state === 'Loading'}}" class="hud__status">{{view.status || defaultStatus}}</text>
+    </block>
+  </view>
+</view>
