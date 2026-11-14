@@ -1,6 +1,9 @@
 package com.cyl.refresh
 
 import android.content.Context
+import android.content.res.Configuration
+import android.view.ContextThemeWrapper
+import java.util.Locale
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -39,9 +42,20 @@ internal fun placeIconsOnTrailingSide(views: List<ImageView?>, trailing: Boolean
 }
 
 /**
+ * [context] in [CYLRefreshConfig.languageCode]'s language, keeping its theme, or [context] itself when no language is
+ * set: the classic header and footer read their built-in texts from it when they are made.
+ */
+internal fun cylLocalizedContext(context: Context): Context {
+    val code = CYLRefreshConfig.defaultConfig.languageCode ?: return context
+    return ContextThemeWrapper(context, context.theme).apply {
+        applyOverrideConfiguration(Configuration().apply { setLocale(Locale.forLanguageTag(code)) })
+    }
+}
+
+/**
  * The classic header with its texts and views reachable (they are protected in SmartRefreshLayout).
  */
-internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(context) {
+internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(cylLocalizedContext(context)) {
     val titleView: TextView? get() = mTitleText
     val arrow: ImageView? get() = mArrowView
     val progress: ImageView? get() = mProgressView
@@ -111,7 +125,7 @@ internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(context)
 /**
  * The classic footer with its texts and views reachable.
  */
-internal class CYLClassicsFooterView(context: Context) : ClassicsFooter(context) {
+internal class CYLClassicsFooterView(context: Context) : ClassicsFooter(cylLocalizedContext(context)) {
     val titleView: TextView? get() = mTitleText
     val arrow: ImageView? get() = mArrowView
     val progress: ImageView? get() = mProgressView

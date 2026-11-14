@@ -86,6 +86,8 @@ class RefreshExamplesPage : StackPage() {
             listOf("example40", "example41"),
             "CYLRefreshWKWebViewController",
         ),
+        RefreshExample(R.string.merged_mj_section_i18n, listOf(R.string.merged_mj_languages), listOf("i18n"),
+            "CYLRefreshI18NExampleViewController"),
     )
 
     override fun root(): View {
@@ -100,6 +102,7 @@ class RefreshExamplesPage : StackPage() {
                         exam.header == R.string.merged_mj_section_collection ->
                             collectionPage(name, pinHeader = i == 1) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_web -> webPage()
+                        exam.header == R.string.merged_mj_section_i18n -> i18nPage(name)
                         else -> tablePage(name, exam.methods[i])
                     })
                 })

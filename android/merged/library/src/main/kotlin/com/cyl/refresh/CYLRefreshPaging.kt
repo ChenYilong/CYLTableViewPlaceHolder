@@ -151,8 +151,8 @@ class CYLRefreshPaging(
  */
 class CYLRefreshConfig private constructor() {
     /**
-     * The language of the built-in texts, or null for the system's (`languageCode`). On Android the refresh texts are
-     * string resources in the system's language; this also sets the placeholder texts' language
+     * The language of the built-in texts, or null for the system's (`languageCode`). A classic header or footer made
+     * after the change shows its built-in texts in this language; this also sets the placeholder texts' language
      * ([CYLPlaceholderLocalization.language]).
      */
     var languageCode: String? = null
