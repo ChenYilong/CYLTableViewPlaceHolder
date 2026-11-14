@@ -935,6 +935,8 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![Android merged example: network status bar page](docs/assets/android-merged-status.png)
 
+![Android merged example: flows](docs/assets/android-merged-flows-1.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |
