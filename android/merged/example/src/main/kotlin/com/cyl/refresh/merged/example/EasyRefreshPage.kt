@@ -173,10 +173,12 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
                     text = context.t(R.string.merged_easy_second_floor)
                     textSize = 28f
                     setTextColor(Color.WHITE)
-                })
+                }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
                 addView(Button(context).apply {
                     text = context.t(R.string.merged_easy_close_second_floor)
                     setOnClickListener { normal.closeSecondary() }
+                }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = (16 * density).toInt()
                 })
             }
             normal.secondaryView = floor
