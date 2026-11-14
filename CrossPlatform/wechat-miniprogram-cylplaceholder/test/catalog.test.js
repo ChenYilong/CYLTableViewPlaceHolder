@@ -40,6 +40,14 @@ test('every scenario has components, every icon exists, every text is localized'
   }
 })
 
+test('no Android escape sequences are left in the texts', () => {
+  for (const language of L.SUPPORTED_LANGUAGES) {
+    for (const [key, value] of Object.entries(require(path.join(SRC, 'locales', language + '.js')))) {
+      assert.doesNotMatch(value, /\\['"n\\@?]|&(amp|lt|gt|apos|quot);/, `${language} ${key}: ${value}`)
+    }
+  }
+})
+
 test('the locale .js twins match the .json tables', () => {
   for (const language of L.SUPPORTED_LANGUAGES) {
     assert.deepStrictEqual(require(path.join(SRC, 'locales', language + '.js')), JSON.parse(fs.readFileSync(path.join(SRC, 'locales', language + '.json'), 'utf8')))

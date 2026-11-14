@@ -9,7 +9,8 @@ const res = path.resolve(pkg, '../../android/placeholder/src/main/res')
 const out = path.join(pkg, 'src/cyl-placeholder')
 const locales = { values: 'en', 'values-b+zh+Hans': 'zh-Hans', 'values-b+zh+Hant': 'zh-Hant', 'values-ja': 'ja', 'values-ko': 'ko', 'values-ru': 'ru', 'values-uk': 'uk' }
 
-const unescape = (s) => s.replace(/\'/g, "'").replace(/\\"/g, '"').replace(/\n/g, '\n').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+// Android string escapes: \' \" \n \\ and the XML entities.
+const unescape = (s) => s.replace(/\\(['"n\\@?])/g, (_, c) => (c === 'n' ? '\n' : c)).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
 
 for (const [folder, locale] of Object.entries(locales)) {
   const xml = fs.readFileSync(path.join(res, folder, 'cyl_placeholder_strings.xml'), 'utf8')
