@@ -70,8 +70,8 @@
   3. `CYLPlaceholderHUD`, `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not
      ported yet.
   4. Icon tinting: Android tints template icons; the mini program uses 45 % opacity (no `tintColor` on `<image>`).
-  5. Push the branch and open its pull request: `git push` fails on this machine (no GitHub credentials, `gh` not
-     installed).
+  5. Done: branch pushed; pull request https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/31 targets
+     `feat/android-refresh-port`.
 - **Doc discrepancy found:** `docs/Placeholder-Scenarios.md` says "36 scenarios (including HUD)", but the iOS-derived
   Kotlin enum has 35 entries (HUD included). The unit test pins the mini program list to the Kotlin enum.
 
