@@ -1,6 +1,7 @@
 package com.cyl.placeholder
 
 import android.app.Activity
+import android.view.View
 import android.view.ViewGroup
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -87,4 +88,24 @@ class CYLPlaceholderStatusTest {
         monitor.stopMonitoring()
         assertFalse(monitor.monitoring)
     }
+
+    @Test
+    fun thePlaceholderCoversOnlyTheScrollViewsContainer() {
+        // iOS puts the placeholder over `cyl_placeholderScrollView`, not over the whole view; the status bar stays at
+        // the top of the content.
+        val frame = android.widget.FrameLayout(activity)
+        val list = View(activity)
+        frame.addView(list)
+        val root = android.widget.LinearLayout(activity).apply { orientation = android.widget.LinearLayout.VERTICAL }
+        root.addView(frame, android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        root.addView(View(activity), android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100))
+        activity.setContentView(root)
+        activity.cyl_placeholderScrollView = list
+        activity.cyl_statusDisplay = CYLPlaceholderStatusDisplay.All
+        assertEquals("the placeholder is in the list's frame", 2, frame.childCount)
+        assertEquals("the bar is in the content", activity.findViewById<ViewGroup>(android.R.id.content), activity.cyl_statusView.parent)
+        activity.cyl_statusDisplay = CYLPlaceholderStatusDisplay.StatusBar
+        assertEquals("and goes from the frame again", 1, frame.childCount)
+    }
+
 }

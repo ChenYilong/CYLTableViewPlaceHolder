@@ -78,4 +78,16 @@
     <string name="merged_title_hud">HUD: хід завантаження сторінки</string>
     <string name="merged_section_flows">Сценарії взаємодії</string>
     <string name="merged_section_hud">HUD</string>
+    <string name="merged_action_cancel">Скасувати</string>
+    <string name="merged_action_show_file">Файл</string>
+    <string name="merged_feedback_reconnect">Повторне підключення…</string>
+    <string name="merged_format_network_status">Мережа: %1$s</string>
+    <string name="merged_section_status_bar">Рядок стану</string>
+    <string name="merged_status_follow_network">Мережа</string>
+    <string name="merged_status_following_network">Мережа ✓</string>
+    <string name="merged_status_mode_bar">Лише рядок</string>
+    <string name="merged_status_mode_both">Рядок + заглушка</string>
+    <string name="merged_status_mode_list">Рядок + список</string>
+    <string name="merged_status_mode_placeholder">Лише заглушка</string>
+    <string name="merged_title_status_bar">Рядок стану мережі</string>
 </resources>

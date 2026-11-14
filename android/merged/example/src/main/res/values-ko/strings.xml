@@ -78,4 +78,16 @@
     <string name="merged_title_hud">HUD: 페이지 로딩 진행</string>
     <string name="merged_section_flows">흐름</string>
     <string name="merged_section_hud">HUD</string>
+    <string name="merged_action_cancel">취소</string>
+    <string name="merged_action_show_file">파일</string>
+    <string name="merged_feedback_reconnect">다시 연결하는 중…</string>
+    <string name="merged_format_network_status">네트워크: %1$s</string>
+    <string name="merged_section_status_bar">상태 표시줄</string>
+    <string name="merged_status_follow_network">네트워크</string>
+    <string name="merged_status_following_network">네트워크 ✓</string>
+    <string name="merged_status_mode_bar">표시줄만</string>
+    <string name="merged_status_mode_both">표시줄 + 플레이스홀더</string>
+    <string name="merged_status_mode_list">표시줄 + 목록</string>
+    <string name="merged_status_mode_placeholder">플레이스홀더만</string>
+    <string name="merged_title_status_bar">네트워크 상태 표시줄</string>
 </resources>

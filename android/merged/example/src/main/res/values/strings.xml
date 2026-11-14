@@ -78,4 +78,16 @@
     <string name="merged_title_hud">HUD: page loading progress</string>
     <string name="merged_section_flows">Flows</string>
     <string name="merged_section_hud">HUD</string>
+    <string name="merged_action_cancel">Cancel</string>
+    <string name="merged_action_show_file">File</string>
+    <string name="merged_feedback_reconnect">Reconnecting…</string>
+    <string name="merged_format_network_status">Network: %1$s</string>
+    <string name="merged_section_status_bar">Status bar</string>
+    <string name="merged_status_follow_network">Network</string>
+    <string name="merged_status_following_network">Network ✓</string>
+    <string name="merged_status_mode_bar">Bar only</string>
+    <string name="merged_status_mode_both">Bar + placeholder</string>
+    <string name="merged_status_mode_list">Bar + list</string>
+    <string name="merged_status_mode_placeholder">Placeholder only</string>
+    <string name="merged_title_status_bar">Network status bar</string>
 </resources>

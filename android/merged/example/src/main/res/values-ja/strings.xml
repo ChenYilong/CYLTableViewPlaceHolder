@@ -78,4 +78,16 @@
     <string name="merged_title_hud">HUD：ページ読み込みの進行</string>
     <string name="merged_section_flows">フロー</string>
     <string name="merged_section_hud">HUD</string>
+    <string name="merged_action_cancel">キャンセル</string>
+    <string name="merged_action_show_file">ファイル</string>
+    <string name="merged_feedback_reconnect">再接続しています…</string>
+    <string name="merged_format_network_status">ネットワーク：%1$s</string>
+    <string name="merged_section_status_bar">ステータスバー</string>
+    <string name="merged_status_follow_network">ネットワーク</string>
+    <string name="merged_status_following_network">ネットワーク ✓</string>
+    <string name="merged_status_mode_bar">バーのみ</string>
+    <string name="merged_status_mode_both">バー + プレースホルダー</string>
+    <string name="merged_status_mode_list">バー + リスト</string>
+    <string name="merged_status_mode_placeholder">プレースホルダーのみ</string>
+    <string name="merged_title_status_bar">ネットワークステータスバー</string>
 </resources>

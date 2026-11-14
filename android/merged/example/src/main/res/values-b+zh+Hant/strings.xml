@@ -78,4 +78,16 @@
     <string name="merged_title_hud">HUD：頁面載入進度</string>
     <string name="merged_section_flows">互動流程</string>
     <string name="merged_section_hud">HUD</string>
+    <string name="merged_action_cancel">取消</string>
+    <string name="merged_action_show_file">檔案</string>
+    <string name="merged_feedback_reconnect">正在重新連線…</string>
+    <string name="merged_format_network_status">網路：%1$s</string>
+    <string name="merged_section_status_bar">狀態條</string>
+    <string name="merged_status_follow_network">網路</string>
+    <string name="merged_status_following_network">網路 ✓</string>
+    <string name="merged_status_mode_bar">只顯示紅條</string>
+    <string name="merged_status_mode_both">紅條 + 佔位圖</string>
+    <string name="merged_status_mode_list">紅條 + 列表</string>
+    <string name="merged_status_mode_placeholder">只顯示佔位圖</string>
+    <string name="merged_title_status_bar">網路狀態條</string>
 </resources>
