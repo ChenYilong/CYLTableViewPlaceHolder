@@ -8,148 +8,148 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：54 / 100**（done + 0.5 × partial，共 801 个计入的符号；done 403、partial 52、planned 346、n/a 103）。 | **Migration score: 54 / 100** (done + 0.5 × partial over 801 counted symbols; done 403, partial 52, planned 346, n/a 103). |
+| **迁移完成率：67 / 100**（done + 0.5 × partial，共 795 个计入的符号；done 509、partial 52、planned 234、n/a 109）。 | **Migration score: 67 / 100** (done + 0.5 × partial over 795 counted symbols; done 509, partial 52, planned 234, n/a 109). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderAnimationBackend` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationErrorHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `animationView` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `player` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `animatorIdentifier` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `backend` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `playing` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `ready` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `errorHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `readyHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:options:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-initWithFrame:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-initWithCoder:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-play` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-stop` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-showLastFrame` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-setAnimationProgress:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-setAnimationSpeed:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-setAnimationRepeatCount:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationView` `-setAnimationColors:` | — | planned (TODO) |  |
+| `CYLPlaceholderAnimationBackend` | `com.cyl.placeholder.CYLPlaceholderAnimationBackend` | done |  |
+| `CYLPlaceholderAnimationErrorHandler` | `com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler` | done |  |
+| `CYLPlaceholderAnimationView` | `com.cyl.placeholder.CYLPlaceholderAnimationView` | done |  |
+| `CYLPlaceholderAnimationView` `animationView` | `CYLPlaceholderAnimationView.animationView` | done |  |
+| `CYLPlaceholderAnimationView` `player` | `CYLPlaceholderAnimationView.player` | done |  |
+| `CYLPlaceholderAnimationView` `animatorIdentifier` | `CYLPlaceholderAnimationView.animatorIdentifier` | done |  |
+| `CYLPlaceholderAnimationView` `backend` | `CYLPlaceholderAnimationView.backend` | done |  |
+| `CYLPlaceholderAnimationView` `playing` | `CYLPlaceholderAnimationView.playing` | done |  |
+| `CYLPlaceholderAnimationView` `ready` | `CYLPlaceholderAnimationView.ready` | done |  |
+| `CYLPlaceholderAnimationView` `errorHandler` | `CYLPlaceholderAnimationView.errorHandler` | done |  |
+| `CYLPlaceholderAnimationView` `readyHandler` | `CYLPlaceholderAnimationView.readyHandler` | done |  |
+| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:error:` | `CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)` | done | null when no animator plays the file |
+| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:options:error:` | `CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)` | done | null when no animator plays the file |
+| `CYLPlaceholderAnimationView` `-initWithFrame:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderAnimationView` `-initWithCoder:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderAnimationView` `-play` | `CYLPlaceholderAnimationView.play` | done |  |
+| `CYLPlaceholderAnimationView` `-stop` | `CYLPlaceholderAnimationView.stop` | done |  |
+| `CYLPlaceholderAnimationView` `-showLastFrame` | `CYLPlaceholderAnimationView.showLastFrame` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationProgress:` | `CYLPlaceholderAnimationView.setAnimationProgress` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationSpeed:` | `CYLPlaceholderAnimationView.setAnimationSpeed` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationRepeatCount:` | `CYLPlaceholderAnimationView.setAnimationRepeatCount` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationColors:` | `CYLPlaceholderAnimationView.setAnimationColors` | done |  |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationFactory.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationViewMaking` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewMaking` `-animationViewWithURL:size:contentMode:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewMaking` `-playerForView:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewMaking` `-isAnimationView:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `registry` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `-initWithRegistry:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `+sharedFactory` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `+animationViewWithURL:size:contentMode:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `+playerForView:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFactory` `+isAnimationView:` | — | planned (TODO) |  |
+| `CYLPlaceholderItemAnimationViewMaking` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking` | done |  |
+| `CYLPlaceholderItemAnimationViewMaking` `-animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationViewMaking.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimationViewMaking` `-playerForView:` | `CYLPlaceholderItemAnimationViewMaking.playerForView` | done |  |
+| `CYLPlaceholderItemAnimationViewMaking` `-isAnimationView:` | `CYLPlaceholderItemAnimationViewMaking.isAnimationView` | done |  |
+| `CYLPlaceholderItemAnimationFactory` | `com.cyl.placeholder.CYLPlaceholderItemAnimationFactory` | done |  |
+| `CYLPlaceholderItemAnimationFactory` `registry` | `CYLPlaceholderItemAnimationFactory.registry` | done |  |
+| `CYLPlaceholderItemAnimationFactory` `-initWithRegistry:` | `CYLPlaceholderItemAnimationFactory.initWithRegistry` | done |  |
+| `CYLPlaceholderItemAnimationFactory` `-init` | `CYLPlaceholderItemAnimationFactory.init` | done |  |
+| `CYLPlaceholderItemAnimationFactory` `+sharedFactory` | `CYLPlaceholderItemAnimationFactory.sharedFactory` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimationFactory` `+animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationFactory.animationViewWithURL` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimationFactory` `+playerForView:` | `CYLPlaceholderItemAnimationFactory.playerForView` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimationFactory` `+isAnimationView:` | `CYLPlaceholderItemAnimationFactory.isAnimationView` | done | companion call on the shared instance |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayableView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationPlayableView` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_playAnimationView` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_showAnimationViewLastFrame` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_stopAnimationView` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_applyAnimationViewColors:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_setAnimationViewRepeatCount:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_isAnimationViewReady` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewReadyHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewErrorHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewProviding` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewProviding` `+cyl_animationViewWithFileURL:options:contentMode:` | — | planned (TODO) |  |
+| `CYLPlaceholderItemAnimationPlayableView` | `com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_playAnimationView` | `CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_showAnimationViewLastFrame` | `CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_stopAnimationView` | `CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_applyAnimationViewColors:` | `CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_setAnimationViewRepeatCount:` | `CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_isAnimationViewReady` | `CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewReadyHandler` | `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler` | done |  |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewErrorHandler` | `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler` | done |  |
+| `CYLPlaceholderItemAnimationViewProviding` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding` | done |  |
+| `CYLPlaceholderItemAnimationViewProviding` `+cyl_animationViewWithFileURL:options:contentMode:` | `CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL` | done | a file is a path, "asset:<name>" or a URL string |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayer.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationPlayer` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `animationView` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-play` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-showLastFrame` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-stop` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `progress` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `animationSpeed` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-setAnimationRepeatCount:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-applyDarkColors:traitCollection:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationPlayer` `-applyColors:traitCollection:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationBasePlayer` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationBasePlayer` `-initWithAnimationView:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationBasePlayer` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationBasePlayer` `+new` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationBasePlayer` `animationView` | — | planned (TODO) |  |
+| `CYLPlaceholderItemAnimationPlayer` | `com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `animationView` | `CYLPlaceholderItemAnimationPlayer.animationView` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `-play` | `CYLPlaceholderItemAnimationPlayer.play` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `-showLastFrame` | `CYLPlaceholderItemAnimationPlayer.showLastFrame` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `-stop` | `CYLPlaceholderItemAnimationPlayer.stop` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `progress` | `CYLPlaceholderItemAnimationPlayer.progress` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `animationSpeed` | `CYLPlaceholderItemAnimationPlayer.animationSpeed` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `-setAnimationRepeatCount:` | `CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` `-applyDarkColors:traitCollection:` | `CYLPlaceholderItemAnimationPlayer.applyDarkColors` | done | a night flag instead of a trait collection |
+| `CYLPlaceholderItemAnimationPlayer` `-applyColors:traitCollection:` | `CYLPlaceholderItemAnimationPlayer.applyColors` | done | a night flag instead of a trait collection |
+| `CYLPlaceholderItemAnimationBasePlayer` | `com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer` | done |  |
+| `CYLPlaceholderItemAnimationBasePlayer` `-initWithAnimationView:` | `CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView` | done |  |
+| `CYLPlaceholderItemAnimationBasePlayer` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderItemAnimationBasePlayer` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderItemAnimationBasePlayer` `animationView` | `CYLPlaceholderItemAnimationBasePlayer.animationView` | done |  |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimatorPriority` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` `identifier` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` `-canAnimateFileAtURL:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` `priority` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` `fileExtensions` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationFileMatching` `attributeKeys` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewFactory` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewFactory` `-animationViewWithURL:size:contentMode:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimationViewFactory` `-playerForAnimationView:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimator` | — | planned (TODO) |  |
+| `CYLPlaceholderItemAnimatorPriority` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority` | done |  |
+| `CYLPlaceholderItemAnimationFileMatching` | `com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching` | done |  |
+| `CYLPlaceholderItemAnimationFileMatching` `identifier` | `CYLPlaceholderItemAnimationFileMatching.identifier` | done |  |
+| `CYLPlaceholderItemAnimationFileMatching` `-canAnimateFileAtURL:` | `CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimationFileMatching` `priority` | `CYLPlaceholderItemAnimationFileMatching.priority` | done |  |
+| `CYLPlaceholderItemAnimationFileMatching` `fileExtensions` | `CYLPlaceholderItemAnimationFileMatching.fileExtensions` | done |  |
+| `CYLPlaceholderItemAnimationFileMatching` `attributeKeys` | `CYLPlaceholderItemAnimationFileMatching.attributeKeys` | done |  |
+| `CYLPlaceholderItemAnimationViewFactory` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory` | done |  |
+| `CYLPlaceholderItemAnimationViewFactory` `-animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationViewFactory.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimationViewFactory` `-playerForAnimationView:` | `CYLPlaceholderItemAnimationViewFactory.playerForAnimationView` | done |  |
+| `CYLPlaceholderItemAnimator` | `com.cyl.placeholder.CYLPlaceholderItemAnimator` | done |  |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimatorRegistry.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimatorRegistering` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-registerAnimator:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-unregisterAnimatorWithIdentifier:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animators` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorWithIdentifier:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorForURL:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorForAttributes:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeyForGenericKey:inAttributes:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-bindURL:toAnimator:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeysForGenericKey:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-fileExtensions` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+sharedRegistry` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+registerAnimator:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+unregisterAnimatorWithIdentifier:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+animators` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorWithIdentifier:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorForURL:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorForAttributes:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeyForGenericKey:inAttributes:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+bindURL:toAnimator:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeysForGenericKey:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+fileExtensions` | — | planned (TODO) |  |
+| `CYLPlaceholderItemAnimatorRegistering` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-registerAnimator:` | `CYLPlaceholderItemAnimatorRegistering.registerAnimator` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-unregisterAnimatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-animators` | `CYLPlaceholderItemAnimatorRegistering.animators` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorForURL:` | `CYLPlaceholderItemAnimatorRegistering.animatorForURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorForAttributes:` | `CYLPlaceholderItemAnimatorRegistering.animatorForAttributes` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeyForGenericKey:inAttributes:` | `CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-bindURL:toAnimator:` | `CYLPlaceholderItemAnimatorRegistering.bindURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeysForGenericKey:` | `CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey` | done |  |
+| `CYLPlaceholderItemAnimatorRegistering` `-fileExtensions` | `CYLPlaceholderItemAnimatorRegistering.fileExtensions` | done |  |
+| `CYLPlaceholderItemAnimatorRegistry` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry` | done |  |
+| `CYLPlaceholderItemAnimatorRegistry` `+sharedRegistry` | `CYLPlaceholderItemAnimatorRegistry.sharedRegistry` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+registerAnimator:` | `CYLPlaceholderItemAnimatorRegistry.registerAnimator` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+unregisterAnimatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+animators` | `CYLPlaceholderItemAnimatorRegistry.animators` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorForURL:` | `CYLPlaceholderItemAnimatorRegistry.animatorForURL` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorForAttributes:` | `CYLPlaceholderItemAnimatorRegistry.animatorForAttributes` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeyForGenericKey:inAttributes:` | `CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+bindURL:toAnimator:` | `CYLPlaceholderItemAnimatorRegistry.bindURL` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeysForGenericKey:` | `CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistry` `+fileExtensions` | `CYLPlaceholderItemAnimatorRegistry.fileExtensions` | done | companion call on the shared instance |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemViewAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemViewAnimator` | — | planned (TODO) |  |
-| `CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` | — | planned (TODO) |  |
-| `CYLPlaceholderItemViewAnimator` `-init` | — | planned (TODO) |  |
-| `CYLPlaceholderItemViewAnimator` `+new` | — | planned (TODO) |  |
-| `CYLPlaceholderItemViewAnimator` `viewProvider` | — | planned (TODO) |  |
+| `CYLPlaceholderItemViewAnimator` | `com.cyl.placeholder.CYLPlaceholderItemViewAnimator` | done |  |
+| `CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` | `CYLPlaceholderItemViewAnimator.initWithIdentifier` | done |  |
+| `CYLPlaceholderItemViewAnimator` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderItemViewAnimator` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
+| `CYLPlaceholderItemViewAnimator` `viewProvider` | `CYLPlaceholderItemViewAnimator.viewProvider` | done |  |
 
 ## `CYLPlaceholderAnimation/GIF/CYLGIFPlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLGIFPlaceholderItemAnimator` | — | planned (TODO) |  |
-| `CYLGIFPlaceholderItemAnimator` `animator` | — | planned (TODO) |  |
+| `CYLGIFPlaceholderItemAnimator` | `com.cyl.placeholder.CYLGIFPlaceholderItemAnimator` | done |  |
+| `CYLGIFPlaceholderItemAnimator` `animator` | `CYLGIFPlaceholderItemAnimator.animator` | done |  |
 
 ## `CYLPlaceholderAnimation/PAG/CYLPAGPlaceholderItemAnimator.h`
 
@@ -161,17 +161,17 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderAnimationOption` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveArtboard` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveStateMachine` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveActiveProperty` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveActiveDuration` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveColor` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveInput` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveTriggerInput` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveAnimation` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | — | planned (TODO) |  |
+| `CYLPlaceholderAnimationOption` | `com.cyl.placeholder.CYLPlaceholderAnimationOption` | done |  |
+| `CYLPlaceholderAnimationOptionRiveArtboard` | `CYLPlaceholderAnimationOptions.RiveArtboard` | done |  |
+| `CYLPlaceholderAnimationOptionRiveStateMachine` | `CYLPlaceholderAnimationOptions.RiveStateMachine` | done |  |
+| `CYLPlaceholderAnimationOptionRiveActiveProperty` | `CYLPlaceholderAnimationOptions.RiveActiveProperty` | done |  |
+| `CYLPlaceholderAnimationOptionRiveActiveDuration` | `CYLPlaceholderAnimationOptions.RiveActiveDuration` | done |  |
+| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | `CYLPlaceholderAnimationOptions.RiveTriggerProperty` | done |  |
+| `CYLPlaceholderAnimationOptionRiveColor` | `CYLPlaceholderAnimationOptions.RiveColor` | done |  |
+| `CYLPlaceholderAnimationOptionRiveInput` | `CYLPlaceholderAnimationOptions.RiveInput` | done |  |
+| `CYLPlaceholderAnimationOptionRiveTriggerInput` | `CYLPlaceholderAnimationOptions.RiveTriggerInput` | done |  |
+| `CYLPlaceholderAnimationOptionRiveAnimation` | `CYLPlaceholderAnimationOptions.RiveAnimation` | done |  |
+| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | `CYLPlaceholderAnimationOptions.RiveLegacyRuntime` | done |  |
 | `CYLRivePlaceholderItemAnimator` | — | planned (TODO) |  |
 | `CYLRivePlaceholderItemAnimator` `animator` | — | planned (TODO) |  |
 

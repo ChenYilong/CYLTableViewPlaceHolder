@@ -558,8 +558,11 @@ class CYLPlaceholderView @JvmOverloads constructor(
      * none is registered or it cannot load (the icon stays).
      */
     fun setAnimationFile(path: String): Boolean {
-        val factory = factories[path.substringAfterLast('.', "").lowercase()] ?: return false
-        val made = factory(context, path) ?: return false
+        // A factory registered for the extension first, then the animator registry (CYLPlaceholderItemAnimatorRegistry).
+        val side = imageView.layoutParams
+        val made = factories[path.substringAfterLast('.', "").lowercase()]?.invoke(context, path)
+            ?: CYLPlaceholderAnimationView.withFileURL(context, path, maxOf(1, side.width), maxOf(1, side.height))
+            ?: return false
         player?.let { (it.view.parent as? ViewGroup)?.removeView(it.view) }
         player = made
         made.setAnimationRepeatCount(animationRepeatCount)

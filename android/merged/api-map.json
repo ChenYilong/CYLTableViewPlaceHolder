@@ -7,6 +7,14 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLCollectionPlaceholderViewBlock"
  },
+ "CYLGIFPlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLGIFPlaceholderItemAnimator"
+ },
+ "CYLGIFPlaceholderItemAnimator animator": {
+  "status": "done",
+  "android": "CYLGIFPlaceholderItemAnimator.animator"
+ },
  "CYLPlaceholderAction": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderAction",
@@ -16,9 +24,61 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
  },
+ "CYLPlaceholderAnimationBackend": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationBackend"
+ },
+ "CYLPlaceholderAnimationErrorHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler"
+ },
  "CYLPlaceholderAnimationFactory": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderAnimationFactory"
+ },
+ "CYLPlaceholderAnimationOption": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationOption"
+ },
+ "CYLPlaceholderAnimationOptionRiveActiveDuration": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveActiveDuration"
+ },
+ "CYLPlaceholderAnimationOptionRiveActiveProperty": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveActiveProperty"
+ },
+ "CYLPlaceholderAnimationOptionRiveAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveAnimation"
+ },
+ "CYLPlaceholderAnimationOptionRiveArtboard": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveArtboard"
+ },
+ "CYLPlaceholderAnimationOptionRiveColor": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveColor"
+ },
+ "CYLPlaceholderAnimationOptionRiveInput": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveInput"
+ },
+ "CYLPlaceholderAnimationOptionRiveLegacyRuntime": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveLegacyRuntime"
+ },
+ "CYLPlaceholderAnimationOptionRiveStateMachine": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveStateMachine"
+ },
+ "CYLPlaceholderAnimationOptionRiveTriggerInput": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveTriggerInput"
+ },
+ "CYLPlaceholderAnimationOptionRiveTriggerProperty": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationOptions.RiveTriggerProperty"
  },
  "CYLPlaceholderAnimationPlayer": {
   "status": "done",
@@ -63,6 +123,88 @@
  "CYLPlaceholderAnimationPlayer readyHandler": {
   "status": "done",
   "android": "CYLPlaceholderAnimationPlayer.readyHandler"
+ },
+ "CYLPlaceholderAnimationView": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationView"
+ },
+ "CYLPlaceholderAnimationView -initWithCoder:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
+  "note": "null when no animator plays the file"
+ },
+ "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:options:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
+  "note": "null when no animator plays the file"
+ },
+ "CYLPlaceholderAnimationView -initWithFrame:": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderAnimationView -play": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.play"
+ },
+ "CYLPlaceholderAnimationView -setAnimationColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationColors"
+ },
+ "CYLPlaceholderAnimationView -setAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationProgress"
+ },
+ "CYLPlaceholderAnimationView -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderAnimationView -setAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.setAnimationSpeed"
+ },
+ "CYLPlaceholderAnimationView -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.showLastFrame"
+ },
+ "CYLPlaceholderAnimationView -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.stop"
+ },
+ "CYLPlaceholderAnimationView animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.animationView"
+ },
+ "CYLPlaceholderAnimationView animatorIdentifier": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.animatorIdentifier"
+ },
+ "CYLPlaceholderAnimationView backend": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.backend"
+ },
+ "CYLPlaceholderAnimationView errorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.errorHandler"
+ },
+ "CYLPlaceholderAnimationView player": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.player"
+ },
+ "CYLPlaceholderAnimationView playing": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.playing"
+ },
+ "CYLPlaceholderAnimationView ready": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.ready"
+ },
+ "CYLPlaceholderAnimationView readyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationView.readyHandler"
  },
  "CYLPlaceholderBadgeAppearance": {
   "status": "done",
@@ -493,6 +635,337 @@
  "CYLPlaceholderHUDStyle": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderHUDStyle"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer -initWithAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView"
+ },
+ "CYLPlaceholderItemAnimationBasePlayer animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationBasePlayer.animationView"
+ },
+ "CYLPlaceholderItemAnimationFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFactory"
+ },
+ "CYLPlaceholderItemAnimationFactory +animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.animationViewWithURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +isAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.isAnimationView",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +playerForView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.playerForView",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory +sharedFactory": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.sharedFactory",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimationFactory -init": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.init"
+ },
+ "CYLPlaceholderItemAnimationFactory -initWithRegistry:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.initWithRegistry"
+ },
+ "CYLPlaceholderItemAnimationFactory registry": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFactory.registry"
+ },
+ "CYLPlaceholderItemAnimationFileMatching": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching"
+ },
+ "CYLPlaceholderItemAnimationFileMatching -canAnimateFileAtURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationFileMatching attributeKeys": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.attributeKeys"
+ },
+ "CYLPlaceholderItemAnimationFileMatching fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.fileExtensions"
+ },
+ "CYLPlaceholderItemAnimationFileMatching identifier": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.identifier"
+ },
+ "CYLPlaceholderItemAnimationFileMatching priority": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationFileMatching.priority"
+ },
+ "CYLPlaceholderItemAnimationPlayableView": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_applyAnimationViewColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_playAnimationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_setAnimationViewRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_showAnimationViewLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame"
+ },
+ "CYLPlaceholderItemAnimationPlayableView -cyl_stopAnimationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_animationViewErrorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_animationViewReadyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler"
+ },
+ "CYLPlaceholderItemAnimationPlayableView cyl_isAnimationViewReady": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady"
+ },
+ "CYLPlaceholderItemAnimationPlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer"
+ },
+ "CYLPlaceholderItemAnimationPlayer -applyColors:traitCollection:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.applyColors",
+  "note": "a night flag instead of a trait collection"
+ },
+ "CYLPlaceholderItemAnimationPlayer -applyDarkColors:traitCollection:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.applyDarkColors",
+  "note": "a night flag instead of a trait collection"
+ },
+ "CYLPlaceholderItemAnimationPlayer -play": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.play"
+ },
+ "CYLPlaceholderItemAnimationPlayer -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderItemAnimationPlayer -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.showLastFrame"
+ },
+ "CYLPlaceholderItemAnimationPlayer -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.stop"
+ },
+ "CYLPlaceholderItemAnimationPlayer animationSpeed": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.animationSpeed"
+ },
+ "CYLPlaceholderItemAnimationPlayer animationView": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.animationView"
+ },
+ "CYLPlaceholderItemAnimationPlayer progress": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationPlayer.progress"
+ },
+ "CYLPlaceholderItemAnimationViewFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory"
+ },
+ "CYLPlaceholderItemAnimationViewFactory -animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewFactory.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationViewFactory -playerForAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewFactory.playerForAnimationView"
+ },
+ "CYLPlaceholderItemAnimationViewMaking": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -animationViewWithURL:size:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -isAnimationView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.isAnimationView"
+ },
+ "CYLPlaceholderItemAnimationViewMaking -playerForView:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewMaking.playerForView"
+ },
+ "CYLPlaceholderItemAnimationViewProviding": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding"
+ },
+ "CYLPlaceholderItemAnimationViewProviding +cyl_animationViewWithFileURL:options:contentMode:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimator"
+ },
+ "CYLPlaceholderItemAnimatorPriority": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority"
+ },
+ "CYLPlaceholderItemAnimatorRegistering": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorForAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForAttributes"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorForURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -animators": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.animators"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -attributeKeyForGenericKey:inAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -attributeKeysForGenericKey:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -bindURL:toAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.bindURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.fileExtensions"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -registerAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.registerAnimator"
+ },
+ "CYLPlaceholderItemAnimatorRegistering -unregisterAnimatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier"
+ },
+ "CYLPlaceholderItemAnimatorRegistry": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorForAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForAttributes",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorForURL:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +animators": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.animators",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +attributeKeyForGenericKey:inAttributes:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +attributeKeysForGenericKey:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +bindURL:toAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.bindURL",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +fileExtensions": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.fileExtensions",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +registerAnimator:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.registerAnimator",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +sharedRegistry": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.sharedRegistry",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemAnimatorRegistry +unregisterAnimatorWithIdentifier:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier",
+  "note": "companion call on the shared instance"
+ },
+ "CYLPlaceholderItemViewAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderItemViewAnimator"
+ },
+ "CYLPlaceholderItemViewAnimator +new": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemViewAnimator -init": {
+  "status": "n/a",
+  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderItemViewAnimator -initWithIdentifier:fileExtensions:attributeKeys:viewProvider:": {
+  "status": "done",
+  "android": "CYLPlaceholderItemViewAnimator.initWithIdentifier"
+ },
+ "CYLPlaceholderItemViewAnimator viewProvider": {
+  "status": "done",
+  "android": "CYLPlaceholderItemViewAnimator.viewProvider"
  },
  "CYLPlaceholderLocalization": {
   "status": "done",
