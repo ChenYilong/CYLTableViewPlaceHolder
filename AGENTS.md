@@ -22,8 +22,11 @@ the integrated `CYLRefresh` component, and an example application. Read
 
 ## SKILLS
 
-TODO: please install following docs 开发者工具 Skills
- https://developers.weixin.qq.com/miniprogram/dev/devtools/Skills.html
+- WeChat DevTools Skills (<https://developers.weixin.qq.com/miniprogram/dev/devtools/Skills.html>): run `wechatide`
+  (WeChat DevTools 2.02.2607032 or later) to print the skill folder and install it for the agent (Claude Code:
+  a link at `~/.claude/skills/wechatide-skill`). Use it to build, run and screenshot the mini program in
+  `CrossPlatform/wechat-miniprogram-cylplaceholder`; authorize the client once with `wechatide auth -c <client>`
+  while logged in to DevTools. Status and remaining work: `docs/WeChat-MiniProgram.md`.
 
 ## Source of truth
 

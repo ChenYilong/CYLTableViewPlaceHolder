@@ -1,0 +1,14 @@
+{
+  "pages": ["pages/index/index", "pages/scenario/scenario"],
+  "window": {
+    "navigationBarTitleText": "CYLTableViewPlaceHolder",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f2f2f7"
+  },
+  "usingComponents": {
+    "cyl-placeholder": "/components/cyl-placeholder/index"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

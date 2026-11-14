@@ -1,0 +1,28 @@
+<view class="cyl-placeholder" bindtap="onBackgroundTap" aria-role="{{_background ? 'button' : ''}}">
+  <view class="cyl-placeholder__stack">
+    <block wx:for="{{items}}" wx:key="index">
+      <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">
+        <!-- icon: an image with an optional title below -->
+        <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box"
+              catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
+              aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
+          <image class="cyl-placeholder__icon {{item.tinted ? 'cyl-placeholder__icon--tinted' : ''}}"
+                 src="{{imageBase}}{{item.image}}.png" mode="aspectFit"
+                 style="width: {{item.side}}px; height: {{item.side}}px" />
+          <text wx:if="{{item.title}}" class="cyl-placeholder__title">{{item.title}}</text>
+        </view>
+        <text wx:elif="{{item.type === 'text'}}" class="cyl-placeholder__title"
+              style="{{item.size ? 'font-size:' + item.size + 'px;' : ''}}{{item.color ? 'color:' + item.color : ''}}">{{item.text}}</text>
+        <text wx:elif="{{item.type === 'hint'}}" class="cyl-placeholder__hint">{{item.text}}</text>
+        <view wx:elif="{{item.type === 'separator'}}" class="cyl-placeholder__separator">
+          <view class="cyl-placeholder__line" />
+          <text class="cyl-placeholder__separator-text">{{item.text}}</text>
+          <view class="cyl-placeholder__line" />
+        </view>
+        <view wx:elif="{{item.type === 'button'}}" class="cyl-placeholder__button cyl-placeholder__button--{{item.style}}"
+              hover-class="cyl-placeholder__button--pressed" catchtap="onItemTap" data-index="{{index}}"
+              aria-role="button" aria-label="{{item.title}}">{{item.title}}</view>
+      </view>
+    </block>
+  </view>
+</view>

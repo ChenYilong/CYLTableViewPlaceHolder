@@ -1,0 +1,14 @@
+<view class="controls">
+  <view class="control"><text>Interactive</text><switch checked="{{interactive}}" bindchange="onInteractiveChange" /></view>
+  <view class="control"><text>Load data on retry</text><switch checked="{{loadOnRetry}}" bindchange="onLoadOnRetryChange" /></view>
+  <view wx:if="{{lastAction}}" class="last-action">Last action: {{lastAction}}</view>
+</view>
+<view class="list">
+  <block wx:if="{{rows.length}}">
+    <view wx:for="{{rows}}" wx:key="*this" class="list__row">{{item}}</view>
+    <view class="list__clear" bindtap="onClear">Clear rows</view>
+  </block>
+  <cyl-placeholder wx:elif="{{loading}}" scenario="Loading" language="{{language}}" interactive="{{false}}" />
+  <cyl-placeholder wx:else scenario="{{scenario}}" language="{{language}}" interactive="{{interactive}}"
+                   bind:action="onPlaceholderAction" />
+</view>
