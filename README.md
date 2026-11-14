@@ -931,6 +931,8 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![Android merged example: plus button page](docs/assets/android-merged-plus.png)
 
+![Android merged example: HUD page](docs/assets/android-merged-hud.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |
