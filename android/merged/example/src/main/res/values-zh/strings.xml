@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">刷新与占位图</string>
+    <string name="merged_plus_button">发布</string>
+    <string name="merged_plus_page">PlusButton 自己的页面</string>
+    <string name="merged_row">第 %1$d 行</string>
+    <string name="merged_empty">下拉加载数据</string>
+    <string name="merged_loaded">已加载 %1$d 行</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：下拉刷新，滚动到底部加载更多</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：下拉刷新</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout：下拉刷新，上拉加载更多</string>
+</resources>

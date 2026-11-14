@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">更新とプレースホルダー</string>
+    <string name="merged_plus_button">投稿</string>
+    <string name="merged_plus_page">プラスボタン専用のページ</string>
+    <string name="merged_row">%1$d 行目</string>
+    <string name="merged_empty">引き下げて読み込む</string>
+    <string name="merged_loaded">%1$d 行を読み込みました</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：引き下げて更新、最後までスクロールしてさらに読み込む</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：引き下げて更新</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout：引き下げて更新、引き上げてさらに読み込む</string>
+</resources>

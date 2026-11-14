@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">새로고침과 플레이스홀더</string>
+    <string name="merged_plus_button">게시</string>
+    <string name="merged_plus_page">플러스 버튼 전용 페이지</string>
+    <string name="merged_row">%1$d번째 행</string>
+    <string name="merged_empty">당겨서 불러오기</string>
+    <string name="merged_loaded">%1$d개 행을 불러왔습니다</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: 당겨서 새로고침, 끝까지 스크롤하면 더 불러오기</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: 당겨서 새로고침</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: 당겨서 새로고침, 올려서 더 불러오기</string>
+</resources>

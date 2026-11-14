@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">重新整理與佔位圖</string>
+    <string name="merged_plus_button">發佈</string>
+    <string name="merged_plus_page">PlusButton 自己的頁面</string>
+    <string name="merged_row">第 %1$d 列</string>
+    <string name="merged_empty">下拉載入資料</string>
+    <string name="merged_loaded">已載入 %1$d 列</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：下拉重新整理，捲動到底部載入更多</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：下拉重新整理</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout：下拉重新整理，上拉載入更多</string>
+</resources>

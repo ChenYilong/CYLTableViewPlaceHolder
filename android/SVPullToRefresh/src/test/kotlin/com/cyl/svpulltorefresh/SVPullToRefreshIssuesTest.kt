@@ -441,4 +441,29 @@ class SVPullToRefreshIssuesTest {
         infinite.stopAnimating()
         assertNull(spinner.parent)
     }
+
+    @Test
+    fun rowsAddedWhileLoadingAreLaidOut() {
+        // Found by the merged example (docs/Android-Port.md): rows added while loading stayed 0 x 0 (a blank list). The
+        // pull animation laid the content out directly, which cleared its layout request before it was measured
+        // again, so the window's next pass skipped measuring it.
+        val activity = org.robolectric.Robolectric.buildActivity(android.app.Activity::class.java).setup().get()
+        val layout = SVPullToRefreshLayout(activity)
+        val scrollView = ScrollView(activity)
+        val content = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
+        scrollView.addView(content)
+        layout.addView(scrollView)
+        layout.addPullToRefresh { }
+        activity.setContentView(layout)
+        idle(100)
+        drag(layout, 400f)
+        idle(100)
+        assertEquals(SVPullToRefreshState.LOADING, layout.pullToRefreshView!!.state)
+        repeat(20) { content.addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 60)) }
+        layout.pullToRefreshView!!.stopAnimating()
+        idle(2000)
+        assertEquals("every row is laid out", 60, content.getChildAt(19).height)
+        assertEquals(20 * 60, content.height)
+    }
+
 }

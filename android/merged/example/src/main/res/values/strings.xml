@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">Refresh &amp; Placeholder</string>
+    <string name="merged_plus_button">New post</string>
+    <string name="merged_plus_page">The plus button\'s own page</string>
+    <string name="merged_row">Row %1$d</string>
+    <string name="merged_empty">Pull down to load rows</string>
+    <string name="merged_loaded">%1$d rows loaded</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: pull down to refresh, scroll to the end to load more</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: pull down to refresh</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: pull down to refresh, pull up to load more</string>
+</resources>

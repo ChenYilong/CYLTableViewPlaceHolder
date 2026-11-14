@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The merged example's texts (docs/Android-Port.md, step 3). -->
+<resources>
+    <string name="merged_app_name">Обновление и заглушки</string>
+    <string name="merged_plus_button">Новая запись</string>
+    <string name="merged_plus_page">Отдельная страница кнопки «плюс»</string>
+    <string name="merged_row">Строка %1$d</string>
+    <string name="merged_empty">Потяните вниз, чтобы загрузить строки</string>
+    <string name="merged_loaded">Загружено строк: %1$d</string>
+    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: потяните вниз для обновления, прокрутите до конца, чтобы загрузить ещё</string>
+    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: потяните вниз для обновления</string>
+    <string name="merged_intro_smartrefresh">SmartRefreshLayout: потяните вниз для обновления, вверх — чтобы загрузить ещё</string>
+</resources>
