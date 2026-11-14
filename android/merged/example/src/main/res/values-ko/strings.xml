@@ -36,4 +36,7 @@
     <string name="merged_support_text">상담원이 곧 답변해 드립니다.</string>
     <string name="merged_support_title">고객 지원</string>
     <string name="merged_format_action_tapped">탭함: %1$s</string>
+    <string name="merged_format_post">게시물 %1$d</string>
+    <string name="merged_text_feed_hint">새로고침은 번갈아 실패합니다</string>
+    <string name="merged_action_publish">게시</string>
 </resources>

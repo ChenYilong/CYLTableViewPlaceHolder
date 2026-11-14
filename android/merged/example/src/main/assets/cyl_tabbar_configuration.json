@@ -34,6 +34,13 @@
       "CYLTabBarItemAccessibilityLabel": "tab.smartrefresh",
       "CYLTabBarItemImage": "system:sparkles",
       "CYLTabBarItemSelectedImage": "system:sparkles"
+    },
+    {
+      "CYLTabBarItemIdentifier": "feed",
+      "CYLTabBarItemTitle": "tab.feed",
+      "CYLTabBarItemAccessibilityLabel": "tab.feed",
+      "CYLTabBarItemImage": "system:bubble.left.and.bubble.right",
+      "CYLTabBarItemSelectedImage": "system:bubble.left.and.bubble.right.fill"
     }
   ]
 }

@@ -118,6 +118,19 @@ private class PlaceholderState(val list: RecyclerView) : RecyclerView.AdapterDat
         host = content
     }
 
+    /**
+     * A reload while the list stays empty builds a new placeholder, as on iOS: the old one is destroyed and the block
+     * is asked again, so a state change (loading, then failed) shows at once.
+     */
+    fun reload() {
+        observe()
+        val adapter = list.adapter
+        val delegate = adapter as? CYLTableViewPlaceHolderDelegate
+        val empty = adapter == null || adapter.itemCount == 0
+        if (host != null && empty && !hidden && (viewBlock != null || delegate != null)) remove()
+        update()
+    }
+
     fun remove() {
         host?.let { (it.parent as? ViewGroup)?.removeView(it) }
         host = null
@@ -157,7 +170,7 @@ fun RecyclerView.cyl_reloadData() {
     val state = placeholderState()
     state.observe()
     adapter?.notifyDataSetChanged()
-    state.update()
+    state.reload()
 }
 
 /**

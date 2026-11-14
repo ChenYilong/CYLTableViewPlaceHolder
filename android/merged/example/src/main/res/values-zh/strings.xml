@@ -36,4 +36,7 @@
     <string name="merged_support_text">客服人员将尽快回复您。</string>
     <string name="merged_support_title">联系客服</string>
     <string name="merged_format_action_tapped">已点击：%1$s</string>
+    <string name="merged_format_post">动态 %1$d</string>
+    <string name="merged_text_feed_hint">下拉刷新会交替失败</string>
+    <string name="merged_action_publish">发布</string>
 </resources>

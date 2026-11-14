@@ -36,4 +36,7 @@
     <string name="merged_support_text">Працівник підтримки скоро вам відповість.</string>
     <string name="merged_support_title">Служба підтримки</string>
     <string name="merged_format_action_tapped">Натиснуто: %1$s</string>
+    <string name="merged_format_post">Публікація %1$d</string>
+    <string name="merged_text_feed_hint">Кожне друге оновлення завершується помилкою</string>
+    <string name="merged_action_publish">Опублікувати</string>
 </resources>

@@ -36,4 +36,7 @@
     <string name="merged_support_text">A support agent will reply to you soon.</string>
     <string name="merged_support_title">Customer support</string>
     <string name="merged_format_action_tapped">Tapped: %1$s</string>
+    <string name="merged_format_post">Post %1$d</string>
+    <string name="merged_text_feed_hint">Every other refresh fails</string>
+    <string name="merged_action_publish">Publish</string>
 </resources>
