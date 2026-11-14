@@ -921,6 +921,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![Android merged example: three refresh libraries](docs/assets/android-merged-example-refresh.png)
 
+| 中文 | English |
+| --- | --- |
+| 第一个 Tab 是 iOS 示例“场景”页的移植：三个分组列出全部占位场景，点击进入场景页，最后一组是 JSON 配置文件，顶部切换七种语言（Android 15 模拟器，API 35，提交 `d425a1b`，2026-11-14）。其余页面的移植进度见 [docs/Android-Port.md](docs/Android-Port.md)。 | The first tab is a port of the iOS example's "Scenarios" page: three sections list every placeholder scenario, a row opens its page, the last group is the JSON configuration files, and the top row switches the seven languages (Android 15 emulator, API 35, commit `d425a1b`, 2026-11-14). The progress of the other pages is in [docs/Android-Port.md](docs/Android-Port.md). |
+
+![Android merged example: Scenarios tab, scenario page and configuration file](docs/assets/android-merged-scenarios.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |
