@@ -90,6 +90,8 @@ class RefreshExamplesPage : StackPage() {
             "CYLRefreshI18NExampleViewController"),
         RefreshExample(R.string.merged_smart_section, smartStyles.map { it.first }, smartStyles.map { it.second },
             "CYLSmartRefreshDemoViewController"),
+        RefreshExample(R.string.merged_easy_section, easyPages.map { it.first }, easyPages.map { it.second },
+            "CYLEasyRefreshDemoViewController"),
     )
 
     override fun root(): View {
@@ -106,6 +108,7 @@ class RefreshExamplesPage : StackPage() {
                         exam.header == R.string.merged_mj_section_web -> webPage()
                         exam.header == R.string.merged_mj_section_i18n -> i18nPage(name)
                         exam.header == R.string.merged_smart_section -> smartStylePage(name, exam.methods[i])
+                        exam.header == R.string.merged_easy_section -> easyPage(name, exam.methods[i])
                         else -> tablePage(name, exam.methods[i])
                     })
                 })
