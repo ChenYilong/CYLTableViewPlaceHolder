@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 0 → in progress)
+### TODO: WeChat Mini Program placeholder package (score 55)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -56,14 +56,59 @@
 - **Blocked:** the DevTools CLI authorization (`wechatide auth -c Claude`) times out; `wechatidecli islogin` returns
   `{"login":false}`, so the DevTools login must be renewed first.
 
+- **Score: 55 / 100.** Package, example and unit tests are done; nothing has run in the DevTools simulator yet.
+- **Remaining work (TODO):**
+  1. Renew the DevTools login, authorize the skill client (`wechatide auth -c Claude`), then `project_import` +
+     `open_project_window` this package, check that the compile succeeds, walk through all 35 scenarios and take
+     `simulator_screenshot`s; store the stitched screenshot in `docs/` and add a README section (platform, base
+     library version, commit, time). Blocker today: `wechatidecli open` refuses `touristappid` without a login
+     ("There is no such AppID", code 10).
+  2. Animated icons: iOS / Android play Lottie / PAG / Rive / GIF files per scenario
+     (`animationFileNamesForScenario`). The mini program shows the static icon only. When animations are added (for
+     example with CYLTabBarController's `lottie-miniprogram`), the example page needs "Play all", a speed slider and
+     a loop switch (`docs/Example-Animation-Playback.md`).
+  3. `CYLPlaceholderHUD`, `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not
+     ported yet.
+  4. Icon tinting: Android tints template icons; the mini program uses 45 % opacity (no `tintColor` on `<image>`).
+  5. Push the branch and open its pull request: `git push` fails on this machine (no GitHub credentials, `gh` not
+     installed).
+- **Doc discrepancy found:** `docs/Placeholder-Scenarios.md` says "36 scenarios (including HUD)", but the iOS-derived
+  Kotlin enum has 35 entries (HUD included). The unit test pins the mini program list to the Kotlin enum.
+
 ## 结构 / Structure
 
-TODO: filled in when the package lands.
+| Path (under `CrossPlatform/wechat-miniprogram-cylplaceholder/`) | Role |
+| --- | --- |
+| `src/cyl-placeholder/index.{js,json,wxml,wxss}` | The `cyl-placeholder` component (CYLPlaceholderStackView): vertical, centered stack; background tap; `action` event; `interactive` |
+| `src/cyl-placeholder/cyl_scenario_catalog.js` | `CYLPlaceholderScenarioCatalog`, scenarios, categories, permissions, actions, button styles |
+| `src/cyl-placeholder/cyl_localization.js` | `CYLPlaceholderLocalization`: `setLanguage`, `resolveLanguage`, `localizedString` |
+| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting both |
+| `src/cyl-placeholder/locales/<locale>.json` (+ generated `.js` twin) | Strings of `android/placeholder` (7 languages, 108 keys) |
+| `src/cyl-placeholder/images/*.png` | Icons of `android/placeholder` (52), licenses copied alongside |
+| `scripts/import-android-resources.js` | Re-imports strings and icons from Android |
+| `scripts/sync-example.js` | Copies `src/cyl-placeholder` into the example (DevTools `beforeCompile` hook) |
+| `example/miniprogram` | Scenario list (grouped by category, language picker) and a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") |
+| `test/catalog.test.js` | `node --test` unit tests |
 
 ## API 对照 / API alignment
 
-TODO: filled in when the package lands.
+| iOS / Android | Mini program | Notes |
+| --- | --- | --- |
+| `CYLPlaceholderScenario` (35) | `CYLPlaceholderScenario` (string values = Kotlin names) | Same order |
+| `CYLPlaceholderScenarioCatalog.componentsForScenario` | same name, returns plain objects | `type`: icon / text / hint / button / separator |
+| `scenarioNamed`, `actionNamed`, `backgroundActionForScenario`, `categoryForScenario`, `permissionForScenario`, `scenarioForPermission`, `readmeScreenshotNumbersForScenario`, `localizedNameForScenario`, `localizedTitleForAction` | same names | Same behavior; tested |
+| `CYLPlaceholderAction*` | same string values | Apps may pass their own strings |
+| `CYLPlaceholderStackView` + action handlers | `<cyl-placeholder>` + `bind:action` | Handlers become one event with `{ action, scenario, index }` |
+| `CYLPlaceholderStackView.interactive` | `interactive` property | |
+| `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.setLanguage` or the `language` property | Falls back to the WeChat client language |
+| `animationFileNamesForScenario`, `CYLPlaceholderHUD`, `CYLPlaceholderConfiguration` | — | TODO (see above) |
 
 ## 验证 / Verification
 
-TODO: filled in when the package lands.
+- 2026-11-15, Windows 11, Node 22.23.5: `npm test` passes 8 / 8: the scenario list matches the Kotlin enum; every
+  scenario has components in all 7 languages, with every icon file present and every text resolved; the locale `.js`
+  twins equal the `.json` tables; names, actions, categories, permissions, language tags; the wxml binds only
+  handlers defined in `index.js`.
+- Not verified: rendering, taps and layout in the DevTools simulator or on a phone (see TODO 1). WeChat DevTools
+  2.02.2609250 is installed and its Skills are installed for Claude Code, but the CLI authorization is blocked by the
+  expired login.

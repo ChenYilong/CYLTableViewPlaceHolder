@@ -1,0 +1,23 @@
+{
+  "appid": "touristappid",
+  "projectname": "cyl-placeholder-miniprogram-example",
+  "description": "The example of cyl-placeholder-miniprogram (CYLTableViewPlaceHolder for WeChat Mini Program)",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "example/miniprogram/",
+  "libVersion": "latest",
+  "scripts": {
+    "beforeCompile": "node scripts/sync-example.js",
+    "beforePreview": "node scripts/sync-example.js",
+    "beforeUpload": "node scripts/sync-example.js"
+  },
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "scriptsEnable": true
+  },
+  "packOptions": { "ignore": [], "include": [] },
+  "condition": {}
+}

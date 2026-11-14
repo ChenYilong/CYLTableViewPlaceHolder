@@ -1,0 +1,6 @@
+.controls { margin: 12px 16px; padding: 4px 16px; background: #fff; border-radius: 10px; }
+.control { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 15px; color: #333; }
+.last-action { padding: 8px 0; font-size: 12px; color: #8e8e93; word-break: break-all; }
+.list { margin: 0 16px 16px; min-height: 420px; background: #fff; border-radius: 10px; overflow: hidden; }
+.list__row { padding: 14px 16px; border-bottom: 1px solid #f2f2f7; font-size: 15px; }
+.list__clear { padding: 14px 16px; text-align: center; color: #007aff; font-size: 15px; }

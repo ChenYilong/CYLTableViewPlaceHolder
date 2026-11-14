@@ -1,0 +1,22 @@
+{
+  "name": "cyl-placeholder-miniprogram",
+  "version": "0.1.0",
+  "description": "CYLTableViewPlaceHolder for WeChat Mini Program: the cyl-placeholder component with the 35 scenarios of CYLPlaceholderScenarioCatalog (empty, load failed, permission, progress and success states), localized in 7 languages",
+  "license": "MIT",
+  "author": "ChenYilong <luohanchenyilong@163.com>",
+  "homepage": "https://github.com/ChenYilong/CYLTableViewPlaceHolder/tree/master/CrossPlatform/wechat-miniprogram-cylplaceholder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChenYilong/CYLTableViewPlaceHolder.git",
+    "directory": "CrossPlatform/wechat-miniprogram-cylplaceholder"
+  },
+  "keywords": ["miniprogram", "placeholder", "empty-state", "CYLTableViewPlaceHolder"],
+  "miniprogram": "src",
+  "main": "src/cyl-placeholder/cyl_placeholder.js",
+  "files": ["src", "README.md", "LICENSE", "LICENSE.material-design-icons", "LICENSE.placeholder-third-party", "NOTICE.material-design-icons"],
+  "scripts": {
+    "import-android": "node scripts/import-android-resources.js",
+    "sync-example": "node scripts/sync-example.js",
+    "test": "node --test \"test/*.test.js\""
+  }
+}
