@@ -8,7 +8,8 @@
   },
   "usingComponents": {
     "cyl-placeholder": "/components/cyl-placeholder/index",
-    "cyl-placeholder-hud": "/components/cyl-placeholder-hud/index"
+    "cyl-placeholder-hud": "/components/cyl-placeholder-hud/index",
+    "cyl-lottie": "/libs/cyl-lottie-miniprogram/cyl-lottie/index"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

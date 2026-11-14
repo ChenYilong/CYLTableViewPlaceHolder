@@ -1,4 +1,9 @@
 {
   "component": true,
-  "styleIsolation": "isolated"
+  "styleIsolation": "isolated",
+  "componentGenerics": {
+    "animation": {
+      "default": "./no-animation/index"
+    }
+  }
 }

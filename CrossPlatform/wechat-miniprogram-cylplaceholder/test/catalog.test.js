@@ -40,6 +40,29 @@ test('every scenario has components, every icon exists, every text is localized'
   }
 })
 
+test('animations: the Kotlin file lists, a shipped Lottie file on the main icon, the default generic', () => {
+  const kotlin = fs.readFileSync(path.join(__dirname, '../../../android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderScenario.kt'), 'utf8')
+  const own = {}
+  for (const m of kotlin.matchAll(/CYLPlaceholderScenario\.(\w+) to listOf\(([^)]*)\)/g)) own[m[1]] = [...m[2].matchAll(/"([^"]+)"/g)].map((x) => x[1])
+  assert.strictEqual(Object.keys(own).length, 34) // TextOnly has no icon
+  for (const s of C.allScenarios) {
+    const files = own[s] || []
+    assert.deepStrictEqual(C.animationFileNamesForScenario(s).slice(0, files.length), files, s)
+    const lottie = C.lottieFileNameForScenario(s)
+    const main = C.componentsForScenario(s, 'en').find((c) => c.type === 'icon')
+    if (lottie) {
+      assert.match(lottie, /^CYLPlaceholder.*\.json$/)
+      assert.ok(fs.existsSync(path.join(SRC, 'animations', lottie)), lottie)
+      assert.strictEqual(main.animation, lottie, s)
+    } else if (main) {
+      assert.strictEqual(main.animation, undefined, s)
+    }
+  }
+  assert.strictEqual(C.lottieFileNameForScenario('NoFavorites'), 'CYLPlaceholderNoFavorites.json')
+  const json = JSON.parse(fs.readFileSync(path.join(SRC, 'index.json'), 'utf8'))
+  assert.ok(fs.existsSync(path.join(SRC, json.componentGenerics.animation.default + '.js')))
+})
+
 test('no Android escape sequences are left in the texts', () => {
   for (const language of L.SUPPORTED_LANGUAGES) {
     for (const [key, value] of Object.entries(require(path.join(SRC, 'locales', language + '.js')))) {

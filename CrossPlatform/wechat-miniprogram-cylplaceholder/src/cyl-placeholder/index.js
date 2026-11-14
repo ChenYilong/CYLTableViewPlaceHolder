@@ -25,14 +25,38 @@ Component({
     compact: { type: Boolean, value: false },
     /** The folder of the icons, for icons an app ships elsewhere. */
     imageBase: { type: String, value: './images/' },
+    /**
+     * true plays the main icon's Lottie file (CYLPlaceholderScenarioCatalog.lottieFileNameForScenario) instead of the
+     * static icon. Needs a player: generic:animation="cyl-lottie" (cyl-lottie-miniprogram).
+     */
+    animated: { type: Boolean, value: false },
+    /** Loops the animation (applied live). */
+    loop: { type: Boolean, value: true },
+    /** Animation speed, above 0 (applied live). */
+    speed: { type: Number, value: 1 },
+    /** The package path of the animations; empty uses this component's own `animations/` folder. */
+    animationBase: { type: String, value: '' },
   },
-  data: { items: [], _background: null, _scenario: null },
+  data: { items: [], _background: null, _scenario: null, hasBackgroundAction: false, animationFolder: '' },
+  lifetimes: {
+    attached() {
+      // `this.is` is the component's package path ("components/cyl-placeholder/index"); lottie needs absolute paths.
+      this.setData({ animationFolder: this.data.animationBase || '/' + this.is.replace(/[^/]*$/, '') + 'animations/' })
+    },
+  },
   observers: {
     'scenario, components, language, backgroundAction': function () {
       this.reload()
     },
+    animationBase(base) {
+      if (base) this.setData({ animationFolder: base })
+    },
   },
   methods: {
+    /** "Play all": restarts every animation of the placeholder from progress 0. */
+    playAll() {
+      this.selectAllComponents('.cyl-placeholder__animation').forEach((a) => a.cyl_playFromStart && a.cyl_playFromStart())
+    },
     /** Rebuilds the stack, for example after CYLPlaceholderLocalization.setLanguage. */
     reload() {
       const scenario = CYLPlaceholderScenarioCatalog.scenarioNamed(this.data.scenario)
@@ -42,7 +66,7 @@ Component({
       const source = own && own.length ? own : (scenario ? CYLPlaceholderScenarioCatalog.componentsForScenario(scenario, language) : [])
       const items = source.map((c, index) => ({ ...c, index, tappable: !!c.action }))
       const background = this.data.backgroundAction || (scenario ? CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario) : null)
-      this.setData({ items, _background: background, _scenario: scenario })
+      this.setData({ items, _background: background, _scenario: scenario, hasBackgroundAction: !!background })
     },
     onItemTap(e) {
       const index = Number(e.currentTarget.dataset.index)

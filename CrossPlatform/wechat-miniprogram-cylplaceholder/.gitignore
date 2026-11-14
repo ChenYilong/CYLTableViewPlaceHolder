@@ -3,4 +3,5 @@ miniprogram_npm/
 # Copied from src/ by scripts/sync-example.js (also run by the DevTools beforeCompile hook).
 example/miniprogram/components/cyl-placeholder/
 example/miniprogram/components/cyl-placeholder-hud/
+example/miniprogram/libs/
 project.private.config.json
