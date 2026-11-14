@@ -22,6 +22,7 @@
 | [HUD 样式](#hud-样式--the-hud-style) | [The HUD style](#hud-样式--the-hud-style) |
 | [内置刷新组件](#内置刷新组件--built-in-refresh-components) | [Built-in refresh components](#内置刷新组件--built-in-refresh-components) |
 | [运行 Demo](#运行-demo--running-the-demos) | [Running the demos](#运行-demo--running-the-demos) |
+| [Android](#android--android) | [Android](#android--android) |
 | [适用于多种应用场景](#适用于多种应用场景--scenarios-it-fits) | [Scenarios it fits](#适用于多种应用场景--scenarios-it-fits) |
 
 <!-- docs-navigation:end -->
@@ -908,6 +909,17 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 | 在该目录运行 `pod install` 后打开 `Example-Scenarios.xcworkspace`；它通过本地 Pod 引入全部动画子规格，并按最新 commit 引入 CYLTabBarController（构建前由 `scripts/resolve-cyltabbarcontroller-commit.sh` 更新）。场景文字来自核心资源包；Demo 自己的界面文字（Tab、分组等）放在示例的 `Sources/CYLScenarioExample.bundle`（七种语言），代码只通过 `CYLScenarioLocalization.swift` 中的 `CYLScenarioLocalizedString` 函数和 `CYLScenarioL10n` 键枚举读取；`python3 scripts/check_localizations.py` 检查所有资源包以及键枚举是否完整。 | Run `pod install` in that directory and open `Example-Scenarios.xcworkspace`; it pulls in all animation subspecs through the local pod and CYLTabBarController at its newest commit (updated before each build by `scripts/resolve-cyltabbarcontroller-commit.sh`). Scenario texts come from the core resource bundle; the demo's own UI text (tabs, sections and so on) lives in the example's `Sources/CYLScenarioExample.bundle` (seven languages), and the code reads it only through the `CYLScenarioLocalizedString` function and the `CYLScenarioL10n` key enum in `CYLScenarioLocalization.swift`; `python3 scripts/check_localizations.py` checks that all resource bundles and the key enum are complete. |
 | 四个 `Example-*` 工程使用本地 Pod，分别在各自目录运行 `pod install` 后打开 workspace；它们的应用和 Pods 最低版本为 iOS 15，与库的 iOS 12 最低版本不同。 | The four `Example-*` projects use the local pod; run `pod install` in each directory and open the workspace; their apps and Pods require iOS 15 at least, which differs from the library's iOS 12 minimum. |
 | 这四个 `Example-*` 工程的 Podfile 还会加入最新版本的 MJRefresh（本库的刷新组件改编自它），用来在每次构建时检查两者能否共存并编译通过。版本由 `scripts/resolve-mjrefresh-version.sh` 在构建前取自 CocoaPods 索引（最高的稳定版本），并写入各 Podfile；CI 的 `scripts/ci-build-example.sh` 会自动执行。仓库根目录的主 Demo 通过同一工程的框架目标使用刷新源码，不受影响。 | The Podfiles of these four `Example-*` projects also add the latest version of MJRefresh (this library's refresh component is adapted from it), so every build checks that the two coexist and compile. The version, the highest stable one, is read from the CocoaPods index by `scripts/resolve-mjrefresh-version.sh` before the build and written into each Podfile; CI's `scripts/ci-build-example.sh` does this automatically. The main demo at the repository root uses the refresh source through the framework target of the same project and is not affected. |
+
+## Android / Android
+
+| 中文 | English |
+| --- | --- |
+| `android/` 是本库的 Android 版本（Kotlin）：`placeholder`（占位图）、SVPullToRefresh、android-Ultra-Pull-To-Refresh 与 SmartRefreshLayout 三个刷新库的 Kotlin 移植（保留原库的包名、类名与许可证），`android/merged` 把它们汇集为一个库 `:merged`，示例 `:merged-example` 用 CYLTabBarController 的 Android TabBar 分为四个 Tab（每个库一个），中间是凸出的加号按钮。进度、问题修复与 API 对照见 [docs/Android-Port.md](docs/Android-Port.md)。 | `android/` is this library's Android version (Kotlin): `placeholder` (the placeholder views) and Kotlin ports of three refresh libraries, SVPullToRefresh, android-Ultra-Pull-To-Refresh and SmartRefreshLayout (their packages, class names and licenses kept). `android/merged` brings them together as one library, `:merged`; the example `:merged-example` uses CYLTabBarController's Android tab bar with four tabs, one per library, and a raised plus button in the middle. Progress, issue fixes and the API table are in [docs/Android-Port.md](docs/Android-Port.md). |
+| 构建：在 `android/` 运行 `./gradlew -PcylTabBarDir=<CYLTabBarController 检出>/Example-Android :merged-example:assembleDebug`（不传时使用与本仓库同级的 `CYLTabBarController/`）。截图：Android 15 模拟器（API 35），提交 `2623a1c`，2026-11-14。 | Build: in `android/`, run `./gradlew -PcylTabBarDir=<CYLTabBarController checkout>/Example-Android :merged-example:assembleDebug` (without it, the `CYLTabBarController/` next to this repository is used). Screenshots: Android 15 emulator (API 35), commit `2623a1c`, 2026-11-14. |
+
+![Android merged example: placeholder tab and tab bar](docs/assets/android-merged-example-tabs.png)
+
+![Android merged example: three refresh libraries](docs/assets/android-merged-example-refresh.png)
 
 ## 适用于多种应用场景 / Scenarios it fits
 
