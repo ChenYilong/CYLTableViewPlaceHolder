@@ -1,5 +1,6 @@
 /* The merged example's tab titles (docs/Android-Port.md, step 3). */
 "tab.placeholder" = "佔位圖";
-"tab.svpulltorefresh" = "SVPullToRefresh";
+"tab.svpulltorefresh" = "SVPull";
 "tab.ultraptr" = "Ultra 重新整理";
 "tab.smartrefresh" = "SmartRefresh";
+"tab.feed" = "動態";

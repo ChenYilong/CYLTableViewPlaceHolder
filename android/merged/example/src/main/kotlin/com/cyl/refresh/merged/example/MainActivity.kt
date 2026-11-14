@@ -38,6 +38,7 @@ object ExamplePages {
         "tray" to android.R.drawable.ic_menu_agenda,
         "arrow" to android.R.drawable.ic_menu_rotate,
         "sparkles" to android.R.drawable.btn_star,
+        "bubble" to android.R.drawable.ic_menu_send,
     )
 
     /**
@@ -56,5 +57,6 @@ object ExamplePages {
         registry.registerPageProvider({ _, _ -> SVPullToRefreshPage() }, listOf("svpulltorefresh"))
         registry.registerPageProvider({ _, _ -> UltraPullToRefreshPage() }, listOf("ultraptr"))
         registry.registerPageProvider({ _, _ -> SmartRefreshPage() }, listOf("smartrefresh"))
+        registry.registerPageProvider({ _, _ -> FeedPage() }, listOf("feed"))
     }
 }

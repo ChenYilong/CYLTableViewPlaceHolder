@@ -16,8 +16,6 @@ import androidx.core.view.NestedScrollingParent
 import androidx.core.view.ScrollingView
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.scwang.smart.refresh.layout.api.RefreshComponent
 import com.scwang.smart.refresh.layout.api.RefreshKernel
@@ -132,7 +130,22 @@ class SmartUtil(private val type: Int) : Interpolator {
         @JvmStatic
         fun isContentView(view: View): Boolean {
             if (view is RefreshComponent) return false
-            return isScrollableView(view) || view is ViewPager || view is ViewPager2 || view is NestedScrollingParent
+            return isScrollableView(view) || isPager(view) || view is NestedScrollingParent
+        }
+
+        /**
+         * True for a ViewPager or a ViewPager2 (or a subclass), found by class name: the kernel does not link either
+         * class, so an app without viewpager2 (the layout around a plain list) does not crash with a
+         * NoClassDefFoundError the first time a content view is checked.
+         */
+        @JvmStatic
+        fun isPager(view: View): Boolean {
+            var type: Class<*>? = view.javaClass
+            while (type != null) {
+                if (type.name == "androidx.viewpager2.widget.ViewPager2" || type.name == "androidx.viewpager.widget.ViewPager") return true
+                type = type.superclass
+            }
+            return false
         }
 
         /**

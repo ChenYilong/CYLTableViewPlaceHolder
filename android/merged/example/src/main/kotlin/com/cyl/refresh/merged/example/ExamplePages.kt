@@ -73,8 +73,8 @@ internal class RowList(context: Context, intro: Int) : NestedScrollView(context)
 /**
  * Runs [block] after a short pause, like a network request.
  */
-internal fun later(block: () -> Unit) {
-    Handler(Looper.getMainLooper()).postDelayed(block, 1200)
+internal fun later(delay: Long = 1200, block: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed(block, delay)
 }
 
 /**

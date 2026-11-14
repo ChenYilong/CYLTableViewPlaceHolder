@@ -1267,4 +1267,22 @@ class SmartRefreshKotlinIssuesTest {
         }
         throw NoSuchFieldException(name)
     }
+
+    @Test
+    fun aFrameAroundAListIsFoundWithoutLinkingViewPager2() {
+        // Found with the Android sample app (no viewpager2 on its class path): checking a content view named the
+        // ViewPager2 class, and attaching a layout whose content is a frame around a list crashed with a
+        // NoClassDefFoundError. The kernel finds pagers by class name now. Here the class is on the path, so the test
+        // checks the lookup itself: the list inside the frame is the scrolling view, a pager subclass is a pager.
+        assumeKotlin()
+        val list = content(3000)
+        val box = FrameLayout(activity).apply { addView(list) }
+        val layout = show(layout(box))
+        val wrapper = SmartRefreshLayout::class.java.getDeclaredField("mRefreshContent").apply { isAccessible = true }.get(layout)
+        assertEquals(list, wrapper.javaClass.getMethod("getScrollableView").invoke(wrapper))
+        val pager = Class.forName("com.scwang.smart.refresh.layout.util.SmartUtil").getMethod("isPager", View::class.java)
+        assertFalse(pager.invoke(null, box) as Boolean)
+        assertTrue(pager.invoke(null, androidx.viewpager.widget.ViewPager(activity)) as Boolean)
+    }
+
 }

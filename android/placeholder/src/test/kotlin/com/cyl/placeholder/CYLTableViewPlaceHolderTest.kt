@@ -90,4 +90,32 @@ class CYLTableViewPlaceHolderTest {
         assertTrue("scrollable, so a pull to refresh still works", shown is NestedScrollView)
         assertNotNull(placeholder.parent)
     }
+
+    @Test
+    fun aReloadOfAnEmptyListBuildsANewPlaceholder() {
+        // iOS destroys the placeholder on every reloadData and asks makePlaceHolderView again, so a change of state
+        // (loading, then failed) shows at once. Found with the sample app's Feed page: after "Retry" the failed
+        // placeholder stayed on screen while the list loaded.
+        val rows = Rows(0)
+        val (parent, list) = list(rows)
+        var made = 0
+        list.cyl_placeholderViewBlock { View(activity).also { made++ } }
+        val first = list.cyl_placeholderView
+        assertNotNull(first)
+        assertEquals(1, made)
+        val children = parent.childCount
+        list.cyl_reloadData()
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals("the block is asked again", 2, made)
+        val second = list.cyl_placeholderView
+        assertNotNull(second)
+        assertTrue("a new placeholder", first !== second)
+        assertNull("the old one is gone", first!!.parent)
+        assertEquals("still one placeholder next to the list", children, parent.childCount)
+        rows.count = 3
+        list.cyl_reloadData()
+        assertNull("data again: no placeholder", list.cyl_placeholderView)
+        assertEquals(2, made)
+    }
+
 }

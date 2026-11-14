@@ -36,4 +36,7 @@
     <string name="merged_support_text">担当者がまもなく返信します。</string>
     <string name="merged_support_title">カスタマーサポート</string>
     <string name="merged_format_action_tapped">タップ：%1$s</string>
+    <string name="merged_format_post">投稿 %1$d</string>
+    <string name="merged_text_feed_hint">2回に1回は更新に失敗します</string>
+    <string name="merged_action_publish">投稿</string>
 </resources>

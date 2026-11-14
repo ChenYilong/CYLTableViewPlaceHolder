@@ -15,8 +15,6 @@ import android.widget.FrameLayout
 import android.widget.Space
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.scwang.smart.refresh.layout.api.RefreshContent
 import com.scwang.smart.refresh.layout.api.RefreshFooter
 import com.scwang.smart.refresh.layout.api.RefreshHeader
@@ -124,7 +122,7 @@ open class RefreshContentWrapper(view: View) : RefreshContent, CoordinatorLayout
             for (i in content.childCount downTo 1) {
                 var child = content.getChildAt(i - 1)
                 if (SmartUtil.isTransformedTouchPointInView(content, child, event.x, event.y, point)) {
-                    if (child is ViewPager || child is ViewPager2 || !SmartUtil.isContentView(child)) {
+                    if (SmartUtil.isPager(child) || !SmartUtil.isContentView(child)) {
                         event.offset(point.x, point.y)
                         child = findScrollableViewByPoint(child, event, orgScrollableView)
                         event.offset(-point.x, -point.y)
