@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：继续未结束的任务，并完成文档中的所有 TODO / TODO: Continue the unfinished tasks and finish every TODO in the documents
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-14，分支 `feat/android-refresh-port`，PR #28）。 | Status: TODO (2026-11-14, branch `feat/android-refresh-port`, pull request #28). |
+| 用户原始提示词：“根据Memory 以及本地Memory文档，尝试继续完成对于 CYLTableViewPlaceHolder 文件夹 我们未结束的任务，然后遍历所有文档，找到关键词TODO 完成所有TODO工作。重点查看CYLTableViewPlaceHolder 文件夹相关文档的TODO continue” | The user's original prompt (verbatim on the left): from the memory and the local memory documents, continue the unfinished tasks of the CYLTableViewPlaceHolder folder, then go through every document, find the keyword TODO and finish all TODO work, with the focus on the TODOs of the documents of the CYLTableViewPlaceHolder folder; continue. |
+| 要求：①先继续未结束的任务；②再遍历文档中的 TODO 并逐个完成；③重点是 CYLTableViewPlaceHolder 的文档；④按指令顺序执行（最早的指令先做）。 | Requirements: (1) continue the unfinished tasks first; (2) then go through the TODOs in the documents and finish them one by one; (3) the focus is CYLTableViewPlaceHolder's documents; (4) in instruction order (the oldest instruction first). |
+| 上下文（2026-11-14 盘点的 TODO 标题）：`docs/Android-Port.md`：Android 移植总任务（第 5 步 API 对齐评分 36 / 100，进行中；第 6 步移植 iOS 示例；5 个需要真机的 SmartRefreshLayout issue，评分 98 / 100）、HarmonyOS NEXT；`docs/Task-Log.md`：动效示例的播放控制；`docs/Swift-Migration.md`：核心层转写为 Swift；`docs/Refresh-Library-Parity.md`：三个刷新库对照与 Swift 示例；`docs/issue-progress.md`、`docs/flatdesign-item-comparison.md`、`docs/commit-readiness-2026-11-09.md` 的 TODO 小节。先做进行中的 Android 第 5 步。 | Context (TODO headings found on 2026-11-14): `docs/Android-Port.md`: the Android port (step 5, the API alignment score, 36 / 100, in progress; step 6, porting the iOS examples; 5 SmartRefreshLayout issues that need a device, score 98 / 100) and HarmonyOS NEXT; `docs/Task-Log.md`: playback controls in animation examples; `docs/Swift-Migration.md`: the core in Swift; `docs/Refresh-Library-Parity.md`: the three refresh libraries compared, with Swift examples; the TODO sections of `docs/issue-progress.md`, `docs/flatdesign-item-comparison.md` and `docs/commit-readiness-2026-11-09.md`. The Android step 5 in progress comes first. |
+
 ### 已完成：开始任务前先在 docs 中记录任务 / Done: Record every task in docs before starting it
 
 | 中文 | English |
