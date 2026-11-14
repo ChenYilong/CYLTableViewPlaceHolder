@@ -12,11 +12,15 @@ from xml.sax.saxutils import escape
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 BUNDLE = os.path.join(ROOT, 'CYLTableViewPlaceHolder', 'CYLTableViewPlaceHolder', 'CYLTableViewPlaceHolder.bundle')
 RES = os.path.join(ROOT, 'android', 'placeholder', 'src', 'main', 'res')
-IMAGES = ['Empty', 'SearchOff', 'EmptyCart', 'Archive', 'Favorite', 'Inbox', 'NotificationsOff',
-          # Every fallback style of the scenario catalog (CYLPlaceholderScenarioCatalog).
-          'WifiOff', 'Refresh', 'ErrorOutline', 'SignalWifiOff', 'NoInternet', 'ReportProblem', 'CloudOff', 'Help', 'Info',
-          'Locked', 'LocationOff', 'VideoOff', 'PhotoLibrary', 'MusicOff', 'GroupOff', 'EventBusy', 'BluetoothDisabled',
-          'SyncProblem', 'Hourglass', 'UploadOff']
+IMAGES = [
+    # Every CYLPlaceholderStyle, in the iOS order (CYLPlaceholderView.imageNameForStyle).
+    'Empty', 'NoResults', 'Error', 'WifiOff', 'SignalWifiOff', 'NoInternet', 'CloudOff', 'SyncProblem', 'SyncDisabled',
+    'NetworkLocked', 'BluetoothDisabled', 'LocationOff', 'PublicOff', 'ErrorOutline', 'Warning', 'ReportProblem', 'Blocked',
+    'Help', 'Hourglass', 'Locked', 'VisibilityOff', 'SearchOff', 'FolderOff', 'FolderOpen', 'DownloadOff', 'UploadOff',
+    'Inbox', 'BrokenImage', 'ImageUnavailable', 'PhotoLibrary', 'MusicOff', 'VideoOff', 'PersonOff', 'GroupOff', 'EventBusy',
+    'EmptyCart', 'Favorite', 'BatteryAlert', 'UnknownDevice', 'PhoneDisabled', 'WrongLocation', 'Archive', 'Info', 'Refresh',
+    'Delete', 'Search', 'Mail', 'Image', 'Cloud', 'NotificationsOff', 'History',
+]
 LANGS = {'en': 'values', 'ja': 'values-ja', 'ko': 'values-ko', 'ru': 'values-ru', 'uk': 'values-uk',
          'zh-Hans': 'values-b+zh+Hans', 'zh-Hant': 'values-b+zh+Hant'}
 

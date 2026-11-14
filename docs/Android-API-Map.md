@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：19 / 100**（done + 0.5 × partial，共 816 个计入的符号；done 133、partial 43、planned 640、n/a 88）。 | **Migration score: 19 / 100** (done + 0.5 × partial over 816 counted symbols; done 133, partial 43, planned 640, n/a 88). |
+| **迁移完成率：27 / 100**（done + 0.5 × partial，共 814 个计入的符号；done 197、partial 49、planned 568、n/a 90）。 | **Migration score: 27 / 100** (done + 0.5 × partial over 814 counted symbols; done 197, partial 49, planned 568, n/a 90). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -1197,80 +1197,80 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderStyle` | — | planned (TODO) |  |
-| `CYLPlaceholderMessage` | — | planned (TODO) |  |
-| `CYLPlaceholderTapHighlightStyle` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeStyle` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `backgroundColor` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `textColor` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `font` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `cornerRadius` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `contentInsets` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `animationDuration` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `animatesChanges` | — | planned (TODO) |  |
-| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `ready` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `errorHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `readyHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-play` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-stop` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-showLastFrame` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationProgress:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationSpeed:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | — | planned (TODO) |  |
-| `CYLPlaceholderAnimationFactory` | — | planned (TODO) |  |
-| `CYLPlaceholderView` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `imageView` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `textLabel` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `badgeValue` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `badgeLabel` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `badgeCenterOffset` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `selected` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `selectionIndicatorImage` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `selectionIndicatorTintColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultTitleColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultIconColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultBackgroundColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultTitleFont` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectedTitleColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectedIconColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectedBackgroundColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectedTitleFont` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `itemAttributes` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `reportsContentSize` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `preferredMaxLayoutWidth` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `contentMargin` | — | planned (TODO) |  |
-| `CYLPlaceholderTapHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `tapHandler` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `tapInteractionEnabled` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `tapHighlightStyle` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `tapHighlighted` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `tapInteractive` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-performTap` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `animationRepeatCount` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-playPlaceholderAnimation` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-stopPlaceholderAnimation` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | — | planned (TODO) |  |
+| `CYLPlaceholderStyle` | `com.cyl.placeholder.CYLPlaceholderStyle` | done |  |
+| `CYLPlaceholderMessage` | `com.cyl.placeholder.CYLPlaceholderMessage` | done |  |
+| `CYLPlaceholderTapHighlightStyle` | `com.cyl.placeholder.CYLPlaceholderTapHighlightStyle` | done |  |
+| `CYLPlaceholderBadgeStyle` | `com.cyl.placeholder.CYLPlaceholderBadgeStyle` | done |  |
+| `CYLPlaceholderBadgeAppearance` | `com.cyl.placeholder.CYLPlaceholderBadgeAppearance` | done |  |
+| `CYLPlaceholderBadgeAppearance` `backgroundColor` | `CYLPlaceholderBadgeAppearance.backgroundColor` | done |  |
+| `CYLPlaceholderBadgeAppearance` `textColor` | `CYLPlaceholderBadgeAppearance.textColor` | done |  |
+| `CYLPlaceholderBadgeAppearance` `font` | `CYLPlaceholderBadgeAppearance.font` | partial | the text size in sp (Android takes no UIFont) |
+| `CYLPlaceholderBadgeAppearance` `cornerRadius` | `CYLPlaceholderBadgeAppearance.cornerRadius` | done |  |
+| `CYLPlaceholderBadgeAppearance` `contentInsets` | `CYLPlaceholderBadgeAppearance.contentInsets` | done |  |
+| `CYLPlaceholderBadgeAppearance` `animationDuration` | `CYLPlaceholderBadgeAppearance.animationDuration` | partial | kept; badge changes do not animate yet |
+| `CYLPlaceholderBadgeAppearance` `animatesChanges` | `CYLPlaceholderBadgeAppearance.animatesChanges` | partial | kept; badge changes do not animate yet |
+| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | `CYLPlaceholderBadgeAppearance.sharedAppearance` | done |  |
+| `CYLPlaceholderAnimationPlayer` | `com.cyl.placeholder.CYLPlaceholderAnimationPlayer` | done |  |
+| `CYLPlaceholderAnimationPlayer` `ready` | `CYLPlaceholderAnimationPlayer.ready` | done |  |
+| `CYLPlaceholderAnimationPlayer` `errorHandler` | `CYLPlaceholderAnimationPlayer.errorHandler` | done |  |
+| `CYLPlaceholderAnimationPlayer` `readyHandler` | `CYLPlaceholderAnimationPlayer.readyHandler` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-play` | `CYLPlaceholderAnimationPlayer.play` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-stop` | `CYLPlaceholderAnimationPlayer.stop` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-showLastFrame` | `CYLPlaceholderAnimationPlayer.showLastFrame` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationProgress:` | `CYLPlaceholderAnimationPlayer.setAnimationProgress` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationSpeed:` | `CYLPlaceholderAnimationPlayer.setAnimationSpeed` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | `CYLPlaceholderAnimationPlayer.setAnimationRepeatCount` | done |  |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | `CYLPlaceholderAnimationPlayer.setAnimationColors` | done |  |
+| `CYLPlaceholderAnimationFactory` | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` | done |  |
+| `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | partial | creating one from an item configuration (dictionary or file) is TODO |
+| `CYLPlaceholderView` `imageView` | `CYLPlaceholderView.imageView` | done |  |
+| `CYLPlaceholderView` `textLabel` | `CYLPlaceholderView.textLabel` | done |  |
+| `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderView.badgeValue` | done |  |
+| `CYLPlaceholderView` `badgeLabel` | `CYLPlaceholderView.badgeLabel` | done |  |
+| `CYLPlaceholderView` `badgeCenterOffset` | `CYLPlaceholderView.badgeCenterOffset` | done |  |
+| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | `CYLPlaceholderView.showBadgeWithStyle(style, value)` | done |  |
+| `CYLPlaceholderView` `selected` | `CYLPlaceholderView.selectedState` | done | named selectedState: View already has isSelected |
+| `CYLPlaceholderView` `selectionIndicatorImage` | `CYLPlaceholderView.selectionIndicatorImage` | done |  |
+| `CYLPlaceholderView` `selectionIndicatorTintColor` | `CYLPlaceholderView.selectionIndicatorTintColor` | done |  |
+| `CYLPlaceholderView` `defaultTitleColor` | `CYLPlaceholderView.defaultTitleColor` | done |  |
+| `CYLPlaceholderView` `defaultIconColor` | `CYLPlaceholderView.defaultIconColor` | done |  |
+| `CYLPlaceholderView` `defaultBackgroundColor` | `CYLPlaceholderView.defaultBackgroundColor` | done |  |
+| `CYLPlaceholderView` `defaultTitleFont` | `CYLPlaceholderView.defaultTitleFont (sp)` | done |  |
+| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | `CYLPlaceholderView.defaultTitlePositionAdjustment` | done |  |
+| `CYLPlaceholderView` `defaultSelectedTitleColor` | `CYLPlaceholderView.defaultSelectedTitleColor` | done |  |
+| `CYLPlaceholderView` `defaultSelectedIconColor` | `CYLPlaceholderView.defaultSelectedIconColor` | done |  |
+| `CYLPlaceholderView` `defaultSelectedBackgroundColor` | `CYLPlaceholderView.defaultSelectedBackgroundColor` | done |  |
+| `CYLPlaceholderView` `defaultSelectedTitleFont` | `CYLPlaceholderView.defaultSelectedTitleFont (sp)` | done |  |
+| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | `CYLPlaceholderView.defaultSelectionIndicatorImage` | done |  |
+| `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | `CYLPlaceholderView.defaultSelectionIndicatorTintColor` | done |  |
+| `CYLPlaceholderView` `itemAttributes` | `CYLPlaceholderView.itemAttributes` | partial | the title, image and animation file keys |
+| `CYLPlaceholderView` `reportsContentSize` | `CYLPlaceholderView.reportsContentSize` | partial | kept; the view always measures to its content on Android |
+| `CYLPlaceholderView` `preferredMaxLayoutWidth` | `CYLPlaceholderView.preferredMaxLayoutWidth` | done |  |
+| `CYLPlaceholderView` `contentMargin` | `CYLPlaceholderView.contentMargin` | done |  |
+| `CYLPlaceholderTapHandler` | `com.cyl.placeholder.CYLPlaceholderTapHandler` | done |  |
+| `CYLPlaceholderView` `tapHandler` | `CYLPlaceholderView.tapHandler` | done |  |
+| `CYLPlaceholderView` `tapInteractionEnabled` | `CYLPlaceholderView.tapInteractionEnabled` | done |  |
+| `CYLPlaceholderView` `tapHighlightStyle` | `CYLPlaceholderView.tapHighlightStyle` | done |  |
+| `CYLPlaceholderView` `tapHighlighted` | `CYLPlaceholderView.tapHighlighted` | done |  |
+| `CYLPlaceholderView` `tapInteractive` | `CYLPlaceholderView.tapInteractive` | done |  |
+| `CYLPlaceholderView` `-performTap` | `CYLPlaceholderView.performTap()` | done |  |
+| `CYLPlaceholderView` `animationRepeatCount` | `CYLPlaceholderView.animationRepeatCount` | done |  |
+| `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | `CYLPlaceholderView.registerAnimationFactory(factory, extension)` | done |  |
+| `CYLPlaceholderView` `-playPlaceholderAnimation` | `CYLPlaceholderView.playPlaceholderAnimation()` | done |  |
+| `CYLPlaceholderView` `-stopPlaceholderAnimation` | `CYLPlaceholderView.stopPlaceholderAnimation()` | done |  |
+| `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` | done |  |
+| `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | `CYLPlaceholderView.setPlaceholderAnimationProgress(progress)` | done |  |
+| `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | `CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)` | done |  |
 | `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | — | planned (TODO) |  |
 | `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-initWithStyle:message:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-initWithStyle:text:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-initWithImage:text:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+imageForStyle:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+imageNameForStyle:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+localizedTextForMessage:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+bundledAnimationFileNames` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `+pathForBundledAnimation:` | — | planned (TODO) |  |
+| `CYLPlaceholderView` `-initWithStyle:message:` | `CYLPlaceholderView(context, style, message)` | done |  |
+| `CYLPlaceholderView` `-initWithStyle:text:` | `CYLPlaceholderView(context, style, text)` | done |  |
+| `CYLPlaceholderView` `-initWithImage:text:` | `CYLPlaceholderView(context, image, text)` | done |  |
+| `CYLPlaceholderView` `+imageForStyle:` | `CYLPlaceholderView.imageForStyle(context, style)` | done |  |
+| `CYLPlaceholderView` `+imageNameForStyle:` | `CYLPlaceholderView.imageNameForStyle(style)` | done |  |
+| `CYLPlaceholderView` `+localizedTextForMessage:` | `CYLPlaceholderView.localizedTextForMessage(context, message)` | done |  |
+| `CYLPlaceholderView` `+bundledAnimationFileNames` | — | n/a | Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile) |
+| `CYLPlaceholderView` `+pathForBundledAnimation:` | — | n/a | Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile) |
 
 ## `CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`
 

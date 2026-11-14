@@ -8,6 +8,97 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
  },
+ "CYLPlaceholderAnimationFactory": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationFactory"
+ },
+ "CYLPlaceholderAnimationPlayer": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderAnimationPlayer"
+ },
+ "CYLPlaceholderAnimationPlayer -play": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.play"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationColors:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationColors"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationProgress"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationRepeatCount:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationRepeatCount"
+ },
+ "CYLPlaceholderAnimationPlayer -setAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.setAnimationSpeed"
+ },
+ "CYLPlaceholderAnimationPlayer -showLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.showLastFrame"
+ },
+ "CYLPlaceholderAnimationPlayer -stop": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.stop"
+ },
+ "CYLPlaceholderAnimationPlayer errorHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.errorHandler"
+ },
+ "CYLPlaceholderAnimationPlayer ready": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.ready"
+ },
+ "CYLPlaceholderAnimationPlayer readyHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderAnimationPlayer.readyHandler"
+ },
+ "CYLPlaceholderBadgeAppearance": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderBadgeAppearance"
+ },
+ "CYLPlaceholderBadgeAppearance +sharedAppearance": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.sharedAppearance"
+ },
+ "CYLPlaceholderBadgeAppearance animatesChanges": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.animatesChanges",
+  "note": "kept; badge changes do not animate yet"
+ },
+ "CYLPlaceholderBadgeAppearance animationDuration": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.animationDuration",
+  "note": "kept; badge changes do not animate yet"
+ },
+ "CYLPlaceholderBadgeAppearance backgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.backgroundColor"
+ },
+ "CYLPlaceholderBadgeAppearance contentInsets": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.contentInsets"
+ },
+ "CYLPlaceholderBadgeAppearance cornerRadius": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.cornerRadius"
+ },
+ "CYLPlaceholderBadgeAppearance font": {
+  "status": "partial",
+  "android": "CYLPlaceholderBadgeAppearance.font",
+  "note": "the text size in sp (Android takes no UIFont)"
+ },
+ "CYLPlaceholderBadgeAppearance textColor": {
+  "status": "done",
+  "android": "CYLPlaceholderBadgeAppearance.textColor"
+ },
+ "CYLPlaceholderBadgeStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderBadgeStyle"
+ },
  "CYLPlaceholderButtonStyle": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle"
@@ -72,6 +163,10 @@
  "CYLPlaceholderComponent spacingBefore": {
   "status": "done",
   "android": "CYLPlaceholderComponent.spacingBefore (dp)"
+ },
+ "CYLPlaceholderMessage": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderMessage"
  },
  "CYLPlaceholderPermission": {
   "status": "done",
@@ -206,6 +301,206 @@
  "CYLPlaceholderStackView stackView": {
   "status": "done",
   "android": "CYLPlaceholderStackView.stackView"
+ },
+ "CYLPlaceholderStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderStyle"
+ },
+ "CYLPlaceholderTapHandler": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderTapHandler"
+ },
+ "CYLPlaceholderTapHighlightStyle": {
+  "status": "done",
+  "android": "com.cyl.placeholder.CYLPlaceholderTapHighlightStyle"
+ },
+ "CYLPlaceholderView": {
+  "status": "partial",
+  "android": "com.cyl.placeholder.CYLPlaceholderView",
+  "note": "creating one from an item configuration (dictionary or file) is TODO"
+ },
+ "CYLPlaceholderView +bundledAnimationFileNames": {
+  "status": "n/a",
+  "note": "Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)"
+ },
+ "CYLPlaceholderView +imageForStyle:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageForStyle(context, style)"
+ },
+ "CYLPlaceholderView +imageNameForStyle:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageNameForStyle(style)"
+ },
+ "CYLPlaceholderView +localizedTextForMessage:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.localizedTextForMessage(context, message)"
+ },
+ "CYLPlaceholderView +pathForBundledAnimation:": {
+  "status": "n/a",
+  "note": "Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)"
+ },
+ "CYLPlaceholderView +registerAnimationFactory:forFileExtension:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.registerAnimationFactory(factory, extension)"
+ },
+ "CYLPlaceholderView -initWithImage:text:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, image, text)"
+ },
+ "CYLPlaceholderView -initWithStyle:message:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, style, message)"
+ },
+ "CYLPlaceholderView -initWithStyle:text:": {
+  "status": "done",
+  "android": "CYLPlaceholderView(context, style, text)"
+ },
+ "CYLPlaceholderView -performTap": {
+  "status": "done",
+  "android": "CYLPlaceholderView.performTap()"
+ },
+ "CYLPlaceholderView -playPlaceholderAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderView.playPlaceholderAnimation()"
+ },
+ "CYLPlaceholderView -setPlaceholderAnimationProgress:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setPlaceholderAnimationProgress(progress)"
+ },
+ "CYLPlaceholderView -setPlaceholderAnimationSpeed:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)"
+ },
+ "CYLPlaceholderView -showBadgeWithStyle:value:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.showBadgeWithStyle(style, value)"
+ },
+ "CYLPlaceholderView -showPlaceholderAnimationLastFrame": {
+  "status": "done",
+  "android": "CYLPlaceholderView.showPlaceholderAnimationLastFrame()"
+ },
+ "CYLPlaceholderView -stopPlaceholderAnimation": {
+  "status": "done",
+  "android": "CYLPlaceholderView.stopPlaceholderAnimation()"
+ },
+ "CYLPlaceholderView animationRepeatCount": {
+  "status": "done",
+  "android": "CYLPlaceholderView.animationRepeatCount"
+ },
+ "CYLPlaceholderView badgeCenterOffset": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeCenterOffset"
+ },
+ "CYLPlaceholderView badgeLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeLabel"
+ },
+ "CYLPlaceholderView badgeValue": {
+  "status": "done",
+  "android": "CYLPlaceholderView.badgeValue"
+ },
+ "CYLPlaceholderView contentMargin": {
+  "status": "done",
+  "android": "CYLPlaceholderView.contentMargin"
+ },
+ "CYLPlaceholderView defaultBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultBackgroundColor"
+ },
+ "CYLPlaceholderView defaultIconColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultIconColor"
+ },
+ "CYLPlaceholderView defaultSelectedBackgroundColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedBackgroundColor"
+ },
+ "CYLPlaceholderView defaultSelectedIconColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedIconColor"
+ },
+ "CYLPlaceholderView defaultSelectedTitleColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedTitleColor"
+ },
+ "CYLPlaceholderView defaultSelectedTitleFont": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectedTitleFont (sp)"
+ },
+ "CYLPlaceholderView defaultSelectionIndicatorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectionIndicatorImage"
+ },
+ "CYLPlaceholderView defaultSelectionIndicatorTintColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultSelectionIndicatorTintColor"
+ },
+ "CYLPlaceholderView defaultTitleColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitleColor"
+ },
+ "CYLPlaceholderView defaultTitleFont": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitleFont (sp)"
+ },
+ "CYLPlaceholderView defaultTitlePositionAdjustment": {
+  "status": "done",
+  "android": "CYLPlaceholderView.defaultTitlePositionAdjustment"
+ },
+ "CYLPlaceholderView imageView": {
+  "status": "done",
+  "android": "CYLPlaceholderView.imageView"
+ },
+ "CYLPlaceholderView itemAttributes": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.itemAttributes",
+  "note": "the title, image and animation file keys"
+ },
+ "CYLPlaceholderView preferredMaxLayoutWidth": {
+  "status": "done",
+  "android": "CYLPlaceholderView.preferredMaxLayoutWidth"
+ },
+ "CYLPlaceholderView reportsContentSize": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.reportsContentSize",
+  "note": "kept; the view always measures to its content on Android"
+ },
+ "CYLPlaceholderView selected": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectedState",
+  "note": "named selectedState: View already has isSelected"
+ },
+ "CYLPlaceholderView selectionIndicatorImage": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectionIndicatorImage"
+ },
+ "CYLPlaceholderView selectionIndicatorTintColor": {
+  "status": "done",
+  "android": "CYLPlaceholderView.selectionIndicatorTintColor"
+ },
+ "CYLPlaceholderView tapHandler": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHandler"
+ },
+ "CYLPlaceholderView tapHighlightStyle": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHighlightStyle"
+ },
+ "CYLPlaceholderView tapHighlighted": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapHighlighted"
+ },
+ "CYLPlaceholderView tapInteractionEnabled": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapInteractionEnabled"
+ },
+ "CYLPlaceholderView tapInteractive": {
+  "status": "done",
+  "android": "CYLPlaceholderView.tapInteractive"
+ },
+ "CYLPlaceholderView textLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderView.textLabel"
  },
  "CYLRefreshAnimatorInterpolator": {
   "status": "n/a",
