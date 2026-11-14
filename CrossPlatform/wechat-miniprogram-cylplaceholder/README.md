@@ -38,13 +38,40 @@ Event `action`: `detail = { action, scenario, index }`, `index` is `-1` for a ba
 `CYLPlaceholderAction*` strings of iOS and Android (`CYLPlaceholderActionRetry`, `…ContactSupport`, `…OpenSettings`,
 `…GoShopping`, `…Done`, `…ChooseManually`).
 
+## HUD
+
+`cyl-placeholder-hud` is `CYLPlaceholderHUD` (the SVProgressHUD-style loading box) for mini programs:
+
+```html
+<cyl-placeholder-hud id="hud" bind:action="onHUDAction" />
+```
+
+```js
+onReady() {
+  this.hud = this.selectComponent('#hud').hud
+},
+load() {
+  this.hud.showWithStatus('Loading…')
+  request().then(() => this.hud.dismiss(), () => this.hud.showErrorWithStatus("Couldn't load"))
+},
+```
+
+Calls: `show`, `showWithStatus`, `showProgress(progress, status)` (negative = indeterminate), `setStatus`,
+`showSuccessWithStatus` / `showErrorWithStatus` / `showInfoWithStatus` / `showImage(path, status)` (dismissed after
+`displayDurationForString`), `showScenario(name)` / `showComponents(list)` (their buttons send the `action` event),
+`popActivity`, `dismiss(completion)`, `dismissWithDelay(seconds, completion)`. Properties: `style` (`Automatic`,
+`Light`, `Dark`), `maskType` (`None`, `Clear`, `Black`, `Gradient`; any but `None` blocks touches and sends `touch`
+when tapped), `graceTimeInterval`, `minimumDismissTimeInterval`, `maximumDismissTimeInterval`,
+`fadeInAnimationDuration`, `fadeOutAnimationDuration`; read-only `visible`, `state`, `status`, `progress`,
+`activityCount`.
+
 ## Example
 
 Open this folder (`CrossPlatform/wechat-miniprogram-cylplaceholder`) in WeChat DevTools. `project.config.json`
 points `miniprogramRoot` at `example/miniprogram/` and its `beforeCompile` hook runs `node scripts/sync-example.js`,
-which copies `src/cyl-placeholder` into the example (a mini program cannot load files outside its root). Run
-`npm run sync-example` yourself if the hook is disabled. The project uses `touristappid`; set your own AppID to
-preview on a phone.
+which copies both components into the example (a mini program cannot load files outside its root). Run
+`npm run sync-example` yourself if the hook is disabled. DevTools refuses the committed `touristappid`: put your own
+AppID in `project.private.config.json` (git-ignored), for example `{ "appid": "wx…" }`.
 
 ## Development
 
