@@ -926,3 +926,12 @@
 
   - Still `TODO`: the scenarios' Lottie / PAG animations on Android, and the other categories (load failed,
     permission, progress, success, HUD).
+
+### TODO：Android 占位图播放 Lottie 动画 / TODO: Lottie animations in the Android placeholder
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-15，分支 `feat/android-lottie-placeholder`，来源分支 `feat/android-refresh-port`，PR #28）。 | Status: TODO (2026-11-15, branch `feat/android-lottie-placeholder`, source branch `feat/android-refresh-port`, PR #28). |
+| 用户原始提示词：“Android animated placeholder: CYLTableViewPlaceHolder PR #28 merged with a Lottie animator. order is 3。4 1 2。” | The user's original prompt (verbatim, left). The order means: this task first, then CYLTabBarController's raised plus button, then the mini program components, then HarmonyOS. |
+| 要求：①Lottie 动画器（`com.airbnb.android:lottie`），单独模块，对应 iOS 的 `CYLPlaceholderAnimation/Lottie` subspec；②场景的 Lottie JSON 进入 Android assets（iOS `Animations/CYLPlaceholder<Name>.json`，表为 `animationFileNamesForScenario`）；③`CYLPlaceholderStackView` 播放场景动画，静态图作后备；④测试；⑤合并进 PR #28（合并到 master 前先问）；⑥CYLSearchViewController 的 `cylsearch` 依赖该模块并更新 pin。 | Requirements: (1) a Lottie animator (`com.airbnb.android:lottie`) in its own module, the counterpart of the iOS `CYLPlaceholderAnimation/Lottie` subspec; (2) the scenarios' Lottie JSON in the Android assets (iOS `Animations/CYLPlaceholder<Name>.json`, table `animationFileNamesForScenario`); (3) `CYLPlaceholderStackView` plays its scenario's animation, the still image as the fallback; (4) tests; (5) merged into PR #28 (ask before merging to master); (6) CYLSearchViewController's `cylsearch` depends on the module, pin updated. |
+| 上下文：PR #28 已有动画基础设施（`CYLPlaceholderItemAnimationFactory`、动画器注册表、`CYLPlaceholderAnimationView`、GIF 动画器），但没有 Lottie 动画器，栈视图不播放动画，JSON 不在 assets（`android/scripts/import-ios-resources.py` 只导入图片与字符串）。iOS 由 CYLSearchViewController 核心依赖 Lottie subspec，空缓存占位图播放 `CYLPlaceholderNoDrafts.json`。 | Context: PR #28 has the animation infrastructure (`CYLPlaceholderItemAnimationFactory`, the animator registry, `CYLPlaceholderAnimationView`, a GIF animator) but no Lottie animator, the stack view plays nothing, and the JSON is not in the assets (`android/scripts/import-ios-resources.py` imports images and strings only). On iOS, CYLSearchViewController's core depends on the Lottie subspec and the empty-cache placeholder plays `CYLPlaceholderNoDrafts.json`. |
