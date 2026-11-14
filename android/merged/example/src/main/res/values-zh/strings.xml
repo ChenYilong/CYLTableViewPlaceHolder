@@ -90,4 +90,18 @@
     <string name="merged_status_mode_list">红条 + 列表</string>
     <string name="merged_status_mode_placeholder">只显示占位图</string>
     <string name="merged_title_status_bar">网络状态条</string>
+    <string name="merged_title_switch_states">状态切换</string>
+    <string name="merged_title_keep_table_header">保留表头</string>
+    <string name="merged_title_keep_section_headers">保留分组头</string>
+    <string name="merged_title_refresh_controls">下拉刷新与上拉加载</string>
+    <string name="merged_title_scrollable">占位时可滚动</string>
+    <string name="merged_title_collection">集合视图占位</string>
+    <string name="merged_state_empty">空</string>
+    <string name="merged_state_failed">失败</string>
+    <string name="merged_state_offline">断网</string>
+    <string name="merged_state_data">数据</string>
+    <string name="merged_search_placeholder">搜索</string>
+    <string name="merged_section_pinned">置顶</string>
+    <string name="merged_section_all">全部</string>
+    <string name="merged_action_add">添加</string>
 </resources>

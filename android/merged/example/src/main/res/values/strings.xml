@@ -90,4 +90,18 @@
     <string name="merged_status_mode_list">Bar + list</string>
     <string name="merged_status_mode_placeholder">Placeholder only</string>
     <string name="merged_title_status_bar">Network status bar</string>
+    <string name="merged_title_switch_states">Switch states</string>
+    <string name="merged_title_keep_table_header">Keep table header</string>
+    <string name="merged_title_keep_section_headers">Keep section headers</string>
+    <string name="merged_title_refresh_controls">Refresh controls</string>
+    <string name="merged_title_scrollable">Scrollable</string>
+    <string name="merged_title_collection">Collection view</string>
+    <string name="merged_state_empty">Empty</string>
+    <string name="merged_state_failed">Failed</string>
+    <string name="merged_state_offline">Offline</string>
+    <string name="merged_state_data">Data</string>
+    <string name="merged_search_placeholder">Search</string>
+    <string name="merged_section_pinned">Pinned</string>
+    <string name="merged_section_all">All</string>
+    <string name="merged_action_add">Add</string>
 </resources>

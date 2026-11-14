@@ -129,6 +129,9 @@ class ScenariosPage : Fragment() {
             }
         }
         column.addView(header(context, context.t(R.string.merged_section_flows)))
+        for (flow in CYLFlow.values()) {
+            column.addView(row(context, context.t(flow.title), flow.detail, "flow-${flow.name}") { push(flowPage(flow)) })
+        }
         column.addView(row(context, context.t(R.string.merged_title_hud), null, "flow-hud") { push(hudPage()) })
         column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
             startActivity(Intent(context, StatusBarActivity::class.java))

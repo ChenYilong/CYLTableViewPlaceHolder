@@ -90,4 +90,18 @@
     <string name="merged_status_mode_list">Строка + список</string>
     <string name="merged_status_mode_placeholder">Только заглушка</string>
     <string name="merged_title_status_bar">Строка состояния сети</string>
+    <string name="merged_title_switch_states">Смена состояний</string>
+    <string name="merged_title_keep_table_header">Сохранить шапку таблицы</string>
+    <string name="merged_title_keep_section_headers">Сохранить заголовки секций</string>
+    <string name="merged_title_refresh_controls">Обновление и подгрузка</string>
+    <string name="merged_title_scrollable">С прокруткой</string>
+    <string name="merged_title_collection">Коллекция</string>
+    <string name="merged_state_empty">Пусто</string>
+    <string name="merged_state_failed">Ошибка</string>
+    <string name="merged_state_offline">Офлайн</string>
+    <string name="merged_state_data">Данные</string>
+    <string name="merged_search_placeholder">Поиск</string>
+    <string name="merged_section_pinned">Закреплённые</string>
+    <string name="merged_section_all">Все</string>
+    <string name="merged_action_add">Добавить</string>
 </resources>
