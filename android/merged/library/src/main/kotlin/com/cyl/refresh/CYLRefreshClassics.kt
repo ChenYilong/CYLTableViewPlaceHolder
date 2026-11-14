@@ -352,6 +352,72 @@ open class CYLRefreshBackFooter(context: Context) : CYLRefreshFooter(CYLClassics
     override fun didAttachToScrollView(layout: SmartRefreshLayout) {
         layout.setEnableAutoLoadMore(false)
     }
+
+    /**
+     * Seconds "no more data" stays visible, with the footer held open, after a load ends with
+     * [endRefreshingWithNoMoreData] (`noMoreDataDisplayDuration`); 0 rebounds at once.
+     */
+    var noMoreDataDisplayDuration: Double = 0.0
+
+    override val noMoreDataHoldMillis: Int get() = (noMoreDataDisplayDuration * 1000).toInt().coerceAtLeast(0)
+
+    internal val floor = CYLRefreshSecondaryFloor(this)
+
+    /**
+     * Pulling up this far and releasing opens the second floor below the list, in dp; 0 for never
+     * (`secondaryTriggerOffset`).
+     */
+    var secondaryTriggerOffset: Float by floor::triggerOffset
+
+    /**
+     * The open second floor's height, in dp; 0 for the layout's height (`secondaryDimension`).
+     */
+    var secondaryDimension: Float by floor::dimension
+
+    /**
+     * Pulling the open second floor down this far and releasing closes it, in dp (`secondaryCloseTriggerOffset`).
+     */
+    var secondaryCloseTriggerOffset: Float by floor::closeTriggerOffset
+
+    /**
+     * A release this fast opens the second floor (`secondaryVelocity`); kept, a release's speed is not measured on
+     * Android.
+     */
+    var secondaryVelocity: Float by floor::velocity
+
+    /**
+     * The second floor's content, placed over the layout's lower part and slid in by the pull (`secondaryView`).
+     */
+    var secondaryView: View? by floor::view
+
+    /**
+     * Whether the second floor is open (`secondaryOpen`).
+     */
+    val secondaryOpen: Boolean get() = floor.isOpen
+
+    /**
+     * Called after the second floor has opened (`secondaryOpenedBlock`).
+     */
+    var secondaryOpenedBlock: CYLRefreshComponentAction? by floor::openedBlock
+
+    /**
+     * Called after the second floor has closed (`secondaryClosedBlock`).
+     */
+    var secondaryClosedBlock: CYLRefreshComponentAction? by floor::closedBlock
+
+    /**
+     * Opens the second floor (`openSecondary`).
+     */
+    fun openSecondary() = floor.open()
+
+    /**
+     * Closes the second floor (`closeSecondary`).
+     */
+    fun closeSecondary() = floor.close()
+
+    internal fun released() {
+        if (floor.openOnReleaseIfPulledFar()) refreshLayout?.finishLoadMore(0, true, false)
+    }
 }
 
 /**

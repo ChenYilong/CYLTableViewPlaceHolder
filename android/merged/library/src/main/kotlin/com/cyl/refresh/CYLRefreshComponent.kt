@@ -446,6 +446,8 @@ abstract class CYLRefreshComponent internal constructor(
     internal fun moved(offset: Int, percent: Float, dragging: Boolean) {
         dragOffset = offset
         pullingPercent = percent
+        if (dragging) (this as? CYLRefreshHeader)?.floor?.lastDragOffset = offset
+        if (dragging) (this as? CYLRefreshBackFooter)?.floor?.lastDragOffset = offset
         if (autoHideRefresh) updateAutoHideVisibility()
         if (automaticallyChangeAlpha) {
             view.view.alpha = if (state == CYLRefreshState.Refreshing) 1f else percent.coerceIn(0f, 1f)
@@ -571,6 +573,65 @@ open class CYLRefreshHeader(view: RefreshHeader) : CYLRefreshComponent(view) {
      */
     var resetsFooterAfterRefresh: Boolean = false
 
+    internal val floor = CYLRefreshSecondaryFloor(this)
+
+    /**
+     * Pulling this far and releasing opens the second floor instead of refreshing, in dp; 0 for never
+     * (`secondaryTriggerOffset`).
+     */
+    var secondaryTriggerOffset: Float by floor::triggerOffset
+
+    /**
+     * The open second floor's height, in dp; 0 for the layout's height (`secondaryDimension`).
+     */
+    var secondaryDimension: Float by floor::dimension
+
+    /**
+     * Pushing the open second floor up this far and releasing closes it, in dp (`secondaryCloseTriggerOffset`).
+     */
+    var secondaryCloseTriggerOffset: Float by floor::closeTriggerOffset
+
+    /**
+     * A release this fast opens the second floor (`secondaryVelocity`); kept, a release's speed is not measured on
+     * Android.
+     */
+    var secondaryVelocity: Float by floor::velocity
+
+    /**
+     * The second floor's content, placed over the layout and slid in by the pull (`secondaryView`); the layout's
+     * parent should be a FrameLayout.
+     */
+    var secondaryView: View? by floor::view
+
+    /**
+     * Whether the second floor is open (`secondaryOpen`).
+     */
+    val secondaryOpen: Boolean get() = floor.isOpen
+
+    /**
+     * Called after the second floor has opened (`secondaryOpenedBlock`).
+     */
+    var secondaryOpenedBlock: CYLRefreshComponentAction? by floor::openedBlock
+
+    /**
+     * Called after the second floor has closed (`secondaryClosedBlock`).
+     */
+    var secondaryClosedBlock: CYLRefreshComponentAction? by floor::closedBlock
+
+    /**
+     * Opens the second floor (`openSecondary`).
+     */
+    fun openSecondary() = floor.open()
+
+    /**
+     * Closes the second floor (`closeSecondary`).
+     */
+    fun closeSecondary() = floor.close()
+
+    internal fun released() {
+        if (floor.openOnReleaseIfPulledFar()) refreshLayout?.finishRefresh(0, true, null)
+    }
+
     override fun beginRefreshing() {
         val layout = refreshLayout ?: return
         if (layout.state.isFooter && layout.state != RefreshState.None) {
@@ -680,11 +741,17 @@ open class CYLRefreshFooter(view: RefreshFooter) : CYLRefreshComponent(view) {
     }
 
     /**
+     * How long a load that ends with "no more data" holds the footer open, in milliseconds.
+     */
+    internal open val noMoreDataHoldMillis: Int get() = 0
+
+    /**
      * Ends loading and shows "no more data" (`endRefreshingWithNoMoreData`).
      */
     fun endRefreshingWithNoMoreData() {
         noMoreData = true
-        refreshLayout?.finishLoadMoreWithNoMoreData()
+        val hold = noMoreDataHoldMillis
+        if (hold > 0) refreshLayout?.finishLoadMore(hold, true, true) else refreshLayout?.finishLoadMoreWithNoMoreData()
         if (loadsAfterNoMoreData) refreshLayout?.let { layout -> layout.postDelayed({ if (noMoreData) { noMoreData = false; layout.setNoMoreData(false) } }, 1500) }
     }
 
@@ -748,6 +815,14 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
         footer?.executeRefreshingCallback()
+    }
+
+    override fun onHeaderReleased(header: RefreshHeader?, headerHeight: Int, maxDragHeight: Int) {
+        this.header?.released()
+    }
+
+    override fun onFooterReleased(footer: RefreshFooter?, footerHeight: Int, maxDragHeight: Int) {
+        (this.footer as? CYLRefreshBackFooter)?.released()
     }
 
     override fun onStateChanged(refreshLayout: RefreshLayout, oldState: RefreshState, newState: RefreshState) {

@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：87 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 591、partial 52、planned 66、n/a 195）。 | **Migration score: 87 / 100** (done + 0.5 × partial over 709 counted symbols; done 591, partial 52, planned 66, n/a 195). |
+| **迁移完成率：90 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 610、partial 54、planned 45、n/a 195）。 | **Migration score: 90 / 100** (done + 0.5 × partial over 709 counted symbols; done 610, partial 54, planned 45, n/a 195). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -189,17 +189,17 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | partial | the second floor (secondary*) is TODO |
-| `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryTriggerOffset` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryDimension` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryView` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryOpen` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryOpenedBlock` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryClosedBlock` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `secondaryVelocity` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `-openSecondary` | — | planned (TODO) |  |
-| `CYLRefreshBackFooter` `-closeSecondary` | — | planned (TODO) |  |
+| `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooter.noMoreDataDisplayDuration` | done |  |
+| `CYLRefreshBackFooter` `secondaryTriggerOffset` | `CYLRefreshBackFooter.secondaryTriggerOffset` | done |  |
+| `CYLRefreshBackFooter` `secondaryDimension` | `CYLRefreshBackFooter.secondaryDimension` | done |  |
+| `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | `CYLRefreshBackFooter.secondaryCloseTriggerOffset` | done |  |
+| `CYLRefreshBackFooter` `secondaryView` | `CYLRefreshBackFooter.secondaryView` | done | placed over the layout; the layout's parent should be a FrameLayout |
+| `CYLRefreshBackFooter` `secondaryOpen` | `CYLRefreshBackFooter.secondaryOpen` | done |  |
+| `CYLRefreshBackFooter` `secondaryOpenedBlock` | `CYLRefreshBackFooter.secondaryOpenedBlock` | done |  |
+| `CYLRefreshBackFooter` `secondaryClosedBlock` | `CYLRefreshBackFooter.secondaryClosedBlock` | done |  |
+| `CYLRefreshBackFooter` `secondaryVelocity` | `CYLRefreshBackFooter.secondaryVelocity` | partial | kept; the release speed is not measured on Android |
+| `CYLRefreshBackFooter` `-openSecondary` | `CYLRefreshBackFooter.openSecondary()` | done |  |
+| `CYLRefreshBackFooter` `-closeSecondary` | `CYLRefreshBackFooter.closeSecondary()` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshComponent.h`
 
@@ -328,16 +328,16 @@
 | `CYLRefreshHeader` `-setExpandHeight:` | `CYLRefreshHeader.setExpandHeight(dp)` | done |  |
 | `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeader.addsRefreshingInset` | done |  |
 | `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeader.resetsFooterAfterRefresh` | done |  |
-| `CYLRefreshHeader` `secondaryTriggerOffset` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryDimension` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryCloseTriggerOffset` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryVelocity` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryView` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryOpen` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryOpenedBlock` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `secondaryClosedBlock` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `-openSecondary` | — | planned (TODO) |  |
-| `CYLRefreshHeader` `-closeSecondary` | — | planned (TODO) |  |
+| `CYLRefreshHeader` `secondaryTriggerOffset` | `CYLRefreshHeader.secondaryTriggerOffset` | done |  |
+| `CYLRefreshHeader` `secondaryDimension` | `CYLRefreshHeader.secondaryDimension` | done |  |
+| `CYLRefreshHeader` `secondaryCloseTriggerOffset` | `CYLRefreshHeader.secondaryCloseTriggerOffset` | done |  |
+| `CYLRefreshHeader` `secondaryVelocity` | `CYLRefreshHeader.secondaryVelocity` | partial | kept; the release speed is not measured on Android |
+| `CYLRefreshHeader` `secondaryView` | `CYLRefreshHeader.secondaryView` | done | placed over the layout; the layout's parent should be a FrameLayout |
+| `CYLRefreshHeader` `secondaryOpen` | `CYLRefreshHeader.secondaryOpen` | done |  |
+| `CYLRefreshHeader` `secondaryOpenedBlock` | `CYLRefreshHeader.secondaryOpenedBlock` | done |  |
+| `CYLRefreshHeader` `secondaryClosedBlock` | `CYLRefreshHeader.secondaryClosedBlock` | done |  |
+| `CYLRefreshHeader` `-openSecondary` | `CYLRefreshHeader.openSecondary()` | done |  |
+| `CYLRefreshHeader` `-closeSecondary` | `CYLRefreshHeader.closeSecondary()` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshIconView.h`
 

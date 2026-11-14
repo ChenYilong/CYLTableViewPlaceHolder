@@ -342,4 +342,81 @@ class CYLRefreshComponentTest {
         }
     }
 
+
+    @Test
+    fun theSecondFloorOpensFromAPullAndClosesAgain() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        var refreshes = 0
+        header.refreshingBlock = { refreshes++ }
+        val page = View(activity)
+        header.secondaryView = page
+        header.secondaryDimension = 300f
+        var opened = 0
+        var closed = 0
+        header.secondaryOpenedBlock = { opened++ }
+        header.secondaryClosedBlock = { closed++ }
+        header.openSecondary()
+        assertTrue(header.secondaryOpen)
+        assertEquals(CYLRefreshPhase.SecondaryOpen, header.phase)
+        assertNotNull(page.parent)
+        idle(1500)
+        assertEquals(1, opened)
+        header.closeSecondary()
+        idle(1500)
+        assertFalse(header.secondaryOpen)
+        assertEquals(1, closed)
+        assertNull("the content leaves the layout's parent", (page.parent as? android.view.ViewGroup)?.parent)
+        assertEquals(0, refreshes)
+        header.secondaryView = null
+        header.openSecondary()
+        assertFalse("no content: nothing opens", header.secondaryOpen)
+    }
+
+    @Test
+    fun theBackFooterHoldsNoMoreDataAndOpensItsSecondFloor() {
+        val layout = show(layout(300))
+        val footer = CYLRefreshBackNormalFooter(activity)
+        layout.cyl_footer = footer
+        footer.noMoreDataDisplayDuration = 1.0
+        footer.beginRefreshing()
+        idle(1500)
+        assertTrue(footer.isRefreshing)
+        footer.endRefreshingWithNoMoreData()
+        idle(300)
+        assertTrue("held open while the text shows", footer.state == CYLRefreshState.Refreshing || footer.phase == CYLRefreshPhase.Finishing)
+        idle(3000)
+        assertEquals(CYLRefreshState.NoMoreData, footer.state)
+        footer.secondaryView = View(activity)
+        footer.openSecondary()
+        assertTrue(footer.secondaryOpen)
+        footer.closeSecondary()
+        idle(1500)
+        assertFalse(footer.secondaryOpen)
+    }
+
+
+    @Test
+    fun aFarPullOpensTheSecondFloorInsteadOfRefreshing() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        var refreshes = 0
+        header.refreshingBlock = { refreshes++ }
+        header.secondaryView = View(activity)
+        header.secondaryTriggerOffset = 200f
+        drag(layout, 700f)
+        idle(2500)
+        assertTrue("a pull past 200dp opens the second floor", header.secondaryOpen)
+        assertEquals("and does not refresh", 0, refreshes)
+        header.closeSecondary()
+        idle(1500)
+        // A short pull still refreshes.
+        drag(layout, 260f)
+        idle(2500)
+        assertFalse(header.secondaryOpen)
+        assertEquals(1, refreshes)
+    }
+
 }

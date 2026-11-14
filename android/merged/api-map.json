@@ -1590,6 +1590,52 @@
   "android": "com.cyl.refresh.CYLRefreshBackFooter",
   "note": "the second floor (secondary*) is TODO"
  },
+ "CYLRefreshBackFooter -closeSecondary": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.closeSecondary()"
+ },
+ "CYLRefreshBackFooter -openSecondary": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.openSecondary()"
+ },
+ "CYLRefreshBackFooter noMoreDataDisplayDuration": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.noMoreDataDisplayDuration"
+ },
+ "CYLRefreshBackFooter secondaryCloseTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryCloseTriggerOffset"
+ },
+ "CYLRefreshBackFooter secondaryClosedBlock": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryClosedBlock"
+ },
+ "CYLRefreshBackFooter secondaryDimension": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryDimension"
+ },
+ "CYLRefreshBackFooter secondaryOpen": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryOpen"
+ },
+ "CYLRefreshBackFooter secondaryOpenedBlock": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryOpenedBlock"
+ },
+ "CYLRefreshBackFooter secondaryTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryTriggerOffset"
+ },
+ "CYLRefreshBackFooter secondaryVelocity": {
+  "status": "partial",
+  "android": "CYLRefreshBackFooter.secondaryVelocity",
+  "note": "kept; the release speed is not measured on Android"
+ },
+ "CYLRefreshBackFooter secondaryView": {
+  "status": "done",
+  "android": "CYLRefreshBackFooter.secondaryView",
+  "note": "placed over the layout; the layout's parent should be a FrameLayout"
+ },
  "CYLRefreshBackFooterIdleText": {
   "status": "done",
   "android": "CYLRefreshConst.CYLRefreshBackFooterIdleText"
@@ -2359,6 +2405,14 @@
   "status": "n/a",
   "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
  },
+ "CYLRefreshHeader -closeSecondary": {
+  "status": "done",
+  "android": "CYLRefreshHeader.closeSecondary()"
+ },
+ "CYLRefreshHeader -openSecondary": {
+  "status": "done",
+  "android": "CYLRefreshHeader.openSecondary()"
+ },
  "CYLRefreshHeader -setExpandHeight:": {
   "status": "done",
   "android": "CYLRefreshHeader.setExpandHeight(dp)"
@@ -2386,6 +2440,40 @@
  "CYLRefreshHeader resetsFooterAfterRefresh": {
   "status": "done",
   "android": "CYLRefreshHeader.resetsFooterAfterRefresh"
+ },
+ "CYLRefreshHeader secondaryCloseTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryCloseTriggerOffset"
+ },
+ "CYLRefreshHeader secondaryClosedBlock": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryClosedBlock"
+ },
+ "CYLRefreshHeader secondaryDimension": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryDimension"
+ },
+ "CYLRefreshHeader secondaryOpen": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryOpen"
+ },
+ "CYLRefreshHeader secondaryOpenedBlock": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryOpenedBlock"
+ },
+ "CYLRefreshHeader secondaryTriggerOffset": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryTriggerOffset"
+ },
+ "CYLRefreshHeader secondaryVelocity": {
+  "status": "partial",
+  "android": "CYLRefreshHeader.secondaryVelocity",
+  "note": "kept; the release speed is not measured on Android"
+ },
+ "CYLRefreshHeader secondaryView": {
+  "status": "done",
+  "android": "CYLRefreshHeader.secondaryView",
+  "note": "placed over the layout; the layout's parent should be a FrameLayout"
  },
  "CYLRefreshHeaderDateTodayText": {
   "status": "done",
