@@ -90,4 +90,18 @@
     <string name="merged_status_mode_list">バー + リスト</string>
     <string name="merged_status_mode_placeholder">プレースホルダーのみ</string>
     <string name="merged_title_status_bar">ネットワークステータスバー</string>
+    <string name="merged_title_switch_states">状態の切り替え</string>
+    <string name="merged_title_keep_table_header">テーブルヘッダーを残す</string>
+    <string name="merged_title_keep_section_headers">セクションヘッダーを残す</string>
+    <string name="merged_title_refresh_controls">引っ張って更新と追加読み込み</string>
+    <string name="merged_title_scrollable">スクロール可能</string>
+    <string name="merged_title_collection">コレクションビュー</string>
+    <string name="merged_state_empty">空</string>
+    <string name="merged_state_failed">失敗</string>
+    <string name="merged_state_offline">オフライン</string>
+    <string name="merged_state_data">データ</string>
+    <string name="merged_search_placeholder">検索</string>
+    <string name="merged_section_pinned">ピン留め</string>
+    <string name="merged_section_all">すべて</string>
+    <string name="merged_action_add">追加</string>
 </resources>

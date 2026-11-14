@@ -90,4 +90,18 @@
     <string name="merged_status_mode_list">표시줄 + 목록</string>
     <string name="merged_status_mode_placeholder">플레이스홀더만</string>
     <string name="merged_title_status_bar">네트워크 상태 표시줄</string>
+    <string name="merged_title_switch_states">상태 전환</string>
+    <string name="merged_title_keep_table_header">테이블 헤더 유지</string>
+    <string name="merged_title_keep_section_headers">섹션 헤더 유지</string>
+    <string name="merged_title_refresh_controls">당겨서 새로고침과 더 불러오기</string>
+    <string name="merged_title_scrollable">스크롤 가능</string>
+    <string name="merged_title_collection">컬렉션 뷰</string>
+    <string name="merged_state_empty">비어 있음</string>
+    <string name="merged_state_failed">실패</string>
+    <string name="merged_state_offline">오프라인</string>
+    <string name="merged_state_data">데이터</string>
+    <string name="merged_search_placeholder">검색</string>
+    <string name="merged_section_pinned">고정됨</string>
+    <string name="merged_section_all">전체</string>
+    <string name="merged_action_add">추가</string>
 </resources>
