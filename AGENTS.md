@@ -20,6 +20,11 @@ the integrated `CYLRefresh` component, and an example application. Read
   counterpart here and rescore after every fix until 100. Translation starts once the issues reach 60. Every platform.
   See "Translating or porting another project" in `instructions.md`.
 
+## SKILLS
+
+TODO: please install following docs 开发者工具 Skills
+ https://developers.weixin.qq.com/miniprogram/dev/devtools/Skills.html
+
 ## Source of truth
 
 - Public headers under `CYLTableViewPlaceHolder/` define the current API.
