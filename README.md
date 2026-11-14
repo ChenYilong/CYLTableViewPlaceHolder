@@ -23,6 +23,7 @@
 | [内置刷新组件](#内置刷新组件--built-in-refresh-components) | [Built-in refresh components](#内置刷新组件--built-in-refresh-components) |
 | [运行 Demo](#运行-demo--running-the-demos) | [Running the demos](#运行-demo--running-the-demos) |
 | [Android](#android--android) | [Android](#android--android) |
+| [微信小程序](#微信小程序--wechat-mini-program) | [WeChat Mini Program](#微信小程序--wechat-mini-program) |
 | [适用于多种应用场景](#适用于多种应用场景--scenarios-it-fits) | [Scenarios it fits](#适用于多种应用场景--scenarios-it-fits) |
 
 <!-- docs-navigation:end -->
@@ -936,6 +937,15 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 ![Android merged example: network status bar page](docs/assets/android-merged-status.png)
 
 ![Android merged example: flows](docs/assets/android-merged-flows-1.png)
+
+## 微信小程序 / WeChat Mini Program
+
+| 中文 | English |
+| --- | --- |
+| `CrossPlatform/wechat-miniprogram-cylplaceholder` 是本库的微信小程序版：`cyl-placeholder` 组件，35 个场景、七种语言，从 Android 版 `android/placeholder` 翻译而来。用微信开发者工具打开该文件夹即可运行示例。用法、属性与事件见其 README，进度与 TODO 见 [docs/WeChat-MiniProgram.md](docs/WeChat-MiniProgram.md)。 | `CrossPlatform/wechat-miniprogram-cylplaceholder` is the WeChat Mini Program version: the `cyl-placeholder` component with 35 scenarios in seven languages, translated from `android/placeholder`. Open that folder in WeChat DevTools to run the example. Usage, properties and events: its README; progress and TODOs: [docs/WeChat-MiniProgram.md](docs/WeChat-MiniProgram.md). |
+| 截图：微信开发者工具 2.02.2609250 模拟器，基础库 3.17.6，Windows 11，提交 `83c8bd0`，2026-11-15 12:14（+13:00）。场景列表与五个场景页。 | Screenshot: WeChat DevTools 2.02.2609250 simulator, base library 3.17.6, Windows 11, commit `83c8bd0`, 2026-11-15 12:14 (+13:00). The scenario list and five scenario pages. |
+
+![WeChat Mini Program example: scenario list and scenario pages](docs/assets/wechat-miniprogram-example.png)
 
 ## 适用于多种应用场景 / Scenarios it fits
 
