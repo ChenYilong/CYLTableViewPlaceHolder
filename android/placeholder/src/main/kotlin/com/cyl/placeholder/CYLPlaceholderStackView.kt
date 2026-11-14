@@ -23,7 +23,7 @@ import androidx.core.widget.ImageViewCompat
  * ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. `actions` maps an action
  * ([CYLPlaceholderAction]) to its handler; [setHandler] adds or replaces one; an action without a handler does nothing.
  */
-class CYLPlaceholderStackView private constructor(
+class CYLPlaceholderStackView internal constructor(
     context: Context,
     /**
      * The scenario shown, or null for a stack of your own components (`scenario`).
@@ -49,6 +49,11 @@ class CYLPlaceholderStackView private constructor(
 
     private val handlers = HashMap<String, CYLPlaceholderActionHandler>().apply { actions?.let { putAll(it) } }
     private val viewActions = ArrayList<Pair<View, String?>>()
+
+    /**
+     * The reserved first component, the icon and title (`placeholderView`).
+     */
+    val placeholderView: View get() = componentViews.first()
 
     /**
      * The stacked views (`stackView`).
@@ -194,9 +199,10 @@ class CYLPlaceholderStackView private constructor(
                     setImageDrawable(ContextCompat.getDrawable(context, component.image))
                     scaleType = ImageView.ScaleType.FIT_CENTER
                     if (component.tinted) ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(ACCENT))
-                    if (component.action != null) {
+                    val iconAction = component.action
+                    if (iconAction != null) {
                         // [EN] An icon that acts (RefreshIcon) is a button named by its action.
-                        contentDescription = CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, component.action)
+                        contentDescription = CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, iconAction)
                     } else {
                         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
                     }

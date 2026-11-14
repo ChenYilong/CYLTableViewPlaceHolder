@@ -43,12 +43,25 @@ class CYLPlaceholderComponent private constructor(
      * The button's look (buttons only).
      */
     val buttonStyle: CYLPlaceholderButtonStyle?,
+    action: String?,
+) {
+    internal enum class Kind { Item, Hint, Button, Separator }
+
     /**
      * The action a tap runs, or null (`action`).
      */
-    val action: String?,
-) {
-    internal enum class Kind { Item, Hint, Button, Separator }
+    var action: String? = action
+        internal set
+
+    /**
+     * How a tap on the component is shown (`tapHighlightStyle`); kept for views that show taps.
+     */
+    var tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim
+
+    /**
+     * The identifier tests find the component's view by (`accessibilityIdentifier`), or null.
+     */
+    var accessibilityIdentifier: String? = null
 
     /**
      * The space above the component, in dp (`spacingBefore`).

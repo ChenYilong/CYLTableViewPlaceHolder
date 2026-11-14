@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：91 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 619、partial 58、planned 32、n/a 195）。 | **Migration score: 91 / 100** (done + 0.5 × partial over 709 counted symbols; done 619, partial 58, planned 32, n/a 195). |
+| **迁移完成率：93 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 626、partial 61、planned 22、n/a 195）。 | **Migration score: 93 / 100** (done + 0.5 × partial over 709 counted symbols; done 626, partial 61, planned 22, n/a 195). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -1125,14 +1125,14 @@
 | `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
 | `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` | done |  |
-| `CYLPlaceholderComponent` `tapHighlightStyle` | — | planned (TODO) |  |
+| `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` | partial | kept; the stacked views show taps their own way |
 | `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | kept for apps that play the animation; Android shows the static icon |
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | shows the fallback image (the iOS animation is not played) |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` | done |  |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` | done |  |
 | `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` | done |  |
-| `CYLPlaceholderComponent` `+componentWithDictionary:error:` | — | planned (TODO) |  |
+| `CYLPlaceholderComponent` `+componentWithDictionary:error:` | `CYLPlaceholderComponent.componentWithDictionary(context, dictionary, error)` | done | the error is a callback with the reason |
 | `CYLPlaceholderComponent` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderComponent` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderScenarioCatalog` | `com.cyl.placeholder.CYLPlaceholderScenarioCatalog` | done |  |
@@ -1159,14 +1159,14 @@
 | `CYLPlaceholderActionHandler` | `com.cyl.placeholder.CYLPlaceholderActionHandler` | done |  |
 | `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | no CYLPlaceholderView inside yet; built from components |
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackView.stackView` | done |  |
-| `CYLPlaceholderStackView` `placeholderView` | — | planned (TODO) |  |
+| `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackView.placeholderView` | done | the first component view |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackView.componentViews` | done |  |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackView.scenario` | done |  |
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackView.backgroundAction` | done |  |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackView(context, scenario, actions)` | done |  |
 | `CYLPlaceholderStackView` `-initWithComponents:actions:` | `CYLPlaceholderStackView(context, components, actions)` | done |  |
-| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | — | planned (TODO) |  |
+| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | `CYLPlaceholderStackView.fromConfiguration(context, configuration, actions, error)` | done |  |
+| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | `CYLPlaceholderStackView.fromContentsOfURL(context, path, actions, error)` | done | reads a .json file or "asset:name"; a property list is an iOS format |
 | `CYLPlaceholderStackView` `-initWithFrame:` | — | n/a | UIKit initializers; Android views take a Context |
 | `CYLPlaceholderStackView` `-initWithCoder:` | — | n/a | UIKit initializers; Android views take a Context |
 | `CYLPlaceholderStackView` `-appendComponent:` | `CYLPlaceholderStackView.appendComponent(component)` | done |  |
@@ -1187,7 +1187,7 @@
 | `CYLPlaceholderStatusView` `-initWithFrame:` | `CYLPlaceholderStatusView(context)` | done |  |
 | `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusView(context, attributes)` | partial | the title, image and title color keys |
 | `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | `CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)` | done |  |
-| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | — | planned (TODO) |  |
+| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | `CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)` | done | "image" is a drawable name; "system:" names are iOS only |
 | `CYLPlaceholderStatusView` `-initWithCoder:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderStatusView` `placeholderView` | `CYLPlaceholderStatusView.placeholderView` | done |  |
 | `CYLPlaceholderStatusView` `text` | `CYLPlaceholderStatusView.text` | done |  |
@@ -1261,8 +1261,8 @@
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` | done |  |
 | `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | `CYLPlaceholderView.setPlaceholderAnimationProgress(progress)` | done |  |
 | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | `CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)` | done |  |
-| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | — | planned (TODO) |  |
-| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | — | planned (TODO) |  |
+| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | `CYLPlaceholderView.fromItemAttributes(context, attributes, error)` | partial | no image bundle: names are drawable resources |
+| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | `CYLPlaceholderView.fromItemContentsOfURL(context, path, error)` | partial | reads a .json file or "asset:name"; a property list is an iOS format; no image bundle |
 | `CYLPlaceholderView` `-initWithStyle:message:` | `CYLPlaceholderView(context, style, message)` | done |  |
 | `CYLPlaceholderView` `-initWithStyle:text:` | `CYLPlaceholderView(context, style, text)` | done |  |
 | `CYLPlaceholderView` `-initWithImage:text:` | `CYLPlaceholderView(context, image, text)` | done |  |
@@ -1319,7 +1319,7 @@
 | `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | `Activity.cyl_statusDisplay` | done |  |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | `Activity.cyl_setStatusDisplay(display, animated)` | done |  |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | `Activity.cyl_showsStatusViewWhenOffline` | done |  |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | — | planned (TODO) |  |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | — | planned (TODO) |  |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | `Activity.cyl_applyStatusConfiguration(configuration, error)` | done |  |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `Activity.cyl_applyStatusConfigurationWithContentsOfURL(path, error)` | done | reads a .json file or "asset:name"; a property list is an iOS format |
 | `UIScrollView(CYLPlaceholderVisibility)` | `RecyclerView extensions` | done |  |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `RecyclerView.cyl_placeholderHidden` | done |  |

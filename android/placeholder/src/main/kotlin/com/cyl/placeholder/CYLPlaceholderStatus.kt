@@ -321,6 +321,16 @@ var Activity.cyl_statusView: CYLPlaceholderStatusView
     }
 
 /**
+ * Goes back to the default banner.
+ */
+internal fun Activity.cyl_resetStatusView() {
+    val state = status()
+    state.statusView?.let { (it.parent as? ViewGroup)?.removeView(it) }
+    state.statusView = null
+    cyl_setStatusDisplay(state.display, false)
+}
+
+/**
  * The scrolling view the placeholder covers, or null for the whole content (`cyl_placeholderScrollView`).
  */
 var Activity.cyl_placeholderScrollView: View?

@@ -272,6 +272,11 @@
   "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
   "note": "shows the fallback image (the iOS animation is not played)"
  },
+ "CYLPlaceholderComponent +componentWithDictionary:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.componentWithDictionary(context, dictionary, error)",
+  "note": "the error is a callback with the reason"
+ },
  "CYLPlaceholderComponent +hintComponentWithText:": {
   "status": "done",
   "android": "CYLPlaceholderComponent.hintComponentWithText(text)"
@@ -313,6 +318,11 @@
  "CYLPlaceholderComponent spacingBefore": {
   "status": "done",
   "android": "CYLPlaceholderComponent.spacingBefore (dp)"
+ },
+ "CYLPlaceholderComponent tapHighlightStyle": {
+  "status": "partial",
+  "android": "CYLPlaceholderComponent.tapHighlightStyle",
+  "note": "kept; the stacked views show taps their own way"
  },
  "CYLPlaceholderHUD": {
   "status": "partial",
@@ -1153,6 +1163,15 @@
   "status": "done",
   "android": "CYLPlaceholderStackView(context, components, actions)"
  },
+ "CYLPlaceholderStackView -initWithConfiguration:actions:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.fromConfiguration(context, configuration, actions, error)"
+ },
+ "CYLPlaceholderStackView -initWithContentsOfURL:actions:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.fromContentsOfURL(context, path, actions, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format"
+ },
  "CYLPlaceholderStackView -initWithFrame:": {
   "status": "n/a",
   "note": "UIKit initializers; Android views take a Context"
@@ -1177,6 +1196,11 @@
   "status": "done",
   "android": "CYLPlaceholderStackView.componentViews"
  },
+ "CYLPlaceholderStackView placeholderView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.placeholderView",
+  "note": "the first component view"
+ },
  "CYLPlaceholderStackView scenario": {
   "status": "done",
   "android": "CYLPlaceholderStackView.scenario"
@@ -1198,6 +1222,11 @@
  "CYLPlaceholderStatusView -initWithCoder:": {
   "status": "n/a",
   "note": "unavailable on iOS too (NS_UNAVAILABLE)"
+ },
+ "CYLPlaceholderStatusView -initWithConfiguration:error:": {
+  "status": "done",
+  "android": "CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)",
+  "note": "\"image\" is a drawable name; \"system:\" names are iOS only"
  },
  "CYLPlaceholderStatusView -initWithFrame:": {
   "status": "done",
@@ -1284,6 +1313,16 @@
  "CYLPlaceholderView -initWithImage:text:": {
   "status": "done",
   "android": "CYLPlaceholderView(context, image, text)"
+ },
+ "CYLPlaceholderView -initWithItemAttributes:imageBundle:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.fromItemAttributes(context, attributes, error)",
+  "note": "no image bundle: names are drawable resources"
+ },
+ "CYLPlaceholderView -initWithItemContentsOfURL:imageBundle:error:": {
+  "status": "partial",
+  "android": "CYLPlaceholderView.fromItemContentsOfURL(context, path, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format; no image bundle"
  },
  "CYLPlaceholderView -initWithStyle:message:": {
   "status": "done",
@@ -3590,6 +3629,15 @@
   "status": "done",
   "android": "Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)",
   "note": "the Activity is the view controller's counterpart"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_applyStatusConfiguration:error:": {
+  "status": "done",
+  "android": "Activity.cyl_applyStatusConfiguration(configuration, error)"
+ },
+ "UIViewController(CYLPlaceholderStatus) -cyl_applyStatusConfigurationWithContentsOfURL:error:": {
+  "status": "done",
+  "android": "Activity.cyl_applyStatusConfigurationWithContentsOfURL(path, error)",
+  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format"
  },
  "UIViewController(CYLPlaceholderStatus) -cyl_setStatusDisplay:animated:": {
   "status": "done",

@@ -453,6 +453,11 @@ object CYLPlaceholderScenarioCatalog {
     }
 
     /**
+     * Every animation file name of every scenario, once.
+     */
+    internal fun allAnimationFileNames(): List<String> = CYLPlaceholderScenario.values().flatMap { animationFileNamesForScenario(it) }.distinct()
+
+    /**
      * The iOS animation files of the scenario, its own icon first (`animationFileNamesForScenario:`). Android shows
      * the static icon of each component; the names are for apps that play the animations themselves.
      */
