@@ -459,6 +459,25 @@ class CYLRefreshComponentTest {
 
 
     @Test
+    fun drawnFootersShowTheirDrawingWhileLoading() {
+        val layout = show(layout(300))
+        for (footer in listOf(CYLRefreshBezierRadarFooter(activity), CYLRefreshPhoenixFooter(activity))) {
+            layout.cyl_footer = footer
+            idle(50)
+            footer.beginRefreshing()
+            idle(600)
+            val drawn = footer.style.view.view
+            val name = footer.javaClass.simpleName
+            // The drawing keeps the footer's height (not the layout's), inside the layout, so it shows.
+            assertTrue(name, drawn.height in 1 until layout.height)
+            assertTrue(name, footer.view.view.bottom <= layout.height)
+            footer.endRefreshing()
+            idle(1500)
+        }
+    }
+
+
+    @Test
     fun theStateClassesShowResultAndNoMoreDataImages() {
         val layout = show(layout())
         val header = CYLRefreshNormalHeader(activity)
