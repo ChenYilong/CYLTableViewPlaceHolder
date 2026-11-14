@@ -73,6 +73,13 @@ class RefreshExamplesPage : StackPage() {
                 "example18", "example19", "example20", "example21"),
             "CYLRefreshTableViewController",
         ),
+        // example42 (pull left) needs a trailer, which the Android library does not have yet.
+        RefreshExample(
+            R.string.merged_mj_section_collection,
+            listOf(R.string.merged_mj_pull_up_and_down, R.string.merged_mj_pin_header),
+            listOf("example31", "example31"),
+            "CYLRefreshCollectionViewController",
+        ),
     )
 
     override fun root(): View {
@@ -82,7 +89,11 @@ class RefreshExamplesPage : StackPage() {
             column.addView(header(context, context.t(exam.header)))
             exam.titles.forEachIndexed { i, title ->
                 column.addView(row(context, context.t(title), "${exam.page} - ${exam.methods[i]}", "refresh-${exam.methods[i]}") {
-                    push(tablePage(context.t(title), exam.methods[i]))
+                    val name = context.t(title)
+                    push(when {
+                        exam.header != R.string.merged_mj_section_collection -> tablePage(name, exam.methods[i])
+                        else -> collectionPage(name, pinHeader = i == 1) { push(testPage()) }
+                    })
                 })
             }
         }
@@ -104,7 +115,7 @@ class RefreshExamplesPage : StackPage() {
      * MJTestViewController: the page a row of an example opens. iOS pushes it on odd rows and presents it on even rows;
      * here both push, with a Close button.
      */
-    private fun testPage(): View {
+    internal fun testPage(): View {
         val context = requireContext()
         val close = Button(context).apply { text = context.t(R.string.merged_mj_close); setOnClickListener { pop() } }
         return page(context, bar(context, context.t(R.string.merged_mj_test_title), close), FrameLayout(context))
