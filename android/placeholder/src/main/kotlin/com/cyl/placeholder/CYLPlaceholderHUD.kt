@@ -224,6 +224,8 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
             setColor(boxColor)
             cornerRadius = dp(this@CYLPlaceholderHUD.cornerRadius).toFloat()
         }
+        // A light box on a light page needs an edge: a soft shadow, as the system's HUD boxes have.
+        hudView.elevation = dp(8f).toFloat()
         hudView.minimumWidth = dp(minimumSize[0])
         hudView.minimumHeight = dp(minimumSize[1])
         val padding = dp(16f)
