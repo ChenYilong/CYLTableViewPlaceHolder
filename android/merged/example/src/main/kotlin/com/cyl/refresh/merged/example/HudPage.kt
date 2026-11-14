@@ -131,6 +131,9 @@ internal fun ScenariosPage.hudPage(): View {
         hud.showSuccessWithStatus(context.t(R.string.merged_hud_status_saved))
     }
 
+    column.addView(header(context, context.t(R.string.merged_hud_section_lifecycle)))
+    add("lifecycle", R.string.merged_hud_lifecycle) { push(hudLifecyclePage()) }
+
     frame.addView(ScrollView(context).apply { addView(column) }, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     frame.tag = "hudDemo"
     frame.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
