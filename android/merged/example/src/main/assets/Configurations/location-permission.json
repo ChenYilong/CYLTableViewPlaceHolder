@@ -1,0 +1,8 @@
+{
+  "scenario": "locationPermissionDenied",
+  "backgroundAction": "",
+  "overrides": [
+    { "index": 2, "highlightStyle": "shrink" },
+    { "index": 3, "highlightStyle": "none" }
+  ]
+}

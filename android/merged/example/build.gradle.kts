@@ -37,4 +37,5 @@ dependencies {
     implementation(project(":merged"))
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
 }

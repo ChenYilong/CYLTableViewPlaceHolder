@@ -52,7 +52,7 @@ object ExamplePages {
             ContextCompat.getDrawable(context, icons[symbol] ?: android.R.drawable.ic_menu_help)
         }
         val registry = CYLTabBarPageRegistry.sharedRegistry
-        registry.registerPageProvider({ _, _ -> PlaceholderPage() }, listOf("placeholder"))
+        registry.registerPageProvider({ _, _ -> ScenariosPage() }, listOf("placeholder"))
         registry.registerPageProvider({ _, _ -> SVPullToRefreshPage() }, listOf("svpulltorefresh"))
         registry.registerPageProvider({ _, _ -> UltraPullToRefreshPage() }, listOf("ultraptr"))
         registry.registerPageProvider({ _, _ -> SmartRefreshPage() }, listOf("smartrefresh"))
