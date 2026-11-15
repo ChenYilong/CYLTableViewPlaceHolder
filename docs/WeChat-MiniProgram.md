@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 92)
+### TODO: WeChat Mini Program placeholder package (score 95)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -53,12 +53,13 @@
   4. `node --test` unit tests for the catalog and the localization.
   5. Open the example with the DevTools skill (`project_import`, `open_project_window`, `simulator_screenshot`),
      store the screenshot in `docs/`, update the README.
-- **Score: 92 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
-  simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD) ported; Lottie animations for 31 scenarios with "Play all",
-  speed and loop controls; `CYLPlaceholderConfiguration` (JSON configuration files) ported; all checked in the
-  simulator; README section with screenshots added. Left: items 1–4 below.
+- **Score: 95 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
+  simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD), Lottie animations for 31 scenarios with "Play all", speed
+  and loop controls, `CYLPlaceholderConfiguration` (JSON configuration files) and `cyl-placeholder-status`
+  (CYLPlaceholderStatusView) ported; all checked in the simulator; README section with screenshots added. Left:
+  the real phone check (skipped), the differences listed in items 2–4.
 - **Remaining work (TODO):**
-  1. Check on a real phone (preview). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
+  1. Check on a real phone (preview). Skipped for now at the owner's request (2026-11-15). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
      times out with `connect_failed` even while logged in, so the simulator run used the classic CLI
      (`wechatidecli open` / `auto`) and miniprogram-automator instead of the skill tools. DevTools refuses
      `touristappid` ("There is no such AppID", code 10): set a real AppID in the git-ignored
@@ -69,7 +70,10 @@
      choosing a variant per scenario, Lottie on the HUD (`loadingAnimationFileName`), Dark Mode colors (`colors` of
      cyl-lottie). The example's player comes from a CYLTabBarController checkout (`CYL_TABBAR_DIR`, default: next to
      this repository); the package itself has no dependency (the `animation` generic defaults to no player).
-  3. The status view (`CYLPlaceholderStatusView`, `cyl_applyStatusConfiguration`) is not ported yet.
+  3. Ported with known differences (no further work planned unless asked). `CYLPlaceholderStatusView` (`2368eb0`):
+     `cyl-placeholder-status` is placed by the page (a mini program has no view controller or
+     `additionalSafeAreaInsets`; put it above the list), no Dynamic Type height, no
+     `CYLPlaceholderItemContentAxis` item keys, no right-to-left mirroring.
      `CYLPlaceholderConfiguration` is ported (`3e164da`) except: `.plist` (refused with the Android message), the
      `item` type draws only the title attributes (title color, background color, corner radius, content insets,
      minimum width; other raw item attributes are ignored), a numeric `style` indexes the sorted icon list instead of
@@ -94,6 +98,8 @@
 | `src/cyl-placeholder/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
 | `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
 | `src/cyl-placeholder/cyl_configuration.js` | `CYLPlaceholderConfiguration`: parses configuration objects / JSON files |
+| `src/cyl-placeholder/cyl_status.js` | `CYLPlaceholderStatusDisplay`, `CYLPlaceholderStatus` (status bar and status configuration) |
+| `src/cyl-placeholder-status/index.{js,json,wxml,wxss}` | The `cyl-placeholder-status` component (the red network bar; `LICENSE.CYLChatKit` at the package root) |
 | `src/cyl-placeholder/cyl_images.js` | Generated icon list (validates a configuration's `style`) |
 | `src/cyl-placeholder/animations/` | The 31 placeholder Lottie files of the iOS bundle, `NOTICE.animations`, licenses |
 | `src/cyl-placeholder/no-animation/` | Default `animation` generic (no player) |
@@ -122,6 +128,10 @@
 | Animated placeholder icons (Lottie / PAG / Rive / GIF players) | `animated`, `speed`, `loop` properties, `playAll()`, `generic:animation="cyl-lottie"` | Lottie only |
 | `CYLPlaceholderStackView initWithConfiguration:` / `initWithContentsOfURL:`, Kotlin `fromConfiguration` / `fromContentsOfURL` | `<cyl-placeholder configuration="{{object or JSON string}}">`, `CYLPlaceholderConfiguration.parse(configuration, language)`, `readConfigurationFile(path)` | Errors: `configerror` event / thrown `CYLPlaceholderConfigurationError` with the Android messages; tap handlers stay in the page (`action` event) |
 | `CYLPlaceholderComponent componentWithDictionary` | `CYLPlaceholderConfiguration.componentWithDictionary` | |
+| `CYLPlaceholderStatusView` (`delegate` / `tapHandler`, `text`, `CYLPlaceholderStatusViewHeight`) | `<cyl-placeholder-status>` (`tappable` + `statustap`, `text`, `image`, `titleColor`, `backgroundColor`), `CYLPlaceholderStatusViewHeight` | The page places the bar |
+| `cyl_statusDisplay`, `CYLPlaceholderStatusDisplay` | `CYLPlaceholderStatusDisplay`, `CYLPlaceholderStatus.showsStatusBar` / `showsPlaceholder` | The page binds `visible` and `wx:if` |
+| `cyl_showsStatusViewWhenOffline` | `shows-when-offline` property, `networkchange` event | `wx.onNetworkStatusChange` |
+| `cyl_applyStatusConfiguration`, `CYLPlaceholderStatusView fromConfiguration` | `CYLPlaceholderStatus.parseStatusConfiguration`, `statusBarFromConfiguration`, the bar's `configuration` property | Same keys and messages |
 
 ## 验证 / Verification
 
@@ -156,4 +166,12 @@
   animation kept playing, the "once" one stopped on its last frame and the "3 times" one stopped after its third
   play; the raw item (`#rawItem`) sent `CYLPlaceholderActionContactSupport`. Screenshot:
   `docs/assets/wechat-miniprogram-configuration.png`.
+- 2026-11-15 13:07 (+13:00), commit `2368eb0`, same simulator: `npm test` passes 27 / 27 (3 status tests: display
+  flags, the default bar's localized text, bar dictionaries, `cyl_applyStatusConfiguration` rules and messages). The
+  status page: the bar shows for All and StatusBar, hides for Placeholder and None, and the placeholder follows; a
+  tap sends `statustap` only while tappable; with "shows when offline" on and display None, a simulated offline
+  network event shows the bar and an online one hides it; the configuration gives the yellow bar with the Wi-Fi icon.
+  A unit test caught `textKey` "CYLPlaceholderStatusNetworkUnavailable" not resolving (a missing camel-case rule);
+  fixed before the commit. Screenshot: `docs/assets/wechat-miniprogram-status.png`. Not checked: the real network
+  switch (simulated through the component's listener) and Dark Mode colors.
 - Not verified: a real phone.
