@@ -21,9 +21,9 @@ Component({
     header: { type: String, value: 'normal' },
     footer: { type: String, value: 'auto' },
     /** { Idle, Pulling, Refreshing }: '/path.json' or { path, size } per state (setIconAnimation…for:). */
-    headerIcons: { type: Object, value: null },
+    headerIcons: { type: null, value: null },
     /** { Idle, Refreshing, NoMoreData } of the footer. */
-    footerIcons: { type: Object, value: null },
+    footerIcons: { type: null, value: null },
     /** Fades the header in while pulling (isAutomaticallyChangeAlpha). */
     automaticallyChangeAlpha: { type: Boolean, value: false },
     /** Hides the "last updated" line (lastUpdatedTimeLabel.hidden). */
@@ -37,13 +37,13 @@ Component({
     /** Language of the texts; empty follows CYLRefresh.setLanguageCode / CYLPlaceholderLocalization. */
     language: { type: String, value: '' },
     /** Custom header texts { Idle, Pulling, Refreshing } (setTitle:forState:). */
-    headerTitles: { type: Object, value: null },
+    headerTitles: { type: null, value: null },
     /** Custom footer texts { Idle, Pulling, Refreshing, NoMoreData }. */
-    footerTitles: { type: Object, value: null },
+    footerTitles: { type: null, value: null },
     /** Header state / time label styles: { stateColor, stateFontSize, timeColor, timeFontSize }. */
-    headerStyle: { type: Object, value: null },
+    headerStyle: { type: null, value: null },
     /** Footer label style: { color, fontSize }. */
-    footerStyle: { type: Object, value: null },
+    footerStyle: { type: null, value: null },
     /** Hides the footer's text while refreshing (refreshingTitleHidden). */
     refreshingTitleHidden: { type: Boolean, value: false },
     /** false: the auto footer loads only on tap (automaticallyRefresh). */

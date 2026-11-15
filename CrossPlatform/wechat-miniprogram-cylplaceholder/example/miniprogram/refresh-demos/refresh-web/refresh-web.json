@@ -1,0 +1,5 @@
+{
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": { "cyl-refresh": "/components/cyl-refresh/index" }
+}

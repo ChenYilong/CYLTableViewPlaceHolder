@@ -17,9 +17,7 @@
     "pages/hud/hud",
     "pages/hud-lifecycle/hud-lifecycle",
     "pages/refresh-icons/refresh-icons",
-    "pages/refresh-icon-demo/refresh-icon-demo",
-    "pages/refresh-table/refresh-table",
-    "pages/refresh-test/refresh-test"
+    "pages/refresh-icon-demo/refresh-icon-demo"
   ],
   "window": {
     "navigationBarTitleText": "CYLTableViewPlaceHolder",
@@ -32,11 +30,26 @@
     "color": "#8E8E93",
     "selectedColor": "#30B0C7",
     "list": [
-      { "pagePath": "pages/scenarios/scenarios", "text": "Scenarios" },
-      { "pagePath": "pages/animations/animations", "text": "Animations" },
-      { "pagePath": "pages/flows/flows", "text": "Flows" },
-      { "pagePath": "pages/feed/feed", "text": "Feed" },
-      { "pagePath": "pages/refresh/refresh", "text": "Refresh" }
+      {
+        "pagePath": "pages/scenarios/scenarios",
+        "text": "Scenarios"
+      },
+      {
+        "pagePath": "pages/animations/animations",
+        "text": "Animations"
+      },
+      {
+        "pagePath": "pages/flows/flows",
+        "text": "Flows"
+      },
+      {
+        "pagePath": "pages/feed/feed",
+        "text": "Feed"
+      },
+      {
+        "pagePath": "pages/refresh/refresh",
+        "text": "Refresh"
+      }
     ]
   },
   "usingComponents": {
@@ -47,5 +60,28 @@
   },
   "style": "v2",
   "darkmode": true,
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "subPackages": [
+    {
+      "root": "refresh-demos/",
+      "name": "refreshDemos",
+      "pages": [
+        "refresh-table/refresh-table",
+        "refresh-test/refresh-test",
+        "refresh-collection/refresh-collection",
+        "refresh-web/refresh-web",
+        "refresh-i18n/refresh-i18n",
+        "refresh-easy/refresh-easy",
+        "refresh-smart/refresh-smart"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/refresh/refresh": {
+      "network": "all",
+      "packages": [
+        "refreshDemos"
+      ]
+    }
+  }
 }

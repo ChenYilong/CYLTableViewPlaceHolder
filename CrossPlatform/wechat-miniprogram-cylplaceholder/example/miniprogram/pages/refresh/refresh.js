@@ -4,9 +4,6 @@ const { t } = require('../../utils/l10n')
 const { showTab } = require('../../utils/page')
 const { SECTIONS } = require('./menu')
 
-// Leaf pages that exist so far; the others are being ported (docs/WeChat-MiniProgram.md).
-const READY = ['refresh-table']
-
 Page({
   data: { sections: [] },
   onLoad() {
@@ -25,11 +22,8 @@ Page({
   },
   onOpen(e) {
     const { page, method, title, vc } = e.currentTarget.dataset
-    if (READY.indexOf(page) < 0) {
-      wx.showToast({ title: 'Not ported yet', icon: 'none' })
-      return
-    }
-    wx.navigateTo({ url: '/pages/' + page + '/' + page + '?method=' + method + '&vc=' + vc + '&title=' + encodeURIComponent(title) })
+    // The demos live in the refresh-demos subpackage (the main package is limited to 2 MB).
+    wx.navigateTo({ url: '/refresh-demos/' + page + '/' + page + '?method=' + method + '&vc=' + vc + '&title=' + encodeURIComponent(title) })
   },
   onRefresh() {
     this.timer = setTimeout(() => this.selectComponent('#refresh').endRefreshing(), 2000)

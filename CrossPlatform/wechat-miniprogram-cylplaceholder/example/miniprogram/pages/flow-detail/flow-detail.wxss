@@ -1,10 +1,12 @@
+/* The segmented control (shared with the status page). */
 @import "./refresh.wxss";
 
 /* A plain table on systemBackground; the keepSectionHeaders flow is insetGrouped. */
 page { background: #fff; }
 .page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
 .page--grouped { background: #f2f2f7; }
-.flow-list { flex: 1; height: 0; }
+.flow-list { flex: 1; min-height: 0; }
+.flow-scroll { height: 100%; }
 .switcher { padding: 6px 16px 8px; background: #f2f2f7; }
 .grouped { padding: 0 16px; }
 .flow__doc { color: #007aff; }
