@@ -7,7 +7,9 @@
 const { t } = require('../../utils/l10n')
 const { later } = require('../../utils/page')
 const { CYLPlaceholderAction } = require('../../components/cyl-placeholder/cyl_placeholder')
-const { cylRefreshData, CYLRefreshMethods } = require('./refresh_control')
+
+/** CYLRefreshAutoAnimationFooter of refreshControls: the 28x28 CYLRefreshActivity.gif while refreshing. */
+const FOOTER_ICONS = { Refreshing: { path: '/assets/animations/CYLRefreshActivity.gif', size: 28 } }
 
 /** CYLFlow: title key and the scenario shown while the list is empty. */
 const FLOWS = {
@@ -23,8 +25,6 @@ const STATES = ['empty', 'failed', 'offline', 'data']
 const STATE_KEYS = ['CYLScenarioStateEmpty', 'CYLScenarioStateFailed', 'CYLScenarioStateOffline', 'CYLScenarioStateData']
 
 Page({
-  ...CYLRefreshMethods,
-
   data: {
     flow: 'switchStates',
     state: 'empty',
@@ -39,7 +39,7 @@ Page({
     hasFooter: false,
     searchPlaceholder: '',
     sectionHeaders: [],
-    ...cylRefreshData(),
+    footerIcons: FOOTER_ICONS,
   },
 
   onLoad(query) {
@@ -115,17 +115,18 @@ Page({
   onHeaderRefresh() {
     this.cancels.push(later(1000, () => {
       this.applyRows(this.data.rows.length > 0 ? 0 : 12)
-      this.resetFooterNoMoreData()
-      this.endHeaderRefreshing()
+      const refresh = this.selectComponent('#refresh')
+      if (!refresh) return
+      refresh.resetNoMoreData()
+      refresh.endRefreshing()
     }))
   },
 
-  footerEnabled() {
-    return this.data.hasFooter && this.data.rows.length > 0
-  },
-
-  /** CYLRefreshAutoAnimationFooter: after 1 s always ends with no more data. */
+  /** CYLRefreshAutoAnimationFooter (refreshControls only): after 1 s always ends with no more data. */
   onFooterRefresh() {
-    this.cancels.push(later(1000, () => this.endFooterRefreshingWithNoMoreData()))
+    this.cancels.push(later(1000, () => {
+      const refresh = this.selectComponent('#refresh')
+      if (refresh) refresh.endRefreshingWithNoMoreData()
+    }))
   },
 })

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "",
+  "disableScroll": true,
+  "usingComponents": {
+    "cyl-refresh": "/components/cyl-refresh/index",
+    "smart-canvas": "./styles/smart-canvas/index"
+  }
+}

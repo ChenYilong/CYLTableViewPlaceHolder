@@ -137,6 +137,6 @@ Page({
   /** Odd rows push the test page, even rows present it (a mini program page either way). */
   onRow(e) {
     const modal = e.currentTarget.dataset.index % 2 === 1
-    wx.navigateTo({ url: '/pages/refresh-test/refresh-test?modal=' + (modal ? 1 : 0) })
+    wx.navigateTo({ url: '/refresh-demos/refresh-test/refresh-test?modal=' + (modal ? 1 : 0) })
   },
 })

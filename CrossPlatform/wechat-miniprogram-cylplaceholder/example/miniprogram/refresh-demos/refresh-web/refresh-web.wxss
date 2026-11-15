@@ -1,0 +1,32 @@
+.page { position: relative; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; background: #fff; }
+.content { flex: 1; min-height: 0; }
+
+.web { padding-bottom: 180px; }
+.web__address { margin: 8px 12px; padding: 8px 12px; border-radius: 10px; background: #f2f2f7; display: flex; flex-direction: row; align-items: center; }
+.web__lock { font-size: 12px; margin-right: 6px; }
+.web__url { font-size: 13px; color: #3c3c43; word-break: break-all; }
+.web__body { padding: 0 16px; transition: opacity 0.2s; }
+.web__body--loading { opacity: 0.4; }
+.web__repo { padding: 12px 0 4px; font-size: 20px; color: #0969da; }
+.web__name { font-weight: 600; }
+.web__about { padding-bottom: 12px; border-bottom: 1px solid #d0d7de; font-size: 15px; color: #57606a; }
+.web__h1 { padding: 16px 0 8px; border-bottom: 1px solid #d0d7de; font-size: 26px; font-weight: 600; }
+.web__h2 { padding: 18px 0 6px; font-size: 20px; font-weight: 600; }
+.web__p, .web__li { padding: 4px 0; font-size: 15px; line-height: 22px; color: #1f2328; }
+.web__code { margin: 6px 0; padding: 12px; border-radius: 6px; background: #f6f8fa; font-family: Menlo, monospace; font-size: 12px;
+  line-height: 18px; white-space: pre-wrap; word-break: break-all; }
+.web__stamp { padding: 16px 0; font-size: 12px; color: #8e8e93; text-align: center; }
+
+.warning { position: absolute; right: 10px; bottom: 110px; width: 200px; height: 50px; box-sizing: border-box; padding: 0 6px;
+  display: flex; align-items: center; font-size: 14px; line-height: 17px; color: #000; background: rgba(142, 142, 147, 0.3); }
+.back { position: absolute; right: 10px; bottom: 50px; width: 200px; height: 50px; display: flex; align-items: center;
+  justify-content: center; font-size: 17px; color: #fff; background: #ff3b30; }
+.back--pressed { opacity: 0.6; }
+
+@media (prefers-color-scheme: dark) {
+  .page { background: #000; }
+  .web__address { background: #1c1c1e; }
+  .web__url, .web__p, .web__li, .web__h1, .web__h2 { color: #e6edf3; }
+  .web__code { background: #161b22; color: #e6edf3; }
+  .warning { color: #fff; }
+}

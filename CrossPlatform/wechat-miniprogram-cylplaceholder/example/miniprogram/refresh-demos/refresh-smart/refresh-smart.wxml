@@ -1,0 +1,35 @@
+<!-- CYLSmartRefreshDemoViewController: a grouped table under the style's header, or above its footer. -->
+<view class="page">
+  <view class="content" style="{{contentBackground ? 'background:' + contentBackground : ''}}">
+    <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}"
+                 header-height="{{setup.headerHeight || 0}}" footer-height="{{setup.footerHeight || 0}}"
+                 header-style="{{headerStyle}}" footer-style="{{footerStyle}}"
+                 bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:statechange="onStateChange">
+      <!-- The drawn header (CYLRefresh<Name>Header / CYLRefreshRiveHeader stand-in). -->
+      <view slot="header" class="slot">
+        <smart-canvas wx:if="{{setup.header === 'diy'}}" kind="{{setup.kind}}" part="header"
+                      state="{{hs.state}}" percent="{{hs.percent}}" primary="{{primary}}" accent="{{accent}}" />
+      </view>
+      <view class="table">
+        <block wx:for="{{sections}}" wx:for-item="section" wx:key="id">
+          <view wx:if="{{section.title}}" class="section__header grouped__header">{{section.title}}</view>
+          <view wx:else class="grouped__gap" />
+          <view class="grouped__body">
+            <view wx:for="{{section.rows}}" wx:for-item="row" wx:key="id" class="cell"
+                  hover-class="{{row.action ? 'cell--pressed' : 'none'}}" bindtap="onRow" data-action="{{row.action || ''}}"
+                  aria-role="{{row.action ? 'button' : 'text'}}">
+              <view class="cell__text"><text class="cell__title">{{row.title}}</text></view>
+              <text wx:if="{{row.detail}}" class="cell__detail">{{row.detail}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+      <!-- The drawn footer (CYLRefreshDrawnFooter): only "No more data" is a label. -->
+      <view slot="footer" class="slot">
+        <smart-canvas wx:if="{{setup.footer === 'diyBack' && fs.state !== 'NoMoreData'}}" kind="{{setup.kind}}" part="footer"
+                      state="{{fs.state}}" percent="{{fs.percent}}" primary="{{primary}}" accent="{{accent}}" />
+        <text wx:if="{{fs.state === 'NoMoreData'}}" class="no-more">{{noMoreText}}</text>
+      </view>
+    </cyl-refresh>
+  </view>
+</view>

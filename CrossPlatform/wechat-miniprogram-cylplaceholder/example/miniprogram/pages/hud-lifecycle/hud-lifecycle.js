@@ -4,7 +4,6 @@
 const { t } = require('../../utils/l10n')
 const { later } = require('../../utils/page')
 const { CYLPlaceholderAction } = require('../../components/cyl-placeholder/cyl_placeholder')
-const { cylRefreshData, CYLRefreshMethods } = require('../flow-detail/refresh_control')
 
 function range(from, to) {
   const list = []
@@ -13,9 +12,7 @@ function range(from, to) {
 }
 
 Page({
-  ...CYLRefreshMethods,
-
-  data: { rows: [], ...cylRefreshData() },
+  data: { rows: [], placeholderHeight: 0 },
 
   onLoad() {
     wx.setNavigationBarTitle({ title: t('CYLScenarioHUDSectionLifecycle') })
@@ -25,6 +22,10 @@ Page({
   },
 
   onReady() {
+    // The placeholder fills the visible list.
+    wx.createSelectorQuery().in(this).select('#hudLifecycle').boundingClientRect().exec(([list]) => {
+      if (list) this.setData({ placeholderHeight: list.height })
+    })
     // A HUD local to the page, with a minimum dismiss interval of 1 s.
     this.hud = this.selectComponent('#hud').hud
     this.hud.minimumDismissTimeInterval = 1
@@ -64,13 +65,11 @@ Page({
   onHeaderRefresh() {
     this.cancels.push(later(1000, () => {
       this.setItems(range(1, 15))
-      this.endHeaderRefreshing()
-      this.resetFooterNoMoreData()
+      const refresh = this.selectComponent('#refresh')
+      if (!refresh) return
+      refresh.endRefreshing()
+      refresh.resetNoMoreData()
     }))
-  },
-
-  footerEnabled() {
-    return this.items.length > 0
   },
 
   /** CYLRefreshAutoNormalFooter: after 1 s ten more items; no more data from 45. */
@@ -78,8 +77,10 @@ Page({
     this.cancels.push(later(1000, () => {
       const next = this.items.length + 1
       this.setItems(this.items.concat(range(next, next + 9)))
-      if (this.items.length >= 45) this.endFooterRefreshingWithNoMoreData()
-      else this.endFooterRefreshing()
+      const refresh = this.selectComponent('#refresh')
+      if (!refresh) return
+      if (this.items.length >= 45) refresh.endRefreshingWithNoMoreData()
+      else refresh.endFooterRefreshing()
     }))
   },
 })

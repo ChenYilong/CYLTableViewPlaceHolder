@@ -1,0 +1,5 @@
+{
+  "navigationBarTitleText": "",
+  "disableScroll": true,
+  "usingComponents": { "easy-refresh": "./components/easy-refresh/index" }
+}

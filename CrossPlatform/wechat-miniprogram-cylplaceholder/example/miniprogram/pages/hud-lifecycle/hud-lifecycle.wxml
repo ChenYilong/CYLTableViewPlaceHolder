@@ -1,24 +1,19 @@
-<!-- CYLHUDLifecycleViewController: a plain list with CYLRefresh, the RetryButton placeholder while it is empty, and
-     the page's own HUD. -->
-<import src="../flow-detail/refresh.wxml" />
+<!-- CYLHUDLifecycleViewController: a plain list with CYLRefresh (CYLRefreshNormalHeader, CYLRefreshAutoNormalFooter),
+     the RetryButton placeholder while it is empty, and the page's own HUD. -->
 <view class="page">
-  <scroll-view class="list" id="hudLifecycle" scroll-y="{{true}}" enhanced="{{true}}" bounces="{{true}}"
-               refresher-enabled="{{true}}" refresher-default-style="none" refresher-background="transparent"
-               refresher-threshold="{{refreshThreshold}}" refresher-triggered="{{refresherTriggered}}"
-               bindrefresherpulling="onRefresherPulling" bindrefresherrefresh="onRefresherRefresh"
-               bindrefresherrestore="onRefresherRestore" bindrefresherabort="onRefresherRestore"
-               bindscrolltolower="onScrollToLower" lower-threshold="{{20}}">
-    <template is="cyl-refresh-header" data="{{header}}" />
-    <view wx:if="{{rows.length}}" class="plain">
-      <view wx:for="{{rows}}" wx:key="id" class="cell">
-        <text class="cell__title">{{item.title}}</text>
+  <view class="list" id="hudLifecycle">
+    <cyl-refresh id="refresh" header="normal" footer="auto" footer-hidden="{{!rows.length}}"
+                 bind:refresh="onHeaderRefresh" bind:loadmore="onFooterRefresh">
+      <view wx:if="{{rows.length}}" class="plain">
+        <view wx:for="{{rows}}" wx:key="id" class="cell">
+          <text class="cell__title">{{item.title}}</text>
+        </view>
       </view>
-    </view>
-    <view wx:else class="placeholder">
-      <cyl-placeholder scenario="RetryButton" generic:animation="cyl-lottie" animated="{{true}}"
-                       bind:action="onPlaceholderAction" />
-    </view>
-    <block wx:if="{{rows.length}}"><template is="cyl-refresh-footer" data="{{footer: footer, gif: false}}" /></block>
-  </scroll-view>
+      <view wx:else class="placeholder" style="height: {{placeholderHeight}}px">
+        <cyl-placeholder scenario="RetryButton" generic:animation="cyl-lottie" animated="{{true}}"
+                         bind:action="onPlaceholderAction" />
+      </view>
+    </cyl-refresh>
+  </view>
   <cyl-placeholder-hud id="hud" />
 </view>
