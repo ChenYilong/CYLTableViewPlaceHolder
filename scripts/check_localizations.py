@@ -48,7 +48,18 @@ def parse(path):
     return dict(entries)
 
 
+def android_asset_table(path):
+    """An Android example's `assets/Localization/<language>.lproj/*.strings`: the layout CYLTabBarController's Android
+    configuration reader expects (instructions.md, "Integrating CYLTabBarController in the examples"), not an iOS
+    bundle."""
+    parts = path.relative_to(ROOT).parts
+    return (parts[0] == 'android' and path.parent.suffix == '.lproj' and path.parent.parent.name == 'Localization'
+            and path.parent.parent.parent.name == 'assets')
+
+
 for path in sorted(p for p in ROOT.rglob('*') if p.suffix in {'.strings', '.stringsdict', '.xcstrings'} and visible(p)):
+    if android_asset_table(path):
+        continue
     if path.parent.suffix != '.lproj' or path.parent.parent.suffix != '.bundle':
         problems.append(f'{path.relative_to(ROOT)}: localization file outside <language>.lproj in a .bundle')
 
