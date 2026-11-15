@@ -23,7 +23,7 @@
 
 ## 任务 / Tasks
 
-### TODO: WeChat Mini Program placeholder package (score 88)
+### TODO: WeChat Mini Program placeholder package (score 92)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
   request targets `feat/android-refresh-port`).
@@ -53,10 +53,10 @@
   4. `node --test` unit tests for the catalog and the localization.
   5. Open the example with the DevTools skill (`project_import`, `open_project_window`, `simulator_screenshot`),
      store the screenshot in `docs/`, update the README.
-- **Score: 88 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
+- **Score: 92 / 100.** Package, example and unit tests done; all 35 scenarios render and Retry works in the DevTools
   simulator; `cyl-placeholder-hud` (CYLPlaceholderHUD) ported; Lottie animations for 31 scenarios with "Play all",
-  speed and loop controls; all checked in the simulator; README section with screenshots added. Left: items 1–4
-  below.
+  speed and loop controls; `CYLPlaceholderConfiguration` (JSON configuration files) ported; all checked in the
+  simulator; README section with screenshots added. Left: items 1–4 below.
 - **Remaining work (TODO):**
   1. Check on a real phone (preview). The DevTools Skills client authorization (`wechatide auth -c Claude`) still
      times out with `connect_failed` even while logged in, so the simulator run used the classic CLI
@@ -69,7 +69,11 @@
      choosing a variant per scenario, Lottie on the HUD (`loadingAnimationFileName`), Dark Mode colors (`colors` of
      cyl-lottie). The example's player comes from a CYLTabBarController checkout (`CYL_TABBAR_DIR`, default: next to
      this repository); the package itself has no dependency (the `animation` generic defaults to no player).
-  3. `CYLPlaceholderConfiguration` (JSON configuration files) and the status view are not ported yet.
+  3. The status view (`CYLPlaceholderStatusView`, `cyl_applyStatusConfiguration`) is not ported yet.
+     `CYLPlaceholderConfiguration` is ported (`3e164da`) except: `.plist` (refused with the Android message), the
+     `item` type draws only the title attributes (title color, background color, corner radius, content insets,
+     minimum width; other raw item attributes are ignored), a numeric `style` indexes the sorted icon list instead of
+     the `CYLPlaceholderStyle` enum order, non-Lottie `animation` names validate but keep the static icon.
      `CYLPlaceholderHUD` is ported (`dfc0495`) except: the appear / disappear / touch notifications (one `touch`
      event instead), haptics, `offsetFromCenter`, `minimumSize`, colors / font / corner radius properties,
      `loading/progress/successAnimationFileName` (the loading animation is the iOS `CYLRefreshActivity.gif`; success /
@@ -89,13 +93,18 @@
 | `src/cyl-placeholder/cyl_localization.js` | `CYLPlaceholderLocalization`: `setLanguage`, `resolveLanguage`, `localizedString` |
 | `src/cyl-placeholder/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
 | `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
-| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting the catalog, the HUD and the localization |
+| `src/cyl-placeholder/cyl_configuration.js` | `CYLPlaceholderConfiguration`: parses configuration objects / JSON files |
+| `src/cyl-placeholder/cyl_images.js` | Generated icon list (validates a configuration's `style`) |
+| `src/cyl-placeholder/animations/` | The 31 placeholder Lottie files of the iOS bundle, `NOTICE.animations`, licenses |
+| `src/cyl-placeholder/no-animation/` | Default `animation` generic (no player) |
+| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting the catalog, the HUD, the configuration and the localization |
 | `src/cyl-placeholder/locales/<locale>.json` (+ generated `.js` twin) | Strings of `android/placeholder` (7 languages, 108 keys) |
 | `src/cyl-placeholder/images/*.png` | Icons of `android/placeholder` (52), licenses copied alongside |
 | `scripts/import-android-resources.js` | Re-imports strings and icons from Android |
 | `scripts/sync-example.js` | Copies both components into the example (DevTools `beforeCompile` hook) |
 | `example/miniprogram` | Scenario list (grouped by category, language picker), a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") and a HUD page (every HUD call, mask type and style pickers) |
-| `test/catalog.test.js`, `test/hud.test.js` | `node --test` unit tests |
+| `example/miniprogram/configurations/` | The six example configuration files (copied from `android/merged/example`) |
+| `test/catalog.test.js`, `test/hud.test.js`, `test/configuration.test.js` | `node --test` unit tests |
 
 ## API 对照 / API alignment
 
@@ -111,7 +120,8 @@
 | `CYLPlaceholderHUD` `show`, `showWithStatus`, `showProgress(:status:)`, `setStatus`, `showInfo/Success/ErrorWithStatus`, `showImage`, `showScenario`, `showComponents`, `popActivity`, `dismiss(WithDelay)(completion)`, `visible`, `displayDurationForString`, `state`, `status`, `progress`, `activityCount`, `style`, `maskType`, `graceTimeInterval`, `minimum/maximumDismissTimeInterval`, `fadeIn/OutAnimationDuration` | same names on `selectComponent('#hud').hud` | Actions of components in the box arrive as the `action` event instead of an `actions` map |
 | `animationFileNamesForScenario` | same name, plus `lottieFileNameForScenario` | Same lists as Kotlin; tested |
 | Animated placeholder icons (Lottie / PAG / Rive / GIF players) | `animated`, `speed`, `loop` properties, `playAll()`, `generic:animation="cyl-lottie"` | Lottie only |
-| `CYLPlaceholderConfiguration` | — | TODO (see above) |
+| `CYLPlaceholderStackView initWithConfiguration:` / `initWithContentsOfURL:`, Kotlin `fromConfiguration` / `fromContentsOfURL` | `<cyl-placeholder configuration="{{object or JSON string}}">`, `CYLPlaceholderConfiguration.parse(configuration, language)`, `readConfigurationFile(path)` | Errors: `configerror` event / thrown `CYLPlaceholderConfigurationError` with the Android messages; tap handlers stay in the page (`action` event) |
+| `CYLPlaceholderComponent componentWithDictionary` | `CYLPlaceholderConfiguration.componentWithDictionary` | |
 
 ## 验证 / Verification
 
@@ -138,4 +148,12 @@
   lottie instance (`playSpeed` 2, `loop` false) and "Play all" restarts it (frame 387 → 9). Screenshot:
   `docs/assets/wechat-miniprogram-animation.png`. `fs.cpSync` crashed Node 22 on Windows (0xC0000409) when copying
   from the CYLTabBarController checkout; the sync script now copies file by file.
+- 2026-11-15 13:03 (+13:00), commit `3e164da`, same simulator: `npm test` passes 24 / 24 (7 configuration tests: the
+  six Android example files, overrides, background actions, styles / sizes / animations / repeat counts /
+  interaction, item attributes and `titleKey`, every error message, no regex lookbehind in the sources). The
+  configuration page rendered all six files with the expected components and no console errors; the dim button
+  sent `CYLPlaceholderActionRetry`, the "interaction off" button sent nothing; in playback-policies the looping
+  animation kept playing, the "once" one stopped on its last frame and the "3 times" one stopped after its third
+  play; the raw item (`#rawItem`) sent `CYLPlaceholderActionContactSupport`. Screenshot:
+  `docs/assets/wechat-miniprogram-configuration.png`.
 - Not verified: a real phone.

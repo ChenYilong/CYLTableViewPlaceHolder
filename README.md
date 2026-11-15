@@ -959,6 +959,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program Lottie animations with Play all, speed and loop](docs/assets/wechat-miniprogram-animation.png)
 
+| 中文 | English |
+| --- | --- |
+| 配置文件初始化（`CYLPlaceholderConfiguration`）：三种按下样式与关闭交互、三种播放策略、原始 item 属性，下方为文件内容。同一模拟器与基础库，提交 `3e164da`，2026-11-15 13:03（+13:00）。 | Configuration files (`CYLPlaceholderConfiguration`): three highlight styles and interaction off, three playback policies, raw item attributes, each with the file below. Same simulator and base library, commit `3e164da`, 2026-11-15 13:03 (+13:00). |
+
+![WeChat Mini Program configuration files](docs/assets/wechat-miniprogram-configuration.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |

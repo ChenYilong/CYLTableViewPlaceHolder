@@ -38,6 +38,35 @@ Event `action`: `detail = { action, scenario, index }`, `index` is `-1` for a ba
 `CYLPlaceholderAction*` strings of iOS and Android (`CYLPlaceholderActionRetry`, `…ContactSupport`, `…OpenSettings`,
 `…GoShopping`, `…Done`, `…ChooseManually`).
 
+## Configuration files
+
+`CYLPlaceholderConfiguration` builds a placeholder from a configuration object or JSON file, with the keys of iOS and
+Android (see `docs/Placeholder-Scenarios.md`, "Configuration files"):
+
+```js
+const { CYLPlaceholderConfiguration } = require('/components/cyl-placeholder/cyl_placeholder')
+this.setData({ configuration: CYLPlaceholderConfiguration.readConfigurationFile('/configurations/ctrip.json') })
+```
+
+```html
+<cyl-placeholder configuration="{{configuration}}" bind:action="onAction" bind:configerror="onConfigError" />
+```
+
+```json
+{
+  "scenario": "RetryOrContactSupport",
+  "overrides": [{ "index": 1, "highlightStyle": "shrink" }, { "index": 3, "interactionEnabled": false }]
+}
+```
+
+Top-level keys: `scenario`, `components`, `overrides`, `backgroundAction` (`""` turns it off),
+`accessibilityIdentifier`. Component keys: `type` (`icon`, `hint`, `button`, `separator`, `item`), `title` / `text`
+or `titleKey` / `textKey`, `animation`, `style` (an icon name such as `WifiOff`), `size`, `buttonStyle`, `action`,
+`interactionEnabled`, `highlightStyle` (`dim`, `shrink`, `none`), `repeatCount` (`"loop"`, `"once"`, N),
+`spacingBefore`, `accessibilityIdentifier` (the element's `id`), `attributes` (`item`: title color, background
+color, corner radius, content insets, minimum width). An invalid configuration renders nothing and sends
+`configerror` with the reason; `CYLPlaceholderConfiguration.parse` throws it instead.
+
 ## Animations
 
 31 scenarios have a Lottie file for their main icon (`CYLPlaceholderScenarioCatalog.lottieFileNameForScenario`),
