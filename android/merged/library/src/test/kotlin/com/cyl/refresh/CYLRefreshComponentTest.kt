@@ -589,4 +589,25 @@ class CYLRefreshComponentTest {
     }
 
 
+
+    @Test
+    fun flyHeaderBringsItsSceneAndRestoresTheContent() {
+        val layout = show(layout())
+        val content = layout.cyl_header.let { (0 until layout.childCount).map(layout::getChildAt).first() }
+        val header = CYLRefreshFlyHeader(activity)
+        layout.cyl_header = header
+        idle(100)
+        val density = activity.resources.displayMetrics.density
+        assertEquals("scene height", (150 * density).toInt(), header.mountainView.height)
+        val sceneAt = IntArray(2).also(header.mountainView::getLocationInWindow)
+        val contentAt = IntArray(2).also(content::getLocationInWindow)
+        assertEquals("content below the scene", sceneAt[1] + header.mountainView.height, contentAt[1])
+        assertTrue("plane shown", header.flyView.width > 0 && header.flyView.isShown)
+        layout.cyl_header = null
+        idle(50)
+        assertSame("content restored", layout, content.parent)
+        assertNull(header.mountainView.parent)
+    }
+
+
 }
