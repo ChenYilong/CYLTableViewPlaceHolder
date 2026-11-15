@@ -163,7 +163,7 @@
   back footer ("Release to load more", release loads), which also found and fixed a back footer that never armed
   when the rows are shorter than the view.
 
-### TODO: The mini program as a cyl- npm library, verified with npm pack and "构建 npm" (score 0)
+### TODO: The mini program as a cyl- npm library, verified with npm pack and "构建 npm" (score 90)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "在跨端相关文档中标记TODO：小程序封装成库 cyl- 开头的小程序库，用 npm 打包加「构建 npm」实际验证过。提醒我的话先运行 ! npm login。 然后继续你未完成的任务。"
@@ -173,6 +173,15 @@
   "构建 npm" (Build npm); use the components from `miniprogram_npm` and check they open with no error.
 - **Publishing:** `npm publish` needs the owner's npm account: run `! npm login` first (the owner runs it; the
   agent does not log in or publish on its own).
+- **Status (2026-11-15 22:50):** verified, not published. `cyl-placeholder-miniprogram@0.2.0` (`npm pack`: 148 files,
+  ~137 kB) installed from the tarball into a fresh mini program, "构建 npm" via `cli build-npm` (WeChat DevTools
+  2.02.2609250, base library 3.17.6): `miniprogram_npm/cyl-placeholder-miniprogram` holds the five components;
+  the page uses all five and `require('cyl-placeholder-miniprogram')`, with no exception or console error, and a
+  Cupertino refresh ends in "Refresh complete". This found a missing entry: Build npm makes `src` the package
+  root, so `main` (`src/cyl-placeholder/...`) did not resolve; `src/index.js` now re-exports the placeholder and
+  refresh APIs (`main` is `src/index.js`). Screenshot: `docs/assets/wechat-miniprogram-npm-build.png`.
+  Notes: DevTools' CLI fails with "There is no such AppID" when given an 8.3 short path (`CHENYI~1`) or a
+  project.config.json with a BOM. Left: `npm publish` after the owner runs `! npm login`.
 
 ## 结构 / Structure
 

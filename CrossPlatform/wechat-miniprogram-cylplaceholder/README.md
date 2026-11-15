@@ -5,7 +5,35 @@ CYLTableViewPlaceHolder for WeChat Mini Program: the `cyl-placeholder` custom co
 Android module `android/placeholder` (itself the Kotlin port of the iOS library). Texts in English, Simplified
 Chinese, Traditional Chinese, Japanese, Korean, Russian and Ukrainian.
 
-## Usage
+## Install with npm
+
+```bash
+npm install cyl-placeholder-miniprogram
+```
+
+Then run WeChat DevTools' 工具 → 构建 npm (Tools → Build npm). The components land in
+`miniprogram_npm/cyl-placeholder-miniprogram`:
+
+```json
+{
+  "usingComponents": {
+    "cyl-placeholder": "cyl-placeholder-miniprogram/cyl-placeholder/index",
+    "cyl-placeholder-hud": "cyl-placeholder-miniprogram/cyl-placeholder-hud/index",
+    "cyl-placeholder-status": "cyl-placeholder-miniprogram/cyl-placeholder-status/index",
+    "cyl-refresh": "cyl-placeholder-miniprogram/cyl-refresh/index",
+    "cyl-refresh-trailer": "cyl-placeholder-miniprogram/cyl-refresh-trailer/index"
+  }
+}
+```
+
+```js
+const { CYLPlaceholderAction, CYLRefresh } = require('cyl-placeholder-miniprogram')
+```
+
+Verified with `npm pack` → `npm install <tarball>` → 构建 npm in WeChat DevTools 2.02.2609250 (base library 3.17.6):
+all five components and the `require` entry load with no error.
+
+## Usage (copied components)
 
 ```json
 { "usingComponents": { "cyl-placeholder": "/components/cyl-placeholder/index" } }
