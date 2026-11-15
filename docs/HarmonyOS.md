@@ -25,7 +25,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### DONE: HarmonyOS port, library and example (score 100)
+### TODO: HarmonyOS port, library and example (score 94)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
@@ -182,7 +182,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：100 / 100**（两张表合计：没有 TODO 的行 1064 / 计入的行 1064；n/a 20 行不计入）。API 表 884 / 884，演示表 180 / 180。 | **HarmonyOS score: 100 / 100** (both tables: rows without TODO 1064 / counted rows 1064; 20 n/a rows not counted). API table 884 / 884, demo table 180 / 180. |
+| **鸿蒙完成度：94 / 100**（两张表合计：没有 TODO 的行 1064 / 计入的行 1126；n/a 22 行不计入）。API 表 884 / 946，演示表 180 / 180。 | **HarmonyOS score: 94 / 100** (both tables: rows without TODO 1064 / counted rows 1126; 22 n/a rows not counted). API table 884 / 946, demo table 180 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -1499,6 +1499,90 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `CYLPlaceholderStatusController.cyl_applyStatusConfigurationWithContentsOfURL(path, onError)` |
 | `UIScrollView(CYLPlaceholderVisibility)` | `CYLPlaceholderListController` |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `CYLPlaceholderListController.cyl_placeholderHidden` |
+
+#### `LottieSwift/CYLPlaceholderCompatibleLottie.swift`
+
+| iOS API | 鸿蒙对应实现 / HarmonyOS |
+|:---|:---|
+| `CYLPlaceholderCompatibleLOTAnimation` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimation` `init(filepath:)` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimation` `isLoaded` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `init(compatibleAnimation:)` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `loopAnimationCount` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `contentMode` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `animationProgress` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `duration` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `realtimeAnimationProgress` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `animationSpeed` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `isAnimationPlaying` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-play()` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-stop()` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-pause()` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-forceDrawingUpdate()` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-setColorValue(_:forKeypathString:)` | TODO |
+| `CYLPlaceholderCompatibleLOTAnimationView` `-removeValueProvider(forKeypathString:)` | TODO |
+
+#### `RiveSwift/CYLPlaceholderRiveItemAnimationView.swift`
+
+| iOS API | 鸿蒙对应实现 / HarmonyOS |
+|:---|:---|
+| `CYLPlaceholderRiveItemAnimationView` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `legacyViewProvider` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `animationReadyHandler` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `animationErrorHandler` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `isAnimationReady` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `+makeAnimationView(fileURL:options:contentMode:)` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `init(coder:)` | n/a (NSCoding initializer, unavailable on iOS) |
+| `CYLPlaceholderRiveItemAnimationView` `-playAnimation()` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `-showAnimationLastFrame()` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `-stopAnimation()` | TODO |
+| `CYLPlaceholderRiveItemAnimationView` `-applyAnimationColors(_:)` | TODO |
+
+#### `RiveSwift/CYLPlaceholderRiveLegacyItemAnimationView.swift`
+
+| iOS API | 鸿蒙对应实现 / HarmonyOS |
+|:---|:---|
+| `CYLPlaceholderRiveLegacyItemAnimationView` | TODO |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `+makeAnimationView(fileURL:options:contentMode:)` | TODO |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `init(coder:)` | n/a (NSCoding initializer, unavailable on iOS) |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `-playAnimation()` | TODO |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `-setAnimationRepeatCount(_:)` | TODO |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `-showAnimationLastFrame()` | TODO |
+| `CYLPlaceholderRiveLegacyItemAnimationView` `-stopAnimation()` | TODO |
+
+#### `RiveSwift/CYLRefreshRiveHeader.swift`
+
+| iOS API | 鸿蒙对应实现 / HarmonyOS |
+|:---|:---|
+| `CYLRefreshRiveStyle` | TODO |
+| `CYLRefreshRiveStyle` `fileURL` | TODO |
+| `CYLRefreshRiveStyle` `artboardName` | TODO |
+| `CYLRefreshRiveStyle` `stateMachineName` | TODO |
+| `CYLRefreshRiveStyle` `triggerOffset` | TODO |
+| `CYLRefreshRiveStyle` `minimumHeight` | TODO |
+| `CYLRefreshRiveStyle` `fitsWidth` | TODO |
+| `CYLRefreshRiveStyle` `pullInput` | TODO |
+| `CYLRefreshRiveStyle` `pullInputMinimum` | TODO |
+| `CYLRefreshRiveStyle` `pullInputMaximum` | TODO |
+| `CYLRefreshRiveStyle` `pullInputStart` | TODO |
+| `CYLRefreshRiveStyle` `pullInputRefreshingValue` | TODO |
+| `CYLRefreshRiveStyle` `releaseTrigger` | TODO |
+| `CYLRefreshRiveStyle` `finishTrigger` | TODO |
+| `CYLRefreshRiveStyle` `restartTrigger` | TODO |
+| `CYLRefreshRiveStyle` `loadingBoolean` | TODO |
+| `CYLRefreshRiveStyle` `loadingNumber` | TODO |
+| `CYLRefreshRiveStyle` `loadingNumberMaximum` | TODO |
+| `CYLRefreshRiveStyle` `loadingNumberFinished` | TODO |
+| `CYLRefreshRiveStyle` `loadingNumberDuration` | TODO |
+| `CYLRefreshRiveStyle` `pullAnimation` | TODO |
+| `CYLRefreshRiveStyle` `triggerAnimation` | TODO |
+| `CYLRefreshRiveStyle` `loadingAnimation` | TODO |
+| `CYLRefreshRiveStyle` `idleAnimation` | TODO |
+| `CYLRefreshRiveStyle` `init(fileURL:)` | TODO |
+| `CYLRefreshRiveHeader` | TODO |
+| `CYLRefreshRiveHeader` `riveStyle` | TODO |
+| `CYLRefreshRiveHeader` `init(style:)` | TODO |
 
 ### 表 2：iOS example 演示 / Table 2: iOS example demos
 
