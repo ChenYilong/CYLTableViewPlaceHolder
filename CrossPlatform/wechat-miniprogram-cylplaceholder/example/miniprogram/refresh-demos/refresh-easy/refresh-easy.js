@@ -1,6 +1,6 @@
 // CYLEasyRefreshDemoViewController: the flutter_easy_refresh samples (example/lib/page), one method per page:
 // easyCupertino, easySecondary, easyTriggerMode, easyRefreshOnStart, easyPaging, easyListener, easyChat,
-// easyUserProfile. Headers and footers come from the page-local easy-refresh component (components/easy-refresh).
+// easyUserProfile. Headers and footers are cyl-refresh's (Cupertino, listener, trigger modes, second floor, behind, scroll helpers).
 const { t } = require('../../utils/l10n')
 
 const METHODS = ['easyCupertino', 'easySecondary', 'easyTriggerMode', 'easyRefreshOnStart', 'easyPaging', 'easyListener', 'easyChat', 'easyUserProfile']
@@ -186,7 +186,7 @@ Page({
 
   // listener_header_page.dart: the bar above the list shows min(pullingPercent, 1).
   onPull(e) {
-    if (this.method !== 'easyListener') return
+    if (this.method !== 'easyListener' || e.detail.part !== 'header') return
     const progress = Math.round(Math.min(1, e.detail.percent) * 100)
     if (progress !== this.data.progress) this.setData({ progress })
   },

@@ -8,18 +8,9 @@
 
 /* Horizontal pager: frame y = 150, height 200, full width. */
 .hpager { position: absolute; left: 0; right: 0; top: 150px; height: 200px; overflow: hidden; }
-.hpager__track { height: 200px; }
-.hpager__scroll { width: 100%; height: 200px; white-space: nowrap; }
-.hpager__row { display: flex; flex-direction: row; height: 200px; }
 .hpager__page { flex-shrink: 0; width: 100vw; height: 200px; }
-.trailer { position: absolute; top: 0; right: 0; height: 200px; display: flex; flex-direction: row;
-  align-items: center; justify-content: center; overflow: hidden; }
-.trailer__arrow { font-size: 22px; color: #8e8e93; transition: transform 0.2s; }
-.trailer__arrow--flipped { transform: rotate(180deg); }
-.trailer__text { margin-left: 4px; font-size: 13px; line-height: 15px; color: #666; writing-mode: vertical-rl; white-space: normal; }
 
 @media (prefers-color-scheme: dark) {
   .page { background: #000; }
   .grid__header { background: #bf5af2; }
-  .trailer__text { color: #c7c7cc; }
 }

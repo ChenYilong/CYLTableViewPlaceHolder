@@ -1,6 +1,5 @@
 <view class="page">
-  <cyl-refresh id="refresh" header="normal" footer="auto" automatically-change-alpha="{{true}}"
-               language="{{language}}" header-titles="{{headerTitles}}" generic:animation="cyl-lottie"
+  <cyl-refresh id="refresh" header="normal" footer="auto" automatically-change-alpha="{{true}}" generic:animation="cyl-lottie"
                bind:refresh="onRefresh" bind:loadmore="onLoadMore">
     <view class="inset">
       <block wx:for="{{sections}}" wx:for-item="section" wx:key="header">

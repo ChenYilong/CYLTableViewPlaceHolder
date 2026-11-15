@@ -4,12 +4,9 @@
 // - CYLRefreshHorizontalCollectionViewController example42 (pull left: the trailer opens the test page)
 // The variant comes from query.vc plus query.method.
 const { t } = require('../../utils/l10n')
-const { CYLRefresh } = require('../../components/cyl-refresh/cyl_refresh')
 
 const DURATION = 2000
 const A = '/assets/animations/'
-/** MJRefreshTrailWidth: the pull distance that arms the trailer. */
-const TRAILER_WIDTH = 60
 
 /** CYLRefreshRandomColor. */
 function randomColor() {
@@ -38,10 +35,6 @@ Page({
     setup: {},
     colors: [],
     pages: [],
-    // Trailer (horizontal example).
-    trailerPull: 0,
-    trailerState: 'Idle',
-    trailerText: '',
   },
   onLoad(query) {
     this.method = query.method || 'example31'
@@ -54,7 +47,6 @@ Page({
       horizontal,
       setup: gridSetup(this.method),
       pages: horizontal ? randomColors(5).map((p, i) => Object.assign(p, { label: this.itemLabel(i) })) : [],
-      trailerText: CYLRefresh.refreshText('CYLRefreshTrailerIdleText'),
     })
   },
   onReady() {
@@ -99,53 +91,8 @@ Page({
     wx.navigateTo({ url: '/refresh-demos/refresh-test/refresh-test?modal=' + (modal ? 1 : 0) })
   },
 
-  // Horizontal (example42): CYLRefreshNormalTrailer, emulated with touch tracking at the last page.
-
-  onPagesScroll(e) {
-    this.scrollLeft = e.detail.scrollLeft
-    this.scrollWidth = e.detail.scrollWidth
-  },
-  atEnd() {
-    const width = wx.getSystemInfoSync().windowWidth
-    const total = this.scrollWidth || width * this.data.pages.length
-    return this.scrollLeft >= total - width - 2
-  },
-  onTouchStart(e) {
-    if (this.method !== 'example42' || this.data.trailerState === 'Refreshing') return
-    this.tracking = true
-    this.touchX = this.atEnd() ? e.touches[0].clientX : null
-  },
-  onTouchMove(e) {
-    if (!this.tracking) return
-    const x = e.touches[0].clientX
-    // Not at the end when the touch began: the pull starts once the last page is reached during the drag.
-    if (this.touchX == null) {
-      if (!this.atEnd()) return
-      this.touchX = x
-    }
-    const dx = this.touchX - x
-    const pull = Math.max(0, dx) * 0.5
-    const state = pull >= TRAILER_WIDTH ? 'Pulling' : 'Idle'
-    const update = { trailerPull: pull }
-    if (state !== this.data.trailerState) {
-      update.trailerState = state
-      update.trailerText = CYLRefresh.refreshText(state === 'Pulling' ? 'CYLRefreshTrailerPullingText' : 'CYLRefreshTrailerIdleText')
-    }
-    this.setData(update)
-  },
-  onTouchEnd() {
-    if (!this.tracking) return
-    this.tracking = false
-    if (this.data.trailerState === 'Pulling') {
-      // The trailer's block: push the test page, then endRefreshing.
-      this.setData({ trailerState: 'Refreshing', trailerPull: TRAILER_WIDTH })
-      wx.navigateTo({ url: '/refresh-demos/refresh-test/refresh-test?modal=0' })
-      this.endTrailer()
-    } else {
-      this.endTrailer()
-    }
-  },
-  endTrailer() {
-    this.setData({ trailerState: 'Idle', trailerPull: 0, trailerText: CYLRefresh.refreshText('CYLRefreshTrailerIdleText') })
+  // Horizontal (example42): CYLRefreshNormalTrailer (cyl-refresh-trailer); its block pushes the test page.
+  onTrailer() {
+    wx.navigateTo({ url: '/refresh-demos/refresh-test/refresh-test?modal=0' })
   },
 })

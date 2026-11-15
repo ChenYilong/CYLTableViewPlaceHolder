@@ -1,0 +1,14 @@
+<view class="cyl-trailer" style="height: {{height}}">
+  <view class="cyl-trailer__track" style="transform: translateX({{-pull}}px)">
+    <scroll-view class="cyl-trailer__scroll" scroll-x enhanced="{{true}}" paging-enabled="{{pagingEnabled}}" bounces="{{false}}"
+                 show-scrollbar="{{false}}" bindscroll="onScroll"
+                 bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" bindtouchcancel="onTouchEnd">
+      <view class="cyl-trailer__row"><slot></slot></view>
+    </scroll-view>
+  </view>
+  <!-- The trailer: an arrow and the vertical "Swipe to see details" text, revealed by the pull. -->
+  <view wx:if="{{pull > 0}}" class="cyl-trailer__trailer" style="width: {{pull}}px" aria-role="text" aria-label="{{text}}">
+    <text class="cyl-trailer__arrow {{state !== 'Idle' ? 'cyl-trailer__arrow--flipped' : ''}}">←</text>
+    <text wx:if="{{!stateHidden}}" class="cyl-trailer__text">{{text}}</text>
+  </view>
+</view>
