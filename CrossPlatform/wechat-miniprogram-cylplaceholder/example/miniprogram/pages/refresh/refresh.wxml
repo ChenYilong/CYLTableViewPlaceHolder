@@ -6,7 +6,7 @@
         <view class="section__header">{{section.title}}</view>
         <view class="section__body">
           <view wx:for="{{section.rows}}" wx:key="subtitle" class="cell" hover-class="cell--pressed" bindtap="onOpen"
-                data-page="{{item.page}}" data-method="{{item.method}}" data-title="{{item.title}}">
+                data-page="{{item.page}}" data-method="{{item.method}}" data-vc="{{item.vc}}" data-title="{{item.title}}">
             <view class="cell__text">
               <text class="cell__title">{{item.title}}</text>
               <text class="cell__subtitle">{{item.subtitle}}</text>

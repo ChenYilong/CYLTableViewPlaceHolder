@@ -1,2 +1,1 @@
 .hud__value { flex-shrink: 1; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hud-mask { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9998; background: rgba(48, 176, 199, 0.3); }

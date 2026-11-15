@@ -107,6 +107,25 @@ test('graceTimeInterval hides a quick task', () => {
   assert.strictEqual(hud.state, S.Loading)
 })
 
+test('custom colors, mask, metrics, loading animation and haptics reach the view', () => {
+  let vibrations = 0
+  const views = []
+  const hud = new CYLPlaceholderHUD((v) => views.push(v), { setTimeout: () => 0, clearTimeout: () => {}, vibrate: () => vibrations++ })
+  Object.assign(hud, { style: 'Custom', maskType: 'Custom', foregroundColor: '#fff', hudBackgroundColor: '#30b0c7', backgroundLayerColor: 'rgba(0,0,0,0.2)', cornerRadius: 8, minimumSize: 80, offsetFromCenter: [0, -40], loadingAnimationFileName: '/a/spin.json' })
+  hud.show()
+  const v = views.at(-1)
+  assert.deepStrictEqual([v.style, v.maskType, v.foregroundColor, v.hudBackgroundColor, v.backgroundLayerColor, v.cornerRadius, v.minimumSize, v.offsetX, v.offsetY, v.loadingAnimation],
+    ['Custom', 'Custom', '#fff', '#30b0c7', 'rgba(0,0,0,0.2)', 8, 80, 0, -40, '/a/spin.json'])
+  assert.strictEqual(v.blocksTouches, true)
+  hud.showSuccessWithStatus('ok')
+  assert.strictEqual(vibrations, 0)
+  hud.hapticsEnabled = true
+  hud.showSuccessWithStatus('ok')
+  hud.showErrorWithStatus('no')
+  hud.showInfoWithStatus('i')
+  assert.strictEqual(vibrations, 2)
+})
+
 test('scenario and components in the box; the mask blocks touches unless None', () => {
   const { hud, views } = makeHUD()
   hud.showScenario('CYLPlaceholderScenarioRetryButton')

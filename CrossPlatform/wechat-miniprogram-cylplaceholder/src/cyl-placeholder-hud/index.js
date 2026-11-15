@@ -18,7 +18,7 @@ Component({
   data: { view: { visible: false }, shown: false, defaultStatus: '' },
   lifetimes: {
     created() {
-      this.hud = new CYLPlaceholderHUD((view) => this._render(view))
+      this.hud = new CYLPlaceholderHUD((view) => this._render(view), { vibrate: () => wx.vibrateShort({ type: 'medium' }) })
     },
     attached() {
       this.setData({ defaultStatus: localizedString('scenario_h_u_d_title', this.data.language || undefined) })
@@ -31,12 +31,18 @@ Component({
   methods: {
     _render(view) {
       clearTimeout(this._fadeTimer)
+      const wasVisible = !!this.data.view.visible
       if (view.visible) {
         this.setData({ view, shown: true })
+        // CYLPlaceholderHUDDidAppearNotification / DidDisappearNotification as events.
+        if (!wasVisible) this.triggerEvent('appear', { state: view.state })
       } else {
         // Keep the box while it fades out.
         this.setData({ 'view.visible': false })
-        this._fadeTimer = setTimeout(() => this.setData({ shown: false }), view.fadeOut * 1000)
+        this._fadeTimer = setTimeout(() => {
+          this.setData({ shown: false })
+          if (wasVisible) this.triggerEvent('disappear', {})
+        }, view.fadeOut * 1000)
       }
     },
     onAction(e) {

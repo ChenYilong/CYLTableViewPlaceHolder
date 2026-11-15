@@ -13,6 +13,4 @@
   </block>
 </view>
 
-<!-- The custom mask (backgroundLayerColor: systemTeal at 0.3) under the HUD. -->
-<view wx:if="{{customMask && hudVisible}}" class="hud-mask" />
-<cyl-placeholder-hud id="hud" bind:action="onHUDAction" />
+<cyl-placeholder-hud id="hud" generic:animation="cyl-lottie" bind:action="onHUDAction" />
