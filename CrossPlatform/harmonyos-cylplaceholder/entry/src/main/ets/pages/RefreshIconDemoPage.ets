@@ -104,7 +104,8 @@ export struct RefreshIconDemoPage {
         .fontSize(20)
         .fontColor(UiColor.teal)
         .padding({ left: 8, right: 8, top: 6, bottom: 6 })
-        .accessibilityText('Refresh')
+        .accessibilityText(t('CYLScenarioTabRefresh'))
+        .accessibilityRole(AccessibilityRoleType.BUTTON)
         .onClick(() => {
           if (this.header !== null) {
             this.header.beginRefreshing();

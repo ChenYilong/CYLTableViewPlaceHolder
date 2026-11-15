@@ -124,6 +124,7 @@ export struct AnimationsTab {
       Row() {
         Blank()
         Text(t('CYLScenarioActionSources'))
+          .accessibilityRole(AccessibilityRoleType.BUTTON)
           .fontSize(17)
           .fontColor(UiColor.teal)
           .padding({ left: 8, right: 8, top: 6, bottom: 6 })

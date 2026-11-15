@@ -63,6 +63,7 @@ export function LargeTitle(title: string) {
 @Builder
 export function BarButton(title: string, action: () => void) {
   Text(title)
+    .accessibilityRole(AccessibilityRoleType.BUTTON)
     .fontSize(17)
     .fontColor(UiColor.teal)
     .padding({ left: 8, right: 8, top: 6, bottom: 6 })

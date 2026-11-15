@@ -342,10 +342,7 @@ export function CYLPlaceholderAnimationFileExists(URL: string, context: Context 
       const path = file.startsWith('file://') ? file.substring('file://'.length) : file;
       return fileIo.accessSync(path) && fileIo.statSync(path).isFile();
     }
-    let host: Context | null = context;
-    if (host === null) {
-      host = getContext() as common.Context;
-    }
+    const host: Context | null = context !== null ? context : CYLPlaceholderAnimationDefaultContext();
     if (host === null || host === undefined) {
       return false;
     }
@@ -376,10 +373,7 @@ export function CYLPlaceholderAnimationReadFileSync(URL: string, context: Contex
         fileIo.closeSync(handle);
       }
     }
-    let host: Context | null = context;
-    if (host === null) {
-      host = getContext() as common.Context;
-    }
+    const host: Context | null = context !== null ? context : CYLPlaceholderAnimationDefaultContext();
     if (host === null || host === undefined) {
       return null;
     }
@@ -389,26 +383,54 @@ export function CYLPlaceholderAnimationReadFileSync(URL: string, context: Contex
   }
 }
 
+let defaultContext: Context | null = null;
+
+/**
+ * The context rawfiles are read with when a caller passes none (HarmonyOS addition replacing the deprecated global
+ * getContext): the app sets it once (EntryAbility), and every context passed to a read is remembered too.
+ */
+export function CYLPlaceholderAnimationSetDefaultContext(context: Context | null): void {
+  defaultContext = context;
+}
+
+/** The context set by CYLPlaceholderAnimationSetDefaultContext (or the last one passed to a read), or null. */
+export function CYLPlaceholderAnimationDefaultContext(): Context | null {
+  return defaultContext;
+}
+
 /** Reads the URL's file: a sandbox file, or a rawfile through the context's resource manager. */
 export async function CYLPlaceholderAnimationReadFile(URL: string, context: Context | null): Promise<Uint8Array> {
   const file = CYLPlaceholderAnimationFileOfURL(URL);
+  if (context !== null && defaultContext === null) {
+    defaultContext = context;
+  }
   if (CYLPlaceholderAnimationIsSandboxURL(file)) {
     const path = file.startsWith('file://') ? file.substring('file://'.length) : file;
-    const handle = fileIo.openSync(path, fileIo.OpenMode.READ_ONLY);
     try {
-      const size = fileIo.statSync(handle.fd).size;
-      const buffer = new ArrayBuffer(size);
-      fileIo.readSync(handle.fd, buffer);
-      return new Uint8Array(buffer);
-    } finally {
-      fileIo.closeSync(handle);
+      const handle = fileIo.openSync(path, fileIo.OpenMode.READ_ONLY);
+      try {
+        const size = fileIo.statSync(handle.fd).size;
+        const buffer = new ArrayBuffer(size);
+        fileIo.readSync(handle.fd, buffer);
+        return new Uint8Array(buffer);
+      } finally {
+        fileIo.closeSync(handle);
+      }
+    } catch (e) {
+      throw new CYLPlaceholderAnimationError(CYLPlaceholderAnimationErrorCode.AssetLoadFailed,
+        'Cannot read ' + file + ': ' + (e as Error).message);
     }
   }
-  const host: Context | null = context !== null ? context : (getContext() as common.Context);
+  const host: Context | null = context !== null ? context : defaultContext;
   if (host === null || host === undefined) {
     throw new CYLPlaceholderAnimationError(CYLPlaceholderAnimationErrorCode.AssetLoadFailed, 'No context to read ' + file);
   }
-  return await host.resourceManager.getRawFileContent(file);
+  try {
+    return await host.resourceManager.getRawFileContent(file);
+  } catch (e) {
+    throw new CYLPlaceholderAnimationError(CYLPlaceholderAnimationErrorCode.AssetLoadFailed,
+      'Cannot read ' + file + ': ' + (e as Error).message);
+  }
 }
 
 /** The bytes as an ArrayBuffer of their own. */

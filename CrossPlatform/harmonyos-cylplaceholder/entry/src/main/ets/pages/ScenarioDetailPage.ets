@@ -149,6 +149,7 @@ export struct ScenarioDetailPage {
   barItems() {
     Row() {
       Text(t(this.interactionEnabled ? 'CYLScenarioInteractionOn' : 'CYLScenarioInteractionOff'))
+        .accessibilityRole(AccessibilityRoleType.BUTTON)
         .fontSize(17)
         .fontColor(UiColor.teal)
         .padding({ left: 8, right: 8, top: 6, bottom: 6 })

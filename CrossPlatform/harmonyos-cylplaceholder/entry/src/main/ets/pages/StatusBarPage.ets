@@ -162,6 +162,7 @@ export struct StatusBarPage {
         Row() {
           ForEach(MODE_KEYS, (key: string, index: number) => {
             Text(t(key))
+              .accessibilityRole(AccessibilityRoleType.BUTTON)
               .fontSize(13)
               .textAlign(TextAlign.Center)
               .layoutWeight(1)

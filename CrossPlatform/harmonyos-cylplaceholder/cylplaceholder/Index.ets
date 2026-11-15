@@ -151,6 +151,8 @@ export {
   CYLPlaceholderAnimationPlayer,
   CYLPlaceholderAnimationFactory,
   CYLPlaceholderAnimationViewModel,
+  CYLPlaceholderAnimationSetDefaultContext,
+  CYLPlaceholderAnimationDefaultContext,
   CYLPlaceholderAnimationView,
   CYLPlaceholderAnimationURLWithOptions,
   CYLPlaceholderAnimationOptionsOfURL
