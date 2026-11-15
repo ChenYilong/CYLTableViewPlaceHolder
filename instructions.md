@@ -405,7 +405,7 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
 ## HarmonyOS (owner's rule, 2026-11-16)
 
 - **Version:** HarmonyOS 6.0.1 (API 21, Release); HarmonyOS SDK 6.0.1.112, `compileSdkVersion` / `targetSdkVersion`
-  and the minimum `compatibleSdkVersion` 6.0.1(21); DevEco Studio 6.0.1.251; ArkTS / ArkUI, Stage model. Code:
+  and the minimum `compatibleSdkVersion` 5.1.0(18) (lowest the dependencies and APIs allow; lets Device Manager list phone emulators); DevEco Studio 6.0.1.251; ArkTS / ArkUI, Stage model. Code:
   `CrossPlatform/harmonyos-cylplaceholder` (HAR `cylplaceholder`, example HAP `entry`).
 - **The API matches iOS:** every public symbol of the iOS library has a HarmonyOS counterpart with the iOS name
   (types, enums, constants, methods in camelCase without the Objective-C colons).
