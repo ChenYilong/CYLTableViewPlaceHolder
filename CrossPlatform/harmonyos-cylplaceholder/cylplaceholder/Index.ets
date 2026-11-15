@@ -148,3 +148,18 @@ export { CYLPAGPlaceholderItemAnimator } from './src/main/ets/CYLPAGPlaceholderI
 export { CYLRivePlaceholderItemAnimator } from './src/main/ets/CYLRivePlaceholderItemAnimator';
 // Registers the GIF, Lottie, PAG and Rive animators in the shared registry when the HAR is imported.
 export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';
+
+// CYLRefresh drawn styles: SmartRefreshControl's headers and footers drawn on a Canvas, with their support classes.
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnSupport';
+export * from './src/main/ets/refresh/drawn/CYLRefreshValueAnimator';
+export * from './src/main/ets/refresh/drawn/CYLRefreshVectorPathsParser';
+export * from './src/main/ets/refresh/drawn/CYLRefreshVector';
+export * from './src/main/ets/refresh/drawn/CYLRefreshStoreHouse';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnHeader';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnShapes';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnVectors';
+export * from './src/main/ets/refresh/drawn/CYLRefreshStoreHouseHeader';
+export * from './src/main/ets/refresh/drawn/CYLRefreshFly';
+export * from './src/main/ets/refresh/drawn/CYLRefreshGame';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
+export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';

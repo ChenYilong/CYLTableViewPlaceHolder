@@ -38,6 +38,7 @@ import {
 import { CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
 import { CYLRefreshBundle } from './CYLRefreshBundle';
 import { CYLRefreshIconViewModel } from './CYLRefreshIconView';
+import { CYLRefreshDrawnView, cylRefreshDrawnStyle } from './drawn/CYLRefreshDrawnView';
 
 /** The share of the finger's travel that moves the content past an edge (UIScrollView's rubber band). */
 const CYLRefreshPullDamping: number = 0.5;
@@ -213,6 +214,12 @@ function cylIconFrame(icon: CYLRefreshIconViewModel): ResourceStr {
   return current.images[Math.min(current.images.length - 1, Math.max(0, icon.frameIndex))];
 }
 
+/** Whether a control is drawn on a canvas (a drawn header, or a drawn footer showing its style). */
+function cylDrawnShown(c: CYLRefreshComponentModel | null): boolean {
+  const style = cylRefreshDrawnStyle(c);
+  return style !== null && !style.hidden;
+}
+
 // MARK: - One control
 
 /**
@@ -347,7 +354,9 @@ export struct CYLRefreshComponentView {
   build() {
     if (this.model() !== null) {
       Stack() {
-        if (this.role === 'trailer') {
+        if (this.role !== 'trailer' && cylDrawnShown(this.model())) {
+          CYLRefreshDrawnView({ scrollView: this.scrollView, role: this.role })
+        } else if (this.role === 'trailer') {
           Row({ space: 4 }) {
             if (cylArrow(this.model() as CYLRefreshComponentModel) !== null) {
               this.sideIcon(this.model() as CYLRefreshComponentModel)
@@ -408,7 +417,8 @@ export struct CYLRefreshComponentView {
       .opacity((this.model() as CYLRefreshComponentModel).cyl_autoHidden ? 0 :
         (this.model() as CYLRefreshComponentModel).alpha)
       .visibility((this.model() as CYLRefreshComponentModel).hidden ? Visibility.Hidden : Visibility.Visible)
-      .backgroundColor((this.model() as CYLRefreshComponentModel).colorPrimary !== null ?
+      .backgroundColor((this.model() as CYLRefreshComponentModel).colorPrimary !== null &&
+        cylRefreshDrawnStyle(this.model()) === null ?
         (this.model() as CYLRefreshComponentModel).colorPrimary as string : Color.Transparent)
     }
   }
