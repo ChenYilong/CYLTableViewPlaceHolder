@@ -38,6 +38,7 @@ import {
 } from './CYLRefreshClassics';
 import { CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
 import { CYLRefreshBundle } from './CYLRefreshBundle';
+import { CYLRefreshImage } from './CYLRefreshImage';
 import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
 import { CYLPlaceholderAnimationContent, CYLPlaceholderAnimationContentView } from '../CYLPlaceholderAnimation';
 import { CYLRefreshDrawnView, cylRefreshDrawnStyle } from './drawn/CYLRefreshDrawnView';
@@ -89,7 +90,7 @@ function cylArrow(c: CYLRefreshComponentModel): CYLRefreshImageViewModel | null 
   return null;
 }
 
-function cylArrowSource(c: CYLRefreshComponentModel, arrow: CYLRefreshImageViewModel): ResourceStr {
+function cylArrowSource(c: CYLRefreshComponentModel, arrow: CYLRefreshImageViewModel): CYLRefreshImage {
   if (arrow.image !== null) {
     return arrow.image;
   }
@@ -202,9 +203,20 @@ function cylLabelColor(c: CYLRefreshComponentModel, label: CYLRefreshLabel): str
   return c.colorAccent !== null ? c.colorAccent : label.textColor;
 }
 
+/**
+ * Each frame's duration in ms for frames played in `duration` seconds; 0 means UIImageView's default of 1/30 s per
+ * frame (iOS animationDuration 0).
+ */
+export function CYLRefreshFrameDuration(duration: number, count: number): number {
+  if (count <= 0) {
+    return 100;
+  }
+  return duration > 0 ? Math.max(16, duration * 1000 / count) : 1000 / 30;
+}
+
 function cylFrameInfos(frames: CYLRefreshFrames): ImageFrameInfo[] {
-  const each = frames.images.length > 0 ? Math.max(16, frames.duration * 1000 / frames.images.length) : 100;
-  return frames.images.map((src: ResourceStr) => {
+  const each = CYLRefreshFrameDuration(frames.duration, frames.images.length);
+  return frames.images.map((src: CYLRefreshImage) => {
     const info: ImageFrameInfo = { src: src, duration: each };
     return info;
   });
@@ -217,13 +229,13 @@ function cylIconFrameInfos(icon: CYLRefreshIconViewModel): ImageFrameInfo[] {
   }
   const each = Math.max(16, (current.duration > 0 ? current.duration : current.images.length * 0.1) * 1000 /
     current.images.length);
-  return current.images.map((src: ResourceStr) => {
+  return current.images.map((src: CYLRefreshImage) => {
     const info: ImageFrameInfo = { src: src, duration: each };
     return info;
   });
 }
 
-function cylIconFrame(icon: CYLRefreshIconViewModel): ResourceStr {
+function cylIconFrame(icon: CYLRefreshIconViewModel): CYLRefreshImage {
   const current = icon.current;
   if (current === null || current.images.length === 0) {
     return '';

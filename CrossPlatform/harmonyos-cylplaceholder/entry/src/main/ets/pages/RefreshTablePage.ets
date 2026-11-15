@@ -24,9 +24,11 @@ import {
   CYLRefreshIconSize,
   CYLRefreshNormalHeaderModel,
   CYLRefreshScrollViewModel,
-  CYLRefreshState
+  CYLRefreshState,
+  CYLRefreshImage
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
+import { imagesOfBundledGIF } from '../common/RefreshFrames';
 import { RouteParam } from '../common/Routes';
 import { BarButton } from '../common/Ui';
 import { animationPath } from '../feed/RefreshSetups';
@@ -35,13 +37,13 @@ import { showRefreshTest } from './RefreshTestPage';
 /** MJRefresh's MJDuration: long enough to see the refreshing state. */
 const CYLRefreshDuration: number = 2000;
 
-/** CYLRefreshExampleImages: turning arrows while idle, a ring while refreshing (each GIF plays by itself). */
-function idleImages(): ResourceStr[] {
-  return [$rawfile('example/core-animations/CYLRefreshArrows.gif')];
+/** CYLRefreshExampleImages: the frames of the turning arrows (idle) and of the ring (pulling, refreshing). */
+function idleImages(): CYLRefreshImage[] {
+  return imagesOfBundledGIF('CYLRefreshArrows.gif');
 }
 
-function refreshingImages(): ResourceStr[] {
-  return [$rawfile('example/core-animations/CYLRefreshRing.gif')];
+function refreshingImages(): CYLRefreshImage[] {
+  return imagesOfBundledGIF('CYLRefreshRing.gif');
 }
 
 /** MJChiBaoZiHeader: images for the idle, pulling and refreshing states. */

@@ -235,6 +235,8 @@ export struct RefreshSmartPage {
   @State sections: SmartSection[] = [];
   /** The navigation bar's color while a theme is applied, or '' for the saved appearance. */
   @State barColor: string = '';
+  /** The title's color while a theme is applied (iOS titleTextAttributes from the accent), or '' for the default. */
+  @State titleColor: string = '';
   private method: string = 'smartClassics';
   private scroller: Scroller = new Scroller();
   private scrollView: CYLRefreshScrollViewModel = new CYLRefreshScrollViewModel();
@@ -317,9 +319,23 @@ export struct RefreshSmartPage {
     const isDefault = primary === this.defaultPrimary && accent === this.defaultAccent;
     if (isDefault || primary === null || primary === 'transparent') {
       this.barColor = '';
+      this.titleColor = '';
       return;
     }
     this.barColor = primary;
+    this.titleColor = accent !== null && accent !== 'transparent' ? accent : '';
+  }
+
+  /** The bar title, in the theme's accent color while a theme is applied. */
+  @Builder
+  titleView() {
+    Text(this.param.title)
+      .fontSize(20)
+      .fontWeight(FontWeight.Bold)
+      .fontColor(this.titleColor.length > 0 ? this.titleColor : UiColor.label)
+      .maxLines(1)
+      .textOverflow({ overflow: TextOverflow.Ellipsis })
+      .height('100%')
   }
 
   private onRow(row: SmartRow): void {
@@ -401,7 +417,7 @@ export struct RefreshSmartPage {
         .height('100%')
       }
     }
-    .title(this.param.title,
+    .title(this.titleView,
       { backgroundColor: this.barColor.length > 0 ? this.barColor : UiColor.groupedBackground })
     .backgroundColor(UiColor.groupedBackground)
   }
