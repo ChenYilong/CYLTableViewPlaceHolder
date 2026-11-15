@@ -1,0 +1,11 @@
+/node_modules
+/oh_modules
+/.hvigor
+/.idea
+/build
+**/build
+**/oh_modules
+**/.preview
+local.properties
+oh-package-lock.json5
+**/BuildProfile.ets

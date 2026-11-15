@@ -1,0 +1,100 @@
+// The bundled icons (rawfile/cylplaceholder/images), as Resources. $rawfile() only accepts a string literal, so
+// every icon is listed here; regenerate this list when icons are added.
+const IMAGES: Record<string, Resource> = {
+  'archive': $rawfile('cylplaceholder/images/archive.png'),
+  'battery_alert': $rawfile('cylplaceholder/images/battery_alert.png'),
+  'blocked': $rawfile('cylplaceholder/images/blocked.png'),
+  'bluetooth_disabled': $rawfile('cylplaceholder/images/bluetooth_disabled.png'),
+  'broken_image': $rawfile('cylplaceholder/images/broken_image.png'),
+  'cloud': $rawfile('cylplaceholder/images/cloud.png'),
+  'cloud_off': $rawfile('cylplaceholder/images/cloud_off.png'),
+  'delete': $rawfile('cylplaceholder/images/delete.png'),
+  'download_off': $rawfile('cylplaceholder/images/download_off.png'),
+  'empty': $rawfile('cylplaceholder/images/empty.png'),
+  'empty_cart': $rawfile('cylplaceholder/images/empty_cart.png'),
+  'error': $rawfile('cylplaceholder/images/error.png'),
+  'error_outline': $rawfile('cylplaceholder/images/error_outline.png'),
+  'event_busy': $rawfile('cylplaceholder/images/event_busy.png'),
+  'favorite': $rawfile('cylplaceholder/images/favorite.png'),
+  'folder_off': $rawfile('cylplaceholder/images/folder_off.png'),
+  'folder_open': $rawfile('cylplaceholder/images/folder_open.png'),
+  'group_off': $rawfile('cylplaceholder/images/group_off.png'),
+  'help': $rawfile('cylplaceholder/images/help.png'),
+  'history': $rawfile('cylplaceholder/images/history.png'),
+  'hourglass': $rawfile('cylplaceholder/images/hourglass.png'),
+  'image': $rawfile('cylplaceholder/images/image.png'),
+  'image_unavailable': $rawfile('cylplaceholder/images/image_unavailable.png'),
+  'inbox': $rawfile('cylplaceholder/images/inbox.png'),
+  'info': $rawfile('cylplaceholder/images/info.png'),
+  'location_off': $rawfile('cylplaceholder/images/location_off.png'),
+  'locked': $rawfile('cylplaceholder/images/locked.png'),
+  'mail': $rawfile('cylplaceholder/images/mail.png'),
+  'music_off': $rawfile('cylplaceholder/images/music_off.png'),
+  'network_locked': $rawfile('cylplaceholder/images/network_locked.png'),
+  'no_internet': $rawfile('cylplaceholder/images/no_internet.png'),
+  'no_results': $rawfile('cylplaceholder/images/no_results.png'),
+  'notifications_off': $rawfile('cylplaceholder/images/notifications_off.png'),
+  'person_off': $rawfile('cylplaceholder/images/person_off.png'),
+  'phone_disabled': $rawfile('cylplaceholder/images/phone_disabled.png'),
+  'photo_library': $rawfile('cylplaceholder/images/photo_library.png'),
+  'public_off': $rawfile('cylplaceholder/images/public_off.png'),
+  'refresh': $rawfile('cylplaceholder/images/refresh.png'),
+  'report_problem': $rawfile('cylplaceholder/images/report_problem.png'),
+  'search': $rawfile('cylplaceholder/images/search.png'),
+  'search_off': $rawfile('cylplaceholder/images/search_off.png'),
+  'signal_wifi_off': $rawfile('cylplaceholder/images/signal_wifi_off.png'),
+  'status_fail': $rawfile('cylplaceholder/images/status_fail.png'),
+  'sync_disabled': $rawfile('cylplaceholder/images/sync_disabled.png'),
+  'sync_problem': $rawfile('cylplaceholder/images/sync_problem.png'),
+  'unknown_device': $rawfile('cylplaceholder/images/unknown_device.png'),
+  'upload_off': $rawfile('cylplaceholder/images/upload_off.png'),
+  'video_off': $rawfile('cylplaceholder/images/video_off.png'),
+  'visibility_off': $rawfile('cylplaceholder/images/visibility_off.png'),
+  'warning': $rawfile('cylplaceholder/images/warning.png'),
+  'wifi_off': $rawfile('cylplaceholder/images/wifi_off.png'),
+  'wrong_location': $rawfile('cylplaceholder/images/wrong_location.png')
+};
+
+/** The names of the bundled icons ("wifi_off", "empty", ...). */
+export const CYLPlaceholderImageNames: string[] = Object.keys(IMAGES);
+
+/** The bundled icon called name ("wifi_off"), or null. */
+export function CYLPlaceholderImageResource(name: string): Resource | null {
+  const found: Resource | undefined = IMAGES[name];
+  return found !== undefined ? found : null;
+}
+
+/** The bundled animation files (rawfile/cylplaceholder/animations). */
+export const CYLPlaceholderBundledAnimationFileNames: string[] = [
+  'CYLPlaceholderBluetoothPermission.json',
+  'CYLPlaceholderCalendarPermission.json',
+  'CYLPlaceholderCameraPermission.json',
+  'CYLPlaceholderCelebrate.json',
+  'CYLPlaceholderCloudOff.json',
+  'CYLPlaceholderContactSupport.json',
+  'CYLPlaceholderContactsPermission.json',
+  'CYLPlaceholderEmpty.json',
+  'CYLPlaceholderEmptyCart.json',
+  'CYLPlaceholderLoadFailed.json',
+  'CYLPlaceholderLoading.json',
+  'CYLPlaceholderLoadingInfinity.json',
+  'CYLPlaceholderLocation.json',
+  'CYLPlaceholderLocationPermission.json',
+  'CYLPlaceholderMicrophonePermission.json',
+  'CYLPlaceholderNoDrafts.json',
+  'CYLPlaceholderNoFavorites.json',
+  'CYLPlaceholderNoInternet.json',
+  'CYLPlaceholderNoMessages.json',
+  'CYLPlaceholderNoNotifications.json',
+  'CYLPlaceholderNoOrders.json',
+  'CYLPlaceholderNoPermission.json',
+  'CYLPlaceholderNoResults.json',
+  'CYLPlaceholderNotificationPermission.json',
+  'CYLPlaceholderPhotoLibraryPermission.json',
+  'CYLPlaceholderRefresh.json',
+  'CYLPlaceholderSad.json',
+  'CYLPlaceholderServerError.json',
+  'CYLPlaceholderSettings.json',
+  'CYLPlaceholderSuccess.json',
+  'CYLPlaceholderTapHint.json'
+];

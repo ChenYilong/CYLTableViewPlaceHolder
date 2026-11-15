@@ -1,0 +1,417 @@
+Placeholder animations bundled with CYLTableViewPlaceHolder
+===========================================================
+
+Each file below was downloaded unmodified from the named open-source repository and commit, and renamed
+for its placeholder scenario. The license of the source repository applies; its full text ships next to
+this file. Playing Lottie, PAG and Rive files needs the CYLTableViewPlaceHolder/LottieSwift, /PAG and /Rive
+subspecs; GIF plays with Core.
+
+* Files that lottie-ios keeps under Tests/Samples/LottieFiles/ were contributed to that repository from
+  lottiefiles.com. They are distributed here as part of the Apache-2.0 lottie-ios repository; replace them
+  if your distribution requires a separate review of their original terms.
+
+CYLPlaceholderLoading.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_1.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  4829c3f86ac4daecaf749d88086e8c103cfd0ed06fc959600f6c22605b02bd68
+
+CYLPlaceholderLoadingInfinity.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/infinity_loader.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  c1d87f28017a30df0748e481161081a5b06d7694bb6dfcdf65297ab6a2aab642
+
+CYLPlaceholderEmpty.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/cactus.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  ebcf52c4ce325e606e0c8c85a9e2c0174615c6432da61e6a672bdd31ddaa4e33
+
+CYLPlaceholderEmptyCart.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/shop.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  d70ec3cfea07800875e7e964c0795d85df63330f1391b31c2087486aba408eb7
+
+CYLPlaceholderNoDrafts.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/draft_icon.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  c9388ccb2c654bf003b582315840edf6e3a59c308af97cf88a25a665cd455cd5
+
+CYLPlaceholderNoFavorites.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/TwitterHeart.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  d4c529dcd7d948c30da383e9e9de843d187b576f88fee2fdf0b7c5d1be19e9ee
+
+CYLPlaceholderLocation.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/PinJump.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  05dcbb0e237d05cc20714820a98ea282f47dca817e8dce226cf253b24fa10a1b
+
+CYLPlaceholderSuccess.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/success.json
+  license: Apache-2.0 (LICENSE.lottie-ios)
+  sha256:  6830cfcc4188edceefae881bb51cf9e67cae6031a173111b33a89d6fe80f07e3
+
+CYLPlaceholderCelebrate.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/fireworks.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  fda965c402f74cb209d6aa5b0bf120d3c0ded42ffa0bb5bfbea317d126b694da
+
+CYLPlaceholderLoading.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/refreshing.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  069f7cf1b54f5d7a896deffc6fafd622e3ed439550a64df2ec329e1b99a6d72f
+
+CYLPlaceholderNoFavorites.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/like.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  bc40511dc95bf2452a89fda2d494e2d3c3d74aacf39623fcbe22f7a242bbe1b0
+
+CYLPlaceholderPullHint.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/guide_hand_drag.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  28419e808fea51e96dddbb492b02e9647b9bf3ac64776476ec1ff712c3f49570
+
+CYLPlaceholderProgress.pag
+  source:  https://github.com/Tencent/libpag (5faac72964023cc3ebc2f4395d78023d3a187ae4)
+  path:    assets/wstask_circle.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  abfac793abe73ef23a3cb4464b1dda573fd1a64cf3f36c9d4076a0e271c2d864
+
+CYLPlaceholderLoading.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/progress.riv
+  license: MIT (LICENSE.rive-ios)
+  modified: 2026-11-12, the artboard's background fill made transparent (alpha 0, was #ff313131), so the placeholder
+            has no dark square behind it; nothing else changed (1 byte; original sha256
+            5e11544033eccde437d658e240eb84b03032f3380ed020947012d5c5262c6b96)
+  sha256:  33d258a3e5da35d0f1ec6068c9bd751a01829f84ae887161621cc4f0f3c5e8c3
+
+CYLPlaceholderPullToRefresh.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/pull.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  f1e434fd80dc6d41bce3b35546d36e6c25e23cffe242bcbef24e2c6480476d2f
+
+CYLPlaceholderSuccess.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Demo-App/RiveExampleSPM/Rive Files/confetti.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  efdbdcb87ef4a9e937e4dd7e1c7f112de651b10fea3b5667921cfeb8f5eae49d
+
+
+
+CYLPlaceholderUploading.gif
+  source:  https://github.com/ChenYilong/CYLTabBarController (4209e37da86a3b0f14334f5573d152ac938908c7)
+  path:    Example-GIF/GIFApp/Resources/tab_rocket.gif
+  license: MIT (../LICENSE.CYLTabBarController)
+  sha256:  1857f59624bc5a6a579ce9c9ae68885a17834da704a63c601ecbbf18a33f854a
+
+Line icons from useAnimations (MIT). They draw black strokes on a 32 x 32 canvas; the scenarios scale them and tint
+them through Lottie keypath colors.
+
+CYLPlaceholderNoInternet.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/wifiOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  08b9dc7ca30a8a52f7621e7e2a03df794975a4363bb8290b35ac98f6235f9511
+
+CYLPlaceholderLoadFailed.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/alertCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  44c61ede9d21bc71dfdf0283985549898cff767e83f619375ee6553fcb5781b2
+
+CYLPlaceholderServerError.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/server.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  2e36fbc857da2d313001cce997222916f568440c64dd0afb54057521a8b7e9bb
+
+CYLPlaceholderRefresh.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d45036f9c9af5ce0f1070300170bc505af3ee1eadcf85879b4bac83e1f7c066e
+
+CYLPlaceholderNoResults.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/searchToX.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  de5a5c24bd652571b707e447c95a39a83123701ffb1b351ea0411109f820a718
+
+CYLPlaceholderNoPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/lock.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  83ceee9f6a3efe301226f92371529194a3c7620863ddbf140e4f86f7d801eeff
+
+CYLPlaceholderContactSupport.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/headphones.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  26323794dc284b1b707e83bbbeecc92911493b5d4214cbe57173afa857e9e244
+
+CYLPlaceholderNoMessages.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/inbox.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  a2998f6e73eadd26a9d71b7f63d094f173df76ff7ff94920b6d99ea4b0358adc
+
+CYLPlaceholderNoNotifications.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/notification.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d3ded55782dbbbb983119fd3c701663389290bbdcdd94b7ed2db562b92244fa5
+
+CYLPlaceholderSad.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/frown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  216edab5ddc268b02ed757412f267a262ce324136a5203c34c0bcd0f3310c909
+
+CYLPlaceholderCloudOff.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/cloudOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  7c57b2778c3c2adb3a2f3048f3e4193931cd5a04735b140190c40d6de5f0b881
+
+CYLPlaceholderTapHint.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/chevronsDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  c99ecb8f64b36d2805db4b39d11a9cbea1aa20c109d4885189db23b978af4528
+
+CYLPlaceholderSettings.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/settings.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  379db9d7b1788b1c6977fc40e1d06db6a0426f5ec8018659fb42940a7ab41ae1
+
+Permission line icons from the same useAnimations commit (MIT), one per permission scenario.
+
+CYLPlaceholderLocationPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/mapPin.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  84c09ced558f6c38282525a6081850160c86a48e3721c455f885273d2b0957f8
+
+CYLPlaceholderCameraPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/cameraOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  b20af2270be0e49f1c23c6a3a6baa11eae8bf5083f27bfe988ba18cb66d967bd
+
+CYLPlaceholderPhotoLibraryPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/image.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  e9ae85fa5e5de8813ab6ee67d8e355d222008130747e4a3a1c47aac6504f6ff1
+
+CYLPlaceholderMicrophonePermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/micOff.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  6fa934dc53fd15834ba45e67ab2e416edee955ae370a4df7805b1edc4290d755
+
+CYLPlaceholderContactsPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/users.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  4a0435d3a99467e551fe5ec0902eb7211d35ebaedcd466645f7ac116395f9ea5
+
+CYLPlaceholderCalendarPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/calendar.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  efc0a075571d96d7a7af218193e29445c9326e85a815713e5a61863b32619d00
+
+CYLPlaceholderBluetoothPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/bluetooth.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  4a0635167d86ba39340f1a356defb85ddeb4acbc85dc34f584a52d93cb4771ce
+
+CYLPlaceholderNotificationPermission.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/notification2.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  a8a588a6828f925defb168062dc85734efe17dab03d8fba3e242c3f11b8fd2b6
+
+A GIF variant for the No Favorites scenario, unmodified.
+
+CYLPlaceholderNoFavorites.gif
+  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
+  path:    Example-GIF/GIFApp/Resources/tab_star.gif
+  license: MIT (../LICENSE.CYLTabBarController)
+  sha256:  3090920e76bf4379d2646fe98e28ddabd44559bd80585b04f9d61ee354f25439
+
+
+
+
+
+CYLPlaceholderNoOrders.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/package.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  1768af35c517ad24bb612e9a57d87151c529538e3ed3aa4ae74e93e0e0093c90
+
+Refresh icons (CYLRefresh)
+--------------------------
+
+Animations made for the icon of a refresh control: pulling, refreshing, loading more, done. Set them on the
+animated-image controls (CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter, CYLRefreshAutoAnimationFooter)
+with `-setBundledIconAnimation:size:forState:`; `+bundledIconAnimationFileNames` lists them together with the two
+placeholder animations above that also mean refresh (CYLPlaceholderRefresh.json, CYLPlaceholderProgress.pag).
+Only files whose content means a refresh state are kept here.
+
+* The lottie-android files below come from its snapshot-tests/.../lottiefiles/ folder, contributed from
+  lottiefiles.com, with the same status as the lottie-ios LottieFiles samples above.
+
+CYLRefreshArrows.gif
+  source:  https://github.com/onevcat/Kingfisher (503d8e875623dcc3c1482370c4cd54579b9fa5ce)
+  path:    Demo/Demo/Kingfisher-Demo/Resources/loader.gif
+  license: MIT (LICENSE.Kingfisher)
+  sha256:  5ec89345eebd5f504a0b2efac4dbbb8fe24408ffb674417255c2be95e7cd443f
+
+CYLRefreshDots.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_2.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  3a19f9910e77d06f471c3300041323786f0777906fccf35f130a29b1c39f1606
+
+CYLRefreshDotsPulse.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_dots_3.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  00aed74cb0a551d7e240c256e6608d29180651535fa438bf2121d3896828a2be
+
+
+CYLRefreshGradientSpinner.json
+  source:  https://github.com/airbnb/lottie-ios (1fb4d7d5b45b0e81239c0c0cab95136a10153762)
+  path:    Tests/Samples/LottieFiles/loading_gradient_strokes.json
+  license: Apache-2.0 (LICENSE.lottie-ios)*
+  sha256:  9d4db8fecfc8eff46a6509c81a07c48d954335c7f1ca8ab1a6be11eecbd1f085
+
+
+
+CYLRefreshSpinnerRing.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading4.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  956b31f62ff1f460a64cd324885da4b826ab01c8d26d40dffa10327d01e8c577
+
+CYLRefreshPullArrow.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/arrowDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  b69d7dc994bd64e28d58e1a4ebe5bc0bb865cf742d54526b202ca6b692cf3289
+
+CYLRefreshLoadMore.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/chevronsDown.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  c99ecb8f64b36d2805db4b39d11a9cbea1aa20c109d4885189db23b978af4528
+
+CYLRefreshCycle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh2.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  2ee0051d6769e0c41ac690a6abad7ea11600f46b6a0234bb1161510043f7b8ae
+
+CYLRefreshDone.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/checkmark.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  785f9a805f1ba9c949850bc5ebc2637e0882f9a81fdf3b41c9dc74760fd4526e
+
+CYLRefreshClockwise.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refresh.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  d45036f9c9af5ce0f1070300170bc505af3ee1eadcf85879b4bac83e1f7c066e
+
+CYLRefreshCounterClockwise.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/refreshCcw.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  5f172683e08ab6d81f34b47c5a31017f12ec718e2d73645414c809d9845422fe
+
+CYLRefreshPullCircle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/arrowDownCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  ff70f3c41c967b3ad682292dc312f25f28c1350aef8f7d074f5aa87d3ebce582
+
+CYLRefreshMoreDots.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/moreHorizontal.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  8c7ee8f346308c4b93005c14e984f0544d3990a3091b58d417832a006e2d5e9a
+
+CYLRefreshArc.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/loading.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  25f016f046497a8ad3d1301987938fc4c27561c5cbf56ce2386aa13dfa706443
+
+CYLRefreshDoneCircle.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/checkCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  be3f0a05435e8c5a586ce2dd346c2a046fcacdfd5eaa89ebf3e0aa201545ca8c
+
+CYLRefreshMaterialSpinner.json
+  source:  https://github.com/airbnb/lottie-android (05ea92e90381eb8a8ae06855ea2b74f322bebbec)
+  path:    snapshot-tests/src/main/assets/lottiefiles/material_loader.json
+  license: Apache-2.0 (LICENSE.lottie-android)*
+  sha256:  c08869527e0577500d9205dd7d0586e917b7f0088cd5f7745aee16723fa37de7
+
+CYLRefreshDonePop.json
+  source:  https://github.com/airbnb/lottie-android (05ea92e90381eb8a8ae06855ea2b74f322bebbec)
+  path:    snapshot-tests/src/main/assets/lottiefiles/check_pop.json
+  license: Apache-2.0 (LICENSE.lottie-android)*
+  sha256:  4a639c930cc40cd256849129bf292d6f723ddcc3cb557bce924e50e380e840a9
+
+CYLRefreshRing.gif
+  source:  https://github.com/lokesh/lightbox2 (3e5c15622759a38534b219c1def6b331185b8567)
+  path:    dist/images/loading.gif
+  license: MIT (LICENSE.lightbox2)
+  sha256:  225aa88b6ab02c06222ec9468d62e15fa188e39cdb9431d1f55401ad380753ed
+
+CYLRefreshActivity.gif
+  source:  https://github.com/blueimp/Gallery (beddb391b0fd89959ac2a9607f3b6e59551ba0ef)
+  path:    img/loading.gif
+  license: MIT (LICENSE.blueimp-Gallery)
+  sha256:  d3392bf20045832b864377d90961d6d34e066c0dc3098bf9585e2fabed40283c
+
+CYLRefreshThrobber.gif
+  source:  https://github.com/vakata/jstree (6256df013ebd98aea138402d8ac96db3efe0c0da)
+  path:    dist/themes/default/throbber.gif
+  license: MIT (LICENSE.jstree)
+  sha256:  28e3fcaacae52189201f54a20576ee63c7450be82a0ee55398ac2f51bed98fac
+
+CYLRefreshPetals.gif
+  source:  https://github.com/jackmoore/colorbox (d6490ea29cfe6ce80908011b52d5aff58114facc)
+  path:    example1/images/loading.gif
+  license: MIT (LICENSE.colorbox)
+  sha256:  b91986fe9ef769912225701b0accfa89edb3e8344bc8e98f92a89ccdb1f4a2cc
+
+CYLRefreshIcon.riv
+  source:  https://github.com/rive-app/rive-flutter (e419fe847c19e79302c3e5facc90f676b06e174d)
+  path:    example/assets/web_icons_pack.riv (artboard "refresh", animation "active")
+  license: MIT (LICENSE.rive-flutter)
+  modified: 2026-11-12, the fill of each artboard's "BG" rounded rectangle made transparent (alpha 0, was #ff6f6e6e),
+            so the icon has no dark square behind it; nothing else changed (6 bytes; original sha256
+            958fcf52a87b0ea0cdacbd312af1625c101fa3071a22ffaa5037334a1d7f8b71)
+  sha256:  5d2f453cf68113aaa85e3f266b4ca1be201d5e7150a92b0a31d85cde034401c3
