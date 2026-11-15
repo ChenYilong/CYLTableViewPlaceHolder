@@ -10,6 +10,7 @@
 // `CYLRefreshRiveView` (CYLRefreshRiveView.ets) implements on a RiveAnimationView and attaches while it is shown.
 import { CYLRefreshPhase, CYLRefreshScrollMode } from '../CYLRefreshConst';
 import { CYLRefreshDrawnHeaderModel } from './CYLRefreshDrawnHeader';
+import { CYLPlaceholderAnimationFileExists } from '../../CYLPlaceholderAnimation';
 
 /**
  * How a Rive file is driven by the pull, the refresh and its end (iOS `CYLRefreshRiveStyle`). Every name is
@@ -143,8 +144,14 @@ export class CYLRefreshRiveHeaderModel extends CYLRefreshDrawnHeaderModel {
     }
   }
 
-  /** A header drawn by `style` (iOS `initWithStyle:`). */
-  static initWithStyle(style: CYLRefreshRiveStyle): CYLRefreshRiveHeaderModel {
+  /**
+   * A header drawn by `style`; null when the file cannot be read (iOS failable `init(style:)`), checked synchronously
+   * so the page falls back to the normal header. `context` resolves rawfile paths (the app context by default).
+   */
+  static initWithStyle(style: CYLRefreshRiveStyle, context: Context | null = null): CYLRefreshRiveHeaderModel | null {
+    if (!CYLPlaceholderAnimationFileExists(style.fileURL, context)) {
+      return null;
+    }
     return new CYLRefreshRiveHeaderModel(style);
   }
 

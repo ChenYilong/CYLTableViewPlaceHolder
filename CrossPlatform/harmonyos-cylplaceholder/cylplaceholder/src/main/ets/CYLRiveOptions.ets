@@ -59,3 +59,12 @@ export function CYLRiveColorValue(options: Record<string, string>): number | nul
   const alpha = digits.length === 8 ? parseInt(digits.substring(6, 8), 16) : 0xFF;
   return alpha * 0x1000000 + rgb;
 }
+
+function colorByte(value: number): number {
+  return Math.max(0, Math.min(255, Math.round(value)));
+}
+
+/** A color (0...255 channels) as the signed Rive color integer 0xAARRGGBB (iOS `riveColor(_:)`). */
+export function CYLRiveColorInteger(red: number, green: number, blue: number, alpha: number): number {
+  return (colorByte(alpha) * 0x1000000 + colorByte(red) * 0x10000 + colorByte(green) * 0x100 + colorByte(blue)) | 0;
+}

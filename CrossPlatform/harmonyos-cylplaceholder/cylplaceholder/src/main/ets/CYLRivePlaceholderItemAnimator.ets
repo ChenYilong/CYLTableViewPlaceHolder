@@ -10,12 +10,15 @@ import { Fit, Loop, RiveAnimationView, ViewModelInstance, initializeRive } from 
 import {
   CYLRiveActivePropertyPath,
   CYLRiveColorPropertyPath,
+  CYLRiveColorInteger,
   CYLRiveColorValue,
   CYLRiveTriggerPropertyPath,
   CYLRiveUsesLegacyRuntime
 } from './CYLRiveOptions';
+import { CYLPlaceholderDrawingColor } from './CYLPlaceholderView';
 import {
   CYLPlaceholderAnimationArrayBuffer,
+  CYLPlaceholderAnimationColors,
   CYLPlaceholderAnimationContentView,
   CYLPlaceholderAnimationOptionRiveActiveDuration,
   CYLPlaceholderAnimationOptionRiveAnimation,
@@ -81,8 +84,14 @@ function riveFit(fit: ImageFit): Fit {
 export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentView {
   private riveView: RiveAnimationView | null = null;
   private bytes: ArrayBuffer | null = null;
-  private loop: Loop = Loop.ONESHOT;
+  /** How a named animation plays: AUTO follows the file (iOS `.autoLoop`). */
+  private loop: Loop = Loop.AUTO;
   private deactivateTimer: number = -1;
+  /** The colors last asked for (iOS `requestedColors`); null restores the original colors. */
+  private requestedColors: CYLPlaceholderAnimationColors | null = null;
+  /** The file's colors before they were overridden, by property path. */
+  private originalColors: Map<string, number> = new Map<string, number>();
+  private overriddenColorPaths: Set<string> = new Set<string>();
 
   constructor(fileURL: string, options: Record<string, string>, contentMode: ImageFit) {
     super();
@@ -138,6 +147,9 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
         this.option(CYLPlaceholderAnimationOptionRiveAnimation), this.option(CYLPlaceholderAnimationOptionRiveStateMachine),
         false, true, riveFit(this.contentMode), undefined, this.loop);
       this.applyLightColor(view);
+      if (this.requestedColors !== null) {
+        this.applyRequestedColors(view);
+      }
       this.didLoad();
     } catch (e) {
       this.didFail('Rive', e as Error);
@@ -175,6 +187,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     }
     try {
       instance.getColorProperty(CYLRiveColorPropertyPath).value = color | 0;
+      this.originalColors.set(CYLRiveColorPropertyPath, color | 0);
     } catch (e) {
       // No "color" property: the file keeps its colors, as on iOS.
     }
@@ -299,6 +312,56 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.repeatCount = repeatCount;
     this.loop = repeatCount === 0 ? Loop.LOOP : Loop.ONESHOT;
     return true;
+  }
+
+  /**
+   * View-model color property path -> color; null restores the original colors (iOS
+   * CYLPlaceholderRiveItemAnimationView.applyAnimationColors). Files without a view model keep their colors.
+   */
+  cyl_applyAnimationViewColors(colors: CYLPlaceholderAnimationColors | null): void {
+    this.requestedColors = colors;
+    const view = this.riveView;
+    if (view !== null && this.cyl_isAnimationViewReady) {
+      this.applyRequestedColors(view);
+    }
+  }
+
+  private applyRequestedColors(view: RiveAnimationView): void {
+    const instance = this.viewModelInstance(view);
+    if (instance === null) {
+      return;
+    }
+    const colors = this.requestedColors;
+    if (colors !== null) {
+      Object.keys(colors).forEach((path: string) => {
+        const color = CYLPlaceholderDrawingColor(colors[path]);
+        if (color === null) {
+          return;
+        }
+        try {
+          const property = instance.getColorProperty(path);
+          if (!this.originalColors.has(path)) {
+            this.originalColors.set(path, property.value);
+          }
+          property.value = CYLRiveColorInteger(color.red, color.green, color.blue, color.alpha);
+          this.overriddenColorPaths.add(path);
+        } catch (e) {
+          // No such color property.
+        }
+      });
+      return;
+    }
+    this.overriddenColorPaths.forEach((path: string) => {
+      const original = this.originalColors.get(path);
+      if (original !== undefined) {
+        try {
+          instance.getColorProperty(path).value = original;
+        } catch (e) {
+          // No such color property.
+        }
+      }
+    });
+    this.overriddenColorPaths.clear();
   }
 
   private cancelDeactivate(): void {
