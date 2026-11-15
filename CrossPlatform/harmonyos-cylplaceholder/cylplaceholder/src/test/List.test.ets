@@ -1,7 +1,9 @@
 import placeholderCoreTest from './CYLPlaceholderCore.test';
-import refreshCoreTest from './CYLRefreshCore.test';
+import placeholderHUDStatusTest from './CYLPlaceholderHUDStatus.test';
+import placeholderAnimationTest from './CYLPlaceholderAnimation.test';
 
 export default function testsuite() {
   placeholderCoreTest();
-  refreshCoreTest();
+  placeholderHUDStatusTest();
+  placeholderAnimationTest();
 }

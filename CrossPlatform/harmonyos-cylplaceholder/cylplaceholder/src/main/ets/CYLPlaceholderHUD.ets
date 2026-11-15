@@ -14,6 +14,10 @@ import { UIContext } from '@kit.ArkUI';
 import { CYLPlaceholderViewModel } from './CYLPlaceholderView';
 import { CYLPlaceholderActionHandler, CYLPlaceholderStackViewModel } from './CYLPlaceholderStackView';
 import { CYLPlaceholderAction, CYLPlaceholderComponent, CYLPlaceholderScenario } from './CYLPlaceholderScenario';
+import { CYLPlaceholderIconNameForStyle, CYLPlaceholderStyle } from './CYLPlaceholderViewTypes';
+
+/** The built-in loading animation (iOS default of `loadingAnimationFileName`). */
+const DEFAULT_LOADING_ANIMATION = 'CYLRefreshActivity.gif';
 
 /** Posted before the HUD fades in (iOS `CYLPlaceholderHUDWillAppearNotification`). */
 export const CYLPlaceholderHUDWillAppearNotification: string = 'CYLPlaceholderHUDWillAppearNotification';
@@ -171,12 +175,14 @@ export class CYLPlaceholderHUD {
   animationSize: CYLPlaceholderHUDSize = new CYLPlaceholderHUDSize(40, 40);
   /** The box's offset from the center, in vp (iOS `offsetFromCenter`). */
   offsetFromCenter: CYLPlaceholderHUDOffset = new CYLPlaceholderHUDOffset();
-  /** Stored for an animation player; the HUD shows the system loading indicator. */
-  loadingAnimationFileName: string | null = null;
-  /** Stored for an animation player. */
+  private loadingAnimationFileNameValue: string | null = null;
+  /**
+   * The bundled animation scrubbed to the progress in the Progress state (iOS `progressAnimationFileName`). null by
+   * default: the icon keeps looping loadingAnimationFileName and the title shows the percentage.
+   */
   progressAnimationFileName: string | null = null;
-  /** Stored for an animation player. */
-  successAnimationFileName: string | null = null;
+  /** The bundled animation of the Success state, played once (iOS `successAnimationFileName`); successImage before. */
+  successAnimationFileName: string | null = 'CYLRefreshDoneCircle.json';
   private successImageValue: ResourceStr | null = null;
   private errorImageValue: ResourceStr | null = null;
   private infoImageValue: ResourceStr | null = null;
@@ -301,6 +307,19 @@ export class CYLPlaceholderHUD {
     this.fontValue = value !== null && value > 0 ? value : DEFAULT_FONT;
   }
 
+  /**
+   * The bundled animation of the Loading state, looping (iOS `loadingAnimationFileName`, null_resettable):
+   * "CYLRefreshActivity.gif" by default; the hourglass icon shows until it is ready.
+   */
+  get loadingAnimationFileName(): string {
+    const name = this.loadingAnimationFileNameValue;
+    return name !== null && name.length > 0 ? name : DEFAULT_LOADING_ANIMATION;
+  }
+
+  set loadingAnimationFileName(value: string | null) {
+    this.loadingAnimationFileNameValue = value;
+  }
+
   /** The success icon; null resets it to the built-in one (iOS `successImage`). */
   get successImage(): ResourceStr {
     return this.successImageValue !== null ? this.successImageValue : 'info';
@@ -396,6 +415,8 @@ export class CYLPlaceholderHUD {
     const state = determinate ? CYLPlaceholderHUDState.Progress : CYLPlaceholderHUDState.Loading;
     this.progressValue = determinate ? Math.min(Math.max(progress, 0), 1) : 0;
     if (this.visible && this.stateValue === state && this.contentView !== null) {
+      // The same kind of HUD: update in place so the animation does not restart.
+      this.updateProgress();
       this.setStatus(status);
       return;
     }
@@ -407,7 +428,8 @@ export class CYLPlaceholderHUD {
     this.statusValue = status;
     const content = this.contentView;
     if (content !== null) {
-      content.text = status;
+      content.text = this.titleForStatus(status, this.stateValue === CYLPlaceholderHUDState.Progress);
+      content.accessibilityLabel = status;
     }
   }
 
@@ -604,6 +626,28 @@ export class CYLPlaceholderHUD {
 
   // Internals.
 
+  /** The title: the status, followed in the Progress state by the percentage when no animation is scrubbed. */
+  private titleForStatus(status: string | null, determinate: boolean): string | null {
+    const progressFile = this.progressAnimationFileName;
+    if (!determinate || (progressFile !== null && progressFile.length > 0)) {
+      return status;
+    }
+    const percent = Math.round(this.progressValue * 100) + '%';
+    return status !== null && status.length > 0 ? status + ' ' + percent : percent;
+  }
+
+  /** Scrubs progressAnimationFileName to the progress. */
+  private updateProgress(): void {
+    const view = this.contentView;
+    const progressFile = this.progressAnimationFileName;
+    if (this.stateValue !== CYLPlaceholderHUDState.Progress || view === null || progressFile === null ||
+      progressFile.length === 0) {
+      return;
+    }
+    view.stopPlaceholderAnimation();
+    view.setPlaceholderAnimationProgress(this.progressValue);
+  }
+
   private showTimed(state: CYLPlaceholderHUDState, image: ResourceStr | null, status: string | null): void {
     this.activityCountValue = 0;
     this.cancelTimer(this.graceTimer);
@@ -633,7 +677,24 @@ export class CYLPlaceholderHUD {
       this.contentView = null;
     } else {
       this.placeholderView = null;
-      const view = CYLPlaceholderViewModel.initWithImageText(image, status);
+      // Loading loops loadingAnimationFileName, Progress scrubs progressAnimationFileName (or loops the loading one),
+      // Success plays successAnimationFileName once; the image (the hourglass while loading) shows until it is ready.
+      const loading = state === CYLPlaceholderHUDState.Loading || state === CYLPlaceholderHUDState.Progress;
+      const progressFile = this.progressAnimationFileName;
+      const scrubs = state === CYLPlaceholderHUDState.Progress && progressFile !== null && progressFile.length > 0;
+      let animation: string | null = null;
+      if (loading) {
+        animation = scrubs ? progressFile : this.loadingAnimationFileName;
+      } else if (state === CYLPlaceholderHUDState.Success) {
+        animation = this.successAnimationFileName;
+      }
+      const icon: ResourceStr | null = loading && image === null ?
+        CYLPlaceholderIconNameForStyle(CYLPlaceholderStyle.Hourglass) : image;
+      const view = CYLPlaceholderViewModel.initWithImageText(icon,
+        this.titleForStatus(status, state === CYLPlaceholderHUDState.Progress));
+      view.accessibilityLabel = status;
+      view.animationFileName = animation;
+      view.animationRepeatCount = loading ? 0 : 1;
       view.reportsContentSize = true;
       view.contentMargin = 0;
       view.imageSide = Math.min(this.animationSize.width, this.animationSize.height);
@@ -642,6 +703,7 @@ export class CYLPlaceholderHUD {
       view.defaultTitleFont = this.font;
       view.preferredMaxLayoutWidth = 240;
       this.contentView = view;
+      this.updateProgress();
     }
     this.present();
   }
