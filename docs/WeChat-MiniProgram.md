@@ -88,6 +88,23 @@
 - **Doc discrepancy found:** `docs/Placeholder-Scenarios.md` says "36 scenarios (including HUD)", but the iOS-derived
   Kotlin enum has 35 entries (HUD included). The unit test pins the mini program list to the Kotlin enum.
 
+### TODO: The mini program example as a 1:1 copy of the iOS example (score 0 → in progress)
+
+- **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "跳过真机测试。继续小程序example层要一比一复刻"
+- **Requirements:** skip the real phone test; rebuild the mini program example as a 1:1 copy of the iOS example
+  `Examples/Example-Scenarios` (the Android `android/merged/example` is itself a port of it).
+- **The iOS example:** a CYLTabBarController with five tabs, Scenarios, Animations, Flows, Feed and Refresh, and a
+  teal plus button at index 3 that presents "Publish" (Uploading, then Success with Done); a 🌐 language switch that
+  rebuilds the interface; the Scenarios tab lists the README cases, the business cases and the configuration files;
+  HUD and status bar pages; the Refresh tab is a menu of CYLRefresh demos (table, collection, web view, SmartRefresh
+  and EasyRefresh styles, refresh icons, DIY controls).
+- **Plan:** the tab bar with the plus button from CYLTabBarController's mini program package
+  (`wechat-miniprogram-cyltabbar`, its `cyl-tab-bar` custom tab bar), one page per iOS screen, the example's own
+  texts from `CYLScenarioExample.bundle` (7 languages), the same rows, buttons and behaviors. The refresh demos need a
+  pull-to-refresh for mini programs (CYLRefresh is not ported yet); the plan for them is recorded once the spec of
+  the iOS pages is done.
+
 ## 结构 / Structure
 
 | Path (under `CrossPlatform/wechat-miniprogram-cylplaceholder/`) | Role |
