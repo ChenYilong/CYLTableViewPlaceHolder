@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### 已完成：鸿蒙 IDE 准备与模拟器必要条件写入说明文件与 skills / Done: Write the HarmonyOS IDE preparation and emulator prerequisites into the instructions and skills
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-16，分支 `feat/android-refresh-port-followup`）。新建 skill `.agents/skills/cyl-harmonyos-setup/SKILL.md`（全英文）；`instructions.md` 的 “HarmonyOS” 追加 “IDE and emulator setup”；`AGENTS.md` 引用该 skill。本机 `%APPDATA%\Huawei\DevEcoStudio6.0\options\country.region.xml` 已核对为 `<countryregion name="CN"/>`（备份 `country.region.xml.bak-NZ` 为 NZ）。 | Status: done (2026-11-16, branch `feat/android-refresh-port-followup`). New skill `.agents/skills/cyl-harmonyos-setup/SKILL.md` (English only); `instructions.md` "HarmonyOS" gains "IDE and emulator setup"; `AGENTS.md` points to the skill. This machine's `%APPDATA%\Huawei\DevEcoStudio6.0\options\country.region.xml` checked: `<countryregion name="CN"/>` (the backup `country.region.xml.bak-NZ` holds NZ). |
+| 用户原始提示词：“全英文写入instructions相关文件以及 skills相关文件： 鸿蒙系统 ide 准备工作，模拟器安装的必要条件， region should be set to china (NZ) in country.region.xml to china make sure The region file now says China: <countryregion name="CN"/>” | The user's original prompt (verbatim on the left): write in English into the instructions and skills: the HarmonyOS IDE preparation, the emulator's prerequisites, and the region in `country.region.xml` changed from NZ to China; make sure the region file says `<countryregion name="CN"/>`. |
+
 ### TODO：SVGA 动效（对齐 CYLTabBarController），example 一比一复刻 Rive 的演示 / TODO: SVGA animations (as CYLTabBarController has them), the examples copy every Rive demo 1:1
 
 | 中文 | English |
