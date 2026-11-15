@@ -3,6 +3,7 @@ package com.cyl.refresh.rive
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.SurfaceTexture
 import android.view.View
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.core.Direction
@@ -127,7 +128,23 @@ class CYLRefreshRiveStyle(
 internal class CYLRiveHeaderView(context: Context, private val style: CYLRefreshRiveStyle) :
     SimpleComponent(context, null, 0), RefreshHeader {
 
-    val rive = RiveAnimationView(context)
+    /**
+     * Called when the Rive surface appears or changes size: rive-android draws only while something plays, so a state
+     * machine that has settled leaves a new surface black until it is played again.
+     */
+    var surfaceChanged: (() -> Unit)? = null
+
+    val rive: RiveAnimationView = object : RiveAnimationView(context, null) {
+        override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+            super.onSurfaceTextureAvailable(surface, width, height)
+            post { surfaceChanged?.invoke() }
+        }
+
+        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+            super.onSurfaceTextureSizeChanged(surface, width, height)
+            post { surfaceChanged?.invoke() }
+        }
+    }
 
     init {
         addView(rive)
@@ -135,18 +152,27 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
         clipChildren = true
     }
 
+    private val minimum: Int
+        get() = ((if (style.minimumHeight > 0) style.minimumHeight else style.triggerOffset) * resources.displayMetrics.density).toInt()
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val minimum = (if (style.minimumHeight > 0) style.minimumHeight else style.triggerOffset) * resources.displayMetrics.density
-        rive.measure(
-            MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(max(measuredHeight, minimum.toInt()), MeasureSpec.EXACTLY),
-        )
+        measureRive(measuredWidth, measuredHeight)
     }
 
+    // The layout stretches the header by laying it out taller or shorter without measuring it again, so the Rive view is
+    // sized here from the bounds it actually gets: at least the minimum height, aligned to the bottom.
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val width = r - l
         val height = b - t
-        rive.layout(0, height - rive.measuredHeight, r - l, height)
+        measureRive(width, height)
+        rive.layout(0, height - rive.measuredHeight, width, height)
+    }
+
+    private fun measureRive(width: Int, height: Int) {
+        val target = max(height, minimum)
+        if (rive.measuredWidth == width && rive.measuredHeight == target && !rive.isLayoutRequested) return
+        rive.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(target, MeasureSpec.EXACTLY))
     }
 }
 
@@ -167,6 +193,27 @@ class CYLRefreshRiveHeader private constructor(
     private var rivePlaysRefresh = false
     private var loadingAnimator: ValueAnimator? = null
     private val density get() = headerView.resources.displayMetrics.density
+
+    init {
+        headerView.surfaceChanged = ::redraw
+    }
+
+    /**
+     * Plays the state machine (or the looping animation) again, so the new surface gets frames.
+     */
+    private fun redraw() {
+        val machine = riveStyle.stateMachineName
+        val idle = riveStyle.idleAnimation
+        val loading = riveStyle.loadingAnimation
+        runCatching {
+            when {
+                machine != null -> rive.play(machine, Loop.AUTO, Direction.AUTO, true, false)
+                rivePlaysRefresh && loading != null -> playLinear(loading, Loop.LOOP)
+                idle != null -> playLinear(idle, Loop.LOOP)
+                else -> rive.controller.advance(0f)
+            }
+        }
+    }
 
     override fun setUpComponent() {
         scrollMode = CYLRefreshScrollMode.Stretch
