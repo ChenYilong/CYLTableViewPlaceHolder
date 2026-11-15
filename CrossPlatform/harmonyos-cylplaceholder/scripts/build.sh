@@ -15,6 +15,11 @@ mkdir -p "$OUT"
 # Mirror the sources (not the build outputs) to the ASCII directory.
 powershell.exe -NoProfile -Command "robocopy '$(cygpath -w "$HERE")' '$(cygpath -w "$OUT")' /MIR /XD build .hvigor oh_modules .idea /NFL /NDL /NJH /NJS /NP | Out-Null; exit 0"
 cd "$OUT"
+# Signing stays out of the repository: a build-profile.json5 with signingConfigs (made by DevEco Studio's automatic
+# signing in the mirror) is kept at CYL_HARMONY_SIGNED_PROFILE (default ~/.cyl-harmony/build-profile.json5) and
+# copied over the mirror's profile, so the HAP comes out signed and can be installed on the emulator.
+SIGNED="${CYL_HARMONY_SIGNED_PROFILE:-$HOME/.cyl-harmony/build-profile.json5}"
+if [ -f "$SIGNED" ]; then cp "$SIGNED" build-profile.json5; fi
 ohpm install >/dev/null
 hvigorw.bat assembleHap --mode module -p module=entry@default -p product=default --no-daemon
 hvigorw.bat assembleHar --mode module -p module=cylplaceholder@default -p product=default --no-daemon
@@ -25,4 +30,4 @@ if [ "${1:-}" = "test" ]; then
   hvigorw.bat test -p module=cylplaceholder@default -p product=default --no-daemon
   tail -n 1 cylplaceholder/.test/default/intermediates/test/coverage_data/test_result.txt
 fi
-echo "HAP: $OUT/entry/build/default/outputs/default/entry-default-unsigned.hap"
+ls "$OUT"/entry/build/default/outputs/default/entry-default-*.hap
