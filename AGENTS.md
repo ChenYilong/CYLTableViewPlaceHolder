@@ -38,6 +38,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   `cyl-xcode-compat` for project settings, `cyl-verify` for verification, and
   `cyl-docs` for documentation changes; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
   CYLTabBarController, with their upstream licenses) for accessibility and localization work.
+- HarmonyOS (HarmonyOS 6.0.1, API 21): the API matches iOS, the example is a 1:1 copy of the iOS example, and the
+  implementation is migrated from the Kotlin source under `android/`. Rules: `instructions.md` "HarmonyOS"; status
+  and score: `docs/HarmonyOS.md`.
 
 ## Naming and compatibility
 
