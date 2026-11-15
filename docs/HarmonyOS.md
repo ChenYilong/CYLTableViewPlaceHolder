@@ -23,7 +23,59 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 两张表一起打分：完成度 = 第二列没有 TODO 的行 ÷ 计入的行 × 100（向下取整）。第二列默认 TODO；每完成一个功能，就把它的 TODO 换成鸿蒙实现（API 名或页面路径），移除全部 TODO 即满分。只有 iOS 自己标为不可用（NS_UNAVAILABLE）的符号记 n/a，不计入。分数由 `node scripts/harmony-port-tables.js` 计算并写回本文件，开发过程中每完成一个功能就重跑一次。 | Both tables are scored together: score = rows whose second column has no TODO ÷ counted rows × 100 (rounded down). The second column starts as TODO; each finished feature replaces its TODO with the HarmonyOS implementation (API name or page path), and no TODO left is full marks. Only symbols iOS itself marks unavailable (NS_UNAVAILABLE) are n/a and not counted. `node scripts/harmony-port-tables.js` computes the score and writes it back here; it is re-run after every finished feature. |
 
+## 满分标准 / Full-marks standard
+
+| 中文 | English |
+|:---|:---|
+| 上面的对照表只看 TODO 是否移除（已 100 分），但大部分页面只经过编译验证。本标准是更严格的第二个分数：下表每一项都有明确的通过条件，只有满足条件（含证据：构建日志、测试数、截图）才标“完成”。质量分 = 完成项 ÷ 计入项 × 100（向下取整），由 `node scripts/harmony-quality-score.js` 计算并写回本节。全部完成才是满分。 | The tables above only check that TODOs are gone (score 100), but most pages were verified by compiling only. This standard is a stricter second score: every row below has a clear pass condition and is marked Done only when it is met, with evidence (build log, test count, screenshot). Quality score = Done rows ÷ counted rows × 100 (rounded down), computed and written back here by `node scripts/harmony-quality-score.js`. Full marks means every row is Done. |
+
+<!-- harmony-quality:begin -->
+| 中文 | English |
+|:---|:---|
+| **鸿蒙质量分：38 / 100**（完成 7 / 计入 18 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 38 / 100** (7 / 18 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
+<!-- harmony-quality:end -->
+
+| # | 项目 / Item | 通过条件 / Pass condition | 状态 / Status |
+|:---|:---|:---|:---|
+| Q1 | 对照表 / Port tables | `node scripts/harmony-port-tables.js --score` 为 100 / prints 100 | 完成 / Done (1126 / 1126, 2026-11-16) |
+| Q2 | 构建 / Build | `scripts/build.sh`：entry HAP 与 cylplaceholder HAR 均 BUILD SUCCESSFUL / both BUILD SUCCESSFUL | 完成 / Done (2026-11-16) |
+| Q3 | 单元测试 / Unit tests | `scripts/build.sh test`：0 failures | 完成 / Done (77 tests, 0 failures, 2026-11-16) |
+| Q4 | 播放控制：Lottie / Playback controls: Lottie | 从 0 重播、倍速、循环均由库 API 实时生效 / restart from 0, speed and loop applied live through the library API | 完成 / Done (`setPlaceholderAnimationSpeed`, live `animationRepeatCount`) |
+| Q5 | 播放控制：PAG / Playback controls: PAG | 同上；libpag 无倍速，由库逐帧驱动进度 / as above; libpag has no speed, the library drives the progress per frame | 完成 / Done (`CYLPAGDrivenProgress`, 4 tests) |
+| Q6 | 播放控制：GIF / Playback controls: GIF | 同上；倍速按帧时长缩放 / as above; speed scales the frame durations | 完成 / Done (`CYLGIFScaledDuration`, 1 test) |
+| Q7 | 播放控制：Rive 倍速 / Playback controls: Rive speed | Rive 动画按倍速播放（@ohos/rive 无倍速 API，需要 `RiveArtboardRenderer` 子类缩放 `advance` 的时间，在模拟器上验证） / Rive plays at the chosen speed (@ohos/rive has no speed API; needs a `RiveArtboardRenderer` subclass scaling `advance`'s time, checked on the emulator) | TODO |
+| Q8 | 动效详情页的控制条 / Controls on the animation detail page | `AnimationDetailPage.ets` 有“全部播放”、倍速滑块（0.25x–3x，步长 0.25x，显示“1x”）、循环开关，七种语言，带无障碍标签 / has Play all, a speed slider (0.25x–3x, step 0.25x, "1x" label) and a loop switch, seven languages, accessibility labels | 完成 / Done (`entry/src/main/ets/common/Playback.ets`) |
+| Q9 | 模拟器：安装与启动 / Emulator: install and launch | HarmonyOS 6.0.1 手机模拟器上安装 entry HAP 并启动，无崩溃 / the entry HAP installs and launches on the HarmonyOS 6.0.1 phone emulator, no crash | TODO（模拟器安装中 / emulator being installed） |
+| Q10 | 模拟器：所有 Tab / Emulator: every tab | 每个 Tab 能打开、内容与 iOS 相同，各一张截图 / every tab opens with the iOS content, one screenshot each | TODO |
+| Q11 | 模拟器：场景页 / Emulator: scenarios | 场景列表与任一场景详情（图标、文字、按钮）正常，截图 / the scenario list and a scenario page (icon, texts, buttons) work, screenshot | TODO |
+| Q12 | 模拟器：四种引擎 / Emulator: four engines | 动效 Tab 中 Lottie、PAG、Rive、GIF 各一个文件能播放 / one Lottie, PAG, Rive and GIF file each play in the Animations tab | TODO |
+| Q13 | 模拟器：播放控制 / Emulator: playback controls | 非默认倍速与循环状态下截图；全部播放从 0 开始 / screenshot at a non-default speed with the loop state visible; Play all restarts from 0 | TODO |
+| Q14 | 模拟器：刷新 / Emulator: refresh | 刷新 Tab 的下拉刷新、上拉加载、没有更多数据正常，截图 / pull to refresh, load more and no more data work in the Refresh tab, screenshot | TODO |
+| Q15 | 模拟器：HUD 与状态栏 / Emulator: HUD and status bar | HUD 页与 HUD 生命周期页（失败、重试、加载）正常，截图 / the HUD page and the HUD life cycle page (fail, retry, load) work, screenshot | TODO |
+| Q16 | 模拟器：多语言 / Emulator: languages | 切换到简体中文与日语后文字正确，截图 / texts are right after switching to Simplified Chinese and Japanese, screenshot | TODO |
+| Q17 | 模拟器：深色模式 / Emulator: dark mode | 深色模式下占位图与列表可读，截图 / the placeholder and lists are readable in dark mode, screenshot | TODO |
+| Q18 | 文档与截图 / Docs and screenshots | 截图存入 `docs/assets/harmonyos-*.png` 并记录在本文件（设备、系统、提交、时间） / screenshots in `docs/assets/harmonyos-*.png`, recorded here (device, OS, commit, time) | TODO |
+
 ## 任务 / Tasks
+
+### TODO: Full-marks standard: playback controls, emulator verification (quality score)
+
+- **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "鸿蒙模拟器正在安装，大概一小时后安装成功，请现在立即开始鸿蒙端的开发工作。阅读本地的鸿蒙功能相关文档，搜索鸿蒙相关关键词，找到TODO以及打分表。制作满分标准。如果没有就新建打分表。一直完成到满分为止。"
+- **Requirements:** read the HarmonyOS documents and find the TODOs and the score table; write a full-marks
+  standard (a new score table when none fits); keep working until the score is full.
+- **Context:** the port tables already score 100 (every TODO removed), but pages were verified by compiling only,
+  and the HarmonyOS row of `docs/Example-Animation-Playback.md` (Play all, speed, loop) was still TODO. So the
+  standard above adds a quality score: the playback controls (Q4–Q8, can be done now) and emulator checks with
+  screenshots (Q9–Q18, after the emulator finishes installing, about an hour from 2026-11-16 06:00 NZDT). Setup: skill
+  `cyl-harmonyos-setup` (region CN in `country.region.xml`). Not in this standard: SVGA (waits for the iOS core,
+  `docs/Task-Log.md`) and the Flutter / React Native HarmonyOS NEXT TODO in `docs/Android-Port.md` (other projects).
+- **Progress 2026-11-16:** Q4–Q6 and Q8 done: the library's `CYLPlaceholderViewModel.animationRepeatCount` applies
+  live to the player; PAG plays at any speed by driving the progress per frame (`CYLPAGDrivenProgress`); GIF
+  divides frame durations by the speed (`CYLGIFScaledDuration`); the generic playable-view player forwards speed
+  (`cyl_setAnimationViewSpeed`); the animation detail page has the controls (`common/Playback.ets`, spinners loop
+  by default, the old 4-second auto replay is gone because the loop switch replaces it). `scripts/build.sh test`:
+  BUILD SUCCESSFUL, 77 tests (6 new), 0 failures. UI verified by compiling only until Q9.
 
 ### DONE: HarmonyOS port, library and example (score 100)
 

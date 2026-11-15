@@ -6,6 +6,7 @@ import refreshDrawnTest from './CYLRefreshDrawn.test';
 import refreshIconsTest from './CYLRefreshIcons.test';
 import refreshRiveTest from './CYLRefreshRive.test';
 import swiftAPITest from './CYLSwiftAPI.test';
+import playbackControlsTest from './CYLPlaybackControls.test';
 
 export default function testsuite() {
   placeholderCoreTest();
@@ -16,4 +17,5 @@ export default function testsuite() {
   refreshIconsTest();
   refreshRiveTest();
   swiftAPITest();
+  playbackControlsTest();
 }
