@@ -420,6 +420,16 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   feature; remove one TODO per finished feature until the score is 100.
 - **Build:** `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh` (hvigor refuses non-ASCII project paths, so
   the script mirrors the project to an ASCII directory and builds there).
+- **IDE and emulator setup:** follow the skill `cyl-harmonyos-setup` (`.agents/skills/cyl-harmonyos-setup/SKILL.md`)
+  before building or running. Emulator prerequisites: a Huawei developer account signed in to DevEco Studio; VT-x /
+  AMD-V enabled in the BIOS; Hyper-V and Windows Hypervisor Platform turned on (`HypervisorPresent` is `True`);
+  16 GB RAM or more and free disk space for the image; `compatibleSdkVersion` 5.1.0(18) so phone images are listed;
+  and **the region set to China**. The region lives in DevEco Studio's `country.region.xml`
+  (Windows: `%APPDATA%\Huawei\DevEcoStudio6.0\options\country.region.xml`; macOS:
+  `~/Library/Application Support/Huawei/DevEcoStudio6.0/options/country.region.xml`). With DevEco Studio closed,
+  back the file up (for example `country.region.xml.bak-NZ` when it was New Zealand) and change the region to China
+  (CN). Make sure the region file now says China: `<countryregion name="CN"/>`; without it Device Manager offers no
+  emulator.
 
 ## Localization
 

@@ -41,6 +41,8 @@ the integrated `CYLRefresh` component, and an example application. Read
 - HarmonyOS (HarmonyOS 6.0.1, API 21): the API matches iOS, the example is a 1:1 copy of the iOS example, and the
   implementation is migrated from the Kotlin source under `android/`. Rules: `instructions.md` "HarmonyOS"; status
   and score: `docs/HarmonyOS.md`.
+- HarmonyOS IDE and emulator setup (prerequisites; the region set to China in DevEco Studio's `country.region.xml`,
+  which must say `<countryregion name="CN"/>`): skill `cyl-harmonyos-setup`.
 
 ## Naming and compatibility
 
