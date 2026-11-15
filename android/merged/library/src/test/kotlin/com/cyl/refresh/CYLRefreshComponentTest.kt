@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.scwang.smart.refresh.layout.listener.ScrollBoundaryDecider
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -459,6 +463,51 @@ class CYLRefreshComponentTest {
 
 
     @Test
+    fun drawnFootersShowTheirDrawingWhileLoading() {
+        val layout = show(layout(300))
+        for (footer in listOf(CYLRefreshBezierRadarFooter(activity), CYLRefreshPhoenixFooter(activity))) {
+            layout.cyl_footer = footer
+            idle(50)
+            footer.beginRefreshing()
+            idle(600)
+            val drawn = footer.style.view.view
+            val name = footer.javaClass.simpleName
+            // The drawing keeps the footer's height (not the layout's), inside the layout, so it shows.
+            assertTrue(name, drawn.height in 1 until layout.height)
+            assertTrue(name, footer.view.view.bottom <= layout.height)
+            footer.endRefreshing()
+            idle(1500)
+        }
+    }
+
+
+    @Test
+    fun secondFloorCoversTheLayoutInsideALinearLayout() {
+        // A bar above the layout: the floor must start at the layout, not at the window's top.
+        val layout = layout(300)
+        val column = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100))
+            addView(layout, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        }
+        activity.setContentView(column)
+        idle(100)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        val page = View(activity)
+        header.secondaryView = page
+        header.secondaryTriggerOffset = 50f
+        idle(50)
+        header.floor.open()
+        idle(1000)
+        val floorAt = IntArray(2).also { (page.parent as View).getLocationInWindow(it) }
+        val layoutAt = IntArray(2).also(layout::getLocationInWindow)
+        assertEquals("top", layoutAt[1], floorAt[1])
+        assertEquals("height", layout.height, (page.parent as View).height)
+    }
+
+
+    @Test
     fun theStateClassesShowResultAndNoMoreDataImages() {
         val layout = show(layout())
         val header = CYLRefreshNormalHeader(activity)
@@ -502,6 +551,63 @@ class CYLRefreshComponentTest {
         assertNotSame(done, footer.arrowView!!.drawable)
     }
 
+
+
+
+    @Test
+    fun triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle() {
+        val list = RecyclerView(activity).apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                override fun getItemCount() = 50
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    object : RecyclerView.ViewHolder(TextView(activity).apply { layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100) }) {}
+                override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = Unit
+            }
+        }
+        val layout = SmartRefreshLayout(activity).apply { setRefreshContent(list) }
+        show(layout)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        assertEquals("default, as on iOS", CYLRefreshTriggerMode.Anywhere, header.triggerMode)
+        header.triggerMode = CYLRefreshTriggerMode.OnEdge
+        idle(50)
+        val field = SmartRefreshLayout::class.java.getDeclaredField("mScrollBoundaryDecider").apply { isAccessible = true }
+        val decider = field.get(layout) as ScrollBoundaryDecider
+        val bridge = CYLRefreshBridge.of(layout)
+        // The drag starts in the middle, then scrolls back to the top: no pull.
+        list.scrollBy(0, 1000)
+        bridge.dragStarted(list)
+        list.scrollBy(0, -1000)
+        assertFalse("started in the middle", decider.canRefresh(list))
+        // A drag that starts at the top pulls.
+        bridge.dragStarted(list)
+        assertTrue("started at the top", decider.canRefresh(list))
+        // Anywhere removes the decider.
+        header.triggerMode = CYLRefreshTriggerMode.Anywhere
+        assertNull(field.get(layout))
+    }
+
+
+
+    @Test
+    fun flyHeaderBringsItsSceneAndRestoresTheContent() {
+        val layout = show(layout())
+        val content = layout.cyl_header.let { (0 until layout.childCount).map(layout::getChildAt).first() }
+        val header = CYLRefreshFlyHeader(activity)
+        layout.cyl_header = header
+        idle(100)
+        val density = activity.resources.displayMetrics.density
+        assertEquals("scene height", (150 * density).toInt(), header.mountainView.height)
+        val sceneAt = IntArray(2).also(header.mountainView::getLocationInWindow)
+        val contentAt = IntArray(2).also(content::getLocationInWindow)
+        assertEquals("content below the scene", sceneAt[1] + header.mountainView.height, contentAt[1])
+        assertTrue("plane shown", header.flyView.width > 0 && header.flyView.isShown)
+        layout.cyl_header = null
+        idle(50)
+        assertSame("content restored", layout, content.parent)
+        assertNull(header.mountainView.parent)
+    }
 
 
 }

@@ -166,6 +166,14 @@ class ScenariosPage : StackPage() {
         column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
             startActivity(Intent(context, StatusBarActivity::class.java))
         })
+        // The iOS main example (Examples/Example): pull to refresh with two custom placeholders, Auto, Styles.
+        column.addView(header(context, "Examples/Example"))
+        column.addView(row(context, "CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", "main-example") { push(mainExampleScreen()) })
+        // The iOS issue reproductions Examples/Example-objc-01 and Example-objc-02.
+        column.addView(header(context, "Examples/Example-objc-01 · Example-objc-02"))
+        column.addView(row(context, "MJRefresh #1575", "Example-objc-01", "issue-1575") { push(issue1575Page()) })
+        column.addView(row(context, context.t(R.string.o2_title_collection), "Example-objc-02 · MJRefresh #1523 #1506 #1483", "issue-1523") { push(issue1523Page()) })
+        column.addView(row(context, context.t(R.string.o2_title_paging), "Example-objc-02 · MJRefresh #1430", "issue-1430") { push(issue1430Page()) })
         column.addView(header(context, context.t(R.string.merged_section_configurations)))
         for (name in context.assets.list("Configurations").orEmpty().sorted()) {
             column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })

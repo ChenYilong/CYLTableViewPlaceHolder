@@ -196,6 +196,16 @@ internal class CYLDrawnFooterView(private val styleHeader: RefreshHeader) : Simp
 
     override val spinnerStyle: SpinnerStyle get() = styleHeader.spinnerStyle
 
+    // The header inside fills its parent, so a wrapped measure would take the whole layout's height and the drawing,
+    // flipped to the bottom edge, would sit below the screen; no height of its own makes the layout use the footer's.
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), 0)
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+    }
+
     override fun setPrimaryColors(vararg colors: Int) = styleHeader.setPrimaryColors(*colors)
 
     override fun onInitialized(kernel: RefreshKernel, height: Int, maxDragHeight: Int) = styleHeader.onInitialized(kernel, height, maxDragHeight)

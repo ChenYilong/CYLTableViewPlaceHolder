@@ -1,6 +1,14 @@
 package com.cyl.refresh
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import com.scwang.smart.refresh.header.BezierCircleHeader
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.scwang.smart.refresh.header.ClassicsHeader
@@ -14,6 +22,8 @@ import com.scwang.smart.refresh.header.PhoenixHeader
 import com.scwang.smart.refresh.header.StoreHouseHeader
 import com.scwang.smart.refresh.header.TaurusHeader
 import com.scwang.smart.refresh.header.WaveSwipeHeader
+import com.scwang.smart.refresh.header.flyrefresh.FlyView
+import com.scwang.smart.refresh.header.flyrefresh.MountainSceneView
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshHeader
 
@@ -178,9 +188,107 @@ open class CYLRefreshDeliveryHeader(context: Context) : CYLRefreshDrawnHeader(De
 open class CYLRefreshDropBoxHeader(context: Context) : CYLRefreshDrawnHeader(DropBoxHeader(context))
 
 /**
- * The paper plane (iOS `CYLRefreshFlyHeader`).
+ * The paper plane (iOS `CYLRefreshFlyHeader`): like iOS, it brings its own scene. Attaching puts a 150 dp mountain
+ * scene above the content and the plane on a round button at the scene's bottom left; detaching restores the content.
  */
-open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefreshHeader(context))
+open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefreshHeader(context)) {
+
+    /**
+     * The mountains above the content (`mountainView`).
+     */
+    val mountainView = MountainSceneView(context)
+
+    /**
+     * The paper plane (`flyView`).
+     */
+    val flyView = FlyView(context)
+
+    /**
+     * The round button under the plane, in the primary color (`floatView`).
+     */
+    val floatView: View = object : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        override fun onDraw(canvas: Canvas) {
+            paint.color = if (colorPrimary != 0) colorPrimary else DEFAULT_PRIMARY
+            canvas.drawCircle(width / 2f, height / 2f, minOf(width, height) / 2f, paint)
+        }
+    }
+
+    private var scene: FrameLayout? = null
+    private var content: View? = null
+    private var baseHeight = 0
+    private var stretch = 0
+
+    override fun scrollView(scrollView: SmartRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {
+        val added = maxOf(0, didScroll)
+        if (scene == null || added == stretch) return
+        val delta = added - stretch
+        stretch = added
+        mountainView.layoutParams = mountainView.layoutParams.apply { height = baseHeight + added }
+        for (child in listOf(floatView, flyView)) {
+            child.layoutParams = (child.layoutParams as FrameLayout.LayoutParams).apply { topMargin += delta }
+        }
+    }
+
+    init {
+        colorPrimary = DEFAULT_PRIMARY
+        colorAccent = Color.WHITE
+    }
+
+    override fun scrollView(scrollView: SmartRefreshLayout, attached: Boolean) {
+        if (attached) wrapContent(scrollView) else unwrapContent(scrollView)
+    }
+
+    private fun wrapContent(layout: SmartRefreshLayout) {
+        if (scene != null) return
+        val original = (0 until layout.childCount).map(layout::getChildAt).firstOrNull { it !== view.view && it !== layout.refreshFooter?.view } ?: return
+        val density = layout.resources.displayMetrics.density
+        val sceneHeight = (SCENE_HEIGHT_DP * density).toInt()
+        val size = (FLOAT_SIZE_DP * density).toInt()
+        val frame = FrameLayout(layout.context)
+        val column = LinearLayout(layout.context).apply { orientation = LinearLayout.VERTICAL }
+        frame.addView(column, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        layout.setRefreshContent(frame)
+        column.addView(mountainView, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sceneHeight))
+        column.addView(original, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        // The button sits on the scene's bottom edge, a quarter of its size from the left (iOS FLOAT_VIEW_SIZE * 3 / 4).
+        val buttonParams = FrameLayout.LayoutParams(size, size, Gravity.TOP or Gravity.START).apply {
+            leftMargin = size / 4
+            topMargin = sceneHeight - size / 2
+        }
+        frame.addView(floatView, buttonParams)
+        // The plane keeps its own 25 dp size, centered on the button.
+        val plane = (PLANE_SIZE_DP * density).toInt()
+        frame.addView(flyView, FrameLayout.LayoutParams(plane, plane, Gravity.TOP or Gravity.START).apply {
+            leftMargin = buttonParams.leftMargin + (size - plane) / 2
+            topMargin = buttonParams.topMargin + (size - plane) / 2
+        })
+        // As on iOS, the pull stretches the scene and pushes the content down, instead of moving the whole page.
+        layout.setEnableHeaderTranslationContent(false)
+        baseHeight = sceneHeight
+        (view as FlyRefreshHeader).setUp(mountainView, flyView)
+        scene = frame
+        content = original
+    }
+
+    private fun unwrapContent(layout: SmartRefreshLayout) {
+        val original = content ?: return
+        for (child in listOf(original, mountainView, floatView, flyView)) (child.parent as? ViewGroup)?.removeView(child)
+        layout.setRefreshContent(original)
+        layout.setEnableHeaderTranslationContent(true)
+        (view as FlyRefreshHeader).setUp(null, null)
+        scene = null
+        content = null
+    }
+
+    private companion object {
+        const val DEFAULT_PRIMARY = 0xFF33AAFF.toInt()
+        const val SCENE_HEIGHT_DP = 150
+        const val FLOAT_SIZE_DP = 56
+        const val PLANE_SIZE_DP = 25
+    }
+}
 
 /**
  * A header with a small game to play while refreshing (iOS `CYLRefreshGameHeader`).
