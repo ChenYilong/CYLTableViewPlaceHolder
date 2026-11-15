@@ -4,8 +4,8 @@
 //   header refreshes on open and ends after 2.5 s. A theme colors the control (colorPrimary / colorAccent) and the
 //   navigation bar, and refreshes once; Fly and WaveSwipe open in their own blue.
 // - Footer styles (no header): load more after 2.5 s doubles the test rows, 8 → 16 → 32, then "no more data".
-// - The Rive styles (smartRive…) need a Rive runtime, which HarmonyOS lacks: like iOS when a Rive file cannot be
-//   read, they fall back to CYLRefreshNormalHeader.
+// - The Rive styles (smartRive…): CYLRefreshRiveHeaderModel with flutter_easy_refresh's names per file (riveStyle);
+//   smartRiveSpaceFooter hosts the Space header in a drawn footer.
 import {
   CYLRefreshBackNormalFooterModel,
   CYLRefreshBezierCircleHeaderModel,
@@ -14,6 +14,7 @@ import {
   CYLRefreshComponentModel,
   CYLRefreshContainer,
   CYLRefreshDeliveryFooterModel,
+  CYLRefreshDrawnFooterModel,
   CYLRefreshDeliveryHeaderModel,
   CYLRefreshDropBoxHeaderModel,
   CYLRefreshFlyHeaderModel,
@@ -27,6 +28,8 @@ import {
   CYLRefreshOriginalHeaderModel,
   CYLRefreshPhoenixFooterModel,
   CYLRefreshPhoenixHeaderModel,
+  CYLRefreshRiveHeaderModel,
+  CYLRefreshRiveStyle,
   CYLRefreshScrollViewModel,
   CYLRefreshStoreHouseHeaderModel,
   CYLRefreshTaurusFooterModel,
@@ -84,6 +87,83 @@ const THEMES: Theme[] = [
   new Theme('CYLScenarioSmartThemeBlue', '#007AFF'),
 ];
 
+
+/**
+ * flutter_easy_refresh's Rive style packages: the file in this example's rawfiles and the names each package's
+ * indicator drives (each package's lib/src indicator .dart at dcdbb81).
+ */
+function riveStyle(method: string): CYLRefreshRiveStyle | null {
+  let file: string;
+  switch (method) {
+    case 'smartRiveBow':
+      file = 'Bow';
+      break;
+    case 'smartRiveBubbles':
+      file = 'Bubbles';
+      break;
+    case 'smartRiveHalloween':
+      file = 'Halloween';
+      break;
+    case 'smartRiveSkating':
+      file = 'Skating';
+      break;
+    case 'smartRiveSpace':
+    case 'smartRiveSpaceFooter':
+      file = 'Space';
+      break;
+    case 'smartRiveSquats':
+      file = 'Squats';
+      break;
+    default:
+      return null;
+  }
+  const style = new CYLRefreshRiveStyle('example/animations/CYLScenarioExampleRefresh' + file + '.riv');
+  switch (file) {
+    case 'Bow':
+      style.stateMachineName = 'numberSimulation';
+      style.triggerOffset = 200;
+      style.fitsWidth = true;
+      style.pullInput = 'pull';
+      style.pullInputMinimum = 10;
+      style.releaseTrigger = 'advance';
+      style.finishTrigger = 'advance';
+      style.restartTrigger = 'restart';
+      break;
+    case 'Bubbles':
+      style.stateMachineName = 'Motion';
+      style.pullInput = 'numDrag';
+      style.pullInputStart = 4.0 / 7.0;
+      style.pullInputMaximum = 99;
+      style.pullInputRefreshingValue = 100;
+      style.loadingNumber = 'numLoad';
+      break;
+    case 'Halloween':
+      style.triggerOffset = 200;
+      style.pullAnimation = 'Pull';
+      style.triggerAnimation = 'Trigger';
+      style.loadingAnimation = 'Loading';
+      break;
+    case 'Skating':
+      style.stateMachineName = 'Reload';
+      style.minimumHeight = 140;
+      style.pullInput = 'pullAmount';
+      style.releaseTrigger = 'pullRelease';
+      style.finishTrigger = 'loadFinished';
+      break;
+    case 'Space':
+      style.stateMachineName = 'Reload';
+      style.pullInput = 'Pull Amount';
+      style.loadingBoolean = 'Start';
+      break;
+    default:
+      style.triggerOffset = 190;
+      style.fitsWidth = true;
+      style.idleAnimation = 'Idle';
+      style.loadingAnimation = 'Demo';
+      break;
+  }
+  return style;
+}
 function makeHeader(method: string): CYLRefreshHeaderModel {
   switch (method) {
     case 'smartDropBox':
@@ -110,9 +190,11 @@ function makeHeader(method: string): CYLRefreshHeaderModel {
       return new CYLRefreshGameBattleCityHeaderModel();
     case 'smartFly':
       return new CYLRefreshFlyHeaderModel();
-    default:
-      // smartClassics, and the Rive styles without a Rive runtime.
-      return new CYLRefreshNormalHeaderModel();
+    default: {
+      // The Rive styles (iOS falls back to the normal header when the file cannot be read), and smartClassics.
+      const style = method.startsWith('smartRive') ? riveStyle(method) : null;
+      return style !== null ? new CYLRefreshRiveHeaderModel(style) : new CYLRefreshNormalHeaderModel();
+    }
   }
 }
 
@@ -130,8 +212,11 @@ function makeFooter(method: string): CYLRefreshFooterModel | null {
       return new CYLRefreshPhoenixFooterModel();
     case 'smartTaurusFooter':
       return new CYLRefreshTaurusFooterModel();
+    case 'smartRiveSpaceFooter': {
+      const style = riveStyle(method);
+      return style !== null ? CYLRefreshDrawnFooterModel.initWithStyle(new CYLRefreshRiveHeaderModel(style)) : null;
+    }
     default:
-      // smartRiveSpaceFooter has no Rive style here: like iOS without the file, the page uses a header.
       return null;
   }
 }

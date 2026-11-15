@@ -105,7 +105,12 @@ export * from './src/main/ets/refresh/CYLRefreshClassics';
 export * from './src/main/ets/refresh/CYLRefreshIconView';
 export * from './src/main/ets/refresh/CYLRefreshPaging';
 export { CYLRefreshBundle } from './src/main/ets/refresh/CYLRefreshBundle';
-export { CYLRefreshContainer, CYLRefreshComponentView, CYLRefreshFooterView } from './src/main/ets/refresh/CYLRefreshView';
+export {
+  CYLRefreshContainer,
+  CYLRefreshComponentView,
+  CYLRefreshCustomControlView,
+  CYLRefreshFooterView
+} from './src/main/ets/refresh/CYLRefreshView';
 export {
   CYLPlaceholderItemAnimatorPriority,
   CYLPlaceholderItemAnimatorPriorityDefault,
@@ -177,3 +182,5 @@ export * from './src/main/ets/refresh/drawn/CYLRefreshFly';
 export * from './src/main/ets/refresh/drawn/CYLRefreshGame';
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
 export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';
+export * from './src/main/ets/refresh/drawn/CYLRefreshRiveHeader';
+export { CYLRefreshRiveView, cylRefreshRiveHeader } from './src/main/ets/refresh/drawn/CYLRefreshRiveView';

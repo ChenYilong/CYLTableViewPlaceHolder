@@ -10,6 +10,7 @@
 //   }
 import {
   CYLRefreshActivityIndicatorModel,
+  cylAutoFooterItemShown,
   CYLRefreshAutoFooterModel,
   CYLRefreshBackFooterModel,
   CYLRefreshComponentModel,
@@ -40,6 +41,7 @@ import { CYLRefreshBundle } from './CYLRefreshBundle';
 import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
 import { CYLPlaceholderAnimationContent, CYLPlaceholderAnimationContentView } from '../CYLPlaceholderAnimation';
 import { CYLRefreshDrawnView, cylRefreshDrawnStyle } from './drawn/CYLRefreshDrawnView';
+import { CYLRefreshRiveView, cylRefreshRiveHeader } from './drawn/CYLRefreshRiveView';
 
 /** The share of the finger's travel that moves the content past an edge (UIScrollView's rubber band). */
 const CYLRefreshPullDamping: number = 0.5;
@@ -235,6 +237,76 @@ function cylDrawnShown(c: CYLRefreshComponentModel | null): boolean {
   return style !== null && !style.hidden;
 }
 
+/** Whether a control is a Rive header, or a drawn footer showing one. */
+function cylRiveShown(c: CYLRefreshComponentModel | null): boolean {
+  const rive = cylRefreshRiveHeader(c);
+  return rive !== null && !rive.hidden;
+}
+
+// MARK: - A custom control
+
+/**
+ * Draws a custom header / footer (iOS: a view subclassing the header or footer) with `builder`, given the control
+ * model, and builds it again on each change of the model (`cyl_setNeedsLayout`, `hidden`) or of the scroll view.
+ */
+@Component
+export struct CYLRefreshCustomControlView {
+  scrollView: CYLRefreshScrollViewModel = new CYLRefreshScrollViewModel();
+  /** 'header' or 'footer'. */
+  role: string = 'header';
+  builder: WrappedBuilder<[CYLRefreshComponentModel]> | null = null;
+  @State private tick: number = 0;
+  private listened: CYLRefreshComponentModel | null = null;
+  private onChange: () => void = () => {
+    this.follow();
+    this.tick++;
+  };
+
+  aboutToAppear(): void {
+    this.scrollView.addChangeListener(this.onChange);
+    this.follow();
+  }
+
+  aboutToDisappear(): void {
+    this.scrollView.removeChangeListener(this.onChange);
+    if (this.listened !== null) {
+      this.listened.removeChangeListener(this.onChange);
+      this.listened = null;
+    }
+  }
+
+  private current(): CYLRefreshComponentModel | null {
+    return this.role === 'footer' ? this.scrollView.cyl_footer : this.scrollView.cyl_header;
+  }
+
+  private follow(): void {
+    const c = this.current();
+    if (c === this.listened) {
+      return;
+    }
+    if (this.listened !== null) {
+      this.listened.removeChangeListener(this.onChange);
+    }
+    if (c !== null) {
+      c.addChangeListener(this.onChange);
+    }
+    this.listened = c;
+  }
+
+  build() {
+    Stack() {
+      if (this.builder !== null && this.current() !== null && !(this.current() as CYLRefreshComponentModel).hidden) {
+        ForEach([this.tick], (n: number) => {
+          (this.builder as WrappedBuilder<[CYLRefreshComponentModel]>).builder(
+            this.current() as CYLRefreshComponentModel)
+        }, (n: number) => String(n))
+      }
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+
 // MARK: - One control
 
 /**
@@ -375,7 +447,9 @@ export struct CYLRefreshComponentView {
   build() {
     if (this.model() !== null) {
       Stack() {
-        if (this.role !== 'trailer' && cylDrawnShown(this.model())) {
+        if (this.role !== 'trailer' && cylRiveShown(this.model())) {
+          CYLRefreshRiveView({ scrollView: this.scrollView, role: this.role })
+        } else if (this.role !== 'trailer' && cylDrawnShown(this.model())) {
           CYLRefreshDrawnView({ scrollView: this.scrollView, role: this.role })
         } else if (this.role === 'trailer') {
           Row({ space: 4 }) {
@@ -453,6 +527,7 @@ export struct CYLRefreshComponentView {
 
 // MARK: - The auto footer item
 
+
 /**
  * The scroll view's auto footer as the last item of the list (iOS: the auto footer sits after the content). It
  * reports how much of it is visible, which starts the automatic load (triggerAutomaticallyRefreshPercent).
@@ -460,17 +535,41 @@ export struct CYLRefreshComponentView {
 @Component
 export struct CYLRefreshFooterView {
   scrollView: CYLRefreshScrollViewModel = new CYLRefreshScrollViewModel();
+  /** Draws a custom auto footer (iOS: a view subclassing the auto footer), given the footer; null for the class's look. */
+  footerBuilder: WrappedBuilder<[CYLRefreshComponentModel]> | null = null;
   @State private tick: number = 0;
+  private listened: CYLRefreshComponentModel | null = null;
   private onChange: () => void = () => {
+    this.follow();
     this.tick++;
   };
 
   aboutToAppear(): void {
     this.scrollView.addChangeListener(this.onChange);
+    this.follow();
   }
 
   aboutToDisappear(): void {
     this.scrollView.removeChangeListener(this.onChange);
+    if (this.listened !== null) {
+      this.listened.removeChangeListener(this.onChange);
+      this.listened = null;
+    }
+  }
+
+  /** Follows the footer itself too, so setting its `hidden` removes or restores the item. */
+  private follow(): void {
+    const c = this.scrollView.cyl_footer;
+    if (c === this.listened) {
+      return;
+    }
+    if (this.listened !== null) {
+      this.listened.removeChangeListener(this.onChange);
+    }
+    if (c !== null) {
+      c.addChangeListener(this.onChange);
+    }
+    this.listened = c;
   }
 
   private footer(): CYLRefreshAutoFooterModel | null {
@@ -479,8 +578,14 @@ export struct CYLRefreshFooterView {
   }
 
   build() {
-    if (this.footer() !== null && !(this.footer() as CYLRefreshAutoFooterModel).hidden) {
-      CYLRefreshComponentView({ scrollView: this.scrollView, role: 'footer' })
+    if (cylAutoFooterItemShown(this.footer())) {
+      Stack() {
+        if (this.footerBuilder !== null) {
+          CYLRefreshCustomControlView({ scrollView: this.scrollView, role: 'footer', builder: this.footerBuilder })
+        } else {
+          CYLRefreshComponentView({ scrollView: this.scrollView, role: 'footer' })
+        }
+      }
         .width('100%')
         .height((this.footer() as CYLRefreshAutoFooterModel).cyl_h)
         .onVisibleAreaChange([0, 0.25, 0.5, 0.75, 1.0], (visible: boolean, ratio: number) => {
@@ -511,6 +616,13 @@ export struct CYLRefreshContainer {
   secondaryHeaderBuilder: WrappedBuilder<[]> | null = null;
   /** Draws the back footer's second floor, or null. */
   secondaryFooterBuilder: WrappedBuilder<[]> | null = null;
+  /**
+   * Draws a custom header (iOS: a view subclassing the header) inside the header area, given the header model
+   * (wrapBuilder of a global @Builder); null draws the header class's own look.
+   */
+  headerBuilder: WrappedBuilder<[CYLRefreshComponentModel]> | null = null;
+  /** Draws a custom back footer inside the back footer area, given the footer model; null for the class's look. */
+  footerBuilder: WrappedBuilder<[CYLRefreshComponentModel]> | null = null;
   @State private tick: number = 0;
   private viewW: number = 0;
   private viewH: number = 0;
@@ -667,11 +779,22 @@ export struct CYLRefreshContainer {
     return f instanceof CYLRefreshBackFooterModel ? (f as CYLRefreshBackFooterModel).cyl_secondaryHeight : 0;
   }
 
+  /** The header / back footer: the custom builder when set, else the control class's look. */
+  @Builder
+  controlView(role: string) {
+    if ((role === 'footer' ? this.footerBuilder : this.headerBuilder) !== null) {
+      CYLRefreshCustomControlView({ scrollView: this.scrollView, role: role,
+        builder: role === 'footer' ? this.footerBuilder : this.headerBuilder })
+    } else {
+      CYLRefreshComponentView({ scrollView: this.scrollView, role: role })
+    }
+  }
+
   build() {
     Stack({ alignContent: Alignment.TopStart }) {
       if (this.sv().cyl_header !== null &&
         (this.sv().cyl_header as CYLRefreshHeaderModel).scrollMode === CYLRefreshScrollMode.Behind) {
-        CYLRefreshComponentView({ scrollView: this.scrollView, role: 'header' })
+        Stack() { this.controlView('header') }
           .width('100%')
           .height((this.sv().cyl_header as CYLRefreshHeaderModel).cyl_h)
           .position({ x: 0, y: 0 })
@@ -697,14 +820,14 @@ export struct CYLRefreshContainer {
 
       if (this.sv().cyl_header !== null &&
         (this.sv().cyl_header as CYLRefreshHeaderModel).scrollMode !== CYLRefreshScrollMode.Behind) {
-        CYLRefreshComponentView({ scrollView: this.scrollView, role: 'header' })
+        Stack() { this.controlView('header') }
           .width('100%')
           .height(this.headerHeight(this.sv().cyl_header as CYLRefreshHeaderModel))
           .position({ x: 0, y: this.headerY(this.sv().cyl_header as CYLRefreshHeaderModel) })
           .zIndex((this.sv().cyl_header as CYLRefreshHeaderModel).scrollMode === CYLRefreshScrollMode.Front ? 2 : 1)
       }
       if (this.sv().cyl_footer instanceof CYLRefreshBackFooterModel) {
-        CYLRefreshComponentView({ scrollView: this.scrollView, role: 'footer' })
+        Stack() { this.controlView('footer') }
           .width('100%')
           .height((this.sv().cyl_footer as CYLRefreshBackFooterModel).cyl_h)
           .position({ x: 0, y: this.viewH - this.sv().revealBottom })
