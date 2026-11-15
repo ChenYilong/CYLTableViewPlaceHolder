@@ -25,7 +25,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: HarmonyOS port, library and example (score 93)
+### DONE: HarmonyOS port, library and example (score 100)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
@@ -131,7 +131,49 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   of the bundled GIFs, `setIconAnimationAttributes` with Rive options, `refresh-icons.json`); the Feed header plays
   Lottie / PAG. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 56 host unit tests, 5 new: icon
   engines, playback policy, RTL flips, image bundle, Rive options: 0 failures); the UI is verified by compiling only
-  (no emulator).
+  (no emulator). After merging the Refresh tab (e17d8f4): examples 52, 53, 54 (Rive options), 56 and collection
+  example32 play through the icon view. Still TODO: the 7 Rive SmartRefresh styles (they need a port of iOS
+  `CYLRefreshRiveHeader` / `CYLRefreshRiveStyle`, a drawn header hosting a RiveAnimationView driven by inputs).
+- **Status 2026-11-16 (score 90 → 95, branch `harmony/refresh-tab`):** the Refresh tab's demos as a 1:1 copy of the
+  iOS example (53 of 65 rows): each menu row opens its page in `entry/src/main/ets/pages/`: `RefreshTablePage.ets`
+  (CYLRefreshTableViewController example01–06, 11–21, 51–56: random rows, loadNewData / loadMoreData / loadLastData /
+  loadOnceData after 2 s, "Resume loading", custom texts / fonts / colors, the DIY header and footers),
+  `RefreshTestPage.ets` (CYLRefreshTestViewController), `RefreshCollectionPage.ets` (grid example31 / example32,
+  pinned header, horizontal pager with CYLRefreshNormalTrailer), `RefreshWebPage.ets` (ArkWeb, header over the web
+  page), `RefreshI18nPage.ets` (languageCode, i18nFilename + i18nBundle from the example's CYLRefreshCustom keys),
+  `RefreshSmartPage.ets` (the drawn SmartRefreshControl headers and footers with the theme rows and bar colors),
+  `RefreshEasyPage.ets` (Cupertino, second floor, trigger modes, start header, CYLRefreshPaging, listener header,
+  chat, Behind user profile); the temporary `RefreshDemo.ets` is gone; the entry asks for `ohos.permission.INTERNET`
+  (web demo). The three texts `CYLScenarioMJAutoBack01/02` and `CYLScenarioMJSectionI18n` were already imported in all
+  7 languages. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 51 host unit tests, 0 failures);
+  pages are verified by compiling only (no emulator). Differences from iOS: the DIY controls are plain header / footer
+  models whose label, switch, logo (an SVG instead of the SF Symbol) and spinner the page draws over the container
+  (the container has no custom-view slot); the "animated images" controls use one GIF per state played by Image
+  instead of frames cut from the GIF (no GIF-frame helper), so idle frames do not follow the pull; a presented test
+  page is pushed too ("Close" pops it); the web page hides the title bar but not the status bar, and its Web is laid
+  out FIT_CONTENT inside a Scroll so the container can drive it; theme colors tint the title bar background only
+  (title text stays default); the auto footer's DIY item reports its visible ratio itself. Still TODO: example52, 53,
+  54, 56 and the collection example32 (Lottie / PAG / Rive refresh icons: the library's icon view plays only GIF and
+  frames; the pages already set the iOS icons and will play them once it does; example54's artboard / animation
+  options have no CYLRefreshIconAttributes field yet) and the 7 Rive SmartRefresh styles (no Rive runtime on
+  HarmonyOS; they fall back to CYLRefreshNormalHeader as iOS does without the file).
+- **Status 2026-11-16 (score 99 → 100, branch `harmony/rive-header`):** the 7 Rive SmartRefresh styles: iOS
+  `CYLRefreshRiveStyle` / `CYLRefreshRiveHeader` ported as `CYLRefreshRiveStyle` / `CYLRefreshRiveHeaderModel`
+  (`refresh/drawn/CYLRefreshRiveHeader.ets`, a stretching drawn header: pull input with minimum / start /
+  refreshing value, release / finish / restart triggers, loading boolean, loading number timer, pull animation
+  scrubbed by time, trigger → loading animations, idle loop, reset on idle) driving a `CYLRefreshRiveDriver`, which
+  `CYLRefreshRiveView` implements on @ohos/rive's RiveAnimationView (bottom-aligned in at least `minimumHeight`);
+  `CYLRefreshComponentView` shows it for a Rive header and for a drawn footer hosting one
+  (`CYLRefreshDrawnFooterModel.initWithStyle`). `RefreshSmartPage.ets` builds smartRiveBow / Bubbles / Halloween /
+  Skating / Space / Squats / SpaceFooter with the iOS names per file. Library gaps: `CYLRefreshContainer`
+  `headerBuilder` / `footerBuilder` and `CYLRefreshFooterView.footerBuilder` (WrappedBuilder given the control model,
+  `CYLRefreshCustomControlView`) draw custom controls inside the header / footer area, so examples 06 / 20 / 21 no
+  longer draw over the container; `hidden` on a control re-renders it and `CYLRefreshFooterView` follows its footer,
+  so example17 only sets `footer.hidden`. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 64
+  host unit tests, 8 new: Rive input mapping from pull / status, driver attach during a refresh, drawn footer
+  hosting, auto footer hidden rule: 0 failures); the UI is verified by compiling only (no emulator). Table 1 has no
+  rows for iOS `CYLRefreshRiveStyle` / `CYLRefreshRiveHeader` (Swift classes in `RiveSwift/`, missed by the table
+  generator), so they are not scored there.
 
 ## 对照表 / Tables
 
@@ -140,7 +182,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：93 / 100**（两张表合计：没有 TODO 的行 999 / 计入的行 1064；n/a 20 行不计入）。API 表 884 / 884，演示表 115 / 180。 | **HarmonyOS score: 93 / 100** (both tables: rows without TODO 999 / counted rows 1064; 20 n/a rows not counted). API table 884 / 884, demo table 115 / 180. |
+| **鸿蒙完成度：100 / 100**（两张表合计：没有 TODO 的行 1064 / 计入的行 1064；n/a 20 行不计入）。API 表 884 / 884，演示表 180 / 180。 | **HarmonyOS score: 100 / 100** (both tables: rows without TODO 1064 / counted rows 1064; 20 n/a rows not counted). API table 884 / 884, demo table 180 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -1654,13 +1696,13 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | SmartRefreshControl styles · Delivery footer (CYLSmartRefreshDemoViewController - smartDeliveryFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | SmartRefreshControl styles · Phoenix footer (CYLSmartRefreshDemoViewController - smartPhoenixFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | SmartRefreshControl styles · Taurus footer (CYLSmartRefreshDemoViewController - smartTaurusFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Bow (CYLSmartRefreshDemoViewController - smartRiveBow) | TODO |
-| SmartRefreshControl styles · Rive · Bubbles (CYLSmartRefreshDemoViewController - smartRiveBubbles) | TODO |
-| SmartRefreshControl styles · Rive · Halloween (CYLSmartRefreshDemoViewController - smartRiveHalloween) | TODO |
-| SmartRefreshControl styles · Rive · Skating (CYLSmartRefreshDemoViewController - smartRiveSkating) | TODO |
-| SmartRefreshControl styles · Rive · Space (CYLSmartRefreshDemoViewController - smartRiveSpace) | TODO |
-| SmartRefreshControl styles · Rive · Squats (CYLSmartRefreshDemoViewController - smartRiveSquats) | TODO |
-| SmartRefreshControl styles · Rive · Space footer (CYLSmartRefreshDemoViewController - smartRiveSpaceFooter) | TODO |
+| SmartRefreshControl styles · Rive · Bow (CYLSmartRefreshDemoViewController - smartRiveBow) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Bubbles (CYLSmartRefreshDemoViewController - smartRiveBubbles) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Halloween (CYLSmartRefreshDemoViewController - smartRiveHalloween) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Skating (CYLSmartRefreshDemoViewController - smartRiveSkating) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Space (CYLSmartRefreshDemoViewController - smartRiveSpace) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Squats (CYLSmartRefreshDemoViewController - smartRiveSquats) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Rive · Space footer (CYLSmartRefreshDemoViewController - smartRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |

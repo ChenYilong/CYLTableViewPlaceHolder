@@ -99,9 +99,21 @@ export class CYLRefreshViewModel {
   cyl_h: number = 0;
   /** The view's opacity (UIView alpha). */
   alpha: number = 1;
-  /** Whether the view is hidden (UIView hidden). */
-  hidden: boolean = false;
+  private hiddenValue: boolean = false;
   private changeListeners: CYLRefreshChangeListener[] = [];
+
+  /** Whether the view is hidden (UIView hidden); a change re-renders the component drawing the model. */
+  get hidden(): boolean {
+    return this.hiddenValue;
+  }
+
+  set hidden(value: boolean) {
+    if (value === this.hiddenValue) {
+      return;
+    }
+    this.hiddenValue = value;
+    this.changeListeners.slice().forEach((l: CYLRefreshChangeListener) => l());
+  }
 
   get cyl_size(): CYLSize {
     return new CYLSize(this.cyl_w, this.cyl_h);
@@ -2711,4 +2723,12 @@ export class CYLRefreshTrailerModel extends CYLRefreshComponentModel {
     scrollView.cyl_trailer = this;
     return this;
   }
+}
+
+/**
+ * Whether the auto footer item is laid out: a footer that is not hidden (iOS: a hidden auto footer takes no room).
+ * `CYLRefreshFooterView` follows the footer, so setting `hidden` removes or restores the item.
+ */
+export function cylAutoFooterItemShown(footer: CYLRefreshAutoFooterModel | null): boolean {
+  return footer !== null && !footer.hidden;
 }

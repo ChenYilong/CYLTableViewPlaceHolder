@@ -52,6 +52,14 @@ export function CYLRiveActiveDuration(options: Record<string, string>): number {
 
 let riveInitialized = false;
 
+/** Initializes @ohos/rive once for the library (throws when the runtime cannot load). */
+export function cylEnsureRiveInitialized(): void {
+  if (!riveInitialized) {
+    initializeRive();
+    riveInitialized = true;
+  }
+}
+
 function riveFit(fit: ImageFit): Fit {
   if (fit === ImageFit.Cover) {
     return Fit.COVER;
@@ -90,14 +98,11 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   }
 
   cyl_attach(context: Context | null): void {
-    if (!riveInitialized) {
-      try {
-        initializeRive();
-        riveInitialized = true;
-      } catch (e) {
-        this.didFail('Rive', e as Error);
-        return;
-      }
+    try {
+      cylEnsureRiveInitialized();
+    } catch (e) {
+      this.didFail('Rive', e as Error);
+      return;
     }
     if (this.bytes !== null || this.loading || this.failed) {
       return;
