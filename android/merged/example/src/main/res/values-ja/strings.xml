@@ -257,4 +257,18 @@
     <string name="ex_custom_text_placeholder">カスタムメッセージ</string>
     <string name="ex_action_cancel">キャンセル</string>
     <string name="ex_action_preview">プレビュー</string>
+    <string name="o2_title_collection">コレクションのアニメーション</string>
+    <string name="o2_title_header_refreshing">ヘッダーを更新中</string>
+    <string name="o2_format_header_completed">ヘッダーの更新完了 %1$d</string>
+    <string name="o2_title_footer_refreshing">フッターを読み込み中</string>
+    <string name="o2_title_footer_completed">フッターの読み込み完了</string>
+    <string name="o2_format_item">項目 %1$d</string>
+    <string name="o2_title_paging">ページング</string>
+    <string name="o2_title_refresh_completed">更新完了</string>
+    <string name="o2_title_load_completed">読み込み完了</string>
+    <string name="o2_action_refresh">更新</string>
+    <string name="o2_action_last_page">最後のページ</string>
+    <string name="o2_hint_refresh">表を更新して 2 ページ目に戻ります。</string>
+    <string name="o2_hint_last_page">最後のページまでスクロールします。</string>
+    <string name="o2_format_page">ページ %1$d</string>
 </resources>

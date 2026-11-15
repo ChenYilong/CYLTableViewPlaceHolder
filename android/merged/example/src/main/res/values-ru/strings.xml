@@ -257,4 +257,18 @@
     <string name="ex_custom_text_placeholder">Ваше сообщение</string>
     <string name="ex_action_cancel">Отмена</string>
     <string name="ex_action_preview">Предпросмотр</string>
+    <string name="o2_title_collection">Анимация коллекции</string>
+    <string name="o2_title_header_refreshing">Обновление заголовка</string>
+    <string name="o2_format_header_completed">Заголовок обновлён %1$d</string>
+    <string name="o2_title_footer_refreshing">Загрузка внизу</string>
+    <string name="o2_title_footer_completed">Загрузка внизу завершена</string>
+    <string name="o2_format_item">Элемент %1$d</string>
+    <string name="o2_title_paging">Постраничная прокрутка</string>
+    <string name="o2_title_refresh_completed">Обновление завершено</string>
+    <string name="o2_title_load_completed">Загрузка завершена</string>
+    <string name="o2_action_refresh">Обновить</string>
+    <string name="o2_action_last_page">Последняя страница</string>
+    <string name="o2_hint_refresh">Обновляет таблицу и возвращает на страницу 2.</string>
+    <string name="o2_hint_last_page">Прокручивает к последней странице.</string>
+    <string name="o2_format_page">Страница %1$d</string>
 </resources>

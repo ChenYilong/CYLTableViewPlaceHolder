@@ -257,4 +257,18 @@
     <string name="ex_custom_text_placeholder">사용자 지정 메시지</string>
     <string name="ex_action_cancel">취소</string>
     <string name="ex_action_preview">미리보기</string>
+    <string name="o2_title_collection">컬렉션 애니메이션</string>
+    <string name="o2_title_header_refreshing">헤더 새로 고치는 중</string>
+    <string name="o2_format_header_completed">헤더 새로 고침 완료 %1$d</string>
+    <string name="o2_title_footer_refreshing">푸터 불러오는 중</string>
+    <string name="o2_title_footer_completed">푸터 불러오기 완료</string>
+    <string name="o2_format_item">항목 %1$d</string>
+    <string name="o2_title_paging">페이징</string>
+    <string name="o2_title_refresh_completed">새로 고침 완료</string>
+    <string name="o2_title_load_completed">불러오기 완료</string>
+    <string name="o2_action_refresh">새로 고침</string>
+    <string name="o2_action_last_page">마지막 페이지</string>
+    <string name="o2_hint_refresh">표를 새로 고치고 2페이지로 돌아갑니다.</string>
+    <string name="o2_hint_last_page">마지막 페이지로 스크롤합니다.</string>
+    <string name="o2_format_page">페이지 %1$d</string>
 </resources>

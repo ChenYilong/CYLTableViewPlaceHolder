@@ -257,4 +257,18 @@
     <string name="ex_custom_text_placeholder">你的自定义文案</string>
     <string name="ex_action_cancel">取消</string>
     <string name="ex_action_preview">预览</string>
+    <string name="o2_title_collection">集合视图动画</string>
+    <string name="o2_title_header_refreshing">顶部刷新中</string>
+    <string name="o2_format_header_completed">顶部刷新完成 %1$d</string>
+    <string name="o2_title_footer_refreshing">底部加载中</string>
+    <string name="o2_title_footer_completed">底部加载完成</string>
+    <string name="o2_format_item">第 %1$d 项</string>
+    <string name="o2_title_paging">分页</string>
+    <string name="o2_title_refresh_completed">刷新完成</string>
+    <string name="o2_title_load_completed">加载完成</string>
+    <string name="o2_action_refresh">刷新</string>
+    <string name="o2_action_last_page">最后一页</string>
+    <string name="o2_hint_refresh">刷新列表并回到第 2 页。</string>
+    <string name="o2_hint_last_page">滚动到最后一页。</string>
+    <string name="o2_format_page">第 %1$d 页</string>
 </resources>

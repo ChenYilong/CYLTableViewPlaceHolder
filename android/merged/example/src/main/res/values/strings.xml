@@ -257,4 +257,18 @@
     <string name="ex_custom_text_placeholder">Your custom message</string>
     <string name="ex_action_cancel">Cancel</string>
     <string name="ex_action_preview">Preview</string>
+    <string name="o2_title_collection">Collection animation</string>
+    <string name="o2_title_header_refreshing">Header refreshing</string>
+    <string name="o2_format_header_completed">Header completed %1$d</string>
+    <string name="o2_title_footer_refreshing">Footer refreshing</string>
+    <string name="o2_title_footer_completed">Footer completed</string>
+    <string name="o2_format_item">Item %1$d</string>
+    <string name="o2_title_paging">Paging</string>
+    <string name="o2_title_refresh_completed">Refresh completed</string>
+    <string name="o2_title_load_completed">Load completed</string>
+    <string name="o2_action_refresh">Refresh</string>
+    <string name="o2_action_last_page">Last page</string>
+    <string name="o2_hint_refresh">Refreshes the table and returns to page 2.</string>
+    <string name="o2_hint_last_page">Scrolls to the last page.</string>
+    <string name="o2_format_page">Page %1$d</string>
 </resources>

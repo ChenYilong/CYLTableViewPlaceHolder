@@ -896,6 +896,11 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
     override fun onStateChanged(refreshLayout: RefreshLayout, oldState: RefreshState, newState: RefreshState) {
         header?.layoutStateChanged(newState)
         footer?.layoutStateChanged(newState)
+        // MJRefresh #1430: a paged list (one with a SnapHelper) left between pages when a refresh or a load ends, for
+        // example after the app restored an offset while the header was open, goes back to its nearest page.
+        if (newState == RefreshState.None && oldState != RefreshState.None && hasRecyclerView) {
+            layout.post { findList(layout)?.let { snapToPage(it) } }
+        }
     }
 
     override fun onHeaderMoving(header: RefreshHeader?, isDragging: Boolean, percent: Float, offset: Int, headerHeight: Int, maxDragHeight: Int) {
@@ -907,6 +912,17 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
     }
 
     companion object {
+        /**
+         * Scrolls [list] to the page its SnapHelper would settle on, when it has one and sits between pages.
+         */
+        internal fun snapToPage(list: RecyclerView) {
+            val snap = list.onFlingListener as? androidx.recyclerview.widget.SnapHelper ?: return
+            val manager = list.layoutManager ?: return
+            val page = snap.findSnapView(manager) ?: return
+            val distance = snap.calculateDistanceToFinalSnap(manager, page) ?: return
+            if (distance[0] != 0 || distance[1] != 0) list.smoothScrollBy(distance[0], distance[1])
+        }
+
         /**
          * Whether the app ships RecyclerView (the library only compiles against it).
          */
