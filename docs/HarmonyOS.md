@@ -25,13 +25,23 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: HarmonyOS port, library and example (score 0)
+### TODO: HarmonyOS port, library and example (score 9)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
 - **Requirements:** a new cross-platform document (this file) with the HarmonyOS version; table 1 lists every iOS
   public API, table 2 every iOS example demo; the second column of both is the HarmonyOS implementation, TODO by
   default; one live score for both tables; remove one TODO per finished feature until the score is 100.
+- **Status 2026-11-16 (score 0 → 9):** placeholder core ported to the `cylplaceholder` HAR:
+  `CYLPlaceholderLocalization`, `CYLPlaceholderScenario` (35 scenarios, category, permission, actions, button
+  styles, `CYLPlaceholderComponent`, `CYLPlaceholderScenarioCatalog`), `CYLPlaceholderView` (styles, messages, badge,
+  selected colors, tap highlight; `@Observed CYLPlaceholderViewModel` + `@Component CYLPlaceholderView`) and
+  `CYLPlaceholderStackView` (`CYLPlaceholderStackViewModel` + `@Component`). The entry shows a temporary list of all
+  35 scenarios. Verified by `scripts/build.sh` (entry HAP and HAR: BUILD SUCCESSFUL) and 5 host-run hypium local
+  unit tests (`cylplaceholder/src/test`, `hvigorw test`: 5 pass). Still TODO in these headers: animation playback
+  (players, factories, play/stop/progress/speed, repeat counts, `componentWithBundledAnimation` playback),
+  `imageBundle`, and the configuration / file initializers (`initWithConfiguration`, `initWithContentsOfURL`,
+  `initWithItemContentsOfURL`).
 
 ## 对照表 / Tables
 
@@ -40,7 +50,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：0 / 100**（两张表合计：没有 TODO 的行 0 / 计入的行 1068；n/a 16 行不计入）。API 表 0 / 888，演示表 0 / 180。 | **HarmonyOS score: 0 / 100** (both tables: rows without TODO 0 / counted rows 1068; 16 n/a rows not counted). API table 0 / 888, demo table 0 / 180. |
+| **鸿蒙完成度：9 / 100**（两张表合计：没有 TODO 的行 103 / 计入的行 1066；n/a 18 行不计入）。API 表 103 / 886，演示表 0 / 180。 | **HarmonyOS score: 9 / 100** (both tables: rows without TODO 103 / counted rows 1066; 18 n/a rows not counted). API table 103 / 886, demo table 0 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -1118,11 +1128,11 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderLocalization` | TODO |
-| `CYLPlaceholderLocalization` `supportedLanguages` | TODO |
-| `CYLPlaceholderLocalization` `language` | TODO |
-| `CYLPlaceholderLocalization` `effectiveLanguage` | TODO |
-| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | TODO |
+| `CYLPlaceholderLocalization` | `CYLPlaceholderLocalization` (class with static members) |
+| `CYLPlaceholderLocalization` `supportedLanguages` | `CYLPlaceholderLocalization.supportedLanguages` |
+| `CYLPlaceholderLocalization` `language` | `CYLPlaceholderLocalization.language` (get / set, null follows the app language) |
+| `CYLPlaceholderLocalization` `effectiveLanguage` | `CYLPlaceholderLocalization.effectiveLanguage` |
+| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | `CYLPlaceholderLocalization.localizedStringForKey(key, fallback)` |
 | `CYLPlaceholderLocalization` `-init` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLPlaceholderLocalization` `+new` | n/a (NS_UNAVAILABLE on iOS) |
 
@@ -1148,41 +1158,41 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderScenario` | TODO |
-| `CYLPlaceholderScenarioCategory` | TODO |
-| `CYLPlaceholderPermission` | TODO |
-| `CYLPlaceholderAction` | TODO |
-| `CYLPlaceholderButtonStyle` | TODO |
-| `CYLPlaceholderComponent` | TODO |
-| `CYLPlaceholderComponent` `attributes` | TODO |
-| `CYLPlaceholderComponent` `action` | TODO |
+| `CYLPlaceholderScenario` | `CYLPlaceholderScenario` (enum) |
+| `CYLPlaceholderScenarioCategory` | `CYLPlaceholderScenarioCategory` (enum) |
+| `CYLPlaceholderPermission` | `CYLPlaceholderPermission` (enum) |
+| `CYLPlaceholderAction` | `CYLPlaceholderAction` (string type) + `CYLPlaceholderActions.Retry` etc. |
+| `CYLPlaceholderButtonStyle` | `CYLPlaceholderButtonStyle` (enum) |
+| `CYLPlaceholderComponent` | `CYLPlaceholderComponent` (class) |
+| `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` |
+| `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` |
 | `CYLPlaceholderComponent` `imageBundle` | TODO |
-| `CYLPlaceholderComponent` `spacingBefore` | TODO |
-| `CYLPlaceholderComponent` `interactionEnabled` | TODO |
-| `CYLPlaceholderComponent` `tapHighlightStyle` | TODO |
+| `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore` |
+| `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` |
+| `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` |
 | `CYLPlaceholderComponent` `animationRepeatCount` | TODO |
-| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | TODO |
+| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | TODO |
-| `CYLPlaceholderComponent` `+hintComponentWithText:` | TODO |
-| `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | TODO |
-| `CYLPlaceholderComponent` `+separatorComponentWithText:` | TODO |
-| `CYLPlaceholderComponent` `+componentWithDictionary:error:` | TODO |
+| `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` |
+| `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` |
+| `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` |
+| `CYLPlaceholderComponent` `+componentWithDictionary:error:` | `CYLPlaceholderComponent.componentWithDictionary(dictionary, onError)` |
 | `CYLPlaceholderComponent` `-init` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLPlaceholderComponent` `+new` | n/a (NS_UNAVAILABLE on iOS) |
-| `CYLPlaceholderScenarioCatalog` | TODO |
-| `CYLPlaceholderScenarioCatalog` `allScenarios` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+animationFileNamesForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+categoryForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+permissionForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+scenarioForPermission:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+nameForScenario:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+scenarioNamed:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+actionNamed:` | TODO |
-| `CYLPlaceholderScenarioCatalog` `+localizedTitleForAction:` | TODO |
+| `CYLPlaceholderScenarioCatalog` | `CYLPlaceholderScenarioCatalog` (class with static members) |
+| `CYLPlaceholderScenarioCatalog` `allScenarios` | `CYLPlaceholderScenarioCatalog.allScenarios` |
+| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | `CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | `CYLPlaceholderScenarioCatalog.localizedNameForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | `CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+animationFileNamesForScenario:` | `CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+categoryForScenario:` | `CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+permissionForScenario:` | `CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+scenarioForPermission:` | `CYLPlaceholderScenarioCatalog.scenarioForPermission(permission)` |
+| `CYLPlaceholderScenarioCatalog` `+nameForScenario:` | `CYLPlaceholderScenarioCatalog.nameForScenario(scenario)` |
+| `CYLPlaceholderScenarioCatalog` `+scenarioNamed:` | `CYLPlaceholderScenarioCatalog.scenarioNamed(name)` (null instead of -1) |
+| `CYLPlaceholderScenarioCatalog` `+actionNamed:` | `CYLPlaceholderScenarioCatalog.actionNamed(name)` |
+| `CYLPlaceholderScenarioCatalog` `+localizedTitleForAction:` | `CYLPlaceholderScenarioCatalog.localizedTitleForAction(action)` |
 | `CYLPlaceholderScenarioCatalog` `-init` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLPlaceholderScenarioCatalog` `+new` | n/a (NS_UNAVAILABLE on iOS) |
 
@@ -1190,24 +1200,24 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderActionHandler` | TODO |
-| `CYLPlaceholderStackView` | TODO |
-| `CYLPlaceholderStackView` `stackView` | TODO |
-| `CYLPlaceholderStackView` `placeholderView` | TODO |
-| `CYLPlaceholderStackView` `componentViews` | TODO |
-| `CYLPlaceholderStackView` `scenario` | TODO |
-| `CYLPlaceholderStackView` `backgroundAction` | TODO |
-| `CYLPlaceholderStackView` `-initWithScenario:actions:` | TODO |
-| `CYLPlaceholderStackView` `-initWithComponents:actions:` | TODO |
+| `CYLPlaceholderActionHandler` | `CYLPlaceholderActionHandler` (`(placeholder, action) => void`) |
+| `CYLPlaceholderStackView` | `@Component CYLPlaceholderStackView({ model })` + `CYLPlaceholderStackViewModel` |
+| `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackViewModel.entries` (the stacked rows) |
+| `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackViewModel.placeholderView` |
+| `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackViewModel.componentViews` |
+| `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackViewModel.scenario` (null for components) |
+| `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackViewModel.backgroundAction` |
+| `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackViewModel.initWithScenario(scenario, actions)` |
+| `CYLPlaceholderStackView` `-initWithComponents:actions:` | `CYLPlaceholderStackViewModel.initWithComponents(components, actions)` |
 | `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | TODO |
 | `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | TODO |
-| `CYLPlaceholderStackView` `-initWithFrame:` | TODO |
-| `CYLPlaceholderStackView` `-initWithCoder:` | TODO |
-| `CYLPlaceholderStackView` `-appendComponent:` | TODO |
-| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | TODO |
-| `CYLPlaceholderStackView` `-setHandler:forAction:` | TODO |
-| `CYLPlaceholderStackView` `-componentViewForAction:` | TODO |
-| `CYLPlaceholderStackView` `-performAction:` | TODO |
+| `CYLPlaceholderStackView` `-initWithFrame:` | n/a (NS_UNAVAILABLE on iOS) |
+| `CYLPlaceholderStackView` `-initWithCoder:` | n/a (NS_UNAVAILABLE on iOS) |
+| `CYLPlaceholderStackView` `-appendComponent:` | `CYLPlaceholderStackViewModel.appendComponent(component)` |
+| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | `CYLPlaceholderStackViewModel.appendComponentView(view, action, spacingBefore)` |
+| `CYLPlaceholderStackView` `-setHandler:forAction:` | `CYLPlaceholderStackViewModel.setHandler(handler, action)` |
+| `CYLPlaceholderStackView` `-componentViewForAction:` | `CYLPlaceholderStackViewModel.componentViewForAction(action)` |
+| `CYLPlaceholderStackView` `-performAction:` | `CYLPlaceholderStackViewModel.performAction(action)` |
 
 #### `CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`
 
@@ -1231,19 +1241,19 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderStyle` | TODO |
-| `CYLPlaceholderMessage` | TODO |
-| `CYLPlaceholderTapHighlightStyle` | TODO |
-| `CYLPlaceholderBadgeStyle` | TODO |
-| `CYLPlaceholderBadgeAppearance` | TODO |
-| `CYLPlaceholderBadgeAppearance` `backgroundColor` | TODO |
-| `CYLPlaceholderBadgeAppearance` `textColor` | TODO |
-| `CYLPlaceholderBadgeAppearance` `font` | TODO |
-| `CYLPlaceholderBadgeAppearance` `cornerRadius` | TODO |
-| `CYLPlaceholderBadgeAppearance` `contentInsets` | TODO |
-| `CYLPlaceholderBadgeAppearance` `animationDuration` | TODO |
-| `CYLPlaceholderBadgeAppearance` `animatesChanges` | TODO |
-| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | TODO |
+| `CYLPlaceholderStyle` | `CYLPlaceholderStyle` (enum, with `Count`) |
+| `CYLPlaceholderMessage` | `CYLPlaceholderMessage` (enum, with `Count`) |
+| `CYLPlaceholderTapHighlightStyle` | `CYLPlaceholderTapHighlightStyle` (enum) |
+| `CYLPlaceholderBadgeStyle` | `CYLPlaceholderBadgeStyle` (enum) |
+| `CYLPlaceholderBadgeAppearance` | `CYLPlaceholderBadgeAppearance` (class) |
+| `CYLPlaceholderBadgeAppearance` `backgroundColor` | `CYLPlaceholderBadgeAppearance.sharedAppearance.backgroundColor` |
+| `CYLPlaceholderBadgeAppearance` `textColor` | `CYLPlaceholderBadgeAppearance.sharedAppearance.textColor` |
+| `CYLPlaceholderBadgeAppearance` `font` | `CYLPlaceholderBadgeAppearance.sharedAppearance.font` |
+| `CYLPlaceholderBadgeAppearance` `cornerRadius` | `CYLPlaceholderBadgeAppearance.sharedAppearance.cornerRadius` |
+| `CYLPlaceholderBadgeAppearance` `contentInsets` | `CYLPlaceholderBadgeAppearance.sharedAppearance.contentInsets` |
+| `CYLPlaceholderBadgeAppearance` `animationDuration` | `CYLPlaceholderBadgeAppearance.sharedAppearance.animationDuration` |
+| `CYLPlaceholderBadgeAppearance` `animatesChanges` | `CYLPlaceholderBadgeAppearance.sharedAppearance.animatesChanges` |
+| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | `CYLPlaceholderBadgeAppearance.sharedAppearance` |
 | `CYLPlaceholderAnimationPlayer` | TODO |
 | `CYLPlaceholderAnimationPlayer` `ready` | TODO |
 | `CYLPlaceholderAnimationPlayer` `errorHandler` | TODO |
@@ -1256,38 +1266,38 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | TODO |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | TODO |
 | `CYLPlaceholderAnimationFactory` | TODO |
-| `CYLPlaceholderView` | TODO |
-| `CYLPlaceholderView` `imageView` | TODO |
-| `CYLPlaceholderView` `textLabel` | TODO |
-| `CYLPlaceholderView` `badgeValue` | TODO |
-| `CYLPlaceholderView` `badgeLabel` | TODO |
-| `CYLPlaceholderView` `badgeCenterOffset` | TODO |
-| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | TODO |
-| `CYLPlaceholderView` `selected` | TODO |
-| `CYLPlaceholderView` `selectionIndicatorImage` | TODO |
-| `CYLPlaceholderView` `selectionIndicatorTintColor` | TODO |
-| `CYLPlaceholderView` `defaultTitleColor` | TODO |
-| `CYLPlaceholderView` `defaultIconColor` | TODO |
-| `CYLPlaceholderView` `defaultBackgroundColor` | TODO |
-| `CYLPlaceholderView` `defaultTitleFont` | TODO |
-| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | TODO |
-| `CYLPlaceholderView` `defaultSelectedTitleColor` | TODO |
-| `CYLPlaceholderView` `defaultSelectedIconColor` | TODO |
-| `CYLPlaceholderView` `defaultSelectedBackgroundColor` | TODO |
-| `CYLPlaceholderView` `defaultSelectedTitleFont` | TODO |
-| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | TODO |
-| `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | TODO |
-| `CYLPlaceholderView` `itemAttributes` | TODO |
-| `CYLPlaceholderView` `reportsContentSize` | TODO |
-| `CYLPlaceholderView` `preferredMaxLayoutWidth` | TODO |
-| `CYLPlaceholderView` `contentMargin` | TODO |
-| `CYLPlaceholderTapHandler` | TODO |
-| `CYLPlaceholderView` `tapHandler` | TODO |
-| `CYLPlaceholderView` `tapInteractionEnabled` | TODO |
-| `CYLPlaceholderView` `tapHighlightStyle` | TODO |
-| `CYLPlaceholderView` `tapHighlighted` | TODO |
-| `CYLPlaceholderView` `tapInteractive` | TODO |
-| `CYLPlaceholderView` `-performTap` | TODO |
+| `CYLPlaceholderView` | `@Component CYLPlaceholderView({ model })` + `@Observed CYLPlaceholderViewModel` |
+| `CYLPlaceholderView` `imageView` | `CYLPlaceholderViewModel.image` (drawn by an ArkUI `Image`) |
+| `CYLPlaceholderView` `textLabel` | `CYLPlaceholderViewModel.text` (drawn by an ArkUI `Text`) |
+| `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderViewModel.badgeValue` |
+| `CYLPlaceholderView` `badgeLabel` | `CYLPlaceholderViewModel.badgeText` / `badgeStyle` (drawn by an ArkUI `Text`) |
+| `CYLPlaceholderView` `badgeCenterOffset` | `CYLPlaceholderViewModel.badgeCenterOffset` |
+| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | `CYLPlaceholderViewModel.showBadgeWithStyle(style, value)` |
+| `CYLPlaceholderView` `selected` | `CYLPlaceholderViewModel.selected` |
+| `CYLPlaceholderView` `selectionIndicatorImage` | `CYLPlaceholderViewModel.selectionIndicatorImage` |
+| `CYLPlaceholderView` `selectionIndicatorTintColor` | `CYLPlaceholderViewModel.selectionIndicatorTintColor` |
+| `CYLPlaceholderView` `defaultTitleColor` | `CYLPlaceholderViewModel.defaultTitleColor` |
+| `CYLPlaceholderView` `defaultIconColor` | `CYLPlaceholderViewModel.defaultIconColor` |
+| `CYLPlaceholderView` `defaultBackgroundColor` | `CYLPlaceholderViewModel.defaultBackgroundColor` |
+| `CYLPlaceholderView` `defaultTitleFont` | `CYLPlaceholderViewModel.defaultTitleFont` |
+| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | `CYLPlaceholderViewModel.defaultTitlePositionAdjustment` |
+| `CYLPlaceholderView` `defaultSelectedTitleColor` | `CYLPlaceholderViewModel.defaultSelectedTitleColor` |
+| `CYLPlaceholderView` `defaultSelectedIconColor` | `CYLPlaceholderViewModel.defaultSelectedIconColor` |
+| `CYLPlaceholderView` `defaultSelectedBackgroundColor` | `CYLPlaceholderViewModel.defaultSelectedBackgroundColor` |
+| `CYLPlaceholderView` `defaultSelectedTitleFont` | `CYLPlaceholderViewModel.defaultSelectedTitleFont` |
+| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | `CYLPlaceholderViewModel.defaultSelectionIndicatorImage` |
+| `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | `CYLPlaceholderViewModel.defaultSelectionIndicatorTintColor` |
+| `CYLPlaceholderView` `itemAttributes` | `CYLPlaceholderViewModel.itemAttributes` |
+| `CYLPlaceholderView` `reportsContentSize` | `CYLPlaceholderViewModel.reportsContentSize` |
+| `CYLPlaceholderView` `preferredMaxLayoutWidth` | `CYLPlaceholderViewModel.preferredMaxLayoutWidth` |
+| `CYLPlaceholderView` `contentMargin` | `CYLPlaceholderViewModel.contentMargin` |
+| `CYLPlaceholderTapHandler` | `CYLPlaceholderTapHandler` (`(placeholderView) => void`) |
+| `CYLPlaceholderView` `tapHandler` | `CYLPlaceholderViewModel.tapHandler` |
+| `CYLPlaceholderView` `tapInteractionEnabled` | `CYLPlaceholderViewModel.tapInteractionEnabled` |
+| `CYLPlaceholderView` `tapHighlightStyle` | `CYLPlaceholderViewModel.tapHighlightStyle` |
+| `CYLPlaceholderView` `tapHighlighted` | `CYLPlaceholderViewModel.tapHighlighted` |
+| `CYLPlaceholderView` `tapInteractive` | `CYLPlaceholderViewModel.tapInteractive` |
+| `CYLPlaceholderView` `-performTap` | `CYLPlaceholderViewModel.performTap()` |
 | `CYLPlaceholderView` `animationRepeatCount` | TODO |
 | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | TODO |
 | `CYLPlaceholderView` `-playPlaceholderAnimation` | TODO |
@@ -1295,16 +1305,16 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | TODO |
 | `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | TODO |
 | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | TODO |
-| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | TODO |
+| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | `CYLPlaceholderViewModel.initWithItemAttributes(attributes, imageBundle, onError)` (imageBundle ignored: images are bundled icon names, Resources or paths) |
 | `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | TODO |
-| `CYLPlaceholderView` `-initWithStyle:message:` | TODO |
-| `CYLPlaceholderView` `-initWithStyle:text:` | TODO |
-| `CYLPlaceholderView` `-initWithImage:text:` | TODO |
-| `CYLPlaceholderView` `+imageForStyle:` | TODO |
-| `CYLPlaceholderView` `+imageNameForStyle:` | TODO |
-| `CYLPlaceholderView` `+localizedTextForMessage:` | TODO |
-| `CYLPlaceholderView` `+bundledAnimationFileNames` | TODO |
-| `CYLPlaceholderView` `+pathForBundledAnimation:` | TODO |
+| `CYLPlaceholderView` `-initWithStyle:message:` | `CYLPlaceholderViewModel.initWithStyleMessage(style, message)` |
+| `CYLPlaceholderView` `-initWithStyle:text:` | `CYLPlaceholderViewModel.initWithStyleText(style, text)` |
+| `CYLPlaceholderView` `-initWithImage:text:` | `CYLPlaceholderViewModel.initWithImageText(image, text)` |
+| `CYLPlaceholderView` `+imageForStyle:` | `CYLPlaceholderViewModel.imageForStyle(style)` (a Resource) |
+| `CYLPlaceholderView` `+imageNameForStyle:` | `CYLPlaceholderViewModel.imageNameForStyle(style)` |
+| `CYLPlaceholderView` `+localizedTextForMessage:` | `CYLPlaceholderViewModel.localizedTextForMessage(message)` |
+| `CYLPlaceholderView` `+bundledAnimationFileNames` | `CYLPlaceholderViewModel.bundledAnimationFileNames()` |
+| `CYLPlaceholderView` `+pathForBundledAnimation:` | `CYLPlaceholderViewModel.pathForBundledAnimation(fileName)` (rawfile path) |
 
 #### `CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`
 

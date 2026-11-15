@@ -1,0 +1,8 @@
+{
+  "modelVersion": "5.0.0",
+  "description": "CYLTableViewPlaceHolder for HarmonyOS (ArkTS): the cylplaceholder library and its example.",
+  "dependencies": {},
+  "devDependencies": {
+    "@ohos/hypium": "1.0.21"
+  }
+}

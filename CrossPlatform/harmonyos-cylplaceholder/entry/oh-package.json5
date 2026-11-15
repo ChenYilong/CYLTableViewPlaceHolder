@@ -1,0 +1,11 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "The CYLTableViewPlaceHolder example for HarmonyOS: a 1:1 copy of the iOS Examples/Example-Scenarios.",
+  "main": "",
+  "author": "ChenYilong",
+  "license": "MIT",
+  "dependencies": {
+    "cylplaceholder": "file:../cylplaceholder"
+  }
+}
