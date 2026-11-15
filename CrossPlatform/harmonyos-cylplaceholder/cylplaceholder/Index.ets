@@ -99,3 +99,18 @@ export * from './src/main/ets/refresh/CYLRefreshIconView';
 export * from './src/main/ets/refresh/CYLRefreshPaging';
 export { CYLRefreshBundle } from './src/main/ets/refresh/CYLRefreshBundle';
 export { CYLRefreshContainer, CYLRefreshComponentView, CYLRefreshFooterView } from './src/main/ets/refresh/CYLRefreshView';
+
+// CYLRefresh drawn styles: SmartRefreshControl's headers and footers drawn on a Canvas, with their support classes.
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnSupport';
+export * from './src/main/ets/refresh/drawn/CYLRefreshValueAnimator';
+export * from './src/main/ets/refresh/drawn/CYLRefreshVectorPathsParser';
+export * from './src/main/ets/refresh/drawn/CYLRefreshVector';
+export * from './src/main/ets/refresh/drawn/CYLRefreshStoreHouse';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnHeader';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnShapes';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnVectors';
+export * from './src/main/ets/refresh/drawn/CYLRefreshStoreHouseHeader';
+export * from './src/main/ets/refresh/drawn/CYLRefreshFly';
+export * from './src/main/ets/refresh/drawn/CYLRefreshGame';
+export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
+export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';
