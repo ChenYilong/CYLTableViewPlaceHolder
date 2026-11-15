@@ -187,6 +187,17 @@
   back footer ("Release to load more", release loads), which also found and fixed a back footer that never armed
   when the rows are shorter than the view.
 
+### TODO: The mini program as a cyl- npm library, verified with npm pack and "构建 npm" (score 0)
+
+- **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "在跨端相关文档中标记TODO：小程序封装成库 cyl- 开头的小程序库，用 npm 打包加「构建 npm」实际验证过。提醒我的话先运行 ! npm login。 然后继续你未完成的任务。"
+- **Requirements:** ship the mini program code as a library whose name starts with `cyl-`
+  (`cyl-placeholder-miniprogram`: cyl-placeholder, cyl-placeholder-hud, cyl-placeholder-status, cyl-refresh,
+  cyl-refresh-trailer); pack it with `npm pack`; install the tarball in a mini program and run WeChat DevTools'
+  "构建 npm" (Build npm); use the components from `miniprogram_npm` and check they open with no error.
+- **Publishing:** `npm publish` needs the owner's npm account: run `! npm login` first (the owner runs it; the
+  agent does not log in or publish on its own).
+
 ## 结构 / Structure
 
 | Path (under `CrossPlatform/wechat-miniprogram-cylplaceholder/`) | Role |
