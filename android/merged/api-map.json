@@ -2617,11 +2617,11 @@
  },
  "CYLRefreshIconAnimating -setIconAnimationAttributes:forState:": {
   "status": "done",
-  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+  "android": "setIconAnimationAttributes(attributes, state) on the GIF / animation headers and footers; CYLRefreshComponent.cyl_setIconAnimationAttributes on any component"
  },
  "CYLRefreshIconAnimating -setIconAnimationFilePath:size:forState:": {
   "status": "done",
-  "android": "cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)"
+  "android": "setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers"
  },
  "CYLRefreshIconAnimating bundledIconAnimationFileNames": {
   "status": "n/a",

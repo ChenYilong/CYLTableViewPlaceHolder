@@ -19,6 +19,10 @@ rootProject.name = "CYLTableViewPlaceHolderAndroid"
 include(":placeholder")
 // The Lottie animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Lottie).
 include(":placeholder-lottie")
+// The PAG animator of the placeholder (iOS subspec CYLPlaceholderAnimation/PAG).
+include(":placeholder-pag")
+// The Rive animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Rive).
+include(":placeholder-rive")
 // SVPullToRefresh in Kotlin (docs/Android-Port.md, the refresh port).
 include(":SVPullToRefresh")
 // android-Ultra-Pull-To-Refresh in Kotlin (docs/Android-Port.md, the refresh port).

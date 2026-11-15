@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.cyl.refresh.CYLRefreshAnimationHeader
+import com.cyl.refresh.CYLRefreshBackAnimationFooter
 import com.cyl.refresh.CYLRefreshBackNormalFooter
+import com.cyl.refresh.CYLRefreshState
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.CYLRefreshNormalTrailer
 import com.cyl.refresh.cyl_trailer
@@ -70,7 +73,7 @@ private class ColorItems(private val colors: List<Int>, private val open: (Int) 
  * Pull down and up on a collection (iOS `CYLRefreshCollectionViewController.example31`); [pinHeader] is
  * MJPinHeaderCollectionViewController, whose header pinning is a TODO in MJRefresh too, so both pages look the same.
  */
-internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolean, openTest: () -> Unit): View {
+internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolean, animatedIcons: Boolean = false, openTest: () -> Unit): View {
     val context = requireContext()
     val density = context.resources.displayMetrics.density
     val gap = (20 * density).toInt()
@@ -105,19 +108,26 @@ internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolea
     }
 
     // Pull down: ten fake items, the refresh ends 2 seconds later.
-    val header = CYLRefreshNormalHeader(context)
+    // example32: animated icons (Lottie arrows while pulling, a gradient spinner while refreshing, a GIF in the footer).
+    val header = if (animatedIcons) CYLRefreshAnimationHeader(context).apply {
+        setIconAnimationFilePath("asset:Animations/CYLRefreshCounterClockwise.json", 28f, 28f, CYLRefreshState.Idle)
+        setIconAnimationFilePath("asset:Animations/CYLRefreshGradientSpinner.json", 32f, 32f, CYLRefreshState.Refreshing)
+    } else CYLRefreshNormalHeader(context)
     header.refreshingBlock = {
         repeat(10) { colors.add(0, randomColor()) }
         later(2000) { reload(); header.endRefreshing() }
     }
     layout.cyl_header = header
     // Pull up: five more.
-    val footer = CYLRefreshBackNormalFooter(context)
+    val footer = if (animatedIcons) CYLRefreshBackAnimationFooter(context).apply {
+        setIconAnimationFilePath("asset:Animations/CYLRefreshActivity.gif", 28f, 28f, CYLRefreshState.Idle)
+    } else CYLRefreshBackNormalFooter(context)
     footer.refreshingBlock = {
         repeat(5) { colors += randomColor() }
         later(2000) { reload(); footer.endRefreshing() }
     }
-    footer.setAnimationDisabled().cyl_autoChangeTransparency(true)
+    footer.setAnimationDisabled()
+    footer.cyl_autoChangeTransparency(true)
     layout.cyl_footer = footer
     reload()
     header.beginRefreshing()

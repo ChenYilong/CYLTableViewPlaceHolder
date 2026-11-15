@@ -23,12 +23,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.refresh.CYLRefreshAutoAnimationFooter
 import com.cyl.refresh.CYLRefreshAutoFooter
+import com.cyl.refresh.CYLRefreshAutoGifFooter
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshBackAnimationFooter
 import com.cyl.refresh.CYLRefreshBackFooter
 import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshComponent
 import com.cyl.refresh.CYLRefreshAnimationHeader
+import com.cyl.refresh.CYLRefreshGifHeader
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.CYLRefreshState
 import com.cyl.refresh.CYLRefreshStateHeader
@@ -85,6 +87,15 @@ class RefreshExamplesPage : StackPage() {
             listOf("example40", "example41"),
             "CYLRefreshWKWebViewController",
         ),
+        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG and Rive icons.
+        RefreshExample(
+            R.string.merged_mj_section_animations,
+            listOf(R.string.merged_mj_gif_icon, R.string.merged_mj_lottie_states, R.string.merged_mj_pag_ring,
+                R.string.merged_mj_rive_icon, R.string.merged_mj_gif_frames, R.string.merged_mj_mixed_engines,
+                R.string.merged_mj_collection_icons),
+            listOf("example51", "example52", "example53", "example54", "example55", "example56", "example32"),
+            "CYLRefreshTableViewController",
+        ),
         RefreshExample(R.string.merged_mj_section_i18n, listOf(R.string.merged_mj_languages), listOf("i18n"),
             "CYLRefreshI18NExampleViewController"),
         RefreshExample(R.string.merged_smart_section, smartStyles.map { it.first }, smartStyles.map { it.second },
@@ -106,6 +117,7 @@ class RefreshExamplesPage : StackPage() {
                             horizontalCollectionPage(name) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_collection ->
                             collectionPage(name, pinHeader = i == 1) { push(testPage()) }
+                        exam.methods[i] == "example32" -> collectionPage(name, pinHeader = false, animatedIcons = true) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_web -> webPage()
                         exam.header == R.string.merged_mj_section_i18n -> i18nPage(name)
                         exam.header == R.string.merged_smart_section -> smartStylePage(name, exam.methods[i])
@@ -283,6 +295,77 @@ class RefreshExamplesPage : StackPage() {
                 layout.cyl_footer = DIYAutoFooter(context).on(::loadMoreData).apply { autoTriggerTimes = 2 }
             }
             "example21" -> { example01(); layout.cyl_footer = DIYBackFooter(context).on(::loadMoreData) }
+            "example51" -> {
+                // A GIF icon in place of the images.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshArrows.gif"), 32f, 32f, CYLRefreshState.Idle)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshRing.gif"), 28f, 28f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example52" -> {
+                // A Lottie icon for each state; the footer shows load-more dots, then "no more data".
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshPullArrow.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshClockwise.json"), 28f, 28f, CYLRefreshState.Pulling)
+                    setIconAnimationFilePath(animation("CYLRefreshMaterialSpinner.json"), 36f, 36f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshBackAnimationFooter(context).on(::loadLastData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshLoadMore.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshMoreDots.json"), 40f, 24f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example53" -> {
+                // The PAG progress ring.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 32f, 32f, CYLRefreshState.Idle)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 28f, 28f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example54" -> {
+                // The Rive refresh icon: its "refresh" artboard rests while pulling and turns while refreshing.
+                val resting = animation("CYLRefreshIcon.riv?artboard=refresh&animation=idle")
+                val turning = animation("CYLRefreshIcon.riv?artboard=refresh&animation=active")
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example55" -> {
+                // MJRefresh's animated-images API on its own names: frames of the refresh GIFs.
+                layout.cyl_header = CYLRefreshGifHeader(context).on(::loadNewData).apply {
+                    setImages(ExampleImages.idle(context), CYLRefreshState.Idle)
+                    setImages(ExampleImages.refreshing(context), 0.8, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoGifFooter(context).on(::loadMoreData).apply {
+                    setImages(ExampleImages.refreshing(context), CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example56" -> {
+                // A different engine for each state: Lottie while idle, GIF when released, PAG while refreshing; the
+                // footer loads with Rive.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshPullCircle.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshArrows.gif"), 30f, 30f, CYLRefreshState.Pulling)
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshIcon.riv"), 30f, 30f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
         }
         return page(context, bar(context, title, *buttons.toTypedArray()), layout)
     }
@@ -292,6 +375,11 @@ class RefreshExamplesPage : StackPage() {
          * MJRefresh's MJDuration: long enough to see the refreshing state.
          */
         const val DURATION = 2000L
+
+        /**
+         * A file of the example's assets/Animations, for a registered player.
+         */
+        fun animation(name: String) = "asset:Animations/$name"
 
         fun randomData(context: Context) = context.t(R.string.merged_mj_random_data, Random.nextInt(1_000_000))
     }

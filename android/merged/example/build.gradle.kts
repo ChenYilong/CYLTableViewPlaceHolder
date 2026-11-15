@@ -35,6 +35,10 @@ android {
 
 dependencies {
     implementation(project(":merged"))
+    // The animation players of the animated-icon examples (example32, example51–56): Lottie, PAG, Rive; GIF is built in.
+    implementation(project(":placeholder-lottie"))
+    implementation(project(":placeholder-pag"))
+    implementation(project(":placeholder-rive"))
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)

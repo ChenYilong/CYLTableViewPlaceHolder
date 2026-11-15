@@ -359,8 +359,8 @@
 | `CYLRefreshIconAnimating` | `com.cyl.refresh.CYLRefreshIconAnimating` | partial | an interface; every component gets the same calls as cyl_ extensions |
 | `CYLRefreshIconAnimating` `iconView` | `CYLRefreshComponent.cyl_iconView` | done |  |
 | `CYLRefreshIconAnimating` `usesIconView` | `CYLRefreshComponent.cyl_usesIconView` | done |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | `CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)` | done |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | `cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | `setIconAnimationAttributes(attributes, state) on the GIF / animation headers and footers; CYLRefreshComponent.cyl_setIconAnimationAttributes on any component` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | `setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers` | done |  |
 | `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
 | `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
 | `CYLRefreshIconView(CYLRefreshIconAttributes)` | `com.cyl.refresh.CYLRefreshIconView (companion)` | done |  |
