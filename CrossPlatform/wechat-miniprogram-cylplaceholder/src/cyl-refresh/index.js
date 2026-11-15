@@ -132,9 +132,7 @@ Component({
       this._render()
     },
     ready() {
-      this.createSelectorQuery().select('.cyl-refresh__scroll').boundingClientRect((rect) => {
-        if (rect) this._viewHeight = rect.height
-      }).exec()
+      this._measure()
     },
     detached() {
       if (this._unsubscribe) this._unsubscribe()
@@ -192,6 +190,20 @@ Component({
     },
 
     // Drag tracking: trigger modes and the back footer's pull.
+    /** Reads the scroll offset and sizes (a list shorter than the view never fires scroll events). */
+    _measure() {
+      this.createSelectorQuery().select('.cyl-refresh__scroll')
+        .fields({ size: true, scrollOffset: true }, (r) => {
+          if (!r) return
+          this._viewHeight = r.height
+          this._scrollHeight = r.scrollHeight || this._scrollHeight
+          this._scrollTop = r.scrollTop
+          if (this._dragging && this._footerTouchY == null && this._atBottom()) {
+            this._startedAtBottom = true
+            this._footerTouchY = this._touchY
+          }
+        }).exec()
+    },
     _atBottom() {
       if (!this._viewHeight || !this._scrollHeight) return false
       return this._scrollTop >= this._scrollHeight - this._viewHeight - 2
@@ -208,6 +220,7 @@ Component({
       this._startedAtBottom = this._atBottom()
       this._touchY = e.touches && e.touches[0] ? e.touches[0].clientY : null
       this._footerTouchY = this._startedAtBottom ? this._touchY : null
+      this._measure()
     },
     onTouchMove(e) {
       if (!this._isBack() || !this._footerActive() || this.data.footerState === S.Refreshing) return

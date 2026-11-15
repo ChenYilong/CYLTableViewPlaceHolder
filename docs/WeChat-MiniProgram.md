@@ -182,7 +182,10 @@
 - **Verified:** `npm test` 35 / 35; DevTools 2.02.2609250 / base library 3.17.6: the 8 easy_refresh pages, the finish
   phase ("Refresh failed"), live language and custom table texts, the trailer component; all 65 Refresh rows open
   with no exception or console error. Not verified: touch-driven behaviors (drag distances, trigger modes, the
-  second floor, the trailer pull) on a phone, skipped at the owner's request.
+  second floor, the trailer pull) on a phone, skipped at the owner's request. Simulated touches (miniprogram-automator
+  touchstart / touchmove / touchend) verified the trailer (pull left past 60px, release opens the test page) and the
+  back footer ("Release to load more", release loads), which also found and fixed a back footer that never armed
+  when the rows are shorter than the view.
 
 ## 结构 / Structure
 
