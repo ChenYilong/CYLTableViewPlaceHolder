@@ -85,8 +85,16 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
             if (swipe >= closeTriggerOffset * density()) close()
         }
         floor.addView(content, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        val gravity = if (header) android.view.Gravity.TOP else android.view.Gravity.BOTTOM
-        parent.addView(floor, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height, gravity))
+        // The floor covers the layout's own area: when the layout is not directly in a FrameLayout, the floor goes into
+        // the window's content and is placed at the layout's position there, not at the window's top.
+        val layoutAt = IntArray(2).also(layout::getLocationInWindow)
+        val parentAt = IntArray(2).also(parent::getLocationInWindow)
+        val top = layoutAt[1] - parentAt[1] + if (header) 0 else layout.height - height
+        val params = FrameLayout.LayoutParams(layout.width, height, android.view.Gravity.TOP or android.view.Gravity.START).apply {
+            leftMargin = layoutAt[0] - parentAt[0]
+            topMargin = top
+        }
+        parent.addView(floor, params)
         host = floor
         isOpen = true
         closing = false

@@ -478,6 +478,32 @@ class CYLRefreshComponentTest {
 
 
     @Test
+    fun secondFloorCoversTheLayoutInsideALinearLayout() {
+        // A bar above the layout: the floor must start at the layout, not at the window's top.
+        val layout = layout(300)
+        val column = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100))
+            addView(layout, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        }
+        activity.setContentView(column)
+        idle(100)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        val page = View(activity)
+        header.secondaryView = page
+        header.secondaryTriggerOffset = 50f
+        idle(50)
+        header.floor.open()
+        idle(1000)
+        val floorAt = IntArray(2).also { (page.parent as View).getLocationInWindow(it) }
+        val layoutAt = IntArray(2).also(layout::getLocationInWindow)
+        assertEquals("top", layoutAt[1], floorAt[1])
+        assertEquals("height", layout.height, (page.parent as View).height)
+    }
+
+
+    @Test
     fun theStateClassesShowResultAndNoMoreDataImages() {
         val layout = show(layout())
         val header = CYLRefreshNormalHeader(activity)
