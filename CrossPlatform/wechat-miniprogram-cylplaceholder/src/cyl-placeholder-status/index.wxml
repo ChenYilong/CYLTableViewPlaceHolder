@@ -1,0 +1,7 @@
+<view wx:if="{{shown}}" class="status" id="{{bar.accessibilityIdentifier || ''}}"
+      style="height: {{height}}px; {{bar.backgroundColor ? 'background:' + bar.backgroundColor + ';' : ''}}"
+      hover-class="{{tappable ? 'status--pressed' : 'none'}}" catchtap="onTap"
+      aria-role="{{tappable ? 'button' : 'text'}}" aria-label="{{bar.text}}">
+  <image class="status__icon" src="../cyl-placeholder/images/{{bar.image}}.png" mode="aspectFit" />
+  <text class="status__text" style="{{bar.titleColor ? 'color:' + bar.titleColor : ''}}">{{bar.text}}</text>
+</view>

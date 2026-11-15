@@ -1,0 +1,19 @@
+<cyl-placeholder-status id="status" visible="{{showsBar}}" shows-when-offline="{{showsWhenOffline}}" tappable="{{tappable}}"
+                        configuration="{{barConfiguration}}" language="{{language}}"
+                        bind:statustap="onStatusTap" bind:networkchange="onNetworkChange" />
+<view class="group">
+  <picker range="{{displays}}" value="{{displayIndex}}" bindchange="onDisplay">
+    <view class="row"><text>Display</text><text class="value">{{displays[displayIndex]}} ›</text></view>
+  </picker>
+  <view class="row"><text>Shows when offline</text><switch checked="{{showsWhenOffline}}" bindchange="onOffline" /></view>
+  <view class="row"><text>Tappable bar</text><switch checked="{{tappable}}" bindchange="onTappable" /></view>
+  <view class="row" hover-class="pressed" bindtap="onApplyConfiguration"><text>Apply configuration</text><text class="value">›</text></view>
+  <view class="row" hover-class="pressed" bindtap="onReset"><text>Default bar</text><text class="value">›</text></view>
+  <view wx:if="{{lastEvent}}" class="note">Last event: {{lastEvent}}</view>
+</view>
+<view class="card">
+  <cyl-placeholder wx:if="{{showsPlaceholder}}" id="placeholder" scenario="NetworkUnavailable" language="{{language}}" compact="{{true}}" />
+  <view wx:else class="empty">(placeholder hidden)</view>
+</view>
+<view class="code-title">Configuration</view>
+<scroll-view class="code" scroll-x><text>{{configurationText}}</text></scroll-view>

@@ -1,5 +1,5 @@
 {
-  "pages": ["pages/index/index", "pages/scenario/scenario", "pages/hud/hud", "pages/configuration/configuration"],
+  "pages": ["pages/index/index", "pages/scenario/scenario", "pages/hud/hud", "pages/configuration/configuration", "pages/status/status"],
   "window": {
     "navigationBarTitleText": "CYLTableViewPlaceHolder",
     "navigationBarBackgroundColor": "#ffffff",
@@ -9,8 +9,10 @@
   "usingComponents": {
     "cyl-placeholder": "/components/cyl-placeholder/index",
     "cyl-placeholder-hud": "/components/cyl-placeholder-hud/index",
+    "cyl-placeholder-status": "/components/cyl-placeholder-status/index",
     "cyl-lottie": "/libs/cyl-lottie-miniprogram/cyl-lottie/index"
   },
   "style": "v2",
+  "darkmode": true,
   "sitemapLocation": "sitemap.json"
 }

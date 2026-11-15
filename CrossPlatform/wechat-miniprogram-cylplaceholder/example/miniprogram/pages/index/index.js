@@ -36,6 +36,9 @@ Page({
   onConfigurations() {
     wx.navigateTo({ url: '/pages/configuration/configuration' })
   },
+  onStatus() {
+    wx.navigateTo({ url: '/pages/status/status' })
+  },
   onOpen(e) {
     wx.navigateTo({ url: '/pages/scenario/scenario?scenario=' + e.currentTarget.dataset.scenario })
   },
