@@ -1,10 +1,43 @@
 {
-  "pages": ["pages/index/index", "pages/scenario/scenario", "pages/hud/hud", "pages/configuration/configuration", "pages/status/status"],
+  "pages": [
+    "pages/scenarios/scenarios",
+    "pages/animations/animations",
+    "pages/flows/flows",
+    "pages/feed/feed",
+    "pages/refresh/refresh",
+    "pages/publish/publish",
+    "pages/scenario-detail/scenario-detail",
+    "pages/support/support",
+    "pages/configuration/configuration",
+    "pages/text-file/text-file",
+    "pages/animation-detail/animation-detail",
+    "pages/flow-detail/flow-detail",
+    "pages/collection-flow/collection-flow",
+    "pages/status/status",
+    "pages/hud/hud",
+    "pages/hud-lifecycle/hud-lifecycle",
+    "pages/refresh-icons/refresh-icons",
+    "pages/refresh-icon-demo/refresh-icon-demo",
+    "pages/refresh-table/refresh-table",
+    "pages/refresh-test/refresh-test"
+  ],
   "window": {
     "navigationBarTitleText": "CYLTableViewPlaceHolder",
-    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarBackgroundColor": "#f2f2f7",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f2f2f7"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8E8E93",
+    "selectedColor": "#30B0C7",
+    "list": [
+      { "pagePath": "pages/scenarios/scenarios", "text": "Scenarios" },
+      { "pagePath": "pages/animations/animations", "text": "Animations" },
+      { "pagePath": "pages/flows/flows", "text": "Flows" },
+      { "pagePath": "pages/feed/feed", "text": "Feed" },
+      { "pagePath": "pages/refresh/refresh", "text": "Refresh" }
+    ]
   },
   "usingComponents": {
     "cyl-placeholder": "/components/cyl-placeholder/index",

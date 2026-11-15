@@ -1,0 +1,9 @@
+@import "../flow-detail/refresh.wxss";
+
+page { background: #fff; }
+.page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.list { flex: 1; height: 0; }
+.placeholder { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+@media (prefers-color-scheme: dark) {
+  page, .page { background: #000; }
+}

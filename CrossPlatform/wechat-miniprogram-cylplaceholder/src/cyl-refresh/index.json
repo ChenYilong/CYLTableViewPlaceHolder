@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "componentGenerics": {
+    "animation": { "default": "../cyl-placeholder/no-animation/index" }
+  }
+}

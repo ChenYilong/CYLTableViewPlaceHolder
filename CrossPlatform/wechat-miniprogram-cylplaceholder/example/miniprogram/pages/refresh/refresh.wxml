@@ -1,0 +1,20 @@
+<view class="page">
+  <cyl-refresh id="refresh" header="normal" footer="back" automatically-change-alpha="{{true}}"
+               bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+    <view class="inset">
+      <block wx:for="{{sections}}" wx:for-item="section" wx:key="title">
+        <view class="section__header">{{section.title}}</view>
+        <view class="section__body">
+          <view wx:for="{{section.rows}}" wx:key="subtitle" class="cell" hover-class="cell--pressed" bindtap="onOpen"
+                data-page="{{item.page}}" data-method="{{item.method}}" data-title="{{item.title}}">
+            <view class="cell__text">
+              <text class="cell__title">{{item.title}}</text>
+              <text class="cell__subtitle">{{item.subtitle}}</text>
+            </view>
+            <text class="cell__chevron">›</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </cyl-refresh>
+</view>

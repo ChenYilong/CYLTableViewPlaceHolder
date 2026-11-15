@@ -1,0 +1,2 @@
+<cyl-tab-bar id="cyl-tab-bar" generic:cyl-lottie-view="cyl-lottie" configuration="{{configuration}}"
+             selected-identifier="{{selected}}" bind:select="onSelect" bind:plustap="onPlusTap" />

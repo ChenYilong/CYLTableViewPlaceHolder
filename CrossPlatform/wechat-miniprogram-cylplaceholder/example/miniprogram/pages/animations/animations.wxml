@@ -1,0 +1,20 @@
+<!-- CYLAnimationListViewController: insetGrouped, one section per engine; the right bar item "Sources". -->
+<view class="bar">
+  <view class="bar__button" hover-class="bar__button--pressed" bindtap="showNotice">{{sourcesTitle}}</view>
+</view>
+<view wx:if="{{sections.length === 0}}" class="empty">{{emptyText}}</view>
+<view class="inset">
+  <block wx:for="{{sections}}" wx:for-item="section" wx:for-index="sectionIndex" wx:key="title">
+    <view class="section__header">{{section.title}}</view>
+    <view class="section__body">
+      <view wx:for="{{section.files}}" wx:for-item="file" wx:for-index="rowIndex" wx:key="name" class="cell"
+        hover-class="cell--pressed" data-section="{{sectionIndex}}" data-row="{{rowIndex}}" bindtap="openAnimation">
+        <view class="cell__text">
+          <text class="cell__title">{{file.name}}</text>
+          <text class="cell__subtitle">{{file.size}}</text>
+        </view>
+        <text class="cell__chevron">›</text>
+      </view>
+    </view>
+  </block>
+</view>

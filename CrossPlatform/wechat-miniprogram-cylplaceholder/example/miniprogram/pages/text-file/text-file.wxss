@@ -1,0 +1,6 @@
+page { background: #fff; }
+.page { padding: 8px 5px; }
+
+@media (prefers-color-scheme: dark) {
+  page { background: #000; }
+}

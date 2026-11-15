@@ -1,3 +1,8 @@
+const { applyStoredLanguage } = require('./utils/l10n')
+
 App({
-  globalData: { language: '' },
+  onLaunch() {
+    // The language chosen with the 🌐 button (stored), else the system's.
+    applyStoredLanguage()
+  },
 })

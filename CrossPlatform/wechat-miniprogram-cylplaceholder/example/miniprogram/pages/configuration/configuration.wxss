@@ -1,10 +1,7 @@
-.group { margin: 12px 16px; background: #fff; border-radius: 10px; overflow: hidden; }
-.row { display: flex; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #f2f2f7; font-size: 15px; color: #111; }
-.value { color: #007aff; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pressed { background: #e5e5ea; }
-.note { padding: 8px 16px; font-size: 12px; color: #8e8e93; word-break: break-all; }
-.note--error { color: #ff3b30; }
-.card { margin: 0 16px; background: #fff; border-radius: 10px; overflow: hidden; }
-.code-title { margin: 16px 20px 6px; font-size: 13px; color: #8e8e93; text-transform: uppercase; }
-.code { margin: 0 16px 24px; padding: 12px; box-sizing: border-box; width: auto; background: #1c1c1e; color: #e5e5ea;
-  border-radius: 10px; font-family: Menlo, monospace; font-size: 11px; line-height: 16px; white-space: pre; }
+page { background: #fff; }
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 16px; }
+
+@media (prefers-color-scheme: dark) {
+  page { background: #000; }
+}

@@ -1,0 +1,10 @@
+page { background: #fff; }
+.page { min-height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.bar { background: #f2f2f7; }
+/* UICollectionViewFlowLayout: 104 x 104 items, 8 spacing, 12 section insets. */
+.grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 12px; }
+.grid__item { width: 104px; height: 104px; border-radius: 10px; }
+.placeholder { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+@media (prefers-color-scheme: dark) {
+  page, .page, .bar { background: #000; }
+}
