@@ -2,8 +2,18 @@
 // Rive runtime (@ohos/rive, RiveAnimationView). Like the iOS legacy view (CYLPlaceholderRiveLegacyItemAnimationView)
 // it plays a named linear animation ("animation"), fires a state machine trigger input ("triggerInput"), or sets a
 // boolean input ("input") true for "duration" seconds (1 by default, 0 keeps it true until stopped), on the
-// "artboard" and "stateMachine" given; without those options the default state machine plays and pauses.
-import { Fit, Loop, RiveAnimationView, initializeRive } from '@ohos/rive';
+// "artboard" and "stateMachine" given. Without those legacy options (and without `legacy` = "1") it plays like the iOS
+// view-model view (CYLPlaceholderRiveItemAnimationView): the bound view model's boolean `active` (default "active")
+// is true for "duration" seconds, or its trigger `trigger` fires, and `color` is written to its "color" property.
+// @ohos/rive is one runtime with both APIs, so `legacy` only picks the input API (see CYLRiveOptions.ets).
+import { Fit, Loop, RiveAnimationView, ViewModelInstance, initializeRive } from '@ohos/rive';
+import {
+  CYLRiveActivePropertyPath,
+  CYLRiveColorPropertyPath,
+  CYLRiveColorValue,
+  CYLRiveTriggerPropertyPath,
+  CYLRiveUsesLegacyRuntime
+} from './CYLRiveOptions';
 import {
   CYLPlaceholderAnimationArrayBuffer,
   CYLPlaceholderAnimationContentView,
@@ -122,6 +132,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       view.setRiveBytes(this.bytes as ArrayBuffer, this.option(CYLPlaceholderAnimationOptionRiveArtboard),
         this.option(CYLPlaceholderAnimationOptionRiveAnimation), this.option(CYLPlaceholderAnimationOptionRiveStateMachine),
         false, true, riveFit(this.contentMode), undefined, this.loop);
+      this.applyLightColor(view);
       this.didLoad();
     } catch (e) {
       this.didFail('Rive', e as Error);
@@ -138,6 +149,68 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     return machines.length > 0 ? machines[0].name : undefined;
   }
 
+  /** The view model bound to the state machine (autoBind), or null for a file without one. */
+  private viewModelInstance(view: RiveAnimationView): ViewModelInstance | null {
+    try {
+      const machines = view.getStateMachines();
+      return machines.length > 0 ? machines[0].viewModelInstance : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private applyLightColor(view: RiveAnimationView): void {
+    const color = CYLRiveColorValue(this.options);
+    if (color === null || CYLRiveUsesLegacyRuntime(this.options)) {
+      return;
+    }
+    const instance = this.viewModelInstance(view);
+    if (instance === null) {
+      return;
+    }
+    try {
+      instance.getColorProperty(CYLRiveColorPropertyPath).value = color | 0;
+    } catch (e) {
+      // No "color" property: the file keeps its colors, as on iOS.
+    }
+  }
+
+  private setActive(instance: ViewModelInstance, value: boolean): void {
+    try {
+      instance.getBooleanProperty(CYLRiveActivePropertyPath(this.options)).value = value;
+    } catch (e) {
+      // No such property: nothing to drive, as on iOS.
+    }
+  }
+
+  /** iOS CYLPlaceholderRiveItemAnimationView.playAnimation. */
+  private playViewModel(view: RiveAnimationView): void {
+    view.play();
+    const instance = this.viewModelInstance(view);
+    if (instance === null) {
+      return;
+    }
+    const trigger = CYLRiveTriggerPropertyPath(this.options);
+    if (trigger !== null) {
+      try {
+        instance.getTriggerProperty(trigger).trigger();
+      } catch (e) {
+        // No such trigger.
+      }
+      return;
+    }
+    this.setActive(instance, true);
+    const duration = CYLRiveActiveDuration(this.options);
+    if (duration > 0) {
+      this.deactivateTimer = setTimeout(() => {
+        this.deactivateTimer = -1;
+        if (this.riveView === view) {
+          this.setActive(instance, false);
+        }
+      }, duration * 1000);
+    }
+  }
+
   cyl_playAnimationView(): void {
     const view = this.riveView;
     if (view === null || !this.cyl_isAnimationViewReady) {
@@ -145,6 +218,10 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       return;
     }
     this.cancelDeactivate();
+    if (!CYLRiveUsesLegacyRuntime(this.options)) {
+      this.playViewModel(view);
+      return;
+    }
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
     if (animation !== undefined) {
       view.play(animation, this.loop);
@@ -187,6 +264,14 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.cancelDeactivate();
     const view = this.riveView;
     if (view === null || !this.cyl_isAnimationViewReady) {
+      return;
+    }
+    if (!CYLRiveUsesLegacyRuntime(this.options)) {
+      const instance = this.viewModelInstance(view);
+      if (instance !== null && CYLRiveTriggerPropertyPath(this.options) === null) {
+        this.setActive(instance, false);
+      }
+      view.pause();
       return;
     }
     if (this.option(CYLPlaceholderAnimationOptionRiveAnimation) !== undefined) {

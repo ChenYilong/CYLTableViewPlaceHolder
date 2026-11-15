@@ -25,8 +25,9 @@ export struct RefreshIconDemoPage {
   aboutToAppear(): void {
     const row = refreshIconRowFor(this.param.value);
     const setup = row !== null ? row.setup : RefreshSetup.of('normal', 'auto', [], []);
-    const header = setup.makeHeader();
-    const footer = setup.makeFooter();
+    const controls = setup.make(this.getUIContext());
+    const header = controls.header;
+    const footer = controls.footer;
     header.refreshingBlock = () => {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {

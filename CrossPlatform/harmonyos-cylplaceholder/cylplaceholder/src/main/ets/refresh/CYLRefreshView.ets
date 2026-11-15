@@ -37,7 +37,8 @@ import {
 } from './CYLRefreshClassics';
 import { CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
 import { CYLRefreshBundle } from './CYLRefreshBundle';
-import { CYLRefreshIconViewModel } from './CYLRefreshIconView';
+import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
+import { CYLPlaceholderAnimationContent, CYLPlaceholderAnimationContentView } from '../CYLPlaceholderAnimation';
 import { CYLRefreshDrawnView, cylRefreshDrawnStyle } from './drawn/CYLRefreshDrawnView';
 
 /** The share of the finger's travel that moves the content past an edge (UIScrollView's rubber band). */
@@ -108,6 +109,20 @@ function cylSpinner(c: CYLRefreshComponentModel): CYLRefreshActivityIndicatorMod
   }
   if (c instanceof CYLRefreshCupertinoFooterModel) {
     return (c as CYLRefreshCupertinoFooterModel).activityIndicator;
+  }
+  return null;
+}
+
+/** The animation view of an animation control (it carries the frames), or null. */
+function cylAnimationView(c: CYLRefreshComponentModel): CYLRefreshImageViewModel | null {
+  if (c instanceof CYLRefreshAnimationHeaderModel) {
+    return (c as CYLRefreshAnimationHeaderModel).animationView;
+  }
+  if (c instanceof CYLRefreshAutoAnimationFooterModel) {
+    return (c as CYLRefreshAutoAnimationFooterModel).animationView;
+  }
+  if (c instanceof CYLRefreshBackAnimationFooterModel) {
+    return (c as CYLRefreshBackAnimationFooterModel).animationView;
   }
   return null;
 }
@@ -290,11 +305,13 @@ export struct CYLRefreshComponentView {
           .iterations(-1)
           .width(40)
           .height(40)
+          .scale({ x: c.cyl_flipScaleX(cylAnimationView(c)) })
       } else {
         Image((cylFrames(c) as CYLRefreshFrames).images[(cylFrames(c) as CYLRefreshFrames).index])
           .width(40)
           .height(40)
           .objectFit(ImageFit.Contain)
+          .scale({ x: c.cyl_flipScaleX(cylAnimationView(c)) })
       }
     } else if (cylSpinner(c) !== null && !(cylSpinner(c) as CYLRefreshActivityIndicatorModel).hidden) {
       if ((cylSpinner(c) as CYLRefreshActivityIndicatorModel).animating) {
@@ -317,6 +334,7 @@ export struct CYLRefreshComponentView {
         .objectFit(ImageFit.Contain)
         .fillColor(c.colorAccent !== null ? c.colorAccent : '#5A5A5A')
         .rotate({ angle: (cylArrow(c) as CYLRefreshImageViewModel).rotation })
+        .scale({ x: c.cyl_flipScaleX(cylArrow(c)) })
         .animation({ duration: c.fastAnimationDuration * 1000 })
     }
   }
@@ -338,8 +356,11 @@ export struct CYLRefreshComponentView {
             .height(c.cyl_iconView.iconSize.height)
             .objectFit(ImageFit.Contain)
         }
+      } else if (c.cyl_iconView.placeholderView !== null) {
+        // Lottie, PAG, Rive: the library's animation view, driven by the icon's playback policy.
+        CYLPlaceholderAnimationContent({ view: c.cyl_iconView.placeholderView as CYLPlaceholderAnimationContentView })
       } else if (c.cyl_iconView.current !== null && c.cyl_iconView.current.filePath !== null &&
-        c.cyl_iconView.current.isPlayableNow) {
+        c.cyl_iconView.current.engine() === CYLRefreshIconEngine.Image) {
         Image(CYLRefreshBundle.animationSource(c.cyl_iconView.current.filePath as string))
           .width(c.cyl_iconView.iconSize.width)
           .height(c.cyl_iconView.iconSize.height)
@@ -368,6 +389,8 @@ export struct CYLRefreshComponentView {
                 .fontColor(cylLabelColor(this.model() as CYLRefreshComponentModel,
                   cylStateLabel(this.model() as CYLRefreshComponentModel) as CYLRefreshLabel))
                 .textAlign(TextAlign.Center)
+                // iOS CYLRefreshStateTrailer flips its state label together with its rotation.
+                .scale({ x: this.scrollView.flipsHorizontallyInOppositeLayoutDirection ? -1 : 1 })
             }
           }
           .height('100%')
@@ -388,6 +411,8 @@ export struct CYLRefreshComponentView {
                   .fontWeight(FontWeight.Bold)
                   .fontColor(cylLabelColor(this.model() as CYLRefreshComponentModel,
                     cylStateLabel(this.model() as CYLRefreshComponentModel) as CYLRefreshLabel))
+                  .scale({ x: (this.model() as CYLRefreshComponentModel).cyl_flipScaleX(
+                    cylStateLabel(this.model() as CYLRefreshComponentModel)) })
                   .onClick(() => {
                     const m = this.current();
                     if (m instanceof CYLRefreshAutoStateFooterModel) {
@@ -402,6 +427,8 @@ export struct CYLRefreshComponentView {
                   .fontColor(cylLabelColor(this.model() as CYLRefreshComponentModel,
                     cylTimeLabel(this.model() as CYLRefreshComponentModel) as CYLRefreshLabel))
                   .margin({ top: (this.model() as CYLRefreshStateHeaderModel).titleTimeSpacing })
+                  .scale({ x: (this.model() as CYLRefreshComponentModel).cyl_flipScaleX(
+                    cylTimeLabel(this.model() as CYLRefreshComponentModel)) })
               }
             }
             .alignItems(HorizontalAlign.Center)

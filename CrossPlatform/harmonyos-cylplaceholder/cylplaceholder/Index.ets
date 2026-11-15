@@ -8,7 +8,14 @@ export {
   CYLPlaceholderLanguageObserver
 } from './src/main/ets/CYLPlaceholderLocalization';
 export * from './src/main/ets/CYLPlaceholderViewTypes';
-export { CYLPlaceholderImageNames, CYLPlaceholderImageResource, CYLPlaceholderBundledAnimationFileNames } from './src/main/ets/CYLPlaceholderImages';
+export {
+  CYLPlaceholderImageNames,
+  CYLPlaceholderImageResource,
+  CYLPlaceholderBundledAnimationFileNames,
+  CYLPlaceholderImageBundle,
+  CYLPlaceholderImageResourceManager,
+  CYLPlaceholderResolveImage
+} from './src/main/ets/CYLPlaceholderImages';
 export {
   CYLPlaceholderScenario,
   CYLPlaceholderScenarioCategory,
@@ -99,6 +106,62 @@ export * from './src/main/ets/refresh/CYLRefreshIconView';
 export * from './src/main/ets/refresh/CYLRefreshPaging';
 export { CYLRefreshBundle } from './src/main/ets/refresh/CYLRefreshBundle';
 export { CYLRefreshContainer, CYLRefreshComponentView, CYLRefreshFooterView } from './src/main/ets/refresh/CYLRefreshView';
+export {
+  CYLPlaceholderItemAnimatorPriority,
+  CYLPlaceholderItemAnimatorPriorityDefault,
+  CYLPlaceholderItemAnimatorPriorityFallback,
+  CYLPlaceholderAnimationOption,
+  CYLPlaceholderAnimationOptionRiveArtboard,
+  CYLPlaceholderAnimationOptionRiveStateMachine,
+  CYLPlaceholderAnimationOptionRiveActiveProperty,
+  CYLPlaceholderAnimationOptionRiveActiveDuration,
+  CYLPlaceholderAnimationOptionRiveTriggerProperty,
+  CYLPlaceholderAnimationOptionRiveColor,
+  CYLPlaceholderAnimationOptionRiveInput,
+  CYLPlaceholderAnimationOptionRiveTriggerInput,
+  CYLPlaceholderAnimationOptionRiveAnimation,
+  CYLPlaceholderAnimationOptionRiveLegacyRuntime,
+  CYLPlaceholderAnimationErrorDomain,
+  CYLPlaceholderAnimationErrorCode,
+  CYLPlaceholderAnimationError,
+  CYLPlaceholderAnimationErrorHandler,
+  CYLPlaceholderAnimationColors,
+  CYLPlaceholderAnimationContentView,
+  CYLPlaceholderAnimationContent,
+  CYLPlaceholderPlayableContentView,
+  CYLPlaceholderItemAnimationPlayableView,
+  CYLPlaceholderItemAnimationViewProviding,
+  CYLPlaceholderItemAnimationPlayer,
+  CYLPlaceholderItemAnimationBasePlayer,
+  CYLPlaceholderItemAnimationFileMatching,
+  CYLPlaceholderItemAnimationViewFactory,
+  CYLPlaceholderItemAnimator,
+  CYLPlaceholderItemViewAnimator,
+  CYLPlaceholderItemAnimatorRegistering,
+  CYLPlaceholderItemAnimatorRegistry,
+  CYLPlaceholderItemAnimationViewMaking,
+  CYLPlaceholderItemAnimationFactory,
+  CYLPlaceholderAnimationBackend,
+  CYLPlaceholderAnimationPlayer,
+  CYLPlaceholderAnimationFactory,
+  CYLPlaceholderAnimationViewModel,
+  CYLPlaceholderAnimationView,
+  CYLPlaceholderAnimationURLWithOptions,
+  CYLPlaceholderAnimationOptionsOfURL
+} from './src/main/ets/CYLPlaceholderAnimation';
+export { CYLGIFPlaceholderItemAnimator } from './src/main/ets/CYLGIFPlaceholderItemAnimator';
+export { CYLLottiePlaceholderItemAnimator } from './src/main/ets/CYLLottiePlaceholderItemAnimator';
+export { CYLPAGPlaceholderItemAnimator } from './src/main/ets/CYLPAGPlaceholderItemAnimator';
+export { CYLRivePlaceholderItemAnimator } from './src/main/ets/CYLRivePlaceholderItemAnimator';
+export {
+  CYLRiveUsesLegacyRuntime,
+  CYLRiveActivePropertyPath,
+  CYLRiveTriggerPropertyPath,
+  CYLRiveColorPropertyPath,
+  CYLRiveColorValue
+} from './src/main/ets/CYLRiveOptions';
+// Registers the GIF, Lottie, PAG and Rive animators in the shared registry when the HAR is imported.
+export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';
 
 // CYLRefresh drawn styles: SmartRefreshControl's headers and footers drawn on a Canvas, with their support classes.
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnSupport';

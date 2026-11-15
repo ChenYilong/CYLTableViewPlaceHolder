@@ -109,3 +109,58 @@ export const CYLPlaceholderBundledAnimationFileNames: string[] = [
   'CYLRefreshActivity.gif',
   'CYLRefreshDoneCircle.json'
 ];
+
+/** What a CYLPlaceholderImageBundle reads images from: a ResourceManager (of any module or HAR context). */
+export interface CYLPlaceholderImageResourceManager {
+  getMediaBase64ByNameSync(resName: string): string;
+}
+
+/**
+ * Where image names in item attributes are looked up (iOS `NSBundle *imageBundle`): the media (resources/base/media)
+ * of a resource manager, such as `context.createModuleContext('feature').resourceManager` of another module or HAR,
+ * or a lookup of your own. null in the APIs that take one uses the library's bundled icons.
+ */
+export class CYLPlaceholderImageBundle {
+  private lookup: (name: string) => ResourceStr | null;
+
+  private constructor(lookup: (name: string) => ResourceStr | null) {
+    this.lookup = lookup;
+  }
+
+  /** The media of a resource manager: "empty_box" names resources/base/media/empty_box.png, drawn as a data URL. */
+  static bundleWithResourceManager(manager: CYLPlaceholderImageResourceManager): CYLPlaceholderImageBundle {
+    return new CYLPlaceholderImageBundle((name: string) => {
+      try {
+        const data = manager.getMediaBase64ByNameSync(name);
+        return data.length > 0 ? data : null;
+      } catch (e) {
+        return null;
+      }
+    });
+  }
+
+  /** A bundle whose images come from `lookup` (null: not found). */
+  static bundleWithLookup(lookup: (name: string) => ResourceStr | null): CYLPlaceholderImageBundle {
+    return new CYLPlaceholderImageBundle(lookup);
+  }
+
+  /** The image called name, or null when the bundle has none (iOS `+imageNamed:inBundle:`). */
+  imageNamed(name: string): ResourceStr | null {
+    return name.length > 0 ? this.lookup(name) : null;
+  }
+}
+
+/**
+ * The image an attribute value names: a Resource stays as it is; a name is looked up in `bundle` (null when it has
+ * none, as iOS fails), or without a bundle is a bundled icon, else a path.
+ */
+export function CYLPlaceholderResolveImage(value: ResourceStr | null, bundle: CYLPlaceholderImageBundle | null): ResourceStr | null {
+  if (value === null || typeof value !== 'string') {
+    return value;
+  }
+  if (bundle !== null) {
+    return bundle.imageNamed(value as string);
+  }
+  const bundled = CYLPlaceholderImageResource(value as string);
+  return bundled !== null ? bundled : value;
+}

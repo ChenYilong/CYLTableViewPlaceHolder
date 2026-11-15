@@ -191,6 +191,13 @@ export class CYLPlaceholderStackViewModel {
 
   /** Appends a component under the last one and returns its view. */
   appendComponent(component: CYLPlaceholderComponent): CYLPlaceholderViewModel | null {
+    if (component.imageBundle !== null && typeof component.image === 'string' &&
+      component.imageBundle.imageNamed(component.image as string) === null) {
+      // iOS: the image is not in the selected bundle, so the component is not added.
+      console.warn('CYLTableViewPlaceHolder: component not added: image "' + (component.image as string) +
+        '" was not found in the selected bundle.');
+      return null;
+    }
     const view = CYLPlaceholderViewModel.initWithComponent(component);
     this.appendComponentView(view, component.interactionEnabled ? component.action : null, component.spacingBefore);
     if (component.action !== null && !component.interactionEnabled) {
