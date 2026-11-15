@@ -1,5 +1,5 @@
 {
   "navigationBarTitleText": "",
   "disableScroll": true,
-  "usingComponents": { "easy-refresh": "./components/easy-refresh/index" }
+  "usingComponents": { "cyl-refresh": "/components/cyl-refresh/index" }
 }

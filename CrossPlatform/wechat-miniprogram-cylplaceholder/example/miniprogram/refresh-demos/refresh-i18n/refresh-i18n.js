@@ -28,20 +28,18 @@ const LANGUAGE_NAMES = {
   uk: { 'zh-Hans': 'китайська (спрощена)', 'zh-Hant': 'китайська (традиційна)', en: 'англійська', ru: 'російська', ko: 'корейська', uk: 'українська', ja: 'японська' },
 }
 
-const HEADER_KEYS = { Idle: 'CYLRefreshHeaderIdleText', Pulling: 'CYLRefreshHeaderPullingText', Refreshing: 'CYLRefreshHeaderRefreshingText' }
-
-/** The custom table's header texts in a language (i18nFilename "CYLRefreshCustom"); missing keys stay built in. */
-function customHeaderTitles(code) {
+/** The custom table (i18nFilename "CYLRefreshCustom") of a language: its CYLRefresh keys; missing keys stay built in. */
+function customTable(code) {
   const table = EXAMPLE_TABLES[code] || {}
-  const titles = {}
-  Object.keys(HEADER_KEYS).forEach((state) => {
-    if (table[HEADER_KEYS[state]] != null) titles[state] = table[HEADER_KEYS[state]]
+  const own = {}
+  Object.keys(table).forEach((key) => {
+    if (key.indexOf('CYLRefresh') === 0) own[key] = table[key]
   })
-  return Object.keys(titles).length ? titles : null
+  return own
 }
 
 Page({
-  data: { sections: [], language: '', headerTitles: null },
+  data: { sections: [] },
   onLoad(query) {
     wx.setNavigationBarTitle({ title: decodeURIComponent(query.title || '') })
     const names = LANGUAGE_NAMES[effectiveLanguage()] || LANGUAGE_NAMES.en
@@ -57,7 +55,12 @@ Page({
     clearTimeout(this.headerTimer)
     clearTimeout(this.footerTimer)
     // The configuration is shared by the whole app: give the other pages their default texts back.
+    this.dropCustomTable()
     CYLRefresh.setLanguageCode('')
+  },
+  dropCustomTable() {
+    if (this.customCode) CYLRefresh.registerStrings(this.customCode, null)
+    this.customCode = ''
   },
   refresh() {
     return this.selectComponent('#refresh')
@@ -73,9 +76,13 @@ Page({
   /** Built-in: clears the custom table and sets languageCode. Custom: uses CYLRefreshCustom plus languageCode. */
   onRow(e) {
     const { code, custom } = e.currentTarget.dataset
+    this.dropCustomTable()
+    if (custom) {
+      CYLRefresh.registerStrings(code, customTable(code))
+      this.customCode = code
+    }
+    // Every mounted cyl-refresh re-renders its texts at once (CYLRefresh.onLanguageChange).
     CYLRefresh.setLanguageCode(code)
-    // The `language` property re-renders this page's control at once; setLanguageCode covers the rest of the app.
-    this.setData({ language: code, headerTitles: custom ? customHeaderTitles(code) : null })
     wx.showModal({ content: t('CYLScenarioMJLanguageChanged', code), showCancel: false, confirmText: t('CYLScenarioMJOK') })
   },
 })

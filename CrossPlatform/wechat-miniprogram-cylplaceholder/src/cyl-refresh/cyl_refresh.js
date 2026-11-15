@@ -22,16 +22,57 @@ const CYLRefreshState = Object.freeze({ Idle: 'Idle', Pulling: 'Pulling', Refres
 const CYLRefreshHeaderHeight = 54
 /** The footer's height (MJRefreshFooterHeight). */
 const CYLRefreshFooterHeight = 44
+/** The Cupertino header's height (CYLRefreshCupertinoHeader, as flutter_easy_refresh's CupertinoHeader). */
+const CYLRefreshCupertinoHeaderHeight = 60
 
 /** CYLRefreshConfig.default.languageCode: '' follows CYLPlaceholderLocalization (the app's language). */
 let languageCode = ''
 
+/** Called with the new code whenever setLanguageCode changes it; mounted cyl-refresh components re-render. */
+const languageListeners = []
+
 function setLanguageCode(code) {
-  languageCode = code ? CYLPlaceholderLocalization.resolveLanguage(code) : ''
+  const next = code ? CYLPlaceholderLocalization.resolveLanguage(code) : ''
+  const changed = next !== languageCode
+  languageCode = next
+  if (changed) languageListeners.slice().forEach((fn) => fn(next))
+}
+
+/** Subscribes to language changes; returns the unsubscribe function. */
+function onLanguageChange(fn) {
+  languageListeners.push(fn)
+  return () => {
+    const i = languageListeners.indexOf(fn)
+    if (i >= 0) languageListeners.splice(i, 1)
+  }
+}
+
+/** Notifies the components after the app changed its own language (CYLPlaceholderLocalization.setLanguage). */
+function reloadLanguage() {
+  languageListeners.slice().forEach((fn) => fn(languageCode))
+}
+
+/**
+ * Custom string tables (a custom CYLRefresh.strings / bundle): registerStrings({ CYLRefreshHeaderIdleText: '…' })
+ * overrides keys in every language, registerStrings('ja', {…}) in one. Pass null to drop the overrides.
+ */
+const customTables = {}
+function registerStrings(language, table) {
+  if (typeof language !== 'string') {
+    table = language
+    language = '*'
+  }
+  if (table) customTables[language] = Object.assign({}, customTables[language], table)
+  else delete customTables[language]
+  reloadLanguage()
 }
 
 /** A CYLRefresh text ("CYLRefreshHeaderIdleText") in the language in use, else English. */
 function refreshText(key, language) {
+  const lang = language || languageCode || CYLPlaceholderLocalization.currentLanguage()
+  const own = customTables[lang] || {}
+  if (own[key] != null) return own[key]
+  if (customTables['*'] && customTables['*'][key] != null) return customTables['*'][key]
   const table = TABLES[language || languageCode || CYLPlaceholderLocalization.currentLanguage()] || TABLES.en
   return table[key] != null ? table[key] : TABLES.en[key] != null ? TABLES.en[key] : key
 }
@@ -39,6 +80,7 @@ function refreshText(key, language) {
 const KEYS = {
   header: { Idle: 'CYLRefreshHeaderIdleText', Pulling: 'CYLRefreshHeaderPullingText', Refreshing: 'CYLRefreshHeaderRefreshingText' },
   autoFooter: { Idle: 'CYLRefreshAutoFooterIdleText', Refreshing: 'CYLRefreshAutoFooterRefreshingText', NoMoreData: 'CYLRefreshAutoFooterNoMoreDataText' },
+  trailer: { Idle: 'CYLRefreshTrailerIdleText', Pulling: 'CYLRefreshTrailerPullingText' },
   backFooter: { Idle: 'CYLRefreshBackFooterIdleText', Pulling: 'CYLRefreshBackFooterPullingText', Refreshing: 'CYLRefreshBackFooterRefreshingText', NoMoreData: 'CYLRefreshBackFooterNoMoreDataText' },
 }
 
@@ -67,6 +109,12 @@ function lastUpdatedText(date, now, language) {
   return prefix + day
 }
 
+/** The finish phase text: "Refresh complete" / "Refresh failed" (part 'header') or "Load complete" / "Load failed". */
+function finishText(part, success, language) {
+  const p = part === 'footer' ? 'Footer' : 'Header'
+  return refreshText('CYLRefresh' + p + (success === false ? 'Failed' : 'Finished') + 'Text', language)
+}
+
 /** The header's state for a pull distance while not refreshing. */
 function headerStateForPull(distance, threshold = CYLRefreshHeaderHeight) {
   return distance >= threshold ? CYLRefreshState.Pulling : CYLRefreshState.Idle
@@ -88,5 +136,6 @@ module.exports = {
   CYLRefreshState,
   CYLRefreshHeaderHeight,
   CYLRefreshFooterHeight,
-  CYLRefresh: { setLanguageCode, refreshText, stateText, lastUpdatedText, headerStateForPull, iconForState },
+  CYLRefreshCupertinoHeaderHeight,
+  CYLRefresh: { setLanguageCode, onLanguageChange, reloadLanguage, registerStrings, finishText, refreshText, stateText, lastUpdatedText, headerStateForPull, iconForState },
 }

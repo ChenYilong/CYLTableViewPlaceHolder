@@ -39,3 +39,32 @@ test('pull distance and icons', () => {
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.NoMoreData), null) // no-more-data shows text only
   assert.strictEqual(R.iconForState(null, S.Idle), null)
 })
+
+test('custom string tables and live language changes', () => {
+  const seen = []
+  const off = R.onLanguageChange((code) => seen.push(code))
+  R.registerStrings({ CYLRefreshHeaderIdleText: 'Pull me' })
+  assert.strictEqual(R.stateText('header', S.Idle, 'ja'), 'Pull me')
+  R.registerStrings('ja', { CYLRefreshHeaderIdleText: '引いて' })
+  assert.strictEqual(R.stateText('header', S.Idle, 'ja'), '引いて')
+  assert.strictEqual(R.stateText('header', S.Idle, 'en'), 'Pull me')
+  R.registerStrings('ja', null)
+  R.registerStrings(null)
+  assert.strictEqual(R.stateText('header', S.Idle, 'en'), 'Pull down to refresh')
+  R.setLanguageCode('ko')
+  R.setLanguageCode('ko')
+  R.setLanguageCode('')
+  off()
+  R.setLanguageCode('ja')
+  R.setLanguageCode('')
+  assert.deepStrictEqual(seen.slice(-2), ['ko', ''])
+  assert.strictEqual(seen.filter((c) => c === 'ko').length, 1)
+})
+
+test('finish phase and trailer texts', () => {
+  assert.strictEqual(R.finishText('header', true, 'en'), 'Refresh complete')
+  assert.strictEqual(R.finishText('header', false, 'en'), 'Refresh failed')
+  assert.strictEqual(R.finishText('footer', true, 'en'), 'Load complete')
+  assert.strictEqual(R.finishText('footer', false, 'en'), 'Load failed')
+  assert.strictEqual(R.stateText('trailer', S.Pulling, 'en'), 'Release to see details')
+})
