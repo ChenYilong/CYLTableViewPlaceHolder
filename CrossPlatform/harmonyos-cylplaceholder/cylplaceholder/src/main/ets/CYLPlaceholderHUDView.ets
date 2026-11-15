@@ -1,7 +1,7 @@
 // Draws a CYLPlaceholderHUD in a global overlay: a ComponentContent added to the containerView UIContext's
 // OverlayManager, so the class methods work from anywhere once the shared HUD has its UIContext. The box centers in
-// the window (moved by offsetFromCenter) over the mask of maskType; the loading state shows the system
-// LoadingProgress, the progress state a ring Progress, the other states the icon and status of contentView, and the
+// the window (moved by offsetFromCenter) over the mask of maskType; the built-in states show the icon (or animation:
+// loadingAnimationFileName, progressAnimationFileName, successAnimationFileName) and status of contentView, and the
 // Custom state the CYLPlaceholderStackView of placeholderView.
 import { ComponentContent } from '@kit.ArkUI';
 import { vibrator } from '@kit.SensorServiceKit';
@@ -23,18 +23,6 @@ export struct CYLPlaceholderHUDView {
   @Builder
   box() {
     Column({ space: 12 }) {
-      if (this.hud.state === CYLPlaceholderHUDState.Loading) {
-        LoadingProgress()
-          .width(this.hud.animationSize.width)
-          .height(this.hud.animationSize.height)
-          .color(this.hud.contentColor)
-      } else if (this.hud.state === CYLPlaceholderHUDState.Progress) {
-        Progress({ value: this.hud.progress * 100, total: 100, type: ProgressType.Ring })
-          .width(this.hud.animationSize.width)
-          .height(this.hud.animationSize.height)
-          .color(this.hud.contentColor)
-          .style({ strokeWidth: 4 })
-      }
       if (this.hud.state === CYLPlaceholderHUDState.Custom && this.hud.placeholderView !== null) {
         Column() {
           CYLPlaceholderStackView({ model: this.hud.placeholderView })

@@ -90,3 +90,52 @@ export {
   CYLPlaceholderHUDStatusUserInfoKey
 } from './src/main/ets/CYLPlaceholderHUD';
 export { CYLPlaceholderHUDView, CYLPlaceholderHUDInstallOverlayPresenter } from './src/main/ets/CYLPlaceholderHUDView';
+export {
+  CYLPlaceholderItemAnimatorPriority,
+  CYLPlaceholderItemAnimatorPriorityDefault,
+  CYLPlaceholderItemAnimatorPriorityFallback,
+  CYLPlaceholderAnimationOption,
+  CYLPlaceholderAnimationOptionRiveArtboard,
+  CYLPlaceholderAnimationOptionRiveStateMachine,
+  CYLPlaceholderAnimationOptionRiveActiveProperty,
+  CYLPlaceholderAnimationOptionRiveActiveDuration,
+  CYLPlaceholderAnimationOptionRiveTriggerProperty,
+  CYLPlaceholderAnimationOptionRiveColor,
+  CYLPlaceholderAnimationOptionRiveInput,
+  CYLPlaceholderAnimationOptionRiveTriggerInput,
+  CYLPlaceholderAnimationOptionRiveAnimation,
+  CYLPlaceholderAnimationOptionRiveLegacyRuntime,
+  CYLPlaceholderAnimationErrorDomain,
+  CYLPlaceholderAnimationErrorCode,
+  CYLPlaceholderAnimationError,
+  CYLPlaceholderAnimationErrorHandler,
+  CYLPlaceholderAnimationColors,
+  CYLPlaceholderAnimationContentView,
+  CYLPlaceholderAnimationContent,
+  CYLPlaceholderPlayableContentView,
+  CYLPlaceholderItemAnimationPlayableView,
+  CYLPlaceholderItemAnimationViewProviding,
+  CYLPlaceholderItemAnimationPlayer,
+  CYLPlaceholderItemAnimationBasePlayer,
+  CYLPlaceholderItemAnimationFileMatching,
+  CYLPlaceholderItemAnimationViewFactory,
+  CYLPlaceholderItemAnimator,
+  CYLPlaceholderItemViewAnimator,
+  CYLPlaceholderItemAnimatorRegistering,
+  CYLPlaceholderItemAnimatorRegistry,
+  CYLPlaceholderItemAnimationViewMaking,
+  CYLPlaceholderItemAnimationFactory,
+  CYLPlaceholderAnimationBackend,
+  CYLPlaceholderAnimationPlayer,
+  CYLPlaceholderAnimationFactory,
+  CYLPlaceholderAnimationViewModel,
+  CYLPlaceholderAnimationView,
+  CYLPlaceholderAnimationURLWithOptions,
+  CYLPlaceholderAnimationOptionsOfURL
+} from './src/main/ets/CYLPlaceholderAnimation';
+export { CYLGIFPlaceholderItemAnimator } from './src/main/ets/CYLGIFPlaceholderItemAnimator';
+export { CYLLottiePlaceholderItemAnimator } from './src/main/ets/CYLLottiePlaceholderItemAnimator';
+export { CYLPAGPlaceholderItemAnimator } from './src/main/ets/CYLPAGPlaceholderItemAnimator';
+export { CYLRivePlaceholderItemAnimator } from './src/main/ets/CYLRivePlaceholderItemAnimator';
+// Registers the GIF, Lottie, PAG and Rive animators in the shared registry when the HAR is imported.
+export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';

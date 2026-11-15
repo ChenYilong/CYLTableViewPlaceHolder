@@ -185,9 +185,9 @@ export class CYLPlaceholderComponent {
   /** false ignores taps on the component. */
   interactionEnabled: boolean = true;
   tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim;
-  /** 0 loops the animation, N plays it N times (stored for the animation player). */
-  animationRepeatCount: number = 0;
-  /** The bundled animation file of the component ("CYLPlaceholderNoInternet.json"), for the animation player. */
+  /** 0 loops the animation, N plays it N times; once by default, looping for componentWithBundledAnimation (iOS). */
+  animationRepeatCount: number = 1;
+  /** The bundled animation of the component ("CYLPlaceholderNoInternet.json"), played in place of its image. */
   animationFileName: string | null = null;
   accessibilityIdentifier: string | null = null;
 
@@ -299,14 +299,15 @@ export class CYLPlaceholderComponent {
   }
 
   /**
-   * A bundled animation with a static fallback style and an optional title. The animation file name is stored in
-   * `animationFileName`; until an animation player is attached the fallback icon is shown.
+   * A bundled animation (looping) with a static fallback style and an optional title: the fallback icon shows until
+   * the animation is ready, and when its engine cannot play it.
    */
   static componentWithBundledAnimation(fileName: string | null, fallbackStyle: CYLPlaceholderStyle,
     title: string | null, size: number, action: CYLPlaceholderAction | null): CYLPlaceholderComponent {
     const c = new CYLPlaceholderComponent(CYLPlaceholderComponentKind.Item, CYLPlaceholderIconNameForStyle(fallbackStyle),
       fallbackStyle !== CYLPlaceholderStyle.Empty, size > 0 ? size : CYLScenarioIconSide, title, 0, null, null, action);
     c.animationFileName = fileName;
+    c.animationRepeatCount = 0;
     return c;
   }
 
@@ -675,7 +676,7 @@ export class CYLPlaceholderScenarioCatalog {
 
   /**
    * The components of a scenario, in the effective language. The first icon carries the scenario's main animation
-   * file (`animationFileName`) for an animation player; without one it shows its static icon.
+   * file (`animationFileName`, looping), played in place of its static icon once loaded.
    */
   static componentsForScenario(scenario: CYLPlaceholderScenario): CYLPlaceholderComponent[] {
     const components = staticComponents(scenario);
@@ -685,6 +686,7 @@ export class CYLPlaceholderScenarioCatalog {
       if (c.kind === CYLPlaceholderComponentKind.Item && c.image !== null) {
         if (files.length > 0) {
           c.animationFileName = files[0];
+          c.animationRepeatCount = 0;
         }
         break;
       }
