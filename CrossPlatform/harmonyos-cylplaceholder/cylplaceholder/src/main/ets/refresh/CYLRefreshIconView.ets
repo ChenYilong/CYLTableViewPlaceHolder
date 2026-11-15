@@ -142,6 +142,61 @@ export class CYLRefreshIconViewModel {
   private percent: number = 0;
   private applied: CYLRefreshIconPlayback | null = null;
   private appliedView: CYLPlaceholderAnimationContentView | null = null;
+  private speedValue: number = 1;
+  private loopsValue: boolean = true;
+
+  /**
+   * The playback rate of the icon's animation, 1 by default; applied live (HarmonyOS addition for the examples'
+   * speed slider, docs/Example-Animation-Playback.md). Values that are not positive and finite are ignored.
+   */
+  get animationSpeed(): number {
+    return this.speedValue;
+  }
+
+  set animationSpeed(value: number) {
+    if (!isFinite(value) || value <= 0) {
+      return;
+    }
+    this.speedValue = value;
+    const player = this.currentPlayer();
+    if (player !== null && player.supportsAnimationSpeed) {
+      player.animationSpeed = value;
+    }
+  }
+
+  /**
+   * Whether the animation loops while it plays (refreshing), true by default; false plays it once and rests on its
+   * last frame (the examples' loop switch). Applied live.
+   */
+  get loopsWhilePlaying(): boolean {
+    return this.loopsValue;
+  }
+
+  set loopsWhilePlaying(value: boolean) {
+    this.loopsValue = value;
+    const player = this.currentPlayer();
+    if (player !== null) {
+      player.setAnimationRepeatCount(value ? 0 : 1);
+    }
+  }
+
+  /** Restarts the current animation from progress 0 with the current speed and loop (the examples' Play all). */
+  replayAnimation(): void {
+    const player = this.currentPlayer();
+    if (player === null) {
+      return;
+    }
+    if (player.supportsAnimationSpeed) {
+      player.animationSpeed = this.speedValue;
+    }
+    player.setAnimationRepeatCount(this.loopsValue ? 0 : 1);
+    player.play();
+  }
+
+  private currentPlayer(): CYLPlaceholderItemAnimationPlayer | null {
+    const view = this.placeholderView;
+    return view !== null ? CYLPlaceholderItemAnimationFactory.playerForView(view) : null;
+  }
 
   /**
    * The animation view showing the current state's file (iOS `placeholderView`): made by
@@ -189,7 +244,10 @@ export class CYLRefreshIconViewModel {
       player.progress = Math.min(1, Math.max(0, this.percent));
     } else if (playback !== this.applied || view !== this.appliedView) {
       if (playback === CYLRefreshIconPlayback.Play) {
-        player.setAnimationRepeatCount(0);
+        player.setAnimationRepeatCount(this.loopsValue ? 0 : 1);
+        if (player.supportsAnimationSpeed) {
+          player.animationSpeed = this.speedValue;
+        }
         player.play();
       } else {
         player.stop();

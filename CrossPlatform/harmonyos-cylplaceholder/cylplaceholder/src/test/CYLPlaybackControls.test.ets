@@ -4,6 +4,7 @@ import { describe, expect, it } from '@ohos/hypium';
 import { CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
 import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlaceholderItemAnimator';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
+import { CYLRefreshIconViewModel } from '../main/ets/refresh/CYLRefreshIconView';
 
 export default function playbackControlsTest() {
   describe('CYLPlaybackControls', () => {
@@ -57,6 +58,20 @@ export default function playbackControlsTest() {
       expect(m.animationRepeatCount).assertEqual(0);
       m.animationRepeatCount = 2.7;
       expect(m.animationRepeatCount).assertEqual(2);
+    });
+
+    it('refreshIconSpeedAndLoopDefaultsAndValidation', 0, () => {
+      const icon = new CYLRefreshIconViewModel();
+      expect(icon.animationSpeed).assertEqual(1);
+      expect(icon.loopsWhilePlaying).assertTrue();
+      icon.animationSpeed = 2.5;
+      expect(icon.animationSpeed).assertEqual(2.5);
+      icon.animationSpeed = 0;
+      icon.animationSpeed = -1;
+      expect(icon.animationSpeed).assertEqual(2.5);
+      icon.loopsWhilePlaying = false;
+      expect(icon.loopsWhilePlaying).assertFalse();
+      icon.replayAnimation();
     });
   });
 }

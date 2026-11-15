@@ -1,13 +1,20 @@
 // CYLRefreshIconDemoViewController: 15 rows; the header ends after 1.5 s; the footer adds 15 up to 45, then
 // "No more data". The bar's Refresh button starts the header in code (beginRefreshing).
+// Above the list, the playback controls of docs/Example-Animation-Playback.md drive the header and footer icons:
+// Play all starts a refresh, which replays the icon from 0; the speed and the loop apply live.
 import {
+  CYLRefreshAnimationHeaderModel,
+  CYLRefreshAutoAnimationFooterModel,
+  CYLRefreshBackAnimationFooterModel,
   CYLRefreshContainer,
   CYLRefreshFooterModel,
   CYLRefreshFooterView,
   CYLRefreshHeaderModel,
+  CYLRefreshIconViewModel,
   CYLRefreshScrollViewModel
 } from 'cylplaceholder';
-import { t } from '../common/L10n';
+import { effectiveLanguage, t } from '../common/L10n';
+import { PlaybackControls } from '../common/Playback';
 import { RouteParam } from '../common/Routes';
 import { UiColor } from '../common/Ui';
 import { RefreshSetup, refreshIconRowFor } from '../feed/RefreshSetups';
@@ -21,6 +28,8 @@ export struct RefreshIconDemoPage {
   private header: CYLRefreshHeaderModel | null = null;
   private footer: CYLRefreshFooterModel | null = null;
   private timer: number = -1;
+  @State speed: number = 1;
+  @State loop: boolean = true;
 
   aboutToAppear(): void {
     const row = refreshIconRowFor(this.param.value);
@@ -59,6 +68,27 @@ export struct RefreshIconDemoPage {
     clearTimeout(this.timer);
   }
 
+  /** The icon views of the header and footer (animated styles only). */
+  private iconViews(): CYLRefreshIconViewModel[] {
+    const views: CYLRefreshIconViewModel[] = [];
+    if (this.header instanceof CYLRefreshAnimationHeaderModel) {
+      views.push((this.header as CYLRefreshAnimationHeaderModel).iconView);
+    }
+    if (this.footer instanceof CYLRefreshAutoAnimationFooterModel) {
+      views.push((this.footer as CYLRefreshAutoAnimationFooterModel).iconView);
+    } else if (this.footer instanceof CYLRefreshBackAnimationFooterModel) {
+      views.push((this.footer as CYLRefreshBackAnimationFooterModel).iconView);
+    }
+    return views;
+  }
+
+  private playAll(): void {
+    if (this.header !== null && !this.header.refreshing) {
+      this.header.beginRefreshing();
+    }
+    this.iconViews().forEach((v: CYLRefreshIconViewModel) => v.replayAnimation());
+  }
+
   private items(n: number): string[] {
     const rows: string[] = [];
     for (let i = 1; i <= n; i++) {
@@ -86,6 +116,16 @@ export struct RefreshIconDemoPage {
 
   build() {
     NavDestination() {
+      Column() {
+      PlaybackControls({
+        language: effectiveLanguage(),
+        speed: $speed,
+        loop: $loop,
+        onPlayAll: () => this.playAll(),
+        onSpeed: (speed: number) => this.iconViews().forEach((v: CYLRefreshIconViewModel) => v.animationSpeed = speed),
+        onLoop: (loop: boolean) => this.iconViews().forEach((v: CYLRefreshIconViewModel) => v.loopsWhilePlaying = loop)
+      })
+      Column() {
       CYLRefreshContainer({ scrollView: this.scrollView, scroller: this.scroller }) {
         List({ scroller: this.scroller }) {
           ForEach(this.rows, (row: string) => {
@@ -112,6 +152,11 @@ export struct RefreshIconDemoPage {
         .width('100%')
         .height('100%')
       }
+      }
+      .layoutWeight(1)
+      }
+      .width('100%')
+      .height('100%')
     }
     .title(this.param.title)
     .menus(this.barItems)
