@@ -4,5 +4,6 @@ module.exports = {
   ...require('./cyl_scenario_catalog'),
   ...require('./cyl_placeholder_hud'),
   ...require('./cyl_configuration'),
+  ...require('./cyl_status'),
   CYLPlaceholderLocalization: require('./cyl_localization'),
 }
