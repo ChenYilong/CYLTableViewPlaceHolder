@@ -138,13 +138,9 @@
   - `cyl-refresh` cannot report the pull beyond the threshold or the footer's pull, and hides the header when a
     refresh ends, so some SmartRefresh finish animations and drawn footers are simplified; the games are not
     playable (the header ignores touches).
-  - easy_refresh features beyond `cyl-refresh` (Cupertino header, second floor, trigger modes, behind mode, chat
-    scroll keeping) live in the page's own `easy-refresh` component.
   - Unknown file types are not packaged: `.plist` and NOTICE / LICENSE texts ship as `<name>.json` holding the text
     as a JSON string (`CYLPlaceholderConfiguration.readConfigurationFile` reads `.plist.json`).
-- **Remaining work:** move the page-level refresh features into `cyl-refresh` (a trailer mode, Cupertino header,
-  trigger modes, second floor, pull progress beyond 1, a finish phase, footer pull progress, custom string tables,
-  live language changes); check touch behaviors on a phone.
+- **Remaining work:** check touch behaviors on a phone (the refresh features moved into `cyl-refresh`, see below).
 
 #### Original task record
 
@@ -162,6 +158,54 @@
   texts from `CYLScenarioExample.bundle` (7 languages), the same rows, buttons and behaviors. The refresh demos need a
   pull-to-refresh for mini programs (CYLRefresh is not ported yet); the plan for them is recorded once the spec of
   the iOS pages is done.
+
+### TODO: cyl-refresh takes over the page-level refresh features (score 85)
+
+- **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "continue" (after the offer to move the page-level refresh features
+  into `cyl-refresh`).
+- **Plan:** `cyl-refresh` gets the Cupertino header and footer, a listener header, trigger modes (anywhere / onEdge),
+  the second floor (`secondaryOffset`, `secondary` event), the behind scroll mode, a `pull` event with the
+  unclamped percent, a finish phase (`endRefreshing({ success })` shows "Refresh complete" / "Refresh failed" for
+  `finishDuration` ms), the back footer's pull progress, custom string tables (`CYLRefresh.registerStrings`), live
+  language changes (`CYLRefresh.setLanguageCode` re-renders mounted components), a trailer (pull-left "see details")
+  mode, and the chat helpers (`measureContent`, `getScrollTop`, `setScrollTop`, `scrollToBottom`). The easy_refresh
+  page then drops its own component.
+- **Status (2026-11-15, commit `b6fbd4f` + the finish-phase fix):** done. A second `endRefreshing` during the finish phase is ignored. Screenshots: `docs/assets/wechat-miniprogram-refresh-cupertino.png`, `docs/assets/wechat-miniprogram-refresh-finish.png`. `cyl-refresh` has header "cupertino" / "listener", footer "cupertino", the back
+  footer's pull ("Release to load more", `pull` event for the footer), `headerTrigger` / `footerTrigger`,
+  `secondaryOffset` + `secondary`, `behind`, `finishDuration` with `endRefreshing({ success })` /
+  `endFooterRefreshing({ success })`, the `pull` event (percent beyond 1), `scroll` event and the scroll helpers;
+  `CYLRefresh.registerStrings`, `onLanguageChange`, `reloadLanguage`, `finishText`; the new
+  `cyl-refresh-trailer` component (CYLRefreshNormalTrailer). The easy_refresh page uses `cyl-refresh` (its
+  `easy-refresh` component is removed), the pull-left collection uses `cyl-refresh-trailer`, the i18n page uses
+  `registerStrings` + live `setLanguageCode`.
+- **Verified:** `npm test` 35 / 35; DevTools 2.02.2609250 / base library 3.17.6: the 8 easy_refresh pages, the finish
+  phase ("Refresh failed"), live language and custom table texts, the trailer component; all 65 Refresh rows open
+  with no exception or console error. Not verified: touch-driven behaviors (drag distances, trigger modes, the
+  second floor, the trailer pull) on a phone, skipped at the owner's request. Simulated touches (miniprogram-automator
+  touchstart / touchmove / touchend) verified the trailer (pull left past 60px, release opens the test page) and the
+  back footer ("Release to load more", release loads), which also found and fixed a back footer that never armed
+  when the rows are shorter than the view.
+
+### TODO: The mini program as a cyl- npm library, verified with npm pack and "构建 npm" (score 90)
+
+- **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "在跨端相关文档中标记TODO：小程序封装成库 cyl- 开头的小程序库，用 npm 打包加「构建 npm」实际验证过。提醒我的话先运行 ! npm login。 然后继续你未完成的任务。"
+- **Requirements:** ship the mini program code as a library whose name starts with `cyl-`
+  (`cyl-placeholder-miniprogram`: cyl-placeholder, cyl-placeholder-hud, cyl-placeholder-status, cyl-refresh,
+  cyl-refresh-trailer); pack it with `npm pack`; install the tarball in a mini program and run WeChat DevTools'
+  "构建 npm" (Build npm); use the components from `miniprogram_npm` and check they open with no error.
+- **Publishing:** `npm publish` needs the owner's npm account: run `! npm login` first (the owner runs it; the
+  agent does not log in or publish on its own).
+- **Status (2026-11-15 22:50):** verified, not published. `cyl-placeholder-miniprogram@0.2.0` (`npm pack`: 148 files,
+  ~137 kB) installed from the tarball into a fresh mini program, "构建 npm" via `cli build-npm` (WeChat DevTools
+  2.02.2609250, base library 3.17.6): `miniprogram_npm/cyl-placeholder-miniprogram` holds the five components;
+  the page uses all five and `require('cyl-placeholder-miniprogram')`, with no exception or console error, and a
+  Cupertino refresh ends in "Refresh complete". This found a missing entry: Build npm makes `src` the package
+  root, so `main` (`src/cyl-placeholder/...`) did not resolve; `src/index.js` now re-exports the placeholder and
+  refresh APIs (`main` is `src/index.js`). Screenshot: `docs/assets/wechat-miniprogram-npm-build.png`.
+  Notes: DevTools' CLI fails with "There is no such AppID" when given an 8.3 short path (`CHENYI~1`) or a
+  project.config.json with a BOM. Left: `npm publish` after the owner runs `! npm login`.
 
 ## 结构 / Structure
 

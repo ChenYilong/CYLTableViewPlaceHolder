@@ -1,4 +1,5 @@
-// The package entry: require('cyl-placeholder-miniprogram') resolves to the index.js of the built miniprogram_npm folder
-// (the "miniprogram" folder, src/), so the API lives behind this name (see cyl-placeholder/cyl_placeholder.js).
+// The package entry: require('cyl-placeholder-miniprogram') after "构建 npm" (Build npm) resolves to this file in
+// miniprogram_npm/cyl-placeholder-miniprogram (the "miniprogram" directory, src, becomes the package root).
 'use strict'
-module.exports = require('./cyl-placeholder/cyl_placeholder')
+
+module.exports = Object.assign({}, require('./cyl-placeholder/cyl_placeholder'), require('./cyl-refresh/cyl_refresh'))

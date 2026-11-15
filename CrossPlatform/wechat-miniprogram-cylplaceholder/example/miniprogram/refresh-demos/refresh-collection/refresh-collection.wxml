@@ -2,23 +2,10 @@
   <!-- CYLRefreshHorizontalCollectionViewController: 5 full-width pages at y = 150, 200 high, paging; pull left past
        the last page to open the test page (CYLRefreshNormalTrailer). -->
   <block wx:if="{{horizontal}}">
-    <view class="hpager">
-      <view class="hpager__track" style="transform: translateX({{-trailerPull}}px)">
-        <scroll-view class="hpager__scroll" scroll-x enhanced="{{true}}" paging-enabled="{{true}}" bounces="{{false}}"
-                     show-scrollbar="{{false}}" bindscroll="onPagesScroll"
-                     bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" bindtouchcancel="onTouchEnd">
-          <view class="hpager__row">
-            <view wx:for="{{pages}}" wx:key="id" class="hpager__page" style="background: {{item.color}}"
-                  bindtap="onItem" data-index="{{index}}" aria-role="button" aria-label="{{item.label}}"></view>
-          </view>
-        </scroll-view>
-      </view>
-      <!-- The trailer: an arrow and the vertical "Swipe to see details" text, revealed by the pull. -->
-      <view wx:if="{{trailerPull > 0}}" class="trailer" style="width: {{trailerPull}}px">
-        <text class="trailer__arrow {{trailerState !== 'Idle' ? 'trailer__arrow--flipped' : ''}}">←</text>
-        <text class="trailer__text">{{trailerText}}</text>
-      </view>
-    </view>
+    <cyl-refresh-trailer class="hpager" height="200px" paging-enabled="{{true}}" bind:trailer="onTrailer">
+      <view wx:for="{{pages}}" wx:key="id" class="hpager__page" style="background: {{item.color}}"
+            bindtap="onItem" data-index="{{index}}" aria-role="button" aria-label="{{item.label}}"></view>
+    </cyl-refresh-trailer>
   </block>
 
   <!-- CYLRefreshCollectionViewController / PinHeader: 80×80 items, insets 20, spacing 20, a purple 30pt section

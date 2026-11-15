@@ -1,9 +1,18 @@
 /* MJRefresh metrics: 54px header, 44px footer, 14px bold state text, 14px gray time text. */
 :host { display: block; height: 100%; }
 .cyl-refresh { position: relative; height: 100%; overflow: hidden; }
-.cyl-refresh__scroll { height: 100%; }
+.cyl-refresh__scroll { position: relative; z-index: 0; height: 100%; }
+/* Behind: the content scrolls above the pinned header; the page gives its rows a background. */
+.cyl-refresh__scroll--behind { z-index: 2; }
 .cyl-refresh__header { position: absolute; left: 0; right: 0; top: 0; z-index: 1; display: flex; flex-direction: row;
   align-items: center; justify-content: center; pointer-events: none; }
+.cyl-refresh__mark { font-size: 20px; color: #8e8e93; }
+.cyl-refresh__arrow--small { font-size: 18px; }
+/* UIActivityIndicatorView (medium): 12 gray ticks; spinning steps through them. */
+.cyl-refresh__activity { position: relative; width: 20px; height: 20px; }
+.cyl-refresh__activity--spinning { animation: cyl-refresh-spin 1s steps(12) infinite; }
+.cyl-refresh__tick { position: absolute; left: 9px; top: 0; width: 2px; height: 6px; border-radius: 1px; background: #8e8e93;
+  transform-origin: 1px 10px; }
 .cyl-refresh__indicator { display: flex; align-items: center; justify-content: center; min-width: 30px; margin-right: 12px; }
 .cyl-refresh__labels { display: flex; flex-direction: column; align-items: center; }
 .cyl-refresh__state { font-size: 14px; font-weight: 600; line-height: 18px; color: #666; }
