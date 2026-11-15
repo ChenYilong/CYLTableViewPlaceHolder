@@ -14,7 +14,13 @@ export class Route {
   static readonly HUDLifecycle: string = 'HUDLifecycle';
   static readonly RefreshIcons: string = 'RefreshIcons';
   static readonly RefreshIconDemo: string = 'RefreshIconDemo';
-  static readonly RefreshDemo: string = 'RefreshDemo';
+  static readonly RefreshTable: string = 'RefreshTable';
+  static readonly RefreshTest: string = 'RefreshTest';
+  static readonly RefreshCollection: string = 'RefreshCollection';
+  static readonly RefreshWeb: string = 'RefreshWeb';
+  static readonly RefreshI18n: string = 'RefreshI18n';
+  static readonly RefreshSmart: string = 'RefreshSmart';
+  static readonly RefreshEasy: string = 'RefreshEasy';
 }
 
 /** The parameter of every route: a value (scenario, file, flow, icon id...), an index pair and a title. */

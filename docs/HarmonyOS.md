@@ -25,7 +25,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: HarmonyOS port, library and example (score 90)
+### TODO: HarmonyOS port, library and example (score 95)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
@@ -98,7 +98,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   BUILD SUCCESSFUL; 32 unit tests, 0 failures); pages are verified by compiling only: no emulator. Platform differences:
   SF Symbols replaced by the mini program's SVG icons and glyphs/emoji; the language menu is an ArkUI bindMenu; Publish is
   a pushed NavDestination (back = Close); segmented controls drawn by hand; placeholders sit as a list-height ListItem.
-  Still TODO: the Refresh tab's 65 demos (a menu shell lists them; waits for the drawn SmartRefresh headers) and 24
+  Still TODO (Refresh tab: see the refresh-tab status below): 24
   refresh-icon rows (Lottie, PAG, Rive icons and the per-state / file / attributes / configuration ways): the library's
   refresh icon view plays only GIF and frame images so far.
 - **Status 2026-11-16 (score 53 → 70, branch `harmony/refresh-drawn`):** SmartRefreshControl drawn headers and
@@ -117,6 +117,29 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 43 host unit tests, 19 new: animator timing /
   interpolation / repeats / points, path parser and vector sizing, StoreHouse letters, status order, style defaults,
   game rules: 0 failures); the drawing is verified by compiling only (no emulator).
+- **Status 2026-11-16 (score 90 → 95, branch `harmony/refresh-tab`):** the Refresh tab's demos as a 1:1 copy of the
+  iOS example (53 of 65 rows): each menu row opens its page in `entry/src/main/ets/pages/`: `RefreshTablePage.ets`
+  (CYLRefreshTableViewController example01–06, 11–21, 51–56: random rows, loadNewData / loadMoreData / loadLastData /
+  loadOnceData after 2 s, "Resume loading", custom texts / fonts / colors, the DIY header and footers),
+  `RefreshTestPage.ets` (CYLRefreshTestViewController), `RefreshCollectionPage.ets` (grid example31 / example32,
+  pinned header, horizontal pager with CYLRefreshNormalTrailer), `RefreshWebPage.ets` (ArkWeb, header over the web
+  page), `RefreshI18nPage.ets` (languageCode, i18nFilename + i18nBundle from the example's CYLRefreshCustom keys),
+  `RefreshSmartPage.ets` (the drawn SmartRefreshControl headers and footers with the theme rows and bar colors),
+  `RefreshEasyPage.ets` (Cupertino, second floor, trigger modes, start header, CYLRefreshPaging, listener header,
+  chat, Behind user profile); the temporary `RefreshDemo.ets` is gone; the entry asks for `ohos.permission.INTERNET`
+  (web demo). The three texts `CYLScenarioMJAutoBack01/02` and `CYLScenarioMJSectionI18n` were already imported in all
+  7 languages. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 51 host unit tests, 0 failures);
+  pages are verified by compiling only (no emulator). Differences from iOS: the DIY controls are plain header / footer
+  models whose label, switch, logo (an SVG instead of the SF Symbol) and spinner the page draws over the container
+  (the container has no custom-view slot); the "animated images" controls use one GIF per state played by Image
+  instead of frames cut from the GIF (no GIF-frame helper), so idle frames do not follow the pull; a presented test
+  page is pushed too ("Close" pops it); the web page hides the title bar but not the status bar, and its Web is laid
+  out FIT_CONTENT inside a Scroll so the container can drive it; theme colors tint the title bar background only
+  (title text stays default); the auto footer's DIY item reports its visible ratio itself. Still TODO: example52, 53,
+  54, 56 and the collection example32 (Lottie / PAG / Rive refresh icons: the library's icon view plays only GIF and
+  frames; the pages already set the iOS icons and will play them once it does; example54's artboard / animation
+  options have no CYLRefreshIconAttributes field yet) and the 7 Rive SmartRefresh styles (no Rive runtime on
+  HarmonyOS; they fall back to CYLRefreshNormalHeader as iOS does without the file).
 
 ## 对照表 / Tables
 
@@ -125,7 +148,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：90 / 100**（两张表合计：没有 TODO 的行 965 / 计入的行 1064；n/a 20 行不计入）。API 表 875 / 884，演示表 90 / 180。 | **HarmonyOS score: 90 / 100** (both tables: rows without TODO 965 / counted rows 1064; 20 n/a rows not counted). API table 875 / 884, demo table 90 / 180. |
+| **鸿蒙完成度：95 / 100**（两张表合计：没有 TODO 的行 1018 / 计入的行 1064；n/a 20 行不计入）。API 表 875 / 884，演示表 143 / 180。 | **HarmonyOS score: 95 / 100** (both tables: rows without TODO 1018 / counted rows 1064; 20 n/a rows not counted). API table 875 / 884, demo table 143 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -1589,56 +1612,56 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS 演示 / iOS demo | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| UITableView + pull-down refresh · Default (CYLRefreshTableViewController - example01) | TODO |
-| UITableView + pull-down refresh · Animated images (CYLRefreshTableViewController - example02) | TODO |
-| UITableView + pull-down refresh · Hide the time (CYLRefreshTableViewController - example03) | TODO |
-| UITableView + pull-down refresh · Hide the state and time (CYLRefreshTableViewController - example04) | TODO |
-| UITableView + pull-down refresh · Custom text (CYLRefreshTableViewController - example05) | TODO |
-| UITableView + pull-down refresh · Custom refresh control (CYLRefreshTableViewController - example06) | TODO |
-| UITableView + pull-up loading · Default (CYLRefreshTableViewController - example11) | TODO |
-| UITableView + pull-up loading · Animated images (CYLRefreshTableViewController - example12) | TODO |
-| UITableView + pull-up loading · Hide the refreshing text (CYLRefreshTableViewController - example13) | TODO |
-| UITableView + pull-up loading · Everything loaded (CYLRefreshTableViewController - example14) | TODO |
-| UITableView + pull-up loading · No automatic loading (CYLRefreshTableViewController - example15) | TODO |
-| UITableView + pull-up loading · Custom text (CYLRefreshTableViewController - example16) | TODO |
-| UITableView + pull-up loading · Hide after loading (CYLRefreshTableViewController - example17) | TODO |
-| UITableView + pull-up loading · Springing-back footer 01 (CYLRefreshTableViewController - example18) | TODO |
-| UITableView + pull-up loading · Springing-back footer 02 (CYLRefreshTableViewController - example19) | TODO |
-| UITableView + pull-up loading · Custom control (loads automatically) (CYLRefreshTableViewController - example20) | TODO |
-| UITableView + pull-up loading · Custom control (springs back) (CYLRefreshTableViewController - example21) | TODO |
-| UICollectionView · Pull down and up (CYLRefreshCollectionViewController - example31) | TODO |
-| UICollectionView · Pull down and up, pinned header (CYLRefreshPinHeaderCollectionViewController - example31) | TODO |
-| UICollectionView · Pull left (CYLRefreshHorizontalCollectionViewController - example42) | TODO |
-| WKWebView · Pull down (the former UIWebView sample) (CYLRefreshWKWebViewController - example40) | TODO |
-| WKWebView · Pull down to reload (CYLRefreshWKWebViewController - example41) | TODO |
-| Localization · Refresh text languages (CYLRefreshI18NExampleViewController - i18n) | TODO |
-| Animated icons: GIF, Lottie, PAG, Rive · GIF icon in place of the images (CYLRefreshTableViewController - example51) | TODO |
+| UITableView + pull-down refresh · Default (CYLRefreshTableViewController - example01) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-down refresh · Animated images (CYLRefreshTableViewController - example02) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-down refresh · Hide the time (CYLRefreshTableViewController - example03) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-down refresh · Hide the state and time (CYLRefreshTableViewController - example04) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-down refresh · Custom text (CYLRefreshTableViewController - example05) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-down refresh · Custom refresh control (CYLRefreshTableViewController - example06) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Default (CYLRefreshTableViewController - example11) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Animated images (CYLRefreshTableViewController - example12) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Hide the refreshing text (CYLRefreshTableViewController - example13) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Everything loaded (CYLRefreshTableViewController - example14) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · No automatic loading (CYLRefreshTableViewController - example15) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Custom text (CYLRefreshTableViewController - example16) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Hide after loading (CYLRefreshTableViewController - example17) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Springing-back footer 01 (CYLRefreshTableViewController - example18) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Springing-back footer 02 (CYLRefreshTableViewController - example19) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Custom control (loads automatically) (CYLRefreshTableViewController - example20) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UITableView + pull-up loading · Custom control (springs back) (CYLRefreshTableViewController - example21) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| UICollectionView · Pull down and up (CYLRefreshCollectionViewController - example31) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
+| UICollectionView · Pull down and up, pinned header (CYLRefreshPinHeaderCollectionViewController - example31) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
+| UICollectionView · Pull left (CYLRefreshHorizontalCollectionViewController - example42) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
+| WKWebView · Pull down (the former UIWebView sample) (CYLRefreshWKWebViewController - example40) | `entry/src/main/ets/pages/RefreshWebPage.ets` |
+| WKWebView · Pull down to reload (CYLRefreshWKWebViewController - example41) | `entry/src/main/ets/pages/RefreshWebPage.ets` |
+| Localization · Refresh text languages (CYLRefreshI18NExampleViewController - i18n) | `entry/src/main/ets/pages/RefreshI18nPage.ets` |
+| Animated icons: GIF, Lottie, PAG, Rive · GIF icon in place of the images (CYLRefreshTableViewController - example51) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · Lottie icon for each state (CYLRefreshTableViewController - example52) | TODO |
 | Animated icons: GIF, Lottie, PAG, Rive · PAG progress ring (CYLRefreshTableViewController - example53) | TODO |
 | Animated icons: GIF, Lottie, PAG, Rive · Rive refresh icon (CYLRefreshTableViewController - example54) | TODO |
-| Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | TODO |
+| Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | TODO |
 | Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | TODO |
-| SmartRefreshControl styles · Delivery (CYLSmartRefreshDemoViewController - smartDelivery) | TODO |
-| SmartRefreshControl styles · Classics (CYLSmartRefreshDemoViewController - smartClassics) | TODO |
-| SmartRefreshControl styles · DropBox (CYLSmartRefreshDemoViewController - smartDropBox) | TODO |
-| SmartRefreshControl styles · Phoenix (CYLSmartRefreshDemoViewController - smartPhoenix) | TODO |
-| SmartRefreshControl styles · Taurus (CYLSmartRefreshDemoViewController - smartTaurus) | TODO |
-| SmartRefreshControl styles · BezierRadar (CYLSmartRefreshDemoViewController - smartBezierRadar) | TODO |
-| SmartRefreshControl styles · BezierCircle (CYLSmartRefreshDemoViewController - smartBezierCircle) | TODO |
-| SmartRefreshControl styles · StoreHouse (CYLSmartRefreshDemoViewController - smartStoreHouse) | TODO |
-| SmartRefreshControl styles · WaveSwipe (CYLSmartRefreshDemoViewController - smartWaveSwipe) | TODO |
-| SmartRefreshControl styles · Original (CYLSmartRefreshDemoViewController - smartOriginal) | TODO |
-| SmartRefreshControl styles · Material (CYLSmartRefreshDemoViewController - smartMaterial) | TODO |
-| SmartRefreshControl styles · GameHitBlock (CYLSmartRefreshDemoViewController - smartGameHitBlock) | TODO |
-| SmartRefreshControl styles · GameBattleCity (CYLSmartRefreshDemoViewController - smartGameBattleCity) | TODO |
-| SmartRefreshControl styles · Fly (CYLSmartRefreshDemoViewController - smartFly) | TODO |
-| SmartRefreshControl styles · Classics footer (CYLSmartRefreshDemoViewController - smartClassicsFooter) | TODO |
-| SmartRefreshControl styles · BezierRadar footer (CYLSmartRefreshDemoViewController - smartBezierRadarFooter) | TODO |
-| SmartRefreshControl styles · Material footer (CYLSmartRefreshDemoViewController - smartMaterialFooter) | TODO |
-| SmartRefreshControl styles · Delivery footer (CYLSmartRefreshDemoViewController - smartDeliveryFooter) | TODO |
-| SmartRefreshControl styles · Phoenix footer (CYLSmartRefreshDemoViewController - smartPhoenixFooter) | TODO |
-| SmartRefreshControl styles · Taurus footer (CYLSmartRefreshDemoViewController - smartTaurusFooter) | TODO |
+| SmartRefreshControl styles · Delivery (CYLSmartRefreshDemoViewController - smartDelivery) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Classics (CYLSmartRefreshDemoViewController - smartClassics) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · DropBox (CYLSmartRefreshDemoViewController - smartDropBox) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Phoenix (CYLSmartRefreshDemoViewController - smartPhoenix) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Taurus (CYLSmartRefreshDemoViewController - smartTaurus) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · BezierRadar (CYLSmartRefreshDemoViewController - smartBezierRadar) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · BezierCircle (CYLSmartRefreshDemoViewController - smartBezierCircle) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · StoreHouse (CYLSmartRefreshDemoViewController - smartStoreHouse) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · WaveSwipe (CYLSmartRefreshDemoViewController - smartWaveSwipe) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Original (CYLSmartRefreshDemoViewController - smartOriginal) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Material (CYLSmartRefreshDemoViewController - smartMaterial) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · GameHitBlock (CYLSmartRefreshDemoViewController - smartGameHitBlock) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · GameBattleCity (CYLSmartRefreshDemoViewController - smartGameBattleCity) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Fly (CYLSmartRefreshDemoViewController - smartFly) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Classics footer (CYLSmartRefreshDemoViewController - smartClassicsFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · BezierRadar footer (CYLSmartRefreshDemoViewController - smartBezierRadarFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Material footer (CYLSmartRefreshDemoViewController - smartMaterialFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Delivery footer (CYLSmartRefreshDemoViewController - smartDeliveryFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Phoenix footer (CYLSmartRefreshDemoViewController - smartPhoenixFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| SmartRefreshControl styles · Taurus footer (CYLSmartRefreshDemoViewController - smartTaurusFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | SmartRefreshControl styles · Rive · Bow (CYLSmartRefreshDemoViewController - smartRiveBow) | TODO |
 | SmartRefreshControl styles · Rive · Bubbles (CYLSmartRefreshDemoViewController - smartRiveBubbles) | TODO |
 | SmartRefreshControl styles · Rive · Halloween (CYLSmartRefreshDemoViewController - smartRiveHalloween) | TODO |
@@ -1646,13 +1669,13 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | SmartRefreshControl styles · Rive · Space (CYLSmartRefreshDemoViewController - smartRiveSpace) | TODO |
 | SmartRefreshControl styles · Rive · Squats (CYLSmartRefreshDemoViewController - smartRiveSquats) | TODO |
 | SmartRefreshControl styles · Rive · Space footer (CYLSmartRefreshDemoViewController - smartRiveSpaceFooter) | TODO |
-| flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | TODO |
-| flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | TODO |
-| flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | TODO |
-| flutter_easy_refresh samples · Refresh on start (CYLEasyRefreshDemoViewController - easyRefreshOnStart) | TODO |
-| flutter_easy_refresh samples · Paging (CYLEasyRefreshDemoViewController - easyPaging) | TODO |
-| flutter_easy_refresh samples · Listener header (CYLEasyRefreshDemoViewController - easyListener) | TODO |
-| flutter_easy_refresh samples · Chat (CYLEasyRefreshDemoViewController - easyChat) | TODO |
-| flutter_easy_refresh samples · User profile (CYLEasyRefreshDemoViewController - easyUserProfile) | TODO |
+| flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Refresh on start (CYLEasyRefreshDemoViewController - easyRefreshOnStart) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Paging (CYLEasyRefreshDemoViewController - easyPaging) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Listener header (CYLEasyRefreshDemoViewController - easyListener) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Chat (CYLEasyRefreshDemoViewController - easyChat) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · User profile (CYLEasyRefreshDemoViewController - easyUserProfile) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 
 <!-- harmony-tables:end -->
