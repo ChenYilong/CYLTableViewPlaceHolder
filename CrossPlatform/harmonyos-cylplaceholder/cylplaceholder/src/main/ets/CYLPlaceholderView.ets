@@ -50,6 +50,15 @@ import {
 import { CYLPlaceholderBundledAnimationFileNames, CYLPlaceholderImageResource } from './CYLPlaceholderImages';
 import { CYLPlaceholderConfiguration } from './CYLPlaceholderConfiguration';
 import {
+  CYLPlaceholderAnimationContent,
+  CYLPlaceholderAnimationError,
+  CYLPlaceholderAnimationFactory,
+  CYLPlaceholderAnimationFactoryForURL,
+  CYLPlaceholderAnimationPlayer,
+  CYLPlaceholderAnimationViewModel,
+  CYLPlaceholderRegisterAnimationFactory
+} from './CYLPlaceholderAnimation';
+import {
   CYLPlaceholderAccentColor,
   CYLPlaceholderButtonStyle,
   CYLPlaceholderComponent,
@@ -134,10 +143,29 @@ export class CYLPlaceholderViewModel {
   /** Whether the view is pressed (read only for apps). */
   tapHighlighted: boolean = false;
 
-  /** 0 loops, N plays N times; stored for the animation player. */
-  animationRepeatCount: number = 0;
-  /** The bundled animation file the view stands for, for the animation player; the static image is shown. */
+  /**
+   * How many times the animation plays each time it starts: 0 loops until stopped, N plays N times (iOS
+   * `animationRepeatCount`). Defaults to 1, or to CYLPlaceholderItemAnimationRepeatCount.
+   */
+  animationRepeatCount: number = 1;
+  /**
+   * The animation played in place of the image: a bundled name ("CYLPlaceholderEmpty.json"), a rawfile path or a
+   * sandbox path. A factory registered for its extension plays it, else the animator registry; the image stays as
+   * the fallback until the animation is ready, and for good when it cannot load.
+   */
   animationFileName: string | null = null;
+  /** The player of animationFileName once the view appeared, or null. */
+  animationPlayer: CYLPlaceholderAnimationPlayer | null = null;
+  /** true once the player has loaded: the animation replaces the image. */
+  animationReady: boolean = false;
+  /** true when animationFileName cannot be played: the image stays. */
+  animationFailed: boolean = false;
+  private animationAttachedFileName: string | null = null;
+  /** What the view does with the animation once it is ready: 1 play, 2 last frame, 3 seek, 0 rest. */
+  private animationCommand: number = 0;
+  private animationRequestedProgress: number = 0;
+  private animationRequestedSpeed: number = 0;
+  private animationStopped: boolean = false;
 
   accessibilityIdentifier: string = '';
   accessibilityLabel: string | null = null;
@@ -230,6 +258,151 @@ export class CYLPlaceholderViewModel {
   get currentSelectionIndicatorTintColor(): ResourceColor | null {
     return this.selectionIndicatorTintColor !== null ? this.selectionIndicatorTintColor :
       this.defaultSelectionIndicatorTintColor;
+  }
+
+  // Animation playback (iOS -playPlaceholderAnimation and friends).
+
+  /** Whether the animation is drawn (loading or ready); false shows only the image. */
+  get animationVisible(): boolean {
+    return this.animationPlayer !== null && !this.animationFailed;
+  }
+
+  /**
+   * Makes the player of animationFileName (called when the view appears): the factory registered for the extension
+   * first, then CYLPlaceholderAnimationViewModel through the animator registry. The image stays when neither plays it.
+   */
+  cyl_attachAnimation(): void {
+    const name = this.animationFileName;
+    if (name === null || name.length === 0) {
+      this.cyl_releaseAnimation();
+      return;
+    }
+    if (this.animationPlayer !== null && this.animationAttachedFileName === name) {
+      return;
+    }
+    this.cyl_releaseAnimation();
+    this.animationAttachedFileName = name;
+    const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(name);
+    const path = bundled !== null ? bundled : name;
+    const side = Math.max(1, this.imageSide);
+    const factory = CYLPlaceholderAnimationFactoryForURL(path);
+    let player: CYLPlaceholderAnimationPlayer | null = null;
+    if (factory !== null) {
+      player = factory(path, side, side, ImageFit.Contain, {});
+    }
+    if (player === null) {
+      player = CYLPlaceholderAnimationViewModel.initWithFileURL(path, side, side, ImageFit.Contain, null);
+    }
+    if (player === null) {
+      this.animationFailed = true;
+      return;
+    }
+    const made: CYLPlaceholderAnimationPlayer = player;
+    made.setAnimationRepeatCount(this.animationRepeatCount);
+    if (this.animationRequestedSpeed > 0) {
+      made.setAnimationSpeed(this.animationRequestedSpeed);
+    }
+    made.errorHandler = (error: CYLPlaceholderAnimationError) => {
+      if (this.animationPlayer === made) {
+        this.animationFailed = true;
+        this.animationReady = false;
+      }
+    };
+    made.readyHandler = () => {
+      if (this.animationPlayer === made) {
+        this.animationReady = true;
+        this.cyl_runAnimationCommand();
+      }
+    };
+    this.animationFailed = false;
+    this.animationPlayer = made;
+    if (made.ready) {
+      this.animationReady = true;
+    }
+    this.cyl_runAnimationCommand();
+  }
+
+  /** Stops and drops the player (called when the view disappears; it is made again when it reappears). */
+  cyl_releaseAnimation(): void {
+    const player = this.animationPlayer;
+    if (player !== null) {
+      player.errorHandler = null;
+      player.readyHandler = null;
+      player.stop();
+    }
+    this.animationPlayer = null;
+    this.animationReady = false;
+    this.animationFailed = false;
+    this.animationAttachedFileName = null;
+  }
+
+  private cyl_runAnimationCommand(): void {
+    const player = this.animationPlayer;
+    if (player === null) {
+      return;
+    }
+    if (this.animationCommand === 1) {
+      player.play();
+    } else if (this.animationCommand === 2) {
+      player.showLastFrame();
+    } else if (this.animationCommand === 3) {
+      player.setAnimationProgress(this.animationRequestedProgress);
+    }
+  }
+
+  /** Plays when the view appears unless the app asked for a frame or a stop (iOS plays visible placeholders). */
+  playPlaceholderAnimationIfIdle(): void {
+    if (this.animationCommand === 0 && !this.animationStopped) {
+      this.playPlaceholderAnimation();
+    }
+  }
+
+  /** Replays the animation (iOS `-playPlaceholderAnimation`); a view still loading plays once ready. */
+  playPlaceholderAnimation(): void {
+    this.animationCommand = 1;
+    this.animationStopped = false;
+    if (this.animationPlayer !== null) {
+      this.animationPlayer.play();
+    }
+  }
+
+  /** Stops and shows the resting frame until replayed (iOS `-stopPlaceholderAnimation`). */
+  stopPlaceholderAnimation(): void {
+    this.animationCommand = 0;
+    this.animationStopped = true;
+    if (this.animationPlayer !== null) {
+      this.animationPlayer.stop();
+    }
+  }
+
+  /** Stops and shows the last frame when supported (iOS `-showPlaceholderAnimationLastFrame`). */
+  showPlaceholderAnimationLastFrame(): void {
+    this.animationCommand = 2;
+    if (this.animationPlayer !== null) {
+      this.animationPlayer.showLastFrame();
+    }
+  }
+
+  /**
+   * Stops and seeks (iOS `-setPlaceholderAnimationProgress:`); false for values outside 0...1 or a player that cannot
+   * seek. Before the player exists the progress is kept and applied when it is made.
+   */
+  setPlaceholderAnimationProgress(progress: number): boolean {
+    if (!isFinite(progress) || progress < 0 || progress > 1) {
+      return false;
+    }
+    this.animationCommand = 3;
+    this.animationRequestedProgress = progress;
+    return this.animationPlayer !== null ? this.animationPlayer.setAnimationProgress(progress) : true;
+  }
+
+  /** A positive finite speed (iOS `-setPlaceholderAnimationSpeed:`); false otherwise or when unsupported. */
+  setPlaceholderAnimationSpeed(speed: number): boolean {
+    if (!isFinite(speed) || speed <= 0) {
+      return false;
+    }
+    this.animationRequestedSpeed = speed;
+    return this.animationPlayer !== null ? this.animationPlayer.setAnimationSpeed(speed) : true;
   }
 
   // Initializers (iOS -initWith...).
@@ -402,6 +575,15 @@ export class CYLPlaceholderViewModel {
     return CYLPlaceholderLocalizedTextForMessage(message);
   }
 
+  /**
+   * Registers or, with null, removes a factory for a local file extension, without a leading dot, case-insensitive
+   * (iOS `+registerAnimationFactory:forFileExtension:`). "gif" stays with the built-in decoder (false). Views keep
+   * their player until they appear again.
+   */
+  static registerAnimationFactory(factory: CYLPlaceholderAnimationFactory | null, fileExtension: string): boolean {
+    return CYLPlaceholderRegisterAnimationFactory(factory, fileExtension);
+  }
+
   /** The animation files bundled in the HAR (`+bundledAnimationFileNames`). */
   static bundledAnimationFileNames(): string[] {
     return CYLPlaceholderBundledAnimationFileNames.slice();
@@ -507,6 +689,17 @@ export function CYLPlaceholderTintFilter(color: ResourceColor | null): ColorFilt
 export struct CYLPlaceholderView {
   @ObjectLink model: CYLPlaceholderViewModel;
 
+  aboutToAppear(): void {
+    if (this.model.animationFileName !== null) {
+      this.model.cyl_attachAnimation();
+      this.model.playPlaceholderAnimationIfIdle();
+    }
+  }
+
+  aboutToDisappear(): void {
+    this.model.cyl_releaseAnimation();
+  }
+
   @Builder
   badge() {
     if (this.model.badgeStyle !== CYLPlaceholderBadgeStyle.None) {
@@ -537,14 +730,26 @@ export struct CYLPlaceholderView {
 
   @Builder
   item() {
-    if (this.model.currentImage !== null) {
+    if (this.model.currentImage !== null || this.model.animationVisible) {
       Stack({ alignContent: Alignment.TopEnd }) {
-        Image(this.model.currentImage)
-          .width(this.model.imageSide)
-          .height(this.model.imageSide)
-          .objectFit(ImageFit.Contain)
-          .colorFilter(CYLPlaceholderTintFilter(this.model.tintsIcon ? this.model.currentIconColor : null))
-          .accessibilityLevel('no')
+        Stack() {
+          if (this.model.currentImage !== null) {
+            Image(this.model.currentImage)
+              .width(this.model.imageSide)
+              .height(this.model.imageSide)
+              .objectFit(ImageFit.Contain)
+              .colorFilter(CYLPlaceholderTintFilter(this.model.tintsIcon ? this.model.currentIconColor : null))
+              .opacity(this.model.animationVisible && this.model.animationReady ? 0 : 1)
+              .accessibilityLevel('no')
+          }
+          if (this.model.animationVisible) {
+            // Drawn from the start (hidden) so the engine can load; shown once ready.
+            CYLPlaceholderAnimationContent({ view: (this.model.animationPlayer as CYLPlaceholderAnimationPlayer).view })
+              .opacity(this.model.animationReady ? 1 : 0)
+          }
+        }
+        .width(this.model.imageSide)
+        .height(this.model.imageSide)
         this.badge()
       }
     }
@@ -564,7 +769,7 @@ export struct CYLPlaceholderView {
           bottom: this.model.titleContentInsets.bottom, right: this.model.titleContentInsets.right
         })
         .constraintSize({ minWidth: this.model.titleMinimumWidth })
-        .margin({ top: this.model.currentImage !== null ? 12 : 0 })
+        .margin({ top: this.model.currentImage !== null || this.model.animationVisible ? 12 : 0 })
         .translate({ x: this.model.defaultTitlePositionAdjustment.x, y: this.model.defaultTitlePositionAdjustment.y })
     }
   }
