@@ -114,6 +114,27 @@ when tapped), `graceTimeInterval`, `minimumDismissTimeInterval`, `maximumDismiss
 `fadeInAnimationDuration`, `fadeOutAnimationDuration`; read-only `visible`, `state`, `status`, `progress`,
 `activityCount`.
 
+## Status bar
+
+`cyl-placeholder-status` is `CYLPlaceholderStatusView`, the red "network unavailable" bar of CYLChatKit. Put it at
+the top of the page, above the list:
+
+```html
+<cyl-placeholder-status visible="{{showsBar}}" shows-when-offline tappable bind:statustap="onStatusTap" />
+<cyl-placeholder wx:if="{{showsPlaceholder}}" scenario="NetworkUnavailable" />
+```
+
+```js
+const { CYLPlaceholderStatus, CYLPlaceholderStatusDisplay } = require('/components/cyl-placeholder/cyl_placeholder')
+const display = CYLPlaceholderStatusDisplay.All // StatusBar, Placeholder, None
+this.setData({ showsBar: CYLPlaceholderStatus.showsStatusBar(display), showsPlaceholder: CYLPlaceholderStatus.showsPlaceholder(display) })
+```
+
+Properties: `visible`, `showsWhenOffline` (watches `wx.onNetworkStatusChange`, sends `networkchange`), `tappable`
+(sends `statustap`), `text`, `image`, `titleColor`, `backgroundColor`, `language`, `configuration` (a `statusBar`
+dictionary). `CYLPlaceholderStatus.parseStatusConfiguration` reads `statusBar`, `display` and `showsWhenOffline` of a
+configuration file. The bar's icon and design come from CYLChatKit (MIT, `LICENSE.CYLChatKit`).
+
 ## Example
 
 Open this folder (`CrossPlatform/wechat-miniprogram-cylplaceholder`) in WeChat DevTools. `project.config.json`

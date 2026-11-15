@@ -965,6 +965,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program configuration files](docs/assets/wechat-miniprogram-configuration.png)
 
+| 中文 | English |
+| --- | --- |
+| 红条（`cyl-placeholder-status`，`CYLPlaceholderStatusView`）与占位图：默认红条，以及应用状态配置后的黄色红条。同一模拟器与基础库，提交 `2368eb0`，2026-11-15 13:07（+13:00）。 | The status bar (`cyl-placeholder-status`, `CYLPlaceholderStatusView`) with the placeholder: the default bar, and the yellow bar of a status configuration. Same simulator and base library, commit `2368eb0`, 2026-11-15 13:07 (+13:00). |
+
+![WeChat Mini Program status bar](docs/assets/wechat-miniprogram-status.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |
