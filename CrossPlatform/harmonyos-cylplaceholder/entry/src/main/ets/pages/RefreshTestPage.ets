@@ -1,7 +1,7 @@
 // CYLRefreshTestViewController: a blank page titled "Test view controller" with a "Close" bar button. Every refresh
 // list opens it with `showRefreshTest(row)`: odd rows push it, even rows present it (iOS presents it in its own
-// navigation controller). HarmonyOS has one NavPathStack here, so a presented test page is pushed too and "Close"
-// pops it either way (as the example's Publish page does).
+// navigation controller). HarmonyOS has one NavPathStack, so a presented page is a NavDestination that comes up from
+// the bottom (systemTransition SLIDE_BOTTOM) without a back button, as a modal does; "Close" pops it either way.
 import { t } from '../common/L10n';
 import { Route, RouteParam, pop, push } from '../common/Routes';
 import { BarButton } from '../common/Ui';
@@ -32,5 +32,8 @@ export struct RefreshTestPage {
     .title(t('CYLScenarioMJTestTitle'))
     .menus(this.barItems)
     .backgroundColor(Color.White)
+    .hideBackButton(this.param.value === 'modal')
+    .systemTransition(this.param.value === 'modal' ? NavigationSystemTransitionType.SLIDE_BOTTOM :
+      NavigationSystemTransitionType.DEFAULT)
   }
 }

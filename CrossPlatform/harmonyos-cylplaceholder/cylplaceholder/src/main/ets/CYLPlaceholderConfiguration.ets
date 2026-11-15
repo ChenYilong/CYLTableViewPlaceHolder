@@ -6,6 +6,7 @@ import { fileIo } from '@kit.CoreFileKit';
 import { util } from '@kit.ArkTS';
 import { CYLPlaceholderLocalization } from './CYLPlaceholderLocalization';
 import { CYLPlaceholderComponent, CYLPlaceholderScenarioCatalog } from './CYLPlaceholderScenario';
+import { CYLBinaryPropertyListIsBinary, CYLBinaryPropertyListParse, CYLPlaceholderDecodeUTF8 } from './CYLPlaceholderBinaryPropertyList';
 import { CYLPlaceholderTapHighlightStyle } from './CYLPlaceholderViewTypes';
 
 /** Receives the reason a configuration was refused (the iOS `error:` out parameter). */
@@ -147,12 +148,13 @@ export class CYLPlaceholderConfiguration {
 
   /**
    * An XML property list (dict, array, string, integer, real, true, false, date and data as strings); null, with the
-   * reason, for a binary or invalid one.
+   * reason, for an invalid one (binary lists are read from bytes: parsePropertyListData).
    */
   static parsePropertyList(text: string, onError: CYLPlaceholderConfigurationErrorHandler | null = null):
     Object | null {
     if (text.startsWith('bplist')) {
-      return CYLPlaceholderConfiguration.fail(onError, 'A binary property list is not supported; save it as XML.');
+      // A binary list decoded as text has lost its bytes: read it with parsePropertyListData (readFile does).
+      return CYLPlaceholderConfiguration.fail(onError, 'A binary property list must be read as bytes (parsePropertyListData).');
     }
     try {
       const reader = new PlistReader(text);
@@ -164,6 +166,36 @@ export class CYLPlaceholderConfiguration {
     } catch (e) {
       return CYLPlaceholderConfiguration.fail(onError, (e as Error).message);
     }
+  }
+
+  /** A property list's bytes: binary ("bplist00") or XML; null, with the reason, when it is invalid. */
+  static parsePropertyListData(bytes: Uint8Array, onError: CYLPlaceholderConfigurationErrorHandler | null = null):
+    Object | null {
+    if (CYLBinaryPropertyListIsBinary(bytes)) {
+      try {
+        return CYLBinaryPropertyListParse(bytes);
+      } catch (e) {
+        return CYLPlaceholderConfiguration.fail(onError, (e as Error).message);
+      }
+    }
+    return CYLPlaceholderConfiguration.parsePropertyList(CYLPlaceholderDecodeUTF8(bytes), onError);
+  }
+
+  /** The dictionary in a configuration file's bytes: a property list (binary or XML) for ".plist", else JSON. */
+  static parseData(bytes: Uint8Array, fileName: string, onError: CYLPlaceholderConfigurationErrorHandler | null = null):
+    Record<string, Object> | null {
+    if (fileName.toLowerCase().endsWith('.plist') && CYLBinaryPropertyListIsBinary(bytes)) {
+      const value = CYLPlaceholderConfiguration.parsePropertyListData(bytes, onError);
+      if (value === null) {
+        return null;
+      }
+      if (!isRecord(value)) {
+        return CYLPlaceholderConfiguration.fail(onError, 'The property list is not a dictionary.');
+      }
+      return value as Record<string, Object>;
+    }
+    return CYLPlaceholderConfiguration.parseText(CYLPlaceholderDecodeUTF8(bytes), fileName,
+      onError);
   }
 
   /** The dictionary in a configuration text: a property list when fileName ends with ".plist", else JSON. */
@@ -189,21 +221,21 @@ export class CYLPlaceholderConfiguration {
   static readFile(path: string, onError: CYLPlaceholderConfigurationErrorHandler | null = null):
     Record<string, Object> | null {
     const plain = path.startsWith('file://') ? path.substring('file://'.length) : path;
-    let text = '';
+    let bytes: Uint8Array = new Uint8Array(0);
     try {
       const file = fileIo.openSync(plain, fileIo.OpenMode.READ_ONLY);
       try {
         const size = fileIo.statSync(file.fd).size;
         const buffer = new ArrayBuffer(size);
         fileIo.readSync(file.fd, buffer);
-        text = util.TextDecoder.create('utf-8').decodeToString(new Uint8Array(buffer));
+        bytes = new Uint8Array(buffer);
       } finally {
         fileIo.closeSync(file);
       }
     } catch (e) {
       return CYLPlaceholderConfiguration.fail(onError, 'The configuration file cannot be read: ' + (e as Error).message);
     }
-    return CYLPlaceholderConfiguration.parseText(text, plain, onError);
+    return CYLPlaceholderConfiguration.parseData(bytes, plain, onError);
   }
 
   /**
