@@ -152,3 +152,10 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
    the image download asks for it, with hardware virtualization available on the Mac.
 4. **Signing is not needed on the emulator**: it installs the unsigned `entry-default-unsigned.hap`
    (`hdc install -r`). Do not ask the owner for a signing setup for emulator runs.
+
+Commits: `git cz` (Commitizen) style with the default types and emojis, and the whole message in English with no
+Chinese characters (`instructions.md`, "git cz style, English only"). Before pushing, check the new commits:
+
+```sh
+git log --format=%B @{u}..HEAD | LC_ALL=C.UTF-8 grep -nP '[\x{4e00}-\x{9fff}\x{3000}-\x{303f}\x{ff00}-\x{ffef}]' && echo "Chinese in a commit message"
+```

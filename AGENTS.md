@@ -236,6 +236,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   If the detailed description exceeds 50 characters, create or update a
   suitable document under `docs/` and link it in the commit body. Reuse the
   existing tracker and avoid duplicate documents.
+- **git cz style, English only:** every commit uses the `git cz` (Commitizen) format with its default types and
+  emojis, and the whole message (subject, body, scope, merge and cherry-pick messages) is English with no Chinese
+  characters. See "git cz style, English only" in `instructions.md`.
 - Follow the Commitizen defaults: `{type}{scope}: {emoji}{subject}`, emojis
   enabled, no predefined scopes, and a 3–64 character message. The interactive
  examples separate the emoji from the subject with a space. The
