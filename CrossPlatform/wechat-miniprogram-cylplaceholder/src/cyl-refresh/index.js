@@ -298,6 +298,8 @@ Component({
         } catch (e) {}
       }
       if (this.data.footerState === S.Refreshing) this.setData({ footerState: S.Idle })
+      // Already in the finish phase: its timer folds the header.
+      if (this.data.finishing && this.data.headerState !== S.Refreshing) return
       if (this.data.headerState !== S.Refreshing || !(this.data.finishDuration > 0)) {
         this.setData({ triggered: false, headerState: S.Idle, finishing: '', pull: 0 })
         return
