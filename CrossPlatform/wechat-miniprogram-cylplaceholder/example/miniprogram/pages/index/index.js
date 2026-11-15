@@ -33,6 +33,9 @@ Page({
   onHUD() {
     wx.navigateTo({ url: '/pages/hud/hud' })
   },
+  onConfigurations() {
+    wx.navigateTo({ url: '/pages/configuration/configuration' })
+  },
   onOpen(e) {
     wx.navigateTo({ url: '/pages/scenario/scenario?scenario=' + e.currentTarget.dataset.scenario })
   },

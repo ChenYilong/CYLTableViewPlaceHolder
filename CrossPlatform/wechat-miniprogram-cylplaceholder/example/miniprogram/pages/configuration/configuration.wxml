@@ -1,0 +1,15 @@
+<view class="group">
+  <picker range="{{files}}" value="{{index}}" bindchange="onPick">
+    <view class="row"><text>File</text><text class="value">{{files[index]}} ›</text></view>
+  </picker>
+  <view class="row" hover-class="pressed" bindtap="onPlayAll"><text>Play all</text><text class="value">↻</text></view>
+  <view wx:if="{{lastAction}}" class="note">Last action: {{lastAction}}</view>
+  <view wx:if="{{error}}" class="note note--error">{{error}}</view>
+</view>
+<view class="card">
+  <cyl-placeholder id="placeholder" configuration="{{configuration}}" language="{{language}}"
+                   generic:animation="cyl-lottie" animated="{{true}}"
+                   bind:action="onAction" bind:configerror="onConfigError" />
+</view>
+<view class="code-title">Configuration file</view>
+<scroll-view class="code" scroll-x><text user-select>{{text}}</text></scroll-view>

@@ -1,0 +1,7 @@
+{
+  "components": [
+    { "type": "icon", "animation": "CYLPlaceholderLoading.json", "style": "Hourglass", "size": 96, "repeatCount": "loop", "exampleTitleKey": "CYLScenarioConfigPlaybackLoop" },
+    { "type": "icon", "animation": "CYLPlaceholderRefresh.json", "style": "Refresh", "size": 72, "repeatCount": "once", "exampleTitleKey": "CYLScenarioConfigPlaybackOnce", "spacingBefore": 24 },
+    { "type": "icon", "animation": "CYLPlaceholderNoInternet.json", "style": "WifiOff", "size": 72, "repeatCount": 3, "exampleTitleKey": "CYLScenarioConfigPlaybackThree", "spacingBefore": 24 }
+  ]
+}
