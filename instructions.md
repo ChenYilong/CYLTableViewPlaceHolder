@@ -402,6 +402,25 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
 - Done means every example builds again (the `Demo` CI jobs) with the core's clean API, examples updated in the same
   change.
 
+## HarmonyOS (owner's rule, 2026-11-16)
+
+- **Version:** HarmonyOS 6.0.1 (API 21, Release); HarmonyOS SDK 6.0.1.112, `compileSdkVersion` / `targetSdkVersion`
+  and the minimum `compatibleSdkVersion` 6.0.1(21); DevEco Studio 6.0.1.251; ArkTS / ArkUI, Stage model. Code:
+  `CrossPlatform/harmonyos-cylplaceholder` (HAR `cylplaceholder`, example HAP `entry`).
+- **The API matches iOS:** every public symbol of the iOS library has a HarmonyOS counterpart with the iOS name
+  (types, enums, constants, methods in camelCase without the Objective-C colons).
+- **The example matches iOS:** the HarmonyOS example is a 1:1 copy of `Examples/Example-Scenarios`: the same tabs,
+  pages, rows, texts, behaviors and order.
+- **The implementation follows Android:** the internals are migrated from the Kotlin source under `android/`
+  (`android/placeholder`, `android/merged`), translated to ArkTS; iOS headers define the contract, Kotlin the
+  behavior.
+- **Tracking and score:** `docs/HarmonyOS.md` lists every iOS public API (table 1) and every iOS example demo
+  (table 2); the second column is the HarmonyOS implementation, TODO until done. Score = rows without TODO ÷
+  counted rows (both tables together), recomputed by `node scripts/harmony-port-tables.js` after every finished
+  feature; remove one TODO per finished feature until the score is 100.
+- **Build:** `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh` (hvigor refuses non-ASCII project paths, so
+  the script mirrors the project to an ASCII directory and builds there).
+
 ## Localization
 
 Localization is always several files: one per language, often several tables
