@@ -48,6 +48,7 @@ import {
   CYLPlaceholderTapHighlightStyle
 } from './CYLPlaceholderViewTypes';
 import { CYLPlaceholderBundledAnimationFileNames, CYLPlaceholderImageResource } from './CYLPlaceholderImages';
+import { CYLPlaceholderConfiguration } from './CYLPlaceholderConfiguration';
 import {
   CYLPlaceholderAccentColor,
   CYLPlaceholderButtonStyle,
@@ -343,6 +344,16 @@ export class CYLPlaceholderViewModel {
     }
     m.animationFileName = readString(attributes[CYLPlaceholderItemAnimationFilePath]);
     return m;
+  }
+
+  /**
+   * Reads the item attributes from a local ".json" or ".plist" file, a sandbox path or "file://" URI
+   * (`-initWithItemContentsOfURL:imageBundle:error:`); null, with the reason, when it cannot be read or is invalid.
+   */
+  static initWithItemContentsOfURL(path: string, imageBundle: string | null = null,
+    onError: ((message: string) => void) | null = null): CYLPlaceholderViewModel | null {
+    const attributes = CYLPlaceholderConfiguration.readFile(path, onError);
+    return attributes === null ? null : CYLPlaceholderViewModel.initWithItemAttributes(attributes, imageBundle, onError);
   }
 
   /** The view of a stack component (what CYLPlaceholderStackView makes for each component). */

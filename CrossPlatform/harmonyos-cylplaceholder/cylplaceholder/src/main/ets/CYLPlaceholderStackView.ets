@@ -14,6 +14,7 @@ import {
   CYLPlaceholderScenarioCatalog
 } from './CYLPlaceholderScenario';
 import { CYLPlaceholderLocalizedTextForMessage, CYLPlaceholderMessage } from './CYLPlaceholderViewTypes';
+import { CYLPlaceholderConfiguration, CYLPlaceholderConfigurationErrorHandler } from './CYLPlaceholderConfiguration';
 
 /** Runs when a component's action is performed (iOS `CYLPlaceholderActionHandler`). */
 export type CYLPlaceholderActionHandler = (placeholder: CYLPlaceholderStackViewModel, action: CYLPlaceholderAction) =>
@@ -46,6 +47,8 @@ export class CYLPlaceholderStackViewModel {
   backgroundAction: CYLPlaceholderAction | null = null;
   /** false ignores every tap. */
   interactive: boolean = true;
+  /** The component id of the view (a configuration's "accessibilityIdentifier"); "" for none. */
+  accessibilityIdentifier: string = '';
   private handlers: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> = new Map();
   private nextKey: number = 0;
 
@@ -87,6 +90,103 @@ export class CYLPlaceholderStackViewModel {
       }
     });
     return m;
+  }
+
+  /**
+   * A placeholder from a configuration dictionary (`-initWithConfiguration:actions:error:`): "scenario" (a name),
+   * "components" (component dictionaries, replacing the scenario's), "overrides" (dictionaries with an "index" and
+   * component fields), "backgroundAction" (an action name, or "" for none) and "accessibilityIdentifier". null, with
+   * the reason passed to onError, when a value is invalid.
+   */
+  static initWithConfiguration(configuration: Record<string, Object> | null,
+    actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null,
+    onError: CYLPlaceholderConfigurationErrorHandler | null = null): CYLPlaceholderStackViewModel | null {
+    if (configuration === null || !CYLPlaceholderConfiguration.isDictionary(configuration)) {
+      return CYLPlaceholderConfiguration.fail(onError, 'The configuration must be a dictionary.');
+    }
+    let scenario: CYLPlaceholderScenario | null = null;
+    const scenarioValue: Object | undefined = configuration['scenario'];
+    if (scenarioValue !== undefined) {
+      scenario = CYLPlaceholderScenarioCatalog.scenarioNamed(typeof scenarioValue === 'string' ?
+        scenarioValue as string : null);
+      if (scenario === null) {
+        return CYLPlaceholderConfiguration.fail(onError, 'Unknown scenario ' + String(scenarioValue) + '.');
+      }
+    }
+    let components: CYLPlaceholderComponent[] = [];
+    const list: Object | undefined = configuration['components'];
+    if (list !== undefined && list !== null) {
+      if (!Array.isArray(list) || (list as Object[]).length === 0) {
+        return CYLPlaceholderConfiguration.fail(onError, '"components" must be a non-empty array.');
+      }
+      const entries = list as Object[];
+      for (let i = 0; i < entries.length; i++) {
+        if (!CYLPlaceholderConfiguration.isDictionary(entries[i])) {
+          return CYLPlaceholderConfiguration.fail(onError, 'A component must be a dictionary.');
+        }
+        const c = CYLPlaceholderComponent.componentWithDictionary(entries[i] as Record<string, Object>, onError);
+        if (c === null) {
+          return null;
+        }
+        components.push(c);
+      }
+    } else if (scenario !== null) {
+      components = CYLPlaceholderScenarioCatalog.componentsForScenario(scenario);
+    } else {
+      return CYLPlaceholderConfiguration.fail(onError, 'The configuration needs a "scenario" or "components".');
+    }
+    const overrides: Object | undefined = configuration['overrides'];
+    if (overrides !== undefined && overrides !== null) {
+      if (!Array.isArray(overrides)) {
+        return CYLPlaceholderConfiguration.fail(onError, '"overrides" must be an array.');
+      }
+      const items = overrides as Object[];
+      for (let i = 0; i < items.length; i++) {
+        const fields = CYLPlaceholderConfiguration.isDictionary(items[i]) ? items[i] as Record<string, Object> : null;
+        const indexValue: Object | undefined = fields !== null ? fields['index'] : undefined;
+        const index = typeof indexValue === 'number' ? Math.floor(indexValue as number) : -1;
+        if (fields === null || index < 0 || index >= components.length) {
+          return CYLPlaceholderConfiguration.fail(onError, 'Each override needs the "index" of an existing component.');
+        }
+        const rest: Record<string, Object> = {};
+        Object.keys(fields).forEach((k: string) => {
+          if (k !== 'index') {
+            rest[k] = fields[k];
+          }
+        });
+        if (!CYLPlaceholderConfiguration.applyComponentFields(components[index], rest, onError)) {
+          return null;
+        }
+      }
+    }
+    const background: Object | undefined = configuration['backgroundAction'];
+    if (background !== undefined && background !== null && typeof background !== 'string') {
+      return CYLPlaceholderConfiguration.fail(onError, '"backgroundAction" must be an action name.');
+    }
+    const m = CYLPlaceholderStackViewModel.initWithComponents(components, actions);
+    m.scenario = scenario;
+    m.backgroundAction = scenario !== null ? CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario) : null;
+    if (typeof background === 'string') {
+      const name = background as string;
+      m.backgroundAction = name.length === 0 ? null : CYLPlaceholderScenarioCatalog.actionNamed(name);
+    }
+    const identifier: Object | undefined = configuration['accessibilityIdentifier'];
+    if (typeof identifier === 'string') {
+      m.accessibilityIdentifier = identifier as string;
+    }
+    return m;
+  }
+
+  /**
+   * The configuration in a local ".json" or ".plist" file, a sandbox path or "file://" URI
+   * (`-initWithContentsOfURL:actions:error:`).
+   */
+  static initWithContentsOfURL(path: string,
+    actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null,
+    onError: CYLPlaceholderConfigurationErrorHandler | null = null): CYLPlaceholderStackViewModel | null {
+    const configuration = CYLPlaceholderConfiguration.readFile(path, onError);
+    return configuration === null ? null :
+      CYLPlaceholderStackViewModel.initWithConfiguration(configuration, actions, onError);
   }
 
   /** Appends a component under the last one and returns its view. */
@@ -173,6 +273,7 @@ export struct CYLPlaceholderStackView {
     .width('100%')
     .height('100%')
     .justifyContent(FlexAlign.Center)
+    .id(this.model.accessibilityIdentifier)
     .onClick(() => {
       const action = this.model.backgroundAction;
       if (this.model.interactive && action !== null) {
