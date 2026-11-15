@@ -971,6 +971,14 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program status bar](docs/assets/wechat-miniprogram-status.png)
 
+| 中文 | English |
+| --- | --- |
+| 示例一比一复刻 iOS 的 `Example-Scenarios`：CYLTabBarController 的 TabBar（五个 Tab、第 4 位的凸起加号按钮）、场景、动效、流程、动态与刷新五个 Tab，刷新 Tab 的 65 个示例（MJRefresh 表格与集合视图、SmartRefreshControl 27 种样式、flutter_easy_refresh 8 种用法）。同一模拟器与基础库，提交 `66f0dbc`，2026-11-15 13:54（+13:00）。差异见 [docs/WeChat-MiniProgram.md](docs/WeChat-MiniProgram.md)。 | The example is a 1:1 copy of the iOS `Example-Scenarios`: CYLTabBarController's tab bar (five tabs, the raised plus button at index 3), the Scenarios, Animations, Flows, Feed and Refresh tabs, and the Refresh tab's 65 demos (MJRefresh tables and collections, 27 SmartRefreshControl styles, 8 flutter_easy_refresh samples). Same simulator and base library, commit `66f0dbc`, 2026-11-15 13:54 (+13:00). Differences: [docs/WeChat-MiniProgram.md](docs/WeChat-MiniProgram.md). |
+
+![WeChat Mini Program 1:1 example: the five tabs and a refresh example](docs/assets/wechat-miniprogram-example-tabs.png)
+
+![WeChat Mini Program SmartRefreshControl styles drawn mid-refresh](docs/assets/wechat-miniprogram-smartrefresh.png)
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |

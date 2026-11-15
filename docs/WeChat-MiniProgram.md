@@ -88,7 +88,41 @@
 - **Doc discrepancy found:** `docs/Placeholder-Scenarios.md` says "36 scenarios (including HUD)", but the iOS-derived
   Kotlin enum has 35 entries (HUD included). The unit test pins the mini program list to the Kotlin enum.
 
-### TODO: The mini program example as a 1:1 copy of the iOS example (score 0 → in progress)
+### TODO: The mini program example as a 1:1 copy of the iOS example (score 85)
+
+- **Status (2026-11-15 13:54, commits `81ec65b`, `555758c`, `66f0dbc`):** every screen of the iOS example exists:
+  the tab bar (cyl-tab-bar from CYLTabBarController: five tabs, the teal plus button at index 3, Publish), the 🌐
+  language menu (7 languages + follow system, rebuilds the interface), Scenarios (4 sections, detail with "Tap:
+  on | Clear", support, the 7 configuration files incl. the plist, raw file), Animations (74 files by engine,
+  detail replaying every 4 s, NOTICE), Flows (5 flows, collection, status bar with its toolbar, HUD with 16 rows,
+  HUD life cycle), Feed (alternating failures, refresh icons list and demo), Refresh (65 rows: table examples
+  01–06 / 11–21 / 51–56, test page, collections, web view, languages, 27 SmartRefresh styles, 8 easy_refresh
+  samples; in the `refresh-demos` subpackage). The example's own texts come from `CYLScenarioExample.bundle`
+  (7 languages, `scripts/import-example-strings.js`).
+- **Verified:** WeChat DevTools 2.02.2609250, base library 3.17.6: every tab and every page opens with no exception
+  or console error (miniprogram-automator); headers drawn mid-refresh for 8 SmartRefresh styles; `npm test` 33 / 33.
+  Screenshots: `docs/assets/wechat-miniprogram-example-tabs.png`, `docs/assets/wechat-miniprogram-smartrefresh.png`.
+  Not verified: a real phone (skipped at the owner's request), touch-driven behaviors that the automator cannot
+  drag (pull distances, the pull-left trailer, the second floor, trigger modes).
+- **Not 1:1 (platform limits, documented in the pages):**
+  - No SF Symbols: row icons are emoji / text glyphs; tab icons are original SVGs in the iOS gray and teal.
+  - Navigation bar buttons sit in a row under the native bar; no large titles; modal pages are pushed pages.
+  - PAG and Rive have no mini program player: such files are listed but show a note (Animations), a spinner
+    (refresh icons) or a drawn equivalent (SmartRefresh Rive styles).
+  - The web view page is a native page (a `<web-view>` cannot host the refresh header or overlays, and github.com
+    is not a business domain of the AppID).
+  - `cyl-refresh` cannot report the pull beyond the threshold or the footer's pull, and hides the header when a
+    refresh ends, so some SmartRefresh finish animations and drawn footers are simplified; the games are not
+    playable (the header ignores touches).
+  - easy_refresh features beyond `cyl-refresh` (Cupertino header, second floor, trigger modes, behind mode, chat
+    scroll keeping) live in the page's own `easy-refresh` component.
+  - Unknown file types are not packaged: `.plist` and NOTICE / LICENSE texts ship as `<name>.json` holding the text
+    as a JSON string (`CYLPlaceholderConfiguration.readConfigurationFile` reads `.plist.json`).
+- **Remaining work:** move the page-level refresh features into `cyl-refresh` (a trailer mode, Cupertino header,
+  trigger modes, second floor, pull progress beyond 1, a finish phase, footer pull progress, custom string tables,
+  live language changes); check touch behaviors on a phone.
+
+#### Original task record
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "跳过真机测试。继续小程序example层要一比一复刻"
@@ -115,6 +149,9 @@
 | `src/cyl-placeholder/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
 | `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
 | `src/cyl-placeholder/cyl_configuration.js` | `CYLPlaceholderConfiguration`: parses configuration objects / JSON files |
+| `src/cyl-refresh/` | `cyl-refresh` (CYLRefresh: MJRefresh-compatible header / footers, icons per state, DIY slots, CYLRefresh texts in 7 languages from `scripts/import-refresh-strings.js`) |
+| `example/miniprogram/custom-tab-bar/`, `utils/tabs.js`, `utils/l10n.js` | The example's tab bar (cyl-tab-bar, synced from CYLTabBarController), tab configuration, example texts and language switch |
+| `example/miniprogram/pages/`, `example/miniprogram/refresh-demos/` | One page per iOS screen; the Refresh tab's leaf pages in a subpackage |
 | `src/cyl-placeholder/cyl_status.js` | `CYLPlaceholderStatusDisplay`, `CYLPlaceholderStatus` (status bar and status configuration) |
 | `src/cyl-placeholder-status/index.{js,json,wxml,wxss}` | The `cyl-placeholder-status` component (the red network bar; `LICENSE.CYLChatKit` at the package root) |
 | `src/cyl-placeholder/cyl_images.js` | Generated icon list (validates a configuration's `style`) |
