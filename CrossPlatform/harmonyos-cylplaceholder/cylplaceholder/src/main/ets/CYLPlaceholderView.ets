@@ -47,7 +47,12 @@ import {
   CYLPlaceholderStyleValues,
   CYLPlaceholderTapHighlightStyle
 } from './CYLPlaceholderViewTypes';
-import { CYLPlaceholderBundledAnimationFileNames, CYLPlaceholderImageResource } from './CYLPlaceholderImages';
+import {
+  CYLPlaceholderBundledAnimationFileNames,
+  CYLPlaceholderImageBundle,
+  CYLPlaceholderImageResource,
+  CYLPlaceholderResolveImage
+} from './CYLPlaceholderImages';
 import { CYLPlaceholderConfiguration } from './CYLPlaceholderConfiguration';
 import {
   CYLPlaceholderAnimationContent,
@@ -439,11 +444,19 @@ export class CYLPlaceholderViewModel {
    * A view from item attributes (`-initWithItemAttributes:imageBundle:error:`): the title, image, style, message,
    * colors, fonts, selected variants, title decorations, accessibility, interaction, tap highlight, repeat count and
    * animation file keys. null, with the reason passed to onError, when there is neither an image nor a title.
-   * imageBundle is not supported yet (image names are bundled icons, Resources or paths).
+   * Image names are looked up in imageBundle (CYLPlaceholderImageBundle: another module's or HAR's media); null uses
+   * the bundled icons, else the name is a path. A name the bundle does not have fails, as on iOS.
    */
-  static initWithItemAttributes(attributes: Record<string, Object>, imageBundle: string | null = null,
+  static initWithItemAttributes(attributes: Record<string, Object>, imageBundle: CYLPlaceholderImageBundle | null = null,
     onError: ((message: string) => void) | null = null): CYLPlaceholderViewModel | null {
-    let image: ResourceStr | null = readImage(attributes[CYLPlaceholderItemImage]);
+    const imageValue: ResourceStr | null = readImage(attributes[CYLPlaceholderItemImage]);
+    let image: ResourceStr | null = imageBundle !== null ? CYLPlaceholderResolveImage(imageValue, imageBundle) : imageValue;
+    if (imageValue !== null && image === null) {
+      if (onError !== null) {
+        onError('Image \'' + (imageValue as string) + '\' was not found in the selected bundle.');
+      }
+      return null;
+    }
     let tints = true;
     const style = readStyle(attributes[CYLPlaceholderItemStyle]);
     if (image === null && style !== null) {
@@ -465,7 +478,8 @@ export class CYLPlaceholderViewModel {
     const m = CYLPlaceholderViewModel.initWithImageText(image, text);
     m.tintsIcon = tints;
     m.itemAttributes = attributes;
-    m.selectedImage = readImage(attributes[CYLPlaceholderItemSelectedImage]);
+    const selectedValue: ResourceStr | null = readImage(attributes[CYLPlaceholderItemSelectedImage]);
+    m.selectedImage = imageBundle !== null ? CYLPlaceholderResolveImage(selectedValue, imageBundle) : selectedValue;
     m.selectedText = readString(attributes[CYLPlaceholderItemSelectedTitle]);
     const titleColor = readColor(attributes[CYLPlaceholderItemTitleColor]);
     if (titleColor !== null) {
@@ -523,7 +537,7 @@ export class CYLPlaceholderViewModel {
    * Reads the item attributes from a local ".json" or ".plist" file, a sandbox path or "file://" URI
    * (`-initWithItemContentsOfURL:imageBundle:error:`); null, with the reason, when it cannot be read or is invalid.
    */
-  static initWithItemContentsOfURL(path: string, imageBundle: string | null = null,
+  static initWithItemContentsOfURL(path: string, imageBundle: CYLPlaceholderImageBundle | null = null,
     onError: ((message: string) => void) | null = null): CYLPlaceholderViewModel | null {
     const attributes = CYLPlaceholderConfiguration.readFile(path, onError);
     return attributes === null ? null : CYLPlaceholderViewModel.initWithItemAttributes(attributes, imageBundle, onError);
@@ -531,7 +545,9 @@ export class CYLPlaceholderViewModel {
 
   /** The view of a stack component (what CYLPlaceholderStackView makes for each component). */
   static initWithComponent(component: CYLPlaceholderComponent): CYLPlaceholderViewModel {
-    const m = CYLPlaceholderViewModel.initWithImageText(component.image, component.title);
+    const image: ResourceStr | null = component.imageBundle !== null ?
+      CYLPlaceholderResolveImage(component.image, component.imageBundle) : component.image;
+    const m = CYLPlaceholderViewModel.initWithImageText(image, component.title);
     m.kind = component.kind;
     m.itemAttributes = component.attributes;
     m.tintsIcon = component.tinted;

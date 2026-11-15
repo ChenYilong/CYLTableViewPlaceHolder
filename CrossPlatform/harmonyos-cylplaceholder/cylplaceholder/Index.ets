@@ -8,7 +8,14 @@ export {
   CYLPlaceholderLanguageObserver
 } from './src/main/ets/CYLPlaceholderLocalization';
 export * from './src/main/ets/CYLPlaceholderViewTypes';
-export { CYLPlaceholderImageNames, CYLPlaceholderImageResource, CYLPlaceholderBundledAnimationFileNames } from './src/main/ets/CYLPlaceholderImages';
+export {
+  CYLPlaceholderImageNames,
+  CYLPlaceholderImageResource,
+  CYLPlaceholderBundledAnimationFileNames,
+  CYLPlaceholderImageBundle,
+  CYLPlaceholderImageResourceManager,
+  CYLPlaceholderResolveImage
+} from './src/main/ets/CYLPlaceholderImages';
 export {
   CYLPlaceholderScenario,
   CYLPlaceholderScenarioCategory,
@@ -146,6 +153,13 @@ export { CYLGIFPlaceholderItemAnimator } from './src/main/ets/CYLGIFPlaceholderI
 export { CYLLottiePlaceholderItemAnimator } from './src/main/ets/CYLLottiePlaceholderItemAnimator';
 export { CYLPAGPlaceholderItemAnimator } from './src/main/ets/CYLPAGPlaceholderItemAnimator';
 export { CYLRivePlaceholderItemAnimator } from './src/main/ets/CYLRivePlaceholderItemAnimator';
+export {
+  CYLRiveUsesLegacyRuntime,
+  CYLRiveActivePropertyPath,
+  CYLRiveTriggerPropertyPath,
+  CYLRiveColorPropertyPath,
+  CYLRiveColorValue
+} from './src/main/ets/CYLRiveOptions';
 // Registers the GIF, Lottie, PAG and Rive animators in the shared registry when the HAR is imported.
 export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';
 

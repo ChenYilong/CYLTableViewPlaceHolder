@@ -228,6 +228,14 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
   panVelocityY: number = 0;
   /** iOS pagingEnabled (an auto footer settles to a page after loading). */
   pagingEnabled: boolean = false;
+  /**
+   * The collection layout's `flipsHorizontallyInOppositeLayoutDirection` (UICollectionViewLayout (CYLRefresh)): set it
+   * when the content and its controls are drawn mirrored for a right-to-left layout (for example the container under
+   * `.scale({ x: -1 })` while `direction` is Rtl); the controls then flip their texts, arrow and animation view back
+   * so they read normally. Content size changes reach the footer through `cyl_contentW` / `cyl_contentH`, the iOS
+   * `finalizeCollectionViewUpdates` hook.
+   */
+  flipsHorizontallyInOppositeLayoutDirection: boolean = false;
   /** The Scroller's own offset (no over-scroll). */
   scrollerX: number = 0;
   scrollerY: number = 0;
@@ -751,10 +759,42 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   scrollMode: CYLRefreshScrollMode = CYLRefreshScrollMode.Move;
   /** True while the auto hide keeps the control invisible (the UI reads it). */
   cyl_autoHidden: boolean = false;
-  /** The views flipped in a right-to-left collection layout (`flipsHorizontallyInOppositeLayoutDirectionViews`). */
-  flipsHorizontallyInOppositeLayoutDirectionViews: CYLRefreshViewModel[] = [];
-  /** More views to flip (`additionalFlipsViews`). */
+  /**
+   * More views to flip back, added to `flipsHorizontallyInOppositeLayoutDirectionViews` (`additionalFlipsViews`,
+   * empty by default; iOS subclasses override the getter, here it is assigned).
+   */
   additionalFlipsViews: CYLRefreshViewModel[] = [];
+
+  /**
+   * The views flipped back when the scroll view's layout mirrors its content
+   * (`flipsHorizontallyInOppositeLayoutDirectionViews`): the state and time labels, the arrow, the animation view,
+   * per class as on iOS. Subclasses add theirs in `cyl_flipViews`.
+   */
+  get flipsHorizontallyInOppositeLayoutDirectionViews(): CYLRefreshViewModel[] {
+    return this.cyl_flipViews();
+  }
+
+  /** The class's own views to flip back (the iOS getter overrides); none in the base class. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return [];
+  }
+
+  /**
+   * Whether `view` is drawn flipped back (iOS `-layoutSubviews`: scale x -1 when the scroll view's layout has
+   * `flipsHorizontallyInOppositeLayoutDirection`, for the views of both lists).
+   */
+  cyl_flipsView(view: CYLRefreshViewModel | null): boolean {
+    const scrollView = this.cyl_scrollView;
+    if (view === null || scrollView === null || !scrollView.flipsHorizontallyInOppositeLayoutDirection) {
+      return false;
+    }
+    return this.flipsHorizontallyInOppositeLayoutDirectionViews.includes(view) || this.additionalFlipsViews.includes(view);
+  }
+
+  /** The x scale the UI draws `view` with: -1 when flipped back, else 1. */
+  cyl_flipScaleX(view: CYLRefreshViewModel | null): number {
+    return this.cyl_flipsView(view) ? -1 : 1;
+  }
   protected cyl_scrollView: CYLRefreshScrollViewModel | null = null;
   protected cyl_originalInset: CYLEdgeInsets = new CYLEdgeInsets(0, 0, 0, 0);
   protected cyl_finishing: boolean = false;

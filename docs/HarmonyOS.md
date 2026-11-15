@@ -25,7 +25,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: HarmonyOS port, library and example (score 90)
+### TODO: HarmonyOS port, library and example (score 93)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
@@ -117,6 +117,21 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 43 host unit tests, 19 new: animator timing /
   interpolation / repeats / points, path parser and vector sizing, StoreHouse letters, status order, style defaults,
   game rules: 0 failures); the drawing is verified by compiling only (no emulator).
+- **Status 2026-11-16 (score 90 → 93, branch `harmony/finish-lib`):** refresh icons play every engine and the last
+  library rows. `CYLRefreshIconViewModel.placeholderView` makes the icon of a state with
+  `CYLPlaceholderItemAnimationFactory` (the animator registry: GIF, Lottie, PAG, Rive) and drives it by the iOS policy
+  (`CYLRefreshIconPlaybackFor`: stopped at rest, scrubbed with `progress` while pulled when the engine seeks, else
+  played; looping while pulling / refreshing; stopped for no more data); attributes carry engine `options`. Rive:
+  without legacy options the view model bound by @ohos/rive's autoBind is driven as on iOS (`active` boolean for
+  `duration`, `trigger`, `color` on load); `legacy` = "1" picks the input / linear animation API (one runtime has
+  both). Right-to-left: `CYLRefreshScrollViewModel.flipsHorizontallyInOppositeLayoutDirection` flips each control's
+  iOS list plus `additionalFlipsViews` back with `.scale({ x: -1 })`. `CYLPlaceholderComponent.imageBundle` /
+  `initWithItemAttributes(attributes, imageBundle)` look names up in a `CYLPlaceholderImageBundle` (another module's
+  or HAR's resource manager media). Example: the refresh icon rows use the iOS APIs (image sequences from the frames
+  of the bundled GIFs, `setIconAnimationAttributes` with Rive options, `refresh-icons.json`); the Feed header plays
+  Lottie / PAG. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 56 host unit tests, 5 new: icon
+  engines, playback policy, RTL flips, image bundle, Rive options: 0 failures); the UI is verified by compiling only
+  (no emulator).
 
 ## 对照表 / Tables
 
@@ -125,7 +140,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：90 / 100**（两张表合计：没有 TODO 的行 965 / 计入的行 1064；n/a 20 行不计入）。API 表 875 / 884，演示表 90 / 180。 | **HarmonyOS score: 90 / 100** (both tables: rows without TODO 965 / counted rows 1064; 20 n/a rows not counted). API table 875 / 884, demo table 90 / 180. |
+| **鸿蒙完成度：93 / 100**（两张表合计：没有 TODO 的行 999 / 计入的行 1064；n/a 20 行不计入）。API 表 884 / 884，演示表 115 / 180。 | **HarmonyOS score: 93 / 100** (both tables: rows without TODO 999 / counted rows 1064; 20 n/a rows not counted). API table 884 / 884, demo table 115 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -283,14 +298,14 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderAnimationOption` | `CYLPlaceholderAnimationOption` |
 | `CYLPlaceholderAnimationOptionRiveArtboard` | `CYLPlaceholderAnimationOptionRiveArtboard` |
 | `CYLPlaceholderAnimationOptionRiveStateMachine` | `CYLPlaceholderAnimationOptionRiveStateMachine` |
-| `CYLPlaceholderAnimationOptionRiveActiveProperty` | TODO |
+| `CYLPlaceholderAnimationOptionRiveActiveProperty` | `CYLPlaceholderAnimationOptionRiveActiveProperty` (the bound view model's boolean, "active" by default, true for `duration` seconds: `RiveAnimationView` state machine `viewModelInstance.getBooleanProperty`; `CYLRiveActivePropertyPath`) |
 | `CYLPlaceholderAnimationOptionRiveActiveDuration` | `CYLPlaceholderAnimationOptionRiveActiveDuration` (for the `input` option, as the iOS legacy runtime) |
-| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | TODO |
-| `CYLPlaceholderAnimationOptionRiveColor` | TODO |
+| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | `CYLPlaceholderAnimationOptionRiveTriggerProperty` (view-model trigger fired on play: `getTriggerProperty(path).trigger()`; `CYLRiveTriggerPropertyPath`) |
+| `CYLPlaceholderAnimationOptionRiveColor` | `CYLPlaceholderAnimationOptionRiveColor` ("#RRGGBB[AA]" written to the view model's "color" property on load: `getColorProperty`; `CYLRiveColorValue`) |
 | `CYLPlaceholderAnimationOptionRiveInput` | `CYLPlaceholderAnimationOptionRiveInput` |
 | `CYLPlaceholderAnimationOptionRiveTriggerInput` | `CYLPlaceholderAnimationOptionRiveTriggerInput` |
 | `CYLPlaceholderAnimationOptionRiveAnimation` | `CYLPlaceholderAnimationOptionRiveAnimation` |
-| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | TODO |
+| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | `CYLPlaceholderAnimationOptionRiveLegacyRuntime` ("1" plays with the state machine input / linear animation API, like `input` / `triggerInput` / `animation`: `CYLRiveUsesLegacyRuntime`; @ohos/rive is one runtime with both APIs, so nothing is unavailable) |
 | `CYLRivePlaceholderItemAnimator` | `CYLRivePlaceholderItemAnimator` (@ohos/rive 1.0.4 `RiveAnimationView`) |
 | `CYLRivePlaceholderItemAnimator` `animator` | `CYLRivePlaceholderItemAnimator.animator` |
 
@@ -356,8 +371,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLRefreshComponent` `state` | `CYLRefreshComponentModel.state` |
 | `CYLRefreshComponent` `scrollViewOriginalInset` | `CYLRefreshComponentModel.scrollViewOriginalInset` |
 | `CYLRefreshComponent` `scrollView` | `CYLRefreshComponentModel.scrollView` |
-| `CYLRefreshComponent` `flipsHorizontallyInOppositeLayoutDirectionViews` | TODO |
-| `CYLRefreshComponent` `additionalFlipsViews` | TODO |
+| `CYLRefreshComponent` `flipsHorizontallyInOppositeLayoutDirectionViews` | `CYLRefreshComponentModel.flipsHorizontallyInOppositeLayoutDirectionViews` (per class as iOS; drawn with `.scale({ x: cyl_flipScaleX(view) })` when `CYLRefreshScrollViewModel.flipsHorizontallyInOppositeLayoutDirection`) |
+| `CYLRefreshComponent` `additionalFlipsViews` | `CYLRefreshComponentModel.additionalFlipsViews` |
 | `CYLRefreshComponent` `-prepare` | `CYLRefreshComponentModel.prepare()` |
 | `CYLRefreshComponent` `-placeSubviews` | `CYLRefreshComponentModel.placeSubviews()` |
 | `CYLRefreshComponent` `-scrollViewContentOffsetDidChange:` | `CYLRefreshComponentModel.scrollViewContentOffsetDidChange(change)` |
@@ -466,7 +481,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLRefreshIconView` `-setAnimationAttributes:forState:` | `CYLRefreshIconViewModel.setAnimationAttributes(attributes, state)` |
 | `CYLRefreshIconView` `-animationAttributesForState:` | `CYLRefreshIconViewModel.animationAttributesForState(state)` |
 | `CYLRefreshIconView` `hasAnimations` | `CYLRefreshIconViewModel.hasAnimations` |
-| `CYLRefreshIconView` `placeholderView` | TODO |
+| `CYLRefreshIconView` `placeholderView` | `CYLRefreshIconViewModel.placeholderView` (a `CYLPlaceholderItemAnimationFactory` view: GIF, Lottie, PAG, Rive through the animator registry; `CYLRefreshIconPlaybackFor` policy, scrubbing with `progress`) |
 | `CYLRefreshIconView` `iconSize` | `CYLRefreshIconViewModel.iconSize` |
 | `CYLRefreshIconView` `title` | `CYLRefreshIconViewModel.title` |
 | `CYLRefreshIconView` `titleFont` | `CYLRefreshIconViewModel.titleFont` |
@@ -1072,7 +1087,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `UICollectionViewLayout(CYLRefresh)` | TODO |
+| `UICollectionViewLayout(CYLRefresh)` | `CYLRefreshScrollViewModel.flipsHorizontallyInOppositeLayoutDirection` (the layout flag) + `cyl_contentW` / `cyl_contentH` setters (content size changes reach the footer's `scrollViewContentSizeDidChange`, the `finalizeCollectionViewUpdates` hook) |
 
 #### `CYLRefresh/UIScrollView+CYLExtension.h`
 
@@ -1241,7 +1256,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderComponent` | `CYLPlaceholderComponent` (class) |
 | `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` |
 | `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` |
-| `CYLPlaceholderComponent` `imageBundle` | TODO |
+| `CYLPlaceholderComponent` `imageBundle` | `CYLPlaceholderComponent.imageBundle` (`CYLPlaceholderImageBundle.bundleWithResourceManager(moduleContext.resourceManager)` or `bundleWithLookup`; null = the library's icons; a missing name fails as on iOS) |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore` |
 | `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` |
 | `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` |
@@ -1558,31 +1573,31 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Refresh icons (CYLRefreshIconListViewController): GIF · Core · CYLRefreshPetals.gif | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` |
 | Refresh icons (CYLRefreshIconListViewController): GIF · Core · CYLRefreshRing.gif | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` |
 | Refresh icons (CYLRefreshIconListViewController): GIF · Core · CYLRefreshThrobber.gif | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLPlaceholderRefresh.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshArc.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshClockwise.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshCounterClockwise.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshCycle.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDone.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDoneCircle.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDonePop.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDots.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDotsPulse.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshGradientSpinner.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshLoadMore.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshMaterialSpinner.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshMoreDots.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshPullArrow.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshPullCircle.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshSpinnerRing.json | TODO |
-| Refresh icons (CYLRefreshIconListViewController): PAG · CYLTableViewPlaceHolder/PAG · CYLPlaceholderProgress.pag | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Rive · CYLTableViewPlaceHolder/Rive · CYLRefreshIcon.riv | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Image sequence per state | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · A different icon for each state | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Back footer, icon per state | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By file path | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By item attributes (Rive artboard) | TODO |
-| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By configuration file | TODO |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLPlaceholderRefresh.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshArc.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshClockwise.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshCounterClockwise.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshCycle.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDone.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDoneCircle.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDonePop.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDots.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshDotsPulse.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshGradientSpinner.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshLoadMore.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshMaterialSpinner.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshMoreDots.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshPullArrow.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshPullCircle.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshSpinnerRing.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): PAG · CYLTableViewPlaceHolder/PAG · CYLPlaceholderProgress.pag | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Rive · CYLTableViewPlaceHolder/Rive · CYLRefreshIcon.riv | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Image sequence per state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · A different icon for each state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Back footer, icon per state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By file path | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By item attributes (Rive artboard) | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · By configuration file | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
 | Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · MJRefresh Gif names (compatible) | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` |
 
 #### Refresh tab (CYLRefreshExampleViewController)

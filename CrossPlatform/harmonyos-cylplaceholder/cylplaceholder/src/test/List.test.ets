@@ -3,6 +3,7 @@ import placeholderHUDStatusTest from './CYLPlaceholderHUDStatus.test';
 import refreshCoreTest from './CYLRefreshCore.test';
 import placeholderAnimationTest from './CYLPlaceholderAnimation.test';
 import refreshDrawnTest from './CYLRefreshDrawn.test';
+import refreshIconsTest from './CYLRefreshIcons.test';
 
 export default function testsuite() {
   placeholderCoreTest();
@@ -10,4 +11,5 @@ export default function testsuite() {
   refreshCoreTest();
   placeholderAnimationTest();
   refreshDrawnTest();
+  refreshIconsTest();
 }

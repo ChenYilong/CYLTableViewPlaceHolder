@@ -2,6 +2,7 @@
 // actions, the button styles, CYLPlaceholderComponent and CYLPlaceholderScenarioCatalog. Translated from the Android
 // port (CYLPlaceholderScenario.kt, CYLPlaceholderComponent.kt) and the mini program's cyl_scenario_catalog.js.
 import { CYLPlaceholderLocalization } from './CYLPlaceholderLocalization';
+import { CYLPlaceholderImageBundle } from './CYLPlaceholderImages';
 import {
   CYLPlaceholderIconNameForStyle,
   CYLPlaceholderItemAccessibilityIdentifier,
@@ -178,8 +179,8 @@ export class CYLPlaceholderComponent {
   readonly buttonStyle: CYLPlaceholderButtonStyle | null;
   /** The action sent when the component is tapped, or null. */
   action: CYLPlaceholderAction | null;
-  /** Where the component's own images are looked up; null uses the bundled icons. Not supported yet. */
-  imageBundle: string | null = null;
+  /** Where image names in `attributes` are looked up (iOS `imageBundle`); null uses the library's bundled icons. */
+  imageBundle: CYLPlaceholderImageBundle | null = null;
   /** The space above the component, in vp. */
   spacingBefore: number;
   /** false ignores taps on the component. */

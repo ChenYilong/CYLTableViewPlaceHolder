@@ -35,6 +35,7 @@ import {
   CYLRefreshScrollViewModel,
   CYLRefreshTargetAction,
   CYLRefreshTrailerModel,
+  CYLRefreshViewModel,
   CYLSize
 } from './CYLRefreshComponent';
 import { CYLRefreshIconAttributes, CYLRefreshIconSize, CYLRefreshIconViewModel } from './CYLRefreshIconView';
@@ -113,6 +114,11 @@ function titlesText(titles: Map<CYLRefreshState, string>, state: CYLRefreshState
 
 /** A header with a state text and the last update time (iOS `CYLRefreshStateHeader`). */
 export class CYLRefreshStateHeaderModel extends CYLRefreshHeaderModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the state and time labels. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return [this.stateLabel, this.lastUpdatedTimeLabel];
+  }
+
   /** The state text (`stateLabel`). */
   stateLabel: CYLRefreshLabel = CYLRefreshLabel.cyl_label();
   /** The last update line (`lastUpdatedTimeLabel`). */
@@ -225,6 +231,11 @@ export class CYLRefreshStateHeaderModel extends CYLRefreshHeaderModel {
 
 /** A state header with an arrow and a spinner (iOS `CYLRefreshNormalHeader`). */
 export class CYLRefreshNormalHeaderModel extends CYLRefreshStateHeaderModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the arrow. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.arrowView]);
+  }
+
   /** The arrow (`arrowView`); its image is the bundled arrow when null. */
   arrowView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
   /** The arrow's size; 0 x 0 for the image's own (15 x 40) (`iconSize`). */
@@ -280,6 +291,11 @@ export class CYLRefreshNormalHeaderModel extends CYLRefreshStateHeaderModel {
 
 /** A state header with frame images per state (iOS `CYLRefreshAnimationHeader`). */
 export class CYLRefreshAnimationHeaderModel extends CYLRefreshStateHeaderModel implements CYLRefreshIconAnimating {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the animation view. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.animationView]);
+  }
+
   /** The frame view (`animationView`). */
   animationView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
   /** The frames per state. */
@@ -413,6 +429,11 @@ export class CYLRefreshCupertinoHeaderModel extends CYLRefreshHeaderModel {
 
 /** An auto footer with a state text; tapping it loads (iOS `CYLRefreshAutoStateFooter`). */
 export class CYLRefreshAutoStateFooterModel extends CYLRefreshAutoFooterModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the state label. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return [this.stateLabel];
+  }
+
   labelLeftInset: number = CYLRefreshLabelLeftInset;
   stateLabel: CYLRefreshLabel = CYLRefreshLabel.cyl_label();
   /** Hides the text while loading (`refreshingTitleHidden`). */
@@ -513,6 +534,11 @@ export class CYLRefreshAutoNormalFooterModel extends CYLRefreshAutoStateFooterMo
 
 /** An auto footer with frame images (iOS `CYLRefreshAutoAnimationFooter`). */
 export class CYLRefreshAutoAnimationFooterModel extends CYLRefreshAutoStateFooterModel implements CYLRefreshIconAnimating {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the animation view. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.animationView]);
+  }
+
   animationView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
   frames: CYLRefreshFrames = new CYLRefreshFrames();
 
@@ -622,6 +648,11 @@ export class CYLRefreshCupertinoFooterModel extends CYLRefreshAutoFooterModel {
 
 /** A back footer with a state text (iOS `CYLRefreshBackStateFooter`). */
 export class CYLRefreshBackStateFooterModel extends CYLRefreshBackFooterModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the state label. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return [this.stateLabel];
+  }
+
   labelLeftInset: number = CYLRefreshLabelLeftInset;
   stateLabel: CYLRefreshLabel = CYLRefreshLabel.cyl_label();
   protected stateTitles: Map<CYLRefreshState, string> = new Map();
@@ -671,6 +702,11 @@ export class CYLRefreshBackStateFooterModel extends CYLRefreshBackFooterModel {
 
 /** A back footer with an arrow and a spinner (iOS `CYLRefreshBackNormalFooter`). */
 export class CYLRefreshBackNormalFooterModel extends CYLRefreshBackStateFooterModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the arrow. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.arrowView]);
+  }
+
   arrowView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
   loadingView: CYLRefreshActivityIndicatorModel = new CYLRefreshActivityIndicatorModel();
   noMoreDataImage: ResourceStr | null = null;
@@ -721,6 +757,11 @@ export class CYLRefreshBackNormalFooterModel extends CYLRefreshBackStateFooterMo
 
 /** A back footer with frame images (iOS `CYLRefreshBackAnimationFooter`). */
 export class CYLRefreshBackAnimationFooterModel extends CYLRefreshBackStateFooterModel implements CYLRefreshIconAnimating {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the animation view. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.animationView]);
+  }
+
   animationView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
   frames: CYLRefreshFrames = new CYLRefreshFrames();
 
@@ -861,6 +902,11 @@ export class CYLRefreshStateTrailerModel extends CYLRefreshTrailerModel {
 
 /** A state trailer with an arrow (iOS `CYLRefreshNormalTrailer`). */
 export class CYLRefreshNormalTrailerModel extends CYLRefreshStateTrailerModel {
+  /** iOS `flipsHorizontallyInOppositeLayoutDirectionViews`: adds the arrow. */
+  protected cyl_flipViews(): CYLRefreshViewModel[] {
+    return super.cyl_flipViews().concat([this.arrowView]);
+  }
+
   /** The arrow (`arrowView`); the bundled trail arrow when its image is null. */
   arrowView: CYLRefreshImageViewModel = new CYLRefreshImageViewModel();
 

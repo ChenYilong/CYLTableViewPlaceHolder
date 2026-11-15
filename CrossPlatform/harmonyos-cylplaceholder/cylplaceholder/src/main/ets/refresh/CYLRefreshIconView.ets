@@ -1,8 +1,17 @@
 // CYLRefreshIconView: the HarmonyOS counterpart of iOS CYLRefreshIconView.h: an icon per refresh state (frame images
 // or an animation file) shown by a control in place of its arrow / spinner, with an optional title. The UI
-// (CYLRefreshView.ets) draws frame images and GIF files; Lottie / PAG / Rive files are kept for the later animation
-// player step (`isPlayableNow` is false for them).
+// (CYLRefreshView.ets) draws frame images and GIF / PNG files itself, and Lottie / PAG / Rive files (any file an
+// animator of the library's registry plays) through `placeholderView`, a view of CYLPlaceholderItemAnimationFactory,
+// played by the iOS policy (`CYLRefreshIconPlaybackFor`).
 import { CYLRefreshState } from './CYLRefreshConst';
+import {
+  CYLPlaceholderAnimationContentView,
+  CYLPlaceholderAnimationURLWithOptions,
+  CYLPlaceholderItemAnimationFactory,
+  CYLPlaceholderItemAnimationPlayer,
+  CYLPlaceholderItemAnimatorRegistering,
+  CYLPlaceholderItemAnimatorRegistry
+} from '../CYLPlaceholderAnimation';
 
 /** The size of an icon, in vp (CGSize). */
 export class CYLRefreshIconSize {
@@ -15,27 +24,91 @@ export class CYLRefreshIconSize {
   }
 }
 
+/** What draws an icon (iOS: CYLPlaceholderView picks the engine of the attributes). */
+export enum CYLRefreshIconEngine {
+  /** Nothing to draw. */
+  None = 0,
+  /** Frame images (`images`). */
+  Frames = 1,
+  /** An image file no animator plays, drawn by ArkUI Image: GIF, WebP, APNG, PNG. */
+  Image = 2,
+  /** A file played by an animator of the registry (GIF, Lottie, PAG, Rive): `placeholderView`. */
+  Animator = 3
+}
+
+/** What the icon does now (the iOS playback policy of CYLRefreshIconView.h). */
+export enum CYLRefreshIconPlayback {
+  /** Stopped on its resting frame. */
+  Stop = 0,
+  /** Follows the pulling percent (engines that can seek). */
+  Scrub = 1,
+  /** Plays, looping. */
+  Play = 2
+}
+
+/**
+ * The iOS policy: idle and not pulled stops; idle and pulled scrubs when `scrubsWhilePulling` and the engine can
+ * seek, else plays; pulling, refreshing and will refresh play, looping; no more data stops.
+ */
+export function CYLRefreshIconPlaybackFor(state: CYLRefreshState, pullingPercent: number, scrubsWhilePulling: boolean,
+  canSeek: boolean): CYLRefreshIconPlayback {
+  if (state === CYLRefreshState.Pulling || state === CYLRefreshState.Refreshing ||
+    state === CYLRefreshState.WillRefresh) {
+    return CYLRefreshIconPlayback.Play;
+  }
+  if (state !== CYLRefreshState.Idle || pullingPercent <= 0) {
+    return CYLRefreshIconPlayback.Stop;
+  }
+  return scrubsWhilePulling && canSeek ? CYLRefreshIconPlayback.Scrub : CYLRefreshIconPlayback.Play;
+}
+
 /**
  * The animation of one state (the iOS attributes dictionary): an animation file path (`filePath`, rawfile path or
- * URI), or frame images played over `duration` seconds, at `size` (iOS keys CYLPlaceholderItemAnimationFilePath,
- * CYLPlaceholderItemImages, CYLPlaceholderItemAnimationDuration, CYLPlaceholderItemImageSize).
+ * URI) with its engine `options`, or frame images played over `duration` seconds, at `size` (iOS keys
+ * CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationOptions, CYLPlaceholderItemImages,
+ * CYLPlaceholderItemAnimationDuration, CYLPlaceholderItemImageSize).
  */
 export class CYLRefreshIconAttributes {
   filePath: string | null = null;
   images: ResourceStr[] = [];
   duration: number = 0;
   size: CYLRefreshIconSize = new CYLRefreshIconSize(40, 40);
+  /** Engine options (CYLPlaceholderItemAnimationOptions), such as a Rive artboard or animation. */
+  options: Record<string, string> = {};
 
-  /** Whether the HarmonyOS UI plays it today: frame images and GIF / WebP / PNG files. */
-  get isPlayableNow(): boolean {
+  /** The file with its options, as the animators read it; null without a file. */
+  get animationURL(): string | null {
+    if (this.filePath === null) {
+      return null;
+    }
+    return Object.keys(this.options).length > 0 ?
+      CYLPlaceholderAnimationURLWithOptions(this.filePath as string, this.options) : this.filePath as string;
+  }
+
+  /** What draws these attributes, with the animators of `registry` (the shared one by default). */
+  engine(registry: CYLPlaceholderItemAnimatorRegistering | null = null): CYLRefreshIconEngine {
     if (this.images.length > 0) {
-      return true;
+      return CYLRefreshIconEngine.Frames;
     }
     if (this.filePath === null) {
-      return false;
+      return CYLRefreshIconEngine.None;
     }
-    const lower = this.filePath.toLowerCase();
-    return lower.endsWith('.gif') || lower.endsWith('.webp') || lower.endsWith('.png') || lower.endsWith('.apng');
+    // iOS draws every file through CYLPlaceholderView, so the registry comes first (GIF, Lottie, PAG, Rive).
+    const source: CYLPlaceholderItemAnimatorRegistering = registry !== null ? registry :
+      CYLPlaceholderItemAnimatorRegistry.sharedRegistry();
+    if (source.animatorForURL(this.animationURL) !== null) {
+      return CYLRefreshIconEngine.Animator;
+    }
+    const lower = (this.filePath as string).toLowerCase();
+    if (lower.endsWith('.gif') || lower.endsWith('.webp') || lower.endsWith('.png') || lower.endsWith('.apng')) {
+      return CYLRefreshIconEngine.Image;
+    }
+    return CYLRefreshIconEngine.None;
+  }
+
+  /** Whether the UI plays it: frame images, image files, or a file an animator of the shared registry plays. */
+  get isPlayableNow(): boolean {
+    return this.engine() !== CYLRefreshIconEngine.None;
   }
 }
 
@@ -64,6 +137,67 @@ export class CYLRefreshIconViewModel {
   /** The attributes of the state shown, or null. */
   current: CYLRefreshIconAttributes | null = null;
   private attributes: Map<CYLRefreshState, CYLRefreshIconAttributes> = new Map();
+  private views: Map<CYLRefreshIconAttributes, CYLPlaceholderAnimationContentView> = new Map();
+  private state: CYLRefreshState = CYLRefreshState.Idle;
+  private percent: number = 0;
+  private applied: CYLRefreshIconPlayback | null = null;
+  private appliedView: CYLPlaceholderAnimationContentView | null = null;
+
+  /**
+   * The animation view showing the current state's file (iOS `placeholderView`): made by
+   * CYLPlaceholderItemAnimationFactory for Lottie, PAG and Rive files; null for frames, image files and none.
+   */
+  get placeholderView(): CYLPlaceholderAnimationContentView | null {
+    const current = this.current;
+    if (current === null || current.engine() !== CYLRefreshIconEngine.Animator) {
+      return null;
+    }
+    const made = this.views.get(current);
+    if (made !== undefined) {
+      return made;
+    }
+    const view = CYLPlaceholderItemAnimationFactory.animationViewWithURL(current.animationURL as string,
+      current.size.width, current.size.height, ImageFit.Contain);
+    if (view !== null) {
+      this.views.set(current, view);
+    }
+    return view;
+  }
+
+  /** What the icon does now (`CYLRefreshIconPlaybackFor` with the engine of the current view). */
+  get playback(): CYLRefreshIconPlayback {
+    const view = this.placeholderView;
+    const player = view !== null ? CYLPlaceholderItemAnimationFactory.playerForView(view) : null;
+    return CYLRefreshIconPlaybackFor(this.state, this.percent, this.scrubsWhilePulling,
+      player !== null && player.supportsProgress);
+  }
+
+  /** Drives the animation view by the policy; a command is sent again only when it changes (scrubbing seeks). */
+  private applyPlayback(): void {
+    const view = this.placeholderView;
+    if (view === null) {
+      this.applied = null;
+      this.appliedView = null;
+      return;
+    }
+    const player: CYLPlaceholderItemAnimationPlayer | null = CYLPlaceholderItemAnimationFactory.playerForView(view);
+    if (player === null) {
+      return;
+    }
+    const playback = this.playback;
+    if (playback === CYLRefreshIconPlayback.Scrub) {
+      player.progress = Math.min(1, Math.max(0, this.percent));
+    } else if (playback !== this.applied || view !== this.appliedView) {
+      if (playback === CYLRefreshIconPlayback.Play) {
+        player.setAnimationRepeatCount(0);
+        player.play();
+      } else {
+        player.stop();
+      }
+    }
+    this.applied = playback;
+    this.appliedView = view;
+  }
 
   /** Sets (or with null removes) the animation of a state (`-setAnimationAttributes:forState:`). */
   setAnimationAttributes(attributes: CYLRefreshIconAttributes | null, state: CYLRefreshState): void {
@@ -72,6 +206,12 @@ export class CYLRefreshIconViewModel {
     } else {
       this.attributes.set(state, attributes);
     }
+    const kept = Array.from(this.attributes.values());
+    Array.from(this.views.keys()).forEach((a: CYLRefreshIconAttributes) => {
+      if (!kept.includes(a)) {
+        this.views.delete(a);
+      }
+    });
   }
 
   /** The animation of a state, or null (`-animationAttributesForState:`). */
@@ -101,17 +241,21 @@ export class CYLRefreshIconViewModel {
     return new CYLRefreshIconSize(Math.max(icon.width, titleW), icon.height + 4 + titleH);
   }
 
-  /** Shows the animation of `state` (the Idle one when it has none); plays it while refreshing (`-updateForState:`). */
+  /** Shows the animation of `state` (the Idle one when it has none); plays it by the policy (`-updateForState:`). */
   updateForState(state: CYLRefreshState): void {
     const own = this.attributes.get(state);
     const idle = this.attributes.get(CYLRefreshState.Idle);
     this.current = own !== undefined ? own : (idle !== undefined ? idle : null);
     this.playing = state === CYLRefreshState.Refreshing || state === CYLRefreshState.WillRefresh ||
       !this.scrubsWhilePulling;
+    this.state = state;
+    this.applyPlayback();
   }
 
-  /** Moves the frames with the pull (`-updateForPullingPercent:`). */
+  /** Moves the frames, or seeks the animation, with the pull (`-updateForPullingPercent:`). */
   updateForPullingPercent(pullingPercent: number): void {
+    this.percent = pullingPercent;
+    this.applyPlayback();
     const current = this.current;
     if (current === null || this.playing || !this.scrubsWhilePulling || current.images.length === 0) {
       return;
