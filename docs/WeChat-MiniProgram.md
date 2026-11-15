@@ -139,6 +139,19 @@
   pull-to-refresh for mini programs (CYLRefresh is not ported yet); the plan for them is recorded once the spec of
   the iOS pages is done.
 
+### TODO: cyl-refresh takes over the page-level refresh features (score 0)
+
+- **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt (verbatim):** "continue" (after the offer to move the page-level refresh features
+  into `cyl-refresh`).
+- **Plan:** `cyl-refresh` gets the Cupertino header and footer, a listener header, trigger modes (anywhere / onEdge),
+  the second floor (`secondaryOffset`, `secondary` event), the behind scroll mode, a `pull` event with the
+  unclamped percent, a finish phase (`endRefreshing({ success })` shows "Refresh complete" / "Refresh failed" for
+  `finishDuration` ms), the back footer's pull progress, custom string tables (`CYLRefresh.registerStrings`), live
+  language changes (`CYLRefresh.setLanguageCode` re-renders mounted components), a trailer (pull-left "see details")
+  mode, and the chat helpers (`measureContent`, `getScrollTop`, `setScrollTop`, `scrollToBottom`). The easy_refresh
+  page then drops its own component.
+
 ## 结构 / Structure
 
 | Path (under `CrossPlatform/wechat-miniprogram-cylplaceholder/`) | Role |
