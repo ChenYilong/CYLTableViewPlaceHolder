@@ -32,7 +32,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 <!-- harmony-quality:begin -->
 | 中文 | English |
 |:---|:---|
-| **鸿蒙质量分：60 / 100**（完成 17 / 计入 28 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 60 / 100** (17 / 28 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
+| **鸿蒙质量分：62 / 100**（完成 18 / 计入 29 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 62 / 100** (18 / 29 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
 <!-- harmony-quality:end -->
 
 | # | 项目 / Item | 通过条件 / Pass condition | 状态 / Status |
@@ -65,6 +65,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q26 | 编译告警 / Compiler warnings | 干净构建（删除 build 与 .hvigor）没有可修复的 ArkTS 告警：已去掉废弃的 `getContext`（新增 `CYLPlaceholderAnimationSetDefaultContext`）、未处理的异常、未声明的权限（entry 声明 GET_NETWORK_INFO、VIBRATE）、可空的 @ObjectLink；剩下的唯一一类是 wrapBuilder 把动画视图传给 @ObjectLink（5 处，同一模式，改为 V2 状态管理才能消除） / a clean build has no fixable ArkTS warnings: deprecated `getContext` (new `CYLPlaceholderAnimationSetDefaultContext`), unhandled exceptions, undeclared permissions and a nullable @ObjectLink are gone; the one kind left is wrapBuilder handing animation views to @ObjectLink (5 sites, one pattern, which only the V2 state model removes) | 完成 / Done (2026-11-16) |
 | Q27 | 文案覆盖 / Text coverage | `node scripts/harmony-l10n-check.js`：示例用到的每个 `t('...')` 键在七种语言都存在，各语言键相同 / every key the example passes to `t('...')` exists in all seven languages, which have the same keys | 完成 / Done (79 keys used, 231 keys each) |
 | Q28 | 无障碍：可点文字 / Accessibility: tappable texts | 可点的文字与图标都有按钮角色，图标有本地化的无障碍文字 / tappable texts and glyphs have the button role, glyphs a localized label | 完成 / Done (6 sites) |
+| Q29 | UI 自动化测试 / UI test suite | `entry/src/ohosTest`（Hypium + UiTest）：启动、五个 Tab、场景页、动效详情页的播放控制、加号页，每步截图；`scripts/build.sh test` 编译出 ohosTest HAP，`scripts/emulator-check.sh uitest` 在模拟器上运行并取回截图 / launch, the five tabs, a scenario, the playback controls, Publish, a screenshot each; `scripts/build.sh test` builds the ohosTest HAP, `scripts/emulator-check.sh uitest` runs it on the emulator and copies the screenshots | 完成 / Done (2026-11-16, compiled; runs once the emulator exists) |
 
 ## 任务 / Tasks
 
@@ -100,6 +101,10 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   and the refresh test page is presented from the bottom on even rows. 84 tests, 0 failures.
 - **Progress 2026-11-16 (Q26–Q28):** compiler warnings cleaned up (one structural kind left, documented), a text
   coverage check (`scripts/harmony-l10n-check.js`) and button roles / localized labels on tappable texts and glyphs.
+- **Progress 2026-11-16 (Q29):** a UI test suite (`entry/src/ohosTest/ets/test/ExampleUi.test.ets`) so Q9–Q13 run
+  with one command on the emulator (`scripts/emulator-check.sh uitest`); tab items have ids (`tab-<identifier>`).
+  Tried and reverted: passing the content-view builders their parameter by reference does not remove the
+  wrapBuilder → @ObjectLink warning (Q26) and breaks the build.
 
 ### DONE: HarmonyOS port, library and example (score 100)
 
