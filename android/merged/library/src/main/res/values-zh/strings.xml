@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CYLRefreshTrailerIdleText -->
+    <string name="cyl_refresh_trailer_idle">滑动查看图文详情</string>
+    <!-- CYLRefreshTrailerPullingText -->
+    <string name="cyl_refresh_trailer_pulling">释放查看图文详情</string>
+</resources>

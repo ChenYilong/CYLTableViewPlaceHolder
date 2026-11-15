@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：93 / 100**（done + 0.5 × partial，共 709 个计入的符号；done 631、partial 61、planned 17、n/a 195）。 | **Migration score: 93 / 100** (done + 0.5 × partial over 709 counted symbols; done 631, partial 61, planned 17, n/a 195). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 706 个计入的符号；done 639、partial 61、planned 6、n/a 198）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 706 counted symbols; done 639, partial 61, planned 6, n/a 198). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -359,8 +359,8 @@
 | `CYLRefreshIconAnimating` | `com.cyl.refresh.CYLRefreshIconAnimating` | partial | an interface; every component gets the same calls as cyl_ extensions |
 | `CYLRefreshIconAnimating` `iconView` | `CYLRefreshComponent.cyl_iconView` | done |  |
 | `CYLRefreshIconAnimating` `usesIconView` | `CYLRefreshComponent.cyl_usesIconView` | done |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | `CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)` | done |  |
-| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | `cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | `setIconAnimationAttributes(attributes, state) on the GIF / animation headers and footers; CYLRefreshComponent.cyl_setIconAnimationAttributes on any component` | done |  |
+| `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | `setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers` | done |  |
 | `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
 | `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | — | n/a | Android ships no animation files; pass a file path (attributesForAnimationFilePath) |
 | `CYLRefreshIconView(CYLRefreshIconAttributes)` | `com.cyl.refresh.CYLRefreshIconView (companion)` | done |  |
@@ -406,13 +406,13 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshTrailer` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `+trailerWithRefreshingTarget:refreshingAction:` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `ignoredScrollViewContentInsetRight` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `automaticallyRefresh` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | — | planned (TODO) |  |
-| `CYLRefreshTrailer` `autoTriggerTimes` | — | planned (TODO) |  |
+| `CYLRefreshTrailer` | `com.cyl.refresh.CYLRefreshTrailer` | done |  |
+| `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }` | done |  |
+| `CYLRefreshTrailer` `+trailerWithRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin uses the block |
+| `CYLRefreshTrailer` `ignoredScrollViewContentInsetRight` | — | n/a | the Android trailer moves the list itself, there is no content inset to ignore |
+| `CYLRefreshTrailer` `automaticallyRefresh` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
+| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
+| `CYLRefreshTrailer` `autoTriggerTimes` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
 
 ## `CYLRefresh/CYLRefreshConfig.h`
 
@@ -926,17 +926,17 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshNormalTrailer` | — | planned (TODO) |  |
-| `CYLRefreshNormalTrailer` `arrowView` | — | planned (TODO) |  |
+| `CYLRefreshNormalTrailer` | `com.cyl.refresh.CYLRefreshNormalTrailer` | done |  |
+| `CYLRefreshNormalTrailer` `arrowView` | `CYLRefreshNormalTrailer.arrowView` | done | a drawn arrow instead of the bundle image |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStateTrailer` | — | planned (TODO) |  |
-| `CYLRefreshStateTrailer` `stateLabel` | — | planned (TODO) |  |
-| `CYLRefreshStateTrailer` `-setTitle:forState:` | — | planned (TODO) |  |
-| `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | — | planned (TODO) |  |
+| `CYLRefreshStateTrailer` | `com.cyl.refresh.CYLRefreshStateTrailer` | done |  |
+| `CYLRefreshStateTrailer` `stateLabel` | `CYLRefreshStateTrailer.stateLabel` | done |  |
+| `CYLRefreshStateTrailer` `-setTitle:forState:` | `CYLRefreshStateTrailer.setTitle(title, state)` | done |  |
+| `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | — | n/a | frame layout helper; the Android label is placed by a LinearLayout |
 
 ## `CYLRefresh/NSBundle+CYLRefresh.h`
 
@@ -981,7 +981,7 @@
 | `UIScrollView(CYLRefresh)` | `com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)` | partial | the SmartRefreshLayout around the content is the scroll view's counterpart |
 | `UIScrollView(CYLRefresh)` `cyl_header` | `SmartRefreshLayout.cyl_header` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_footer` | `SmartRefreshLayout.cyl_footer` | done |  |
-| `UIScrollView(CYLRefresh)` `cyl_trailer` | — | planned (TODO) |  |
+| `UIScrollView(CYLRefresh)` `cyl_trailer` | `RecyclerView.cyl_trailer` | done | horizontal RecyclerView only; set it once the list is in its parent |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefresh` | `SmartRefreshLayout.cyl_autoHideRefresh` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `SmartRefreshLayout.cyl_autoHideRefreshHeader` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `SmartRefreshLayout.cyl_autoHideRefreshFooter` | done |  |

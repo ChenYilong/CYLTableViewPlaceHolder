@@ -12,7 +12,10 @@ import com.cyl.refresh.CYLRefreshComponent
 import com.cyl.refresh.CYLRefreshDeliveryFooter
 import com.cyl.refresh.CYLRefreshDeliveryHeader
 import com.cyl.refresh.CYLRefreshDropBoxHeader
+import com.cyl.refresh.CYLRefreshDrawnFooter
 import com.cyl.refresh.CYLRefreshFlyHeader
+import com.cyl.refresh.rive.CYLRefreshRiveHeader
+import com.cyl.refresh.rive.CYLRefreshRiveStyle
 import com.cyl.refresh.CYLRefreshFooter
 import com.cyl.refresh.CYLRefreshGameBattleCityHeader
 import com.cyl.refresh.CYLRefreshGameHitBlockHeader
@@ -38,8 +41,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
  */
 
 /**
- * The styles of the "SmartRefreshControl styles" section: title and method (iOS `styles`). The Rive styles wait for
- * a Rive header on Android.
+ * The styles of the "SmartRefreshControl styles" section: title and method (iOS `styles`).
  */
 internal val smartStyles = listOf(
     R.string.merged_smart_delivery to "smartDelivery", R.string.merged_smart_classics to "smartClassics",
@@ -54,7 +56,73 @@ internal val smartStyles = listOf(
     R.string.merged_smart_material_footer to "smartMaterialFooter",
     R.string.merged_smart_delivery_footer to "smartDeliveryFooter",
     R.string.merged_smart_phoenix_footer to "smartPhoenixFooter", R.string.merged_smart_taurus_footer to "smartTaurusFooter",
+    R.string.merged_smart_rive_bow to "smartRiveBow", R.string.merged_smart_rive_bubbles to "smartRiveBubbles",
+    R.string.merged_smart_rive_halloween to "smartRiveHalloween", R.string.merged_smart_rive_skating to "smartRiveSkating",
+    R.string.merged_smart_rive_space to "smartRiveSpace", R.string.merged_smart_rive_squats to "smartRiveSquats",
+    R.string.merged_smart_rive_space_footer to "smartRiveSpaceFooter",
 )
+
+/**
+ * flutter_easy_refresh's Rive style packages: the file in this example's assets and the names each package's indicator
+ * drives (each package's lib/src indicator at dcdbb81; iOS `riveStyle`).
+ */
+private fun riveStyle(method: String): CYLRefreshRiveStyle? {
+    val file = when (method) {
+        "smartRiveBow" -> "Bow"
+        "smartRiveBubbles" -> "Bubbles"
+        "smartRiveHalloween" -> "Halloween"
+        "smartRiveSkating" -> "Skating"
+        "smartRiveSpace", "smartRiveSpaceFooter" -> "Space"
+        "smartRiveSquats" -> "Squats"
+        else -> return null
+    }
+    return CYLRefreshRiveStyle("asset:Animations/CYLScenarioExampleRefresh$file.riv").apply {
+        when (file) {
+            "Bow" -> {
+                stateMachineName = "numberSimulation"
+                triggerOffset = 200f
+                fitsWidth = true
+                pullInput = "pull"
+                pullInputMinimum = 10.0
+                releaseTrigger = "advance"
+                finishTrigger = "advance"
+                restartTrigger = "restart"
+            }
+            "Bubbles" -> {
+                stateMachineName = "Motion"
+                pullInput = "numDrag"
+                pullInputStart = 4.0 / 7.0
+                pullInputMaximum = 99.0
+                pullInputRefreshingValue = 100.0
+                loadingNumber = "numLoad"
+            }
+            "Halloween" -> {
+                triggerOffset = 200f
+                pullAnimation = "Pull"
+                triggerAnimation = "Trigger"
+                loadingAnimation = "Loading"
+            }
+            "Skating" -> {
+                stateMachineName = "Reload"
+                minimumHeight = 140f
+                pullInput = "pullAmount"
+                releaseTrigger = "pullRelease"
+                finishTrigger = "loadFinished"
+            }
+            "Space" -> {
+                stateMachineName = "Reload"
+                pullInput = "Pull Amount"
+                loadingBoolean = "Start"
+            }
+            else -> {
+                triggerOffset = 190f
+                fitsWidth = true
+                idleAnimation = "Idle"
+                loadingAnimation = "Demo"
+            }
+        }
+    }
+}
 
 /**
  * One style's page (iOS `CYLSmartRefreshDemoViewController`): theme rows and test data, with the style's header (it
@@ -81,7 +149,7 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
         "smartGameHitBlock" -> CYLRefreshGameHitBlockHeader(context)
         "smartGameBattleCity" -> CYLRefreshGameBattleCityHeader(context)
         "smartFly" -> CYLRefreshFlyHeader(context)
-        else -> CYLRefreshNormalHeader(context)
+        else -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) } ?: CYLRefreshNormalHeader(context)
     }
 
     fun footer(): CYLRefreshFooter? = when (method) {
@@ -91,6 +159,7 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
         "smartDeliveryFooter" -> CYLRefreshDeliveryFooter(context)
         "smartPhoenixFooter" -> CYLRefreshPhoenixFooter(context)
         "smartTaurusFooter" -> CYLRefreshTaurusFooter(context)
+        "smartRiveSpaceFooter" -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) }?.let { CYLRefreshDrawnFooter(it) }
         else -> null
     }
 
