@@ -221,4 +221,8 @@
     <string name="merged_smart_game_hit_block">GameHitBlock</string>
     <string name="merged_smart_game_battle_city">GameBattleCity</string>
     <string name="merged_smart_fly">Fly</string>
+    <string name="merged_action_replay">重播</string>
+    <string name="merged_action_sources">來源</string>
+    <string name="merged_text_no_animations">未找到動畫資源</string>
+    <string name="merged_text_notice_missing">未找到 NOTICE.animations</string>
 </resources>

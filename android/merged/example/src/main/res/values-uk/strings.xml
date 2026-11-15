@@ -221,4 +221,8 @@
     <string name="merged_smart_game_hit_block">GameHitBlock</string>
     <string name="merged_smart_game_battle_city">GameBattleCity</string>
     <string name="merged_smart_fly">Fly</string>
+    <string name="merged_action_replay">Відтворити знову</string>
+    <string name="merged_action_sources">Джерела</string>
+    <string name="merged_text_no_animations">Анімації не знайдено</string>
+    <string name="merged_text_notice_missing">NOTICE.animations не знайдено</string>
 </resources>
