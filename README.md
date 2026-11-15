@@ -979,6 +979,12 @@ CYLPlaceholderStackView *placeholder = [[CYLPlaceholderStackView alloc]
 
 ![WeChat Mini Program SmartRefreshControl styles drawn mid-refresh](docs/assets/wechat-miniprogram-smartrefresh.png)
 
+| 中文 | English |
+| --- | --- |
+| `cyl-refresh` 新增：Cupertino 头部与尾部、监听头部、触发方式（anywhere / onEdge）、二楼、头部固定在内容下方、结束提示（`finishDuration`）、上拉尾部的拖动进度、自定义文字表（`CYLRefresh.registerStrings`）、即时切换语言，以及左拉「查看图文详情」的 `cyl-refresh-trailer` 组件。左图：Cupertino 头部刷新中；右图：结束提示「Refresh complete」。微信开发者工具 2.02.2609250，基础库 3.17.6，2026-11-15 17:21（+13:00）。 | `cyl-refresh` adds the Cupertino header and footer, a listener header, trigger modes (anywhere / onEdge), the second floor, the behind mode, the finish phase (`finishDuration`), the back footer's pull progress, custom string tables (`CYLRefresh.registerStrings`), live language changes, and the `cyl-refresh-trailer` component (pull left to see details). Left: the Cupertino header refreshing; right: the finish phase, "Refresh complete". WeChat DevTools 2.02.2609250, base library 3.17.6, 2026-11-15 17:21 (+13:00). |
+
+<img src="docs/assets/wechat-miniprogram-refresh-cupertino.png" alt="cyl-refresh Cupertino header refreshing" width="300"> <img src="docs/assets/wechat-miniprogram-refresh-finish.png" alt="cyl-refresh finish phase: Refresh complete" width="300">
+
 ## 适用于多种应用场景 / Scenarios it fits
 
 | 中文 | English |
