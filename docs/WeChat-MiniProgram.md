@@ -23,6 +23,30 @@
 
 ## 任务 / Tasks
 
+### DONE: the package entry works after DevTools' Build npm (score 100)
+
+- **Date / branch:** 2026-11-15, `fix/miniprogram-package-entry` (from `feat/android-refresh-port-followup`; its pull
+  request targets that branch).
+- **The user's original prompt (verbatim):** "修复 cylplaceholder 的包名入口 continue"
+- **Requirement:** `require('cyl-placeholder-miniprogram')` works in a mini program that installs the package from npm
+  and runs DevTools' Build npm. Found while packaging CYLSearchViewController's mini program library, which follows
+  this package (CYLSearchViewController `docs/miniprogram-api-alignment.md`).
+- **Faults (reproduced in a new mini program: `npm pack`, `npm install` of the tarball, Build npm):**
+  1. Build npm copies the `miniprogram` folder (`src/`) to `miniprogram_npm/cyl-placeholder-miniprogram/`, and
+     `require('<package>')` loads that folder's `index.js`. `main` was `src/cyl-placeholder/cyl_placeholder.js`,
+     so there was no `index.js`: "module 'pages/index/cyl-placeholder-miniprogram.js' is not defined".
+  2. The entry spread its requires (`{ ...require('./cyl_scenario_catalog') }`). DevTools' "filter unused files" does
+     not see a require inside an object spread and drops that file ("module … is not defined") once the entry loads.
+- **Fix:** `src/index.js` (`main`) loads `src/cyl-placeholder/cyl_placeholder.js`, which now assigns its parts with
+  plain `Object.assign(module.exports, require(…))` statements. The paths the README uses for a copy of `src/` keep
+  working. `test/package.test.js`: the entry is the built folder's `index.js` and exports the API; every relative
+  require names a file and none is spread; the components refer to each other by relative paths; the published files
+  exist.
+- **Verification:** `npm test` 37/37. In WeChat DevTools 2.02.2609250 (base library 3.6.6, Windows 11 Pro
+  10.0.22631), the new mini program renders `cyl-placeholder` (RetryButton) from `miniprogram_npm`, and
+  `require('cyl-placeholder-miniprogram')` gives 18 exports (`CYLPlaceholderAction.Retry` is
+  `CYLPlaceholderActionRetry`); no console error. Before the fix the same page failed with fault 1.
+
 ### TODO: WeChat Mini Program placeholder package (score 95)
 
 - **Date / branch:** 2026-11-15, `feat/android-refresh-port-followup` (based on `feat/android-refresh-port`; its pull
@@ -201,7 +225,8 @@
 | `src/cyl-placeholder/cyl_images.js` | Generated icon list (validates a configuration's `style`) |
 | `src/cyl-placeholder/animations/` | The 31 placeholder Lottie files of the iOS bundle, `NOTICE.animations`, licenses |
 | `src/cyl-placeholder/no-animation/` | Default `animation` generic (no player) |
-| `src/cyl-placeholder/cyl_placeholder.js` | Package entry exporting the catalog, the HUD, the configuration and the localization |
+| `src/index.js` | The npm entry (`main`): `require('cyl-placeholder-miniprogram')` after Build npm loads it |
+| `src/cyl-placeholder/cyl_placeholder.js` | The JavaScript API: the catalog, the HUD, the configuration, the status and the localization (plain `Object.assign` requires) |
 | `src/cyl-placeholder/locales/<locale>.json` (+ generated `.js` twin) | Strings of `android/placeholder` (7 languages, 108 keys) |
 | `src/cyl-placeholder/images/*.png` | Icons of `android/placeholder` (52), licenses copied alongside |
 | `scripts/import-android-resources.js` | Re-imports strings and icons from Android |
@@ -209,6 +234,7 @@
 | `example/miniprogram` | Scenario list (grouped by category, language picker), a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") and a HUD page (every HUD call, mask type and style pickers) |
 | `example/miniprogram/configurations/` | The six example configuration files (copied from `android/merged/example`) |
 | `test/catalog.test.js`, `test/hud.test.js`, `test/configuration.test.js` | `node --test` unit tests |
+| `test/package.test.js` | The package as a library: entry, requires, component paths, published files |
 
 ## API 对照 / API alignment
 
