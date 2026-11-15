@@ -25,7 +25,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: HarmonyOS port, library and example (score 9)
+### TODO: HarmonyOS port, library and example (score 21)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt (verbatim):** "开始鸿蒙端开发，在新建跨端文档，标注鸿蒙系统版本，新建表格，列出iOS版本存在的API， 在新建表格列出iOS端example 层所有演示，每个表格的第二列为鸿蒙对应实现，默认填TODO 鸿蒙系统软件开发过程中需要实时打分，两个表格一起打分。移除所有todo为满分。每每完成一个功能移除一个todo，一直到满分为止。"
@@ -42,6 +42,18 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   (players, factories, play/stop/progress/speed, repeat counts, `componentWithBundledAnimation` playback),
   `imageBundle`, and the configuration / file initializers (`initWithConfiguration`, `initWithContentsOfURL`,
   `initWithItemContentsOfURL`).
+- **Status 2026-11-16 (score 9 → 21, branch `harmony/hud-status`):** HUD, network status bar, page status,
+  list placeholder and configuration ported to the `cylplaceholder` HAR: `CYLPlaceholderHUD` (state, timing,
+  instance and class methods; drawn by `CYLPlaceholderHUDView` in a global overlay, a `ComponentContent` on the
+  `OverlayManager` of `CYLPlaceholderHUD.sharedHUD.containerView`, a `UIContext`), `CYLPlaceholderNetworkMonitor`
+  (`@kit.NetworkKit` connection), `CYLPlaceholderStatusView` (+ `CYLPlaceholderStatusViewModel`),
+  `CYLPlaceholderStatusController` + `CYLPlaceholderStatusPage` (UIViewController+CYLPlaceholderStatus),
+  `CYLPlaceholderListController` + `CYLPlaceholderList` (UITableView / UICollectionView placeholder blocks,
+  `cyl_reloadData`, `CYLTableViewPlaceHolderDelegate`, `cyl_placeholderHidden`) and `CYLPlaceholderConfiguration`
+  (JSON and XML property lists; `initWithConfiguration`, `initWithContentsOfURL`, `initWithItemContentsOfURL`).
+  Verified by `scripts/build.sh test` (entry HAP and HAR: BUILD SUCCESSFUL; 14 host-run hypium tests pass). The UI
+  (overlay, bar, list) is verified by compiling only: no emulator. Still TODO in these headers: the HUD's
+  `loadingAnimationFileName`, `progressAnimationFileName` and `successAnimationFileName` (animation playback).
 
 ## 对照表 / Tables
 
@@ -50,7 +62,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：9 / 100**（两张表合计：没有 TODO 的行 103 / 计入的行 1066；n/a 18 行不计入）。API 表 103 / 886，演示表 0 / 180。 | **HarmonyOS score: 9 / 100** (both tables: rows without TODO 103 / counted rows 1066; 18 n/a rows not counted). API table 103 / 886, demo table 0 / 180. |
+| **鸿蒙完成度：21 / 100**（两张表合计：没有 TODO 的行 228 / 计入的行 1064；n/a 20 行不计入）。API 表 228 / 884，演示表 0 / 180。 | **HarmonyOS score: 21 / 100** (both tables: rows without TODO 228 / counted rows 1064; 20 n/a rows not counted). API table 228 / 884, demo table 0 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -1048,81 +1060,81 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderHUDStyle` | TODO |
-| `CYLPlaceholderHUDMaskType` | TODO |
-| `CYLPlaceholderHUDState` | TODO |
-| `CYLPlaceholderHUDDismissCompletion` | TODO |
-| `CYLPlaceholderHUD` | TODO |
-| `CYLPlaceholderHUD` `sharedHUD` | TODO |
-| `CYLPlaceholderHUD` `-initWithContainerView:` | TODO |
-| `CYLPlaceholderHUD` `-init` | TODO |
-| `CYLPlaceholderHUD` `-initWithFrame:` | TODO |
-| `CYLPlaceholderHUD` `-initWithCoder:` | TODO |
-| `CYLPlaceholderHUD` `contentView` | TODO |
-| `CYLPlaceholderHUD` `placeholderView` | TODO |
-| `CYLPlaceholderHUD` `hudView` | TODO |
-| `CYLPlaceholderHUD` `actions` | TODO |
-| `CYLPlaceholderHUD` `state` | TODO |
-| `CYLPlaceholderHUD` `status` | TODO |
-| `CYLPlaceholderHUD` `progress` | TODO |
-| `CYLPlaceholderHUD` `visible` | TODO |
-| `CYLPlaceholderHUD` `activityCount` | TODO |
-| `CYLPlaceholderHUD` `containerView` | TODO |
-| `CYLPlaceholderHUD` `style` | TODO |
-| `CYLPlaceholderHUD` `maskType` | TODO |
-| `CYLPlaceholderHUD` `foregroundColor` | TODO |
-| `CYLPlaceholderHUD` `hudBackgroundColor` | TODO |
-| `CYLPlaceholderHUD` `backgroundLayerColor` | TODO |
-| `CYLPlaceholderHUD` `font` | TODO |
-| `CYLPlaceholderHUD` `cornerRadius` | TODO |
-| `CYLPlaceholderHUD` `minimumSize` | TODO |
-| `CYLPlaceholderHUD` `animationSize` | TODO |
-| `CYLPlaceholderHUD` `offsetFromCenter` | TODO |
+| `CYLPlaceholderHUDStyle` | `CYLPlaceholderHUDStyle` (enum) |
+| `CYLPlaceholderHUDMaskType` | `CYLPlaceholderHUDMaskType` (enum) |
+| `CYLPlaceholderHUDState` | `CYLPlaceholderHUDState` (enum) |
+| `CYLPlaceholderHUDDismissCompletion` | `CYLPlaceholderHUDDismissCompletion` (`() => void`) |
+| `CYLPlaceholderHUD` | `CYLPlaceholderHUD` (`@Observed` state) + `CYLPlaceholderHUDView` drawn in a global overlay (`ComponentContent` on the `OverlayManager`) |
+| `CYLPlaceholderHUD` `sharedHUD` | `CYLPlaceholderHUD.sharedHUD` (set its `containerView` to the page's `UIContext` once) |
+| `CYLPlaceholderHUD` `-initWithContainerView:` | `CYLPlaceholderHUD.initWithContainerView(uiContext)` / `new CYLPlaceholderHUD(uiContext)` |
+| `CYLPlaceholderHUD` `-init` | `CYLPlaceholderHUD.init()` |
+| `CYLPlaceholderHUD` `-initWithFrame:` | n/a (NS_UNAVAILABLE on iOS) |
+| `CYLPlaceholderHUD` `-initWithCoder:` | n/a (NS_UNAVAILABLE on iOS) |
+| `CYLPlaceholderHUD` `contentView` | `CYLPlaceholderHUD.contentView` (`CYLPlaceholderViewModel`) |
+| `CYLPlaceholderHUD` `placeholderView` | `CYLPlaceholderHUD.placeholderView` (`CYLPlaceholderStackViewModel`) |
+| `CYLPlaceholderHUD` `hudView` | `CYLPlaceholderHUD.hudView` (the overlay `ComponentContent` while shown) |
+| `CYLPlaceholderHUD` `actions` | `CYLPlaceholderHUD.actions` |
+| `CYLPlaceholderHUD` `state` | `CYLPlaceholderHUD.state` |
+| `CYLPlaceholderHUD` `status` | `CYLPlaceholderHUD.status` |
+| `CYLPlaceholderHUD` `progress` | `CYLPlaceholderHUD.progress` |
+| `CYLPlaceholderHUD` `visible` | `CYLPlaceholderHUD.visible` |
+| `CYLPlaceholderHUD` `activityCount` | `CYLPlaceholderHUD.activityCount` |
+| `CYLPlaceholderHUD` `containerView` | `CYLPlaceholderHUD.containerView` (a `UIContext`) |
+| `CYLPlaceholderHUD` `style` | `CYLPlaceholderHUD.style` |
+| `CYLPlaceholderHUD` `maskType` | `CYLPlaceholderHUD.maskType` |
+| `CYLPlaceholderHUD` `foregroundColor` | `CYLPlaceholderHUD.foregroundColor` |
+| `CYLPlaceholderHUD` `hudBackgroundColor` | `CYLPlaceholderHUD.hudBackgroundColor` |
+| `CYLPlaceholderHUD` `backgroundLayerColor` | `CYLPlaceholderHUD.backgroundLayerColor` |
+| `CYLPlaceholderHUD` `font` | `CYLPlaceholderHUD.font` (fp; null resets) |
+| `CYLPlaceholderHUD` `cornerRadius` | `CYLPlaceholderHUD.cornerRadius` |
+| `CYLPlaceholderHUD` `minimumSize` | `CYLPlaceholderHUD.minimumSize` (`CYLPlaceholderHUDSize`) |
+| `CYLPlaceholderHUD` `animationSize` | `CYLPlaceholderHUD.animationSize` (`CYLPlaceholderHUDSize`) |
+| `CYLPlaceholderHUD` `offsetFromCenter` | `CYLPlaceholderHUD.offsetFromCenter` (`CYLPlaceholderHUDOffset`) |
 | `CYLPlaceholderHUD` `loadingAnimationFileName` | TODO |
 | `CYLPlaceholderHUD` `progressAnimationFileName` | TODO |
 | `CYLPlaceholderHUD` `successAnimationFileName` | TODO |
-| `CYLPlaceholderHUD` `successImage` | TODO |
-| `CYLPlaceholderHUD` `errorImage` | TODO |
-| `CYLPlaceholderHUD` `infoImage` | TODO |
-| `CYLPlaceholderHUD` `graceTimeInterval` | TODO |
-| `CYLPlaceholderHUD` `minimumDismissTimeInterval` | TODO |
-| `CYLPlaceholderHUD` `maximumDismissTimeInterval` | TODO |
-| `CYLPlaceholderHUD` `fadeInAnimationDuration` | TODO |
-| `CYLPlaceholderHUD` `fadeOutAnimationDuration` | TODO |
-| `CYLPlaceholderHUD` `hapticsEnabled` | TODO |
-| `CYLPlaceholderHUD` `-show` | TODO |
-| `CYLPlaceholderHUD` `-showWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `-showProgress:` | TODO |
-| `CYLPlaceholderHUD` `-showProgress:status:` | TODO |
-| `CYLPlaceholderHUD` `-setStatus:` | TODO |
-| `CYLPlaceholderHUD` `-showInfoWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `-showSuccessWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `-showErrorWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `-showImage:status:` | TODO |
-| `CYLPlaceholderHUD` `-showComponents:actions:` | TODO |
-| `CYLPlaceholderHUD` `-showScenario:actions:` | TODO |
-| `CYLPlaceholderHUD` `-popActivity` | TODO |
-| `CYLPlaceholderHUD` `-dismiss` | TODO |
-| `CYLPlaceholderHUD` `-dismissWithCompletion:` | TODO |
-| `CYLPlaceholderHUD` `-dismissWithDelay:` | TODO |
-| `CYLPlaceholderHUD` `-dismissWithDelay:completion:` | TODO |
-| `CYLPlaceholderHUD` `-displayDurationForString:` | TODO |
-| `CYLPlaceholderHUD` `+show` | TODO |
-| `CYLPlaceholderHUD` `+showWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `+showProgress:` | TODO |
-| `CYLPlaceholderHUD` `+showProgress:status:` | TODO |
-| `CYLPlaceholderHUD` `+setStatus:` | TODO |
-| `CYLPlaceholderHUD` `+showInfoWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `+showSuccessWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `+showErrorWithStatus:` | TODO |
-| `CYLPlaceholderHUD` `+showImage:status:` | TODO |
-| `CYLPlaceholderHUD` `+popActivity` | TODO |
-| `CYLPlaceholderHUD` `+dismiss` | TODO |
-| `CYLPlaceholderHUD` `+dismissWithCompletion:` | TODO |
-| `CYLPlaceholderHUD` `+dismissWithDelay:` | TODO |
-| `CYLPlaceholderHUD` `+dismissWithDelay:completion:` | TODO |
-| `CYLPlaceholderHUD` `+isVisible` | TODO |
-| `CYLPlaceholderHUD` `+displayDurationForString:` | TODO |
+| `CYLPlaceholderHUD` `successImage` | `CYLPlaceholderHUD.successImage` |
+| `CYLPlaceholderHUD` `errorImage` | `CYLPlaceholderHUD.errorImage` |
+| `CYLPlaceholderHUD` `infoImage` | `CYLPlaceholderHUD.infoImage` |
+| `CYLPlaceholderHUD` `graceTimeInterval` | `CYLPlaceholderHUD.graceTimeInterval` |
+| `CYLPlaceholderHUD` `minimumDismissTimeInterval` | `CYLPlaceholderHUD.minimumDismissTimeInterval` |
+| `CYLPlaceholderHUD` `maximumDismissTimeInterval` | `CYLPlaceholderHUD.maximumDismissTimeInterval` |
+| `CYLPlaceholderHUD` `fadeInAnimationDuration` | `CYLPlaceholderHUD.fadeInAnimationDuration` |
+| `CYLPlaceholderHUD` `fadeOutAnimationDuration` | `CYLPlaceholderHUD.fadeOutAnimationDuration` |
+| `CYLPlaceholderHUD` `hapticsEnabled` | `CYLPlaceholderHUD.hapticsEnabled` (vibrator) |
+| `CYLPlaceholderHUD` `-show` | `hud.show()` |
+| `CYLPlaceholderHUD` `-showWithStatus:` | `hud.showWithStatus(status)` |
+| `CYLPlaceholderHUD` `-showProgress:` | `hud.showProgress(progress)` |
+| `CYLPlaceholderHUD` `-showProgress:status:` | `hud.showProgressStatus(progress, status)` |
+| `CYLPlaceholderHUD` `-setStatus:` | `hud.setStatus(status)` |
+| `CYLPlaceholderHUD` `-showInfoWithStatus:` | `hud.showInfoWithStatus(status)` |
+| `CYLPlaceholderHUD` `-showSuccessWithStatus:` | `hud.showSuccessWithStatus(status)` |
+| `CYLPlaceholderHUD` `-showErrorWithStatus:` | `hud.showErrorWithStatus(status)` |
+| `CYLPlaceholderHUD` `-showImage:status:` | `hud.showImageStatus(image, status)` |
+| `CYLPlaceholderHUD` `-showComponents:actions:` | `hud.showComponentsActions(components, actions)` |
+| `CYLPlaceholderHUD` `-showScenario:actions:` | `hud.showScenarioActions(scenario, actions)` |
+| `CYLPlaceholderHUD` `-popActivity` | `hud.popActivity()` |
+| `CYLPlaceholderHUD` `-dismiss` | `hud.dismiss()` |
+| `CYLPlaceholderHUD` `-dismissWithCompletion:` | `hud.dismissWithCompletion(completion)` |
+| `CYLPlaceholderHUD` `-dismissWithDelay:` | `hud.dismissWithDelay(delay)` |
+| `CYLPlaceholderHUD` `-dismissWithDelay:completion:` | `hud.dismissWithDelayCompletion(delay, completion)` |
+| `CYLPlaceholderHUD` `-displayDurationForString:` | `hud.displayDurationForString(string)` |
+| `CYLPlaceholderHUD` `+show` | `CYLPlaceholderHUD.show()` (static) |
+| `CYLPlaceholderHUD` `+showWithStatus:` | `CYLPlaceholderHUD.showWithStatus(status)` (static) |
+| `CYLPlaceholderHUD` `+showProgress:` | `CYLPlaceholderHUD.showProgress(progress)` (static) |
+| `CYLPlaceholderHUD` `+showProgress:status:` | `CYLPlaceholderHUD.showProgressStatus(progress, status)` (static) |
+| `CYLPlaceholderHUD` `+setStatus:` | `CYLPlaceholderHUD.setStatus(status)` (static) |
+| `CYLPlaceholderHUD` `+showInfoWithStatus:` | `CYLPlaceholderHUD.showInfoWithStatus(status)` (static) |
+| `CYLPlaceholderHUD` `+showSuccessWithStatus:` | `CYLPlaceholderHUD.showSuccessWithStatus(status)` (static) |
+| `CYLPlaceholderHUD` `+showErrorWithStatus:` | `CYLPlaceholderHUD.showErrorWithStatus(status)` (static) |
+| `CYLPlaceholderHUD` `+showImage:status:` | `CYLPlaceholderHUD.showImageStatus(image, status)` (static) |
+| `CYLPlaceholderHUD` `+popActivity` | `CYLPlaceholderHUD.popActivity()` (static) |
+| `CYLPlaceholderHUD` `+dismiss` | `CYLPlaceholderHUD.dismiss()` (static) |
+| `CYLPlaceholderHUD` `+dismissWithCompletion:` | `CYLPlaceholderHUD.dismissWithCompletion(completion)` (static) |
+| `CYLPlaceholderHUD` `+dismissWithDelay:` | `CYLPlaceholderHUD.dismissWithDelay(delay)` (static) |
+| `CYLPlaceholderHUD` `+dismissWithDelay:completion:` | `CYLPlaceholderHUD.dismissWithDelayCompletion(delay, completion)` (static) |
+| `CYLPlaceholderHUD` `+isVisible` | `CYLPlaceholderHUD.isVisible()` |
+| `CYLPlaceholderHUD` `+displayDurationForString:` | `CYLPlaceholderHUD.displayDurationForString(string)` (static) |
 
 #### `CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`
 
@@ -1140,19 +1152,19 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderNetworkStatus` | TODO |
-| `CYLPlaceholderNetworkStatusBlock` | TODO |
-| `CYLPlaceholderNetworkMonitor` | TODO |
-| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | TODO |
-| `CYLPlaceholderNetworkMonitor` `networkStatus` | TODO |
-| `CYLPlaceholderNetworkMonitor` `reachable` | TODO |
-| `CYLPlaceholderNetworkMonitor` `constrained` | TODO |
-| `CYLPlaceholderNetworkMonitor` `expensive` | TODO |
-| `CYLPlaceholderNetworkMonitor` `monitoring` | TODO |
-| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | TODO |
-| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | TODO |
-| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | TODO |
-| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | TODO |
+| `CYLPlaceholderNetworkStatus` | `CYLPlaceholderNetworkStatus` (enum, same raw values) |
+| `CYLPlaceholderNetworkStatusBlock` | `CYLPlaceholderNetworkStatusBlock` |
+| `CYLPlaceholderNetworkMonitor` | `CYLPlaceholderNetworkMonitor` (`@kit.NetworkKit` connection) |
+| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | `CYLPlaceholderNetworkMonitor.sharedMonitor` |
+| `CYLPlaceholderNetworkMonitor` `networkStatus` | `CYLPlaceholderNetworkMonitor.networkStatus` |
+| `CYLPlaceholderNetworkMonitor` `reachable` | `CYLPlaceholderNetworkMonitor.reachable` |
+| `CYLPlaceholderNetworkMonitor` `constrained` | `CYLPlaceholderNetworkMonitor.constrained` (always false: HarmonyOS reports no Low Data Mode) |
+| `CYLPlaceholderNetworkMonitor` `expensive` | `CYLPlaceholderNetworkMonitor.expensive` (metered or cellular) |
+| `CYLPlaceholderNetworkMonitor` `monitoring` | `CYLPlaceholderNetworkMonitor.monitoring` |
+| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | `CYLPlaceholderNetworkMonitor.startMonitoring()` |
+| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | `CYLPlaceholderNetworkMonitor.stopMonitoring()` |
+| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | `CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock(block)` |
+| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | `CYLPlaceholderNetworkMonitor.nameForStatus(status)` |
 
 #### `CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`
 
@@ -1209,8 +1221,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackViewModel.backgroundAction` |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackViewModel.initWithScenario(scenario, actions)` |
 | `CYLPlaceholderStackView` `-initWithComponents:actions:` | `CYLPlaceholderStackViewModel.initWithComponents(components, actions)` |
-| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | TODO |
-| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | TODO |
+| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | `CYLPlaceholderStackViewModel.initWithConfiguration(configuration, actions, onError)` |
+| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | `CYLPlaceholderStackViewModel.initWithContentsOfURL(path, actions, onError)` (.json / XML .plist) |
 | `CYLPlaceholderStackView` `-initWithFrame:` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLPlaceholderStackView` `-initWithCoder:` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLPlaceholderStackView` `-appendComponent:` | `CYLPlaceholderStackViewModel.appendComponent(component)` |
@@ -1223,19 +1235,19 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderStatusViewDelegate` | TODO |
-| `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | TODO |
-| `CYLPlaceholderStatusViewTapHandler` | TODO |
-| `CYLPlaceholderStatusView` | TODO |
-| `CYLPlaceholderStatusView` `delegate` | TODO |
-| `CYLPlaceholderStatusView` `-initWithFrame:` | TODO |
-| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | TODO |
-| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | TODO |
-| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | TODO |
+| `CYLPlaceholderStatusViewDelegate` | `CYLPlaceholderStatusViewDelegate` (interface) |
+| `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | `CYLPlaceholderStatusViewDelegate.statusViewClicked?(sender)` |
+| `CYLPlaceholderStatusViewTapHandler` | `CYLPlaceholderStatusViewTapHandler` |
+| `CYLPlaceholderStatusView` | `@Component CYLPlaceholderStatusView({ model })` + `CYLPlaceholderStatusViewModel` |
+| `CYLPlaceholderStatusView` `delegate` | `CYLPlaceholderStatusViewModel.delegate` |
+| `CYLPlaceholderStatusView` `-initWithFrame:` | `CYLPlaceholderStatusViewModel.initWithFrame()` |
+| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusViewModel.initWithItemAttributes(attributes, onError)` |
+| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | `CYLPlaceholderStatusViewModel.networkUnavailableItemAttributes` |
+| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | `CYLPlaceholderStatusViewModel.initWithConfiguration(configuration, onError)` |
 | `CYLPlaceholderStatusView` `-initWithCoder:` | n/a (NS_UNAVAILABLE on iOS) |
-| `CYLPlaceholderStatusView` `placeholderView` | TODO |
-| `CYLPlaceholderStatusView` `text` | TODO |
-| `CYLPlaceholderStatusView` `tapHandler` | TODO |
+| `CYLPlaceholderStatusView` `placeholderView` | `CYLPlaceholderStatusViewModel.placeholderView` |
+| `CYLPlaceholderStatusView` `text` | `CYLPlaceholderStatusViewModel.text` |
+| `CYLPlaceholderStatusView` `tapHandler` | `CYLPlaceholderStatusViewModel.tapHandler` |
 
 #### `CYLTableViewPlaceHolder/CYLPlaceholderView.h`
 
@@ -1306,7 +1318,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | TODO |
 | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | TODO |
 | `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | `CYLPlaceholderViewModel.initWithItemAttributes(attributes, imageBundle, onError)` (imageBundle ignored: images are bundled icon names, Resources or paths) |
-| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | TODO |
+| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | `CYLPlaceholderViewModel.initWithItemContentsOfURL(path, imageBundle, onError)` (.json / XML .plist) |
 | `CYLPlaceholderView` `-initWithStyle:message:` | `CYLPlaceholderViewModel.initWithStyleMessage(style, message)` |
 | `CYLPlaceholderView` `-initWithStyle:text:` | `CYLPlaceholderViewModel.initWithStyleText(style, text)` |
 | `CYLPlaceholderView` `-initWithImage:text:` | `CYLPlaceholderViewModel.initWithImageText(image, text)` |
@@ -1320,53 +1332,53 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLTableViewPlaceHolderDelegate` | TODO |
-| `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | TODO |
-| `CYLTableViewPlaceHolderDelegate` `-enableScrollWhenPlaceHolderViewShowing` | TODO |
-| `CYLTableViewPlaceHolderDelegate` `-frameForPlaceHolderViewInTableView:` | TODO |
+| `CYLTableViewPlaceHolderDelegate` | `CYLTableViewPlaceHolderDelegate` (interface, the `CYLPlaceholderListController.delegate`) |
+| `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | `CYLTableViewPlaceHolderDelegate.makePlaceHolderView()` |
+| `CYLTableViewPlaceHolderDelegate` `-enableScrollWhenPlaceHolderViewShowing` | `CYLTableViewPlaceHolderDelegate.enableScrollWhenPlaceHolderViewShowing?()` |
+| `CYLTableViewPlaceHolderDelegate` `-frameForPlaceHolderViewInTableView:` | `CYLTableViewPlaceHolderDelegate.frameForPlaceHolderViewInTableView?(tableView)` (`CYLPlaceholderRect`) |
 
 #### `CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLCollectionPlaceholderViewBlock` | TODO |
-| `CYLCollectionPlaceholderNormalBlock` | TODO |
-| `UICollectionView(CYLPlaceholder)` | TODO |
-| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | TODO |
-| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | TODO |
+| `CYLCollectionPlaceholderViewBlock` | `CYLCollectionPlaceholderViewBlock` |
+| `CYLCollectionPlaceholderNormalBlock` | `CYLCollectionPlaceholderNormalBlock` |
+| `UICollectionView(CYLPlaceholder)` | `CYLPlaceholderListController` (alias `CYLPlaceholderCollectionController`) + `@Component CYLPlaceholderList` around the Grid |
+| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | `CYLPlaceholderListController.cyl_placeholderViewBlock(block)` |
+| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | `CYLPlaceholderListController.cyl_placeholderViewBlockBackToNormalBlock(block, backToNormalBlock)` |
 
 #### `CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLTablePlaceholderViewBlock` | TODO |
-| `CYLTablePlaceholderNormalBlock` | TODO |
-| `UITableView(CYLPlaceholder)` | TODO |
-| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | TODO |
-| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | TODO |
+| `CYLTablePlaceholderViewBlock` | `CYLTablePlaceholderViewBlock` |
+| `CYLTablePlaceholderNormalBlock` | `CYLTablePlaceholderNormalBlock` |
+| `UITableView(CYLPlaceholder)` | `CYLPlaceholderListController` (alias `CYLPlaceholderTableController`) + `@Component CYLPlaceholderList` around the List |
+| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | `CYLPlaceholderListController.cyl_placeholderViewBlock(block)` |
+| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | `CYLPlaceholderListController.cyl_placeholderViewBlockBackToNormalBlock(block, backToNormalBlock)` |
 
 #### `CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `UITableView(CYLTableViewPlaceHolder)` | TODO |
-| `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | TODO |
+| `UITableView(CYLTableViewPlaceHolder)` | `CYLPlaceholderListController` (with a `CYLTableViewPlaceHolderDelegate`) |
+| `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | `CYLPlaceholderListController.cyl_reloadData()` |
 
 #### `CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLPlaceholderStatusDisplay` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | TODO |
-| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | TODO |
-| `UIScrollView(CYLPlaceholderVisibility)` | TODO |
-| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | TODO |
+| `CYLPlaceholderStatusDisplay` | `CYLPlaceholderStatusDisplay` (None / StatusBar / Placeholder / All, combine with `|`) |
+| `UIViewController(CYLPlaceholderStatus)` | `CYLPlaceholderStatusController` (the page's UIViewController) + `@Component CYLPlaceholderStatusPage` |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | `CYLPlaceholderStatusController.cyl_statusView` |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | `CYLPlaceholderStatusController.cyl_placeholderScrollView` |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | `CYLPlaceholderStatusController.cyl_statusDisplay` |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | `CYLPlaceholderStatusController.cyl_setStatusDisplay(display, animated)` |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | `CYLPlaceholderStatusController.cyl_showsStatusViewWhenOffline` |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | `CYLPlaceholderStatusController.cyl_applyStatusConfiguration(configuration, onError)` |
+| `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `CYLPlaceholderStatusController.cyl_applyStatusConfigurationWithContentsOfURL(path, onError)` |
+| `UIScrollView(CYLPlaceholderVisibility)` | `CYLPlaceholderListController` |
+| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `CYLPlaceholderListController.cyl_placeholderHidden` |
 
 ### 表 2：iOS example 演示 / Table 2: iOS example demos
 
