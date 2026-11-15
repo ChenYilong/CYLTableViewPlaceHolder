@@ -43,6 +43,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   and score: `docs/HarmonyOS.md`.
 - HarmonyOS IDE and emulator setup (prerequisites; the region set to China in DevEco Studio's `country.region.xml`,
   which must say `<countryregion name="CN"/>`): skill `cyl-harmonyos-setup`.
+- HarmonyOS accessibility and localization: all HarmonyOS code supports visual assistance / blind users and
+  localization (add it first where missing); UI tests locate controls by accessibility label or localized text before
+  ids, also for taps and multi-step flows. Rule: `instructions.md` "HarmonyOS accessibility and localization"; skill
+  `cyl-harmonyos-a11y-l10n`.
 
 ## Naming and compatibility
 

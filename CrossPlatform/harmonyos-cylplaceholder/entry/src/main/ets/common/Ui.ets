@@ -130,6 +130,9 @@ export function TableCell(row: TableRow, action: () => void) {
     pressed: { .backgroundColor(UiColor.pressed) },
     normal: { .backgroundColor(UiColor.cell) }
   })
+  // A row reads as one element (its title and detail) and acts as a button.
+  .accessibilityGroup(true)
+  .accessibilityRole(AccessibilityRoleType.BUTTON)
   .onClick(action)
 }
 

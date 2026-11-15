@@ -381,6 +381,7 @@ export struct CYLRefreshComponentView {
   sideIcon(c: CYLRefreshComponentModel) {
     if (cylSideImage(c) !== null) {
       Image(cylSideImage(c) as ResourceStr).width(20).height(20).objectFit(ImageFit.Contain)
+        .accessibilityLevel('no')
     } else if (cylFrames(c) !== null && (cylFrames(c) as CYLRefreshFrames).images.length > 0) {
       if ((cylFrames(c) as CYLRefreshFrames).animating) {
         ImageAnimator()
@@ -390,12 +391,14 @@ export struct CYLRefreshComponentView {
           .width(40)
           .height(40)
           .scale({ x: c.cyl_flipScaleX(cylAnimationView(c)) })
+          .accessibilityLevel('no')
       } else {
         Image((cylFrames(c) as CYLRefreshFrames).images[(cylFrames(c) as CYLRefreshFrames).index])
           .width(40)
           .height(40)
           .objectFit(ImageFit.Contain)
           .scale({ x: c.cyl_flipScaleX(cylAnimationView(c)) })
+          .accessibilityLevel('no')
       }
     } else if (cylSpinner(c) !== null && !(cylSpinner(c) as CYLRefreshActivityIndicatorModel).hidden) {
       if ((cylSpinner(c) as CYLRefreshActivityIndicatorModel).animating) {
@@ -403,6 +406,7 @@ export struct CYLRefreshComponentView {
           .width(24)
           .height(24)
           .color(c.colorAccent !== null ? c.colorAccent : (cylSpinner(c) as CYLRefreshActivityIndicatorModel).color)
+          .accessibilityLevel('no')
       } else {
         LoadingProgress()
           .width(24)
@@ -410,6 +414,7 @@ export struct CYLRefreshComponentView {
           .enableLoading(false)
           .opacity((cylSpinner(c) as CYLRefreshActivityIndicatorModel).progress)
           .color(c.colorAccent !== null ? c.colorAccent : (cylSpinner(c) as CYLRefreshActivityIndicatorModel).color)
+          .accessibilityLevel('no')
       }
     } else if (cylArrow(c) !== null && !(cylArrow(c) as CYLRefreshImageViewModel).hidden) {
       Image(cylArrowSource(c, cylArrow(c) as CYLRefreshImageViewModel))
@@ -420,6 +425,7 @@ export struct CYLRefreshComponentView {
         .rotate({ angle: (cylArrow(c) as CYLRefreshImageViewModel).rotation })
         .scale({ x: c.cyl_flipScaleX(cylArrow(c)) })
         .animation({ duration: c.fastAnimationDuration * 1000 })
+        .accessibilityLevel('no')
     }
   }
 
@@ -434,10 +440,12 @@ export struct CYLRefreshComponentView {
             .iterations(-1)
             .width(c.cyl_iconView.iconSize.width)
             .height(c.cyl_iconView.iconSize.height)
+            .accessibilityLevel('no')
         } else {
           Image(cylIconFrame(c.cyl_iconView))
             .width(c.cyl_iconView.iconSize.width)
             .height(c.cyl_iconView.iconSize.height)
+            .accessibilityLevel('no')
             .objectFit(ImageFit.Contain)
         }
       } else if (c.cyl_iconView.placeholderView !== null) {
@@ -449,11 +457,14 @@ export struct CYLRefreshComponentView {
           .width(c.cyl_iconView.iconSize.width)
           .height(c.cyl_iconView.iconSize.height)
           .objectFit(ImageFit.Contain)
+          .accessibilityLevel('no')
       }
       if (c.cyl_iconView.title !== null) {
         Text(c.cyl_iconView.title).fontSize(c.cyl_iconView.titleFont).fontColor(c.cyl_iconView.titleColor)
       }
     }
+    // iOS: VoiceOver reads the text from the one view that shows it (the icon's title), as one element.
+    .accessibilityGroup(true)
   }
 
   build() {
@@ -499,6 +510,8 @@ export struct CYLRefreshComponentView {
                     cylStateLabel(this.model() as CYLRefreshComponentModel) as CYLRefreshLabel))
                   .scale({ x: (this.model() as CYLRefreshComponentModel).cyl_flipScaleX(
                     cylStateLabel(this.model() as CYLRefreshComponentModel)) })
+                  .accessibilityRole(this.model() instanceof CYLRefreshAutoStateFooterModel ?
+                    AccessibilityRoleType.BUTTON : AccessibilityRoleType.TEXT)
                   .onClick(() => {
                     const m = this.current();
                     if (m instanceof CYLRefreshAutoStateFooterModel) {
@@ -530,6 +543,10 @@ export struct CYLRefreshComponentView {
       .opacity((this.model() as CYLRefreshComponentModel).cyl_autoHidden ? 0 :
         (this.model() as CYLRefreshComponentModel).alpha)
       .visibility((this.model() as CYLRefreshComponentModel).hidden ? Visibility.Hidden : Visibility.Visible)
+      // iOS: the state and time labels read as one element; what is not shown (hidden, auto-hidden) is not read either.
+      .accessibilityGroup(true)
+      .accessibilityLevel((this.model() as CYLRefreshComponentModel).hidden ||
+        (this.model() as CYLRefreshComponentModel).cyl_autoHidden ? 'no-hide-descendants' : 'auto')
       .backgroundColor((this.model() as CYLRefreshComponentModel).colorPrimary !== null &&
         cylRefreshDrawnStyle(this.model()) === null ?
         (this.model() as CYLRefreshComponentModel).colorPrimary as string : Color.Transparent)

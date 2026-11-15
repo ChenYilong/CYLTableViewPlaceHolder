@@ -410,6 +410,9 @@ export struct RefreshEasyPage {
             .padding({ left: 16, right: 16 })
         }
         .backgroundColor(Color.White)
+        // A row reads as one element (its title and detail) and acts as a button.
+        .accessibilityGroup(true)
+        .accessibilityRole(AccessibilityRoleType.BUTTON)
         .onClick(() => this.onRow(index))
       }, (row: EasyRow) => row.id)
       if (this.method === 'easyCupertino') {

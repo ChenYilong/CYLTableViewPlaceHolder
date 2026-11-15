@@ -431,6 +431,25 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   (CN). Make sure the region file now says China: `<countryregion name="CN"/>`; without it Device Manager offers no
   emulator.
 
+### HarmonyOS accessibility and localization (owner's rule, 2026-11-16)
+
+- **All HarmonyOS code of this project supports visual assistance and blind users** (screen readers, large text,
+  high contrast) **and internationalization / localization.** If you find code that does not, add the support first.
+- **Accessibility:** every tappable element has a role and a localized label (`accessibilityRole`, visible text or
+  `accessibilityText`); rows group their content (`accessibilityGroup`); decorative images and animations are hidden
+  (`accessibilityLevel('no')`); hidden controls are not read; selected items say so; library views follow the iOS
+  VoiceOver behavior (placeholder, status bar, HUD, refresh controls).
+- **Localization:** no hard-coded user-visible or spoken text. Library texts: `CYLPlaceholderLocalization`; example
+  texts: `t('Key')` in seven languages (en, zh-Hans, zh-Hant, ja, ko, ru, uk); tab bar texts (Selected, Plus button,
+  Close, Play / Stop, Badges): copied from CYLTabBarController's string table, only the keys this project uses, by
+  `CrossPlatform/harmonyos-cylplaceholder/scripts/import-tabbar-strings.js`. Check with
+  `node scripts/harmony-l10n-check.js`.
+- **Automated UI tests use these features first to locate controls**: find a control by its accessibility label
+  (`ON.description`) or its localized text (`ON.text`), in any of the example's languages, and fall back to component
+  ids only when needed; trigger taps, complex flows and consecutive operations through those lookups
+  (`entry/src/ohosTest/ets/test/ExampleUi.test.ets`).
+- Checklists and the test pattern: skill `cyl-harmonyos-a11y-l10n` (`.agents/skills/cyl-harmonyos-a11y-l10n/SKILL.md`).
+
 ## Localization
 
 Localization is always several files: one per language, often several tables
