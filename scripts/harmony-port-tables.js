@@ -41,6 +41,45 @@ function apiRows() {
     const unavailable = /unavailable on iOS too/.test(note)
     rows.push({ group: file, key: ios, value: unavailable ? 'n/a (NS_UNAVAILABLE on iOS)' : 'TODO' })
   }
+  return rows.concat(swiftRows())
+}
+
+// The public Swift API of the library (RiveSwift/, LottieSwift/), which docs/Android-API-Map.md (Objective-C headers
+// only) does not list: every `public` / `open` class and member, as "`Class`" and "`Class` `member`".
+function swiftRows() {
+  const rows = []
+  const lib = path.join(ROOT, 'CYLTableViewPlaceHolder')
+  for (const dir of ['LottieSwift', 'RiveSwift']) {
+    const full = path.join(lib, dir)
+    if (!fs.existsSync(full)) continue
+    for (const f of fs.readdirSync(full).filter((n) => n.endsWith('.swift')).sort()) {
+      let cls = null
+      for (const raw of fs.readFileSync(path.join(full, f), 'utf8').split(/\r?\n/)) {
+        const line = raw.trim()
+        if (!/^(@objc\S* )?(public|open) /.test(line)) continue
+        const c = /\b(?:class|struct|enum|protocol) (\w+)/.exec(line)
+        if (c && !/\b(func|var|let|init)\b/.test(line.split(c[1])[0])) {
+          cls = c[1]
+          rows.push({ group: dir + '/' + f, key: '`' + cls + '`', value: 'TODO' })
+          continue
+        }
+        let member = null
+        const fn = /\bfunc (\w+)\(([^)]*)\)/.exec(line)
+        const v = /\b(?:var|let) (\w+)/.exec(line)
+        const init = /\binit\??\(([^)]*)\)/.exec(line)
+        if (fn) member = (/\bstatic\b/.test(line) ? '+' : '-') + fn[1] + '(' + fn[2].split(',').map((p) => p.trim().split(/[\s:]/)[0]).filter(Boolean).map((p) => p + ':').join('') + ')'
+        else if (init) member = 'init(' + init[1].split(',').map((p) => p.trim().split(/[\s:]/)[0]).filter(Boolean).map((p) => p + ':').join('') + ')'
+        else if (v) member = v[1]
+        if (!member || !cls) continue
+        if (/^init\(coder:\)$/.test(member) || /^init\(_:\)$/.test(member)) {
+          rows.push({ group: dir + '/' + f, key: '`' + cls + '` `' + member + '`', value: 'n/a (NSCoding initializer, unavailable on iOS)' })
+          continue
+        }
+        if (/override var contentMode/.test(line)) member = 'contentMode'
+        rows.push({ group: dir + '/' + f, key: '`' + cls + '` `' + member + '`', value: 'TODO' })
+      }
+    }
+  }
   return rows
 }
 
