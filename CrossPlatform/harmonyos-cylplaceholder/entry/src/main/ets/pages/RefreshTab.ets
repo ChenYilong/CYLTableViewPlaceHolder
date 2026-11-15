@@ -1,7 +1,7 @@
 // CYLRefreshExampleViewController: the menu of CYLRefresh demos (8 sections, 65 rows, from the mini program's
 // pages/refresh/menu.js); each subtitle names the iOS view controller and method. The list itself has a normal
 // header and a back footer, each ending after 2 s.
-// The demos themselves are not ported yet: a row opens the small CYLRefresh demo (RefreshDemo.ets) for now.
+// A row opens its demo page (routeFor): the table, collection, web, i18n, SmartRefresh and easy_refresh pages.
 import {
   CYLRefreshBackNormalFooterModel,
   CYLRefreshContainer,
@@ -95,6 +95,31 @@ const SECTIONS: MenuSection[] = [
   ]),
 ];
 
+/** The page of a row (CYLRefreshExample's view controller). */
+function routeFor(row: MenuRow): string {
+  switch (row.vc) {
+    case 'CYLRefreshCollectionViewController':
+    case 'CYLRefreshPinHeaderCollectionViewController':
+    case 'CYLRefreshHorizontalCollectionViewController':
+      return Route.RefreshCollection;
+    case 'CYLRefreshWKWebViewController':
+      return Route.RefreshWeb;
+    case 'CYLRefreshI18NExampleViewController':
+      return Route.RefreshI18n;
+    case 'CYLSmartRefreshDemoViewController':
+      return Route.RefreshSmart;
+    case 'CYLEasyRefreshDemoViewController':
+      return Route.RefreshEasy;
+    default:
+      return Route.RefreshTable;
+  }
+}
+
+/** The route value: the method, with the view controller first for the collection pages ("vc|method"). */
+function routeValue(row: MenuRow): string {
+  return routeFor(row) === Route.RefreshCollection ? row.vc + '|' + row.method : row.method;
+}
+
 @Component
 export struct RefreshTab {
   private scroller: Scroller = new Scroller();
@@ -136,7 +161,7 @@ export struct RefreshTab {
                       Divider().strokeWidth(0.5).color(UiColor.separator).margin({ left: 16 })
                     }
                     TableCell(new TableRow(row.vc + row.method, t(row.key), row.vc + ' - ' + row.method),
-                      () => push(Route.RefreshDemo, RouteParam.of(row.method, t(row.key))))
+                      () => push(routeFor(row), RouteParam.of(routeValue(row), t(row.key))))
                   }, (row: MenuRow, r: number) => s + '-' + r)
                 }
                 .borderRadius(10)

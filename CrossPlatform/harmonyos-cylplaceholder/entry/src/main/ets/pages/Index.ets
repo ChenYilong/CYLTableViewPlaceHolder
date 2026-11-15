@@ -26,7 +26,13 @@ import { HUDPage } from './HUDPage';
 import { HUDLifecyclePage } from './HUDLifecyclePage';
 import { RefreshIconsPage } from './RefreshIconsPage';
 import { RefreshIconDemoPage } from './RefreshIconDemoPage';
-import { RefreshDemo } from './RefreshDemo';
+import { RefreshTablePage } from './RefreshTablePage';
+import { RefreshTestPage } from './RefreshTestPage';
+import { RefreshCollectionPage } from './RefreshCollectionPage';
+import { RefreshWebPage } from './RefreshWebPage';
+import { RefreshI18nPage } from './RefreshI18nPage';
+import { RefreshSmartPage } from './RefreshSmartPage';
+import { RefreshEasyPage } from './RefreshEasyPage';
 
 /** One tab: identifier, title key and the icons (rawfile/example/tab, from the mini program). */
 class Tab {
@@ -110,11 +116,20 @@ struct Index {
       RefreshIconsPage({ param: param as RouteParam })
     } else if (name === Route.RefreshIconDemo) {
       RefreshIconDemoPage({ param: param as RouteParam })
-    } else if (name === Route.RefreshDemo) {
-      NavDestination() {
-        RefreshDemo()
-      }
-      .title('CYLRefresh')
+    } else if (name === Route.RefreshTable) {
+      RefreshTablePage({ param: param as RouteParam })
+    } else if (name === Route.RefreshTest) {
+      RefreshTestPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshCollection) {
+      RefreshCollectionPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshWeb) {
+      RefreshWebPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshI18n) {
+      RefreshI18nPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshSmart) {
+      RefreshSmartPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshEasy) {
+      RefreshEasyPage({ param: param as RouteParam })
     }
   }
 
