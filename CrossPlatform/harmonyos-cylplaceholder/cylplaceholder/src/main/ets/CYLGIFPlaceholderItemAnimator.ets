@@ -1,6 +1,6 @@
 // iOS CYLGIFPlaceholderItemAnimator: a CYLPlaceholderItemViewAnimator for ".gif" files. The frames are decoded with
 // @kit.ImageKit (createPixelMapList / getDelayTimeList) and played by ArkUI's ImageAnimator, which gives play, stop,
-// last frame and repeat counts. Kotlin: CYLGIFPlaceholderItemAnimator.
+// last frame and repeat counts; the speed divides each frame's duration. Kotlin: CYLGIFPlaceholderItemAnimator.
 import { image } from '@kit.ImageKit';
 import {
   CYLPlaceholderAnimationArrayBuffer,
@@ -39,6 +39,12 @@ export function CYLGIFFrameDurations(delays: number[], frameCount: number): numb
 /** ImageAnimator's iterations for a repeat count: 0 loops (-1), N plays N times. */
 export function CYLGIFIterations(repeatCount: number): number {
   return repeatCount <= 0 ? -1 : Math.floor(repeatCount);
+}
+
+/** One frame's duration in ms at a playback speed (at least 1 ms). */
+export function CYLGIFScaledDuration(duration: number, speed: number): number {
+  const rate = isFinite(speed) && speed > 0 ? speed : 1;
+  return Math.max(1, Math.round(duration / rate));
 }
 
 /** A GIF drawn by ImageAnimator. */
@@ -91,10 +97,28 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
     });
   }
 
+  get cyl_supportsAnimationViewSpeed(): boolean {
+    return true;
+  }
+
+  /** Divides every frame's duration by the speed; ImageAnimator takes the new frames at once. */
+  cyl_setAnimationViewSpeed(speed: number): boolean {
+    if (!isFinite(speed) || speed <= 0) {
+      return false;
+    }
+    this.playbackSpeed = speed;
+    if (this.pixelMaps.length > 0) {
+      this.updateFrames();
+    }
+    return true;
+  }
+
   private updateFrames(): void {
     const frames: ImageFrameInfo[] = [];
     for (let i = 0; i < this.pixelMaps.length; i++) {
-      const frame: ImageFrameInfo = { src: this.pixelMaps[i], duration: Math.max(1, Math.round(this.durations[i])) };
+      const frame: ImageFrameInfo = {
+        src: this.pixelMaps[i], duration: CYLGIFScaledDuration(this.durations[i], this.playbackSpeed)
+      };
       frames.push(frame);
     }
     this.frames = frames;

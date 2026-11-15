@@ -150,9 +150,21 @@ export class CYLPlaceholderViewModel {
 
   /**
    * How many times the animation plays each time it starts: 0 loops until stopped, N plays N times (iOS
-   * `animationRepeatCount`). Defaults to 1, or to CYLPlaceholderItemAnimationRepeatCount.
+   * `animationRepeatCount`). Defaults to 1, or to CYLPlaceholderItemAnimationRepeatCount. A change applies live to
+   * the player that exists, so a playing animation starts or stops looping without a restart (examples' Loop switch).
    */
-  animationRepeatCount: number = 1;
+  get animationRepeatCount(): number {
+    return this.animationRepeatCountValue;
+  }
+
+  set animationRepeatCount(value: number) {
+    this.animationRepeatCountValue = Math.max(0, Math.floor(value));
+    if (this.animationPlayer !== null) {
+      this.animationPlayer.setAnimationRepeatCount(this.animationRepeatCountValue);
+    }
+  }
+
+  private animationRepeatCountValue: number = 1;
   /**
    * The animation played in place of the image: a bundled name ("CYLPlaceholderEmpty.json"), a rawfile path or a
    * sandbox path. A factory registered for its extension plays it, else the animator registry; the image stays as

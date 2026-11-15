@@ -445,9 +445,21 @@ export class CYLPlaceholderPlayableContentView extends CYLPlaceholderAnimationCo
   cyl_animationViewErrorHandler: CYLPlaceholderAnimationErrorHandler | null = null;
   /** 0 loops, N plays N times. */
   repeatCount: number = 1;
+  /** The playback rate, 1 is normal (HarmonyOS addition: iOS sets speed on the engine view itself). */
+  playbackSpeed: number = 1;
   /** Requested before the load finished: 1 play, 2 last frame, 0 nothing. */
   pendingCommand: number = 0;
   protected loading: boolean = false;
+
+  /** Whether cyl_setAnimationViewSpeed changes the speed; subclasses that can return true. */
+  get cyl_supportsAnimationViewSpeed(): boolean {
+    return false;
+  }
+
+  /** Sets the playback rate (above 0), live; false when the view cannot change it. */
+  cyl_setAnimationViewSpeed(speed: number): boolean {
+    return false;
+  }
 
   playableView(): CYLPlaceholderItemAnimationPlayableView | null {
     return this;
@@ -500,10 +512,26 @@ export class CYLPlaceholderPlayableContentView extends CYLPlaceholderAnimationCo
 /** The player of a playable view: forwards to its cyl_ methods (used by CYLPlaceholderItemViewAnimator). */
 class CYLPlaceholderPlayableViewPlayer extends CYLPlaceholderItemAnimationBasePlayer {
   private playable: CYLPlaceholderItemAnimationPlayableView;
+  private speedView: CYLPlaceholderPlayableContentView | null;
 
   constructor(view: CYLPlaceholderAnimationContentView, playable: CYLPlaceholderItemAnimationPlayableView) {
     super(view);
     this.playable = playable;
+    this.speedView = view instanceof CYLPlaceholderPlayableContentView ? view as CYLPlaceholderPlayableContentView : null;
+  }
+
+  get animationSpeed(): number {
+    return this.speedView !== null ? this.speedView.playbackSpeed : 1;
+  }
+
+  set animationSpeed(value: number) {
+    if (this.speedView !== null) {
+      this.speedView.cyl_setAnimationViewSpeed(value);
+    }
+  }
+
+  get supportsAnimationSpeed(): boolean {
+    return this.speedView !== null && this.speedView.cyl_supportsAnimationViewSpeed;
   }
 
   play(): void {
