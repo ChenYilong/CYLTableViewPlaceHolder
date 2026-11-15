@@ -10,12 +10,14 @@ import {
   CYLPlaceholderStackViewModel,
   CYLPlaceholderVersion
 } from 'cylplaceholder';
+import { RefreshDemo } from './RefreshDemo';
 
 @Entry
 @Component
 struct Index {
   @State scenarios: CYLPlaceholderScenario[] = CYLPlaceholderScenarioCatalog.allScenarios;
   @State showing: boolean = false;
+  @State showingRefresh: boolean = false;
   @State placeholder: CYLPlaceholderStackViewModel = new CYLPlaceholderStackViewModel();
   @State language: string = CYLPlaceholderLocalization.effectiveLanguage;
 
@@ -41,19 +43,26 @@ struct Index {
   build() {
     Column() {
       Row() {
-        Text(this.showing ? '‹ Back' : 'CYLPlaceholder ' + CYLPlaceholderVersion)
+        Text(this.showing || this.showingRefresh ? '‹ Back' : 'CYLPlaceholder ' + CYLPlaceholderVersion)
           .fontSize(17)
-          .fontColor(this.showing ? '#007AFF' : '#000000')
+          .fontColor(this.showing || this.showingRefresh ? '#007AFF' : '#000000')
           .onClick(() => {
             this.showing = false;
+            this.showingRefresh = false;
           })
         Blank()
+        Text('Refresh').fontSize(15).fontColor('#007AFF').margin({ right: 16 }).onClick(() => {
+          this.showing = false;
+          this.showingRefresh = true;
+        })
         Text(this.language).fontSize(15).fontColor('#007AFF').onClick(() => this.nextLanguage())
       }
       .width('100%')
       .padding(16)
 
-      if (this.showing) {
+      if (this.showingRefresh) {
+        RefreshDemo().layoutWeight(1)
+      } else if (this.showing) {
         CYLPlaceholderStackView({ model: this.placeholder }).layoutWeight(1)
       } else {
         List() {

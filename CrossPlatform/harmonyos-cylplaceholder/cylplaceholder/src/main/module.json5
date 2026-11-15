@@ -2,6 +2,11 @@
   "module": {
     "name": "cylplaceholder",
     "type": "har",
-    "deviceTypes": ["phone", "tablet", "2in1"]
+    "deviceTypes": ["phone", "tablet", "2in1"],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.VIBRATE"
+      }
+    ]
   }
 }
