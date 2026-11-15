@@ -13,7 +13,7 @@ Page({
     this.setData({
       sections: SECTIONS.map((s) => ({
         title: t(s.key),
-        rows: s.rows.map((r) => ({ title: t(r.key), subtitle: r.vc + ' - ' + r.method, page: r.page, method: r.method })),
+        rows: s.rows.map((r) => ({ title: t(r.key), subtitle: r.vc + ' - ' + r.method, page: r.page, method: r.method, vc: r.vc })),
       })),
     })
   },
@@ -24,12 +24,12 @@ Page({
     clearTimeout(this.timer)
   },
   onOpen(e) {
-    const { page, method, title } = e.currentTarget.dataset
+    const { page, method, title, vc } = e.currentTarget.dataset
     if (READY.indexOf(page) < 0) {
       wx.showToast({ title: 'Not ported yet', icon: 'none' })
       return
     }
-    wx.navigateTo({ url: '/pages/' + page + '/' + page + '?method=' + method + '&title=' + encodeURIComponent(title) })
+    wx.navigateTo({ url: '/pages/' + page + '/' + page + '?method=' + method + '&vc=' + vc + '&title=' + encodeURIComponent(title) })
   },
   onRefresh() {
     this.timer = setTimeout(() => this.selectComponent('#refresh').endRefreshing(), 2000)

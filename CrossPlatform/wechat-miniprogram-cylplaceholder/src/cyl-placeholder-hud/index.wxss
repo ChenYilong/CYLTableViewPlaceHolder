@@ -8,7 +8,7 @@
 .hud--mask-None, .hud--mask-Clear { background: transparent; }
 .hud--mask-Black { background: rgba(0, 0, 0, 0.5); }
 .hud--mask-Gradient { background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%); }
-.hud__box { min-width: 100px; min-height: 100px; max-width: 260px; box-sizing: border-box; padding: 16px;
+.hud__box { max-width: 260px; box-sizing: border-box; padding: 16px;
   border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .hud__box--Automatic, .hud__box--Light { background: rgba(255, 255, 255, 0.96); color: #1c1c1e;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12); }

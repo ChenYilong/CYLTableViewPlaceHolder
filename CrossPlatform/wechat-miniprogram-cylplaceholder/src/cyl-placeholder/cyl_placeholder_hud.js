@@ -15,8 +15,10 @@ const CYLPlaceholderHUDState = Object.freeze({
   Image: 'Image',
   Custom: 'Custom',
 })
-const CYLPlaceholderHUDStyle = Object.freeze({ Automatic: 'Automatic', Light: 'Light', Dark: 'Dark' })
-const CYLPlaceholderHUDMaskType = Object.freeze({ None: 'None', Clear: 'Clear', Black: 'Black', Gradient: 'Gradient' })
+/** Custom uses foregroundColor and hudBackgroundColor. */
+const CYLPlaceholderHUDStyle = Object.freeze({ Automatic: 'Automatic', Light: 'Light', Dark: 'Dark', Custom: 'Custom' })
+/** Custom uses backgroundLayerColor. */
+const CYLPlaceholderHUDMaskType = Object.freeze({ None: 'None', Clear: 'Clear', Black: 'Black', Gradient: 'Gradient', Custom: 'Custom' })
 
 class CYLPlaceholderHUD {
   /**
@@ -42,6 +44,22 @@ class CYLPlaceholderHUD {
     this.maximumDismissTimeInterval = 5
     this.fadeInAnimationDuration = 0.15
     this.fadeOutAnimationDuration = 0.15
+    /** Text and icon color of the Custom style (foregroundColor). */
+    this.foregroundColor = '#ffffff'
+    /** Box color of the Custom style (hudBackgroundColor). */
+    this.hudBackgroundColor = '#30b0c7'
+    /** Mask color of the Custom mask type (backgroundLayerColor). */
+    this.backgroundLayerColor = 'rgba(48, 176, 199, 0.3)'
+    /** The box's corner radius and minimum side, in px (cornerRadius, minimumSize). */
+    this.cornerRadius = 14
+    this.minimumSize = 100
+    /** The box's offset from the center, [x, y] in px (offsetFromCenter). */
+    this.offsetFromCenter = [0, 0]
+    /** A Lottie file played while loading instead of the spinner GIF; needs the component's animation generic. */
+    this.loadingAnimationFileName = ''
+    /** Vibrates on success and error (hapticsEnabled); the component supplies the vibration. */
+    this.hapticsEnabled = false
+    this._vibrate = timers.vibrate || null
     this._grace = null
     this._dismiss = null
   }
@@ -153,6 +171,14 @@ class CYLPlaceholderHUD {
       blocksTouches: this.visible && this.maskType !== CYLPlaceholderHUDMaskType.None,
       fadeIn: this.fadeInAnimationDuration,
       fadeOut: this.fadeOutAnimationDuration,
+      foregroundColor: this.foregroundColor,
+      hudBackgroundColor: this.hudBackgroundColor,
+      backgroundLayerColor: this.backgroundLayerColor,
+      cornerRadius: this.cornerRadius,
+      minimumSize: this.minimumSize,
+      offsetX: (this.offsetFromCenter || [0, 0])[0] || 0,
+      offsetY: (this.offsetFromCenter || [0, 0])[1] || 0,
+      loadingAnimation: this.loadingAnimationFileName || '',
     }
   }
 
@@ -160,6 +186,7 @@ class CYLPlaceholderHUD {
     this.activityCount = 0
     this._cancel('_grace')
     this._present(state, { status, image })
+    if (this.hapticsEnabled && this._vibrate && (state === CYLPlaceholderHUDState.Success || state === CYLPlaceholderHUDState.Error)) this._vibrate()
     this._dismiss = this._setTimeout(() => this.dismiss(), this.displayDurationForString(status) * 1000)
   }
 

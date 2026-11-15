@@ -8,23 +8,25 @@ const {
   CYLPlaceholderHUDMaskType,
 } = require('../../components/cyl-placeholder/cyl_placeholder')
 
-const CUSTOM = 'Custom'
-/** Styles and their value keys. The core mini program HUD has no custom colors; see `applyStyle`. */
+/** Styles and their value keys; Custom is a white foreground on a teal box, as iOS. */
 const STYLES = [
   [CYLPlaceholderHUDStyle.Automatic, 'CYLScenarioHUDStyleAutomatic'],
   [CYLPlaceholderHUDStyle.Light, 'CYLScenarioHUDStyleLight'],
   [CYLPlaceholderHUDStyle.Dark, 'CYLScenarioHUDStyleDark'],
-  [CUSTOM, 'CYLScenarioHUDStyleCustom'],
+  [CYLPlaceholderHUDStyle.Custom, 'CYLScenarioHUDStyleCustom'],
 ]
+/** Mask types; Custom is systemTeal at 0.3 (backgroundLayerColor), as iOS. */
 const MASKS = [
   [CYLPlaceholderHUDMaskType.None, 'CYLScenarioHUDMaskNone'],
   [CYLPlaceholderHUDMaskType.Clear, 'CYLScenarioHUDMaskClear'],
   [CYLPlaceholderHUDMaskType.Black, 'CYLScenarioHUDMaskBlack'],
   [CYLPlaceholderHUDMaskType.Gradient, 'CYLScenarioHUDMaskGradient'],
-  [CUSTOM, 'CYLScenarioHUDStyleCustom'],
+  [CYLPlaceholderHUDMaskType.Custom, 'CYLScenarioHUDStyleCustom'],
 ]
 /** The loading animations that suit the HUD: the scenario's own GIF first, then Lottie, PAG and Rive. */
 const ANIMATIONS = CYLPlaceholderScenarioCatalog.animationFileNamesForScenario('HUD')
+/** The package path of a Lottie loading animation, or '' (GIF: the HUD's own spinner GIF; PAG / Rive: no player). */
+const lottiePath = (name) => (/\.json$/.test(name) ? '/assets/animations/' + name : '')
 
 /** Row identifier, title key and section (0 Show, 1 Look, 2 Page life cycle). */
 const ROWS = [
@@ -49,7 +51,7 @@ const SECTION_KEYS = ['CYLScenarioHUDSectionShow', 'CYLScenarioHUDSectionLook', 
 const CANCEL = 'cancel'
 
 Page({
-  data: { sections: [], customMask: false, customStyle: false, hudVisible: false },
+  data: { sections: [] },
 
   onLoad() {
     wx.setNavigationBarTitle({ title: t('CYLScenarioTitleHUD') })
@@ -64,12 +66,10 @@ Page({
   onReady() {
     this.hud = this.selectComponent('#hud').hud
     this.hud.minimumDismissTimeInterval = 1.5
-    // The page draws the custom mask itself, so it follows the HUD's visibility through its render callback.
-    const render = this.hud._render
-    this.hud._render = (view) => {
-      render(view)
-      if (view.visible !== this.data.hudVisible) this.setData({ hudVisible: view.visible })
-    }
+    // The Custom style and mask colors of the iOS page: white on systemTeal, systemTeal at 0.3.
+    this.hud.foregroundColor = '#ffffff'
+    this.hud.hudBackgroundColor = '#30b0c7'
+    this.hud.backgroundLayerColor = 'rgba(48, 176, 199, 0.3)'
   },
 
   /** viewWillDisappear: also when the life cycle page is pushed. */
@@ -128,7 +128,6 @@ Page({
         this.showSuccess(t('CYLScenarioHUDStatusSaved'))
         break
       case 'error':
-        this.haptic()
         hud.showErrorWithStatus(t('CYLScenarioHUDStatusFailed'))
         break
       case 'info':
@@ -166,12 +165,13 @@ Page({
       case 'animation':
         if (!ANIMATIONS.length) return
         this.animationIndex = (this.animationIndex + 1) % ANIMATIONS.length
-        // loadingAnimationFileName: kept on the HUD; the mini program HUD always plays its GIF (no setter in core).
-        hud.loadingAnimationFileName = ANIMATIONS[this.animationIndex]
+        // loadingAnimationFileName: Lottie files play; the GIF is the HUD's own spinner; PAG / Rive have no player.
+        hud.loadingAnimationFileName = lottiePath(ANIMATIONS[this.animationIndex])
         this.showPreview()
         break
       case 'haptics':
         this.hapticsEnabled = !this.hapticsEnabled
+        hud.hapticsEnabled = this.hapticsEnabled
         this.showSuccess(t('CYLScenarioHUDStatusSaved'))
         break
       case 'lifecycle':
@@ -181,30 +181,15 @@ Page({
     this.render()
   },
 
-  /**
-   * Custom style: iOS uses a white foreground on a systemTeal box. The core mini program HUD has no foreground /
-   * background colors and its box is style-isolated, so Custom falls back to the Dark box (white text).
-   */
   applyStyle() {
-    const style = STYLES[this.styleIndex][0]
-    this.hud.style = style === CUSTOM ? CYLPlaceholderHUDStyle.Dark : style
-    this.setData({ customStyle: style === CUSTOM })
+    this.hud.style = STYLES[this.styleIndex][0]
   },
 
-  /** Custom mask: backgroundLayerColor teal at 0.3, drawn by the page under a Clear (touch-blocking) HUD mask. */
   applyMask() {
-    const mask = MASKS[this.maskIndex][0]
-    this.hud.maskType = mask === CUSTOM ? CYLPlaceholderHUDMaskType.Clear : mask
-    this.setData({ customMask: mask === CUSTOM })
-  },
-
-  /** Haptics on success and error (hapticsEnabled; off by default as on iOS). */
-  haptic() {
-    if (this.hapticsEnabled) wx.vibrateShort({ type: 'light' })
+    this.hud.maskType = MASKS[this.maskIndex][0]
   },
 
   showSuccess(status) {
-    this.haptic()
     this.hud.showSuccessWithStatus(status)
   },
 

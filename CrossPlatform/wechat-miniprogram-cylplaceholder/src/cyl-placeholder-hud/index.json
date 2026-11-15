@@ -3,5 +3,8 @@
   "styleIsolation": "isolated",
   "usingComponents": {
     "cyl-placeholder": "../cyl-placeholder/index"
+  },
+  "componentGenerics": {
+    "animation": { "default": "../cyl-placeholder/no-animation/index" }
   }
 }
