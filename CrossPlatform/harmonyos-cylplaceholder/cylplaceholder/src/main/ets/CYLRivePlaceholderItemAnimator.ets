@@ -7,6 +7,7 @@
 // is true for "duration" seconds, or its trigger `trigger` fires, and `color` is written to its "color" property.
 // @ohos/rive is one runtime with both APIs, so `legacy` only picks the input API (see CYLRiveOptions.ets).
 import { Fit, Loop, RiveAnimationView, ViewModelInstance, initializeRive } from '@ohos/rive';
+import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
 import {
   CYLRiveActivePropertyPath,
   CYLRiveColorPropertyPath,
@@ -79,10 +80,24 @@ function riveFit(fit: ImageFit): Fit {
   return Fit.CONTAIN;
 }
 
+/**
+ * @ohos/rive has no playback speed: this controller scales the time of every advance (the renderer calls advance with
+ * the real elapsed time each frame), so animations and state machines run at `speed`.
+ */
+export class CYLRiveSpeedController extends RiveFileController {
+  speed: number = 1;
+
+  advance(elapsed: number): void {
+    super.advance(elapsed * this.speed);
+  }
+}
+
 /** A Rive file drawn by RiveAnimationView. */
 @Observed
 export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentView {
   private riveView: RiveAnimationView | null = null;
+  /** Given to RiveAnimationView so the speed applies (the view uses it when it keeps the controller it was given). */
+  readonly speedController: CYLRiveSpeedController = new CYLRiveSpeedController();
   private bytes: ArrayBuffer | null = null;
   /** How a named animation plays: AUTO follows the file (iOS `.autoLoop`). */
   private loop: Loop = Loop.AUTO;
@@ -304,6 +319,25 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     view.pause();
   }
 
+  get cyl_supportsAnimationViewSpeed(): boolean {
+    return true;
+  }
+
+  /** Live: the next frame advances by the elapsed time times the speed. */
+  cyl_setAnimationViewSpeed(speed: number): boolean {
+    if (!isFinite(speed) || speed <= 0) {
+      return false;
+    }
+    this.playbackSpeed = speed;
+    this.speedController.speed = speed;
+    const view = this.riveView;
+    if (view !== null && view.controller !== null && view.controller !== this.speedController) {
+      // The view made its own controller: the speed cannot reach it.
+      return false;
+    }
+    return true;
+  }
+
   /** 0 loops and 1 plays once a named animation; other counts, and state machines, are not supported. */
   cyl_setAnimationViewRepeatCount(repeatCount: number): boolean {
     if (this.option(CYLPlaceholderAnimationOptionRiveAnimation) === undefined || (repeatCount !== 0 && repeatCount !== 1)) {
@@ -380,6 +414,7 @@ struct CYLRiveAnimationComponent {
     Stack() {
       RiveAnimationView({
         riveAutoPlay: false,
+        controller: this.view.speedController,
         onReady: (riveView: RiveAnimationView) => {
           this.view.onRiveReady(riveView);
         }

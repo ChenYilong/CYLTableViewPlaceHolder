@@ -43,7 +43,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q4 | 播放控制：Lottie / Playback controls: Lottie | 从 0 重播、倍速、循环均由库 API 实时生效 / restart from 0, speed and loop applied live through the library API | 完成 / Done (`setPlaceholderAnimationSpeed`, live `animationRepeatCount`) |
 | Q5 | 播放控制：PAG / Playback controls: PAG | 同上；libpag 无倍速，由库逐帧驱动进度 / as above; libpag has no speed, the library drives the progress per frame | 完成 / Done (`CYLPAGDrivenProgress`, 4 tests) |
 | Q6 | 播放控制：GIF / Playback controls: GIF | 同上；倍速按帧时长缩放 / as above; speed scales the frame durations | 完成 / Done (`CYLGIFScaledDuration`, 1 test) |
-| Q7 | 播放控制：Rive 倍速 / Playback controls: Rive speed | Rive 动画按倍速播放（@ohos/rive 无倍速 API，需要 `RiveArtboardRenderer` 子类缩放 `advance` 的时间，在模拟器上验证） / Rive plays at the chosen speed (@ohos/rive has no speed API; needs a `RiveArtboardRenderer` subclass scaling `advance`'s time, checked on the emulator) | TODO |
+| Q7 | 播放控制：Rive 倍速 / Playback controls: Rive speed | Rive 动画按倍速播放（@ohos/rive 无倍速 API，需要 `RiveArtboardRenderer` 子类缩放 `advance` 的时间，在模拟器上验证） / Rive plays at the chosen speed (@ohos/rive has no speed API; needs a `RiveArtboardRenderer` subclass scaling `advance`'s time, checked on the emulator) | TODO（代码已加：`CYLRiveSpeedController` 缩放 `advance` 的时间并传给 RiveAnimationView；待模拟器确认视图使用该 controller / code in: `CYLRiveSpeedController` scales `advance`'s time and is given to RiveAnimationView; the emulator must confirm the view keeps that controller) |
 | Q8 | 动效详情页的控制条 / Controls on the animation detail page | `AnimationDetailPage.ets` 有“全部播放”、倍速滑块（0.25x–3x，步长 0.25x，显示“1x”）、循环开关，七种语言，带无障碍标签 / has Play all, a speed slider (0.25x–3x, step 0.25x, "1x" label) and a loop switch, seven languages, accessibility labels | 完成 / Done (`entry/src/main/ets/common/Playback.ets`) |
 | Q9 | 模拟器：安装与启动 / Emulator: install and launch | HarmonyOS 6.0.1 手机模拟器上安装 entry HAP 并启动，无崩溃 / the entry HAP installs and launches on the HarmonyOS 6.0.1 phone emulator, no crash | TODO（模拟器安装中 / emulator being installed） |
 | Q10 | 模拟器：所有 Tab / Emulator: every tab | 每个 Tab 能打开、内容与 iOS 相同，各一张截图 / every tab opens with the iOS content, one screenshot each | TODO |
@@ -76,6 +76,10 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   (`cyl_setAnimationViewSpeed`); the animation detail page has the controls (`common/Playback.ets`, spinners loop
   by default, the old 4-second auto replay is gone because the loop switch replaces it). `scripts/build.sh test`:
   BUILD SUCCESSFUL, 77 tests (6 new), 0 failures. UI verified by compiling only until Q9.
+- **Progress 2026-11-16 (Q7, code):** `CYLRiveSpeedController` (a `RiveFileController` subclass whose `advance`
+  multiplies the elapsed time by the speed) is passed as RiveAnimationView's `controller`; `cyl_setAnimationViewSpeed`
+  returns false when the view replaced it. @ohos/rive is a bytecode HAR, so whether the view keeps a given controller
+  is checked on the emulator. Build: BUILD SUCCESSFUL, 77 tests, 0 failures.
 
 ### DONE: HarmonyOS port, library and example (score 100)
 
