@@ -328,6 +328,67 @@ export function CYLPlaceholderAnimationIsSandboxURL(URL: string): boolean {
   return URL.startsWith('/') || URL.startsWith('file://');
 }
 
+/**
+ * Whether the URL's file exists and is readable, checked synchronously (iOS `Data(contentsOf:)` succeeding): a sandbox
+ * file, or a rawfile through the context's resource manager. False for an empty URL or without a context.
+ */
+export function CYLPlaceholderAnimationFileExists(URL: string, context: Context | null = null): boolean {
+  const file = CYLPlaceholderAnimationFileOfURL(URL);
+  if (file.length === 0) {
+    return false;
+  }
+  try {
+    if (CYLPlaceholderAnimationIsSandboxURL(file)) {
+      const path = file.startsWith('file://') ? file.substring('file://'.length) : file;
+      return fileIo.accessSync(path) && fileIo.statSync(path).isFile();
+    }
+    let host: Context | null = context;
+    if (host === null) {
+      host = getContext() as common.Context;
+    }
+    if (host === null || host === undefined) {
+      return false;
+    }
+    host.resourceManager.getRawFdSync(file);
+    host.resourceManager.closeRawFdSync(file);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Reads the URL's file synchronously (iOS `Data(contentsOf:)`); null when it cannot be read. */
+export function CYLPlaceholderAnimationReadFileSync(URL: string, context: Context | null = null): Uint8Array | null {
+  const file = CYLPlaceholderAnimationFileOfURL(URL);
+  if (file.length === 0) {
+    return null;
+  }
+  try {
+    if (CYLPlaceholderAnimationIsSandboxURL(file)) {
+      const path = file.startsWith('file://') ? file.substring('file://'.length) : file;
+      const handle = fileIo.openSync(path, fileIo.OpenMode.READ_ONLY);
+      try {
+        const size = fileIo.statSync(handle.fd).size;
+        const buffer = new ArrayBuffer(size);
+        fileIo.readSync(handle.fd, buffer);
+        return new Uint8Array(buffer);
+      } finally {
+        fileIo.closeSync(handle);
+      }
+    }
+    let host: Context | null = context;
+    if (host === null) {
+      host = getContext() as common.Context;
+    }
+    if (host === null || host === undefined) {
+      return null;
+    }
+    return host.resourceManager.getRawFileContentSync(file);
+  } catch (e) {
+    return null;
+  }
+}
+
 /** Reads the URL's file: a sandbox file, or a rawfile through the context's resource manager. */
 export async function CYLPlaceholderAnimationReadFile(URL: string, context: Context | null): Promise<Uint8Array> {
   const file = CYLPlaceholderAnimationFileOfURL(URL);

@@ -184,3 +184,19 @@ export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
 export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';
 export * from './src/main/ets/refresh/drawn/CYLRefreshRiveHeader';
 export { CYLRefreshRiveView, cylRefreshRiveHeader } from './src/main/ets/refresh/drawn/CYLRefreshRiveView';
+
+// The public Swift API of iOS RiveSwift / LottieSwift: the Rive views and the lottie-ios 2 compatible Lottie view.
+export {
+  CYLPlaceholderRiveItemAnimationView,
+  CYLPlaceholderRiveLegacyItemAnimationView,
+  CYLPlaceholderRiveLegacyViewProvider,
+  CYLPlaceholderRiveLegacyOptions
+} from './src/main/ets/CYLPlaceholderRiveItemAnimationView';
+export { CYLRiveColorInteger } from './src/main/ets/CYLRiveOptions';
+export {
+  CYLPlaceholderCompatibleLOTAnimation,
+  CYLPlaceholderCompatibleLOTAnimationView,
+  CYLPlaceholderCompatibleLOTAnimationViewComponent
+} from './src/main/ets/CYLPlaceholderCompatibleLottie';
+export * from './src/main/ets/CYLPlaceholderCompatibleLottieSupport';
+export { CYLPlaceholderAnimationFileExists, CYLPlaceholderAnimationReadFileSync } from './src/main/ets/CYLPlaceholderAnimation';
