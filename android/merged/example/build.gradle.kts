@@ -39,6 +39,8 @@ dependencies {
     implementation(project(":placeholder-lottie"))
     implementation(project(":placeholder-pag"))
     implementation(project(":placeholder-rive"))
+    // The Rive refresh styles of the SmartRefresh section.
+    implementation(project(":merged-rive"))
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
