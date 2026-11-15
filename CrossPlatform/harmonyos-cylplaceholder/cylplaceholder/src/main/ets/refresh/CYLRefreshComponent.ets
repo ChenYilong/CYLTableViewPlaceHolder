@@ -8,6 +8,7 @@
 // CYLRefreshView.ets) drives from the List / Scroll / Grid it wraps: the real scroll offset of its Scroller plus the
 // over-scroll pulled by a parallel PanGesture at the edges ("reveals"). contentOffset therefore has the iOS meaning:
 // negative when the content is pulled down past its top, beyond the end when pulled up past its end.
+import { CYLRefreshImage } from './CYLRefreshImage';
 import { vibrator } from '@kit.SensorServiceKit';
 import { CYLEdgeInsets } from '../CYLPlaceholderViewTypes';
 import {
@@ -179,7 +180,7 @@ export class CYLRefreshLabel extends CYLRefreshViewModel {
 
 /** An image view of a control (arrow, result, frames): the image, its rotation in degrees and visibility. */
 export class CYLRefreshImageViewModel extends CYLRefreshViewModel {
-  image: ResourceStr | null = null;
+  image: CYLRefreshImage | null = null;
   rotation: number = 0;
 }
 
@@ -1394,7 +1395,7 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   }
 
   /** Frame images of a state, played over `duration` seconds (`-cyl_setIconImages:duration:forState:`). */
-  cyl_setIconImages(images: ResourceStr[], duration: number, state: CYLRefreshState): void {
+  cyl_setIconImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): void {
     const attributes = new CYLRefreshIconAttributes();
     attributes.images = images.slice();
     attributes.duration = duration;
@@ -1403,7 +1404,7 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   }
 
   /** Shows the frame of `images` that matches the pull (`-cyl_showIconImageFrameOf:pullingPercent:`). */
-  cyl_showIconImageFrameOf(images: ResourceStr[] | null, pullingPercent: number): void {
+  cyl_showIconImageFrameOf(images: CYLRefreshImage[] | null, pullingPercent: number): void {
     if (images === null || images.length === 0) {
       return;
     }

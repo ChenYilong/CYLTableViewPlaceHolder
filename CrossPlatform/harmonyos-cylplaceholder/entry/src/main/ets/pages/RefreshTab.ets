@@ -11,6 +11,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
+import { preloadRefreshFrames } from '../common/RefreshFrames';
 import { LargeTitle, SectionHeader, TableCell, TableRow, UiColor } from '../common/Ui';
 
 class MenuRow {
@@ -127,6 +128,7 @@ export struct RefreshTab {
   private timer: number = -1;
 
   aboutToAppear(): void {
+    preloadRefreshFrames(this.getUIContext().getHostContext() as Context);
     const header = new CYLRefreshNormalHeaderModel();
     header.automaticallyChangeAlpha = true;
     const footer = new CYLRefreshBackNormalFooterModel();

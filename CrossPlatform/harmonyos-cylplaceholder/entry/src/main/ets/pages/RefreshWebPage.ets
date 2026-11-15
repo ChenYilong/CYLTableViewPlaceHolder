@@ -6,6 +6,7 @@
 // ArkWeb scrolls inside itself, so the Web uses WebLayoutMode.FIT_CONTENT (as tall as its page) inside a Scroll that
 // CYLRefreshContainer drives: the header then sits over the web page as it does over WKWebView's scroll view.
 import { webview } from '@kit.ArkWeb';
+import { window } from '@kit.ArkUI';
 import {
   CYLRefreshAnimationHeaderModel,
   CYLRefreshContainer,
@@ -14,6 +15,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam, pop } from '../common/Routes';
+import { imagesOfBundledGIF } from '../common/RefreshFrames';
 
 const URL: string = 'https://github.com/CoderMJLee/MJRefresh';
 
@@ -28,12 +30,24 @@ export struct RefreshWebPage {
   private header: CYLRefreshAnimationHeaderModel = new CYLRefreshAnimationHeaderModel();
   private loadedOnce: boolean = false;
 
+  private setStatusBarHidden(hidden: boolean): void {
+    window.getLastWindow(this.getUIContext().getHostContext()).then((w: window.Window) => {
+      w.setSpecificSystemBarEnabled('status', !hidden).catch(() => {
+      });
+    }).catch(() => {
+    });
+  }
+
+  aboutToDisappear(): void {
+    this.setStatusBarHidden(false);
+  }
+
   aboutToAppear(): void {
     // CYLRefreshExampleImagesHeader: arrows while idle, a ring when pulled and while refreshing.
     const header = this.header;
-    header.setAnimationImages([$rawfile('example/core-animations/CYLRefreshArrows.gif')], 0, CYLRefreshState.Idle);
-    header.setAnimationImages([$rawfile('example/core-animations/CYLRefreshRing.gif')], 0, CYLRefreshState.Pulling);
-    header.setAnimationImages([$rawfile('example/core-animations/CYLRefreshRing.gif')], 0,
+    header.setAnimationImages(imagesOfBundledGIF('CYLRefreshArrows.gif'), 0, CYLRefreshState.Idle);
+    header.setAnimationImages(imagesOfBundledGIF('CYLRefreshRing.gif'), 0, CYLRefreshState.Pulling);
+    header.setAnimationImages(imagesOfBundledGIF('CYLRefreshRing.gif'), 0,
       CYLRefreshState.Refreshing);
     header.automaticallyChangeAlpha = true;
     // webView.reload() (the first refresh is the page's first load).
@@ -110,6 +124,9 @@ export struct RefreshWebPage {
       })
     }
     .hideTitleBar(true)
+    // iOS hides the status bar too (prefersStatusBarHidden); it comes back when the page goes away.
+    .onShown(() => this.setStatusBarHidden(true))
+    .onHidden(() => this.setStatusBarHidden(false))
     .backgroundColor(Color.White)
   }
 }

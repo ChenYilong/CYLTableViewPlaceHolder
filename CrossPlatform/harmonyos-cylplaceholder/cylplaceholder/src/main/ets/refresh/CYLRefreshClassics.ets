@@ -1,6 +1,7 @@
 // CYLRefreshClassics: the HarmonyOS counterpart of the iOS controls under Custom/Header, Custom/Footer/Auto,
 // Custom/Footer/Back, Custom/Trailer and Custom/Cupertino: state texts, the last update time, arrows, spinners and
 // frame animations, as models drawn by CYLRefreshView.ets.
+import { CYLRefreshImage } from './CYLRefreshImage';
 import {
   CYLRefreshAutoFooterIdleText,
   CYLRefreshAutoFooterNoMoreDataText,
@@ -55,14 +56,14 @@ export interface CYLRefreshIconAnimating {
 /** The frame images of an animation control, per state (the iOS stateImages / stateDurations). */
 export class CYLRefreshFrames {
   /** The frames shown now, the frame index while pulled, and whether they play (refreshing). */
-  images: ResourceStr[] = [];
+  images: CYLRefreshImage[] = [];
   index: number = 0;
   animating: boolean = false;
   duration: number = 0;
-  private stateImages: Map<CYLRefreshState, ResourceStr[]> = new Map();
+  private stateImages: Map<CYLRefreshState, CYLRefreshImage[]> = new Map();
   private stateDurations: Map<CYLRefreshState, number> = new Map();
 
-  set(images: ResourceStr[], duration: number, state: CYLRefreshState): void {
+  set(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): void {
     if (images.length === 0) {
       return;
     }
@@ -70,7 +71,7 @@ export class CYLRefreshFrames {
     this.stateDurations.set(state, duration);
   }
 
-  imagesFor(state: CYLRefreshState): ResourceStr[] {
+  imagesFor(state: CYLRefreshState): CYLRefreshImage[] {
     const images = this.stateImages.get(state);
     return images !== undefined ? images : [];
   }
@@ -308,7 +309,7 @@ export class CYLRefreshAnimationHeaderModel extends CYLRefreshStateHeaderModel i
   }
 
   /** Frames of a state played over `duration` seconds (`-setAnimationImages:duration:forState:`). */
-  setAnimationImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshAnimationHeaderModel {
+  setAnimationImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshAnimationHeaderModel {
     this.frames.set(images, duration, state);
     this.frames.update(this.state);
     this.cyl_setNeedsLayout();
@@ -316,7 +317,7 @@ export class CYLRefreshAnimationHeaderModel extends CYLRefreshStateHeaderModel i
   }
 
   /** Frames of a state, 0.1 s each (`-setAnimationImages:forState:`). */
-  setAnimationImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshAnimationHeaderModel {
+  setAnimationImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshAnimationHeaderModel {
     return this.setAnimationImages(images, images.length * 0.1, state);
   }
 
@@ -376,13 +377,13 @@ export class CYLRefreshGifHeaderModel extends CYLRefreshAnimationHeaderModel {
   }
 
   /** `-setImages:duration:forState:`. */
-  setImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshGifHeaderModel {
+  setImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshGifHeaderModel {
     this.setAnimationImages(images, duration, state);
     return this;
   }
 
   /** `-setImages:forState:`. */
-  setImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshGifHeaderModel {
+  setImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshGifHeaderModel {
     this.setAnimationImagesForState(images, state);
     return this;
   }
@@ -548,14 +549,14 @@ export class CYLRefreshAutoAnimationFooterModel extends CYLRefreshAutoStateFoote
     return footer;
   }
 
-  setAnimationImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshAutoAnimationFooterModel {
+  setAnimationImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshAutoAnimationFooterModel {
     this.frames.set(images, duration, state);
     this.frames.update(this.state);
     this.cyl_setNeedsLayout();
     return this;
   }
 
-  setAnimationImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshAutoAnimationFooterModel {
+  setAnimationImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshAutoAnimationFooterModel {
     return this.setAnimationImages(images, images.length * 0.1, state);
   }
 
@@ -605,12 +606,12 @@ export class CYLRefreshAutoGifFooterModel extends CYLRefreshAutoAnimationFooterM
     return this.animationView;
   }
 
-  setImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshAutoGifFooterModel {
+  setImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshAutoGifFooterModel {
     this.setAnimationImages(images, duration, state);
     return this;
   }
 
-  setImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshAutoGifFooterModel {
+  setImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshAutoGifFooterModel {
     this.setAnimationImagesForState(images, state);
     return this;
   }
@@ -771,14 +772,14 @@ export class CYLRefreshBackAnimationFooterModel extends CYLRefreshBackStateFoote
     return footer;
   }
 
-  setAnimationImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshBackAnimationFooterModel {
+  setAnimationImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshBackAnimationFooterModel {
     this.frames.set(images, duration, state);
     this.frames.update(this.state);
     this.cyl_setNeedsLayout();
     return this;
   }
 
-  setAnimationImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshBackAnimationFooterModel {
+  setAnimationImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshBackAnimationFooterModel {
     return this.setAnimationImages(images, images.length * 0.1, state);
   }
 
@@ -835,12 +836,12 @@ export class CYLRefreshBackGifFooterModel extends CYLRefreshBackAnimationFooterM
     return this.animationView;
   }
 
-  setImages(images: ResourceStr[], duration: number, state: CYLRefreshState): CYLRefreshBackGifFooterModel {
+  setImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): CYLRefreshBackGifFooterModel {
     this.setAnimationImages(images, duration, state);
     return this;
   }
 
-  setImagesForState(images: ResourceStr[], state: CYLRefreshState): CYLRefreshBackGifFooterModel {
+  setImagesForState(images: CYLRefreshImage[], state: CYLRefreshState): CYLRefreshBackGifFooterModel {
     this.setAnimationImagesForState(images, state);
     return this;
   }

@@ -103,6 +103,7 @@ export * from './src/main/ets/refresh/CYLRefreshConst';
 export * from './src/main/ets/refresh/CYLRefreshComponent';
 export * from './src/main/ets/refresh/CYLRefreshClassics';
 export * from './src/main/ets/refresh/CYLRefreshIconView';
+export * from './src/main/ets/refresh/CYLRefreshImage';
 export * from './src/main/ets/refresh/CYLRefreshPaging';
 export { CYLRefreshBundle } from './src/main/ets/refresh/CYLRefreshBundle';
 export {

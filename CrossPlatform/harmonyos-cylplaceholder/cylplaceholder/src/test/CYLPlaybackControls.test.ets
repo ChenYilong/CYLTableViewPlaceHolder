@@ -5,6 +5,7 @@ import { CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator'
 import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlaceholderItemAnimator';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
 import { CYLRefreshIconViewModel } from '../main/ets/refresh/CYLRefreshIconView';
+import { CYLRefreshFrameDuration } from '../main/ets/refresh/CYLRefreshView';
 
 export default function playbackControlsTest() {
   describe('CYLPlaybackControls', () => {
@@ -72,6 +73,13 @@ export default function playbackControlsTest() {
       icon.loopsWhilePlaying = false;
       expect(icon.loopsWhilePlaying).assertFalse();
       icon.replayAnimation();
+    });
+
+    it('refreshFrameDurationFollowsUIImageView', 0, () => {
+      expect(CYLRefreshFrameDuration(1, 10)).assertEqual(100);
+      expect(Math.abs(CYLRefreshFrameDuration(0, 12) - 1000 / 30) < 1e-9).assertTrue();
+      expect(CYLRefreshFrameDuration(0.1, 100)).assertEqual(16);
+      expect(CYLRefreshFrameDuration(1, 0)).assertEqual(100);
     });
   });
 }

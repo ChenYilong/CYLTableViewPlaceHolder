@@ -24,9 +24,11 @@ import {
   CYLRefreshIconSize,
   CYLRefreshNormalHeaderModel,
   CYLRefreshScrollViewModel,
-  CYLRefreshState
+  CYLRefreshState,
+  CYLRefreshImage
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
+import { imagesOfBundledGIF } from '../common/RefreshFrames';
 import { RouteParam } from '../common/Routes';
 import { BarButton } from '../common/Ui';
 import { animationPath } from '../feed/RefreshSetups';
@@ -35,13 +37,13 @@ import { showRefreshTest } from './RefreshTestPage';
 /** MJRefresh's MJDuration: long enough to see the refreshing state. */
 const CYLRefreshDuration: number = 2000;
 
-/** CYLRefreshExampleImages: turning arrows while idle, a ring while refreshing (each GIF plays by itself). */
-function idleImages(): ResourceStr[] {
-  return [$rawfile('example/core-animations/CYLRefreshArrows.gif')];
+/** CYLRefreshExampleImages: the frames of the turning arrows (idle) and of the ring (pulling, refreshing). */
+function idleImages(): CYLRefreshImage[] {
+  return imagesOfBundledGIF('CYLRefreshArrows.gif');
 }
 
-function refreshingImages(): ResourceStr[] {
-  return [$rawfile('example/core-animations/CYLRefreshRing.gif')];
+function refreshingImages(): CYLRefreshImage[] {
+  return imagesOfBundledGIF('CYLRefreshRing.gif');
 }
 
 /** MJChiBaoZiHeader: images for the idle, pulling and refreshing states. */
@@ -472,13 +474,14 @@ export struct RefreshTablePage {
   }
 
   /**
-   * example54's Rive icon: the "refresh" artboard resting ("idle") or turning ("active"). CYLRefreshIconAttributes
-   * has no options (artboard / animation) on HarmonyOS yet, so both states name the same file.
+   * example54's Rive icon: the "refresh" artboard resting ("idle") or turning ("active"), as iOS's
+   * CYLPlaceholderItemAnimationOptions.
    */
   private riveAttributes(animation: string): CYLRefreshIconAttributes {
     const attributes = new CYLRefreshIconAttributes();
     attributes.filePath = animationPath('CYLRefreshIcon.riv');
     attributes.size = size(32);
+    attributes.options = { 'legacy': '1', 'artboard': 'refresh', 'animation': animation };
     return attributes;
   }
 

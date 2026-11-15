@@ -3,6 +3,7 @@
 // (CYLRefreshView.ets) draws frame images and GIF / PNG files itself, and Lottie / PAG / Rive files (any file an
 // animator of the library's registry plays) through `placeholderView`, a view of CYLPlaceholderItemAnimationFactory,
 // played by the iOS policy (`CYLRefreshIconPlaybackFor`).
+import { CYLRefreshImage } from './CYLRefreshImage';
 import { CYLRefreshState } from './CYLRefreshConst';
 import {
   CYLPlaceholderAnimationContentView,
@@ -70,7 +71,7 @@ export function CYLRefreshIconPlaybackFor(state: CYLRefreshState, pullingPercent
  */
 export class CYLRefreshIconAttributes {
   filePath: string | null = null;
-  images: ResourceStr[] = [];
+  images: CYLRefreshImage[] = [];
   duration: number = 0;
   size: CYLRefreshIconSize = new CYLRefreshIconSize(40, 40);
   /** Engine options (CYLPlaceholderItemAnimationOptions), such as a Rive artboard or animation. */
