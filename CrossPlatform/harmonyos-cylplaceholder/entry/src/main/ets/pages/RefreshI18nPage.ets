@@ -140,6 +140,9 @@ export struct RefreshI18nPage {
           .width('100%')
           .padding({ left: 16, right: 16, top: 10, bottom: 10 })
           .stateStyles({ pressed: { .backgroundColor(UiColor.pressed) }, normal: { .backgroundColor(UiColor.cell) } })
+          // A row reads as one element (its title and detail) and acts as a button.
+          .accessibilityGroup(true)
+          .accessibilityRole(AccessibilityRoleType.BUTTON)
           .onClick(() => this.choose(code, custom))
         }, (code: string) => (custom ? 'c-' : 'b-') + code)
       }

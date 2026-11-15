@@ -5,7 +5,7 @@
 // Every pushed page lives on one NavPathStack (common/Routes.ets). Choosing a language rebuilds the whole interface
 // and goes back to the first tab, as the iOS example's cyl_setRootViewControllerProvider does.
 import { CYLPlaceholderHUD } from 'cylplaceholder';
-import { EXAMPLE_GENERATION_KEY, applyStoredLanguage, t } from '../common/L10n';
+import { EXAMPLE_GENERATION_KEY, applyStoredLanguage, effectiveLanguage, t } from '../common/L10n';
 import { Route, RouteParam, pathStack, push } from '../common/Routes';
 import { UiColor } from '../common/Ui';
 import { ScenariosTab } from './ScenariosTab';
@@ -32,6 +32,7 @@ import { RefreshCollectionPage } from './RefreshCollectionPage';
 import { RefreshWebPage } from './RefreshWebPage';
 import { RefreshI18nPage } from './RefreshI18nPage';
 import { RefreshSmartPage } from './RefreshSmartPage';
+import { tabBarText } from '../common/TabBarStrings';
 import { RefreshEasyPage } from './RefreshEasyPage';
 
 /** One tab: identifier, title key and the icons (rawfile/example/tab, from the mini program). */
@@ -165,6 +166,11 @@ struct Index {
     .height('100%')
     .justifyContent(FlexAlign.Center)
     .accessibilityText(t(tab.titleKey))
+    // The selected tab says so (CYLTabBarController's "Selected", copied with its translations), as VoiceOver reads a
+    // selected UITabBarItem.
+    .accessibilitySelected(index === this.selected)
+    .accessibilityDescription(index === this.selected ? tabBarText('Selected', effectiveLanguage()) : '')
+    .accessibilityRole(AccessibilityRoleType.BUTTON)
     .id('tab-' + tab.identifier)
     .onClick(() => {
       this.selected = index;
@@ -225,7 +231,10 @@ struct Index {
           .height(PLUS_SIZE)
           .justifyContent(FlexAlign.Center)
           .id('plusButton')
+          // The plus button reads its action ("Publish"), and says it is the plus button (CYLTabBarController's text).
           .accessibilityText(t('CYLScenarioActionPublish'))
+          .accessibilityDescription(tabBarText('PlusButton', effectiveLanguage()))
+          .accessibilityRole(AccessibilityRoleType.BUTTON)
           .onClick(() => push(Route.Publish, new RouteParam()))
         }
         .layoutWeight(1)

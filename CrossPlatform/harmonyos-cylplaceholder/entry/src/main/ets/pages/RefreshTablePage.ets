@@ -607,6 +607,9 @@ export struct RefreshTablePage {
                   .padding({ left: 16, right: 16 })
               }
               .stateStyles({ pressed: { .backgroundColor('#D1D1D6') }, normal: { .backgroundColor(Color.White) } })
+              // A row reads as one element (its title and detail) and acts as a button.
+              .accessibilityGroup(true)
+              .accessibilityRole(AccessibilityRoleType.BUTTON)
               .onClick(() => showRefreshTest(index))
             }, (row: string, index: number) => index + '-' + row)
             ListItem() {

@@ -117,3 +117,7 @@ its call sites to the core's new Swift API in the same change, then rebuild ever
 an extra `@objc` name or a wrapper to the core, or lower its Swift quality, so that an example keeps compiling
 unchanged; examples have the lowest weight (`instructions.md`, "Examples have the lowest weight";
 `docs/Swift-Migration.md`).
+
+HarmonyOS: before verifying, check accessibility and localization (skill `cyl-harmonyos-a11y-l10n`): every control has
+a role and a localized label, `node scripts/harmony-l10n-check.js` passes, and UI tests find controls by
+accessibility label or localized text before ids (`CrossPlatform/harmonyos-cylplaceholder/scripts/emulator-check.sh uitest`).
