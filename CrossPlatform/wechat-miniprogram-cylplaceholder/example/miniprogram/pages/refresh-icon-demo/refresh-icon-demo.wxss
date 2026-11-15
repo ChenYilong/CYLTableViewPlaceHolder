@@ -1,0 +1,4 @@
+.page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.content { flex: 1; min-height: 0; }
+.bar__button--icon { font-size: 22px; }
+@media (prefers-color-scheme: dark) { .page { background: #000; } }

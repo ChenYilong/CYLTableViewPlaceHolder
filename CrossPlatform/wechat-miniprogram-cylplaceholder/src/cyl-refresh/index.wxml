@@ -1,0 +1,50 @@
+<view class="cyl-refresh">
+  <!-- Header: placed over the native refresher area, following the pull distance. -->
+  <view wx:if="{{header !== 'none' && (pull > 0 || headerState === 'Refreshing')}}" class="cyl-refresh__header"
+        style="height: {{threshold}}px; transform: translateY({{pull - threshold}}px); {{automaticallyChangeAlpha && headerState !== 'Refreshing' ? 'opacity:' + (pull / threshold) : ''}}"
+        aria-role="progressbar" aria-label="{{texts.header}}">
+    <!-- "diy": the page draws the header (slot "header", driven by the statechange event). -->
+    <slot wx:if="{{header === 'diy'}}" name="header"></slot>
+    <block wx:else>
+      <view class="cyl-refresh__indicator">
+        <block wx:if="{{headerIcon}}">
+          <animation wx:if="{{headerIcon.type === 'lottie'}}" path="{{headerIcon.path}}" loop="{{true}}" autoplay="{{true}}"
+                     style="display:block; width: {{headerIcon.width}}px; height: {{headerIcon.height}}px" />
+          <image wx:elif="{{headerIcon.type === 'image'}}" src="{{headerIcon.path}}" mode="aspectFit"
+                 style="width: {{headerIcon.width}}px; height: {{headerIcon.height}}px" />
+          <view wx:else class="cyl-refresh__spinner" />
+        </block>
+        <block wx:elif="{{header === 'normal'}}">
+          <view wx:if="{{headerState === 'Refreshing'}}" class="cyl-refresh__spinner" />
+          <text wx:else class="cyl-refresh__arrow {{headerState === 'Pulling' ? 'cyl-refresh__arrow--up' : ''}}">↓</text>
+        </block>
+      </view>
+      <view wx:if="{{!stateHidden || !lastUpdatedTimeHidden}}" class="cyl-refresh__labels">
+        <text wx:if="{{!stateHidden}}" class="cyl-refresh__state" style="{{headerLabelStyle}}">{{texts.header}}</text>
+        <text wx:if="{{!lastUpdatedTimeHidden}}" class="cyl-refresh__time" style="{{timeLabelStyle}}">{{texts.lastUpdated}}</text>
+      </view>
+    </block>
+  </view>
+  <scroll-view class="cyl-refresh__scroll" scroll-y enhanced="{{true}}" bounces="{{true}}"
+               refresher-enabled="{{header !== 'none'}}" refresher-threshold="{{threshold}}"
+               refresher-default-style="none" refresher-background="transparent" refresher-triggered="{{triggered}}"
+               bindrefresherpulling="onPulling" bindrefresherrefresh="onRefresherRefresh"
+               bindrefresherrestore="onRefresherRestore" bindrefresherabort="onRefresherAbort"
+               lower-threshold="40" bindscrolltolower="onScrollToLower">
+    <slot></slot>
+    <view wx:if="{{footer !== 'none' && !footerHidden}}" class="cyl-refresh__footer" style="height: {{footerSize}}px"
+          bindtap="onFooterTap" aria-role="{{footer !== 'back' && footer !== 'diyBack' && footerState === 'Idle' ? 'button' : 'text'}}" aria-label="{{texts.footer}}">
+      <slot wx:if="{{footer === 'diy' || footer === 'diyBack'}}" name="footer"></slot>
+      <block wx:else>
+        <block wx:if="{{footerState === 'Refreshing' || footerIcon}}">
+          <animation wx:if="{{footerIcon && footerIcon.type === 'lottie'}}" path="{{footerIcon.path}}" loop="{{true}}" autoplay="{{true}}"
+                     style="display:block; width: {{footerIcon.width}}px; height: {{footerIcon.height}}px" />
+          <image wx:elif="{{footerIcon && footerIcon.type === 'image'}}" src="{{footerIcon.path}}" mode="aspectFit"
+                 style="width: {{footerIcon.width}}px; height: {{footerIcon.height}}px" />
+          <view wx:elif="{{footerState === 'Refreshing'}}" class="cyl-refresh__spinner" />
+        </block>
+        <text wx:if="{{texts.footer}}" class="cyl-refresh__footer-text" style="{{footerLabelStyle}}">{{texts.footer}}</text>
+      </block>
+    </view>
+  </scroll-view>
+</view>

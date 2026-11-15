@@ -1,0 +1,5 @@
+<!-- CYLPublishViewController: Uploading, then Success after 1.5 s; Done closes the page. -->
+<view class="page">
+  <cyl-placeholder wx:if="{{!done}}" scenario="Uploading" generic:animation="cyl-lottie" animated="{{true}}" />
+  <cyl-placeholder wx:else scenario="Success" generic:animation="cyl-lottie" animated="{{true}}" bind:action="onAction" />
+</view>

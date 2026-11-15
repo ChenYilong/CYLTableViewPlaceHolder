@@ -1,0 +1,4 @@
+<!-- A non-editable UITextView with a 12pt monospaced font. -->
+<view class="page">
+  <text class="mono" user-select="{{true}}">{{text}}</text>
+</view>

@@ -1,0 +1,18 @@
+<!-- CYLFlowListViewController: insetGrouped table, 3 sections, every row with a disclosure indicator. -->
+<view class="inset flows">
+  <block wx:for="{{sections}}" wx:for-item="section" wx:key="index">
+    <view wx:if="{{section.header}}" class="section__header">{{section.header}}</view>
+    <view wx:else class="section__spacer" />
+    <view class="section__body">
+      <view wx:for="{{section.rows}}" wx:key="id" class="cell cell--icon" hover-class="cell--pressed"
+            data-url="{{item.url}}" bindtap="onRowTap" aria-role="button" aria-label="{{item.title}}">
+        <view class="cell__icon {{item.red ? 'flows__icon--red' : ''}}">{{item.icon}}</view>
+        <view class="cell__text">
+          <text class="cell__title">{{item.title}}</text>
+          <text class="cell__subtitle">{{item.subtitle}}</text>
+        </view>
+        <text class="cell__chevron">›</text>
+      </view>
+    </view>
+  </block>
+</view>

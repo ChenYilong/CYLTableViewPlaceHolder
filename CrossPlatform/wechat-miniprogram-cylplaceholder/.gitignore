@@ -4,5 +4,6 @@ miniprogram_npm/
 example/miniprogram/components/cyl-placeholder/
 example/miniprogram/components/cyl-placeholder-hud/
 example/miniprogram/components/cyl-placeholder-status/
+example/miniprogram/components/cyl-refresh/
 example/miniprogram/libs/
 project.private.config.json

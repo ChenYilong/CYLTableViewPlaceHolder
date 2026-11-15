@@ -19,7 +19,7 @@ function copyDir(from, to, filter = () => true) {
 
 const pkg = path.resolve(__dirname, '..')
 const components = path.join(pkg, 'example/miniprogram/components')
-for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status']) {
+for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status', 'cyl-refresh']) {
   const from = path.join(pkg, 'src', name)
   const to = path.join(components, name)
   fs.rmSync(to, { recursive: true, force: true })
@@ -31,14 +31,21 @@ for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-s
 // The example's Lottie player: cyl-lottie-miniprogram from a CYLTabBarController checkout (CYL_TABBAR_DIR, else the
 // folder next to this repository, as the Android build's cylTabBarDir).
 const tabBar = process.env.CYL_TABBAR_DIR || path.resolve(pkg, '../../../CYLTabBarController')
-const lottie = path.join(tabBar, 'CrossPlatform/lottie-miniprogram')
-const lottieTo = path.join(pkg, 'example/miniprogram/libs/cyl-lottie-miniprogram')
-if (fs.existsSync(path.join(lottie, 'miniprogram_dist/cyl-lottie/index.js'))) {
-  fs.rmSync(lottieTo, { recursive: true, force: true })
-  copyDir(path.join(lottie, 'miniprogram_dist'), lottieTo)
-  fs.copyFileSync(path.join(lottie, 'LICENSE'), path.join(lottieTo, 'LICENSE'))
-  console.log('synced', path.relative(pkg, lottieTo), 'from', lottie)
-} else if (!fs.existsSync(path.join(lottieTo, 'cyl-lottie/index.js'))) {
-  console.error('cyl-lottie-miniprogram not found at ' + lottie + '; set CYL_TABBAR_DIR to a CYLTabBarController checkout.')
-  process.exitCode = 1
+// The example's tab bar (cyl-tab-bar, as the iOS example uses CYLTabBarController) and Lottie player.
+const libraries = [
+  { name: 'cyl-lottie-miniprogram', from: 'CrossPlatform/lottie-miniprogram', dist: 'miniprogram_dist', check: 'cyl-lottie/index.js' },
+  { name: 'cyl-tabbar-miniprogram', from: 'CrossPlatform/wechat-miniprogram-cyltabbar', dist: 'src', check: 'cyl-tab-bar/index.js' },
+]
+for (const library of libraries) {
+  const root = path.join(tabBar, library.from)
+  const to = path.join(pkg, 'example/miniprogram/libs', library.name)
+  if (fs.existsSync(path.join(root, library.dist, library.check))) {
+    fs.rmSync(to, { recursive: true, force: true })
+    copyDir(path.join(root, library.dist), to)
+    fs.copyFileSync(path.join(root, 'LICENSE'), path.join(to, 'LICENSE'))
+    console.log('synced', path.relative(pkg, to), 'from', root)
+  } else if (!fs.existsSync(path.join(to, library.check))) {
+    console.error(library.name + ' not found at ' + root + '; set CYL_TABBAR_DIR to a CYLTabBarController checkout.')
+    process.exitCode = 1
+  }
 }

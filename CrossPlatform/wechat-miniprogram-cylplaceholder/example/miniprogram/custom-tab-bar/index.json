@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "cyl-tab-bar": "/libs/cyl-tabbar-miniprogram/cyl-tab-bar/index",
+    "cyl-lottie": "/libs/cyl-lottie-miniprogram/cyl-lottie/index"
+  }
+}

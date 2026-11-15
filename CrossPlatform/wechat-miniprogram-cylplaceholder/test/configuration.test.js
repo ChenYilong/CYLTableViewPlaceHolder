@@ -79,6 +79,20 @@ test('a JSON string works; errors carry the Android messages', () => {
   throwsWith({ scenario: 'NoContent', backgroundAction: 3 }, '"backgroundAction" must be an action name.')
 })
 
+test('XML property lists (smzdm-capsule.plist of the iOS example)', () => {
+  const p = path.join(__dirname, '../../../Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Configurations/smzdm-capsule.plist')
+  const dict = K.parsePlist(fs.readFileSync(p, 'utf8'))
+  assert.deepStrictEqual(dict.components[0].size, [160, 160])
+  const r = K.parse(dict, 'en').components
+  assert.deepStrictEqual(r.map((c) => c.type), ['icon', 'button'])
+  assert.strictEqual(r[0].animation, 'CYLPlaceholderCloudOff.json')
+  assert.strictEqual(r[0].repeatCount, 0)
+  assert.strictEqual(r[1].style, 'Capsule')
+  assert.strictEqual(r[1].title, 'Tap to retry')
+  assert.deepStrictEqual(K.parsePlist('<plist><dict><key>a</key><true/><key>b</key><real>1.5</real><key>c</key><string>x &amp; y</string></dict></plist>'), { a: true, b: 1.5, c: 'x & y' })
+  assert.throws(() => K.parsePlist('bplist00…'), /binary property list/)
+})
+
 test('the parser source has no regex lookbehind (older iOS WeChat engines)', () => {
   for (const f of fs.readdirSync(path.join(__dirname, '../src/cyl-placeholder')).filter((x) => x.endsWith('.js'))) {
     assert.doesNotMatch(fs.readFileSync(path.join(__dirname, '../src/cyl-placeholder', f), 'utf8'), /\(\?<[=!]/, f)

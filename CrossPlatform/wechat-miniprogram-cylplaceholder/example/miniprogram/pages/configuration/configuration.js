@@ -1,70 +1,68 @@
-// Configuration files (CYLPlaceholderConfiguration): the six files of the Android / iOS examples, each read from the
-// package, shown as text and rendered. The example's own texts are marked "exampleTitleKey" in the files; the example
-// resolves them here (the core never reads the example's strings).
-const { CYLPlaceholderConfiguration, CYLPlaceholderScenarioCatalog } = require('../../components/cyl-placeholder/cyl_placeholder')
+// CYLConfigurationViewController: one configuration file of /configurations (JSON or plist), turned into a placeholder
+// by the core. A file that names the example's own texts ("exampleTitleKey") gets them resolved here, so the core
+// never reads the example's strings.
+const { t, effectiveLanguage, showFeedback } = require('../../utils/l10n')
+const {
+  CYLPlaceholderConfiguration,
+  CYLPlaceholderScenarioCatalog: Catalog,
+} = require('../../components/cyl-placeholder/cyl_placeholder')
 
-const FILES = [
-  'ctrip-retry-or-contact-support.json',
-  'interaction-switches.json',
-  'playback-policies.json',
-  'animation-formats.json',
-  'location-permission.json',
-  'raw-item-attributes.json',
-]
-// The English texts of CYLScenarioExample.bundle for the keys the files use.
-const EXAMPLE_TEXTS = {
-  CYLScenarioConfigTapEachButton: 'Tap each button',
-  CYLScenarioConfigHighlightDim: 'Highlight: dim',
-  CYLScenarioConfigHighlightShrink: 'Highlight: shrink',
-  CYLScenarioConfigHighlightNone: 'Highlight: none',
-  CYLScenarioConfigInteractionOff: 'Interaction off: no tap, no highlight',
-  CYLScenarioConfigPlaybackLoop: 'Loops (default)',
-  CYLScenarioConfigPlaybackOnce: 'Plays once',
-  CYLScenarioConfigPlaybackThree: 'Plays 3 times',
-}
-
-function resolveExampleTexts(configuration) {
-  for (const c of configuration.components || []) {
-    if (c.exampleTitleKey) {
-      if (EXAMPLE_TEXTS[c.exampleTitleKey]) c.title = EXAMPLE_TEXTS[c.exampleTitleKey]
-      delete c.exampleTitleKey
-    }
-  }
-  return configuration
+/** Replaces each "exampleTitleKey" with a "title" read from the example's strings. */
+function resolvingExampleTexts(value) {
+  if (Array.isArray(value)) return value.map(resolvingExampleTexts)
+  if (!value || typeof value !== 'object') return value
+  const result = {}
+  Object.keys(value).forEach((key) => {
+    if (key !== 'exampleTitleKey') result[key] = resolvingExampleTexts(value[key])
+  })
+  if (typeof value.exampleTitleKey === 'string') result.title = t(value.exampleTitleKey)
+  return result
 }
 
 Page({
-  data: { files: FILES, index: 0, text: '', configuration: null, language: '', error: '', lastAction: '' },
+  data: { file: '', language: '', configuration: null, error: '', replayTitle: '', fileTitle: '' },
+
   onLoad(query) {
-    this.setData({ language: getApp().globalData.language || '' })
-    this.open(Number(query.index) || 0)
-  },
-  open(index) {
-    const file = FILES[index]
-    let text = ''
-    let configuration = null
-    let error = ''
-    try {
-      text = wx.getFileSystemManager().readFileSync('configurations/' + file, 'utf8')
-      configuration = resolveExampleTexts(CYLPlaceholderConfiguration.readConfigurationFile('/configurations/' + file))
-    } catch (e) {
-      error = e.message
-    }
-    this.setData({ index, text, configuration, error, lastAction: '' })
+    const file = decodeURIComponent(query.file || '')
     wx.setNavigationBarTitle({ title: file })
+    this.setData({
+      file,
+      language: effectiveLanguage(),
+      replayTitle: t('CYLScenarioActionReplay'),
+      fileTitle: t('CYLScenarioActionShowFile'),
+    })
+    this.reload()
   },
-  onPick(e) {
-    this.open(Number(e.detail.value))
+
+  /** Builds the placeholder from the file again ("Replay"); a broken file shows its error instead. */
+  reload() {
+    let configuration
+    try {
+      // Property lists ship as <name>.plist.json (a mini program package keeps only known file types).
+      const packaged = /\.plist$/.test(this.data.file) ? this.data.file + '.json' : this.data.file
+      configuration = resolvingExampleTexts(CYLPlaceholderConfiguration.readConfigurationFile('/configurations/' + packaged))
+    } catch (e) {
+      this.setData({ configuration: null, error: e.message })
+      return
+    }
+    this.setData({ configuration, error: '' }, () => {
+      const placeholder = this.selectComponent('#placeholder')
+      if (placeholder) placeholder.playAll()
+    })
   },
-  onAction(e) {
-    const title = CYLPlaceholderScenarioCatalog.localizedTitleForAction(e.detail.action, this.data.language || undefined)
-    this.setData({ lastAction: e.detail.action + ' (component ' + e.detail.index + ')' })
-    wx.showToast({ title: (title || e.detail.action) + ' tapped', icon: 'none' })
-  },
+
   onConfigError(e) {
-    this.setData({ error: e.detail.message })
+    this.setData({ configuration: null, error: e.detail.message })
   },
-  onPlayAll() {
-    this.selectComponent('#placeholder').playAll()
+
+  /** Every action confirms the tap with its core title (a custom action shows its raw value). */
+  onAction(e) {
+    const action = e.detail.action
+    const title = Catalog.localizedTitleForAction(action, this.data.language) || action
+    showFeedback(t('CYLScenarioFormatActionTapped', title))
+  },
+
+  onShowFile() {
+    wx.navigateTo({ url: '/pages/text-file/text-file?file=' + encodeURIComponent(this.data.file) })
   },
 })

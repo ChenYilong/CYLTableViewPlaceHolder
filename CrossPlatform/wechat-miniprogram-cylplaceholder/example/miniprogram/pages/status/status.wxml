@@ -1,19 +1,36 @@
-<cyl-placeholder-status id="status" visible="{{showsBar}}" shows-when-offline="{{showsWhenOffline}}" tappable="{{tappable}}"
-                        configuration="{{barConfiguration}}" language="{{language}}"
-                        bind:statustap="onStatusTap" bind:networkchange="onNetworkChange" />
-<view class="group">
-  <picker range="{{displays}}" value="{{displayIndex}}" bindchange="onDisplay">
-    <view class="row"><text>Display</text><text class="value">{{displays[displayIndex]}} ›</text></view>
-  </picker>
-  <view class="row"><text>Shows when offline</text><switch checked="{{showsWhenOffline}}" bindchange="onOffline" /></view>
-  <view class="row"><text>Tappable bar</text><switch checked="{{tappable}}" bindchange="onTappable" /></view>
-  <view class="row" hover-class="pressed" bindtap="onApplyConfiguration"><text>Apply configuration</text><text class="value">›</text></view>
-  <view class="row" hover-class="pressed" bindtap="onReset"><text>Default bar</text><text class="value">›</text></view>
-  <view wx:if="{{lastEvent}}" class="note">Last event: {{lastEvent}}</view>
+<!-- CYLStatusBarViewController: bar buttons, the red status bar under the navigation bar, the plain list or its
+     placeholder, and the bottom toolbar with the mode segmented control. -->
+<view class="page">
+  <!-- rightBarButtonItems [File, Network]: the first item sits at the far right. -->
+  <view class="bar">
+    <text class="bar__button" id="statusFollowNetwork" hover-class="bar__button--pressed" bindtap="toggleNetwork"
+          aria-role="button">{{networkTitle}}</text>
+    <text class="bar__button" hover-class="bar__button--pressed" bindtap="showFiles" aria-role="button">{{fileTitle}}</text>
+  </view>
+
+  <cyl-placeholder-status visible="{{showsBar}}" shows-when-offline="{{showsWhenOffline}}" tappable="{{true}}"
+                          configuration="{{barConfiguration}}" bind:statustap="onStatusTap"
+                          bind:configerror="onStatusConfigError" />
+
+  <scroll-view class="list" scroll-y="{{true}}" id="statusBarDemo">
+    <view wx:if="{{rows.length}}" class="plain">
+      <view wx:for="{{rows}}" wx:key="id" class="cell cell--icon">
+        <view class="cell__icon status__bubble">🗨︎</view>
+        <text class="cell__title">{{item.title}}</text>
+      </view>
+    </view>
+    <view wx:elif="{{showsPlaceholder}}" class="placeholder">
+      <cyl-placeholder scenario="NetworkUnavailable" generic:animation="cyl-lottie" animated="{{true}}"
+                       bind:action="onPlaceholderAction" />
+    </view>
+  </scroll-view>
+
+  <!-- The navigation controller's toolbar: a centered segmented control. -->
+  <view class="toolbar">
+    <view class="segmented" id="statusBarMode">
+      <view wx:for="{{modes}}" wx:key="index" data-index="{{index}}" bindtap="onModeTap"
+            class="segmented__item {{index === mode ? 'segmented__item--selected' : ''}}"
+            aria-role="tab" aria-label="{{item}}">{{item}}</view>
+    </view>
+  </view>
 </view>
-<view class="card">
-  <cyl-placeholder wx:if="{{showsPlaceholder}}" id="placeholder" scenario="NetworkUnavailable" language="{{language}}" compact="{{true}}" />
-  <view wx:else class="empty">(placeholder hidden)</view>
-</view>
-<view class="code-title">Configuration</view>
-<scroll-view class="code" scroll-x><text>{{configurationText}}</text></scroll-view>

@@ -102,7 +102,8 @@ function applyConfiguration(component, map) {
 function componentWithDictionary(dictionary, language) {
   if (!dictionary || typeof dictionary !== 'object' || Array.isArray(dictionary)) fail('A component must be a dictionary.')
   const type = typeof dictionary.type === 'string' ? dictionary.type : 'icon'
-  const title = configuredText(dictionary, 'title', 'titleKey', language) ?? configuredText(dictionary, 'text', 'textKey', language)
+  const literalTitle = configuredText(dictionary, 'title', 'titleKey', language)
+  const title = literalTitle != null ? literalTitle : configuredText(dictionary, 'text', 'textKey', language)
   let action = null
   if ('action' in dictionary) {
     if (typeof dictionary.action !== 'string' || !dictionary.action) fail('A component action must be a non-empty string.')
@@ -134,11 +135,11 @@ function componentWithDictionary(dictionary, language) {
         style = ['Filled', 'Outlined', 'Capsule'][index]
       }
       if (!action) fail('A button needs an action.')
-      component = { type: 'button', title: title ?? (CYLPlaceholderScenarioCatalog.localizedTitleForAction(action, language) || ''), style, action }
+      component = { type: 'button', title: title != null ? title : CYLPlaceholderScenarioCatalog.localizedTitleForAction(action, language) || '', style, action }
       break
     }
     case 'separator':
-      component = { type: 'separator', text: title ?? localizedString('scenario_or_separator', language) }
+      component = { type: 'separator', text: title != null ? title : localizedString('scenario_or_separator', language) }
       break
     case 'item': {
       const a = dictionary.attributes
@@ -147,7 +148,7 @@ function componentWithDictionary(dictionary, language) {
       const insets = Array.isArray(a.CYLPlaceholderItemTitleContentInsets) ? a.CYLPlaceholderItemTitleContentInsets : null
       component = {
         type: 'item',
-        title: title ?? (typeof a.CYLPlaceholderItemTitle === 'string' ? a.CYLPlaceholderItemTitle : ''),
+        title: title != null ? title : typeof a.CYLPlaceholderItemTitle === 'string' ? a.CYLPlaceholderItemTitle : '',
         color: a.CYLTabBarItemTitleColor || '',
         backgroundColor: a.CYLPlaceholderItemTitleBackgroundColor || '',
         cornerRadius: isNumber(a.CYLPlaceholderItemTitleCornerRadius) ? a.CYLPlaceholderItemTitleCornerRadius : 0,
@@ -208,15 +209,79 @@ function parse(configuration, language) {
   return result
 }
 
-/** Reads a JSON configuration file of the mini program package or user data ("/configurations/a.json"). */
+/**
+ * Parses an XML property list (as iOS initWithContentsOfURL: reads .plist files): dict, array, string, integer,
+ * real, true, false, date (as a string). Binary property lists are refused.
+ */
+function parsePlist(text) {
+  if (/^bplist/.test(text)) fail('A binary property list is not supported; save it as XML.')
+  const tokens = text.replace(/<\?xml[^>]*\?>|<!DOCTYPE[^>]*>|<!--[\s\S]*?-->/g, '').match(/<[^>]+>|[^<]+/g) || []
+  let i = 0
+  const decode = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&')
+  const next = () => {
+    while (i < tokens.length && !tokens[i].startsWith('<')) i++ // whitespace between elements
+    return tokens[i++]
+  }
+  const textUntil = (close) => {
+    let s = ''
+    while (i < tokens.length && tokens[i] !== close) s += tokens[i++]
+    i++
+    return decode(s)
+  }
+  const value = (tag) => {
+    if (!tag) fail('The property list is not complete.')
+    if (/^<(\w+)\s*\/>$/.test(tag)) {
+      const name = tag.match(/^<(\w+)/)[1]
+      if (name === 'true') return true
+      if (name === 'false') return false
+      if (name === 'string') return ''
+      if (name === 'dict') return {}
+      if (name === 'array') return []
+      fail(`Unsupported property list element <${name}/>.`)
+    }
+    const name = (tag.match(/^<(\w+)/) || [])[1]
+    switch (name) {
+      case 'string': case 'date': case 'data': return textUntil(`</${name}>`)
+      case 'integer': return parseInt(textUntil('</integer>'), 10)
+      case 'real': return parseFloat(textUntil('</real>'))
+      case 'array': {
+        const list = []
+        for (let t = next(); t !== '</array>'; t = next()) list.push(value(t))
+        return list
+      }
+      case 'dict': {
+        const dict = {}
+        for (let t = next(); t !== '</dict>'; t = next()) {
+          if (t !== '<key>') fail('A property list dictionary needs <key> before each value.')
+          const key = textUntil('</key>')
+          dict[key] = value(next())
+        }
+        return dict
+      }
+      default: return fail(`Unsupported property list element ${tag}.`)
+    }
+  }
+  let root = next()
+  if (root && root.startsWith('<plist')) root = next()
+  return value(root)
+}
+
+/** Reads a configuration file of the mini program package or user data ("/configurations/a.json", ".plist"). */
 function readConfigurationFile(path) {
-  if (/\.plist$/i.test(path)) fail('A property list is an iOS format; use a .json file.')
   let text
   try {
     // eslint-disable-next-line no-undef
     text = wx.getFileSystemManager().readFileSync(path.replace(/^\//, ''), 'utf8')
   } catch (e) {
     fail('The configuration file cannot be read: ' + (e && (e.errMsg || e.message)))
+  }
+  if (/\.plist$/i.test(path)) return parsePlist(text)
+  // A mini program package keeps only known file types (not .plist or .txt), so a property list ships as
+  // <name>.plist.json holding the XML as one JSON string.
+  if (/\.plist\.json$/i.test(path)) {
+    const xml = parseJSON(text)
+    if (typeof xml !== 'string') fail('A .plist.json file must hold the property list as a JSON string.')
+    return parsePlist(xml)
   }
   return parseJSON(text)
 }
@@ -229,4 +294,4 @@ function parseJSON(text) {
   }
 }
 
-module.exports = { CYLPlaceholderConfiguration: { parse, componentWithDictionary, readConfigurationFile, allAnimationFileNames } }
+module.exports = { CYLPlaceholderConfiguration: { parse, componentWithDictionary, readConfigurationFile, parsePlist, allAnimationFileNames } }

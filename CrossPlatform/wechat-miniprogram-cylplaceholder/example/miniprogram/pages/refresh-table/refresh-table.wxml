@@ -1,0 +1,34 @@
+<view class="page">
+  <view wx:if="{{resume}}" class="bar">
+    <view class="bar__button bar__button--done" hover-class="bar__button--pressed" bindtap="onResume">{{resume}}</view>
+  </view>
+  <view class="content">
+    <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}"
+                 header-icons="{{setup.headerIcons}}" footer-icons="{{setup.footerIcons}}"
+                 header-titles="{{setup.headerTitles}}" footer-titles="{{setup.footerTitles}}"
+                 header-style="{{setup.headerStyle}}" footer-style="{{setup.footerStyle}}"
+                 automatically-change-alpha="{{setup.automaticallyChangeAlpha || false}}"
+                 last-updated-time-hidden="{{setup.lastUpdatedTimeHidden || false}}" state-hidden="{{setup.stateHidden || false}}"
+                 refreshing-title-hidden="{{setup.refreshingTitleHidden || false}}"
+                 automatically-refresh="{{setup.automaticallyRefresh !== false}}" auto-trigger-times="{{setup.autoTriggerTimes || 0}}"
+                 header-height="{{setup.headerHeight || 0}}" footer-height="{{setup.footerHeight || 0}}"
+                 footer-hidden="{{footerHidden}}" generic:animation="cyl-lottie"
+                 bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:statechange="onStateChange">
+      <!-- CYLRefreshDIYHeader (example06): label, a decorative switch, a spinner; the color follows the pull. -->
+      <view slot="header" class="diy">
+        <switch class="diy__switch" checked="{{diy.header.switchOn}}" disabled />
+        <text class="diy__label" style="color: {{diy.header.color}}">{{diy.header.text}}</text>
+        <view class="diy__spinner {{diy.header.spinning ? 'diy__spinner--on' : ''}}" />
+      </view>
+      <view class="rows" style="{{setup.bottomInset ? 'padding-bottom:' + setup.bottomInset + 'px' : ''}}">
+        <view wx:for="{{rows}}" wx:key="id" class="row" hover-class="cell--pressed" bindtap="onRow" data-index="{{index}}">{{item.text}}</view>
+      </view>
+      <!-- CYLRefreshDIYAutoFooter / DIYBackFooter (examples 20, 21). -->
+      <view slot="footer" class="diy diy--footer">
+        <view class="diy__spinner {{diy.footer.spinning ? 'diy__spinner--on' : ''}}" />
+        <text class="diy__label" style="color: {{setup.footer === 'diyBack' ? diy.footer.color : '#ff8000'}}">{{diy.footer.text}}</text>
+        <switch class="diy__switch" checked="{{diy.footer.switchOn}}" disabled />
+      </view>
+    </cyl-refresh>
+  </view>
+</view>

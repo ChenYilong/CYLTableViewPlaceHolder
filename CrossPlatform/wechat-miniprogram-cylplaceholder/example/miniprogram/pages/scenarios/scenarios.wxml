@@ -1,0 +1,35 @@
+<!-- CYLScenarioListViewController: an insetGrouped table; the language button is the right bar button. -->
+<view class="bar">
+  <view class="bar__button" hover-class="bar__button--pressed" bindtap="onLanguageTap" aria-role="button">{{languageTitle}}</view>
+</view>
+<view class="inset list">
+  <block wx:for="{{sections}}" wx:for-item="section" wx:key="title">
+    <view class="section__header">{{section.title}}</view>
+    <view class="section__body">
+      <view wx:for="{{section.rows}}" wx:for-item="row" wx:key="key" class="cell cell--icon" hover-class="cell--pressed"
+            data-url="{{row.url}}" bindtap="onRowTap" aria-role="button">
+        <view class="cell__icon">{{row.icon}}</view>
+        <view class="cell__text">
+          <text class="cell__title">{{row.title}}</text>
+          <text class="cell__subtitle">{{row.subtitle}}</text>
+        </view>
+        <text class="cell__chevron">›</text>
+      </view>
+    </view>
+  </block>
+</view>
+
+<!-- The language menu (a UIMenu titled "Language" on iOS), as a bottom sheet. -->
+<view wx:if="{{menuShown}}" class="sheet-mask" bindtap="onMenuClose">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet__header">{{menuTitle}}</view>
+    <view class="section__body sheet__body">
+      <view wx:for="{{menu}}" wx:key="code" class="cell" hover-class="cell--pressed" data-code="{{item.code}}"
+            catchtap="onMenuSelect" aria-role="menuitem">
+        <text class="sheet__check">{{item.checked ? '✓' : ''}}</text>
+        <text class="cell__title cell__text">{{item.title}}</text>
+        <text wx:if="{{item.system}}" class="sheet__gear">⚙</text>
+      </view>
+    </view>
+  </view>
+</view>
