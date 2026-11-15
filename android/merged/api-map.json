@@ -3679,5 +3679,63 @@
  "UIViewController(CYLPlaceholderStatus) cyl_statusView": {
   "status": "done",
   "android": "Activity.cyl_statusView"
+ },
+ "CYLRefreshTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTrailer"
+ },
+ "CYLRefreshTrailer +trailerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }"
+ },
+ "CYLRefreshTrailer +trailerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin uses the block"
+ },
+ "CYLRefreshTrailer ignoredScrollViewContentInsetRight": {
+  "status": "n/a",
+  "note": "the Android trailer moves the list itself, there is no content inset to ignore"
+ },
+ "CYLRefreshTrailer automaticallyRefresh": {
+  "status": "planned",
+  "note": "automatic refresh while dragging is not ported yet"
+ },
+ "CYLRefreshTrailer triggerAutomaticallyRefreshPercent": {
+  "status": "planned",
+  "note": "automatic refresh while dragging is not ported yet"
+ },
+ "CYLRefreshTrailer autoTriggerTimes": {
+  "status": "planned",
+  "note": "automatic refresh while dragging is not ported yet"
+ },
+ "CYLRefreshNormalTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshNormalTrailer"
+ },
+ "CYLRefreshNormalTrailer arrowView": {
+  "status": "done",
+  "android": "CYLRefreshNormalTrailer.arrowView",
+  "note": "a drawn arrow instead of the bundle image"
+ },
+ "CYLRefreshStateTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateTrailer"
+ },
+ "CYLRefreshStateTrailer stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.stateLabel"
+ },
+ "CYLRefreshStateTrailer -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.setTitle(title, state)"
+ },
+ "CYLRefreshStateTrailer -cyl_placeStateLabelAtCenterX:": {
+  "status": "n/a",
+  "note": "frame layout helper; the Android label is placed by a LinearLayout"
+ },
+ "UIScrollView(CYLRefresh) cyl_trailer": {
+  "status": "done",
+  "android": "RecyclerView.cyl_trailer",
+  "note": "horizontal RecyclerView only; set it once the list is in its parent"
  }
 }

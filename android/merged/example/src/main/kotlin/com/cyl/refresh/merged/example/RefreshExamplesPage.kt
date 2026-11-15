@@ -73,11 +73,10 @@ class RefreshExamplesPage : StackPage() {
                 "example18", "example19", "example20", "example21"),
             "CYLRefreshTableViewController",
         ),
-        // example42 (pull left) needs a trailer, which the Android library does not have yet.
         RefreshExample(
             R.string.merged_mj_section_collection,
-            listOf(R.string.merged_mj_pull_up_and_down, R.string.merged_mj_pin_header),
-            listOf("example31", "example31"),
+            listOf(R.string.merged_mj_pull_up_and_down, R.string.merged_mj_pin_header, R.string.merged_mj_pull_left),
+            listOf("example31", "example31", "example42"),
             "CYLRefreshCollectionViewController",
         ),
         RefreshExample(
@@ -103,6 +102,8 @@ class RefreshExamplesPage : StackPage() {
                 column.addView(row(context, context.t(title), "${exam.page} - ${exam.methods[i]}", "refresh-${exam.methods[i]}") {
                     val name = context.t(title)
                     push(when {
+                        exam.header == R.string.merged_mj_section_collection && i == 2 ->
+                            horizontalCollectionPage(name) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_collection ->
                             collectionPage(name, pinHeader = i == 1) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_web -> webPage()

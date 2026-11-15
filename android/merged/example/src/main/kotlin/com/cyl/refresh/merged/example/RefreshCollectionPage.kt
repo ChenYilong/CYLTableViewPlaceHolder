@@ -4,10 +4,15 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
+import com.cyl.refresh.CYLRefreshNormalTrailer
+import com.cyl.refresh.cyl_trailer
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -117,4 +122,45 @@ internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolea
     reload()
     header.beginRefreshing()
     return page(context, bar(context, title), layout)
+}
+
+/**
+ * Pages that swipe left; pulling past the last one opens the test page (iOS
+ * `CYLRefreshHorizontalCollectionViewController.example42`, MJHorizontalCollectionViewController).
+ */
+internal fun RefreshExamplesPage.horizontalCollectionPage(title: String, openTest: () -> Unit): View {
+    val context = requireContext()
+    val density = context.resources.displayMetrics.density
+    val colors = List(5) { randomColor() }
+    val list = RecyclerView(context).apply {
+        tag = "refreshHorizontalCollection"
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun getItemCount() = colors.size
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+                object : RecyclerView.ViewHolder(View(parent.context).apply {
+                    layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                }) {}
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                holder.itemView.setBackgroundColor(colors[position])
+                holder.itemView.contentDescription = context.t(if (position % 2 == 1) R.string.merged_mj_push else R.string.merged_mj_modal)
+                holder.itemView.setOnClickListener { openTest() }
+            }
+        }
+        PagerSnapHelper().attachToRecyclerView(this)
+    }
+    // The strip is 200 dp high, 150 dp below the top (iOS frame y 150, height 200).
+    val column = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(0, (150 * density).toInt(), 0, 0)
+        addView(list, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (200 * density).toInt()))
+    }
+    // Pull left past the last page: open the test page, then end at once.
+    list.cyl_trailer = CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) {
+        openTest()
+        list.cyl_trailer?.endRefreshing()
+    }
+    return page(context, bar(context, title), column)
 }
