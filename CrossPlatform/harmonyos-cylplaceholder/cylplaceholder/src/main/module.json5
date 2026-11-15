@@ -4,9 +4,8 @@
     "type": "har",
     "deviceTypes": ["phone", "tablet", "2in1"],
     "requestPermissions": [
-      {
-        "name": "ohos.permission.VIBRATE"
-      }
+      { "name": "ohos.permission.GET_NETWORK_INFO" },
+      { "name": "ohos.permission.VIBRATE" }
     ]
   }
 }

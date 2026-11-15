@@ -206,7 +206,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 43 host unit tests, 19 new: animator timing /
   interpolation / repeats / points, path parser and vector sizing, StoreHouse letters, status order, style defaults,
   game rules: 0 failures); the drawing is verified by compiling only (no emulator).
-- **Status 2026-11-16 (score 90 → 93, branch `harmony/finish-lib`):** refresh icons play every engine and the last
+- **Status 2026-11-16 (score 90 → 99 with the Refresh tab merged, branch `harmony/finish-lib`):** refresh icons play every engine and the last
   library rows. `CYLRefreshIconViewModel.placeholderView` makes the icon of a state with
   `CYLPlaceholderItemAnimationFactory` (the animator registry: GIF, Lottie, PAG, Rive) and drives it by the iOS policy
   (`CYLRefreshIconPlaybackFor`: stopped at rest, scrubbed with `progress` while pulled when the engine seeks, else
@@ -1862,12 +1862,12 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | WKWebView · Pull down to reload (CYLRefreshWKWebViewController - example41) | `entry/src/main/ets/pages/RefreshWebPage.ets` |
 | Localization · Refresh text languages (CYLRefreshI18NExampleViewController - i18n) | `entry/src/main/ets/pages/RefreshI18nPage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · GIF icon in place of the images (CYLRefreshTableViewController - example51) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
-| Animated icons: GIF, Lottie, PAG, Rive · Lottie icon for each state (CYLRefreshTableViewController - example52) | TODO |
-| Animated icons: GIF, Lottie, PAG, Rive · PAG progress ring (CYLRefreshTableViewController - example53) | TODO |
-| Animated icons: GIF, Lottie, PAG, Rive · Rive refresh icon (CYLRefreshTableViewController - example54) | TODO |
+| Animated icons: GIF, Lottie, PAG, Rive · Lottie icon for each state (CYLRefreshTableViewController - example52) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| Animated icons: GIF, Lottie, PAG, Rive · PAG progress ring (CYLRefreshTableViewController - example53) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| Animated icons: GIF, Lottie, PAG, Rive · Rive refresh icon (CYLRefreshTableViewController - example54) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
-| Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | TODO |
-| Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | TODO |
+| Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
 | SmartRefreshControl styles · Delivery (CYLSmartRefreshDemoViewController - smartDelivery) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | SmartRefreshControl styles · Classics (CYLSmartRefreshDemoViewController - smartClassics) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
 | SmartRefreshControl styles · DropBox (CYLSmartRefreshDemoViewController - smartDropBox) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
