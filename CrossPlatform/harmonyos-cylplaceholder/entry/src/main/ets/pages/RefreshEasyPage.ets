@@ -33,6 +33,7 @@ function secondFloor() {
       .fontSize(28)
       .fontColor(Color.White)
     Text(t('CYLScenarioEasyCloseSecondFloor'))
+      .accessibilityRole(AccessibilityRoleType.BUTTON)
       .fontSize(17)
       .fontColor(Color.White)
       .padding(8)

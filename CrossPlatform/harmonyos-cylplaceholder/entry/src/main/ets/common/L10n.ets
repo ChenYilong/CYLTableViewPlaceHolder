@@ -102,5 +102,9 @@ export function t(key: string, ...args: Object[]): string {
 
 /** cyl_showFeedback: a message that closes itself after 1 s. */
 export function showFeedback(context: UIContext, message: string): void {
-  context.getPromptAction().showToast({ message: message, duration: 1000 });
+  try {
+    context.getPromptAction().showToast({ message: message, duration: 1000 });
+  } catch (e) {
+    // No window to show it in (the page is going away).
+  }
 }

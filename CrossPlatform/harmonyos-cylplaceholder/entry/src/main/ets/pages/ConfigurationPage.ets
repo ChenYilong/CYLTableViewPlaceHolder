@@ -54,7 +54,9 @@ function resolvingExampleTexts(value: Object): Object {
 @Component
 export struct ConfigurationPage {
   param: RouteParam = new RouteParam();
-  @State placeholder: CYLPlaceholderStackViewModel | null = null;
+  @State placeholder: CYLPlaceholderStackViewModel = new CYLPlaceholderStackViewModel();
+  /** Whether the file made a placeholder (a broken file shows its error instead). */
+  @State hasPlaceholder: boolean = false;
   @State error: string = '';
   @State generation: number = 0;
 
@@ -91,7 +93,10 @@ export struct ConfigurationPage {
     }
     const made = configuration === null ? null :
       CYLPlaceholderStackViewModel.initWithConfiguration(configuration, this.actions(), onError);
-    this.placeholder = made;
+    if (made !== null) {
+      this.placeholder = made;
+    }
+    this.hasPlaceholder = made !== null;
     this.error = made === null ? (message.length > 0 ? message : 'The file cannot be read.') : '';
     this.generation++;
   }
@@ -109,10 +114,10 @@ export struct ConfigurationPage {
   build() {
     NavDestination() {
       Column() {
-        if (this.placeholder !== null) {
+        if (this.hasPlaceholder) {
           // Keyed by the generation: "Replay" makes the views (and their animations) again.
           ForEach([this.generation], (generation: number) => {
-            CYLPlaceholderStackView({ model: this.placeholder! })
+            CYLPlaceholderStackView({ model: this.placeholder })
           }, (generation: number) => 'placeholder-' + generation)
         } else {
           Text(this.error)
