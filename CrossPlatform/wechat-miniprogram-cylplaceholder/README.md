@@ -25,6 +25,10 @@ Page({
 })
 ```
 
+Installed from npm (`npm i cyl-placeholder-miniprogram`, then DevTools > Tools > Build npm), the components are
+`cyl-placeholder-miniprogram/cyl-placeholder/index` (and `…/cyl-placeholder-hud/index`, `…/cyl-placeholder-status/index`,
+`…/cyl-refresh/index`) and the same API is `require('cyl-placeholder-miniprogram')`.
+
 | Property | Type | Default | Meaning |
 | --- | --- | --- | --- |
 | `scenario` | String | `''` | A scenario name (`RetryButton` or `CYLPlaceholderScenarioRetryButton`) |

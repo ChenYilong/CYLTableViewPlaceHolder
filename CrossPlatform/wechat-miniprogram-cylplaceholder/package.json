@@ -12,7 +12,7 @@
   },
   "keywords": ["miniprogram", "placeholder", "empty-state", "CYLTableViewPlaceHolder"],
   "miniprogram": "src",
-  "main": "src/cyl-placeholder/cyl_placeholder.js",
+  "main": "src/index.js",
   "files": ["src", "README.md", "LICENSE", "LICENSE.CYLChatKit", "LICENSE.material-design-icons", "LICENSE.placeholder-third-party", "NOTICE.material-design-icons"],
   "scripts": {
     "import-android": "node scripts/import-android-resources.js",
