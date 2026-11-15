@@ -32,7 +32,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 <!-- harmony-quality:begin -->
 | 中文 | English |
 |:---|:---|
-| **鸿蒙质量分：52 / 100**（完成 12 / 计入 23 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 52 / 100** (12 / 23 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
+| **鸿蒙质量分：56 / 100**（完成 14 / 计入 25 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 56 / 100** (14 / 25 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
 <!-- harmony-quality:end -->
 
 | # | 项目 / Item | 通过条件 / Pass condition | 状态 / Status |
@@ -60,6 +60,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q21 | 动画图片刷新控件逐帧 / Frame-by-frame "animated images" controls | 与 iOS 一样把刷新 GIF 切成帧（示例 `common/RefreshFrames.ets`，对应 iOS `CYLRefreshFrames.images(ofBundledGIF:)`），下拉时显示对应帧；库的帧图片类型接受 PixelMap（`CYLRefreshImage`）；时长 0 按 UIImageView 的每帧 1/30 秒 / the refresh GIFs are cut into frames as on iOS, the pull shows the matching frame; the library's frame type takes PixelMap; duration 0 is 1/30 s per frame like UIImageView | 完成 / Done (2026-11-16, compiled, 1 test) |
 | Q22 | 网页示例隐藏状态栏 / Web example hides the status bar | `RefreshWebPage.ets` 显示时隐藏状态栏、离开时恢复（iOS prefersStatusBarHidden） / hides the status bar while shown and restores it on leaving | 完成 / Done (2026-11-16, compiled) |
 | Q23 | 主题色标题文字 / Theme-colored title text | `RefreshSmartPage.ets` 主题下标题文字用主题的 accent 色（iOS titleTextAttributes），默认恢复 / the title text takes the theme's accent color, Default restores it | 完成 / Done (2026-11-16, compiled) |
+| Q24 | 二进制 plist 配置 / Binary property list configurations | iOS 能读二进制 plist：`CYLPlaceholderConfiguration.readFile` 读字节，`bplist00` 由 `CYLBinaryPropertyListParse` 解析（新增 `parsePropertyListData` / `parseData`） / iOS reads binary plists: `readFile` reads bytes and `bplist00` files go through `CYLBinaryPropertyListParse` (new `parsePropertyListData` / `parseData`) | 完成 / Done (2026-11-16, 5 tests) |
+| Q25 | 测试页模态弹出 / Test page presented modally | 偶数行像 iOS present 一样从底部弹出、无返回按钮，“关闭”返回 / even rows come up from the bottom without a back button like an iOS present; Close returns | 完成 / Done (2026-11-16, compiled) |
 
 ## 任务 / Tasks
 
@@ -91,6 +93,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 - **Progress 2026-11-16 (Q21–Q23):** three platform differences listed above are gone: the "animated images"
   controls use frames cut from the GIFs (idle frames follow the pull), the web example hides the status bar, and
   theme colors tint the title text too. 79 tests, 0 failures.
+- **Progress 2026-11-16 (Q24, Q25):** binary property lists are read like on iOS (the reader used to refuse them),
+  and the refresh test page is presented from the bottom on even rows. 84 tests, 0 failures.
 
 ### DONE: HarmonyOS port, library and example (score 100)
 
