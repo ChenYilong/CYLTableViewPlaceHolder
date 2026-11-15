@@ -13,7 +13,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 目标系统 / Target OS | HarmonyOS 6.0.1 (API 21, Release) |
 | SDK | HarmonyOS SDK 6.0.1.112 (`compileSdkVersion` / `targetSdkVersion` 6.0.1(21)) |
-| 最低系统 / Minimum OS | HarmonyOS 6.0.1 (API 21) |
+| 最低系统 / Minimum OS | HarmonyOS 5.1.0 (API 18; `compatibleSdkVersion` 5.1.0(18): the lowest the code and its dependencies allow — `@tencent/libpag` needs API 15, `accessibilityRole` API 18 — so that DevEco Device Manager offers phone emulator images) |
 | 开发工具 / IDE | DevEco Studio 6.0.1.251 (hvigor, ohpm and the emulator bundled) |
 | 语言与 UI / Language and UI | ArkTS, ArkUI (declarative), Stage model |
 
