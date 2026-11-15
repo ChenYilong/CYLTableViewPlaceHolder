@@ -2,7 +2,7 @@ package com.cyl.refresh
 
 import android.content.Context
 import android.view.HapticFeedbackConstants
-import android.view.View
+import android.view.MotionEvent import android.view.View import android.view.ViewGroup import androidx.recyclerview.widget.RecyclerView
 import com.cyl.refresh.merged.R
 import com.scwang.smart.refresh.classics.ClassicsAbstract
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -14,7 +14,7 @@ import com.scwang.smart.refresh.layout.api.RefreshHeader
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import com.scwang.smart.refresh.layout.constant.SpinnerStyle
-import com.scwang.smart.refresh.layout.simple.SimpleMultiListener
+import com.scwang.smart.refresh.layout.listener.ScrollBoundaryDecider import com.scwang.smart.refresh.layout.simple.SimpleMultiListener import com.scwang.smart.refresh.layout.util.SmartUtil
 import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
@@ -346,9 +346,14 @@ abstract class CYLRefreshComponent internal constructor(
         }
 
     /**
-     * Where a pull may start (`triggerMode`); SmartRefreshLayout pulls once the content is at its edge.
+     * Where a pull may start (`triggerMode`): [CYLRefreshTriggerMode.Anywhere] (default) also lets a drag that started
+     * in the middle of the list carry on into the pull; [CYLRefreshTriggerMode.OnEdge] only a drag that started at the edge.
      */
-    var triggerMode: CYLRefreshTriggerMode = CYLRefreshTriggerMode.OnEdge
+    var triggerMode: CYLRefreshTriggerMode = CYLRefreshTriggerMode.Anywhere
+        set(value) {
+            field = value
+            refreshLayout?.let { CYLRefreshBridge.of(it).applyTriggerMode() }
+        }
 
     /**
      * Whether the component hides while it has nothing to show (`autoHideRefresh`).
@@ -397,6 +402,7 @@ abstract class CYLRefreshComponent internal constructor(
         applyTriggerRate(layout)
         if (maxPullDistance > 0f) view.view.post { applyMaxPullDistance(layout) }
         if (!isHeader && triggersWhenReached) layout.setEnableAutoLoadMore(true)
+        CYLRefreshBridge.of(layout).applyTriggerMode()
         didAttachToScrollView(layout)
     }
 
@@ -809,6 +815,68 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
         }
     }
 
+    /**
+     * Whether the list was at its top (or bottom) edge when the current drag started.
+     */
+    internal var startedAtTop = true
+    internal var startedAtBottom = true
+    private var watchedList: RecyclerView? = null
+
+    /**
+     * Records where each drag starts, for the trigger mode.
+     */
+    private val dragStart by lazy { object : RecyclerView.SimpleOnItemTouchListener() {
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            if (e.actionMasked == MotionEvent.ACTION_DOWN) dragStarted(rv)
+            return false
+        }
+    } }
+
+    internal fun dragStarted(list: View) {
+        startedAtTop = !list.canScrollVertically(-1)
+        startedAtBottom = !list.canScrollVertically(1)
+    }
+
+    /**
+     * Installs a scroll boundary decider when a component pulls only from the edge, and removes it otherwise.
+     */
+    fun applyTriggerMode() {
+        val headerOnEdge = header?.triggerMode == CYLRefreshTriggerMode.OnEdge
+        val footerOnEdge = footer?.triggerMode == CYLRefreshTriggerMode.OnEdge
+        if (!headerOnEdge && !footerOnEdge) {
+            watchedList?.removeOnItemTouchListener(dragStart)
+            watchedList = null
+            layout.setScrollBoundaryDecider(null)
+            return
+        }
+        if (hasRecyclerView) layout.post {
+            val list = findList(layout)
+            if (list !== watchedList) {
+                watchedList?.removeOnItemTouchListener(dragStart)
+                list?.addOnItemTouchListener(dragStart)
+                watchedList = list
+            }
+        }
+        layout.setScrollBoundaryDecider(object : ScrollBoundaryDecider {
+            override fun canRefresh(content: View) =
+                SmartUtil.canRefresh(content, null) && (header?.triggerMode != CYLRefreshTriggerMode.OnEdge || startedAtTop)
+
+            override fun canLoadMore(content: View) =
+                SmartUtil.canLoadMore(content, null, true) && (footer?.triggerMode != CYLRefreshTriggerMode.OnEdge || startedAtBottom)
+        })
+    }
+
+    private fun findList(view: View): RecyclerView? {
+        if (view is RecyclerView) return view
+        if (view !is ViewGroup) return null
+        for (i in 0 until view.childCount) {
+            val child = view.getChildAt(i)
+            if (child === header?.view?.view || child === footer?.view?.view) continue
+            findList(child)?.let { return it }
+        }
+        return null
+    }
+
     override fun onRefresh(refreshLayout: RefreshLayout) {
         header?.executeRefreshingCallback()
     }
@@ -839,6 +907,11 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
     }
 
     companion object {
+        /**
+         * Whether the app ships RecyclerView (the library only compiles against it).
+         */
+        private val hasRecyclerView = runCatching { Class.forName("androidx.recyclerview.widget.RecyclerView") }.isSuccess
+
         fun of(layout: SmartRefreshLayout): CYLRefreshBridge {
             (layout.getTag(R.id.cyl_refresh_bridge) as? CYLRefreshBridge)?.let { return it }
             val bridge = CYLRefreshBridge(layout)

@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.scwang.smart.refresh.layout.listener.ScrollBoundaryDecider
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -547,6 +551,42 @@ class CYLRefreshComponentTest {
         assertNotSame(done, footer.arrowView!!.drawable)
     }
 
+
+
+
+    @Test
+    fun triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle() {
+        val list = RecyclerView(activity).apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                override fun getItemCount() = 50
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    object : RecyclerView.ViewHolder(TextView(activity).apply { layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100) }) {}
+                override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = Unit
+            }
+        }
+        val layout = SmartRefreshLayout(activity).apply { setRefreshContent(list) }
+        show(layout)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        assertEquals("default, as on iOS", CYLRefreshTriggerMode.Anywhere, header.triggerMode)
+        header.triggerMode = CYLRefreshTriggerMode.OnEdge
+        idle(50)
+        val field = SmartRefreshLayout::class.java.getDeclaredField("mScrollBoundaryDecider").apply { isAccessible = true }
+        val decider = field.get(layout) as ScrollBoundaryDecider
+        val bridge = CYLRefreshBridge.of(layout)
+        // The drag starts in the middle, then scrolls back to the top: no pull.
+        list.scrollBy(0, 1000)
+        bridge.dragStarted(list)
+        list.scrollBy(0, -1000)
+        assertFalse("started in the middle", decider.canRefresh(list))
+        // A drag that starts at the top pulls.
+        bridge.dragStarted(list)
+        assertTrue("started at the top", decider.canRefresh(list))
+        // Anywhere removes the decider.
+        header.triggerMode = CYLRefreshTriggerMode.Anywhere
+        assertNull(field.get(layout))
+    }
 
 
 }
