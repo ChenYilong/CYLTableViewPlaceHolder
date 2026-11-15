@@ -165,6 +165,7 @@ struct Index {
     .height('100%')
     .justifyContent(FlexAlign.Center)
     .accessibilityText(t(tab.titleKey))
+    .id('tab-' + tab.identifier)
     .onClick(() => {
       this.selected = index;
       this.controller.changeIndex(index);
