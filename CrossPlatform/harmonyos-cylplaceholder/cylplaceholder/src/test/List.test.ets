@@ -5,6 +5,7 @@ import placeholderAnimationTest from './CYLPlaceholderAnimation.test';
 import refreshDrawnTest from './CYLRefreshDrawn.test';
 import refreshIconsTest from './CYLRefreshIcons.test';
 import refreshRiveTest from './CYLRefreshRive.test';
+import swiftAPITest from './CYLSwiftAPI.test';
 
 export default function testsuite() {
   placeholderCoreTest();
@@ -14,4 +15,5 @@ export default function testsuite() {
   refreshDrawnTest();
   refreshIconsTest();
   refreshRiveTest();
+  swiftAPITest();
 }
