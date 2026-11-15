@@ -1042,6 +1042,17 @@ touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
 The vault's auto sync (`.claude/hooks/git_sync.py` in the vault root) checks `.git/NO_AUTO_SYNC`, not `.git/hooks/NO_AUTO_SYNC`: the hooks path never paused it (verified 2026-11-12). Both files are kept so either reading works; delete them to turn the sync back on. If the hooks directory does not exist (for example in a fresh clone or a container without sample hooks),
 `mkdir -p` creates it first so `touch` always succeeds.
 
+### git cz style, English only (owner's rule, 2026-11-16)
+
+- **Every commit is a `git cz` (Commitizen) style commit**: `{type}{scope}: {emoji} {subject}` with the Commitizen
+  default types and emojis listed in "Commitizen defaults" (`feat` 🎸, `fix` 🐛, `docs` ✏️, `test` 💍, `ci` 🎡,
+  `chore` 🤖, `refactor` 💡, `style` 💄, `perf` ⚡️), whether it is written with `git cz` or by hand.
+- **The whole commit message is in English: no Chinese characters anywhere**, not in the subject, the body, the
+  scope or a quoted file name or prompt. Describe a Chinese text or prompt in English (or point to the `docs/` entry
+  that quotes it) instead of pasting it. This applies to merge commits, cherry-picks and amended messages too.
+- Check before committing: `git log -1 --format=%B | LC_ALL=C.UTF-8 grep -nP '[\x{4e00}-\x{9fff}\x{3000}-\x{303f}\x{ff00}-\x{ffef}]'`
+  must print nothing.
+
 ## Committing on branches
 
 On any branch other than `master` or `main`, commit and push as soon as the
