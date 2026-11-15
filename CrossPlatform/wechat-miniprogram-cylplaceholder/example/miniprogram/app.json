@@ -1,5 +1,5 @@
 {
-  "pages": ["pages/index/index", "pages/scenario/scenario", "pages/hud/hud"],
+  "pages": ["pages/index/index", "pages/scenario/scenario", "pages/hud/hud", "pages/configuration/configuration"],
   "window": {
     "navigationBarTitleText": "CYLTableViewPlaceHolder",
     "navigationBarBackgroundColor": "#ffffff",

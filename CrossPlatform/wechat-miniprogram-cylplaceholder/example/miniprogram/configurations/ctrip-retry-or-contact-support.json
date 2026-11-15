@@ -1,0 +1,8 @@
+{
+  "scenario": "RetryOrContactSupport",
+  "overrides": [
+    { "index": 0, "repeatCount": "loop" },
+    { "index": 1, "highlightStyle": "shrink" },
+    { "index": 3, "highlightStyle": "dim", "interactionEnabled": true }
+  ]
+}

@@ -2,12 +2,14 @@
   <view class="cyl-placeholder__stack">
     <block wx:for="{{items}}" wx:key="index">
       <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">
-        <!-- icon: an image with an optional title below -->
-        <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box"
+        <!-- icon: an image (or its animation) with an optional title below -->
+        <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box" id="{{item.accessibilityIdentifier || ''}}"
+              hover-class="{{item.tappable ? item.hoverClass : 'none'}}"
               catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
               aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
-          <animation wx:if="{{animated && item.animation}}" class="cyl-placeholder__animation"
-                     path="{{animationFolder}}{{item.animation}}" loop="{{loop}}" speed="{{speed}}" autoplay="{{true}}"
+          <animation wx:if="{{animated && item.animation}}" class="cyl-placeholder__animation" id="cyl-animation-{{index}}"
+                     path="{{animationFolder}}{{item.animation}}" loop="{{item.ownLoop === null ? loop : item.ownLoop}}"
+                     speed="{{speed}}" autoplay="{{true}}" data-index="{{index}}" bind:complete="onAnimationComplete"
                      style="display: block; width: {{item.side}}px; height: {{item.side}}px" />
           <image wx:else class="cyl-placeholder__icon {{item.tinted ? 'cyl-placeholder__icon--tinted' : ''}}"
                  src="{{imageBase}}{{item.image}}.png" mode="aspectFit"
@@ -22,9 +24,15 @@
           <text class="cyl-placeholder__separator-text">{{item.text}}</text>
           <view class="cyl-placeholder__line" />
         </view>
-        <view wx:elif="{{item.type === 'button'}}" class="cyl-placeholder__button cyl-placeholder__button--{{item.style}}"
-              hover-class="cyl-placeholder__button--pressed" catchtap="onItemTap" data-index="{{index}}"
-              aria-role="button" aria-label="{{item.title}}">{{item.title}}</view>
+        <view wx:elif="{{item.type === 'button'}}" id="{{item.accessibilityIdentifier || ''}}"
+              class="cyl-placeholder__button cyl-placeholder__button--{{item.style}}"
+              hover-class="{{item.hoverClass}}" catchtap="onItemTap" data-index="{{index}}"
+              aria-role="button" aria-disabled="{{!item.tappable}}" aria-label="{{item.title}}">{{item.title}}</view>
+        <!-- item: a title drawn with raw item attributes (configuration "item" type) -->
+        <view wx:elif="{{item.type === 'item'}}" id="{{item.accessibilityIdentifier || ''}}" class="cyl-placeholder__raw-item"
+              style="color: {{item.color || '#333'}}; background: {{item.backgroundColor || 'transparent'}}; border-radius: {{item.cornerRadius}}px; {{item.padding ? 'padding: ' + item.padding + ';' : ''}} min-width: {{item.minWidth}}px"
+              hover-class="{{item.tappable ? item.hoverClass : 'none'}}" catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
+              aria-role="{{item.tappable ? 'button' : 'text'}}" aria-label="{{item.title}}">{{item.title}}</view>
       </view>
     </block>
   </view>
