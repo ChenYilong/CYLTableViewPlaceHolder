@@ -166,6 +166,9 @@ class ScenariosPage : StackPage() {
         column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
             startActivity(Intent(context, StatusBarActivity::class.java))
         })
+        // The iOS main example (Examples/Example): pull to refresh with two custom placeholders, Auto, Styles.
+        column.addView(header(context, "Examples/Example"))
+        column.addView(row(context, "CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", "main-example") { push(mainExampleScreen()) })
         column.addView(header(context, context.t(R.string.merged_section_configurations)))
         for (name in context.assets.list("Configurations").orEmpty().sorted()) {
             column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })
