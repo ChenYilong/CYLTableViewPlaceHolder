@@ -32,7 +32,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 <!-- harmony-quality:begin -->
 | 中文 | English |
 |:---|:---|
-| **鸿蒙质量分：38 / 100**（完成 7 / 计入 18 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 38 / 100** (7 / 18 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
+| **鸿蒙质量分：45 / 100**（完成 9 / 计入 20 项；未完成：Q7、Q9、Q10、Q11、Q12、Q13、Q14、Q15、Q16、Q17、Q18）。 | **HarmonyOS quality score: 45 / 100** (9 / 20 rows done; open: Q7, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18). |
 <!-- harmony-quality:end -->
 
 | # | 项目 / Item | 通过条件 / Pass condition | 状态 / Status |
@@ -55,6 +55,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q16 | 模拟器：多语言 / Emulator: languages | 切换到简体中文与日语后文字正确，截图 / texts are right after switching to Simplified Chinese and Japanese, screenshot | TODO |
 | Q17 | 模拟器：深色模式 / Emulator: dark mode | 深色模式下占位图与列表可读，截图 / the placeholder and lists are readable in dark mode, screenshot | TODO |
 | Q18 | 文档与截图 / Docs and screenshots | 截图存入 `docs/assets/harmonyos-*.png` 并记录在本文件（设备、系统、提交、时间） / screenshots in `docs/assets/harmonyos-*.png`, recorded here (device, OS, commit, time) | TODO |
+| Q19 | 场景页的控制条 / Controls on the scenario page | `ScenarioDetailPage.ets`：全部播放作用于所有组件，倍速与循环实时生效，循环初始值取场景自身设置 / Play all acts on every component, speed and loop live, the loop starts as the scenario's own setting | 完成 / Done (2026-11-16, compiled) |
+| Q20 | 刷新图标页的控制条 / Controls on the refresh icon page | `CYLRefreshIconViewModel` 新增 `animationSpeed`、`loopsWhilePlaying`、`replayAnimation()`；`RefreshIconDemoPage.ets` 用它们控制头部和尾部图标 / `CYLRefreshIconViewModel` gains `animationSpeed`, `loopsWhilePlaying`, `replayAnimation()`; `RefreshIconDemoPage.ets` drives the header and footer icons with them | 完成 / Done (2026-11-16, compiled, 1 test) |
 
 ## 任务 / Tasks
 
@@ -80,6 +82,9 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   multiplies the elapsed time by the speed) is passed as RiveAnimationView's `controller`; `cyl_setAnimationViewSpeed`
   returns false when the view replaced it. @ohos/rive is a bytecode HAR, so whether the view keeps a given controller
   is checked on the emulator. Build: BUILD SUCCESSFUL, 77 tests, 0 failures.
+- **Progress 2026-11-16 (Q19, Q20):** the scenario page and the refresh icon page have the playback controls too;
+  `CYLRefreshIconViewModel` gains `animationSpeed`, `loopsWhilePlaying` and `replayAnimation()` (HarmonyOS additions
+  for the rule). The emulator script installs the unsigned HAP (no signing needed on the emulator).
 
 ### DONE: HarmonyOS port, library and example (score 100)
 

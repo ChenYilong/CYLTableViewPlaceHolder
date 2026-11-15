@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs the signed entry HAP on the running emulator (hdc), launches it and saves a screenshot, for the emulator
+# Installs the entry HAP (unsigned is fine on the emulator) on the running emulator (hdc), launches it and saves a screenshot, for the emulator
 # rows (Q9-Q18) of docs/HarmonyOS.md "Full-marks standard". Build first with `scripts/build.sh` and a signed profile
 # (see build.sh).
 #
@@ -24,8 +24,8 @@ if [ "${1:-}" = "shot" ]; then
   exit 0
 fi
 "$HDC" list targets
-HAP="$OUT/entry/build/default/outputs/default/entry-default-signed.hap"
-[ -f "$HAP" ] || { echo "no signed HAP: set up signing (build.sh) and rebuild"; exit 1; }
+HAP=$(ls "$OUT"/entry/build/default/outputs/default/entry-default-signed.hap 2>/dev/null || ls "$OUT"/entry/build/default/outputs/default/entry-default-unsigned.hap)
+# The emulator takes the unsigned HAP (no signing needed for emulator tests); a signed one is used when present.
 "$HDC" install -r "$HAP"
 "$HDC" shell aa start -a EntryAbility -b "$BUNDLE"
 sleep 4

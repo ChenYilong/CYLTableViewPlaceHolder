@@ -7,6 +7,8 @@
 // - chooseManually: a short confirmation (the location permission scenario offers to pick an address by hand)
 // - done:           goes back
 // "Tap: on/off" switches every component's tap (off keeps the components visible but inert).
+// Under the placeholder, the playback controls of docs/Example-Animation-Playback.md act on every animated component:
+// Play all restarts them from 0, the speed and the loop apply live (the loop starts as the scenario's own setting).
 import { common, Want } from '@kit.AbilityKit';
 import {
   CYLPlaceholderAction,
@@ -18,7 +20,8 @@ import {
   CYLPlaceholderStackViewModel,
   CYLPlaceholderViewModel
 } from 'cylplaceholder';
-import { showFeedback, t } from '../common/L10n';
+import { effectiveLanguage, showFeedback, t } from '../common/L10n';
+import { PlaybackControls, repeatCountForLoop } from '../common/Playback';
 import { Route, RouteParam, pop, push } from '../common/Routes';
 import { BarButton, UiColor } from '../common/Ui';
 
@@ -41,6 +44,10 @@ export struct ScenarioDetailPage {
   @State placeholder: CYLPlaceholderStackViewModel = new CYLPlaceholderStackViewModel();
   @State rows: string[] = [];
   @State interactionEnabled: boolean = true;
+  @State speed: number = 1;
+  @State loop: boolean = false;
+  /** Whether the loop switch was touched; until then each component keeps the scenario's repeat count. */
+  private loopChosen: boolean = false;
   private isLoading: boolean = false;
   private scenario: CYLPlaceholderScenario = CYLPlaceholderScenario.NoContent;
   private timer: number = -1;
@@ -51,6 +58,7 @@ export struct ScenarioDetailPage {
       this.scenario = scenario;
     }
     this.reloadData();
+    this.loop = this.placeholder.componentViews.some((c: CYLPlaceholderViewModel) => c.animationRepeatCount === 0);
   }
 
   aboutToDisappear(): void {
@@ -68,6 +76,29 @@ export struct ScenarioDetailPage {
       component.tapInteractionEnabled = this.interactionEnabled;
     });
     this.placeholder = placeholder;
+    this.applyPlayback();
+  }
+
+  /** The current speed (and the loop, once chosen) on every component of the placeholder. */
+  private applyPlayback(): void {
+    this.placeholder.componentViews.forEach((c: CYLPlaceholderViewModel) => {
+      c.setPlaceholderAnimationSpeed(this.speed);
+      if (this.loopChosen) {
+        c.animationRepeatCount = repeatCountForLoop(this.loop);
+      }
+    });
+  }
+
+  private playAll(): void {
+    this.placeholder.componentViews.forEach((c: CYLPlaceholderViewModel) => c.playPlaceholderAnimation());
+  }
+
+  private applyLoop(loop: boolean): void {
+    this.loopChosen = true;
+    this.applyPlayback();
+    if (loop) {
+      this.playAll();
+    }
   }
 
   private makeScenarioPlaceholder(): CYLPlaceholderStackViewModel {
@@ -148,7 +179,20 @@ export struct ScenarioDetailPage {
         .width('100%')
         .height('100%')
       } else {
-        CYLPlaceholderStackView({ model: this.placeholder })
+        Column() {
+          CYLPlaceholderStackView({ model: this.placeholder })
+            .layoutWeight(1)
+          PlaybackControls({
+            language: effectiveLanguage(),
+            speed: $speed,
+            loop: $loop,
+            onPlayAll: () => this.playAll(),
+            onSpeed: (speed: number) => this.applyPlayback(),
+            onLoop: (loop: boolean) => this.applyLoop(loop)
+          })
+        }
+        .width('100%')
+        .height('100%')
       }
     }
     .title(CYLPlaceholderScenarioCatalog.localizedNameForScenario(this.scenario))
