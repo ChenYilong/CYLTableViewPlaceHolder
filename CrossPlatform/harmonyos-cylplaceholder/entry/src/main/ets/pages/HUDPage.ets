@@ -74,8 +74,18 @@ export struct HUDPage {
   }
 
   aboutToAppear(): void {
-    const hud = this.hud;
-    hud.minimumDismissTimeInterval = 1.5;
+    // CYLDIAG (E5, docs/HarmonyOS.md): the page crashed here on its first open ("Obj is not a Valid object"); log what
+    // the shared HUD is and keep the page open with the error and its stack in hilog until the cause is known.
+    try {
+      const hud = this.hud;
+      console.error('CYLDIAG HUDPage sharedHUD type=' + typeof hud + ' defined=' + (hud !== undefined && hud !== null) +
+        ' minimumDismissTimeInterval=' + String(hud.minimumDismissTimeInterval));
+      hud.minimumDismissTimeInterval = 1.5;
+      console.error('CYLDIAG HUDPage minimumDismissTimeInterval set');
+    } catch (e) {
+      const error = e as Error;
+      console.error('CYLDIAG HUDPage error ' + error.name + ': ' + error.message + ' stack=' + error.stack);
+    }
     this.render();
   }
 

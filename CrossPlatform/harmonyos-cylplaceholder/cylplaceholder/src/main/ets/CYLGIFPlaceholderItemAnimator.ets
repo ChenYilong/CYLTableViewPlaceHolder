@@ -80,6 +80,9 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
         } catch (e) {
           delays = [];
         }
+        // CYLDIAG (E6, docs/HarmonyOS.md): the GIF detail page stayed blank on the emulator.
+        console.error('CYLDIAG GIF ' + this.fileURL + ' bytes=' + bytes.length + ' frames=' + maps.length + ' delays=' +
+          delays.length + ' size=' + this.width + 'x' + this.height);
         if (maps.length === 0) {
           this.didFail('GIF', null);
           return;
@@ -93,6 +96,7 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
         source.release();
       }
     }).catch((e: Error) => {
+      console.error('CYLDIAG GIF ' + this.fileURL + ' failed: ' + e.name + ': ' + e.message);
       this.didFail('GIF', e);
     });
   }
