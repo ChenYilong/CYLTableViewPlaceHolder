@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### 已完成：bug 优先在 core 修复的规则 / Done: Rule: fix bugs in the core first
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。规则（全英文）写入 `instructions.md` 的 “Code conventions” 新小节 “Fix bugs in the core first”，并在 `AGENTS.md`、`Examples/instructions.md`、skills `cyl-verify` 与 `cyl-docs` 中引用。 | Status: done (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). The rule (in English) is a new subsection "Fix bugs in the core first" under "Code conventions" in `instructions.md`, referenced from `AGENTS.md`, `Examples/instructions.md` and the skills `cyl-verify` and `cyl-docs`. |
+| 用户原始提示词：“continue，并找到instructions相关文档，以及skills相关文档，追加编码规范：全英文写入：如果遇到issue bug，你应该主要优先修改 core 层面的代码以规避类似问题，而非example层。core的定义为发布到 相关库管理平台的代码比如 cocoapods maven gradle npm等平台的代码。最差的方式是在example层修复。如果无法从core 层面修复，你要询问我并告知我原因。并在相关文档中解释 ：为什么不能从core层面解决，而是在example层解决。” | The user's original prompt (verbatim on the left): find the instructions and skills documents and append, in English: fix issues and bugs in the core first, not in the example layer; the core is the code published to package registries (CocoaPods, Maven, Gradle, npm…); fixing in the example layer is the worst option; when the core cannot fix it, ask the owner and say why, and explain in the related document why the core cannot and the example does. |
+
 ### 已完成：鸿蒙 IDE 准备与模拟器必要条件写入说明文件与 skills / Done: Write the HarmonyOS IDE preparation and emulator prerequisites into the instructions and skills
 
 | 中文 | English |

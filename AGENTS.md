@@ -117,6 +117,10 @@ the integrated `CYLRefresh` component, and an example application. Read
   build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
   breaks a build, fix the code in `CYLRefresh/` until it builds; never pin an older MJRefresh. See "Depending
   on MJRefresh in the examples" in `instructions.md`.
+- Fix bugs in the core first (`instructions.md`, "Fix bugs in the core first"): the core is the code published to a
+  package registry (CocoaPods, Maven / Gradle, npm, ohpm, pub.dev). Fix an issue or bug there so every app avoids it;
+  fixing it only in an example is the worst option. If the core cannot fix it, ask the owner and say why, then record
+  in the related document why the core cannot and the example does.
 - Examples have the lowest weight (`instructions.md`, "Examples have the lowest weight"; `docs/Swift-Migration.md`):
   when a core change (the Swift migration or a refactor) breaks an example, fix the example first, freely and in the
   same change. An example's usage is never a compatibility constraint and never a reason for an alias, a shim, a

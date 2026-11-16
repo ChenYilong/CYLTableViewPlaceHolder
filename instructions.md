@@ -76,6 +76,25 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
 
 ## Code conventions
 
+### Fix bugs in the core first (owner's rule, 2026-11-17)
+
+- **The core** is the code published to a package registry: CocoaPods (the podspec's sources and resources), Maven /
+  Gradle (the Android library modules), npm (the mini program and React Native packages), ohpm (the HarmonyOS HAR
+  `cylplaceholder`), pub.dev and the like. Examples, demo apps, tests and scripts are not core.
+- **When you meet an issue or bug, fix it in the core first**, so every app using the library avoids it and the
+  same problem cannot come back in another page or another app. Fixing it in the example layer is the worst option:
+  it hides the bug in the demo while every real app still has it.
+- **If it cannot be fixed in the core, ask the owner before fixing it in the example, and say why**: what in the
+  core prevents the fix (for example a platform API that does not exist, a public-API change that would break
+  compatibility, a third-party library that must change upstream, or the bug really being in the example's own
+  code). Then record the reason in the related document (the issue table, the task entry or the feature document):
+  why the core cannot solve it and why the example layer does.
+- An example's own mistakes (its layout, its texts, how it calls the API) are fixed in the example, with no question;
+  but check first whether the core made the mistake easy (an unclear default, a missing guard, a misleading name)
+  and fix that too.
+- This is not the same as "Examples have the lowest weight": that rule is about a core change that breaks an
+  example's build (fix the example); this one is about bugs (fix the core).
+
 ### Documentation comments on public API
 
 Callers read the public API through generated documentation: Xcode Quick Help, the generated Swift interface of an

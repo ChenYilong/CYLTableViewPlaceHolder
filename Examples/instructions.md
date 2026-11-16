@@ -53,3 +53,6 @@ reproduction and the automated test command.
 
 Status scores come from `docs/issue-progress.md`; update both when an issue changes.
 
+Bugs: fix them in the core (the code published to CocoaPods, Maven / Gradle, npm, ohpm, pub.dev), not in an example;
+an example-only fix needs the owner's approval and a written reason in the related document (`instructions.md`,
+"Fix bugs in the core first").
