@@ -105,7 +105,10 @@ export function TableCell(row: TableRow, action: () => void) {
         .margin({ right: 12 })
     }
     Column() {
+      // One line, cut at the end, as a UITableViewCell title (long file names used to wrap mid-word).
       Text(row.title).fontSize(17).fontColor(UiColor.label)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
       if (row.subtitle.length > 0) {
         Text(row.subtitle).fontSize(12).fontColor(UiColor.gray).margin({ top: 2 })
       }

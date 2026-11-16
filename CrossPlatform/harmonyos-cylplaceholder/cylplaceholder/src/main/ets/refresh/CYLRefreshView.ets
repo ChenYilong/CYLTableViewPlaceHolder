@@ -653,8 +653,10 @@ export struct CYLRefreshContainer {
   /** Draws a custom back footer inside the back footer area, given the footer model; null for the class's look. */
   footerBuilder: WrappedBuilder<[CYLRefreshComponentModel]> | null = null;
   @State private tick: number = 0;
-  private viewW: number = 0;
-  private viewH: number = 0;
+  // The container's size: state, so the back footer (at viewH) and the trailer (at viewW) move once the layout knows it;
+  // as plain fields the first layout's 0 stayed and the back footer was drawn over the top of the list.
+  @State private viewW: number = 0;
+  @State private viewH: number = 0;
   private contentW: number = 0;
   private contentH: number = 0;
   private baseTop: number = Number.NaN;
