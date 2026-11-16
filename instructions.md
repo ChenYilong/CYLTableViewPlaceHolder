@@ -1070,6 +1070,20 @@ user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
   Pass it explicitly (`gh pr create --base <source branch>`); never rely on the repository's default.
 - Write the source branch into the pull request description, so a reviewer knows where it will merge.
 - Still do not merge the pull request without the user's approval.
+- **Every branch with commits has an open pull request (added 2026-11-16).** After creating a branch, any commit on it
+  must be in a pull request. Never create a branch and keep committing to it without one: commits on a branch with no
+  pull request are ignored, because nothing ever merges them.
+  - **Before every commit**, check that the current branch has an open pull request
+    (`gh pr list --state open --head <branch>`). If it has none (never opened, closed or merged), open a new one right
+    after pushing (`gh pr create --base <target> --head <branch>`).
+  - **Target branch**: the branch of the pull request that was active (open) before this one was created; only when
+    there is none, `master` (or `main`).
+  - **More than two open pull requests: ask first.** When the repository already has more than two open pull requests,
+    do not open another one on your own: ask the owner whether to create a new branch and pull request or to keep
+    committing on the current branch. More than two open branches make merging hard and leave no sensible target for
+    each branch.
+  - Push only to branches that have an open pull request; do not recreate a branch that was deleted after its pull
+    request was closed or merged.
 
 ## HarmonyOS: IDE preparation and emulator prerequisites (added 2026-11-16)
 

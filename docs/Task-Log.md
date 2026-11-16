@@ -160,3 +160,9 @@
 | 中文 | English |
 | --- | --- |
 | 状态：已完成（2026-11-16）。没有脚本执行相关章节，新建 “Running scripts: bash first”，写入 `AGENTS.md`、`instructions.md` 与 skill `cyl-verify`（全英文）。用户原话：「写入instructions相关文件，skills相关指令，找到脚本执行的相关章节，没有的话就新建，保证写入成功：全英文写入：优先使用bash 执行脚本 避免以下错误zsh doesn't split $box into words either. Running the same measurement as a bash script.」 | Status: done (2026-11-16). No section on running scripts existed, so "Running scripts: bash first" is new in `AGENTS.md`, `instructions.md` and the `cyl-verify` skill (English). |
+
+### 已完成：每个有提交的分支必须有 open 的 PR / Done: Every branch with commits has an open pull request
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-16，分支 `feat/android-refresh-port-followup`，PR #31）。规则（全英文）写入 `AGENTS.md` “Git”、`instructions.md` “Committing on branches” 与 skill `cyl-verify`。用户原话：「写入instructions相关文件，skills相关指令，找到commit 的相关章节，没有的话就新建，保证写入成功：全英文写入：创建分支后有任何commit必须提交pr。不允许只新建分支，持续向该分支commit代码，但不创建pr。因为不创建pr会导致该分支上的所有commit代码全部被忽略。 commit前必须检查该分支pr是否处于open状态，如果不处于open状态必须新建pr。target 目标优先设置为 在创建pr前的活跃pr，如果没有才设置为master分支。如果open状态的pr已经超过两个，那么就要慎重，你需要询问我，是否新建分支创建pr还是保持在本分支继续提交。因为超过两个分支会导致代码合并困难，无法合理分配分支的目标分支。」 | Status: done (2026-11-16, branch `feat/android-refresh-port-followup`, PR #31). The rule (English) is in `AGENTS.md` "Git", `instructions.md` "Committing on branches" and the `cyl-verify` skill. |
