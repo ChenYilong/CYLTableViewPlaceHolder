@@ -94,7 +94,9 @@ export {
   CYLPlaceholderHUDDidDisappearNotification,
   CYLPlaceholderHUDDidReceiveTouchEventNotification,
   CYLPlaceholderHUDDidTouchDownInsideNotification,
-  CYLPlaceholderHUDStatusUserInfoKey
+  CYLPlaceholderHUDStatusUserInfoKey,
+  CYLPlaceholderSharedHUD,
+  CYLPlaceholderHUDSetPresenter
 } from './src/main/ets/CYLPlaceholderHUD';
 export { CYLPlaceholderHUDView, CYLPlaceholderHUDInstallOverlayPresenter } from './src/main/ets/CYLPlaceholderHUDView';
 

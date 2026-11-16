@@ -6,7 +6,7 @@
 // on the UIContext's OverlayManager), so it can be called from anywhere, like the iOS class methods. The shared HUD
 // needs its container once, as on Android:
 //
-//   aboutToAppear() { CYLPlaceholderHUD.sharedHUD.containerView = this.getUIContext(); }
+//   aboutToAppear() { CYLPlaceholderSharedHUD().containerView = this.getUIContext(); }
 //   ...
 //   CYLPlaceholderHUD.showWithStatus('Loading');
 //   CYLPlaceholderHUD.showSuccessWithStatus('Saved');
@@ -136,6 +136,27 @@ function durationForString(text: string | null, minimum: number, maximum: number
   return Math.min(Math.max(length * 0.06 + 0.5, minimum), maximum);
 }
 
+// The shared HUD, the presenter and the observers live at module level, not in static fields of the @Observed
+// class: on the device the static getter `sharedHUD` returned undefined on the HUD page (TypeError "Cannot read
+// property minimumDismissTimeInterval of undefined", emulator 2026-11-16, issue E5), so nothing reads static state
+// of the decorated class any more. The static members below only forward to these.
+let cylSharedHUD: CYLPlaceholderHUD | null = null;
+let cylHUDPresenter: CYLPlaceholderHUDPresenter | null = null;
+let cylHUDObservers: CYLPlaceholderHUDObserver[] = [];
+
+/** The HUD the class methods use (iOS `+[CYLPlaceholderHUD sharedHUD]`); made on first use. */
+export function CYLPlaceholderSharedHUD(): CYLPlaceholderHUD {
+  if (cylSharedHUD === null) {
+    cylSharedHUD = new CYLPlaceholderHUD(null);
+  }
+  return cylSharedHUD;
+}
+
+/** Sets the presenter that draws every HUD (CYLPlaceholderHUDView.ets installs the overlay presenter). */
+export function CYLPlaceholderHUDSetPresenter(presenter: CYLPlaceholderHUDPresenter | null): void {
+  cylHUDPresenter = presenter;
+}
+
 /** A heads-up display over a page (iOS `CYLPlaceholderHUD`). */
 // Only the @Track fields notify the HUD view (CYLPlaceholderHUDView, inside an overlay ComponentContent that is
 // disposed after each HUD). Without @Track every assignment notified it, and setting a plain option such as
@@ -143,10 +164,14 @@ function durationForString(text: string | null, minimum: number, maximum: number
 // (HUD page crash, emulator 2026-11-16). The native references (containerView, hudView) are untracked too.
 @Observed
 export class CYLPlaceholderHUD {
-  private static shared: CYLPlaceholderHUD | null = null;
   /** Draws every HUD; set by CYLPlaceholderHUDView.ets (null in unit tests: the state still changes). */
-  static presenter: CYLPlaceholderHUDPresenter | null = null;
-  private static observers: CYLPlaceholderHUDObserver[] = [];
+  static get presenter(): CYLPlaceholderHUDPresenter | null {
+    return cylHUDPresenter;
+  }
+
+  static set presenter(value: CYLPlaceholderHUDPresenter | null) {
+    cylHUDPresenter = value;
+  }
 
   // Content.
   /** The icon and status of the built-in states, or null (iOS `contentView`). */
@@ -248,10 +273,7 @@ export class CYLPlaceholderHUD {
 
   /** The HUD the class methods use; set its containerView once (iOS `sharedHUD`). */
   static get sharedHUD(): CYLPlaceholderHUD {
-    if (CYLPlaceholderHUD.shared === null) {
-      CYLPlaceholderHUD.shared = new CYLPlaceholderHUD(null);
-    }
-    return CYLPlaceholderHUD.shared;
+    return CYLPlaceholderSharedHUD();
   }
 
   // Read-only state.
@@ -556,92 +578,92 @@ export class CYLPlaceholderHUD {
 
   /** Adds an observer of the HUD notifications (every name; filter on the name it receives). */
   static addObserver(observer: CYLPlaceholderHUDObserver): void {
-    if (CYLPlaceholderHUD.observers.indexOf(observer) < 0) {
-      CYLPlaceholderHUD.observers.push(observer);
+    if (cylHUDObservers.indexOf(observer) < 0) {
+      cylHUDObservers.push(observer);
     }
   }
 
   /** Removes an observer added by addObserver. */
   static removeObserver(observer: CYLPlaceholderHUDObserver): void {
-    CYLPlaceholderHUD.observers = CYLPlaceholderHUD.observers.filter((o: CYLPlaceholderHUDObserver) => o !== observer);
+    cylHUDObservers = cylHUDObservers.filter((o: CYLPlaceholderHUDObserver) => o !== observer);
   }
 
   // Class methods: the shared HUD (iOS `+show` etc.).
 
   static show(): void {
-    CYLPlaceholderHUD.sharedHUD.show();
+    CYLPlaceholderSharedHUD().show();
   }
 
   static showWithStatus(status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showWithStatus(status);
+    CYLPlaceholderSharedHUD().showWithStatus(status);
   }
 
   static showProgress(progress: number): void {
-    CYLPlaceholderHUD.sharedHUD.showProgress(progress);
+    CYLPlaceholderSharedHUD().showProgress(progress);
   }
 
   static showProgressStatus(progress: number, status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showProgressStatus(progress, status);
+    CYLPlaceholderSharedHUD().showProgressStatus(progress, status);
   }
 
   static setStatus(status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.setStatus(status);
+    CYLPlaceholderSharedHUD().setStatus(status);
   }
 
   static showInfoWithStatus(status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showInfoWithStatus(status);
+    CYLPlaceholderSharedHUD().showInfoWithStatus(status);
   }
 
   static showSuccessWithStatus(status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showSuccessWithStatus(status);
+    CYLPlaceholderSharedHUD().showSuccessWithStatus(status);
   }
 
   static showErrorWithStatus(status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showErrorWithStatus(status);
+    CYLPlaceholderSharedHUD().showErrorWithStatus(status);
   }
 
   static showImageStatus(image: ResourceStr | null, status: string | null): void {
-    CYLPlaceholderHUD.sharedHUD.showImageStatus(image, status);
+    CYLPlaceholderSharedHUD().showImageStatus(image, status);
   }
 
   static showComponentsActions(components: CYLPlaceholderComponent[],
     actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null): void {
-    CYLPlaceholderHUD.sharedHUD.showComponentsActions(components, actions);
+    CYLPlaceholderSharedHUD().showComponentsActions(components, actions);
   }
 
   static showScenarioActions(scenario: CYLPlaceholderScenario,
     actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null): void {
-    CYLPlaceholderHUD.sharedHUD.showScenarioActions(scenario, actions);
+    CYLPlaceholderSharedHUD().showScenarioActions(scenario, actions);
   }
 
   static popActivity(): void {
-    CYLPlaceholderHUD.sharedHUD.popActivity();
+    CYLPlaceholderSharedHUD().popActivity();
   }
 
   static dismiss(): void {
-    CYLPlaceholderHUD.sharedHUD.dismiss();
+    CYLPlaceholderSharedHUD().dismiss();
   }
 
   static dismissWithCompletion(completion: CYLPlaceholderHUDDismissCompletion | null): void {
-    CYLPlaceholderHUD.sharedHUD.dismissWithCompletion(completion);
+    CYLPlaceholderSharedHUD().dismissWithCompletion(completion);
   }
 
   static dismissWithDelay(delay: number): void {
-    CYLPlaceholderHUD.sharedHUD.dismissWithDelay(delay);
+    CYLPlaceholderSharedHUD().dismissWithDelay(delay);
   }
 
   static dismissWithDelayCompletion(delay: number, completion: CYLPlaceholderHUDDismissCompletion | null): void {
-    CYLPlaceholderHUD.sharedHUD.dismissWithDelayCompletion(delay, completion);
+    CYLPlaceholderSharedHUD().dismissWithDelayCompletion(delay, completion);
   }
 
   /** Whether the shared HUD is on screen (iOS `+isVisible`). */
   static isVisible(): boolean {
-    return CYLPlaceholderHUD.shared !== null && CYLPlaceholderHUD.shared.visible;
+    return cylSharedHUD !== null && cylSharedHUD.visible;
   }
 
   /** The shared HUD's display duration (iOS `+displayDurationForString:`). */
   static displayDurationForString(text: string | null): number {
-    return CYLPlaceholderHUD.sharedHUD.displayDurationForString(text);
+    return CYLPlaceholderSharedHUD().displayDurationForString(text);
   }
 
   // Internals.
@@ -673,7 +695,7 @@ export class CYLPlaceholderHUD {
     this.cancelTimer(this.graceTimer);
     this.graceTimer = -1;
     this.showContent(state, status, image, null);
-    const presenter = CYLPlaceholderHUD.presenter;
+    const presenter = cylHUDPresenter;
     if (this.hapticsEnabled && presenter !== null &&
       (state === CYLPlaceholderHUDState.Success || state === CYLPlaceholderHUDState.Error)) {
       presenter.haptic(this, state);
@@ -732,7 +754,7 @@ export class CYLPlaceholderHUD {
     if (!this.presented) {
       this.presented = true;
       this.post(CYLPlaceholderHUDWillAppearNotification);
-      const presenter = CYLPlaceholderHUD.presenter;
+      const presenter = cylHUDPresenter;
       if (presenter !== null) {
         presenter.present(this);
       }
@@ -748,7 +770,7 @@ export class CYLPlaceholderHUD {
 
   private finish(completion: CYLPlaceholderHUDDismissCompletion | null, wasPresented: boolean): void {
     if (wasPresented) {
-      const presenter = CYLPlaceholderHUD.presenter;
+      const presenter = cylHUDPresenter;
       if (presenter !== null) {
         presenter.remove(this);
       }
@@ -772,6 +794,6 @@ export class CYLPlaceholderHUD {
   }
 
   private post(name: string): void {
-    CYLPlaceholderHUD.observers.slice().forEach((o: CYLPlaceholderHUDObserver) => o(name, this, this.statusValue));
+    cylHUDObservers.slice().forEach((o: CYLPlaceholderHUDObserver) => o(name, this, this.statusValue));
   }
 }

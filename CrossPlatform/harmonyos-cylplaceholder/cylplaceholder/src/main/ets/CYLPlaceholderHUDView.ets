@@ -8,6 +8,7 @@ import { vibrator } from '@kit.SensorServiceKit';
 import { resourceManager } from '@kit.LocalizationKit';
 import {
   CYLPlaceholderHUD,
+  CYLPlaceholderHUDSetPresenter,
   CYLPlaceholderHUDMaskType,
   CYLPlaceholderHUDPresenter,
   CYLPlaceholderHUDState
@@ -97,7 +98,7 @@ class CYLPlaceholderHUDOverlayPresenter implements CYLPlaceholderHUDPresenter {
     const context = hud.containerView;
     if (context === null) {
       console.warn('CYLPlaceholderHUD: set containerView (a UIContext) first, e.g. ' +
-        'CYLPlaceholderHUD.sharedHUD.containerView = this.getUIContext()');
+        'CYLPlaceholderSharedHUD().containerView = this.getUIContext()');
       return;
     }
     try {
@@ -145,7 +146,7 @@ class CYLPlaceholderHUDOverlayPresenter implements CYLPlaceholderHUDPresenter {
 
 /** Installs the overlay presenter (done when this module loads; call it again after replacing the presenter). */
 export function CYLPlaceholderHUDInstallOverlayPresenter(): void {
-  CYLPlaceholderHUD.presenter = new CYLPlaceholderHUDOverlayPresenter();
+  CYLPlaceholderHUDSetPresenter(new CYLPlaceholderHUDOverlayPresenter());
 }
 
 CYLPlaceholderHUDInstallOverlayPresenter();

@@ -56,6 +56,19 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
   private pixelMaps: image.PixelMap[] = [];
   private durations: number[] = [];
   private restartTimer: number = -1;
+  /**
+   * Re-renders the drawing component (CYLGIFAnimationComponent). The view reaches the component through a builder
+   * parameter, which does not keep an @ObjectLink subscribed on the device, so the frames decoded later never drew
+   * and the GIF detail page stayed blank (emulator 2026-11-16, issue E6); the component listens here instead.
+   */
+  cylChangeListener: (() => void) | null = null;
+
+  cylNotifyChange(): void {
+    const listener = this.cylChangeListener;
+    if (listener !== null) {
+      listener();
+    }
+  }
 
   constructor(fileURL: string, options: Record<string, string>, contentMode: ImageFit) {
     super();
@@ -80,9 +93,6 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
         } catch (e) {
           delays = [];
         }
-        // CYLDIAG (E6, docs/HarmonyOS.md): the GIF detail page stayed blank on the emulator.
-        console.error('CYLDIAG GIF ' + this.fileURL + ' bytes=' + bytes.length + ' frames=' + maps.length + ' delays=' +
-          delays.length + ' size=' + this.width + 'x' + this.height);
         if (maps.length === 0) {
           this.didFail('GIF', null);
           return;
@@ -91,12 +101,13 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
         this.durations = CYLGIFFrameDurations(delays, maps.length);
         this.updateFrames();
         this.iterations = CYLGIFIterations(this.repeatCount);
+        this.cylNotifyChange();
         this.didLoad();
       } finally {
         source.release();
       }
     }).catch((e: Error) => {
-      console.error('CYLDIAG GIF ' + this.fileURL + ' failed: ' + e.name + ': ' + e.message);
+      console.error('CYLGIFPlaceholderItemAnimator: ' + this.fileURL + ' failed to decode: ' + e.name + ': ' + e.message);
       this.didFail('GIF', e);
     });
   }
@@ -135,6 +146,7 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
       frames.push(frame);
     }
     this.frames = frames;
+    this.cylNotifyChange();
   }
 
   cyl_playAnimationView(): void {
@@ -143,14 +155,17 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
       return;
     }
     this.iterations = CYLGIFIterations(this.repeatCount);
+    this.cylNotifyChange();
     if (this.restartTimer >= 0) {
       clearTimeout(this.restartTimer);
     }
     // From the first frame: back to Initial, then Running on the next frame.
     this.state = AnimationStatus.Initial;
+    this.cylNotifyChange();
     this.restartTimer = setTimeout(() => {
       this.restartTimer = -1;
       this.state = AnimationStatus.Running;
+      this.cylNotifyChange();
     }, 0);
   }
 
@@ -162,17 +177,20 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
     this.cancelRestart();
     // fillMode Forwards: a stopped animator rests on its last frame.
     this.state = AnimationStatus.Stopped;
+    this.cylNotifyChange();
   }
 
   cyl_stopAnimationView(): void {
     this.pendingCommand = 0;
     this.cancelRestart();
     this.state = AnimationStatus.Initial;
+    this.cylNotifyChange();
   }
 
   cyl_setAnimationViewRepeatCount(repeatCount: number): boolean {
     this.repeatCount = Math.max(0, Math.floor(repeatCount));
     this.iterations = CYLGIFIterations(this.repeatCount);
+    this.cylNotifyChange();
     return true;
   }
 
@@ -191,9 +209,20 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
 @Component
 struct CYLGIFAnimationComponent {
   @ObjectLink view: CYLGIFAnimationContentView;
+  @State private cylTick: number = 0;
+
+  aboutToAppear(): void {
+    this.view.cylChangeListener = () => {
+      this.cylTick++;
+    };
+  }
+
+  aboutToDisappear(): void {
+    this.view.cylChangeListener = null;
+  }
 
   build() {
-    if (this.view.state === AnimationStatus.Initial && this.view.frames.length > 0) {
+    if (this.cylTick >= 0 && this.view.state === AnimationStatus.Initial && this.view.frames.length > 0) {
       // At rest (before the first play, or stopped) the first frame is drawn as an image: ImageAnimator may draw
       // nothing in its Initial state (the GIF detail page showed only the file name, 2026-11-16).
       Image(this.view.frames[0].src)

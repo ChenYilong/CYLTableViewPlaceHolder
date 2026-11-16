@@ -4,7 +4,7 @@
 // bar is an ArkUI Tabs with a custom bar (the SF Symbols are replaced by the mini program's SVG icons).
 // Every pushed page lives on one NavPathStack (common/Routes.ets). Choosing a language rebuilds the whole interface
 // and goes back to the first tab, as the iOS example's cyl_setRootViewControllerProvider does.
-import { CYLPlaceholderHUD } from 'cylplaceholder';
+import { CYLPlaceholderSharedHUD } from 'cylplaceholder';
 import { EXAMPLE_GENERATION_KEY, applyStoredLanguage, effectiveLanguage, t } from '../common/L10n';
 import { Route, RouteParam, pathStack, push } from '../common/Routes';
 import { UiColor } from '../common/Ui';
@@ -80,7 +80,7 @@ struct Index {
 
   aboutToAppear(): void {
     applyStoredLanguage(this.getUIContext().getHostContext()!);
-    CYLPlaceholderHUD.sharedHUD.containerView = this.getUIContext();
+    CYLPlaceholderSharedHUD().containerView = this.getUIContext();
   }
 
   /** setLanguage: back to the first tab, every page closed, every text rebuilt. */

@@ -12,6 +12,7 @@ import {
   CYLPlaceholderImageResource,
   CYLPlaceholderScenario,
   CYLPlaceholderScenarioCatalog,
+  CYLPlaceholderSharedHUD,
   CYLPlaceholderStackViewModel
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
@@ -69,23 +70,12 @@ export struct HUDPage {
   private progressTimer: number = -1;
   private timers: number[] = [];
 
-  private get hud(): CYLPlaceholderHUD {
-    return CYLPlaceholderHUD.sharedHUD;
-  }
+  // A field, not a struct getter, and the module function, not the @Observed class's static getter (E5: `this.hud`
+  // was undefined on the device).
+  private hud: CYLPlaceholderHUD = CYLPlaceholderSharedHUD();
 
   aboutToAppear(): void {
-    // CYLDIAG (E5, docs/HarmonyOS.md): the page crashed here on its first open ("Obj is not a Valid object"); log what
-    // the shared HUD is and keep the page open with the error and its stack in hilog until the cause is known.
-    try {
-      const hud = this.hud;
-      console.error('CYLDIAG HUDPage sharedHUD type=' + typeof hud + ' defined=' + (hud !== undefined && hud !== null) +
-        ' minimumDismissTimeInterval=' + String(hud.minimumDismissTimeInterval));
-      hud.minimumDismissTimeInterval = 1.5;
-      console.error('CYLDIAG HUDPage minimumDismissTimeInterval set');
-    } catch (e) {
-      const error = e as Error;
-      console.error('CYLDIAG HUDPage error ' + error.name + ': ' + error.message + ' stack=' + error.stack);
-    }
+    this.hud.minimumDismissTimeInterval = 1.5;
     this.render();
   }
 
@@ -254,7 +244,7 @@ export struct HUDPage {
     this.hud.showInfoWithStatus(t('CYLScenarioHUDCancelled')));
     this.hud.showComponentsActions(components, actions);
   }
-
+
   @Builder
   navTitle() {
     NavTitle(t('CYLScenarioTitleHUD'))
