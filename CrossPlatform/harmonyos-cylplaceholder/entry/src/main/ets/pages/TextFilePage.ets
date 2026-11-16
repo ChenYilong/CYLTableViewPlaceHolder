@@ -2,7 +2,8 @@
 // and the "Sources" page of the animation list): a non-editable UITextView with a 12 pt monospaced font.
 // param.value: the rawfile path; param.title: the title (default: the file name). An unreadable file shows nothing.
 import { readRawText } from '../common/RawFile';
-import { RouteParam } from '../common/Routes';
+import { RouteParam } from '../common/Routes';
+import { NavTitle } from '../common/Ui';
 
 @Component
 export struct TextFilePage {
@@ -11,6 +12,11 @@ export struct TextFilePage {
 
   aboutToAppear(): void {
     this.text = readRawText(this.getUIContext(), this.param.value);
+  }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title.length > 0 ? this.param.title : this.param.value.replace(/^.*\//, ''))
   }
 
   build() {
@@ -28,7 +34,7 @@ export struct TextFilePage {
       .width('100%')
       .height('100%')
     }
-    .title(this.param.title.length > 0 ? this.param.title : this.param.value.replace(/^.*\//, ''))
+    .title(this.navTitle)
     .backgroundColor(Color.White)
   }
 }

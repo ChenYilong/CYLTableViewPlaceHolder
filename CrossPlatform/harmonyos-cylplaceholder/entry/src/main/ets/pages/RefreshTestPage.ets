@@ -4,7 +4,7 @@
 // the bottom (systemTransition SLIDE_BOTTOM) without a back button, as a modal does; "Close" pops it either way.
 import { t } from '../common/L10n';
 import { Route, RouteParam, pop, push } from '../common/Routes';
-import { BarButton } from '../common/Ui';
+import { BarButton, NavTitle } from '../common/Ui';
 
 /** CYLRefreshTestViewController.show(from:row:): pushes on odd rows, presents on even rows. */
 export function showRefreshTest(row: number): void {
@@ -22,6 +22,11 @@ export struct RefreshTestPage {
     }
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioMJTestTitle'))
+  }
 
   build() {
     NavDestination() {
@@ -29,7 +34,7 @@ export struct RefreshTestPage {
         .width('100%')
         .height('100%')
     }
-    .title(t('CYLScenarioMJTestTitle'))
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
     .hideBackButton(this.param.value === 'modal')

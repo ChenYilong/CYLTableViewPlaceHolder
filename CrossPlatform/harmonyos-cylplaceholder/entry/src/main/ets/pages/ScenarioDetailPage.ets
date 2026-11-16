@@ -23,7 +23,7 @@ import {
 import { effectiveLanguage, showFeedback, t } from '../common/L10n';
 import { PlaybackControls, repeatCountForLoop } from '../common/Playback';
 import { Route, RouteParam, pop, push } from '../common/Routes';
-import { BarButton, UiColor } from '../common/Ui';
+import { BarButton, UiColor, NavTitle } from '../common/Ui';
 
 /** Opens the app's page in the Settings app (UIApplication.openSettingsURLString). */
 export function openAppSettings(context: UIContext): void {
@@ -159,6 +159,11 @@ export struct ScenarioDetailPage {
     }
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(CYLPlaceholderScenarioCatalog.localizedNameForScenario(this.scenario))
+  }
 
   build() {
     NavDestination() {
@@ -196,7 +201,7 @@ export struct ScenarioDetailPage {
         .height('100%')
       }
     }
-    .title(CYLPlaceholderScenarioCatalog.localizedNameForScenario(this.scenario))
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

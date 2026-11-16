@@ -14,7 +14,7 @@ import {
 import { showFeedback, t } from '../common/L10n';
 import { readRawText } from '../common/RawFile';
 import { Route, RouteParam, push } from '../common/Routes';
-import { BarButton, UiColor } from '../common/Ui';
+import { BarButton, UiColor, NavTitle } from '../common/Ui';
 
 /** The files of the bundle's Configurations directory, sorted by name (CYLConfigurationFiles.urls()). */
 export const CONFIGURATION_FILES: string[] = [
@@ -110,6 +110,11 @@ export struct ConfigurationPage {
     }
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.value)
+  }
 
   build() {
     NavDestination() {
@@ -132,7 +137,7 @@ export struct ConfigurationPage {
       .padding({ left: 16, right: 16 })
       .justifyContent(FlexAlign.Center)
     }
-    .title(this.param.value)
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

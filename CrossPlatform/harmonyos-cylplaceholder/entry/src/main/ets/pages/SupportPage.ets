@@ -2,7 +2,8 @@
 // 120 x 120) titled "Contact support" and the example's hint text.
 import { CYLPlaceholderComponent, CYLPlaceholderStackView, CYLPlaceholderStackViewModel,
   CYLPlaceholderStyle } from 'cylplaceholder';
-import { t } from '../common/L10n';
+import { t } from '../common/L10n';
+import { NavTitle } from '../common/Ui';
 
 @Component
 export struct SupportPage {
@@ -17,12 +18,17 @@ export struct SupportPage {
     m.accessibilityIdentifier = 'supportPage';
     return m;
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioSupportTitle'))
+  }
 
   build() {
     NavDestination() {
       CYLPlaceholderStackView({ model: this.placeholder })
     }
-    .title(t('CYLScenarioSupportTitle'))
+    .title(this.navTitle)
     .backgroundColor(Color.White)
   }
 }

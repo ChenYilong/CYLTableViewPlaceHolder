@@ -16,7 +16,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
-import { InsetTable, TableRow, TableSection } from '../common/Ui';
+import { InsetTable, TableRow, TableSection, NavTitle } from '../common/Ui';
 
 const STYLES: CYLPlaceholderHUDStyle[] = [CYLPlaceholderHUDStyle.Automatic, CYLPlaceholderHUDStyle.Light,
   CYLPlaceholderHUDStyle.Dark, CYLPlaceholderHUDStyle.Custom];
@@ -244,6 +244,11 @@ export struct HUDPage {
     this.hud.showInfoWithStatus(t('CYLScenarioHUDCancelled')));
     this.hud.showComponentsActions(components, actions);
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioTitleHUD'))
+  }
 
   build() {
     NavDestination() {
@@ -252,7 +257,7 @@ export struct HUDPage {
         onRow: (section: number, row: number) => this.onRow(section, row)
       })
     }
-    .title(t('CYLScenarioTitleHUD'))
+    .title(this.navTitle)
     .onHidden(() => this.leave())
   }
 }

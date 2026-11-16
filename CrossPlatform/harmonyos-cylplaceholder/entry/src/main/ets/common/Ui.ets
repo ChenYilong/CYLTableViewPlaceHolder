@@ -66,6 +66,10 @@ export function BarButton(title: string, action: () => void) {
     .accessibilityRole(AccessibilityRoleType.BUTTON)
     .fontSize(17)
     .fontColor(UiColor.teal)
+    // One line: long translations shrink instead of wrapping in the navigation bar.
+    .maxLines(1)
+    .minFontSize(12)
+    .maxFontSize(17)
     .padding({ left: 8, right: 8, top: 6, bottom: 6 })
     .stateStyles({ pressed: { .opacity(0.5) }, normal: { .opacity(1) } })
     .onClick(action)
@@ -219,4 +223,20 @@ export struct InsetTable {
 
 @Builder
 export function EmptyHeader() {
+}
+
+/**
+ * A pushed page's title on one line, as a UINavigationBar title: it shrinks to 14 fp, then ends with an ellipsis
+ * (long translations, file names and scenario names used to wrap onto two lines in the 56 vp bar).
+ */
+@Builder
+export function NavTitle(title: string) {
+  Text(title)
+    .fontSize(20)
+    .fontWeight(FontWeight.Bold)
+    .maxLines(1)
+    .minFontSize(14)
+    .maxFontSize(20)
+    .textOverflow({ overflow: TextOverflow.Ellipsis })
+    .height('100%')
 }

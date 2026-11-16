@@ -16,7 +16,7 @@ import {
 import { effectiveLanguage, t } from '../common/L10n';
 import { PlaybackControls } from '../common/Playback';
 import { RouteParam } from '../common/Routes';
-import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 import { RefreshSetup, refreshIconRowFor } from '../feed/RefreshSetups';
 
 @Component
@@ -115,6 +115,11 @@ export struct RefreshIconDemoPage {
     .height('100%')
   }
 
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title)
+  }
+
   build() {
     NavDestination() {
       Column() {
@@ -160,7 +165,7 @@ export struct RefreshIconDemoPage {
       .width('100%')
       .height('100%')
     }
-    .title(this.param.title)
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

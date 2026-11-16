@@ -15,7 +15,7 @@ import {
 import { ExampleStringTable } from '../common/ExampleStrings';
 import { effectiveLanguage, t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { SectionHeader, UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
+import { SectionHeader, UiColor, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 
 const LANGUAGES: string[] = ['zh-Hans', 'zh-Hant', 'en', 'ru', 'ko', 'uk', 'ja'];
 const CUSTOM_TABLE: string = 'CYLRefreshCustom';
@@ -151,6 +151,11 @@ export struct RefreshI18nPage {
       .margin({ left: 16, right: 16 })
     }
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title)
+  }
 
   build() {
     NavDestination() {
@@ -172,7 +177,7 @@ export struct RefreshI18nPage {
         .height('100%')
       }
     }
-    .title(this.param.title)
+    .title(this.navTitle)
     .backgroundColor(UiColor.groupedBackground)
   }
 }

@@ -21,7 +21,7 @@ import {
 import { showFeedback, t } from '../common/L10n';
 import { readRawText } from '../common/RawFile';
 import { RouteParam } from '../common/Routes';
-import { BarButton, UiColor } from '../common/Ui';
+import { BarButton, UiColor, NavTitle } from '../common/Ui';
 
 const MODE_KEYS: string[] = ['CYLScenarioStatusModeBoth', 'CYLScenarioStatusModeBar', 'CYLScenarioStatusModePlaceholder',
   'CYLScenarioStatusModeList'];
@@ -130,6 +130,11 @@ export struct StatusBarPage {
     .height('100%')
   }
 
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioTitleStatusBar'))
+  }
+
   build() {
     NavDestination() {
       Column() {
@@ -163,6 +168,10 @@ export struct StatusBarPage {
           ForEach(MODE_KEYS, (key: string, index: number) => {
             Text(t(key))
               .accessibilityRole(AccessibilityRoleType.BUTTON)
+              // One line in the segment: long translations shrink instead of being clipped.
+              .maxLines(1)
+              .minFontSize(9)
+              .maxFontSize(13)
               .fontSize(13)
               .textAlign(TextAlign.Center)
               .layoutWeight(1)
@@ -182,7 +191,7 @@ export struct StatusBarPage {
       .width('100%')
       .height('100%')
     }
-    .title(t('CYLScenarioTitleStatusBar'))
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

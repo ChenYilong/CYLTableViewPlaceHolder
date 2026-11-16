@@ -10,7 +10,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { BarButton } from '../common/Ui';
+import { BarButton, NavTitle } from '../common/Ui';
 
 /** UIColor(hue:saturation:brightness:) as a #rrggbb string. */
 function hsb(h: number, s: number, v: number): string {
@@ -53,6 +53,11 @@ export struct CollectionFlowPage {
     }
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioTitleCollection'))
+  }
 
   build() {
     NavDestination() {
@@ -72,7 +77,7 @@ export struct CollectionFlowPage {
         .height('100%')
       }
     }
-    .title(t('CYLScenarioTitleCollection'))
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

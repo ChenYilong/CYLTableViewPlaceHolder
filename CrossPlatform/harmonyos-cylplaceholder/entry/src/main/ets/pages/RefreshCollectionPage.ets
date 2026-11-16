@@ -26,7 +26,7 @@ import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
 import { animationPath } from '../feed/RefreshSetups';
 import { showRefreshTest } from './RefreshTestPage';
-import { PAGE_LIST_END_INSET } from '../common/Ui';
+import { PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 
 const CYLRefreshCollectionDuration: number = 2000;
 
@@ -226,6 +226,11 @@ export struct RefreshCollectionPage {
     .height(200)
     .margin({ top: 150 })
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title)
+  }
 
   build() {
     NavDestination() {
@@ -242,7 +247,7 @@ export struct RefreshCollectionPage {
         this.pageWidth = Number(newValue.width);
       })
     }
-    .title(this.param.title)
+    .title(this.navTitle)
     .backgroundColor(Color.White)
   }
 }

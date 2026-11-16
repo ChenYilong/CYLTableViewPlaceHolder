@@ -76,7 +76,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 来自 2026-11-16 模拟器截图（Mate 70 Pro，HarmonyOS 6.0.1 API 21，提交 `4e15478`，`docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`、`docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`）的问题，每个问题一行。第二列为修复状态：默认 `TODO`；修好后为 `TODO need 模拟器截图验证`，下次截图确认后改为已完成。打分 = 第二列不是 `TODO` 的行 ÷ 全部行；没有 `TODO` 即满分。 | Issues from the 2026-11-16 emulator screenshots (Mate 70 Pro, HarmonyOS 6.0.1 API 21, commit `4e15478`, the two images above), one row each. Second column: the fix status, `TODO` by default, `TODO need 模拟器截图验证` once fixed, done after the next screenshot confirms it. Score = rows whose status is not `TODO` ÷ all rows; full marks with no `TODO`. |
 
-**打分 / Score: 100 / 100** (9 / 9 fixed, 3 checked with a screenshot: E1–E3).
+**打分 / Score: 100 / 100** (11 / 11 fixed, 3 checked with a screenshot: E1–E3).
 
 | # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
 |:---|:---|:---|:---|
@@ -89,6 +89,8 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | E7 | TODO need 模拟器截图验证 | Opening a Rive (`.riv`) animation detail page was followed by the emulator itself crashing. | The Rive view was handed a custom `RiveFileController` (`CYLRiveSpeedController`, added for Q7) that the bytecode @ohos/rive library did not create; it is no longer passed, and Rive reports its speed as unsupported (`CYLRivePlaceholderItemAnimator.ets`). Q7 stays N/A. |
 | E8 | TODO need 模拟器截图验证 | Japanese: the Animations tab title is cut ("アニメーショ"). | Tab titles keep one line and shrink to fit (`minFontSize(7)` … `maxFontSize(10)`) instead of being cut (`entry/src/main/ets/pages/Index.ets`). |
 | E9 | TODO need 模拟器截图验证 | Pushed refresh pages: the last item is cut off at the bottom edge ("已经全部加载完毕" on example14, `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`). | Pushed pages have no tab bar, so their lists reach the gesture bar. `PAGE_LIST_END_INSET` (28 vp) is added after the lists of the refresh table, collection, icon demo, easy, i18n and Smart pages and the HUD life cycle page (`common/Ui.ets`). |
+| E10 | TODO need 模拟器截图验证 | Pushed pages: a long title wraps onto two lines (found by code review after CYLTabBarController's issue #34 on the emulator; long translations, configuration file names and scenario names are at risk). | Every pushed page with a string title uses `NavTitle` (`common/Ui.ets`): one line, shrinking to 14 fp, then an ellipsis, as a UINavigationBar title (17 pages). |
+| E11 | TODO need 模拟器截图验证 | Navigation bar buttons and the hand-drawn segmented controls (flow state switch, status bar modes): a long translation wraps and is clipped in the 28 vp segments (code review). | One line, shrinking to fit (`maxLines(1)` with `minFontSize` / `maxFontSize`) in `BarButton`, `FlowDetailPage.ets` and `StatusBarPage.ets`. |
 
 不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
 

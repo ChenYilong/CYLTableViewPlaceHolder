@@ -22,7 +22,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { UiColor } from '../common/Ui';
+import { UiColor, NavTitle } from '../common/Ui';
 
 const STATES: string[] = ['empty', 'failed', 'offline', 'data'];
 const STATE_KEYS: string[] = ['CYLScenarioStateEmpty', 'CYLScenarioStateFailed', 'CYLScenarioStateOffline',
@@ -153,6 +153,10 @@ export struct FlowDetailPage {
           .fontSize(13)
           .fontWeight(index === this.stateIndex ? FontWeight.Medium : FontWeight.Normal)
           .textAlign(TextAlign.Center)
+          // One line in the 28 vp segment: long translations shrink instead of being clipped.
+          .maxLines(1)
+          .minFontSize(9)
+          .maxFontSize(13)
           .layoutWeight(1)
           .height(28)
           .borderRadius(7)
@@ -256,6 +260,11 @@ export struct FlowDetailPage {
     .width('100%')
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t(titleKeyOf(this.flow)))
+  }
 
   build() {
     NavDestination() {
@@ -282,7 +291,7 @@ export struct FlowDetailPage {
       .width('100%')
       .height('100%')
     }
-    .title(t(titleKeyOf(this.flow)))
+    .title(this.navTitle)
     .backgroundColor(this.flow === 'keepSectionHeaders' ? UiColor.groupedBackground : Color.White)
   }
 }

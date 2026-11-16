@@ -30,7 +30,7 @@ import {
 import { t } from '../common/L10n';
 import { imagesOfBundledGIF } from '../common/RefreshFrames';
 import { RouteParam } from '../common/Routes';
-import { BarButton, PAGE_LIST_END_INSET } from '../common/Ui';
+import { BarButton, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 import { animationPath } from '../feed/RefreshSetups';
 import { showRefreshTest } from './RefreshTestPage';
 
@@ -587,6 +587,11 @@ export struct RefreshTablePage {
     }
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title)
+  }
 
   build() {
     NavDestination() {
@@ -630,7 +635,7 @@ export struct RefreshTablePage {
       .height('100%')
       .clip(true)
     }
-    .title(this.param.title)
+    .title(this.navTitle)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }

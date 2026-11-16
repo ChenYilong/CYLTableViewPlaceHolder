@@ -20,7 +20,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 
 /** The header whose second floor is on screen (the floor's close button closes it). */
 let floorHeader: CYLRefreshHeaderModel | null = null;
@@ -430,6 +430,11 @@ export struct RefreshEasyPage {
     .width('100%')
     .height('100%')
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(this.param.title)
+  }
 
   build() {
     NavDestination() {
@@ -447,7 +452,7 @@ export struct RefreshEasyPage {
         }
       }
     }
-    .title(this.param.title)
+    .title(this.navTitle)
     .backgroundColor(Color.White)
   }
 }

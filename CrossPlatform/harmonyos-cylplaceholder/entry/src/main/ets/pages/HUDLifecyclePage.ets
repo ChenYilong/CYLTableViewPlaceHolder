@@ -18,7 +18,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 
 function range(from: number, to: number): number[] {
   const list: number[] = [];
@@ -104,6 +104,11 @@ export struct HUDLifecyclePage {
       }
     }, 1500));
   }
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioHUDSectionLifecycle'))
+  }
 
   build() {
     NavDestination() {
@@ -140,7 +145,7 @@ export struct HUDLifecyclePage {
         this.listHeight = Number(n.height);
       })
     }
-    .title(t('CYLScenarioHUDSectionLifecycle'))
+    .title(this.navTitle)
     .backgroundColor(Color.White)
   }
 }

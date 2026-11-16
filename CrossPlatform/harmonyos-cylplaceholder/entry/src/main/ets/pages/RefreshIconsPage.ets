@@ -1,7 +1,7 @@
 // CYLRefreshIconListViewController: every refresh icon of the bundle by engine, then other ways to set an icon.
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
-import { InsetTable, TableRow, TableSection, UiColor } from '../common/Ui';
+import { InsetTable, TableRow, TableSection, UiColor, NavTitle } from '../common/Ui';
 import { REFRESH_ICON_SECTIONS, RefreshIconRow, RefreshIconSection } from '../feed/RefreshSetups';
 
 function rowTitle(r: RefreshIconRow): string {
@@ -14,6 +14,11 @@ export struct RefreshIconsPage {
   @State sections: TableSection[] = REFRESH_ICON_SECTIONS.map((s: RefreshIconSection) =>
   new TableSection(s.titleKey ? t(s.title) : s.title,
     s.rows.map((r: RefreshIconRow) => new TableRow(r.id, rowTitle(r), r.subtitle))));
+
+  @Builder
+  navTitle() {
+    NavTitle(t('CYLScenarioRefreshIcons'))
+  }
 
   build() {
     NavDestination() {
@@ -25,7 +30,7 @@ export struct RefreshIconsPage {
         }
       })
     }
-    .title(t('CYLScenarioRefreshIcons'))
+    .title(this.navTitle)
     .backgroundColor(UiColor.groupedBackground)
   }
 }
