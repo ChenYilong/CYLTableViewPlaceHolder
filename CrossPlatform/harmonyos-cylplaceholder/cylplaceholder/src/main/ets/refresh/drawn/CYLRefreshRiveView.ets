@@ -4,7 +4,7 @@
 // and for a drawn footer hosting one.
 import { Alignment as RiveAlignment, Fit, Loop, RiveAnimationView } from '@ohos/rive';
 import { CYLPlaceholderAnimationArrayBuffer, CYLPlaceholderAnimationReadFile } from '../../CYLPlaceholderAnimation';
-import { cylEnsureRiveInitialized } from '../../CYLRivePlaceholderItemAnimator';
+import { cylEnsureRiveInitialized, cylRiveRendererType } from '../../CYLRivePlaceholderItemAnimator';
 import { CYLRefreshComponentModel, CYLRefreshScrollViewModel } from '../CYLRefreshComponent';
 import { cylRefreshDrawnStyle } from './CYLRefreshDrawnView';
 import { CYLRefreshRiveDriver, CYLRefreshRiveHeaderModel, CYLRefreshRiveStyle } from './CYLRefreshRiveHeader';
@@ -185,6 +185,7 @@ export struct CYLRefreshRiveView {
       RiveAnimationView({
         riveAutoPlay: false,
         touchPassThrough: true,
+        rendererType: cylRiveRendererType(),
         onReady: (riveView: RiveAnimationView) => {
           this.riveView = riveView;
           this.loadIfPossible();

@@ -6,7 +6,8 @@
 // view-model view (CYLPlaceholderRiveItemAnimationView): the bound view model's boolean `active` (default "active")
 // is true for "duration" seconds, or its trigger `trigger` fires, and `color` is written to its "color" property.
 // @ohos/rive is one runtime with both APIs, so `legacy` only picks the input API (see CYLRiveOptions.ets).
-import { Fit, Loop, RiveAnimationView, ViewModelInstance, initializeRive } from '@ohos/rive';
+import { Fit, Loop, RendererType, RiveAnimationView, ViewModelInstance, initializeRive } from '@ohos/rive';
+import { deviceInfo } from '@kit.BasicServicesKit';
 import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
 import {
   CYLRiveActivePropertyPath,
@@ -411,6 +412,16 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   }
 }
 
+/**
+ * The Rive renderer for this device. The HarmonyOS emulator's host GPU crashes the whole emulator when @ohos/rive draws
+ * with its default GPU renderer (`RendererType.Rive`): the emulator log shows the GPU thread stalling, then a
+ * minidump, whenever a .riv file is shown. On the emulator the Canvas renderer draws the same file without the GPU
+ * path; real devices keep the default renderer.
+ */
+export function cylRiveRendererType(): RendererType {
+  return deviceInfo.productModel === 'emulator' ? RendererType.Canvas : RendererType.Rive;
+}
+
 @Component
 struct CYLRiveAnimationComponent {
   @ObjectLink view: CYLRiveAnimationContentView;
@@ -419,6 +430,7 @@ struct CYLRiveAnimationComponent {
     Stack() {
       RiveAnimationView({
         riveAutoPlay: false,
+        rendererType: cylRiveRendererType(),
         onReady: (riveView: RiveAnimationView) => {
           this.view.onRiveReady(riveView);
         }
