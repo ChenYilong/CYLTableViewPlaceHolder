@@ -1084,6 +1084,9 @@ user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
     each branch.
   - Push only to branches that have an open pull request; do not recreate a branch that was deleted after its pull
     request was closed or merged.
+  - **Commit and push at the end of every turn (added 2026-11-16).** When a question-and-answer turn ends and the current
+    branch is not `master` or `main`, commit and push the work right away, without asking. The code is always on a
+    branch and never pushed to `master` or `main`, so this is safe; there is no risk to weigh after the push.
 
 ## HarmonyOS: IDE preparation and emulator prerequisites (added 2026-11-16)
 

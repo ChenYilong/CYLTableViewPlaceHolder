@@ -188,3 +188,6 @@ git log --format=%B @{u}..HEAD | LC_ALL=C.UTF-8 grep -nP '[\x{4e00}-\x{9fff}\x{3
     each branch.
   - Push only to branches that have an open pull request; do not recreate a branch that was deleted after its pull
     request was closed or merged.
+  - **Commit and push at the end of every turn (added 2026-11-16).** When a question-and-answer turn ends and the current
+    branch is not `master` or `main`, commit and push the work right away, without asking. The code is always on a
+    branch and never pushed to `master` or `main`, so this is safe; there is no risk to weigh after the push.
