@@ -161,6 +161,9 @@ struct Index {
         .fontColor(index === this.selected ? UiColor.teal : UiColor.gray)
         .margin({ top: 2 })
         .maxLines(1)
+        // Long translations (Japanese "アニメーション" was cut to "アニメーショ") shrink to fit the tab.
+        .minFontSize(7)
+        .maxFontSize(10)
     }
     .layoutWeight(1)
     .height('100%')

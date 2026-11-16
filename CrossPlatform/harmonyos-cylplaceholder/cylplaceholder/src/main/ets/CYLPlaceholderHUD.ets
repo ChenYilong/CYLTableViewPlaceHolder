@@ -137,6 +137,10 @@ function durationForString(text: string | null, minimum: number, maximum: number
 }
 
 /** A heads-up display over a page (iOS `CYLPlaceholderHUD`). */
+// Only the @Track fields notify the HUD view (CYLPlaceholderHUDView, inside an overlay ComponentContent that is
+// disposed after each HUD). Without @Track every assignment notified it, and setting a plain option such as
+// minimumDismissTimeInterval after a HUD had been dismissed hit the disposed view: "Obj is not a Valid object"
+// (HUD page crash, emulator 2026-11-16). The native references (containerView, hudView) are untracked too.
 @Observed
 export class CYLPlaceholderHUD {
   private static shared: CYLPlaceholderHUD | null = null;
@@ -146,14 +150,18 @@ export class CYLPlaceholderHUD {
 
   // Content.
   /** The icon and status of the built-in states, or null (iOS `contentView`). */
+  @Track
   contentView: CYLPlaceholderViewModel | null = null;
   /** The components or scenario of the Custom state, or null (iOS `placeholderView`). */
+  @Track
   placeholderView: CYLPlaceholderStackViewModel | null = null;
   /** The box on screen: the overlay's ComponentContent while shown, else null (iOS `hudView`). */
   hudView: Object | null = null;
   /** The handlers of the shown components' actions (iOS `actions`). */
   actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null;
+  @Track
   private stateValue: CYLPlaceholderHUDState = CYLPlaceholderHUDState.Hidden;
+  @Track
   private statusValue: string | null = null;
   private progressValue: number = 0;
   private activityCountValue: number = 0;
@@ -161,19 +169,27 @@ export class CYLPlaceholderHUD {
   // Customization.
   /** The UIContext of the window the HUD covers (iOS `containerView`). */
   containerView: UIContext | null = null;
+  @Track
   style: CYLPlaceholderHUDStyle = CYLPlaceholderHUDStyle.Automatic;
+  @Track
   maskType: CYLPlaceholderHUDMaskType = CYLPlaceholderHUDMaskType.None;
+  @Track
   private foregroundColorValue: ResourceColor | null = null;
+  @Track
   private hudBackgroundColorValue: ResourceColor | null = null;
+  @Track
   private backgroundLayerColorValue: ResourceColor | null = null;
   private fontValue: number = DEFAULT_FONT;
   /** The box's corner radius, in vp (iOS `cornerRadius`). */
+  @Track
   cornerRadius: number = 14;
   /** The box's smallest size, in vp (iOS `minimumSize`). */
+  @Track
   minimumSize: CYLPlaceholderHUDSize = new CYLPlaceholderHUDSize(100, 100);
   /** The icon's size, in vp (iOS `animationSize`). */
   animationSize: CYLPlaceholderHUDSize = new CYLPlaceholderHUDSize(40, 40);
   /** The box's offset from the center, in vp (iOS `offsetFromCenter`). */
+  @Track
   offsetFromCenter: CYLPlaceholderHUDOffset = new CYLPlaceholderHUDOffset();
   private loadingAnimationFileNameValue: string | null = null;
   /**
@@ -193,16 +209,20 @@ export class CYLPlaceholderHUD {
   /** The longest time it stays, in seconds (iOS `maximumDismissTimeInterval`). */
   maximumDismissTimeInterval: number = 5;
   /** The fade-in duration, in seconds (iOS `fadeInAnimationDuration`). */
+  @Track
   fadeInAnimationDuration: number = 0.15;
   /** The fade-out duration, in seconds (iOS `fadeOutAnimationDuration`). */
+  @Track
   fadeOutAnimationDuration: number = 0.15;
   /** Whether success and error vibrate (iOS `hapticsEnabled`). */
   hapticsEnabled: boolean = false;
 
   // Drawing state (read by CYLPlaceholderHUDView).
   /** The box's opacity: 1 while shown, 0 while fading out. */
+  @Track
   opacity: number = 0;
   /** Whether the system appearance is dark (set by the presenter; used by the Automatic style). */
+  @Track
   systemDark: boolean = false;
   /** Timers; replace for tests. */
   scheduler: CYLPlaceholderHUDScheduler = new SystemScheduler();

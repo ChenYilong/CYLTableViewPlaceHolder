@@ -319,8 +319,13 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     view.pause();
   }
 
+  /**
+   * @ohos/rive has no speed API, and handing RiveAnimationView a custom controller (CYLRiveSpeedController) was
+   * followed by an emulator crash on a .riv detail page (2026-11-16), so the controller is no longer passed and the
+   * speed is reported unsupported (docs/HarmonyOS.md Q7).
+   */
   get cyl_supportsAnimationViewSpeed(): boolean {
-    return true;
+    return false;
   }
 
   /** Live: the next frame advances by the elapsed time times the speed. */
@@ -414,7 +419,6 @@ struct CYLRiveAnimationComponent {
     Stack() {
       RiveAnimationView({
         riveAutoPlay: false,
-        controller: this.view.speedController,
         onReady: (riveView: RiveAnimationView) => {
           this.view.onRiveReady(riveView);
         }

@@ -106,9 +106,18 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
     if (!isFinite(speed) || speed <= 0) {
       return false;
     }
+    if (speed === this.playbackSpeed) {
+      return true;
+    }
     this.playbackSpeed = speed;
     if (this.pixelMaps.length > 0) {
+      const running = this.state === AnimationStatus.Running;
       this.updateFrames();
+      // ImageAnimator can stop (and draw nothing) when its frames change while it runs: start it again with the new
+      // durations (the GIF detail page was blank after a speed change, 2026-11-16).
+      if (running) {
+        this.cyl_playAnimationView();
+      }
     }
     return true;
   }
@@ -180,14 +189,23 @@ struct CYLGIFAnimationComponent {
   @ObjectLink view: CYLGIFAnimationContentView;
 
   build() {
-    ImageAnimator()
-      .images(this.view.frames)
-      .state(this.view.state)
-      .iterations(this.view.iterations)
-      .fillMode(FillMode.Forwards)
-      .fixedSize(true)
-      .width(this.view.width)
-      .height(this.view.height)
+    if (this.view.state === AnimationStatus.Initial && this.view.frames.length > 0) {
+      // At rest (before the first play, or stopped) the first frame is drawn as an image: ImageAnimator may draw
+      // nothing in its Initial state (the GIF detail page showed only the file name, 2026-11-16).
+      Image(this.view.frames[0].src)
+        .objectFit(ImageFit.Contain)
+        .width(this.view.width)
+        .height(this.view.height)
+    } else {
+      ImageAnimator()
+        .images(this.view.frames)
+        .state(this.view.state)
+        .iterations(this.view.iterations)
+        .fillMode(FillMode.Forwards)
+        .fixedSize(true)
+        .width(this.view.width)
+        .height(this.view.height)
+    }
   }
 }
 
