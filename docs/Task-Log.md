@@ -154,3 +154,9 @@
 | --- | --- |
 | 状态：已完成（2026-11-16，分支 `feat/android-refresh-port`）。规则（全英文）追加到 `instructions.md`、`AGENTS.md` 与 skill `cyl-verify` 末尾的 “HarmonyOS: IDE preparation and emulator prerequisites”；CYLTabBarController 同步追加。本机 DevEco 地区文件已改为 `CN`。 | Status: done (2026-11-16, branch `feat/android-refresh-port`). The rule (English) is appended as "HarmonyOS: IDE preparation and emulator prerequisites" to `instructions.md`, `AGENTS.md` and the `cyl-verify` skill; CYLTabBarController got the same. This Mac's DevEco region file now says `CN`. |
 | 用户原话：「接入android ，并 全英文写入instructions相关文件以及 skills相关文件： 鸿蒙系统 ide 准备工作，模拟器安装的必要条件， region should be set to china (NZ) in country.region.xml to china make sure The region file now says China: <countryregion name="CN"/>」 | The user's prompt (verbatim on the left): integrate SVGA into Android, and write in English into the instructions and skills: HarmonyOS IDE preparation and emulator prerequisites; the region in country.region.xml must be China (it was NZ): `<countryregion name="CN"/>`. |
+
+### 已完成：脚本优先用 bash 执行 / Done: Run scripts with bash first
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-16）。没有脚本执行相关章节，新建 “Running scripts: bash first”，写入 `AGENTS.md`、`instructions.md` 与 skill `cyl-verify`（全英文）。用户原话：「写入instructions相关文件，skills相关指令，找到脚本执行的相关章节，没有的话就新建，保证写入成功：全英文写入：优先使用bash 执行脚本 避免以下错误zsh doesn't split $box into words either. Running the same measurement as a bash script.」 | Status: done (2026-11-16). No section on running scripts existed, so "Running scripts: bash first" is new in `AGENTS.md`, `instructions.md` and the `cyl-verify` skill (English). |
