@@ -18,17 +18,19 @@ the status and score are in `docs/HarmonyOS.md`.
 - Sign in to a **Huawei developer account** in DevEco Studio (needed for emulator images and automatic signing).
 - Open `CrossPlatform/harmonyos-cylplaceholder`, run ohpm install, and set up automatic signing (File > Project
   Structure > Signing Configs) for the example HAP `entry`. Never commit signing material.
-- hvigor refuses non-ASCII project paths (this checkout sits under `文档`): from that checkout, build with
-  `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh`, which mirrors the project to an ASCII directory.
-- **To open the project in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
-  ("00306003 Specification Limit Violation: Invalid project path"), and the usual checkout sits under `文档`. A
-  directory junction or a `subst` drive does not help: hvigor resolves both back to the real path (Node's native
-  `realpath`), and fails with "Invalid project path" or "Path not found" (tested 2026-11-17). Use a second clone at an
-  ASCII path and open its HarmonyOS project: `git clone --branch <branch>
-  https://github.com/ChenYilong/CYLTableViewPlaceHolder.git C:\dev\CYLTableViewPlaceHolder`, then in DevEco Studio
-  File > Open `C:\dev\CYLTableViewPlaceHolder\CrossPlatform\harmonyos-cylplaceholder`. It builds in place (`ohpm
-  install`, Build > Build Hap(s), or `scripts/build.sh`). Keep the two checkouts in sync with git (commit and push in
-  one, `git pull` in the other); never copy files between them by hand.
+- Build with `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh`: in place from an ASCII path (the checkout
+  now is), mirrored to an ASCII directory (`C:\cylbuild`) from a path with non-ASCII characters.
+- **Opening it in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
+  ("00306003 Specification Limit Violation: Invalid project path"). The checkout used to sit under `文档`: OneDrive's
+  Known Folder Move had created Documents / Pictures / Desktop with Chinese names (`文档` / `图片` / `桌面`; Explorer only
+  showed them as "Documents" through `desktop.ini`). On 2026-11-17 they were renamed to `Documents` / `Pictures` /
+  `Desktop`, with the known-folder registry entries (`User Shell Folders`, `Shell Folders`) updated and the git
+  worktrees repaired, so the checkout is now at `C:\Users\Chen Yilong\OneDrive - AUT University\Documents\GitHub\
+  CYLTableViewPlaceHolder` and DevEco Studio opens `CrossPlatform\harmonyos-cylplaceholder` there directly (it builds
+  in place: `ohpm install`, Build > Build Hap(s), or `scripts/build.sh`). Keep project paths ASCII: a directory
+  junction or a `subst` drive does not work around a non-ASCII path (hvigor resolves both back to the real path with
+  Node's native `realpath`: "Invalid project path" / "Path not found"); use a clone at an ASCII path instead. Scripts
+  with non-ASCII text for Windows PowerShell 5.1 must be saved as UTF-8 with a BOM, or they read `文档` as `鏂囨。`.
 - **x86_64 emulator:** the Windows emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native
   libraries only, so the normal HAP does not install ("install parse native so failed"). Test on an arm64 emulator
   (Apple silicon) or a phone; or, for checks that need no PAG / Rive, build an emulator-only HAP without them by

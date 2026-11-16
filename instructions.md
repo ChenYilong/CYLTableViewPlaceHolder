@@ -422,14 +422,16 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   from a checkout under such a path the script mirrors the project to an ASCII directory and builds there; from a
   checkout at an ASCII path it builds in place).
 - **Opening it in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
-  ("00306003 Specification Limit Violation: Invalid project path"), and the usual checkout sits under `文档`. A
-  directory junction or a `subst` drive does not help: hvigor resolves both back to the real path (Node's native
-  `realpath`), and fails with "Invalid project path" or "Path not found" (tested 2026-11-17). Use a second clone at an
-  ASCII path and open its HarmonyOS project: `git clone --branch <branch>
-  https://github.com/ChenYilong/CYLTableViewPlaceHolder.git C:\dev\CYLTableViewPlaceHolder`, then in DevEco Studio
-  File > Open `C:\dev\CYLTableViewPlaceHolder\CrossPlatform\harmonyos-cylplaceholder`. It builds in place (`ohpm
-  install`, Build > Build Hap(s), or `scripts/build.sh`). Keep the two checkouts in sync with git (commit and push in
-  one, `git pull` in the other); never copy files between them by hand.
+  ("00306003 Specification Limit Violation: Invalid project path"). The checkout used to sit under `文档`: OneDrive's
+  Known Folder Move had created Documents / Pictures / Desktop with Chinese names (`文档` / `图片` / `桌面`; Explorer only
+  showed them as "Documents" through `desktop.ini`). On 2026-11-17 they were renamed to `Documents` / `Pictures` /
+  `Desktop`, with the known-folder registry entries (`User Shell Folders`, `Shell Folders`) updated and the git
+  worktrees repaired, so the checkout is now at `C:\Users\Chen Yilong\OneDrive - AUT University\Documents\GitHub\
+  CYLTableViewPlaceHolder` and DevEco Studio opens `CrossPlatform\harmonyos-cylplaceholder` there directly (it builds
+  in place: `ohpm install`, Build > Build Hap(s), or `scripts/build.sh`). Keep project paths ASCII: a directory
+  junction or a `subst` drive does not work around a non-ASCII path (hvigor resolves both back to the real path with
+  Node's native `realpath`: "Invalid project path" / "Path not found"); use a clone at an ASCII path instead. Scripts
+  with non-ASCII text for Windows PowerShell 5.1 must be saved as UTF-8 with a BOM, or they read `文档` as `鏂囨。`.
 - **IDE and emulator setup:** follow the skill `cyl-harmonyos-setup` (`.agents/skills/cyl-harmonyos-setup/SKILL.md`)
   before building or running. Emulator prerequisites: a Huawei developer account signed in to DevEco Studio; VT-x /
   AMD-V enabled in the BIOS; Hyper-V and Windows Hypervisor Platform turned on (`HypervisorPresent` is `True`);
