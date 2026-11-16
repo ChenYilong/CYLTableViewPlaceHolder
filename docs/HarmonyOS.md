@@ -76,15 +76,18 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 来自 2026-11-16 模拟器截图（Mate 70 Pro，HarmonyOS 6.0.1 API 21，提交 `4e15478`，`docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`、`docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`）的问题，每个问题一行。第二列为修复状态：默认 `TODO`；修好后为 `TODO need 模拟器截图验证`，下次截图确认后改为已完成。打分 = 第二列不是 `TODO` 的行 ÷ 全部行；没有 `TODO` 即满分。 | Issues from the 2026-11-16 emulator screenshots (Mate 70 Pro, HarmonyOS 6.0.1 API 21, commit `4e15478`, the two images above), one row each. Second column: the fix status, `TODO` by default, `TODO need 模拟器截图验证` once fixed, done after the next screenshot confirms it. Score = rows whose status is not `TODO` ÷ all rows; full marks with no `TODO`. |
 
-**打分 / Score: 100 / 100** (3 / 3 fixed, 0 checked with a screenshot).
+**打分 / Score: 100 / 100** (4 / 4 fixed, 0 checked with a screenshot).
 
 | # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
 |:---|:---|:---|:---|
 | E1 | TODO need 模拟器截图验证 | Refresh tab: the back footer ("上拉可以加载更多" with its arrow) is drawn over the first section header. | `CYLRefreshContainer` kept its size in plain fields (`viewW`, `viewH`), so the first layout's 0 stayed and the back footer sat at `y = 0`; they are `@State` now, so the footer (and the trailer) move to the content's end once the size is known (`cylplaceholder/src/main/ets/refresh/CYLRefreshView.ets`). |
 | E2 | TODO need 模拟器截图验证 | Animations tab: long file names wrap mid-word ("CYLPlaceholderBluetoothPermission.j" / "son"). | Cell titles had no line limit. They are one line, cut at the end, like a `UITableViewCell` title (`entry/src/main/ets/common/Ui.ets` `TableCell`). |
 | E3 | TODO need 模拟器截图验证 | Animation detail page: the file name title wraps onto two lines next to the back button. | The page title is one line, cut in the middle so the extension stays visible (`AnimationDetailPage.ets` `titleView`). |
+| E4 | TODO need 模拟器截图验证 | Tab lists (Scenarios, Animations, Flows, Feed, Refresh): at the end of a list the last row stays under the raised plus button. | The plus image (66 vp) is centred 24 vp above the bar's centre, so it rises about 34 vp above the bar, and the lists had no space for it. `TAB_LIST_END_INSET` (36 vp) is added after each tab list (`common/Ui.ets` `InsetTable`, `FeedTab.ets`, `RefreshTab.ets`); CYLTabBarController fixed the same issue as its #15. |
 
 不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
+
+其他仓库（2026-11-16 复查）：CYLTabBarController 的 `docs/HarmonyOS-Issues.md` 由其鸿蒙会话维护（18 项，94 / 100）；代码中已核对 #1 角标按文字测宽、#2 标题与加号标题同一基线、#3 导航栏按钮、#5 文案已翻译、#15 列表底部留白；#11 已截图确认；#18 仍为 TODO。 | Other repositories (re-checked 2026-11-16): CYLTabBarController's `docs/HarmonyOS-Issues.md` is kept by its HarmonyOS session (18 issues, 94 / 100). Checked in its code: #1 badges measured from their text, #2 tab and plus titles on one line, #3 nav bar buttons, #5 the hints translated, #15 the list end inset; #11 confirmed by a screenshot; #18 still TODO.
 
 ## 任务 / Tasks
 

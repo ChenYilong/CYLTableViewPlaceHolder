@@ -12,7 +12,7 @@ import {
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
 import { preloadRefreshFrames } from '../common/RefreshFrames';
-import { LargeTitle, SectionHeader, TableCell, TableRow, UiColor } from '../common/Ui';
+import { LargeTitle, SectionHeader, TableCell, TableRow, UiColor, TAB_LIST_END_INSET } from '../common/Ui';
 
 class MenuRow {
   key: string;
@@ -176,6 +176,7 @@ export struct RefreshTab {
             CYLRefreshFooterView({ scrollView: this.scrollView })
           }
         }
+        .contentEndOffset(TAB_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')

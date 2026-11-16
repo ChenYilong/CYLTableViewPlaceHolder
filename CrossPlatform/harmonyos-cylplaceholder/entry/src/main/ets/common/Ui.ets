@@ -92,6 +92,12 @@ export function SectionFooter(title: string) {
     .padding({ left: 32, right: 32, top: 6 })
 }
 
+/**
+ * Space after a tab's list so its last row clears the plus button, which rises about 34 vp above the tab bar
+ * (a 66 vp image centred 24 vp above the bar's centre). Without it the last row ended under the plus button.
+ */
+export const TAB_LIST_END_INSET: number = 36;
+
 /** One cell: optional leading glyph, title, subtitle, trailing detail, check mark or chevron. */
 @Builder
 export function TableCell(row: TableRow, action: () => void) {
@@ -196,7 +202,7 @@ export struct InsetTable {
         }
       }, (section: TableSection, s: number) => s + section.title + section.rows.length)
       ListItem() {
-        Column().height(24)
+        Column().height(24 + TAB_LIST_END_INSET)
       }
     }
     .width('100%')

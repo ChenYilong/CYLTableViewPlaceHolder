@@ -18,7 +18,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
-import { LargeTitle, UiColor } from '../common/Ui';
+import { LargeTitle, UiColor, TAB_LIST_END_INSET } from '../common/Ui';
 import { RefreshIcon, RefreshSetup } from '../feed/RefreshSetups';
 
 const FEED_SETUP: RefreshSetup = RefreshSetup.of('animation', 'auto', [
@@ -159,6 +159,7 @@ export struct FeedTab {
           }
         }
         .divider({ strokeWidth: 0.5, color: UiColor.separator, startMargin: 54 })
+        .contentEndOffset(TAB_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')
