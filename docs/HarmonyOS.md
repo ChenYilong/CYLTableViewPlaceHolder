@@ -171,6 +171,13 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
   ![HarmonyOS placeholder languages](assets/harmonyos-placeholder-languages-mate70pro-api21.png)
 
+- **Rive crash audit (2026-11-16, Mac session, after another project reported Rive crashes from many Rive views):**
+  no page creates one Rive view per list row. Rive appears once per page: the animation detail, a placeholder
+  animation, or one refresh header / footer (example54, the smartRive styles). On the emulator the Rive detail page
+  holds exactly 1 XComponent, still 1 after 5 s, with 3 AceXcomponent creation lines in hilog, so the view is not
+  rebuilt. The emulator crash itself is fixed by the Canvas renderer on the emulator (E7, `1902852`).
+  CYLTabBarController's HarmonyOS port has no Rive dependency (only `@ohos/lottie`).
+
 ### DONE: HarmonyOS port, library and example (score 100)
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
