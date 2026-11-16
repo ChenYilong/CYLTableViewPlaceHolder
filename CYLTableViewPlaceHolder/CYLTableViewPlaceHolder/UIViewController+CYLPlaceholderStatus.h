@@ -103,6 +103,14 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
  *      `cyl_statusDisplay` sets it. [CN] YES 时即使列表为空也不显示占位图；NO（默认）与以前相同。由 `cyl_statusDisplay` 设置。
  */
 @property (nonatomic) BOOL cyl_placeholderHidden;
+/*!
+ * [EN] The placeholder shown for this list now, or nil: the view of `cyl_placeholderViewBlock:` (or of the delegate API,
+ *      `cyl_reloadData`) while the list is empty. Updates are applied on the next run loop turn, so read it after the
+ *      reload has been laid out. The same as Android's `RecyclerView.cyl_placeholderView`.
+ * [CN] 当前为该列表显示的占位图，没有则为 nil：列表为空时 `cyl_placeholderViewBlock:`（或委托接口 `cyl_reloadData`）提供的视图。更新在下一次
+ *      run loop 应用，请在刷新布局后读取。与 Android 的 `RecyclerView.cyl_placeholderView` 相同。
+ */
+@property (nonatomic, readonly, nullable) UIView *cyl_placeholderView;
 @end
 
 NS_ASSUME_NONNULL_END

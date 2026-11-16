@@ -334,6 +334,19 @@ BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView) {
     return [objc_getAssociatedObject(self, CYLPlaceholderHiddenKey) boolValue];
 }
 
+- (UIView *)cyl_placeholderView {
+    UIView *view = CYLController(self).view;
+    if (view) return view;
+    // [EN] The delegate API (UITableView+CYLTableViewPlaceHolder) keeps its view under its own key.
+    // [CN] 委托接口（UITableView+CYLTableViewPlaceHolder）以自己的 key 保存视图。
+    SEL legacy = NSSelectorFromString(@"placeHolderView");
+    if ([self respondsToSelector:legacy]) {
+        id legacyView = [self valueForKey:NSStringFromSelector(legacy)];
+        if ([legacyView isKindOfClass:UIView.class]) return legacyView;
+    }
+    return nil;
+}
+
 - (void)setCyl_placeholderHidden:(BOOL)hidden {
     if (hidden == self.cyl_placeholderHidden) return;
     objc_setAssociatedObject(self, CYLPlaceholderHiddenKey, hidden ? @YES : nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

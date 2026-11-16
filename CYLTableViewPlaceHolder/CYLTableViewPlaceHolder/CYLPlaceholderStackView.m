@@ -15,8 +15,16 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 @property (nonatomic, strong) NSMutableArray<CYLPlaceholderView *> *mutableComponentViews;
 /// Parallel to `mutableComponentViews`: each component's action, or NSNull.
 @property (nonatomic, strong) NSMutableArray *componentActions;
+/// [EN] Each component view's kind ("item", "hint", "button", "separator"), for `hintLabel` and `button`.
+/// [CN] 每个组件视图的种类，供 `hintLabel` 与 `button` 使用。
+@property (nonatomic, strong) NSMapTable<CYLPlaceholderView *, NSString *> *componentKinds;
 @property (nonatomic, strong) NSMutableDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *handlers;
 @property (nonatomic, strong) UITapGestureRecognizer *backgroundTapRecognizer;
+@end
+
+/// The factory that made a component ("item", "hint", "button", "separator"), set in CYLPlaceholderScenario.m.
+@interface CYLPlaceholderComponent (CYLStackKind)
+@property (nonatomic, copy) NSString *cyl_kind;
 @end
 
 /// Applies the shared component fields ("action", "interactionEnabled", "highlightStyle", "repeatCount", …).
@@ -25,7 +33,7 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 @end
 
 static NSError *CYLStackConfigurationError(NSString *description) {
-    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:3
+    return [NSError errorWithDomain:CYLPlaceholderConfigurationErrorDomain code:CYLPlaceholderConfigurationErrorStackView
                            userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 
@@ -206,7 +214,44 @@ static NSError *CYLStackConfigurationError(NSString *description) {
         return nil;
     }
     [self appendComponentView:view action:component.action spacingBefore:component.spacingBefore];
+    NSString *kind = [component respondsToSelector:@selector(cyl_kind)] ? component.cyl_kind : nil;
+    if (kind) {
+        if (!self.componentKinds) self.componentKinds = [NSMapTable weakToStrongObjectsMapTable];
+        [self.componentKinds setObject:kind forKey:view];
+    }
     return view;
+}
+
+- (NSString *)cyl_kindOfComponentView:(CYLPlaceholderView *)view {
+    return [self.componentKinds objectForKey:view] ?: @"item";
+}
+
+- (UIImageView *)imageView {
+    for (CYLPlaceholderView *view in self.mutableComponentViews) {
+        if (view.imageView.image && !view.imageView.hidden) return view.imageView;
+    }
+    return self.placeholderView.imageView;
+}
+
+- (UILabel *)titleLabel {
+    for (CYLPlaceholderView *view in self.mutableComponentViews) {
+        if ([[self cyl_kindOfComponentView:view] isEqualToString:@"item"] && view.textLabel.text.length) return view.textLabel;
+    }
+    return self.placeholderView.textLabel;
+}
+
+- (UILabel *)hintLabel {
+    for (CYLPlaceholderView *view in self.mutableComponentViews) {
+        if ([[self cyl_kindOfComponentView:view] isEqualToString:@"hint"]) return view.textLabel;
+    }
+    return nil;
+}
+
+- (CYLPlaceholderView *)button {
+    for (CYLPlaceholderView *view in self.mutableComponentViews) {
+        if ([[self cyl_kindOfComponentView:view] isEqualToString:@"button"]) return view;
+    }
+    return nil;
 }
 
 - (void)appendComponentView:(CYLPlaceholderView *)view action:(CYLPlaceholderAction)action spacingBefore:(CGFloat)spacingBefore {

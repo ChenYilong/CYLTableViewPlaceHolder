@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：98 / 100**（686 / 699 行已有 iOS 对应，TODO 13 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 98 / 100** (686 of 699 rows have an iOS counterpart, 13 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（699 / 699 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (699 of 699 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
 
@@ -282,9 +282,9 @@
 | `CYLRefreshDeliveryHeader` (class) | The delivery box and balloon (iOS `CYLRefreshDeliveryHeader`). | `CYLRefreshDeliveryHeader` |  |
 | `CYLRefreshDropBoxHeader` (class) | The drop box (iOS `CYLRefreshDropBoxHeader`). | `CYLRefreshDropBoxHeader` |  |
 | `CYLRefreshFlyHeader` (class) | The paper plane (iOS `CYLRefreshFlyHeader`): like iOS, it brings its own scene. | `CYLRefreshFlyHeader` |  |
-| `CYLRefreshFlyHeader.mountainView` (val) | The mountains above the content (`mountainView`). | TODO |  |
-| `CYLRefreshFlyHeader.flyView` (val) | The paper plane (`flyView`). | TODO |  |
-| `CYLRefreshFlyHeader.floatView` (val) | The round button under the plane, in the primary color (`floatView`). | TODO |  |
+| `CYLRefreshFlyHeader.mountainView` (val) | The mountains above the content (`mountainView`). | `CYLRefreshFlyHeader` `mountainView` | added 2026-11-16 for Android parity |
+| `CYLRefreshFlyHeader.flyView` (val) | The paper plane (`flyView`). | `CYLRefreshFlyHeader` `flyView` | added 2026-11-16 for Android parity |
+| `CYLRefreshFlyHeader.floatView` (val) | The round button under the plane, in the primary color (`floatView`). | `CYLRefreshFlyHeader` `floatView` | added 2026-11-16 for Android parity |
 | `CYLRefreshGameHeader` (class) | A header with a small game to play while refreshing (iOS `CYLRefreshGameHeader`). | `CYLRefreshGameHeader` |  |
 | `CYLRefreshGameBattleCityHeader` (class) | The tank game (iOS `CYLRefreshGameBattleCityHeader`). | `CYLRefreshGameBattleCityHeader` |  |
 | `CYLRefreshGameHitBlockHeader` (class) | The block-breaking game (iOS `CYLRefreshGameHitBlockHeader`). | `CYLRefreshGameHitBlockHeader` |  |
@@ -323,8 +323,8 @@
 | `CYLRefreshIconView.updateForState` (fun) | Shows and plays the icon of [state] (`updateForState:`); a state without one keeps the last icon. | `CYLRefreshIconView` `-updateForState:` |  |
 | `CYLRefreshIconView.updateForPullingPercent` (fun) | Scrubs the icon to [pullingPercent], 0 to 1, while pulling (`updateForPullingPercent:`). | `CYLRefreshIconView` `-updateForPullingPercent:` |  |
 | `CYLRefreshIconView.ANIMATION_FILE_PATH` (val) | The animation file a registered player plays. | `CYLPlaceholderItemAnimationFilePath` |  |
-| `CYLRefreshIconView.IMAGES` (val) | The image frames, a list of drawables. | TODO |  |
-| `CYLRefreshIconView.DURATION` (val) | The image frames' total duration, in seconds. | TODO |  |
+| `CYLRefreshIconView.IMAGES` (val) | The image frames, a list of drawables. | `CYLPlaceholderItemImages` | added 2026-11-16 for Android parity |
+| `CYLRefreshIconView.DURATION` (val) | The image frames' total duration, in seconds. | `CYLPlaceholderItemAnimationDuration` | added 2026-11-16 for Android parity |
 | `CYLRefreshIconView.SIZE` (val) | The icon's size in dp, width and height. | `CYLPlaceholderItemAnimationSize` |  |
 | `CYLRefreshIconView.attributesForAnimationFilePath` (fun) | The attributes of the animation at [filePath], [width] by [height] dp (`attributesForAnimationFilePath:size:`). | `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` |  |
 | `CYLRefreshIconAnimating` (interface) | A refresh component with a per-state icon (iOS `CYLRefreshIconAnimating`); every [CYLRefreshComponent] is one through the `cyl_` extensions below. | `CYLRefreshIconAnimating` | partial (see docs/Android-API-Map.md) |
@@ -538,7 +538,7 @@
 | `CYLPlaceholderComponent.attributes` (val) | The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize". | `CYLPlaceholderComponent` `attributes` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderComponent.componentWithAttributes` (fun) | A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action] when tapped (`componentWithAttributes:action:`). | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderComponent.icon` (fun) | An icon of [side] dp with an optional [title] below it, running [action] when tapped. | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderComponent.text` (fun) | A text of its own, [sizeSp] large and [color] colored (0 for the default). | TODO |  |
+| `CYLPlaceholderComponent.text` (fun) | A text of its own, [sizeSp] large and [color] colored (0 for the default). | `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderComponent.hintComponentWithText` (fun) | A smaller, lighter line of text (`hintComponentWithText:`). | `CYLPlaceholderComponent` `+hintComponentWithText:` |  |
 | `CYLPlaceholderComponent.buttonComponentWithTitle` (fun) | A button titled [title] in [style], running [action] (`buttonComponentWithTitle:style:action:`). | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` |  |
 | `CYLPlaceholderComponent.separatorComponentWithText` (fun) | "——— [text] ———"; accessibility services read only [text] (`separatorComponentWithText:`). | `CYLPlaceholderComponent` `+separatorComponentWithText:` |  |
@@ -547,7 +547,7 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderConfigurationError` (class) | Why a configuration was refused (iOS `CYLPlaceholderConfigurationError`). | TODO |  |
+| `CYLPlaceholderConfigurationError` (class) | Why a configuration was refused (iOS `CYLPlaceholderConfigurationError`). | `CYLPlaceholderConfigurationErrorDomain` (Swift `CYLPlaceholderConfigurationError`) | added 2026-11-16 for Android parity |
 | `CYLPlaceholderConfigurationErrorHandler` (typealias) | Called with the reason when a configuration is refused (the iOS `error:` out parameter). | `error:` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderConfiguration_fromJSON` (fun) | A JSON object as a map, an array as a list: the shapes a configuration has. | `NSJSONSerialization` (Foundation) | Android's JSON-to-map helper; iOS reads JSON with Foundation |
 | `componentWithDictionary` (fun) | A component from a configuration dictionary (iOS `+[CYLPlaceholderComponent componentWithDictionary:error:]`): "type" ("icon", "hint", "button", "separator" or "item"), "title" / "titleKey", "action", and the fields of " | `componentWithDictionary:error:` | matched by the iOS name its KDoc cites |
@@ -671,10 +671,10 @@
 | `CYLPlaceholderStackView.placeholderView` (val) | The reserved first component, the icon and title (`placeholderView`). | `CYLPlaceholderStackView` `placeholderView` |  |
 | `CYLPlaceholderStackView.stackView` (val) | The stacked views (`stackView`). | `CYLPlaceholderStackView` `stackView` |  |
 | `CYLPlaceholderStackView.componentViews` (val) | One view per component, in order (`componentViews`). | `CYLPlaceholderStackView` `componentViews` |  |
-| `CYLPlaceholderStackView.imageView` (val) | The first icon (hidden and empty when there is none). | TODO |  |
-| `CYLPlaceholderStackView.titleLabel` (val) | The first title. | TODO |  |
-| `CYLPlaceholderStackView.hintLabel` (val) | The first hint, or null. | TODO |  |
-| `CYLPlaceholderStackView.button` (val) | The first button, or null. | TODO |  |
+| `CYLPlaceholderStackView.imageView` (val) | The first icon (hidden and empty when there is none). | `CYLPlaceholderStackView` `imageView` | added 2026-11-16 for Android parity |
+| `CYLPlaceholderStackView.titleLabel` (val) | The first title. | `CYLPlaceholderStackView` `titleLabel` | added 2026-11-16 for Android parity |
+| `CYLPlaceholderStackView.hintLabel` (val) | The first hint, or null. | `CYLPlaceholderStackView` `hintLabel` | added 2026-11-16 for Android parity |
+| `CYLPlaceholderStackView.button` (val) | The first button, or null. | `CYLPlaceholderStackView` `button` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderStackView.backgroundAction` (var) | The action a tap anywhere on the placeholder runs, or null (`backgroundAction`). | `CYLPlaceholderStackView` `backgroundAction` |  |
 | `CYLPlaceholderStackView.animationView` (var) | The animation playing in place of the first icon, or null when no registered animator plays any of the scenario's files and the still image shows (`animationView`). | `CYLPlaceholderStackView` `animationView` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderStackView.appendComponent` (fun) | Adds [component] at the end (`appendComponent:`). | `CYLPlaceholderStackView` `-appendComponent:` |  |
@@ -782,7 +782,7 @@
 | `CYLPlaceholderView.itemAttributes` (var) | The description the view was made from, with the iOS keys (`itemAttributes`). | `CYLPlaceholderView` `itemAttributes` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderView.showBadgeWithStyle` (fun) | Shows a badge of [style] with [value] (`showBadgeWithStyle:value:`). | `CYLPlaceholderView` `-showBadgeWithStyle:value:` |  |
 | `CYLPlaceholderView.performTap` (fun) | Calls [tapHandler] as a tap would; false when the placeholder is not interactive (`performTap`). | `CYLPlaceholderView` `-performTap` |  |
-| `CYLPlaceholderView.setAnimationFile` (fun) | Shows the animation at [path] instead of the icon, through the factory registered for its extension; false when none is registered or it cannot load (the icon stays). | TODO |  |
+| `CYLPlaceholderView.setAnimationFile` (fun) | Shows the animation at [path] instead of the icon, through the factory registered for its extension; false when none is registered or it cannot load (the icon stays). | `CYLPlaceholderView` `-setAnimationFile:` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderView.playPlaceholderAnimation` (fun) | Plays the animation (`playPlaceholderAnimation`). | `CYLPlaceholderView` `-playPlaceholderAnimation` |  |
 | `CYLPlaceholderView.stopPlaceholderAnimation` (fun) | Stops the animation (`stopPlaceholderAnimation`). | `CYLPlaceholderView` `-stopPlaceholderAnimation` |  |
 | `CYLPlaceholderView.showPlaceholderAnimationLastFrame` (fun) | Shows the animation's last frame (`showPlaceholderAnimationLastFrame`). | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` |  |
@@ -809,5 +809,5 @@
 | `cyl_placeholderViewBlock` (fun) | As [cyl_placeholderViewBlock], calling [backToNormalBlock] when the list has data again (iOS `cyl_placeholderViewBlock:backToNormalBlock:`). | `cyl_placeholderViewBlock:backToNormalBlock:` | matched by the iOS name its KDoc cites |
 | `cyl_reloadData` (fun) | Reloads the list and shows or removes its placeholder (iOS `cyl_reloadData`); an adapter that is a [CYLTableViewPlaceHolderDelegate] gives the placeholder. | `cyl_reloadData` | matched by the iOS name its KDoc cites |
 | `cyl_placeholderHidden` (var) | Hides the placeholder even while the list is empty (iOS `UIScrollView.cyl_placeholderHidden`). | `cyl_placeholderHidden` | matched by the iOS name its KDoc cites |
-| `cyl_placeholderView` (val) | The placeholder now shown for the list, or null. | TODO |  |
+| `cyl_placeholderView` (val) | The placeholder now shown for the list, or null. | `UIScrollView` `cyl_placeholderView` | added 2026-11-16 for Android parity |
 

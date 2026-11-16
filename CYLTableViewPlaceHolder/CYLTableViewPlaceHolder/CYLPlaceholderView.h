@@ -232,6 +232,50 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemTapHighlightStyle;
  * "loop" and "once". Absent means once, as before.
  */
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationRepeatCount;
+/*!
+ * [EN] Image frames played in a loop as the icon: an array of UIImage, used when `CYLPlaceholderItemImage` is absent
+ *      (with Reduce Motion only the first frame shows). The same key as Android's `CYLRefreshIconView.IMAGES`.
+ * [CN] 循环播放的图标帧：UIImage 数组，在没有 `CYLPlaceholderItemImage` 时使用（开启“减弱动态效果”时只显示第一帧）。与 Android 的
+ *      `CYLRefreshIconView.IMAGES` 为同一个 key。
+ */
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemImages;
+/*!
+ * [EN] The total duration of `CYLPlaceholderItemImages`, in seconds (a number); absent means 0.1 seconds per frame. The
+ *      same key as Android's `CYLRefreshIconView.DURATION`.
+ * [CN] `CYLPlaceholderItemImages` 的总时长，单位秒（数字）；缺省时每帧 0.1 秒。与 Android 的 `CYLRefreshIconView.DURATION` 为同一个 key。
+ */
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationDuration;
+/*!
+ * [EN] The error domain of a refused configuration (item attributes, a component, a stack view, a status bar or a
+ *      status configuration); Swift sees it as `CYLPlaceholderConfigurationError`, the name of Android's exception.
+ * [CN] 配置被拒绝时的错误域（item 属性、组件、组件栈、状态条或状态配置）；Swift 中为 `CYLPlaceholderConfigurationError`，与 Android 的异常同名。
+ */
+FOUNDATION_EXPORT NSErrorDomain const CYLPlaceholderConfigurationErrorDomain;
+/*!
+ * [EN] Which configuration was refused. [CN] 被拒绝的配置种类。
+ */
+typedef NS_ERROR_ENUM(CYLPlaceholderConfigurationErrorDomain, CYLPlaceholderConfigurationErrorCode) {
+    /*!
+     * [EN] Item attributes (`CYLPlaceholderView`). [CN] item 属性（`CYLPlaceholderView`）。
+     */
+    CYLPlaceholderConfigurationErrorItemAttributes = 1,
+    /*!
+     * [EN] A component (`CYLPlaceholderComponent`). [CN] 组件（`CYLPlaceholderComponent`）。
+     */
+    CYLPlaceholderConfigurationErrorComponent = 2,
+    /*!
+     * [EN] A stack view (`CYLPlaceholderStackView`). [CN] 组件栈（`CYLPlaceholderStackView`）。
+     */
+    CYLPlaceholderConfigurationErrorStackView = 3,
+    /*!
+     * [EN] A status bar (`CYLPlaceholderStatusView`). [CN] 状态条（`CYLPlaceholderStatusView`）。
+     */
+    CYLPlaceholderConfigurationErrorStatusView = 4,
+    /*!
+     * [EN] A status configuration (`cyl_applyStatusConfiguration:error:`). [CN] 状态配置（`cyl_applyStatusConfiguration:error:`）。
+     */
+    CYLPlaceholderConfigurationErrorStatusConfiguration = 5,
+};
 
 /*!
  * Animation views supplied by custom factories must invoke handlers on the main thread.
@@ -396,6 +440,16 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
  */
 + (BOOL)registerAnimationFactory:(nullable CYLPlaceholderAnimationFactory)factory
                 forFileExtension:(NSString *)fileExtension;
+/*!
+ * [EN] Shows the animation file at `path` (a full path, or the name of a bundled animation) instead of the icon, at
+ *      the icon's animation size (`CYLPlaceholderItemAnimationSize`, else 64 x 64 points), through the animator
+ *      registered for its extension. NO, with the icon kept, when the file is missing or no animator plays it. The same
+ *      as Android's `CYLPlaceholderView.setAnimationFile(path)`.
+ * [CN] 用 `path` 处的动画文件（完整路径或内置动画名）代替图标显示，尺寸为图标的动画尺寸（`CYLPlaceholderItemAnimationSize`，否则为
+ *      64 x 64 点），由该扩展名注册的动画器播放。文件不存在或没有动画器可播放时返回 NO，图标保持不变。与 Android 的
+ *      `CYLPlaceholderView.setAnimationFile(path)` 相同。
+ */
+- (BOOL)setAnimationFile:(NSString *)path NS_SWIFT_NAME(setAnimationFile(_:));
 /*!
  * Replay the configured animation when visible. Honors Reduce Motion.
  */

@@ -208,7 +208,7 @@ static const CGFloat CYLPlaceholderStatusZPosition = 1000;
 @end
 
 static NSError *CYLStatusPresentationError(NSString *description) {
-    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:5
+    return [NSError errorWithDomain:CYLPlaceholderConfigurationErrorDomain code:CYLPlaceholderConfigurationErrorStatusConfiguration
                            userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 

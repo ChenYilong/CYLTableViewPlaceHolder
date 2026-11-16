@@ -49,7 +49,7 @@ static UIColor *CYLPlaceholderStatusTextColor(void) {
 }
 
 static NSError *CYLStatusConfigurationError(NSString *description) {
-    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:4
+    return [NSError errorWithDomain:CYLPlaceholderConfigurationErrorDomain code:CYLPlaceholderConfigurationErrorStatusView
                            userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 

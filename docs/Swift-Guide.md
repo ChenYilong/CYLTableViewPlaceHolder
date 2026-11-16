@@ -95,3 +95,9 @@ The spellings above are the core's choice under the Swift coding standard. When 
 Swift migration in `docs/Swift-Migration.md`, or any refactor), the examples are updated to the new spelling in the
 same change; an example's old call site never keeps an old spelling, alias or shim in the core. See `instructions.md`,
 "Examples have the lowest weight".
+
+The Android-parity APIs (docs/iOS-API-Map.md, 2026-11-16) add these spellings, pending CI: `tableView.cyl_placeholderView`,
+`placeholder.setAnimationFile(_:)`, `stack.imageView`, `stack.titleLabel`, `stack.hintLabel`, `stack.button`,
+`CYLPlaceholderComponent.text(_:fontSize:color:)`, `CYLPlaceholderConfigurationError` (the NS_ERROR_ENUM of
+`CYLPlaceholderConfigurationErrorDomain`), `CYLPlaceholderItemImages`, `CYLPlaceholderItemAnimationDuration`, and
+`CYLRefreshFlyHeader.mountainView` / `flyView` / `floatView`.

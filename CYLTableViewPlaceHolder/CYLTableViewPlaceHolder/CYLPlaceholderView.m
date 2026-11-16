@@ -81,6 +81,9 @@ static const CGFloat CYLPlaceholderHorizontalSpacing = 5;
 NSString *const CYLPlaceholderItemInteractionEnabled = @"CYLPlaceholderItemInteractionEnabled";
 NSString *const CYLPlaceholderItemTapHighlightStyle = @"CYLPlaceholderItemTapHighlightStyle";
 NSString *const CYLPlaceholderItemAnimationRepeatCount = @"CYLPlaceholderItemAnimationRepeatCount";
+NSString *const CYLPlaceholderItemImages = @"CYLPlaceholderItemImages";
+NSString *const CYLPlaceholderItemAnimationDuration = @"CYLPlaceholderItemAnimationDuration";
+NSErrorDomain const CYLPlaceholderConfigurationErrorDomain = @"CYLPlaceholderConfigurationError";
 
 // [EN] CYLPlaceholderResourceBundle() is the core resource lookup, declared in CYLPlaceholderLocalization.h.
 // [CN] CYLPlaceholderResourceBundle() 是核心层的资源查找函数，声明在 CYLPlaceholderLocalization.h 中。
@@ -88,7 +91,7 @@ NSString *const CYLPlaceholderItemAnimationRepeatCount = @"CYLPlaceholderItemAni
 static NSString *const CYLPlaceholderAnimationsDirectory = @"Animations";
 
 static NSError *CYLPlaceholderConfigurationError(NSString *description) {
-    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:1
+    return [NSError errorWithDomain:CYLPlaceholderConfigurationErrorDomain code:CYLPlaceholderConfigurationErrorItemAttributes
                           userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 
@@ -639,6 +642,27 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
             if (error) *error = CYLPlaceholderConfigurationError(@"Item configuration keys must be strings.");
             return nil;
         }
+    }
+    id frames = attributes[CYLPlaceholderItemImages];
+    if (frames && !attributes[CYLPlaceholderItemImage]) {
+        // [EN] Image frames (Android's IMAGES and DURATION) become one animated image; Reduce Motion keeps the first.
+        // [CN] 图片帧（Android 的 IMAGES 与 DURATION）合成为一张动图；“减弱动态效果”时只保留第一帧。
+        id duration = attributes[CYLPlaceholderItemAnimationDuration];
+        BOOL images = [frames isKindOfClass:NSArray.class] && [frames count] > 0;
+        for (id frame in images ? frames : @[]) images = images && [frame isKindOfClass:UIImage.class];
+        if (!images || (duration && (![duration isKindOfClass:NSNumber.class] || !isfinite([duration doubleValue]) ||
+                                     [duration doubleValue] < 0))) {
+            if (error) *error = CYLPlaceholderConfigurationError(@"Item images must be a non-empty array of images, "
+                                                                 @"with a non-negative duration.");
+            return nil;
+        }
+        NSArray<UIImage *> *list = frames;
+        NSTimeInterval seconds = [duration doubleValue] > 0 ? [duration doubleValue] : list.count * 0.1;
+        UIImage *image = (list.count == 1 || UIAccessibilityIsReduceMotionEnabled()) ? list.firstObject :
+            [UIImage animatedImageWithImages:list duration:seconds];
+        NSMutableDictionary<NSString *, id> *expanded = [attributes mutableCopy];
+        expanded[CYLPlaceholderItemImage] = image ?: list.firstObject;
+        attributes = expanded;
     }
     id title = attributes[CYLPlaceholderItemTitle];
     id imageValue = attributes[CYLPlaceholderItemImage];
@@ -1276,6 +1300,31 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedTitleFont, UIFont *, _defaul
 CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorImage, UIImage *, _defaultSelectionIndicatorImage)
 CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor *, _defaultSelectionIndicatorTintColor)
 #undef CYL_PLACEHOLDER_APPEARANCE_SETTER
+
+- (BOOL)setAnimationFile:(NSString *)path {
+    if (![path isKindOfClass:NSString.class] || path.length == 0) return NO;
+    NSString *resolved = path.isAbsolutePath ? path : ([CYLPlaceholderView pathForBundledAnimation:path] ?: path);
+    if (![NSFileManager.defaultManager fileExistsAtPath:resolved]) return NO;
+    NSDictionary<NSString *, id> *previous = self.itemAttributes ?: @{};
+    NSMutableDictionary<NSString *, id> *attributes = [previous mutableCopy];
+    for (NSString *key in @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFURL,
+                            CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieURL, CYLPlaceholderItemPAGFilePath,
+                            CYLPlaceholderItemPAGURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveURL]) {
+        [attributes removeObjectForKey:key];
+    }
+    attributes[CYLPlaceholderItemAnimationFilePath] = resolved;
+    if (!attributes[CYLPlaceholderItemAnimationSize]) attributes[CYLPlaceholderItemAnimationSize] = @[@64, @64];
+    self.itemAttributes = attributes;
+    [self cyl_configureAnimations];
+    if (!self.itemView.animationView) {
+        // [EN] No animator plays it: keep the icon, as Android does. [CN] 没有动画器可播放：保留图标，与 Android 相同。
+        self.itemAttributes = previous;
+        [self cyl_configureAnimations];
+        return NO;
+    }
+    [self setNeedsLayout];
+    return YES;
+}
 
 - (void)cyl_configureAnimations {
     [self.backendView stop];

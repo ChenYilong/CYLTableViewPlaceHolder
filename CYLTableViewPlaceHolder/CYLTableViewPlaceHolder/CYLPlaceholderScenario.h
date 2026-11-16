@@ -297,6 +297,14 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
  */
 + (instancetype)hintComponentWithText:(NSString *)text NS_SWIFT_NAME(hint(text:));
 /*!
+ * [EN] A text of its own, `fontSize` points large and `color` colored (0 and nil for the default title look); the same
+ *      as Android's `CYLPlaceholderComponent.text(title, sizeSp, color)`. The size follows Dynamic Type.
+ * [CN] 一段独立的文字，字号 `fontSize`、颜色 `color`（0 与 nil 表示默认标题样式）；与 Android 的
+ *      `CYLPlaceholderComponent.text(title, sizeSp, color)` 相同。字号随动态字体缩放。
+ */
++ (instancetype)textComponentWithText:(NSString *)text fontSize:(CGFloat)fontSize color:(nullable UIColor *)color
+    NS_SWIFT_NAME(text(_:fontSize:color:));
+/*!
  * A title drawn as a button.
  */
 + (instancetype)buttonComponentWithTitle:(NSString *)title

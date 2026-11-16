@@ -38,6 +38,29 @@ typedef void (^CYLPlaceholderActionHandler)(CYLPlaceholderStackView *placeholder
  */
 @property (nonatomic, copy, readonly) NSArray<CYLPlaceholderView *> *componentViews;
 /*!
+ * [EN] The first icon of the components (the reserved component's image view when none shows one); the same as
+ *      Android's `CYLPlaceholderStackView.imageView`.
+ * [CN] 组件中的第一个图标（都没有图标时为保留组件的图片视图）；与 Android 的 `CYLPlaceholderStackView.imageView` 相同。
+ */
+@property (nonatomic, strong, readonly) UIImageView *imageView;
+/*!
+ * [EN] The first title that is not a hint, a button or a separator (the reserved component's label when there is
+ *      none); the same as Android's `titleLabel`.
+ * [CN] 第一个不是提示、按钮或分隔符的标题（没有时为保留组件的标签）；与 Android 的 `titleLabel` 相同。
+ */
+@property (nonatomic, strong, readonly) UILabel *titleLabel;
+/*!
+ * [EN] The label of the first hint component (`hintComponentWithText:`), or nil; the same as Android's `hintLabel`.
+ * [CN] 第一个提示组件（`hintComponentWithText:`）的标签，没有则为 nil；与 Android 的 `hintLabel` 相同。
+ */
+@property (nonatomic, strong, readonly, nullable) UILabel *hintLabel;
+/*!
+ * [EN] The first button component (`buttonComponentWithTitle:style:action:`), or nil; `performTap` taps it. The same
+ *      as Android's `button`.
+ * [CN] 第一个按钮组件（`buttonComponentWithTitle:style:action:`），没有则为 nil；`performTap` 可点击它。与 Android 的 `button` 相同。
+ */
+@property (nonatomic, strong, readonly, nullable) CYLPlaceholderView *button;
+/*!
  * The scenario the view was created from; CYLPlaceholderScenarioCount when it was created from components.
  */
 @property (nonatomic, readonly) CYLPlaceholderScenario scenario;

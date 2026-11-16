@@ -59,7 +59,7 @@ static UIImage *CYLScenarioCapsuleBackgroundImage(void) {
 #pragma mark - Configuration values
 
 static NSError *CYLScenarioConfigurationError(NSString *description) {
-    return [NSError errorWithDomain:@"CYLPlaceholderConfigurationError" code:2
+    return [NSError errorWithDomain:CYLPlaceholderConfigurationErrorDomain code:CYLPlaceholderConfigurationErrorComponent
                            userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 
@@ -163,6 +163,10 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
 
 @interface CYLPlaceholderComponent ()
 @property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *attributes;
+/// [EN] "item", "hint", "button" or "separator": which factory made it (CYLPlaceholderStackView reads it for its
+///      `hintLabel` and `button`, as Android's component kinds). [CN] 由哪个工厂方法创建（CYLPlaceholderStackView 据此提供
+///      `hintLabel` 与 `button`，同 Android 的组件种类）。
+@property (nonatomic, copy) NSString *cyl_kind;
 @property (nonatomic, copy, readwrite, nullable) CYLPlaceholderAction action;
 @end
 
@@ -173,6 +177,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
     component.attributes = attributes ?: @{};
     component.action = action;
     component.spacingBefore = 16;
+    component.cyl_kind = @"item";
     return component;
 }
 
@@ -186,6 +191,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
     copy.action = self.action;
     copy.imageBundle = self.imageBundle;
     copy.spacingBefore = self.spacingBefore;
+    copy.cyl_kind = self.cyl_kind;
     return copy;
 }
 
@@ -400,7 +406,20 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
         CYLPlaceholderItemTitleFont: [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote],
     } action:nil];
     component.spacingBefore = 4;
+    component.cyl_kind = @"hint";
     return component;
+}
+
++ (instancetype)textComponentWithText:(NSString *)text fontSize:(CGFloat)fontSize color:(UIColor *)color {
+    NSMutableDictionary<NSString *, id> *attributes = [NSMutableDictionary dictionary];
+    attributes[CYLPlaceholderItemTitle] = text ?: @"";
+    if (fontSize > 0 && isfinite(fontSize)) {
+        // [EN] A point size that still follows Dynamic Type. [CN] 指定字号，仍随动态字体缩放。
+        attributes[CYLPlaceholderItemTitleFont] =
+            [[UIFontMetrics defaultMetrics] scaledFontForFont:[UIFont systemFontOfSize:fontSize]];
+    }
+    if (color) attributes[CYLPlaceholderItemTitleColor] = color;
+    return [self componentWithAttributes:attributes action:nil];
 }
 
 + (instancetype)buttonComponentWithTitle:(NSString *)title
@@ -436,6 +455,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
     }
     CYLPlaceholderComponent *component = [self componentWithAttributes:attributes action:action];
     component.spacingBefore = 20;
+    component.cyl_kind = @"button";
     return component;
 }
 
@@ -448,6 +468,7 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
         CYLPlaceholderItemTitleFont: [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote],
     } action:nil];
     component.spacingBefore = 14;
+    component.cyl_kind = @"separator";
     return component;
 }
 

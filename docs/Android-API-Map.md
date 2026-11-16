@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 706 个计入的符号；done 639、partial 61、planned 6、n/a 198）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 706 counted symbols; done 639, partial 61, planned 6, n/a 198). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 716 个计入的符号；done 649、partial 61、planned 6、n/a 198）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 716 counted symbols; done 649, partial 61, planned 6, n/a 198). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -546,6 +546,9 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshFlyHeader` | `com.cyl.refresh.CYLRefreshFlyHeader` | done |  |
+| `CYLRefreshFlyHeader` `mountainView` | `CYLRefreshFlyHeader.mountainView` | done |  |
+| `CYLRefreshFlyHeader` `flyView` | `CYLRefreshFlyHeader.flyView` | done |  |
+| `CYLRefreshFlyHeader` `floatView` | `CYLRefreshFlyHeader.floatView` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
@@ -1130,6 +1133,7 @@
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | shows the fallback image (the iOS animation is not played) |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` | done |  |
+| `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | `CYLPlaceholderComponent.text(title, sizeSp, color)` | done |  |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` | done |  |
 | `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` | done |  |
 | `CYLPlaceholderComponent` `+componentWithDictionary:error:` | `CYLPlaceholderComponent.componentWithDictionary(context, dictionary, error)` | done | the error is a callback with the reason |
@@ -1161,6 +1165,10 @@
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackView.stackView` | done |  |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackView.placeholderView` | done | the first component view |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackView.componentViews` | done |  |
+| `CYLPlaceholderStackView` `imageView` | `CYLPlaceholderStackView.imageView` | done |  |
+| `CYLPlaceholderStackView` `titleLabel` | `CYLPlaceholderStackView.titleLabel` | done |  |
+| `CYLPlaceholderStackView` `hintLabel` | `CYLPlaceholderStackView.hintLabel` | done |  |
+| `CYLPlaceholderStackView` `button` | `CYLPlaceholderStackView.button` | done |  |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackView.scenario` | done |  |
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackView.backgroundAction` | done |  |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackView(context, scenario, actions)` | done |  |
@@ -1256,6 +1264,7 @@
 | `CYLPlaceholderView` `-performTap` | `CYLPlaceholderView.performTap()` | done |  |
 | `CYLPlaceholderView` `animationRepeatCount` | `CYLPlaceholderView.animationRepeatCount` | done |  |
 | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | `CYLPlaceholderView.registerAnimationFactory(factory, extension)` | done |  |
+| `CYLPlaceholderView` `-setAnimationFile:` | `CYLPlaceholderView.setAnimationFile(path)` | done |  |
 | `CYLPlaceholderView` `-playPlaceholderAnimation` | `CYLPlaceholderView.playPlaceholderAnimation()` | done |  |
 | `CYLPlaceholderView` `-stopPlaceholderAnimation` | `CYLPlaceholderView.stopPlaceholderAnimation()` | done |  |
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` | done |  |
@@ -1323,3 +1332,4 @@
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `Activity.cyl_applyStatusConfigurationWithContentsOfURL(path, error)` | done | reads a .json file or "asset:name"; a property list is an iOS format |
 | `UIScrollView(CYLPlaceholderVisibility)` | `RecyclerView extensions` | done |  |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `RecyclerView.cyl_placeholderHidden` | done |  |
+| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderView` | `RecyclerView.cyl_placeholderView` | done |  |

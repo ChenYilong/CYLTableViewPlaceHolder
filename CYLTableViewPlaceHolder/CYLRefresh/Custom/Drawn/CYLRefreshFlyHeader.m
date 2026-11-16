@@ -16,9 +16,12 @@
 @property (nonatomic, assign) CGFloat cyl_addedInset;
 /// [EN] The fixed open height; the frame grows past it with the pull. [CN] 固定的展开高度；frame 随下拉超过它。
 @property (nonatomic, assign) CGFloat cyl_openHeight;
-@property (nonatomic, strong) UIView *floatView;
-@property (nonatomic, strong) CYLRefreshFlyView *flyView;
-@property (nonatomic, strong) CYLRefreshMountainView *mountainView;
+@property (nonatomic, strong, readwrite) UIView *floatView;
+/// [EN] A CYLRefreshFlyView; public as UIView because the support classes are private headers.
+/// [CN] 实际为 CYLRefreshFlyView；支持类是私有头文件，因此公开为 UIView。
+@property (nonatomic, strong, readwrite) UIView *flyView;
+/// [EN] A CYLRefreshMountainView, public as UIView. [CN] 实际为 CYLRefreshMountainView，公开为 UIView。
+@property (nonatomic, strong, readwrite) UIView *mountainView;
 
 @end
 
@@ -53,7 +56,7 @@
     }
 }
 
-- (void)setFlyView:(CYLRefreshFlyView *)flyView {
+- (void)setFlyView:(UIView *)flyView {
     _flyView = flyView;
     [self addSubview:flyView];
 }
@@ -76,7 +79,7 @@
 - (void)setColorPrimary:(UIColor *)colorPrimary {
     [super setColorPrimary:colorPrimary];
     [self.floatView setBackgroundColor:colorPrimary];
-    [self.mountainView setColorPrimary:colorPrimary];
+    [(CYLRefreshMountainView *)self.mountainView setColorPrimary:colorPrimary];
 }
 
 /**
@@ -84,7 +87,7 @@
  */
 - (void)setColorAccent:(UIColor *)colorAccent {
     [super setColorAccent:colorAccent];
-    [self.flyView setColorAccent:colorAccent];
+    [(CYLRefreshFlyView *)self.flyView setColorAccent:colorAccent];
 }
 
 /**
@@ -128,7 +131,7 @@
  * 下拉时候，根据偏移量改变 背景高度，和纸飞机角度
  */
 - (void)onScrollingWithOffset:(CGFloat)offset percent:(CGFloat)percent drag:(BOOL)isDragging {
-    [self.mountainView onScrollingWithOffset:offset percent:percent];
+    [(CYLRefreshMountainView *)self.mountainView onScrollingWithOffset:offset percent:percent];
     if (!self.isRefreshing) {
         percent = offset / self.expandHeight;
         [self.flyView setTransform:CGAffineTransformMakeRotation(-percent*3.1415926/4)];

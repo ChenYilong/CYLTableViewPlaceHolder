@@ -13,6 +13,22 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface CYLRefreshFlyHeader : CYLRefreshDrawnHeader
 
+/*!
+ * [EN] The mountains above the content, tinted with `colorPrimary`; the same as Android's `mountainView`.
+ * [CN] 内容上方的山，使用 `colorPrimary` 着色；与 Android 的 `mountainView` 相同。
+ */
+@property (nonatomic, strong, readonly) UIView *mountainView;
+/*!
+ * [EN] The paper plane, tinted with `colorAccent`; the same as Android's `flyView`.
+ * [CN] 纸飞机，使用 `colorAccent` 着色；与 Android 的 `flyView` 相同。
+ */
+@property (nonatomic, strong, readonly) UIView *flyView;
+/*!
+ * [EN] The round button under the plane, in the primary color; the same as Android's `floatView`.
+ * [CN] 纸飞机下方的圆形按钮，使用主色；与 Android 的 `floatView` 相同。
+ */
+@property (nonatomic, strong, readonly) UIView *floatView;
+
 @end
 
 NS_ASSUME_NONNULL_END

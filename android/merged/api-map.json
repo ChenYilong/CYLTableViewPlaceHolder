@@ -3737,5 +3737,45 @@
   "status": "done",
   "android": "RecyclerView.cyl_trailer",
   "note": "horizontal RecyclerView only; set it once the list is in its parent"
+ },
+ "CYLRefreshFlyHeader mountainView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.mountainView"
+ },
+ "CYLRefreshFlyHeader flyView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.flyView"
+ },
+ "CYLRefreshFlyHeader floatView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.floatView"
+ },
+ "CYLPlaceholderComponent +textComponentWithText:fontSize:color:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.text(title, sizeSp, color)"
+ },
+ "CYLPlaceholderStackView imageView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.imageView"
+ },
+ "CYLPlaceholderStackView titleLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.titleLabel"
+ },
+ "CYLPlaceholderStackView hintLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.hintLabel"
+ },
+ "CYLPlaceholderStackView button": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.button"
+ },
+ "CYLPlaceholderView -setAnimationFile:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setAnimationFile(path)"
+ },
+ "UIScrollView(CYLPlaceholderVisibility) cyl_placeholderView": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderView"
  }
 }
