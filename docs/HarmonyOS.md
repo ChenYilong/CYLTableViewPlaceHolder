@@ -101,7 +101,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
-### TODO: GIF decode fallback (E12)
+### TODO: GIF decode fallback (E12): emulator check left
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's request (verbatim):** "fix a GIF fails to decode and write context of this case toTODO and how to fix it"
@@ -128,13 +128,23 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
      placeholder keeps its fallback image.
   Each step logs why it fell back (`CYLGIFPlaceholderItemAnimator: … trying its first frame` and so on), and a file
   that cannot be read at all is reported as such (`cannot be read`), not as a decode failure.
-- **Verification (TODO, needs the emulator):** a valid GIF still plays in `Frames` (the Animations tab GIF rows, the
-  refresh icon GIF rows); a GIF whose frame list ImageKit rejects shows its first frame; a file ImageKit rejects
-  entirely but the system decoder reads shows animated through `Image`; a non-GIF renamed `.gif` falls through to
-  the placeholder's fallback image. hilog: `hdc shell hilog -x | grep CYLGIFPlaceholderItemAnimator`. Unit test:
-  `gifFallbackCacheNameIsStableAndModesOrdered` (cache name and mode order); 85 / 85 unit tests.
-- **Not done / open:** speed and repeat count in the `System` mode (ArkUI's `Image` has no API for them); a test
-  fixture with a GIF that ImageKit rejects (none of the bundled GIFs do).
+- **Test fixtures (done without the emulator, 2026-11-16):** two GIFs in the example's Animations tab
+  (`entry/src/main/resources/rawfile/example/animations`, listed under "CYLScenarioExample.bundle/Animations", with
+  their source, license and SHA-256 in `NOTICE.animations`):
+  `CYLScenarioExampleTruncated.gif` is the first 1214 bytes of `CYLPlaceholderNoFavorites.gif` (the whole first frame,
+  then the start of the second image, no trailer), cut at the GIF block boundary, so the
+  frame list fails and the first frame decodes (expected: `FirstFrame`, a still star);
+  `CYLScenarioExampleBroken.gif` is a GIF89a header followed by bytes that are no GIF (expected: `Failed`, the
+  placeholder keeps its fallback image, after the system decoder also fails). The license copy
+  `LICENSE.CYLTabBarController` the library's notice pointed to (`cylplaceholder/LICENSE.CYLTabBarController`) was
+  missing in the HarmonyOS rawfile; it is added there and next to the example notice.
+- **Verification (TODO need 模拟器截图验证):** in the Animations tab, `CYLPlaceholderNoFavorites.gif` plays (`Frames`),
+  `CYLScenarioExampleTruncated.gif` shows a still first frame (`FirstFrame`), `CYLScenarioExampleBroken.gif` shows
+  the fallback image (`Failed`); hilog `hdc shell hilog -x | grep CYLGIFPlaceholderItemAnimator` shows each fallback
+  reason. Unit test `gifFallbackCacheNameIsStableAndModesOrdered`; 85 / 85 unit tests.
+- **TODO: N/A on HarmonyOS — speed and repeat count in the `System` mode:** ArkUI's `Image` plays an animated GIF
+  by itself and has no API for its rate, its repeat count or a restart, and ImageKit (the only API that exposes frames
+  and delays) is exactly what failed in this mode; the controls keep working in the `Frames` and `FirstFrame` modes.
 
 ### TODO: Full-marks standard: playback controls, emulator verification (quality score)
 

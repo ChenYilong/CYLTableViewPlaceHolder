@@ -82,3 +82,19 @@ CYLScenarioExampleRefreshSquats.riv
   origin:  "Lumberjack Squats" by Dante, https://rive.app/community/980-1894-lumberjack-squats
   license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
   sha256:  0f5cff48fe330a8daee360548b732e0e2fcf91166509d40917b45a3c68f133c9
+
+CYLScenarioExampleTruncated.gif
+  test fixture for the GIF decode fallback (docs/HarmonyOS.md, TODO "GIF decode fallback", E12): the first 1214
+  bytes of CYLPlaceholderNoFavorites.gif (the whole first frame, then the start of the second image, no trailer), so
+  the frame list does not decode but the first frame does; made by cutting the file, no other change
+  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
+  path:    Example-GIF/GIFApp/Resources/tab_star.gif
+  license: MIT (LICENSE.CYLTabBarController)
+  sha256:  01c5485f5734696d83dcfc7e06b819a213b6c5cd077c76935b6a10f8f782225a
+
+CYLScenarioExampleBroken.gif
+  test fixture for the GIF decode fallback (E12): a GIF89a header followed by 32 bytes of 0xFF and the SHA-256 of
+  "CYLScenarioExampleBroken" twice: no image decoder can read it, so the placeholder keeps its fallback image
+  source:  generated for this project (no third-party content)
+  license: MIT (this project's LICENSE)
+  sha256:  72199f94cc525ed02df17514ff3b83aa6d9e13f47a05a504f3210e946506326b
