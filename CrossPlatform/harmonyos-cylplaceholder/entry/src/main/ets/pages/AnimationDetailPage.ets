@@ -64,6 +64,18 @@ export struct AnimationDetailPage {
     }
   }
 
+  /** The file name on one line, cut in the middle so the extension stays visible. */
+  @Builder
+  titleView() {
+    Text(this.fileName)
+      .fontSize(20)
+      .fontWeight(FontWeight.Bold)
+      .maxLines(1)
+      .textOverflow({ overflow: TextOverflow.Ellipsis })
+      .ellipsisMode(EllipsisMode.CENTER)
+      .height('100%')
+  }
+
   @Builder
   barItems() {
     Row() {
@@ -89,7 +101,7 @@ export struct AnimationDetailPage {
       .width('100%')
       .height('100%')
     }
-    .title(this.fileName)
+    .title(this.titleView)
     .menus(this.barItems)
     .backgroundColor(Color.White)
   }
