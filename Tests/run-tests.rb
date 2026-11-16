@@ -5,7 +5,8 @@ require 'xcodeproj'
 root = File.expand_path('..', __dir__)
 Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   project = Xcodeproj::Project.new(File.join(dir, 'Tests.xcodeproj'))
-  # TEST_DEPLOYMENT_TARGET builds the suite at another deployment target (e.g. 15.0, the lowest Xcode 27 allows).
+  # TEST_DEPLOYMENT_TARGET builds the suite at another deployment target: 15.0 (the lowest Xcode 27 allows) or 12.0
+  # (the podspec's minimum, CI: .github/workflows/ios12-runtime.yml on the Intel runner with the iOS 12.4 simulator).
   deployment = ENV.fetch('TEST_DEPLOYMENT_TARGET', '17.0')
   target = project.new_target(:unit_test_bundle, 'PlaceholderTests', :ios, deployment)
   target.build_configurations.each do |config|

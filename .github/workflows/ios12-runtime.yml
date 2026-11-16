@@ -1,0 +1,63 @@
+# Runs Core's unit tests on an iOS 12.4 simulator, the podspec's minimum. iOS 12 simulator runtimes are Intel-only,
+# so this uses the Intel image and Apple's public simulator runtime download. See docs/CI-CD.md.
+name: iOS 12 runtime
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios12-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    name: iOS 12 runtime
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Environment
+        run: |
+          uname -m
+          ls -d /Applications/Xcode*.app
+          xcrun simctl list runtimes
+      - name: Apple's simulator runtime index (iOS 12-13)
+        run: |
+          curl -fsSL -o index.plist https://devimages-cdn.apple.com/downloads/xcode/simulators/index2.dvtdownloadableindex
+          python3 - <<'PY'
+          import plistlib
+          index = plistlib.load(open("index.plist", "rb"))
+          for d in index.get("downloadables", []):
+              name = d.get("name", "")
+              if "iOS 12" in name or "iOS 13" in name:
+                  print(name, d.get("identifier"), d.get("source"), d.get("fileSize"))
+          PY
+      - name: Select Xcode 16
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_16*.app' | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+      - name: Install and boot an iOS 12.4 simulator
+        id: simulator
+        run: echo "destination=$(scripts/install-ios12-simulator.sh | tail -1)" >> "$GITHUB_OUTPUT"
+      - name: Unit tests on iOS 12.4, built at deployment target 12.0
+        env:
+          DESTINATION: ${{ steps.simulator.outputs.destination }}
+          TEST_DEPLOYMENT_TARGET: "12.0"
+        run: |
+          ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+          set -o pipefail
+          mkdir -p build
+          ruby Tests/run-tests.rb 2>&1 | tee build/ios12-unit-tests.log
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always()
+        with:
+          name: ios12-unit-tests-log
+          path: build/ios12-unit-tests.log
+          if-no-files-found: ignore
