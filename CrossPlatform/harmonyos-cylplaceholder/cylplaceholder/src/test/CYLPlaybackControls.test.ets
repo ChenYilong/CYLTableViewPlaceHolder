@@ -1,7 +1,7 @@
 // Unit tests for the playback controls the examples use (docs/Example-Animation-Playback.md): the PAG speed driver,
 // GIF frame durations at a speed, and the placeholder's live repeat count.
 import { describe, expect, it } from '@ohos/hypium';
-import { CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
+import { CYLGIFCacheFileName, CYLGIFDrawMode, CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
 import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlaceholderItemAnimator';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
 import { CYLRefreshIconViewModel } from '../main/ets/refresh/CYLRefreshIconView';
@@ -80,6 +80,17 @@ export default function playbackControlsTest() {
       expect(Math.abs(CYLRefreshFrameDuration(0, 12) - 1000 / 30) < 1e-9).assertTrue();
       expect(CYLRefreshFrameDuration(0.1, 100)).assertEqual(16);
       expect(CYLRefreshFrameDuration(1, 0)).assertEqual(100);
+    });
+
+    it('gifFallbackCacheNameIsStableAndModesOrdered', 0, () => {
+      const a = CYLGIFCacheFileName('cylplaceholder/animations/CYLPlaceholderNoFavorites.gif', 52969);
+      expect(a).assertEqual(CYLGIFCacheFileName('cylplaceholder/animations/CYLPlaceholderNoFavorites.gif', 52969));
+      expect(a.startsWith('cyl-gif-')).assertTrue();
+      expect(a.endsWith('-52969.gif')).assertTrue();
+      expect(a === CYLGIFCacheFileName('cylplaceholder/animations/Other.gif', 52969)).assertFalse();
+      expect(CYLGIFDrawMode.Frames < CYLGIFDrawMode.FirstFrame).assertTrue();
+      expect(CYLGIFDrawMode.FirstFrame < CYLGIFDrawMode.System).assertTrue();
+      expect(CYLGIFDrawMode.System < CYLGIFDrawMode.Failed).assertTrue();
     });
   });
 }

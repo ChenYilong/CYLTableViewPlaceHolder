@@ -76,7 +76,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 来自 2026-11-16 模拟器截图（Mate 70 Pro，HarmonyOS 6.0.1 API 21，提交 `4e15478`，`docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`、`docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`）的问题，每个问题一行。第二列为修复状态：默认 `TODO`；修好后为 `TODO need 模拟器截图验证`，下次截图确认后改为已完成。打分 = 第二列不是 `TODO` 的行 ÷ 全部行；没有 `TODO` 即满分。 | Issues from the 2026-11-16 emulator screenshots (Mate 70 Pro, HarmonyOS 6.0.1 API 21, commit `4e15478`, the two images above), one row each. Second column: the fix status, `TODO` by default, `TODO need 模拟器截图验证` once fixed, done after the next screenshot confirms it. Score = rows whose status is not `TODO` ÷ all rows; full marks with no `TODO`. |
 
-**打分 / Score: 100 / 100** (11 / 11 rows no longer TODO; checked with a screenshot: E1–E3, E7).
+**打分 / Score: 100 / 100** (12 / 12 rows no longer TODO; checked with a screenshot: E1–E3, E7).
 
 | # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
 |:---|:---|:---|:---|
@@ -91,6 +91,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | E9 | TODO need 模拟器截图验证 | Pushed refresh pages: the last item is cut off at the bottom edge ("已经全部加载完毕" on example14, `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`). | Pushed pages have no tab bar, so their lists reach the gesture bar. `PAGE_LIST_END_INSET` (28 vp) is added after the lists of the refresh table, collection, icon demo, easy, i18n and Smart pages and the HUD life cycle page (`common/Ui.ets`). |
 | E10 | TODO need 模拟器截图验证 | Pushed pages: a long title wraps onto two lines (found by code review after CYLTabBarController's issue #34 on the emulator; long translations, configuration file names and scenario names are at risk). | Every pushed page with a string title uses `NavTitle` (`common/Ui.ets`): one line, shrinking to 14 fp, then an ellipsis, as a UINavigationBar title (17 pages). |
 | E11 | TODO need 模拟器截图验证 | Navigation bar buttons and the hand-drawn segmented controls (flow state switch, status bar modes): a long translation wraps and is clipped in the 28 vp segments (code review). | One line, shrinking to fit (`maxLines(1)` with `minFontSize` / `maxFontSize`) in `BarButton`, `FlowDetailPage.ets` and `StatusBarPage.ets`. |
+| E12 | TODO need 模拟器截图验证 | A GIF that ImageKit cannot decode drew nothing of the GIF: the view reported a failure and the placeholder showed only its generic fallback image (found while fixing E6; see the TODO "GIF decode fallback" below). | The GIF view now falls back in three steps: every frame (ImageAnimator), else the first frame as a still image, else ArkUI's own Image decoder on a cache copy; only when all three fail is the failure reported (`CYLGIFPlaceholderItemAnimator.ets`, `CYLGIFDrawMode`). |
 
 不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
 
@@ -99,6 +100,41 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 复查（2026-11-16 第二次）：CYLTabBarController 新截图中 “NEW”“99+” 角标已一行显示，系统 TabBar 页已无悬浮加号且已本地化，SVGA 演示页已本地化；新问题：长导航标题「推入到系统 UITabBarController（另一个加号按钮）」换成两行（已告知其会话）。日语副标题在词中换行属正常的日文断行。 | Re-check (2026-11-16, second): in CYLTabBarController's new screenshots the "NEW" and "99+" badges fit on one line, the system tab bar page has no floating plus button and is localized, and the SVGA demo page is localized; new: the long nav title "推入到系统 UITabBarController（另一个加号按钮）" wraps onto two lines (sent to its session). Japanese subtitles breaking inside words is normal Japanese line breaking.
 
 ## 任务 / Tasks
+
+### TODO: GIF decode fallback (E12)
+
+- **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's request (verbatim):** "fix a GIF fails to decode and write context of this case toTODO and how to fix it"
+- **Context:** GIF files (bundled placeholder animations such as `CYLPlaceholderNoFavorites.gif`, refresh icon GIFs,
+  app files through `CYLPlaceholderItemGIFURL` / `CYLPlaceholderItemGIFFilePath`) are played by
+  `CYLGIFPlaceholderItemAnimator`: the bytes are read (rawfile or sandbox), ImageKit decodes every frame
+  (`image.createImageSource(...).createPixelMapList()` with `getDelayTimeList()`), and ArkUI's `ImageAnimator` plays
+  the frames with play / last frame / stop, repeat counts and speed. Before this change any decode error (or a list
+  with no frame) went straight to `didFail`: the placeholder hid the animation and kept its generic fallback image, so
+  nothing of the GIF showed. ImageKit can reject a GIF it only partly understands: unusual or damaged frame data,
+  very large frame counts or sizes (memory), or encoder variants (interlacing, odd disposal modes) that the frame
+  list decoder refuses while the first frame or the system image decoder still reads them. On the emulator the
+  bundled GIF did decode (73 frames, diagnostics of 2026-11-16) and its blank page was a drawing problem (E6), but
+  the failure path itself had no fallback.
+- **Fix (implemented, `CYLGIFPlaceholderItemAnimator.ets`):** `decode()` tries, in order, and reports which way it
+  draws in `drawMode` (`CYLGIFDrawMode`):
+  1. `Frames`: every frame with their delays, played by `ImageAnimator` (the normal way; all controls work);
+  2. `FirstFrame`: `createPixelMapList()` threw or returned no frame, but `createPixelMap()` decodes the first frame:
+     it is shown as a still image (play / stop keep working on the one frame);
+  3. `System`: ImageKit cannot decode it at all: the bytes are copied once to the app's cache
+     (`<cacheDir>/cyl-gif-<hash of the URL>-<byte count>.gif`, `CYLGIFCacheFileName`) and ArkUI's `Image` decodes and
+     plays that file itself (play / stop / speed / repeat count do not apply in this mode);
+  4. `Failed`: nothing works (no context for the cache, or the copy fails): `didFail`, as before, and the
+     placeholder keeps its fallback image.
+  Each step logs why it fell back (`CYLGIFPlaceholderItemAnimator: … trying its first frame` and so on), and a file
+  that cannot be read at all is reported as such (`cannot be read`), not as a decode failure.
+- **Verification (TODO, needs the emulator):** a valid GIF still plays in `Frames` (the Animations tab GIF rows, the
+  refresh icon GIF rows); a GIF whose frame list ImageKit rejects shows its first frame; a file ImageKit rejects
+  entirely but the system decoder reads shows animated through `Image`; a non-GIF renamed `.gif` falls through to
+  the placeholder's fallback image. hilog: `hdc shell hilog -x | grep CYLGIFPlaceholderItemAnimator`. Unit test:
+  `gifFallbackCacheNameIsStableAndModesOrdered` (cache name and mode order); 85 / 85 unit tests.
+- **Not done / open:** speed and repeat count in the `System` mode (ArkUI's `Image` has no API for them); a test
+  fixture with a GIF that ImageKit rejects (none of the bundled GIFs do).
 
 ### TODO: Full-marks standard: playback controls, emulator verification (quality score)
 
