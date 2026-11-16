@@ -430,6 +430,8 @@ struct CYLRiveAnimationComponent {
     Stack() {
       RiveAnimationView({
         riveAutoPlay: false,
+        // [EN] The placeholder's button and tap-to-reload keep the taps. [CN] 点击留给占位图的按钮与点击重试。
+        touchPassThrough: true,
         rendererType: cylRiveRendererType(),
         onReady: (riveView: RiveAnimationView) => {
           this.view.onRiveReady(riveView);
@@ -437,9 +439,11 @@ struct CYLRiveAnimationComponent {
       })
         .width('100%')
         .height('100%')
+        .hitTestBehavior(HitTestMode.None)
     }
     .width(this.view.width)
     .height(this.view.height)
+    .hitTestBehavior(HitTestMode.Transparent)
   }
 }
 

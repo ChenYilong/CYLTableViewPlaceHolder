@@ -144,6 +144,10 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
             super.onSurfaceTextureSizeChanged(surface, width, height)
             post { surfaceChanged?.invoke() }
         }
+
+        // The pull gesture belongs to the list: RiveAnimationView consumes every touch.
+        @android.annotation.SuppressLint("ClickableViewAccessibility")
+        override fun onTouchEvent(event: android.view.MotionEvent): Boolean = false
     }
 
     init {

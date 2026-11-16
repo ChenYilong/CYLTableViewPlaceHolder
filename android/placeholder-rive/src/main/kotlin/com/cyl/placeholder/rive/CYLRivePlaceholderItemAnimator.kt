@@ -59,6 +59,9 @@ object CYLRivePlaceholderItemAnimator {
         private val loaded: Boolean
 
         init {
+            // The placeholder's own button and tap-to-reload keep the taps: RiveAnimationView consumes every touch.
+            isClickable = false
+            isFocusable = false
             val data = bytes(context, fileURL)
             loaded = data != null && runCatching {
                 setRiveBytes(data, artboardName = options["artboard"], animationName = options["animation"],
@@ -67,6 +70,9 @@ object CYLRivePlaceholderItemAnimator {
         }
 
         override val cyl_isAnimationViewReady: Boolean get() = loaded
+
+        @android.annotation.SuppressLint("ClickableViewAccessibility")
+        override fun onTouchEvent(event: android.view.MotionEvent): Boolean = false
 
         override fun cyl_playAnimationView() {
             val animation = options["animation"]
