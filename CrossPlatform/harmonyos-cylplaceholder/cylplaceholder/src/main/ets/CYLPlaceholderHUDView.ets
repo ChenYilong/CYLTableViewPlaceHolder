@@ -20,6 +20,17 @@ import { CYLPlaceholderStackView } from './CYLPlaceholderStackView';
 @Component
 export struct CYLPlaceholderHUDView {
   @ObjectLink hud: CYLPlaceholderHUD;
+  @State private cylTick: number = 0;
+
+  aboutToAppear(): void {
+    this.hud.cylChangeListener = () => {
+      this.cylTick++;
+    };
+  }
+
+  aboutToDisappear(): void {
+    this.hud.cylChangeListener = null;
+  }
 
   @Builder
   box() {
@@ -54,6 +65,9 @@ export struct CYLPlaceholderHUDView {
 
   build() {
     Stack() {
+      if (this.cylTick < 0) {
+        Blank()
+      }
       this.box()
     }
     .width('100%')

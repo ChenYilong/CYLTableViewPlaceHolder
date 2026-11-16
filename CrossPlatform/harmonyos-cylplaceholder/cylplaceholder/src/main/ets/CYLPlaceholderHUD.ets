@@ -158,10 +158,10 @@ export function CYLPlaceholderHUDSetPresenter(presenter: CYLPlaceholderHUDPresen
 }
 
 /** A heads-up display over a page (iOS `CYLPlaceholderHUD`). */
-// Only the @Track fields notify the HUD view (CYLPlaceholderHUDView, inside an overlay ComponentContent that is
-// disposed after each HUD). Without @Track every assignment notified it, and setting a plain option such as
-// minimumDismissTimeInterval after a HUD had been dismissed hit the disposed view: "Obj is not a Valid object"
-// (HUD page crash, emulator 2026-11-16). The native references (containerView, hudView) are untracked too.
+// No @Track here: with any @Track field, ArkUI forbids the UI from reading anything else, getters included, and the
+// HUD view reads getters (blocksTouches, boxColor, status...): showing a HUD crashed with "Illegal usage of not
+// @Track'ed property 'blocksTouches' on UI!" (emulator 2026-11-16). The page crash it was meant for (E5) was the
+// static getter returning undefined, fixed by the module-level shared HUD below.
 @Observed
 export class CYLPlaceholderHUD {
   /** Draws every HUD; set by CYLPlaceholderHUDView.ets (null in unit tests: the state still changes). */
@@ -175,18 +175,14 @@ export class CYLPlaceholderHUD {
 
   // Content.
   /** The icon and status of the built-in states, or null (iOS `contentView`). */
-  @Track
   contentView: CYLPlaceholderViewModel | null = null;
   /** The components or scenario of the Custom state, or null (iOS `placeholderView`). */
-  @Track
   placeholderView: CYLPlaceholderStackViewModel | null = null;
   /** The box on screen: the overlay's ComponentContent while shown, else null (iOS `hudView`). */
   hudView: Object | null = null;
   /** The handlers of the shown components' actions (iOS `actions`). */
   actions: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> | null = null;
-  @Track
   private stateValue: CYLPlaceholderHUDState = CYLPlaceholderHUDState.Hidden;
-  @Track
   private statusValue: string | null = null;
   private progressValue: number = 0;
   private activityCountValue: number = 0;
@@ -194,27 +190,19 @@ export class CYLPlaceholderHUD {
   // Customization.
   /** The UIContext of the window the HUD covers (iOS `containerView`). */
   containerView: UIContext | null = null;
-  @Track
   style: CYLPlaceholderHUDStyle = CYLPlaceholderHUDStyle.Automatic;
-  @Track
   maskType: CYLPlaceholderHUDMaskType = CYLPlaceholderHUDMaskType.None;
-  @Track
   private foregroundColorValue: ResourceColor | null = null;
-  @Track
   private hudBackgroundColorValue: ResourceColor | null = null;
-  @Track
   private backgroundLayerColorValue: ResourceColor | null = null;
   private fontValue: number = DEFAULT_FONT;
   /** The box's corner radius, in vp (iOS `cornerRadius`). */
-  @Track
   cornerRadius: number = 14;
   /** The box's smallest size, in vp (iOS `minimumSize`). */
-  @Track
   minimumSize: CYLPlaceholderHUDSize = new CYLPlaceholderHUDSize(100, 100);
   /** The icon's size, in vp (iOS `animationSize`). */
   animationSize: CYLPlaceholderHUDSize = new CYLPlaceholderHUDSize(40, 40);
   /** The box's offset from the center, in vp (iOS `offsetFromCenter`). */
-  @Track
   offsetFromCenter: CYLPlaceholderHUDOffset = new CYLPlaceholderHUDOffset();
   private loadingAnimationFileNameValue: string | null = null;
   /**
@@ -234,20 +222,31 @@ export class CYLPlaceholderHUD {
   /** The longest time it stays, in seconds (iOS `maximumDismissTimeInterval`). */
   maximumDismissTimeInterval: number = 5;
   /** The fade-in duration, in seconds (iOS `fadeInAnimationDuration`). */
-  @Track
   fadeInAnimationDuration: number = 0.15;
   /** The fade-out duration, in seconds (iOS `fadeOutAnimationDuration`). */
-  @Track
   fadeOutAnimationDuration: number = 0.15;
   /** Whether success and error vibrate (iOS `hapticsEnabled`). */
   hapticsEnabled: boolean = false;
 
+  /**
+   * Re-renders the HUD view (CYLPlaceholderHUDView). The overlay builds the view through a builder parameter, which
+   * does not keep its @ObjectLink subscribed on the device, so the fade-in (opacity 0 -> 1) and status changes never
+   * drew and the HUD stayed invisible (emulator 2026-11-16); the view listens here instead. Called after every change
+   * the HUD makes to what the view draws.
+   */
+  cylChangeListener: (() => void) | null = null;
+
+  cylNotifyChange(): void {
+    const listener = this.cylChangeListener;
+    if (listener !== null) {
+      listener();
+    }
+  }
+
   // Drawing state (read by CYLPlaceholderHUDView).
   /** The box's opacity: 1 while shown, 0 while fading out. */
-  @Track
   opacity: number = 0;
   /** Whether the system appearance is dark (set by the presenter; used by the Automatic style). */
-  @Track
   systemDark: boolean = false;
   /** Timers; replace for tests. */
   scheduler: CYLPlaceholderHUDScheduler = new SystemScheduler();
@@ -313,8 +312,10 @@ export class CYLPlaceholderHUD {
 
   set foregroundColor(value: ResourceColor | null) {
     this.foregroundColorValue = value;
+    this.cylNotifyChange();
     if (value !== null) {
       this.style = CYLPlaceholderHUDStyle.Custom;
+      this.cylNotifyChange();
     }
   }
 
@@ -326,8 +327,10 @@ export class CYLPlaceholderHUD {
 
   set hudBackgroundColor(value: ResourceColor | null) {
     this.hudBackgroundColorValue = value;
+    this.cylNotifyChange();
     if (value !== null) {
       this.style = CYLPlaceholderHUDStyle.Custom;
+      this.cylNotifyChange();
     }
   }
 
@@ -338,6 +341,7 @@ export class CYLPlaceholderHUD {
 
   set backgroundLayerColor(value: ResourceColor | null) {
     this.backgroundLayerColorValue = value;
+    this.cylNotifyChange();
   }
 
   /** The status font size in fp; null resets it to 15 (iOS `font`). */
@@ -347,6 +351,7 @@ export class CYLPlaceholderHUD {
 
   set font(value: number | null) {
     this.fontValue = value !== null && value > 0 ? value : DEFAULT_FONT;
+    this.cylNotifyChange();
   }
 
   /**
@@ -456,6 +461,7 @@ export class CYLPlaceholderHUD {
     }
     const state = determinate ? CYLPlaceholderHUDState.Progress : CYLPlaceholderHUDState.Loading;
     this.progressValue = determinate ? Math.min(Math.max(progress, 0), 1) : 0;
+    this.cylNotifyChange();
     if (this.visible && this.stateValue === state && this.contentView !== null) {
       // The same kind of HUD: update in place so the animation does not restart.
       this.updateProgress();
@@ -468,6 +474,7 @@ export class CYLPlaceholderHUD {
   /** Changes the status in place, without restarting the indicator (iOS `-setStatus:`). */
   setStatus(status: string | null): void {
     this.statusValue = status;
+    this.cylNotifyChange();
     const content = this.contentView;
     if (content !== null) {
       content.text = this.titleForStatus(status, this.stateValue === CYLPlaceholderHUDState.Progress);
@@ -550,6 +557,7 @@ export class CYLPlaceholderHUD {
       }
       this.post(CYLPlaceholderHUDWillDisappearNotification);
       this.opacity = 0;
+      this.cylNotifyChange();
       this.cancelTimer(this.fadeTimer);
       this.fadeTimer = this.scheduler.schedule(() => {
         this.fadeTimer = -1;
@@ -713,12 +721,17 @@ export class CYLPlaceholderHUD {
     this.cancelTimer(this.fadeTimer);
     this.fadeTimer = -1;
     this.stateValue = state;
+    this.cylNotifyChange();
     this.statusValue = status;
+    this.cylNotifyChange();
     if (stack !== null) {
       this.placeholderView = stack;
+      this.cylNotifyChange();
       this.contentView = null;
+      this.cylNotifyChange();
     } else {
       this.placeholderView = null;
+      this.cylNotifyChange();
       // Loading loops loadingAnimationFileName, Progress scrubs progressAnimationFileName (or loops the loading one),
       // Success plays successAnimationFileName once; the image (the hourglass while loading) shows until it is ready.
       const loading = state === CYLPlaceholderHUDState.Loading || state === CYLPlaceholderHUDState.Progress;
@@ -745,6 +758,7 @@ export class CYLPlaceholderHUD {
       view.defaultTitleFont = this.font;
       view.preferredMaxLayoutWidth = 240;
       this.contentView = view;
+      this.cylNotifyChange();
       this.updateProgress();
     }
     this.present();
@@ -759,12 +773,14 @@ export class CYLPlaceholderHUD {
         presenter.present(this);
       }
       this.opacity = 1;
+      this.cylNotifyChange();
       this.fadeTimer = this.scheduler.schedule(() => {
         this.fadeTimer = -1;
         this.post(CYLPlaceholderHUDDidAppearNotification);
       }, this.fadeInAnimationDuration * 1000);
     } else {
       this.opacity = 1;
+      this.cylNotifyChange();
     }
   }
 
@@ -777,8 +793,11 @@ export class CYLPlaceholderHUD {
     }
     this.presented = false;
     this.stateValue = CYLPlaceholderHUDState.Hidden;
+    this.cylNotifyChange();
     this.contentView = null;
+    this.cylNotifyChange();
     this.placeholderView = null;
+    this.cylNotifyChange();
     if (completion !== null) {
       completion();
     }
