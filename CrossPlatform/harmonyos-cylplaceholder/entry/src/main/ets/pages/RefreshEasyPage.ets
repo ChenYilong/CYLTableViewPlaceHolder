@@ -20,7 +20,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { UiColor } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 
 /** The header whose second floor is on screen (the floor's close button closes it). */
 let floorHeader: CYLRefreshHeaderModel | null = null;
@@ -425,6 +425,7 @@ export struct RefreshEasyPage {
     .onScrollIndex((start: number) => {
       this.firstVisible = start;
     })
+    .contentEndOffset(PAGE_LIST_END_INSET)
     .edgeEffect(EdgeEffect.None)
     .width('100%')
     .height('100%')

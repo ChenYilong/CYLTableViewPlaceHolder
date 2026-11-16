@@ -18,7 +18,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { UiColor } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 
 function range(from: number, to: number): number[] {
   const list: number[] = [];
@@ -127,6 +127,7 @@ export struct HUDLifecyclePage {
             }
           }
           .divider({ strokeWidth: 0.5, color: UiColor.separator, startMargin: 16 })
+          .contentEndOffset(PAGE_LIST_END_INSET)
           .edgeEffect(EdgeEffect.None)
           .width('100%')
           .height('100%')

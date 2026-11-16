@@ -25,7 +25,8 @@ import { LengthMetrics } from '@kit.ArkUI';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
 import { animationPath } from '../feed/RefreshSetups';
-import { showRefreshTest } from './RefreshTestPage';
+import { showRefreshTest } from './RefreshTestPage';
+import { PAGE_LIST_END_INSET } from '../common/Ui';
 
 const CYLRefreshCollectionDuration: number = 2000;
 
@@ -187,6 +188,7 @@ export struct RefreshCollectionPage {
           .padding(20)
         }
       }
+      .contentEndOffset(PAGE_LIST_END_INSET)
       .edgeEffect(EdgeEffect.None)
       .width('100%')
       .height('100%')
@@ -214,6 +216,7 @@ export struct RefreshCollectionPage {
         .listDirection(Axis.Horizontal)
         .scrollSnapAlign(ScrollSnapAlign.START)
         .scrollBar(BarState.Off)
+        .contentEndOffset(PAGE_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')

@@ -76,7 +76,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 |:---|:---|
 | 来自 2026-11-16 模拟器截图（Mate 70 Pro，HarmonyOS 6.0.1 API 21，提交 `4e15478`，`docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`、`docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`）的问题，每个问题一行。第二列为修复状态：默认 `TODO`；修好后为 `TODO need 模拟器截图验证`，下次截图确认后改为已完成。打分 = 第二列不是 `TODO` 的行 ÷ 全部行；没有 `TODO` 即满分。 | Issues from the 2026-11-16 emulator screenshots (Mate 70 Pro, HarmonyOS 6.0.1 API 21, commit `4e15478`, the two images above), one row each. Second column: the fix status, `TODO` by default, `TODO need 模拟器截图验证` once fixed, done after the next screenshot confirms it. Score = rows whose status is not `TODO` ÷ all rows; full marks with no `TODO`. |
 
-**打分 / Score: 100 / 100** (8 / 8 fixed, 3 checked with a screenshot: E1–E3).
+**打分 / Score: 100 / 100** (9 / 9 fixed, 3 checked with a screenshot: E1–E3).
 
 | # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
 |:---|:---|:---|:---|
@@ -88,10 +88,13 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | E6 | TODO need 模拟器截图验证 | GIF animation detail (CYLPlaceholderNoFavorites.gif) shows no image, only its name, at 1x and 2.75x. | At rest (before the first play, or stopped) the GIF view draws its first frame as an `Image`, as ImageAnimator may draw nothing in its Initial state; a speed change while it runs restarts it with the new frames instead of leaving it stopped (`CYLGIFPlaceholderItemAnimator.ets`). |
 | E7 | TODO need 模拟器截图验证 | Opening a Rive (`.riv`) animation detail page was followed by the emulator itself crashing. | The Rive view was handed a custom `RiveFileController` (`CYLRiveSpeedController`, added for Q7) that the bytecode @ohos/rive library did not create; it is no longer passed, and Rive reports its speed as unsupported (`CYLRivePlaceholderItemAnimator.ets`). Q7 stays N/A. |
 | E8 | TODO need 模拟器截图验证 | Japanese: the Animations tab title is cut ("アニメーショ"). | Tab titles keep one line and shrink to fit (`minFontSize(7)` … `maxFontSize(10)`) instead of being cut (`entry/src/main/ets/pages/Index.ets`). |
+| E9 | TODO need 模拟器截图验证 | Pushed refresh pages: the last item is cut off at the bottom edge ("已经全部加载完毕" on example14, `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`). | Pushed pages have no tab bar, so their lists reach the gesture bar. `PAGE_LIST_END_INSET` (28 vp) is added after the lists of the refresh table, collection, icon demo, easy, i18n and Smart pages and the HUD life cycle page (`common/Ui.ets`). |
 
 不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
 
 其他仓库（2026-11-16 复查）：CYLTabBarController 的 `docs/HarmonyOS-Issues.md` 由其鸿蒙会话维护（18 项，94 / 100）；代码中已核对 #1 角标按文字测宽、#2 标题与加号标题同一基线、#3 导航栏按钮、#5 文案已翻译、#15 列表底部留白；#11 已截图确认；#18 仍为 TODO。 | Other repositories (re-checked 2026-11-16): CYLTabBarController's `docs/HarmonyOS-Issues.md` is kept by its HarmonyOS session (18 issues, 94 / 100). Checked in its code: #1 badges measured from their text, #2 tab and plus titles on one line, #3 nav bar buttons, #5 the hints translated, #15 the list end inset; #11 confirmed by a screenshot; #18 still TODO.
+
+复查（2026-11-16 第二次）：CYLTabBarController 新截图中 “NEW”“99+” 角标已一行显示，系统 TabBar 页已无悬浮加号且已本地化，SVGA 演示页已本地化；新问题：长导航标题「推入到系统 UITabBarController（另一个加号按钮）」换成两行（已告知其会话）。日语副标题在词中换行属正常的日文断行。 | Re-check (2026-11-16, second): in CYLTabBarController's new screenshots the "NEW" and "99+" badges fit on one line, the system tab bar page has no floating plus button and is localized, and the SVGA demo page is localized; new: the long nav title "推入到系统 UITabBarController（另一个加号按钮）" wraps onto two lines (sent to its session). Japanese subtitles breaking inside words is normal Japanese line breaking.
 
 ## 任务 / Tasks
 

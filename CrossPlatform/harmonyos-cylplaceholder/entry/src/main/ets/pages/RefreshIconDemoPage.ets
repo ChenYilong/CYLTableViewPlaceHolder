@@ -16,7 +16,7 @@ import {
 import { effectiveLanguage, t } from '../common/L10n';
 import { PlaybackControls } from '../common/Playback';
 import { RouteParam } from '../common/Routes';
-import { UiColor } from '../common/Ui';
+import { UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 import { RefreshSetup, refreshIconRowFor } from '../feed/RefreshSetups';
 
 @Component
@@ -149,6 +149,7 @@ export struct RefreshIconDemoPage {
           }
         }
         .divider({ strokeWidth: 0.5, color: UiColor.separator, startMargin: 54 })
+        .contentEndOffset(PAGE_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')

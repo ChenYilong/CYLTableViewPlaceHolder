@@ -30,7 +30,7 @@ import {
 import { t } from '../common/L10n';
 import { imagesOfBundledGIF } from '../common/RefreshFrames';
 import { RouteParam } from '../common/Routes';
-import { BarButton } from '../common/Ui';
+import { BarButton, PAGE_LIST_END_INSET } from '../common/Ui';
 import { animationPath } from '../feed/RefreshSetups';
 import { showRefreshTest } from './RefreshTestPage';
 
@@ -620,6 +620,7 @@ export struct RefreshTablePage {
             }
           }
           .contentEndOffset(this.bottomInset)
+          .contentEndOffset(PAGE_LIST_END_INSET)
           .edgeEffect(EdgeEffect.None)
           .width('100%')
           .height('100%')

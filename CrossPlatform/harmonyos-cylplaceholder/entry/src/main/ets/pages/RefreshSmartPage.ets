@@ -38,7 +38,7 @@ import {
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { SectionHeader, UiColor } from '../common/Ui';
+import { SectionHeader, UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 
 const DURATION: number = 2500;
 
@@ -415,6 +415,7 @@ export struct RefreshSmartPage {
             }
           }, (section: SmartSection) => section.id + '-' + section.rows.length)
         }
+        .contentEndOffset(PAGE_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')

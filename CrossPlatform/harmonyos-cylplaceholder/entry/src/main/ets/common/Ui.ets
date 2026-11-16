@@ -98,6 +98,12 @@ export function SectionFooter(title: string) {
  */
 export const TAB_LIST_END_INSET: number = 36;
 
+/**
+ * Space after a pushed page's list so its last row (a refresh footer such as "已经全部加载完毕") clears the gesture
+ * bar: pushed pages have no tab bar and their lists reach the bottom edge, where the last item was cut off.
+ */
+export const PAGE_LIST_END_INSET: number = 28;
+
 /** One cell: optional leading glyph, title, subtitle, trailing detail, check mark or chevron. */
 @Builder
 export function TableCell(row: TableRow, action: () => void) {

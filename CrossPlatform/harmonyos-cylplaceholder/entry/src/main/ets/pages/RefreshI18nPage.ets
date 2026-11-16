@@ -15,7 +15,7 @@ import {
 import { ExampleStringTable } from '../common/ExampleStrings';
 import { effectiveLanguage, t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
-import { SectionHeader, UiColor } from '../common/Ui';
+import { SectionHeader, UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 
 const LANGUAGES: string[] = ['zh-Hans', 'zh-Hant', 'en', 'ru', 'ko', 'uk', 'ja'];
 const CUSTOM_TABLE: string = 'CYLRefreshCustom';
@@ -166,6 +166,7 @@ export struct RefreshI18nPage {
             CYLRefreshFooterView({ scrollView: this.scrollView })
           }
         }
+        .contentEndOffset(PAGE_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')
