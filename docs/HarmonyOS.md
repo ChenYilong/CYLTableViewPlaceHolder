@@ -32,7 +32,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 <!-- harmony-quality:begin -->
 | 中文 | English |
 |:---|:---|
-| **鸿蒙质量分：100 / 100**（完成 25 / 计入 25 项；N/A on HarmonyOS，不计入：Q7、Q12、Q13、Q14、Q15、Q16、Q17）。 | **HarmonyOS quality score: 100 / 100** (25 / 25 rows done; N/A on HarmonyOS, not counted: Q7, Q12, Q13, Q14, Q15, Q16, Q17). |
+| **鸿蒙质量分：93 / 100**（完成 28 / 计入 30 项；未完成：Q12、Q15；N/A on HarmonyOS，不计入：Q7、Q17）。 | **HarmonyOS quality score: 93 / 100** (28 / 30 rows done; open: Q12, Q15; N/A on HarmonyOS, not counted: Q7, Q17). |
 <!-- harmony-quality:end -->
 
 | # | 项目 / Item | 通过条件 / Pass condition | 状态 / Status |
@@ -48,11 +48,11 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q9 | 模拟器：安装与启动 / Emulator: install and launch | HarmonyOS 6.0.1 手机模拟器上安装 entry HAP 并启动，无崩溃 / the entry HAP installs and launches on the HarmonyOS 6.0.1 phone emulator, no crash | 完成 / Done (2026-11-16, emulator "CYL TabBar Test", Mate 70 Pro HarmonyOS 6.0.1 API 21, commit `4e15478`: installed and launched with no crash; screenshot `docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`) |
 | Q10 | 模拟器：所有 Tab / Emulator: every tab | 每个 Tab 能打开、内容与 iOS 相同，各一张截图 / every tab opens with the iOS content, one screenshot each | 完成 / Done (2026-11-16, emulator: Scenarios, Animations, Flows, Feed, Refresh and Publish opened, one screenshot each in `docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`) |
 | Q11 | 模拟器：场景页 / Emulator: scenarios | 场景列表与任一场景详情（图标、文字、按钮）正常，截图 / the scenario list and a scenario page (icon, texts, buttons) work, screenshot | 完成 / Done (2026-11-16, emulator: scenario list and the 网络不给力 / 暂无内容 pages with icon, text and playback controls; `docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`) |
-| Q12 | 模拟器：四种引擎 / Emulator: four engines | 动效 Tab 中 Lottie、PAG、Rive、GIF 各一个文件能播放 / one Lottie, PAG, Rive and GIF file each play in the Animations tab | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
-| Q13 | 模拟器：播放控制 / Emulator: playback controls | 非默认倍速与循环状态下截图；全部播放从 0 开始 / screenshot at a non-default speed with the loop state visible; Play all restarts from 0 | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
-| Q14 | 模拟器：刷新 / Emulator: refresh | 刷新 Tab 的下拉刷新、上拉加载、没有更多数据正常，截图 / pull to refresh, load more and no more data work in the Refresh tab, screenshot | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
-| Q15 | 模拟器：HUD 与状态栏 / Emulator: HUD and status bar | HUD 页与 HUD 生命周期页（失败、重试、加载）正常，截图 / the HUD page and the HUD life cycle page (fail, retry, load) work, screenshot | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
-| Q16 | 模拟器：多语言 / Emulator: languages | 切换到简体中文与日语后文字正确，截图 / texts are right after switching to Simplified Chinese and Japanese, screenshot | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
+| Q12 | 模拟器：四种引擎 / Emulator: four engines | 动效 Tab 中 Lottie、PAG、Rive、GIF 各一个文件能播放 / one Lottie, PAG, Rive and GIF file each play in the Animations tab | TODO (2026-11-16, emulator): Lottie and PAG play; the GIF detail shows no image; opening a Rive file was followed by an emulator crash. See the second emulator run note. |
+| Q13 | 模拟器：播放控制 / Emulator: playback controls | 非默认倍速与循环状态下截图；全部播放从 0 开始 / screenshot at a non-default speed with the loop state visible; Play all restarts from 0 | 完成 / Done (2026-11-16, emulator: GIF detail at 2.75x with the loop switch on, Play all tapped; `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`) |
+| Q14 | 模拟器：刷新 / Emulator: refresh | 刷新 Tab 的下拉刷新、上拉加载、没有更多数据正常，截图 / pull to refresh, load more and no more data work in the Refresh tab, screenshot | 完成 / Done (2026-11-16, emulator: example01 pulled to refresh, example14 shows "已经全部加载完毕" (no more data); `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`) |
+| Q15 | 模拟器：HUD 与状态栏 / Emulator: HUD and status bar | HUD 页与 HUD 生命周期页（失败、重试、加载）正常，截图 / the HUD page and the HUD life cycle page (fail, retry, load) work, screenshot | TODO (2026-11-16, emulator): the HUD page crashes the app on open (`TypeError: Obj is not a Valid object`, `HUDPage.ets:78`). See the second emulator run note. |
+| Q16 | 模拟器：多语言 / Emulator: languages | 切换到简体中文与日语后文字正确，截图 / texts are right after switching to Simplified Chinese and Japanese, screenshot | 完成 / Done (2026-11-16, emulator: switched to 日本語 (Scenarios and Refresh tabs translated) and back to 简体中文; `docs/assets/harmonyos-placeholder-languages-mate70pro-api21.png`) |
 | Q17 | 模拟器：深色模式 / Emulator: dark mode | 深色模式下占位图与列表可读，截图 / the placeholder and lists are readable in dark mode, screenshot | TODO: N/A on HarmonyOS — needs a running HarmonyOS emulator, and none can be created in this environment (an emulator instance is only created in DevEco Studio Device Manager; `Emulator.exe` can start but not create one); the UI test suite (Q29, Q32) runs it with `scripts/emulator-check.sh uitest` once an emulator exists |
 | Q18 | 文档与截图 / Docs and screenshots | 截图存入 `docs/assets/harmonyos-*.png` 并记录在本文件（设备、系统、提交、时间） / screenshots in `docs/assets/harmonyos-*.png`, recorded here (device, OS, commit, time) | 完成 / Done (2026-11-16: `docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`, `docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`, recorded in the progress note above with device, OS, commit and time) |
 | Q19 | 场景页的控制条 / Controls on the scenario page | `ScenarioDetailPage.ets`：全部播放作用于所有组件，倍速与循环实时生效，循环初始值取场景自身设置 / Play all acts on every component, speed and loop live, the loop starts as the scenario's own setting | 完成 / Done (2026-11-16, compiled) |
@@ -80,9 +80,9 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
 |:---|:---|:---|:---|
-| E1 | TODO need 模拟器截图验证 | Refresh tab: the back footer ("上拉可以加载更多" with its arrow) is drawn over the first section header. | `CYLRefreshContainer` kept its size in plain fields (`viewW`, `viewH`), so the first layout's 0 stayed and the back footer sat at `y = 0`; they are `@State` now, so the footer (and the trailer) move to the content's end once the size is known (`cylplaceholder/src/main/ets/refresh/CYLRefreshView.ets`). |
-| E2 | TODO need 模拟器截图验证 | Animations tab: long file names wrap mid-word ("CYLPlaceholderBluetoothPermission.j" / "son"). | Cell titles had no line limit. They are one line, cut at the end, like a `UITableViewCell` title (`entry/src/main/ets/common/Ui.ets` `TableCell`). |
-| E3 | TODO need 模拟器截图验证 | Animation detail page: the file name title wraps onto two lines next to the back button. | The page title is one line, cut in the middle so the extension stays visible (`AnimationDetailPage.ets` `titleView`). |
+| E1 | 完成 / Done (2026-11-16, emulator: the Refresh tab starts with its section header, no footer over it; `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`) | Refresh tab: the back footer ("上拉可以加载更多" with its arrow) is drawn over the first section header. | `CYLRefreshContainer` kept its size in plain fields (`viewW`, `viewH`), so the first layout's 0 stayed and the back footer sat at `y = 0`; they are `@State` now, so the footer (and the trailer) move to the content's end once the size is known (`cylplaceholder/src/main/ets/refresh/CYLRefreshView.ets`). |
+| E2 | 完成 / Done (2026-11-16, emulator: Animations tab titles are one line with an end ellipsis; `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`) | Animations tab: long file names wrap mid-word ("CYLPlaceholderBluetoothPermission.j" / "son"). | Cell titles had no line limit. They are one line, cut at the end, like a `UITableViewCell` title (`entry/src/main/ets/common/Ui.ets` `TableCell`). |
+| E3 | 完成 / Done (2026-11-16, emulator: "CYLPlacehol…oFavorites.gif" is one line with a middle ellipsis; `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`) | Animation detail page: the file name title wraps onto two lines next to the back button. | The page title is one line, cut in the middle so the extension stays visible (`AnimationDetailPage.ets` `titleView`). |
 | E4 | TODO need 模拟器截图验证 | Tab lists (Scenarios, Animations, Flows, Feed, Refresh): at the end of a list the last row stays under the raised plus button. | The plus image (66 vp) is centred 24 vp above the bar's centre, so it rises about 34 vp above the bar, and the lists had no space for it. `TAB_LIST_END_INSET` (36 vp) is added after each tab list (`common/Ui.ets` `InsetTable`, `FeedTab.ets`, `RefreshTab.ets`); CYLTabBarController fixed the same issue as its #15. |
 
 不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
@@ -146,6 +146,21 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   ![HarmonyOS placeholder example tabs](assets/harmonyos-placeholder-tabs-mate70pro-api21.png)
 
   ![HarmonyOS placeholder example pages](assets/harmonyos-placeholder-pages-mate70pro-api21.png)
+
+- **Progress 2026-11-16 (emulator, second run, Mac session):** "CYL TabBar Test" (Mate 70 Pro profile, HarmonyOS 6.0.1
+  API 21), commit `ccf8ec3`, 10:03–10:20 emulator time; controls found by id and text from `uitest dumpLayout`. Done:
+  E1, E2, E3, Q13, Q14, Q16. **Bugs found (TODO):** (1) the HUD page crashes the app on open: `TypeError: Obj is not a
+  Valid object` at `entry/src/main/ets/pages/HUDPage.ets:78` (`hud.minimumDismissTimeInterval = 1.5` on
+  `CYLPlaceholderHUD.sharedHUD`, an `@Observed` class), seen in both runs (jscrash logs 09:33 and 10:18); (2) the GIF
+  detail page (CYLPlaceholderNoFavorites.gif) shows no image, only its name, at 1x and 2.75x; (3) opening a Rive file
+  (`.riv`) on the animation detail page was followed by the emulator itself crashing (emulator minidump at 15:06 Mac
+  time), so Q7 / Q12 for Rive are not verified; (4) in Japanese the Animations tab title is cut ("アニメーショ").
+  Lottie and PAG files play (Q12 partly). Not done: Q15 (blocked by bug 1), Q17 (no command-line dark mode switch
+  found), E4 (the end of a list was not scrolled to).
+
+  ![HarmonyOS placeholder refresh and animations](assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png)
+
+  ![HarmonyOS placeholder languages](assets/harmonyos-placeholder-languages-mate70pro-api21.png)
 
 ### DONE: HarmonyOS port, library and example (score 100)
 
