@@ -18,8 +18,22 @@ the status and score are in `docs/HarmonyOS.md`.
 - Sign in to a **Huawei developer account** in DevEco Studio (needed for emulator images and automatic signing).
 - Open `CrossPlatform/harmonyos-cylplaceholder`, run ohpm install, and set up automatic signing (File > Project
   Structure > Signing Configs) for the example HAP `entry`. Never commit signing material.
-- hvigor refuses non-ASCII project paths (this checkout sits under `文档`), so build with
+- hvigor refuses non-ASCII project paths (this checkout sits under `文档`): from that checkout, build with
   `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh`, which mirrors the project to an ASCII directory.
+- **To open the project in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
+  ("00306003 Specification Limit Violation: Invalid project path"), and the usual checkout sits under `文档`. A
+  directory junction or a `subst` drive does not help: hvigor resolves both back to the real path (Node's native
+  `realpath`), and fails with "Invalid project path" or "Path not found" (tested 2026-11-17). Use a second clone at an
+  ASCII path and open its HarmonyOS project: `git clone --branch <branch>
+  https://github.com/ChenYilong/CYLTableViewPlaceHolder.git C:\dev\CYLTableViewPlaceHolder`, then in DevEco Studio
+  File > Open `C:\dev\CYLTableViewPlaceHolder\CrossPlatform\harmonyos-cylplaceholder`. It builds in place (`ohpm
+  install`, Build > Build Hap(s), or `scripts/build.sh`). Keep the two checkouts in sync with git (commit and push in
+  one, `git pull` in the other); never copy files between them by hand.
+- **x86_64 emulator:** the Windows emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native
+  libraries only, so the normal HAP does not install ("install parse native so failed"). Test on an arm64 emulator
+  (Apple silicon) or a phone; or, for checks that need no PAG / Rive, build an emulator-only HAP without them by
+  adding `"nativeLib": { "filter": { "excludes": ["**/*.so"] } }` to `entry/build-profile.json5` `buildOption`
+  locally (never commit it; PAG and Rive cannot play in that build).
 
 ## 2. Emulator prerequisites
 

@@ -419,7 +419,17 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   counted rows (both tables together), recomputed by `node scripts/harmony-port-tables.js` after every finished
   feature; remove one TODO per finished feature until the score is 100.
 - **Build:** `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh` (hvigor refuses non-ASCII project paths, so
-  the script mirrors the project to an ASCII directory and builds there).
+  from a checkout under such a path the script mirrors the project to an ASCII directory and builds there; from a
+  checkout at an ASCII path it builds in place).
+- **Opening it in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
+  ("00306003 Specification Limit Violation: Invalid project path"), and the usual checkout sits under `文档`. A
+  directory junction or a `subst` drive does not help: hvigor resolves both back to the real path (Node's native
+  `realpath`), and fails with "Invalid project path" or "Path not found" (tested 2026-11-17). Use a second clone at an
+  ASCII path and open its HarmonyOS project: `git clone --branch <branch>
+  https://github.com/ChenYilong/CYLTableViewPlaceHolder.git C:\dev\CYLTableViewPlaceHolder`, then in DevEco Studio
+  File > Open `C:\dev\CYLTableViewPlaceHolder\CrossPlatform\harmonyos-cylplaceholder`. It builds in place (`ohpm
+  install`, Build > Build Hap(s), or `scripts/build.sh`). Keep the two checkouts in sync with git (commit and push in
+  one, `git pull` in the other); never copy files between them by hand.
 - **IDE and emulator setup:** follow the skill `cyl-harmonyos-setup` (`.agents/skills/cyl-harmonyos-setup/SKILL.md`)
   before building or running. Emulator prerequisites: a Huawei developer account signed in to DevEco Studio; VT-x /
   AMD-V enabled in the BIOS; Hyper-V and Windows Hypervisor Platform turned on (`HypervisorPresent` is `True`);
