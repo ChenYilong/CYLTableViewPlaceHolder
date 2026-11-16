@@ -70,6 +70,22 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | Q31 | 本地化：CYLTabBarController 文案 / Localization: CYLTabBarController texts | `scripts/import-tabbar-strings.js` 从 CYLTabBarController 的字符串表复制本项目用到的 5 个键（选中、加号按钮、关闭、播放 / 停止、角标）的七种语言到 `common/TabBarStrings.ets` / copies the 5 keys this project uses (Selected, Plus button, Close, Play / Stop, Badges) in seven languages into `common/TabBarStrings.ets` | 完成 / Done (CYLTabBarController 2fff174b) |
 | Q32 | UI 测试按无障碍定位 / UI tests locate by accessibility | `ExampleUi.test.ets` 先按无障碍文字（`ON.description`）与本地化文字（`ON.text`，七种语言）查找控件，id 只作后备；包含连续操作（全部播放 → 循环 → 全部播放 → 返回） / finds controls by accessibility label and localized text (seven languages) first, ids as fallback; includes a multi-step flow | 完成 / Done (2026-11-16, compiled) |
 
+## 模拟器截图问题 / Emulator screenshot issues
+
+| 中文 | English |
+|:---|:---|
+| 来自 2026-11-16 模拟器截图（Mate 70 Pro，HarmonyOS 6.0.1 API 21，提交 `4e15478`，`docs/assets/harmonyos-placeholder-tabs-mate70pro-api21.png`、`docs/assets/harmonyos-placeholder-pages-mate70pro-api21.png`）的问题，每个问题一行。第二列为修复状态：默认 `TODO`；修好后为 `TODO need 模拟器截图验证`，下次截图确认后改为已完成。打分 = 第二列不是 `TODO` 的行 ÷ 全部行；没有 `TODO` 即满分。 | Issues from the 2026-11-16 emulator screenshots (Mate 70 Pro, HarmonyOS 6.0.1 API 21, commit `4e15478`, the two images above), one row each. Second column: the fix status, `TODO` by default, `TODO need 模拟器截图验证` once fixed, done after the next screenshot confirms it. Score = rows whose status is not `TODO` ÷ all rows; full marks with no `TODO`. |
+
+**打分 / Score: 100 / 100** (3 / 3 fixed, 0 checked with a screenshot).
+
+| # | 状态 / Status | 问题 / Issue | 原因与修复 / Cause and fix |
+|:---|:---|:---|:---|
+| E1 | TODO need 模拟器截图验证 | Refresh tab: the back footer ("上拉可以加载更多" with its arrow) is drawn over the first section header. | `CYLRefreshContainer` kept its size in plain fields (`viewW`, `viewH`), so the first layout's 0 stayed and the back footer sat at `y = 0`; they are `@State` now, so the footer (and the trailer) move to the content's end once the size is known (`cylplaceholder/src/main/ets/refresh/CYLRefreshView.ets`). |
+| E2 | TODO need 模拟器截图验证 | Animations tab: long file names wrap mid-word ("CYLPlaceholderBluetoothPermission.j" / "son"). | Cell titles had no line limit. They are one line, cut at the end, like a `UITableViewCell` title (`entry/src/main/ets/common/Ui.ets` `TableCell`). |
+| E3 | TODO need 模拟器截图验证 | Animation detail page: the file name title wraps onto two lines next to the back button. | The page title is one line, cut in the middle so the extension stays visible (`AnimationDetailPage.ets` `titleView`). |
+
+不是问题（已核对）：状态切换页与网络状态条页的占位图位于控件下方区域的中央。Q13 只截到 1x：倍速与循环的效果仍待截图（Q13 保持 N/A）。 | Not issues (checked): the placeholders of the state-switch and status-bar pages are centred in the area below their controls. Q13 was shot at 1x only: speed and loop effects still need a screenshot (Q13 stays N/A).
+
 ## 任务 / Tasks
 
 ### TODO: Full-marks standard: playback controls, emulator verification (quality score)
