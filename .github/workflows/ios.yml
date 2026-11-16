@@ -72,6 +72,8 @@ jobs:
       - run: python3 scripts/update-docs-navigation.py --check
       # Public API documentation comments: one block comment, not stacked /// lines (instructions.md, "Code conventions").
       - run: python3 scripts/check_doc_comments.py
+      # The Android -> iOS API map (docs/iOS-API-Map.md) is generated from the Android core and ios-map.json.
+      - run: python3 scripts/ios-api-map.py --check
 
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:
