@@ -24,7 +24,7 @@
           <view wx:if="{{headerIcon.type !== 'unsupported'}}" class="cyl-refresh__icon-wrap" aria-hidden="true"
                 style="width: {{headerIcon.width}}px; height: {{headerIcon.height}}px">
             <cyl-animated-item class="cyl-refresh__animated-icon" image="{{headerIcon.image}}" animation-url="{{headerIcon.animationUrl}}"
-                               icon-size="{{headerIcon.width > headerIcon.height ? headerIcon.width : headerIcon.height}}" loop="{{true}}"
+                               icon-size="{{headerIcon.width > headerIcon.height ? headerIcon.width : headerIcon.height}}" loop="{{iconLoop}}" speed="{{iconSpeed}}"
                                accessibility-label="{{texts.header}}"
                                generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
                                generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
@@ -61,7 +61,7 @@
           <view wx:if="{{footerIcon && footerIcon.type !== 'unsupported'}}" class="cyl-refresh__icon-wrap" aria-hidden="true"
                 style="width: {{footerIcon.width}}px; height: {{footerIcon.height}}px">
             <cyl-animated-item class="cyl-refresh__animated-icon" image="{{footerIcon.image}}" animation-url="{{footerIcon.animationUrl}}"
-                               icon-size="{{footerIcon.width > footerIcon.height ? footerIcon.width : footerIcon.height}}" loop="{{true}}"
+                               icon-size="{{footerIcon.width > footerIcon.height ? footerIcon.width : footerIcon.height}}" loop="{{iconLoop}}" speed="{{iconSpeed}}"
                                accessibility-label="{{texts.footerA11y}}"
                                generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
                                generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />

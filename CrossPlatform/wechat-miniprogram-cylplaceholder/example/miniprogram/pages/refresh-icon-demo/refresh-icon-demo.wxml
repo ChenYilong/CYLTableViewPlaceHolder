@@ -4,7 +4,7 @@
   </view>
   <view class="content">
     <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}" header-icons="{{setup.headerIcons}}"
-                 footer-icons="{{setup.footerIcons}}" generic:animation="cyl-lottie" bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+                 footer-icons="{{setup.footerIcons}}" icon-speed="{{speed}}" icon-loop="{{loop}}" generic:animation="cyl-lottie" bind:refresh="onRefresh" bind:loadmore="onLoadMore">
       <view class="plain">
         <view wx:for="{{rows}}" wx:key="*this" class="cell cell--icon">
           <view class="cell__icon">⇅</view>
@@ -16,4 +16,6 @@
       </view>
     </cyl-refresh>
   </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
 </view>

@@ -38,6 +38,12 @@ Component({
     header: { type: String, value: 'normal' },
     footer: { type: String, value: 'auto' },
     /** { Idle, Pulling, Refreshing }: '/path.json' or { path, size } per state (setIconAnimation…for:). */
+    /**
+     * The state icons' playback (the example's playback controls, docs/Example-Animation-Playback.md): speed 0.25 to 3
+     * and loop, applied live to the header and footer icons (iOS `CYLRefreshIconView` playback policy).
+     */
+    iconSpeed: { type: Number, value: 1 },
+    iconLoop: { type: Boolean, value: true },
     headerIcons: { type: null, value: null },
     /** { Idle, Refreshing, NoMoreData } of the footer. */
     footerIcons: { type: null, value: null },
@@ -140,6 +146,13 @@ Component({
     },
   },
   methods: {
+    /** Restarts every state icon from its first frame ("Play all"). */
+    playIconsFromStart() {
+      this.selectAllComponents('.cyl-refresh__animated-icon').forEach((icon) => {
+        if (icon && typeof icon.cyl_playFromStart === 'function') icon.cyl_playFromStart()
+      })
+    },
+
     _isBack() {
       return this.data.footer === 'back' || this.data.footer === 'diyBack'
     },

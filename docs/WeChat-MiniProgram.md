@@ -417,8 +417,10 @@
     ([screenshot](assets/wechat-miniprogram-more-pages.png)). MP5 (fixed, example): the refresh icon demo page started with
     an empty setup, so its first render passed null to `cyl-refresh`'s String `header` / `footer` (two console warnings);
     it starts with the default setup now and the console is clean.
-  - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
-    yet (`cyl-refresh` takes no speed or loop).
+  - The refresh icon demo has the playback controls too: the core `cyl-refresh` takes `icon-speed` / `icon-loop` and
+    `playIconsFromStart()`, and the demo wires the shared widget to them (simulator: speed 2x and loop off reach the state
+    icon; [screenshot](assets/wechat-miniprogram-refresh-icon-controls.jpg)).
+  - Not done: screen-reader output (WeChat DevTools has no screen reader; it needs a real phone with VoiceOver / TalkBack).
 - Not verified: a real phone.
 
 ## CYLRefresh in one folder

@@ -6,3 +6,5 @@
 "tab.feed" = "Стрічка";
 "tab.refresh" = "Оновлення";
 "tab.animations" = "Анімації";
+"tab.scenarios" = "Сценарії";
+"tab.flows" = "Сценарії взаємодії";

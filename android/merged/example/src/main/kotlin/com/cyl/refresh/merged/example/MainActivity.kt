@@ -43,6 +43,8 @@ object ExamplePages {
      */
     private val icons = mapOf(
         "tray" to android.R.drawable.ic_menu_agenda,
+        "rectangle" to android.R.drawable.ic_menu_agenda,
+        "arrow.triangle" to android.R.drawable.ic_menu_share,
         "arrow" to android.R.drawable.ic_menu_rotate,
         "sparkles" to android.R.drawable.btn_star,
         "bubble" to android.R.drawable.ic_menu_send,
@@ -56,14 +58,16 @@ object ExamplePages {
         if (registered) return
         registered = true
         CYLTabBarConfiguration.imageResolver = CYLTabBarConfiguration.CYLTabBarImageResolver { context: Context, name: String ->
-            val symbol = name.removePrefix("system:").substringBefore('.')
-            ContextCompat.getDrawable(context, icons[symbol] ?: android.R.drawable.ic_menu_help)
+            val symbol = name.removePrefix("system:")
+            val drawable = icons[symbol.split('.').take(2).joinToString(".")] ?: icons[symbol.substringBefore('.')]
+            ContextCompat.getDrawable(context, drawable ?: android.R.drawable.ic_menu_help)
         }
         val registry = CYLTabBarPageRegistry.sharedRegistry
         registry.registerPageProvider({ _, _ -> ScenariosPage() }, listOf("placeholder"))
         registry.registerPageProvider({ _, _ -> AnimationsPage() }, listOf("animations"))
-        registry.registerPageProvider({ _, _ -> LoadMorePage() }, listOf("loadmore"))
-        registry.registerPageProvider({ _, _ -> StoreHousePage() }, listOf("storehouse"))
+        // The iOS example's Flows tab; the former Load more and StoreHouse tabs are in the Refresh tab's examples and
+        // the Smart styles page.
+        registry.registerPageProvider({ _, _ -> FlowsPage() }, listOf("flows"))
         registry.registerPageProvider({ _, _ -> RefreshExamplesPage() }, listOf("refresh"))
         registry.registerPageProvider({ _, _ -> FeedPage() }, listOf("feed"))
     }

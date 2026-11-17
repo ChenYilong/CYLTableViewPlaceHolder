@@ -6,3 +6,5 @@
 "tab.feed" = "Лента";
 "tab.refresh" = "Обновление";
 "tab.animations" = "Анимации";
+"tab.scenarios" = "Сценарии";
+"tab.flows" = "Сценарии взаимодействия";

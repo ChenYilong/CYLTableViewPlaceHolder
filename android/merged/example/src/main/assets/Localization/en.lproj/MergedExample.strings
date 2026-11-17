@@ -6,3 +6,5 @@
 "tab.feed" = "Feed";
 "tab.refresh" = "Refresh";
 "tab.animations" = "Animations";
+"tab.scenarios" = "Scenarios";
+"tab.flows" = "Flows";
