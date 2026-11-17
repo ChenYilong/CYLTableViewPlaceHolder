@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：截图规则：一列多行优先，超过一屏再两列 / TODO: Screenshot rule: one column first, two columns when taller than a phone screen
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
+- User's original prompt (verbatim): "更新截图规则，优选一列多行 如果一列拼接后长度超过普通手机的一屏幕 则两列多行"
+- Requirements (English): update the screenshot rule: one column with several rows first; when the one-column image would be taller than one screen of a common phone, two columns with several rows.
+- Context: `9cdf294` put two columns first; this replaces that order. A common phone screen is 19.5:9, so "taller than one screen" at phone width means height > about 2.17 × width (the same threshold as CYLTabBarController's `scripts/stitch-screenshots.py`).
+- Acceptance: full marks (100) = `instructions.md`, `AGENTS.md`, skills `cyl-verify` and `cyl-docs` updated, writes checked, pushed. Pass (60) = `instructions.md` and one skill.
+
 ### 已完成（100 / 100）：截图规范：竖版两列多行，拼接图加 header / footer / Done (100 / 100): Screenshot rules: portrait, two columns, header and footer on stitched images
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
