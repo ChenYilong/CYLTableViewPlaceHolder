@@ -393,8 +393,8 @@
     (the swap in its DOMLoaded handler never ran), and a direct `cyl_setSpeed(2)` reached the inner animation while the
     property observer did not ([screenshot](assets/wechat-miniprogram-speed-bug.jpg)). Recorded and screenshotted, then
     handed to CYLTabBarController (owner's rule: animation bugs are fixed in its animation component).
-  - MP3 (TODO, example): the Animations list wraps long file names mid-word ("…Permission.js" / "on"); iOS and HarmonyOS
-    truncate them on one line.
+  - MP3 (fixed, example): the Animations list wrapped long file names mid-word ("…Permission.js" / "on"); like iOS and
+    HarmonyOS it now keeps one line and ends with an ellipsis ([screenshot](assets/wechat-miniprogram-animations-list.jpg)).
   - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
     yet (`cyl-refresh` takes no speed or loop).
 - Not verified: a real phone.
