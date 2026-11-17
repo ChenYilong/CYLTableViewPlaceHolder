@@ -4,17 +4,17 @@ import android.content.Context
 import android.content.res.Configuration
 import android.view.ContextThemeWrapper
 import java.util.Locale
-import com.scwang.smart.refresh.layout.api.RefreshFooter
+import com.cyl.refresh.layout.api.RefreshFooter
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.constant.RefreshState
-import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.api.RefreshLayout
+import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.footer.ClassicsFooter
+import com.cyl.refresh.header.ClassicsHeader
+import com.cyl.refresh.layout.CYLRefreshLayout
 import java.text.DateFormat
 import java.util.Date
 
@@ -53,7 +53,7 @@ internal fun cylLocalizedContext(context: Context): Context {
 }
 
 /**
- * The classic header with its texts and views reachable (they are protected in SmartRefreshLayout).
+ * The classic header with its texts and views reachable (they are protected in CYLRefreshLayout).
  */
 internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(cylLocalizedContext(context)) {
     val titleView: TextView? get() = mTitleText
@@ -398,11 +398,11 @@ open class CYLRefreshAutoFooter internal constructor(view: RefreshFooter) : CYLR
         }
 
     /**
-     * How many times one drag may load, -1 for no limit (`autoTriggerTimes`); SmartRefreshLayout loads once per drag.
+     * How many times one drag may load, -1 for no limit (`autoTriggerTimes`); CYLRefreshLayout loads once per drag.
      */
     var autoTriggerTimes: Int = 1
 
-    override fun didAttachToScrollView(layout: SmartRefreshLayout) {
+    override fun didAttachToScrollView(layout: CYLRefreshLayout) {
         layout.setEnableAutoLoadMore(automaticallyRefresh)
     }
 }
@@ -532,7 +532,7 @@ open class CYLRefreshBackFooter internal constructor(view: RefreshFooter) : CYLR
 
     internal val classics: CYLClassicsFooterView get() = view as CYLClassicsFooterView
 
-    override fun didAttachToScrollView(layout: SmartRefreshLayout) {
+    override fun didAttachToScrollView(layout: CYLRefreshLayout) {
         layout.setEnableAutoLoadMore(false)
     }
 

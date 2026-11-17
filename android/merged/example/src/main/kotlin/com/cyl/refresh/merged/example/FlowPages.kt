@@ -25,7 +25,7 @@ import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * The flows of the iOS example's Flows tab (`CYLFlow`): each shows a placeholder API in a real list.
@@ -143,7 +143,7 @@ internal fun ScenariosPage.flowPage(flow: CYLFlow): View {
     }
 
     val content: View = if (flow == CYLFlow.Scrollable || flow == CYLFlow.RefreshControls) {
-        SmartRefreshLayout(context).apply {
+        CYLRefreshLayout(context).apply {
             setRefreshContent(frame)
             val header = CYLRefreshNormalHeader(context)
             cyl_header = header

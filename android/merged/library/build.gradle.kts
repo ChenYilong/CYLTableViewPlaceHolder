@@ -1,7 +1,7 @@
-// android/merged: one dependency for the whole Android port (docs/Android-Port.md, step 3). It brings together, with
-// every public API kept as it is: the placeholder views, SVPullToRefresh, android-Ultra-Pull-To-Refresh and the Kotlin
-// modules of SmartRefreshLayout. Each library keeps its package, its license and its tests in its own folder; this
-// module only joins them, so no class is copied twice.
+// android/merged/library: CYLRefresh for Android, the only refresh kernel. The kernel (CYLRefreshLayout) and the
+// headers, footers and drawables came from SmartRefreshLayout (https://github.com/scwang90/SmartRefreshLayout,
+// Apache-2.0, scwang90; LICENSE.SmartRefreshLayout.txt), translated to Kotlin and folded in under com.cyl.refresh.*
+// (docs/Android-Port.md). It also brings the placeholder views, SVPullToRefresh and android-Ultra-Pull-To-Refresh.
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -45,20 +45,10 @@ dependencies {
     api(project(":SVPullToRefresh"))
     // android-Ultra-Pull-To-Refresh (MIT, liaohuqiu) in Kotlin.
     api(project(":android-Ultra-Pull-To-Refresh"))
-    // SmartRefreshLayout (Apache-2.0, scwang90) in Kotlin: the kernel, every header and footer, and the drawables.
-    api(project(":srl-kernel"))
-    api(project(":srl-header-classics"))
-    api(project(":srl-footer-classics"))
-    api(project(":srl-header-material"))
-    api(project(":srl-header-two-level"))
-    api(project(":srl-header-radar"))
-    api(project(":srl-header-falsify"))
-    api(project(":srl-footer-ball"))
-    api(project(":srl-drawable-path"))
-    api(project(":srl-drawable-paint"))
-    api(project(":srl-header"))
-    // AndroidX for the iOS-named refresh API (SmartRefreshLayout's supertypes come from it).
+    // AndroidX for the refresh kernel and the iOS-named refresh API.
     implementation(libs.androidx.appcompat)
+    // MaterialHeader reads Material's progress colors when the app has Material (as SmartRefreshLayout did).
+    compileOnly(libs.material)
     // Only for cyl_totalDataCount: an app that uses it has RecyclerView itself.
     compileOnly(libs.androidx.recyclerview)
     testImplementation(libs.androidx.recyclerview)

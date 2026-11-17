@@ -179,10 +179,10 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoFooter` | `com.cyl.refresh.CYLRefreshAutoFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoFooter` | `com.cyl.refresh.CYLRefreshAutoFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooter.automaticallyRefresh` | done |  |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` | done |  |
-| `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooter.autoTriggerTimes` | partial | kept; SmartRefreshLayout loads once per drag |
+| `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooter.autoTriggerTimes` | partial | kept; CYLRefreshLayout loads once per drag |
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
@@ -206,7 +206,7 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshState` | `com.cyl.refresh.CYLRefreshState` | done |  |
-| `CYLRefreshScrollMode` | `com.cyl.refresh.CYLRefreshScrollMode` | done | maps to SmartRefreshLayout's SpinnerStyle |
+| `CYLRefreshScrollMode` | `com.cyl.refresh.CYLRefreshScrollMode` | done | maps to CYLRefreshLayout's SpinnerStyle |
 | `CYLRefreshTriggerMode` | `com.cyl.refresh.CYLRefreshTriggerMode` | done | read by CYLRefreshComponent.triggerMode (OnEdge / Anywhere) |
 | `CYLRefreshPhase` | `com.cyl.refresh.CYLRefreshPhase` | done |  |
 | `CYLRefreshComponentHandler` | `com.cyl.refresh.CYLRefreshComponentHandler` | done |  |
@@ -214,7 +214,7 @@
 | `CYLRefreshComponentBeginRefreshingCompletionBlock` | `com.cyl.refresh.CYLRefreshComponentBeginRefreshingCompletionBlock` | done |  |
 | `CYLRefreshComponentEndRefreshingCompletionBlock` | `com.cyl.refresh.CYLRefreshComponentEndRefreshingCompletionBlock` | done |  |
 | `CYLRefreshComponentAction` | `com.cyl.refresh.CYLRefreshComponentAction` | done |  |
-| `CYLRefreshComponent` | `com.cyl.refresh.CYLRefreshComponent` | partial | wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content |
+| `CYLRefreshComponent` | `com.cyl.refresh.CYLRefreshComponent` | partial | wraps a CYLRefreshLayout RefreshComponent; attached to the CYLRefreshLayout around the content |
 | `CYLRefreshComponent` `fastAnimationDuration` | `CYLRefreshComponent.fastAnimationDuration` | done |  |
 | `CYLRefreshComponent` `slowAnimationDuration` | `CYLRefreshComponent.slowAnimationDuration` | done |  |
 | `CYLRefreshComponent` `-setAnimationDisabled` | `CYLRefreshComponent.setAnimationDisabled()` | done |  |
@@ -232,7 +232,7 @@
 | `CYLRefreshComponent` `-endRefreshing` | `CYLRefreshComponent.endRefreshing()` | done |  |
 | `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | `CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)` | done |  |
 | `CYLRefreshComponent` `refreshing` | `CYLRefreshComponent.isRefreshing` | done |  |
-| `CYLRefreshComponent` `exclusiveWithOtherRefresh` | `CYLRefreshComponent.exclusiveWithOtherRefresh` | partial | SmartRefreshLayout always excludes; it cannot be turned off |
+| `CYLRefreshComponent` `exclusiveWithOtherRefresh` | `CYLRefreshComponent.exclusiveWithOtherRefresh` | partial | CYLRefreshLayout always excludes; it cannot be turned off |
 | `CYLRefreshComponent` `blockedByOtherRefreshBlock` | `CYLRefreshComponent.blockedByOtherRefreshBlock` | done |  |
 | `CYLRefreshComponent` `state` | `CYLRefreshComponent.state` | done |  |
 | `CYLRefreshComponent` `scrollViewOriginalInset` | — | n/a | UIKit content insets |
@@ -274,10 +274,10 @@
 | `CYLRefreshComponent` `-updateAutoHideVisibility` | `CYLRefreshComponent.updateAutoHideVisibility()` | done |  |
 | `CYLRefreshComponent` `refreshEnabled` | `CYLRefreshComponent.refreshEnabled` | done |  |
 | `CYLRefreshComponent` `triggersWhenReached` | `CYLRefreshComponent.triggersWhenReached` | partial | a footer loads when reached; a header waits for the release |
-| `CYLRefreshComponent` `triggerMode` | `CYLRefreshComponent.triggerMode` | partial | kept; SmartRefreshLayout pulls from the content's edge |
+| `CYLRefreshComponent` `triggerMode` | `CYLRefreshComponent.triggerMode` | partial | kept; CYLRefreshLayout pulls from the content's edge |
 | `CYLRefreshComponent` `hapticFeedback` | `CYLRefreshComponent.hapticFeedback` | done |  |
 | `CYLRefreshComponent` `maxPullDistance` | `CYLRefreshComponent.maxPullDistance` | done |  |
-| `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponent.notifiesWhenHidden` | partial | kept; SmartRefreshLayout always reports |
+| `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponent.notifiesWhenHidden` | partial | kept; CYLRefreshLayout always reports |
 | `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponent.addPhaseObserver(observer)` | done |  |
 | `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponent.removePhaseObserver(observer)` | done |  |
 | `CYLRefreshComponent` `-addObservers` | — | n/a | UIKit KVO |
@@ -288,7 +288,7 @@
 | `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` | `CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)` | done |  |
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` | done |  |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` | done |  |
-| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; SmartRefreshLayout reads the component's own finish duration |
+| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; CYLRefreshLayout reads the component's own finish duration |
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
@@ -512,7 +512,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshDrawnHeader` | `com.cyl.refresh.CYLRefreshDrawnHeader` | done | the drawing is SmartRefreshLayout's header; the hooks are the iOS ones |
+| `CYLRefreshDrawnHeader` | `com.cyl.refresh.CYLRefreshDrawnHeader` | done | the drawing is CYLRefreshLayout's header; the hooks are the iOS ones |
 | `CYLRefreshDrawnHeader` `width` | `CYLRefreshDrawnHeader.width` | done |  |
 | `CYLRefreshDrawnHeader` `height` | `CYLRefreshDrawnHeader.height` | done |  |
 | `CYLRefreshDrawnHeader` `durationFast` | `CYLRefreshDrawnHeader.durationFast` | done |  |
@@ -620,14 +620,14 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshFlyView` | `com.scwang.smart.refresh.header.flyrefresh.FlyView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshFlyView` | `com.cyl.refresh.header.flyrefresh.FlyView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshFlyView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FlyView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGamePlayingScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshGamePlayingScene` | `com.cyl.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshGamePlayingScene` `title` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 | `CYLRefreshGamePlayingScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 | `CYLRefreshGamePlayingScene` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
@@ -642,7 +642,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGameStartScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshGameStartScene` | `com.cyl.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshGameStartScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 | `CYLRefreshGameStartScene` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 
@@ -650,7 +650,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshMountainView` | `com.scwang.smart.refresh.header.flyrefresh.MountainSceneView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshMountainView` | `com.cyl.refresh.header.flyrefresh.MountainSceneView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshMountainView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
 | `CYLRefreshMountainView` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
 | `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
@@ -659,7 +659,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStoreHouseLine` | `com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHouseLine` | `com.cyl.refresh.header.storehouse.StoreHouseBarItem` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHouseLine` `start` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
 | `CYLRefreshStoreHouseLine` `end` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
 | `CYLRefreshStoreHouseLine` `middle` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
@@ -672,7 +672,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStoreHousePath` | `com.scwang.smart.refresh.header.storehouse.StoreHousePath` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHousePath` | `com.cyl.refresh.header.storehouse.StoreHousePath` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHousePath` `+linesFromArray:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
 | `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
 | `CYLRefreshStoreHousePath` `+arrayAkta` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
@@ -715,7 +715,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorElement` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorElement` | `com.cyl.refresh.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorElement` `identifier` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorElement` `stroke` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorElement` `fill` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -731,7 +731,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorImage` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorImage` | `com.cyl.refresh.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorImage` `elements` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorImage` `size` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorImage` `frame` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -750,7 +750,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorPathElement` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathElement` | `com.cyl.refresh.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathElement` `+newWith:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorPathElement` `pathForShape` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
@@ -758,8 +758,8 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshCurveType` | `com.scwang.smart.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
-| `CYLRefreshVectorPathsParser` | `com.scwang.smart.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshCurveType` | `com.cyl.refresh.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathsParser` | `com.cyl.refresh.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathsParser` `+startingCurve` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
@@ -790,14 +790,14 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorUtilities` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorUtilities` | `com.cyl.refresh.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorView` | `com.scwang.smart.drawable.view.PathsView` | partial | the Android class with the same role; its members are its own |
+| `CYLRefreshVectorView` | `com.cyl.refresh.drawable.view.PathsView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorView` `image` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
 | `CYLRefreshVectorView` `-parserPaths:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
 | `CYLRefreshVectorView` `-parserColors:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
@@ -806,7 +806,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoAnimationFooter` | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoAnimationFooter` | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoAnimationFooter` `animationView` | `CYLRefreshAutoAnimationFooter.animationView` | done |  |
 | `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:` | `CYLRefreshAutoAnimationFooter.setAnimationImages` | done |  |
 | `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` | `CYLRefreshAutoAnimationFooter.setAnimationImages` | done |  |
@@ -815,7 +815,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoGifFooter` | `com.cyl.refresh.CYLRefreshAutoGifFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoGifFooter` | `com.cyl.refresh.CYLRefreshAutoGifFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoGifFooter` `gifView` | `CYLRefreshAutoGifFooter.gifView` | done |  |
 | `CYLRefreshAutoGifFooter` `-setImages:duration:forState:` | `CYLRefreshAutoGifFooter.setImages` | done |  |
 | `CYLRefreshAutoGifFooter` `-setImages:forState:` | `CYLRefreshAutoGifFooter.setImages` | done |  |
@@ -824,7 +824,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoNormalFooter` | `com.cyl.refresh.CYLRefreshAutoNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoNormalFooter` | `com.cyl.refresh.CYLRefreshAutoNormalFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoNormalFooter` `loadingView` | `CYLRefreshAutoNormalFooter.loadingView` | done |  |
 | `CYLRefreshAutoNormalFooter` `noMoreDataImage` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | done |  |
 | `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
@@ -833,7 +833,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAutoStateFooter` | `com.cyl.refresh.CYLRefreshAutoStateFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAutoStateFooter` | `com.cyl.refresh.CYLRefreshAutoStateFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | `CYLRefreshAutoStateFooter.labelLeftInset` | done |  |
 | `CYLRefreshAutoStateFooter` `stateLabel` | `CYLRefreshAutoStateFooter.stateLabel` | done |  |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | `CYLRefreshAutoStateFooter.setTitle` | done |  |
@@ -843,7 +843,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackAnimationFooter` | `com.cyl.refresh.CYLRefreshBackAnimationFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackAnimationFooter` | `com.cyl.refresh.CYLRefreshBackAnimationFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackAnimationFooter` `animationView` | `CYLRefreshBackAnimationFooter.animationView` | done |  |
 | `CYLRefreshBackAnimationFooter` `-setAnimationImages:duration:forState:` | `CYLRefreshBackAnimationFooter.setAnimationImages` | done |  |
 | `CYLRefreshBackAnimationFooter` `-setAnimationImages:forState:` | `CYLRefreshBackAnimationFooter.setAnimationImages` | done |  |
@@ -852,7 +852,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackGifFooter` | `com.cyl.refresh.CYLRefreshBackGifFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackGifFooter` | `com.cyl.refresh.CYLRefreshBackGifFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackGifFooter` `gifView` | `CYLRefreshBackGifFooter.gifView` | done |  |
 | `CYLRefreshBackGifFooter` `-setImages:duration:forState:` | `CYLRefreshBackGifFooter.setImages` | done |  |
 | `CYLRefreshBackGifFooter` `-setImages:forState:` | `CYLRefreshBackGifFooter.setImages` | done |  |
@@ -861,7 +861,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackNormalFooter` | `com.cyl.refresh.CYLRefreshBackNormalFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackNormalFooter` | `com.cyl.refresh.CYLRefreshBackNormalFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackNormalFooter` `arrowView` | `CYLRefreshBackNormalFooter.arrowView` | done |  |
 | `CYLRefreshBackNormalFooter` `loadingView` | `CYLRefreshBackNormalFooter.loadingView` | done |  |
 | `CYLRefreshBackNormalFooter` `noMoreDataImage` | `CYLRefreshBackNormalFooter.noMoreDataImage` | done |  |
@@ -872,7 +872,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackStateFooter` | `com.cyl.refresh.CYLRefreshBackStateFooter` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshBackStateFooter` | `com.cyl.refresh.CYLRefreshBackStateFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackStateFooter` `labelLeftInset` | `CYLRefreshBackStateFooter.labelLeftInset` | done |  |
 | `CYLRefreshBackStateFooter` `stateLabel` | `CYLRefreshBackStateFooter.stateLabel` | done |  |
 | `CYLRefreshBackStateFooter` `-setTitle:forState:` | `CYLRefreshBackStateFooter.setTitle` | done |  |
@@ -882,7 +882,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshAnimationHeader` | `com.cyl.refresh.CYLRefreshAnimationHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshAnimationHeader` | `com.cyl.refresh.CYLRefreshAnimationHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAnimationHeader` `animationView` | `CYLRefreshAnimationHeader.animationView` | done |  |
 | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | done |  |
 | `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | done |  |
@@ -891,7 +891,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGifHeader` | `com.cyl.refresh.CYLRefreshGifHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshGifHeader` | `com.cyl.refresh.CYLRefreshGifHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshGifHeader` `gifView` | `CYLRefreshGifHeader.gifView` | done |  |
 | `CYLRefreshGifHeader` `-setImages:duration:forState:` | `CYLRefreshGifHeader.setImages` | done |  |
 | `CYLRefreshGifHeader` `-setImages:forState:` | `CYLRefreshGifHeader.setImages` | done |  |
@@ -900,7 +900,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshNormalHeader` | `com.cyl.refresh.CYLRefreshNormalHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshNormalHeader` | `com.cyl.refresh.CYLRefreshNormalHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshNormalHeader` `arrowView` | `CYLRefreshNormalHeader.arrowView` | done |  |
 | `CYLRefreshNormalHeader` `iconSize` | `CYLRefreshNormalHeader.iconSize` | done |  |
 | `CYLRefreshNormalHeader` `loadingView` | `CYLRefreshNormalHeader.loadingView` | done |  |
@@ -910,7 +910,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStateHeader` | `com.cyl.refresh.CYLRefreshStateHeader` | done | on SmartRefreshLayout's classic header / footer |
+| `CYLRefreshStateHeader` | `com.cyl.refresh.CYLRefreshStateHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshStateHeader` `lastUpdatedTimeText` | `CYLRefreshStateHeader.lastUpdatedTimeText` | done |  |
 | `CYLRefreshStateHeader` `lastUpdatedTimeLabel` | `CYLRefreshStateHeader.lastUpdatedTimeLabel` | done |  |
 | `CYLRefreshStateHeader` `labelLeftInset` | `CYLRefreshStateHeader.labelLeftInset` | done |  |
@@ -981,15 +981,15 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | `com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)` | partial | the SmartRefreshLayout around the content is the scroll view's counterpart |
-| `UIScrollView(CYLRefresh)` `cyl_header` | `SmartRefreshLayout.cyl_header` | done |  |
-| `UIScrollView(CYLRefresh)` `cyl_footer` | `SmartRefreshLayout.cyl_footer` | done |  |
+| `UIScrollView(CYLRefresh)` | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` | partial | the CYLRefreshLayout around the content is the scroll view's counterpart |
+| `UIScrollView(CYLRefresh)` `cyl_header` | `CYLRefreshLayout.cyl_header` | done |  |
+| `UIScrollView(CYLRefresh)` `cyl_footer` | `CYLRefreshLayout.cyl_footer` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | `RecyclerView.cyl_trailer` | done | horizontal RecyclerView only; set it once the list is in its parent |
-| `UIScrollView(CYLRefresh)` `cyl_autoHideRefresh` | `SmartRefreshLayout.cyl_autoHideRefresh` | done |  |
-| `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `SmartRefreshLayout.cyl_autoHideRefreshHeader` | done |  |
-| `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `SmartRefreshLayout.cyl_autoHideRefreshFooter` | done |  |
-| `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | `SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(header)` | done |  |
-| `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | `SmartRefreshLayout.cyl_totalDataCount()` | done |  |
+| `UIScrollView(CYLRefresh)` `cyl_autoHideRefresh` | `CYLRefreshLayout.cyl_autoHideRefresh` | done |  |
+| `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `CYLRefreshLayout.cyl_autoHideRefreshHeader` | done |  |
+| `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `CYLRefreshLayout.cyl_autoHideRefreshFooter` | done |  |
+| `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | `CYLRefreshLayout.cyl_beginRefreshingWithStartHeader(header)` | done |  |
+| `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | `CYLRefreshLayout.cyl_totalDataCount()` | done |  |
 
 ## `CYLRefresh/UIView+CYLExtension.h`
 

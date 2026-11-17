@@ -9,7 +9,7 @@
     <string name="merged_loaded">%1$d 行を読み込みました</string>
     <string name="merged_intro_svpulltorefresh">SVPullToRefresh：引き下げて更新、最後までスクロールしてさらに読み込む</string>
     <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：引き下げて更新</string>
-    <string name="merged_intro_smartrefresh">SmartRefreshLayout：引き下げて更新、引き上げてさらに読み込む</string>
+    <string name="merged_intro_smartrefresh">CYLRefreshLayout：引き下げて更新、引き上げてさらに読み込む</string>
     <string name="merged_action_clear">クリア</string>
     <string name="merged_config_highlight_dim">ハイライト：暗く</string>
     <string name="merged_config_highlight_none">ハイライト：なし</string>

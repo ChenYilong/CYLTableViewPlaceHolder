@@ -9,7 +9,7 @@
     <string name="merged_loaded">已載入 %1$d 列</string>
     <string name="merged_intro_svpulltorefresh">SVPullToRefresh：下拉重新整理，捲動到底部載入更多</string>
     <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：下拉重新整理</string>
-    <string name="merged_intro_smartrefresh">SmartRefreshLayout：下拉重新整理，上拉載入更多</string>
+    <string name="merged_intro_smartrefresh">CYLRefreshLayout：下拉重新整理，上拉載入更多</string>
     <string name="merged_action_clear">清空</string>
     <string name="merged_config_highlight_dim">高亮：變暗</string>
     <string name="merged_config_highlight_none">高亮：無</string>

@@ -12,8 +12,8 @@ import app.rive.runtime.kotlin.core.Loop
 import com.cyl.refresh.CYLRefreshDrawnHeader
 import com.cyl.refresh.CYLRefreshPhase
 import com.cyl.refresh.CYLRefreshScrollMode
-import com.scwang.smart.refresh.layout.api.RefreshHeader
-import com.scwang.smart.refresh.layout.simple.SimpleComponent
+import com.cyl.refresh.layout.api.RefreshHeader
+import com.cyl.refresh.layout.simple.SimpleComponent
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min

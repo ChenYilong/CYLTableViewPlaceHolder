@@ -19,7 +19,7 @@ import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
 /*
@@ -85,7 +85,7 @@ internal fun StackPage.issue1575Page(): View {
         clipToPadding = false
         tag = "issue1575Collection"
     }
-    val layout = SmartRefreshLayout(context).apply { setRefreshContent(list) }
+    val layout = CYLRefreshLayout(context).apply { setRefreshContent(list) }
     val header = CYLRefreshNormalHeader(context)
     layout.cyl_header = header
     header.refreshingBlock = {
@@ -117,7 +117,7 @@ internal fun StackPage.issue1523Page(): View {
         clipToPadding = false
         tag = "issue1523Collection"
     }
-    val layout = SmartRefreshLayout(context).apply { setRefreshContent(list) }
+    val layout = CYLRefreshLayout(context).apply { setRefreshContent(list) }
     var headerCount = 0
     val header = CYLRefreshNormalHeader(context)
     layout.cyl_header = header
@@ -172,7 +172,7 @@ internal fun StackPage.issue1430Page(): View {
         tag = "pagingTable"
     }
     PagerSnapHelper().attachToRecyclerView(list)
-    val layout = SmartRefreshLayout(context).apply { setRefreshContent(list) }
+    val layout = CYLRefreshLayout(context).apply { setRefreshContent(list) }
     val header = CYLRefreshNormalHeader(context)
     layout.cyl_header = header
     header.refreshingBlock = {

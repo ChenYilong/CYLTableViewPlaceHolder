@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import com.cyl.placeholder.CYLPlaceholderScenario
 import com.cyl.placeholder.CYLPlaceholderStackView
 import com.cyl.svpulltorefresh.SVPullToRefreshLayout
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import `in`.srain.cube.views.ptr.PtrClassicFrameLayout
 import `in`.srain.cube.views.ptr.PtrDefaultHandler
 import `in`.srain.cube.views.ptr.PtrFrameLayout

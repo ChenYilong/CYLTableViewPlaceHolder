@@ -1482,7 +1482,7 @@
  "CYLRefreshAnimationHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAnimationHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAnimationHeader -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1512,7 +1512,7 @@
  "CYLRefreshAutoAnimationFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoAnimationFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoAnimationFooter -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1529,12 +1529,12 @@
  "CYLRefreshAutoFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoFooter autoTriggerTimes": {
   "status": "partial",
   "android": "CYLRefreshAutoFooter.autoTriggerTimes",
-  "note": "kept; SmartRefreshLayout loads once per drag"
+  "note": "kept; CYLRefreshLayout loads once per drag"
  },
  "CYLRefreshAutoFooter automaticallyRefresh": {
   "status": "done",
@@ -1559,7 +1559,7 @@
  "CYLRefreshAutoGifFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoGifFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoGifFooter -setImages:duration:forState:": {
   "status": "done",
@@ -1576,7 +1576,7 @@
  "CYLRefreshAutoNormalFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoNormalFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoNormalFooter CYLRefreshDeprecated": {
   "status": "n/a",
@@ -1593,7 +1593,7 @@
  "CYLRefreshAutoStateFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoStateFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoStateFooter -setTitle:forState:": {
   "status": "done",
@@ -1614,7 +1614,7 @@
  "CYLRefreshBackAnimationFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackAnimationFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackAnimationFooter -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1698,7 +1698,7 @@
  "CYLRefreshBackGifFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackGifFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackGifFooter -setImages:duration:forState:": {
   "status": "done",
@@ -1715,7 +1715,7 @@
  "CYLRefreshBackNormalFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackNormalFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackNormalFooter CYLRefreshDeprecated": {
   "status": "n/a",
@@ -1740,7 +1740,7 @@
  "CYLRefreshBackStateFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackStateFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackStateFooter -setTitle:forState:": {
   "status": "done",
@@ -1773,7 +1773,7 @@
  "CYLRefreshComponent": {
   "status": "partial",
   "android": "com.cyl.refresh.CYLRefreshComponent",
-  "note": "wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content"
+  "note": "wraps a CYLRefreshLayout RefreshComponent; attached to the CYLRefreshLayout around the content"
  },
  "CYLRefreshComponent +attach:": {
   "status": "partial",
@@ -1839,7 +1839,7 @@
  "CYLRefreshComponent -finishingDurationWithSuccess:": {
   "status": "partial",
   "android": "CYLRefreshComponent.finishingDurationWithSuccess(success)",
-  "note": "an overridable hook; SmartRefreshLayout reads the component's own finish duration"
+  "note": "an overridable hook; CYLRefreshLayout reads the component's own finish duration"
  },
  "CYLRefreshComponent -i18nDidChange": {
   "status": "n/a",
@@ -1968,7 +1968,7 @@
  "CYLRefreshComponent exclusiveWithOtherRefresh": {
   "status": "partial",
   "android": "CYLRefreshComponent.exclusiveWithOtherRefresh",
-  "note": "SmartRefreshLayout always excludes; it cannot be turned off"
+  "note": "CYLRefreshLayout always excludes; it cannot be turned off"
  },
  "CYLRefreshComponent expandHeight": {
   "status": "done",
@@ -2006,7 +2006,7 @@
  "CYLRefreshComponent notifiesWhenHidden": {
   "status": "partial",
   "android": "CYLRefreshComponent.notifiesWhenHidden",
-  "note": "kept; SmartRefreshLayout always reports"
+  "note": "kept; CYLRefreshLayout always reports"
  },
  "CYLRefreshComponent phase": {
   "status": "done",
@@ -2064,7 +2064,7 @@
  "CYLRefreshComponent triggerMode": {
   "status": "partial",
   "android": "CYLRefreshComponent.triggerMode",
-  "note": "kept; SmartRefreshLayout pulls from the content's edge"
+  "note": "kept; CYLRefreshLayout pulls from the content's edge"
  },
  "CYLRefreshComponent triggerRate": {
   "status": "done",
@@ -2204,7 +2204,7 @@
  },
  "CYLRefreshCurveType": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.path.PathParser",
+  "android": "com.cyl.refresh.drawable.path.PathParser",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshDeliveryFooter": {
@@ -2240,7 +2240,7 @@
  "CYLRefreshDrawnHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshDrawnHeader",
-  "note": "the drawing is SmartRefreshLayout's header; the hooks are the iOS ones"
+  "note": "the drawing is CYLRefreshLayout's header; the hooks are the iOS ones"
  },
  "CYLRefreshDrawnHeader -beginRefresh": {
   "status": "done",
@@ -2340,7 +2340,7 @@
  },
  "CYLRefreshFlyView": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
+  "android": "com.cyl.refresh.header.flyrefresh.FlyView",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshFlyView colorAccent": {
@@ -2414,7 +2414,7 @@
  },
  "CYLRefreshGamePlayingScene": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "android": "com.cyl.refresh.header.fungame.FunGameView",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshGamePlayingScene -finishWithSuccess:": {
@@ -2455,7 +2455,7 @@
  },
  "CYLRefreshGameStartScene": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
+  "android": "com.cyl.refresh.header.fungame.FunGameView",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshGameStartScene colorAccent": {
@@ -2469,7 +2469,7 @@
  "CYLRefreshGifHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshGifHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshGifHeader -setImages:duration:forState:": {
   "status": "done",
@@ -2734,7 +2734,7 @@
  },
  "CYLRefreshMountainView": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
+  "android": "com.cyl.refresh.header.flyrefresh.MountainSceneView",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
@@ -2752,7 +2752,7 @@
  "CYLRefreshNormalHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshNormalHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshNormalHeader CYLRefreshDeprecated": {
   "status": "n/a",
@@ -2873,7 +2873,7 @@
  "CYLRefreshScrollMode": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshScrollMode",
-  "note": "maps to SmartRefreshLayout's SpinnerStyle"
+  "note": "maps to CYLRefreshLayout's SpinnerStyle"
  },
  "CYLRefreshSlowAnimationDuration": {
   "status": "done",
@@ -2886,7 +2886,7 @@
  "CYLRefreshStateHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshStateHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshStateHeader -setTitle:forState:": {
   "status": "done",
@@ -2992,7 +2992,7 @@
  },
  "CYLRefreshStoreHouseLine": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
+  "android": "com.cyl.refresh.header.storehouse.StoreHouseBarItem",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshStoreHouseLine alpha": {
@@ -3025,7 +3025,7 @@
  },
  "CYLRefreshStoreHousePath": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
+  "android": "com.cyl.refresh.header.storehouse.StoreHousePath",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshStoreHousePath +arrayAkta": {
@@ -3171,7 +3171,7 @@
  },
  "CYLRefreshVectorElement": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorElement -newLayer": {
@@ -3216,7 +3216,7 @@
  },
  "CYLRefreshVectorImage": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorImage -addElement:": {
@@ -3273,7 +3273,7 @@
  },
  "CYLRefreshVectorPathElement": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorPathElement +newWith:": {
@@ -3286,7 +3286,7 @@
  },
  "CYLRefreshVectorPathsParser": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.path.PathParser",
+  "android": "com.cyl.refresh.drawable.path.PathParser",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
@@ -3391,7 +3391,7 @@
  },
  "CYLRefreshVectorUtilities": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorUtilities +newLayerForElement:withPath:": {
@@ -3400,7 +3400,7 @@
  },
  "CYLRefreshVectorView": {
   "status": "partial",
-  "android": "com.scwang.smart.drawable.view.PathsView",
+  "android": "com.cyl.refresh.drawable.view.PathsView",
   "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorView -parserColors:": {
@@ -3563,36 +3563,36 @@
  },
  "UIScrollView(CYLRefresh)": {
   "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
-  "note": "the SmartRefreshLayout around the content is the scroll view's counterpart"
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)",
+  "note": "the CYLRefreshLayout around the content is the scroll view's counterpart"
  },
  "UIScrollView(CYLRefresh) -cyl_beginRefreshingWithStartHeader:": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
+  "android": "CYLRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
  },
  "UIScrollView(CYLRefresh) -cyl_totalDataCount": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_totalDataCount()"
+  "android": "CYLRefreshLayout.cyl_totalDataCount()"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefresh": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefresh"
+  "android": "CYLRefreshLayout.cyl_autoHideRefresh"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefreshFooter": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefreshFooter"
+  "android": "CYLRefreshLayout.cyl_autoHideRefreshFooter"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefreshHeader": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefreshHeader"
+  "android": "CYLRefreshLayout.cyl_autoHideRefreshHeader"
  },
  "UIScrollView(CYLRefresh) cyl_footer": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_footer"
+  "android": "CYLRefreshLayout.cyl_footer"
  },
  "UIScrollView(CYLRefresh) cyl_header": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_header"
+  "android": "CYLRefreshLayout.cyl_header"
  },
  "UITableView(CYLPlaceholder)": {
   "status": "done",

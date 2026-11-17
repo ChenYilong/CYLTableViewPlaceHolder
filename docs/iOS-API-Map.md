@@ -9,6 +9,7 @@
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
 | **评分：100 / 100**（702 / 702 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (702 of 702 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| TODO：从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`，2026-11-17）尚未计入本表；计入后评分为 72 / 100，需逐个找出 iOS 对应（UIScrollView 与 CYLRefresh 控件）。 | TODO: the refresh kernel and the styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`, 2026-11-17) are not counted in this table yet; counted, the score is 72 / 100, and each needs its iOS counterpart (UIScrollView and the CYLRefresh controls). |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
 
@@ -44,7 +45,7 @@
 | `CYLRefreshAutoFooter` (class) | A footer that loads by itself when it comes into view (iOS `CYLRefreshAutoFooter`). | `CYLRefreshAutoFooter` |  |
 | `CYLRefreshAutoFooter.automaticallyRefresh` (var) | Whether reaching the end loads by itself (`automaticallyRefresh`). | `CYLRefreshAutoFooter` `automaticallyRefresh` |  |
 | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` (var) | How much of the footer must show before it loads, 0 to 1 (`triggerAutomaticallyRefreshPercent`). | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` |  |
-| `CYLRefreshAutoFooter.autoTriggerTimes` (var) | How many times one drag may load, -1 for no limit (`autoTriggerTimes`); SmartRefreshLayout loads once per drag. | `CYLRefreshAutoFooter` `autoTriggerTimes` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshAutoFooter.autoTriggerTimes` (var) | How many times one drag may load, -1 for no limit (`autoTriggerTimes`); CYLRefreshLayout loads once per drag. | `CYLRefreshAutoFooter` `autoTriggerTimes` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshAutoStateFooter` (class) | The automatic footer with a state text (iOS `CYLRefreshAutoStateFooter`). | `CYLRefreshAutoStateFooter` |  |
 | `CYLRefreshAutoStateFooter.stateLabel` (val) | The state text (`stateLabel`). | `CYLRefreshAutoStateFooter` `stateLabel` |  |
 | `CYLRefreshAutoStateFooter.labelLeftInset` (var) | The gap between the icon and the text, in dp (`labelLeftInset`). | `CYLRefreshAutoStateFooter` `labelLeftInset` |  |
@@ -101,8 +102,8 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshComponent` (class) | The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the iOS names, on top of SmartRefreshLayout. | `CYLRefreshComponent`, `CYLRefreshComponent(CYLRefreshIconLayout)`, `CYLRefreshComponent(ChainingGrammar)` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.view` (val) | The SmartRefreshLayout header or footer this component shows. | n/a | the SmartRefreshLayout view the component wraps; on iOS the component is the UIView itself |
+| `CYLRefreshComponent` (class) | The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the iOS names, on top of CYLRefreshLayout. | `CYLRefreshComponent`, `CYLRefreshComponent(CYLRefreshIconLayout)`, `CYLRefreshComponent(ChainingGrammar)` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.view` (val) | The CYLRefreshLayout header or footer this component shows. | n/a | the CYLRefreshLayout view the component wraps; on iOS the component is the UIView itself |
 | `CYLRefreshComponent.refreshLayout` (var) | The layout the component is attached to (the iOS `scrollView`'s counterpart), or null. | `CYLRefreshComponent` `scrollView` | matched by the iOS name its KDoc cites |
 | `CYLRefreshComponent.scrollView` (val) | The scrolling content of the layout the component is attached to (`scrollView`). | `CYLRefreshComponent` `scrollView` |  |
 | `CYLRefreshComponent.attached` (val) | Whether the component is attached to a layout (`attached`). | `CYLRefreshComponent` `attached` |  |
@@ -138,13 +139,13 @@
 | `CYLRefreshComponent.colorAccent` (var) | The accent color (text and icons), or 0 for the component's own (`colorAccent`). | `CYLRefreshComponent` `colorAccent` |  |
 | `CYLRefreshComponent.colorPrimary` (var) | The primary color (background), or 0 for the component's own (`colorPrimary`). | `CYLRefreshComponent` `colorPrimary` |  |
 | `CYLRefreshComponent.hapticFeedback` (var) | Vibrates once when the pull passes the trigger (`hapticFeedback`). | `CYLRefreshComponent` `hapticFeedback` |  |
-| `CYLRefreshComponent.exclusiveWithOtherRefresh` (var) | Whether a refresh and a load exclude each other (`exclusiveWithOtherRefresh`); SmartRefreshLayout always does, so turning it off has no effect. | `CYLRefreshComponent` `exclusiveWithOtherRefresh` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.exclusiveWithOtherRefresh` (var) | Whether a refresh and a load exclude each other (`exclusiveWithOtherRefresh`); CYLRefreshLayout always does, so turning it off has no effect. | `CYLRefreshComponent` `exclusiveWithOtherRefresh` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshComponent.blockedByOtherRefreshBlock` (var) | Called when [beginRefreshing] is refused because the other component is busy (`blockedByOtherRefreshBlock`). | `CYLRefreshComponent` `blockedByOtherRefreshBlock` |  |
 | `CYLRefreshComponent.expanded` (val) | Whether the component holds its refreshing position (`expanded`). | `CYLRefreshComponent` `expanded` |  |
 | `CYLRefreshComponent.expandHeight` (val) | The component's height when open, in pixels (`expandHeight`). | `CYLRefreshComponent` `expandHeight` |  |
 | `CYLRefreshComponent.maxPullDistance` (var) | The farthest the component can be pulled open, in dp; 0 for no limit of its own (`maxPullDistance`). | `CYLRefreshComponent` `maxPullDistance` |  |
-| `CYLRefreshComponent.notifiesWhenHidden` (var) | Whether the component keeps reporting while hidden (`notifiesWhenHidden`); SmartRefreshLayout always reports. | `CYLRefreshComponent` `notifiesWhenHidden` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.triggersWhenReached` (var) | Whether reaching the trigger starts at once, without a release (`triggersWhenReached`); a footer loads when reached (SmartRefreshLayout's auto load more), a header keeps waiting for the release. | `CYLRefreshComponent` `triggersWhenReached` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.notifiesWhenHidden` (var) | Whether the component keeps reporting while hidden (`notifiesWhenHidden`); CYLRefreshLayout always reports. | `CYLRefreshComponent` `notifiesWhenHidden` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.triggersWhenReached` (var) | Whether reaching the trigger starts at once, without a release (`triggersWhenReached`); a footer loads when reached (CYLRefreshLayout's auto load more), a header keeps waiting for the release. | `CYLRefreshComponent` `triggersWhenReached` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshComponent.triggerMode` (var) | Where a pull may start (`triggerMode`): [CYLRefreshTriggerMode.Anywhere] (default) also lets a drag that started in the middle of the list carry on into the pull; [CYLRefreshTriggerMode.OnEdge] only a drag that started a | `CYLRefreshComponent` `triggerMode` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshComponent.autoHideRefresh` (var) | Whether the component hides while it has nothing to show (`autoHideRefresh`). | `CYLRefreshComponent` `autoHideRefresh` |  |
 | `CYLRefreshComponent.isReadyToAutoHide` (fun) | Whether the component is at rest and not pulled, so auto hide may hide it (`isReadyToAutoHide`). | `CYLRefreshComponent` `-isReadyToAutoHide` |  |
@@ -228,7 +229,7 @@
 | `CYLRefreshConst.CYLRefreshHeaderNoneLastDateText` (val) | Text key: no last update yet. | `CYLRefreshHeaderNoneLastDateText` |  |
 | `CYLRefreshConst.CYLRefreshDidChangeLanguageNotification` (val) | The name of the notice sent when the refresh texts' language changes. | `CYLRefreshDidChangeLanguageNotification` |  |
 | `CYLRefreshState` (enum) | A refresh component's state (`CYLRefreshState`). | `CYLRefreshState` |  |
-| `CYLRefreshScrollMode` (enum) | How the component moves with the pull (`CYLRefreshScrollMode`); on Android, SmartRefreshLayout's spinner style. | `CYLRefreshScrollMode` |  |
+| `CYLRefreshScrollMode` (enum) | How the component moves with the pull (`CYLRefreshScrollMode`); on Android, CYLRefreshLayout's spinner style. | `CYLRefreshScrollMode` |  |
 | `CYLRefreshTriggerMode` (enum) | Where a pull may start (`CYLRefreshTriggerMode`). | `CYLRefreshTriggerMode` |  |
 | `CYLRefreshPhase` (enum) | A refresh component's detailed phase (`CYLRefreshPhase`). | `CYLRefreshPhase` |  |
 | `CYLRefreshComponentRefreshingBlock` (typealias) | Called when a component starts refreshing (`CYLRefreshComponentRefreshingBlock`). | `CYLRefreshComponentRefreshingBlock` |  |
@@ -291,7 +292,7 @@
 | `CYLRefreshPhoenixHeader` (class) | The sunrise over a town (iOS `CYLRefreshPhoenixHeader`). | `CYLRefreshPhoenixHeader` |  |
 | `CYLRefreshTaurusHeader` (class) | The plane among clouds (iOS `CYLRefreshTaurusHeader`). | `CYLRefreshTaurusHeader` |  |
 | `CYLRefreshWaveSwipeHeader` (class) | The wave and drop (iOS `CYLRefreshWaveSwipeHeader`). | `CYLRefreshWaveSwipeHeader` |  |
-| `CYLRefreshOriginalHeader` (class) | SmartRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`). | `CYLRefreshOriginalHeader` |  |
+| `CYLRefreshOriginalHeader` (class) | CYLRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`). | `CYLRefreshOriginalHeader` |  |
 | `CYLRefreshOriginalHeader.enableAutoRefresh` (var) | Whether the header refreshes by itself once attached (`enableAutoRefresh`). | `CYLRefreshOriginalHeader` `enableAutoRefresh` |  |
 | `CYLRefreshStoreHouseHeader` (class) | Text drawn as line segments that assemble as you pull (iOS `CYLRefreshStoreHouseHeader`). | `CYLRefreshStoreHouseHeader` |  |
 | `CYLRefreshStoreHouseHeader.lineWidth` (var) | The lines' width, in pixels (`lineWidth`). | `CYLRefreshStoreHouseHeader` `lineWidth` |  |

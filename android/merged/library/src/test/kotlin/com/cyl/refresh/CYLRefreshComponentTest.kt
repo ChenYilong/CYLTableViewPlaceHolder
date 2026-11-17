@@ -11,8 +11,8 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.scwang.smart.refresh.layout.listener.ScrollBoundaryDecider
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.listener.ScrollBoundaryDecider
+import com.cyl.refresh.layout.CYLRefreshLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -40,15 +40,15 @@ class CYLRefreshComponentTest {
 
     private fun idle(ms: Long = 2000) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
 
-    private fun layout(contentHeight: Int = 3000): SmartRefreshLayout {
-        val layout = SmartRefreshLayout(activity)
+    private fun layout(contentHeight: Int = 3000): CYLRefreshLayout {
+        val layout = CYLRefreshLayout(activity)
         layout.setRefreshContent(ScrollView(activity).apply {
             addView(LinearLayout(activity).apply { addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, contentHeight)) })
         })
         return layout
     }
 
-    private fun show(layout: SmartRefreshLayout): SmartRefreshLayout {
+    private fun show(layout: CYLRefreshLayout): CYLRefreshLayout {
         activity.setContentView(layout)
         idle(100)
         return layout
@@ -555,7 +555,7 @@ class CYLRefreshComponentTest {
         classics.onFinish(layout, true)
         assertSame("the spinner shows the check", ok, header.loadingView!!.drawable)
         assertEquals(View.VISIBLE, header.loadingView!!.visibility)
-        classics.onStateChanged(layout, com.scwang.smart.refresh.layout.constant.RefreshState.RefreshFinish, com.scwang.smart.refresh.layout.constant.RefreshState.None)
+        classics.onStateChanged(layout, com.cyl.refresh.layout.constant.RefreshState.RefreshFinish, com.cyl.refresh.layout.constant.RefreshState.None)
         assertSame("the spinner is back and hidden", spinner, header.loadingView!!.drawable)
         assertEquals(View.GONE, header.loadingView!!.visibility)
         classics.onFinish(layout, false)
@@ -598,14 +598,14 @@ class CYLRefreshComponentTest {
                 override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = Unit
             }
         }
-        val layout = SmartRefreshLayout(activity).apply { setRefreshContent(list) }
+        val layout = CYLRefreshLayout(activity).apply { setRefreshContent(list) }
         show(layout)
         val header = CYLRefreshNormalHeader(activity)
         layout.cyl_header = header
         assertEquals("default, as on iOS", CYLRefreshTriggerMode.Anywhere, header.triggerMode)
         header.triggerMode = CYLRefreshTriggerMode.OnEdge
         idle(50)
-        val field = SmartRefreshLayout::class.java.getDeclaredField("mScrollBoundaryDecider").apply { isAccessible = true }
+        val field = CYLRefreshLayout::class.java.getDeclaredField("mScrollBoundaryDecider").apply { isAccessible = true }
         val decider = field.get(layout) as ScrollBoundaryDecider
         val bridge = CYLRefreshBridge.of(layout)
         // The drag starts in the middle, then scrolls back to the top: no pull.

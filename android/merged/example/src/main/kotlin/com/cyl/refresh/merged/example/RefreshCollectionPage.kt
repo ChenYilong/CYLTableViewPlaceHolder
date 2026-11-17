@@ -18,7 +18,7 @@ import com.cyl.refresh.CYLRefreshNormalTrailer
 import com.cyl.refresh.cyl_trailer
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
 /*
@@ -97,7 +97,7 @@ internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolea
             }
         })
     }
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
     layout.setRefreshContent(grid)
 
     @Suppress("NotifyDataSetChanged")

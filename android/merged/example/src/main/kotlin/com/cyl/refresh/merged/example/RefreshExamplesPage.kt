@@ -36,7 +36,7 @@ import com.cyl.refresh.CYLRefreshState
 import com.cyl.refresh.CYLRefreshStateHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
 /*
@@ -128,7 +128,7 @@ class RefreshExamplesPage : StackPage() {
             }
         }
         // Pull down to refresh, pull up to load: each ends 2 seconds later.
-        return SmartRefreshLayout(context).apply {
+        return CYLRefreshLayout(context).apply {
             setRefreshContent(ScrollView(context).apply { addView(column) })
             val header = CYLRefreshNormalHeader(context)
             cyl_header = header
@@ -156,7 +156,7 @@ class RefreshExamplesPage : StackPage() {
      */
     private fun tablePage(title: String, method: String): View {
         val context = requireContext()
-        val layout = SmartRefreshLayout(context)
+        val layout = CYLRefreshLayout(context)
         val data = MutableList(5) { randomData(context) }
         val list = RecyclerView(context).apply { layoutManager = LinearLayoutManager(context); tag = "refreshExample" }
         val rows = DataRows(data) { testPage().let(::push) }

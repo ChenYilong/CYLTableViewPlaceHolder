@@ -9,7 +9,7 @@
     <string name="merged_loaded">%1$d rows loaded</string>
     <string name="merged_intro_svpulltorefresh">SVPullToRefresh: pull down to refresh, scroll to the end to load more</string>
     <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: pull down to refresh</string>
-    <string name="merged_intro_smartrefresh">SmartRefreshLayout: pull down to refresh, pull up to load more</string>
+    <string name="merged_intro_smartrefresh">CYLRefreshLayout: pull down to refresh, pull up to load more</string>
     <string name="merged_action_clear">Clear</string>
     <string name="merged_config_highlight_dim">Highlight: dim</string>
     <string name="merged_config_highlight_none">Highlight: none</string>

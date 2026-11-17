@@ -7,13 +7,13 @@ import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import com.scwang.smart.refresh.layout.api.RefreshFooter
-import com.scwang.smart.refresh.layout.api.RefreshHeader
-import com.scwang.smart.refresh.layout.api.RefreshKernel
-import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.constant.RefreshState
-import com.scwang.smart.refresh.layout.constant.SpinnerStyle
-import com.scwang.smart.refresh.layout.simple.SimpleComponent
+import com.cyl.refresh.layout.api.RefreshFooter
+import com.cyl.refresh.layout.api.RefreshHeader
+import com.cyl.refresh.layout.api.RefreshKernel
+import com.cyl.refresh.layout.api.RefreshLayout
+import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.layout.constant.SpinnerStyle
+import com.cyl.refresh.layout.simple.SimpleComponent
 
 /**
  * The twelve-spoke spinner of the iOS system (`UIActivityIndicatorView`): spokes appear as you pull and one fading tail

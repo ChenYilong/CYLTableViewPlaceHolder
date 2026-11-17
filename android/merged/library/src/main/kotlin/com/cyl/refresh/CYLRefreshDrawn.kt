@@ -9,27 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import com.scwang.smart.refresh.header.BezierCircleHeader
-import com.scwang.smart.refresh.header.BezierRadarHeader
-import com.scwang.smart.refresh.header.ClassicsHeader
-import com.scwang.smart.refresh.header.DeliveryHeader
-import com.scwang.smart.refresh.header.DropBoxHeader
-import com.scwang.smart.refresh.header.FlyRefreshHeader
-import com.scwang.smart.refresh.header.FunGameBattleCityHeader
-import com.scwang.smart.refresh.header.FunGameHitBlockHeader
-import com.scwang.smart.refresh.header.MaterialHeader
-import com.scwang.smart.refresh.header.PhoenixHeader
-import com.scwang.smart.refresh.header.StoreHouseHeader
-import com.scwang.smart.refresh.header.TaurusHeader
-import com.scwang.smart.refresh.header.WaveSwipeHeader
-import com.scwang.smart.refresh.header.flyrefresh.FlyView
-import com.scwang.smart.refresh.header.flyrefresh.MountainSceneView
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.scwang.smart.refresh.layout.api.RefreshHeader
+import com.cyl.refresh.header.BezierCircleHeader
+import com.cyl.refresh.header.BezierRadarHeader
+import com.cyl.refresh.header.ClassicsHeader
+import com.cyl.refresh.header.DeliveryHeader
+import com.cyl.refresh.header.DropBoxHeader
+import com.cyl.refresh.header.FlyRefreshHeader
+import com.cyl.refresh.header.FunGameBattleCityHeader
+import com.cyl.refresh.header.FunGameHitBlockHeader
+import com.cyl.refresh.header.MaterialHeader
+import com.cyl.refresh.header.PhoenixHeader
+import com.cyl.refresh.header.StoreHouseHeader
+import com.cyl.refresh.header.TaurusHeader
+import com.cyl.refresh.header.WaveSwipeHeader
+import com.cyl.refresh.header.flyrefresh.FlyView
+import com.cyl.refresh.header.flyrefresh.MountainSceneView
+import com.cyl.refresh.layout.CYLRefreshLayout
+import com.cyl.refresh.layout.api.RefreshHeader
 
 /**
  * A header drawn in code, with the hooks its subclasses override (iOS `CYLRefreshDrawnHeader`). On Android the drawing
- * is done by the SmartRefreshLayout header given as [view]; the hooks tell a subclass what happens.
+ * is done by the CYLRefreshLayout header given as [view]; the hooks tell a subclass what happens.
  */
 open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
 
@@ -85,7 +85,7 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
     /**
      * Called as the pull moves, with the layout (`scrollView:didScroll:percent:drag:`).
      */
-    protected open fun scrollView(scrollView: SmartRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {}
+    protected open fun scrollView(scrollView: CYLRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {}
 
     /**
      * Called as the pull moves (`onScrollingWithOffset:percent:drag:`).
@@ -116,7 +116,7 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
     /**
      * Called when the header joins or leaves a layout (`scrollView:attached:`).
      */
-    protected open fun scrollView(scrollView: SmartRefreshLayout, attached: Boolean) {}
+    protected open fun scrollView(scrollView: CYLRefreshLayout, attached: Boolean) {}
 
     /**
      * Starts refreshing (`beginRefresh`).
@@ -138,12 +138,12 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
      */
     fun inStatus(vararg statuses: CYLRefreshPhase): Boolean = isInAnyPhase(*statuses)
 
-    final override fun didAttachToScrollView(layout: SmartRefreshLayout) {
+    final override fun didAttachToScrollView(layout: CYLRefreshLayout) {
         setUpComponent()
         scrollView(layout, true)
     }
 
-    final override fun willDetachFromScrollView(layout: SmartRefreshLayout) = scrollView(layout, false)
+    final override fun willDetachFromScrollView(layout: CYLRefreshLayout) = scrollView(layout, false)
 
     final override fun didScrollWithOffset(offset: Int, percent: Float, dragging: Boolean) {
         refreshLayout?.let { scrollView(it, offset, percent, dragging) }
@@ -220,7 +220,7 @@ open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefr
     private var baseHeight = 0
     private var stretch = 0
 
-    override fun scrollView(scrollView: SmartRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {
+    override fun scrollView(scrollView: CYLRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {
         val added = maxOf(0, didScroll)
         if (scene == null || added == stretch) return
         val delta = added - stretch
@@ -236,11 +236,11 @@ open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefr
         colorAccent = Color.WHITE
     }
 
-    override fun scrollView(scrollView: SmartRefreshLayout, attached: Boolean) {
+    override fun scrollView(scrollView: CYLRefreshLayout, attached: Boolean) {
         if (attached) wrapContent(scrollView) else unwrapContent(scrollView)
     }
 
-    private fun wrapContent(layout: SmartRefreshLayout) {
+    private fun wrapContent(layout: CYLRefreshLayout) {
         if (scene != null) return
         val original = (0 until layout.childCount).map(layout::getChildAt).firstOrNull { it !== view.view && it !== layout.refreshFooter?.view } ?: return
         val density = layout.resources.displayMetrics.density
@@ -272,7 +272,7 @@ open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefr
         content = original
     }
 
-    private fun unwrapContent(layout: SmartRefreshLayout) {
+    private fun unwrapContent(layout: CYLRefreshLayout) {
         val original = content ?: return
         for (child in listOf(original, mountainView, floatView, flyView)) (child.parent as? ViewGroup)?.removeView(child)
         layout.setRefreshContent(original)
@@ -321,7 +321,7 @@ open class CYLRefreshTaurusHeader(context: Context) : CYLRefreshDrawnHeader(Taur
 open class CYLRefreshWaveSwipeHeader(context: Context) : CYLRefreshDrawnHeader(WaveSwipeHeader(context))
 
 /**
- * SmartRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`).
+ * CYLRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`).
  */
 open class CYLRefreshOriginalHeader(context: Context) : CYLRefreshDrawnHeader(ClassicsHeader(context)) {
     /**

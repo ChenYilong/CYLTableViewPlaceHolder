@@ -9,7 +9,7 @@
     <string name="merged_loaded">%1$d개 행을 불러왔습니다</string>
     <string name="merged_intro_svpulltorefresh">SVPullToRefresh: 당겨서 새로고침, 끝까지 스크롤하면 더 불러오기</string>
     <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: 당겨서 새로고침</string>
-    <string name="merged_intro_smartrefresh">SmartRefreshLayout: 당겨서 새로고침, 올려서 더 불러오기</string>
+    <string name="merged_intro_smartrefresh">CYLRefreshLayout: 당겨서 새로고침, 올려서 더 불러오기</string>
     <string name="merged_action_clear">지우기</string>
     <string name="merged_config_highlight_dim">강조: 어둡게</string>
     <string name="merged_config_highlight_none">강조: 없음</string>

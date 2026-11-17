@@ -1,7 +1,7 @@
 {
   "CYLRefreshComponent.view": {
     "ios": "n/a",
-    "note": "the SmartRefreshLayout view the component wraps; on iOS the component is the UIView itself"
+    "note": "the CYLRefreshLayout view the component wraps; on iOS the component is the UIView itself"
   },
   "CYLActivityIndicatorView.isAnimating": {
     "ios": "`UIActivityIndicatorView` `isAnimating` (UIKit)",

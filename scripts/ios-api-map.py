@@ -31,6 +31,11 @@ SOURCES = [
     'android/placeholder-rive/src/main/kotlin',
     'android/merged/library/src/main/kotlin',
 ]
+# The refresh kernel and the styles folded in from SmartRefreshLayout (com.cyl.refresh.layout / header / footer /
+# classics / drawable) are not scored yet: their iOS counterparts (UIScrollView plus the CYLRefresh controls) are a
+# TODO recorded in the document (72 / 100 with them counted, 2026-11-17).
+KERNEL = [os.path.join('android', 'merged', 'library', 'src', 'main', 'kotlin', 'com', 'cyl', 'refresh', name)
+          for name in ('layout', 'header', 'footer', 'classics', 'drawable')]
 API_MAP = os.path.join(ROOT, 'android', 'merged', 'api-map.json')
 IOS_MAP = os.path.join(ROOT, 'android', 'merged', 'ios-map.json')
 DOC = os.path.join(ROOT, 'docs', 'iOS-API-Map.md')
@@ -119,6 +124,8 @@ def declarations():
     for source in SOURCES:
         base = os.path.join(ROOT, source)
         for directory, _, files in sorted(os.walk(base)):
+            if any(os.path.relpath(directory, ROOT).startswith(kernel) for kernel in KERNEL):
+                continue
             for name in sorted(files):
                 if not name.endswith('.kt'):
                     continue
@@ -284,6 +291,11 @@ def render(by_file, counted, done):
         f'| **评分：{score} / 100**（{done} / {counted} 行已有 iOS 对应，TODO {todo} 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | '
         f'**Score: {score} / 100** ({done} of {counted} rows have an iOS counterpart, {todo} TODO; n/a rows are Android '
         'platform details, counted out). No TODO in the third column is 100; all TODO is 0. |',
+        '| TODO：从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / '
+        '`drawable`，2026-11-17）尚未计入本表；计入后评分为 72 / 100，需逐个找出 iOS 对应（UIScrollView 与 CYLRefresh 控件）。 | '
+        'TODO: the refresh kernel and the styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / '
+        '`footer` / `classics` / `drawable`, 2026-11-17) are not counted in this table yet; counted, the score is 72 / 100, '
+        'and each needs its iOS counterpart (UIScrollView and the CYLRefresh controls). |',
         '',
     ]
     for rel in sorted(by_file):

@@ -5,7 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * Holds a second floor's content over the list and follows the finger on it (iOS "second floor": a pull past
@@ -71,7 +71,7 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
         show(animated = true)
     }
 
-    private fun parentOf(layout: SmartRefreshLayout): ViewGroup? =
+    private fun parentOf(layout: CYLRefreshLayout): ViewGroup? =
         (layout.parent as? FrameLayout) ?: layout.rootView.findViewById(android.R.id.content)
 
     private fun show(animated: Boolean) {

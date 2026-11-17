@@ -38,7 +38,7 @@ import com.cyl.placeholder.fromItemAttributes
 import com.cyl.placeholder.fromItemContentsOfURL
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
 /*
@@ -199,7 +199,7 @@ private fun weChatStylePlaceHolder(context: Context, reload: () -> Unit): View =
 internal fun StackPage.mainExampleScreen(): View {
     val context = requireContext()
     val list = RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
     val header = CYLRefreshNormalHeader(context)
     val beginRefreshing = { header.beginRefreshing() }
     val rows = RandomRows {

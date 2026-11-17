@@ -32,7 +32,7 @@ import com.cyl.refresh.CYLRefreshTaurusHeader
 import com.cyl.refresh.CYLRefreshWaveSwipeHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /*
  * The demo of SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, SmartRefreshDemo, MIT; by SCWANG),
@@ -130,7 +130,7 @@ private fun riveStyle(method: String): CYLRefreshRiveStyle? {
  */
 internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): View {
     val context = requireContext()
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
     val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; tag = "smartRefreshDemo" }
     val bar = bar(context, title)
     var testRows = 8

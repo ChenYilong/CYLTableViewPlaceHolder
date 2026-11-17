@@ -22,7 +22,7 @@ import com.cyl.refresh.CYLRefreshTriggerMode
 import com.cyl.refresh.cyl_beginRefreshingWithStartHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /*
  * The demo of flutter_easy_refresh (https://github.com/xuelongqy/flutter_easy_refresh, example/lib/page, MIT; by
@@ -80,7 +80,7 @@ private class TextRows(private val tap: (Int) -> Unit) : RecyclerView.Adapter<Re
 internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
     val context = requireContext()
     val density = context.resources.displayMetrics.density
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
     var count = 10
     var refreshCount = 0
     var loadCount = 0

@@ -22,7 +22,7 @@ import kotlin.math.max
 /*
  * MJRefreshTrailer, MJRefreshStateTrailer and MJRefreshNormalTrailer (MIT; created by kinarobin, Copyright (c) 2020
  * 小码哥), translated from the iOS port (`CYLRefreshTrailer`, `CYLRefreshStateTrailer`, `CYLRefreshNormalTrailer`) to
- * Kotlin. SmartRefreshLayout only pulls vertically, so the trailer drives a horizontal RecyclerView itself.
+ * Kotlin. CYLRefreshLayout only pulls vertically, so the trailer drives a horizontal RecyclerView itself.
  */
 
 /**
