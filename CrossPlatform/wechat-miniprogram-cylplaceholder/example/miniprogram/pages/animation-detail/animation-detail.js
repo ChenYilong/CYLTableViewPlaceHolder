@@ -1,7 +1,7 @@
 // CYLAnimationDetailViewController: one animation, 180 x 180, titled with its name; it replays every 4 seconds while
 // visible and on "Replay". Lottie plays in <cyl-lottie>, GIF in <image>; PAG and Rive have no player in the mini
 // program, so the page says so instead.
-const { t } = require('../../utils/l10n')
+const { t, effectiveLanguage } = require('../../utils/l10n')
 const { sections } = require('../animations/animation_list')
 
 const UNSUPPORTED_NOTE = {
@@ -10,7 +10,7 @@ const UNSUPPORTED_NOTE = {
 }
 
 Page({
-  data: { name: '', title: '', engine: '', path: '', note: '', replayTitle: '', showGif: true },
+  data: { name: '', title: '', engine: '', path: '', note: '', replayTitle: '', showGif: true, language: '', speed: 1, loop: false },
   onLoad(query) {
     const section = sections[Number(query.section)]
     const file = section && section.files[Number(query.row)]
@@ -27,12 +27,27 @@ Page({
     wx.setNavigationBarTitle({ title: file.name })
   },
   onShow() {
-    this.setData({ replayTitle: t('CYLScenarioActionReplay') })
-    // Placeholder animations play once when they appear; replay them so the demo keeps moving.
-    this.timer = setInterval(() => this.replay(), 4000)
+    this.setData({ replayTitle: t('CYLScenarioActionReplay'), language: effectiveLanguage() })
+    // Placeholder animations play once when they appear; replay them so the demo keeps moving (the loop switch on
+    // loops them instead).
+    this.timer = setInterval(() => { if (!this.data.loop) this.replay() }, 4000)
   },
   onHide() {
     clearInterval(this.timer)
+  },
+  // Playback controls (docs/Example-Animation-Playback.md): Play all from 0, live speed and loop.
+  onPlayAll() {
+    this.replay()
+  },
+  onSpeedChange(e) {
+    this.setData({ speed: e.detail.speed }, () => this.applySpeed())
+  },
+  onLoopChange(e) {
+    this.setData({ loop: e.detail.loop })
+  },
+  applySpeed() {
+    const player = this.selectComponent('#animation')
+    if (player && player.cyl_setSpeed) player.cyl_setSpeed(this.data.speed)
   },
   onUnload() {
     clearInterval(this.timer)

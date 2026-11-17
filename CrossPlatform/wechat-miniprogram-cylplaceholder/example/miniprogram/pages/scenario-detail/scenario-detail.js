@@ -20,6 +20,9 @@ Page({
     /** The scenario's components with taps off; empty while taps are on (the scenario's own components). */
     components: [],
     rows: [],
+    /** Playback controls: the speed (0.25x to 3x) and the loop switch, applied live. */
+    speed: 1,
+    loop: true,
     clearTitle: '',
     interactionTitle: '',
   },
@@ -34,6 +37,18 @@ Page({
 
   onUnload() {
     if (this.cancelRetry) this.cancelRetry()
+  },
+
+  // Playback controls (docs/Example-Animation-Playback.md): Play all from 0, live speed and loop.
+  onPlayAll() {
+    const placeholder = this.selectComponent('#placeholder')
+    if (placeholder) placeholder.playAll()
+  },
+  onSpeedChange(e) {
+    this.setData({ speed: e.detail.speed })
+  },
+  onLoopChange(e) {
+    this.setData({ loop: e.detail.loop })
   },
 
   /** Each component's own switch: off, a tap neither runs the action nor highlights. */

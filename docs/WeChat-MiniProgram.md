@@ -377,6 +377,26 @@
   A unit test caught `textKey` "CYLPlaceholderStatusNetworkUnavailable" not resolving (a missing camel-case rule);
   fixed before the commit. Screenshot: `docs/assets/wechat-miniprogram-status.png`. Not checked: the real network
   switch (simulated through the component's listener) and Dark Mode colors.
+- 2026-11-17 21:35 (+13:00), CYLAnimatedItem TODO 3, WeChat DevTools 2.02.2609250 simulator, base library 3.17.6,
+  CYLTabBarController 56a89d56: `npm test` 55 / 55. The scenarios list, Animations list, a Lottie detail, the HUD,
+  status bar and refresh icon pages render with no console errors ([tour](assets/wechat-miniprogram-animated-item-tour.png)).
+  The playback-policies file plays its looping (the Loading dots), once and 3 times items as the file says, all through
+  `cyl-animated-item` with the Lottie engine loaded ([screenshot](assets/wechat-miniprogram-animation-bugs.png)). Found:
+  - MP1 (fixed, example): the scenario detail, animation detail and configuration pages had lost the playback controls
+    when the example became a 1:1 copy of iOS (the old `pages/scenario` had them). A shared example widget
+    `widgets/playback-controls` (Play all, loop switch, speed slider 0.25–3x, seven languages, accessible labels) now
+    sits on all three; Play all calls `cyl-placeholder.playAll()` / `cyl-lottie.cyl_playFromStart()`, speed and loop
+    bind to the core properties ([screenshot](assets/wechat-miniprogram-playback-controls.png)). These controls are the
+    example's own UI, so the example is where they belong.
+  - MP2 (TODO, CYLTabBarController): the speed does not reach the playing Lottie. With speed 3x the `cyl-lottie` view's
+    `speed` property is 3 but its animation plays at 1x; `cylAnimation` is still the stand-in a `path` load returns
+    (the swap in its DOMLoaded handler never ran), and a direct `cyl_setSpeed(2)` reached the inner animation while the
+    property observer did not ([screenshot](assets/wechat-miniprogram-speed-bug.jpg)). Recorded and screenshotted, then
+    handed to CYLTabBarController (owner's rule: animation bugs are fixed in its animation component).
+  - MP3 (TODO, example): the Animations list wraps long file names mid-word ("…Permission.js" / "on"); iOS and HarmonyOS
+    truncate them on one line.
+  - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
+    yet (`cyl-refresh` takes no speed or loop).
 - Not verified: a real phone.
 
 ## CYLRefresh in one folder

@@ -13,7 +13,10 @@
   <view wx:else class="placeholder">
     <cyl-placeholder wx:if="{{isLoading}}" scenario="Loading" language="{{language}}"
                      generic:animation="cyl-lottie" animated="{{true}}" />
-    <cyl-placeholder wx:else scenario="{{scenario}}" components="{{components}}" interactive="{{interactionEnabled}}"
-                     language="{{language}}" generic:animation="cyl-lottie" animated="{{true}}" bind:action="onAction" />
+    <cyl-placeholder wx:else id="placeholder" scenario="{{scenario}}" components="{{components}}" interactive="{{interactionEnabled}}"
+                     language="{{language}}" generic:animation="cyl-lottie" animated="{{true}}" loop="{{loop}}"
+                     speed="{{speed}}" bind:action="onAction" />
   </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
 </view>

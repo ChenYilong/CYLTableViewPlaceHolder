@@ -5,11 +5,13 @@
   </view>
   <view class="stage">
     <view class="animation">
-      <cyl-lottie wx:if="{{engine === 'json' && path}}" id="animation" path="{{path}}" loop="{{false}}"
-        autoplay="{{true}}" />
+      <cyl-lottie wx:if="{{engine === 'json' && path}}" id="animation" path="{{path}}" loop="{{loop}}"
+        autoplay="{{true}}" bind:ready="applySpeed" />
       <image wx:elif="{{engine === 'gif' && path && showGif}}" class="gif" src="{{path}}" mode="aspectFit" />
       <view wx:elif="{{note}}" class="note">{{note}}</view>
     </view>
     <text class="title">{{title}}</text>
   </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
 </view>

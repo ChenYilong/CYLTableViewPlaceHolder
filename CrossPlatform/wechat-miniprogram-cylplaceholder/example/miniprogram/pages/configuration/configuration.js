@@ -20,7 +20,19 @@ function resolvingExampleTexts(value) {
 }
 
 Page({
-  data: { file: '', language: '', configuration: null, error: '', replayTitle: '', fileTitle: '' },
+  // Playback controls (docs/Example-Animation-Playback.md): Play all from 0, live speed and loop.
+  onPlayAll() {
+    const placeholder = this.selectComponent('#placeholder')
+    if (placeholder) placeholder.playAll()
+  },
+  onSpeedChange(e) {
+    this.setData({ speed: e.detail.speed })
+  },
+  onLoopChange(e) {
+    this.setData({ loop: e.detail.loop })
+  },
+
+  data: { file: '', language: '', configuration: null, error: '', replayTitle: '', fileTitle: '', speed: 1, loop: true },
 
   onLoad(query) {
     const file = decodeURIComponent(query.file || '')

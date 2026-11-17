@@ -51,10 +51,13 @@ test('the copied files are unchanged from that commit (when the CYLTabBarControl
     assert.deepStrictEqual(local, files.map((file) => path.basename(file)).concat(folder === 'cyl-animated-item'
       ? ['LICENSE.CYLTabBarController', 'UPSTREAM_COMMIT'] : ['LICENSE.CYLTabBarController']).sort(), folder)
     for (const file of files) {
-      assert.ok(git(['show', `${pinned}:${file}`]).equals(fs.readFileSync(path.join(src, folder, path.basename(file)))), file)
+      // A Windows checkout (core.autocrlf) has CRLF line endings; compare the text with LF.
+      const lf = (buffer) => buffer.toString('latin1').replace(/\r\n/g, '\n')
+      assert.strictEqual(lf(fs.readFileSync(path.join(src, folder, path.basename(file)))), lf(git(['show', `${pinned}:${file}`])), file)
     }
   }
-  assert.ok(git(['show', `${pinned}:${UPSTREAM}/test/cyl_animated_item.test.js`]).equals(fs.readFileSync(path.join(root, 'test/cyl_animated_item.test.js'))))
+  assert.strictEqual(fs.readFileSync(path.join(root, 'test/cyl_animated_item.test.js'), 'utf8').replace(/\r\n/g, '\n'),
+    git(['show', `${pinned}:${UPSTREAM}/test/cyl_animated_item.test.js`], 'utf8').replace(/\r\n/g, '\n'))
 })
 
 test('paths become absolute for cyl-animated-item, which draws files from its own folder', () => {
