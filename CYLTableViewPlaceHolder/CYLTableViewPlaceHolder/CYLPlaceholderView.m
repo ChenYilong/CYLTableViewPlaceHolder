@@ -1976,7 +1976,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
             }
         }
     } else if ([extension isEqualToString:@"riv"]) {
-        // Rive options: artboard, stateMachine, active, trigger, input, triggerInput, animation, legacy, duration
+        // Rive options: artboard, stateMachine, active, trigger, input, triggerInput, animation, legacy, duration, color,
+        // numberInput, values (CYLAnimatedItem's CYLTabBarAnimationOptionRive* keys).
         for (NSString *key in options) {
             if (![key isEqualToString:@"artboard"] &&
                 ![key isEqualToString:@"stateMachine"] &&
@@ -1987,7 +1988,9 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
                 ![key isEqualToString:@"animation"] &&
                 ![key isEqualToString:@"legacy"] &&
                 ![key isEqualToString:@"color"] &&
-                ![key isEqualToString:@"duration"]) {
+                ![key isEqualToString:@"duration"] &&
+                ![key isEqualToString:@"numberInput"] &&
+                ![key isEqualToString:@"values"]) {
                 NSLog(@"CYLTableViewPlaceHolder: Rive animation option '%@' is not supported.", key);
                 isValid = NO;
             }

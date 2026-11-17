@@ -59,7 +59,7 @@
 | **TintColor Handling** | `tintColorDidChange` updates icon color when no explicit color set; appearance proxy defaults resolved on trait change | Normal Appearance: 85→95 |
 | **Selection Indicator Appearance Proxy** | `defaultSelectionIndicatorImage`, `defaultSelectionIndicatorTintColor` | Selection/Indicator: 80→95 |
 | **PAG Dark Colors** | Added `CYLPlaceholderItemPAGDarkColors` key support | Dark Colors: 55→75 |
-| **Animation Options Validation** | Per-backend validation (Lottie: loopMode, animationSpeed, contentMode; PAG: loopMode, contentMode; Rive: artboard, stateMachine, active, trigger, input, triggerInput, animation, legacy, duration; GIF: contentMode) | Animation Config: 75→90 |
+| **Animation Options Validation** | Per-backend validation (Lottie: loopMode, animationSpeed, contentMode; PAG: loopMode, contentMode; Rive: artboard, stateMachine, active, trigger, input, triggerInput, animation, legacy, duration, color, numberInput, values; GIF: contentMode) | Animation Config: 75→90 |
 | **Trait Collection Color Resolution** | `cyl_updateColorsForTraitChange` resolves all colors (normal, selected, indicator) for current trait collection | All appearance scores |
 
 ---
