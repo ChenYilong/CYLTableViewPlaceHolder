@@ -116,3 +116,12 @@ Carthage binary JSON or SPM manifest to update yet.
 `:placeholder-rive`, `:merged`) and builds `:merged-example` on `ubuntu-latest`, whose Android SDK has its licenses
 accepted. It runs when `android/**` changes. The iOS workflow's docs job also checks the generated API tables:
 `docs/iOS-API-Map.md` (table A), `docs/Android-API-Map.md` and `docs/iOS-Android-Parity.md` (table B, English).
+
+## iOS 12 runtime
+
+Apple does not run the iOS 12.4 simulator runtime on macOS 13 or later ("not supported on hosts after macOS
+12.99.0"), and GitHub offers no macOS 12 runner, so `.github/workflows/ios12-runtime.yml` could never boot iOS 12.4:
+the install step printed no destination and xcodebuild stopped with a usage error before compiling (every run from
+#7 on). Since 2026-11-17 the job falls back: the unit tests are still built for the 12.0 deployment target and run on
+the newest iPhone simulator, with a warning that iOS 12.4 itself was not run. TODO: running on iOS 12.4 needs a
+macOS 12 host (a self-hosted runner).
