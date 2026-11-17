@@ -33,12 +33,16 @@ repository=https://github.com/ChenYilong/CYLTabBarController
 commit=$SHA
 path=$UPSTREAM_PATH
 EOF
+# [EN] Build outputs of a local DevEco / hvigor build are git-ignored and not part of the copy; a Windows checkout
+#      has CRLF line endings.
+# [CN] 本地 DevEco / hvigor 构建产物已被 git 忽略，不属于复制内容。
+IGNORED=(--strip-trailing-cr -x build -x .test -x oh_modules -x .hvigor -x BuildProfile.ets -x oh-package-lock.json5)
 if [[ "${1:-}" == "--check" ]]; then
-  if diff -r "$STAGE/$UPSTREAM_PATH" "$DEST" >/dev/null 2>&1; then
+  if diff -r "${IGNORED[@]}" "$STAGE/$UPSTREAM_PATH" "$DEST" >/dev/null 2>&1; then
     echo "$DEST matches CYLTabBarController $SHA"
     exit 0
   fi
-  diff -r "$STAGE/$UPSTREAM_PATH" "$DEST" || true
+  diff -r "${IGNORED[@]}" "$STAGE/$UPSTREAM_PATH" "$DEST" || true
   echo "error: $DEST differs from CYLTabBarController $SHA; run scripts/sync-harmonyos-cylanimateditem.sh" >&2
   exit 1
 fi
