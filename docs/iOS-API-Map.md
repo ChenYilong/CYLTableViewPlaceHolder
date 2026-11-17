@@ -872,7 +872,7 @@
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
 | `DesignUtil` (object) | Hooks a CoordinatorLayout content to its app bar (`DesignUtil`); works only when the app has the Material library. | n/a | Android CoordinatorLayout / Material library hook |
-| `DesignUtil.checkCoordinatorLayout` (fun) | When [content] is a CoordinatorLayout, nested scrolling is turned off and [listener] hears whether its app bar allows refreshing (fully expanded) or loading more (fully collapsed). | n/a | Android CoordinatorLayout / Material library hook |
+| `DesignUtil.checkCoordinatorLayout` (fun) |  | n/a | Android CoordinatorLayout / Material library hook |
 | `CYLRefreshUtil` (class) | Helpers and the layout's interpolators (`SmartUtil`). | n/a | Android view helpers and interpolators |
 | `CYLRefreshUtil.measureViewHeight` (fun) | Measures [view]'s height with its layout parameters. | n/a | Android measure pass |
 | `CYLRefreshUtil.scrollListBy` (fun) | Scrolls [listView] by [y] pixels. | n/a | Android ListView helper |

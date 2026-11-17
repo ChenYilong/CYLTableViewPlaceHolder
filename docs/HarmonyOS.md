@@ -417,7 +417,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：97 / 100**（两张表合计：没有 TODO 的行 983 / 计入的行 1007；n/a 14 行不计入）。API 表 803 / 827，演示表 180 / 180。 | **HarmonyOS score: 97 / 100** (both tables: rows without TODO 983 / counted rows 1007; 14 n/a rows not counted). API table 803 / 827, demo table 180 / 180. |
+| **鸿蒙完成度：94 / 100**（两张表合计：没有 TODO 的行 983 / 计入的行 1045；n/a 14 行不计入）。API 表 803 / 865，演示表 180 / 180。 | **HarmonyOS score: 94 / 100** (both tables: rows without TODO 983 / counted rows 1045; 14 n/a rows not counted). API table 803 / 865, demo table 180 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -509,6 +509,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooterModel.automaticallyRefresh` |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | `CYLRefreshAutoFooterModel.triggerAutomaticallyRefreshPercent` |
 | `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooterModel.autoTriggerTimes` |
+| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | TODO |
 
 #### `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
@@ -516,6 +517,8 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 |:---|:---|
 | `CYLRefreshBackFooter` | `CYLRefreshBackFooterModel` |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooterModel.noMoreDataDisplayDuration` |
+| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | TODO |
+| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | TODO |
 | `CYLRefreshBackFooter` `secondaryTriggerOffset` | `CYLRefreshBackFooterModel.secondaryTriggerOffset` |
 | `CYLRefreshBackFooter` `secondaryDimension` | `CYLRefreshBackFooterModel.secondaryDimension` |
 | `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | `CYLRefreshBackFooterModel.secondaryCloseTriggerOffset` |
@@ -606,6 +609,21 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponentModel.notifiesWhenHidden` |
 | `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponentModel.addPhaseObserver(observer)` |
 | `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponentModel.removePhaseObserver(token)` |
+| `CYLRefreshComponent` `autoRefresh` | TODO |
+| `CYLRefreshComponent` `-beginRefreshingAfterDelay:` | TODO |
+| `CYLRefreshComponent` `-beginRefreshingAnimationOnly` | TODO |
+| `CYLRefreshComponent` `-endRefreshingAfterDelay:success:` | TODO |
+| `CYLRefreshComponent` `-addScrollObserver:` | TODO |
+| `CYLRefreshComponent` `-removeScrollObserver:` | TODO |
+| `CYLRefreshComponent` `canTriggerBlock` | TODO |
+| `CYLRefreshComponent` `-canTrigger` | TODO |
+| `CYLRefreshComponent` `disablesContentWhileRefreshing` | TODO |
+| `CYLRefreshComponent` `dragRate` | TODO |
+| `CYLRefreshComponent` `reboundAnimationOptions` | TODO |
+| `CYLRefreshComponent` `insetStart` | TODO |
+| `CYLRefreshComponent` `pinnedView` | TODO |
+| `CYLRefreshComponent` `translationView` | TODO |
+| `CYLRefreshComponent` `supportsHorizontalDrag` | TODO |
 | `CYLRefreshComponent` `-addObservers` | `CYLRefreshComponentModel.addObservers()` |
 | `CYLRefreshComponent` `-removeObservers` | `CYLRefreshComponentModel.removeObservers()` |
 | `CYLRefreshComponent` `-didAttachToScrollView:` | `CYLRefreshComponentModel.didAttachToScrollView(scrollView)` |
@@ -615,6 +633,9 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponentModel.phaseDidChangeFrom(oldPhase, phase)` |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponentModel.refreshDidFinishWithSuccess(success)` |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponentModel.finishingDurationWithSuccess(success)` |
+| `CYLRefreshComponent` `-autoRefreshDidChange:` | TODO |
+| `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | TODO |
+| `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | TODO |
 | `UILabel(CYLRefresh)` | `CYLRefreshLabel` |
 | `UILabel(CYLRefresh)` `+cyl_label` | `CYLRefreshLabel.cyl_label()` |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | `CYLRefreshLabel.cyl_textWidth()` |
@@ -660,6 +681,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshHeader` `-setExpandHeight:` | `CYLRefreshHeaderModel.setExpandHeight(expandHeight)` |
 | `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeaderModel.addsRefreshingInset` |
 | `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeaderModel.resetsFooterAfterRefresh` |
+| `CYLRefreshHeader` `clipsWhenBehind` | TODO |
 | `CYLRefreshHeader` `secondaryTriggerOffset` | `CYLRefreshHeaderModel.secondaryTriggerOffset` |
 | `CYLRefreshHeader` `secondaryDimension` | `CYLRefreshHeaderModel.secondaryDimension` |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | `CYLRefreshHeaderModel.secondaryCloseTriggerOffset` |
@@ -669,6 +691,8 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshHeader` `secondaryOpenedBlock` | `CYLRefreshHeaderModel.secondaryOpenedBlock` |
 | `CYLRefreshHeader` `secondaryClosedBlock` | `CYLRefreshHeaderModel.secondaryClosedBlock` |
 | `CYLRefreshHeader` `-openSecondary` | `CYLRefreshHeaderModel.openSecondary()` |
+| `CYLRefreshHeader` `secondaryShouldOpenBlock` | TODO |
+| `CYLRefreshHeader` `secondaryAnimationDuration` | TODO |
 | `CYLRefreshHeader` `-closeSecondary` | `CYLRefreshHeaderModel.closeSecondary()` |
 
 #### `CYLRefresh/Base/CYLRefreshIconView.h`
@@ -759,6 +783,9 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.defaultConfig.languageCode` |
 | `CYLRefreshConfig` `i18nFilename` | `CYLRefreshConfig.defaultConfig.i18nFilename` |
 | `CYLRefreshConfig` `i18nBundle` | `CYLRefreshConfig.defaultConfig.i18nBundle` |
+| `CYLRefreshConfig` `defaultHeaderCreator` | TODO |
+| `CYLRefreshConfig` `defaultFooterCreator` | TODO |
+| `CYLRefreshConfig` `defaultInitializer` | TODO |
 | `CYLRefreshConfig` `defaultConfig` | `CYLRefreshConfig.defaultConfig` |
 | `CYLRefreshConfig` `-init` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLRefreshConfig` `+new` | n/a (NS_UNAVAILABLE on iOS) |
@@ -844,6 +871,9 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `CYLRefreshDeliveryFooter` | `CYLRefreshDeliveryFooterModel` |
 | `CYLRefreshPhoenixFooter` | `CYLRefreshPhoenixFooterModel` |
 | `CYLRefreshTaurusFooter` | `CYLRefreshTaurusFooterModel` |
+| `CYLRefreshBallPulseFooter` | TODO |
+| `CYLRefreshBallPulseFooter` `normalColor` | TODO |
+| `CYLRefreshBallPulseFooter` `animatingColor` | TODO |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -909,7 +939,10 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
+| `CYLRefreshMaterialSize` | TODO |
 | `CYLRefreshMaterialHeader` | `CYLRefreshMaterialHeaderModel` |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | TODO |
+| `CYLRefreshMaterialHeader` `progressSize` | TODO |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
@@ -952,6 +985,8 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
 | `CYLRefreshWaveSwipeHeader` | `CYLRefreshWaveSwipeHeaderModel` |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | TODO |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | TODO |
 
 #### `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
@@ -1329,6 +1364,9 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `CYLRefreshScrollViewModel.cyl_autoHideRefreshHeader` |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `CYLRefreshScrollViewModel.cyl_autoHideRefreshFooter` |
 | `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | `CYLRefreshScrollViewModel.cyl_beginRefreshingWithStartHeader(startHeader)` |
+| `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | TODO |
+| `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | TODO |
+| `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | TODO |
 | `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | `CYLRefreshScrollViewModel.cyl_totalDataCount()` |
 
 #### `CYLRefresh/UIView+CYLExtension.h`
