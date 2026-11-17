@@ -1030,8 +1030,9 @@ no tool and no check behind them). From now on a screenshot that breaks the rule
    screenshot used as evidence is a one-panel sheet too, never a bare capture.
 3. **Run the checker before every commit that adds or changes an image:** `python3 scripts/check_screenshots.py`. Both
    scripts need Pillow (`python3 -m pip install pillow`, or a venv where the system Python refuses it). It
-   fails on any image in `docs/assets/` that is neither a sheet with a complete record nor an original one uses. CI
-   runs it (`Docs navigation` job), so a pull request with a non-conforming screenshot fails.
+   fails on any image in `docs/assets/` that is neither a sheet with a complete record nor an original one uses. It is
+   a local check: CI does not run it (removed from the `Docs navigation` job at the owner's request, 2026-11-18), so
+   run it yourself before every commit that adds or changes an image.
 4. **Never add to `docs/assets/screenshot-legacy.txt`.** It lists the images committed before the rule; replace an
    old image by a conforming sheet instead (keep the old file only while another repository links it).
 5. **Re-read the rules a pull changed** (see "Re-read the rules a pull changes") before taking,

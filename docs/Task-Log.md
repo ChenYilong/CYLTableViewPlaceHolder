@@ -27,13 +27,14 @@
 
 ## 任务 / Tasks
 
-### TODO：从 CI 移除截图 Label 检查 / TODO: Remove the screenshot label check from CI
+### 已完成（100 / 100）：从 CI 移除截图 Label 检查 / Done (100 / 100): Remove the screenshot label check from CI
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
 - User's original prompt (verbatim): "Remove label CI screenshots from ci"
 - Requirements: remove the screenshot label check (`python3 scripts/check_screenshots.py` and its Pillow install step, job `Docs navigation` in `.github/workflows/ios.yml`, added in 91e0002) from CI. The "Example screenshots" job (demo builds and their screenshots) has no label check and stays.
 - Context: the checker and `scripts/screenshot_sheet.py` stay in the repository as local tools; the rule texts that say "CI runs it" (`instructions.md` enforcement, `AGENTS.md`, `docs/instructions.md`, skills `cyl-docs` and `cyl-verify`) are changed to a local check before committing an image.
 - Acceptance: full marks (100) = both CI steps gone, every "CI runs it" for the checker updated, workflow YAML still valid, pushed. Pass (60) = the CI steps gone.
+- Result (2026-11-18): the Pillow install step and `python3 scripts/check_screenshots.py` are gone from the `Docs navigation` job (`.github/workflows/ios.yml`; YAML parses); the "Example screenshots" job is unchanged. `instructions.md` (enforcement step 3), `AGENTS.md`, `docs/instructions.md` and skills `cyl-docs`, `cyl-verify` now call the checker a local check that CI does not run; the scripts' Pillow hint no longer says CI installs it. The checker still passes locally.
 
 ### 已完成（100 / 100）：截图 Label 规范为何没有生效，并强制执行 / Done (100 / 100): Why the screenshot label rule was not applied, and enforce it
 

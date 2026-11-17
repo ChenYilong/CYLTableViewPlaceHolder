@@ -33,7 +33,7 @@ vault's root `instructions.md`.
 - **Screenshots are enforced:** every stitched image is made with `python3 scripts/screenshot_sheet.py` (portrait, one
   column first, bold English header / captions / footer outside the panels, recorded in the PNG; another tool adds a
   `<sheet>.sheet.json` sidecar), originals are named `<platform>-...-<commit>-<yyyymmdd>`, and
-  `python3 scripts/check_screenshots.py` must pass before every commit that adds an image (CI runs it). Never add to
+  `python3 scripts/check_screenshots.py` must pass before every commit that adds an image (a local check; CI does not run it). Never add to
   `docs/assets/screenshot-legacy.txt`. After every pull, read the rule changes it brought
   (`git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md .agents/skills`) before committing; never pull and commit in
   one command. See `instructions.md`, "Enforcement: every screenshot passes the checker" and "Re-read the rules a pull
