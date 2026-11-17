@@ -101,3 +101,10 @@ The Android-parity APIs (docs/iOS-API-Map.md, 2026-11-16) add these spellings, p
 `CYLPlaceholderComponent.text(_:fontSize:color:)`, `CYLPlaceholderConfigurationError` (the NS_ERROR_ENUM of
 `CYLPlaceholderConfigurationErrorDomain`), `CYLPlaceholderItemImages`, `CYLPlaceholderItemAnimationDuration`, and
 `CYLRefreshFlyHeader.mountainView` / `flyView` / `floatView`.
+
+The consolidated CYLRefresh API (2026-11-17) adds these spellings, pending CI: `header.title(for: .pulling)` on
+`CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter` and `CYLRefreshStateTrailer` (as on `CYLRefreshBackStateFooter`),
+`control.cyl_setStateTitle(_:for:)` / `control.cyl_stateTitle(for:)`, `control.cyl_setAnimationImages(_:duration:for:)`
+/ `control.cyl_animationImages(for:)`, `control.cyl_setIconAnimation(filePath:size:for:)`,
+`control.cyl_setBundledIconAnimation(_:size:for:)`, and `footer.cyl_updateNoMoreDataImage(_:)` /
+`footer.cyl_placeNoMoreDataImage(besideLabel:inset:size:)`.

@@ -6,6 +6,7 @@
 
 | 中文 | English |
 | --- | --- |
+| [现状（聚合后的 API）](#现状聚合后的-api--current-state-the-consolidated-api) | [Current state (the consolidated API)](#现状聚合后的-api--current-state-the-consolidated-api) |
 | [任务](#任务--tasks) | [Tasks](#任务--tasks) |
 
 <!-- docs-navigation:end -->
@@ -17,6 +18,12 @@
 | 无 / none | — |
 
 <!-- docs-binding:end -->
+
+## 现状（聚合后的 API） / Current state (the consolidated API)
+
+| 中文 | English |
+| --- | --- |
+| 2026-11-17 起 CYLRefresh 是每个平台唯一的刷新库与刷新内核（`instructions.md` “One refresh library: CYLRefresh”）。iOS：全部刷新代码在 `CYLTableViewPlaceHolder/CYLRefresh/`（Rive 刷新头在 `CYLRefresh/Custom/Rive/`，由 Rive 子 spec 编译），所有控件继承 `CYLRefreshComponent`；重复逻辑已合并：状态文字（`setTitle:forState:` / `titleForState:`，共用 `cyl_setStateTitle:forState:` / `cyl_stateTitleForState:`）、动画图片（`setAnimationImages:forState:`，共用 `cyl_setAnimationImages:duration:forState:`）、Normal 尾部的无更多数据图片（`CYLRefreshFooter` 的 `cyl_updateNoMoreDataImage:`）；示例不依赖 MJRefresh。Android：SmartRefreshLayout 并入 `android/merged/library`（`CYLRefreshLayout`、`com.cyl.refresh.*`），SVPullToRefresh 与 android-Ultra-Pull-To-Refresh 已删除，新增 `CYLRefreshHeader(context)`（不绘制的监听刷新头），`cyl_header = null` / `cyl_footer = null` 关闭对应拉动。微信小程序：尾随组件在 `cyl-refresh/trailer`。下方三个上游库的转写记录、PR 与 issue 表为历史记录，代码现已并入或删除。 | Since 2026-11-17 CYLRefresh is the only refresh library and refresh kernel on every platform ("One refresh library: CYLRefresh" in `instructions.md`). iOS: all refresh code is in `CYLTableViewPlaceHolder/CYLRefresh/` (the Rive refresh header in `CYLRefresh/Custom/Rive/`, compiled by the Rive subspec), and every control subclasses `CYLRefreshComponent`; duplicate logic is merged: the state texts (`setTitle:forState:` / `titleForState:`, sharing `cyl_setStateTitle:forState:` / `cyl_stateTitleForState:`), the animation images (`setAnimationImages:forState:`, sharing `cyl_setAnimationImages:duration:forState:`) and the normal footers' no-more-data image (`CYLRefreshFooter` `cyl_updateNoMoreDataImage:`); the examples do not depend on MJRefresh. Android: SmartRefreshLayout is folded into `android/merged/library` (`CYLRefreshLayout`, `com.cyl.refresh.*`), SVPullToRefresh and android-Ultra-Pull-To-Refresh are deleted, `CYLRefreshHeader(context)` gives a listener header that draws nothing, and `cyl_header = null` / `cyl_footer = null` turn that pull off. WeChat mini program: the trailer component is `cyl-refresh/trailer`. The transcription logs and the pull request and issue tables of the three upstream libraries below are history; their code is now folded in or deleted. |
 
 ## 任务 / Tasks
 
