@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：继续处理 CYLAnimatedItem 迁移的 TODO，未发布的组件按 commit 引入 / TODO: Continue the CYLAnimatedItem TODOs; take unpublished components by commit
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“continue fix todo还没发布的组件尝试使用commit方式导入。不要阻碍进度” | The user's original prompt (verbatim on the left), summarized: continue fixing the TODOs; components that are not published yet are taken by commit; do not let them block progress. |
+| 要求与上下文：①未发布到 CocoaPods trunk / Maven Central 的上游组件（CYLAnimatedItem pod、Android `cyltabbarcontroller-animateditem`）一律按 Cartfile 固定的 commit 引入，不等待发布；②Android 构建目前要求手动传入 `-PcylTabBarDir`，否则直接失败：改为在没有本地 checkout 时自动检出 Cartfile 固定的 commit（`scripts/cyltabbarcontroller-checkout.sh`），一个 commit 同时用于 iOS 与 Android；③继续处理“进度”行中的其余 TODO（CI、动画颜色 API 等），无法由本仓库完成的（trunk 发布、小程序与鸿蒙的上游组件）记录原因并继续其他工作。 | Requirements and context: (1) upstream components not yet on the CocoaPods trunk or Maven Central (the CYLAnimatedItem pod, Android `cyltabbarcontroller-animateditem`) are taken at the commit the Cartfile pins, without waiting for a release; (2) the Android build needs `-PcylTabBarDir` today and fails without it: check out the Cartfile's commit automatically when there is no local checkout (`scripts/cyltabbarcontroller-checkout.sh`), so one commit serves iOS and Android; (3) continue the other TODOs of the progress row (CI, the animation color API and others); for those this repository cannot finish (trunk release, the upstream component for the mini program and HarmonyOS), record why and carry on. |
+
 ### 已完成：所有发布到外部仓库的包都包含协议声明，写入 instructions 与技能 / Done: Every published package carries its license, as a rule in the instructions and skills
 
 | 中文 | English |
