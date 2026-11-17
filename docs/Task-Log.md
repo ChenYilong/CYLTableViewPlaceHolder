@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：所有 icon + title / 动效展示都经过 CYLPlaceholderView / TODO: Every icon + title and animation display goes through CYLPlaceholderView
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“请确保本项目中所有具有如下特征的组件使用的是同一个组件，如果不是相关代码修改内部实现，以保证使用的是同一个组件，方便我重构该组件就可以把修改应用到所有组件上。我的需求是以后新增动效类型，仅需需要修改这个组件，所有需要使用动效展示的组件都可以支持新增动效，无须在第二个地方修改代码。这个组件是 `CYLPlaceholderView`（icon + title 的封装，同时负责播放 GIF / Lottie / PAG / Rive 动效）。当前分支 `feat/android-refresh-port-followup` 上的实现类地址：https://github.com/ChenYilong/CYLTableViewPlaceHolder/blob/feat/android-refresh-port-followup/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m 公开接口在同目录的头文件：https://github.com/ChenYilong/CYLTableViewPlaceHolder/blob/feat/android-refresh-port-followup/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h” | The user's original prompt (Chinese, verbatim on the left), summarized: make sure every component in the project that shows an icon with a title or plays an animation uses one component, `CYLPlaceholderView` (the icon + title view that also plays GIF / Lottie / PAG / Rive); where one does not, change its internals so it does, so that refactoring that component applies everywhere. A new animation type must then need a change in that component only, with no second place to edit. |
+| 要求：①排查 iOS core（占位图、CYLRefresh、HUD、状态栏）与示例中所有显示 icon + title 或播放动效的地方；②不经过 `CYLPlaceholderView` 的改为内部使用它（公开 API 不变）；③新增动效类型时只需修改 `CYLPlaceholderView`（及其动画注册表）；④其他端同理（Android `CYLPlaceholderView`、鸿蒙 `CYLPlaceholderViewModel`）。 | Requirements: (1) audit every place in the iOS core (placeholder, CYLRefresh, HUD, status bar) and the examples that shows an icon + title or plays an animation; (2) those that bypass `CYLPlaceholderView` use it internally (public API unchanged); (3) a new animation type needs a change only in `CYLPlaceholderView` (and its animator registry); (4) likewise on the other platforms (Android `CYLPlaceholderView`, HarmonyOS `CYLPlaceholderViewModel`). |
+
 ### 已完成：文档以聚合后的 API 作为唯一版本介绍（首个发布版本） / Done: Docs introduce the consolidated API as the only version (the first release)
 
 | 中文 | English |
