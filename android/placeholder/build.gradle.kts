@@ -1,5 +1,6 @@
 // The placeholder views of CYLTableViewPlaceHolder on Android (Kotlin), with the iOS names; images and strings are
-// imported from CYLTableViewPlaceHolder.bundle by ../scripts/import-ios-resources.py.
+// imported from CYLTableViewPlaceHolder.bundle by ../scripts/import-ios-resources.py. No animation library: animated
+// icons come from CYLTabBarController's CYLAnimatedItem engine once the app adds Lottie, libpag or rive-android.
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -37,6 +38,12 @@ android {
 }
 
 dependencies {
+    // CYLPlaceholderView subclasses CYLAnimatedItemView, CYLTabBarController's animated icon + title view, and plays its
+    // animations through that module's engine (docs/Animated-Item.md of CYLTabBarController). Built from source by
+    // commit: settings.gradle.kts substitutes the coordinate with the included build's :cylanimateditem. The engine
+    // reaches Lottie, libpag and rive-android by reflection, so this module depends on no animation library: the app
+    // adds the libraries it wants to animate, otherwise the static image shows.
+    api("io.github.chenyilong:cyltabbarcontroller-animateditem")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     // Only for the RecyclerView extensions (cyl_placeholderViewBlock, cyl_reloadData): an app that uses them has

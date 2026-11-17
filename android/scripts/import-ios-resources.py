@@ -5,7 +5,7 @@ Images: the static icons of the ported scenarios, CYLPlaceholderSearchOff@2x.png
 cyl_placeholder_search_off.png. Strings: every key of <lang>.lproj/Localizable.strings ("CYLPlaceholderX" ->
 <string name="cyl_placeholder_x">) in res/values[-<lang>]/cyl_placeholder_strings.xml, iOS format specifiers turned
 into Java ones. Animations: every CYLPlaceholder*.json and *.gif of Animations/ with the licenses and notices, to
-assets/CYLPlaceholderAnimations/ (played when an animator for them is registered, such as module placeholder-lottie).
+assets/CYLPlaceholderAnimations/ (played by the animation engine of CYLTabBarController's :cylanimateditem when the app adds the animation library, such as Lottie).
 Run: python3 android/scripts/import-ios-resources.py
 """
 import os, re, shutil

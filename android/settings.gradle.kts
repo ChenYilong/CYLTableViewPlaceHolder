@@ -16,13 +16,12 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "CYLTableViewPlaceHolderAndroid"
+// The placeholder core. Its icon + title view, CYLPlaceholderView, subclasses CYLTabBarController's CYLAnimatedItemView
+// (module :cylanimateditem, Maven `io.github.chenyilong:cyltabbarcontroller-animateditem`), whose animation engine
+// reaches Lottie, libpag and rive-android by reflection: the core depends on no animation library, and animated icons
+// show only in an app that adds one (docs/Animated-Item.md of CYLTabBarController). The former animator modules
+// placeholder-lottie, placeholder-pag and placeholder-rive are gone.
 include(":placeholder")
-// The Lottie animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Lottie).
-include(":placeholder-lottie")
-// The PAG animator of the placeholder (iOS subspec CYLPlaceholderAnimation/PAG).
-include(":placeholder-pag")
-// The Rive animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Rive).
-include(":placeholder-rive")
 
 // android/merged (docs/Android-Port.md, step 3): CYLRefresh, the only refresh kernel (SmartRefreshLayout folded in),
 // with the placeholder, and one example app with CYLTabBarController's Android tab bar, one tab per library.
@@ -38,12 +37,22 @@ project(":merged-example").projectDir = file("merged/example")
 // CYLTabBarController for Android, built from source (a Gradle composite build): its repository has no Gradle build at
 // the root, so a JitPack commit reference cannot build it. The default is the vault's checkout next to this
 // repository; -PcylTabBarDir=<…/CYLTabBarController/Example-Android> points to a clone at the latest commit
-// (scripts/resolve-cyltabbarcontroller-commit.sh in the repository root finds it).
+// (scripts/resolve-cyltabbarcontroller-commit.sh in the repository root finds it). It brings two modules:
+// - `io.github.chenyilong:cyltabbar` (the tab bar of the example app);
+// - `io.github.chenyilong:cyltabbarcontroller-animateditem` (CYLAnimatedItemView and the animation engine), which the
+//   core module :placeholder depends on, so every build needs the checkout.
 val cylTabBarDir = providers.gradleProperty("cylTabBarDir").orNull ?: "../../CYLTabBarController/Example-Android"
-if (file(cylTabBarDir).resolve("settings.gradle.kts").exists()) {
-    includeBuild(cylTabBarDir) {
-        dependencySubstitution {
-            substitute(module("io.github.chenyilong:cyltabbar")).using(project(":cyltabbar"))
-        }
+if (!file(cylTabBarDir).resolve("settings.gradle.kts").exists()) {
+    throw GradleException(
+        "CYLTabBarController's Example-Android was not found at '$cylTabBarDir'. The placeholder core depends on its " +
+            "module :cylanimateditem (io.github.chenyilong:cyltabbarcontroller-animateditem). Clone " +
+            "https://github.com/ChenYilong/CYLTabBarController at the commit printed by " +
+            "scripts/resolve-cyltabbarcontroller-commit.sh and pass -PcylTabBarDir=<clone>/Example-Android.",
+    )
+}
+includeBuild(cylTabBarDir) {
+    dependencySubstitution {
+        substitute(module("io.github.chenyilong:cyltabbar")).using(project(":cyltabbar"))
+        substitute(module("io.github.chenyilong:cyltabbarcontroller-animateditem")).using(project(":cylanimateditem"))
     }
 }

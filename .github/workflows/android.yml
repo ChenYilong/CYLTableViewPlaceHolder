@@ -1,4 +1,4 @@
-# Android CI: the unit tests of the Kotlin core (android/placeholder*, android/merged) and a build of the example. The
+# Android CI: the unit tests of the Kotlin core (android/placeholder, android/merged) and a build of the example. The
 # GitHub-hosted Ubuntu runner ships the Android SDK with its licenses accepted. See docs/CI-CD.md.
 name: Android
 
@@ -32,16 +32,10 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Unit tests (placeholder, animators, CYLRefresh)
-        run: >-
-          bash ./gradlew --no-daemon --continue
-          :placeholder:testDebugUnitTest
-          :placeholder-lottie:testDebugUnitTest
-          :placeholder-rive:testDebugUnitTest
-          :merged:testDebugUnitTest
-          :merged-rive:compileDebugKotlin
-      # The example's tab bar is CYLTabBarController's Android module, built from source at its latest commit across all
-      # branches (instructions.md, "Depending on CYLTabBarController"); Gradle includes it with -PcylTabBarDir.
+      # CYLTabBarController for Android, built from source at its latest commit across all branches (instructions.md,
+      # "Depending on CYLTabBarController"): the core module :placeholder depends on its :cylanimateditem
+      # (CYLAnimatedItemView and the animation engine) and the example on its tab bar, so it is cloned before every
+      # Gradle call and passed with -PcylTabBarDir.
       - name: CYLTabBarController at its latest commit
         working-directory: .
         run: |
@@ -50,6 +44,13 @@ jobs:
           echo "CYLTabBarController $LINE"
           git clone --quiet --filter=blob:none --no-checkout https://github.com/ChenYilong/CYLTabBarController.git "$RUNNER_TEMP/CYLTabBarController"
           git -C "$RUNNER_TEMP/CYLTabBarController" checkout --quiet "$SHA"
+      - name: Unit tests (placeholder, CYLRefresh)
+        run: >-
+          bash ./gradlew --no-daemon --continue
+          -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android"
+          :placeholder:testDebugUnitTest
+          :merged:testDebugUnitTest
+          :merged-rive:compileDebugKotlin
       - name: Build the example
         run: bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" :merged-example:assembleDebug
       - name: Test reports
