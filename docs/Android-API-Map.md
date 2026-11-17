@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 637 个计入的符号；done 574、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 637 counted symbols; done 574, partial 63, planned 0, n/a 194). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 645 个计入的符号；done 582、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 645 counted symbols; done 582, partial 63, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -448,6 +448,9 @@
 | `CYLRefreshDeliveryFooter` | `com.cyl.refresh.CYLRefreshDeliveryFooter` | done |  |
 | `CYLRefreshPhoenixFooter` | `com.cyl.refresh.CYLRefreshPhoenixFooter` | done |  |
 | `CYLRefreshTaurusFooter` | `com.cyl.refresh.CYLRefreshTaurusFooter` | done |  |
+| `CYLRefreshBallPulseFooter` | `com.cyl.refresh.footer.BallPulseFooter` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `normalColor` | `com.cyl.refresh.footer.BallPulseFooter.setNormalColor` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `animatingColor` | `com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor` | done | added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -513,7 +516,10 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
+| `CYLRefreshMaterialSize` | `com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshMaterialHeader` | `com.cyl.refresh.CYLRefreshMaterialHeader` | done |  |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | `com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshMaterialHeader` `progressSize` | `com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)` | done | added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
@@ -556,6 +562,8 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshWaveSwipeHeader` | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` | done |  |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)` | done | added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 

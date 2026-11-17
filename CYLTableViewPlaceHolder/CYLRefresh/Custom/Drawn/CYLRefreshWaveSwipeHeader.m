@@ -166,6 +166,34 @@ CGFloat EXPAND_PTS[6][2] = {
 
 @implementation CYLRefreshWaveSwipeHeader
 
+- (CGFloat)waveShadowRadius
+{
+    return self.waveLayer ? self.waveLayer.shadowRadius : 1.5;
+}
+
+- (void)setWaveShadowRadius:(CGFloat)waveShadowRadius
+{
+    self.waveLayer.shadowRadius = waveShadowRadius;
+    self.shapeLayer.shadowRadius = waveShadowRadius;
+}
+
+- (UIColor *)waveShadowColor
+{
+    CALayer *layer = self.waveLayer;
+    if (!layer.shadowColor) return [UIColor.blackColor colorWithAlphaComponent:0.3];
+    return [[UIColor colorWithCGColor:layer.shadowColor] colorWithAlphaComponent:layer.shadowOpacity];
+}
+
+- (void)setWaveShadowColor:(UIColor *)waveShadowColor
+{
+    CGFloat alpha = CGColorGetAlpha(waveShadowColor.CGColor);
+    UIColor *opaque = [waveShadowColor colorWithAlphaComponent:1];
+    for (CALayer *layer in @[self.waveLayer ?: CALayer.layer, self.shapeLayer ?: CALayer.layer]) {
+        layer.shadowColor = opaque.CGColor;
+        layer.shadowOpacity = alpha;
+    }
+}
+
 /**
  * 初始化参数
  */

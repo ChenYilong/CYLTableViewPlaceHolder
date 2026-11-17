@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：97 / 100**（772 / 799 行已有 iOS 对应，TODO 27 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 97 / 100** (772 of 799 rows have an iOS counterpart, 27 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：97 / 100**（779 / 799 行已有 iOS 对应，TODO 20 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 97 / 100** (779 of 799 rows have an iOS counterpart, 20 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
@@ -445,7 +445,7 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `BallPulseFooter` (class) | The footer with three pulsing balls (`BallPulseFooter`). | TODO |  |
+| `BallPulseFooter` (class) | The footer with three pulsing balls (`BallPulseFooter`). | `CYLRefreshBallPulseFooter` | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/footer/ClassicsFooter.kt`
 
@@ -598,15 +598,15 @@
 | `CircleImageView.SHADOW_RADIUS` (val) | The shadow radius in dp. | n/a | Android elevation shadow constant |
 | `CircleImageView.SHADOW_ELEVATION` (val) | The elevation in dp. | n/a | Android elevation constant |
 | `MaterialProgressDrawable` (class) | The Material spinner with an arc, an arrow and color changes (`MaterialProgressDrawable`). | `CYLRefreshMaterialHeader` | the arc, arrow and color changes are drawn inside the header |
-| `MaterialProgressDrawable.ProgressDrawableSize` (class) | The sizes of [updateSizes]. | TODO |  |
-| `MaterialProgressDrawable.updateSizes` (fun) | Sets the size: [LARGE] or [DEFAULT]. | TODO |  |
+| `MaterialProgressDrawable.ProgressDrawableSize` (class) | The sizes of [updateSizes]. | `CYLRefreshMaterialSize` | added 2026-11-17 for Android parity |
+| `MaterialProgressDrawable.updateSizes` (fun) | Sets the size: [LARGE] or [DEFAULT]. | `CYLRefreshMaterialHeader` `progressSize` | added 2026-11-17 for Android parity |
 | `MaterialProgressDrawable.showArrow` (fun) | Shows the arrow at the arc's end. | n/a | internal drawing step of the Android drawable; CYLRefreshMaterialHeader draws the arrow privately |
 | `MaterialProgressDrawable.setArrowScale` (fun) | The arrow's scale, 0 to 1. | n/a | internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates it privately |
 | `MaterialProgressDrawable.setStartEndTrim` (fun) | The arc's start and end, as fractions of a turn. | n/a | internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates the trim privately |
 | `MaterialProgressDrawable.setProgressRotation` (fun) | The arc's rotation, as a fraction of a turn. | n/a | internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates the rotation privately |
-| `MaterialProgressDrawable.setColorSchemeColors` (fun) | The arc's colors, in turn. | TODO |  |
-| `MaterialProgressDrawable.LARGE` (val) | The large size. | TODO |  |
-| `MaterialProgressDrawable.DEFAULT` (val) | The default size. | TODO |  |
+| `MaterialProgressDrawable.setColorSchemeColors` (fun) | The arc's colors, in turn. | `CYLRefreshMaterialHeader` `colorSchemeColors` | added 2026-11-17 for Android parity |
+| `MaterialProgressDrawable.LARGE` (val) | The large size. | `CYLRefreshMaterialSizeLarge` | added 2026-11-17 for Android parity |
+| `MaterialProgressDrawable.DEFAULT` (val) | The default size. | `CYLRefreshMaterialSizeDefault` | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/header/storehouse/StoreHouseBarItem.kt`
 
@@ -669,7 +669,7 @@
 | `WaveView.startWaveAnimation` (fun) | Lets the wave bounce back from [h], a share of the width. | n/a | internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately |
 | `WaveView.animationDropCircle` (fun) | Drops the circle with a small wave, unless the circle is still shrinking away. | n/a | internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately |
 | `WaveView.getCurrentCircleCenterY` (fun) | The circle's center y. | n/a | internal geometry of the Android view |
-| `WaveView.setShadow` (fun) | The shadow's [radius] and [color]. | TODO |  |
+| `WaveView.setShadow` (fun) | The shadow's [radius] and [color]. | `CYLRefreshWaveSwipeHeader` `waveShadowRadius` / `waveShadowColor` | added 2026-11-17 for Android parity |
 | `WaveView.setWaveColor` (fun) | The wave's color, alpha included. | `CYLRefreshComponent` `colorPrimary` (on `CYLRefreshWaveSwipeHeader`) |  |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/layout/CYLRefreshLayout.kt`

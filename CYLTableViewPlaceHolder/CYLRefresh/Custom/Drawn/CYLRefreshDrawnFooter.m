@@ -14,6 +14,8 @@
 #import "CYLRefreshTaurusHeader.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
+#import "NSBundle+CYLRefresh.h"
+#import "CYLRefreshConst.h"
 
 /// [EN] CYLRefreshDrawnHeader's private driven mode. [CN] CYLRefreshDrawnHeader 私有的被驱动模式。
 @interface CYLRefreshDrawnHeader (CYLDriven)
@@ -193,6 +195,144 @@
 
 @implementation CYLRefreshPhoenixFooter
 + (Class)styleClass { return CYLRefreshPhoenixHeader.class; }
+@end
+
+/// [EN] Forwards display-link ticks without retaining the footer. [CN] 转发 display link 回调，不强持有刷新尾。
+@interface CYLRefreshBallPulseFooter (CYLTick)
+- (void)cyl_tick;
+@end
+
+@interface CYLRefreshBallPulseTicker : NSObject
+@property (weak, nonatomic) CYLRefreshBallPulseFooter *target;
+@end
+
+@implementation CYLRefreshBallPulseTicker
+- (void)tick:(CADisplayLink *)link
+{
+    [self.target cyl_tick];
+}
+@end
+
+@interface CYLRefreshBallPulseFooter ()
+@property (strong, nonatomic) NSArray<CAShapeLayer *> *cyl_balls;
+@property (strong, nonatomic) CADisplayLink *cyl_link;
+@property (assign, nonatomic) CFTimeInterval cyl_startTime;
+@end
+
+@implementation CYLRefreshBallPulseFooter
+
+- (void)prepare
+{
+    [super prepare];
+    self.cyl_h = 60;
+    _normalColor = [UIColor colorWithRed:0xee / 255.0 green:0xee / 255.0 blue:0xee / 255.0 alpha:1];
+    _animatingColor = [UIColor colorWithRed:0xe7 / 255.0 green:0x59 / 255.0 blue:0x46 / 255.0 alpha:1];
+    NSMutableArray<CAShapeLayer *> *balls = [NSMutableArray array];
+    for (NSInteger i = 0; i < 3; i++) {
+        CAShapeLayer *ball = [CAShapeLayer layer];
+        ball.fillColor = _normalColor.CGColor;
+        [self.layer addSublayer:ball];
+        [balls addObject:ball];
+    }
+    self.cyl_balls = balls;
+    self.isAccessibilityElement = YES;
+}
+
+- (void)placeSubviews
+{
+    [super placeSubviews];
+    // [EN] As BallPulseFooter.dispatchDraw: three balls with 4-point gaps, centered. [CN] 与 BallPulseFooter.dispatchDraw 相同：间隔 4 点的三个小球，居中。
+    CGFloat spacing = 4;
+    CGFloat radius = (MIN(self.cyl_w, self.cyl_h) - spacing * 2) / 6;
+    CGFloat x = self.cyl_w / 2 - (radius * 2 + spacing);
+    for (NSInteger i = 0; i < (NSInteger)self.cyl_balls.count; i++) {
+        CAShapeLayer *ball = self.cyl_balls[i];
+        ball.bounds = CGRectMake(0, 0, radius * 2, radius * 2);
+        ball.position = CGPointMake(x + i * (radius * 2 + spacing), self.cyl_h / 2);
+        ball.path = [UIBezierPath bezierPathWithOvalInRect:ball.bounds].CGPath;
+    }
+}
+
+- (void)setNormalColor:(UIColor *)normalColor
+{
+    _normalColor = normalColor;
+    if (self.state != CYLRefreshStateRefreshing) [self cyl_fillBalls:normalColor];
+}
+
+- (void)setAnimatingColor:(UIColor *)animatingColor
+{
+    _animatingColor = animatingColor;
+    if (self.state == CYLRefreshStateRefreshing) [self cyl_fillBalls:animatingColor];
+}
+
+- (void)cyl_fillBalls:(UIColor *)color
+{
+    for (CAShapeLayer *ball in self.cyl_balls) ball.fillColor = color.CGColor;
+}
+
+- (void)setState:(CYLRefreshState)state
+{
+    CYLRefreshCheckState
+    BOOL loading = state == CYLRefreshStateRefreshing;
+    for (CAShapeLayer *ball in self.cyl_balls) ball.hidden = state == CYLRefreshStateNoMoreData;
+    [self cyl_fillBalls:loading ? self.animatingColor : self.normalColor];
+    self.accessibilityLabel = loading ? [NSBundle cyl_localizedStringForKey:CYLRefreshAutoFooterRefreshingText] : nil;
+    if (loading) {
+        [self cyl_startPulsing];
+    } else {
+        [self cyl_stopPulsing];
+    }
+}
+
+- (void)cyl_startPulsing
+{
+    if (self.cyl_link) return;
+    self.cyl_startTime = CACurrentMediaTime();
+    CYLRefreshBallPulseTicker *ticker = [CYLRefreshBallPulseTicker new];
+    ticker.target = self;
+    self.cyl_link = [CADisplayLink displayLinkWithTarget:ticker selector:@selector(tick:)];
+    [self.cyl_link addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
+}
+
+- (void)cyl_stopPulsing
+{
+    [self.cyl_link invalidate];
+    self.cyl_link = nil;
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    for (CAShapeLayer *ball in self.cyl_balls) ball.transform = CATransform3DIdentity;
+    [CATransaction commit];
+}
+
+/// [EN] One frame: each ball scales on a 0.75 s accelerate-decelerate cycle, 0.12 s after the previous one (as Android).
+/// [CN] 一帧：每个小球按 0.75 秒的先加速后减速周期缩放，比前一个晚 0.12 秒（与 Android 相同）。
+- (void)cyl_tick
+{
+    CFTimeInterval now = CACurrentMediaTime();
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    for (NSInteger i = 0; i < (NSInteger)self.cyl_balls.count; i++) {
+        CFTimeInterval time = now - self.cyl_startTime - 0.12 * (i + 1);
+        CGFloat linear = time > 0 ? fmod(time, 0.75) / 0.75 : 0;
+        CGFloat percent = cos((linear + 1) * M_PI) / 2 + 0.5;
+        CGFloat scale = percent < 0.5 ? 1 - percent * 2 * 0.7 : percent * 2 * 0.7 - 0.4;
+        self.cyl_balls[i].transform = CATransform3DMakeScale(scale, scale, 1);
+    }
+    [CATransaction commit];
+}
+
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+    [super willMoveToWindow:newWindow];
+    if (!newWindow) [self cyl_stopPulsing];
+    else if (self.state == CYLRefreshStateRefreshing) [self cyl_startPulsing];
+}
+
+- (void)dealloc
+{
+    [_cyl_link invalidate];
+}
+
 @end
 
 @implementation CYLRefreshTaurusFooter

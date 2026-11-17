@@ -6,10 +6,10 @@
 
 #import "CYLRefreshValueAnimator.h"
 
-#define kCircleSize 40
+#define kCircleSize ([self cyl_circleSize])
 
-#define kMaxArrowSize       2
-#define kMaxArrowRadius     8
+#define kMaxArrowSize       (2 * [self cyl_circleSize] / 40.0)
+#define kMaxArrowRadius     (8 * [self cyl_circleSize] / 40.0)
 
 #define MAX_PROGRESS_ANGLE  0.8f
 #define MAX_PROGRESS_ARC    0.8f
@@ -52,6 +52,30 @@
 @end
 
 @implementation CYLRefreshMaterialHeader
+
+/// [EN] The circle's diameter for progressSize. [CN] progressSize 对应的圆直径。
+- (CGFloat)cyl_circleSize
+{
+    return self.progressSize == CYLRefreshMaterialSizeLarge ? 56 : 40;
+}
+
+- (void)setProgressSize:(CYLRefreshMaterialSize)progressSize
+{
+    if (_progressSize == progressSize) return;
+    _progressSize = progressSize;
+    self.height = kCircleSize * 2;
+    [self setNeedsLayout];
+}
+
+- (NSArray<UIColor *> *)colorSchemeColors
+{
+    return self.aniSchemeColors;
+}
+
+- (void)setColorSchemeColors:(NSArray<UIColor *> *)colorSchemeColors
+{
+    self.aniSchemeColors = colorSchemeColors;
+}
 
 /**
  * 初始化参数

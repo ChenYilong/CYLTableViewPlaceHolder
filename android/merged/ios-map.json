@@ -991,5 +991,33 @@
  "DefaultRefreshInitializer.initialize": {
   "ios": "`CYLRefreshConfig` `defaultInitializer`",
   "note": "added 2026-11-17 for Android parity"
+ },
+ "BallPulseFooter": {
+  "ios": "`CYLRefreshBallPulseFooter`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "MaterialProgressDrawable.setColorSchemeColors": {
+  "ios": "`CYLRefreshMaterialHeader` `colorSchemeColors`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "MaterialProgressDrawable.updateSizes": {
+  "ios": "`CYLRefreshMaterialHeader` `progressSize`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "MaterialProgressDrawable.ProgressDrawableSize": {
+  "ios": "`CYLRefreshMaterialSize`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "MaterialProgressDrawable.LARGE": {
+  "ios": "`CYLRefreshMaterialSizeLarge`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "MaterialProgressDrawable.DEFAULT": {
+  "ios": "`CYLRefreshMaterialSizeDefault`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "WaveView.setShadow": {
+  "ios": "`CYLRefreshWaveSwipeHeader` `waveShadowRadius` / `waveShadowColor`",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

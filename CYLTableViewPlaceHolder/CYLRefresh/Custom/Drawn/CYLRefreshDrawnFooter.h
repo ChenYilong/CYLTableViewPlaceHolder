@@ -9,6 +9,7 @@
 
 #import "CYLRefreshBackStateFooter.h"
 #import "CYLRefreshDrawnHeader.h"
+#import "CYLRefreshAutoFooter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -63,6 +64,21 @@ NS_ASSUME_NONNULL_BEGIN
  * [EN] flutter_easy_refresh's `TaurusFooter`, drawn by CYLRefreshTaurusHeader. [CN] flutter_easy_refresh 的 `TaurusFooter`，由 CYLRefreshTaurusHeader 绘制。
  */
 @interface CYLRefreshTaurusFooter : CYLRefreshDrawnFooter
+@end
+
+/*!
+ * [EN] Three balls that pulse in turn while loading more; an auto footer (Android SmartRefreshLayout's
+ *      `BallPulseFooter`). [CN] 加载更多时依次跳动的三个小球；自动加载尾部（对应 Android SmartRefreshLayout 的 `BallPulseFooter`）。
+ */
+@interface CYLRefreshBallPulseFooter : CYLRefreshAutoFooter
+/*!
+ * [EN] The balls' color while idle; default #EEEEEE (`setNormalColor`). [CN] 空闲时小球的颜色；默认 #EEEEEE（`setNormalColor`）。
+ */
+@property (strong, nonatomic) UIColor *normalColor;
+/*!
+ * [EN] The balls' color while loading; default #E75946 (`setAnimatingColor`). [CN] 加载时小球的颜色；默认 #E75946（`setAnimatingColor`）。
+ */
+@property (strong, nonatomic) UIColor *animatingColor;
 @end
 
 NS_ASSUME_NONNULL_END

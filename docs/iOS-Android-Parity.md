@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (637 counted rows, 0 TODO, 194 n/a).
+**Score: 100 / 100** (645 counted rows, 0 TODO, 194 n/a).
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -448,6 +448,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshDeliveryFooter` | flutter_easy_refresh's `DeliveryFooter`, drawn by CYLRefreshDeliveryHeader. | `com.cyl.refresh.CYLRefreshDeliveryFooter` |
 | `CYLRefreshPhoenixFooter` | flutter_easy_refresh's `PhoenixFooter`, drawn by CYLRefreshPhoenixHeader. | `com.cyl.refresh.CYLRefreshPhoenixFooter` |
 | `CYLRefreshTaurusFooter` | flutter_easy_refresh's `TaurusFooter`, drawn by CYLRefreshTaurusHeader. | `com.cyl.refresh.CYLRefreshTaurusFooter` |
+| `CYLRefreshBallPulseFooter` | Three balls that pulse in turn while loading more; an auto footer (Android SmartRefreshLayout's `BallPulseFooter`). | `com.cyl.refresh.footer.BallPulseFooter` — added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `normalColor` | The balls' color while idle; default #EEEEEE (`setNormalColor`). | `com.cyl.refresh.footer.BallPulseFooter.setNormalColor` — added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `animatingColor` | The balls' color while loading; default #E75946 (`setAnimatingColor`). | `com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -513,7 +516,10 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
+| `CYLRefreshMaterialSize` | The Material spinner's size (Android MaterialProgressDrawable's `DEFAULT` and `LARGE`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize` — added 2026-11-17 for Android parity |
 | `CYLRefreshMaterialHeader` | The Material Design swipe-refresh spinner, floating in front of the content. | `com.cyl.refresh.CYLRefreshMaterialHeader` |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | The colors the arc takes in turn while refreshing; an empty array is ignored (Android MaterialProgressDrawable's `setColorSchemeColors`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)` — added 2026-11-17 for Android parity |
+| `CYLRefreshMaterialHeader` `progressSize` | The spinner's size; changing it sets the header height to twice the circle (Android MaterialProgressDrawable's `updateSizes`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
@@ -556,6 +562,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshWaveSwipeHeader` | A wave pulled down from the top, with a spinner in its drop (after WaveSwipeRefreshLayout); floats in front of the content. | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | The blur radius of the wave's and the drop's shadow, in points; default 1.5 (Android WaveView's `setShadow(radius, color)`). | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)` — added 2026-11-17 for Android parity |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | The color of the wave's and the drop's shadow; default black at 30% (Android WaveView's `setShadow(radius, color)`). | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 

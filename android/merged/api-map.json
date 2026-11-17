@@ -3459,5 +3459,45 @@
   "status": "done",
   "android": "com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)",
   "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter normalColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter.setNormalColor",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter animatingColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialSize": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialHeader colorSchemeColors": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialHeader progressSize": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshWaveSwipeHeader waveShadowRadius": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshWaveSwipeHeader waveShadowColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

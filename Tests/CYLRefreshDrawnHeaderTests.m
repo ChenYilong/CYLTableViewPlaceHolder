@@ -390,4 +390,41 @@
     }
 }
 
+#pragma mark - Android parity options (docs/iOS-API-Map.md)
+
+- (void)testMaterialColorsAndSize {
+    CYLRefreshMaterialHeader *header = [CYLRefreshMaterialHeader new];
+    XCTAssertEqual(header.progressSize, CYLRefreshMaterialSizeDefault);
+    CGFloat defaultHeight = header.cyl_h;
+    header.progressSize = CYLRefreshMaterialSizeLarge;
+    XCTAssertGreaterThan(header.cyl_h, defaultHeight, @"LARGE is a bigger circle");
+    NSArray<UIColor *> *colors = @[UIColor.redColor, UIColor.greenColor];
+    header.colorSchemeColors = colors;
+    XCTAssertEqualObjects(header.colorSchemeColors, colors);
+    header.colorSchemeColors = @[];
+    XCTAssertEqualObjects(header.colorSchemeColors, colors, @"an empty list is ignored");
+}
+
+- (void)testWaveSwipeShadow {
+    CYLRefreshWaveSwipeHeader *header = [CYLRefreshWaveSwipeHeader new];
+    XCTAssertEqualWithAccuracy(header.waveShadowRadius, 1.5, 0.001);
+    header.waveShadowRadius = 4;
+    header.waveShadowColor = [UIColor.blueColor colorWithAlphaComponent:0.5];
+    XCTAssertEqualWithAccuracy(header.waveShadowRadius, 4, 0.001);
+    XCTAssertEqualWithAccuracy(CGColorGetAlpha(header.waveShadowColor.CGColor), 0.5, 0.01);
+}
+
+- (void)testBallPulseFooterLoadsAndStops {
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    scrollView.contentSize = CGSizeMake(320, 2000);
+    CYLRefreshBallPulseFooter *footer = [CYLRefreshBallPulseFooter footerWithRefreshingBlock:^{}];
+    scrollView.cyl_footer = footer;
+    footer.animatingColor = UIColor.orangeColor;
+    footer.state = CYLRefreshStateRefreshing;
+    XCTAssertTrue(footer.isRefreshing);
+    footer.state = CYLRefreshStateNoMoreData;
+    XCTAssertEqual(footer.state, CYLRefreshStateNoMoreData);
+    footer.state = CYLRefreshStateIdle;
+}
+
 @end
