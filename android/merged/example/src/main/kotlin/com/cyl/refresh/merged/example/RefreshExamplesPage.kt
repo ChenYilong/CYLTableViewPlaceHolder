@@ -330,8 +330,8 @@ class RefreshExamplesPage : StackPage() {
             }
             "example54" -> {
                 // The Rive refresh icon: its "refresh" artboard rests while pulling and turns while refreshing.
-                val resting = animation("CYLRefreshIcon.riv?artboard=refresh&animation=idle")
-                val turning = animation("CYLRefreshIcon.riv?artboard=refresh&animation=active")
+                val resting = animation("CYLRefreshIcon.riv#artboard=refresh&animation=idle")
+                val turning = animation("CYLRefreshIcon.riv#artboard=refresh&animation=active")
                 layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
                     setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
                     setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)

@@ -13,8 +13,9 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import com.cyl.placeholder.CYLPlaceholderAnimationView
+import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStackView
+import com.cyl.tabbar.CYLSize
 
 private fun Context.dp(value: Float) = (value * resources.displayMetrics.density).toInt()
 
@@ -87,39 +88,39 @@ class AnimationsPage : StackPage() {
      */
     private fun detail(folder: String, name: String): View {
         val context = requireContext()
-        val side = context.dp(180f)
+        val side = 180f
         val title = name.substringBeforeLast('.').replace("CYLPlaceholder", "").replace("CYLScenarioExample", "")
-        val url = "asset:$folder/$name" + (RIVE_OPTIONS[name]?.let { "?$it" } ?: "")
-        val animation = CYLPlaceholderAnimationView.withFileURL(context, url, side, side)?.apply {
-            setAnimationRepeatCount(0)
+        val url = "asset:$folder/$name" + (RIVE_OPTIONS[name]?.let { "#$it" } ?: "")
+        // The core's animated icon + title view (a CYLAnimatedItemView): it plays the file through the CYLAnimatedItem
+        // engine, which finds this app's Lottie, libpag and rive-android by reflection.
+        val placeholder = CYLPlaceholderView(context, null, title).apply {
+            iconSizeDp = CYLSize(side, side)
+            contentMargin = 0f
+            animationRepeatCount = 0
             tag = "animation-view"
         }
+        val playable = placeholder.setAnimationFile(url)
+        if (!playable) placeholder.title = "$title\n(no animator for .${name.substringAfterLast('.')})"
         val handler = Handler(Looper.getMainLooper())
         val replay = object : Runnable {
             override fun run() {
-                animation?.stop()
-                animation?.play()
+                placeholder.stopPlaceholderAnimation()
+                placeholder.playPlaceholderAnimation()
                 handler.postDelayed(this, REPLAY_INTERVAL_MS)
             }
         }
         val content = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            if (animation != null) addView(animation, LinearLayout.LayoutParams(side, side))
-            addView(TextView(context).apply {
-                text = if (animation != null) title else "$title\n(no animator for .${name.substringAfterLast('.')})"
-                textSize = 17f
-                gravity = Gravity.CENTER
-                setPadding(0, context.dp(12f), 0, 0)
-            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            addView(placeholder, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-                override fun onViewAttachedToWindow(v: View) { handler.post(replay) }
-                override fun onViewDetachedFromWindow(v: View) { handler.removeCallbacks(replay); animation?.stop() }
+                override fun onViewAttachedToWindow(v: View) { if (playable) handler.post(replay) }
+                override fun onViewDetachedFromWindow(v: View) { handler.removeCallbacks(replay); placeholder.stopPlaceholderAnimation() }
             })
         }
         val replayButton = Button(context).apply {
             text = context.t(R.string.merged_action_replay)
-            setOnClickListener { animation?.stop(); animation?.play() }
+            setOnClickListener { placeholder.stopPlaceholderAnimation(); placeholder.playPlaceholderAnimation() }
         }
         return page(context, bar(context, name, replayButton), content)
     }
@@ -132,14 +133,14 @@ class AnimationsPage : StackPage() {
          * The engines in the order of the iOS page.
          */
         val ENGINES = linkedMapOf(
-            "json" to "Lottie · placeholder-lottie",
-            "pag" to "PAG · placeholder-pag",
-            "riv" to "Rive · placeholder-rive",
-            "gif" to "GIF · Core",
+            "json" to "Lottie · lottie-android",
+            "pag" to "PAG · libpag",
+            "riv" to "Rive · rive-android",
+            "gif" to "GIF · CYLAnimatedItem",
         )
 
         /**
-         * The options some bundled Rive files need (iOS `CYLScenarioAnimationOptions`), as the Rive animator's query.
+         * The options some bundled Rive files need (iOS `CYLScenarioAnimationOptions`), after '#' in the file URL.
          */
         val RIVE_OPTIONS = mapOf(
             "CYLPlaceholderSuccess.riv" to "stateMachine=State%20Machine%201",

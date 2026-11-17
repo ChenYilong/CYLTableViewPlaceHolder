@@ -9,6 +9,7 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.core.Direction
 import app.rive.runtime.kotlin.core.Fit
 import app.rive.runtime.kotlin.core.Loop
+import app.rive.runtime.kotlin.core.Rive
 import com.cyl.refresh.CYLRefreshDrawnHeader
 import com.cyl.refresh.CYLRefreshPhase
 import com.cyl.refresh.CYLRefreshScrollMode
@@ -336,12 +337,23 @@ class CYLRefreshRiveHeader private constructor(
     }
 
     companion object {
+        @Volatile private var riveInitialized = false
+
+        // rive-android needs Rive.init before its first view; its androidx.startup initializer is not in every app
+        // (the module that used to call it, placeholder-rive, is gone): called once here.
+        private fun initializeRive(context: Context) {
+            if (riveInitialized) return
+            riveInitialized = true
+            runCatching { Rive.init(context.applicationContext) }
+        }
+
         /**
          * A header drawn by [style]; null when the file cannot be read (iOS `initWithStyle:`).
          */
         @JvmStatic
         fun create(context: Context, style: CYLRefreshRiveStyle): CYLRefreshRiveHeader? {
             val bytes = style.bytes(context) ?: return null
+            initializeRive(context)
             val view = CYLRiveHeaderView(context, style)
             val fit = if (style.fitsWidth) Fit.FIT_WIDTH else Fit.COVER
             val loaded = runCatching {

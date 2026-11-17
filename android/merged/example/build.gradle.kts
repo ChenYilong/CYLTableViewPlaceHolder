@@ -35,10 +35,12 @@ android {
 
 dependencies {
     implementation(project(":merged"))
-    // The animation players of the animated-icon examples (example32, example51–56): Lottie, PAG, Rive; GIF is built in.
-    implementation(project(":placeholder-lottie"))
-    implementation(project(":placeholder-pag"))
-    implementation(project(":placeholder-rive"))
+    // The animation libraries of the animated-icon examples (example32, example51–56). The core depends on none: the
+    // CYLAnimatedItem engine of CYLTabBarController (under CYLPlaceholderView) finds Lottie, libpag and rive-android by
+    // reflection once the app adds them, and shows the static image otherwise. GIF needs no library.
+    implementation(libs.lottie)
+    implementation(libs.libpag)
+    implementation(libs.rive)
     // The Rive refresh styles of the SmartRefresh section.
     implementation(project(":merged-rive"))
     implementation("io.github.chenyilong:cyltabbar")

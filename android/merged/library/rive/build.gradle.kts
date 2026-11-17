@@ -38,8 +38,6 @@ android {
 
 dependencies {
     api(project(":merged"))
-    // The Rive runtime start-up and the asset loading of the placeholder's Rive animator.
-    api(project(":placeholder-rive"))
     api(libs.rive)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
