@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### 已完成（90 / 100）：占位图标题默认居中，图标与标题中心线对齐 / Done (90 / 100): Placeholder titles centered by default; the icon and the title share one center line
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "新issue，placeholder的占位title，默认应该局中，包括单行以及多行。重点查看非iOS端效果，与iOS端局中逻辑保持一致。如果iOS也不局中同样更新iOS为局中。以上为异常截图 标记TODO icon与title总是中心线对齐" (with two screenshots: the mini program's left-aligned wrapped title, the HarmonyOS Celebrate page with the icon left of the title).
+- Requirements: (1) titles centered by default, one line and several; (2) the icon and the title always on one center line; (3) the non-iOS platforms first, following iOS's centering; (4) fix iOS too if it is not centered; (5) record and screenshot first.
+- Acceptance: full marks (100) = every platform measured centered (icon and title center lines equal, wrapped lines centered), fixes in the cores, screenshots before / after, docs, pushed. Pass (60) = the two reported platforms fixed and measured.
+- Done: screenshots saved first (`docs/assets/issue-title-center-*.{png,jpg}`). HarmonyOS: the icon was 14 px left of the title (layout dump), fixed in the core with `isBare: true` on the `CYLAnimatedItemView` (`docs/HarmonyOS.md` E16); after the fix the icon, canvas and text centers are equal (x = 658). Mini program: the screenshot was the 59a1cb0f trial, never committed; 52569d68 centers each wrapped line and draws the title at the same pixels as before (`docs/WeChat-MiniProgram.md`). Android: already centered (x = 539.5 / 540, a two-line text centered). iOS: centered by code (no change needed).
+- Score: 90 / 100. TODO (-5): an iOS simulator screenshot of a multi-line title (Mac session; the code centers it). TODO (-5): an automated HarmonyOS check of the icon / title center lines (today a manual layout dump; the unit tests do not lay out views).
+
 ### 已完成（100 / 100）：重新固定 CYLTabBarController（59a1cb0f，再到 52569d68），小程序改用 cyl-animated-item 的事件与标题属性 / Done (100 / 100): Pin CYLTabBarController (59a1cb0f, then 52569d68); the mini program uses cyl-animated-item's events and title properties
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
@@ -53,6 +62,7 @@
 - Requirements: (1) relay "continue fix TODO" to every active session; (2) continue this session's open TODOs, oldest first, without overlapping other sessions (the Windows session owns the Android / RN / Flutter rows).
 - Context: `docs/HarmonyOS.md` quality score is 93 / 100. Open rows: Q12 (Lottie, PAG, Rive, GIF each play in the Animations tab; Rive crashed on the x86_64 Windows emulator, GIF showed nothing before E12), Q15 (HUD and HUD life cycle pages; the crash was fixed in E5), and two rows marked N/A because no emulator existed: Q17 (dark mode readable) and Q7 (Rive speed). The Mac emulator 127.0.0.1:5559 is arm64-v8a, so Rive runs there.
 - Acceptance: full marks (100) = Q12, Q15, Q17 checked on the emulator with labeled screenshots in `docs/assets`; Q7 implemented (or a documented reason it cannot be) and checked; `node scripts/harmony-quality-score.js` rerun; pushed. Pass (60) = Q12 and Q15 checked with screenshots and the score rerun.
+- Progress (2026-11-18): Q12 done (Lottie, PAG, Rive, GIF draw; Rive does not crash on arm64), Q15 done (HUD page, HUD states, life cycle, status bar); quality score 93 → 96 (`node scripts/harmony-quality-score.js`). Q17 fails: the example keeps white backgrounds in dark mode while system text turns white (screenshot in `docs/HarmonyOS.md`); fixing with dark-aware color resources next. Found on the way, TODO: `CYLScenarioExampleMoonlight.pag` draws nothing. Q7 (Rive speed) after Q17.
 
 ### 已完成（90 / 100）：模拟器重启后继续中断的设备测试 / Done (90 / 100): Continue the on-device checks interrupted by the hung emulator
 
