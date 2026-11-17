@@ -112,11 +112,10 @@ the integrated `CYLRefresh` component, and an example application. Read
 - The example's plus button bulges by default: its top edge is above the tab bar's top edge
   (`CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset`, tappable through `touchableAreaOutsets`); a flat
   plus button needs the task to ask for it.
-- Every example Podfile (`Examples/*/Podfile`) also contains `pod 'MJRefresh', '<latest version>'`, the
-  highest stable version on the CocoaPods trunk, set with `scripts/resolve-mjrefresh-version.sh` before every
-  build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
-  breaks a build, fix the code in `CYLRefresh/` until it builds; never pin an older MJRefresh. See "Depending
-  on MJRefresh in the examples" in `instructions.md`.
+- CYLRefresh is the only refresh library and the only refresh kernel on every platform: no example or core module
+  depends on MJRefresh, SVPullToRefresh, SmartRefreshLayout, android-Ultra-Pull-To-Refresh or easy_refresh, and every
+  example refresh call goes through CYLRefresh; a missing feature is added to CYLRefresh. See "One refresh library:
+  CYLRefresh" in `instructions.md`.
 - Fix bugs in the core first (`instructions.md`, "Fix bugs in the core first"): the core is the code published to a
   package registry (CocoaPods, Maven / Gradle, npm, ohpm, pub.dev). Fix an issue or bug there so every app avoids it;
   fixing it only in an example is the worst option. If the core cannot fix it, ask the owner and say why, then record

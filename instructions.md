@@ -319,38 +319,21 @@ integrates it the same way:
   built in code) does so only when the task asks for it, and says why in a
   comment where the tab bar controller is created.
 
-## Depending on MJRefresh in the examples
+## One refresh library: CYLRefresh
 
-`CYLRefresh` is adapted from MJRefresh. So that an example always builds and runs with the original library
-next to it (name clashes, duplicate symbols, the "MJRefresh controls stay above the placeholder" behavior),
-**every example's Podfile also contains MJRefresh at its latest version**, in the app target:
+`CYLRefresh` is the only refresh library and the only refresh kernel on every platform (the owner's decision of
+2026-11-17: "remove any non-CYLRefresh dependency ... make sure CYLRefresh is the only kernel"):
 
-```ruby
-pod 'MJRefresh', '<latest version>'
-```
-
-- **"Latest version" means the highest stable version on the CocoaPods trunk** (digits and dots only, no
-  pre-release), not a `~>` range and not the newest GitHub tag. Find it before every build and write the exact
-  version into every example Podfile:
-
-  ```sh
-  scripts/resolve-mjrefresh-version.sh                           # prints the version
-  scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile
-  ```
-
-  The script reads the CocoaPods CDN index, the one `pod` resolves from, so it needs only `curl`.
-  `scripts/ci-build-example.sh` runs it before `pod install`, so CI always builds with the newest version.
-- Run `pod install`; when a `Podfile.lock` pins an older version, `pod update MJRefresh`.
-- **Check that the example still compiles and launches**: the `Demo` CI job builds it and saves a screenshot
-  ("CI example screenshots"). Report the version that was built.
-- **If it does not compile, link or launch, change the code in `CYLTableViewPlaceHolder/CYLRefresh/`** (the
-  adapted copy of MJRefresh) and build again, repeating until every example builds and launches. Never pin
-  an older MJRefresh to get green. Keep each fix compatible (the public API rules still apply), record the
-  cause and the change in `docs/issue-progress.md`, and add a test when the failure can be reproduced. A
-  cause outside `CYLRefresh/` is fixed where it is and named in the report; a defect inside MJRefresh itself
-  is worked around on our side and reported.
-- The main app at the repository root (`Examples/Example`, built through the root `Podfile`) embeds the
-  project's own framework target and promises no `pod install`; it is not covered by this rule.
+- No example and no core module depends on another refresh library: no MJRefresh, SVPullToRefresh,
+  SmartRefreshLayout / SmartRefreshControl, android-Ultra-Pull-To-Refresh or easy_refresh package in a Podfile,
+  Gradle file, package.json or oh-package. Every refresh call in an example goes through CYLRefresh
+  (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls).
+- A feature such a library has and CYLRefresh lacks is added to CYLRefresh (a new control, or a CYLRefresh API with a
+  new parameter), never brought in with the library. Code adapted from one keeps its license and attribution.
+- Until 2026-11-17 every example Podfile also listed `pod 'MJRefresh'` at its latest version to check that both
+  libraries build side by side; that rule and `scripts/resolve-mjrefresh-version.sh` are gone. The placeholder still
+  keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.m` looks the class up by
+  name), which needs no dependency.
 
 ## Swift examples and a Swift-friendly core
 

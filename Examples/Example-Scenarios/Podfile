@@ -6,9 +6,7 @@ use_frameworks!
 target 'ExampleScenarios' do
   # Every animation engine, so the demo can play the bundled Lottie, PAG, Rive and GIF placeholders.
   pod 'CYLTableViewPlaceHolder', :path => '../..', :subspecs => ['Core', 'LottieSwift', 'PAG', 'Rive', 'GIF']
-  # The original library CYLRefresh is adapted from, always at its latest version (scripts/resolve-mjrefresh-version.sh
-  # sets it before every build; instructions.md, "Depending on MJRefresh in the examples").
-  pod 'MJRefresh', '3.7.9'
+  # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
   # The tab bar with the plus button and the language rebuild (`cyl_setRootViewControllerProvider`), as in
   # CYLTabBarController's Objective-C demo. Always its newest commit on any branch (instructions.md, "Depending on
   # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh rewrites the commit before every build.
