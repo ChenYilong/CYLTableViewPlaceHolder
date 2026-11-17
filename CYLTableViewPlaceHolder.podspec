@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   # Placeholder view, automatic table/collection integration, CYLPlaceholderHUD and CYLRefresh. `CYLPlaceholderView` (the
-  # packaged icon + title view) is a subclass of CYLTabBarController's `CYLAnimatedItemView` (docs/Animated-Item.md in
-  # CYLTabBarController), so Core depends on its `CYLAnimatedItem` subspec: static images, no animation engine. An
+  # packaged icon + title view) is a subclass of CYLTabBarController's `CYLAnimatedItemView` (integration guide:
+  # https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md), so Core depends on its `CYLAnimatedItem` subspec: static images, no animation engine. An
   # animation file plays only when the app adds an animation subspec below (or CYLTabBarController's own
   # `CYLAnimatedItem<Type>` subspec); without one, the view shows its static image.
   s.subspec 'Core' do |core|
