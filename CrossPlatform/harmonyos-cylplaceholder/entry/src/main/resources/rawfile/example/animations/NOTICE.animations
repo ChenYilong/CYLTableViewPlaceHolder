@@ -98,3 +98,10 @@ CYLScenarioExampleBroken.gif
   source:  generated for this project (no third-party content)
   license: MIT (this project's LICENSE)
   sha256:  72199f94cc525ed02df17514ff3b83aa6d9e13f47a05a504f3210e946506326b
+
+CYLScenarioExampleHouse.riv
+  source:  https://github.com/ChenYilong/CYLTabBarController (341caebb5538e0b98a3f8f4110e77f2be6f68ecd)
+  path:    Example-SwiftUI-Rive/AnimatedApp/RiveAssets/house.riv (the Design+Code course "SwiftUI Animations", Meng To)
+  license: no license file in the course download; copyright of the original author (see that repository's
+           Example-SwiftUI-Rive/README.md, "Source and license"); same owner, used as a demo only
+  sha256:  632474611244a3ea9cdf455719624bcc0e6684de09f734ade923fe474ba94039

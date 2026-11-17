@@ -1042,7 +1042,9 @@ export class CYLPlaceholderAnimationViewModel implements CYLPlaceholderAnimation
       return fail(CYLPlaceholderAnimationErrorCode.InvalidSize,
         'Animation size must be finite, positive, and no larger than 1000 points.');
     }
-    const stringOptions: Record<string, string> = {};
+    // Options already in the URL's fragment are kept (a placeholder's animationFileName carries them); the explicit
+    // options replace those of the same name.
+    const stringOptions: Record<string, string> = CYLPlaceholderAnimationOptionsOfURL(fileURL);
     const names = Object.keys(options);
     for (let i = 0; i < names.length; i++) {
       const value: Object = options[names[i]];

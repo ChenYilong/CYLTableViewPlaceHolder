@@ -122,6 +122,13 @@ export struct AnimationsTab {
   header() {
     Column() {
       Row() {
+        Text(t('CYLScenarioRiveInputsTitle'))
+          .id('riveInputsButton')
+          .accessibilityRole(AccessibilityRoleType.BUTTON)
+          .fontSize(17)
+          .fontColor(UiColor.teal)
+          .padding({ left: 8, right: 8, top: 6, bottom: 6 })
+          .onClick(() => push(Route.RiveInputs))
         Blank()
         Text(t('CYLScenarioActionSources'))
           .accessibilityRole(AccessibilityRoleType.BUTTON)

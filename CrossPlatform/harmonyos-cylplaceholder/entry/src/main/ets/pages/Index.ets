@@ -19,6 +19,7 @@ import { SupportPage } from './SupportPage';
 import { ConfigurationPage } from './ConfigurationPage';
 import { TextFilePage } from './TextFilePage';
 import { AnimationDetailPage } from './AnimationDetailPage';
+import { RiveInputsPage } from './RiveInputsPage';
 import { FlowDetailPage } from './FlowDetailPage';
 import { CollectionFlowPage } from './CollectionFlowPage';
 import { StatusBarPage } from './StatusBarPage';
@@ -103,6 +104,8 @@ struct Index {
       TextFilePage({ param: param as RouteParam })
     } else if (name === Route.AnimationDetail) {
       AnimationDetailPage({ param: param as RouteParam })
+    } else if (name === Route.RiveInputs) {
+      RiveInputsPage({ param: param as RouteParam })
     } else if (name === Route.FlowDetail) {
       FlowDetailPage({ param: param as RouteParam })
     } else if (name === Route.CollectionFlow) {
@@ -214,7 +217,7 @@ struct Index {
           .height(BAR_HEIGHT)
           .width('100%')
         }
-        .backgroundColor('#F9F9F9')
+        .backgroundColor(UiColor.tabBar)
         .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
       }
       .width('100%')

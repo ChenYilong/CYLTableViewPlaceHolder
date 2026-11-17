@@ -27,7 +27,7 @@ import {
 } from '../main/ets/CYLPlaceholderAnimation';
 import { CYLAnimatedItemEngines, cylAnimatedItemTypeOf } from 'cylanimateditem';
 import { CYLGIFFrameDurations, CYLGIFIterations, CYLGIFPlaceholderItemAnimator } from '../main/ets/CYLGIFPlaceholderItemAnimator';
-import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
+import { CYLPlaceholderViewModel, CYLScenarioIsLineIcon, CYLScenarioLineIconColor } from '../main/ets/CYLPlaceholderView';
 import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/hud/CYLPlaceholderHUD';
 import {
   CYLPlaceholderComponent,
@@ -315,6 +315,39 @@ export default function placeholderAnimationTest() {
       expect(gif.canAnimateFileAtURL('x.json')).assertFalse();
       expect(gif.attributeKeys[CYLPlaceholderItemAnimationFilePath]).assertEqual(CYLPlaceholderItemGIFFilePath);
       expect(CYLGIFPlaceholderItemAnimator.animator === gif).assertTrue();
+    });
+
+    it('fileURLKeepsItsFragmentOptions', 0, () => {
+      // A placeholder's animationFileName carries the Rive options in its fragment; making the player kept only the
+      // explicit options before (the HarmonyOS Rive inputs page played without numberInput, 2026-11-18).
+      const URL = CYLPlaceholderAnimationURLWithOptions('example/animations/house.riv',
+        { 'stateMachine': 'State Machine 1', 'numberInput': 'Rooms', 'values': '3,4,5,6', 'duration': '99' });
+      let failure = '';
+      CYLPlaceholderAnimationViewModel.initWithFileURLOptions(URL, 10, 10, ImageFit.Contain, {},
+        (e: CYLPlaceholderAnimationError) => { failure = e.message; });
+      // The fragment's out-of-range duration is now seen (it was dropped with the other fragment options before).
+      expect(failure).assertEqual('Rive duration must be between 0 and 60 seconds.');
+      // An explicit option replaces the fragment's one of the same name.
+      failure = '';
+      CYLPlaceholderAnimationViewModel.initWithFileURLOptions(URL, 10, 10, ImageFit.Contain, { 'duration': 1 },
+        (e: CYLPlaceholderAnimationError) => { failure = e.message; });
+      expect(failure === 'Rive duration must be between 0 and 60 seconds.').assertFalse();
+    });
+
+    it('scenarioLineIconsAreGrayForDarkMode', 0, () => {
+      // iOS CYLPlaceholderScenario recolors the black line art ("**.Color", white 0.6) so it reads in dark mode.
+      expect(CYLScenarioLineIconColor).assertEqual('#999999');
+      expect(CYLScenarioIsLineIcon('CYLPlaceholderNoInternet.json')).assertTrue();
+      expect(CYLScenarioIsLineIcon('/data/x/CYLRefreshDoneCircle.json')).assertTrue();
+      expect(CYLScenarioIsLineIcon('CYLPlaceholderEmpty.json')).assertFalse();
+      expect(CYLScenarioIsLineIcon(null)).assertFalse();
+      const icons = CYLPlaceholderScenarioCatalog.componentsForScenario(CYLPlaceholderScenario.NetworkUnavailable)
+        .filter((c: CYLPlaceholderComponent) => c.kind === CYLPlaceholderComponentKind.Item && c.animationFileName !== null);
+      const line = CYLPlaceholderViewModel.initWithComponent(icons[0]);
+      expect(line.animationColors !== null && line.animationColors['**.Color'] === CYLScenarioLineIconColor).assertTrue();
+      const empty = CYLPlaceholderViewModel.initWithComponent(CYLPlaceholderComponent.componentWithBundledAnimation(
+        'CYLPlaceholderEmpty.json', CYLPlaceholderStyle.Empty, null, 0, null));
+      expect(empty.animationColors === null).assertTrue();
     });
 
     it('placeholderPlaysWithFactoriesAndFallsBack', 0, () => {

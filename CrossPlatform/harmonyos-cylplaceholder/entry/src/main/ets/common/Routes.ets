@@ -7,6 +7,7 @@ export class Route {
   static readonly Configuration: string = 'Configuration';
   static readonly TextFile: string = 'TextFile';
   static readonly AnimationDetail: string = 'AnimationDetail';
+  static readonly RiveInputs: string = 'RiveInputs';
   static readonly FlowDetail: string = 'FlowDetail';
   static readonly CollectionFlow: string = 'CollectionFlow';
   static readonly StatusBar: string = 'StatusBar';
