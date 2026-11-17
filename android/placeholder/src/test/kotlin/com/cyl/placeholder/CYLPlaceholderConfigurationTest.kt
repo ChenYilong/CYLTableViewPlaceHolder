@@ -156,7 +156,7 @@ class CYLPlaceholderConfigurationTest {
         assertTrue("the extra keys need the packaged view", first is CYLPlaceholderView)
         assertEquals("Rich item", first.contentDescription)
         assertEquals("Rich", stack.titleLabel.text.toString())
-        assertFalse("a plain component keeps the light layout", stack.componentViews[1] is CYLPlaceholderView)
+        assertTrue("every item is a CYLPlaceholderView, the one animation component", stack.componentViews[1] is CYLPlaceholderView)
     }
 
     @Test

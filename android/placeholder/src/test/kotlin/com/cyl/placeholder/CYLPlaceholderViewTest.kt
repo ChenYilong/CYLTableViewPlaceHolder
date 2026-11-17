@@ -110,10 +110,13 @@ class CYLPlaceholderViewTest {
         val sequence = view.imageView.drawable as android.graphics.drawable.AnimationDrawable
         assertEquals(3, sequence.numberOfFrames)
         assertEquals(View.VISIBLE, view.imageView.visibility)
+        // [EN] AnimationDrawable keeps its own copy of each frame: compare with its frame list.
         view.setPlaceholderAnimationProgress(1f)
-        assertSame(frames[2], sequence.current)
+        assertSame(sequence.getFrame(2), sequence.current)
+        view.setPlaceholderAnimationProgress(0f)
+        assertSame(sequence.getFrame(0), sequence.current)
         view.showPlaceholderAnimationLastFrame()
-        assertSame(frames[2], sequence.current)
+        assertSame(sequence.getFrame(2), sequence.current)
         assertEquals(frames, view.itemAttributes["CYLPlaceholderItemImages"])
         val one = CYLPlaceholderView(context, null, null)
         assertTrue(one.setAnimationImages(listOf(frames[0])))
