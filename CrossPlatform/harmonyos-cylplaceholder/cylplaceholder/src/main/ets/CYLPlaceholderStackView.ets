@@ -36,6 +36,12 @@ export class CYLPlaceholderStackEntry {
   }
 }
 
+/**
+ * The next ForEach key of a stack entry, unique across every stack model: a page that swaps in a new model (Flows →
+ * state switching) must not get the old model's keys, or ForEach keeps the old rows (docs/HarmonyOS.md, E13).
+ */
+let cylNextStackEntryKey: number = 0;
+
 /** The state of a CYLPlaceholderStackView. */
 @Observed
 export class CYLPlaceholderStackViewModel {
@@ -50,7 +56,6 @@ export class CYLPlaceholderStackViewModel {
   /** The component id of the view (a configuration's "accessibilityIdentifier"); "" for none. */
   accessibilityIdentifier: string = '';
   private handlers: Map<CYLPlaceholderAction, CYLPlaceholderActionHandler> = new Map();
-  private nextKey: number = 0;
 
   /** Every component view, the reserved one first. */
   get componentViews(): CYLPlaceholderViewModel[] {
@@ -216,7 +221,7 @@ export class CYLPlaceholderStackViewModel {
         }
       };
     }
-    this.entries = this.entries.concat([new CYLPlaceholderStackEntry(view, action, spacingBefore, this.nextKey++)]);
+    this.entries = this.entries.concat([new CYLPlaceholderStackEntry(view, action, spacingBefore, cylNextStackEntryKey++)]);
   }
 
   /** Sets or, with null, removes the handler of an action. */

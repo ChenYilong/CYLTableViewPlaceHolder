@@ -86,6 +86,11 @@ Steps:
 
    No match means the change did not stick: repeat with DevEco Studio closed.
 5. Start DevEco Studio, open Device Manager, and download / start the HarmonyOS 6.0.1 phone emulator.
+6. **Check the region again before every emulator start.** A DevEco Studio that was open while the file was edited
+   writes its own region back when it exits: on 2026-11-17 the file said `NZ` again although it had been set to
+   `CN` the day before. Before starting the emulator (from Device Manager or from the command line, `Emulator.exe
+   -hvd "<device>" -path "%LOCALAPPDATA%HuaweiEmulatordeployed"`), run the check in step 4; if it says `NZ`, quit
+   DevEco Studio, set `CN` again, and only then start DevEco Studio and the emulator.
 
 The region is first chosen in the IDE at first launch; editing the file is the reliable fix once the IDE has picked
 another region (NZ on the owner's machine).

@@ -1,5 +1,6 @@
 // Local (host) unit tests of the non-UI placeholder core: localization, scenarios, components and styles.
 import { describe, expect, it } from '@ohos/hypium';
+import { CYLPlaceholderStackViewModel } from '../main/ets/CYLPlaceholderStackView';
 import { CYLPlaceholderLocalization } from '../main/ets/CYLPlaceholderLocalization';
 import {
   CYLPlaceholderActions,
@@ -134,6 +135,13 @@ export default function placeholderCoreTest() {
       expect(CYLPlaceholderStyleNamed('cloud_off')).assertEqual(CYLPlaceholderStyle.CloudOff);
       expect(CYLPlaceholderLocalizedTextForMessage(CYLPlaceholderMessage.NoInternet) !== null).assertTrue();
       expect(CYLPlaceholderLocalizedTextForMessage(CYLPlaceholderMessage.Count) === null).assertTrue();
+    });
+    it('keysStackRowsUniquelyAcrossModels', 0, () => {
+      // E13: a page that swaps in a new model must not reuse the old model's ForEach keys.
+      const first = CYLPlaceholderStackViewModel.initWithScenario(CYLPlaceholderScenario.NoContent);
+      const second = CYLPlaceholderStackViewModel.initWithScenario(CYLPlaceholderScenario.RetryButton);
+      const firstKeys = first.entries.map((e) => e.key);
+      second.entries.forEach((e) => expect(firstKeys.includes(e.key)).assertFalse());
     });
   });
 }

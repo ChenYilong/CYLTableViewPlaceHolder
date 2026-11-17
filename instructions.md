@@ -507,7 +507,9 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   `~/Library/Application Support/Huawei/DevEcoStudio6.0/options/country.region.xml`). With DevEco Studio closed,
   back the file up (for example `country.region.xml.bak-NZ` when it was New Zealand) and change the region to China
   (CN). Make sure the region file now says China: `<countryregion name="CN"/>`; without it Device Manager offers no
-  emulator.
+  emulator. **Check it again before every emulator start**: a DevEco Studio left open while the file is edited writes
+  its own region back on exit (2026-11-17 it said `NZ` again), so quit DevEco Studio, set `CN`, then start it and the
+  emulator (skill `cyl-harmonyos-setup`, section 3).
 
 ### HarmonyOS accessibility and localization (owner's rule, 2026-11-16)
 
