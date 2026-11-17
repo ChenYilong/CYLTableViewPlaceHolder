@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### TODO：重新固定 CYLTabBarController 59a1cb0f，小程序改用 cyl-animated-item 的事件与标题属性 / TODO: Pin CYLTabBarController 59a1cb0f; the mini program uses cyl-animated-item's events and title properties
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- Prompt (relayed from the owner by Mac-CYLTabBarController 小程序开发, verbatim): "both cyl-animated-item requests landed on feat/cross-platform-components in 59a1cb0f. (1) Events with the engine's detail: `animationready`, `animationcomplete`, `animationloopcomplete`, `animationerror` ... (2) Properties `titleColor`, `titleFontSize`, `titleLines` ... Please repin, drop your workaround, and tell me if anything renders wrong."
+- Requirements: (1) repin to 59a1cb0f (Cartfile, Podfiles, the copied component); (2) count `repeatCount` passes from `bind:animationcomplete` and drop the `cyl_animation()` listener; (3) move `cyl-placeholder`'s icon title into the item through `title-color` / `title-font-size` / `title-lines` where it renders the same; (4) check in WeChat DevTools and report rendering problems upstream.
+- Acceptance: full marks (100) = all four, `npm test` green, DevTools screenshots (playback policies once / three times / loop, a titled icon), the HarmonyOS and Android checks still pass at the new pin, docs updated, pushed. Pass (60) = (1) and (2) with tests and a DevTools check of the playback policies.
+
 ### 已完成（90 / 100）：继续最早的非 iOS TODO：小程序 cyl-animated-item 剩余项 / Done (90 / 100): Continue the oldest non-iOS TODO: the mini program cyl-animated-item leftovers
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
