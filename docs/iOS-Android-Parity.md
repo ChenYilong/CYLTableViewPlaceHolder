@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (726 counted rows, 0 TODO, 199 n/a).
+**Score: 100 / 100** (728 counted rows, 0 TODO, 200 n/a).
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -316,6 +316,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | Pulling past the end loads again after "no more data": the footer resets and refreshes (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO. | `CYLRefreshFooter.loadsAfterNoMoreData` — clears "no more data" shortly after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | The bottom inset the footer ignores, in dp: the layout's footer inset start. | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshFooter`. | n/a (iOS only: deprecated iOS aliases) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | The image shown beside the text in the no-more-data state, kept once for both normal footers (`CYLRefreshAutoNormalFooter` / `CYLRefreshBackNormalFooter`, whose `noMoreDataImage` uses it). | `CYLRefreshAutoNormalFooter.noMoreDataImage` — Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | Shows `image` only in the no-more-data state (nil hides it); call when the image or the state changes. | `CYLRefreshAutoNormalFooter.noMoreDataImage` — Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | Places the image left of `label`'s text (`inset` apart), at `size` or, when zero, the image's own size; call from `placeSubviews`. | n/a (iOS only: an iOS layout helper; Android lays the image out in the classic footer view) |
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
 

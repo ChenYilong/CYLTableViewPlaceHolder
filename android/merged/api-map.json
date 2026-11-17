@@ -3840,5 +3840,19 @@
  "CYLRefreshStateTrailer -titleForState:": {
   "status": "done",
   "android": "CYLRefreshStateTrailer.titleForState"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage)": {
+  "status": "partial",
+  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage",
+  "note": "Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage)"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_updateNoMoreDataImage:": {
+  "status": "partial",
+  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage",
+  "note": "Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage)"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_placeNoMoreDataImageBesideLabel:inset:size:": {
+  "status": "n/a",
+  "note": "an iOS layout helper; Android lays the image out in the classic footer view"
  }
 }

@@ -54,7 +54,7 @@
 | `CYLRefreshAutoStateFooter.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshAutoStateFooter` `-setTitle:forState:` |  |
 | `CYLRefreshAutoStateFooter.titleForState` (fun) | The text of [state] (`titleForState:`). | `CYLRefreshAutoStateFooter` `-titleForState:` |  |
 | `CYLRefreshAutoNormalFooter` (class) | The automatic state footer with a spinner (iOS `CYLRefreshAutoNormalFooter`). | `CYLRefreshAutoNormalFooter` |  |
-| `CYLRefreshAutoNormalFooter.noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`). | `CYLRefreshAutoNormalFooter` `noMoreDataImage` |  |
+| `CYLRefreshAutoNormalFooter.noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`). | `CYLRefreshAutoNormalFooter` `noMoreDataImage`, `CYLRefreshFooter(CYLRefreshNoMoreDataImage)`, `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshAutoNormalFooter.loadingView` (val) | The spinner (`loadingView`). | `CYLRefreshAutoNormalFooter` `loadingView` |  |
 | `CYLRefreshAutoGifFooter` (class) | The automatic state footer with image frames per state (iOS `CYLRefreshAutoGifFooter`). | `CYLRefreshAutoGifFooter` |  |
 | `CYLRefreshAutoGifFooter.gifView` (val) | The view that shows the frames (`gifView`). | `CYLRefreshAutoGifFooter` `gifView` |  |

@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：96 / 100**（done + 0.5 × partial，共 726 个计入的符号；done 665、partial 61、planned 0、n/a 199）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 726 counted symbols; done 665, partial 61, planned 0, n/a 199). |
+| **迁移完成率：96 / 100**（done + 0.5 × partial，共 728 个计入的符号；done 665、partial 63、planned 0、n/a 200）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 728 counted symbols; done 665, partial 63, planned 0, n/a 200). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -316,6 +316,9 @@
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooter.loadsAfterNoMoreData` | partial | clears "no more data" shortly after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` | done |  |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | partial | Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | partial | Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | — | n/a | an iOS layout helper; Android lays the image out in the classic footer view |
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
 

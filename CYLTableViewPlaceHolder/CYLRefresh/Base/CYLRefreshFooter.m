@@ -12,6 +12,8 @@
 #import "UIScrollView+CYLExtension.h"
 
 @interface CYLRefreshFooter()
+/// [EN] The view of `cyl_updateNoMoreDataImage:`. [CN] `cyl_updateNoMoreDataImage:` 的视图。
+@property (weak, nonatomic) UIImageView *cyl_noMoreDataImageView;
 
 @end
 
@@ -120,3 +122,36 @@
 }
 
 @end
+
+@implementation CYLRefreshFooter (CYLRefreshNoMoreDataImage)
+
+- (void)cyl_updateNoMoreDataImage:(UIImage *)image
+{
+    BOOL show = image && self.state == CYLRefreshStateNoMoreData;
+    if (show && !self.cyl_noMoreDataImageView) {
+        // [EN] A system UIImageView, not CYLPlaceholderView: it sits beside stateLabel in place of the system
+        //      arrow / spinner views of the classic footers and shows one small image with no title.
+        // [CN] 用系统 UIImageView 而不是 CYLPlaceholderView：它代替经典刷新尾的系统箭头 / 菊花，放在 stateLabel 旁边，只显示一张小图、没有标题。
+        UIImageView *imageView = [[UIImageView alloc] init];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.isAccessibilityElement = NO;
+        [self addSubview:imageView];
+        self.cyl_noMoreDataImageView = imageView;
+    }
+    self.cyl_noMoreDataImageView.image = image;
+    self.cyl_noMoreDataImageView.hidden = !show;
+    [self setNeedsLayout];
+}
+
+- (void)cyl_placeNoMoreDataImageBesideLabel:(UILabel *)label inset:(CGFloat)inset size:(CGSize)size
+{
+    UIImageView *imageView = self.cyl_noMoreDataImageView;
+    if (!imageView || imageView.hidden) return;
+    imageView.cyl_size = (size.width > 0 && size.height > 0) ? size : imageView.image.size;
+    CGFloat centerX = self.cyl_w * 0.5;
+    if (label && !label.hidden) centerX -= inset + label.cyl_textWidth * 0.5;
+    imageView.center = CGPointMake(centerX, self.cyl_h * 0.5);
+}
+
+@end
+

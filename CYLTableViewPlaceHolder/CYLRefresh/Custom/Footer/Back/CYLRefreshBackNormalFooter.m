@@ -15,7 +15,6 @@
     __unsafe_unretained UIImageView *_arrowView;
 }
 @property (weak, nonatomic) UIActivityIndicatorView *loadingView;
-@property (weak, nonatomic) UIImageView *cyl_noMoreDataImageView;
 @end
 
 @implementation CYLRefreshBackNormalFooter
@@ -151,34 +150,16 @@
     [self cyl_updateNoMoreDataImage];
 }
 
-/// [EN] Shows noMoreDataImage beside the text only in the no-more-data state. [CN] 仅在无更多数据状态时，在文字旁显示 noMoreDataImage。
+/// [EN] Shows noMoreDataImage beside the text only in the no-more-data state (one implementation in CYLRefreshFooter).
+/// [CN] 仅在无更多数据状态时，在文字旁显示 noMoreDataImage（CYLRefreshFooter 中的统一实现）。
 - (void)cyl_updateNoMoreDataImage
 {
-    BOOL show = self.noMoreDataImage && self.state == CYLRefreshStateNoMoreData;
-    if (show && !self.cyl_noMoreDataImageView) {
-        // [EN] A system UIImageView, not CYLPlaceholderView: it sits beside stateLabel in place of the system
-        //      arrow / spinner views of this classic footer and shows one small image with no title.
-        // [CN] 用系统 UIImageView 而不是 CYLPlaceholderView：它代替经典刷新尾的系统箭头 / 菊花，放在 stateLabel 旁边，只显示一张小图、没有标题。
-        UIImageView *imageView = [[UIImageView alloc] init];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
-        imageView.isAccessibilityElement = NO;
-        [self addSubview:imageView];
-        self.cyl_noMoreDataImageView = imageView;
-    }
-    self.cyl_noMoreDataImageView.image = self.noMoreDataImage;
-    self.cyl_noMoreDataImageView.hidden = !show;
-    [self setNeedsLayout];
+    [self cyl_updateNoMoreDataImage:self.noMoreDataImage];
 }
 
 - (void)cyl_placeNoMoreDataImage
 {
-    UIImageView *imageView = self.cyl_noMoreDataImageView;
-    if (!imageView || imageView.hidden) return;
-    CGSize size = (self.iconSize.width > 0 && self.iconSize.height > 0) ? self.iconSize : imageView.image.size;
-    imageView.cyl_size = size;
-    CGFloat centerX = self.cyl_w * 0.5;
-    if (!self.stateLabel.hidden) centerX -= self.labelLeftInset + self.stateLabel.cyl_textWidth * 0.5;
-    imageView.center = CGPointMake(centerX, self.cyl_h * 0.5);
+    [self cyl_placeNoMoreDataImageBesideLabel:self.stateLabel inset:self.labelLeftInset size:self.iconSize];
 }
 
 - (void)setIconSize:(CGSize)iconSize

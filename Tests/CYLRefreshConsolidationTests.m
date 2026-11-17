@@ -41,4 +41,32 @@
     }
 }
 
+- (void)testBothNormalFootersShowTheNoMoreDataImageOnlyWithoutMoreData {
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(12, 12)];
+    UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {}];
+    NSArray<CYLRefreshFooter *> *footers = @[
+        [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}],
+        [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}],
+    ];
+    for (CYLRefreshFooter *footer in footers) {
+        footer.frame = CGRectMake(0, 0, 320, 44);
+        [(id)footer setNoMoreDataImage:image];
+        UIImageView *(^shown)(void) = ^UIImageView * {
+            for (UIView *view in footer.subviews) {
+                if ([view isMemberOfClass:UIImageView.class] && ((UIImageView *)view).image == image && !view.hidden) return (UIImageView *)view;
+            }
+            return nil;
+        };
+        XCTAssertNil(shown(), @"hidden while idle: %@", footer.class);
+        [footer endRefreshingWithNoMoreData];
+        // [EN] The state changes on the next main-queue turn. [CN] 状态在下一个主队列循环中改变。
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
+        while (!shown() && deadline.timeIntervalSinceNow > 0) {
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+            [footer layoutIfNeeded];
+        }
+        XCTAssertNotNil(shown(), @"shown without more data: %@", footer.class);
+    }
+}
+
 @end
