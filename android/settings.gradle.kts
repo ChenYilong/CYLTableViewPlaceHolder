@@ -81,9 +81,10 @@ project(":srl-header").projectDir = file("SmartRefreshLayout/refresh-header")
 // together, and one example app with CYLTabBarController's Android tab bar, one tab per library.
 include(":merged")
 project(":merged").projectDir = file("merged/library")
-// The Rive refresh header (iOS RiveSwift/CYLRefreshRiveHeader.swift).
+// The Rive refresh header (iOS CYLRefresh/Custom/Rive/CYLRefreshRiveHeader.swift): inside the CYLRefresh library folder,
+// a module of its own because it needs the Rive runtime (as the iOS Rive subspec); its Gradle path stays :merged-rive.
 include(":merged-rive")
-project(":merged-rive").projectDir = file("merged/rive")
+project(":merged-rive").projectDir = file("merged/library/rive")
 include(":merged-example")
 project(":merged-example").projectDir = file("merged/example")
 

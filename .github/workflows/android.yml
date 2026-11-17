@@ -39,6 +39,7 @@ jobs:
           :placeholder-lottie:testDebugUnitTest
           :placeholder-rive:testDebugUnitTest
           :merged:testDebugUnitTest
+          :merged-rive:compileDebugKotlin
       # The example's tab bar is CYLTabBarController's Android module, built from source at its latest commit across all
       # branches (instructions.md, "Depending on CYLTabBarController"); Gradle includes it with -PcylTabBarDir.
       - name: CYLTabBarController at its latest commit
