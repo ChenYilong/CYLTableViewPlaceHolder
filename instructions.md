@@ -27,6 +27,58 @@ Before starting any task, write it down in `docs/`, so an interrupted task never
 
 Follow the bilingual documentation rules for the entry; the user's prompt is quoted as written.
 
+### Before the TODO: check the other sessions first
+
+The first step of every task, before the TODO entry and before any change:
+
+1. **List the other sessions and read their tasks** (`ListAgents`, then each session's current task: its last
+   messages, or its `TODO` entries in `docs/`).
+2. **Is another session editing the same branch?**
+   - No: continue with the task.
+   - Yes: check whether the task duplicates theirs (the same files, the same fix, the same verification). Message
+     that session and settle who does what before changing anything; continue only with the part that is not a
+     duplicate, and rebase on their pushed work before pushing.
+
+### TODO and the branch at the top of the session
+
+When a task starts, the session's first reply begins with a `TODO` line and the current branch, for example
+``**TODO** (branch `feat/x`): <the task in one line>``. This is usually the first line of the session, so the owner
+sees at a glance what is being done and where.
+
+### Acceptance criteria and scoring
+
+The task's `TODO` entry in `docs/` also states how the result is scored:
+
+- **Full marks (100):** what the finished task looks like: every requirement done, verified (tests, screenshots) and
+  pushed.
+- **Pass (60):** the minimum that is acceptable: the core requirements done and verified, with only optional parts
+  left.
+- **Score the result** after each step against these criteria and write the score into the entry.
+- **Do not stop below a pass.** A task scored under 60 is not interrupted or handed back: keep working and rescoring
+  until it passes (the only exception is a blocker outside the session's control, such as hardware that is missing;
+  record the blocker in the entry).
+- **Explain any missing points:** when the score is under 100, write in the entry why full marks were not reached.
+- **Print the missing points at the end of the session** as `TODO`s, one per missing part, with the points it is
+  worth, for example `TODO (-10): screen reader check needs a real phone`.
+- **Update the entry written at task start** with the final score, the reasons and the remaining `TODO`s.
+
+## Shared emulators: restart a hung emulator
+
+Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS emulator (`127.0.0.1:5555`).
+
+- **An emulator that stays hung** (adb / hdc commands time out, the package manager does not answer, the screen does
+  not respond) stays hung until it is restarted. **Tell the other sessions first** (`SendMessage`: "taking
+  emulator-5556, restarting it"), **then restart it** from the command line. Do not ask the owner whether to restart.
+- **An emulator that does not open** (it does not boot, or it is not listed by `adb devices` / `hdc list targets`):
+  restarting is the first strategy, before any other fix.
+- **How to restart** (Android): `adb -s emulator-5556 emu kill`, wait for `qemu-system-x86_64` to exit, then a cold
+  boot: `emulator -avd <name> -port 5556 -no-snapshot-load -no-boot-anim`, and wait for
+  `getprop sys.boot_completed` to be `1`. HarmonyOS: close the emulator (`hdc kill`, or end `Emulator.exe` for that
+  device only), then start it again with `Emulator -hvd "<device>" ...` (skill `cyl-harmonyos-setup`).
+- Restart only the hung emulator; leave the other platform's emulator running.
+- **When done, tell the other sessions** ("done, emulator-5556 is free") and stop anything that might hang it again
+  (for example a loop of `adb shell dumpsys` checks).
+
 ## Translating or porting another project: its open pull requests and issues
 
 When a document in this repository links to another project's GitHub repository as the source of a translation, a

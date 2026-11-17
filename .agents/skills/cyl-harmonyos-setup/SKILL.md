@@ -100,3 +100,14 @@ another region (NZ on the owner's machine).
 - Build with `scripts/build.sh`, install the `entry` HAP on the emulator, and follow `instructions.md`
   ("Screenshots of local builds and CI/CD") when recording results.
 - Record emulator results in `docs/HarmonyOS.md`; pages verified only by compiling say "no emulator".
+
+## 5. A hung or unopenable emulator: restart it
+
+- An emulator that stays hung (hdc / adb commands time out, the screen does not respond) stays hung until it is
+  restarted. **Tell the other sessions first** (`SendMessage`: "taking 127.0.0.1:5555, restarting it"), **then
+  restart it** from the command line. Do not ask the owner whether to restart.
+- An emulator that does not open (does not boot, not listed by `hdc list targets`): restarting is the first strategy,
+  before any other fix. Check the region (section 3) before the new start.
+- Restart only the hung emulator (end that device's `Emulator.exe`, then `Emulator -hvd "Mate 70 Pro" ...` again);
+  leave the Android emulator running. Tell the other sessions "done" afterwards.
+- Full rule: `instructions.md`, "Shared emulators: restart a hung emulator".

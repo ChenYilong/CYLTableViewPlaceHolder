@@ -10,6 +10,18 @@ description: Keep project usage, issue tracking, and skills aligned with the Obj
 requirements and the detailed context; commit and push it first. Mark it done (`已完成 / Done`, date, commits,
 verification) when the task ends. See `instructions.md`, "Record every task in docs before starting it".
 
+- **Check the other sessions first** (step one of every task): list them and read their tasks; if one edits the same
+  branch, check whether the task duplicates theirs and settle it with that session before changing anything.
+- **Start with `TODO` and the branch:** the session's first reply begins with a `TODO` line naming the task and the
+  current branch.
+- **Score against acceptance criteria:** the `TODO` entry states what full marks (100) and a pass (60) are. Score
+  after each step; never stop below a pass, keep rescoring until it passes. Write down why full marks were not
+  reached, print the missing points as `TODO`s at the end of the session, and update the entry written at task start.
+- **A hung emulator is restarted:** when a shared emulator stays hung or does not open, tell the other sessions
+  first, then restart it from the command line without asking (restart is the first strategy); say "done" after.
+- See `instructions.md`, "Record every task in docs before starting it" and "Shared emulators: restart a hung
+  emulator".
+
 **Another project as a source** (a translation or port of a linked GitHub repository): the task's document also
 lists that project's open pull requests (merged, translated or not taken, with why) and a table of its open issues
 (issue link, description, status `TODO` by default) with a score that rises after every fixed issue until 100;

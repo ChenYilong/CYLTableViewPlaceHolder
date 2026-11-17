@@ -27,7 +27,7 @@
 
 ## 任务 / Tasks
 
-### TODO：任务开始、评分、其他会话与模拟器重启规则 / TODO: Task start, scoring, other sessions and emulator restart rules
+### 已完成：任务开始、评分、其他会话与模拟器重启规则 / Done: Task start, scoring, other sessions and emulator restart rules
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim): "找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：找到开始任务先标注todo写入文档的相关描述没有就新建该规则，如果有就插入以下规则：开始任务前总是在任务顶部标注TODO 以及当前分支，并找到合适的文档将任务写进docs文档以及验收评分标准什么是满分，什么什么是及格，不达到及格不允许中断任务，一直打分到及格为止。并标注为什么打不到满分，并将缺失的分数以TODO的形式打印在会话结束末端。并更新任务开始时写入的文档。看看 check other sessions first read their task ，第一步看看有没有session在编辑相同分支，如果没有就继续，如果有继续坚持任务是否重复。usually marked as TODO at top of 会话， 遇到 emulator stays hung until it's restarted,  please tell the other sessions first, then restart it. 遇到模拟器打不开的情况优先使用重启策略。无须询问是否重启直接命令行执行重启。"
@@ -43,6 +43,8 @@
   4. A hung emulator: tell the other sessions first, then restart it from the command line without asking; when an emulator does not open, restart it first.
 - Context: the same-branch check for this task was done (the Mac CYLTableViewPlaceHolder session is idle, no overlap). The Android emulator-5556 restart earlier today followed rule 4 by hand.
 - Acceptance: full marks (100) = all four rules in `instructions.md`, `AGENTS.md`, `docs/instructions.md` and the skills `cyl-docs`, `cyl-verify`, `cyl-harmonyos-setup`, in English, pushed. Pass (60) = the rules in `instructions.md` and `AGENTS.md`, pushed.
+- Done 2026-11-18: the four rules are in `instructions.md` ("Before the TODO: check the other sessions first", "TODO and the branch at the top of the session", "Acceptance criteria and scoring", and the new section "Shared emulators: restart a hung emulator"), `AGENTS.md`, `docs/instructions.md` and the skills `cyl-docs`, `cyl-verify` (summary) and `cyl-harmonyos-setup` (section 5, emulator restart). No file was missing, so none was created. Verification: `git diff --check` clean; text read back.
+- Score: 100 / 100 (full marks: every rule in every listed file, in English, pushed). No missing points.
 
 ### 已完成：在 Mac 上验证 SmartRefresh 新 API 并为 iOS 示例截图 / Done: Check the new SmartRefresh APIs on a Mac and screenshot the iOS example
 

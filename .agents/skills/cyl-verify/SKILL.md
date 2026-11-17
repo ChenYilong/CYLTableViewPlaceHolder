@@ -14,6 +14,18 @@ another project").
 Before verifying, the task must already have its `TODO` entry in `docs/` (`instructions.md`, "Record every task in
 docs before starting it"); after verifying, write the results into that entry and mark it done.
 
+- **Check the other sessions first** (step one of every task): list them and read their tasks; if one edits the same
+  branch, check whether the task duplicates theirs and settle it with that session before changing anything.
+- **Start with `TODO` and the branch:** the session's first reply begins with a `TODO` line naming the task and the
+  current branch.
+- **Score against acceptance criteria:** the `TODO` entry states what full marks (100) and a pass (60) are. Score
+  after each step; never stop below a pass, keep rescoring until it passes. Write down why full marks were not
+  reached, print the missing points as `TODO`s at the end of the session, and update the entry written at task start.
+- **A hung emulator is restarted:** when a shared emulator stays hung or does not open, tell the other sessions
+  first, then restart it from the command line without asking (restart is the first strategy); say "done" after.
+- See `instructions.md`, "Record every task in docs before starting it" and "Shared emulators: restart a hung
+  emulator".
+
 New branch: open its pull request right away, without asking, with the source branch as the base (`main` or
 `master` only when that is the source, or the source is gone); see `instructions.md`, "A pull request for every new
 branch":
