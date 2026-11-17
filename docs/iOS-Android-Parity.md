@@ -546,14 +546,14 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshFlyView` | Class. | `com.cyl.refresh.header.flyrefresh.FlyView` — the Android class with the same role; its members are its own |
+| `CYLRefreshFlyView` | The paper plane. | `com.cyl.refresh.header.flyrefresh.FlyView` — the Android class with the same role; its members are its own |
 | `CYLRefreshFlyView` `colorAccent` | Property of `CYLRefreshFlyView`. | n/a (iOS only: an iOS drawing internal; Android draws with FlyView (its own API)) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGamePlayingScene` | Class. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
+| `CYLRefreshGamePlayingScene` | The game headers' curtain and arena, from FunGameRefresh. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
 | `CYLRefreshGamePlayingScene` `title` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGamePlayingScene` `colorAccent` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGamePlayingScene` `colorPrimary` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
@@ -568,7 +568,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGameStartScene` | Class. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
+| `CYLRefreshGameStartScene` | The game headers' curtain and arena, from FunGameRefresh. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
 | `CYLRefreshGameStartScene` `colorAccent` | Property of `CYLRefreshGameStartScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGameStartScene` `colorPrimary` | Property of `CYLRefreshGameStartScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 
@@ -576,7 +576,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshMountainView` | Class. | `com.cyl.refresh.header.flyrefresh.MountainSceneView` — the Android class with the same role; its members are its own |
+| `CYLRefreshMountainView` | Hills and trees behind the paper plane, from FlyRefresh. | `com.cyl.refresh.header.flyrefresh.MountainSceneView` — the Android class with the same role; its members are its own |
 | `CYLRefreshMountainView` `colorAccent` | Property of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
 | `CYLRefreshMountainView` `colorPrimary` | Property of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
 | `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | Method of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
@@ -585,7 +585,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStoreHouseLine` | Class. | `com.cyl.refresh.header.storehouse.StoreHouseBarItem` — the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHouseLine` | One bar of the StoreHouse header, with its fade animation. | `com.cyl.refresh.header.storehouse.StoreHouseBarItem` — the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHouseLine` `start` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
 | `CYLRefreshStoreHouseLine` `end` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
 | `CYLRefreshStoreHouseLine` `middle` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
@@ -598,7 +598,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStoreHousePath` | Class. | `com.cyl.refresh.header.storehouse.StoreHousePath` — the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHousePath` | The StoreHouse header's letters, as line segments. | `com.cyl.refresh.header.storehouse.StoreHousePath` — the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHousePath` `+linesFromArray:` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
 | `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
 | `CYLRefreshStoreHousePath` `+arrayAkta` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
@@ -641,7 +641,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorElement` | Class. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorElement` `identifier` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorElement` `stroke` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorElement` `fill` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
@@ -657,7 +657,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorImage` | Class. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorImage` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorImage` `elements` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorImage` `size` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorImage` `frame` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
@@ -676,7 +676,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorPathElement` | Class. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathElement` `+newWith:` | Method of `CYLRefreshVectorPathElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorPathElement` `pathForShape` | Property of `CYLRefreshVectorPathElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 
@@ -684,8 +684,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshCurveType` | Enumeration. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
-| `CYLRefreshVectorPathsParser` | Class. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
+| `CYLRefreshCurveType` | Parses SVG path data into [Path]s. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathsParser` | Parses SVG path data into [Path]s. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathsParser` `+startingCurve` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
@@ -716,14 +716,14 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorUtilities` | Class. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorUtilities` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | Method of `CYLRefreshVectorUtilities`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorView` | Class. | `com.cyl.refresh.drawable.view.PathsView` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorView` | A view that draws SVG paths; a string tag is parsed as path data. | `com.cyl.refresh.drawable.view.PathsView` — the Android class with the same role; its members are its own |
 | `CYLRefreshVectorView` `image` | Property of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
 | `CYLRefreshVectorView` `-parserPaths:` | Method of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
 | `CYLRefreshVectorView` `-parserColors:` | Method of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
@@ -910,7 +910,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | Category. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — the CYLRefreshLayout around the content is the scroll view's counterpart |
+| `UIScrollView(CYLRefresh)` | The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — the CYLRefreshLayout around the content is the scroll view's counterpart |
 | `UIScrollView(CYLRefresh)` `cyl_header` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_header` |
 | `UIScrollView(CYLRefresh)` `cyl_footer` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_footer` |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | Property of `UIScrollView(CYLRefresh)`. | `RecyclerView.cyl_trailer` — horizontal RecyclerView only; set it once the list is in its parent |

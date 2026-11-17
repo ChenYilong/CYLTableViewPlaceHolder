@@ -576,7 +576,13 @@
     }];
     [page.tableView cyl_beginRefreshingWithStartHeader:start];
     [nav pushViewController:page animated:YES];
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3]];
+    // [EN] Poll instead of a fixed 3 s: on a loaded CI runner the animated push and the first refresh can take longer
+    //      (the fixed wait failed once on CI while every other test passed).
+    // [CN] 轮询而不是固定等待 3 秒：CI 机器繁忙时动画 push 与首次刷新可能更久（固定等待曾在 CI 上失败一次，其他测试都通过）。
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:15];
+    while ((![log containsObject:@"refresh"] || page.tableView.cyl_header != regular) && deadline.timeIntervalSinceNow > 0) {
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
     XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action");
     XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh");
     window.hidden = YES;
