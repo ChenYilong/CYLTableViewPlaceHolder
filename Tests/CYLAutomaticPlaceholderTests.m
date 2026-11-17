@@ -327,11 +327,13 @@
     CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:attributes imageBundle:nil error:&error];
     XCTAssertNotNil(placeholder);
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
-    window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    // [EN] The guard the compiler sees; the test already returned before iOS 13. [CN] 编译器能识别的判断；iOS 13 以下测试已提前返回。
+    if (@available(iOS 13.0, *)) { window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight; }
     [window addSubview:placeholder];
     XCTAssertEqualObjects(player.colors[@"Shape.Color"], UIColor.redColor);
     XCTAssertEqualObjects(player.colors[@"Other"], UIColor.greenColor);
-    window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    // [EN] The guard the compiler sees; the test already returned before iOS 13. [CN] 编译器能识别的判断；iOS 13 以下测试已提前返回。
+    if (@available(iOS 13.0, *)) { window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark; }
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return [player.colors[@"Shape.Color"] isEqual:UIColor.blueColor];
     }] evaluatedWithObject:placeholder handler:nil];
