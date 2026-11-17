@@ -86,3 +86,43 @@ test('cyl-animated-item: a GIF tab icon draws itself; a failed engine shows the 
   assert.equal(failed.usesEngine, false)
   assert.equal(failed.fallbackImage, CYL_ANIMATED_ITEM_PLACEHOLDER)
 })
+
+test('cyl-animated-item: *.svga.bin / *.pag.bin / *.riv.bin keep their type, animationType names it (bug B6)', () => {
+  assert.equal(cylAnimatedItemType('/assets/tab/svga/tab_activity.svga.bin'), 'svga')
+  assert.equal(cylAnimatedItemType('home.pag.bin?v=2'), 'pag')
+  assert.equal(cylAnimatedItemType('icons.riv.BIN'), 'rive')
+  assert.equal(cylAnimatedItemType('data.bin'), '')
+  const m = cylAnimatedItemModel({ animationUrl: '/assets/tab/svga/tab_activity.svga.bin' })
+  assert.equal(m.animationType, 'svga')
+  assert.equal(m.usesEngine, true)
+  const named = cylAnimatedItemModel({ animationUrl: 'https://example.com/icon', animationType: 'Lottie' })
+  assert.equal(named.animationType, 'lottie')
+  assert.equal(cylAnimatedItemModel({ animationUrl: 'a.json', animationType: 'unknown' }).animationType, 'lottie')
+})
+
+test('cyl-animated-item: the placeholder is a data URI, not a path the page would resolve (bug B6)', () => {
+  assert.match(CYL_ANIMATED_ITEM_PLACEHOLDER, /^data:image\/png;base64,iVBORw0KGgo/)
+  assert.equal(cylAnimatedItemModel({ animationUrl: 'unknown.xyz' }).fallbackImage, CYL_ANIMATED_ITEM_PLACEHOLDER)
+})
+
+test('cyl-animated-item: the same file set again keeps the loaded state (the engine view sends no second ready)', () => {
+  let definition = null
+  global.Component = (options) => { definition = options }
+  delete require.cache[require.resolve('../src/cyl-animated-item/index.js')]
+  require('../src/cyl-animated-item/index.js')
+  delete global.Component
+  const observer = definition.observers['animationUrl, animationType']
+  const resets = []
+  const item = {
+    setData(data) { if (data.animationLoaded === false) resets.push(data) },
+    cyl_update() {},
+  }
+  observer.call(item, '/a.json', '')
+  observer.call(item, '/a.json', '')
+  observer.call(item, '/a.json', '')
+  assert.equal(resets.length, 1, 'set again with the same file: no reset')
+  observer.call(item, '/b.json', '')
+  assert.equal(resets.length, 2, 'a new file resets')
+  observer.call(item, '/b.json', 'lottie')
+  assert.equal(resets.length, 3, 'a new type resets')
+})

@@ -388,13 +388,27 @@
     sits on all three; Play all calls `cyl-placeholder.playAll()` / `cyl-lottie.cyl_playFromStart()`, speed and loop
     bind to the core properties ([screenshot](assets/wechat-miniprogram-playback-controls.png)). These controls are the
     example's own UI, so the example is where they belong.
-  - MP2 (TODO, CYLTabBarController): the speed does not reach the playing Lottie. With speed 3x the `cyl-lottie` view's
+  - MP2 (fixed in CYLTabBarController, PR #818, commit `2b09d007`): the speed did not reach the playing Lottie. With speed 3x the `cyl-lottie` view's
     `speed` property is 3 but its animation plays at 1x; `cylAnimation` is still the stand-in a `path` load returns
     (the swap in its DOMLoaded handler never ran), and a direct `cyl_setSpeed(2)` reached the inner animation while the
     property observer did not ([screenshot](assets/wechat-miniprogram-speed-bug.jpg)). Recorded and screenshotted, then
     handed to CYLTabBarController (owner's rule: animation bugs are fixed in its animation component).
   - MP3 (fixed, example): the Animations list wrapped long file names mid-word ("…Permission.js" / "on"); like iOS and
     HarmonyOS it now keeps one line and ends with an ellipsis ([screenshot](assets/wechat-miniprogram-animations-list.jpg)).
+  - MP4 (fixed in CYLTabBarController, [PR #818](https://github.com/ChenYilong/CYLTabBarController/pull/818), commits
+    `2b09d007` and `4f764db5`, taken here by the Cartfile pin; owner's report 2026-11-17): on configuration → playback-policies.json (and the
+    scenario pages) the Lottie icons do not play, and "Replay" does not play them either: two screenshots a minute apart
+    are identical ([screenshot](assets/wechat-miniprogram-playback-not-playing.png)). Recorded first, screenshot second;
+    the fix belongs in CYLTabBarController's animation component (`cyl-lottie` / `cyl-animated-item`). Cause: every
+    `cyl-lottie` reloaded about 30 times a second (`cylLoadToken` 1237 -> 1269 in one second): since 56a89d56
+    `cyl-animated-item` binds `colors` (an Object) on every render and the player's observer reloaded each time, destroying
+    the animation before it played. Fixes: `cyl-lottie` reloads only when path / data / colors / fit change and applies
+    the current speed / loop / autoplay when a load ends (`2b09d007`, which also fixes MP2); `cyl-animated-item` keeps its
+    loaded state when the same file is set again, or the static image stayed over a playing animation after Replay
+    (`4f764db5`). Verified at `4f764db5` in the simulator: each player loads once, the looping item plays, Replay restarts
+    all three (frames 8 / 4 / 4 after 150 ms, 41 / 21 / 21 after 700 ms) and 2x reaches every animation
+    ([screenshot](assets/wechat-miniprogram-playback-fixed.png)). The example now syncs its CYLTabBarController
+    libraries from the pinned checkout first (`scripts/sync-example.js`).
   - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
     yet (`cyl-refresh` takes no speed or loop).
 - Not verified: a real phone.

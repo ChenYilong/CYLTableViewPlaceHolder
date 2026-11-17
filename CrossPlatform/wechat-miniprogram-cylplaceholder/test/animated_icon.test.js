@@ -31,7 +31,9 @@ test('the copy of cyl-animated-item records the commit the Cartfile pins, with i
   for (const folder of ['cyl-animated-item', 'cyl-animation-placeholder']) {
     assert.match(read(`${folder}/LICENSE.CYLTabBarController`), /MIT|Permission is hereby granted/, folder)
   }
-  assert.ok(fs.existsSync(path.join(src, 'cyl-animated-item', CYL_ANIMATED_ITEM_PLACEHOLDER)), 'the placeholder image ships')
+  // Upstream ships the placeholder as a file name or, since its B7 fix, as an inline data URI.
+  assert.ok(CYL_ANIMATED_ITEM_PLACEHOLDER.startsWith('data:image/') ||
+    fs.existsSync(path.join(src, 'cyl-animated-item', CYL_ANIMATED_ITEM_PLACEHOLDER)), 'the placeholder image ships')
   assert.ok(fs.existsSync(path.join(root, 'test/cyl_animated_item.test.js')), "upstream's model tests are copied")
 })
 

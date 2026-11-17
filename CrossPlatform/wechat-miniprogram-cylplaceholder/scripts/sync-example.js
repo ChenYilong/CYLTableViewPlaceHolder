@@ -31,9 +31,10 @@ for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-s
 }
 
 // The example's Lottie player: cyl-lottie-miniprogram from a CYLTabBarController checkout (CYL_TABBAR_DIR, else the
-// folder next to this repository, as the Android build's cylTabBarDir, else the Cartfile checkout that
-// `bash scripts/cyltabbarcontroller-checkout.sh` creates in Carthage/Checkouts).
-const tabBar = process.env.CYL_TABBAR_DIR || [path.resolve(pkg, '../../../CYLTabBarController'), path.resolve(pkg, '../../Carthage/Checkouts/CYLTabBarController')]
+// Cartfile checkout at the pinned commit that `bash scripts/cyltabbarcontroller-checkout.sh` creates in
+// Carthage/Checkouts, else the folder next to this repository). The pinned checkout comes first so the example runs the
+// commit the repository takes ("Depending on CYLTabBarController"), not whatever a neighbouring working tree holds.
+const tabBar = process.env.CYL_TABBAR_DIR || [path.resolve(pkg, '../../Carthage/Checkouts/CYLTabBarController'), path.resolve(pkg, '../../../CYLTabBarController')]
   .find((folder) => fs.existsSync(path.join(folder, 'CrossPlatform'))) || path.resolve(pkg, '../../../CYLTabBarController')
 // The example's tab bar (cyl-tab-bar, as the iOS example uses CYLTabBarController) and Lottie player.
 const libraries = [
