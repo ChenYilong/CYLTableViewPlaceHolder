@@ -194,6 +194,7 @@ export {
   CYLAnimatedItemAccessoryPlacement,
   CYLAnimatedItemAnimationContext,
   CYLAnimatedItemEngines,
+  CYLAnimatedItemController,
   cylAnimatedItemTypeOf
 } from 'cylanimateditem';
 

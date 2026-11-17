@@ -751,11 +751,31 @@ function cylAnimatedItemModelForURL(URL: string): CYLPlaceholderViewModel | null
 struct CYLPlaceholderAnimatedItemContent {
   @ObjectLink @Watch('cylReportAnimationState') model: CYLPlaceholderViewModel;
   animationContext: CYLAnimatedItemAnimationContext = new CYLAnimatedItemAnimationContext();
+  /**
+   * The item's playback (CYLTabBarController B22: animationSpeed, animationLoops, animationRestartToken and
+   * CYLAnimatedItemController.restartAnimation(), handed in through the context). Applied to the model when they change
+   * only, so a CYLPlaceholderView, whose item sets none of them, keeps its own speed and repeat count.
+   */
+  @Prop @Watch('cylApplySpeed') speed: number = 1;
+  @Prop @Watch('cylApplyLoops') loops: boolean = false;
+  @Prop @Watch('cylRestart') restartToken: number = 0;
   /** What was reported to the context: 0 nothing, 1 loaded, 2 failed. */
   private reported: number = 0;
 
   aboutToAppear(): void {
     this.cylReportAnimationState();
+  }
+
+  cylApplySpeed(): void {
+    this.model.setPlaceholderAnimationSpeed(this.speed);
+  }
+
+  cylApplyLoops(): void {
+    this.model.animationRepeatCount = this.loops ? 0 : 1;
+  }
+
+  cylRestart(): void {
+    this.model.playPlaceholderAnimation();
   }
 
   cylReportAnimationState(): void {
@@ -790,13 +810,66 @@ export function cylPlaceholderAnimatedItemBuilder(context: CYLAnimatedItemAnimat
   if (cylAnimatedItemModelForURL(context.url) !== null) {
     CYLPlaceholderAnimatedItemContent({
       model: cylAnimatedItemModelForURL(context.url) as CYLPlaceholderViewModel,
-      animationContext: context
+      animationContext: context,
+      speed: context.speed,
+      loops: context.loops,
+      restartToken: context.restartToken
+    })
+  } else {
+    CYLPlaceholderOwnAnimatedItemContent({
+      animationContext: context,
+      speed: context.speed,
+      loops: context.loops,
+      restartToken: context.restartToken
     })
   }
 }
 
 /**
- * A placeholder model's animation in an app's own CYLAnimatedItemView: for an icon with a title and nothing else, where
+ * A URL with no placeholder model behind it (an app's own CYLAnimatedItemView with `animationBuilder:
+ * CYLPlaceholderAnimatedItemBuilder`): a model of its own plays the file through the animators the app registered,
+ * sized to the item's icon, with the item's speed, loop and restarts.
+ */
+@Component
+struct CYLPlaceholderOwnAnimatedItemContent {
+  animationContext: CYLAnimatedItemAnimationContext = new CYLAnimatedItemAnimationContext();
+  @Prop speed: number = 1;
+  @Prop loops: boolean = false;
+  @Prop restartToken: number = 0;
+  @State model: CYLPlaceholderViewModel = new CYLPlaceholderViewModel();
+
+  aboutToAppear(): void {
+    const m = new CYLPlaceholderViewModel();
+    m.animationFileName = this.animationContext.url;
+    m.imageSide = Math.max(1, this.animationContext.size);
+    m.animationRepeatCount = this.loops ? 0 : 1;
+    if (this.speed !== 1) {
+      m.setPlaceholderAnimationSpeed(this.speed);
+    }
+    this.model = m;
+    CYLPlaceholderAnimatedItem.attach(m);
+  }
+
+  aboutToDisappear(): void {
+    CYLPlaceholderAnimatedItem.detach(this.model);
+  }
+
+  build() {
+    CYLPlaceholderAnimatedItemContent({
+      model: this.model,
+      animationContext: this.animationContext,
+      speed: this.speed,
+      loops: this.loops,
+      restartToken: this.restartToken
+    })
+  }
+}
+
+/**
+ * A placeholder model's animation in an app's own CYLAnimatedItemView, when the page drives playback through the model.
+ * Without a model, the item alone does it: give it the file as `animationUrl`, `animationBuilder:
+ * CYLPlaceholderAnimatedItemBuilder` and its own animationSpeed / animationLoops / controller (CYLTabBarController
+ * B22). Either way it is for an icon with a title and nothing else, where
  * a CYLPlaceholderStackView (several components, buttons, hints, a long wrapping text) is more than the page needs.
  * Call attach(model) when the item appears and detach(model) when it goes; give the item animationURL(model) and
  * `animationBuilder: CYLPlaceholderAnimatedItemBuilder`. Playback stays on the model (playPlaceholderAnimation,

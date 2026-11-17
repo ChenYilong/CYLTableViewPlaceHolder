@@ -1,15 +1,17 @@
 // CYLAnimationDetailViewController: one animation in a CYLAnimatedItemView (180 x 180 icon above its title, the
 // fallback style image until the animation is ready), titled with its name without "CYLPlaceholder" /
 // "CYLScenarioExample". An icon and a title are all the page shows, so it uses the item view, not a
-// CYLPlaceholderStackView (kept for what the item cannot draw: several components, buttons, long wrapping texts); the
-// core's CYLPlaceholderAnimatedItem plays the model's animation in it. Under it, the
+// CYLPlaceholderStackView (kept for what the item cannot draw: several components, buttons, hints). The item plays
+// the file itself through the core's CYLPlaceholderAnimatedItemBuilder (the animators the app registered) and takes
+// the playback as its own props: animationSpeed, animationLoops and a CYLAnimatedItemController for restarts
+// (CYLTabBarController B22). Under it, the
 // playback controls of docs/Example-Animation-Playback.md: "Play all" (and the bar's "Replay") restart from
 // progress 0, the speed slider and the loop switch apply live. Spinners loop by default, one-shot demos play once
 // and rest on their last frame.
-import { CYLAnimatedItemAxis, CYLAnimatedItemView, CYLPlaceholderAnimatedItem, CYLPlaceholderAnimatedItemBuilder,
+import { CYLAnimatedItemAxis, CYLAnimatedItemController, CYLAnimatedItemView, CYLPlaceholderAnimatedItemBuilder,
   CYLPlaceholderComponent, CYLPlaceholderStyle, CYLPlaceholderViewModel } from 'cylplaceholder';
 import { effectiveLanguage, t } from '../common/L10n';
-import { PlaybackControls, loopsByDefault, repeatCountForLoop } from '../common/Playback';
+import { PlaybackControls, loopsByDefault } from '../common/Playback';
 import { RouteParam } from '../common/Routes';
 import { BarButton } from '../common/Ui';
 import { AnimationFile, animationSections } from './AnimationsTab';
@@ -17,10 +19,11 @@ import { AnimationFile, animationSections } from './AnimationsTab';
 @Component
 export struct AnimationDetailPage {
   param: RouteParam = new RouteParam();
-  /** The animation's model: its player, speed and repeat count; drawn by the CYLAnimatedItemView below. */
-  @State item: CYLPlaceholderViewModel = new CYLPlaceholderViewModel();
+  /** The core's look of the component (its fallback image and title font / color); it plays nothing itself. */
+  @State look: CYLPlaceholderViewModel = new CYLPlaceholderViewModel();
   @State itemTitle: string = '';
   @State animationURL: string = '';
+  private controller: CYLAnimatedItemController = new CYLAnimatedItemController();
   @State fileName: string = '';
   @State speed: number = 1;
   @State loop: boolean = false;
@@ -37,30 +40,25 @@ export struct AnimationDetailPage {
       .replace('CYLPlaceholder', '').replace('CYLScenarioExample', '');
     // A core file plays by its bundled name (or its rawfile path when the library does not ship it); an example file
     // by its rawfile path.
-    this.item = CYLPlaceholderViewModel.initWithComponent(
+    this.look = CYLPlaceholderViewModel.initWithComponent(
       CYLPlaceholderComponent.componentWithBundledAnimation(file.path, CYLPlaceholderStyle.Image, title, 180, null));
+    const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(file.path);
+    this.animationURL = bundled !== null ? bundled : file.path;
     this.itemTitle = title;
     this.loop = loopsByDefault(file.name);
-    this.item.animationRepeatCount = repeatCountForLoop(this.loop);
-    CYLPlaceholderAnimatedItem.attach(this.item);
-    this.animationURL = CYLPlaceholderAnimatedItem.animationURL(this.item);
-  }
-
-  aboutToDisappear(): void {
-    CYLPlaceholderAnimatedItem.detach(this.item);
   }
 
   /** "Play all" / "Replay": from progress 0 with the current speed and loop setting. */
   private playAll(): void {
-    this.item.playPlaceholderAnimation();
+    this.controller.restartAnimation();
   }
 
   private applySpeed(speed: number): void {
-    this.item.setPlaceholderAnimationSpeed(speed);
+    // The slider's @Link already set this.speed, which the item passes on as animationSpeed.
   }
 
   private applyLoop(loop: boolean): void {
-    this.item.animationRepeatCount = repeatCountForLoop(loop);
+    // this.loop (the switch's @Link) is the item's animationLoops.
     if (loop) {
       // A one-shot animation that already finished starts again so the switch shows its effect at once.
       this.playAll();
@@ -93,13 +91,16 @@ export struct AnimationDetailPage {
         Column() {
           CYLAnimatedItemView({
             itemTitle: this.itemTitle,
-            image: this.item.currentImage !== null ? this.item.currentImage as ResourceStr : '',
+            image: this.look.currentImage !== null ? this.look.currentImage as ResourceStr : '',
             animationUrl: this.animationURL,
             axis: CYLAnimatedItemAxis.Vertical,
             iconSize: 180,
             spacing: 8,
-            titleFontSize: this.item.currentTitleFont,
-            titleColor: this.item.currentTitleColor,
+            titleFontSize: this.look.currentTitleFont,
+            titleColor: this.look.currentTitleColor,
+            animationSpeed: this.speed,
+            animationLoops: this.loop,
+            controller: this.controller,
             animationBuilder: CYLPlaceholderAnimatedItemBuilder
           })
         }

@@ -449,8 +449,9 @@ Program, React Native, Flutter):
    CYLTabBarController for it (rule "Animation bugs: record, screenshot, fix in CYLTabBarController"), and move the page
    to the item once the pinned commit has it. Track the request as a `TODO` with its points in the task's document.
 4. **Playback stays on the core's model.** The item view draws; play from the start, speed and repeat count go through
-   the core's API so the examples' playback controls keep working: HarmonyOS `CYLPlaceholderAnimatedItem` (attach /
-   detach / `animationURL`) with `CYLPlaceholderAnimatedItemBuilder`; Android `CYLPlaceholderView` (a
+   the core's API so the examples' playback controls keep working: HarmonyOS the item's own `animationSpeed` /
+   `animationLoops` / `CYLAnimatedItemController` with `animationBuilder: CYLPlaceholderAnimatedItemBuilder` (or
+   `CYLPlaceholderAnimatedItem` attach / detach when a placeholder model drives it); Android `CYLPlaceholderView` (a
    `CYLAnimatedItemView` subclass) or the item's own `animationSpeed` / `animationLoops` / `restartAnimation()`; the mini
    program's `cyl-animated-item` properties and `cyl_playFromStart()`; iOS `CYLPlaceholderView` (a
    `CYLAnimatedItemView` subclass).

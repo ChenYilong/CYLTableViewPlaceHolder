@@ -32,6 +32,8 @@ every placeholder icon is a `CYLAnimatedItemView`, the core ships only the GIF e
   applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
   vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
   CYLPlaceholderStackView only for what it cannot cover".
-- HarmonyOS today: `AnimationDetailPage` draws `CYLAnimatedItemView` with `CYLPlaceholderAnimatedItem` /
-  `CYLPlaceholderAnimatedItemBuilder` (64ab041). Since CYLTabBarController 0ce518a8 (B21) the item applies `spacing`
+- HarmonyOS today: `AnimationDetailPage` draws `CYLAnimatedItemView` with item props only (`animationUrl`,
+  `animationSpeed`, `animationLoops`, a `CYLAnimatedItemController` for restarts, CYLTabBarController B22) and
+  `animationBuilder: CYLPlaceholderAnimatedItemBuilder`, which plays any file through the registered animators.
+  `CYLPlaceholderAnimatedItem` (attach / detach) stays for pages that drive playback through a placeholder model. Since CYLTabBarController 0ce518a8 (B21) the item applies `spacing`
   (8 vp on the detail page, checked on the emulator) and has `titleLines` (1 by default, 0 = no limit).
