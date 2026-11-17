@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：在 Mac 上验证 SmartRefresh 新 API 并为 iOS 示例截图 / TODO: Check the new SmartRefresh APIs on a Mac and screenshot the iOS example
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31，macOS 27 + Xcode 27.2）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31, macOS 27 + Xcode 27.2). |
+| 用户原始提示词：“测CYLTableViewPlaceHolder 继续执行simctl launch continue 运行模拟器 截图更新相关文档。阅读CYLAnimatedItem 相关的集成文档，continue fix todo iOS端代码与测试” | User prompt, verbatim on the left (English: test CYLTableViewPlaceHolder, keep running simctl launch, run the simulator, take screenshots and update the related documents; read the CYLAnimatedItem integration documents and continue fixing the iOS TODOs, code and tests). |
+| 要求：①在本机运行单元测试；②在模拟器上运行 iOS 示例（Example-Scenarios 的 SmartRefresh 演示页）；③截图并更新相关文档（`docs/Refresh-Library-Parity.md` 中“未在本地编译运行”的说明）。 | Requirements: (1) run the unit tests on this Mac; (2) run the iOS example on a simulator (Example-Scenarios, the SmartRefresh demo page); (3) take screenshots and update the related documents (the "not built or run locally" note in `docs/Refresh-Library-Parity.md`). |
+| 上下文：SmartRefresh 新 API（`a5cbbf9`、`61e2b0c`、`00087d4`）由 Windows 会话在没有 Xcode 的情况下编写。已知：本机单元测试全部通过（190 个，0 失败，Xcode 27.2，iPhone 17 Pro Max iOS 27，`ae93b83`）；CI 中 `testDrawnFootersLoadAndShowNoMoreData`（Phoenix 尾部）失败一次，本机不能复现；本机 iOS 26.5 模拟器上测试宿主卡在第一个测试（本机环境问题）。 | Context: the new SmartRefresh APIs (`a5cbbf9`, `61e2b0c`, `00087d4`) were written by the Windows session without Xcode. Known: all unit tests pass on this Mac (190, 0 failures, Xcode 27.2, iPhone 17 Pro Max iOS 27, `ae93b83`); `testDrawnFootersLoadAndShowNoMoreData` (the Phoenix footer) failed once on CI and does not reproduce here; on a local iOS 26.5 simulator the test host hangs at the first test (a local environment problem). |
+
 ### 已完成（core）：Android → iOS 对照表计入刷新内核并循环打分到满分 / Done (core): the Android → iOS table counts the refresh kernel, scored in a loop up to 100
 
 | 中文 | English |
