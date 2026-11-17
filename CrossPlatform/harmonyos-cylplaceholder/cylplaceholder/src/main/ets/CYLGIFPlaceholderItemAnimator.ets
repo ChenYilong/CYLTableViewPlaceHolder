@@ -62,6 +62,14 @@ export enum CYLGIFDrawMode {
   Failed = 3
 }
 
+/**
+ * Whether the GIF ends with its trailer byte (0x3B). A file without it was cut short: its last frame, as ImageKit
+ * decodes it, is incomplete (E12: CYLScenarioExampleTruncated.gif rested on a fragment of its second frame).
+ */
+export function CYLGIFHasTrailer(bytes: Uint8Array): boolean {
+  return bytes.length > 0 && bytes[bytes.length - 1] === 0x3B;
+}
+
 /** The cache file of a GIF given to the system decoder: a stable name from the URL and the size. */
 export function CYLGIFCacheFileName(fileURL: string, byteLength: number): string {
   let hash = 5381;
@@ -130,6 +138,17 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
       // 1. Every frame (the normal way).
       try {
         const maps = await source.createPixelMapList();
+        // A file cut short (no trailer) decodes its last frame only partly: drop that fragment.
+        if (maps.length > 1 && !CYLGIFHasTrailer(bytes)) {
+          const fragment = maps.pop();
+          if (fragment !== undefined) {
+            fragment.release();
+          }
+        }
+        if (maps.length === 1 && !CYLGIFHasTrailer(bytes)) {
+          this.useFrames(maps, [100], CYLGIFDrawMode.FirstFrame);
+          return;
+        }
         if (maps.length > 0) {
           let delays: number[] = [];
           try {
@@ -180,6 +199,21 @@ export class CYLGIFAnimationContentView extends CYLPlaceholderPlayableContentVie
       }
     }
     this.drawMode = CYLGIFDrawMode.Failed;
+    this.didFail('GIF', null);
+  }
+
+  /**
+   * ArkUI's Image could not decode the cache copy either (the System mode): the view fails now, so the placeholder
+   * shows its fallback image. Before, the System mode reported a load as soon as the copy was written and drew nothing
+   * for a file no decoder understands (E12: CYLScenarioExampleBroken.gif).
+   */
+  cyl_systemDecodeFailed(): void {
+    if (this.drawMode !== CYLGIFDrawMode.System) {
+      return;
+    }
+    console.error('CYLGIFPlaceholderItemAnimator: ' + this.fileURL + ' the system decoder failed too');
+    this.drawMode = CYLGIFDrawMode.Failed;
+    this.cylNotifyChange();
     this.didFail('GIF', null);
   }
 
@@ -317,9 +351,15 @@ struct CYLGIFAnimationComponent {
         .objectFit(ImageFit.Contain)
         .width(this.model().width)
         .height(this.model().height)
-    } else if (this.model().state === AnimationStatus.Initial && this.model().frames.length > 0) {
+        .onError(() => {
+          this.view.cyl_systemDecodeFailed();
+        })
+    } else if ((this.model().state === AnimationStatus.Initial || this.model().drawMode === CYLGIFDrawMode.FirstFrame) &&
+      this.model().frames.length > 0) {
       // At rest (before the first play, or stopped) the first frame is drawn as an image: ImageAnimator may draw
-      // nothing in its Initial state (the GIF detail page showed only the file name, 2026-11-16).
+      // nothing in its Initial state (the GIF detail page showed only the file name, 2026-11-16). The FirstFrame mode
+      // is always a still image: ImageAnimator with its single frame drew nothing once "playing" (E12, a tiny mark
+      // instead of the star of CYLScenarioExampleTruncated.gif on the emulator, 2026-11-17).
       Image(this.model().frames[0].src)
         .objectFit(ImageFit.Contain)
         .width(this.model().width)

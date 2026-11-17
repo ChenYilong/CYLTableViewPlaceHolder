@@ -1,7 +1,7 @@
 // Unit tests for the playback controls the examples use (docs/Example-Animation-Playback.md): the PAG speed driver,
 // GIF frame durations at a speed, and the placeholder's live repeat count.
 import { describe, expect, it } from '@ohos/hypium';
-import { CYLGIFCacheFileName, CYLGIFDrawMode, CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
+import { CYLGIFCacheFileName, CYLGIFDrawMode, CYLGIFHasTrailer, CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
 import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlayback';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
 import { CYLRefreshIconViewModel } from '../main/ets/refresh/CYLRefreshIconView';
@@ -91,6 +91,12 @@ export default function playbackControlsTest() {
       expect(CYLGIFDrawMode.Frames < CYLGIFDrawMode.FirstFrame).assertTrue();
       expect(CYLGIFDrawMode.FirstFrame < CYLGIFDrawMode.System).assertTrue();
       expect(CYLGIFDrawMode.System < CYLGIFDrawMode.Failed).assertTrue();
+    });
+    it('gifTrailerMarksAFileCutShort', 0, () => {
+      // E12: a GIF without its trailer (0x3B) was cut short; its last decoded frame is a fragment.
+      expect(CYLGIFHasTrailer(new Uint8Array([0x47, 0x49, 0x46, 0x3B]))).assertTrue();
+      expect(CYLGIFHasTrailer(new Uint8Array([0x47, 0x49, 0x46, 0x2C]))).assertFalse();
+      expect(CYLGIFHasTrailer(new Uint8Array([]))).assertFalse();
     });
   });
 }
