@@ -57,6 +57,16 @@ not as a system `UIImage` on a `UIImageView`; where that cannot be avoided, a co
 Preserve API compatibility and keep this map current when a mapped file or
 public API changes.
 
+## Parity tables and the scoring loop
+
+Follow `instructions.md`, "Cross-platform API parity tables and the scoring loop". The Android → iOS table is
+`docs/iOS-API-Map.md` (regenerate with `python3 scripts/ios-api-map.py`, matches in `android/merged/ios-map.json`).
+The iOS → Android table is `docs/iOS-Android-Parity.md` (`python3 scripts/ios-android-parity.py`, matches in
+`android/merged/api-map.json`). Column 3 is TODO by default. The score is rows without TODO / counted rows (n/a
+rows, platform details only, are not counted). Loop until 100: search the existing code and record each match;
+score; implement what is missing (core first, the same API on both platforms, then the example reproduces the
+other platform's example); score again. Do the Android → iOS table first, then the reverse one.
+
 ## Examples follow the core's API
 
 The core's Swift API is decided by the Swift coding standard, not by how an example calls it. When the API changes

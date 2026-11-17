@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### 进行中：Android → iOS 对照表计入刷新内核并循环打分到满分 / In progress: the Android → iOS table counts the refresh kernel, scored in a loop up to 100
+
+| 中文 | English |
+| --- | --- |
+| 状态：进行中（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。`docs/iOS-API-Map.md` 现在计入从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`），评分由 100 变为 69 / 100（883 行中 274 行 TODO）。流程：① 搜索现有 iOS 代码并记录对应；② 打分；③ 逐个实现 iOS 缺少的 API 与功能（core 优先，iOS example 复刻 Android example）；④ 再打分，循环直到满分；之后对 iOS → Android 表（`docs/iOS-Android-Parity.md`，当前 100）做同样的循环。规则（全英文）写入 `instructions.md` “Cross-platform API parity tables and the scoring loop” 与 skill `cyl-api-map`。标签（tag）示例属于 CollectionViewClassifyMenu 与 CYLSearchViewController，由各自会话处理。 | Status: in progress (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). `docs/iOS-API-Map.md` now counts the refresh kernel and styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`); the score went from 100 to 69 / 100 (274 TODO of 883 rows). Process: (1) search the existing iOS code and record each match; (2) score; (3) implement each missing iOS API and feature (core first, the iOS example reproduces the Android one); (4) score again, until 100; then the same loop for the iOS → Android table (`docs/iOS-Android-Parity.md`, now 100). The rule (in English) is in `instructions.md`, "Cross-platform API parity tables and the scoring loop", and the skill `cyl-api-map`. The tag example belongs to CollectionViewClassifyMenu and CYLSearchViewController, handled by their own sessions. |
+| 用户原始提示词（节选）：“将iOS端与Android的core核心代码，制作一个表格，第一列为Android 端core核心代码的API以及功能列表，第二列为功能描述，第三列为iOS端对应的api或者功能。第三列默认为TODO。制作评分系统……100分后，再制作一个表格格式类似，第一列为iOS端api与功能……” | The user's original prompt (excerpt, verbatim on the left): build a table of the Android core's APIs and features, their descriptions, and the iOS counterparts (TODO by default), with a score; find, score, implement, update the iOS example; at 100, build the reverse table the same way. |
+
 ### 已完成：在仓库中标注 CYLAnimatedItem 接入文档的改造进度与 TODO / Done: Track the CYLAnimatedItem guide migration's progress and TODOs in the repository
 
 | 中文 | English |

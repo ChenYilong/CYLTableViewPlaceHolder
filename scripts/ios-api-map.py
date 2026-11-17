@@ -30,11 +30,10 @@ SOURCES = [
     'android/placeholder/src/main/kotlin',
     'android/merged/library/src/main/kotlin',
 ]
-# The refresh kernel and the styles folded in from SmartRefreshLayout (com.cyl.refresh.layout / header / footer /
-# classics / drawable) are not scored yet: their iOS counterparts (UIScrollView plus the CYLRefresh controls) are a
-# TODO recorded in the document (72 / 100 with them counted, 2026-11-17).
-KERNEL = [os.path.join('android', 'merged', 'library', 'src', 'main', 'kotlin', 'com', 'cyl', 'refresh', name)
-          for name in ('layout', 'header', 'footer', 'classics', 'drawable')]
+# Every Android source is scored, the refresh kernel and the styles folded in from SmartRefreshLayout
+# (com.cyl.refresh.layout / header / footer / classics / drawable) included since 2026-11-17. A folder listed here
+# would be left out of the table.
+KERNEL = []
 API_MAP = os.path.join(ROOT, 'android', 'merged', 'api-map.json')
 IOS_MAP = os.path.join(ROOT, 'android', 'merged', 'ios-map.json')
 DOC = os.path.join(ROOT, 'docs', 'iOS-API-Map.md')
@@ -129,7 +128,7 @@ def declarations():
                 if not name.endswith('.kt'):
                     continue
                 path = os.path.join(directory, name)
-                rel = os.path.relpath(path, ROOT)
+                rel = os.path.relpath(path, ROOT).replace(os.sep, '/')
                 lines = open(path, encoding='utf-8').read().split('\n')
                 stack = []  # (owner name or None when hidden, depth at which the body opened)
                 depth = 0
@@ -290,11 +289,13 @@ def render(by_file, counted, done):
         f'| **评分：{score} / 100**（{done} / {counted} 行已有 iOS 对应，TODO {todo} 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | '
         f'**Score: {score} / 100** ({done} of {counted} rows have an iOS counterpart, {todo} TODO; n/a rows are Android '
         'platform details, counted out). No TODO in the third column is 100; all TODO is 0. |',
-        '| TODO：从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / '
-        '`drawable`，2026-11-17）尚未计入本表；计入后评分为 72 / 100，需逐个找出 iOS 对应（UIScrollView 与 CYLRefresh 控件）。 | '
-        'TODO: the refresh kernel and the styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / '
-        '`footer` / `classics` / `drawable`, 2026-11-17) are not counted in this table yet; counted, the score is 72 / 100, '
-        'and each needs its iOS counterpart (UIScrollView and the CYLRefresh controls). |',
+        '| 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；'
+        '③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。'
+        '循环直到满分。 | '
+        'Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; '
+        '(2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core '
+        'first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the '
+        'implementation; (4) score again. Repeat until the score is 100. |',
         '',
     ]
     for rel in sorted(by_file):

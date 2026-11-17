@@ -147,5 +147,713 @@
  "CYLPlaceholderView.accessibilityLabel": {
   "ios": "`UIView` `accessibilityLabel` (UIKit, inherited by `CYLPlaceholderView`)",
   "note": "Android reads it into the view's contentDescription, which CYLAnimatedItemView rebuilds from the title"
+ },
+ "ArrowDrawable": {
+  "ios": "`CYLRefreshNormalHeader` `arrowView`",
+  "note": "iOS shows the bundled arrow image instead of drawing it"
+ },
+ "ClassicsAbstract": {
+  "ios": "`CYLRefreshNormalHeader`, `CYLRefreshBackNormalFooter`, `CYLRefreshAutoNormalFooter`",
+  "note": "no shared base class on iOS; each normal control has the arrow, spinner and title"
+ },
+ "PaintDrawable": {
+  "ios": "n/a",
+  "note": "Android Drawable/Paint plumbing"
+ },
+ "PaintDrawable.setColor": {
+  "ios": "n/a",
+  "note": "Android Drawable/Paint plumbing"
+ },
+ "ProgressDrawable": {
+  "ios": "`CYLRefreshNormalHeader` `loadingView`",
+  "note": "the system UIActivityIndicatorView draws the same twelve-bar spinner"
+ },
+ "PathsDrawable.parserPaths": {
+  "ios": "`CYLRefreshVectorImage` `-parserPaths:`"
+ },
+ "PathsDrawable.declareOriginal": {
+  "ios": "`CYLRefreshVectorImage` `viewport`"
+ },
+ "PathsDrawable.parserColors": {
+  "ios": "`CYLRefreshVectorImage` `-parserColors:`"
+ },
+ "PathsDrawable.setGeometricWidth": {
+  "ios": "`CYLRefreshVectorImage` `-setGeometricWidth:`"
+ },
+ "PathsDrawable.setGeometricHeight": {
+  "ios": "`CYLRefreshVectorImage` `-setGeometricHeight:`"
+ },
+ "PathParser.PathDataNode": {
+  "ios": "n/a",
+  "note": "intermediate node of Android's AOSP-derived parser; CYLRefreshVectorPathsParser writes straight into a CGMutablePath"
+ },
+ "PathParser.PathDataNode.nodesToPath": {
+  "ios": "n/a",
+  "note": "intermediate step of Android's AOSP-derived parser; CYLRefreshVectorPathsParser writes straight into a CGMutablePath"
+ },
+ "PathParser.createNodesFromPathData": {
+  "ios": "n/a",
+  "note": "intermediate step of Android's AOSP-derived parser; CYLRefreshVectorPathsParser writes straight into a CGMutablePath"
+ },
+ "PathParser.transformScale": {
+  "ios": "n/a",
+  "note": "android.graphics.Path/Matrix helper; iOS scales the whole vector image (`CYLRefreshVectorImage` `-scaleToFitInside:`)"
+ },
+ "PathParser.createPathFromPathData": {
+  "ios": "`CYLRefreshVectorPathElement` `+newWith:` / `pathForShape`"
+ },
+ "PathsView.parserPaths": {
+  "ios": "`CYLRefreshVectorView` `-parserPaths:`"
+ },
+ "PathsView.parserColors": {
+  "ios": "`CYLRefreshVectorView` `-parserColors:`"
+ },
+ "ClassicsFooter": {
+  "ios": "`CYLRefreshBackNormalFooter`, `CYLRefreshAutoNormalFooter`"
+ },
+ "BezierCircleHeader": {
+  "ios": "`CYLRefreshBezierCircleHeader`"
+ },
+ "BezierRadarHeader": {
+  "ios": "`CYLRefreshBezierRadarHeader`"
+ },
+ "ClassicsHeader": {
+  "ios": "`CYLRefreshNormalHeader`"
+ },
+ "DeliveryHeader": {
+  "ios": "`CYLRefreshDeliveryHeader`"
+ },
+ "DropBoxHeader": {
+  "ios": "`CYLRefreshDropBoxHeader`"
+ },
+ "FalsifyHeader": {
+  "ios": "`CYLRefreshHeader` with `refreshEnabled` = NO",
+  "note": "a plain CYLRefreshHeader draws nothing; refreshEnabled NO keeps the bounce and never refreshes"
+ },
+ "FalsifyFooter": {
+  "ios": "`CYLRefreshBackFooter` with `refreshEnabled` = NO",
+  "note": "a plain CYLRefreshBackFooter draws nothing; refreshEnabled NO keeps the bounce and never loads"
+ },
+ "FalsifyAbstract": {
+  "ios": "`CYLRefreshComponent`",
+  "note": "the base draws nothing; the layout-editor outline is Android-only"
+ },
+ "FlyRefreshHeader": {
+  "ios": "`CYLRefreshFlyHeader`"
+ },
+ "FunGameBattleCityHeader": {
+  "ios": "`CYLRefreshGameBattleCityHeader`"
+ },
+ "FunGameHitBlockHeader": {
+  "ios": "`CYLRefreshGameHitBlockHeader`"
+ },
+ "MaterialHeader": {
+  "ios": "`CYLRefreshMaterialHeader`"
+ },
+ "PhoenixHeader": {
+  "ios": "`CYLRefreshPhoenixHeader`"
+ },
+ "StoreHouseHeader": {
+  "ios": "`CYLRefreshStoreHouseHeader`"
+ },
+ "TaurusHeader": {
+  "ios": "`CYLRefreshTaurusHeader`"
+ },
+ "TwoLevelHeader": {
+  "ios": "`CYLRefreshHeader` `secondaryTriggerOffset` / `secondaryView` / `-openSecondary`",
+  "note": "every iOS header has the second floor built in; no wrapper class"
+ },
+ "WaterDropHeader": {
+  "ios": "`CYLRefreshOriginalHeader`",
+  "note": "the same iOS 6 water drop; `enableAutoRefresh` = NO waits for the release as Android does"
+ },
+ "WaveSwipeHeader": {
+  "ios": "`CYLRefreshWaveSwipeHeader`"
+ },
+ "MountainSceneView.setPrimaryColor": {
+  "ios": "`CYLRefreshMountainView` `colorPrimary`"
+ },
+ "MountainSceneView.updatePercent": {
+  "ios": "`CYLRefreshMountainView` `-onScrollingWithOffset:percent:`"
+ },
+ "FunGameBase": {
+  "ios": "`CYLRefreshGameHeader`"
+ },
+ "FunGameView.postStatus": {
+  "ios": "`CYLRefreshGamePlayingScene` `-reset` / `-start` / `-gameOver` / `-finishWithSuccess:`",
+  "note": "one method per status"
+ },
+ "CircleImageView": {
+  "ios": "n/a",
+  "note": "Android ImageView with an elevation shadow; CYLRefreshMaterialHeader draws its circle and shadow with layers"
+ },
+ "CircleImageView.SHADOW_RADIUS": {
+  "ios": "n/a",
+  "note": "Android elevation shadow constant"
+ },
+ "CircleImageView.SHADOW_ELEVATION": {
+  "ios": "n/a",
+  "note": "Android elevation constant"
+ },
+ "MaterialProgressDrawable": {
+  "ios": "`CYLRefreshMaterialHeader`",
+  "note": "the arc, arrow and color changes are drawn inside the header"
+ },
+ "MaterialProgressDrawable.showArrow": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android drawable; CYLRefreshMaterialHeader draws the arrow privately"
+ },
+ "MaterialProgressDrawable.setArrowScale": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates it privately"
+ },
+ "MaterialProgressDrawable.setStartEndTrim": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates the trim privately"
+ },
+ "MaterialProgressDrawable.setProgressRotation": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android drawable; CYLRefreshMaterialHeader animates the rotation privately"
+ },
+ "StoreHouseBarItem.index": {
+  "ios": "`CYLRefreshStoreHouseLine` `index`"
+ },
+ "StoreHouseBarItem.setLineWidth": {
+  "ios": "`CYLRefreshStoreHouseHeader` `lineWidth`",
+  "note": "one width for every bar"
+ },
+ "StoreHouseBarItem.setColor": {
+  "ios": "`CYLRefreshComponent` `colorAccent` (on `CYLRefreshStoreHouseHeader`)",
+  "note": "one color for every bar"
+ },
+ "StoreHouseBarItem.resetPosition": {
+  "ios": "`CYLRefreshStoreHouseLine` `offset`",
+  "note": "the random horizontal offset is assigned when `CYLRefreshStoreHousePath` builds the lines"
+ },
+ "StoreHouseBarItem.setAlpha": {
+  "ios": "`CYLRefreshStoreHouseLine` `alpha`"
+ },
+ "StoreHouseBarItem.start": {
+  "ios": "n/a",
+  "note": "Android AlphaAnimation on the bar; CYLRefreshStoreHouseHeader fades `CYLRefreshStoreHouseLine` `alpha` itself"
+ },
+ "StoreHouseBarItem.draw": {
+  "ios": "n/a",
+  "note": "Android Canvas drawing; CYLRefreshStoreHouseHeader strokes the lines in drawRect:"
+ },
+ "StoreHousePath.getPath": {
+  "ios": "`CYLRefreshStoreHousePath` `+linesFrom:scale:space:`"
+ },
+ "Circle": {
+  "ios": "n/a",
+  "note": "geometry holder of the Android WaterDropView; CYLRefreshOriginalHeader keeps its circles privately"
+ },
+ "WaterDropView": {
+  "ios": "`CYLRefreshOriginalHeader`",
+  "note": "the drop is drawn inside the header; no separate view"
+ },
+ "WaterDropView.maxCircleRadius": {
+  "ios": "n/a",
+  "note": "internal geometry of the Android view; CYLRefreshOriginalHeader uses private constants"
+ },
+ "WaterDropView.createAnimator": {
+  "ios": "n/a",
+  "note": "internal animation of the Android view; CYLRefreshOriginalHeader animates the drop privately"
+ },
+ "WaterDropView.updateCompleteState": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android view; CYLRefreshOriginalHeader stretches the drop privately from the pull"
+ },
+ "WaterDropView.getTopCircle": {
+  "ios": "n/a",
+  "note": "internal geometry of the Android view"
+ },
+ "WaterDropView.getBottomCircle": {
+  "ios": "n/a",
+  "note": "internal geometry of the Android view"
+ },
+ "WaterDropView.setIndicatorColor": {
+  "ios": "`CYLRefreshComponent` `colorPrimary` (on `CYLRefreshOriginalHeader`)"
+ },
+ "WaterDropView.getIndicatorColor": {
+  "ios": "`CYLRefreshComponent` `colorPrimary` (on `CYLRefreshOriginalHeader`)"
+ },
+ "DropBounceInterpolator": {
+  "ios": "n/a",
+  "note": "android.view.animation.Interpolator; CYLRefreshWaveSwipeHeader passes the same curve as a `CYLRefreshValueAnimator` `interpolatorBlock`"
+ },
+ "WaveView": {
+  "ios": "`CYLRefreshWaveSwipeHeader`",
+  "note": "the wave and the drop are drawn inside the header; no separate view"
+ },
+ "WaveView.manualRefresh": {
+  "ios": "`CYLRefreshComponent` `-beginRefreshing` (on `CYLRefreshWaveSwipeHeader`)"
+ },
+ "WaveView.beginPhase": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android view; CYLRefreshWaveSwipeHeader draws the phases privately"
+ },
+ "WaveView.appearPhase": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android view; CYLRefreshWaveSwipeHeader draws the phases privately"
+ },
+ "WaveView.expandPhase": {
+  "ios": "n/a",
+  "note": "internal drawing step of the Android view; CYLRefreshWaveSwipeHeader draws the phases privately"
+ },
+ "WaveView.startDropAnimation": {
+  "ios": "n/a",
+  "note": "internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately"
+ },
+ "WaveView.startDisappearCircleAnimation": {
+  "ios": "n/a",
+  "note": "internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately"
+ },
+ "WaveView.startWaveAnimation": {
+  "ios": "n/a",
+  "note": "internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately"
+ },
+ "WaveView.animationDropCircle": {
+  "ios": "n/a",
+  "note": "internal animation of the Android view; CYLRefreshWaveSwipeHeader runs it privately"
+ },
+ "WaveView.getCurrentCircleCenterY": {
+  "ios": "n/a",
+  "note": "internal geometry of the Android view"
+ },
+ "WaveView.setWaveColor": {
+  "ios": "`CYLRefreshComponent` `colorPrimary` (on `CYLRefreshWaveSwipeHeader`)"
+ },
+ "CYLRefreshLayout.LayoutParams": {
+  "ios": "n/a",
+  "note": "ViewGroup.LayoutParams; per control iOS uses `colorPrimary` and `scrollMode`"
+ },
+ "RefreshComponent": {
+  "ios": "`CYLRefreshComponent`"
+ },
+ "RefreshComponent.view": {
+  "ios": "n/a",
+  "note": "the Android View of the component; on iOS the component is the UIView itself"
+ },
+ "RefreshComponent.spinnerStyle": {
+  "ios": "`CYLRefreshComponent` `scrollMode`"
+ },
+ "RefreshComponent.setPrimaryColors": {
+  "ios": "`CYLRefreshComponent` `colorPrimary` / `colorAccent`"
+ },
+ "RefreshComponent.onInitialized": {
+  "ios": "`CYLRefreshComponent` `-didAttachToScrollView:` / `-placeSubviews`"
+ },
+ "RefreshComponent.onMoving": {
+  "ios": "`CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:`"
+ },
+ "RefreshComponent.onReleased": {
+  "ios": "`CYLRefreshComponent` `-phaseDidChangeFrom:to:` (`CYLRefreshPhaseReleasing`), `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing`"
+ },
+ "RefreshComponent.onStartAnimator": {
+  "ios": "`CYLRefreshComponent` `-phaseDidChangeFrom:to:` (`CYLRefreshPhaseRefreshing`), `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing`"
+ },
+ "RefreshComponent.onFinish": {
+  "ios": "`CYLRefreshComponent` `-refreshDidFinishWithSuccess:` / `-finishingDurationWithSuccess:`",
+  "note": "seconds instead of milliseconds"
+ },
+ "RefreshHeader": {
+  "ios": "`CYLRefreshHeader`"
+ },
+ "RefreshFooter": {
+  "ios": "`CYLRefreshFooter`"
+ },
+ "RefreshFooter.setNoMoreData": {
+  "ios": "`CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData`"
+ },
+ "RefreshContent": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing of the Android ViewGroup; iOS controls attach to the UIScrollView itself"
+ },
+ "RefreshContent.view": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS controls attach to the UIScrollView itself"
+ },
+ "RefreshContent.scrollableView": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS controls attach to the UIScrollView itself"
+ },
+ "RefreshContent.onActionDown": {
+  "ios": "n/a",
+  "note": "Android MotionEvent dispatch"
+ },
+ "RefreshContent.setUpComponent": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing"
+ },
+ "RefreshContent.setScrollBoundaryDecider": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; the feature is RefreshLayout.setScrollBoundaryDecider"
+ },
+ "RefreshContent.setEnableLoadMoreWhenContentNotFull": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; the feature is RefreshLayout.setEnableLoadMoreWhenContentNotFull"
+ },
+ "RefreshContent.moveSpinner": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; a UIScrollView moves its own content"
+ },
+ "RefreshContent.canRefresh": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS reads the scroll view contentOffset"
+ },
+ "RefreshContent.canLoadMore": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS reads the scroll view contentOffset"
+ },
+ "RefreshContent.scrollContentWhenFinished": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing"
+ },
+ "RefreshKernel": {
+  "ios": "n/a",
+  "note": "the Android layout bridge for components; iOS controls drive their `scrollView` directly"
+ },
+ "RefreshKernel.refreshLayout": {
+  "ios": "`CYLRefreshComponent` `scrollView`"
+ },
+ "RefreshKernel.refreshContent": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS controls attach to the UIScrollView itself"
+ },
+ "RefreshKernel.setState": {
+  "ios": "`CYLRefreshComponent` `state`"
+ },
+ "RefreshKernel.startTwoLevel": {
+  "ios": "`CYLRefreshHeader` `-openSecondary` / `-closeSecondary`"
+ },
+ "RefreshKernel.finishTwoLevel": {
+  "ios": "`CYLRefreshHeader` `-closeSecondary`"
+ },
+ "RefreshKernel.moveSpinner": {
+  "ios": "`UIScrollView` `contentOffset` (UIKit, through `CYLRefreshComponent` `scrollView`)",
+  "note": "iOS controls move the pull by setting the content offset"
+ },
+ "RefreshKernel.animSpinner": {
+  "ios": "`UIScrollView` `-setContentOffset:animated:` (UIKit, through `CYLRefreshComponent` `scrollView`)",
+  "note": "iOS controls animate the pull by setting the content offset"
+ },
+ "RefreshKernel.requestDrawBackgroundFor": {
+  "ios": "`CYLRefreshComponent` `colorPrimary`"
+ },
+ "RefreshKernel.requestNeedTouchEventFor": {
+  "ios": "n/a",
+  "note": "Android touch dispatch; an iOS control is a UIView and gets touches itself"
+ },
+ "RefreshKernel.requestRemeasureHeightFor": {
+  "ios": "n/a",
+  "note": "Android measure pass"
+ },
+ "RefreshKernel.requestFloorBottomPullUpToCloseRate": {
+  "ios": "`CYLRefreshHeader` `secondaryCloseTriggerOffset`",
+  "note": "points instead of a share of the floor"
+ },
+ "RefreshLayout": {
+  "ios": "`UIScrollView(CYLRefresh)`"
+ },
+ "RefreshLayout.setFooterHeight": {
+  "ios": "`CYLRefreshFooter` frame height (`UIView(CYLExtension)` `cyl_h`)",
+  "note": "points"
+ },
+ "RefreshLayout.setFooterHeightPx": {
+  "ios": "n/a",
+  "note": "pixel variant; iOS uses points (see setFooterHeight)"
+ },
+ "RefreshLayout.setHeaderHeight": {
+  "ios": "`CYLRefreshHeader` `-setExpandHeight:`",
+  "note": "points"
+ },
+ "RefreshLayout.setHeaderHeightPx": {
+  "ios": "n/a",
+  "note": "pixel variant; iOS uses points (see setHeaderHeight)"
+ },
+ "RefreshLayout.setHeaderInsetStartPx": {
+  "ios": "n/a",
+  "note": "pixel variant; iOS uses points (see setHeaderInsetStart)"
+ },
+ "RefreshLayout.setFooterInsetStartPx": {
+  "ios": "n/a",
+  "note": "pixel variant; iOS uses points (see setFooterInsetStart)"
+ },
+ "RefreshLayout.setHeaderMaxDragRate": {
+  "ios": "`CYLRefreshComponent` `maxPullDistance` (on the header)",
+  "note": "points instead of a multiple of the height"
+ },
+ "RefreshLayout.setFooterMaxDragRate": {
+  "ios": "`CYLRefreshComponent` `maxPullDistance` (on a back footer)",
+  "note": "points instead of a multiple of the height"
+ },
+ "RefreshLayout.setHeaderTriggerRate": {
+  "ios": "`CYLRefreshComponent` `triggerRate` (on the header)"
+ },
+ "RefreshLayout.setFooterTriggerRate": {
+  "ios": "`CYLRefreshComponent` `triggerRate` (on the footer)"
+ },
+ "RefreshLayout.setReboundDuration": {
+  "ios": "`CYLRefreshComponent` `fastAnimationDuration` / `slowAnimationDuration`",
+  "note": "seconds, per control"
+ },
+ "RefreshLayout.setRefreshFooter": {
+  "ios": "`UIScrollView` `cyl_footer`"
+ },
+ "RefreshLayout.setRefreshHeader": {
+  "ios": "`UIScrollView` `cyl_header`"
+ },
+ "RefreshLayout.setRefreshContent": {
+  "ios": "n/a",
+  "note": "the content is the UIScrollView the controls are attached to"
+ },
+ "RefreshLayout.setEnableRefresh": {
+  "ios": "`CYLRefreshComponent` `refreshEnabled` (on `cyl_header`)"
+ },
+ "RefreshLayout.setEnableLoadMore": {
+  "ios": "`CYLRefreshComponent` `refreshEnabled` (on `cyl_footer`)"
+ },
+ "RefreshLayout.setEnableAutoLoadMore": {
+  "ios": "`CYLRefreshAutoFooter` `automaticallyRefresh`"
+ },
+ "RefreshLayout.setEnableOverScrollBounce": {
+  "ios": "`UIScrollView` `bounces` (UIKit)",
+  "note": "the system bounce"
+ },
+ "RefreshLayout.setEnablePureScrollMode": {
+  "ios": "`UIScrollView` `alwaysBounceVertical` (UIKit)",
+  "note": "the system bounce with no header or footer attached"
+ },
+ "RefreshLayout.setEnableOverScrollDrag": {
+  "ios": "`UIScrollView` `bounces` (UIKit)",
+  "note": "the system bounce"
+ },
+ "RefreshLayout.setEnableNestedScroll": {
+  "ios": "n/a",
+  "note": "Android nested scrolling"
+ },
+ "RefreshLayout.setOnRefreshListener": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` / `refreshingHandler` / `-setRefreshingTarget:refreshingAction:` (on `cyl_header`)"
+ },
+ "RefreshLayout.setOnLoadMoreListener": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` / `refreshingHandler` / `-setRefreshingTarget:refreshingAction:` (on `cyl_footer`)"
+ },
+ "RefreshLayout.setOnRefreshLoadMoreListener": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` (on `cyl_header` and `cyl_footer`)",
+  "note": "one callback per control"
+ },
+ "RefreshLayout.setPrimaryColors": {
+  "ios": "`CYLRefreshComponent` `colorPrimary` / `colorAccent`",
+  "note": "per control"
+ },
+ "RefreshLayout.setPrimaryColorsId": {
+  "ios": "n/a",
+  "note": "Android color resources"
+ },
+ "RefreshLayout.finishRefreshWithNoMoreData": {
+  "ios": "`CYLRefreshComponent` `-endRefreshing` (on `cyl_header`) + `CYLRefreshFooter` `-endRefreshingWithNoMoreData`",
+  "note": "two calls"
+ },
+ "RefreshLayout.finishLoadMoreWithNoMoreData": {
+  "ios": "`CYLRefreshFooter` `-endRefreshingWithNoMoreData`"
+ },
+ "RefreshLayout.closeHeaderOrFooter": {
+  "ios": "`CYLRefreshComponent` `-endRefreshing` (on the open control)"
+ },
+ "RefreshLayout.setNoMoreData": {
+  "ios": "`CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData`"
+ },
+ "RefreshLayout.resetNoMoreData": {
+  "ios": "`CYLRefreshFooter` `-resetNoMoreData`"
+ },
+ "RefreshLayout.refreshHeader": {
+  "ios": "`UIScrollView` `cyl_header`"
+ },
+ "RefreshLayout.refreshFooter": {
+  "ios": "`UIScrollView` `cyl_footer`"
+ },
+ "RefreshLayout.state": {
+  "ios": "`CYLRefreshComponent` `phase` / `state`",
+  "note": "per control"
+ },
+ "RefreshLayout.layout": {
+  "ios": "n/a",
+  "note": "the Android ViewGroup; on iOS the UIScrollView itself"
+ },
+ "RefreshLayout.isRefreshing": {
+  "ios": "`CYLRefreshComponent` `refreshing` (on `cyl_header`)"
+ },
+ "RefreshLayout.isLoading": {
+  "ios": "`CYLRefreshComponent` `refreshing` (on `cyl_footer`)"
+ },
+ "DimensionStatus": {
+  "ios": "n/a",
+  "note": "Android size-source bookkeeping for measurement"
+ },
+ "DimensionStatus.ordinal": {
+  "ios": "n/a",
+  "note": "Android size-source bookkeeping"
+ },
+ "DimensionStatus.notified": {
+  "ios": "n/a",
+  "note": "Android size-source bookkeeping"
+ },
+ "DimensionStatus.unNotify": {
+  "ios": "n/a",
+  "note": "Android size-source bookkeeping"
+ },
+ "DimensionStatus.canReplaceWith": {
+  "ios": "n/a",
+  "note": "Android size-source bookkeeping"
+ },
+ "RefreshState": {
+  "ios": "`CYLRefreshPhase`, `CYLRefreshState`"
+ },
+ "RefreshState.toFooter": {
+  "ios": "n/a",
+  "note": "Android keeps separate header and footer states; iOS phases are per control"
+ },
+ "RefreshState.toHeader": {
+  "ios": "n/a",
+  "note": "Android keeps separate header and footer states; iOS phases are per control"
+ },
+ "SpinnerStyle": {
+  "ios": "`CYLRefreshScrollMode`"
+ },
+ "SpinnerStyle.ordinal": {
+  "ios": "n/a",
+  "note": "index of the Kotlin class-enum; iOS uses NS_ENUM values"
+ },
+ "SpinnerStyle.front": {
+  "ios": "`CYLRefreshScrollMode`",
+  "note": "every mode but `CYLRefreshScrollModeBehind` is in front"
+ },
+ "SpinnerStyle.scale": {
+  "ios": "`CYLRefreshScrollModeStretch`"
+ },
+ "CoordinatorLayoutListener": {
+  "ios": "n/a",
+  "note": "Android CoordinatorLayout / AppBarLayout"
+ },
+ "CoordinatorLayoutListener.onCoordinatorUpdate": {
+  "ios": "n/a",
+  "note": "Android CoordinatorLayout / AppBarLayout"
+ },
+ "OnLoadMoreListener": {
+  "ios": "`CYLRefreshComponentAction` / `CYLRefreshComponentHandler` (`refreshingBlock` / `refreshingHandler` on `cyl_footer`)"
+ },
+ "OnLoadMoreListener.onLoadMore": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` (on `cyl_footer`)"
+ },
+ "OnRefreshListener": {
+  "ios": "`CYLRefreshComponentAction` / `CYLRefreshComponentHandler` (`refreshingBlock` / `refreshingHandler` on `cyl_header`)"
+ },
+ "OnRefreshListener.onRefresh": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` (on `cyl_header`)"
+ },
+ "OnRefreshLoadMoreListener": {
+  "ios": "`CYLRefreshComponent` `refreshingBlock` (on `cyl_header` and `cyl_footer`)",
+  "note": "one callback per control"
+ },
+ "OnStateChangedListener": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:`"
+ },
+ "OnStateChangedListener.onStateChanged": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:`",
+  "note": "the observer gets the old and the new phase"
+ },
+ "OnMultiListener.onHeaderReleased": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseReleasing`, on `cyl_header`)"
+ },
+ "OnMultiListener.onHeaderStartAnimator": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseRefreshing`, on `cyl_header`)"
+ },
+ "OnMultiListener.onHeaderFinish": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseFinishing`) + `lastRefreshSucceeded` (on `cyl_header`)"
+ },
+ "OnMultiListener.onFooterReleased": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseReleasing`, on `cyl_footer`)"
+ },
+ "OnMultiListener.onFooterStartAnimator": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseRefreshing`, on `cyl_footer`)"
+ },
+ "OnMultiListener.onFooterFinish": {
+  "ios": "`CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseFinishing`) + `lastRefreshSucceeded` (on `cyl_footer`)"
+ },
+ "SimpleComponent": {
+  "ios": "`CYLRefreshComponent`",
+  "note": "subclass it, or add any view to a plain `CYLRefreshHeader` / `CYLRefreshBackFooter`"
+ },
+ "SimpleComponent.setNoMoreData": {
+  "ios": "`CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData`"
+ },
+ "DesignUtil": {
+  "ios": "n/a",
+  "note": "Android CoordinatorLayout / Material library hook"
+ },
+ "DesignUtil.checkCoordinatorLayout": {
+  "ios": "n/a",
+  "note": "Android CoordinatorLayout / Material library hook"
+ },
+ "CYLRefreshUtil": {
+  "ios": "n/a",
+  "note": "Android view helpers and interpolators"
+ },
+ "CYLRefreshUtil.measureViewHeight": {
+  "ios": "n/a",
+  "note": "Android measure pass"
+ },
+ "CYLRefreshUtil.scrollListBy": {
+  "ios": "n/a",
+  "note": "Android ListView helper"
+ },
+ "CYLRefreshUtil.isScrollableView": {
+  "ios": "n/a",
+  "note": "Android view-type check; iOS controls attach to a UIScrollView"
+ },
+ "CYLRefreshUtil.isContentView": {
+  "ios": "n/a",
+  "note": "Android view-type check; iOS controls attach to a UIScrollView"
+ },
+ "CYLRefreshUtil.isPager": {
+  "ios": "n/a",
+  "note": "Android ViewPager check"
+ },
+ "CYLRefreshUtil.fling": {
+  "ios": "n/a",
+  "note": "Android scroller fling; UIScrollView decelerates itself"
+ },
+ "CYLRefreshUtil.canRefresh": {
+  "ios": "n/a",
+  "note": "Android view scroll check; iOS reads the scroll view contentOffset"
+ },
+ "CYLRefreshUtil.canLoadMore": {
+  "ios": "n/a",
+  "note": "Android view scroll check; iOS reads the scroll view contentOffset"
+ },
+ "CYLRefreshUtil.isTransformedTouchPointInView": {
+  "ios": "n/a",
+  "note": "Android touch hit-testing"
+ },
+ "CYLRefreshUtil.dp2px": {
+  "ios": "n/a",
+  "note": "dp to px; iOS uses points"
+ },
+ "CYLRefreshUtil.px2dp": {
+  "ios": "n/a",
+  "note": "px to dp; iOS uses points"
+ },
+ "RefreshContentWrapper": {
+  "ios": "n/a",
+  "note": "content-wrapper plumbing; iOS controls attach to the UIScrollView itself"
+ },
+ "RefreshFooterWrapper": {
+  "ios": "`CYLRefreshBackFooter` (add the view as a subview)",
+  "note": "a plain footer draws nothing; any view can be its content"
+ },
+ "RefreshHeaderWrapper": {
+  "ios": "`CYLRefreshHeader` (add the view as a subview)",
+  "note": "a plain header draws nothing; any view can be its content"
  }
 }

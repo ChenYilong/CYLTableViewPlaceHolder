@@ -98,6 +98,32 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
 - This is not the same as "Examples have the lowest weight": that rule is about a core change that breaks an
   example's build (fix the example); this one is about bugs (fix the core).
 
+### Cross-platform API parity tables and the scoring loop (owner's rule, 2026-11-17)
+
+Find the related document first and insert into it; create one only when none exists. In this repository the
+tables are generated: Android → iOS is `docs/iOS-API-Map.md` (`scripts/ios-api-map.py`, data
+`android/merged/ios-map.json`), iOS → Android is `docs/iOS-Android-Parity.md` (`scripts/ios-android-parity.py`,
+data `android/merged/api-map.json`); HarmonyOS uses `scripts/harmony-port-tables.js`.
+
+- **The table.** Column 1: every API and feature of one platform's core (Android first). Column 2: what it does.
+  Column 3: the other platform's counterpart, `TODO` by default. Rows that are a platform detail with no
+  counterpart needed are `n/a` with the reason, and are not counted; a feature (an option, an event, a style, a
+  gesture) is never n/a.
+- **The score.** Rows without TODO / counted rows: no TODO in column 3 is 100, all TODO is 0. The score sits at the
+  top of the table and is regenerated with it.
+- **The loop, until 100.** (1) Search the existing code for each TODO and record the counterpart you find (cite only
+  symbols that exist). (2) Score. (3) Implement the missing APIs and features one by one, replacing each TODO with
+  its implementation. (4) Score again, and repeat.
+- **Core first** (see "Fix bugs in the core first"). A missing feature is added to the core of the platform that
+  lacks it, with the same logic and the same API shape as the other platform. Then that platform's example
+  reproduces the other platform's example that shows the feature. Example: when Android has draggable tags with a
+  left icon, a title and a fixed delete icon on the right, and iOS has only the icon and title, extend the iOS core
+  component (the packaged icon + title) with the delete icon, its tap event and dragging, keeping the API the same
+  as Android's. Then the iOS tag list example shows deleting a tag: the data source is updated and the list lays
+  out again.
+- **Then the reverse table.** At 100 for Android → iOS, do the same for iOS → Android (column 1 the iOS API, column 3
+  the Android counterpart, TODO by default) with the same scoring and loop.
+
 ### Documentation comments on public API
 
 Callers read the public API through generated documentation: Xcode Quick Help, the generated Swift interface of an
