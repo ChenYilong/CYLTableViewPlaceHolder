@@ -101,6 +101,12 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 ## 任务 / Tasks
 
+### TODO：动效全部经过 CYLPlaceholderViewModel / TODO: Every animation through CYLPlaceholderViewModel
+
+| 中文 | English |
+| --- | --- |
+| TODO（2026-11-17，评分 70）：规则 “One animation component”（`instructions.md`）要求所有动效都经过 `CYLPlaceholderViewModel`，新增动效类型只改这一处。iOS 与 Android 已完成；鸿蒙仍有两处绕过：①`refresh/CYLRefreshView.ets` 的动画头部与两种动画尾部用 `ImageAnimator` 直接播放图片帧（第 387、437 行附近），应改为由 `CYLPlaceholderViewModel` 播放图片序列（与 iOS `CYLPlaceholderItemImages`、Android `setAnimationImages` 相同）；②`refresh/CYLRefreshIconView.ets` 自己选择绘制引擎（第 28、97 行附近），应改为直接创建 `CYLPlaceholderViewModel`。Rive 刷新头（`refresh/drawn/CYLRefreshRiveHeader.ets`、`CYLRefreshRiveView.ets`）是驱动 Rive 状态机输入的专用样式，与 iOS / Android 一样不在此列。需要 DevEco Studio 编译与模拟器验证。 | TODO (2026-11-17, score 70): the rule "One animation component" (`instructions.md`) requires every animation to go through `CYLPlaceholderViewModel`, so a new animation type changes only that place. iOS and Android are done; HarmonyOS still bypasses it twice: (1) the animation header and both animation footers in `refresh/CYLRefreshView.ets` play image frames with `ImageAnimator` directly (around lines 387 and 437); `CYLPlaceholderViewModel` should play the image sequence (as iOS `CYLPlaceholderItemImages` and Android `setAnimationImages`); (2) `refresh/CYLRefreshIconView.ets` picks the drawing engine itself (around lines 28 and 97); it should create a `CYLPlaceholderViewModel` directly. The Rive refresh header (`refresh/drawn/CYLRefreshRiveHeader.ets`, `CYLRefreshRiveView.ets`) is a dedicated style that drives Rive state-machine inputs and, as on iOS and Android, is out of scope. Needs a DevEco Studio build and an emulator check. |
+
 ### TODO: GIF decode fallback (E12): emulator check left
 
 - **Date / branch:** 2026-11-16, `feat/android-refresh-port-followup` (pull request #31).
