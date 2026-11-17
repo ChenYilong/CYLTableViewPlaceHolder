@@ -1,11 +1,1 @@
-:host { display: block; }
-.cyl-trailer { position: relative; overflow: hidden; }
-.cyl-trailer__track, .cyl-trailer__scroll { height: 100%; }
-.cyl-trailer__scroll { width: 100%; white-space: nowrap; }
-.cyl-trailer__row { display: flex; flex-direction: row; height: 100%; }
-.cyl-trailer__trailer { position: absolute; top: 0; right: 0; height: 100%; display: flex; flex-direction: row;
-  align-items: center; justify-content: center; overflow: hidden; }
-.cyl-trailer__arrow { font-size: 22px; color: #8e8e93; transition: transform 0.2s; }
-.cyl-trailer__arrow--flipped { transform: rotate(180deg); }
-.cyl-trailer__text { margin-left: 4px; font-size: 13px; line-height: 15px; color: #666; writing-mode: vertical-rl; white-space: normal; }
-@media (prefers-color-scheme: dark) { .cyl-trailer__text { color: #c7c7cc; } }
+@import "../cyl-refresh/trailer/index.wxss";

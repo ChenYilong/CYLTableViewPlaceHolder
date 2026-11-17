@@ -1,11 +1,11 @@
-// cyl-refresh-trailer: CYLRefreshNormalTrailer (MJRefreshNormalTrailer) for WeChat Mini Program. A horizontal
+// cyl-refresh/trailer: CYLRefreshNormalTrailer (MJRefreshNormalTrailer) for WeChat Mini Program. A horizontal
 // scroller; pulling left past its end by `trailerWidth` and letting go fires `trailer` (open the details), then the
 // page calls endRefreshing (or the trailer folds by itself with autoEnd):
 //
 // <cyl-refresh-trailer id="trailer" height="200px" paging-enabled bind:trailer="onTrailer">…pages…</cyl-refresh-trailer>
 'use strict'
 
-const { CYLRefresh, CYLRefreshState } = require('../cyl-refresh/cyl_refresh')
+const { CYLRefresh, CYLRefreshState } = require('../cyl_refresh')
 
 const S = CYLRefreshState
 
