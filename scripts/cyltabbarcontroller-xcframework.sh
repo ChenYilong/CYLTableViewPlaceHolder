@@ -42,7 +42,7 @@ for destination in "${destinations[@]}"; do
   name=${name// /-}
   xcodebuild archive -project "$CHECKOUT/CYLTabBarController.xcodeproj" -scheme CYLTabBarController-Framework \
     -destination "$destination" -archivePath "$WORK/$name.xcarchive" -derivedDataPath "$WORK/DerivedData" \
-    SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO -quiet
+    SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO BUILD_LIBRARY_FOR_DISTRIBUTION=NO -quiet
   framework="$WORK/$name.xcarchive/Products/Library/Frameworks/CYLTabBarController.framework"
   # The CYLTabBarController-Framework target compiles CYLAnimatedItemView and the animation engine but marks their
   # headers as project headers, so the framework does not ship them (docs/Task-Log.md, TODO for upstream). Copy them
@@ -54,6 +54,9 @@ for destination in "${destinations[@]}"; do
 done
 rm -rf "$OUTPUT" Carthage/Build/.CYLTabBarController.*
 mkdir -p Carthage/Build
-xcodebuild -create-xcframework "${args[@]}" -output "$OUTPUT"
+# No .swiftinterface: the same Xcode builds this framework and its users, which then load the binary .swiftmodule. Swift 6.2
+# (Xcode 26.6) crashed rebuilding CYLTabBarController's module from its interface ("Redundant conformance requirements
+# in signature <Self where Self : CYLBadgeTextDisplaying>", Demo . on d214229; docs/Task-Log.md).
+xcodebuild -create-xcframework "${args[@]}" -allow-internal-distribution -output "$OUTPUT"
 touch "$STAMP"
 echo "$OUTPUT ($SHA, $SLICES)"
