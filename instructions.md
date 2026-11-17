@@ -183,9 +183,12 @@ spans several lines must reach them as one comment.
 - **One animation component.** Every animation the library shows (GIF, Lottie, PAG, Rive files and image sequences)
   plays through `CYLPlaceholderView` (Android `CYLPlaceholderView`, HarmonyOS `CYLPlaceholderViewModel`): the
   placeholder, every stack view item, the HUD, the status bar and the refresh icons. No other component creates an
-  animation player, an animated image or a frame animator itself. A new animation type is added once, in
-  `CYLPlaceholderView` and its animator registry (`CYLPlaceholderItemAnimatorRegistry`), and every component supports
-  it with no second change. Exceptions are format-specific drawn styles that drive one engine's own features (the Rive
+  animation player, an animated image or a frame animator itself. `CYLPlaceholderView` is a subclass of
+  CYLTabBarController's `CYLAnimatedItemView` (iOS and Android; guide:
+  https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md), so a
+  new animation type is added once, as an animator in CYLTabBarController's engine (`CYLTabBarItemAnimatorRegistry`),
+  and every component supports it with no second change. Core depends on no animation engine (static images); an
+  example shows animations by adding an animation subspec (`LottieSwift`, `PAG`, `Rive`, `SVGA`, `GIF`). Exceptions are format-specific drawn styles that drive one engine's own features (the Rive
   refresh header's state-machine inputs) and the system spinners (`UIActivityIndicatorView`) of the classic controls.
 - Example: `CYLPlaceholderHUD` shows loading, progress and results in one `CYLPlaceholderView` inside its stack view;
   progress scrubs an animation or adds the percentage to the title, with no drawn ring.
