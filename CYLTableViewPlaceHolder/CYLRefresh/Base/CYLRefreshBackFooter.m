@@ -111,7 +111,8 @@
         // 普通 和 即将刷新 的临界点
 
         BOOL mayArm = self.triggerMode == CYLRefreshTriggerModeAnywhere || self.cyl_dragStartedAtEdge;
-        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && currentOffsetY > normal2pullingOffsetY) {
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && [self canTrigger] &&
+            currentOffsetY > normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
             if (self.triggersWhenReached) [self beginRefreshing];

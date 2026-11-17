@@ -5,7 +5,9 @@
 //  Copyright © 2018 小码哥. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+@class CYLRefreshComponent, CYLRefreshHeader, CYLRefreshFooter;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,6 +30,28 @@ NS_ASSUME_NONNULL_BEGIN
  * - Attention: 默认为 nil 采用内置逻辑. 这里设置后将忽略内置逻辑的多语言模式, 采用自定义的多语言 bundle
  */
 @property (nonatomic, nullable) NSBundle *i18nBundle;
+
+/*!
+ * [EN] Makes the header `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none
+ *      (SmartRefreshLayout's `setDefaultRefreshHeaderCreator`). Default nil.
+ * [CN] 生成 `-[UIScrollView cyl_installDefaultRefreshControls]` 为没有刷新头的滚动视图安装的刷新头（对应 SmartRefreshLayout 的
+ *      `setDefaultRefreshHeaderCreator`）。默认 nil。
+ */
+@property (copy, nonatomic, nullable) CYLRefreshHeader * _Nullable (^defaultHeaderCreator)(UIScrollView *scrollView);
+/*!
+ * [EN] Makes the footer `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none
+ *      (SmartRefreshLayout's `setDefaultRefreshFooterCreator`). Default nil.
+ * [CN] 生成 `-[UIScrollView cyl_installDefaultRefreshControls]` 为没有尾部的滚动视图安装的尾部（对应 SmartRefreshLayout 的
+ *      `setDefaultRefreshFooterCreator`）。默认 nil。
+ */
+@property (copy, nonatomic, nullable) CYLRefreshFooter * _Nullable (^defaultFooterCreator)(UIScrollView *scrollView);
+/*!
+ * [EN] Sets up every control once, when it is first attached to a scroll view, before its own
+ *      `didAttachToScrollView:` (SmartRefreshLayout's `setDefaultRefreshInitializer`). Default nil.
+ * [CN] 每个控件第一次挂到滚动视图时调用一次，在其 `didAttachToScrollView:` 之前（对应 SmartRefreshLayout 的
+ *      `setDefaultRefreshInitializer`）。默认 nil。
+ */
+@property (copy, nonatomic, nullable) void (^defaultInitializer)(__kindof CYLRefreshComponent *component);
 
 /*!
  * Singleton Config instance

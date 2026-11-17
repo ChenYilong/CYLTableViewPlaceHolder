@@ -40,6 +40,17 @@
 }
 @end
 
+@interface CYLAutoHookHeader : CYLRefreshNormalHeader
+@property (nonatomic) NSMutableArray<NSNumber *> *autoChanges;
+@end
+
+@implementation CYLAutoHookHeader
+- (void)autoRefreshDidChange:(BOOL)autoRefresh {
+    if (!self.autoChanges) self.autoChanges = [NSMutableArray array];
+    [self.autoChanges addObject:@(autoRefresh)];
+}
+@end
+
 @implementation CYLRefreshSmartAPITests
 
 - (void)onRefresh:(id)sender {
@@ -586,6 +597,110 @@
     XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action");
     XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh");
     window.hidden = YES;
+}
+
+
+#pragma mark - SmartRefreshLayout parity (docs/iOS-API-Map.md)
+
+- (void)testAutoRefreshTellsCodeFromAPull {
+    UIScrollView *scrollView = [self scrollView];
+    CYLAutoHookHeader *header = [CYLAutoHookHeader attach:scrollView];
+    XCTAssertFalse(header.isAutoRefresh);
+    [header beginRefreshing];
+    XCTAssertTrue(header.isAutoRefresh, @"started in code");
+    header.state = CYLRefreshStateIdle;
+    XCTAssertFalse(header.isAutoRefresh, @"cleared when it ends");
+    XCTAssertEqualObjects(header.autoChanges, (@[@YES, @NO]));
+}
+
+- (void)testAnimationOnlySkipsTheCallbacksOnce {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    __block NSInteger calls = 0;
+    header.refreshingBlock = ^{ calls++; };
+    [header beginRefreshingAnimationOnly];
+    XCTAssertTrue(header.isRefreshing);
+    [header executeRefreshingCallback];
+    XCTAssertEqual(calls, 0, @"animation only");
+    header.state = CYLRefreshStateIdle;
+    [header executeRefreshingCallback];
+    XCTAssertEqual(calls, 1, @"the next refresh calls back again");
+}
+
+- (void)testScrollObserversDecidersAndContentTouches {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    __block NSInteger moves = 0;
+    id token = [header addScrollObserver:^(CYLRefreshComponent *component, CGFloat offset, CGFloat percent, BOOL dragging) {
+        moves++;
+    }];
+    scrollView.contentOffset = CGPointMake(0, -10);
+    XCTAssertGreaterThan(moves, 0, @"OnMultiListener.onHeaderMoving");
+    [header removeScrollObserver:token];
+    NSInteger before = moves;
+    scrollView.contentOffset = CGPointMake(0, -20);
+    XCTAssertEqual(moves, before, @"removed observers stay silent");
+
+    XCTAssertTrue([header canTrigger], @"no decider: the built-in check");
+    header.canTriggerBlock = ^BOOL(CYLRefreshComponent *component) { return NO; };
+    XCTAssertFalse([header canTrigger]);
+
+    header.disablesContentWhileRefreshing = YES;
+    header.state = CYLRefreshStateRefreshing;
+    XCTAssertFalse(scrollView.userInteractionEnabled, @"setDisableContentWhenRefresh");
+    header.state = CYLRefreshStateIdle;
+    XCTAssertTrue(scrollView.userInteractionEnabled);
+}
+
+- (void)testSecondFloorVetoAndDelayedCalls {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    header.secondaryTriggerOffset = 120;
+    header.secondaryAnimationDuration = 0.05;
+    header.secondaryShouldOpenBlock = ^BOOL(CYLRefreshHeader *h) { return NO; };
+    [header openSecondary];
+    XCTAssertFalse(header.isSecondaryOpen, @"OnTwoLevelListener returned false");
+    header.secondaryShouldOpenBlock = ^BOOL(CYLRefreshHeader *h) { return YES; };
+    [header openSecondary];
+    XCTAssertTrue(header.isSecondaryOpen);
+
+    CYLRefreshNormalHeader *other = [CYLRefreshNormalHeader attach:[self scrollView]];
+    XCTestExpectation *began = [self expectationWithDescription:@"autoRefresh(delayed)"];
+    [other beginRefreshingAfterDelay:0.05];
+    XCTAssertFalse(other.isRefreshing, @"not yet");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        XCTAssertTrue(other.isRefreshing);
+        [began fulfill];
+    });
+    [self waitForExpectationsWithTimeout:2 handler:nil];
+}
+
+- (void)testFinishWithNoMoreDataAndAppWideDefaults {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    header.state = CYLRefreshStateRefreshing;
+    [scrollView cyl_endRefreshingAfterDelay:0 success:YES noMoreData:YES];
+    XCTAssertTrue(footer.isNoMoreData, @"finishRefresh(noMoreData: true)");
+    [scrollView cyl_endRefreshingAfterDelay:0 success:YES noMoreData:NO];
+    XCTAssertFalse(footer.isNoMoreData, @"finishRefresh(noMoreData: false) resets it");
+    footer.state = CYLRefreshStateRefreshing;
+    [scrollView cyl_endLoadingMoreAfterDelay:0 success:YES noMoreData:YES];
+    XCTAssertTrue(footer.isNoMoreData, @"finishLoadMore(noMoreData: true)");
+
+    CYLRefreshConfig *config = CYLRefreshConfig.defaultConfig;
+    __block NSInteger initialized = 0;
+    config.defaultHeaderCreator = ^CYLRefreshHeader *(UIScrollView *s) { return [CYLRefreshNormalHeader new]; };
+    config.defaultFooterCreator = ^CYLRefreshFooter *(UIScrollView *s) { return [CYLRefreshBackNormalFooter new]; };
+    config.defaultInitializer = ^(CYLRefreshComponent *component) { initialized++; };
+    UIScrollView *fresh = [self scrollView];
+    [fresh cyl_installDefaultRefreshControls];
+    config.defaultHeaderCreator = nil;
+    config.defaultFooterCreator = nil;
+    config.defaultInitializer = nil;
+    XCTAssertTrue([fresh.cyl_header isKindOfClass:CYLRefreshNormalHeader.class]);
+    XCTAssertTrue([fresh.cyl_footer isKindOfClass:CYLRefreshBackNormalFooter.class]);
+    XCTAssertEqual(initialized, 2, @"every new control is set up once");
 }
 
 @end

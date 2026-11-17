@@ -33,6 +33,15 @@
 @property (assign, nonatomic) CYLRefreshPhase cyl_reportedPhase;
 /// [EN] Observers added with -addPhaseObserver:, by token. [CN] -addPhaseObserver: 添加的观察者，按标识保存。
 @property (strong, nonatomic) NSMutableDictionary<NSUUID *, id> *cyl_phaseObservers;
+/// [EN] Observers added with -addScrollObserver:, by token. [CN] -addScrollObserver: 添加的观察者，按标识保存。
+@property (strong, nonatomic) NSMutableDictionary<NSUUID *, id> *cyl_scrollObservers;
+/// [EN] YES while -beginRefreshingAnimationOnly holds the callbacks back. [CN] -beginRefreshingAnimationOnly 不调用回调期间为 YES。
+@property (assign, nonatomic) BOOL cyl_skipsCallbacks;
+/// [EN] YES once CYLRefreshConfig.defaultInitializer ran for this control. [CN] 已为本控件运行 defaultInitializer 后为 YES。
+@property (assign, nonatomic) BOOL cyl_initialized;
+/// [EN] YES while this control turned the scroll view's touches off. [CN] 本控件关闭了滚动视图的触摸期间为 YES。
+@property (assign, nonatomic) BOOL cyl_disabledContent;
+@property (assign, nonatomic, readwrite, getter=isAutoRefresh) BOOL autoRefresh;
 /// [EN] The empty mask that hides the control (`autoHideRefresh`). [CN] 隐藏控件（`autoHideRefresh`）的空遮罩。
 @property (strong, nonatomic) CALayer *cyl_autoHideMask;
 /// [EN] The text of each state (CYLRefreshStateTitles). [CN] 各状态的文字（CYLRefreshStateTitles）。
@@ -276,7 +285,15 @@
 - (void)didMoveToSuperview
 {
     [super didMoveToSuperview];
-    if (_scrollView && self.superview == _scrollView) [self didAttachToScrollView:_scrollView];
+    if (_scrollView && self.superview == _scrollView) {
+        // [EN] The app-wide setup runs once per control (CYLRefreshConfig.defaultInitializer).
+        // [CN] 应用级设置每个控件只运行一次（CYLRefreshConfig.defaultInitializer）。
+        if (!self.cyl_initialized && CYLRefreshConfig.defaultConfig.defaultInitializer) {
+            self.cyl_initialized = YES;
+            CYLRefreshConfig.defaultConfig.defaultInitializer(self);
+        }
+        [self didAttachToScrollView:_scrollView];
+    }
 }
 
 - (void)didMoveToWindow
@@ -340,6 +357,9 @@
     if ([keyPath isEqualToString:CYLRefreshKeyPathContentOffset]) {
         [self scrollViewContentOffsetDidChange:change];
         [self didScrollWithOffset:self.dragOffset percent:self.pullingPercent dragging:self.scrollView.isDragging];
+        for (void (^observer)(CYLRefreshComponent *, CGFloat, CGFloat, BOOL) in self.cyl_scrollObservers.allValues) {
+            observer(self, self.dragOffset, self.pullingPercent, self.scrollView.isDragging);
+        }
         [self cyl_reportPhase];
     } else if ([keyPath isEqualToString:CYLRefreshKeyPathPanState]) {
         [self scrollViewPanStateDidChange:change];
@@ -366,6 +386,14 @@
 - (void)setState:(CYLRefreshState)state
 {
     _state = state;
+    [self cyl_updateContentTouchesForState:state];
+    if (state == CYLRefreshStateIdle || state == CYLRefreshStateNoMoreData) {
+        if (self.autoRefresh) {
+            self.autoRefresh = NO;
+            [self autoRefreshDidChange:NO];
+        }
+        self.cyl_skipsCallbacks = NO;
+    }
     // [EN] The icon follows every state change of every subclass (CYLRefreshCheckState calls super).
     // [CN] 图标随所有子类的每次状态变化更新（CYLRefreshCheckState 会调用 super）。
     [_iconView updateForState:state];
@@ -406,6 +434,15 @@
 - (void)beginRefreshing
 {
     if ([self cyl_holdsBackStartForOtherRefresh]) return;
+    // [EN] Started in code unless a pull armed the control or a scroll reached it. [CN] 除非由拉动触发或滚动到达，否则视为代码开始。
+    UIScrollView *scrollView = self.scrollView;
+    UIGestureRecognizerState pan = scrollView.panGestureRecognizer.state;
+    BOOL byUser = self.state == CYLRefreshStatePulling || scrollView.isDragging || scrollView.isDecelerating ||
+        pan == UIGestureRecognizerStateBegan || pan == UIGestureRecognizerStateChanged || pan == UIGestureRecognizerStateEnded;
+    if (!byUser && !self.isRefreshing && !self.autoRefresh) {
+        self.autoRefresh = YES;
+        [self autoRefreshDidChange:YES];
+    }
     [UIView animateWithDuration:self.fastAnimationDuration animations:^{
         self.alpha = 1.0;
     }];
@@ -555,6 +592,7 @@
 #pragma mark - 内部方法
 - (void)executeRefreshingCallback
 {
+    if (self.cyl_skipsCallbacks) return;
     if (self.refreshingBlock) {
         self.refreshingBlock();
     }
@@ -727,6 +765,84 @@
 {
     if ([token isKindOfClass:NSUUID.class]) [self.cyl_phaseObservers removeObjectForKey:token];
 }
+
+#pragma mark - SmartRefreshLayout parity: starting and ending in code, observing, deciding
+
+- (void)beginRefreshingAfterDelay:(NSTimeInterval)delay
+{
+    if (delay <= 0) {
+        [self beginRefreshing];
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf beginRefreshing];
+    });
+}
+
+- (void)beginRefreshingAnimationOnly
+{
+    if (self.isRefreshing) return;
+    self.cyl_skipsCallbacks = YES;
+    [self beginRefreshing];
+    // [EN] Held back by another refresh: nothing started, so the next start calls back again.
+    // [CN] 被其他刷新挡住时没有开始，下次开始仍调用回调。
+    if (!self.isRefreshing) self.cyl_skipsCallbacks = NO;
+}
+
+- (void)endRefreshingAfterDelay:(NSTimeInterval)delay success:(BOOL)success
+{
+    if (delay <= 0) {
+        [self endRefreshingWithSuccess:success];
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf endRefreshingWithSuccess:success];
+    });
+}
+
+- (id)addScrollObserver:(void (^)(__kindof CYLRefreshComponent *, CGFloat, CGFloat, BOOL))observer
+{
+    NSUUID *token = [NSUUID UUID];
+    if (!observer) return token;
+    if (!self.cyl_scrollObservers) self.cyl_scrollObservers = [NSMutableDictionary dictionary];
+    self.cyl_scrollObservers[token] = [observer copy];
+    return token;
+}
+
+- (void)removeScrollObserver:(id)token
+{
+    if ([token isKindOfClass:NSUUID.class]) [self.cyl_scrollObservers removeObjectForKey:token];
+}
+
+- (BOOL)canTrigger
+{
+    return self.canTriggerBlock ? self.canTriggerBlock(self) : YES;
+}
+
+- (void)setDisablesContentWhileRefreshing:(BOOL)disablesContentWhileRefreshing
+{
+    _disablesContentWhileRefreshing = disablesContentWhileRefreshing;
+    [self cyl_updateContentTouchesForState:self.state];
+}
+
+/// [EN] Turns the scroll view's touches off while refreshing (disablesContentWhileRefreshing) and back on after.
+/// [CN] 刷新期间关闭滚动视图的触摸（disablesContentWhileRefreshing），结束后恢复。
+- (void)cyl_updateContentTouchesForState:(CYLRefreshState)state
+{
+    BOOL busy = state == CYLRefreshStateRefreshing || state == CYLRefreshStateWillRefresh;
+    UIScrollView *scrollView = self.scrollView;
+    if (self.disablesContentWhileRefreshing && busy && !self.cyl_disabledContent && scrollView) {
+        self.cyl_disabledContent = YES;
+        scrollView.userInteractionEnabled = NO;
+    } else if (self.cyl_disabledContent && (!busy || !self.disablesContentWhileRefreshing)) {
+        self.cyl_disabledContent = NO;
+        scrollView.userInteractionEnabled = YES;
+    }
+}
+
+- (void)autoRefreshDidChange:(BOOL)autoRefresh {}
 
 - (void)setColorAccent:(UIColor *)colorAccent
 {

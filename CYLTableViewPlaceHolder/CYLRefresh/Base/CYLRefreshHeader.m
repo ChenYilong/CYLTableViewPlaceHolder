@@ -158,9 +158,21 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     [super willDetachFromScrollView:scrollView];
 }
 
+/// [EN] The second floor's open / close duration (secondaryAnimationDuration, else slowAnimationDuration).
+/// [CN] 二楼打开 / 关闭的时长（secondaryAnimationDuration，否则 slowAnimationDuration）。
+- (NSTimeInterval)cyl_secondaryDuration
+{
+    return self.secondaryAnimationDuration > 0 ? self.secondaryAnimationDuration : self.slowAnimationDuration;
+}
+
 - (void)openSecondary
 {
     if (self.secondaryOpen || !self.scrollView || self.isRefreshing) return;
+    if (self.secondaryShouldOpenBlock && !self.secondaryShouldOpenBlock(self)) {
+        // [EN] Vetoed: drop the armed pull, the header stays as it is. [CN] 被拒绝：放弃已触发的拉动，刷新头保持原样。
+        self.cyl_secondaryArmed = NO;
+        return;
+    }
     self.cyl_secondaryArmed = NO;
     if (self.state == CYLRefreshStatePulling) self.state = CYLRefreshStateIdle;
     [self cyl_placeSecondaryView];
@@ -171,7 +183,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     if (self.secondaryView) [self.scrollView insertSubview:self.secondaryView aboveSubview:self];
     [self cyl_reportPhase];
     CGFloat top = self.scrollViewOriginalInset.top + [self cyl_secondaryHeight];
-    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+    [UIView animateWithDuration:[self cyl_secondaryDuration] animations:^{
         [self setRefreshingInsetTop:top];
         self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, -top);
     } completion:^(BOOL finished) {
@@ -186,7 +198,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     self.cyl_secondaryClosePending = NO;
     [self cyl_reportPhase];
     CGFloat top = self.scrollViewOriginalInset.top;
-    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+    [UIView animateWithDuration:[self cyl_secondaryDuration] animations:^{
         [self setRefreshingInsetTop:top];
         self.scrollView.contentOffset = CGPointMake(self.scrollView.cyl_offsetX, -top);
     } completion:^(BOOL finished) {
@@ -398,7 +410,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         }
         self.pullingPercent = pullingPercent;
         BOOL mayArm = self.triggerMode == CYLRefreshTriggerModeAnywhere || self.cyl_dragStartedAtEdge;
-        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && offsetY < normal2pullingOffsetY) {
+        if (self.state == CYLRefreshStateIdle && self.refreshEnabled && mayArm && [self canTrigger] &&
+            offsetY < normal2pullingOffsetY) {
             // 转为即将刷新状态
             self.state = CYLRefreshStatePulling;
             // [EN] triggersWhenReached: refresh now, without waiting for the release. [CN] triggersWhenReached：立即刷新，不等松手。

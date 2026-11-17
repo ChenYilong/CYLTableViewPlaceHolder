@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：91 / 100**（728 / 799 行已有 iOS 对应，TODO 71 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 91 / 100** (728 of 799 rows have an iOS counterpart, 71 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：97 / 100**（772 / 799 行已有 iOS 对应，TODO 27 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 97 / 100** (772 of 799 rows have an iOS counterpart, 27 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
@@ -587,8 +587,8 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `OnTwoLevelListener` (interface) | Called when the second floor opens; return false to keep it closed (`OnTwoLevelListener`). | TODO |  |
-| `OnTwoLevelListener.onTwoLevel` (fun) | True opens the second floor. | TODO |  |
+| `OnTwoLevelListener` (interface) | Called when the second floor opens; return false to keep it closed (`OnTwoLevelListener`). | `CYLRefreshHeader` `secondaryShouldOpenBlock` | added 2026-11-17 for Android parity |
+| `OnTwoLevelListener.onTwoLevel` (fun) | True opens the second floor. | `CYLRefreshHeader` `secondaryShouldOpenBlock` | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/header/material/MaterialDrawables.kt`
 
@@ -676,11 +676,11 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshLayout` (class) | The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more (`SmartRefreshLayout`). | `UIScrollView(CYLRefresh)` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshLayout` (class) | The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more (`SmartRefreshLayout`). | `UIScrollView(CYLRefresh)`, `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshLayout.LayoutParams` (class) | The layout parameters of the layout's children: a background color and a spinner style for a header or footer. | n/a | ViewGroup.LayoutParams; per control iOS uses `colorPrimary` and `scrollMode` |
-| `CYLRefreshLayout.setDefaultRefreshHeaderCreator` (fun) | Sets the header every layout gets when it has none. | TODO |  |
-| `CYLRefreshLayout.setDefaultRefreshFooterCreator` (fun) | Sets the footer every layout gets when it has none. | TODO |  |
-| `CYLRefreshLayout.setDefaultRefreshInitializer` (fun) | Sets up every new layout. | TODO |  |
+| `CYLRefreshLayout.setDefaultRefreshHeaderCreator` (fun) | Sets the header every layout gets when it has none. | `CYLRefreshConfig` `defaultHeaderCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls` | added 2026-11-17 for Android parity |
+| `CYLRefreshLayout.setDefaultRefreshFooterCreator` (fun) | Sets the footer every layout gets when it has none. | `CYLRefreshConfig` `defaultFooterCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls` | added 2026-11-17 for Android parity |
+| `CYLRefreshLayout.setDefaultRefreshInitializer` (fun) | Sets up every new layout. | `CYLRefreshConfig` `defaultInitializer` | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/layout/api/Api.kt`
 
@@ -690,7 +690,7 @@
 | `RefreshComponent.view` (val) | The view shown for this component. | n/a | the Android View of the component; on iOS the component is the UIView itself |
 | `RefreshComponent.spinnerStyle` (val) | How the component moves with the pull. | `CYLRefreshComponent` `scrollMode` |  |
 | `RefreshComponent.setPrimaryColors` (fun) | The layout's primary colors (srlPrimaryColor, srlAccentColor). | `CYLRefreshComponent` `colorPrimary` / `colorAccent` |  |
-| `RefreshComponent.onAutoRefresh` (fun) | True when autoRefresh / autoLoadMore starts, false when it ends (pull request #1095), so a component can tell an auto refresh from a drag (#1268). | TODO |  |
+| `RefreshComponent.onAutoRefresh` (fun) | True when autoRefresh / autoLoadMore starts, false when it ends (pull request #1095), so a component can tell an auto refresh from a drag (#1268). | `CYLRefreshComponent` `-autoRefreshDidChange:` | added 2026-11-17 for Android parity |
 | `RefreshComponent.onInitialized` (fun) | The size is known; called once, and again when the height changes. | `CYLRefreshComponent` `-didAttachToScrollView:` / `-placeSubviews` |  |
 | `RefreshComponent.onMoving` (fun) | The pull moved: [percent] of the trigger height, [offset] pixels. | `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` |  |
 | `RefreshComponent.onReleased` (fun) | Released past the trigger height. | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` (`CYLRefreshPhaseReleasing`), `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` |  |
@@ -725,10 +725,10 @@
 | `RefreshKernel.requestNeedTouchEventFor` (fun) | Lets [internal] get touches while open. | n/a | Android touch dispatch; an iOS control is a UIView and gets touches itself |
 | `RefreshKernel.requestDefaultTranslationContentFor` (fun) | The default for moving the content with [internal], unless the app set it. | TODO |  |
 | `RefreshKernel.requestRemeasureHeightFor` (fun) | Measures [internal]'s height again. | n/a | Android measure pass |
-| `RefreshKernel.requestFloorDuration` (fun) | The second floor's open and close duration. | TODO |  |
+| `RefreshKernel.requestFloorDuration` (fun) | The second floor's open and close duration. | `CYLRefreshHeader` `secondaryAnimationDuration` | added 2026-11-17 for Android parity |
 | `RefreshKernel.requestFloorBottomPullUpToCloseRate` (fun) | The bottom share of the second floor where a pull up closes it. | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | points instead of a share of the floor |
-| `RefreshKernel.onAutoRefreshAnimationEnd` (fun) | An auto refresh's open animation ended. | TODO |  |
-| `RefreshKernel.onAutoLoadMoreAnimationEnd` (fun) | An auto load more's open animation ended. | TODO |  |
+| `RefreshKernel.onAutoRefreshAnimationEnd` (fun) | An auto refresh's open animation ended. | `CYLRefreshComponent` `autoRefresh` with `addPhaseObserver:` (the refreshing phase after an automatic start) | added 2026-11-17 for Android parity |
+| `RefreshKernel.onAutoLoadMoreAnimationEnd` (fun) | An auto load more's open animation ended. | `CYLRefreshComponent` `autoRefresh` with `addPhaseObserver:` (the refreshing phase after an automatic start) | added 2026-11-17 for Android parity |
 | `RefreshLayout` (interface) | The refresh layout's API (`RefreshLayout`). | `UIScrollView(CYLRefresh)` |  |
 | `RefreshLayout.setFooterHeight` (fun) | The footer's height in dp. | `CYLRefreshFooter` frame height (`UIView(CYLExtension)` `cyl_h`) | points |
 | `RefreshLayout.setFooterHeightPx` (fun) | The footer's height in pixels. | n/a | pixel variant; iOS uses points (see setFooterHeight) |
@@ -770,24 +770,24 @@
 | `RefreshLayout.setFixedFooterViewId` (fun) | A view inside the content that stays at the bottom. | TODO |  |
 | `RefreshLayout.setHeaderTranslationViewId` (fun) | The view that moves with the header instead of the content. | TODO |  |
 | `RefreshLayout.setFooterTranslationViewId` (fun) | The view that moves with the footer instead of the content. | TODO |  |
-| `RefreshLayout.setDisableContentWhenRefresh` (fun) | Ignores touches on the content while refreshing. | TODO |  |
-| `RefreshLayout.setDisableContentWhenLoading` (fun) | Ignores touches on the content while loading. | TODO |  |
+| `RefreshLayout.setDisableContentWhenRefresh` (fun) | Ignores touches on the content while refreshing. | `CYLRefreshHeader` `disablesContentWhileRefreshing` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setDisableContentWhenLoading` (fun) | Ignores touches on the content while loading. | `CYLRefreshFooter` `disablesContentWhileRefreshing` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setOnRefreshListener` (fun) | Called to refresh. | `CYLRefreshComponent` `refreshingBlock` / `refreshingHandler` / `-setRefreshingTarget:refreshingAction:` (on `cyl_header`) |  |
 | `RefreshLayout.setOnLoadMoreListener` (fun) | Called to load more. | `CYLRefreshComponent` `refreshingBlock` / `refreshingHandler` / `-setRefreshingTarget:refreshingAction:` (on `cyl_footer`) |  |
 | `RefreshLayout.setOnRefreshLoadMoreListener` (fun) | Called to refresh and to load more. | `CYLRefreshComponent` `refreshingBlock` (on `cyl_header` and `cyl_footer`) | one callback per control |
-| `RefreshLayout.setOnMultiListener` (fun) | Called for every step. | TODO |  |
-| `RefreshLayout.setScrollBoundaryDecider` (fun) | Decides when the content can refresh or load more. | TODO |  |
+| `RefreshLayout.setOnMultiListener` (fun) | Called for every step. | `CYLRefreshComponent` `-addScrollObserver:` / `-addPhaseObserver:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setScrollBoundaryDecider` (fun) | Decides when the content can refresh or load more. | `CYLRefreshComponent` `canTriggerBlock` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setPrimaryColors` (fun) | The components' primary colors. | `CYLRefreshComponent` `colorPrimary` / `colorAccent` | per control |
 | `RefreshLayout.setPrimaryColorsId` (fun) | The components' primary colors, as resources. | n/a | Android color resources |
-| `RefreshLayout.finishRefresh` (fun) | Ends refreshing. | TODO |  |
-| `RefreshLayout.finishRefresh` (fun) | Ends refreshing after [delayed] milliseconds. | TODO |  |
-| `RefreshLayout.finishRefresh` (fun) | Ends refreshing, succeeded or failed. | TODO |  |
-| `RefreshLayout.finishRefresh` (fun) | Ends refreshing; [noMoreData] null leaves it unchanged. | TODO |  |
+| `RefreshLayout.finishRefresh` (fun) | Ends refreshing. | `CYLRefreshHeader` `-endRefreshing` / `-endRefreshingAfterDelay:success:` / `-endRefreshingWithSuccess:`; with no more data `UIScrollView` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishRefresh` (fun) | Ends refreshing after [delayed] milliseconds. | `CYLRefreshHeader` `-endRefreshing` / `-endRefreshingAfterDelay:success:` / `-endRefreshingWithSuccess:`; with no more data `UIScrollView` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishRefresh` (fun) | Ends refreshing, succeeded or failed. | `CYLRefreshHeader` `-endRefreshing` / `-endRefreshingAfterDelay:success:` / `-endRefreshingWithSuccess:`; with no more data `UIScrollView` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishRefresh` (fun) | Ends refreshing; [noMoreData] null leaves it unchanged. | `CYLRefreshHeader` `-endRefreshing` / `-endRefreshingAfterDelay:success:` / `-endRefreshingWithSuccess:`; with no more data `UIScrollView` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
 | `RefreshLayout.finishRefreshWithNoMoreData` (fun) | Ends refreshing and marks no more data. | `CYLRefreshComponent` `-endRefreshing` (on `cyl_header`) + `CYLRefreshFooter` `-endRefreshingWithNoMoreData` | two calls |
-| `RefreshLayout.finishLoadMore` (fun) | Ends loading more. | TODO |  |
-| `RefreshLayout.finishLoadMore` (fun) | Ends loading more after [delayed] milliseconds. | TODO |  |
-| `RefreshLayout.finishLoadMore` (fun) | Ends loading more, succeeded or failed. | TODO |  |
-| `RefreshLayout.finishLoadMore` (fun) | Ends loading more. | TODO |  |
+| `RefreshLayout.finishLoadMore` (fun) | Ends loading more. | `CYLRefreshFooter` `-endRefreshing` / `-endRefreshingAfterDelay:success:`; `UIScrollView` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishLoadMore` (fun) | Ends loading more after [delayed] milliseconds. | `CYLRefreshFooter` `-endRefreshing` / `-endRefreshingAfterDelay:success:`; `UIScrollView` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishLoadMore` (fun) | Ends loading more, succeeded or failed. | `CYLRefreshFooter` `-endRefreshing` / `-endRefreshingAfterDelay:success:`; `UIScrollView` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.finishLoadMore` (fun) | Ends loading more. | `CYLRefreshFooter` `-endRefreshing` / `-endRefreshingAfterDelay:success:`; `UIScrollView` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | added 2026-11-17 for Android parity |
 | `RefreshLayout.finishLoadMoreWithNoMoreData` (fun) | Ends loading more and marks no more data. | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` |  |
 | `RefreshLayout.closeHeaderOrFooter` (fun) | Closes the open header or footer. | `CYLRefreshComponent` `-endRefreshing` (on the open control) |  |
 | `RefreshLayout.setNoMoreData` (fun) | Marks (or clears) no more data. | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData` |  |
@@ -796,14 +796,14 @@
 | `RefreshLayout.refreshFooter` (val) | The footer, or null. | `UIScrollView` `cyl_footer` |  |
 | `RefreshLayout.state` (val) | The state. | `CYLRefreshComponent` `phase` / `state` | per control |
 | `RefreshLayout.layout` (val) | The layout's view. | n/a | the Android ViewGroup; on iOS the UIScrollView itself |
-| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled; false when it cannot now. | TODO |  |
-| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled, after [delayed] milliseconds. | TODO |  |
-| `RefreshLayout.autoRefreshAnimationOnly` (fun) | Shows refreshing without calling the refresh listener. | TODO |  |
-| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled, with the open duration and pull rate. | TODO |  |
-| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up. | TODO |  |
-| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up, after [delayed] milliseconds. | TODO |  |
-| `RefreshLayout.autoLoadMoreAnimationOnly` (fun) | Shows loading more without calling the load-more listener. | TODO |  |
-| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up, with the open duration and pull rate. | TODO |  |
+| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled; false when it cannot now. | `CYLRefreshHeader` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled, after [delayed] milliseconds. | `CYLRefreshHeader` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoRefreshAnimationOnly` (fun) | Shows refreshing without calling the refresh listener. | `CYLRefreshHeader` `-beginRefreshingAnimationOnly` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoRefresh` (fun) | Refreshes as if pulled, with the open duration and pull rate. | `CYLRefreshHeader` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up. | `CYLRefreshFooter` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up, after [delayed] milliseconds. | `CYLRefreshFooter` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoLoadMoreAnimationOnly` (fun) | Shows loading more without calling the load-more listener. | `CYLRefreshFooter` `-beginRefreshingAnimationOnly` | added 2026-11-17 for Android parity |
+| `RefreshLayout.autoLoadMore` (fun) | Loads more as if pulled up, with the open duration and pull rate. | `CYLRefreshFooter` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:` | added 2026-11-17 for Android parity |
 | `RefreshLayout.isRefreshing` (val) | True while refreshing. | `CYLRefreshComponent` `refreshing` (on `cyl_header`) |  |
 | `RefreshLayout.isLoading` (val) | True while loading more. | `CYLRefreshComponent` `refreshing` (on `cyl_footer`) |  |
 
@@ -831,12 +831,12 @@
 |:---|:---|:---|:---|
 | `CoordinatorLayoutListener` (interface) | Hears a CoordinatorLayout's app bar (`CoordinatorLayoutListener`). | n/a | Android CoordinatorLayout / AppBarLayout |
 | `CoordinatorLayoutListener.onCoordinatorUpdate` (fun) | Whether refreshing and loading more are possible with the app bar's offset. | n/a | Android CoordinatorLayout / AppBarLayout |
-| `DefaultRefreshFooterCreator` (interface) | Makes the default footer of every layout (`DefaultRefreshFooterCreator`). | TODO |  |
-| `DefaultRefreshFooterCreator.createRefreshFooter` (fun) | A new footer for [layout]. | TODO |  |
-| `DefaultRefreshHeaderCreator` (interface) | Makes the default header of every layout (`DefaultRefreshHeaderCreator`). | TODO |  |
-| `DefaultRefreshHeaderCreator.createRefreshHeader` (fun) | A new header for [layout]. | TODO |  |
-| `DefaultRefreshInitializer` (interface) | Sets up every new layout (`DefaultRefreshInitializer`). | TODO |  |
-| `DefaultRefreshInitializer.initialize` (fun) | Sets up [layout]. | TODO |  |
+| `DefaultRefreshFooterCreator` (interface) | Makes the default footer of every layout (`DefaultRefreshFooterCreator`). | `CYLRefreshConfig` `defaultFooterCreator` (a block) | added 2026-11-17 for Android parity |
+| `DefaultRefreshFooterCreator.createRefreshFooter` (fun) | A new footer for [layout]. | `CYLRefreshConfig` `defaultFooterCreator` | added 2026-11-17 for Android parity |
+| `DefaultRefreshHeaderCreator` (interface) | Makes the default header of every layout (`DefaultRefreshHeaderCreator`). | `CYLRefreshConfig` `defaultHeaderCreator` (a block) | added 2026-11-17 for Android parity |
+| `DefaultRefreshHeaderCreator.createRefreshHeader` (fun) | A new header for [layout]. | `CYLRefreshConfig` `defaultHeaderCreator` | added 2026-11-17 for Android parity |
+| `DefaultRefreshInitializer` (interface) | Sets up every new layout (`DefaultRefreshInitializer`). | `CYLRefreshConfig` `defaultInitializer` (a block) | added 2026-11-17 for Android parity |
+| `DefaultRefreshInitializer.initialize` (fun) | Sets up [layout]. | `CYLRefreshConfig` `defaultInitializer` | added 2026-11-17 for Android parity |
 | `OnLoadMoreListener` (interface) | Called to load more (`OnLoadMoreListener`). | `CYLRefreshComponentAction` / `CYLRefreshComponentHandler` (`refreshingBlock` / `refreshingHandler` on `cyl_footer`) |  |
 | `OnLoadMoreListener.onLoadMore` (fun) | Load more, then call finishLoadMore. | `CYLRefreshComponent` `refreshingBlock` (on `cyl_footer`) |  |
 | `OnRefreshListener` (interface) | Called to refresh (`OnRefreshListener`). | `CYLRefreshComponentAction` / `CYLRefreshComponentHandler` (`refreshingBlock` / `refreshingHandler` on `cyl_header`) |  |
@@ -844,28 +844,28 @@
 | `OnRefreshLoadMoreListener` (interface) | Called to refresh and to load more (`OnRefreshLoadMoreListener`). | `CYLRefreshComponent` `refreshingBlock` (on `cyl_header` and `cyl_footer`) | one callback per control |
 | `OnStateChangedListener` (interface) | Hears state changes (`OnStateChangedListener`). | `CYLRefreshComponent` `-addPhaseObserver:` |  |
 | `OnStateChangedListener.onStateChanged` (fun) | The state changed from [oldState] to [newState]. | `CYLRefreshComponent` `-addPhaseObserver:` | the observer gets the old and the new phase |
-| `OnMultiListener` (interface) | Hears every step of the header and footer (`OnMultiListener`). | TODO |  |
-| `OnMultiListener.onHeaderMoving` (fun) | The header moved. | TODO |  |
+| `OnMultiListener` (interface) | Hears every step of the header and footer (`OnMultiListener`). | `CYLRefreshComponent` `-addScrollObserver:` with `-addPhaseObserver:` | added 2026-11-17 for Android parity |
+| `OnMultiListener.onHeaderMoving` (fun) | The header moved. | `CYLRefreshHeader` `-addScrollObserver:` | added 2026-11-17 for Android parity |
 | `OnMultiListener.onHeaderReleased` (fun) | The header was released. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseReleasing`, on `cyl_header`) |  |
 | `OnMultiListener.onHeaderStartAnimator` (fun) | The header started its animation. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseRefreshing`, on `cyl_header`) |  |
 | `OnMultiListener.onHeaderFinish` (fun) | The header finished. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseFinishing`) + `lastRefreshSucceeded` (on `cyl_header`) |  |
-| `OnMultiListener.onFooterMoving` (fun) | The footer moved. | TODO |  |
+| `OnMultiListener.onFooterMoving` (fun) | The footer moved. | `CYLRefreshFooter` `-addScrollObserver:` | added 2026-11-17 for Android parity |
 | `OnMultiListener.onFooterReleased` (fun) | The footer was released. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseReleasing`, on `cyl_footer`) |  |
 | `OnMultiListener.onFooterStartAnimator` (fun) | The footer started its animation. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseRefreshing`, on `cyl_footer`) |  |
 | `OnMultiListener.onFooterFinish` (fun) | The footer finished. | `CYLRefreshComponent` `-addPhaseObserver:` (`CYLRefreshPhaseFinishing`) + `lastRefreshSucceeded` (on `cyl_footer`) |  |
-| `ScrollBoundaryDecider` (interface) | Decides when the content is at its top or end (`ScrollBoundaryDecider`). | TODO |  |
-| `ScrollBoundaryDecider.canRefresh` (fun) | True when [content] can refresh. | TODO |  |
-| `ScrollBoundaryDecider.canLoadMore` (fun) | True when [content] can load more. | TODO |  |
+| `ScrollBoundaryDecider` (interface) | Decides when the content is at its top or end (`ScrollBoundaryDecider`). | `CYLRefreshComponent` `canTriggerBlock` | added 2026-11-17 for Android parity |
+| `ScrollBoundaryDecider.canRefresh` (fun) | True when [content] can refresh. | `CYLRefreshHeader` `canTriggerBlock` | added 2026-11-17 for Android parity |
+| `ScrollBoundaryDecider.canLoadMore` (fun) | True when [content] can load more. | `CYLRefreshFooter` `canTriggerBlock` | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/layout/simple/Simple.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `SimpleBoundaryDecider` (class) | The default boundary check: the content (or the scrolling view under the finger) cannot scroll further (`SimpleBoundaryDecider`). | TODO |  |
+| `SimpleBoundaryDecider` (class) | The default boundary check: the content (or the scrolling view under the finger) cannot scroll further (`SimpleBoundaryDecider`). | `CYLRefreshComponent` `canTriggerBlock` = nil (the built-in edge check, `-canTrigger`) | added 2026-11-17 for Android parity |
 | `SimpleComponent` (class) | A base for headers and footers, or a wrapper around any view (`SimpleComponent`). | `CYLRefreshComponent` | subclass it, or add any view to a plain `CYLRefreshHeader` / `CYLRefreshBackFooter` |
-| `SimpleComponent.isAutoRefresh` (val) | True while the current refresh was started by autoRefresh / autoLoadMore, false for a drag (pull request #1095, #1268). | TODO |  |
+| `SimpleComponent.isAutoRefresh` (val) | True while the current refresh was started by autoRefresh / autoLoadMore, false for a drag (pull request #1095, #1268). | `CYLRefreshComponent` `autoRefresh` (`isAutoRefresh`) | added 2026-11-17 for Android parity |
 | `SimpleComponent.setNoMoreData` (fun) | Passes no-more-data to a wrapped footer; false when there is none. | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData` |  |
-| `SimpleMultiListener` (class) | An [OnMultiListener] whose methods do nothing; override the ones needed (`SimpleMultiListener`). | TODO |  |
+| `SimpleMultiListener` (class) | An [OnMultiListener] whose methods do nothing; override the ones needed (`SimpleMultiListener`). | `CYLRefreshComponent` `-addScrollObserver:` (one block: nothing to override) | added 2026-11-17 for Android parity |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/layout/util/Utils.kt`
 

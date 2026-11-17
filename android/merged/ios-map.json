@@ -855,5 +855,141 @@
  "RefreshHeaderWrapper": {
   "ios": "`CYLRefreshHeader` (add the view as a subview)",
   "note": "a plain header draws nothing; any view can be its content"
+ },
+ "RefreshComponent.onAutoRefresh": {
+  "ios": "`CYLRefreshComponent` `-autoRefreshDidChange:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "SimpleComponent.isAutoRefresh": {
+  "ios": "`CYLRefreshComponent` `autoRefresh` (`isAutoRefresh`)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshKernel.onAutoRefreshAnimationEnd": {
+  "ios": "`CYLRefreshComponent` `autoRefresh` with `addPhaseObserver:` (the refreshing phase after an automatic start)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshKernel.onAutoLoadMoreAnimationEnd": {
+  "ios": "`CYLRefreshComponent` `autoRefresh` with `addPhaseObserver:` (the refreshing phase after an automatic start)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "OnMultiListener": {
+  "ios": "`CYLRefreshComponent` `-addScrollObserver:` with `-addPhaseObserver:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "OnMultiListener.onHeaderMoving": {
+  "ios": "`CYLRefreshHeader` `-addScrollObserver:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "OnMultiListener.onFooterMoving": {
+  "ios": "`CYLRefreshFooter` `-addScrollObserver:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "SimpleMultiListener": {
+  "ios": "`CYLRefreshComponent` `-addScrollObserver:` (one block: nothing to override)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setOnMultiListener": {
+  "ios": "`CYLRefreshComponent` `-addScrollObserver:` / `-addPhaseObserver:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "ScrollBoundaryDecider": {
+  "ios": "`CYLRefreshComponent` `canTriggerBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "ScrollBoundaryDecider.canRefresh": {
+  "ios": "`CYLRefreshHeader` `canTriggerBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "ScrollBoundaryDecider.canLoadMore": {
+  "ios": "`CYLRefreshFooter` `canTriggerBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "SimpleBoundaryDecider": {
+  "ios": "`CYLRefreshComponent` `canTriggerBlock` = nil (the built-in edge check, `-canTrigger`)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setScrollBoundaryDecider": {
+  "ios": "`CYLRefreshComponent` `canTriggerBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setDisableContentWhenRefresh": {
+  "ios": "`CYLRefreshHeader` `disablesContentWhileRefreshing`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setDisableContentWhenLoading": {
+  "ios": "`CYLRefreshFooter` `disablesContentWhileRefreshing`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "OnTwoLevelListener": {
+  "ios": "`CYLRefreshHeader` `secondaryShouldOpenBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "OnTwoLevelListener.onTwoLevel": {
+  "ios": "`CYLRefreshHeader` `secondaryShouldOpenBlock`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshKernel.requestFloorDuration": {
+  "ios": "`CYLRefreshHeader` `secondaryAnimationDuration`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.finishRefresh": {
+  "ios": "`CYLRefreshHeader` `-endRefreshing` / `-endRefreshingAfterDelay:success:` / `-endRefreshingWithSuccess:`; with no more data `UIScrollView` `-cyl_endRefreshingAfterDelay:success:noMoreData:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.finishLoadMore": {
+  "ios": "`CYLRefreshFooter` `-endRefreshing` / `-endRefreshingAfterDelay:success:`; `UIScrollView` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.autoRefresh": {
+  "ios": "`CYLRefreshHeader` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.autoLoadMore": {
+  "ios": "`CYLRefreshFooter` `-beginRefreshing` / `-beginRefreshingAfterDelay:` / `-beginRefreshingWithDuration:overOffset:force:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.autoRefreshAnimationOnly": {
+  "ios": "`CYLRefreshHeader` `-beginRefreshingAnimationOnly`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.autoLoadMoreAnimationOnly": {
+  "ios": "`CYLRefreshFooter` `-beginRefreshingAnimationOnly`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshLayout.setDefaultRefreshHeaderCreator": {
+  "ios": "`CYLRefreshConfig` `defaultHeaderCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshLayout.setDefaultRefreshFooterCreator": {
+  "ios": "`CYLRefreshConfig` `defaultFooterCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshLayout.setDefaultRefreshInitializer": {
+  "ios": "`CYLRefreshConfig` `defaultInitializer`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshHeaderCreator": {
+  "ios": "`CYLRefreshConfig` `defaultHeaderCreator` (a block)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshHeaderCreator.createRefreshHeader": {
+  "ios": "`CYLRefreshConfig` `defaultHeaderCreator`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshFooterCreator": {
+  "ios": "`CYLRefreshConfig` `defaultFooterCreator` (a block)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshFooterCreator.createRefreshFooter": {
+  "ios": "`CYLRefreshConfig` `defaultFooterCreator`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshInitializer": {
+  "ios": "`CYLRefreshConfig` `defaultInitializer` (a block)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "DefaultRefreshInitializer.initialize": {
+  "ios": "`CYLRefreshConfig` `defaultInitializer`",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

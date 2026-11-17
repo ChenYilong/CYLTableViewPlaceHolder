@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (619 counted rows, 0 TODO, 194 n/a).
+**Score: 100 / 100** (637 counted rows, 0 TODO, 194 n/a).
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -195,6 +195,15 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `notifiesWhenHidden` | Keeps following the scroll view while the control is hidden, so hooks and observers still run (flutter_easy_refresh's `notifyWhenInvisible`). Default NO. | `CYLRefreshComponent.notifiesWhenHidden` — kept; CYLRefreshLayout always reports |
 | `CYLRefreshComponent` `-addPhaseObserver:` | Calls `observer` on every phase change, with the old and the new phase (flutter_easy_refresh's `listenable`). A plain `CYLRefreshHeader` draws nothing, so with an observer it is a listener header (`ListenerHeader`). | `CYLRefreshComponent.addPhaseObserver(observer)` |
 | `CYLRefreshComponent` `-removePhaseObserver:` | Removes an observer added with `addPhaseObserver:`. | `CYLRefreshComponent.removePhaseObserver(observer)` |
+| `CYLRefreshComponent` `autoRefresh` | YES while the current refresh was started in code (`beginRefreshing` and its variants) rather than by a pull or a scroll; NO once it ends (SmartRefreshLayout's `isAutoRefresh`). | `com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-beginRefreshingAfterDelay:` | Starts refreshing after `delay` seconds, as `beginRefreshing` does (SmartRefreshLayout's `autoRefresh(delayed)` / `autoLoadMore(delayed)`). | `com.cyl.refresh.layout.api.RefreshLayout.autoRefresh(delayed) / autoLoadMore(delayed)` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-beginRefreshingAnimationOnly` | Shows the refreshing state without calling the refreshing callbacks (block, handler, target-actions); end it with `endRefreshing` (SmartRefreshLayout's `autoRefreshAnimationOnly` / `autoLoadMoreAnimationOnly`). | `com.cyl.refresh.layout.api.RefreshLayout.autoRefreshAnimationOnly() / autoLoadMoreAnimationOnly()` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-endRefreshingAfterDelay:success:` | Ends refreshing after `delay` seconds with the result `success`, as `endRefreshingWithSuccess:` does (SmartRefreshLayout's `finishRefresh(delayed, success)` / `finishLoadMore(delayed, success)`). | `com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, null) / finishLoadMore(delayed, success, false)` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-addScrollObserver:` | Calls `observer` on every move of the control, with the pulled points, the percent and whether the user drags (SmartRefreshLayout's `OnMultiListener.onHeaderMoving` / `onFooterMoving`; the phase changes are `addPhaseO... | `com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener (onHeaderMoving / onFooterMoving)` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-removeScrollObserver:` | Removes an observer added with `addScrollObserver:`. | `com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener(null)` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `canTriggerBlock` | Decides whether a pull may arm the control now; nil (default) uses the built-in edge check (SmartRefreshLayout's `ScrollBoundaryDecider.canRefresh` / `canLoadMore`; nil is its `SimpleBoundaryDecider`). | `com.cyl.refresh.layout.api.RefreshLayout.setScrollBoundaryDecider` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-canTrigger` | Whether a pull may arm the control now: `canTriggerBlock`'s answer, YES without one. Subclasses check it before arming. | `com.cyl.refresh.layout.api.ScrollBoundaryDecider.canRefresh / canLoadMore` — added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `disablesContentWhileRefreshing` | Ignores touches on the scroll view while this control refreshes (SmartRefreshLayout's `setDisableContentWhenRefresh` / `setDisableContentWhenLoading`). Default NO. | `com.cyl.refresh.layout.api.RefreshLayout.setDisableContentWhenRefresh / setDisableContentWhenLoading` — added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-addObservers` | Starts observing the scroll view (content offset, size and inset, pan state); called on attach. Override to observe more, and call super. | n/a (iOS only: UIKit KVO) |
 | `CYLRefreshComponent` `-removeObservers` | Stops what `addObservers` started; called on detach. | n/a (iOS only: UIKit KVO) |
 | `CYLRefreshComponent` `-didAttachToScrollView:` | Called after the control is attached to `scrollView`. | `CYLRefreshComponent.didAttachToScrollView(layout)` |
@@ -204,6 +213,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | Called when `phase` changes. | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | Called when the refresh ends, with its result; state controls show it here. | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | Seconds to stay open after the refresh ends; returns `finishDuration` by default. | `CYLRefreshComponent.finishingDurationWithSuccess(success)` — an overridable hook; CYLRefreshLayout reads the component's own finish duration |
+| `CYLRefreshComponent` `-autoRefreshDidChange:` | Called with YES when a refresh started in code begins and with NO when it ends (SmartRefreshLayout's `RefreshComponent.onAutoRefresh`), so a control can tell it from a pull. | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` — added 2026-11-17 for Android parity |
 | `UILabel(CYLRefresh)` | Category. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
 | `UILabel(CYLRefresh)` `+cyl_label` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
@@ -258,6 +268,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshHeader` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshHeader.secondaryOpenedBlock` |
 | `CYLRefreshHeader` `secondaryClosedBlock` | Called when the second floor has closed. | `CYLRefreshHeader.secondaryClosedBlock` |
 | `CYLRefreshHeader` `-openSecondary` | Opens the second floor (flutter_easy_refresh's `openHeaderSecondary`). | `CYLRefreshHeader.openSecondary()` |
+| `CYLRefreshHeader` `secondaryShouldOpenBlock` | Asked before the second floor opens (by a pull or by `openSecondary`); return NO to keep it closed (SmartRefreshLayout's `OnTwoLevelListener.onTwoLevel`). nil (default) always opens. | `com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)` — added 2026-11-17 for Android parity |
+| `CYLRefreshHeader` `secondaryAnimationDuration` | Seconds the second floor takes to open and to close; 0 (default) uses `slowAnimationDuration` (SmartRefreshLayout's `RefreshKernel.requestFloorDuration`). | `com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration` — added 2026-11-17 for Android parity |
 | `CYLRefreshHeader` `-closeSecondary` | Closes the second floor (flutter_easy_refresh's `closeHeaderSecondary`). | `CYLRefreshHeader.closeSecondary()` |
 
 ## `CYLRefresh/Base/CYLRefreshIconView.h`
@@ -348,6 +360,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshConfig` `languageCode` | The language of the built-in texts, or null for the system's. | `CYLRefreshConfig.languageCode` — sets the placeholder texts' language; the refresh texts are string resources in the system's language |
 | `CYLRefreshConfig` `i18nFilename` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
 | `CYLRefreshConfig` `i18nBundle` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
+| `CYLRefreshConfig` `defaultHeaderCreator` | Makes the header `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (SmartRefreshLayout's `setDefaultRefreshHeaderCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` — added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultFooterCreator` | Makes the footer `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (SmartRefreshLayout's `setDefaultRefreshFooterCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator` — added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultInitializer` | Sets up every control once, when it is first attached to a scroll view, before its own `didAttachToScrollView:` (SmartRefreshLayout's `setDefaultRefreshInitializer`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer` — added 2026-11-17 for Android parity |
 | `CYLRefreshConfig` `defaultConfig` | Singleton Config instance | `CYLRefreshConfig.defaultConfig` |
 | `CYLRefreshConfig` `-init` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
 | `CYLRefreshConfig` `+new` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
@@ -918,6 +933,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `autoHideRefresh` of the header alone (also applied to a header attached later). | `CYLRefreshLayout.cyl_autoHideRefreshHeader` |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `autoHideRefresh` of the footer alone (also applied to a footer attached later). | `CYLRefreshLayout.cyl_autoHideRefreshFooter` |
 | `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | Refreshes once with `startHeader` in place of `cyl_header`, then puts `cyl_header` back when that refresh ends (flutter_easy_refresh's `refreshOnStart` with `refreshOnStartHeader`). | `CYLRefreshLayout.cyl_beginRefreshingWithStartHeader(header)` |
+| `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | Ends the header's refresh after `delay` seconds with `success`, and sets the footer's no-more-data state: YES shows no more data, NO resets it (SmartRefreshLayout's `finishRefresh(delayed, success, noMoreData)`; to le... | `com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, noMoreData)` — added 2026-11-17 for Android parity |
+| `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | Ends the footer's load more after `delay` seconds with `success`; `noMoreData` YES then shows no more data (SmartRefreshLayout's `finishLoadMore(delayed, success, noMoreData)`). | `com.cyl.refresh.layout.api.RefreshLayout.finishLoadMore(delayed, success, noMoreData)` — added 2026-11-17 for Android parity |
+| `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | Sets `cyl_header` and `cyl_footer`, where nil, from `CYLRefreshConfig.defaultConfig`'s `defaultHeaderCreator` / `defaultFooterCreator` (SmartRefreshLayout's default header and footer of every layout). | `com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)` — added 2026-11-17 for Android parity |
 | `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | Method of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_totalDataCount()` |
 
 ## `CYLRefresh/UIView+CYLExtension.h`

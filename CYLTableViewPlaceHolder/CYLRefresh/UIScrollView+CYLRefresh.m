@@ -10,6 +10,7 @@
 #import "CYLRefreshHeader.h"
 #import "CYLRefreshFooter.h"
 #import "CYLRefreshTrailer.h"
+#import "CYLRefreshConfig.h"
 #import <objc/runtime.h>
 
 static const char CYLRefreshAutoHideHeaderKey = '\0';
@@ -156,6 +157,51 @@ static BOOL CYLRefreshDefaultAutoHide(void)
 }
 
 #pragma mark - Start header
+
+- (void)cyl_endRefreshingAfterDelay:(NSTimeInterval)delay success:(BOOL)success noMoreData:(BOOL)noMoreData
+{
+    [self.cyl_header endRefreshingAfterDelay:delay success:success];
+    CYLRefreshFooter *footer = self.cyl_footer;
+    if (!footer) return;
+    void (^apply)(void) = ^{
+        if (noMoreData) {
+            [footer endRefreshingWithNoMoreData];
+        } else if (footer.isNoMoreData) {
+            [footer resetNoMoreData];
+        }
+    };
+    if (delay <= 0) {
+        apply();
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), apply);
+    }
+}
+
+- (void)cyl_endLoadingMoreAfterDelay:(NSTimeInterval)delay success:(BOOL)success noMoreData:(BOOL)noMoreData
+{
+    CYLRefreshFooter *footer = self.cyl_footer;
+    if (!footer) return;
+    if (!noMoreData) {
+        [footer endRefreshingAfterDelay:delay success:success];
+        return;
+    }
+    __weak CYLRefreshFooter *weakFooter = footer;
+    void (^apply)(void) = ^{
+        [weakFooter endRefreshingWithNoMoreData];
+    };
+    if (delay <= 0) {
+        apply();
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), apply);
+    }
+}
+
+- (void)cyl_installDefaultRefreshControls
+{
+    CYLRefreshConfig *config = CYLRefreshConfig.defaultConfig;
+    if (!self.cyl_header && config.defaultHeaderCreator) self.cyl_header = config.defaultHeaderCreator(self);
+    if (!self.cyl_footer && config.defaultFooterCreator) self.cyl_footer = config.defaultFooterCreator(self);
+}
 
 - (void)cyl_beginRefreshingWithStartHeader:(CYLRefreshHeader *)startHeader
 {

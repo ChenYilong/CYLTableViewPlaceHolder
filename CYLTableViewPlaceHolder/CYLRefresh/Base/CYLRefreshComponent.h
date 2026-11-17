@@ -511,6 +511,74 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 - (void)removePhaseObserver:(id)token NS_SWIFT_NAME(removePhaseObserver(_:));
 
+#pragma mark Starting and ending in code (SmartRefreshLayout's autoRefresh / finishRefresh)
+
+/*!
+ * [EN] YES while the current refresh was started in code (`beginRefreshing` and its variants) rather than by a pull or a
+ *      scroll; NO once it ends (SmartRefreshLayout's `isAutoRefresh`). A pull that arms the control, or a scroll that
+ *      reaches an auto footer, is not automatic.
+ * [CN] 当前刷新由代码开始（`beginRefreshing` 及其变体）而不是由拉动或滚动开始时为 YES；结束后为 NO（对应 SmartRefreshLayout 的
+ *      `isAutoRefresh`）。拉动触发或滚动到自动加载尾部都不算自动。
+ */
+@property (nonatomic, readonly, getter=isAutoRefresh) BOOL autoRefresh;
+/*!
+ * [EN] Starts refreshing after `delay` seconds, as `beginRefreshing` does (SmartRefreshLayout's `autoRefresh(delayed)` /
+ *      `autoLoadMore(delayed)`). [CN] `delay` 秒后开始刷新，与 `beginRefreshing` 相同（对应 SmartRefreshLayout 的
+ *      `autoRefresh(delayed)` / `autoLoadMore(delayed)`）。
+ */
+- (void)beginRefreshingAfterDelay:(NSTimeInterval)delay NS_SWIFT_NAME(beginRefreshing(afterDelay:));
+/*!
+ * [EN] Shows the refreshing state without calling the refreshing callbacks (block, handler, target-actions); end it with
+ *      `endRefreshing` (SmartRefreshLayout's `autoRefreshAnimationOnly` / `autoLoadMoreAnimationOnly`).
+ * [CN] 显示刷新状态但不调用刷新回调（block、handler、target-action）；用 `endRefreshing` 结束（对应 SmartRefreshLayout 的
+ *      `autoRefreshAnimationOnly` / `autoLoadMoreAnimationOnly`）。
+ */
+- (void)beginRefreshingAnimationOnly;
+/*!
+ * [EN] Ends refreshing after `delay` seconds with the result `success`, as `endRefreshingWithSuccess:` does
+ *      (SmartRefreshLayout's `finishRefresh(delayed, success)` / `finishLoadMore(delayed, success)`).
+ * [CN] `delay` 秒后以结果 `success` 结束刷新，与 `endRefreshingWithSuccess:` 相同（对应 SmartRefreshLayout 的
+ *      `finishRefresh(delayed, success)` / `finishLoadMore(delayed, success)`）。
+ */
+- (void)endRefreshingAfterDelay:(NSTimeInterval)delay success:(BOOL)success
+    NS_SWIFT_NAME(endRefreshing(afterDelay:success:));
+
+#pragma mark Observing and deciding (SmartRefreshLayout's OnMultiListener / ScrollBoundaryDecider)
+
+/*!
+ * [EN] Calls `observer` on every move of the control, with the pulled points, the percent and whether the user drags
+ *      (SmartRefreshLayout's `OnMultiListener.onHeaderMoving` / `onFooterMoving`; the phase changes are
+ *      `addPhaseObserver:`). Returns a token for `removeScrollObserver:`.
+ * [CN] 控件每次移动时调用 `observer`，参数为已拉动点数、百分比以及用户是否在拖动（对应 SmartRefreshLayout 的
+ *      `OnMultiListener.onHeaderMoving` / `onFooterMoving`；阶段变化见 `addPhaseObserver:`）。返回用于 `removeScrollObserver:` 的标识。
+ */
+- (id)addScrollObserver:(void (^)(__kindof CYLRefreshComponent *component, CGFloat offset, CGFloat percent, BOOL dragging))observer
+    NS_SWIFT_NAME(addScrollObserver(_:));
+/*!
+ * [EN] Removes an observer added with `addScrollObserver:`. [CN] 移除 `addScrollObserver:` 添加的观察者。
+ */
+- (void)removeScrollObserver:(id)token NS_SWIFT_NAME(removeScrollObserver(_:));
+/*!
+ * [EN] Decides whether a pull may arm the control now; nil (default) uses the built-in edge check
+ *      (SmartRefreshLayout's `ScrollBoundaryDecider.canRefresh` / `canLoadMore`; nil is its `SimpleBoundaryDecider`).
+ *      Return NO, for example, while a nested horizontal list is being dragged.
+ * [CN] 决定此刻拉动能否触发控件；nil（默认）使用内置的边缘判断（对应 SmartRefreshLayout 的 `ScrollBoundaryDecider.canRefresh` /
+ *      `canLoadMore`；nil 即其 `SimpleBoundaryDecider`）。例如嵌套的横向列表正在拖动时返回 NO。
+ */
+@property (copy, nonatomic, nullable) BOOL (^canTriggerBlock)(__kindof CYLRefreshComponent *component);
+/*!
+ * [EN] Whether a pull may arm the control now: `canTriggerBlock`'s answer, YES without one. Subclasses check it before
+ *      arming. [CN] 此刻拉动能否触发控件：`canTriggerBlock` 的结果，没有时为 YES。子类在触发前检查。
+ */
+- (BOOL)canTrigger;
+/*!
+ * [EN] Ignores touches on the scroll view while this control refreshes (SmartRefreshLayout's
+ *      `setDisableContentWhenRefresh` / `setDisableContentWhenLoading`). Default NO.
+ * [CN] 本控件刷新期间忽略滚动视图上的触摸（对应 SmartRefreshLayout 的 `setDisableContentWhenRefresh` /
+ *      `setDisableContentWhenLoading`）。默认 NO。
+ */
+@property (nonatomic) BOOL disablesContentWhileRefreshing;
+
 #pragma mark Subclass hooks
 
 /*!
@@ -553,6 +621,12 @@ typedef void (^CYLRefreshComponentAction)(void);
  * [CN] 刷新结束后停留的秒数；默认返回 `finishDuration`。
  */
 - (NSTimeInterval)finishingDurationWithSuccess:(BOOL)success;
+/*!
+ * [EN] Called with YES when a refresh started in code begins and with NO when it ends (SmartRefreshLayout's
+ *      `RefreshComponent.onAutoRefresh`), so a control can tell it from a pull. [CN] 由代码开始的刷新开始时以 YES 调用，结束时以 NO
+ *      调用（对应 SmartRefreshLayout 的 `RefreshComponent.onAutoRefresh`），控件据此区分自动刷新与拉动。
+ */
+- (void)autoRefreshDidChange:(BOOL)autoRefresh;
 @end
 
 @interface UILabel(CYLRefresh)

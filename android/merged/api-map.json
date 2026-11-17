@@ -3369,5 +3369,95 @@
  "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_placeNoMoreDataImageBesideLabel:inset:size:": {
   "status": "n/a",
   "note": "an iOS layout helper; Android lays the image out in the classic footer view"
+ },
+ "CYLRefreshComponent autoRefresh": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -beginRefreshingAfterDelay:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.autoRefresh(delayed) / autoLoadMore(delayed)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -beginRefreshingAnimationOnly": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.autoRefreshAnimationOnly() / autoLoadMoreAnimationOnly()",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -endRefreshingAfterDelay:success:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, null) / finishLoadMore(delayed, success, false)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -addScrollObserver:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener (onHeaderMoving / onFooterMoving)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -removeScrollObserver:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener(null)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent canTriggerBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setScrollBoundaryDecider",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -canTrigger": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.ScrollBoundaryDecider.canRefresh / canLoadMore",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent disablesContentWhileRefreshing": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setDisableContentWhenRefresh / setDisableContentWhenLoading",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -autoRefreshDidChange:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader secondaryShouldOpenBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader secondaryAnimationDuration": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultHeaderCreator": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultFooterCreator": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultInitializer": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_endRefreshingAfterDelay:success:noMoreData:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, noMoreData)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_endLoadingMoreAfterDelay:success:noMoreData:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishLoadMore(delayed, success, noMoreData)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_installDefaultRefreshControls": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

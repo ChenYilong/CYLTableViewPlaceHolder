@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 619 个计入的符号；done 556、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 619 counted symbols; done 556, partial 63, planned 0, n/a 194). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 637 个计入的符号；done 574、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 637 counted symbols; done 574, partial 63, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -195,6 +195,15 @@
 | `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponent.notifiesWhenHidden` | partial | kept; CYLRefreshLayout always reports |
 | `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponent.addPhaseObserver(observer)` | done |  |
 | `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponent.removePhaseObserver(observer)` | done |  |
+| `CYLRefreshComponent` `autoRefresh` | `com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-beginRefreshingAfterDelay:` | `com.cyl.refresh.layout.api.RefreshLayout.autoRefresh(delayed) / autoLoadMore(delayed)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-beginRefreshingAnimationOnly` | `com.cyl.refresh.layout.api.RefreshLayout.autoRefreshAnimationOnly() / autoLoadMoreAnimationOnly()` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-endRefreshingAfterDelay:success:` | `com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, null) / finishLoadMore(delayed, success, false)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-addScrollObserver:` | `com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener (onHeaderMoving / onFooterMoving)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-removeScrollObserver:` | `com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener(null)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `canTriggerBlock` | `com.cyl.refresh.layout.api.RefreshLayout.setScrollBoundaryDecider` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-canTrigger` | `com.cyl.refresh.layout.api.ScrollBoundaryDecider.canRefresh / canLoadMore` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `disablesContentWhileRefreshing` | `com.cyl.refresh.layout.api.RefreshLayout.setDisableContentWhenRefresh / setDisableContentWhenLoading` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-addObservers` | — | n/a | UIKit KVO |
 | `CYLRefreshComponent` `-removeObservers` | — | n/a | UIKit KVO |
 | `CYLRefreshComponent` `-didAttachToScrollView:` | `CYLRefreshComponent.didAttachToScrollView(layout)` | done |  |
@@ -204,6 +213,7 @@
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` | done |  |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` | done |  |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; CYLRefreshLayout reads the component's own finish duration |
+| `CYLRefreshComponent` `-autoRefreshDidChange:` | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` | done | added 2026-11-17 for Android parity |
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
@@ -258,6 +268,8 @@
 | `CYLRefreshHeader` `secondaryOpenedBlock` | `CYLRefreshHeader.secondaryOpenedBlock` | done |  |
 | `CYLRefreshHeader` `secondaryClosedBlock` | `CYLRefreshHeader.secondaryClosedBlock` | done |  |
 | `CYLRefreshHeader` `-openSecondary` | `CYLRefreshHeader.openSecondary()` | done |  |
+| `CYLRefreshHeader` `secondaryShouldOpenBlock` | `com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshHeader` `secondaryAnimationDuration` | `com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshHeader` `-closeSecondary` | `CYLRefreshHeader.closeSecondary()` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshIconView.h`
@@ -348,6 +360,9 @@
 | `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.languageCode` | partial | sets the placeholder texts' language; the refresh texts are string resources in the system's language |
 | `CYLRefreshConfig` `i18nFilename` | — | n/a | iOS string tables in a bundle; Android texts are string resources an app overrides by name |
 | `CYLRefreshConfig` `i18nBundle` | — | n/a | iOS string tables in a bundle; Android texts are string resources an app overrides by name |
+| `CYLRefreshConfig` `defaultHeaderCreator` | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultFooterCreator` | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultInitializer` | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshConfig` `defaultConfig` | `CYLRefreshConfig.defaultConfig` | done |  |
 | `CYLRefreshConfig` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLRefreshConfig` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
@@ -918,6 +933,9 @@
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `CYLRefreshLayout.cyl_autoHideRefreshHeader` | done |  |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `CYLRefreshLayout.cyl_autoHideRefreshFooter` | done |  |
 | `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | `CYLRefreshLayout.cyl_beginRefreshingWithStartHeader(header)` | done |  |
+| `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | `com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, noMoreData)` | done | added 2026-11-17 for Android parity |
+| `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | `com.cyl.refresh.layout.api.RefreshLayout.finishLoadMore(delayed, success, noMoreData)` | done | added 2026-11-17 for Android parity |
+| `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | `com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)` | done | added 2026-11-17 for Android parity |
 | `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | `CYLRefreshLayout.cyl_totalDataCount()` | done |  |
 
 ## `CYLRefresh/UIView+CYLExtension.h`

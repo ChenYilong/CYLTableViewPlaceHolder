@@ -78,7 +78,8 @@
 
     if (_scrollView.cyl_insetT + _scrollView.cyl_contentH > _scrollView.cyl_h) { // 内容超过一个屏幕
         // 这里的_scrollView.cyl_contentH替换掉self.cyl_y更为合理
-        if (_scrollView.cyl_offsetY >= _scrollView.cyl_contentH - _scrollView.cyl_h + self.cyl_h * self.triggerAutomaticallyRefreshPercent + _scrollView.cyl_insetB - self.cyl_h) {
+        if ([self canTrigger] &&
+            _scrollView.cyl_offsetY >= _scrollView.cyl_contentH - _scrollView.cyl_h + self.cyl_h * self.triggerAutomaticallyRefreshPercent + _scrollView.cyl_insetB - self.cyl_h) {
             // 防止手松开时连续调用
             CGPoint old = [change[@"old"] CGPointValue];
             CGPoint new = [change[@"new"] CGPointValue];
@@ -103,7 +104,8 @@
         _scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
         [self resetNoMoreData];
     }
-    if (self.state != CYLRefreshStateIdle || !self.refreshEnabled || self.scrollView.cyl_header.isRefreshing) return;
+    if (self.state != CYLRefreshStateIdle || !self.refreshEnabled || self.scrollView.cyl_header.isRefreshing ||
+        ![self canTrigger]) return;
 
     UIGestureRecognizerState panState = _scrollView.panGestureRecognizer.state;
 
