@@ -1,4 +1,4 @@
 # Copied by scripts/sync-harmonyos-cylanimateditem.sh. Do not edit this folder: re-run the script instead.
 repository=https://github.com/ChenYilong/CYLTabBarController
-commit=e8b6695748c1e898a3126103bc69e93d70f04847
+commit=6a9ede85ece5671b0391bb6ccad8a24d1d1b500d
 path=CrossPlatform/harmonyos-cyltabbar/cylanimateditem
