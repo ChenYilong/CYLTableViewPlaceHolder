@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：鸿蒙与微信小程序的 CYLPlaceholderView 改用上游 CYLAnimatedItem / TODO: HarmonyOS and the WeChat Mini Program placeholder views on upstream CYLAnimatedItem
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“我已经更新了该文档地址 最新地址https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md 文档更新了一些描述 请重新阅读 调整” | The user's original prompt (verbatim on the left), summarized: the guide changed again; read it and adjust. |
+| 上下文：上游 `842aef88` 新增鸿蒙模块 `CrossPlatform/harmonyos-cyltabbar/cylanimateditem`（ohpm 包 `cylanimateditem`，组件 `CYLAnimatedItemView`，应用通过 `CYLAnimatedItemEngines.register()` 注册类型并用 `animationBuilder` 提供动画视图，`onLoaded` / `onFailed`）与小程序组件 `src/cyl-animated-item`（抽象节点 `cyl-lottie-view` 等接入引擎，GIF 用 `<image>`，`ready` / `error` 事件；逻辑在 `cyl_animated_item_model.js`）。未发布前按 commit 引入：鸿蒙复制或以 `file:` 依赖固定 commit 的 `cylanimateditem` 文件夹；小程序用 npm git 依赖或复制 `src/cyl-animated-item`。另：iOS 远程 GIF / PAG 下载（`ab29a846`、`d875dd12`，基类处理，无需改动）。要求：①本仓库鸿蒙 `CYLPlaceholderViewModel` 与小程序 `cyl-placeholder` 的图标 + 标题 + 动效改为基于上游组件（与 iOS、Android 相同的显示优先级，核心不依赖动画库，示例层注册引擎）；②按固定 commit 引入（Cartfile 的 commit），记录同步脚本；③协议文件随包发布；④小程序 `npm test` 通过；鸿蒙与小程序设备验证在本容器无法进行，记录为 TODO。 | Context: upstream `842aef88` adds the HarmonyOS module `CrossPlatform/harmonyos-cyltabbar/cylanimateditem` (ohpm package `cylanimateditem`, component `CYLAnimatedItemView`; apps register types with `CYLAnimatedItemEngines.register()` and pass the animation view through `animationBuilder`, `onLoaded` / `onFailed`) and the mini program component `src/cyl-animated-item` (engines through abstract nodes such as `cyl-lottie-view`, GIF with `<image>`, `ready` / `error` events; logic in `cyl_animated_item_model.js`). Until they are published, take them by commit: HarmonyOS copies, or depends with `file:` on, the `cylanimateditem` folder at a pinned commit; the mini program uses an npm git dependency or copies `src/cyl-animated-item`. Also: iOS remote GIF / PAG downloads (`ab29a846`, `d875dd12`, handled by the base class, nothing to change). Requirements: (1) the icon + title + animation of this repository\'s HarmonyOS `CYLPlaceholderViewModel` and mini program `cyl-placeholder` build on the upstream component (the same display priority as iOS and Android, a core with no animation library, engines registered in the example); (2) taken at the pinned commit (the Cartfile\'s), with a sync script; (3) the license ships with the packages; (4) mini program `npm test` passes; device checks for HarmonyOS and the mini program cannot run in this container and stay TODO. |
+
 ### TODO：继续处理 CYLAnimatedItem 迁移的 TODO，未发布的组件按 commit 引入 / TODO: Continue the CYLAnimatedItem TODOs; take unpublished components by commit
 
 | 中文 | English |
