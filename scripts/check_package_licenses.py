@@ -38,10 +38,19 @@ THIRD_PARTY = [
      'android/merged/library/LICENSE.SmartRefreshLayout.txt'),
 ]
 
+# [EN] Packages of another project copied into this repository unchanged (their own LICENSE, not this project's): the
+#      copy must keep its upstream LICENSE and record its source commit. (package folder, file naming the commit)
+# [CN] 原样复制到本仓库的其他项目的包（保留其自身的 LICENSE，而不是本项目的）：副本必须保留上游 LICENSE 并记录来源 commit。
+VENDORED = [
+    # [EN] CYLTabBarController's CYLAnimatedItem for HarmonyOS, by scripts/sync-harmonyos-cylanimateditem.sh (MIT).
+    ('CrossPlatform/harmonyos-cylplaceholder/cylanimateditem', 'UPSTREAM_COMMIT'),
+]
+
 # [EN] Manifests that must declare the license. [CN] 必须声明协议的包清单。
 MANIFESTS = [
     ('CYLTableViewPlaceHolder.podspec', r"s\.license\s*=\s*\{\s*:type\s*=>\s*'MIT'"),
     ('CrossPlatform/harmonyos-cylplaceholder/cylplaceholder/oh-package.json5', r'"license"\s*:\s*"MIT"'),
+    ('CrossPlatform/harmonyos-cylplaceholder/cylanimateditem/oh-package.json5', r'"license"\s*:\s*"MIT"'),
     ('CrossPlatform/wechat-miniprogram-cylplaceholder/package.json', r'"license"\s*:\s*"MIT"'),
 ]
 
@@ -64,6 +73,14 @@ def main():
             problems.append('missing %s (copy of %s)' % (copy, original))
         elif read(copy) != read(original):
             problems.append('%s differs from %s' % (copy, original))
+    for folder, commit_file in VENDORED:
+        upstream_license = os.path.join(folder, 'LICENSE')
+        if not os.path.isfile(os.path.join(ROOT, upstream_license)):
+            problems.append('missing %s (the upstream license of the copied package)' % upstream_license)
+        commit_path = os.path.join(folder, commit_file)
+        if not os.path.isfile(os.path.join(ROOT, commit_path)) or \
+                not re.search(r'^commit=[0-9a-f]{40}$', read(commit_path).decode('utf-8'), re.M):
+            problems.append('%s does not record the upstream commit' % commit_path)
     for path, pattern in MANIFESTS:
         if not re.search(pattern, read(path).decode('utf-8')):
             problems.append('%s does not declare the MIT license' % path)
@@ -71,8 +88,8 @@ def main():
         print('\n'.join(problems))
         print('Copy the license files into each package (instructions.md, "License in every published package").')
         return 1
-    print('%d packages carry LICENSE, %d third-party licenses ship, %d manifests declare MIT.'
-          % (len(COPIES), len(THIRD_PARTY), len(MANIFESTS)))
+    print('%d packages carry LICENSE, %d third-party licenses ship, %d copied packages keep their upstream LICENSE, '
+          '%d manifests declare MIT.' % (len(COPIES), len(THIRD_PARTY), len(VENDORED), len(MANIFESTS)))
     return 0
 
 

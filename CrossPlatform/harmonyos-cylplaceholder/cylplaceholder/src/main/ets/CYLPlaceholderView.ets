@@ -750,7 +750,7 @@ function cylAnimatedItemModelForURL(URL: string): CYLPlaceholderViewModel | null
 @Component
 struct CYLPlaceholderAnimatedItemContent {
   @ObjectLink @Watch('cylReportAnimationState') model: CYLPlaceholderViewModel;
-  context: CYLAnimatedItemAnimationContext = new CYLAnimatedItemAnimationContext();
+  animationContext: CYLAnimatedItemAnimationContext = new CYLAnimatedItemAnimationContext();
   /** What was reported to the context: 0 nothing, 1 loaded, 2 failed. */
   private reported: number = 0;
 
@@ -762,11 +762,11 @@ struct CYLPlaceholderAnimatedItemContent {
     if (this.model.animationFailed || this.model.animationPlayer === null) {
       if (this.reported !== 2) {
         this.reported = 2;
-        this.context.onFailed();
+        this.animationContext.onFailed();
       }
     } else if (this.model.animationReady && this.reported !== 1) {
       this.reported = 1;
-      this.context.onLoaded();
+      this.animationContext.onLoaded();
     }
   }
 
@@ -776,8 +776,8 @@ struct CYLPlaceholderAnimatedItemContent {
         CYLPlaceholderAnimationContent({ view: (this.model.animationPlayer as CYLPlaceholderAnimationPlayer).view })
       }
     }
-    .width(this.context.size)
-    .height(this.context.size)
+    .width(this.animationContext.size)
+    .height(this.animationContext.size)
   }
 }
 
@@ -790,7 +790,7 @@ function cylPlaceholderAnimatedItemBuilder(context: CYLAnimatedItemAnimationCont
   if (cylAnimatedItemModelForURL(context.url) !== null) {
     CYLPlaceholderAnimatedItemContent({
       model: cylAnimatedItemModelForURL(context.url) as CYLPlaceholderViewModel,
-      context: context
+      animationContext: context
     })
   }
 }

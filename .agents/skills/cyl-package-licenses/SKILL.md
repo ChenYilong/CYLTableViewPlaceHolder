@@ -38,6 +38,14 @@ Notes:
 - Never drop or edit another author's license, copyright line or attribution.
 - A license kept at a module root that the package does not ship (Android) is copied into the package folder as well.
 
+## Copied (vendored) upstream packages
+
+An upstream package taken by commit and copied into this repository (the HarmonyOS `cylanimateditem` module, the mini
+program's `cyl-animated-item` and `cyl-animation-placeholder`) keeps its upstream `LICENSE` unchanged next to an
+`UPSTREAM_COMMIT` file naming the repository and commit. Never edit the copied files; re-run the sync script
+(`scripts/sync-harmonyos-cylanimateditem.sh`, `npm run sync-animated-item`) when the `Cartfile` commit changes.
+`scripts/check_package_licenses.py` checks the copies in its `VENDORED` table.
+
 ## Manifests
 
 Declare the license in each manifest: `s.license` in `CYLTableViewPlaceHolder.podspec`, `"license"` in

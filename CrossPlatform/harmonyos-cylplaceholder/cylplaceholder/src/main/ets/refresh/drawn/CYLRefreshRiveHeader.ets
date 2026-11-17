@@ -6,8 +6,10 @@
 // animation, a loading loop, an idle loop). The .riv files belong to the example, not to the core.
 // As a footer: CYLRefreshDrawnFooterModel.initWithStyle(new CYLRefreshRiveHeaderModel(style)).
 //
-// The model has no @ohos/rive dependency (host unit-tested): it drives a `CYLRefreshRiveDriver`, which
-// `CYLRefreshRiveView` (CYLRefreshRiveView.ets) implements on a RiveAnimationView and attaches while it is shown.
+// The model has no @ohos/rive dependency (host unit-tested; the core depends on no animation library): it drives a
+// `CYLRefreshRiveDriver`, which the app's Rive view implements and attaches while it is shown. The app registers that
+// view with `CYLRefreshRiveRegisterViewBuilder` (CYLRefreshRiveView.ets); the example's is
+// entry/src/main/ets/engines/CYLRefreshRiveView.ets, on @ohos/rive's RiveAnimationView.
 import { CYLRefreshPhase, CYLRefreshScrollMode } from '../CYLRefreshConst';
 import { CYLRefreshDrawnHeaderModel } from './CYLRefreshDrawnHeader';
 import { CYLPlaceholderAnimationFileExists } from '../../CYLPlaceholderAnimation';
