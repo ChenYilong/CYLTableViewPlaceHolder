@@ -411,6 +411,12 @@
     libraries from the pinned checkout first (`scripts/sync-example.js`).
     Review follow-up `a43c124d` (same PR): the same file after a failed load is a retry: `cyl-lottie` loads it again and
     `cyl-animated-item` clears the failure. Re-verified at `a43c124d`: the same results; `npm test` 59 / 59.
+  - More pages (2026-11-17, CYLTabBarController a43c124d): Flows → state switching shows each state's own icon and text
+    and the list for data ([screenshot](assets/wechat-miniprogram-state-switch.png); the HarmonyOS E13 bug does not occur
+    here); the collection flow, page life cycle, Feed, Refresh list, refresh icon demo and support pages render
+    ([screenshot](assets/wechat-miniprogram-more-pages.png)). MP5 (fixed, example): the refresh icon demo page started with
+    an empty setup, so its first render passed null to `cyl-refresh`'s String `header` / `footer` (two console warnings);
+    it starts with the default setup now and the console is clean.
   - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
     yet (`cyl-refresh` takes no speed or loop).
 - Not verified: a real phone.

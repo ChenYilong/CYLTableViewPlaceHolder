@@ -4,7 +4,8 @@ const { t } = require('../../utils/l10n')
 const { setupFor } = require('../refresh-icons/setups')
 
 Page({
-  data: { setup: {}, rows: [], hint: '' },
+  // The default setup from the start: an empty one passed null header / footer to cyl-refresh's String properties.
+  data: { setup: { header: 'normal', footer: 'auto' }, rows: [], hint: '' },
   onLoad(query) {
     const row = setupFor(query.setup)
     wx.setNavigationBarTitle({ title: decodeURIComponent(query.title || '') })
