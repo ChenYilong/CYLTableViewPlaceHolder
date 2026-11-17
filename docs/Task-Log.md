@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：HUD 代码聚合到一个文件夹，CYLHUD 是唯一的 HUD 内核（iOS、Android、其他端） / TODO: Gather the HUD code in one folder, CYLHUD the only HUD kernel (iOS, Android, the other platforms)
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“同样要求处理HUD，将所有HUD代码聚合在一个文件夹。保证CYLHUD是唯一kernel” | The user's original prompt (Chinese, verbatim on the left): handle the HUD with the same requirements (as the CYLRefresh consolidation): gather all HUD code in one folder, and make sure CYLHUD is the only kernel. |
+| 要求：①与 CYLRefresh 相同：HUD 代码移入一个文件夹（`CYLHUD`），重复的 API 只保留一份，公开 API 兼容；②示例只用 CYLHUD，不依赖 SVProgressHUD、MBProgressHUD 等其他 HUD 库；③iOS 之后同样处理 Android、鸿蒙与微信小程序。 | Requirements: (1) as for CYLRefresh: the HUD code moves into one folder (`CYLHUD`), duplicate APIs are kept once, the public API stays compatible; (2) the examples use only CYLHUD and depend on no other HUD library (SVProgressHUD, MBProgressHUD...); (3) after iOS, the same for Android, HarmonyOS and the WeChat mini program. |
+| 上下文：iOS 的 HUD 是 `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.h/.m`（SVProgressHUD 风格 API，基于 CYLPlaceholderView），测试 `Tests/CYLPlaceholderHUDTests.m`，示例 `CYLHUDViewController.swift`；没有其他 HUD 库依赖。Android：`android/placeholder/.../CYLPlaceholderHUD.kt`；鸿蒙：`CYLPlaceholderHUD.ets` + `CYLPlaceholderHUDView.ets`；微信小程序：`src/cyl-placeholder-hud/` 组件 + `src/cyl-placeholder/cyl_placeholder_hud.js`。文档：`docs/Placeholder-HUD.md`。 | Context: the iOS HUD is `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.h/.m` (SVProgressHUD-style API, built on CYLPlaceholderView), tests `Tests/CYLPlaceholderHUDTests.m`, example `CYLHUDViewController.swift`; no other HUD library is a dependency. Android: `android/placeholder/.../CYLPlaceholderHUD.kt`; HarmonyOS: `CYLPlaceholderHUD.ets` + `CYLPlaceholderHUDView.ets`; WeChat mini program: the `src/cyl-placeholder-hud/` component + `src/cyl-placeholder/cyl_placeholder_hud.js`. Document: `docs/Placeholder-HUD.md`. |
+
 ### TODO：iOS 示例刷新 API 全部来自 CYLRefresh，合并 CYLRefresh 内的重复逻辑，移除非 CYLRefresh 依赖 / TODO: Every iOS example refresh API from CYLRefresh, merge CYLRefresh's duplicate logic, remove non-CYLRefresh dependencies
 
 | 中文 | English |
