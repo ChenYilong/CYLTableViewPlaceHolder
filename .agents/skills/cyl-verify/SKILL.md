@@ -101,6 +101,11 @@ documentation comment, single-line or multi-line, is a three-line-or-longer `/*!
 with the markers on their own lines, no trailing comment follows code, and a file never mixes formats
 (`instructions.md`, "Code conventions").
 
+## License in every published package
+
+- Run `python3 scripts/check_package_licenses.py` after changing a package, its resources or a manifest: every
+  published package carries the root `LICENSE` in its resource folder (skill `cyl-package-licenses`).
+
 ## Animation playback controls
 
 When verifying an example page that shows animations, check its playback controls (`docs/Example-Animation-Playback.md`,

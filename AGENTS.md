@@ -36,7 +36,7 @@ the integrated `CYLRefresh` component, and an example application. Read
   the affected documentation.
 - Use the project skills in `.agents/skills/`: `cyl-api-map` for API locations,
   `cyl-xcode-compat` for project settings, `cyl-verify` for verification, and
-  `cyl-docs` for documentation changes; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
+  `cyl-docs` for documentation changes, `cyl-package-licenses` for the license in every published package; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
   CYLTabBarController, with their upstream licenses) for accessibility and localization work.
 - HarmonyOS (HarmonyOS 6.0.1, API 21): the API matches iOS, the example is a 1:1 copy of the iOS example, and the
   implementation is migrated from the Kotlin source under `android/`. Rules: `instructions.md` "HarmonyOS"; status
@@ -160,6 +160,13 @@ the integrated `CYLRefresh` component, and an example application. Read
   `accessibility-audit` skills.
 - Resources follow the localization split: the core reads only its bundle through `CYLPlaceholderResourceBundle()` /
   `CYLPlaceholderResourceURL(path)`, each example only its own bundle through its own lookup.
+- License in every published package (`instructions.md`, "License in every published package"): all code published to
+  an external registry (CocoaPods, Carthage, Gradle / Maven, npm, ohpm, pub.dev and others, every platform) carries
+  its license inside the package: the root `LICENSE` copied into the package's built-in resource folder (created if
+  missing), e.g. `CYLTableViewPlaceHolder.bundle/LICENSE` on iOS, `src/main/resources/META-INF/<artifact>/LICENSE` in
+  each Android library module, `LICENSE` at the ohpm package root and in its `rawfile`, `src/LICENSE` in the mini
+  program package; third-party licenses ship unchanged next to the files they cover; manifests declare the license.
+  `python3 scripts/check_package_licenses.py` checks it in CI; skill `cyl-package-licenses`.
 - Ready-made placeholder animations live in
   `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
   Add only animations whose content means a placeholder state (loading, empty,

@@ -60,6 +60,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/check_localizations.py
+      # Every published package carries the license (instructions.md, "License in every published package").
+      - run: python3 scripts/check_package_licenses.py
 
   # The navigation and binding tables of the bilingual README and docs are generated; fail when one is stale
   # (instructions.md, "Bilingual documentation"). Runs on every pull request, including documentation-only ones.

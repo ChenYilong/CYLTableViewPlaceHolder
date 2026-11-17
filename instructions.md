@@ -688,6 +688,32 @@ existing code you review: fix what is missing when you meet it. Use the `ios-acc
   last resort, and a missing label is a bug to fix. Unit tests check labels, traits and hidden decorations.
 - A change that adds a control or a text without accessibility is not done.
 
+## License in every published package (owner's rule, 2026-11-17)
+
+Every piece of code published to an external registry carries its license declaration inside the package itself:
+CocoaPods, Carthage / XCFramework, Gradle / Maven, npm, ohpm, pub.dev and any registry added later, on every platform.
+
+- **The project's own license** (the root `LICENSE`, MIT) is copied into the package's built-in resource folder, so it
+  ships with the package and is not left behind in the repository:
+  - iOS (CocoaPods, Carthage): `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle/LICENSE`.
+    The resource bundle always contains the license file.
+  - Android (Gradle / Maven): `src/main/resources/META-INF/<artifact>/LICENSE` in each library module
+    (`android/placeholder` → `cylplaceholder`, `android/merged/library` → `cylrefresh`, `android/merged/library/rive`
+    → `cylrefresh-rive`). Java resources are packed into the AAR, and a folder per artifact keeps the paths unique,
+    since an app that merges two AARs with the same `META-INF` path fails to build.
+  - HarmonyOS (ohpm): `LICENSE` at the package root (`CrossPlatform/harmonyos-cylplaceholder/cylplaceholder/`) and in
+    its resource folder `src/main/resources/rawfile/cylplaceholder/`.
+  - WeChat Mini Program (npm): `LICENSE` at the package root and in the published folder `src/` (the folder
+    `miniprogram_npm` copies).
+  - A new platform or package: put the license in its existing resource folder; if it has none, create one.
+- **Third-party licenses** of code or resources inside a package ship inside the package too, next to the files they
+  cover (`LICENSE.<project>`, `NOTICE.<project>`), unchanged. Never drop or edit another author's license or attribution.
+- **The manifest declares the license**: `s.license` in the podspec, `"license"` in `package.json` and
+  `oh-package.json5`, the POM `licenses` block when a Maven publication is configured.
+- **Keep the copies identical** to the root `LICENSE`. `python3 scripts/check_package_licenses.py` checks every copy,
+  the third-party copies that must ship and the manifests; CI runs it. Add each new package to its tables.
+- Skill: `cyl-package-licenses`.
+
 ## Bundled animations
 
 `CYLTableViewPlaceHolder.bundle/Animations/` ships ready-made placeholder
