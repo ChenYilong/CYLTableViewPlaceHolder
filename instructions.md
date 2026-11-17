@@ -124,6 +124,26 @@ data `android/merged/api-map.json`); HarmonyOS uses `scripts/harmony-port-tables
 - **Then the reverse table.** At 100 for Android → iOS, do the same for iOS → Android (column 1 the iOS API, column 3
   the Android counterpart, TODO by default) with the same scoring and loop.
 
+### Animation bugs: record, screenshot, fix in CYLTabBarController (owner's rule, 2026-11-17)
+
+The animation component (icon + title + animation: `CYLAnimatedItemView`, its engines and animators on every
+platform) belongs to CYLTabBarController (branch `feat/cross-platform-components`, `docs/Animated-Item.md`); this
+repository only takes it by commit (`CYLPlaceholderView` builds on it).
+
+1. **Record first.** When you meet a bug, write it down before anything else: a row in the related issue table
+   (for example `docs/HarmonyOS.md`, `docs/Animated-Item-Migration.md`) with the status `TODO`.
+2. **Screenshot second.** Capture the bug (simulator, emulator or device) into `docs/assets/` and link it from the
+   row; say so in the row when no screenshot is possible.
+3. **Fix it in CYLTabBarController's animation component**, not in an example and not by working around it in this
+   repository. Hand the bug to the session or branch that owns CYLTabBarController (with the row and the
+   screenshot), then take the fixed commit here.
+4. **Examples change only through CYLTabBarController's API.** If a demo really must change, CYLTabBarController first
+   adds or changes the public interface the demo needs, and the example then calls that interface; never patch the
+   component's behavior inside an example.
+
+This narrows "Fix bugs in the core first" for animation bugs: the core that fixes them is CYLTabBarController's
+animation component.
+
 ### Documentation comments on public API
 
 Callers read the public API through generated documentation: Xcode Quick Help, the generated Swift interface of an

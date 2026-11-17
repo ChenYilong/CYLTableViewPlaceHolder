@@ -125,6 +125,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   package registry (CocoaPods, Maven / Gradle, npm, ohpm, pub.dev). Fix an issue or bug there so every app avoids it;
   fixing it only in an example is the worst option. If the core cannot fix it, ask the owner and say why, then record
   in the related document why the core cannot and the example does.
+- Animation bugs (`instructions.md`, "Animation bugs: record, screenshot, fix in CYLTabBarController"): record the bug
+  first, screenshot it second, and fix it in CYLTabBarController's animation component, not in an example; if a demo
+  must change, CYLTabBarController first adds the interface the demo calls.
 - Examples have the lowest weight (`instructions.md`, "Examples have the lowest weight"; `docs/Swift-Migration.md`):
   when a core change (the Swift migration or a refactor) breaks an example, fix the example first, freely and in the
   same change. An example's usage is never a compatibility constraint and never a reason for an alias, a shim, a

@@ -198,3 +198,6 @@ git log --format=%B @{u}..HEAD | LC_ALL=C.UTF-8 grep -nP '[\x{4e00}-\x{9fff}\x{3
 Bugs are fixed in the core first (`instructions.md`, "Fix bugs in the core first"): the core is the code published
 to CocoaPods, Maven / Gradle, npm, ohpm or pub.dev. A fix only in an example needs the owner's approval, and the
 related document must say why the core cannot solve it and why the example layer does.
+Animation bugs (`instructions.md`, "Animation bugs: record, screenshot, fix in CYLTabBarController"): first record
+the bug as a TODO row, then screenshot it into `docs/assets/`, then fix it in CYLTabBarController's animation
+component (hand it to the owning session); an example changes only by calling an interface CYLTabBarController adds.
