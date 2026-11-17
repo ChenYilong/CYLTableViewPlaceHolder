@@ -4,10 +4,12 @@
 // <cyl-placeholder-status visible="{{showsBar}}" shows-when-offline bind:statustap="onStatusTap" />
 //
 // Events: `statustap` (only while `tappable`; CYLPlaceholderStatusViewDelegate statusViewClicked:), `networkchange`
-// with { offline } while `showsWhenOffline` watches the network.
+// with { offline } while `showsWhenOffline` watches the network. The icon is a cyl-animated-item (CYLTabBarController's
+// CYLAnimatedItem, src/cyl-animated-item), so the bar shows its image, or the component placeholder without one.
 'use strict'
 
 const { CYLPlaceholderStatus, CYLPlaceholderStatusViewHeight } = require('../cyl-placeholder/cyl_status')
+const { cylResolvePath } = require('../cyl-placeholder/cyl_animated_icon')
 
 Component({
   properties: {
@@ -27,7 +29,7 @@ Component({
     /** A status bar dictionary of a configuration file ({ text, textKey, image, titleColor, backgroundColor }). */
     configuration: { type: null, value: null },
   },
-  data: { shown: false, offline: false, bar: {}, height: CYLPlaceholderStatusViewHeight, error: '' },
+  data: { shown: false, offline: false, bar: {}, height: CYLPlaceholderStatusViewHeight, error: '', imageFolder: '' },
   observers: {
     'text, image, titleColor, backgroundColor, language, configuration': function () {
       this._build()
@@ -41,6 +43,8 @@ Component({
   },
   lifetimes: {
     attached() {
+      // The icon is drawn by cyl-animated-item, from its own folder: the package icons need an absolute path.
+      this.setData({ imageFolder: cylResolvePath('../cyl-placeholder/images/', this.is) })
       this._build()
     },
     detached() {

@@ -16,7 +16,9 @@
 @media (prefers-color-scheme: dark) {
   .hud__box--Automatic { background: rgba(28, 28, 30, 0.92); color: #ffffff; }
 }
-.hud__icon { width: 56px; height: 56px; }
+/* cyl-animated-item pads its 56px icon by 4px (a 44px touch target); the negative margin keeps the box metrics. */
+.hud__icon-wrap { display: flex; margin: -4px; }
+.hud__animated-icon { display: block; }
 .hud__glyph { width: 56px; height: 56px; line-height: 56px; font-size: 40px; text-align: center; }
 .hud__progress { width: 140px; height: 6px; margin: 25px 0; border-radius: 3px; background: rgba(128, 128, 128, 0.25); overflow: hidden; }
 .hud__progress-bar { height: 100%; background: #007aff; transition: width 0.2s; }

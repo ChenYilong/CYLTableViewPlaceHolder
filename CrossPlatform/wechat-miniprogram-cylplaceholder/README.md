@@ -104,9 +104,24 @@ color, corner radius, content insets, minimum width). An invalid configuration r
 ## Animations
 
 31 scenarios have a Lottie file for their main icon (`CYLPlaceholderScenarioCatalog.lottieFileNameForScenario`),
-shipped in `src/cyl-placeholder/animations`. The package has no player of its own; plug one in through the
-`animation` generic, for example `cyl-lottie` from
-[cyl-lottie-miniprogram](https://github.com/ChenYilong/CYLTabBarController/tree/master/CrossPlatform/lottie-miniprogram):
+shipped in `src/cyl-placeholder/animations`.
+
+Every icon and animation of `cyl-placeholder`, `cyl-placeholder-hud`, `cyl-placeholder-status` and `cyl-refresh` is
+drawn by `cyl-animated-item`, the CYLAnimatedItem component of
+[CYLTabBarController](https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md)
+(the counterpart of iOS `CYLAnimatedItemView`, which `CYLPlaceholderView` subclasses). It shows the animation once its
+engine reports `ready`; until then, and after an `error` (no engine, a corrupt file, a failed download), the static
+icon; its placeholder image only without a static icon. The first failure of a type logs once in the developer tools
+which package to install. The component is copied unchanged into `src/cyl-animated-item` (with its default engine view
+`src/cyl-animation-placeholder`) at the commit the repository's `Cartfile` pins (`src/cyl-animated-item/UPSTREAM_COMMIT`;
+`npm run sync-animated-item` copies it again).
+
+The package depends on no animation library. A page passes the engines it installs through the abstract nodes:
+`animation` for Lottie (for example `cyl-lottie` from
+[cyl-lottie-miniprogram](https://github.com/ChenYilong/CYLTabBarController/tree/master/CrossPlatform/lottie-miniprogram)),
+`cyl-pag-view`, `cyl-rive-view` and `cyl-svga-view` for PAG, Rive and SVGA files (cyl-pag-miniprogram,
+cyl-rive-miniprogram, cyl-svga-miniprogram). GIF needs no engine. A file whose engine is not passed keeps the static
+icon.
 
 ```json
 { "usingComponents": { "cyl-lottie": "cyl-lottie-miniprogram/cyl-lottie/index" } }
@@ -118,8 +133,11 @@ shipped in `src/cyl-placeholder/animations`. The package has no player of its ow
 ```
 
 `animated` switches between the animation and the static icon; `loop` and `speed` apply live;
-`this.selectComponent('#placeholder').playAll()` restarts every animation from frame 0. Any player with `path`,
-`loop`, `speed`, `autoplay` properties and a `cyl_playFromStart()` method works.
+`this.selectComponent('#placeholder').playAll()` restarts every animation from frame 0. An engine needs the
+properties `path`, `loop`, `speed`, `autoplay`, the events `ready` and `error`, and a `cyl_playFromStart()` method
+(`cyl_animation()` returning an object with `addEventListener('complete')` for a `repeatCount` above 1), as
+cyl-lottie has. `cyl-refresh`'s `headerIcons` / `footerIcons` and the HUD's `loadingAnimationFileName` /
+`showImage(path)` take the same file types.
 
 ## HUD
 
@@ -173,19 +191,24 @@ configuration file. The bar's icon and design come from CYLChatKit (MIT, `LICENS
 
 Open this folder (`CrossPlatform/wechat-miniprogram-cylplaceholder`) in WeChat DevTools. `project.config.json`
 points `miniprogramRoot` at `example/miniprogram/` and its `beforeCompile` hook runs `node scripts/sync-example.js`,
-which copies both components into the example (a mini program cannot load files outside its root). Run
-`npm run sync-example` yourself if the hook is disabled. The script also copies the example's Lottie player
-from a CYLTabBarController checkout: `CYL_TABBAR_DIR`, else `../CYLTabBarController` next to this repository. DevTools refuses the committed `touristappid`: put your own
+which copies the components (and the `cyl-animated-item` copy they build on) into the example (a mini program cannot
+load files outside its root). Run `npm run sync-example` yourself if the hook is disabled. The script also copies the
+example's Lottie player from a CYLTabBarController checkout: `CYL_TABBAR_DIR`, else `../CYLTabBarController` next to
+this repository, else the repository's `Carthage/Checkouts/CYLTabBarController`. DevTools refuses the committed `touristappid`: put your own
 AppID in `project.private.config.json` (git-ignored), for example `{ "appid": "wx…" }`.
 
 ## Development
 
 - `npm test`: unit tests (`node --test`), including a check that the scenario list matches the Kotlin enum.
 - `npm run import-android`: re-imports the icons and strings from `android/placeholder` after they change.
+- `npm run sync-animated-item`: copies CYLTabBarController's `cyl-animated-item` (and `cyl-animation-placeholder`,
+  upstream's model tests as `test/cyl_animated_item.test.js`) at the `Cartfile` commit; never edit the copy.
 
 ## License
 
 MIT, see `LICENSE`. The icons in `src/cyl-placeholder/images` are copied unchanged from `android/placeholder` (file names without the `cyl_placeholder_` prefix) and keep their licenses: the Material Design icons listed in `NOTICE.material-design-icons` are Apache 2.0 (`LICENSE.material-design-icons`); `LICENSE.placeholder-third-party` covers the images from KLTableViewAndCollectionViewPlaceholder (MIT). The Lottie
 files in `src/cyl-placeholder/animations` come unchanged from the iOS bundle; `NOTICE.animations` there names each
 file's source (lottie-ios, Apache 2.0, `LICENSE.lottie-ios`; react-useanimations, MIT, `LICENSE.useanimations`).
+`src/cyl-animated-item` and `src/cyl-animation-placeholder` (with `cyl_animated_item_placeholder.png`) are
+CYLTabBarController's, MIT, copied unchanged with its license as `LICENSE.CYLTabBarController` in each folder.
 It also lists the PAG / Rive / GIF files of the iOS bundle, which this package does not ship.

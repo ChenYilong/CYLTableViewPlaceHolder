@@ -1,6 +1,8 @@
-// Copies the package's components (src/cyl-placeholder, src/cyl-placeholder-hud) into the example (a mini program
-// cannot load files outside its miniprogramRoot), plus the example's Lottie player. Runs from `npm run sync-example`
-// and from the DevTools beforeCompile hook in project.config.json.
+// Copies the package's components (src/cyl-placeholder, src/cyl-placeholder-hud, src/cyl-placeholder-status,
+// src/cyl-refresh and the copied CYLTabBarController components they build on, src/cyl-animated-item and
+// src/cyl-animation-placeholder) into the example (a mini program cannot load files outside its miniprogramRoot), plus
+// the example's Lottie player. Runs from `npm run sync-example` and from the DevTools beforeCompile hook in
+// project.config.json.
 'use strict'
 const fs = require('fs')
 const path = require('path')
@@ -19,7 +21,7 @@ function copyDir(from, to, filter = () => true) {
 
 const pkg = path.resolve(__dirname, '..')
 const components = path.join(pkg, 'example/miniprogram/components')
-for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status', 'cyl-refresh']) {
+for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status', 'cyl-refresh', 'cyl-animated-item', 'cyl-animation-placeholder']) {
   const from = path.join(pkg, 'src', name)
   const to = path.join(components, name)
   fs.rmSync(to, { recursive: true, force: true })
@@ -29,8 +31,10 @@ for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-s
 }
 
 // The example's Lottie player: cyl-lottie-miniprogram from a CYLTabBarController checkout (CYL_TABBAR_DIR, else the
-// folder next to this repository, as the Android build's cylTabBarDir).
-const tabBar = process.env.CYL_TABBAR_DIR || path.resolve(pkg, '../../../CYLTabBarController')
+// folder next to this repository, as the Android build's cylTabBarDir, else the Cartfile checkout that
+// `bash scripts/cyltabbarcontroller-checkout.sh` creates in Carthage/Checkouts).
+const tabBar = process.env.CYL_TABBAR_DIR || [path.resolve(pkg, '../../../CYLTabBarController'), path.resolve(pkg, '../../Carthage/Checkouts/CYLTabBarController')]
+  .find((folder) => fs.existsSync(path.join(folder, 'CrossPlatform'))) || path.resolve(pkg, '../../../CYLTabBarController')
 // The example's tab bar (cyl-tab-bar, as the iOS example uses CYLTabBarController) and Lottie player.
 const libraries = [
   { name: 'cyl-lottie-miniprogram', from: 'CrossPlatform/lottie-miniprogram', dist: 'miniprogram_dist', check: 'cyl-lottie/index.js' },

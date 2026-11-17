@@ -24,6 +24,75 @@
 
 ## 任务 / Tasks
 
+### TODO: the components build on CYLTabBarController's cyl-animated-item (score 80)
+
+- **Date / branch:** 2026-11-17, `feat/android-refresh-port-followup` (pull request #31).
+- **The user's original prompt:** the same CYLAnimatedItem migration request as iOS and Android (CYLTabBarController
+  `docs/Animated-Item.md`, "Downstream migration status"): this repository's icon + title + animation component and
+  every other place that shows an icon or plays an animation build on the upstream component, keeping this repository's
+  names, properties and events where possible; the core package depends on no animation library; the example installs
+  the engines it uses through the abstract nodes.
+- **Requirements:** upstream ships CYLAnimatedItem for the mini program as `src/cyl-animated-item` in
+  `CrossPlatform/wechat-miniprogram-cyltabbar` (engines through the abstract nodes `cyl-lottie-view`, `cyl-pag-view`,
+  `cyl-rive-view`, `cyl-svga-view`; GIF drawn with `<image>`; `ready` shows the animation, `error` goes back to the
+  static image, else the placeholder, and logs once which package to install; display logic in
+  `cyl_animated_item_model.js` with node tests). Display priority, as on iOS / Android: the animation if it plays, else
+  the static image passed in, else the placeholder. Unpublished upstream, so it is taken by commit: copied (the guide
+  allows an npm git dependency or a copy; `miniprogram_npm` copies only `src/`), at the commit the repository's
+  `Cartfile` pins (`57a527ef`), without editing the copied files.
+- **Done (2026-11-17):**
+  1. `scripts/sync-cyl-animated-item.js` (`npm run sync-animated-item`) reads the `Cartfile` commit and copies, with
+     `git show <commit>:<path>` from the CYLTabBarController checkout (`Carthage/Checkouts/CYLTabBarController`, or
+     `CYL_TABBAR_DIR`): `src/cyl-animated-item/` (component, model, `cyl_animated_item_placeholder.png`),
+     `src/cyl-animation-placeholder/` (the default of the abstract nodes, which `cyl-animated-item/index.json` names)
+     and upstream's `test/cyl_animated_item.test.js`; it adds the upstream `src/LICENSE` as
+     `LICENSE.CYLTabBarController` in both folders and `src/cyl-animated-item/UPSTREAM_COMMIT` (repository, commit,
+     paths, license).
+  2. `cyl-placeholder`: each icon is a `cyl-animated-item` (`image` = the static icon, `animation-url` = the animation
+     when `animated`, `icon-size` = the side, `loop` / `speed` live). Static icons now stay while the engine loads and
+     when it is missing or fails (before, `animated` without an engine drew an empty view). The title stays the
+     component's own `<text>` (upstream's title is 14px, one line, with no color property), and the icon box keeps its
+     `aria-role` (`button` / `img`) and `aria-label`; the item sits in an `aria-hidden` wrapper so it is not read
+     twice. `playAll()` and `repeatCount` reach the engine inside the item (`selectComponent` →
+     `.cyl-animated-item-animation`); because upstream does not forward `complete`, a repeat count above 1 listens on
+     the engine's `cyl_animation()` object (`addEventListener('complete')`, lottie-web).
+  3. `cyl-placeholder-hud`: the loading icon (`loadingAnimationFileName`, else the CYLRefreshActivity GIF as the static
+     image) and the `showImage` icon (an animation file plays too) are `cyl-animated-item`; the inner
+     `cyl-placeholder` now gets the HUD's engines. `cyl-placeholder-status`: the bar's icon is a `cyl-animated-item`.
+     `cyl-refresh`: the header / footer state icons are `cyl-animated-item`; `CYLRefresh.iconForState` now accepts
+     PAG, Rive and SVGA files (type `pag` / `rive` / `svga`, `animationUrl`) besides Lottie and images; other files
+     still show the spinner.
+  4. Engines: the abstract node `animation` stays the Lottie engine (no change for `generic:animation="cyl-lottie"`;
+     it is forwarded as the item's `cyl-lottie-view`), and the components add `cyl-pag-view`, `cyl-rive-view`,
+     `cyl-svga-view`. Every default is the copied `cyl-animation-placeholder`, which reports `error`; the package has no
+     dependency. `src/cyl-placeholder/no-animation/` is removed. Paths for the item are made absolute against the
+     calling component (`cylResolvePath` in `src/cyl-placeholder/cyl_animated_icon.js`), because the item draws files
+     from its own folder; `imageBase` may stay relative.
+  5. `scripts/sync-example.js` also copies `cyl-animated-item` and `cyl-animation-placeholder` into the example (git
+     ignored) and falls back to the Cartfile checkout for the example's libraries. Tests: upstream's model tests
+     (7) and `test/animated_icon.test.js` (the copy matches the Cartfile commit byte for byte when the checkout is
+     present, the path / type helpers, the display priority, every component draws icons only through the item with
+     its engines declared and the item hidden from screen readers, no animation library dependency).
+- **Verification (2026-11-17, Linux container, Node):** `npm test` 53 / 53; `npm run sync-example` copies the six
+  folders; `python3 scripts/check_package_licenses.py`, `python3 scripts/check_localizations.py` and
+  `python3 scripts/update-docs-navigation.py --check` pass. Not verified: rendering. WeChat DevTools cannot run in
+  this container, so nothing was drawn: the abstract node forwarding under a different name
+  (`generic:cyl-lottie-view="animation"`), the layout (the item adds 4px padding and a 44px minimum height, offset by
+  negative margins / fixed wrappers), the `aria-hidden` wrapper, `playAll()` / `repeatCount` through the nested
+  engine, and the HUD / status / refresh icons are unchecked.
+- **Remaining work (TODO):**
+  1. Open the example in WeChat DevTools: scenarios with and without `generic:animation`, the configuration page's
+     playback policies (once / three times / loop), "Play all", the HUD loading animation, the status bar, the refresh
+     icon demos; take screenshots for this document and the README.
+  2. Upstream requests (CYLTabBarController, not editable here): forward the engine's `ready` / `complete` / `error`
+     as events and add `cyl_playFromStart()` (then drop the `cyl_animation()` listener for `repeatCount`); a property
+     to hide the item from screen readers or set its role (it is always a `button`), and title color / font / line
+     properties so `cyl-placeholder`'s title can move into the item.
+  3. Tinted template icons: the 45 % opacity applies only while no animation is requested (it would dim the
+     animation); the static fallback of an animated icon is drawn untinted.
+  4. Move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the component
+     inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
+
 ### DONE: the package entry works after DevTools' Build npm (score 100)
 
 - **Date / branch:** 2026-11-15, `fix/miniprogram-package-entry` (from `feat/android-refresh-port-followup`; its pull
@@ -94,7 +163,8 @@
      PAG, Uploading GIF, Success Rive; the mini program shows those scenarios' static icon or the first JSON variant),
      choosing a variant per scenario, Lottie on the HUD (`loadingAnimationFileName`), Dark Mode colors (`colors` of
      cyl-lottie). The example's player comes from a CYLTabBarController checkout (`CYL_TABBAR_DIR`, default: next to
-     this repository); the package itself has no dependency (the `animation` generic defaults to no player).
+     this repository); the package itself has no dependency (the `animation` generic defaults to the copied
+     `cyl-animation-placeholder`, which reports `error`, so the static icon stays; see the cyl-animated-item task).
   3. Ported with known differences (no further work planned unless asked). `CYLPlaceholderStatusView` (`2368eb0`):
      `cyl-placeholder-status` is placed by the page (a mini program has no view controller or
      `additionalSafeAreaInsets`; put it above the list), no Dynamic Type height, no
@@ -225,13 +295,17 @@
 | `src/cyl-placeholder-status/index.{js,json,wxml,wxss}` | The `cyl-placeholder-status` component (the red network bar; `LICENSE.CYLChatKit` at the package root) |
 | `src/cyl-placeholder/cyl_images.js` | Generated icon list (validates a configuration's `style`) |
 | `src/cyl-placeholder/animations/` | The 31 placeholder Lottie files of the iOS bundle, `NOTICE.animations`, licenses |
-| `src/cyl-placeholder/no-animation/` | Default `animation` generic (no player) |
+| `src/cyl-animated-item/` | CYLTabBarController's `cyl-animated-item` (CYLAnimatedItem), copied unchanged at the `Cartfile` commit (`UPSTREAM_COMMIT`, `LICENSE.CYLTabBarController`); draws every icon and animation of the components |
+| `src/cyl-animation-placeholder/` | CYLTabBarController's default of the abstract nodes (`animation`, `cyl-pag-view`, `cyl-rive-view`, `cyl-svga-view`): no engine, reports `error` |
+| `src/cyl-placeholder/cyl_animated_icon.js` | `cylResolvePath` (absolute paths for the item) and `cylIconSource` (engine file or image) |
+| `scripts/sync-cyl-animated-item.js` | `npm run sync-animated-item`: copies the two folders and upstream's model test at the `Cartfile` commit |
+| `test/cyl_animated_item.test.js`, `test/animated_icon.test.js` | Upstream's model tests (copied); the copy, the helpers and the components' use of the item |
 | `src/index.js` | The npm entry (`main`): `require('cyl-placeholder-miniprogram')` after Build npm loads it |
 | `src/cyl-placeholder/cyl_placeholder.js` | The JavaScript API: the catalog, the HUD, the configuration, the status and the localization (plain `Object.assign` requires) |
 | `src/cyl-placeholder/locales/<locale>.json` (+ generated `.js` twin) | Strings of `android/placeholder` (7 languages, 108 keys) |
 | `src/cyl-placeholder/images/*.png` | Icons of `android/placeholder` (52), licenses copied alongside |
 | `scripts/import-android-resources.js` | Re-imports strings and icons from Android |
-| `scripts/sync-example.js` | Copies both components into the example (DevTools `beforeCompile` hook) |
+| `scripts/sync-example.js` | Copies the components and the `cyl-animated-item` copy into the example (DevTools `beforeCompile` hook) |
 | `example/miniprogram` | Scenario list (grouped by category, language picker), a scenario page on an empty list (Retry reloads, interactive switch, "Load data on retry") and a HUD page (every HUD call, mask type and style pickers) |
 | `example/miniprogram/configurations/` | The six example configuration files (copied from `android/merged/example`) |
 | `test/catalog.test.js`, `test/hud.test.js`, `test/configuration.test.js` | `node --test` unit tests |
@@ -250,7 +324,7 @@
 | `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.setLanguage` or the `language` property | Falls back to the WeChat client language |
 | `CYLPlaceholderHUD` `show`, `showWithStatus`, `showProgress(:status:)`, `setStatus`, `showInfo/Success/ErrorWithStatus`, `showImage`, `showScenario`, `showComponents`, `popActivity`, `dismiss(WithDelay)(completion)`, `visible`, `displayDurationForString`, `state`, `status`, `progress`, `activityCount`, `style`, `maskType`, `graceTimeInterval`, `minimum/maximumDismissTimeInterval`, `fadeIn/OutAnimationDuration` | same names on `selectComponent('#hud').hud` | Actions of components in the box arrive as the `action` event instead of an `actions` map |
 | `animationFileNamesForScenario` | same name, plus `lottieFileNameForScenario` | Same lists as Kotlin; tested |
-| Animated placeholder icons (Lottie / PAG / Rive / GIF players) | `animated`, `speed`, `loop` properties, `playAll()`, `generic:animation="cyl-lottie"` | Lottie only |
+| Animated placeholder icons (`CYLPlaceholderView` is a `CYLAnimatedItemView`) | `cyl-animated-item` inside `cyl-placeholder`; `animated`, `speed`, `loop` properties, `playAll()`, `generic:animation="cyl-lottie"` (Lottie), `generic:cyl-pag-view` / `cyl-rive-view` / `cyl-svga-view` | The scenarios ship Lottie files only; any engine the page passes plays its files; animation, else static icon, else placeholder |
 | `CYLPlaceholderStackView initWithConfiguration:` / `initWithContentsOfURL:`, Kotlin `fromConfiguration` / `fromContentsOfURL` | `<cyl-placeholder configuration="{{object or JSON string}}">`, `CYLPlaceholderConfiguration.parse(configuration, language)`, `readConfigurationFile(path)` | Errors: `configerror` event / thrown `CYLPlaceholderConfigurationError` with the Android messages; tap handlers stay in the page (`action` event) |
 | `CYLPlaceholderComponent componentWithDictionary` | `CYLPlaceholderConfiguration.componentWithDictionary` | |
 | `CYLPlaceholderStatusView` (`delegate` / `tapHandler`, `text`, `CYLPlaceholderStatusViewHeight`) | `<cyl-placeholder-status>` (`tappable` + `statustap`, `text`, `image`, `titleColor`, `backgroundColor`), `CYLPlaceholderStatusViewHeight` | The page places the bar |

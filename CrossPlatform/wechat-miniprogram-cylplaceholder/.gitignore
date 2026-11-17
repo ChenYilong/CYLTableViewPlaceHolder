@@ -5,5 +5,7 @@ example/miniprogram/components/cyl-placeholder/
 example/miniprogram/components/cyl-placeholder-hud/
 example/miniprogram/components/cyl-placeholder-status/
 example/miniprogram/components/cyl-refresh/
+example/miniprogram/components/cyl-animated-item/
+example/miniprogram/components/cyl-animation-placeholder/
 example/miniprogram/libs/
 project.private.config.json

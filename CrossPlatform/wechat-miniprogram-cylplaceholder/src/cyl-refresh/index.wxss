@@ -28,3 +28,7 @@
   .cyl-refresh__state, .cyl-refresh__footer-text { color: #c7c7cc; }
   .cyl-refresh__time { color: #8e8e93; }
 }
+/* A state icon drawn by cyl-animated-item: the wrapper keeps the icon's own width and height in the layout (the item is
+   a square of the longer side, padded by 4px for a 44px touch target, centered and allowed to overflow). */
+.cyl-refresh__icon-wrap { display: flex; align-items: center; justify-content: center; overflow: visible; flex-shrink: 0; }
+.cyl-refresh__animated-icon { display: block; flex-shrink: 0; }

@@ -3,7 +3,10 @@
 .status { display: flex; flex-direction: row; align-items: center; box-sizing: border-box; padding: 0 12px;
   background: rgb(255, 199, 199); }
 .status--pressed { opacity: 0.7; }
-.status__icon { width: 22px; height: 22px; flex-shrink: 0; }
+/* cyl-animated-item pads its icon by 4px and is at least 44px tall (the bar's height); the negative side margins keep
+   the icon at the bar's 12px inset. */
+.status__icon-wrap { display: flex; flex-shrink: 0; margin: 0 -4px; }
+.status__animated-icon { display: block; }
 .status__text { margin-left: 8px; flex: 1; font-size: 14px; line-height: 18px; color: #555555;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (prefers-color-scheme: dark) {

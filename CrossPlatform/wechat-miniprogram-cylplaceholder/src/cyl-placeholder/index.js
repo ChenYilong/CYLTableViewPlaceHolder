@@ -4,10 +4,20 @@
 // <cyl-placeholder scenario="RetryButton" bind:action="onPlaceholderAction" />
 //
 // Events: `action` with detail { action, scenario, index } (index is -1 for a tap on the background).
+//
+// Every icon is a cyl-animated-item (CYLTabBarController's CYLAnimatedItem for mini programs, copied into
+// src/cyl-animated-item): the animation once its engine is ready, else the static icon, else the placeholder. Engines
+// come from the page through the abstract nodes `animation` (Lottie, e.g. generic:animation="cyl-lottie"),
+// `cyl-pag-view`, `cyl-rive-view` and `cyl-svga-view`; without one the static icon stays.
 'use strict'
 
 const { CYLPlaceholderScenarioCatalog } = require('./cyl_scenario_catalog')
 const { CYLPlaceholderConfiguration } = require('./cyl_configuration')
+const { cylResolvePath } = require('./cyl_animated_icon')
+
+/** How long the component waits for an engine to load a file with a repeat count (40 tries, 250 ms apart). */
+const CYL_REPEAT_HOOK_TRIES = 40
+const CYL_REPEAT_HOOK_INTERVAL = 250
 
 Component({
   options: { pureDataPattern: /^_/ },
@@ -24,11 +34,14 @@ Component({
     backgroundAction: { type: String, value: '' },
     /** true drops the minimum height and padding (inside a HUD box or a small container). */
     compact: { type: Boolean, value: false },
-    /** The folder of the icons, for icons an app ships elsewhere. */
+    /** The folder of the icons, for icons an app ships elsewhere (relative to this component, or absolute). */
     imageBase: { type: String, value: './images/' },
     /**
-     * true plays the main icon's Lottie file (CYLPlaceholderScenarioCatalog.lottieFileNameForScenario) instead of the
-     * static icon. Needs a player: generic:animation="cyl-lottie" (cyl-lottie-miniprogram).
+     * true plays the main icon's animation file (CYLPlaceholderScenarioCatalog.lottieFileNameForScenario, or a
+     * component's `animation`) instead of the static icon, once its engine is ready. Needs an engine through the
+     * abstract nodes: generic:animation="cyl-lottie" (cyl-lottie-miniprogram) for Lottie, generic:cyl-pag-view,
+     * generic:cyl-rive-view, generic:cyl-svga-view for PAG / Rive / SVGA files; GIF needs none. Without one, or when the
+     * file fails, the static icon stays.
      */
     animated: { type: Boolean, value: false },
     /** Loops the animation (applied live). */
@@ -43,11 +56,18 @@ Component({
      */
     configuration: { type: null, value: null },
   },
-  data: { items: [], _background: null, _scenario: null, hasBackgroundAction: false, animationFolder: '' },
+  data: { items: [], _background: null, _scenario: null, hasBackgroundAction: false, animationFolder: '', imageFolder: '' },
   lifetimes: {
     attached() {
-      // `this.is` is the component's package path ("components/cyl-placeholder/index"); lottie needs absolute paths.
-      this.setData({ animationFolder: this.data.animationBase || '/' + this.is.replace(/[^/]*$/, '') + 'animations/' })
+      // `this.is` is the component's package path ("components/cyl-placeholder/index"). cyl-animated-item draws the
+      // files from its own folder and the engines need absolute paths, so both folders become absolute.
+      this.setData({
+        animationFolder: this.data.animationBase || cylResolvePath('./animations/', this.is),
+        imageFolder: cylResolvePath(this.data.imageBase, this.is),
+      })
+    },
+    detached() {
+      clearTimeout(this._repeatTimer)
     },
   },
   observers: {
@@ -57,12 +77,56 @@ Component({
     animationBase(base) {
       if (base) this.setData({ animationFolder: base })
     },
+    imageBase(base) {
+      if (this.is) this.setData({ imageFolder: cylResolvePath(base, this.is) })
+    },
+    animated() {
+      this._hookRepeats()
+    },
   },
   methods: {
     /** "Play all": restarts every animation of the placeholder from progress 0. */
     playAll() {
       this._plays = {}
-      this.selectAllComponents('.cyl-placeholder__animation').forEach((a) => a.cyl_playFromStart && a.cyl_playFromStart())
+      this.data.items.forEach((item, index) => {
+        const engine = this._engineAt(index)
+        if (engine && engine.cyl_playFromStart) engine.cyl_playFromStart()
+      })
+    },
+    /**
+     * The engine component inside the cyl-animated-item of item `index` (cyl-lottie, cyl-pag, … or the
+     * cyl-animation-placeholder default), or null while it shows no animation.
+     */
+    _engineAt(index) {
+      const item = this.selectComponent('#cyl-animated-' + index)
+      return (item && item.selectComponent('.cyl-animated-item-animation')) || null
+    },
+    /**
+     * repeatCount N (above 1) replays the animation until it has played N times. cyl-animated-item does not forward
+     * the engine's `complete` event, so the component listens on the engine's animation object
+     * (`cyl_animation()`, lottie-web's `addEventListener('complete')`) once the engine has loaded the file.
+     */
+    _hookRepeats() {
+      clearTimeout(this._repeatTimer)
+      if (!this.data.animated) return
+      const pending = this.data.items.map((item, index) => ({ item, index })).filter(({ item }) => item.animation && item.repeatCount > 1)
+      if (!pending.length) return
+      let tries = 0
+      const attempt = () => {
+        let waiting = false
+        for (const { index } of pending) {
+          const engine = this._engineAt(index)
+          const animation = engine && typeof engine.cyl_animation === 'function' ? engine.cyl_animation() : null
+          if (!animation || typeof animation.addEventListener !== 'function') {
+            waiting = true
+          } else if (!animation.__cylPlaceholderRepeat) {
+            animation.__cylPlaceholderRepeat = true
+            animation.addEventListener('complete', () => this._onAnimationComplete(index))
+          }
+        }
+        if (waiting && ++tries < CYL_REPEAT_HOOK_TRIES) this._repeatTimer = setTimeout(attempt, CYL_REPEAT_HOOK_INTERVAL)
+      }
+      this._repeatTimer = setTimeout(attempt, 0)
     },
     /** Rebuilds the stack, for example after CYLPlaceholderLocalization.setLanguage. */
     reload() {
@@ -100,15 +164,15 @@ Component({
         }
       })
       this._plays = {}
-      this.setData({ items, _background: background, _scenario: scenario, hasBackgroundAction: !!background })
+      this.setData({ items, _background: background, _scenario: scenario, hasBackgroundAction: !!background }, () => this._hookRepeats())
     },
     /** Replays an animation with repeatCount N until it has played N times. */
-    onAnimationComplete(e) {
-      const index = Number(e.currentTarget.dataset.index)
+    _onAnimationComplete(index) {
       const item = this.data.items[index]
       if (!item || !(item.repeatCount > 1)) return
       this._plays[index] = (this._plays[index] || 1) + 1
-      if (this._plays[index] <= item.repeatCount) this.selectComponent('#cyl-animation-' + index).cyl_playFromStart()
+      const engine = this._engineAt(index)
+      if (this._plays[index] <= item.repeatCount && engine && engine.cyl_playFromStart) engine.cyl_playFromStart()
     },
     onItemTap(e) {
       const index = Number(e.currentTarget.dataset.index)

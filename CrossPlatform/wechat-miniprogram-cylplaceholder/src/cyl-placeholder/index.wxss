@@ -6,6 +6,10 @@
 .cyl-placeholder__stack { display: flex; flex-direction: column; align-items: center; max-width: 320px; }
 .cyl-placeholder__item { display: flex; flex-direction: column; align-items: center; }
 .cyl-placeholder__icon-box { display: flex; flex-direction: column; align-items: center; }
+/* cyl-animated-item pads its icon by 4px on each side (a 44px touch target); the negative margin keeps the icon's
+   own size in the stack. */
+.cyl-placeholder__icon-wrap { display: flex; flex-direction: column; align-items: center; margin: -4px; }
+.cyl-placeholder__animated-icon { display: block; }
 .cyl-placeholder__icon--tinted { opacity: 0.45; }
 .cyl-placeholder__title { margin-top: 12px; font-size: 16px; line-height: 22px; color: #333333; text-align: center; }
 .cyl-placeholder__item > .cyl-placeholder__title { margin-top: 0; }

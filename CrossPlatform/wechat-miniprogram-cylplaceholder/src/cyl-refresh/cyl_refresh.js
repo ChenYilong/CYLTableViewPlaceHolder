@@ -4,6 +4,7 @@
 'use strict'
 
 const { CYLPlaceholderLocalization } = require('../cyl-placeholder/cyl_placeholder')
+const { cylIconSource } = require('../cyl-placeholder/cyl_animated_icon')
 
 const TABLES = {
   en: require('./locales/en.js'),
@@ -120,7 +121,13 @@ function headerStateForPull(distance, threshold = CYLRefreshHeaderHeight) {
   return distance >= threshold ? CYLRefreshState.Pulling : CYLRefreshState.Idle
 }
 
-/** An icon spec for a state: { path, size } (Lottie .json plays with the animation generic, .gif in <image>). */
+/**
+ * An icon spec for a state: { path, size }. cyl-refresh draws it with cyl-animated-item (CYLTabBarController's
+ * CYLAnimatedItem): Lottie (.json / .lottie), PAG, Rive (.riv) and SVGA files play through the engine the page passes in
+ * the abstract nodes (`animation` for Lottie, `cyl-pag-view`, `cyl-rive-view`, `cyl-svga-view`) and show the component
+ * placeholder until it is ready or after it fails; GIF, PNG, JPEG, WebP and SVG are images. Other files are
+ * 'unsupported' and show the spinner.
+ */
 function iconForState(icons, state) {
   if (!icons) return null
   const icon = icons[state] || (state !== CYLRefreshState.NoMoreData ? icons.Idle : null)
@@ -128,8 +135,10 @@ function iconForState(icons, state) {
   const spec = typeof icon === 'string' ? { path: icon } : icon
   const size = spec.size || 28
   const [width, height] = Array.isArray(size) ? size : [size, size]
-  const type = /\.json$/i.test(spec.path) ? 'lottie' : /\.(gif|png|jpe?g|webp|svg)$/i.test(spec.path) ? 'image' : 'unsupported'
-  return { path: spec.path, width, height, type }
+  const source = cylIconSource(spec.path)
+  const isImage = source.type === 'gif' || /\.(png|jpe?g|webp|svg)$/i.test(String(spec.path || '').split(/[?#]/)[0])
+  const type = source.animationUrl ? source.type : isImage ? 'image' : 'unsupported'
+  return { path: spec.path, width, height, type, image: type === 'image' ? spec.path : '', animationUrl: source.animationUrl }
 }
 
 module.exports = {

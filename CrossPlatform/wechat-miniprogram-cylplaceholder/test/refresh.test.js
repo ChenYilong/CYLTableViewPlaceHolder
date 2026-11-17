@@ -32,9 +32,17 @@ test('pull distance and icons', () => {
   assert.strictEqual(R.headerStateForPull(53), S.Idle)
   assert.strictEqual(R.headerStateForPull(54), S.Pulling)
   const icons = { Idle: '/a/CYLRefreshPullArrow.json', Refreshing: { path: '/a/CYLRefreshRing.gif', size: [40, 24] }, Pulling: { path: '/a/x.pag', size: 32 } }
-  assert.deepStrictEqual(R.iconForState(icons, S.Idle), { path: '/a/CYLRefreshPullArrow.json', width: 28, height: 28, type: 'lottie' })
-  assert.deepStrictEqual(R.iconForState(icons, S.Refreshing), { path: '/a/CYLRefreshRing.gif', width: 40, height: 24, type: 'image' })
-  assert.strictEqual(R.iconForState(icons, S.Pulling).type, 'unsupported')
+  // cyl-animated-item draws the icons: engine files go to animationUrl, images (GIF included) to image.
+  assert.deepStrictEqual(R.iconForState(icons, S.Idle),
+    { path: '/a/CYLRefreshPullArrow.json', width: 28, height: 28, type: 'lottie', image: '', animationUrl: '/a/CYLRefreshPullArrow.json' })
+  assert.deepStrictEqual(R.iconForState(icons, S.Refreshing),
+    { path: '/a/CYLRefreshRing.gif', width: 40, height: 24, type: 'image', image: '/a/CYLRefreshRing.gif', animationUrl: '' })
+  assert.deepStrictEqual(R.iconForState(icons, S.Pulling),
+    { path: '/a/x.pag', width: 32, height: 32, type: 'pag', image: '', animationUrl: '/a/x.pag' })
+  assert.strictEqual(R.iconForState({ Idle: '/a/x.riv' }, S.Idle).type, 'rive')
+  assert.strictEqual(R.iconForState({ Idle: '/a/x.svga' }, S.Idle).type, 'svga')
+  assert.strictEqual(R.iconForState({ Idle: '/a/x.png' }, S.Idle).image, '/a/x.png')
+  assert.deepStrictEqual([R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).type, R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).image], ['unsupported', ''])
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.Pulling).path, '/a.json') // Idle covers every state
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.NoMoreData), null) // no-more-data shows text only
   assert.strictEqual(R.iconForState(null, S.Idle), null)

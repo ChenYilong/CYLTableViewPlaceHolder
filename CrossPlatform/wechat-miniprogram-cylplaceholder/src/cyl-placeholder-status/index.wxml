@@ -2,6 +2,11 @@
       style="height: {{height}}px; {{bar.backgroundColor ? 'background:' + bar.backgroundColor + ';' : ''}}"
       hover-class="{{tappable ? 'status--pressed' : 'none'}}" catchtap="onTap"
       aria-role="{{tappable ? 'button' : 'text'}}" aria-label="{{bar.text}}">
-  <image class="status__icon" src="../cyl-placeholder/images/{{bar.image}}.png" mode="aspectFit" />
+  <!-- The icon is a cyl-animated-item (CYLTabBarController's CYLAnimatedItem): the bar's image, else its placeholder.
+       The bar is the accessibility element (role and text), so the item is hidden from screen readers. -->
+  <view class="status__icon-wrap" aria-hidden="true">
+    <cyl-animated-item class="status__animated-icon" image="{{imageFolder}}{{bar.image}}.png" icon-size="{{22}}"
+                       accessibility-label="{{bar.text}}" />
+  </view>
   <text class="status__text" style="{{bar.titleColor ? 'color:' + bar.titleColor : ''}}">{{bar.text}}</text>
 </view>

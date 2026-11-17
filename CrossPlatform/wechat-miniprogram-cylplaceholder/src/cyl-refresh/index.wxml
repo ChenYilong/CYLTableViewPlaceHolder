@@ -19,10 +19,16 @@
       <view class="cyl-refresh__indicator">
         <text wx:if="{{finishing}}" class="cyl-refresh__mark">{{finishing === 'Failed' ? '✕' : '✓'}}</text>
         <block wx:elif="{{headerIcon}}">
-          <animation wx:if="{{headerIcon.type === 'lottie'}}" path="{{headerIcon.path}}" loop="{{true}}" autoplay="{{true}}"
-                     style="display:block; width: {{headerIcon.width}}px; height: {{headerIcon.height}}px" />
-          <image wx:elif="{{headerIcon.type === 'image'}}" src="{{headerIcon.path}}" mode="aspectFit"
-                 style="width: {{headerIcon.width}}px; height: {{headerIcon.height}}px" />
+          <!-- The state's icon is a cyl-animated-item (CYLTabBarController's CYLAnimatedItem): the animation once its
+               engine is ready, else the image, else the placeholder. The header is the accessibility element. -->
+          <view wx:if="{{headerIcon.type !== 'unsupported'}}" class="cyl-refresh__icon-wrap" aria-hidden="true"
+                style="width: {{headerIcon.width}}px; height: {{headerIcon.height}}px">
+            <cyl-animated-item class="cyl-refresh__animated-icon" image="{{headerIcon.image}}" animation-url="{{headerIcon.animationUrl}}"
+                               icon-size="{{headerIcon.width > headerIcon.height ? headerIcon.width : headerIcon.height}}" loop="{{true}}"
+                               accessibility-label="{{texts.header}}"
+                               generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                               generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+          </view>
           <view wx:else class="cyl-refresh__spinner" />
         </block>
         <block wx:elif="{{header === 'normal'}}">
@@ -52,10 +58,14 @@
       <slot wx:if="{{footer === 'diy' || footer === 'diyBack'}}" name="footer"></slot>
       <block wx:else>
         <block wx:if="{{footerState === 'Refreshing' || footerIcon}}">
-          <animation wx:if="{{footerIcon && footerIcon.type === 'lottie'}}" path="{{footerIcon.path}}" loop="{{true}}" autoplay="{{true}}"
-                     style="display:block; width: {{footerIcon.width}}px; height: {{footerIcon.height}}px" />
-          <image wx:elif="{{footerIcon && footerIcon.type === 'image'}}" src="{{footerIcon.path}}" mode="aspectFit"
-                 style="width: {{footerIcon.width}}px; height: {{footerIcon.height}}px" />
+          <view wx:if="{{footerIcon && footerIcon.type !== 'unsupported'}}" class="cyl-refresh__icon-wrap" aria-hidden="true"
+                style="width: {{footerIcon.width}}px; height: {{footerIcon.height}}px">
+            <cyl-animated-item class="cyl-refresh__animated-icon" image="{{footerIcon.image}}" animation-url="{{footerIcon.animationUrl}}"
+                               icon-size="{{footerIcon.width > footerIcon.height ? footerIcon.width : footerIcon.height}}" loop="{{true}}"
+                               accessibility-label="{{texts.footerA11y}}"
+                               generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                               generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+          </view>
           <view wx:elif="{{footer === 'cupertino'}}" class="cyl-refresh__activity cyl-refresh__activity--spinning">
             <view wx:for="{{ticks}}" wx:key="*this" class="cyl-refresh__tick" style="transform: rotate({{item * 30}}deg); opacity: {{0.25 + item * 0.0625}}" />
           </view>

@@ -2,18 +2,22 @@
   <view class="cyl-placeholder__stack">
     <block wx:for="{{items}}" wx:key="index">
       <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">
-        <!-- icon: an image (or its animation) with an optional title below -->
+        <!-- icon: CYLTabBarController's cyl-animated-item draws the animation once its engine is ready, else the
+             static icon, else its placeholder; the title stays below it. The box keeps the accessibility element
+             (role and label); the animated item inside is hidden from screen readers so it is not read twice. -->
         <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box" id="{{item.accessibilityIdentifier || ''}}"
               hover-class="{{item.tappable ? item.hoverClass : 'none'}}"
               catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
               aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
-          <animation wx:if="{{animated && item.animation}}" class="cyl-placeholder__animation" id="cyl-animation-{{index}}"
-                     path="{{animationFolder}}{{item.animation}}" loop="{{item.ownLoop === null ? loop : item.ownLoop}}"
-                     speed="{{speed}}" autoplay="{{true}}" data-index="{{index}}" bind:complete="onAnimationComplete"
-                     style="display: block; width: {{item.side}}px; height: {{item.side}}px" />
-          <image wx:else class="cyl-placeholder__icon {{item.tinted ? 'cyl-placeholder__icon--tinted' : ''}}"
-                 src="{{imageBase}}{{item.image}}.png" mode="aspectFit"
-                 style="width: {{item.side}}px; height: {{item.side}}px" />
+          <view class="cyl-placeholder__icon-wrap {{item.tinted && !(animated && item.animation) ? 'cyl-placeholder__icon--tinted' : ''}}" aria-hidden="true">
+            <cyl-animated-item class="cyl-placeholder__animated-icon" id="cyl-animated-{{index}}"
+                               image="{{item.image ? imageFolder + item.image + '.png' : ''}}"
+                               animation-url="{{animated && item.animation ? animationFolder + item.animation : ''}}"
+                               icon-size="{{item.side}}" loop="{{item.ownLoop === null ? loop : item.ownLoop}}" speed="{{speed}}"
+                               accessibility-label="{{item.title}}"
+                               generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                               generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+          </view>
           <text wx:if="{{item.title}}" class="cyl-placeholder__title">{{item.title}}</text>
         </view>
         <text wx:elif="{{item.type === 'text'}}" class="cyl-placeholder__title"
