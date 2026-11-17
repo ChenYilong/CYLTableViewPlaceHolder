@@ -84,7 +84,9 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Reuse `CYLPlaceholderView` in the core (`instructions.md`, "Reuse CYLPlaceholderView in the core"): core
   features show icons and text through `CYLPlaceholderView`, the packaged icon-and-title view, instead of fully
   custom views. "The packaged icon and title" means `CYLPlaceholderView`, not `CYLPlaceholderStackView`; every element
-  inside a stack view is a `CYLPlaceholderView`. A custom view needs explicit approval.
+  inside a stack view is a `CYLPlaceholderView`. A custom view needs explicit approval. Every animation (files and image
+  sequences) plays through `CYLPlaceholderView`, so a new animation type is added there once and every component
+  supports it ("One animation component" in `instructions.md`).
 - Always search for image-setting code (`setImages`, `setImage`, `.image =`, `animationImages`, `UIImageView`) and
   prefer `CYLPlaceholderView`'s image API (`CYLPlaceholderItemImage`, `CYLPlaceholderComponent`,
   `-cyl_setIconImages:duration:forState:`) over a system `UIImage` on a `UIImageView`. Where system image setting is

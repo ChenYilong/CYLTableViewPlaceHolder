@@ -79,8 +79,8 @@ class CYLPlaceholderComponent private constructor(
     var interactionEnabled: Boolean = true
 
     /**
-     * How often an animated icon repeats (`animationRepeatCount`); Android shows the static icon, so it is kept for
-     * apps that play the animation themselves.
+     * How often the item's animation repeats (`animationRepeatCount`), 0 for ever: the stack view's
+     * CYLPlaceholderView plays it.
      */
     var animationRepeatCount: Int = 0
 

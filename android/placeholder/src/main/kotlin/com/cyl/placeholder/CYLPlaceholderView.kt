@@ -3,7 +3,9 @@ package com.cyl.placeholder
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
+import android.provider.Settings
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
@@ -317,7 +319,34 @@ class CYLPlaceholderView @JvmOverloads constructor(
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
     }
 
-    private var tintsIcon = true
+    internal var tintsIcon = true
+        set(value) { field = value; refreshColors() }
+
+    /**
+     * Whether the animation (a file or an image sequence) plays by itself while the view is on screen, true by default;
+     * a component that drives it, such as a refresh icon following the pull, sets false and calls
+     * [playPlaceholderAnimation] / [setPlaceholderAnimationProgress] itself.
+     */
+    var autoPlaysAnimation: Boolean = true
+
+    /**
+     * The image sequence shown as the icon ([setAnimationImages]), or null.
+     */
+    private var frames: AnimationDrawable? = null
+
+    /**
+     * The player of the animation file, for components that host it (a stack view reports it as its animation view).
+     */
+    internal val animationPlayer: CYLPlaceholderAnimationPlayer? get() = player
+
+    /**
+     * Sets the icon's side in dp, for the image and an animation file alike.
+     */
+    internal fun setIconSide(sideDp: Float) {
+        val side = dp(sideDp)
+        imageView.layoutParams = imageView.layoutParams.apply { width = side; height = side }
+        player?.view?.let { view -> view.layoutParams = view.layoutParams?.apply { width = side; height = side } }
+    }
     private var player: CYLPlaceholderAnimationPlayer? = null
 
     /** The text color (`defaultTitleColor`). */
@@ -564,6 +593,8 @@ class CYLPlaceholderView @JvmOverloads constructor(
             ?: CYLPlaceholderAnimationView.withFileURL(context, path, maxOf(1, side.width), maxOf(1, side.height))
             ?: return false
         player?.let { (it.view.parent as? ViewGroup)?.removeView(it.view) }
+        frames?.stop()
+        frames = null
         player = made
         made.setAnimationRepeatCount(animationRepeatCount)
         val box = imageView.parent as FrameLayout
@@ -573,28 +604,76 @@ class CYLPlaceholderView @JvmOverloads constructor(
         return true
     }
 
+    /**
+     * Shows [images] as one animated icon of [duration] seconds (iOS `CYLPlaceholderItemImages` with
+     * `CYLPlaceholderItemAnimationDuration`): played, stopped and moved by the same calls as an animation file. With
+     * animations off (the system animator duration scale is 0) the first image stays still. False for an empty list.
+     */
+    @JvmOverloads
+    fun setAnimationImages(images: List<Drawable>, duration: Double = images.size * 0.1): Boolean {
+        if (images.isEmpty()) return false
+        frames?.stop()
+        if (images.size == 1 || !animationsEnabled()) {
+            frames = null
+            imageView.setImageDrawable(images.first())
+        } else {
+            val sequence = AnimationDrawable().apply {
+                val each = maxOf(1, ((if (duration > 0) duration else images.size * 0.1) * 1000 / images.size).toInt())
+                images.forEach { addFrame(it, each) }
+                isOneShot = animationRepeatCount == 1
+            }
+            frames = sequence
+            imageView.setImageDrawable(sequence)
+        }
+        player?.let { (it.view.parent as? ViewGroup)?.removeView(it.view) }
+        player = null
+        imageView.visibility = VISIBLE
+        itemAttributes = itemAttributes + mapOf("CYLPlaceholderItemImages" to images, "CYLPlaceholderItemAnimationDuration" to duration)
+        if (autoPlaysAnimation && isAttachedToWindow) frames?.start()
+        return true
+    }
+
+    private fun animationsEnabled(): Boolean =
+        Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) != 0f
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // [EN] An animation file plays while the view is on screen, as on iOS.
-        player?.play()
+        // [EN] An animation plays while the view is on screen, as on iOS, unless its owner drives it.
+        if (autoPlaysAnimation) playPlaceholderAnimation()
     }
 
     override fun onDetachedFromWindow() {
-        player?.stop()
+        stopPlaceholderAnimation()
         super.onDetachedFromWindow()
     }
 
-    /** Plays the animation (`playPlaceholderAnimation`). */
-    fun playPlaceholderAnimation() { player?.play() }
+    /** Plays the animation or the image sequence (`playPlaceholderAnimation`). */
+    fun playPlaceholderAnimation() {
+        player?.play()
+        frames?.start()
+    }
 
-    /** Stops the animation (`stopPlaceholderAnimation`). */
-    fun stopPlaceholderAnimation() { player?.stop() }
+    /** Stops the animation or the image sequence (`stopPlaceholderAnimation`). */
+    fun stopPlaceholderAnimation() {
+        player?.stop()
+        frames?.stop()
+    }
 
     /** Shows the animation's last frame (`showPlaceholderAnimationLastFrame`). */
-    fun showPlaceholderAnimationLastFrame() { player?.showLastFrame() }
+    fun showPlaceholderAnimationLastFrame() {
+        player?.showLastFrame()
+        frames?.let { it.stop(); it.selectDrawable(it.numberOfFrames - 1) }
+    }
 
-    /** Moves the animation to [progress], 0 to 1 (`setPlaceholderAnimationProgress:`). */
-    fun setPlaceholderAnimationProgress(progress: Float) { player?.setAnimationProgress(progress) }
+    /** Moves the animation, or the image sequence while it is not playing, to [progress], 0 to 1 (`setPlaceholderAnimationProgress:`). */
+    fun setPlaceholderAnimationProgress(progress: Float) {
+        player?.setAnimationProgress(progress)
+        frames?.let { sequence ->
+            if (sequence.numberOfFrames > 0 && !sequence.isRunning) {
+                sequence.selectDrawable(((sequence.numberOfFrames - 1) * progress.coerceIn(0f, 1f)).toInt())
+            }
+        }
+    }
 
     /** Plays the animation at [speed] (`setPlaceholderAnimationSpeed:`). */
     fun setPlaceholderAnimationSpeed(speed: Float) { player?.setAnimationSpeed(speed) }

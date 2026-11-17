@@ -2,6 +2,8 @@ package com.cyl.placeholder
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -122,5 +124,19 @@ class CYLPlaceholderStackViewTest {
         val played = CYLPlaceholderScenario.values().flatMap { CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(it) }
             .filter { it.endsWith(".json") || it.endsWith(".gif") }.distinct()
         assertEquals(emptyList<String>(), played.filter { it.startsWith("CYLPlaceholder") && it !in bundled })
+    }
+
+    @Test
+    fun everyIconItemIsACYLPlaceholderView() {
+        // The one component that shows an icon with a title and plays every animation type.
+        val view = CYLPlaceholderStackView(context, CYLPlaceholderScenario.NoSearchResults)
+        val item = view.componentViews.first()
+        assertTrue("the icon item is a CYLPlaceholderView", item is CYLPlaceholderView)
+        assertSame((item as CYLPlaceholderView).imageView, view.imageView)
+        assertSame(item.textLabel, view.titleLabel)
+        val own = CYLPlaceholderStackView(context, listOf(CYLPlaceholderComponent.text("Only text"), CYLPlaceholderComponent.hintComponentWithText("hint")))
+        assertTrue(own.componentViews.first() is CYLPlaceholderView)
+        assertEquals("Only text", own.titleLabel.text.toString())
+        assertEquals("no visible icon", android.view.View.GONE, own.imageView.visibility)
     }
 }

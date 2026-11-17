@@ -1,7 +1,6 @@
 package com.cyl.refresh
 
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
@@ -32,7 +31,11 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     /**
      * The view that shows the icon and the title (`placeholderView`).
      */
-    val placeholderView: CYLPlaceholderView = CYLPlaceholderView(context).apply { contentMargin = 0f }
+    val placeholderView: CYLPlaceholderView = CYLPlaceholderView(context).apply {
+        contentMargin = 0f
+        // The icon follows the pull and the refresh; it does not play by itself.
+        autoPlaysAnimation = false
+    }
 
     init {
         // Decorative: the component's state text is what accessibility services read.
@@ -131,14 +134,10 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         val images = icon[IMAGES] as? List<Drawable>
         val path = icon[ANIMATION_FILE_PATH] as? String
         when {
-            images != null && images.isNotEmpty() -> {
-                val frames = AnimationDrawable()
-                val each = ((((icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) * 1000) / images.size).toInt()
-                images.forEach { frames.addFrame(it, each) }
-                frames.isOneShot = false
-                placeholderView.imageView.setImageDrawable(frames)
-                placeholderView.imageView.visibility = VISIBLE
-                if (state == CYLRefreshState.Refreshing || !scrubsWhilePulling) frames.start()
+            // Image frames and animation files both play through CYLPlaceholderView, the one animation component.
+            images != null && images.isNotEmpty() -> if (placeholderView.setAnimationImages(images, (icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) &&
+                (state == CYLRefreshState.Refreshing || !scrubsWhilePulling)) {
+                placeholderView.playPlaceholderAnimation()
             }
             path != null -> if (placeholderView.setAnimationFile(path) && (state == CYLRefreshState.Refreshing || !scrubsWhilePulling)) {
                 placeholderView.playPlaceholderAnimation()
@@ -151,11 +150,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
      */
     fun updateForPullingPercent(pullingPercent: Float) {
         if (!scrubsWhilePulling) return
-        val percent = pullingPercent.coerceIn(0f, 1f)
-        (placeholderView.imageView.drawable as? AnimationDrawable)?.let { frames ->
-            if (frames.numberOfFrames > 0 && !frames.isRunning) frames.selectDrawable(((frames.numberOfFrames - 1) * percent).toInt())
-        }
-        placeholderView.setPlaceholderAnimationProgress(percent)
+        placeholderView.setPlaceholderAnimationProgress(pullingPercent.coerceIn(0f, 1f))
     }
 
     /**
@@ -256,10 +251,7 @@ fun CYLRefreshComponent.cyl_setIconImages(images: List<Drawable>, duration: Doub
 fun CYLRefreshComponent.cyl_showIconImageFrameOf(images: List<Drawable>?, pullingPercent: Float) {
     if (images.isNullOrEmpty()) return
     val index = ((images.size - 1) * pullingPercent.coerceIn(0f, 1f)).toInt()
-    cyl_iconView.placeholderView.imageView.apply {
-        setImageDrawable(images[index])
-        visibility = View.VISIBLE
-    }
+    cyl_iconView.placeholderView.setAnimationImages(listOf(images[index]))
 }
 
 /**

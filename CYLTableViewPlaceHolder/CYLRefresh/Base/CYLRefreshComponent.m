@@ -120,13 +120,16 @@
 {
     UIImage *first = images.firstObject;
     if (![first isKindOfClass:UIImage.class]) return;
-    BOOL still = state == CYLRefreshStateIdle || images.count == 1 || UIAccessibilityIsReduceMotionEnabled();
-    UIImage *image = still ? first : [UIImage animatedImageWithImages:images duration:duration > 0 ? duration : images.count * 0.1];
-    if (!image) return;
     if (state != CYLRefreshStateIdle && ![self.cyl_iconView animationAttributesForState:CYLRefreshStateIdle]) {
         [self.cyl_iconView setAnimationAttributes:@{CYLPlaceholderItemImage: first} forState:CYLRefreshStateIdle];
     }
-    [self cyl_setIconAnimationAttributes:@{CYLPlaceholderItemImage: image} forState:state];
+    // [EN] The idle state shows one frame (chosen by the pull); the other states hand the sequence to CYLPlaceholderView,
+    //      which plays every kind of animation (and keeps the first frame with Reduce Motion).
+    // [CN] 空闲状态只显示一帧（由下拉进度选择）；其他状态把图片序列交给 CYLPlaceholderView，它负责播放所有类型的动效（“减弱动态效果”时保留第一帧）。
+    NSDictionary<NSString *, id> *attributes = state == CYLRefreshStateIdle || images.count == 1
+        ? @{CYLPlaceholderItemImage: first}
+        : @{CYLPlaceholderItemImages: images, CYLPlaceholderItemAnimationDuration: @(duration > 0 ? duration : images.count * 0.1)};
+    [self cyl_setIconAnimationAttributes:attributes forState:state];
 }
 
 - (void)cyl_setAnimationImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state

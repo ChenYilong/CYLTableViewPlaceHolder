@@ -180,6 +180,13 @@ spans several lines must reach them as one comment.
 - When `CYLPlaceholderView` cannot show something yet (a percentage, a new state), extend it through its attributes
   or put the information into its title, rather than adding a custom view beside it. A custom view needs the
   user's explicit approval.
+- **One animation component.** Every animation the library shows (GIF, Lottie, PAG, Rive files and image sequences)
+  plays through `CYLPlaceholderView` (Android `CYLPlaceholderView`, HarmonyOS `CYLPlaceholderViewModel`): the
+  placeholder, every stack view item, the HUD, the status bar and the refresh icons. No other component creates an
+  animation player, an animated image or a frame animator itself. A new animation type is added once, in
+  `CYLPlaceholderView` and its animator registry (`CYLPlaceholderItemAnimatorRegistry`), and every component supports
+  it with no second change. Exceptions are format-specific drawn styles that drive one engine's own features (the Rive
+  refresh header's state-machine inputs) and the system spinners (`UIActivityIndicatorView`) of the classic controls.
 - Example: `CYLPlaceholderHUD` shows loading, progress and results in one `CYLPlaceholderView` inside its stack view;
   progress scrubs an animation or adds the percentage to the title, with no drawn ring.
 - Images go through `CYLPlaceholderView` too. Always search the project for image-setting code (`setImages`,

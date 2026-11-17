@@ -367,6 +367,17 @@ fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes
     val animationKeys = listOf("CYLPlaceholderItemAnimationFilePath", "CYLPlaceholderItemLottieFilePath", "CYLPlaceholderItemPAGFilePath",
         "CYLPlaceholderItemRiveFilePath", "CYLPlaceholderItemGIFFilePath")
     animationKeys.firstNotNullOfOrNull { string(attributes[it]) }?.let { view.setAnimationFile(it) }
+    // "CYLPlaceholderItemImages" (drawables) with "CYLPlaceholderItemAnimationDuration" (seconds): one animated icon.
+    when (val images = attributes["CYLPlaceholderItemImages"]) {
+        null -> Unit
+        is List<*> -> {
+            val drawables = images.filterIsInstance<Drawable>()
+            if (drawables.isEmpty() || drawables.size != images.size) return error.fail("CYLPlaceholderItemImages must be a list of drawables.")
+            val duration = (attributes["CYLPlaceholderItemAnimationDuration"] as? Number)?.toDouble() ?: (drawables.size * 0.1)
+            view.setAnimationImages(drawables, duration)
+        }
+        else -> return error.fail("CYLPlaceholderItemImages must be a list of drawables.")
+    }
     view.itemAttributes = view.itemAttributes + attributes.filterValues { it != null }.mapValues { it.value!! }
     return view
 }

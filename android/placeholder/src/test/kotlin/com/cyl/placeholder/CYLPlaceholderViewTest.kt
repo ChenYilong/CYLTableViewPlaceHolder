@@ -3,6 +3,7 @@ package com.cyl.placeholder
 import android.content.Context
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -98,5 +99,34 @@ class CYLPlaceholderViewTest {
         } finally {
             CYLPlaceholderView.registerAnimationFactory(null, "json")
         }
+    }
+
+    @Test
+    fun anImageSequencePlaysAndScrubsLikeAnAnimationFile() {
+        val view = CYLPlaceholderView(context, null, "Loading")
+        val frames = listOf(android.graphics.drawable.ColorDrawable(1), android.graphics.drawable.ColorDrawable(2), android.graphics.drawable.ColorDrawable(3))
+        assertFalse(view.setAnimationImages(emptyList()))
+        assertTrue(view.setAnimationImages(frames, 0.3))
+        val sequence = view.imageView.drawable as android.graphics.drawable.AnimationDrawable
+        assertEquals(3, sequence.numberOfFrames)
+        assertEquals(View.VISIBLE, view.imageView.visibility)
+        view.setPlaceholderAnimationProgress(1f)
+        assertSame(frames[2], sequence.current)
+        view.showPlaceholderAnimationLastFrame()
+        assertSame(frames[2], sequence.current)
+        assertEquals(frames, view.itemAttributes["CYLPlaceholderItemImages"])
+        val one = CYLPlaceholderView(context, null, null)
+        assertTrue(one.setAnimationImages(listOf(frames[0])))
+        assertSame("a single image stays still", frames[0], one.imageView.drawable)
+    }
+
+    @Test
+    fun itemAttributesTakeAnImageSequence() {
+        val frames = listOf(android.graphics.drawable.ColorDrawable(1), android.graphics.drawable.ColorDrawable(2))
+        val view = CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemImages" to frames, "CYLPlaceholderItemAnimationDuration" to 0.4))!!
+        assertTrue(view.imageView.drawable is android.graphics.drawable.AnimationDrawable)
+        var message: String? = null
+        assertEquals(null, CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemImages" to listOf("x"))) { message = it.message })
+        assertEquals("CYLPlaceholderItemImages must be a list of drawables.", message)
     }
 }

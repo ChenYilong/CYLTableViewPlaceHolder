@@ -1,166 +1,170 @@
 {
-  "CYLRefreshComponent.view": {
-    "ios": "n/a",
-    "note": "the CYLRefreshLayout view the component wraps; on iOS the component is the UIView itself"
-  },
-  "CYLActivityIndicatorView.isAnimating": {
-    "ios": "`UIActivityIndicatorView` `isAnimating` (UIKit)",
-    "note": "Android draws the iOS system spinner; iOS uses the system view"
-  },
-  "CYLActivityIndicatorView.startAnimating": {
-    "ios": "`UIActivityIndicatorView` `-startAnimating` (UIKit)"
-  },
-  "CYLActivityIndicatorView.stopAnimating": {
-    "ios": "`UIActivityIndicatorView` `-stopAnimating` (UIKit)"
-  },
-  "CYLRefreshFlyHeader.mountainView": {
-    "ios": "`CYLRefreshFlyHeader` `mountainView`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLRefreshFlyHeader.flyView": {
-    "ios": "`CYLRefreshFlyHeader` `flyView`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLRefreshFlyHeader.floatView": {
-    "ios": "`CYLRefreshFlyHeader` `floatView`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLRefreshIconView.ANIMATION_FILE_PATH": {
-    "ios": "`CYLPlaceholderItemAnimationFilePath`"
-  },
-  "CYLRefreshIconView.IMAGES": {
-    "ios": "`CYLPlaceholderItemImages`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLRefreshIconView.DURATION": {
-    "ios": "`CYLPlaceholderItemAnimationDuration`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLRefreshIconView.SIZE": {
-    "ios": "`CYLPlaceholderItemAnimationSize`"
-  },
-  "CYLLottiePlaceholderItemAnimatorInstaller": {
-    "ios": "`+[CYLLottiePlaceholderItemAnimator load]` (registers itself)",
-    "note": "Android registers through a ContentProvider at startup; iOS through +load"
-  },
-  "CYLPAGPlaceholderItemAnimatorInstaller": {
-    "ios": "`+[CYLPAGPlaceholderItemAnimator load]` (registers itself)",
-    "note": "Android: a ContentProvider; iOS: +load"
-  },
-  "CYLRivePlaceholderItemAnimatorInstaller": {
-    "ios": "`+[CYLRivePlaceholderItemAnimator load]` (registers itself)",
-    "note": "Android: a ContentProvider; iOS: +load"
-  },
-  "CYLPlaceholderAnimationOptions": {
-    "ios": "`CYLPlaceholderAnimationOptionRive…` constants",
-    "note": "one object holding the iOS option constants"
-  },
-  "CYLPlaceholderItemViewAnimator.options": {
-    "ios": "`CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` (options per file in the item attributes)",
-    "note": "iOS passes the options per file (CYLPlaceholderItemAnimationOptions)"
-  },
-  "CYLPlaceholderItemAnimatorRegistry.ANIMATION_FILE_PATH": {
-    "ios": "`CYLPlaceholderItemAnimationFilePath`"
-  },
-  "CYLPlaceholderComponent.image": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemImage]` / `CYLPlaceholderItemStyle`"
-  },
-  "CYLPlaceholderComponent.tinted": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemIconColor]`"
-  },
-  "CYLPlaceholderComponent.imageSide": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemAnimationSize]`"
-  },
-  "CYLPlaceholderComponent.title": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitle]`"
-  },
-  "CYLPlaceholderComponent.titleSizeSp": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitleFont]`"
-  },
-  "CYLPlaceholderComponent.titleColor": {
-    "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitleColor]`"
-  },
-  "CYLPlaceholderComponent.buttonStyle": {
-    "ios": "`CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` (style)"
-  },
-  "CYLPlaceholderComponent.text": {
-    "ios": "`CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderConfigurationError": {
-    "ios": "`CYLPlaceholderConfigurationErrorDomain` (Swift `CYLPlaceholderConfigurationError`)",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderConfiguration_fromJSON": {
-    "ios": "`NSJSONSerialization` (Foundation)",
-    "note": "Android's JSON-to-map helper; iOS reads JSON with Foundation"
-  },
-  "CYLPlaceholderAction.Retry": {
-    "ios": "`CYLPlaceholderActionRetry`"
-  },
-  "CYLPlaceholderAction.ContactSupport": {
-    "ios": "`CYLPlaceholderActionContactSupport`"
-  },
-  "CYLPlaceholderAction.OpenSettings": {
-    "ios": "`CYLPlaceholderActionOpenSettings`"
-  },
-  "CYLPlaceholderAction.GoShopping": {
-    "ios": "`CYLPlaceholderActionGoShopping`"
-  },
-  "CYLPlaceholderAction.Done": {
-    "ios": "`CYLPlaceholderActionDone`"
-  },
-  "CYLPlaceholderAction.ChooseManually": {
-    "ios": "`CYLPlaceholderActionChooseManually`"
-  },
-  "CYLPlaceholderStackView.imageView": {
-    "ios": "`CYLPlaceholderStackView` `imageView`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderStackView.titleLabel": {
-    "ios": "`CYLPlaceholderStackView` `titleLabel`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderStackView.hintLabel": {
-    "ios": "`CYLPlaceholderStackView` `hintLabel`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderStackView.button": {
-    "ios": "`CYLPlaceholderStackView` `button`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "CYLPlaceholderStackView.ANIMATION_FOLDER": {
-    "ios": "`CYLPlaceholderResourceURL(@\"Animations\")`",
-    "note": "the Animations folder of CYLTableViewPlaceHolder.bundle"
-  },
-  "CYLPlaceholderStackView.localizedNameForScenario": {
-    "ios": "`CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:`"
-  },
-  "CYLPlaceholderLocalization.localizedContext": {
-    "ios": "n/a",
-    "note": "an Android Context in another language; iOS reads the language's .lproj directly"
-  },
-  "CYLPlaceholderStatusDisplay.None": {
-    "ios": "`CYLPlaceholderStatusDisplayNone`"
-  },
-  "CYLPlaceholderStatusDisplay.StatusBar": {
-    "ios": "`CYLPlaceholderStatusDisplayStatusBar`"
-  },
-  "CYLPlaceholderStatusDisplay.Placeholder": {
-    "ios": "`CYLPlaceholderStatusDisplayPlaceholder`"
-  },
-  "CYLPlaceholderStatusDisplay.All": {
-    "ios": "`CYLPlaceholderStatusDisplayAll`"
-  },
-  "CYLPlaceholderAnimationPlayer.view": {
-    "ios": "`CYLPlaceholderItemAnimationPlayer` `animationView`"
-  },
-  "CYLPlaceholderView.setAnimationFile": {
-    "ios": "`CYLPlaceholderView` `-setAnimationFile:`",
-    "note": "added 2026-11-16 for Android parity"
-  },
-  "cyl_placeholderView": {
-    "ios": "`UIScrollView` `cyl_placeholderView`",
-    "note": "added 2026-11-16 for Android parity"
-  }
+ "CYLRefreshComponent.view": {
+  "ios": "n/a",
+  "note": "the CYLRefreshLayout view the component wraps; on iOS the component is the UIView itself"
+ },
+ "CYLActivityIndicatorView.isAnimating": {
+  "ios": "`UIActivityIndicatorView` `isAnimating` (UIKit)",
+  "note": "Android draws the iOS system spinner; iOS uses the system view"
+ },
+ "CYLActivityIndicatorView.startAnimating": {
+  "ios": "`UIActivityIndicatorView` `-startAnimating` (UIKit)"
+ },
+ "CYLActivityIndicatorView.stopAnimating": {
+  "ios": "`UIActivityIndicatorView` `-stopAnimating` (UIKit)"
+ },
+ "CYLRefreshFlyHeader.mountainView": {
+  "ios": "`CYLRefreshFlyHeader` `mountainView`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLRefreshFlyHeader.flyView": {
+  "ios": "`CYLRefreshFlyHeader` `flyView`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLRefreshFlyHeader.floatView": {
+  "ios": "`CYLRefreshFlyHeader` `floatView`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLRefreshIconView.ANIMATION_FILE_PATH": {
+  "ios": "`CYLPlaceholderItemAnimationFilePath`"
+ },
+ "CYLRefreshIconView.IMAGES": {
+  "ios": "`CYLPlaceholderItemImages`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLRefreshIconView.DURATION": {
+  "ios": "`CYLPlaceholderItemAnimationDuration`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLRefreshIconView.SIZE": {
+  "ios": "`CYLPlaceholderItemAnimationSize`"
+ },
+ "CYLLottiePlaceholderItemAnimatorInstaller": {
+  "ios": "`+[CYLLottiePlaceholderItemAnimator load]` (registers itself)",
+  "note": "Android registers through a ContentProvider at startup; iOS through +load"
+ },
+ "CYLPAGPlaceholderItemAnimatorInstaller": {
+  "ios": "`+[CYLPAGPlaceholderItemAnimator load]` (registers itself)",
+  "note": "Android: a ContentProvider; iOS: +load"
+ },
+ "CYLRivePlaceholderItemAnimatorInstaller": {
+  "ios": "`+[CYLRivePlaceholderItemAnimator load]` (registers itself)",
+  "note": "Android: a ContentProvider; iOS: +load"
+ },
+ "CYLPlaceholderAnimationOptions": {
+  "ios": "`CYLPlaceholderAnimationOptionRive…` constants",
+  "note": "one object holding the iOS option constants"
+ },
+ "CYLPlaceholderItemViewAnimator.options": {
+  "ios": "`CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` (options per file in the item attributes)",
+  "note": "iOS passes the options per file (CYLPlaceholderItemAnimationOptions)"
+ },
+ "CYLPlaceholderItemAnimatorRegistry.ANIMATION_FILE_PATH": {
+  "ios": "`CYLPlaceholderItemAnimationFilePath`"
+ },
+ "CYLPlaceholderComponent.image": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemImage]` / `CYLPlaceholderItemStyle`"
+ },
+ "CYLPlaceholderComponent.tinted": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemIconColor]`"
+ },
+ "CYLPlaceholderComponent.imageSide": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemAnimationSize]`"
+ },
+ "CYLPlaceholderComponent.title": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitle]`"
+ },
+ "CYLPlaceholderComponent.titleSizeSp": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitleFont]`"
+ },
+ "CYLPlaceholderComponent.titleColor": {
+  "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitleColor]`"
+ },
+ "CYLPlaceholderComponent.buttonStyle": {
+  "ios": "`CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` (style)"
+ },
+ "CYLPlaceholderComponent.text": {
+  "ios": "`CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderConfigurationError": {
+  "ios": "`CYLPlaceholderConfigurationErrorDomain` (Swift `CYLPlaceholderConfigurationError`)",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderConfiguration_fromJSON": {
+  "ios": "`NSJSONSerialization` (Foundation)",
+  "note": "Android's JSON-to-map helper; iOS reads JSON with Foundation"
+ },
+ "CYLPlaceholderAction.Retry": {
+  "ios": "`CYLPlaceholderActionRetry`"
+ },
+ "CYLPlaceholderAction.ContactSupport": {
+  "ios": "`CYLPlaceholderActionContactSupport`"
+ },
+ "CYLPlaceholderAction.OpenSettings": {
+  "ios": "`CYLPlaceholderActionOpenSettings`"
+ },
+ "CYLPlaceholderAction.GoShopping": {
+  "ios": "`CYLPlaceholderActionGoShopping`"
+ },
+ "CYLPlaceholderAction.Done": {
+  "ios": "`CYLPlaceholderActionDone`"
+ },
+ "CYLPlaceholderAction.ChooseManually": {
+  "ios": "`CYLPlaceholderActionChooseManually`"
+ },
+ "CYLPlaceholderStackView.imageView": {
+  "ios": "`CYLPlaceholderStackView` `imageView`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderStackView.titleLabel": {
+  "ios": "`CYLPlaceholderStackView` `titleLabel`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderStackView.hintLabel": {
+  "ios": "`CYLPlaceholderStackView` `hintLabel`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderStackView.button": {
+  "ios": "`CYLPlaceholderStackView` `button`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderStackView.ANIMATION_FOLDER": {
+  "ios": "`CYLPlaceholderResourceURL(@\"Animations\")`",
+  "note": "the Animations folder of CYLTableViewPlaceHolder.bundle"
+ },
+ "CYLPlaceholderStackView.localizedNameForScenario": {
+  "ios": "`CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:`"
+ },
+ "CYLPlaceholderLocalization.localizedContext": {
+  "ios": "n/a",
+  "note": "an Android Context in another language; iOS reads the language's .lproj directly"
+ },
+ "CYLPlaceholderStatusDisplay.None": {
+  "ios": "`CYLPlaceholderStatusDisplayNone`"
+ },
+ "CYLPlaceholderStatusDisplay.StatusBar": {
+  "ios": "`CYLPlaceholderStatusDisplayStatusBar`"
+ },
+ "CYLPlaceholderStatusDisplay.Placeholder": {
+  "ios": "`CYLPlaceholderStatusDisplayPlaceholder`"
+ },
+ "CYLPlaceholderStatusDisplay.All": {
+  "ios": "`CYLPlaceholderStatusDisplayAll`"
+ },
+ "CYLPlaceholderAnimationPlayer.view": {
+  "ios": "`CYLPlaceholderItemAnimationPlayer` `animationView`"
+ },
+ "CYLPlaceholderView.setAnimationFile": {
+  "ios": "`CYLPlaceholderView` `-setAnimationFile:`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "cyl_placeholderView": {
+  "ios": "`UIScrollView` `cyl_placeholderView`",
+  "note": "added 2026-11-16 for Android parity"
+ },
+ "CYLPlaceholderView.autoPlaysAnimation": {
+  "ios": "-[CYLPlaceholderView stopPlaceholderAnimation]",
+  "note": "iOS has no flag: a component that drives the animation stops it after creating the view (CYLRefreshIconView) and plays or scrubs it itself"
+ }
 }
