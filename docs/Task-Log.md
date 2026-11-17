@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：截图规范：竖版两列多行，拼接图加 header / footer / TODO: Screenshot rules: portrait, two columns, header and footer on stitched images
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
+- User's original prompt (verbatim): "找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：找到截图相关规范，如果没有就新建保证写入成功，截图除了 优先选用竖版排列风格。优先两列，多行。且给拼接好的图增加header，footer，header，footer不能与截图区域重叠 覆盖，标注关键信息：关键信息也是英文，测试模拟器平台，模拟器系统版本，操作系统版本，ide 版本，以及测试目的等等。以附带的截图为例。提取截图的附带信息以及风格 完善我的描述规则。"
+- Requirements (English): in the instructions and skills files (create them if missing; check the writes), in English: stitched screenshots use a portrait layout, two columns over several rows first; every stitched image gets a header and a footer that never overlap or cover the screenshots; they carry the key information in English: the simulator platform, the simulator OS version, the host OS version, the IDE version, the test purpose and so on. Use the attached screenshot as the example: take its information and style to complete the rule.
+- Context: the attached example (CYLTabBarController, iOS 27.2, iPhone 17 Pro simulator, Xcode 27.2, CYLTabBarController dcbfdec6 (ef1d0313), feat/harmony, 2026-11-18, "Rive tags at rest (no play)"): white background, a red bold header line with the environment and the purpose, a red bold caption band above each panel ("launch, no play", "11 s later, 0 changed pixels"), panels stacked top to bottom, nothing drawn on the screenshots, no footer. The current rule ("Screenshots of local builds and CI/CD") puts one column first and two columns second; the owner now puts two columns first.
+- Acceptance: full marks (100) = the rule in `instructions.md`, `AGENTS.md`, skills `cyl-verify` and `cyl-docs`, the example image in `docs/assets`, writes checked by grep, pushed. Pass (60) = `instructions.md` and one skill.
+
 ### TODO：鸿蒙 Rive input 示例页 / TODO: HarmonyOS Rive input example page
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
