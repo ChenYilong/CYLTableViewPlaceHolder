@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：规则：图标 + 标题只用 CYLAnimatedItemView，其余用 CYLPlaceholderStackView，各平台同一布局框架 / TODO: Rule: an icon with a title uses CYLAnimatedItemView only, the rest CYLPlaceholderStackView, one layout framework on every platform
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：use only CYLAnimatedItemView only on this icon and title case instead of CYLPlaceholderStackView. CYLPlaceholderStackView only used in case which CYLAnimatedItemView cannot cover.  apply same function layout framework as CYLPlaceholderStackView does on other platform"
+- Requirements: (1) find the instructions and skills files (create when missing); (2) write in English: an icon with a title uses CYLAnimatedItemView only, not CYLPlaceholderStackView; CYLPlaceholderStackView only where CYLAnimatedItemView cannot cover the case; (3) every platform applies the same layout framework as CYLPlaceholderStackView does on the other platforms.
+- Context: the rule follows 64ab041 (the HarmonyOS animation detail page on CYLAnimatedItemView, the core's CYLPlaceholderAnimatedItem) and the review there (scenarios and the support page stay stacks; Android's detail page is a CYLPlaceholderView, a CYLAnimatedItemView subclass; the mini program detail page waits for a title font weight).
+- Acceptance: full marks (100) = the rule in `instructions.md`, `AGENTS.md`, `docs/instructions.md`, the platform folders' instructions (Android, HarmonyOS, mini program) and the skills `cyl-api-map` and `cyl-verify`, in English, pushed. Pass (60) = `instructions.md` and `AGENTS.md`, pushed.
+
 ### 已完成（85 / 100）：图标 + 标题只用 CYLAnimatedItemView，CYLPlaceholderStackView 只用于它覆盖不了的情况 / Done (85 / 100): An icon with a title uses CYLAnimatedItemView only; CYLPlaceholderStackView only where the item cannot cover it
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
