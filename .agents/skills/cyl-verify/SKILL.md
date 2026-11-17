@@ -231,3 +231,14 @@ component (hand it to the owning session); an example changes only by calling an
   CYLPlaceholderStackView only for what it cannot cover".
 - Verify on a simulator or emulator that the icon's and the title's horizontal centers are equal (layout dump, view
   hierarchy or pixel bounds) and that wrapped lines are centered.
+
+## Screenshots: enforced
+
+- **Screenshots are enforced:** every stitched image is made with `python3 scripts/screenshot_sheet.py` (portrait, one
+  column first, bold English header / captions / footer outside the panels, recorded in the PNG; another tool adds a
+  `<sheet>.sheet.json` sidecar), originals are named `<platform>-...-<commit>-<yyyymmdd>`, and
+  `python3 scripts/check_screenshots.py` must pass before every commit that adds an image (CI runs it). Never add to
+  `docs/assets/screenshot-legacy.txt`. After every pull, read the rule changes it brought
+  (`git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md .agents/skills`) before committing; never pull and commit in
+  one command. See `instructions.md`, "Enforcement: every screenshot passes the checker" and "Re-read the rules a pull
+  changes".

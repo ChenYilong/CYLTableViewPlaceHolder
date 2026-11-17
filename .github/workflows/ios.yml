@@ -72,6 +72,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/update-docs-navigation.py --check
+      # Every screenshot added since 2026-11-18 is a sheet with an English header, captions and a footer, or one of its
+      # conventionally named originals (instructions.md, "Header and footer on stitched screenshots").
+      - run: python3 -c "import PIL" 2>/dev/null || python3 -m pip install --quiet --user --break-system-packages pillow
+      - run: python3 scripts/check_screenshots.py
       # Public API documentation comments: one block comment, not stacked /// lines (instructions.md, "Code conventions").
       - run: python3 scripts/check_doc_comments.py
       # The Android -> iOS API map (docs/iOS-API-Map.md) is generated from the Android core and ios-map.json.

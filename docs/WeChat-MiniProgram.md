@@ -95,20 +95,20 @@
      `repeatCount` from `bind:animationcomplete`; the `cyl_animation()` hook (40 tries, 250 ms apart, lottie-web's
      `complete`) is removed. WeChat DevTools, playback-policies.json: the "3 times" item plays three passes and stops,
      "once" stops, the looping item goes on, Play all restarts the count, console clean
-     ([screenshot](assets/wechat-miniprogram-playback-events.png)); test "repeat counts come from cyl-animated-item's
+     ([screenshot](assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-events-and-title-in-item-5a8a601-20261118-sheet.png)); test "repeat counts come from cyl-animated-item's
      animationcomplete event". The icon's title moved into the item (`title`, `axis` vertical, `title-color`
      #333333, `title-font-size` 16, `title-line-height` 22, `title-spacing` 12, `title-lines` 0); the separate
      `<text>` is gone. At 59a1cb0f a wrapped title was left-aligned with a 2px gap
-     ([before the fix](assets/wechat-miniprogram-title-in-item.png)); reported, fixed upstream in 52569d68. WeChat
+     ([before the fix](assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-events-and-title-in-item-5a8a601-20261118-sheet.png)); reported, fixed upstream in 52569d68. WeChat
      DevTools at 52569d68: "Network unavailable" draws the wrapped title at the same pixels as the old `<text>` (dark
      rows 28 to 143, columns 49 to 274 in both), the playback-policies page looks the same, repeat counts still right,
-     console clean ([left: old text, right: in the item](assets/wechat-miniprogram-title-in-item-fixed.png)); test "an
+     console clean ([left: old text, right: in the item](assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-events-and-title-in-item-5a8a601-20261118-sheet.png)); test "an
      icon's title is drawn by cyl-animated-item" (`npm test` 69 / 69). Requested from the owner of the mini program animation code (the "Mac-CYLTabBarController文件夹" session).
   3. Done (2026-11-18): tinted template icons use the item's `icon-tint` (#8c8c8c, the old 45 % black on white) instead
      of a 45 % opacity on the icon box: the static image and the static image of an animated icon are tinted, a playing
      animation keeps its colors. Test: "tinted template icons use the item tint" (`npm test` 65 / 65). WeChat DevTools:
      Network unavailable with the animation (black Lottie) and with the animation off (gray static icon), console clean
-     ([screenshot](assets/wechat-miniprogram-icon-tint.png)).
+     ([screenshot](assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-icon-tint-5919ab7-20261118-sheet.png)).
   4. Open, upstream: move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the
      component inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
 - **Why not 100:** item 4 (upstream publishing, -5) waits for CYLTabBarController.

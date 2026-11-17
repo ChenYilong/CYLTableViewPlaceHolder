@@ -39,6 +39,17 @@ The first step of every task, before the TODO entry and before any change:
      that session and settle who does what before changing anything; continue only with the part that is not a
      duplicate, and rebase on their pushed work before pushing.
 
+### Re-read the rules a pull changes
+
+Rules change while a task runs (other sessions push them). After every `git pull` (and before every commit, which
+pulls first), check whether the pull changed a rule file and read the changed parts before going on:
+
+    git diff --stat ORIG_HEAD HEAD -- instructions.md AGENTS.md '*/instructions.md' .agents/skills
+    git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md '*/instructions.md' .agents/skills
+
+Apply a changed rule to the work in progress (redo what it affects) before committing. Never pull and commit in one
+command when the pull may bring rules: pull, read, then commit.
+
 ### TODO and the branch at the top of the session
 
 When a task starts, the session's first reply begins with a `TODO` line and the current branch, for example
@@ -1001,6 +1012,29 @@ footer yet: `docs/assets/screenshot-style-reference-ios27.2-iphone17pro-xcode27.
 - **Originals stay too.** Commit the uncropped original captures next to the stitched image in `docs/assets/`, named
   with the platform, OS, device, commit and date. Crop the panels, never scale them down or recompress them until they
   blur.
+
+### Enforcement: every screenshot passes the checker
+
+The owner's rule (2026-11-18), after a screenshot was committed without the header and footer 26 seconds after the rule
+above landed (this session pulled the rule in the same command as its commit and never read it; the earlier sheets had
+no tool and no check behind them). From now on a screenshot that breaks the rule cannot be committed or merged:
+
+1. **Make every stitched image with the tool.** `python3 scripts/screenshot_sheet.py sheet.json` writes the portrait
+   sheet in the order above (one column first, two columns only when one column is taller than 2.17 times its width),
+   the bold English header with the seven facts, a caption band above each panel and the footer, all outside the
+   panels, and records them in the PNG ("cyl-screenshot-sheet"). A sheet made by another tool (CYLTabBarController's
+   `scripts/stitch-screenshots.py`) needs a sidecar `<sheet>.sheet.json` with the same record (header, captions,
+   footer, originals).
+2. **Name the originals** `<platform>-...-<commit>-<yyyymmdd>.<png|jpg|jpeg>` (platform: ios, android, harmonyos,
+   wechat-miniprogram, flutter, react-native), commit them in `docs/assets/`, and list them in the sheet. A single
+   screenshot used as evidence is a one-panel sheet too, never a bare capture.
+3. **Run the checker before every commit that adds or changes an image:** `python3 scripts/check_screenshots.py`. It
+   fails on any image in `docs/assets/` that is neither a sheet with a complete record nor an original one uses. CI
+   runs it (`Docs navigation` job), so a pull request with a non-conforming screenshot fails.
+4. **Never add to `docs/assets/screenshot-legacy.txt`.** It lists the images committed before the rule; replace an
+   old image by a conforming sheet instead (keep the old file only while another repository links it).
+5. **Re-read the rules a pull changed** (see "Re-read the rules a pull changes") before taking,
+   stitching or committing a screenshot: the screenshot rules changed three times on 2026-11-18.
 
 ## CI example screenshots
 

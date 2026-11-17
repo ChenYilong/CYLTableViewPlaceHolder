@@ -103,3 +103,14 @@ and screenshot there; the rule itself is in `instructions.md`, "Animation playba
 When a bug is fixed in an example instead of the core (only with the owner's approval, `instructions.md`, "Fix bugs
 in the core first"), the related document (issue table, task entry or feature document) states why the core cannot
 solve it and why the example layer does.
+
+## Screenshots: enforced
+
+- **Screenshots are enforced:** every stitched image is made with `python3 scripts/screenshot_sheet.py` (portrait, one
+  column first, bold English header / captions / footer outside the panels, recorded in the PNG; another tool adds a
+  `<sheet>.sheet.json` sidecar), originals are named `<platform>-...-<commit>-<yyyymmdd>`, and
+  `python3 scripts/check_screenshots.py` must pass before every commit that adds an image (CI runs it). Never add to
+  `docs/assets/screenshot-legacy.txt`. After every pull, read the rule changes it brought
+  (`git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md .agents/skills`) before committing; never pull and commit in
+  one command. See `instructions.md`, "Enforcement: every screenshot passes the checker" and "Re-read the rules a pull
+  changes".
