@@ -26,8 +26,7 @@ Then run WeChat DevTools' 工具 → 构建 npm (Tools → Build npm). The compo
 }
 ```
 
-Every refresh component lives in `cyl-refresh/` (the trailer in `cyl-refresh/trailer/`); the former path
-`cyl-refresh-trailer/index` still works.
+Every refresh component lives in `cyl-refresh/` (the trailer in `cyl-refresh/trailer/`).
 
 ```js
 const { CYLPlaceholderAction, CYLRefresh } = require('cyl-placeholder-miniprogram')

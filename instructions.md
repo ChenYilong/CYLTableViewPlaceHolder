@@ -321,8 +321,7 @@ integrates it the same way:
 
 ## One refresh library: CYLRefresh
 
-`CYLRefresh` is the only refresh library and the only refresh kernel on every platform (the owner's decision of
-2026-11-17: "remove any non-CYLRefresh dependency ... make sure CYLRefresh is the only kernel"):
+`CYLRefresh` is the only refresh library and the only refresh kernel on every platform:
 
 - No example and no core module depends on another refresh library: no MJRefresh, SVPullToRefresh,
   SmartRefreshLayout / SmartRefreshControl, android-Ultra-Pull-To-Refresh or easy_refresh package in a Podfile,
@@ -330,14 +329,12 @@ integrates it the same way:
   (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls).
 - A feature such a library has and CYLRefresh lacks is added to CYLRefresh (a new control, or a CYLRefresh API with a
   new parameter), never brought in with the library. Code adapted from one keeps its license and attribution.
-- Until 2026-11-17 every example Podfile also listed `pod 'MJRefresh'` at its latest version to check that both
-  libraries build side by side; that rule and `scripts/resolve-mjrefresh-version.sh` are gone. The placeholder still
-  keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.m` looks the class up by
-  name), which needs no dependency.
+- The placeholder keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.m` looks the
+  class up by name), which needs no dependency.
 
 ## One HUD: CYLPlaceholderHUD
 
-The HUD follows the same rule as CYLRefresh (the owner's decision of 2026-11-17): `CYLPlaceholderHUD` is the
+The HUD follows the same rule as CYLRefresh: `CYLPlaceholderHUD` is the
 only HUD kernel on every platform, and its code lives in one folder: `CYLTableViewPlaceHolder/CYLPlaceholderHUD/` (iOS),
 `android/placeholder/.../placeholder/hud/` (Android), `ets/hud/` (HarmonyOS) and `src/cyl-placeholder-hud/` (WeChat
 mini program). No example or core module depends on another HUD library (SVProgressHUD, MBProgressHUD,

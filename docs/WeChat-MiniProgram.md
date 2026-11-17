@@ -10,7 +10,7 @@
 | [结构](#结构--structure) | [Structure](#结构--structure) |
 | [API 对照](#api-对照--api-alignment) | [API alignment](#api-对照--api-alignment) |
 | [验证](#验证--verification) | [Verification](#验证--verification) |
-| [CYLRefresh in one folder (2026-11-17)](#cylrefresh-in-one-folder-2026-11-17) | [CYLRefresh in one folder (2026-11-17)](#cylrefresh-in-one-folder-2026-11-17) |
+| [CYLRefresh in one folder](#cylrefresh-in-one-folder) | [CYLRefresh in one folder](#cylrefresh-in-one-folder) |
 
 <!-- docs-navigation:end -->
 
@@ -194,7 +194,7 @@
 - **The user's original prompt (verbatim):** "在跨端相关文档中标记TODO：小程序封装成库 cyl- 开头的小程序库，用 npm 打包加「构建 npm」实际验证过。提醒我的话先运行 ! npm login。 然后继续你未完成的任务。"
 - **Requirements:** ship the mini program code as a library whose name starts with `cyl-`
   (`cyl-placeholder-miniprogram`: cyl-placeholder, cyl-placeholder-hud, cyl-placeholder-status, cyl-refresh with
-  its trailer in `cyl-refresh/trailer`, and the alias `cyl-refresh-trailer`); pack it with `npm pack`; install the tarball in a mini program and run WeChat DevTools'
+  its trailer in `cyl-refresh/trailer`); pack it with `npm pack`; install the tarball in a mini program and run WeChat DevTools'
   "构建 npm" (Build npm); use the components from `miniprogram_npm` and check they open with no error.
 - **Publishing:** `npm publish` needs the owner's npm account: run `! npm login` first (the owner runs it; the
   agent does not log in or publish on its own).
@@ -215,7 +215,7 @@
 | `src/cyl-placeholder/index.{js,json,wxml,wxss}` | The `cyl-placeholder` component (CYLPlaceholderStackView): vertical, centered stack; background tap; `action` event; `interactive` |
 | `src/cyl-placeholder/cyl_scenario_catalog.js` | `CYLPlaceholderScenarioCatalog`, scenarios, categories, permissions, actions, button styles |
 | `src/cyl-placeholder/cyl_localization.js` | `CYLPlaceholderLocalization`: `setLanguage`, `resolveLanguage`, `localizedString` |
-| `src/cyl-placeholder-hud/cyl_placeholder_hud.js` (the former `src/cyl-placeholder/cyl_placeholder_hud.js` forwards to it) | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
+| `src/cyl-placeholder-hud/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
 | `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
 | `src/cyl-placeholder/cyl_configuration.js` | `CYLPlaceholderConfiguration`: parses configuration objects / JSON files |
 | `src/cyl-refresh/` | `cyl-refresh` (CYLRefresh: MJRefresh-compatible header / footers, icons per state, DIY slots, CYLRefresh texts in 7 languages from `scripts/import-refresh-strings.js`) |
@@ -301,12 +301,9 @@
   switch (simulated through the component's listener) and Dark Mode colors.
 - Not verified: a real phone.
 
-## CYLRefresh in one folder (2026-11-17)
+## CYLRefresh in one folder
 
-Every refresh component of the mini program now lives in `src/cyl-refresh/`: the trailer (CYLRefreshNormalTrailer)
-moved from `src/cyl-refresh-trailer/` to `src/cyl-refresh/trailer/`, next to `cyl_refresh.js`, which it requires.
-`src/cyl-refresh-trailer/` stays as an alias so existing `usingComponents` paths keep working: its `index.js` requires
-the moved file (which registers the same Component for the alias folder), its template is an `<include>` and its
-styles an `@import` of the moved files. The example uses the new path; `scripts/sync-example.js` copies only
-`cyl-refresh/`. Verified: `npm test` passes. TODO (not verified): open the alias and the new path in WeChat DevTools
-(needs the owner's DevTools login), especially that the alias runs `endRefreshing` and the `trailer` event.
+Every refresh component of the mini program lives in `src/cyl-refresh/`: `cyl_refresh.js`, the `cyl-refresh` component
+and the trailer component (CYLRefreshNormalTrailer) in `src/cyl-refresh/trailer/`. The HUD lives in
+`src/cyl-placeholder-hud/`. The example copies `cyl-refresh/` with `scripts/sync-example.js`. TODO (not verified):
+open the trailer in WeChat DevTools (needs the owner's DevTools login).

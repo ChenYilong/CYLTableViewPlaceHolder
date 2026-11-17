@@ -5,7 +5,7 @@
 // ("filter unused files"), and it does not see a require inside an object spread.
 'use strict'
 Object.assign(module.exports, require('./cyl_scenario_catalog'))
-Object.assign(module.exports, require('./cyl_placeholder_hud'))
+Object.assign(module.exports, require('../cyl-placeholder-hud/cyl_placeholder_hud'))
 Object.assign(module.exports, require('./cyl_configuration'))
 Object.assign(module.exports, require('./cyl_status'))
 // CYLRefresh lives in ../cyl-refresh (require('../cyl-refresh/cyl_refresh')); it is not re-exported here to avoid a cycle.

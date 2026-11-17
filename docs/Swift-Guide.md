@@ -96,13 +96,13 @@ Swift migration in `docs/Swift-Migration.md`, or any refactor), the examples are
 same change; an example's old call site never keeps an old spelling, alias or shim in the core. See `instructions.md`,
 "Examples have the lowest weight".
 
-The Android-parity APIs (docs/iOS-API-Map.md, 2026-11-16) add these spellings, pending CI: `tableView.cyl_placeholderView`,
+More Swift spellings: `tableView.cyl_placeholderView`,
 `placeholder.setAnimationFile(_:)`, `stack.imageView`, `stack.titleLabel`, `stack.hintLabel`, `stack.button`,
 `CYLPlaceholderComponent.text(_:fontSize:color:)`, `CYLPlaceholderConfigurationError` (the NS_ERROR_ENUM of
 `CYLPlaceholderConfigurationErrorDomain`), `CYLPlaceholderItemImages`, `CYLPlaceholderItemAnimationDuration`, and
 `CYLRefreshFlyHeader.mountainView` / `flyView` / `floatView`.
 
-The consolidated CYLRefresh API (2026-11-17) adds these spellings, pending CI: `header.title(for: .pulling)` on
+CYLRefresh's shared state and image API is spelled in Swift as: `header.title(for: .pulling)` on
 `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter` and `CYLRefreshStateTrailer` (as on `CYLRefreshBackStateFooter`),
 `control.cyl_setStateTitle(_:for:)` / `control.cyl_stateTitle(for:)`, `control.cyl_setAnimationImages(_:duration:for:)`
 / `control.cyl_animationImages(for:)`, `control.cyl_setIconAnimation(filePath:size:for:)`,
