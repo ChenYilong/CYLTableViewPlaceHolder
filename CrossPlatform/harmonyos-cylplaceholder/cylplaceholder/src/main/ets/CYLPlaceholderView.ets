@@ -911,6 +911,10 @@ export struct CYLPlaceholderView {
           .blendMode(BlendMode.SRC_IN, BlendApplyType.OFFSCREEN)
       }
     }
+    // The icon's own size: the tint overlay is 100% x 100% of this Stack, and a Stack with no size of its own took the
+    // whole height of an unbounded parent (the HUD box stretched over the screen, its title pushed away; E14).
+    .width(Math.max(1, this.model.imageSide))
+    .height(Math.max(1, this.model.imageSide))
     .blendMode(BlendMode.SRC_OVER, BlendApplyType.OFFSCREEN)
     .hitTestBehavior(HitTestMode.None)
     .accessibilityLevel('no-hide-descendants')
