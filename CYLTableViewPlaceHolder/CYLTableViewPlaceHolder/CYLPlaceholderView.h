@@ -460,8 +460,9 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
 - (BOOL)performTap;
 /*!
  * How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times.
- * Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. Every player that loops supports 0 and 1; N needs a
- * player that reports its progress (Lottie, PAG). Reduce Motion still stops the animation.
+ * Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. Players that loop or report their progress (Lottie,
+ * PAG) support every value; others (GIF, Rive, SVGA) play as their file defines. Reduce Motion still stops the
+ * animation.
  */
 @property (nonatomic) NSInteger animationRepeatCount;
 
