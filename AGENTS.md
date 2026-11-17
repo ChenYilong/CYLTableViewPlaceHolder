@@ -219,7 +219,8 @@ the integrated `CYLRefresh` component, and an example application. Read
   library's iOS 12.0 minimum.
 - Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
   merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details in a portrait
-  sheet: two columns over several rows first, then one column, a single row last (at most three per row); every
+  sheet: one column with several rows first, two columns with several rows only when one column would be taller than
+  one phone screen (height above about 2.17 times the width), a single row last (at most three per row); every
   stitched image has an English header (platform and device, simulator OS, IDE version, host OS, library and repository
   commits, date, test purpose), a caption band above each panel and a footer (verdict, measured values, method,
   original file names), none of them overlapping the screenshots (`instructions.md`, "Header and footer on stitched

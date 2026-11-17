@@ -36,13 +36,14 @@
 - Plan: a sheet tool (`scripts/screenshot_sheet.py`: portrait, two columns first, English bold header / captions / footer bands outside the panels, metadata embedded), a checker (`scripts/check_screenshots.py`, in CI and before every commit that adds images), the rules (re-read rules after a pull; sheets only through the tool; the checker), and this session's non-conforming screenshots of today remade as conforming sheets with renamed originals.
 - Acceptance: full marks (100) = the cause recorded; tool and checker committed and run in CI; rules in `instructions.md`, `AGENTS.md` and the skills `cyl-verify` / `cyl-docs`; this session's screenshots of today conform (checker green); pushed. Pass (60) = cause recorded, checker in CI, rules written.
 
-### TODO：截图规则：一列多行优先，超过一屏再两列 / TODO: Screenshot rule: one column first, two columns when taller than a phone screen
+### 已完成（100 / 100）：截图规则：一列多行优先，超过一屏再两列 / Done (100 / 100): Screenshot rule: one column first, two columns when taller than a phone screen
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
 - User's original prompt (verbatim): "更新截图规则，优选一列多行 如果一列拼接后长度超过普通手机的一屏幕 则两列多行"
 - Requirements (English): update the screenshot rule: one column with several rows first; when the one-column image would be taller than one screen of a common phone, two columns with several rows.
 - Context: `9cdf294` put two columns first; this replaces that order. A common phone screen is 19.5:9, so "taller than one screen" at phone width means height > about 2.17 × width (the same threshold as CYLTabBarController's `scripts/stitch-screenshots.py`).
 - Acceptance: full marks (100) = `instructions.md`, `AGENTS.md`, skills `cyl-verify` and `cyl-docs` updated, writes checked, pushed. Pass (60) = `instructions.md` and one skill.
+- Result (2026-11-18): the order is now one column with several rows first, two columns with several rows only when one column would be taller than one phone screen (height above about 2.17 times the width, 19.5:9), one row last; in `instructions.md` ("Screenshots of local builds and CI/CD" and "Header and footer on stitched screenshots"), `AGENTS.md`, skills `cyl-docs` and `cyl-verify` (edited in place, frontmatter checked, no "two columns first" left). The two sheets of `e2ec88c` (Q17, Rive inputs) are far taller than a phone screen in one column, so their two columns already follow the rule.
 
 ### 已完成（100 / 100）：截图规范：竖版两列多行，拼接图加 header / footer / Done (100 / 100): Screenshot rules: portrait, two columns, header and footer on stitched images
 

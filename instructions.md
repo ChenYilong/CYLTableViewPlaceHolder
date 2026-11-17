@@ -951,9 +951,10 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
 - **Show the key detail, not the whole screen.** Crop to the part that proves the point (the refresh header, the
   footer, the badge); take the full screen only when the whole layout is the point.
 - **Stitch several details into one image** in a portrait (vertical) sheet, in this order of preference (the owner's
-  rule of 2026-11-18, which replaces the 2026-11-12 order that put one column first):
-  1. two columns over several rows, the sheet taller than it is wide;
-  2. one column, stacked top to bottom;
+  rule of 2026-11-18, second update, which replaces the same morning's "two columns first"):
+  1. one column with several rows, stacked top to bottom;
+  2. two columns with several rows, only when the one-column image would be taller than one screen of a common phone
+     (19.5:9: height above about 2.17 times the width at phone width);
   3. a single horizontal row, the last resort, with at most three images per row.
   Every stitched image has a header and a footer; see "Header and footer on stitched screenshots" below.
 - **Store every screenshot in `docs/`.** Put the image in `docs/assets/` (or the `assets/` folder next to the document)
@@ -974,7 +975,8 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
 The owner's rule (2026-11-18). Reference image, which shows the style (the header and the panel captions) but has no
 footer yet: `docs/assets/screenshot-style-reference-ios27.2-iphone17pro-xcode27.2-cyltabbarcontroller-dcbfdec6-20261118.png`.
 
-- **Layout.** A portrait sheet: two columns over several rows first, then one column, then one row (see above). Plain
+- **Layout.** A portrait sheet: one column with several rows first; two columns with several rows when one column
+  would be taller than one phone screen (height above about 2.17 times the width); one row last (see above). Plain
   white background, the same margin around every panel, panels in the order of the test (left to right, then top to
   bottom).
 - **A header and a footer on every stitched image.** Both are bands of their own above and below the panels. They never

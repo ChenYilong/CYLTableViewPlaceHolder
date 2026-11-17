@@ -52,8 +52,9 @@ translation starts at 60. See `instructions.md`, "Translating or porting another
   bug-free debugging screenshots in `docs/assets/` embedded in the document, final screenshots in the
   README. If the change could not be run, say so; never present a diagram as a screenshot. Every screenshot, local
   or CI/CD, lives in `docs/` (committed) and, once the result is right, in the README with the platform, the OS /
-  simulator / SDK versions, the commit link and the time; key details only, stitched in a portrait sheet: two columns over several
-  rows first, then one column, a single row last (at most three per row), with an English header (platform and
+  simulator / SDK versions, the commit link and the time; key details only, stitched in a portrait sheet: one column with several
+  rows first, two columns with several rows only when one column would be taller than one phone screen (height above
+  about 2.17 times the width), a single row last (at most three per row), with an English header (platform and
   device, simulator OS, IDE version, host OS, library and repository commits, date, test purpose), a caption band
   above each panel and a footer (verdict, measured values, method, original file names) that never overlap the
   screenshots (`instructions.md`, "Header and footer on stitched screenshots"), from clear original images (`instructions.md`,
