@@ -36,6 +36,8 @@ case "$command" in
     [[ "$tag" == "$current" ]]
     ;;
   push)
+    # CYLTabBarController/CYLAnimatedItem is not on the trunk yet (docs/Task-Log.md): a push fails until CYLTabBarController
+    # releases it and the podspec depends on that version.
     : "${COCOAPODS_TRUNK_TOKEN:?COCOAPODS_TRUNK_TOKEN is not set}"
     pod trunk push "$PODSPEC" --allow-warnings --skip-tests "$@"
     ;;
