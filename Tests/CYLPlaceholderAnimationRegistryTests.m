@@ -92,20 +92,28 @@
         XCTAssertTrue([extensions containsObject:extension], @"%@", extension);
     }
     XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.PAG"]].identifier, @"PAG");
-    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.json"]].identifier, @"Lottie");
-    // [EN] Upstream's Lottie animator is the fallback: it takes every file no other animator takes (CYLTabBarController's
-    //      CYLLottieTabBarItemAnimator, priority Fallback).
-    // [CN] 上游的 Lottie animator 是兜底：其他 animator 都不处理的文件都交给它（CYLTabBarController 的
-    //      CYLLottieTabBarItemAnimator，优先级 Fallback）。
-    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.txt"]].identifier, @"Lottie");
+    // [EN] A real Lottie document: the Lottie animator only takes files it can play (upstream PR #814).
+    // [CN] 真实的 Lottie 文档：Lottie animator 只接收它能播放的文件（上游 PR #814）。
+    NSString *lottie = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
+    XCTAssertNotNil(lottie);
+    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:lottie]].identifier, @"Lottie");
+    // [EN] Lottie is the fallback animator, but only for a Lottie document (CYLTabBarItemAnimationURLMayBeLottie, upstream
+    //      PR #814): a missing or non-Lottie local file has no animator.
+    // [CN] Lottie 是兜底 animator，但只接收 Lottie 文档（CYLTabBarItemAnimationURLMayBeLottie，上游 PR #814）：缺失或不是 Lottie 的本地
+    //      文件没有 animator。
+    XCTAssertNil([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.txt"]]);
 }
 
 - (void)testAnUnknownOrMissingFileKeepsTheStaticImage {
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
-    // [EN] Missing files only: with Lottie installed, a file of an unknown type goes to the Lottie fallback, which does not
-    //      report a parse failure for a local file yet (upstream TODO, docs/Task-Log.md).
-    // [CN] 只测缺失的文件：引入 Lottie 后，未知类型的文件交给 Lottie 兜底，而它对本地文件的解析失败尚不报告（上游 TODO，见 docs/Task-Log.md）。
-    for (NSString *path in @[@"/missing/animation.json", @"/missing/animation.riv", @"/missing/animation.pag"]) {
+    // [EN] A text file, a broken JSON file and missing files: none plays, the static image stays (display priority; the Lottie
+    //      fallback takes only Lottie documents since upstream PR #814).
+    // [CN] 文本文件、损坏的 JSON 文件与缺失的文件：都无法播放，保留静态图片（显示优先级；自上游 PR #814 起 Lottie 兜底只接收 Lottie 文档）。
+    NSString *unknown = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CYLRegistry-unknown.txt"];
+    [@"text" writeToFile:unknown atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    NSString *broken = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CYLRegistry-broken.json"];
+    [@"{\"not\": \"lottie\"" writeToFile:broken atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    for (NSString *path in @[unknown, broken, @"/missing/animation.json", @"/missing/animation.riv", @"/missing/animation.pag"]) {
         NSError *error = nil;
         CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
             CYLPlaceholderItemAnimationFilePath: path, CYLPlaceholderItemImage: image
@@ -115,6 +123,8 @@
         XCTAssertEqual(placeholder.imageView.image, image, @"%@", path);
         XCTAssertFalse(placeholder.imageView.hidden, @"%@", path);
     }
+    [[NSFileManager defaultManager] removeItemAtPath:unknown error:NULL];
+    [[NSFileManager defaultManager] removeItemAtPath:broken error:NULL];
 }
 
 - (void)testGIFPlaysThroughTheGIFAnimator {

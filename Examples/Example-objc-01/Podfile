@@ -9,7 +9,7 @@ target 'ExampleObjC01' do
   # lives in the CYLTabBarController repository and is not on the trunk yet. Always that repository's newest commit on
   # any branch (instructions.md, "Depending on CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh
   # rewrites the commit before every build.
-  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => 'ec12a9d85f33d07dffbddb643d37ee67236bfb0a'
+  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '47aec88ff1eb23394127dd24acb721f0e393d4eb'
   # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
 end
 
