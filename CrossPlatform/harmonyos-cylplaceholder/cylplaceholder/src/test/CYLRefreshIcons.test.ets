@@ -30,6 +30,7 @@ import { CYLPlaceholderItemImage, CYLPlaceholderItemTitle } from '../main/ets/CY
 import {
   CYLRiveActivePropertyPath,
   CYLRiveColorValue,
+  CYLRiveNextNumber,
   CYLRiveTriggerPropertyPath,
   CYLRiveUsesLegacyRuntime
 } from '../main/ets/CYLRiveOptions';
@@ -133,6 +134,16 @@ export default function refreshIconsTest() {
       expect(error.indexOf('missing') >= 0).assertTrue();
     });
 
+    // CYLTabBarController 6a9ede85: each play sets numberInput to the next of `values`, cycling.
+    it('stepsRiveNumberInputValues', 0, () => {
+      expect(CYLRiveNextNumber('3,4,5,6', undefined)).assertEqual(3);
+      expect(CYLRiveNextNumber('3,4,5,6', 3)).assertEqual(4);
+      expect(CYLRiveNextNumber('3, 4, 5, 6', 6)).assertEqual(3);
+      expect(CYLRiveNextNumber('3,4,5,6', 9)).assertEqual(3);
+      expect(CYLRiveNextNumber(undefined, 2)).assertEqual(3);
+      expect(CYLRiveNextNumber('x,', undefined)).assertEqual(1);
+    });
+
     it('readsRiveViewModelOptions', 0, () => {
       expect(CYLRiveUsesLegacyRuntime({})).assertFalse();
       expect(CYLRiveUsesLegacyRuntime({ 'legacy': '1' })).assertTrue();
@@ -140,6 +151,7 @@ export default function refreshIconsTest() {
       expect(CYLRiveUsesLegacyRuntime({ 'animation': 'idle' })).assertTrue();
       expect(CYLRiveUsesLegacyRuntime({ 'input': 'on' })).assertTrue();
       expect(CYLRiveUsesLegacyRuntime({ 'triggerInput': 'go' })).assertTrue();
+      expect(CYLRiveUsesLegacyRuntime({ 'numberInput': 'Rooms' })).assertTrue();
       expect(CYLRiveActivePropertyPath({})).assertEqual('active');
       expect(CYLRiveActivePropertyPath({ 'active': 'isOn' })).assertEqual('isOn');
       expect(CYLRiveTriggerPropertyPath({})).assertNull();

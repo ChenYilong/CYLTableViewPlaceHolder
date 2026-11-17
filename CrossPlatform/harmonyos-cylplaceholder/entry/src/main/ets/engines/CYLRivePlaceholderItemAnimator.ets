@@ -8,7 +8,12 @@
 // view-model view (CYLPlaceholderRiveItemAnimationView): the bound view model's boolean `active` (default "active")
 // is true for "duration" seconds, or its trigger `trigger` fires, and `color` is written to its "color" property.
 // @ohos/rive is one runtime with both APIs, so `legacy` only picks the input API (see CYLRiveOptions.ets).
-import { Fit, Loop, RendererType, RiveAnimationView, ViewModelInstance, initializeRive } from '@ohos/rive';
+// Every play starts from the beginning, as CYLTabBarController's CYLRiveIcon (6a9ede85, docs/Animated-Item.md, the Rive
+// loop): a named animation restarts; a trigger input restarts the state machine, then fires 50 ms later; a boolean
+// (input or view model `active`) goes false, then true 50 ms later; `numberInput` is set to the next of `values`; a
+// state machine without a usable input restarts. A repeat count of 0 loops a state machine by playing it again after
+// each pass.
+import { Fit, Loop, RendererType, RiveAnimationView, SMINumber, ViewModelInstance, initializeRive } from '@ohos/rive';
 import { deviceInfo } from '@kit.BasicServicesKit';
 import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
 import {
@@ -16,6 +21,7 @@ import {
   CYLRiveColorPropertyPath,
   CYLRiveColorInteger,
   CYLRiveColorValue,
+  CYLRiveNextNumber,
   CYLRiveTriggerPropertyPath,
   CYLRiveUsesLegacyRuntime
 } from 'cylplaceholder';
@@ -28,6 +34,8 @@ import {
   CYLPlaceholderAnimationOptionRiveAnimation,
   CYLPlaceholderAnimationOptionRiveArtboard,
   CYLPlaceholderAnimationOptionRiveInput,
+  CYLPlaceholderAnimationOptionRiveNumberInput,
+  CYLPlaceholderAnimationOptionRiveNumberValues,
   CYLPlaceholderAnimationOptionRiveStateMachine,
   CYLPlaceholderAnimationOptionRiveTriggerInput,
   CYLPlaceholderAnimationReadFile,
@@ -56,6 +64,13 @@ export function CYLRiveActiveDuration(options: Record<string, string>): number {
   const value = text !== undefined && text.trim().length > 0 ? Number(text) : NaN;
   return isFinite(value) && value >= 0 ? Math.min(value, 60) : 1;
 }
+
+/** Seconds of a loop pass when the file gives none (CYLRiveIcon `CYL_RIVE_LOOP_SECONDS`). */
+const CYL_RIVE_LOOP_SECONDS: number = 1.5;
+/** The pause after a boolean goes back to false, before the next pass. */
+const CYL_RIVE_LOOP_PAUSE_SECONDS: number = 0.4;
+/** A frame later: the state machine sees the reset or the false first. */
+const CYL_RIVE_NEXT_FRAME_MS: number = 50;
 
 let riveInitialized = false;
 
@@ -119,6 +134,9 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   /** How a named animation plays: AUTO follows the file (iOS `.autoLoop`). */
   private loop: Loop = Loop.AUTO;
   private deactivateTimer: number = -1;
+  /** A repeat count of 0 on a state machine: play again after each pass. */
+  private loopsStateMachine: boolean = false;
+  private loopTimer: number = -1;
   /** The colors last asked for (iOS `requestedColors`); null restores the original colors. */
   private requestedColors: CYLPlaceholderAnimationColors | null = null;
   /** The file's colors before they were overridden, by property path. */
@@ -165,6 +183,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
 
   cyl_detach(): void {
     this.cancelDeactivate();
+    this.cancelLoop();
     this.riveView = null;
     this.cyl_isAnimationViewReady = false;
   }
@@ -225,7 +244,24 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     }
   }
 
-  private setActive(instance: ViewModelInstance, value: boolean): void {
+  /** Sets the boolean (state machine input in the legacy API, else the view model property); a missing one is skipped. */
+  private setActive(view: RiveAnimationView, value: boolean): void {
+    if (CYLRiveUsesLegacyRuntime(this.options)) {
+      const input = this.option(CYLPlaceholderAnimationOptionRiveInput);
+      const machine = this.stateMachineName(view);
+      if (input !== undefined && machine !== undefined) {
+        try {
+          view.setBooleanState(machine, input, value);
+        } catch (e) {
+          // No such input: nothing to drive, as on iOS.
+        }
+      }
+      return;
+    }
+    const instance = this.viewModelInstance(view);
+    if (instance === null) {
+      return;
+    }
     try {
       instance.getBooleanProperty(CYLRiveActivePropertyPath(this.options)).value = value;
     } catch (e) {
@@ -233,31 +269,24 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     }
   }
 
-  /** iOS CYLPlaceholderRiveItemAnimationView.playAnimation. */
-  private playViewModel(view: RiveAnimationView): void {
-    view.play();
-    const instance = this.viewModelInstance(view);
-    if (instance === null) {
-      return;
+  /** Whether the state machine has the input (an unknown answer counts as yes). */
+  private hasInput(view: RiveAnimationView, machine: string, input: string): boolean {
+    try {
+      const found = view.getStateMachines().find((instance) => instance.name === machine);
+      return found === undefined ? true : found.inputNames.includes(input);
+    } catch (e) {
+      return true;
     }
-    const trigger = CYLRiveTriggerPropertyPath(this.options);
-    if (trigger !== null) {
-      try {
-        instance.getTriggerProperty(trigger).trigger();
-      } catch (e) {
-        // No such trigger.
-      }
-      return;
-    }
-    this.setActive(instance, true);
-    const duration = CYLRiveActiveDuration(this.options);
-    if (duration > 0) {
-      this.deactivateTimer = setTimeout(() => {
-        this.deactivateTimer = -1;
-        if (this.riveView === view) {
-          this.setActive(instance, false);
-        }
-      }, duration * 1000);
+  }
+
+  /** A number input's value, undefined when unknown. */
+  private numberValue(view: RiveAnimationView, machine: string, input: string): number | undefined {
+    try {
+      const found = view.getStateMachines().find((instance) => instance.name === machine);
+      const value = found?.inputByName(input);
+      return value instanceof SMINumber ? value.value : undefined;
+    } catch (e) {
+      return undefined;
     }
   }
 
@@ -267,37 +296,112 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       this.pendingCommand = 1;
       return;
     }
+    this.play(view);
+  }
+
+  /** CYLRiveIcon.cylPlay: plays from the start (see the file comment). */
+  private play(view: RiveAnimationView): void {
     this.cancelDeactivate();
-    if (!CYLRiveUsesLegacyRuntime(this.options)) {
-      this.playViewModel(view);
-      return;
-    }
+    this.cancelLoop();
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
     if (animation !== undefined) {
+      // The repeat count picks the loop mode (Loop.LOOP for 0): no loop timer.
+      view.reset();
       view.play(animation, this.loop);
       return;
     }
-    view.play();
+    const legacy = CYLRiveUsesLegacyRuntime(this.options);
     const machine = this.stateMachineName(view);
-    const trigger = this.option(CYLPlaceholderAnimationOptionRiveTriggerInput);
-    if (trigger !== undefined && machine !== undefined) {
-      view.fireState(machine, trigger);
-      return;
-    }
-    const input = this.option(CYLPlaceholderAnimationOptionRiveInput);
-    if (input === undefined || machine === undefined) {
-      return;
-    }
-    view.setBooleanState(machine, input, true);
-    const duration = CYLRiveActiveDuration(this.options);
-    if (duration > 0) {
+    const triggerInput = legacy ? this.option(CYLPlaceholderAnimationOptionRiveTriggerInput) : undefined;
+    const trigger = legacy ? null : CYLRiveTriggerPropertyPath(this.options);
+    const instance = legacy ? null : this.viewModelInstance(view);
+    const input = legacy ? this.option(CYLPlaceholderAnimationOptionRiveInput) : undefined;
+    const numberInput = this.option(CYLPlaceholderAnimationOptionRiveNumberInput);
+    if (triggerInput !== undefined && machine !== undefined && this.hasInput(view, machine, triggerInput)) {
+      view.reset();
+      view.play();
       this.deactivateTimer = setTimeout(() => {
         this.deactivateTimer = -1;
         if (this.riveView === view) {
-          view.setBooleanState(machine, input, false);
+          try {
+            view.fireState(machine, triggerInput);
+          } catch (e) {
+            // No such trigger.
+          }
         }
-      }, duration * 1000);
+      }, CYL_RIVE_NEXT_FRAME_MS);
+    } else if (numberInput !== undefined && machine !== undefined && this.hasInput(view, machine, numberInput)) {
+      // The next value: house.riv moves only when Rooms changes.
+      view.play();
+      view.setNumberState(machine, numberInput, CYLRiveNextNumber(this.option(CYLPlaceholderAnimationOptionRiveNumberValues),
+        this.numberValue(view, machine, numberInput)));
+    } else if (trigger !== null && instance !== null) {
+      view.play();
+      try {
+        instance.getTriggerProperty(trigger).trigger();
+      } catch (e) {
+        // No such trigger.
+      }
+    } else if (instance !== null || (input !== undefined && machine !== undefined && this.hasInput(view, machine, input))) {
+      view.play();
+      this.setActive(view, false);
+      const duration = CYLRiveActiveDuration(this.options);
+      this.deactivateTimer = setTimeout(() => {
+        this.deactivateTimer = -1;
+        if (this.riveView !== view) {
+          return;
+        }
+        this.setActive(view, true);
+        if (duration > 0) {
+          this.deactivateTimer = setTimeout(() => {
+            this.deactivateTimer = -1;
+            if (this.riveView === view) {
+              this.setActive(view, false);
+            }
+          }, duration * 1000);
+        }
+      }, CYL_RIVE_NEXT_FRAME_MS);
+    } else {
+      view.reset();
+      view.play();
     }
+    this.scheduleLoop(view, trigger !== null || triggerInput !== undefined);
+  }
+
+  /** Whether a play restarts the file (no usable input or trigger, no view model). */
+  private restartsOnPlay(view: RiveAnimationView): boolean {
+    const machine = this.stateMachineName(view);
+    if (machine === undefined) {
+      return true;
+    }
+    if (!CYLRiveUsesLegacyRuntime(this.options) && this.viewModelInstance(view) !== null) {
+      return false;
+    }
+    const inputs = [CYLPlaceholderAnimationOptionRiveTriggerInput, CYLPlaceholderAnimationOptionRiveNumberInput,
+      CYLPlaceholderAnimationOptionRiveInput].map((key: string) => this.option(key))
+      .filter((name: string | undefined) => name !== undefined) as string[];
+    return !inputs.some((name: string) => this.hasInput(view, machine, name));
+  }
+
+  /** The next pass while looping (CYLRiveIcon.cylScheduleLoop). */
+  private scheduleLoop(view: RiveAnimationView, isTrigger: boolean): void {
+    if (!this.loopsStateMachine) {
+      return;
+    }
+    const duration = CYLRiveActiveDuration(this.options);
+    const seconds = !isTrigger && duration > 0 ? duration + CYL_RIVE_LOOP_PAUSE_SECONDS : CYL_RIVE_LOOP_SECONDS;
+    this.loopTimer = setTimeout(() => {
+      this.loopTimer = -1;
+      if (!this.loopsStateMachine || this.riveView !== view) {
+        return;
+      }
+      // A file still moving on its own is not cut short: check again after another pass.
+      if (this.restartsOnPlay(view) && view.isPlaying()) {
+        this.scheduleLoop(view, isTrigger);
+      } else {
+        this.play(view);
+      }
+    }, seconds * 1000);
   }
 
   /** A state machine has no last frame: the view stays in its resting state. */
@@ -312,14 +416,14 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   cyl_stopAnimationView(): void {
     this.pendingCommand = 0;
     this.cancelDeactivate();
+    this.cancelLoop();
     const view = this.riveView;
     if (view === null || !this.cyl_isAnimationViewReady) {
       return;
     }
     if (!CYLRiveUsesLegacyRuntime(this.options)) {
-      const instance = this.viewModelInstance(view);
-      if (instance !== null && CYLRiveTriggerPropertyPath(this.options) === null) {
-        this.setActive(instance, false);
+      if (CYLRiveTriggerPropertyPath(this.options) === null) {
+        this.setActive(view, false);
       }
       view.pause();
       return;
@@ -328,11 +432,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       view.stop();
       return;
     }
-    const input = this.option(CYLPlaceholderAnimationOptionRiveInput);
-    const machine = this.stateMachineName(view);
-    if (input !== undefined && machine !== undefined) {
-      view.setBooleanState(machine, input, false);
-    }
+    this.setActive(view, false);
     view.pause();
   }
 
@@ -360,13 +460,23 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     return true;
   }
 
-  /** 0 loops and 1 plays once a named animation; other counts, and state machines, are not supported. */
+  /**
+   * 0 loops and 1 plays once: a named animation through its loop mode, a state machine by playing again after each pass
+   * (CYLRiveIcon `loops`). Other counts are not supported.
+   */
   cyl_setAnimationViewRepeatCount(repeatCount: number): boolean {
-    if (this.option(CYLPlaceholderAnimationOptionRiveAnimation) === undefined || (repeatCount !== 0 && repeatCount !== 1)) {
+    if (repeatCount !== 0 && repeatCount !== 1) {
       return false;
     }
     this.repeatCount = repeatCount;
-    this.loop = repeatCount === 0 ? Loop.LOOP : Loop.ONESHOT;
+    if (this.option(CYLPlaceholderAnimationOptionRiveAnimation) !== undefined) {
+      this.loop = repeatCount === 0 ? Loop.LOOP : Loop.ONESHOT;
+      return true;
+    }
+    this.loopsStateMachine = repeatCount === 0;
+    if (!this.loopsStateMachine) {
+      this.cancelLoop();
+    }
     return true;
   }
 
@@ -418,6 +528,13 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }
     });
     this.overriddenColorPaths.clear();
+  }
+
+  private cancelLoop(): void {
+    if (this.loopTimer >= 0) {
+      clearTimeout(this.loopTimer);
+      this.loopTimer = -1;
+    }
   }
 
   private cancelDeactivate(): void {

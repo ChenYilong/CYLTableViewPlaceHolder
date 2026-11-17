@@ -35,6 +35,10 @@ export const CYLPlaceholderAnimationOptionRiveInput: CYLPlaceholderAnimationOpti
 export const CYLPlaceholderAnimationOptionRiveTriggerInput: CYLPlaceholderAnimationOption = 'triggerInput';
 export const CYLPlaceholderAnimationOptionRiveAnimation: CYLPlaceholderAnimationOption = 'animation';
 export const CYLPlaceholderAnimationOptionRiveLegacyRuntime: CYLPlaceholderAnimationOption = 'legacy';
+/** A state machine number input set to the next of `values` on each play (house.riv: "Rooms"). */
+export const CYLPlaceholderAnimationOptionRiveNumberInput: CYLPlaceholderAnimationOption = 'numberInput';
+/** The values `numberInput` steps through, "3,4,5,6", cycling; without it, +1. */
+export const CYLPlaceholderAnimationOptionRiveNumberValues: CYLPlaceholderAnimationOption = 'values';
 
 /** The error domain of animation errors (iOS `CYLPlaceholderAnimationErrorDomain`). */
 export const CYLPlaceholderAnimationErrorDomain: string = 'CYLPlaceholderAnimationErrorDomain';

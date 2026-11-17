@@ -130,6 +130,8 @@ export {
   CYLPlaceholderAnimationOptionRiveTriggerInput,
   CYLPlaceholderAnimationOptionRiveAnimation,
   CYLPlaceholderAnimationOptionRiveLegacyRuntime,
+  CYLPlaceholderAnimationOptionRiveNumberInput,
+  CYLPlaceholderAnimationOptionRiveNumberValues,
   CYLPlaceholderAnimationErrorDomain,
   CYLPlaceholderAnimationErrorCode,
   CYLPlaceholderAnimationError,
@@ -176,7 +178,8 @@ export {
   CYLRiveActivePropertyPath,
   CYLRiveTriggerPropertyPath,
   CYLRiveColorPropertyPath,
-  CYLRiveColorValue
+  CYLRiveColorValue,
+  CYLRiveNextNumber
 } from './src/main/ets/CYLRiveOptions';
 // Registers the GIF animator (the one engine the core ships, on system APIs) when the HAR is imported.
 export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';
