@@ -14,6 +14,24 @@
 #import "CYLAnimatedItemView.h"
 #endif
 
+// [EN] Per-type guards from CYLAnimatedItemMacros.h (CYLAnimatedItem/Core): a type's keys compile without its engine and
+//      only warn (the item then shows its static image, and debug builds log the pod to add). Defined empty when an
+//      older CYLAnimatedItem does not provide them.
+// [CN] 来自 CYLAnimatedItemMacros.h（CYLAnimatedItem/Core）的各类型开关：没有对应引擎时，该类型的 key 仍能编译，只产生警告（条目显示静态
+//      图片，debug 构建输出需要加入的 pod）。旧版 CYLAnimatedItem 未提供时定义为空。
+#ifndef CYL_LOTTIE_REQUIRED
+#define CYL_LOTTIE_REQUIRED
+#endif
+#ifndef CYL_PAG_REQUIRED
+#define CYL_PAG_REQUIRED
+#endif
+#ifndef CYL_RIVE_REQUIRED
+#define CYL_RIVE_REQUIRED
+#endif
+#ifndef CYL_GIF_REQUIRED
+#define CYL_GIF_REQUIRED
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, CYLPlaceholderStyle) {
@@ -187,29 +205,29 @@ FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationDarkFilePath;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationColors;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationDarkColors;
 FOUNDATION_EXPORT NSString *const CYLPlaceholderItemAnimationOptions;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieSize;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkColors;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieLoopsWhenUnselected;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGSize;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGDarkURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGDarkFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveSize;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkColors;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFFilePath;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFSize;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkURL;
-FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkFilePath;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieURL CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieFilePath CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieSize CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkURL CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkFilePath CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieDarkColors CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemLottieLoopsWhenUnselected CYL_LOTTIE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGURL CYL_PAG_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGFilePath CYL_PAG_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGSize CYL_PAG_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGDarkURL CYL_PAG_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemPAGDarkFilePath CYL_PAG_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveURL CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveFilePath CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveSize CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkURL CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkFilePath CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemRiveDarkColors CYL_RIVE_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFURL CYL_GIF_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFFilePath CYL_GIF_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFSize CYL_GIF_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkURL CYL_GIF_REQUIRED;
+FOUNDATION_EXPORT NSString *const CYLPlaceholderItemGIFDarkFilePath CYL_GIF_REQUIRED;
 /*!
  * Title chrome, for components that read as buttons (see CYLPlaceholderStackView): an image (UIImage or name, drawn
  * stretched; give it cap insets for a resizable look) or color behind the title, a border, a corner radius (clamped to

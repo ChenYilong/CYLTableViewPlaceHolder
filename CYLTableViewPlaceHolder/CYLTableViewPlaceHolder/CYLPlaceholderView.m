@@ -863,8 +863,13 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
             colors[key] = color;
         }
     }
+#pragma clang diagnostic push
+// [EN] Reading a type key is fine without its engine (CYL_LOTTIE_REQUIRED and its siblings warn the app, not this file).
+// [CN] 没有对应引擎时读取类型 key 也无妨（CYL_LOTTIE_REQUIRED 等只提醒应用，不针对本文件）。
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     for (NSString *key in @[CYLPlaceholderItemAnimationColors, CYLPlaceholderItemAnimationDarkColors,
                              CYLPlaceholderItemLottieDarkColors, CYLPlaceholderItemRiveDarkColors]) {
+#pragma clang diagnostic pop
         id values = attributes[key];
         if (!values) continue;
         if (![values isKindOfClass:NSDictionary.class]) {
@@ -1438,9 +1443,14 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     if (![NSFileManager.defaultManager fileExistsAtPath:resolved]) return NO;
     NSDictionary<NSString *, id> *previous = self.itemAttributes ?: @{};
     NSMutableDictionary<NSString *, id> *attributes = [previous mutableCopy];
+#pragma clang diagnostic push
+// [EN] Reading a type key is fine without its engine (CYL_LOTTIE_REQUIRED and its siblings warn the app, not this file).
+// [CN] 没有对应引擎时读取类型 key 也无妨（CYL_LOTTIE_REQUIRED 等只提醒应用，不针对本文件）。
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     for (NSString *key in @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFURL,
                             CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieURL, CYLPlaceholderItemPAGFilePath,
                             CYLPlaceholderItemPAGURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveURL]) {
+#pragma clang diagnostic pop
         [attributes removeObjectForKey:key];
     }
     attributes[CYLPlaceholderItemAnimationFilePath] = resolved;
@@ -1462,11 +1472,16 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 ///      size and options; nil when there is none or it is invalid.
 /// [CN] item 属性中的动画文件（先看各引擎专用的 key，再看通用 key）及其尺寸与选项；没有或无效时返回 nil。
 - (NSURL *)cyl_animationURLFromAttributes:(NSDictionary *)attributes size:(CGSize *)outSize options:(NSDictionary **)outOptions {
+#pragma clang diagnostic push
+// [EN] Reading a type key is fine without its engine (CYL_LOTTIE_REQUIRED and its siblings warn the app, not this file).
+// [CN] 没有对应引擎时读取类型 key 也无妨（CYL_LOTTIE_REQUIRED 等只提醒应用，不针对本文件）。
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSArray *sources = @[
         @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFSize],
         @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieSize],
         @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGSize],
         @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveSize],
+#pragma clang diagnostic pop
         @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationSize]
     ];
     id value = nil, sizeValue = nil;
@@ -1534,8 +1549,13 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
             if (attributes[CYLPlaceholderItemAnimationDarkColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationDarkColors]];
             NSString *extension = url.pathExtension.lowercaseString;
+#pragma clang diagnostic push
+// [EN] Reading a type key is fine without its engine (CYL_LOTTIE_REQUIRED and its siblings warn the app, not this file).
+// [CN] 没有对应引擎时读取类型 key 也无妨（CYL_LOTTIE_REQUIRED 等只提醒应用，不针对本文件）。
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             NSString *specificKey = [extension isEqualToString:@"json"] ? CYLPlaceholderItemLottieDarkColors :
                 ([extension isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil);
+#pragma clang diagnostic pop
             if (specificKey && attributes[specificKey]) [colorSources addObject:attributes[specificKey]];
         }
     }
@@ -1553,11 +1573,16 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 - (void)cyl_configureAnimations {
     NSMutableDictionary *attributes = [self.itemAttributes mutableCopy] ?: [NSMutableDictionary dictionary];
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+#pragma clang diagnostic push
+// [EN] Reading a type key is fine without its engine (CYL_LOTTIE_REQUIRED and its siblings warn the app, not this file).
+// [CN] 没有对应引擎时读取类型 key 也无妨（CYL_LOTTIE_REQUIRED 等只提醒应用，不针对本文件）。
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSArray *pairs = @[
             @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFDarkURL, CYLPlaceholderItemGIFDarkFilePath],
             @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieDarkURL, CYLPlaceholderItemLottieDarkFilePath],
             @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGDarkURL, CYLPlaceholderItemPAGDarkFilePath],
             @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveDarkURL, CYLPlaceholderItemRiveDarkFilePath],
+#pragma clang diagnostic pop
             @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationDarkURL, CYLPlaceholderItemAnimationDarkFilePath]
         ];
         for (NSArray *keys in pairs) {
