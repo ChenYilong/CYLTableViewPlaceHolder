@@ -27,7 +27,6 @@ import com.cyl.tabbar.CYLTabBarItemAnimationPlayer
 import com.cyl.tabbar.CYLTabBarItemAnimator
 import com.cyl.tabbar.CYLTabBarItemAnimatorPriority
 import com.cyl.tabbar.CYLTabBarItemAnimatorRegistry
-import java.util.WeakHashMap
 
 /**
  * The built-in icons (iOS `CYLPlaceholderStyle`), in the iOS order.
@@ -288,18 +287,21 @@ private class CYLPlaceholderFactoryAnimator(extension: String, private val facto
     override val identifier: String = "CYLPlaceholderAnimationFactory.$extension"
     override val priority: CYLTabBarItemAnimatorPriority = FACTORY_PRIORITY
     override val fileExtensions: List<String> = listOf(extension)
-    private val players = WeakHashMap<View, CYLPlaceholderAnimationPlayer>()
 
     override fun canAnimateFileAtURL(url: String): Boolean = fileExtensionOf(url) == fileExtensions.first()
 
     override fun animationViewWithURL(context: Context, url: String, size: CYLSize, contentMode: ImageView.ScaleType): View? {
         val player = factory(context, url) ?: return null
-        synchronized(players) { players[player.view] = player }
+        player.view.setTag(R.id.cyl_placeholder_factory_player, player)
         return player.view
     }
 
-    override fun playerForAnimationView(view: View): CYLTabBarItemAnimationPlayer? =
-        synchronized(players) { players[view] }?.let { CYLPlaceholderFactoryPlayer(view, it) }
+    override fun playerForAnimationView(view: View): CYLTabBarItemAnimationPlayer? {
+        val player = view.getTag(R.id.cyl_placeholder_factory_player) as? CYLPlaceholderAnimationPlayer ?: return null
+        // [EN] One engine player per view, so the repeat count the placeholder gives it stays.
+        (view.getTag(R.id.cyl_placeholder_state) as? CYLPlaceholderFactoryPlayer)?.let { return it }
+        return CYLPlaceholderFactoryPlayer(view, player).also { view.setTag(R.id.cyl_placeholder_state, it) }
+    }
 }
 
 // The engine's player around an app's CYLPlaceholderAnimationPlayer. The engine knows only "loops"; the view passes

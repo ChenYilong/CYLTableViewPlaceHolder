@@ -2,4 +2,6 @@
 <!-- The tag that keeps a RecyclerView's placeholder state (cyl_placeholderViewBlock, cyl_reloadData). -->
 <resources>
     <item name="cyl_placeholder_state" type="id" />
+    <!-- The player an app's animation factory made for a view (CYLPlaceholderView.registerAnimationFactory). -->
+    <item name="cyl_placeholder_factory_player" type="id" />
 </resources>
