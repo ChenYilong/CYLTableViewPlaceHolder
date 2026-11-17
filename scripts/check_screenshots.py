@@ -18,7 +18,10 @@ import os
 import re
 import sys
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:  # Pillow is not part of the system Python on macOS or Ubuntu.
+    raise SystemExit("error: this script needs Pillow: python3 -m pip install pillow (or a venv; CI installs it)")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS = os.path.join(ROOT, "docs", "assets")

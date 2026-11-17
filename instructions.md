@@ -1028,7 +1028,8 @@ no tool and no check behind them). From now on a screenshot that breaks the rule
 2. **Name the originals** `<platform>-...-<commit>-<yyyymmdd>.<png|jpg|jpeg>` (platform: ios, android, harmonyos,
    wechat-miniprogram, flutter, react-native), commit them in `docs/assets/`, and list them in the sheet. A single
    screenshot used as evidence is a one-panel sheet too, never a bare capture.
-3. **Run the checker before every commit that adds or changes an image:** `python3 scripts/check_screenshots.py`. It
+3. **Run the checker before every commit that adds or changes an image:** `python3 scripts/check_screenshots.py`. Both
+   scripts need Pillow (`python3 -m pip install pillow`, or a venv where the system Python refuses it). It
    fails on any image in `docs/assets/` that is neither a sheet with a complete record nor an original one uses. CI
    runs it (`Docs navigation` job), so a pull request with a non-conforming screenshot fails.
 4. **Never add to `docs/assets/screenshot-legacy.txt`.** It lists the images committed before the rule; replace an
