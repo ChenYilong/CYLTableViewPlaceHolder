@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（706 / 706 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (706 of 706 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（600 / 600 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (600 of 600 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | TODO：从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`，2026-11-17）尚未计入本表；计入后评分为 72 / 100，需逐个找出 iOS 对应（UIScrollView 与 CYLRefresh 控件）。 | TODO: the refresh kernel and the styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`, 2026-11-17) are not counted in this table yet; counted, the score is 72 / 100, and each needs its iOS counterpart (UIScrollView and the CYLRefresh controls). |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
@@ -324,7 +324,7 @@
 | `CYLRefreshIconView.scrubsWhilePulling` (var) | Whether the pull scrubs the animation instead of playing it (`scrubsWhilePulling`). | `CYLRefreshIconView` `scrubsWhilePulling` |  |
 | `CYLRefreshIconView.updateForState` (fun) | Shows and plays the icon of [state] (`updateForState:`); a state without one keeps the last icon. | `CYLRefreshIconView` `-updateForState:` |  |
 | `CYLRefreshIconView.updateForPullingPercent` (fun) | Scrubs the icon to [pullingPercent], 0 to 1, while pulling (`updateForPullingPercent:`). | `CYLRefreshIconView` `-updateForPullingPercent:` |  |
-| `CYLRefreshIconView.ANIMATION_FILE_PATH` (val) | The animation file a registered player plays. | `CYLPlaceholderItemAnimationFilePath` |  |
+| `CYLRefreshIconView.ANIMATION_FILE_PATH` (val) | The animation file the animation engine (or a registered factory) plays. | `CYLPlaceholderItemAnimationFilePath` |  |
 | `CYLRefreshIconView.IMAGES` (val) | The image frames, a list of drawables. | `CYLPlaceholderItemImages` | added 2026-11-16 for Android parity |
 | `CYLRefreshIconView.DURATION` (val) | The image frames' total duration, in seconds. | `CYLPlaceholderItemAnimationDuration` | added 2026-11-16 for Android parity |
 | `CYLRefreshIconView.SIZE` (val) | The icon's size in dp, width and height. | `CYLPlaceholderItemAnimationSize` |  |
@@ -395,133 +395,6 @@
 | `CYLRefreshNormalTrailer.arrowView` (val) | The arrow, pointing left until the pull passes the trigger (`arrowView`). | `CYLRefreshNormalTrailer` `arrowView` |  |
 | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock` (fun) | A trailer that runs [refreshingBlock] when released past the trigger (`trailerWithRefreshingBlock:`). | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` |  |
 | `cyl_trailer` (var) | The list's trailer (the iOS `UIScrollView.cyl_trailer`). | `cyl_trailer` | matched by the iOS name its KDoc cites |
-
-## `android/placeholder-lottie/src/main/kotlin/com/cyl/placeholder/lottie/CYLLottiePlaceholderItemAnimator.kt`
-
-| Android API | 描述 / Description | iOS API | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLLottiePlaceholderItemAnimator` (object) | Plays Lottie JSON files with lottie-android (iOS `CYLLottiePlaceholderItemAnimator`). | `CYLLottiePlaceholderItemAnimator` | matched by the iOS name its KDoc cites |
-| `CYLLottiePlaceholderItemAnimator.animator` (val) | The Lottie animator (`animator`). | `CYLLottiePlaceholderItemAnimator` `animator` | matched by the iOS name its KDoc cites |
-| `CYLLottiePlaceholderItemAnimator.register` (fun) | Adds [animator] to the shared registry (`registerAnimator:` on the shared registry). | `CYLLottiePlaceholderItemAnimator` `registerAnimator:` | matched by the iOS name its KDoc cites |
-| `CYLLottiePlaceholderItemAnimatorInstaller` (class) | Registers [CYLLottiePlaceholderItemAnimator.animator] when the app starts; declared in this module's manifest. | `+[CYLLottiePlaceholderItemAnimator load]` (registers itself) | Android registers through a ContentProvider at startup; iOS through +load |
-
-## `android/placeholder-pag/src/main/kotlin/com/cyl/placeholder/pag/CYLPAGPlaceholderItemAnimator.kt`
-
-| Android API | 描述 / Description | iOS API | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLPAGPlaceholderItemAnimator` (object) | Plays PAG files with libpag (iOS `CYLPAGPlaceholderItemAnimator`). | `CYLPAGPlaceholderItemAnimator` |  |
-| `CYLPAGPlaceholderItemAnimator.animator` (val) | The PAG animator (`animator`). | `CYLPAGPlaceholderItemAnimator` `animator` | matched by the iOS name its KDoc cites |
-| `CYLPAGPlaceholderItemAnimator.register` (fun) | Adds [animator] to the shared registry (`registerAnimator:` on the shared registry). | `CYLPAGPlaceholderItemAnimator` `registerAnimator:` | matched by the iOS name its KDoc cites |
-| `CYLPAGPlaceholderItemAnimatorInstaller` (class) | Registers [CYLPAGPlaceholderItemAnimator.animator] when the app starts; declared in this module's manifest. | `+[CYLPAGPlaceholderItemAnimator load]` (registers itself) | Android: a ContentProvider; iOS: +load |
-
-## `android/placeholder-rive/src/main/kotlin/com/cyl/placeholder/rive/CYLRivePlaceholderItemAnimator.kt`
-
-| Android API | 描述 / Description | iOS API | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLRivePlaceholderItemAnimator` (object) | Plays Rive files with rive-android (iOS `CYLRivePlaceholderItemAnimator`). | `CYLRivePlaceholderItemAnimator` |  |
-| `CYLRivePlaceholderItemAnimator.animator` (val) | The Rive animator (`animator`). | `CYLRivePlaceholderItemAnimator` `animator` |  |
-| `CYLRivePlaceholderItemAnimator.register` (fun) | Adds [animator] to the shared registry (`registerAnimator:` on the shared registry). | `CYLRivePlaceholderItemAnimator` `registerAnimator:` | matched by the iOS name its KDoc cites |
-| `CYLRivePlaceholderItemAnimatorInstaller` (class) | Starts the Rive runtime and registers [CYLRivePlaceholderItemAnimator.animator] when the app starts; declared in this module's manifest. | `+[CYLRivePlaceholderItemAnimator load]` (registers itself) | Android: a ContentProvider; iOS: +load |
-
-## `android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderAnimation.kt`
-
-| Android API | 描述 / Description | iOS API | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimatorPriority` (typealias) | An animator's rank when several can play a file (iOS `CYLPlaceholderItemAnimatorPriority`); higher wins. | `CYLPlaceholderItemAnimatorPriority` |  |
-| `CYLPlaceholderItemAnimatorPriorityDefault` (val) | The default rank (iOS `CYLPlaceholderItemAnimatorPriorityDefault`). | `CYLPlaceholderItemAnimatorPriorityDefault` | matched by the iOS name its KDoc cites |
-| `CYLPlaceholderItemAnimatorPriorityFallback` (val) | The rank of an animator used only when no other fits (iOS `CYLPlaceholderItemAnimatorPriorityFallback`). | `CYLPlaceholderItemAnimatorPriorityFallback` | matched by the iOS name its KDoc cites |
-| `CYLPlaceholderAnimationOption` (typealias) | An option of an animation file (iOS `CYLPlaceholderAnimationOption`): a key of the options map. | `CYLPlaceholderAnimationOption` |  |
-| `CYLPlaceholderAnimationOptions` (object) | The Rive options, with the iOS values (`CYLPlaceholderAnimationOptionRive…`). | `CYLPlaceholderAnimationOptionRive…` constants | one object holding the iOS option constants |
-| `CYLPlaceholderAnimationOptions.RiveArtboard` (val) | The artboard's name. | `CYLPlaceholderAnimationOptionRiveArtboard` |  |
-| `CYLPlaceholderAnimationOptions.RiveStateMachine` (val) | The state machine's name. | `CYLPlaceholderAnimationOptionRiveStateMachine` |  |
-| `CYLPlaceholderAnimationOptions.RiveActiveProperty` (val) | The boolean input that is on while active. | `CYLPlaceholderAnimationOptionRiveActiveProperty` |  |
-| `CYLPlaceholderAnimationOptions.RiveActiveDuration` (val) | How long the active input stays on, in seconds. | `CYLPlaceholderAnimationOptionRiveActiveDuration` |  |
-| `CYLPlaceholderAnimationOptions.RiveTriggerProperty` (val) | The trigger fired on play (a view-model property). | `CYLPlaceholderAnimationOptionRiveTriggerProperty` |  |
-| `CYLPlaceholderAnimationOptions.RiveColor` (val) | The color property. | `CYLPlaceholderAnimationOptionRiveColor` |  |
-| `CYLPlaceholderAnimationOptions.RiveInput` (val) | The state machine's boolean input. | `CYLPlaceholderAnimationOptionRiveInput` |  |
-| `CYLPlaceholderAnimationOptions.RiveTriggerInput` (val) | The state machine's trigger input. | `CYLPlaceholderAnimationOptionRiveTriggerInput` |  |
-| `CYLPlaceholderAnimationOptions.RiveAnimation` (val) | A linear animation's name. | `CYLPlaceholderAnimationOptionRiveAnimation` |  |
-| `CYLPlaceholderAnimationOptions.RiveLegacyRuntime` (val) | Whether to use the legacy runtime. | `CYLPlaceholderAnimationOptionRiveLegacyRuntime` |  |
-| `CYLPlaceholderItemAnimationFileMatching` (interface) | Says which files an animator plays (iOS `CYLPlaceholderItemAnimationFileMatching`). | `CYLPlaceholderItemAnimationFileMatching` |  |
-| `CYLPlaceholderItemAnimationFileMatching.identifier` (val) | The animator's name, unique in a registry (`identifier`). | `CYLPlaceholderItemAnimationFileMatching` `identifier` |  |
-| `CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL` (fun) | Whether the animator plays the file at [URL] (`canAnimateFileAtURL:`). | `CYLPlaceholderItemAnimationFileMatching` `-canAnimateFileAtURL:` |  |
-| `CYLPlaceholderItemAnimationFileMatching.priority` (val) | The animator's rank (`priority`). | `CYLPlaceholderItemAnimationFileMatching` `priority` |  |
-| `CYLPlaceholderItemAnimationFileMatching.fileExtensions` (val) | The file extensions it plays, lower case, without the dot (`fileExtensions`). | `CYLPlaceholderItemAnimationFileMatching` `fileExtensions` |  |
-| `CYLPlaceholderItemAnimationFileMatching.attributeKeys` (val) | Its own attribute key for each generic key (`attributeKeys`). | `CYLPlaceholderItemAnimationFileMatching` `attributeKeys` |  |
-| `CYLPlaceholderItemAnimationViewFactory` (interface) | Makes animation views and their players (iOS `CYLPlaceholderItemAnimationViewFactory`). | `CYLPlaceholderItemAnimationViewFactory` |  |
-| `CYLPlaceholderItemAnimationViewFactory.animationViewWithURL` (fun) | A view playing the file at [URL], [width] by [height] pixels, or null (`animationViewWithURL:size:contentMode:`). | `CYLPlaceholderItemAnimationViewFactory` `-animationViewWithURL:size:contentMode:` |  |
-| `CYLPlaceholderItemAnimationViewFactory.playerForAnimationView` (fun) | The player of a view this factory made, or null (`playerForAnimationView:`). | `CYLPlaceholderItemAnimationViewFactory` `-playerForAnimationView:` |  |
-| `CYLPlaceholderItemAnimator` (interface) | One animation engine: it says which files it plays and makes their views (iOS `CYLPlaceholderItemAnimator`). | `CYLPlaceholderItemAnimator` |  |
-| `CYLPlaceholderItemAnimationPlayer` (interface) | Controls one animation view (iOS `CYLPlaceholderItemAnimationPlayer`). | `CYLPlaceholderItemAnimationPlayer` |  |
-| `CYLPlaceholderItemAnimationPlayer.animationView` (val) | The view it controls, while it lives (`animationView`). | `CYLPlaceholderItemAnimationPlayer` `animationView` |  |
-| `CYLPlaceholderItemAnimationPlayer.play` (fun) | Plays from the start (`play`). | `CYLPlaceholderItemAnimationPlayer` `-play` |  |
-| `CYLPlaceholderItemAnimationPlayer.showLastFrame` (fun) | Shows the last frame (`showLastFrame`). | `CYLPlaceholderItemAnimationPlayer` `-showLastFrame` |  |
-| `CYLPlaceholderItemAnimationPlayer.stop` (fun) | Stops (`stop`). | `CYLPlaceholderItemAnimationPlayer` `-stop` |  |
-| `CYLPlaceholderItemAnimationPlayer.progress` (var) | The position, 0 to 1 (`progress`). | `CYLPlaceholderItemAnimationPlayer` `progress` |  |
-| `CYLPlaceholderItemAnimationPlayer.animationSpeed` (var) | The speed, 1 for normal (`animationSpeed`). | `CYLPlaceholderItemAnimationPlayer` `animationSpeed` |  |
-| `CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount` (fun) | Repeats [repeatCount] times, 0 for ever; false when the engine cannot (`setAnimationRepeatCount:`). | `CYLPlaceholderItemAnimationPlayer` `-setAnimationRepeatCount:` |  |
-| `CYLPlaceholderItemAnimationPlayer.applyDarkColors` (fun) | Recolors for dark mode when [night] (`applyDarkColors:traitCollection:`). | `CYLPlaceholderItemAnimationPlayer` `-applyDarkColors:traitCollection:` |  |
-| `CYLPlaceholderItemAnimationPlayer.applyColors` (fun) | Recolors; null restores the file's colors (`applyColors:traitCollection:`). | `CYLPlaceholderItemAnimationPlayer` `-applyColors:traitCollection:` |  |
-| `CYLPlaceholderItemAnimationBasePlayer` (class) | A player that does nothing, to subclass (iOS `CYLPlaceholderItemAnimationBasePlayer`). | `CYLPlaceholderItemAnimationBasePlayer` |  |
-| `CYLPlaceholderItemAnimationPlayableView` (interface) | What an animation view does for the short path (iOS `CYLPlaceholderItemAnimationPlayableView`): a view that implements it needs no player class. | `CYLPlaceholderItemAnimationPlayableView` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView` (fun) | Plays from the start (`cyl_playAnimationView`). | `CYLPlaceholderItemAnimationPlayableView` `-cyl_playAnimationView` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame` (fun) | Shows the last frame (`cyl_showAnimationViewLastFrame`). | `CYLPlaceholderItemAnimationPlayableView` `-cyl_showAnimationViewLastFrame` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView` (fun) | Stops (`cyl_stopAnimationView`). | `CYLPlaceholderItemAnimationPlayableView` `-cyl_stopAnimationView` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors` (fun) | Recolors; null restores (`cyl_applyAnimationViewColors:`). | `CYLPlaceholderItemAnimationPlayableView` `-cyl_applyAnimationViewColors:` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount` (fun) | Repeats [repeatCount] times, 0 for ever; false when it cannot (`cyl_setAnimationViewRepeatCount:`). | `CYLPlaceholderItemAnimationPlayableView` `-cyl_setAnimationViewRepeatCount:` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady` (val) | Whether the animation is loaded (`cyl_isAnimationViewReady`). | `CYLPlaceholderItemAnimationPlayableView` `cyl_isAnimationViewReady` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler` (var) | Called once loaded (`cyl_animationViewReadyHandler`). | `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewReadyHandler` |  |
-| `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler` (var) | Called when loading fails (`cyl_animationViewErrorHandler`). | `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewErrorHandler` |  |
-| `CYLPlaceholderItemAnimationViewProviding` (interface) | Makes playable views for the short path (iOS `CYLPlaceholderItemAnimationViewProviding`). | `CYLPlaceholderItemAnimationViewProviding` |  |
-| `CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL` (fun) | A playable view for the file, or null (`cyl_animationViewWithFileURL:options:contentMode:`). | `CYLPlaceholderItemAnimationViewProviding` `+cyl_animationViewWithFileURL:options:contentMode:` |  |
-| `CYLPlaceholderItemViewAnimator` (class) | An animator made from a view provider: the short path to add an engine (iOS `CYLPlaceholderItemViewAnimator`). | `CYLPlaceholderItemViewAnimator` |  |
-| `CYLPlaceholderItemViewAnimator.viewProvider` (var) | Makes the views (`viewProvider`). | `CYLPlaceholderItemViewAnimator` `viewProvider` |  |
-| `CYLPlaceholderItemViewAnimator.options` (var) | Options passed to the provider for every file. | `CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` (options per file in the item attributes) | iOS passes the options per file (CYLPlaceholderItemAnimationOptions) |
-| `CYLPlaceholderItemAnimatorRegistering` (interface) | Keeps animators (iOS `CYLPlaceholderItemAnimatorRegistering`). | `CYLPlaceholderItemAnimatorRegistering` |  |
-| `CYLPlaceholderItemAnimatorRegistering.registerAnimator` (fun) | Adds [animator], replacing one with the same identifier (`registerAnimator:`). | `CYLPlaceholderItemAnimatorRegistering` `-registerAnimator:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier` (fun) | Removes the animator called [identifier] (`unregisterAnimatorWithIdentifier:`). | `CYLPlaceholderItemAnimatorRegistering` `-unregisterAnimatorWithIdentifier:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.animators` (fun) | Every animator, highest rank first (`animators`). | `CYLPlaceholderItemAnimatorRegistering` `-animators` |  |
-| `CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier` (fun) | The animator called [identifier], or null (`animatorWithIdentifier:`). | `CYLPlaceholderItemAnimatorRegistering` `-animatorWithIdentifier:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.animatorForURL` (fun) | The animator for the file at [URL], or null (`animatorForURL:`). | `CYLPlaceholderItemAnimatorRegistering` `-animatorForURL:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.animatorForAttributes` (fun) | The animator for the file named in [attributes], or null (`animatorForAttributes:`). | `CYLPlaceholderItemAnimatorRegistering` `-animatorForAttributes:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey` (fun) | The key in [attributes] that stands for [genericKey], or null (`attributeKeyForGenericKey:inAttributes:`). | `CYLPlaceholderItemAnimatorRegistering` `-attributeKeyForGenericKey:inAttributes:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.bindURL` (fun) | Plays the file at [URL] with [animator] whatever its extension; null undoes it (`bindURL:toAnimator:`). | `CYLPlaceholderItemAnimatorRegistering` `-bindURL:toAnimator:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey` (fun) | Every animator's key for [genericKey], then the generic key (`attributeKeysForGenericKey:`). | `CYLPlaceholderItemAnimatorRegistering` `-attributeKeysForGenericKey:` |  |
-| `CYLPlaceholderItemAnimatorRegistering.fileExtensions` (fun) | Every file extension an animator plays (`fileExtensions`). | `CYLPlaceholderItemAnimatorRegistering` `-fileExtensions` |  |
-| `CYLPlaceholderItemAnimatorRegistry` (class) | The animators of the app (iOS `CYLPlaceholderItemAnimatorRegistry`); the companion's calls act on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` |  |
-| `CYLPlaceholderItemAnimatorRegistry.ANIMATION_FILE_PATH` (val) | The generic attribute key of an animation file. | `CYLPlaceholderItemAnimationFilePath` |  |
-| `CYLPlaceholderItemAnimatorRegistry.sharedRegistry` (val) | The app's registry (`sharedRegistry`); the GIF animator is in it from the start. | `CYLPlaceholderItemAnimatorRegistry` `+sharedRegistry` |  |
-| `CYLPlaceholderItemAnimatorRegistry.registerAnimator` (fun) | [registerAnimator] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+registerAnimator:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier` (fun) | [unregisterAnimatorWithIdentifier] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+unregisterAnimatorWithIdentifier:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.animators` (fun) | [animators] of [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+animators` |  |
-| `CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier` (fun) | [animatorWithIdentifier] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+animatorWithIdentifier:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.animatorForURL` (fun) | [animatorForURL] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+animatorForURL:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.animatorForAttributes` (fun) | [animatorForAttributes] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+animatorForAttributes:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey` (fun) | [attributeKeyForGenericKey] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+attributeKeyForGenericKey:inAttributes:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.bindURL` (fun) | [bindURL] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+bindURL:toAnimator:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey` (fun) | [attributeKeysForGenericKey] on [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+attributeKeysForGenericKey:` |  |
-| `CYLPlaceholderItemAnimatorRegistry.fileExtensions` (fun) | [fileExtensions] of [sharedRegistry]. | `CYLPlaceholderItemAnimatorRegistry` `+fileExtensions` |  |
-| `CYLPlaceholderItemAnimationViewMaking` (interface) | Makes animation views through a registry (iOS `CYLPlaceholderItemAnimationViewMaking`). | `CYLPlaceholderItemAnimationViewMaking` |  |
-| `CYLPlaceholderItemAnimationViewMaking.animationViewWithURL` (fun) | A view playing the file, or null when no animator plays it (`animationViewWithURL:size:contentMode:`). | `CYLPlaceholderItemAnimationViewMaking` `-animationViewWithURL:size:contentMode:` |  |
-| `CYLPlaceholderItemAnimationViewMaking.playerForView` (fun) | The player of a view this factory made, or null (`playerForView:`). | `CYLPlaceholderItemAnimationViewMaking` `-playerForView:` |  |
-| `CYLPlaceholderItemAnimationViewMaking.isAnimationView` (fun) | Whether this factory made [view] (`isAnimationView:`). | `CYLPlaceholderItemAnimationViewMaking` `-isAnimationView:` |  |
-| `CYLPlaceholderItemAnimationFactory` (class) | The factory of animation views (iOS `CYLPlaceholderItemAnimationFactory`); the companion's calls act on [sharedFactory]. | `CYLPlaceholderItemAnimationFactory` |  |
-| `CYLPlaceholderItemAnimationFactory.registry` (val) | The animators it uses (`registry`). | `CYLPlaceholderItemAnimationFactory` `registry` |  |
-| `CYLPlaceholderItemAnimationFactory.sharedFactory` (val) | The factory on the shared registry (`sharedFactory`). | `CYLPlaceholderItemAnimationFactory` `+sharedFactory` |  |
-| `CYLPlaceholderItemAnimationFactory.animationViewWithURL` (fun) | [animationViewWithURL] on [sharedFactory]. | `CYLPlaceholderItemAnimationFactory` `+animationViewWithURL:size:contentMode:` |  |
-| `CYLPlaceholderItemAnimationFactory.playerForView` (fun) | [playerForView] on [sharedFactory]. | `CYLPlaceholderItemAnimationFactory` `+playerForView:` |  |
-| `CYLPlaceholderItemAnimationFactory.isAnimationView` (fun) | [isAnimationView] on [sharedFactory]. | `CYLPlaceholderItemAnimationFactory` `+isAnimationView:` |  |
-| `CYLPlaceholderAnimationBackend` (enum) | The engine behind an animation view (iOS `CYLPlaceholderAnimationBackend`). | `CYLPlaceholderAnimationBackend` |  |
-| `CYLPlaceholderAnimationErrorHandler` (typealias) | Called when an animation cannot load (iOS `CYLPlaceholderAnimationErrorHandler`). | `CYLPlaceholderAnimationErrorHandler` |  |
-| `CYLPlaceholderAnimationView` (class) | A view that plays one animation file with the registered animator for it (iOS `CYLPlaceholderAnimationView`). | `CYLPlaceholderAnimationView` |  |
-| `CYLPlaceholderAnimationView.animationView` (val) | The engine's view (`animationView`). | `CYLPlaceholderAnimationView` `animationView` |  |
-| `CYLPlaceholderAnimationView.player` (val) | The engine's player (`player`). | `CYLPlaceholderAnimationView` `player` |  |
-| `CYLPlaceholderAnimationView.animatorIdentifier` (val) | The animator that made it (`animatorIdentifier`). | `CYLPlaceholderAnimationView` `animatorIdentifier` |  |
-| `CYLPlaceholderAnimationView.backend` (val) | The engine (`backend`). | `CYLPlaceholderAnimationView` `backend` |  |
-| `CYLPlaceholderAnimationView.playing` (var) | Whether it is playing (`playing`). | `CYLPlaceholderAnimationView` `playing` |  |
-| `CYLPlaceholderAnimationView.withFileURL` (fun) | A view playing the file at [fileURL], [width] by [height] pixels, with [options] for its engine (`initWithFileURL:size:contentMode:options:error:`); null, after calling [errorHandler], when the size is empty or no regist | `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:error:`, `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:options:error:` |  |
-| `CYLGIFPlaceholderItemAnimator` (object) | Plays GIF files with the platform's decoder (iOS `CYLGIFPlaceholderItemAnimator`): animated on Android 9 and later, the first frame before. | `CYLGIFPlaceholderItemAnimator` |  |
-| `CYLGIFPlaceholderItemAnimator.animator` (val) | The GIF animator (`animator`), registered in the shared registry from the start. | `CYLGIFPlaceholderItemAnimator` `animator` |  |
 
 ## `android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderComponent.kt`
 
@@ -610,7 +483,7 @@
 | `CYLPlaceholderStackView.hintLabel` (val) | The first hint, or null. | `CYLPlaceholderStackView` `hintLabel` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderStackView.button` (val) | The first button, or null. | `CYLPlaceholderStackView` `button` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderStackView.backgroundAction` (var) | The action a tap anywhere on the placeholder runs, or null (`backgroundAction`). | `CYLPlaceholderStackView` `backgroundAction` |  |
-| `CYLPlaceholderStackView.animationView` (var) | The animation playing in place of the first icon, or null when no registered animator plays any of the scenario's files and the still image shows (`animationView`). | `CYLPlaceholderStackView` `animationView` | matched by the iOS name its KDoc cites |
+| `CYLPlaceholderStackView.animationView` (val) | The animation view playing in place of the first icon (made by CYLTabBarController's CYLAnimatedItem engine, the first item's inherited `animationView`), or null when no animator plays any of the scenario's files (the ap | `CYLPlaceholderStackView` `animationView` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderStackView.appendComponent` (fun) | Adds [component] at the end (`appendComponent:`). | `CYLPlaceholderStackView` `-appendComponent:` |  |
 | `CYLPlaceholderStackView.appendComponentView` (fun) | Adds your own [view] at the end, [spacingBefore] dp below the previous one; a tap runs [action] (`appendComponentView:action:spacingBefore:`). | `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` |  |
 | `CYLPlaceholderStackView.setHandler` (fun) | Runs [handler] for [action], replacing its handler (`setHandler:forAction:`); null removes it. | `CYLPlaceholderStackView` `-setHandler:forAction:` |  |
@@ -678,7 +551,7 @@
 | `CYLPlaceholderBadgeAppearance.animationDuration` (var) | How long a change animates, in seconds. | `CYLPlaceholderBadgeAppearance` `animationDuration` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderBadgeAppearance.animatesChanges` (var) | Whether changes animate. | `CYLPlaceholderBadgeAppearance` `animatesChanges` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderBadgeAppearance.sharedAppearance` (val) | The shared appearance (`sharedAppearance`). | `CYLPlaceholderBadgeAppearance` `+sharedAppearance` |  |
-| `CYLPlaceholderAnimationPlayer` (interface) | Plays a placeholder animation (iOS `CYLPlaceholderAnimationPlayer`). | `CYLPlaceholderAnimationPlayer` |  |
+| `CYLPlaceholderAnimationPlayer` (interface) | Plays a placeholder animation (iOS `CYLPlaceholderAnimationPlayer`): what an app's own factory returns ([CYLPlaceholderView.registerAnimationFactory]). | `CYLPlaceholderAnimationPlayer` |  |
 | `CYLPlaceholderAnimationPlayer.view` (val) | The view that shows the animation. | `CYLPlaceholderItemAnimationPlayer` `animationView` |  |
 | `CYLPlaceholderAnimationPlayer.ready` (val) | Whether the animation is loaded (`ready`). | `CYLPlaceholderAnimationPlayer` `ready` |  |
 | `CYLPlaceholderAnimationPlayer.errorHandler` (var) | Called when the animation cannot load (`errorHandler`). | `CYLPlaceholderAnimationPlayer` `errorHandler` |  |
@@ -693,8 +566,8 @@
 | `CYLPlaceholderAnimationFactory` (typealias) | Makes a player for an animation file (iOS `CYLPlaceholderAnimationFactory`); null when it cannot. | `CYLPlaceholderAnimationFactory` |  |
 | `CYLPlaceholderTapHandler` (typealias) | Called when a tappable placeholder is tapped (iOS `CYLPlaceholderTapHandler`). | `CYLPlaceholderTapHandler` |  |
 | `CYLPlaceholderView` (class) | An icon (or an animation) above a text, with an optional badge and tap (iOS `CYLPlaceholderView`). | `CYLPlaceholderView`, `CYLPlaceholderView` `-initWithImage:text:`, `CYLPlaceholderView` `-initWithStyle:message:` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderView.imageView` (val) | The icon (`imageView`). | `CYLPlaceholderView` `imageView` |  |
-| `CYLPlaceholderView.textLabel` (val) | The text (`textLabel`). | `CYLPlaceholderView` `textLabel` |  |
+| `CYLPlaceholderView.imageView` (val) | The icon (`imageView`): the inherited `iconView`. | `CYLPlaceholderView` `imageView` |  |
+| `CYLPlaceholderView.textLabel` (val) | The text (`textLabel`): the inherited `titleView`; set it through `title`. | `CYLPlaceholderView` `textLabel` |  |
 | `CYLPlaceholderView.badgeLabel` (val) | The badge's label (`badgeLabel`). | `CYLPlaceholderView` `badgeLabel` |  |
 | `CYLPlaceholderView.autoPlaysAnimation` (var) | Whether the animation (a file or an image sequence) plays by itself while the view is on screen, true by default; a component that drives it, such as a refresh icon following the pull, sets false and calls [playPlacehold | -[CYLPlaceholderView stopPlaceholderAnimation] | iOS has no flag: a component that drives the animation stops it after creating the view (CYLRefreshIconView) and plays or scrubs it itself |
 | `CYLPlaceholderView.defaultTitleFont` (var) | The text size in sp (`defaultTitleFont`). | `CYLPlaceholderView` `defaultTitleFont` |  |
@@ -702,8 +575,8 @@
 | `CYLPlaceholderView.defaultSelectedTitleFont` (var) | The text size in sp when selected, or 0 for [defaultTitleFont] (`defaultSelectedTitleFont`). | `CYLPlaceholderView` `defaultSelectedTitleFont` |  |
 | `CYLPlaceholderView.defaultSelectionIndicatorImage` (var) | The image drawn behind a selected placeholder by default (`defaultSelectionIndicatorImage`). | `CYLPlaceholderView` `defaultSelectionIndicatorImage` |  |
 | `CYLPlaceholderView.selectionIndicatorImage` (var) | The image drawn behind a selected placeholder (`selectionIndicatorImage`). | `CYLPlaceholderView` `selectionIndicatorImage` |  |
-| `CYLPlaceholderView.selectedState` (var) | Whether the placeholder is selected (`selected`). | `CYLPlaceholderView` `selected` |  |
-| `CYLPlaceholderView.contentMargin` (var) | The margin around the content, in dp (`contentMargin`). | `CYLPlaceholderView` `contentMargin` |  |
+| `CYLPlaceholderView.selectedState` (var) | Whether the placeholder is selected (`selected`); it also selects the view, which shows `selectedImage`. | `CYLPlaceholderView` `selected` |  |
+| `CYLPlaceholderView.contentMargin` (var) | The margin around the content, in dp (`contentMargin`): the view's padding. | `CYLPlaceholderView` `contentMargin` |  |
 | `CYLPlaceholderView.preferredMaxLayoutWidth` (var) | The widest the text lays out, in px, or 0 for no limit (`preferredMaxLayoutWidth`). | `CYLPlaceholderView` `preferredMaxLayoutWidth` |  |
 | `CYLPlaceholderView.reportsContentSize` (var) | Whether the view measures to its content rather than filling its parent (`reportsContentSize`). | `CYLPlaceholderView` `reportsContentSize` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderView.badgeValue` (var) | The badge's value: null for none, "" for a dot, else the text (`badgeValue`). | `CYLPlaceholderView` `badgeValue` |  |
@@ -714,17 +587,18 @@
 | `CYLPlaceholderView.tapHighlighted` (var) | Whether a finger is down on it (`tapHighlighted`). | `CYLPlaceholderView` `tapHighlighted` |  |
 | `CYLPlaceholderView.tapInteractive` (val) | Whether a tap does something now (`tapInteractive`). | `CYLPlaceholderView` `tapInteractive` |  |
 | `CYLPlaceholderView.animationRepeatCount` (var) | How often the animation repeats, 0 for ever (`animationRepeatCount`). | `CYLPlaceholderView` `animationRepeatCount` |  |
+| `CYLPlaceholderView.accessibilityLabel` (var) | What accessibility services read for the placeholder (iOS `accessibilityLabel`); null reads the text and the badge. | `UIView` `accessibilityLabel` (UIKit, inherited by `CYLPlaceholderView`) | Android reads it into the view's contentDescription, which CYLAnimatedItemView rebuilds from the title |
 | `CYLPlaceholderView.itemAttributes` (var) | The description the view was made from, with the iOS keys (`itemAttributes`). | `CYLPlaceholderView` `itemAttributes` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderView.showBadgeWithStyle` (fun) | Shows a badge of [style] with [value] (`showBadgeWithStyle:value:`). | `CYLPlaceholderView` `-showBadgeWithStyle:value:` |  |
 | `CYLPlaceholderView.performTap` (fun) | Calls [tapHandler] as a tap would; false when the placeholder is not interactive (`performTap`). | `CYLPlaceholderView` `-performTap` |  |
-| `CYLPlaceholderView.setAnimationFile` (fun) | Shows the animation at [path] instead of the icon, through the factory registered for its extension; false when none is registered or it cannot load (the icon stays). | `CYLPlaceholderView` `-setAnimationFile:` | added 2026-11-16 for Android parity |
-| `CYLPlaceholderView.setAnimationImages` (fun) | Shows [images] as one animated icon of [duration] seconds (iOS `CYLPlaceholderItemImages` with `CYLPlaceholderItemAnimationDuration`): played, stopped and moved by the same calls as an animation file. | `CYLPlaceholderItemImages` | matched by the iOS name its KDoc cites |
-| `CYLPlaceholderView.playPlaceholderAnimation` (fun) | Plays the animation or the image sequence (`playPlaceholderAnimation`). | `CYLPlaceholderView` `-playPlaceholderAnimation` |  |
-| `CYLPlaceholderView.stopPlaceholderAnimation` (fun) | Stops the animation or the image sequence (`stopPlaceholderAnimation`). | `CYLPlaceholderView` `-stopPlaceholderAnimation` |  |
-| `CYLPlaceholderView.showPlaceholderAnimationLastFrame` (fun) | Shows the animation's last frame (`showPlaceholderAnimationLastFrame`). | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` |  |
+| `CYLPlaceholderView.setAnimationFile` (fun) | Shows the animation at [path] instead of the icon (the inherited `animationURL`), through the animator of the CYLAnimatedItem engine for it (an app's [registerAnimationFactory] first); false when no animator plays it (fo | `CYLPlaceholderView` `-setAnimationFile:` | added 2026-11-16 for Android parity |
+| `CYLPlaceholderView.setAnimationImages` (fun) | Shows [images] as one animated icon of [duration] seconds (iOS `CYLPlaceholderItemImages` with `CYLPlaceholderItemAnimationDuration`): played, stopped and moved by the same calls as an animation file, and it replaces an  | `CYLPlaceholderItemImages` | matched by the iOS name its KDoc cites |
+| `CYLPlaceholderView.playPlaceholderAnimation` (fun) | Plays the animation or the image sequence (`playPlaceholderAnimation`): the inherited `playAnimation()`. | `CYLPlaceholderView` `-playPlaceholderAnimation` |  |
+| `CYLPlaceholderView.stopPlaceholderAnimation` (fun) | Stops the animation or the image sequence (`stopPlaceholderAnimation`): the inherited `stopAnimation()`. | `CYLPlaceholderView` `-stopPlaceholderAnimation` |  |
+| `CYLPlaceholderView.showPlaceholderAnimationLastFrame` (fun) | Shows the animation's last frame (`showPlaceholderAnimationLastFrame`): the inherited `showAnimationLastFrame()`. | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` |  |
 | `CYLPlaceholderView.setPlaceholderAnimationProgress` (fun) | Moves the animation, or the image sequence while it is not playing, to [progress], 0 to 1 (`setPlaceholderAnimationProgress:`). | `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` |  |
-| `CYLPlaceholderView.setPlaceholderAnimationSpeed` (fun) | Plays the animation at [speed] (`setPlaceholderAnimationSpeed:`). | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` |  |
-| `CYLPlaceholderView.registerAnimationFactory` (fun) | Plays files ending in [extension] ("json", "pag", "riv", "gif") with [factory] (`registerAnimationFactory:forFileExtension:`). | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` |  |
+| `CYLPlaceholderView.setPlaceholderAnimationSpeed` (fun) | Plays the animation at [speed] (`setPlaceholderAnimationSpeed:`): the inherited `animationSpeed`. | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` |  |
+| `CYLPlaceholderView.registerAnimationFactory` (fun) | Plays files ending in [extension] ("json", "pag", "riv", "gif") with [factory] (`registerAnimationFactory:forFileExtension:`): the factory becomes an animator of the CYLAnimatedItem engine, looked up before the engine's  | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` |  |
 | `CYLPlaceholderView.imageNameForStyle` (fun) | The resource name of [style]'s icon, "CYLPlaceholderWifiOff" as on iOS (`imageNameForStyle:`). | `CYLPlaceholderView` `+imageNameForStyle:` |  |
 | `CYLPlaceholderView.imageForStyle` (fun) | [style]'s icon (`imageForStyle:`); every one but Empty is meant to be tinted. | `CYLPlaceholderView` `+imageForStyle:` |  |
 | `CYLPlaceholderView.localizedTextForMessage` (fun) | [message]'s localized text (`localizedTextForMessage:`). | `CYLPlaceholderView` `+localizedTextForMessage:` |  |

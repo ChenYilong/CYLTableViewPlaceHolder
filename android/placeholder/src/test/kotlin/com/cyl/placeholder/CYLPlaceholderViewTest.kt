@@ -3,10 +3,13 @@ package com.cyl.placeholder
 import android.content.Context
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.cyl.animateditem.CYLAnimatedItemAxis
+import com.cyl.animateditem.CYLAnimatedItemView
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,7 +17,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * CYLPlaceholderView with the iOS API (docs/Android-API-Map.md).
+ * CYLPlaceholderView with the iOS API (docs/Android-API-Map.md), a CYLAnimatedItemView of CYLTabBarController.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -89,16 +92,56 @@ class CYLPlaceholderViewTest {
         }, "json")
         try {
             val view = CYLPlaceholderView(context, CYLPlaceholderStyle.Empty, CYLPlaceholderMessage.Empty)
-            assertFalse("no factory for gif", view.setAnimationFile("a.gif"))
+            assertFalse("no animator for the file type", view.setAnimationFile("a.unknownext"))
             assertTrue(view.setAnimationFile("CYLPlaceholderEmpty.json"))
-            assertEquals(View.GONE, view.imageView.visibility)
+            assertNotNull(view.animationView)
+            assertEquals("the animation shows over the icon", View.INVISIBLE, view.imageView.visibility)
+            assertTrue("repeats for ever by default", calls.contains("repeat:0"))
+            calls.clear()
             view.playPlaceholderAnimation()
             view.setPlaceholderAnimationSpeed(2f)
             view.stopPlaceholderAnimation()
-            assertEquals(listOf("repeat:0", "play:CYLPlaceholderEmpty.json", "speed:2.0", "stop"), calls)
+            assertEquals(listOf("play:CYLPlaceholderEmpty.json", "speed:2.0", "stop"),
+                calls.filter { it.startsWith("play:") || it == "speed:2.0" || it == "stop" })
+            view.animationRepeatCount = 1
+            assertEquals("plays once", "repeat:1", calls.last())
         } finally {
             CYLPlaceholderView.registerAnimationFactory(null, "json")
         }
+    }
+
+    @Test
+    fun isACYLAnimatedItemViewOnTheVerticalAxis() {
+        val view = CYLPlaceholderView(context, CYLPlaceholderStyle.WifiOff, CYLPlaceholderMessage.NoInternet)
+        val item: CYLAnimatedItemView = view
+        assertEquals(CYLAnimatedItemAxis.Vertical, item.axis)
+        assertSame("imageView is the inherited icon view", item.iconView, view.imageView)
+        assertSame("textLabel is the inherited title view", item.titleView, view.textLabel)
+        assertEquals("No internet connection", item.title.toString())
+        assertNotNull(item.image)
+    }
+
+    @Test
+    fun withoutAnAnimationLibraryTheCoreShowsTheStaticImage() {
+        // [EN] The core depends on no animation library: the engine finds none of them by reflection here.
+        for (name in listOf("com.airbnb.lottie.LottieAnimationView", "org.libpag.PAGView", "app.rive.runtime.kotlin.RiveAnimationView")) {
+            assertFalse("$name is not on the core's classpath", runCatching { Class.forName(name) }.isSuccess)
+        }
+        val view = CYLPlaceholderView(context, CYLPlaceholderStyle.NoInternet, "Offline")
+        val icon = view.imageView.drawable
+        for (file in listOf("CYLPlaceholderLoading.json", "CYLPlaceholderLoading.pag", "CYLPlaceholderLoading.riv")) {
+            assertFalse(file, view.setAnimationFile("asset:${CYLPlaceholderStackView.ANIMATION_FOLDER}/$file"))
+            assertNull(file, view.animationView)
+            assertEquals(file, View.VISIBLE, view.imageView.visibility)
+            assertSame("the static image given at setup", icon, view.imageView.drawable)
+        }
+        // [EN] The file is kept, as CYLAnimatedItemView does; local options after '?' move behind '#'.
+        assertFalse(view.setAnimationFile("asset:CYLRefreshIcon.riv?artboard=refresh&animation=active"))
+        assertEquals("asset:CYLRefreshIcon.riv#artboard=refresh&animation=active", view.animationURL)
+        // [EN] No static image: the inherited placeholder shows (CYLAnimatedItemView's display priority).
+        val bare = CYLPlaceholderView(context, null, "Loading")
+        assertFalse(bare.setAnimationFile("asset:${CYLPlaceholderStackView.ANIMATION_FOLDER}/CYLPlaceholderLoading.json"))
+        assertNotNull("the component's placeholder", bare.imageView.drawable)
     }
 
     @Test

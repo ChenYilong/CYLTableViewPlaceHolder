@@ -39,29 +39,6 @@
  "CYLRefreshIconView.SIZE": {
   "ios": "`CYLPlaceholderItemAnimationSize`"
  },
- "CYLLottiePlaceholderItemAnimatorInstaller": {
-  "ios": "`+[CYLLottiePlaceholderItemAnimator load]` (registers itself)",
-  "note": "Android registers through a ContentProvider at startup; iOS through +load"
- },
- "CYLPAGPlaceholderItemAnimatorInstaller": {
-  "ios": "`+[CYLPAGPlaceholderItemAnimator load]` (registers itself)",
-  "note": "Android: a ContentProvider; iOS: +load"
- },
- "CYLRivePlaceholderItemAnimatorInstaller": {
-  "ios": "`+[CYLRivePlaceholderItemAnimator load]` (registers itself)",
-  "note": "Android: a ContentProvider; iOS: +load"
- },
- "CYLPlaceholderAnimationOptions": {
-  "ios": "`CYLPlaceholderAnimationOptionRive…` constants",
-  "note": "one object holding the iOS option constants"
- },
- "CYLPlaceholderItemViewAnimator.options": {
-  "ios": "`CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` (options per file in the item attributes)",
-  "note": "iOS passes the options per file (CYLPlaceholderItemAnimationOptions)"
- },
- "CYLPlaceholderItemAnimatorRegistry.ANIMATION_FILE_PATH": {
-  "ios": "`CYLPlaceholderItemAnimationFilePath`"
- },
  "CYLPlaceholderComponent.image": {
   "ios": "`CYLPlaceholderComponent` `attributes[CYLPlaceholderItemImage]` / `CYLPlaceholderItemStyle`"
  },
@@ -166,5 +143,9 @@
  "CYLPlaceholderView.autoPlaysAnimation": {
   "ios": "-[CYLPlaceholderView stopPlaceholderAnimation]",
   "note": "iOS has no flag: a component that drives the animation stops it after creating the view (CYLRefreshIconView) and plays or scrubs it itself"
+ },
+ "CYLPlaceholderView.accessibilityLabel": {
+  "ios": "`UIView` `accessibilityLabel` (UIKit, inherited by `CYLPlaceholderView`)",
+  "note": "Android reads it into the view's contentDescription, which CYLAnimatedItemView rebuilds from the title"
  }
 }

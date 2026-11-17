@@ -25,10 +25,9 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCES = [
+    # The former animator modules placeholder-lottie / -pag / -rive are gone: the core plays animations through
+    # CYLTabBarController's CYLAnimatedItem engine (module :cylanimateditem), which is not part of this repository.
     'android/placeholder/src/main/kotlin',
-    'android/placeholder-lottie/src/main/kotlin',
-    'android/placeholder-pag/src/main/kotlin',
-    'android/placeholder-rive/src/main/kotlin',
     'android/merged/library/src/main/kotlin',
 ]
 # The refresh kernel and the styles folded in from SmartRefreshLayout (com.cyl.refresh.layout / header / footer /
