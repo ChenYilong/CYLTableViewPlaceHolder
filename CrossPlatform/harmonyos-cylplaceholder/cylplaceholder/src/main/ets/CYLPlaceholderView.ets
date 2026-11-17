@@ -786,12 +786,41 @@ struct CYLPlaceholderAnimatedItemContent {
  * (made by the animator the app registered); CYLAnimatedItemView calls it only for a registered type.
  */
 @Builder
-function cylPlaceholderAnimatedItemBuilder(context: CYLAnimatedItemAnimationContext) {
+export function cylPlaceholderAnimatedItemBuilder(context: CYLAnimatedItemAnimationContext) {
   if (cylAnimatedItemModelForURL(context.url) !== null) {
     CYLPlaceholderAnimatedItemContent({
       model: cylAnimatedItemModelForURL(context.url) as CYLPlaceholderViewModel,
       animationContext: context
     })
+  }
+}
+
+/**
+ * A placeholder model's animation in an app's own CYLAnimatedItemView: for an icon with a title and nothing else, where
+ * a CYLPlaceholderStackView (several components, buttons, hints, a long wrapping text) is more than the page needs.
+ * Call attach(model) when the item appears and detach(model) when it goes; give the item animationURL(model) and
+ * `animationBuilder: CYLPlaceholderAnimatedItemBuilder`. Playback stays on the model (playPlaceholderAnimation,
+ * stopPlaceholderAnimation, setPlaceholderAnimationSpeed, animationRepeatCount), as with a CYLPlaceholderView.
+ */
+export class CYLPlaceholderAnimatedItem {
+  /** Registers the model with the builder and makes its player (it plays unless the app asked for a frame or a stop). */
+  static attach(model: CYLPlaceholderViewModel): void {
+    cylRetainAnimatedItemModel(model);
+    if (model.animationFileName !== null) {
+      model.cyl_attachAnimation();
+      model.playPlaceholderAnimationIfIdle();
+    }
+  }
+
+  /** Stops and drops the player and the registration. */
+  static detach(model: CYLPlaceholderViewModel): void {
+    model.cyl_releaseAnimation();
+    cylReleaseAnimatedItemModel(model);
+  }
+
+  /** The item's animationUrl (the file with the model's key; call after attach); '' without an animation. */
+  static animationURL(model: CYLPlaceholderViewModel): string {
+    return model.cyl_animatedItemURL;
   }
 }
 
@@ -847,16 +876,11 @@ export struct CYLPlaceholderView {
   @ObjectLink model: CYLPlaceholderViewModel;
 
   aboutToAppear(): void {
-    cylRetainAnimatedItemModel(this.model);
-    if (this.model.animationFileName !== null) {
-      this.model.cyl_attachAnimation();
-      this.model.playPlaceholderAnimationIfIdle();
-    }
+    CYLPlaceholderAnimatedItem.attach(this.model);
   }
 
   aboutToDisappear(): void {
-    this.model.cyl_releaseAnimation();
-    cylReleaseAnimatedItemModel(this.model);
+    CYLPlaceholderAnimatedItem.detach(this.model);
   }
 
   @Builder

@@ -36,7 +36,9 @@ export {
   CYLPlaceholderViewModel,
   CYLPlaceholderTapHandler,
   CYLPlaceholderTintFilter,
-  CYLPlaceholderDrawingColor
+  CYLPlaceholderDrawingColor,
+  CYLPlaceholderAnimatedItem,
+  cylPlaceholderAnimatedItemBuilder as CYLPlaceholderAnimatedItemBuilder
 } from './src/main/ets/CYLPlaceholderView';
 export {
   CYLPlaceholderStackView,

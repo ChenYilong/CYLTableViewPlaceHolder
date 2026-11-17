@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 已完成（85 / 100）：图标 + 标题只用 CYLAnimatedItemView，CYLPlaceholderStackView 只用于它覆盖不了的情况 / Done (85 / 100): An icon with a title uses CYLAnimatedItemView only; CYLPlaceholderStackView only where the item cannot cover it
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "kill OneDrive / use only CYLAnimatedItemView only on this icon and title case instead of CYLPlaceholderStackView. CYLPlaceholderStackView only used in case which CYLAnimatedItemView cannot cover"
+- Requirements: (1) stop OneDrive; (2) the icon + title case (the Celebrate animation detail page of the last issue) draws with CYLAnimatedItemView, not CYLPlaceholderStackView; (3) CYLPlaceholderStackView stays only where the item view cannot do the job.
+- Acceptance: full marks (100) = OneDrive stopped; every non-iOS page showing only an icon and a title on the item view, playback controls working, centered, other cases reviewed and listed; pushed. Pass (60) = OneDrive stopped and the HarmonyOS detail page on the item view, verified.
+- Done: (1) OneDrive and OneDrive.Sync.Service stopped (no OneDrive process left). (2) HarmonyOS: new core API `CYLPlaceholderAnimatedItem` (attach / detach / animationURL) and the exported `CYLPlaceholderAnimatedItemBuilder`, so a page shows a placeholder model's animation in its own CYLAnimatedItemView while playback stays on the model; `CYLPlaceholderView` uses the same attach / detach. `AnimationDetailPage` now draws `CYLAnimatedItemView` (vertical, 180, title) instead of a one-component stack. Emulator (x86_64, local build without .so): icon and title centered (x 658 / 658.5), Play all restarts, the loop switch loops (frames drawn across 10 s), unit tests 89 / 89 ([screenshot](assets/harmonyos-animation-detail-item-view.jpeg)). (3) Reviewed and kept: scenario pages (several components, actions) and SupportPage (icon, title and a hint) stay stacks; Android's detail page already uses `CYLPlaceholderView`, a CYLAnimatedItemView subclass (it adds the GIF loop the plain item lacks); the mini program detail page draws its own player and title (no stack) and stays, because `cyl-animated-item` has no font weight and one title color (its title is 17px semibold, white in dark mode).
+- Found upstream (reported to the CYLTabBarController HarmonyOS session): `CYLAnimatedItemView.spacing` is never applied (title against the icon); no titleLines (one line only).
+- Score: 85 / 100. TODO (-5): title spacing on HarmonyOS once upstream applies `spacing`. TODO (-5): the mini program detail page on `cyl-animated-item` once it has a title font weight and a dark-mode title color. TODO (-5): an Android plain-item detail page once the item loops GIFs itself.
+
 ### 已完成（90 / 100）：占位图标题默认居中，图标与标题中心线对齐 / Done (90 / 100): Placeholder titles centered by default; the icon and the title share one center line
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
