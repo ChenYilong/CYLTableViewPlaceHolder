@@ -1200,6 +1200,10 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
     // value and the badge label is hidden from VoiceOver; otherwise the badge label is read on its own.
     BOOL placeholderIsAccessibilityElement = self.isAccessibilityElement;
     self.badgeLabel.isAccessibilityElement = !placeholderIsAccessibilityElement;
+    // [EN] Now a direct subview of the control (the old inner item view is gone): hide it from the accessibility tree too,
+    //      or it is still exposed beside the element.
+    // [CN] 现在它直接是控件的子视图（原来的内部条目视图已删除）：同时从无障碍树中隐藏，否则仍会与元素并列出现。
+    self.badgeLabel.accessibilityElementsHidden = placeholderIsAccessibilityElement;
     if (badgeValue) {
         NSString *description = badgeValue.length ? badgeValue :
             CYLPlaceholderLocalizedString(@"CYLPlaceholderBadgeNewContent", @"New content");
