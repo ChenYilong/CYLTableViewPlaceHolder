@@ -12,7 +12,7 @@ import { CYLAnimatedItemEngines } from 'cylanimateditem';
 import { CYLPlaceholderItemAnimatorRegistry, CYLRefreshRiveRegisterViewBuilder } from 'cylplaceholder';
 import { CYLLottiePlaceholderItemAnimator } from './CYLLottiePlaceholderItemAnimator';
 import { CYLPAGPlaceholderItemAnimator } from './CYLPAGPlaceholderItemAnimator';
-import { CYLRivePlaceholderItemAnimator } from './CYLRivePlaceholderItemAnimator';
+import { CYLRivePlaceholderItemAnimator, cylRiveIsSupported } from './CYLRivePlaceholderItemAnimator';
 import { cylRefreshRiveViewBuilder } from './CYLRefreshRiveView';
 
 /**
@@ -22,11 +22,20 @@ import { cylRefreshRiveViewBuilder } from './CYLRefreshRiveView';
 export function ExampleRegisterAnimationEngines(): void {
   CYLAnimatedItemEngines.register('Lottie');
   CYLAnimatedItemEngines.register('PAG');
-  CYLAnimatedItemEngines.register('Rive');
+  // FIX: issue E15: Rive only where @ohos/rive has its native library (arm64-v8a); elsewhere Rive files show the
+  // static image or the placeholder, as with a type that is left out.
+  const riveSupported = cylRiveIsSupported();
+  if (riveSupported) {
+    CYLAnimatedItemEngines.register('Rive');
+  }
   const registry = CYLPlaceholderItemAnimatorRegistry.sharedRegistry();
   registry.registerAnimator(new CYLPAGPlaceholderItemAnimator());
-  registry.registerAnimator(CYLRivePlaceholderItemAnimator.animator);
+  if (riveSupported) {
+    registry.registerAnimator(CYLRivePlaceholderItemAnimator.animator);
+  }
   // Lottie last, at the fallback priority (it also claims ".json").
   registry.registerAnimator(new CYLLottiePlaceholderItemAnimator());
-  CYLRefreshRiveRegisterViewBuilder(wrapBuilder(cylRefreshRiveViewBuilder));
+  if (riveSupported) {
+    CYLRefreshRiveRegisterViewBuilder(wrapBuilder(cylRefreshRiveViewBuilder));
+  }
 }

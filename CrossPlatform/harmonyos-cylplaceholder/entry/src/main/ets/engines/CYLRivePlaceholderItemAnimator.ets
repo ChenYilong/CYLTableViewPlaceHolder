@@ -59,8 +59,22 @@ export function CYLRiveActiveDuration(options: Record<string, string>): number {
 
 let riveInitialized = false;
 
-/** Initializes @ohos/rive once for the library (throws when the runtime cannot load). */
+/**
+ * Whether @ohos/rive can run here. FIX: HarmonyOS issue E15 (docs/HarmonyOS.md): @ohos/rive 1.0.4 ships its native
+ * library (libohos_rive.so) for arm64-v8a only, so on an x86_64 emulator a Rive view crashed the app later
+ * ("Accessing released C++ object: RiveArtboardRenderer" in onSurfaceChanged). Without arm64-v8a the example does not
+ * register Rive, and every Rive file shows its static image or the placeholder instead.
+ */
+export function cylRiveIsSupported(): boolean {
+  const abis: string = deviceInfo.abiList ?? '';
+  return abis.split(',').map((abi: string) => abi.trim()).indexOf('arm64-v8a') >= 0;
+}
+
+/** Initializes @ohos/rive once for the library (throws when the runtime cannot load or the device cannot run it). */
 export function cylEnsureRiveInitialized(): void {
+  if (!cylRiveIsSupported()) {
+    throw new Error('@ohos/rive has no native library for this device (' + (deviceInfo.abiList ?? '') + ')');
+  }
   if (!riveInitialized) {
     initializeRive();
     riveInitialized = true;
