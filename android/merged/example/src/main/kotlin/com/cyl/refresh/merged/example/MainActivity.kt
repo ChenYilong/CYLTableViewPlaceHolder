@@ -1,9 +1,11 @@
 package com.cyl.refresh.merged.example
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import com.cyl.tabbar.CYLPlusButton
 import com.cyl.tabbar.CYLTabBarConfiguration
 import com.cyl.tabbar.CYLTabBarController
@@ -22,6 +24,11 @@ class MainActivity : AppCompatActivity() {
         CYLPlusButton.registerPlusButton(ExamplePlusButton.Provider)
         val controller = CYLTabBarController.tabBarControllerWithConfigurationFile(this, "cyl_tabbar_configuration.json")
         setContentView(controller.view)
+        // Android 15 draws the app edge to edge: the status bar area shows the light window background, while the
+        // DarkActionBar theme asks for light status bar icons (white on white, nearly invisible). Dark icons in the
+        // light theme, light icons in the dark one.
+        val night = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !night
     }
 }
 
