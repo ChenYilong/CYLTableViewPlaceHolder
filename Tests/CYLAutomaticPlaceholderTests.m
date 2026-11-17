@@ -6,8 +6,70 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
-#import "../CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h"
 #import "CYLRefresh.h"
+
+/// [EN] Where the placeholder laid its content out (its icon, title and selection indicator share this rect).
+/// [CN] 占位图内容的布局位置（图标、标题与选中指示共用该区域）。
+static CGRect CYLItemFrame(CYLPlaceholderView *view) {
+    return [[view valueForKey:@"itemFrame"] CGRectValue];
+}
+
+/// [EN] A local file for an animator: the base class makes no animation view for a missing or empty local file.
+/// [CN] 供 animator 使用的本地文件：本地文件不存在或为空时，基类不会创建动画视图。
+static NSString *CYLTemporaryAnimationFile(NSString *extension) {
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:
+        [NSString stringWithFormat:@"CYLPlaceholder-%@.%@", NSUUID.UUID.UUIDString, extension]];
+    [[@"animation" dataUsingEncoding:NSUTF8StringEncoding] writeToFile:path atomically:YES];
+    return path;
+}
+
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+/// [EN] The view of the test animator. [CN] 测试 animator 的视图。
+@interface CYLTestEngineView : UIView
+@end
+@implementation CYLTestEngineView
+@end
+
+/// [EN] A player of CYLTabBarController's animation engine that counts what the placeholder asks.
+/// [CN] CYLTabBarController 动画引擎的播放器，记录占位图的调用。
+@interface CYLTestEnginePlayer : CYLTabBarItemAnimationBasePlayer <CYLTabBarItemAnimationPlayer>
+@property (nonatomic) NSInteger plays;
+@property (nonatomic) NSInteger stops;
+@property (nonatomic) NSInteger lastFrames;
+@property (nonatomic) CGFloat progress;
+@property (nonatomic) CGFloat animationSpeed;
+@property (nonatomic) BOOL loops;
+@end
+@implementation CYLTestEnginePlayer
+- (void)play { self.plays++; self.progress = 0; }
+- (void)stop { self.stops++; }
+- (void)showLastFrame { self.lastFrames++; self.progress = 1; }
+@end
+
+/// [EN] An animator registered with `CYLTabBarItemAnimatorRegistry`, as an animation subspec registers its own.
+/// [CN] 注册到 `CYLTabBarItemAnimatorRegistry` 的 animator，与动画子库注册自己的 animator 相同。
+@interface CYLTestEngineAnimator : NSObject <CYLTabBarItemAnimator>
+@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy) NSArray<NSString *> *fileExtensions;
+@property (nonatomic) CYLTabBarItemAnimatorPriority priority;
+@property (nonatomic) CGSize lastSize;
+@property (nonatomic, strong) CYLTestEnginePlayer *lastPlayer;
+@end
+@implementation CYLTestEngineAnimator
+- (BOOL)canAnimateFileAtURL:(NSURL *)URL {
+    return [self.fileExtensions containsObject:URL.pathExtension.lowercaseString];
+}
+- (UIView *)animationViewWithURL:(NSURL *)URL size:(CGSize)size contentMode:(UIViewContentMode)contentMode {
+    self.lastSize = size;
+    return [[CYLTestEngineView alloc] initWithFrame:(CGRect){CGPointZero, size}];
+}
+- (id<CYLTabBarItemAnimationPlayer>)playerForAnimationView:(UIView *)view {
+    if (![view isKindOfClass:CYLTestEngineView.class]) return nil;
+    self.lastPlayer = [[CYLTestEnginePlayer alloc] initWithAnimationView:view];
+    return self.lastPlayer;
+}
+@end
+#endif
 
 
 /// Scopes appearance-proxy values to these tests.
@@ -249,10 +311,10 @@
     XCTAssertEqual(indicator.image.renderingMode, UIImageRenderingModeAlwaysTemplate);
     XCTAssertEqualObjects(indicator.tintColor, UIColor.blueColor);
     XCTAssertEqual(indicator.contentMode, UIViewContentModeCenter);
-    XCTAssertTrue(CGRectEqualToRect(indicator.frame, item.bounds));
+    XCTAssertTrue(CGRectEqualToRect(indicator.frame, CYLItemFrame(placeholder)));
     placeholder.frame = CGRectMake(0, 0, 480, 320);
     [placeholder layoutIfNeeded];
-    XCTAssertTrue(CGRectEqualToRect(indicator.frame, item.bounds));
+    XCTAssertTrue(CGRectEqualToRect(indicator.frame, CYLItemFrame(placeholder)));
     placeholder.selectionIndicatorImage = [image resizableImageWithCapInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
     XCTAssertEqual(indicator.contentMode, UIViewContentModeScaleToFill);
     placeholder.selectionIndicatorImage = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
@@ -269,16 +331,18 @@
         NSURL *url, CGSize size, UIViewContentMode mode, NSDictionary *options, NSError **error) {
         calls++;
         XCTAssertEqualObjects(url.pathExtension.lowercaseString, @"cyltest");
+        XCTAssertNil(url.fragment, @"the factory gets the file; the options come separately");
         XCTAssertEqualWithAccuracy(size.width, 40, 0.01);
         XCTAssertEqualObjects(options[@"setting"], @"value");
         player = [CYLTestAnimationPlayer new];
         return player;
     } forFileExtension:@"CYLTEST"]);
-    XCTAssertFalse([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"gif"]);
+    XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"gif"], @"no extension is reserved");
     XCTAssertFalse([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@".cyltest"]);
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
+    NSString *path = CYLTemporaryAnimationFile(@"cyltest");
     NSDictionary *attributes = @{
-        CYLPlaceholderItemAnimationFilePath: @"/local/example.cyltest",
+        CYLPlaceholderItemAnimationFilePath: path,
         CYLPlaceholderItemAnimationSize: @[@40, @30],
         CYLPlaceholderItemAnimationOptions: @{@"setting": @"value"},
         CYLPlaceholderItemImage: image
@@ -288,25 +352,30 @@
         imageBundle:nil error:&error];
     XCTAssertNotNil(placeholder);
     XCTAssertEqual(calls, 1);
-    XCTAssertFalse(placeholder.imageView.layer.hidden);
+    XCTAssertEqual(placeholder.animationView, (UIView *)player, @"the factory's view plays through the engine");
+    XCTAssertFalse(placeholder.imageView.layer.hidden, @"not ready yet: the static image shows");
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     [window addSubview:placeholder];
     if (!UIAccessibilityIsReduceMotionEnabled()) XCTAssertEqual(player.plays, 1);
     player.ready = YES;
     player.readyHandler();
-    XCTAssertTrue(placeholder.imageView.layer.hidden);
+    [self drainUpdates];
+    XCTAssertTrue(placeholder.imageView.layer.hidden, @"ready: the animation covers the static image");
     [placeholder showPlaceholderAnimationLastFrame];
     XCTAssertEqual(player.lastFrames, 1);
     [placeholder stopPlaceholderAnimation];
     XCTAssertGreaterThan(player.stops, 0);
     player.errorHandler([NSError errorWithDomain:@"CYLTest" code:1 userInfo:nil]);
-    XCTAssertFalse(placeholder.imageView.layer.hidden);
+    [self drainUpdates];
+    XCTAssertFalse(placeholder.imageView.layer.hidden, @"a failure shows the static image again");
+    XCTAssertEqual(placeholder.imageView.image, image);
     XCTAssertNil(player.superview);
     NSMutableDictionary *invalidSize = [attributes mutableCopy];
     invalidSize[CYLPlaceholderItemAnimationSize] = @[@0, @30];
     [[CYLPlaceholderView alloc] initWithItemAttributes:invalidSize imageBundle:nil error:&error];
     XCTAssertEqual(calls, 1);
     XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"cyltest"]);
+    [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
 }
 
 - (void)testRegisteredAnimationReceivesResolvedAppearanceColors {
@@ -318,8 +387,9 @@
         player.ready = YES;
         return player;
     } forFileExtension:@"cylcolors"]);
+    NSString *path = CYLTemporaryAnimationFile(@"cylcolors");
     NSDictionary *attributes = @{
-        CYLPlaceholderItemAnimationFilePath: @"/local/example.cylcolors",
+        CYLPlaceholderItemAnimationFilePath: path,
         CYLPlaceholderItemAnimationColors: @{@"Shape.Color": @"#ff0000", @"Other": UIColor.greenColor},
         CYLPlaceholderItemAnimationDarkColors: @{@"Shape.Color": @"#0000ff"}
     };
@@ -346,6 +416,7 @@
     XCTAssertNotNil(error);
     [placeholder removeFromSuperview];
     XCTAssertTrue([CYLPlaceholderView registerAnimationFactory:nil forFileExtension:@"cylcolors"]);
+    [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
 }
 
 - (void)drainUpdates {
@@ -514,69 +585,114 @@
     XCTAssertNotNil(error);
 }
 
-- (void)testGIFAnimationUsesConfiguredSizeAndStopsOffscreen {
-    NSMutableData *data = [NSMutableData data];
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)data,
-        CFSTR("com.compuserve.gif"), 2, NULL);
-    XCTAssertNotEqual(destination, NULL);
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(20, 20)];
-    for (UIColor *color in @[UIColor.redColor, UIColor.blueColor]) {
-        UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-            [color setFill];
-            UIRectFill(CGRectMake(0, 0, 20, 20));
-        }];
-        NSDictionary *properties = @{(__bridge NSString *)kCGImagePropertyGIFDictionary:
-            @{(__bridge NSString *)kCGImagePropertyGIFDelayTime: @0.2}};
-        CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef)properties);
-    }
-    XCTAssertTrue(CGImageDestinationFinalize(destination));
-    CFRelease(destination);
-    NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:
-        [NSString stringWithFormat:@"CYLPlaceholder-%@.gif", NSUUID.UUID.UUIDString]]];
+- (void)testPlaceholderViewIsTheSharedAnimatedItemView {
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithStyle:CYLPlaceholderStyleEmpty message:CYLPlaceholderMessageEmpty];
+    XCTAssertTrue([view isKindOfClass:CYLAnimatedItemView.class], @"CYLPlaceholderView subclasses CYLAnimatedItemView");
+    XCTAssertEqual(view.textLabel, view.titleLabel);
+    XCTAssertEqual(view.axis, CYLAnimatedItemAxisVertical);
+    XCTAssertEqual(view.image, view.imageView.image, @"the static image is the base class's image");
+    XCTAssertEqualObjects(view.title, view.textLabel.text);
+    // [EN] The placeholder's accessibility, not the base class's button. [CN] 使用占位图的无障碍设置，而不是基类的按钮。
+    XCTAssertFalse(view.isAccessibilityElement, @"a decoration until it has a label or a tap event");
+    XCTAssertFalse(view.accessibilityTraits & UIAccessibilityTraitButton);
+    XCTAssertNil(view.accessibilityIdentifier);
+    XCTAssertTrue(view.textLabel.isAccessibilityElement, @"the text reads on its own");
+    view.tapHandler = ^(CYLPlaceholderView *placeholderView) {};
+    XCTAssertTrue(view.isAccessibilityElement);
+    XCTAssertTrue(view.accessibilityTraits & UIAccessibilityTraitButton);
+    // [EN] An image set on `imageView` becomes the static image, so the base class keeps it through state changes.
+    // [CN] 设置到 `imageView` 的图片成为静态图片，基类在状态变化时保留它。
+    UIImage *other = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleError];
+    view.imageView.image = other;
+    XCTAssertEqual(view.image, other);
+    view.selected = YES;
+    view.selected = NO;
+    XCTAssertEqual(view.imageView.image, other);
+    XCTAssertFalse(view.imageView.hidden);
+    // [EN] The display priority of the base class: an animation that cannot play shows the static image, else the
+    //      component's placeholder. [CN] 基类的显示优先级：无法播放的动画显示静态图片，没有时显示组件的占位图。
+    view.animationURL = [NSURL fileURLWithPath:@"/missing/animation.json"];
+    XCTAssertEqual(view.imageView.image, other);
+    CYLPlaceholderView *bare = [[CYLPlaceholderView alloc] initWithImage:nil text:@"Text"];
+    bare.animationURL = [NSURL fileURLWithPath:@"/missing/animation.json"];
+    XCTAssertEqual(bare.imageView.image, bare.placeholderImage);
+    XCTAssertNil(bare.animationView);
+}
+
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+- (void)testAnAnimationFilePlaysThroughTheEngineAndFollowsThePlaybackPolicy {
+    CYLTestEngineAnimator *animator = [CYLTestEngineAnimator new];
+    animator.identifier = @"CYLTestGIF";
+    animator.fileExtensions = @[@"gif"];
+    animator.priority = 2000;
+    [CYLTabBarItemAnimatorRegistry registerAnimator:animator];
+    NSString *path = [CYLPlaceholderView pathForBundledAnimation:@"CYLRefreshArrows.gif"];
+    XCTAssertNotNil(path);
     NSError *error = nil;
-    XCTAssertTrue([data writeToURL:url options:NSDataWritingAtomic error:&error]);
     CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
-        CYLPlaceholderItemGIFURL: url, CYLPlaceholderItemGIFSize: @[@40, @30],
+        CYLPlaceholderItemGIFFilePath: path, CYLPlaceholderItemGIFSize: @[@40, @30],
         CYLPlaceholderItemTitle: @"Offline"
     } imageBundle:nil error:&error];
     XCTAssertNotNil(placeholder);
+    XCTAssertTrue(CGSizeEqualToSize(animator.lastSize, CGSizeMake(40, 30)), @"%@", NSStringFromCGSize(animator.lastSize));
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     placeholder.frame = window.bounds;
     [window addSubview:placeholder];
     [placeholder layoutIfNeeded];
-    UIImageView *animationView = nil;
-    for (UIView *child in placeholder.imageView.superview.subviews) {
-        if ([child isKindOfClass:UIImageView.class] && child != placeholder.imageView) animationView = (UIImageView *)child;
-    }
-    XCTAssertNotNil(animationView);
+    UIView *animationView = placeholder.animationView;
+    XCTAssertTrue([animationView isKindOfClass:CYLTestEngineView.class]);
+    XCTAssertEqual(animationView.superview, placeholder);
     XCTAssertEqualWithAccuracy(CGRectGetWidth(animationView.frame), 40, 0.01);
     XCTAssertEqualWithAccuracy(CGRectGetHeight(animationView.frame), 30, 0.01);
+    XCTAssertTrue(placeholder.imageView.hidden, @"the animation covers the static image");
+    CYLTestEnginePlayer *player = (CYLTestEnginePlayer *)placeholder.animationPlayer;
+    XCTAssertEqual(player, animator.lastPlayer);
     if (!UIAccessibilityIsReduceMotionEnabled()) {
-        CAKeyframeAnimation *animation = (CAKeyframeAnimation *)[animationView.layer animationForKey:@"CYLPlaceholderGIF"];
-        XCTAssertNotNil(animation);
-        XCTAssertEqual(animation.values.count, 3);
-        XCTAssertEqual(animation.keyTimes.count, animation.values.count);
-        XCTAssertEqualWithAccuracy(animation.duration, 0.4, 0.02);
+        NSInteger plays = player.plays;
+        XCTAssertGreaterThan(plays, 0, @"plays once on screen");
+        NSInteger stops = player.stops;
         placeholder.hidden = YES;
-        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        XCTAssertGreaterThan(player.stops, stops, @"hidden: stopped");
         placeholder.hidden = NO;
-        XCTAssertNotNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        XCTAssertGreaterThan(player.plays, plays, @"shown again: plays");
+        stops = player.stops;
         [placeholder stopPlaceholderAnimation];
-        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
-        UIImage *first = animationView.image;
+        XCTAssertGreaterThan(player.stops, stops);
         [placeholder showPlaceholderAnimationLastFrame];
-        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
-        XCTAssertNotEqual(first, animationView.image);
+        XCTAssertEqual(player.lastFrames, 1);
+        plays = player.plays;
         [placeholder removeFromSuperview];
         [window addSubview:placeholder];
-        XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        XCTAssertEqual(player.plays, plays, @"a stopped animation stays stopped");
         [placeholder playPlaceholderAnimation];
-        XCTAssertNotNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
+        XCTAssertEqual(player.plays, plays + 1);
+        // [EN] The base class's spelling follows the same policy. [CN] 基类的写法遵循同样的策略。
+        stops = player.stops;
+        [placeholder stopAnimation];
+        XCTAssertGreaterThan(player.stops, stops);
+        [placeholder playAnimation];
+        XCTAssertEqual(player.plays, plays + 2);
     }
+    XCTAssertTrue([placeholder setPlaceholderAnimationSpeed:2]);
+    XCTAssertEqualWithAccuracy(player.animationSpeed, 2, 0.001);
+    placeholder.animationRepeatCount = 0;
+    XCTAssertTrue(player.loops, @"0 loops");
+    placeholder.animationRepeatCount = 1;
+    XCTAssertFalse(player.loops);
+    XCTAssertTrue([placeholder setPlaceholderAnimationProgress:0.5]);
+    XCTAssertEqualWithAccuracy(player.progress, 0.5, 0.001);
     [placeholder removeFromSuperview];
-    XCTAssertNil([animationView.layer animationForKey:@"CYLPlaceholderGIF"]);
-    XCTAssertTrue([[NSFileManager defaultManager] removeItemAtURL:url error:&error]);
+    [CYLTabBarItemAnimatorRegistry unregisterAnimatorWithIdentifier:@"CYLTestGIF"];
+    // [EN] Without an animator for the file the static image shows. [CN] 没有该文件的 animator 时显示静态图片。
+    CYLPlaceholderView *fallback = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemGIFFilePath: path, CYLPlaceholderItemStyle: @(CYLPlaceholderStyleRefresh)
+    } imageBundle:nil error:&error];
+    XCTAssertNil(fallback.animationView);
+    XCTAssertNotNil(fallback.imageView.image);
+    XCTAssertFalse(fallback.imageView.hidden);
+    XCTAssertFalse([fallback setAnimationFile:@"CYLRefreshArrows.gif"], @"no animator plays it");
 }
+#endif
 
 - (void)testUnavailableAnimationBackendPreservesStaticImage {
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
@@ -596,18 +712,6 @@
         XCTAssertFalse(placeholder.imageView.layer.hidden);
         XCTAssertEqual(placeholder.imageView.superview.subviews.count, 2);
     }
-}
-
-- (void)testAnimationAdapterRejectsInvalidInputs {
-    NSError *error = nil;
-    NSURL *url = [NSURL fileURLWithPath:@"/missing.json"];
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:url size:CGSizeZero
-        contentMode:UIViewContentModeScaleAspectFit error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorInvalidSize);
-    error = nil;
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:url size:CGSizeMake(40, 40)
-        contentMode:UIViewContentModeScaleAspectFit error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorBackendUnavailable);
 }
 
 - (void)testGIFFailureKeepsStaticImage {
@@ -633,30 +737,35 @@
     CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithImage:image text:@"Offline"];
     view.frame = CGRectMake(0, 0, 320, 480);
     [view layoutIfNeeded];
-    UIView *item = view.imageView.superview;
-    XCTAssertEqual(item, view.textLabel.superview);
+    // [EN] The icon and the title are the base class's subviews, laid out in the item frame.
+    // [CN] 图标与标题是基类的子视图，在 item 区域中布局。
+    XCTAssertEqual(view.imageView.superview, view);
+    XCTAssertEqual(view.textLabel.superview, view);
+    CGRect item = CYLItemFrame(view);
     XCTAssertEqualWithAccuracy(CGRectGetWidth(view.imageView.frame), 40, 0.01);
     XCTAssertEqualWithAccuracy(CGRectGetHeight(view.imageView.frame), 30, 0.01);
-    XCTAssertEqualWithAccuracy(CGRectGetMinY(view.imageView.frame),
-        (CGRectGetMinY(view.textLabel.frame) - 30) / 2, 0.01);
-    XCTAssertEqualWithAccuracy(CGRectGetMaxY(view.textLabel.frame), CGRectGetHeight(item.bounds) - 2, 0.01);
-    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), CGRectGetMidY(view.bounds), 0.01);
-    XCTAssertEqualWithAccuracy(CGRectGetMidX(view.imageView.frame), CGRectGetMidX(item.bounds), 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMinY(view.imageView.frame) - CGRectGetMinY(item),
+        (CGRectGetMinY(view.textLabel.frame) - CGRectGetMinY(item) - 30) / 2, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMaxY(view.textLabel.frame), CGRectGetMaxY(item) - 2, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(item), CGRectGetMidY(view.bounds), 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidX(view.imageView.frame), CGRectGetMidX(item), 0.01);
 
     view.textLabel.hidden = YES;
     [view layoutIfNeeded];
-    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.imageView.frame), CGRectGetMidY(item.bounds), 0.01);
+    item = CYLItemFrame(view);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.imageView.frame), CGRectGetMidY(item), 0.01);
     view.textLabel.hidden = NO;
     view.imageView.hidden = YES;
     [view layoutIfNeeded];
-    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.textLabel.frame), CGRectGetMidY(item.bounds), 0.01);
+    item = CYLItemFrame(view);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(view.textLabel.frame), CGRectGetMidY(item), 0.01);
     view.imageView.hidden = NO;
     view.textLabel.text = @"A longer message that should wrap in a narrow placeholder";
     view.frame = CGRectMake(0, 0, 160, 300);
     [view layoutIfNeeded];
     XCTAssertLessThanOrEqual(CGRectGetWidth(view.textLabel.frame), 128);
     XCTAssertGreaterThan(CGRectGetHeight(view.textLabel.frame), view.textLabel.font.lineHeight);
-    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), 150, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(CYLItemFrame(view)), 150, 0.01);
     view.textLabel.text = @"Short";
     view.textLabel.font = [UIFont systemFontOfSize:24];
     UIGraphicsImageRenderer *secondRenderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(60, 50)];
@@ -667,7 +776,7 @@
     XCTAssertEqualWithAccuracy(CGRectGetWidth(view.imageView.frame), 60, 0.01);
     XCTAssertEqualWithAccuracy(CGRectGetHeight(view.imageView.frame), 50, 0.01);
     XCTAssertGreaterThan(CGRectGetHeight(view.textLabel.frame), 20);
-    XCTAssertEqualWithAccuracy(CGRectGetMidY(item.frame), 150, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetMidY(CYLItemFrame(view)), 150, 0.01);
 }
 
 - (void)testConfiguredPlaceholderPropertyListAndPresets {
@@ -1088,7 +1197,7 @@ static BOOL CYLColorIsClose(UIColor *color, CGFloat r, CGFloat g, CGFloat b) {
     placeholder.selected = YES;
     UIImage *selected = render();
     XCTAssertTrue(CYLColorIsClose(CYLPixelColor(selected, imageCenter), 0, 1, 0));
-    CGRect item = [placeholder convertRect:placeholder.imageView.superview.bounds fromView:placeholder.imageView.superview];
+    CGRect item = CYLItemFrame(placeholder);
     XCTAssertTrue(CYLColorIsClose(CYLPixelColor(selected, CGPointMake(CGRectGetMinX(item) + 2, CGRectGetMinY(item) + 2)), 1, 0, 0));
     placeholder.selected = NO;
     UIImage *normal = render();

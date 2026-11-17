@@ -365,13 +365,15 @@
     XCTAssertEqualWithAccuracy(view.contentMargin, 16, 0.01, @"a full-screen placeholder keeps 16 points");
     view.frame = CGRectMake(0, 0, image.size.width + 8, 100);
     [view layoutIfNeeded];
-    UIView *item = view.imageView.superview;
-    XCTAssertGreaterThanOrEqual(CGRectGetWidth(item.frame), image.size.width - 0.5, @"no zero-width item");
-    XCTAssertEqualWithAccuracy(CGRectGetMidX(item.frame), CGRectGetMidX(view.bounds), 0.5);
+    // [EN] The item frame: where the placeholder lays out its icon and title. [CN] item 区域：占位图布局图标与标题的位置。
+    CGRect item = [[view valueForKey:@"itemFrame"] CGRectValue];
+    XCTAssertGreaterThanOrEqual(CGRectGetWidth(item), image.size.width - 0.5, @"no zero-width item");
+    XCTAssertEqualWithAccuracy(CGRectGetMidX(item), CGRectGetMidX(view.bounds), 0.5);
     CYLPlaceholderView *text = [[CYLPlaceholderView alloc] initWithImage:nil text:@"A long title that wraps over several lines of text"];
     text.frame = CGRectMake(0, 0, 200, 300);
     [text layoutIfNeeded];
-    XCTAssertGreaterThanOrEqual(CGRectGetMinX(text.textLabel.superview.frame), 16 - 0.5, @"wrapping text keeps the margins");
+    CGRect textItem = [[text valueForKey:@"itemFrame"] CGRectValue];
+    XCTAssertGreaterThanOrEqual(CGRectGetMinX(textItem), 16 - 0.5, @"wrapping text keeps the margins");
 }
 
 - (void)testHeaderAndFooterAutoHideCanBeSetSeparatelyOrTogether {

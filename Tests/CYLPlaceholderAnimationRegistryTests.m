@@ -1,30 +1,56 @@
 #import <XCTest/XCTest.h>
 #import <ImageIO/ImageIO.h>
 #import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderAnimationView.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderItemAnimatorRegistry.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationFactory.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderItemViewAnimator.h>
 
-/// A self-playing view for a custom animator registered through the short path.
-@interface CYLTestPlayableView : UIView <CYLPlaceholderItemAnimationPlayableView, CYLPlaceholderItemAnimationViewProviding>
-@property (nonatomic) NSInteger plays;
-@property (nonatomic) NSInteger stops;
+// [EN] CYLPlaceholderView plays every animation through CYLTabBarController's animation engine: the animators that
+//      the GIF, Lottie, PAG and Rive subspecs bring register with `CYLTabBarItemAnimatorRegistry`, and an app's own
+//      animator registers the same way.
+// [CN] CYLPlaceholderView 通过 CYLTabBarController 的动画引擎播放所有动画：GIF、Lottie、PAG、Rive 子库带入的 animator 注册到
+//      `CYLTabBarItemAnimatorRegistry`，应用自己的 animator 也以同样方式注册。
+
+/// [EN] The view of the custom animator below. [CN] 下面自定义 animator 的视图。
+@interface CYLRegistryTestView : UIView
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> *options;
 @end
+@implementation CYLRegistryTestView
+@end
 
-@implementation CYLTestPlayableView
-+ (UIView<CYLPlaceholderItemAnimationPlayableView> *)cyl_animationViewWithFileURL:(NSURL *)fileURL
-                                                                          options:(NSDictionary<NSString *, NSString *> *)options
-                                                                      contentMode:(UIViewContentMode)contentMode {
-    CYLTestPlayableView *view = [[self alloc] initWithFrame:CGRectZero];
+/// [EN] Counts what the placeholder asks of the player. [CN] 记录占位图对播放器的调用。
+@interface CYLRegistryTestPlayer : CYLTabBarItemAnimationBasePlayer <CYLTabBarItemAnimationPlayer>
+@property (nonatomic) NSInteger plays;
+@property (nonatomic) NSInteger stops;
+@end
+@implementation CYLRegistryTestPlayer
+- (void)play { self.plays++; }
+- (void)stop { self.stops++; }
+- (void)showLastFrame { self.stops++; }
+@end
+
+/// [EN] An app's own animator for ".cyltest" files; it reads the options from the URL's fragment, as the engine's
+///      animators do. [CN] 应用自己的 ".cyltest" animator；与引擎的 animator 一样从 URL 的 fragment 中读取选项。
+@interface CYLRegistryTestAnimator : NSObject <CYLTabBarItemAnimator>
+@property (nonatomic, strong) CYLRegistryTestPlayer *player;
+@end
+@implementation CYLRegistryTestAnimator
+- (NSString *)identifier { return @"CYLTest"; }
+- (NSArray<NSString *> *)fileExtensions { return @[@"cyltest"]; }
+- (BOOL)canAnimateFileAtURL:(NSURL *)URL { return [URL.pathExtension.lowercaseString isEqualToString:@"cyltest"]; }
+- (UIView *)animationViewWithURL:(NSURL *)URL size:(CGSize)size contentMode:(UIViewContentMode)contentMode {
+    CYLRegistryTestView *view = [[CYLRegistryTestView alloc] initWithFrame:(CGRect){CGPointZero, size}];
+    NSMutableDictionary<NSString *, NSString *> *options = [NSMutableDictionary dictionary];
+    NSString *fragment = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:YES].percentEncodedFragment;
+    for (NSString *item in [fragment componentsSeparatedByString:@"&"]) {
+        NSArray<NSString *> *pair = [item componentsSeparatedByString:@"="];
+        if (pair.count == 2) options[pair[0].stringByRemovingPercentEncoding] = pair[1].stringByRemovingPercentEncoding;
+    }
     view.options = options;
-    view.contentMode = contentMode;
     return view;
 }
-- (void)cyl_playAnimationView { self.plays++; }
-- (void)cyl_stopAnimationView { self.stops++; }
-- (void)cyl_showAnimationViewLastFrame { self.stops++; }
+- (id<CYLTabBarItemAnimationPlayer>)playerForAnimationView:(UIView *)view {
+    if (![view isKindOfClass:CYLRegistryTestView.class]) return nil;
+    self.player = [[CYLRegistryTestPlayer alloc] initWithAnimationView:view];
+    return self.player;
+}
 @end
 
 @interface CYLPlaceholderAnimationRegistryTests : XCTestCase
@@ -54,46 +80,40 @@
     return url;
 }
 
-- (void)testReferenceAnimatorsRegisterThemselves {
-    NSArray<NSString *> *identifiers = [[CYLPlaceholderItemAnimatorRegistry animators] valueForKey:@"identifier"];
+- (void)testTheSubspecsAnimatorsRegisterThemselves {
+    NSArray<NSString *> *identifiers = [[CYLTabBarItemAnimatorRegistry animators] valueForKey:@"identifier"];
     for (NSString *identifier in @[@"GIF", @"PAG", @"Rive", @"Lottie"]) {
         XCTAssertTrue([identifiers containsObject:identifier], @"%@ is not registered", identifier);
     }
     // Lottie has the fallback priority, so it is looked up last.
     XCTAssertEqualObjects(identifiers.lastObject, @"Lottie");
-    NSArray<NSString *> *extensions = [CYLPlaceholderItemAnimatorRegistry fileExtensions];
-    for (NSString *extension in @[@"gif", @"pag", @"riv", @"json", @"lottie"]) {
-        XCTAssertTrue([extensions containsObject:extension]);
+    NSArray<NSString *> *extensions = [CYLTabBarItemAnimatorRegistry fileExtensions];
+    for (NSString *extension in @[@"gif", @"pag", @"riv", @"json"]) {
+        XCTAssertTrue([extensions containsObject:extension], @"%@", extension);
     }
-    XCTAssertEqualObjects([CYLPlaceholderItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.PAG"]].identifier, @"PAG");
-    XCTAssertEqualObjects([CYLPlaceholderItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.json"]].identifier, @"Lottie");
-    XCTAssertNil([CYLPlaceholderItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.txt"]]);
-    XCTAssertEqualObjects([CYLPlaceholderItemAnimatorRegistry animatorForAttributes:@{CYLPlaceholderItemRiveURL: @"x.riv"}].identifier, @"Rive");
-    XCTAssertEqualObjects([CYLPlaceholderItemAnimatorRegistry attributeKeyForGenericKey:CYLPlaceholderItemAnimationURL
-                                                                           inAttributes:@{CYLPlaceholderItemPAGFilePath: @"x.pag"}],
-                          CYLPlaceholderItemPAGURL);
+    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.PAG"]].identifier, @"PAG");
+    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.json"]].identifier, @"Lottie");
+    XCTAssertNil([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.txt"]]);
 }
 
-- (void)testUnknownFormatIsUnsupportedAndInvalidOptionsAreRejected {
-    NSError *error = nil;
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:[NSURL fileURLWithPath:@"/missing.txt"]
-        size:CGSizeMake(40, 40) contentMode:UIViewContentModeScaleAspectFit error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorUnsupportedFormat);
-    error = nil;
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:[NSURL fileURLWithPath:@"/missing.riv"]
-        size:CGSizeMake(40, 40) contentMode:UIViewContentModeScaleAspectFit options:@{@"duration": @"90"} error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorInvalidOptions);
-    error = nil;
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:[NSURL fileURLWithPath:@"/missing.riv"]
-        size:CGSizeMake(40, 40) contentMode:UIViewContentModeScaleAspectFit options:@{@"artboard": @[]} error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorInvalidOptions);
-    error = nil;
-    XCTAssertNil([[CYLPlaceholderAnimationView alloc] initWithFileURL:[NSURL fileURLWithPath:@"/missing.json"]
-        size:CGSizeMake(40, 40) contentMode:UIViewContentModeScaleAspectFit error:&error]);
-    XCTAssertEqual(error.code, CYLPlaceholderAnimationErrorAssetLoadFailed);
+- (void)testAnUnknownOrMissingFileKeepsTheStaticImage {
+    UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
+    NSString *unknown = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CYLRegistry-unknown.txt"];
+    [@"text" writeToFile:unknown atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    for (NSString *path in @[unknown, @"/missing/animation.json", @"/missing/animation.riv"]) {
+        NSError *error = nil;
+        CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+            CYLPlaceholderItemAnimationFilePath: path, CYLPlaceholderItemImage: image
+        } imageBundle:nil error:&error];
+        XCTAssertNotNil(placeholder, @"%@", error);
+        XCTAssertNil(placeholder.animationView, @"%@", path);
+        XCTAssertEqual(placeholder.imageView.image, image, @"%@", path);
+        XCTAssertFalse(placeholder.imageView.hidden, @"%@", path);
+    }
+    [[NSFileManager defaultManager] removeItemAtPath:unknown error:NULL];
 }
 
-- (void)testGIFPlaysOnceThroughTheRegisteredAnimator {
+- (void)testGIFPlaysThroughTheGIFAnimator {
     NSURL *url = [self gifURL];
     NSError *error = nil;
     CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
@@ -101,52 +121,46 @@
         CYLPlaceholderItemAnimationOptions: @{@"contentMode": @"center"}
     } imageBundle:nil error:&error];
     XCTAssertNotNil(placeholder);
-    CYLPlaceholderAnimationView *backend = [placeholder valueForKey:@"backendView"];
-    XCTAssertTrue([backend isKindOfClass:CYLPlaceholderAnimationView.class]);
-    XCTAssertEqual(backend.backend, CYLPlaceholderAnimationBackendGIF);
-    XCTAssertEqualObjects(backend.animatorIdentifier, @"GIF");
-    UIImageView *gif = (UIImageView *)backend.animationView;
+    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:url].identifier, @"GIF");
+    UIView *gif = placeholder.animationView;
+    XCTAssertNotNil(gif, @"the GIF subspec plays GIF files");
     XCTAssertEqual(gif.contentMode, UIViewContentModeCenter);
-    XCTAssertEqualWithAccuracy(CGRectGetWidth(backend.bounds), 40, 0.01);
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    placeholder.frame = window.bounds;
     [window addSubview:placeholder];
-    if (!UIAccessibilityIsReduceMotionEnabled()) {
-        CAKeyframeAnimation *animation = (CAKeyframeAnimation *)[gif.layer animationForKey:@"CYLGIFPlaceholderItemPlayAnimation"];
-        XCTAssertNotNil(animation);
-        XCTAssertEqualWithAccuracy(animation.duration, 0.4, 0.02);
-        XCTAssertEqual(animation.values.count, animation.keyTimes.count);
-    }
+    [placeholder layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetWidth(gif.frame), 40, 0.01);
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(gif.frame), 30, 0.01);
     [placeholder showPlaceholderAnimationLastFrame];
-    XCTAssertNil([gif.layer animationForKey:@"CYLGIFPlaceholderItemPlayAnimation"]);
     [placeholder stopPlaceholderAnimation];
-    XCTAssertNil([gif.layer animationForKey:@"CYLGIFPlaceholderItemPlayAnimation"]);
-    XCTAssertFalse([placeholder setPlaceholderAnimationProgress:0.5]); // GIF has no seeking
+    [placeholder playPlaceholderAnimation];
     [placeholder removeFromSuperview];
     [[NSFileManager defaultManager] removeItemAtURL:url error:NULL];
 }
 
-- (void)testCustomViewAnimatorReceivesOptionsAndPlays {
-    CYLPlaceholderItemViewAnimator *animator = [[CYLPlaceholderItemViewAnimator alloc] initWithIdentifier:@"CYLTest"
-        fileExtensions:@[@"CYLTEST"] attributeKeys:nil viewProvider:[CYLTestPlayableView class]];
-    [CYLPlaceholderItemAnimatorRegistry registerAnimator:animator];
-    NSURL *url = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"custom.cyltest"]];
+- (void)testACustomAnimatorReceivesOptionsAndPlays {
+    CYLRegistryTestAnimator *animator = [CYLRegistryTestAnimator new];
+    [CYLTabBarItemAnimatorRegistry registerAnimator:animator];
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"custom.cyltest"];
+    [@"custom" writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     NSError *error = nil;
     CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
-        CYLPlaceholderItemAnimationURL: url,
+        CYLPlaceholderItemAnimationURL: [NSURL fileURLWithPath:path],
         CYLPlaceholderItemAnimationOptions: @{@"name": @"a b&c", @"count": @2}
     } imageBundle:nil error:&error];
-    CYLPlaceholderAnimationView *backend = [placeholder valueForKey:@"backendView"];
-    XCTAssertEqual(backend.backend, CYLPlaceholderAnimationBackendCustom);
-    CYLTestPlayableView *view = (CYLTestPlayableView *)backend.animationView;
+    CYLRegistryTestView *view = (CYLRegistryTestView *)placeholder.animationView;
+    XCTAssertTrue([view isKindOfClass:CYLRegistryTestView.class]);
     XCTAssertEqualObjects(view.options, (@{@"name": @"a b&c", @"count": @"2"}));
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     [window addSubview:placeholder];
-    if (!UIAccessibilityIsReduceMotionEnabled()) XCTAssertEqual(view.plays, 1);
+    if (!UIAccessibilityIsReduceMotionEnabled()) XCTAssertGreaterThan(animator.player.plays, 0);
+    NSInteger stops = animator.player.stops;
     [placeholder removeFromSuperview];
-    XCTAssertGreaterThan(view.stops, 0);
-    XCTAssertFalse([placeholder setPlaceholderAnimationSpeed:2]);
-    [CYLPlaceholderItemAnimatorRegistry unregisterAnimatorWithIdentifier:@"CYLTest"];
-    XCTAssertNil([CYLPlaceholderItemAnimatorRegistry animatorWithIdentifier:@"CYLTest"]);
+    XCTAssertGreaterThan(animator.player.stops, stops, @"off screen: stopped");
+    XCTAssertFalse([placeholder setPlaceholderAnimationSpeed:2], @"the player has no speed");
+    [CYLTabBarItemAnimatorRegistry unregisterAnimatorWithIdentifier:@"CYLTest"];
+    XCTAssertNil([CYLTabBarItemAnimatorRegistry animatorWithIdentifier:@"CYLTest"]);
+    [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
 }
 
 @end

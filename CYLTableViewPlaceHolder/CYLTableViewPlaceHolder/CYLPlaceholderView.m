@@ -1654,6 +1654,14 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return CGSizeMake(24, 24);
 }
 
+/// [EN] YES when the item attributes configure an animation file: its size is then the icon's, whatever shows in it (the
+///      animation, or the static image or placeholder standing in for it, aspect fit), so the layout is the same with or
+///      without an animation engine.
+/// [CN] item 属性配置了动画文件时为 YES：此时图标尺寸即动画尺寸，无论其中显示的是动画，还是代替它的静态图片或占位图（等比缩放），因此有无动画引擎布局都相同。
+- (BOOL)cyl_reservesAnimationBox {
+    return self.itemAnimationSize.width > 0 && self.itemAnimationSize.height > 0;
+}
+
 /// [EN] YES when the animation view shows: it is hidden only with a static image the caller hid.
 /// [CN] 动画视图是否显示：只有在调用方隐藏了静态图片时才隐藏。
 - (BOOL)cyl_showsAnimationView {
@@ -1677,7 +1685,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     CGFloat textWidth = MAX(0, width - insets.left - insets.right);
     CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(textWidth, CGFLOAT_MAX)
         options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
-    CGSize imageSize = showAnimation ? [self cyl_animationBoxSize] :
+    CGSize imageSize = (showAnimation || (hasImage && [self cyl_reservesAnimationBox])) ? [self cyl_animationBoxSize] :
         (hasImage ? self.imageView.image.size : CGSizeZero);
     if (self.horizontal) {
         UIEdgeInsets imageInsets = self.itemImageInsets;
@@ -1776,7 +1784,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     BOOL isShowImageView = (imageView.image != nil && !imageView.hidden) || (animationView != nil && !animationView.hidden);
     BOOL isShowTitleLabel = titleLabel.text.length > 0 && !titleLabel.hidden;
     CGSize box = CGSizeZero;
-    if (animationView && !animationView.hidden) {
+    if ((animationView && !animationView.hidden) || (isShowImageView && [self cyl_reservesAnimationBox])) {
         box = [self cyl_animationBoxSize];
     } else if (isShowImageView) {
         box = imageView.image.size;

@@ -400,9 +400,10 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
  * [EN] Original item attributes. An animation file (GIF, Lottie, PAG, Rive, SVGA…) plays when the view enters a window,
  *      through CYLTabBarController's animation engine and the animator of its type: add the matching subspec of this
  *      pod (or CYLTabBarController's `CYLAnimatedItem<Type>`). The Core subspec alone has no engine and shows the
- *      static image.
+ *      static image. The icon keeps the animation's size (`CYLPlaceholderItemAnimationSize`) whatever stands in for it.
  * [CN] 原始 item 属性。动画文件（GIF、Lottie、PAG、Rive、SVGA……）在视图进入窗口时，通过 CYLTabBarController 的动画引擎及对应类型的
  *      animator 播放：需加入本 pod 对应的子库（或 CYLTabBarController 的 `CYLAnimatedItem<Type>`）。只有 Core 子库时没有引擎，显示静态图片。
+ *      无论用什么代替动画，图标都保持动画尺寸（`CYLPlaceholderItemAnimationSize`）。
  */
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *itemAttributes;
 /*!
