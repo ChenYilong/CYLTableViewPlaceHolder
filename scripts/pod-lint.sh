@@ -47,8 +47,15 @@ case "$command" in
     work=$(mktemp -d "${TMPDIR:-/tmp}/cyl-xcframework.XXXXXX")
     trap 'rm -rf "$work"' EXIT
     git ls-files -z | grep -zv '/\._\|^\._' | xargs -0 -I{} rsync -R "{}" "$work/" 2>/dev/null || git archive HEAD | tar -x -C "$work"
-    # The Cartfile's dependency (CYLTabBarController) is fetched first, then built with this framework.
-    (cd "$work" && carthage bootstrap --no-build && carthage build --no-skip-current --use-xcframeworks --platform iOS)
+    # The framework target links CYLTabBarController.xcframework. `carthage build` of that dependency fails: Carthage
+    # lists every Xcode project in its checkout, and CYLTabBarController's Flutter example needs generated Swift
+    # packages (docs/Task-Log.md, TODO). So it is built by scripts/cyltabbarcontroller-xcframework.sh, and Carthage
+    # builds only this repository (no Cartfile in the clean copy).
+    scripts/cyltabbarcontroller-xcframework.sh all
+    mkdir -p "$work/Carthage/Build"
+    cp -R Carthage/Build/CYLTabBarController.xcframework "$work/Carthage/Build/"
+    rm -f "$work/Cartfile" "$work/Cartfile.resolved"
+    (cd "$work" && carthage build --no-skip-current --use-xcframeworks --platform iOS)
     test -f "$work/Carthage/Build/CYLTableViewPlaceHolder.xcframework/Info.plist"
     rm -f build/CYLTableViewPlaceHolder.xcframework.zip
     (cd "$work/Carthage/Build" && zip -qry - CYLTableViewPlaceHolder.xcframework) > build/CYLTableViewPlaceHolder.xcframework.zip
