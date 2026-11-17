@@ -31,8 +31,23 @@ object DesignUtil {
      * When [content] is a CoordinatorLayout, nested scrolling is turned off and [listener] hears whether its app bar
      * allows refreshing (fully expanded) or loading more (fully collapsed).
      */
+    /**
+     * Whether CoordinatorLayout and AppBarLayout are on the class path: the Material library is compileOnly, and
+     * without it every attach threw NoClassDefFoundError and printed its stack trace.
+     */
+    private val coordinatorLayoutAvailable: Boolean by lazy {
+        try {
+            Class.forName("androidx.coordinatorlayout.widget.CoordinatorLayout")
+            Class.forName("com.google.android.material.appbar.AppBarLayout")
+            true
+        } catch (e: Throwable) {
+            false
+        }
+    }
+
     @JvmStatic
     fun checkCoordinatorLayout(content: View, kernel: RefreshKernel, listener: CoordinatorLayoutListener) {
+        if (!coordinatorLayoutAvailable) return
         try {
             if (content is CoordinatorLayout) {
                 kernel.refreshLayout.setEnableNestedScroll(false)
