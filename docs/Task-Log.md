@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：所有发布到外部仓库的包都包含协议声明，写入 instructions 与技能 / TODO: Every published package carries its license, as a rule in the instructions and skills
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：所有需要发布到外部仓库的代码，包括但不限于 cocoapods graddle npm maven等等 必须包含协议声明，如果已经有内置包文件夹就放进去，如果没有就新建，确保写入成功。以iOS为例，内置包bundle文件应包含协议文件。此操作适用于所有平台。” | The user's original prompt (Chinese, verbatim on the left), summarized: find the project's instructions and skills files (create them if missing, make sure the write succeeds) and write, in English only, the rule that all code published to an external registry (CocoaPods, Gradle, npm, Maven and others) must include its license declaration, placed in the package's built-in resource folder (created if missing; on iOS the resource bundle contains the license file); the rule applies to every platform. |
+| 要求：①规则以全英文写入 `instructions.md`、`AGENTS.md` 与相关技能（`.agents/skills/`，没有合适的就新建）；②每个发布的包都带上本项目的协议文件：iOS `CYLTableViewPlaceHolder.bundle`、Android 各库模块（AAR 的资源）、HarmonyOS ohpm 包（模块根目录与 `rawfile`）、微信小程序 npm 包（发布目录 `src/`）；③已有的第三方协议文件保持不变；④检查脚本与 CI 验证每个包都带有协议文件。 | Requirements: (1) the rule in English in `instructions.md`, `AGENTS.md` and the relevant skills (`.agents/skills/`, a new one when none fits); (2) every published package carries this project's license file: the iOS `CYLTableViewPlaceHolder.bundle`, each Android library module (inside the AAR), the HarmonyOS ohpm package (module root and `rawfile`), the WeChat Mini Program npm package (its published folder `src/`); (3) existing third-party license files stay as they are; (4) a check script and CI verify that every package has its license file. |
+
 ### TODO：core 依赖 CYLTabBarController 的 CYLAnimatedItem 组件，动效引擎只在 example 层引入 / TODO: Core depends on CYLTabBarController's CYLAnimatedItem; animation engines only in the examples
 
 | 中文 | English |
