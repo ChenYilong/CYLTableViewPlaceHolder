@@ -594,8 +594,13 @@
     while ((![log containsObject:@"refresh"] || page.tableView.cyl_header != regular) && deadline.timeIntervalSinceNow > 0) {
         [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
-    XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action");
-    XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh");
+    // [EN] The messages carry the phase log and the start header's state, so a failure shows where it stopped (waiting
+    //      for a window, never refreshing, or refreshing without the callback).
+    // [CN] 失败信息包含阶段日志与起始刷新头的状态，便于看出停在哪一步（等待窗口、未开始刷新、或刷新了但没有回调）。
+    NSString *where = [NSString stringWithFormat:@"log %@, start state %ld, in window %d, header %@", log,
+                       (long)start.state, start.window != nil, page.tableView.cyl_header == start ? @"start" : @"other"];
+    XCTAssertTrue([log containsObject:@"refresh"], @"the start header calls the regular header's target-action (%@)", where);
+    XCTAssertEqual(page.tableView.cyl_header, regular, @"the regular header is back after the first refresh (%@)", where);
     window.hidden = YES;
 }
 
