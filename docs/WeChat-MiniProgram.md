@@ -28,7 +28,7 @@
 | --- | --- |
 | CYLAnimatedItem（动效组件）接入进度、评分与 TODO 见 [Animated-Item-Migration.md](Animated-Item-Migration.md)。 | CYLAnimatedItem (the animation component) migration status, score and TODOs: [Animated-Item-Migration.md](Animated-Item-Migration.md). |
 
-### TODO: the components build on CYLTabBarController's cyl-animated-item (score 90)
+### TODO: the components build on CYLTabBarController's cyl-animated-item (score 95)
 
 - **Date / branch:** 2026-11-17, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt:** the same CYLAnimatedItem migration request as iOS and Android (CYLTabBarController
@@ -88,10 +88,22 @@
   1. Done: rendering in WeChat DevTools. The 2026-11-17 runs (see "Verification" below: CYLAnimatedItem TODO 3, MP1 to
      MP5) cover the scenarios, the configuration page's playback policies, "Play all", the HUD, the status bar and the
      refresh icon demos, with screenshots.
-  2. Partly done upstream (CYLTabBarController 6a9ede85): `cyl_playFromStart()` and `accessibilityHidden` exist now.
-     Still open there: forward the engine's `ready` / `complete` / `error` as events (then drop the `cyl_animation()`
-     listener for `repeatCount`), and title color / font / line properties so `cyl-placeholder`'s title can move into
-     the item. Requested from the owner of the mini program animation code (the "Mac-CYLTabBarController文件夹" session).
+  2. Upstream requests. Done: `cyl_playFromStart()` and `accessibilityHidden` (6a9ede85); the events
+     `animationready` / `animationcomplete` / `animationloopcomplete` / `animationerror` and the title properties
+     `titleColor` / `titleFontSize` / `titleLines` (59a1cb0f), then centered wrapped titles, `titleSpacing` and
+     `titleLineHeight` (52569d68, pinned 2026-11-18). `cyl-placeholder` now counts
+     `repeatCount` from `bind:animationcomplete`; the `cyl_animation()` hook (40 tries, 250 ms apart, lottie-web's
+     `complete`) is removed. WeChat DevTools, playback-policies.json: the "3 times" item plays three passes and stops,
+     "once" stops, the looping item goes on, Play all restarts the count, console clean
+     ([screenshot](assets/wechat-miniprogram-playback-events.png)); test "repeat counts come from cyl-animated-item's
+     animationcomplete event". The icon's title moved into the item (`title`, `axis` vertical, `title-color`
+     #333333, `title-font-size` 16, `title-line-height` 22, `title-spacing` 12, `title-lines` 0); the separate
+     `<text>` is gone. At 59a1cb0f a wrapped title was left-aligned with a 2px gap
+     ([before the fix](assets/wechat-miniprogram-title-in-item.png)); reported, fixed upstream in 52569d68. WeChat
+     DevTools at 52569d68: "Network unavailable" draws the wrapped title at the same pixels as the old `<text>` (dark
+     rows 28 to 143, columns 49 to 274 in both), the playback-policies page looks the same, repeat counts still right,
+     console clean ([left: old text, right: in the item](assets/wechat-miniprogram-title-in-item-fixed.png)); test "an
+     icon's title is drawn by cyl-animated-item" (`npm test` 69 / 69). Requested from the owner of the mini program animation code (the "Mac-CYLTabBarController文件夹" session).
   3. Done (2026-11-18): tinted template icons use the item's `icon-tint` (#8c8c8c, the old 45 % black on white) instead
      of a 45 % opacity on the icon box: the static image and the static image of an animated icon are tinted, a playing
      animation keeps its colors. Test: "tinted template icons use the item tint" (`npm test` 65 / 65). WeChat DevTools:
@@ -99,7 +111,7 @@
      ([screenshot](assets/wechat-miniprogram-icon-tint.png)).
   4. Open, upstream: move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the
      component inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
-- **Why not 100:** item 2 (two upstream requests, -5) and item 4 (upstream publishing, -5) wait for CYLTabBarController.
+- **Why not 100:** item 4 (upstream publishing, -5) waits for CYLTabBarController.
 
 ### DONE: the package entry works after DevTools' Build npm (score 100)
 

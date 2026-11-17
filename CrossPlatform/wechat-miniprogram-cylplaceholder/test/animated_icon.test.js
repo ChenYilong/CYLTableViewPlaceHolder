@@ -121,3 +121,19 @@ test('tinted template icons use the item tint, which spares the animation, not a
   assert.match(wxml, /icon-tint="\{\{item\.tinted \? '#[0-9a-f]{6}' : ''\}\}"/, 'cyl-placeholder passes icon-tint for tinted items')
   assert.doesNotMatch(wxml + read('cyl-placeholder/index.wxss'), /icon--tinted/, 'no opacity class dims the animation')
 })
+
+test('repeat counts come from cyl-animated-item\'s animationcomplete event, not from the engine\'s animation object', () => {
+  const wxml = read('cyl-placeholder/index.wxml')
+  const js = read('cyl-placeholder/index.js')
+  assert.match(wxml, /<cyl-animated-item\b[^>]*data-index="\{\{index\}\}"[^>]*bind:animationcomplete="onAnimationComplete"/)
+  assert.match(js, /onAnimationComplete\(e\)/)
+  assert.doesNotMatch(js, /cyl_animation\(|addEventListener\('complete'/, 'no reach into lottie-web')
+})
+
+test('an icon\'s title is drawn by cyl-animated-item with the placeholder\'s metrics (16px, 22px lines, 12px gap, centered wrap)', () => {
+  const wxml = read('cyl-placeholder/index.wxml')
+  const icon = wxml.match(/<view wx:if="\{\{item\.type === 'icon'\}\}"[\s\S]*?\n {8}<\/view>/)[0]
+  for (const attribute of ['title="{{item.title}}"', 'axis="vertical"', 'title-color="#333333"', 'title-font-size="{{16}}"',
+    'title-line-height="{{22}}"', 'title-spacing="{{12}}"', 'title-lines="{{0}}"']) assert.ok(icon.includes(attribute), attribute)
+  assert.doesNotMatch(icon, /<text\b/, 'no second title next to the item')
+})

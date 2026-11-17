@@ -27,12 +27,14 @@
 
 ## 任务 / Tasks
 
-### TODO：重新固定 CYLTabBarController 59a1cb0f，小程序改用 cyl-animated-item 的事件与标题属性 / TODO: Pin CYLTabBarController 59a1cb0f; the mini program uses cyl-animated-item's events and title properties
+### 已完成（100 / 100）：重新固定 CYLTabBarController（59a1cb0f，再到 52569d68），小程序改用 cyl-animated-item 的事件与标题属性 / Done (100 / 100): Pin CYLTabBarController (59a1cb0f, then 52569d68); the mini program uses cyl-animated-item's events and title properties
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
 - Prompt (relayed from the owner by Mac-CYLTabBarController 小程序开发, verbatim): "both cyl-animated-item requests landed on feat/cross-platform-components in 59a1cb0f. (1) Events with the engine's detail: `animationready`, `animationcomplete`, `animationloopcomplete`, `animationerror` ... (2) Properties `titleColor`, `titleFontSize`, `titleLines` ... Please repin, drop your workaround, and tell me if anything renders wrong."
 - Requirements: (1) repin to 59a1cb0f (Cartfile, Podfiles, the copied component); (2) count `repeatCount` passes from `bind:animationcomplete` and drop the `cyl_animation()` listener; (3) move `cyl-placeholder`'s icon title into the item through `title-color` / `title-font-size` / `title-lines` where it renders the same; (4) check in WeChat DevTools and report rendering problems upstream.
 - Acceptance: full marks (100) = all four, `npm test` green, DevTools screenshots (playback policies once / three times / loop, a titled icon), the HarmonyOS and Android checks still pass at the new pin, docs updated, pushed. Pass (60) = (1) and (2) with tests and a DevTools check of the playback policies.
+- Done: (1) Cartfile and the four Podfiles at 59a1cb0f; the mini program copy synced (6 + 4 files and the upstream test); HarmonyOS `cylanimateditem` synced (only `UPSTREAM_COMMIT` changed); Android's `cylanimateditem` has no change between the two pins. (2) `bind:animationcomplete` replaces the `cyl_animation()` hook, with a test; `npm test` 67 / 67; DevTools: three passes, once, loop, Play all, console clean. (3) At 59a1cb0f a wrapped title in the item was left-aligned with a 2px gap and no line height (screenshot); reported; fixed upstream in 52569d68 (centered wrap, `titleSpacing`, `titleLineHeight`), repinned, and the title moved into the item: DevTools shows the same pixels as the old `<text>`; `npm test` 69 / 69. (4) DevTools screenshots in `docs/WeChat-MiniProgram.md`; HarmonyOS 89 / 89 at the new pin (only `UPSTREAM_COMMIT` changed); Android's `cylanimateditem` unchanged between 6a9ede85 and 52569d68.
+- Score: 100 / 100.
 
 ### 已完成（90 / 100）：继续最早的非 iOS TODO：小程序 cyl-animated-item 剩余项 / Done (90 / 100): Continue the oldest non-iOS TODO: the mini program cyl-animated-item leftovers
 

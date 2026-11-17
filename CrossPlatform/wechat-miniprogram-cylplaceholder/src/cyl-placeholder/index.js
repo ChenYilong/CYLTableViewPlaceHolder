@@ -15,9 +15,6 @@ const { CYLPlaceholderScenarioCatalog } = require('./cyl_scenario_catalog')
 const { CYLPlaceholderConfiguration } = require('./cyl_configuration')
 const { cylResolvePath } = require('./cyl_animated_icon')
 
-/** How long the component waits for an engine to load a file with a repeat count (40 tries, 250 ms apart). */
-const CYL_REPEAT_HOOK_TRIES = 40
-const CYL_REPEAT_HOOK_INTERVAL = 250
 
 Component({
   options: { pureDataPattern: /^_/ },
@@ -66,9 +63,6 @@ Component({
         imageFolder: cylResolvePath(this.data.imageBase, this.is),
       })
     },
-    detached() {
-      clearTimeout(this._repeatTimer)
-    },
   },
   observers: {
     'scenario, components, language, backgroundAction, configuration': function () {
@@ -79,9 +73,6 @@ Component({
     },
     imageBase(base) {
       if (this.is) this.setData({ imageFolder: cylResolvePath(base, this.is) })
-    },
-    animated() {
-      this._hookRepeats()
     },
   },
   methods: {
@@ -100,33 +91,6 @@ Component({
     _engineAt(index) {
       const item = this.selectComponent('#cyl-animated-' + index)
       return (item && item.selectComponent('.cyl-animated-item-animation')) || null
-    },
-    /**
-     * repeatCount N (above 1) replays the animation until it has played N times. cyl-animated-item does not forward
-     * the engine's `complete` event, so the component listens on the engine's animation object
-     * (`cyl_animation()`, lottie-web's `addEventListener('complete')`) once the engine has loaded the file.
-     */
-    _hookRepeats() {
-      clearTimeout(this._repeatTimer)
-      if (!this.data.animated) return
-      const pending = this.data.items.map((item, index) => ({ item, index })).filter(({ item }) => item.animation && item.repeatCount > 1)
-      if (!pending.length) return
-      let tries = 0
-      const attempt = () => {
-        let waiting = false
-        for (const { index } of pending) {
-          const engine = this._engineAt(index)
-          const animation = engine && typeof engine.cyl_animation === 'function' ? engine.cyl_animation() : null
-          if (!animation || typeof animation.addEventListener !== 'function') {
-            waiting = true
-          } else if (!animation.__cylPlaceholderRepeat) {
-            animation.__cylPlaceholderRepeat = true
-            animation.addEventListener('complete', () => this._onAnimationComplete(index))
-          }
-        }
-        if (waiting && ++tries < CYL_REPEAT_HOOK_TRIES) this._repeatTimer = setTimeout(attempt, CYL_REPEAT_HOOK_INTERVAL)
-      }
-      this._repeatTimer = setTimeout(attempt, 0)
     },
     /** Rebuilds the stack, for example after CYLPlaceholderLocalization.setLanguage. */
     reload() {
@@ -164,10 +128,14 @@ Component({
         }
       })
       this._plays = {}
-      this.setData({ items, _background: background, _scenario: scenario, hasBackgroundAction: !!background }, () => this._hookRepeats())
+      this.setData({ items, _background: background, _scenario: scenario, hasBackgroundAction: !!background })
     },
-    /** Replays an animation with repeatCount N until it has played N times. */
-    _onAnimationComplete(index) {
+    /**
+     * repeatCount N (above 1) replays the animation until it has played N times: such an item does not loop, so its
+     * cyl-animated-item sends `animationcomplete` after every pass (CYLTabBarController 59a1cb0f).
+     */
+    onAnimationComplete(e) {
+      const index = Number(e.currentTarget.dataset.index)
       const item = this.data.items[index]
       if (!item || !(item.repeatCount > 1)) return
       this._plays[index] = (this._plays[index] || 1) + 1
