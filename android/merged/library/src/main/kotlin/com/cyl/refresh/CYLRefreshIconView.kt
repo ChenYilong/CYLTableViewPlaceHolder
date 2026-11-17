@@ -10,12 +10,14 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.cyl.placeholder.CYLPlaceholderView
+import com.cyl.tabbar.CYLSize
 import com.cyl.refresh.merged.R
 
 /**
  * The icon of a refresh component: one animation (or image sequence) per state, with an optional title (iOS
- * `CYLRefreshIconView`). It shows them through a [CYLPlaceholderView], so animations play with the players registered
- * by `CYLPlaceholderView.registerAnimationFactory`.
+ * `CYLRefreshIconView`). It shows them through a [CYLPlaceholderView], so animation files play with the animation engine of
+ * CYLTabBarController's CYLAnimatedItem once the app adds the animation library (Lottie, libpag, rive-android; GIF
+ * needs none), or with a factory registered by `CYLPlaceholderView.registerAnimationFactory`.
  */
 class CYLRefreshIconView(context: Context) : FrameLayout(context) {
 
@@ -79,8 +81,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     var title: String? = null
         set(value) {
             field = value
-            placeholderView.textLabel.text = value
-            placeholderView.textLabel.visibility = if (value.isNullOrEmpty()) GONE else VISIBLE
+            placeholderView.title = value
         }
 
     /**
@@ -123,13 +124,8 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         val icon = attributes[state] ?: return
         shownState = state
         val size = icon[SIZE] as? FloatArray
-        val density = resources.displayMetrics.density
-        size?.let {
-            placeholderView.imageView.layoutParams = placeholderView.imageView.layoutParams.apply {
-                width = (it[0] * density).toInt()
-                height = (it[1] * density).toInt()
-            }
-        }
+        // The inherited iconSizeDp rebuilds the animation view: set only on a change.
+        size?.let { CYLSize(it[0], it[1]) }?.takeIf { it != placeholderView.iconSizeDp }?.let { placeholderView.iconSizeDp = it }
         @Suppress("UNCHECKED_CAST")
         val images = icon[IMAGES] as? List<Drawable>
         val path = icon[ANIMATION_FILE_PATH] as? String
@@ -157,7 +153,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
      * The keys of an icon's attributes, and the iOS attribute makers (`CYLRefreshIconView (CYLRefreshIconAttributes)`).
      */
     companion object {
-        /** The animation file a registered player plays. */
+        /** The animation file the animation engine (or a registered factory) plays. */
         const val ANIMATION_FILE_PATH = "CYLPlaceholderItemAnimationFilePath"
 
         /** The image frames, a list of drawables. */

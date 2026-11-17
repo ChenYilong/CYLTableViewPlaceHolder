@@ -1,4 +1,14 @@
 #import <UIKit/UIKit.h>
+// [EN] CYLPlaceholderView subclasses CYLTabBarController's shared animated icon + title control, `CYLAnimatedItemView`
+//      (subspec `CYLTabBarController/CYLAnimatedItem`; guide:
+//      https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md).
+// [CN] CYLPlaceholderView 继承自 CYLTabBarController 共用的动效 icon + title 控件 `CYLAnimatedItemView`
+//      （子库 `CYLTabBarController/CYLAnimatedItem`；接入文档见上面的链接）。
+#if __has_include(<CYLTabBarController/CYLAnimatedItemView.h>)
+#import <CYLTabBarController/CYLAnimatedItemView.h>
+#else
+#import "CYLAnimatedItemView.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -278,7 +288,11 @@ typedef NS_ERROR_ENUM(CYLPlaceholderConfigurationErrorDomain, CYLPlaceholderConf
 };
 
 /*!
- * Animation views supplied by custom factories must invoke handlers on the main thread.
+ * [EN] A view made by a factory registered with `+registerAnimationFactory:forFileExtension:`. It must invoke its
+ *      handlers on the main thread. CYLPlaceholderView plays it through CYLTabBarController's animation engine, which
+ *      is needed for any animation to play.
+ * [CN] 由 `+registerAnimationFactory:forFileExtension:` 注册的工厂创建的视图，必须在主线程调用其回调。CYLPlaceholderView 通过
+ *      CYLTabBarController 的动画引擎播放它，播放任何动画都需要该引擎。
  */
 @protocol CYLPlaceholderAnimationPlayer <NSObject>
 @property (nonatomic, readonly, getter=isReady) BOOL ready;
@@ -305,10 +319,23 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
     NSDictionary<NSString *, id> *options, NSError * _Nullable * _Nullable error);
 
 /*!
- * A reusable, localized empty-state view. Customize its image and label as needed.
+ * [EN] A reusable, localized empty-state view: the packaged animated icon + title view of this library. It is a
+ *      `CYLAnimatedItemView` (`axis` vertical by default): the icon plays any file of CYLTabBarController's animation
+ *      engine when an animation subspec adds the engine, and shows its static image otherwise; the display priority,
+ *      the failure fallbacks and the loading state of URL files are the base class's. Customize its image and label as
+ *      needed.
+ * [CN] 可复用、已本地化的空状态视图，即本库封装好的动效 icon + title 视图。它是一个 `CYLAnimatedItemView`（默认 `axis` 为纵向）：加入动画子库
+ *      带入引擎后，图标可播放 CYLTabBarController 动画引擎支持的任意文件，否则显示静态图片；显示优先级、失败回退与 URL 文件的加载状态由基类处理。
+ *      图片与文字可按需定制。
  */
-@interface CYLPlaceholderView : UIView
+@interface CYLPlaceholderView : CYLAnimatedItemView
+/*!
+ * [EN] The icon's image view (the base class's `imageView`). [CN] 图标的图片视图（基类的 `imageView`）。
+ */
 @property (nonatomic, strong, readonly) UIImageView *imageView;
+/*!
+ * [EN] The title label: the base class's `titleLabel`. [CN] 标题标签，即基类的 `titleLabel`。
+ */
 @property (nonatomic, strong, readonly) UILabel *textLabel;
 /*!
  * A nil value hides the badge; an empty string displays a dot.
@@ -370,8 +397,12 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
 @property (nonatomic, strong, nullable) UIColor *defaultSelectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
 
 /*!
- * Original item attributes. Local GIF animations play once when the view enters a window.
- * Optional Lottie, PAG and Rive backends require their corresponding CocoaPods subspec.
+ * [EN] Original item attributes. An animation file (GIF, Lottie, PAG, Rive, SVGA…) plays when the view enters a window,
+ *      through CYLTabBarController's animation engine and the animator of its type: add the matching subspec of this
+ *      pod (or CYLTabBarController's `CYLAnimatedItem<Type>`). The Core subspec alone has no engine and shows the
+ *      static image.
+ * [CN] 原始 item 属性。动画文件（GIF、Lottie、PAG、Rive、SVGA……）在视图进入窗口时，通过 CYLTabBarController 的动画引擎及对应类型的
+ *      animator 播放：需加入本 pod 对应的子库（或 CYLTabBarController 的 `CYLAnimatedItem<Type>`）。只有 Core 子库时没有引擎，显示静态图片。
  */
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *itemAttributes;
 /*!
@@ -427,39 +458,45 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
  */
 - (BOOL)performTap;
 /*!
- * How many times the animation plays each time it starts: 0 loops until stopped, N plays N times. Defaults to 1, or
- * to `CYLPlaceholderItemAnimationRepeatCount`. GIF, Lottie and PAG support every value; Rive supports 0 and 1 for a
- * named animation, while a state machine follows the file. Reduce Motion still stops the animation.
+ * How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times.
+ * Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. Every player that loops supports 0 and 1; N needs a
+ * player that reports its progress (Lottie, PAG). Reduce Motion still stops the animation.
  */
 @property (nonatomic) NSInteger animationRepeatCount;
 
 /*!
- * Registers or removes a factory for a local file extension, without a leading dot.
- * Extensions are case-insensitive. GIF remains reserved for the built-in decoder.
- * Existing views keep their current player until their configuration is reloaded.
+ * [EN] Registers or removes a factory for a file extension, without a leading dot, as an animator of
+ *      CYLTabBarController's shared `CYLTabBarItemAnimatorRegistry` that wins over the built-in animators for that
+ *      extension. Extensions are case-insensitive. Existing views keep their current player until their configuration
+ *      is reloaded. Returns NO for an invalid extension, or when the build has no animation engine (CocoaPods Core
+ *      alone).
+ * [CN] 为某个文件扩展名（不带点）注册或移除工厂：作为 CYLTabBarController 共享 `CYLTabBarItemAnimatorRegistry` 中的 animator，对该扩展名优先于
+ *      内置 animator。扩展名不区分大小写。已有视图在重新加载配置前保持当前播放器。扩展名无效或工程中没有动画引擎（只有 CocoaPods Core）时返回 NO。
  */
 + (BOOL)registerAnimationFactory:(nullable CYLPlaceholderAnimationFactory)factory
                 forFileExtension:(NSString *)fileExtension;
 /*!
  * [EN] Shows the animation file at `path` (a full path, or the name of a bundled animation) instead of the icon, at
  *      the icon's animation size (`CYLPlaceholderItemAnimationSize`, else 64 x 64 points), through the animator
- *      registered for its extension. NO, with the icon kept, when the file is missing or no animator plays it. The same
+ *      registered for its extension. NO, with the icon kept, when the file is missing or no animator plays it (always
+ *      without an animation engine). The same
  *      as Android's `CYLPlaceholderView.setAnimationFile(path)`.
  * [CN] 用 `path` 处的动画文件（完整路径或内置动画名）代替图标显示，尺寸为图标的动画尺寸（`CYLPlaceholderItemAnimationSize`，否则为
- *      64 x 64 点），由该扩展名注册的动画器播放。文件不存在或没有动画器可播放时返回 NO，图标保持不变。与 Android 的
+ *      64 x 64 点），由该扩展名注册的动画器播放。文件不存在或没有动画器可播放时（没有动画引擎时总是如此）返回 NO，图标保持不变。与 Android 的
  *      `CYLPlaceholderView.setAnimationFile(path)` 相同。
  */
 - (BOOL)setAnimationFile:(NSString *)path NS_SWIFT_NAME(setAnimationFile(_:));
 /*!
- * Replay the configured animation when visible. Honors Reduce Motion.
+ * Replay the configured animation when visible (`playAnimation` of the base class does the same). Honors Reduce
+ * Motion.
  */
 - (void)playPlaceholderAnimation;
 /*!
- * Stop playback and show the resting frame until explicitly replayed.
+ * Stop playback and show the resting frame until explicitly replayed (also `stopAnimation`).
  */
 - (void)stopPlaceholderAnimation;
 /*!
- * Stop and show the last frame when supported; Rive returns to its resting state.
+ * Stop and show the last frame when supported (also `showAnimationLastFrame`).
  */
 - (void)showPlaceholderAnimationLastFrame;
 /*!
@@ -518,7 +555,7 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
 + (NSArray<NSString *> *)bundledAnimationFileNames;
 /*!
  * Full path of a bundled animation, for CYLPlaceholderItemAnimationFilePath and the engine-specific file
- * path keys; nil when there is no such file. Lottie, PAG and Rive playback needs the matching subspec.
+ * path keys; nil when there is no such file. Playback needs the matching animation subspec (the engine).
  */
 + (nullable NSString *)pathForBundledAnimation:(NSString *)fileName NS_SWIFT_NAME(path(forBundledAnimation:));
 @end

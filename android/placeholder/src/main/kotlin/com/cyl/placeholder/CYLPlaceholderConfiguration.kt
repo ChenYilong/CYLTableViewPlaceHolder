@@ -275,7 +275,7 @@ fun CYLPlaceholderStatusView.Companion.fromConfiguration(context: Context, confi
  * "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemIconColor", "CYLPlaceholderItemBackgroundColor" and their
  * "CYLPlaceholderItemSelected…" variants (a color int or "#RRGGBB"), "CYLPlaceholderItemTitleFontSize" (sp, Android takes
  * no UIFont), an animation file ("CYLPlaceholderItemAnimationFilePath" or the Lottie / PAG / Rive / GIF file keys, played
- * by the registered animators), "CYLPlaceholderItemAnimationRepeatCount", "CYLPlaceholderItemInteractionEnabled",
+ * by CYLTabBarController's CYLAnimatedItem engine when the app adds the animation library), "CYLPlaceholderItemAnimationRepeatCount", "CYLPlaceholderItemInteractionEnabled",
  * "CYLPlaceholderItemTapHighlightStyle" ("dim", "shrink", "none"), "CYLPlaceholderItemAccessibilityIdentifier" (the
  * view's tag) and "CYLPlaceholderItemAccessibilityLabel". Every key is kept in [CYLPlaceholderView.itemAttributes].
  * There is no image bundle: names are drawable resources.
@@ -362,8 +362,9 @@ fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes
         else -> return error.fail("CYLPlaceholderItemTapHighlightStyle must be a style.")
     }
     string(attributes["CYLPlaceholderItemAccessibilityIdentifier"])?.let { view.tag = it }
-    string(attributes["CYLPlaceholderItemAccessibilityLabel"])?.let { view.contentDescription = it }
-    // The first animation file a registered animator plays replaces the icon; the icon stays when none does (as iOS).
+    string(attributes["CYLPlaceholderItemAccessibilityLabel"])?.let { view.accessibilityLabel = it }
+    // The first animation file an animator of the CYLAnimatedItem engine plays (its library is in the app) replaces the
+    // icon; the icon stays when none does (as iOS).
     val animationKeys = listOf("CYLPlaceholderItemAnimationFilePath", "CYLPlaceholderItemLottieFilePath", "CYLPlaceholderItemPAGFilePath",
         "CYLPlaceholderItemRiveFilePath", "CYLPlaceholderItemGIFFilePath")
     animationKeys.firstNotNullOfOrNull { string(attributes[it]) }?.let { view.setAnimationFile(it) }
