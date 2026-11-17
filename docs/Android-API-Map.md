@@ -971,16 +971,16 @@
 | `CYLPlaceholderPermission` | `com.cyl.placeholder.CYLPlaceholderPermission` | done |  |
 | `CYLPlaceholderAction` | `com.cyl.placeholder.CYLPlaceholderAction` | done | string constants with the iOS values |
 | `CYLPlaceholderButtonStyle` | `com.cyl.placeholder.CYLPlaceholderButtonStyle` | done |  |
-| `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | partial | icons are the static fallback images; Android plays no animation yet |
+| `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | partial | an icon component shows its image; in a scenario's stack view the first item plays the scenario's animation through CYLPlaceholderView when the app adds the animation library |
 | `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` | done | every item key is kept; keys beyond the title, image, color and size show through CYLPlaceholderView.fromItemAttributes |
 | `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` | done |  |
 | `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
 | `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` | done |  |
 | `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` | partial | kept; the stacked views show taps their own way |
-| `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | kept for apps that play the animation; Android shows the static icon |
+| `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | passed to the stack view's CYLPlaceholderView; applies when the item plays an animation (GIF repeats the count, Lottie / PAG / Rive loop above 1) |
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
-| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | shows the fallback image (the iOS animation is not played) |
+| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | builds an icon component from the fallback image; a scenario's stack view plays the scenario's animation in its place (CYLAnimatedItem engine, when the app adds the library) |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` | done |  |
 | `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | `CYLPlaceholderComponent.text(title, sizeSp, color)` | done |  |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` | done |  |
@@ -990,7 +990,7 @@
 | `CYLPlaceholderComponent` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderScenarioCatalog` | `com.cyl.placeholder.CYLPlaceholderScenarioCatalog` | done |  |
 | `CYLPlaceholderScenarioCatalog` `allScenarios` | `CYLPlaceholderScenarioCatalog.allScenarios` | done |  |
-| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)` | partial | every scenario's components; icons are the static fallback images |
+| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)` | partial | every scenario's components; the first icon plays the scenario's animation in its stack view when the app adds the animation library, else the static image shows |
 | `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | `CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)` | done |  |
 | `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | `CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario)` | done |  |
 | `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | `CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)` | done |  |
@@ -1010,7 +1010,7 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderActionHandler` | `com.cyl.placeholder.CYLPlaceholderActionHandler` | done |  |
-| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | no CYLPlaceholderView inside yet; built from components |
+| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | each icon + title component is a CYLPlaceholderView (a CYLAnimatedItemView); a scenario's stack view plays the scenario's animation through its first item when the app adds the animation library; iOS also plays a component's own animation file |
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackView.stackView` | done |  |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackView.placeholderView` | done | the first component view |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackView.componentViews` | done |  |

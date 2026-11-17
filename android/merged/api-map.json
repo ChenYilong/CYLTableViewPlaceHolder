@@ -114,7 +114,7 @@
  "CYLPlaceholderComponent": {
   "status": "partial",
   "android": "com.cyl.placeholder.CYLPlaceholderComponent",
-  "note": "icons are the static fallback images; Android plays no animation yet"
+  "note": "an icon component shows its image; in a scenario's stack view the first item plays the scenario's animation through CYLPlaceholderView when the app adds the animation library"
  },
  "CYLPlaceholderComponent +buttonComponentWithTitle:style:action:": {
   "status": "done",
@@ -128,7 +128,7 @@
  "CYLPlaceholderComponent +componentWithBundledAnimation:fallbackStyle:title:size:action:": {
   "status": "partial",
   "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
-  "note": "shows the fallback image (the iOS animation is not played)"
+  "note": "builds an icon component from the fallback image; a scenario's stack view plays the scenario's animation in its place (CYLAnimatedItem engine, when the app adds the library)"
  },
  "CYLPlaceholderComponent +componentWithDictionary:error:": {
   "status": "done",
@@ -158,7 +158,7 @@
  "CYLPlaceholderComponent animationRepeatCount": {
   "status": "partial",
   "android": "CYLPlaceholderComponent.animationRepeatCount",
-  "note": "kept for apps that play the animation; Android shows the static icon"
+  "note": "passed to the stack view's CYLPlaceholderView; applies when the item plays an animation (GIF repeats the count, Lottie / PAG / Rive loop above 1)"
  },
  "CYLPlaceholderComponent attributes": {
   "status": "done",
@@ -619,7 +619,7 @@
  "CYLPlaceholderScenarioCatalog +componentsForScenario:": {
   "status": "partial",
   "android": "CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)",
-  "note": "every scenario's components; icons are the static fallback images"
+  "note": "every scenario's components; the first icon plays the scenario's animation in its stack view when the app adds the animation library, else the static image shows"
  },
  "CYLPlaceholderScenarioCatalog +localizedNameForScenario:": {
   "status": "done",
@@ -668,7 +668,7 @@
  "CYLPlaceholderStackView": {
   "status": "partial",
   "android": "com.cyl.placeholder.CYLPlaceholderStackView",
-  "note": "no CYLPlaceholderView inside yet; built from components"
+  "note": "each icon + title component is a CYLPlaceholderView (a CYLAnimatedItemView); a scenario's stack view plays the scenario's animation through its first item when the app adds the animation library; iOS also plays a component's own animation file"
  },
  "CYLPlaceholderStackView -appendComponent:": {
   "status": "done",
