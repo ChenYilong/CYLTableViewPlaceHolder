@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：core 依赖 CYLTabBarController 的 CYLAnimatedItem 组件，动效引擎只在 example 层引入 / TODO: Core depends on CYLTabBarController's CYLAnimatedItem; animation engines only in the examples
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“https://github.com/ChenYilong/CYLTabBarController/blob/13e717c9/docs/Animated-Item.md 根据文档链接，根据该文档，修改cocoapods gradle maven npm等配置，要求更新core核心代码 ，依赖该新组件。改造core核心代码，要求实现同等动效效果。core核心代码不依赖于动效引擎，仅仅在example层引入动效引擎时才展示动效icon。涉及的组件为本仓库中已经封装好的动效icon加title的核心组件代码。” | The user's original prompt (Chinese, verbatim on the left), summarized: following CYLTabBarController's `docs/Animated-Item.md` (commit `13e717c9`), change the CocoaPods, Gradle, Maven, npm and other configuration so the core depends on the new component; rework the core for the same animation effects; the core does not depend on any animation engine, and animated icons show only when an example adds an engine. The component concerned is this repository's packaged animated icon + title view (`CYLPlaceholderView`). |
+| 要求：①core 依赖 `CYLTabBarController/CYLAnimatedItem`（iOS CocoaPods 子库，`:git` + 最新 `:commit`）与 Android `io.github.chenyilong:cyltabbarcontroller-animateditem`（按 commit 构建时用 `:cylanimateditem` 替换）；②删除本仓库的引擎副本 `CYLPlaceholderAnimation/` 及各动画库 animator，`CYLPlaceholderView` 继承 `CYLAnimatedItemView`，公开 API 保持；③core 不依赖任何动效引擎（只显示静态图片，`CYL_ANIMATION_ENGINE_AVAILABLE` 为 0）；example 加入组件动效引擎（`CYLTabBarController/CYLAnimatedItemLottieSwift`、`…PAG`、`…Rive`、`…GIF` 等）后才播放动效；④npm（小程序）与鸿蒙：上游组件尚未提供（其文档 TODO 3、4），先记录。 | Requirements: (1) the core depends on `CYLTabBarController/CYLAnimatedItem` (iOS CocoaPods subspec, `:git` + latest `:commit`) and Android `io.github.chenyilong:cyltabbarcontroller-animateditem` (substituted by `:cylanimateditem` when built by commit); (2) delete this repository's engine copy `CYLPlaceholderAnimation/` and its animators; `CYLPlaceholderView` subclasses `CYLAnimatedItemView` with its public API kept; (3) the core depends on no animation engine (static images, `CYL_ANIMATION_ENGINE_AVAILABLE` = 0); animations play only when an example adds a component engine (`CYLTabBarController/CYLAnimatedItemLottieSwift`, `…PAG`, `…Rive`, `…GIF`…); (4) npm (mini program) and HarmonyOS: the upstream component does not exist there yet (its TODO 3 and 4), recorded first. |
+
 ### 已完成：所有 icon + title / 动效展示都经过 CYLPlaceholderView / Done: Every icon + title and animation display goes through CYLPlaceholderView
 
 | 中文 | English |
