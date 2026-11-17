@@ -34,20 +34,41 @@ project(":merged-rive").projectDir = file("merged/library/rive")
 include(":merged-example")
 project(":merged-example").projectDir = file("merged/example")
 
-// CYLTabBarController for Android, built from source (a Gradle composite build): its repository has no Gradle build at
-// the root, so a JitPack commit reference cannot build it. The default is the vault's checkout next to this
-// repository; -PcylTabBarDir=<…/CYLTabBarController/Example-Android> points to a clone at the latest commit
-// (scripts/resolve-cyltabbarcontroller-commit.sh in the repository root finds it). It brings two modules:
+// CYLTabBarController for Android, built from source (a Gradle composite build) at a commit, since its modules are not
+// on Maven Central yet and its repository has no Gradle build at the root, so a JitPack commit reference cannot build
+// it. It brings two modules:
 // - `io.github.chenyilong:cyltabbar` (the tab bar of the example app);
 // - `io.github.chenyilong:cyltabbarcontroller-animateditem` (CYLAnimatedItemView and the animation engine), which the
 //   core module :placeholder depends on, so every build needs the checkout.
-val cylTabBarDir = providers.gradleProperty("cylTabBarDir").orNull ?: "../../CYLTabBarController/Example-Android"
+// Where it comes from, first match wins:
+// 1. -PcylTabBarDir=<…/CYLTabBarController/Example-Android> (CI passes a clone of the newest commit);
+// 2. ../Carthage/Checkouts/CYLTabBarController, the commit the repository's Cartfile pins (the same checkout iOS uses);
+// 3. the vault's checkout next to this repository, ../../CYLTabBarController;
+// 4. otherwise scripts/cyltabbarcontroller-checkout.sh checks out the Cartfile's commit into (2), so a fresh clone
+//    builds without any manual step.
+fun cylTabBarExampleAndroid(root: File): File = root.resolve("Example-Android")
+val cylTabBarDir: String = providers.gradleProperty("cylTabBarDir").orNull ?: run {
+    val repository = rootDir.parentFile
+    val candidates = listOf(
+        cylTabBarExampleAndroid(repository.resolve("Carthage/Checkouts/CYLTabBarController")),
+        cylTabBarExampleAndroid(repository.resolve("../CYLTabBarController")),
+    )
+    candidates.firstOrNull { it.resolve("settings.gradle.kts").exists() }?.path ?: run {
+        val script = repository.resolve("scripts/cyltabbarcontroller-checkout.sh")
+        val process = ProcessBuilder("bash", script.path).directory(repository).redirectErrorStream(false).start()
+        val output = process.inputStream.bufferedReader().readText().trim()
+        val error = process.errorStream.bufferedReader().readText().trim()
+        if (process.waitFor() != 0) {
+            throw GradleException("scripts/cyltabbarcontroller-checkout.sh failed: $error")
+        }
+        cylTabBarExampleAndroid(File(output.lines().last())).path
+    }
+}
 if (!file(cylTabBarDir).resolve("settings.gradle.kts").exists()) {
     throw GradleException(
         "CYLTabBarController's Example-Android was not found at '$cylTabBarDir'. The placeholder core depends on its " +
-            "module :cylanimateditem (io.github.chenyilong:cyltabbarcontroller-animateditem). Clone " +
-            "https://github.com/ChenYilong/CYLTabBarController at the commit printed by " +
-            "scripts/resolve-cyltabbarcontroller-commit.sh and pass -PcylTabBarDir=<clone>/Example-Android.",
+            "module :cylanimateditem (io.github.chenyilong:cyltabbarcontroller-animateditem). Pass " +
+            "-PcylTabBarDir=<clone>/Example-Android, or run scripts/cyltabbarcontroller-checkout.sh in the repository root.",
     )
 }
 includeBuild(cylTabBarDir) {
