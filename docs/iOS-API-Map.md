@@ -8,14 +8,14 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（702 / 702 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (702 of 702 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（704 / 704 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (704 of 704 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | TODO：从 SmartRefreshLayout 并入的刷新内核与样式（`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`，2026-11-17）尚未计入本表；计入后评分为 72 / 100，需逐个找出 iOS 对应（UIScrollView 与 CYLRefresh 控件）。 | TODO: the refresh kernel and the styles folded in from SmartRefreshLayout (`com.cyl.refresh.layout` / `header` / `footer` / `classics` / `drawable`, 2026-11-17) are not counted in this table yet; counted, the score is 72 / 100, and each needs its iOS counterpart (UIScrollView and the CYLRefresh controls). |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStateHeader` (class) | A header with a state text and a "last updated" line (iOS `CYLRefreshStateHeader`). | `CYLRefreshStateHeader`, `CYLRefreshStateHeader(ChainingGrammar)` |  |
+| `CYLRefreshStateHeader` (class) | A header with a state text and a "last updated" line (iOS `CYLRefreshStateHeader`). | `CYLRefreshStateHeader`, `CYLRefreshStateHeader(ChainingGrammar)`, `CYLRefreshComponent(CYLRefreshStateTitles)` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshStateHeader.stateLabel` (val) | The state text (`stateLabel`). | `CYLRefreshStateHeader` `stateLabel` |  |
 | `CYLRefreshStateHeader.lastUpdatedTimeLabel` (val) | The "last updated" text (`lastUpdatedTimeLabel`). | `CYLRefreshStateHeader` `lastUpdatedTimeLabel` |  |
 | `CYLRefreshStateHeader.labelLeftInset` (var) | The gap between the icon and the texts, in dp (`labelLeftInset`). | `CYLRefreshStateHeader` `labelLeftInset` |  |
@@ -26,7 +26,8 @@
 | `CYLRefreshStateHeader.failedImage` (var) | Shown in place of the icon while the header holds after a failed refresh (`failedImage`). | `CYLRefreshStateHeader` `failedImage` |  |
 | `CYLRefreshStateHeader.iconOnTrailingSide` (var) | Puts the icon after the text instead of before it (`iconOnTrailingSide`). | `CYLRefreshStateHeader` `iconOnTrailingSide` |  |
 | `CYLRefreshStateHeader.lastUpdatedTimeString` (val) | The "last updated" text now shown (`lastUpdatedTimeString`). | `CYLRefreshStateHeader` `lastUpdatedTimeString` |  |
-| `CYLRefreshStateHeader.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshStateHeader` `-setTitle:forState:` |  |
+| `CYLRefreshStateHeader.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshStateHeader` `-setTitle:forState:`, `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshStateHeader.titleForState` (fun) | The text of [state] (`titleForState:`), as on the state footers. | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:`, `CYLRefreshStateHeader` `-titleForState:` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText` (fun) | Sets [lastUpdatedTimeText] (`cyl_modifyLastUpdatedTimeText:`). | `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` |  |
 | `CYLRefreshNormalHeader` (class) | The state header with an arrow and a spinner (iOS `CYLRefreshNormalHeader`). | `CYLRefreshNormalHeader` |  |
 | `CYLRefreshNormalHeader.arrowView` (val) | The arrow (`arrowView`). | `CYLRefreshNormalHeader` `arrowView` |  |
@@ -40,8 +41,8 @@
 | `CYLRefreshGifHeader.setIconAnimationAttributes` (fun) | The icon of [state] as attributes (`setIconAnimationAttributes:forState:`). | `CYLRefreshGifHeader` `setIconAnimationAttributes:forState:` | matched by the iOS name its KDoc cites |
 | `CYLRefreshAnimationHeader` (class) | The state header with an animation per state (iOS `CYLRefreshAnimationHeader`). | `CYLRefreshAnimationHeader` |  |
 | `CYLRefreshAnimationHeader.animationView` (val) | The view that shows the animation (`animationView`). | `CYLRefreshAnimationHeader` `animationView` |  |
-| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], [duration] seconds in all (`setAnimationImages:duration:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` |  |
-| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], 0.1 seconds each (`setAnimationImages:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` |  |
+| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], [duration] seconds in all (`setAnimationImages:duration:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:`, `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], 0.1 seconds each (`setAnimationImages:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:`, `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshAutoFooter` (class) | A footer that loads by itself when it comes into view (iOS `CYLRefreshAutoFooter`). | `CYLRefreshAutoFooter` |  |
 | `CYLRefreshAutoFooter.automaticallyRefresh` (var) | Whether reaching the end loads by itself (`automaticallyRefresh`). | `CYLRefreshAutoFooter` `automaticallyRefresh` |  |
 | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` (var) | How much of the footer must show before it loads, 0 to 1 (`triggerAutomaticallyRefreshPercent`). | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` |  |
@@ -51,7 +52,7 @@
 | `CYLRefreshAutoStateFooter.labelLeftInset` (var) | The gap between the icon and the text, in dp (`labelLeftInset`). | `CYLRefreshAutoStateFooter` `labelLeftInset` |  |
 | `CYLRefreshAutoStateFooter.refreshingTitleHidden` (var) | Whether the text hides while loading (`refreshingTitleHidden`). | `CYLRefreshAutoStateFooter` `refreshingTitleHidden` |  |
 | `CYLRefreshAutoStateFooter.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshAutoStateFooter` `-setTitle:forState:` |  |
-| `CYLRefreshAutoStateFooter.titleForState` (fun) | The text of [state] (`titleForState:`). | `CYLRefreshAutoStateFooter` `titleForState:` | matched by the iOS name its KDoc cites |
+| `CYLRefreshAutoStateFooter.titleForState` (fun) | The text of [state] (`titleForState:`). | `CYLRefreshAutoStateFooter` `-titleForState:` |  |
 | `CYLRefreshAutoNormalFooter` (class) | The automatic state footer with a spinner (iOS `CYLRefreshAutoNormalFooter`). | `CYLRefreshAutoNormalFooter` |  |
 | `CYLRefreshAutoNormalFooter.noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`). | `CYLRefreshAutoNormalFooter` `noMoreDataImage` |  |
 | `CYLRefreshAutoNormalFooter.loadingView` (val) | The spinner (`loadingView`). | `CYLRefreshAutoNormalFooter` `loadingView` |  |
@@ -389,6 +390,7 @@
 | `CYLRefreshStateTrailer` (class) | A trailer with a vertical state text (`CYLRefreshStateTrailer`). | `CYLRefreshStateTrailer` |  |
 | `CYLRefreshStateTrailer.stateLabel` (val) | The state text (`stateLabel`). | `CYLRefreshStateTrailer` `stateLabel` |  |
 | `CYLRefreshStateTrailer.setTitle` (fun) | Sets the text shown in [state] (`setTitle:forState:`). | `CYLRefreshStateTrailer` `-setTitle:forState:` |  |
+| `CYLRefreshStateTrailer.titleForState` (fun) | The text shown in [state] (`titleForState:`), as on the state footers. | `CYLRefreshStateTrailer` `-titleForState:` |  |
 | `CYLRefreshNormalTrailer` (class) | A trailer with an arrow that turns around past the trigger (`CYLRefreshNormalTrailer`). | `CYLRefreshNormalTrailer` |  |
 | `CYLRefreshNormalTrailer.arrowView` (val) | The arrow, pointing left until the pull passes the trigger (`arrowView`). | `CYLRefreshNormalTrailer` `arrowView` |  |
 | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock` (fun) | A trailer that runs [refreshingBlock] when released past the trigger (`trailerWithRefreshingBlock:`). | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` |  |

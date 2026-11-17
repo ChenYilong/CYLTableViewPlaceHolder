@@ -216,6 +216,37 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)cyl_showIconImageFrameOf:(nullable NSArray<UIImage *> *)images pullingPercent:(CGFloat)pullingPercent
     NS_SWIFT_NAME(cyl_showIconImageFrame(of:pullingPercent:));
+/*!
+ * [EN] The one implementation of `setAnimationImages:duration:forState:` for the animation header and both animation
+ *      footers: keeps the images of `state`, grows the control to the tallest image and shows them as the icon
+ *      (`cyl_setIconImages:duration:forState:`). nil is ignored.
+ * [CN] 动画刷新头与两种动画尾部的 `setAnimationImages:duration:forState:` 的唯一实现：保存 `state` 的图片，控件高度随最高的图片
+ *      增大，并作为图标显示（`cyl_setIconImages:duration:forState:`）。nil 被忽略。
+ */
+- (void)cyl_setAnimationImages:(nullable NSArray<UIImage *> *)images duration:(NSTimeInterval)duration
+                      forState:(CYLRefreshState)state NS_SWIFT_NAME(cyl_setAnimationImages(_:duration:for:));
+/*!
+ * [EN] The images set for `state` with `cyl_setAnimationImages:duration:forState:`, or nil.
+ * [CN] 用 `cyl_setAnimationImages:duration:forState:` 为 `state` 设置的图片，或 nil。
+ */
+- (nullable NSArray<UIImage *> *)cyl_animationImagesForState:(CYLRefreshState)state
+    NS_SWIFT_NAME(cyl_animationImages(for:));
+/*!
+ * [EN] While idle, shows the idle images' frame for the current `pullingPercent`. [CN] 空闲时显示空闲图片中与当前 `pullingPercent` 对应的帧。
+ */
+- (void)cyl_showIdleAnimationFrame;
+/*!
+ * [EN] The one implementation of `CYLRefreshIconAnimating`'s `setIconAnimationFilePath:size:forState:`.
+ * [CN] `CYLRefreshIconAnimating` 的 `setIconAnimationFilePath:size:forState:` 的唯一实现。
+ */
+- (void)cyl_setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
+    NS_SWIFT_NAME(cyl_setIconAnimation(filePath:size:for:));
+/*!
+ * [EN] The one implementation of `CYLRefreshIconAnimating`'s `setBundledIconAnimation:size:forState:`.
+ * [CN] `CYLRefreshIconAnimating` 的 `setBundledIconAnimation:size:forState:` 的唯一实现。
+ */
+- (void)cyl_setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
+    NS_SWIFT_NAME(cyl_setBundledIconAnimation(_:size:for:));
 @end
 
 NS_ASSUME_NONNULL_END

@@ -24,6 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
  * 设置state状态下的文字
  */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
+/*!
+ * [EN] The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`).
+ * [CN] `state` 显示的文字，或 nil（与 `CYLRefreshBackStateFooter` 相同的读取方法）。
+ */
+- (nullable NSString *)titleForState:(CYLRefreshState)state;
 
 /*!
  * 隐藏刷新状态的文字

@@ -15,10 +15,6 @@
 {
     __unsafe_unretained UIImageView *_animationView;
 }
-/** 所有状态对应的动画图片 */
-@property (strong, nonatomic) NSMutableDictionary *stateImages;
-/** 所有状态对应的动画时间 */
-@property (strong, nonatomic) NSMutableDictionary *stateDurations;
 @end
 
 @implementation CYLRefreshAnimationHeader
@@ -43,15 +39,13 @@
 
 - (instancetype)setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
 {
-    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForAnimationFilePath:filePath size:size];
-    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+    [self cyl_setIconAnimationFilePath:filePath size:size forState:state];
     return self;
 }
 
 - (instancetype)setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
 {
-    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForBundledAnimation:fileName size:size];
-    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+    [self cyl_setBundledIconAnimation:fileName size:size forState:state];
     return self;
 }
 
@@ -73,38 +67,13 @@
     return _animationView;
 }
 
-- (NSMutableDictionary *)stateImages
-{
-    if (!_stateImages) {
-        self.stateImages = [NSMutableDictionary dictionary];
-    }
-    return _stateImages;
-}
-
-- (NSMutableDictionary *)stateDurations
-{
-    if (!_stateDurations) {
-        self.stateDurations = [NSMutableDictionary dictionary];
-    }
-    return _stateDurations;
-}
-
 #pragma mark - 公共方法
-- (instancetype)setAnimationImages:(NSArray *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state {
-    if (images == nil) return self;
-
-    self.stateImages[@(state)] = images;
-    self.stateDurations[@(state)] = @(duration);
-
-    /* 根据图片设置控件的高度 */
-    UIImage *image = [images firstObject];
-    if (image.size.height > self.cyl_h) {
-        self.cyl_h = image.size.height;
-    }
-    // [EN] The images are drawn by the icon's CYLPlaceholderView, like every other icon, with the state text in the
-    //      same view; `animationView` stays for compatibility and is hidden.
-    // [CN] 图片由图标的 CYLPlaceholderView 绘制（与其他图标相同），状态文字在同一视图中；`animationView` 为兼容保留并隐藏。
-    [self cyl_setIconImages:images duration:duration forState:state];
+- (instancetype)setAnimationImages:(NSArray *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
+{
+    // [EN] One implementation for the animation header and footers (CYLRefreshComponent): the images are drawn by the
+    //      icon's CYLPlaceholderView; `animationView` stays for compatibility and is hidden.
+    // [CN] 动画刷新头与尾部共用一个实现（CYLRefreshComponent）：图片由图标的 CYLPlaceholderView 绘制；`animationView` 为兼容保留并隐藏。
+    [self cyl_setAnimationImages:images duration:duration forState:state];
     return self;
 }
 
@@ -125,7 +94,7 @@
 - (void)setPullingPercent:(CGFloat)pullingPercent
 {
     [super setPullingPercent:pullingPercent];
-    [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:pullingPercent];
+    [self cyl_showIdleAnimationFrame];
 }
 
 - (void)placeSubviews
@@ -178,7 +147,7 @@
 
     // [EN] Back to idle: the frame for the current pull. [CN] 回到空闲：显示与当前下拉距离对应的帧。
     if (state == CYLRefreshStateIdle) {
-        [self cyl_showIconImageFrameOf:self.stateImages[@(CYLRefreshStateIdle)] pullingPercent:self.pullingPercent];
+        [self cyl_showIdleAnimationFrame];
     }
     [self cyl_placeAnimationIconView];
 }

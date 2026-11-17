@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (716 counted rows, 0 TODO, 198 n/a).
+**Score: 100 / 100** (726 counted rows, 0 TODO, 199 n/a).
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -292,6 +292,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `UILabel(CYLRefresh)` | Category. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
 | `UILabel(CYLRefresh)` `+cyl_label` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` | The text of each state, kept once for every control that shows a state text (the state header, both state footers and the state trailer, whose `setTitle:forState:` / `titleForState:` use it). | `com.cyl.refresh.CYLRefreshStateHeader` — Android keeps each control's texts in its own view (setTitle / titleForState on the state header, footers and trailer) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | Sets the text of `state`; nil is ignored, as in `setTitle:forState:`. | `CYLRefreshStateHeader.setTitle` — the per-control setTitle(title, state) on Android |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | The text of `state`, or nil. | `CYLRefreshStateHeader.titleForState` — the per-control titleForState(state) on Android |
 | `CYLRefreshComponent(ChainingGrammar)` | The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the iOS names, on top of CYLRefreshLayout. | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | Sets [automaticallyChangeAlpha]. | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | Sets [beginRefreshingCompletionBlock]. | `CYLRefreshComponent.cyl_afterBeginningAction(action)` |
@@ -376,6 +379,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | When an icon animation is set: shows the icon and `title` as one CYLPlaceholderView centered in the control, and fades out `labels` (the state and time labels whose text it carries) and hides `views` (the animation vi... | `CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | MJRefresh's image sequences (`setAnimationImages:` / `setImages:`) as the icon of a state, drawn by the icon's CYLPlaceholderView like any other icon: several images play as one animated image of `duration` seconds; t... | `CYLRefreshComponent.cyl_setIconImages(images, duration, state)` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | While idle, shows the frame of `images` that matches `pullingPercent`, as MJRefresh does while pulling. | `CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | The one implementation of `setAnimationImages:duration:forState:` for the animation header and both animation footers: keeps the images of `state`, grows the control to the tallest image and shows them as the icon (`c... | `CYLRefreshAnimationHeader.setAnimationImages` — the per-control setAnimationImages(images, duration, state) on Android |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_animationImagesForState:` | The images set for `state` with `cyl_setAnimationImages:duration:forState:`, or nil. | n/a (iOS only: an iOS implementation helper shared by the iOS controls; Android controls keep their images in their own views) |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIdleAnimationFrame` | While idle, shows the idle images' frame for the current `pullingPercent`. | `CYLRefreshComponent.cyl_showIconImageFrameOf` — Android passes the idle images itself |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationFilePath:size:forState:` | The one implementation of `CYLRefreshIconAnimating`'s `setIconAnimationFilePath:size:forState:`. | `CYLRefreshIconView.setIconAnimationFilePath` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | The one implementation of `CYLRefreshIconAnimating`'s `setBundledIconAnimation:size:forState:`. | `CYLRefreshIconView.setIconAnimationFilePath` — Android names a bundled file as "asset:Animations/<name>" |
 
 ## `CYLRefresh/Base/CYLRefreshPaging.h`
 
@@ -837,6 +845,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | The gap between the icon and the text, in dp. | `CYLRefreshAutoStateFooter.labelLeftInset` |
 | `CYLRefreshAutoStateFooter` `stateLabel` | The state text. | `CYLRefreshAutoStateFooter.stateLabel` |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | The text of [state]. | `CYLRefreshAutoStateFooter.setTitle` |
+| `CYLRefreshAutoStateFooter` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshAutoStateFooter.titleForState` |
 | `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | Whether the text hides while loading. | `CYLRefreshAutoStateFooter.refreshingTitleHidden` |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
@@ -916,6 +925,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshStateHeader` `labelLeftInset` | The gap between the icon and the texts, in dp. | `CYLRefreshStateHeader.labelLeftInset` |
 | `CYLRefreshStateHeader` `stateLabel` | The state text. | `CYLRefreshStateHeader.stateLabel` |
 | `CYLRefreshStateHeader` `-setTitle:forState:` | The text of [state]. | `CYLRefreshStateHeader.setTitle` |
+| `CYLRefreshStateHeader` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshStateHeader.titleForState` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | Formats the last update time instead of the built-in, locale-aware format ("Last update: " stays in front). `lastUpdatedTimeText` still wins when set. | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeString` | The text the time label shows now. | `CYLRefreshStateHeader.lastUpdatedTimeString` |
 | `CYLRefreshStateHeader` `titleTimeSpacing` | Points between the state text and the time text; 0 (default) splits the height in halves as before. | `CYLRefreshStateHeader.titleTimeSpacing` |
@@ -939,6 +949,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshStateTrailer` | A trailer with a vertical state text. | `com.cyl.refresh.CYLRefreshStateTrailer` |
 | `CYLRefreshStateTrailer` `stateLabel` | The state text. | `CYLRefreshStateTrailer.stateLabel` |
 | `CYLRefreshStateTrailer` `-setTitle:forState:` | Sets the text shown in [state]. | `CYLRefreshStateTrailer.setTitle(title, state)` |
+| `CYLRefreshStateTrailer` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshStateTrailer.titleForState` |
 | `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | Lays the state label out as a vertical column centered at `centerX`, so the whole text stays readable in every language: CJK text stands upright one character per line (as in MJRefresh) when it fits the height; any ot... | n/a (iOS only: frame layout helper; the Android label is placed by a LinearLayout) |
 
 ## `CYLRefresh/NSBundle+CYLRefresh.h`

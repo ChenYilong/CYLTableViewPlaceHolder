@@ -277,6 +277,11 @@ open class CYLRefreshStateHeader(context: Context) : CYLRefreshHeader(CYLClassic
         if (this.state == state) stateLabel?.text = title
     }
 
+    /**
+     * The text of [state] (`titleForState:`), as on the state footers.
+     */
+    fun titleForState(state: CYLRefreshState): String? = classics.text(state)
+
     override fun didEndRefreshing() {
         super.didEndRefreshing()
         lastUpdatedTimeText?.let { classics.setLastUpdateText(it(lastUpdatedTime)) }

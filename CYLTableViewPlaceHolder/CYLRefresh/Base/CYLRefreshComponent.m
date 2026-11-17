@@ -35,6 +35,10 @@
 @property (strong, nonatomic) NSMutableDictionary<NSUUID *, id> *cyl_phaseObservers;
 /// [EN] The empty mask that hides the control (`autoHideRefresh`). [CN] 隐藏控件（`autoHideRefresh`）的空遮罩。
 @property (strong, nonatomic) CALayer *cyl_autoHideMask;
+/// [EN] The text of each state (CYLRefreshStateTitles). [CN] 各状态的文字（CYLRefreshStateTitles）。
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSString *> *cyl_stateTitleTable;
+/// [EN] The image sequence of each state (`-cyl_setAnimationImages:duration:forState:`). [CN] 各状态的图片序列。
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSArray<UIImage *> *> *cyl_animationImageTable;
 @end
 
 @implementation CYLRefreshComponent
@@ -123,6 +127,55 @@
         [self.cyl_iconView setAnimationAttributes:@{CYLPlaceholderItemImage: first} forState:CYLRefreshStateIdle];
     }
     [self cyl_setIconAnimationAttributes:@{CYLPlaceholderItemImage: image} forState:state];
+}
+
+- (void)cyl_setAnimationImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
+{
+    if (images == nil) return;
+    if (!self.cyl_animationImageTable) self.cyl_animationImageTable = [NSMutableDictionary dictionary];
+    self.cyl_animationImageTable[@(state)] = images;
+    // [EN] The control grows to the tallest image, as in MJRefresh. [CN] 控件高度随最高的图片增大，与 MJRefresh 相同。
+    UIImage *image = images.firstObject;
+    if ([image isKindOfClass:UIImage.class] && image.size.height > self.cyl_h) {
+        self.cyl_h = image.size.height;
+    }
+    [self cyl_setIconImages:images duration:duration forState:state];
+}
+
+- (NSArray<UIImage *> *)cyl_animationImagesForState:(CYLRefreshState)state
+{
+    return self.cyl_animationImageTable[@(state)];
+}
+
+- (void)cyl_showIdleAnimationFrame
+{
+    [self cyl_showIconImageFrameOf:[self cyl_animationImagesForState:CYLRefreshStateIdle] pullingPercent:self.pullingPercent];
+}
+
+- (void)cyl_setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
+{
+    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForAnimationFilePath:filePath size:size];
+    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+}
+
+- (void)cyl_setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
+{
+    NSDictionary<NSString *, id> *attributes = [CYLRefreshIconView attributesForBundledAnimation:fileName size:size];
+    if (attributes) [self cyl_setIconAnimationAttributes:attributes forState:state];
+}
+
+#pragma mark - State titles (CYLRefreshStateTitles)
+
+- (void)cyl_setStateTitle:(NSString *)title forState:(CYLRefreshState)state
+{
+    if (title == nil) return;
+    if (!self.cyl_stateTitleTable) self.cyl_stateTitleTable = [NSMutableDictionary dictionary];
+    self.cyl_stateTitleTable[@(state)] = title;
+}
+
+- (NSString *)cyl_stateTitleForState:(CYLRefreshState)state
+{
+    return self.cyl_stateTitleTable[@(state)];
 }
 
 - (void)cyl_showIconImageFrameOf:(NSArray<UIImage *> *)images pullingPercent:(CGFloat)pullingPercent

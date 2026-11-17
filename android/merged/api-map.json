@@ -3790,5 +3790,55 @@
  "CYLRivePlaceholderItemAnimator animator": {
   "status": "done",
   "android": "CYLRivePlaceholderItemAnimator.animator"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles)": {
+  "status": "partial",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader",
+  "note": "Android keeps each control's texts in its own view (setTitle / titleForState on the state header, footers and trailer)"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_setStateTitle:forState:": {
+  "status": "partial",
+  "android": "CYLRefreshStateHeader.setTitle",
+  "note": "the per-control setTitle(title, state) on Android"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_stateTitleForState:": {
+  "status": "partial",
+  "android": "CYLRefreshStateHeader.titleForState",
+  "note": "the per-control titleForState(state) on Android"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setAnimationImages:duration:forState:": {
+  "status": "partial",
+  "android": "CYLRefreshAnimationHeader.setAnimationImages",
+  "note": "the per-control setAnimationImages(images, duration, state) on Android"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_animationImagesForState:": {
+  "status": "n/a",
+  "note": "an iOS implementation helper shared by the iOS controls; Android controls keep their images in their own views"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_showIdleAnimationFrame": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_showIconImageFrameOf",
+  "note": "Android passes the idle images itself"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconAnimationFilePath:size:forState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.setIconAnimationFilePath"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setBundledIconAnimation:size:forState:": {
+  "status": "partial",
+  "android": "CYLRefreshIconView.setIconAnimationFilePath",
+  "note": "Android names a bundled file as \"asset:Animations/<name>\""
+ },
+ "CYLRefreshAutoStateFooter -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.titleForState"
+ },
+ "CYLRefreshStateHeader -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.titleForState"
+ },
+ "CYLRefreshStateTrailer -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.titleForState"
  }
 }

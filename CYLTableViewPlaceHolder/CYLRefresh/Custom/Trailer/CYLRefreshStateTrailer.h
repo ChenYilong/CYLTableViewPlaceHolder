@@ -23,6 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
 /*!
+ * [EN] The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`).
+ * [CN] `state` 显示的文字，或 nil（与 `CYLRefreshBackStateFooter` 相同的读取方法）。
+ */
+- (nullable NSString *)titleForState:(CYLRefreshState)state;
+/*!
  * [EN] Lays the state label out as a vertical column centered at `centerX`, so the whole text stays readable in every
  *      language: CJK text stands upright one character per line (as in MJRefresh) when it fits the height; any other
  *      text (English, Russian, …) or CJK text that does not fit is rotated 90° clockwise to read top to bottom, and

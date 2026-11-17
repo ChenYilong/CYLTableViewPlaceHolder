@@ -560,6 +560,24 @@ typedef void (^CYLRefreshComponentAction)(void);
 - (CGFloat)cyl_textWidth;
 @end
 
+/*!
+ * [EN] The text of each state, kept once for every control that shows a state text (the state header, both state
+ *      footers and the state trailer, whose `setTitle:forState:` / `titleForState:` use it).
+ * [CN] 各状态的文字，为所有显示状态文字的控件统一保存（状态刷新头、两种状态尾部与状态尾随控件的 `setTitle:forState:` /
+ *      `titleForState:` 都使用它）。
+ */
+@interface CYLRefreshComponent (CYLRefreshStateTitles)
+/*!
+ * [EN] Sets the text of `state`; nil is ignored, as in `setTitle:forState:`. [CN] 设置 `state` 的文字；nil 被忽略，与 `setTitle:forState:` 相同。
+ */
+- (void)cyl_setStateTitle:(nullable NSString *)title forState:(CYLRefreshState)state
+    NS_SWIFT_NAME(cyl_setStateTitle(_:for:));
+/*!
+ * [EN] The text of `state`, or nil. [CN] `state` 的文字，或 nil。
+ */
+- (nullable NSString *)cyl_stateTitleForState:(CYLRefreshState)state NS_SWIFT_NAME(cyl_stateTitle(for:));
+@end
+
 @interface CYLRefreshComponent (ChainingGrammar)
 
 #pragma mark - <<< 为 Swift 扩展链式语法 >>> -

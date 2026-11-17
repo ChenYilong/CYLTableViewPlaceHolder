@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：96 / 100**（done + 0.5 × partial，共 716 个计入的符号；done 660、partial 56、planned 0、n/a 198）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 716 counted symbols; done 660, partial 56, planned 0, n/a 198). |
+| **迁移完成率：96 / 100**（done + 0.5 × partial，共 726 个计入的符号；done 665、partial 61、planned 0、n/a 199）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 726 counted symbols; done 665, partial 61, planned 0, n/a 199). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -292,6 +292,9 @@
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` | `com.cyl.refresh.CYLRefreshStateHeader` | partial | Android keeps each control's texts in its own view (setTitle / titleForState on the state header, footers and trailer) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | `CYLRefreshStateHeader.setTitle` | partial | the per-control setTitle(title, state) on Android |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | `CYLRefreshStateHeader.titleForState` | partial | the per-control titleForState(state) on Android |
 | `CYLRefreshComponent(ChainingGrammar)` | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` | done |  |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` | done |  |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | `CYLRefreshComponent.cyl_afterBeginningAction(action)` | done |  |
@@ -376,6 +379,11 @@
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | `CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)` | done |  |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | `CYLRefreshComponent.cyl_setIconImages(images, duration, state)` | done |  |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | `CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | partial | the per-control setAnimationImages(images, duration, state) on Android |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_animationImagesForState:` | — | n/a | an iOS implementation helper shared by the iOS controls; Android controls keep their images in their own views |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIdleAnimationFrame` | `CYLRefreshComponent.cyl_showIconImageFrameOf` | done | Android passes the idle images itself |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationFilePath:size:forState:` | `CYLRefreshIconView.setIconAnimationFilePath` | done |  |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | `CYLRefreshIconView.setIconAnimationFilePath` | partial | Android names a bundled file as "asset:Animations/<name>" |
 
 ## `CYLRefresh/Base/CYLRefreshPaging.h`
 
@@ -837,6 +845,7 @@
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | `CYLRefreshAutoStateFooter.labelLeftInset` | done |  |
 | `CYLRefreshAutoStateFooter` `stateLabel` | `CYLRefreshAutoStateFooter.stateLabel` | done |  |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | `CYLRefreshAutoStateFooter.setTitle` | done |  |
+| `CYLRefreshAutoStateFooter` `-titleForState:` | `CYLRefreshAutoStateFooter.titleForState` | done |  |
 | `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | `CYLRefreshAutoStateFooter.refreshingTitleHidden` | done |  |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
@@ -916,6 +925,7 @@
 | `CYLRefreshStateHeader` `labelLeftInset` | `CYLRefreshStateHeader.labelLeftInset` | done |  |
 | `CYLRefreshStateHeader` `stateLabel` | `CYLRefreshStateHeader.stateLabel` | done |  |
 | `CYLRefreshStateHeader` `-setTitle:forState:` | `CYLRefreshStateHeader.setTitle` | done |  |
+| `CYLRefreshStateHeader` `-titleForState:` | `CYLRefreshStateHeader.titleForState` | done |  |
 | `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` | done |  |
 | `CYLRefreshStateHeader` `lastUpdatedTimeString` | `CYLRefreshStateHeader.lastUpdatedTimeString` | done |  |
 | `CYLRefreshStateHeader` `titleTimeSpacing` | `CYLRefreshStateHeader.titleTimeSpacing` | done |  |
@@ -939,6 +949,7 @@
 | `CYLRefreshStateTrailer` | `com.cyl.refresh.CYLRefreshStateTrailer` | done |  |
 | `CYLRefreshStateTrailer` `stateLabel` | `CYLRefreshStateTrailer.stateLabel` | done |  |
 | `CYLRefreshStateTrailer` `-setTitle:forState:` | `CYLRefreshStateTrailer.setTitle(title, state)` | done |  |
+| `CYLRefreshStateTrailer` `-titleForState:` | `CYLRefreshStateTrailer.titleForState` | done |  |
 | `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | — | n/a | frame layout helper; the Android label is placed by a LinearLayout |
 
 ## `CYLRefresh/NSBundle+CYLRefresh.h`

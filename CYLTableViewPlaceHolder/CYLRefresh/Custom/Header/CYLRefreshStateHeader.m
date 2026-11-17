@@ -20,8 +20,6 @@
     /** 显示刷新状态的label */
     __unsafe_unretained UILabel *_stateLabel;
 }
-/** 所有状态对应的文字 */
-@property (strong, nonatomic) NSMutableDictionary *stateTitles;
 /// [EN] Shows succeededImage / failedImage during the finish hold. [CN] 结束停留期间显示 succeededImage / failedImage。
 @property (strong, nonatomic) UIImageView *cyl_resultImageView;
 - (CGPoint)cyl_iconCenterBesideText;
@@ -31,14 +29,6 @@
 
 @implementation CYLRefreshStateHeader
 #pragma mark - 懒加载
-- (NSMutableDictionary *)stateTitles
-{
-    if (!_stateTitles) {
-        self.stateTitles = [NSMutableDictionary dictionary];
-    }
-    return _stateTitles;
-}
-
 - (UILabel *)stateLabel
 {
     if (!_stateLabel) {
@@ -65,9 +55,14 @@
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state
 {
     if (title == nil) return self;
-    self.stateTitles[@(state)] = title;
-    self.stateLabel.text = self.stateTitles[@(self.state)];
+    [self cyl_setStateTitle:title forState:state];
+    self.stateLabel.text = [self cyl_stateTitleForState:self.state];
     return self;
+}
+
+- (NSString *)titleForState:(CYLRefreshState)state
+{
+    return [self cyl_stateTitleForState:state];
 }
 
 #pragma mark key的处理
@@ -198,7 +193,7 @@
     if (state != CYLRefreshStateRefreshing) [self cyl_hideResultImage];
 
     // 设置状态文字
-    self.stateLabel.text = self.stateTitles[@(state)];
+    self.stateLabel.text = [self cyl_stateTitleForState:state];
 
     // 重新设置key（重新显示时间）
     self.lastUpdatedTimeKey = self.lastUpdatedTimeKey;

@@ -14,20 +14,10 @@
     /** 显示刷新状态的label */
     __unsafe_unretained UILabel *_stateLabel;
 }
-/** 所有状态对应的文字 */
-@property (strong, nonatomic) NSMutableDictionary *stateTitles;
 @end
 
 @implementation CYLRefreshBackStateFooter
 #pragma mark - 懒加载
-- (NSMutableDictionary *)stateTitles
-{
-    if (!_stateTitles) {
-        self.stateTitles = [NSMutableDictionary dictionary];
-    }
-    return _stateTitles;
-}
-
 - (UILabel *)stateLabel
 {
     if (!_stateLabel) {
@@ -40,13 +30,13 @@
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state
 {
     if (title == nil) return self;
-    self.stateTitles[@(state)] = title;
-    self.stateLabel.text = self.stateTitles[@(self.state)];
+    [self cyl_setStateTitle:title forState:state];
+    self.stateLabel.text = [self cyl_stateTitleForState:self.state];
     return self;
 }
 
 - (NSString *)titleForState:(CYLRefreshState)state {
-  return self.stateTitles[@(state)];
+  return [self cyl_stateTitleForState:state];
 }
 
 - (void)textConfiguration {
@@ -88,7 +78,7 @@
     CYLRefreshCheckState
 
     // 设置状态文字
-    self.stateLabel.text = self.stateTitles[@(state)];
+    self.stateLabel.text = [self cyl_stateTitleForState:state];
 }
 
 - (NSArray<UIView *> *)flipsHorizontallyInOppositeLayoutDirectionViews {

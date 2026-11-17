@@ -302,6 +302,11 @@ open class CYLRefreshStateTrailer(context: Context) : CYLRefreshTrailer(context)
         stateLabel.text = titles[this.state]
     }
 
+    /**
+     * The text shown in [state] (`titleForState:`), as on the state footers.
+     */
+    fun titleForState(state: CYLRefreshState): String? = titles[state]
+
     override fun stateDidChange(old: CYLRefreshState, new: CYLRefreshState) {
         stateLabel.text = titles[new]
     }

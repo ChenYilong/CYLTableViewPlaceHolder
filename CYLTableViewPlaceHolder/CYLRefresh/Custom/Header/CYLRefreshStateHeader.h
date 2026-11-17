@@ -35,6 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
 /*!
+ * [EN] The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`).
+ * [CN] `state` 显示的文字，或 nil（与 `CYLRefreshBackStateFooter` 相同的读取方法）。
+ */
+- (nullable NSString *)titleForState:(CYLRefreshState)state;
+/*!
  * [EN] Formats the last update time instead of the built-in, locale-aware format ("Last update: " stays in front).
  *      `lastUpdatedTimeText` still wins when set. [CN] 用它格式化上次更新时间，代替内置的按语言格式（前面保留 “最后更新：”）。
  *      设置了 `lastUpdatedTimeText` 时仍以它为准。
