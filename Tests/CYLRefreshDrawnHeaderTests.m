@@ -302,8 +302,12 @@
         XCTAssertTrue(footer.stateLabel.hidden, @"%@: no text while loading", cls);
 
         [footer endRefreshing];
-        [self spinUntil:^BOOL { return footer.state == CYLRefreshStateIdle; } timeout:5];
-        XCTAssertEqual(footer.state, CYLRefreshStateIdle, @"%@", cls);
+        // [EN] The footer turns idle after its style's finishing delay; busy CI runners stretch that (a 5 s wait failed
+        //      for CYLRefreshMaterialFooter on 5a8a601 while the test took 25 s), so wait up to 15 s.
+        // [CN] footer 在样式的结束延时后回到空闲；CI 负载高时会变慢（5a8a601 上 5 秒等待失败，整个测试用时 25 秒），因此最多等 15 秒。
+        BOOL idle = [self spinUntil:^BOOL { return footer.state == CYLRefreshStateIdle; } timeout:15];
+        XCTAssertTrue(idle, @"%@ still in state %ld (style status %ld, finishing %.2f s) after endRefreshing", cls,
+                      (long)footer.state, (long)footer.style.status, [footer finishingDurationWithSuccess:YES]);
         XCTAssertNotEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
 
         [footer endRefreshingWithNoMoreData];
