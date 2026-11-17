@@ -16,7 +16,7 @@
 |:---|:---|:---|:---|
 | `CYLPlaceholderAnimationBackend` | — | planned (TODO) | removed with the engine copy; the upstream engine names animators by identifier ("Lottie", "PAG", "Rive", "GIF", "SVGA") |
 | `CYLPlaceholderAnimationErrorHandler` | `com.cyl.tabbar.CYLTabBarItemAnimationFailure` | done | failures are reported to CYLAnimatedItemView, which shows the static image |
-| `CYLPlaceholderAnimationView` | `com.cyl.placeholder.CYLPlaceholderAnimationView` | done |  |
+| `CYLPlaceholderAnimationView` | `com.cyl.placeholder.CYLPlaceholderView` | done | the animation plays inside CYLPlaceholderView (a CYLAnimatedItemView of CYLTabBarController); the separate view is gone on Android |
 | `CYLPlaceholderAnimationView` `animationView` | `CYLPlaceholderView.animationView` | done | inherited from CYLAnimatedItemView |
 | `CYLPlaceholderAnimationView` `player` | `CYLPlaceholderView.animationPlayer` | done | inherited from CYLAnimatedItemView (CYLTabBarItemAnimationPlayer) |
 | `CYLPlaceholderAnimationView` `animatorIdentifier` | — | planned (TODO) | not exposed by CYLAnimatedItemView |

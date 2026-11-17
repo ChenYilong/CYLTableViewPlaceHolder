@@ -138,7 +138,8 @@
  },
  "CYLPlaceholderAnimationView": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationView"
+  "android": "com.cyl.placeholder.CYLPlaceholderView",
+  "note": "the animation plays inside CYLPlaceholderView (a CYLAnimatedItemView of CYLTabBarController); the separate view is gone on Android"
  },
  "CYLPlaceholderAnimationView -initWithCoder:": {
   "status": "n/a",
