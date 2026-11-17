@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：以聚合后的 API 为准更新文档 / TODO: Update the documentation to the consolidated API
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“更新文档，以聚合后的api为准” | The user's original prompt (Chinese, verbatim on the left): update the documentation, taking the consolidated API as the reference. |
+| 要求：README、`docs/`、skill 与各文件夹的 instructions 中描述当前用法的部分改为聚合后的 API：Android `CYLRefreshLayout`（原 `SmartRefreshLayout`）与 `com.cyl.refresh.*` 包名，删除的 SVPullToRefresh / android-Ultra-Pull-To-Refresh，示例不再依赖 MJRefresh，iOS `CYLRefresh/Custom/Rive/`、`CYLPlaceholderHUD/` 文件夹，Android `merged/library/rive`，小程序 `cyl-refresh/trailer`，新增的 `titleForState:`、`cyl_setStateTitle:forState:` 等；带日期的历史记录保持原样。 | Requirements: the parts of the README, `docs/`, the skills and the folder instructions that describe current usage follow the consolidated API: Android `CYLRefreshLayout` (formerly `SmartRefreshLayout`) and the `com.cyl.refresh.*` packages, the deleted SVPullToRefresh / android-Ultra-Pull-To-Refresh, examples no longer depending on MJRefresh, the iOS `CYLRefresh/Custom/Rive/` and `CYLPlaceholderHUD/` folders, Android `merged/library/rive`, the mini program `cyl-refresh/trailer`, and the new `titleForState:`, `cyl_setStateTitle:forState:` and friends; dated history entries stay as they were. |
+
 ### TODO：HUD 代码聚合到一个文件夹，CYLHUD 是唯一的 HUD 内核（iOS、Android、其他端） / TODO: Gather the HUD code in one folder, CYLHUD the only HUD kernel (iOS, Android, the other platforms)
 
 | 中文 | English |
