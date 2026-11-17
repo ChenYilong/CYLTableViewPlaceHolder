@@ -292,6 +292,14 @@ struct CYLGIFAnimationComponent {
   @ObjectLink view: CYLGIFAnimationContentView;
   @State private cylTick: number = 0;
 
+  /**
+   * The model, read together with cylTick: ArkUI re-renders only the parts of build() that read the changed state,
+   * so every read goes through here and every attribute updates when the model notifies (cylChangeListener).
+   */
+  private model(): CYLGIFAnimationContentView {
+    return this.cylTick >= 0 ? this.view : this.view;
+  }
+
   aboutToAppear(): void {
     this.view.cylChangeListener = () => {
       this.cylTick++;
@@ -303,28 +311,28 @@ struct CYLGIFAnimationComponent {
   }
 
   build() {
-    if (this.cylTick >= 0 && this.view.drawMode === CYLGIFDrawMode.System) {
+    if (this.model().drawMode === CYLGIFDrawMode.System) {
       // ImageKit could not decode it: ArkUI's Image decodes and plays the cache copy (it ignores play / stop / speed).
-      Image(this.view.systemImagePath)
+      Image(this.model().systemImagePath)
         .objectFit(ImageFit.Contain)
-        .width(this.view.width)
-        .height(this.view.height)
-    } else if (this.view.state === AnimationStatus.Initial && this.view.frames.length > 0) {
+        .width(this.model().width)
+        .height(this.model().height)
+    } else if (this.model().state === AnimationStatus.Initial && this.model().frames.length > 0) {
       // At rest (before the first play, or stopped) the first frame is drawn as an image: ImageAnimator may draw
       // nothing in its Initial state (the GIF detail page showed only the file name, 2026-11-16).
-      Image(this.view.frames[0].src)
+      Image(this.model().frames[0].src)
         .objectFit(ImageFit.Contain)
-        .width(this.view.width)
-        .height(this.view.height)
+        .width(this.model().width)
+        .height(this.model().height)
     } else {
       ImageAnimator()
-        .images(this.view.frames)
-        .state(this.view.state)
-        .iterations(this.view.iterations)
+        .images(this.model().frames)
+        .state(this.model().state)
+        .iterations(this.model().iterations)
         .fillMode(FillMode.Forwards)
         .fixedSize(true)
-        .width(this.view.width)
-        .height(this.view.height)
+        .width(this.model().width)
+        .height(this.model().height)
     }
   }
 }

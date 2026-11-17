@@ -3,7 +3,7 @@
 // the window (moved by offsetFromCenter) over the mask of maskType; the built-in states show the icon (or animation:
 // loadingAnimationFileName, progressAnimationFileName, successAnimationFileName) and status of contentView, and the
 // Custom state the CYLPlaceholderStackView of placeholderView.
-import { ComponentContent } from '@kit.ArkUI';
+import { ComponentContent, display } from '@kit.ArkUI';
 import { vibrator } from '@kit.SensorServiceKit';
 import { resourceManager } from '@kit.LocalizationKit';
 import {
@@ -13,8 +13,8 @@ import {
   CYLPlaceholderHUDPresenter,
   CYLPlaceholderHUDState
 } from './CYLPlaceholderHUD';
-import { CYLPlaceholderView } from '../CYLPlaceholderView';
-import { CYLPlaceholderStackView } from '../CYLPlaceholderStackView';
+import { CYLPlaceholderView, CYLPlaceholderViewModel } from '../CYLPlaceholderView';
+import { CYLPlaceholderStackView, CYLPlaceholderStackViewModel } from '../CYLPlaceholderStackView';
 
 /** The box and its mask. */
 @Component
@@ -22,88 +22,108 @@ export struct CYLPlaceholderHUDView {
   @ObjectLink hud: CYLPlaceholderHUD;
   @State private cylTick: number = 0;
 
+  /**
+   * The model, read together with cylTick: ArkUI re-renders only the parts of build() that read the changed state,
+   * so every read goes through here and every attribute updates when the model notifies (cylChangeListener).
+   */
+  private model(): CYLPlaceholderHUD {
+    return this.cylTick >= 0 ? this.hud : this.hud;
+  }
+  /** The overlay's size in vp (the display): `100%` in an OverlayManager ComponentContent can resolve to 0 x 0. */
+  overlayWidth: number = 0;
+  overlayHeight: number = 0;
+
+  /** This view's own listener: a HUD shown again while the previous overlay fades out gets a new view first, so the
+   * old view may only clear the listener while it is still its own. */
+  private ownListener: (() => void) | null = null;
+
   aboutToAppear(): void {
-    this.hud.cylChangeListener = () => {
+    this.ownListener = () => {
       this.cylTick++;
     };
+    this.hud.cylChangeListener = this.ownListener;
   }
 
   aboutToDisappear(): void {
-    this.hud.cylChangeListener = null;
+    if (this.hud.cylChangeListener === this.ownListener) {
+      this.hud.cylChangeListener = null;
+    }
+    this.ownListener = null;
   }
 
   @Builder
   box() {
     Column({ space: 12 }) {
-      if (this.hud.state === CYLPlaceholderHUDState.Custom && this.hud.placeholderView !== null) {
+      if (this.model().state === CYLPlaceholderHUDState.Custom && this.model().placeholderView !== null) {
         Column() {
-          CYLPlaceholderStackView({ model: this.hud.placeholderView })
+          CYLPlaceholderStackView({ model: this.model().placeholderView as CYLPlaceholderStackViewModel })
         }
         .constraintSize({ maxWidth: 300, maxHeight: 480 })
-      } else if (this.hud.contentView !== null) {
-        CYLPlaceholderView({ model: this.hud.contentView })
+      } else if (this.model().contentView !== null) {
+        CYLPlaceholderView({ model: this.model().contentView as CYLPlaceholderViewModel })
       }
     }
     .padding(16)
     .constraintSize({
-      minWidth: this.hud.minimumSize.width,
-      minHeight: this.hud.minimumSize.height,
+      minWidth: this.model().minimumSize.width,
+      minHeight: this.model().minimumSize.height,
       maxWidth: 300
     })
     .justifyContent(FlexAlign.Center)
     .alignItems(HorizontalAlign.Center)
-    .backgroundColor(this.hud.boxColor)
-    .borderRadius(this.hud.cornerRadius)
+    .backgroundColor(this.model().boxColor)
+    .borderRadius(this.model().cornerRadius)
     .shadow({ radius: 16, color: '#33000000' })
-    .translate({ x: this.hud.offsetFromCenter.horizontal, y: this.hud.offsetFromCenter.vertical })
+    .translate({ x: this.model().offsetFromCenter.horizontal, y: this.model().offsetFromCenter.vertical })
     .accessibilityGroup(true)
-    .accessibilityText(this.hud.status !== null ? this.hud.status : '')
+    .accessibilityText(this.model().status !== null ? this.model().status : '')
     .onClick(() => {
-      this.hud.receiveTouch(true);
+      this.model().receiveTouch(true);
     })
   }
 
   build() {
     Stack() {
-      if (this.cylTick < 0) {
-        Blank()
-      }
       this.box()
     }
-    .width('100%')
-    .height('100%')
+    .width(this.overlayWidth > 0 ? this.overlayWidth : '100%')
+    .height(this.overlayHeight > 0 ? this.overlayHeight : '100%')
     .alignContent(Alignment.Center)
-    .backgroundColor(this.hud.maskType === CYLPlaceholderHUDMaskType.Black ? '#66000000' :
-      this.hud.maskType === CYLPlaceholderHUDMaskType.Custom ? this.hud.backgroundLayerColor : Color.Transparent)
-    .radialGradient(this.hud.maskType === CYLPlaceholderHUDMaskType.Gradient ? {
+    .backgroundColor(this.model().maskType === CYLPlaceholderHUDMaskType.Black ? '#66000000' :
+      this.model().maskType === CYLPlaceholderHUDMaskType.Custom ? this.model().backgroundLayerColor : Color.Transparent)
+    .radialGradient(this.model().maskType === CYLPlaceholderHUDMaskType.Gradient ? {
       center: ['50%', '50%'],
       radius: '75%',
       colors: [['#00000000', 0], ['#99000000', 1]]
     } : { center: ['50%', '50%'], radius: 0, colors: [['#00000000', 0], ['#00000000', 1]] })
-    .hitTestBehavior(this.hud.blocksTouches ? HitTestMode.Default : HitTestMode.Transparent)
+    .hitTestBehavior(this.model().blocksTouches ? HitTestMode.Default : HitTestMode.Transparent)
     .onClick(() => {
-      if (this.hud.blocksTouches) {
-        this.hud.receiveTouch(false);
+      if (this.model().blocksTouches) {
+        this.model().receiveTouch(false);
       }
     })
-    .opacity(this.hud.opacity)
+    .opacity(this.model().opacity)
     .animation({
-      duration: (this.hud.opacity > 0 ? this.hud.fadeInAnimationDuration : this.hud.fadeOutAnimationDuration) * 1000
+      duration: (this.model().opacity > 0 ? this.model().fadeInAnimationDuration : this.model().fadeOutAnimationDuration) * 1000
     })
   }
 }
 
 class CYLPlaceholderHUDParams {
   hud: CYLPlaceholderHUD;
+  width: number;
+  height: number;
 
-  constructor(hud: CYLPlaceholderHUD) {
+  constructor(hud: CYLPlaceholderHUD, width: number, height: number) {
     this.hud = hud;
+    this.width = width;
+    this.height = height;
   }
 }
 
 @Builder
 function hudBuilder(params: CYLPlaceholderHUDParams) {
-  CYLPlaceholderHUDView({ hud: params.hud })
+  CYLPlaceholderHUDView({ hud: params.hud, overlayWidth: params.width, overlayHeight: params.height })
 }
 
 /** Presents HUDs in the OverlayManager of their containerView. */
@@ -126,8 +146,20 @@ class CYLPlaceholderHUDOverlayPresenter implements CYLPlaceholderHUDPresenter {
       hud.contentView.defaultTitleColor = hud.contentColor;
       hud.contentView.defaultIconColor = hud.contentColor;
     }
+    // The overlay covers the display; sized explicitly, as `100%` inside an OverlayManager ComponentContent drew
+    // nothing on the emulator (2026-11-16: the overlay was added and removed, but no HUD showed).
+    let overlayWidth = 0;
+    let overlayHeight = 0;
+    try {
+      const screen = display.getDefaultDisplaySync();
+      overlayWidth = context.px2vp(screen.width);
+      overlayHeight = context.px2vp(screen.height);
+    } catch (e) {
+      overlayWidth = 0;
+      overlayHeight = 0;
+    }
     const content = new ComponentContent<CYLPlaceholderHUDParams>(context, wrapBuilder(hudBuilder),
-      new CYLPlaceholderHUDParams(hud));
+      new CYLPlaceholderHUDParams(hud, overlayWidth, overlayHeight));
     context.getOverlayManager().addComponentContent(content);
     hud.hudView = content;
   };
