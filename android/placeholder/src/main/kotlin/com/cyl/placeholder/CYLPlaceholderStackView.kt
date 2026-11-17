@@ -94,11 +94,15 @@ class CYLPlaceholderStackView internal constructor(
         }
 
     /**
-     * The animation playing in place of the first icon, or null when no registered animator plays any of the
-     * scenario's files and the still image shows (`animationView`).
+     * The animation view playing in place of the first icon (made by CYLTabBarController's CYLAnimatedItem engine,
+     * the first item's inherited `animationView`), or null when no animator plays any of the scenario's files (the app
+     * added no animation library for them) and the still image shows (`animationView`).
      */
-    var animationView: CYLPlaceholderAnimationView? = null
-        private set
+    val animationView: View?
+        get() = animatedItem?.animationView
+
+    // The item that plays the scenario's animation file, if one was found.
+    private var animatedItem: CYLPlaceholderView? = null
 
     private val density = resources.displayMetrics.density
 
@@ -113,10 +117,10 @@ class CYLPlaceholderStackView internal constructor(
             rightMargin = margin
         })
         components.forEach { appendComponent(it) }
-        imageView = componentViews.flatMap { allViews(it) }.filterIsInstance<ImageView>().firstOrNull { it.visibility == VISIBLE }
+        imageView = componentViews.flatMap { allViews(it) }.filterIsInstance<ImageView>().firstOrNull { it.visibility == VISIBLE && it.drawable != null }
             ?: ImageView(context).apply { visibility = GONE }
         titleLabel = componentViews.flatMap { allViews(it) }
-            .firstOrNull { it is TextView && it !is Button && it.tag != HINT_TAG && it.visibility == VISIBLE } as? TextView
+            .firstOrNull { it is TextView && it !is Button && it.tag != HINT_TAG && it.visibility == VISIBLE && !it.text.isNullOrEmpty() } as? TextView
             ?: TextView(context).apply { visibility = GONE }
         hintLabel = componentViews.firstOrNull { it.tag == HINT_TAG } as? TextView
         button = componentViews.filterIsInstance<Button>().firstOrNull()
@@ -125,23 +129,25 @@ class CYLPlaceholderStackView internal constructor(
         updateBackgroundTap()
     }
 
-    // The first of the scenario's animation files (its own icon first) that is in the assets and that a registered
-    // animator plays replaces the first icon, through the first item's CYLPlaceholderView; the still image stays as the
-    // fallback.
+    // The first of the scenario's animation files (its own icon first) that is in the assets and that an animator of
+    // the CYLAnimatedItem engine plays (its library is in the app) replaces the first icon, through the first item's
+    // CYLPlaceholderView; the still image stays as the fallback.
     private fun attachScenarioAnimation(scenario: CYLPlaceholderScenario) {
         val item = componentViews.firstOrNull { it is CYLPlaceholderView } as? CYLPlaceholderView ?: return
-        if (item.imageView.visibility != VISIBLE || item.imageView.drawable == null) return
+        if (item.imageView.drawable == null) return
         val bundled = runCatching { context.assets.list(ANIMATION_FOLDER)?.toSet() }.getOrNull().orEmpty()
-        for (name in CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)) {
-            if (name !in bundled) continue
+        val names = CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario).filter { it in bundled }
+        for (name in names) {
             if (!item.setAnimationFile("asset:$ANIMATION_FOLDER/$name")) continue
-            animationView = item.animationPlayer as? CYLPlaceholderAnimationView
-            item.animationPlayer?.view?.let { view ->
+            animatedItem = item
+            item.animationView?.let { view ->
                 view.contentDescription = item.imageView.contentDescription
                 view.importantForAccessibility = item.imageView.importantForAccessibility
             }
             return
         }
+        // [EN] None plays: no animation file stays on the item, so its still image shows.
+        if (names.isNotEmpty()) item.animationURL = null
     }
 
     private fun allViews(view: View): List<View> = when {

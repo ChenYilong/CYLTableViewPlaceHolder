@@ -285,10 +285,9 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
                 defaultTitleColor = contentColor
                 defaultIconColor = contentColor
                 defaultTitleFont = font
-                imageView.layoutParams = imageView.layoutParams.apply { width = dp(animationSize); height = dp(animationSize) }
+                iconSizeDp = com.cyl.tabbar.CYLSize(animationSize, animationSize)
                 animation?.let { setAnimationFile(it); playPlaceholderAnimation() }
             }
-            if (icon == null) view.imageView.visibility = GONE
             placeholderView = view
             column.addView(view)
         }
