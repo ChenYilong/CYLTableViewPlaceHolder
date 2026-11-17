@@ -47,7 +47,13 @@ static NSString *const CYLEmptyLottie = @"{\"v\":\"5.7.4\",\"fr\":30,\"ip\":0,\"
 @implementation CYLPlaceholderLottiePlaybackTests
 
 - (void)testTheLottieAnimatorIsRegistered {
-    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.json"]].identifier, @"Lottie");
+    // [EN] A real Lottie document: since upstream PR #814 the Lottie animator takes only files it can play, so a missing
+    //      "/a.json" has no animator.
+    // [CN] 真实的 Lottie 文档：自上游 PR #814 起，Lottie animator 只接收它能播放的文件，缺失的 "/a.json" 没有 animator。
+    NSString *lottie = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
+    XCTAssertNotNil(lottie);
+    XCTAssertEqualObjects([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:lottie]].identifier, @"Lottie");
+    XCTAssertNil([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.json"]]);
 }
 
 - (void)testLottieColorOverridesFollowAppearance {
