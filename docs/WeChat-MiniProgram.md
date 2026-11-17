@@ -409,6 +409,8 @@
     all three (frames 8 / 4 / 4 after 150 ms, 41 / 21 / 21 after 700 ms) and 2x reaches every animation
     ([screenshot](assets/wechat-miniprogram-playback-fixed.png)). The example now syncs its CYLTabBarController
     libraries from the pinned checkout first (`scripts/sync-example.js`).
+    Review follow-up `a43c124d` (same PR): the same file after a failed load is a retry: `cyl-lottie` loads it again and
+    `cyl-animated-item` clears the failure. Re-verified at `a43c124d`: the same results; `npm test` 59 / 59.
   - Not done: screen-reader output (DevTools has no screen reader); the refresh icon demo page has no playback controls
     yet (`cyl-refresh` takes no speed or loop).
 - Not verified: a real phone.
