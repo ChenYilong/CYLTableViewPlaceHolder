@@ -575,6 +575,10 @@ static NSURL *CYLPlaceholderAnimationFileURL(NSURL *URL) {
 
 @interface CYLPlaceholderView ()
 @property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *itemAttributes;
+// [EN] Holds the badge label one level below the control, as the old inner item view did: a direct subview of the
+//      accessibility element was still exposed to UI automation beside it. Same frame as the view, no touches.
+// [CN] 让角标标签位于控件下一层，与原来的内部条目视图相同：作为无障碍元素的直接子视图时，它仍会与元素并列暴露给 UI 自动化。与视图同大小，不响应触摸。
+@property (nonatomic, strong) UIView *badgeContainerView;
 // [EN] Layout values from the item attributes (adapted from CYLFlatDesignTabBarButton). [CN] 来自 item 属性的布局值。
 @property (nonatomic) UIOffset itemTitleOffset;
 @property (nonatomic) UIOffset itemImageOffset;
@@ -1194,12 +1198,21 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
     self.badgeLabel.hidden = badgeValue == nil;
     if (badgeValue) {
         [self cyl_applyBadgeAppearance];
-        if (self.badgeLabel.superview != self) [self addSubview:self.badgeLabel];
+        if (!self.badgeContainerView) {
+            UIView *container = [[UIView alloc] initWithFrame:self.bounds];
+            container.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            container.userInteractionEnabled = NO;
+            container.isAccessibilityElement = NO;
+            self.badgeContainerView = container;
+        }
+        if (self.badgeContainerView.superview != self) [self addSubview:self.badgeContainerView];
+        if (self.badgeLabel.superview != self.badgeContainerView) [self.badgeContainerView addSubview:self.badgeLabel];
     } else {
         [self.badgeLabel.layer removeAllAnimations];
         self.badgeLabel.transform = CGAffineTransformIdentity;
         self.badgeLabel.alpha = 1;
         [self.badgeLabel removeFromSuperview];
+        [self.badgeContainerView removeFromSuperview];
     }
     // One announcement, no duplicates: when the placeholder is itself an accessibility element, the badge joins its
     // value and the badge label is hidden from VoiceOver; otherwise the badge label is read on its own.
@@ -1209,6 +1222,7 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
     //      or it is still exposed beside the element.
     // [CN] 现在它直接是控件的子视图（原来的内部条目视图已删除）：同时从无障碍树中隐藏，否则仍会与元素并列出现。
     self.badgeLabel.accessibilityElementsHidden = placeholderIsAccessibilityElement;
+    self.badgeContainerView.accessibilityElementsHidden = placeholderIsAccessibilityElement;
     if (badgeValue) {
         NSString *description = badgeValue.length ? badgeValue :
             CYLPlaceholderLocalizedString(@"CYLPlaceholderBadgeNewContent", @"New content");
@@ -1934,7 +1948,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         self.badgeLabel.center = CGPointMake(CGRectGetMaxX(anchor) + 2 + self.badgeCenterOffset.x,
                                               CGRectGetMinY(anchor) + self.badgeCenterOffset.y);
         self.badgeLabel.layer.cornerRadius = appearance.cornerRadius > 0 ? MIN(appearance.cornerRadius, size.height / 2) : size.height / 2;
-        [self bringSubviewToFront:self.badgeLabel];
+        self.badgeContainerView.frame = self.bounds;
+        [self bringSubviewToFront:self.badgeContainerView];
     }
 }
 
