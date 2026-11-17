@@ -73,3 +73,17 @@ The core's Swift API is decided by the Swift coding standard, not by how an exam
 (the Swift migration in `docs/Swift-Migration.md`, or a refactor), update the example call sites listed above in the
 same change; examples have the lowest weight and are no compatibility constraint (`instructions.md`, "Examples have
 the lowest weight").
+
+## Icon and title vs. the stack view
+
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
+  CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+  The stack is only for what the item cannot cover (several components, hints, buttons, per-component actions, or a
+  title the item cannot draw on that platform); a missing item feature is requested upstream and the page moves to the
+  item once the pin has it. Playback stays on the core's model (HarmonyOS `CYLPlaceholderAnimatedItem`). Every platform
+  applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
+  vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
+  CYLPlaceholderStackView only for what it cannot cover".
+- In the parity tables, an icon-with-title view maps to `CYLAnimatedItemView` on every platform and a multi-component
+  placeholder to `CYLPlaceholderStackView` with the same layout; a platform that differs scores below 100 until it
+  matches.

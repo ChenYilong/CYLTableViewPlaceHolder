@@ -60,6 +60,17 @@ the integrated `CYLRefresh` component, and an example application. Read
   ids, also for taps and multi-step flows. Rule: `instructions.md` "HarmonyOS accessibility and localization"; skill
   `cyl-harmonyos-a11y-l10n`.
 
+## Icon and title vs. the stack view
+
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
+  CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+  The stack is only for what the item cannot cover (several components, hints, buttons, per-component actions, or a
+  title the item cannot draw on that platform); a missing item feature is requested upstream and the page moves to the
+  item once the pin has it. Playback stays on the core's model (HarmonyOS `CYLPlaceholderAnimatedItem`). Every platform
+  applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
+  vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
+  CYLPlaceholderStackView only for what it cannot cover".
+
 ## Naming and compatibility
 
 - Follow the English naming rules in `instructions.md`: new project-owned

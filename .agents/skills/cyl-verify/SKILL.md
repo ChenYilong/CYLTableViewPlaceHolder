@@ -213,3 +213,16 @@ related document must say why the core cannot solve it and why the example layer
 Animation bugs (`instructions.md`, "Animation bugs: record, screenshot, fix in CYLTabBarController"): first record
 the bug as a TODO row, then screenshot it into `docs/assets/`, then fix it in CYLTabBarController's animation
 component (hand it to the owning session); an example changes only by calling an interface CYLTabBarController adds.
+
+## Icon and title vs. the stack view
+
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
+  CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+  The stack is only for what the item cannot cover (several components, hints, buttons, per-component actions, or a
+  title the item cannot draw on that platform); a missing item feature is requested upstream and the page moves to the
+  item once the pin has it. Playback stays on the core's model (HarmonyOS `CYLPlaceholderAnimatedItem`). Every platform
+  applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
+  vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
+  CYLPlaceholderStackView only for what it cannot cover".
+- Verify on a simulator or emulator that the icon's and the title's horizontal centers are equal (layout dump, view
+  hierarchy or pixel bounds) and that wrapped lines are centered.

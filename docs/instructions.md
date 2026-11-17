@@ -16,3 +16,14 @@ vault's root `instructions.md`.
   first, then restart it from the command line without asking (restart is the first strategy); say "done" after.
 - See `instructions.md`, "Record every task in docs before starting it" and "Shared emulators: restart a hung
   emulator".
+
+## Icon and title vs. the stack view
+
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
+  CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+  The stack is only for what the item cannot cover (several components, hints, buttons, per-component actions, or a
+  title the item cannot draw on that platform); a missing item feature is requested upstream and the page moves to the
+  item once the pin has it. Playback stays on the core's model (HarmonyOS `CYLPlaceholderAnimatedItem`). Every platform
+  applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
+  vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
+  CYLPlaceholderStackView only for what it cannot cover".

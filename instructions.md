@@ -427,6 +427,44 @@ integrates it the same way:
   built in code) does so only when the task asks for it, and says why in a
   comment where the tab bar controller is created.
 
+## Icon and title: CYLAnimatedItemView; CYLPlaceholderStackView only for what it cannot cover
+
+Owner's rule (2026-11-18), for the core and the examples on every platform (iOS, Android, HarmonyOS, the WeChat Mini
+Program, React Native, Flutter):
+
+1. **An icon with a title is a CYLAnimatedItemView.** A view or page that shows only an icon (a static image, a GIF or
+   an animation) and a title draws it with CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini
+   program), vertical, the title on the icon's center line. It does not wrap that pair in a `CYLPlaceholderStackView`.
+   The animation detail pages are the reference case (HarmonyOS `AnimationDetailPage`, 64ab041).
+2. **`CYLPlaceholderStackView` only where the item cannot cover the case.** Use the stack when the content is more than
+   one icon with one title, or needs what the item view does not offer, for example:
+   - several components: a hint or a long text under the title, buttons, separators, illustrations (the scenario
+     catalog, the support page);
+   - actions and tap handling per component, background actions, the configuration file format;
+   - a title the item cannot draw on that platform (several lines where its title is one line only, a font weight or a
+     dark-mode color it has no property for).
+   Say in a comment why a page uses the stack when it shows little more than an icon and a title.
+3. **A missing item feature goes upstream first.** When the stack is used only because `CYLAnimatedItemView` lacks a
+   property (title lines, spacing, font weight, a color, GIF looping), record it, ask the owner of the component in
+   CYLTabBarController for it (rule "Animation bugs: record, screenshot, fix in CYLTabBarController"), and move the page
+   to the item once the pinned commit has it. Track the request as a `TODO` with its points in the task's document.
+4. **Playback stays on the core's model.** The item view draws; play from the start, speed and repeat count go through
+   the core's API so the examples' playback controls keep working: HarmonyOS `CYLPlaceholderAnimatedItem` (attach /
+   detach / `animationURL`) with `CYLPlaceholderAnimatedItemBuilder`; Android `CYLPlaceholderView` (a
+   `CYLAnimatedItemView` subclass) or the item's own `animationSpeed` / `animationLoops` / `restartAnimation()`; the mini
+   program's `cyl-animated-item` properties and `cyl_playFromStart()`; iOS `CYLPlaceholderView` (a
+   `CYLAnimatedItemView` subclass).
+5. **One layout framework on every platform.** Every platform applies the same layout framework as
+   `CYLPlaceholderStackView` does on the others: the same components in the same order, a vertical stack centered in
+   its container, every component (icon, title, hint, button) on one vertical center line, titles and texts centered
+   on one or several lines, the same spacing and metrics as the iOS core (`docs/iOS-API-Map.md`,
+   `docs/iOS-Android-Parity.md`). No platform invents its own arrangement for a multi-component placeholder, and the
+   item / stack choice of a page is the same on every platform unless point 2 or 3 forces a difference, which the page's
+   comment and the task's document then explain.
+6. **Verify the center line.** A change to either view is checked on a simulator or emulator: the icon's and the
+   title's horizontal centers are equal (layout dump, view hierarchy or pixel bounds) and wrapped lines are centered
+   (`docs/HarmonyOS.md` E16).
+
 ## One refresh library: CYLRefresh
 
 `CYLRefresh` is the only refresh library and the only refresh kernel on every platform:

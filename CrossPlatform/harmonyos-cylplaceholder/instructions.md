@@ -21,3 +21,17 @@ MIT `LICENSE` (ChenYilong). `cylplaceholder` depends on it (`file:../cylanimated
 every placeholder icon is a `CYLAnimatedItemView`, the core ships only the GIF engine (system APIs), and the example
 `entry` depends on `@ohos/lottie`, `@tencent/libpag` and `@ohos/rive` and registers their engines at launch
 (`entry/src/main/ets/engines/ExampleAnimationEngines.ets`). Status: `docs/HarmonyOS.md`, "CYLAnimatedItem".
+
+## Icon and title vs. the stack view
+
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
+  CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+  The stack is only for what the item cannot cover (several components, hints, buttons, per-component actions, or a
+  title the item cannot draw on that platform); a missing item feature is requested upstream and the page moves to the
+  item once the pin has it. Playback stays on the core's model (HarmonyOS `CYLPlaceholderAnimatedItem`). Every platform
+  applies the same layout framework as `CYLPlaceholderStackView` does on the others (same components and order, one
+  vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
+  CYLPlaceholderStackView only for what it cannot cover".
+- HarmonyOS today: `AnimationDetailPage` draws `CYLAnimatedItemView` with `CYLPlaceholderAnimatedItem` /
+  `CYLPlaceholderAnimatedItemBuilder` (64ab041); the item's title is one line only and its `spacing` is not applied yet
+  (reported upstream), so long wrapping texts stay in stacks.
