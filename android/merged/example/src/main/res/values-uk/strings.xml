@@ -7,8 +7,8 @@
     <string name="merged_row">Рядок %1$d</string>
     <string name="merged_empty">Потягніть униз, щоб завантажити рядки</string>
     <string name="merged_loaded">Завантажено рядків: %1$d</string>
-    <string name="merged_intro_svpulltorefresh">SVPullToRefresh: потягніть униз, щоб оновити, прокрутіть до кінця, щоб завантажити ще</string>
-    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh: потягніть униз, щоб оновити</string>
+    <string name="merged_intro_loadmore">CYLRefresh: потягніть униз, щоб оновити, прокрутіть до кінця, щоб завантажити ще</string>
+    <string name="merged_intro_storehouse">CYLRefresh: заголовок StoreHouse малює слово з падаючих смужок</string>
     <string name="merged_intro_smartrefresh">CYLRefreshLayout: потягніть униз, щоб оновити, угору — щоб завантажити ще</string>
     <string name="merged_action_clear">Очистити</string>
     <string name="merged_config_highlight_dim">Підсвічування: затемнення</string>

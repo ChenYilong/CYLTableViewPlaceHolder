@@ -55,6 +55,9 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
    For SmartRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
    copy of the Java source in `android/SmartRefreshLayout/java/` gets the taken pull requests and issue fixes, each
    with a test, until the issues reach 60; then translation starts and the remaining issues are fixed in Kotlin.
+   Since 2026-11-17 (the owner's decision: "make sure CYLRefresh is the only kernel") the Kotlin SmartRefreshLayout is
+   folded into CYLRefresh (`android/merged/library`, `com.cyl.refresh.*`), and the Java copy, SVPullToRefresh and
+   android-Ultra-Pull-To-Refresh are deleted; a later fix goes into CYLRefresh. See docs/Android-Port.md.
 6. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
 
 ## English naming rules

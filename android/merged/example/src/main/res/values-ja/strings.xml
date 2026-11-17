@@ -7,8 +7,8 @@
     <string name="merged_row">%1$d 行目</string>
     <string name="merged_empty">引き下げて読み込む</string>
     <string name="merged_loaded">%1$d 行を読み込みました</string>
-    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：引き下げて更新、最後までスクロールしてさらに読み込む</string>
-    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：引き下げて更新</string>
+    <string name="merged_intro_loadmore">CYLRefresh: 引っ張って更新、最後までスクロールするともっと読み込みます</string>
+    <string name="merged_intro_storehouse">CYLRefresh: StoreHouse ヘッダーは落ちてくるバーで文字を描きます</string>
     <string name="merged_intro_smartrefresh">CYLRefreshLayout：引き下げて更新、引き上げてさらに読み込む</string>
     <string name="merged_action_clear">クリア</string>
     <string name="merged_config_highlight_dim">ハイライト：暗く</string>

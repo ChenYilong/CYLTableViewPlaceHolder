@@ -23,13 +23,9 @@ include(":placeholder-lottie")
 include(":placeholder-pag")
 // The Rive animator of the placeholder (iOS subspec CYLPlaceholderAnimation/Rive).
 include(":placeholder-rive")
-// SVPullToRefresh in Kotlin (docs/Android-Port.md, the refresh port).
-include(":SVPullToRefresh")
-// android-Ultra-Pull-To-Refresh in Kotlin (docs/Android-Port.md, the refresh port).
-include(":android-Ultra-Pull-To-Refresh")
 
 // android/merged (docs/Android-Port.md, step 3): CYLRefresh, the only refresh kernel (SmartRefreshLayout folded in),
-// with the placeholder and the two other Kotlin ports, and one example app with CYLTabBarController's Android tab bar, one tab per library.
+// with the placeholder, and one example app with CYLTabBarController's Android tab bar, one tab per library.
 include(":merged")
 project(":merged").projectDir = file("merged/library")
 // The Rive refresh header (iOS CYLRefresh/Custom/Rive/CYLRefreshRiveHeader.swift): inside the CYLRefresh library folder,

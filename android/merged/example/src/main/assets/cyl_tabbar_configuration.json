@@ -22,16 +22,16 @@
       "CYLTabBarItemSelectedImage": "system:sparkles"
     },
     {
-      "CYLTabBarItemIdentifier": "svpulltorefresh",
-      "CYLTabBarItemTitle": "tab.svpulltorefresh",
-      "CYLTabBarItemAccessibilityLabel": "tab.svpulltorefresh",
+      "CYLTabBarItemIdentifier": "loadmore",
+      "CYLTabBarItemTitle": "tab.loadmore",
+      "CYLTabBarItemAccessibilityLabel": "tab.loadmore",
       "CYLTabBarItemImage": "system:arrow.down",
       "CYLTabBarItemSelectedImage": "system:arrow.down"
     },
     {
-      "CYLTabBarItemIdentifier": "ultraptr",
-      "CYLTabBarItemTitle": "tab.ultraptr",
-      "CYLTabBarItemAccessibilityLabel": "tab.ultraptr",
+      "CYLTabBarItemIdentifier": "storehouse",
+      "CYLTabBarItemTitle": "tab.storehouse",
+      "CYLTabBarItemAccessibilityLabel": "tab.storehouse",
       "CYLTabBarItemImage": "system:arrow.clockwise",
       "CYLTabBarItemSelectedImage": "system:arrow.clockwise"
     },

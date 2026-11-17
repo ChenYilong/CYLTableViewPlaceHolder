@@ -7,8 +7,8 @@
     <string name="merged_row">第 %1$d 行</string>
     <string name="merged_empty">下拉加载数据</string>
     <string name="merged_loaded">已加载 %1$d 行</string>
-    <string name="merged_intro_svpulltorefresh">SVPullToRefresh：下拉刷新，滚动到底部加载更多</string>
-    <string name="merged_intro_ultraptr">Ultra-Pull-To-Refresh：下拉刷新</string>
+    <string name="merged_intro_loadmore">CYLRefresh：下拉刷新，滚动到底部加载更多</string>
+    <string name="merged_intro_storehouse">CYLRefresh：StoreHouse 刷新头用落下的线条拼出文字</string>
     <string name="merged_intro_smartrefresh">CYLRefreshLayout：下拉刷新，上拉加载更多</string>
     <string name="merged_action_clear">清空</string>
     <string name="merged_config_highlight_dim">高亮：变暗</string>
