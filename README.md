@@ -154,7 +154,7 @@ CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:it
 | `CYLPlaceholderItemAnimation` | 无 | iOS 12 | 共用的 animator 协议、播放器、注册表、工厂与引擎，只由下列动画库子规格引入；旧名称 `Animation` 仍可用 |
 | `LottieSwift`（`Lottie` 为别名） | `lottie-ios` ≥ 4.5.1 | iOS 13 | Swift 桥接（`LottieSwift/`）加 Objective-C animator；不提供 Objective-C 版 Lottie 2.x |
 | `PAG` / `PAGEnterprise` | `libpag` / `libpag-enterprise` ≥ 4.0 | iOS 12 | 二选一，不能同时引入 |
-| `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | Swift 视图（`RiveSwift/`）遵守可播放视图协议 |
+| `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | Swift 视图（`RiveSwift/`）遵守可播放视图协议；Rive 刷新头 `CYLRefresh/Custom/Rive/` |
 | `GIF` | ImageIO | iOS 12 | 通过注册表播放一次；未引入时 `Core` 内置解码器照常播放 GIF |
 
 | Subspec | Dependency | Minimum OS | Notes |
@@ -162,7 +162,7 @@ CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:it
 | `CYLPlaceholderItemAnimation` | none | iOS 12 | Shared animator protocol, player, registry, factory and engine; pulled in only by the animation-library subspecs below; the old name `Animation` still works |
 | `LottieSwift` (`Lottie` is an alias) | `lottie-ios` ≥ 4.5.1 | iOS 13 | A Swift bridge (`LottieSwift/`) plus an Objective-C animator; no Objective-C Lottie 2.x |
 | `PAG` / `PAGEnterprise` | `libpag` / `libpag-enterprise` ≥ 4.0 | iOS 12 | Choose one; they cannot be included together |
-| `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | A Swift view (`RiveSwift/`) conforming to the playable-view protocol |
+| `Rive` | `RiveRuntime` ~> 6.29 | iOS 14 | A Swift view (`RiveSwift/`) conforming to the playable-view protocol; the Rive refresh header, `CYLRefresh/Custom/Rive/` |
 | `GIF` | ImageIO | iOS 12 | Plays once through the registry; when not included, the decoder built into `Core` still plays GIFs |
 
 #### 内置动画资源 / Built-in animation resources

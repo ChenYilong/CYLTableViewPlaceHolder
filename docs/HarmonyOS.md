@@ -371,7 +371,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
   so example17 only sets `footer.hidden`. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 64
   host unit tests, 8 new: Rive input mapping from pull / status, driver attach during a refresh, drawn footer
   hosting, auto footer hidden rule: 0 failures); the UI is verified by compiling only (no emulator). Table 1 has no
-  rows for iOS `CYLRefreshRiveStyle` / `CYLRefreshRiveHeader` (Swift classes in `RiveSwift/`, missed by the table
+  rows for iOS `CYLRefreshRiveStyle` / `CYLRefreshRiveHeader` (Swift classes, now in `CYLRefresh/Custom/Rive/`, missed by the table
   generator), so they are not scored there.
 - **Status 2026-11-16 (score 94 → 100, branch `harmony/swift-api`):** the 62 table 1 rows of the iOS public Swift
   API (`LottieSwift/`, `RiveSwift/`). `CYLPlaceholderRiveItemAnimationView` / `CYLPlaceholderRiveLegacyItemAnimationView`
@@ -400,7 +400,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：100 / 100**（两张表合计：没有 TODO 的行 1126 / 计入的行 1126；n/a 22 行不计入）。API 表 946 / 946，演示表 180 / 180。 | **HarmonyOS score: 100 / 100** (both tables: rows without TODO 1126 / counted rows 1126; 22 n/a rows not counted). API table 946 / 946, demo table 180 / 180. |
+| **鸿蒙完成度：99 / 100**（两张表合计：没有 TODO 的行 1126 / 计入的行 1136；n/a 22 行不计入）。API 表 946 / 956，演示表 180 / 180。 | **HarmonyOS score: 99 / 100** (both tables: rows without TODO 1126 / counted rows 1136; 22 n/a rows not counted). API table 946 / 956, demo table 180 / 180. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -940,6 +940,9 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
 | `CYLRefreshFlyHeader` | `CYLRefreshFlyHeaderModel` (always open: adds its height to the top inset) |
+| `CYLRefreshFlyHeader` `mountainView` | TODO |
+| `CYLRefreshFlyHeader` `flyView` | TODO |
+| `CYLRefreshFlyHeader` `floatView` | TODO |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
@@ -1524,6 +1527,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.componentWithBundledAnimation(fileName, fallbackStyle, title, size, action)` (played by the stack view, fallback icon until ready) |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` |
+| `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | TODO |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` |
 | `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` |
 | `CYLPlaceholderComponent` `+componentWithDictionary:error:` | `CYLPlaceholderComponent.componentWithDictionary(dictionary, onError)` |
@@ -1555,6 +1559,10 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackViewModel.entries` (the stacked rows) |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackViewModel.placeholderView` |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackViewModel.componentViews` |
+| `CYLPlaceholderStackView` `imageView` | TODO |
+| `CYLPlaceholderStackView` `titleLabel` | TODO |
+| `CYLPlaceholderStackView` `hintLabel` | TODO |
+| `CYLPlaceholderStackView` `button` | TODO |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackViewModel.scenario` (null for components) |
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackViewModel.backgroundAction` |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackViewModel.initWithScenario(scenario, actions)` |
@@ -1650,6 +1658,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderView` `-performTap` | `CYLPlaceholderViewModel.performTap()` |
 | `CYLPlaceholderView` `animationRepeatCount` | `CYLPlaceholderViewModel.animationRepeatCount` (1 by default) |
 | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | `CYLPlaceholderViewModel.registerAnimationFactory(factory, fileExtension)` |
+| `CYLPlaceholderView` `-setAnimationFile:` | TODO |
 | `CYLPlaceholderView` `-playPlaceholderAnimation` | `CYLPlaceholderViewModel.playPlaceholderAnimation()` |
 | `CYLPlaceholderView` `-stopPlaceholderAnimation` | `CYLPlaceholderViewModel.stopPlaceholderAnimation()` |
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderViewModel.showPlaceholderAnimationLastFrame()` |
@@ -1717,6 +1726,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `CYLPlaceholderStatusController.cyl_applyStatusConfigurationWithContentsOfURL(path, onError)` |
 | `UIScrollView(CYLPlaceholderVisibility)` | `CYLPlaceholderListController` |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `CYLPlaceholderListController.cyl_placeholderHidden` |
+| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderView` | TODO |
 
 #### `LottieSwift/CYLPlaceholderCompatibleLottie.swift`
 
@@ -1769,7 +1779,7 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 | `CYLPlaceholderRiveLegacyItemAnimationView` `-showAnimationLastFrame()` | `CYLPlaceholderRiveLegacyItemAnimationView.showAnimationLastFrame()` |
 | `CYLPlaceholderRiveLegacyItemAnimationView` `-stopAnimation()` | `CYLPlaceholderRiveLegacyItemAnimationView.stopAnimation()` |
 
-#### `RiveSwift/CYLRefreshRiveHeader.swift`
+#### `CYLRefresh/Custom/Rive/CYLRefreshRiveHeader.swift`
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|

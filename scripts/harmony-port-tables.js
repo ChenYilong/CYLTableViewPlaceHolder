@@ -44,12 +44,12 @@ function apiRows() {
   return rows.concat(swiftRows())
 }
 
-// The public Swift API of the library (RiveSwift/, LottieSwift/), which docs/Android-API-Map.md (Objective-C headers
+// The public Swift API of the library (RiveSwift/, LottieSwift/, CYLRefresh/Custom/Rive/), which docs/Android-API-Map.md (Objective-C headers
 // only) does not list: every `public` / `open` class and member, as "`Class`" and "`Class` `member`".
 function swiftRows() {
   const rows = []
   const lib = path.join(ROOT, 'CYLTableViewPlaceHolder')
-  for (const dir of ['LottieSwift', 'RiveSwift']) {
+  for (const dir of ['LottieSwift', 'RiveSwift', 'CYLRefresh/Custom/Rive']) {
     const full = path.join(lib, dir)
     if (!fs.existsSync(full)) continue
     for (const f of fs.readdirSync(full).filter((n) => n.endsWith('.swift')).sort()) {

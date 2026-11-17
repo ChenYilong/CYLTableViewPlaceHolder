@@ -102,11 +102,13 @@ Pod::Spec.new do |s|
   end
 
   # Rive animations (`RiveRuntime`): the Swift views (RiveSwift/) adopt the playable view protocols, and the
-  # animator only registers a ready-made `CYLPlaceholderItemViewAnimator` for ".riv" files.
+  # animator only registers a ready-made `CYLPlaceholderItemViewAnimator` for ".riv" files. The Rive refresh header
+  # lives with the other refresh controls in CYLRefresh/Custom/Rive/ and is compiled here, since it needs RiveRuntime.
   s.subspec 'Rive' do |rive|
     rive.dependency 'CYLTableViewPlaceHolder/Core'
     rive.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-    rive.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Rive/*.{h,m}', 'CYLTableViewPlaceHolder/RiveSwift/*.swift'
+    rive.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Rive/*.{h,m}', 'CYLTableViewPlaceHolder/RiveSwift/*.swift',
+                        'CYLTableViewPlaceHolder/CYLRefresh/Custom/Rive/*.swift'
     rive.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Rive/*.h'
     rive.dependency 'RiveRuntime', '~> 6.29'
     # RiveRuntime requires iOS 14.
