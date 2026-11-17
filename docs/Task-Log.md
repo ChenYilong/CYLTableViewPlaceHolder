@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：鸿蒙 Rive input 示例页 / TODO: HarmonyOS Rive input example page
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
+- User's original prompt (verbatim): "加鸿蒙 Rive input 示例页"
+- Requirements: a HarmonyOS example page that shows Rive placeholders driven by state-machine inputs: `triggerInput`, a boolean `input`, and `numberInput` + `values` (each play sets the next value), like the iOS Rive Rooms page (`CYLRiveRoomsViewController.swift`: house.riv, number input `Rooms`, values 3,4,5,6, picker, slider, Loop switch with a label). Uses the example animator `entry/src/main/ets/engines/CYLRivePlaceholderItemAnimator.ets` aligned with CYLRiveIcon in `9378da4`.
+- Context: the 2026-11-18 Rive alignment left these input paths unverified on HarmonyOS because the example had no such page. The Mac emulator 127.0.0.1:5559 is arm64, so Rive runs there.
+- Acceptance: full marks (100) = page reachable from the example, each of the three input kinds plays and restarts on Play all, the number label / picker / slider follow the loop, strings in all languages, emulator screenshots in `docs/assets`, docs updated, pushed. Pass (60) = page with `numberInput` (house.riv Rooms) working on the emulator with a screenshot.
+- Order: starts after the Q17 dark-mode fix in progress (tasks in instruction order).
 ### 已完成（100 / 100）：规则：图标 + 标题只用 CYLAnimatedItemView，其余用 CYLPlaceholderStackView，各平台同一布局框架 / Done (100 / 100): Rule: an icon with a title uses CYLAnimatedItemView only, the rest CYLPlaceholderStackView, one layout framework on every platform
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
