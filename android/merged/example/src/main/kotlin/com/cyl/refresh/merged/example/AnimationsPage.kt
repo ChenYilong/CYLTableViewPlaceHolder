@@ -3,8 +3,6 @@ package com.cyl.refresh.merged.example
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Handler
-import android.os.Looper
 import android.text.format.Formatter
 import android.view.Gravity
 import android.view.View
@@ -12,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.SeekBar
+import android.widget.Switch
 import android.widget.TextView
 import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStackView
@@ -83,8 +83,10 @@ class AnimationsPage : StackPage() {
     }
 
     /**
-     * One file in the middle of the page, with its name below; it replays every 4 seconds and on "Replay"
-     * (iOS `CYLAnimationDetailViewController`).
+     * One file in the middle of the page, with its name below (iOS `CYLAnimationDetailViewController`), and the
+     * playback controls of `docs/Example-Animation-Playback.md` under it: "Play all" restarts from frame 0, the speed
+     * slider sets 0.25x to 3x live, the loop switch plays for ever or once. All three go through the core
+     * ([CYLPlaceholderView.animationSpeed], [CYLPlaceholderView.animationRepeatCount], play / stop).
      */
     private fun detail(folder: String, name: String): View {
         val context = requireContext()
@@ -101,33 +103,81 @@ class AnimationsPage : StackPage() {
         }
         val playable = placeholder.setAnimationFile(url)
         if (!playable) placeholder.title = "$title\n(no animator for .${name.substringAfterLast('.')})"
-        val handler = Handler(Looper.getMainLooper())
-        val replay = object : Runnable {
-            override fun run() {
-                placeholder.stopPlaceholderAnimation()
-                placeholder.playPlaceholderAnimation()
-                handler.postDelayed(this, REPLAY_INTERVAL_MS)
-            }
-        }
+        val playFromStart = { placeholder.stopPlaceholderAnimation(); placeholder.playPlaceholderAnimation() }
         val content = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             addView(placeholder, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            if (playable) addView(playbackControls(context, placeholder, playFromStart), LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = context.dp(24f) })
             addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-                override fun onViewAttachedToWindow(v: View) { if (playable) handler.post(replay) }
-                override fun onViewDetachedFromWindow(v: View) { handler.removeCallbacks(replay); placeholder.stopPlaceholderAnimation() }
+                override fun onViewAttachedToWindow(v: View) { if (playable) playFromStart() }
+                override fun onViewDetachedFromWindow(v: View) { placeholder.stopPlaceholderAnimation() }
             })
         }
         val replayButton = Button(context).apply {
             text = context.t(R.string.merged_action_replay)
-            setOnClickListener { placeholder.stopPlaceholderAnimation(); placeholder.playPlaceholderAnimation() }
+            setOnClickListener { playFromStart() }
         }
         return page(context, bar(context, name, replayButton), content)
     }
 
+    /**
+     * "Play all", the speed slider (0.25x to 3x in steps of 0.25, 1x first) and the loop switch (on first), as on the
+     * other platforms' examples.
+     */
+    private fun playbackControls(context: Context, placeholder: CYLPlaceholderView, playFromStart: () -> Unit): View {
+        val padding = context.dp(16f)
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(padding, 0, padding, 0) }
+        column.addView(Button(context).apply {
+            text = context.t(R.string.merged_playback_play_all)
+            tag = "playback-play-all"
+            setOnClickListener { playFromStart() }
+        })
+        val speedValue = TextView(context).apply { minWidth = context.dp(48f); gravity = Gravity.END }
+        val speedLabel = context.t(R.string.merged_playback_speed)
+        fun showSpeed(speed: Float) {
+            speedValue.text = "${if (speed % 1f == 0f) speed.toInt().toString() else speed.toString()}×"
+            column.findViewWithTag<SeekBar>("playback-speed")?.contentDescription = "$speedLabel ${speedValue.text}"
+        }
+        column.addView(LinearLayout(context).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            addView(TextView(context).apply { text = speedLabel; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+            addView(SeekBar(context).apply {
+                tag = "playback-speed"
+                max = SPEED_STEPS - 1
+                progress = SPEED_ONE
+                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(bar: SeekBar, value: Int, fromUser: Boolean) {
+                        val speed = (value + 1) * SPEED_STEP
+                        placeholder.animationSpeed = speed
+                        showSpeed(speed)
+                    }
+                    override fun onStartTrackingTouch(bar: SeekBar) = Unit
+                    override fun onStopTrackingTouch(bar: SeekBar) = Unit
+                })
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            addView(speedValue)
+        })
+        showSpeed(1f)
+        column.addView(Switch(context).apply {
+            text = context.t(R.string.merged_playback_loop)
+            tag = "playback-loop"
+            isChecked = true
+            setOnCheckedChangeListener { _, loops ->
+                placeholder.animationRepeatCount = if (loops) 0 else 1
+                playFromStart()
+            }
+        })
+        return column
+    }
+
     private companion object {
         const val EXAMPLE_FOLDER = "Animations"
-        const val REPLAY_INTERVAL_MS = 4000L
+        /** The speed slider: 12 steps of 0.25x (0.25x to 3x); step 3 is 1x. */
+        const val SPEED_STEP = 0.25f
+        const val SPEED_STEPS = 12
+        const val SPEED_ONE = 3
 
         /**
          * The engines in the order of the iOS page.

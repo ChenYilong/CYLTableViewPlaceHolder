@@ -222,6 +222,12 @@
     <string name="merged_smart_game_battle_city">GameBattleCity</string>
     <string name="merged_smart_fly">Fly</string>
     <string name="merged_action_replay">다시 재생</string>
+
+    <string name="merged_playback_play_all">모두 재생</string>
+
+    <string name="merged_playback_speed">속도</string>
+
+    <string name="merged_playback_loop">반복</string>
     <string name="merged_action_sources">출처</string>
     <string name="merged_text_no_animations">애니메이션을 찾을 수 없습니다</string>
     <string name="merged_text_notice_missing">NOTICE.animations를 찾을 수 없습니다</string>

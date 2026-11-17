@@ -222,6 +222,12 @@
     <string name="merged_smart_game_battle_city">GameBattleCity</string>
     <string name="merged_smart_fly">Fly</string>
     <string name="merged_action_replay">Replay</string>
+
+    <string name="merged_playback_play_all">Play all</string>
+
+    <string name="merged_playback_speed">Speed</string>
+
+    <string name="merged_playback_loop">Loop</string>
     <string name="merged_action_sources">Sources</string>
     <string name="merged_text_no_animations">No bundled animations</string>
     <string name="merged_text_notice_missing">NOTICE.animations not found</string>
