@@ -9,11 +9,13 @@
  },
  "CYLGIFPlaceholderItemAnimator": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLGIFPlaceholderItemAnimator"
+  "android": "com.cyl.tabbar.CYLGIFTabBarItemAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLGIFPlaceholderItemAnimator animator": {
   "status": "done",
-  "android": "CYLGIFPlaceholderItemAnimator.animator"
+  "android": "CYLGIFTabBarItemAnimator.animator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAction": {
   "status": "done",
@@ -25,12 +27,13 @@
   "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
  },
  "CYLPlaceholderAnimationBackend": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationBackend"
+  "status": "planned",
+  "note": "removed with the engine copy; the upstream engine names animators by identifier (\"Lottie\", \"PAG\", \"Rive\", \"GIF\", \"SVGA\")"
  },
  "CYLPlaceholderAnimationErrorHandler": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationFailure",
+  "note": "failures are reported to CYLAnimatedItemView, which shows the static image"
  },
  "CYLPlaceholderAnimationFactory": {
   "status": "done",
@@ -38,47 +41,56 @@
  },
  "CYLPlaceholderAnimationOption": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationOption"
+  "android": "com.cyl.tabbar.CYLTabBarAnimationOption",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveActiveDuration": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveActiveDuration"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveActiveDuration",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveActiveProperty": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveActiveProperty"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveActiveProperty",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveAnimation": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveAnimation"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveAnimation",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveArtboard": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveArtboard"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveArtboard",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveColor": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveColor"
+  "status": "planned",
+  "note": "no such option in the upstream engine (CYLTabBarItemAnimationKeys)"
  },
  "CYLPlaceholderAnimationOptionRiveInput": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveInput"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveInput",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveLegacyRuntime": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveLegacyRuntime"
+  "status": "planned",
+  "note": "no such option in the upstream engine (CYLTabBarItemAnimationKeys)"
  },
  "CYLPlaceholderAnimationOptionRiveStateMachine": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveStateMachine"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveStateMachine",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveTriggerInput": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveTriggerInput"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveTriggerInput",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationOptionRiveTriggerProperty": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveTriggerProperty"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveTriggerProperty",
+  "note": "after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderAnimationPlayer": {
   "status": "done",
@@ -134,13 +146,13 @@
  },
  "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:error:": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
-  "note": "null when no animator plays the file"
+  "android": "CYLPlaceholderView.setAnimationFile(path) with iconSizeDp",
+  "note": "false when no animator plays the file; options after '#'"
  },
  "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:options:error:": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
-  "note": "null when no animator plays the file"
+  "android": "CYLPlaceholderView.setAnimationFile(path) with iconSizeDp",
+  "note": "false when no animator plays the file; options after '#'"
  },
  "CYLPlaceholderAnimationView -initWithFrame:": {
   "status": "n/a",
@@ -148,63 +160,68 @@
  },
  "CYLPlaceholderAnimationView -play": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.play"
+  "android": "CYLPlaceholderView.playPlaceholderAnimation"
  },
  "CYLPlaceholderAnimationView -setAnimationColors:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationColors"
+  "status": "planned",
+  "note": "no color API on CYLPlaceholderView yet (the engine has CYLTabBarItemAnimationPlayer.applyColors)"
  },
  "CYLPlaceholderAnimationView -setAnimationProgress:": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationProgress"
+  "android": "CYLPlaceholderView.setPlaceholderAnimationProgress"
  },
  "CYLPlaceholderAnimationView -setAnimationRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationRepeatCount"
+  "status": "partial",
+  "android": "CYLPlaceholderView.animationRepeatCount",
+  "note": "1 plays once, other counts loop (GIF and app factories repeat the exact count)"
  },
  "CYLPlaceholderAnimationView -setAnimationSpeed:": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationSpeed"
+  "android": "CYLPlaceholderView.setPlaceholderAnimationSpeed"
  },
  "CYLPlaceholderAnimationView -showLastFrame": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.showLastFrame"
+  "android": "CYLPlaceholderView.showPlaceholderAnimationLastFrame"
  },
  "CYLPlaceholderAnimationView -stop": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.stop"
+  "android": "CYLPlaceholderView.stopPlaceholderAnimation"
  },
  "CYLPlaceholderAnimationView animationView": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.animationView"
+  "android": "CYLPlaceholderView.animationView",
+  "note": "inherited from CYLAnimatedItemView"
  },
  "CYLPlaceholderAnimationView animatorIdentifier": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.animatorIdentifier"
+  "status": "planned",
+  "note": "not exposed by CYLAnimatedItemView"
  },
  "CYLPlaceholderAnimationView backend": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.backend"
+  "status": "planned",
+  "note": "not exposed by CYLAnimatedItemView"
  },
  "CYLPlaceholderAnimationView errorHandler": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.errorHandler"
+  "android": "CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidFail",
+  "note": "CYLAnimatedItemView handles failures and shows the static image"
  },
  "CYLPlaceholderAnimationView player": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.player"
+  "android": "CYLPlaceholderView.animationPlayer",
+  "note": "inherited from CYLAnimatedItemView (CYLTabBarItemAnimationPlayer)"
  },
  "CYLPlaceholderAnimationView playing": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.playing"
+  "status": "planned",
+  "note": "CYLAnimatedItemView keeps its playing state private"
  },
  "CYLPlaceholderAnimationView ready": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.ready"
+  "android": "CYLPlaceholderView.isAnimationReady",
+  "note": "inherited from CYLAnimatedItemView"
  },
  "CYLPlaceholderAnimationView readyHandler": {
   "status": "done",
-  "android": "CYLPlaceholderAnimationView.readyHandler"
+  "android": "CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidLoad"
  },
  "CYLPlaceholderBadgeAppearance": {
   "status": "done",
@@ -648,7 +665,8 @@
  },
  "CYLPlaceholderItemAnimationBasePlayer": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationBasePlayer",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationBasePlayer +new": {
   "status": "n/a",
@@ -660,306 +678,353 @@
  },
  "CYLPlaceholderItemAnimationBasePlayer -initWithAnimationView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView"
+  "android": "CYLTabBarItemAnimationBasePlayer(animationView)",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationBasePlayer animationView": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationBasePlayer.animationView"
+  "android": "CYLTabBarItemAnimationBasePlayer.animationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFactory"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationFactory",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory +animationViewWithURL:size:contentMode:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.animationViewWithURL",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimationFactory.animationViewWithURL",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory +isAnimationView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.isAnimationView",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimationFactory.isAnimationView",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory +playerForView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.playerForView",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimationFactory.playerForView",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory +sharedFactory": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.sharedFactory",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimationFactory.sharedFactory",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory -init": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.init"
+  "android": "CYLTabBarItemAnimationFactory()",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory -initWithRegistry:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.initWithRegistry"
+  "android": "CYLTabBarItemAnimationFactory(registry)",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFactory registry": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.registry"
+  "android": "CYLTabBarItemAnimationFactory.registry",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationFileMatching",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching -canAnimateFileAtURL:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimationFileMatching.canAnimateFileAtURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching attributeKeys": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.attributeKeys"
+  "android": "CYLTabBarItemAnimationFileMatching.attributeKeys",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching fileExtensions": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.fileExtensions"
+  "android": "CYLTabBarItemAnimationFileMatching.fileExtensions",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching identifier": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.identifier"
+  "android": "CYLTabBarItemAnimationFileMatching.identifier",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationFileMatching priority": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.priority"
+  "android": "CYLTabBarItemAnimationFileMatching.priority",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationPlayableView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView -cyl_applyAnimationViewColors:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors"
+  "android": "CYLTabBarItemAnimationPlayableView.cyl_applyAnimationViewColors",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView -cyl_playAnimationView": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView"
+  "android": "CYLTabBarItemAnimationPlayableView.cyl_playAnimationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView -cyl_setAnimationViewRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount"
+  "status": "partial",
+  "android": "CYLTabBarItemAnimationPlayer.loops",
+  "note": "the upstream engine only loops or plays once; CYLPlaceholderView.animationRepeatCount maps 1 to once, other counts to loops (GIF and app factories repeat the exact count); upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView -cyl_showAnimationViewLastFrame": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame"
+  "android": "CYLTabBarItemAnimationPlayableView.cyl_showAnimationViewLastFrame",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView -cyl_stopAnimationView": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView"
+  "android": "CYLTabBarItemAnimationPlayableView.cyl_stopAnimationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView cyl_animationViewErrorHandler": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler"
+  "android": "CYLTabBarItemAnimationFailure.reportLater",
+  "note": "upstream: the animator reports a failed file, CYLAnimatedItemView shows the static image again; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView cyl_animationViewReadyHandler": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler"
+  "android": "CYLTabBarItemAnimationFailure.reportLoaded",
+  "note": "upstream: the animator reports a loaded file (CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidLoad); upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayableView cyl_isAnimationViewReady": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady"
+  "android": "CYLTabBarItemAnimationFailure.isLoading",
+  "note": "upstream: the negation, while the file loads; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationPlayer",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -applyColors:traitCollection:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.applyColors",
-  "note": "a night flag instead of a trait collection"
+  "android": "CYLTabBarItemAnimationPlayer.applyColors",
+  "note": "a Configuration instead of a trait collection; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -applyDarkColors:traitCollection:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.applyDarkColors",
-  "note": "a night flag instead of a trait collection"
+  "android": "CYLTabBarItemAnimationPlayer.applyDarkColors",
+  "note": "a Configuration instead of a trait collection; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -play": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.play"
+  "android": "CYLTabBarItemAnimationPlayer.play",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -setAnimationRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount"
+  "status": "partial",
+  "android": "CYLTabBarItemAnimationPlayer.loops",
+  "note": "the upstream engine only loops or plays once; CYLPlaceholderView.animationRepeatCount maps 1 to once, other counts to loops; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -showLastFrame": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.showLastFrame"
+  "android": "CYLTabBarItemAnimationPlayer.showLastFrame",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer -stop": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.stop"
+  "android": "CYLTabBarItemAnimationPlayer.stop",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer animationSpeed": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.animationSpeed"
+  "android": "CYLTabBarItemAnimationPlayer.animationSpeed",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer animationView": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.animationView"
+  "android": "CYLTabBarItemAnimationPlayer.animationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationPlayer progress": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.progress"
+  "android": "CYLTabBarItemAnimationPlayer.progress",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewFactory": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationViewFactory",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewFactory -animationViewWithURL:size:contentMode:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewFactory.animationViewWithURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimationViewFactory.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewFactory -playerForAnimationView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewFactory.playerForAnimationView"
+  "android": "CYLTabBarItemAnimationViewFactory.playerForAnimationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewMaking": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationViewMaking",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewMaking -animationViewWithURL:size:contentMode:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.animationViewWithURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimationViewMaking.animationViewWithURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewMaking -isAnimationView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.isAnimationView"
+  "android": "CYLTabBarItemAnimationViewMaking.isAnimationView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewMaking -playerForView:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.playerForView"
+  "android": "CYLTabBarItemAnimationViewMaking.playerForView",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewProviding": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimationViewProviding",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimationViewProviding +cyl_animationViewWithFileURL:options:contentMode:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimationViewProviding.cyl_animationViewWithFileURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimator": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimator"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorPriority": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimatorPriority",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimatorRegistering",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -animatorForAttributes:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForAttributes"
+  "android": "CYLTabBarItemAnimatorRegistering.animatorForAttributes",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -animatorForURL:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimatorRegistering.animatorForURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -animatorWithIdentifier:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier"
+  "android": "CYLTabBarItemAnimatorRegistering.animatorWithIdentifier",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -animators": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animators"
+  "android": "CYLTabBarItemAnimatorRegistering.animators",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -attributeKeyForGenericKey:inAttributes:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey"
+  "android": "CYLTabBarItemAnimatorRegistering.attributeKeyForGenericKey",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -attributeKeysForGenericKey:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey"
+  "android": "CYLTabBarItemAnimatorRegistering.attributeKeysForGenericKey",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -bindURL:toAnimator:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.bindURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
+  "android": "CYLTabBarItemAnimatorRegistering.bindURL",
+  "note": "a file is a path, \"asset:<name>\" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -fileExtensions": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.fileExtensions"
+  "android": "CYLTabBarItemAnimatorRegistering.fileExtensions",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -registerAnimator:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.registerAnimator"
+  "android": "CYLTabBarItemAnimatorRegistering.registerAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistering -unregisterAnimatorWithIdentifier:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier"
+  "android": "CYLTabBarItemAnimatorRegistering.unregisterAnimatorWithIdentifier",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry"
+  "android": "com.cyl.tabbar.CYLTabBarItemAnimatorRegistry",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +animatorForAttributes:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForAttributes",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.animatorForAttributes",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +animatorForURL:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForURL",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.animatorForURL",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +animatorWithIdentifier:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.animatorWithIdentifier",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +animators": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animators",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.animators",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +attributeKeyForGenericKey:inAttributes:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.attributeKeyForGenericKey",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +attributeKeysForGenericKey:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.attributeKeysForGenericKey",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +bindURL:toAnimator:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.bindURL",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.bindURL",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +fileExtensions": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.fileExtensions",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.fileExtensions",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +registerAnimator:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.registerAnimator",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.registerAnimator",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +sharedRegistry": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.sharedRegistry",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.sharedRegistry",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemAnimatorRegistry +unregisterAnimatorWithIdentifier:": {
   "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier",
-  "note": "companion call on the shared instance"
+  "android": "CYLTabBarItemAnimatorRegistry.unregisterAnimatorWithIdentifier",
+  "note": "companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemViewAnimator": {
   "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemViewAnimator"
+  "android": "com.cyl.tabbar.CYLTabBarItemViewAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemViewAnimator +new": {
   "status": "n/a",
@@ -971,11 +1036,13 @@
  },
  "CYLPlaceholderItemViewAnimator -initWithIdentifier:fileExtensions:attributeKeys:viewProvider:": {
   "status": "done",
-  "android": "CYLPlaceholderItemViewAnimator.initWithIdentifier"
+  "android": "CYLTabBarItemViewAnimator(identifier, fileExtensions, attributeKeys, viewProvider)",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderItemViewAnimator viewProvider": {
   "status": "done",
-  "android": "CYLPlaceholderItemViewAnimator.viewProvider"
+  "android": "CYLTabBarItemViewAnimator.viewProvider",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLPlaceholderLocalization": {
   "status": "done",
@@ -3781,15 +3848,18 @@
  },
  "CYLPAGPlaceholderItemAnimator": {
   "status": "done",
-  "android": "com.cyl.placeholder.pag.CYLPAGPlaceholderItemAnimator"
+  "android": "com.cyl.tabbar.CYLPAGTabBarItemAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLRivePlaceholderItemAnimator": {
   "status": "done",
-  "android": "com.cyl.placeholder.rive.CYLRivePlaceholderItemAnimator"
+  "android": "com.cyl.tabbar.CYLRiveTabBarItemAnimator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLRivePlaceholderItemAnimator animator": {
   "status": "done",
-  "android": "CYLRivePlaceholderItemAnimator.animator"
+  "android": "CYLRiveTabBarItemAnimator.animator",
+  "note": "upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17"
  },
  "CYLRefreshComponent(CYLRefreshStateTitles)": {
   "status": "partial",

@@ -8,172 +8,172 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：96 / 100**（done + 0.5 × partial，共 728 个计入的符号；done 665、partial 63、planned 0、n/a 200）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 728 counted symbols; done 665, partial 63, planned 0, n/a 200). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 728 个计入的符号；done 655、partial 66、planned 7、n/a 200）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 728 counted symbols; done 655, partial 66, planned 7, n/a 200). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderAnimationBackend` | `com.cyl.placeholder.CYLPlaceholderAnimationBackend` | done |  |
-| `CYLPlaceholderAnimationErrorHandler` | `com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler` | done |  |
+| `CYLPlaceholderAnimationBackend` | — | planned (TODO) | removed with the engine copy; the upstream engine names animators by identifier ("Lottie", "PAG", "Rive", "GIF", "SVGA") |
+| `CYLPlaceholderAnimationErrorHandler` | `com.cyl.tabbar.CYLTabBarItemAnimationFailure` | done | failures are reported to CYLAnimatedItemView, which shows the static image |
 | `CYLPlaceholderAnimationView` | `com.cyl.placeholder.CYLPlaceholderAnimationView` | done |  |
-| `CYLPlaceholderAnimationView` `animationView` | `CYLPlaceholderAnimationView.animationView` | done |  |
-| `CYLPlaceholderAnimationView` `player` | `CYLPlaceholderAnimationView.player` | done |  |
-| `CYLPlaceholderAnimationView` `animatorIdentifier` | `CYLPlaceholderAnimationView.animatorIdentifier` | done |  |
-| `CYLPlaceholderAnimationView` `backend` | `CYLPlaceholderAnimationView.backend` | done |  |
-| `CYLPlaceholderAnimationView` `playing` | `CYLPlaceholderAnimationView.playing` | done |  |
-| `CYLPlaceholderAnimationView` `ready` | `CYLPlaceholderAnimationView.ready` | done |  |
-| `CYLPlaceholderAnimationView` `errorHandler` | `CYLPlaceholderAnimationView.errorHandler` | done |  |
-| `CYLPlaceholderAnimationView` `readyHandler` | `CYLPlaceholderAnimationView.readyHandler` | done |  |
-| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:error:` | `CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)` | done | null when no animator plays the file |
-| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:options:error:` | `CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)` | done | null when no animator plays the file |
+| `CYLPlaceholderAnimationView` `animationView` | `CYLPlaceholderView.animationView` | done | inherited from CYLAnimatedItemView |
+| `CYLPlaceholderAnimationView` `player` | `CYLPlaceholderView.animationPlayer` | done | inherited from CYLAnimatedItemView (CYLTabBarItemAnimationPlayer) |
+| `CYLPlaceholderAnimationView` `animatorIdentifier` | — | planned (TODO) | not exposed by CYLAnimatedItemView |
+| `CYLPlaceholderAnimationView` `backend` | — | planned (TODO) | not exposed by CYLAnimatedItemView |
+| `CYLPlaceholderAnimationView` `playing` | — | planned (TODO) | CYLAnimatedItemView keeps its playing state private |
+| `CYLPlaceholderAnimationView` `ready` | `CYLPlaceholderView.isAnimationReady` | done | inherited from CYLAnimatedItemView |
+| `CYLPlaceholderAnimationView` `errorHandler` | `CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidFail` | done | CYLAnimatedItemView handles failures and shows the static image |
+| `CYLPlaceholderAnimationView` `readyHandler` | `CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidLoad` | done |  |
+| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:error:` | `CYLPlaceholderView.setAnimationFile(path) with iconSizeDp` | done | false when no animator plays the file; options after '#' |
+| `CYLPlaceholderAnimationView` `-initWithFileURL:size:contentMode:options:error:` | `CYLPlaceholderView.setAnimationFile(path) with iconSizeDp` | done | false when no animator plays the file; options after '#' |
 | `CYLPlaceholderAnimationView` `-initWithFrame:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderAnimationView` `-initWithCoder:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
-| `CYLPlaceholderAnimationView` `-play` | `CYLPlaceholderAnimationView.play` | done |  |
-| `CYLPlaceholderAnimationView` `-stop` | `CYLPlaceholderAnimationView.stop` | done |  |
-| `CYLPlaceholderAnimationView` `-showLastFrame` | `CYLPlaceholderAnimationView.showLastFrame` | done |  |
-| `CYLPlaceholderAnimationView` `-setAnimationProgress:` | `CYLPlaceholderAnimationView.setAnimationProgress` | done |  |
-| `CYLPlaceholderAnimationView` `-setAnimationSpeed:` | `CYLPlaceholderAnimationView.setAnimationSpeed` | done |  |
-| `CYLPlaceholderAnimationView` `-setAnimationRepeatCount:` | `CYLPlaceholderAnimationView.setAnimationRepeatCount` | done |  |
-| `CYLPlaceholderAnimationView` `-setAnimationColors:` | `CYLPlaceholderAnimationView.setAnimationColors` | done |  |
+| `CYLPlaceholderAnimationView` `-play` | `CYLPlaceholderView.playPlaceholderAnimation` | done |  |
+| `CYLPlaceholderAnimationView` `-stop` | `CYLPlaceholderView.stopPlaceholderAnimation` | done |  |
+| `CYLPlaceholderAnimationView` `-showLastFrame` | `CYLPlaceholderView.showPlaceholderAnimationLastFrame` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationProgress:` | `CYLPlaceholderView.setPlaceholderAnimationProgress` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationSpeed:` | `CYLPlaceholderView.setPlaceholderAnimationSpeed` | done |  |
+| `CYLPlaceholderAnimationView` `-setAnimationRepeatCount:` | `CYLPlaceholderView.animationRepeatCount` | partial | 1 plays once, other counts loop (GIF and app factories repeat the exact count) |
+| `CYLPlaceholderAnimationView` `-setAnimationColors:` | — | planned (TODO) | no color API on CYLPlaceholderView yet (the engine has CYLTabBarItemAnimationPlayer.applyColors) |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationFactory.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationViewMaking` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking` | done |  |
-| `CYLPlaceholderItemAnimationViewMaking` `-animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationViewMaking.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string |
-| `CYLPlaceholderItemAnimationViewMaking` `-playerForView:` | `CYLPlaceholderItemAnimationViewMaking.playerForView` | done |  |
-| `CYLPlaceholderItemAnimationViewMaking` `-isAnimationView:` | `CYLPlaceholderItemAnimationViewMaking.isAnimationView` | done |  |
-| `CYLPlaceholderItemAnimationFactory` | `com.cyl.placeholder.CYLPlaceholderItemAnimationFactory` | done |  |
-| `CYLPlaceholderItemAnimationFactory` `registry` | `CYLPlaceholderItemAnimationFactory.registry` | done |  |
-| `CYLPlaceholderItemAnimationFactory` `-initWithRegistry:` | `CYLPlaceholderItemAnimationFactory.initWithRegistry` | done |  |
-| `CYLPlaceholderItemAnimationFactory` `-init` | `CYLPlaceholderItemAnimationFactory.init` | done |  |
-| `CYLPlaceholderItemAnimationFactory` `+sharedFactory` | `CYLPlaceholderItemAnimationFactory.sharedFactory` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimationFactory` `+animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationFactory.animationViewWithURL` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimationFactory` `+playerForView:` | `CYLPlaceholderItemAnimationFactory.playerForView` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimationFactory` `+isAnimationView:` | `CYLPlaceholderItemAnimationFactory.isAnimationView` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimationViewMaking` | `com.cyl.tabbar.CYLTabBarItemAnimationViewMaking` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewMaking` `-animationViewWithURL:size:contentMode:` | `CYLTabBarItemAnimationViewMaking.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewMaking` `-playerForView:` | `CYLTabBarItemAnimationViewMaking.playerForView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewMaking` `-isAnimationView:` | `CYLTabBarItemAnimationViewMaking.isAnimationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` | `com.cyl.tabbar.CYLTabBarItemAnimationFactory` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `registry` | `CYLTabBarItemAnimationFactory.registry` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `-initWithRegistry:` | `CYLTabBarItemAnimationFactory(registry)` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `-init` | `CYLTabBarItemAnimationFactory()` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `+sharedFactory` | `CYLTabBarItemAnimationFactory.sharedFactory` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `+animationViewWithURL:size:contentMode:` | `CYLTabBarItemAnimationFactory.animationViewWithURL` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `+playerForView:` | `CYLTabBarItemAnimationFactory.playerForView` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFactory` `+isAnimationView:` | `CYLTabBarItemAnimationFactory.isAnimationView` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayableView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationPlayableView` | `com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_playAnimationView` | `CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_showAnimationViewLastFrame` | `CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_stopAnimationView` | `CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_applyAnimationViewColors:` | `CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `-cyl_setAnimationViewRepeatCount:` | `CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_isAnimationViewReady` | `CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewReadyHandler` | `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler` | done |  |
-| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewErrorHandler` | `CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler` | done |  |
-| `CYLPlaceholderItemAnimationViewProviding` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding` | done |  |
-| `CYLPlaceholderItemAnimationViewProviding` `+cyl_animationViewWithFileURL:options:contentMode:` | `CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL` | done | a file is a path, "asset:<name>" or a URL string |
+| `CYLPlaceholderItemAnimationPlayableView` | `com.cyl.tabbar.CYLTabBarItemAnimationPlayableView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_playAnimationView` | `CYLTabBarItemAnimationPlayableView.cyl_playAnimationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_showAnimationViewLastFrame` | `CYLTabBarItemAnimationPlayableView.cyl_showAnimationViewLastFrame` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_stopAnimationView` | `CYLTabBarItemAnimationPlayableView.cyl_stopAnimationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_applyAnimationViewColors:` | `CYLTabBarItemAnimationPlayableView.cyl_applyAnimationViewColors` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `-cyl_setAnimationViewRepeatCount:` | `CYLTabBarItemAnimationPlayer.loops` | partial | the upstream engine only loops or plays once; CYLPlaceholderView.animationRepeatCount maps 1 to once, other counts to loops (GIF and app factories repeat the exact count); upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_isAnimationViewReady` | `CYLTabBarItemAnimationFailure.isLoading` | done | upstream: the negation, while the file loads; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewReadyHandler` | `CYLTabBarItemAnimationFailure.reportLoaded` | done | upstream: the animator reports a loaded file (CYLTabBarItemAnimationFailureHandling.cyl_animationViewDidLoad); upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayableView` `cyl_animationViewErrorHandler` | `CYLTabBarItemAnimationFailure.reportLater` | done | upstream: the animator reports a failed file, CYLAnimatedItemView shows the static image again; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewProviding` | `com.cyl.tabbar.CYLTabBarItemAnimationViewProviding` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewProviding` `+cyl_animationViewWithFileURL:options:contentMode:` | `CYLTabBarItemAnimationViewProviding.cyl_animationViewWithFileURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayer.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimationPlayer` | `com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `animationView` | `CYLPlaceholderItemAnimationPlayer.animationView` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `-play` | `CYLPlaceholderItemAnimationPlayer.play` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `-showLastFrame` | `CYLPlaceholderItemAnimationPlayer.showLastFrame` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `-stop` | `CYLPlaceholderItemAnimationPlayer.stop` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `progress` | `CYLPlaceholderItemAnimationPlayer.progress` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `animationSpeed` | `CYLPlaceholderItemAnimationPlayer.animationSpeed` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `-setAnimationRepeatCount:` | `CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount` | done |  |
-| `CYLPlaceholderItemAnimationPlayer` `-applyDarkColors:traitCollection:` | `CYLPlaceholderItemAnimationPlayer.applyDarkColors` | done | a night flag instead of a trait collection |
-| `CYLPlaceholderItemAnimationPlayer` `-applyColors:traitCollection:` | `CYLPlaceholderItemAnimationPlayer.applyColors` | done | a night flag instead of a trait collection |
-| `CYLPlaceholderItemAnimationBasePlayer` | `com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer` | done |  |
-| `CYLPlaceholderItemAnimationBasePlayer` `-initWithAnimationView:` | `CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView` | done |  |
+| `CYLPlaceholderItemAnimationPlayer` | `com.cyl.tabbar.CYLTabBarItemAnimationPlayer` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `animationView` | `CYLTabBarItemAnimationPlayer.animationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-play` | `CYLTabBarItemAnimationPlayer.play` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-showLastFrame` | `CYLTabBarItemAnimationPlayer.showLastFrame` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-stop` | `CYLTabBarItemAnimationPlayer.stop` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `progress` | `CYLTabBarItemAnimationPlayer.progress` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `animationSpeed` | `CYLTabBarItemAnimationPlayer.animationSpeed` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-setAnimationRepeatCount:` | `CYLTabBarItemAnimationPlayer.loops` | partial | the upstream engine only loops or plays once; CYLPlaceholderView.animationRepeatCount maps 1 to once, other counts to loops; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-applyDarkColors:traitCollection:` | `CYLTabBarItemAnimationPlayer.applyDarkColors` | done | a Configuration instead of a trait collection; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationPlayer` `-applyColors:traitCollection:` | `CYLTabBarItemAnimationPlayer.applyColors` | done | a Configuration instead of a trait collection; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationBasePlayer` | `com.cyl.tabbar.CYLTabBarItemAnimationBasePlayer` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationBasePlayer` `-initWithAnimationView:` | `CYLTabBarItemAnimationBasePlayer(animationView)` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 | `CYLPlaceholderItemAnimationBasePlayer` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderItemAnimationBasePlayer` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
-| `CYLPlaceholderItemAnimationBasePlayer` `animationView` | `CYLPlaceholderItemAnimationBasePlayer.animationView` | done |  |
+| `CYLPlaceholderItemAnimationBasePlayer` `animationView` | `CYLTabBarItemAnimationBasePlayer.animationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimatorPriority` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority` | done |  |
-| `CYLPlaceholderItemAnimationFileMatching` | `com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching` | done |  |
-| `CYLPlaceholderItemAnimationFileMatching` `identifier` | `CYLPlaceholderItemAnimationFileMatching.identifier` | done |  |
-| `CYLPlaceholderItemAnimationFileMatching` `-canAnimateFileAtURL:` | `CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL` | done | a file is a path, "asset:<name>" or a URL string |
-| `CYLPlaceholderItemAnimationFileMatching` `priority` | `CYLPlaceholderItemAnimationFileMatching.priority` | done |  |
-| `CYLPlaceholderItemAnimationFileMatching` `fileExtensions` | `CYLPlaceholderItemAnimationFileMatching.fileExtensions` | done |  |
-| `CYLPlaceholderItemAnimationFileMatching` `attributeKeys` | `CYLPlaceholderItemAnimationFileMatching.attributeKeys` | done |  |
-| `CYLPlaceholderItemAnimationViewFactory` | `com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory` | done |  |
-| `CYLPlaceholderItemAnimationViewFactory` `-animationViewWithURL:size:contentMode:` | `CYLPlaceholderItemAnimationViewFactory.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string |
-| `CYLPlaceholderItemAnimationViewFactory` `-playerForAnimationView:` | `CYLPlaceholderItemAnimationViewFactory.playerForAnimationView` | done |  |
-| `CYLPlaceholderItemAnimator` | `com.cyl.placeholder.CYLPlaceholderItemAnimator` | done |  |
+| `CYLPlaceholderItemAnimatorPriority` | `com.cyl.tabbar.CYLTabBarItemAnimatorPriority` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` | `com.cyl.tabbar.CYLTabBarItemAnimationFileMatching` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` `identifier` | `CYLTabBarItemAnimationFileMatching.identifier` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` `-canAnimateFileAtURL:` | `CYLTabBarItemAnimationFileMatching.canAnimateFileAtURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` `priority` | `CYLTabBarItemAnimationFileMatching.priority` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` `fileExtensions` | `CYLTabBarItemAnimationFileMatching.fileExtensions` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationFileMatching` `attributeKeys` | `CYLTabBarItemAnimationFileMatching.attributeKeys` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewFactory` | `com.cyl.tabbar.CYLTabBarItemAnimationViewFactory` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewFactory` `-animationViewWithURL:size:contentMode:` | `CYLTabBarItemAnimationViewFactory.animationViewWithURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimationViewFactory` `-playerForAnimationView:` | `CYLTabBarItemAnimationViewFactory.playerForAnimationView` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimator` | `com.cyl.tabbar.CYLTabBarItemAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemAnimatorRegistry.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemAnimatorRegistering` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-registerAnimator:` | `CYLPlaceholderItemAnimatorRegistering.registerAnimator` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-unregisterAnimatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animators` | `CYLPlaceholderItemAnimatorRegistering.animators` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorForURL:` | `CYLPlaceholderItemAnimatorRegistering.animatorForURL` | done | a file is a path, "asset:<name>" or a URL string |
-| `CYLPlaceholderItemAnimatorRegistering` `-animatorForAttributes:` | `CYLPlaceholderItemAnimatorRegistering.animatorForAttributes` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeyForGenericKey:inAttributes:` | `CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-bindURL:toAnimator:` | `CYLPlaceholderItemAnimatorRegistering.bindURL` | done | a file is a path, "asset:<name>" or a URL string |
-| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeysForGenericKey:` | `CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey` | done |  |
-| `CYLPlaceholderItemAnimatorRegistering` `-fileExtensions` | `CYLPlaceholderItemAnimatorRegistering.fileExtensions` | done |  |
-| `CYLPlaceholderItemAnimatorRegistry` | `com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry` | done |  |
-| `CYLPlaceholderItemAnimatorRegistry` `+sharedRegistry` | `CYLPlaceholderItemAnimatorRegistry.sharedRegistry` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+registerAnimator:` | `CYLPlaceholderItemAnimatorRegistry.registerAnimator` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+unregisterAnimatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+animators` | `CYLPlaceholderItemAnimatorRegistry.animators` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorWithIdentifier:` | `CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorForURL:` | `CYLPlaceholderItemAnimatorRegistry.animatorForURL` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+animatorForAttributes:` | `CYLPlaceholderItemAnimatorRegistry.animatorForAttributes` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeyForGenericKey:inAttributes:` | `CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+bindURL:toAnimator:` | `CYLPlaceholderItemAnimatorRegistry.bindURL` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeysForGenericKey:` | `CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey` | done | companion call on the shared instance |
-| `CYLPlaceholderItemAnimatorRegistry` `+fileExtensions` | `CYLPlaceholderItemAnimatorRegistry.fileExtensions` | done | companion call on the shared instance |
+| `CYLPlaceholderItemAnimatorRegistering` | `com.cyl.tabbar.CYLTabBarItemAnimatorRegistering` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-registerAnimator:` | `CYLTabBarItemAnimatorRegistering.registerAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-unregisterAnimatorWithIdentifier:` | `CYLTabBarItemAnimatorRegistering.unregisterAnimatorWithIdentifier` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-animators` | `CYLTabBarItemAnimatorRegistering.animators` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorWithIdentifier:` | `CYLTabBarItemAnimatorRegistering.animatorWithIdentifier` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorForURL:` | `CYLTabBarItemAnimatorRegistering.animatorForURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-animatorForAttributes:` | `CYLTabBarItemAnimatorRegistering.animatorForAttributes` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeyForGenericKey:inAttributes:` | `CYLTabBarItemAnimatorRegistering.attributeKeyForGenericKey` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-bindURL:toAnimator:` | `CYLTabBarItemAnimatorRegistering.bindURL` | done | a file is a path, "asset:<name>" or a URL string; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-attributeKeysForGenericKey:` | `CYLTabBarItemAnimatorRegistering.attributeKeysForGenericKey` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistering` `-fileExtensions` | `CYLTabBarItemAnimatorRegistering.fileExtensions` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` | `com.cyl.tabbar.CYLTabBarItemAnimatorRegistry` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+sharedRegistry` | `CYLTabBarItemAnimatorRegistry.sharedRegistry` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+registerAnimator:` | `CYLTabBarItemAnimatorRegistry.registerAnimator` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+unregisterAnimatorWithIdentifier:` | `CYLTabBarItemAnimatorRegistry.unregisterAnimatorWithIdentifier` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+animators` | `CYLTabBarItemAnimatorRegistry.animators` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorWithIdentifier:` | `CYLTabBarItemAnimatorRegistry.animatorWithIdentifier` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorForURL:` | `CYLTabBarItemAnimatorRegistry.animatorForURL` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+animatorForAttributes:` | `CYLTabBarItemAnimatorRegistry.animatorForAttributes` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeyForGenericKey:inAttributes:` | `CYLTabBarItemAnimatorRegistry.attributeKeyForGenericKey` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+bindURL:toAnimator:` | `CYLTabBarItemAnimatorRegistry.bindURL` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+attributeKeysForGenericKey:` | `CYLTabBarItemAnimatorRegistry.attributeKeysForGenericKey` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemAnimatorRegistry` `+fileExtensions` | `CYLTabBarItemAnimatorRegistry.fileExtensions` | done | companion call on the shared instance; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderItemViewAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderItemViewAnimator` | `com.cyl.placeholder.CYLPlaceholderItemViewAnimator` | done |  |
-| `CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` | `CYLPlaceholderItemViewAnimator.initWithIdentifier` | done |  |
+| `CYLPlaceholderItemViewAnimator` | `com.cyl.tabbar.CYLTabBarItemViewAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderItemViewAnimator` `-initWithIdentifier:fileExtensions:attributeKeys:viewProvider:` | `CYLTabBarItemViewAnimator(identifier, fileExtensions, attributeKeys, viewProvider)` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 | `CYLPlaceholderItemViewAnimator` `-init` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderItemViewAnimator` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
-| `CYLPlaceholderItemViewAnimator` `viewProvider` | `CYLPlaceholderItemViewAnimator.viewProvider` | done |  |
+| `CYLPlaceholderItemViewAnimator` `viewProvider` | `CYLTabBarItemViewAnimator.viewProvider` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/GIF/CYLGIFPlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLGIFPlaceholderItemAnimator` | `com.cyl.placeholder.CYLGIFPlaceholderItemAnimator` | done |  |
-| `CYLGIFPlaceholderItemAnimator` `animator` | `CYLGIFPlaceholderItemAnimator.animator` | done |  |
+| `CYLGIFPlaceholderItemAnimator` | `com.cyl.tabbar.CYLGIFTabBarItemAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLGIFPlaceholderItemAnimator` `animator` | `CYLGIFTabBarItemAnimator.animator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/PAG/CYLPAGPlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPAGPlaceholderItemAnimator` | `com.cyl.placeholder.pag.CYLPAGPlaceholderItemAnimator` | done |  |
+| `CYLPAGPlaceholderItemAnimator` | `com.cyl.tabbar.CYLPAGTabBarItemAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderAnimation/Rive/CYLRivePlaceholderItemAnimator.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderAnimationOption` | `com.cyl.placeholder.CYLPlaceholderAnimationOption` | done |  |
-| `CYLPlaceholderAnimationOptionRiveArtboard` | `CYLPlaceholderAnimationOptions.RiveArtboard` | done |  |
-| `CYLPlaceholderAnimationOptionRiveStateMachine` | `CYLPlaceholderAnimationOptions.RiveStateMachine` | done |  |
-| `CYLPlaceholderAnimationOptionRiveActiveProperty` | `CYLPlaceholderAnimationOptions.RiveActiveProperty` | done |  |
-| `CYLPlaceholderAnimationOptionRiveActiveDuration` | `CYLPlaceholderAnimationOptions.RiveActiveDuration` | done |  |
-| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | `CYLPlaceholderAnimationOptions.RiveTriggerProperty` | done |  |
-| `CYLPlaceholderAnimationOptionRiveColor` | `CYLPlaceholderAnimationOptions.RiveColor` | done |  |
-| `CYLPlaceholderAnimationOptionRiveInput` | `CYLPlaceholderAnimationOptions.RiveInput` | done |  |
-| `CYLPlaceholderAnimationOptionRiveTriggerInput` | `CYLPlaceholderAnimationOptions.RiveTriggerInput` | done |  |
-| `CYLPlaceholderAnimationOptionRiveAnimation` | `CYLPlaceholderAnimationOptions.RiveAnimation` | done |  |
-| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | `CYLPlaceholderAnimationOptions.RiveLegacyRuntime` | done |  |
-| `CYLRivePlaceholderItemAnimator` | `com.cyl.placeholder.rive.CYLRivePlaceholderItemAnimator` | done |  |
-| `CYLRivePlaceholderItemAnimator` `animator` | `CYLRivePlaceholderItemAnimator.animator` | done |  |
+| `CYLPlaceholderAnimationOption` | `com.cyl.tabbar.CYLTabBarAnimationOption` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveArtboard` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveArtboard` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveStateMachine` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveStateMachine` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveActiveProperty` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveActiveProperty` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveActiveDuration` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveActiveDuration` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveTriggerProperty` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveTriggerProperty` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveColor` | — | planned (TODO) | no such option in the upstream engine (CYLTabBarItemAnimationKeys) |
+| `CYLPlaceholderAnimationOptionRiveInput` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveInput` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveTriggerInput` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveTriggerInput` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveAnimation` | `com.cyl.tabbar.CYLTabBarItemAnimationKeys.CYLTabBarAnimationOptionRiveAnimation` | done | after '#' in the file URL; upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | — | planned (TODO) | no such option in the upstream engine (CYLTabBarItemAnimationKeys) |
+| `CYLRivePlaceholderItemAnimator` | `com.cyl.tabbar.CYLRiveTabBarItemAnimator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
+| `CYLRivePlaceholderItemAnimator` `animator` | `CYLRiveTabBarItemAnimator.animator` | done | upstream engine: CYLTabBarController's :cylanimateditem (com.cyl.tabbar), which CYLPlaceholderView uses since 2026-11-17 |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
