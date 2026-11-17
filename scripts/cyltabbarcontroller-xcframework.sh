@@ -19,6 +19,19 @@ if [[ -f "$OUTPUT/Info.plist" && ( -f "$STAMP" || ( "$SLICES" == simulator && -f
   exit 0
 fi
 CHECKOUT=$(scripts/cyltabbarcontroller-checkout.sh)
+# CYLTabBarController uses iOS 26 SDK APIs (e.g. UITabBarController.MinimizeBehavior), so it needs Xcode 26 or newer.
+# The iOS 12 jobs select Xcode 16 for this repository's own build; build the dependency with the newest Xcode instead.
+# Its Objective-C interface is what this repository imports, and a dynamic framework links across Xcode versions.
+major=$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]+).*/\1/p')
+if [[ "${major:-0}" -lt 26 ]]; then
+  newest=$(find /Applications -maxdepth 1 -name 'Xcode*.app' -print0 | while IFS= read -r -d '' app; do
+      v=$(defaults read "$app/Contents/Info" CFBundleShortVersionString 2>/dev/null || echo 0)
+      echo "$v $app"
+    done | sort -V | tail -1 | cut -d' ' -f2-)
+  [[ -n "$newest" ]] || { echo "error: CYLTabBarController needs Xcode 26 or newer" >&2; exit 1; }
+  echo "Building CYLTabBarController with $newest (the selected Xcode is $major)"
+  export DEVELOPER_DIR="$newest/Contents/Developer"
+fi
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/cyltbc-xcframework.XXXXXX")
 trap 'rm -rf "${WORK:?}"' EXIT
 destinations=('generic/platform=iOS Simulator')
