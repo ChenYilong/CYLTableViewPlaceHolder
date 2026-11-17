@@ -28,7 +28,7 @@ if [[ "$DEMO" == . ]]; then
 fi
 cd "$DEMO"
 # CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
-if grep -q "pod 'CYLTabBarController'.*:commit" Podfile; then
+if grep -Eq "pod '(CYLTabBarController|CYLAnimatedItem)'.*:commit" Podfile; then
   "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
 fi
 pod install

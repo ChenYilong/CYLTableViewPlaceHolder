@@ -285,7 +285,7 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
                 defaultTitleColor = contentColor
                 defaultIconColor = contentColor
                 defaultTitleFont = font
-                iconSizeDp = com.cyl.tabbar.CYLSize(animationSize, animationSize)
+                iconSizeDp = com.cyl.animateditem.CYLSize(animationSize, animationSize)
                 animation?.let { setAnimationFile(it); playPlaceholderAnimation() }
             }
             placeholderView = view

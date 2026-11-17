@@ -10,7 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.cyl.placeholder.CYLPlaceholderView
-import com.cyl.tabbar.CYLSize
+import com.cyl.animateditem.CYLSize
 import com.cyl.refresh.merged.R
 
 /**

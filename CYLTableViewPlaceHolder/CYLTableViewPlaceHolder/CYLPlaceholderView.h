@@ -1,10 +1,14 @@
 #import <UIKit/UIKit.h>
-// [EN] CYLPlaceholderView subclasses CYLTabBarController's shared animated icon + title control, `CYLAnimatedItemView`
-//      (subspec `CYLTabBarController/CYLAnimatedItem`; guide:
-//      https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md).
-// [CN] CYLPlaceholderView 继承自 CYLTabBarController 共用的动效 icon + title 控件 `CYLAnimatedItemView`
-//      （子库 `CYLTabBarController/CYLAnimatedItem`；接入文档见上面的链接）。
-#if __has_include(<CYLTabBarController/CYLAnimatedItemView.h>)
+// [EN] CYLPlaceholderView subclasses the shared animated icon + title control `CYLAnimatedItemView`: CocoaPods pod
+//      `CYLAnimatedItem` (module `CYLAnimatedItem`, from the CYLTabBarController repository); the Carthage framework
+//      of CYLTabBarController compiles it into module `CYLTabBarController`. Guide:
+//      https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md
+// [CN] CYLPlaceholderView 继承自共用的动效 icon + title 控件 `CYLAnimatedItemView`：CocoaPods 为 `CYLAnimatedItem` pod
+//      （模块 `CYLAnimatedItem`，位于 CYLTabBarController 仓库）；CYLTabBarController 的 Carthage framework 把它编译进
+//      `CYLTabBarController` 模块。接入文档见上面的链接。
+#if __has_include(<CYLAnimatedItem/CYLAnimatedItemView.h>)
+#import <CYLAnimatedItem/CYLAnimatedItemView.h>
+#elif __has_include(<CYLTabBarController/CYLAnimatedItemView.h>)
 #import <CYLTabBarController/CYLAnimatedItemView.h>
 #else
 #import "CYLAnimatedItemView.h"

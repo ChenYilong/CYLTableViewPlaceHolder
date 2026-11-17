@@ -16,12 +16,12 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   # Placeholder view, automatic table/collection integration, CYLPlaceholderHUD and CYLRefresh. `CYLPlaceholderView` (the
-  # packaged icon + title view) is a subclass of CYLTabBarController's `CYLAnimatedItemView` (integration guide:
-  # https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md), so Core depends on its `CYLAnimatedItem` subspec: static images, no animation engine. An
-  # animation file plays only when the app adds an animation subspec below (or CYLTabBarController's own
-  # `CYLAnimatedItem<Type>` subspec); without one, the view shows its static image.
+  # packaged icon + title view) is a subclass of `CYLAnimatedItemView` from the `CYLAnimatedItem` pod (CYLTabBarController repository; guide:
+  # https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md), so Core depends on `CYLAnimatedItem/Core`: static images, no animation engine. An
+  # animation file plays only when the app adds an animation subspec below (or the `CYLAnimatedItem/<Type>` subspec
+  # directly); without one, the view shows its static image.
   s.subspec 'Core' do |core|
-    core.dependency 'CYLTabBarController/CYLAnimatedItem'
+    core.dependency 'CYLAnimatedItem/Core'
     core.source_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/**/*.{h,m}',
                         'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}'
@@ -39,8 +39,8 @@ Pod::Spec.new do |s|
     core.resource_bundles = { 'CYLTableViewPlaceHolderPrivacy' => 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy' }
   end
 
-  # The animation subspecs: each adds CYLTabBarController's animation engine (`CYLAnimationEngine`) and one animator
-  # through its `CYLAnimatedItem<Type>` subspec. Nothing else changes: `CYLPlaceholderView` sees the engine at compile
+  # The animation subspecs: each adds the animation engine (`CYLAnimatedItem/Engine`) and one animator through the
+  # matching `CYLAnimatedItem/<Type>` subspec. Nothing else changes: `CYLPlaceholderView` sees the engine at compile
   # time (`CYL_ANIMATION_ENGINE_AVAILABLE`) and plays the files of every installed type. Pick one per type.
   # Lottie uses the Swift version of lottie-ios (iOS 13).
   s.subspec 'Lottie' do |lottie|
@@ -50,28 +50,28 @@ Pod::Spec.new do |s|
 
   s.subspec 'LottieSwift' do |lottieswift|
     lottieswift.dependency 'CYLTableViewPlaceHolder/Core'
-    lottieswift.dependency 'CYLTabBarController/CYLAnimatedItemLottieSwift'
+    lottieswift.dependency 'CYLAnimatedItem/LottieSwift'
     lottieswift.ios.deployment_target = '13.0'
   end
 
   # PAG animations (Tencent libpag, a binary pod).
   s.subspec 'PAG' do |pag|
     pag.dependency 'CYLTableViewPlaceHolder/Core'
-    pag.dependency 'CYLTabBarController/CYLAnimatedItemPAG'
+    pag.dependency 'CYLAnimatedItem/PAG'
   end
 
   # PAG Enterprise (`libpag-enterprise`). It ships the same `libpag.xcframework`, so use either `PAG` or
   # `PAGEnterprise`, not both.
   s.subspec 'PAGEnterprise' do |pagenterprise|
     pagenterprise.dependency 'CYLTableViewPlaceHolder/Core'
-    pagenterprise.dependency 'CYLTabBarController/CYLAnimatedItemPAGEnterprise'
+    pagenterprise.dependency 'CYLAnimatedItem/PAGEnterprise'
   end
 
   # Rive animations (`RiveRuntime`, iOS 14). The Rive refresh header lives with the other refresh controls in
   # CYLRefresh/Custom/Rive/ and is compiled here, since it needs RiveRuntime.
   s.subspec 'Rive' do |rive|
     rive.dependency 'CYLTableViewPlaceHolder/Core'
-    rive.dependency 'CYLTabBarController/CYLAnimatedItemRive'
+    rive.dependency 'CYLAnimatedItem/Rive'
     rive.source_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Rive/*.swift'
     rive.ios.deployment_target = '14.0'
   end
@@ -79,13 +79,13 @@ Pod::Spec.new do |s|
   # SVGA animations (`SVGAPlayerLite`).
   s.subspec 'SVGA' do |svga|
     svga.dependency 'CYLTableViewPlaceHolder/Core'
-    svga.dependency 'CYLTabBarController/CYLAnimatedItemSVGA'
+    svga.dependency 'CYLAnimatedItem/SVGA'
   end
 
   # GIF animations through the engine (ImageIO, no third-party library). Without it a GIF shows as a static image.
   s.subspec 'GIF' do |gif|
     gif.dependency 'CYLTableViewPlaceHolder/Core'
-    gif.dependency 'CYLTabBarController/CYLAnimatedItemGIF'
+    gif.dependency 'CYLAnimatedItem/GIF'
   end
 
   s.pod_target_xcconfig = {

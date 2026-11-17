@@ -6,7 +6,8 @@
 # of master or main: the newest work often lives on a feature branch. Run it before every build that depends on
 # CYLTabBarController (instructions.md, "Depending on CYLTabBarController").
 #
-# With --write, also rewrites the `:commit => '<sha>'` of the `pod 'CYLTabBarController'` line in each given Podfile;
+# With --write, also rewrites the `:commit => '<sha>'` of the `pod 'CYLTabBarController'` and `pod 'CYLAnimatedItem'`
+# lines in each given Podfile;
 # for a Cartfile, the `github "ChenYilong/CYLTabBarController" "<sha>"` line. It fails when a file has no such line. CYL_TABBARCONTROLLER_URL overrides the repository (default: GitHub).
 set -euo pipefail
 URL="${CYL_TABBARCONTROLLER_URL:-https://github.com/ChenYilong/CYLTabBarController.git}"
@@ -38,9 +39,10 @@ for podfile in "${WRITE[@]+"${WRITE[@]}"}"; do
     echo "updated $podfile"
     continue
   fi
-  grep -Eq "pod +'CYLTabBarController'.*:commit *=> *'[0-9a-f]{40}'" "$podfile" ||
-    { echo "error: $podfile has no pod 'CYLTabBarController' ... :commit => '<sha>' line" >&2; exit 1; }
-  sed -E -i.bak "/pod +'CYLTabBarController'/ s/(:commit *=> *')[0-9a-f]{40}(')/\1$SHA\2/" "$podfile"
+  # The repository holds two pods, CYLTabBarController and CYLAnimatedItem (version-locked): both lines follow it.
+  grep -Eq "pod +'(CYLTabBarController|CYLAnimatedItem)'.*:commit *=> *'[0-9a-f]{40}'" "$podfile" ||
+    { echo "error: $podfile has no pod 'CYLTabBarController' / 'CYLAnimatedItem' ... :commit => '<sha>' line" >&2; exit 1; }
+  sed -E -i.bak "/pod +'(CYLTabBarController|CYLAnimatedItem)'/ s/(:commit *=> *')[0-9a-f]{40}(')/\1$SHA\2/" "$podfile"
   rm -f "$podfile.bak"
   echo "updated $podfile"
 done

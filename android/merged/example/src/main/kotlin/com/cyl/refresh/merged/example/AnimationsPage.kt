@@ -15,7 +15,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStackView
-import com.cyl.tabbar.CYLSize
+import com.cyl.animateditem.CYLSize
 
 private fun Context.dp(value: Float) = (value * resources.displayMetrics.density).toInt()
 

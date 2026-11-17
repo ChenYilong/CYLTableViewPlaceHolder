@@ -22,9 +22,10 @@ command="${1:-lib}"
 shift || true
 case "$command" in
   lib)
-    # Core depends on CYLTabBarController/CYLAnimatedItem, linted from the commit the Cartfile pins.
+    # Core depends on the CYLAnimatedItem pod (CYLTabBarController repository, not on the trunk yet), linted from the
+    # commit the Cartfile pins.
     tabbar=$(scripts/cyltabbarcontroller-checkout.sh)
-    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests --include-podspecs="$tabbar/CYLTabBarController.podspec" "$@"
+    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests --include-podspecs="$tabbar/CYLAnimatedItem.podspec" "$@"
     ;;
   spec)
     pod spec lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests "$@"
@@ -36,8 +37,8 @@ case "$command" in
     [[ "$tag" == "$current" ]]
     ;;
   push)
-    # CYLTabBarController/CYLAnimatedItem is not on the trunk yet (docs/Task-Log.md): a push fails until CYLTabBarController
-    # releases it and the podspec depends on that version.
+    # The CYLAnimatedItem pod is not on the trunk yet (docs/Task-Log.md): a push fails until CYLTabBarController
+    # publishes it and the podspec depends on that version.
     : "${COCOAPODS_TRUNK_TOKEN:?COCOAPODS_TRUNK_TOKEN is not set}"
     pod trunk push "$PODSPEC" --allow-warnings --skip-tests "$@"
     ;;

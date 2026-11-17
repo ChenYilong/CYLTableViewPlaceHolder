@@ -20,13 +20,13 @@ import androidx.core.widget.ImageViewCompat
 import com.cyl.animateditem.CYLAnimatedItemAccessibilityText
 import com.cyl.animateditem.CYLAnimatedItemAxis
 import com.cyl.animateditem.CYLAnimatedItemView
-import com.cyl.tabbar.CYLGIFTabBarItemAnimationView
-import com.cyl.tabbar.CYLSize
-import com.cyl.tabbar.CYLTabBarItemAnimationBasePlayer
-import com.cyl.tabbar.CYLTabBarItemAnimationPlayer
-import com.cyl.tabbar.CYLTabBarItemAnimator
-import com.cyl.tabbar.CYLTabBarItemAnimatorPriority
-import com.cyl.tabbar.CYLTabBarItemAnimatorRegistry
+import com.cyl.animateditem.CYLGIFTabBarItemAnimationView
+import com.cyl.animateditem.CYLSize
+import com.cyl.animateditem.CYLTabBarItemAnimationBasePlayer
+import com.cyl.animateditem.CYLTabBarItemAnimationPlayer
+import com.cyl.animateditem.CYLTabBarItemAnimator
+import com.cyl.animateditem.CYLTabBarItemAnimatorPriority
+import com.cyl.animateditem.CYLTabBarItemAnimatorRegistry
 
 /**
  * The built-in icons (iOS `CYLPlaceholderStyle`), in the iOS order.

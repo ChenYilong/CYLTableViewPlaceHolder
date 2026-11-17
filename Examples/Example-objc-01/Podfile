@@ -5,10 +5,11 @@ use_frameworks!
 
 target 'ExampleObjC01' do
   pod 'CYLTableViewPlaceHolder', :path => '../..'
-  # CYLTableViewPlaceHolder's Core depends on CYLTabBarController's CYLAnimatedItem subspec (CYLPlaceholderView is a
-  # CYLAnimatedItemView). Always CYLTabBarController's newest commit on any branch (instructions.md, "Depending on
-  # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh rewrites the commit before every build.
-  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '7511f7db2c9ada0da015e4b4e0f4c1bb94df8f93', :subspecs => ['CYLAnimatedItem']
+  # CYLTableViewPlaceHolder's Core depends on the CYLAnimatedItem pod (CYLPlaceholderView is a CYLAnimatedItemView), which
+  # lives in the CYLTabBarController repository and is not on the trunk yet. Always that repository's newest commit on
+  # any branch (instructions.md, "Depending on CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh
+  # rewrites the commit before every build.
+  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '1f0fccec2efce25c92fe30e1ccd1cb9cd68348d3'
   # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
 end
 

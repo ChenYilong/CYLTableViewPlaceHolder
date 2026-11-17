@@ -240,7 +240,7 @@ class CYLPlaceholderStatusView @JvmOverloads constructor(context: Context, attri
             defaultTitleColor = (used["CYLPlaceholderItemTitleColor"] as? Int) ?: Color.rgb(0x66, 0x66, 0x66)
             defaultIconColor = Color.rgb(0xFF, 0x3B, 0x30)
             // A banner: the icon sits left of the text (the inherited CYLAnimatedItemView layout).
-            iconSizeDp = com.cyl.tabbar.CYLSize(20f, 20f)
+            iconSizeDp = com.cyl.animateditem.CYLSize(20f, 20f)
             axis = com.cyl.animateditem.CYLAnimatedItemAxis.Horizontal
             spacingDp = 8f
         }

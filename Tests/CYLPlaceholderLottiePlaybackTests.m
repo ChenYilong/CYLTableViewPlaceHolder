@@ -2,10 +2,10 @@
 #import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
 
 // [EN] Lottie plays through CYLTabBarController's animation engine and its Lottie animator (the LottieSwift subspec brings
-//      `CYLTabBarController/CYLAnimatedItemLottieSwift`); the animation view is its `CYLCompatibleLOTAnimationView`, read
+//      `CYLAnimatedItem/LottieSwift`); the animation view is its `CYLCompatibleLOTAnimationView`, read
 //      here through key-value coding only.
 // [CN] Lottie 通过 CYLTabBarController 的动画引擎及其 Lottie animator 播放（LottieSwift 子库带入
-//      `CYLTabBarController/CYLAnimatedItemLottieSwift`）；动画视图是其 `CYLCompatibleLOTAnimationView`，这里只通过 KVC 读取。
+//      `CYLAnimatedItem/LottieSwift`）；动画视图是其 `CYLCompatibleLOTAnimationView`，这里只通过 KVC 读取。
 
 static UIColor *CYLRenderedCenterColor(UIView *view) {
     UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat preferredFormat];
