@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：模拟器重启后继续中断的设备测试 / TODO: Continue the on-device checks interrupted by the hung emulator
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "通知所有活跃会话，模拟器已经重启可用，继续 之前因为模拟器无法启动而中断的任务"
+- Requirements: (1) tell every active session the emulator is available again; (2) continue the tasks that stopped because the emulator would not start.
+- Context: emulator-5556 was cold-booted today; B17 passed and the four RN / Flutter examples launch. Rows still `TODO` in `docs/Example-Animation-Playback.md` that need the Android emulator: "`android/merged` example, refresh styles and animations" and "React Native and Flutter examples".
+- Acceptance: full marks (100) = sessions told; RN and Flutter playback (Play all, speed, loop) checked on the emulator with screenshots; the `android/merged` example's animations checked; both rows updated; pushed. Pass (60) = sessions told and the RN / Flutter row checked and updated.
+
 ### 已完成：任务开始、评分、其他会话与模拟器重启规则 / Done: Task start, scoring, other sessions and emulator restart rules
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
