@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：鸿蒙 Q7 Rive 倍速 → Moonlight.pag 画面空白 → iOS 多行标题截图 / TODO: HarmonyOS Q7 Rive speed, then Moonlight.pag blank, then the iOS multi-line title screenshot
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
+- User's original prompt (verbatim): "鸿蒙 Q7 Rive 倍速 → Moonlight.pag 画面空白 → iOS 多行标题截图。"
+- Requirements, in this order: (1) Q7 in `docs/HarmonyOS.md`: Rive plays at the chosen speed on the HarmonyOS example (the row says "N/A, no emulator", which no longer holds: the Mac emulator 127.0.0.1:5559 is arm64 and runs Rive); (2) `CYLScenarioExampleMoonlight.pag` draws nothing in its HarmonyOS detail page (no hilog error); find out why and fix (core first); (3) an iOS simulator screenshot of a placeholder with a multi-line title, to confirm iOS centers it (the Windows session's open point, -5, in "Placeholder titles centered by default").
+- Context: Q7 code from 2026-11-16: `CYLRiveSpeedController` (a `RiveFileController` subclass whose `advance` multiplies the elapsed time by the speed) passed as RiveAnimationView's `controller`; never checked on a device. Screenshots follow `instructions.md` "Header and footer on stitched screenshots" (sheet tool, one column first) and pass `scripts/check_screenshots.py` locally.
+- Acceptance: full marks (100) = Q7 measured on the emulator (the speed changes the animation's pace) and the row updated, the quality score rerun; Moonlight's cause found and fixed or documented with evidence; the iOS screenshot sheet committed; all pushed. Pass (60) = Q7 done.
+
 ### 已完成（100 / 100）：从 CI 移除截图 Label 检查 / Done (100 / 100): Remove the screenshot label check from CI
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
