@@ -167,6 +167,6 @@ export struct RefreshIconDemoPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

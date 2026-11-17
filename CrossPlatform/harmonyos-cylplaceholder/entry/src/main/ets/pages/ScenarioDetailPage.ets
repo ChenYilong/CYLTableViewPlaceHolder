@@ -159,7 +159,8 @@ export struct ScenarioDetailPage {
     }
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(CYLPlaceholderScenarioCatalog.localizedNameForScenario(this.scenario))
@@ -203,6 +204,6 @@ export struct ScenarioDetailPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

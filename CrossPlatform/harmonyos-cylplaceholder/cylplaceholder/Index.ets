@@ -38,7 +38,9 @@ export {
   CYLPlaceholderTintFilter,
   CYLPlaceholderDrawingColor,
   CYLPlaceholderAnimatedItem,
-  cylPlaceholderAnimatedItemBuilder as CYLPlaceholderAnimatedItemBuilder
+  cylPlaceholderAnimatedItemBuilder as CYLPlaceholderAnimatedItemBuilder,
+  CYLScenarioIsLineIcon,
+  CYLScenarioLineIconColor
 } from './src/main/ets/CYLPlaceholderView';
 export {
   CYLPlaceholderStackView,

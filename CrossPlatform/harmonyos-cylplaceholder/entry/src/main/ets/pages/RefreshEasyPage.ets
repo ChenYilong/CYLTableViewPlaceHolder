@@ -409,7 +409,7 @@ export struct RefreshEasyPage {
             .height(44)
             .padding({ left: 16, right: 16 })
         }
-        .backgroundColor(Color.White)
+        .backgroundColor(UiColor.background)
         // A row reads as one element (its title and detail) and acts as a button.
         .accessibilityGroup(true)
         .accessibilityRole(AccessibilityRoleType.BUTTON)
@@ -430,7 +430,8 @@ export struct RefreshEasyPage {
     .width('100%')
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(this.param.title)
@@ -453,6 +454,6 @@ export struct RefreshEasyPage {
       }
     }
     .title(this.navTitle)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

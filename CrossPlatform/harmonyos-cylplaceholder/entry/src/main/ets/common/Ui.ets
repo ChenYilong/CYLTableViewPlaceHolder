@@ -1,17 +1,22 @@
 // Shared looks of the example: the iOS table styles (insetGrouped / plain), bar buttons and texts, as in the mini
-// program's app.wxss. Colors are iOS system colors (light values; dark mode via resources would follow the system).
+// program's app.wxss. Colors are iOS system colors as color resources (resources/base and resources/dark), so the
+// example follows the system light / dark appearance like the iOS example.
 
 export class UiColor {
-  static readonly teal: string = '#30B0C7'; // UIColor.systemTeal
-  static readonly gray: string = '#8E8E93';
-  static readonly groupedBackground: string = '#F2F2F7';
-  static readonly cell: string = '#FFFFFF';
-  static readonly pressed: string = '#D1D1D6';
-  static readonly separator: string = '#C6C6C8';
-  static readonly sectionHeader: string = '#6D6D72';
-  static readonly chevron: string = '#C4C4C7';
-  static readonly destructive: string = '#FF3B30';
-  static readonly label: string = '#000000';
+  static readonly teal: ResourceColor = $r('app.color.cyl_teal'); // UIColor.systemTeal
+  static readonly gray: ResourceColor = $r('app.color.cyl_gray');
+  static readonly background: ResourceColor = $r('app.color.cyl_background'); // systemBackground
+  static readonly groupedBackground: ResourceColor = $r('app.color.cyl_grouped_background');
+  static readonly cell: ResourceColor = $r('app.color.cyl_cell');
+  static readonly pressed: ResourceColor = $r('app.color.cyl_pressed');
+  static readonly separator: ResourceColor = $r('app.color.cyl_separator');
+  static readonly sectionHeader: ResourceColor = $r('app.color.cyl_section_header');
+  static readonly chevron: ResourceColor = $r('app.color.cyl_chevron');
+  static readonly destructive: ResourceColor = $r('app.color.cyl_destructive');
+  static readonly label: ResourceColor = $r('app.color.cyl_label');
+  static readonly tabBar: ResourceColor = $r('app.color.cyl_tab_bar');
+  static readonly segmentBackground: ResourceColor = $r('app.color.cyl_segment_background');
+  static readonly segmentSelected: ResourceColor = $r('app.color.cyl_segment_selected');
 }
 
 /** A row of an insetGrouped / plain table. */

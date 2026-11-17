@@ -11,6 +11,7 @@ import {
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
 import { BarButton, NavTitle } from '../common/Ui';
+import { UiColor } from '../common/Ui';
 
 /** UIColor(hue:saturation:brightness:) as a #rrggbb string. */
 function hsb(h: number, s: number, v: number): string {
@@ -53,7 +54,8 @@ export struct CollectionFlowPage {
     }
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(t('CYLScenarioTitleCollection'))
@@ -79,6 +81,6 @@ export struct CollectionFlowPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

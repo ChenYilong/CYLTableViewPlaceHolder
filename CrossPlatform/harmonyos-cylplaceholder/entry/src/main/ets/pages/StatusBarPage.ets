@@ -178,14 +178,14 @@ export struct StatusBarPage {
               .height(28)
               .borderRadius(7)
               .maxLines(1)
-              .backgroundColor(index === this.mode ? Color.White : Color.Transparent)
+              .backgroundColor(index === this.mode ? UiColor.segmentSelected : Color.Transparent)
               .onClick(() => this.apply(index))
           }, (key: string) => key)
         }
         .id('statusBarMode')
         .padding(2)
         .borderRadius(9)
-        .backgroundColor('#E3E3E8')
+        .backgroundColor(UiColor.segmentBackground)
         .margin({ left: 16, right: 16, top: 8, bottom: 8 })
       }
       .width('100%')
@@ -193,6 +193,6 @@ export struct StatusBarPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

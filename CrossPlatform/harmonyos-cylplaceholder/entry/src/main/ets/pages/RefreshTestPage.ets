@@ -5,6 +5,7 @@
 import { t } from '../common/L10n';
 import { Route, RouteParam, pop, push } from '../common/Routes';
 import { BarButton, NavTitle } from '../common/Ui';
+import { UiColor } from '../common/Ui';
 
 /** CYLRefreshTestViewController.show(from:row:): pushes on odd rows, presents on even rows. */
 export function showRefreshTest(row: number): void {
@@ -22,7 +23,8 @@ export struct RefreshTestPage {
     }
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(t('CYLScenarioMJTestTitle'))
@@ -36,7 +38,7 @@ export struct RefreshTestPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
     .hideBackButton(this.param.value === 'modal')
     .systemTransition(this.param.value === 'modal' ? NavigationSystemTransitionType.SLIDE_BOTTOM :
       NavigationSystemTransitionType.DEFAULT)

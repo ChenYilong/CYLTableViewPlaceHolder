@@ -26,6 +26,7 @@ import {
   CYLPlaceholderItemAccessibilityIdentifier,
   CYLPlaceholderItemAccessibilityLabel,
   CYLPlaceholderItemAnimationFilePath,
+  CYLPlaceholderItemAnimationColors,
   CYLPlaceholderItemAnimationRepeatCount,
   CYLPlaceholderItemBackgroundColor,
   CYLPlaceholderItemIconColor,
@@ -63,6 +64,7 @@ import {
 } from './CYLPlaceholderImages';
 import { CYLPlaceholderConfiguration } from './CYLPlaceholderConfiguration';
 import {
+  CYLPlaceholderAnimationColors,
   CYLPlaceholderAnimationContent,
   CYLPlaceholderAnimationError,
   CYLPlaceholderAnimationFactory,
@@ -89,6 +91,35 @@ const MESSAGE_VALUES: CYLPlaceholderMessage[] = [CYLPlaceholderMessage.Empty, CY
   CYLPlaceholderMessage.NoNotifications];
 
 const DEFAULT_TITLE_COLOR = '#8E8E93';
+
+/** A middle gray that reads on light and dark backgrounds (iOS `CYLScenarioLineIconColor`, white 0.6). */
+export const CYLScenarioLineIconColor: string = '#999999';
+
+// The bundled line-art animations, drawn in black: recolored to CYLScenarioLineIconColor so they stay visible in the
+// dark appearance (iOS `CYLScenarioIsLineIcon`).
+const CYL_LINE_ICON_NAMES: Set<string> = new Set<string>([
+  'CYLPlaceholderNoInternet.json', 'CYLPlaceholderLoadFailed.json', 'CYLPlaceholderServerError.json',
+  'CYLPlaceholderRefresh.json', 'CYLPlaceholderNoResults.json', 'CYLPlaceholderNoPermission.json',
+  'CYLPlaceholderContactSupport.json', 'CYLPlaceholderNoMessages.json',
+  'CYLPlaceholderNoNotifications.json', 'CYLPlaceholderSad.json', 'CYLPlaceholderCloudOff.json',
+  'CYLPlaceholderTapHint.json', 'CYLPlaceholderSettings.json',
+  'CYLPlaceholderLocationPermission.json', 'CYLPlaceholderCameraPermission.json',
+  'CYLPlaceholderPhotoLibraryPermission.json', 'CYLPlaceholderMicrophonePermission.json',
+  'CYLPlaceholderContactsPermission.json', 'CYLPlaceholderCalendarPermission.json',
+  'CYLPlaceholderBluetoothPermission.json', 'CYLPlaceholderNotificationPermission.json',
+  'CYLRefreshSpinnerRing.json', 'CYLRefreshArc.json', 'CYLRefreshClockwise.json',
+  'CYLRefreshCounterClockwise.json', 'CYLRefreshPullCircle.json', 'CYLRefreshMoreDots.json',
+  'CYLRefreshDoneCircle.json', 'CYLRefreshPullArrow.json', 'CYLRefreshLoadMore.json', 'CYLRefreshCycle.json',
+  'CYLRefreshDone.json', 'CYLPlaceholderNoOrders.json']);
+
+/** Whether a file name (or path) is one of the bundled black line-art animations (iOS `CYLScenarioIsLineIcon`). */
+export function CYLScenarioIsLineIcon(fileName: string | null): boolean {
+  if (fileName === null) {
+    return false;
+  }
+  const slash = fileName.lastIndexOf('/');
+  return CYL_LINE_ICON_NAMES.has(slash >= 0 ? fileName.substring(slash + 1) : fileName);
+}
 
 /** The state of a CYLPlaceholderView (the iOS view's properties and initializers). */
 @Observed
@@ -180,6 +211,12 @@ export class CYLPlaceholderViewModel {
    * the fallback until the animation is ready, and for good when it cannot load.
    */
   animationFileName: string | null = null;
+  /**
+   * Color overrides of the animation (CYLPlaceholderItemAnimationColors, lottie-ios keypaths such as "**.Color"); null
+   * keeps the file's own colors. Scenario components recolor the bundled line-art animations to
+   * CYLScenarioLineIconColor (initWithComponent), as on iOS.
+   */
+  animationColors: CYLPlaceholderAnimationColors | null = null;
   /** The player of animationFileName once the view appeared, or null. */
   animationPlayer: CYLPlaceholderAnimationPlayer | null = null;
   /** true once the player has loaded: the animation replaces the image. */
@@ -353,6 +390,9 @@ export class CYLPlaceholderViewModel {
     }
     const made: CYLPlaceholderAnimationPlayer = player;
     made.setAnimationRepeatCount(this.animationRepeatCount);
+    if (this.animationColors !== null) {
+      made.setAnimationColors(this.animationColors);
+    }
     if (this.animationRequestedSpeed > 0) {
       made.setAnimationSpeed(this.animationRequestedSpeed);
     }
@@ -579,6 +619,10 @@ export class CYLPlaceholderViewModel {
       m.animationRepeatCount = Math.max(0, Math.floor(repeat));
     }
     m.animationFileName = readString(attributes[CYLPlaceholderItemAnimationFilePath]);
+    const colors: Object | undefined = attributes[CYLPlaceholderItemAnimationColors];
+    if (colors !== undefined && colors !== null && typeof colors === 'object') {
+      m.animationColors = colors as CYLPlaceholderAnimationColors;
+    }
     return m;
   }
 
@@ -616,6 +660,11 @@ export class CYLPlaceholderViewModel {
     m.tapHighlightStyle = component.tapHighlightStyle;
     m.animationRepeatCount = component.animationRepeatCount;
     m.animationFileName = component.animationFileName;
+    if (CYLScenarioIsLineIcon(component.animationFileName)) {
+      // The black line art stays visible on dark backgrounds (iOS CYLPlaceholderScenario "**.Color").
+      const gray: CYLPlaceholderAnimationColors = { '**.Color': CYLScenarioLineIconColor };
+      m.animationColors = gray;
+    }
     m.accessibilityIdentifier = component.accessibilityIdentifier !== null ? component.accessibilityIdentifier : '';
     m.reportsContentSize = true;
     m.contentMargin = 0;

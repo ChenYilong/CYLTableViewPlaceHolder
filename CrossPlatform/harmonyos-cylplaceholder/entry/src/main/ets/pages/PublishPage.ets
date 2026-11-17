@@ -3,8 +3,10 @@
 import { CYLPlaceholderAction, CYLPlaceholderActionHandler, CYLPlaceholderActions, CYLPlaceholderScenario,
   CYLPlaceholderStackView, CYLPlaceholderStackViewModel } from 'cylplaceholder';
 import { t } from '../common/L10n';
-import { pop } from '../common/Routes';
+import { pop } from '../common/Routes';
+
 import { NavTitle } from '../common/Ui';
+import { UiColor } from '../common/Ui';
 
 @Component
 export struct PublishPage {
@@ -23,7 +25,8 @@ export struct PublishPage {
   aboutToDisappear(): void {
     clearTimeout(this.timer);
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(t('CYLScenarioActionPublish'))
@@ -34,6 +37,6 @@ export struct PublishPage {
       CYLPlaceholderStackView({ model: this.placeholder })
     }
     .title(this.navTitle)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

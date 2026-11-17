@@ -110,7 +110,8 @@ export struct ConfigurationPage {
     }
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(this.param.value)
@@ -139,6 +140,6 @@ export struct ConfigurationPage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

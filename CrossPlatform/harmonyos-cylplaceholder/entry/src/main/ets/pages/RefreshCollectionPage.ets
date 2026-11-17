@@ -25,8 +25,10 @@ import { LengthMetrics } from '@kit.ArkUI';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
 import { animationPath } from '../feed/RefreshSetups';
-import { showRefreshTest } from './RefreshTestPage';
+import { showRefreshTest } from './RefreshTestPage';
+
 import { PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
+import { UiColor } from '../common/Ui';
 
 const CYLRefreshCollectionDuration: number = 2000;
 
@@ -226,7 +228,8 @@ export struct RefreshCollectionPage {
     .height(200)
     .margin({ top: 150 })
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(this.param.title)
@@ -248,6 +251,6 @@ export struct RefreshCollectionPage {
       })
     }
     .title(this.navTitle)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

@@ -15,6 +15,7 @@ import { PlaybackControls, loopsByDefault } from '../common/Playback';
 import { RouteParam } from '../common/Routes';
 import { BarButton } from '../common/Ui';
 import { AnimationFile, animationSections } from './AnimationsTab';
+import { UiColor } from '../common/Ui';
 
 @Component
 export struct AnimationDetailPage {
@@ -121,6 +122,6 @@ export struct AnimationDetailPage {
     }
     .title(this.titleView)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

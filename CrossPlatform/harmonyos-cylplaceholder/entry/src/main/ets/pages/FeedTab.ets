@@ -163,7 +163,7 @@ export struct FeedTab {
         .edgeEffect(EdgeEffect.None)
         .width('100%')
         .height('100%')
-        .backgroundColor(Color.White)
+        .backgroundColor(UiColor.background)
       }
       }
       .layoutWeight(1)

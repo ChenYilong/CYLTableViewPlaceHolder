@@ -24,7 +24,8 @@ import {
   CYLRefreshIconSize,
   CYLRefreshNormalHeaderModel,
   CYLRefreshScrollViewModel,
-  CYLRefreshState,
+  CYLRefreshState
+,
   CYLRefreshImage
 } from 'cylplaceholder';
 import { t } from '../common/L10n';
@@ -33,6 +34,7 @@ import { RouteParam } from '../common/Routes';
 import { BarButton, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
 import { animationPath } from '../feed/RefreshSetups';
 import { showRefreshTest } from './RefreshTestPage';
+import { UiColor } from '../common/Ui';
 
 /** MJRefresh's MJDuration: long enough to see the refreshing state. */
 const CYLRefreshDuration: number = 2000;
@@ -587,7 +589,8 @@ export struct RefreshTablePage {
     }
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(this.param.title)
@@ -611,7 +614,7 @@ export struct RefreshTablePage {
                   .height(44)
                   .padding({ left: 16, right: 16 })
               }
-              .stateStyles({ pressed: { .backgroundColor('#D1D1D6') }, normal: { .backgroundColor(Color.White) } })
+              .stateStyles({ pressed: { .backgroundColor(UiColor.pressed) }, normal: { .backgroundColor(UiColor.cell) } })
               // A row reads as one element (its title and detail) and acts as a button.
               .accessibilityGroup(true)
               .accessibilityRole(AccessibilityRoleType.BUTTON)
@@ -637,6 +640,6 @@ export struct RefreshTablePage {
     }
     .title(this.navTitle)
     .menus(this.barItems)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

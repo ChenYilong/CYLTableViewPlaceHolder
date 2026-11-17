@@ -160,7 +160,7 @@ export struct FlowDetailPage {
           .layoutWeight(1)
           .height(28)
           .borderRadius(7)
-          .backgroundColor(index === this.stateIndex ? Color.White : Color.Transparent)
+          .backgroundColor(index === this.stateIndex ? UiColor.segmentSelected : Color.Transparent)
           .accessibilityText(t(key))
           .onClick(() => this.select(STATES[index]))
       }, (key: string) => key)
@@ -168,7 +168,7 @@ export struct FlowDetailPage {
     .id('stateSwitcher')
     .padding(2)
     .borderRadius(9)
-    .backgroundColor('#E3E3E8')
+    .backgroundColor(UiColor.segmentBackground)
     .margin({ left: 16, right: 16, top: 8, bottom: 8 })
   }
 
@@ -260,7 +260,8 @@ export struct FlowDetailPage {
     .width('100%')
     .height('100%')
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(t(titleKeyOf(this.flow)))
@@ -292,6 +293,6 @@ export struct FlowDetailPage {
       .height('100%')
     }
     .title(this.navTitle)
-    .backgroundColor(this.flow === 'keepSectionHeaders' ? UiColor.groupedBackground : Color.White)
+    .backgroundColor(this.flow === 'keepSectionHeaders' ? UiColor.groupedBackground : UiColor.background)
   }
 }

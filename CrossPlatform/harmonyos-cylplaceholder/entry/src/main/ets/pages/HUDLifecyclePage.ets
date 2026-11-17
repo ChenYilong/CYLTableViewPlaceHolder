@@ -104,7 +104,8 @@ export struct HUDLifecyclePage {
       }
     }, 1500));
   }
-
+
+
   @Builder
   navTitle() {
     NavTitle(t('CYLScenarioHUDSectionLifecycle'))
@@ -146,6 +147,6 @@ export struct HUDLifecyclePage {
       })
     }
     .title(this.navTitle)
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

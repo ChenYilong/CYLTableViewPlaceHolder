@@ -16,6 +16,7 @@ import {
 import { t } from '../common/L10n';
 import { RouteParam, pop } from '../common/Routes';
 import { imagesOfBundledGIF } from '../common/RefreshFrames';
+import { UiColor } from '../common/Ui';
 
 const URL: string = 'https://github.com/CoderMJLee/MJRefresh';
 
@@ -127,6 +128,6 @@ export struct RefreshWebPage {
     // iOS hides the status bar too (prefersStatusBarHidden); it comes back when the page goes away.
     .onShown(() => this.setStatusBarHidden(true))
     .onHidden(() => this.setStatusBarHidden(false))
-    .backgroundColor(Color.White)
+    .backgroundColor(UiColor.background)
   }
 }

@@ -3,6 +3,62 @@
     {
       "name": "start_window_background",
       "value": "#FFFFFF"
+    },
+    {
+      "name": "cyl_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "cyl_grouped_background",
+      "value": "#F2F2F7"
+    },
+    {
+      "name": "cyl_cell",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "cyl_pressed",
+      "value": "#D1D1D6"
+    },
+    {
+      "name": "cyl_separator",
+      "value": "#C6C6C8"
+    },
+    {
+      "name": "cyl_section_header",
+      "value": "#6D6D72"
+    },
+    {
+      "name": "cyl_chevron",
+      "value": "#C4C4C7"
+    },
+    {
+      "name": "cyl_label",
+      "value": "#000000"
+    },
+    {
+      "name": "cyl_gray",
+      "value": "#8E8E93"
+    },
+    {
+      "name": "cyl_teal",
+      "value": "#30B0C7"
+    },
+    {
+      "name": "cyl_destructive",
+      "value": "#FF3B30"
+    },
+    {
+      "name": "cyl_tab_bar",
+      "value": "#F9F9F9"
+    },
+    {
+      "name": "cyl_segment_background",
+      "value": "#E3E3E8"
+    },
+    {
+      "name": "cyl_segment_selected",
+      "value": "#FFFFFF"
     }
   ]
 }
