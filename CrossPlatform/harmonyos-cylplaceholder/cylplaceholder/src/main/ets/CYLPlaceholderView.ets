@@ -901,6 +901,10 @@ export struct CYLPlaceholderView {
         animationUrl: this.model.cyl_animatedItemURL,
         isItemSelected: this.model.selected,
         iconSize: this.model.imageSide,
+        // Bare: no 4vp padding, exactly the icon's size, taps and accessibility left to this view. With the padding
+        // the item's inner box was 8vp narrower than the icon in this imageSide Stack, and the icon overflowed to the
+        // left only: 4vp off the title's center line (the Celebrate detail page, 2026-11-18).
+        isBare: true,
         animationBuilder: cylPlaceholderAnimatedItemBuilder
       })
       if (this.model.tintsIcon && !(this.model.animationVisible && this.model.animationReady)) {
