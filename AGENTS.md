@@ -218,8 +218,12 @@ the integrated `CYLRefresh` component, and an example application. Read
   builds. Override the build target for that toolchain instead of changing the
   library's iOS 12.0 minimum.
 - Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
-  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details vertically
-  (top to bottom) first, then two columns, a single row last (at most three per row); store every image in `docs/` (embedded
+  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details in a portrait
+  sheet: two columns over several rows first, then one column, a single row last (at most three per row); every
+  stitched image has an English header (platform and device, simulator OS, IDE version, host OS, library and repository
+  commits, date, test purpose), a caption band above each panel and a footer (verdict, measured values, method,
+  original file names), none of them overlapping the screenshots (`instructions.md`, "Header and footer on stitched
+  screenshots"); store every image in `docs/` (embedded
   in the fitting document, committed); when the result is right, update the README section with the platform, the
   OS / simulator / SDK versions, the commit and the time; use clear original images. See "Screenshots of local
   builds and CI/CD" in `instructions.md`.

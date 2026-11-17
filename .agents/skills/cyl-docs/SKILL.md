@@ -52,8 +52,11 @@ translation starts at 60. See `instructions.md`, "Translating or porting another
   bug-free debugging screenshots in `docs/assets/` embedded in the document, final screenshots in the
   README. If the change could not be run, say so; never present a diagram as a screenshot. Every screenshot, local
   or CI/CD, lives in `docs/` (committed) and, once the result is right, in the README with the platform, the OS /
-  simulator / SDK versions, the commit link and the time; key details only, stitched vertically (top to bottom) first, then two
-  columns, a single row last (at most three per row), from clear original images (`instructions.md`,
+  simulator / SDK versions, the commit link and the time; key details only, stitched in a portrait sheet: two columns over several
+  rows first, then one column, a single row last (at most three per row), with an English header (platform and
+  device, simulator OS, IDE version, host OS, library and repository commits, date, test purpose), a caption band
+  above each panel and a footer (verdict, measured values, method, original file names) that never overlap the
+  screenshots (`instructions.md`, "Header and footer on stitched screenshots"), from clear original images (`instructions.md`,
   "Screenshots of local builds and CI/CD").
 - **Public API comments:** every public declaration has a documentation comment directly above it; several lines
   are one block, `/*! … */` in Objective-C headers and `/** … */` in Swift, never stacked `///`; a single-line comment

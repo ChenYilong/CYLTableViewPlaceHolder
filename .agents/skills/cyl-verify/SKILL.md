@@ -101,7 +101,11 @@ or fix the CI, or give the concrete reason none could be produced
 
 Screenshots, local and CI/CD (`instructions.md`, "Screenshots of local builds and CI/CD"): take them at key moments
 (a `TODO` or "Linux" note can go, a pull request can be merged, or the result meets the expectation with no bug);
-crop to the key detail; stitch vertically (top to bottom) first, then two columns, a single row last (at most three per row);
+crop to the key detail; stitch in a portrait sheet: two columns over several rows first, then one column, a single row
+last (at most three per row); give every stitched image an English header (platform and device, simulator OS, IDE
+version, host OS, library and repository commits, date, test purpose), a caption band above each panel and a footer
+(verdict, measured values, method, original file names), none of them overlapping or covering a screenshot
+(`instructions.md`, "Header and footer on stitched screenshots");
 store them in `docs/assets/` embedded in the fitting document and commit them; when the result is right, update the
 README with the platform (iOS, Android, Flutter, React Native, HarmonyOS, mini program), the OS, simulator and SDK
 versions, the commit link and the time; use clear original images.

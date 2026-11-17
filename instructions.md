@@ -949,11 +949,12 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
   open issue.
 - **Show the key detail, not the whole screen.** Crop to the part that proves the point (the refresh header, the
   footer, the badge); take the full screen only when the whole layout is the point.
-- **Stitch several details into one image**, in this order of preference (vertical first, confirmed by the owner on
-  2026-11-12; an earlier wording that put a horizontal layout first was a mistake):
-  1. stacked top to bottom (one column, vertical), the easiest to read on a phone;
-  2. two columns over several rows;
+- **Stitch several details into one image** in a portrait (vertical) sheet, in this order of preference (the owner's
+  rule of 2026-11-18, which replaces the 2026-11-12 order that put one column first):
+  1. two columns over several rows, the sheet taller than it is wide;
+  2. one column, stacked top to bottom;
   3. a single horizontal row, the last resort, with at most three images per row.
+  Every stitched image has a header and a footer; see "Header and footer on stitched screenshots" below.
 - **Store every screenshot in `docs/`.** Put the image in `docs/assets/` (or the `assets/` folder next to the document)
   and embed it in the document it belongs to; create a document when none fits. Commit the images to the repository;
   never leave them only in a temporary folder or a CI artifact.
@@ -966,6 +967,37 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
   - the time the screenshot was taken.
 - **Use clear original images**: the simulator's or device's full-resolution capture, cropped but not scaled down or
   recompressed until it blurs.
+
+### Header and footer on stitched screenshots
+
+The owner's rule (2026-11-18). Reference image, which shows the style (the header and the panel captions) but has no
+footer yet: `docs/assets/screenshot-style-reference-ios27.2-iphone17pro-xcode27.2-cyltabbarcontroller-dcbfdec6-20261118.png`.
+
+- **Layout.** A portrait sheet: two columns over several rows first, then one column, then one row (see above). Plain
+  white background, the same margin around every panel, panels in the order of the test (left to right, then top to
+  bottom).
+- **A header and a footer on every stitched image.** Both are bands of their own above and below the panels. They never
+  overlap, cover or touch any screenshot pixel; nothing is drawn on a screenshot (no labels, arrows or boxes inside
+  it). Leave a gap between a band and the panels.
+- **Everything in English**, in bold text of one high-contrast color (the reference uses red), large enough to read on
+  a phone without zooming.
+- **The header holds the key facts**, on one or two lines, in this order, separated by commas:
+  1. the platform and the device: "iOS 27.2, iPhone 17 Pro sim" (the simulator or emulator OS version and device; "real
+     device" for a phone);
+  2. the IDE and its version, for example "Xcode 27.2", "DevEco Studio 6.0.1", "Android Studio 2026.1", "WeChat DevTools 1.06";
+  3. the host operating system and its version: "macOS 27.3", "Windows 11 24H2";
+  4. the libraries under test and their commits: "CYLTabBarController dcbfdec6 (ef1d0313)";
+  5. this repository's branch and commit: "feat/android-refresh-port-followup 579018c";
+  6. the date: "2026-11-18";
+  7. then, ending the header with a full stop, the test purpose in a few words: "Rive tags at rest (no play)".
+- **A caption above each panel**, in its own band (never over the image), naming the step and, when measured, the
+  result: "launch, no play", "11 s later, 0 changed pixels", "after Retry", "dark mode".
+- **The footer holds the outcome**: the verdict (pass / fail), the measured values, how they were measured (for
+  example a pixel diff of two captures 11 s apart), the launch arguments or command, and the file names of the
+  original captures in `docs/assets/`.
+- **Originals stay too.** Commit the uncropped original captures next to the stitched image in `docs/assets/`, named
+  with the platform, OS, device, commit and date. Crop the panels, never scale them down or recompress them until they
+  blur.
 
 ## CI example screenshots
 
