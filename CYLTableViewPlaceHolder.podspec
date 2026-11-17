@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   # built-in ImageIO decoder when the GIF subspec is not installed.
   s.subspec 'Core' do |core|
     core.source_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/**/*.{h,m}',
-                        'CYLTableViewPlaceHolder/CYLHUD/*.{h,m}',
+                        'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}'
     # The interface to the CYLPlaceholderItemAnimation subspec, internal, not public API. Core does not depend on
     # that subspec: the engine installs itself at load time (as `CYLTabBarItemAnimationService` in CYLTabBarController).

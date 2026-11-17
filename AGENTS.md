@@ -116,9 +116,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   depends on MJRefresh, SVPullToRefresh, SmartRefreshLayout, android-Ultra-Pull-To-Refresh or easy_refresh, and every
   example refresh call goes through CYLRefresh; a missing feature is added to CYLRefresh. See "One refresh library:
   CYLRefresh" in `instructions.md`.
-- CYLHUD (`CYLPlaceholderHUD`) is the only HUD kernel on every platform, its code in one folder (`CYLHUD/` on iOS,
+- `CYLPlaceholderHUD` is the only HUD kernel on every platform, its code in one folder (`CYLPlaceholderHUD/` on iOS,
   `hud/` on Android and HarmonyOS, `cyl-placeholder-hud/` in the mini program); no other HUD library. See "One HUD:
-  CYLHUD" in `instructions.md`.
+  CYLPlaceholderHUD" in `instructions.md`.
 - Fix bugs in the core first (`instructions.md`, "Fix bugs in the core first"): the core is the code published to a
   package registry (CocoaPods, Maven / Gradle, npm, ohpm, pub.dev). Fix an issue or bug there so every app avoids it;
   fixing it only in an example is the worst option. If the core cannot fix it, ask the owner and say why, then record
