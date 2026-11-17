@@ -7,6 +7,9 @@ The HarmonyOS port of CYLTableViewPlaceHolder: an ArkTS / ArkUI library and exam
 (`CYLTableViewPlaceHolder/`) and the iOS example (`Examples/Example-Scenarios`). Code:
 `CrossPlatform/harmonyos-cylplaceholder`.
 
+
+CYLAnimatedItem (the animation component) migration status, score and TODOs: [Animated-Item-Migration.md](Animated-Item-Migration.md).
+
 ## 鸿蒙系统版本 / HarmonyOS version
 
 | 项目 / Item | 版本 / Version |

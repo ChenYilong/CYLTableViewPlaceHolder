@@ -24,6 +24,10 @@
 
 ## 任务 / Tasks
 
+| 中文 | English |
+| --- | --- |
+| CYLAnimatedItem（动效组件）接入进度、评分与 TODO 见 [Animated-Item-Migration.md](Animated-Item-Migration.md)。 | CYLAnimatedItem (the animation component) migration status, score and TODOs: [Animated-Item-Migration.md](Animated-Item-Migration.md). |
+
 ### TODO: the components build on CYLTabBarController's cyl-animated-item (score 80)
 
 - **Date / branch:** 2026-11-17, `feat/android-refresh-port-followup` (pull request #31).
