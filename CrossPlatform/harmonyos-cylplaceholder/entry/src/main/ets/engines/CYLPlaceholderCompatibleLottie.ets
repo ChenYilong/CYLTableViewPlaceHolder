@@ -1,3 +1,5 @@
+// The example's engine (moved out of the cylplaceholder core on 2026-11-17: the core depends on no animation library,
+// as CYLTabBarController's CYLAnimatedItem requires). ExampleAnimationEngines.ets registers it; an app copies it.
 // iOS LottieSwift/CYLPlaceholderCompatibleLottie.swift: the lottie-ios 2 (LOTAnimationView) compatible API, played by
 // @ohos/lottie (lottie-ohos, drawn on a Canvas). `CYLPlaceholderCompatibleLOTAnimation` reads and decodes the file
 // synchronously like iOS `LottieAnimation.filepath`; `CYLPlaceholderCompatibleLOTAnimationView` is the observed model
@@ -6,8 +8,8 @@
 // strokes the keypath names (CYLPlaceholderCompatibleLottieSupport.ets) and reloads the animation at its frame.
 import lottie, { AnimationItem } from '@ohos/lottie';
 import { util } from '@kit.ArkTS';
-import { CYLPlaceholderAnimationReadFileSync } from './CYLPlaceholderAnimation';
-import { CYLPlaceholderDrawingColor } from './CYLPlaceholderView';
+import { CYLPlaceholderAnimationReadFileSync } from 'cylplaceholder';
+import { CYLPlaceholderDrawingColor } from 'cylplaceholder';
 import { CYLLottieContentMode } from './CYLLottiePlaceholderItemAnimator';
 import {
   CYLCompatibleLOTCopyData,
@@ -15,7 +17,7 @@ import {
   CYLCompatibleLOTLoopValue,
   CYLCompatibleLOTProgressOfFrame,
   CYLCompatibleLOTSetColor
-} from './CYLPlaceholderCompatibleLottieSupport';
+} from 'cylplaceholder';
 
 /** A Lottie animation read from a file (iOS `CYLPlaceholderCompatibleLOTAnimation`). */
 export class CYLPlaceholderCompatibleLOTAnimation {

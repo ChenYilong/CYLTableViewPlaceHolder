@@ -6,6 +6,10 @@
   "author": "ChenYilong",
   "license": "MIT",
   "dependencies": {
-    "cylplaceholder": "file:../cylplaceholder"
+    "cylplaceholder": "file:../cylplaceholder",
+    "cylanimateditem": "file:../cylanimateditem",
+    "@ohos/lottie": "2.0.28",
+    "@tencent/libpag": "4.5.102",
+    "@ohos/rive": "1.0.4"
   }
 }

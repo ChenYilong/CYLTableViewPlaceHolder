@@ -1,3 +1,5 @@
+// The example's engine (moved out of the cylplaceholder core on 2026-11-17: the core depends on no animation library,
+// as CYLTabBarController's CYLAnimatedItem requires). ExampleAnimationEngines.ets registers it; an app copies it.
 // iOS CYLRivePlaceholderItemAnimator: a CYLPlaceholderItemViewAnimator for ".riv" files, played by the OpenHarmony
 // Rive runtime (@ohos/rive, RiveAnimationView). Like the iOS legacy view (CYLPlaceholderRiveLegacyItemAnimationView)
 // it plays a named linear animation ("animation"), fires a state machine trigger input ("triggerInput"), or sets a
@@ -16,8 +18,8 @@ import {
   CYLRiveColorValue,
   CYLRiveTriggerPropertyPath,
   CYLRiveUsesLegacyRuntime
-} from './CYLRiveOptions';
-import { CYLPlaceholderDrawingColor } from './CYLPlaceholderView';
+} from 'cylplaceholder';
+import { CYLPlaceholderDrawingColor } from 'cylplaceholder';
 import {
   CYLPlaceholderAnimationArrayBuffer,
   CYLPlaceholderAnimationColors,
@@ -32,7 +34,7 @@ import {
   CYLPlaceholderItemAnimationViewProviding,
   CYLPlaceholderItemViewAnimator,
   CYLPlaceholderPlayableContentView
-} from './CYLPlaceholderAnimation';
+} from 'cylplaceholder';
 import {
   CYLPlaceholderItemAnimationDarkColors,
   CYLPlaceholderItemAnimationDarkFilePath,
@@ -46,7 +48,7 @@ import {
   CYLPlaceholderItemRiveFilePath,
   CYLPlaceholderItemRiveSize,
   CYLPlaceholderItemRiveURL
-} from './CYLPlaceholderViewTypes';
+} from 'cylplaceholder';
 
 /** How long the input stays true, in seconds: 1 by default, at most 60; 0 keeps it true until stopped. */
 export function CYLRiveActiveDuration(options: Record<string, string>): number {

@@ -1,5 +1,6 @@
 import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { CYLPlaceholderAnimationSetDefaultContext } from 'cylplaceholder';
+import { ExampleRegisterAnimationEngines } from '../engines/ExampleAnimationEngines';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 
@@ -13,6 +14,8 @@ export default class EntryAbility extends UIAbility {
       hilog.warn(DOMAIN, 'testTag', 'setColorMode failed');
     }
     CYLPlaceholderAnimationSetDefaultContext(this.context);
+    // The core plays no Lottie, PAG or Rive by itself: the example registers the engines it depends on.
+    ExampleRegisterAnimationEngines();
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
   }
 

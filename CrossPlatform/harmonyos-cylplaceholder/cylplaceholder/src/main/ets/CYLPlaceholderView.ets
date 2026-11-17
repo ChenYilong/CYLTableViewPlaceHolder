@@ -6,7 +6,15 @@
 //     CYLPlaceholderStyle.NoInternet, CYLPlaceholderMessage.NoInternet);
 //   ...
 //   CYLPlaceholderView({ model: this.placeholder })
+//
+// The icon is CYLTabBarController's CYLAnimatedItemView (module cylanimateditem, copied by
+// scripts/sync-harmonyos-cylanimateditem.sh), as iOS CYLPlaceholderView subclasses CYLAnimatedItemView and Android's
+// extends com.cyl.animateditem.CYLAnimatedItemView: it shows the animation when a registered engine plays it, else the
+// static image, else its placeholder. The core depends on no animation library: the player comes from the animator
+// the app registered (CYLPlaceholderItemAnimatorRegistry), drawn by the core's animationBuilder, and the type must be
+// registered with CYLAnimatedItemEngines (registering an animator in the shared registry does it).
 import { drawing, common2D } from '@kit.ArkGraphics2D';
+import { CYLAnimatedItemAnimationContext, CYLAnimatedItemView } from 'cylanimateditem';
 import {
   CYLEdgeInsets,
   CYLOffset,
@@ -59,6 +67,7 @@ import {
   CYLPlaceholderAnimationError,
   CYLPlaceholderAnimationFactory,
   CYLPlaceholderAnimationFactoryForURL,
+  CYLPlaceholderAnimationOptionsOfURL,
   CYLPlaceholderAnimationPlayer,
   CYLPlaceholderAnimationViewModel,
   CYLPlaceholderRegisterAnimationFactory
@@ -178,6 +187,8 @@ export class CYLPlaceholderViewModel {
   /** true when animationFileName cannot be played: the image stays. */
   animationFailed: boolean = false;
   private animationAttachedFileName: string | null = null;
+  /** The key that finds this model from CYLAnimatedItemView's animation context (set while a view shows it). */
+  cyl_animatedItemKey: string = '';
   /** What the view does with the animation once it is ready: 1 play, 2 last frame, 3 seek, 0 rest. */
   private animationCommand: number = 0;
   private animationRequestedProgress: number = 0;
@@ -282,6 +293,32 @@ export class CYLPlaceholderViewModel {
   /** Whether the animation is drawn (loading or ready); false shows only the image. */
   get animationVisible(): boolean {
     return this.animationPlayer !== null && !this.animationFailed;
+  }
+
+  /**
+   * The animation file CYLAnimatedItemView is given: the rawfile path of a bundled animation, else animationFileName,
+   * with this model's key in the fragment so the core's animation builder finds the player; '' without an animation.
+   * CYLAnimatedItemView reads the type from the extension (the fragment is ignored).
+   */
+  get cyl_animatedItemURL(): string {
+    const name = this.animationFileName;
+    if (name === null || name.length === 0) {
+      return '';
+    }
+    const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(name);
+    const path = bundled !== null ? bundled : name;
+    if (this.cyl_animatedItemKey.length === 0) {
+      return path;
+    }
+    return path + (path.indexOf('#') >= 0 ? '&' : '#') + CYL_ANIMATED_ITEM_KEY + '=' + this.cyl_animatedItemKey;
+  }
+
+  /**
+   * Whether the view shows an icon: an image, or an animation file (CYLAnimatedItemView then shows the animation, the
+   * image or its placeholder, in that order).
+   */
+  get cyl_showsIcon(): boolean {
+    return this.currentImage !== null || (this.animationFileName !== null && this.animationFileName.length > 0);
   }
 
   /**
@@ -666,6 +703,98 @@ function readStyle(value: Object | undefined): CYLPlaceholderStyle | null {
   return typeof value === 'string' ? CYLPlaceholderStyleNamed(value as string) : null;
 }
 
+// The models shown by a CYLPlaceholderView, by key: CYLAnimatedItemView calls the core's global animation builder with
+// a context only (no model), so the context's URL carries the key (cyl_animatedItemURL) and the builder looks it up.
+const CYL_ANIMATED_ITEM_KEY: string = 'cylPlaceholderView';
+const CYL_ANIMATED_ITEM_MODELS: Map<string, CYLPlaceholderViewModel> = new Map<string, CYLPlaceholderViewModel>();
+const CYL_ANIMATED_ITEM_COUNTS: Map<string, number> = new Map<string, number>();
+let cylNextAnimatedItemKey: number = 0;
+
+function cylRetainAnimatedItemModel(model: CYLPlaceholderViewModel): void {
+  if (model.cyl_animatedItemKey.length === 0) {
+    cylNextAnimatedItemKey += 1;
+    model.cyl_animatedItemKey = cylNextAnimatedItemKey.toString();
+  }
+  const key = model.cyl_animatedItemKey;
+  CYL_ANIMATED_ITEM_MODELS.set(key, model);
+  const count: number | undefined = CYL_ANIMATED_ITEM_COUNTS.get(key);
+  CYL_ANIMATED_ITEM_COUNTS.set(key, count !== undefined ? count + 1 : 1);
+}
+
+function cylReleaseAnimatedItemModel(model: CYLPlaceholderViewModel): void {
+  const key = model.cyl_animatedItemKey;
+  const count: number | undefined = CYL_ANIMATED_ITEM_COUNTS.get(key);
+  if (count === undefined || count <= 1) {
+    CYL_ANIMATED_ITEM_COUNTS.delete(key);
+    CYL_ANIMATED_ITEM_MODELS.delete(key);
+  } else {
+    CYL_ANIMATED_ITEM_COUNTS.set(key, count - 1);
+  }
+}
+
+/** The model whose key the animation context's URL carries, or null. */
+function cylAnimatedItemModelForURL(URL: string): CYLPlaceholderViewModel | null {
+  const options = CYLPlaceholderAnimationOptionsOfURL(URL);
+  const key: string | undefined = options[CYL_ANIMATED_ITEM_KEY];
+  if (key === undefined) {
+    return null;
+  }
+  const model: CYLPlaceholderViewModel | undefined = CYL_ANIMATED_ITEM_MODELS.get(key);
+  return model !== undefined ? model : null;
+}
+
+/**
+ * Draws a model's player inside CYLAnimatedItemView and tells it when the player is ready (`onLoaded`: the animation
+ * replaces the image) or failed (`onFailed`: the image, or the placeholder, shows again).
+ */
+@Component
+struct CYLPlaceholderAnimatedItemContent {
+  @ObjectLink @Watch('cylReportAnimationState') model: CYLPlaceholderViewModel;
+  context: CYLAnimatedItemAnimationContext = new CYLAnimatedItemAnimationContext();
+  /** What was reported to the context: 0 nothing, 1 loaded, 2 failed. */
+  private reported: number = 0;
+
+  aboutToAppear(): void {
+    this.cylReportAnimationState();
+  }
+
+  cylReportAnimationState(): void {
+    if (this.model.animationFailed || this.model.animationPlayer === null) {
+      if (this.reported !== 2) {
+        this.reported = 2;
+        this.context.onFailed();
+      }
+    } else if (this.model.animationReady && this.reported !== 1) {
+      this.reported = 1;
+      this.context.onLoaded();
+    }
+  }
+
+  build() {
+    Stack() {
+      if (this.model.animationPlayer !== null && !this.model.animationFailed) {
+        CYLPlaceholderAnimationContent({ view: (this.model.animationPlayer as CYLPlaceholderAnimationPlayer).view })
+      }
+    }
+    .width(this.context.size)
+    .height(this.context.size)
+  }
+}
+
+/**
+ * The core's animationBuilder for CYLAnimatedItemView: the player of the model whose key the context's URL carries
+ * (made by the animator the app registered); CYLAnimatedItemView calls it only for a registered type.
+ */
+@Builder
+function cylPlaceholderAnimatedItemBuilder(context: CYLAnimatedItemAnimationContext) {
+  if (cylAnimatedItemModelForURL(context.url) !== null) {
+    CYLPlaceholderAnimatedItemContent({
+      model: cylAnimatedItemModelForURL(context.url) as CYLPlaceholderViewModel,
+      context: context
+    })
+  }
+}
+
 /** "#RGB", "#RRGGBB", "#AARRGGBB" or 0xAARRGGBB / 0xRRGGBB as a drawing color; null for Resources and names. */
 export function CYLPlaceholderDrawingColor(color: ResourceColor | null): common2D.Color | null {
   let argb = -1;
@@ -718,6 +847,7 @@ export struct CYLPlaceholderView {
   @ObjectLink model: CYLPlaceholderViewModel;
 
   aboutToAppear(): void {
+    cylRetainAnimatedItemModel(this.model);
     if (this.model.animationFileName !== null) {
       this.model.cyl_attachAnimation();
       this.model.playPlaceholderAnimationIfIdle();
@@ -726,6 +856,7 @@ export struct CYLPlaceholderView {
 
   aboutToDisappear(): void {
     this.model.cyl_releaseAnimation();
+    cylReleaseAnimatedItemModel(this.model);
   }
 
   @Builder
@@ -756,28 +887,40 @@ export struct CYLPlaceholderView {
     }
   }
 
+  /**
+   * The icon: CYLTabBarController's CYLAnimatedItemView (the animation when a registered engine plays it, else the
+   * static image, else its placeholder). Template icons are tinted with the icon color while the image shows: a layer
+   * of that color drawn SRC_IN over the icon (CYLAnimatedItemView has no tint of its own). The title, badge and
+   * accessibility stay this view's: the icon is hidden from accessibility and lets taps through to this view.
+   */
+  @Builder
+  icon() {
+    Stack() {
+      CYLAnimatedItemView({
+        image: this.model.currentImage !== null ? this.model.currentImage as ResourceStr : '',
+        animationUrl: this.model.cyl_animatedItemURL,
+        isItemSelected: this.model.selected,
+        iconSize: this.model.imageSide,
+        animationBuilder: cylPlaceholderAnimatedItemBuilder
+      })
+      if (this.model.tintsIcon && !(this.model.animationVisible && this.model.animationReady)) {
+        Column()
+          .width('100%')
+          .height('100%')
+          .backgroundColor(this.model.currentIconColor)
+          .blendMode(BlendMode.SRC_IN, BlendApplyType.OFFSCREEN)
+      }
+    }
+    .blendMode(BlendMode.SRC_OVER, BlendApplyType.OFFSCREEN)
+    .hitTestBehavior(HitTestMode.None)
+    .accessibilityLevel('no-hide-descendants')
+  }
+
   @Builder
   item() {
-    if (this.model.currentImage !== null || this.model.animationVisible) {
+    if (this.model.cyl_showsIcon) {
       Stack({ alignContent: Alignment.TopEnd }) {
-        Stack() {
-          if (this.model.currentImage !== null) {
-            Image(this.model.currentImage)
-              .width(this.model.imageSide)
-              .height(this.model.imageSide)
-              .objectFit(ImageFit.Contain)
-              .colorFilter(CYLPlaceholderTintFilter(this.model.tintsIcon ? this.model.currentIconColor : null))
-              .opacity(this.model.animationVisible && this.model.animationReady ? 0 : 1)
-              .accessibilityLevel('no')
-          }
-          if (this.model.animationVisible) {
-            // Drawn from the start (hidden) so the engine can load; shown once ready.
-            CYLPlaceholderAnimationContent({ view: (this.model.animationPlayer as CYLPlaceholderAnimationPlayer).view })
-              .opacity(this.model.animationReady ? 1 : 0)
-          }
-        }
-        .width(this.model.imageSide)
-        .height(this.model.imageSide)
+        this.icon()
         this.badge()
       }
     }
@@ -797,7 +940,7 @@ export struct CYLPlaceholderView {
           bottom: this.model.titleContentInsets.bottom, right: this.model.titleContentInsets.right
         })
         .constraintSize({ minWidth: this.model.titleMinimumWidth })
-        .margin({ top: this.model.currentImage !== null || this.model.animationVisible ? 12 : 0 })
+        .margin({ top: this.model.cyl_showsIcon ? 8 : 0 })
         .translate({ x: this.model.defaultTitlePositionAdjustment.x, y: this.model.defaultTitlePositionAdjustment.y })
     }
   }

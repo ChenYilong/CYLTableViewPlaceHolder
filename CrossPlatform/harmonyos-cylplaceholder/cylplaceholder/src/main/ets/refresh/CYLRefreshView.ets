@@ -42,7 +42,12 @@ import { CYLRefreshImage } from './CYLRefreshImage';
 import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
 import { CYLPlaceholderAnimationContent, CYLPlaceholderAnimationContentView } from '../CYLPlaceholderAnimation';
 import { CYLRefreshDrawnView, cylRefreshDrawnStyle } from './drawn/CYLRefreshDrawnView';
-import { CYLRefreshRiveView, cylRefreshRiveHeader } from './drawn/CYLRefreshRiveView';
+import {
+  CYLRefreshRiveViewBuilder,
+  CYLRefreshRiveViewBuilderType,
+  cylRefreshRiveCanDraw,
+  cylRefreshRiveHeader
+} from './drawn/CYLRefreshRiveView';
 
 /** The share of the finger's travel that moves the content past an edge (UIScrollView's rubber band). */
 const CYLRefreshPullDamping: number = 0.5;
@@ -471,7 +476,10 @@ export struct CYLRefreshComponentView {
     if (this.model() !== null) {
       Stack() {
         if (this.role !== 'trailer' && cylRiveShown(this.model())) {
-          CYLRefreshRiveView({ scrollView: this.scrollView, role: this.role })
+          // The Rive view is the app's (the core depends on no animation library): the builder it registered.
+          if (cylRefreshRiveCanDraw(this.model())) {
+            (CYLRefreshRiveViewBuilder() as CYLRefreshRiveViewBuilderType).builder(this.scrollView, this.role)
+          }
         } else if (this.role !== 'trailer' && cylDrawnShown(this.model())) {
           CYLRefreshDrawnView({ scrollView: this.scrollView, role: this.role })
         } else if (this.role === 'trailer') {

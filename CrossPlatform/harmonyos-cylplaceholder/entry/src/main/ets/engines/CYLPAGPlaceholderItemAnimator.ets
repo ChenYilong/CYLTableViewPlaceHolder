@@ -1,3 +1,5 @@
+// The example's engine (moved out of the cylplaceholder core on 2026-11-17: the core depends on no animation library,
+// as CYLTabBarController's CYLAnimatedItem requires). ExampleAnimationEngines.ets registers it; an app copies it.
 // iOS CYLPAGPlaceholderItemAnimator: plays ".pag" files with Tencent's official libpag for OpenHarmony
 // (@tencent/libpag: PAGFile.LoadFromBytes + PAGViewController + PAGView). libpag has no playback speed, so a speed
 // other than 1 drives the progress per frame (CYLPAGDrivenProgress).
@@ -16,8 +18,9 @@ import {
   CYLPlaceholderItemAnimator,
   CYLPlaceholderItemAnimatorPriority,
   CYLPlaceholderItemAnimatorPriorityDefault,
-  CYLPlaceholderPlayableContentView
-} from './CYLPlaceholderAnimation';
+  CYLPlaceholderPlayableContentView,
+  CYLPAGDrivenProgress
+} from 'cylplaceholder';
 import {
   CYLPlaceholderItemAnimationDarkFilePath,
   CYLPlaceholderItemAnimationDarkURL,
@@ -29,7 +32,7 @@ import {
   CYLPlaceholderItemPAGFilePath,
   CYLPlaceholderItemPAGSize,
   CYLPlaceholderItemPAGURL
-} from './CYLPlaceholderViewTypes';
+} from 'cylplaceholder';
 
 /** libpag's scale mode for an ImageFit. */
 function pagScaleMode(fit: ImageFit): PAGScaleMode {
@@ -216,34 +219,6 @@ export class CYLPAGAnimationContentView extends CYLPlaceholderPlayableContentVie
       this.controller.pause();
     }
   }
-}
-
-/** The next state of a driven PAG play. */
-export interface CYLPAGDrivenStep {
-  progress: number;
-  plays: number;
-  finished: boolean;
-}
-
-/**
- * Advances a driven play by `elapsed` ms at `speed` for a file of `duration` ms: past the end it wraps while plays
- * remain (repeatCount 0 loops forever, N plays N times), else it rests on the last frame and reports finished.
- */
-export function CYLPAGDrivenProgress(progress: number, plays: number, elapsed: number, duration: number,
-  speed: number, repeatCount: number): CYLPAGDrivenStep {
-  if (!(duration > 0) || !(elapsed > 0)) {
-    return { progress: progress, plays: plays, finished: false };
-  }
-  let next = progress + elapsed * speed / duration;
-  let done = plays;
-  while (next >= 1) {
-    done += 1;
-    if (repeatCount !== 0 && done >= repeatCount) {
-      return { progress: 1, plays: done, finished: true };
-    }
-    next -= 1;
-  }
-  return { progress: next, plays: done, finished: false };
 }
 
 @Component

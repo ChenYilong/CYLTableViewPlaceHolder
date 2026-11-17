@@ -1,4 +1,5 @@
-// cylplaceholder: CYLTableViewPlaceHolder for HarmonyOS (ArkTS), with the iOS names.
+// cylplaceholder: CYLTableViewPlaceHolder for HarmonyOS (ArkTS), with the iOS names. It depends on CYLTabBarController's
+// cylanimateditem (CYLAnimatedItemView draws every placeholder icon) and on no animation library.
 export const CYLPlaceholderVersion: string = '0.1.0';
 
 export {
@@ -160,9 +161,16 @@ export {
   CYLPlaceholderAnimationOptionsOfURL
 } from './src/main/ets/CYLPlaceholderAnimation';
 export { CYLGIFPlaceholderItemAnimator } from './src/main/ets/CYLGIFPlaceholderItemAnimator';
-export { CYLLottiePlaceholderItemAnimator } from './src/main/ets/CYLLottiePlaceholderItemAnimator';
-export { CYLPAGPlaceholderItemAnimator } from './src/main/ets/CYLPAGPlaceholderItemAnimator';
-export { CYLRivePlaceholderItemAnimator } from './src/main/ets/CYLRivePlaceholderItemAnimator';
+// The engines' building blocks. The core depends on no animation library: Lottie, PAG and Rive engines are the app's
+// (the example's entry/src/main/ets/engines), built on these and registered by the app.
+export {
+  CYLPlaceholderAnimationFileOfURL,
+  CYLPlaceholderAnimationExtensionOfURL,
+  CYLPlaceholderAnimationReadFile,
+  CYLPlaceholderAnimationArrayBuffer,
+  CYLPlaceholderRegisterAnimatedItemType
+} from './src/main/ets/CYLPlaceholderAnimation';
+export { CYLPAGDrivenStep, CYLPAGDrivenProgress } from './src/main/ets/CYLPAGPlayback';
 export {
   CYLRiveUsesLegacyRuntime,
   CYLRiveActivePropertyPath,
@@ -170,8 +178,19 @@ export {
   CYLRiveColorPropertyPath,
   CYLRiveColorValue
 } from './src/main/ets/CYLRiveOptions';
-// Registers the GIF, Lottie, PAG and Rive animators in the shared registry when the HAR is imported.
+// Registers the GIF animator (the one engine the core ships, on system APIs) when the HAR is imported.
 export { CYLPlaceholderItemAnimationEngine } from './src/main/ets/CYLPlaceholderItemAnimationEngine';
+
+// CYLTabBarController's CYLAnimatedItem (module cylanimateditem): CYLPlaceholderView draws its icon with
+// CYLAnimatedItemView, and an app registers the animation types it plays with CYLAnimatedItemEngines.
+export {
+  CYLAnimatedItemView,
+  CYLAnimatedItemAxis,
+  CYLAnimatedItemAccessoryPlacement,
+  CYLAnimatedItemAnimationContext,
+  CYLAnimatedItemEngines,
+  cylAnimatedItemTypeOf
+} from 'cylanimateditem';
 
 // CYLRefresh drawn styles: SmartRefreshControl's headers and footers drawn on a Canvas, with their support classes.
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnSupport';
@@ -188,20 +207,17 @@ export * from './src/main/ets/refresh/drawn/CYLRefreshGame';
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
 export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';
 export * from './src/main/ets/refresh/drawn/CYLRefreshRiveHeader';
-export { CYLRefreshRiveView, cylRefreshRiveHeader } from './src/main/ets/refresh/drawn/CYLRefreshRiveView';
+// The Rive refresh header's view is the app's (it needs a Rive runtime): registered with CYLRefreshRiveRegisterViewBuilder.
+export {
+  cylRefreshRiveHeader,
+  CYLRefreshRiveRegisterViewBuilder,
+  CYLRefreshRiveViewBuilder,
+  CYLRefreshRiveViewBuilderType
+} from './src/main/ets/refresh/drawn/CYLRefreshRiveView';
 
-// The public Swift API of iOS RiveSwift / LottieSwift: the Rive views and the lottie-ios 2 compatible Lottie view.
-export {
-  CYLPlaceholderRiveItemAnimationView,
-  CYLPlaceholderRiveLegacyItemAnimationView,
-  CYLPlaceholderRiveLegacyViewProvider,
-  CYLPlaceholderRiveLegacyOptions
-} from './src/main/ets/CYLPlaceholderRiveItemAnimationView';
+// The public Swift API of iOS RiveSwift / LottieSwift (the Rive views and the lottie-ios 2 compatible Lottie view) needs
+// @ohos/rive and @ohos/lottie, so it lives with the example's engines (entry/src/main/ets/engines); the core keeps their
+// library-free helpers.
 export { CYLRiveColorInteger } from './src/main/ets/CYLRiveOptions';
-export {
-  CYLPlaceholderCompatibleLOTAnimation,
-  CYLPlaceholderCompatibleLOTAnimationView,
-  CYLPlaceholderCompatibleLOTAnimationViewComponent
-} from './src/main/ets/CYLPlaceholderCompatibleLottie';
 export * from './src/main/ets/CYLPlaceholderCompatibleLottieSupport';
 export { CYLPlaceholderAnimationFileExists, CYLPlaceholderAnimationReadFileSync } from './src/main/ets/CYLPlaceholderAnimation';

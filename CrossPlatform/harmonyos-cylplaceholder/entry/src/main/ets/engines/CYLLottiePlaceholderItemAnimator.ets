@@ -1,3 +1,5 @@
+// The example's engine (moved out of the cylplaceholder core on 2026-11-17: the core depends on no animation library,
+// as CYLTabBarController's CYLAnimatedItem requires). ExampleAnimationEngines.ets registers it; an app copies it.
 // iOS CYLLottiePlaceholderItemAnimator: plays Lottie JSON files with @ohos/lottie (lottie-ohos, drawn on a Canvas),
 // looked up last (fallback priority), for ".json" and ".lottie" files. Kotlin: CYLLottiePlaceholderItemAnimator.
 import lottie, { AnimationItem } from '@ohos/lottie';
@@ -14,8 +16,8 @@ import {
   CYLPlaceholderAnimationExtensionOfURL,
   CYLPlaceholderAnimationOptionsOfURL,
   CYLPlaceholderPlayableContentView
-} from './CYLPlaceholderAnimation';
-import { CYLPlaceholderDrawingColor } from './CYLPlaceholderView';
+} from 'cylplaceholder';
+import { CYLPlaceholderDrawingColor } from 'cylplaceholder';
 import {
   CYLPlaceholderItemAnimationDarkColors,
   CYLPlaceholderItemAnimationDarkFilePath,
@@ -29,7 +31,7 @@ import {
   CYLPlaceholderItemLottieFilePath,
   CYLPlaceholderItemLottieSize,
   CYLPlaceholderItemLottieURL
-} from './CYLPlaceholderViewTypes';
+} from 'cylplaceholder';
 
 /** lottie's `loop` for a repeat count: 0 loops (true), 1 plays once (false), N plays N times (N - 1 more loops). */
 export function CYLLottieLoopValue(repeatCount: number): boolean | number {

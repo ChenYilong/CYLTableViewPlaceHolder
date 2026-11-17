@@ -1,3 +1,5 @@
+// The example's engine (moved out of the cylplaceholder core on 2026-11-17: the core depends on no animation library,
+// as CYLTabBarController's CYLAnimatedItem requires). ExampleAnimationEngines.ets registers it; an app copies it.
 // iOS RiveSwift/CYLPlaceholderRiveItemAnimationView.swift and CYLPlaceholderRiveLegacyItemAnimationView.swift: the
 // public Rive views, thin classes over the library's Rive player (CYLRiveAnimationContentView on @ohos/rive).
 // `CYLPlaceholderRiveItemAnimationView` plays through the bound view model (boolean `active` for `duration` seconds,
@@ -6,7 +8,7 @@
 // `CYLPlaceholderRiveLegacyItemAnimationView` (state machine inputs or a named linear animation).
 // Both are CYLPlaceholderAnimationContentView: show one with `CYLPlaceholderAnimationContent({ view })`.
 import { CYLRiveAnimationContentView } from './CYLRivePlaceholderItemAnimator';
-import { CYLRiveUsesLegacyRuntime } from './CYLRiveOptions';
+import { CYLRiveUsesLegacyRuntime } from 'cylplaceholder';
 import {
   CYLPlaceholderAnimationColors,
   CYLPlaceholderAnimationContentView,
@@ -15,7 +17,7 @@ import {
   CYLPlaceholderAnimationFileOfURL,
   CYLPlaceholderAnimationOptionRiveLegacyRuntime,
   CYLPlaceholderItemAnimationViewProviding
-} from './CYLPlaceholderAnimation';
+} from 'cylplaceholder';
 
 /** Makes the legacy view (iOS `CYLPlaceholderRiveLegacyItemAnimationView` as a view provider class). */
 export class CYLPlaceholderRiveLegacyViewProvider implements CYLPlaceholderItemAnimationViewProviding {

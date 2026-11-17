@@ -2,7 +2,7 @@
 // GIF frame durations at a speed, and the placeholder's live repeat count.
 import { describe, expect, it } from '@ohos/hypium';
 import { CYLGIFCacheFileName, CYLGIFDrawMode, CYLGIFScaledDuration } from '../main/ets/CYLGIFPlaceholderItemAnimator';
-import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlaceholderItemAnimator';
+import { CYLPAGDrivenProgress } from '../main/ets/CYLPAGPlayback';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
 import { CYLRefreshIconViewModel } from '../main/ets/refresh/CYLRefreshIconView';
 import { CYLRefreshFrameDuration } from '../main/ets/refresh/CYLRefreshView';

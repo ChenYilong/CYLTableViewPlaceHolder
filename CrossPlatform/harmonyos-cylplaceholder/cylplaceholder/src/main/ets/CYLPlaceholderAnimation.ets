@@ -8,8 +8,13 @@
 //
 // A file URL is a rawfile path ("cylplaceholder/animations/CYLPlaceholderEmpty.json"), a sandbox path ("/data/...")
 // or a "file://" URI; options travel in the fragment ("CYLPlaceholderLoading.riv#artboard=Main&duration=1").
+//
+// The core depends on no animation library: an app registers its engines (CYLPlaceholderItemAnimatorRegistry for the
+// player, CYLAnimatedItemEngines of CYLTabBarController's cylanimateditem for the type), and CYLPlaceholderView shows
+// the result through CYLAnimatedItemView, which plays the animation only for a registered type.
 import { fileIo } from '@kit.CoreFileKit';
 import { common } from '@kit.AbilityKit';
+import { CYLAnimatedItemEngines, cylAnimatedItemTypeOf } from 'cylanimateditem';
 
 /** Lookup order of animators: higher first; equal priorities keep their registration order. */
 export type CYLPlaceholderItemAnimatorPriority = number;
@@ -681,6 +686,12 @@ export class CYLPlaceholderItemAnimatorRegistry implements CYLPlaceholderItemAni
     if (animator.identifier.length === 0) {
       return;
     }
+    if (this === CYLPlaceholderItemAnimatorRegistry.shared) {
+      // CYLAnimatedItemView plays only registered types: an animator of the shared registry registers its types.
+      animator.fileExtensions.forEach((fileExtension: string) => {
+        CYLPlaceholderRegisterAnimatedItemType(fileExtension);
+      });
+    }
     const index = this.registered.findIndex((a: CYLPlaceholderItemAnimator) => a.identifier === animator.identifier);
     if (index < 0) {
       this.registered.push(animator);
@@ -1182,7 +1193,23 @@ export function CYLPlaceholderRegisterAnimationFactory(factory: CYLPlaceholderAn
     FACTORIES.delete(key);
   } else {
     FACTORIES.set(key, factory);
+    CYLPlaceholderRegisterAnimatedItemType(key);
   }
+  return true;
+}
+
+/**
+ * Registers with CYLAnimatedItemEngines the animation type of a file extension ("json" registers "Lottie"), so
+ * CYLAnimatedItemView plays files of that type; false for an extension CYLAnimatedItemView does not know (its types
+ * are Lottie, PAG, Rive, SVGA and GIF: a file of another extension shows the static image).
+ */
+export function CYLPlaceholderRegisterAnimatedItemType(fileExtension: string): boolean {
+  const key = (fileExtension.startsWith('.') ? fileExtension.substring(1) : fileExtension).toLowerCase();
+  const type = key.length > 0 ? cylAnimatedItemTypeOf('file.' + key) : '';
+  if (type.length === 0) {
+    return false;
+  }
+  CYLAnimatedItemEngines.register(type);
   return true;
 }
 

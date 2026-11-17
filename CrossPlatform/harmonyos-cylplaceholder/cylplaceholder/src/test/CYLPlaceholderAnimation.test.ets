@@ -22,8 +22,10 @@ import {
   CYLPlaceholderItemAnimatorPriorityFallback,
   CYLPlaceholderItemAnimatorRegistry,
   CYLPlaceholderItemViewAnimator,
-  CYLPlaceholderPlayableContentView
+  CYLPlaceholderPlayableContentView,
+  CYLPlaceholderRegisterAnimatedItemType
 } from '../main/ets/CYLPlaceholderAnimation';
+import { CYLAnimatedItemEngines, cylAnimatedItemTypeOf } from 'cylanimateditem';
 import { CYLGIFFrameDurations, CYLGIFIterations, CYLGIFPlaceholderItemAnimator } from '../main/ets/CYLGIFPlaceholderItemAnimator';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
 import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/hud/CYLPlaceholderHUD';
@@ -279,6 +281,27 @@ export default function placeholderAnimationTest() {
       m.stop();
       expect(m.playing).assertFalse();
       CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier('FakeShared');
+    });
+
+    it('showsItsIconThroughCYLAnimatedItemView', 0, () => {
+      // CYLAnimatedItemView plays only registered types; the extension (not the fragment) names the type.
+      expect(CYLPlaceholderRegisterAnimatedItemType('xyz')).assertFalse();
+      expect(CYLPlaceholderRegisterAnimatedItemType('')).assertFalse();
+      expect(CYLPlaceholderRegisterAnimatedItemType('.SVGA')).assertTrue();
+      expect(CYLAnimatedItemEngines.isRegistered('SVGA')).assertTrue();
+      const m = CYLPlaceholderViewModel.initWithImageText(null, 'x');
+      expect(m.cyl_showsIcon).assertFalse();
+      expect(m.cyl_animatedItemURL).assertEqual('');
+      m.animationFileName = 'CYLPlaceholderLoading.pag';
+      expect(m.cyl_showsIcon).assertTrue();
+      expect(m.cyl_animatedItemURL).assertEqual('cylplaceholder/animations/CYLPlaceholderLoading.pag');
+      m.cyl_animatedItemKey = '7';
+      expect(m.cyl_animatedItemURL).assertEqual('cylplaceholder/animations/CYLPlaceholderLoading.pag#cylPlaceholderView=7');
+      expect(cylAnimatedItemTypeOf(m.cyl_animatedItemURL)).assertEqual('PAG');
+      m.animationFileName = '/data/x.riv#artboard=Main';
+      expect(m.cyl_animatedItemURL).assertEqual('/data/x.riv#artboard=Main&cylPlaceholderView=7');
+      expect(cylAnimatedItemTypeOf(m.cyl_animatedItemURL)).assertEqual('Rive');
+      expect(CYLPlaceholderViewModel.initWithImageText('info', null).cyl_showsIcon).assertTrue();
     });
 
     it('gifRepeatCountsAndFrameDurations', 0, () => {
