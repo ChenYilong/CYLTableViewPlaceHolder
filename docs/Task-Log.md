@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：文档以聚合后的 API 作为唯一版本介绍（首个发布版本） / TODO: Docs introduce the consolidated API as the only version (the first release)
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“更新文档，以聚合后的api为准。这是一个没有发布的版本，我们将发布的事第一个版本。所有无需备注增删改接口，细节。以聚合后的api 为准。作为唯一版本介绍。” | The user's original prompt (Chinese, verbatim on the left): update the docs to the consolidated API. This version is unreleased; what we release is the first version. No notes on added, removed or changed APIs or their details are needed. The consolidated API is the reference, introduced as the only version. |
+| 要求：README 与面向使用者的文档（`docs/` 中的介绍、各端 README、skill、文件夹 instructions）只描述当前 API，作为第一个版本：不写“原来叫…”、“已删除”、“改名”、“旧路径仍可用”、“自某日起”等变更说明；任务记录（`docs/Task-Log.md`）与问题进度表照常保留历史。因为没有发布过，旧路径的兼容转发（小程序 `cyl-refresh-trailer/`、`cyl-placeholder/cyl_placeholder_hud.js`）也不需要。 | Requirements: the README and the user-facing documents (introductions in `docs/`, each platform's README, the skills, folder instructions) describe only the current API, as the first version: no "formerly called…", "deleted", "renamed", "the old path still works" or "since <date>" notes; the task record (`docs/Task-Log.md`) and the issue progress table keep their history as usual. Since nothing was released, the old-path forwarders (mini program `cyl-refresh-trailer/`, `cyl-placeholder/cyl_placeholder_hud.js`) are not needed either. |
+
 ### 已完成：以聚合后的 API 为准更新文档 / Done: Update the documentation to the consolidated API
 
 | 中文 | English |
