@@ -39,16 +39,23 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
-  # The shared animation subspec (registry, factory, engine, host view), without any engine adapter, so Core's
-  # built-in GIF decoder and the "backend unavailable" paths are exercised.
-  Dir.glob(File.join(root, 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/*.m')).reject { |path| File.basename(path).start_with?('._') }.sort.each do |path|
-    target.source_build_phase.add_file_reference(project.main_group.new_file(path))
-  end
+  # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework, built by
+  # scripts/cyltabbarcontroller-xcframework.sh at the commit the Cartfile pins. The framework holds the animation engine
+  # without any animator, so CYL_ANIMATION_ENGINE_AVAILABLE is 1 and the tests register their own animators.
+  tabbar = File.join(root, 'Carthage/Build/CYLTabBarController.xcframework')
+  slices = ENV.fetch('DESTINATION', 'Simulator').include?('Simulator') ? 'simulator' : 'all'
+  system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), slices) || abort('CYLTabBarController.xcframework failed to build')
+  tabbar_ref = project.main_group.new_file(tabbar)
+  target.frameworks_build_phase.add_file_reference(tabbar_ref)
+  embed = target.new_copy_files_build_phase('Embed Frameworks')
+  embed.symbol_dst_subfolder_spec = :frameworks
+  embed.add_file_reference(tabbar_ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderAnimation\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
+    config.build_settings['LD_RUNPATH_SEARCH_PATHS'] = '$(inherited) @loader_path/Frameworks'
   end
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))

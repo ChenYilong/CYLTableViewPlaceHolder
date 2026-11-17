@@ -78,7 +78,8 @@ jobs:
       - run: python3 scripts/android-api-map.py --check
       - run: python3 scripts/ios-android-parity.py --check
 
-  # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
+  # Full `pod lib lint` of every subspec (Core, Lottie, LottieSwift, PAG, PAGEnterprise, Rive, SVGA, GIF), with
+  # CYLTabBarController (CYLAnimatedItem) from the commit the Cartfile pins.
   lint:
     name: pod lib lint
     needs: changes

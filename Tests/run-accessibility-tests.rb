@@ -42,6 +42,13 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
   sources.sort.each { |path| app.source_build_phase.add_file_reference(project.main_group.new_file(path)) }
   # One resource bundle holds the placeholder and refresh localizations and images.
   app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
+  # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework.
+  system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), 'simulator') || abort('CYLTabBarController.xcframework failed to build')
+  tabbar_ref = project.main_group.new_file(File.join(root, 'Carthage/Build/CYLTabBarController.xcframework'))
+  app.frameworks_build_phase.add_file_reference(tabbar_ref)
+  embed = app.new_copy_files_build_phase('Embed Frameworks')
+  embed.symbol_dst_subfolder_spec = :frameworks
+  embed.add_file_reference(tabbar_ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
   ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.m')))
   project.save
 

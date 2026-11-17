@@ -22,7 +22,9 @@ command="${1:-lib}"
 shift || true
 case "$command" in
   lib)
-    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests "$@"
+    # Core depends on CYLTabBarController/CYLAnimatedItem, linted from the commit the Cartfile pins.
+    tabbar=$(scripts/cyltabbarcontroller-checkout.sh)
+    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests --include-podspecs="$tabbar/CYLTabBarController.podspec" "$@"
     ;;
   spec)
     pod spec lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests "$@"
@@ -43,7 +45,8 @@ case "$command" in
     work=$(mktemp -d "${TMPDIR:-/tmp}/cyl-xcframework.XXXXXX")
     trap 'rm -rf "$work"' EXIT
     git ls-files -z | grep -zv '/\._\|^\._' | xargs -0 -I{} rsync -R "{}" "$work/" 2>/dev/null || git archive HEAD | tar -x -C "$work"
-    (cd "$work" && carthage build --no-skip-current --use-xcframeworks --platform iOS)
+    # The Cartfile's dependency (CYLTabBarController) is fetched first, then built with this framework.
+    (cd "$work" && carthage bootstrap --no-build && carthage build --no-skip-current --use-xcframeworks --platform iOS)
     test -f "$work/Carthage/Build/CYLTableViewPlaceHolder.xcframework/Info.plist"
     rm -f build/CYLTableViewPlaceHolder.xcframework.zip
     (cd "$work/Carthage/Build" && zip -qry - CYLTableViewPlaceHolder.xcframework) > build/CYLTableViewPlaceHolder.xcframework.zip

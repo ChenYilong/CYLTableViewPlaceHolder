@@ -81,6 +81,7 @@ playground.xcworkspace
 
 # Carthage
 Carthage/Build
+Carthage/Checkouts
 
 # fastlane
 fastlane/report.xml

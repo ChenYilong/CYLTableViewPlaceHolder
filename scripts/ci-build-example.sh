@@ -21,6 +21,11 @@ case "$DEMO" in
   Examples/Example-Scenarios) SCHEME=ExampleScenarios ;;
   *) echo "Unknown demo: $DEMO" >&2; exit 2 ;;
 esac
+# The main example embeds the framework target, which links CYLTabBarController.xcframework (the Cartfile's commit).
+if [[ "$DEMO" == . ]]; then
+  "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$ROOT/Cartfile"
+  "$ROOT/scripts/cyltabbarcontroller-xcframework.sh" simulator
+fi
 cd "$DEMO"
 # CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
 if grep -q "pod 'CYLTabBarController'.*:commit" Podfile; then

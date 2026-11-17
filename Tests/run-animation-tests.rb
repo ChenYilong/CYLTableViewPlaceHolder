@@ -48,11 +48,14 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
   scheme.save_as(project.path, 'AnimationTests', true)
   linkage = ENV.fetch('LINKAGE', 'static')
   abort 'LINKAGE must be static or dynamic' unless %w[static dynamic].include?(linkage)
+  # Core depends on CYLTabBarController/CYLAnimatedItem: the commit the Cartfile pins.
+  tabbar_sha = File.read(File.join(root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
   File.write(File.join(dir, 'Podfile'), <<~PODFILE)
     platform :ios, '15.0'
     project 'AnimationTests.xcodeproj'
     use_frameworks! :linkage => :#{linkage}
     target 'AnimationTests' do
+      pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}', :subspecs => ['CYLAnimatedItem']
       pod 'CYLTableViewPlaceHolder/LottieSwift', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/GIF', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/#{ENV.fetch('PAG_SUBSPEC', 'PAG')}', :path => #{root.dump}

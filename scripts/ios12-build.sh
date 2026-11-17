@@ -8,6 +8,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build
 xcodebuild -version
+# CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: the target links
+# Carthage/Build/CYLTabBarController.xcframework (the commit the Cartfile pins).
+scripts/cyltabbarcontroller-xcframework.sh simulator
 DERIVED_DATA=$(mktemp -d "${TMPDIR:-/tmp}/cyl-ios12.XXXXXX")
 trap 'rm -rf "$DERIVED_DATA"' EXIT
 # $(inherited) is an Xcode build-setting macro, expanded by xcodebuild, not by the shell.

@@ -15,19 +15,20 @@ Pod::Spec.new do |s|
   s.default_subspecs = 'Core'
   s.static_framework = true
 
-  # Placeholder view, automatic table/collection integration and CYLRefresh. GIF files play through Core's
-  # built-in ImageIO decoder when the GIF subspec is not installed.
+  # Placeholder view, automatic table/collection integration, CYLPlaceholderHUD and CYLRefresh. `CYLPlaceholderView` (the
+  # packaged icon + title view) is a subclass of CYLTabBarController's `CYLAnimatedItemView` (docs/Animated-Item.md in
+  # CYLTabBarController), so Core depends on its `CYLAnimatedItem` subspec: static images, no animation engine. An
+  # animation file plays only when the app adds an animation subspec below (or CYLTabBarController's own
+  # `CYLAnimatedItem<Type>` subspec); without one, the view shows its static image.
   s.subspec 'Core' do |core|
+    core.dependency 'CYLTabBarController/CYLAnimatedItem'
     core.source_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/**/*.{h,m}',
                         'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}'
-    # The interface to the CYLPlaceholderItemAnimation subspec, internal, not public API. Core does not depend on
-    # that subspec: the engine installs itself at load time (as `CYLTabBarItemAnimationService` in CYLTabBarController).
     # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal.
-    core.private_header_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationService.h',
-                                'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.h'
+    core.private_header_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.h'
     # The core bundle: <language>.lproj/Localizable.strings (placeholder, scenario and component texts) and
-    # CYLRefresh.strings, the images, and Animations/ (40 scenario animations and 22 CYLRefresh icons: Lottie, PAG, Rive,
+    # CYLRefresh.strings, the images, and Animations/ (the scenario animations and CYLRefresh icons: Lottie, PAG, Rive,
     # GIF, with NOTICE.animations and the license of each source repository). Declared on Core, which reads them: a
     # root-level `resources` was not installed when a Podfile names subspecs, so every icon fell back to the default.
     core.resources = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle',
@@ -38,92 +39,53 @@ Pod::Spec.new do |s|
     core.resource_bundles = { 'CYLTableViewPlaceHolderPrivacy' => 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy' }
   end
 
-  # The animation shared by every animation library, pulled in only by a library's subspec (Lottie, PAG...), organized
-  # like CYLTabBarController's `CYLTabBarItemAnimation`: `CYLPlaceholderItemAnimator` (file matching + view factory),
-  # `CYLPlaceholderItemAnimationPlayer`, `CYLPlaceholderItemAnimatorRegistry`, `CYLPlaceholderItemAnimationFactory`, and
-  # the short path `CYLPlaceholderItemAnimationPlayableView` + `CYLPlaceholderItemViewAnimator`. Each library's animator
-  # lives in `CYLPlaceholderAnimation/<Library>/` and registers itself.
-  s.subspec 'CYLPlaceholderItemAnimation' do |animation|
-    animation.dependency 'CYLTableViewPlaceHolder/Core'
-    animation.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/*.{h,m}'
-    animation.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimator.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayer.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimatorRegistry.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationFactory.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationPlayableView.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemViewAnimator.h',
-                                    'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h'
-    animation.private_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationEngine.h'
-    animation.frameworks = 'UIKit'
-  end
-
-  # Former name of the shared animation subspec, kept so existing Podfiles keep working.
-  s.subspec 'Animation' do |legacy|
-    legacy.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-  end
-
-  # Lottie uses the Swift version of lottie-ios only (no Objective-C Lottie 2.x flavor).
+  # The animation subspecs: each adds CYLTabBarController's animation engine (`CYLAnimationEngine`) and one animator
+  # through its `CYLAnimatedItem<Type>` subspec. Nothing else changes: `CYLPlaceholderView` sees the engine at compile
+  # time (`CYL_ANIMATION_ENGINE_AVAILABLE`) and plays the files of every installed type. Pick one per type.
+  # Lottie uses the Swift version of lottie-ios (iOS 13).
   s.subspec 'Lottie' do |lottie|
     lottie.dependency 'CYLTableViewPlaceHolder/LottieSwift'
-    lottie.ios.deployment_target = '13.0' # depends on LottieSwift
+    lottie.ios.deployment_target = '13.0'
   end
 
   s.subspec 'LottieSwift' do |lottieswift|
-    # The Swift bridge, and the Lottie animator.
-    lottieswift.source_files = 'CYLTableViewPlaceHolder/**/LottieSwift/*.{h,m,swift}', 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Lottie/*.{h,m}'
-    lottieswift.private_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Lottie/*.h'
-    # 4.5.1 adds `removeValueProvider(for:)`, used to restore colors when leaving Dark Mode.
-    lottieswift.dependency 'lottie-ios', '>= 4.5.1'
-    # lottie-ios 4.5.1 requires iOS 13.
-    lottieswift.ios.deployment_target = '13.0'
     lottieswift.dependency 'CYLTableViewPlaceHolder/Core'
-    lottieswift.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
+    lottieswift.dependency 'CYLTabBarController/CYLAnimatedItemLottieSwift'
+    lottieswift.ios.deployment_target = '13.0'
   end
 
-  # PAG animations (Tencent libpag), a binary pod; the animator finds it with `__has_include(<libpag/PAGView.h>)`.
+  # PAG animations (Tencent libpag, a binary pod).
   s.subspec 'PAG' do |pag|
     pag.dependency 'CYLTableViewPlaceHolder/Core'
-    pag.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-    pag.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/PAG/*.{h,m}'
-    pag.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/PAG/*.h'
-    pag.dependency 'libpag', '>= 4.0'
+    pag.dependency 'CYLTabBarController/CYLAnimatedItemPAG'
   end
 
   # PAG Enterprise (`libpag-enterprise`). It ships the same `libpag.xcframework`, so use either `PAG` or
   # `PAGEnterprise`, not both.
   s.subspec 'PAGEnterprise' do |pagenterprise|
     pagenterprise.dependency 'CYLTableViewPlaceHolder/Core'
-    pagenterprise.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-    pagenterprise.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/PAG/*.{h,m}'
-    pagenterprise.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/PAG/*.h'
-    pagenterprise.dependency 'libpag-enterprise', '>= 4.0'
-    # libpag-enterprise 4.4.x-4.5.98: the module's umbrella header imports a header the framework does not ship, so a
-    # modular import fails. The PAG animator imports only `PAGView.h`, so its file is compiled without modules.
-    pagenterprise.compiler_flags = '-fno-modules'
+    pagenterprise.dependency 'CYLTabBarController/CYLAnimatedItemPAGEnterprise'
   end
 
-  # Rive animations (`RiveRuntime`): the Swift views (RiveSwift/) adopt the playable view protocols, and the
-  # animator only registers a ready-made `CYLPlaceholderItemViewAnimator` for ".riv" files. The Rive refresh header
-  # lives with the other refresh controls in CYLRefresh/Custom/Rive/ and is compiled here, since it needs RiveRuntime.
+  # Rive animations (`RiveRuntime`, iOS 14). The Rive refresh header lives with the other refresh controls in
+  # CYLRefresh/Custom/Rive/ and is compiled here, since it needs RiveRuntime.
   s.subspec 'Rive' do |rive|
     rive.dependency 'CYLTableViewPlaceHolder/Core'
-    rive.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-    rive.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Rive/*.{h,m}', 'CYLTableViewPlaceHolder/RiveSwift/*.swift',
-                        'CYLTableViewPlaceHolder/CYLRefresh/Custom/Rive/*.swift'
-    rive.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Rive/*.h'
-    rive.dependency 'RiveRuntime', '~> 6.29'
-    # RiveRuntime requires iOS 14.
+    rive.dependency 'CYLTabBarController/CYLAnimatedItemRive'
+    rive.source_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Rive/*.swift'
     rive.ios.deployment_target = '14.0'
   end
 
-  # GIF placeholder animations that play once through the registry, like Lottie, PAG and Rive. No third-party
-  # library: ImageIO decodes it.
+  # SVGA animations (`SVGAPlayerLite`).
+  s.subspec 'SVGA' do |svga|
+    svga.dependency 'CYLTableViewPlaceHolder/Core'
+    svga.dependency 'CYLTabBarController/CYLAnimatedItemSVGA'
+  end
+
+  # GIF animations through the engine (ImageIO, no third-party library). Without it a GIF shows as a static image.
   s.subspec 'GIF' do |gif|
     gif.dependency 'CYLTableViewPlaceHolder/Core'
-    gif.dependency 'CYLTableViewPlaceHolder/CYLPlaceholderItemAnimation'
-    gif.source_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/GIF/*.{h,m}'
-    gif.public_header_files = 'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/GIF/*.h'
-    gif.frameworks = 'ImageIO', 'QuartzCore'
+    gif.dependency 'CYLTabBarController/CYLAnimatedItemGIF'
   end
 
   s.pod_target_xcconfig = {
