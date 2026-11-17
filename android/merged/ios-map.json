@@ -1019,5 +1019,85 @@
  "WaveView.setShadow": {
   "ios": "`CYLRefreshWaveSwipeHeader` `waveShadowRadius` / `waveShadowColor`",
   "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableFooterTranslationContent": {
+  "ios": "n/a",
+  "note": "iOS footers always sit right after the content and move with it (back footers) or load at the end without moving it (auto footers); there is no footer that slides over still content"
+ },
+ "RefreshLayout.setEnableClipFooterWhenFixedBehind": {
+  "ios": "n/a",
+  "note": "iOS footers have no fixed-behind mode (scrollMode is for headers), so there is nothing to clip"
+ },
+ "RefreshLayout.setEnableScrollContentWhenRefreshed": {
+  "ios": "n/a",
+  "note": "UIScrollView keeps the content where it is when the refreshing inset goes back; there is no content translation to keep or drop"
+ },
+ "RefreshLayout.setHeaderInsetStart": {
+  "ios": "`CYLRefreshHeader` `insetStart`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setFooterInsetStart": {
+  "ios": "`CYLRefreshBackFooter` `insetStart`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setDragRate": {
+  "ios": "`CYLRefreshComponent` `dragRate`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setReboundInterpolator": {
+  "ios": "`CYLRefreshComponent` `reboundAnimationOptions` (a UIKit animation curve)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableHeaderTranslationContent": {
+  "ios": "`CYLRefreshHeader` `scrollMode` (`CYLRefreshScrollModeFront`: the content does not move for the header)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshKernel.requestDefaultTranslationContentFor": {
+  "ios": "each header class's default `scrollMode` (`CYLRefreshMaterialHeader` and `CYLRefreshWaveSwipeHeader` set `CYLRefreshScrollModeFront`)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableScrollContentWhenLoaded": {
+  "ios": "`CYLRefreshBackFooter` `scrollsContentAfterLoading`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableLoadMoreWhenContentNotFull": {
+  "ios": "`CYLRefreshAutoFooter` `loadsWhenContentNotFull`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableFooterFollowWhenNoMoreData": {
+  "ios": "`CYLRefreshBackFooter` `followsContentWhenNoMoreData`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setEnableClipHeaderWhenFixedBehind": {
+  "ios": "`CYLRefreshHeader` `clipsWhenBehind`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setFixedHeaderViewId": {
+  "ios": "`CYLRefreshHeader` `pinnedView`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setFixedFooterViewId": {
+  "ios": "`CYLRefreshFooter` `pinnedView`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setHeaderTranslationViewId": {
+  "ios": "`CYLRefreshHeader` `translationView`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshLayout.setFooterTranslationViewId": {
+  "ios": "`CYLRefreshFooter` `translationView`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshComponent.onHorizontalDrag": {
+  "ios": "`CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshComponent.isSupportHorizontalDrag": {
+  "ios": "`CYLRefreshComponent` `supportsHorizontalDrag`",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "RefreshComponent.autoOpen": {
+  "ios": "`CYLRefreshComponent` `-openForAutoRefreshWithDuration:`",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

@@ -20,6 +20,20 @@ NS_ASSUME_NONNULL_BEGIN
  * pull-up" is not covered.
  */
 @property (nonatomic) NSTimeInterval noMoreDataDisplayDuration;
+/*!
+ * [EN] Keeps the footer shown after the content while there is no more data, until the state changes
+ *      (SmartRefreshLayout's `setEnableFooterFollowWhenNoMoreData`). Default NO.
+ * [CN] 没有更多数据时让尾部一直显示在内容之后，直到状态改变（对应 SmartRefreshLayout 的
+ *      `setEnableFooterFollowWhenNoMoreData`）。默认 NO。
+ */
+@property (nonatomic) BOOL followsContentWhenNoMoreData;
+/*!
+ * [EN] After loading more, leaves the new rows in the place the footer showed, so they come into view; NO keeps the
+ *      old end of the content in place (SmartRefreshLayout's `setEnableScrollContentWhenLoaded`). Default YES.
+ * [CN] 加载更多后，新数据留在尾部原来显示的位置，从而进入可见区域；NO 时保持原来内容末尾的位置（对应 SmartRefreshLayout 的
+ *      `setEnableScrollContentWhenLoaded`）。默认 YES。
+ */
+@property (nonatomic) BOOL scrollsContentAfterLoading;
 
 /*!
  * [EN] Pulling up at least this far (points) and releasing opens the footer's second floor below the list instead of

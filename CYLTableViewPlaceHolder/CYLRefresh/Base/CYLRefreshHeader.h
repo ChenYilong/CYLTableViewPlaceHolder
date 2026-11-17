@@ -60,6 +60,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) BOOL resetsFooterAfterRefresh;
 
+/*!
+ * [EN] In `CYLRefreshScrollModeBehind`, shows only the part of the header the content has revealed
+ *      (SmartRefreshLayout's `setEnableClipHeaderWhenFixedBehind`). Default NO.
+ * [CN] 在 `CYLRefreshScrollModeBehind` 下只显示内容已露出的部分（对应 SmartRefreshLayout 的
+ *      `setEnableClipHeaderWhenFixedBehind`）。默认 NO。
+ */
+@property (nonatomic) BOOL clipsWhenBehind;
+
 #pragma mark Second floor (flutter_easy_refresh's secondary)
 
 /*!

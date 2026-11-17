@@ -3499,5 +3499,65 @@
   "status": "done",
   "android": "com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)",
   "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshAutoFooter loadsWhenContentNotFull": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBackFooter followsContentWhenNoMoreData": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBackFooter scrollsContentAfterLoading": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent dragRate": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setDragRate",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent reboundAnimationOptions": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setReboundInterpolator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent insetStart": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setHeaderInsetStart / setFooterInsetStart",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent pinnedView": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setFixedHeaderViewId / setFixedFooterViewId",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent translationView": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setHeaderTranslationViewId / setFooterTranslationViewId",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent supportsHorizontalDrag": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.isSupportHorizontalDrag",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -didDragHorizontallyWithOffset:percent:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -openForAutoRefreshWithDuration:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.autoOpen",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader clipsWhenBehind": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableClipHeaderWhenFixedBehind",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

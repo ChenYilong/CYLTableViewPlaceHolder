@@ -703,4 +703,34 @@
     XCTAssertEqual(initialized, 2, @"every new control is set up once");
 }
 
+- (void)testLayoutOptionsDefaultsAndEffects {
+    UIScrollView *scrollView = [self scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader attach:scrollView];
+    CYLRefreshBackNormalFooter *footer = [CYLRefreshBackNormalFooter attach:scrollView];
+    CYLRefreshAutoNormalFooter *autoFooter = [CYLRefreshAutoNormalFooter new];
+    XCTAssertEqual(header.dragRate, 0, @"UIScrollView's own rubber band by default");
+    XCTAssertEqual(header.reboundAnimationOptions, (UIViewAnimationOptions)0);
+    XCTAssertFalse(header.clipsWhenBehind);
+    XCTAssertFalse(header.supportsHorizontalDrag);
+    XCTAssertFalse([header openForAutoRefreshWithDuration:0.25], @"autoOpen: the layout animates by default");
+    XCTAssertTrue(footer.scrollsContentAfterLoading, @"setEnableScrollContentWhenLoaded defaults to true");
+    XCTAssertFalse(footer.followsContentWhenNoMoreData);
+    XCTAssertTrue(autoFooter.loadsWhenContentNotFull, @"setEnableLoadMoreWhenContentNotFull defaults to true");
+
+    [header layoutIfNeeded];
+    CGFloat y = header.cyl_y;
+    header.insetStart = 44;
+    [header setNeedsLayout];
+    [header layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(header.cyl_y, y + 44, 0.5, @"setHeaderInsetStart");
+
+    UIView *pinned = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+    [scrollView addSubview:pinned];
+    header.pinnedView = pinned;
+    scrollView.contentOffset = CGPointMake(0, -30);
+    XCTAssertLessThan(pinned.transform.ty, 0, @"setFixedHeaderViewId: moved back up by the pull");
+    scrollView.contentOffset = CGPointZero;
+    XCTAssertEqualWithAccuracy(pinned.transform.ty, 0, 0.001);
+}
+
 @end

@@ -36,9 +36,20 @@
 @property (assign, nonatomic) BOOL cyl_dragStartedAtEdge;
 @end
 
+/// [EN] CYLRefreshComponent's private dragRate helper. [CN] CYLRefreshComponent 私有的 dragRate 辅助方法。
+@interface CYLRefreshComponent (CYLDragRate)
+- (CGFloat)cyl_offsetForDragRate:(CGFloat)offsetY happenOffset:(CGFloat)happenOffsetY;
+@end
+
 @implementation CYLRefreshBackFooter
 
 #pragma mark - 初始化
+- (void)prepare
+{
+    [super prepare];
+    _scrollsContentAfterLoading = YES;
+}
+
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
     if (!newSuperview) {
@@ -74,6 +85,10 @@
     // 如果是向下滚动到看不见尾部控件，直接返回
     if (currentOffsetY <= happenOffsetY) return;
 
+    // [EN] dragRate scales the pull. [CN] dragRate 按比例缩放拉动距离。
+    if (self.state != CYLRefreshStateNoMoreData) {
+        currentOffsetY = [self cyl_offsetForDragRate:currentOffsetY happenOffset:happenOffsetY];
+    }
     CGFloat pullingPercent = (currentOffsetY - happenOffsetY) / (self.cyl_h * self.triggerRate);
 
     CGFloat normal2pullingOffsetY = happenOffsetY + self.cyl_h * self.triggerRate;
@@ -140,7 +155,7 @@
     // 表格的高度
     CGFloat scrollHeight = self.scrollView.cyl_h - self.scrollViewOriginalInset.top - self.scrollViewOriginalInset.bottom + self.ignoredScrollViewContentInsetBottom;
     // 设置位置
-    CGFloat y = MAX(contentHeight, scrollHeight);
+    CGFloat y = MAX(contentHeight, scrollHeight) - self.insetStart;
     if (self.cyl_y != y) {
         self.cyl_y = y;
     }
@@ -159,7 +174,11 @@
     if (state == CYLRefreshStateNoMoreData || state == CYLRefreshStateIdle) {
         // 刷新完毕
         if (CYLRefreshStateRefreshing == oldState) {
-            if (state == CYLRefreshStateNoMoreData && self.noMoreDataDisplayDuration > 0) {
+            if (state == CYLRefreshStateNoMoreData && self.followsContentWhenNoMoreData) {
+                // [EN] Held until the state changes (cyl_endNoMoreDataHold). [CN] 保持到状态改变（cyl_endNoMoreDataHold）。
+                self.holdingNoMoreData = YES;
+                self.noMoreDataHoldToken += 1;
+            } else if (state == CYLRefreshStateNoMoreData && self.noMoreDataDisplayDuration > 0) {
                 [self cyl_holdNoMoreDataForDuration:self.noMoreDataDisplayDuration];
             } else {
                 [self cyl_restoreBottomInsetAfterRefresh];
@@ -170,6 +189,10 @@
         // 刚刷新完毕
         if (CYLRefreshStateRefreshing == oldState && deltaH > 0 && self.scrollView.cyl_totalDataCount != self.lastRefreshCount) {
             self.scrollView.cyl_offsetY = self.scrollView.cyl_offsetY;
+            // [EN] scrollsContentAfterLoading NO: the old end of the content stays at the bottom. [CN] 为 NO 时原来的内容末尾停在底部。
+            if (!self.scrollsContentAfterLoading && self.scrollView.cyl_offsetY > self.pagingRestingOffset) {
+                self.scrollView.cyl_offsetY = self.pagingRestingOffset;
+            }
         }
     } else if (state == CYLRefreshStateRefreshing) {
         // 记录刷新前的数量
@@ -233,7 +256,7 @@
     //      拖动中或减速中不做处理。
     BOOL restorePagingOffset = scrollView.pagingEnabled && !scrollView.isDragging && !scrollView.isDecelerating &&
         (fabs(scrollView.cyl_offsetY - self.pagingRefreshOffset) < 0.001 || [self cyl_isBetweenPages]);
-    [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+    [UIView animateWithDuration:self.slowAnimationDuration delay:0 options:self.reboundAnimationOptions animations:^{
         if (self.endRefreshingAnimationBeginAction) {
             self.endRefreshingAnimationBeginAction();
         }

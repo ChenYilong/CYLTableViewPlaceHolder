@@ -40,6 +40,11 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic, readwrite, getter=isSecondaryOpen) BOOL secondaryOpen;
 @end
 
+/// [EN] CYLRefreshComponent's private dragRate helper. [CN] CYLRefreshComponent 私有的 dragRate 辅助方法。
+@interface CYLRefreshComponent (CYLDragRate)
+- (CGFloat)cyl_offsetForDragRate:(CGFloat)offsetY happenOffset:(CGFloat)happenOffsetY;
+@end
+
 @implementation CYLRefreshHeader
 #pragma mark - 构造方法
 + (instancetype)headerWithRefreshingBlock:(CYLRefreshComponentAction)refreshingBlock
@@ -106,7 +111,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     [super placeSubviews];
 
     // 设置y值(当自己的高度发生改变了，肯定要重新调整Y值，所以放到placeSubviews方法中设置y值)
-    self.cyl_y = - self.cyl_h - self.ignoredScrollViewContentInsetTop;
+    self.cyl_y = - self.cyl_h - self.ignoredScrollViewContentInsetTop + self.insetStart;
     [self cyl_applyScrollMode];
 }
 
@@ -310,15 +315,24 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         // [EN] Behind: pinned at the visible top behind the content, revealed as the content moves down.
         // [CN] 后置：固定在可见区域顶部、位于内容后面，内容下移时露出。
         if (fabs(self.cyl_h - height) > 0.25) self.cyl_h = height;
-        self.cyl_y = MIN(visibleTop, -height);
+        self.cyl_y = MIN(visibleTop, -height) + self.insetStart;
         self.layer.zPosition = -1;
+        // [EN] clipsWhenBehind: only the revealed part shows. [CN] clipsWhenBehind：只显示露出的部分。
+        if (self.clipsWhenBehind) {
+            CALayer *mask = self.layer.mask ?: [CALayer layer];
+            mask.backgroundColor = UIColor.blackColor.CGColor;
+            mask.frame = CGRectMake(0, 0, self.cyl_w, MIN(pulled, height));
+            self.layer.mask = mask;
+        } else if (self.layer.mask && !self.clipsWhenBehind) {
+            self.layer.mask = nil;
+        }
         if (self.superview.subviews.firstObject != self) [self.superview sendSubviewToBack:self];
     } else {
         // [EN] Front, as in SmartRefreshControl: pinned at the top of the visible area, in front of the content, which
         //      never moves for it (no refreshing inset). [CN] 前置（与 SmartRefreshControl 相同）：固定在可见区域顶部、位于内容前面，
         //      内容不会为它移动（不加刷新 inset）。
         if (fabs(self.cyl_h - height) > 0.25) self.cyl_h = height;
-        self.cyl_y = visibleTop;
+        self.cyl_y = visibleTop + self.insetStart;
         self.layer.zPosition = 1;
         if (self.superview.subviews.lastObject != self) [self.superview bringSubviewToFront:self];
     }
@@ -383,6 +397,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 如果是向上滚动到看不见头部控件，直接返回
     // >= -> >
     if (offsetY > happenOffsetY) return;
+    // [EN] dragRate scales the pull. [CN] dragRate 按比例缩放拉动距离。
+    offsetY = [self cyl_offsetForDragRate:offsetY happenOffset:happenOffsetY];
 
     // 普通 和 即将刷新 的临界点
     CGFloat triggerDistance = self.expandHeight * self.triggerRate;
@@ -468,7 +484,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     // 默认使用 UIViewAnimation 动画
     if (!self.isCollectionViewAnimationBug) {
         // 恢复inset和offset
-        [UIView animateWithDuration:self.slowAnimationDuration animations:^{
+        [UIView animateWithDuration:self.slowAnimationDuration delay:0 options:self.reboundAnimationOptions animations:^{
             [self setRefreshingInsetTop:self.scrollView.cyl_insetT + self.insetTDelta];
 
             if (self.endRefreshingAnimationBeginAction) {

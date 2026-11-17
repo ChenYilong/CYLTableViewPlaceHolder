@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 645 个计入的符号；done 582、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 645 counted symbols; done 582, partial 63, planned 0, n/a 194). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 657 个计入的符号；done 594、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 657 counted symbols; done 594, partial 63, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -98,6 +98,7 @@
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooter.automaticallyRefresh` | done |  |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` | done |  |
 | `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooter.autoTriggerTimes` | partial | kept; CYLRefreshLayout loads once per drag |
+| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | `com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull` | done | added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
@@ -105,6 +106,8 @@
 |:---|:---|:---|:---|
 | `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | done | pull to load and the second floor (secondary*) |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooter.noMoreDataDisplayDuration` | done |  |
+| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | `com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | `com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshBackFooter` `secondaryTriggerOffset` | `CYLRefreshBackFooter.secondaryTriggerOffset` | done |  |
 | `CYLRefreshBackFooter` `secondaryDimension` | `CYLRefreshBackFooter.secondaryDimension` | done |  |
 | `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | `CYLRefreshBackFooter.secondaryCloseTriggerOffset` | done |  |
@@ -204,6 +207,12 @@
 | `CYLRefreshComponent` `canTriggerBlock` | `com.cyl.refresh.layout.api.RefreshLayout.setScrollBoundaryDecider` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-canTrigger` | `com.cyl.refresh.layout.api.ScrollBoundaryDecider.canRefresh / canLoadMore` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `disablesContentWhileRefreshing` | `com.cyl.refresh.layout.api.RefreshLayout.setDisableContentWhenRefresh / setDisableContentWhenLoading` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `dragRate` | `com.cyl.refresh.layout.api.RefreshLayout.setDragRate` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `reboundAnimationOptions` | `com.cyl.refresh.layout.api.RefreshLayout.setReboundInterpolator` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `insetStart` | `com.cyl.refresh.layout.api.RefreshLayout.setHeaderInsetStart / setFooterInsetStart` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `pinnedView` | `com.cyl.refresh.layout.api.RefreshLayout.setFixedHeaderViewId / setFixedFooterViewId` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `translationView` | `com.cyl.refresh.layout.api.RefreshLayout.setHeaderTranslationViewId / setFooterTranslationViewId` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `supportsHorizontalDrag` | `com.cyl.refresh.layout.api.RefreshComponent.isSupportHorizontalDrag` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-addObservers` | — | n/a | UIKit KVO |
 | `CYLRefreshComponent` `-removeObservers` | — | n/a | UIKit KVO |
 | `CYLRefreshComponent` `-didAttachToScrollView:` | `CYLRefreshComponent.didAttachToScrollView(layout)` | done |  |
@@ -214,6 +223,8 @@
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` | done |  |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; CYLRefreshLayout reads the component's own finish duration |
 | `CYLRefreshComponent` `-autoRefreshDidChange:` | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | `com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag` | done | added 2026-11-17 for Android parity |
+| `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | `com.cyl.refresh.layout.api.RefreshComponent.autoOpen` | done | added 2026-11-17 for Android parity |
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
@@ -259,6 +270,7 @@
 | `CYLRefreshHeader` `-setExpandHeight:` | `CYLRefreshHeader.setExpandHeight(dp)` | done |  |
 | `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeader.addsRefreshingInset` | done |  |
 | `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeader.resetsFooterAfterRefresh` | done |  |
+| `CYLRefreshHeader` `clipsWhenBehind` | `com.cyl.refresh.layout.api.RefreshLayout.setEnableClipHeaderWhenFixedBehind` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshHeader` `secondaryTriggerOffset` | `CYLRefreshHeader.secondaryTriggerOffset` | done |  |
 | `CYLRefreshHeader` `secondaryDimension` | `CYLRefreshHeader.secondaryDimension` | done |  |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | `CYLRefreshHeader.secondaryCloseTriggerOffset` | done |  |

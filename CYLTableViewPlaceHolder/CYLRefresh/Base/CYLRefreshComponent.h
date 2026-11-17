@@ -579,6 +579,52 @@ typedef void (^CYLRefreshComponentAction)(void);
  */
 @property (nonatomic) BOOL disablesContentWhileRefreshing;
 
+#pragma mark Layout options (SmartRefreshLayout's RefreshLayout setters)
+
+/*!
+ * [EN] Pull distance per finger distance while pulling the control open, from 0 to 1; 0 (default) and 1 follow
+ *      UIScrollView's own rubber band (SmartRefreshLayout's `setDragRate`). Headers and back footers.
+ * [CN] 拉开控件时手指每移动一点控件拉开的距离，0 到 1；0（默认）与 1 使用 UIScrollView 自带的回弹（对应 SmartRefreshLayout 的
+ *      `setDragRate`）。适用于刷新头与返回式刷新尾。
+ */
+@property (nonatomic) CGFloat dragRate;
+/*!
+ * [EN] The animation curve of the bounce back when a refresh ends; default 0 (`UIViewAnimationOptionCurveEaseInOut`)
+ *      (SmartRefreshLayout's `setReboundInterpolator`). Headers and back footers.
+ * [CN] 刷新结束后回弹的动画曲线；默认 0（`UIViewAnimationOptionCurveEaseInOut`）（对应 SmartRefreshLayout 的
+ *      `setReboundInterpolator`）。适用于刷新头与返回式刷新尾。
+ */
+@property (nonatomic) UIViewAnimationOptions reboundAnimationOptions;
+/*!
+ * [EN] Moves the control this many points into the content from its edge, for example below a translucent bar that
+ *      covers the top (SmartRefreshLayout's `setHeaderInsetStart` / `setFooterInsetStart`). Default 0.
+ * [CN] 把控件从边缘向内容内移动这么多点，例如放在遮住顶部的半透明栏下面（对应 SmartRefreshLayout 的 `setHeaderInsetStart` /
+ *      `setFooterInsetStart`）。默认 0。
+ */
+@property (nonatomic) CGFloat insetStart;
+/*!
+ * [EN] A view inside the scroll view that stays where it is while the control is pulled, for example a pinned bar
+ *      (SmartRefreshLayout's `setFixedHeaderViewId` / `setFixedFooterViewId`). Weak; nil (default) pins nothing.
+ * [CN] 滚动视图内的一个视图，控件被拉开时保持不动，例如固定的栏（对应 SmartRefreshLayout 的 `setFixedHeaderViewId` /
+ *      `setFixedFooterViewId`）。弱引用；nil（默认）不固定任何视图。
+ */
+@property (weak, nonatomic, nullable) UIView *pinnedView;
+/*!
+ * [EN] A view that moves with the control by the pulled distance, for example a background outside the scroll view
+ *      (SmartRefreshLayout's `setHeaderTranslationViewId` / `setFooterTranslationViewId`). Weak; nil (default) moves
+ *      nothing else.
+ * [CN] 随控件移动拉开距离的视图，例如滚动视图外的背景（对应 SmartRefreshLayout 的 `setHeaderTranslationViewId` /
+ *      `setFooterTranslationViewId`）。弱引用；nil（默认）不移动其他视图。
+ */
+@property (weak, nonatomic, nullable) UIView *translationView;
+/*!
+ * [EN] Calls `-didDragHorizontallyWithOffset:percent:` for sideways finger moves while the control is pulled
+ *      (SmartRefreshLayout's `RefreshComponent.isSupportHorizontalDrag`). Default NO.
+ * [CN] 控件被拉开时，手指横向移动会调用 `-didDragHorizontallyWithOffset:percent:`（对应 SmartRefreshLayout 的
+ *      `RefreshComponent.isSupportHorizontalDrag`）。默认 NO。
+ */
+@property (nonatomic) BOOL supportsHorizontalDrag;
+
 #pragma mark Subclass hooks
 
 /*!
@@ -627,6 +673,22 @@ typedef void (^CYLRefreshComponentAction)(void);
  *      调用（对应 SmartRefreshLayout 的 `RefreshComponent.onAutoRefresh`），控件据此区分自动刷新与拉动。
  */
 - (void)autoRefreshDidChange:(BOOL)autoRefresh;
+/*!
+ * [EN] With `supportsHorizontalDrag`, called on every sideways finger move while the control is pulled: `offset` is the
+ *      horizontal move in points since the drag began, `percent` the control's `pullingPercent` (SmartRefreshLayout's
+ *      `RefreshComponent.onHorizontalDrag`). [CN] 开启 `supportsHorizontalDrag` 后，控件被拉开时手指每次横向移动都会调用：
+ *      `offset` 为拖动开始后的横向移动点数，`percent` 为控件的 `pullingPercent`（对应 SmartRefreshLayout 的
+ *      `RefreshComponent.onHorizontalDrag`）。
+ */
+- (void)didDragHorizontallyWithOffset:(CGFloat)offset percent:(CGFloat)percent;
+/*!
+ * [EN] Called when a refresh starts in code: return YES when the control opens itself with its own animation (lasting
+ *      `duration`), so the scroll view takes its refreshing position without animating; NO (default) lets the control
+ *      animate as usual (SmartRefreshLayout's `RefreshComponent.autoOpen`).
+ * [CN] 由代码开始刷新时调用：控件用自己的动画（持续 `duration`）打开时返回 YES，滚动视图则不加动画直接到刷新位置；NO（默认）按通常方式
+ *      动画（对应 SmartRefreshLayout 的 `RefreshComponent.autoOpen`）。
+ */
+- (BOOL)openForAutoRefreshWithDuration:(NSTimeInterval)duration;
 @end
 
 @interface UILabel(CYLRefresh)

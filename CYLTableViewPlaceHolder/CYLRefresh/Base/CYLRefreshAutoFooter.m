@@ -49,6 +49,7 @@
 
     // 默认底部控件100%出现时才会自动刷新
     self.triggerAutomaticallyRefreshPercent = 1.0;
+    self.loadsWhenContentNotFull = YES;
 
     // 设置为默认状态
     self.automaticallyRefresh = YES;
@@ -113,7 +114,7 @@
         // 手松开
         case UIGestureRecognizerStateEnded: {
             if (_scrollView.cyl_insetT + _scrollView.cyl_contentH <= _scrollView.cyl_h) {  // 不够一个屏幕
-                if (_scrollView.cyl_offsetY >= - _scrollView.cyl_insetT) { // 向上拽
+                if (self.loadsWhenContentNotFull && _scrollView.cyl_offsetY >= - _scrollView.cyl_insetT) { // 向上拽
                     self.triggerByDrag = YES;
                     [self beginRefreshing];
                 }

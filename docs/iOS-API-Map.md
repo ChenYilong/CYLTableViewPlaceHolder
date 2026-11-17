@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：97 / 100**（779 / 799 行已有 iOS 对应，TODO 20 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 97 / 100** (779 of 799 rows have an iOS counterpart, 20 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（796 / 796 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (796 of 796 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
@@ -696,9 +696,9 @@
 | `RefreshComponent.onReleased` (fun) | Released past the trigger height. | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` (`CYLRefreshPhaseReleasing`), `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` |  |
 | `RefreshComponent.onStartAnimator` (fun) | Refreshing (or loading) started; start the animation. | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` (`CYLRefreshPhaseRefreshing`), `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing` |  |
 | `RefreshComponent.onFinish` (fun) | Finished; returns the milliseconds to wait before closing (Int.MAX_VALUE: do not close). | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` / `-finishingDurationWithSuccess:` | seconds instead of milliseconds |
-| `RefreshComponent.onHorizontalDrag` (fun) | A sideways move while pulled. | TODO |  |
-| `RefreshComponent.isSupportHorizontalDrag` (val) | True when the component follows sideways moves. | TODO |  |
-| `RefreshComponent.autoOpen` (fun) | Opens the component itself for an auto refresh; false lets the layout animate it. | TODO |  |
+| `RefreshComponent.onHorizontalDrag` (fun) | A sideways move while pulled. | `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | added 2026-11-17 for Android parity |
+| `RefreshComponent.isSupportHorizontalDrag` (val) | True when the component follows sideways moves. | `CYLRefreshComponent` `supportsHorizontalDrag` | added 2026-11-17 for Android parity |
+| `RefreshComponent.autoOpen` (fun) | Opens the component itself for an auto refresh; false lets the layout animate it. | `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | added 2026-11-17 for Android parity |
 | `RefreshHeader` (interface) | A refresh header (`RefreshHeader`). | `CYLRefreshHeader` |  |
 | `RefreshFooter` (interface) | A refresh footer (`RefreshFooter`). | `CYLRefreshFooter` |  |
 | `RefreshFooter.setNoMoreData` (fun) | Shows or hides the no-more-data state; false when the footer does not support it. | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData` |  |
@@ -723,7 +723,7 @@
 | `RefreshKernel.animSpinner` (fun) | Animates the pull to [endSpinner]; null when it is already there. | `UIScrollView` `-setContentOffset:animated:` (UIKit, through `CYLRefreshComponent` `scrollView`) | iOS controls animate the pull by setting the content offset |
 | `RefreshKernel.requestDrawBackgroundFor` (fun) | Draws a background color behind [internal]. | `CYLRefreshComponent` `colorPrimary` |  |
 | `RefreshKernel.requestNeedTouchEventFor` (fun) | Lets [internal] get touches while open. | n/a | Android touch dispatch; an iOS control is a UIView and gets touches itself |
-| `RefreshKernel.requestDefaultTranslationContentFor` (fun) | The default for moving the content with [internal], unless the app set it. | TODO |  |
+| `RefreshKernel.requestDefaultTranslationContentFor` (fun) | The default for moving the content with [internal], unless the app set it. | each header class's default `scrollMode` (`CYLRefreshMaterialHeader` and `CYLRefreshWaveSwipeHeader` set `CYLRefreshScrollModeFront`) | added 2026-11-17 for Android parity |
 | `RefreshKernel.requestRemeasureHeightFor` (fun) | Measures [internal]'s height again. | n/a | Android measure pass |
 | `RefreshKernel.requestFloorDuration` (fun) | The second floor's open and close duration. | `CYLRefreshHeader` `secondaryAnimationDuration` | added 2026-11-17 for Android parity |
 | `RefreshKernel.requestFloorBottomPullUpToCloseRate` (fun) | The bottom share of the second floor where a pull up closes it. | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | points instead of a share of the floor |
@@ -734,16 +734,16 @@
 | `RefreshLayout.setFooterHeightPx` (fun) | The footer's height in pixels. | n/a | pixel variant; iOS uses points (see setFooterHeight) |
 | `RefreshLayout.setHeaderHeight` (fun) | The header's height in dp. | `CYLRefreshHeader` `-setExpandHeight:` | points |
 | `RefreshLayout.setHeaderHeightPx` (fun) | The header's height in pixels. | n/a | pixel variant; iOS uses points (see setHeaderHeight) |
-| `RefreshLayout.setHeaderInsetStart` (fun) | The header's start inset in dp. | TODO |  |
+| `RefreshLayout.setHeaderInsetStart` (fun) | The header's start inset in dp. | `CYLRefreshHeader` `insetStart` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setHeaderInsetStartPx` (fun) | The header's start inset in pixels. | n/a | pixel variant; iOS uses points (see setHeaderInsetStart) |
-| `RefreshLayout.setFooterInsetStart` (fun) | The footer's start inset in dp. | TODO |  |
+| `RefreshLayout.setFooterInsetStart` (fun) | The footer's start inset in dp. | `CYLRefreshBackFooter` `insetStart` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setFooterInsetStartPx` (fun) | The footer's start inset in pixels. | n/a | pixel variant; iOS uses points (see setFooterInsetStart) |
-| `RefreshLayout.setDragRate` (fun) | Pull distance per finger distance (0 to 1). | TODO |  |
+| `RefreshLayout.setDragRate` (fun) | Pull distance per finger distance (0 to 1). | `CYLRefreshComponent` `dragRate` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setHeaderMaxDragRate` (fun) | The longest header pull. | `CYLRefreshComponent` `maxPullDistance` (on the header) | points instead of a multiple of the height |
 | `RefreshLayout.setFooterMaxDragRate` (fun) | The longest footer pull. | `CYLRefreshComponent` `maxPullDistance` (on a back footer) | points instead of a multiple of the height |
 | `RefreshLayout.setHeaderTriggerRate` (fun) | The header pull that triggers a refresh. | `CYLRefreshComponent` `triggerRate` (on the header) |  |
 | `RefreshLayout.setFooterTriggerRate` (fun) | The footer pull that triggers loading more. | `CYLRefreshComponent` `triggerRate` (on the footer) |  |
-| `RefreshLayout.setReboundInterpolator` (fun) | The interpolator of the bounce back. | TODO |  |
+| `RefreshLayout.setReboundInterpolator` (fun) | The interpolator of the bounce back. | `CYLRefreshComponent` `reboundAnimationOptions` (a UIKit animation curve) | added 2026-11-17 for Android parity |
 | `RefreshLayout.setReboundDuration` (fun) | The duration of the bounce back in milliseconds. | `CYLRefreshComponent` `fastAnimationDuration` / `slowAnimationDuration` | seconds, per control |
 | `RefreshLayout.setRefreshFooter` (fun) | Sets the footer. | `UIScrollView` `cyl_footer` |  |
 | `RefreshLayout.setRefreshFooter` (fun) | Sets the footer with its size. | `UIScrollView` `cyl_footer` |  |
@@ -754,22 +754,22 @@
 | `RefreshLayout.setEnableRefresh` (fun) | Enables pull to refresh. | `CYLRefreshComponent` `refreshEnabled` (on `cyl_header`) |  |
 | `RefreshLayout.setEnableLoadMore` (fun) | Enables load more. | `CYLRefreshComponent` `refreshEnabled` (on `cyl_footer`) |  |
 | `RefreshLayout.setEnableAutoLoadMore` (fun) | Loads more by itself when the content's end is reached. | `CYLRefreshAutoFooter` `automaticallyRefresh` |  |
-| `RefreshLayout.setEnableHeaderTranslationContent` (fun) | Moves the content with the header. | TODO |  |
-| `RefreshLayout.setEnableFooterTranslationContent` (fun) | Moves the content with the footer. | TODO |  |
+| `RefreshLayout.setEnableHeaderTranslationContent` (fun) | Moves the content with the header. | `CYLRefreshHeader` `scrollMode` (`CYLRefreshScrollModeFront`: the content does not move for the header) | added 2026-11-17 for Android parity |
+| `RefreshLayout.setEnableFooterTranslationContent` (fun) | Moves the content with the footer. | n/a | iOS footers always sit right after the content and move with it (back footers) or load at the end without moving it (auto footers); there is no footer that slides over still content |
 | `RefreshLayout.setEnableOverScrollBounce` (fun) | Bounces when a fling reaches the edge. | `UIScrollView` `bounces` (UIKit) | the system bounce |
 | `RefreshLayout.setEnablePureScrollMode` (fun) | Pure scroll mode: pulls bounce both ways without refreshing (issues #1109, #1199). | `UIScrollView` `alwaysBounceVertical` (UIKit) | the system bounce with no header or footer attached |
-| `RefreshLayout.setEnableScrollContentWhenLoaded` (fun) | Scrolls the content to show new data after loading more. | TODO |  |
-| `RefreshLayout.setEnableScrollContentWhenRefreshed` (fun) | Scrolls the content after refreshing. | TODO |  |
-| `RefreshLayout.setEnableLoadMoreWhenContentNotFull` (fun) | Loads more when the content does not fill the layout. | TODO |  |
+| `RefreshLayout.setEnableScrollContentWhenLoaded` (fun) | Scrolls the content to show new data after loading more. | `CYLRefreshBackFooter` `scrollsContentAfterLoading` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setEnableScrollContentWhenRefreshed` (fun) | Scrolls the content after refreshing. | n/a | UIScrollView keeps the content where it is when the refreshing inset goes back; there is no content translation to keep or drop |
+| `RefreshLayout.setEnableLoadMoreWhenContentNotFull` (fun) | Loads more when the content does not fill the layout. | `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setEnableOverScrollDrag` (fun) | Allows pulling past the edges without refreshing. | `UIScrollView` `bounces` (UIKit) | the system bounce |
-| `RefreshLayout.setEnableFooterFollowWhenNoMoreData` (fun) | Keeps the footer after the content when there is no more data. | TODO |  |
-| `RefreshLayout.setEnableClipHeaderWhenFixedBehind` (fun) | Clips a FixedBehind header. | TODO |  |
-| `RefreshLayout.setEnableClipFooterWhenFixedBehind` (fun) | Clips a FixedBehind footer. | TODO |  |
+| `RefreshLayout.setEnableFooterFollowWhenNoMoreData` (fun) | Keeps the footer after the content when there is no more data. | `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setEnableClipHeaderWhenFixedBehind` (fun) | Clips a FixedBehind header. | `CYLRefreshHeader` `clipsWhenBehind` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setEnableClipFooterWhenFixedBehind` (fun) | Clips a FixedBehind footer. | n/a | iOS footers have no fixed-behind mode (scrollMode is for headers), so there is nothing to clip |
 | `RefreshLayout.setEnableNestedScroll` (fun) | Enables nested scrolling. | n/a | Android nested scrolling |
-| `RefreshLayout.setFixedHeaderViewId` (fun) | A view inside the content that stays at the top. | TODO |  |
-| `RefreshLayout.setFixedFooterViewId` (fun) | A view inside the content that stays at the bottom. | TODO |  |
-| `RefreshLayout.setHeaderTranslationViewId` (fun) | The view that moves with the header instead of the content. | TODO |  |
-| `RefreshLayout.setFooterTranslationViewId` (fun) | The view that moves with the footer instead of the content. | TODO |  |
+| `RefreshLayout.setFixedHeaderViewId` (fun) | A view inside the content that stays at the top. | `CYLRefreshHeader` `pinnedView` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setFixedFooterViewId` (fun) | A view inside the content that stays at the bottom. | `CYLRefreshFooter` `pinnedView` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setHeaderTranslationViewId` (fun) | The view that moves with the header instead of the content. | `CYLRefreshHeader` `translationView` | added 2026-11-17 for Android parity |
+| `RefreshLayout.setFooterTranslationViewId` (fun) | The view that moves with the footer instead of the content. | `CYLRefreshFooter` `translationView` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setDisableContentWhenRefresh` (fun) | Ignores touches on the content while refreshing. | `CYLRefreshHeader` `disablesContentWhileRefreshing` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setDisableContentWhenLoading` (fun) | Ignores touches on the content while loading. | `CYLRefreshFooter` `disablesContentWhileRefreshing` | added 2026-11-17 for Android parity |
 | `RefreshLayout.setOnRefreshListener` (fun) | Called to refresh. | `CYLRefreshComponent` `refreshingBlock` / `refreshingHandler` / `-setRefreshingTarget:refreshingAction:` (on `cyl_header`) |  |

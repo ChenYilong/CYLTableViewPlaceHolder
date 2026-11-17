@@ -39,6 +39,8 @@
 @property (assign, nonatomic) BOOL cyl_skipsCallbacks;
 /// [EN] YES once CYLRefreshConfig.defaultInitializer ran for this control. [CN] 已为本控件运行 defaultInitializer 后为 YES。
 @property (assign, nonatomic) BOOL cyl_initialized;
+/// [EN] The content offset when the current drag began (dragRate). [CN] 当前拖动开始时的内容偏移（dragRate）。
+@property (assign, nonatomic) CGFloat cyl_dragStartOffsetY;
 /// [EN] YES while this control turned the scroll view's touches off. [CN] 本控件关闭了滚动视图的触摸期间为 YES。
 @property (assign, nonatomic) BOOL cyl_disabledContent;
 @property (assign, nonatomic, readwrite, getter=isAutoRefresh) BOOL autoRefresh;
@@ -360,8 +362,12 @@
         for (void (^observer)(CYLRefreshComponent *, CGFloat, CGFloat, BOOL) in self.cyl_scrollObservers.allValues) {
             observer(self, self.dragOffset, self.pullingPercent, self.scrollView.isDragging);
         }
+        [self cyl_followPull];
         [self cyl_reportPhase];
     } else if ([keyPath isEqualToString:CYLRefreshKeyPathPanState]) {
+        if (self.scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+            self.cyl_dragStartOffsetY = self.scrollView.contentOffset.y;
+        }
         [self scrollViewPanStateDidChange:change];
     }
 }
@@ -449,6 +455,14 @@
     self.pullingPercent = 1.0;
     // 只要正在刷新，就完全显示
     if (self.window) {
+        if (self.autoRefresh && !self.isRefreshing && [self openForAutoRefreshWithDuration:self.fastAnimationDuration]) {
+            // [EN] autoOpen: the control animates itself, the inset snaps. [CN] autoOpen：控件自己做动画，inset 直接到位。
+            NSTimeInterval saved = self.fastAnimationDuration;
+            self.fastAnimationDuration = 0;
+            self.state = CYLRefreshStateRefreshing;
+            self.fastAnimationDuration = saved;
+            return;
+        }
         self.state = CYLRefreshStateRefreshing;
     } else {
         // 预防正在刷新中时，调用本方法使得header inset回置失败
@@ -843,6 +857,64 @@
 }
 
 - (void)autoRefreshDidChange:(BOOL)autoRefresh {}
+
+- (void)didDragHorizontallyWithOffset:(CGFloat)offset percent:(CGFloat)percent {}
+
+- (BOOL)openForAutoRefreshWithDuration:(NSTimeInterval)duration
+{
+    return NO;
+}
+
+/// [EN] YES for controls at the bottom (footers); headers and trailers pull from the other side.
+/// [CN] 位于底部的控件（尾部）为 YES；刷新头与尾随控件从另一侧拉开。
+- (BOOL)cyl_pullsUp
+{
+    return [self isKindOfClass:CYLRefreshFooter.class];
+}
+
+/// [EN] On every move: the horizontal drag hook, the pinned view and the translation view.
+/// [CN] 每次移动时：横向拖动钩子、固定视图与跟随视图。
+- (void)cyl_followPull
+{
+    UIScrollView *scrollView = self.scrollView;
+    // [EN] The distance pulled past the edge, from the geometry (pullingPercent is not reset once scrolled away).
+    // [CN] 越过边缘的拉动距离，按几何位置计算（滚走后 pullingPercent 不会重置）。
+    BOOL up = [self cyl_pullsUp];
+    CGFloat pulled = up ?
+        MAX(0, scrollView.cyl_offsetY + scrollView.cyl_h - MAX(scrollView.cyl_contentH, scrollView.cyl_h - self.scrollViewOriginalInset.top - self.scrollViewOriginalInset.bottom) - self.scrollViewOriginalInset.bottom) :
+        MAX(0, -(scrollView.cyl_offsetY + self.scrollViewOriginalInset.top));
+    CGFloat sign = up ? 1 : -1;
+    if (self.supportsHorizontalDrag && scrollView.isDragging && self.pullingPercent > 0) {
+        CGFloat dx = [scrollView.panGestureRecognizer translationInView:scrollView].x;
+        [self didDragHorizontallyWithOffset:dx percent:self.pullingPercent];
+    }
+    UIView *pinned = self.pinnedView;
+    if (pinned) pinned.transform = CGAffineTransformMakeTranslation(0, sign * pulled);
+    UIView *translation = self.translationView;
+    if (translation) translation.transform = CGAffineTransformMakeTranslation(0, -sign * pulled);
+}
+
+/// [EN] dragRate: the pulled distance as the finger's distance times dragRate, from the offset where the drag began.
+///      Returns the offset to use, or `offsetY` when dragRate is off or the control is not being pulled.
+/// [CN] dragRate：拉开距离为手指移动距离乘以 dragRate，从拖动开始时的偏移算起。返回要使用的偏移；dragRate 关闭或未在拉动时返回 `offsetY`。
+- (CGFloat)cyl_offsetForDragRate:(CGFloat)offsetY happenOffset:(CGFloat)happenOffsetY
+{
+    UIScrollView *scrollView = self.scrollView;
+    if (self.dragRate <= 0 || self.dragRate >= 1 || !scrollView.isDragging) return offsetY;
+    UIPanGestureRecognizer *pan = scrollView.panGestureRecognizer;
+    CGFloat moved = [pan translationInView:scrollView].y;
+    BOOL up = [self cyl_pullsUp];
+    // [EN] Where the content would be with no rubber band; past the edge, scaled by dragRate.
+    // [CN] 没有回弹时内容所在的位置；越过边缘的部分乘以 dragRate。
+    CGFloat natural = self.cyl_dragStartOffsetY - moved;
+    CGFloat over = up ? natural - happenOffsetY : happenOffsetY - natural;
+    if (over <= 0) return offsetY;
+    CGFloat target = up ? happenOffsetY + over * self.dragRate : happenOffsetY - over * self.dragRate;
+    if (fabs(target - offsetY) > 0.5) {
+        scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, target);
+    }
+    return target;
+}
 
 - (void)setColorAccent:(UIColor *)colorAccent
 {
