@@ -175,8 +175,11 @@
 		F8E0E6C318CE25D617676C10 /* CYLRefreshGamePlayingScene.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7E5761105B23F9A84A8659 /* CYLRefreshGamePlayingScene.m */; };
 		F91D3DDFF9B8B80F22433E29 /* CYLRefreshFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C697B7279BF082BB2B6AE1D /* CYLRefreshFooter.m */; };
 		C0A1B2C3D4E5F60718293A02 /* CYLTabBarController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */; };
+		C0A1B2C3D4E5F60718293A12 /* CYLAnimatedItem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; };
 		C0A1B2C3D4E5F60718293A03 /* CYLTabBarController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */; };
+		C0A1B2C3D4E5F60718293A13 /* CYLAnimatedItem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; };
 		C0A1B2C3D4E5F60718293A04 /* CYLTabBarController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0A1B2C3D4E5F60718293A14 /* CYLAnimatedItem.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -198,6 +201,7 @@
 			files = (
 				8D4C11596E4D4AD17BA36C00 /* CYLTableViewPlaceHolder.framework in Embed Frameworks */,
 				C0A1B2C3D4E5F60718293A04 /* CYLTabBarController.xcframework in Embed Frameworks */,
+				C0A1B2C3D4E5F60718293A14 /* CYLAnimatedItem.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,6 +376,7 @@
 		FEF48ED28050EE9E255147C1 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SpriteKit.framework; sourceTree = DEVELOPER_DIR; };
 		FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderStatusView.m; sourceTree = "<group>"; };
 		C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLTabBarController.xcframework; path = Carthage/Build/CYLTabBarController.xcframework; sourceTree = SOURCE_ROOT; };
+		C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLAnimatedItem.xcframework; path = Carthage/Build/CYLAnimatedItem.xcframework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -382,6 +387,7 @@
 				0DC9143802E5B023FF8FDE29 /* Foundation.framework in Frameworks */,
 				D9B587752F2A1F0032014EA4 /* SpriteKit.framework in Frameworks */,
 				C0A1B2C3D4E5F60718293A02 /* CYLTabBarController.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293A12 /* CYLAnimatedItem.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +398,7 @@
 				EA71CB9C9CD43E4024E13EB9 /* libPods-CYLTableViewPlaceHolder.a in Frameworks */,
 				59C3D0A3A565785138A753B3 /* CYLTableViewPlaceHolder.framework in Frameworks */,
 				C0A1B2C3D4E5F60718293A03 /* CYLTabBarController.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293A13 /* CYLAnimatedItem.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,6 +714,7 @@
 			isa = PBXGroup;
 			children = (
 				C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */,
+				C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */,
 				5B0EA6D4B478301B17518048 /* iOS */,
 				FA758383F348F5CEE18E8703 /* libPods-CYLTableViewPlaceHolder.a */,
 			);

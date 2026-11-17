@@ -44,11 +44,16 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
   app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
   # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework.
   system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), 'simulator') || abort('CYLTabBarController.xcframework failed to build')
-  tabbar_ref = project.main_group.new_file(File.join(root, 'Carthage/Build/CYLTabBarController.xcframework'))
-  app.frameworks_build_phase.add_file_reference(tabbar_ref)
+  # Newer CYLTabBarController commits split CYLAnimatedItem into its own framework; link it too when it was built.
   embed = app.new_copy_files_build_phase('Embed Frameworks')
   embed.symbol_dst_subfolder_spec = :frameworks
-  embed.add_file_reference(tabbar_ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+  %w[CYLTabBarController CYLAnimatedItem].each do |name|
+    path = File.join(root, "Carthage/Build/#{name}.xcframework")
+    next unless File.exist?(path)
+    ref = project.main_group.new_file(path)
+    app.frameworks_build_phase.add_file_reference(ref)
+    embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+  end
   ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.m')))
   project.save
 

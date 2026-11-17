@@ -55,6 +55,8 @@ case "$command" in
     scripts/cyltabbarcontroller-xcframework.sh all
     mkdir -p "$work/Carthage/Build"
     cp -R Carthage/Build/CYLTabBarController.xcframework "$work/Carthage/Build/"
+    # Newer commits split CYLAnimatedItem out of CYLTabBarController-Framework (the framework target links both).
+    [[ ! -d Carthage/Build/CYLAnimatedItem.xcframework ]] || cp -R Carthage/Build/CYLAnimatedItem.xcframework "$work/Carthage/Build/"
     rm -f "$work/Cartfile" "$work/Cartfile.resolved"
     (cd "$work" && carthage build --no-skip-current --use-xcframeworks --platform iOS)
     test -f "$work/Carthage/Build/CYLTableViewPlaceHolder.xcframework/Info.plist"

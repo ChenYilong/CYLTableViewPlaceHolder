@@ -10,7 +10,7 @@ cd "$(dirname "$0")/.."
 mkdir -p build
 export XCODE_XCCONFIG_FILE="$PWD/scripts/pod-lint.xcconfig"
 # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: the target links
-# Carthage/Build/CYLTabBarController.xcframework (the commit the Cartfile pins).
+# Carthage/Build/CYLTabBarController.xcframework and CYLAnimatedItem.xcframework (the commit the Cartfile pins).
 scripts/cyltabbarcontroller-xcframework.sh simulator
 DERIVED_DATA=$(mktemp -d "${TMPDIR:-/tmp}/cyl-framework.XXXXXX")
 trap 'rm -rf "$DERIVED_DATA"' EXIT
