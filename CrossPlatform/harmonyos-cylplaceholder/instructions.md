@@ -33,5 +33,5 @@ every placeholder icon is a `CYLAnimatedItemView`, the core ships only the GIF e
   vertical center line, centered titles, iOS metrics). See `instructions.md`, "Icon and title: CYLAnimatedItemView;
   CYLPlaceholderStackView only for what it cannot cover".
 - HarmonyOS today: `AnimationDetailPage` draws `CYLAnimatedItemView` with `CYLPlaceholderAnimatedItem` /
-  `CYLPlaceholderAnimatedItemBuilder` (64ab041); the item's title is one line only and its `spacing` is not applied yet
-  (reported upstream), so long wrapping texts stay in stacks.
+  `CYLPlaceholderAnimatedItemBuilder` (64ab041). Since CYLTabBarController 0ce518a8 (B21) the item applies `spacing`
+  (8 vp on the detail page, checked on the emulator) and has `titleLines` (1 by default, 0 = no limit).
