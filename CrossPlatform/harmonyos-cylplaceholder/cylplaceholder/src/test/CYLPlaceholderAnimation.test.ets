@@ -26,7 +26,7 @@ import {
 } from '../main/ets/CYLPlaceholderAnimation';
 import { CYLGIFFrameDurations, CYLGIFIterations, CYLGIFPlaceholderItemAnimator } from '../main/ets/CYLGIFPlaceholderItemAnimator';
 import { CYLPlaceholderViewModel } from '../main/ets/CYLPlaceholderView';
-import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/CYLPlaceholderHUD';
+import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/hud/CYLPlaceholderHUD';
 import {
   CYLPlaceholderComponent,
   CYLPlaceholderComponentKind,

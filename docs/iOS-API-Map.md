@@ -565,78 +565,6 @@
 | `cyl_applyStatusConfiguration` (fun) | Applies a status configuration (iOS `-[UIViewController cyl_applyStatusConfiguration:error:`): "statusBar" (true or "networkUnavailable" for the network banner, or a dictionary for [CYLPlaceholderStatusView.Companion.fro | `cyl_applyStatusConfiguration:error:` | matched by the iOS name its KDoc cites |
 | `cyl_applyStatusConfigurationWithContentsOfURL` (fun) | The same, from a local ".json" file (iOS `-cyl_applyStatusConfigurationWithContentsOfURL:error:`). | `cyl_applyStatusConfigurationWithContentsOfURL:error:` | matched by the iOS name its KDoc cites |
 
-## `android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderHUD.kt`
-
-| Android API | 描述 / Description | iOS API | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLPlaceholderHUDStyle` (enum) | The HUD's colors (iOS `CYLPlaceholderHUDStyle`). | `CYLPlaceholderHUDStyle` |  |
-| `CYLPlaceholderHUDMaskType` (enum) | What covers the screen behind the HUD (iOS `CYLPlaceholderHUDMaskType`). | `CYLPlaceholderHUDMaskType` |  |
-| `CYLPlaceholderHUDState` (enum) | What the HUD shows (iOS `CYLPlaceholderHUDState`). | `CYLPlaceholderHUDState` |  |
-| `CYLPlaceholderHUDDismissCompletion` (typealias) | Called once the HUD has disappeared (iOS `CYLPlaceholderHUDDismissCompletion`). | `CYLPlaceholderHUDDismissCompletion` |  |
-| `CYLPlaceholderHUD` (class) | A heads-up display over a container (iOS `CYLPlaceholderHUD`): a spinner, a progress bar, a success / error / info icon or a placeholder scenario, with a status text. | `CYLPlaceholderHUD`, `CYLPlaceholderHUD` `-initWithContainerView:` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderHUD.containerView` (var) | The container the HUD covers (`containerView`). | `CYLPlaceholderHUD` `containerView` |  |
-| `CYLPlaceholderHUD.hudView` (val) | The box (`hudView`). | `CYLPlaceholderHUD` `hudView` |  |
-| `CYLPlaceholderHUD.contentView` (val) | The box's content area (`contentView`). | `CYLPlaceholderHUD` `contentView` |  |
-| `CYLPlaceholderHUD.placeholderView` (var) | The icon and status (`placeholderView`). | `CYLPlaceholderHUD` `placeholderView` |  |
-| `CYLPlaceholderHUD.actions` (var) | The handlers of the shown components' actions (`actions`). | `CYLPlaceholderHUD` `actions` |  |
-| `CYLPlaceholderHUD.state` (var) | What is shown (`state`). | `CYLPlaceholderHUD` `state` |  |
-| `CYLPlaceholderHUD.status` (var) | The status text (`status`). | `CYLPlaceholderHUD` `status` |  |
-| `CYLPlaceholderHUD.progress` (var) | The progress, 0 to 1 (`progress`). | `CYLPlaceholderHUD` `progress` |  |
-| `CYLPlaceholderHUD.visible` (val) | Whether the HUD is on screen (`visible`). | `CYLPlaceholderHUD` `visible` |  |
-| `CYLPlaceholderHUD.activityCount` (var) | How many [show] calls wait for [popActivity] (`activityCount`). | `CYLPlaceholderHUD` `activityCount` |  |
-| `CYLPlaceholderHUD.style` (var) | The colors (`style`). | `CYLPlaceholderHUD` `style` |  |
-| `CYLPlaceholderHUD.maskType` (var) | What covers the screen (`maskType`). | `CYLPlaceholderHUD` `maskType` |  |
-| `CYLPlaceholderHUD.font` (var) | The status text size, in sp (`font`). | `CYLPlaceholderHUD` `font` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderHUD.cornerRadius` (var) | The box's corner radius, in dp (`cornerRadius`). | `CYLPlaceholderHUD` `cornerRadius` |  |
-| `CYLPlaceholderHUD.minimumSize` (var) | The box's smallest size, in dp: width and height (`minimumSize`). | `CYLPlaceholderHUD` `minimumSize` |  |
-| `CYLPlaceholderHUD.animationSize` (var) | The icon's side, in dp (`animationSize`). | `CYLPlaceholderHUD` `animationSize` |  |
-| `CYLPlaceholderHUD.offsetFromCenter` (var) | The box's offset from the container's center, in dp: x and y (`offsetFromCenter`). | `CYLPlaceholderHUD` `offsetFromCenter` |  |
-| `CYLPlaceholderHUD.loadingAnimationFileName` (var) | The animation shown while loading, played by a registered factory (`loadingAnimationFileName`). | `CYLPlaceholderHUD` `loadingAnimationFileName` |  |
-| `CYLPlaceholderHUD.progressAnimationFileName` (var) | The animation shown with progress (`progressAnimationFileName`). | `CYLPlaceholderHUD` `progressAnimationFileName` |  |
-| `CYLPlaceholderHUD.successAnimationFileName` (var) | The animation shown on success (`successAnimationFileName`). | `CYLPlaceholderHUD` `successAnimationFileName` |  |
-| `CYLPlaceholderHUD.successImage` (var) | The success icon, or null for the built-in one (`successImage`). | `CYLPlaceholderHUD` `successImage` |  |
-| `CYLPlaceholderHUD.errorImage` (var) | The error icon, or null for the built-in one (`errorImage`). | `CYLPlaceholderHUD` `errorImage` |  |
-| `CYLPlaceholderHUD.infoImage` (var) | The info icon, or null for the built-in one (`infoImage`). | `CYLPlaceholderHUD` `infoImage` |  |
-| `CYLPlaceholderHUD.graceTimeInterval` (var) | Seconds a loading HUD waits before it shows, so a quick task shows none (`graceTimeInterval`). | `CYLPlaceholderHUD` `graceTimeInterval` |  |
-| `CYLPlaceholderHUD.minimumDismissTimeInterval` (var) | The shortest time a success / error / info HUD stays, in seconds (`minimumDismissTimeInterval`). | `CYLPlaceholderHUD` `minimumDismissTimeInterval` |  |
-| `CYLPlaceholderHUD.maximumDismissTimeInterval` (var) | The longest time it stays, in seconds (`maximumDismissTimeInterval`). | `CYLPlaceholderHUD` `maximumDismissTimeInterval` |  |
-| `CYLPlaceholderHUD.fadeInAnimationDuration` (var) | The fade-in duration, in seconds (`fadeInAnimationDuration`). | `CYLPlaceholderHUD` `fadeInAnimationDuration` |  |
-| `CYLPlaceholderHUD.fadeOutAnimationDuration` (var) | The fade-out duration, in seconds (`fadeOutAnimationDuration`). | `CYLPlaceholderHUD` `fadeOutAnimationDuration` |  |
-| `CYLPlaceholderHUD.hapticsEnabled` (var) | Whether success and error vibrate (`hapticsEnabled`). | `CYLPlaceholderHUD` `hapticsEnabled` |  |
-| `CYLPlaceholderHUD.show` (fun) | Shows a spinner (`show`); each call counts until [popActivity]. | `CYLPlaceholderHUD` `+show`, `CYLPlaceholderHUD` `-show` |  |
-| `CYLPlaceholderHUD.showWithStatus` (fun) | Shows a spinner with [status] (`showWithStatus:`). | `CYLPlaceholderHUD` `+showWithStatus:`, `CYLPlaceholderHUD` `-showWithStatus:` |  |
-| `CYLPlaceholderHUD.showProgress` (fun) | Shows a progress bar at [progress], 0 to 1 (`showProgress:`). | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
-| `CYLPlaceholderHUD.showProgress` (fun) | Shows a progress bar at [progress] with [status] (`showProgress:status:`). | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
-| `CYLPlaceholderHUD.setStatus` (fun) | Changes the status text in place (`setStatus:`). | `CYLPlaceholderHUD` `+setStatus:`, `CYLPlaceholderHUD` `-setStatus:` |  |
-| `CYLPlaceholderHUD.showInfoWithStatus` (fun) | Shows the info icon with [status], then hides (`showInfoWithStatus:`). | `CYLPlaceholderHUD` `+showInfoWithStatus:`, `CYLPlaceholderHUD` `-showInfoWithStatus:` |  |
-| `CYLPlaceholderHUD.showSuccessWithStatus` (fun) | Shows the success icon with [status], then hides (`showSuccessWithStatus:`). | `CYLPlaceholderHUD` `+showSuccessWithStatus:`, `CYLPlaceholderHUD` `-showSuccessWithStatus:` |  |
-| `CYLPlaceholderHUD.showErrorWithStatus` (fun) | Shows the error icon with [status], then hides (`showErrorWithStatus:`). | `CYLPlaceholderHUD` `+showErrorWithStatus:`, `CYLPlaceholderHUD` `-showErrorWithStatus:` |  |
-| `CYLPlaceholderHUD.showImage` (fun) | Shows [image] with [status], then hides (`showImage:status:`). | `CYLPlaceholderHUD` `+showImage:status:`, `CYLPlaceholderHUD` `-showImage:status:` |  |
-| `CYLPlaceholderHUD.showComponents` (fun) | Shows your [components]; [actions] handle their buttons (`showComponents:actions:`). | `CYLPlaceholderHUD` `-showComponents:actions:` |  |
-| `CYLPlaceholderHUD.showScenario` (fun) | Shows [scenario]; [actions] handle its buttons (`showScenario:actions:`). | `CYLPlaceholderHUD` `-showScenario:actions:` |  |
-| `CYLPlaceholderHUD.popActivity` (fun) | Ends one [show]; the HUD hides once every one has ended (`popActivity`). | `CYLPlaceholderHUD` `+popActivity`, `CYLPlaceholderHUD` `-popActivity` |  |
-| `CYLPlaceholderHUD.dismiss` (fun) | Hides at once (`dismiss`). | `CYLPlaceholderHUD` `+dismiss`, `CYLPlaceholderHUD` `-dismiss` |  |
-| `CYLPlaceholderHUD.dismissWithCompletion` (fun) | Hides, then calls [completion] (`dismissWithCompletion:`). | `CYLPlaceholderHUD` `+dismissWithCompletion:`, `CYLPlaceholderHUD` `-dismissWithCompletion:` |  |
-| `CYLPlaceholderHUD.dismissWithDelay` (fun) | Hides after [delay] seconds (`dismissWithDelay:`). | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
-| `CYLPlaceholderHUD.dismissWithDelay` (fun) | Hides after [delay] seconds, then calls [completion] (`dismissWithDelay:completion:`). | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
-| `CYLPlaceholderHUD.displayDurationForString` (fun) | How long a timed HUD with [string] stays, in seconds (`displayDurationForString:`). | `CYLPlaceholderHUD` `+displayDurationForString:`, `CYLPlaceholderHUD` `-displayDurationForString:` |  |
-| `CYLPlaceholderHUD.sharedHUD` (fun) | The shared HUD for [containerView]'s window; set its container once (`sharedHUD`). | `CYLPlaceholderHUD` `sharedHUD` |  |
-| `CYLPlaceholderHUD.show` (fun) | [show] on the shared HUD. | `CYLPlaceholderHUD` `+show`, `CYLPlaceholderHUD` `-show` |  |
-| `CYLPlaceholderHUD.showWithStatus` (fun) | [showWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showWithStatus:`, `CYLPlaceholderHUD` `-showWithStatus:` |  |
-| `CYLPlaceholderHUD.showProgress` (fun) | [showProgress] on the shared HUD. | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
-| `CYLPlaceholderHUD.showProgress` (fun) | [showProgress] with a status on the shared HUD. | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
-| `CYLPlaceholderHUD.setStatus` (fun) | [setStatus] on the shared HUD. | `CYLPlaceholderHUD` `+setStatus:`, `CYLPlaceholderHUD` `-setStatus:` |  |
-| `CYLPlaceholderHUD.showInfoWithStatus` (fun) | [showInfoWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showInfoWithStatus:`, `CYLPlaceholderHUD` `-showInfoWithStatus:` |  |
-| `CYLPlaceholderHUD.showSuccessWithStatus` (fun) | [showSuccessWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showSuccessWithStatus:`, `CYLPlaceholderHUD` `-showSuccessWithStatus:` |  |
-| `CYLPlaceholderHUD.showErrorWithStatus` (fun) | [showErrorWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showErrorWithStatus:`, `CYLPlaceholderHUD` `-showErrorWithStatus:` |  |
-| `CYLPlaceholderHUD.showImage` (fun) | [showImage] on the shared HUD. | `CYLPlaceholderHUD` `+showImage:status:`, `CYLPlaceholderHUD` `-showImage:status:` |  |
-| `CYLPlaceholderHUD.popActivity` (fun) | [popActivity] on the shared HUD. | `CYLPlaceholderHUD` `+popActivity`, `CYLPlaceholderHUD` `-popActivity` |  |
-| `CYLPlaceholderHUD.dismiss` (fun) | [dismiss] on the shared HUD. | `CYLPlaceholderHUD` `+dismiss`, `CYLPlaceholderHUD` `-dismiss` |  |
-| `CYLPlaceholderHUD.dismissWithCompletion` (fun) | [dismissWithCompletion] on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithCompletion:`, `CYLPlaceholderHUD` `-dismissWithCompletion:` |  |
-| `CYLPlaceholderHUD.dismissWithDelay` (fun) | [dismissWithDelay] on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
-| `CYLPlaceholderHUD.dismissWithDelay` (fun) | [dismissWithDelay] with a completion on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
-| `CYLPlaceholderHUD.displayDurationForString` (fun) | [displayDurationForString] of the shared HUD (default limits without one). | `CYLPlaceholderHUD` `+displayDurationForString:`, `CYLPlaceholderHUD` `-displayDurationForString:` |  |
-
 ## `android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderScenario.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
@@ -816,4 +744,76 @@
 | `cyl_reloadData` (fun) | Reloads the list and shows or removes its placeholder (iOS `cyl_reloadData`); an adapter that is a [CYLTableViewPlaceHolderDelegate] gives the placeholder. | `cyl_reloadData` | matched by the iOS name its KDoc cites |
 | `cyl_placeholderHidden` (var) | Hides the placeholder even while the list is empty (iOS `UIScrollView.cyl_placeholderHidden`). | `cyl_placeholderHidden` | matched by the iOS name its KDoc cites |
 | `cyl_placeholderView` (val) | The placeholder now shown for the list, or null. | `UIScrollView` `cyl_placeholderView` | added 2026-11-16 for Android parity |
+
+## `android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/CYLPlaceholderHUD.kt`
+
+| Android API | 描述 / Description | iOS API | 说明 / Note |
+|:---|:---|:---|:---|
+| `CYLPlaceholderHUDStyle` (enum) | The HUD's colors (iOS `CYLPlaceholderHUDStyle`). | `CYLPlaceholderHUDStyle` |  |
+| `CYLPlaceholderHUDMaskType` (enum) | What covers the screen behind the HUD (iOS `CYLPlaceholderHUDMaskType`). | `CYLPlaceholderHUDMaskType` |  |
+| `CYLPlaceholderHUDState` (enum) | What the HUD shows (iOS `CYLPlaceholderHUDState`). | `CYLPlaceholderHUDState` |  |
+| `CYLPlaceholderHUDDismissCompletion` (typealias) | Called once the HUD has disappeared (iOS `CYLPlaceholderHUDDismissCompletion`). | `CYLPlaceholderHUDDismissCompletion` |  |
+| `CYLPlaceholderHUD` (class) | A heads-up display over a container (iOS `CYLPlaceholderHUD`): a spinner, a progress bar, a success / error / info icon or a placeholder scenario, with a status text. | `CYLPlaceholderHUD`, `CYLPlaceholderHUD` `-initWithContainerView:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderHUD.containerView` (var) | The container the HUD covers (`containerView`). | `CYLPlaceholderHUD` `containerView` |  |
+| `CYLPlaceholderHUD.hudView` (val) | The box (`hudView`). | `CYLPlaceholderHUD` `hudView` |  |
+| `CYLPlaceholderHUD.contentView` (val) | The box's content area (`contentView`). | `CYLPlaceholderHUD` `contentView` |  |
+| `CYLPlaceholderHUD.placeholderView` (var) | The icon and status (`placeholderView`). | `CYLPlaceholderHUD` `placeholderView` |  |
+| `CYLPlaceholderHUD.actions` (var) | The handlers of the shown components' actions (`actions`). | `CYLPlaceholderHUD` `actions` |  |
+| `CYLPlaceholderHUD.state` (var) | What is shown (`state`). | `CYLPlaceholderHUD` `state` |  |
+| `CYLPlaceholderHUD.status` (var) | The status text (`status`). | `CYLPlaceholderHUD` `status` |  |
+| `CYLPlaceholderHUD.progress` (var) | The progress, 0 to 1 (`progress`). | `CYLPlaceholderHUD` `progress` |  |
+| `CYLPlaceholderHUD.visible` (val) | Whether the HUD is on screen (`visible`). | `CYLPlaceholderHUD` `visible` |  |
+| `CYLPlaceholderHUD.activityCount` (var) | How many [show] calls wait for [popActivity] (`activityCount`). | `CYLPlaceholderHUD` `activityCount` |  |
+| `CYLPlaceholderHUD.style` (var) | The colors (`style`). | `CYLPlaceholderHUD` `style` |  |
+| `CYLPlaceholderHUD.maskType` (var) | What covers the screen (`maskType`). | `CYLPlaceholderHUD` `maskType` |  |
+| `CYLPlaceholderHUD.font` (var) | The status text size, in sp (`font`). | `CYLPlaceholderHUD` `font` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderHUD.cornerRadius` (var) | The box's corner radius, in dp (`cornerRadius`). | `CYLPlaceholderHUD` `cornerRadius` |  |
+| `CYLPlaceholderHUD.minimumSize` (var) | The box's smallest size, in dp: width and height (`minimumSize`). | `CYLPlaceholderHUD` `minimumSize` |  |
+| `CYLPlaceholderHUD.animationSize` (var) | The icon's side, in dp (`animationSize`). | `CYLPlaceholderHUD` `animationSize` |  |
+| `CYLPlaceholderHUD.offsetFromCenter` (var) | The box's offset from the container's center, in dp: x and y (`offsetFromCenter`). | `CYLPlaceholderHUD` `offsetFromCenter` |  |
+| `CYLPlaceholderHUD.loadingAnimationFileName` (var) | The animation shown while loading, played by a registered factory (`loadingAnimationFileName`). | `CYLPlaceholderHUD` `loadingAnimationFileName` |  |
+| `CYLPlaceholderHUD.progressAnimationFileName` (var) | The animation shown with progress (`progressAnimationFileName`). | `CYLPlaceholderHUD` `progressAnimationFileName` |  |
+| `CYLPlaceholderHUD.successAnimationFileName` (var) | The animation shown on success (`successAnimationFileName`). | `CYLPlaceholderHUD` `successAnimationFileName` |  |
+| `CYLPlaceholderHUD.successImage` (var) | The success icon, or null for the built-in one (`successImage`). | `CYLPlaceholderHUD` `successImage` |  |
+| `CYLPlaceholderHUD.errorImage` (var) | The error icon, or null for the built-in one (`errorImage`). | `CYLPlaceholderHUD` `errorImage` |  |
+| `CYLPlaceholderHUD.infoImage` (var) | The info icon, or null for the built-in one (`infoImage`). | `CYLPlaceholderHUD` `infoImage` |  |
+| `CYLPlaceholderHUD.graceTimeInterval` (var) | Seconds a loading HUD waits before it shows, so a quick task shows none (`graceTimeInterval`). | `CYLPlaceholderHUD` `graceTimeInterval` |  |
+| `CYLPlaceholderHUD.minimumDismissTimeInterval` (var) | The shortest time a success / error / info HUD stays, in seconds (`minimumDismissTimeInterval`). | `CYLPlaceholderHUD` `minimumDismissTimeInterval` |  |
+| `CYLPlaceholderHUD.maximumDismissTimeInterval` (var) | The longest time it stays, in seconds (`maximumDismissTimeInterval`). | `CYLPlaceholderHUD` `maximumDismissTimeInterval` |  |
+| `CYLPlaceholderHUD.fadeInAnimationDuration` (var) | The fade-in duration, in seconds (`fadeInAnimationDuration`). | `CYLPlaceholderHUD` `fadeInAnimationDuration` |  |
+| `CYLPlaceholderHUD.fadeOutAnimationDuration` (var) | The fade-out duration, in seconds (`fadeOutAnimationDuration`). | `CYLPlaceholderHUD` `fadeOutAnimationDuration` |  |
+| `CYLPlaceholderHUD.hapticsEnabled` (var) | Whether success and error vibrate (`hapticsEnabled`). | `CYLPlaceholderHUD` `hapticsEnabled` |  |
+| `CYLPlaceholderHUD.show` (fun) | Shows a spinner (`show`); each call counts until [popActivity]. | `CYLPlaceholderHUD` `+show`, `CYLPlaceholderHUD` `-show` |  |
+| `CYLPlaceholderHUD.showWithStatus` (fun) | Shows a spinner with [status] (`showWithStatus:`). | `CYLPlaceholderHUD` `+showWithStatus:`, `CYLPlaceholderHUD` `-showWithStatus:` |  |
+| `CYLPlaceholderHUD.showProgress` (fun) | Shows a progress bar at [progress], 0 to 1 (`showProgress:`). | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
+| `CYLPlaceholderHUD.showProgress` (fun) | Shows a progress bar at [progress] with [status] (`showProgress:status:`). | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
+| `CYLPlaceholderHUD.setStatus` (fun) | Changes the status text in place (`setStatus:`). | `CYLPlaceholderHUD` `+setStatus:`, `CYLPlaceholderHUD` `-setStatus:` |  |
+| `CYLPlaceholderHUD.showInfoWithStatus` (fun) | Shows the info icon with [status], then hides (`showInfoWithStatus:`). | `CYLPlaceholderHUD` `+showInfoWithStatus:`, `CYLPlaceholderHUD` `-showInfoWithStatus:` |  |
+| `CYLPlaceholderHUD.showSuccessWithStatus` (fun) | Shows the success icon with [status], then hides (`showSuccessWithStatus:`). | `CYLPlaceholderHUD` `+showSuccessWithStatus:`, `CYLPlaceholderHUD` `-showSuccessWithStatus:` |  |
+| `CYLPlaceholderHUD.showErrorWithStatus` (fun) | Shows the error icon with [status], then hides (`showErrorWithStatus:`). | `CYLPlaceholderHUD` `+showErrorWithStatus:`, `CYLPlaceholderHUD` `-showErrorWithStatus:` |  |
+| `CYLPlaceholderHUD.showImage` (fun) | Shows [image] with [status], then hides (`showImage:status:`). | `CYLPlaceholderHUD` `+showImage:status:`, `CYLPlaceholderHUD` `-showImage:status:` |  |
+| `CYLPlaceholderHUD.showComponents` (fun) | Shows your [components]; [actions] handle their buttons (`showComponents:actions:`). | `CYLPlaceholderHUD` `-showComponents:actions:` |  |
+| `CYLPlaceholderHUD.showScenario` (fun) | Shows [scenario]; [actions] handle its buttons (`showScenario:actions:`). | `CYLPlaceholderHUD` `-showScenario:actions:` |  |
+| `CYLPlaceholderHUD.popActivity` (fun) | Ends one [show]; the HUD hides once every one has ended (`popActivity`). | `CYLPlaceholderHUD` `+popActivity`, `CYLPlaceholderHUD` `-popActivity` |  |
+| `CYLPlaceholderHUD.dismiss` (fun) | Hides at once (`dismiss`). | `CYLPlaceholderHUD` `+dismiss`, `CYLPlaceholderHUD` `-dismiss` |  |
+| `CYLPlaceholderHUD.dismissWithCompletion` (fun) | Hides, then calls [completion] (`dismissWithCompletion:`). | `CYLPlaceholderHUD` `+dismissWithCompletion:`, `CYLPlaceholderHUD` `-dismissWithCompletion:` |  |
+| `CYLPlaceholderHUD.dismissWithDelay` (fun) | Hides after [delay] seconds (`dismissWithDelay:`). | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
+| `CYLPlaceholderHUD.dismissWithDelay` (fun) | Hides after [delay] seconds, then calls [completion] (`dismissWithDelay:completion:`). | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
+| `CYLPlaceholderHUD.displayDurationForString` (fun) | How long a timed HUD with [string] stays, in seconds (`displayDurationForString:`). | `CYLPlaceholderHUD` `+displayDurationForString:`, `CYLPlaceholderHUD` `-displayDurationForString:` |  |
+| `CYLPlaceholderHUD.sharedHUD` (fun) | The shared HUD for [containerView]'s window; set its container once (`sharedHUD`). | `CYLPlaceholderHUD` `sharedHUD` |  |
+| `CYLPlaceholderHUD.show` (fun) | [show] on the shared HUD. | `CYLPlaceholderHUD` `+show`, `CYLPlaceholderHUD` `-show` |  |
+| `CYLPlaceholderHUD.showWithStatus` (fun) | [showWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showWithStatus:`, `CYLPlaceholderHUD` `-showWithStatus:` |  |
+| `CYLPlaceholderHUD.showProgress` (fun) | [showProgress] on the shared HUD. | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
+| `CYLPlaceholderHUD.showProgress` (fun) | [showProgress] with a status on the shared HUD. | `CYLPlaceholderHUD` `+showProgress:`, `CYLPlaceholderHUD` `+showProgress:status:`, `CYLPlaceholderHUD` `-showProgress:` |  |
+| `CYLPlaceholderHUD.setStatus` (fun) | [setStatus] on the shared HUD. | `CYLPlaceholderHUD` `+setStatus:`, `CYLPlaceholderHUD` `-setStatus:` |  |
+| `CYLPlaceholderHUD.showInfoWithStatus` (fun) | [showInfoWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showInfoWithStatus:`, `CYLPlaceholderHUD` `-showInfoWithStatus:` |  |
+| `CYLPlaceholderHUD.showSuccessWithStatus` (fun) | [showSuccessWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showSuccessWithStatus:`, `CYLPlaceholderHUD` `-showSuccessWithStatus:` |  |
+| `CYLPlaceholderHUD.showErrorWithStatus` (fun) | [showErrorWithStatus] on the shared HUD. | `CYLPlaceholderHUD` `+showErrorWithStatus:`, `CYLPlaceholderHUD` `-showErrorWithStatus:` |  |
+| `CYLPlaceholderHUD.showImage` (fun) | [showImage] on the shared HUD. | `CYLPlaceholderHUD` `+showImage:status:`, `CYLPlaceholderHUD` `-showImage:status:` |  |
+| `CYLPlaceholderHUD.popActivity` (fun) | [popActivity] on the shared HUD. | `CYLPlaceholderHUD` `+popActivity`, `CYLPlaceholderHUD` `-popActivity` |  |
+| `CYLPlaceholderHUD.dismiss` (fun) | [dismiss] on the shared HUD. | `CYLPlaceholderHUD` `+dismiss`, `CYLPlaceholderHUD` `-dismiss` |  |
+| `CYLPlaceholderHUD.dismissWithCompletion` (fun) | [dismissWithCompletion] on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithCompletion:`, `CYLPlaceholderHUD` `-dismissWithCompletion:` |  |
+| `CYLPlaceholderHUD.dismissWithDelay` (fun) | [dismissWithDelay] on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
+| `CYLPlaceholderHUD.dismissWithDelay` (fun) | [dismissWithDelay] with a completion on the shared HUD. | `CYLPlaceholderHUD` `+dismissWithDelay:`, `CYLPlaceholderHUD` `+dismissWithDelay:completion:`, `CYLPlaceholderHUD` `-dismissWithDelay:` |  |
+| `CYLPlaceholderHUD.displayDurationForString` (fun) | [displayDurationForString] of the shared HUD (default limits without one). | `CYLPlaceholderHUD` `+displayDurationForString:`, `CYLPlaceholderHUD` `-displayDurationForString:` |  |
 

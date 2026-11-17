@@ -11,10 +11,10 @@
 //   CYLPlaceholderHUD.showWithStatus('Loading');
 //   CYLPlaceholderHUD.showSuccessWithStatus('Saved');
 import { UIContext } from '@kit.ArkUI';
-import { CYLPlaceholderViewModel } from './CYLPlaceholderView';
-import { CYLPlaceholderActionHandler, CYLPlaceholderStackViewModel } from './CYLPlaceholderStackView';
-import { CYLPlaceholderAction, CYLPlaceholderComponent, CYLPlaceholderScenario } from './CYLPlaceholderScenario';
-import { CYLPlaceholderIconNameForStyle, CYLPlaceholderStyle } from './CYLPlaceholderViewTypes';
+import { CYLPlaceholderViewModel } from '../CYLPlaceholderView';
+import { CYLPlaceholderActionHandler, CYLPlaceholderStackViewModel } from '../CYLPlaceholderStackView';
+import { CYLPlaceholderAction, CYLPlaceholderComponent, CYLPlaceholderScenario } from '../CYLPlaceholderScenario';
+import { CYLPlaceholderIconNameForStyle, CYLPlaceholderStyle } from '../CYLPlaceholderViewTypes';
 
 /** The built-in loading animation (iOS default of `loadingAnimationFileName`). */
 const DEFAULT_LOADING_ANIMATION = 'CYLRefreshActivity.gif';

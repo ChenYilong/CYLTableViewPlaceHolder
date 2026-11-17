@@ -33,7 +33,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.m',
+   'CYLTableViewPlaceHolder/CYLHUD/CYLPlaceholderHUD.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
@@ -46,7 +46,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   end
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderAnimation\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLHUD\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderAnimation\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
   end

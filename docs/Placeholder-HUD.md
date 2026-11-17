@@ -6,6 +6,7 @@
 
 | 中文 | English |
 | --- | --- |
+| [CYLHUD：唯一的 HUD 内核](#cylhud唯一的-hud-内核--cylhud-the-only-hud-kernel) | [CYLHUD: the only HUD kernel](#cylhud唯一的-hud-内核--cylhud-the-only-hud-kernel) |
 | [概述](#概述--overview) | [Overview](#概述--overview) |
 | [接口](#接口--api) | [API](#接口--api) |
 | [行为与无障碍](#行为与无障碍--behavior-and-accessibility) | [Behavior and accessibility](#行为与无障碍--behavior-and-accessibility) |
@@ -17,10 +18,16 @@
 
 | 类 / Class | 头文件 / Header |
 | --- | --- |
-| `CYLPlaceholderHUD` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderHUD.h) |
+| `CYLPlaceholderHUD` | [`CYLTableViewPlaceHolder/CYLHUD/CYLPlaceholderHUD.h`](../CYLTableViewPlaceHolder/CYLHUD/CYLPlaceholderHUD.h) |
 | `CYLPlaceholderStackView` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h) |
 
 <!-- docs-binding:end -->
+
+## CYLHUD：唯一的 HUD 内核 / CYLHUD: the only HUD kernel
+
+| 中文 | English |
+| --- | --- |
+| 2026-11-17 起，HUD 代码在每个平台都集中在一个文件夹，`CYLPlaceholderHUD`（CYLHUD）是唯一的 HUD 内核，示例不依赖 SVProgressHUD、MBProgressHUD 等其他 HUD 库（`instructions.md` “One HUD: CYLHUD”）。iOS：`CYLTableViewPlaceHolder/CYLHUD/`（`CYLHUD.h` 总头文件、`CYLPlaceholderHUD.h/.m`，由 Core 子 spec 与框架目标编译，`#import "CYLPlaceholderHUD.h"` 仍可用）；Android：`android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/`（包名仍为 `com.cyl.placeholder`，调用方不变）；鸿蒙：`cylplaceholder/src/main/ets/hud/`（`Index.ets` 的导出不变）；微信小程序：`src/cyl-placeholder-hud/`（组件与 `cyl_placeholder_hud.js`；旧路径 `src/cyl-placeholder/cyl_placeholder_hud.js` 保留为转发）。公开 API 均未改变。 | Since 2026-11-17 the HUD code lives in one folder on every platform, `CYLPlaceholderHUD` (CYLHUD) is the only HUD kernel, and the examples depend on no other HUD library such as SVProgressHUD or MBProgressHUD ("One HUD: CYLHUD" in `instructions.md`). iOS: `CYLTableViewPlaceHolder/CYLHUD/` (the umbrella `CYLHUD.h` and `CYLPlaceholderHUD.h/.m`, compiled by the Core subspec and the framework target; `#import "CYLPlaceholderHUD.h"` still works); Android: `android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/` (the package stays `com.cyl.placeholder`, so callers do not change); HarmonyOS: `cylplaceholder/src/main/ets/hud/` (the `Index.ets` exports unchanged); WeChat mini program: `src/cyl-placeholder-hud/` (the component and `cyl_placeholder_hud.js`; the former path `src/cyl-placeholder/cyl_placeholder_hud.js` forwards to it). No public API changed. |
 
 ## 概述 / Overview
 

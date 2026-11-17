@@ -1,3 +1,7 @@
+// CYLHUD: the only HUD kernel, in its own folder (hud/). The package stays com.cyl.placeholder so every caller of
+// CYLPlaceholderHUD keeps compiling (docs/Placeholder-HUD.md).
+@file:Suppress("PackageDirectoryMismatch")
+
 package com.cyl.placeholder
 
 import android.content.Context

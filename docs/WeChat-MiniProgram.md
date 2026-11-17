@@ -215,7 +215,7 @@
 | `src/cyl-placeholder/index.{js,json,wxml,wxss}` | The `cyl-placeholder` component (CYLPlaceholderStackView): vertical, centered stack; background tap; `action` event; `interactive` |
 | `src/cyl-placeholder/cyl_scenario_catalog.js` | `CYLPlaceholderScenarioCatalog`, scenarios, categories, permissions, actions, button styles |
 | `src/cyl-placeholder/cyl_localization.js` | `CYLPlaceholderLocalization`: `setLanguage`, `resolveLanguage`, `localizedString` |
-| `src/cyl-placeholder/cyl_placeholder_hud.js` | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
+| `src/cyl-placeholder-hud/cyl_placeholder_hud.js` (the former `src/cyl-placeholder/cyl_placeholder_hud.js` forwards to it) | `CYLPlaceholderHUD`: state and timing of the HUD, no rendering (unit-tested with fake timers) |
 | `src/cyl-placeholder-hud/index.{js,json,wxml,wxss}` | The `cyl-placeholder-hud` component: renders a `CYLPlaceholderHUD` (`selectComponent('#hud').hud`); `action` and `touch` events |
 | `src/cyl-placeholder/cyl_configuration.js` | `CYLPlaceholderConfiguration`: parses configuration objects / JSON files |
 | `src/cyl-refresh/` | `cyl-refresh` (CYLRefresh: MJRefresh-compatible header / footers, icons per state, DIY slots, CYLRefresh texts in 7 languages from `scripts/import-refresh-strings.js`) |

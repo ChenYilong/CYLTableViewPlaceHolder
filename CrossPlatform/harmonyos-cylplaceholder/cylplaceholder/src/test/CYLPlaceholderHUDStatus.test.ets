@@ -9,7 +9,7 @@ import {
   CYLPlaceholderHUDState,
   CYLPlaceholderHUDStyle,
   CYLPlaceholderHUDWillAppearNotification
-} from '../main/ets/CYLPlaceholderHUD';
+} from '../main/ets/hud/CYLPlaceholderHUD';
 import { CYLPlaceholderConfiguration } from '../main/ets/CYLPlaceholderConfiguration';
 import { CYLPlaceholderStackViewModel } from '../main/ets/CYLPlaceholderStackView';
 import { CYLPlaceholderActions, CYLPlaceholderScenario } from '../main/ets/CYLPlaceholderScenario';

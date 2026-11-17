@@ -335,6 +335,14 @@ integrates it the same way:
   keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.m` looks the class up by
   name), which needs no dependency.
 
+## One HUD: CYLHUD
+
+The HUD follows the same rule as CYLRefresh (the owner's decision of 2026-11-17): `CYLPlaceholderHUD` (CYLHUD) is the
+only HUD kernel on every platform, and its code lives in one folder: `CYLTableViewPlaceHolder/CYLHUD/` (iOS),
+`android/placeholder/.../placeholder/hud/` (Android), `ets/hud/` (HarmonyOS) and `src/cyl-placeholder-hud/` (WeChat
+mini program). No example or core module depends on another HUD library (SVProgressHUD, MBProgressHUD,
+JGProgressHUD, a toast library...); a missing feature is added to CYLHUD. See docs/Placeholder-HUD.md.
+
 ## Swift examples and a Swift-friendly core
 
 iOS examples are written in Swift; the library stays Objective-C. The core adapts to the Swift call site, not the other way round.

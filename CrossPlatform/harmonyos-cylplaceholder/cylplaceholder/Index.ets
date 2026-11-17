@@ -97,8 +97,8 @@ export {
   CYLPlaceholderHUDStatusUserInfoKey,
   CYLPlaceholderSharedHUD,
   CYLPlaceholderHUDSetPresenter
-} from './src/main/ets/CYLPlaceholderHUD';
-export { CYLPlaceholderHUDView, CYLPlaceholderHUDInstallOverlayPresenter } from './src/main/ets/CYLPlaceholderHUDView';
+} from './src/main/ets/hud/CYLPlaceholderHUD';
+export { CYLPlaceholderHUDView, CYLPlaceholderHUDInstallOverlayPresenter } from './src/main/ets/hud/CYLPlaceholderHUDView';
 
 // CYLRefresh: the MJRefresh-compatible pull-to-refresh controls, with the iOS names (models + ArkUI container).
 export * from './src/main/ets/refresh/CYLRefreshConst';

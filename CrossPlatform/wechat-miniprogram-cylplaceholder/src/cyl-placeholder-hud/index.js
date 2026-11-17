@@ -7,7 +7,7 @@
 // Events: `action` (a component in the box was tapped, detail as cyl-placeholder's), `touch` (the mask was tapped).
 'use strict'
 
-const { CYLPlaceholderHUD } = require('../cyl-placeholder/cyl_placeholder_hud')
+const { CYLPlaceholderHUD } = require('./cyl_placeholder_hud')
 const { localizedString } = require('../cyl-placeholder/cyl_localization')
 
 Component({

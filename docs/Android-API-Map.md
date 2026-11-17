@@ -10,6 +10,86 @@
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
 | **迁移完成率：96 / 100**（done + 0.5 × partial，共 728 个计入的符号；done 665、partial 63、planned 0、n/a 200）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 728 counted symbols; done 665, partial 63, planned 0, n/a 200). |
 
+## `CYLHUD/CYLPlaceholderHUD.h`
+
+| iOS API | Android API | 状态 Status | 说明 / Note |
+|:---|:---|:---|:---|
+| `CYLPlaceholderHUDStyle` | `com.cyl.placeholder.CYLPlaceholderHUDStyle` | done |  |
+| `CYLPlaceholderHUDMaskType` | `com.cyl.placeholder.CYLPlaceholderHUDMaskType` | done |  |
+| `CYLPlaceholderHUDState` | `com.cyl.placeholder.CYLPlaceholderHUDState` | done |  |
+| `CYLPlaceholderHUDDismissCompletion` | `com.cyl.placeholder.CYLPlaceholderHUDDismissCompletion` | done |  |
+| `CYLPlaceholderHUD` | `com.cyl.placeholder.CYLPlaceholderHUD` | partial | an overlay on a container view; the class-level calls use the shared HUD of a container |
+| `CYLPlaceholderHUD` `sharedHUD` | `CYLPlaceholderHUD.sharedHUD(container)` | done | set the container once |
+| `CYLPlaceholderHUD` `-initWithContainerView:` | `CYLPlaceholderHUD(context, container)` | done |  |
+| `CYLPlaceholderHUD` `-init` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
+| `CYLPlaceholderHUD` `-initWithFrame:` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
+| `CYLPlaceholderHUD` `-initWithCoder:` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
+| `CYLPlaceholderHUD` `contentView` | `CYLPlaceholderHUD.contentView` | done |  |
+| `CYLPlaceholderHUD` `placeholderView` | `CYLPlaceholderHUD.placeholderView` | done |  |
+| `CYLPlaceholderHUD` `hudView` | `CYLPlaceholderHUD.hudView` | done |  |
+| `CYLPlaceholderHUD` `actions` | `CYLPlaceholderHUD.actions` | done |  |
+| `CYLPlaceholderHUD` `state` | `CYLPlaceholderHUD.state` | done |  |
+| `CYLPlaceholderHUD` `status` | `CYLPlaceholderHUD.status` | done |  |
+| `CYLPlaceholderHUD` `progress` | `CYLPlaceholderHUD.progress` | done |  |
+| `CYLPlaceholderHUD` `visible` | `CYLPlaceholderHUD.visible` | done |  |
+| `CYLPlaceholderHUD` `activityCount` | `CYLPlaceholderHUD.activityCount` | done |  |
+| `CYLPlaceholderHUD` `containerView` | `CYLPlaceholderHUD.containerView` | done |  |
+| `CYLPlaceholderHUD` `style` | `CYLPlaceholderHUD.style` | done |  |
+| `CYLPlaceholderHUD` `maskType` | `CYLPlaceholderHUD.maskType` | done |  |
+| `CYLPlaceholderHUD` `foregroundColor` | `CYLPlaceholderHUD.foregroundColor` | done |  |
+| `CYLPlaceholderHUD` `hudBackgroundColor` | `CYLPlaceholderHUD.hudBackgroundColor` | done |  |
+| `CYLPlaceholderHUD` `backgroundLayerColor` | `CYLPlaceholderHUD.backgroundLayerColor` | done |  |
+| `CYLPlaceholderHUD` `font` | `CYLPlaceholderHUD.font` | partial | the status text size in sp (Android takes no UIFont) |
+| `CYLPlaceholderHUD` `cornerRadius` | `CYLPlaceholderHUD.cornerRadius` | done |  |
+| `CYLPlaceholderHUD` `minimumSize` | `CYLPlaceholderHUD.minimumSize` | done |  |
+| `CYLPlaceholderHUD` `animationSize` | `CYLPlaceholderHUD.animationSize` | done |  |
+| `CYLPlaceholderHUD` `offsetFromCenter` | `CYLPlaceholderHUD.offsetFromCenter` | done |  |
+| `CYLPlaceholderHUD` `loadingAnimationFileName` | `CYLPlaceholderHUD.loadingAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
+| `CYLPlaceholderHUD` `progressAnimationFileName` | `CYLPlaceholderHUD.progressAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
+| `CYLPlaceholderHUD` `successAnimationFileName` | `CYLPlaceholderHUD.successAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
+| `CYLPlaceholderHUD` `successImage` | `CYLPlaceholderHUD.successImage` | done |  |
+| `CYLPlaceholderHUD` `errorImage` | `CYLPlaceholderHUD.errorImage` | done |  |
+| `CYLPlaceholderHUD` `infoImage` | `CYLPlaceholderHUD.infoImage` | done |  |
+| `CYLPlaceholderHUD` `graceTimeInterval` | `CYLPlaceholderHUD.graceTimeInterval` | done |  |
+| `CYLPlaceholderHUD` `minimumDismissTimeInterval` | `CYLPlaceholderHUD.minimumDismissTimeInterval` | done |  |
+| `CYLPlaceholderHUD` `maximumDismissTimeInterval` | `CYLPlaceholderHUD.maximumDismissTimeInterval` | done |  |
+| `CYLPlaceholderHUD` `fadeInAnimationDuration` | `CYLPlaceholderHUD.fadeInAnimationDuration` | done |  |
+| `CYLPlaceholderHUD` `fadeOutAnimationDuration` | `CYLPlaceholderHUD.fadeOutAnimationDuration` | done |  |
+| `CYLPlaceholderHUD` `hapticsEnabled` | `CYLPlaceholderHUD.hapticsEnabled` | done |  |
+| `CYLPlaceholderHUD` `-show` | `CYLPlaceholderHUD.show` | done |  |
+| `CYLPlaceholderHUD` `-showWithStatus:` | `CYLPlaceholderHUD.showWithStatus` | done |  |
+| `CYLPlaceholderHUD` `-showProgress:` | `CYLPlaceholderHUD.showProgress` | done |  |
+| `CYLPlaceholderHUD` `-showProgress:status:` | `CYLPlaceholderHUD.showProgress` | done |  |
+| `CYLPlaceholderHUD` `-setStatus:` | `CYLPlaceholderHUD.setStatus` | done |  |
+| `CYLPlaceholderHUD` `-showInfoWithStatus:` | `CYLPlaceholderHUD.showInfoWithStatus` | done |  |
+| `CYLPlaceholderHUD` `-showSuccessWithStatus:` | `CYLPlaceholderHUD.showSuccessWithStatus` | done |  |
+| `CYLPlaceholderHUD` `-showErrorWithStatus:` | `CYLPlaceholderHUD.showErrorWithStatus` | done |  |
+| `CYLPlaceholderHUD` `-showImage:status:` | `CYLPlaceholderHUD.showImage` | done |  |
+| `CYLPlaceholderHUD` `-showComponents:actions:` | `CYLPlaceholderHUD.showComponents` | done |  |
+| `CYLPlaceholderHUD` `-showScenario:actions:` | `CYLPlaceholderHUD.showScenario` | done |  |
+| `CYLPlaceholderHUD` `-popActivity` | `CYLPlaceholderHUD.popActivity` | done |  |
+| `CYLPlaceholderHUD` `-dismiss` | `CYLPlaceholderHUD.dismiss` | done |  |
+| `CYLPlaceholderHUD` `-dismissWithCompletion:` | `CYLPlaceholderHUD.dismissWithCompletion` | done |  |
+| `CYLPlaceholderHUD` `-dismissWithDelay:` | `CYLPlaceholderHUD.dismissWithDelay` | done |  |
+| `CYLPlaceholderHUD` `-dismissWithDelay:completion:` | `CYLPlaceholderHUD.dismissWithDelay` | done |  |
+| `CYLPlaceholderHUD` `-displayDurationForString:` | `CYLPlaceholderHUD.displayDurationForString` | done |  |
+| `CYLPlaceholderHUD` `+show` | `CYLPlaceholderHUD.show(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showWithStatus:` | `CYLPlaceholderHUD.showWithStatus(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showProgress:` | `CYLPlaceholderHUD.showProgress(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showProgress:status:` | `CYLPlaceholderHUD.showProgress(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+setStatus:` | `CYLPlaceholderHUD.setStatus(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showInfoWithStatus:` | `CYLPlaceholderHUD.showInfoWithStatus(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showSuccessWithStatus:` | `CYLPlaceholderHUD.showSuccessWithStatus(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showErrorWithStatus:` | `CYLPlaceholderHUD.showErrorWithStatus(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+showImage:status:` | `CYLPlaceholderHUD.showImage(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+popActivity` | `CYLPlaceholderHUD.popActivity(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+dismiss` | `CYLPlaceholderHUD.dismiss(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+dismissWithCompletion:` | `CYLPlaceholderHUD.dismissWithCompletion(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+dismissWithDelay:` | `CYLPlaceholderHUD.dismissWithDelay(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+dismissWithDelay:completion:` | `CYLPlaceholderHUD.dismissWithDelay(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+isVisible` | `CYLPlaceholderHUD.isVisible(…) (companion)` | done | on the shared HUD |
+| `CYLPlaceholderHUD` `+displayDurationForString:` | `CYLPlaceholderHUD.displayDurationForString(…) (companion)` | done | on the shared HUD |
+
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
@@ -1016,86 +1096,6 @@
 | `UIView(CYLExtension)` `cyl_h` | — | n/a | UIKit frame helpers; Android views have x / y / width / height |
 | `UIView(CYLExtension)` `cyl_size` | — | n/a | UIKit frame helpers; Android views have x / y / width / height |
 | `UIView(CYLExtension)` `cyl_origin` | — | n/a | UIKit frame helpers; Android views have x / y / width / height |
-
-## `CYLTableViewPlaceHolder/CYLPlaceholderHUD.h`
-
-| iOS API | Android API | 状态 Status | 说明 / Note |
-|:---|:---|:---|:---|
-| `CYLPlaceholderHUDStyle` | `com.cyl.placeholder.CYLPlaceholderHUDStyle` | done |  |
-| `CYLPlaceholderHUDMaskType` | `com.cyl.placeholder.CYLPlaceholderHUDMaskType` | done |  |
-| `CYLPlaceholderHUDState` | `com.cyl.placeholder.CYLPlaceholderHUDState` | done |  |
-| `CYLPlaceholderHUDDismissCompletion` | `com.cyl.placeholder.CYLPlaceholderHUDDismissCompletion` | done |  |
-| `CYLPlaceholderHUD` | `com.cyl.placeholder.CYLPlaceholderHUD` | partial | an overlay on a container view; the class-level calls use the shared HUD of a container |
-| `CYLPlaceholderHUD` `sharedHUD` | `CYLPlaceholderHUD.sharedHUD(container)` | done | set the container once |
-| `CYLPlaceholderHUD` `-initWithContainerView:` | `CYLPlaceholderHUD(context, container)` | done |  |
-| `CYLPlaceholderHUD` `-init` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
-| `CYLPlaceholderHUD` `-initWithFrame:` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
-| `CYLPlaceholderHUD` `-initWithCoder:` | — | n/a | Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container)) |
-| `CYLPlaceholderHUD` `contentView` | `CYLPlaceholderHUD.contentView` | done |  |
-| `CYLPlaceholderHUD` `placeholderView` | `CYLPlaceholderHUD.placeholderView` | done |  |
-| `CYLPlaceholderHUD` `hudView` | `CYLPlaceholderHUD.hudView` | done |  |
-| `CYLPlaceholderHUD` `actions` | `CYLPlaceholderHUD.actions` | done |  |
-| `CYLPlaceholderHUD` `state` | `CYLPlaceholderHUD.state` | done |  |
-| `CYLPlaceholderHUD` `status` | `CYLPlaceholderHUD.status` | done |  |
-| `CYLPlaceholderHUD` `progress` | `CYLPlaceholderHUD.progress` | done |  |
-| `CYLPlaceholderHUD` `visible` | `CYLPlaceholderHUD.visible` | done |  |
-| `CYLPlaceholderHUD` `activityCount` | `CYLPlaceholderHUD.activityCount` | done |  |
-| `CYLPlaceholderHUD` `containerView` | `CYLPlaceholderHUD.containerView` | done |  |
-| `CYLPlaceholderHUD` `style` | `CYLPlaceholderHUD.style` | done |  |
-| `CYLPlaceholderHUD` `maskType` | `CYLPlaceholderHUD.maskType` | done |  |
-| `CYLPlaceholderHUD` `foregroundColor` | `CYLPlaceholderHUD.foregroundColor` | done |  |
-| `CYLPlaceholderHUD` `hudBackgroundColor` | `CYLPlaceholderHUD.hudBackgroundColor` | done |  |
-| `CYLPlaceholderHUD` `backgroundLayerColor` | `CYLPlaceholderHUD.backgroundLayerColor` | done |  |
-| `CYLPlaceholderHUD` `font` | `CYLPlaceholderHUD.font` | partial | the status text size in sp (Android takes no UIFont) |
-| `CYLPlaceholderHUD` `cornerRadius` | `CYLPlaceholderHUD.cornerRadius` | done |  |
-| `CYLPlaceholderHUD` `minimumSize` | `CYLPlaceholderHUD.minimumSize` | done |  |
-| `CYLPlaceholderHUD` `animationSize` | `CYLPlaceholderHUD.animationSize` | done |  |
-| `CYLPlaceholderHUD` `offsetFromCenter` | `CYLPlaceholderHUD.offsetFromCenter` | done |  |
-| `CYLPlaceholderHUD` `loadingAnimationFileName` | `CYLPlaceholderHUD.loadingAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
-| `CYLPlaceholderHUD` `progressAnimationFileName` | `CYLPlaceholderHUD.progressAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
-| `CYLPlaceholderHUD` `successAnimationFileName` | `CYLPlaceholderHUD.successAnimationFileName` | done | played by the player registered with CYLPlaceholderView.registerAnimationFactory |
-| `CYLPlaceholderHUD` `successImage` | `CYLPlaceholderHUD.successImage` | done |  |
-| `CYLPlaceholderHUD` `errorImage` | `CYLPlaceholderHUD.errorImage` | done |  |
-| `CYLPlaceholderHUD` `infoImage` | `CYLPlaceholderHUD.infoImage` | done |  |
-| `CYLPlaceholderHUD` `graceTimeInterval` | `CYLPlaceholderHUD.graceTimeInterval` | done |  |
-| `CYLPlaceholderHUD` `minimumDismissTimeInterval` | `CYLPlaceholderHUD.minimumDismissTimeInterval` | done |  |
-| `CYLPlaceholderHUD` `maximumDismissTimeInterval` | `CYLPlaceholderHUD.maximumDismissTimeInterval` | done |  |
-| `CYLPlaceholderHUD` `fadeInAnimationDuration` | `CYLPlaceholderHUD.fadeInAnimationDuration` | done |  |
-| `CYLPlaceholderHUD` `fadeOutAnimationDuration` | `CYLPlaceholderHUD.fadeOutAnimationDuration` | done |  |
-| `CYLPlaceholderHUD` `hapticsEnabled` | `CYLPlaceholderHUD.hapticsEnabled` | done |  |
-| `CYLPlaceholderHUD` `-show` | `CYLPlaceholderHUD.show` | done |  |
-| `CYLPlaceholderHUD` `-showWithStatus:` | `CYLPlaceholderHUD.showWithStatus` | done |  |
-| `CYLPlaceholderHUD` `-showProgress:` | `CYLPlaceholderHUD.showProgress` | done |  |
-| `CYLPlaceholderHUD` `-showProgress:status:` | `CYLPlaceholderHUD.showProgress` | done |  |
-| `CYLPlaceholderHUD` `-setStatus:` | `CYLPlaceholderHUD.setStatus` | done |  |
-| `CYLPlaceholderHUD` `-showInfoWithStatus:` | `CYLPlaceholderHUD.showInfoWithStatus` | done |  |
-| `CYLPlaceholderHUD` `-showSuccessWithStatus:` | `CYLPlaceholderHUD.showSuccessWithStatus` | done |  |
-| `CYLPlaceholderHUD` `-showErrorWithStatus:` | `CYLPlaceholderHUD.showErrorWithStatus` | done |  |
-| `CYLPlaceholderHUD` `-showImage:status:` | `CYLPlaceholderHUD.showImage` | done |  |
-| `CYLPlaceholderHUD` `-showComponents:actions:` | `CYLPlaceholderHUD.showComponents` | done |  |
-| `CYLPlaceholderHUD` `-showScenario:actions:` | `CYLPlaceholderHUD.showScenario` | done |  |
-| `CYLPlaceholderHUD` `-popActivity` | `CYLPlaceholderHUD.popActivity` | done |  |
-| `CYLPlaceholderHUD` `-dismiss` | `CYLPlaceholderHUD.dismiss` | done |  |
-| `CYLPlaceholderHUD` `-dismissWithCompletion:` | `CYLPlaceholderHUD.dismissWithCompletion` | done |  |
-| `CYLPlaceholderHUD` `-dismissWithDelay:` | `CYLPlaceholderHUD.dismissWithDelay` | done |  |
-| `CYLPlaceholderHUD` `-dismissWithDelay:completion:` | `CYLPlaceholderHUD.dismissWithDelay` | done |  |
-| `CYLPlaceholderHUD` `-displayDurationForString:` | `CYLPlaceholderHUD.displayDurationForString` | done |  |
-| `CYLPlaceholderHUD` `+show` | `CYLPlaceholderHUD.show(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showWithStatus:` | `CYLPlaceholderHUD.showWithStatus(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showProgress:` | `CYLPlaceholderHUD.showProgress(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showProgress:status:` | `CYLPlaceholderHUD.showProgress(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+setStatus:` | `CYLPlaceholderHUD.setStatus(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showInfoWithStatus:` | `CYLPlaceholderHUD.showInfoWithStatus(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showSuccessWithStatus:` | `CYLPlaceholderHUD.showSuccessWithStatus(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showErrorWithStatus:` | `CYLPlaceholderHUD.showErrorWithStatus(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+showImage:status:` | `CYLPlaceholderHUD.showImage(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+popActivity` | `CYLPlaceholderHUD.popActivity(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+dismiss` | `CYLPlaceholderHUD.dismiss(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+dismissWithCompletion:` | `CYLPlaceholderHUD.dismissWithCompletion(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+dismissWithDelay:` | `CYLPlaceholderHUD.dismissWithDelay(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+dismissWithDelay:completion:` | `CYLPlaceholderHUD.dismissWithDelay(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+isVisible` | `CYLPlaceholderHUD.isVisible(…) (companion)` | done | on the shared HUD |
-| `CYLPlaceholderHUD` `+displayDurationForString:` | `CYLPlaceholderHUD.displayDurationForString(…) (companion)` | done | on the shared HUD |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`
 

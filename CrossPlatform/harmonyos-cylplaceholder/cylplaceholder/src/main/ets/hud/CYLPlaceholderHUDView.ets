@@ -13,8 +13,8 @@ import {
   CYLPlaceholderHUDPresenter,
   CYLPlaceholderHUDState
 } from './CYLPlaceholderHUD';
-import { CYLPlaceholderView } from './CYLPlaceholderView';
-import { CYLPlaceholderStackView } from './CYLPlaceholderStackView';
+import { CYLPlaceholderView } from '../CYLPlaceholderView';
+import { CYLPlaceholderStackView } from '../CYLPlaceholderStackView';
 
 /** The box and its mask. */
 @Component

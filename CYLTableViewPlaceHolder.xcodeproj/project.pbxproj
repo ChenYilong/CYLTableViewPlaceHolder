@@ -174,6 +174,7 @@
 		F88D6A4D5B90CF84AFF3D071 /* CYLRefreshAutoGifFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 020EF24E7074D6CA32EE917C /* CYLRefreshAutoGifFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8E0E6C318CE25D617676C10 /* CYLRefreshGamePlayingScene.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7E5761105B23F9A84A8659 /* CYLRefreshGamePlayingScene.m */; };
 		F91D3DDFF9B8B80F22433E29 /* CYLRefreshFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C697B7279BF082BB2B6AE1D /* CYLRefreshFooter.m */; };
+		A69FCA5AED4745DAFBCAC524 /* CYLHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9006C42B8627DACED31760 /* CYLHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -367,6 +368,7 @@
 		FEB2E2B5116BACD4EFB63967 /* CYLRefreshStateHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshStateHeader.h; sourceTree = "<group>"; };
 		FEF48ED28050EE9E255147C1 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SpriteKit.framework; sourceTree = DEVELOPER_DIR; };
 		FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderStatusView.m; sourceTree = "<group>"; };
+		5C9006C42B8627DACED31760 /* CYLHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLHUD.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -573,9 +575,7 @@
 				83F08F3F75DC7D778742A230 /* CYLPlaceholderStackView.h */,
 				54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.m */,
 				C4CF5772B9A452E75C78C9B9 /* CYLPlaceholderStatusView.h */,
-				025A183607BCEB5632C113AD /* CYLPlaceholderHUD.h */,
 				FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */,
-				4A2E6D3B8481DC597B4EEC13 /* CYLPlaceholderHUD.m */,
 				B28457D5975BE7EE3112EBF5 /* CYLPlaceholderNetworkMonitor.h */,
 				E12DA508DC4E722A3C1D5D25 /* CYLPlaceholderNetworkMonitor.m */,
 				5A1457F39CECB45740B23D7A /* UIViewController+CYLPlaceholderStatus.h */,
@@ -630,6 +630,7 @@
 			children = (
 				9A68F2E11C2A67E800D2E9B0 /* CYLTableViewPlaceHolder */,
 				08B6590E7E0200E1B3277CC3 /* CYLRefresh */,
+				CB9FB1022BDF68CC7FAD46D6 /* CYLHUD */,
 				9A68F2E71C2A67F600D2E9B0 /* Example */,
 				9ADE6FD61C29A0C500214C69 /* Products */,
 				C9239322DA10EA8D2E9B5808 /* Frameworks */,
@@ -727,6 +728,16 @@
 			path = Footer;
 			sourceTree = "<group>";
 		};
+		CB9FB1022BDF68CC7FAD46D6 /* CYLHUD */ = {
+			isa = PBXGroup;
+			children = (
+				5C9006C42B8627DACED31760 /* CYLHUD.h */,
+				025A183607BCEB5632C113AD /* CYLPlaceholderHUD.h */,
+				4A2E6D3B8481DC597B4EEC13 /* CYLPlaceholderHUD.m */,
+			);
+			path = CYLTableViewPlaceHolder/CYLHUD;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -774,6 +785,7 @@
 				074366D30423B1589E4D8DAC /* CYLRefreshIconView.h in Headers */,
 				A66F60D6E05BE162EF02BB65 /* CYLPlaceholderStatusView.h in Headers */,
 				1CF85564426FD32802210B2E /* CYLPlaceholderHUD.h in Headers */,
+				A69FCA5AED4745DAFBCAC524 /* CYLHUD.h in Headers */,
 				9ABBB4E6029808148F5E28F3 /* CYLPlaceholderNetworkMonitor.h in Headers */,
 				620A0FF6641E7A0726FA90CD /* UIViewController+CYLPlaceholderStatus.h in Headers */,
 				430305709B9F5EF91A1286B2 /* CYLRefreshBezierCircleHeader.h in Headers */,
