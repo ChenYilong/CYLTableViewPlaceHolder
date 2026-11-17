@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "清空";
 "CYLScenarioActionAdd" = "新增";
 "CYLScenarioActionSources" = "來源";
+"CYLScenarioEngineRegistered" = "已註冊";
+"CYLScenarioEngineMissing" = "未包含在此建置中";
+"CYLScenarioActionEngines" = "動效引擎";
 "CYLScenarioActionPublish" = "發佈";
 "CYLScenarioFeedbackRetry" = "已重新載入";
 "CYLScenarioFeedbackGoShopping" = "正在前往商城…";

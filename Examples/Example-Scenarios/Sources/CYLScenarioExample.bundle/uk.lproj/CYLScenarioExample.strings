@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "Очистити";
 "CYLScenarioActionAdd" = "Додати";
 "CYLScenarioActionSources" = "Джерела";
+"CYLScenarioEngineRegistered" = "Зареєстровано";
+"CYLScenarioEngineMissing" = "Немає в цій збірці";
+"CYLScenarioActionEngines" = "Рушії";
 "CYLScenarioActionPublish" = "Опублікувати";
 "CYLScenarioFeedbackRetry" = "Завантажено знову";
 "CYLScenarioFeedbackGoShopping" = "Відкриваємо магазин…";

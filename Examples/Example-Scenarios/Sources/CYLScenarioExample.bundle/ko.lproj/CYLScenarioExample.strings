@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "지우기";
 "CYLScenarioActionAdd" = "추가";
 "CYLScenarioActionSources" = "출처";
+"CYLScenarioEngineRegistered" = "등록됨";
+"CYLScenarioEngineMissing" = "이 빌드에 없음";
+"CYLScenarioActionEngines" = "엔진";
 "CYLScenarioActionPublish" = "게시";
 "CYLScenarioFeedbackRetry" = "다시 불러왔습니다";
 "CYLScenarioFeedbackGoShopping" = "스토어로 이동 중…";

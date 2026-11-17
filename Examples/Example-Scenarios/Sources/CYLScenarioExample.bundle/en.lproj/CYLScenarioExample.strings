@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "Clear";
 "CYLScenarioActionAdd" = "Add";
 "CYLScenarioActionSources" = "Sources";
+"CYLScenarioEngineRegistered" = "Registered";
+"CYLScenarioEngineMissing" = "Not in this build";
+"CYLScenarioActionEngines" = "Engines";
 "CYLScenarioActionPublish" = "Publish";
 "CYLScenarioFeedbackRetry" = "Reloaded";
 "CYLScenarioFeedbackGoShopping" = "Opening the store…";

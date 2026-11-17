@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "Очистить";
 "CYLScenarioActionAdd" = "Добавить";
 "CYLScenarioActionSources" = "Источники";
+"CYLScenarioEngineRegistered" = "Зарегистрирован";
+"CYLScenarioEngineMissing" = "Нет в этой сборке";
+"CYLScenarioActionEngines" = "Движки";
 "CYLScenarioActionPublish" = "Опубликовать";
 "CYLScenarioFeedbackRetry" = "Загружено заново";
 "CYLScenarioFeedbackGoShopping" = "Открываем магазин…";

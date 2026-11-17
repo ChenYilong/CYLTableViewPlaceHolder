@@ -5,10 +5,13 @@
 //  Every animation bundled in CYLTableViewPlaceHolder.bundle/Animations, grouped by engine, read with
 //  `CYLPlaceholderView.bundledAnimationFileNames()`. Each row shows one file as the reserved component of a
 //  `CYLPlaceholderStackView`; "Sources" shows NOTICE.animations (source, commit, license, SHA-256 of each file).
+//  Each engine's section says whether its animator registered itself (CYLAnimatedItem's registry: each engine subspec
+//  registers on load, nothing to call); "Engines" shows the registry's report (registered, missing, conflicts).
 //
 
 import UIKit
 import CYLTableViewPlaceHolder
+import CYLAnimatedItem
 
 final class CYLAnimationListViewController: UITableViewController {
 
@@ -19,18 +22,28 @@ final class CYLAnimationListViewController: UITableViewController {
         var folder: URL?
     }
 
-    private static let engines: [(fileExtension: String, title: String)] = [
-        ("json", "Lottie · CYLTableViewPlaceHolder/LottieSwift"),
-        ("pag", "PAG · CYLTableViewPlaceHolder/PAG"),
-        ("riv", "Rive · CYLTableViewPlaceHolder/Rive"),
-        ("gif", "GIF · Core"),
+    /// The engine identifier (CYLTabBarItemAnimatorRegistry) and the subspec that brings it, per file extension.
+    private static let engines: [(fileExtension: String, identifier: String, subspec: String)] = [
+        ("json", "Lottie", "CYLTableViewPlaceHolder/LottieSwift"),
+        ("pag", "PAG", "CYLTableViewPlaceHolder/PAG"),
+        ("riv", "Rive", "CYLTableViewPlaceHolder/Rive"),
+        ("gif", "GIF", "CYLTableViewPlaceHolder/GIF"),
     ]
+
+    /// "Lottie · CYLTableViewPlaceHolder/LottieSwift · Registered", or "Not in this build" without that engine.
+    private static func engineTitle(identifier: String, subspec: String) -> String {
+        let registered = CYLTabBarItemAnimatorRegistry.isAnimatorRegistered(withIdentifier: identifier)
+        let status = CYLScenarioLocalizedString(registered ? .engineRegistered : .engineMissing)
+        return "\(identifier) · \(subspec) · \(status)"
+    }
 
     private let sections: [Section] = {
         let names = CYLPlaceholderView.bundledAnimationFileNames()
         var sections: [Section] = engines.compactMap { engine in
             let files = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }
-            return files.isEmpty ? nil : Section(title: engine.title, fileNames: files, folder: nil)
+            guard !files.isEmpty else { return nil }
+            let title = CYLAnimationListViewController.engineTitle(identifier: engine.identifier, subspec: engine.subspec)
+            return Section(title: title, fileNames: files, folder: nil)
         }
         // The example's own animations: no placeholder meaning (a mascot, a scene, widget demos), so they live in the
         // example bundle, not in the core bundle (CYLScenarioExample.bundle/Animations/NOTICE.animations).
@@ -64,12 +77,33 @@ final class CYLAnimationListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "animation")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionSources),
-                                                            style: .plain, target: self, action: #selector(showNotice))
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionSources), style: .plain, target: self,
+                            action: #selector(showNotice)),
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionEngines), style: .plain, target: self,
+                            action: #selector(showEngines)),
+        ]
         // The empty state of this list, should the bundle be missing.
         tableView.cyl_placeholderViewBlock({ _ in
             CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
         })
+    }
+
+    /// The registry's report: every registered engine, the known engines missing from this build and any conflict.
+    @objc private func showEngines() {
+        showText(CYLTabBarItemAnimatorRegistry.registrationReport(), title: CYLScenarioLocalizedString(.actionEngines))
+    }
+
+    private func showText(_ text: String, title: String) {
+        let controller = UIViewController()
+        controller.title = title
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
+        textView.text = text
+        controller.view = textView
+        controller.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(controller, animated: true)
     }
 
     @objc private func showNotice() {
@@ -77,15 +111,7 @@ final class CYLAnimationListViewController: UITableViewController {
             .flatMap { CYLPlaceholderView.path(forBundledAnimation: $0) }
             .map { (($0 as NSString).deletingLastPathComponent as NSString).appendingPathComponent("NOTICE.animations") }
             .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }
-        let controller = UIViewController()
-        controller.title = "NOTICE.animations"
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
-        textView.text = notice ?? CYLScenarioLocalizedString(.textNoticeMissing)
-        controller.view = textView
-        controller.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(controller, animated: true)
+        showText(notice ?? CYLScenarioLocalizedString(.textNoticeMissing), title: "NOTICE.animations")
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {

@@ -104,6 +104,23 @@
     XCTAssertNil([CYLTabBarItemAnimatorRegistry animatorForURL:[NSURL fileURLWithPath:@"/a.txt"]]);
 }
 
+- (void)testTheRegistryReportsEachEngineOfThisBuild {
+    // [EN] Several engines at once (upstream "multi-engine management"): each subspec registered itself, SVGA is not in
+    //      this build, and nothing conflicts.
+    // [CN] 同时引入多个引擎（上游“多动效引擎管理”）：每个子库已自行注册，本构建没有 SVGA，且没有冲突。
+    for (NSString *identifier in @[@"GIF", @"PAG", @"Rive", @"Lottie"]) {
+        XCTAssertTrue([CYLTabBarItemAnimatorRegistry isAnimatorRegisteredWithIdentifier:identifier], @"%@", identifier);
+        XCTAssertTrue([[CYLTabBarItemAnimatorRegistry registeredIdentifiers] containsObject:identifier], @"%@", identifier);
+    }
+    XCTAssertTrue([[CYLTabBarItemAnimatorRegistry missingKnownIdentifiers] containsObject:@"SVGA"]);
+    XCTAssertEqual([CYLTabBarItemAnimatorRegistry conflictDescriptions].count, 0u,
+                   @"%@", [CYLTabBarItemAnimatorRegistry conflictDescriptions]);
+    NSString *report = [CYLTabBarItemAnimatorRegistry registrationReport];
+    for (NSString *identifier in @[@"GIF", @"PAG", @"Rive", @"Lottie", @"SVGA"]) {
+        XCTAssertTrue([report containsString:identifier], @"%@ not in %@", identifier, report);
+    }
+}
+
 - (void)testAnUnknownOrMissingFileKeepsTheStaticImage {
     UIImage *image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleNoInternet];
     // [EN] A text file, a broken JSON file and missing files: none plays, the static image stays (display priority; the Lottie

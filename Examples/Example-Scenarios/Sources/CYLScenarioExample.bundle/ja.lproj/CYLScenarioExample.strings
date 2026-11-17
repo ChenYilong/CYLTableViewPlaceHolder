@@ -19,6 +19,9 @@
 "CYLScenarioActionClear" = "クリア";
 "CYLScenarioActionAdd" = "追加";
 "CYLScenarioActionSources" = "出典";
+"CYLScenarioEngineRegistered" = "登録済み";
+"CYLScenarioEngineMissing" = "このビルドに未含有";
+"CYLScenarioActionEngines" = "エンジン";
 "CYLScenarioActionPublish" = "投稿";
 "CYLScenarioFeedbackRetry" = "再読み込みしました";
 "CYLScenarioFeedbackGoShopping" = "ストアを開いています…";
