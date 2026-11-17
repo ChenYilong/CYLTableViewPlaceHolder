@@ -440,7 +440,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
 
     /** The description the view was made from, with the iOS keys (`itemAttributes`). */
     var itemAttributes: Map<String, Any> = emptyMap()
-        private set
+        internal set
 
     init {
         imageView.setImageDrawable(image)
@@ -571,6 +571,17 @@ class CYLPlaceholderView @JvmOverloads constructor(
         imageView.visibility = GONE
         itemAttributes = itemAttributes + ("CYLPlaceholderItemAnimationFilePath" to path)
         return true
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // [EN] An animation file plays while the view is on screen, as on iOS.
+        player?.play()
+    }
+
+    override fun onDetachedFromWindow() {
+        player?.stop()
+        super.onDetachedFromWindow()
     }
 
     /** Plays the animation (`playPlaceholderAnimation`). */

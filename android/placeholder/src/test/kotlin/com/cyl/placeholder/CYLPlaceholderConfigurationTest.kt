@@ -98,6 +98,68 @@ class CYLPlaceholderConfigurationTest {
     }
 
     @Test
+    fun itemAttributesApplyColorsSizeInteractionAndAccessibility() {
+        val view = CYLPlaceholderView.fromItemAttributes(context, mapOf(
+            "CYLPlaceholderItemTitle" to "Offline",
+            "CYLPlaceholderItemIconColor" to "#FF0000",
+            "CYLPlaceholderItemBackgroundColor" to 0x11223344,
+            "CYLPlaceholderItemSelectedTitleColor" to "#00FF00",
+            "CYLPlaceholderItemTitleFontSize" to 20,
+            "CYLPlaceholderItemAnimationRepeatCount" to 2,
+            "CYLPlaceholderItemInteractionEnabled" to false,
+            "CYLPlaceholderItemTapHighlightStyle" to "shrink",
+            "CYLPlaceholderItemAccessibilityIdentifier" to "offline.item",
+            "CYLPlaceholderItemAccessibilityLabel" to "No connection",
+            "CYLPlaceholderItemPageIdentifier" to "settings",
+        ))!!
+        assertEquals(android.graphics.Color.RED, view.defaultIconColor)
+        assertEquals(0x11223344, view.defaultBackgroundColor)
+        assertEquals(android.graphics.Color.GREEN, view.defaultSelectedTitleColor)
+        assertEquals(20f, view.defaultTitleFont)
+        assertEquals(2, view.animationRepeatCount)
+        assertFalse(view.tapInteractionEnabled)
+        assertEquals(CYLPlaceholderTapHighlightStyle.Shrink, view.tapHighlightStyle)
+        assertEquals("offline.item", view.tag)
+        assertEquals("No connection", view.contentDescription)
+        assertEquals("every key is kept", "settings", view.itemAttributes["CYLPlaceholderItemPageIdentifier"])
+        assertEquals("CYLPlaceholderItemIconColor is not a color.", failure { e -> CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemIconColor" to "blue-ish"), e) })
+        assertEquals("CYLPlaceholderItemTapHighlightStyle must be dim, shrink or none.", failure { e -> CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemTapHighlightStyle" to "wobble"), e) })
+    }
+
+    @Test
+    fun styleMessageAndOffsetsMatchTheIOSExampleItem() {
+        // The iOS example's item (CYLPlaceholderDemoViewController): style, message, offsets and an animation file.
+        val view = CYLPlaceholderView.fromItemAttributes(context, mapOf(
+            "CYLPlaceholderItemStyle" to CYLPlaceholderStyle.Warning.ordinal,
+            "CYLPlaceholderItemMessage" to "error",
+            "CYLPlaceholderItemImagePositionAdjustment" to listOf(8, -6),
+            "CYLPlaceholderItemTitlePositionAdjustment" to listOf(0, 6),
+            "CYLPlaceholderItemAnimationFilePath" to "reserved-animation.json",
+        ))!!
+        assertEquals(CYLPlaceholderView.localizedTextForMessage(context, CYLPlaceholderMessage.Error), view.textLabel.text.toString())
+        assertNotNull("the style's icon", view.imageView.drawable)
+        assertEquals(8 * context.resources.displayMetrics.density, view.imageView.translationX, 0.01f)
+        assertEquals(6f, view.defaultTitlePositionAdjustment[1])
+        assertEquals("a missing animation keeps the icon", android.view.View.VISIBLE, view.imageView.visibility)
+        assertEquals("CYLPlaceholderItemStyle 99 is not a style.", failure { e -> CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemStyle" to 99), e) })
+        assertEquals("CYLPlaceholderItemTitlePositionAdjustment must be two numbers, x and y in dp.", failure { e -> CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemTitlePositionAdjustment" to listOf(1)), e) })
+    }
+
+    @Test
+    fun aComponentKeepsEveryItemKeyAndShowsThemThroughAPlaceholderView() {
+        val plain = CYLPlaceholderComponent.componentWithAttributes(mapOf("CYLPlaceholderItemTitle" to "Plain"), null)
+        val rich = CYLPlaceholderComponent.componentWithAttributes(mapOf("CYLPlaceholderItemTitle" to "Rich", "CYLPlaceholderItemAccessibilityLabel" to "Rich item"), null)
+        assertEquals("Rich item", rich.attributes["CYLPlaceholderItemAccessibilityLabel"])
+        assertEquals("Rich", rich.attributes["CYLPlaceholderItemTitle"])
+        val stack = CYLPlaceholderStackView(context, listOf(rich, plain))
+        val first = stack.componentViews.first()
+        assertTrue("the extra keys need the packaged view", first is CYLPlaceholderView)
+        assertEquals("Rich item", first.contentDescription)
+        assertEquals("Rich", stack.titleLabel.text.toString())
+        assertFalse("a plain component keeps the light layout", stack.componentViews[1] is CYLPlaceholderView)
+    }
+
+    @Test
     fun anActivityAppliesAStatusConfiguration() {
         val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
         assertTrue(activity.cyl_applyStatusConfiguration(mapOf("statusBar" to mapOf("text" to "Custom"), "showsWhenOffline" to false)))

@@ -60,8 +60,39 @@ open class CYLRefreshTrailer(context: Context) : FrameLayout(context) {
             if (field == value) return
             val old = field
             field = value
+            // An automatic refresh started by a drag uses one of the drag's [autoTriggerTimes] once it ends.
+            if (value != CYLRefreshState.Refreshing && value != CYLRefreshState.Pulling && triggerByDrag) {
+                if (leftTriggerTimes != -1) leftTriggerTimes -= 1
+                triggerByDrag = false
+            }
             stateDidChange(old, value)
         }
+
+    /**
+     * Whether pulling the trailer into view refreshes without a release (`automaticallyRefresh`); false, the default,
+     * keeps the pull-and-release behavior. Only applies when the content is wider than the list. A fling that reaches
+     * the end (no drag) also refreshes.
+     */
+    var automaticallyRefresh: Boolean = false
+
+    /**
+     * How much of the trailer must be in view before it refreshes automatically, 1 for fully
+     * (`triggerAutomaticallyRefreshPercent`).
+     */
+    var triggerAutomaticallyRefreshPercent: Float = 1f
+
+    /**
+     * Automatic refreshes allowed per drag, 1 by default; -1 for no limit (`autoTriggerTimes`). A fling without a drag
+     * is not limited.
+     */
+    var autoTriggerTimes: Int = 1
+        set(value) {
+            field = value
+            leftTriggerTimes = value
+        }
+
+    private var leftTriggerTimes = 1
+    private var triggerByDrag = false
 
     /**
      * True while refreshing (`isRefreshing`).
@@ -108,10 +139,12 @@ open class CYLRefreshTrailer(context: Context) : FrameLayout(context) {
     internal fun attach(list: RecyclerView) {
         scrollView = list
         list.addOnItemTouchListener(touches)
+        list.addOnScrollListener(flings)
     }
 
     internal fun detach() {
         scrollView?.removeOnItemTouchListener(touches)
+        scrollView?.removeOnScrollListener(flings)
         animator?.cancel()
         setPull(0f)
         scrollView = null
@@ -126,6 +159,28 @@ open class CYLRefreshTrailer(context: Context) : FrameLayout(context) {
         translationX = trailerWidth - pull
         pullingPercent = pull / (trailerWidth * triggerRate)
         if (!isRefreshing) state = if (pullingPercent >= 1f) CYLRefreshState.Pulling else CYLRefreshState.Idle
+    }
+
+    // The iOS shouldAutomaticallyRefreshWithChange:pullingPercent: (moving toward the end, content wider than the list,
+    // enough of the trailer in view, and a drag's automatic refreshes not used up).
+    private fun shouldAutomaticallyRefresh(movingLeft: Boolean, dragging: Boolean): Boolean {
+        val list = scrollView ?: return false
+        if (!automaticallyRefresh || !movingLeft) return false
+        if (state != CYLRefreshState.Idle && state != CYLRefreshState.Pulling) return false
+        if (list.computeHorizontalScrollRange() <= list.width) return false
+        if (pull / trailerWidth < triggerAutomaticallyRefreshPercent) return false
+        return !(dragging && leftTriggerTimes != -1 && leftTriggerTimes <= 0)
+    }
+
+    /**
+     * A fling that reaches the end refreshes when [automaticallyRefresh] is on (scrolling without a drag).
+     */
+    private val flings = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (!automaticallyRefresh || dx <= 0 || recyclerView.scrollState != RecyclerView.SCROLL_STATE_SETTLING) return
+            if (recyclerView.canScrollHorizontally(1) || recyclerView.computeHorizontalScrollRange() <= recyclerView.width) return
+            if (state == CYLRefreshState.Idle) beginRefreshing()
+        }
     }
 
     private fun animatePull(to: Float, end: () -> Unit) {
@@ -154,7 +209,11 @@ open class CYLRefreshTrailer(context: Context) : FrameLayout(context) {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             when (e.actionMasked) {
-                MotionEvent.ACTION_DOWN -> { lastX = e.x; startX = e.x }
+                MotionEvent.ACTION_DOWN -> {
+                    lastX = e.x
+                    startX = e.x
+                    leftTriggerTimes = autoTriggerTimes
+                }
                 MotionEvent.ACTION_MOVE -> {
                     val movingLeft = e.x < lastX
                     lastX = e.x
@@ -170,9 +229,21 @@ open class CYLRefreshTrailer(context: Context) : FrameLayout(context) {
 
         override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
             when (e.actionMasked) {
-                MotionEvent.ACTION_MOVE -> setPull((startX - e.x) * DAMPING)
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
-                    if (state == CYLRefreshState.Pulling) beginRefreshing() else animatePull(0f) {}
+                MotionEvent.ACTION_MOVE -> {
+                    val movingLeft = e.x < lastX
+                    lastX = e.x
+                    if (isRefreshing) return
+                    setPull((startX - e.x) * DAMPING)
+                    if (shouldAutomaticallyRefresh(movingLeft, dragging = true)) {
+                        triggerByDrag = true
+                        beginRefreshing()
+                    }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> when {
+                    isRefreshing -> Unit
+                    state == CYLRefreshState.Pulling -> beginRefreshing()
+                    else -> animatePull(0f) {}
+                }
             }
         }
 

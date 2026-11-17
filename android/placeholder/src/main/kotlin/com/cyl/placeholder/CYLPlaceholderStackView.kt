@@ -155,8 +155,11 @@ class CYLPlaceholderStackView internal constructor(
         super.onDetachedFromWindow()
     }
 
-    private fun allViews(view: View): List<View> =
-        if (view is LinearLayout && view.tag == ITEM_TAG) (0 until view.childCount).map { view.getChildAt(it) } else listOf(view)
+    private fun allViews(view: View): List<View> = when {
+        view is LinearLayout && view.tag == ITEM_TAG -> (0 until view.childCount).map { view.getChildAt(it) }
+        view is CYLPlaceholderView -> listOf(view.imageView, view.textLabel)
+        else -> listOf(view)
+    }
 
     /**
      * Adds [component] at the end (`appendComponent:`).
@@ -223,6 +226,11 @@ class CYLPlaceholderStackView internal constructor(
         val secondary = Color.rgb(0x8E, 0x8E, 0x93)
         return when (component.kind) {
             CYLPlaceholderComponent.Kind.Item -> {
+                // [EN] Item keys beyond the title, image, color and size: the packaged CYLPlaceholderView applies them
+                // (an animation file, colors, accessibility...), as iOS does.
+                if (component.usesItemAttributes) {
+                    CYLPlaceholderView.fromItemAttributes(context, component.attributes)?.let { return it }
+                }
                 val text = component.title?.let { title ->
                     TextView(context).apply {
                         this.text = title

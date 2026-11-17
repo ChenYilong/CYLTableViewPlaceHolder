@@ -85,16 +85,30 @@ class CYLPlaceholderComponent private constructor(
     var animationRepeatCount: Int = 0
 
     /**
+     * The other iOS item keys of a component made by [componentWithAttributes], kept as given.
+     */
+    private var extraAttributes: Map<String, Any> = emptyMap()
+
+    /**
      * The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle",
-     * "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize".
+     * "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize",
+     * and every other item key given to [componentWithAttributes] (see [CYLPlaceholderView.Companion.fromItemAttributes]).
      */
     val attributes: Map<String, Any>
         get() = buildMap {
+            putAll(extraAttributes)
             title?.let { put(TITLE, it) }
             if (image != 0) put(IMAGE, image)
             if (titleColor != 0) put(TITLE_COLOR, titleColor)
             if (titleSizeSp != 0f) put(TITLE_FONT_SIZE, titleSizeSp)
         }
+
+    /**
+     * Whether the stack view shows this component as a [CYLPlaceholderView] made from [attributes]: it has item keys
+     * beyond the title, image, title color and size (an animation file, other colors, accessibility...).
+     */
+    internal val usesItemAttributes: Boolean
+        get() = kind == Kind.Item && extraAttributes.keys.any { it !in BASIC_KEYS }
 
     /**
      * Makes components with the iOS factory names.
@@ -104,6 +118,7 @@ class CYLPlaceholderComponent private constructor(
         private const val IMAGE = "CYLPlaceholderItemImage"
         private const val TITLE_COLOR = "CYLPlaceholderItemTitleColor"
         private const val TITLE_FONT_SIZE = "CYLPlaceholderItemTitleFontSize"
+        private val BASIC_KEYS = setOf(TITLE, IMAGE, TITLE_COLOR, TITLE_FONT_SIZE)
 
         /**
          * A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action]
@@ -113,7 +128,7 @@ class CYLPlaceholderComponent private constructor(
         fun componentWithAttributes(attributes: Map<String, Any>, action: String?): CYLPlaceholderComponent = CYLPlaceholderComponent(
             Kind.Item, (attributes[IMAGE] as? Int) ?: 0, true, ICON_SIDE, attributes[TITLE] as? CharSequence,
             (attributes[TITLE_FONT_SIZE] as? Number)?.toFloat() ?: 0f, (attributes[TITLE_COLOR] as? Int) ?: 0, null, action,
-        )
+        ).apply { extraAttributes = attributes.filterKeys { it !in BASIC_KEYS } }
 
         /**
          * An icon of [side] dp with an optional [title] below it, running [action] when tapped. The iOS

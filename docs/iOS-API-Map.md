@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（699 / 699 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (699 of 699 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（702 / 702 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (702 of 702 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
 
@@ -64,7 +64,7 @@
 | `CYLRefreshAutoAnimationFooter.animationView` (val) | The view that shows the animation (`animationView`). | `CYLRefreshAutoAnimationFooter` `animationView` |  |
 | `CYLRefreshAutoAnimationFooter.setAnimationImages` (fun) | The frames of [state], [duration] seconds in all (`setAnimationImages:duration:forState:`). | `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:`, `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` |  |
 | `CYLRefreshAutoAnimationFooter.setAnimationImages` (fun) | The frames of [state], 0.1 seconds each (`setAnimationImages:forState:`). | `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:`, `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` |  |
-| `CYLRefreshBackFooter` (class) | A footer that loads when pulled up and released (iOS `CYLRefreshBackFooter`). | `CYLRefreshBackFooter` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshBackFooter` (class) | A footer that loads when pulled up and released (iOS `CYLRefreshBackFooter`). | `CYLRefreshBackFooter` |  |
 | `CYLRefreshBackFooter.noMoreDataDisplayDuration` (var) | Seconds "no more data" stays visible, with the footer held open, after a load ends with [endRefreshingWithNoMoreData] (`noMoreDataDisplayDuration`); 0 rebounds at once. | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` |  |
 | `CYLRefreshBackFooter.secondaryTriggerOffset` (var) | Pulling up this far and releasing opens the second floor below the list, in dp; 0 for never (`secondaryTriggerOffset`). | `CYLRefreshBackFooter` `secondaryTriggerOffset` |  |
 | `CYLRefreshBackFooter.secondaryDimension` (var) | The open second floor's height, in dp; 0 for the layout's height (`secondaryDimension`). | `CYLRefreshBackFooter` `secondaryDimension` |  |
@@ -157,7 +157,7 @@
 | `CYLRefreshComponent.cyl_endingAnimationBeginningAction` (fun) | Sets [endRefreshingAnimationBeginAction] (`cyl_endingAnimationBeginningAction:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` |  |
 | `CYLRefreshComponent.cyl_afterEndingAction` (fun) | Sets [endRefreshingCompletionBlock] (`cyl_afterEndingAction:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterEndingAction:` |  |
 | `CYLRefreshComponent.cyl_linkTo` (fun) | Attaches the component to [layout] (`cyl_linkTo:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_linkTo:` |  |
-| `CYLRefreshHeader` (class) | The iOS `CYLRefreshHeader` on Android: pull down to refresh. | `CYLRefreshHeader` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshHeader` (class) | The iOS `CYLRefreshHeader` on Android: pull down to refresh. | `CYLRefreshHeader` |  |
 | `CYLRefreshHeader.lastUpdatedTimeKey` (var) | The key the last update time is stored under (`lastUpdatedTimeKey`). | `CYLRefreshHeader` `lastUpdatedTimeKey` |  |
 | `CYLRefreshHeader.lastUpdatedTime` (val) | When the header last finished refreshing, or null (`lastUpdatedTime`), kept across launches. | `CYLRefreshHeader` `lastUpdatedTime` |  |
 | `CYLRefreshHeader.ignoredScrollViewContentInsetTop` (var) | The top inset the header ignores, in dp (`ignoredScrollViewContentInsetTop`): the layout's header inset start. | `CYLRefreshHeader` `ignoredScrollViewContentInsetTop` |  |
@@ -229,7 +229,7 @@
 | `CYLRefreshConst.CYLRefreshDidChangeLanguageNotification` (val) | The name of the notice sent when the refresh texts' language changes. | `CYLRefreshDidChangeLanguageNotification` |  |
 | `CYLRefreshState` (enum) | A refresh component's state (`CYLRefreshState`). | `CYLRefreshState` |  |
 | `CYLRefreshScrollMode` (enum) | How the component moves with the pull (`CYLRefreshScrollMode`); on Android, SmartRefreshLayout's spinner style. | `CYLRefreshScrollMode` |  |
-| `CYLRefreshTriggerMode` (enum) | Where a pull may start (`CYLRefreshTriggerMode`). | `CYLRefreshTriggerMode` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshTriggerMode` (enum) | Where a pull may start (`CYLRefreshTriggerMode`). | `CYLRefreshTriggerMode` |  |
 | `CYLRefreshPhase` (enum) | A refresh component's detailed phase (`CYLRefreshPhase`). | `CYLRefreshPhase` |  |
 | `CYLRefreshComponentRefreshingBlock` (typealias) | Called when a component starts refreshing (`CYLRefreshComponentRefreshingBlock`). | `CYLRefreshComponentRefreshingBlock` |  |
 | `CYLRefreshComponentBeginRefreshingCompletionBlock` (typealias) | Called once a refresh has begun (`CYLRefreshComponentBeginRefreshingCompletionBlock`). | `CYLRefreshComponentBeginRefreshingCompletionBlock` |  |
@@ -377,6 +377,9 @@
 | `CYLRefreshTrailer.triggerRate` (var) | The share of the trailer's width to pull before release refreshes (`triggerRate`). | `CYLRefreshTrailer` `triggerRate` | matched by the iOS name its KDoc cites |
 | `CYLRefreshTrailer.pullingPercent` (var) | How far the trailer is pulled, as a share of the trigger distance (`pullingPercent`). | `CYLRefreshTrailer` `pullingPercent` | matched by the iOS name its KDoc cites |
 | `CYLRefreshTrailer.state` (var) | The current state (`state`). | `CYLRefreshTrailer` `state` | matched by the iOS name its KDoc cites |
+| `CYLRefreshTrailer.automaticallyRefresh` (var) | Whether pulling the trailer into view refreshes without a release (`automaticallyRefresh`); false, the default, keeps the pull-and-release behavior. | `CYLRefreshTrailer` `automaticallyRefresh` |  |
+| `CYLRefreshTrailer.triggerAutomaticallyRefreshPercent` (var) | How much of the trailer must be in view before it refreshes automatically, 1 for fully (`triggerAutomaticallyRefreshPercent`). | `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` |  |
+| `CYLRefreshTrailer.autoTriggerTimes` (var) | Automatic refreshes allowed per drag, 1 by default; -1 for no limit (`autoTriggerTimes`). | `CYLRefreshTrailer` `autoTriggerTimes` |  |
 | `CYLRefreshTrailer.isRefreshing` (val) | True while refreshing (`isRefreshing`). | `CYLRefreshTrailer` `isRefreshing` | matched by the iOS name its KDoc cites |
 | `CYLRefreshTrailer.scrollView` (var) | The list the trailer is attached to, or null (`scrollView`). | `CYLRefreshTrailer` `scrollView` | matched by the iOS name its KDoc cites |
 | `CYLRefreshTrailer.trailerWidth` (val) | The trailer's width, in pixels (`CYLRefreshTrailWidth`). | `CYLRefreshTrailWidth` | matched by the iOS name its KDoc cites |
@@ -403,7 +406,7 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPAGPlaceholderItemAnimator` (object) | Plays PAG files with libpag (iOS `CYLPAGPlaceholderItemAnimator`). | `CYLPAGPlaceholderItemAnimator` | matched by the iOS name its KDoc cites |
+| `CYLPAGPlaceholderItemAnimator` (object) | Plays PAG files with libpag (iOS `CYLPAGPlaceholderItemAnimator`). | `CYLPAGPlaceholderItemAnimator` |  |
 | `CYLPAGPlaceholderItemAnimator.animator` (val) | The PAG animator (`animator`). | `CYLPAGPlaceholderItemAnimator` `animator` | matched by the iOS name its KDoc cites |
 | `CYLPAGPlaceholderItemAnimator.register` (fun) | Adds [animator] to the shared registry (`registerAnimator:` on the shared registry). | `CYLPAGPlaceholderItemAnimator` `registerAnimator:` | matched by the iOS name its KDoc cites |
 | `CYLPAGPlaceholderItemAnimatorInstaller` (class) | Registers [CYLPAGPlaceholderItemAnimator.animator] when the app starts; declared in this module's manifest. | `+[CYLPAGPlaceholderItemAnimator load]` (registers itself) | Android: a ContentProvider; iOS: +load |
@@ -412,8 +415,8 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRivePlaceholderItemAnimator` (object) | Plays Rive files with rive-android (iOS `CYLRivePlaceholderItemAnimator`). | `CYLRivePlaceholderItemAnimator` | matched by the iOS name its KDoc cites |
-| `CYLRivePlaceholderItemAnimator.animator` (val) | The Rive animator (`animator`). | `CYLRivePlaceholderItemAnimator` `animator` | matched by the iOS name its KDoc cites |
+| `CYLRivePlaceholderItemAnimator` (object) | Plays Rive files with rive-android (iOS `CYLRivePlaceholderItemAnimator`). | `CYLRivePlaceholderItemAnimator` |  |
+| `CYLRivePlaceholderItemAnimator.animator` (val) | The Rive animator (`animator`). | `CYLRivePlaceholderItemAnimator` `animator` |  |
 | `CYLRivePlaceholderItemAnimator.register` (fun) | Adds [animator] to the shared registry (`registerAnimator:` on the shared registry). | `CYLRivePlaceholderItemAnimator` `registerAnimator:` | matched by the iOS name its KDoc cites |
 | `CYLRivePlaceholderItemAnimatorInstaller` (class) | Starts the Rive runtime and registers [CYLRivePlaceholderItemAnimator.animator] when the app starts; declared in this module's manifest. | `+[CYLRivePlaceholderItemAnimator load]` (registers itself) | Android: a ContentProvider; iOS: +load |
 
@@ -535,7 +538,7 @@
 | `CYLPlaceholderComponent.spacingBefore` (var) | The space above the component, in dp (`spacingBefore`). | `CYLPlaceholderComponent` `spacingBefore` |  |
 | `CYLPlaceholderComponent.interactionEnabled` (var) | Whether the component reacts to taps (`interactionEnabled`); a button that does not is shown disabled. | `CYLPlaceholderComponent` `interactionEnabled` |  |
 | `CYLPlaceholderComponent.animationRepeatCount` (var) | How often an animated icon repeats (`animationRepeatCount`); Android shows the static icon, so it is kept for apps that play the animation themselves. | `CYLPlaceholderComponent` `animationRepeatCount` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderComponent.attributes` (val) | The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize". | `CYLPlaceholderComponent` `attributes` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderComponent.attributes` (val) | The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize", and every other | `CYLPlaceholderComponent` `attributes` |  |
 | `CYLPlaceholderComponent.componentWithAttributes` (fun) | A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action] when tapped (`componentWithAttributes:action:`). | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderComponent.icon` (fun) | An icon of [side] dp with an optional [title] below it, running [action] when tapped. | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderComponent.text` (fun) | A text of its own, [sizeSp] large and [color] colored (0 for the default). | `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | added 2026-11-16 for Android parity |
@@ -554,7 +557,7 @@
 | `fromConfiguration` (fun) | A placeholder from a configuration dictionary (iOS `-[CYLPlaceholderStackView initWithConfiguration:actions:error:]`): "scenario" (a name), "components" (component dictionaries, replacing the scenario's), "overrides" (di | `initWithConfiguration:actions:error:` | matched by the iOS name its KDoc cites |
 | `fromContentsOfURL` (fun) | The configuration in a local ".json" file, a path or "asset:name" (iOS `-initWithContentsOfURL:actions:error:`). | `initWithContentsOfURL:actions:error:` | matched by the iOS name its KDoc cites |
 | `fromConfiguration` (fun) | A banner from a configuration dictionary (iOS `-[CYLPlaceholderStatusView initWithConfiguration:error:]`): "text", "textKey", "image" (a drawable name), "titleColor" and "backgroundColor" (color strings such as "#FFC7C7" | `initWithConfiguration:error:` | matched by the iOS name its KDoc cites |
-| `fromItemAttributes` (fun) | A placeholder view from item keys (iOS `-[CYLPlaceholderView initWithItemAttributes:imageBundle:error:]`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name) and "CY | `initWithItemAttributes:imageBundle:error:` | matched by the iOS name its KDoc cites |
+| `fromItemAttributes` (fun) | A placeholder view from item keys (iOS `-[CYLPlaceholderView initWithItemAttributes:imageBundle:error:]`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name), "CYLPl | `initWithItemAttributes:imageBundle:error:` | matched by the iOS name its KDoc cites |
 | `fromItemContentsOfURL` (fun) | Reads the item keys from a local ".json" file (iOS `-initWithItemContentsOfURL:imageBundle:error:`). | `initWithItemContentsOfURL:imageBundle:error:` | matched by the iOS name its KDoc cites |
 | `cyl_applyStatusConfiguration` (fun) | Applies a status configuration (iOS `-[UIViewController cyl_applyStatusConfiguration:error:`): "statusBar" (true or "networkUnavailable" for the network banner, or a dictionary for [CYLPlaceholderStatusView.Companion.fro | `cyl_applyStatusConfiguration:error:` | matched by the iOS name its KDoc cites |
 | `cyl_applyStatusConfigurationWithContentsOfURL` (fun) | The same, from a local ".json" file (iOS `-cyl_applyStatusConfigurationWithContentsOfURL:error:`). | `cyl_applyStatusConfigurationWithContentsOfURL:error:` | matched by the iOS name its KDoc cites |

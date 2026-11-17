@@ -347,9 +347,14 @@ private fun StackPage.flatDesignItem(fromFile: Boolean) {
     val placeholder = if (fromFile) {
         CYLPlaceholderView.fromItemContentsOfURL(context, "asset:$ITEM_FILE") { failure = it.message }
     } else {
+        // The same keys as the iOS example: style, message, offsets and a reserved animation file (the icon stays when
+        // no animator plays it).
         CYLPlaceholderView.fromItemAttributes(context, mapOf(
-            "CYLPlaceholderItemTitle" to CYLPlaceholderView.localizedTextForMessage(context, CYLPlaceholderMessage.Error),
-            "CYLPlaceholderItemImage" to "cyl_placeholder_warning",
+            "CYLPlaceholderItemStyle" to CYLPlaceholderStyle.Warning.ordinal,
+            "CYLPlaceholderItemMessage" to CYLPlaceholderMessage.Error.ordinal,
+            "CYLPlaceholderItemImagePositionAdjustment" to listOf(8, -6),
+            "CYLPlaceholderItemTitlePositionAdjustment" to listOf(0, 6),
+            "CYLPlaceholderItemAnimationFilePath" to "reserved-animation.json",
         )) { failure = it.message }
     }
     if (placeholder == null) {

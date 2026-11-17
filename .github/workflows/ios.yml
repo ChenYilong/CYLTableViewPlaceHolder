@@ -74,6 +74,9 @@ jobs:
       - run: python3 scripts/check_doc_comments.py
       # The Android -> iOS API map (docs/iOS-API-Map.md) is generated from the Android core and ios-map.json.
       - run: python3 scripts/ios-api-map.py --check
+      # The iOS -> Android maps: docs/Android-API-Map.md and table B, docs/iOS-Android-Parity.md (English).
+      - run: python3 scripts/android-api-map.py --check
+      - run: python3 scripts/ios-android-parity.py --check
 
   # Full `pod lib lint` of every subspec (Core, CYLPlaceholderItemAnimation, LottieSwift, PAG, PAGEnterprise, Rive, GIF).
   lint:

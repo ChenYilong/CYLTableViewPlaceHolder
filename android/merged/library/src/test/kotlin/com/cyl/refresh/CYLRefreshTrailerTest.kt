@@ -86,4 +86,53 @@ class CYLRefreshTrailerTest {
         assertSame(column, list.parent)
         assertNull(trailer.parent)
     }
+    @Test
+    fun anAutomaticTrailerRefreshesWithoutARelease() {
+        // Three pages: the content is wider than the list; scroll to the last one.
+        val list = pages(3)
+        val column = LinearLayout(activity).apply { addView(list, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400)) }
+        activity.setContentView(column)
+        var refreshed = 0
+        val trailer = CYLRefreshNormalTrailer.trailerWithRefreshingBlock(activity) { refreshed += 1 }
+        trailer.automaticallyRefresh = true
+        trailer.triggerAutomaticallyRefreshPercent = 0.5f
+        list.cyl_trailer = trailer
+        idle()
+        list.scrollToPosition(2)
+        idle()
+        assertTrue("at the end", !list.canScrollHorizontally(1))
+        // Pulling half the trailer into view refreshes while the finger is still down.
+        val start = SystemClock.uptimeMillis()
+        val y = list.height / 2f
+        list.dispatchTouchEvent(MotionEvent.obtain(start, start, MotionEvent.ACTION_DOWN, 700f, y, 0))
+        for (i in 1..20) list.dispatchTouchEvent(MotionEvent.obtain(start, start + i * 10L, MotionEvent.ACTION_MOVE, 700f - i * 20f, y, 0))
+        assertEquals("refreshed before the release", 1, refreshed)
+        assertEquals(CYLRefreshState.Refreshing, trailer.state)
+        list.dispatchTouchEvent(MotionEvent.obtain(start, start + 220, MotionEvent.ACTION_UP, 300f, y, 0))
+        trailer.endRefreshing()
+        idle()
+        // The default autoTriggerTimes (1) is used up until the next drag.
+        assertEquals(CYLRefreshState.Idle, trailer.state)
+        list.cyl_trailer = null
+    }
+
+    @Test
+    fun aTrailerOverNarrowContentKeepsPullAndRelease() {
+        val list = pages(1)
+        activity.setContentView(LinearLayout(activity).apply { addView(list, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400)) })
+        var refreshed = 0
+        val trailer = CYLRefreshNormalTrailer.trailerWithRefreshingBlock(activity) { refreshed += 1 }
+        trailer.automaticallyRefresh = true
+        list.cyl_trailer = trailer
+        idle()
+        val start = SystemClock.uptimeMillis()
+        val y = list.height / 2f
+        list.dispatchTouchEvent(MotionEvent.obtain(start, start, MotionEvent.ACTION_DOWN, 700f, y, 0))
+        for (i in 1..20) list.dispatchTouchEvent(MotionEvent.obtain(start, start + i * 10L, MotionEvent.ACTION_MOVE, 700f - i * 30f, y, 0))
+        assertEquals("no automatic refresh over a single page", 0, refreshed)
+        list.dispatchTouchEvent(MotionEvent.obtain(start, start + 220, MotionEvent.ACTION_UP, 100f, y, 0))
+        idle()
+        assertEquals("the release still refreshes", 1, refreshed)
+        list.cyl_trailer = null
+    }
 }

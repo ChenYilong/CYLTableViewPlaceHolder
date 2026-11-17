@@ -303,9 +303,9 @@
   "note": "kept for apps that play the animation; Android shows the static icon"
  },
  "CYLPlaceholderComponent attributes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.attributes",
-  "note": "title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO)"
+  "note": "every item key is kept; keys beyond the title, image, color and size show through CYLPlaceholderView.fromItemAttributes"
  },
  "CYLPlaceholderComponent imageBundle": {
   "status": "n/a",
@@ -1215,9 +1215,9 @@
   "note": "Int flags combined with or"
  },
  "CYLPlaceholderStatusView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderStatusView",
-  "note": "creating one from a configuration is TODO"
+  "note": "CYLPlaceholderStatusView.fromConfiguration makes one from a configuration"
  },
  "CYLPlaceholderStatusView -initWithCoder:": {
   "status": "n/a",
@@ -1284,7 +1284,7 @@
  "CYLPlaceholderView": {
   "status": "partial",
   "android": "com.cyl.placeholder.CYLPlaceholderView",
-  "note": "creating one from an item configuration (dictionary or file) is TODO"
+  "note": "fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied"
  },
  "CYLPlaceholderView +bundledAnimationFileNames": {
   "status": "n/a",
@@ -1629,9 +1629,9 @@
   "android": "CYLRefreshBackAnimationFooter.animationView"
  },
  "CYLRefreshBackFooter": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackFooter",
-  "note": "the second floor (secondary*) is TODO"
+  "note": "pull to load and the second floor (secondary*)"
  },
  "CYLRefreshBackFooter -closeSecondary": {
   "status": "done",
@@ -2341,7 +2341,7 @@
  "CYLRefreshFlyView": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshFlyView colorAccent": {
   "status": "n/a",
@@ -2415,7 +2415,7 @@
  "CYLRefreshGamePlayingScene": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshGamePlayingScene -finishWithSuccess:": {
   "status": "n/a",
@@ -2484,9 +2484,9 @@
   "android": "CYLRefreshGifHeader.gifView"
  },
  "CYLRefreshHeader": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshHeader",
-  "note": "pull to refresh; the second floor (secondary*) is TODO"
+  "note": "pull to refresh and the second floor (secondary*)"
  },
  "CYLRefreshHeader +headerWithRefreshingBlock:": {
   "status": "done",
@@ -2735,7 +2735,7 @@
  "CYLRefreshMountainView": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
   "status": "n/a",
@@ -2993,7 +2993,7 @@
  "CYLRefreshStoreHouseLine": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshStoreHouseLine alpha": {
   "status": "n/a",
@@ -3026,7 +3026,7 @@
  "CYLRefreshStoreHousePath": {
   "status": "partial",
   "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshStoreHousePath +arrayAkta": {
   "status": "n/a",
@@ -3065,9 +3065,9 @@
   "android": "CYLRefreshConst.CYLRefreshTrailerPullingText"
  },
  "CYLRefreshTriggerMode": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshTriggerMode",
-  "note": "the enum exists; triggerMode is not wired yet (TODO)"
+  "note": "read by CYLRefreshComponent.triggerMode (OnEdge / Anywhere)"
  },
  "CYLRefreshValueAnimator": {
   "status": "n/a",
@@ -3217,7 +3217,7 @@
  "CYLRefreshVectorImage": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.PathsDrawable",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorImage -addElement:": {
   "status": "n/a",
@@ -3287,7 +3287,7 @@
  "CYLRefreshVectorPathsParser": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.path.PathParser",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
   "status": "n/a",
@@ -3401,7 +3401,7 @@
  "CYLRefreshVectorView": {
   "status": "partial",
   "android": "com.scwang.smart.drawable.view.PathsView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "note": "the Android class with the same role; its members are its own"
  },
  "CYLRefreshVectorView -parserColors:": {
   "status": "n/a",
@@ -3697,16 +3697,17 @@
   "note": "the Android trailer moves the list itself, there is no content inset to ignore"
  },
  "CYLRefreshTrailer automaticallyRefresh": {
-  "status": "planned",
-  "note": "automatic refresh while dragging is not ported yet"
+  "status": "done",
+  "android": "CYLRefreshTrailer.automaticallyRefresh",
+  "note": "a fling that reaches the end also refreshes"
  },
  "CYLRefreshTrailer triggerAutomaticallyRefreshPercent": {
-  "status": "planned",
-  "note": "automatic refresh while dragging is not ported yet"
+  "status": "done",
+  "android": "CYLRefreshTrailer.triggerAutomaticallyRefreshPercent"
  },
  "CYLRefreshTrailer autoTriggerTimes": {
-  "status": "planned",
-  "note": "automatic refresh while dragging is not ported yet"
+  "status": "done",
+  "android": "CYLRefreshTrailer.autoTriggerTimes"
  },
  "CYLRefreshNormalTrailer": {
   "status": "done",
@@ -3777,5 +3778,17 @@
  "UIScrollView(CYLPlaceholderVisibility) cyl_placeholderView": {
   "status": "done",
   "android": "RecyclerView.cyl_placeholderView"
+ },
+ "CYLPAGPlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.pag.CYLPAGPlaceholderItemAnimator"
+ },
+ "CYLRivePlaceholderItemAnimator": {
+  "status": "done",
+  "android": "com.cyl.placeholder.rive.CYLRivePlaceholderItemAnimator"
+ },
+ "CYLRivePlaceholderItemAnimator animator": {
+  "status": "done",
+  "android": "CYLRivePlaceholderItemAnimator.animator"
  }
 }

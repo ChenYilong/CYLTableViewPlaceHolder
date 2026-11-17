@@ -109,3 +109,10 @@ Carthage binary JSON or SPM manifest to update yet.
   XCUITest can still fail with "Timed out while launching application via
   Xcode" before any test code runs (seen in the `Accessibility` job). That is
   the runner, not the library: re-run the job once; a second failure is real.
+
+## Android
+
+`.github/workflows/android.yml` (added 2026-11-17) runs the Android unit tests (`:placeholder`, `:placeholder-lottie`,
+`:placeholder-rive`, `:merged`) and builds `:merged-example` on `ubuntu-latest`, whose Android SDK has its licenses
+accepted. It runs when `android/**` changes. The iOS workflow's docs job also checks the generated API tables:
+`docs/iOS-API-Map.md` (table A), `docs/Android-API-Map.md` and `docs/iOS-Android-Parity.md` (table B, English).

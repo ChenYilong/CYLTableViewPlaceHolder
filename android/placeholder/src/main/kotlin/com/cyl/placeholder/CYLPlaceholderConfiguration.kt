@@ -269,8 +269,16 @@ fun CYLPlaceholderStatusView.Companion.fromConfiguration(context: Context, confi
 
 /**
  * A placeholder view from item keys (iOS `-[CYLPlaceholderView initWithItemAttributes:imageBundle:error:]`):
- * "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name) and
- * "CYLPlaceholderItemTitleColor". There is no image bundle: names are drawable resources.
+ * "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name),
+ * "CYLPlaceholderItemStyle" / "CYLPlaceholderItemMessage" (the built-in icon / text when no image / title is set),
+ * "CYLPlaceholderItemImagePositionAdjustment" / "CYLPlaceholderItemTitlePositionAdjustment" ([x, y] in dp), the colors
+ * "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemIconColor", "CYLPlaceholderItemBackgroundColor" and their
+ * "CYLPlaceholderItemSelected…" variants (a color int or "#RRGGBB"), "CYLPlaceholderItemTitleFontSize" (sp, Android takes
+ * no UIFont), an animation file ("CYLPlaceholderItemAnimationFilePath" or the Lottie / PAG / Rive / GIF file keys, played
+ * by the registered animators), "CYLPlaceholderItemAnimationRepeatCount", "CYLPlaceholderItemInteractionEnabled",
+ * "CYLPlaceholderItemTapHighlightStyle" ("dim", "shrink", "none"), "CYLPlaceholderItemAccessibilityIdentifier" (the
+ * view's tag) and "CYLPlaceholderItemAccessibilityLabel". Every key is kept in [CYLPlaceholderView.itemAttributes].
+ * There is no image bundle: names are drawable resources.
  */
 fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes: Map<String, Any?>?, error: CYLPlaceholderConfigurationErrorHandler? = null): CYLPlaceholderView? {
     if (attributes == null) return error.fail("The item attributes must be a dictionary.")
@@ -283,13 +291,83 @@ fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes
         is String -> drawableId(context, value).takeIf { it != 0 }?.let { ContextCompat.getDrawable(context, it) } ?: return error.fail("The image $value was not found.")
         else -> return error.fail("CYLPlaceholderItemImage must be a drawable, a resource or a name.")
     }
-    val view = CYLPlaceholderView(context, image, title as CharSequence?)
-    when (val titleColor = attributes["CYLPlaceholderItemTitleColor"]) {
-        null -> Unit
-        is Int -> view.defaultTitleColor = titleColor
-        is String -> view.defaultTitleColor = color(titleColor) ?: return error.fail("CYLPlaceholderItemTitleColor is not a color.")
-        else -> return error.fail("CYLPlaceholderItemTitleColor must be a color.")
+    // "CYLPlaceholderItemStyle" and "CYLPlaceholderItemMessage" give the built-in icon and text when no image or title is
+    // set: the iOS raw value (an Int), the name ("warning") or the enum.
+    val style: CYLPlaceholderStyle? = when (val value = attributes["CYLPlaceholderItemStyle"]) {
+        null -> null
+        is CYLPlaceholderStyle -> value
+        is Number -> CYLPlaceholderStyle.values().getOrNull(value.toInt()) ?: return error.fail("CYLPlaceholderItemStyle ${value.toInt()} is not a style.")
+        is String -> CYLPlaceholderStyle.values().firstOrNull { it.name.equals(value, ignoreCase = true) } ?: return error.fail("CYLPlaceholderItemStyle $value is not a style.")
+        else -> return error.fail("CYLPlaceholderItemStyle must be a style.")
     }
+    val message: CYLPlaceholderMessage? = when (val value = attributes["CYLPlaceholderItemMessage"]) {
+        null -> null
+        is CYLPlaceholderMessage -> value
+        is Number -> CYLPlaceholderMessage.values().getOrNull(value.toInt()) ?: return error.fail("CYLPlaceholderItemMessage ${value.toInt()} is not a message.")
+        is String -> CYLPlaceholderMessage.values().firstOrNull { it.name.equals(value, ignoreCase = true) } ?: return error.fail("CYLPlaceholderItemMessage $value is not a message.")
+        else -> return error.fail("CYLPlaceholderItemMessage must be a message.")
+    }
+    val view = CYLPlaceholderView(context, image ?: style?.let { CYLPlaceholderView.imageForStyle(context, it) },
+        (title as CharSequence?) ?: message?.let { CYLPlaceholderView.localizedTextForMessage(context, it) })
+    fun offset(key: String): FloatArray? = when (val value = attributes[key]) {
+        null -> null
+        is FloatArray -> value.takeIf { it.size == 2 }
+        is List<*> -> value.mapNotNull { (it as? Number)?.toFloat() }.takeIf { it.size == 2 }?.toFloatArray()
+        else -> null
+    }
+    for (key in listOf("CYLPlaceholderItemImagePositionAdjustment", "CYLPlaceholderItemTitlePositionAdjustment")) {
+        if (attributes[key] != null && offset(key) == null) return error.fail("$key must be two numbers, x and y in dp.")
+    }
+    offset("CYLPlaceholderItemImagePositionAdjustment")?.let {
+        view.imageView.translationX = it[0] * context.resources.displayMetrics.density
+        view.imageView.translationY = it[1] * context.resources.displayMetrics.density
+    }
+    offset("CYLPlaceholderItemTitlePositionAdjustment")?.let { view.defaultTitlePositionAdjustment = it }
+    val colors = listOf<Pair<String, (Int) -> Unit>>(
+        "CYLPlaceholderItemTitleColor" to { view.defaultTitleColor = it },
+        "CYLPlaceholderItemIconColor" to { view.defaultIconColor = it },
+        "CYLPlaceholderItemBackgroundColor" to { view.defaultBackgroundColor = it },
+        "CYLPlaceholderItemSelectedTitleColor" to { view.defaultSelectedTitleColor = it },
+        "CYLPlaceholderItemSelectedIconColor" to { view.defaultSelectedIconColor = it },
+        "CYLPlaceholderItemSelectedBackgroundColor" to { view.defaultSelectedBackgroundColor = it },
+    )
+    for ((key, apply) in colors) {
+        when (val value = attributes[key]) {
+            null -> Unit
+            is Int -> apply(value)
+            is String -> apply(color(value) ?: return error.fail("$key is not a color."))
+            else -> return error.fail("$key must be a color.")
+        }
+    }
+    when (val size = attributes["CYLPlaceholderItemTitleFontSize"]) {
+        null -> Unit
+        is Number -> if (size.toFloat() > 0f) view.defaultTitleFont = size.toFloat() else return error.fail("CYLPlaceholderItemTitleFontSize must be positive.")
+        else -> return error.fail("CYLPlaceholderItemTitleFontSize must be a number.")
+    }
+    when (val count = attributes["CYLPlaceholderItemAnimationRepeatCount"]) {
+        null -> Unit
+        is Number -> view.animationRepeatCount = count.toInt()
+        else -> return error.fail("CYLPlaceholderItemAnimationRepeatCount must be a number.")
+    }
+    when (val enabled = attributes["CYLPlaceholderItemInteractionEnabled"]) {
+        null -> Unit
+        is Boolean -> view.tapInteractionEnabled = enabled
+        else -> return error.fail("CYLPlaceholderItemInteractionEnabled must be a boolean.")
+    }
+    when (val style = attributes["CYLPlaceholderItemTapHighlightStyle"]) {
+        null -> Unit
+        is CYLPlaceholderTapHighlightStyle -> view.tapHighlightStyle = style
+        is String -> view.tapHighlightStyle = CYLPlaceholderTapHighlightStyle.values().firstOrNull { it.name.equals(style, ignoreCase = true) }
+            ?: return error.fail("CYLPlaceholderItemTapHighlightStyle must be dim, shrink or none.")
+        else -> return error.fail("CYLPlaceholderItemTapHighlightStyle must be a style.")
+    }
+    string(attributes["CYLPlaceholderItemAccessibilityIdentifier"])?.let { view.tag = it }
+    string(attributes["CYLPlaceholderItemAccessibilityLabel"])?.let { view.contentDescription = it }
+    // The first animation file a registered animator plays replaces the icon; the icon stays when none does (as iOS).
+    val animationKeys = listOf("CYLPlaceholderItemAnimationFilePath", "CYLPlaceholderItemLottieFilePath", "CYLPlaceholderItemPAGFilePath",
+        "CYLPlaceholderItemRiveFilePath", "CYLPlaceholderItemGIFFilePath")
+    animationKeys.firstNotNullOfOrNull { string(attributes[it]) }?.let { view.setAnimationFile(it) }
+    view.itemAttributes = view.itemAttributes + attributes.filterValues { it != null }.mapValues { it.value!! }
     return view
 }
 

@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 716 个计入的符号；done 649、partial 61、planned 6、n/a 198）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 716 counted symbols; done 649, partial 61, planned 6, n/a 198). |
+| **迁移完成率：96 / 100**（done + 0.5 × partial，共 716 个计入的符号；done 660、partial 56、planned 0、n/a 198）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 716 counted symbols; done 660, partial 56, planned 0, n/a 198). |
 
 ## `CYLPlaceholderAnimation/CYLPlaceholderAnimationView.h`
 
@@ -155,7 +155,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPAGPlaceholderItemAnimator` | — | planned (TODO) |  |
+| `CYLPAGPlaceholderItemAnimator` | `com.cyl.placeholder.pag.CYLPAGPlaceholderItemAnimator` | done |  |
 
 ## `CYLPlaceholderAnimation/Rive/CYLRivePlaceholderItemAnimator.h`
 
@@ -172,8 +172,8 @@
 | `CYLPlaceholderAnimationOptionRiveTriggerInput` | `CYLPlaceholderAnimationOptions.RiveTriggerInput` | done |  |
 | `CYLPlaceholderAnimationOptionRiveAnimation` | `CYLPlaceholderAnimationOptions.RiveAnimation` | done |  |
 | `CYLPlaceholderAnimationOptionRiveLegacyRuntime` | `CYLPlaceholderAnimationOptions.RiveLegacyRuntime` | done |  |
-| `CYLRivePlaceholderItemAnimator` | — | planned (TODO) |  |
-| `CYLRivePlaceholderItemAnimator` `animator` | — | planned (TODO) |  |
+| `CYLRivePlaceholderItemAnimator` | `com.cyl.placeholder.rive.CYLRivePlaceholderItemAnimator` | done |  |
+| `CYLRivePlaceholderItemAnimator` `animator` | `CYLRivePlaceholderItemAnimator.animator` | done |  |
 
 ## `CYLRefresh/Base/CYLRefreshAutoFooter.h`
 
@@ -188,7 +188,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | partial | the second floor (secondary*) is TODO |
+| `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | done | pull to load and the second floor (secondary*) |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooter.noMoreDataDisplayDuration` | done |  |
 | `CYLRefreshBackFooter` `secondaryTriggerOffset` | `CYLRefreshBackFooter.secondaryTriggerOffset` | done |  |
 | `CYLRefreshBackFooter` `secondaryDimension` | `CYLRefreshBackFooter.secondaryDimension` | done |  |
@@ -207,7 +207,7 @@
 |:---|:---|:---|:---|
 | `CYLRefreshState` | `com.cyl.refresh.CYLRefreshState` | done |  |
 | `CYLRefreshScrollMode` | `com.cyl.refresh.CYLRefreshScrollMode` | done | maps to SmartRefreshLayout's SpinnerStyle |
-| `CYLRefreshTriggerMode` | `com.cyl.refresh.CYLRefreshTriggerMode` | partial | the enum exists; triggerMode is not wired yet (TODO) |
+| `CYLRefreshTriggerMode` | `com.cyl.refresh.CYLRefreshTriggerMode` | done | read by CYLRefreshComponent.triggerMode (OnEdge / Anywhere) |
 | `CYLRefreshPhase` | `com.cyl.refresh.CYLRefreshPhase` | done |  |
 | `CYLRefreshComponentHandler` | `com.cyl.refresh.CYLRefreshComponentHandler` | done |  |
 | `CYLRefreshComponentRefreshingBlock` | `com.cyl.refresh.CYLRefreshComponentRefreshingBlock` | done |  |
@@ -318,7 +318,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshHeader` | `com.cyl.refresh.CYLRefreshHeader` | partial | pull to refresh; the second floor (secondary*) is TODO |
+| `CYLRefreshHeader` | `com.cyl.refresh.CYLRefreshHeader` | done | pull to refresh and the second floor (secondary*) |
 | `CYLRefreshHeader` `+headerWithRefreshingBlock:` | `CYLRefreshHeader.headerWithRefreshingBlock(context, block)` | done |  |
 | `CYLRefreshHeader` `+headerWithRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler) |
 | `CYLRefreshHeader` `lastUpdatedTimeKey` | `CYLRefreshHeader.lastUpdatedTimeKey` | done |  |
@@ -410,9 +410,9 @@
 | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }` | done |  |
 | `CYLRefreshTrailer` `+trailerWithRefreshingTarget:refreshingAction:` | — | n/a | Objective-C target-action; Kotlin uses the block |
 | `CYLRefreshTrailer` `ignoredScrollViewContentInsetRight` | — | n/a | the Android trailer moves the list itself, there is no content inset to ignore |
-| `CYLRefreshTrailer` `automaticallyRefresh` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
-| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
-| `CYLRefreshTrailer` `autoTriggerTimes` | — | planned (TODO) | automatic refresh while dragging is not ported yet |
+| `CYLRefreshTrailer` `automaticallyRefresh` | `CYLRefreshTrailer.automaticallyRefresh` | done | a fling that reaches the end also refreshes |
+| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | `CYLRefreshTrailer.triggerAutomaticallyRefreshPercent` | done |  |
+| `CYLRefreshTrailer` `autoTriggerTimes` | `CYLRefreshTrailer.autoTriggerTimes` | done |  |
 
 ## `CYLRefresh/CYLRefreshConfig.h`
 
@@ -620,14 +620,14 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshFlyView` | `com.scwang.smart.refresh.header.flyrefresh.FlyView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshFlyView` | `com.scwang.smart.refresh.header.flyrefresh.FlyView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshFlyView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FlyView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshGamePlayingScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshGamePlayingScene` | `com.scwang.smart.refresh.header.fungame.FunGameView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshGamePlayingScene` `title` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 | `CYLRefreshGamePlayingScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
 | `CYLRefreshGamePlayingScene` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
@@ -650,7 +650,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshMountainView` | `com.scwang.smart.refresh.header.flyrefresh.MountainSceneView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshMountainView` | `com.scwang.smart.refresh.header.flyrefresh.MountainSceneView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshMountainView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
 | `CYLRefreshMountainView` `colorPrimary` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
 | `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
@@ -659,7 +659,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStoreHouseLine` | `com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshStoreHouseLine` | `com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHouseLine` `start` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
 | `CYLRefreshStoreHouseLine` `end` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
 | `CYLRefreshStoreHouseLine` `middle` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
@@ -672,7 +672,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStoreHousePath` | `com.scwang.smart.refresh.header.storehouse.StoreHousePath` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshStoreHousePath` | `com.scwang.smart.refresh.header.storehouse.StoreHousePath` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshStoreHousePath` `+linesFromArray:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
 | `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
 | `CYLRefreshStoreHousePath` `+arrayAkta` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
@@ -731,7 +731,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorImage` | `com.scwang.smart.drawable.PathsDrawable` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshVectorImage` | `com.scwang.smart.drawable.PathsDrawable` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorImage` `elements` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorImage` `size` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 | `CYLRefreshVectorImage` `frame` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -759,7 +759,7 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCurveType` | `com.scwang.smart.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
-| `CYLRefreshVectorPathsParser` | `com.scwang.smart.drawable.path.PathParser` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshVectorPathsParser` | `com.scwang.smart.drawable.path.PathParser` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorPathsParser` `+startingCurve` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | — | n/a | an iOS drawing internal; Android draws with PathParser (its own API) |
@@ -797,7 +797,7 @@
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshVectorView` | `com.scwang.smart.drawable.view.PathsView` | partial | the type exists in android/merged; its members are aligned one by one (TODO) |
+| `CYLRefreshVectorView` | `com.scwang.smart.drawable.view.PathsView` | partial | the Android class with the same role; its members are its own |
 | `CYLRefreshVectorView` `image` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
 | `CYLRefreshVectorView` `-parserPaths:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
 | `CYLRefreshVectorView` `-parserColors:` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
@@ -1123,7 +1123,7 @@
 | `CYLPlaceholderAction` | `com.cyl.placeholder.CYLPlaceholderAction` | done | string constants with the iOS values |
 | `CYLPlaceholderButtonStyle` | `com.cyl.placeholder.CYLPlaceholderButtonStyle` | done |  |
 | `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | partial | icons are the static fallback images; Android plays no animation yet |
-| `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` | partial | title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO) |
+| `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` | done | every item key is kept; keys beyond the title, image, color and size show through CYLPlaceholderView.fromItemAttributes |
 | `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` | done |  |
 | `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
@@ -1190,7 +1190,7 @@
 | `CYLPlaceholderStatusViewDelegate` | `com.cyl.placeholder.CYLPlaceholderStatusViewDelegate` | done |  |
 | `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | `CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)` | done |  |
 | `CYLPlaceholderStatusViewTapHandler` | `com.cyl.placeholder.CYLPlaceholderStatusViewTapHandler` | done |  |
-| `CYLPlaceholderStatusView` | `com.cyl.placeholder.CYLPlaceholderStatusView` | partial | creating one from a configuration is TODO |
+| `CYLPlaceholderStatusView` | `com.cyl.placeholder.CYLPlaceholderStatusView` | done | CYLPlaceholderStatusView.fromConfiguration makes one from a configuration |
 | `CYLPlaceholderStatusView` `delegate` | `CYLPlaceholderStatusView.delegate` | done |  |
 | `CYLPlaceholderStatusView` `-initWithFrame:` | `CYLPlaceholderStatusView(context)` | done |  |
 | `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusView(context, attributes)` | partial | the title, image and title color keys |
@@ -1230,7 +1230,7 @@
 | `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | `CYLPlaceholderAnimationPlayer.setAnimationRepeatCount` | done |  |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | `CYLPlaceholderAnimationPlayer.setAnimationColors` | done |  |
 | `CYLPlaceholderAnimationFactory` | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` | done |  |
-| `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | partial | creating one from an item configuration (dictionary or file) is TODO |
+| `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | partial | fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied |
 | `CYLPlaceholderView` `imageView` | `CYLPlaceholderView.imageView` | done |  |
 | `CYLPlaceholderView` `textLabel` | `CYLPlaceholderView.textLabel` | done |  |
 | `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderView.badgeValue` | done |  |

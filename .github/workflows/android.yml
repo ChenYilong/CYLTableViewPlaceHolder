@@ -1,0 +1,49 @@
+# Android CI: the unit tests of the Kotlin core (android/placeholder*, android/merged) and a build of the example. The
+# GitHub-hosted Ubuntu runner ships the Android SDK with its licenses accepted. See docs/CI-CD.md.
+name: Android
+
+on:
+  pull_request:
+    paths: [ 'android/**', '.github/workflows/android.yml' ]
+  push:
+    branches: [ master ]
+    paths: [ 'android/**', '.github/workflows/android.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Android unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests (placeholder, animators, CYLRefresh)
+        run: >-
+          bash ./gradlew --no-daemon
+          :placeholder:testDebugUnitTest
+          :placeholder-lottie:testDebugUnitTest
+          :placeholder-rive:testDebugUnitTest
+          :merged:testDebugUnitTest
+      - name: Build the example
+        run: bash ./gradlew --no-daemon :merged-example:assembleDebug
+      - name: Test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-reports
+          path: android/**/build/reports/tests/
