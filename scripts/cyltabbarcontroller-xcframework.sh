@@ -43,7 +43,14 @@ for destination in "${destinations[@]}"; do
   xcodebuild archive -project "$CHECKOUT/CYLTabBarController.xcodeproj" -scheme CYLTabBarController-Framework \
     -destination "$destination" -archivePath "$WORK/$name.xcarchive" -derivedDataPath "$WORK/DerivedData" \
     SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO -quiet
-  args+=(-framework "$WORK/$name.xcarchive/Products/Library/Frameworks/CYLTabBarController.framework")
+  framework="$WORK/$name.xcarchive/Products/Library/Frameworks/CYLTabBarController.framework"
+  # The CYLTabBarController-Framework target compiles CYLAnimatedItemView and the animation engine but marks their
+  # headers as project headers, so the framework does not ship them (docs/Task-Log.md, TODO for upstream). Copy them
+  # in; their quoted imports resolve inside Headers/, and the classes are in the binary.
+  for header in "$CHECKOUT"/CYLTabBarController/CYLAnimatedItem/*.h "$CHECKOUT"/CYLTabBarController/CYLTabBarItemAnimation/*.h; do
+    [[ -f "$framework/Headers/$(basename "$header")" ]] || cp "$header" "$framework/Headers/"
+  done
+  args+=(-framework "$framework")
 done
 rm -rf "$OUTPUT" Carthage/Build/.CYLTabBarController.*
 mkdir -p Carthage/Build
