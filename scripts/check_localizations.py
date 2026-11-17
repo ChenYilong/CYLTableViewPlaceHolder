@@ -16,7 +16,8 @@ import re
 import sys
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent)
-SKIP = {'.git', 'Pods', 'build', 'DerivedData', 'node_modules'}
+# Carthage/ holds third-party checkouts (CYLTabBarController), checked by their own repositories.
+SKIP = {'.git', 'Pods', 'build', 'DerivedData', 'node_modules', 'Carthage'}
 ENTRY = re.compile(r'^\s*"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;\s*$')
 FORMAT = re.compile(r'%(?:\d+\$)?[-+ #0]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?[@dDiuUxXoOfeEgGcCsSp]')
 MACRO = re.compile(r'^\s*#define\s+\w+L10n\w+\s+@"([^"]+)"', re.M)
