@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：在仓库中标注 CYLAnimatedItem 接入文档的改造进度与 TODO / TODO: Track the CYLAnimatedItem guide migration's progress and TODOs in the repository
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“告诉我 你遵循文档改造的进度，并在本仓库合适地方标注进度以及todo。这个文档是与动效组件相关的。告诉我 你遵循文档改造的进度https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md” | The user's original prompt (verbatim on the left), summarized: report the progress of the migration that follows the guide, and record the progress and the TODOs in a fitting place in this repository; the guide is about the animation component. |
+| 要求：新建（或复用）与动效组件相关的文档，按接入文档逐项列出各平台（iOS、Android、鸿蒙、微信小程序）的完成情况、验证证据、评分与 TODO，并在 README 与相关文档中链接。 | Requirements: a document about the animation component (new, or an existing one) that lists, item by item against the guide, each platform\'s status (iOS, Android, HarmonyOS, WeChat Mini Program), the verification evidence, a score and the TODOs, linked from the README and the related documents. |
+
 ### 进行中（代码完成，待设备验证）：鸿蒙与微信小程序的 CYLPlaceholderView 改用上游 CYLAnimatedItem / In progress (code done, device checks pending): HarmonyOS and the WeChat Mini Program placeholder views on upstream CYLAnimatedItem
 
 | 中文 | English |
