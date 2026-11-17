@@ -3,7 +3,7 @@
 //  CYLTableViewPlaceHolder
 //
 //  [EN] The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or
-//       an animation file, GIF, Lottie, PAG or Rive (the last three need the matching subspec). The animated-image
+//       an animation file, GIF, Lottie, PAG or Rive (each needs its animation subspec, which adds the engine). The animated-image
 //       controls (CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter, CYLRefreshAutoAnimationFooter, `CYLRefreshIconAnimating`) create
 //       it only when an icon animation is set, place it where the animation view draws its images and hide that view; without an
 //       icon animation nothing changes. The arrow and spinner controls keep their arrow and spinner.
@@ -13,7 +13,7 @@
 //       - pulling (release to load): plays, looping
 //       - refreshing / will refresh: plays, looping
 //       - no more data:              stopped
-//  [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片，或 GIF、Lottie、PAG、Rive 动画文件（后三者需要对应的子规格）。
+//  [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片，或 GIF、Lottie、PAG、Rive 动画文件（各自需要对应的动画子规格，由其带入引擎）。
 //       只有设置了图标动画时，“动画图片”控件（CYLRefreshAnimationHeader、CYLRefreshBackAnimationFooter、CYLRefreshAutoAnimationFooter，见
 //       `CYLRefreshIconAnimating`）才创建它，把它放在 动画视图绘制图片的位置并隐藏该视图；不设置时行为不变。箭头与菊花控件保持原样。图标按固定策略随控件状态播放：
 //       空闲未拖动时停在静止帧；拖动中按下拉百分比定位（Lottie、PAG 可定位），否则播放；松开即可刷新时循环播放；

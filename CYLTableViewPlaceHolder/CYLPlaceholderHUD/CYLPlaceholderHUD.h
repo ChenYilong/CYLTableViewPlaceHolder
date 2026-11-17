@@ -273,9 +273,10 @@ typedef void (^CYLPlaceholderHUDDismissCompletion)(void);
  */
 @property (nonatomic) UIOffset offsetFromCenter;
 /*!
- * [EN] The bundled animation of the Loading state, looping ("CYLRefreshActivity.gif" by default, which Core plays;
- *      any name of `+[CYLPlaceholderView bundledAnimationFileNames]`). [CN] Loading 状态循环播放的内置动画（默认
- *      "CYLRefreshActivity.gif"，Core 即可播放；可为任意内置动画名）。
+ * [EN] The bundled animation of the Loading state, looping ("CYLRefreshActivity.gif" by default, played by the GIF
+ *      subspec; without an animation engine the hourglass image shows; any name of
+ *      `+[CYLPlaceholderView bundledAnimationFileNames]`). [CN] Loading 状态循环播放的内置动画（默认
+ *      "CYLRefreshActivity.gif"，由 GIF 子库播放；没有动画引擎时显示沙漏图片；可为任意内置动画名）。
  */
 @property (nonatomic, copy, null_resettable) NSString *loadingAnimationFileName;
 /*!

@@ -936,8 +936,9 @@ static NSArray<CYLPlaceholderComponent *> *CYLScenarioPermissionComponents(NSStr
                          CYLScenarioText(@"CYLPlaceholderScenarioSuccessTitle", @"Submitted"), art),
                      CYLScenarioButton(CYLPlaceholderActionDone, CYLPlaceholderButtonStyleFilled)];
         case CYLPlaceholderScenarioHUD:
-            // [EN] A refresh-bundle spinner that Core plays (GIF), looping like every scenario icon.
-            // [CN] Core 即可播放的刷新资源加载圈（GIF），与所有场景图标一样循环播放。
+            // [EN] A refresh-bundle spinner (GIF, played by the GIF subspec's animator), looping like every scenario icon;
+            //      without an animation engine the Hourglass style shows.
+            // [CN] 刷新资源中的加载圈（GIF，由 GIF 子库的 animator 播放），与所有场景图标一样循环播放；没有动画引擎时显示 Hourglass 样式。
             return @[CYLScenarioIcon(@"CYLRefreshActivity.gif", CYLPlaceholderStyleHourglass,
                 CYLScenarioText(@"CYLPlaceholderScenarioHUDTitle", @"Loading…"), 56)];
         case CYLPlaceholderScenarioCount:

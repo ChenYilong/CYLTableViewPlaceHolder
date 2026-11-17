@@ -1,11 +1,35 @@
 #import "CYLPlaceholderView.h"
 #import "CYLPlaceholderLocalization.h"
-#import "CYLPlaceholderItemAnimationService.h"
+#import <objc/runtime.h>
+
+// [EN] CYLPlaceholderView is a subclass of CYLTabBarController's `CYLAnimatedItemView` (integration guide:
+//      https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md).
+//      The base class owns the icon (`imageView`), the title (`titleLabel`), the animation view and its player, the
+//      display priority (the animation when it can play, else the static `image`, else the component's placeholder),
+//      the failure fallbacks and the loading state of URL files. This class adds what a placeholder needs on top: the
+//      item attributes, its own layout (margins, offsets, title chrome, the horizontal arrangement), the badge, the
+//      selection indicator, the appearance layers, the tap handler and the playback policy (visibility, Reduce Motion,
+//      repeat count). Animations play only through the engine (`CYL_ANIMATION_ENGINE_AVAILABLE`, evaluated by the base
+//      class's header): always 1 in the framework target, Carthage and the XCFramework; 0 only with the CocoaPods Core
+//      subspec alone, where the view shows static images and every engine call below is compiled out.
+// [CN] CYLPlaceholderView 继承自 CYLTabBarController 的 `CYLAnimatedItemView`（接入文档见上面的链接）。基类负责图标（`imageView`）、标题
+//      （`titleLabel`）、动画视图及其播放器、显示优先级（能播放时显示动画，否则显示静态 `image`，再否则显示组件的占位图）、失败回退以及 URL 文件的
+//      加载状态。本类在其上加入占位图需要的部分：item 属性、自己的布局（边距、偏移、标题装饰、横向排列）、角标、选中指示、外观层级、点击事件与播放策略
+//      （可见性、减弱动态效果、重复次数）。动画只通过引擎播放（`CYL_ANIMATION_ENGINE_AVAILABLE`，由基类头文件判断）：framework target、Carthage 与
+//      XCFramework 中始终为 1；只有单独使用 CocoaPods Core 子库时为 0，此时只显示静态图片，下面所有引擎相关代码都不参与编译。
 
 static NSArray<NSString *> *CYLPlaceholderAppearanceKeys(void);
 static BOOL CYLPlaceholderSameValue(id a, id b);
 #import <math.h>
-#import <ImageIO/ImageIO.h>
+
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+// [EN] The base class handles the engine's load and failure reports; it declares the protocol in its implementation
+//      file, so this declaration lets the subclass call `super`.
+// [CN] 基类处理引擎的加载与失败通知，但只在其实现文件中声明该协议；此声明让子类可以调用 `super`。
+@interface CYLAnimatedItemView (CYLPlaceholderAnimationFailureHandling) <CYLTabBarItemAnimationFailureHandling>
+@end
+#endif
+
 
 NSString *const CYLPlaceholderItemTitle = @"CYLTabBarItemTitle";
 NSString *const CYLPlaceholderItemImage = @"CYLTabBarItemImage";
@@ -259,17 +283,32 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
     return contentMode;
 }
 
+
+#pragma mark - The base class's subviews
+
+@interface CYLPlaceholderView (CYLPlaceholderSubviews)
+- (void)cyl_imageViewDidSetImage:(UIImage *)image;
+@end
+
+// [EN] The base class creates `imageView` and `titleLabel` as a plain UIImageView and UILabel. CYLPlaceholderView
+//      changes their class to these subclasses, which add no storage (so the change is safe): a value an app sets on
+//      them directly lays the placeholder out again, as before, and a static image set on `imageView` becomes the base
+//      class's `image`, which decides what the icon shows.
+// [CN] 基类把 `imageView` 与 `titleLabel` 创建为普通的 UIImageView 与 UILabel。CYLPlaceholderView 将它们的类改为下面的子类（不增加存储，
+//      因此修改是安全的）：应用直接设置的值会让占位图重新布局（与以前相同），设置到 `imageView` 的静态图片会成为基类的 `image`，由基类决定图标显示什么。
 @interface CYLPlaceholderItemImageView : UIImageView
 @end
 
 @implementation CYLPlaceholderItemImageView
 - (void)setImage:(UIImage *)image {
     [super setImage:image];
-    [self.superview.superview setNeedsLayout];
+    UIView *owner = self.superview;
+    if ([owner isKindOfClass:CYLPlaceholderView.class]) [(CYLPlaceholderView *)owner cyl_imageViewDidSetImage:image];
+    [owner setNeedsLayout];
 }
 - (void)setHidden:(BOOL)hidden {
     [super setHidden:hidden];
-    [self.superview.superview setNeedsLayout];
+    [self.superview setNeedsLayout];
 }
 @end
 
@@ -279,200 +318,234 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 @implementation CYLPlaceholderItemLabel
 - (void)setText:(NSString *)text {
     [super setText:text];
-    [self.superview.superview setNeedsLayout];
+    [self.superview setNeedsLayout];
 }
 - (void)setAttributedText:(NSAttributedString *)attributedText {
     [super setAttributedText:attributedText];
-    [self.superview.superview setNeedsLayout];
+    [self.superview setNeedsLayout];
 }
 - (void)setFont:(UIFont *)font {
     [super setFont:font];
-    [self.superview.superview setNeedsLayout];
+    [self.superview setNeedsLayout];
 }
 - (void)setHidden:(BOOL)hidden {
     [super setHidden:hidden];
-    [self.superview.superview setNeedsLayout];
+    [self.superview setNeedsLayout];
 }
 @end
 
-// UI adapted from CYLFlatDesignTabBarButton, CYLTabBarController (MIT).
-// Copyright (c) 2026 CYLTabBarController, https://github.com/ChenYilong/CYLTabBarController.
-@interface CYLPlaceholderItemView : UIView
-@property (nonatomic, strong, readonly) UIImageView *imageView;
-@property (nonatomic, strong, readonly) UILabel *titleLabel;
-@property (nonatomic) UIOffset itemTitleOffset;
-/// Used when the item has no title offset of its own (the FlatDesign `_appearanceTitlePositionAdjustment`).
-@property (nonatomic) UIOffset appearanceTitleOffset;
-@property (nonatomic) UIOffset itemImageOffset;
-@property (nonatomic) UIEdgeInsets itemImageInsets;
-@property (nonatomic, strong) UIView *animationView;
-@property (nonatomic) CGSize animationSize;
-/// YES while the animation covers the static image. The image view is hidden then, which on iOS is the same flag as
-/// a caller hiding the icon, so the layout must not read it as "no icon" and hide the animation too.
-@property (nonatomic) BOOL imageCoveredByAnimation;
-@property (nonatomic, strong) UILabel *badgeLabel;
-@property (nonatomic) CGPoint badgeCenterOffset;
-// Title chrome (CYLPlaceholderItemTitle... keys); nil background view means a plain title.
-@property (nonatomic, strong) UIImageView *titleBackgroundView;
-@property (nonatomic) UIEdgeInsets titleContentInsets;
-@property (nonatomic) CGFloat titleMinimumWidth;
-/// [EN] YES: the icon at the leading edge, the title after it (`CYLPlaceholderItemContentAxis`). [CN] YES：横向排列。
-@property (nonatomic) BOOL horizontal;
-@property (nonatomic) CGFloat titleCornerRadius;
-@property (nonatomic, strong) UIColor *titleBorderColor;
-@property (nonatomic) CGFloat titleBorderWidth;
+/// [EN] `fileURL` with the animation `options` in its fragment, in the format of CYLTabBarController's
+///      `CYLTabBarAnimationURLWithOptions()` ("name=value&…", sorted, percent-encoded), which its animators read (the
+///      Rive artboard, state machine…). `contentMode` and `animationSpeed` are applied by the view, not written.
+/// [CN] 把动画 `options` 写入 `fileURL` 的 fragment，格式与 CYLTabBarController 的 `CYLTabBarAnimationURLWithOptions()` 相同（「名称=值&…」，
+///      排序并百分号编码），由其 animator 读取（Rive 画板、状态机等）。`contentMode` 与 `animationSpeed` 由视图应用，不写入。
+static NSURL *CYLPlaceholderAnimationURLWithOptions(NSURL *fileURL, NSDictionary *options) {
+    if (!fileURL || ![options isKindOfClass:NSDictionary.class] || options.count == 0) return fileURL;
+    NSMutableCharacterSet *allowed = [NSCharacterSet.URLQueryAllowedCharacterSet mutableCopy];
+    [allowed removeCharactersInString:@"&=+#?"];
+    NSMutableArray<NSString *> *items = [NSMutableArray array];
+    NSArray *names = [[options.allKeys filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id name, NSDictionary *bindings) {
+        return [name isKindOfClass:NSString.class];
+    }]] sortedArrayUsingSelector:@selector(compare:)];
+    for (NSString *name in names) {
+        if ([name isEqualToString:@"contentMode"] || [name isEqualToString:@"animationSpeed"]) continue;
+        id value = options[name];
+        NSString *text = [value isKindOfClass:NSString.class] ? value :
+            ([value isKindOfClass:NSNumber.class] ? [value stringValue] : nil);
+        NSString *encodedName = [name stringByAddingPercentEncodingWithAllowedCharacters:allowed];
+        NSString *encodedValue = [text stringByAddingPercentEncodingWithAllowedCharacters:allowed];
+        if (encodedName.length && encodedValue.length) [items addObject:[NSString stringWithFormat:@"%@=%@", encodedName, encodedValue]];
+    }
+    if (items.count == 0) return fileURL;
+    NSURLComponents *components = [NSURLComponents componentsWithURL:fileURL resolvingAgainstBaseURL:YES];
+    components.percentEncodedFragment = [items componentsJoinedByString:@"&"];
+    return components.URL ?: fileURL;
+}
+
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+
+#pragma mark - Factories registered with +registerAnimationFactory:forFileExtension:
+
+/// [EN] The options in `URL`'s fragment, as `CYLPlaceholderAnimationURLWithOptions()` writes them. [CN] `URL` fragment 中的选项。
+static NSDictionary<NSString *, NSString *> *CYLPlaceholderAnimationOptionsFromURL(NSURL *URL) {
+    NSString *fragment = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:YES].percentEncodedFragment;
+    NSMutableDictionary<NSString *, NSString *> *options = [NSMutableDictionary dictionary];
+    for (NSString *item in [fragment componentsSeparatedByString:@"&"]) {
+        NSRange separator = [item rangeOfString:@"="];
+        if (separator.location == NSNotFound || separator.location == 0) continue;
+        NSString *name = [[item substringToIndex:separator.location] stringByRemovingPercentEncoding];
+        NSString *value = [[item substringFromIndex:NSMaxRange(separator)] stringByRemovingPercentEncoding];
+        if (name.length && value.length) options[name] = value;
+    }
+    return [options copy];
+}
+
+/// [EN] `URL` without its fragment: the animation file itself. [CN] 去掉 fragment 的 `URL`，即动画文件本身。
+static NSURL *CYLPlaceholderAnimationFileURL(NSURL *URL) {
+    NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:YES];
+    components.fragment = nil;
+    return components.URL ?: URL;
+}
+
+/// [EN] Plays a factory's `CYLPlaceholderAnimationPlayer` view through the engine's player protocol. It answers only
+///      for what the view supports, so the base class sees the same features as before.
+/// [CN] 通过引擎的播放器协议播放工厂创建的 `CYLPlaceholderAnimationPlayer` 视图；只对视图支持的功能作出响应，因此基类看到的功能与以前相同。
+@interface CYLPlaceholderFactoryAnimationPlayer : CYLTabBarItemAnimationBasePlayer <CYLTabBarItemAnimationPlayer>
 @end
 
-@implementation CYLPlaceholderItemView
+@implementation CYLPlaceholderFactoryAnimationPlayer {
+    CGFloat _progress;
+    CGFloat _speed;
+    BOOL _loops;
+}
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        _imageView = [[CYLPlaceholderItemImageView alloc] init];
-        _imageView.clipsToBounds = NO;
-        [self addSubview:_imageView];
+- (UIView<CYLPlaceholderAnimationPlayer> *)playerView {
+    UIView *view = self.animationView;
+    return [view conformsToProtocol:@protocol(CYLPlaceholderAnimationPlayer)] ? (UIView<CYLPlaceholderAnimationPlayer> *)view : nil;
+}
 
-        _titleLabel = [[CYLPlaceholderItemLabel alloc] init];
-        _titleLabel.clipsToBounds = NO;
-        [self addSubview:_titleLabel];
+- (BOOL)respondsToSelector:(SEL)selector {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.playerView;
+    if (selector == @selector(progress) || selector == @selector(setProgress:)) {
+        return [view respondsToSelector:@selector(setAnimationProgress:)];
+    }
+    if (selector == @selector(animationSpeed) || selector == @selector(setAnimationSpeed:)) {
+        return [view respondsToSelector:@selector(setAnimationSpeed:)];
+    }
+    if (selector == @selector(loops) || selector == @selector(setLoops:)) {
+        return [view respondsToSelector:@selector(setAnimationRepeatCount:)];
+    }
+    if (selector == @selector(applyColors:traitCollection:)) {
+        return [view respondsToSelector:@selector(setAnimationColors:)];
+    }
+    return [super respondsToSelector:selector];
+}
+
+- (void)play {
+    [self.playerView play];
+}
+
+- (void)stop {
+    [self.playerView stop];
+}
+
+- (void)showLastFrame {
+    [self.playerView showLastFrame];
+    _progress = 1;
+}
+
+- (CGFloat)progress {
+    return _progress;
+}
+
+- (void)setProgress:(CGFloat)progress {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.playerView;
+    if ([view respondsToSelector:@selector(setAnimationProgress:)] && [view setAnimationProgress:progress]) _progress = progress;
+}
+
+- (CGFloat)animationSpeed {
+    return _speed > 0 ? _speed : 1;
+}
+
+- (void)setAnimationSpeed:(CGFloat)animationSpeed {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.playerView;
+    if ([view respondsToSelector:@selector(setAnimationSpeed:)] && [view setAnimationSpeed:animationSpeed]) _speed = animationSpeed;
+}
+
+- (BOOL)loops {
+    return _loops;
+}
+
+- (void)setLoops:(BOOL)loops {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.playerView;
+    if ([view respondsToSelector:@selector(setAnimationRepeatCount:)] && [view setAnimationRepeatCount:loops ? 0 : 1]) _loops = loops;
+}
+
+- (void)applyColors:(NSDictionary<NSString *, UIColor *> *)colors traitCollection:(UITraitCollection *)traitCollection {
+    UIView<CYLPlaceholderAnimationPlayer> *view = self.playerView;
+    if (colors && [view respondsToSelector:@selector(setAnimationColors:)] && ![view setAnimationColors:colors]) {
+        NSLog(@"CYLTableViewPlaceHolder: animation color overrides are not supported by this player.");
+    }
+}
+
+@end
+
+/// [EN] A factory as an animator of the engine's registry, ahead of the built-in animators for its extension.
+/// [CN] 作为引擎注册表中 animator 的工厂，对其扩展名优先于内置 animator。
+@interface CYLPlaceholderFactoryAnimator : NSObject <CYLTabBarItemAnimator>
++ (NSString *)identifierForFileExtension:(NSString *)fileExtension;
+- (instancetype)initWithFileExtension:(NSString *)fileExtension factory:(CYLPlaceholderAnimationFactory)factory;
+@end
+
+@implementation CYLPlaceholderFactoryAnimator {
+    NSString *_identifier;
+    NSArray<NSString *> *_fileExtensions;
+    CYLPlaceholderAnimationFactory _factory;
+}
+
++ (NSString *)identifierForFileExtension:(NSString *)fileExtension {
+    return [@"CYLPlaceholderFactory." stringByAppendingString:fileExtension.lowercaseString];
+}
+
+- (instancetype)initWithFileExtension:(NSString *)fileExtension factory:(CYLPlaceholderAnimationFactory)factory {
+    if (self = [super init]) {
+        _identifier = [[self class] identifierForFileExtension:fileExtension];
+        _fileExtensions = @[fileExtension.lowercaseString];
+        _factory = [factory copy];
     }
     return self;
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    if (CGRectIsEmpty(self.bounds)) return;
-
-    BOOL imageHiddenByCaller = self.imageView.hidden && !self.imageCoveredByAnimation;
-    self.animationView.hidden = self.imageView.image != nil && imageHiddenByCaller;
-    BOOL isShowImageView = (self.imageView.image != nil && !self.imageView.hidden) ||
-        (self.animationView != nil && !self.animationView.hidden);
-    BOOL isShowTitleLabel = self.titleLabel.text.length > 0 && !self.titleLabel.hidden;
-    if (self.animationView && !self.animationView.hidden) {
-        self.imageView.frame = (CGRect){CGPointZero, self.animationSize};
-    } else if (isShowImageView) {
-        [self.imageView sizeToFit];
-    }
-
-    if (self.horizontal) {
-        [self cyl_layoutHorizontallyShowingImage:isShowImageView title:isShowTitleLabel];
-        [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
-        return;
-    }
-
-    // [EN] Title chrome (background, border, padding) applies only to a shown title; with zero insets the layout is
-    // the same as without chrome.
-    // [CN] 标题装饰（背景、边框、内边距）只作用于显示中的标题；内边距为零时布局与没有装饰时相同。
-    UIEdgeInsets titleInsets = isShowTitleLabel ? self.titleContentInsets : UIEdgeInsetsZero;
-    CGFloat titleAreaWidth = MAX(0, CGRectGetWidth(self.bounds) - titleInsets.left - titleInsets.right);
-    NSString *title = isShowTitleLabel ? self.titleLabel.text : @"height";
-    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(titleAreaWidth, CGFLOAT_MAX)
-                                           options:NSStringDrawingUsesLineFragmentOrigin
-                                        attributes:@{NSFontAttributeName: self.titleLabel.font}
-                                           context:nil].size;
-    CGFloat titleLabelWidth = MIN(titleAreaWidth, ceil(titleSize.width));
-    CGFloat titleLabelHeight = ceil(titleSize.height);
-    CGFloat titleLabelX = (CGRectGetWidth(self.bounds) - titleLabelWidth) / 2;
-    CGFloat titleLabelY = CGRectGetHeight(self.bounds) - titleLabelHeight - 2 - titleInsets.bottom;
-    if (!isShowImageView) {
-        titleLabelY = titleInsets.top +
-            (CGRectGetHeight(self.bounds) - titleInsets.top - titleInsets.bottom - titleLabelHeight) / 2;
-    }
-    // The item's own offset wins, else the appearance's, as in CYLFlatDesignTabBarButton.
-    UIOffset titleOffset = UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.appearanceTitleOffset : self.itemTitleOffset;
-    titleLabelX += titleOffset.horizontal;
-    titleLabelY += titleOffset.vertical;
-    self.titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelWidth, titleLabelHeight);
-    if (self.titleBackgroundView) {
-        self.titleBackgroundView.hidden = !isShowTitleLabel;
-        if (isShowTitleLabel) {
-            CGFloat chromeWidth = MIN(CGRectGetWidth(self.bounds),
-                                      MAX(titleLabelWidth + titleInsets.left + titleInsets.right, self.titleMinimumWidth));
-            CGRect chrome = CGRectMake(CGRectGetMidX(self.titleLabel.frame) - chromeWidth / 2,
-                                       CGRectGetMinY(self.titleLabel.frame) - titleInsets.top,
-                                       chromeWidth, titleLabelHeight + titleInsets.top + titleInsets.bottom);
-            self.titleBackgroundView.frame = chrome;
-            self.titleBackgroundView.layer.cornerRadius = MIN(MAX(0, self.titleCornerRadius), CGRectGetHeight(chrome) / 2);
-            self.titleBackgroundView.layer.borderWidth = self.titleBorderWidth;
-            UIColor *borderColor = self.titleBorderColor;
-            if (@available(iOS 13.0, *)) {
-                borderColor = [borderColor resolvedColorWithTraitCollection:self.traitCollection];
-            }
-            self.titleBackgroundView.layer.borderColor = borderColor.CGColor;
-            [self insertSubview:self.titleBackgroundView belowSubview:self.titleLabel];
-        }
-    }
-
-    if (isShowImageView) {
-        CGFloat imageViewWidth = CGRectGetWidth(self.imageView.frame);
-        CGFloat imageViewHeight = CGRectGetHeight(self.imageView.frame);
-        CGFloat imageViewX = (CGRectGetWidth(self.bounds) - imageViewWidth) / 2;
-        CGFloat imageViewY = (CGRectGetMinY(self.titleLabel.frame) - titleInsets.top - imageViewHeight) / 2;
-        if (!isShowTitleLabel) imageViewY = (CGRectGetHeight(self.bounds) - imageViewHeight) / 2;
-        imageViewX += self.itemImageOffset.horizontal;
-        imageViewY += self.itemImageOffset.vertical;
-        self.imageView.frame = CGRectMake(imageViewX, imageViewY,
-            MAX(0, imageViewWidth - self.itemImageInsets.left - self.itemImageInsets.right),
-            MAX(0, imageViewHeight - self.itemImageInsets.top - self.itemImageInsets.bottom));
-        self.animationView.frame = self.imageView.frame;
-    } else {
-        self.imageView.frame = CGRectZero;
-    }
-    [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
+- (NSString *)identifier {
+    return _identifier;
 }
 
-/// [EN] The icon at the leading edge, then the title; both centered vertically. [CN] 图标在前缘，标题在后，二者垂直居中。
-- (void)cyl_layoutHorizontallyShowingImage:(BOOL)showImage title:(BOOL)showTitle {
-    CGFloat width = CGRectGetWidth(self.bounds), height = CGRectGetHeight(self.bounds);
-    CGSize imageSize = CGSizeZero;
-    if (showImage) {
-        imageSize = CGSizeMake(MAX(0, CGRectGetWidth(self.imageView.frame) - self.itemImageInsets.left - self.itemImageInsets.right),
-                               MAX(0, CGRectGetHeight(self.imageView.frame) - self.itemImageInsets.top - self.itemImageInsets.bottom));
-    }
-    CGFloat titleX = showImage ? imageSize.width + CYLPlaceholderHorizontalSpacing : 0;
-    CGFloat titleWidth = MAX(0, width - titleX);
-    CGFloat titleHeight = 0;
-    if (showTitle) {
-        titleHeight = ceil([self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
-            options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.titleLabel.font}
-            context:nil].size.height);
-    }
-    BOOL rightToLeft = self.effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
-    CGRect imageFrame = CGRectMake(0, (height - imageSize.height) / 2, imageSize.width, imageSize.height);
-    CGRect titleFrame = CGRectMake(titleX, (height - titleHeight) / 2, titleWidth, titleHeight);
-    if (rightToLeft) {
-        imageFrame.origin.x = width - CGRectGetMaxX(imageFrame);
-        titleFrame.origin.x = width - CGRectGetMaxX(titleFrame);
-    }
-    imageFrame = CGRectOffset(imageFrame, self.itemImageOffset.horizontal, self.itemImageOffset.vertical);
-    UIOffset titleOffset = UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.appearanceTitleOffset : self.itemTitleOffset;
-    titleFrame = CGRectOffset(titleFrame, titleOffset.horizontal, titleOffset.vertical);
-    self.imageView.frame = showImage ? imageFrame : CGRectZero;
-    self.animationView.frame = self.imageView.frame;
-    self.titleLabel.textAlignment = NSTextAlignmentNatural;
-    self.titleLabel.frame = showTitle ? titleFrame : CGRectZero;
-    self.titleBackgroundView.hidden = YES;
+- (NSArray<NSString *> *)fileExtensions {
+    return _fileExtensions;
 }
 
-- (void)cyl_layoutBadgeAnchoredToImage:(BOOL)isShowImageView {
-    // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
-    if (self.badgeLabel && !self.badgeLabel.hidden) {
-        CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
-        UIEdgeInsets insets = appearance.contentInsets;
-        BOOL dot = self.badgeLabel.text.length == 0;
-        CGSize size = dot ? CGSizeMake(8, 8) : [self.badgeLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-        if (!dot) {
-            size.height = ceil(size.height) + insets.top + insets.bottom;
-            size.width = MAX(size.height, ceil(size.width) + insets.left + insets.right);
-        }
-        CGRect anchor = isShowImageView ? self.imageView.frame : self.titleLabel.frame;
-        self.badgeLabel.bounds = (CGRect){CGPointZero, size};
-        self.badgeLabel.center = CGPointMake(CGRectGetMaxX(anchor) + 2 + self.badgeCenterOffset.x,
-                                              CGRectGetMinY(anchor) + self.badgeCenterOffset.y);
-        self.badgeLabel.layer.cornerRadius = appearance.cornerRadius > 0 ? MIN(appearance.cornerRadius, size.height / 2) : size.height / 2;
-        [self bringSubviewToFront:self.badgeLabel];
-    }
+- (CYLTabBarItemAnimatorPriority)priority {
+    return 1000;
 }
+
+- (BOOL)canAnimateFileAtURL:(NSURL *)URL {
+    return [_fileExtensions containsObject:URL.pathExtension.lowercaseString];
+}
+
+- (UIView *)animationViewWithURL:(NSURL *)URL size:(CGSize)size contentMode:(UIViewContentMode)contentMode {
+    NSError *error = nil;
+    UIView<CYLPlaceholderAnimationPlayer> *view = _factory(CYLPlaceholderAnimationFileURL(URL), size, contentMode,
+                                                           CYLPlaceholderAnimationOptionsFromURL(URL), &error);
+    if (![view conformsToProtocol:@protocol(CYLPlaceholderAnimationPlayer)]) {
+        NSLog(@"CYLTableViewPlaceHolder: animation could not be loaded: %@.", error.localizedDescription ?: @"factory returned no view");
+        return nil;
+    }
+    // [EN] A late failure or the end of loading goes back through the engine to the base class, which shows the static
+    //      image (or the placeholder) until the animation is ready and again after it fails.
+    // [CN] 迟到的失败或加载完成经由引擎通知基类：动画就绪前以及失败后，基类显示静态图片（或占位图）。
+    __weak UIView *weakView = view;
+    view.errorHandler = ^(NSError *backendError) {
+        NSLog(@"CYLTableViewPlaceHolder: animation failed: %@.", backendError.localizedDescription);
+        UIView *strongView = weakView;
+        if (strongView) CYLTabBarItemAnimationReportFailure(strongView, backendError);
+    };
+    view.readyHandler = ^{
+        UIView *strongView = weakView;
+        if (strongView) CYLTabBarItemAnimationReportLoaded(strongView);
+    };
+    if (!view.isReady) CYLTabBarItemAnimationMarkLoading(view);
+    return view;
+}
+
+- (id<CYLTabBarItemAnimationPlayer>)playerForAnimationView:(UIView *)view {
+    if (![view conformsToProtocol:@protocol(CYLPlaceholderAnimationPlayer)]) return nil;
+    return [[CYLPlaceholderFactoryAnimationPlayer alloc] initWithAnimationView:view];
+}
+
 @end
+
+#endif
+
 
 @implementation CYLPlaceholderBadgeAppearance
 
@@ -500,36 +573,45 @@ static UIViewContentMode CYLPlaceholderAnimationContentMode(id options) {
 
 @end
 
-static id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationCurrentService;
-
-void CYLPlaceholderItemAnimationSetService(id<CYLPlaceholderItemAnimationService> service) {
-    @synchronized ([CYLPlaceholderBadgeAppearance class]) {
-        CYLPlaceholderItemAnimationCurrentService = service;
-    }
-}
-
-id<CYLPlaceholderItemAnimationService> CYLPlaceholderItemAnimationGetService(void) {
-    @synchronized ([CYLPlaceholderBadgeAppearance class]) {
-        return CYLPlaceholderItemAnimationCurrentService;
-    }
-}
-
 @interface CYLPlaceholderView ()
 @property (nonatomic, copy, readwrite) NSDictionary<NSString *, id> *itemAttributes;
-@property (nonatomic, strong) CYLPlaceholderItemView *itemView;
-@property (nonatomic, copy) NSArray<UIImage *> *gifFrames;
-@property (nonatomic, copy) NSArray<NSNumber *> *gifDelays;
-@property (nonatomic, strong) UIView<CYLPlaceholderAnimationPlayer> *backendView;
+// [EN] Layout values from the item attributes (adapted from CYLFlatDesignTabBarButton). [CN] 来自 item 属性的布局值。
+@property (nonatomic) UIOffset itemTitleOffset;
+@property (nonatomic) UIOffset itemImageOffset;
+@property (nonatomic) UIEdgeInsets itemImageInsets;
+/// [EN] The size the animation is laid out at (`CYLPlaceholderItemAnimationSize`). [CN] 动画的布局尺寸。
+@property (nonatomic) CGSize itemAnimationSize;
+/// [EN] YES: the icon at the leading edge, the title after it (`CYLPlaceholderItemContentAxis`). [CN] YES：横向排列。
+@property (nonatomic) BOOL horizontal;
+/// [EN] Where the content was laid out last (the old inner item view's frame). [CN] 内容最近一次布局的位置。
+@property (nonatomic) CGRect itemFrame;
+// Title chrome (CYLPlaceholderItemTitle... keys); nil background view means a plain title.
+@property (nonatomic, strong) UIImageView *titleBackgroundView;
+@property (nonatomic) UIEdgeInsets titleContentInsets;
+@property (nonatomic) CGFloat titleMinimumWidth;
+@property (nonatomic) CGFloat titleCornerRadius;
+@property (nonatomic, strong) UIColor *titleBorderColor;
+@property (nonatomic) CGFloat titleBorderWidth;
 @property (nonatomic, strong) NSBundle *animationImageBundle;
 @property (nonatomic) BOOL animationStopped;
 @property (nonatomic) BOOL animationShowsLastFrame;
 @property (nonatomic, strong) NSNumber *animationSeekProgress;
-@property (nonatomic, strong) NSNumber *animationSpeed;
+/// [EN] The speed set with -setPlaceholderAnimationSpeed:, and the `animationSpeed` option. [CN] 显式设置的速度与选项中的速度。
+@property (nonatomic, strong) NSNumber *explicitAnimationSpeed;
+@property (nonatomic, strong) NSNumber *optionAnimationSpeed;
+@property (nonatomic) UIViewContentMode animationContentMode;
+@property (nonatomic, copy) NSDictionary<NSString *, UIColor *> *animationColors;
+/// [EN] Replays a player N - 1 more times for a repeat count N > 1. [CN] 重复次数 N > 1 时再重播 N - 1 次。
+@property (nonatomic, strong) NSTimer *repeatTimer;
+@property (nonatomic) NSInteger remainingRepeats;
+/// [EN] YES while a static image set on `imageView` is copied to the base class's `image`. [CN] 正在把静态图片同步给基类。
+@property (nonatomic) BOOL syncingImage;
+/// [EN] The subviews' alpha before the pressed highlight. [CN] 按下高亮前各子视图的 alpha。
+@property (nonatomic, strong) NSMapTable<UIView *, NSNumber *> *highlightAlphas;
 @property (nonatomic, readwrite, getter=isTapHighlighted) BOOL tapHighlighted;
 /// Whether the tap API added the button trait, and the not-enabled trait, so it removes only what it added.
 @property (nonatomic) BOOL tapAddedButtonTrait;
 @property (nonatomic) BOOL tapAddedNotEnabledTrait;
-@property (nonatomic, strong) UIImage *selectedImage;
 @property (nonatomic, copy) NSString *selectedTitle;
 @property (nonatomic, strong) UIColor *selectedTitleColor;
 @property (nonatomic, strong) UIColor *selectedIconColor;
@@ -591,32 +673,79 @@ static BOOL CYLPlaceholderRepeatCountFromValue(id value, NSInteger *count) {
     return YES;
 }
 
-// [EN] System image setting in this file is CYLPlaceholderView's own implementation (its image view, GIF frames,
-//      selection indicator and title chrome); every other part of the project sets images through it.
-// [CN] 本文件中的系统图片设置是 CYLPlaceholderView 自身的实现（图片视图、GIF 帧、选中指示与标题底图）；项目其他部分都通过它设置图片。
+// [EN] System image setting in this file is CYLPlaceholderView's own implementation (its image view, selection
+//      indicator and title chrome); every other part of the project sets images through it.
+// [CN] 本文件中的系统图片设置是 CYLPlaceholderView 自身的实现（图片视图、选中指示与标题底图）；项目其他部分都通过它设置图片。
 @implementation CYLPlaceholderView
 
-static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlaceholderAnimationFactories(void) {
-    static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *factories;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{ factories = [NSMutableDictionary dictionary]; });
-    return factories;
+// [EN] Declared again in the header for the documentation; the base classes implement them.
+// [CN] 为了文档在头文件中再次声明，由父类实现。
+@dynamic imageView;
+@dynamic selected;
+
+- (UILabel *)textLabel {
+    return self.titleLabel;
+}
+
+- (NSString *)title {
+    // [EN] The base class's title is the label's text, which this class (and apps) set directly.
+    // [CN] 基类的标题即标签文字，本类（以及应用）会直接设置它。
+    return self.titleLabel.text;
 }
 
 + (BOOL)registerAnimationFactory:(CYLPlaceholderAnimationFactory)factory forFileExtension:(NSString *)fileExtension {
     NSCharacterSet *invalid = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
     if (![fileExtension isKindOfClass:NSString.class] || !fileExtension.length ||
-        [fileExtension rangeOfCharacterFromSet:invalid].location != NSNotFound ||
-        [fileExtension.lowercaseString isEqualToString:@"gif"]) {
-        NSLog(@"CYLTableViewPlaceHolder: invalid or reserved animation extension.");
+        [fileExtension rangeOfCharacterFromSet:invalid].location != NSNotFound) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid animation extension.");
         return NO;
     }
-    NSMutableDictionary *factories = CYLPlaceholderAnimationFactories();
-    @synchronized (factories) {
-        if (factory) factories[fileExtension.lowercaseString] = [factory copy];
-        else [factories removeObjectForKey:fileExtension.lowercaseString];
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    if (factory) {
+        [CYLTabBarItemAnimatorRegistry registerAnimator:[[CYLPlaceholderFactoryAnimator alloc] initWithFileExtension:fileExtension
+                                                                                                             factory:factory]];
+    } else {
+        [CYLTabBarItemAnimatorRegistry unregisterAnimatorWithIdentifier:[CYLPlaceholderFactoryAnimator identifierForFileExtension:fileExtension]];
     }
     return YES;
+#else
+    NSLog(@"CYLTableViewPlaceHolder: animation factories need the animation engine; add an animation subspec.");
+    return NO;
+#endif
+}
+
+#pragma mark - Static image 静态图片
+
+- (void)cyl_imageViewDidSetImage:(UIImage *)image {
+    // [EN] The base class shows `image`, `selectedImage` or its placeholder in `imageView`; any other image was set by
+    //      this class or the app, and becomes the base class's static image, so the base class keeps showing it.
+    // [CN] 基类在 `imageView` 中显示 `image`、`selectedImage` 或占位图；其他图片由本类或应用设置，成为基类的静态图片，基类会继续显示它。
+    if (self.syncingImage || image == self.image) return;
+    if (image && (image == self.selectedImage || image == self.placeholderImage)) return;
+    self.syncingImage = YES;
+    [self cyl_preservingIconVisibility:^{
+        self.image = image;
+    }];
+    self.syncingImage = NO;
+}
+
+/// [EN] YES while a ready animation covers the static image (the base class hides `imageView` then).
+/// [CN] 就绪的动画覆盖静态图片时为 YES（此时基类隐藏 `imageView`）。
+- (BOOL)cyl_animationCoversImage {
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    return self.animationView != nil && !CYLTabBarItemAnimationIsLoading(self.animationView);
+#else
+    return NO;
+#endif
+}
+
+/// [EN] Runs `changes` (which let the base class update the icon) and keeps an icon the caller hid hidden: the base
+///      class shows `imageView` whenever no animation covers it.
+/// [CN] 执行 `changes`（其中基类会更新图标），并保持调用方隐藏的图标仍然隐藏：没有动画覆盖时基类总是显示 `imageView`。
+- (void)cyl_preservingIconVisibility:(void (^)(void))changes {
+    BOOL hiddenByCaller = self.imageView.hidden && self.imageView.image != nil && ![self cyl_animationCoversImage];
+    changes();
+    if (hiddenByCaller && ![self cyl_animationCoversImage] && !self.imageView.hidden) self.imageView.hidden = YES;
 }
 
 - (instancetype)initWithItemContentsOfURL:(NSURL *)url imageBundle:(NSBundle *)imageBundle error:(NSError **)error {
@@ -861,25 +990,27 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
             chrome.backgroundColor = colors[CYLPlaceholderItemTitleBackgroundColor];
             chrome.clipsToBounds = YES;
             chrome.isAccessibilityElement = NO;
-            self.itemView.titleBackgroundView = chrome;
-            [self.itemView insertSubview:chrome belowSubview:self.textLabel];
-            self.itemView.titleBorderColor = colors[CYLPlaceholderItemTitleBorderColor];
-            self.itemView.titleBorderWidth = titleChromeNumbers[0];
-            self.itemView.titleCornerRadius = titleChromeNumbers[1];
-            self.itemView.titleMinimumWidth = titleChromeNumbers[2];
-            self.itemView.titleContentInsets = titleContentInsets;
+            self.titleBackgroundView = chrome;
+            [self insertSubview:chrome belowSubview:self.textLabel];
+            self.titleBorderColor = colors[CYLPlaceholderItemTitleBorderColor];
+            self.titleBorderWidth = titleChromeNumbers[0];
+            self.titleCornerRadius = titleChromeNumbers[1];
+            self.titleMinimumWidth = titleChromeNumbers[2];
+            self.titleContentInsets = titleContentInsets;
         }
         _animationImageBundle = imageBundle;
-        _selectedImage = selectedImage;
+        // [EN] The base class shows it while selected. [CN] 选中时由基类显示。
+        self.selectedImage = selectedImage;
         _selectedTitle = [selectedTitle copy];
         _selectedTitleColor = colors[CYLPlaceholderItemSelectedTitleColor];
         _selectedIconColor = colors[CYLPlaceholderItemSelectedIconColor];
         _selectedBackgroundColor = colors[CYLPlaceholderItemSelectedBackgroundColor];
         _selectedTitleFont = selectedFont;
-        self.itemView.itemTitleOffset = titleOffset;
-        self.itemView.itemImageOffset = imageOffset;
-        self.itemView.itemImageInsets = insets;
-        self.itemView.horizontal = horizontal;
+        self.itemTitleOffset = titleOffset;
+        self.itemImageOffset = imageOffset;
+        self.itemImageInsets = insets;
+        self.horizontal = horizontal;
+        self.axis = horizontal ? CYLAnimatedItemAxisHorizontal : CYLAnimatedItemAxisVertical;
         if (horizontal) self.textLabel.textAlignment = NSTextAlignmentNatural;
         if (colors[CYLPlaceholderItemTitleColor]) self.textLabel.textColor = colors[CYLPlaceholderItemTitleColor];
         if (colors[CYLPlaceholderItemIconColor]) self.imageView.tintColor = colors[CYLPlaceholderItemIconColor];
@@ -922,7 +1053,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
 }
 
 - (void)setSelected:(BOOL)selected {
-    if (_selected == selected) return;
+    if (self.isSelected == selected) return;
     if (selected) {
         self.normalImage = self.imageView.image;
         self.normalTitle = self.textLabel.text;
@@ -930,19 +1061,18 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.normalIconColor = self.imageView.tintColor;
         self.normalBackgroundColor = self.backgroundColor;
         self.normalTitleFont = self.textLabel.font;
-        self.normalImageHidden = self.imageView.hidden;
+        self.normalImageHidden = self.imageView.hidden && ![self cyl_animationCoversImage];
         self.normalTitleHidden = self.textLabel.hidden;
         self.normalHasSelectedTrait = (self.accessibilityTraits & UIAccessibilityTraitSelected) != 0;
-        if (self.selectedImage) {
-            self.imageView.image = self.selectedImage;
-            self.imageView.hidden = NO;
-        }
+        // [EN] The base class shows `selectedImage` (the configured selected image) when there is one.
+        // [CN] 有选中图片（配置的 `selectedImage`）时由基类显示。
+        [super setSelected:YES];
+        self.imageView.hidden = [self cyl_animationCoversImage] || (!self.selectedImage && self.normalImageHidden);
         if (self.selectedTitle) {
             self.textLabel.text = self.selectedTitle;
             self.textLabel.hidden = NO;
         }
         // Explicit selected values, then the selected appearance defaults, then the normal values.
-        _selected = YES;
         for (NSString *key in CYLPlaceholderAppearanceKeys()) {
             id value = [self cyl_desiredAppearanceValueForKey:key];
             [self cyl_setAppearanceTargetValue:value forKey:key];
@@ -950,15 +1080,15 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         }
         self.accessibilityTraits |= UIAccessibilityTraitSelected;
     } else {
+        [super setSelected:NO];
         self.imageView.image = self.normalImage;
-        self.imageView.hidden = self.normalImageHidden;
+        self.imageView.hidden = self.normalImageHidden || [self cyl_animationCoversImage];
         self.textLabel.text = self.normalTitle;
         self.textLabel.hidden = self.normalTitleHidden;
         self.textLabel.textColor = self.normalTitleColor;
         self.imageView.tintColor = self.normalIconColor;
         self.backgroundColor = self.normalBackgroundColor;
         self.textLabel.font = self.normalTitleFont;
-        _selected = NO;
         for (NSString *key in CYLPlaceholderAppearanceKeys()) {
             id restored = [self cyl_appearanceTargetValueForKey:key] ?: NSNull.null;
             id normal = self.appearanceNormalValues[key];
@@ -974,7 +1104,6 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         [self cyl_applyAppearance];
         if (!self.normalHasSelectedTrait) self.accessibilityTraits &= ~UIAccessibilityTraitSelected;
     }
-    _selected = selected;
     [self cyl_updateSelectionIndicator];
     [self setNeedsLayout];
 }
@@ -1003,8 +1132,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.selectionIndicatorView = [UIImageView new];
         self.selectionIndicatorView.userInteractionEnabled = NO;
         self.selectionIndicatorView.isAccessibilityElement = NO;
-        self.selectionIndicatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.itemView insertSubview:self.selectionIndicatorView atIndex:0];
+        [self insertSubview:self.selectionIndicatorView atIndex:0];
     }
     UIImage *image = indicatorImage;
     if (indicatorTintColor && image.renderingMode != UIImageRenderingModeAlwaysOriginal) {
@@ -1014,7 +1142,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     self.selectionIndicatorView.tintColor = indicatorTintColor;
     self.selectionIndicatorView.contentMode = UIEdgeInsetsEqualToEdgeInsets(image.capInsets, UIEdgeInsetsZero) ?
         UIViewContentModeCenter : UIViewContentModeScaleToFill;
-    self.selectionIndicatorView.frame = self.itemView.bounds;
+    self.selectionIndicatorView.frame = self.itemFrame;
 }
 
 // Applies `CYLPlaceholderBadgeAppearance` like CYLTabBarController's `_updateBadgeAppearance`: a value still equal to
@@ -1061,7 +1189,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     self.badgeLabel.hidden = badgeValue == nil;
     if (badgeValue) {
         [self cyl_applyBadgeAppearance];
-        if (self.badgeLabel.superview != self.itemView) [self.itemView addSubview:self.badgeLabel];
+        if (self.badgeLabel.superview != self) [self addSubview:self.badgeLabel];
     } else {
         [self.badgeLabel.layer removeAllAnimations];
         self.badgeLabel.transform = CGAffineTransformIdentity;
@@ -1089,7 +1217,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         self.appliedBadgeAccessibilityValue = nil;
         self.accessibilityValueBeforeBadge = nil;
     }
-    [self.itemView setNeedsLayout];
+    [self setNeedsLayout];
     if (showsChange) {
         // [EN] A badge that appears or disappears changes the accessibility tree: tell assistive technologies, or a
         //      cached tree (inside a semantic-group container, for example) keeps reading the old badge.
@@ -1116,8 +1244,7 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
         return;
     }
     _badgeCenterOffset = badgeCenterOffset;
-    self.itemView.badgeCenterOffset = badgeCenterOffset;
-    [self.itemView setNeedsLayout];
+    [self setNeedsLayout];
 }
 
 - (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(NSString *)value {
@@ -1155,7 +1282,6 @@ static NSMutableDictionary<NSString *, CYLPlaceholderAnimationFactory> *CYLPlace
     // A text-size change can arrive as a trait change only (no notification): re-measure title and badge.
     if (![self.traitCollection.preferredContentSizeCategory isEqualToString:previousTraitCollection.preferredContentSizeCategory]) {
         [self setNeedsLayout];
-        [self.itemView setNeedsLayout];
     }
     if (self.itemAttributes && previousTraitCollection &&
         self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
@@ -1294,12 +1420,13 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectedTitleFont, UIFont *, _defaul
         return;
     }
     _defaultTitlePositionAdjustment = adjustment;
-    self.itemView.appearanceTitleOffset = adjustment;
-    [self.itemView setNeedsLayout];
+    [self setNeedsLayout];
 }
 CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorImage, UIImage *, _defaultSelectionIndicatorImage)
 CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor *, _defaultSelectionIndicatorTintColor)
 #undef CYL_PLACEHOLDER_APPEARANCE_SETTER
+
+#pragma mark - Animation file 动画文件
 
 - (BOOL)setAnimationFile:(NSString *)path {
     if (![path isKindOfClass:NSString.class] || path.length == 0) return NO;
@@ -1316,8 +1443,9 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     if (!attributes[CYLPlaceholderItemAnimationSize]) attributes[CYLPlaceholderItemAnimationSize] = @[@64, @64];
     self.itemAttributes = attributes;
     [self cyl_configureAnimations];
-    if (!self.itemView.animationView) {
-        // [EN] No animator plays it: keep the icon, as Android does. [CN] 没有动画器可播放：保留图标，与 Android 相同。
+    if (!self.animationView) {
+        // [EN] No animator plays it (always the case without the engine): keep the icon, as Android does.
+        // [CN] 没有动画器可播放（没有引擎时总是如此）：保留图标，与 Android 相同。
         self.itemAttributes = previous;
         [self cyl_configureAnimations];
         return NO;
@@ -1326,16 +1454,100 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return YES;
 }
 
+/// [EN] The animation file of the item attributes (the engine-specific keys first, then the generic ones), with its
+///      size and options; nil when there is none or it is invalid.
+/// [CN] item 属性中的动画文件（先看各引擎专用的 key，再看通用 key）及其尺寸与选项；没有或无效时返回 nil。
+- (NSURL *)cyl_animationURLFromAttributes:(NSDictionary *)attributes size:(CGSize *)outSize options:(NSDictionary **)outOptions {
+    NSArray *sources = @[
+        @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFSize],
+        @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieSize],
+        @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGSize],
+        @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveSize],
+        @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationSize]
+    ];
+    id value = nil, sizeValue = nil;
+    for (NSArray *keys in sources) {
+        value = attributes[keys[0]] ?: attributes[keys[1]];
+        if (value) {
+            sizeValue = attributes[keys[2]] ?: attributes[CYLPlaceholderItemAnimationSize];
+            break;
+        }
+    }
+    if (!value) return nil;
+    NSURL *url = nil;
+    if ([value isKindOfClass:NSURL.class]) {
+        url = value;
+    } else if ([value isKindOfClass:NSString.class] && [value length]) {
+        NSString *path = value;
+        if ([path containsString:@"://"]) {
+            url = [NSURL URLWithString:path];
+        } else {
+            if (![path isAbsolutePath]) {
+                NSBundle *bundle = self.animationImageBundle ?: NSBundle.mainBundle;
+                path = [bundle pathForResource:path.stringByDeletingPathExtension ofType:path.pathExtension] ?: path;
+            }
+            url = [NSURL fileURLWithPath:path];
+        }
+    }
+    if (!url) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid animation file.");
+        return nil;
+    }
+    // [EN] Without a configured size: the static image's size, else 80 x 80. [CN] 未配置尺寸时：静态图片的尺寸，否则为 80 x 80。
+    CGSize size = self.image ? self.image.size : CGSizeMake(80, 80);
+    double numbers[2] = {0};
+    if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
+        size = [sizeValue CGSizeValue];
+    } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
+        size = CGSizeMake(numbers[0], numbers[1]);
+    } else if (sizeValue) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
+        return nil;
+    }
+    if (!isfinite(size.width) || !isfinite(size.height) || size.width <= 0 || size.height <= 0 ||
+        size.width > 1000 || size.height > 1000) {
+        NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
+        return nil;
+    }
+    id options = attributes[CYLPlaceholderItemAnimationOptions] ?: @{};
+    if (![options isKindOfClass:NSDictionary.class]) {
+        NSLog(@"CYLTableViewPlaceHolder: animation options must be a dictionary.");
+        return nil;
+    }
+    [self cyl_validateAnimationOptions:options forExtension:url.pathExtension.lowercaseString];
+    *outSize = size;
+    *outOptions = options;
+    return CYLPlaceholderAnimationURLWithOptions(url, options);
+}
+
+/// [EN] Color overrides for the current appearance: `CYLPlaceholderItemAnimationColors`, plus the dark colors in Dark
+///      Mode. [CN] 当前外观下的颜色覆盖：`CYLPlaceholderItemAnimationColors`，深色模式下再加上深色颜色。
+- (NSDictionary<NSString *, UIColor *> *)cyl_animationColorsForAttributes:(NSDictionary *)attributes URL:(NSURL *)url {
+    NSMutableDictionary<NSString *, UIColor *> *animationColors = [NSMutableDictionary dictionary];
+    NSMutableArray *colorSources = [NSMutableArray array];
+    if (attributes[CYLPlaceholderItemAnimationColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationColors]];
+    if (@available(iOS 13.0, *)) {
+        if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            if (attributes[CYLPlaceholderItemAnimationDarkColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationDarkColors]];
+            NSString *extension = url.pathExtension.lowercaseString;
+            NSString *specificKey = [extension isEqualToString:@"json"] ? CYLPlaceholderItemLottieDarkColors :
+                ([extension isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil);
+            if (specificKey && attributes[specificKey]) [colorSources addObject:attributes[specificKey]];
+        }
+    }
+    for (NSDictionary *source in colorSources) {
+        if (![source isKindOfClass:NSDictionary.class]) continue;
+        [source enumerateKeysAndObjectsUsingBlock:^(NSString *path, id value, BOOL *stop) {
+            UIColor *color = CYLPlaceholderColor(value);
+            if (@available(iOS 13.0, *)) color = [color resolvedColorWithTraitCollection:self.traitCollection];
+            if ([path isKindOfClass:NSString.class] && color) animationColors[path] = color;
+        }];
+    }
+    return animationColors;
+}
+
 - (void)cyl_configureAnimations {
-    [self.backendView stop];
-    [self.itemView.animationView.layer removeAnimationForKey:@"CYLPlaceholderGIF"];
-    [self.itemView.animationView removeFromSuperview];
-    self.backendView = nil;
-    self.itemView.animationView = nil;
-    self.gifFrames = nil;
-    self.gifDelays = nil;
-    [self cyl_setImageCoveredByAnimation:NO];
-    NSMutableDictionary *attributes = [self.itemAttributes mutableCopy];
+    NSMutableDictionary *attributes = [self.itemAttributes mutableCopy] ?: [NSMutableDictionary dictionary];
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         NSArray *pairs = @[
             @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFDarkURL, CYLPlaceholderItemGIFDarkFilePath],
@@ -1355,32 +1567,120 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
             }
         }
     }
-    [self cyl_configureGIFWithAttributes:attributes imageBundle:self.animationImageBundle];
-    if (!self.itemView.animationView) {
-        [self cyl_configureBackendWithAttributes:attributes imageBundle:self.animationImageBundle];
-    } else if (attributes[CYLPlaceholderItemAnimationColors] ||
-               (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark &&
-                attributes[CYLPlaceholderItemAnimationDarkColors])) {
-        NSLog(@"CYLTableViewPlaceHolder: GIF color overrides are not supported.");
-    }
+    CGSize size = CGSizeZero;
+    NSDictionary *options = nil;
+    NSURL *url = [self cyl_animationURLFromAttributes:attributes size:&size options:&options];
+    self.animationContentMode = CYLPlaceholderAnimationContentMode(options);
+    self.animationColors = url ? [self cyl_animationColorsForAttributes:attributes URL:url] : nil;
+    // [EN] The `animationSpeed` option is the per-item form of CYLTabBarController's `tabBarItemAnimationSpeed`; a speed
+    //      set later with -setPlaceholderAnimationSpeed: wins.
+    // [CN] `animationSpeed` 选项是 CYLTabBarController `tabBarItemAnimationSpeed` 的单项形式；之后用 -setPlaceholderAnimationSpeed: 设置的速度优先。
+    id speedOption = options[@"animationSpeed"];
+    double speed = [speedOption respondsToSelector:@selector(doubleValue)] ? [speedOption doubleValue] : NAN;
+    BOOL validSpeed = speedOption && isfinite(speed) && speed > 0;
+    if (speedOption && !validSpeed) NSLog(@"CYLTableViewPlaceHolder: animationSpeed must be positive.");
+    self.optionAnimationSpeed = validSpeed ? @(speed) : nil;
+    self.animationSpeed = (self.explicitAnimationSpeed ?: self.optionAnimationSpeed ?: @1).doubleValue;
+    self.animationLoops = self.animationRepeatCount == 0;
+    self.itemAnimationSize = url ? size : CGSizeZero;
+    [self cyl_preservingIconVisibility:^{
+        // [EN] Clear first, so the new size applies and the file is always loaded again (a trait change, a new file).
+        // [CN] 先清空，使新尺寸生效并总是重新加载文件（外观变化、新文件）。
+        self.animationURL = nil;
+        if (url) {
+            self.iconSize = size;
+            self.animationURL = url;
+        }
+    }];
     [self setNeedsLayout];
+}
+
+- (void)reloadAnimation {
+    [self cyl_stopRepeatTimer];
+    [self cyl_preservingIconVisibility:^{
+        [super reloadAnimation];
+    }];
+    [self cyl_configureAnimationPlayer];
+    [self cyl_updateAnimationPlayback];
+}
+
+/// [EN] Applies what the base class does not: the content mode and the color overrides of the item attributes.
+/// [CN] 应用基类不处理的部分：item 属性中的缩放方式与颜色覆盖。
+- (void)cyl_configureAnimationPlayer {
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    UIView *view = self.animationView;
+    id<CYLTabBarItemAnimationPlayer> player = self.animationPlayer;
+    if (!view || !player) return;
+    view.contentMode = self.animationContentMode;
+    if (self.animationColors.count) {
+        if ([player respondsToSelector:@selector(applyColors:traitCollection:)]) {
+            [player applyColors:self.animationColors traitCollection:self.traitCollection];
+        } else {
+            NSLog(@"CYLTableViewPlaceHolder: animation color overrides are not supported by this player.");
+        }
+    }
+    if ((self.explicitAnimationSpeed || self.optionAnimationSpeed) && ![player respondsToSelector:@selector(setAnimationSpeed:)]) {
+        NSLog(@"CYLTableViewPlaceHolder: this animation does not support a playback speed.");
+    }
+    if (self.animationRepeatCount != 1 && ![player respondsToSelector:@selector(setLoops:)] &&
+        ![player respondsToSelector:@selector(progress)]) {
+        NSLog(@"CYLTableViewPlaceHolder: this animation does not support a repeat count of %ld; it plays as its file "
+              @"defines.", (long)self.animationRepeatCount);
+    }
+#endif
+}
+
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+- (void)cylAnimationViewDidLoad:(UIView *)animationView {
+    [super cylAnimationViewDidLoad:animationView];
+    if (animationView == self.animationView) [self cyl_updateAnimationPlayback];
+}
+
+- (void)cylAnimationViewDidFail:(UIView *)animationView error:(NSError *)error {
+    if (animationView == self.animationView) [self cyl_stopRepeatTimer];
+    [self cyl_preservingIconVisibility:^{
+        [super cylAnimationViewDidFail:animationView error:error];
+    }];
+    [self setNeedsLayout];
+}
+#endif
+
+#pragma mark - Measuring and layout 测量与布局
+
+/// [EN] The size an animation is laid out at. [CN] 动画的布局尺寸。
+- (CGSize)cyl_animationBoxSize {
+    if (self.itemAnimationSize.width > 0 && self.itemAnimationSize.height > 0) return self.itemAnimationSize;
+    if (self.iconSize.width > 0 && self.iconSize.height > 0) return self.iconSize;
+    return CGSizeMake(24, 24);
+}
+
+/// [EN] YES when the animation view shows: it is hidden only with a static image the caller hid.
+/// [CN] 动画视图是否显示：只有在调用方隐藏了静态图片时才隐藏。
+- (BOOL)cyl_showsAnimationView {
+    return self.animationView != nil &&
+        (!self.imageView.image || !self.imageView.hidden || [self cyl_animationCoversImage]);
+}
+
+/// [EN] The title offset: the item's own, else the appearance's, as in CYLFlatDesignTabBarButton.
+/// [CN] 标题偏移：优先使用 item 自己的，否则使用外观的，与 CYLFlatDesignTabBarButton 相同。
+- (UIOffset)cyl_titleOffset {
+    return UIOffsetEqualToOffset(self.itemTitleOffset, UIOffsetZero) ? self.defaultTitlePositionAdjustment : self.itemTitleOffset;
 }
 
 /// The item's content (image or animation, gap, title with its chrome) measured for a width, shared by the layout and
 /// the intrinsic content size so the two cannot disagree.
 - (CGSize)cyl_itemSizeForWidth:(CGFloat)width {
-    BOOL showAnimation = self.itemView.animationView &&
-        (!self.imageView.image || !self.imageView.hidden || self.itemView.imageCoveredByAnimation);
+    BOOL showAnimation = [self cyl_showsAnimationView];
     BOOL hasImage = (self.imageView.image != nil && !self.imageView.hidden) || showAnimation;
     BOOL hasTitle = self.textLabel.text.length > 0 && !self.textLabel.hidden;
-    UIEdgeInsets insets = hasTitle ? self.itemView.titleContentInsets : UIEdgeInsetsZero;
+    UIEdgeInsets insets = hasTitle ? self.titleContentInsets : UIEdgeInsetsZero;
     CGFloat textWidth = MAX(0, width - insets.left - insets.right);
     CGSize titleSize = hasTitle ? [self.textLabel.text boundingRectWithSize:CGSizeMake(textWidth, CGFLOAT_MAX)
         options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.textLabel.font} context:nil].size : CGSizeZero;
-    CGSize imageSize = showAnimation ? self.itemView.animationSize :
+    CGSize imageSize = showAnimation ? [self cyl_animationBoxSize] :
         (hasImage ? self.imageView.image.size : CGSizeZero);
-    if (self.itemView.horizontal) {
-        UIEdgeInsets imageInsets = self.itemView.itemImageInsets;
+    if (self.horizontal) {
+        UIEdgeInsets imageInsets = self.itemImageInsets;
         CGSize icon = hasImage ? CGSizeMake(MAX(0, imageSize.width - imageInsets.left - imageInsets.right),
                                             MAX(0, imageSize.height - imageInsets.top - imageInsets.bottom)) : CGSizeZero;
         CGFloat gap = hasImage && hasTitle ? CYLPlaceholderHorizontalSpacing : 0;
@@ -1392,7 +1692,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     CGFloat titleWidth = 0;
     if (hasTitle) {
         height += insets.top + insets.bottom;
-        titleWidth = MAX(ceil(titleSize.width) + insets.left + insets.right, self.itemView.titleMinimumWidth);
+        titleWidth = MAX(ceil(titleSize.width) + insets.left + insets.right, self.titleMinimumWidth);
     }
     return CGSizeMake(MAX(imageSize.width, titleWidth), height);
 }
@@ -1413,14 +1713,6 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return MAX(0, (width - content) / 2);
 }
 
-/// Hides the static image under a playing animation (or shows it again) without the layout reading it as "no icon".
-- (void)cyl_setImageCoveredByAnimation:(BOOL)covered {
-    self.itemView.imageCoveredByAnimation = covered;
-    self.imageView.layer.hidden = covered;
-    [self invalidateIntrinsicContentSize];
-    [self setNeedsLayout];
-}
-
 - (void)setContentMargin:(CGFloat)contentMargin {
     if (_contentMargin == contentMargin) return;
     _contentMargin = contentMargin;
@@ -1428,18 +1720,18 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     [self setNeedsLayout];
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    if (CGRectIsEmpty(self.bounds)) return;
-    CGFloat width = MAX(0, CGRectGetWidth(self.bounds) - 2 * [self cyl_marginForWidth:CGRectGetWidth(self.bounds)]);
-    CGFloat itemHeight = [self cyl_itemSizeForWidth:width].height;
-    self.itemView.frame = CGRectMake((CGRectGetWidth(self.bounds) - width) / 2,
-        (CGRectGetHeight(self.bounds) - itemHeight) / 2, width, itemHeight);
-    [self.itemView setNeedsLayout];
+- (CGSize)contentSizeThatFits:(CGSize)size {
+    return [self cyl_itemSizeForWidth:MAX(0, size.width)];
+}
+
+- (CGSize)sizeThatFits:(CGSize)size {
+    // [EN] UIView's behavior, as before: the view keeps its size; `reportsContentSize` reports the content instead.
+    // [CN] 与以前一样采用 UIView 的行为：视图保持自身尺寸；需要内容尺寸时使用 `reportsContentSize`。
+    return self.bounds.size;
 }
 
 - (CGSize)intrinsicContentSize {
-    if (!self.reportsContentSize) return [super intrinsicContentSize];
+    if (!self.reportsContentSize) return CGSizeMake(UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric);
     CGFloat maxWidth = self.preferredMaxLayoutWidth > 0 ? self.preferredMaxLayoutWidth : CGRectGetWidth(UIScreen.mainScreen.bounds);
     CGFloat margin = MAX(0, self.contentMargin);
     CGSize size = [self cyl_itemSizeForWidth:MAX(0, maxWidth - 2 * margin)];
@@ -1458,113 +1750,155 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     [self invalidateIntrinsicContentSize];
 }
 
-// GIF frame timing adapted from CYLGIFTabBarItemAnimator, CYLTabBarController (MIT).
-- (void)cyl_configureGIFWithAttributes:(NSDictionary *)attributes imageBundle:(NSBundle *)imageBundle {
-    id value = attributes[CYLPlaceholderItemGIFURL] ?: attributes[CYLPlaceholderItemGIFFilePath];
-    if (!value) {
-        id generic = attributes[CYLPlaceholderItemAnimationURL] ?: attributes[CYLPlaceholderItemAnimationFilePath];
-        NSString *extension = [generic isKindOfClass:NSURL.class] ? [generic pathExtension] :
-            ([generic isKindOfClass:NSString.class] ? [generic pathExtension] : nil);
-        if ([extension.lowercaseString isEqualToString:@"gif"]) value = generic;
+- (void)layoutContentInRect:(CGRect)rect {
+    if (CGRectIsEmpty(rect)) return;
+    CGFloat width = MAX(0, CGRectGetWidth(rect) - 2 * [self cyl_marginForWidth:CGRectGetWidth(rect)]);
+    CGFloat itemHeight = [self cyl_itemSizeForWidth:width].height;
+    CGRect item = CGRectMake(CGRectGetMinX(rect) + (CGRectGetWidth(rect) - width) / 2,
+                             CGRectGetMinY(rect) + (CGRectGetHeight(rect) - itemHeight) / 2, width, itemHeight);
+    self.itemFrame = item;
+    self.selectionIndicatorView.frame = item;
+    if (CGRectIsEmpty(item)) return;
+    [self cyl_layoutItemInRect:item];
+}
+
+// UI adapted from CYLFlatDesignTabBarButton, CYLTabBarController (MIT).
+// Copyright (c) 2026 CYLTabBarController, https://github.com/ChenYilong/CYLTabBarController.
+- (void)cyl_layoutItemInRect:(CGRect)item {
+    UIImageView *imageView = self.imageView;
+    UILabel *titleLabel = self.titleLabel;
+    UIView *animationView = self.animationView;
+    // [EN] The base class hides the image view under a ready animation, which is the same flag as a caller hiding the
+    //      icon, so the layout must not read it as "no icon" and hide the animation too.
+    // [CN] 基类会在就绪的动画下隐藏图片视图，这与调用方隐藏图标是同一个属性，因此布局不能把它当作“没有图标”而把动画也隐藏。
+    BOOL imageHiddenByCaller = imageView.hidden && ![self cyl_animationCoversImage];
+    animationView.hidden = imageView.image != nil && imageHiddenByCaller;
+    BOOL isShowImageView = (imageView.image != nil && !imageView.hidden) || (animationView != nil && !animationView.hidden);
+    BOOL isShowTitleLabel = titleLabel.text.length > 0 && !titleLabel.hidden;
+    CGSize box = CGSizeZero;
+    if (animationView && !animationView.hidden) {
+        box = [self cyl_animationBoxSize];
+    } else if (isShowImageView) {
+        box = imageView.image.size;
     }
-    if (!value) return;
-    NSURL *url = nil;
-    if ([value isKindOfClass:NSURL.class]) {
-        url = value;
-    } else if ([value isKindOfClass:NSString.class] && [value length] > 0) {
-        NSString *path = value;
-        if (![path isAbsolutePath]) {
-            NSBundle *bundle = imageBundle ?: NSBundle.mainBundle;
-            path = [bundle pathForResource:[path stringByDeletingPathExtension] ofType:path.pathExtension] ?: path;
+
+    if (self.horizontal) {
+        [self cyl_layoutHorizontallyInRect:item iconBox:box showingImage:isShowImageView title:isShowTitleLabel];
+        [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
+        return;
+    }
+
+    CGFloat itemWidth = CGRectGetWidth(item), itemHeight = CGRectGetHeight(item);
+    // [EN] Title chrome (background, border, padding) applies only to a shown title; with zero insets the layout is
+    // the same as without chrome.
+    // [CN] 标题装饰（背景、边框、内边距）只作用于显示中的标题；内边距为零时布局与没有装饰时相同。
+    UIEdgeInsets titleInsets = isShowTitleLabel ? self.titleContentInsets : UIEdgeInsetsZero;
+    CGFloat titleAreaWidth = MAX(0, itemWidth - titleInsets.left - titleInsets.right);
+    NSString *title = isShowTitleLabel ? titleLabel.text : @"height";
+    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(titleAreaWidth, CGFLOAT_MAX)
+                                           options:NSStringDrawingUsesLineFragmentOrigin
+                                        attributes:@{NSFontAttributeName: titleLabel.font}
+                                           context:nil].size;
+    CGFloat titleLabelWidth = MIN(titleAreaWidth, ceil(titleSize.width));
+    CGFloat titleLabelHeight = ceil(titleSize.height);
+    CGFloat titleLabelX = (itemWidth - titleLabelWidth) / 2;
+    CGFloat titleLabelY = itemHeight - titleLabelHeight - 2 - titleInsets.bottom;
+    if (!isShowImageView) {
+        titleLabelY = titleInsets.top + (itemHeight - titleInsets.top - titleInsets.bottom - titleLabelHeight) / 2;
+    }
+    UIOffset titleOffset = [self cyl_titleOffset];
+    titleLabelX += titleOffset.horizontal;
+    titleLabelY += titleOffset.vertical;
+    titleLabel.frame = CGRectMake(CGRectGetMinX(item) + titleLabelX, CGRectGetMinY(item) + titleLabelY,
+                                  titleLabelWidth, titleLabelHeight);
+    if (self.titleBackgroundView) {
+        self.titleBackgroundView.hidden = !isShowTitleLabel;
+        if (isShowTitleLabel) {
+            CGFloat chromeWidth = MIN(itemWidth, MAX(titleLabelWidth + titleInsets.left + titleInsets.right, self.titleMinimumWidth));
+            CGRect chrome = CGRectMake(CGRectGetMidX(titleLabel.frame) - chromeWidth / 2,
+                                       CGRectGetMinY(titleLabel.frame) - titleInsets.top,
+                                       chromeWidth, titleLabelHeight + titleInsets.top + titleInsets.bottom);
+            self.titleBackgroundView.frame = chrome;
+            self.titleBackgroundView.layer.cornerRadius = MIN(MAX(0, self.titleCornerRadius), CGRectGetHeight(chrome) / 2);
+            self.titleBackgroundView.layer.borderWidth = self.titleBorderWidth;
+            UIColor *borderColor = self.titleBorderColor;
+            if (@available(iOS 13.0, *)) {
+                borderColor = [borderColor resolvedColorWithTraitCollection:self.traitCollection];
+            }
+            self.titleBackgroundView.layer.borderColor = borderColor.CGColor;
+            [self insertSubview:self.titleBackgroundView belowSubview:titleLabel];
         }
-        url = [NSURL fileURLWithPath:path];
     }
-    if (!url.isFileURL || ![url.pathExtension.lowercaseString isEqualToString:@"gif"]) {
-        NSLog(@"CYLTableViewPlaceHolder: GIF animation requires a local .gif file.");
-        return;
+
+    if (isShowImageView) {
+        CGFloat imageViewX = (itemWidth - box.width) / 2;
+        CGFloat imageViewY = (CGRectGetMinY(titleLabel.frame) - CGRectGetMinY(item) - titleInsets.top - box.height) / 2;
+        if (!isShowTitleLabel) imageViewY = (itemHeight - box.height) / 2;
+        imageViewX += self.itemImageOffset.horizontal;
+        imageViewY += self.itemImageOffset.vertical;
+        imageView.frame = CGRectMake(CGRectGetMinX(item) + imageViewX, CGRectGetMinY(item) + imageViewY,
+            MAX(0, box.width - self.itemImageInsets.left - self.itemImageInsets.right),
+            MAX(0, box.height - self.itemImageInsets.top - self.itemImageInsets.bottom));
+        animationView.frame = imageView.frame;
+    } else {
+        imageView.frame = (CGRect){item.origin, CGSizeZero};
     }
-    // With the GIF subspec, the registered GIF animator plays it, like the other engines.
-    if ([CYLPlaceholderItemAnimationGetService() canAnimateFileAtURL:url]) return;
-    NSNumber *fileSize = nil;
-    NSError *fileError = nil;
-    if (![url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:&fileError]) {
-        NSLog(@"CYLTableViewPlaceHolder: cannot read GIF metadata: %@.", fileError.localizedDescription);
-        return;
+    [self cyl_layoutBadgeAnchoredToImage:isShowImageView];
+}
+
+/// [EN] The icon at the leading edge, then the title; both centered vertically. [CN] 图标在前缘，标题在后，二者垂直居中。
+- (void)cyl_layoutHorizontallyInRect:(CGRect)item iconBox:(CGSize)box showingImage:(BOOL)showImage title:(BOOL)showTitle {
+    CGFloat width = CGRectGetWidth(item), height = CGRectGetHeight(item);
+    CGSize imageSize = CGSizeZero;
+    if (showImage) {
+        imageSize = CGSizeMake(MAX(0, box.width - self.itemImageInsets.left - self.itemImageInsets.right),
+                               MAX(0, box.height - self.itemImageInsets.top - self.itemImageInsets.bottom));
     }
-    if (fileSize.unsignedLongLongValue > 16 * 1024 * 1024) {
-        NSLog(@"CYLTableViewPlaceHolder: GIF animation exceeds the 16 MB input limit.");
-        return;
+    CGFloat titleX = showImage ? imageSize.width + CYLPlaceholderHorizontalSpacing : 0;
+    CGFloat titleWidth = MAX(0, width - titleX);
+    CGFloat titleHeight = 0;
+    if (showTitle) {
+        titleHeight = ceil([self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
+            options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: self.titleLabel.font}
+            context:nil].size.height);
     }
-    NSData *data = [NSData dataWithContentsOfURL:url options:0 error:NULL];
-    if (data.length > 16 * 1024 * 1024) {
-        NSLog(@"CYLTableViewPlaceHolder: GIF animation exceeds the 16 MB input limit.");
-        return;
+    BOOL rightToLeft = self.effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
+    CGRect imageFrame = CGRectMake(0, (height - imageSize.height) / 2, imageSize.width, imageSize.height);
+    CGRect titleFrame = CGRectMake(titleX, (height - titleHeight) / 2, titleWidth, titleHeight);
+    if (rightToLeft) {
+        imageFrame.origin.x = width - CGRectGetMaxX(imageFrame);
+        titleFrame.origin.x = width - CGRectGetMaxX(titleFrame);
     }
-    CGImageSourceRef source = data ? CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL) : NULL;
-    if (!source || !CGImageSourceGetType(source) || !CFEqual(CGImageSourceGetType(source), CFSTR("com.compuserve.gif")) ||
-        CGImageSourceGetCount(source) == 0 || CGImageSourceGetCount(source) > 500) {
-        if (source) CFRelease(source);
-        NSLog(@"CYLTableViewPlaceHolder: cannot decode GIF animation at %@.", url);
-        return;
-    }
-    NSMutableArray<UIImage *> *frames = [NSMutableArray array];
-    NSMutableArray<NSNumber *> *delays = [NSMutableArray array];
-    uint64_t pixelBytes = 0;
-    for (size_t i = 0; i < CGImageSourceGetCount(source); i++) {
-        NSDictionary *properties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(source, i, NULL));
-        uint64_t width = [properties[(__bridge NSString *)kCGImagePropertyPixelWidth] unsignedLongLongValue];
-        uint64_t height = [properties[(__bridge NSString *)kCGImagePropertyPixelHeight] unsignedLongLongValue];
-        if (width == 0 || height == 0 || width > 4096 || height > 4096 ||
-            width * height * 4 > 64 * 1024 * 1024 - pixelBytes) {
-            CFRelease(source);
-            NSLog(@"CYLTableViewPlaceHolder: GIF frame dimensions exceed the memory limit or are invalid.");
-            return;
+    imageFrame = CGRectOffset(imageFrame, self.itemImageOffset.horizontal, self.itemImageOffset.vertical);
+    UIOffset titleOffset = [self cyl_titleOffset];
+    titleFrame = CGRectOffset(titleFrame, titleOffset.horizontal, titleOffset.vertical);
+    imageFrame = CGRectOffset(imageFrame, CGRectGetMinX(item), CGRectGetMinY(item));
+    titleFrame = CGRectOffset(titleFrame, CGRectGetMinX(item), CGRectGetMinY(item));
+    self.imageView.frame = showImage ? imageFrame : (CGRect){item.origin, CGSizeZero};
+    self.animationView.frame = self.imageView.frame;
+    self.titleLabel.textAlignment = NSTextAlignmentNatural;
+    self.titleLabel.frame = showTitle ? titleFrame : (CGRect){item.origin, CGSizeZero};
+    self.titleBackgroundView.hidden = YES;
+}
+
+- (void)cyl_layoutBadgeAnchoredToImage:(BOOL)isShowImageView {
+    // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
+    if (self.badgeLabel && !self.badgeLabel.hidden) {
+        CYLPlaceholderBadgeAppearance *appearance = [CYLPlaceholderBadgeAppearance sharedAppearance];
+        UIEdgeInsets insets = appearance.contentInsets;
+        BOOL dot = self.badgeLabel.text.length == 0;
+        CGSize size = dot ? CGSizeMake(8, 8) : [self.badgeLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        if (!dot) {
+            size.height = ceil(size.height) + insets.top + insets.bottom;
+            size.width = MAX(size.height, ceil(size.width) + insets.left + insets.right);
         }
-        NSDictionary *options = @{(__bridge NSString *)kCGImageSourceShouldCacheImmediately: @YES};
-        CGImageRef image = CGImageSourceCreateImageAtIndex(source, i, (__bridge CFDictionaryRef)options);
-        if (!image) {
-            CFRelease(source);
-            NSLog(@"CYLTableViewPlaceHolder: GIF frame %zu could not be decoded.", i);
-            return;
-        }
-        pixelBytes += width * height * 4;
-        [frames addObject:[UIImage imageWithCGImage:image]];
-        CGImageRelease(image);
-        NSDictionary *gif = properties[(__bridge NSString *)kCGImagePropertyGIFDictionary];
-        NSNumber *delay = gif[(__bridge NSString *)kCGImagePropertyGIFUnclampedDelayTime] ?:
-            gif[(__bridge NSString *)kCGImagePropertyGIFDelayTime];
-        double seconds = delay.doubleValue;
-        [delays addObject:@(isfinite(seconds) && seconds >= 0.02 ? seconds : 0.1)];
+        CGRect anchor = isShowImageView ? self.imageView.frame : self.titleLabel.frame;
+        self.badgeLabel.bounds = (CGRect){CGPointZero, size};
+        self.badgeLabel.center = CGPointMake(CGRectGetMaxX(anchor) + 2 + self.badgeCenterOffset.x,
+                                              CGRectGetMinY(anchor) + self.badgeCenterOffset.y);
+        self.badgeLabel.layer.cornerRadius = appearance.cornerRadius > 0 ? MIN(appearance.cornerRadius, size.height / 2) : size.height / 2;
+        [self bringSubviewToFront:self.badgeLabel];
     }
-    CFRelease(source);
-    if (frames.count == 0) {
-        NSLog(@"CYLTableViewPlaceHolder: GIF animation contains no decodable frames.");
-        return;
-    }
-    CGSize size = frames.firstObject.size;
-    id sizeValue = attributes[CYLPlaceholderItemGIFSize] ?: attributes[CYLPlaceholderItemAnimationSize];
-    double numbers[2] = {0};
-    if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
-        size = [sizeValue CGSizeValue];
-    } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
-        size = CGSizeMake(numbers[0], numbers[1]);
-    } else if (sizeValue) {
-        NSLog(@"CYLTableViewPlaceHolder: invalid GIF animation size.");
-        return;
-    }
-    if (!isfinite(size.width) || !isfinite(size.height) || size.width <= 0 || size.height <= 0 || size.width > 1000 || size.height > 1000) {
-        NSLog(@"CYLTableViewPlaceHolder: invalid GIF animation size.");
-        return;
-    }
-    self.gifFrames = frames;
-    self.gifDelays = delays;
-    UIViewContentMode contentMode = CYLPlaceholderAnimationContentMode(attributes[CYLPlaceholderItemAnimationOptions]);
-    UIImageView *view = [[UIImageView alloc] initWithImage:frames.firstObject];
-    view.contentMode = contentMode;
-    self.itemView.animationView = view;
-    self.itemView.animationSize = size;
-    [self cyl_setImageCoveredByAnimation:YES];
-    [self.itemView insertSubview:view aboveSubview:self.imageView];
 }
 
 // Validates animation options for a given file extension/backend.
@@ -1620,168 +1954,136 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return isValid;
 }
 
-- (void)cyl_configureBackendWithAttributes:(NSDictionary *)attributes imageBundle:(NSBundle *)imageBundle {
-   NSArray *sources = @[
-       @[CYLPlaceholderItemGIFURL, CYLPlaceholderItemGIFFilePath, CYLPlaceholderItemGIFSize],
-       @[CYLPlaceholderItemLottieURL, CYLPlaceholderItemLottieFilePath, CYLPlaceholderItemLottieSize],
-       @[CYLPlaceholderItemPAGURL, CYLPlaceholderItemPAGFilePath, CYLPlaceholderItemPAGSize],
-       @[CYLPlaceholderItemRiveURL, CYLPlaceholderItemRiveFilePath, CYLPlaceholderItemRiveSize],
-       @[CYLPlaceholderItemAnimationURL, CYLPlaceholderItemAnimationFilePath, CYLPlaceholderItemAnimationSize]
-   ];
-   id value = nil, sizeValue = nil;
-   for (NSArray *keys in sources) {
-       value = attributes[keys[0]] ?: attributes[keys[1]];
-       if (value) {
-           sizeValue = attributes[keys[2]] ?: attributes[CYLPlaceholderItemAnimationSize];
-           break;
-       }
-   }
-   if (!value) return;
-   NSURL *url = nil;
-   if ([value isKindOfClass:NSURL.class]) {
-       url = value;
-   } else if ([value isKindOfClass:NSString.class] && [value length]) {
-       NSString *path = value;
-       if ([path containsString:@"://"]) {
-           url = [NSURL URLWithString:path];
-       } else {
-           if (![path isAbsolutePath]) {
-               NSBundle *bundle = imageBundle ?: NSBundle.mainBundle;
-               path = [bundle pathForResource:path.stringByDeletingPathExtension ofType:path.pathExtension] ?: path;
-           }
-           url = [NSURL fileURLWithPath:path];
-       }
-   }
-   if (!url.isFileURL) {
-       NSLog(@"CYLTableViewPlaceHolder: animation requires a local file.");
-       return;
-   }
-   CGSize size = self.imageView.image ? self.imageView.image.size : CGSizeMake(80, 80);
-   double numbers[2] = {0};
-   if ([sizeValue isKindOfClass:NSValue.class] && strcmp([sizeValue objCType], @encode(CGSize)) == 0) {
-       size = [sizeValue CGSizeValue];
-   } else if (sizeValue && CYLPlaceholderNumbers(sizeValue, @[@[@"width", @"w"], @[@"height", @"h"]], numbers)) {
-       size = CGSizeMake(numbers[0], numbers[1]);
-   } else if (sizeValue) {
-       NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
-       return;
-   }
-   if (!isfinite(size.width) || !isfinite(size.height) || size.width <= 0 || size.height <= 0 ||
-       size.width > 1000 || size.height > 1000) {
-       NSLog(@"CYLTableViewPlaceHolder: invalid animation size.");
-       return;
-   }
-   NSError *error = nil;
-   id options = attributes[CYLPlaceholderItemAnimationOptions] ?: @{};
-   if (![options isKindOfClass:NSDictionary.class]) {
-       NSLog(@"CYLTableViewPlaceHolder: animation options must be a dictionary.");
-       return;
-   }
-   // Validate animation options for the backend
-   [self cyl_validateAnimationOptions:options forExtension:url.pathExtension.lowercaseString];
-   NSMutableDictionary *factories = CYLPlaceholderAnimationFactories();
-   CYLPlaceholderAnimationFactory factory;
-   @synchronized (factories) {
-       factory = [factories[url.pathExtension.lowercaseString] copy];
-   }
-   UIView<CYLPlaceholderAnimationPlayer> *view;
-   UIViewContentMode contentMode = CYLPlaceholderAnimationContentMode(options);
-   if (factory) {
-       view = factory(url, size, contentMode, options, &error);
-   } else {
-       id<CYLPlaceholderItemAnimationService> service = CYLPlaceholderItemAnimationGetService();
-       if (!service) {
-           NSLog(@"CYLTableViewPlaceHolder: animation backend is not installed; showing the static image.");
-           return;
-       }
-       view = [service animationViewWithFileURL:url size:size contentMode:contentMode
-                                        options:options error:&error];
-   }
-   if (!view) {
-       NSLog(@"CYLTableViewPlaceHolder: animation could not be loaded: %@.", error.localizedDescription ?: @"factory returned no view");
-       return;
-   }
-   __weak typeof(self) weakSelf = self;
-   __weak UIView<CYLPlaceholderAnimationPlayer> *weakView = view;
-   view.errorHandler = ^(NSError *backendError) {
-       NSLog(@"CYLTableViewPlaceHolder: animation failed: %@.", backendError.localizedDescription);
-       CYLPlaceholderView *strongSelf = weakSelf;
-       if (!strongSelf || strongSelf.backendView != weakView) return;
-       [strongSelf.backendView removeFromSuperview];
-       strongSelf.backendView = nil;
-       strongSelf.itemView.animationView = nil;
-       [strongSelf cyl_setImageCoveredByAnimation:NO];
-       [strongSelf setNeedsLayout];
-   };
-   view.readyHandler = ^{
-       CYLPlaceholderView *strongSelf = weakSelf;
-       if (strongSelf.backendView == weakView && weakView) {
-           [strongSelf cyl_setImageCoveredByAnimation:YES];
-           if (strongSelf.animationStopped) [strongSelf cyl_updateAnimationPlayback];
-       }
-   };
-   self.backendView = view;
-   self.itemView.animationView = view;
-   self.itemView.animationSize = size;
-   [self cyl_setImageCoveredByAnimation:view.isReady];
-   [self.itemView insertSubview:view aboveSubview:self.imageView];
-   NSMutableDictionary<NSString *, UIColor *> *animationColors = [NSMutableDictionary dictionary];
-   NSMutableArray *colorSources = [NSMutableArray array];
-   if (attributes[CYLPlaceholderItemAnimationColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationColors]];
-   if (@available(iOS 13.0, *)) {
-       if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-           if (attributes[CYLPlaceholderItemAnimationDarkColors]) [colorSources addObject:attributes[CYLPlaceholderItemAnimationDarkColors]];
-           NSString *specificKey = [url.pathExtension.lowercaseString isEqualToString:@"json"] ? CYLPlaceholderItemLottieDarkColors :
-               ([url.pathExtension.lowercaseString isEqualToString:@"riv"] ? CYLPlaceholderItemRiveDarkColors : nil);
-           if (specificKey && attributes[specificKey]) [colorSources addObject:attributes[specificKey]];
-       }
-   }
-   for (NSDictionary *source in colorSources) {
-       [source enumerateKeysAndObjectsUsingBlock:^(NSString *path, id value, BOOL *stop) {
-           UIColor *color = CYLPlaceholderColor(value);
-           if (@available(iOS 13.0, *)) color = [color resolvedColorWithTraitCollection:self.traitCollection];
-           animationColors[path] = color;
-       }];
-   }
-   if (animationColors.count &&
-       (![view respondsToSelector:@selector(setAnimationColors:)] || ![view setAnimationColors:animationColors])) {
-       NSLog(@"CYLTableViewPlaceHolder: animation color overrides are not supported by this player.");
-   }
-   // The `animationSpeed` option is the per-item form of CYLTabBarController's `tabBarItemAnimationSpeed`;
-   // a speed set later with -setPlaceholderAnimationSpeed: wins.
-   id speedOption = options[@"animationSpeed"];
-   if (speedOption && !self.animationSpeed) {
-       double speed = [speedOption respondsToSelector:@selector(doubleValue)] ? [speedOption doubleValue] : NAN;
-       if (!isfinite(speed) || speed <= 0 || ![view respondsToSelector:@selector(setAnimationSpeed:)] ||
-           ![view setAnimationSpeed:speed]) {
-           NSLog(@"CYLTableViewPlaceHolder: animationSpeed must be positive and supported by the player.");
-       }
-   }
-   if (self.animationSpeed &&
-       (![view respondsToSelector:@selector(setAnimationSpeed:)] ||
-        ![view setAnimationSpeed:self.animationSpeed.doubleValue])) {
-       NSLog(@"CYLTableViewPlaceHolder: the replacement animation does not support playback speed.");
-   }
-   [self cyl_applyAnimationRepeatCount];
-}
-
-/// Passes `animationRepeatCount` to the player; the built-in GIF decoder reads it when it plays.
-- (void)cyl_applyAnimationRepeatCount {
-    UIView<CYLPlaceholderAnimationPlayer> *view = self.backendView;
-    if (!view) return;
-    BOOL applied = [view respondsToSelector:@selector(setAnimationRepeatCount:)] &&
-        [view setAnimationRepeatCount:self.animationRepeatCount];
-    if (!applied && self.animationRepeatCount != 1) {
-        NSLog(@"CYLTableViewPlaceHolder: this animation does not support a repeat count of %ld; it plays as its file "
-              @"defines.", (long)self.animationRepeatCount);
-    }
-}
+#pragma mark - Playback 播放
 
 - (void)setAnimationRepeatCount:(NSInteger)animationRepeatCount {
     if (animationRepeatCount < 0 || _animationRepeatCount == animationRepeatCount) return;
     _animationRepeatCount = animationRepeatCount;
-    [self cyl_applyAnimationRepeatCount];
+    self.animationLoops = animationRepeatCount == 0;
     [self cyl_updateAnimationPlayback];
+}
+
+- (void)playPlaceholderAnimation {
+    [self cyl_leaveSeekMode];
+    self.animationStopped = NO;
+    self.animationShowsLastFrame = NO;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)stopPlaceholderAnimation {
+    [self cyl_leaveSeekMode];
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = NO;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)showPlaceholderAnimationLastFrame {
+    [self cyl_leaveSeekMode];
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = YES;
+    [self cyl_updateAnimationPlayback];
+}
+
+- (void)cyl_leaveSeekMode {
+    if (!self.animationSeekProgress) return;
+    self.animationSeekProgress = nil;
+    self.animationRestingProgress = 0;
+}
+
+// [EN] The base class's playback methods follow the placeholder's policy too (visibility, Reduce Motion, repeat
+//      count), so both spellings behave the same.
+// [CN] 基类的播放方法同样遵循占位图的播放策略（可见性、减弱动态效果、重复次数），两种写法行为一致。
+- (void)playAnimation {
+    [self playPlaceholderAnimation];
+}
+
+- (void)restartAnimation {
+    // [EN] Every engine player plays from progress 0. [CN] 引擎的播放器都从进度 0 开始播放。
+    [self playPlaceholderAnimation];
+}
+
+- (void)stopAnimation {
+    [self stopPlaceholderAnimation];
+}
+
+- (void)showAnimationLastFrame {
+    [self showPlaceholderAnimationLastFrame];
+}
+
+- (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress {
+    if (!NSThread.isMainThread || !isfinite(progress) || progress < 0 || progress > 1) return NO;
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    if (![self.animationPlayer respondsToSelector:@selector(setProgress:)]) return NO;
+    self.animationStopped = YES;
+    self.animationShowsLastFrame = NO;
+    self.animationSeekProgress = @(progress);
+    [self cyl_updateAnimationPlayback];
+    return YES;
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed {
+    if (!NSThread.isMainThread || !isfinite(speed) || speed <= 0) return NO;
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    if (![self.animationPlayer respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
+    self.explicitAnimationSpeed = @(speed);
+    self.animationSpeed = speed;
+    return YES;
+#else
+    return NO;
+#endif
+}
+
+/// [EN] Plays while the view is on screen, visible, not stopped and Reduce Motion is off; otherwise shows the resting
+///      frame, the last frame or the seek position. The base class plays.
+/// [CN] 视图在屏幕上、可见、未停止且未开启“减弱动态效果”时播放；否则显示静止帧、最后一帧或定位的位置。由基类播放。
+- (void)cyl_updateAnimationPlayback {
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    [self cyl_stopRepeatTimer];
+    if (!self.animationPlayer) return;
+    if (self.animationShowsLastFrame) {
+        [super showAnimationLastFrame];
+    } else if (self.animationSeekProgress) {
+        self.animationRestingProgress = self.animationSeekProgress.doubleValue;
+        [super stopAnimation];
+    } else if (!self.animationStopped && self.window && !self.hidden && !UIAccessibilityIsReduceMotionEnabled()) {
+        [super playAnimation];
+        [self cyl_startRepeatTimerIfNeeded];
+    } else {
+        [super stopAnimation];
+    }
+#endif
+}
+
+/// [EN] A repeat count N > 1: the player plays once and is replayed N - 1 times when it reaches the end (it must
+///      report its progress, as Lottie and PAG do). 0 is `animationLoops`, handled by the base class.
+/// [CN] 重复次数 N > 1：播放器播放一次，播放到末尾时再重播 N - 1 次（播放器需要提供进度，如 Lottie 与 PAG）。0 即 `animationLoops`，由基类处理。
+- (void)cyl_startRepeatTimerIfNeeded {
+#if CYL_ANIMATION_ENGINE_AVAILABLE
+    if (self.animationRepeatCount <= 1 || ![self.animationPlayer respondsToSelector:@selector(progress)]) return;
+    self.remainingRepeats = self.animationRepeatCount - 1;
+    __weak typeof(self) weakSelf = self;
+    self.repeatTimer = [NSTimer timerWithTimeInterval:0.05 repeats:YES block:^(NSTimer *timer) {
+        CYLPlaceholderView *strongSelf = weakSelf;
+        id<CYLTabBarItemAnimationPlayer> player = strongSelf.animationPlayer;
+        if (!strongSelf || !player || strongSelf.remainingRepeats <= 0) {
+            [timer invalidate];
+            return;
+        }
+        if (player.progress >= 0.999) {
+            strongSelf.remainingRepeats -= 1;
+            [player play];
+        }
+    }];
+    [[NSRunLoop mainRunLoop] addTimer:self.repeatTimer forMode:NSRunLoopCommonModes];
+#endif
+}
+
+- (void)cyl_stopRepeatTimer {
+    [self.repeatTimer invalidate];
+    self.repeatTimer = nil;
 }
 
 #pragma mark - Tap
@@ -1839,6 +2141,31 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return [self performTap] || [super accessibilityActivate];
 }
 
+/// [EN] The base class's accessibility (a button with the title) does not apply: a placeholder is a decoration, an
+///      element when it has content or a label, and a button only with a tap event.
+/// [CN] 不使用基类的无障碍设置（带标题的按钮）：占位图是装饰；有内容或标签时是元素；只有设置点击事件时才是按钮。
+- (void)updateItemAccessibility {
+    [self cyl_updateTapAccessibility];
+}
+
+/// [EN] `UIControlEventTouchUpInside` (sent by the base class's tracking or by the touches below) runs the tap event.
+/// [CN] `UIControlEventTouchUpInside`（由基类的跟踪或下面的触摸处理发送）执行点击事件。
+- (void)cyl_handleTouchUpInside {
+    [self performTap];
+}
+
+/// [EN] YES when the control handles touches: a tap event, or the base class's delegate or drag. Otherwise touches pass
+///      through, as they did before the placeholder became a control.
+/// [CN] 控件是否处理触摸：有点击事件，或设置了基类的代理或拖拽。否则触摸穿透，与占位图成为控件之前相同。
+- (BOOL)cyl_handlesTouches {
+    return self.isTapInteractive || self.delegate != nil || self.isDragEnabled;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *hit = [super hitTest:point withEvent:event];
+    return (hit == self && ![self cyl_handlesTouches]) ? nil : hit;
+}
+
 - (void)cyl_setTapHighlighted:(BOOL)highlighted {
     if (highlighted && self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleNone) highlighted = NO;
     if (self.tapHighlighted == highlighted) return;
@@ -1849,12 +2176,23 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     BOOL shrink = self.tapHighlightStyle == CYLPlaceholderTapHighlightStyleShrink && !UIAccessibilityIsReduceMotionEnabled();
     CGFloat alpha = highlighted ? (shrink ? 0.8 : 0.5) : 1;
     CGAffineTransform transform = highlighted && shrink ? CGAffineTransformMakeScale(0.96, 0.96) : CGAffineTransformIdentity;
+    // [EN] The content is the subviews: the transform scales them around the center (the content is centered), and
+    //      each keeps the alpha it had before the press.
+    // [CN] 内容即子视图：变换以中心缩放它们（内容居中），各子视图保留按下前的 alpha。
+    if (highlighted && !self.highlightAlphas) {
+        self.highlightAlphas = [NSMapTable weakToStrongObjectsMapTable];
+        for (UIView *view in self.subviews) [self.highlightAlphas setObject:@(view.alpha) forKey:view];
+    }
+    NSMapTable<UIView *, NSNumber *> *alphas = self.highlightAlphas;
     [UIView animateWithDuration:highlighted ? 0.08 : 0.2 delay:0
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
                      animations:^{
-        self.itemView.alpha = alpha;
-        self.itemView.transform = transform;
+        self.layer.sublayerTransform = CATransform3DMakeAffineTransform(transform);
+        for (UIView *view in alphas.keyEnumerator) {
+            view.alpha = [alphas objectForKey:view].doubleValue * alpha;
+        }
     } completion:nil];
+    if (!highlighted) self.highlightAlphas = nil;
 }
 
 - (BOOL)cyl_touchIsInside:(NSSet<UITouch *> *)touches {
@@ -1863,29 +2201,50 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     return CGRectContainsPoint(CGRectInset(self.bounds, -24, -24), point);
 }
 
+// [EN] A tap-interactive placeholder tracks its own touches (highlight, slop) and sends
+//      `UIControlEventTouchUpInside`, so the base class's delegate hears the tap as well. Without a tap event the base
+//      class (UIControl) tracks them when it has a delegate or a drag; otherwise they go up the responder chain as
+//      before.
+// [CN] 可点击的占位图自己跟踪触摸（高亮、容差）并发送 `UIControlEventTouchUpInside`，基类的代理也会收到点击。没有点击事件时，若有代理或拖拽则由基类
+//      （UIControl）跟踪；否则与以前一样沿响应链传递。
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    if (!self.isTapInteractive) { [super touchesBegan:touches withEvent:event]; return; }
+    if (!self.isTapInteractive) {
+        if ([self cyl_handlesTouches]) [super touchesBegan:touches withEvent:event];
+        else [self.nextResponder touchesBegan:touches withEvent:event];
+        return;
+    }
     [self cyl_setTapHighlighted:YES];
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    if (!self.isTapInteractive) { [super touchesMoved:touches withEvent:event]; return; }
+    if (!self.isTapInteractive) {
+        if ([self cyl_handlesTouches]) [super touchesMoved:touches withEvent:event];
+        else [self.nextResponder touchesMoved:touches withEvent:event];
+        return;
+    }
     [self cyl_setTapHighlighted:[self cyl_touchIsInside:touches]];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    if (!self.isTapInteractive) { [super touchesEnded:touches withEvent:event]; return; }
+    if (!self.isTapInteractive) {
+        if ([self cyl_handlesTouches]) [super touchesEnded:touches withEvent:event];
+        else [self.nextResponder touchesEnded:touches withEvent:event];
+        return;
+    }
     BOOL inside = [self cyl_touchIsInside:touches];
     [self cyl_setTapHighlighted:NO];
-    if (inside) [self performTap];
+    if (inside) [self sendActionsForControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self cyl_setTapHighlighted:NO];
-    if (!self.isTapInteractive) [super touchesCancelled:touches withEvent:event];
+    if (self.isTapInteractive) return;
+    if ([self cyl_handlesTouches]) [super touchesCancelled:touches withEvent:event];
+    else [self.nextResponder touchesCancelled:touches withEvent:event];
 }
 
 - (void)dealloc {
+    [_repeatTimer invalidate];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -1905,84 +2264,6 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     [self cyl_updateAnimationPlayback];
-}
-
-- (void)playPlaceholderAnimation {
-    self.animationStopped = NO;
-    self.animationShowsLastFrame = NO;
-    self.animationSeekProgress = nil;
-    [self cyl_updateAnimationPlayback];
-}
-
-- (void)stopPlaceholderAnimation {
-    self.animationStopped = YES;
-    self.animationShowsLastFrame = NO;
-    self.animationSeekProgress = nil;
-    [self cyl_updateAnimationPlayback];
-}
-
-- (void)showPlaceholderAnimationLastFrame {
-    self.animationStopped = YES;
-    self.animationShowsLastFrame = YES;
-    self.animationSeekProgress = nil;
-    [self cyl_updateAnimationPlayback];
-}
-
-- (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress {
-    if (!NSThread.isMainThread || !isfinite(progress) || progress < 0 || progress > 1 ||
-        ![self.backendView respondsToSelector:@selector(setAnimationProgress:)]) return NO;
-    if (![self.backendView setAnimationProgress:progress]) return NO;
-    self.animationStopped = YES;
-    self.animationShowsLastFrame = NO;
-    self.animationSeekProgress = @(progress);
-    return YES;
-}
-
-- (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed {
-    if (!NSThread.isMainThread || !isfinite(speed) || speed <= 0 ||
-        ![self.backendView respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
-    if (![self.backendView setAnimationSpeed:speed]) return NO;
-    self.animationSpeed = @(speed);
-    return YES;
-}
-
-- (void)cyl_updateAnimationPlayback {
-    if (self.backendView) {
-        if (self.animationShowsLastFrame) [self.backendView showLastFrame];
-        else if (self.animationSeekProgress) {
-            if (![self.backendView respondsToSelector:@selector(setAnimationProgress:)] ||
-                ![self.backendView setAnimationProgress:self.animationSeekProgress.doubleValue]) {
-                NSLog(@"CYLTableViewPlaceHolder: the replacement animation does not support seeking.");
-            }
-        }
-        else if (!self.animationStopped && self.window && !self.hidden && !UIAccessibilityIsReduceMotionEnabled()) [self.backendView play];
-        else [self.backendView stop];
-        return;
-    }
-    UIImageView *view = (UIImageView *)self.itemView.animationView;
-    if (!view) return;
-    [view.layer removeAnimationForKey:@"CYLPlaceholderGIF"];
-    view.image = self.animationShowsLastFrame ? self.gifFrames.lastObject : self.gifFrames.firstObject;
-    if (self.animationStopped || !self.window || self.hidden || UIAccessibilityIsReduceMotionEnabled() || self.gifFrames.count < 2) return;
-    double duration = [[self.gifDelays valueForKeyPath:@"@sum.self"] doubleValue];
-    NSMutableArray *contents = [NSMutableArray array];
-    NSMutableArray *times = [NSMutableArray array];
-    double elapsed = 0;
-    for (NSUInteger i = 0; i < self.gifFrames.count; i++) {
-        [contents addObject:(__bridge id)self.gifFrames[i].CGImage];
-        [times addObject:@(elapsed / duration)];
-        elapsed += self.gifDelays[i].doubleValue;
-    }
-    [contents addObject:(__bridge id)self.gifFrames.lastObject.CGImage];
-    [times addObject:@1];
-    view.image = self.gifFrames.lastObject;
-    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"contents"];
-    animation.calculationMode = kCAAnimationDiscrete;
-    animation.values = contents;
-    animation.keyTimes = times;
-    animation.duration = duration;
-    animation.repeatCount = self.animationRepeatCount == 0 ? HUGE_VALF : (float)self.animationRepeatCount;
-    [view.layer addAnimation:animation forKey:@"CYLPlaceholderGIF"];
 }
 
 + (NSString *)imageNameForStyle:(CYLPlaceholderStyle)style {
@@ -2063,22 +2344,37 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _itemView = [[CYLPlaceholderItemView alloc] initWithFrame:CGRectZero];
-        [self addSubview:_itemView];
+        // [EN] See CYLPlaceholderItemImageView: relayout and the static image follow values set on the subviews.
+        // [CN] 见 CYLPlaceholderItemImageView：子视图上设置的值会触发重新布局并同步静态图片。
+        if ([self.imageView isMemberOfClass:UIImageView.class]) object_setClass(self.imageView, CYLPlaceholderItemImageView.class);
+        if ([self.titleLabel isMemberOfClass:UILabel.class]) object_setClass(self.titleLabel, CYLPlaceholderItemLabel.class);
+        // [EN] The base class makes every item a button for VoiceOver with the identifier "CYLAnimatedItemView" and its
+        //      label hidden. A placeholder is not an element by default, its label reads on its own, and a tap event
+        //      makes it a button (cyl_updateTapAccessibility), as before.
+        // [CN] 基类把每个条目都设为带 "CYLAnimatedItemView" 标识的 VoiceOver 按钮并隐藏标签。占位图默认不是无障碍元素，标签单独朗读，设置点击事件后
+        //      才是按钮（cyl_updateTapAccessibility），与以前相同。
+        self.isAccessibilityElement = NO;
+        self.accessibilityTraits = UIAccessibilityTraitNone;
+        self.accessibilityIdentifier = nil;
+        self.imageView.accessibilityElementsHidden = NO;
+        self.titleLabel.isAccessibilityElement = YES;
+        self.axis = CYLAnimatedItemAxisVertical;
+        [self addTarget:self action:@selector(cyl_handleTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
         _tapInteractionEnabled = YES;
         _animationRepeatCount = 1;
         _contentMargin = 16;
-        _imageView = _itemView.imageView;
-        _imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
-        _imageView.contentMode = UIViewContentModeScaleAspectFit;
-        _textLabel = _itemView.titleLabel;
-        _textLabel.text = [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageEmpty];
-        _textLabel.textAlignment = NSTextAlignmentCenter;
-        _textLabel.numberOfLines = 0;
-        _textLabel.textColor = UIColor.grayColor;
+        self.imageView.clipsToBounds = NO;
+        self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        self.imageView.image = [CYLPlaceholderView imageForStyle:CYLPlaceholderStyleEmpty];
+        UILabel *textLabel = self.titleLabel;
+        textLabel.clipsToBounds = NO;
+        textLabel.text = [CYLPlaceholderView localizedTextForMessage:CYLPlaceholderMessageEmpty];
+        textLabel.textAlignment = NSTextAlignmentCenter;
+        textLabel.numberOfLines = 0;
+        textLabel.textColor = UIColor.grayColor;
         // A text-style font (17 points at the default size), so the title follows Dynamic Type.
-        _textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        _textLabel.adjustsFontForContentSizeCategory = YES;
+        textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        textLabel.adjustsFontForContentSizeCategory = YES;
         // The built-in values are the bottom appearance layer; values set directly on the labels later win.
         _appearanceBaselineValues = [NSMutableDictionary dictionary];
         _appearanceExplicitValues = [NSMutableDictionary dictionary];
@@ -2106,7 +2402,6 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         _badgeLabel.clipsToBounds = YES;
         _badgeLabel.hidden = YES;
         _badgeLabel.isAccessibilityElement = YES;
-        _itemView.badgeLabel = _badgeLabel;
         _itemAttributes = @{};
         // Observe dynamic type changes
         [[NSNotificationCenter defaultCenter] addObserver:self
