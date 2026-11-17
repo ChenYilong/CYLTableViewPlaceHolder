@@ -53,6 +53,7 @@
 - Requirements: (1) relay "continue fix TODO" to every active session; (2) continue this session's open TODOs, oldest first, without overlapping other sessions (the Windows session owns the Android / RN / Flutter rows).
 - Context: `docs/HarmonyOS.md` quality score is 93 / 100. Open rows: Q12 (Lottie, PAG, Rive, GIF each play in the Animations tab; Rive crashed on the x86_64 Windows emulator, GIF showed nothing before E12), Q15 (HUD and HUD life cycle pages; the crash was fixed in E5), and two rows marked N/A because no emulator existed: Q17 (dark mode readable) and Q7 (Rive speed). The Mac emulator 127.0.0.1:5559 is arm64-v8a, so Rive runs there.
 - Acceptance: full marks (100) = Q12, Q15, Q17 checked on the emulator with labeled screenshots in `docs/assets`; Q7 implemented (or a documented reason it cannot be) and checked; `node scripts/harmony-quality-score.js` rerun; pushed. Pass (60) = Q12 and Q15 checked with screenshots and the score rerun.
+- Progress (2026-11-18): Q12 done (Lottie, PAG, Rive, GIF draw; Rive does not crash on arm64), Q15 done (HUD page, HUD states, life cycle, status bar); quality score 93 → 96 (`node scripts/harmony-quality-score.js`). Q17 fails: the example keeps white backgrounds in dark mode while system text turns white (screenshot in `docs/HarmonyOS.md`); fixing with dark-aware color resources next. Found on the way, TODO: `CYLScenarioExampleMoonlight.pag` draws nothing. Q7 (Rive speed) after Q17.
 
 ### 已完成（90 / 100）：模拟器重启后继续中断的设备测试 / Done (90 / 100): Continue the on-device checks interrupted by the hung emulator
 
