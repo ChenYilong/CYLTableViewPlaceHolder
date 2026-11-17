@@ -14,6 +14,7 @@ import com.scwang.smart.refresh.layout.api.RefreshHeader
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import com.scwang.smart.refresh.layout.constant.SpinnerStyle
+import com.scwang.smart.refresh.layout.simple.SimpleComponent
 import com.scwang.smart.refresh.layout.listener.ScrollBoundaryDecider import com.scwang.smart.refresh.layout.simple.SimpleMultiListener import com.scwang.smart.refresh.layout.util.SmartUtil
 import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
@@ -539,6 +540,12 @@ abstract class CYLRefreshComponent internal constructor(
  */
 open class CYLRefreshHeader(view: RefreshHeader) : CYLRefreshComponent(view) {
 
+    /**
+     * A header that draws nothing, as a plain iOS `CYLRefreshHeader`: with [addPhaseObserver], [pullingPercent] or an
+     * overridden [didScrollWithOffset] it is a listener header (flutter_easy_refresh's `ListenerHeader`).
+     */
+    constructor(context: Context) : this(CYLRefreshSilentHeaderView(context))
+
     override val isHeader = true
 
     /**
@@ -941,21 +948,38 @@ internal class CYLRefreshBridge private constructor(private val layout: SmartRef
 }
 
 /**
- * The layout's header component (the iOS `UIScrollView.cyl_header`); setting it attaches it.
+ * A header view that draws nothing, behind [CYLRefreshHeader] (context).
+ */
+internal class CYLRefreshSilentHeaderView(context: Context) : SimpleComponent(context, null, 0), RefreshHeader
+
+/**
+ * The layout's header component (the iOS `UIScrollView.cyl_header`); setting it attaches it. Null removes it and turns
+ * pull to refresh off, as a scroll view without a header on iOS.
  */
 var SmartRefreshLayout.cyl_header: CYLRefreshHeader?
     get() = CYLRefreshBridge.existing(this)?.header
     set(value) {
-        if (value != null) value.attach(this) else CYLRefreshBridge.existing(this)?.let { it.header?.detach(); it.header = null }
+        if (value != null) {
+            value.attach(this)
+        } else {
+            CYLRefreshBridge.existing(this)?.let { it.header?.detach(); it.header = null }
+            setEnableRefresh(false)
+        }
     }
 
 /**
- * The layout's footer component (the iOS `UIScrollView.cyl_footer`); setting it attaches it.
+ * The layout's footer component (the iOS `UIScrollView.cyl_footer`); setting it attaches it. Null removes it and turns
+ * loading more off, as a scroll view without a footer on iOS.
  */
 var SmartRefreshLayout.cyl_footer: CYLRefreshFooter?
     get() = CYLRefreshBridge.existing(this)?.footer
     set(value) {
-        if (value != null) value.attach(this) else CYLRefreshBridge.existing(this)?.let { it.footer?.detach(); it.footer = null }
+        if (value != null) {
+            value.attach(this)
+        } else {
+            CYLRefreshBridge.existing(this)?.let { it.footer?.detach(); it.footer = null }
+            setEnableLoadMore(false)
+        }
     }
 
 /**

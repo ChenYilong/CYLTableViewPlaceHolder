@@ -67,6 +67,39 @@ class CYLRefreshComponentTest {
     }
 
     @Test
+    fun aPlainHeaderDrawsNothingAndReportsThePull() {
+        val layout = show(layout())
+        var largest = 0f
+        var refreshes = 0
+        // As a plain iOS CYLRefreshHeader: no drawing, the pull reaches the subclass hook (a listener header).
+        val listener = object : CYLRefreshHeader(activity) {
+            override fun didScrollWithOffset(offset: Int, percent: Float, dragging: Boolean) {
+                largest = maxOf(largest, percent)
+            }
+        }.apply { refreshingBlock = { refreshes++ } }
+        layout.cyl_header = listener
+        idle(100)
+        drag(layout, 900f)
+        idle()
+        assertTrue("the pull is reported", largest > 0f)
+        assertEquals(1, refreshes)
+        listener.endRefreshing()
+        idle()
+    }
+
+    @Test
+    fun removingTheHeaderTurnsPullToRefreshOff() {
+        val layout = show(layout())
+        var refreshes = 0
+        layout.cyl_header = CYLRefreshNormalHeader(activity).apply { refreshingBlock = { refreshes++ } }
+        layout.cyl_header = null
+        assertNull(layout.cyl_header)
+        drag(layout, 900f)
+        idle()
+        assertEquals("no header, no refresh", 0, refreshes)
+    }
+
+    @Test
     fun aHeaderRefreshesWithTheIOSCalls() {
         var refreshes = 0
         var began = 0

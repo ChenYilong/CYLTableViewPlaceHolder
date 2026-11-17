@@ -211,12 +211,12 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
                 if (testRows <= 16) loadMore.endRefreshing() else loadMore.endRefreshingWithNoMoreData()
             }
         }
-        layout.setEnableRefresh(false)
+        layout.cyl_header = null
         layout.cyl_footer = loadMore
     } else {
         control.refreshingBlock = { later(2500) { control.endRefreshing() } }
         layout.cyl_header = control as CYLRefreshHeader
-        layout.setEnableLoadMore(false)
+        layout.cyl_footer = null
     }
     // UIFlyController and UIWaveSwipeController open in the style's own blue.
     when (method) {

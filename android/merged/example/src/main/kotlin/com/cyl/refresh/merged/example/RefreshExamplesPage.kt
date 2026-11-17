@@ -185,7 +185,7 @@ class RefreshExamplesPage : StackPage() {
         // Data that loads only once: the footer hides afterwards.
         fun loadOnceData() {
             repeat(5) { data += randomData(context) }
-            later(DURATION) { reload(); layout.cyl_footer?.endRefreshing(); layout.setEnableLoadMore(false) }
+            later(DURATION) { reload(); layout.cyl_footer?.endRefreshing(); layout.cyl_footer?.refreshEnabled = false }
         }
 
         fun <T : CYLRefreshComponent> T.on(block: () -> Unit): T = apply { refreshingBlock = block }

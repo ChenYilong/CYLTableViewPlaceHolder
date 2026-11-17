@@ -23,8 +23,6 @@ import com.cyl.refresh.cyl_beginRefreshingWithStartHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.scwang.smart.refresh.layout.api.RefreshHeader
-import com.scwang.smart.refresh.layout.simple.SimpleComponent
 
 /*
  * The demo of flutter_easy_refresh (https://github.com/xuelongqy/flutter_easy_refresh, example/lib/page, MIT; by
@@ -42,15 +40,6 @@ internal val easyPages = listOf(
     R.string.merged_easy_paging to "easyPaging", R.string.merged_easy_listener to "easyListener",
     R.string.merged_easy_chat to "easyChat", R.string.merged_easy_user_profile to "easyUserProfile",
 )
-
-/**
- * A header view that draws nothing (listener_header_page.dart): the page shows the pull itself.
- */
-private class SilentHeaderView(context: android.content.Context, private val onPull: (Float) -> Unit) :
-    SimpleComponent(context, null, 0), RefreshHeader {
-
-    override fun onMoving(isDragging: Boolean, percent: Float, offset: Int, height: Int, maxDragHeight: Int) = onPull(percent)
-}
 
 /**
  * Plain text rows; a row with a tap handler is a button.
@@ -149,8 +138,9 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
     fun attach(h: CYLRefreshHeader?, f: CYLRefreshFooter?) {
         header = h
         footer = f
-        if (h != null) layout.cyl_header = h else layout.setEnableRefresh(false)
-        if (f != null) layout.cyl_footer = f else layout.setEnableLoadMore(false)
+        // A null header or footer also turns that pull off.
+        layout.cyl_header = h
+        layout.cyl_footer = f
     }
 
     var content: View = list
@@ -236,11 +226,14 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
                 max = 100
                 contentDescription = context.t(R.string.merged_easy_pull_progress)
             }
-            val listener = CYLRefreshHeader(SilentHeaderView(context) { percent ->
-                val value = (minOf(percent, 1f) * 100).toInt()
-                progress.progress = value
-                progress.stateDescription = "$value%"
-            }).apply { refreshingBlock = refreshCounted }
+            // A plain CYLRefreshHeader draws nothing; it reports the pull as it moves.
+            val listener = object : CYLRefreshHeader(context) {
+                override fun didScrollWithOffset(offset: Int, percent: Float, dragging: Boolean) {
+                    val value = (minOf(percent, 1f) * 100).toInt()
+                    progress.progress = value
+                    progress.stateDescription = "$value%"
+                }
+            }.apply { refreshingBlock = refreshCounted }
             attach(listener, CYLRefreshBackNormalFooter(context).apply { refreshingBlock = loadCounted })
             reloadCounted()
             content = LinearLayout(context).apply {
@@ -266,7 +259,7 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
                     adapter.notifyItemRangeInserted(0, added.size)
                     (list.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(added.size, 0)
                     h.endRefreshing()
-                    if (first == 1) layout.setEnableRefresh(false)
+                    if (first == 1) h.refreshEnabled = false
                 }
             }
             attach(h, null)

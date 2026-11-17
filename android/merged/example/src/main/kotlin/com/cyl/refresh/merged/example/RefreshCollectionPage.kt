@@ -104,7 +104,7 @@ internal fun RefreshExamplesPage.collectionPage(title: String, pinHeader: Boolea
     fun reload() {
         items.notifyDataSetChanged()
         // Show the footer only when there is something to load after.
-        layout.setEnableLoadMore(colors.isNotEmpty())
+        layout.cyl_footer?.refreshEnabled = colors.isNotEmpty()
     }
 
     // Pull down: ten fake items, the refresh ends 2 seconds later.
