@@ -91,7 +91,7 @@
   2. Partly done upstream (CYLTabBarController 6a9ede85): `cyl_playFromStart()` and `accessibilityHidden` exist now.
      Still open there: forward the engine's `ready` / `complete` / `error` as events (then drop the `cyl_animation()`
      listener for `repeatCount`), and title color / font / line properties so `cyl-placeholder`'s title can move into
-     the item. Requested from the CYLTabBarController mini program session.
+     the item. Requested from the owner of the mini program animation code (the "Mac-CYLTabBarController文件夹" session).
   3. Done (2026-11-18): tinted template icons use the item's `icon-tint` (#8c8c8c, the old 45 % black on white) instead
      of a 45 % opacity on the icon box: the static image and the static image of an animated icon are tinted, a playing
      animation keeps its colors. Test: "tinted template icons use the item tint" (`npm test` 65 / 65). WeChat DevTools:
