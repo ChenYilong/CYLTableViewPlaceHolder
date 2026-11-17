@@ -238,3 +238,11 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+"CYLScenarioRiveRoomsTitle" = "Числовой вход Rive: Rooms";
+"CYLScenarioRiveRoomsPlaceholder" = "Главная";
+"CYLScenarioRiveRoomsValue" = "Rooms: %@";
+"CYLScenarioRiveRoomsPicker" = "Выбор Rooms";
+"CYLScenarioRiveRoomsSlider" = "Ползунок Rooms";
+"CYLScenarioRiveRoomsLoop" = "Повтор";
+"CYLScenarioRiveRoomsHint" = "Выберите значение или передвиньте ползунок, чтобы задать Rooms вручную: каждое изменение проигрывает заглушку, которая задаёт числовой вход Rooms машины состояний (numberInput=Rooms, values=3,4,5,6). Повтор проигрывает её каждые 1,5 с, как повтор библиотеки: Rooms идёт 3, 4, 5, 6, 3, а подпись, выбор и ползунок следуют за ним.";

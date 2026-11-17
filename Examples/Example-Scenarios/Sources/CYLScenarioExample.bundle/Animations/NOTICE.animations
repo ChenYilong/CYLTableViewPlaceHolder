@@ -82,3 +82,10 @@ CYLScenarioExampleRefreshSquats.riv
   origin:  "Lumberjack Squats" by Dante, https://rive.app/community/980-1894-lumberjack-squats
   license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
   sha256:  0f5cff48fe330a8daee360548b732e0e2fcf91166509d40917b45a3c68f133c9
+
+CYLScenarioExampleHouse.riv
+  source:  https://github.com/ChenYilong/CYLTabBarController (341caebb5538e0b98a3f8f4110e77f2be6f68ecd)
+  path:    Example-SwiftUI-Rive/AnimatedApp/RiveAssets/house.riv (the Design+Code course "SwiftUI Animations", Meng To)
+  license: no license file in the course download; copyright of the original author (see that repository's
+           Example-SwiftUI-Rive/README.md, "Source and license"); same owner, used as a demo only
+  sha256:  632474611244a3ea9cdf455719624bcc0e6684de09f734ade923fe474ba94039

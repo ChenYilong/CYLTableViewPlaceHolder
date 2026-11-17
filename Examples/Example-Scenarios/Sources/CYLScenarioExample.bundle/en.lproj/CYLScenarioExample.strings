@@ -238,3 +238,11 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+"CYLScenarioRiveRoomsTitle" = "Rive number input: Rooms";
+"CYLScenarioRiveRoomsPlaceholder" = "Home";
+"CYLScenarioRiveRoomsValue" = "Rooms: %@";
+"CYLScenarioRiveRoomsPicker" = "Rooms picker";
+"CYLScenarioRiveRoomsSlider" = "Rooms slider";
+"CYLScenarioRiveRoomsLoop" = "Loop";
+"CYLScenarioRiveRoomsHint" = "Pick a value or drag the slider to set Rooms by hand: each change plays the placeholder, which sets the state machine number input Rooms (numberInput=Rooms, values=3,4,5,6). Loop plays it every 1.5 s, as the library loop does: Rooms steps 3, 4, 5, 6, 3, and the label, picker and slider follow.";

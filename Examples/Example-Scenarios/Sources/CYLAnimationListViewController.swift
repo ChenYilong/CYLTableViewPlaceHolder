@@ -114,6 +114,18 @@ final class CYLAnimationListViewController: UITableViewController {
         showText(notice ?? CYLScenarioLocalizedString(.textNoticeMissing), title: "NOTICE.animations")
     }
 
+    /// `-CYLRiveRoomsPage` opens the house.riv Rooms page at launch (screenshots and UI checks).
+    private var openedRoomsPage = false
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !openedRoomsPage, ProcessInfo.processInfo.arguments.contains("-CYLRiveRoomsPage"),
+              let folder = CYLScenarioExampleResourceURL("Animations") else { return }
+        openedRoomsPage = true
+        let path = folder.appendingPathComponent(CYLRiveRoomsViewController.fileName).path
+        navigationController?.pushViewController(CYLRiveRoomsViewController(path: path), animated: false)
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         sections.count
     }
@@ -145,6 +157,11 @@ final class CYLAnimationListViewController: UITableViewController {
         let section = sections[indexPath.section]
         let name = section.fileNames[indexPath.row]
         let examplePath = section.folder == nil ? nil : path(at: indexPath)
+        // house.riv moves only when its number input Rooms changes: its page sets Rooms by hand and by loop.
+        if name == CYLRiveRoomsViewController.fileName, let examplePath = examplePath {
+            navigationController?.pushViewController(CYLRiveRoomsViewController(path: examplePath), animated: true)
+            return
+        }
         navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
                                                  animated: true)
     }

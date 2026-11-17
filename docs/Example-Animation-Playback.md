@@ -77,6 +77,7 @@ TODO until each page has the three controls and a screenshot. The order follows 
 | Page | Platform | Status |
 | --- | --- | --- |
 | Example-Scenarios "Animations" tab (`CYLAnimationListViewController.swift`) | iOS | TODO |
+| Example-Scenarios Rive Home icon page (`CYLRiveRoomsViewController.swift`, house.riv, number input Rooms) | iOS | Done (2026-11-18): Rooms picker and slider (by hand), Loop switch (1.5 s, label follows); no speed control (a number input has no playback speed). Screenshot: `assets/rive-rooms-loop-ios.png` (iPhone 17 Pro simulator, iOS 27.0, Xcode 27.2) |
 | Example-Scenarios "Refresh icons" page (Feed tab) | iOS | TODO |
 | Refresh demo pages with animated headers (Lottie / Rive / PAG / GIF styles) | iOS | TODO |
 | `android/merged` example, refresh styles and animations | Android | TODO (the example is being built) |

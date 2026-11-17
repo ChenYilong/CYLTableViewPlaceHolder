@@ -238,3 +238,11 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+"CYLScenarioRiveRoomsTitle" = "Rive 数字输入：Rooms";
+"CYLScenarioRiveRoomsPlaceholder" = "首页";
+"CYLScenarioRiveRoomsValue" = "Rooms：%@";
+"CYLScenarioRiveRoomsPicker" = "Rooms 选项卡";
+"CYLScenarioRiveRoomsSlider" = "Rooms 滑块";
+"CYLScenarioRiveRoomsLoop" = "循环";
+"CYLScenarioRiveRoomsHint" = "点选或拖动滑块手动设置 Rooms：每次改变都会播放占位图，由它设置状态机数字输入 Rooms（numberInput=Rooms，values=3,4,5,6）。打开循环后每 1.5 秒播放一次，与组件库的循环相同：Rooms 依次为 3、4、5、6、3，标签、选项卡与滑块随之变化。";

@@ -238,3 +238,11 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+"CYLScenarioRiveRoomsTitle" = "Числовий вхід Rive: Rooms";
+"CYLScenarioRiveRoomsPlaceholder" = "Головна";
+"CYLScenarioRiveRoomsValue" = "Rooms: %@";
+"CYLScenarioRiveRoomsPicker" = "Вибір Rooms";
+"CYLScenarioRiveRoomsSlider" = "Повзунок Rooms";
+"CYLScenarioRiveRoomsLoop" = "Повтор";
+"CYLScenarioRiveRoomsHint" = "Виберіть значення або пересуньте повзунок, щоб задати Rooms вручну: кожна зміна відтворює заглушку, яка задає числовий вхід Rooms машини станів (numberInput=Rooms, values=3,4,5,6). Повтор відтворює її кожні 1,5 с, як повтор бібліотеки: Rooms іде 3, 4, 5, 6, 3, а підпис, вибір і повзунок ідуть слідом.";

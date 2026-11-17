@@ -53,6 +53,16 @@ final class CYLScenarioTabBarController: CYLTabBarController {
         super.viewDidLoad()
         tabBar.tintColor = .systemTeal
     }
+
+    /// `-CYLRiveRoomsPage`: switch once to the Animations tab, which opens the house.riv Rooms page.
+    private var showedRoomsPage = false
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !showedRoomsPage, ProcessInfo.processInfo.arguments.contains("-CYLRiveRoomsPage") else { return }
+        showedRoomsPage = true
+        selectedIndex = 1
+    }
 }
 
 /// The plus button opens the publish page: uploading, then success.
