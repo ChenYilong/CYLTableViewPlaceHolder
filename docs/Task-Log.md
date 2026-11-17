@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：iOS 示例刷新 API 全部来自 CYLRefresh，合并 CYLRefresh 内的重复逻辑，移除非 CYLRefresh 依赖 / TODO: Every iOS example refresh API from CYLRefresh, merge CYLRefresh's duplicate logic, remove non-CYLRefresh dependencies
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-17，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-17, branch `feat/android-refresh-port-followup`, pull request #31). |
+| 用户原始提示词：“排查iOS example中的刷新相关api 是否全部来自CYLRefresh 如果不是 继续重构。合并CYLRefresh内的重复逻辑，重复API。使代码更加聚合。保持CYLRefresh原有API兼容性。移除任何非 CYLRefresh 的依赖，比如，SVPullToRefresh 全部提取api ，merge到CYLRefresh. For. Example move all refresh code into CYLRefresh, move and translate the kernel refresh code to CYLRefresh. Remove smartrefreshlayout. make sure CYRefresh is the only kernel.” | The user's original prompt (verbatim on the left), summarized: check that every refresh API the iOS examples use comes from CYLRefresh and keep refactoring where not; merge duplicate logic and duplicate APIs inside CYLRefresh so the code is more cohesive, keeping CYLRefresh's existing API compatible; remove every non-CYLRefresh dependency (for example, extract all of SVPullToRefresh's API and merge it into CYLRefresh); move all refresh code into CYLRefresh, move and translate the kernel refresh code into CYLRefresh, remove SmartRefreshLayout, and make sure CYLRefresh is the only kernel. |
+| 上下文：iOS 示例的刷新调用已全部来自 CYLRefresh（`cyl_header` / `cyl_footer` / `cyl_trailer` 与 CYLRefresh 控件），但四个示例的 Podfile 仍有 `pod 'MJRefresh'`（`AGENTS.md` 的旧规则 “Depending on MJRefresh in the examples”，`scripts/resolve-mjrefresh-version.sh`，`scripts/ci-build-example.sh`），代码中没有 import；按本任务移除，并更新规则。iOS 只有一个刷新内核：所有控件（含从 SmartRefreshControl 移植的 Drawn 刷新头）都继承 `CYLRefreshComponent`；iOS 没有 SVPullToRefresh 或 SmartRefreshLayout 的代码（Android 端已在本分支删除 / 并入）。重复逻辑候选：Auto / Back 状态尾部与状态头部的标题表，动画头部与两种动画尾部的帧图片逻辑，Normal 头尾的转圈视图，几何辅助方法。 | Context: the iOS examples' refresh calls already all come from CYLRefresh (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls), but four example Podfiles still list `pod 'MJRefresh'` (the old `AGENTS.md` rule "Depending on MJRefresh in the examples", `scripts/resolve-mjrefresh-version.sh`, `scripts/ci-build-example.sh`) with no import in the code; this task removes it and updates the rule. iOS has one refresh kernel: every control (the Drawn headers ported from SmartRefreshControl included) subclasses `CYLRefreshComponent`; iOS has no SVPullToRefresh or SmartRefreshLayout code (Android deleted / folded them on this branch). Duplicate-logic candidates: the title tables of the Auto / Back state footers and the state header, the frame-image logic of the animation header and both animation footers, the Normal header / footer spinners, and geometry helpers. |
+
 ### TODO：刷新代码聚合进 CYLRefresh（iOS，然后 Android 与其他端） / TODO: Consolidate the refresh code into CYLRefresh (iOS, then Android and the other platforms)
 
 | 中文 | English |
