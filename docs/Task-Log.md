@@ -27,7 +27,7 @@
 
 ## 任务 / Tasks
 
-### 已完成（95 / 100）：截图 Label 规范为何没有生效，并强制执行 / Done (95 / 100): Why the screenshot label rule was not applied, and enforce it
+### 已完成（100 / 100）：截图 Label 规范为何没有生效，并强制执行 / Done (100 / 100): Why the screenshot label rule was not applied, and enforce it
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim): "检查为什么没有应用新增的截图Label规范，并强化该策略保证以后截图必须遵循该规范，避免再出现该问题。"
@@ -36,7 +36,8 @@
 - Plan: a sheet tool (`scripts/screenshot_sheet.py`: portrait, two columns first, English bold header / captions / footer bands outside the panels, metadata embedded), a checker (`scripts/check_screenshots.py`, in CI and before every commit that adds images), the rules (re-read rules after a pull; sheets only through the tool; the checker), and this session's non-conforming screenshots of today remade as conforming sheets with renamed originals.
 - Acceptance: full marks (100) = the cause recorded; tool and checker committed and run in CI; rules in `instructions.md`, `AGENTS.md` and the skills `cyl-verify` / `cyl-docs`; this session's screenshots of today conform (checker green); pushed. Pass (60) = cause recorded, checker in CI, rules written.
 - Done 2026-11-18: `scripts/screenshot_sheet.py` (sheet tool, layout updated to the owner's second change of the day, 63dac99: one column first, two columns only above 2.17 times the width; long names wrap inside the bands) and `scripts/check_screenshots.py` (every image in `docs/assets/` not in `screenshot-legacy.txt` is a sheet with a complete record, from PNG text or a `<sheet>.sheet.json` sidecar, or a conventionally named original one uses), run in CI (`Docs navigation` job). The checker flagged exactly the non-conforming image (b8a4aaf's `harmonyos-animation-detail-item-playback.jpeg`). Rules: `instructions.md` "Re-read the rules a pull changes" and "Enforcement: every screenshot passes the checker"; `AGENTS.md`, `docs/instructions.md`, skills `cyl-verify` and `cyl-docs`. This session's screenshots of today remade as six conforming sheets with renamed originals (playback controls on Android; mini program icon tint; mini program events and title in the item; HarmonyOS and Android center line; HarmonyOS item view, spacing, playback); the post-rule image removed; the docs point to the sheets; earlier files kept as legacy (CYLTabBarController's docs link two). The Mac session's two post-rule sheets (ffmpeg) got sidecars from their own header, captions and footer. Checker: 34 screenshots, 8 sheets, 137 legacy, no error.
-- Score: 95 / 100. TODO (-5): see the CI `Docs navigation` job pass with the checker (the Pillow install on the Ubuntu runner is untested until the next run).
+- CI: run 44193548056 (91e0002), job `Docs navigation`: the Pillow step and `python3 scripts/check_screenshots.py` succeeded (the run was later cancelled by the next push, after that job had finished). The Mac session also ran the checker (34 screenshots, 8 sheets, 137 legacy, no failure); a7d91a1 added the Pillow hint it asked for.
+- Score: 100 / 100.
 
 ### 已完成（100 / 100）：截图规则：一列多行优先，超过一屏再两列 / Done (100 / 100): Screenshot rule: one column first, two columns when taller than a phone screen
 
