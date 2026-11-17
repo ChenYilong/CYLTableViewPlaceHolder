@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：截图 Label 规范为何没有生效，并强制执行 / TODO: Why the screenshot label rule was not applied, and enforce it
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "检查为什么没有应用新增的截图Label规范，并强化该策略保证以后截图必须遵循该规范，避免再出现该问题。"
+- Requirements: (1) find why the new screenshot label rule (`instructions.md`, "Header and footer on stitched screenshots", 9cdf294) was not applied; (2) strengthen it so every future screenshot must follow it; (3) prevent a repeat.
+- Findings: 9cdf294 landed at 11:04:14 from another session; this session's b8a4aaf (11:04:40) pulled it in the same command as its commit and never read it; every other screenshot this session added today predates it. Gaps behind that: no step re-reads rules that a pull changes; no tool makes the required sheet (screenshots were raw captures with ad-hoc names, side-by-side images were horizontal rows without header / footer, already against the older one-column-first order); no automated check.
+- Plan: a sheet tool (`scripts/screenshot_sheet.py`: portrait, two columns first, English bold header / captions / footer bands outside the panels, metadata embedded), a checker (`scripts/check_screenshots.py`, in CI and before every commit that adds images), the rules (re-read rules after a pull; sheets only through the tool; the checker), and this session's non-conforming screenshots of today remade as conforming sheets with renamed originals.
+- Acceptance: full marks (100) = the cause recorded; tool and checker committed and run in CI; rules in `instructions.md`, `AGENTS.md` and the skills `cyl-verify` / `cyl-docs`; this session's screenshots of today conform (checker green); pushed. Pass (60) = cause recorded, checker in CI, rules written.
+
 ### TODO：截图规则：一列多行优先，超过一屏再两列 / TODO: Screenshot rule: one column first, two columns when taller than a phone screen
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
