@@ -9,6 +9,7 @@
 #import "NSBundle+CYLRefresh.h"
 #import "CYLRefreshComponent.h"
 #import "CYLRefreshConfig.h"
+#import "CYLPlaceholderLocalization.h"
 
 /// The refresh component's strings table inside CYLTableViewPlaceHolder.bundle; the placeholder uses Localizable.
 static NSString *const CYLRefreshStringsTable = @"CYLRefresh";
@@ -19,24 +20,9 @@ static NSBundle *cyl_systemI18nBundle = nil;
 @implementation NSBundle (CYLRefresh)
 + (instancetype)cyl_refreshBundle
 {
-    static NSBundle *refreshBundle = nil;
-    if (refreshBundle == nil) {
-#ifdef SWIFT_PACKAGE
-        NSBundle *containnerBundle = SWIFTPM_MODULE_BUNDLE;
-#else
-        NSBundle *containnerBundle = [NSBundle bundleForClass:[CYLRefreshComponent class]];
-#endif
-        // Localizations and images live in the library's single resource bundle,
-        // CYLTableViewPlaceHolder.bundle, next to the placeholder's resources.
-        NSString *bundlePath = [containnerBundle pathForResource:@"CYLTableViewPlaceHolder" ofType:@"bundle"];
-        if (!bundlePath) {
-            bundlePath = [NSBundle.mainBundle pathForResource:@"CYLTableViewPlaceHolder" ofType:@"bundle"];
-        }
-        if (bundlePath) {
-            refreshBundle = [NSBundle bundleWithPath:bundlePath];
-        }
-    }
-    return refreshBundle;
+    // [EN] The one lookup of CYLTableViewPlaceHolder.bundle, shared with the placeholder (CYLPlaceholderResourceBundle).
+    // [CN] 与占位图共用对 CYLTableViewPlaceHolder.bundle 的唯一查找（CYLPlaceholderResourceBundle）。
+    return CYLPlaceholderResourceBundle();
 }
 
 + (UIImage *)cyl_arrowImage
