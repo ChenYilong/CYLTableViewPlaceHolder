@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 已完成（90 / 100）：继续最早的非 iOS TODO：小程序 cyl-animated-item 剩余项 / Done (90 / 100): Continue the oldest non-iOS TODO: the mini program cyl-animated-item leftovers
+
+- Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim, relayed by Mac-CollectionViewClassifyMenu): "通知所有需要我回复continue的活跃session，continue"
+- Requirements: continue the open TODOs (this session: everything except iOS), oldest first.
+- Context: the oldest open non-iOS entry is `docs/WeChat-MiniProgram.md` "the components build on CYLTabBarController's cyl-animated-item" (score 80). Its remaining items: (1) a WeChat DevTools rendering check, (2) upstream requests, (3) tinted icons dim the animation / the static fallback is untinted, (4) the published npm package.
+- Acceptance: full marks (100) = all four items done. Pass (60) = items 1 and 3 (the ones this repository can do) done and verified.
+- Done: (1) already covered by the 2026-11-17 DevTools runs (MP1 to MP5), now recorded in the entry; (2) upstream has `cyl_playFromStart()` and `accessibilityHidden`; the events and title properties are requested from the CYLTabBarController mini program session; (3) tinted template icons now use `cyl-animated-item`'s `icon-tint` instead of a 45 % opacity, with a test (`npm test` 65 / 65) and a DevTools check (screenshot `docs/assets/wechat-miniprogram-icon-tint.png`). Also: `scripts/cyltabbarcontroller-checkout.sh` turns on `core.longpaths` (Windows: the upstream-copy test failed with "Filename too long").
+- Score: 90 / 100. TODO (-5): upstream event forwarding and title properties (CYLTabBarController). TODO (-5): the published npm package (CYLTabBarController).
+
 ### TODO：在 Mac 的 arm64 鸿蒙模拟器上补完质量分 Q12、Q15、Q17、Q7 / TODO: Finish HarmonyOS quality rows Q12, Q15, Q17 and Q7 on the Mac's arm64 emulator
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.

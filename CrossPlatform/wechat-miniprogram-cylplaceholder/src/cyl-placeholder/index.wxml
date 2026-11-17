@@ -9,12 +9,12 @@
               hover-class="{{item.tappable ? item.hoverClass : 'none'}}"
               catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
               aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
-          <view class="cyl-placeholder__icon-wrap {{item.tinted && !(animated && item.animation) ? 'cyl-placeholder__icon--tinted' : ''}}" aria-hidden="true">
+          <view class="cyl-placeholder__icon-wrap" aria-hidden="true">
             <cyl-animated-item class="cyl-placeholder__animated-icon" id="cyl-animated-{{index}}"
                                image="{{item.image ? imageFolder + item.image + '.png' : ''}}"
                                animation-url="{{animated && item.animation ? animationFolder + item.animation : ''}}"
                                icon-size="{{item.side}}" loop="{{item.ownLoop === null ? loop : item.ownLoop}}" speed="{{speed}}"
-                               accessibility-label="{{item.title}}"
+                               accessibility-label="{{item.title}}" icon-tint="{{item.tinted ? '#8c8c8c' : ''}}"
                                generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
                                generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
           </view>

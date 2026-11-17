@@ -115,3 +115,9 @@ test('the package depends on no animation library: every engine default is the c
   const pkg = require('../package.json')
   assert.deepStrictEqual(Object.keys(pkg.dependencies || {}), [])
 })
+
+test('tinted template icons use the item tint, which spares the animation, not an opacity over the whole icon', () => {
+  const wxml = read('cyl-placeholder/index.wxml')
+  assert.match(wxml, /icon-tint="\{\{item\.tinted \? '#[0-9a-f]{6}' : ''\}\}"/, 'cyl-placeholder passes icon-tint for tinted items')
+  assert.doesNotMatch(wxml + read('cyl-placeholder/index.wxss'), /icon--tinted/, 'no opacity class dims the animation')
+})

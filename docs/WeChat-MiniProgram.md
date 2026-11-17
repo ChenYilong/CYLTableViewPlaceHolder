@@ -28,7 +28,7 @@
 | --- | --- |
 | CYLAnimatedItem（动效组件）接入进度、评分与 TODO 见 [Animated-Item-Migration.md](Animated-Item-Migration.md)。 | CYLAnimatedItem (the animation component) migration status, score and TODOs: [Animated-Item-Migration.md](Animated-Item-Migration.md). |
 
-### TODO: the components build on CYLTabBarController's cyl-animated-item (score 80)
+### TODO: the components build on CYLTabBarController's cyl-animated-item (score 90)
 
 - **Date / branch:** 2026-11-17, `feat/android-refresh-port-followup` (pull request #31).
 - **The user's original prompt:** the same CYLAnimatedItem migration request as iOS and Android (CYLTabBarController
@@ -84,18 +84,22 @@
   (`generic:cyl-lottie-view="animation"`), the layout (the item adds 4px padding and a 44px minimum height, offset by
   negative margins / fixed wrappers), the `aria-hidden` wrapper, `playAll()` / `repeatCount` through the nested
   engine, and the HUD / status / refresh icons are unchecked.
-- **Remaining work (TODO):**
-  1. Open the example in WeChat DevTools: scenarios with and without `generic:animation`, the configuration page's
-     playback policies (once / three times / loop), "Play all", the HUD loading animation, the status bar, the refresh
-     icon demos; take screenshots for this document and the README.
-  2. Upstream requests (CYLTabBarController, not editable here): forward the engine's `ready` / `complete` / `error`
-     as events and add `cyl_playFromStart()` (then drop the `cyl_animation()` listener for `repeatCount`); a property
-     to hide the item from screen readers or set its role (it is always a `button`), and title color / font / line
-     properties so `cyl-placeholder`'s title can move into the item.
-  3. Tinted template icons: the 45 % opacity applies only while no animation is requested (it would dim the
-     animation); the static fallback of an animated icon is drawn untinted.
-  4. Move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the component
-     inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
+- **Remaining work (2026-11-18 update, score 80 -> 90):**
+  1. Done: rendering in WeChat DevTools. The 2026-11-17 runs (see "Verification" below: CYLAnimatedItem TODO 3, MP1 to
+     MP5) cover the scenarios, the configuration page's playback policies, "Play all", the HUD, the status bar and the
+     refresh icon demos, with screenshots.
+  2. Partly done upstream (CYLTabBarController 6a9ede85): `cyl_playFromStart()` and `accessibilityHidden` exist now.
+     Still open there: forward the engine's `ready` / `complete` / `error` as events (then drop the `cyl_animation()`
+     listener for `repeatCount`), and title color / font / line properties so `cyl-placeholder`'s title can move into
+     the item. Requested from the CYLTabBarController mini program session.
+  3. Done (2026-11-18): tinted template icons use the item's `icon-tint` (#8c8c8c, the old 45 % black on white) instead
+     of a 45 % opacity on the icon box: the static image and the static image of an animated icon are tinted, a playing
+     animation keeps its colors. Test: "tinted template icons use the item tint" (`npm test` 65 / 65). WeChat DevTools:
+     Network unavailable with the animation (black Lottie) and with the animation off (gray static icon), console clean
+     ([screenshot](assets/wechat-miniprogram-icon-tint.png)).
+  4. Open, upstream: move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the
+     component inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
+- **Why not 100:** item 2 (two upstream requests, -5) and item 4 (upstream publishing, -5) wait for CYLTabBarController.
 
 ### DONE: the package entry works after DevTools' Build npm (score 100)
 

@@ -13,8 +13,11 @@ SHA=$(sed -nE 's/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})".*/\1
 CHECKOUT=Carthage/Checkouts/CYLTabBarController
 if [[ ! -d "$CHECKOUT/.git" ]]; then
   rm -rf "$CHECKOUT"
-  git clone --quiet --filter=blob:none --no-checkout "$URL" "$CHECKOUT" >&2
+  git clone --quiet --filter=blob:none --no-checkout -c core.longpaths=true "$URL" "$CHECKOUT" >&2
 fi
+# Windows: CYLTabBarController has paths longer than 260 characters (the mini program and HarmonyOS folders); without
+# long paths, checkout and `git show <sha>:<path>` fail with "Filename too long". No effect elsewhere.
+git -C "$CHECKOUT" config core.longpaths true
 git -C "$CHECKOUT" cat-file -e "$SHA^{commit}" 2>/dev/null || git -C "$CHECKOUT" fetch --quiet origin "$SHA" >&2
 git -C "$CHECKOUT" checkout --quiet --force "$SHA" >&2
 echo "$PWD/$CHECKOUT"
