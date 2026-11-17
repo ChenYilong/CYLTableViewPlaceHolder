@@ -22,7 +22,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
       config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "org.cyl.placeholder.tests.#{ENV['DEVELOPMENT_TEAM'].downcase}"
     end
     # Any newer API the suite or the library uses without @available fails the build at a low deployment target.
-    config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Werror=unguarded-availability-new'
+    # CYL_EXTRA_CFLAGS adds more (scripts/ios12-build.sh: -Werror=unguarded-availability).
+    config.build_settings['OTHER_CFLAGS'] = "$(inherited) -Werror=unguarded-availability-new #{ENV['CYL_EXTRA_CFLAGS']}".strip
   end
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
    'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshSmartAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
@@ -39,23 +40,11 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
-  # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework, built by
-  # scripts/cyltabbarcontroller-xcframework.sh at the commit the Cartfile pins. The framework holds the animation engine
-  # without any animator, so CYL_ANIMATION_ENGINE_AVAILABLE is 1 and the tests register their own animators.
-  tabbar = File.join(root, 'Carthage/Build/CYLTabBarController.xcframework')
-  slices = ENV.fetch('DESTINATION', 'Simulator').include?('Simulator') ? 'simulator' : 'all'
-  system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), slices) || abort('CYLTabBarController.xcframework failed to build')
-  tabbar_ref = project.main_group.new_file(tabbar)
-  target.frameworks_build_phase.add_file_reference(tabbar_ref)
-  embed = target.new_copy_files_build_phase('Embed Frameworks')
-  embed.symbol_dst_subfolder_spec = :frameworks
-  embed.add_file_reference(tabbar_ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
-    config.build_settings['LD_RUNPATH_SEARCH_PATHS'] = '$(inherited) @loader_path/Frameworks'
   end
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))
@@ -68,9 +57,37 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   scheme.add_build_target(target)
   scheme.add_test_target(target)
   scheme.save_as(project.path, 'PlaceholderTests', true)
-  destination = ENV.fetch('DESTINATION', 'platform=iOS Simulator,name=iPhone 15,OS=17.5')
+  # CYLPlaceholderView is a subclass of CYLAnimatedItemView: the CYLAnimatedItem pod (CYLTabBarController repository, not
+  # on the trunk yet) at the commit the Cartfile pins, with its engine and no animator, so CYL_ANIMATION_ENGINE_AVAILABLE
+  # is 1 and the tests register their own animators. CocoaPods builds it with the same Xcode as the tests (the iOS 12
+  # jobs use Xcode 16, which cannot import a framework built by Xcode 26).
+  tabbar_sha = File.read(File.join(root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
+  File.write(File.join(dir, 'Podfile'), <<~PODFILE)
+    platform :ios, '#{deployment}'
+    project 'Tests.xcodeproj'
+    use_frameworks!
+    target 'PlaceholderTests' do
+      pod 'CYLAnimatedItem/Engine', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+    end
+    post_install do |installer|
+      installer.pods_project.targets.each do |pod_target|
+        pod_target.build_configurations.each do |config|
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '#{deployment}'
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO' if ENV['DEVELOPMENT_TEAM'].to_s.empty?
+        end
+      end
+    end
+  PODFILE
+  Dir.chdir(dir) do
+    ENV['LANG'] ||= 'en_US.UTF-8'
+    ENV['LC_ALL'] ||= 'en_US.UTF-8'
+    abort 'pod install failed' unless system('pod', 'install', '--silent')
+  end
+  # CYL_TEST_ACTION=build-for-testing only builds (scripts/ios12-build.sh, generic simulator destination).
+  action = ENV.fetch('CYL_TEST_ACTION', 'test')
+  destination = ENV.fetch('DESTINATION', action == 'test' ? 'platform=iOS Simulator,name=iPhone 15,OS=17.5' : 'generic/platform=iOS Simulator')
   signing = ENV['DEVELOPMENT_TEAM'].to_s.empty? ? ['CODE_SIGNING_ALLOWED=NO'] : ['-allowProvisioningUpdates']
-  success = system('xcodebuild', 'test', '-project', project.path.to_s, '-scheme', 'PlaceholderTests',
+  success = system('xcodebuild', action, '-workspace', File.join(dir, 'Tests.xcworkspace'), '-scheme', 'PlaceholderTests',
                    '-destination', destination, '-derivedDataPath', File.join(dir, 'DerivedData'), *signing)
   exit(success ? 0 : 1)
 end

@@ -144,6 +144,12 @@ jobs:
           XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_16*.app' | sort -V | tail -1)
           echo "Using $XCODE"
           sudo xcode-select -s "$XCODE/Contents/Developer"
+      # CocoaPods builds the CYLAnimatedItem pod with the selected Xcode (scripts/ios12-build.sh).
+      - name: Tools
+        if: needs.changes.outputs.code == 'true'
+        run: |
+          pod --version || sudo gem install cocoapods
+          ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
       - name: Build at iOS 12.0
         if: needs.changes.outputs.code == 'true'
         run: scripts/ios12-build.sh
@@ -159,6 +165,10 @@ jobs:
       - name: xcodeproj gem
         if: needs.changes.outputs.code == 'true'
         run: ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+      # Tests/run-tests.rb installs the CYLAnimatedItem pod.
+      - name: CocoaPods
+        if: needs.changes.outputs.code == 'true'
+        run: pod --version || sudo gem install cocoapods
       - name: Unit tests
         if: needs.changes.outputs.code == 'true'
         run: scripts/unit-tests.sh
