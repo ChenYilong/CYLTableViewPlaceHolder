@@ -9,32 +9,37 @@
 @implementation CYLRefreshConsolidationTests
 
 - (void)testEveryStateControlKeepsItsTitlesTheSameWay {
-    NSArray<CYLRefreshComponent *> *controls = @[
-        [CYLRefreshStateHeader headerWithRefreshingBlock:^{}],
-        [CYLRefreshAutoStateFooter footerWithRefreshingBlock:^{}],
-        [CYLRefreshBackStateFooter footerWithRefreshingBlock:^{}],
-        [[CYLRefreshStateTrailer alloc] init],
-    ];
-    for (CYLRefreshComponent *control in controls) {
-        id stateControl = control;
-        [stateControl setTitle:@"Pull" forState:CYLRefreshStatePulling];
-        XCTAssertEqualObjects([stateControl titleForState:CYLRefreshStatePulling], @"Pull", @"%@", control.class);
+    // [EN] Typed receivers: on `id`, `setTitle:forState:` is ambiguous with UIButton's.
+    // [CN] 使用具体类型：在 `id` 上，`setTitle:forState:` 与 UIButton 的同名方法冲突。
+    CYLRefreshStateHeader *header = [CYLRefreshStateHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshAutoStateFooter *autoFooter = [CYLRefreshAutoStateFooter footerWithRefreshingBlock:^{}];
+    CYLRefreshBackStateFooter *backFooter = [CYLRefreshBackStateFooter footerWithRefreshingBlock:^{}];
+    CYLRefreshStateTrailer *trailer = [[CYLRefreshStateTrailer alloc] init];
+    [header setTitle:@"Pull" forState:CYLRefreshStatePulling];
+    [autoFooter setTitle:@"Pull" forState:CYLRefreshStatePulling];
+    [backFooter setTitle:@"Pull" forState:CYLRefreshStatePulling];
+    [trailer setTitle:@"Pull" forState:CYLRefreshStatePulling];
+    XCTAssertEqualObjects([header titleForState:CYLRefreshStatePulling], @"Pull");
+    XCTAssertEqualObjects([autoFooter titleForState:CYLRefreshStatePulling], @"Pull");
+    XCTAssertEqualObjects([backFooter titleForState:CYLRefreshStatePulling], @"Pull");
+    XCTAssertEqualObjects([trailer titleForState:CYLRefreshStatePulling], @"Pull");
+    for (CYLRefreshComponent *control in @[header, autoFooter, backFooter, trailer]) {
         XCTAssertEqualObjects([control cyl_stateTitleForState:CYLRefreshStatePulling], @"Pull", @"%@", control.class);
         [control cyl_setStateTitle:nil forState:CYLRefreshStatePulling];
-        XCTAssertEqualObjects([stateControl titleForState:CYLRefreshStatePulling], @"Pull", @"nil is ignored: %@", control.class);
+        XCTAssertEqualObjects([control cyl_stateTitleForState:CYLRefreshStatePulling], @"Pull", @"nil is ignored: %@", control.class);
     }
 }
 
 - (void)testEveryAnimationControlKeepsItsImagesTheSameWay {
     UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(10, 90)];
     UIImage *tall = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {}];
-    NSArray<CYLRefreshComponent *> *controls = @[
-        [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}],
-        [CYLRefreshAutoAnimationFooter footerWithRefreshingBlock:^{}],
-        [CYLRefreshBackAnimationFooter footerWithRefreshingBlock:^{}],
-    ];
-    for (CYLRefreshComponent *control in controls) {
-        [(id)control setAnimationImages:@[tall, tall] forState:CYLRefreshStateRefreshing];
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
+    CYLRefreshAutoAnimationFooter *autoFooter = [CYLRefreshAutoAnimationFooter footerWithRefreshingBlock:^{}];
+    CYLRefreshBackAnimationFooter *backFooter = [CYLRefreshBackAnimationFooter footerWithRefreshingBlock:^{}];
+    [header setAnimationImages:@[tall, tall] forState:CYLRefreshStateRefreshing];
+    [autoFooter setAnimationImages:@[tall, tall] forState:CYLRefreshStateRefreshing];
+    [backFooter setAnimationImages:@[tall, tall] forState:CYLRefreshStateRefreshing];
+    for (CYLRefreshComponent *control in @[header, autoFooter, backFooter]) {
         XCTAssertEqual([control cyl_animationImagesForState:CYLRefreshStateRefreshing].count, 2u, @"%@", control.class);
         XCTAssertGreaterThanOrEqual(control.bounds.size.height, 90, @"grows to the tallest image: %@", control.class);
         XCTAssertTrue(control.cyl_usesIconView, @"the images become the icon: %@", control.class);
@@ -50,7 +55,8 @@
     ];
     for (CYLRefreshFooter *footer in footers) {
         footer.frame = CGRectMake(0, 0, 320, 44);
-        [(id)footer setNoMoreDataImage:image];
+        if ([footer isKindOfClass:CYLRefreshAutoNormalFooter.class]) ((CYLRefreshAutoNormalFooter *)footer).noMoreDataImage = image;
+        else ((CYLRefreshBackNormalFooter *)footer).noMoreDataImage = image;
         UIImageView *(^shown)(void) = ^UIImageView * {
             for (UIView *view in footer.subviews) {
                 if ([view isMemberOfClass:UIImageView.class] && ((UIImageView *)view).image == image && !view.hidden) return (UIImageView *)view;
