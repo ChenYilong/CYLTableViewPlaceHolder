@@ -86,6 +86,7 @@ class CYLRefreshTrailerTest {
         assertSame(column, list.parent)
         assertNull(trailer.parent)
     }
+
     @Test
     fun anAutomaticTrailerRefreshesWithoutARelease() {
         // Three pages: the content is wider than the list; scroll to the last one.
@@ -106,9 +107,12 @@ class CYLRefreshTrailerTest {
         val y = list.height / 2f
         list.dispatchTouchEvent(MotionEvent.obtain(start, start, MotionEvent.ACTION_DOWN, 700f, y, 0))
         for (i in 1..20) list.dispatchTouchEvent(MotionEvent.obtain(start, start + i * 10L, MotionEvent.ACTION_MOVE, 700f - i * 20f, y, 0))
-        assertEquals("refreshed before the release", 1, refreshed)
-        assertEquals(CYLRefreshState.Refreshing, trailer.state)
+        assertEquals("refreshing before the release", CYLRefreshState.Refreshing, trailer.state)
+        // The block runs once the trailer has slid fully in, as on iOS.
+        idle()
+        assertEquals(1, refreshed)
         list.dispatchTouchEvent(MotionEvent.obtain(start, start + 220, MotionEvent.ACTION_UP, 300f, y, 0))
+        assertEquals("the release does not refresh again", 1, refreshed)
         trailer.endRefreshing()
         idle()
         // The default autoTriggerTimes (1) is used up until the next drag.
