@@ -1,12 +1,8 @@
 .page { min-height: 100vh; display: flex; flex-direction: column; background: #fff; }
 .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 0 24px 80px; }
-.animation { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
-.gif { width: 180px; height: 180px; }
-.note { font-size: 14px; line-height: 20px; color: #8e8e93; text-align: center; }
-.title { margin-top: 16px; font-size: 17px; font-weight: 600; color: #000; text-align: center; }
+.note { width: 180px; margin-bottom: 16px; font-size: 14px; line-height: 20px; color: #8e8e93; text-align: center; }
 
 @media (prefers-color-scheme: dark) {
   .page { background: #000; }
-  .title { color: #fff; }
 }

@@ -1,6 +1,6 @@
 // CYLAnimationDetailViewController: one animation, 180 x 180, titled with its name; it replays every 4 seconds while
-// visible and on "Replay". Lottie plays in <cyl-lottie>, GIF in <image>; PAG and Rive have no player in the mini
-// program, so the page says so instead.
+// visible and on "Replay". The animation and its title are one <cyl-animated-item> (Lottie, GIF; speed, loop and
+// restart are its properties and restartAnimation()); PAG and Rive have no player in this example, so the page says so.
 const { t, effectiveLanguage } = require('../../utils/l10n')
 const { sections } = require('../animations/animation_list')
 
@@ -10,7 +10,7 @@ const UNSUPPORTED_NOTE = {
 }
 
 Page({
-  data: { name: '', title: '', engine: '', path: '', note: '', replayTitle: '', showGif: true, language: '', speed: 1, loop: false },
+  data: { name: '', title: '', engine: '', path: '', note: '', replayTitle: '', language: '', speed: 1, loop: false },
   onLoad(query) {
     const section = sections[Number(query.section)]
     const file = section && section.files[Number(query.row)]
@@ -40,26 +40,17 @@ Page({
     this.replay()
   },
   onSpeedChange(e) {
-    this.setData({ speed: e.detail.speed }, () => this.applySpeed())
+    this.setData({ speed: e.detail.speed })
   },
   onLoopChange(e) {
     this.setData({ loop: e.detail.loop })
-  },
-  applySpeed() {
-    const player = this.selectComponent('#animation')
-    if (player && player.cyl_setSpeed) player.cyl_setSpeed(this.data.speed)
   },
   onUnload() {
     clearInterval(this.timer)
   },
   replay() {
     if (!this.data.path) return
-    if (this.data.engine === 'json') {
-      const player = this.selectComponent('#animation')
-      if (player) player.cyl_playFromStart()
-    } else if (this.data.engine === 'gif') {
-      // An <image> restarts a GIF when it is created again.
-      this.setData({ showGif: false }, () => this.setData({ showGif: true }))
-    }
+    const item = this.selectComponent('#item')
+    if (item) item.restartAnimation()
   },
 })

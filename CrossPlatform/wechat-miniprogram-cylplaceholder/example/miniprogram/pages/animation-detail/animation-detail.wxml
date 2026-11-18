@@ -1,16 +1,15 @@
-<!-- CYLAnimationDetailViewController: the right bar item "Replay", then the animation and its title, centered. -->
+<!-- CYLAnimationDetailViewController: the right bar item "Replay", then the animation and its title, centered, in one
+     cyl-animated-item (instructions.md, "Icon and title: CYLAnimatedItemView"). -->
 <view class="page">
   <view class="bar">
     <view class="bar__button" hover-class="bar__button--pressed" bindtap="replay">{{replayTitle}}</view>
   </view>
   <view class="stage">
-    <view class="animation">
-      <cyl-lottie wx:if="{{engine === 'json' && path}}" id="animation" path="{{path}}" loop="{{loop}}"
-        autoplay="{{true}}" bind:ready="applySpeed" />
-      <image wx:elif="{{engine === 'gif' && path && showGif}}" class="gif" src="{{path}}" mode="aspectFit" />
-      <view wx:elif="{{note}}" class="note">{{note}}</view>
-    </view>
-    <text class="title">{{title}}</text>
+    <view wx:if="{{note}}" class="note">{{note}}</view>
+    <cyl-animated-item id="item" generic:cyl-lottie-view="cyl-lottie" title="{{title}}" animation-url="{{path}}" axis="vertical" icon-size="{{180}}"
+      loop="{{loop}}" speed="{{speed}}" autoplay="{{true}}" bare="{{true}}"
+      title-font-size="{{17}}" title-font-weight="600" title-color="#000000" title-dark-color="#ffffff"
+      title-lines="{{0}}" title-spacing="{{16}}" />
   </view>
   <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
                      bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
