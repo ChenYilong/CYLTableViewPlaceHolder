@@ -1068,6 +1068,17 @@ export struct CYLPlaceholderView {
     .blendMode(BlendMode.SRC_OVER, BlendApplyType.OFFSCREEN)
     .hitTestBehavior(HitTestMode.None)
     .accessibilityLevel('no-hide-descendants')
+    .id(this.cylPartId('icon'))
+  }
+
+  /**
+   * The inspector id of a part ("icon", "title"): "<accessibilityIdentifier>-<part>", or "cyl-placeholder-<part>" without
+   * an identifier. scripts/harmonyos-center-check.py finds the icon and the title by these ids in a uitest dumpLayout
+   * and checks that they share one center line (E16).
+   */
+  private cylPartId(part: string): string {
+    const base = this.model.accessibilityIdentifier.length > 0 ? this.model.accessibilityIdentifier : 'cyl-placeholder';
+    return `${base}-${part}`;
   }
 
   @Builder
@@ -1096,6 +1107,7 @@ export struct CYLPlaceholderView {
         .constraintSize({ minWidth: this.model.titleMinimumWidth })
         .margin({ top: this.model.cyl_showsIcon ? 8 : 0 })
         .translate({ x: this.model.defaultTitlePositionAdjustment.x, y: this.model.defaultTitlePositionAdjustment.y })
+        .id(this.cylPartId('title'))
     }
   }
 

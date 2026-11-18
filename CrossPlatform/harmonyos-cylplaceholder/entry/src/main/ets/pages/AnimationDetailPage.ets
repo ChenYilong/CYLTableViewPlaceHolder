@@ -91,6 +91,8 @@ export struct AnimationDetailPage {
       Column() {
         Column() {
           CYLAnimatedItemView({
+            // scripts/harmonyos-center-check.py finds the icon and the title inside this id.
+            itemId: 'animation-detail-item',
             itemTitle: this.itemTitle,
             image: this.look.currentImage !== null ? this.look.currentImage as ResourceStr : '',
             animationUrl: this.animationURL,
