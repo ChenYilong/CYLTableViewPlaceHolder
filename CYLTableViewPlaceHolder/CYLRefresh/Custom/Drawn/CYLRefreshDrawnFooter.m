@@ -3,7 +3,7 @@
 //  CYLRefresh
 //
 //  flutter_easy_refresh's drawn footers (https://github.com/xuelongqy/flutter_easy_refresh, MIT), built on the
-//  headers ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, MIT).
+//  headers ported from third-party refresh code (MIT, see LICENSE.refresh-third-party.txt).
 //
 
 #import "CYLRefreshDrawnFooter.h"

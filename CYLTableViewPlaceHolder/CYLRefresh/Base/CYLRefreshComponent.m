@@ -628,7 +628,7 @@
     }
 }
 
-#pragma mark - SmartRefreshControl-style API
+#pragma mark - CYLRefresh styles API
 
 + (instancetype)attach:(UIScrollView *)scrollView
 {
@@ -782,7 +782,7 @@
     if ([token isKindOfClass:NSUUID.class]) [self.cyl_phaseObservers removeObjectForKey:token];
 }
 
-#pragma mark - SmartRefreshLayout parity: starting and ending in code, observing, deciding
+#pragma mark - CYLRefreshLayout parity: starting and ending in code, observing, deciding
 
 - (void)beginRefreshingAfterDelay:(NSTimeInterval)delay
 {

@@ -1,16 +1,16 @@
 //
-//  CYLSmartRefreshDemoViewController.swift
+//  CYLRefreshStylesDemoViewController.swift
 //  Example-Scenarios
 //
-//  The demo of SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, SmartRefreshDemo, MIT; by
-//  SCWANG), transcribed to Swift on this project's API: DemoViewController's list became the "SmartRefreshControl
+//  The demo of the CYLRefresh styles (third-party refresh code, MIT, see LICENSE.refresh-third-party.txt; by
+//  SCWANG), transcribed to Swift on this project's API: DemoViewController's list became the "CYLRefresh
 //  styles" section of the Refresh tab, UIDemoHeaderController / UIDemoFooterController and the per-style controllers
-//  became this page (one page, a method per style), and UIDeliveryController is the plain list of `smartDelivery`.
+//  became this page (one page, a method per style), and UIDeliveryController is the plain list of `styleDelivery`.
 //  Only data, style parameters and taps live here; every header and footer comes from the core (CYLRefresh).
 //
 //  Differences from the original, each for a reason:
 //  - "Classics" uses CYLRefreshNormalHeader / CYLRefreshBackNormalFooter, this project's classic controls (the
-//    SmartRefreshControl API table maps UIRefreshClassicsHeader / Footer to them).
+//    CYLRefresh styles API table maps UIRefreshClassicsHeader / Footer to them).
 //  - The theme changes the navigation bar through UINavigationBarAppearance (barTintColor no longer colors the bar
 //    on iOS 15 and later), and restores the appearance when the page goes away.
 //  - Texts come from CYLScenarioExample.bundle in seven languages; style names are proper nouns and stay as they are.
@@ -19,7 +19,7 @@
 import UIKit
 import CYLTableViewPlaceHolder
 
-final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefreshExampleRunning {
+final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefreshExampleRunning {
 
     var method = ""
 
@@ -49,18 +49,18 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.accessibilityIdentifier = "smartRefreshDemo"
+        tableView.accessibilityIdentifier = "styleRefreshDemo"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "item")
-        if method == "smartDelivery" {
+        if method == "styleDelivery" {
             // UIDeliveryController: the header over a plain list of 20 rows, refreshing once on open.
-            sections = [(nil, (1...20).map { Row(title: String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0)) })]
-            // SmartRefreshControl's way 1: create, attach and bind in one call.
+            sections = [(nil, (1...20).map { Row(title: String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0)) })]
+            // The styles' way 1: create, attach and bind in one call.
             let delivery = CYLRefreshDeliveryHeader.attach(to: tableView, target: self, action: #selector(onRefresh))
             header = delivery
             delivery.beginRefreshing()
             return
         }
-        sections = [(nil, themeRows()), (CYLScenarioLocalizedString(.smartTestData), testRows(count: 8))]
+        sections = [(nil, themeRows()), (CYLScenarioLocalizedString(.refreshStyleTestData), testRows(count: 8))]
         if let loadMore = makeFooter() {
             loadMore.attach(to: tableView)
             loadMore.addTarget(self, action: #selector(onLoadMore))
@@ -69,7 +69,7 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
             defaultPrimary = loadMore.colorPrimary
             return
         }
-        // SmartRefreshControl's way 3: create first, then attach and bind.
+        // The styles' way 3: create first, then attach and bind.
         let control = makeHeader()
         control.attach(to: tableView)
         control.addTarget(self, action: #selector(onRefresh))
@@ -84,9 +84,9 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
         guard let bar = navigationController?.navigationBar else { return }
         savedAppearance = (bar.standardAppearance.copy(), bar.scrollEdgeAppearance?.copy(), bar.tintColor)
         // UIFlyController and UIWaveSwipeController open in the style's own blue.
-        if method == "smartFly" {
+        if method == "styleFly" {
             applyTheme(primary: UIColor(red: 0.2, green: 0.6, blue: 1, alpha: 1), accent: .white)
-        } else if method == "smartWaveSwipe" {
+        } else if method == "styleWaveSwipe" {
             defaultPrimary = .clear
             applyTheme(primary: .systemBlue, accent: .white)
         }
@@ -102,22 +102,22 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
 
     // MARK: - Data and styles
 
-    /// The header of each style (SmartRefreshControl's per-style controllers).
+    /// The header of each style (the styles' per-style controllers).
     private func makeHeader() -> CYLRefreshHeader {
         switch method {
-        case "smartDropBox": return CYLRefreshDropBoxHeader()
-        case "smartPhoenix": return CYLRefreshPhoenixHeader()
-        case "smartTaurus": return CYLRefreshTaurusHeader()
-        case "smartBezierRadar": return CYLRefreshBezierRadarHeader()
-        case "smartBezierCircle": return CYLRefreshBezierCircleHeader()
-        case "smartStoreHouse": return CYLRefreshStoreHouseHeader()
-        case "smartWaveSwipe": return CYLRefreshWaveSwipeHeader()
-        case "smartOriginal": return CYLRefreshOriginalHeader()
-        case "smartMaterial": return CYLRefreshMaterialHeader()
-        case "smartGameHitBlock": return CYLRefreshGameHitBlockHeader()
-        case "smartGameBattleCity": return CYLRefreshGameBattleCityHeader()
-        case "smartFly": return CYLRefreshFlyHeader()
-        case _ where method.hasPrefix("smartRive"):
+        case "styleDropBox": return CYLRefreshDropBoxHeader()
+        case "stylePhoenix": return CYLRefreshPhoenixHeader()
+        case "styleTaurus": return CYLRefreshTaurusHeader()
+        case "styleBezierRadar": return CYLRefreshBezierRadarHeader()
+        case "styleBezierCircle": return CYLRefreshBezierCircleHeader()
+        case "styleStoreHouse": return CYLRefreshStoreHouseHeader()
+        case "styleWaveSwipe": return CYLRefreshWaveSwipeHeader()
+        case "styleOriginal": return CYLRefreshOriginalHeader()
+        case "styleMaterial": return CYLRefreshMaterialHeader()
+        case "styleGameHitBlock": return CYLRefreshGameHitBlockHeader()
+        case "styleGameBattleCity": return CYLRefreshGameBattleCityHeader()
+        case "styleFly": return CYLRefreshFlyHeader()
+        case _ where method.hasPrefix("styleRive"):
             return riveStyle().flatMap { CYLRefreshRiveHeader(style: $0) } ?? CYLRefreshNormalHeader()
         default: return CYLRefreshNormalHeader()
         }
@@ -126,13 +126,13 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
     /// The footer pages: the classic footer, and flutter_easy_refresh's drawn footers.
     private func makeFooter() -> CYLRefreshFooter? {
         switch method {
-        case "smartClassicsFooter": return CYLRefreshBackNormalFooter()
-        case "smartBezierRadarFooter": return CYLRefreshBezierRadarFooter()
-        case "smartMaterialFooter": return CYLRefreshMaterialFooter()
-        case "smartDeliveryFooter": return CYLRefreshDeliveryFooter()
-        case "smartPhoenixFooter": return CYLRefreshPhoenixFooter()
-        case "smartTaurusFooter": return CYLRefreshTaurusFooter()
-        case "smartRiveSpaceFooter":
+        case "styleClassicsFooter": return CYLRefreshBackNormalFooter()
+        case "styleBezierRadarFooter": return CYLRefreshBezierRadarFooter()
+        case "styleMaterialFooter": return CYLRefreshMaterialFooter()
+        case "styleDeliveryFooter": return CYLRefreshDeliveryFooter()
+        case "stylePhoenixFooter": return CYLRefreshPhoenixFooter()
+        case "styleTaurusFooter": return CYLRefreshTaurusFooter()
+        case "styleRiveSpaceFooter":
             guard let style = riveStyle(), let rive = CYLRefreshRiveHeader(style: style) else { return nil }
             return CYLRefreshDrawnFooter(style: rive)
         default: return nil
@@ -144,12 +144,12 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
     private func riveStyle() -> CYLRefreshRiveStyle? {
         let file: String
         switch method {
-        case "smartRiveBow": file = "Bow"
-        case "smartRiveBubbles": file = "Bubbles"
-        case "smartRiveHalloween": file = "Halloween"
-        case "smartRiveSkating": file = "Skating"
-        case "smartRiveSpace", "smartRiveSpaceFooter": file = "Space"
-        case "smartRiveSquats": file = "Squats"
+        case "styleRiveBow": file = "Bow"
+        case "styleRiveBubbles": file = "Bubbles"
+        case "styleRiveHalloween": file = "Halloween"
+        case "styleRiveSkating": file = "Skating"
+        case "styleRiveSpace", "styleRiveSpaceFooter": file = "Space"
+        case "styleRiveSquats": file = "Squats"
         default: return nil
         }
         guard let url = CYLScenarioExampleResourceURL("Animations/CYLScenarioExampleRefresh\(file).riv") else { return nil }
@@ -196,30 +196,30 @@ final class CYLSmartRefreshDemoViewController: UITableViewController, CYLRefresh
     }
 
     private func themeRows() -> [Row] {
-        let restore = CYLScenarioLocalizedString(.smartTapToRestore)
-        let change = CYLScenarioLocalizedString(.smartTapToSwitch)
+        let restore = CYLScenarioLocalizedString(.refreshStyleTapToRestore)
+        let change = CYLScenarioLocalizedString(.refreshStyleTapToSwitch)
         return [
-            Row(title: CYLScenarioLocalizedString(.smartThemeDefault), detail: restore) { [weak self] in
+            Row(title: CYLScenarioLocalizedString(.refreshStyleThemeDefault), detail: restore) { [weak self] in
                 guard let self = self else { return }
                 self.applyTheme(primary: self.defaultPrimary, accent: self.defaultAccent)
             },
-            Row(title: CYLScenarioLocalizedString(.smartThemeOrange), detail: change) { [weak self] in
+            Row(title: CYLScenarioLocalizedString(.refreshStyleThemeOrange), detail: change) { [weak self] in
                 self?.applyTheme(primary: .systemOrange, accent: .white)
             },
-            Row(title: CYLScenarioLocalizedString(.smartThemeRed), detail: change) { [weak self] in
+            Row(title: CYLScenarioLocalizedString(.refreshStyleThemeRed), detail: change) { [weak self] in
                 self?.applyTheme(primary: .systemRed, accent: .white)
             },
-            Row(title: CYLScenarioLocalizedString(.smartThemeGreen), detail: change) { [weak self] in
+            Row(title: CYLScenarioLocalizedString(.refreshStyleThemeGreen), detail: change) { [weak self] in
                 self?.applyTheme(primary: .systemGreen, accent: .white)
             },
-            Row(title: CYLScenarioLocalizedString(.smartThemeBlue), detail: change) { [weak self] in
+            Row(title: CYLScenarioLocalizedString(.refreshStyleThemeBlue), detail: change) { [weak self] in
                 self?.applyTheme(primary: .systemBlue, accent: .white)
             },
         ]
     }
 
     private func testRows(count: Int) -> [Row] {
-        (1...count).map { Row(title: String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0)) }
+        (1...count).map { Row(title: String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0)) }
     }
 
     /// UIDemoHeaderController.changeTheme: colors the control and the navigation bar, and refreshes once.

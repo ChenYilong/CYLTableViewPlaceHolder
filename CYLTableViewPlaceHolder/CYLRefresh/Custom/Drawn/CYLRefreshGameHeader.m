@@ -1,6 +1,6 @@
 //
-//  Ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, MIT, commit 9319448,
-//  Game/UIRefreshGameHeader.m) into CYLRefresh; identifiers renamed with the CYLRefresh prefix. See CYLRefresh/LICENSE.third-party.
+//  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from Game/UIRefreshGameHeader.m (commit 9319448)
+//  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
 
 #import <SpriteKit/SpriteKit.h>
 

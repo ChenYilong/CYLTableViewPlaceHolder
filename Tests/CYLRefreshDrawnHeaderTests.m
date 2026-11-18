@@ -5,8 +5,8 @@
 // CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
 #import "CYLTableViewPlaceHolder.h"
 
-/// The hand-drawn headers ported from SmartRefreshControl (CYLRefresh/Custom/Drawn): each one runs a whole refresh in a
-/// window and draws; the base reports SmartRefreshControl's status order; inset handling survives mode switches.
+/// The hand-drawn headers of the CYLRefresh styles (CYLRefresh/Custom/Drawn, third-party refresh code, MIT): each one runs a whole refresh in a
+/// window and draws; the base reports the CYLRefresh styles' status order; inset handling survives mode switches.
 @interface CYLRefreshDrawnHeaderTests : XCTestCase
 @property (nonatomic, strong) UIWindow *window;
 @end
@@ -163,7 +163,7 @@
     }
 }
 
-- (void)testTheBaseReportsSmartRefreshControlsStatusOrder {
+- (void)testTheBaseReportsTheStylesStatusOrder {
     UIScrollView *scrollView = [self scrollView];
     CYLStatusRecordingHeader *header = [CYLStatusRecordingHeader attach:scrollView];
     [self spin:0.05];

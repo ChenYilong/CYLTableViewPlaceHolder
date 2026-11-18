@@ -2,9 +2,9 @@
 //  CYLRefreshDrawnHeader.h
 //  CYLRefresh
 //
-//  The base of the hand-drawn headers ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl,
-//  MIT): it offers SmartRefreshControl's subclass API (`UIRefreshComponent` / `UIRefreshHeader`) on top of CYLRefresh's
-//  phases, so each ported style keeps its original drawing code. See CYLRefresh/LICENSE.third-party.
+//  The base of the hand-drawn CYLRefresh styles (third-party refresh code, MIT, see LICENSE.refresh-third-party.txt):
+//  it offers the styles' subclass API (`UIRefreshComponent` / `UIRefreshHeader`) on top of CYLRefresh's
+//  phases, so each ported style keeps its original drawing code.
 //
 
 #import "CYLRefreshHeader.h"
@@ -13,10 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  * [EN] A header whose look is drawn in code (Core Graphics, layers or SpriteKit). Subclasses override the
- *      SmartRefreshControl-named hooks below; the base maps CYLRefresh's phases onto them in SmartRefreshControl's order
+ *      style-named hooks below; the base maps CYLRefresh's phases onto them in the CYLRefresh styles' order
  *      (pull, release, releasing, refreshing, finish, idle).
- * [CN] 用代码绘制外观（Core Graphics、图层或 SpriteKit）的刷新头。子类重写下面以 SmartRefreshControl 命名的钩子；基类按
- *      SmartRefreshControl 的顺序（下拉、松开、释放中、刷新中、结束、空闲）把 CYLRefresh 的阶段映射到这些钩子上。
+ * [CN] 用代码绘制外观（Core Graphics、图层或 SpriteKit）的刷新头。子类重写下面以 CYLRefresh styles 命名的钩子；基类按
+ *      CYLRefresh styles 的顺序（下拉、松开、释放中、刷新中、结束、空闲）把 CYLRefresh 的阶段映射到这些钩子上。
  */
 @interface CYLRefreshDrawnHeader : CYLRefreshHeader
 
@@ -38,8 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) NSTimeInterval durationNormal;
 /*!
- * [EN] The phase as SmartRefreshControl reports it: `CYLRefreshPhaseReleasing` is always passed through before
- *      refreshing, and `CYLRefreshPhaseFinishing` after it. [CN] 按 SmartRefreshControl 的方式报告的阶段：刷新前一定经过
+ * [EN] The phase as CYLRefresh styles reports it: `CYLRefreshPhaseReleasing` is always passed through before
+ *      refreshing, and `CYLRefreshPhaseFinishing` after it. [CN] 按 CYLRefresh styles 的方式报告的阶段：刷新前一定经过
  *      `CYLRefreshPhaseReleasing`，刷新后一定经过 `CYLRefreshPhaseFinishing`。
  */
 @property (nonatomic, readonly) CYLRefreshPhase status;
@@ -95,15 +95,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)scrollView:(UIScrollView *)scrollView attached:(BOOL)attach NS_SWIFT_NAME(scrollView(_:attached:));
 /*!
- * [EN] `beginRefreshing`, under SmartRefreshControl's name. [CN] 即 `beginRefreshing`（SmartRefreshControl 的名字）。
+ * [EN] `beginRefreshing`, under the CYLRefresh styles' name. [CN] 即 `beginRefreshing`（CYLRefresh styles 的名字）。
  */
 - (void)beginRefresh;
 /*!
- * [EN] `endRefreshing`, under SmartRefreshControl's name. [CN] 即 `endRefreshing`（SmartRefreshControl 的名字）。
+ * [EN] `endRefreshing`, under the CYLRefresh styles' name. [CN] 即 `endRefreshing`（CYLRefresh styles 的名字）。
  */
 - (void)finishRefresh;
 /*!
- * [EN] `endRefreshingWithSuccess:`, under SmartRefreshControl's name. [CN] 即 `endRefreshingWithSuccess:`（SmartRefreshControl 的名字）。
+ * [EN] `endRefreshingWithSuccess:`, under the CYLRefresh styles' name. [CN] 即 `endRefreshingWithSuccess:`（CYLRefresh styles 的名字）。
  */
 - (void)finishRefreshWithSuccess:(BOOL)success;
 /*!

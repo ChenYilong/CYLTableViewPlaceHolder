@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '12.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
   s.requires_arc = true
-  # SpriteKit draws the two game headers ported from SmartRefreshControl (BattleCity, HitBlock).
+  # SpriteKit draws the two game headers of the CYLRefresh styles (BattleCity, HitBlock).
   s.frameworks = 'ImageIO', 'QuartzCore', 'Network', 'SpriteKit'
   s.swift_version = '5.0'
   s.default_subspecs = 'Core'
@@ -36,7 +36,8 @@ Pod::Spec.new do |s|
     # root-level `resources` was not installed when a Podfile names subspecs, so every icon fell back to the default.
     core.resources = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle',
                      'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party',
-                     'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party'
+                     'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party',
+                     'CYLTableViewPlaceHolder/CYLRefresh/LICENSE.refresh-third-party.txt'
     # The privacy manifest in a bundle of its own, as CocoaPods recommends: copied as a plain resource it landed at the
     # app's root and clashed with the app's own PrivacyInfo.xcprivacy ("Multiple commands produce", a React Native app).
     core.resource_bundles = { 'CYLTableViewPlaceHolderPrivacy' => 'CYLTableViewPlaceHolder/CYLRefresh/PrivacyInfo.xcprivacy' }

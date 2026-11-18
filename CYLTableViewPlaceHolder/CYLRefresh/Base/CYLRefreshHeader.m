@@ -307,8 +307,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     CGFloat visibleTop = offsetY + self.scrollViewOriginalInset.top;
     CGFloat pulled = MAX(0, -visibleTop);
     if (self.scrollMode == CYLRefreshScrollModeStretch) {
-        // [EN] Stretch, as in SmartRefreshControl: the header is exactly the pulled area, from 0 when idle.
-        // [CN] 拉伸（与 SmartRefreshControl 相同）：刷新头正好是被拉出的区域，空闲时高度为 0。
+        // [EN] Stretch, as in CYLRefresh styles: the header is exactly the pulled area, from 0 when idle.
+        // [CN] 拉伸（与 CYLRefresh styles 相同）：刷新头正好是被拉出的区域，空闲时高度为 0。
         if (fabs(self.cyl_h - pulled) > 0.25) self.cyl_h = pulled;
         self.cyl_y = -pulled - self.ignoredScrollViewContentInsetTop;
     } else if (self.scrollMode == CYLRefreshScrollModeBehind) {
@@ -328,8 +328,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         }
         if (self.superview.subviews.firstObject != self) [self.superview sendSubviewToBack:self];
     } else {
-        // [EN] Front, as in SmartRefreshControl: pinned at the top of the visible area, in front of the content, which
-        //      never moves for it (no refreshing inset). [CN] 前置（与 SmartRefreshControl 相同）：固定在可见区域顶部、位于内容前面，
+        // [EN] Front, as in CYLRefresh styles: pinned at the top of the visible area, in front of the content, which
+        //      never moves for it (no refreshing inset). [CN] 前置（与 CYLRefresh styles 相同）：固定在可见区域顶部、位于内容前面，
         //      内容不会为它移动（不加刷新 inset）。
         if (fabs(self.cyl_h - height) > 0.25) self.cyl_h = height;
         self.cyl_y = visibleTop + self.insetStart;

@@ -1,6 +1,6 @@
 //
-//  Ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, MIT, commit 9319448,
-//  Vector/PathsParser.m) into CYLRefresh; identifiers renamed with the CYLRefresh prefix. See CYLRefresh/LICENSE.third-party.
+//  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from Vector/PathsParser.m (commit 9319448)
+//  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
 
 /* references
  http://www.w3.org/TR/2011/REC-SVG11-20110816/paths.html#PathDataBNF

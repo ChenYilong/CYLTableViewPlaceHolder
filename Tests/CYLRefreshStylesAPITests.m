@@ -4,9 +4,9 @@
 // CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
 #import "CYLTableViewPlaceHolder.h"
 
-/// SmartRefreshControl-style API on CYLRefresh: attach / addTarget, triggerRate, finishDuration with a result,
+/// CYLRefresh styles API on CYLRefresh: attach / addTarget, triggerRate, finishDuration with a result,
 /// phases, scroll modes, theme colors and the subclass hooks (docs/Refresh-Library-Parity.md).
-@interface CYLRefreshSmartAPITests : XCTestCase
+@interface CYLRefreshStylesAPITests : XCTestCase
 @property (nonatomic) NSInteger targetCalls;
 @property (nonatomic, weak) id lastSender;
 @end
@@ -53,7 +53,7 @@
 }
 @end
 
-@implementation CYLRefreshSmartAPITests
+@implementation CYLRefreshStylesAPITests
 
 - (void)onRefresh:(id)sender {
     self.targetCalls++;
@@ -165,7 +165,7 @@
     XCTAssertEqualObjects(header.loadingView.color, UIColor.systemRedColor);
     XCTAssertEqualObjects(header.backgroundColor, UIColor.systemYellowColor);
 
-    header.lastUpdatedTimeKey = @"CYLRefreshSmartAPITests";
+    header.lastUpdatedTimeKey = @"CYLRefreshStylesAPITests";
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
     header.lastUpdatedTime = date;
     XCTAssertEqualObjects(header.lastUpdatedTime, date);
@@ -626,7 +626,7 @@
 }
 
 
-#pragma mark - SmartRefreshLayout parity (docs/iOS-API-Map.md)
+#pragma mark - CYLRefreshLayout parity (docs/iOS-API-Map.md)
 
 - (void)testAutoRefreshTellsCodeFromAPull {
     UIScrollView *scrollView = [self scrollView];

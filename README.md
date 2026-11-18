@@ -426,7 +426,7 @@ self.tableView.cyl_footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBloc
 
 | 中文 | English |
 | --- | --- |
-| `CYLRefresh` 的类名使用 `CYL` 前缀，分类属性和方法使用 `cyl_`（如 `cyl_header`、`cyl_footer`）。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy` 和 `LICENSE.third-party` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。 | `CYLRefresh` classes use the `CYL` prefix, and category properties and methods use `cyl_` (such as `cyl_header` and `cyl_footer`). For manual source integration, besides all `.h` and `.m` files, add the `CYLRefresh` directory and its subdirectories to Header Search Paths, and copy `CYLTableViewPlaceHolder.bundle`, `PrivacyInfo.xcprivacy` and `LICENSE.third-party` into the app's resources. Static library integration needs `-ObjC` to link the categories. |
+| `CYLRefresh` 的类名使用 `CYL` 前缀，分类属性和方法使用 `cyl_`（如 `cyl_header`、`cyl_footer`）。使用源码手动集成时，除所有 `.h`、`.m` 外，还须将 `CYLRefresh` 目录及其子目录加入 Header Search Paths，并复制 `CYLTableViewPlaceHolder.bundle`、`PrivacyInfo.xcprivacy`、`LICENSE.third-party` 和 `LICENSE.refresh-third-party.txt` 到应用资源。静态库集成需要使用 `-ObjC` 链接分类。 | `CYLRefresh` classes use the `CYL` prefix, and category properties and methods use `cyl_` (such as `cyl_header` and `cyl_footer`). For manual source integration, besides all `.h` and `.m` files, add the `CYLRefresh` directory and its subdirectories to Header Search Paths, and copy `CYLTableViewPlaceHolder.bundle`, `PrivacyInfo.xcprivacy`, `LICENSE.third-party` and `LICENSE.refresh-third-party.txt` into the app's resources. Static library integration needs `-ObjC` to link the categories. |
 
 ### 刷新样式一览 / All refresh styles
 

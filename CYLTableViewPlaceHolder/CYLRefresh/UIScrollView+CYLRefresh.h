@@ -56,26 +56,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  * [EN] Ends the header's refresh after `delay` seconds with `success`, and sets the footer's no-more-data state:
- *      YES shows no more data, NO resets it (SmartRefreshLayout's `finishRefresh(delayed, success, noMoreData)`; to
+ *      YES shows no more data, NO resets it (CYLRefreshLayout's `finishRefresh(delayed, success, noMoreData)`; to
  *      leave the footer as it is, call the header's `endRefreshingAfterDelay:success:`).
- * [CN] `delay` 秒后以 `success` 结束刷新头的刷新，并设置尾部的“没有更多数据”：YES 显示没有更多，NO 重置（对应 SmartRefreshLayout 的
+ * [CN] `delay` 秒后以 `success` 结束刷新头的刷新，并设置尾部的“没有更多数据”：YES 显示没有更多，NO 重置（对应 CYLRefreshLayout 的
  *      `finishRefresh(delayed, success, noMoreData)`；不改尾部时调用刷新头的 `endRefreshingAfterDelay:success:`）。
  */
 - (void)cyl_endRefreshingAfterDelay:(NSTimeInterval)delay success:(BOOL)success noMoreData:(BOOL)noMoreData
     NS_SWIFT_NAME(cyl_endRefreshing(afterDelay:success:noMoreData:));
 /*!
  * [EN] Ends the footer's load more after `delay` seconds with `success`; `noMoreData` YES then shows no more data
- *      (SmartRefreshLayout's `finishLoadMore(delayed, success, noMoreData)`).
- * [CN] `delay` 秒后以 `success` 结束尾部的加载；`noMoreData` 为 YES 时随后显示没有更多数据（对应 SmartRefreshLayout 的
+ *      (CYLRefreshLayout's `finishLoadMore(delayed, success, noMoreData)`).
+ * [CN] `delay` 秒后以 `success` 结束尾部的加载；`noMoreData` 为 YES 时随后显示没有更多数据（对应 CYLRefreshLayout 的
  *      `finishLoadMore(delayed, success, noMoreData)`）。
  */
 - (void)cyl_endLoadingMoreAfterDelay:(NSTimeInterval)delay success:(BOOL)success noMoreData:(BOOL)noMoreData
     NS_SWIFT_NAME(cyl_endLoadingMore(afterDelay:success:noMoreData:));
 /*!
  * [EN] Sets `cyl_header` and `cyl_footer`, where nil, from `CYLRefreshConfig.defaultConfig`'s
- *      `defaultHeaderCreator` / `defaultFooterCreator` (SmartRefreshLayout's default header and footer of every layout).
+ *      `defaultHeaderCreator` / `defaultFooterCreator` (CYLRefreshLayout's default header and footer of every layout).
  * [CN] 在 `cyl_header`、`cyl_footer` 为 nil 时，用 `CYLRefreshConfig.defaultConfig` 的 `defaultHeaderCreator` /
- *      `defaultFooterCreator` 创建（对应 SmartRefreshLayout 为每个布局提供的默认刷新头与尾部）。
+ *      `defaultFooterCreator` 创建（对应 CYLRefreshLayout 为每个布局提供的默认刷新头与尾部）。
  */
 - (void)cyl_installDefaultRefreshControls;
 

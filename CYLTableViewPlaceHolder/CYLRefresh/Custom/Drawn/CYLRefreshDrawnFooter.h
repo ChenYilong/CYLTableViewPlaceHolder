@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  * [EN] A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content,
- *      the progress and SmartRefreshControl's status order, and draws in the revealed area under the content. Only
+ *      the progress and the CYLRefresh styles' status order, and draws in the revealed area under the content. Only
  *      the "no more data" text is shown as a label (from `CYLRefresh.strings`).
- * [CN] 由内嵌的手绘刷新头（`style`）绘制的上拉刷新尾：刷新头收到拉出内容底部的距离、进度和 SmartRefreshControl 顺序的状态，在内容
+ * [CN] 由内嵌的手绘刷新头（`style`）绘制的上拉刷新尾：刷新头收到拉出内容底部的距离、进度和 CYLRefresh styles 顺序的状态，在内容
  *      下方露出的区域里绘制。只有“没有更多数据”以文字标签显示（来自 `CYLRefresh.strings`）。
  */
 @interface CYLRefreshDrawnFooter : CYLRefreshBackStateFooter
@@ -67,8 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /*!
- * [EN] Three balls that pulse in turn while loading more; an auto footer (Android SmartRefreshLayout's
- *      `BallPulseFooter`). [CN] 加载更多时依次跳动的三个小球；自动加载尾部（对应 Android SmartRefreshLayout 的 `BallPulseFooter`）。
+ * [EN] Three balls that pulse in turn while loading more; an auto footer (Android CYLRefreshLayout's
+ *      `BallPulseFooter`). [CN] 加载更多时依次跳动的三个小球；自动加载尾部（对应 Android CYLRefreshLayout 的 `BallPulseFooter`）。
  */
 @interface CYLRefreshBallPulseFooter : CYLRefreshAutoFooter
 /*!

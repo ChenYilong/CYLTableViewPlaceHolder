@@ -1,6 +1,6 @@
 //
-//  Ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, MIT, commit 9319448,
-//  Vector/Element.h) into CYLRefresh; identifiers renamed with the CYLRefresh prefix. See CYLRefresh/LICENSE.third-party.
+//  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from Vector/Element.h (commit 9319448)
+//  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
 
 //#import <Foundation/Foundation.h>
 //#import <QuartzCore/QuartzCore.h>

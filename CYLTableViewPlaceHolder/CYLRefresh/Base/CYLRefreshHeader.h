@@ -62,8 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  * [EN] In `CYLRefreshScrollModeBehind`, shows only the part of the header the content has revealed
- *      (SmartRefreshLayout's `setEnableClipHeaderWhenFixedBehind`). Default NO.
- * [CN] 在 `CYLRefreshScrollModeBehind` 下只显示内容已露出的部分（对应 SmartRefreshLayout 的
+ *      (CYLRefreshLayout's `setEnableClipHeaderWhenFixedBehind`). Default NO.
+ * [CN] 在 `CYLRefreshScrollModeBehind` 下只显示内容已露出的部分（对应 CYLRefreshLayout 的
  *      `setEnableClipHeaderWhenFixedBehind`）。默认 NO。
  */
 @property (nonatomic) BOOL clipsWhenBehind;
@@ -119,15 +119,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)openSecondary;
 /*!
  * [EN] Asked before the second floor opens (by a pull or by `openSecondary`); return NO to keep it closed
- *      (SmartRefreshLayout's `OnTwoLevelListener.onTwoLevel`). nil (default) always opens.
- * [CN] 二楼打开前（拉动或 `openSecondary`）询问；返回 NO 保持关闭（对应 SmartRefreshLayout 的 `OnTwoLevelListener.onTwoLevel`）。
+ *      (CYLRefreshLayout's `OnTwoLevelListener.onTwoLevel`). nil (default) always opens.
+ * [CN] 二楼打开前（拉动或 `openSecondary`）询问；返回 NO 保持关闭（对应 CYLRefreshLayout 的 `OnTwoLevelListener.onTwoLevel`）。
  *      nil（默认）总是打开。
  */
 @property (copy, nonatomic, nullable) BOOL (^secondaryShouldOpenBlock)(__kindof CYLRefreshHeader *header);
 /*!
  * [EN] Seconds the second floor takes to open and to close; 0 (default) uses `slowAnimationDuration`
- *      (SmartRefreshLayout's `RefreshKernel.requestFloorDuration`).
- * [CN] 二楼打开与关闭的秒数；0（默认）使用 `slowAnimationDuration`（对应 SmartRefreshLayout 的 `RefreshKernel.requestFloorDuration`）。
+ *      (CYLRefreshLayout's `RefreshKernel.requestFloorDuration`).
+ * [CN] 二楼打开与关闭的秒数；0（默认）使用 `slowAnimationDuration`（对应 CYLRefreshLayout 的 `RefreshKernel.requestFloorDuration`）。
  */
 @property (nonatomic) NSTimeInterval secondaryAnimationDuration;
 /*!

@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger autoTriggerTimes;
 /*!
  * [EN] Loads more on a pull-up release when the content does not fill the scroll view; NO waits for content that
- *      fills it (SmartRefreshLayout's `setEnableLoadMoreWhenContentNotFull`). Default YES.
- * [CN] 内容不满一屏时，上拉松手也加载更多；NO 时等内容填满后才加载（对应 SmartRefreshLayout 的
+ *      fills it (CYLRefreshLayout's `setEnableLoadMoreWhenContentNotFull`). Default YES.
+ * [CN] 内容不满一屏时，上拉松手也加载更多；NO 时等内容填满后才加载（对应 CYLRefreshLayout 的
  *      `setEnableLoadMoreWhenContentNotFull`）。默认 YES。
  */
 @property (nonatomic) BOOL loadsWhenContentNotFull;
