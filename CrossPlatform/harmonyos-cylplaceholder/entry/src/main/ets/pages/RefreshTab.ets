@@ -71,7 +71,7 @@ const SECTIONS: MenuSection[] = [
   ]),
   new MenuSection('CYLScenarioMJSectionAnimations', [
     table('CYLScenarioMJGifIcon', 'example51'), table('CYLScenarioMJLottieStates', 'example52'),
-    table('CYLScenarioMJPagRing', 'example53'), table('CYLScenarioMJRiveIcon', 'example54'),
+    table('CYLScenarioMJPagRing', 'example53'), table('CYLScenarioMJRiveIcon', 'example54'), table('CYLScenarioMJSVGAIcon', 'example57'),
     table('CYLScenarioMJGifFrames', 'example55'), table('CYLScenarioMJMixedEngines', 'example56'),
     new MenuRow('CYLScenarioMJCollectionIcons', 'CYLRefreshCollectionViewController', 'example32'),
   ]),

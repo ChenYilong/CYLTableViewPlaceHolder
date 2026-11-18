@@ -36,6 +36,11 @@ import { animationPath } from '../feed/RefreshSetups';
 import { showRefreshTest } from './RefreshTestPage';
 import { UiColor } from '../common/Ui';
 
+/** The example's SVGA files (rawfile example/animations, NOTICE.animations). */
+function svgaPath(file: string): string {
+  return 'example/animations/' + file;
+}
+
 /** MJRefresh's MJDuration: long enough to see the refreshing state. */
 const CYLRefreshDuration: number = 2000;
 
@@ -452,6 +457,17 @@ export struct RefreshTablePage {
         footer.setIconAnimationAttributes(turning, CYLRefreshState.Refreshing);
         return new Example(header, footer);
       }
+      case 'example57': {
+        // The SVGA twin of example54: SVGA files have no artboards, so one icon rests while pulling and another
+        // plays while refreshing (Android example57).
+        const header = new CYLRefreshAnimationHeaderModel();
+        const footer = new CYLRefreshAutoAnimationFooterModel();
+        header.setIconAnimationFilePath(svgaPath('tab_list.svga'), size(32), CYLRefreshState.Idle);
+        header.setIconAnimationFilePath(svgaPath('tab_activity.svga'), size(32), CYLRefreshState.Refreshing);
+        footer.setIconAnimationFilePath(svgaPath('tab_list.svga'), size(32), CYLRefreshState.Idle);
+        footer.setIconAnimationFilePath(svgaPath('tab_activity.svga'), size(32), CYLRefreshState.Refreshing);
+        return new Example(header, footer);
+      }
       case 'example55': {
         const header = new CYLRefreshGifHeaderModel();
         header.setImagesForState(idleImages(), CYLRefreshState.Idle);
@@ -467,6 +483,7 @@ export struct RefreshTablePage {
         header.setIconAnimationFilePath(animationPath('CYLPlaceholderProgress.pag'), size(32),
           CYLRefreshState.Refreshing);
         const footer = new CYLRefreshAutoAnimationFooterModel();
+        footer.setIconAnimationFilePath(svgaPath('tab_list.svga'), size(30), CYLRefreshState.Idle);
         footer.setIconAnimationFilePath(animationPath('CYLRefreshIcon.riv'), size(30), CYLRefreshState.Refreshing);
         return new Example(header, footer);
       }

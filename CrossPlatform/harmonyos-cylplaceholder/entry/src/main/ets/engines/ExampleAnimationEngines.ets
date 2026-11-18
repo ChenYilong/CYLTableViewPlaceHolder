@@ -12,16 +12,19 @@ import { CYLAnimatedItemEngines } from 'cylanimateditem';
 import { CYLPlaceholderItemAnimatorRegistry, CYLRefreshRiveRegisterViewBuilder } from 'cylplaceholder';
 import { CYLLottiePlaceholderItemAnimator } from './CYLLottiePlaceholderItemAnimator';
 import { CYLPAGPlaceholderItemAnimator } from './CYLPAGPlaceholderItemAnimator';
+import { CYLSVGAPlaceholderItemAnimator } from './CYLSVGAPlaceholderItemAnimator';
 import { CYLRivePlaceholderItemAnimator, cylRiveIsSupported } from './CYLRivePlaceholderItemAnimator';
 import { cylRefreshRiveViewBuilder } from './CYLRefreshRiveView';
 
 /**
- * Registers the example's Lottie, PAG and Rive engines (types, animators and the Rive refresh header's view).
+ * Registers the example's Lottie, PAG, SVGA and Rive engines (types, animators and the Rive refresh header's view).
  * Registering again replaces them.
  */
 export function ExampleRegisterAnimationEngines(): void {
   CYLAnimatedItemEngines.register('Lottie');
   CYLAnimatedItemEngines.register('PAG');
+  // SVGA: CYLTabBarController's own decoder and renderer on a Canvas (no native library), so on every ABI.
+  CYLAnimatedItemEngines.register('SVGA');
   // FIX: issue E15: Rive only where @ohos/rive has its native library (arm64-v8a); elsewhere Rive files show the
   // static image or the placeholder, as with a type that is left out.
   const riveSupported = cylRiveIsSupported();
@@ -30,6 +33,7 @@ export function ExampleRegisterAnimationEngines(): void {
   }
   const registry = CYLPlaceholderItemAnimatorRegistry.sharedRegistry();
   registry.registerAnimator(new CYLPAGPlaceholderItemAnimator());
+  registry.registerAnimator(new CYLSVGAPlaceholderItemAnimator());
   if (riveSupported) {
     registry.registerAnimator(CYLRivePlaceholderItemAnimator.animator);
   }

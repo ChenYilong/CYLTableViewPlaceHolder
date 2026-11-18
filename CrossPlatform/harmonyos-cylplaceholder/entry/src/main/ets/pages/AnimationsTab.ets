@@ -95,7 +95,7 @@ export function animationSections(context: UIContext): AnimationSection[] {
   // The example's own animations: no placeholder meaning (a mascot, a scene, widget demos), so they live in the
   // example bundle, not in the core bundle.
   const exampleFiles = rawFileList(context, 'example/animations')
-    .filter((name: string) => ['json', 'pag', 'riv', 'gif'].includes(extensionOf(name)))
+    .filter((name: string) => ['json', 'pag', 'riv', 'svga', 'gif'].includes(extensionOf(name)))
     .map((name: string) => new AnimationFile(name, EXAMPLE_ANIMATIONS + name, false,
       rawFileSize(context, EXAMPLE_ANIMATIONS + name)));
   if (exampleFiles.length > 0) {

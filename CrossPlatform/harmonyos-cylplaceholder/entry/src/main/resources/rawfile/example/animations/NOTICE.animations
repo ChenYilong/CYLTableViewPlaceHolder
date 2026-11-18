@@ -105,3 +105,39 @@ CYLScenarioExampleHouse.riv
   license: no license file in the course download; copyright of the original author (see that repository's
            Example-SwiftUI-Rive/README.md, "Source and license"); same owner, used as a demo only
   sha256:  632474611244a3ea9cdf455719624bcc0e6684de09f734ade923fe474ba94039
+
+tab_activity.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_activity.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_life_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  484d71ebabefa2a57b8171a8abb2efab4ccd54a830a0623e55d9fec2c85364ce
+
+tab_chat.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_chat.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_lvju_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  a35292641c53961e118e212002b88e5210347a54d2f47ed7eca172f239e70449
+
+tab_home.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_home.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_home_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  37b39729c88d45446f4fdc4d91df92ae109d5fe10832e7ff80f117730769e6a7
+
+tab_list.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_list.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_find_house_list_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  ce8d0a0433c04972dd95a242479cf3ae2e86642cbdfe0f9f9b005002717af3e0
+
+tab_profile.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_profile.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_my_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  f2483d7ae4868e7f9f8f8b452242758ed15a76202c07907dcf659dd6c06c29e6
+
+tab_search.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_search.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_search_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  1dfb5b4f81e599b8e686cbb5f768264ac4afacc5b6252e461e0b9c1d04ded1a7
