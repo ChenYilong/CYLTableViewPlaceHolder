@@ -1,4 +1,4 @@
-// The Refresh tab's menu (CYLRefreshExampleViewController): 8 sections, 65 rows. Each row names the iOS view
+// The Refresh tab's menu (CYLRefreshExampleViewController): 8 sections, 66 rows. Each row names the iOS view
 // controller and method (shown as the subtitle "<VC> - <method>") and the mini program page that plays it.
 const T = 'CYLRefreshTableViewController'
 const table = (key, method) => ({ key, vc: T, method, page: 'refresh-table' })
@@ -33,7 +33,7 @@ const SECTIONS = [
   ] },
   { key: 'CYLScenarioMJSectionAnimations', rows: [
     table('CYLScenarioMJGifIcon', 'example51'), table('CYLScenarioMJLottieStates', 'example52'),
-    table('CYLScenarioMJPagRing', 'example53'), table('CYLScenarioMJRiveIcon', 'example54'),
+    table('CYLScenarioMJPagRing', 'example53'), table('CYLScenarioMJRiveIcon', 'example54'), table('CYLScenarioMJSVGAIcon', 'example57'),
     table('CYLScenarioMJGifFrames', 'example55'), table('CYLScenarioMJMixedEngines', 'example56'),
     { key: 'CYLScenarioMJCollectionIcons', vc: 'CYLRefreshCollectionViewController', method: 'example32', page: 'refresh-collection' },
   ] },

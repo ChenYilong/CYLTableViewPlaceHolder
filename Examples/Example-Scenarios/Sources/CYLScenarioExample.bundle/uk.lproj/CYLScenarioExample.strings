@@ -119,6 +119,7 @@
 "CYLScenarioMJLottieStates" = "Іконка Lottie для кожного стану";
 "CYLScenarioMJPagRing" = "Кільце прогресу PAG";
 "CYLScenarioMJRiveIcon" = "Іконка оновлення Rive";
+"CYLScenarioMJSVGAIcon" = "Іконка оновлення SVGA";
 "CYLScenarioMJGifFrames" = "Кадри GIF як анімовані зображення";
 "CYLScenarioMJMixedEngines" = "Свій рушій для кожного стану";
 "CYLScenarioMJCollectionIcons" = "UICollectionView з анімованими іконками";

@@ -119,6 +119,7 @@
 "CYLScenarioMJLottieStates" = "每个状态一个 Lottie 图标";
 "CYLScenarioMJPagRing" = "PAG 进度圆环";
 "CYLScenarioMJRiveIcon" = "Rive 刷新图标";
+"CYLScenarioMJSVGAIcon" = "SVGA 刷新图标";
 "CYLScenarioMJGifFrames" = "GIF 帧作为动画图片";
 "CYLScenarioMJMixedEngines" = "每个状态使用不同引擎";
 "CYLScenarioMJCollectionIcons" = "UICollectionView 使用动效图标";

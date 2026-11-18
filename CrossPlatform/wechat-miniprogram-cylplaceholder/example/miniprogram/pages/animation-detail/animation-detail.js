@@ -1,6 +1,6 @@
 // CYLAnimationDetailViewController: one animation, 180 x 180, titled with its name; it replays every 4 seconds while
 // visible and on "Replay". The animation and its title are one <cyl-animated-item> (Lottie, GIF; speed, loop and
-// restart are its properties and restartAnimation()); PAG and Rive have no player in this example, so the page says so.
+// restart are its properties and restartAnimation()); SVGA plays through cyl-svga (cyl-svga-view); PAG and Rive have no player in this example, so the page says so.
 const { t, effectiveLanguage } = require('../../utils/l10n')
 const { sections } = require('../animations/animation_list')
 

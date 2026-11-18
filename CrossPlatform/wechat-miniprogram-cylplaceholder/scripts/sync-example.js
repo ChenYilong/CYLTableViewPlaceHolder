@@ -39,6 +39,8 @@ const tabBar = process.env.CYL_TABBAR_DIR || [path.resolve(pkg, '../../Carthage/
 // The example's tab bar (cyl-tab-bar, as the iOS example uses CYLTabBarController) and Lottie player.
 const libraries = [
   { name: 'cyl-lottie-miniprogram', from: 'CrossPlatform/lottie-miniprogram', dist: 'miniprogram_dist', check: 'cyl-lottie/index.js' },
+  // The SVGA player (cyl-svga) the example passes as cyl-svga-view, as the Lottie one as cyl-lottie-view.
+  { name: 'cyl-svga-miniprogram', from: 'CrossPlatform/svga-miniprogram', dist: 'miniprogram_dist', check: 'cyl-svga/index.js' },
   { name: 'cyl-tabbar-miniprogram', from: 'CrossPlatform/wechat-miniprogram-cyltabbar', dist: 'src', check: 'cyl-tab-bar/index.js' },
 ]
 for (const library of libraries) {
@@ -48,6 +50,8 @@ for (const library of libraries) {
     fs.rmSync(to, { recursive: true, force: true })
     copyDir(path.join(root, library.dist), to)
     fs.copyFileSync(path.join(root, 'LICENSE'), path.join(to, 'LICENSE'))
+    // A package NOTICE (cyl-svga-miniprogram: fflate's license) goes with it.
+    if (fs.existsSync(path.join(root, 'NOTICE'))) fs.copyFileSync(path.join(root, 'NOTICE'), path.join(to, 'NOTICE'))
     console.log('synced', path.relative(pkg, to), 'from', root)
   } else if (!fs.existsSync(path.join(to, library.check))) {
     console.error(library.name + ' not found at ' + root + '; set CYL_TABBAR_DIR to a CYLTabBarController checkout.')

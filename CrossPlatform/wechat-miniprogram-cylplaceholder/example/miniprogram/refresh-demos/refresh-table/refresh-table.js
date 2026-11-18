@@ -1,5 +1,5 @@
 // CYLRefreshTableViewController: MJRefresh's table examples 01–06 (headers), 11–21 (footers) and 51–56 (animated
-// icons). 5 random rows to start; loadNewData inserts 5 at the top, loadMoreData appends 1, loadLastData appends 5
+// icons, 57 the SVGA one). 5 random rows to start; loadNewData inserts 5 at the top, loadMoreData appends 1, loadLastData appends 5
 // then "No more data", loadOnceData appends 5 then hides the footer; each takes CYLRefreshDuration (2 s).
 const { t } = require('../../utils/l10n')
 
@@ -53,7 +53,13 @@ function exampleSetup(method) {
     case 56: return withFooter({
       header: 'animation',
       headerIcons: { Idle: icon('CYLRefreshPullCircle.json', 28), Pulling: icon('CYLRefreshArrows.gif', 30), Refreshing: icon('CYLPlaceholderProgress.pag', 32) },
-      footerIcons: { Refreshing: icon('CYLRefreshIcon.riv', 30) },
+      footerIcons: { Idle: icon('tab_list.svga.bin', 30), Refreshing: icon('CYLRefreshIcon.riv', 30) },
+    })
+    // 57: the SVGA twin of 54 (Android and HarmonyOS example57): one icon rests while pulling, another plays while refreshing.
+    case 57: return withFooter({
+      header: 'animation',
+      headerIcons: { Idle: icon('tab_list.svga.bin', 32), Refreshing: icon('tab_activity.svga.bin', 32) },
+      footerIcons: { Idle: icon('tab_list.svga.bin', 32), Refreshing: icon('tab_activity.svga.bin', 32) },
     })
     default: return base
   }

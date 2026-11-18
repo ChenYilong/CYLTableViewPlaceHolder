@@ -119,6 +119,7 @@
 "CYLScenarioMJLottieStates" = "状態ごとの Lottie アイコン";
 "CYLScenarioMJPagRing" = "PAG の進行リング";
 "CYLScenarioMJRiveIcon" = "Rive の更新アイコン";
+"CYLScenarioMJSVGAIcon" = "SVGA の更新アイコン";
 "CYLScenarioMJGifFrames" = "GIF のフレームをアニメーション画像に";
 "CYLScenarioMJMixedEngines" = "状態ごとに別のエンジン";
 "CYLScenarioMJCollectionIcons" = "アニメーションアイコン付き UICollectionView";

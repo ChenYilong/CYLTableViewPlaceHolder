@@ -57,6 +57,7 @@
     "cyl-placeholder-hud": "/components/cyl-placeholder-hud/index",
     "cyl-placeholder-status": "/components/cyl-placeholder-status/index",
     "cyl-lottie": "/libs/cyl-lottie-miniprogram/cyl-lottie/index",
+    "cyl-svga": "/libs/cyl-svga-miniprogram/cyl-svga/index",
     "playback-controls": "/widgets/playback-controls/index"
   },
   "style": "v2",

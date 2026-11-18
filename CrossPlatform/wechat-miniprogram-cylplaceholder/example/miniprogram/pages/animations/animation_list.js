@@ -469,6 +469,13 @@ module.exports = {
           "example": true
         },
         {
+          "name": "CYLScenarioExampleHouse.riv",
+          "engine": "riv",
+          "bytes": 26231,
+          "path": "",
+          "example": true
+        },
+        {
           "name": "CYLScenarioExampleLightSwitch.riv",
           "engine": "riv",
           "bytes": 319,
@@ -543,6 +550,53 @@ module.exports = {
           "engine": "riv",
           "bytes": 18666,
           "path": "",
+          "example": true
+        }
+      ]
+    },
+    {
+      "title": "SVGA · cyl-svga-miniprogram",
+      "files": [
+        {
+          "name": "tab_activity.svga",
+          "engine": "svga",
+          "bytes": 33117,
+          "path": "/assets/animations/tab_activity.svga.bin",
+          "example": true
+        },
+        {
+          "name": "tab_chat.svga",
+          "engine": "svga",
+          "bytes": 29605,
+          "path": "/assets/animations/tab_chat.svga.bin",
+          "example": true
+        },
+        {
+          "name": "tab_home.svga",
+          "engine": "svga",
+          "bytes": 35103,
+          "path": "/assets/animations/tab_home.svga.bin",
+          "example": true
+        },
+        {
+          "name": "tab_list.svga",
+          "engine": "svga",
+          "bytes": 13590,
+          "path": "/assets/animations/tab_list.svga.bin",
+          "example": true
+        },
+        {
+          "name": "tab_profile.svga",
+          "engine": "svga",
+          "bytes": 19940,
+          "path": "/assets/animations/tab_profile.svga.bin",
+          "example": true
+        },
+        {
+          "name": "tab_search.svga",
+          "engine": "svga",
+          "bytes": 24934,
+          "path": "/assets/animations/tab_search.svga.bin",
           "example": true
         }
       ]

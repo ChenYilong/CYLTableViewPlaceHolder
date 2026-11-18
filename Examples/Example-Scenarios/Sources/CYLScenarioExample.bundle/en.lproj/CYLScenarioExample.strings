@@ -119,6 +119,7 @@
 "CYLScenarioMJLottieStates" = "Lottie icon for each state";
 "CYLScenarioMJPagRing" = "PAG progress ring";
 "CYLScenarioMJRiveIcon" = "Rive refresh icon";
+"CYLScenarioMJSVGAIcon" = "SVGA refresh icon";
 "CYLScenarioMJGifFrames" = "Animated images from GIF frames";
 "CYLScenarioMJMixedEngines" = "A different engine for each state";
 "CYLScenarioMJCollectionIcons" = "UICollectionView with animated icons";

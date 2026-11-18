@@ -12,7 +12,7 @@
                  refreshing-title-hidden="{{setup.refreshingTitleHidden || false}}"
                  automatically-refresh="{{setup.automaticallyRefresh !== false}}" auto-trigger-times="{{setup.autoTriggerTimes || 0}}"
                  header-height="{{setup.headerHeight || 0}}" footer-height="{{setup.footerHeight || 0}}"
-                 footer-hidden="{{footerHidden}}" generic:animation="cyl-lottie"
+                 footer-hidden="{{footerHidden}}" generic:animation="cyl-lottie" generic:cyl-svga-view="cyl-svga"
                  bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:statechange="onStateChange">
       <!-- CYLRefreshDIYHeader (example06): label, a decorative switch, a spinner; the color follows the pull. -->
       <view slot="header" class="diy">

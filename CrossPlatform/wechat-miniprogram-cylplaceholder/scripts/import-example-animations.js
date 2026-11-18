@@ -80,6 +80,25 @@ if (fs.existsSync(EXAMPLE)) {
   if (files.length) sections.push({ title: 'CYLScenarioExample.bundle/Animations', files })
 }
 
+// SVGA: CYLTabBarController's six SVGA sample files (Apache-2.0, their NOTICE.md), from the same checkout as
+// scripts/sync-example.js (CYL_TABBAR_DIR, else the Cartfile checkout, else the folder next to this repository). A
+// package cannot hold .svga files, so they ship as <name>.svga.bin, which cyl-animated-item reads as SVGA (bug B6).
+const TAB_BAR = process.env.CYL_TABBAR_DIR || [path.join(REPO, 'Carthage/Checkouts/CYLTabBarController'), path.resolve(REPO, '../CYLTabBarController')]
+  .find((folder) => fs.existsSync(path.join(folder, 'CrossPlatform'))) || path.resolve(REPO, '../CYLTabBarController')
+const SVGA = path.join(TAB_BAR, 'Example-SwiftUI-Rive/AnimatedApp/SVGAAssets')
+if (fs.existsSync(SVGA)) {
+  const files = fs.readdirSync(SVGA).filter((n) => ext(n) === 'svga').sort().map((n) => {
+    fs.copyFileSync(path.join(SVGA, n), path.join(OUT, n + '.bin'))
+    copiedBytes += fs.statSync(path.join(OUT, n + '.bin')).size
+    return { name: n, engine: 'svga', bytes: fs.statSync(path.join(SVGA, n)).size, path: '/assets/animations/' + n + '.bin', example: true }
+  })
+  copy(SVGA, 'NOTICE.md', true)
+  if (files.length) sections.push({ title: 'SVGA · cyl-svga-miniprogram', files })
+} else {
+  console.error('SVGA samples not found at ' + SVGA + '; set CYL_TABBAR_DIR to a CYLTabBarController checkout.')
+  process.exitCode = 1
+}
+
 // NOTICE.animations and the LICENSE files the copied animations name in it.
 const notice = fs.readFileSync(path.join(CORE, 'NOTICE.animations'), 'utf8')
 const copied = new Set(fs.readdirSync(OUT))

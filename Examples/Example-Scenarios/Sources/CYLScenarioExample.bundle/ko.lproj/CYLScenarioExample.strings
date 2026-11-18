@@ -119,6 +119,7 @@
 "CYLScenarioMJLottieStates" = "상태별 Lottie 아이콘";
 "CYLScenarioMJPagRing" = "PAG 진행 링";
 "CYLScenarioMJRiveIcon" = "Rive 새로고침 아이콘";
+"CYLScenarioMJSVGAIcon" = "SVGA 새로고침 아이콘";
 "CYLScenarioMJGifFrames" = "GIF 프레임을 애니메이션 이미지로";
 "CYLScenarioMJMixedEngines" = "상태마다 다른 엔진";
 "CYLScenarioMJCollectionIcons" = "애니메이션 아이콘이 있는 UICollectionView";
