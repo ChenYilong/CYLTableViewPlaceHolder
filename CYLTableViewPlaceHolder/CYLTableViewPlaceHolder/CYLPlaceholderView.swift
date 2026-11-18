@@ -2071,11 +2071,18 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     /**
-     * [EN] UIView's behavior, as before: the view keeps its size; `reportsContentSize` reports the content instead.
-     * [CN] 与以前一样采用 UIView 的行为：视图保持自身尺寸；需要内容尺寸时使用 `reportsContentSize`。
+     * [EN] UIView's behavior, as before: the view keeps its size. With `reportsContentSize` it reports the content for
+     *      the width limit instead (as `intrinsicContentSize` does), so a container that sizes its items with
+     *      `sizeThatFits:` (CYLTabBarController's CYLAnimatedItemStackView, which lays out CYLPlaceholderStackView) gives
+     *      the icon and the title their room.
+     * [CN] 与以前一样采用 UIView 的行为：视图保持自身尺寸。`reportsContentSize` 为 YES 时改为报告该宽度上限下的内容尺寸（与
+     *      `intrinsicContentSize` 相同），使用 `sizeThatFits:` 计算条目尺寸的容器（CYLTabBarController 的 CYLAnimatedItemStackView，
+     *      CYLPlaceholderStackView 用它布局）因此能给图标和标题留出空间。
      */
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
-        bounds.size
+        guard reportsContentSize else { return bounds.size }
+        let limit = size.width > 0 && size.width.isFinite ? size.width : 0
+        return cyl_reportedContentSize(maxWidth: limit)
     }
 
     /**
@@ -2083,7 +2090,13 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override var intrinsicContentSize: CGSize {
         if !reportsContentSize { return CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric) }
-        let maxWidth = preferredMaxLayoutWidth > 0 ? preferredMaxLayoutWidth : UIScreen.main.bounds.width
+        return cyl_reportedContentSize(maxWidth: 0)
+    }
+
+    /// [EN] The content with its margins within `maxWidth`; 0 uses `preferredMaxLayoutWidth`, else the screen width.
+    /// [CN] `maxWidth` 内带边距的内容尺寸；0 时使用 `preferredMaxLayoutWidth`，否则使用屏幕宽度。
+    private func cyl_reportedContentSize(maxWidth limit: CGFloat) -> CGSize {
+        let maxWidth = limit > 0 ? limit : (preferredMaxLayoutWidth > 0 ? preferredMaxLayoutWidth : UIScreen.main.bounds.width)
         let margin = max(0, contentMargin)
         let size = cyl_itemSize(forWidth: max(0, maxWidth - 2 * margin))
         if size.height <= 0 { return .zero }

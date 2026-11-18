@@ -468,6 +468,30 @@
     }
 }
 
+#pragma mark - Layout
+
+- (void)testComponentsAreCenteredWithTheirTitlesVisible {
+    // [EN] The Animations detail page: one component with an icon and a title in a phone-sized stack view.
+    // [CN] 动效详情页：手机尺寸的堆叠视图中一个带图标和标题的组件。
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithComponents:@[
+        [CYLPlaceholderComponent componentWithBundledAnimation:@"CYLPlaceholderSuccess.json"
+            fallbackStyle:CYLPlaceholderStyleImage title:@"Success" size:CGSizeMake(180, 180) action:nil]] actions:nil];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 402, 874)];
+    stack.frame = window.bounds;
+    [window addSubview:stack];
+    [stack setNeedsLayout];
+    [stack layoutIfNeeded];
+    CYLPlaceholderView *component = stack.placeholderView;
+    CGRect frame = [component convertRect:component.bounds toView:stack];
+    XCTAssertGreaterThanOrEqual(CGRectGetWidth(frame), 180, @"the component is at least as wide as its icon");
+    XCTAssertEqualWithAccuracy(CGRectGetMidX(frame), 201, 1, @"centered horizontally");
+    CGRect title = [component.textLabel convertRect:component.textLabel.bounds toView:stack];
+    XCTAssertFalse(component.textLabel.hidden);
+    XCTAssertGreaterThan(CGRectGetHeight(title), 0, @"the title has room");
+    XCTAssertTrue(CGRectContainsRect(CGRectInset(frame, -1, -1), title), @"the title is inside the component");
+    [stack removeFromSuperview];
+}
+
 #pragma mark - Accessibility and resources
 
 - (void)testComponentsSpeakTextAndControlsAndHideDecorations {
