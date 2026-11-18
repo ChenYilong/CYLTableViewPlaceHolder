@@ -17,6 +17,13 @@ import { BarButton } from '../common/Ui';
 import { AnimationFile, animationSections } from './AnimationsTab';
 import { UiColor } from '../common/Ui';
 
+/**
+ * Files drawn for a dark background: libpag's moonlight.pag is white artwork made for its black composition background,
+ * which PAGView does not draw (libpag has no background API), so on the white page it is invisible. Their item area is
+ * black with a white title (example only; docs/HarmonyOS.md, Q12).
+ */
+const DARK_BACKDROP_FILES: string[] = ['CYLScenarioExampleMoonlight.pag'];
+
 @Component
 export struct AnimationDetailPage {
   param: RouteParam = new RouteParam();
@@ -28,6 +35,7 @@ export struct AnimationDetailPage {
   @State fileName: string = '';
   @State speed: number = 1;
   @State loop: boolean = false;
+  @State darkBackdrop: boolean = false;
 
   aboutToAppear(): void {
     const sections = animationSections(this.getUIContext());
@@ -36,6 +44,7 @@ export struct AnimationDetailPage {
     }
     const file: AnimationFile = sections[this.param.section].files[this.param.row];
     this.fileName = file.name;
+    this.darkBackdrop = DARK_BACKDROP_FILES.indexOf(file.name) >= 0;
     const dot = file.name.lastIndexOf('.');
     const title = (dot < 0 ? file.name : file.name.substring(0, dot))
       .replace('CYLPlaceholder', '').replace('CYLScenarioExample', '');
@@ -100,7 +109,7 @@ export struct AnimationDetailPage {
             iconSize: 180,
             spacing: 8,
             titleFontSize: this.look.currentTitleFont,
-            titleColor: this.look.currentTitleColor,
+            titleColor: this.darkBackdrop ? Color.White : this.look.currentTitleColor,
             animationSpeed: this.speed,
             animationLoops: this.loop,
             controller: this.controller,
@@ -110,6 +119,7 @@ export struct AnimationDetailPage {
         .layoutWeight(1)
         .width('100%')
         .justifyContent(FlexAlign.Center)
+        .backgroundColor(this.darkBackdrop ? Color.Black : Color.Transparent)
         PlaybackControls({
           language: effectiveLanguage(),
           speed: $speed,

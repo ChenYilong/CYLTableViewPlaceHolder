@@ -176,6 +176,11 @@ final class CYLAnimationDetailViewController: UIViewController {
     private var placeholder: CYLPlaceholderStackView?
     private var replayTimer: Timer?
 
+    /// Files drawn for a dark background: libpag's moonlight.pag is white artwork made for its black composition
+    /// background, which PAGView does not draw (libpag has no background API), so on the white page it is invisible.
+    /// Their page is black with a white title (example only; docs/HarmonyOS.md, Q12).
+    static let darkBackdropFileNames: Set<String> = ["CYLScenarioExampleMoonlight.pag"]
+
     init(fileName: String, examplePath: String? = nil) {
         self.fileName = fileName
         self.examplePath = examplePath
@@ -192,7 +197,8 @@ final class CYLAnimationDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        let darkBackdrop = Self.darkBackdropFileNames.contains(fileName)
+        view.backgroundColor = darkBackdrop ? .black : .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionReplay),
                                                             style: .plain, target: self, action: #selector(replay))
         let title = (fileName as NSString).deletingPathExtension
@@ -210,6 +216,9 @@ final class CYLAnimationDetailViewController: UIViewController {
             if (fileName as NSString).pathExtension == "riv" {
                 attributes[CYLPlaceholderItemAnimationOptions] = ["legacy": "1"]
             }
+            if darkBackdrop {
+                attributes[CYLPlaceholderItemTitleColor] = UIColor.white
+            }
             component = CYLPlaceholderComponent(attributes: attributes, action: nil)
         } else {
             // The component builder adds the options a bundled Rive file needs.
@@ -219,6 +228,9 @@ final class CYLAnimationDetailViewController: UIViewController {
         let placeholder = CYLPlaceholderStackView(components: [component], actions: nil)
         placeholder.frame = view.bounds
         placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        if darkBackdrop {
+            placeholder.backgroundColor = .black
+        }
         view.addSubview(placeholder)
         self.placeholder = placeholder
     }
