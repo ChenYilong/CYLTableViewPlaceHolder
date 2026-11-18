@@ -37,6 +37,18 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
+### TODO：表格占位图被键盘遮住（来自 CYLSearchViewController） / TODO: The table placeholder is covered by the keyboard (from CYLSearchViewController)
+
+- Date and branch: 2026-11-19, `feat/android-refresh-port-followup`. Reported by the session Mac-CYLSearchViewController (a peer request, logged under the session-roles rule: iOS core, so this Mac session).
+- Report (verbatim, English): "the table placeholder shown by `cyl_reloadData` is centred in the whole table, so with the keyboard up its subtitle is covered. Repro: CYLSearchViewController native example, Search tab (CYLSearchExampleViewController: plain UISearchController + tableView.cyl_reloadData, CYLPlaceholderView style .noResults), type "zzzz": "No results found" sits under the keyboard (iPhone 18 Pro, iOS 27.2)." Their own fix for CYLSearchView: CYLSearchViewController `f83ccd1` (framed above the keyboard's overlap).
+- Requirements: fix in the core: center the automatic placeholder in the area above the keyboard / respect the table's adjusted bottom inset; unit test; screenshot.
+
+### TODO：CYLPlaceholderStackView 改用 CYLAnimatedItemStackView；CYLPlaceholderView 迁移到 Swift / TODO: CYLPlaceholderStackView on CYLAnimatedItemStackView; CYLPlaceholderView in Swift
+
+- Date and branch: 2026-11-19, `feat/android-refresh-port-followup`. Relayed by the session Mac-CYLTabBarController 小程序开发 from the owner: "封装…CYLPlaceholderStackView到CYLanimatedView里的一个视图，他的特点为每一个元素都为CYLanimatedView，并通知session名字为Mac-CYLTableViewPlaceHolder 让他使用我们的新视图控件来完成原本由CYLPlaceholderStackView完成的工作".
+- Upstream: CYLTabBarController `f702df06` adds `CYLAnimatedItemStackView` (Swift, @objc, every element a CYLAnimatedItemView); `bf1717f8` / `4c7dc79d` port CYLAnimatedItemView to Swift (same Objective-C API). Objective-C cannot subclass a Swift class, and CYLPlaceholderView is an Objective-C subclass of CYLAnimatedItemView, so the pin stays at `28a9609d` (the last commit before the port) until CYLPlaceholderView is Swift.
+- Requirements: (1) CYLPlaceholderView in Swift (keeping its Objective-C API); (2) pin the newest CYLTabBarController; (3) CYLPlaceholderStackView built on CYLAnimatedItemStackView, keeping its public API; (4) scenario tests; (5) report what the stack view is missing.
+
 ### 已完成：按 session 名称分配平台任务（Mac → iOS，Win → 其他端） / Done: Assign platform work by session name (Mac → iOS, Win → the other platforms)
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
