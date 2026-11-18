@@ -36,6 +36,7 @@ import com.cyl.refresh.CYLRefreshState
 import com.cyl.refresh.CYLRefreshStateHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
+import com.cyl.refresh.cyl_iconView
 import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
@@ -367,7 +368,23 @@ class RefreshExamplesPage : StackPage() {
                 layout.cyl_header?.beginRefreshing()
             }
         }
-        return page(context, bar(context, title, *buttons.toTypedArray()), layout)
+        if (method !in ANIMATED_ICON_EXAMPLES) return page(context, bar(context, title, *buttons.toTypedArray()), layout)
+        // The animated-icon examples get the playback controls, applied to the header's and the footer's icons through
+        // the core (CYLRefreshIconView animationSpeed, loopsWhilePlaying, replayAnimation).
+        fun icons() = listOfNotNull(layout.cyl_header, layout.cyl_footer).map { it.cyl_iconView }
+        fun playAll() {
+            val header = layout.cyl_header
+            // Play all shows the refreshing icon from its first frame: a header at rest refreshes again.
+            if (header != null && !header.isRefreshing) header.beginRefreshing()
+            icons().forEach { it.replayAnimation() }
+        }
+        val content = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(playbackControls(context, onPlayAll = ::playAll, onSpeed = { speed -> icons().forEach { it.animationSpeed = speed } },
+                onLoop = { loops -> icons().forEach { it.loopsWhilePlaying = loops }; playAll() }))
+            addView(layout, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        }
+        return page(context, bar(context, title, *buttons.toTypedArray()), content)
     }
 
     private companion object {
@@ -375,6 +392,11 @@ class RefreshExamplesPage : StackPage() {
          * MJRefresh's MJDuration: long enough to see the refreshing state.
          */
         const val DURATION = 2000L
+
+        /**
+         * The examples whose header and footer draw animated icons: they show the playback controls.
+         */
+        val ANIMATED_ICON_EXAMPLES = setOf("example51", "example52", "example53", "example54", "example55", "example56")
 
         /**
          * A file of the example's assets/Animations, for a registered player.

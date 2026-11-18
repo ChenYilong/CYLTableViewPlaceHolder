@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.SeekBar
-import android.widget.Switch
 import android.widget.TextView
 import com.cyl.placeholder.CYLPlaceholderStackView
 import com.cyl.animateditem.CYLAnimatedItemAxis
@@ -117,7 +115,8 @@ class AnimationsPage : StackPage() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             addView(item, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-            if (playable) addView(playbackControls(context, item, playFromStart), LinearLayout.LayoutParams(
+            if (playable) addView(playbackControls(context, onPlayAll = playFromStart, onSpeed = { item.animationSpeed = it },
+                onLoop = { item.animationLoops = it; playFromStart() }), LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = context.dp(24f) })
             addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                 override fun onViewAttachedToWindow(v: View) { if (playable) playFromStart() }
@@ -131,62 +130,8 @@ class AnimationsPage : StackPage() {
         return page(context, bar(context, name, replayButton), content)
     }
 
-    /**
-     * "Play all", the speed slider (0.25x to 3x in steps of 0.25, 1x first) and the loop switch (on first), as on the
-     * other platforms' examples.
-     */
-    private fun playbackControls(context: Context, item: CYLAnimatedItemView, playFromStart: () -> Unit): View {
-        val padding = context.dp(16f)
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(padding, 0, padding, 0) }
-        column.addView(Button(context).apply {
-            text = context.t(R.string.merged_playback_play_all)
-            tag = "playback-play-all"
-            setOnClickListener { playFromStart() }
-        })
-        val speedValue = TextView(context).apply { minWidth = context.dp(48f); gravity = Gravity.END }
-        val speedLabel = context.t(R.string.merged_playback_speed)
-        fun showSpeed(speed: Float) {
-            speedValue.text = "${if (speed % 1f == 0f) speed.toInt().toString() else speed.toString()}×"
-            column.findViewWithTag<SeekBar>("playback-speed")?.contentDescription = "$speedLabel ${speedValue.text}"
-        }
-        column.addView(LinearLayout(context).apply {
-            gravity = Gravity.CENTER_VERTICAL
-            addView(TextView(context).apply { text = speedLabel; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
-            addView(SeekBar(context).apply {
-                tag = "playback-speed"
-                max = SPEED_STEPS - 1
-                progress = SPEED_ONE
-                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(bar: SeekBar, value: Int, fromUser: Boolean) {
-                        val speed = (value + 1) * SPEED_STEP
-                        item.animationSpeed = speed
-                        showSpeed(speed)
-                    }
-                    override fun onStartTrackingTouch(bar: SeekBar) = Unit
-                    override fun onStopTrackingTouch(bar: SeekBar) = Unit
-                })
-            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-            addView(speedValue)
-        })
-        showSpeed(1f)
-        column.addView(Switch(context).apply {
-            text = context.t(R.string.merged_playback_loop)
-            tag = "playback-loop"
-            isChecked = true
-            setOnCheckedChangeListener { _, loops ->
-                item.animationLoops = loops
-                playFromStart()
-            }
-        })
-        return column
-    }
-
     private companion object {
         const val EXAMPLE_FOLDER = "Animations"
-        /** The speed slider: 12 steps of 0.25x (0.25x to 3x); step 3 is 1x. */
-        const val SPEED_STEP = 0.25f
-        const val SPEED_STEPS = 12
-        const val SPEED_ONE = 3
 
         /**
          * The engines in the order of the iOS page.

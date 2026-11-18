@@ -117,6 +117,50 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     var scrubsWhilePulling: Boolean = true
 
     /**
+     * The playback rate of the icon's animation, 1 by default, applied live (the examples' speed slider,
+     * docs/Example-Animation-Playback.md; HarmonyOS `CYLRefreshIconViewModel.animationSpeed`). Animation files play
+     * at it through the engine; image frames are shown [DURATION] / speed long. Values that are not positive and finite
+     * are ignored.
+     */
+    var animationSpeed: Float = 1f
+        set(value) {
+            if (!value.isFinite() || value <= 0f || value == field) return
+            field = value
+            placeholderView.animationSpeed = value
+            // Image frames have no rate: they are built again with the new frame duration.
+            reloadShownFrames()
+        }
+
+    /**
+     * Whether the icon loops while it plays (refreshing), true by default; false plays it once and rests on its last
+     * frame (the examples' loop switch; HarmonyOS `loopsWhilePlaying`). Applied live.
+     */
+    var loopsWhilePlaying: Boolean = true
+        set(value) {
+            field = value
+            placeholderView.animationRepeatCount = if (value) 0 else 1
+        }
+
+    /**
+     * Restarts the shown icon from its first frame with the current speed and loop (the examples' Play all;
+     * HarmonyOS `replayAnimation()`).
+     */
+    fun replayAnimation() {
+        if (shownState == null) return
+        placeholderView.animationSpeed = animationSpeed
+        placeholderView.animationRepeatCount = if (loopsWhilePlaying) 0 else 1
+        placeholderView.stopPlaceholderAnimation()
+        placeholderView.playPlaceholderAnimation()
+    }
+
+    private fun reloadShownFrames() {
+        val state = shownState ?: return
+        if ((attributes[state]?.get(IMAGES) as? List<*>).isNullOrEmpty()) return
+        shownState = null
+        updateForState(state)
+    }
+
+    /**
      * Shows and plays the icon of [state] (`updateForState:`); a state without one keeps the last icon.
      */
     fun updateForState(state: CYLRefreshState) {
@@ -131,7 +175,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         val path = icon[ANIMATION_FILE_PATH] as? String
         when {
             // Image frames and animation files both play through CYLPlaceholderView, the one animation component.
-            images != null && images.isNotEmpty() -> if (placeholderView.setAnimationImages(images, (icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) &&
+            images != null && images.isNotEmpty() -> if (placeholderView.setAnimationImages(images, ((icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) / animationSpeed) &&
                 (state == CYLRefreshState.Refreshing || !scrubsWhilePulling)) {
                 placeholderView.playPlaceholderAnimation()
             }

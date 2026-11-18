@@ -806,16 +806,21 @@ class CYLPlaceholderView @JvmOverloads constructor(
     private fun scheduleGIFLoop() {
         removeCallbacks(gifLoop)
         val gif = animationView as? CYLGIFTabBarItemAnimationView ?: return
-        gifPlaysLeft = if (animationRepeatCount <= 0) Int.MAX_VALUE else animationRepeatCount - 1
-        if (gifPlaysLeft > 0) postDelayed(gifLoop, gif.duration.toLong())
+        // For ever: the engine's GIF view loops by itself (`loops`, CYLTabBarController 4f73209c); a timer restarting
+        // it would cut a pass played below 1x short. A count above 1 replays after each pass at the current speed.
+        gifPlaysLeft = if (animationRepeatCount <= 0) 0 else animationRepeatCount - 1
+        if (gifPlaysLeft > 0) postDelayed(gifLoop, gifPassMillis(gif))
     }
+
+    private fun gifPassMillis(gif: CYLGIFTabBarItemAnimationView): Long =
+        (gif.duration / (if (animationSpeed > 0f) animationSpeed else 1f)).toLong().coerceAtLeast(1L)
 
     private fun replayGIF() {
         val gif = animationView as? CYLGIFTabBarItemAnimationView ?: return
         if (!wantsToPlay || gifPlaysLeft <= 0) return
-        if (gifPlaysLeft != Int.MAX_VALUE) gifPlaysLeft--
+        gifPlaysLeft--
         animationPlayer?.play()
-        if (gifPlaysLeft > 0) postDelayed(gifLoop, gif.duration.toLong())
+        if (gifPlaysLeft > 0) postDelayed(gifLoop, gifPassMillis(gif))
     }
 
     /** Plays the animation or the image sequence (`playPlaceholderAnimation`): the inherited `playAnimation()`. */
