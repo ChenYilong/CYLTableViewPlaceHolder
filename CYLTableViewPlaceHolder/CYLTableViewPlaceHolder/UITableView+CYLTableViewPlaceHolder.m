@@ -46,7 +46,18 @@ extern NSNotificationName const CYLPlaceholderVisibleAreaDidChangeNotification;
 
 - (void)cyl_framePlaceholderInVisibleArea:(UIView *)view {
     UIEdgeInsets insets = CYLPlaceholderVisibleInsets(self);
-    view.frame = CGRectMake(0, 0, self.bounds.size.width, MAX(0, self.bounds.size.height - insets.top - insets.bottom));
+    CGFloat fullHeight = self.bounds.size.height;
+    CGFloat height = fullHeight;
+    if (insets.bottom > 0) {
+        // [EN] With the keyboard up the placeholder must end at the keyboard: in content coordinates y = 0 is below the
+        //      top bar (`adjustedContentInset.top`), so that height comes off too. Without the keyboard it keeps the
+        //      table's full height, as before.
+        // [CN] 键盘显示时占位图必须止于键盘：内容坐标中 y = 0 在顶部栏（`adjustedContentInset.top`）下方，因此也要减去这段高度。
+        //      没有键盘时保持表格的完整高度，与之前相同。
+        height -= MAX(0, self.adjustedContentInset.top) + insets.bottom;
+    }
+    // [EN] At least a third of the table stays for the placeholder. [CN] 至少给占位图留下表格三分之一的高度。
+    view.frame = CGRectMake(0, 0, self.bounds.size.width, MAX(fullHeight / 3, height));
 }
 
 static const void *CYLVisibleAreaObserverKey = &CYLVisibleAreaObserverKey;

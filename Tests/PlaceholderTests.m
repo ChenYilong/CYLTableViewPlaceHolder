@@ -241,6 +241,24 @@ static const NSTimeInterval CYLTestTimeout = 30;
     [self.table removeFromSuperview];
 }
 
+- (void)testPlaceholderShownWhileTheKeyboardIsUpEndsAtTheKeyboard {
+    // [EN] CYLSearchViewController's search: the keyboard is up before the first empty result, and the table has a top
+    //      bar inset. [CN] CYLSearchViewController 的搜索：键盘在第一次空结果之前已显示，表格有顶部栏内边距。
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    [window addSubview:self.table];
+    self.table.contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
+    CGRect keyboard = [window convertRect:CGRectMake(0, 280, 320, 200) toCoordinateSpace:window.screen.coordinateSpace];
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillChangeFrameNotification object:nil
+        userInfo:@{UIKeyboardFrameEndUserInfoKey: [NSValue valueWithCGRect:keyboard]}];
+    [self.table cyl_reloadData];
+    CGFloat inset = self.table.adjustedContentInset.top;
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 480 - inset - 200, 0.1,
+                               @"from below the top bar to the keyboard's top");
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillHideNotification object:nil userInfo:nil];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 480, 0.1, @"no keyboard: as before");
+    [self.table removeFromSuperview];
+}
+
 - (void)testDelegateTakesPrecedenceOverDataSource {
     CYLTestDelegate *delegate = [CYLTestDelegate new];
     delegate.view = [UIView new];

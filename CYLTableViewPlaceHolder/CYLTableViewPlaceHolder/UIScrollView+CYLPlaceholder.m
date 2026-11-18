@@ -229,6 +229,10 @@ static void CYLSwizzle(Class cls, SEL original, SEL replacement) {
 @implementation UITableView (CYLPlaceholder)
 
 + (void)load {
+    // [EN] The keyboard is tracked from launch: a placeholder that first appears while the keyboard is already up (a
+    //      search with no results) must know where it is (CYLSearchViewController's report).
+    // [CN] 从启动起跟踪键盘：在键盘已显示时才首次出现的占位图（无结果的搜索）也要知道键盘位置（CYLSearchViewController 报告）。
+    CYLPlaceholderStartTrackingKeyboard();
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         SEL selectors[] = {
