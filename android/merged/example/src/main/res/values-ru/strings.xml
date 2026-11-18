@@ -142,6 +142,7 @@
     <string name="merged_mj_lottie_states">Иконка Lottie для каждого состояния</string>
     <string name="merged_mj_pag_ring">Кольцо прогресса PAG</string>
     <string name="merged_mj_rive_icon">Иконка обновления Rive</string>
+    <string name="merged_mj_svga_icon">Иконка обновления SVGA</string>
     <string name="merged_mj_gif_frames">Кадры GIF как анимированные изображения</string>
     <string name="merged_mj_mixed_engines">Свой движок для каждого состояния</string>
     <string name="merged_mj_collection_icons">UICollectionView с анимированными иконками</string>

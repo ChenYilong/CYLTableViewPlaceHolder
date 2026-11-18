@@ -142,6 +142,7 @@
     <string name="merged_mj_lottie_states">每個狀態一個 Lottie 圖示</string>
     <string name="merged_mj_pag_ring">PAG 進度圓環</string>
     <string name="merged_mj_rive_icon">Rive 重新整理圖示</string>
+    <string name="merged_mj_svga_icon">SVGA 重新整理圖示</string>
     <string name="merged_mj_gif_frames">GIF 影格作為動畫圖片</string>
     <string name="merged_mj_mixed_engines">每個狀態使用不同引擎</string>
     <string name="merged_mj_collection_icons">UICollectionView 使用動效圖示</string>

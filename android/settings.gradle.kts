@@ -13,6 +13,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // SVGAPlayer-Android (com.github.yyued), which the example's SVGA files need, is only on JitPack.
+        maven("https://jitpack.io") { content { includeGroup("com.github.yyued") } }
     }
 }
 rootProject.name = "CYLTableViewPlaceHolderAndroid"

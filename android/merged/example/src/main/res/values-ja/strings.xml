@@ -142,6 +142,7 @@
     <string name="merged_mj_lottie_states">状態ごとの Lottie アイコン</string>
     <string name="merged_mj_pag_ring">PAG の進行リング</string>
     <string name="merged_mj_rive_icon">Rive の更新アイコン</string>
+    <string name="merged_mj_svga_icon">SVGA の更新アイコン</string>
     <string name="merged_mj_gif_frames">GIF のフレームをアニメーション画像に</string>
     <string name="merged_mj_mixed_engines">状態ごとに別のエンジン</string>
     <string name="merged_mj_collection_icons">アニメーションアイコン付き UICollectionView</string>

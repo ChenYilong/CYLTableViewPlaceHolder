@@ -142,6 +142,7 @@
     <string name="merged_mj_lottie_states">Lottie icon for each state</string>
     <string name="merged_mj_pag_ring">PAG progress ring</string>
     <string name="merged_mj_rive_icon">Rive refresh icon</string>
+    <string name="merged_mj_svga_icon">SVGA refresh icon</string>
     <string name="merged_mj_gif_frames">Animated images from GIF frames</string>
     <string name="merged_mj_mixed_engines">A different engine for each state</string>
     <string name="merged_mj_collection_icons">UICollectionView with animated icons</string>

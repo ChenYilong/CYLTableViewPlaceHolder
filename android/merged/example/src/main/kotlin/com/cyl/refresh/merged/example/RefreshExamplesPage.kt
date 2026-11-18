@@ -92,9 +92,9 @@ class RefreshExamplesPage : StackPage() {
         RefreshExample(
             R.string.merged_mj_section_animations,
             listOf(R.string.merged_mj_gif_icon, R.string.merged_mj_lottie_states, R.string.merged_mj_pag_ring,
-                R.string.merged_mj_rive_icon, R.string.merged_mj_gif_frames, R.string.merged_mj_mixed_engines,
-                R.string.merged_mj_collection_icons),
-            listOf("example51", "example52", "example53", "example54", "example55", "example56", "example32"),
+                R.string.merged_mj_rive_icon, R.string.merged_mj_svga_icon, R.string.merged_mj_gif_frames,
+                R.string.merged_mj_mixed_engines, R.string.merged_mj_collection_icons),
+            listOf("example51", "example52", "example53", "example54", "example57", "example55", "example56", "example32"),
             "CYLRefreshTableViewController",
         ),
         RefreshExample(R.string.merged_mj_section_i18n, listOf(R.string.merged_mj_languages), listOf("i18n"),
@@ -343,6 +343,21 @@ class RefreshExamplesPage : StackPage() {
                 }
                 layout.cyl_header?.beginRefreshing()
             }
+            "example57" -> {
+                // The SVGA twin of example54 (Task-Log "SVGA animations, every Rive demo copied 1:1"): SVGA files have
+                // no artboards, so a resting icon shows while pulling and another plays while refreshing.
+                val resting = animation("tab_list.svga")
+                val turning = animation("tab_activity.svga")
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
             "example55" -> {
                 // MJRefresh's animated-images API on its own names: frames of the refresh GIFs.
                 layout.cyl_header = CYLRefreshGifHeader(context).on(::loadNewData).apply {
@@ -396,7 +411,7 @@ class RefreshExamplesPage : StackPage() {
         /**
          * The examples whose header and footer draw animated icons: they show the playback controls.
          */
-        val ANIMATED_ICON_EXAMPLES = setOf("example51", "example52", "example53", "example54", "example55", "example56")
+        val ANIMATED_ICON_EXAMPLES = setOf("example51", "example52", "example53", "example54", "example55", "example56", "example57")
 
         /**
          * A file of the example's assets/Animations, for a registered player.

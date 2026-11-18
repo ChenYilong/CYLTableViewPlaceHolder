@@ -152,6 +152,7 @@ class AnimationsPage : StackPage() {
             "json" to "Lottie · lottie-android",
             "pag" to "PAG · libpag",
             "riv" to "Rive · rive-android",
+            "svga" to "SVGA · SVGAPlayer-Android",
             "gif" to "GIF · CYLAnimatedItem",
         )
 
