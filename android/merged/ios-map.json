@@ -1099,5 +1099,9 @@
  "RefreshComponent.autoOpen": {
   "ios": "`CYLRefreshComponent` `-openForAutoRefreshWithDuration:`",
   "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLPlaceholderScenarioCatalog.animationLoopsByDefault": {
+  "ios": "`CYLPlaceholderComponent` `+componentWithBundledAnimation:…`",
+  "note": "iOS applies the same spinner check privately (static CYLScenarioAnimationLoopsByDefault in CYLPlaceholderScenario.m) when it sets animationRepeatCount; no public iOS function"
  }
 }
