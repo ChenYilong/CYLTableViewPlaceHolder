@@ -180,6 +180,13 @@
     <string name="merged_smart_rive_space">Rive · Space</string>
     <string name="merged_smart_rive_squats">Rive · Squats</string>
     <string name="merged_smart_rive_space_footer">Rive · Space 加载尾</string>
+    <string name="merged_smart_svga_bow">SVGA · Bow</string>
+    <string name="merged_smart_svga_bubbles">SVGA · Bubbles</string>
+    <string name="merged_smart_svga_halloween">SVGA · Halloween</string>
+    <string name="merged_smart_svga_skating">SVGA · Skating</string>
+    <string name="merged_smart_svga_space">SVGA · Space</string>
+    <string name="merged_smart_svga_squats">SVGA · Squats</string>
+    <string name="merged_smart_svga_space_footer">SVGA · Space 加载尾</string>
     <string name="merged_easy_section">flutter_easy_refresh 示例</string>
     <string name="merged_easy_cupertino">Cupertino 样式</string>
     <string name="merged_easy_secondary">二楼</string>

@@ -60,7 +60,27 @@ internal val smartStyles = listOf(
     R.string.merged_smart_rive_halloween to "smartRiveHalloween", R.string.merged_smart_rive_skating to "smartRiveSkating",
     R.string.merged_smart_rive_space to "smartRiveSpace", R.string.merged_smart_rive_squats to "smartRiveSquats",
     R.string.merged_smart_rive_space_footer to "smartRiveSpaceFooter",
+    R.string.merged_smart_svga_bow to "smartSvgaBow", R.string.merged_smart_svga_bubbles to "smartSvgaBubbles",
+    R.string.merged_smart_svga_halloween to "smartSvgaHalloween", R.string.merged_smart_svga_skating to "smartSvgaSkating",
+    R.string.merged_smart_svga_space to "smartSvgaSpace", R.string.merged_smart_svga_squats to "smartSvgaSquats",
+    R.string.merged_smart_svga_space_footer to "smartSvgaSpaceFooter",
 )
+
+/**
+ * The SVGA twins of the Rive styles (Task-Log "SVGA animations, every Rive demo copied 1:1"): this repository's own
+ * scenes of the same subjects (scripts/make_svga_scenes.py), drawn by the CYLAnimatedItem engine in SVGASceneHeader,
+ * which stretches like the Rive header; SVGA has no state machine, so the pull scrubs the scene and refreshing loops it.
+ */
+private fun svgaScene(method: String): String? = when (method) {
+    "smartSvgaBow" -> "Bow"
+    "smartSvgaBubbles" -> "Bubbles"
+    "smartSvgaHalloween" -> "Halloween"
+    "smartSvgaSkating" -> "Skating"
+    "smartSvgaSpace", "smartSvgaSpaceFooter" -> "Space"
+    "smartSvgaSquats" -> "Squats"
+    else -> null
+}?.let { "asset:Animations/CYLScenarioExampleRefresh$it.svga" }
+
 
 /**
  * flutter_easy_refresh's Rive style packages: the file in this example's assets and the names each package's indicator
@@ -149,7 +169,7 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
         "smartGameHitBlock" -> CYLRefreshGameHitBlockHeader(context)
         "smartGameBattleCity" -> CYLRefreshGameBattleCityHeader(context)
         "smartFly" -> CYLRefreshFlyHeader(context)
-        else -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) } ?: CYLRefreshNormalHeader(context)
+        else -> svgaScene(method)?.let { SVGASceneHeader(context, it) } ?: riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) } ?: CYLRefreshNormalHeader(context)
     }
 
     fun footer(): CYLRefreshFooter? = when (method) {
@@ -159,6 +179,7 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
         "smartDeliveryFooter" -> CYLRefreshDeliveryFooter(context)
         "smartPhoenixFooter" -> CYLRefreshPhoenixFooter(context)
         "smartTaurusFooter" -> CYLRefreshTaurusFooter(context)
+        "smartSvgaSpaceFooter" -> CYLRefreshDrawnFooter(SVGASceneHeader(context, svgaScene(method)!!))
         "smartRiveSpaceFooter" -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) }?.let { CYLRefreshDrawnFooter(it) }
         else -> null
     }

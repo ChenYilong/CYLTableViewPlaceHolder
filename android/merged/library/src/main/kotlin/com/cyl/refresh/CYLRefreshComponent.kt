@@ -453,6 +453,11 @@ abstract class CYLRefreshComponent internal constructor(
     internal fun moved(offset: Int, percent: Float, dragging: Boolean) {
         dragOffset = offset
         pullingPercent = percent
+        // FIX: the icon's animation follows the pull at rest, as iOS `setPullingPercent:` and HarmonyOS do (an animated
+        // icon that scrubs while pulling, CYLRefreshIconView.scrubsWhilePulling); only an icon that exists already.
+        if (state == CYLRefreshState.Idle) {
+            (view.view.getTag(R.id.cyl_refresh_icon_view) as? CYLRefreshIconView)?.updateForPullingPercent(percent)
+        }
         if (dragging) (this as? CYLRefreshHeader)?.floor?.lastDragOffset = offset
         if (dragging) (this as? CYLRefreshBackFooter)?.floor?.lastDragOffset = offset
         if (autoHideRefresh) updateAutoHideVisibility()

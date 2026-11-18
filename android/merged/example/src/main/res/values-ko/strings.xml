@@ -180,6 +180,13 @@
     <string name="merged_smart_rive_space">Rive · Space</string>
     <string name="merged_smart_rive_squats">Rive · Squats</string>
     <string name="merged_smart_rive_space_footer">Rive · Space 푸터</string>
+    <string name="merged_smart_svga_bow">SVGA · Bow</string>
+    <string name="merged_smart_svga_bubbles">SVGA · Bubbles</string>
+    <string name="merged_smart_svga_halloween">SVGA · Halloween</string>
+    <string name="merged_smart_svga_skating">SVGA · Skating</string>
+    <string name="merged_smart_svga_space">SVGA · Space</string>
+    <string name="merged_smart_svga_squats">SVGA · Squats</string>
+    <string name="merged_smart_svga_space_footer">SVGA · Space 푸터</string>
     <string name="merged_easy_section">flutter_easy_refresh 예제</string>
     <string name="merged_easy_cupertino">Cupertino 스타일</string>
     <string name="merged_easy_secondary">2층</string>
