@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 已完成（95 / 100）：处理剩余 TODO：iOS 多行标题截图、小程序 npm 包、Android 刷新示例播放控件 / Done (95 / 100): Fix the open TODOs: iOS multi-line title screenshot, mini program npm package, Android refresh demo playback controls
+
+- Date: 2026-11-19. Branch: `feat/android-refresh-port-followup` (PR #31).
+- User's original prompt (verbatim): "fix TODO: −5: iOS simulator screenshot of a multi-line title. Waiting on the Mac session. −5: Publishing the mini program npm package. Waiting on CYLTabBarController upstream. −10: Playback controls on the Android refresh demo pages. Waiting on the iOS row \"Refresh demo pages with animated headers\"."
+- Requirements: close the three TODOs instead of waiting.
+- Acceptance: full marks (100) = (1) the iOS screenshot committed with measurements; (2) the mini program uses a published npm package; (3) the Android refresh demo pages with animated icons have Play all, speed and loop through the core, unit-tested, checked on emulator-5556 with a sheet; docs and pushed. Pass (60) = (3) done and verified, (1) and (2) settled or with exact blockers.
+- Done: (1) already done by the Mac session in `98d7483` (iPhone 18 Pro simulator, iOS 27.2, `-AppleLanguages (ru)`, 3 lines within 1 pt; the centering entry is 100). (3) `ab7d05f`: `CYLRefreshIconView` gains `animationSpeed`, `loopsWhilePlaying` and `replayAnimation()` (as HarmonyOS `CYLRefreshIconViewModel`); image frames are rebuilt with `DURATION / speed`; example51–56 show the controls, shared with the Animations detail page (`PlaybackControls.kt`). Found and fixed in the core: `CYLPlaceholderView` restarted a looping GIF on a 1x timer, which cut passes played below 1x short; the engine's GIF view loops by itself since 4f73209c. Tests: merged 27 / 27 (new `CYLRefreshIconPlaybackTest`), placeholder 40 / 40. Emulator: Lottie spinner at 3x keeps coming back with loop on and plays once with loop off; at 0.25x one pass outlasts the refresh; frames 0.8 s → 3.2 s (0.25x) and 0.267 s (3x); NoFavorites.gif still loops at 1x and 0.25x ([screenshot](assets/android-17-api37-x86_64-emulator-refresh-playback-controls-ab7d05f-20261119-sheet.png)). (2) blocked: upstream `cyl-tabbar-miniprogram` 0.2.0 is ready but unpublished, and npm is not logged in here.
+- Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
+- Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
+
 ### 已完成（90 / 100）：鸿蒙 Q7 Rive 倍速 → Moonlight.pag 画面空白 → iOS 多行标题截图 / Done (90 / 100): HarmonyOS Q7 Rive speed, then Moonlight.pag blank, then the iOS multi-line title screenshot
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
@@ -135,7 +145,7 @@
 - Done: (1) Cartfile and the four Podfiles at 59a1cb0f; the mini program copy synced (6 + 4 files and the upstream test); HarmonyOS `cylanimateditem` synced (only `UPSTREAM_COMMIT` changed); Android's `cylanimateditem` has no change between the two pins. (2) `bind:animationcomplete` replaces the `cyl_animation()` hook, with a test; `npm test` 67 / 67; DevTools: three passes, once, loop, Play all, console clean. (3) At 59a1cb0f a wrapped title in the item was left-aligned with a 2px gap and no line height (screenshot); reported; fixed upstream in 52569d68 (centered wrap, `titleSpacing`, `titleLineHeight`), repinned, and the title moved into the item: DevTools shows the same pixels as the old `<text>`; `npm test` 69 / 69. (4) DevTools screenshots in `docs/WeChat-MiniProgram.md`; HarmonyOS 89 / 89 at the new pin (only `UPSTREAM_COMMIT` changed); Android's `cylanimateditem` unchanged between 6a9ede85 and 52569d68.
 - Score: 100 / 100.
 
-### 已完成（90 / 100）：继续最早的非 iOS TODO：小程序 cyl-animated-item 剩余项 / Done (90 / 100): Continue the oldest non-iOS TODO: the mini program cyl-animated-item leftovers
+### 已完成（95 / 100）：继续最早的非 iOS TODO：小程序 cyl-animated-item 剩余项 / Done (95 / 100): Continue the oldest non-iOS TODO: the mini program cyl-animated-item leftovers
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim, relayed by Mac-CollectionViewClassifyMenu): "通知所有需要我回复continue的活跃session，continue"
@@ -143,7 +153,8 @@
 - Context: the oldest open non-iOS entry is `docs/WeChat-MiniProgram.md` "the components build on CYLTabBarController's cyl-animated-item" (score 80). Its remaining items: (1) a WeChat DevTools rendering check, (2) upstream requests, (3) tinted icons dim the animation / the static fallback is untinted, (4) the published npm package.
 - Acceptance: full marks (100) = all four items done. Pass (60) = items 1 and 3 (the ones this repository can do) done and verified.
 - Done: (1) already covered by the 2026-11-17 DevTools runs (MP1 to MP5), now recorded in the entry; (2) upstream has `cyl_playFromStart()` and `accessibilityHidden`; the events and title properties are requested from the CYLTabBarController mini program session; (3) tinted template icons now use `cyl-animated-item`'s `icon-tint` instead of a 45 % opacity, with a test (`npm test` 65 / 65) and a DevTools check (screenshot `docs/assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-icon-tint-5919ab7-20261118-sheet.png`). Also: `scripts/cyltabbarcontroller-checkout.sh` turns on `core.longpaths` (Windows: the upstream-copy test failed with "Filename too long").
-- Score: 90 / 100. TODO (-5): upstream event forwarding and title properties (CYLTabBarController). TODO (-5): the published npm package (CYLTabBarController).
+- Score (then): 90 / 100. TODO (-5): upstream event forwarding and title properties (CYLTabBarController). TODO (-5): the published npm package (CYLTabBarController).
+- Update 2026-11-19: the event forwarding and title properties landed upstream (59a1cb0f `bind:animationcomplete`, 52569d68 and 5582685f title properties, pinned). Left: the npm package. Upstream `cyl-tabbar-miniprogram` 0.2.0 (CrossPlatform/wechat-miniprogram-cyltabbar, branch feat/cross-platform-components) is ready with `src/cyl-animated-item`, but is not on npm (`npm view` 404) and this machine is not logged in to npm (`npm whoami`: need auth). Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` (needs the owner's `npm login` and the upstream session), then depend on it instead of `npm run sync-animated-item`.
 
 ### TODO：在 Mac 的 arm64 鸿蒙模拟器上补完质量分 Q12、Q15、Q17、Q7 / TODO: Finish HarmonyOS quality rows Q12, Q15, Q17 and Q7 on the Mac's arm64 emulator
 
@@ -155,7 +166,7 @@
 - Progress (2026-11-18): Q12 done (Lottie, PAG, Rive, GIF draw; Rive does not crash on arm64), Q15 done (HUD page, HUD states, life cycle, status bar); quality score 93 → 96 (`node scripts/harmony-quality-score.js`). Q17 fails: the example keeps white backgrounds in dark mode while system text turns white (screenshot in `docs/HarmonyOS.md`); fixing with dark-aware color resources next. Found on the way, TODO: `CYLScenarioExampleMoonlight.pag` draws nothing. Q7 (Rive speed) after Q17.
 - Progress (2026-11-18, `e80de84`): Q17 done: dark-aware color resources in the example, scenario line icons gray in the core (as iOS); quality score 100 / 100 (`docs/assets/harmonyos-q17-dark-mode-fixed-mate70pro-emulator-arm64-e80de84-20261118.png`). Left: Q7 (Rive speed), still marked "N/A" with an outdated reason (an emulator exists now), and `CYLScenarioExampleMoonlight.pag` drawing nothing.
 
-### 已完成（90 / 100）：模拟器重启后继续中断的设备测试 / Done (90 / 100): Continue the on-device checks interrupted by the hung emulator
+### 已完成（100 / 100）：模拟器重启后继续中断的设备测试 / Done (100 / 100): Continue the on-device checks interrupted by the hung emulator
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim): "通知所有活跃会话，模拟器已经重启可用，继续 之前因为模拟器无法启动而中断的任务"
@@ -164,7 +175,8 @@
 - Acceptance: full marks (100) = sessions told; RN and Flutter playback (Play all, speed, loop) checked on the emulator with screenshots; the `android/merged` example's animations checked; both rows updated; pushed. Pass (60) = sessions told and the RN / Flutter row checked and updated.
 - Done 2026-11-18: (1) told the eight sessions that can use the Windows emulators (three local, five Mac); cloud sessions cannot reach them. (2) React Native and Flutter tab bar examples: Play all, speed and loop checked with Rive tab icons (icons loop with loop on, stop after one play with loop off); B17 passed. (3) `android/merged` Animations detail page had only Replay: added Play all, a 0.25–3× speed slider and a loop switch through the core API (`AnimationsPage.kt`, strings in seven languages), built, installed and checked on emulator-5556. `docs/Example-Animation-Playback.md` rows updated with screenshots.
 - Found: Flutter tab bar example: turning on "Rive tab icons" jumps back to the first tab (React Native does not); reported to the CYLTabBarController session (their repository).
-- Score: 90 / 100. Missing: TODO (-10): playback controls on the Android refresh demo pages, which follow the iOS row "Refresh demo pages with animated headers" (still TODO on iOS, so the 1:1 copy waits for it).
+- Score (then): 90 / 100. Missing: TODO (-10): playback controls on the Android refresh demo pages, which follow the iOS row "Refresh demo pages with animated headers" (still TODO on iOS, so the 1:1 copy waits for it).
+- Update 2026-11-19 (`ab7d05f`): the refresh demo pages with animated icons (example51–56) have the playback controls, done without waiting for the iOS row (see the 2026-11-19 entry at the top). Score: 100 / 100.
 
 ### 已完成：任务开始、评分、其他会话与模拟器重启规则 / Done: Task start, scoring, other sessions and emulator restart rules
 
