@@ -13,9 +13,8 @@ import android.widget.ScrollView
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
+import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStackView
-import com.cyl.animateditem.CYLAnimatedItemAxis
-import com.cyl.animateditem.CYLAnimatedItemView
 import com.cyl.animateditem.CYLSize
 
 private fun Context.dp(value: Float) = (value * resources.displayMetrics.density).toInt()
@@ -86,42 +85,34 @@ class AnimationsPage : StackPage() {
     /**
      * One file in the middle of the page, with its name below (iOS `CYLAnimationDetailViewController`), and the
      * playback controls of `docs/Example-Animation-Playback.md` under it: "Play all" restarts from frame 0, the speed
-     * slider sets 0.25x to 3x live, the loop switch plays for ever or once. The icon and the title are one plain
-     * [CYLAnimatedItemView] (instructions.md, "Icon and title: CYLAnimatedItemView"); all three controls are its own
-     * properties ([CYLAnimatedItemView.animationSpeed], [CYLAnimatedItemView.animationLoops],
-     * [CYLAnimatedItemView.restartAnimation]). GIF follows them too since CYLTabBarController ad385a5a (B24).
+     * slider sets 0.25x to 3x live, the loop switch plays for ever or once. All three go through the core
+     * ([CYLPlaceholderView.animationSpeed], [CYLPlaceholderView.animationRepeatCount], play / stop).
      */
     private fun detail(folder: String, name: String): View {
         val context = requireContext()
         val side = 180f
         val title = name.substringBeforeLast('.').replace("CYLPlaceholder", "").replace("CYLScenarioExample", "")
-        val url = "file:///android_asset/$folder/$name" + (RIVE_OPTIONS[name]?.let { "#$it" } ?: "")
-        // CYLTabBarController's animated icon + title view: it plays the file through the CYLAnimatedItem engine, which
-        // finds this app's Lottie, libpag and rive-android by reflection (GIF is decoded by the platform).
-        val item = CYLAnimatedItemView(context).apply {
-            axis = CYLAnimatedItemAxis.Vertical
+        val url = "asset:$folder/$name" + (RIVE_OPTIONS[name]?.let { "#$it" } ?: "")
+        // The core's animated icon + title view (a CYLAnimatedItemView): it plays the file through the CYLAnimatedItem
+        // engine, which finds this app's Lottie, libpag and rive-android by reflection.
+        val placeholder = CYLPlaceholderView(context, null, title).apply {
             iconSizeDp = CYLSize(side, side)
-            spacingDp = 16f
-            animationLoops = true
-            this.title = title
-            titleView.maxLines = Int.MAX_VALUE
-            titleView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 17f)
-            titleView.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            contentMargin = 0f
+            animationRepeatCount = 0
             tag = "animation-view"
-            animationURL = url
         }
-        val playable = item.isAnimationReady
-        if (!playable) item.title = "$title\n(no animator for .${name.substringAfterLast('.')})"
-        val playFromStart = { item.stopAnimation(); item.restartAnimation() }
+        val playable = placeholder.setAnimationFile(url)
+        if (!playable) placeholder.title = "$title\n(no animator for .${name.substringAfterLast('.')})"
+        val playFromStart = { placeholder.stopPlaceholderAnimation(); placeholder.playPlaceholderAnimation() }
         val content = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            addView(item, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-            if (playable) addView(playbackControls(context, item, playFromStart), LinearLayout.LayoutParams(
+            addView(placeholder, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            if (playable) addView(playbackControls(context, placeholder, playFromStart), LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = context.dp(24f) })
             addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                 override fun onViewAttachedToWindow(v: View) { if (playable) playFromStart() }
-                override fun onViewDetachedFromWindow(v: View) { item.stopAnimation() }
+                override fun onViewDetachedFromWindow(v: View) { placeholder.stopPlaceholderAnimation() }
             })
         }
         val replayButton = Button(context).apply {
@@ -135,7 +126,7 @@ class AnimationsPage : StackPage() {
      * "Play all", the speed slider (0.25x to 3x in steps of 0.25, 1x first) and the loop switch (on first), as on the
      * other platforms' examples.
      */
-    private fun playbackControls(context: Context, item: CYLAnimatedItemView, playFromStart: () -> Unit): View {
+    private fun playbackControls(context: Context, placeholder: CYLPlaceholderView, playFromStart: () -> Unit): View {
         val padding = context.dp(16f)
         val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(padding, 0, padding, 0) }
         column.addView(Button(context).apply {
@@ -159,7 +150,7 @@ class AnimationsPage : StackPage() {
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(bar: SeekBar, value: Int, fromUser: Boolean) {
                         val speed = (value + 1) * SPEED_STEP
-                        item.animationSpeed = speed
+                        placeholder.animationSpeed = speed
                         showSpeed(speed)
                     }
                     override fun onStartTrackingTouch(bar: SeekBar) = Unit
@@ -174,7 +165,7 @@ class AnimationsPage : StackPage() {
             tag = "playback-loop"
             isChecked = true
             setOnCheckedChangeListener { _, loops ->
-                item.animationLoops = loops
+                placeholder.animationRepeatCount = if (loops) 0 else 1
                 playFromStart()
             }
         })
