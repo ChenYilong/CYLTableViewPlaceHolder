@@ -30,6 +30,7 @@
 		AD0329B913AA04ECFA3B5E10 /* CYLScenarioLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E82D09E815D175DC3CEF18 /* CYLScenarioLanguage.swift */; };
 		B26CABD477E78B83A3C5ADBF /* CYLEasyRefreshDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079331D57882E2E2E0DAD5EB /* CYLEasyRefreshDemoViewController.swift */; };
 		C9F1A2B3D4E5F60718293A4B /* CYLRiveRoomsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1A2B3D4E5F60718293A4C /* CYLRiveRoomsViewController.swift */; };
+		C9F1A2B3D4E5F60718293B01 /* CYLPlaybackControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1A2B3D4E5F60718293B02 /* CYLPlaybackControlsView.swift */; };
 		CACFD6DEBF91775C4A3CA561 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D141C582E1040C9B8DF2867 /* LaunchScreen.storyboard */; };
 		D960D5955233E789FE356921 /* CYLRefreshWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A50CB3F0F14BF0E059BE69E /* CYLRefreshWebViewController.swift */; };
 		E1857F161D5AA5D3C7A0A13D /* CYLRefreshDIYControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61718378A38CA7E2BFCD0272 /* CYLRefreshDIYControls.swift */; };
@@ -62,6 +63,7 @@
 		A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLFeedViewController.swift; sourceTree = "<group>"; };
 		B69719CCA062B14DEFBBA57F /* CYLScenarioDetailViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioDetailViewController.swift; sourceTree = "<group>"; };
 		C9F1A2B3D4E5F60718293A4C /* CYLRiveRoomsViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRiveRoomsViewController.swift; sourceTree = "<group>"; };
+		C9F1A2B3D4E5F60718293B02 /* CYLPlaybackControlsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaybackControlsView.swift; sourceTree = "<group>"; };
 		D310BE0FC2B59B42C561C71C /* CYLScenarioFeedback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioFeedback.swift; sourceTree = "<group>"; };
 		DB079383EC083523B0BF9C04 /* Pods_ExampleScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioAppDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 				1284517433ABCD0882ECA9B1 /* Assets.xcassets */,
 				7D81305DF85AB35A58B61517 /* CYLAnimationListViewController.swift */,
 				C9F1A2B3D4E5F60718293A4C /* CYLRiveRoomsViewController.swift */,
+				C9F1A2B3D4E5F60718293B02 /* CYLPlaybackControlsView.swift */,
 				825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */,
 				A6A9A3E572955BBC228F2DB4 /* CYLFeedViewController.swift */,
 				2F3F5991C8A84CF73BE6C377 /* CYLHUDViewController.swift */,
@@ -309,6 +312,7 @@
 			files = (
 				AA102A4FBA26B8E03872FA75 /* CYLAnimationListViewController.swift in Sources */,
 				C9F1A2B3D4E5F60718293A4B /* CYLRiveRoomsViewController.swift in Sources */,
+				C9F1A2B3D4E5F60718293B01 /* CYLPlaybackControlsView.swift in Sources */,
 				1E4EDAF863C06F44FA7260F2 /* CYLConfigurationViewController.swift in Sources */,
 				81BEC3DBBCA97FA4A2605B4C /* CYLFeedViewController.swift in Sources */,
 				4C7F7F2D8F9D079A07C5B3AF /* CYLHUDViewController.swift in Sources */,

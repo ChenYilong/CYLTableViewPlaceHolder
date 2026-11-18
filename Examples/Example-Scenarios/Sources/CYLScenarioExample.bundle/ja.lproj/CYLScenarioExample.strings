@@ -246,3 +246,6 @@
 "CYLScenarioRiveRoomsSlider" = "Rooms スライダー";
 "CYLScenarioRiveRoomsLoop" = "ループ";
 "CYLScenarioRiveRoomsHint" = "値を選ぶかスライダーを動かして Rooms を手動で設定します。変更のたびにプレースホルダーが再生され、ステートマシンの数値入力 Rooms を設定します（numberInput=Rooms、values=3,4,5,6）。ループをオンにするとライブラリのループと同じく 1.5 秒ごとに再生され、Rooms は 3、4、5、6、3 と進み、ラベル・選択・スライダーも追従します。";
+"CYLScenarioPlaybackPlayAll" = "すべて再生";
+"CYLScenarioPlaybackSpeed" = "速度";
+"CYLScenarioPlaybackLoop" = "ループ";

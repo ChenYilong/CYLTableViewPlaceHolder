@@ -246,3 +246,6 @@
 "CYLScenarioRiveRoomsSlider" = "Rooms 滑块";
 "CYLScenarioRiveRoomsLoop" = "循环";
 "CYLScenarioRiveRoomsHint" = "点选或拖动滑块手动设置 Rooms：每次改变都会播放占位图，由它设置状态机数字输入 Rooms（numberInput=Rooms，values=3,4,5,6）。打开循环后每 1.5 秒播放一次，与组件库的循环相同：Rooms 依次为 3、4、5、6、3，标签、选项卡与滑块随之变化。";
+"CYLScenarioPlaybackPlayAll" = "全部播放";
+"CYLScenarioPlaybackSpeed" = "倍速";
+"CYLScenarioPlaybackLoop" = "循环";

@@ -167,14 +167,24 @@ final class CYLAnimationListViewController: UITableViewController {
     }
 }
 
-/// One bundled animation as the reserved component; it replays every 4 seconds and on "Replay".
+/// One bundled animation as the reserved component, with the playback controls of docs/Example-Animation-Playback.md:
+/// "Play all" (and "Replay") restart from progress 0, the speed slider and the loop switch apply live, all through the
+/// core (`playPlaceholderAnimation()`, `setPlaceholderAnimationSpeed(_:)`, `animationRepeatCount`). Spinners loop by
+/// default; one-shot demos play once and rest on their last frame.
 final class CYLAnimationDetailViewController: UIViewController {
 
     private let fileName: String
     /// The full path of an example-bundle animation; nil for a core one.
     private let examplePath: String?
     private var placeholder: CYLPlaceholderStackView?
-    private var replayTimer: Timer?
+    private lazy var controls = CYLPlaybackControlsView(loops: Self.loopsByDefault(fileName))
+
+    /// Whether a file is a spinner, which loops by default (one-shot demos do not); the same list as the HarmonyOS
+    /// and Android examples.
+    static func loopsByDefault(_ fileName: String) -> Bool {
+        ["Loading", "Spinner", "Progress", "Throbber", "Activity", "Ring", "Dots", "Cycle", "Arc", "Clockwise",
+         "Uploading", "Infinity"].contains { fileName.contains($0) }
+    }
 
     /// Files drawn for a dark background: libpag's moonlight.pag is white artwork made for its black composition
     /// background, which PAGView does not draw (libpag has no background API), so on the white page it is invisible.
@@ -198,7 +208,7 @@ final class CYLAnimationDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let darkBackdrop = Self.darkBackdropFileNames.contains(fileName)
-        view.backgroundColor = darkBackdrop ? .black : .systemBackground
+        view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionReplay),
                                                             style: .plain, target: self, action: #selector(replay))
         let title = (fileName as NSString).deletingPathExtension
@@ -211,7 +221,7 @@ final class CYLAnimationDetailViewController: UIViewController {
                 CYLPlaceholderItemStyle: CYLPlaceholderStyle.image.rawValue,
                 CYLPlaceholderItemAnimationFilePath: examplePath,
                 CYLPlaceholderItemAnimationSize: [180, 180],
-                CYLPlaceholderItemAnimationRepeatCount: 0,
+                CYLPlaceholderItemAnimationRepeatCount: controls.loops ? 0 : 1,
             ]
             if (fileName as NSString).pathExtension == "riv" {
                 attributes[CYLPlaceholderItemAnimationOptions] = ["legacy": "1"]
@@ -226,27 +236,36 @@ final class CYLAnimationDetailViewController: UIViewController {
                                                 size: CGSize(width: 180, height: 180), action: nil)
         }
         let placeholder = CYLPlaceholderStackView(components: [component], actions: nil)
-        placeholder.frame = view.bounds
-        placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        placeholder.placeholderView.animationRepeatCount = controls.loops ? 0 : 1
         if darkBackdrop {
             placeholder.backgroundColor = .black
         }
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(placeholder)
         self.placeholder = placeholder
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Placeholder animations play once when they appear; replay them so the demo keeps moving.
-        replayTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: true) { [weak self] _ in
-            self?.replay()
+        controls.onPlayAll = { [weak self] in self?.replay() }
+        controls.onSpeed = { [weak self] speed in
+            _ = self?.placeholder?.placeholderView.setPlaceholderAnimationSpeed(speed)
         }
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        replayTimer?.invalidate()
-        replayTimer = nil
+        controls.onLoop = { [weak self] loops in
+            guard let view = self?.placeholder?.placeholderView else { return }
+            view.animationRepeatCount = loops ? 0 : 1
+            // A one-shot animation that already finished starts again, so the switch shows its effect at once.
+            if loops { view.playPlaceholderAnimation() }
+        }
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(controls)
+        let guide = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            placeholder.topAnchor.constraint(equalTo: guide.topAnchor),
+            placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            controls.topAnchor.constraint(equalTo: placeholder.bottomAnchor, constant: 16),
+            controls.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 20),
+            controls.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -20),
+            controls.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -16),
+        ])
     }
 
     @objc private func replay() {
