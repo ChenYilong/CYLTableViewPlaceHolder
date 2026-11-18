@@ -14,7 +14,7 @@ import { CYLLottiePlaceholderItemAnimator } from './CYLLottiePlaceholderItemAnim
 import { CYLPAGPlaceholderItemAnimator } from './CYLPAGPlaceholderItemAnimator';
 import { CYLSVGAPlaceholderItemAnimator } from './CYLSVGAPlaceholderItemAnimator';
 import { CYLRivePlaceholderItemAnimator, cylRiveIsSupported } from './CYLRivePlaceholderItemAnimator';
-import { cylRefreshRiveViewBuilder } from './CYLRefreshRiveView';
+import { cylRefreshSceneViewBuilder, cylRefreshSetRiveRuns } from './CYLRefreshSVGASceneView';
 
 /**
  * Registers the example's Lottie, PAG, SVGA and Rive engines (types, animators and the Rive refresh header's view).
@@ -39,7 +39,7 @@ export function ExampleRegisterAnimationEngines(): void {
   }
   // Lottie last, at the fallback priority (it also claims ".json").
   registry.registerAnimator(new CYLLottiePlaceholderItemAnimator());
-  if (riveSupported) {
-    CYLRefreshRiveRegisterViewBuilder(wrapBuilder(cylRefreshRiveViewBuilder));
-  }
+  // The scene headers' view: SVGA files on every ABI (CYLRefreshSVGASceneView), Rive files where Rive runs.
+  cylRefreshSetRiveRuns(riveSupported);
+  CYLRefreshRiveRegisterViewBuilder(wrapBuilder(cylRefreshSceneViewBuilder));
 }

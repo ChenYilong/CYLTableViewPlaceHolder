@@ -88,6 +88,10 @@ const SECTIONS: MenuSection[] = [
     smart('RiveBubbles', 'smartRiveBubbles'), smart('RiveHalloween', 'smartRiveHalloween'),
     smart('RiveSkating', 'smartRiveSkating'), smart('RiveSpace', 'smartRiveSpace'),
     smart('RiveSquats', 'smartRiveSquats'), smart('RiveSpaceFooter', 'smartRiveSpaceFooter'),
+    smart('SVGABow', 'smartSvgaBow'), smart('SVGABubbles', 'smartSvgaBubbles'),
+    smart('SVGAHalloween', 'smartSvgaHalloween'), smart('SVGASkating', 'smartSvgaSkating'),
+    smart('SVGASpace', 'smartSvgaSpace'), smart('SVGASquats', 'smartSvgaSquats'),
+    smart('SVGASpaceFooter', 'smartSvgaSpaceFooter'),
   ]),
   new MenuSection('CYLScenarioEasySection', [
     easy('Cupertino', 'easyCupertino'), easy('Secondary', 'easySecondary'), easy('TriggerMode', 'easyTriggerMode'),

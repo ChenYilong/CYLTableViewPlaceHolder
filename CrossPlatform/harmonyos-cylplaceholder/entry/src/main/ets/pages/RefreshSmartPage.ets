@@ -89,10 +89,34 @@ const THEMES: Theme[] = [
 
 
 /**
+ * The SVGA twins of the Rive styles (Task-Log "SVGA animations, every Rive demo copied 1:1"): this repository's own
+ * scenes of the same subjects (scripts/make_svga_scenes.py), in the same header model; SVGA has no state machine, so
+ * the pull scrubs the whole file ("scene") and refreshing loops it. CYLRefreshSVGASceneView draws them.
+ */
+function svgaStyle(method: string): CYLRefreshRiveStyle | null {
+  const files: Record<string, string> = {
+    'smartSvgaBow': 'Bow', 'smartSvgaBubbles': 'Bubbles', 'smartSvgaHalloween': 'Halloween',
+    'smartSvgaSkating': 'Skating', 'smartSvgaSpace': 'Space', 'smartSvgaSpaceFooter': 'Space', 'smartSvgaSquats': 'Squats'
+  };
+  const file = files[method];
+  if (file === undefined) {
+    return null;
+  }
+  const style = new CYLRefreshRiveStyle('example/animations/CYLScenarioExampleRefresh' + file + '.svga');
+  style.triggerOffset = 130;
+  style.pullAnimation = 'scene';
+  style.loadingAnimation = 'scene';
+  return style;
+}
+
+/**
  * flutter_easy_refresh's Rive style packages: the file in this example's rawfiles and the names each package's
  * indicator drives (each package's lib/src indicator .dart at dcdbb81).
  */
 function riveStyle(method: string): CYLRefreshRiveStyle | null {
+  if (method.startsWith('smartSvga')) {
+    return svgaStyle(method);
+  }
   let file: string;
   switch (method) {
     case 'smartRiveBow':
@@ -192,7 +216,7 @@ function makeHeader(method: string): CYLRefreshHeaderModel {
       return new CYLRefreshFlyHeaderModel();
     default: {
       // The Rive styles (iOS falls back to the normal header when the file cannot be read), and smartClassics.
-      const style = method.startsWith('smartRive') ? riveStyle(method) : null;
+      const style = method.startsWith('smartRive') || method.startsWith('smartSvga') ? riveStyle(method) : null;
       return style !== null ? new CYLRefreshRiveHeaderModel(style) : new CYLRefreshNormalHeaderModel();
     }
   }
@@ -212,6 +236,7 @@ function makeFooter(method: string): CYLRefreshFooterModel | null {
       return new CYLRefreshPhoenixFooterModel();
     case 'smartTaurusFooter':
       return new CYLRefreshTaurusFooterModel();
+    case 'smartSvgaSpaceFooter':
     case 'smartRiveSpaceFooter': {
       const style = riveStyle(method);
       return style !== null ? CYLRefreshDrawnFooterModel.initWithStyle(new CYLRefreshRiveHeaderModel(style)) : null;
