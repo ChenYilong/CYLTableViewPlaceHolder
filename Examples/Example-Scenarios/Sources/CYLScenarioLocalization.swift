@@ -121,6 +121,7 @@ enum CYLScenarioL10n: String, CaseIterable {
     case mjLottieStates = "CYLScenarioMJLottieStates"
     case mjPagRing = "CYLScenarioMJPagRing"
     case mjRiveIcon = "CYLScenarioMJRiveIcon"
+    case mjSVGAIcon = "CYLScenarioMJSVGAIcon"
     case mjGifFrames = "CYLScenarioMJGifFrames"
     case mjMixedEngines = "CYLScenarioMJMixedEngines"
     case mjCollectionIcons = "CYLScenarioMJCollectionIcons"
