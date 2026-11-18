@@ -175,7 +175,7 @@ module.exports = {
   "CYLScenarioHUDMaskBlack": "变暗",
   "CYLScenarioHUDMaskGradient": "渐变",
   "CYLScenarioHUDLifecycleRow": "第 %ld 项",
-  "CYLScenarioRefreshStyleSection": "CYLRefresh styles 样式",
+  "CYLScenarioRefreshStyleSection": "CYLRefresh 样式",
   "CYLScenarioRefreshStyleClassics": "经典",
   "CYLScenarioRefreshStyleClassicsFooter": "经典加载尾",
   "CYLScenarioRefreshStyleBezierRadarFooter": "BezierRadar 加载尾",

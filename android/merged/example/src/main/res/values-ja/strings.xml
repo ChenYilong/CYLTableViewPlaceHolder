@@ -165,7 +165,7 @@
     <string name="merged_mj_footer_no_more">これ以上データはありません</string>
     <string name="merged_mj_web_warning">注意：これはネイティブ画面ではなく Web ページです</string>
     <string name="merged_mj_web_back">前のページに戻る</string>
-    <string name="merged_style_section">CYLRefresh styles のスタイル</string>
+    <string name="merged_style_section">CYLRefresh のスタイル</string>
     <string name="merged_style_classics">クラシック</string>
     <string name="merged_style_classics_footer">クラシックなフッター</string>
     <string name="merged_style_bezier_radar_footer">BezierRadar フッター</string>

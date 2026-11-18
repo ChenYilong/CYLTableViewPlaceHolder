@@ -175,7 +175,7 @@ module.exports = {
   "CYLScenarioHUDMaskBlack": "Затемнение",
   "CYLScenarioHUDMaskGradient": "Градиент",
   "CYLScenarioHUDLifecycleRow": "Элемент %ld",
-  "CYLScenarioRefreshStyleSection": "Стили CYLRefresh styles",
+  "CYLScenarioRefreshStyleSection": "Стили CYLRefresh",
   "CYLScenarioRefreshStyleClassics": "Классический",
   "CYLScenarioRefreshStyleClassicsFooter": "Классический футер",
   "CYLScenarioRefreshStyleBezierRadarFooter": "Футер BezierRadar",

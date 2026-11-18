@@ -41,7 +41,7 @@ import com.cyl.refresh.layout.CYLRefreshLayout
  */
 
 /**
- * The styles of the "CYLRefresh styles styles" section: title and method (iOS `styles`).
+ * The styles of the "CYLRefresh styles" section: title and method (iOS `styles`).
  */
 internal val refreshStyles = listOf(
     R.string.merged_style_delivery to "styleDelivery", R.string.merged_style_classics to "styleClassics",

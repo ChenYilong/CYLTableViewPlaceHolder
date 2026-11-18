@@ -165,7 +165,7 @@
     <string name="merged_mj_footer_no_more">Больше данных нет</string>
     <string name="merged_mj_web_warning">Внимание: это веб-страница, а не нативный экран</string>
     <string name="merged_mj_web_back">Назад</string>
-    <string name="merged_style_section">Стили CYLRefresh styles</string>
+    <string name="merged_style_section">Стили CYLRefresh</string>
     <string name="merged_style_classics">Классический</string>
     <string name="merged_style_classics_footer">Классический футер</string>
     <string name="merged_style_bezier_radar_footer">Футер BezierRadar</string>

@@ -165,7 +165,7 @@
     <string name="merged_mj_footer_no_more">No more data</string>
     <string name="merged_mj_web_warning">Note: this is a web page, not a native screen</string>
     <string name="merged_mj_web_back">Back to the previous page</string>
-    <string name="merged_style_section">CYLRefresh styles styles</string>
+    <string name="merged_style_section">CYLRefresh styles</string>
     <string name="merged_style_classics">Classics</string>
     <string name="merged_style_classics_footer">Classics footer</string>
     <string name="merged_style_bezier_radar_footer">BezierRadar footer</string>

@@ -165,7 +165,7 @@
     <string name="merged_mj_footer_no_more">더 이상 데이터가 없습니다</string>
     <string name="merged_mj_web_warning">참고: 네이티브 화면이 아니라 웹 페이지입니다</string>
     <string name="merged_mj_web_back">이전 페이지로</string>
-    <string name="merged_style_section">CYLRefresh styles 스타일</string>
+    <string name="merged_style_section">CYLRefresh 스타일</string>
     <string name="merged_style_classics">클래식</string>
     <string name="merged_style_classics_footer">클래식 푸터</string>
     <string name="merged_style_bezier_radar_footer">BezierRadar 푸터</string>

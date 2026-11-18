@@ -175,7 +175,7 @@ module.exports = {
   "CYLScenarioHUDMaskBlack": "暗く",
   "CYLScenarioHUDMaskGradient": "グラデーション",
   "CYLScenarioHUDLifecycleRow": "項目 %ld",
-  "CYLScenarioRefreshStyleSection": "CYLRefresh styles のスタイル",
+  "CYLScenarioRefreshStyleSection": "CYLRefresh のスタイル",
   "CYLScenarioRefreshStyleClassics": "クラシック",
   "CYLScenarioRefreshStyleClassicsFooter": "クラシックなフッター",
   "CYLScenarioRefreshStyleBezierRadarFooter": "BezierRadar フッター",

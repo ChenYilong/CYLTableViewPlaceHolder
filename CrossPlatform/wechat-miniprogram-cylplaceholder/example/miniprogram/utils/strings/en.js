@@ -175,7 +175,7 @@ module.exports = {
   "CYLScenarioHUDMaskBlack": "Dim",
   "CYLScenarioHUDMaskGradient": "Gradient",
   "CYLScenarioHUDLifecycleRow": "Item %ld",
-  "CYLScenarioRefreshStyleSection": "CYLRefresh styles styles",
+  "CYLScenarioRefreshStyleSection": "CYLRefresh styles",
   "CYLScenarioRefreshStyleClassics": "Classics",
   "CYLScenarioRefreshStyleClassicsFooter": "Classics footer",
   "CYLScenarioRefreshStyleBezierRadarFooter": "BezierRadar footer",

@@ -1851,33 +1851,33 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
-| CYLRefresh styles styles · Delivery (CYLRefreshStylesDemoViewController - styleDelivery) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Classics (CYLRefreshStylesDemoViewController - styleClassics) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · DropBox (CYLRefreshStylesDemoViewController - styleDropBox) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Phoenix (CYLRefreshStylesDemoViewController - stylePhoenix) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Taurus (CYLRefreshStylesDemoViewController - styleTaurus) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · BezierRadar (CYLRefreshStylesDemoViewController - styleBezierRadar) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · BezierCircle (CYLRefreshStylesDemoViewController - styleBezierCircle) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · StoreHouse (CYLRefreshStylesDemoViewController - styleStoreHouse) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · WaveSwipe (CYLRefreshStylesDemoViewController - styleWaveSwipe) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Original (CYLRefreshStylesDemoViewController - styleOriginal) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Material (CYLRefreshStylesDemoViewController - styleMaterial) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · GameHitBlock (CYLRefreshStylesDemoViewController - styleGameHitBlock) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · GameBattleCity (CYLRefreshStylesDemoViewController - styleGameBattleCity) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Fly (CYLRefreshStylesDemoViewController - styleFly) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Classics footer (CYLRefreshStylesDemoViewController - styleClassicsFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · BezierRadar footer (CYLRefreshStylesDemoViewController - styleBezierRadarFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Material footer (CYLRefreshStylesDemoViewController - styleMaterialFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Delivery footer (CYLRefreshStylesDemoViewController - styleDeliveryFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Phoenix footer (CYLRefreshStylesDemoViewController - stylePhoenixFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Taurus footer (CYLRefreshStylesDemoViewController - styleTaurusFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Bow (CYLRefreshStylesDemoViewController - styleRiveBow) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Bubbles (CYLRefreshStylesDemoViewController - styleRiveBubbles) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Halloween (CYLRefreshStylesDemoViewController - styleRiveHalloween) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Skating (CYLRefreshStylesDemoViewController - styleRiveSkating) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Space (CYLRefreshStylesDemoViewController - styleRiveSpace) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Squats (CYLRefreshStylesDemoViewController - styleRiveSquats) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
-| CYLRefresh styles styles · Rive · Space footer (CYLRefreshStylesDemoViewController - styleRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Delivery (CYLRefreshStylesDemoViewController - styleDelivery) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Classics (CYLRefreshStylesDemoViewController - styleClassics) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · DropBox (CYLRefreshStylesDemoViewController - styleDropBox) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Phoenix (CYLRefreshStylesDemoViewController - stylePhoenix) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Taurus (CYLRefreshStylesDemoViewController - styleTaurus) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · BezierRadar (CYLRefreshStylesDemoViewController - styleBezierRadar) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · BezierCircle (CYLRefreshStylesDemoViewController - styleBezierCircle) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · StoreHouse (CYLRefreshStylesDemoViewController - styleStoreHouse) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · WaveSwipe (CYLRefreshStylesDemoViewController - styleWaveSwipe) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Original (CYLRefreshStylesDemoViewController - styleOriginal) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Material (CYLRefreshStylesDemoViewController - styleMaterial) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · GameHitBlock (CYLRefreshStylesDemoViewController - styleGameHitBlock) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · GameBattleCity (CYLRefreshStylesDemoViewController - styleGameBattleCity) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Fly (CYLRefreshStylesDemoViewController - styleFly) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Classics footer (CYLRefreshStylesDemoViewController - styleClassicsFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · BezierRadar footer (CYLRefreshStylesDemoViewController - styleBezierRadarFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Material footer (CYLRefreshStylesDemoViewController - styleMaterialFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Delivery footer (CYLRefreshStylesDemoViewController - styleDeliveryFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Phoenix footer (CYLRefreshStylesDemoViewController - stylePhoenixFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Taurus footer (CYLRefreshStylesDemoViewController - styleTaurusFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Bow (CYLRefreshStylesDemoViewController - styleRiveBow) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Bubbles (CYLRefreshStylesDemoViewController - styleRiveBubbles) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Halloween (CYLRefreshStylesDemoViewController - styleRiveHalloween) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Skating (CYLRefreshStylesDemoViewController - styleRiveSkating) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Space (CYLRefreshStylesDemoViewController - styleRiveSpace) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Squats (CYLRefreshStylesDemoViewController - styleRiveSquats) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · Rive · Space footer (CYLRefreshStylesDemoViewController - styleRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
 | flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |

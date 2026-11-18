@@ -165,7 +165,7 @@
     <string name="merged_mj_footer_no_more">已经全部加载完毕</string>
     <string name="merged_mj_web_warning">注意，这不是原生界面，是个网页</string>
     <string name="merged_mj_web_back">回到上一页</string>
-    <string name="merged_style_section">CYLRefresh styles 样式</string>
+    <string name="merged_style_section">CYLRefresh 样式</string>
     <string name="merged_style_classics">经典</string>
     <string name="merged_style_classics_footer">经典加载尾</string>
     <string name="merged_style_bezier_radar_footer">BezierRadar 加载尾</string>

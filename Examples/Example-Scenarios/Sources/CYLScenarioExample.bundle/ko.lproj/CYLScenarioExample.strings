@@ -182,7 +182,7 @@
 "CYLScenarioHUDMaskBlack" = "어둡게";
 "CYLScenarioHUDMaskGradient" = "그라데이션";
 "CYLScenarioHUDLifecycleRow" = "항목 %ld";
-"CYLScenarioRefreshStyleSection" = "CYLRefresh styles 스타일";
+"CYLScenarioRefreshStyleSection" = "CYLRefresh 스타일";
 "CYLScenarioRefreshStyleClassics" = "클래식";
 "CYLScenarioRefreshStyleClassicsFooter" = "클래식 푸터";
 "CYLScenarioRefreshStyleBezierRadarFooter" = "BezierRadar 푸터";
