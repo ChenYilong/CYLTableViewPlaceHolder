@@ -108,6 +108,15 @@ class AnimationsPage : StackPage() {
             tag = "animation-view"
             animationURL = url
         }
+        if (name in DARK_BACKDROP_FILES) {
+            // White artwork made for the file's black composition background, which PAGView does not draw (libpag has
+            // no background API): the item shows it on a black backdrop with a white title (docs/Task-Log.md, the
+            // Moonlight.pag dark backdrop task; the same on iOS, HarmonyOS and the mini program).
+            item.setBackgroundColor(Color.BLACK)
+            item.titleView.setTextColor(Color.WHITE)
+            val inset = context.dp(16f)
+            item.setPadding(inset, inset, inset, inset)
+        }
         val playable = item.isAnimationReady
         if (!playable) item.title = "$title\n(no animator for .${name.substringAfterLast('.')})"
         val playFromStart = { item.stopAnimation(); item.restartAnimation() }
@@ -132,6 +141,9 @@ class AnimationsPage : StackPage() {
 
     private companion object {
         const val EXAMPLE_FOLDER = "Animations"
+
+        /** Files whose white artwork needs a black backdrop: their black composition background is not drawn. */
+        val DARK_BACKDROP_FILES = setOf("CYLScenarioExampleMoonlight.pag")
 
         /**
          * The engines in the order of the iOS page.
