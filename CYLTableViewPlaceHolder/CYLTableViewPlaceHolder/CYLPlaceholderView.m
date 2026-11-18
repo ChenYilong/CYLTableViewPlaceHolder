@@ -599,6 +599,10 @@ static NSURL *CYLPlaceholderAnimationFileURL(NSURL *URL) {
 @property (nonatomic, strong) NSBundle *animationImageBundle;
 @property (nonatomic) BOOL animationStopped;
 @property (nonatomic) BOOL animationShowsLastFrame;
+/// [EN] Set by -playPlaceholderAnimation: the next play starts from progress 0 (also when the view becomes visible
+///      later), so a finished one-shot animation plays again. [CN] 由 -playPlaceholderAnimation 设置：下一次播放从进度 0
+///      开始（视图稍后才可见时也是），播放结束的单次动画因此能再次播放。
+@property (nonatomic) BOOL animationRestartPending;
 @property (nonatomic, strong) NSNumber *animationSeekProgress;
 /// [EN] The speed set with -setPlaceholderAnimationSpeed:, and the `animationSpeed` option. [CN] 显式设置的速度与选项中的速度。
 @property (nonatomic, strong) NSNumber *explicitAnimationSpeed;
@@ -2022,6 +2026,7 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
     [self cyl_leaveSeekMode];
     self.animationStopped = NO;
     self.animationShowsLastFrame = NO;
+    self.animationRestartPending = YES;
     [self cyl_updateAnimationPlayback];
 }
 
@@ -2104,6 +2109,13 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
         self.animationRestingProgress = self.animationSeekProgress.doubleValue;
         [super stopAnimation];
     } else if (!self.animationStopped && self.window && !self.hidden && !UIAccessibilityIsReduceMotionEnabled()) {
+        // [EN] A replay starts from progress 0; any other update (visibility, repeat count) resumes.
+        // [CN] 重播从进度 0 开始；其他更新（可见性、重复次数）继续播放。
+        // [EN] Not `super restartAnimation`: it calls `self.playAnimation`, which this class routes back here.
+        // [CN] 不用 `super restartAnimation`：它调用 `self.playAnimation`，本类又会转回这里。
+        id<CYLTabBarItemAnimationPlayer> player = self.animationPlayer;
+        if (self.animationRestartPending && [player respondsToSelector:@selector(setProgress:)]) player.progress = 0;
+        self.animationRestartPending = NO;
         [super playAnimation];
         [self cyl_startRepeatTimerIfNeeded];
     } else {

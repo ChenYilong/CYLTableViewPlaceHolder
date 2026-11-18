@@ -155,6 +155,18 @@ static NSString *const CYLEmptyLottie = @"{\"v\":\"5.7.4\",\"fr\":30,\"ip\":0,\"
         XCTAssertFalse([placeholder setPlaceholderAnimationSpeed:0]);
         [placeholder playPlaceholderAnimation];
         XCTAssertTrue([[lottie valueForKey:@"isAnimationPlaying"] boolValue]);
+        // A one-shot animation that finished replays from progress 0 (the examples' "Play all" with the loop off).
+        placeholder.animationRepeatCount = 1;
+        [placeholder showPlaceholderAnimationLastFrame];
+        XCTAssertEqualWithAccuracy([[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue], 1, 0.01);
+        [placeholder playPlaceholderAnimation];
+        XCTAssertTrue([[lottie valueForKey:@"isAnimationPlaying"] boolValue]);
+        XCTestExpectation *replayed = [self expectationWithDescription:@"Lottie replays from 0"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{ [replayed fulfill]; });
+        [self waitForExpectations:@[replayed] timeout:15];
+        XCTAssertLessThan([[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue], 0.9,
+                          @"the 1 s animation restarted at 0, it did not stay on its last frame");
     }
     [placeholder removeFromSuperview];
     XCTAssertFalse([[lottie valueForKey:@"isAnimationPlaying"] boolValue]);
