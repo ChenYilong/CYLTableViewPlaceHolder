@@ -93,8 +93,8 @@ if (fs.existsSync(SVGA)) {
     return { name: n, engine: 'svga', bytes: fs.statSync(path.join(SVGA, n)).size, path: '/assets/animations/' + n + '.bin', example: true }
   })
   copy(SVGA, 'NOTICE.md', true)
-  // This repository's own SVGA scenes (scripts/make_svga_scenes.py, MIT), the twins of the SmartRefresh Rive styles,
-  // generated once into the Android example's assets: the refresh-smart page's SVGA styles play them.
+  // This repository's own SVGA scenes (scripts/make_svga_scenes.py, MIT), the twins of the CYLRefresh Rive styles,
+  // generated once into the Android example's assets: the refresh-styles page's SVGA styles play them.
   const SCENES = path.join(REPO, 'android/merged/example/src/main/assets/Animations')
   fs.readdirSync(SCENES).filter((n) => /^CYLScenarioExampleRefresh\w+\.svga$/.test(n)).sort().forEach((n) => {
     fs.copyFileSync(path.join(SCENES, n), path.join(OUT, n + '.bin'))

@@ -1,6 +1,6 @@
 // CYLRefreshDrawnVectors: the drawn styles made of vector images, the HarmonyOS counterparts of iOS
 // CYLRefreshDeliveryHeader, CYLRefreshDropBoxHeader, CYLRefreshPhoenixHeader and CYLRefreshTaurusHeader
-// (SmartRefreshControl). Paths, colors, sizes and the per-frame steps are those of the iOS port.
+// (CYLRefresh styles). Paths, colors, sizes and the per-frame steps are those of the iOS port.
 import { CYLPoint, CYLSize } from '../CYLRefreshComponent';
 import { CYLRefreshComponentAction, CYLRefreshPhase, CYLRefreshScrollMode } from '../CYLRefreshConst';
 import { CYLRefreshDrawnColor, CYLRefreshDrawnEase, CYLRefreshDrawnTween } from './CYLRefreshDrawnSupport';

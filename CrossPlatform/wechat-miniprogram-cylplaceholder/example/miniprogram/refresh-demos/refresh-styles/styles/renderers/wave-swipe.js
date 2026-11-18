@@ -1,4 +1,4 @@
-// CYLRefreshWaveSwipeHeader (SmartRefreshControl's WaveSwipeHeader): a wave hangs down from the top while pulling,
+// CYLRefreshWaveSwipeHeader (CYLRefresh styles's WaveSwipeHeader): a wave hangs down from the top while pulling,
 // with a Material arrow under it; on release the wave springs back, a drop falls and bounces, and the arrow spins
 // as Material's progress ring while refreshing.
 

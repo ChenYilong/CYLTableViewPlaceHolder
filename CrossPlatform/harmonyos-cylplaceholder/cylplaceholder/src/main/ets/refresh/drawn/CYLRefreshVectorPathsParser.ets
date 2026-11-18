@@ -1,5 +1,5 @@
 // CYLRefreshVectorPathsParser: the HarmonyOS counterpart of iOS Support/CYLRefreshVectorPathsParser.h (SVGKit's path
-// parser as used by SmartRefreshControl). The iOS NSScanner and CGMutablePathRef are `CYLRefreshScanner` and
+// parser as used by CYLRefresh styles). The iOS NSScanner and CGMutablePathRef are `CYLRefreshScanner` and
 // `CYLRefreshMutablePath` (a list of absolute move / line / quad / cubic / close commands, with Core Graphics' current
 // point and control-point bounding box); the read methods keep the iOS names, grammar and relative-origin rules.
 // No ArkUI dependency (host unit-tested); `CYLRefreshMutablePath.addToContext` traces a path on a canvas.

@@ -1,11 +1,11 @@
-// CYLSmartRefreshDemoViewController: SmartRefreshControl's demo, one grouped list per style (param.value = method).
-// - smartDelivery: the Delivery header over 20 test rows, refreshing once on open.
+// CYLRefreshStylesDemoViewController: CYLRefresh styles's demo, one grouped list per style (param.value = method).
+// - styleDelivery: the Delivery header over 20 test rows, refreshing once on open.
 // - Header styles: theme rows ("Default" restores, Orange / Red / Green / Blue switch) + "Test data" (8 rows); the
 //   header refreshes on open and ends after 2.5 s. A theme colors the control (colorPrimary / colorAccent) and the
 //   navigation bar, and refreshes once; Fly and WaveSwipe open in their own blue.
 // - Footer styles (no header): load more after 2.5 s doubles the test rows, 8 → 16 → 32, then "no more data".
-// - The Rive styles (smartRive…): CYLRefreshRiveHeaderModel with flutter_easy_refresh's names per file (riveStyle);
-//   smartRiveSpaceFooter hosts the Space header in a drawn footer.
+// - The Rive styles (styleRive…): CYLRefreshRiveHeaderModel with flutter_easy_refresh's names per file (riveStyle);
+//   styleRiveSpaceFooter hosts the Space header in a drawn footer.
 import {
   CYLRefreshBackNormalFooterModel,
   CYLRefreshBezierCircleHeaderModel,
@@ -42,7 +42,7 @@ import { SectionHeader, UiColor, PAGE_LIST_END_INSET } from '../common/Ui';
 
 const DURATION: number = 2500;
 
-class SmartRow {
+class StyleRow {
   id: string;
   title: string;
   detail: string;
@@ -57,12 +57,12 @@ class SmartRow {
   }
 }
 
-class SmartSection {
+class StyleSection {
   id: string;
   title: string;
-  rows: SmartRow[];
+  rows: StyleRow[];
 
-  constructor(id: string, title: string, rows: SmartRow[]) {
+  constructor(id: string, title: string, rows: StyleRow[]) {
     this.id = id;
     this.title = title;
     this.rows = rows;
@@ -81,10 +81,10 @@ class Theme {
 
 // UIColor.systemOrange / systemRed / systemGreen / systemBlue (light).
 const THEMES: Theme[] = [
-  new Theme('CYLScenarioSmartThemeOrange', '#FF9500'),
-  new Theme('CYLScenarioSmartThemeRed', '#FF3B30'),
-  new Theme('CYLScenarioSmartThemeGreen', '#34C759'),
-  new Theme('CYLScenarioSmartThemeBlue', '#007AFF'),
+  new Theme('CYLScenarioRefreshStyleThemeOrange', '#FF9500'),
+  new Theme('CYLScenarioRefreshStyleThemeRed', '#FF3B30'),
+  new Theme('CYLScenarioRefreshStyleThemeGreen', '#34C759'),
+  new Theme('CYLScenarioRefreshStyleThemeBlue', '#007AFF'),
 ];
 
 
@@ -95,8 +95,8 @@ const THEMES: Theme[] = [
  */
 function svgaStyle(method: string): CYLRefreshRiveStyle | null {
   const files: Record<string, string> = {
-    'smartSvgaBow': 'Bow', 'smartSvgaBubbles': 'Bubbles', 'smartSvgaHalloween': 'Halloween',
-    'smartSvgaSkating': 'Skating', 'smartSvgaSpace': 'Space', 'smartSvgaSpaceFooter': 'Space', 'smartSvgaSquats': 'Squats'
+    'styleSvgaBow': 'Bow', 'styleSvgaBubbles': 'Bubbles', 'styleSvgaHalloween': 'Halloween',
+    'styleSvgaSkating': 'Skating', 'styleSvgaSpace': 'Space', 'styleSvgaSpaceFooter': 'Space', 'styleSvgaSquats': 'Squats'
   };
   const file = files[method];
   if (file === undefined) {
@@ -114,28 +114,28 @@ function svgaStyle(method: string): CYLRefreshRiveStyle | null {
  * indicator drives (each package's lib/src indicator .dart at dcdbb81).
  */
 function riveStyle(method: string): CYLRefreshRiveStyle | null {
-  if (method.startsWith('smartSvga')) {
+  if (method.startsWith('styleSvga')) {
     return svgaStyle(method);
   }
   let file: string;
   switch (method) {
-    case 'smartRiveBow':
+    case 'styleRiveBow':
       file = 'Bow';
       break;
-    case 'smartRiveBubbles':
+    case 'styleRiveBubbles':
       file = 'Bubbles';
       break;
-    case 'smartRiveHalloween':
+    case 'styleRiveHalloween':
       file = 'Halloween';
       break;
-    case 'smartRiveSkating':
+    case 'styleRiveSkating':
       file = 'Skating';
       break;
-    case 'smartRiveSpace':
-    case 'smartRiveSpaceFooter':
+    case 'styleRiveSpace':
+    case 'styleRiveSpaceFooter':
       file = 'Space';
       break;
-    case 'smartRiveSquats':
+    case 'styleRiveSquats':
       file = 'Squats';
       break;
     default:
@@ -190,33 +190,33 @@ function riveStyle(method: string): CYLRefreshRiveStyle | null {
 }
 function makeHeader(method: string): CYLRefreshHeaderModel {
   switch (method) {
-    case 'smartDropBox':
+    case 'styleDropBox':
       return new CYLRefreshDropBoxHeaderModel();
-    case 'smartPhoenix':
+    case 'stylePhoenix':
       return new CYLRefreshPhoenixHeaderModel();
-    case 'smartTaurus':
+    case 'styleTaurus':
       return new CYLRefreshTaurusHeaderModel();
-    case 'smartBezierRadar':
+    case 'styleBezierRadar':
       return new CYLRefreshBezierRadarHeaderModel();
-    case 'smartBezierCircle':
+    case 'styleBezierCircle':
       return new CYLRefreshBezierCircleHeaderModel();
-    case 'smartStoreHouse':
+    case 'styleStoreHouse':
       return new CYLRefreshStoreHouseHeaderModel();
-    case 'smartWaveSwipe':
+    case 'styleWaveSwipe':
       return new CYLRefreshWaveSwipeHeaderModel();
-    case 'smartOriginal':
+    case 'styleOriginal':
       return new CYLRefreshOriginalHeaderModel();
-    case 'smartMaterial':
+    case 'styleMaterial':
       return new CYLRefreshMaterialHeaderModel();
-    case 'smartGameHitBlock':
+    case 'styleGameHitBlock':
       return new CYLRefreshGameHitBlockHeaderModel();
-    case 'smartGameBattleCity':
+    case 'styleGameBattleCity':
       return new CYLRefreshGameBattleCityHeaderModel();
-    case 'smartFly':
+    case 'styleFly':
       return new CYLRefreshFlyHeaderModel();
     default: {
-      // The Rive styles (iOS falls back to the normal header when the file cannot be read), and smartClassics.
-      const style = method.startsWith('smartRive') || method.startsWith('smartSvga') ? riveStyle(method) : null;
+      // The Rive styles (iOS falls back to the normal header when the file cannot be read), and styleClassics.
+      const style = method.startsWith('styleRive') || method.startsWith('styleSvga') ? riveStyle(method) : null;
       return style !== null ? new CYLRefreshRiveHeaderModel(style) : new CYLRefreshNormalHeaderModel();
     }
   }
@@ -224,20 +224,20 @@ function makeHeader(method: string): CYLRefreshHeaderModel {
 
 function makeFooter(method: string): CYLRefreshFooterModel | null {
   switch (method) {
-    case 'smartClassicsFooter':
+    case 'styleClassicsFooter':
       return new CYLRefreshBackNormalFooterModel();
-    case 'smartBezierRadarFooter':
+    case 'styleBezierRadarFooter':
       return new CYLRefreshBezierRadarFooterModel();
-    case 'smartMaterialFooter':
+    case 'styleMaterialFooter':
       return new CYLRefreshMaterialFooterModel();
-    case 'smartDeliveryFooter':
+    case 'styleDeliveryFooter':
       return new CYLRefreshDeliveryFooterModel();
-    case 'smartPhoenixFooter':
+    case 'stylePhoenixFooter':
       return new CYLRefreshPhoenixFooterModel();
-    case 'smartTaurusFooter':
+    case 'styleTaurusFooter':
       return new CYLRefreshTaurusFooterModel();
-    case 'smartSvgaSpaceFooter':
-    case 'smartRiveSpaceFooter': {
+    case 'styleSvgaSpaceFooter':
+    case 'styleRiveSpaceFooter': {
       const style = riveStyle(method);
       return style !== null ? CYLRefreshDrawnFooterModel.initWithStyle(new CYLRefreshRiveHeaderModel(style)) : null;
     }
@@ -246,23 +246,23 @@ function makeFooter(method: string): CYLRefreshFooterModel | null {
   }
 }
 
-function testRows(count: number): SmartRow[] {
-  const rows: SmartRow[] = [];
+function testRows(count: number): StyleRow[] {
+  const rows: StyleRow[] = [];
   for (let i = 1; i <= count; i++) {
-    rows.push(new SmartRow('r' + i, t('CYLScenarioSmartTestDataRow', i)));
+    rows.push(new StyleRow('r' + i, t('CYLScenarioRefreshStyleTestDataRow', i)));
   }
   return rows;
 }
 
 @Component
-export struct RefreshSmartPage {
+export struct RefreshStylesPage {
   param: RouteParam = new RouteParam();
-  @State sections: SmartSection[] = [];
+  @State sections: StyleSection[] = [];
   /** The navigation bar's color while a theme is applied, or '' for the saved appearance. */
   @State barColor: string = '';
   /** The title's color while a theme is applied (iOS titleTextAttributes from the accent), or '' for the default. */
   @State titleColor: string = '';
-  private method: string = 'smartClassics';
+  private method: string = 'styleClassics';
   private scroller: Scroller = new Scroller();
   private scrollView: CYLRefreshScrollViewModel = new CYLRefreshScrollViewModel();
   private header: CYLRefreshHeaderModel | null = null;
@@ -272,14 +272,14 @@ export struct RefreshSmartPage {
   private timers: number[] = [];
 
   aboutToAppear(): void {
-    this.method = this.param.value.length > 0 ? this.param.value : 'smartClassics';
+    this.method = this.param.value.length > 0 ? this.param.value : 'styleClassics';
     this.scrollView.dataCountProvider = () => {
       let n = 0;
-      this.sections.forEach((s: SmartSection) => n += s.rows.length);
+      this.sections.forEach((s: StyleSection) => n += s.rows.length);
       return n;
     };
-    if (this.method === 'smartDelivery') {
-      this.sections = [new SmartSection('s0', '', testRows(20))];
+    if (this.method === 'styleDelivery') {
+      this.sections = [new StyleSection('s0', '', testRows(20))];
       const delivery = new CYLRefreshDeliveryHeaderModel();
       delivery.refreshingBlock = () => this.onRefresh();
       this.header = delivery;
@@ -287,8 +287,8 @@ export struct RefreshSmartPage {
       delivery.beginRefreshing();
       return;
     }
-    this.sections = [new SmartSection('s0', '', this.themeRows()),
-      new SmartSection('s1', t('CYLScenarioSmartTestData'), testRows(8))];
+    this.sections = [new StyleSection('s0', '', this.themeRows()),
+      new StyleSection('s1', t('CYLScenarioRefreshStyleTestData'), testRows(8))];
     const loadMore = makeFooter(this.method);
     if (loadMore !== null) {
       loadMore.refreshingBlock = () => this.onLoadMore();
@@ -306,9 +306,9 @@ export struct RefreshSmartPage {
     this.defaultPrimary = control.colorPrimary;
     control.beginRefreshing();
     // viewWillAppear: UIFlyController and UIWaveSwipeController open in the style's own blue.
-    if (this.method === 'smartFly') {
+    if (this.method === 'styleFly') {
       this.applyTheme('rgb(51, 153, 255)', '#FFFFFF');
-    } else if (this.method === 'smartWaveSwipe') {
+    } else if (this.method === 'styleWaveSwipe') {
       this.defaultPrimary = 'transparent';
       this.applyTheme('#007AFF', '#FFFFFF');
     }
@@ -322,11 +322,11 @@ export struct RefreshSmartPage {
     this.timers.push(setTimeout(action, ms));
   }
 
-  private themeRows(): SmartRow[] {
-    const restore = t('CYLScenarioSmartTapToRestore');
-    const change = t('CYLScenarioSmartTapToSwitch');
-    const rows: SmartRow[] = [new SmartRow('default', t('CYLScenarioSmartThemeDefault'), restore, 'default')];
-    THEMES.forEach((theme: Theme, i: number) => rows.push(new SmartRow('theme' + i, t(theme.key), change, String(i))));
+  private themeRows(): StyleRow[] {
+    const restore = t('CYLScenarioRefreshStyleTapToRestore');
+    const change = t('CYLScenarioRefreshStyleTapToSwitch');
+    const rows: StyleRow[] = [new StyleRow('default', t('CYLScenarioRefreshStyleThemeDefault'), restore, 'default')];
+    THEMES.forEach((theme: Theme, i: number) => rows.push(new StyleRow('theme' + i, t(theme.key), change, String(i))));
     return rows;
   }
 
@@ -363,7 +363,7 @@ export struct RefreshSmartPage {
       .height('100%')
   }
 
-  private onRow(row: SmartRow): void {
+  private onRow(row: StyleRow): void {
     if (row.action === 'default') {
       this.applyTheme(this.defaultPrimary, this.defaultAccent);
     } else if (row.action.length > 0) {
@@ -386,7 +386,7 @@ export struct RefreshSmartPage {
       const last = this.sections.length - 1;
       const count = this.sections[last].rows.length * 2;
       const sections = this.sections.slice();
-      sections[last] = new SmartSection(sections[last].id, sections[last].title, testRows(count));
+      sections[last] = new StyleSection(sections[last].id, sections[last].title, testRows(count));
       this.sections = sections;
       if (this.footer === null) {
         return;
@@ -403,7 +403,7 @@ export struct RefreshSmartPage {
     NavDestination() {
       CYLRefreshContainer({ scrollView: this.scrollView, scroller: this.scroller }) {
         List({ scroller: this.scroller }) {
-          ForEach(this.sections, (section: SmartSection) => {
+          ForEach(this.sections, (section: StyleSection) => {
             ListItem() {
               Column() {
                 if (section.title.length > 0) {
@@ -412,7 +412,7 @@ export struct RefreshSmartPage {
                   Column().height(20)
                 }
                 Column() {
-                  ForEach(section.rows, (row: SmartRow, r: number) => {
+                  ForEach(section.rows, (row: StyleRow, r: number) => {
                     if (r > 0) {
                       Divider().strokeWidth(0.5).color(UiColor.separator).margin({ left: 16 })
                     }
@@ -434,11 +434,11 @@ export struct RefreshSmartPage {
                     .accessibilityGroup(true)
                     .accessibilityRole(AccessibilityRoleType.BUTTON)
                     .onClick(() => this.onRow(row))
-                  }, (row: SmartRow) => row.id)
+                  }, (row: StyleRow) => row.id)
                 }
               }
             }
-          }, (section: SmartSection) => section.id + '-' + section.rows.length)
+          }, (section: StyleSection) => section.id + '-' + section.rows.length)
         }
         .contentEndOffset(PAGE_LIST_END_INSET)
         .edgeEffect(EdgeEffect.None)

@@ -1,4 +1,4 @@
-// CYLRefreshMaterialHeader (SmartRefreshControl's UIRefreshMaterialHeader, Android SwipeRefreshLayout's
+// CYLRefreshMaterialHeader (CYLRefresh styles's UIRefreshMaterialHeader, Android SwipeRefreshLayout's
 // MaterialProgressDrawable): a white disc (colorPrimary) slides down over the list with a progress arc + arrow
 // that grows with the pull, then spins with trimming arcs, cycling the scheme colors when colorAccent is clear.
 // Also the drawing of CYLRefreshMaterialFooter.

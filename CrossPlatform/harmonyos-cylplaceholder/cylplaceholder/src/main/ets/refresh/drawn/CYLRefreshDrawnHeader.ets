@@ -1,7 +1,7 @@
 // CYLRefreshDrawnHeader: the HarmonyOS counterpart of iOS Custom/Drawn/CYLRefreshDrawnHeader.h and CYLRefreshDrawnFooter.h:
-// a header whose look is drawn in code, with SmartRefreshControl's hooks (setUpComponent, onStatus:changed:,
+// a header whose look is drawn in code, with CYLRefresh styles's hooks (setUpComponent, onStatus:changed:,
 // onScrollingWithOffset:percent:drag:, onStartAnimationWhenRealeasing, ...), and a back footer drawn by a hosted
-// ("driven") header. CYLRefresh's phases are mapped onto `status` in SmartRefreshControl's order (releasing is
+// ("driven") header. CYLRefresh's phases are mapped onto `status` in CYLRefresh styles's order (releasing is
 // always passed through before refreshing, finishing after it until the header has retracted).
 //
 // iOS drawRect: is `drawInContext(ctx)`: `CYLRefreshDrawnView` (CYLRefreshDrawnView.ets) hosts a header on an ArkUI
@@ -109,7 +109,7 @@ export class CYLRefreshDrawnHeaderModel extends CYLRefreshHeaderModel {
 
   // MARK: - Status
 
-  /** The phase as SmartRefreshControl reports it (`status`). */
+  /** The phase as CYLRefresh styles reports it (`status`). */
   get status(): CYLRefreshPhase {
     return this.statusValue;
   }
@@ -129,7 +129,7 @@ export class CYLRefreshDrawnHeaderModel extends CYLRefreshHeaderModel {
   setUpComponent(): void {
   }
 
-  /** `status` changed; the start hooks run on the next turn, as in SmartRefreshControl (`-onStatus:changed:`). */
+  /** `status` changed; the start hooks run on the next turn, as in CYLRefresh styles (`-onStatus:changed:`). */
   onStatus(oldStatus: CYLRefreshPhase, status: CYLRefreshPhase): void {
     if (status === CYLRefreshPhase.Releasing) {
       setTimeout(() => this.onStartAnimationWhenRealeasing(), 0);
@@ -229,12 +229,12 @@ export class CYLRefreshDrawnHeaderModel extends CYLRefreshHeaderModel {
 
   // MARK: - Refreshing
 
-  /** beginRefreshing, under SmartRefreshControl's name (`-beginRefresh`). */
+  /** beginRefreshing, under CYLRefresh styles's name (`-beginRefresh`). */
   beginRefresh(): void {
     this.beginRefreshing();
   }
 
-  /** endRefreshing, under SmartRefreshControl's name (`-finishRefresh`). */
+  /** endRefreshing, under CYLRefresh styles's name (`-finishRefresh`). */
   finishRefresh(): void {
     this.finishRefreshWithSuccess(true);
   }
@@ -244,7 +244,7 @@ export class CYLRefreshDrawnHeaderModel extends CYLRefreshHeaderModel {
     this.finishRefreshWithSuccess(success);
   }
 
-  /** endRefreshingWithSuccess, under SmartRefreshControl's name (`-finishRefreshWithSuccess:`). */
+  /** endRefreshingWithSuccess, under CYLRefresh styles's name (`-finishRefreshWithSuccess:`). */
   finishRefreshWithSuccess(success: boolean): void {
     super.endRefreshingWithSuccess(success);
   }
@@ -363,7 +363,7 @@ export class CYLRefreshDrawnHeaderModel extends CYLRefreshHeaderModel {
 
 /**
  * A pull-up footer drawn by a hosted drawn header (iOS `CYLRefreshDrawnFooter`): the header gets the distance
- * pulled past the content, the progress and the SmartRefreshControl status order. Only "no more data" is a label.
+ * pulled past the content, the progress and the CYLRefresh styles status order. Only "no more data" is a label.
  * A subclass names its style by overriding `newStyle` (iOS `+styleClass`).
  */
 export class CYLRefreshDrawnFooterModel extends CYLRefreshBackStateFooterModel {

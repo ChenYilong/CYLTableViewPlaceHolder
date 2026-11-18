@@ -1,4 +1,4 @@
-// CYLRefreshGameHitBlockHeader (SmartRefreshControl's UIRefreshGameHitBlockHeader on CYLRefreshGameHeader): a
+// CYLRefreshGameHitBlockHeader (CYLRefresh styles's UIRefreshGameHitBlockHeader on CYLRefreshGameHeader): a
 // 100 pt SpriteKit scene. While pulling: the start scene ("Pull to Break Out!" / "Scroll to move handle" on
 // colorAccent, framed in colorPrimary). While refreshing: a breakout game on colorPrimary, 3 × 5 blocks on the
 // left, the paddle near the right edge, "Refreshing..." in the middle.

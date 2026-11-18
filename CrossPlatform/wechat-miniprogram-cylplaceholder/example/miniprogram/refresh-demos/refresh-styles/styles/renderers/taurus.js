@@ -1,4 +1,4 @@
-// CYLRefreshTaurusHeader (SmartRefreshControl's UIRefreshTaurusHeader, MIT): an airplane flying between clouds,
+// CYLRefreshTaurusHeader (CYLRefresh styles's UIRefreshTaurusHeader, MIT): an airplane flying between clouds,
 // with wind lines while refreshing. Paths, colors, constants and the four-part loading motion from the iOS port.
 const { VectorImage } = require('../vector')
 const { Animator, ease } = require('../util')

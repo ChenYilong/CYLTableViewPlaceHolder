@@ -1,4 +1,4 @@
-// CYLRefreshGameBattleCityHeader (SmartRefreshControl's UIRefreshGameBattleCityHeader on CYLRefreshGameHeader):
+// CYLRefreshGameBattleCityHeader (CYLRefresh styles's UIRefreshGameBattleCityHeader on CYLRefreshGameHeader):
 // the same start scene as GameHitBlock; while refreshing, enemy tanks drive right along 3 rows and the player's
 // tank on the right shoots round bullets to the left. A tank reaching the player ends the game ("Game Over").
 // iOS moves the player with the extra pull; here the player tank aims at the leading enemy by itself. SpriteKit

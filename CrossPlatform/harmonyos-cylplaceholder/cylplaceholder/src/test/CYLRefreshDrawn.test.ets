@@ -1,4 +1,4 @@
-// Local (host) unit tests of the drawn SmartRefreshControl styles' logic: the value animator (timing, interpolators,
+// Local (host) unit tests of the drawn CYLRefresh styles styles' logic: the value animator (timing, interpolators,
 // repeats, points, delegate), the SVG path parser and vector image sizing, the StoreHouse letter table, the drawn
 // header's status order and the game rules.
 import { describe, expect, it } from '@ohos/hypium';

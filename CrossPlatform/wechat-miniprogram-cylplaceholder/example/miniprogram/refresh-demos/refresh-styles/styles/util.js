@@ -1,4 +1,4 @@
-// Shared drawing helpers of the SmartRefreshControl style renderers: colors, interpolators and a value animator
+// Shared drawing helpers of the CYLRefresh styles style renderers: colors, interpolators and a value animator
 // (CYLRefreshValueAnimator) driven by the canvas frame time.
 
 /** '#rgb', '#rrggbb', '#rrggbbaa', 'rgb()/rgba()' or 'transparent' to [r, g, b, a] (a in 0..1). */

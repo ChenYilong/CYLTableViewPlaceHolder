@@ -1,4 +1,4 @@
-// CYLRefreshOriginalHeader (SmartRefreshControl's UIRefreshOriginalHeader): the classic iOS 6 "rubber drop" that
+// CYLRefreshOriginalHeader (CYLRefresh styles's UIRefreshOriginalHeader): the classic iOS 6 "rubber drop" that
 // stretches while pulling, shrinks into a dot on release and gives way to a gray activity indicator.
 const { alpha } = require('../util')
 

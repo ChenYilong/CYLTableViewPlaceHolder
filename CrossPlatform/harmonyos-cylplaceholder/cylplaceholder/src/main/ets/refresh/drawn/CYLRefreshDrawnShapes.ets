@@ -1,6 +1,6 @@
 // CYLRefreshDrawnShapes: the drawn styles made of plain shapes, the HarmonyOS counterparts of iOS
 // CYLRefreshBezierCircleHeader, CYLRefreshBezierRadarHeader, CYLRefreshMaterialHeader, CYLRefreshOriginalHeader and
-// CYLRefreshWaveSwipeHeader (SmartRefreshControl). Geometry, colors, durations and the animator chains are those of
+// CYLRefreshWaveSwipeHeader (CYLRefresh styles). Geometry, colors, durations and the animator chains are those of
 // the iOS port; each CYLRefreshValueAnimator chain is stepped from the canvas frame clock (CYLRefreshDrawnTween).
 import { CYLRefreshComponentAction, CYLRefreshPhase, CYLRefreshScrollMode } from '../CYLRefreshConst';
 import { CYLRefreshDrawnColor, CYLRefreshDrawnEase, CYLRefreshDrawnTween, cylRefreshCubicBezier } from './CYLRefreshDrawnSupport';

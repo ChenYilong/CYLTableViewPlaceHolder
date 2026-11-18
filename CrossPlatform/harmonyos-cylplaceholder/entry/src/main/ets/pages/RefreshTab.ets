@@ -1,7 +1,7 @@
 // CYLRefreshExampleViewController: the menu of CYLRefresh demos (8 sections, 65 rows, from the mini program's
 // pages/refresh/menu.js); each subtitle names the iOS view controller and method. The list itself has a normal
 // header and a back footer, each ending after 2 s.
-// A row opens its demo page (routeFor): the table, collection, web, i18n, SmartRefresh and easy_refresh pages.
+// A row opens its demo page (routeFor): the table, collection, web, i18n, CYLRefresh and easy_refresh pages.
 import {
   CYLRefreshBackNormalFooterModel,
   CYLRefreshContainer,
@@ -38,8 +38,8 @@ class MenuSection {
 
 const T = 'CYLRefreshTableViewController';
 const table = (key: string, method: string) => new MenuRow(key, T, method);
-const smart = (suffix: string, method: string) =>
-new MenuRow('CYLScenarioSmart' + suffix, 'CYLSmartRefreshDemoViewController', method);
+const style = (suffix: string, method: string) =>
+new MenuRow('CYLScenarioRefreshStyle' + suffix, 'CYLRefreshStylesDemoViewController', method);
 const easy = (suffix: string, method: string) =>
 new MenuRow('CYLScenarioEasy' + suffix, 'CYLEasyRefreshDemoViewController', method);
 
@@ -75,23 +75,23 @@ const SECTIONS: MenuSection[] = [
     table('CYLScenarioMJGifFrames', 'example55'), table('CYLScenarioMJMixedEngines', 'example56'),
     new MenuRow('CYLScenarioMJCollectionIcons', 'CYLRefreshCollectionViewController', 'example32'),
   ]),
-  new MenuSection('CYLScenarioSmartSection', [
-    smart('Delivery', 'smartDelivery'), smart('Classics', 'smartClassics'), smart('DropBox', 'smartDropBox'),
-    smart('Phoenix', 'smartPhoenix'), smart('Taurus', 'smartTaurus'), smart('BezierRadar', 'smartBezierRadar'),
-    smart('BezierCircle', 'smartBezierCircle'), smart('StoreHouse', 'smartStoreHouse'),
-    smart('WaveSwipe', 'smartWaveSwipe'), smart('Original', 'smartOriginal'), smart('Material', 'smartMaterial'),
-    smart('GameHitBlock', 'smartGameHitBlock'), smart('GameBattleCity', 'smartGameBattleCity'),
-    smart('Fly', 'smartFly'), smart('ClassicsFooter', 'smartClassicsFooter'),
-    smart('BezierRadarFooter', 'smartBezierRadarFooter'), smart('MaterialFooter', 'smartMaterialFooter'),
-    smart('DeliveryFooter', 'smartDeliveryFooter'), smart('PhoenixFooter', 'smartPhoenixFooter'),
-    smart('TaurusFooter', 'smartTaurusFooter'), smart('RiveBow', 'smartRiveBow'),
-    smart('RiveBubbles', 'smartRiveBubbles'), smart('RiveHalloween', 'smartRiveHalloween'),
-    smart('RiveSkating', 'smartRiveSkating'), smart('RiveSpace', 'smartRiveSpace'),
-    smart('RiveSquats', 'smartRiveSquats'), smart('RiveSpaceFooter', 'smartRiveSpaceFooter'),
-    smart('SVGABow', 'smartSvgaBow'), smart('SVGABubbles', 'smartSvgaBubbles'),
-    smart('SVGAHalloween', 'smartSvgaHalloween'), smart('SVGASkating', 'smartSvgaSkating'),
-    smart('SVGASpace', 'smartSvgaSpace'), smart('SVGASquats', 'smartSvgaSquats'),
-    smart('SVGASpaceFooter', 'smartSvgaSpaceFooter'),
+  new MenuSection('CYLScenarioRefreshStyleSection', [
+    style('Delivery', 'styleDelivery'), style('Classics', 'styleClassics'), style('DropBox', 'styleDropBox'),
+    style('Phoenix', 'stylePhoenix'), style('Taurus', 'styleTaurus'), style('BezierRadar', 'styleBezierRadar'),
+    style('BezierCircle', 'styleBezierCircle'), style('StoreHouse', 'styleStoreHouse'),
+    style('WaveSwipe', 'styleWaveSwipe'), style('Original', 'styleOriginal'), style('Material', 'styleMaterial'),
+    style('GameHitBlock', 'styleGameHitBlock'), style('GameBattleCity', 'styleGameBattleCity'),
+    style('Fly', 'styleFly'), style('ClassicsFooter', 'styleClassicsFooter'),
+    style('BezierRadarFooter', 'styleBezierRadarFooter'), style('MaterialFooter', 'styleMaterialFooter'),
+    style('DeliveryFooter', 'styleDeliveryFooter'), style('PhoenixFooter', 'stylePhoenixFooter'),
+    style('TaurusFooter', 'styleTaurusFooter'), style('RiveBow', 'styleRiveBow'),
+    style('RiveBubbles', 'styleRiveBubbles'), style('RiveHalloween', 'styleRiveHalloween'),
+    style('RiveSkating', 'styleRiveSkating'), style('RiveSpace', 'styleRiveSpace'),
+    style('RiveSquats', 'styleRiveSquats'), style('RiveSpaceFooter', 'styleRiveSpaceFooter'),
+    style('SVGABow', 'styleSvgaBow'), style('SVGABubbles', 'styleSvgaBubbles'),
+    style('SVGAHalloween', 'styleSvgaHalloween'), style('SVGASkating', 'styleSvgaSkating'),
+    style('SVGASpace', 'styleSvgaSpace'), style('SVGASquats', 'styleSvgaSquats'),
+    style('SVGASpaceFooter', 'styleSvgaSpaceFooter'),
   ]),
   new MenuSection('CYLScenarioEasySection', [
     easy('Cupertino', 'easyCupertino'), easy('Secondary', 'easySecondary'), easy('TriggerMode', 'easyTriggerMode'),
@@ -111,8 +111,8 @@ function routeFor(row: MenuRow): string {
       return Route.RefreshWeb;
     case 'CYLRefreshI18NExampleViewController':
       return Route.RefreshI18n;
-    case 'CYLSmartRefreshDemoViewController':
-      return Route.RefreshSmart;
+    case 'CYLRefreshStylesDemoViewController':
+      return Route.RefreshStyles;
     case 'CYLEasyRefreshDemoViewController':
       return Route.RefreshEasy;
     default:

@@ -20,7 +20,7 @@ export class Route {
   static readonly RefreshCollection: string = 'RefreshCollection';
   static readonly RefreshWeb: string = 'RefreshWeb';
   static readonly RefreshI18n: string = 'RefreshI18n';
-  static readonly RefreshSmart: string = 'RefreshSmart';
+  static readonly RefreshStyles: string = 'RefreshStyles';
   static readonly RefreshEasy: string = 'RefreshEasy';
 }
 

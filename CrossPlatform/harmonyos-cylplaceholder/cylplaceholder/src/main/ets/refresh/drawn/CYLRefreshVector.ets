@@ -1,5 +1,5 @@
 // CYLRefreshVector: the HarmonyOS counterpart of iOS Support/CYLRefreshVectorElement.h, CYLRefreshVectorPathElement.h,
-// CYLRefreshVectorUtilities.h, CYLRefreshVectorImage.h and the model half of CYLRefreshVectorView.h (SmartRefreshControl's
+// CYLRefreshVectorUtilities.h, CYLRefreshVectorImage.h and the model half of CYLRefreshVectorView.h (CYLRefresh styles's
 // vector drawables). A CALayer is a `CYLRefreshVectorLayer` (the path with its fill, stroke and opacity) rendered on
 // an ArkUI canvas; parsing, bounding boxes and sizing have no ArkUI dependency (host unit-tested).
 import { CYLPoint, CYLSize } from '../CYLRefreshComponent';

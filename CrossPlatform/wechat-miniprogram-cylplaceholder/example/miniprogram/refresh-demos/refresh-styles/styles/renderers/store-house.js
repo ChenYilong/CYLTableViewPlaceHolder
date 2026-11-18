@@ -1,4 +1,4 @@
-// CYLRefreshStoreHouseHeader (SmartRefreshControl's StoreHouseHeader): the default text "store house" drawn as
+// CYLRefreshStoreHouseHeader (CYLRefresh styles's StoreHouseHeader): the default text "store house" drawn as
 // line segments that fly in, rotate and scale into place while pulling, then flash one by one while refreshing.
 
 // CYLRefreshStoreHousePath letter data (only the letters of "store house"), as x1,y1,x2,y2 per segment.

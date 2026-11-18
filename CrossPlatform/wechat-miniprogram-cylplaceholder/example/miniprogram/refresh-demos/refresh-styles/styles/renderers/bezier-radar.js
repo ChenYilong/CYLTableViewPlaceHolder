@@ -1,4 +1,4 @@
-// CYLRefreshBezierRadarHeader (SmartRefreshControl's UIRefreshBezierRadarHeader): a Bezier wave with seven dots
+// CYLRefreshBezierRadarHeader (CYLRefresh styles's UIRefreshBezierRadarHeader): a Bezier wave with seven dots
 // while pulling; on release the wave springs back, the dots fade, a radar grows and sweeps until the end, then a
 // ripple of colorAccent fills the header. Also drawn by CYLRefreshBezierRadarFooter.
 const { alpha, Animator, ease } = require('../util')

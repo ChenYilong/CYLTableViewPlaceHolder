@@ -2,7 +2,7 @@
 // controller and method (shown as the subtitle "<VC> - <method>") and the mini program page that plays it.
 const T = 'CYLRefreshTableViewController'
 const table = (key, method) => ({ key, vc: T, method, page: 'refresh-table' })
-const smart = (key, method) => ({ key, vc: 'CYLSmartRefreshDemoViewController', method, page: 'refresh-smart' })
+const style = (key, method) => ({ key, vc: 'CYLRefreshStylesDemoViewController', method, page: 'refresh-styles' })
 const easy = (key, method) => ({ key, vc: 'CYLEasyRefreshDemoViewController', method, page: 'refresh-easy' })
 
 const SECTIONS = [
@@ -37,20 +37,20 @@ const SECTIONS = [
     table('CYLScenarioMJGifFrames', 'example55'), table('CYLScenarioMJMixedEngines', 'example56'),
     { key: 'CYLScenarioMJCollectionIcons', vc: 'CYLRefreshCollectionViewController', method: 'example32', page: 'refresh-collection' },
   ] },
-  { key: 'CYLScenarioSmartSection', rows: [
-    ['Delivery', 'smartDelivery'], ['Classics', 'smartClassics'], ['DropBox', 'smartDropBox'], ['Phoenix', 'smartPhoenix'],
-    ['Taurus', 'smartTaurus'], ['BezierRadar', 'smartBezierRadar'], ['BezierCircle', 'smartBezierCircle'],
-    ['StoreHouse', 'smartStoreHouse'], ['WaveSwipe', 'smartWaveSwipe'], ['Original', 'smartOriginal'],
-    ['Material', 'smartMaterial'], ['GameHitBlock', 'smartGameHitBlock'], ['GameBattleCity', 'smartGameBattleCity'],
-    ['Fly', 'smartFly'], ['ClassicsFooter', 'smartClassicsFooter'], ['BezierRadarFooter', 'smartBezierRadarFooter'],
-    ['MaterialFooter', 'smartMaterialFooter'], ['DeliveryFooter', 'smartDeliveryFooter'], ['PhoenixFooter', 'smartPhoenixFooter'],
-    ['TaurusFooter', 'smartTaurusFooter'], ['RiveBow', 'smartRiveBow'], ['RiveBubbles', 'smartRiveBubbles'],
-    ['RiveHalloween', 'smartRiveHalloween'], ['RiveSkating', 'smartRiveSkating'], ['RiveSpace', 'smartRiveSpace'],
-    ['RiveSquats', 'smartRiveSquats'], ['RiveSpaceFooter', 'smartRiveSpaceFooter'],
-    ['SVGABow', 'smartSvgaBow'], ['SVGABubbles', 'smartSvgaBubbles'], ['SVGAHalloween', 'smartSvgaHalloween'],
-    ['SVGASkating', 'smartSvgaSkating'], ['SVGASpace', 'smartSvgaSpace'], ['SVGASquats', 'smartSvgaSquats'],
-    ['SVGASpaceFooter', 'smartSvgaSpaceFooter'],
-  ].map(([suffix, method]) => smart('CYLScenarioSmart' + suffix, method)) },
+  { key: 'CYLScenarioRefreshStyleSection', rows: [
+    ['Delivery', 'styleDelivery'], ['Classics', 'styleClassics'], ['DropBox', 'styleDropBox'], ['Phoenix', 'stylePhoenix'],
+    ['Taurus', 'styleTaurus'], ['BezierRadar', 'styleBezierRadar'], ['BezierCircle', 'styleBezierCircle'],
+    ['StoreHouse', 'styleStoreHouse'], ['WaveSwipe', 'styleWaveSwipe'], ['Original', 'styleOriginal'],
+    ['Material', 'styleMaterial'], ['GameHitBlock', 'styleGameHitBlock'], ['GameBattleCity', 'styleGameBattleCity'],
+    ['Fly', 'styleFly'], ['ClassicsFooter', 'styleClassicsFooter'], ['BezierRadarFooter', 'styleBezierRadarFooter'],
+    ['MaterialFooter', 'styleMaterialFooter'], ['DeliveryFooter', 'styleDeliveryFooter'], ['PhoenixFooter', 'stylePhoenixFooter'],
+    ['TaurusFooter', 'styleTaurusFooter'], ['RiveBow', 'styleRiveBow'], ['RiveBubbles', 'styleRiveBubbles'],
+    ['RiveHalloween', 'styleRiveHalloween'], ['RiveSkating', 'styleRiveSkating'], ['RiveSpace', 'styleRiveSpace'],
+    ['RiveSquats', 'styleRiveSquats'], ['RiveSpaceFooter', 'styleRiveSpaceFooter'],
+    ['SVGABow', 'styleSvgaBow'], ['SVGABubbles', 'styleSvgaBubbles'], ['SVGAHalloween', 'styleSvgaHalloween'],
+    ['SVGASkating', 'styleSvgaSkating'], ['SVGASpace', 'styleSvgaSpace'], ['SVGASquats', 'styleSvgaSquats'],
+    ['SVGASpaceFooter', 'styleSvgaSpaceFooter'],
+  ].map(([suffix, method]) => style('CYLScenarioRefreshStyle' + suffix, method)) },
   { key: 'CYLScenarioEasySection', rows: [
     ['Cupertino', 'easyCupertino'], ['Secondary', 'easySecondary'], ['TriggerMode', 'easyTriggerMode'],
     ['RefreshOnStart', 'easyRefreshOnStart'], ['Paging', 'easyPaging'], ['Listener', 'easyListener'],

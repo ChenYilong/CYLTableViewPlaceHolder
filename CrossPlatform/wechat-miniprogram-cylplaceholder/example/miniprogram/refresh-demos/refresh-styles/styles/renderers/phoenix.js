@@ -1,4 +1,4 @@
-// CYLRefreshPhoenixHeader (SmartRefreshControl's UIRefreshPhoenixHeader, MIT): a town under a sky with a sun
+// CYLRefreshPhoenixHeader (CYLRefresh styles's UIRefreshPhoenixHeader, MIT): a town under a sky with a sun
 // that rises and turns with the pull and spins while refreshing. Paths, colors and geometry from the iOS port.
 const { VectorImage } = require('../vector')
 const { Animator, ease } = require('../util')

@@ -1,4 +1,4 @@
-// CYLRefreshDeliveryHeader (SmartRefreshControl's UIRefreshDeliveryHeader, MIT): a box dropping on an umbrella
+// CYLRefreshDeliveryHeader (CYLRefresh styles's UIRefreshDeliveryHeader, MIT): a box dropping on an umbrella
 // through moving clouds. Paths, colors, sizes and per-frame steps are those of the iOS port.
 const { VectorImage } = require('../vector')
 

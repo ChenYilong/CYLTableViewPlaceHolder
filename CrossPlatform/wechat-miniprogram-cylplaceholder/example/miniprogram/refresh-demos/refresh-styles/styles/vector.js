@@ -1,4 +1,4 @@
-// A small port of SmartRefreshControl's vector support (CYLRefreshVectorImage / CYLRefreshVectorPathElement):
+// A small port of CYLRefresh styles's vector support (CYLRefreshVectorImage / CYLRefreshVectorPathElement):
 // SVG path data parsed once into absolute canvas commands, a bounding box (control points included, like
 // CGPathGetBoundingBox), and an image of several filled paths that can be sized, moved and rendered.
 

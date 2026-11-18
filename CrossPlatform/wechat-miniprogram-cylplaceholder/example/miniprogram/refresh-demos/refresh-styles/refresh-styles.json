@@ -4,6 +4,6 @@
   "usingComponents": {
     "cyl-refresh": "/components/cyl-refresh/index",
     "cyl-svga": "/libs/cyl-svga-miniprogram/cyl-svga/index",
-    "smart-canvas": "./styles/smart-canvas/index"
+    "style-canvas": "./styles/style-canvas/index"
   }
 }

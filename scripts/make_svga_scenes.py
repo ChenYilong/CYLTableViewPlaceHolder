@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes the SVGA twins of the SmartRefresh Rive scenes (Task-Log "SVGA animations, every Rive demo copied 1:1").
+"""Writes the SVGA twins of the CYLRefresh Rive scenes (Task-Log "SVGA animations, every Rive demo copied 1:1").
 
     py -3 scripts/make_svga_scenes.py <output folder>
 

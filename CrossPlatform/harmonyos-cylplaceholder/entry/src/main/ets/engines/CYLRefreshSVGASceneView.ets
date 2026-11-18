@@ -1,5 +1,5 @@
 // CYLRefreshSVGASceneView: the SVGA twin of CYLRefreshRiveView (Task-Log "SVGA animations, every Rive demo copied
-// 1:1"). The SmartRefresh "SVGA · …" styles use the core's CYLRefreshRiveHeaderModel with an .svga file (a style
+// 1:1"). The CYLRefresh "SVGA · …" styles use the core's CYLRefreshRiveHeaderModel with an .svga file (a style
 // with a pull animation and a loading animation): this view draws the file on a Canvas with CYLTabBarController's SVGA
 // decoder and renderer (engines/svga) and is the header's CYLRefreshRiveDriver. SVGA has no state machine or named
 // animations: scrubbing shows the frame at the pulled fraction, playing loops the whole file, inputs are ignored.

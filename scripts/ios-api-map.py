@@ -30,7 +30,7 @@ SOURCES = [
     'android/placeholder/src/main/kotlin',
     'android/merged/library/src/main/kotlin',
 ]
-# Every Android source is scored, the refresh kernel and the styles folded in from SmartRefreshLayout
+# Every Android source is scored, the refresh kernel and the styles folded in from CYLRefreshLayout
 # (com.cyl.refresh.layout / header / footer / classics / drawable) included since 2026-11-17. A folder listed here
 # would be left out of the table.
 KERNEL = []

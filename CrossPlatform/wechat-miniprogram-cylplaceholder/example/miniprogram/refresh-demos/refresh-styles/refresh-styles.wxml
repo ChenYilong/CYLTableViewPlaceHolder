@@ -1,4 +1,4 @@
-<!-- CYLSmartRefreshDemoViewController: a grouped table under the style's header, or above its footer. -->
+<!-- CYLRefreshStylesDemoViewController: a grouped table under the style's header, or above its footer. -->
 <view class="page">
   <view class="content" style="{{contentBackground ? 'background:' + contentBackground : ''}}">
     <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}"
@@ -8,7 +8,7 @@
       <!-- The drawn header (CYLRefresh<Name>Header / CYLRefreshRiveHeader stand-in). -->
       <view slot="header" class="slot">
         <cyl-svga wx:if="{{setup.kind === 'svga'}}" id="svga-header" class="scene" style="width: 100vw; height: 130px;" path="{{setup.svga}}" loop="{{true}}" autoplay="{{false}}" />
-        <smart-canvas wx:elif="{{setup.header === 'diy'}}" kind="{{setup.kind}}" part="header"
+        <style-canvas wx:elif="{{setup.header === 'diy'}}" kind="{{setup.kind}}" part="header"
                       state="{{hs.state}}" percent="{{hs.percent}}" primary="{{primary}}" accent="{{accent}}" />
       </view>
       <view class="table">
@@ -28,7 +28,7 @@
       <!-- The drawn footer (CYLRefreshDrawnFooter): only "No more data" is a label. -->
       <view slot="footer" class="slot">
         <cyl-svga wx:if="{{setup.kind === 'svga' && fs.state !== 'NoMoreData'}}" id="svga-footer" class="scene" style="width: 100vw; height: 130px;" path="{{setup.svga}}" loop="{{true}}" autoplay="{{false}}" />
-        <smart-canvas wx:elif="{{setup.footer === 'diyBack' && fs.state !== 'NoMoreData'}}" kind="{{setup.kind}}" part="footer"
+        <style-canvas wx:elif="{{setup.footer === 'diyBack' && fs.state !== 'NoMoreData'}}" kind="{{setup.kind}}" part="footer"
                       state="{{fs.state}}" percent="{{fs.percent}}" primary="{{primary}}" accent="{{accent}}" />
         <text wx:if="{{fs.state === 'NoMoreData'}}" class="no-more">{{noMoreText}}</text>
       </view>

@@ -1,6 +1,6 @@
-// The SmartRefreshControl style renderers, by style name (the page's method without the "smart" prefix).
+// The CYLRefresh style renderers, by style name (the page's method without the "smart" prefix).
 //
-// Renderer contract (used by ../smart-canvas):
+// Renderer contract (used by ../style-canvas):
 //   height        open height in px (expandHeight of the iOS style); also cyl-refresh's header / footer height
 //   triggerRate   optional, default 1 (percent = h / (height * triggerRate))
 //   primary       default colorPrimary (CSS color, 'transparent' for clear); accent: default colorAccent

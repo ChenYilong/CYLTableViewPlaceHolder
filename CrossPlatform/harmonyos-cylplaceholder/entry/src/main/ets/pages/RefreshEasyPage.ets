@@ -203,7 +203,7 @@ export struct RefreshEasyPage {
     });
     paging.itemsDidChange = (p: CYLRefreshPaging) => {
       const items = p.items !== null ? p.items : [];
-      this.rows = items.map((o: Object): EasyRow => new EasyRow('p' + o, t('CYLScenarioSmartTestDataRow', o)));
+      this.rows = items.map((o: Object): EasyRow => new EasyRow('p' + o, t('CYLScenarioRefreshStyleTestDataRow', o)));
     };
     this.paging = paging;
     paging.start();
@@ -241,7 +241,7 @@ export struct RefreshEasyPage {
   private testRows(n: number): EasyRow[] {
     const rows: EasyRow[] = [];
     for (let i = 1; i <= n; i++) {
-      rows.push(new EasyRow('r' + i, t('CYLScenarioSmartTestDataRow', i)));
+      rows.push(new EasyRow('r' + i, t('CYLScenarioRefreshStyleTestDataRow', i)));
     }
     return rows;
   }

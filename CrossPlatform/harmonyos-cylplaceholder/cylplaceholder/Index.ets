@@ -201,7 +201,7 @@ export {
   cylAnimatedItemTypeOf
 } from 'cylanimateditem';
 
-// CYLRefresh drawn styles: SmartRefreshControl's headers and footers drawn on a Canvas, with their support classes.
+// CYLRefresh drawn styles: CYLRefresh styles's headers and footers drawn on a Canvas, with their support classes.
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnSupport';
 export * from './src/main/ets/refresh/drawn/CYLRefreshValueAnimator';
 export * from './src/main/ets/refresh/drawn/CYLRefreshVectorPathsParser';

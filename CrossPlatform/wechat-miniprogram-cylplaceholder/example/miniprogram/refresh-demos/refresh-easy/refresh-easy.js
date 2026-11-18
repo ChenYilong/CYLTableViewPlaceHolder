@@ -69,7 +69,7 @@ Page({
 
   // Data.
   testRows(n) {
-    return Array.from({ length: n }, (_, i) => ({ id: 'r' + (i + 1), text: t('CYLScenarioSmartTestDataRow', i + 1) }))
+    return Array.from({ length: n }, (_, i) => ({ id: 'r' + (i + 1), text: t('CYLScenarioRefreshStyleTestDataRow', i + 1) }))
   },
   reloadCounted() {
     this.setData({ rows: this.testRows(this.count) })
@@ -167,7 +167,7 @@ Page({
       const items = start >= total ? [] : Array.from({ length: Math.min(start + size, total) - start }, (_, i) => start + i + 1)
       this.page = page
       this.items = page === 1 ? items : (this.items || []).concat(items)
-      this.setData({ rows: this.items.map((n) => ({ id: 'p' + n, text: t('CYLScenarioSmartTestDataRow', n) })) })
+      this.setData({ rows: this.items.map((n) => ({ id: 'p' + n, text: t('CYLScenarioRefreshStyleTestDataRow', n) })) })
       const refresh = this.refresher()
       if (page === 1) refresh.endRefreshing()
       if (this.items.length >= total || items.length === 0) refresh.endRefreshingWithNoMoreData()

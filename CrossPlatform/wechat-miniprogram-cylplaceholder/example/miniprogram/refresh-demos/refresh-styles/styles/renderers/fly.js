@@ -1,4 +1,4 @@
-// CYLRefreshFlyHeader (SmartRefreshControl's FlyRefreshHeader): a mountain scene (CYLRefreshMountainView) with
+// CYLRefreshFlyHeader (CYLRefresh styles's FlyRefreshHeader): a mountain scene (CYLRefreshMountainView) with
 // swaying trees, a paper plane (CYLRefreshFlyView) that tilts while pulling and flies out on release.
 const { VectorImage } = require('../vector')
 const { parseColor } = require('../util')

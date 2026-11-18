@@ -1,8 +1,8 @@
-// smart-canvas: hosts one SmartRefreshControl style renderer (../renderers/*.js) on a <canvas type="2d">, the
+// style-canvas: hosts one CYLRefresh styles style renderer (../renderers/*.js) on a <canvas type="2d">, the
 // mini program counterpart of CYLRefreshDrawnHeader's drawRect: and of CYLRefreshDrawnFooter hosting a style.
 //
 // The page feeds it cyl-refresh's statechange event: `state` (Idle / Pulling / Refreshing / NoMoreData) and
-// `percent` (0..1). Statuses given to the renderer follow SmartRefreshControl's order:
+// `percent` (0..1). Statuses given to the renderer follow CYLRefresh styles's order:
 //   Idle → Pulling (percent < 1) → Release (percent >= 1, still dragging) → Refreshing (the Releasing hook
 //   runs right before) → Idle.
 // Renderer drawing space: x from 0 to v.w, y from 0 (top of the revealed area) to v.h (the drag offset, the

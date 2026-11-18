@@ -1,4 +1,4 @@
-// CYLRefreshDrawnSupport: the small Core Graphics stand-ins the drawn SmartRefreshControl styles share on HarmonyOS
+// CYLRefreshDrawnSupport: the small Core Graphics stand-ins the drawn CYLRefresh styles styles share on HarmonyOS
 // (CGRect, CGAffineTransform, UIColor mixing) and a frame-time tween, the per-frame form of CYLRefreshValueAnimator
 // the styles step from their canvas frame clock. No ArkUI dependency (host unit-tested).
 import { CYLPoint } from '../CYLRefreshComponent';

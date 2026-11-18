@@ -1,4 +1,4 @@
-// CYLRefreshValueAnimator: the HarmonyOS counterpart of iOS Support/CYLRefreshValueAnimator.h (SmartRefreshControl's
+// CYLRefreshValueAnimator: the HarmonyOS counterpart of iOS Support/CYLRefreshValueAnimator.h (CYLRefresh styles's
 // ValueAnimator): a value going from `fromValue` to `toValue` (or through `setFromToPoints`) over `duration` seconds,
 // stepped by a display timer, with interpolators, repeats and a delegate. The target-selector pair is a callback.
 // No ArkUI dependency: the step is public (`cyl_step`) and the clock replaceable (`clock`), so it is host-tested.

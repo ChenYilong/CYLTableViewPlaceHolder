@@ -1,4 +1,4 @@
-// CYLRefreshBezierCircleHeader (SmartRefreshControl's UIRefreshBezierCircleHeader): a Bezier wave that springs
+// CYLRefreshBezierCircleHeader (CYLRefresh styles's UIRefreshBezierCircleHeader): a Bezier wave that springs
 // back on release and throws up a ball; the ball settles in the middle with a tail, and an arc spins around it
 // while refreshing.
 const { Animator, ease } = require('../util')

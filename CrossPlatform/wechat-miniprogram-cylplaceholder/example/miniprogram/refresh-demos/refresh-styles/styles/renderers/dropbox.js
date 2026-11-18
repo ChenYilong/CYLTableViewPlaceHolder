@@ -1,4 +1,4 @@
-// CYLRefreshDropBoxHeader (SmartRefreshControl's UIRefreshDropBoxHeader): an isometric box whose lids open while
+// CYLRefreshDropBoxHeader (CYLRefresh styles's UIRefreshDropBoxHeader): an isometric box whose lids open while
 // a movie, a file and a music icon drop into it in turn; between drops the box sides bulge (rebound).
 const { VectorImage } = require('../vector')
 const { alpha, Animator, ease } = require('../util')

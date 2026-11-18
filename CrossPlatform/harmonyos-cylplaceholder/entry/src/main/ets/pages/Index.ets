@@ -32,7 +32,7 @@ import { RefreshTestPage } from './RefreshTestPage';
 import { RefreshCollectionPage } from './RefreshCollectionPage';
 import { RefreshWebPage } from './RefreshWebPage';
 import { RefreshI18nPage } from './RefreshI18nPage';
-import { RefreshSmartPage } from './RefreshSmartPage';
+import { RefreshStylesPage } from './RefreshStylesPage';
 import { tabBarText } from '../common/TabBarStrings';
 import { RefreshEasyPage } from './RefreshEasyPage';
 
@@ -130,8 +130,8 @@ struct Index {
       RefreshWebPage({ param: param as RouteParam })
     } else if (name === Route.RefreshI18n) {
       RefreshI18nPage({ param: param as RouteParam })
-    } else if (name === Route.RefreshSmart) {
-      RefreshSmartPage({ param: param as RouteParam })
+    } else if (name === Route.RefreshStyles) {
+      RefreshStylesPage({ param: param as RouteParam })
     } else if (name === Route.RefreshEasy) {
       RefreshEasyPage({ param: param as RouteParam })
     }
