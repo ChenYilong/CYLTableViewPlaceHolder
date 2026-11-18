@@ -81,6 +81,30 @@ NS_ASSUME_NONNULL_BEGIN
  *      seek. NO: it plays instead. [CN] YES（默认）：空闲状态下拖动时，可定位的动画跟随下拉百分比；NO：改为播放。
  */
 @property (nonatomic) BOOL scrubsWhilePulling;
+/*!
+ * [EN] The playback rate of the icon's animation, 1 by default, applied live and kept when the icon changes with the
+ *      state (the examples' speed slider, docs/Example-Animation-Playback.md; Android and HarmonyOS
+ *      `animationSpeed`). Engines without a playback speed (PAG on iOS) ignore it. Values that are not positive and
+ *      finite are ignored.
+ * [CN] 图标动画的播放速率，默认 1，实时生效，图标随状态切换时保持（示例的倍速滑块）。没有播放速度的引擎（iOS 上的 PAG）忽略它。
+ *      非正数或非有限值被忽略。
+ */
+@property (nonatomic) CGFloat animationSpeed;
+/*!
+ * [EN] YES (the default): the icon loops while it plays (pulling, refreshing); NO plays it once and rests on its last
+ *      frame (the examples' loop switch; Android and HarmonyOS `loopsWhilePlaying`). Applied live. An animation whose
+ *      attributes name `CYLPlaceholderItemAnimationRepeatCount` keeps that count.
+ * [CN] YES（默认）：播放时（下拉、刷新中）循环；NO：播放一次并停在最后一帧（示例的循环开关）。实时生效。属性中指定了
+ *      `CYLPlaceholderItemAnimationRepeatCount` 的动画保持该次数。
+ */
+@property (nonatomic) BOOL loopsWhilePlaying;
+
+/*!
+ * [EN] Restarts the shown icon from its first frame with the current speed and loop setting (the examples' Play all;
+ *      Android and HarmonyOS `replayAnimation()`). Does nothing without an icon.
+ * [CN] 以当前速度与循环设置从第一帧重新播放当前图标（示例的“全部播放”）。没有图标时不做任何事。
+ */
+- (void)replayAnimation;
 
 /*!
  * [EN] Applies the playback policy for the control's state; the control calls it. [CN] 按控件状态应用播放策略；由控件调用。

@@ -296,6 +296,33 @@
     XCTAssertNil([header.iconView animationAttributesForState:CYLRefreshStateRefreshing]);
 }
 
+- (void)testSpeedLoopAndReplayFollowTheExamplesControls {
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
+    NSString *loading = [CYLPlaceholderView pathForBundledAnimation:@"CYLPlaceholderLoading.json"];
+    [header setIconAnimationFilePath:loading size:CGSizeMake(30, 30) forState:CYLRefreshStateIdle];
+    CYLRefreshIconView *iconView = header.iconView;
+    XCTAssertEqual(iconView.animationSpeed, 1);
+    XCTAssertTrue(iconView.loopsWhilePlaying);
+    iconView.animationSpeed = 0;
+    iconView.animationSpeed = NAN;
+    XCTAssertEqual(iconView.animationSpeed, 1, @"invalid speeds are ignored");
+    iconView.loopsWhilePlaying = NO;
+    header.state = CYLRefreshStateRefreshing;
+    XCTAssertEqual(iconView.placeholderView.animationRepeatCount, 1, @"plays once with the loop off");
+    iconView.loopsWhilePlaying = YES;
+    XCTAssertEqual(iconView.placeholderView.animationRepeatCount, 0, @"loops again, live");
+    iconView.animationSpeed = 2;
+    XCTAssertEqual(iconView.animationSpeed, 2);
+    // [EN] A new icon for another state keeps the speed. [CN] 其他状态的新图标保持该速度。
+    [header setBundledIconAnimation:@"CYLPlaceholderRefresh.json" size:CGSizeMake(30, 30) forState:CYLRefreshStatePulling];
+    header.state = CYLRefreshStatePulling;
+    UIView *lottie = iconView.placeholderView.animationView;
+    if (lottie) XCTAssertEqualWithAccuracy([[lottie valueForKey:@"animationSpeed"] doubleValue], 2, 0.01);
+    iconView.loopsWhilePlaying = NO;
+    [iconView replayAnimation];
+    XCTAssertEqual(iconView.placeholderView.animationRepeatCount, 1);
+}
+
 - (void)testAnimationFootersShowTheIconWhenTheirImagesWouldShow {
     CYLRefreshAutoAnimationFooter *autoFooter = [CYLRefreshAutoAnimationFooter footerWithRefreshingBlock:^{}];
     [autoFooter setBundledIconAnimation:@"CYLRefreshSpinnerRing.json" size:CGSizeMake(24, 24) forState:CYLRefreshStateIdle];

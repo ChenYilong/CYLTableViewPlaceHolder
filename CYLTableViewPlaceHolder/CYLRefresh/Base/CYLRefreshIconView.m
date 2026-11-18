@@ -29,6 +29,8 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
         _stateAttributes = [NSMutableDictionary dictionary];
         _state = CYLRefreshStateIdle;
         _scrubsWhilePulling = YES;
+        _animationSpeed = 1;
+        _loopsWhilePlaying = YES;
         self.backgroundColor = UIColor.clearColor;
         self.userInteractionEnabled = NO;
         // [EN] Decorative: the state label says what is happening. [CN] 装饰性内容：状态文字已说明当前状态。
@@ -156,6 +158,7 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     view.userInteractionEnabled = NO;
     view.isAccessibilityElement = NO;
     view.accessibilityElementsHidden = YES;
+    if (self.animationSpeed != 1) [view setPlaceholderAnimationSpeed:self.animationSpeed];
     view.frame = self.bounds;
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:view];
@@ -204,9 +207,35 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
 
 - (void)cyl_playLooping {
     if (self.playing) return;
-    // [EN] An animation that names its own repeat count keeps it; otherwise it loops while the control acts.
-    // [CN] 属性中指定了播放次数的动画保持该设置；否则在控件工作期间循环播放。
-    if (!self.shownAttributes[CYLPlaceholderItemAnimationRepeatCount]) self.placeholderView.animationRepeatCount = 0;
+    [self cyl_applyRepeatCount];
+    [self.placeholderView playPlaceholderAnimation];
+    self.playing = YES;
+}
+
+/// [EN] An animation that names its own repeat count keeps it; otherwise it loops while the control acts, or plays
+///      once when `loopsWhilePlaying` is NO. [CN] 属性中指定了播放次数的动画保持该设置；否则在控件工作期间循环播放，
+///      `loopsWhilePlaying` 为 NO 时播放一次。
+- (void)cyl_applyRepeatCount {
+    if (self.shownAttributes[CYLPlaceholderItemAnimationRepeatCount]) return;
+    self.placeholderView.animationRepeatCount = self.loopsWhilePlaying ? 0 : 1;
+}
+
+- (void)setAnimationSpeed:(CGFloat)animationSpeed {
+    if (!isfinite(animationSpeed) || animationSpeed <= 0 || animationSpeed == _animationSpeed) return;
+    _animationSpeed = animationSpeed;
+    [self.placeholderView setPlaceholderAnimationSpeed:animationSpeed];
+}
+
+- (void)setLoopsWhilePlaying:(BOOL)loopsWhilePlaying {
+    _loopsWhilePlaying = loopsWhilePlaying;
+    // [EN] Only while playing: a stopped icon gets the count when it plays. [CN] 只在播放时设置；停止的图标在播放时获得该次数。
+    if (self.playing) [self cyl_applyRepeatCount];
+}
+
+- (void)replayAnimation {
+    if (!self.placeholderView) return;
+    [self cyl_applyRepeatCount];
+    // [EN] playPlaceholderAnimation starts from progress 0. [CN] playPlaceholderAnimation 从进度 0 开始。
     [self.placeholderView playPlaceholderAnimation];
     self.playing = YES;
 }
@@ -237,7 +266,11 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     // [CN] 由场景组件构建方法补充内置文件需要的选项（Rive 状态机、线条图标颜色）。
     CYLPlaceholderComponent *component = [CYLPlaceholderComponent componentWithBundledAnimation:fileName
         fallbackStyle:CYLPlaceholderStyleRefresh title:nil size:size action:nil];
-    return component.attributes;
+    // [EN] Without the scenario's default repeat count (0, loop): the refresh policy and `loopsWhilePlaying` decide.
+    // [CN] 去掉场景默认的播放次数（0，循环）：由刷新播放策略与 `loopsWhilePlaying` 决定。
+    NSMutableDictionary<NSString *, id> *attributes = [component.attributes mutableCopy];
+    [attributes removeObjectForKey:CYLPlaceholderItemAnimationRepeatCount];
+    return [attributes copy];
 }
 
 + (NSArray<NSString *> *)bundledAnimationFileNames {
