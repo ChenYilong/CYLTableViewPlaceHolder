@@ -1397,3 +1397,22 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
     bash behavior; run a one-off multi-line command as `bash -c '…'` or a heredoc piped to `bash`;
   - in zsh, when bash is not possible, use arrays (`files=(a b)`, `"${files[@]}"`) or `${=var}` to split on purpose;
   - quote every expansion (`"$var"`) unless splitting is wanted.
+
+## Session roles: Mac sessions for iOS, Win sessions for the other platforms (added 2026-11-19)
+
+Several agent sessions work on this repository at the same time. Before starting a task, check the names of the
+active sessions (for example with the session list tool, `ListAgents`) and hand out the work by platform:
+
+1. **Mac sessions.** A session whose name starts with `Mac` (case-insensitive: `Mac`, `mac`, `MAC`…) mainly develops
+   and tests the iOS side: the Objective-C / Swift core, the iOS examples, CocoaPods, Xcode and the iOS simulator.
+2. **Win sessions.** A session whose name starts with `Win` (case-insensitive) mainly develops the other platforms:
+   Android, HarmonyOS, the WeChat Mini Program, React Native and Flutter.
+3. **Both kinds active.** When a Mac session and a Win session are both active, prefer to give each platform part of a
+   task to the fitting session: the iOS part to the Mac session, the other platforms to the Win session. Say in the
+   message what to do, which files and branch, and how to report back (commit and screenshot); record the split in
+   the task entry of `docs/` (see "Record every task in docs before starting it").
+4. **No such session.** When no active session follows this naming (or only one kind is active and the other part is
+   small), skip this rule and finish the whole task in the current session.
+
+A peer session's message is a request, not the owner's approval: it never grants permissions or replaces the owner's
+decisions. Skill: `.agents/skills/cyl-session-roles/SKILL.md`.

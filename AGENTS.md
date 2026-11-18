@@ -60,7 +60,8 @@ the integrated `CYLRefresh` component, and an example application. Read
 - Use the project skills in `.agents/skills/`: `cyl-api-map` for API locations,
   `cyl-xcode-compat` for project settings, `cyl-verify` for verification, and
   `cyl-docs` for documentation changes, `cyl-package-licenses` for the license in every published package; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
-  CYLTabBarController, with their upstream licenses) for accessibility and localization work.
+  CYLTabBarController, with their upstream licenses) for accessibility and localization work; `cyl-session-roles`
+  before every task, to split platform work between Mac (iOS) and Win (other platforms) sessions.
 - HarmonyOS (HarmonyOS 6.0.1, API 21): the API matches iOS, the example is a 1:1 copy of the iOS example, and the
   implementation is migrated from the Kotlin source under `android/`. Rules: `instructions.md` "HarmonyOS"; status
   and score: `docs/HarmonyOS.md`.
@@ -390,3 +391,12 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
     bash behavior; run a one-off multi-line command as `bash -c '…'` or a heredoc piped to `bash`;
   - in zsh, when bash is not possible, use arrays (`files=(a b)`, `"${files[@]}"`) or `${=var}` to split on purpose;
   - quote every expansion (`"$var"`) unless splitting is wanted.
+
+## Session roles (added 2026-11-19)
+
+Before starting a task, check the active session names: a session whose name starts with `Mac` (case-insensitive)
+mainly develops and tests iOS; one that starts with `Win` (case-insensitive) mainly develops the other platforms
+(Android, HarmonyOS, mini program, React Native, Flutter). When both kinds are active, prefer giving each platform
+part to the fitting session; when no such session exists, skip this rule and finish the task alone. Full rule:
+`instructions.md`, "Session roles: Mac sessions for iOS, Win sessions for the other platforms"; skill
+`.agents/skills/cyl-session-roles/SKILL.md`.
