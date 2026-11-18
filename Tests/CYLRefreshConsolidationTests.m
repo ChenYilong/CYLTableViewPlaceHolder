@@ -1,5 +1,7 @@
 #import <XCTest/XCTest.h>
 #import "CYLRefresh.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// The shared state-title and animation-image logic of CYLRefresh (docs/Task-Log.md, the iOS CYLRefresh
 /// consolidation): every state control reads its texts from one table, every animation control its images.

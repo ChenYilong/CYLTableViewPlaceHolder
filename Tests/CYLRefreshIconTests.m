@@ -2,6 +2,8 @@
 #import "CYLRefresh.h"
 #import "CYLRefreshIconView.h"
 #import "CYLPlaceholderView.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// The animated icon of MJRefresh's animated images (CYLRefreshIconAnimating): the GIF header and footers keep their
 /// images until an icon animation is set; then the icon takes the GIF view's place with its layout and plays by a fixed

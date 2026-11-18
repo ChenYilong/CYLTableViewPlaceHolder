@@ -3,6 +3,8 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "CYLRefresh.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// Upper bound for condition-based waits. UIView animation completions, even for 0-second
 /// animations, have stalled for over 5 s on loaded CI runners; waits still end as soon as the

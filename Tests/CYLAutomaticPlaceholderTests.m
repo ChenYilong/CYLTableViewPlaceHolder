@@ -7,6 +7,8 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h"
 #import "CYLRefresh.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// [EN] Where the placeholder laid its content out (its icon, title and selection indicator share this rect).
 /// [CN] 占位图内容的布局位置（图标、标题与选中指示共用该区域）。

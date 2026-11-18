@@ -30,14 +30,22 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
     config.build_settings['INFOPLIST_KEY_UIApplicationSceneManifest_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UISupportedInterfaceOrientations'] = 'UIInterfaceOrientationPortrait'
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\""
+    # CYLPlaceholderView is Swift (2026-11-19): the module is named like the pod (so the Objective-C files find
+    # CYLTableViewPlaceHolder-Swift.h), the bridging header plays the pod's umbrella header for the Swift file, and the
+    # CYLAnimatedItem framework always has the engine.
+    config.build_settings['SWIFT_VERSION'] = '5.0'
+    config.build_settings['PRODUCT_MODULE_NAME'] = 'CYLTableViewPlaceHolder'
+    config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] = File.join(dir, 'AccessibilityHost-Bridging-Header.h')
+    config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE'
   end
+  File.write(File.join(dir, 'AccessibilityHost-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n")
   ui.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.accessibility.uitests'
     config.build_settings['TEST_TARGET_NAME'] = 'AccessibilityHost'
   end
 
   sources = [File.join(root, 'Tests/AccessibilityHost/main.m')] +
-            Dir.glob(File.join(core_dir, '*.m')).select(&visible) +
+            Dir.glob(File.join(core_dir, '*.{m,swift}')).select(&visible) +
             Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible)
   sources.sort.each { |path| app.source_build_phase.add_file_reference(project.main_group.new_file(path)) }
   # One resource bundle holds the placeholder and refresh localizations and images.

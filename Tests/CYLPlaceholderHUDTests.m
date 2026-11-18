@@ -1,6 +1,8 @@
 #import <XCTest/XCTest.h>
 #import "CYLPlaceholderHUD.h"
 #import "CYLPlaceholderLocalization.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 @interface CYLPlaceholderHUDTests : XCTestCase
 @property (nonatomic, strong) UIWindow *window;

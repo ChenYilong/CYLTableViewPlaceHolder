@@ -8,6 +8,8 @@
 //
 
 #import "CYLPlaceholderHUD.h"
+// [EN] The generated Swift interface of CYLPlaceholderView (Swift since 2026-11-19). [CN] CYLPlaceholderView 的 Swift 接口。
+#import "CYLTableViewPlaceHolder.h"
 #import "CYLPlaceholderLocalization.h"
 
 NSNotificationName const CYLPlaceholderHUDWillAppearNotification = @"CYLPlaceholderHUDWillAppearNotification";

@@ -341,247 +341,26 @@ typedef UIView<CYLPlaceholderAnimationPlayer> * _Nullable (^CYLPlaceholderAnimat
     NSDictionary<NSString *, id> *options, NSError * _Nullable * _Nullable error);
 
 /*!
- * [EN] A reusable, localized empty-state view: the packaged animated icon + title view of this library. It is a
- *      `CYLAnimatedItemView` (`axis` vertical by default): the icon plays any file of CYLTabBarController's animation
- *      engine when an animation subspec adds the engine, and shows its static image otherwise; the display priority,
- *      the failure fallbacks and the loading state of URL files are the base class's. Customize its image and label as
- *      needed.
- * [CN] 可复用、已本地化的空状态视图，即本库封装好的动效 icon + title 视图。它是一个 `CYLAnimatedItemView`（默认 `axis` 为纵向）：加入动画子库
- *      带入引擎后，图标可播放 CYLTabBarController 动画引擎支持的任意文件，否则显示静态图片；显示优先级、失败回退与 URL 文件的加载状态由基类处理。
- *      图片与文字可按需定制。
+ * [EN] The class itself is Swift since 2026-11-19 (`CYLPlaceholderView.swift`): CYLTabBarController's `CYLAnimatedItemView`
+ *      became Swift, and Objective-C cannot subclass a Swift class. Its Objective-C API is unchanged (class name,
+ *      selectors, properties). This header keeps what Swift cannot declare for Objective-C (the `CYLPlaceholderItem*` keys,
+ *      the enums, the error domain, the animation player protocol, the factory block and the badge appearance) and
+ *      forward-declares the class. Objective-C code that messages the view imports the umbrella header
+ *      `CYLTableViewPlaceHolder.h` (or `@import CYLTableViewPlaceHolder;`), which brings the generated Swift interface.
+ * [CN] 该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderView.swift`）：CYLTabBarController 的 `CYLAnimatedItemView` 改为 Swift，而
+ *      Objective-C 不能继承 Swift 类。其 Objective-C API 不变（类名、selector、属性）。本头文件保留 Swift 无法为 Objective-C 声明的部分
+ *      （`CYLPlaceholderItem*` key、枚举、错误域、动画播放器协议、工厂 block 与角标外观），并前向声明该类。需要调用该视图的 Objective-C 代码导入
+ *      伞头文件 `CYLTableViewPlaceHolder.h`（或 `@import CYLTableViewPlaceHolder;`），从而获得生成的 Swift 接口。
  */
-@interface CYLPlaceholderView : CYLAnimatedItemView
-/*!
- * [EN] The icon's image view (the base class's `imageView`). [CN] 图标的图片视图（基类的 `imageView`）。
- */
-@property (nonatomic, strong, readonly) UIImageView *imageView;
-/*!
- * [EN] The title label: the base class's `titleLabel`. [CN] 标题标签，即基类的 `titleLabel`。
- */
-@property (nonatomic, strong, readonly) UILabel *textLabel;
-/*!
- * A nil value hides the badge; an empty string displays a dot.
- */
-@property (nonatomic, copy, nullable) NSString *badgeValue UI_APPEARANCE_SELECTOR;
-/*!
- * Badge appearance can be customized directly. VoiceOver can read it separately
- * when the placeholder is not itself an accessibility element.
- */
-@property (nonatomic, strong, readonly) UILabel *badgeLabel;
-/*!
- * Offset from the top-right of the image (or title when there is no image).
- */
-@property (nonatomic) CGPoint badgeCenterOffset UI_APPEARANCE_SELECTOR;
-/*!
- * Number badges use a maximum of 99; nonpositive numbers hide the badge.
- * Text badges require a nonempty string. Returns NO on invalid input.
- */
-- (BOOL)showBadgeWithStyle:(CYLPlaceholderBadgeStyle)style value:(nullable NSString *)value
-    NS_SWIFT_NAME(showBadge(with:value:));
-/*!
- * Enables the configured selected image, title, font and colors. Defaults to NO.
- */
-@property (nonatomic, getter=isSelected) BOOL selected;
-/*!
- * Drawn behind the selected item. Resizable images fill the item; others are centered.
- */
-@property (nonatomic, strong, nullable) UIImage *selectionIndicatorImage UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *selectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
+@class CYLPlaceholderView;
 
+#ifndef __swift__
 /*!
- * Appearance layers, as in CYLFlatDesignTabBarButton: explicit item attributes win, then these
- * values (directly or through the UIAppearance proxy, applied live), then the built-in values.
- * A value set directly on `textLabel` or `imageView` is never overwritten. Without an icon color
- * the icon follows `tintColor`.
- * Default appearance values for normal state.
- */
-@property (nonatomic, strong, nullable) UIColor *defaultTitleColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *defaultIconColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *defaultBackgroundColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIFont *defaultTitleFont UI_APPEARANCE_SELECTOR;
-/*!
- * Title offset used when the item has no `CYLPlaceholderItemTitlePositionAdjustment` of its own.
- */
-@property (nonatomic) UIOffset defaultTitlePositionAdjustment UI_APPEARANCE_SELECTOR;
-
-/*!
- * Default appearance values for selected state. Can be customized via UIAppearance proxy.
- */
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedTitleColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedIconColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectedBackgroundColor UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIFont *defaultSelectedTitleFont UI_APPEARANCE_SELECTOR;
-
-/*!
- * Default selection indicator appearance.
- */
-@property (nonatomic, strong, nullable) UIImage *defaultSelectionIndicatorImage UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong, nullable) UIColor *defaultSelectionIndicatorTintColor UI_APPEARANCE_SELECTOR;
-
-/*!
- * [EN] Original item attributes. An animation file (GIF, Lottie, PAG, Rive, SVGA…) plays when the view enters a window,
- *      through CYLTabBarController's animation engine and the animator of its type: add the matching subspec of this
- *      pod (or CYLTabBarController's `CYLAnimatedItem<Type>`). The Core subspec alone has no engine and shows the
- *      static image. The icon keeps the animation's size (`CYLPlaceholderItemAnimationSize`) whatever stands in for it.
- * [CN] 原始 item 属性。动画文件（GIF、Lottie、PAG、Rive、SVGA……）在视图进入窗口时，通过 CYLTabBarController 的动画引擎及对应类型的
- *      animator 播放：需加入本 pod 对应的子库（或 CYLTabBarController 的 `CYLAnimatedItem<Type>`）。只有 Core 子库时没有引擎，显示静态图片。
- *      无论用什么代替动画，图标都保持动画尺寸（`CYLPlaceholderItemAnimationSize`）。
- */
-@property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *itemAttributes;
-/*!
- * NO (the default): the view fills the frame it is given and centers its content, as before. YES: it also reports its
- * content size as `intrinsicContentSize`, so a UIStackView or Auto Layout can size it. CYLPlaceholderStackView sets it
- * on its components.
- */
-@property (nonatomic) BOOL reportsContentSize;
-/*!
- * The widest the content may be when `reportsContentSize` is YES, padding included; 0 uses the screen width. Long
- * titles wrap within it.
- */
-@property (nonatomic) CGFloat preferredMaxLayoutWidth;
-/*!
- * [EN] The space kept between each side of the view and its content: 16 points by default, as a full-screen
- *      placeholder needs. A view narrower than its content plus both margins gives up the margins first, so the content
- *      stays centered and laid out instead of collapsing to zero width. A compact use, such as the icon of a refresh
- *      control (CYLRefreshIconView), sets 0.
- * [CN] 视图两侧与内容之间保留的距离：默认 16 点，适合全屏占位图。视图窄于内容加两侧边距时先放弃边距，内容保持居中并正常布局，而不会被压缩为
- *      零宽度。紧凑场景（如刷新控件的图标 CYLRefreshIconView）设为 0。
- */
-@property (nonatomic) CGFloat contentMargin;
-
-/*!
- * Runs when the placeholder is tapped. Called on the main thread.
+ * [EN] Runs when the placeholder is tapped. Called on the main thread. Swift sees the property as
+ *      `((CYLPlaceholderView) -> Void)?`.
+ * [CN] 点击占位图时执行，在主线程调用。Swift 中该属性的类型为 `((CYLPlaceholderView) -> Void)?`。
  */
 typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
-
-/*!
- * The placeholder's own tap event: runs only while `tapInteractionEnabled` is YES. Setting it makes the view
- * respond to taps (with the highlight of `tapHighlightStyle` and the button trait for VoiceOver); nil removes it.
- */
-@property (nonatomic, copy, nullable) CYLPlaceholderTapHandler tapHandler;
-/*!
- * Whether taps are handled. NO: the handler does not run and the pressed highlight does not show, and touches pass
- * through as before. Defaults to YES, or to `CYLPlaceholderItemInteractionEnabled`.
- */
-@property (nonatomic, getter=isTapInteractionEnabled) BOOL tapInteractionEnabled;
-/*!
- * The pressed look; defaults to Dim, or to `CYLPlaceholderItemTapHighlightStyle`.
- */
-@property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
-/*!
- * YES while a finger is down on a tappable placeholder.
- */
-@property (nonatomic, readonly, getter=isTapHighlighted) BOOL tapHighlighted;
-/*!
- * YES when a tap would run the handler: interaction is enabled and a handler is set.
- */
-@property (nonatomic, readonly, getter=isTapInteractive) BOOL tapInteractive;
-/*!
- * Runs the handler as a tap would; NO when the placeholder is not tap-interactive.
- */
-- (BOOL)performTap;
-/*!
- * How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times.
- * Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. Players that loop or report their progress (Lottie,
- * PAG) support every value; others (GIF, Rive, SVGA) play as their file defines. Reduce Motion still stops the
- * animation.
- */
-@property (nonatomic) NSInteger animationRepeatCount;
-
-/*!
- * [EN] Registers or removes a factory for a file extension, without a leading dot, as an animator of
- *      CYLTabBarController's shared `CYLTabBarItemAnimatorRegistry` that wins over the built-in animators for that
- *      extension. Extensions are case-insensitive. Existing views keep their current player until their configuration
- *      is reloaded. Returns NO for an invalid extension, or when the build has no animation engine (CocoaPods Core
- *      alone).
- * [CN] 为某个文件扩展名（不带点）注册或移除工厂：作为 CYLTabBarController 共享 `CYLTabBarItemAnimatorRegistry` 中的 animator，对该扩展名优先于
- *      内置 animator。扩展名不区分大小写。已有视图在重新加载配置前保持当前播放器。扩展名无效或工程中没有动画引擎（只有 CocoaPods Core）时返回 NO。
- */
-+ (BOOL)registerAnimationFactory:(nullable CYLPlaceholderAnimationFactory)factory
-                forFileExtension:(NSString *)fileExtension;
-/*!
- * [EN] Shows the animation file at `path` (a full path, or the name of a bundled animation) instead of the icon, at
- *      the icon's animation size (`CYLPlaceholderItemAnimationSize`, else 64 x 64 points), through the animator
- *      registered for its extension. NO, with the icon kept, when the file is missing or no animator plays it (always
- *      without an animation engine). The same
- *      as Android's `CYLPlaceholderView.setAnimationFile(path)`.
- * [CN] 用 `path` 处的动画文件（完整路径或内置动画名）代替图标显示，尺寸为图标的动画尺寸（`CYLPlaceholderItemAnimationSize`，否则为
- *      64 x 64 点），由该扩展名注册的动画器播放。文件不存在或没有动画器可播放时（没有动画引擎时总是如此）返回 NO，图标保持不变。与 Android 的
- *      `CYLPlaceholderView.setAnimationFile(path)` 相同。
- */
-- (BOOL)setAnimationFile:(NSString *)path NS_SWIFT_NAME(setAnimationFile(_:));
-/*!
- * Replay the configured animation when visible (`playAnimation` of the base class does the same). Honors Reduce
- * Motion.
- */
-- (void)playPlaceholderAnimation;
-/*!
- * Stop playback and show the resting frame until explicitly replayed (also `stopAnimation`).
- */
-- (void)stopPlaceholderAnimation;
-/*!
- * Stop and show the last frame when supported (also `showAnimationLastFrame`).
- */
-- (void)showPlaceholderAnimationLastFrame;
-/*!
- * Stops and seeks when supported. Returns NO for invalid values or unsupported players.
- */
-- (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress;
-/*!
- * Sets a positive finite playback speed when supported. Returns NO otherwise.
- */
-- (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed;
-/*!
- * Creates a FlatDesign-style item from CYLTabBarController-compatible item keys.
- * Images may be UIImage objects or names in imageBundle (nil uses the placeholder bundle).
- */
-- (nullable instancetype)initWithItemAttributes:(NSDictionary<NSString *, id> *)attributes
-                                   imageBundle:(nullable NSBundle *)imageBundle
-                                         error:(NSError * _Nullable * _Nullable)error
-    NS_SWIFT_NAME(init(itemAttributes:imageBundle:));
-/*!
- * Reads one item dictionary from a local property list.
- */
-- (nullable instancetype)initWithItemContentsOfURL:(NSURL *)url
-                                      imageBundle:(nullable NSBundle *)imageBundle
-                                            error:(NSError * _Nullable * _Nullable)error
-    NS_SWIFT_NAME(init(itemContentsOf:imageBundle:));
-
-/*!
- * Uses independently selectable bundled art and localized text.
- */
-- (instancetype)initWithStyle:(CYLPlaceholderStyle)style message:(CYLPlaceholderMessage)message;
-/*!
- * A custom string replaces the localized message; nil hides the label.
- */
-- (instancetype)initWithStyle:(CYLPlaceholderStyle)style text:(nullable NSString *)text;
-/*!
- * Custom image and text; nil hides the corresponding content.
- */
-- (instancetype)initWithImage:(nullable UIImage *)image text:(nullable NSString *)text;
-/*!
- * Images are loaded from the library's offline bundle. Invalid styles return nil and log an error.
- */
-+ (nullable UIImage *)imageForStyle:(CYLPlaceholderStyle)style;
-/*!
- * The corresponding bundle image name, without the scale suffix or extension.
- */
-+ (nullable NSString *)imageNameForStyle:(CYLPlaceholderStyle)style;
-/*!
- * Uses the current app language, with an English fallback.
- */
-+ (nullable NSString *)localizedTextForMessage:(CYLPlaceholderMessage)message;
-/*!
- * File names of the ready-made animations in the library's resource bundle (`Animations/`), sorted:
- * Lottie (.json), PAG (.pag), Rive (.riv) and GIF (.gif) files named after their scenario, such as
- * "CYLPlaceholderLoading.json" or "CYLPlaceholderEmptyCart.json". Sources and licenses: NOTICE.animations.
- */
-+ (NSArray<NSString *> *)bundledAnimationFileNames;
-/*!
- * Full path of a bundled animation, for CYLPlaceholderItemAnimationFilePath and the engine-specific file
- * path keys; nil when there is no such file. Playback needs the matching animation subspec (the engine).
- */
-+ (nullable NSString *)pathForBundledAnimation:(NSString *)fileName NS_SWIFT_NAME(path(forBundledAnimation:));
-@end
+#endif
 
 NS_ASSUME_NONNULL_END

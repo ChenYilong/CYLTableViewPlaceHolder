@@ -1,6 +1,8 @@
 #import <XCTest/XCTest.h>
 #import "CYLPlaceholderStackView.h"
 #import "CYLPlaceholderLocalization.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// The stack view's background tap handler, called directly: a hostless test bundle has no UIApplication.
 @interface CYLPlaceholderStackView (CYLScenarioTesting)

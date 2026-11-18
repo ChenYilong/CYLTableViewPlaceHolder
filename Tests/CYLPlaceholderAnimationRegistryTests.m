@@ -1,6 +1,7 @@
 #import <XCTest/XCTest.h>
 #import <ImageIO/ImageIO.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
+// CYLPlaceholderView is Swift: the umbrella header brings its generated interface.
+#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 // [EN] CYLPlaceholderView plays every animation through CYLTabBarController's animation engine: the animators that
 //      the GIF, Lottie, PAG and Rive subspecs bring register with `CYLTabBarItemAnimatorRegistry`, and an app's own

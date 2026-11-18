@@ -5,6 +5,8 @@
 #import "UITableView+CYLPlaceholder.h"
 #import "UIViewController+CYLPlaceholderStatus.h"
 #import "CYLRefreshFlyHeader.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 #if CYL_ANIMATION_ENGINE_AVAILABLE
 /// [EN] The view and player of the test animator below; the player does nothing, the test only checks that a view is

@@ -1,6 +1,7 @@
 #import <XCTest/XCTest.h>
 #import <libpag/PAGView.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
+// CYLPlaceholderView is Swift: the umbrella header brings its generated interface.
+#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 // [EN] PAG and Rive play through CYLTabBarController's animation engine and the animators its `CYLAnimatedItemPAG` and
 //      `CYLAnimatedItemRive` subspecs register (brought by this pod's PAG and Rive subspecs). The animators themselves are

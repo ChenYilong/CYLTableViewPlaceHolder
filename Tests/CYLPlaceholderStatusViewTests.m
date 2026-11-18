@@ -5,6 +5,8 @@
 #import "UIViewController+CYLPlaceholderStatus.h"
 #import "UITableView+CYLPlaceholder.h"
 #import "CYLPlaceholderLocalization.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// The monitor's update, called directly: tests cannot switch the device's network.
 @interface CYLPlaceholderNetworkMonitor (CYLTesting)

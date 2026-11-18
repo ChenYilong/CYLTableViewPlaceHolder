@@ -1,5 +1,6 @@
 #import <XCTest/XCTest.h>
-#import <CYLTableViewPlaceHolder/CYLPlaceholderView.h>
+// CYLPlaceholderView is Swift: the umbrella header brings its generated interface.
+#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.h>
 
 // [EN] Lottie plays through CYLTabBarController's animation engine and its Lottie animator (the LottieSwift subspec brings
 //      `CYLAnimatedItem/LottieSwift`); the animation view is its `CYLCompatibleLOTAnimationView`, read

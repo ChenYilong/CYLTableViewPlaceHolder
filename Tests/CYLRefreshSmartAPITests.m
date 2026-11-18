@@ -1,6 +1,8 @@
 #import <XCTest/XCTest.h>
 #import "CYLRefresh.h"
 #import "UIView+CYLExtension.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// SmartRefreshControl-style API on CYLRefresh: attach / addTarget, triggerRate, finishDuration with a result,
 /// phases, scroll modes, theme colors and the subclass hooks (docs/Refresh-Library-Parity.md).

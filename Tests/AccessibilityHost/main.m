@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderView.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 @interface CYLAccessibilityHostViewController : UIViewController
 @property (nonatomic, strong) CYLPlaceholderView *element;

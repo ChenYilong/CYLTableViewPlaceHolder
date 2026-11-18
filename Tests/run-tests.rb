@@ -29,7 +29,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshSmartAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderViewSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
@@ -45,7 +46,16 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
+    # CYLPlaceholderView is Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
+    # the generated header as CYLTableViewPlaceHolder-Swift.h; the bridging header gives the Swift file the Objective-C
+    # declarations the pod's umbrella header gives it; the CYLAnimatedItem pod below has the engine, so the Swift
+    # condition is set as the pod's animation subspecs set it.
+    config.build_settings['SWIFT_VERSION'] = '5.0'
+    config.build_settings['PRODUCT_MODULE_NAME'] = 'CYLTableViewPlaceHolder'
+    config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] = File.join(dir, 'PlaceholderTests-Bridging-Header.h')
+    config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE'
   end
+  File.write(File.join(dir, 'PlaceholderTests-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n")
   Dir.glob(File.join(refresh_dir, '**/*.m')).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))
   end

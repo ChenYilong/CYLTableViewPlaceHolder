@@ -2,6 +2,8 @@
 #import "CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
+// CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
+#import "CYLTableViewPlaceHolder.h"
 
 /// The hand-drawn headers ported from SmartRefreshControl (CYLRefresh/Custom/Drawn): each one runs a whole refresh in a
 /// window and draws; the base reports SmartRefreshControl's status order; inset handling survives mode switches.

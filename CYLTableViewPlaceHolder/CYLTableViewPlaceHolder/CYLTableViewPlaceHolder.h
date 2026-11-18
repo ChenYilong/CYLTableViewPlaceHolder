@@ -19,3 +19,16 @@
 #import "CYLPlaceholderNetworkMonitor.h"
 #import "UIViewController+CYLPlaceholderStatus.h"
 #import "CYLRefresh.h"
+
+// [EN] CYLPlaceholderView is Swift (2026-11-19): Objective-C code gets its interface from the module's generated Swift
+//      header, imported last so that every Objective-C type it mentions is declared. Not for Swift (`__swift__`): the
+//      module's own Swift files must not import their generated header.
+// [CN] CYLPlaceholderView 用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
+//      Objective-C 类型都已声明。不供 Swift 使用（`__swift__`）：模块自己的 Swift 文件不能导入自己生成的头文件。
+#ifndef __swift__
+#if __has_include(<CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>)
+#import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>
+#elif __has_include("CYLTableViewPlaceHolder-Swift.h")
+#import "CYLTableViewPlaceHolder-Swift.h"
+#endif
+#endif
