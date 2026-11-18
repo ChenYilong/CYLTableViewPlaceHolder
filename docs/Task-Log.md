@@ -37,6 +37,13 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
+### TODO：Moonlight.pag 示例页深色背景 / TODO: a dark backdrop for Moonlight.pag on the example detail pages
+
+- Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "做" (answering the offer: "把 iOS 示例依赖的 CYLTabBarController 版本更新到 `396d3fca`" and "给 Moonlight.pag 的示例页加深色背景，让它在浅色模式下也能看见").
+- Requirements: (1) the iOS examples depend on a CYLTabBarController commit that includes `396d3fca` (Rive tint fix); (2) CYLScenarioExampleMoonlight.pag is visible in light mode on every example's animation detail page.
+- Context: (1) already satisfied: the Podfiles pin `4f73209c` (`e52f7b5`), and `git merge-base --is-ancestor 396d3fca 4f73209c` holds; nothing to change. (2) The file's artwork is white on a transparent layer, made for its black composition background, which PAGView does not draw on any platform (libpag has no background API; see the Q12 row of `docs/HarmonyOS.md`). Example-only change, approved by the owner ("做"), because the core cannot draw a background libpag does not expose: the detail page shows this file on a black backdrop with a white title. Platforms: iOS `CYLAnimationListViewController.swift`, HarmonyOS `AnimationDetailPage.ets`, mini program `pages/animations`; Android `AnimationsPage.kt` is being edited by the Windows session, asked to apply the same change there.
+
 ### 已完成（90 / 100）：鸿蒙 Q7 Rive 倍速 → Moonlight.pag 画面空白 → iOS 多行标题截图 / Done (90 / 100): HarmonyOS Q7 Rive speed, then Moonlight.pag blank, then the iOS multi-line title screenshot
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
