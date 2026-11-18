@@ -37,6 +37,13 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
+### TODO：按 session 名称分配平台任务（Mac → iOS，Win → 其他端） / TODO: Assign platform work by session name (Mac → iOS, Win → the other platforms)
+
+- Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
+- User's original prompt (verbatim): "找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：开始任务前检查session名称，名字中以Mac开头（忽略大小写）的session主要负责iOS端开发测试，名字以Win开头（忽略大小写）主要负责其他端开发，如果相应session均处于活跃状态，优选分配不同平台端任务到合适session，如果不存在以上规则的session则跳过该规则继续独立完成任务。"
+- Requirements: (1) find the instruction files and the skill files; add a file when none fits; make sure the write succeeds; (2) English only; (3) the rule: before a task, check the session names; a session whose name starts with "Mac" (any case) mainly does iOS development and testing, one starting with "Win" (any case) mainly the other platforms; when both kinds are active, prefer handing each platform's part to the fitting session; when no such session exists, skip the rule and finish the task alone.
+- Context: rule files: root `instructions.md`, `AGENTS.md`, skills under `.agents/skills/` (linked from `.claude/skills`); no skill covers session coordination yet, so a new skill `cyl-session-roles` is added. Append only (an earlier bulk edit wiped skills): check the diff numstat and the frontmatter after writing.
+
 ### 已完成（iOS）：内置动画组件的播放次数默认改为 1 / Done (iOS): Bundled animation components play once by default (repeat count 1)
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
