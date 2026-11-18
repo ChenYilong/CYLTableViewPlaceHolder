@@ -294,6 +294,13 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
 
     private let setup: CYLRefreshIconSetup
     private var rows = 15
+    private let controls = CYLPlaybackControlsView(loops: true)
+
+    /// The header's and the footer's icons, which the playback controls drive through the core
+    /// (`CYLRefreshIconView.animationSpeed`, `loopsWhilePlaying`, `replayAnimation()`).
+    private var iconViews: [CYLRefreshIconView] {
+        [tableView.cyl_header, tableView.cyl_footer].compactMap { ($0 as? CYLRefreshIconAnimating)?.iconView }
+    }
 
     fileprivate init(title: String, setup: @escaping CYLRefreshIconSetup) {
         self.setup = setup
@@ -339,6 +346,43 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         }
         tableView.cyl_header = header
         tableView.cyl_footer = footer
+        installPlaybackControls()
+    }
+
+    /// The playback controls of docs/Example-Animation-Playback.md above the rows. Play all shows the refreshing icon
+    /// from its first frame: an idle header refreshes again, then both icons replay (as the Android example).
+    private func installPlaybackControls() {
+        controls.onPlayAll = { [weak self] in
+            guard let self = self else { return }
+            if let header = self.tableView.cyl_header, !header.isRefreshing { header.beginRefreshing() }
+            self.iconViews.forEach { $0.replayAnimation() }
+        }
+        controls.onSpeed = { [weak self] speed in self?.iconViews.forEach { $0.animationSpeed = speed } }
+        controls.onLoop = { [weak self] loops in self?.iconViews.forEach { $0.loopsWhilePlaying = loops } }
+        let container = UIView()
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(controls)
+        NSLayoutConstraint.activate([
+            controls.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
+            controls.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -12),
+            controls.leadingAnchor.constraint(equalTo: container.layoutMarginsGuide.leadingAnchor),
+            controls.trailingAnchor.constraint(equalTo: container.layoutMarginsGuide.trailingAnchor),
+        ])
+        tableView.tableHeaderView = container
+    }
+
+    /// Sizes the controls' header to the table's width (not known in viewDidLoad); a header narrower than the table
+    /// would leave the loop switch outside it, where it gets no touches.
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard let header = tableView.tableHeaderView else { return }
+        let width = tableView.bounds.width
+        let height = header.systemLayoutSizeFitting(CGSize(width: width, height: 0),
+                                                    withHorizontalFittingPriority: .required,
+                                                    verticalFittingPriority: .fittingSizeLevel).height
+        guard header.frame.width != width || header.frame.height != height else { return }
+        header.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        tableView.tableHeaderView = header
     }
 
     @objc private func beginRefreshing() {
