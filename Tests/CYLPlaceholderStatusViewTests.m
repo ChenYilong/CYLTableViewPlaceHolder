@@ -110,6 +110,16 @@
     [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 }
 
+// [EN] Runs the main queue until the condition holds, up to 10 s: a fixed 0.1 s was too short on a busy CI runner
+//      (a697ce6: the placeholder was not in the empty table yet; the test took 10.8 s).
+// [CN] 运行主队列直到条件成立，最多 10 秒：CI 机器繁忙时固定 0.1 秒太短（a697ce6：占位视图尚未加入空列表，测试用时 10.8 秒）。
+- (void)spinMainQueueUntil:(BOOL (^)(void))condition {
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:10];
+    do {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+    } while (!condition() && deadline.timeIntervalSinceNow > 0);
+}
+
 - (void)testTheBarAndThePlaceholderAreIndependentAndChosenByOneParameter {
     UITableViewController *controller = [self hostedTableController];
     XCTAssertEqual(controller.cyl_statusDisplay, CYLPlaceholderStatusDisplayPlaceholder, @"nothing changes by default");
@@ -153,13 +163,13 @@
     UIView *placeholder = [[UIView alloc] init];
     [table cyl_placeholderViewBlock:^UIView *(UITableView *tableView) { return placeholder; }];
     [table reloadData];
-    [self spinMainQueue];
+    [self spinMainQueueUntil:^BOOL { return placeholder.superview == table; }];
     XCTAssertEqual(placeholder.superview, table, @"an empty list shows its placeholder");
     table.cyl_placeholderHidden = YES;
-    [self spinMainQueue];
+    [self spinMainQueueUntil:^BOOL { return placeholder.superview == nil; }];
     XCTAssertNil(placeholder.superview);
     table.cyl_placeholderHidden = NO;
-    [self spinMainQueue];
+    [self spinMainQueueUntil:^BOOL { return placeholder.superview == table; }];
     XCTAssertEqual(placeholder.superview, table);
     [table cyl_placeholderViewBlock:nil];
 }
