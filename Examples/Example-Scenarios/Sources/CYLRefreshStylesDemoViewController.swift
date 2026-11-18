@@ -119,6 +119,8 @@ final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefres
         case "styleFly": return CYLRefreshFlyHeader()
         case _ where method.hasPrefix("styleRive"):
             return riveStyle().flatMap { CYLRefreshRiveHeader(style: $0) } ?? CYLRefreshNormalHeader()
+        case _ where method.hasPrefix("styleSvga"):
+            return svgaScenePath().flatMap { CYLRefreshSVGASceneHeader(path: $0) } ?? CYLRefreshNormalHeader()
         default: return CYLRefreshNormalHeader()
         }
     }
@@ -132,6 +134,9 @@ final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefres
         case "styleDeliveryFooter": return CYLRefreshDeliveryFooter()
         case "stylePhoenixFooter": return CYLRefreshPhoenixFooter()
         case "styleTaurusFooter": return CYLRefreshTaurusFooter()
+        case "styleSvgaSpaceFooter":
+            guard let path = svgaScenePath(), let scene = CYLRefreshSVGASceneHeader(path: path) else { return nil }
+            return CYLRefreshDrawnFooter(style: scene)
         case "styleRiveSpaceFooter":
             guard let style = riveStyle(), let rive = CYLRefreshRiveHeader(style: style) else { return nil }
             return CYLRefreshDrawnFooter(style: rive)
@@ -141,6 +146,21 @@ final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefres
 
     /// flutter_easy_refresh's Rive style packages: the file in this example's bundle and the names each package's
     /// indicator drives (packages/easy_refresh_*/lib/src/*_indicator.dart at dcdbb81).
+    /// The SVGA twin of a Rive scene: the same subject, drawn by scripts/make_svga_scenes.py.
+    private func svgaScenePath() -> String? {
+        let file: String
+        switch method {
+        case "styleSvgaBow": file = "Bow"
+        case "styleSvgaBubbles": file = "Bubbles"
+        case "styleSvgaHalloween": file = "Halloween"
+        case "styleSvgaSkating": file = "Skating"
+        case "styleSvgaSpace", "styleSvgaSpaceFooter": file = "Space"
+        case "styleSvgaSquats": file = "Squats"
+        default: return nil
+        }
+        return CYLScenarioExampleResourceURL("Animations/CYLScenarioExampleRefresh\(file).svga")?.path
+    }
+
     private func riveStyle() -> CYLRefreshRiveStyle? {
         let file: String
         switch method {

@@ -86,6 +86,11 @@ final class CYLRefreshExampleViewController: UITableViewController {
             (.refreshStyleRiveHalloween, "styleRiveHalloween"), (.refreshStyleRiveSkating, "styleRiveSkating"),
             (.refreshStyleRiveSpace, "styleRiveSpace"), (.refreshStyleRiveSquats, "styleRiveSquats"),
             (.refreshStyleRiveSpaceFooter, "styleRiveSpaceFooter"),
+            // The SVGA twins of the Rive scenes (scripts/make_svga_scenes.py), as on the other platforms.
+            (.refreshStyleSVGABow, "styleSvgaBow"), (.refreshStyleSVGABubbles, "styleSvgaBubbles"),
+            (.refreshStyleSVGAHalloween, "styleSvgaHalloween"), (.refreshStyleSVGASkating, "styleSvgaSkating"),
+            (.refreshStyleSVGASpace, "styleSvgaSpace"), (.refreshStyleSVGASquats, "styleSvgaSquats"),
+            (.refreshStyleSVGASpaceFooter, "styleSvgaSpaceFooter"),
         ]
         let exam6 = CYLRefreshExample(header: .refreshStyleSection, titles: styles.map { $0.0 },
                                       methods: styles.map { $0.1 }, viewControllers: [stylesDemo])
