@@ -7,7 +7,8 @@
                  bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:statechange="onStateChange">
       <!-- The drawn header (CYLRefresh<Name>Header / CYLRefreshRiveHeader stand-in). -->
       <view slot="header" class="slot">
-        <smart-canvas wx:if="{{setup.header === 'diy'}}" kind="{{setup.kind}}" part="header"
+        <cyl-svga wx:if="{{setup.kind === 'svga'}}" id="svga-header" class="scene" style="width: 100vw; height: 130px;" path="{{setup.svga}}" loop="{{true}}" autoplay="{{false}}" />
+        <smart-canvas wx:elif="{{setup.header === 'diy'}}" kind="{{setup.kind}}" part="header"
                       state="{{hs.state}}" percent="{{hs.percent}}" primary="{{primary}}" accent="{{accent}}" />
       </view>
       <view class="table">
@@ -26,7 +27,8 @@
       </view>
       <!-- The drawn footer (CYLRefreshDrawnFooter): only "No more data" is a label. -->
       <view slot="footer" class="slot">
-        <smart-canvas wx:if="{{setup.footer === 'diyBack' && fs.state !== 'NoMoreData'}}" kind="{{setup.kind}}" part="footer"
+        <cyl-svga wx:if="{{setup.kind === 'svga' && fs.state !== 'NoMoreData'}}" id="svga-footer" class="scene" style="width: 100vw; height: 130px;" path="{{setup.svga}}" loop="{{true}}" autoplay="{{false}}" />
+        <smart-canvas wx:elif="{{setup.footer === 'diyBack' && fs.state !== 'NoMoreData'}}" kind="{{setup.kind}}" part="footer"
                       state="{{fs.state}}" percent="{{fs.percent}}" primary="{{primary}}" accent="{{accent}}" />
         <text wx:if="{{fs.state === 'NoMoreData'}}" class="no-more">{{noMoreText}}</text>
       </view>

@@ -47,6 +47,9 @@ const SECTIONS = [
     ['TaurusFooter', 'smartTaurusFooter'], ['RiveBow', 'smartRiveBow'], ['RiveBubbles', 'smartRiveBubbles'],
     ['RiveHalloween', 'smartRiveHalloween'], ['RiveSkating', 'smartRiveSkating'], ['RiveSpace', 'smartRiveSpace'],
     ['RiveSquats', 'smartRiveSquats'], ['RiveSpaceFooter', 'smartRiveSpaceFooter'],
+    ['SVGABow', 'smartSvgaBow'], ['SVGABubbles', 'smartSvgaBubbles'], ['SVGAHalloween', 'smartSvgaHalloween'],
+    ['SVGASkating', 'smartSvgaSkating'], ['SVGASpace', 'smartSvgaSpace'], ['SVGASquats', 'smartSvgaSquats'],
+    ['SVGASpaceFooter', 'smartSvgaSpaceFooter'],
   ].map(([suffix, method]) => smart('CYLScenarioSmart' + suffix, method)) },
   { key: 'CYLScenarioEasySection', rows: [
     ['Cupertino', 'easyCupertino'], ['Secondary', 'easySecondary'], ['TriggerMode', 'easyTriggerMode'],

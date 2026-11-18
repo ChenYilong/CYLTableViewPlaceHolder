@@ -197,6 +197,13 @@
 "CYLScenarioSmartRiveSpace" = "Rive · Space";
 "CYLScenarioSmartRiveSquats" = "Rive · Squats";
 "CYLScenarioSmartRiveSpaceFooter" = "Rive · Space フッター";
+"CYLScenarioSmartSVGABow" = "SVGA · Bow";
+"CYLScenarioSmartSVGABubbles" = "SVGA · Bubbles";
+"CYLScenarioSmartSVGAHalloween" = "SVGA · Halloween";
+"CYLScenarioSmartSVGASkating" = "SVGA · Skating";
+"CYLScenarioSmartSVGASpace" = "SVGA · Space";
+"CYLScenarioSmartSVGASquats" = "SVGA · Squats";
+"CYLScenarioSmartSVGASpaceFooter" = "SVGA · Space フッター";
 "CYLScenarioEasySection" = "flutter_easy_refresh のサンプル";
 "CYLScenarioEasyCupertino" = "Cupertino スタイル";
 "CYLScenarioEasySecondary" = "2階";

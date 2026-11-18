@@ -598,6 +598,48 @@ module.exports = {
           "bytes": 24934,
           "path": "/assets/animations/tab_search.svga.bin",
           "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshBow.svga",
+          "engine": "svga",
+          "bytes": 2543,
+          "path": "/assets/animations/CYLScenarioExampleRefreshBow.svga.bin",
+          "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshBubbles.svga",
+          "engine": "svga",
+          "bytes": 8333,
+          "path": "/assets/animations/CYLScenarioExampleRefreshBubbles.svga.bin",
+          "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshHalloween.svga",
+          "engine": "svga",
+          "bytes": 10182,
+          "path": "/assets/animations/CYLScenarioExampleRefreshHalloween.svga.bin",
+          "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshSkating.svga",
+          "engine": "svga",
+          "bytes": 5520,
+          "path": "/assets/animations/CYLScenarioExampleRefreshSkating.svga.bin",
+          "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshSpace.svga",
+          "engine": "svga",
+          "bytes": 9343,
+          "path": "/assets/animations/CYLScenarioExampleRefreshSpace.svga.bin",
+          "example": true
+        },
+        {
+          "name": "CYLScenarioExampleRefreshSquats.svga",
+          "engine": "svga",
+          "bytes": 1338,
+          "path": "/assets/animations/CYLScenarioExampleRefreshSquats.svga.bin",
+          "example": true
         }
       ]
     }

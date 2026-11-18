@@ -197,6 +197,13 @@
 "CYLScenarioSmartRiveSpace" = "Rive · Space";
 "CYLScenarioSmartRiveSquats" = "Rive · Squats";
 "CYLScenarioSmartRiveSpaceFooter" = "Rive · Space 푸터";
+"CYLScenarioSmartSVGABow" = "SVGA · Bow";
+"CYLScenarioSmartSVGABubbles" = "SVGA · Bubbles";
+"CYLScenarioSmartSVGAHalloween" = "SVGA · Halloween";
+"CYLScenarioSmartSVGASkating" = "SVGA · Skating";
+"CYLScenarioSmartSVGASpace" = "SVGA · Space";
+"CYLScenarioSmartSVGASquats" = "SVGA · Squats";
+"CYLScenarioSmartSVGASpaceFooter" = "SVGA · Space 푸터";
 "CYLScenarioEasySection" = "flutter_easy_refresh 예제";
 "CYLScenarioEasyCupertino" = "Cupertino 스타일";
 "CYLScenarioEasySecondary" = "2층";
