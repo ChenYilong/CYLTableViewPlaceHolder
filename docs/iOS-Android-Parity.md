@@ -948,7 +948,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — the CYLRefreshLayout around the content is the scroll view's counterpart |
+| `UIScrollView(CYLRefresh)` | The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — the CYLRefreshLayout around the content is the scroll view's counterpart |
 | `UIScrollView(CYLRefresh)` `cyl_header` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_header` |
 | `UIScrollView(CYLRefresh)` `cyl_footer` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_footer` |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | Property of `UIScrollView(CYLRefresh)`. | `RecyclerView.cyl_trailer` — horizontal RecyclerView only; set it once the list is in its parent |

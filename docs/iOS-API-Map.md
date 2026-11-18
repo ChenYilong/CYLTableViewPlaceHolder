@@ -679,7 +679,7 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshLayout` (class) | The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more (`SmartRefreshLayout`). | `UIScrollView(CYLRefresh)`, `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshLayout` (class) | The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more (`CYLRefreshLayout`). | `UIScrollView(CYLRefresh)`, `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshLayout.LayoutParams` (class) | The layout parameters of the layout's children: a background color and a spinner style for a header or footer. | n/a | ViewGroup.LayoutParams; per control iOS uses `colorPrimary` and `scrollMode` |
 | `CYLRefreshLayout.setDefaultRefreshHeaderCreator` (fun) | Sets the header every layout gets when it has none. | `CYLRefreshConfig` `defaultHeaderCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls` | added 2026-11-17 for Android parity |
 | `CYLRefreshLayout.setDefaultRefreshFooterCreator` (fun) | Sets the footer every layout gets when it has none. | `CYLRefreshConfig` `defaultFooterCreator` with `UIScrollView` `-cyl_installDefaultRefreshControls` | added 2026-11-17 for Android parity |
@@ -876,7 +876,7 @@
 |:---|:---|:---|:---|
 | `DesignUtil` (object) | Hooks a CoordinatorLayout content to its app bar (`DesignUtil`); works only when the app has the Material library. | n/a | Android CoordinatorLayout / Material library hook |
 | `DesignUtil.checkCoordinatorLayout` (fun) |  | n/a | Android CoordinatorLayout / Material library hook |
-| `CYLRefreshUtil` (class) | Helpers and the layout's interpolators (`SmartUtil`). | n/a | Android view helpers and interpolators |
+| `CYLRefreshUtil` (class) | Helpers and the layout's interpolators. | n/a | Android view helpers and interpolators |
 | `CYLRefreshUtil.measureViewHeight` (fun) | Measures [view]'s height with its layout parameters. | n/a | Android measure pass |
 | `CYLRefreshUtil.scrollListBy` (fun) | Scrolls [listView] by [y] pixels. | n/a | Android ListView helper |
 | `CYLRefreshUtil.isScrollableView` (fun) | True for views that scroll by themselves (lists, scroll views, web views, nested scrolling children). | n/a | Android view-type check; iOS controls attach to a UIScrollView |
