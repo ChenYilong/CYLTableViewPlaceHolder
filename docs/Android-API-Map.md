@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 657 个计入的符号；done 594、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 657 counted symbols; done 594, partial 63, planned 0, n/a 194). |
+| **迁移完成率：95 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 597、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 660 counted symbols; done 597, partial 63, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -299,6 +299,9 @@
 | `CYLRefreshIconView` `titleColor` | `CYLRefreshIconView.titleColor` | done |  |
 | `CYLRefreshIconView` `fittingSize` | `CYLRefreshIconView.fittingSize` | done |  |
 | `CYLRefreshIconView` `scrubsWhilePulling` | `CYLRefreshIconView.scrubsWhilePulling` | done |  |
+| `CYLRefreshIconView` `animationSpeed` | `CYLRefreshIconView.animationSpeed` | done |  |
+| `CYLRefreshIconView` `loopsWhilePlaying` | `CYLRefreshIconView.loopsWhilePlaying` | done |  |
+| `CYLRefreshIconView` `-replayAnimation` | `CYLRefreshIconView.replayAnimation()` | done |  |
 | `CYLRefreshIconView` `-updateForState:` | `CYLRefreshIconView.updateForState(state)` | done |  |
 | `CYLRefreshIconView` `-updateForPullingPercent:` | `CYLRefreshIconView.updateForPullingPercent(percent)` | done |  |
 | `CYLRefreshIconAnimating` | `com.cyl.refresh.CYLRefreshIconAnimating` | partial | an interface; every component gets the same calls as cyl_ extensions |

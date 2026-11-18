@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (657 counted rows, 0 TODO, 194 n/a).
+**Score: 100 / 100** (660 counted rows, 0 TODO, 194 n/a).
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -299,6 +299,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshIconView` `titleColor` | The color of `title` (the state label's color). | `CYLRefreshIconView.titleColor` |
 | `CYLRefreshIconView` `fittingSize` | The size of the icon and its `title` together, as the CYLPlaceholderView measures them; `iconSize` without a title. | `CYLRefreshIconView.fittingSize` |
 | `CYLRefreshIconView` `scrubsWhilePulling` | YES (the default): while the idle control is pulled, the animation follows the pulling percent when the engine can seek. NO: it plays instead. | `CYLRefreshIconView.scrubsWhilePulling` |
+| `CYLRefreshIconView` `animationSpeed` | The playback rate of the icon's animation, 1 by default, applied live and kept when the icon changes with the state (the examples' speed slider, docs/Example-Animation-Playback.md; Android and HarmonyOS `animationSpee... | `CYLRefreshIconView.animationSpeed` |
+| `CYLRefreshIconView` `loopsWhilePlaying` | YES (the default): the icon loops while it plays (pulling, refreshing); NO plays it once and rests on its last frame (the examples' loop switch; Android and HarmonyOS `loopsWhilePlaying`). Applied live. | `CYLRefreshIconView.loopsWhilePlaying` |
+| `CYLRefreshIconView` `-replayAnimation` | Restarts the shown icon from its first frame with the current speed and loop setting (the examples' Play all; Android and HarmonyOS `replayAnimation()`). Does nothing without an icon. | `CYLRefreshIconView.replayAnimation()` |
 | `CYLRefreshIconView` `-updateForState:` | Applies the playback policy for the control's state; the control calls it. | `CYLRefreshIconView.updateForState(state)` |
 | `CYLRefreshIconView` `-updateForPullingPercent:` | Follows the pulling percent while idle; the control calls it. | `CYLRefreshIconView.updateForPullingPercent(percent)` |
 | `CYLRefreshIconAnimating` | The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and CYLRefreshAutoAnimationFooter adopt it, next to `setAnimationImages:forState:`. | `com.cyl.refresh.CYLRefreshIconAnimating` — an interface; every component gets the same calls as cyl_ extensions |

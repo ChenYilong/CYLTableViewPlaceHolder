@@ -2182,6 +2182,18 @@
   "status": "done",
   "android": "CYLRefreshIconView.updateForState(state)"
  },
+ "CYLRefreshIconView -replayAnimation": {
+  "status": "done",
+  "android": "CYLRefreshIconView.replayAnimation()"
+ },
+ "CYLRefreshIconView animationSpeed": {
+  "status": "done",
+  "android": "CYLRefreshIconView.animationSpeed"
+ },
+ "CYLRefreshIconView loopsWhilePlaying": {
+  "status": "done",
+  "android": "CYLRefreshIconView.loopsWhilePlaying"
+ },
  "CYLRefreshIconView fittingSize": {
   "status": "done",
   "android": "CYLRefreshIconView.fittingSize"
