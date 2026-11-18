@@ -13,6 +13,9 @@
 
 extern BOOL CYLAutomaticPlaceholderEnabled(UIScrollView *scrollView);
 extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder);
+extern UIEdgeInsets CYLPlaceholderVisibleInsets(UIScrollView *scrollView);
+extern void CYLPlaceholderStartTrackingKeyboard(void);
+extern NSNotificationName const CYLPlaceholderVisibleAreaDidChangeNotification;
 
 @interface UITableView ()
 
@@ -39,6 +42,27 @@ extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeho
 
 - (void)setPlaceHolderView:(UIView *)placeHolderView {
     objc_setAssociatedObject(self, @selector(placeHolderView), placeHolderView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)cyl_framePlaceholderInVisibleArea:(UIView *)view {
+    UIEdgeInsets insets = CYLPlaceholderVisibleInsets(self);
+    view.frame = CGRectMake(0, 0, self.bounds.size.width, MAX(0, self.bounds.size.height - insets.top - insets.bottom));
+}
+
+static const void *CYLVisibleAreaObserverKey = &CYLVisibleAreaObserverKey;
+
+- (void)cyl_observeVisibleArea {
+    if (objc_getAssociatedObject(self, CYLVisibleAreaObserverKey)) return;
+    CYLPlaceholderStartTrackingKeyboard();
+    __weak typeof(self) weakSelf = self;
+    id token = [NSNotificationCenter.defaultCenter addObserverForName:CYLPlaceholderVisibleAreaDidChangeNotification
+        object:nil queue:nil usingBlock:^(NSNotification *note) {
+        UITableView *table = weakSelf;
+        UIView *view = table.placeHolderView;
+        if (!view || view.superview != table) return;
+        [table cyl_framePlaceholderInVisibleArea:view];
+    }];
+    objc_setAssociatedObject(self, CYLVisibleAreaObserverKey, token, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)cyl_reloadData {
@@ -119,8 +143,12 @@ extern void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeho
         [self layoutIfNeeded];
         view.frame = [provider frameForPlaceHolderViewInTableView:self];
     } else {
-        view.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+        // [EN] The table's size, minus the part the keyboard covers; it follows the keyboard while shown (no custom frame
+        //      from the provider).
+        // [CN] 表格的尺寸减去键盘遮住的部分；显示期间跟随键盘（提供者未给出自定义 frame 时）。
+        [self cyl_framePlaceholderInVisibleArea:view];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self cyl_observeVisibleArea];
     }
     if (view.superview != self) {
         [self addSubview:view];

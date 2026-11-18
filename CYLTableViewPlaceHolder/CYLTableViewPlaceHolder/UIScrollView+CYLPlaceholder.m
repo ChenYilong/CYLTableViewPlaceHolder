@@ -43,7 +43,78 @@ void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder) {
     }
 }
 
+#pragma mark - Visible area (top bar, home indicator, keyboard)
+
+/// [EN] Posted after the keyboard's frame changes, so shown placeholders frame themselves above it again.
+/// [CN] 键盘 frame 变化后发出，已显示的占位图据此重新放在键盘上方。
+NSNotificationName const CYLPlaceholderVisibleAreaDidChangeNotification = @"CYLPlaceholderVisibleAreaDidChangeNotification";
+
+/// [EN] The keyboard's frame in screen coordinates, CGRectNull while it is hidden. [CN] 键盘在屏幕坐标中的 frame，隐藏时为 CGRectNull。
+static CGRect CYLKeyboardScreenFrame;
+
+void CYLPlaceholderStartTrackingKeyboard(void) {
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        CYLKeyboardScreenFrame = CGRectNull;
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        [center addObserverForName:UIKeyboardWillChangeFrameNotification object:nil queue:nil
+                        usingBlock:^(NSNotification *note) {
+            NSValue *end = note.userInfo[UIKeyboardFrameEndUserInfoKey];
+            CYLKeyboardScreenFrame = end ? end.CGRectValue : CGRectNull;
+            [center postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
+        }];
+        [center addObserverForName:UIKeyboardWillHideNotification object:nil queue:nil
+                        usingBlock:^(NSNotification *note) {
+            CYLKeyboardScreenFrame = CGRectNull;
+            [center postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
+        }];
+    });
+}
+
+/// [EN] How much of the scroll view a placeholder leaves free: at the bottom, the part the keyboard covers, so the
+///      placeholder is centered above the keyboard (reported by CYLSearchViewController: "No results found" sat under
+///      the keyboard). The top and the bottom inset keep the placement they always had.
+/// [CN] 占位图在滚动视图中留出的距离：底部为键盘遮住的部分，使占位图在键盘上方居中（CYLSearchViewController 报告：“No results
+///      found” 被键盘遮住）。顶部与底部内边距保持原有的位置。
+UIEdgeInsets CYLPlaceholderVisibleInsets(UIScrollView *scrollView) {
+    CGFloat height = CGRectGetHeight(scrollView.bounds);
+    CGFloat bottom = 0;
+    UIWindow *window = scrollView.window;
+    if (window && !CGRectIsNull(CYLKeyboardScreenFrame) && !CGRectIsEmpty(CYLKeyboardScreenFrame)) {
+        CGRect keyboard = [window convertRect:CYLKeyboardScreenFrame fromCoordinateSpace:window.screen.coordinateSpace];
+        CGRect visible = [scrollView convertRect:scrollView.bounds toView:nil];
+        if (CGRectGetMinX(keyboard) < CGRectGetMaxX(visible) && CGRectGetMaxX(keyboard) > CGRectGetMinX(visible)) {
+            bottom = MAX(0, CGRectGetMaxY(visible) - CGRectGetMinY(keyboard));
+        }
+    }
+    // [EN] Never less than a third of the height for the placeholder. [CN] 至少给占位图留下三分之一的高度。
+    bottom = MIN(bottom, height * 2 / 3);
+    return UIEdgeInsetsMake(0, 0, bottom, 0);
+}
+
 @implementation CYLPlaceholderController
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        CYLPlaceholderStartTrackingKeyboard();
+        __weak typeof(self) weakSelf = self;
+        [NSNotificationCenter.defaultCenter addObserverForName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil
+                                                         queue:nil usingBlock:^(NSNotification *note) {
+            [weakSelf updateVisibleArea];
+        }];
+    }
+    return self;
+}
+
+/// [EN] Keeps the placeholder above the keyboard. [CN] 让占位图保持在键盘上方。
+- (void)updateVisibleArea {
+    UIScrollView *scrollView = self.scrollView;
+    if (!self.view || !scrollView || self.constraints.count < 4) return;
+    UIEdgeInsets insets = CYLPlaceholderVisibleInsets(scrollView);
+    self.constraints[2].constant = insets.top;
+    self.constraints[3].constant = -insets.bottom;
+}
 
 - (void)removeView {
     if (!self.view) return;
@@ -116,6 +187,7 @@ void CYLBringPlaceholderToFront(UIScrollView *scrollView, UIView *placeholder) {
             ];
             [NSLayoutConstraint activateConstraints:controller.constraints];
         }
+        [controller updateVisibleArea];
         CYLBringPlaceholderToFront(scrollView, view);
     });
 }

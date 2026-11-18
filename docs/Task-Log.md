@@ -47,11 +47,12 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
-### TODO：表格占位图被键盘遮住（来自 CYLSearchViewController） / TODO: The table placeholder is covered by the keyboard (from CYLSearchViewController)
+### 已完成：表格占位图被键盘遮住（来自 CYLSearchViewController） / Done: The table placeholder is covered by the keyboard (from CYLSearchViewController)
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup`. Reported by the session Mac-CYLSearchViewController (a peer request, logged under the session-roles rule: iOS core, so this Mac session).
 - Report (verbatim, English): "the table placeholder shown by `cyl_reloadData` is centred in the whole table, so with the keyboard up its subtitle is covered. Repro: CYLSearchViewController native example, Search tab (CYLSearchExampleViewController: plain UISearchController + tableView.cyl_reloadData, CYLPlaceholderView style .noResults), type "zzzz": "No results found" sits under the keyboard (iPhone 18 Pro, iOS 27.2)." Their own fix for CYLSearchView: CYLSearchViewController `f83ccd1` (framed above the keyboard's overlap).
 - Requirements: fix in the core: center the automatic placeholder in the area above the keyboard / respect the table's adjusted bottom inset; unit test; screenshot.
+- Done (2026-11-19): both placeholder paths leave out the part the keyboard covers and follow it live: `cyl_reloadData`'s default frame (no `frameForPlaceHolderViewInTableView:`) and `cyl_placeholderViewBlock:` (bottom constraint). One keyboard tracker (`UIKeyboardWillChangeFrameNotification` / `WillHideNotification`) in `UIScrollView+CYLPlaceholder.m`, `CYLPlaceholderVisibleInsets`; at least a third of the height stays for the placeholder. The top and the bottom inset keep their old placement on purpose (changing them would move every placeholder; `testCollectionSectionsAndFrameLayoutWithOffset` pins it). Tests `testDefaultFrameStaysAboveTheKeyboard`, `testAutomaticPlaceholderStaysAboveTheKeyboard`; core tests 193 pass (191 + 2). Score 90 / 100. TODO (-10): screenshot in CYLSearchViewController's Search tab with the keyboard up (that session re-pins and checks).
 
 ### TODO：CYLPlaceholderStackView 改用 CYLAnimatedItemStackView；CYLPlaceholderView 迁移到 Swift / TODO: CYLPlaceholderStackView on CYLAnimatedItemStackView; CYLPlaceholderView in Swift
 

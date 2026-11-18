@@ -427,6 +427,29 @@ static NSString *CYLTemporaryAnimationFile(NSString *extension) {
     [self waitForExpectations:@[done] timeout:15];
 }
 
+- (void)testAutomaticPlaceholderStaysAboveTheKeyboard {
+    CYLAutomaticTestSource *source = [CYLAutomaticTestSource new];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UITableView *table = [[UITableView alloc] initWithFrame:window.bounds];
+    [window addSubview:table];
+    table.dataSource = source;
+    UIView *placeholder = [UIView new];
+    [table cyl_placeholderViewBlock:^UIView *(UITableView *view) { return placeholder; }];
+    [table reloadData];
+    [self drainUpdates];
+    [table layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(placeholder.frame), 480, 0.1, @"no keyboard: the whole table");
+    CGRect keyboard = [window convertRect:CGRectMake(0, 280, 320, 200) toCoordinateSpace:window.screen.coordinateSpace];
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillChangeFrameNotification object:nil
+        userInfo:@{UIKeyboardFrameEndUserInfoKey: [NSValue valueWithCGRect:keyboard]}];
+    [table layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(placeholder.frame), 280, 0.1, @"above the keyboard (CYLSearchViewController's report)");
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillHideNotification object:nil userInfo:nil];
+    [table layoutIfNeeded];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(placeholder.frame), 480, 0.1, @"the keyboard hides: the whole table again");
+    [table cyl_placeholderViewBlock:nil];
+}
+
 - (void)testTableReloadInsertDeleteAndCancellation {
     CYLAutomaticTestSource *source = [CYLAutomaticTestSource new];
     UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];

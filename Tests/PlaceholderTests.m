@@ -224,6 +224,23 @@ static const NSTimeInterval CYLTestTimeout = 30;
     XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 700, 0.1);
 }
 
+- (void)testDefaultFrameStaysAboveTheKeyboard {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    [window addSubview:self.table];
+    [self.table cyl_reloadData];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 480, 0.1, @"no keyboard: the whole table");
+    // [EN] A 200-point keyboard at the bottom of the screen (CYLSearchViewController's report). [CN] 屏幕底部 200 点高的键盘。
+    CGRect keyboard = [window convertRect:CGRectMake(0, 280, 320, 200) toCoordinateSpace:window.screen.coordinateSpace];
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillChangeFrameNotification object:nil
+        userInfo:@{UIKeyboardFrameEndUserInfoKey: [NSValue valueWithCGRect:keyboard]}];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 280, 0.1, @"above the keyboard, live");
+    [self.table cyl_reloadData];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 280, 0.1, @"a reload keeps it above the keyboard");
+    [NSNotificationCenter.defaultCenter postNotificationName:UIKeyboardWillHideNotification object:nil userInfo:nil];
+    XCTAssertEqualWithAccuracy(CGRectGetHeight(self.source.view.frame), 480, 0.1, @"the keyboard hides: the whole table again");
+    [self.table removeFromSuperview];
+}
+
 - (void)testDelegateTakesPrecedenceOverDataSource {
     CYLTestDelegate *delegate = [CYLTestDelegate new];
     delegate.view = [UIView new];
