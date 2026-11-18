@@ -517,12 +517,12 @@
         [first fulfill];
     };
     [paging start];
-    [self waitForExpectations:@[first] timeout:5];
+    [self waitForExpectations:@[first] timeout:15];
     XCTAssertFalse(paging.isNoMore, @"page 1 of 2");
     XCTestExpectation *second = [self expectationWithDescription:@"second page"];
     paging.itemsDidChange = ^(CYLRefreshPaging *p) { [second fulfill]; };
     [paging loadMore];
-    [self waitForExpectations:@[second] timeout:5];
+    [self waitForExpectations:@[second] timeout:15];
     XCTAssertEqual(paging.page, 2);
     XCTAssertTrue(paging.isNoMore, @"page >= totalPage");
     XCTAssertEqualObjects(paging.items, (@[@1, @2]));

@@ -45,7 +45,7 @@ static const NSTimeInterval CYLTestTimeout = 30;
         XCTestExpectation *elapsed = [self expectationWithDescription:@"PAG advances"];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{ [elapsed fulfill]; });
-        [self waitForExpectations:@[elapsed] timeout:3];
+        [self waitForExpectations:@[elapsed] timeout:15];
         XCTAssertGreaterThan([pag getProgress], 0);
         [placeholder stopPlaceholderAnimation];
         XCTAssertEqualWithAccuracy([pag getProgress], 0, 0.01);

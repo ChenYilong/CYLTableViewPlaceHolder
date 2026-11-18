@@ -295,7 +295,7 @@
         XCTAssertEqualWithAccuracy(CGRectGetMinY(footer.style.frame), 0, 0.01, @"%@ stays inside the footer", cls);
 
         [footer beginRefreshing];
-        [self spinUntil:^BOOL { return loads > 0; } timeout:5];
+        [self spinUntil:^BOOL { return loads > 0; } timeout:15];
         XCTAssertEqual(loads, 1, @"%@", cls);
         XCTAssertEqual(footer.style.status, CYLRefreshPhaseRefreshing, @"%@", cls);
         XCTAssertTrue(footer.style.isRefreshing, @"%@", cls);

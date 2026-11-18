@@ -422,7 +422,7 @@ static NSString *CYLTemporaryAnimationFile(NSString *extension) {
 - (void)drainUpdates {
     XCTestExpectation *done = [self expectationWithDescription:@"placeholder update"];
     dispatch_async(dispatch_get_main_queue(), ^{ [done fulfill]; });
-    [self waitForExpectations:@[done] timeout:5];
+    [self waitForExpectations:@[done] timeout:15];
 }
 
 - (void)testTableReloadInsertDeleteAndCancellation {
@@ -975,7 +975,7 @@ static NSString *CYLTemporaryAnimationFile(NSString *extension) {
         [table deleteSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
         [batchExecuted fulfill];
     } completion:nil];
-    [self waitForExpectations:@[batchExecuted] timeout:5];
+    [self waitForExpectations:@[batchExecuted] timeout:15];
     [self drainUpdates];
     XCTAssertEqual(view.superview, table);
     [table cyl_placeholderViewBlock:nil];

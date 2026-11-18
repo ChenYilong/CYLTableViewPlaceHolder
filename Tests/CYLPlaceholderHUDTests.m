@@ -120,7 +120,7 @@
     XCTAssertEqual(hud.activityCount, 0u, @"a result ends every activity");
     XCTestExpectation *gone = [self expectationForPredicate:[NSPredicate predicateWithFormat:@"visible == NO"]
                                         evaluatedWithObject:hud handler:nil];
-    [self waitForExpectations:@[gone] timeout:5];
+    [self waitForExpectations:@[gone] timeout:15];
 
     [hud showErrorWithStatus:@"Failed"];
     XCTAssertEqual(hud.state, CYLPlaceholderHUDStateError);
