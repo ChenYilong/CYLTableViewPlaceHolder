@@ -37,12 +37,14 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
-### TODO：内置动画组件的播放次数默认改为 1 / TODO: Bundled animation components play once by default (repeat count 1)
+### 已完成（iOS）：内置动画组件的播放次数默认改为 1 / Done (iOS): Bundled animation components play once by default (repeat count 1)
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim): "RepeatCount = 1  改为默认为1"
 - Requirements: the default `CYLPlaceholderItemAnimationRepeatCount` becomes 1 (play once) instead of 0 (loop).
 - Context: `CYLPlaceholderView.animationRepeatCount` already defaults to 1 ("Absent means once"). The one default of 0 is in `+[CYLPlaceholderComponent componentWithBundledAnimation:fallbackStyle:title:size:action:]` (`CYLPlaceholderScenario.m`, "Scenario icons loop by default"), used by every catalog scenario and bundled-animation component; callers that want a loop set `animationRepeatCount = 0`. Refresh icons are not affected (`CYLRefreshIconView` drops this key and loops by `loopsWhilePlaying`). To check: unit tests that expect 0, docs that say scenario icons loop, the Android and HarmonyOS builders (same default for parity).
+- Decision (the owner, 2026-11-19, asked once): spinners keep looping ("Spinners keep looping"), everything else plays once.
+- Done (2026-11-19, iOS): `CYLScenarioAnimationLoopsByDefault` in `CYLPlaceholderScenario.m` (the examples' `loopsByDefault` list); `componentWithBundledAnimation:` sets 1, or 0 for a spinner file; the HUD sets its own count and is unchanged. Test `testScenarioIconsPlayOnceByDefaultAndSpinnersLoop`; 191 core tests pass. Docs: README, `Placeholder-Scenarios.md`, `iOS-Android-Parity.md`. TODO: the same default in the Android and HarmonyOS builders (parity).
 
 ### 已完成（100 / 100）：Moonlight.pag 示例页深色背景 / Done (100 / 100): a dark backdrop for Moonlight.pag on the example detail pages
 

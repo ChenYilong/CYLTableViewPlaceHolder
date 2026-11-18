@@ -275,7 +275,8 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 @property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
 /*!
  * How many times the icon animation plays each time it starts (`CYLPlaceholderItemAnimationRepeatCount`): 0 loops.
- * Components made by `componentWithBundledAnimation:…` loop by default; others play once.
+ * Defaults to 1 (play once and rest on the last frame); components made by `componentWithBundledAnimation:…` with a
+ * spinner (a file named Loading, Progress, Activity, Spinner, Uploading…) loop (0).
  */
 @property (nonatomic) NSInteger animationRepeatCount;
 

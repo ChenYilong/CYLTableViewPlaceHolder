@@ -340,13 +340,21 @@
     XCTAssertEqual(retries, 1u);
 }
 
-- (void)testScenarioIconsLoopByDefault {
+- (void)testScenarioIconsPlayOnceByDefaultAndSpinnersLoop {
+    NSArray<NSString *> *spinnerWords = @[@"Loading", @"Spinner", @"Progress", @"Throbber", @"Activity", @"Ring",
+                                          @"Dots", @"Cycle", @"Arc", @"Clockwise", @"Uploading", @"Infinity"];
+    NSUInteger once = 0;
     for (NSNumber *value in CYLPlaceholderScenarioCatalog.allScenarios) {
         for (CYLPlaceholderComponent *component in [CYLPlaceholderScenarioCatalog componentsForScenario:value.integerValue]) {
-            if (!component.attributes[CYLPlaceholderItemAnimationFilePath]) continue;
-            XCTAssertEqual(component.animationRepeatCount, 0, @"scenario %@", value);
+            NSString *file = [component.attributes[CYLPlaceholderItemAnimationFilePath] lastPathComponent];
+            if (!file) continue;
+            BOOL spinner = NO;
+            for (NSString *word in spinnerWords) spinner = spinner || [file containsString:word];
+            XCTAssertEqual(component.animationRepeatCount, spinner ? 0 : 1, @"scenario %@, %@", value, file);
+            if (!spinner) once++;
         }
     }
+    XCTAssertGreaterThan(once, 0u, @"most scenario icons play once");
     CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithScenario:CYLPlaceholderScenarioLoading actions:nil];
     XCTAssertEqual(stack.placeholderView.animationRepeatCount, 0);
     stack.placeholderView.animationRepeatCount = 2;

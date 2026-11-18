@@ -132,6 +132,19 @@ static NSDictionary<NSString *, NSString *> *CYLScenarioAnimationOptions(NSStrin
 }
 
 /// The black line icons from useAnimations (NOTICE.animations), tinted so they read on any background.
+/// [EN] Whether a bundled animation is a spinner (loading, progress, activity…), which loops by default so a loading
+///      indicator never freezes; every other animation plays once and rests on its last frame. The same list as the
+///      examples' `loopsByDefault` (iOS, Android, HarmonyOS).
+/// [CN] 内置动画是否为加载类动画（加载、进度、活动指示……）：默认循环，加载指示不会停住；其他动画默认播放一次并停在最后一帧。
+///      与各端示例的 `loopsByDefault` 名单相同。
+static BOOL CYLScenarioAnimationLoopsByDefault(NSString *fileName) {
+    for (NSString *word in @[@"Loading", @"Spinner", @"Progress", @"Throbber", @"Activity", @"Ring", @"Dots",
+                             @"Cycle", @"Arc", @"Clockwise", @"Uploading", @"Infinity"]) {
+        if ([fileName containsString:word]) return YES;
+    }
+    return NO;
+}
+
 static BOOL CYLScenarioIsLineIcon(NSString *fileName) {
     static NSSet<NSString *> *names;
     static dispatch_once_t onceToken;
@@ -377,9 +390,9 @@ static const CGFloat CYLScenarioIllustrationSide = 160;
     if (path) {
         attributes[CYLPlaceholderItemAnimationFilePath] = path;
         attributes[CYLPlaceholderItemAnimationSize] = @[@(size.width), @(size.height)];
-        // [EN] Scenario icons loop by default; set `animationRepeatCount` to change it.
-        // [CN] 场景图标默认循环播放；可通过 `animationRepeatCount` 修改。
-        attributes[CYLPlaceholderItemAnimationRepeatCount] = @0;
+        // [EN] Played once by default (owner, 2026-11-19), spinners loop; set `animationRepeatCount` to change it.
+        // [CN] 默认播放一次（2026-11-19 维护者决定），加载类动画循环；可通过 `animationRepeatCount` 修改。
+        attributes[CYLPlaceholderItemAnimationRepeatCount] = CYLScenarioAnimationLoopsByDefault(fileName) ? @0 : @1;
         NSDictionary *options = CYLScenarioAnimationOptions(fileName);
         if (options) attributes[CYLPlaceholderItemAnimationOptions] = options;
         if (CYLScenarioIsLineIcon(fileName)) {
