@@ -12,8 +12,8 @@ target 'ExampleScenarios' do
   # CYLTabBarController's Objective-C demo. Always its newest commit on any branch (instructions.md, "Depending on
   # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh rewrites the commit before every build.
   # CYLTabBarController depends on CYLAnimatedItem at the same version: both from the same commit.
-  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '5996fa962e25e216210dd24c4b3186bb2e155abe'
-  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '5996fa962e25e216210dd24c4b3186bb2e155abe'
+  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '86c5f7c5d6629e9c677dceba458f6990fe38a88a'
+  pod 'CYLTabBarController', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '86c5f7c5d6629e9c677dceba458f6990fe38a88a'
 end
 
 post_install do |installer|

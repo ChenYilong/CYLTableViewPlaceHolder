@@ -30,6 +30,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemStackView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderViewSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',

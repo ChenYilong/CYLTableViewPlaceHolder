@@ -11,17 +11,16 @@
 /// Side margin between the view and its components.
 static const CGFloat CYLPlaceholderStackMargin = 16;
 
-@interface CYLPlaceholderStackView () <UIGestureRecognizerDelegate>
-/// [EN] CYLTabBarController's CYLAnimatedItemStackView, every element a CYLAnimatedItemView (each component is a
-///      CYLPlaceholderView): it lays the components out (centered vertical stack, side margins, spacing before each
-///      component, titles wrapped to the width) and groups them for VoiceOver. This view keeps the components' own tap
-///      events (`tapHandler`, `tapInteractionEnabled`) and the background action, so their behavior is unchanged; the
-///      inner stack gets the actions (for `itemViewForAction:` and the button trait) but no handlers, so nothing runs twice.
-/// [CN] CYLTabBarController 的 CYLAnimatedItemStackView，每个元素都是 CYLAnimatedItemView（每个组件是 CYLPlaceholderView）：
-///      它负责组件布局（居中的竖直堆叠、两侧边距、组件前的间距、标题按宽度换行）并为 VoiceOver 分组。本视图保留组件自己的点击事件
-///      （`tapHandler`、`tapInteractionEnabled`）与背景动作，行为不变；内部堆叠视图知道各动作（用于 `itemViewForAction:` 与按钮 trait），
-///      但没有处理，因此不会执行两次。
-@property (nonatomic, strong) CYLAnimatedItemStackView *itemStack;
+@interface CYLPlaceholderStackView ()
+/// [EN] CYLTabBarController's CYLAnimatedItemStackView (CYLPlaceholderItemStackView), every element a CYLAnimatedItemView
+///      (each component is a CYLPlaceholderView): it lays the components out (centered vertical stack, side margins,
+///      spacing before each component, titles wrapped to the width), groups them for VoiceOver, and runs the background
+///      action, passing through every component whose own tap would not run. Item taps stay with the components
+///      (`tapHandler`, `tapInteractionEnabled`; `dispatchesItemTaps` is NO).
+/// [CN] CYLTabBarController 的 CYLAnimatedItemStackView（CYLPlaceholderItemStackView），每个元素都是 CYLAnimatedItemView（每个组件是
+///      CYLPlaceholderView）：负责组件布局（居中的竖直堆叠、两侧边距、组件前的间距、标题按宽度换行）、为 VoiceOver 分组，并执行背景动作，
+///      穿过所有自己的点击不会执行的组件。条目点击仍由组件自己处理（`tapHandler`、`tapInteractionEnabled`；`dispatchesItemTaps` 为 NO）。
+@property (nonatomic, strong) CYLPlaceholderItemStackView *itemStack;
 @property (nonatomic, readwrite) CYLPlaceholderScenario scenario;
 @property (nonatomic, strong) NSMutableArray<CYLPlaceholderView *> *mutableComponentViews;
 /// Parallel to `mutableComponentViews`: each component's action, or NSNull.
@@ -30,7 +29,6 @@ static const CGFloat CYLPlaceholderStackMargin = 16;
 /// [CN] 每个组件视图的种类，供 `hintLabel` 与 `button` 使用。
 @property (nonatomic, strong) NSMapTable<CYLPlaceholderView *, NSString *> *componentKinds;
 @property (nonatomic, strong) NSMutableDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *handlers;
-@property (nonatomic, strong) UITapGestureRecognizer *backgroundTapRecognizer;
 @end
 
 /// The factory that made a component ("item", "hint", "button", "separator"), set in CYLPlaceholderScenario.m.
@@ -162,7 +160,7 @@ static NSError *CYLStackConfigurationError(NSString *description) {
             self->_handlers[action] = [handler copy];
         }];
 
-        _itemStack = [[CYLAnimatedItemStackView alloc] initWithFrame:CGRectZero];
+        _itemStack = [[CYLPlaceholderItemStackView alloc] initWithFrame:CGRectZero];
         _itemStack.contentMargin = CYLPlaceholderStackMargin;
         _itemStack.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_itemStack];
@@ -272,10 +270,6 @@ static NSError *CYLStackConfigurationError(NSString *description) {
     [view setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
     [view setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
     [self.itemStack appendItemView:view action:action spacingBefore:spacingBefore];
-    // [EN] The inner stack lets only items with an action take touches; a component keeps its own tap event (an app can
-    //      set `tapHandler` later), and one that is not tap-interactive passes the tap to the background recognizer.
-    // [CN] 内部堆叠视图只让带动作的条目接收触摸；组件保留自己的点击事件（应用可以之后再设置 `tapHandler`），不可点击的组件把点击交给背景手势。
-    view.userInteractionEnabled = YES;
     [self.mutableComponentViews addObject:view];
     [self.componentActions addObject:action ?: (id)NSNull.null];
     if (action) {
@@ -333,22 +327,15 @@ static NSError *CYLStackConfigurationError(NSString *description) {
 
 - (void)setBackgroundAction:(CYLPlaceholderAction)backgroundAction {
     _backgroundAction = [backgroundAction copy];
-    if (backgroundAction && !self.backgroundTapRecognizer) {
-        self.backgroundTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                               action:@selector(cyl_backgroundTapped:)];
-        self.backgroundTapRecognizer.delegate = self;
-        [self addGestureRecognizer:self.backgroundTapRecognizer];
-    }
-    self.backgroundTapRecognizer.enabled = backgroundAction != nil;
-    // [EN] The inner stack knows the background action too, so it keeps the reserved component a button when it reads
-    //      the component's accessibility again (a title or label change). Its own background recognizer stays off: this
-    //      view performs the action and lets a component that is not tap-interactive pass the tap (the inner stack would
-    //      skip every component with an action).
-    // [CN] 内部堆叠视图也知道背景动作，重新读取组件无障碍信息时（标题或标签变化）保留组件仍是按钮。它自己的背景手势保持关闭：由本视图执行动作，
-    //      并让不可点击的组件把点击交给背景（内部堆叠视图会跳过所有带动作的组件）。
+    // [EN] The inner stack runs the background tap (passing through components whose own tap would not run) and keeps
+    //      the reserved component a button; its handler performs this view's handler for the action.
+    // [CN] 内部堆叠视图执行背景点击（穿过自己的点击不会执行的组件）并让保留组件保持按钮角色；其处理调用本视图对该动作的处理。
     self.itemStack.backgroundAction = backgroundAction;
-    for (UIGestureRecognizer *recognizer in self.itemStack.gestureRecognizers) {
-        if ([recognizer isKindOfClass:UITapGestureRecognizer.class]) recognizer.enabled = NO;
+    if (backgroundAction) {
+        __weak typeof(self) weakSelf = self;
+        [self.itemStack setHandler:^(CYLAnimatedItemStackView *stack, NSString *action) {
+            [weakSelf performAction:action];
+        } forAction:backgroundAction];
     }
     // [EN] VoiceOver users reach the background action through the reserved component.
     // [CN] VoiceOver 用户通过保留组件触发背景点击动作。
@@ -367,20 +354,6 @@ static NSError *CYLStackConfigurationError(NSString *description) {
             [self cyl_updateAccessibilityOfComponent:reserved];
         }
     }
-}
-
-- (void)cyl_backgroundTapped:(UITapGestureRecognizer *)recognizer {
-    if (self.backgroundAction) [self performAction:self.backgroundAction];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if (gestureRecognizer != self.backgroundTapRecognizer) return YES;
-    // [EN] A tappable component handles its own taps; one with interaction turned off lets the background act.
-    // [CN] 可点击的组件自己处理点击；关闭了交互的组件让背景处理。
-    for (UIView *view = touch.view; view && view != self; view = view.superview) {
-        if ([view isKindOfClass:CYLPlaceholderView.class] && ((CYLPlaceholderView *)view).isTapInteractive) return NO;
-    }
-    return YES;
 }
 
 - (BOOL)accessibilityActivate {

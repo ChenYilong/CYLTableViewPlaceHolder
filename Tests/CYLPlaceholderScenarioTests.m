@@ -4,11 +4,6 @@
 // CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
 #import "CYLTableViewPlaceHolder.h"
 
-/// The stack view's background tap handler, called directly: a hostless test bundle has no UIApplication.
-@interface CYLPlaceholderStackView (CYLScenarioTesting)
-- (void)cyl_backgroundTapped:(UITapGestureRecognizer *)recognizer;
-@end
-
 /// Scenarios (CYLPlaceholderScenario), the stack of components (CYLPlaceholderStackView), the title chrome of
 /// CYLPlaceholderView, and the core localization with its run-time language.
 @interface CYLPlaceholderScenarioTests : XCTestCase
@@ -133,7 +128,15 @@
             retries++;
         }}];
     XCTAssertEqualObjects(stack.backgroundAction, CYLPlaceholderActionRetry);
-    [stack cyl_backgroundTapped:nil];
+    // [EN] The inner CYLAnimatedItemStackView runs the background tap; VoiceOver activation performs the same action.
+    // [CN] 内部的 CYLAnimatedItemStackView 执行背景点击；VoiceOver 激活执行同一动作。
+    UIView *itemStack = stack.stackView.superview;
+    BOOL recognizes = NO;
+    for (UIGestureRecognizer *recognizer in itemStack.gestureRecognizers) {
+        recognizes = recognizes || ([recognizer isKindOfClass:UITapGestureRecognizer.class] && recognizer.enabled);
+    }
+    XCTAssertTrue(recognizes, @"the background tap is recognized by the inner stack");
+    XCTAssertTrue([stack accessibilityActivate]);
     XCTAssertEqual(retries, 1u);
     XCTAssertTrue(stack.placeholderView.accessibilityTraits & UIAccessibilityTraitButton);
     stack.backgroundAction = nil;
