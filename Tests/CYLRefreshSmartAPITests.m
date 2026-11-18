@@ -590,8 +590,18 @@
     // [EN] Poll instead of a fixed 3 s: on a loaded CI runner the animated push and the first refresh can take longer
     //      (the fixed wait failed once on CI while every other test passed).
     // [CN] 轮询而不是固定等待 3 秒：CI 机器繁忙时动画 push 与首次刷新可能更久（固定等待曾在 CI 上失败一次，其他测试都通过）。
-    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:15];
-    while ((![log containsObject:@"refresh"] || page.tableView.cyl_header != regular) && deadline.timeIntervalSinceNow > 0) {
+    //      The iOS 12 simulator on CI can stall a single run-loop pass for a minute (203b0c1: the test took 75 s with a
+    //      15 s limit and stopped with the start header in the window but still WillRefresh, its promotion block queued
+    //      by -didMoveToWindow not yet run). So wait up to 60 s, and drain the queue once more after the deadline.
+    // [CN] CI 上的 iOS 12 模拟器可能让一次 run loop 卡住一分钟（203b0c1：限时 15 秒，测试用时 75 秒，结束时起始刷新头已在窗口中但仍为
+    //      WillRefresh，-didMoveToWindow 排队的切换尚未执行）。因此最多等 60 秒，并在超时后再处理一次队列。
+    BOOL (^done)(void) = ^BOOL { return [log containsObject:@"refresh"] && page.tableView.cyl_header == regular; };
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:60];
+    while (!done() && deadline.timeIntervalSinceNow > 0) {
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+    NSDate *drain = [NSDate dateWithTimeIntervalSinceNow:2];
+    while (!done() && drain.timeIntervalSinceNow > 0) {
         [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
     // [EN] The messages carry the phase log and the start header's state, so a failure shows where it stopped (waiting
