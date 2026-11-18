@@ -65,7 +65,7 @@ reach into the engine.
 | Lottie (iOS `LottieAnimationView`, Android `LottieAnimationView`, lottie-web, lottie-react-native, Flutter `lottie`) | progress 0, then play | `animationSpeed` / `speed` | `loopMode` / `repeatCount` |
 | Rive | reset the state machine or animation, then play | drive the time (`advance(delta * speed)`) where the runtime has no speed | the animation's loop mode, or restart on end |
 | PAG | `progress = 0`, then play | drive the progress per frame where the view has no speed | `repeatCount` (0 = forever) |
-| SVGA (Android done 2026-11-19: Animations tab and refresh example57, through the CYLAnimatedItem engine; other platforms TODO, see `docs/Task-Log.md` "SVGA animations") | `stepToFrame(0)`, then `startAnimation` | drive the frame per tick where the player has no speed | `loops` (0 = forever) |
+| SVGA (Android and HarmonyOS done 2026-11-19: Animations tab and refresh example57; Android through the CYLAnimatedItem engine, HarmonyOS through the example's Canvas engine; iOS and the mini program TODO, see `docs/Task-Log.md` "SVGA animations") | `stepToFrame(0)`, then `startAnimation` | drive the frame per tick where the player has no speed | `loops` (0 = forever) |
 | GIF / frame animations | frame 0 | scale the frame durations | `animationRepeatCount` / repeat count |
 | System animations (`CAAnimation`, `ValueAnimator`, Flutter `AnimationController`) | remove and add again / `start()` from 0 / `forward(from: 0)` | `speed` on the layer / duration scale / duration | `repeatCount` / `repeat()` |
 
