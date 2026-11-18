@@ -59,12 +59,13 @@ final class CYLRefreshExampleViewController: UITableViewController {
             viewControllers: [("CYLRefreshWKWebViewController", { CYLRefreshWKWebViewController() })])
         let exam4 = CYLRefreshExample(header: .mjSectionI18n, titles: [.mjLanguages], methods: ["i18n"],
             viewControllers: [("CYLRefreshI18NExampleViewController", { CYLRefreshI18NExampleViewController() })])
-        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG and Rive icons.
+        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG, Rive and SVGA icons.
         let exam5 = CYLRefreshExample(header: .mjSectionAnimations,
-            titles: [.mjGifIcon, .mjLottieStates, .mjPagRing, .mjRiveIcon, .mjGifFrames, .mjMixedEngines,
+            titles: [.mjGifIcon, .mjLottieStates, .mjPagRing, .mjRiveIcon, .mjSVGAIcon, .mjGifFrames, .mjMixedEngines,
                      .mjCollectionIcons],
-            methods: ["example51", "example52", "example53", "example54", "example55", "example56", "example32"],
-            viewControllers: [table, table, table, table, table, table,
+            methods: ["example51", "example52", "example53", "example54", "example57", "example55", "example56",
+                      "example32"],
+            viewControllers: [table, table, table, table, table, table, table,
                               ("CYLRefreshCollectionViewController", { CYLRefreshCollectionViewController() })])
         // Beyond MJRefresh: SmartRefreshControl's demo (CYLSmartRefreshDemoViewController), one method per style.
         let smart: (name: String, make: () -> CYLRefreshExampleRunning) =

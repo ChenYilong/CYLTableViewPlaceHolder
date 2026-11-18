@@ -9,6 +9,7 @@
 //
 
 import UIKit
+import CYLTableViewPlaceHolder
 
 final class CYLPlaybackControlsView: UIView {
 
@@ -106,6 +107,45 @@ final class CYLPlaybackControlsView: UIView {
     @objc private func loopChanged() {
         loops = loopSwitch.isOn
         onLoop?(loops)
+    }
+
+    /// Puts the controls above a table's rows as its header, driving the refresh controls' icons through the core
+    /// (`CYLRefreshIconView.animationSpeed`, `loopsWhilePlaying`, `replayAnimation()`). Play all shows the refreshing
+    /// icon from its first frame: an idle header refreshes again, then both icons replay (as the Android example).
+    /// Call `sizeTableHeader(of:)` from `viewDidLayoutSubviews`.
+    func installAsRefreshIconControls(in tableView: UITableView) {
+        let icons: (UITableView?) -> [CYLRefreshIconView] = { table in
+            [table?.cyl_header, table?.cyl_footer].compactMap { ($0 as? CYLRefreshIconAnimating)?.iconView }
+        }
+        onPlayAll = { [weak tableView] in
+            if let header = tableView?.cyl_header, !header.isRefreshing { header.beginRefreshing() }
+            icons(tableView).forEach { $0.replayAnimation() }
+        }
+        onSpeed = { [weak tableView] speed in icons(tableView).forEach { $0.animationSpeed = speed } }
+        onLoop = { [weak tableView] loops in icons(tableView).forEach { $0.loopsWhilePlaying = loops } }
+        let container = UIView()
+        translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(self)
+        NSLayoutConstraint.activate([
+            topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
+            bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -12),
+            leadingAnchor.constraint(equalTo: container.layoutMarginsGuide.leadingAnchor),
+            trailingAnchor.constraint(equalTo: container.layoutMarginsGuide.trailingAnchor),
+        ])
+        tableView.tableHeaderView = container
+    }
+
+    /// Sizes a table header to the table's width (not known in viewDidLoad); a header narrower than the table would
+    /// leave the loop switch outside it, where it gets no touches.
+    static func sizeTableHeader(of tableView: UITableView) {
+        guard let header = tableView.tableHeaderView else { return }
+        let width = tableView.bounds.width
+        let height = header.systemLayoutSizeFitting(CGSize(width: width, height: 0),
+                                                    withHorizontalFittingPriority: .required,
+                                                    verticalFittingPriority: .fittingSizeLevel).height
+        guard header.frame.width != width || header.frame.height != height else { return }
+        header.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        tableView.tableHeaderView = header
     }
 
     @objc private func speedChanged() {

@@ -6,7 +6,7 @@ use_frameworks!
 target 'ExampleScenarios' do
   # Core shows static images only; the animation subspecs add the engine and one animator each
   # (CYLAnimatedItem/<Type>), so this demo plays the bundled Lottie, PAG, Rive and GIF animations.
-  pod 'CYLTableViewPlaceHolder', :path => '../..', :subspecs => ['Core', 'LottieSwift', 'PAG', 'Rive', 'GIF']
+  pod 'CYLTableViewPlaceHolder', :path => '../..', :subspecs => ['Core', 'LottieSwift', 'PAG', 'Rive', 'SVGA', 'GIF']
   # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
   # The tab bar with the plus button and the language rebuild (`cyl_setRootViewControllerProvider`), as in
   # CYLTabBarController's Objective-C demo. Always its newest commit on any branch (instructions.md, "Depending on

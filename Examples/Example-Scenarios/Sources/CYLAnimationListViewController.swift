@@ -27,6 +27,7 @@ final class CYLAnimationListViewController: UITableViewController {
         ("json", "Lottie", "CYLTableViewPlaceHolder/LottieSwift"),
         ("pag", "PAG", "CYLTableViewPlaceHolder/PAG"),
         ("riv", "Rive", "CYLTableViewPlaceHolder/Rive"),
+        ("svga", "SVGA", "CYLTableViewPlaceHolder/SVGA"),
         ("gif", "GIF", "CYLTableViewPlaceHolder/GIF"),
     ]
 
@@ -49,7 +50,7 @@ final class CYLAnimationListViewController: UITableViewController {
         // example bundle, not in the core bundle (CYLScenarioExample.bundle/Animations/NOTICE.animations).
         if let folder = CYLScenarioExampleResourceURL("Animations") {
             let files = ((try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? [])
-                .filter { ["json", "pag", "riv", "gif"].contains(($0 as NSString).pathExtension) }
+                .filter { ["json", "pag", "riv", "svga", "gif"].contains(($0 as NSString).pathExtension) }
                 .sorted()
             if !files.isEmpty {
                 sections.append(Section(title: "CYLScenarioExample.bundle/Animations", fileNames: files, folder: folder))
