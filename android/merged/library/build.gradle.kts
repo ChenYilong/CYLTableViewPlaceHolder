@@ -1,6 +1,6 @@
 // android/merged/library: CYLRefresh for Android, the only refresh kernel. The kernel (CYLRefreshLayout) and the
-// headers, footers and drawables came from SmartRefreshLayout (https://github.com/scwang90/SmartRefreshLayout,
-// Apache-2.0, scwang90; LICENSE.SmartRefreshLayout.txt), translated to Kotlin and folded in under com.cyl.refresh.*
+// headers, footers and drawables are third-party code (Apache-2.0, LICENSE.refresh-third-party.txt), translated to
+// Kotlin and folded in under com.cyl.refresh.*
 // (docs/Android-Port.md). It also brings the placeholder views.
 plugins {
     alias(libs.plugins.android.library)
@@ -43,7 +43,7 @@ dependencies {
     api(project(":placeholder"))
     // AndroidX for the refresh kernel and the iOS-named refresh API.
     implementation(libs.androidx.appcompat)
-    // MaterialHeader reads Material's progress colors when the app has Material (as SmartRefreshLayout did).
+    // MaterialHeader reads Material's progress colors when the app has Material (as CYLRefreshLayout did).
     compileOnly(libs.material)
     // Only for cyl_totalDataCount: an app that uses it has RecyclerView itself.
     compileOnly(libs.androidx.recyclerview)

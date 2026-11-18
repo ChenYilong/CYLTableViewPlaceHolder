@@ -35,35 +35,35 @@ import com.cyl.refresh.cyl_header
 import com.cyl.refresh.layout.CYLRefreshLayout
 
 /*
- * The demo of SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, SmartRefreshDemo, MIT; by SCWANG),
- * translated from the iOS example's Swift (`CYLSmartRefreshDemoViewController.swift`) to Kotlin on this project's
+ * The demo of CYLRefresh styles (the third-party refresh package (LICENSE.refresh-third-party.txt), CYLRefreshStylesDemo, MIT; by SCWANG),
+ * translated from the iOS example's Swift (`CYLRefreshStylesDemoViewController.swift`) to Kotlin on this project's
  * Android API. The theme colors the page's own bar, as iOS colors the navigation bar.
  */
 
 /**
- * The styles of the "SmartRefreshControl styles" section: title and method (iOS `styles`).
+ * The styles of the "CYLRefresh styles styles" section: title and method (iOS `styles`).
  */
-internal val smartStyles = listOf(
-    R.string.merged_smart_delivery to "smartDelivery", R.string.merged_smart_classics to "smartClassics",
-    R.string.merged_smart_drop_box to "smartDropBox", R.string.merged_smart_phoenix to "smartPhoenix",
-    R.string.merged_smart_taurus to "smartTaurus", R.string.merged_smart_bezier_radar to "smartBezierRadar",
-    R.string.merged_smart_bezier_circle to "smartBezierCircle", R.string.merged_smart_store_house to "smartStoreHouse",
-    R.string.merged_smart_wave_swipe to "smartWaveSwipe", R.string.merged_smart_original to "smartOriginal",
-    R.string.merged_smart_material to "smartMaterial", R.string.merged_smart_game_hit_block to "smartGameHitBlock",
-    R.string.merged_smart_game_battle_city to "smartGameBattleCity", R.string.merged_smart_fly to "smartFly",
-    R.string.merged_smart_classics_footer to "smartClassicsFooter",
-    R.string.merged_smart_bezier_radar_footer to "smartBezierRadarFooter",
-    R.string.merged_smart_material_footer to "smartMaterialFooter",
-    R.string.merged_smart_delivery_footer to "smartDeliveryFooter",
-    R.string.merged_smart_phoenix_footer to "smartPhoenixFooter", R.string.merged_smart_taurus_footer to "smartTaurusFooter",
-    R.string.merged_smart_rive_bow to "smartRiveBow", R.string.merged_smart_rive_bubbles to "smartRiveBubbles",
-    R.string.merged_smart_rive_halloween to "smartRiveHalloween", R.string.merged_smart_rive_skating to "smartRiveSkating",
-    R.string.merged_smart_rive_space to "smartRiveSpace", R.string.merged_smart_rive_squats to "smartRiveSquats",
-    R.string.merged_smart_rive_space_footer to "smartRiveSpaceFooter",
-    R.string.merged_smart_svga_bow to "smartSvgaBow", R.string.merged_smart_svga_bubbles to "smartSvgaBubbles",
-    R.string.merged_smart_svga_halloween to "smartSvgaHalloween", R.string.merged_smart_svga_skating to "smartSvgaSkating",
-    R.string.merged_smart_svga_space to "smartSvgaSpace", R.string.merged_smart_svga_squats to "smartSvgaSquats",
-    R.string.merged_smart_svga_space_footer to "smartSvgaSpaceFooter",
+internal val refreshStyles = listOf(
+    R.string.merged_style_delivery to "styleDelivery", R.string.merged_style_classics to "styleClassics",
+    R.string.merged_style_drop_box to "styleDropBox", R.string.merged_style_phoenix to "stylePhoenix",
+    R.string.merged_style_taurus to "styleTaurus", R.string.merged_style_bezier_radar to "styleBezierRadar",
+    R.string.merged_style_bezier_circle to "styleBezierCircle", R.string.merged_style_store_house to "styleStoreHouse",
+    R.string.merged_style_wave_swipe to "styleWaveSwipe", R.string.merged_style_original to "styleOriginal",
+    R.string.merged_style_material to "styleMaterial", R.string.merged_style_game_hit_block to "styleGameHitBlock",
+    R.string.merged_style_game_battle_city to "styleGameBattleCity", R.string.merged_style_fly to "styleFly",
+    R.string.merged_style_classics_footer to "styleClassicsFooter",
+    R.string.merged_style_bezier_radar_footer to "styleBezierRadarFooter",
+    R.string.merged_style_material_footer to "styleMaterialFooter",
+    R.string.merged_style_delivery_footer to "styleDeliveryFooter",
+    R.string.merged_style_phoenix_footer to "stylePhoenixFooter", R.string.merged_style_taurus_footer to "styleTaurusFooter",
+    R.string.merged_style_rive_bow to "styleRiveBow", R.string.merged_style_rive_bubbles to "styleRiveBubbles",
+    R.string.merged_style_rive_halloween to "styleRiveHalloween", R.string.merged_style_rive_skating to "styleRiveSkating",
+    R.string.merged_style_rive_space to "styleRiveSpace", R.string.merged_style_rive_squats to "styleRiveSquats",
+    R.string.merged_style_rive_space_footer to "styleRiveSpaceFooter",
+    R.string.merged_style_svga_bow to "styleSvgaBow", R.string.merged_style_svga_bubbles to "styleSvgaBubbles",
+    R.string.merged_style_svga_halloween to "styleSvgaHalloween", R.string.merged_style_svga_skating to "styleSvgaSkating",
+    R.string.merged_style_svga_space to "styleSvgaSpace", R.string.merged_style_svga_squats to "styleSvgaSquats",
+    R.string.merged_style_svga_space_footer to "styleSvgaSpaceFooter",
 )
 
 /**
@@ -72,12 +72,12 @@ internal val smartStyles = listOf(
  * which stretches like the Rive header; SVGA has no state machine, so the pull scrubs the scene and refreshing loops it.
  */
 private fun svgaScene(method: String): String? = when (method) {
-    "smartSvgaBow" -> "Bow"
-    "smartSvgaBubbles" -> "Bubbles"
-    "smartSvgaHalloween" -> "Halloween"
-    "smartSvgaSkating" -> "Skating"
-    "smartSvgaSpace", "smartSvgaSpaceFooter" -> "Space"
-    "smartSvgaSquats" -> "Squats"
+    "styleSvgaBow" -> "Bow"
+    "styleSvgaBubbles" -> "Bubbles"
+    "styleSvgaHalloween" -> "Halloween"
+    "styleSvgaSkating" -> "Skating"
+    "styleSvgaSpace", "styleSvgaSpaceFooter" -> "Space"
+    "styleSvgaSquats" -> "Squats"
     else -> null
 }?.let { "asset:Animations/CYLScenarioExampleRefresh$it.svga" }
 
@@ -88,12 +88,12 @@ private fun svgaScene(method: String): String? = when (method) {
  */
 private fun riveStyle(method: String): CYLRefreshRiveStyle? {
     val file = when (method) {
-        "smartRiveBow" -> "Bow"
-        "smartRiveBubbles" -> "Bubbles"
-        "smartRiveHalloween" -> "Halloween"
-        "smartRiveSkating" -> "Skating"
-        "smartRiveSpace", "smartRiveSpaceFooter" -> "Space"
-        "smartRiveSquats" -> "Squats"
+        "styleRiveBow" -> "Bow"
+        "styleRiveBubbles" -> "Bubbles"
+        "styleRiveHalloween" -> "Halloween"
+        "styleRiveSkating" -> "Skating"
+        "styleRiveSpace", "styleRiveSpaceFooter" -> "Space"
+        "styleRiveSquats" -> "Squats"
         else -> return null
     }
     return CYLRefreshRiveStyle("asset:Animations/CYLScenarioExampleRefresh$file.riv").apply {
@@ -145,42 +145,42 @@ private fun riveStyle(method: String): CYLRefreshRiveStyle? {
 }
 
 /**
- * One style's page (iOS `CYLSmartRefreshDemoViewController`): theme rows and test data, with the style's header (it
+ * One style's page (iOS `CYLRefreshStylesDemoViewController`): theme rows and test data, with the style's header (it
  * refreshes on open) or footer (it doubles the rows, then has no more data past 16).
  */
-internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): View {
+internal fun RefreshExamplesPage.refreshStylePage(title: String, method: String): View {
     val context = requireContext()
     val layout = CYLRefreshLayout(context)
-    val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; tag = "smartRefreshDemo" }
+    val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; tag = "refreshStylesDemo" }
     val bar = bar(context, title)
     var testRows = 8
 
     fun header(): CYLRefreshHeader = when (method) {
-        "smartDelivery" -> CYLRefreshDeliveryHeader(context)
-        "smartDropBox" -> CYLRefreshDropBoxHeader(context)
-        "smartPhoenix" -> CYLRefreshPhoenixHeader(context)
-        "smartTaurus" -> CYLRefreshTaurusHeader(context)
-        "smartBezierRadar" -> CYLRefreshBezierRadarHeader(context)
-        "smartBezierCircle" -> CYLRefreshBezierCircleHeader(context)
-        "smartStoreHouse" -> CYLRefreshStoreHouseHeader(context)
-        "smartWaveSwipe" -> CYLRefreshWaveSwipeHeader(context)
-        "smartOriginal" -> CYLRefreshOriginalHeader(context)
-        "smartMaterial" -> CYLRefreshMaterialHeader(context)
-        "smartGameHitBlock" -> CYLRefreshGameHitBlockHeader(context)
-        "smartGameBattleCity" -> CYLRefreshGameBattleCityHeader(context)
-        "smartFly" -> CYLRefreshFlyHeader(context)
+        "styleDelivery" -> CYLRefreshDeliveryHeader(context)
+        "styleDropBox" -> CYLRefreshDropBoxHeader(context)
+        "stylePhoenix" -> CYLRefreshPhoenixHeader(context)
+        "styleTaurus" -> CYLRefreshTaurusHeader(context)
+        "styleBezierRadar" -> CYLRefreshBezierRadarHeader(context)
+        "styleBezierCircle" -> CYLRefreshBezierCircleHeader(context)
+        "styleStoreHouse" -> CYLRefreshStoreHouseHeader(context)
+        "styleWaveSwipe" -> CYLRefreshWaveSwipeHeader(context)
+        "styleOriginal" -> CYLRefreshOriginalHeader(context)
+        "styleMaterial" -> CYLRefreshMaterialHeader(context)
+        "styleGameHitBlock" -> CYLRefreshGameHitBlockHeader(context)
+        "styleGameBattleCity" -> CYLRefreshGameBattleCityHeader(context)
+        "styleFly" -> CYLRefreshFlyHeader(context)
         else -> svgaScene(method)?.let { SVGASceneHeader(context, it) } ?: riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) } ?: CYLRefreshNormalHeader(context)
     }
 
     fun footer(): CYLRefreshFooter? = when (method) {
-        "smartClassicsFooter" -> CYLRefreshBackNormalFooter(context)
-        "smartBezierRadarFooter" -> CYLRefreshBezierRadarFooter(context)
-        "smartMaterialFooter" -> CYLRefreshMaterialFooter(context)
-        "smartDeliveryFooter" -> CYLRefreshDeliveryFooter(context)
-        "smartPhoenixFooter" -> CYLRefreshPhoenixFooter(context)
-        "smartTaurusFooter" -> CYLRefreshTaurusFooter(context)
-        "smartSvgaSpaceFooter" -> CYLRefreshDrawnFooter(SVGASceneHeader(context, svgaScene(method)!!))
-        "smartRiveSpaceFooter" -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) }?.let { CYLRefreshDrawnFooter(it) }
+        "styleClassicsFooter" -> CYLRefreshBackNormalFooter(context)
+        "styleBezierRadarFooter" -> CYLRefreshBezierRadarFooter(context)
+        "styleMaterialFooter" -> CYLRefreshMaterialFooter(context)
+        "styleDeliveryFooter" -> CYLRefreshDeliveryFooter(context)
+        "stylePhoenixFooter" -> CYLRefreshPhoenixFooter(context)
+        "styleTaurusFooter" -> CYLRefreshTaurusFooter(context)
+        "styleSvgaSpaceFooter" -> CYLRefreshDrawnFooter(SVGASceneHeader(context, svgaScene(method)!!))
+        "styleRiveSpaceFooter" -> riveStyle(method)?.let { CYLRefreshRiveHeader.create(context, it) }?.let { CYLRefreshDrawnFooter(it) }
         else -> null
     }
 
@@ -188,7 +188,7 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
     fun fillTestRows() {
         testColumn.removeAllViews()
         for (i in 1..testRows) {
-            testColumn.addView(row(context, context.t(R.string.merged_smart_test_data_row, i), null, "smart-row-$i") {})
+            testColumn.addView(row(context, context.t(R.string.merged_style_test_data_row, i), null, "style-row-$i") {})
         }
     }
 
@@ -202,22 +202,22 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
         if (loadMore == null) control.beginRefreshing()
     }
 
-    if (method == "smartDelivery") {
+    if (method == "styleDelivery") {
         // UIDeliveryController: the header over a plain list of 20 rows.
         testRows = 20
         fillTestRows()
         column.addView(testColumn)
     } else {
-        val restore = context.t(R.string.merged_smart_tap_to_restore)
-        val change = context.t(R.string.merged_smart_tap_to_switch)
-        column.addView(row(context, context.t(R.string.merged_smart_theme_default), restore, "smart-theme-default") { applyTheme(0, 0) })
+        val restore = context.t(R.string.merged_style_tap_to_restore)
+        val change = context.t(R.string.merged_style_tap_to_switch)
+        column.addView(row(context, context.t(R.string.merged_style_theme_default), restore, "style-theme-default") { applyTheme(0, 0) })
         listOf(
-            R.string.merged_smart_theme_orange to 0xFFFF9500.toInt(), R.string.merged_smart_theme_red to 0xFFFF3B30.toInt(),
-            R.string.merged_smart_theme_green to 0xFF34C759.toInt(), R.string.merged_smart_theme_blue to 0xFF007AFF.toInt(),
+            R.string.merged_style_theme_orange to 0xFFFF9500.toInt(), R.string.merged_style_theme_red to 0xFFFF3B30.toInt(),
+            R.string.merged_style_theme_green to 0xFF34C759.toInt(), R.string.merged_style_theme_blue to 0xFF007AFF.toInt(),
         ).forEach { (name, color) ->
-            column.addView(row(context, context.t(name), change, "smart-theme-$color") { applyTheme(color, Color.WHITE) })
+            column.addView(row(context, context.t(name), change, "style-theme-$color") { applyTheme(color, Color.WHITE) })
         }
-        column.addView(header(context, context.t(R.string.merged_smart_test_data)))
+        column.addView(header(context, context.t(R.string.merged_style_test_data)))
         fillTestRows()
         column.addView(testColumn)
     }
@@ -241,8 +241,8 @@ internal fun RefreshExamplesPage.smartStylePage(title: String, method: String): 
     }
     // UIFlyController and UIWaveSwipeController open in the style's own blue.
     when (method) {
-        "smartFly" -> applyTheme(0xFF3399FF.toInt(), Color.WHITE)
-        "smartWaveSwipe" -> applyTheme(0xFF007AFF.toInt(), Color.WHITE)
+        "styleFly" -> applyTheme(0xFF3399FF.toInt(), Color.WHITE)
+        "styleWaveSwipe" -> applyTheme(0xFF007AFF.toInt(), Color.WHITE)
         else -> if (loadMore == null) control.beginRefreshing()
     }
     return page(context, bar, layout)

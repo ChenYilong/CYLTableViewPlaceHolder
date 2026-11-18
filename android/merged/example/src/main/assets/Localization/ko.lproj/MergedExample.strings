@@ -2,7 +2,7 @@
 "tab.placeholder" = "플레이스홀더";
 "tab.loadmore" = "더 불러오기";
 "tab.storehouse" = "StoreHouse";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "피드";
 "tab.refresh" = "새로고침";
 "tab.animations" = "애니메이션";

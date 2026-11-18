@@ -1,4 +1,4 @@
-// SmartRefreshLayout (https://github.com/scwang90/SmartRefreshLayout, Apache-2.0, Copyright scwang90) translated to
+// Third-party refresh code (Apache-2.0, see the package's LICENSE.refresh-third-party.txt) translated to
 // Kotlin, with the pull request #1095 and issue fixes of the Java copy (docs/Android-Port.md); the JVM signatures match
 // the Java version.
 package com.cyl.refresh.header

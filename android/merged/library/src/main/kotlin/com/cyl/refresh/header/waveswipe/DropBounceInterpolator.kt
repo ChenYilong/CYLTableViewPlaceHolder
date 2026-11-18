@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Translated to Kotlin from SmartRefreshLayout (https://github.com/scwang90/SmartRefreshLayout, Apache-2.0).
+// Translated to Kotlin from CYLRefreshLayout (the third-party refresh package (LICENSE.refresh-third-party.txt), Apache-2.0).
 package com.cyl.refresh.header.waveswipe
 
 import android.view.animation.Interpolator

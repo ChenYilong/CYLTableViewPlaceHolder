@@ -34,8 +34,8 @@ THIRD_PARTY = [
      'android/placeholder/LICENSE.placeholder-third-party'),
     ('android/placeholder/src/main/resources/META-INF/cylplaceholder/LICENSE.material-design-icons',
      'android/placeholder/LICENSE.material-design-icons'),
-    ('android/merged/library/src/main/resources/META-INF/cylrefresh/LICENSE.SmartRefreshLayout.txt',
-     'android/merged/library/LICENSE.SmartRefreshLayout.txt'),
+    ('android/merged/library/src/main/resources/META-INF/cylrefresh/LICENSE.refresh-third-party.txt',
+     'android/merged/library/LICENSE.refresh-third-party.txt'),
 ]
 
 # [EN] Packages of another project copied into this repository unchanged (their own LICENSE, not this project's): the

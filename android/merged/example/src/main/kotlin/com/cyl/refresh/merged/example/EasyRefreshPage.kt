@@ -103,7 +103,7 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
         layoutManager = LinearLayoutManager(context)
         this.adapter = adapter
     }
-    fun testRow(i: Int) = context.t(R.string.merged_smart_test_data_row, i)
+    fun testRow(i: Int) = context.t(R.string.merged_style_test_data_row, i)
     fun show(rows: List<String>) { adapter.rows = rows; adapter.notifyDataSetChanged() }
     fun reloadCounted() = show((1..count).map(::testRow))
     reloadTriggerMode = {

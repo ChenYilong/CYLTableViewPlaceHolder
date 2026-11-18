@@ -1,3 +1,8 @@
+Third-party notice: parts of CYLRefresh for Android (the layout kernel, headers, footers and drawables under
+com.cyl.refresh.*) are derived from SmartRefreshLayout, Copyright 2017 scwang90
+(https://github.com/scwang90/SmartRefreshLayout), licensed under the Apache License, Version 2.0 below. They were
+translated to Kotlin and modified for this project.
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

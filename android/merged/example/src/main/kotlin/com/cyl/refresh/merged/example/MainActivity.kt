@@ -66,7 +66,7 @@ object ExamplePages {
         registry.registerPageProvider({ _, _ -> ScenariosPage() }, listOf("placeholder"))
         registry.registerPageProvider({ _, _ -> AnimationsPage() }, listOf("animations"))
         // The iOS example's Flows tab; the former Load more and StoreHouse tabs are in the Refresh tab's examples and
-        // the Smart styles page.
+        // the refresh styles page.
         registry.registerPageProvider({ _, _ -> FlowsPage() }, listOf("flows"))
         registry.registerPageProvider({ _, _ -> RefreshExamplesPage() }, listOf("refresh"))
         registry.registerPageProvider({ _, _ -> FeedPage() }, listOf("feed"))

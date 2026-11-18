@@ -13,7 +13,7 @@ import com.cyl.refresh.layout.simple.SimpleComponent
 import kotlin.math.max
 
 /**
- * The SVGA twin of the Rive scene styles (SmartStylesPage, Task-Log "SVGA animations, every Rive demo copied 1:1"):
+ * The SVGA twin of the Rive scene styles (RefreshStylesPage, Task-Log "SVGA animations, every Rive demo copied 1:1"):
  * an SVGA scene of scripts/make_svga_scenes.py drawn by the core's CYLPlaceholderView (the CYLAnimatedItem engine and
  * SVGAPlayer-Android). Like CYLRefreshRiveHeader it stretches with the pull and keeps the art laid out in at least
  * [SCENE_HEIGHT] dp at the bottom; SVGA has no state machine, so the pull scrubs the scene and refreshing loops it.

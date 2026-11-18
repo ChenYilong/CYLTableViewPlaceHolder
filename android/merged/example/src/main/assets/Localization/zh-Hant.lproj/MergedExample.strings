@@ -2,7 +2,7 @@
 "tab.placeholder" = "佔位圖";
 "tab.loadmore" = "載入更多";
 "tab.storehouse" = "StoreHouse";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "動態";
 "tab.refresh" = "重新整理";
 "tab.animations" = "動畫";

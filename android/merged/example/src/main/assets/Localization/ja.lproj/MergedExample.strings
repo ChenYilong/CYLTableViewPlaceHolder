@@ -2,7 +2,7 @@
 "tab.placeholder" = "プレースホルダー";
 "tab.loadmore" = "もっと読み込む";
 "tab.storehouse" = "StoreHouse";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "フィード";
 "tab.refresh" = "リフレッシュ";
 "tab.animations" = "アニメーション";

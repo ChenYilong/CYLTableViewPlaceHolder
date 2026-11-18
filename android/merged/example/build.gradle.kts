@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.rive)
     // SVGAPlayer-Android: the engine finds it by reflection and plays the .svga files of assets/Animations.
     implementation(libs.svgaplayer)
-    // The Rive refresh styles of the SmartRefresh section.
+    // The Rive refresh styles of the CYLRefresh section.
     implementation(project(":merged-rive"))
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)

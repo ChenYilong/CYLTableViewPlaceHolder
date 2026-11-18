@@ -1,4 +1,4 @@
-// SmartRefreshLayout (https://github.com/scwang90/SmartRefreshLayout, Apache-2.0, Copyright scwang90) translated to
+// Third-party refresh code (Apache-2.0, see the package's LICENSE.refresh-third-party.txt) translated to
 // Kotlin, with the pull requests and issue fixes of the Java copy (docs/Android-Port.md). Field and method names and
 // the JVM signatures match the Java version.
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -67,8 +67,8 @@ import kotlin.math.min
 import kotlin.math.pow
 
 /**
- * The smart refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load
- * more (`SmartRefreshLayout`). Headers and footers are [RefreshHeader] / [RefreshFooter] components (or any view,
+ * The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load
+ * more (`CYLRefreshLayout`). Headers and footers are [RefreshHeader] / [RefreshFooter] components (or any view,
  * wrapped); the layout drives them through [RefreshKernel].
  */
 @SuppressLint("RestrictedApi")
@@ -928,7 +928,7 @@ open class CYLRefreshLayout @JvmOverloads constructor(
 
     /**
      * Issue #1531: a pull this layout turns into a refresh (or a load) counts as a scroll it can make, so a parent that
-     * asks (another SmartRefreshLayout around it, a ViewPager2) leaves the gesture to it: with two layouts nested, a
+     * asks (another CYLRefreshLayout around it, a ViewPager2) leaves the gesture to it: with two layouts nested, a
      * pull on the inner one refreshes the inner one only.
      */
     override fun canScrollVertically(direction: Int): Boolean {

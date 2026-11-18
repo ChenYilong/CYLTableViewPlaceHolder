@@ -87,7 +87,7 @@
         <attr name="layout_srlBackgroundColor" format="color" />
     </declare-styleable>
 
-    <style name="SmartRefreshStyle">
+    <style name="CYLRefreshStyle">
         <item name="srlPrimaryColor">@android:color/holo_blue_dark</item>
         <item name="srlAccentColor">@android:color/white</item>
         <item name="srlReboundDuration">300</item>

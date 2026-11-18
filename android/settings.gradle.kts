@@ -25,7 +25,7 @@ rootProject.name = "CYLTableViewPlaceHolderAndroid"
 // placeholder-lottie, placeholder-pag and placeholder-rive are gone.
 include(":placeholder")
 
-// android/merged (docs/Android-Port.md, step 3): CYLRefresh, the only refresh kernel (SmartRefreshLayout folded in),
+// android/merged (docs/Android-Port.md, step 3): CYLRefresh, the only refresh kernel (CYLRefreshLayout folded in),
 // with the placeholder, and one example app with CYLTabBarController's Android tab bar, one tab per library.
 include(":merged")
 project(":merged").projectDir = file("merged/library")
