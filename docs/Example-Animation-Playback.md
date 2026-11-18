@@ -76,7 +76,7 @@ TODO until each page has the three controls and a screenshot. The order follows 
 
 | Page | Platform | Status |
 | --- | --- | --- |
-| Example-Scenarios "Animations" tab (`CYLAnimationListViewController.swift`) | iOS | TODO |
+| Example-Scenarios "Animations" tab (`CYLAnimationListViewController.swift`) | iOS | Done (2026-11-19, `17fa2f2`, core fix `378259d`): detail page with `CYLPlaybackControlsView` (Play all, speed 0.25–3x in 0.25x steps with the value shown, loop switch; spinners loop by default), all through the core (`playPlaceholderAnimation`, `setPlaceholderAnimationSpeed`, `animationRepeatCount`), seven languages. Found and fixed in the core: Play all left a finished one-shot animation on its last frame; `playPlaceholderAnimation` now replays from progress 0 (unit test in `CYLPlaceholderLottiePlaybackTests`). Checked on the iPhone 18 Pro simulator (iOS 27.2): [screenshot](assets/ios-playback-controls-sheet-ios27.2-iphone18pro-sim-17fa2f2-20261119.png) |
 | Example-Scenarios Rive Home icon page (`CYLRiveRoomsViewController.swift`, house.riv, number input Rooms) | iOS | Done (2026-11-18): Rooms picker and slider (by hand), Loop switch (1.5 s, label follows); no speed control (a number input has no playback speed). Screenshot: `assets/rive-rooms-loop-ios.png` (iPhone 17 Pro simulator, iOS 27.0, Xcode 27.2) |
 | Example-Scenarios "Refresh icons" page (Feed tab) | iOS | TODO |
 | Refresh demo pages with animated headers (Lottie / Rive / PAG / GIF styles) | iOS | TODO |
