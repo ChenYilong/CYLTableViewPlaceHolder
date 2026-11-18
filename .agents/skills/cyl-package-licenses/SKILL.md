@@ -34,7 +34,7 @@ Notes:
 ## Third-party licenses
 
 - Ship every third-party license and notice with the files it covers, unchanged (`LICENSE.<project>`,
-  `NOTICE.<project>`, e.g. `Animations/NOTICE.animations`, `LICENSE.SmartRefreshLayout.txt`).
+  `NOTICE.<project>`, e.g. `Animations/NOTICE.animations`, `LICENSE.refresh-third-party.txt`).
 - Never drop or edit another author's license, copyright line or attribution.
 - A license kept at a module root that the package does not ship (Android) is copied into the package folder as well.
 

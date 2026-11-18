@@ -211,23 +211,23 @@
   on | Clear", support, the 7 configuration files incl. the plist, raw file), Animations (74 files by engine,
   detail replaying every 4 s, NOTICE), Flows (5 flows, collection, status bar with its toolbar, HUD with 16 rows,
   HUD life cycle), Feed (alternating failures, refresh icons list and demo), Refresh (65 rows: table examples
-  01–06 / 11–21 / 51–56, test page, collections, web view, languages, 27 SmartRefresh styles, 8 easy_refresh
+  01–06 / 11–21 / 51–56, test page, collections, web view, languages, 27 CYLRefresh styles, 8 easy_refresh
   samples; in the `refresh-demos` subpackage). The example's own texts come from `CYLScenarioExample.bundle`
   (7 languages, `scripts/import-example-strings.js`).
 - **Verified:** WeChat DevTools 2.02.2609250, base library 3.17.6: every tab and every page opens with no exception
-  or console error (miniprogram-automator); headers drawn mid-refresh for 8 SmartRefresh styles; `npm test` 33 / 33.
-  Screenshots: `docs/assets/wechat-miniprogram-example-tabs.png`, `docs/assets/wechat-miniprogram-smartrefresh.png`.
+  or console error (miniprogram-automator); headers drawn mid-refresh for 8 CYLRefresh styles; `npm test` 33 / 33.
+  Screenshots: `docs/assets/wechat-miniprogram-example-tabs.png`, `docs/assets/wechat-miniprogram-refresh-styles.png`.
   Not verified: a real phone (skipped at the owner's request), touch-driven behaviors that the automator cannot
   drag (pull distances, the pull-left trailer, the second floor, trigger modes).
 - **Not 1:1 (platform limits, documented in the pages):**
   - No SF Symbols: row icons are emoji / text glyphs; tab icons are original SVGs in the iOS gray and teal.
   - Navigation bar buttons sit in a row under the native bar; no large titles; modal pages are pushed pages.
   - PAG and Rive have no mini program player: such files are listed but show a note (Animations), a spinner
-    (refresh icons) or a drawn equivalent (SmartRefresh Rive styles).
+    (refresh icons) or a drawn equivalent (CYLRefresh Rive styles).
   - The web view page is a native page (a `<web-view>` cannot host the refresh header or overlays, and github.com
     is not a business domain of the AppID).
   - `cyl-refresh` cannot report the pull beyond the threshold or the footer's pull, and hides the header when a
-    refresh ends, so some SmartRefresh finish animations and drawn footers are simplified; the games are not
+    refresh ends, so some CYLRefresh finish animations and drawn footers are simplified; the games are not
     playable (the header ignores touches).
   - Unknown file types are not packaged: `.plist` and NOTICE / LICENSE texts ship as `<name>.json` holding the text
     as a JSON string (`CYLPlaceholderConfiguration.readConfigurationFile` reads `.plist.json`).
@@ -242,7 +242,7 @@
 - **The iOS example:** a CYLTabBarController with five tabs, Scenarios, Animations, Flows, Feed and Refresh, and a
   teal plus button at index 3 that presents "Publish" (Uploading, then Success with Done); a 🌐 language switch that
   rebuilds the interface; the Scenarios tab lists the README cases, the business cases and the configuration files;
-  HUD and status bar pages; the Refresh tab is a menu of CYLRefresh demos (table, collection, web view, SmartRefresh
+  HUD and status bar pages; the Refresh tab is a menu of CYLRefresh demos (table, collection, web view, CYLRefresh
   and EasyRefresh styles, refresh icons, DIY controls).
 - **Plan:** the tab bar with the plus button from CYLTabBarController's mini program package
   (`wechat-miniprogram-cyltabbar`, its `cyl-tab-bar` custom tab bar), one page per iOS screen, the example's own

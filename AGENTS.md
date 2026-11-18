@@ -150,7 +150,7 @@ the integrated `CYLRefresh` component, and an example application. Read
   (`CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset`, tappable through `touchableAreaOutsets`); a flat
   plus button needs the task to ask for it.
 - CYLRefresh is the only refresh library and the only refresh kernel on every platform: no example or core module
-  depends on MJRefresh, SVPullToRefresh, SmartRefreshLayout, android-Ultra-Pull-To-Refresh or easy_refresh, and every
+  depends on MJRefresh, SVPullToRefresh, CYLRefreshLayout, android-Ultra-Pull-To-Refresh or easy_refresh, and every
   example refresh call goes through CYLRefresh; a missing feature is added to CYLRefresh. See "One refresh library:
   CYLRefresh" in `instructions.md`.
 - `CYLPlaceholderHUD` is the only HUD kernel on every platform, its code in one folder (`CYLPlaceholderHUD/` on iOS,

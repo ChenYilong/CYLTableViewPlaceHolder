@@ -93,7 +93,7 @@ Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS 
 ## Translating or porting another project: its open pull requests and issues
 
 When a document in this repository links to another project's GitHub repository as the source of a translation, a
-port or a similar task (for example SmartRefreshControl or flutter_easy_refresh in `docs/Refresh-Library-Parity.md`,
+port or a similar task (for example CYLRefresh styles or flutter_easy_refresh in `docs/Refresh-Library-Parity.md`,
 or the Kotlin translations planned in `docs/Android-Port.md`), the source is not only its default branch:
 
 1. **Open pull requests.** Read the source's open pull requests and bring their changes in, before or after the
@@ -115,10 +115,10 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
    translation is into another language, so an issue's fix can only be written in the translated code, an issue whose
    fix is in an open pull request that was reviewed and taken for the translation counts as handled for the 60 needed
    to start; it must still be implemented and tested in the translation before the score reaches 100.
-   For SmartRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
-   copy of the Java source in `android/SmartRefreshLayout/java/` gets the taken pull requests and issue fixes, each
+   For CYLRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
+   copy of the Java source in `android/CYLRefreshLayout/java/` gets the taken pull requests and issue fixes, each
    with a test, until the issues reach 60; then translation starts and the remaining issues are fixed in Kotlin.
-   Since 2026-11-17 (the owner's decision: "make sure CYLRefresh is the only kernel") the Kotlin SmartRefreshLayout is
+   Since 2026-11-17 (the owner's decision: "make sure CYLRefresh is the only kernel") the Kotlin CYLRefreshLayout is
    folded into CYLRefresh (`android/merged/library`, `com.cyl.refresh.*`), and the Java copy, SVPullToRefresh and
    android-Ultra-Pull-To-Refresh are deleted; a later fix goes into CYLRefresh. See docs/Android-Port.md.
 6. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
@@ -482,7 +482,7 @@ Program, React Native, Flutter):
 `CYLRefresh` is the only refresh library and the only refresh kernel on every platform:
 
 - No example and no core module depends on another refresh library: no MJRefresh, SVPullToRefresh,
-  SmartRefreshLayout / SmartRefreshControl, android-Ultra-Pull-To-Refresh or easy_refresh package in a Podfile,
+  CYLRefreshLayout / CYLRefresh styles, android-Ultra-Pull-To-Refresh or easy_refresh package in a Podfile,
   Gradle file, package.json or oh-package. Every refresh call in an example goes through CYLRefresh
   (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls).
 - A feature such a library has and CYLRefresh lacks is added to CYLRefresh (a new control, or a CYLRefresh API with a

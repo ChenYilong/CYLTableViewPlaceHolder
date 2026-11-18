@@ -48,7 +48,7 @@ android-merged-refresh-gif-header.png
 android-merged-refresh-i18n.png
 android-merged-refresh-list.png
 android-merged-refresh-rive-styles.png
-android-merged-refresh-smart.png
+android-merged-refresh-styles.png
 android-merged-refresh-table.png
 android-merged-refresh-trailer.png
 android-merged-refresh-web.png
@@ -100,7 +100,7 @@ harmonyos-state-switch-bug.png
 harmonyos-state-switch.png
 harmonyos-tab-list-ends.png
 ios-rive-rooms-numberinput-no-warning-iphone17pro-ios26.4-6a9ede85.png
-ios-smartrefresh-phoenix-footer-iphone17pro-ios26.4-1d070cb.png
+ios-cylrefresh-styles-phoenix-footer-iphone17pro-ios26.4-1d070cb.png
 issue-title-center-android.png
 issue-title-center-harmonyos-fixed.jpeg
 issue-title-center-harmonyos.jpg
@@ -111,7 +111,7 @@ plus-button-bulged-ios.png
 react-native-tabbar-playback.png
 refresh-icon-rive-transparent-ios.png
 rive-rooms-loop-ios.png
-smartrefresh-styles-ios.png
+cylrefresh-styles-ios.png
 wechat-miniprogram-animated-item-tour.png
 wechat-miniprogram-animation-bugs.png
 wechat-miniprogram-animation.png
@@ -130,7 +130,7 @@ wechat-miniprogram-playback-not-playing.png
 wechat-miniprogram-refresh-cupertino.png
 wechat-miniprogram-refresh-finish.png
 wechat-miniprogram-refresh-icon-controls.jpg
-wechat-miniprogram-smartrefresh.png
+wechat-miniprogram-refresh-styles.png
 wechat-miniprogram-speed-bug.jpg
 wechat-miniprogram-state-switch.png
 wechat-miniprogram-status.png

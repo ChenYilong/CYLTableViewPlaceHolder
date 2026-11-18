@@ -7,7 +7,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** not started (recorded 2026-11-12, while branch `feat/smartrefresh-parity` was in progress; when work
+- **Status:** not started (recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -25,7 +25,7 @@ Objective-C to Swift, and its score after every commit.
 - **Context:**
   - The core is Objective-C today: `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/` (placeholder view, stack view,
     scenarios, HUD, status view, localization, UIKit categories), `CYLTableViewPlaceHolder/CYLRefresh/` (the MJRefresh
-    fork, now with the SmartRefreshControl API from `a30557c`) and `CYLTableViewPlaceHolder/CYLPlaceholderAnimation/`
+    fork, now with the CYLRefresh styles API from `a30557c`) and `CYLTableViewPlaceHolder/CYLPlaceholderAnimation/`
     (optional Lottie, GIF, PAG and Rive backends). The examples are already Swift.
   - Existing Swift rules: `instructions.md` ("Swift examples and a Swift-friendly core"), `docs/Swift-Guide.md` (how
     the Objective-C API reads in Swift), and the public API comment rule (Swift sources use three-line `/** */`

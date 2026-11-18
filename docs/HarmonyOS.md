@@ -62,7 +62,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | Q20 | 刷新图标页的控制条 / Controls on the refresh icon page | `CYLRefreshIconViewModel` 新增 `animationSpeed`、`loopsWhilePlaying`、`replayAnimation()`；`RefreshIconDemoPage.ets` 用它们控制头部和尾部图标 / `CYLRefreshIconViewModel` gains `animationSpeed`, `loopsWhilePlaying`, `replayAnimation()`; `RefreshIconDemoPage.ets` drives the header and footer icons with them | 完成 / Done (2026-11-16, compiled, 1 test) |
 | Q21 | 动画图片刷新控件逐帧 / Frame-by-frame "animated images" controls | 与 iOS 一样把刷新 GIF 切成帧（示例 `common/RefreshFrames.ets`，对应 iOS `CYLRefreshFrames.images(ofBundledGIF:)`），下拉时显示对应帧；库的帧图片类型接受 PixelMap（`CYLRefreshImage`）；时长 0 按 UIImageView 的每帧 1/30 秒 / the refresh GIFs are cut into frames as on iOS, the pull shows the matching frame; the library's frame type takes PixelMap; duration 0 is 1/30 s per frame like UIImageView | 完成 / Done (2026-11-16, compiled, 1 test) |
 | Q22 | 网页示例隐藏状态栏 / Web example hides the status bar | `RefreshWebPage.ets` 显示时隐藏状态栏、离开时恢复（iOS prefersStatusBarHidden） / hides the status bar while shown and restores it on leaving | 完成 / Done (2026-11-16, compiled) |
-| Q23 | 主题色标题文字 / Theme-colored title text | `RefreshSmartPage.ets` 主题下标题文字用主题的 accent 色（iOS titleTextAttributes），默认恢复 / the title text takes the theme's accent color, Default restores it | 完成 / Done (2026-11-16, compiled) |
+| Q23 | 主题色标题文字 / Theme-colored title text | `RefreshStylesPage.ets` 主题下标题文字用主题的 accent 色（iOS titleTextAttributes），默认恢复 / the title text takes the theme's accent color, Default restores it | 完成 / Done (2026-11-16, compiled) |
 | Q24 | 二进制 plist 配置 / Binary property list configurations | iOS 能读二进制 plist：`CYLPlaceholderConfiguration.readFile` 读字节，`bplist00` 由 `CYLBinaryPropertyListParse` 解析（新增 `parsePropertyListData` / `parseData`） / iOS reads binary plists: `readFile` reads bytes and `bplist00` files go through `CYLBinaryPropertyListParse` (new `parsePropertyListData` / `parseData`) | 完成 / Done (2026-11-16, 5 tests) |
 | Q25 | 测试页模态弹出 / Test page presented modally | 偶数行像 iOS present 一样从底部弹出、无返回按钮，“关闭”返回 / even rows come up from the bottom without a back button like an iOS present; Close returns | 完成 / Done (2026-11-16, compiled) |
 | Q26 | 编译告警 / Compiler warnings | 干净构建（删除 build 与 .hvigor）没有可修复的 ArkTS 告警：已去掉废弃的 `getContext`（新增 `CYLPlaceholderAnimationSetDefaultContext`）、未处理的异常、未声明的权限（entry 声明 GET_NETWORK_INFO、VIBRATE）、可空的 @ObjectLink；剩下的唯一一类是 wrapBuilder 把动画视图传给 @ObjectLink（5 处，同一模式，改为 V2 状态管理才能消除） / a clean build has no fixable ArkTS warnings: deprecated `getContext` (new `CYLPlaceholderAnimationSetDefaultContext`), unhandled exceptions, undeclared permissions and a nullable @ObjectLink are gone; the one kind left is wrapBuilder handing animation views to @ObjectLink (5 sites, one pattern, which only the V2 state model removes) | 完成 / Done (2026-11-16) |
@@ -91,7 +91,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | E6 | Done ✅ (2026-11-17, emulator) | GIF animation detail (CYLPlaceholderNoFavorites.gif) shows no image, only its name, at 1x and 2.75x. The diagnostics run showed the decode works (52969 bytes, 73 frames, 180 x 180). | The GIF view reaches its drawing component through a builder parameter, which does not keep the `@ObjectLink` subscribed on the device (the compiler warns about this pattern, Q26), so the frames decoded later never drew. The component now listens to the view (`cylChangeListener`, notified after every change of frames, state and iterations) and re-renders from its own `@State` (`CYLGIFPlaceholderItemAnimator.ets`). Emulator: CYLPlaceholderNoFavorites.gif plays and rests on its star ([screenshot](assets/harmonyos-gif-fallbacks.png)). |
 | E7 | 完成 / Done (2026-11-16, emulator, Mac session): reproduced twice (the emulator itself crashed with a minidump after its GPU thread stalled whenever a .riv detail was shown). Fix: `cylRiveRendererType()` picks `RendererType.Canvas` when `deviceInfo.productModel` is "emulator" (real devices keep the default GPU renderer `RendererType.Rive`), used by the placeholder Rive view and the Rive refresh header. After the fix CYLPlaceholderLoading.riv draws and the emulator and app stay up; whether it moves is not confirmed (two shots 6 s apart look the same). `docs/assets/harmonyos-placeholder-rive-canvas-emulator.png` | Opening a Rive (`.riv`) animation detail page was followed by the emulator itself crashing. | The Rive view was handed a custom `RiveFileController` (`CYLRiveSpeedController`, added for Q7) that the bytecode @ohos/rive library did not create; it is no longer passed, and Rive reports its speed as unsupported (`CYLRivePlaceholderItemAnimator.ets`). Q7 stays N/A. |
 | E8 | Done ✅ (2026-11-17, emulator) | Japanese: the Animations tab title is cut ("アニメーショ"). | Tab titles keep one line and shrink to fit (`minFontSize(7)` … `maxFontSize(10)`) instead of being cut (`entry/src/main/ets/pages/Index.ets`). Emulator in Japanese: every tab title keeps one line (アニメーション, リフレッシュ) ([screenshot](assets/harmonyos-ja-ru-layout.png)). |
-| E9 | Done ✅ (2026-11-17, emulator) | Pushed refresh pages: the last item is cut off at the bottom edge ("已经全部加载完毕" on example14, `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`). | Pushed pages have no tab bar, so their lists reach the gesture bar. `PAGE_LIST_END_INSET` (28 vp) is added after the lists of the refresh table, collection, icon demo, easy, i18n and Smart pages and the HUD life cycle page (`common/Ui.ets`). Emulator: the last rows and the footer 已经全部加载完毕 of example14 sit fully above the bottom edge ([screenshot](assets/harmonyos-refresh-example14-end.jpeg)). |
+| E9 | Done ✅ (2026-11-17, emulator) | Pushed refresh pages: the last item is cut off at the bottom edge ("已经全部加载完毕" on example14, `docs/assets/harmonyos-placeholder-refresh-animations-mate70pro-api21.png`). | Pushed pages have no tab bar, so their lists reach the gesture bar. `PAGE_LIST_END_INSET` (28 vp) is added after the lists of the refresh table, collection, icon demo, easy, i18n and the library pages and the HUD life cycle page (`common/Ui.ets`). Emulator: the last rows and the footer 已经全部加载完毕 of example14 sit fully above the bottom edge ([screenshot](assets/harmonyos-refresh-example14-end.jpeg)). |
 | E10 | Done ✅ (2026-11-17, emulator) | Pushed pages: a long title wraps onto two lines (found by code review after CYLTabBarController's issue #34 on the emulator; long translations, configuration file names and scenario names are at risk). | Every pushed page with a string title uses `NavTitle` (`common/Ui.ets`): one line, shrinking to 14 fp, then an ellipsis, as a UINavigationBar title (17 pages). Emulator in Russian: pushed page titles keep one line ([screenshot](assets/harmonyos-ja-ru-layout.png)). Note: the Russian Flows tab title (Сценарии взаимодействия) fits only at the smallest font size and is hard to read; a shorter Russian tab title would read better. |
 | E11 | Done ✅ (2026-11-17, emulator) | Navigation bar buttons and the hand-drawn segmented controls (flow state switch, status bar modes): a long translation wraps and is clipped in the 28 vp segments (code review). | One line, shrinking to fit (`maxLines(1)` with `minFontSize` / `maxFontSize`) in `BarButton`, `FlowDetailPage.ets` and `StatusBarPage.ets`. Emulator in Russian: the state switch segments (Пусто / Ошибка / Офлайн / Данные) each keep one line ([screenshot](assets/harmonyos-ja-ru-layout.png)). |
 | E12 | Done ✅ (2026-11-17, emulator) | A GIF that ImageKit cannot decode drew nothing of the GIF: the view reported a failure and the placeholder showed only its generic fallback image (found while fixing E6; see the TODO "GIF decode fallback" below). | The GIF view now falls back in three steps: every frame (ImageAnimator), else the first frame as a still image, else ArkUI's own Image decoder on a cache copy; only when all three fail is the failure reported (`CYLGIFPlaceholderItemAnimator.ets`, `CYLGIFDrawMode`). Emulator, first ([before](assets/harmonyos-gif-fallbacks-bug.png)): the truncated GIF rested on a fragment and the broken one drew nothing. ImageKit decodes the cut-off second frame of a file with no trailer, so the view drops that fragment (`CYLGIFHasTrailer`) and shows the first frame still (`FirstFrame`, which is now always an Image); the System mode reports a failure when ArkUI's Image cannot decode the copy either (`cyl_systemDecodeFailed`). [After](assets/harmonyos-gif-fallbacks.png): NoFavorites plays, Truncated shows a still star, Broken shows the placeholder image. Unit test `gifTrailerMarksAFileCutShort`; 88 / 88. |
@@ -246,7 +246,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 
 - **Rive crash audit (2026-11-16, Mac session, after another project reported Rive crashes from many Rive views):**
   no page creates one Rive view per list row. Rive appears once per page: the animation detail, a placeholder
-  animation, or one refresh header / footer (example54, the smartRive styles). On the emulator the Rive detail page
+  animation, or one refresh header / footer (example54, the styleRive styles). On the emulator the Rive detail page
   holds exactly 1 XComponent, still 1 after 5 s, with 3 AceXcomponent creation lines in hilog, so the view is not
   rebuilt. The emulator crash itself is fixed by the Canvas renderer on the emulator (E7, `1902852`).
   CYLTabBarController's HarmonyOS port has no Rive dependency (only `@ohos/lottie`).
@@ -327,9 +327,9 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
   Still TODO (Refresh tab: see the refresh-tab status below): 24
   refresh-icon rows (Lottie, PAG, Rive icons and the per-state / file / attributes / configuration ways): the library's
   refresh icon view plays only GIF and frame images so far.
-- **Status 2026-11-16 (score 53 → 70, branch `harmony/refresh-drawn`):** SmartRefreshControl drawn headers and
+- **Status 2026-11-16 (score 53 → 70, branch `harmony/refresh-drawn`):** CYLRefresh styles drawn headers and
   footers ported to the HAR (`cylplaceholder/src/main/ets/refresh/drawn`, 178 rows): `CYLRefreshDrawnHeaderModel`
-  (SmartRefreshControl hooks and status order: releasing before refreshing, finishing until retracted) and
+  (CYLRefresh styles hooks and status order: releasing before refreshing, finishing until retracted) and
   `CYLRefreshDrawnFooterModel` hosting a driven style; BezierCircle, BezierRadar, Material, Original, WaveSwipe,
   Delivery, DropBox, Phoenix, Taurus, StoreHouse, Fly (always open: adds its height to the top inset) and the games
   HitBlock and BattleCity (playable: drag further while refreshing, as on iOS, or touch the header), plus the
@@ -358,7 +358,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
   Lottie / PAG. Verified by `scripts/build.sh test` (HAP and HAR: BUILD SUCCESSFUL; 56 host unit tests, 5 new: icon
   engines, playback policy, RTL flips, image bundle, Rive options: 0 failures); the UI is verified by compiling only
   (no emulator). After merging the Refresh tab (e17d8f4): examples 52, 53, 54 (Rive options), 56 and collection
-  example32 play through the icon view. Still TODO: the 7 Rive SmartRefresh styles (they need a port of iOS
+  example32 play through the icon view. Still TODO: the 7 Rive CYLRefresh styles (they need a port of iOS
   `CYLRefreshRiveHeader` / `CYLRefreshRiveStyle`, a drawn header hosting a RiveAnimationView driven by inputs).
 - **Status 2026-11-16 (score 90 → 95, branch `harmony/refresh-tab`):** the Refresh tab's demos as a 1:1 copy of the
   iOS example (53 of 65 rows): each menu row opens its page in `entry/src/main/ets/pages/`: `RefreshTablePage.ets`
@@ -367,7 +367,7 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
   `RefreshTestPage.ets` (CYLRefreshTestViewController), `RefreshCollectionPage.ets` (grid example31 / example32,
   pinned header, horizontal pager with CYLRefreshNormalTrailer), `RefreshWebPage.ets` (ArkWeb, header over the web
   page), `RefreshI18nPage.ets` (languageCode, i18nFilename + i18nBundle from the example's CYLRefreshCustom keys),
-  `RefreshSmartPage.ets` (the drawn SmartRefreshControl headers and footers with the theme rows and bar colors),
+  `RefreshStylesPage.ets` (the drawn CYLRefresh styles headers and footers with the theme rows and bar colors),
   `RefreshEasyPage.ets` (Cupertino, second floor, trigger modes, start header, CYLRefreshPaging, listener header,
   chat, Behind user profile); the temporary `RefreshDemo.ets` is gone; the entry asks for `ohos.permission.INTERNET`
   (web demo). The three texts `CYLScenarioMJAutoBack01/02` and `CYLScenarioMJSectionI18n` were already imported in all
@@ -381,16 +381,16 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
   (title text stays default); the auto footer's DIY item reports its visible ratio itself. Still TODO: example52, 53,
   54, 56 and the collection example32 (Lottie / PAG / Rive refresh icons: the library's icon view plays only GIF and
   frames; the pages already set the iOS icons and will play them once it does; example54's artboard / animation
-  options have no CYLRefreshIconAttributes field yet) and the 7 Rive SmartRefresh styles (no Rive runtime on
+  options have no CYLRefreshIconAttributes field yet) and the 7 Rive CYLRefresh styles (no Rive runtime on
   HarmonyOS; they fall back to CYLRefreshNormalHeader as iOS does without the file).
-- **Status 2026-11-16 (score 99 → 100, branch `harmony/rive-header`):** the 7 Rive SmartRefresh styles: iOS
+- **Status 2026-11-16 (score 99 → 100, branch `harmony/rive-header`):** the 7 Rive CYLRefresh styles: iOS
   `CYLRefreshRiveStyle` / `CYLRefreshRiveHeader` ported as `CYLRefreshRiveStyle` / `CYLRefreshRiveHeaderModel`
   (`refresh/drawn/CYLRefreshRiveHeader.ets`, a stretching drawn header: pull input with minimum / start /
   refreshing value, release / finish / restart triggers, loading boolean, loading number timer, pull animation
   scrubbed by time, trigger → loading animations, idle loop, reset on idle) driving a `CYLRefreshRiveDriver`, which
   `CYLRefreshRiveView` implements on @ohos/rive's RiveAnimationView (bottom-aligned in at least `minimumHeight`);
   `CYLRefreshComponentView` shows it for a Rive header and for a drawn footer hosting one
-  (`CYLRefreshDrawnFooterModel.initWithStyle`). `RefreshSmartPage.ets` builds smartRiveBow / Bubbles / Halloween /
+  (`CYLRefreshDrawnFooterModel.initWithStyle`). `RefreshStylesPage.ets` builds styleRiveBow / Bubbles / Halloween /
   Skating / Space / Squats / SpaceFooter with the iOS names per file. Library gaps: `CYLRefreshContainer`
   `headerBuilder` / `footerBuilder` and `CYLRefreshFooterView.footerBuilder` (WrappedBuilder given the control model,
   `CYLRefreshCustomControlView`) draw custom controls inside the header / footer area, so examples 06 / 20 / 21 no
@@ -1851,33 +1851,33 @@ CYLAnimatedItem (the animation component) migration status, score and TODOs: [An
 | Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
-| SmartRefreshControl styles · Delivery (CYLSmartRefreshDemoViewController - smartDelivery) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Classics (CYLSmartRefreshDemoViewController - smartClassics) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · DropBox (CYLSmartRefreshDemoViewController - smartDropBox) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Phoenix (CYLSmartRefreshDemoViewController - smartPhoenix) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Taurus (CYLSmartRefreshDemoViewController - smartTaurus) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · BezierRadar (CYLSmartRefreshDemoViewController - smartBezierRadar) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · BezierCircle (CYLSmartRefreshDemoViewController - smartBezierCircle) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · StoreHouse (CYLSmartRefreshDemoViewController - smartStoreHouse) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · WaveSwipe (CYLSmartRefreshDemoViewController - smartWaveSwipe) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Original (CYLSmartRefreshDemoViewController - smartOriginal) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Material (CYLSmartRefreshDemoViewController - smartMaterial) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · GameHitBlock (CYLSmartRefreshDemoViewController - smartGameHitBlock) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · GameBattleCity (CYLSmartRefreshDemoViewController - smartGameBattleCity) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Fly (CYLSmartRefreshDemoViewController - smartFly) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Classics footer (CYLSmartRefreshDemoViewController - smartClassicsFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · BezierRadar footer (CYLSmartRefreshDemoViewController - smartBezierRadarFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Material footer (CYLSmartRefreshDemoViewController - smartMaterialFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Delivery footer (CYLSmartRefreshDemoViewController - smartDeliveryFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Phoenix footer (CYLSmartRefreshDemoViewController - smartPhoenixFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Taurus footer (CYLSmartRefreshDemoViewController - smartTaurusFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Bow (CYLSmartRefreshDemoViewController - smartRiveBow) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Bubbles (CYLSmartRefreshDemoViewController - smartRiveBubbles) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Halloween (CYLSmartRefreshDemoViewController - smartRiveHalloween) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Skating (CYLSmartRefreshDemoViewController - smartRiveSkating) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Space (CYLSmartRefreshDemoViewController - smartRiveSpace) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Squats (CYLSmartRefreshDemoViewController - smartRiveSquats) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
-| SmartRefreshControl styles · Rive · Space footer (CYLSmartRefreshDemoViewController - smartRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshSmartPage.ets` |
+| CYLRefresh styles styles · Delivery (CYLRefreshStylesDemoViewController - styleDelivery) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Classics (CYLRefreshStylesDemoViewController - styleClassics) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · DropBox (CYLRefreshStylesDemoViewController - styleDropBox) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Phoenix (CYLRefreshStylesDemoViewController - stylePhoenix) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Taurus (CYLRefreshStylesDemoViewController - styleTaurus) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · BezierRadar (CYLRefreshStylesDemoViewController - styleBezierRadar) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · BezierCircle (CYLRefreshStylesDemoViewController - styleBezierCircle) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · StoreHouse (CYLRefreshStylesDemoViewController - styleStoreHouse) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · WaveSwipe (CYLRefreshStylesDemoViewController - styleWaveSwipe) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Original (CYLRefreshStylesDemoViewController - styleOriginal) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Material (CYLRefreshStylesDemoViewController - styleMaterial) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · GameHitBlock (CYLRefreshStylesDemoViewController - styleGameHitBlock) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · GameBattleCity (CYLRefreshStylesDemoViewController - styleGameBattleCity) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Fly (CYLRefreshStylesDemoViewController - styleFly) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Classics footer (CYLRefreshStylesDemoViewController - styleClassicsFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · BezierRadar footer (CYLRefreshStylesDemoViewController - styleBezierRadarFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Material footer (CYLRefreshStylesDemoViewController - styleMaterialFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Delivery footer (CYLRefreshStylesDemoViewController - styleDeliveryFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Phoenix footer (CYLRefreshStylesDemoViewController - stylePhoenixFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Taurus footer (CYLRefreshStylesDemoViewController - styleTaurusFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Bow (CYLRefreshStylesDemoViewController - styleRiveBow) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Bubbles (CYLRefreshStylesDemoViewController - styleRiveBubbles) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Halloween (CYLRefreshStylesDemoViewController - styleRiveHalloween) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Skating (CYLRefreshStylesDemoViewController - styleRiveSkating) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Space (CYLRefreshStylesDemoViewController - styleRiveSpace) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Squats (CYLRefreshStylesDemoViewController - styleRiveSquats) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles styles · Rive · Space footer (CYLRefreshStylesDemoViewController - styleRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
 | flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
