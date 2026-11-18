@@ -371,13 +371,14 @@ class RefreshExamplesPage : StackPage() {
             }
             "example56" -> {
                 // A different engine for each state: Lottie while idle, GIF when released, PAG while refreshing; the
-                // footer loads with Rive.
+                // footer rests on SVGA and loads with Rive.
                 layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
                     setIconAnimationFilePath(animation("CYLRefreshPullCircle.json"), 28f, 28f, CYLRefreshState.Idle)
                     setIconAnimationFilePath(animation("CYLRefreshArrows.gif"), 30f, 30f, CYLRefreshState.Pulling)
                     setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 32f, 32f, CYLRefreshState.Refreshing)
                 }
                 layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("tab_list.svga"), 30f, 30f, CYLRefreshState.Idle)
                     setIconAnimationFilePath(animation("CYLRefreshIcon.riv"), 30f, 30f, CYLRefreshState.Refreshing)
                 }
                 layout.cyl_header?.beginRefreshing()
