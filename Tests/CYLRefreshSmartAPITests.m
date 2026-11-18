@@ -291,10 +291,19 @@
     [header addPhaseObserver:^(CYLRefreshComponent *c, CYLRefreshPhase old, CYLRefreshPhase phase) { [phases addObject:@(phase)]; }];
     header.secondaryOpenedBlock = ^{ opened = YES; };
     header.secondaryClosedBlock = ^{ closed = YES; };
+    // [EN] Poll for the end of each animation instead of a fixed 0.7 s: a busy CI runner stretched the close (4eaed77:
+    //      still SecondaryClosing after 0.7 s while the test took 35 s).
+    // [CN] 轮询动画结束，而不是固定等待 0.7 秒：CI 机器繁忙时关闭动画变慢（4eaed77：0.7 秒后仍为 SecondaryClosing，测试用时 35 秒）。
+    void (^waitUntil)(BOOL (^)(void)) = ^(BOOL (^condition)(void)) {
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:15];
+        while (!condition() && deadline.timeIntervalSinceNow > 0) {
+            [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+        }
+    };
     [header openSecondary];
     XCTAssertTrue(header.isSecondaryOpen);
     XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryOpen);
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    waitUntil(^BOOL { return opened && fabs(scrollView.adjustedContentInset.top - (top + 300)) <= 0.5; });
     XCTAssertTrue(opened);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top + 300, 0.5, @"the content moved down by the floor");
     XCTAssertNil(header.layer.mask, @"not auto-hidden while the floor is open");
@@ -302,8 +311,8 @@
 
     [header closeSecondary];
     XCTAssertEqual(header.phase, CYLRefreshPhaseSecondaryClosing);
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
-    XCTAssertTrue(closed);
+    waitUntil(^BOOL { return closed && [phases.lastObject isEqual:@(CYLRefreshPhaseIdle)]; });
+    XCTAssertTrue(closed, @"closed (phases %@)", phases);
     XCTAssertFalse(header.isSecondaryOpen);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.top, top, 0.5, @"the inset is back");
     XCTAssertLessThan([scrollView.subviews indexOfObject:floor], [scrollView.subviews indexOfObject:header], @"closed: behind the header again");
