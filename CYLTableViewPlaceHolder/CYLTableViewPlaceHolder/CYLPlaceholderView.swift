@@ -2093,8 +2093,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         return cyl_reportedContentSize(maxWidth: 0)
     }
 
-    /// [EN] The content with its margins within `maxWidth`; 0 uses `preferredMaxLayoutWidth`, else the screen width.
-    /// [CN] `maxWidth` 内带边距的内容尺寸；0 时使用 `preferredMaxLayoutWidth`，否则使用屏幕宽度。
+    /**
+     * [EN] The content with its margins within `maxWidth`; 0 uses `preferredMaxLayoutWidth`, else the screen width.
+     * [CN] `maxWidth` 内带边距的内容尺寸；0 时使用 `preferredMaxLayoutWidth`，否则使用屏幕宽度。
+     */
     private func cyl_reportedContentSize(maxWidth limit: CGFloat) -> CGSize {
         let maxWidth = limit > 0 ? limit : (preferredMaxLayoutWidth > 0 ? preferredMaxLayoutWidth : UIScreen.main.bounds.width)
         let margin = max(0, contentMargin)
