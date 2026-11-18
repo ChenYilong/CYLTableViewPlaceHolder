@@ -63,13 +63,14 @@ IOS_TEXT = None
 
 
 def ios_headers_text():
-    """Every public iOS header, joined, to check a name a KDoc cites."""
+    """Every public iOS header and Swift source, joined, to check a name a KDoc cites (a class moved to Swift, such as
+    CYLPlaceholderView since 97b0591, keeps its Objective-C names in `@objc(...)`)."""
     global IOS_TEXT
     if IOS_TEXT is None:
         parts = []
         for directory, _, files in os.walk(os.path.join(ROOT, 'CYLTableViewPlaceHolder')):
             for name in files:
-                if name.endswith('.h'):
+                if name.endswith(('.h', '.swift')):
                     parts.append(open(os.path.join(directory, name), encoding='utf-8', errors='ignore').read())
         IOS_TEXT = '\n'.join(parts)
     return IOS_TEXT

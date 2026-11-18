@@ -1120,56 +1120,56 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | 0 loops until stopped; N plays N times. Return NO when unsupported (the animation then plays once). | `CYLPlaceholderAnimationPlayer.setAnimationRepeatCount` |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | Replace all keypath color overrides. Return NO when unsupported. | `CYLPlaceholderAnimationPlayer.setAnimationColors` |
 | `CYLPlaceholderAnimationFactory` | Makes a player for an animation file; null when it cannot. | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` |
-| `CYLPlaceholderView` | A reusable, localized empty-state view: the packaged animated icon + title view of this library. | `com.cyl.placeholder.CYLPlaceholderView` — fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied |
-| `CYLPlaceholderView` `imageView` | The icon's image view (the base class's `imageView`). | `CYLPlaceholderView.imageView` |
-| `CYLPlaceholderView` `textLabel` | The title label: the base class's `titleLabel`. | `CYLPlaceholderView.textLabel` |
-| `CYLPlaceholderView` `badgeValue` | A nil value hides the badge; an empty string displays a dot. | `CYLPlaceholderView.badgeValue` |
-| `CYLPlaceholderView` `badgeLabel` | Badge appearance can be customized directly. VoiceOver can read it separately when the placeholder is not itself an accessibility element. | `CYLPlaceholderView.badgeLabel` |
-| `CYLPlaceholderView` `badgeCenterOffset` | Offset from the top-right of the image (or title when there is no image). | `CYLPlaceholderView.badgeCenterOffset` |
-| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | Number badges use a maximum of 99; nonpositive numbers hide the badge. Text badges require a nonempty string. Returns NO on invalid input. | `CYLPlaceholderView.showBadgeWithStyle(style, value)` |
-| `CYLPlaceholderView` `selected` | Enables the configured selected image, title, font and colors. Defaults to NO. | `CYLPlaceholderView.selectedState` — named selectedState: View already has isSelected |
-| `CYLPlaceholderView` `selectionIndicatorImage` | Drawn behind the selected item. Resizable images fill the item; others are centered. | `CYLPlaceholderView.selectionIndicatorImage` |
+| `CYLPlaceholderView` | An icon (or an animation) above a text, with an optional badge and tap. | `com.cyl.placeholder.CYLPlaceholderView` — fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied |
+| `CYLPlaceholderView` `imageView` | The icon: the inherited `iconView`. | `CYLPlaceholderView.imageView` |
+| `CYLPlaceholderView` `textLabel` | The text: the inherited `titleView`; set it through `title`. | `CYLPlaceholderView.textLabel` |
+| `CYLPlaceholderView` `badgeValue` | The badge's value: null for none, "" for a dot, else the text. | `CYLPlaceholderView.badgeValue` |
+| `CYLPlaceholderView` `badgeLabel` | The badge's label. | `CYLPlaceholderView.badgeLabel` |
+| `CYLPlaceholderView` `badgeCenterOffset` | The badge's offset from the icon's top right corner, in dp, x and y. | `CYLPlaceholderView.badgeCenterOffset` |
+| `CYLPlaceholderView` `-showBadgeWithStyle:value:` | Shows a badge of [style] with [value]. | `CYLPlaceholderView.showBadgeWithStyle(style, value)` |
+| `CYLPlaceholderView` `selected` | Whether the placeholder is selected; it also selects the view, which shows `selectedImage`. | `CYLPlaceholderView.selectedState` — named selectedState: View already has isSelected |
+| `CYLPlaceholderView` `selectionIndicatorImage` | The image drawn behind a selected placeholder. | `CYLPlaceholderView.selectionIndicatorImage` |
 | `CYLPlaceholderView` `selectionIndicatorTintColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.selectionIndicatorTintColor` |
-| `CYLPlaceholderView` `defaultTitleColor` | Appearance layers, as in CYLFlatDesignTabBarButton: explicit item attributes win, then these values (directly or through the UIAppearance proxy, applied live), then the built-in values. | `CYLPlaceholderView.defaultTitleColor` |
+| `CYLPlaceholderView` `defaultTitleColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultTitleColor` |
 | `CYLPlaceholderView` `defaultIconColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultIconColor` |
 | `CYLPlaceholderView` `defaultBackgroundColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultBackgroundColor` |
 | `CYLPlaceholderView` `defaultTitleFont` | The text size in sp. | `CYLPlaceholderView.defaultTitleFont (sp)` |
-| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | Title offset used when the item has no `CYLPlaceholderItemTitlePositionAdjustment` of its own. | `CYLPlaceholderView.defaultTitlePositionAdjustment` |
-| `CYLPlaceholderView` `defaultSelectedTitleColor` | Default appearance values for selected state. Can be customized via UIAppearance proxy. | `CYLPlaceholderView.defaultSelectedTitleColor` |
+| `CYLPlaceholderView` `defaultTitlePositionAdjustment` | The text's offset in dp, x and y. | `CYLPlaceholderView.defaultTitlePositionAdjustment` |
+| `CYLPlaceholderView` `defaultSelectedTitleColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultSelectedTitleColor` |
 | `CYLPlaceholderView` `defaultSelectedIconColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultSelectedIconColor` |
 | `CYLPlaceholderView` `defaultSelectedBackgroundColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultSelectedBackgroundColor` |
 | `CYLPlaceholderView` `defaultSelectedTitleFont` | The text size in sp when selected, or 0 for [defaultTitleFont]. | `CYLPlaceholderView.defaultSelectedTitleFont (sp)` |
-| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | Default selection indicator appearance. | `CYLPlaceholderView.defaultSelectionIndicatorImage` |
+| `CYLPlaceholderView` `defaultSelectionIndicatorImage` | The image drawn behind a selected placeholder by default. | `CYLPlaceholderView.defaultSelectionIndicatorImage` |
 | `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultSelectionIndicatorTintColor` |
-| `CYLPlaceholderView` `itemAttributes` | Original item attributes. An animation file (GIF, Lottie, PAG, Rive, SVGA…) plays when the view enters a window, through CYLTabBarController's animation engine and the animator of its type: add the matching subspec of... | `CYLPlaceholderView.itemAttributes` — the title, image and animation file keys |
-| `CYLPlaceholderView` `reportsContentSize` | NO (the default): the view fills the frame it is given and centers its content, as before. YES: it also reports its content size as `intrinsicContentSize`, so a UIStackView or Auto Layout can size it. | `CYLPlaceholderView.reportsContentSize` — kept; the view always measures to its content on Android |
-| `CYLPlaceholderView` `preferredMaxLayoutWidth` | The widest the content may be when `reportsContentSize` is YES, padding included; 0 uses the screen width. Long titles wrap within it. | `CYLPlaceholderView.preferredMaxLayoutWidth` |
-| `CYLPlaceholderView` `contentMargin` | The space kept between each side of the view and its content: 16 points by default, as a full-screen placeholder needs. | `CYLPlaceholderView.contentMargin` |
-| `CYLPlaceholderTapHandler` | Runs when the placeholder is tapped. Called on the main thread. | `com.cyl.placeholder.CYLPlaceholderTapHandler` |
-| `CYLPlaceholderView` `tapHandler` | The placeholder's own tap event: runs only while `tapInteractionEnabled` is YES. Setting it makes the view respond to taps (with the highlight of `tapHighlightStyle` and the button trait for VoiceOver); nil removes it. | `CYLPlaceholderView.tapHandler` |
-| `CYLPlaceholderView` `tapInteractionEnabled` | Whether taps are handled. NO: the handler does not run and the pressed highlight does not show, and touches pass through as before. Defaults to YES, or to `CYLPlaceholderItemInteractionEnabled`. | `CYLPlaceholderView.tapInteractionEnabled` |
-| `CYLPlaceholderView` `tapHighlightStyle` | The pressed look; defaults to Dim, or to `CYLPlaceholderItemTapHighlightStyle`. | `CYLPlaceholderView.tapHighlightStyle` |
-| `CYLPlaceholderView` `tapHighlighted` | YES while a finger is down on a tappable placeholder. | `CYLPlaceholderView.tapHighlighted` |
-| `CYLPlaceholderView` `tapInteractive` | YES when a tap would run the handler: interaction is enabled and a handler is set. | `CYLPlaceholderView.tapInteractive` |
-| `CYLPlaceholderView` `-performTap` | Runs the handler as a tap would; NO when the placeholder is not tap-interactive. | `CYLPlaceholderView.performTap()` |
-| `CYLPlaceholderView` `animationRepeatCount` | How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times. Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. | `CYLPlaceholderView.animationRepeatCount` |
-| `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | Registers or removes a factory for a file extension, without a leading dot, as an animator of CYLTabBarController's shared `CYLTabBarItemAnimatorRegistry` that wins over the built-in animators for that extension. | `CYLPlaceholderView.registerAnimationFactory(factory, extension)` |
-| `CYLPlaceholderView` `-setAnimationFile:` | Shows the animation file at `path` (a full path, or the name of a bundled animation) instead of the icon, at the icon's animation size (`CYLPlaceholderItemAnimationSize`, else 64 x 64 points), through the animator reg... | `CYLPlaceholderView.setAnimationFile(path)` |
-| `CYLPlaceholderView` `-playPlaceholderAnimation` | Replay the configured animation when visible (`playAnimation` of the base class does the same). Honors Reduce Motion. | `CYLPlaceholderView.playPlaceholderAnimation()` |
-| `CYLPlaceholderView` `-stopPlaceholderAnimation` | Stop playback and show the resting frame until explicitly replayed (also `stopAnimation`). | `CYLPlaceholderView.stopPlaceholderAnimation()` |
-| `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | Stop and show the last frame when supported (also `showAnimationLastFrame`). | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` |
-| `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | Stops and seeks when supported. Returns NO for invalid values or unsupported players. | `CYLPlaceholderView.setPlaceholderAnimationProgress(progress)` |
-| `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | Sets a positive finite playback speed when supported. Returns NO otherwise. | `CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)` |
-| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | Creates a FlatDesign-style item from CYLTabBarController-compatible item keys. Images may be UIImage objects or names in imageBundle (nil uses the placeholder bundle). | `CYLPlaceholderView.fromItemAttributes(context, attributes, error)` — no image bundle: names are drawable resources |
-| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | Reads one item dictionary from a local property list. | `CYLPlaceholderView.fromItemContentsOfURL(context, path, error)` — reads a .json file or "asset:name"; a property list is an iOS format; no image bundle |
-| `CYLPlaceholderView` `-initWithStyle:message:` | Uses independently selectable bundled art and localized text. | `CYLPlaceholderView(context, style, message)` |
-| `CYLPlaceholderView` `-initWithStyle:text:` | A custom string replaces the localized message; nil hides the label. | `CYLPlaceholderView(context, style, text)` |
-| `CYLPlaceholderView` `-initWithImage:text:` | Custom image and text; nil hides the corresponding content. | `CYLPlaceholderView(context, image, text)` |
-| `CYLPlaceholderView` `+imageForStyle:` | Images are loaded from the library's offline bundle. Invalid styles return nil and log an error. | `CYLPlaceholderView.imageForStyle(context, style)` |
-| `CYLPlaceholderView` `+imageNameForStyle:` | The corresponding bundle image name, without the scale suffix or extension. | `CYLPlaceholderView.imageNameForStyle(style)` |
-| `CYLPlaceholderView` `+localizedTextForMessage:` | Uses the current app language, with an English fallback. | `CYLPlaceholderView.localizedTextForMessage(context, message)` |
-| `CYLPlaceholderView` `+bundledAnimationFileNames` | File names of the ready-made animations in the library's resource bundle (`Animations/`), sorted: Lottie (.json), PAG (.pag), Rive (.riv) and GIF (.gif) files named after their scenario, such as "CYLPlaceholderLoading... | n/a (iOS only: Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)) |
-| `CYLPlaceholderView` `+pathForBundledAnimation:` | Full path of a bundled animation, for CYLPlaceholderItemAnimationFilePath and the engine-specific file path keys; nil when there is no such file. Playback needs the matching animation subspec (the engine). | n/a (iOS only: Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)) |
+| `CYLPlaceholderView` `itemAttributes` | The description the view was made from, with the iOS keys. | `CYLPlaceholderView.itemAttributes` — the title, image and animation file keys |
+| `CYLPlaceholderView` `reportsContentSize` | Whether the view measures to its content rather than filling its parent. | `CYLPlaceholderView.reportsContentSize` — kept; the view always measures to its content on Android |
+| `CYLPlaceholderView` `preferredMaxLayoutWidth` | The widest the text lays out, in px, or 0 for no limit. | `CYLPlaceholderView.preferredMaxLayoutWidth` |
+| `CYLPlaceholderView` `contentMargin` | The margin around the content, in dp: the view's padding. | `CYLPlaceholderView.contentMargin` |
+| `CYLPlaceholderTapHandler` | Runs when the placeholder is tapped. Called on the main thread. Swift sees the property as `((CYLPlaceholderView) -> Void)?`. | `com.cyl.placeholder.CYLPlaceholderTapHandler` |
+| `CYLPlaceholderView` `tapHandler` | Called when the placeholder is tapped; setting it makes the placeholder a button. | `CYLPlaceholderView.tapHandler` |
+| `CYLPlaceholderView` `tapInteractionEnabled` | Whether taps reach [tapHandler]. | `CYLPlaceholderView.tapInteractionEnabled` |
+| `CYLPlaceholderView` `tapHighlightStyle` | How the placeholder answers a finger. | `CYLPlaceholderView.tapHighlightStyle` |
+| `CYLPlaceholderView` `tapHighlighted` | Whether a finger is down on it. | `CYLPlaceholderView.tapHighlighted` |
+| `CYLPlaceholderView` `tapInteractive` | Whether a tap does something now. | `CYLPlaceholderView.tapInteractive` |
+| `CYLPlaceholderView` `-performTap` | Calls [tapHandler] as a tap would; false when the placeholder is not interactive. | `CYLPlaceholderView.performTap()` |
+| `CYLPlaceholderView` `animationRepeatCount` | How often the animation repeats, 0 for ever. | `CYLPlaceholderView.animationRepeatCount` |
+| `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | Plays files ending in [extension] ("json", "pag", "riv", "gif") with [factory]: the factory becomes an animator of the CYLAnimatedItem engine, looked up before the engine's | `CYLPlaceholderView.registerAnimationFactory(factory, extension)` |
+| `CYLPlaceholderView` `-setAnimationFile:` | Shows the animation at [path] instead of the icon (the inherited `animationURL`), through the animator of the CYLAnimatedItem engine for it (an app's [registerAnimationFactory] first); false when no animator plays it (fo | `CYLPlaceholderView.setAnimationFile(path)` |
+| `CYLPlaceholderView` `-playPlaceholderAnimation` | Plays the animation or the image sequence: the inherited `playAnimation()`. | `CYLPlaceholderView.playPlaceholderAnimation()` |
+| `CYLPlaceholderView` `-stopPlaceholderAnimation` | Stops the animation or the image sequence: the inherited `stopAnimation()`. | `CYLPlaceholderView.stopPlaceholderAnimation()` |
+| `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | Shows the animation's last frame: the inherited `showAnimationLastFrame()`. | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` |
+| `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | Moves the animation, or the image sequence while it is not playing, to [progress], 0 to 1. | `CYLPlaceholderView.setPlaceholderAnimationProgress(progress)` |
+| `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | Plays the animation at [speed]: the inherited `animationSpeed`. | `CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)` |
+| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | Method of `CYLPlaceholderView`. | `CYLPlaceholderView.fromItemAttributes(context, attributes, error)` — no image bundle: names are drawable resources |
+| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | Method of `CYLPlaceholderView`. | `CYLPlaceholderView.fromItemContentsOfURL(context, path, error)` — reads a .json file or "asset:name"; a property list is an iOS format; no image bundle |
+| `CYLPlaceholderView` `-initWithStyle:message:` | An icon (or an animation) above a text, with an optional badge and tap. | `CYLPlaceholderView(context, style, message)` |
+| `CYLPlaceholderView` `-initWithStyle:text:` | An icon (or an animation) above a text, with an optional badge and tap. | `CYLPlaceholderView(context, style, text)` |
+| `CYLPlaceholderView` `-initWithImage:text:` | An icon (or an animation) above a text, with an optional badge and tap. | `CYLPlaceholderView(context, image, text)` |
+| `CYLPlaceholderView` `+imageForStyle:` | [style]'s icon; every one but Empty is meant to be tinted. | `CYLPlaceholderView.imageForStyle(context, style)` |
+| `CYLPlaceholderView` `+imageNameForStyle:` | The resource name of [style]'s icon, "CYLPlaceholderWifiOff" as on iOS. | `CYLPlaceholderView.imageNameForStyle(style)` |
+| `CYLPlaceholderView` `+localizedTextForMessage:` | [message]'s localized text. | `CYLPlaceholderView.localizedTextForMessage(context, message)` |
+| `CYLPlaceholderView` `+bundledAnimationFileNames` | Method of `CYLPlaceholderView`. | n/a (iOS only: Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)) |
+| `CYLPlaceholderView` `+pathForBundledAnimation:` | Method of `CYLPlaceholderView`. | n/a (iOS only: Android ships no animation files; an app registers a player per extension and passes the file (setAnimationFile)) |
 
 ## `CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`
 
