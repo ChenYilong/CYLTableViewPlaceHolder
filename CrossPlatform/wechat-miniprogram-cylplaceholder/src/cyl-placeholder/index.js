@@ -41,8 +41,12 @@ Component({
      * file fails, the static icon stays.
      */
     animated: { type: Boolean, value: false },
-    /** Loops the animation (applied live). */
-    loop: { type: Boolean, value: true },
+    /**
+     * Loops the animation (true) or plays it once (false), applied live. Unset (null): each bundled animation plays
+     * once and rests on its last frame, and a spinner loops (iOS componentWithBundledAnimation:, e8e9eb6, 2026-11-19;
+     * CYLPlaceholderScenarioCatalog.animationLoopsByDefault).
+     */
+    loop: { type: null, value: null },
     /** Animation speed, above 0 (applied live). */
     speed: { type: Number, value: 1 },
     /** The package path of the animations; empty uses this component's own `animations/` folder. */
@@ -123,8 +127,10 @@ Component({
           index,
           tappable: !!c.action && enabled,
           hoverClass: !enabled || highlight === 'none' ? 'none' : 'cyl-placeholder--pressed-' + highlight,
-          // repeatCount: undefined follows the `loop` property; 0 loops; N plays N times (replayed on `complete`).
+          // repeatCount: undefined follows the `loop` property (unset: once, spinners loop); 0 loops; N plays N times
+          // (replayed on `complete`).
           ownLoop: c.repeatCount === undefined ? null : c.repeatCount === 0,
+          defaultLoop: !!c.animation && CYLPlaceholderScenarioCatalog.animationLoopsByDefault(c.animation),
         }
       })
       this._plays = {}

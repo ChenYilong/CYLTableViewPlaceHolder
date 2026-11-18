@@ -165,6 +165,16 @@ export enum CYLPlaceholderComponentKind {
 /**
  * One element of a placeholder stack (iOS `CYLPlaceholderComponent`).
  */
+/**
+ * Whether a bundled animation is a spinner (loading, progress, activity…), which loops by default so a loading
+ * indicator never freezes; every other one plays once and rests on its last frame (iOS
+ * `CYLScenarioAnimationLoopsByDefault`, 2026-11-19; the examples' `loopsByDefault` list).
+ */
+export function CYLPlaceholderAnimationLoopsByDefault(fileName: string): boolean {
+  return ['Loading', 'Spinner', 'Progress', 'Throbber', 'Activity', 'Ring', 'Dots', 'Cycle', 'Arc', 'Clockwise',
+    'Uploading', 'Infinity'].some((word: string) => fileName.includes(word));
+}
+
 export class CYLPlaceholderComponent {
   readonly kind: CYLPlaceholderComponentKind;
   /** A bundled icon name ("wifi_off"), or an app's Resource / path. */
@@ -186,7 +196,7 @@ export class CYLPlaceholderComponent {
   /** false ignores taps on the component. */
   interactionEnabled: boolean = true;
   tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim;
-  /** 0 loops the animation, N plays it N times; once by default, looping for componentWithBundledAnimation (iOS). */
+  /** 0 loops the animation, N plays it N times; once by default, spinners loop (componentWithBundledAnimation, iOS). */
   animationRepeatCount: number = 1;
   /** The bundled animation of the component ("CYLPlaceholderNoInternet.json"), played in place of its image. */
   animationFileName: string | null = null;
@@ -300,15 +310,16 @@ export class CYLPlaceholderComponent {
   }
 
   /**
-   * A bundled animation (looping) with a static fallback style and an optional title: the fallback icon shows until
-   * the animation is ready, and when its engine cannot play it.
+   * A bundled animation with a static fallback style and an optional title: the fallback icon shows until the
+   * animation is ready, and when its engine cannot play it. It plays once and rests on its last frame; a spinner
+   * (CYLPlaceholderAnimationLoopsByDefault) loops (iOS e8e9eb6, 2026-11-19). Set `animationRepeatCount` to change it.
    */
   static componentWithBundledAnimation(fileName: string | null, fallbackStyle: CYLPlaceholderStyle,
     title: string | null, size: number, action: CYLPlaceholderAction | null): CYLPlaceholderComponent {
     const c = new CYLPlaceholderComponent(CYLPlaceholderComponentKind.Item, CYLPlaceholderIconNameForStyle(fallbackStyle),
       fallbackStyle !== CYLPlaceholderStyle.Empty, size > 0 ? size : CYLScenarioIconSide, title, 0, null, null, action);
     c.animationFileName = fileName;
-    c.animationRepeatCount = 0;
+    c.animationRepeatCount = fileName !== null && CYLPlaceholderAnimationLoopsByDefault(fileName) ? 0 : 1;
     return c;
   }
 
@@ -677,7 +688,7 @@ export class CYLPlaceholderScenarioCatalog {
 
   /**
    * The components of a scenario, in the effective language. The first icon carries the scenario's main animation
-   * file (`animationFileName`, looping), played in place of its static icon once loaded.
+   * file (`animationFileName`; once, a spinner loops), played in place of its static icon once loaded.
    */
   static componentsForScenario(scenario: CYLPlaceholderScenario): CYLPlaceholderComponent[] {
     const components = staticComponents(scenario);
@@ -687,7 +698,8 @@ export class CYLPlaceholderScenarioCatalog {
       if (c.kind === CYLPlaceholderComponentKind.Item && c.image !== null) {
         if (files.length > 0) {
           c.animationFileName = files[0];
-          c.animationRepeatCount = 0;
+          // Once by default, spinners loop (iOS componentWithBundledAnimation:, e8e9eb6).
+          c.animationRepeatCount = CYLPlaceholderAnimationLoopsByDefault(files[0]) ? 0 : 1;
         }
         break;
       }

@@ -139,4 +139,26 @@ class CYLPlaceholderStackViewTest {
         assertEquals("Only text", own.titleLabel.text.toString())
         assertEquals("no visible icon", android.view.View.GONE, own.imageView.visibility)
     }
+
+    /** iOS e8e9eb6: a scenario's bundled animation plays once by default, a spinner loops, a set count wins. */
+    @Test
+    fun scenarioAnimationsPlayOnceByDefaultAndSpinnersLoop() {
+        val catalog = CYLPlaceholderScenarioCatalog
+        assertEquals(1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", null))
+        assertEquals(1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderSuccess.riv", null))
+        for (spinner in listOf("CYLPlaceholderLoading.pag", "CYLRefreshMaterialSpinner.json", "CYLPlaceholderProgress.pag",
+                "CYLRefreshThrobber.gif", "CYLRefreshActivity.gif", "CYLRefreshRing.gif", "CYLRefreshDots.json",
+                "CYLRefreshCycle.json", "CYLRefreshArc.json", "CYLRefreshClockwise.json", "CYLPlaceholderUploading.gif",
+                "CYLPlaceholderLoadingInfinity.json")) {
+            assertEquals(spinner, 0, catalog.scenarioAnimationRepeatCount(spinner, null))
+        }
+        val component = CYLPlaceholderComponent.icon(0, "Title")
+        assertEquals("not set: the default", 1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", component))
+        component.animationRepeatCount = 3
+        assertEquals("set: wins", 3, catalog.scenarioAnimationRepeatCount("CYLPlaceholderLoading.pag", component))
+        component.animationRepeatCount = 0
+        assertEquals("set to loop: wins", 0, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", component))
+        // Every bundled scenario file is either a spinner or plays once.
+        assertTrue(catalog.allAnimationFileNames().any { !catalog.animationLoopsByDefault(it) })
+    }
 }

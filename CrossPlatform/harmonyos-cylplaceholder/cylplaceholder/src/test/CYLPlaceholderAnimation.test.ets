@@ -31,6 +31,7 @@ import { CYLPlaceholderViewModel, CYLScenarioIsLineIcon, CYLScenarioLineIconColo
 import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/hud/CYLPlaceholderHUD';
 import {
   CYLPlaceholderComponent,
+  CYLPlaceholderAnimationLoopsByDefault,
   CYLPlaceholderComponentKind,
   CYLPlaceholderScenario,
   CYLPlaceholderScenarioCatalog
@@ -352,11 +353,15 @@ export default function placeholderAnimationTest() {
 
     it('placeholderPlaysWithFactoriesAndFallsBack', 0, () => {
       expect(new CYLPlaceholderViewModel().animationRepeatCount).assertEqual(1);
+      // iOS e8e9eb6: bundled animations play once by default, spinners loop.
       expect(CYLPlaceholderComponent.componentWithBundledAnimation('CYLPlaceholderEmpty.json', CYLPlaceholderStyle.Empty,
+        null, 0, null).animationRepeatCount).assertEqual(1);
+      expect(CYLPlaceholderComponent.componentWithBundledAnimation('CYLPlaceholderLoading.pag', CYLPlaceholderStyle.Empty,
         null, 0, null).animationRepeatCount).assertEqual(0);
       const icons = CYLPlaceholderScenarioCatalog.componentsForScenario(CYLPlaceholderScenario.NetworkUnavailable)
         .filter((c: CYLPlaceholderComponent) => c.kind === CYLPlaceholderComponentKind.Item && c.animationFileName !== null);
-      expect(icons.length > 0 && icons[0].animationRepeatCount === 0).assertTrue();
+      expect(icons.length > 0 && icons[0].animationRepeatCount ===
+        (CYLPlaceholderAnimationLoopsByDefault(icons[0].animationFileName as string) ? 0 : 1)).assertTrue();
       expect(CYLPlaceholderViewModel.registerAnimationFactory(null, 'GIF')).assertFalse();
 
       // No engine plays the file: the image stays.

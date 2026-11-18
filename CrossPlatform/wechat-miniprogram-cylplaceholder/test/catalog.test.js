@@ -128,3 +128,14 @@ test('component files are complete and the wxml binds only known handlers', () =
     assert.match(js, new RegExp(handler + '\\('), handler)
   }
 })
+
+test('bundled animations play once by default, spinners loop (iOS e8e9eb6)', () => {
+  const { CYLPlaceholderScenarioCatalog: catalog } = require('../src/cyl-placeholder/cyl_scenario_catalog')
+  assert.strictEqual(catalog.animationLoopsByDefault('CYLPlaceholderEmpty.json'), false)
+  assert.strictEqual(catalog.animationLoopsByDefault('CYLPlaceholderSuccess.riv'), false)
+  for (const spinner of ['CYLPlaceholderLoading.pag', 'CYLRefreshMaterialSpinner.json', 'CYLPlaceholderProgress.pag',
+    'CYLRefreshThrobber.gif', 'CYLRefreshActivity.gif', 'CYLRefreshRing.gif', 'CYLRefreshDots.json', 'CYLRefreshCycle.json',
+    'CYLRefreshArc.json', 'CYLRefreshClockwise.json', 'CYLPlaceholderUploading.gif', 'CYLPlaceholderLoadingInfinity.json']) {
+    assert.strictEqual(catalog.animationLoopsByDefault(spinner), true, spinner)
+  }
+})

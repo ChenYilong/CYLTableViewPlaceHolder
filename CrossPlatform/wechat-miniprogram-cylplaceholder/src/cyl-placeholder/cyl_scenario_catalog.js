@@ -346,7 +346,19 @@ function componentsForScenario(scenario, language) {
   }
 }
 
+/**
+ * Whether a bundled animation is a spinner (loading, progress, activity…), which loops by default so a loading
+ * indicator never freezes; every other one plays once and rests on its last frame (iOS
+ * CYLScenarioAnimationLoopsByDefault, e8e9eb6, 2026-11-19; the examples' loopsByDefault list).
+ */
+const LOOPING_WORDS = ['Loading', 'Spinner', 'Progress', 'Throbber', 'Activity', 'Ring', 'Dots', 'Cycle', 'Arc',
+  'Clockwise', 'Uploading', 'Infinity']
+function animationLoopsByDefault(fileName) {
+  return LOOPING_WORDS.some((word) => String(fileName).includes(word))
+}
+
 const CYLPlaceholderScenarioCatalog = {
+  animationLoopsByDefault,
   animationFileNamesForScenario,
   lottieFileNameForScenario,
   allScenarios: ALL_SCENARIOS,

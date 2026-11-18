@@ -104,6 +104,9 @@ class CYLPlaceholderStackView internal constructor(
     // The item that plays the scenario's animation file, if one was found.
     private var animatedItem: CYLPlaceholderView? = null
 
+    // The component each item view was made from.
+    private val itemComponents = mutableMapOf<View, CYLPlaceholderComponent>()
+
     private val density = resources.displayMetrics.density
 
     private fun dp(value: Float) = (value * density).toInt()
@@ -140,6 +143,7 @@ class CYLPlaceholderStackView internal constructor(
         for (name in names) {
             if (!item.setAnimationFile("asset:$ANIMATION_FOLDER/$name")) continue
             animatedItem = item
+            item.animationRepeatCount = CYLPlaceholderScenarioCatalog.scenarioAnimationRepeatCount(name, itemComponents[item])
             item.animationView?.let { view ->
                 view.contentDescription = item.imageView.contentDescription
                 view.importantForAccessibility = item.imageView.importantForAccessibility
@@ -227,6 +231,7 @@ class CYLPlaceholderStackView internal constructor(
                 }
                 val image = if (component.image != 0) ContextCompat.getDrawable(context, component.image) else null
                 CYLPlaceholderView(context, image, component.title).apply {
+                    itemComponents[this] = component
                     contentMargin = 0f
                     tintsIcon = component.tinted
                     if (image != null) setIconSide(component.imageSide)

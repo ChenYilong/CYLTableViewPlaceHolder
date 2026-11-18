@@ -80,9 +80,19 @@ class CYLPlaceholderComponent private constructor(
 
     /**
      * How often the item's animation repeats (`animationRepeatCount`), 0 for ever: the stack view's
-     * CYLPlaceholderView plays it.
+     * CYLPlaceholderView plays it. A scenario's bundled animation plays once unless it is a spinner (iOS
+     * `componentWithBundledAnimation:`, 2026-11-19, [CYLPlaceholderScenarioCatalog.animationLoopsByDefault]); a value set
+     * here wins.
      */
     var animationRepeatCount: Int = 0
+        set(value) {
+            field = value
+            animationRepeatCountIsSet = true
+        }
+
+    /** Whether [animationRepeatCount] was set, so the scenario default does not replace it. */
+    internal var animationRepeatCountIsSet: Boolean = false
+        private set
 
     /**
      * The other iOS item keys of a component made by [componentWithAttributes], kept as given.

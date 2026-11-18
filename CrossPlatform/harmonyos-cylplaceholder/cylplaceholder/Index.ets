@@ -26,6 +26,7 @@ export {
   CYLPlaceholderActions,
   CYLPlaceholderComponent,
   CYLPlaceholderComponentKind,
+  CYLPlaceholderAnimationLoopsByDefault,
   CYLPlaceholderScenarioCatalog,
   CYLScenarioIconSide,
   CYLScenarioIllustrationSide,

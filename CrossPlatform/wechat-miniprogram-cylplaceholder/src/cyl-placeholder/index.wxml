@@ -14,7 +14,7 @@
                                bind:animationcomplete="onAnimationComplete"
                                image="{{item.image ? imageFolder + item.image + '.png' : ''}}"
                                animation-url="{{animated && item.animation ? animationFolder + item.animation : ''}}"
-                               icon-size="{{item.side}}" loop="{{item.ownLoop === null ? loop : item.ownLoop}}" speed="{{speed}}"
+                               icon-size="{{item.side}}" loop="{{item.ownLoop !== null ? item.ownLoop : (loop === null ? item.defaultLoop : loop)}}" speed="{{speed}}"
                                accessibility-label="{{item.title}}"
                                title="{{item.title}}" axis="vertical" title-color="#333333" title-font-size="{{16}}"
                                title-line-height="{{22}}" title-spacing="{{12}}" title-lines="{{0}}" icon-tint="{{item.tinted ? '#8c8c8c' : ''}}"

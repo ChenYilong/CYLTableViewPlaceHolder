@@ -455,6 +455,26 @@ object CYLPlaceholderScenarioCatalog {
     /**
      * Every animation file name of every scenario, once.
      */
+    /**
+     * Whether a bundled animation is a spinner (loading, progress, activity…), which loops by default so a loading
+     * indicator never freezes; every other one plays once and rests on its last frame (iOS
+     * `CYLScenarioAnimationLoopsByDefault`, 2026-11-19; the examples' `loopsByDefault` list).
+     */
+    fun animationLoopsByDefault(fileName: String): Boolean = LOOPING_WORDS.any { fileName.contains(it) }
+
+    private val LOOPING_WORDS = listOf("Loading", "Spinner", "Progress", "Throbber", "Activity", "Ring", "Dots", "Cycle",
+        "Arc", "Clockwise", "Uploading", "Infinity")
+
+    /**
+     * The repeat count of a scenario's bundled animation [fileName]: the one [component] sets, else 1 (once), or 0
+     * (for ever) for a spinner (iOS `componentWithBundledAnimation:`).
+     */
+    internal fun scenarioAnimationRepeatCount(fileName: String, component: CYLPlaceholderComponent?): Int = when {
+        component != null && component.animationRepeatCountIsSet -> component.animationRepeatCount
+        animationLoopsByDefault(fileName) -> 0
+        else -> 1
+    }
+
     internal fun allAnimationFileNames(): List<String> = CYLPlaceholderScenario.values().flatMap { animationFileNamesForScenario(it) }.distinct()
 
     /**
