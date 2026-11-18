@@ -37,7 +37,7 @@
 - Found: on the emulator an `AnimationDrawable` steps about every 100 ms (34 frames meant for 0.8 s take about 2.5 s); a device limit, not the core.
 - Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` to npm (the owner runs `! npm login`; the CYLTabBarController mini program session owns the package), then switch the mini program to the package.
 
-### TODO：Moonlight.pag 示例页深色背景 / TODO: a dark backdrop for Moonlight.pag on the example detail pages
+### 已完成（100 / 100）：Moonlight.pag 示例页深色背景 / Done (100 / 100): a dark backdrop for Moonlight.pag on the example detail pages
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup`.
 - User's original prompt (verbatim): "做" (answering the offer: "把 iOS 示例依赖的 CYLTabBarController 版本更新到 `396d3fca`" and "给 Moonlight.pag 的示例页加深色背景，让它在浅色模式下也能看见").
@@ -45,9 +45,9 @@
 - Context: (1) already satisfied: the Podfiles pin `4f73209c` (`e52f7b5`), and `git merge-base --is-ancestor 396d3fca 4f73209c` holds; nothing to change. (2) The file's artwork is white on a transparent layer, made for its black composition background, which PAGView does not draw on any platform (libpag has no background API; see the Q12 row of `docs/HarmonyOS.md`). Example-only change, approved by the owner ("做"), because the core cannot draw a background libpag does not expose: the detail page shows this file on a black backdrop with a white title. Platforms: iOS `CYLAnimationListViewController.swift`, HarmonyOS `AnimationDetailPage.ets`, mini program `pages/animations`; Android `AnimationsPage.kt` is being edited by the Windows session, asked to apply the same change there.
 - Android done (2026-11-19, `4b20079`, Windows session): `AnimationsPage.detail()` gives the item a black background, 16 dp padding and a white title for `CYLScenarioExampleMoonlight.pag` only; checked on emulator-5556 ([screenshot](assets/android-17-api37-x86_64-emulator-moonlight-backdrop-4b20079-20261119-sheet.png)).
 - iOS done (2026-11-19, `f38a260`): `CYLAnimationDetailViewController` (in `CYLAnimationListViewController.swift`) gives `CYLScenarioExampleMoonlight.pag` a black page and a white title (`CYLPlaceholderItemTitleColor`). Checked on the iPhone 18 Pro simulator (iOS 27.2, light mode): moon, stars and text drawn, white title ([screenshot](assets/ios-moonlight-pag-black-backdrop-sheet-ios27.2-iphone18pro-sim-f38a260-20261119.png)).
-- HarmonyOS code done (2026-11-19, `f38a260`): `AnimationDetailPage.ets` gives the item area a black background and the item a white title for that file; clean build passes. Not yet checked on the emulator: the Mac's load was 70 to 98 on 10 cores, so no emulator was started (rule: none while the load is very high).
+- HarmonyOS done (2026-11-19, `f38a260`): `AnimationDetailPage.ets` gives the item area a black background and the item a white title for that file. Checked on the Mac arm64 emulator (Mate 70 Pro, HarmonyOS 6.0.1 API 21, light mode) once the load dropped to 11: moon, stars and text drawn, white title ([screenshot](assets/harmonyos-moonlight-pag-black-backdrop-sheet-harmonyos6.0.1-api21-mate70pro-emulator-arm64-f38a260-20261119.png)). The Windows x86_64 emulator cannot check it: libpag ships arm64 only.
 - Mini program: nothing to change; it has no PAG player, and its detail page shows only the "no PAG player" note for this file.
-- Score: 90 / 100. TODO (-10): screenshot the HarmonyOS detail page on the Mac emulator once the load drops.
+- Done (2026-11-19): (1) no change needed (pin `4f73209c` includes `396d3fca`); (2) iOS `f38a260`, Android `4b20079`, HarmonyOS `f38a260`, each checked with a screenshot; mini program has no PAG player. Score: 100 / 100.
 
 ### 已完成（90 / 100）：鸿蒙 Q7 Rive 倍速 → Moonlight.pag 画面空白 → iOS 多行标题截图 / Done (90 / 100): HarmonyOS Q7 Rive speed, then Moonlight.pag blank, then the iOS multi-line title screenshot
 
