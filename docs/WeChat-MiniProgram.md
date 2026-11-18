@@ -110,7 +110,7 @@
      Network unavailable with the animation (black Lottie) and with the animation off (gray static icon), console clean
      ([screenshot](assets/wechat-miniprogram-devtools2.02.2609250-baselib3.17.6-icon-tint-5919ab7-20261118-sheet.png)).
   4. Open, upstream: move to the published npm package (or an npm git dependency) once CYLTabBarController publishes the
-     component inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves.
+     component inside its package's `src/`; until then run `npm run sync-animated-item` whenever the `Cartfile` moves. Blocked (2026-11-19, the owner's decision relayed by the CYLTabBarController mini program session): `cyl-tabbar-miniprogram` is published later from master in a normal release, once its docs have an npm release section (CYLTabBarController `docs/WeChat-Mini-Program.md`, TODO); until then the commit-pinned copy (`npm run sync-animated-item`) stays.
 - **Why not 100:** item 4 (upstream publishing, -5) waits for CYLTabBarController.
 
 ### DONE: the package entry works after DevTools' Build npm (score 100)
