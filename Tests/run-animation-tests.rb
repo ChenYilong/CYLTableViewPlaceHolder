@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'tmpdir'
+require 'fileutils'
 require 'xcodeproj'
 
 root = File.expand_path('..', __dir__)
@@ -33,8 +34,13 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     'CYLPlaceholderTrigger.riv' => ENV.fetch('RIVE_TRIGGER_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv', root)),
     'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root)),
     # rive-app/rive-ios Tests/Assets/data_binding_test.riv (MIT); scripts/animation-tests.sh downloads it.
-    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv'))
+    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv')),
+    # CYLTabBarController's tab_list.svga (Apache-2.0, Examples/Example-Scenarios/.../Animations/NOTICE.svga-samples.md).
+    'CYLPlaceholderTest.svga' => File.join(dir, 'tab_list.svga')
   }
+  # Copied out of the example's .bundle folder: a file reference inside a bundle is not copied as a resource.
+  FileUtils.cp(File.join(root, 'Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Animations/tab_list.svga'),
+               File.join(dir, 'tab_list.svga'))
   fixtures.each do |name, path|
     abort "Missing animation fixture: #{path}" unless File.file?(path)
     ref = project.main_group.new_file(path)
@@ -60,6 +66,7 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
       pod 'CYLTableViewPlaceHolder/GIF', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/#{ENV.fetch('PAG_SUBSPEC', 'PAG')}', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/Rive', :path => #{root.dump}
+      pod 'CYLTableViewPlaceHolder/SVGA', :path => #{root.dump}
     end
     post_install do |installer|
       installer.pods_project.targets.each do |target|

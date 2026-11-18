@@ -69,6 +69,38 @@ static const NSTimeInterval CYLTestTimeout = 30;
     XCTAssertFalse([pag isPlaying]);
 }
 
+- (void)testSVGASeeksLoopsAndChangesSpeed {
+    NSURL *url = [self fixture:@"tab_list" extension:@"svga"];
+    NSError *error = nil;
+    CYLPlaceholderView *placeholder = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemAnimationFilePath: url.path, CYLPlaceholderItemAnimationSize: @[@80, @80]
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(placeholder.animationView, @"the SVGA animator plays the file");
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    [window addSubview:placeholder];
+    // [EN] SVGAParser parses asynchronously. [CN] SVGAParser 异步解析。
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        return placeholder.isAnimationReady;
+    }] evaluatedWithObject:placeholder handler:nil];
+    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
+    // [EN] Seek (the pull scrubs a scene), speed (the examples' slider), loop (refreshing). [CN] 定位、倍速、循环。
+    XCTAssertTrue([placeholder setPlaceholderAnimationProgress:0.5], @"the SVGA view seeks (CYLTabBarController 28a9609d)");
+    XCTAssertTrue([placeholder setPlaceholderAnimationProgress:0]);
+    XCTAssertTrue([placeholder setPlaceholderAnimationSpeed:2], @"the SVGA view changes its rate");
+    placeholder.animationRepeatCount = 0;
+    XCTAssertTrue(placeholder.animationLoops);
+    if (!UIAccessibilityIsReduceMotionEnabled()) {
+        [placeholder playPlaceholderAnimation];
+        XCTestExpectation *elapsed = [self expectationWithDescription:@"SVGA advances at 2x"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{ [elapsed fulfill]; });
+        [self waitForExpectations:@[elapsed] timeout:15];
+        id player = [placeholder valueForKey:@"animationPlayer"];
+        XCTAssertGreaterThan([[player valueForKey:@"progress"] doubleValue], 0, @"playing moves the frame");
+    }
+    [placeholder removeFromSuperview];
+}
+
 - (void)testRiveLoadsAndCoversTheStaticImage {
     NSURL *url = [self fixture:@"icons" extension:@"riv"];
     NSError *error = nil;

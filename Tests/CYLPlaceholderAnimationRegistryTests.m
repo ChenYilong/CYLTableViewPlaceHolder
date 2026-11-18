@@ -105,14 +105,15 @@
 }
 
 - (void)testTheRegistryReportsEachEngineOfThisBuild {
-    // [EN] Several engines at once (upstream "multi-engine management"): each subspec registered itself, SVGA is not in
-    //      this build, and nothing conflicts.
-    // [CN] 同时引入多个引擎（上游“多动效引擎管理”）：每个子库已自行注册，本构建没有 SVGA，且没有冲突。
-    for (NSString *identifier in @[@"GIF", @"PAG", @"Rive", @"Lottie"]) {
+    // [EN] Several engines at once (upstream "multi-engine management"): each subspec registered itself (SVGA too since
+    //      the animation tests add the SVGA subspec, 2026-11-19), nothing is missing and nothing conflicts.
+    // [CN] 同时引入多个引擎（上游“多动效引擎管理”）：每个子库已自行注册（2026-11-19 起动画测试也引入 SVGA 子库），没有缺失，也没有冲突。
+    for (NSString *identifier in @[@"GIF", @"PAG", @"Rive", @"Lottie", @"SVGA"]) {
         XCTAssertTrue([CYLTabBarItemAnimatorRegistry isAnimatorRegisteredWithIdentifier:identifier], @"%@", identifier);
         XCTAssertTrue([[CYLTabBarItemAnimatorRegistry registeredIdentifiers] containsObject:identifier], @"%@", identifier);
     }
-    XCTAssertTrue([[CYLTabBarItemAnimatorRegistry missingKnownIdentifiers] containsObject:@"SVGA"]);
+    XCTAssertEqual([CYLTabBarItemAnimatorRegistry missingKnownIdentifiers].count, 0u,
+                   @"%@", [CYLTabBarItemAnimatorRegistry missingKnownIdentifiers]);
     XCTAssertEqual([CYLTabBarItemAnimatorRegistry conflictDescriptions].count, 0u,
                    @"%@", [CYLTabBarItemAnimatorRegistry conflictDescriptions]);
     NSString *report = [CYLTabBarItemAnimatorRegistry registrationReport];
