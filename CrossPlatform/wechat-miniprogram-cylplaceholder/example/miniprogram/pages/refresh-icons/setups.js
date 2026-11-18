@@ -41,6 +41,8 @@ const SECTIONS = [
   },
   { title: 'PAG · CYLTableViewPlaceHolder/PAG', rows: [{ id: 'CYLPlaceholderProgress', title: 'CYLPlaceholderProgress.pag', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + 'CYLPlaceholderProgress.pag', 'Progress') }] },
   { title: 'Rive · CYLTableViewPlaceHolder/Rive', rows: [{ id: 'CYLRefreshIcon', title: 'CYLRefreshIcon.riv', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + 'CYLRefreshIcon.riv', 'CYLRefreshIcon') }] },
+  // The SVGA twin of the Rive row (Task-Log "SVGA animations"): cyl-svga, the files as *.svga.bin.
+  { title: 'SVGA · CYLTableViewPlaceHolder/SVGA', rows: ['tab_activity', 'tab_list'].map((n) => ({ id: 'svga-' + n, title: n + '.svga', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + n + '.svga.bin', n) })) },
   {
     titleKey: 'CYLScenarioSectionRefreshInit',
     rows: [

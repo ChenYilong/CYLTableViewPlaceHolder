@@ -21,6 +21,10 @@ import { readRawText } from '../common/RawFile';
 
 /** Where an animation file lives: the library's rawfile, else the example's copy of the core bundle. */
 export function animationPath(file: string): string {
+  // The example's SVGA files (CYLTabBarController's samples, rawfile example/animations, NOTICE.animations).
+  if (file.endsWith('.svga')) {
+    return 'example/animations/' + file;
+  }
   if (file === 'CYLRefreshActivity.gif' || file === 'CYLRefreshDoneCircle.json' ||
     file === 'CYLPlaceholderRefresh.json' || file === 'CYLPlaceholderProgress.pag') {
     return 'cylplaceholder/animations/' + file;
@@ -296,6 +300,9 @@ export const REFRESH_ICON_SECTIONS: RefreshIconSection[] = [
     LOTTIES.map((n: string) => fileRow(n + '.json'))),
   new RefreshIconSection('PAG · CYLTableViewPlaceHolder/PAG', false, [fileRow('CYLPlaceholderProgress.pag')]),
   new RefreshIconSection('Rive · CYLTableViewPlaceHolder/Rive', false, [fileRow('CYLRefreshIcon.riv')]),
+  // The SVGA twin of the Rive row (Task-Log "SVGA animations"): the example's engine (CYLSVGAPlaceholderItemAnimator).
+  new RefreshIconSection('SVGA · CYLTableViewPlaceHolder/SVGA', false,
+    [fileRow('tab_activity.svga'), fileRow('tab_list.svga')]),
   new RefreshIconSection('CYLScenarioSectionRefreshInit', true, [
     // MJRefresh's "animated images": an image sequence per state, frames of bundled refresh GIFs.
     new RefreshIconRow('byImages', 'CYLScenarioRefreshByImages', true, 'setAnimationImages(_:duration:for:)',
