@@ -12,7 +12,16 @@
 static const CGFloat CYLPlaceholderStackMargin = 16;
 
 @interface CYLPlaceholderStackView () <UIGestureRecognizerDelegate>
-@property (nonatomic, strong, readwrite) UIStackView *stackView;
+/// [EN] CYLTabBarController's CYLAnimatedItemStackView, every element a CYLAnimatedItemView (each component is a
+///      CYLPlaceholderView): it lays the components out (centered vertical stack, side margins, spacing before each
+///      component, titles wrapped to the width) and groups them for VoiceOver. This view keeps the components' own tap
+///      events (`tapHandler`, `tapInteractionEnabled`) and the background action, so their behavior is unchanged; the
+///      inner stack gets the actions (for `itemViewForAction:` and the button trait) but no handlers, so nothing runs twice.
+/// [CN] CYLTabBarController 的 CYLAnimatedItemStackView，每个元素都是 CYLAnimatedItemView（每个组件是 CYLPlaceholderView）：
+///      它负责组件布局（居中的竖直堆叠、两侧边距、组件前的间距、标题按宽度换行）并为 VoiceOver 分组。本视图保留组件自己的点击事件
+///      （`tapHandler`、`tapInteractionEnabled`）与背景动作，行为不变；内部堆叠视图知道各动作（用于 `itemViewForAction:` 与按钮 trait），
+///      但没有处理，因此不会执行两次。
+@property (nonatomic, strong) CYLAnimatedItemStackView *itemStack;
 @property (nonatomic, readwrite) CYLPlaceholderScenario scenario;
 @property (nonatomic, strong) NSMutableArray<CYLPlaceholderView *> *mutableComponentViews;
 /// Parallel to `mutableComponentViews`: each component's action, or NSNull.
@@ -153,23 +162,19 @@ static NSError *CYLStackConfigurationError(NSString *description) {
             self->_handlers[action] = [handler copy];
         }];
 
-        _stackView = [[UIStackView alloc] init];
-        _stackView.axis = UILayoutConstraintAxisVertical;
-        _stackView.alignment = UIStackViewAlignmentCenter;
-        _stackView.distribution = UIStackViewDistributionFill;
-        _stackView.spacing = 16;
-        _stackView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:_stackView];
+        _itemStack = [[CYLAnimatedItemStackView alloc] initWithFrame:CGRectZero];
+        _itemStack.contentMargin = CYLPlaceholderStackMargin;
+        _itemStack.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_itemStack];
+        [NSLayoutConstraint activateConstraints:@[
+            [_itemStack.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+            [_itemStack.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
+            [_itemStack.topAnchor constraintEqualToAnchor:self.topAnchor],
+            [_itemStack.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+        ]];
         // [EN] VoiceOver reads the components together, top to bottom, before what is behind the placeholder.
         // [CN] VoiceOver 自上而下连续朗读这些组件，再朗读占位视图后面的内容。
         self.shouldGroupAccessibilityChildren = YES;
-        [NSLayoutConstraint activateConstraints:@[
-            [_stackView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
-            [_stackView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
-            [_stackView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.leadingAnchor
-                                                                  constant:CYLPlaceholderStackMargin],
-            [_stackView.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor constant:CYLPlaceholderStackMargin],
-        ]];
 
         for (CYLPlaceholderComponent *component in components) {
             CYLPlaceholderView *view = [self appendComponent:component];
@@ -197,6 +202,10 @@ static NSError *CYLStackConfigurationError(NSString *description) {
 }
 
 #pragma mark - Components
+
+- (UIStackView *)stackView {
+    return self.itemStack.stackView;
+}
 
 - (CYLPlaceholderView *)placeholderView {
     return self.mutableComponentViews.firstObject;
@@ -262,9 +271,11 @@ static NSError *CYLStackConfigurationError(NSString *description) {
     view.preferredMaxLayoutWidth = [self cyl_componentMaxWidth];
     [view setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
     [view setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-    UIView *previous = self.stackView.arrangedSubviews.lastObject;
-    [self.stackView addArrangedSubview:view];
-    if (previous) [self.stackView setCustomSpacing:MAX(0, spacingBefore) afterView:previous];
+    [self.itemStack appendItemView:view action:action spacingBefore:spacingBefore];
+    // [EN] The inner stack lets only items with an action take touches; a component keeps its own tap event (an app can
+    //      set `tapHandler` later), and one that is not tap-interactive passes the tap to the background recognizer.
+    // [CN] 内部堆叠视图只让带动作的条目接收触摸；组件保留自己的点击事件（应用可以之后再设置 `tapHandler`），不可点击的组件把点击交给背景手势。
+    view.userInteractionEnabled = YES;
     [self.mutableComponentViews addObject:view];
     [self.componentActions addObject:action ?: (id)NSNull.null];
     if (action) {
@@ -329,6 +340,16 @@ static NSError *CYLStackConfigurationError(NSString *description) {
         [self addGestureRecognizer:self.backgroundTapRecognizer];
     }
     self.backgroundTapRecognizer.enabled = backgroundAction != nil;
+    // [EN] The inner stack knows the background action too, so it keeps the reserved component a button when it reads
+    //      the component's accessibility again (a title or label change). Its own background recognizer stays off: this
+    //      view performs the action and lets a component that is not tap-interactive pass the tap (the inner stack would
+    //      skip every component with an action).
+    // [CN] 内部堆叠视图也知道背景动作，重新读取组件无障碍信息时（标题或标签变化）保留组件仍是按钮。它自己的背景手势保持关闭：由本视图执行动作，
+    //      并让不可点击的组件把点击交给背景（内部堆叠视图会跳过所有带动作的组件）。
+    self.itemStack.backgroundAction = backgroundAction;
+    for (UIGestureRecognizer *recognizer in self.itemStack.gestureRecognizers) {
+        if ([recognizer isKindOfClass:UITapGestureRecognizer.class]) recognizer.enabled = NO;
+    }
     // [EN] VoiceOver users reach the background action through the reserved component.
     // [CN] VoiceOver 用户通过保留组件触发背景点击动作。
     CYLPlaceholderView *reserved = self.placeholderView;
