@@ -297,8 +297,8 @@
 | `CYLRefreshOriginalHeader.enableAutoRefresh` (var) | Whether the header refreshes by itself once attached (`enableAutoRefresh`). | `CYLRefreshOriginalHeader` `enableAutoRefresh` |  |
 | `CYLRefreshStoreHouseHeader` (class) | Text drawn as line segments that assemble as you pull (iOS `CYLRefreshStoreHouseHeader`). | `CYLRefreshStoreHouseHeader` |  |
 | `CYLRefreshStoreHouseHeader.lineWidth` (var) | The lines' width, in pixels (`lineWidth`). | `CYLRefreshStoreHouseHeader` `lineWidth` |  |
-| `CYLRefreshStoreHouseHeader.enableReverseFlash` (var) | Whether the flash runs back and forth (`enableReverseFlash`); the Android header flashes one way. | `CYLRefreshStoreHouseHeader` `enableReverseFlash` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshStoreHouseHeader.enableFadeAnimation` (var) | Whether the lines fade in as they assemble (`enableFadeAnimation`); the Android header always fades them. | `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshStoreHouseHeader.enableReverseFlash` (var) | Whether the loading flash runs back and forth (`enableReverseFlash`). | `CYLRefreshStoreHouseHeader` `enableReverseFlash` |  |
+| `CYLRefreshStoreHouseHeader.enableFadeAnimation` (var) | Whether the lines fade in as they assemble with the pull (`enableFadeAnimation`); false shows them at full alpha. | `CYLRefreshStoreHouseHeader` `enableFadeAnimation` |  |
 | `CYLRefreshStoreHouseHeader.initLinesWithString` (fun) | Draws [string] at the default size (`initLinesWithString:`). | `CYLRefreshStoreHouseHeader` `-initLinesWithString:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` |  |
 | `CYLRefreshStoreHouseHeader.initLinesWithString` (fun) | Draws [string] scaled by [scale] (`initLinesWithString:scale:`). | `CYLRefreshStoreHouseHeader` `-initLinesWithString:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` |  |
 | `CYLRefreshStoreHouseHeader.initLinesWithString` (fun) | Draws [string] scaled by [scale]; [padding] is the drop height above the text, in pixels (`initLinesWithString:scale:padding:`). | `CYLRefreshStoreHouseHeader` `-initLinesWithString:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:`, `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` |  |
@@ -910,7 +910,7 @@
 | `CYLPlaceholderComponent.titleColor` (val) | The text color, or 0 for the kind's own. | `CYLPlaceholderComponent` `attributes[CYLPlaceholderItemTitleColor]` |  |
 | `CYLPlaceholderComponent.buttonStyle` (val) | The button's look (buttons only). | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` (style) |  |
 | `CYLPlaceholderComponent.action` (var) | The action a tap runs, or null (`action`). | `CYLPlaceholderComponent` `action` |  |
-| `CYLPlaceholderComponent.tapHighlightStyle` (var) | How a tap on the component is shown (`tapHighlightStyle`); kept for views that show taps. | `CYLPlaceholderComponent` `tapHighlightStyle` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderComponent.tapHighlightStyle` (var) | How a finger on a component with an action is shown in the stack view (`tapHighlightStyle`): Dim (default), Shrink or None. | `CYLPlaceholderComponent` `tapHighlightStyle` |  |
 | `CYLPlaceholderComponent.accessibilityIdentifier` (var) | The identifier tests find the component's view by (`accessibilityIdentifier`), or null. | `CYLPlaceholderComponent` `accessibilityIdentifier` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderComponent.spacingBefore` (var) | The space above the component, in dp (`spacingBefore`). | `CYLPlaceholderComponent` `spacingBefore` |  |
 | `CYLPlaceholderComponent.interactionEnabled` (var) | Whether the component reacts to taps (`interactionEnabled`); a button that does not is shown disabled. | `CYLPlaceholderComponent` `interactionEnabled` |  |
@@ -1050,8 +1050,8 @@
 | `CYLPlaceholderBadgeAppearance.font` (var) | The text's size, in sp (the iOS `font`). | `CYLPlaceholderBadgeAppearance` `font` | partial (see docs/Android-API-Map.md) |
 | `CYLPlaceholderBadgeAppearance.cornerRadius` (var) | The corner radius, in dp; below 0 makes a capsule. | `CYLPlaceholderBadgeAppearance` `cornerRadius` |  |
 | `CYLPlaceholderBadgeAppearance.contentInsets` (var) | The text's insets, in dp: top, left, bottom, right. | `CYLPlaceholderBadgeAppearance` `contentInsets` |  |
-| `CYLPlaceholderBadgeAppearance.animationDuration` (var) | How long a change animates, in seconds. | `CYLPlaceholderBadgeAppearance` `animationDuration` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderBadgeAppearance.animatesChanges` (var) | Whether changes animate. | `CYLPlaceholderBadgeAppearance` `animatesChanges` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderBadgeAppearance.animationDuration` (var) | How long a badge change pops (scales from 0.6 to its size), in seconds (`animationDuration`). | `CYLPlaceholderBadgeAppearance` `animationDuration` |  |
+| `CYLPlaceholderBadgeAppearance.animatesChanges` (var) | Whether a badge change pops; off when the device turns animations off (`animatesChanges`). | `CYLPlaceholderBadgeAppearance` `animatesChanges` |  |
 | `CYLPlaceholderBadgeAppearance.sharedAppearance` (val) | The shared appearance (`sharedAppearance`). | `CYLPlaceholderBadgeAppearance` `+sharedAppearance` |  |
 | `CYLPlaceholderAnimationPlayer` (interface) | Plays a placeholder animation (iOS `CYLPlaceholderAnimationPlayer`): what an app's own factory returns ([CYLPlaceholderView.registerAnimationFactory]). | `CYLPlaceholderAnimationPlayer` |  |
 | `CYLPlaceholderAnimationPlayer.view` (val) | The view that shows the animation. | `CYLPlaceholderItemAnimationPlayer` `animationView` |  |
