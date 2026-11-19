@@ -1,5 +1,26 @@
 # Swift migration of the core
 
+<!-- bound-classes: none -->
+
+<!-- docs-navigation:start -->
+
+| 中文 | English |
+| --- | --- |
+| [Tasks](#tasks) | [Tasks](#tasks) |
+| [Rule: examples have the lowest weight (owner, 2026-11-13)](#rule-examples-have-the-lowest-weight-owner-2026-11-13) | [Rule: examples have the lowest weight (owner, 2026-11-13)](#rule-examples-have-the-lowest-weight-owner-2026-11-13) |
+
+<!-- docs-navigation:end -->
+
+<!-- docs-binding:start -->
+
+| 类 / Class | 头文件 / Header |
+| --- | --- |
+| 无 / none | — |
+
+<!-- docs-binding:end -->
+
+Written in English only, as the owner asked on 2026-11-12 (requirement 7 of the task below: "全英文写入").
+
 This document tracks the task of transcribing the core (the library under `CYLTableViewPlaceHolder/`) from
 Objective-C to Swift, and its score after every commit.
 

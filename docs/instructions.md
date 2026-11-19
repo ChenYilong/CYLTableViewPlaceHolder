@@ -1,5 +1,27 @@
 # Folder instructions
 
+<!-- bound-classes: none -->
+
+<!-- docs-navigation:start -->
+
+| 中文 | English |
+| --- | --- |
+| [Task start, scoring, other sessions and emulators](#task-start-scoring-other-sessions-and-emulators) | [Task start, scoring, other sessions and emulators](#task-start-scoring-other-sessions-and-emulators) |
+| [Icon and title vs. the stack view](#icon-and-title-vs-the-stack-view) | [Icon and title vs. the stack view](#icon-and-title-vs-the-stack-view) |
+| [Screenshots: enforced](#screenshots-enforced) | [Screenshots: enforced](#screenshots-enforced) |
+
+<!-- docs-navigation:end -->
+
+<!-- docs-binding:start -->
+
+| 类 / Class | 头文件 / Header |
+| --- | --- |
+| 无 / none | — |
+
+<!-- docs-binding:end -->
+
+Written in English only: instructions stay English only (`instructions.md`, "Bilingual documentation").
+
 This folder contains project documentation and issue tracking. It inherits the
 vault's root `instructions.md`.
 
