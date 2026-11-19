@@ -16,6 +16,12 @@
 //       与刷新图标不同，加载动画默认循环播放。HUD 覆盖页面生命周期的开始（加载中），占位图覆盖其余（失败、空），CYLRefresh
 //       覆盖下拉刷新与加载更多。
 //
+//  [EN] Swift since 2026-11-19: the class is in `CYLPlaceholderHUD.swift`. The notification names and the userInfo key
+//       (FOUNDATION_EXPORT symbols, defined in `CYLPlaceholderHUDSupport.m`), the enums and the dismiss completion block
+//       type stay here in Objective-C, made Swift-compatible (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLPlaceholderHUD.swift`）。通知名与 userInfo 的 key（FOUNDATION_EXPORT 符号，定义在
+//       `CYLPlaceholderHUDSupport.m`）、枚举与关闭完成 block 类型保留在 Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderStackView.h"
@@ -145,351 +151,29 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderHUDState) {
 typedef void (^CYLPlaceholderHUDDismissCompletion)(void);
 
 /*!
- * [EN] A HUD whose content is a placeholder stack view. Use the shared HUD through the class methods (as with
- *      SVProgressHUD), or create one for a view with `initWithContainerView:`. Every method runs on the main thread;
- *      calls from another thread are moved there.
- * [CN] 内容为占位图组件栈的 HUD。可通过类方法使用共享 HUD（与 SVProgressHUD 相同），也可用 `initWithContainerView:` 为某个视图
- *      创建。所有方法在主线程执行；其他线程的调用会转到主线程。
- */
-@interface CYLPlaceholderHUD : UIView
-
-/*!
- * [EN] The HUD the class methods use. [CN] 类方法使用的共享 HUD。
- */
-@property (class, nonatomic, strong, readonly) CYLPlaceholderHUD *sharedHUD NS_SWIFT_NAME(shared);
-
-/*!
- * [EN] A HUD shown over `containerView`; nil shows it over the app's key window. [CN] 显示在 `containerView`
- *      上的 HUD；nil 时显示在应用的 key window 上。
- */
-- (instancetype)initWithContainerView:(nullable UIView *)containerView NS_DESIGNATED_INITIALIZER;
-/*!
- * [EN] The same as `initWithContainerView:nil`. [CN] 等同于 `initWithContainerView:nil`。
- */
-- (instancetype)init;
-/*!
- * [EN] Unavailable: use `initWithContainerView:`. [CN] 不可用：请使用 `initWithContainerView:`。
- */
-- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
-/*!
- * [EN] Unavailable: use `initWithContainerView:`. [CN] 不可用：请使用 `initWithContainerView:`。
- */
-- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
-
-#pragma mark - Content
-
-/*!
- * [EN] The packaged icon and title in the box, rebuilt for every new state; nil while hidden. In a loading, progress
- *      or result state it is the box itself (background, corner radius and size), with no stack view around it; while
- *      components are shown it is the first component of `placeholderView`.
- * [CN] 方框中的图标与标题（已封装的 CYLPlaceholderView），每次切换状态时重建；隐藏时为 nil。加载、进度与结果状态中它就是
- *      方框本身（背景、圆角、尺寸），外面没有组件栈；显示组件时为 `placeholderView` 的第一个组件。
- */
-@property (nonatomic, strong, readonly, nullable) CYLPlaceholderView *contentView;
-/*!
- * [EN] The stack view of `showComponents:actions:` and `showScenario:actions:`, whose elements are all
- *      CYLPlaceholderViews; nil in the other states, which need no stack view. Its handlers and `performAction:` work as
- *      on any placeholder.
- * [CN] `showComponents:actions:` 与 `showScenario:actions:` 的组件栈，其中元素都是 CYLPlaceholderView；其他状态不需要组件栈，
- *      为 nil。其处理与 `performAction:` 与普通占位图相同。
- */
-@property (nonatomic, strong, readonly, nullable) CYLPlaceholderStackView *placeholderView;
-/*!
- * [EN] The box. [CN] 方框视图。
- */
-@property (nonatomic, strong, readonly) UIView *hudView;
-/*!
- * [EN] Handlers for the actions of the components the HUD shows (for example a "Cancel" button added through
- *      `showComponents:actions:`); applied to every state. [CN] HUD 所显示组件的动作处理（例如通过 `showComponents:actions:`
- *      添加的“取消”按钮）；对所有状态生效。
- */
-@property (nonatomic, copy, nullable) NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *actions;
-/*!
- * [EN] What shows now. [CN] 当前显示的内容。
- */
-@property (nonatomic, readonly) CYLPlaceholderHUDState state;
-/*!
- * [EN] The status text, nil for none. [CN] 状态文字，无则为 nil。
- */
-@property (nonatomic, copy, readonly, nullable) NSString *status;
-/*!
- * [EN] The progress of the Progress state, from 0 to 1. [CN] Progress 状态的进度，0 到 1。
- */
-@property (nonatomic, readonly) CGFloat progress;
-/*!
- * [EN] YES while the HUD shows or is about to show. [CN] 显示中或即将显示时为 YES。
- */
-@property (nonatomic, readonly, getter=isVisible) BOOL visible;
-/*!
- * [EN] How many `show` calls `popActivity` has not balanced yet. [CN] 尚未被 `popActivity` 抵消的 `show` 次数。
- */
-@property (nonatomic, readonly) NSUInteger activityCount;
-
-#pragma mark - Customization
-
-/*!
- * [EN] The view the HUD covers; nil uses the app's key window (set it in an app extension). [CN] HUD 覆盖的视图；
- *      nil 使用应用的 key window（App Extension 中请设置）。
- */
-@property (nonatomic, weak, nullable) UIView *containerView;
-/*!
- * [EN] The look of the box (Automatic by default). [CN] 方框外观（默认 Automatic）。
- */
-@property (nonatomic) CYLPlaceholderHUDStyle style;
-/*!
- * [EN] The mask around the box (None by default). [CN] 方框周围的遮罩（默认 None）。
- */
-@property (nonatomic) CYLPlaceholderHUDMaskType maskType;
-/*!
- * [EN] The content color of the Custom style; setting it selects the Custom style. [CN] Custom 样式的内容颜色；设置后切换到 Custom 样式。
- */
-@property (nonatomic, strong, null_resettable) UIColor *foregroundColor;
-/*!
- * [EN] The box color of the Custom style; setting it selects the Custom style. [CN] Custom 样式的方框颜色；设置后切换到 Custom 样式。
- */
-@property (nonatomic, strong, null_resettable) UIColor *hudBackgroundColor;
-/*!
- * [EN] The mask color of the Custom mask type (black at 40% by default). [CN] Custom 遮罩的颜色（默认 40% 黑色）。
- */
-@property (nonatomic, strong, null_resettable) UIColor *backgroundLayerColor;
-/*!
- * [EN] The status font (the scaled subheadline by default, so it follows Dynamic Type). [CN] 状态文字字体（默认随动态字体缩放的 subheadline）。
- */
-@property (nonatomic, strong, null_resettable) UIFont *font;
-/*!
- * [EN] The corner radius of the box (14 by default). [CN] 方框圆角（默认 14）。
- */
-@property (nonatomic) CGFloat cornerRadius;
-/*!
- * [EN] The smallest size of the box (100 x 100 by default). [CN] 方框的最小尺寸（默认 100 x 100）。
- */
-@property (nonatomic) CGSize minimumSize;
-/*!
- * [EN] The size of the icon or animation (40 x 40 by default). [CN] 图标或动画的尺寸（默认 40 x 40）。
- */
-@property (nonatomic) CGSize animationSize;
-/*!
- * [EN] The offset of the box from the container's center. [CN] 方框相对容器中心的偏移。
- */
-@property (nonatomic) UIOffset offsetFromCenter;
-/*!
- * [EN] The bundled animation of the Loading state, looping ("CYLRefreshActivity.gif" by default, played by the GIF
- *      subspec; without an animation engine the hourglass image shows; any name of
- *      `+[CYLPlaceholderView bundledAnimationFileNames]`). [CN] Loading 状态循环播放的内置动画（默认
- *      "CYLRefreshActivity.gif"，由 GIF 子库播放；没有动画引擎时显示沙漏图片；可为任意内置动画名）。
- */
-@property (nonatomic, copy, null_resettable) NSString *loadingAnimationFileName;
-/*!
- * [EN] A bundled animation scrubbed to the progress in the Progress state. nil by default: the icon keeps looping
- *      `loadingAnimationFileName` and the title shows the percentage. The HUD only uses the icon and title component.
- *      [CN] Progress 状态中按进度定位的内置动画。默认 nil：图标循环播放 `loadingAnimationFileName`，标题显示百分比。
- *      HUD 只使用图标与标题组件。
- */
-@property (nonatomic, copy, nullable) NSString *progressAnimationFileName;
-/*!
- * [EN] The bundled animation of the Success state, played once ("CYLRefreshDoneCircle.json" by default; without
- *      the Lottie engine `successImage` shows). [CN] Success 状态播放一次的内置动画（默认 "CYLRefreshDoneCircle.json"；
- *      没有 Lottie 引擎时显示 `successImage`）。
- */
-@property (nonatomic, copy, nullable) NSString *successAnimationFileName;
-/*!
- * [EN] The image of the Success state. [CN] Success 状态的图片。
- */
-@property (nonatomic, strong, null_resettable) UIImage *successImage;
-/*!
- * [EN] The image of the Error state. [CN] Error 状态的图片。
- */
-@property (nonatomic, strong, null_resettable) UIImage *errorImage;
-/*!
- * [EN] The image of the Info state. [CN] Info 状态的图片。
- */
-@property (nonatomic, strong, null_resettable) UIImage *infoImage;
-/*!
- * [EN] How long a `show` waits before the HUD appears, so a quick task shows nothing (0 by default). [CN] `show`
- *      后等待多久才显示，使很快完成的任务不显示 HUD（默认 0）。
- */
-@property (nonatomic) NSTimeInterval graceTimeInterval;
-/*!
- * [EN] The shortest time success, error, info and image HUDs stay (5 seconds by default). [CN] 成功、错误、提示与图片 HUD
- *      的最短停留时间（默认 5 秒）。
- */
-@property (nonatomic) NSTimeInterval minimumDismissTimeInterval;
-/*!
- * [EN] The longest time they stay (no limit by default). [CN] 最长停留时间（默认不限）。
- */
-@property (nonatomic) NSTimeInterval maximumDismissTimeInterval;
-/*!
- * [EN] The fade-in duration (0.15 seconds by default). [CN] 淡入时长（默认 0.15 秒）。
- */
-@property (nonatomic) NSTimeInterval fadeInAnimationDuration;
-/*!
- * [EN] The fade-out duration (0.15 seconds by default). [CN] 淡出时长（默认 0.15 秒）。
- */
-@property (nonatomic) NSTimeInterval fadeOutAnimationDuration;
-/*!
- * [EN] YES plays notification haptics for success, info (warning) and error (NO by default). [CN] YES 时成功、提示（警告）
- *      与错误播放通知触感（默认 NO）。
- */
-@property (nonatomic, getter=isHapticsEnabled) BOOL hapticsEnabled;
-
-#pragma mark - Showing
-
-/*!
- * [EN] The looping loading animation without a status. [CN] 不带文字的循环加载动画。
- */
-- (void)show;
-/*!
- * [EN] The looping loading animation with a status. [CN] 带文字的循环加载动画。
- */
-- (void)showWithStatus:(nullable NSString *)status NS_SWIFT_NAME(show(status:));
-/*!
- * [EN] A progress from 0 to 1; a negative value shows the loading animation. [CN] 0 到 1 的进度；负数显示加载动画。
- */
-- (void)showProgress:(CGFloat)progress NS_SWIFT_NAME(show(progress:));
-/*!
- * [EN] A progress with a status. [CN] 带文字的进度。
- */
-- (void)showProgress:(CGFloat)progress status:(nullable NSString *)status NS_SWIFT_NAME(show(progress:status:));
-/*!
- * [EN] Changes the status of the HUD that shows, keeping its animation. [CN] 修改正在显示的 HUD 的文字，动画不重启。
- */
-- (void)setStatus:(nullable NSString *)status;
-/*!
- * [EN] The info image and a status, dismissed after `displayDurationForString:`. [CN] 提示图片与文字，
- *      在 `displayDurationForString:` 之后关闭。
- */
-- (void)showInfoWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showInfo(status:));
-/*!
- * [EN] The success animation and a status, dismissed after `displayDurationForString:`. [CN] 成功动画与文字，
- *      在 `displayDurationForString:` 之后关闭。
- */
-- (void)showSuccessWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showSuccess(status:));
-/*!
- * [EN] The error image and a status, dismissed after `displayDurationForString:`. [CN] 错误图片与文字，
- *      在 `displayDurationForString:` 之后关闭。
- */
-- (void)showErrorWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showError(status:));
-/*!
- * [EN] An image and a status, dismissed after `displayDurationForString:`. [CN] 图片与文字，
- *      在 `displayDurationForString:` 之后关闭。
- */
-- (void)showImage:(UIImage *)image status:(nullable NSString *)status NS_SWIFT_NAME(show(image:status:));
-/*!
- * [EN] Any components in the box (icons, titles, hints, buttons), with handlers for their actions; it stays until
- *      dismissed. [CN] 在方框中显示任意组件（图标、标题、提示、按钮）及其动作处理；直到关闭才消失。
- */
-- (void)showComponents:(NSArray<CYLPlaceholderComponent *> *)components
-               actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
-    NS_SWIFT_NAME(show(components:actions:));
-/*!
- * [EN] A scenario's components in the box (for example `CYLPlaceholderScenarioHUD` or
- *      `CYLPlaceholderScenarioUploading`); it stays until dismissed. [CN] 在方框中显示某个场景的组件（例如
- *      `CYLPlaceholderScenarioHUD`、`CYLPlaceholderScenarioUploading`）；直到关闭才消失。
- */
-- (void)showScenario:(CYLPlaceholderScenario)scenario
-             actions:(nullable NSDictionary<CYLPlaceholderAction, CYLPlaceholderActionHandler> *)actions
-    NS_SWIFT_NAME(show(scenario:actions:));
-
-#pragma mark - Dismissing
-
-/*!
- * [EN] Balances one `show`: the HUD is dismissed when every `show` is balanced. [CN] 抵消一次 `show`：所有 `show`
- *      都被抵消后关闭 HUD。
- */
-- (void)popActivity;
-/*!
- * [EN] Dismisses now. [CN] 立即关闭。
- */
-- (void)dismiss;
-/*!
- * [EN] Dismisses now and runs `completion` afterwards. [CN] 立即关闭，完成后调用 `completion`。
- */
-- (void)dismissWithCompletion:(nullable CYLPlaceholderHUDDismissCompletion)completion
-    NS_SWIFT_NAME(dismiss(completion:));
-/*!
- * [EN] Dismisses after `delay` seconds. [CN] `delay` 秒后关闭。
- */
-- (void)dismissWithDelay:(NSTimeInterval)delay NS_SWIFT_NAME(dismiss(withDelay:));
-/*!
- * [EN] Dismisses after `delay` seconds and runs `completion` afterwards. [CN] `delay` 秒后关闭，完成后调用 `completion`。
- */
-- (void)dismissWithDelay:(NSTimeInterval)delay completion:(nullable CYLPlaceholderHUDDismissCompletion)completion
-    NS_SWIFT_NAME(dismiss(withDelay:completion:));
-/*!
- * [EN] How long a status stays: 0.06 seconds per character plus 0.5, within the minimum and maximum dismiss
- *      intervals. [CN] 文字的停留时间：每个字符 0.06 秒再加 0.5 秒，限制在最短与最长停留时间之间。
- */
-- (NSTimeInterval)displayDurationForString:(nullable NSString *)string NS_SWIFT_NAME(displayDuration(for:));
-
-#pragma mark - Shared HUD (SVProgressHUD-style class methods)
-
-/*!
- * [EN] `[sharedHUD show]`. [CN] 即 `[sharedHUD show]`。
- */
-+ (void)show;
-/*!
- * [EN] `[sharedHUD showWithStatus:]`. [CN] 即 `[sharedHUD showWithStatus:]`。
- */
-+ (void)showWithStatus:(nullable NSString *)status NS_SWIFT_NAME(show(status:));
-/*!
- * [EN] `[sharedHUD showProgress:]`. [CN] 即 `[sharedHUD showProgress:]`。
- */
-+ (void)showProgress:(CGFloat)progress NS_SWIFT_NAME(show(progress:));
-/*!
- * [EN] `[sharedHUD showProgress:status:]`. [CN] 即 `[sharedHUD showProgress:status:]`。
- */
-+ (void)showProgress:(CGFloat)progress status:(nullable NSString *)status NS_SWIFT_NAME(show(progress:status:));
-/*!
- * [EN] `[sharedHUD setStatus:]`. [CN] 即 `[sharedHUD setStatus:]`。
- */
-+ (void)setStatus:(nullable NSString *)status;
-/*!
- * [EN] `[sharedHUD showInfoWithStatus:]`. [CN] 即 `[sharedHUD showInfoWithStatus:]`。
- */
-+ (void)showInfoWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showInfo(status:));
-/*!
- * [EN] `[sharedHUD showSuccessWithStatus:]`. [CN] 即 `[sharedHUD showSuccessWithStatus:]`。
- */
-+ (void)showSuccessWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showSuccess(status:));
-/*!
- * [EN] `[sharedHUD showErrorWithStatus:]`. [CN] 即 `[sharedHUD showErrorWithStatus:]`。
- */
-+ (void)showErrorWithStatus:(nullable NSString *)status NS_SWIFT_NAME(showError(status:));
-/*!
- * [EN] `[sharedHUD showImage:status:]`. [CN] 即 `[sharedHUD showImage:status:]`。
- */
-+ (void)showImage:(UIImage *)image status:(nullable NSString *)status NS_SWIFT_NAME(show(image:status:));
-/*!
- * [EN] `[sharedHUD popActivity]`. [CN] 即 `[sharedHUD popActivity]`。
- */
-+ (void)popActivity;
-/*!
- * [EN] `[sharedHUD dismiss]`. [CN] 即 `[sharedHUD dismiss]`。
- */
-+ (void)dismiss;
-/*!
- * [EN] `[sharedHUD dismissWithCompletion:]`. [CN] 即 `[sharedHUD dismissWithCompletion:]`。
- */
-+ (void)dismissWithCompletion:(nullable CYLPlaceholderHUDDismissCompletion)completion
-    NS_SWIFT_NAME(dismiss(completion:));
-/*!
- * [EN] `[sharedHUD dismissWithDelay:]`. [CN] 即 `[sharedHUD dismissWithDelay:]`。
- */
-+ (void)dismissWithDelay:(NSTimeInterval)delay NS_SWIFT_NAME(dismiss(withDelay:));
-/*!
- * [EN] `[sharedHUD dismissWithDelay:completion:]`. [CN] 即 `[sharedHUD dismissWithDelay:completion:]`。
- */
-+ (void)dismissWithDelay:(NSTimeInterval)delay completion:(nullable CYLPlaceholderHUDDismissCompletion)completion
-    NS_SWIFT_NAME(dismiss(withDelay:completion:));
-/*!
- * [EN] `sharedHUD.visible`. [CN] 即 `sharedHUD.visible`。
- */
-+ (BOOL)isVisible;
-/*!
- * [EN] `[sharedHUD displayDurationForString:]`. [CN] 即 `[sharedHUD displayDurationForString:]`。
- */
-+ (NSTimeInterval)displayDurationForString:(nullable NSString *)string NS_SWIFT_NAME(displayDuration(for:));
-
-@end
+ * [EN] A HUD whose content is a placeholder stack view. The class is Swift since 2026-11-19 (`CYLPlaceholderHUD.swift`)
+ *      with the same Objective-C API: the shared HUD `+sharedHUD` (Swift `shared`), `-initWithContainerView:`
+ *      (designated; `-init` is the same as `initWithContainerView:nil`; `-initWithFrame:` and `-initWithCoder:` are
+ *      unavailable); the content (`contentView`, `placeholderView`, `hudView`, `actions`, `state`, `status`, `progress`,
+ *      `visible` / `isVisible`, `activityCount`); the customization (`containerView`, `style`, `maskType`, the
+ *      null_resettable `foregroundColor`, `hudBackgroundColor`, `backgroundLayerColor`, `font`,
+ *      `loadingAnimationFileName`, `successImage`, `errorImage` and `infoImage`, `cornerRadius`, `minimumSize`,
+ *      `animationSize`, `offsetFromCenter`, `progressAnimationFileName`, `successAnimationFileName`,
+ *      `graceTimeInterval`, `minimumDismissTimeInterval`, `maximumDismissTimeInterval`, `fadeInAnimationDuration`,
+ *      `fadeOutAnimationDuration`, `hapticsEnabled` / `isHapticsEnabled`); showing (`-show`, `-showWithStatus:` (Swift
+ *      `show(status:)`), `-showProgress:` and `-showProgress:status:` (Swift `show(progress:status:)`), `-setStatus:`,
+ *      `-showInfoWithStatus:`, `-showSuccessWithStatus:`, `-showErrorWithStatus:` (Swift `showInfo(status:)`, ...),
+ *      `-showImage:status:` (Swift `show(image:status:)`), `-showComponents:actions:` and `-showScenario:actions:`
+ *      (Swift `show(components:actions:)`, `show(scenario:actions:)`)); dismissing (`-popActivity`, `-dismiss`,
+ *      `-dismissWithCompletion:`, `-dismissWithDelay:`, `-dismissWithDelay:completion:` (Swift
+ *      `dismiss(withDelay:completion:)`), `-displayDurationForString:` (Swift `displayDuration(for:)`)); and the
+ *      SVProgressHUD-style class methods of the same names, which message the shared HUD. Every method runs on the
+ *      main thread; calls from another thread are moved there. Objective-C code that messages it imports the umbrella
+ *      header `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 内容为占位图组件栈的 HUD。该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderHUD.swift`），Objective-C API 不变（含选择器、
+ *      Swift 名称与同名类方法）。所有方法在主线程执行；其他线程的调用会转到主线程。需要调用它的 Objective-C 代码请导入总头文件
+ *      `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
+ */
+@class CYLPlaceholderHUD;
 
 NS_ASSUME_NONNULL_END

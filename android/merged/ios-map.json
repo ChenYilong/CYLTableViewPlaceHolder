@@ -1138,6 +1138,6 @@
  },
  "CYLPlaceholderHUD.MAXIMUM_WIDTH_DP": {
   "ios": "`CYLPlaceholderHUD`",
-  "note": "iOS keeps the same 260 pt limit as a private constant (static CYLPlaceholderHUDMaximumWidth in CYLPlaceholderHUD.m); no public iOS constant"
+  "note": "iOS keeps the same 260 pt limit as a private constant (private CYLPlaceholderHUDMaximumWidth in CYLPlaceholderHUD.swift); no public iOS constant"
  }
 }

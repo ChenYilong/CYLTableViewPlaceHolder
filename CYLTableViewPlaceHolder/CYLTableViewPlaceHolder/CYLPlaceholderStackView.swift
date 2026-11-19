@@ -239,8 +239,9 @@ open class CYLPlaceholderStackView: UIView {
         try self.init(contentsOf: url, actions: CYLPlaceholderStackView.handlers(from: actions))
     }
 
-    // [EN] The blocks of an Objective-C actions dictionary, keyed by action. [CN] Objective-C 动作字典中的 block，以动作为键。
-    private static func handlers(from actions: NSDictionary?) -> [CYLPlaceholderAction: CYLPlaceholderActionHandler]? {
+    // [EN] The blocks of an Objective-C actions dictionary, keyed by action (also used by CYLPlaceholderHUD).
+    // [CN] Objective-C 动作字典中的 block，以动作为键（CYLPlaceholderHUD 也使用）。
+    static func handlers(from actions: NSDictionary?) -> [CYLPlaceholderAction: CYLPlaceholderActionHandler]? {
         guard let actions = actions else { return nil }
         var handlers = [CYLPlaceholderAction: CYLPlaceholderActionHandler]()
         for (key, value) in actions {

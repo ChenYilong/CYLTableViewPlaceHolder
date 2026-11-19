@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 27 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 32 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -128,8 +128,36 @@ Objective-C to Swift, and its score after every commit.
     (English) the Scenarios list, "Retry button" (icon, title, filled button) and "Network unavailable" (tinted Lottie
     line icon, wrapped title) show centered as before. Measured: core 10 Swift files (5,791 lines) and 67 Objective-C
     `.m` files (15,497 lines). Score by lines: 5,791 / (5,791 + 15,497) ≈ **27 / 100** (was 22).
-  - Next, bottom-up and one commit per file group, each with the core (197) and animation (13) tests: the HUD
-    (`CYLPlaceholderHUD.m`), `UIScrollView+CYLPlaceholder.m`, then `CYLRefresh/` (the largest part), then the tests.
+  - 2026-11-19, step 4 (branch `feat/android-refresh-port-followup`, this commit): `CYLPlaceholderHUD.m` (782 lines) is
+    `CYLPlaceholderHUD.swift`, with the same Objective-C API: `+sharedHUD` (Swift `shared`, a `static let`, created once as
+    `dispatch_once` did), `-initWithContainerView:` (designated; `-init` still means `initWithContainerView:nil`;
+    `-initWithFrame:` and `-initWithCoder:` unavailable), every instance method and the SVProgressHUD-style class methods
+    of the same names (`+show`, `+showWithStatus:`, ..., `+isVisible`, `+displayDurationForString:`), the former
+    `NS_SWIFT_NAME` spellings as the Swift names, `visible` / `isVisible` and `hapticsEnabled` / `isHapticsEnabled` with
+    their getters, the public `-setStatus:` beside the read-only `status`, and the `null_resettable` colors, font, loading
+    animation and images (implicitly unwrapped optionals in Swift, as Swift imported them). `actions`,
+    `-showComponents:actions:` and `-showScenario:actions:` take a dictionary of blocks: Swift keeps
+    `[CYLPlaceholderAction: CYLPlaceholderActionHandler]?`, Objective-C gets `NSDictionary` members with the same names and
+    selectors, hidden from Swift (the step 2 pattern; `CYLPlaceholderStackView.handlers(from:)` is now internal so the HUD
+    reuses it). The setters with side effects (`style`, `maskType`, `cornerRadius`, `foregroundColor`,
+    `hudBackgroundColor`) are computed properties over private storage, so the initializer writes the storage as the
+    Objective-C initializer wrote the ivars. Behavior kept: the main-thread hop, the activity count (indeterminate shows
+    count, results reset it), the HUD's own repeat counts (0 for loading and progress, 1 for results), grace time,
+    minimum and maximum display times, delayed dismissal by generation, the key window lookup at run time (the
+    pre-scene fallback reads `windows` through key-value coding, deprecated since iOS 15), VoiceOver announcements,
+    haptics, the notification order, and `hitTest` treating a nil event as a touch (messaging nil gave
+    `UIEventTypeTouches` in Objective-C). Still Objective-C, made Swift-compatible (rule 6): the six notification names and
+    `CYLPlaceholderHUDStatusUserInfoKey` (FOUNDATION_EXPORT symbols, `CYLPlaceholderHUDSupport.m`), the
+    `CYLPlaceholderHUDStyle`, `CYLPlaceholderHUDMaskType` and `CYLPlaceholderHUDState` enums and the
+    `CYLPlaceholderHUDDismissCompletion` block type (`CYLPlaceholderHUD.h`). The podspec (HUD `*.{h,m,swift}`), the framework
+    target, `Tests/run-tests.rb`, `Tests/run-accessibility-tests.rb`, the cyl-api-map skill, the ios-map note and the
+    regenerated API map and parity table are updated. Tests: core 207/207, animation 13/13 (static, PAG); Example-Scenarios
+    and the `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder warnings); in the example (English,
+    Flows → HUD) loading, progress, success, error and info show the centered box, icon and text as before and dismiss.
+    Measured: core 11 Swift files (6,929 lines) and 67 Objective-C `.m` files (14,870 lines). Score by lines:
+    6,929 / (6,929 + 14,870) ≈ **32 / 100** (was 27).
+  - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests:
+    `UIScrollView+CYLPlaceholder.m`, then `CYLRefresh/` (the largest part), then the tests.
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 

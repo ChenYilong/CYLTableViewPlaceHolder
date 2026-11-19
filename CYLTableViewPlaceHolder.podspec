@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
     # CYLPlaceholderView is Swift since 2026-11-19 (CYLAnimatedItemView became Swift; Objective-C cannot subclass it), with
     # its Objective-C API unchanged; its keys, enums and badge appearance stay in CYLPlaceholderView.h / .m files.
     core.source_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/**/*.{h,m,swift}',
-                        'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m}',
+                        'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m,swift}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}'
     # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal.
     core.private_header_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.h'
