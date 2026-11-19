@@ -857,27 +857,27 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoAnimationFooter` | Animated images (`setAnimationImages:forState:`), or an icon animation (GIF, Lottie, PAG or Rive) through `CYLRefreshIconAnimating`, which takes the animation view's place with the same layout. | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshAutoAnimationFooter` `animationView` | The image view that plays the per-state images. | `CYLRefreshAutoAnimationFooter.animationView` |
-| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:` | Sets the images of `state`, played in `duration` seconds; a single image is shown still. The control grows to the first image's height. | `CYLRefreshAutoAnimationFooter.setAnimationImages` |
-| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` | The same, 0.1 seconds per image. | `CYLRefreshAutoAnimationFooter.setAnimationImages` |
+| `CYLRefreshAutoAnimationFooter` | The automatic state footer with an animation per state. | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoAnimationFooter` `animationView` | The view that shows the animation. | `CYLRefreshAutoAnimationFooter.animationView` |
+| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAutoAnimationFooter.setAnimationImages` |
+| `CYLRefreshAutoAnimationFooter` `-setAnimationImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAutoAnimationFooter.setAnimationImages` |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoGifFooter` | The MJRefresh name of `CYLRefreshAutoAnimationFooter`, kept for compatibility: `gifView` and `setImages:…` call the general methods. New code can use `CYLRefreshAutoAnimationFooter`. | `com.cyl.refresh.CYLRefreshAutoGifFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshAutoGifFooter` `gifView` | The same view as `animationView`. | `CYLRefreshAutoGifFooter.gifView` |
-| `CYLRefreshAutoGifFooter` `-setImages:duration:forState:` | Calls `-setAnimationImages:duration:forState:`. | `CYLRefreshAutoGifFooter.setImages` |
-| `CYLRefreshAutoGifFooter` `-setImages:forState:` | Calls `-setAnimationImages:forState:`. | `CYLRefreshAutoGifFooter.setImages` |
+| `CYLRefreshAutoGifFooter` | The automatic state footer with image frames per state. | `com.cyl.refresh.CYLRefreshAutoGifFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoGifFooter` `gifView` | The view that shows the frames. | `CYLRefreshAutoGifFooter.gifView` |
+| `CYLRefreshAutoGifFooter` `-setImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAutoGifFooter.setImages` |
+| `CYLRefreshAutoGifFooter` `-setImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAutoGifFooter.setImages` |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoNormalFooter` | The standard automatic footer: the state text with a spinner while loading. | `com.cyl.refresh.CYLRefreshAutoNormalFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshAutoNormalFooter` `loadingView` | The spinner shown while loading, created on first access and hidden when stopped; style it here. | `CYLRefreshAutoNormalFooter.loadingView` |
-| `CYLRefreshAutoNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`). | `CYLRefreshAutoNormalFooter.noMoreDataImage` |
+| `CYLRefreshAutoNormalFooter` | The automatic state footer with a spinner. | `com.cyl.refresh.CYLRefreshAutoNormalFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoNormalFooter` `loadingView` | The spinner. | `CYLRefreshAutoNormalFooter.loadingView` |
+| `CYLRefreshAutoNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data. | `CYLRefreshAutoNormalFooter.noMoreDataImage` |
 | `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshAutoNormalFooter`. | n/a (iOS only: deprecated iOS aliases) |
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`
@@ -895,29 +895,29 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackAnimationFooter` | Animated images (`setAnimationImages:forState:`), or an icon animation (GIF, Lottie, PAG or Rive) through `CYLRefreshIconAnimating`, which takes the animation view's place with the same layout. | `com.cyl.refresh.CYLRefreshBackAnimationFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshBackAnimationFooter` `animationView` | The image view that plays the per-state images. | `CYLRefreshBackAnimationFooter.animationView` |
-| `CYLRefreshBackAnimationFooter` `-setAnimationImages:duration:forState:` | Sets the images of `state`, played in `duration` seconds; a single image is shown still. The control grows to the first image's height. | `CYLRefreshBackAnimationFooter.setAnimationImages` |
-| `CYLRefreshBackAnimationFooter` `-setAnimationImages:forState:` | The same, 0.1 seconds per image. | `CYLRefreshBackAnimationFooter.setAnimationImages` |
+| `CYLRefreshBackAnimationFooter` | The back state footer with an animation per state. | `com.cyl.refresh.CYLRefreshBackAnimationFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackAnimationFooter` `animationView` | The view that shows the animation. | `CYLRefreshBackAnimationFooter.animationView` |
+| `CYLRefreshBackAnimationFooter` `-setAnimationImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshBackAnimationFooter.setAnimationImages` |
+| `CYLRefreshBackAnimationFooter` `-setAnimationImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshBackAnimationFooter.setAnimationImages` |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackGifFooter` | The MJRefresh name of `CYLRefreshBackAnimationFooter`, kept for compatibility: `gifView` and `setImages:…` call the general methods. New code can use `CYLRefreshBackAnimationFooter`. | `com.cyl.refresh.CYLRefreshBackGifFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshBackGifFooter` `gifView` | The same view as `animationView`. | `CYLRefreshBackGifFooter.gifView` |
-| `CYLRefreshBackGifFooter` `-setImages:duration:forState:` | Calls `-setAnimationImages:duration:forState:`. | `CYLRefreshBackGifFooter.setImages` |
-| `CYLRefreshBackGifFooter` `-setImages:forState:` | Calls `-setAnimationImages:forState:`. | `CYLRefreshBackGifFooter.setImages` |
+| `CYLRefreshBackGifFooter` | The back state footer with image frames per state. | `com.cyl.refresh.CYLRefreshBackGifFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackGifFooter` `gifView` | The view that shows the frames. | `CYLRefreshBackGifFooter.gifView` |
+| `CYLRefreshBackGifFooter` `-setImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshBackGifFooter.setImages` |
+| `CYLRefreshBackGifFooter` `-setImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshBackGifFooter.setImages` |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackNormalFooter` | The standard back footer: the state text with an arrow that turns when releasing will load, and a spinner while loading. | `com.cyl.refresh.CYLRefreshBackNormalFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshBackNormalFooter` `arrowView` | The arrow beside the text (the bundle's `CYLRefreshArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshBackNormalFooter.arrowView` |
-| `CYLRefreshBackNormalFooter` `loadingView` | The spinner shown while loading, created on first access and hidden when stopped; style it here. | `CYLRefreshBackNormalFooter.loadingView` |
-| `CYLRefreshBackNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`). | `CYLRefreshBackNormalFooter.noMoreDataImage` |
-| `CYLRefreshBackNormalFooter` `iconSize` | Size of the icon (the arrow and noMoreDataImage); CGSizeZero (default) uses the image's own size (flutter_easy_refresh's `iconDimension`). | `CYLRefreshBackNormalFooter.iconSize` |
+| `CYLRefreshBackNormalFooter` | The back state footer with an arrow and a spinner. | `com.cyl.refresh.CYLRefreshBackNormalFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackNormalFooter` `arrowView` | The arrow. | `CYLRefreshBackNormalFooter.arrowView` |
+| `CYLRefreshBackNormalFooter` `loadingView` | The spinner. | `CYLRefreshBackNormalFooter.loadingView` |
+| `CYLRefreshBackNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data. | `CYLRefreshBackNormalFooter.noMoreDataImage` |
+| `CYLRefreshBackNormalFooter` `iconSize` | The arrow's and spinner's side, in dp. | `CYLRefreshBackNormalFooter.iconSize` |
 | `CYLRefreshBackNormalFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshBackNormalFooter`. | n/a (iOS only: deprecated iOS aliases) |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`

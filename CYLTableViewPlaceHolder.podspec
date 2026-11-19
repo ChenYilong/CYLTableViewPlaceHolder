@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
                         'CYLTableViewPlaceHolder/CYLRefresh/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Base/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/*.swift',
+                        'CYLTableViewPlaceHolder/CYLRefresh/Custom/Footer/**/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.swift'
     # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal; its Swift
