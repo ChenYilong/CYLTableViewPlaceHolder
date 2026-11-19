@@ -9,28 +9,16 @@
 // [EN] Swift since 2026-11-19 (docs/Swift-Migration.md, step 8), with the same Objective-C API (`+styleClass`,
 //      `-initWithStyle:`, `style`, the five drawn footers, `CYLRefreshBallPulseFooter` with `normalColor` /
 //      `animatingColor`). The hosted header (`CYLRefreshDrawnHeader`) is Swift since step 9: its driven mode is internal
-//      and called directly. The base classes (`CYLRefreshBackStateFooter`, `CYLRefreshBackFooter`, `CYLRefreshAutoFooter`)
-//      are still Objective-C: `CYLRefreshBackFooter`'s private `-happenOffsetY` is reached by selector, as
-//      `UIScrollView+CYLRefresh.swift` does.
+//      and called directly. The base classes are Swift too (`CYLRefreshBackStateFooter` since step 10,
+//      `CYLRefreshBackFooter` and `CYLRefreshAutoFooter` since step 11): `CYLRefreshBackFooter`'s `happenOffsetY`, reached
+//      by selector until step 11, is internal and read directly.
 // [CN] 自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 8 步），Objective-C API 不变（`+styleClass`、`-initWithStyle:`、
 //      `style`、五个手绘刷新尾、带 `normalColor` / `animatingColor` 的 `CYLRefreshBallPulseFooter`）。内嵌的刷新头
-//      （`CYLRefreshDrawnHeader`）自第 9 步起用 Swift 编写：其被驱动模式为 internal，直接调用。基类（`CYLRefreshBackStateFooter`、
-//      `CYLRefreshBackFooter`、`CYLRefreshAutoFooter`）仍是 Objective-C：`CYLRefreshBackFooter` 私有的 `-happenOffsetY` 按选择器调用，
-//      与 `UIScrollView+CYLRefresh.swift` 相同。
+//      （`CYLRefreshDrawnHeader`）自第 9 步起用 Swift 编写：其被驱动模式为 internal，直接调用。基类同样是 Swift（`CYLRefreshBackStateFooter`
+//      自第 10 步，`CYLRefreshBackFooter` 与 `CYLRefreshAutoFooter` 自第 11 步）：`CYLRefreshBackFooter` 的 `happenOffsetY`（第 11 步之前按选择器
+//      调用）现为 internal，直接读取。
 
 import UIKit
-
-// [EN] CYLRefreshBackFooter's private offset where the footer starts to show (`CYLRefreshBackFooter.m`).
-// [CN] CYLRefreshBackFooter 私有的刷新尾开始出现的偏移（`CYLRefreshBackFooter.m`）。
-private extension CYLRefreshBackFooter {
-
-    var cyl_happenOffsetYForDrawnFooter: CGFloat {
-        let selector = NSSelectorFromString("happenOffsetY")
-        guard responds(to: selector) else { return 0 }
-        typealias Function = @convention(c) (AnyObject, Selector) -> CGFloat
-        return unsafeBitCast(method(for: selector), to: Function.self)(self, selector)
-    }
-}
 
 /**
  * [EN] A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content,
@@ -113,7 +101,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
     // [EN] Points pulled past the content's bottom, the open height included while loading. [CN] 拉出内容底部的点数，加载中包含展开高度。
     private var pulled: CGFloat {
         guard let scrollView = scrollView else { return 0 }
-        return max(0, scrollView.cyl_offsetY - cyl_happenOffsetYForDrawnFooter)
+        return max(0, scrollView.cyl_offsetY - happenOffsetY)
     }
 
     // [EN] Stretch styles fill the revealed area; the others keep their open height. [CN] 拉伸类样式铺满露出区域；其他样式保持展开高度。

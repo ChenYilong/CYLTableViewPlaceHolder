@@ -133,7 +133,7 @@
 		AD8D4EC058BA98D3A52F71C7 /* CYLPlaceholderExample.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B4A60A0591A2EABA96BCAE77 /* CYLPlaceholderExample.bundle */; };
 		AFB1D3F5C14B0510D36CC800 /* CYLRefreshCupertinoHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 52877987520AFF01DD3827B8 /* CYLRefreshCupertinoHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B01C3D4C4BC3777037361BCC /* CYLRefreshNormalTrailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839C02CEFAC5501E1DBF5969 /* CYLRefreshNormalTrailer.swift */; };
-		B172487FEC2CC6C6CAC4C175 /* CYLRefreshBackFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.m */; };
+		B172487FEC2CC6C6CAC4C175 /* CYLRefreshBackFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.swift */; };
 		B1A0CEB3B6EC0F7D6675B362 /* UITableView+CYLTableViewPlaceHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A68F2E51C2A67E800D2E9B0 /* UITableView+CYLTableViewPlaceHolder.swift */; };
 		B1D5A3B6D514FE5A5C29C661 /* CYLPlaceholderStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013F8A0D66AE193A241AEFE5 /* CYLPlaceholderStatusView.swift */; };
 		B2248DC9DF3B87110E2644BA /* CYLRefreshBackNormalFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0B9E1669AC095DBE9C078E /* CYLRefreshBackNormalFooter.swift */; };
@@ -262,7 +262,7 @@
 		26C6550B6BC368C8E3B4749E /* CYLRefreshConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshConfig.h; sourceTree = "<group>"; };
 		271B9AE5193C25D8586A2719 /* CYLRefreshHeader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshHeader.swift; sourceTree = "<group>"; };
 		27BDCF96BBE7D4E274471D80 /* CYLPlaceholderScenario.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderScenario.swift; sourceTree = "<group>"; };
-		2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshBackFooter.m; sourceTree = "<group>"; };
+		2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshBackFooter.swift; sourceTree = "<group>"; };
 		2C697B7279BF082BB2B6AE1D /* CYLRefreshFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshFooter.m; sourceTree = "<group>"; };
 		32597B8F56F991E5387282A0 /* CYLRefreshBackFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshBackFooter.h; sourceTree = "<group>"; };
 		32B572203D33AF9A6B00DEBF /* CYLWeChatStylePlaceHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CYLWeChatStylePlaceHolder.swift; sourceTree = "<group>"; };
@@ -728,7 +728,7 @@
 				0035C4673AA01E386B34CE11 /* CYLRefreshAutoFooter.h */,
 				44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.m */,
 				32597B8F56F991E5387282A0 /* CYLRefreshBackFooter.h */,
-				2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.m */,
+				2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.swift */,
 				00A720C7959BDC73A6E87C44 /* CYLRefreshComponent.h */,
 				0DC946F59994EFA472714224 /* CYLRefreshComponent.m */,
 				5BDA0A6F0F39B2A5B9EA03F0 /* CYLRefreshFooter.h */,
@@ -1018,7 +1018,7 @@
 			files = (
 				B1A0CEB3B6EC0F7D6675B362 /* UITableView+CYLTableViewPlaceHolder.swift in Sources */,
 				B32F8EB18ED9991486EEA334 /* CYLRefreshAutoFooter.m in Sources */,
-				B172487FEC2CC6C6CAC4C175 /* CYLRefreshBackFooter.m in Sources */,
+				B172487FEC2CC6C6CAC4C175 /* CYLRefreshBackFooter.swift in Sources */,
 				E1413511215EA4393B793296 /* CYLRefreshComponent.m in Sources */,
 				F91D3DDFF9B8B80F22433E29 /* CYLRefreshFooter.m in Sources */,
 				EEE46BBC14128E895046BF11 /* CYLRefreshHeader.swift in Sources */,

@@ -191,20 +191,20 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackFooter` | A footer that stays hidden below the content and loads more when the user pulls up past it and releases; the scroll view rebounds when loading ends. The base of the back footers, with the optional second floor. | `com.cyl.refresh.CYLRefreshBackFooter` — pull to load and the second floor (secondary*) |
-| `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | Seconds the "no more data" text stays visible, with the footer held open, after a load that ends with `endRefreshingWithNoMoreData`, before the scroll view rebounds (upstream #1585, case 2). | `CYLRefreshBackFooter.noMoreDataDisplayDuration` |
-| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | Keeps the footer shown after the content while there is no more data, until the state changes (CYLRefreshLayout's `setEnableFooterFollowWhenNoMoreData`). Default NO. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData` — added 2026-11-17 for Android parity |
-| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | After loading more, leaves the new rows in the place the footer showed, so they come into view; NO keeps the old end of the content in place (CYLRefreshLayout's `setEnableScrollContentWhenLoaded`). Default YES. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded` — added 2026-11-17 for Android parity |
-| `CYLRefreshBackFooter` `secondaryTriggerOffset` | Pulling up at least this far (points) and releasing opens the footer's second floor below the list instead of loading; 0 (default) turns it off (flutter_easy_refresh's footer `secondaryTriggerOffset`). | `CYLRefreshBackFooter.secondaryTriggerOffset` |
-| `CYLRefreshBackFooter` `secondaryDimension` | Height of the open second floor (points); 0 (default) uses the scroll view's visible height. | `CYLRefreshBackFooter.secondaryDimension` |
-| `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | While open, pulling the content down this far (points) and releasing closes it. Default 80. | `CYLRefreshBackFooter.secondaryCloseTriggerOffset` |
-| `CYLRefreshBackFooter` `secondaryView` | The second floor's content, placed below the list across the whole floor (flutter_easy_refresh's `SecondaryBuilderFooter`). | `CYLRefreshBackFooter.secondaryView` — placed over the layout; the layout's parent should be a FrameLayout |
-| `CYLRefreshBackFooter` `secondaryOpen` | YES while the second floor is open. | `CYLRefreshBackFooter.secondaryOpen` |
-| `CYLRefreshBackFooter` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshBackFooter.secondaryOpenedBlock` |
-| `CYLRefreshBackFooter` `secondaryClosedBlock` | Called when the second floor has closed. | `CYLRefreshBackFooter.secondaryClosedBlock` |
-| `CYLRefreshBackFooter` `secondaryVelocity` | Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0 (default) turns it off. | `CYLRefreshBackFooter.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
-| `CYLRefreshBackFooter` `-openSecondary` | Opens the second floor (flutter_easy_refresh's `openFooterSecondary`). | `CYLRefreshBackFooter.openSecondary()` |
-| `CYLRefreshBackFooter` `-closeSecondary` | Closes the second floor (flutter_easy_refresh's `closeFooterSecondary`). | `CYLRefreshBackFooter.closeSecondary()` |
+| `CYLRefreshBackFooter` | A footer that loads when pulled up and released. | `com.cyl.refresh.CYLRefreshBackFooter` — pull to load and the second floor (secondary*) |
+| `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | Seconds "no more data" stays visible, with the footer held open, after a load ends with [endRefreshingWithNoMoreData]; 0 rebounds at once. | `CYLRefreshBackFooter.noMoreDataDisplayDuration` |
+| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | Keeps the footer after the content when there is no more data. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData` — added 2026-11-17 for Android parity |
+| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | Scrolls the content to show new data after loading more. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded` — added 2026-11-17 for Android parity |
+| `CYLRefreshBackFooter` `secondaryTriggerOffset` | Pulling up this far and releasing opens the second floor below the list, in dp; 0 for never. | `CYLRefreshBackFooter.secondaryTriggerOffset` |
+| `CYLRefreshBackFooter` `secondaryDimension` | The open second floor's height, in dp; 0 for the layout's height. | `CYLRefreshBackFooter.secondaryDimension` |
+| `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | Pulling the open second floor down this far and releasing closes it, in dp. | `CYLRefreshBackFooter.secondaryCloseTriggerOffset` |
+| `CYLRefreshBackFooter` `secondaryView` | The second floor's content, placed over the layout's lower part and slid in by the pull. | `CYLRefreshBackFooter.secondaryView` — placed over the layout; the layout's parent should be a FrameLayout |
+| `CYLRefreshBackFooter` `secondaryOpen` | Whether the second floor is open. | `CYLRefreshBackFooter.secondaryOpen` |
+| `CYLRefreshBackFooter` `secondaryOpenedBlock` | Called after the second floor has opened. | `CYLRefreshBackFooter.secondaryOpenedBlock` |
+| `CYLRefreshBackFooter` `secondaryClosedBlock` | Called after the second floor has closed. | `CYLRefreshBackFooter.secondaryClosedBlock` |
+| `CYLRefreshBackFooter` `secondaryVelocity` | A release at least this fast (dp per second), past the refresh trigger, opens the second floor, as on iOS. | `CYLRefreshBackFooter.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
+| `CYLRefreshBackFooter` `-openSecondary` | Opens the second floor. | `CYLRefreshBackFooter.openSecondary()` |
+| `CYLRefreshBackFooter` `-closeSecondary` | Closes the second floor. | `CYLRefreshBackFooter.closeSecondary()` |
 
 ## `CYLRefresh/Base/CYLRefreshComponent.h`
 
