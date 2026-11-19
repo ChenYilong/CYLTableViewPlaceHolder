@@ -132,6 +132,8 @@
 
 ## TODO
 
+> Status (2026-11-19, Windows session): every open item below is iOS work that needs macOS, Xcode, an iOS simulator or an iOS device, so by the session-roles rule it belongs to the Mac session; the Windows session handed the list over on 2026-11-19. The Android, HarmonyOS and mini program parts of the project are tracked in `docs/Android-API-Map.md` (100), `docs/HarmonyOS.md` and `docs/WeChat-MiniProgram.md`.
+
 汇总上文所有低于 100 分的条目（2026-11-09 核对）。分数与剩余工作以上方表格为准，此处列出完成所需的工作和验证方式。所有验证都需要 macOS、Xcode 和 iOS 模拟器（部分需真机）。
 
 ### 占位组件

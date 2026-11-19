@@ -77,6 +77,8 @@ were therefore never verified; this document replaces them.
 
 ## TODO: outstanding work before 100%
 
+> Status (2026-11-19, Windows session): every open item below is iOS work that needs macOS, Xcode, an iOS simulator or an iOS device, so by the session-roles rule it belongs to the Mac session; the Windows session handed the list over on 2026-11-19. The Android, HarmonyOS and mini program parts of the project are tracked in `docs/Android-API-Map.md` (100), `docs/HarmonyOS.md` and `docs/WeChat-MiniProgram.md`.
+
 | TODO | Current gap and implementation notes | Verification needed |
 | --- | --- | --- |
 | TODO — Carthage and iOS 12 (95) | Carthage packaging and an iOS 12.0 deployment build (Xcode 16, unguarded-availability errors) pass in CI; the unit suite also builds at 15.0 with those errors and passes. Running on iOS 12 is impossible with any available machine: Apple's iOS 12.4 simulator runtime refuses hosts after macOS 12.99 (tried on GitHub's `macos-15-intel` runner, PR #19), GitHub has no macOS 12 runner, and this Mac runs macOS 27. | Decision (2026-11-10): keep iOS 12 and verify on a physical device. Run `scripts/device-tests.sh <UDID> <team ID>` with Xcode 16 or earlier on an iOS 12 device and record the result here; then the row is 100. |
