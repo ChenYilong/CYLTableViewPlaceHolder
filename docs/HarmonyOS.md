@@ -241,7 +241,7 @@
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：94 / 100**（两张表合计：没有 TODO 的行 983 / 计入的行 1045；n/a 14 行不计入）。API 表 803 / 865，演示表 180 / 180。 | **HarmonyOS score: 94 / 100** (both tables: rows without TODO 983 / counted rows 1045; 14 n/a rows not counted). API table 803 / 865, demo table 180 / 180. |
+| **鸿蒙完成度：94 / 100**（两张表合计：没有 TODO 的行 1000 / 计入的行 1059；n/a 14 行不计入）。API 表 809 / 868，演示表 191 / 191。 | **HarmonyOS score: 94 / 100** (both tables: rows without TODO 1000 / counted rows 1059; 14 n/a rows not counted). API table 809 / 868, demo table 191 / 191. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -534,6 +534,9 @@
 | `CYLRefreshIconView` `titleColor` | `CYLRefreshIconViewModel.titleColor` |
 | `CYLRefreshIconView` `fittingSize` | `CYLRefreshIconViewModel.fittingSize` |
 | `CYLRefreshIconView` `scrubsWhilePulling` | `CYLRefreshIconViewModel.scrubsWhilePulling` |
+| `CYLRefreshIconView` `animationSpeed` | `CYLRefreshIconViewModel.animationSpeed` (refresh/CYLRefreshIconView.ets) |
+| `CYLRefreshIconView` `loopsWhilePlaying` | `CYLRefreshIconViewModel.loopsWhilePlaying` |
+| `CYLRefreshIconView` `-replayAnimation` | `CYLRefreshIconViewModel.replayAnimation()` |
 | `CYLRefreshIconView` `-updateForState:` | `CYLRefreshIconViewModel.updateForState(state)` |
 | `CYLRefreshIconView` `-updateForPullingPercent:` | `CYLRefreshIconViewModel.updateForPullingPercent(percent)` |
 | `CYLRefreshIconAnimating` | `CYLRefreshIconAnimating` |
@@ -737,8 +740,8 @@
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
 | `CYLRefreshFlyHeader` | `CYLRefreshFlyHeaderModel` (always open: adds its height to the top inset) |
-| `CYLRefreshFlyHeader` `mountainView` | TODO |
-| `CYLRefreshFlyHeader` `flyView` | TODO |
+| `CYLRefreshFlyHeader` `mountainView` | `CYLRefreshFlyHeaderModel.mountainView` (refresh/drawn/CYLRefreshFly.ets) |
+| `CYLRefreshFlyHeader` `flyView` | `CYLRefreshFlyHeaderModel.flyView` |
 | `CYLRefreshFlyHeader` `floatView` | TODO |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
@@ -1033,7 +1036,7 @@
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | `CYLRefreshAutoStateFooterModel.labelLeftInset` |
 | `CYLRefreshAutoStateFooter` `stateLabel` | `CYLRefreshAutoStateFooterModel.stateLabel` |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | `CYLRefreshAutoStateFooterModel.setTitle(title, state)` |
-| `CYLRefreshAutoStateFooter` `-titleForState:` | TODO |
+| `CYLRefreshAutoStateFooter` `-titleForState:` | `CYLRefreshAutoStateFooterModel.titleForState` (refresh/CYLRefreshClassics.ets) |
 | `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | `CYLRefreshAutoStateFooterModel.refreshingTitleHidden` |
 
 #### `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
@@ -1556,7 +1559,8 @@
 | Animation files: PAG · CYLTableViewPlaceHolder/PAG (4 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationDetailPage.ets` |
 | Animation files: Rive · CYLTableViewPlaceHolder/Rive (4 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationDetailPage.ets` |
 | Animation files: GIF · Core (7 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationDetailPage.ets` |
-| Animation files: CYLScenarioExample.bundle/Animations (12 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationDetailPage.ets` |
+| Animation files: CYLScenarioExample.bundle/Animations (13 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationDetailPage.ets` |
+| Animation files: SVGA · cyl-svga-miniprogram (12 files, detail replays every 4 s) | `entry/src/main/ets/pages/AnimationsTab.ets` (the example bundle's .svga files) · `engines/CYLSVGAPlaceholderItemAnimator.ets` |
 | Sources (NOTICE.animations) | `entry/src/main/ets/pages/TextFilePage.ets` (from AnimationsTab) |
 
 #### Flows tab (CYLFlowListViewController)
@@ -1623,6 +1627,8 @@
 | Refresh icons (CYLRefreshIconListViewController): Lottie · CYLTableViewPlaceHolder/LottieSwift · CYLRefreshSpinnerRing.json | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
 | Refresh icons (CYLRefreshIconListViewController): PAG · CYLTableViewPlaceHolder/PAG · CYLPlaceholderProgress.pag | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
 | Refresh icons (CYLRefreshIconListViewController): Rive · CYLTableViewPlaceHolder/Rive · CYLRefreshIcon.riv | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
+| Refresh icons (CYLRefreshIconListViewController): SVGA · CYLTableViewPlaceHolder/SVGA · tab_activity.svga | `entry/src/main/ets/feed/RefreshSetups.ets` (SVGA section, `fileRow`) |
+| Refresh icons (CYLRefreshIconListViewController): SVGA · CYLTableViewPlaceHolder/SVGA · tab_list.svga | `entry/src/main/ets/feed/RefreshSetups.ets` (SVGA section, `fileRow`) |
 | Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Image sequence per state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
 | Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · A different icon for each state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
 | Refresh icons (CYLRefreshIconListViewController): Other ways to set an icon · Back footer, icon per state | `entry/src/main/ets/pages/RefreshIconDemoPage.ets` (`feed/RefreshSetups.ets`) |
@@ -1662,6 +1668,7 @@
 | Animated icons: GIF, Lottie, PAG, Rive · Lottie icon for each state (CYLRefreshTableViewController - example52) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · PAG progress ring (CYLRefreshTableViewController - example53) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · Rive refresh icon (CYLRefreshTableViewController - example54) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
+| Animated icons: GIF, Lottie, PAG, Rive · SVGA refresh icon (CYLRefreshTableViewController - example57) | `entry/src/main/ets/pages/RefreshTablePage.ets` (`example57`) |
 | Animated icons: GIF, Lottie, PAG, Rive · Animated images from GIF frames (CYLRefreshTableViewController - example55) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · A different engine for each state (CYLRefreshTableViewController - example56) | `entry/src/main/ets/pages/RefreshTablePage.ets` |
 | Animated icons: GIF, Lottie, PAG, Rive · UICollectionView with animated icons (CYLRefreshCollectionViewController - example32) | `entry/src/main/ets/pages/RefreshCollectionPage.ets` |
@@ -1692,6 +1699,13 @@
 | CYLRefresh styles · Rive · Space (CYLRefreshStylesDemoViewController - styleRiveSpace) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
 | CYLRefresh styles · Rive · Squats (CYLRefreshStylesDemoViewController - styleRiveSquats) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
 | CYLRefresh styles · Rive · Space footer (CYLRefreshStylesDemoViewController - styleRiveSpaceFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` |
+| CYLRefresh styles · SVGA · Bow (CYLRefreshStylesDemoViewController - styleSvgaBow) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Bubbles (CYLRefreshStylesDemoViewController - styleSvgaBubbles) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Halloween (CYLRefreshStylesDemoViewController - styleSvgaHalloween) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Skating (CYLRefreshStylesDemoViewController - styleSvgaSkating) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Space (CYLRefreshStylesDemoViewController - styleSvgaSpace) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Squats (CYLRefreshStylesDemoViewController - styleSvgaSquats) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
+| CYLRefresh styles · SVGA · Space footer (CYLRefreshStylesDemoViewController - styleSvgaSpaceFooter) | `entry/src/main/ets/pages/RefreshStylesPage.ets` (`svgaStyle`) · `engines/CYLRefreshSVGASceneView.ets` |
 | flutter_easy_refresh samples · Cupertino style (CYLEasyRefreshDemoViewController - easyCupertino) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Second floor (CYLEasyRefreshDemoViewController - easySecondary) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
