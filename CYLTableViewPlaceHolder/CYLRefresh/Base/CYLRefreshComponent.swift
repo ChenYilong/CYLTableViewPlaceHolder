@@ -385,7 +385,7 @@ open class CYLRefreshComponent: UIView {
             // [EN] The icon follows every state change of every subclass (CYLRefreshCheckState calls super).
             // [CN] 图标随所有子类的每次状态变化更新（CYLRefreshCheckState 会调用 super）。
             iconViewStorage?.update(for: newValue)
-            cyl_reportPhaseChange()
+            reportPhaseChange()
 
             // 加入主队列的目的是等setState:方法调用完毕、设置完文字后再去布局子控件
             DispatchQueue.main.async { [weak self] in
@@ -487,7 +487,7 @@ open class CYLRefreshComponent: UIView {
         set {
             storedPullingPercent = newValue
             iconViewStorage?.update(pullingPercent: newValue)
-            cyl_reportPhaseChange()
+            reportPhaseChange()
 
             if isRefreshing { return }
 
@@ -740,12 +740,12 @@ open class CYLRefreshComponent: UIView {
         }
         // [EN] Hold open for `duration`, showing the result, then retract. [CN] 停留 `duration` 显示结果，然后收回。
         finishing = true
-        cyl_reportPhaseChange()
+        reportPhaseChange()
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
             guard let self = self else { return }
             self.finishing = false
             if self.isRefreshing { self.state = .idle }
-            self.cyl_reportPhaseChange()
+            self.reportPhaseChange()
         }
     }
 
@@ -1279,7 +1279,7 @@ open class CYLRefreshComponent: UIView {
                 observer(self, dragOffset, pullingPercent, scrollView?.isDragging == true)
             }
             followPull()
-            cyl_reportPhaseChange()
+            reportPhaseChange()
         } else if keyPath == CYLRefreshKeyPathPanState {
             if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .began {
                 dragStartOffsetY = scrollView.contentOffset.y
@@ -1374,9 +1374,9 @@ open class CYLRefreshComponent: UIView {
 
     // MARK: - Internal (the subclasses in this module)
 
-    // [EN] Reports a phase change to the hook, the observers and the haptic tap (MJRefresh's `-cyl_reportPhase`).
-    // [CN] 把阶段变化通知钩子、观察者并触发轻触反馈（即 `-cyl_reportPhase`）。
-    func cyl_reportPhaseChange() {
+    // [EN] Reports a phase change to the hook, the observers and the haptic tap (the Objective-C `-cyl_reportPhase`).
+    // [CN] 把阶段变化通知钩子、观察者并触发轻触反馈（即 Objective-C 的 `-cyl_reportPhase`）。
+    func reportPhaseChange() {
         let phase = self.phase
         if phase == reportedPhase { return }
         let old = reportedPhase
@@ -1392,28 +1392,22 @@ open class CYLRefreshComponent: UIView {
 
     // [EN] Whether any callback is set, the target-actions of -addTarget:action: included (the start header).
     // [CN] 是否设置了任何回调，包括 -addTarget:action: 的 target-action（起始刷新头使用）。
-    var cyl_hasCallbacks: Bool {
+    var hasCallbacks: Bool {
         refreshingBlock != nil || refreshingHandler != nil || refreshingTarget != nil || !targetActions.isEmpty
     }
 
     // [EN] Adds `other`'s live target-actions of -addTarget:action: to this component (the start header).
     // [CN] 把 `other` 通过 -addTarget:action: 添加且仍存在的 target-action 加到本控件（起始刷新头使用）。
-    func cyl_copyTargetActions(from other: CYLRefreshComponent) {
+    func copyTargetActions(from other: CYLRefreshComponent) {
         for pair in other.targetActions {
             if let target = pair.target { addTarget(target, action: pair.action) }
         }
     }
 
-    // [EN] Writes `scrollViewOriginalInset` (the protected ivar of the Objective-C class).
-    // [CN] 写入 `scrollViewOriginalInset`（Objective-C 类中受保护的实例变量）。
-    func cyl_setScrollViewOriginalInset(_ inset: UIEdgeInsets) {
-        scrollViewOriginalInset = inset
-    }
-
     // [EN] dragRate: the pulled distance as the finger's distance times dragRate, from the offset where the drag began.
     //      Returns the offset to use, or `offsetY` when dragRate is off or the control is not being pulled.
     // [CN] dragRate：拉开距离为手指移动距离乘以 dragRate，从拖动开始时的偏移算起。返回要使用的偏移；dragRate 关闭或未在拉动时返回 `offsetY`。
-    func cyl_offset(forDragRate offsetY: CGFloat, happenOffset happenOffsetY: CGFloat) -> CGFloat {
+    func offset(forDragRate offsetY: CGFloat, happenOffset happenOffsetY: CGFloat) -> CGFloat {
         guard let scrollView = scrollView, dragRate > 0, dragRate < 1, scrollView.isDragging else { return offsetY }
         let moved = scrollView.panGestureRecognizer.translation(in: scrollView).y
         let up = pullsUp

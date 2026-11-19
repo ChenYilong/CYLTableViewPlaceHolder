@@ -15,7 +15,7 @@
 //      during a refresh becomes the new baseline (issue MJRefresh#1628), a footer's or trailer's own side-inset write is
 //      not taken for a new top inset (issue MJRefresh#1483), rotation during a refresh rebuilds the original top from the
 //      header's own delta (MJRefresh PR #1444). The root `CYLRefreshComponent` (Swift since step 12) keeps the KVO of the
-//      scroll view; its internal members (`cyl_reportPhaseChange()`, `cyl_offset(forDragRate:happenOffset:)`, ...) are
+//      scroll view; its internal members (`reportPhaseChange()`, `offset(forDragRate:happenOffset:)`, ...) are
 //      called directly.
 // [CN] 自 2026-11-20 起用 Swift 编写（docs/Swift-Migration.md 第 11 步），Objective-C API（工厂方法 `+headerWithRefreshingBlock:` /
 //      `+headerWithRefreshingTarget:refreshingAction:`，Swift 仍写作初始化方法 `init(refreshingBlock:)` / `init(refreshingTarget:refreshingAction:)`；
@@ -404,7 +404,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         //      text would otherwise show over the floor. [CN] 打开的二楼移到刷新头前面（与 flutter_easy_refresh 的二楼页面相同），
         //      否则刷新头的文字会显示在二楼上。
         if let view = secondaryView { scrollView?.insertSubview(view, aboveSubview: self) }
-        cyl_reportPhaseChange()
+        reportPhaseChange()
         let top = scrollViewOriginalInset.top + secondaryHeight
         UIView.animate(withDuration: secondaryDuration, animations: {
             self.setRefreshingInsetTop(top)
@@ -421,7 +421,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         if !isSecondaryOpen || secondaryClosing { return }
         secondaryClosing = true
         secondaryClosePending = false
-        cyl_reportPhaseChange()
+        reportPhaseChange()
         let top = scrollViewOriginalInset.top
         UIView.animate(withDuration: secondaryDuration, animations: {
             self.setRefreshingInsetTop(top)
@@ -432,7 +432,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             self.pullingPercent = 0
             // [EN] Closed: back behind the header, revealed by the next pull. [CN] 关闭后回到刷新头后面，由下次下拉露出。
             if let view = self.secondaryView { self.scrollView?.insertSubview(view, belowSubview: self) }
-            self.cyl_reportPhaseChange()
+            self.reportPhaseChange()
             self.updateAutoHideVisibility()
             self.secondaryClosedBlock?()
         })
@@ -602,7 +602,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         //      保存的原始 top 则不会。用当前 top 重新得出它，否则刷新头会按旧的系统 inset 计算，并在刷新结束后留下差值作为空隙。
         var original = scrollViewOriginalInset
         original.top = scrollView.cyl_insetT + insetTDelta
-        cyl_setScrollViewOriginalInset(original)
+        scrollViewOriginalInset = original
 
         // sectionheader停留解决
         var insetT = -scrollView.cyl_offsetY > original.top ? -scrollView.cyl_offsetY : original.top
@@ -638,7 +638,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         guard let scrollView = scrollView else { return }
 
         // 跳转到下一个控制器时，contentInset可能会变
-        cyl_setScrollViewOriginalInset(scrollView.cyl_inset)
+        scrollViewOriginalInset = scrollView.cyl_inset
 
         // 当前的contentOffset
         var offsetY = scrollView.cyl_offsetY
@@ -649,7 +649,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         // >= -> >
         if offsetY > happenOffsetY { return }
         // [EN] dragRate scales the pull. [CN] dragRate 按比例缩放拉动距离。
-        offsetY = cyl_offset(forDragRate: offsetY, happenOffset: happenOffsetY)
+        offsetY = offset(forDragRate: offsetY, happenOffset: happenOffsetY)
 
         // 普通 和 即将刷新 的临界点
         let triggerDistance = expandHeight * triggerRate
@@ -661,7 +661,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             let armed = scrollView.isDragging && happenOffsetY - offsetY >= secondaryTriggerOffset
             if scrollView.isDragging && armed != secondaryArmed {
                 secondaryArmed = armed
-                cyl_reportPhaseChange()
+                reportPhaseChange()
             } else if !scrollView.isDragging && secondaryArmed {
                 openSecondary()
                 return
@@ -722,7 +722,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         let refreshingTop = originalTop + expandHeight
         var original = scrollViewOriginalInset
         original.top = originalTop
-        cyl_setScrollViewOriginalInset(original)
+        scrollViewOriginalInset = original
         let epsilon = CGFloat(Float.ulpOfOne)
         let restingAtTop = !scrollView.isTracking && !scrollView.isDecelerating &&
             scrollView.cyl_offsetY <= -originalTop + epsilon

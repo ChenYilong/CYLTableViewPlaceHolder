@@ -143,7 +143,7 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
         if state == .refreshing { return }
 
         guard let scrollView = scrollView else { return }
-        cyl_setScrollViewOriginalInset(scrollView.cyl_inset)
+        scrollViewOriginalInset = scrollView.cyl_inset
 
         // 当前的contentOffset
         let currentOffsetX = scrollView.cyl_offsetX

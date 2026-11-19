@@ -256,8 +256,8 @@ extension UIScrollView {
         // [CN] 起始刷新头没有自己的回调时，使用常规刷新头的回调。
         // [EN] Target-actions of -addTarget:action: (the attach:target:action: family) count and are copied too.
         // [CN] -addTarget:action:（attach:target:action: 系列）的 target-action 也计入并复制。
-        if let regular = regular, !startHeader.cyl_hasCallbacks {
-            startHeader.cyl_copyTargetActions(from: regular)
+        if let regular = regular, !startHeader.hasCallbacks {
+            startHeader.copyTargetActions(from: regular)
             startHeader.refreshingBlock = regular.refreshingBlock
             // [EN] Without a target there is nothing to call (the start header has none, having no callbacks).
             // [CN] 没有 target 时无可调用（起始刷新头没有回调，因而也没有 target）。

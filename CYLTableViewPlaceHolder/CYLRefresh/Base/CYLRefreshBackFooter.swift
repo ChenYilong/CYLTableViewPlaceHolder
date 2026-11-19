@@ -167,7 +167,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         }
 
         guard let scrollView = scrollView else { return }
-        cyl_setScrollViewOriginalInset(scrollView.cyl_inset)
+        scrollViewOriginalInset = scrollView.cyl_inset
 
         // 当前的contentOffset
         var currentOffsetY = scrollView.cyl_offsetY
@@ -178,7 +178,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
 
         // [EN] dragRate scales the pull. [CN] dragRate 按比例缩放拉动距离。
         if state != .noMoreData {
-            currentOffsetY = cyl_offset(forDragRate: currentOffsetY, happenOffset: happenOffsetY)
+            currentOffsetY = offset(forDragRate: currentOffsetY, happenOffset: happenOffsetY)
         }
         var pullingPercent = (currentOffsetY - happenOffsetY) / (cyl_h * triggerRate)
 
@@ -199,7 +199,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             let armed = scrollView.isDragging && currentOffsetY - happenOffsetY >= secondaryTriggerOffset
             if scrollView.isDragging && armed != secondaryArmed {
                 secondaryArmed = armed
-                cyl_reportPhaseChange()
+                reportPhaseChange()
             } else if !scrollView.isDragging && secondaryArmed {
                 openSecondary()
                 return
@@ -502,7 +502,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         if state == .pulling { state = .idle }
         placeSecondaryView()
         storedSecondaryOpen = true
-        cyl_reportPhaseChange()
+        reportPhaseChange()
         let height = secondaryHeight
         let bottom = scrollViewOriginalInset.bottom + height
         let target = happenOffsetY + height
@@ -521,7 +521,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         if !isSecondaryOpen || secondaryClosing { return }
         secondaryClosing = true
         secondaryClosePending = false
-        cyl_reportPhaseChange()
+        reportPhaseChange()
         let bottom = scrollViewOriginalInset.bottom
         let target = max(happenOffsetY, -scrollViewOriginalInset.top)
         UIView.animate(withDuration: slowAnimationDuration, animations: {
@@ -531,7 +531,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             self.secondaryClosing = false
             self.storedSecondaryOpen = false
             self.pullingPercent = 0
-            self.cyl_reportPhaseChange()
+            self.reportPhaseChange()
             self.updateAutoHideVisibility()
             self.secondaryClosedBlock?()
         })
