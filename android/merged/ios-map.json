@@ -1103,5 +1103,9 @@
  "CYLPlaceholderScenarioCatalog.animationLoopsByDefault": {
   "ios": "`CYLPlaceholderComponent` `+componentWithBundledAnimation:…`",
   "note": "iOS applies the same spinner check privately (static CYLScenarioAnimationLoopsByDefault in CYLPlaceholderScenario.m) when it sets animationRepeatCount; no public iOS function"
+ },
+ "SimpleComponent.cylSpinnerStyle": {
+  "ios": "`CYLRefreshComponent` `scrollMode`",
+  "note": "the Android styles take the spinner style CYLRefreshComponent.scrollMode works out; iOS sets scrollMode on the component itself"
  }
 }

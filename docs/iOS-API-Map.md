@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（810 / 810 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (810 of 810 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（811 / 811 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (811 of 811 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
@@ -146,8 +146,8 @@
 | `CYLRefreshComponent.automaticallyChangeAlpha` (var) | The component's alpha follows [pullingPercent] while it is pulled (`automaticallyChangeAlpha`). | `CYLRefreshComponent` `automaticallyChangeAlpha` |  |
 | `CYLRefreshComponent.refreshEnabled` (var) | Whether pulling can refresh at all (`refreshEnabled`). | `CYLRefreshComponent` `refreshEnabled` |  |
 | `CYLRefreshComponent.triggerRate` (var) | The share of the component's height to pull before releasing refreshes (`triggerRate`). | `CYLRefreshComponent` `triggerRate` |  |
-| `CYLRefreshComponent.finishDuration` (var) | How long the finished text stays, in seconds (`finishDuration`); used by the classic header and footer. | `CYLRefreshComponent` `finishDuration` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.scrollMode` (var) | How the component moves with the pull (`scrollMode`); the classic header and footer change their spinner style. | `CYLRefreshComponent` `scrollMode` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.finishDuration` (var) | How long the finished text stays, in seconds (`finishDuration`); used by the classic header and footer. | `CYLRefreshComponent` `finishDuration` |  |
+| `CYLRefreshComponent.scrollMode` (var) | How the component moves with the pull (`scrollMode`); the classic header and footer change their spinner style. | `CYLRefreshComponent` `scrollMode` |  |
 | `CYLRefreshComponent.colorAccent` (var) | The accent color (text and icons), or 0 for the component's own (`colorAccent`). | `CYLRefreshComponent` `colorAccent` |  |
 | `CYLRefreshComponent.colorPrimary` (var) | The primary color (background), or 0 for the component's own (`colorPrimary`). | `CYLRefreshComponent` `colorPrimary` |  |
 | `CYLRefreshComponent.hapticFeedback` (var) | Vibrates once when the pull passes the trigger (`hapticFeedback`). | `CYLRefreshComponent` `hapticFeedback` |  |
@@ -156,15 +156,15 @@
 | `CYLRefreshComponent.expanded` (val) | Whether the component holds its refreshing position (`expanded`). | `CYLRefreshComponent` `expanded` |  |
 | `CYLRefreshComponent.expandHeight` (val) | The component's height when open, in pixels (`expandHeight`). | `CYLRefreshComponent` `expandHeight` |  |
 | `CYLRefreshComponent.maxPullDistance` (var) | The farthest the component can be pulled open, in dp; 0 for no limit of its own (`maxPullDistance`). | `CYLRefreshComponent` `maxPullDistance` |  |
-| `CYLRefreshComponent.notifiesWhenHidden` (var) | Whether the component keeps reporting while hidden (`notifiesWhenHidden`); CYLRefreshLayout always reports. | `CYLRefreshComponent` `notifiesWhenHidden` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.triggersWhenReached` (var) | Whether reaching the trigger starts at once, without a release (`triggersWhenReached`); a footer loads when reached (CYLRefreshLayout's auto load more), a header keeps waiting for the release. | `CYLRefreshComponent` `triggersWhenReached` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.triggerMode` (var) | Where a pull may start (`triggerMode`): [CYLRefreshTriggerMode.Anywhere] (default) also lets a drag that started in the middle of the list carry on into the pull; [CYLRefreshTriggerMode.OnEdge] only a drag that started a | `CYLRefreshComponent` `triggerMode` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.notifiesWhenHidden` (var) | Whether the component keeps reporting the pull while its view is hidden (`notifiesWhenHidden`). | `CYLRefreshComponent` `notifiesWhenHidden` |  |
+| `CYLRefreshComponent.triggersWhenReached` (var) | Whether reaching the trigger starts at once, without a release (`triggersWhenReached`): a footer loads when reached (CYLRefreshLayout's auto load more); a header refreshes as soon as the pull arms it (iOS CYLRefreshHeade | `CYLRefreshComponent` `triggersWhenReached` |  |
+| `CYLRefreshComponent.triggerMode` (var) | Where a pull may start (`triggerMode`): [CYLRefreshTriggerMode.Anywhere] (default) also lets a drag that started in the middle of the list carry on into the pull; [CYLRefreshTriggerMode.OnEdge] only a drag that started a | `CYLRefreshComponent` `triggerMode` |  |
 | `CYLRefreshComponent.autoHideRefresh` (var) | Whether the component hides while it has nothing to show (`autoHideRefresh`). | `CYLRefreshComponent` `autoHideRefresh` |  |
 | `CYLRefreshComponent.isReadyToAutoHide` (fun) | Whether the component is at rest and not pulled, so auto hide may hide it (`isReadyToAutoHide`). | `CYLRefreshComponent` `-isReadyToAutoHide` |  |
 | `CYLRefreshComponent.updateAutoHideVisibility` (fun) | Applies [autoHideRefresh] now (`updateAutoHideVisibility`). | `CYLRefreshComponent` `-updateAutoHideVisibility` |  |
 | `CYLRefreshComponent.beginRefreshingWithDuration` (fun) | Starts refreshing with an opening animation of [duration] seconds that overshoots by [overOffset] pixels; with [force], also when a pull is under way (`beginRefreshingWithDuration:overOffset:force:`). | `CYLRefreshComponent` `-beginRefreshingWithDuration:overOffset:force:` |  |
 | `CYLRefreshComponent.attach` (fun) | Attaches the component to [layout] (`attach:`), replacing its header (or footer). | `CYLRefreshComponent` `+attach:`, `CYLRefreshComponent` `-attach:` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshComponent.finishingDurationWithSuccess` (fun) | How long the finished state shows, in seconds (`finishingDurationWithSuccess:`). | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshComponent.finishingDurationWithSuccess` (fun) | How long the finished state shows, in seconds (`finishingDurationWithSuccess:`). | `CYLRefreshComponent` `-finishingDurationWithSuccess:` |  |
 | `CYLRefreshComponent.cyl_autoChangeTransparency` (fun) | Sets [automaticallyChangeAlpha] (`cyl_autoChangeTransparency:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` |  |
 | `CYLRefreshComponent.cyl_afterBeginningAction` (fun) | Sets [beginRefreshingCompletionBlock] (`cyl_afterBeginningAction:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` |  |
 | `CYLRefreshComponent.cyl_endingAnimationBeginningAction` (fun) | Sets [endRefreshingAnimationBeginAction] (`cyl_endingAnimationBeginningAction:`). | `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` |  |
@@ -191,7 +191,7 @@
 | `CYLRefreshFooter` (class) | The iOS `CYLRefreshFooter` on Android: pull up to load more. | `CYLRefreshFooter` |  |
 | `CYLRefreshFooter.noMoreData` (var) | Whether there is no more data (`noMoreData`). | `CYLRefreshFooter` `noMoreData` |  |
 | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` (var) | The bottom inset the footer ignores, in dp (`ignoredScrollViewContentInsetBottom`): the layout's footer inset start. | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` |  |
-| `CYLRefreshFooter.loadsAfterNoMoreData` (var) | Whether a pull still loads after "no more data" (`loadsAfterNoMoreData`); when on, a pull clears "no more data" first. | `CYLRefreshFooter` `loadsAfterNoMoreData` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshFooter.loadsAfterNoMoreData` (var) | Whether a pull still loads after "no more data" (`loadsAfterNoMoreData`); when on, a pull clears "no more data" first. | `CYLRefreshFooter` `loadsAfterNoMoreData` |  |
 | `CYLRefreshFooter.endRefreshingWithNoMoreData` (fun) | Ends loading and shows "no more data" (`endRefreshingWithNoMoreData`). | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` |  |
 | `CYLRefreshFooter.noticeNoMoreData` (fun) | Shows "no more data" (`noticeNoMoreData`). | `CYLRefreshFooter` `-noticeNoMoreData` |  |
 | `CYLRefreshFooter.resetNoMoreData` (fun) | Clears "no more data" (`resetNoMoreData`). | `CYLRefreshFooter` `-resetNoMoreData` |  |
@@ -261,9 +261,9 @@
 | `CYLActivityIndicatorView.startAnimating` (fun) | Starts turning (`startAnimating`). | `UIActivityIndicatorView` `-startAnimating` (UIKit) |  |
 | `CYLActivityIndicatorView.stopAnimating` (fun) | Stops turning (`stopAnimating`). | `UIActivityIndicatorView` `-stopAnimating` (UIKit) |  |
 | `CYLRefreshCupertinoHeader` (class) | A header with the system spinner (iOS `CYLRefreshCupertinoHeader`). | `CYLRefreshCupertinoHeader` |  |
-| `CYLRefreshCupertinoHeader.activityIndicator` (val) | The spinner (`activityIndicator`). | `CYLRefreshCupertinoHeader` `activityIndicator` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshCupertinoHeader.activityIndicator` (val) | The spinner (`activityIndicator`). | `CYLRefreshCupertinoHeader` `activityIndicator` |  |
 | `CYLRefreshCupertinoFooter` (class) | A footer with the system spinner that loads when the end is reached (iOS `CYLRefreshCupertinoFooter`). | `CYLRefreshCupertinoFooter` |  |
-| `CYLRefreshCupertinoFooter.activityIndicator` (val) | The spinner (`activityIndicator`). | `CYLRefreshCupertinoFooter` `activityIndicator` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshCupertinoFooter.activityIndicator` (val) | The spinner (`activityIndicator`). | `CYLRefreshCupertinoFooter` `activityIndicator` |  |
 | `CYLRefreshDrawnFooter` (class) | A back footer drawn like a header style, upside down (iOS `CYLRefreshDrawnFooter`). | `CYLRefreshDrawnFooter`, `CYLRefreshDrawnFooter` `-initWithStyle:` | partial (see docs/Android-API-Map.md) |
 | `CYLRefreshDrawnFooter.style` (val) | The header whose drawing the footer shows (`style`). | `CYLRefreshDrawnFooter` `style` |  |
 | `CYLRefreshDrawnFooter.styleClass` (val) | The style header class a subclass draws, or null for a footer given its style (`styleClass`). | `CYLRefreshDrawnFooter` `styleClass` | partial (see docs/Android-API-Map.md) |
@@ -381,7 +381,7 @@
 | `CYLRefreshPaging.refresh` (fun) | Reloads the first page (`refresh`). | `CYLRefreshPaging` `-refresh` |  |
 | `CYLRefreshPaging.loadMore` (fun) | Loads the next page (`loadMore`); nothing after the last one. | `CYLRefreshPaging` `-loadMore` |  |
 | `CYLRefreshConfig` (class) | The refresh components' settings (iOS `CYLRefreshConfig`). | `CYLRefreshConfig` |  |
-| `CYLRefreshConfig.languageCode` (var) | The language of the built-in texts, or null for the system's (`languageCode`). | `CYLRefreshConfig` `languageCode` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshConfig.languageCode` (var) | The language of the built-in texts, or null for the system's (`languageCode`). | `CYLRefreshConfig` `languageCode` |  |
 | `CYLRefreshConfig.defaultConfig` (val) | The shared settings (`defaultConfig`). | `CYLRefreshConfig` `defaultConfig` |  |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshTrailer.kt`
@@ -878,6 +878,7 @@
 |:---|:---|:---|:---|
 | `SimpleBoundaryDecider` (class) | The default boundary check: the content (or the scrolling view under the finger) cannot scroll further (`SimpleBoundaryDecider`). | `CYLRefreshComponent` `canTriggerBlock` = nil (the built-in edge check, `-canTrigger`) | added 2026-11-17 for Android parity |
 | `SimpleComponent` (class) | A base for headers and footers, or a wrapper around any view (`SimpleComponent`). | `CYLRefreshComponent` | subclass it, or add any view to a plain `CYLRefreshHeader` / `CYLRefreshBackFooter` |
+| `SimpleComponent.cylSpinnerStyle` (var) | Sets the spinner style from outside (CYLRefreshComponent.scrollMode), replacing the one worked out. | `CYLRefreshComponent` `scrollMode` | the Android styles take the spinner style CYLRefreshComponent.scrollMode works out; iOS sets scrollMode on the component itself |
 | `SimpleComponent.isAutoRefresh` (val) | True while the current refresh was started by autoRefresh / autoLoadMore, false for a drag (pull request #1095, #1268). | `CYLRefreshComponent` `autoRefresh` (`isAutoRefresh`) | added 2026-11-17 for Android parity |
 | `SimpleComponent.setNoMoreData` (fun) | Passes no-more-data to a wrapped footer; false when there is none. | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` / `-resetNoMoreData` |  |
 | `SimpleMultiListener` (class) | An [OnMultiListener] whose methods do nothing; override the ones needed (`SimpleMultiListener`). | `CYLRefreshComponent` `-addScrollObserver:` (one block: nothing to override) | added 2026-11-17 for Android parity |
