@@ -34,7 +34,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderViewSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalizationSupport.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenarioSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
@@ -51,7 +52,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
     # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy cyl_reloadData category,
-    # CYLPlaceholderStatusView, CYLPlaceholderStackView and the view controller status category are Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
+    # CYLPlaceholderStatusView, CYLPlaceholderStackView, the view controller status category, CYLPlaceholderComponent and
+    # CYLPlaceholderScenarioCatalog are Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
     # the generated header as CYLTableViewPlaceHolder-Swift.h; the bridging header gives the Swift file the Objective-C
     # declarations the pod's umbrella header gives it; the CYLAnimatedItem pod below has the engine, so the Swift
     # condition is set as the pod's animation subspecs set it.

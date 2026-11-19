@@ -9,6 +9,14 @@
 //  [CN] 现成的空状态场景。一个场景就是 CYLPlaceholderStackView 竖向堆叠的组件列表：第一个是保留的图标加标题组件，
 //  其余是追加的图标加标题组件（提示、按钮、分隔符、图标）。所有文案来自核心层的国际化资源。
 //
+//  [EN] Swift since 2026-11-19: CYLPlaceholderComponent and CYLPlaceholderScenarioCatalog are in
+//       `CYLPlaceholderScenario.swift`. The enums, the CYLPlaceholderAction type and its constants (FOUNDATION_EXPORT
+//       symbols, defined in `CYLPlaceholderScenarioSupport.m`) stay here in Objective-C, made Swift-compatible
+//       (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起 CYLPlaceholderComponent 与 CYLPlaceholderScenarioCatalog 用 Swift 编写（`CYLPlaceholderScenario.swift`）。枚举、
+//       CYLPlaceholderAction 类型及其常量（FOUNDATION_EXPORT 符号，定义在 `CYLPlaceholderScenarioSupport.m`）保留在 Objective-C 中并兼容
+//       Swift（docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderView.h"
@@ -246,162 +254,36 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderButtonStyle) {
 };
 
 /*!
- * One component of a placeholder: the item attributes of a CYLPlaceholderView (an icon, a title or both, see
- * `initWithItemAttributes:imageBundle:error:`) and the action a tap on it performs.
+ * [EN] One component of a placeholder: the item attributes of a CYLPlaceholderView and the action a tap on it performs.
+ *      The class is Swift since 2026-11-19 (`CYLPlaceholderScenario.swift`) with the same Objective-C API: `attributes`,
+ *      `action`, `imageBundle`, `spacingBefore`, `interactionEnabled`, `tapHighlightStyle`, `animationRepeatCount`,
+ *      `+componentWithAttributes:action:` (Swift `init(attributes:action:)`),
+ *      `+componentWithBundledAnimation:fallbackStyle:title:size:action:` (Swift
+ *      `init(bundledAnimation:fallbackStyle:title:size:action:)`), `+hintComponentWithText:` (Swift `hint(text:)`),
+ *      `+textComponentWithText:fontSize:color:` (Swift `text(_:fontSize:color:)`), `+buttonComponentWithTitle:style:action:`
+ *      (Swift `button(title:style:action:)`), `+separatorComponentWithText:` (Swift `separator(text:)`) and
+ *      `+componentWithDictionary:error:` (Swift `init(dictionary:)`, errors in `CYLPlaceholderConfigurationErrorDomain`
+ *      with `CYLPlaceholderConfigurationErrorComponent`); it conforms to NSCopying, and `-init` / `+new` are
+ *      unavailable. Objective-C code that messages it imports the umbrella header `CYLTableViewPlaceHolder.h`, which
+ *      brings the generated Swift header.
+ * [CN] 占位图的一个组件：CYLPlaceholderView 的条目属性及点击它时执行的动作。该类自 2026-11-19 起用 Swift 编写
+ *      （`CYLPlaceholderScenario.swift`），Objective-C API 不变（含 Swift 名称与配置错误码），遵循 NSCopying。需要调用它的 Objective-C
+ *      代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLPlaceholderComponent : NSObject <NSCopying>
-
-@property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *attributes;
-/*!
- * nil: the component is not tappable.
- */
-@property (nonatomic, copy, readonly, nullable) CYLPlaceholderAction action;
-/*!
- * Images named in `attributes` are looked up here; nil uses the library's bundle.
- */
-@property (nonatomic, strong, nullable) NSBundle *imageBundle;
-/*!
- * Space above the component, from the one before it. Ignored for the first component.
- */
-@property (nonatomic) CGFloat spacingBefore;
-/*!
- * Whether a tap performs `action` and highlights the component (`CYLPlaceholderItemInteractionEnabled` in
- * `attributes`). Defaults to YES. NO keeps the component visible but inert, as a disabled button.
- */
-@property (nonatomic) BOOL interactionEnabled;
-/*!
- * The pressed look (`CYLPlaceholderItemTapHighlightStyle`). Defaults to Dim.
- */
-@property (nonatomic) CYLPlaceholderTapHighlightStyle tapHighlightStyle;
-/*!
- * How many times the icon animation plays each time it starts (`CYLPlaceholderItemAnimationRepeatCount`): 0 loops.
- * Defaults to 1 (play once and rest on the last frame); components made by `componentWithBundledAnimation:…` with a
- * spinner (a file named Loading, Progress, Activity, Spinner, Uploading…) loop (0).
- */
-@property (nonatomic) NSInteger animationRepeatCount;
-
-+ (instancetype)componentWithAttributes:(NSDictionary<NSString *, id> *)attributes
-                                 action:(nullable CYLPlaceholderAction)action
-    NS_SWIFT_NAME(init(attributes:action:));
-/*!
- * An icon (a bundled animation, see `+[CYLPlaceholderView bundledAnimationFileNames]`, with a static style shown
- * before it plays or when its engine is not installed) and an optional title.
- */
-+ (instancetype)componentWithBundledAnimation:(nullable NSString *)fileName
-                                fallbackStyle:(CYLPlaceholderStyle)fallbackStyle
-                                        title:(nullable NSString *)title
-                                         size:(CGSize)size
-                                       action:(nullable CYLPlaceholderAction)action
-    NS_SWIFT_NAME(init(bundledAnimation:fallbackStyle:title:size:action:));
-/*!
- * A secondary line of text under the title.
- */
-+ (instancetype)hintComponentWithText:(NSString *)text NS_SWIFT_NAME(hint(text:));
-/*!
- * [EN] A text of its own, `fontSize` points large and `color` colored (0 and nil for the default title look); the same
- *      as Android's `CYLPlaceholderComponent.text(title, sizeSp, color)`. The size follows Dynamic Type.
- * [CN] 一段独立的文字，字号 `fontSize`、颜色 `color`（0 与 nil 表示默认标题样式）；与 Android 的
- *      `CYLPlaceholderComponent.text(title, sizeSp, color)` 相同。字号随动态字体缩放。
- */
-+ (instancetype)textComponentWithText:(NSString *)text fontSize:(CGFloat)fontSize color:(nullable UIColor *)color
-    NS_SWIFT_NAME(text(_:fontSize:color:));
-/*!
- * A title drawn as a button.
- */
-+ (instancetype)buttonComponentWithTitle:(NSString *)title
-                                   style:(CYLPlaceholderButtonStyle)style
-                                  action:(CYLPlaceholderAction)action NS_SWIFT_NAME(button(title:style:action:));
-/*!
- * A title showing a separator, such as "——  or  ——".
- */
-+ (instancetype)separatorComponentWithText:(NSString *)text NS_SWIFT_NAME(separator(text:));
-/*!
- * A component from a configuration dictionary (JSON or property list), as described in
- * docs/Placeholder-Scenarios.md: "type" is "icon", "hint", "button", "separator" or "item" (raw item attributes);
- * "title"/"text" with an optional core localization key "titleKey"/"textKey"; "animation" (a bundled file name),
- * "style" (a CYLPlaceholderStyle name or number), "size", "buttonStyle" ("filled", "outlined", "capsule"), "action",
- * "interactionEnabled", "highlightStyle" ("dim", "shrink", "none"), "repeatCount" (0 or "loop", N, "once"),
- * "spacingBefore" and "accessibilityIdentifier". nil, with an error, for an invalid dictionary.
- */
-+ (nullable instancetype)componentWithDictionary:(NSDictionary<NSString *, id> *)dictionary
-                                           error:(NSError * _Nullable * _Nullable)error
-    NS_SWIFT_NAME(init(dictionary:));
-
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
-
-@end
+@class CYLPlaceholderComponent;
 
 /*!
- * The definition of every scenario. Texts are read in `CYLPlaceholderLocalization.effectiveLanguage` when called.
+ * [EN] The definition of every scenario. The class is Swift since 2026-11-19 (`CYLPlaceholderScenario.swift`) with the
+ *      same Objective-C API: `allScenarios`, `+componentsForScenario:` (Swift `components(for:)`),
+ *      `+backgroundActionForScenario:` (Swift `backgroundAction(for:)`), `+localizedNameForScenario:` (Swift
+ *      `localizedName(for:)`), `+readmeScreenshotNumbersForScenario:` (Swift `readmeScreenshotNumbers(for:)`),
+ *      `+animationFileNamesForScenario:` (Swift `animationFileNames(for:)`), `+categoryForScenario:` (Swift
+ *      `category(for:)`), `+permissionForScenario:` (Swift `permission(for:)`), `+scenarioForPermission:` (Swift
+ *      `scenario(for:)`), `+nameForScenario:` (Swift `name(for:)`), `+scenarioNamed:` (Swift `scenario(named:)`),
+ *      `+actionNamed:` (Swift `action(named:)`) and `+localizedTitleForAction:` (Swift `localizedTitle(for:)`); `-init` and
+ *      `+new` are unavailable.
+ * [CN] 所有场景的定义。该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderScenario.swift`），Objective-C API 不变（含 Swift 名称）。
  */
-@interface CYLPlaceholderScenarioCatalog : NSObject
-
-/*!
- * Every scenario, in declaration order, as NSNumber values of CYLPlaceholderScenario.
- */
-@property (class, nonatomic, copy, readonly) NSArray<NSNumber *> *allScenarios;
-/*!
- * The components of a scenario, the reserved icon-and-title component first; empty for an invalid value.
- */
-+ (NSArray<CYLPlaceholderComponent *> *)componentsForScenario:(CYLPlaceholderScenario)scenario
-    NS_SWIFT_NAME(components(for:));
-/*!
- * The action of a tap anywhere outside a tappable component ("tap the screen to reload"), or nil.
- */
-+ (nullable CYLPlaceholderAction)backgroundActionForScenario:(CYLPlaceholderScenario)scenario
-    NS_SWIFT_NAME(backgroundAction(for:));
-/*!
- * A short localized name for lists.
- */
-+ (NSString *)localizedNameForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(localizedName(for:));
-/*!
- * The README screenshot numbers (`assets/cyl-placeholder-scenario-NN-*.jpg`) the scenario reproduces; empty for
- * the business cases.
- */
-+ (NSArray<NSNumber *> *)readmeScreenshotNumbersForScenario:(CYLPlaceholderScenario)scenario
-    NS_SWIFT_NAME(readmeScreenshotNumbers(for:));
-/*!
- * Every bundled animation that fits the scenario, in all formats (GIF, Lottie, PAG, Rive): the scenario's own icon
- * first, then variants. Use one as a component's "animation" in a configuration, or with
- * `componentWithBundledAnimation:…`. Empty for a scenario without an icon.
- */
-+ (NSArray<NSString *> *)animationFileNamesForScenario:(CYLPlaceholderScenario)scenario
-    NS_SWIFT_NAME(animationFileNames(for:));
-/*!
- * The kind of problem a scenario shows.
- */
-+ (CYLPlaceholderScenarioCategory)categoryForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(category(for:));
-/*!
- * The permission a scenario is about; CYLPlaceholderPermissionNone for other scenarios and for NoPermission.
- */
-+ (CYLPlaceholderPermission)permissionForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(permission(for:));
-/*!
- * The scenario for a missing permission: CYLPlaceholderScenarioNoPermission for CYLPlaceholderPermissionNone.
- */
-+ (CYLPlaceholderScenario)scenarioForPermission:(CYLPlaceholderPermission)permission NS_SWIFT_NAME(scenario(for:));
-/*!
- * The scenario's name in configuration files, such as "RetryOrContactSupport".
- */
-+ (NSString *)nameForScenario:(CYLPlaceholderScenario)scenario NS_SWIFT_NAME(name(for:));
-/*!
- * The scenario with this name ("RetryOrContactSupport", "retryOrContactSupport" or
- * "CYLPlaceholderScenarioRetryOrContactSupport"); CYLPlaceholderScenarioCount when there is none.
- */
-+ (CYLPlaceholderScenario)scenarioNamed:(NSString *)name NS_SWIFT_NAME(scenario(named:));
-/*!
- * The action for a configuration name: "retry", "contactSupport", "openSettings", "goShopping", "done",
- * "chooseManually", or the name itself for an action the app defines.
- */
-+ (CYLPlaceholderAction)actionNamed:(NSString *)name NS_SWIFT_NAME(action(named:));
-/*!
- * The localized title of an action, such as "Retry"; nil for an action the library does not define.
- */
-+ (nullable NSString *)localizedTitleForAction:(CYLPlaceholderAction)action NS_SWIFT_NAME(localizedTitle(for:));
-
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
-
-@end
+@class CYLPlaceholderScenarioCatalog;
 
 NS_ASSUME_NONNULL_END

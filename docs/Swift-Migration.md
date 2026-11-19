@@ -7,7 +7,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 22 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 27 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -58,7 +58,7 @@ Objective-C to Swift, and its score after every commit.
     files (17,363 lines). Score by lines: 3,592 / (3,592 + 17,363) ≈ **17 / 100** (was 15). The work stays on
     `feat/android-refresh-port-followup`, shared with the other sessions, instead of a new branch: a separate branch
     would conflict with their changes to the same core files.
-  - 2026-11-19, step 2 (branch `feat/android-refresh-port-followup`, this commit): `CYLPlaceholderStatusView`,
+  - 2026-11-19, step 2 (branch `feat/android-refresh-port-followup`, `a3c02c1`): `CYLPlaceholderStatusView`,
     `CYLPlaceholderStackView` and the view controller status category (`UIViewController+CYLPlaceholderStatus`) are
     Swift, with the same Objective-C API (class names, selectors including the throwing initializers' `...error:`
     selectors, the former `NS_SWIFT_NAME` spellings as the Swift names, the configuration error codes). The stack view
@@ -80,9 +80,35 @@ Objective-C to Swift, and its score after every commit.
     "Tap to reload" shows the icon and the wrapped hint centered and a tap on an empty area loads the list. Measured: core
     9 Swift files (4,664 lines) and 67 Objective-C `.m` files (16,441 lines). Score by lines: 4,664 / (4,664 + 16,441)
     ≈ **22 / 100** (was 17).
-  - Next, bottom-up and one commit per file group, each with the core (195) and animation (13) tests: the UIKit
-    categories and small model classes of `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/`, then
-    `CYLPlaceholderStackView`, scenarios, HUD and status view, then `CYLRefresh/` (the largest part), then the tests.
+  - 2026-11-19, regression of step 2 fixed (`1c7c51a`): the step 2 Swift entry points took `[String: Any]`, so an
+    `NSArray` or `NSString` passed as `configuration` from Objective-C to `-[CYLPlaceholderStatusView
+    initWithConfiguration:error:]`, `-[CYLPlaceholderStackView initWithConfiguration:actions:error:]` or
+    `-[UIViewController cyl_applyStatusConfiguration:error:]` crashed in the Swift bridge. The Objective-C entry points
+    now take `Any` with the same selectors (hidden from Swift, which keeps its typed API), check the type and return the
+    Objective-C errors again (same domain, codes and messages). Test
+    `testConfigurationsThatAreNotDictionariesReturnTheConfigurationError` (`Tests/CYLPlaceholderStatusViewTests.m`).
+  - 2026-11-19, step 3 (branch `feat/android-refresh-port-followup`, this commit): `CYLPlaceholderScenario.m` (965
+    lines) is `CYLPlaceholderScenario.swift`: `CYLPlaceholderComponent` (`open`, NSCopying) and
+    `CYLPlaceholderScenarioCatalog`, with the same Objective-C API (class names, the factory selectors such as
+    `+componentWithBundledAnimation:fallbackStyle:title:size:action:` and `+componentWithDictionary:error:`, the former
+    `NS_SWIFT_NAME` spellings as the Swift names, the configuration errors and messages, catalog order and counts, the
+    repeat count 1 by default and 0 for spinners, line-icon colors, Rive options). The factories are Swift initializers
+    or class methods returning `Self` (a Swift subclass still gets its own type); the Objective-C factory selectors that
+    Swift spells as initializers are class methods hidden from Swift. `+componentWithDictionary:error:` takes `Any`, as
+    the Objective-C method did (anything but a dictionary returns the component error). The private `cyl_kind` and
+    `cyl_applyConfiguration:error:` are the internal Swift members `kind` and `applyConfiguration(_:)`, so
+    `CYLPlaceholderComponentInternal.h` is deleted (nothing Objective-C used it). Still Objective-C, made
+    Swift-compatible (rule 6): the `CYLPlaceholderScenario`, `CYLPlaceholderScenarioCategory`, `CYLPlaceholderPermission`
+    and `CYLPlaceholderButtonStyle` enums and the `CYLPlaceholderAction` type in `CYLPlaceholderScenario.h` (the HUD
+    header and Objective-C callers use them), and the six `CYLPlaceholderAction` constants (FOUNDATION_EXPORT symbols,
+    `CYLPlaceholderScenarioSupport.m`). New test `testComponentDictionariesAreCheckedAndComponentsCopy`
+    (`Tests/CYLPlaceholderScenarioTests.m`). Tests: core 197/197 (195 + the two new ones), animation 13/13 (static, PAG);
+    Example-Scenarios and the `CYLTableViewPlaceHolderFramework` target build (0 placeholder warnings); in the example
+    (English) the Scenarios list, "Retry button" (icon, title, filled button) and "Network unavailable" (tinted Lottie
+    line icon, wrapped title) show centered as before. Measured: core 10 Swift files (5,791 lines) and 67 Objective-C
+    `.m` files (15,497 lines). Score by lines: 5,791 / (5,791 + 15,497) ≈ **27 / 100** (was 22).
+  - Next, bottom-up and one commit per file group, each with the core (197) and animation (13) tests: the HUD
+    (`CYLPlaceholderHUD.m`), `UIScrollView+CYLPlaceholder.m`, then `CYLRefresh/` (the largest part), then the tests.
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 

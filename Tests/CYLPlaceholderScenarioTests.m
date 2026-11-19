@@ -471,6 +471,45 @@
     }
 }
 
+- (void)testComponentDictionariesAreCheckedAndComponentsCopy {
+    // [EN] `+componentWithDictionary:error:` takes `id` (a configuration read from JSON): anything but a dictionary returns
+    //      nil and the component error, as the Objective-C implementation did (CYLPlaceholderComponent is Swift since
+    //      2026-11-19). A copy keeps the attributes, action, spacing, bundle and the kind the stack view reads.
+    // [CN] `+componentWithDictionary:error:` 接受 `id`（从 JSON 读取的配置）：不是字典时返回 nil 与组件错误，与原 Objective-C 实现一致
+    //      （CYLPlaceholderComponent 自 2026-11-19 起用 Swift 编写）。副本保留属性、动作、间距、bundle 以及堆叠视图读取的种类。
+    for (id configuration in @[@[@{@"type": @"hint"}], @"hint"]) {
+        NSError *error = nil;
+        XCTAssertNil([CYLPlaceholderComponent componentWithDictionary:configuration error:&error], @"%@", configuration);
+        XCTAssertEqualObjects(error.domain, CYLPlaceholderConfigurationErrorDomain);
+        XCTAssertEqual(error.code, CYLPlaceholderConfigurationErrorComponent);
+        XCTAssertEqualObjects(error.localizedDescription, @"A component must be a dictionary.");
+    }
+    NSError *error = nil;
+    XCTAssertNil([CYLPlaceholderComponent componentWithDictionary:@{@"type": @"banner"} error:&error]);
+    XCTAssertEqualObjects(error.localizedDescription, @"Unknown component type banner.");
+    NSDictionary *missingAnimation = @{@"type": @"icon", @"animation": @"Missing.json"};
+    XCTAssertNil([CYLPlaceholderComponent componentWithDictionary:missingAnimation error:&error]);
+    XCTAssertEqualObjects(error.localizedDescription, @"Bundled animation Missing.json was not found.");
+
+    CYLPlaceholderComponent *button = [CYLPlaceholderComponent componentWithDictionary:@{
+        @"type": @"button", @"action": @"retry", @"spacingBefore": @30, @"repeatCount": @"loop"} error:&error];
+    XCTAssertEqualObjects(button.action, CYLPlaceholderActionRetry, @"%@", error);
+    XCTAssertEqualObjects(button.attributes[CYLPlaceholderItemTitle],
+                          [CYLPlaceholderScenarioCatalog localizedTitleForAction:CYLPlaceholderActionRetry]);
+    XCTAssertEqual(button.animationRepeatCount, 0);
+    button.imageBundle = [NSBundle bundleForClass:self.class];
+    CYLPlaceholderComponent *copy = [button copy];
+    XCTAssertNotEqual(copy, button);
+    XCTAssertEqualObjects(copy.attributes, button.attributes);
+    XCTAssertEqualObjects(copy.action, button.action);
+    XCTAssertEqual(copy.imageBundle, button.imageBundle);
+    XCTAssertEqualWithAccuracy(copy.spacingBefore, 30, 0.001);
+    CYLPlaceholderStackView *stack = [[CYLPlaceholderStackView alloc] initWithComponents:@[
+        [CYLPlaceholderComponent componentWithAttributes:@{CYLPlaceholderItemTitle: @"Title"} action:nil], copy]
+                                                                                  actions:nil];
+    XCTAssertNotNil(stack.button, @"the copy is still a button");
+}
+
 #pragma mark - Layout
 
 - (void)testComponentsAreCenteredWithTheirTitlesVisible {

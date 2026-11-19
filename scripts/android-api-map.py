@@ -35,7 +35,6 @@ STATUSES = ('done', 'partial', 'planned', 'n/a')
 #      Swift files can read them (not API; see each header's comment).
 # [CN] 私有头文件（podspec 的 private_header_files），以及只为让模块内 Swift 文件读取而公开的内部头文件（不是 API，见各头文件注释）。
 PRIVATE = {
-    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderComponentInternal.h',
     'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationService.h',
     'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationEngine.h',
     'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/Lottie/CYLLottiePlaceholderItemAnimator.h',

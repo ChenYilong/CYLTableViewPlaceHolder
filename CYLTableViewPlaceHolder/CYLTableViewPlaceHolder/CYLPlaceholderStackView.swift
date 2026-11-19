@@ -3,12 +3,10 @@
 //  CYLTableViewPlaceHolder
 //
 //  [EN] Swift since 2026-11-19 with the same Objective-C API (see `CYLPlaceholderStackView.h`); the action handler block
-//       type stays in the header. The private members of `CYLPlaceholderComponent` it reads (`cyl_kind`,
-//       `cyl_applyConfiguration:error:`, in `CYLPlaceholderScenario.m`) are declared for Swift in
-//       `CYLPlaceholderComponentInternal.h`.
-//  [CN] 自 2026-11-19 起用 Swift 编写，Objective-C API 不变（见 `CYLPlaceholderStackView.h`）；动作处理的 block 类型保留在头文件中。它读取的
-//       `CYLPlaceholderComponent` 私有成员（`cyl_kind`、`cyl_applyConfiguration:error:`，在 `CYLPlaceholderScenario.m` 中）通过
-//       `CYLPlaceholderComponentInternal.h` 声明给 Swift。
+//       type stays in the header. It reads the internal members `kind` and `applyConfiguration(_:)` of
+//       `CYLPlaceholderComponent` (`CYLPlaceholderScenario.swift`).
+//  [CN] 自 2026-11-19 起用 Swift 编写，Objective-C API 不变（见 `CYLPlaceholderStackView.h`）；动作处理的 block 类型保留在头文件中。它读取
+//       `CYLPlaceholderComponent` 的内部成员 `kind` 与 `applyConfiguration(_:)`（`CYLPlaceholderScenario.swift`）。
 //
 
 import UIKit
@@ -163,7 +161,7 @@ open class CYLPlaceholderStackView: UIView {
                 throw CYLStackConfigurationError("Each override needs the \"index\" of an existing component.")
             }
             fields.removeValue(forKey: "index")
-            try components[index].__cyl_applyConfiguration(fields)
+            try components[index].applyConfiguration(fields)
         }
         let background = configuration["backgroundAction"]
         if let background = background, !(background is String) {
@@ -345,11 +343,9 @@ open class CYLPlaceholderStackView: UIView {
             return nil
         }
         append(view, action: component.action, spacingBefore: component.spacingBefore)
-        if let kind = component.__cyl_kind() {
-            let kinds = componentKinds ?? NSMapTable.weakToStrongObjects()
-            componentKinds = kinds
-            kinds.setObject(kind as NSString, forKey: view)
-        }
+        let kinds = componentKinds ?? NSMapTable.weakToStrongObjects()
+        componentKinds = kinds
+        kinds.setObject(component.kind as NSString, forKey: view)
         return view
     }
 
