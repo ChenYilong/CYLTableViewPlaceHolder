@@ -11,7 +11,7 @@
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
 #import "UIScrollView+CYLRefresh.h"
-#import "CYLRefreshHeader.h"
+#import "CYLTableViewPlaceHolder.h" // [EN] The generated Swift header declares CYLRefreshHeader (Swift). [CN] 生成的 Swift 头文件声明了 CYLRefreshHeader（Swift）。
 #import <float.h>
 #import <math.h>
 

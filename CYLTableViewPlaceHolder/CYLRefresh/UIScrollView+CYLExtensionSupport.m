@@ -7,13 +7,14 @@
 
 // [EN] The Objective-C half of `UIScrollView (CYLExtension)` (Swift since 2026-11-19, `UIScrollView+CYLExtension.swift`),
 //      what Swift cannot express (docs/Swift-Migration.md, rule 6): `+load` (Swift has none), which hands Swift the writer
-//      of the bottom, left and right insets, and the C function `CYLRefreshIsWritingSideInset()` that `CYLRefreshHeader.m`
-//      calls. The writer keeps the depth right with `@try` / `@finally` when a `contentInset` observer throws an
-//      Objective-C exception (Swift cannot catch one).
+//      of the bottom, left and right insets, the reader of its depth (the Swift `CYLRefreshHeader` reads it through
+//      `UIScrollView.cyl_isWritingSideInset`) and the `@try` / `@finally` guard of the header's own top-inset writes.
+//      The writer keeps the depth right with `@try` / `@finally` when a `contentInset` observer throws an Objective-C
+//      exception (Swift cannot catch one).
 // [CN] `UIScrollView (CYLExtension)` 的 Objective-C 部分（自 2026-11-19 起用 Swift 编写，见 `UIScrollView+CYLExtension.swift`），即 Swift
-//      无法表达的部分（docs/Swift-Migration.md 第 6 条）：`+load`（Swift 没有），它把下、左、右 inset 的写入函数交给 Swift；以及
-//      `CYLRefreshHeader.m` 调用的 C 函数 `CYLRefreshIsWritingSideInset()`。写入函数用 `@try` / `@finally` 保证 `contentInset` 的观察者
-//      抛出 Objective-C 异常时深度仍然正确（Swift 无法捕获这种异常）。
+//      无法表达的部分（docs/Swift-Migration.md 第 6 条）：`+load`（Swift 没有），它把下、左、右 inset 的写入函数、其嵌套深度的读取函数
+//      （Swift 的 `CYLRefreshHeader` 通过 `UIScrollView.cyl_isWritingSideInset` 读取）以及刷新头写入顶部 inset 时的 `@try` / `@finally`
+//      保护交给 Swift。写入函数用 `@try` / `@finally` 保证 `contentInset` 的观察者抛出 Objective-C 异常时深度仍然正确（Swift 无法捕获这种异常）。
 
 #import <UIKit/UIKit.h>
 
@@ -23,15 +24,12 @@
 //      刷新头据此区分刷新尾或 trailer 的写入与新的顶部 inset。
 static NSInteger CYLRefreshSideInsetWriteDepth = 0;
 
-BOOL CYLRefreshIsWritingSideInset(void)
-{
-    return CYLRefreshSideInsetWriteDepth > 0;
-}
-
 // [EN] Implemented in Swift (`UIScrollView+CYLExtension.swift`, internal); declared here only so `+load` can call it.
 // [CN] 用 Swift 实现（`UIScrollView+CYLExtension.swift`，internal）；这里声明只为让 `+load` 调用。
 @interface UIScrollView (CYLExtensionInstallation)
-+ (void)cyl_installSideInsetWriter:(void (^)(UIScrollView *scrollView, UIEdgeInsets inset))writer;
++ (void)cyl_installSideInsetWriter:(void (^)(UIScrollView *scrollView, UIEdgeInsets inset))writer
+                            reader:(BOOL (^)(void))reader
+                    exceptionGuard:(void (^)(dispatch_block_t body, dispatch_block_t cleanup))exceptionGuard;
 @end
 
 @interface UIScrollView (CYLExtensionLoad)
@@ -46,6 +44,16 @@ BOOL CYLRefreshIsWritingSideInset(void)
             scrollView.contentInset = inset;
         } @finally {
             CYLRefreshSideInsetWriteDepth -= 1;
+        }
+    } reader:^BOOL {
+        return CYLRefreshSideInsetWriteDepth > 0;
+    } exceptionGuard:^(dispatch_block_t body, dispatch_block_t cleanup) {
+        // [EN] The header's own top-inset writes (`updatingRefreshInset` is reset even when an observer throws).
+        // [CN] 刷新头自己写入顶部 inset（即使观察者抛出异常，`updatingRefreshInset` 也会复位）。
+        @try {
+            body();
+        } @finally {
+            cleanup();
         }
     }];
 }

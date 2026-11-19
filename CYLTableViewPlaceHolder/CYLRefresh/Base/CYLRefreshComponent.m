@@ -682,6 +682,14 @@
     [self.cyl_targetActions addObject:@[[NSValue valueWithNonretainedObject:target], NSStringFromSelector(action)]];
 }
 
+/// [EN] Private (the Swift subclasses in Base/ call it by selector until this class is Swift, docs/Swift-Migration.md
+///      step 12): writes the original inset, which they cannot reach as an ivar. [CN] 私有（Base/ 中的 Swift 子类按选择器调用，
+///      直到本类改为 Swift，见 docs/Swift-Migration.md 第 12 步）：写入原始 inset（它们无法访问该实例变量）。
+- (void)cyl_setScrollViewOriginalInset:(UIEdgeInsets)inset
+{
+    _scrollViewOriginalInset = inset;
+}
+
 - (void)removeTarget:(id)target action:(SEL)action
 {
     NSString *name = action ? NSStringFromSelector(action) : nil;

@@ -347,29 +347,29 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshHeader` | The base class of the pull-down refresh controls: it watches the pull above the content and refreshes on release; set one as a scroll view's `cyl_header`. | `com.cyl.refresh.CYLRefreshHeader` — pull to refresh and the second floor (secondary*) |
+| `CYLRefreshHeader` | The iOS `CYLRefreshHeader` on Android: pull down to refresh. | `com.cyl.refresh.CYLRefreshHeader` — pull to refresh and the second floor (secondary*) |
 | `CYLRefreshHeader` `+headerWithRefreshingBlock:` | A classic header calling [block] when it refreshes. | `CYLRefreshHeader.headerWithRefreshingBlock(context, block)` |
 | `CYLRefreshHeader` `+headerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshHeader`. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshHeader` `lastUpdatedTimeKey` | The key the last update time is stored under. | `CYLRefreshHeader.lastUpdatedTimeKey` |
-| `CYLRefreshHeader` `lastUpdatedTime` | When the last refresh succeeded, stored under `lastUpdatedTimeKey`. Setting it stores the date (nil removes it) and updates the time label of state headers. | `CYLRefreshHeader.lastUpdatedTime` |
+| `CYLRefreshHeader` `lastUpdatedTime` | When the header last finished refreshing, or null, kept across launches. | `CYLRefreshHeader.lastUpdatedTime` |
 | `CYLRefreshHeader` `ignoredScrollViewContentInsetTop` | The top inset the header ignores, in dp: the layout's header inset start. | `CYLRefreshHeader.ignoredScrollViewContentInsetTop` |
 | `CYLRefreshHeader` `isCollectionViewAnimationBug` | Property of `CYLRefreshHeader`. | n/a (iOS only: a UICollectionView workaround) |
-| `CYLRefreshHeader` `-setExpandHeight:` | Sets the open height (`expandHeight`). In `CYLRefreshScrollModeStretch` the frame follows the pull, so only the open height changes; in the other modes the frame height changes too. | `CYLRefreshHeader.setExpandHeight(dp)` |
-| `CYLRefreshHeader` `addsRefreshingInset` | Whether refreshing adds the header's height to the top inset, pushing the content down. Default YES; NO (and `CYLRefreshScrollModeFront`) keeps the content where it is, for headers that are always open or float in front. | `CYLRefreshHeader.addsRefreshingInset` |
-| `CYLRefreshHeader` `resetsFooterAfterRefresh` | After a successful refresh, resets the footer's "no more data" (flutter_easy_refresh's `resetAfterRefresh`). Default NO. | `CYLRefreshHeader.resetsFooterAfterRefresh` |
-| `CYLRefreshHeader` `clipsWhenBehind` | In `CYLRefreshScrollModeBehind`, shows only the part of the header the content has revealed (CYLRefreshLayout's `setEnableClipHeaderWhenFixedBehind`). Default NO. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableClipHeaderWhenFixedBehind` — added 2026-11-17 for Android parity |
-| `CYLRefreshHeader` `secondaryTriggerOffset` | Pulling at least this far (points) and releasing opens the second floor instead of refreshing; 0 (default) turns the second floor off (flutter_easy_refresh's `secondaryTriggerOffset`). | `CYLRefreshHeader.secondaryTriggerOffset` |
-| `CYLRefreshHeader` `secondaryDimension` | Height of the open second floor (points); 0 (default) uses the scroll view's visible height (flutter_easy_refresh's `secondaryDimension`). | `CYLRefreshHeader.secondaryDimension` |
-| `CYLRefreshHeader` `secondaryCloseTriggerOffset` | While the second floor is open, pushing the content up this far (points) and releasing closes it. Default 80 (flutter_easy_refresh's `secondaryCloseTriggerOffset`). | `CYLRefreshHeader.secondaryCloseTriggerOffset` |
-| `CYLRefreshHeader` `secondaryVelocity` | Releasing a pull at least this fast (points per second) opens the second floor once the pull is past the refresh trigger, even short of `secondaryTriggerOffset`; 0 (default) turns it off (flutter_easy_refresh's `secon... | `CYLRefreshHeader.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
-| `CYLRefreshHeader` `secondaryView` | The second floor's content, placed above the list across the whole second floor and revealed by the pull (flutter_easy_refresh's `SecondaryBuilderHeader`). | `CYLRefreshHeader.secondaryView` — placed over the layout; the layout's parent should be a FrameLayout |
-| `CYLRefreshHeader` `secondaryOpen` | YES while the second floor is open. | `CYLRefreshHeader.secondaryOpen` |
-| `CYLRefreshHeader` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshHeader.secondaryOpenedBlock` |
-| `CYLRefreshHeader` `secondaryClosedBlock` | Called when the second floor has closed. | `CYLRefreshHeader.secondaryClosedBlock` |
-| `CYLRefreshHeader` `-openSecondary` | Opens the second floor (flutter_easy_refresh's `openHeaderSecondary`). | `CYLRefreshHeader.openSecondary()` |
-| `CYLRefreshHeader` `secondaryShouldOpenBlock` | Asked before the second floor opens (by a pull or by `openSecondary`); return NO to keep it closed (CYLRefreshLayout's `OnTwoLevelListener.onTwoLevel`). nil (default) always opens. | `com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)` — added 2026-11-17 for Android parity |
-| `CYLRefreshHeader` `secondaryAnimationDuration` | Seconds the second floor takes to open and to close; 0 (default) uses `slowAnimationDuration` (CYLRefreshLayout's `RefreshKernel.requestFloorDuration`). | `com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration` — added 2026-11-17 for Android parity |
-| `CYLRefreshHeader` `-closeSecondary` | Closes the second floor (flutter_easy_refresh's `closeHeaderSecondary`). | `CYLRefreshHeader.closeSecondary()` |
+| `CYLRefreshHeader` `-setExpandHeight:` | The header's height, in dp. | `CYLRefreshHeader.setExpandHeight(dp)` |
+| `CYLRefreshHeader` `addsRefreshingInset` | Whether the content moves down to keep the refreshing header in sight. | `CYLRefreshHeader.addsRefreshingInset` |
+| `CYLRefreshHeader` `resetsFooterAfterRefresh` | Whether a finished refresh resets the footer's "no more data". | `CYLRefreshHeader.resetsFooterAfterRefresh` |
+| `CYLRefreshHeader` `clipsWhenBehind` | Clips a FixedBehind header. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableClipHeaderWhenFixedBehind` — added 2026-11-17 for Android parity |
+| `CYLRefreshHeader` `secondaryTriggerOffset` | Pulling this far and releasing opens the second floor instead of refreshing, in dp; 0 for never. | `CYLRefreshHeader.secondaryTriggerOffset` |
+| `CYLRefreshHeader` `secondaryDimension` | The open second floor's height, in dp; 0 for the layout's height. | `CYLRefreshHeader.secondaryDimension` |
+| `CYLRefreshHeader` `secondaryCloseTriggerOffset` | Pushing the open second floor up this far and releasing closes it, in dp. | `CYLRefreshHeader.secondaryCloseTriggerOffset` |
+| `CYLRefreshHeader` `secondaryVelocity` | A release at least this fast (dp per second), past the refresh trigger, opens the second floor, as on iOS. | `CYLRefreshHeader.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
+| `CYLRefreshHeader` `secondaryView` | The second floor's content, placed over the layout and slid in by the pull; the layout's parent should be a FrameLayout. | `CYLRefreshHeader.secondaryView` — placed over the layout; the layout's parent should be a FrameLayout |
+| `CYLRefreshHeader` `secondaryOpen` | Whether the second floor is open. | `CYLRefreshHeader.secondaryOpen` |
+| `CYLRefreshHeader` `secondaryOpenedBlock` | Called after the second floor has opened. | `CYLRefreshHeader.secondaryOpenedBlock` |
+| `CYLRefreshHeader` `secondaryClosedBlock` | Called after the second floor has closed. | `CYLRefreshHeader.secondaryClosedBlock` |
+| `CYLRefreshHeader` `-openSecondary` | Opens the second floor. | `CYLRefreshHeader.openSecondary()` |
+| `CYLRefreshHeader` `secondaryShouldOpenBlock` | True opens the second floor. | `com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)` — added 2026-11-17 for Android parity |
+| `CYLRefreshHeader` `secondaryAnimationDuration` | The second floor's open and close duration. | `com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration` — added 2026-11-17 for Android parity |
+| `CYLRefreshHeader` `-closeSecondary` | Closes the second floor. | `CYLRefreshHeader.closeSecondary()` |
 
 ## `CYLRefresh/Base/CYLRefreshIconView.h`
 

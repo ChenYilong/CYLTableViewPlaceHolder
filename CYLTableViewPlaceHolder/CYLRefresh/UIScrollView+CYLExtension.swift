@@ -9,15 +9,17 @@
 // [EN] The inset, offset and content size shorthands of the refresh controls and the scroll metrics, in Swift since
 //      2026-11-19 (docs/Swift-Migration.md, step 6) with the same Objective-C accessors. The `CYLScrollDirection` enum
 //      stays in `UIScrollView+CYLExtension.h`. What Swift cannot express stays in `UIScrollView+CYLExtensionSupport.m`
-//      (rule 6): `+load`, which hands `cyl_installSideInsetWriter(_:)` below the writer of the bottom, left and right
-//      insets, whose depth `CYLRefreshIsWritingSideInset()` (a C function `CYLRefreshHeader.m` calls) reads; the writer
-//      keeps the depth right with `@try` / `@finally` when a `contentInset` observer throws an Objective-C exception
-//      (Swift cannot catch one).
+//      (rule 6): `+load`, which hands `cyl_installSideInsetWriter(_:reader:exceptionGuard:)` below the writer of the
+//      bottom, left and right insets, the reader of its depth (`cyl_isWritingSideInset`, read by the Swift
+//      `CYLRefreshHeader`) and an `@try` / `@finally` guard for the header's own inset writes; the writer keeps the depth
+//      right with `@try` / `@finally` when a `contentInset` observer throws an Objective-C exception (Swift cannot catch
+//      one).
 // [CN] 刷新控件使用的 inset、偏移、内容尺寸便捷访问与滚动采样，自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 6 步），
 //      Objective-C 存取方法不变。`CYLScrollDirection` 枚举保留在 `UIScrollView+CYLExtension.h`。Swift 无法表达的部分保留在
-//      `UIScrollView+CYLExtensionSupport.m`（第 6 条）：`+load` 把下、左、右 inset 的写入函数交给下面的 `cyl_installSideInsetWriter(_:)`，
-//      其嵌套深度由 C 函数 `CYLRefreshIsWritingSideInset()`（`CYLRefreshHeader.m` 调用）读取；写入函数用 `@try` / `@finally`
-//      保证 `contentInset` 的观察者抛出 Objective-C 异常时深度仍然正确（Swift 无法捕获这种异常）。
+//      `UIScrollView+CYLExtensionSupport.m`（第 6 条）：`+load` 把下、左、右 inset 的写入函数、其嵌套深度的读取函数（`cyl_isWritingSideInset`，
+//      Swift 的 `CYLRefreshHeader` 读取）以及刷新头写入自身 inset 时使用的 `@try` / `@finally` 保护交给下面的
+//      `cyl_installSideInsetWriter(_:reader:exceptionGuard:)`；写入函数用 `@try` / `@finally` 保证 `contentInset` 的观察者抛出
+//      Objective-C 异常时深度仍然正确（Swift 无法捕获这种异常）。
 
 import UIKit
 import ObjectiveC
@@ -25,6 +27,16 @@ import ObjectiveC
 // [EN] Writes `contentInset` while counting the write as a side-inset write (`UIScrollView+CYLExtensionSupport.m`).
 // [CN] 写入 `contentInset`，并把这次写入计为侧边 inset 写入（`UIScrollView+CYLExtensionSupport.m`）。
 typealias CYLRefreshSideInsetWriter = @convention(block) (UIScrollView, UIEdgeInsets) -> Void
+
+// [EN] YES while a side-inset write runs (`UIScrollView+CYLExtensionSupport.m`). [CN] 侧边 inset 写入期间为 YES（`UIScrollView+CYLExtensionSupport.m`）。
+typealias CYLRefreshSideInsetWriteReader = @convention(block) () -> Bool
+
+// [EN] Runs `body`, then `cleanup` even when `body` throws an Objective-C exception (`@try` / `@finally` in
+//      `UIScrollView+CYLExtensionSupport.m`; Swift cannot catch one).
+// [CN] 执行 `body`，即使 `body` 抛出 Objective-C 异常也会执行 `cleanup`（`UIScrollView+CYLExtensionSupport.m` 中的 `@try` / `@finally`；
+//      Swift 无法捕获这种异常）。
+typealias CYLRefreshExceptionGuard = @convention(block) (@escaping @convention(block) () -> Void,
+                                                         @escaping @convention(block) () -> Void) -> Void
 
 // [EN] The samples of `cyl_updateScrollMetrics`, one per scroll view (an associated object).
 // [CN] `cyl_updateScrollMetrics` 的采样，每个滚动视图一个（关联对象）。
@@ -44,12 +56,40 @@ extension UIScrollView {
 
     // [EN] Set once from `+load` (`UIScrollView+CYLExtensionSupport.m`). [CN] 由 `+load` 设置一次（`UIScrollView+CYLExtensionSupport.m`）。
     private static var cyl_sideInsetWriter: CYLRefreshSideInsetWriter?
+    // [EN] Set once from `+load`, with the writer. [CN] 由 `+load` 与写入函数一起设置一次。
+    private static var cyl_sideInsetWriteReader: CYLRefreshSideInsetWriteReader?
 
     // [EN] The entry point of `+load` (`UIScrollView+CYLExtensionSupport.m`, which declares this selector).
     // [CN] `+load` 的入口（`UIScrollView+CYLExtensionSupport.m` 声明了该选择器）。
-    @objc(cyl_installSideInsetWriter:)
-    static func cyl_installSideInsetWriter(_ writer: @escaping CYLRefreshSideInsetWriter) {
+    // [EN] Set once from `+load`, with the writer. [CN] 由 `+load` 与写入函数一起设置一次。
+    private static var cyl_refreshExceptionGuard: CYLRefreshExceptionGuard?
+
+    @objc(cyl_installSideInsetWriter:reader:exceptionGuard:)
+    static func cyl_installSideInsetWriter(_ writer: @escaping CYLRefreshSideInsetWriter,
+                                           reader: @escaping CYLRefreshSideInsetWriteReader,
+                                           exceptionGuard: @escaping CYLRefreshExceptionGuard) {
         cyl_sideInsetWriter = writer
+        cyl_sideInsetWriteReader = reader
+        cyl_refreshExceptionGuard = exceptionGuard
+    }
+
+    // [EN] Runs `body`, then `cleanup` even when `body` throws an Objective-C exception (the header's own inset writes).
+    // [CN] 执行 `body`，即使 `body` 抛出 Objective-C 异常也会执行 `cleanup`（刷新头自己写入 inset 时使用）。
+    static func cyl_refreshPerform(_ body: @escaping () -> Void, cleanup: @escaping () -> Void) {
+        if let exceptionGuard = cyl_refreshExceptionGuard {
+            exceptionGuard(body, cleanup)
+        } else {
+            body()
+            cleanup()
+        }
+    }
+
+    // [EN] YES while `cyl_insetB` / `cyl_insetL` / `cyl_insetR` write the inset: the header tells a footer's or trailer's
+    //      write from a new top inset by it (issue MJRefresh#1483).
+    // [CN] `cyl_insetB` / `cyl_insetL` / `cyl_insetR` 写入 inset 期间为 YES：刷新头据此区分刷新尾或 trailer 的写入与新的顶部 inset
+    //      （issue MJRefresh#1483）。
+    static var cyl_isWritingSideInset: Bool {
+        cyl_sideInsetWriteReader?() ?? false
     }
 
     // [EN] Writes a bottom, left or right inset, so the header can tell it from a new top inset.
