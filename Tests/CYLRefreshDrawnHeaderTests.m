@@ -11,17 +11,10 @@
 @property (nonatomic, strong) UIWindow *window;
 @end
 
-@interface CYLStatusRecordingHeader : CYLRefreshBezierRadarHeader
-@property (nonatomic, strong) NSMutableArray<NSNumber *> *statuses;
-@end
-
-@implementation CYLStatusRecordingHeader
-- (void)onStatus:(CYLRefreshPhase)oldStatus changed:(CYLRefreshPhase)status {
-    [super onStatus:oldStatus changed:status];
-    if (!self.statuses) self.statuses = [NSMutableArray array];
-    [self.statuses addObject:@(status)];
-}
-@end
+// [EN] CYLStatusRecordingHeader (a CYLRefreshBezierRadarHeader that records every status) is Swift since the drawn header
+//      base moved to Swift (Tests/CYLRefreshTestHeaders.swift): Objective-C cannot subclass a Swift class.
+// [CN] CYLStatusRecordingHeader（记录每个状态的 CYLRefreshBezierRadarHeader）自手绘刷新头基类改为 Swift 后用 Swift 编写
+//      （Tests/CYLRefreshTestHeaders.swift）：Objective-C 不能继承 Swift 类。
 
 @interface CYLDrawnDemoTableController : UITableViewController
 @property (nonatomic) Class style;

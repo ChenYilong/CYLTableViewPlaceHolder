@@ -529,7 +529,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBezierRadarHeader` | A bezier wave that turns into a radar scan while refreshing (after "Pull To Refresh" on Dribbble). | `com.cyl.refresh.CYLRefreshBezierRadarHeader` |
+| `CYLRefreshBezierRadarHeader` | The Bezier radar. | `com.cyl.refresh.CYLRefreshBezierRadarHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`
 
@@ -558,28 +558,28 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshDrawnHeader` | A header whose look is drawn in code (Core Graphics, layers or SpriteKit). | `com.cyl.refresh.CYLRefreshDrawnHeader` — the drawing is CYLRefreshLayout's header; the hooks are the iOS ones |
-| `CYLRefreshDrawnHeader` `width` | The frame width. | `CYLRefreshDrawnHeader.width` |
-| `CYLRefreshDrawnHeader` `height` | The open height; setting it calls `setExpandHeight:`. Reading it returns the frame height, which follows the pull in stretch mode. | `CYLRefreshDrawnHeader.height` |
-| `CYLRefreshDrawnHeader` `durationFast` | Duration of the styles' short animations, in seconds. Default 0.1. | `CYLRefreshDrawnHeader.durationFast` |
-| `CYLRefreshDrawnHeader` `durationNormal` | Duration of the styles' normal animations, in seconds. Default 0.25. | `CYLRefreshDrawnHeader.durationNormal` |
-| `CYLRefreshDrawnHeader` `status` | The phase as CYLRefresh styles reports it: `CYLRefreshPhaseReleasing` is always passed through before refreshing, and `CYLRefreshPhaseFinishing` after it. | `CYLRefreshDrawnHeader.status` |
-| `CYLRefreshDrawnHeader` `dragOffset` | Points pulled below the content's top, the open height included while refreshing. | `CYLRefreshDrawnHeader.dragOffset` |
-| `CYLRefreshDrawnHeader` `dragPercent` | `dragOffset` / (`expandHeight` × `triggerRate`). | `CYLRefreshDrawnHeader.dragPercent` |
-| `CYLRefreshDrawnHeader` `isSuccess` | Whether the last refresh succeeded (`lastRefreshSucceeded`). | `CYLRefreshDrawnHeader.isSuccess` |
-| `CYLRefreshDrawnHeader` `-setUpComponent` | Set-up hook, called once from `prepare`; subclasses call super. | `CYLRefreshDrawnHeader.setUpComponent()` |
-| `CYLRefreshDrawnHeader` `-onStatus:changed:` | `status` changed. | `CYLRefreshDrawnHeader.onStatus(oldStatus, status)` |
-| `CYLRefreshDrawnHeader` `-scrollView:didScroll:percent:drag:` | Every scroll, with `dragOffset`, `dragPercent` and whether the user drags; calls `onScrollingWithOffset:…`. | `CYLRefreshDrawnHeader.scrollView(scrollView, didScroll, percent, drag)` |
-| `CYLRefreshDrawnHeader` `-onScrollingWithOffset:percent:drag:` | Every scroll; draw the pull here. | `CYLRefreshDrawnHeader.onScrollingWithOffset(offset, percent, drag)` |
-| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` | The user released past the trigger point (or `beginRefreshing` was called). | `CYLRefreshDrawnHeader.onStartAnimationWhenRealeasing()` |
-| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing` | The refresh started. | `CYLRefreshDrawnHeader.onStartAnimationWhenRefreshing()` |
-| `CYLRefreshDrawnHeader` `-onRefreshFinished:` | The refresh ended with `success`. | `CYLRefreshDrawnHeader.onRefreshFinished(success)` |
-| `CYLRefreshDrawnHeader` `-onRefreshFinishing:` | Seconds to stay open after the refresh ends; `finishDuration` by default. | `CYLRefreshDrawnHeader.onRefreshFinishing(success)` |
-| `CYLRefreshDrawnHeader` `-scrollView:attached:` | The header was attached to or detached from `scrollView`. | `CYLRefreshDrawnHeader.scrollView(scrollView, attached)` |
-| `CYLRefreshDrawnHeader` `-beginRefresh` | `beginRefreshing`, under the CYLRefresh styles' name. | `CYLRefreshDrawnHeader.beginRefresh()` |
-| `CYLRefreshDrawnHeader` `-finishRefresh` | `endRefreshing`, under the CYLRefresh styles' name. | `CYLRefreshDrawnHeader.finishRefresh()` |
-| `CYLRefreshDrawnHeader` `-finishRefreshWithSuccess:` | `endRefreshingWithSuccess:`, under the CYLRefresh styles' name. | `CYLRefreshDrawnHeader.finishRefreshWithSuccess(success)` |
-| `CYLRefreshDrawnHeader` `-inStatus:` | YES when `status` is one of the listed phases; the list ends with 0. | `CYLRefreshDrawnHeader.inStatus(vararg)` |
+| `CYLRefreshDrawnHeader` | A header drawn in code, with the hooks its subclasses override. | `com.cyl.refresh.CYLRefreshDrawnHeader` — the drawing is CYLRefreshLayout's header; the hooks are the iOS ones |
+| `CYLRefreshDrawnHeader` `width` | The header's width, in pixels. | `CYLRefreshDrawnHeader.width` |
+| `CYLRefreshDrawnHeader` `height` | The header's height, in pixels. | `CYLRefreshDrawnHeader.height` |
+| `CYLRefreshDrawnHeader` `durationFast` | The fast animation's duration, in seconds. | `CYLRefreshDrawnHeader.durationFast` |
+| `CYLRefreshDrawnHeader` `durationNormal` | The normal animation's duration, in seconds. | `CYLRefreshDrawnHeader.durationNormal` |
+| `CYLRefreshDrawnHeader` `status` | The phase. | `CYLRefreshDrawnHeader.status` |
+| `CYLRefreshDrawnHeader` `dragOffset` | Property of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.dragOffset` |
+| `CYLRefreshDrawnHeader` `dragPercent` | How far the header is pulled, as a share of its height. | `CYLRefreshDrawnHeader.dragPercent` |
+| `CYLRefreshDrawnHeader` `isSuccess` | Whether the last refresh succeeded. | `CYLRefreshDrawnHeader.isSuccess` |
+| `CYLRefreshDrawnHeader` `-setUpComponent` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.setUpComponent()` |
+| `CYLRefreshDrawnHeader` `-onStatus:changed:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onStatus(oldStatus, status)` |
+| `CYLRefreshDrawnHeader` `-scrollView:didScroll:percent:drag:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.scrollView(scrollView, didScroll, percent, drag)` |
+| `CYLRefreshDrawnHeader` `-onScrollingWithOffset:percent:drag:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onScrollingWithOffset(offset, percent, drag)` |
+| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRealeasing` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onStartAnimationWhenRealeasing()` |
+| `CYLRefreshDrawnHeader` `-onStartAnimationWhenRefreshing` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onStartAnimationWhenRefreshing()` |
+| `CYLRefreshDrawnHeader` `-onRefreshFinished:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onRefreshFinished(success)` |
+| `CYLRefreshDrawnHeader` `-onRefreshFinishing:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.onRefreshFinishing(success)` |
+| `CYLRefreshDrawnHeader` `-scrollView:attached:` | Method of `CYLRefreshDrawnHeader`. | `CYLRefreshDrawnHeader.scrollView(scrollView, attached)` |
+| `CYLRefreshDrawnHeader` `-beginRefresh` | Starts refreshing. | `CYLRefreshDrawnHeader.beginRefresh()` |
+| `CYLRefreshDrawnHeader` `-finishRefresh` | Ends refreshing. | `CYLRefreshDrawnHeader.finishRefresh()` |
+| `CYLRefreshDrawnHeader` `-finishRefreshWithSuccess:` | Ends refreshing with success or failure. | `CYLRefreshDrawnHeader.finishRefreshWithSuccess(success)` |
+| `CYLRefreshDrawnHeader` `-inStatus:` | True when the phase is one of [statuses]. | `CYLRefreshDrawnHeader.inStatus(vararg)` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`
 

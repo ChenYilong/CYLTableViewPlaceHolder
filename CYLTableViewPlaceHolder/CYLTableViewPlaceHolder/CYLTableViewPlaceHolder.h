@@ -43,3 +43,9 @@
 #import "CYLTableViewPlaceHolder-Swift.h"
 #endif
 #endif
+// [EN] Categories of Swift classes that only Objective-C can declare (variadic methods), after the generated header that
+//      declares their classes; empty for Swift (each declares itself only outside `__swift__`), but always included,
+//      so the umbrella header covers every public header of the module.
+// [CN] 只有 Objective-C 能声明的 Swift 类的分类（可变参数方法），放在声明其类的生成头文件之后；对 Swift 为空（各分类只在 `__swift__`
+//      之外声明），但始终导入，使总头文件包含模块的每个公开头文件。
+#import "CYLRefreshDrawnHeader+CYLStatusList.h"

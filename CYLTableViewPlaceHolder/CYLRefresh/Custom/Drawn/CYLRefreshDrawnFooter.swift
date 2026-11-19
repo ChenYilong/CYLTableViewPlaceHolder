@@ -8,55 +8,17 @@
 
 // [EN] Swift since 2026-11-19 (docs/Swift-Migration.md, step 8), with the same Objective-C API (`+styleClass`,
 //      `-initWithStyle:`, `style`, the five drawn footers, `CYLRefreshBallPulseFooter` with `normalColor` /
-//      `animatingColor`). The hosted header (`CYLRefreshDrawnHeader`) and the base classes (`CYLRefreshBackStateFooter`,
-//      `CYLRefreshBackFooter`, `CYLRefreshAutoFooter`) are still Objective-C: their private members that the footers call
-//      (the header's driven mode, `-happenOffsetY`) are reached by selector, as `UIScrollView+CYLRefresh.swift` does.
+//      `animatingColor`). The hosted header (`CYLRefreshDrawnHeader`) is Swift since step 9: its driven mode is internal
+//      and called directly. The base classes (`CYLRefreshBackStateFooter`, `CYLRefreshBackFooter`, `CYLRefreshAutoFooter`)
+//      are still Objective-C: `CYLRefreshBackFooter`'s private `-happenOffsetY` is reached by selector, as
+//      `UIScrollView+CYLRefresh.swift` does.
 // [CN] 自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 8 步），Objective-C API 不变（`+styleClass`、`-initWithStyle:`、
 //      `style`、五个手绘刷新尾、带 `normalColor` / `animatingColor` 的 `CYLRefreshBallPulseFooter`）。内嵌的刷新头
-//      （`CYLRefreshDrawnHeader`）与基类（`CYLRefreshBackStateFooter`、`CYLRefreshBackFooter`、`CYLRefreshAutoFooter`）仍是
-//      Objective-C：刷新尾调用的私有成员（刷新头的被驱动模式、`-happenOffsetY`）按选择器调用，与 `UIScrollView+CYLRefresh.swift` 相同。
+//      （`CYLRefreshDrawnHeader`）自第 9 步起用 Swift 编写：其被驱动模式为 internal，直接调用。基类（`CYLRefreshBackStateFooter`、
+//      `CYLRefreshBackFooter`、`CYLRefreshAutoFooter`）仍是 Objective-C：`CYLRefreshBackFooter` 私有的 `-happenOffsetY` 按选择器调用，
+//      与 `UIScrollView+CYLRefresh.swift` 相同。
 
 import UIKit
-
-// [EN] CYLRefreshDrawnHeader's private driven mode (`CYLRefreshDrawnHeader.m`), called by selector while the header is
-//      Objective-C. [CN] CYLRefreshDrawnHeader 私有的被驱动模式（`CYLRefreshDrawnHeader.m`），在刷新头仍是 Objective-C 时按选择器调用。
-private extension CYLRefreshDrawnHeader {
-
-    func cyl_beginDrivenByFooter() {
-        let selector = NSSelectorFromString("cyl_beginDriven")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector)
-    }
-
-    func cyl_driveFrameByFooter(_ frame: CGRect) {
-        let selector = NSSelectorFromString("cyl_driveFrame:")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector, CGRect) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector, frame)
-    }
-
-    func cyl_driveOffsetByFooter(_ offset: CGFloat, drag isDragging: Bool) {
-        let selector = NSSelectorFromString("cyl_driveOffset:drag:")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector, CGFloat, ObjCBool) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector, offset, ObjCBool(isDragging))
-    }
-
-    func cyl_driveStatusByFooter(_ status: CYLRefreshPhase) {
-        let selector = NSSelectorFromString("cyl_driveStatus:")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector, CYLRefreshPhase) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector, status)
-    }
-
-    func cyl_driveFinishedByFooter(_ success: Bool) {
-        let selector = NSSelectorFromString("cyl_driveFinished:")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector, ObjCBool) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector, ObjCBool(success))
-    }
-}
 
 // [EN] CYLRefreshBackFooter's private offset where the footer starts to show (`CYLRefreshBackFooter.m`).
 // [CN] CYLRefreshBackFooter 私有的刷新尾开始出现的偏移（`CYLRefreshBackFooter.m`）。
@@ -114,7 +76,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
     private func installStyle(_ style: CYLRefreshDrawnHeader) {
         self.style?.removeFromSuperview()
         self.style = style
-        style.cyl_beginDrivenByFooter()
+        style.cyl_beginDriven()
         insertSubview(style, at: 0)
         cyl_h = style.expandHeight
         stateLabel?.isHidden = state != .noMoreData
@@ -159,7 +121,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style else { return }
         var height = style.expandHeight
         if style.scrollMode == .stretch { height = max(height, pulled) }
-        style.cyl_driveFrameByFooter(CGRect(x: 0, y: 0, width: cyl_w, height: height))
+        style.cyl_driveFrame(CGRect(x: 0, y: 0, width: cyl_w, height: height))
     }
 
     /**
@@ -178,10 +140,10 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style, state != .noMoreData else { return }
         let pulled = self.pulled
         if style.status == .finishing && state == .idle && pulled <= 0.5 {
-            style.cyl_driveStatusByFooter(.idle)
+            style.cyl_driveStatus(.idle)
         }
         layoutStyle()
-        style.cyl_driveOffsetByFooter(pulled, drag: scrollView?.isDragging ?? false)
+        style.cyl_driveOffset(pulled, drag: scrollView?.isDragging ?? false, in: scrollView)
     }
 
     /**
@@ -224,15 +186,15 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style else { return }
         switch phase {
         case .refreshing:
-            if style.status != .releasing { style.cyl_driveStatusByFooter(.releasing) }
-            style.cyl_driveStatusByFooter(.refreshing)
+            if style.status != .releasing { style.cyl_driveStatus(.releasing) }
+            style.cyl_driveStatus(.refreshing)
         case .idle:
-            if style.status == .refreshing { style.cyl_driveStatusByFooter(.finishing) }
-            if style.status != .finishing || pulled <= 0.5 { style.cyl_driveStatusByFooter(.idle) }
+            if style.status == .refreshing { style.cyl_driveStatus(.finishing) }
+            if style.status != .finishing || pulled <= 0.5 { style.cyl_driveStatus(.idle) }
         case .noMoreData:
-            style.cyl_driveStatusByFooter(.idle)
+            style.cyl_driveStatus(.idle)
         default:
-            style.cyl_driveStatusByFooter(phase)
+            style.cyl_driveStatus(phase)
         }
     }
 
@@ -241,7 +203,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
      */
     open override func refreshDidFinish(withSuccess success: Bool) {
         super.refreshDidFinish(withSuccess: success)
-        style?.cyl_driveFinishedByFooter(success)
+        style?.cyl_driveFinished(success)
     }
 
     /**

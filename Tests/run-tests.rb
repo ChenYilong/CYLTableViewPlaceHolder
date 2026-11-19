@@ -26,7 +26,9 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['OTHER_CFLAGS'] = "$(inherited) -Werror=unguarded-availability-new #{ENV['CYL_EXTRA_CFLAGS']}".strip
   end
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
-   'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshStylesAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
+   'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshStylesAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m',
+   # The refresh control subclasses the Objective-C tests use are Swift (Objective-C cannot subclass the Swift controls).
+   'Tests/CYLRefreshTestHeaders.swift', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholderSupport.m',
