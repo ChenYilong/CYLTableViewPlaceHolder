@@ -177,8 +177,26 @@
                         CGFloat bottomInset = self.scrollView.cyl_insetB - (self.hidden ? 0 : self.cyl_h);
                         CGFloat maximumOffset = MAX(-self.scrollView.cyl_insetT,
                                                     self.scrollView.cyl_contentH + bottomInset - self.scrollView.cyl_h);
-                        if (offset.y > maximumOffset) {
-                            offset.y = maximumOffset;
+                        // FIX: issue MJRefresh#1610 (page alignment)
+                        // [EN] The load started with the footer's space showing past the last page, so the offset
+                        //      sits between two page boundaries; once new pages arrived it is no longer out of range,
+                        //      and paging would leave the page shifted by the footer's height. Rest on the nearest
+                        //      place paging itself can stop at: a page boundary within range, or the end of the content
+                        //      (which a caller's own bottom inset may put between two boundaries).
+                        // [CN] 加载开始时最后一页之后露出了刷新尾的空间，offset 位于两个分页边界之间；有新页加入后它不再越界，
+                        //      分页会让该页错开刷新尾的高度。停到分页本身能停下的最近位置：范围内的分页边界，或内容末端（调用方自己的
+                        //      底部 inset 可能使其位于两个边界之间）。
+                        CGFloat top = self.scrollView.cyl_insetT;
+                        CGFloat target = maximumOffset;
+                        CGFloat pageHeight = CGRectGetHeight(self.scrollView.bounds);
+                        if (pageHeight > 0) {
+                            CGFloat boundary = round((offset.y + top) / pageHeight) * pageHeight - top;
+                            if (boundary <= maximumOffset && fabs(boundary - offset.y) < fabs(target - offset.y)) {
+                                target = boundary;
+                            }
+                        }
+                        offset.y = MAX(-top, target);
+                        if (fabs(offset.y - self.scrollView.contentOffset.y) > 0.5) {
                             self.scrollView.contentOffset = offset;
                         }
                     }

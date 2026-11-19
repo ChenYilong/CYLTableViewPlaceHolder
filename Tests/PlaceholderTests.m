@@ -1087,6 +1087,154 @@ static const NSTimeInterval CYLTestTimeout = 30;
     XCTAssertNil(weakAnimator);
 }
 
+// FIX: MJRefresh PR #1444 (device rotation)
+// [EN] The system part of the top inset changes while the header refreshes (a rotation changes the bars' height and the
+//      safe area; here additionalSafeAreaInsets), then the user scrolls and the refresh ends: the header works from the
+//      new system inset, never adds more than its own height, and gives back exactly what it added.
+// [CN] 刷新头刷新期间顶部 inset 的系统部分发生变化（旋转会改变栏高与安全区；这里用 additionalSafeAreaInsets 模拟），随后用户滚动、刷新
+//      结束：刷新头以新的系统 inset 为准，增加的量不超过自身高度，结束时恰好归还所增加的量。
+- (void)testSystemInsetChangeDuringRefreshRestoresTheContentInset {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UIViewController *controller = [UIViewController new];
+    window.rootViewController = controller;
+    [window makeKeyAndVisible];
+    UITableView *table = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+    table.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
+    table.contentSize = CGSizeMake(320, 2000);
+    [controller.view addSubview:table];
+    controller.additionalSafeAreaInsets = UIEdgeInsetsMake(100, 0, 0, 0);
+    [controller.view layoutIfNeeded];
+    CGFloat systemTop = table.adjustedContentInset.top - table.contentInset.top;
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    table.cyl_header = header;
+    table.contentOffset = CGPointMake(0, -table.adjustedContentInset.top);
+    [header beginRefreshing];
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+    while (header.state != CYLRefreshStateRefreshing && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+    XCTAssertEqual(header.state, CYLRefreshStateRefreshing);
+    XCTAssertEqualWithAccuracy(table.contentInset.top, header.cyl_h, 0.5);
+
+    // [EN] "Rotate": the system inset shrinks from 100 to 30 + the safe area. [CN] “旋转”：系统 inset 从 100 缩小到 30 + 安全区。
+    controller.additionalSafeAreaInsets = UIEdgeInsetsMake(30, 0, 0, 0);
+    [controller.view layoutIfNeeded];
+    CGFloat newSystemTop = table.adjustedContentInset.top - table.contentInset.top;
+    XCTAssertEqualWithAccuracy(systemTop - newSystemTop, 70, 0.5);
+    // [EN] The user scrolls 20 pt up into the header, then back to the refreshing position.
+    // [CN] 用户向上滚入刷新头 20 点，然后回到刷新位置。
+    table.contentOffset = CGPointMake(0, -(newSystemTop + header.cyl_h) + 20);
+    XCTAssertLessThanOrEqual(table.contentInset.top, header.cyl_h + 0.5, @"never more than the header's own height");
+    table.contentOffset = CGPointMake(0, -(newSystemTop + header.cyl_h));
+    XCTAssertEqualWithAccuracy(table.contentInset.top, header.cyl_h, 0.5);
+
+    [header endRefreshing];
+    deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+    while (header.state != CYLRefreshStateIdle && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+    XCTAssertEqualWithAccuracy(table.contentInset.top, 0, 0.5, @"the header gives back exactly what it added");
+    window.hidden = YES;
+}
+
+// FIX: issue MJRefresh#1483
+// [EN] While the header refreshes, the user drags on to the end and the back footer starts loading too; the header ends
+//      first, then the footer. Both insets come back to what they were (with and without isCollectionViewAnimationBug),
+//      so repeated refreshes do not move the content.
+// [CN] 刷新头刷新期间，用户继续拖到底部，返回式刷新尾也开始加载；刷新头先结束，刷新尾后结束。两个 inset 都恢复原值（开启与关闭
+//      isCollectionViewAnimationBug 都如此），反复刷新不会移动内容。
+- (void)testHeaderEndingWhileTheFooterLoadsRestoresBothInsets {
+    for (NSNumber *animationBug in @[@NO, @YES]) {
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        window.rootViewController = [UIViewController new];
+        [window makeKeyAndVisible];
+        UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+        layout.itemSize = CGSizeMake(80, 80);
+        UICollectionView *collection = [[UICollectionView alloc] initWithFrame:window.bounds collectionViewLayout:layout];
+        collection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        [collection registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:@"cell"];
+        CYLTestCollectionSource *source = [CYLTestCollectionSource new];
+        collection.dataSource = source;
+        [window.rootViewController.view addSubview:collection];
+        CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        header.isCollectionViewAnimationBug = animationBug.boolValue;
+        CYLRefreshBackFooter *footer = [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+        for (CYLRefreshComponent *component in @[header, footer]) {
+            component.fastAnimationDuration = 0.05;
+            component.slowAnimationDuration = 0.05;
+        }
+        collection.cyl_header = header;
+        collection.cyl_footer = footer;
+        [collection layoutIfNeeded];
+        UIEdgeInsets initial = collection.contentInset;
+        for (NSUInteger round = 0; round < 3; round++) {
+            [header beginRefreshing];
+            [self cyl_spinUntil:^BOOL { return header.state == CYLRefreshStateRefreshing && collection.userInteractionEnabled; }];
+            footer.exclusiveWithOtherRefresh = NO;
+            [footer beginRefreshing];
+            [self cyl_spinUntil:^BOOL { return footer.state == CYLRefreshStateRefreshing; }];
+            [header endRefreshing];
+            [self cyl_spinUntil:^BOOL { return header.state == CYLRefreshStateIdle && collection.userInteractionEnabled; }];
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+            [footer endRefreshing];
+            [self cyl_spinUntil:^BOOL { return footer.state == CYLRefreshStateIdle; }];
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+            XCTAssertEqualWithAccuracy(collection.contentInset.top, initial.top, 0.5, @"bug path %@, round %lu", animationBug, (unsigned long)round);
+            XCTAssertEqualWithAccuracy(collection.contentInset.bottom, initial.bottom, 0.5, @"bug path %@, round %lu", animationBug, (unsigned long)round);
+        }
+        window.hidden = YES;
+    }
+}
+
+// [EN] The pull is released past the refreshing position, so the header's inset follows the content (resetInset)
+//      before the start animation ends; three refreshes in a row give back exactly the inset they added (with and
+//      without isCollectionViewAnimationBug), so the content does not move (MJRefresh #1483, PR #1444).
+// [CN] 松手位置超过刷新位置，刷新头的 inset 在开始动画结束前就随内容变化（resetInset）；连续三次刷新恰好归还所增加的 inset（开启与关闭
+//      isCollectionViewAnimationBug 都如此），内容不会移动（MJRefresh #1483、PR #1444）。
+- (void)testRefreshReleasedPastTheRefreshingPositionGivesBackItsInset {
+    for (NSNumber *animationBug in @[@NO, @YES]) {
+        UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        window.rootViewController = [UIViewController new];
+        [window makeKeyAndVisible];
+        UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
+        UICollectionView *collection = [[UICollectionView alloc] initWithFrame:window.bounds collectionViewLayout:layout];
+        collection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        collection.contentInset = UIEdgeInsetsMake(30, 0, 0, 0);
+        [collection registerClass:UICollectionViewCell.class forCellWithReuseIdentifier:@"cell"];
+        CYLTestCollectionSource *source = [CYLTestCollectionSource new];
+        collection.dataSource = source;
+        [window.rootViewController.view addSubview:collection];
+        CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        header.isCollectionViewAnimationBug = animationBug.boolValue;
+        header.fastAnimationDuration = 0.1;
+        header.slowAnimationDuration = 0.1;
+        collection.cyl_header = header;
+        [collection layoutIfNeeded];
+        for (NSUInteger round = 0; round < 3; round++) {
+            collection.contentOffset = CGPointMake(0, -30 - 90);
+            [header beginRefreshing];
+            collection.contentOffset = CGPointMake(0, -30 - 80);
+            [self cyl_spinUntil:^BOOL { return header.state == CYLRefreshStateRefreshing && collection.userInteractionEnabled; }];
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+            XCTAssertEqualWithAccuracy(collection.contentInset.top, 30 + header.cyl_h, 0.5, @"bug path %@, round %lu", animationBug, (unsigned long)round);
+            [header endRefreshing];
+            [self cyl_spinUntil:^BOOL { return header.state == CYLRefreshStateIdle && collection.userInteractionEnabled; }];
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]];
+            XCTAssertEqualWithAccuracy(collection.contentInset.top, 30, 0.5, @"bug path %@, round %lu", animationBug, (unsigned long)round);
+        }
+        window.hidden = YES;
+    }
+}
+
+- (void)cyl_spinUntil:(BOOL (^)(void))condition {
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+    while (!condition() && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+}
+
 - (void)testAutoFooterRestoresInsetWhenRemoved {
     self.table.contentInset = UIEdgeInsetsMake(0, 0, 12, 0);
     CGFloat initialInset = self.table.cyl_insetB;
@@ -1671,6 +1819,34 @@ static const NSTimeInterval CYLTestTimeout = 30;
     XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 550, 0.001);
     scrollView.cyl_testDecelerating = NO;
 
+    scrollView.cyl_footer = nil;
+    window.hidden = YES;
+}
+
+// FIX: issue MJRefresh#1610 (page alignment)
+// [EN] A paging auto footer starts loading with its space showing past the last page; the load adds a page. When it
+//      ends at rest, the scroll view goes back to the page boundary instead of keeping the page shifted by the
+//      footer's height (an Example-objc-02 UI test drives the same case with real swipes).
+// [CN] 分页的自动刷新尾在最后一页之后露出自身空间时开始加载，加载新增一页。静止时结束，滚动视图回到分页边界，而不是让该页错开刷新尾的高度
+//      （Example-objc-02 的 UI 测试以真实滑动覆盖同一场景）。
+- (void)testPagingAutoFooterEndAfterNewPageReturnsToThePageBoundary {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestPagingScrollView *scrollView = [[CYLTestPagingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 960);
+    scrollView.pagingEnabled = YES;
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    CYLRefreshAutoFooter *footer = [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}];
+    footer.fastAnimationDuration = 0;
+    footer.slowAnimationDuration = 0;
+    scrollView.cyl_footer = footer;
+    [footer beginRefreshing];
+    scrollView.contentOffset = CGPointMake(0, 480 + footer.cyl_h);
+    scrollView.contentSize = CGSizeMake(320, 1440);
+    [footer endRefreshing];
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, 480, 0.001);
     scrollView.cyl_footer = nil;
     window.hidden = YES;
 }

@@ -18,6 +18,27 @@
 @property (nonatomic) CYLScrollDirection direction;
 @end
 
+/// [EN] Depth of writes through cyl_insetB / cyl_insetL / cyl_insetR, which change one side and never the top (main
+///      thread only, as UIKit). The header reads it to tell a footer's or trailer's write from a new top inset.
+/// [CN] 通过 cyl_insetB / cyl_insetL / cyl_insetR 写入的嵌套深度；这些写入只改变一侧、从不改变 top（与 UIKit 一样只在主线程）。
+///      刷新头据此区分刷新尾或 trailer 的写入与新的顶部 inset。
+static NSInteger CYLRefreshSideInsetWriteDepth = 0;
+
+BOOL CYLRefreshIsWritingSideInset(void)
+{
+    return CYLRefreshSideInsetWriteDepth > 0;
+}
+
+static void CYLRefreshWriteSideInset(UIScrollView *scrollView, UIEdgeInsets inset)
+{
+    CYLRefreshSideInsetWriteDepth += 1;
+    @try {
+        scrollView.contentInset = inset;
+    } @finally {
+        CYLRefreshSideInsetWriteDepth -= 1;
+    }
+}
+
 @implementation CYLScrollMetrics
 @end
 
@@ -69,7 +90,7 @@ static BOOL respondsToAdjustedContentInset_;
         inset.bottom -= (self.adjustedContentInset.bottom - self.contentInset.bottom);
     }
 #endif
-    self.contentInset = inset;
+    CYLRefreshWriteSideInset(self, inset);
 }
 
 - (CGFloat)cyl_insetB
@@ -86,7 +107,7 @@ static BOOL respondsToAdjustedContentInset_;
         inset.left -= (self.adjustedContentInset.left - self.contentInset.left);
     }
 #endif
-    self.contentInset = inset;
+    CYLRefreshWriteSideInset(self, inset);
 }
 
 - (CGFloat)cyl_insetL
@@ -103,7 +124,7 @@ static BOOL respondsToAdjustedContentInset_;
         inset.right -= (self.adjustedContentInset.right - self.contentInset.right);
     }
 #endif
-    self.contentInset = inset;
+    CYLRefreshWriteSideInset(self, inset);
 }
 
 - (CGFloat)cyl_insetR

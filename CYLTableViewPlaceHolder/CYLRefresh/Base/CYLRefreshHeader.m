@@ -45,6 +45,9 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (CGFloat)cyl_offsetForDragRate:(CGFloat)offsetY happenOffset:(CGFloat)happenOffsetY;
 @end
 
+/// [EN] YES while cyl_insetB / L / R write the inset (UIScrollView+CYLExtension.m). [CN] cyl_insetB / L / R 写入 inset 期间为 YES。
+FOUNDATION_EXTERN BOOL CYLRefreshIsWritingSideInset(void);
+
 @implementation CYLRefreshHeader
 #pragma mark - 构造方法
 + (instancetype)headerWithRefreshingBlock:(CYLRefreshComponentAction)refreshingBlock
@@ -358,6 +361,17 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         if (!self.window) { return; }
     }
 
+    // FIX: MJRefresh PR #1444 (device rotation)
+    // [EN] insetTDelta (original top - current top) is what the header added, and stays right when the system part of
+    //      the inset changes (a rotation changes the bars and the safe area, both sides move together). The saved
+    //      original top does not: rebuild it from the current top, or the header works from the old system inset and
+    //      leaves the difference behind as a gap when the refresh ends.
+    // [CN] insetTDelta（原始 top - 当前 top）是刷新头增加的量，系统部分的 inset 变化时（旋转会改变栏与安全区，两边一起变）它仍然正确；
+    //      保存的原始 top 则不会。用当前 top 重新得出它，否则刷新头会按旧的系统 inset 计算，并在刷新结束后留下差值作为空隙。
+    UIEdgeInsets original = _scrollViewOriginalInset;
+    original.top = self.scrollView.cyl_insetT + self.insetTDelta;
+    _scrollViewOriginalInset = original;
+
     // sectionheader停留解决
     CGFloat insetT = - self.scrollView.cyl_offsetY > _scrollViewOriginalInset.top ? - self.scrollView.cyl_offsetY : _scrollViewOriginalInset.top;
     insetT = insetT > self.expandHeight + _scrollViewOriginalInset.top ? self.expandHeight + _scrollViewOriginalInset.top : insetT;
@@ -457,6 +471,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     [super scrollViewContentInsetDidChange:change];
     if (self.updatingRefreshInset || self.state != CYLRefreshStateRefreshing || !self.cyl_addedRefreshingInset ||
         ![self cyl_movesContentWhileRefreshing] || !self.scrollView) return;
+    // FIX: issue MJRefresh#1483
+    // [EN] A footer or trailer that starts or ends loading writes its own side (cyl_insetB / L / R). Taking that write
+    //      for a new original top made the refreshing top the "original" and added the header's height again, so each
+    //      refresh during a footer load left the content one header height lower.
+    // [CN] 刷新尾或 trailer 开始或结束加载时写入自己那一侧（cyl_insetB / L / R）。把这次写入当作新的原始 top，会把刷新中的 top 当作
+    //      “原始值”并再次加上刷新头高度，于是每次在刷新尾加载期间刷新，内容都下移一个刷新头高度。
+    if (CYLRefreshIsWritingSideInset()) return;
     UIScrollView *scrollView = self.scrollView;
     CGFloat originalTop = scrollView.cyl_insetT;
     CGFloat refreshingTop = originalTop + self.expandHeight;
@@ -592,7 +613,10 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         [UIView animateWithDuration:self.fastAnimationDuration animations:^{
             if (self.scrollView.panGestureRecognizer.state != UIGestureRecognizerStateCancelled) {
                 CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
-                self.insetTDelta = self.scrollView.cyl_insetT - top;
+                // [EN] From the original top, not the current one: resetInset may already have moved the inset while
+                //      the pull was released, and a delta measured from there is wrong by that much.
+                // [CN] 以原始 top 计算，而不是当前 top：松手时 resetInset 可能已移动过 inset，从那里量出的差值会差出同样的量。
+                self.insetTDelta = self.scrollViewOriginalInset.top - top;
                 // 增加滚动区域top
                 [self setRefreshingInsetTop:top];
                 // 设置滚动位置
@@ -651,7 +675,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
         // 避免出现 end 先于 Refreshing 状态
         if (self.state != CYLRefreshStateIdle) {
             CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
-            self.insetTDelta = self.scrollView.cyl_insetT - top;
+            // [EN] From the original top (see headerRefreshingAction). [CN] 以原始 top 计算（见 headerRefreshingAction）。
+            self.insetTDelta = self.scrollViewOriginalInset.top - top;
             [self setRefreshingInsetTop:top];
             // 设置最终滚动位置
             CGPoint offset = self.scrollView.contentOffset;
