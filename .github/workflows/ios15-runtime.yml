@@ -30,7 +30,7 @@ jobs:
       - name: Install and boot an iOS 15 simulator
         id: simulator
         run: |
-          destination=$(scripts/install-ios15-simulator.sh | tail -1) || destination=""
+          destination=$(bash scripts/install-ios15-simulator.sh | tail -1) || destination=""
           case "$destination" in
             platform=*) echo "destination=$destination" >> "$GITHUB_OUTPUT" ;;
             *)
