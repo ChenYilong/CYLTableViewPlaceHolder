@@ -13,20 +13,12 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.animation.tests'
     config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
   end
-  %w[CYLPlaceholderLottiePlaybackTests.m CYLPlaceholderBackendPlaybackTests.m CYLPlaceholderAnimationRegistryTests.m].each do |filename|
-    ref = project.main_group.new_file(File.join(root, 'Tests', filename))
-    build_file = target.source_build_phase.add_file_reference(ref)
-    # libpag-enterprise 4.4.x-4.5.98 ships an umbrella header that imports a missing header, so files that import
-    # libpag are compiled without modules (as the PAGEnterprise subspec does).
-    if ENV['PAG_SUBSPEC'] == 'PAGEnterprise' && filename == 'CYLPlaceholderBackendPlaybackTests.m'
-      build_file.settings = { 'COMPILER_FLAGS' => '-fno-modules' }
-    end
+  # The tests are Swift (docs/Swift-Migration.md, step 13) and import the pods' modules, so they build with static and
+  # dynamic frameworks alike. The PAG view is read by class name and key-value coding: the PAGEnterprise umbrella header
+  # of libpag-enterprise 4.4.x-4.5.98 imports a missing header, so libpag cannot be imported as a module there.
+  %w[CYLPlaceholderLottiePlaybackTests.swift CYLPlaceholderBackendPlaybackTests.swift CYLPlaceholderAnimationRegistryTests.swift].each do |filename|
+    target.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests', filename)))
   end
-  # An Objective-C-only test target linking static Swift pods needs the Swift compatibility libraries; Xcode 26
-  # adds them only when the target itself compiles Swift (Xcode 27 does not need this).
-  swift_file = File.join(dir, 'SwiftRuntime.swift')
-  File.write(swift_file, "// Links the Swift runtime libraries into the test bundle.\n")
-  target.source_build_phase.add_file_reference(project.main_group.new_file(swift_file))
   target.build_configurations.each { |config| config.build_settings['SWIFT_VERSION'] = '5.0' }
   fixtures = {
     'CYLPlaceholderTest.pag' => ENV.fetch('PAG_FIXTURE', File.expand_path('../CYLTabBarController/Example-Shared/PAGResources/tab-icons/tab_home.pag', root)),
