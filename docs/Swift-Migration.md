@@ -662,6 +662,9 @@ Objective-C to Swift, and its score after every commit.
     Swift (the Objective-C API names and selectors stay, so the overridden methods are the same), or compose (add a view
     to the control instead of subclassing). The Swift API and every Objective-C caller that only uses the controls stay
     source-compatible.
+  - **Breaking, same major version (the owner, 2026-11-20: "raise iOS .spec the minimum to iOS 15"):** the minimum
+    deployment target is iOS 15.0 (was 12.0); apps on iOS 12-14 stay on the previous release. The iOS 13/14 availability
+    branches were removed; see `CHANGELOG.md`. No release is tagged by this change.
   - **Order: leaves first.** A Swift class may subclass an Objective-C class, not the reverse, so each class is
     translated only after all its subclasses (plan of 2026-11-19, replacing the bottom-up plan above):
     - step 7: `Custom/Drawn/Support` and the internal helpers with no subclasses (`CYLRefreshPaging`,

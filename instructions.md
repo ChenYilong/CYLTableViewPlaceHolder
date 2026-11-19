@@ -957,7 +957,7 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   GitHub CI/CD: it uses the developer's own Mac directly, where the simulator
   and Xcode can be started for testing. Assume that Mac runs **macOS 27 with
   Xcode 27**, so builds there need the deployment-target override for Xcode 27
-  (at least iOS 15.0 for the build; CI builds and tests iOS 15.0 since 2026-11-20, the podspec's 12.0 is an open owner question). Run
+  (at least iOS 15.0 for the build; CI builds and tests iOS 15.0 since 2026-11-20, the library's minimum is 15.0 too since 2026-11-20). Run
   the same scripts as CI (`scripts/`, `ruby Tests/run-tests.rb` with
   `DESTINATION`), choosing an installed simulator with
   `xcrun simctl list devices available`.

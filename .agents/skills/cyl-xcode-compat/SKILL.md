@@ -8,7 +8,7 @@ description: Maintain Xcode project format, deployment targets, schemes, and Coc
 Use this skill when changing an Xcode project, scheme, build configuration,
 deployment target, or podspec.
 
-- The library podspec declares iOS 12.0 (open owner question: CI builds and tests 15.0 since 2026-11-20, and the CYLAnimatedItem dependency needs iOS 13+). Runnable projects' Podfiles follow
+- The library podspec minimum is iOS 15.0 (raised from 12.0 on 2026-11-20; CI builds and tests 15.0). Runnable projects' Podfiles follow
   the iOS 15.0 and CocoaPods `post_install` checks in `instructions.md`;
   these settings do not change the library's published minimum. Availability-check
   newer APIs.

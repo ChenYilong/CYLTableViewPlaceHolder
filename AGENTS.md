@@ -92,8 +92,9 @@ the integrated `CYLRefresh` component, and an example application. Read
   assessing compatibility and obtaining approval for breaking changes.
 - Preserve third-party copyright, license text, and original attribution. Do
   not replace an author's name with the project author's name.
-- The podspec declares iOS 12.0 (kept: public contract; the CYLAnimatedItem dependency needs iOS 13+ and CI covers 15.0,
-  see the Task-Log question of 2026-11-20); guard newer APIs. Runnable projects' Podfiles follow the iOS 15.0 rules in
+- The library supports iOS 15.0 and later (raised from 12.0 on 2026-11-20, the owner's decision: "raise iOS .spec the
+  minimum to iOS 15"; CHANGELOG.md); the podspec says `15.0`. Guard APIs newer than 15 with `@available`; there are no
+  iOS 12-14 branches any more. Runnable projects' Podfiles follow the iOS 15.0 rules in
   `instructions.md`; their CocoaPods dependencies consequently require iOS 15.
 - Preserve the Xcode project format: `objectVersion = 46`,
   `compatibilityVersion = "Xcode 3.2"`, explicit file references, and a shared
@@ -228,7 +229,7 @@ the integrated `CYLRefresh` component, and an example application. Read
   assume macOS 27 with Xcode 27.
 - Xcode 27's simulator SDK requires a deployment target of at least 15.0 during
   builds. Override the build target for that toolchain instead of changing the
-  podspec's platform; CI's "iOS 15 deployment build" and "iOS 15 runtime" use 15.0.
+  library's minimum (15.0 since 2026-11-20); CI's "iOS 15 deployment build" and "iOS 15 runtime" use 15.0.
 - Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
   merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details in a portrait
   sheet: one column with several rows first, two columns with several rows only when one column would be taller than
