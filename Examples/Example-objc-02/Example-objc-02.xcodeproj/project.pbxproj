@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		193B1CEFB5168037A99356CB /* CYLSectionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A884C93D1EA7548D96A8EC3 /* CYLSectionsUITests.swift */; };
 		22EA486320B5FF64A4562092 /* CYLObjC02Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C5D620B1DC99FD4B1014C2 /* CYLObjC02Localization.swift */; };
+		370E0F4B43B4EEB05E3A1F4E /* CYLLocalizationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCDE4935C7F2D5F80CEB310 /* CYLLocalizationUITests.swift */; };
 		4922901D0C4C7B7642E87E52 /* CYLCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232B43C6112528CE2A1E4E25 /* CYLCollectionViewController.swift */; };
 		4A7C52697EB06E9C17AF7361 /* CYLAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45F7211CE5105CBF1EBD838 /* CYLAppDelegate.swift */; };
 		57E47D844BF3BA37DC6C17A3 /* CYLSectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33799AEF857576CD6C2EDCC0 /* CYLSectionsViewController.swift */; };
@@ -48,6 +49,7 @@
 		BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPagingUITests.swift; sourceTree = "<group>"; };
 		D2B509827356F35D2D76E332 /* Pods-ExampleObjC02.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleObjC02.release.xcconfig"; path = "Target Support Files/Pods-ExampleObjC02/Pods-ExampleObjC02.release.xcconfig"; sourceTree = "<group>"; };
 		E1DB78E91DFFA91A5ECB2C5C /* CYLObjC02Example.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; path = CYLObjC02Example.bundle; sourceTree = "<group>"; };
+		ECCDE4935C7F2D5F80CEB310 /* CYLLocalizationUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLLocalizationUITests.swift; sourceTree = "<group>"; };
 		FAEC5561C7E5599A671296A6 /* CYLPagingViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPagingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,6 +132,7 @@
 				A121FA0663C9DC1AB3716C46 /* CYLCollectionAnimationUITests.swift */,
 				BAAA7A39B2699488971CD9AA /* CYLPagingUITests.swift */,
 				7A884C93D1EA7548D96A8EC3 /* CYLSectionsUITests.swift */,
+				ECCDE4935C7F2D5F80CEB310 /* CYLLocalizationUITests.swift */,
 			);
 			name = UITests;
 			path = UITests;
@@ -307,6 +310,7 @@
 				B124B6E09CD3FA5176C1ECE7 /* CYLCollectionAnimationUITests.swift in Sources */,
 				DE54793E1625C7D2366E35E4 /* CYLPagingUITests.swift in Sources */,
 				193B1CEFB5168037A99356CB /* CYLSectionsUITests.swift in Sources */,
+				370E0F4B43B4EEB05E3A1F4E /* CYLLocalizationUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

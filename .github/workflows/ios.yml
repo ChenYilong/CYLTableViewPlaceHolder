@@ -330,6 +330,7 @@ jobs:
           path: |
             build/screenshots/*.png
             build/*-uitests.log
+            build/*-localization.log
           if-no-files-found: warn
       - name: Summary
         if: always() && needs.changes.outputs.code == 'true'

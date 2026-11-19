@@ -36,7 +36,9 @@ class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         let arguments = ProcessInfo.processInfo.arguments
         let controller: UIViewController
-        if arguments.contains("-sections") {
+        if arguments.contains("-localizationCheck") {
+            controller = CYLObjC02LocalizationCheckViewController()
+        } else if arguments.contains("-sections") {
             controller = CYLSectionsViewController()
         } else if arguments.contains("-paging") {
             controller = CYLPagingViewController()

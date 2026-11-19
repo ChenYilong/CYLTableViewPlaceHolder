@@ -772,6 +772,14 @@ only.
   bundle in the repository: same keys and format specifiers in every language,
   macros that match the keys, and no loose `.strings` files. Run it before
   committing a localization change.
+- Every example with a bundle also checks itself at run time: `<Prefix>LocalizationSelfCheck()` in its
+  `<Prefix>Localization.swift` switches `CYLPlaceholderLocalization.language` through every core language and an
+  unknown one, and checks that `effectiveLanguage` follows and that every key of the key enum resolves through the
+  lookup function to that language's own `.lproj` value (English for the unknown one). The app runs it when launched
+  with `-localizationCheck`; `scripts/ci-build-example.sh` runs it in CI, and an example with a UI test target adds a
+  UI test for it (Example-objc-02: `CYLLocalizationUITests`). `scripts/check_localizations.py` also checks that every
+  key the example's code uses is a case of the enum and exists in every language, and that the bundle has every core
+  language.
 - API, file and subspec names shown as technical hints are identifiers, not
   text, and stay as literals.
 

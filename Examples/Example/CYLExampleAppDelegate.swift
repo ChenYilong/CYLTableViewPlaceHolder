@@ -41,7 +41,11 @@ final class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UINavigationController(rootViewController: CYLExampleViewController())
+        // [EN] `-localizationCheck` shows the example table's lookup check instead of the demo (CYLPlaceholderExampleLocalization.swift).
+        // [CN] `-localizationCheck` 时显示示例字符串表查找检查，而不是演示（见 CYLPlaceholderExampleLocalization.swift）。
+        let root: UIViewController = ProcessInfo.processInfo.arguments.contains("-localizationCheck")
+            ? CYLPlaceholderExampleLocalizationCheckViewController() : CYLExampleViewController()
+        window.rootViewController = UINavigationController(rootViewController: root)
         window.backgroundColor = .white
         window.makeKeyAndVisible()
         self.window = window

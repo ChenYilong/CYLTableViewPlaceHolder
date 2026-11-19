@@ -33,6 +33,14 @@ final class CYLScenarioSceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
         window.backgroundColor = .systemBackground
+        // `-localizationCheck` shows the example table's lookup check instead of the demo, with no root provider, so
+        // the check's language switches do not rebuild the root (CYLScenarioLocalization.swift).
+        if ProcessInfo.processInfo.arguments.contains("-localizationCheck") {
+            window.rootViewController = CYLScenarioLocalizationCheckViewController()
+            window.makeKeyAndVisible()
+            self.window = window
+            return
+        }
         // As in CYLTabBarController's Objective-C demo: the root is rebuilt after every language change
         // (`CYLScenarioLanguage.select(_:)` posts it), so every text, core and example, shows in the new language.
         window.cyl_setRootViewControllerProvider {
