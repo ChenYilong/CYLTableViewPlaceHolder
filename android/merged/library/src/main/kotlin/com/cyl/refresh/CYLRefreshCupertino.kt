@@ -245,15 +245,16 @@ open class CYLRefreshDrawnFooter(
     val style: CYLRefreshDrawnHeader,
 ) : CYLRefreshBackFooter(CYLDrawnFooterView(style.view as RefreshHeader)) {
     /**
-     * The header styles a footer class draws, by footer class (`styleClass`).
+     * A footer that draws a new header of [styleClass] (`+styleClass`, iOS `init` of a subclass): the class needs a
+     * constructor that takes a Context, as every drawn header has.
      */
-    companion object {
-        /**
-         * The style header class a subclass draws, or null for a footer given its style (`styleClass`).
-         */
-        @JvmStatic
-        val styleClass: Class<out CYLRefreshDrawnHeader>? = null
-    }
+    constructor(context: Context, styleClass: Class<out CYLRefreshDrawnHeader>) :
+        this(styleClass.getConstructor(Context::class.java).newInstance(context))
+
+    /**
+     * The header class this footer draws (`styleClass`): CYLRefreshMaterialHeader for CYLRefreshMaterialFooter, and so on.
+     */
+    val styleClass: Class<out CYLRefreshDrawnHeader> get() = style.javaClass
 }
 
 /**

@@ -731,4 +731,77 @@ class CYLRefreshComponentTest {
         material.scrollMode = CYLRefreshScrollMode.Front
         assertEquals(CYLRefreshScrollMode.Front, material.scrollMode)
     }
+
+    private fun autoLoadMoreOn(layout: CYLRefreshLayout) =
+        CYLRefreshLayout::class.java.getDeclaredField("mEnableAutoLoadMore").apply { isAccessible = true }.getBoolean(layout)
+
+    /** iOS autoTriggerTimes: a drag may load by itself that many times; the next touch resets the count. */
+    @Test
+    fun autoTriggerTimesCountsLoadsPerDrag() {
+        val layout = show(layout())
+        val footer = CYLRefreshAutoNormalFooter(activity)
+        layout.cyl_footer = footer
+        footer.autoTriggerTimes = 2
+        footer.setPhase(CYLRefreshPhase.Refreshing)
+        footer.setPhase(CYLRefreshPhase.Idle)
+        assertTrue("one load left", autoLoadMoreOn(layout))
+        footer.setPhase(CYLRefreshPhase.Refreshing)
+        footer.setPhase(CYLRefreshPhase.Idle)
+        assertFalse("used up", autoLoadMoreOn(layout))
+        layout.dispatchTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 10f, 10f, 0))
+        assertTrue("a new drag", autoLoadMoreOn(layout))
+        footer.autoTriggerTimes = -1
+        repeat(5) { footer.setPhase(CYLRefreshPhase.Refreshing); footer.setPhase(CYLRefreshPhase.Idle) }
+        assertTrue("no limit", autoLoadMoreOn(layout))
+    }
+
+    /** iOS styleClass: a drawn footer made from a header class, and the class each footer draws. */
+    @Test
+    fun drawnFooterStyleClass() {
+        val footer = CYLRefreshDrawnFooter(activity, CYLRefreshMaterialHeader::class.java)
+        assertTrue(footer.style is CYLRefreshMaterialHeader)
+        assertEquals(CYLRefreshBezierRadarHeader::class.java, CYLRefreshBezierRadarFooter(activity).styleClass)
+    }
+
+    /** iOS secondaryVelocity: a fast release past the refresh trigger opens the second floor. */
+    @Test
+    fun fastReleaseOpensTheSecondFloor() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        header.secondaryView = View(activity)
+        header.secondaryTriggerOffset = 2000f
+        header.secondaryVelocity = 300f
+        idle(50)
+        val floor = header.floor
+        val trigger = (header.view.view.height * header.triggerRate).toInt() + 10
+        floor.lastDragOffset = trigger - 60
+        SystemClock.sleep(20)
+        floor.lastDragOffset = trigger
+        assertTrue("fast enough: ${floor.releaseVelocity}", floor.releaseVelocity >= 300f)
+        assertTrue(floor.openOnReleaseIfPulledFar())
+    }
+
+    /** iOS exclusiveWithOtherRefresh off: a refresh asked during a load is not refused (here: the load ends, then it starts). */
+    @Test
+    fun nonExclusiveRefreshIsNotRefused() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        val footer = CYLRefreshBackNormalFooter(activity)
+        layout.cyl_header = header
+        layout.cyl_footer = footer
+        var blocked = false
+        header.blockedByOtherRefreshBlock = { blocked = true }
+        footer.beginRefreshing()
+        idle(600)
+        assertTrue(footer.isRefreshing)
+        header.beginRefreshing()
+        assertTrue("exclusive by default", blocked)
+        blocked = false
+        header.exclusiveWithOtherRefresh = false
+        header.beginRefreshing()
+        idle(1500)
+        assertFalse(blocked)
+        assertTrue("the header refreshes after the load", header.isRefreshing)
+    }
 }

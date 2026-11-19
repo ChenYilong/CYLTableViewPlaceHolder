@@ -416,12 +416,36 @@ open class CYLRefreshAutoFooter internal constructor(view: RefreshFooter) : CYLR
         }
 
     /**
-     * How many times one drag may load, -1 for no limit (`autoTriggerTimes`); CYLRefreshLayout loads once per drag.
+     * How many times one drag may load by itself, -1 for no limit (`autoTriggerTimes`), as on iOS: once the count is
+     * used up the footer stops loading by itself until the next drag begins.
      */
     var autoTriggerTimes: Int = 1
+        set(value) {
+            field = value
+            leftTriggerTimes = value
+            refreshLayout?.setEnableAutoLoadMore(automaticallyRefresh && value != 0)
+        }
+
+    /** The loads the current drag may still start (iOS `leftTriggerTimes`); below 0 for no limit. */
+    internal var leftTriggerTimes: Int = 1
+
+    private val resetTriggerTimes: () -> Unit = {
+        leftTriggerTimes = autoTriggerTimes
+        refreshLayout?.setEnableAutoLoadMore(automaticallyRefresh && autoTriggerTimes != 0)
+    }
 
     override fun didAttachToScrollView(layout: CYLRefreshLayout) {
-        layout.setEnableAutoLoadMore(automaticallyRefresh)
+        layout.setEnableAutoLoadMore(automaticallyRefresh && autoTriggerTimes != 0)
+        if (resetTriggerTimes !in layout.cylTouchDownListeners) layout.cylTouchDownListeners += resetTriggerTimes
+    }
+
+    override fun phaseDidChangeFrom(old: CYLRefreshPhase, new: CYLRefreshPhase) {
+        super.phaseDidChangeFrom(old, new)
+        // Each load the footer starts by itself uses one of the drag's loads (iOS decrements leftTriggerTimes).
+        if (new == CYLRefreshPhase.Refreshing && leftTriggerTimes > 0) {
+            leftTriggerTimes--
+            if (leftTriggerTimes == 0) refreshLayout?.setEnableAutoLoadMore(false)
+        }
     }
 }
 
@@ -462,6 +486,7 @@ open class CYLRefreshAutoStateFooter(context: Context) : CYLRefreshAutoFooter(co
     fun titleForState(state: CYLRefreshState): String? = classics.text(state)
 
     override fun phaseDidChangeFrom(old: CYLRefreshPhase, new: CYLRefreshPhase) {
+        super.phaseDidChangeFrom(old, new)
         if (refreshingTitleHidden) stateLabel?.visibility = if (new == CYLRefreshPhase.Refreshing) View.INVISIBLE else View.VISIBLE
     }
 }
@@ -581,8 +606,8 @@ open class CYLRefreshBackFooter internal constructor(view: RefreshFooter) : CYLR
     var secondaryCloseTriggerOffset: Float by floor::closeTriggerOffset
 
     /**
-     * A release this fast opens the second floor (`secondaryVelocity`); kept, a release's speed is not measured on
-     * Android.
+     * A release at least this fast (dp per second), past the refresh trigger, opens the second floor (`secondaryVelocity`), as on
+     * iOS.
      */
     var secondaryVelocity: Float by floor::velocity
 

@@ -26,6 +26,20 @@ import kotlin.math.max
  * to the [CYLRefreshLayout] that wraps the content ([attach], or `refreshLayout.cyl_header` / `cyl_footer`), and
  * [view] is the CYLRefreshLayout header or footer it shows.
  */
+/**
+ * Runs [block] once the layout is back at rest (its state None), checking every 50 ms for up to 5 s: the hand-off of a
+ * refresh asked while the other control is busy and the two are not exclusive.
+ */
+internal fun CYLRefreshLayout.whenIdle(block: () -> Unit) {
+    var tries = 0
+    val check = object : Runnable {
+        override fun run() {
+            if (state == RefreshState.None) block() else if (++tries < 100) postDelayed(this, 50)
+        }
+    }
+    postDelayed(check, 50)
+}
+
 abstract class CYLRefreshComponent internal constructor(
     /**
      * The CYLRefreshLayout header or footer this component shows.
@@ -316,8 +330,9 @@ abstract class CYLRefreshComponent internal constructor(
     var hapticFeedback: Boolean = false
 
     /**
-     * Whether a refresh and a load exclude each other (`exclusiveWithOtherRefresh`); CYLRefreshLayout always does, so
-     * turning it off has no effect.
+     * Whether a refresh and a load exclude each other (`exclusiveWithOtherRefresh`). On (default), beginRefreshing is
+     * refused while the other control is busy (blockedByOtherRefreshBlock). Off, it is not refused: CYLRefreshLayout
+     * shows one control at a time, so the busy one finishes and this one starts (iOS runs both at once).
      */
     var exclusiveWithOtherRefresh: Boolean = true
 
@@ -633,8 +648,8 @@ open class CYLRefreshHeader(view: RefreshHeader) : CYLRefreshComponent(view) {
     var secondaryCloseTriggerOffset: Float by floor::closeTriggerOffset
 
     /**
-     * A release this fast opens the second floor (`secondaryVelocity`); kept, a release's speed is not measured on
-     * Android.
+     * A release at least this fast (dp per second), past the refresh trigger, opens the second floor (`secondaryVelocity`), as on
+     * iOS.
      */
     var secondaryVelocity: Float by floor::velocity
 
@@ -676,7 +691,13 @@ open class CYLRefreshHeader(view: RefreshHeader) : CYLRefreshComponent(view) {
     override fun beginRefreshing() {
         val layout = refreshLayout ?: return
         if (layout.state.isFooter && layout.state != RefreshState.None) {
-            blockedByOtherRefreshBlock?.invoke()
+            if (exclusiveWithOtherRefresh) {
+                blockedByOtherRefreshBlock?.invoke()
+                return
+            }
+            // Not exclusive: the layout shows one control at a time, so the load ends first, then the refresh starts.
+            layout.finishLoadMore(0, true, false)
+            layout.whenIdle { layout.autoRefresh() }
             return
         }
         if (!layout.isAttachedToWindow) markWillRefresh()
@@ -759,7 +780,13 @@ open class CYLRefreshFooter(view: RefreshFooter) : CYLRefreshComponent(view) {
     override fun beginRefreshing() {
         val layout = refreshLayout ?: return
         if (layout.state.isHeader && layout.state != RefreshState.None) {
-            blockedByOtherRefreshBlock?.invoke()
+            if (exclusiveWithOtherRefresh) {
+                blockedByOtherRefreshBlock?.invoke()
+                return
+            }
+            // Not exclusive: the refresh ends first, then the load starts (one control at a time on Android).
+            layout.finishRefresh(0, true, null)
+            layout.whenIdle { layout.autoLoadMore() }
             return
         }
         if (!layout.isAttachedToWindow) markWillRefresh()

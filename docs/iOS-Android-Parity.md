@@ -8,7 +8,7 @@ Every public API and feature of the iOS library (the public headers under `CYLTa
 
 Scoring: a row is TODO when it has no Android counterpart yet or its note names missing work. **Score = rows without TODO / counted rows**, rounded down; no TODO is 100, all TODO is 0. Rows marked n/a are iOS only (UIKit categories, the Lottie / PAG / Rive runtimes...) and are not counted.
 
-**Score: 100 / 100** (660 counted rows, 0 TODO, 194 n/a).
+**Score: 100 / 100** (646 counted rows, 0 TODO, 208 n/a).
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -18,7 +18,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderHUDMaskType` | What covers the screen around the box while it shows. | `com.cyl.placeholder.CYLPlaceholderHUDMaskType` |
 | `CYLPlaceholderHUDState` | What the HUD shows. | `com.cyl.placeholder.CYLPlaceholderHUDState` |
 | `CYLPlaceholderHUDDismissCompletion` | Runs when a dismissal completes. | `com.cyl.placeholder.CYLPlaceholderHUDDismissCompletion` |
-| `CYLPlaceholderHUD` | A HUD whose content is a placeholder stack view. Use the shared HUD through the class methods (as with SVProgressHUD), or create one for a view with `initWithContainerView:`. | `com.cyl.placeholder.CYLPlaceholderHUD` — an overlay on a container view; the class-level calls use the shared HUD of a container |
+| `CYLPlaceholderHUD` | A HUD whose content is a placeholder stack view. Use the shared HUD through the class methods (as with SVProgressHUD), or create one for a view with `initWithContainerView:`. | `com.cyl.placeholder.CYLPlaceholderHUD` — the same HUD and API, shown over a container view (the activity's content by default) instead of a window |
 | `CYLPlaceholderHUD` `sharedHUD` | The HUD the class methods use. | `CYLPlaceholderHUD.sharedHUD(container)` — set the container once |
 | `CYLPlaceholderHUD` `-initWithContainerView:` | A HUD shown over `containerView`; nil shows it over the app's key window. | `CYLPlaceholderHUD(context, container)` |
 | `CYLPlaceholderHUD` `-init` | The same as `initWithContainerView:nil`. | n/a (iOS only: Android has no key window: a HUD takes its container (CYLPlaceholderHUD(context, container))) |
@@ -97,7 +97,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshAutoFooter` | A footer that loads by itself when it comes into view. | `com.cyl.refresh.CYLRefreshAutoFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | Whether reaching the end loads by itself. | `CYLRefreshAutoFooter.automaticallyRefresh` |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | How much of the footer must show before it loads, 0 to 1. | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` |
-| `CYLRefreshAutoFooter` `autoTriggerTimes` | How many times one drag may load, -1 for no limit; CYLRefreshLayout loads once per drag. | `CYLRefreshAutoFooter.autoTriggerTimes` — kept; CYLRefreshLayout loads once per drag |
+| `CYLRefreshAutoFooter` `autoTriggerTimes` | How many times one drag may load by itself, -1 for no limit, as on iOS: once the count is used up the footer stops loading by itself until the next drag begins. | `CYLRefreshAutoFooter.autoTriggerTimes` — loads a drag may start by itself (-1 no limit); used up, auto loading stops until the next touch, as on iOS |
 | `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | Loads more on a pull-up release when the content does not fill the scroll view; NO waits for content that fills it (CYLRefreshLayout's `setEnableLoadMoreWhenContentNotFull`). Default YES. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
@@ -115,7 +115,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshBackFooter` `secondaryOpen` | YES while the second floor is open. | `CYLRefreshBackFooter.secondaryOpen` |
 | `CYLRefreshBackFooter` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshBackFooter.secondaryOpenedBlock` |
 | `CYLRefreshBackFooter` `secondaryClosedBlock` | Called when the second floor has closed. | `CYLRefreshBackFooter.secondaryClosedBlock` |
-| `CYLRefreshBackFooter` `secondaryVelocity` | Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0 (default) turns it off. | `CYLRefreshBackFooter.secondaryVelocity` — kept; the release speed is not measured on Android |
+| `CYLRefreshBackFooter` `secondaryVelocity` | Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0 (default) turns it off. | `CYLRefreshBackFooter.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
 | `CYLRefreshBackFooter` `-openSecondary` | Opens the second floor. | `CYLRefreshBackFooter.openSecondary()` |
 | `CYLRefreshBackFooter` `-closeSecondary` | Closes the second floor (flutter_easy_refresh's `closeFooterSecondary`). | `CYLRefreshBackFooter.closeSecondary()` |
 
@@ -132,7 +132,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponentBeginRefreshingCompletionBlock` | Called once a refresh has begun. | `com.cyl.refresh.CYLRefreshComponentBeginRefreshingCompletionBlock` |
 | `CYLRefreshComponentEndRefreshingCompletionBlock` | Called once a refresh has ended and closed. | `com.cyl.refresh.CYLRefreshComponentEndRefreshingCompletionBlock` |
 | `CYLRefreshComponentAction` | A plain action. | `com.cyl.refresh.CYLRefreshComponentAction` |
-| `CYLRefreshComponent` | The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the iOS names, on top of CYLRefreshLayout. | `com.cyl.refresh.CYLRefreshComponent` — wraps a CYLRefreshLayout RefreshComponent; attached to the CYLRefreshLayout around the content |
+| `CYLRefreshComponent` | Class. | `com.cyl.refresh.CYLRefreshComponent` — the same class and API; on Android it wraps the CYLRefreshLayout header or footer view it shows |
 | `CYLRefreshComponent` `fastAnimationDuration` | The fast animation's duration, in seconds. | `CYLRefreshComponent.fastAnimationDuration` |
 | `CYLRefreshComponent` `slowAnimationDuration` | The slow animation's duration, in seconds. | `CYLRefreshComponent.slowAnimationDuration` |
 | `CYLRefreshComponent` `-setAnimationDisabled` | Sets both animation durations to 0. | `CYLRefreshComponent.setAnimationDisabled()` |
@@ -150,7 +150,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `-endRefreshing` | Ends refreshing. | `CYLRefreshComponent.endRefreshing()` |
 | `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | Ends refreshing and calls [completion] once it has closed. | `CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)` |
 | `CYLRefreshComponent` `refreshing` | Whether the component is refreshing or about to. | `CYLRefreshComponent.isRefreshing` |
-| `CYLRefreshComponent` `exclusiveWithOtherRefresh` | Mutual exclusion with the other refresh components of the same scroll view (header, footer, trailer). Default NO: they run independently, except that a header refresh already holds back the automatic footer. | `CYLRefreshComponent.exclusiveWithOtherRefresh` — CYLRefreshLayout always excludes; it cannot be turned off |
+| `CYLRefreshComponent` `exclusiveWithOtherRefresh` | Mutual exclusion with the other refresh components of the same scroll view (header, footer, trailer). Default NO: they run independently, except that a header refresh already holds back the automatic footer. | `CYLRefreshComponent.exclusiveWithOtherRefresh` — on: refused while the other control is busy; off: not refused, but CYLRefreshLayout shows one control at a time, so the busy one finishes and this one starts (iOS runs both at once) |
 | `CYLRefreshComponent` `blockedByOtherRefreshBlock` | Runs on the main thread each time a start was held back by `exclusiveWithOtherRefresh`, for example to show "refreshing, please wait". | `CYLRefreshComponent.blockedByOtherRefreshBlock` |
 | `CYLRefreshComponent` `state` | The state. | `CYLRefreshComponent.state` |
 | `CYLRefreshComponent` `scrollViewOriginalInset` | Property of `CYLRefreshComponent`. | n/a (iOS only: UIKit content insets) |
@@ -166,7 +166,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `pullingPercent` | How far the component is pulled, as a share of its height. | `CYLRefreshComponent.pullingPercent` |
 | `CYLRefreshComponent` `CYLRefreshDeprecated` | Property of `CYLRefreshComponent`. | n/a (iOS only: deprecated iOS aliases) |
 | `CYLRefreshComponent` `automaticallyChangeAlpha` | The component's alpha follows [pullingPercent] while it is pulled. | `CYLRefreshComponent.automaticallyChangeAlpha` |
-| `CYLRefreshComponent` `+attach:` | Creates the control and attaches it to `scrollView` as its header, footer or trailer (by class). | `CYLRefreshComponent.attach(layout)` — Android creates the component with its view, then attaches it (an instance call) |
+| `CYLRefreshComponent` `+attach:` | Creates the control and attaches it to `scrollView` as its header, footer or trailer (by class). | `CYLRefreshComponent.attach(layout)` — attach(layout) on the component (Android makes the component with its view first); refreshLayout.cyl_header / cyl_footer too |
 | `CYLRefreshComponent` `+attach:target:action:` | Creates, attaches and adds a refreshing target in one call. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshComponent` `-attach:` | Attaches this control to `scrollView` as its header, footer or trailer (by class). | `CYLRefreshComponent.attach(layout)` |
 | `CYLRefreshComponent` `-addTarget:action:` | Adds a target-action called on every refresh, besides `refreshingTarget` and the blocks; several can be added. `action` may take no argument or the control. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
@@ -231,7 +231,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent(CYLRefreshStateTitles)` | The text of each state, kept once for every control that shows a state text (the state header, both state footers and the state trailer, whose `setTitle:forState:` / `titleForState:` use it). | `com.cyl.refresh.CYLRefreshStateHeader` — cyl_setStateTitle / cyl_stateTitleForState on every control (shown by the state header and state footers, kept by others) |
 | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | Sets the text of `state`; nil is ignored, as in `setTitle:forState:`. | `CYLRefreshComponent.cyl_setStateTitle` — CYLRefreshComponent.cyl_setStateTitle(title, state) |
 | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | The text of `state`, or nil. | `CYLRefreshComponent.cyl_stateTitleForState` — CYLRefreshComponent.cyl_stateTitleForState(state) |
-| `CYLRefreshComponent(ChainingGrammar)` | The iOS `CYLRefreshComponent` on Android (docs/Android-API-Map.md): the API both a header and a footer share, with the iOS names, on top of CYLRefreshLayout. | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` |
+| `CYLRefreshComponent(ChainingGrammar)` | Category. | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | Sets [automaticallyChangeAlpha]. | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | Sets [beginRefreshingCompletionBlock]. | `CYLRefreshComponent.cyl_afterBeginningAction(action)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` | Sets [endRefreshingAnimationBeginAction]. | `CYLRefreshComponent.cyl_endingAnimationBeginningAction(action)` |
@@ -274,7 +274,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshHeader` `secondaryTriggerOffset` | Pulling at least this far (points) and releasing opens the second floor instead of refreshing; 0 (default) turns the second floor off (flutter_easy_refresh's `secondaryTriggerOffset`). | `CYLRefreshHeader.secondaryTriggerOffset` |
 | `CYLRefreshHeader` `secondaryDimension` | Height of the open second floor (points); 0 (default) uses the scroll view's visible height (flutter_easy_refresh's `secondaryDimension`). | `CYLRefreshHeader.secondaryDimension` |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | While the second floor is open, pushing the content up this far (points) and releasing closes it. Default 80 (flutter_easy_refresh's `secondaryCloseTriggerOffset`). | `CYLRefreshHeader.secondaryCloseTriggerOffset` |
-| `CYLRefreshHeader` `secondaryVelocity` | Releasing a pull at least this fast (points per second) opens the second floor once the pull is past the refresh trigger, even short of `secondaryTriggerOffset`; 0 (default) turns it off (flutter_easy_refresh's `secon... | `CYLRefreshHeader.secondaryVelocity` — kept; the release speed is not measured on Android |
+| `CYLRefreshHeader` `secondaryVelocity` | Releasing a pull at least this fast (points per second) opens the second floor once the pull is past the refresh trigger, even short of `secondaryTriggerOffset`; 0 (default) turns it off (flutter_easy_refresh's `secon... | `CYLRefreshHeader.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
 | `CYLRefreshHeader` `secondaryView` | The second floor's content, placed above the list across the whole second floor and revealed by the pull (flutter_easy_refresh's `SecondaryBuilderHeader`). | `CYLRefreshHeader.secondaryView` — placed over the layout; the layout's parent should be a FrameLayout |
 | `CYLRefreshHeader` `secondaryOpen` | YES while the second floor is open. | `CYLRefreshHeader.secondaryOpen` |
 | `CYLRefreshHeader` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshHeader.secondaryOpenedBlock` |
@@ -304,7 +304,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshIconView` `-replayAnimation` | Restarts the shown icon from its first frame with the current speed and loop setting (the examples' Play all; Android and HarmonyOS `replayAnimation()`). Does nothing without an icon. | `CYLRefreshIconView.replayAnimation()` |
 | `CYLRefreshIconView` `-updateForState:` | Applies the playback policy for the control's state; the control calls it. | `CYLRefreshIconView.updateForState(state)` |
 | `CYLRefreshIconView` `-updateForPullingPercent:` | Follows the pulling percent while idle; the control calls it. | `CYLRefreshIconView.updateForPullingPercent(percent)` |
-| `CYLRefreshIconAnimating` | The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and CYLRefreshAutoAnimationFooter adopt it, next to `setAnimationImages:forState:`. | `com.cyl.refresh.CYLRefreshIconAnimating` — an interface; every component gets the same calls as cyl_ extensions |
+| `CYLRefreshIconAnimating` | The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and CYLRefreshAutoAnimationFooter adopt it, next to `setAnimationImages:forState:`. | `com.cyl.refresh.CYLRefreshIconAnimating` — the same interface; every component gets its calls as cyl_ extensions (cyl_iconView, cyl_setIconAnimationAttributes…) |
 | `CYLRefreshIconAnimating` `iconView` | The icon, created when an icon animation is first set; the animation view is then hidden. Without an icon animation the control draws its images as before. | `CYLRefreshComponent.cyl_iconView` |
 | `CYLRefreshIconAnimating` `usesIconView` | YES once any icon animation is set. | `CYLRefreshComponent.cyl_usesIconView` |
 | `CYLRefreshIconAnimating` `-setIconAnimationAttributes:forState:` | The icon for a state, as CYLPlaceholderView item attributes (`CYLPlaceholderItemAnimationFilePath`, `CYLPlaceholderItemAnimationSize`, `CYLPlaceholderItemAnimationOptions`, `CYLPlaceholderItemAnimationColors`…); nil r... | `setIconAnimationAttributes(attributes, state) on the GIF / animation headers and footers; CYLRefreshComponent.cyl_setIconAnimationAttributes on any component` |
@@ -454,8 +454,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshDrawnFooter` | A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content, the progress and the CYLRefresh styles' status order, and draws in the revealed area under the content. | `com.cyl.refresh.CYLRefreshDrawnFooter` — extends CYLRefreshBackFooter, not the state footer (it shows no text) |
-| `CYLRefreshDrawnFooter` `styleClass` | The drawn header class a subclass hosts; nil in the base class. | `CYLRefreshDrawnFooter.styleClass` — kept; each subclass builds its own style header |
+| `CYLRefreshDrawnFooter` | A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content, the progress and the CYLRefresh styles' status order, and draws in the revealed area under the content. | `com.cyl.refresh.CYLRefreshDrawnFooter` — a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text) |
+| `CYLRefreshDrawnFooter` `styleClass` | The drawn header class a subclass hosts; nil in the base class. | `CYLRefreshDrawnFooter.styleClass` — the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class |
 | `CYLRefreshDrawnFooter` `-initWithStyle:` | A footer drawn by `style`; the footer takes the style's open height. | `CYLRefreshDrawnFooter(style)` |
 | `CYLRefreshDrawnFooter` `style` | The hosted drawn header; set its colors and options here or through the footer's `colorAccent` / `colorPrimary`. | `CYLRefreshDrawnFooter.style` |
 | `CYLRefreshBezierRadarFooter` | flutter_easy_refresh's `BezierFooter`, drawn by CYLRefreshBezierRadarHeader. | `com.cyl.refresh.CYLRefreshBezierRadarFooter` |
@@ -584,14 +584,14 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshFlyView` | The paper plane. | `com.cyl.refresh.header.flyrefresh.FlyView` — the Android class with the same role; its members are its own |
+| `CYLRefreshFlyView` | The paper plane. | n/a (iOS only: an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (FlyView), no API counterpart needed) |
 | `CYLRefreshFlyView` `colorAccent` | Property of `CYLRefreshFlyView`. | n/a (iOS only: an iOS drawing internal; Android draws with FlyView (its own API)) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGamePlayingScene` | The game headers' curtain and arena, from FunGameRefresh. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
+| `CYLRefreshGamePlayingScene` | The game headers' curtain and arena, from FunGameRefresh. | n/a (iOS only: an internal drawing helper of the game headers (CYLRefreshGameHitBlockHeader, CYLRefreshGameBattleCityHeader), which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed) |
 | `CYLRefreshGamePlayingScene` `title` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGamePlayingScene` `colorAccent` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGamePlayingScene` `colorPrimary` | Property of `CYLRefreshGamePlayingScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
@@ -606,7 +606,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGameStartScene` | The game headers' curtain and arena, from FunGameRefresh. | `com.cyl.refresh.header.fungame.FunGameView` — the Android class with the same role; its members are its own |
+| `CYLRefreshGameStartScene` | The game headers' curtain and arena, from FunGameRefresh. | n/a (iOS only: an internal drawing helper of the game headers, which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed) |
 | `CYLRefreshGameStartScene` `colorAccent` | Property of `CYLRefreshGameStartScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 | `CYLRefreshGameStartScene` `colorPrimary` | Property of `CYLRefreshGameStartScene`. | n/a (iOS only: an iOS drawing internal; Android draws with FunGameView (its own API)) |
 
@@ -614,7 +614,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshMountainView` | Hills and trees behind the paper plane, from FlyRefresh. | `com.cyl.refresh.header.flyrefresh.MountainSceneView` — the Android class with the same role; its members are its own |
+| `CYLRefreshMountainView` | Hills and trees behind the paper plane, from FlyRefresh. | n/a (iOS only: an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (MountainSceneView), no API counterpart needed) |
 | `CYLRefreshMountainView` `colorAccent` | Property of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
 | `CYLRefreshMountainView` `colorPrimary` | Property of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
 | `CYLRefreshMountainView` `-onScrollingWithOffset:percent:` | Method of `CYLRefreshMountainView`. | n/a (iOS only: an iOS drawing internal; Android draws with MountainSceneView (its own API)) |
@@ -623,7 +623,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStoreHouseLine` | One bar of the StoreHouse header, with its fade animation. | `com.cyl.refresh.header.storehouse.StoreHouseBarItem` — the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHouseLine` | One bar of the StoreHouse header, with its fade animation. | n/a (iOS only: an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHouseBarItem), no API counterpart needed) |
 | `CYLRefreshStoreHouseLine` `start` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
 | `CYLRefreshStoreHouseLine` `end` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
 | `CYLRefreshStoreHouseLine` `middle` | Property of `CYLRefreshStoreHouseLine`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)) |
@@ -636,7 +636,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStoreHousePath` | The StoreHouse header's letters, as line segments. | `com.cyl.refresh.header.storehouse.StoreHousePath` — the Android class with the same role; its members are its own |
+| `CYLRefreshStoreHousePath` | The StoreHouse header's letters, as line segments. | n/a (iOS only: an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHousePath), no API counterpart needed) |
 | `CYLRefreshStoreHousePath` `+linesFromArray:` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
 | `CYLRefreshStoreHousePath` `+linesFrom:scale:space:` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
 | `CYLRefreshStoreHousePath` `+arrayAkta` | Method of `CYLRefreshStoreHousePath`. | n/a (iOS only: an iOS drawing internal; Android draws with StoreHousePath (its own API)) |
@@ -652,7 +652,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationStart:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationRepeat:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationEnd:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
-| `CYLRefreshAnimatorInterpolatorBlock` | Type. | `android.animation.ValueAnimator` — the Android class with the same role; its members are its own |
+| `CYLRefreshAnimatorInterpolatorBlock` | Type. | n/a (iOS only: an internal drawing helper of the drawn styles' animations, which is ported (done); Android draws it with its own class (ValueAnimator), no API counterpart needed) |
 | `CYLRefreshValueAnimator` | Class. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |
 | `CYLRefreshValueAnimator` `+newWithFrom:to:` | Method of `CYLRefreshValueAnimator`. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |
 | `CYLRefreshValueAnimator` `+newWithTarget:selector:` | Method of `CYLRefreshValueAnimator`. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |
@@ -679,7 +679,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | n/a (iOS only: an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed) |
 | `CYLRefreshVectorElement` `identifier` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorElement` `stroke` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorElement` `fill` | Property of `CYLRefreshVectorElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
@@ -695,7 +695,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorImage` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorImage` | A drawable of SVG paths, one color per path, that scales to its bounds. | n/a (iOS only: an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed) |
 | `CYLRefreshVectorImage` `elements` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorImage` `size` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorImage` `frame` | Property of `CYLRefreshVectorImage`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
@@ -714,7 +714,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorPathElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorPathElement` | A drawable of SVG paths, one color per path, that scales to its bounds. | n/a (iOS only: an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed) |
 | `CYLRefreshVectorPathElement` `+newWith:` | Method of `CYLRefreshVectorPathElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 | `CYLRefreshVectorPathElement` `pathForShape` | Property of `CYLRefreshVectorPathElement`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 
@@ -722,8 +722,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshCurveType` | Parses SVG path data into [Path]s. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
-| `CYLRefreshVectorPathsParser` | Parses SVG path data into [Path]s. | `com.cyl.refresh.drawable.path.PathParser` — the Android class with the same role; its members are its own |
+| `CYLRefreshCurveType` | Parses SVG path data into [Path]s. | n/a (iOS only: an internal drawing helper of the vector path parser, which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed) |
+| `CYLRefreshVectorPathsParser` | Parses SVG path data into [Path]s. | n/a (iOS only: an internal drawing helper of the vector styles (StoreHouse, Delivery, DropBox…), which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed) |
 | `CYLRefreshVectorPathsParser` `+startingCurve` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawToCmdGroups:path:relativeTo:isRelative:` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
 | `CYLRefreshVectorPathsParser` `+readMovetoDrawto:path:relativeTo:isRelative:` | Method of `CYLRefreshVectorPathsParser`. | n/a (iOS only: an iOS drawing internal; Android draws with PathParser (its own API)) |
@@ -754,14 +754,14 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorUtilities` | A drawable of SVG paths, one color per path, that scales to its bounds. | `com.cyl.refresh.drawable.PathsDrawable` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorUtilities` | A drawable of SVG paths, one color per path, that scales to its bounds. | n/a (iOS only: an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed) |
 | `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | Method of `CYLRefreshVectorUtilities`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsDrawable (its own API)) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshVectorView` | A view that draws SVG paths; a string tag is parsed as path data. | `com.cyl.refresh.drawable.view.PathsView` — the Android class with the same role; its members are its own |
+| `CYLRefreshVectorView` | A view that draws SVG paths; a string tag is parsed as path data. | n/a (iOS only: an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsView), no API counterpart needed) |
 | `CYLRefreshVectorView` `image` | Property of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
 | `CYLRefreshVectorView` `-parserPaths:` | Method of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
 | `CYLRefreshVectorView` `-parserColors:` | Method of `CYLRefreshVectorView`. | n/a (iOS only: an iOS drawing internal; Android draws with PathsView (its own API)) |
@@ -948,7 +948,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — the CYLRefreshLayout around the content is the scroll view's counterpart |
+| `UIScrollView(CYLRefresh)` | The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…) |
 | `UIScrollView(CYLRefresh)` `cyl_header` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_header` |
 | `UIScrollView(CYLRefresh)` `cyl_footer` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_footer` |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | Property of `UIScrollView(CYLRefresh)`. | `RecyclerView.cyl_trailer` — horizontal RecyclerView only; set it once the list is in its parent |
@@ -1214,7 +1214,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderStatusDisplay` | What a view controller shows; combine the options. | `com.cyl.placeholder.CYLPlaceholderStatusDisplay` — Int flags combined with or |
 | `UIViewController(CYLPlaceholderStatus)` | Category. | `Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)` — the Activity is the view controller's counterpart |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | The bar: the network bar (`-[CYLPlaceholderStatusView initWithFrame:]`) until another is assigned; nil restores it. Assigning while the bar shows replaces it in place. | `Activity.cyl_statusView` |
-| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | The table or collection view whose placeholder `cyl_statusDisplay` shows or hides; by default the controller's view when it is a scroll view (a UITableViewController). | `Activity.cyl_placeholderScrollView` — kept; the placeholder covers the activity's content |
+| `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | The table or collection view whose placeholder `cyl_statusDisplay` shows or hides; by default the controller's view when it is a scroll view (a UITableViewController). | `Activity.cyl_placeholderScrollView` — the scrolling view whose container the placeholder covers; null covers the activity's content |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | What shows; `CYLPlaceholderStatusDisplayPlaceholder` by default, so nothing changes until it is set. | `Activity.cyl_statusDisplay` |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_setStatusDisplay:animated:` | Sets `cyl_statusDisplay`, fading the bar in or out when `animated` (no movement, so it suits Reduce Motion). | `Activity.cyl_setStatusDisplay(display, animated)` |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | YES: starts the shared network monitor and adds the bar while the network is not reachable, removing it when it comes back (the placeholder option is kept as it is). | `Activity.cyl_showsStatusViewWhenOffline` |

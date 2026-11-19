@@ -686,7 +686,11 @@ open class CYLRefreshLayout @JvmOverloads constructor(
 
     // MARK: - Touches
 
+    /** Called when a finger touches down (a drag begins): CYLRefreshAutoFooter's autoTriggerTimes resets on it. */
+    internal val cylTouchDownListeners = mutableListOf<() -> Unit>()
+
     override fun dispatchTouchEvent(e: MotionEvent): Boolean {
+        if (e.actionMasked == MotionEvent.ACTION_DOWN) cylTouchDownListeners.toList().forEach { it() }
         // The focal point of every finger.
         val action = e.actionMasked
         val pointerUp = action == MotionEvent.ACTION_POINTER_UP

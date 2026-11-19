@@ -183,9 +183,9 @@
   "note": "a finger on a component with an action dims it, shrinks it to 95 % or leaves it (the stack view)"
  },
  "CYLPlaceholderHUD": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderHUD",
-  "note": "an overlay on a container view; the class-level calls use the shared HUD of a container"
+  "note": "the same HUD and API, shown over a container view (the activity's content by default) instead of a window"
  },
  "CYLPlaceholderHUD +dismiss": {
   "status": "done",
@@ -1028,9 +1028,9 @@
   "note": "Android has android.view.animation interpolators"
  },
  "CYLRefreshAnimatorInterpolatorBlock": {
-  "status": "partial",
+  "status": "n/a",
   "android": "android.animation.ValueAnimator",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the drawn styles' animations, which is ported (done); Android draws it with its own class (ValueAnimator), no API counterpart needed"
  },
  "CYLRefreshAnimatorRepeatMode": {
   "status": "n/a",
@@ -1059,9 +1059,9 @@
   "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoFooter autoTriggerTimes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshAutoFooter.autoTriggerTimes",
-  "note": "kept; CYLRefreshLayout loads once per drag"
+  "note": "loads a drag may start by itself (-1 no limit); used up, auto loading stops until the next touch, as on iOS"
  },
  "CYLRefreshAutoFooter automaticallyRefresh": {
   "status": "done",
@@ -1197,9 +1197,9 @@
   "android": "CYLRefreshBackFooter.secondaryTriggerOffset"
  },
  "CYLRefreshBackFooter secondaryVelocity": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshBackFooter.secondaryVelocity",
-  "note": "kept; the release speed is not measured on Android"
+  "note": "a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor"
  },
  "CYLRefreshBackFooter secondaryView": {
   "status": "done",
@@ -1298,14 +1298,14 @@
   "android": "com.cyl.refresh.CYLRefreshBezierRadarHeader"
  },
  "CYLRefreshComponent": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshComponent",
-  "note": "wraps a CYLRefreshLayout RefreshComponent; attached to the CYLRefreshLayout around the content"
+  "note": "the same class and API; on Android it wraps the CYLRefreshLayout header or footer view it shows"
  },
  "CYLRefreshComponent +attach:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.attach(layout)",
-  "note": "Android creates the component with its view, then attaches it (an instance call)"
+  "note": "attach(layout) on the component (Android makes the component with its view first); refreshLayout.cyl_header / cyl_footer too"
  },
  "CYLRefreshComponent +attach:target:action:": {
   "status": "n/a",
@@ -1495,7 +1495,7 @@
  "CYLRefreshComponent exclusiveWithOtherRefresh": {
   "status": "partial",
   "android": "CYLRefreshComponent.exclusiveWithOtherRefresh",
-  "note": "CYLRefreshLayout always excludes; it cannot be turned off"
+  "note": "on: refused while the other control is busy; off: not refused, but CYLRefreshLayout shows one control at a time, so the busy one finishes and this one starts (iOS runs both at once)"
  },
  "CYLRefreshComponent expandHeight": {
   "status": "done",
@@ -1730,9 +1730,9 @@
   "note": "CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class)"
  },
  "CYLRefreshCurveType": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.path.PathParser",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector path parser, which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed"
  },
  "CYLRefreshDeliveryFooter": {
   "status": "done",
@@ -1747,9 +1747,9 @@
   "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
  },
  "CYLRefreshDrawnFooter": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshDrawnFooter",
-  "note": "extends CYLRefreshBackFooter, not the state footer (it shows no text)"
+  "note": "a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text)"
  },
  "CYLRefreshDrawnFooter -initWithStyle:": {
   "status": "done",
@@ -1760,9 +1760,9 @@
   "android": "CYLRefreshDrawnFooter.style"
  },
  "CYLRefreshDrawnFooter styleClass": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshDrawnFooter.styleClass",
-  "note": "kept; each subclass builds its own style header"
+  "note": "the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class"
  },
  "CYLRefreshDrawnHeader": {
   "status": "done",
@@ -1866,9 +1866,9 @@
   "android": "com.cyl.refresh.CYLRefreshFlyHeader"
  },
  "CYLRefreshFlyView": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.flyrefresh.FlyView",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (FlyView), no API counterpart needed"
  },
  "CYLRefreshFlyView colorAccent": {
   "status": "n/a",
@@ -1940,9 +1940,9 @@
   "android": "com.cyl.refresh.CYLRefreshGameHitBlockHeader"
  },
  "CYLRefreshGamePlayingScene": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.fungame.FunGameView",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the game headers (CYLRefreshGameHitBlockHeader, CYLRefreshGameBattleCityHeader), which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed"
  },
  "CYLRefreshGamePlayingScene -finishWithSuccess:": {
   "status": "n/a",
@@ -1981,9 +1981,9 @@
   "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
  },
  "CYLRefreshGameStartScene": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.fungame.FunGameView",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the game headers, which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed"
  },
  "CYLRefreshGameStartScene colorAccent": {
   "status": "n/a",
@@ -2084,9 +2084,9 @@
   "android": "CYLRefreshHeader.secondaryTriggerOffset"
  },
  "CYLRefreshHeader secondaryVelocity": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshHeader.secondaryVelocity",
-  "note": "kept; the release speed is not measured on Android"
+  "note": "a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor"
  },
  "CYLRefreshHeader secondaryView": {
   "status": "done",
@@ -2134,9 +2134,9 @@
   "android": "CYLRefreshConst.CYLRefreshHeaderRefreshingText"
  },
  "CYLRefreshIconAnimating": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshIconAnimating",
-  "note": "an interface; every component gets the same calls as cyl_ extensions"
+  "note": "the same interface; every component gets its calls as cyl_ extensions (cyl_iconView, cyl_setIconAnimationAttributes…)"
  },
  "CYLRefreshIconAnimating -setBundledIconAnimation:size:forState:": {
   "status": "n/a",
@@ -2272,9 +2272,9 @@
   "android": "com.cyl.refresh.CYLRefreshMaterialHeader"
  },
  "CYLRefreshMountainView": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.flyrefresh.MountainSceneView",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (MountainSceneView), no API counterpart needed"
  },
  "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
   "status": "n/a",
@@ -2530,9 +2530,9 @@
   "android": "CYLRefreshStoreHouseHeader.lineWidth"
  },
  "CYLRefreshStoreHouseLine": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.storehouse.StoreHouseBarItem",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHouseBarItem), no API counterpart needed"
  },
  "CYLRefreshStoreHouseLine alpha": {
   "status": "n/a",
@@ -2563,9 +2563,9 @@
   "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
  },
  "CYLRefreshStoreHousePath": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.header.storehouse.StoreHousePath",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHousePath), no API counterpart needed"
  },
  "CYLRefreshStoreHousePath +arrayAkta": {
   "status": "n/a",
@@ -2709,9 +2709,9 @@
   "note": "Android has android.animation.Animator.AnimatorListener"
  },
  "CYLRefreshVectorElement": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorElement -newLayer": {
   "status": "n/a",
@@ -2754,9 +2754,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorImage": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorImage -addElement:": {
   "status": "n/a",
@@ -2811,9 +2811,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorPathElement": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorPathElement +newWith:": {
   "status": "n/a",
@@ -2824,9 +2824,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorPathsParser": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.path.PathParser",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles (StoreHouse, Delivery, DropBox…), which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed"
  },
  "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
   "status": "n/a",
@@ -2929,18 +2929,18 @@
   "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
  },
  "CYLRefreshVectorUtilities": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorUtilities +newLayerForElement:withPath:": {
   "status": "n/a",
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorView": {
-  "status": "partial",
+  "status": "n/a",
   "android": "com.cyl.refresh.drawable.view.PathsView",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsView), no API counterpart needed"
  },
  "CYLRefreshVectorView -parserColors:": {
   "status": "n/a",
@@ -3101,9 +3101,9 @@
   "android": "RecyclerView.cyl_placeholderHidden"
  },
  "UIScrollView(CYLRefresh)": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)",
-  "note": "the CYLRefreshLayout around the content is the scroll view's counterpart"
+  "note": "extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…)"
  },
  "UIScrollView(CYLRefresh) -cyl_beginRefreshingWithStartHeader:": {
   "status": "done",
@@ -3203,9 +3203,9 @@
   "android": "Activity.cyl_setStatusDisplay(display, animated)"
  },
  "UIViewController(CYLPlaceholderStatus) cyl_placeholderScrollView": {
-  "status": "partial",
+  "status": "done",
   "android": "Activity.cyl_placeholderScrollView",
-  "note": "kept; the placeholder covers the activity's content"
+  "note": "the scrolling view whose container the placeholder covers; null covers the activity's content"
  },
  "UIViewController(CYLPlaceholderStatus) cyl_showsStatusViewWhenOffline": {
   "status": "done",

@@ -48,6 +48,20 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
 
     /** The pull's distance in pixels at the last drag, read when the finger lets go. */
     var lastDragOffset = 0
+        set(value) {
+            val now = android.os.SystemClock.uptimeMillis()
+            val dt = now - lastDragTime
+            // The pull's speed at the release, in dp per second, from the last two drag samples (iOS reads the pan's velocity).
+            if (lastDragTime > 0 && dt in 1..100) releaseVelocity = (kotlin.math.abs(value) - kotlin.math.abs(field)) * 1000f / dt / density()
+            else if (dt > 100) releaseVelocity = 0f
+            lastDragTime = now
+            field = value
+        }
+
+    private var lastDragTime = 0L
+
+    /** The pull's speed at the last drag sample, in dp per second (away from the content's edge is positive). */
+    var releaseVelocity = 0f
 
     private var host: CYLSecondaryHost? = null
     private var closing = false
@@ -61,7 +75,10 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
      */
     fun openOnReleaseIfPulledFar(): Boolean {
         if (view == null || triggerOffset <= 0f || isOpen) return false
-        if (kotlin.math.abs(lastDragOffset) < triggerOffset * density()) return false
+        val pulled = kotlin.math.abs(lastDragOffset)
+        // iOS secondaryVelocity: a fast release past the refresh trigger opens the second floor too.
+        val fast = velocity > 0f && releaseVelocity >= velocity && pulled >= component.view.view.height * component.triggerRate
+        if (pulled < triggerOffset * density() && !fast) return false
         open()
         return true
     }
