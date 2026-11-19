@@ -509,15 +509,15 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshCupertinoFooter` | The iOS-style footer: an automatic footer that shows a system activity indicator while loading and nothing otherwise (flutter_easy_refresh's `CupertinoFooter`). `colorAccent` colors the indicator. | `com.cyl.refresh.CYLRefreshCupertinoFooter` |
-| `CYLRefreshCupertinoFooter` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoFooter.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
+| `CYLRefreshCupertinoFooter` | A footer with the system spinner that loads when the end is reached. | `com.cyl.refresh.CYLRefreshCupertinoFooter` |
+| `CYLRefreshCupertinoFooter` `activityIndicator` | The spinner. | `CYLRefreshCupertinoFooter.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshCupertinoHeader` | The iOS-style header: a system activity indicator that fades and turns in while pulled and spins while refreshing, with no text (flutter_easy_refresh's `CupertinoHeader`). `colorAccent` colors the indicator. | `com.cyl.refresh.CYLRefreshCupertinoHeader` |
-| `CYLRefreshCupertinoHeader` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoHeader.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
+| `CYLRefreshCupertinoHeader` | A header with the system spinner. | `com.cyl.refresh.CYLRefreshCupertinoHeader` |
+| `CYLRefreshCupertinoHeader` `activityIndicator` | The spinner. | `CYLRefreshCupertinoHeader.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`
 
@@ -982,8 +982,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshNormalTrailer` | The standard trailer: the state text with an arrow. | `com.cyl.refresh.CYLRefreshNormalTrailer` |
-| `CYLRefreshNormalTrailer` `arrowView` | The arrow beside the text (the bundle's `CYLRefreshTrailArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshNormalTrailer.arrowView` — a drawn arrow instead of the bundle image |
+| `CYLRefreshNormalTrailer` | A trailer with an arrow that turns around past the trigger. | `com.cyl.refresh.CYLRefreshNormalTrailer` |
+| `CYLRefreshNormalTrailer` `arrowView` | The arrow, pointing left until the pull passes the trigger. | `CYLRefreshNormalTrailer.arrowView` — a drawn arrow instead of the bundle image |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`
 
