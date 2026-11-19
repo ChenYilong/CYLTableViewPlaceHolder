@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 52 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 75 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -271,6 +271,50 @@ Objective-C to Swift, and its score after every commit.
     refreshing, and More → Feed → Refresh icons → `CYLRefreshActivity.gif` shows the playing icon beside "Loading...".
     Measured: core 32 Swift files (11,763 lines) and 49 Objective-C `.m` files (10,880 lines). Score by lines:
     11,763 / (11,763 + 10,880) ≈ **52 / 100** (was 38).
+  - 2026-11-19, step 8 (branch `feat/android-refresh-port-followup`; `e0315fa`, `27f086c`, `c58045f`; leaves first inside
+    `Custom/Drawn`): checked before each base with `git grep -P "@interface\s+\w+\s*:\s*<Class>(?!\w)"` across the repo
+    (Examples, Tests, CrossPlatform). **Subclass found, base not converted:** `Tests/CYLRefreshDrawnHeaderTests.m` declares
+    `CYLStatusRecordingHeader : CYLRefreshBezierRadarHeader` (Objective-C, it records the status order), so
+    `CYLRefreshBezierRadarHeader` and its base `CYLRefreshDrawnHeader` stay Objective-C until the tests move (step 13) or
+    the owner decides otherwise; the Swift subclasses of `CYLRefreshDrawnHeader` in the examples (`CYLRefreshSVGASceneHeader`,
+    `CYLRefreshRiveHeader`) keep working unchanged. Translated, with the same Objective-C API (class names, selectors,
+    former `NS_SWIFT_NAME` spellings as Swift names, the overridable hooks `open` with the same selectors):
+    - part 1 (`e0315fa`): `CYLRefreshDrawnFooter.swift`: the drawn footer base (subclass of the Objective-C
+      `CYLRefreshBackStateFooter`; `+styleClass`, `-initWithStyle:`, `style`), the BezierRadar, Material, Delivery,
+      Phoenix and Taurus footers, `CYLRefreshBallPulseFooter` (subclass of the Objective-C `CYLRefreshAutoFooter`) with its
+      weak display-link ticker; the hosted header's private driven mode (`-cyl_beginDriven`, `-cyl_driveFrame:`, ...) and
+      `CYLRefreshBackFooter`'s private `-happenOffsetY` are called by selector (the pattern of
+      `UIScrollView+CYLRefresh.swift`); and `CYLRefreshFlyHeader.swift`.
+    - part 2 (`27f086c`): the games: `CYLRefreshGameHeader.swift` (the private `-newPlayingScene` hook is the internal
+      `makePlayingScene()`), `CYLRefreshGameBattleCityHeader.swift` and `CYLRefreshGameHitBlockHeader.swift` with their
+      private scenes, and `CYLRefreshGamePlayingScene` (skipped in step 7), now internal, so its private header is deleted
+      (the frozen `scripts/ios-public-api.json` keeps the maps valid). The Swift scenes implement `init(size:)`, which
+      SKScene's `-init` calls (the first test run trapped without it).
+    - part 3 (`c58045f`): the header styles BezierCircle, Delivery, DropBox (private `BoxBody`), Material (`shapeLayer`
+      stays readable by key-value coding for the tests; `CYLRefreshMaterialSize` stays in the header), Original,
+      Phoenix, StoreHouse (the 2026-11-19 leak fix kept: a weak block timer, invalidated in `deinit`; `-init` still draws
+      "store house"; the `+newWithString:...` factories keep their selectors, hidden from Swift, which keeps
+      `init(string:...)`; `-initLinesWith...:` keep their selectors as `setLines(...)`), Taurus and WaveSwipe.
+    The headers keep doc-commented forward declarations (and public enums); Objective-C callers import the umbrella header.
+    **Still Objective-C:** `CYLRefreshDrawnHeader` (base, with the variadic `-inStatus:`) and `CYLRefreshBezierRadarHeader`
+    (the subclass in the tests), plus the Objective-C bases outside `Custom/Drawn` that the Swift classes subclass
+    (`CYLRefreshHeader`, `CYLRefreshBackStateFooter`, `CYLRefreshAutoFooter`, steps 9 to 11). **Not kept identical, on
+    purpose:** drawing without a graphics context does nothing; Phoenix keeps its sky colors with a nil `colorPrimary` and
+    HitBlock's contact end skips a body without a node (Objective-C raised on a nil array element); a non-finite value
+    truncated to an integer gives 0 instead of trapping; BattleCity's unused `isGameWin` (always NO) is dropped. Podspec
+    (Core adds `CYLRefresh/Custom/Drawn/*.swift`), the framework target, the cyl-api-map skill and the regenerated parity
+    table are updated; the test runners glob the folder. Tests: core 207/207 after each part, animation 13/13 (static,
+    PAG), accessibility 4/4 (CI runner on the CYL Placeholder Screens simulator); Example-objc-02 UI tests 12/13 on the
+    full run with only `testDraggingDuringHeaderRefreshKeepsFirstItemPosition` failing under a load average of 75 to 122
+    (it passed 1 of 2 reruns; Example-objc-02 uses only the Normal header and footers, untouched by this step);
+    Example-Scenarios and the `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder warnings, no
+    warning in the new files; 5 CYLRefresh warnings in unchanged Objective-C files, was 7). Simulator check (English,
+    More → Refresh → CYLRefresh styles): every drawn header (Delivery, DropBox, Phoenix, Taurus, BezierRadar,
+    BezierCircle, StoreHouse, WaveSwipe, Original, Material, GameHitBlock, GameBattleCity, Fly), SVGA · Bow and Rive · Bow,
+    the five drawn footers and both Space footers (SVGA, Rive, hosted by the Swift `CYLRefreshDrawnFooter`) draw, and two
+    screenshots 0.5 s apart while refreshing differ; WaveSwipe, Fly, Material and Original were compared with a build of
+    the parent commit `01e61b0` and look the same. Measured: core 47 Swift files (17,184 lines) and 34 Objective-C `.m`
+    files (5,740 lines). Score by lines: 17,184 / (17,184 + 5,740) ≈ **75 / 100** (was 52).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -287,7 +331,8 @@ Objective-C to Swift, and its score after every commit.
     - step 7: `Custom/Drawn/Support` and the internal helpers with no subclasses (`CYLRefreshPaging`,
       `CYLRefreshIconView`, the vector, StoreHouse, value-animator, fly/mountain views and the SpriteKit game scenes) — done, except `CYLRefreshGamePlayingScene` (subclassed by the two games; step 8);
     - step 8: the whole `Custom/Drawn` tree (the styles, `CYLRefreshGameHeader` after its two games, then
-      `CYLRefreshDrawnHeader` and `CYLRefreshDrawnFooter`);
+      `CYLRefreshDrawnHeader` and `CYLRefreshDrawnFooter`) — done, except `CYLRefreshDrawnHeader` and `CYLRefreshBezierRadarHeader` (an Objective-C
+      test subclasses BezierRadar; they move with the tests in step 13);
     - step 9: the remaining concrete controls: Normal / Animation (Gif) headers, the auto and back Normal / Animation
       (Gif) footers, Ball Pulse, Cupertino header and footer, `CYLRefreshNormalTrailer`;
     - step 10: the state layer: `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter`, `CYLRefreshBackStateFooter`,
