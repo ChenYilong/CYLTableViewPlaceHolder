@@ -338,13 +338,23 @@
     __block BOOL opened = NO, closed = NO;
     footer.secondaryOpenedBlock = ^{ opened = YES; };
     footer.secondaryClosedBlock = ^{ closed = YES; };
+    // [EN] Poll for the end of each animation instead of a fixed 0.7 s: a busy CI runner stretched the open (a56ea22:
+    //      the opened block had not run after 0.7 s while the test took 10 s), as for the header in CYLRefreshSmartAPITests.
+    // [CN] 轮询动画结束，而不是固定等待 0.7 秒：CI 机器繁忙时打开动画变慢（a56ea22：0.7 秒后 opened 回调尚未执行，测试用时 10 秒），与
+    //      CYLRefreshSmartAPITests 中的刷新头相同。
+    void (^waitUntil)(BOOL (^)(void)) = ^(BOOL (^condition)(void)) {
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:15];
+        while (!condition() && deadline.timeIntervalSinceNow > 0) {
+            [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+        }
+    };
     [footer openSecondary];
     XCTAssertEqual(footer.phase, CYLRefreshPhaseSecondaryOpen);
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    waitUntil(^BOOL { return opened && footer.isSecondaryOpen; });
     XCTAssertTrue(opened && footer.isSecondaryOpen);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.bottom, bottom + 260, 0.5);
     [footer closeSecondary];
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    waitUntil(^BOOL { return closed && footer.phase == CYLRefreshPhaseIdle; });
     XCTAssertTrue(closed);
     XCTAssertFalse(footer.isSecondaryOpen);
     XCTAssertEqualWithAccuracy(scrollView.adjustedContentInset.bottom, bottom, 0.5);
