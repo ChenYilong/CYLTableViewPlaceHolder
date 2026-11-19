@@ -9,10 +9,10 @@
 // [EN] The legacy delegate API (`cyl_reloadData` with `CYLTableViewPlaceHolderDelegate`), in Swift since 2026-11-19 with
 //      the same selectors: `cyl_reloadData`, and the internal `placeHolderView` (read through key-value coding by
 //      `-[UIScrollView cyl_placeholderView]`) and `cyl_removeLegacyPlaceholder` (called by the automatic placeholder). The
-//      C functions it calls stay in `UIScrollView+CYLPlaceholder.m`, declared for Swift in `CYLPlaceholderVisibleArea.h`.
+//      keyboard tracker and the controller it calls are in `UIScrollView+CYLPlaceholder.swift`.
 // [CN] 旧的委托接口（`cyl_reloadData` 与 `CYLTableViewPlaceHolderDelegate`），自 2026-11-19 起用 Swift 编写，选择器不变：`cyl_reloadData`，
 //      以及内部的 `placeHolderView`（`-[UIScrollView cyl_placeholderView]` 通过键值编码读取）与 `cyl_removeLegacyPlaceholder`（自动占位图调用）。
-//      其调用的 C 函数保留在 `UIScrollView+CYLPlaceholder.m` 中，通过 `CYLPlaceholderVisibleArea.h` 向 Swift 声明。
+//      其调用的键盘跟踪与控制器在 `UIScrollView+CYLPlaceholder.swift` 中。
 
 import UIKit
 import ObjectiveC
@@ -32,7 +32,7 @@ extension UITableView {
      */
     @objc public func cyl_reloadData() {
         reloadData()
-        if !__CYLAutomaticPlaceholderEnabled(self) { cyl_checkEmpty() }
+        if !CYLPlaceholderController.isEnabled(for: self) { cyl_checkEmpty() }
     }
 
     // MARK: Internal state (Objective-C selectors kept)
@@ -67,7 +67,7 @@ extension UITableView {
     // MARK: Private
 
     private func cyl_framePlaceholderInVisibleArea(_ view: UIView) {
-        let insets = __CYLPlaceholderVisibleInsets(self)
+        let insets = CYLPlaceholderVisibleArea.insets(for: self)
         let fullHeight = bounds.size.height
         var height = fullHeight
         if insets.bottom > 0 {
@@ -84,9 +84,9 @@ extension UITableView {
 
     private func cyl_observeVisibleArea() {
         if objc_getAssociatedObject(self, CYLLegacyPlaceholderKey.visibleAreaObserver) != nil { return }
-        __CYLPlaceholderStartTrackingKeyboard()
-        let token = NotificationCenter.default.addObserver(forName: .__CYLPlaceholderVisibleAreaDidChange, object: nil,
-                                                           queue: nil) { [weak self] _ in
+        CYLPlaceholderVisibleArea.startTrackingKeyboard()
+        let token = NotificationCenter.default.addObserver(forName: CYLPlaceholderVisibleArea.didChangeNotification,
+                                                           object: nil, queue: nil) { [weak self] _ in
             guard let table = self, let view = table.cyl_legacyPlaceHolderView, view.superview === table else { return }
             table.cyl_framePlaceholderInVisibleArea(view)
         }
@@ -173,6 +173,6 @@ extension UITableView {
         if view.superview !== self {
             addSubview(view)
         }
-        __CYLBringPlaceholderToFront(self, view)
+        CYLPlaceholderController.bringPlaceholderToFront(view, in: self)
     }
 }

@@ -6,13 +6,13 @@
 //       while the IM client is connected (-[LCCKConversationViewController updateStatusView]). This does the same
 //       through one presenter per controller: the bar sits on the safe area's top edge, the safe area grows by its
 //       height while it shows, and the placeholder is switched on or off through `cyl_placeholderHidden`.
-//       Swift since 2026-11-19 with the same Objective-C API; the `CYLPlaceholderStatusDisplay` options and the
-//       `UIScrollView (CYLPlaceholderVisibility)` category (implemented in `UIScrollView+CYLPlaceholder.m`) stay in
-//       `UIViewController+CYLPlaceholderStatus.h`.
+//       Swift since 2026-11-19 with the same Objective-C API; the `CYLPlaceholderStatusDisplay` options stay in
+//       `UIViewController+CYLPlaceholderStatus.h`, and the `UIScrollView (CYLPlaceholderVisibility)` category is in
+//       `UIScrollView+CYLPlaceholder.swift`.
 //  [CN] CYLChatKit 把状态条加到控制器的 view 上，并在 IM 客户端连接时隐藏它。这里每个控制器用一个 presenter 完成同样的事：状态条位于安全
 //       区域的顶边，显示时安全区域增加其高度，占位图通过 `cyl_placeholderHidden` 打开或关闭。自 2026-11-19 起用 Swift 编写，
-//       Objective-C API 不变；`CYLPlaceholderStatusDisplay` 选项与 `UIScrollView (CYLPlaceholderVisibility)` 分类（实现在
-//       `UIScrollView+CYLPlaceholder.m`）保留在 `UIViewController+CYLPlaceholderStatus.h` 中。
+//       Objective-C API 不变；`CYLPlaceholderStatusDisplay` 选项保留在 `UIViewController+CYLPlaceholderStatus.h` 中，
+//       `UIScrollView (CYLPlaceholderVisibility)` 分类在 `UIScrollView+CYLPlaceholder.swift` 中。
 //
 
 import UIKit

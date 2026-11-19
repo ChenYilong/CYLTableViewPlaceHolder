@@ -15,6 +15,12 @@ typedef UIView * _Nullable (^CYLCollectionPlaceholderViewBlock)(UICollectionView
  */
 typedef void (^CYLCollectionPlaceholderNormalBlock)(UICollectionView *collectionView);
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIScrollView+CYLPlaceholder.swift`, the same selectors). This declaration is
+//      for Objective-C callers only: Swift reads the Swift extension itself (`__swift__` is defined while Swift imports
+//      the header), so the two never meet. The block types above stay here for both.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIScrollView+CYLPlaceholder.swift`，选择器不变）。这里的声明只供 Objective-C 调用方使用：Swift 直接
+//      读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。上面的 block 类型保留在这里，两者共用。
+#ifndef __swift__
 /*!
  * [EN] The automatic placeholder: once a block is set, the collection view shows its view whenever a reload or update
  *      leaves it with no items, and removes it when content comes back; no `cyl_reloadData` call is needed.
@@ -38,5 +44,6 @@ typedef void (^CYLCollectionPlaceholderNormalBlock)(UICollectionView *collection
                backToNormalBlock:(nullable CYLCollectionPlaceholderNormalBlock)backToNormalBlock;
 
 @end
+#endif
 
 NS_ASSUME_NONNULL_END

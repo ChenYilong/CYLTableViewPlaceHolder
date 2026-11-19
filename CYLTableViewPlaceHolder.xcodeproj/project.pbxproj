@@ -168,7 +168,8 @@
 		CCE045821B22B4C402C1248F /* CYLRefreshPhoenixHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F65CF45B82CDFB05797D0BEE /* CYLRefreshPhoenixHeader.m */; };
 		D084AEC3E0AD7100CD288663 /* CYLTableViewPlaceHolder.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4BE61ED4452D6B1EA21864EB /* CYLTableViewPlaceHolder.bundle */; };
 		D0E154D48BA4E8389E8571EF /* CYLRefreshVectorPathElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BACE60AC70F377771CB87C98 /* CYLRefreshVectorPathElement.m */; };
-		D454480418455D86FD4D57EC /* UIScrollView+CYLPlaceholder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.m */; };
+		D454480418455D86FD4D57EC /* UIScrollView+CYLPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.swift */; };
+		3B7E9C2A5D184F6A9E0B1C47 /* UIScrollView+CYLPlaceholderSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C4D2E6F1A3B5C7D9E0F2A4B /* UIScrollView+CYLPlaceholderSupport.m */; };
 		D618BEFA328A102E994BDF6A /* CYLRefreshVectorImage.m in Sources */ = {isa = PBXBuildFile; fileRef = F84069B9431B0F606B89FE07 /* CYLRefreshVectorImage.m */; };
 		D9B587752F2A1F0032014EA4 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEF48ED28050EE9E255147C1 /* SpriteKit.framework */; };
 		DC40983050D90FAAE7306528 /* CYLRefreshStoreHouseHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F864C18C6EA51BD37155F07 /* CYLRefreshStoreHouseHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -181,7 +182,6 @@
 		E840000FE9EC72560CD08EBC /* CYLPlaceholderLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = FA49637A77B00AB2A0A1A54D /* CYLPlaceholderLocalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99C3324A58252FCD319D781 /* UIViewController+CYLPlaceholderStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.swift */; };
 		EA71CB9C9CD43E4024E13EB9 /* libPods-CYLTableViewPlaceHolder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA758383F348F5CEE18E8703 /* libPods-CYLTableViewPlaceHolder.a */; };
-		ECFD3CC1BC1A9F3B4C769B30 /* CYLPlaceholderVisibleArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE9B81CA4B519D93C289FD9F /* CYLRefreshAutoGifFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1F8068D4C726CE5404006B /* CYLRefreshAutoGifFooter.m */; };
 		EEE46BBC14128E895046BF11 /* CYLRefreshHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 271B9AE5193C25D8586A2719 /* CYLRefreshHeader.m */; };
 		F26EDEFC98793A81B6C58D15 /* UITableView+CYLPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F62EC6AEAE2B6224D9DEEF1 /* UITableView+CYLPlaceholder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -226,7 +226,8 @@
 		020EF24E7074D6CA32EE917C /* CYLRefreshAutoGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshAutoGifFooter.h; sourceTree = "<group>"; };
 		025A183607BCEB5632C113AD /* CYLPlaceholderHUD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderHUD.h; sourceTree = "<group>"; };
 		04D0787B1ACCBB46031B765D /* CYLRefreshPaging.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshPaging.m; sourceTree = "<group>"; };
-		0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+CYLPlaceholder.m"; sourceTree = "<group>"; };
+		0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIScrollView+CYLPlaceholder.swift"; sourceTree = "<group>"; };
+		8C4D2E6F1A3B5C7D9E0F2A4B /* UIScrollView+CYLPlaceholderSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+CYLPlaceholderSupport.m"; sourceTree = "<group>"; };
 		07367D0371B55759C70D498B /* CYLRefreshBackGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshBackGifFooter.h; sourceTree = "<group>"; };
 		074DB04053DF1D6A0122372C /* CYLRefreshPhoenixHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshPhoenixHeader.h; sourceTree = "<group>"; };
 		07AD5C6D0036A5EDC387F48D /* CYLRefreshWaveSwipeHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshWaveSwipeHeader.h; sourceTree = "<group>"; };
@@ -279,7 +280,6 @@
 		52877987520AFF01DD3827B8 /* CYLRefreshCupertinoHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshCupertinoHeader.h; sourceTree = "<group>"; };
 		53F2B65CDDD866E0EDDEAC5C /* CYLPlaceholderLocalizationSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderLocalizationSupport.m; sourceTree = "<group>"; };
 		54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderStackView.swift; sourceTree = "<group>"; };
-		55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderVisibleArea.h; sourceTree = "<group>"; };
 		5705C2DCD607A49AA129B0AC /* CYLRefreshAutoAnimationFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshAutoAnimationFooter.m; sourceTree = "<group>"; };
 		575720B60DB69A24E46C1BD8 /* UIScrollView+CYLExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+CYLExtension.h"; sourceTree = "<group>"; };
 		59BECB15CBCFD544350CE32B /* CYLRefreshGameStartScene.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshGameStartScene.h; sourceTree = "<group>"; };
@@ -595,7 +595,8 @@
 				9A68F2E51C2A67E800D2E9B0 /* UITableView+CYLTableViewPlaceHolder.swift */,
 				8F62EC6AEAE2B6224D9DEEF1 /* UITableView+CYLPlaceholder.h */,
 				AE03F9B2739CC6716E553C0D /* UICollectionView+CYLPlaceholder.h */,
-				0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.m */,
+				0671FB90189DAC5FFF639F71 /* UIScrollView+CYLPlaceholder.swift */,
+				8C4D2E6F1A3B5C7D9E0F2A4B /* UIScrollView+CYLPlaceholderSupport.m */,
 				6DB8709EF9D83AAA7FC30E89 /* CYLPlaceholderView.h */,
 				C1A2B3C4D5E6F70819203A02 /* CYLPlaceholderView.swift */,
 				C1A2B3C4D5E6F70819203A04 /* CYLPlaceholderItemStackView.swift */,
@@ -618,7 +619,6 @@
 				F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.swift */,
 				1D4723EA240F44948945D058 /* CYLPlaceholderLocalization.swift */,
 				6E58D51B7B48B51DC5D986F8 /* CYLPlaceholderNetworkMonitor.swift */,
-				55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */,
 			);
 			path = CYLTableViewPlaceHolder/CYLTableViewPlaceHolder;
 			sourceTree = "<group>";
@@ -860,7 +860,6 @@
 				9691D4D21B930886EF9DE5BD /* CYLRefreshCupertinoFooter.h in Headers */,
 				013ED51982451921ED54D3FD /* CYLRefreshDrawnFooter.h in Headers */,
 				1F275A309492E6E479666C67 /* CYLRefreshPaging.h in Headers */,
-				ECFD3CC1BC1A9F3B4C769B30 /* CYLPlaceholderVisibleArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1037,7 +1036,8 @@
 				7C8671F67A5EABB7876A55EE /* UIScrollView+CYLExtension.m in Sources */,
 				2F981370712885B645A60D09 /* UIScrollView+CYLRefresh.m in Sources */,
 				452C8AF0C59657321DA31B1D /* UIView+CYLExtension.m in Sources */,
-				D454480418455D86FD4D57EC /* UIScrollView+CYLPlaceholder.m in Sources */,
+				D454480418455D86FD4D57EC /* UIScrollView+CYLPlaceholder.swift in Sources */,
+				3B7E9C2A5D184F6A9E0B1C47 /* UIScrollView+CYLPlaceholderSupport.m in Sources */,
 				C1A2B3C4D5E6F70819203A01 /* CYLPlaceholderView.swift in Sources */,
 				C1A2B3C4D5E6F70819203A03 /* CYLPlaceholderItemStackView.swift in Sources */,
 				B928FF987752F38D66AF618A /* CYLPlaceholderViewSupport.m in Sources */,

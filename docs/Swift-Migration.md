@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 32 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 34 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -156,8 +156,39 @@ Objective-C to Swift, and its score after every commit.
     Flows → HUD) loading, progress, success, error and info show the centered box, icon and text as before and dismiss.
     Measured: core 11 Swift files (6,929 lines) and 67 Objective-C `.m` files (14,870 lines). Score by lines:
     6,929 / (6,929 + 14,870) ≈ **32 / 100** (was 27).
+  - 2026-11-19, step 5 (branch `feat/android-refresh-port-followup`, this commit): `UIScrollView+CYLPlaceholder.m` (434
+    lines) is `UIScrollView+CYLPlaceholder.swift`: the automatic placeholder of `UITableView (CYLPlaceholder)` and
+    `UICollectionView (CYLPlaceholder)` (`cyl_placeholderViewBlock:` and `...backToNormalBlock:`), the per-scroll-view
+    `CYLPlaceholderController` (scheduling on the main queue, batch depth and batch call depth, generation check,
+    constraints to `frameLayoutGuide`, restore block on removal), the keyboard tracker and visible insets (the 2026-11-19
+    keyboard fix: above the keyboard on both paths, at least a third of the height), refresh controls kept above the
+    placeholder (issue #8) and `UIScrollView (CYLPlaceholderVisibility)` (`cyl_placeholderHidden`, `cyl_placeholderView`,
+    the legacy `placeHolderView` still read by name), with the same Objective-C API and Swift spellings. The swizzling is
+    Swift: `@objc dynamic` replacements with the original selectors (`cyl_ph_reloadData`, `cyl_ph_setDataSource:`, ...,
+    `cyl_ph_reconfigureRowsAtIndexPaths:`), exchanged by `class_addMethod` / `method_exchangeImplementations` as before,
+    once (a `static let`, as `dispatch_once`); index sets and index path arrays stay `NSIndexSet?` / `NSArray?`, so the
+    originals receive exactly what callers passed. The C functions `CYLBringPlaceholderToFront`,
+    `CYLPlaceholderVisibleInsets`, `CYLPlaceholderStartTrackingKeyboard`, `CYLAutomaticPlaceholderEnabled` and the
+    notification name had only Swift callers (the legacy `cyl_reloadData`), so they are internal Swift members
+    (`CYLPlaceholderVisibleArea`, `CYLPlaceholderController`) and the internal header `CYLPlaceholderVisibleArea.h` is
+    deleted. Still Objective-C (rule 6), `UIScrollView+CYLPlaceholderSupport.m` (42 lines): `+load` (Swift has none),
+    which calls one internal Swift entry point (`+cyl_ph_installAutomaticPlaceholderWithExceptionGuard:`, declared only in
+    that file) that tracks the keyboard from launch and swizzles both classes once, and hands over an `@try` / `@finally`
+    block, so the batch depth is restored when batch updates throw an Objective-C exception (Swift cannot catch one).
+    The block typedefs stay in the public headers; the categories are declared for Objective-C callers only
+    (`#ifndef __swift__`). Pitfall: `Optional.map` over a block-typed optional that returns a block crashes the Swift 6.4
+    compiler (IRGen, "Cannot mangle this kind of type"); an `if let` avoids it. Podspec unchanged (`**/*.{h,m,swift}`);
+    the framework target, `Tests/run-tests.rb`, the cyl-api-map skill and `instructions.md` are updated
+    (`Tests/run-accessibility-tests.rb` globs the folder). Tests: core 207/207, animation 13/13 (static, PAG),
+    accessibility 4/4, Example-objc-02 UI tests 13/13 (collection animation, paging,
+    sections, localization); Example-Scenarios and the `CYLTableViewPlaceHolderFramework` target build and analyze
+    (0 placeholder warnings); in the example (English, Flows) "Switch states" (table) and "Collection view" show the
+    placeholder while empty, remove it with data and show it again when cleared. Measured: core 12 Swift files (7,576 lines) and 67 Objective-C `.m` files (14,477 lines). Score by
+    lines: 7,576 / (7,576 + 14,477) ≈ **34 / 100** (was 32). `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/` (the
+    placeholder core outside CYLRefresh) is now fully Swift except the rule-6 shims (the six `*Support.m` files: exported
+    constants and C functions, `+load` and the exception guard) and the public headers.
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests:
-    `UIScrollView+CYLPlaceholder.m`, then `CYLRefresh/` (the largest part), then the tests.
+    `CYLRefresh/` (the largest part), then the tests.
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 

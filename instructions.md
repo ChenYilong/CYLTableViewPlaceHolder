@@ -490,7 +490,7 @@ Program, React Native, Flutter):
   (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls).
 - A feature such a library has and CYLRefresh lacks is added to CYLRefresh (a new control, or a CYLRefresh API with a
   new parameter), never brought in with the library. Code adapted from one keeps its license and attribution.
-- The placeholder keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.m` looks the
+- The placeholder keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.swift` looks the
   class up by name), which needs no dependency.
 
 ## One HUD: CYLPlaceholderHUD

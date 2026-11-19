@@ -13,13 +13,13 @@
 //       一个参数 `cyl_statusDisplay` 决定显示什么：状态条加占位图、只显示状态条、只显示占位图或都不显示。`cyl_showsStatusViewWhenOffline`
 //       让网络监测（`CYLPlaceholderNetworkMonitor`）自动添加和移除状态条。
 //
-//  [EN] Swift since 2026-11-19: the category is in `UIViewController+CYLPlaceholderStatus.swift`. The
-//       `CYLPlaceholderStatusDisplay` options (used by Objective-C callers) and the `UIScrollView (CYLPlaceholderVisibility)`
-//       category (implemented in `UIScrollView+CYLPlaceholder.m`) stay here in Objective-C, made Swift-compatible
-//       (docs/Swift-Migration.md, rule 6).
-//  [CN] 自 2026-11-19 起该分类用 Swift 编写（`UIViewController+CYLPlaceholderStatus.swift`）。`CYLPlaceholderStatusDisplay` 选项
-//       （Objective-C 调用方会用到）与 `UIScrollView (CYLPlaceholderVisibility)` 分类（实现在 `UIScrollView+CYLPlaceholder.m`）保留在
-//       Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
+//  [EN] Swift since 2026-11-19: the category is in `UIViewController+CYLPlaceholderStatus.swift` and the
+//       `UIScrollView (CYLPlaceholderVisibility)` category in `UIScrollView+CYLPlaceholder.swift`; both are declared here
+//       for Objective-C callers only. The `CYLPlaceholderStatusDisplay` options (used by Objective-C callers) stay here in
+//       Objective-C, made Swift-compatible (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该分类用 Swift 编写（`UIViewController+CYLPlaceholderStatus.swift`），`UIScrollView (CYLPlaceholderVisibility)`
+//       分类也用 Swift 编写（`UIScrollView+CYLPlaceholder.swift`）；两者在这里只为 Objective-C 调用方声明。`CYLPlaceholderStatusDisplay`
+//       选项（Objective-C 调用方会用到）保留在 Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
 //
 
 #import <UIKit/UIKit.h>
@@ -117,6 +117,10 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
 @end
 #endif
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIScrollView+CYLPlaceholder.swift`, the same selectors); declared for
+//      Objective-C callers only, like the category above.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIScrollView+CYLPlaceholder.swift`，选择器不变）；与上面的分类一样只为 Objective-C 调用方声明。
+#ifndef __swift__
 /*!
  * [EN] Whether a list's placeholder may show, and the placeholder it shows now.
  * [CN] 列表的占位图是否可以显示，以及当前显示的占位图。
@@ -136,5 +140,6 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
  */
 @property (nonatomic, readonly, nullable) UIView *cyl_placeholderView;
 @end
+#endif
 
 NS_ASSUME_NONNULL_END
