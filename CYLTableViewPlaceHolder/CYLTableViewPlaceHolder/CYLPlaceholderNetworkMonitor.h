@@ -24,6 +24,14 @@
 //       （getsentry/sentry-cocoa#5440）：不监测主机名，网络变化时不发起 DNS 查询；每次启动新建监测器、停止时取消；忽略已取消监测器的更新。
 //       请在主线程使用：状态、回调与通知都在主线程变化。
 //
+//  [EN] Swift since 2026-11-19: the class is in `CYLPlaceholderNetworkMonitor.swift`. The status enum (used by other
+//       Objective-C headers), the notification constant (a FOUNDATION_EXPORT symbol, defined in
+//       `CYLPlaceholderNetworkMonitorSupport.m`) and the block type stay here in Objective-C, made Swift-compatible
+//       (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLPlaceholderNetworkMonitor.swift`）。状态枚举（其他 Objective-C 头文件会用到）、通知常量
+//       （FOUNDATION_EXPORT 符号，定义在 `CYLPlaceholderNetworkMonitorSupport.m`）与回调类型保留在 Objective-C 中并兼容 Swift
+//       （docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <Foundation/Foundation.h>
 
@@ -71,55 +79,15 @@ FOUNDATION_EXPORT NSNotificationName const CYLPlaceholderNetworkStatusDidChangeN
  */
 typedef void (^CYLPlaceholderNetworkStatusBlock)(CYLPlaceholderNetworkStatus status);
 
-@interface CYLPlaceholderNetworkMonitor : NSObject
-
 /*!
- * [EN] The shared monitor, as `+[LCNetworkReachabilityManager manager]` gave CYLChatKit one; it starts on first use of
- *      `startMonitoring`. [CN] 共享的监测器，对应 CYLChatKit 中的 `+[LCNetworkReachabilityManager manager]`；调用 `startMonitoring` 后开始。
+ * [EN] The monitor. The class is Swift since 2026-11-19 (`CYLPlaceholderNetworkMonitor.swift`) with the same Objective-C
+ *      API: `sharedMonitor` (Swift `shared`), `networkStatus`, `reachable` / `isReachable`, `constrained`, `expensive`,
+ *      `monitoring`, `-startMonitoring`, `-stopMonitoring`, `-setNetworkStatusChangeBlock:` and `+nameForStatus:`
+ *      (Swift `name(for:)`). Objective-C code that messages it imports the umbrella header `CYLTableViewPlaceHolder.h`,
+ *      which brings the generated Swift header.
+ * [CN] 监测器。该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderNetworkMonitor.swift`），Objective-C API 不变。需要调用它的
+ *      Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@property (class, nonatomic, readonly) CYLPlaceholderNetworkMonitor *sharedMonitor NS_SWIFT_NAME(shared);
-
-/*!
- * [EN] The current status; `CYLPlaceholderNetworkStatusUnknown` before the first update. [CN] 当前状态；首次更新前为未知。
- */
-@property (nonatomic, readonly) CYLPlaceholderNetworkStatus networkStatus;
-/*!
- * [EN] NO only when the status is `NotReachable`, as `-[AVIMWebSocketWrapper isReachable]`; an unknown status counts as
- *      reachable. [CN] 只有状态为不可达时为 NO，与 `-[AVIMWebSocketWrapper isReachable]` 相同；未知状态视为可达。
- */
-@property (nonatomic, readonly, getter=isReachable) BOOL reachable;
-/*!
- * [EN] Low Data Mode is on for the path (iOS 13 and later; NO before). [CN] 当前路径开启了低数据模式（iOS 13 起）。
- */
-@property (nonatomic, readonly, getter=isConstrained) BOOL constrained;
-/*!
- * [EN] The path is expensive: cellular, or a personal hotspot. [CN] 当前路径费用较高：蜂窝或个人热点。
- */
-@property (nonatomic, readonly, getter=isExpensive) BOOL expensive;
-/*!
- * [EN] Whether it is monitoring. [CN] 是否正在监测。
- */
-@property (nonatomic, readonly, getter=isMonitoring) BOOL monitoring;
-
-/*!
- * [EN] Starts monitoring; the status arrives soon after on the main queue. [CN] 开始监测；状态随后在主队列到达。
- */
-- (void)startMonitoring;
-/*!
- * [EN] Stops monitoring; the status becomes unknown. [CN] 停止监测；状态变为未知。
- */
-- (void)stopMonitoring;
-/*!
- * [EN] The block run on every change, as `-setReachabilityStatusChangeBlock:`; nil removes it. Notifications are posted
- *      too. [CN] 每次状态变化时执行的回调，对应 `-setReachabilityStatusChangeBlock:`；nil 表示移除。同时也会发送通知。
- */
-- (void)setNetworkStatusChangeBlock:(nullable CYLPlaceholderNetworkStatusBlock)block
-    NS_SWIFT_NAME(setNetworkStatusChangeBlock(_:));
-/*!
- * [EN] A short English name of a status, for logs. [CN] 状态的英文简称，用于日志。
- */
-+ (NSString *)nameForStatus:(CYLPlaceholderNetworkStatus)status NS_SWIFT_NAME(name(for:));
-
-@end
+@class CYLPlaceholderNetworkMonitor;
 
 NS_ASSUME_NONNULL_END

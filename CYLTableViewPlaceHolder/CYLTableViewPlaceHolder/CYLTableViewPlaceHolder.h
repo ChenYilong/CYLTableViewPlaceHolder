@@ -19,11 +19,15 @@
 #import "CYLPlaceholderNetworkMonitor.h"
 #import "UIViewController+CYLPlaceholderStatus.h"
 #import "CYLRefresh.h"
+// [EN] Internal C functions for the module's Swift files (the legacy `cyl_reloadData`); not API.
+// [CN] 供模块内 Swift 文件（旧的 `cyl_reloadData`）使用的内部 C 函数；不是 API。
+#import "CYLPlaceholderVisibleArea.h"
 
-// [EN] CYLPlaceholderView is Swift (2026-11-19): Objective-C code gets its interface from the module's generated Swift
+// [EN] CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor and the legacy `cyl_reloadData` category
+//      are Swift (2026-11-19): Objective-C code gets their interfaces from the module's generated Swift
 //      header, imported last so that every Objective-C type it mentions is declared. Not for Swift (`__swift__`): the
 //      module's own Swift files must not import their generated header.
-// [CN] CYLPlaceholderView 用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
+// [CN] CYLPlaceholderView、CYLPlaceholderLocalization、CYLPlaceholderNetworkMonitor 与旧的 `cyl_reloadData` 分类用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
 //      Objective-C 类型都已声明。不供 Swift 使用（`__swift__`）：模块自己的 Swift 文件不能导入自己生成的头文件。
 #ifndef __swift__
 #if __has_include(<CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>)

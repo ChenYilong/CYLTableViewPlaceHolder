@@ -27,17 +27,19 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   end
   ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
    'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshStylesAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemStackView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderViewSupport.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalizationSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitorSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.m'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
@@ -47,7 +49,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
-    # CYLPlaceholderView is Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
+    # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor and the legacy cyl_reloadData category
+    # are Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
     # the generated header as CYLTableViewPlaceHolder-Swift.h; the bridging header gives the Swift file the Objective-C
     # declarations the pod's umbrella header gives it; the CYLAnimatedItem pod below has the engine, so the Swift
     # condition is set as the pod's animation subspecs set it.

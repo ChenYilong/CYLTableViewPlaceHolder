@@ -977,11 +977,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLPlaceholderLocalization` | Language selection for the core bundle's tables. | `com.cyl.placeholder.CYLPlaceholderLocalization` |
-| `CYLPlaceholderLocalization` `supportedLanguages` | The languages the core tables provide: en, zh-Hans, zh-Hant, ja, ko, ru, uk. | `CYLPlaceholderLocalization.supportedLanguages` |
-| `CYLPlaceholderLocalization` `language` | The language used for core texts. nil (the default) follows the app's preferred languages. | `CYLPlaceholderLocalization.language` |
-| `CYLPlaceholderLocalization` `effectiveLanguage` | The supported language actually in use. | `CYLPlaceholderLocalization.effectiveLanguage` |
-| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | The text for a key of the core `Localizable.strings` in `effectiveLanguage`; the fallback (or the key) when the bundle, the language or the key is missing. | `CYLPlaceholderLocalization.localizedStringForKey(context, key, fallback)` |
+| `CYLPlaceholderLocalization` | The language of the built-in texts: the system's by default, or one you set. | `com.cyl.placeholder.CYLPlaceholderLocalization` |
+| `CYLPlaceholderLocalization` `supportedLanguages` | The languages the built-in texts come in. | `CYLPlaceholderLocalization.supportedLanguages` |
+| `CYLPlaceholderLocalization` `language` | The language to use, or null for the system's. | `CYLPlaceholderLocalization.language` |
+| `CYLPlaceholderLocalization` `effectiveLanguage` | The language now used: [language], else the system's when supported, else "en". | `CYLPlaceholderLocalization.effectiveLanguage` |
+| `CYLPlaceholderLocalization` `+localizedStringForKey:fallback:` | The text of the iOS [key] ("CYLPlaceholderEmptyText"), or [fallback]. | `CYLPlaceholderLocalization.localizedStringForKey(context, key, fallback)` |
 | `CYLPlaceholderLocalization` `-init` | Method of `CYLPlaceholderLocalization`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
 | `CYLPlaceholderLocalization` `+new` | Method of `CYLPlaceholderLocalization`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
 
@@ -992,16 +992,16 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderNetworkStatus` | The network status; the first four values are AFNetworkReachabilityStatus's, as CYLChatKit used them. | `com.cyl.placeholder.CYLPlaceholderNetworkStatus` |
 | `CYLPlaceholderNetworkStatusBlock` | Runs on the main queue with the new status. | `com.cyl.placeholder.CYLPlaceholderNetworkStatusBlock` |
 | `CYLPlaceholderNetworkMonitor` | Watches the network; the app needs the ACCESS_NETWORK_STATE permission, which this library's manifest declares. | `com.cyl.placeholder.CYLPlaceholderNetworkMonitor` |
-| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | The shared monitor, as `+[LCNetworkReachabilityManager manager]` gave CYLChatKit one; it starts on first use of `startMonitoring`. | `CYLPlaceholderNetworkMonitor.sharedMonitor(context)` |
-| `CYLPlaceholderNetworkMonitor` `networkStatus` | The current status; `CYLPlaceholderNetworkStatusUnknown` before the first update. | `CYLPlaceholderNetworkMonitor.networkStatus` |
-| `CYLPlaceholderNetworkMonitor` `reachable` | NO only when the status is `NotReachable`, as `-[AVIMWebSocketWrapper isReachable]`; an unknown status counts as reachable. | `CYLPlaceholderNetworkMonitor.reachable` |
-| `CYLPlaceholderNetworkMonitor` `constrained` | Low Data Mode is on for the path (iOS 13 and later; NO before). | `CYLPlaceholderNetworkMonitor.constrained` |
-| `CYLPlaceholderNetworkMonitor` `expensive` | The path is expensive: cellular, or a personal hotspot. | `CYLPlaceholderNetworkMonitor.expensive` |
-| `CYLPlaceholderNetworkMonitor` `monitoring` | Whether it is monitoring. | `CYLPlaceholderNetworkMonitor.monitoring` |
-| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | Starts monitoring; the status arrives soon after on the main queue. | `CYLPlaceholderNetworkMonitor.startMonitoring` |
-| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | Stops monitoring; the status becomes unknown. | `CYLPlaceholderNetworkMonitor.stopMonitoring` |
-| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | The block run on every change, as `-setReachabilityStatusChangeBlock:`; nil removes it. Notifications are posted too. | `CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock` |
-| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | A short English name of a status, for logs. | `CYLPlaceholderNetworkMonitor.nameForStatus` |
+| `CYLPlaceholderNetworkMonitor` `sharedMonitor` | The shared monitor. | `CYLPlaceholderNetworkMonitor.sharedMonitor(context)` |
+| `CYLPlaceholderNetworkMonitor` `networkStatus` | How the device reaches the network. | `CYLPlaceholderNetworkMonitor.networkStatus` |
+| `CYLPlaceholderNetworkMonitor` `reachable` | Whether there is a network. | `CYLPlaceholderNetworkMonitor.reachable` |
+| `CYLPlaceholderNetworkMonitor` `constrained` | Whether Data Saver restricts the network. | `CYLPlaceholderNetworkMonitor.constrained` |
+| `CYLPlaceholderNetworkMonitor` `expensive` | Whether the network is metered. | `CYLPlaceholderNetworkMonitor.expensive` |
+| `CYLPlaceholderNetworkMonitor` `monitoring` | Whether the monitor is watching. | `CYLPlaceholderNetworkMonitor.monitoring` |
+| `CYLPlaceholderNetworkMonitor` `-startMonitoring` | Starts watching. | `CYLPlaceholderNetworkMonitor.startMonitoring` |
+| `CYLPlaceholderNetworkMonitor` `-stopMonitoring` | Stops watching. | `CYLPlaceholderNetworkMonitor.stopMonitoring` |
+| `CYLPlaceholderNetworkMonitor` `-setNetworkStatusChangeBlock:` | Calls [block] on the main thread when the status changes. | `CYLPlaceholderNetworkMonitor.setNetworkStatusChangeBlock` |
+| `CYLPlaceholderNetworkMonitor` `+nameForStatus:` | A status's name for logs, as on iOS. | `CYLPlaceholderNetworkMonitor.nameForStatus` |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`
 

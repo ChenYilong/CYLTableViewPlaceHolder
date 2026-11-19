@@ -12,6 +12,9 @@
 
 #import "UIViewController+CYLPlaceholderStatus.h"
 #import "CYLPlaceholderNetworkMonitor.h"
+// [EN] CYLPlaceholderNetworkMonitor is Swift: its interface comes with the umbrella header (the generated Swift header).
+// [CN] CYLPlaceholderNetworkMonitor 用 Swift 编写：其接口来自总头文件（生成的 Swift 头文件）。
+#import "CYLTableViewPlaceHolder.h"
 #import <objc/runtime.h>
 
 /// [EN] Above the cells and the placeholder of a table that is the controller's view. [CN] 位于列表单元格与占位图之上。

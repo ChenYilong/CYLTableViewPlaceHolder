@@ -1,6 +1,7 @@
 #import "UITableView+CYLPlaceholder.h"
 #import "UICollectionView+CYLPlaceholder.h"
 #import "UIViewController+CYLPlaceholderStatus.h"
+#import "CYLPlaceholderVisibleArea.h"
 #import <objc/runtime.h>
 
 typedef UIView * _Nullable (^CYLPlaceholderProvider)(UIScrollView *);
