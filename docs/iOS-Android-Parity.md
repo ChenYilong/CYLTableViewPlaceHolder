@@ -600,19 +600,19 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGameBattleCityHeader` | A tank game played while refreshing (after FunGameRefresh BattleCity); drag to move the tank. | `com.cyl.refresh.CYLRefreshGameBattleCityHeader` |
+| `CYLRefreshGameBattleCityHeader` | The tank game. | `com.cyl.refresh.CYLRefreshGameBattleCityHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGameHeader` | The base of the game headers: the game starts while refreshing and the user plays it by dragging. | `com.cyl.refresh.CYLRefreshGameHeader` |
+| `CYLRefreshGameHeader` | A header with a small game to play while refreshing. | `com.cyl.refresh.CYLRefreshGameHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGameHitBlockHeader` | A brick-breaker game played while refreshing (after FunGameRefresh HitBlock); drag to move the paddle. | `com.cyl.refresh.CYLRefreshGameHitBlockHeader` |
+| `CYLRefreshGameHitBlockHeader` | The block-breaking game. | `com.cyl.refresh.CYLRefreshGameHitBlockHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`
 

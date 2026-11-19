@@ -4,12 +4,12 @@
 //
 
 // [EN] Swift since 2026-11-19 (docs/Swift-Migration.md, step 7), with the same Objective-C API (`colorAccent`,
-//      `colorPrimary`). Its sibling `CYLRefreshGamePlayingScene` stays Objective-C until step 8: the two game headers
-//      subclass it in Objective-C. Public only so the module's Objective-C files can read it (an internal helper of the
-//      drawn styles, not API).
+//      `colorPrimary`). Its sibling `CYLRefreshGamePlayingScene` is Swift too since step 8 (internal). Public only so the
+//      module's Objective-C files could read it (an internal helper of the drawn styles, not API); since step 8 only Swift
+//      uses it.
 // [CN] 自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 7 步），Objective-C API 不变（`colorAccent`、`colorPrimary`）。同类的
-//      `CYLRefreshGamePlayingScene` 在第 8 步之前仍为 Objective-C：两个游戏刷新头在 Objective-C 中继承它。设为 public 只是为了让模块内的
-//      Objective-C 文件读取（绘制样式的内部辅助类，不是 API）。
+//      `CYLRefreshGamePlayingScene` 自第 8 步起也用 Swift 编写（internal）。设为 public 是为了让模块内的 Objective-C 文件读取（绘制样式的
+//      内部辅助类，不是 API）；自第 8 步起只有 Swift 使用它。
 
 import SpriteKit
 import UIKit
