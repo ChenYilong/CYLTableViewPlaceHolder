@@ -221,13 +221,29 @@ Objective-C to Swift, and its score after every commit.
     Score by lines: 8,551 / (8,551 + 13,808) ≈ **38 / 100** (was 34).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
-    - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines);
-    - step 7: `Base/` (component, header, footer, icon view; 8 files, 3,363 lines; two commits if needed);
-    - step 8: `Custom/Header`, `Custom/Footer/Auto`, `Custom/Footer/Back`, `Custom/Trailer`, `Custom/Cupertino`
-      (16 files, 1,805 lines);
-    - step 9: `Custom/Drawn/Support` (13 files, 2,606 lines);
-    - step 10: `Custom/Drawn` (the drawn styles; 16 files, 5,620 lines; two commits);
-    - step 11: the tests (14 Objective-C files under `Tests/`).
+    - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
+  - **Decision (the owner, 2026-11-19): convert the whole CYLRefresh class tree to Swift**, asked as "Keep them
+    Objective-C / Convert all to Swift / Convert, keep ObjC bases" and answered "Convert all to Swift". Objective-C
+    cannot subclass a Swift class, so after the migration an app can no longer subclass `CYLRefreshComponent`,
+    `CYLRefreshHeader`, the footers, the trailer or any style in Objective-C: **a breaking change for the published
+    library**. The release that ships it is a major version, and its notes carry the migration: write the subclass in
+    Swift (the Objective-C API names and selectors stay, so the overridden methods are the same), or compose (add a view
+    to the control instead of subclassing). The Swift API and every Objective-C caller that only uses the controls stay
+    source-compatible.
+  - **Order: leaves first.** A Swift class may subclass an Objective-C class, not the reverse, so each class is
+    translated only after all its subclasses (plan of 2026-11-19, replacing the bottom-up plan above):
+    - step 7: `Custom/Drawn/Support` and the internal helpers with no subclasses (`CYLRefreshPaging`,
+      `CYLRefreshIconView`, the vector, StoreHouse, value-animator, fly/mountain views and the SpriteKit game scenes);
+    - step 8: the whole `Custom/Drawn` tree (the styles, `CYLRefreshGameHeader` after its two games, then
+      `CYLRefreshDrawnHeader` and `CYLRefreshDrawnFooter`);
+    - step 9: the remaining concrete controls: Normal / Animation (Gif) headers, the auto and back Normal / Animation
+      (Gif) footers, Ball Pulse, Cupertino header and footer, `CYLRefreshNormalTrailer`;
+    - step 10: the state layer: `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter`, `CYLRefreshBackStateFooter`,
+      `CYLRefreshStateTrailer`;
+    - step 11: `CYLRefreshHeader`, `CYLRefreshAutoFooter`, `CYLRefreshBackFooter`, `CYLRefreshTrailer`, then
+      `CYLRefreshFooter`;
+    - step 12: `CYLRefreshComponent` (the root);
+    - step 13: the tests (14 Objective-C files under `Tests/`).
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 
