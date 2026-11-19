@@ -1135,5 +1135,9 @@
  "StoreHouseBarItem": {
   "ios": "n/a",
   "note": "an internal drawing helper of the StoreHouse header, which is ported; iOS draws it with its own class (CYLRefreshStoreHouseLine), no API counterpart needed"
+ },
+ "CYLPlaceholderHUD.MAXIMUM_WIDTH_DP": {
+  "ios": "`CYLPlaceholderHUD`",
+  "note": "iOS keeps the same 260 pt limit as a private constant (static CYLPlaceholderHUDMaximumWidth in CYLPlaceholderHUD.m); no public iOS constant"
  }
 }
