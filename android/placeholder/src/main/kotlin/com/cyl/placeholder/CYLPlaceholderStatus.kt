@@ -244,6 +244,9 @@ class CYLPlaceholderStatusView @JvmOverloads constructor(context: Context, attri
             iconSizeDp = com.cyl.animateditem.CYLSize(20f, 20f)
             axis = com.cyl.animateditem.CYLAnimatedItemAxis.Horizontal
             spacingDp = 8f
+            // iOS `initWithItemAttributes:error:`: every other item key (colors, offsets, font size, animation file…)
+            // too, over the banner's defaults.
+            applyItemAttributes(context, used - setOf("CYLPlaceholderItemImage", "CYLPlaceholderItemTitle"), null)
         }
         setBackgroundColor(Color.rgb(0xFF, 0xF4, 0xE5))
         addView(placeholderView, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER))

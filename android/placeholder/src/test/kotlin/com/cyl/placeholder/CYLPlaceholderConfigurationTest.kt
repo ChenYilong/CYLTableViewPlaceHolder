@@ -80,7 +80,14 @@ class CYLPlaceholderConfigurationTest {
         assertEquals("offline", stack.tag)
         file.writeText("not json")
         assertTrue(failure { e -> CYLPlaceholderStackView.fromContentsOfURL(context, file.path, null, e) }!!.contains("JSON"))
-        assertEquals("A property list is an iOS format; use a .json file.", failure { e -> CYLPlaceholderStackView.fromContentsOfURL(context, "a.plist", null, e) })
+        // A property list is read too, as on iOS.
+        val plist = File.createTempFile("cyl", ".plist").apply { writeText("""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict><key>scenario</key><string>NetworkUnavailable</string><key>accessibilityIdentifier</key><string>plist</string></dict></plist>""") }
+        assertEquals("plist", CYLPlaceholderStackView.fromContentsOfURL(context, plist.path)!!.tag)
+        assertTrue(failure { e -> CYLPlaceholderStackView.fromContentsOfURL(context, "a.plist", null, e) }!!.startsWith("The configuration file cannot be read"))
+        val parsed = CYLPlaceholderConfiguration_fromPropertyList("""<plist><dict><key>n</key><integer>3</integer><key>r</key><real>1.5</real><key>b</key><true/><key>a</key><array><string>x</string><false/></array></dict></plist>""")
+        assertEquals(mapOf("n" to 3, "r" to 1.5, "b" to true, "a" to listOf("x", false)), parsed)
         val bar = CYLPlaceholderStatusView.fromConfiguration(context, mapOf("text" to "Saving", "titleColor" to "#112233", "backgroundColor" to "#FFC7C7", "accessibilityIdentifier" to "bar"))!!
         assertEquals("Saving", bar.text)
         assertEquals("bar", bar.tag)
@@ -174,5 +181,24 @@ class CYLPlaceholderConfigurationTest {
         assertEquals("\"display\" must be \"statusAndPlaceholder\", \"status\", \"placeholder\" or \"none\".", message)
         assertEquals("nothing changed", CYLPlaceholderStatusDisplay.StatusBar, activity.cyl_statusDisplay)
         assertTrue((activity.findViewById<ViewGroup>(android.R.id.content)).childCount > 0)
+    }
+
+    /** iOS componentWithBundledAnimation: the bundled file over the fallback style's image; once, a spinner loops. */
+    @Test
+    fun bundledAnimationComponentsAndStatusViewKeys() {
+        val once = CYLPlaceholderComponent.componentWithBundledAnimation("CYLPlaceholderEmpty.json", CYLPlaceholderStyle.Empty, "Empty", 100f, "go")
+        assertEquals("asset:CYLPlaceholderAnimations/CYLPlaceholderEmpty.json", once.attributes["CYLPlaceholderItemAnimationFilePath"])
+        assertEquals(1, once.attributes["CYLPlaceholderItemAnimationRepeatCount"])
+        assertEquals(100f, once.imageSide)
+        assertEquals("go", once.action)
+        val spinner = CYLPlaceholderComponent.componentWithBundledAnimation("CYLPlaceholderLoading.pag", CYLPlaceholderStyle.Image, null)
+        assertEquals(0, spinner.attributes["CYLPlaceholderItemAnimationRepeatCount"])
+        val stack = CYLPlaceholderStackView(context, listOf(once))
+        assertTrue(stack.componentViews.first() is CYLPlaceholderView)
+        // The status view takes every item key, not only the title, image and title color.
+        val bar = CYLPlaceholderStatusView(context, mapOf("CYLPlaceholderItemTitle" to "Offline", "CYLPlaceholderItemIconColor" to android.graphics.Color.BLUE,
+            "CYLPlaceholderItemAccessibilityIdentifier" to "offline-bar"))
+        assertEquals(android.graphics.Color.BLUE, bar.placeholderView.defaultIconColor)
+        assertEquals("offline-bar", bar.placeholderView.tag)
     }
 }

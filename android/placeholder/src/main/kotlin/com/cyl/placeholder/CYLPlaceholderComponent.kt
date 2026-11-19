@@ -142,6 +142,25 @@ class CYLPlaceholderComponent private constructor(
         ).apply { extraAttributes = attributes.filterKeys { it !in BASIC_KEYS } }
 
         /**
+         * A bundled animation, [fileName] in the placeholder's `CYLPlaceholderAnimations` assets (the iOS
+         * CYLTableViewPlaceHolder.bundle), [side] dp, over the image of [fallbackStyle], with an optional [title],
+         * running [action] when tapped (`componentWithBundledAnimation:fallbackStyle:title:size:action:`). The fallback
+         * shows until the animation is ready and when no animator plays the file (the app added no engine). It plays
+         * once, a spinner loops (animationLoopsByDefault), as on iOS.
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun componentWithBundledAnimation(fileName: String, fallbackStyle: CYLPlaceholderStyle, title: CharSequence?, side: Float = ICON_SIDE,
+                                          action: String? = null): CYLPlaceholderComponent =
+            CYLPlaceholderComponent(Kind.Item, 0, fallbackStyle != CYLPlaceholderStyle.Empty, side, title, 0f, 0, null, action).apply {
+                extraAttributes = mapOf(
+                    "CYLPlaceholderItemStyle" to fallbackStyle,
+                    "CYLPlaceholderItemAnimationFilePath" to "asset:${CYLPlaceholderStackView.ANIMATION_FOLDER}/$fileName",
+                    "CYLPlaceholderItemAnimationRepeatCount" to if (CYLPlaceholderScenarioCatalog.animationLoopsByDefault(fileName)) 0 else 1,
+                )
+            }
+
+        /**
          * An icon of [side] dp with an optional [title] below it, running [action] when tapped. The iOS
          * `componentWithBundledAnimation:fallbackStyle:title:size:action:` plays an animation with this image as its
          * fallback; on Android a scenario's stack view plays its animation in place of this image.

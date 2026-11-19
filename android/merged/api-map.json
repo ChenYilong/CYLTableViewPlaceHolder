@@ -112,23 +112,23 @@
   "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle"
  },
  "CYLPlaceholderComponent": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderComponent",
-  "note": "an icon component shows its image; in a scenario's stack view the first item plays the scenario's animation through CYLPlaceholderView when the app adds the animation library"
+  "note": "icon, text, hint, button and separator components; an animation component plays its file through the stack view's CYLPlaceholderView, the fallback image showing until it is ready"
  },
  "CYLPlaceholderComponent +buttonComponentWithTitle:style:action:": {
   "status": "done",
   "android": "CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)"
  },
  "CYLPlaceholderComponent +componentWithAttributes:action:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.componentWithAttributes(attributes, action)",
-  "note": "the keys of attributes"
+  "note": "every item key, shown through fromItemAttributes in the stack view"
  },
  "CYLPlaceholderComponent +componentWithBundledAnimation:fallbackStyle:title:size:action:": {
-  "status": "partial",
-  "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
-  "note": "builds an icon component from the fallback image; a scenario's stack view plays the scenario's animation in its place (CYLAnimatedItem engine, when the app adds the library)"
+  "status": "done",
+  "android": "CYLPlaceholderComponent.componentWithBundledAnimation(fileName, fallbackStyle, title, side, action)",
+  "note": "the bundled file (CYLPlaceholderAnimations assets) over the fallback style's image; once, a spinner loops"
  },
  "CYLPlaceholderComponent +componentWithDictionary:error:": {
   "status": "done",
@@ -156,9 +156,9 @@
   "android": "CYLPlaceholderComponent.action"
  },
  "CYLPlaceholderComponent animationRepeatCount": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.animationRepeatCount",
-  "note": "passed to the stack view's CYLPlaceholderView; applies when the item plays an animation (GIF repeats the count, Lottie / PAG / Rive loop above 1)"
+  "note": "passed to the item's CYLPlaceholderView; unset, a scenario animation plays once and a spinner loops (iOS default)"
  },
  "CYLPlaceholderComponent attributes": {
   "status": "done",
@@ -617,9 +617,9 @@
   "android": "CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)"
  },
  "CYLPlaceholderScenarioCatalog +componentsForScenario:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)",
-  "note": "every scenario's components; the first icon plays the scenario's animation in its stack view when the app adds the animation library, else the static image shows"
+  "note": "every scenario's components; the first icon plays the scenario's bundled animation (once, a spinner loops) when the app adds an engine, as on iOS"
  },
  "CYLPlaceholderScenarioCatalog +localizedNameForScenario:": {
   "status": "done",
@@ -666,9 +666,9 @@
   "android": "com.cyl.placeholder.CYLPlaceholderScenarioCategory"
  },
  "CYLPlaceholderStackView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderStackView",
-  "note": "each icon + title component is a CYLPlaceholderView (a CYLAnimatedItemView); a scenario's stack view plays the scenario's animation through its first item when the app adds the animation library; iOS also plays a component's own animation file"
+  "note": "each icon + title component is a CYLPlaceholderView reporting its content size; a scenario's first item plays the scenario's animation"
  },
  "CYLPlaceholderStackView -appendComponent:": {
   "status": "done",
@@ -760,9 +760,9 @@
   "android": "CYLPlaceholderStatusView(context)"
  },
  "CYLPlaceholderStatusView -initWithItemAttributes:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderStatusView(context, attributes)",
-  "note": "the title, image and title color keys"
+  "note": "every item key, applied over the banner's defaults"
  },
  "CYLPlaceholderStatusView delegate": {
   "status": "done",
@@ -809,9 +809,9 @@
   "android": "com.cyl.placeholder.CYLPlaceholderTapHighlightStyle"
  },
  "CYLPlaceholderView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderView",
-  "note": "fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied"
+  "note": "fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations"
  },
  "CYLPlaceholderView +bundledAnimationFileNames": {
   "status": "n/a",
@@ -842,14 +842,14 @@
   "android": "CYLPlaceholderView(context, image, text)"
  },
  "CYLPlaceholderView -initWithItemAttributes:imageBundle:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.fromItemAttributes(context, attributes, error)",
-  "note": "no image bundle: names are drawable resources"
+  "note": "images are drawable resource ids, Android's counterpart of the image bundle"
  },
  "CYLPlaceholderView -initWithItemContentsOfURL:imageBundle:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.fromItemContentsOfURL(context, path, error)",
-  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format; no image bundle"
+  "note": "reads a .json or XML .plist file (a path or \"asset:name\"); images are drawable resources, Android's counterpart of the image bundle"
  },
  "CYLPlaceholderView -initWithStyle:message:": {
   "status": "done",
@@ -956,9 +956,9 @@
   "android": "CYLPlaceholderView.imageView"
  },
  "CYLPlaceholderView itemAttributes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.itemAttributes",
-  "note": "the title, image and animation file keys"
+  "note": "every key the view was made from, plus the animation file and images set later"
  },
  "CYLPlaceholderView preferredMaxLayoutWidth": {
   "status": "done",

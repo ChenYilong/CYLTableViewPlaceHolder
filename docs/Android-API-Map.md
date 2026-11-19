@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：97 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 623、partial 37、planned 0、n/a 194）。 | **Migration score: 97 / 100** (done + 0.5 × partial over 660 counted symbols; done 623, partial 37, planned 0, n/a 194). |
+| **迁移完成率：98 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 634、partial 26、planned 0、n/a 194）。 | **Migration score: 98 / 100** (done + 0.5 × partial over 660 counted symbols; done 634, partial 26, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -1012,16 +1012,16 @@
 | `CYLPlaceholderPermission` | `com.cyl.placeholder.CYLPlaceholderPermission` | done |  |
 | `CYLPlaceholderAction` | `com.cyl.placeholder.CYLPlaceholderAction` | done | string constants with the iOS values |
 | `CYLPlaceholderButtonStyle` | `com.cyl.placeholder.CYLPlaceholderButtonStyle` | done |  |
-| `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | partial | an icon component shows its image; in a scenario's stack view the first item plays the scenario's animation through CYLPlaceholderView when the app adds the animation library |
+| `CYLPlaceholderComponent` | `com.cyl.placeholder.CYLPlaceholderComponent` | done | icon, text, hint, button and separator components; an animation component plays its file through the stack view's CYLPlaceholderView, the fallback image showing until it is ready |
 | `CYLPlaceholderComponent` `attributes` | `CYLPlaceholderComponent.attributes` | done | every item key is kept; keys beyond the title, image, color and size show through CYLPlaceholderView.fromItemAttributes |
 | `CYLPlaceholderComponent` `action` | `CYLPlaceholderComponent.action` | done |  |
 | `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
 | `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` | done |  |
 | `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` | done | a finger on a component with an action dims it, shrinks it to 95 % or leaves it (the stack view) |
-| `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | passed to the stack view's CYLPlaceholderView; applies when the item plays an animation (GIF repeats the count, Lottie / PAG / Rive loop above 1) |
-| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
-| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | builds an icon component from the fallback image; a scenario's stack view plays the scenario's animation in its place (CYLAnimatedItem engine, when the app adds the library) |
+| `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | done | passed to the item's CYLPlaceholderView; unset, a scenario animation plays once and a spinner loops (iOS default) |
+| `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | done | every item key, shown through fromItemAttributes in the stack view |
+| `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.componentWithBundledAnimation(fileName, fallbackStyle, title, side, action)` | done | the bundled file (CYLPlaceholderAnimations assets) over the fallback style's image; once, a spinner loops |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` | done |  |
 | `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | `CYLPlaceholderComponent.text(title, sizeSp, color)` | done |  |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` | done |  |
@@ -1031,7 +1031,7 @@
 | `CYLPlaceholderComponent` `+new` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
 | `CYLPlaceholderScenarioCatalog` | `com.cyl.placeholder.CYLPlaceholderScenarioCatalog` | done |  |
 | `CYLPlaceholderScenarioCatalog` `allScenarios` | `CYLPlaceholderScenarioCatalog.allScenarios` | done |  |
-| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)` | partial | every scenario's components; the first icon plays the scenario's animation in its stack view when the app adds the animation library, else the static image shows |
+| `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | `CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)` | done | every scenario's components; the first icon plays the scenario's bundled animation (once, a spinner loops) when the app adds an engine, as on iOS |
 | `CYLPlaceholderScenarioCatalog` `+backgroundActionForScenario:` | `CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario)` | done |  |
 | `CYLPlaceholderScenarioCatalog` `+localizedNameForScenario:` | `CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario)` | done |  |
 | `CYLPlaceholderScenarioCatalog` `+readmeScreenshotNumbersForScenario:` | `CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)` | done |  |
@@ -1051,7 +1051,7 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderActionHandler` | `com.cyl.placeholder.CYLPlaceholderActionHandler` | done |  |
-| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | partial | each icon + title component is a CYLPlaceholderView (a CYLAnimatedItemView); a scenario's stack view plays the scenario's animation through its first item when the app adds the animation library; iOS also plays a component's own animation file |
+| `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | done | each icon + title component is a CYLPlaceholderView reporting its content size; a scenario's first item plays the scenario's animation |
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackView.stackView` | done |  |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackView.placeholderView` | done | the first component view |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackView.componentViews` | done |  |
@@ -1083,7 +1083,7 @@
 | `CYLPlaceholderStatusView` | `com.cyl.placeholder.CYLPlaceholderStatusView` | done | CYLPlaceholderStatusView.fromConfiguration makes one from a configuration |
 | `CYLPlaceholderStatusView` `delegate` | `CYLPlaceholderStatusView.delegate` | done |  |
 | `CYLPlaceholderStatusView` `-initWithFrame:` | `CYLPlaceholderStatusView(context)` | done |  |
-| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusView(context, attributes)` | partial | the title, image and title color keys |
+| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | `CYLPlaceholderStatusView(context, attributes)` | done | every item key, applied over the banner's defaults |
 | `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | `CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)` | done |  |
 | `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | `CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)` | done | "image" is a drawable name; "system:" names are iOS only |
 | `CYLPlaceholderStatusView` `-initWithCoder:` | — | n/a | unavailable on iOS too (NS_UNAVAILABLE) |
@@ -1120,7 +1120,7 @@
 | `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | `CYLPlaceholderAnimationPlayer.setAnimationRepeatCount` | done |  |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | `CYLPlaceholderAnimationPlayer.setAnimationColors` | done |  |
 | `CYLPlaceholderAnimationFactory` | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` | done |  |
-| `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | partial | fromItemAttributes / fromItemContentsOfURL apply the title, image, style, message, offsets, colors, selected colors, size, animation file, repeat count, interaction, tap highlight and accessibility keys; image URLs, dark variants and title decorations are kept in itemAttributes but not applied |
+| `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | done | fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations |
 | `CYLPlaceholderView` `imageView` | `CYLPlaceholderView.imageView` | done |  |
 | `CYLPlaceholderView` `textLabel` | `CYLPlaceholderView.textLabel` | done |  |
 | `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderView.badgeValue` | done |  |
@@ -1141,7 +1141,7 @@
 | `CYLPlaceholderView` `defaultSelectedTitleFont` | `CYLPlaceholderView.defaultSelectedTitleFont (sp)` | done |  |
 | `CYLPlaceholderView` `defaultSelectionIndicatorImage` | `CYLPlaceholderView.defaultSelectionIndicatorImage` | done |  |
 | `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | `CYLPlaceholderView.defaultSelectionIndicatorTintColor` | done |  |
-| `CYLPlaceholderView` `itemAttributes` | `CYLPlaceholderView.itemAttributes` | partial | the title, image and animation file keys |
+| `CYLPlaceholderView` `itemAttributes` | `CYLPlaceholderView.itemAttributes` | done | every key the view was made from, plus the animation file and images set later |
 | `CYLPlaceholderView` `reportsContentSize` | `CYLPlaceholderView.reportsContentSize` | done | false (default): fills a wrap-content limit and centers its content; true: measures to its content (set by the stack view, the HUD, the status view and the refresh icon, as on iOS) |
 | `CYLPlaceholderView` `preferredMaxLayoutWidth` | `CYLPlaceholderView.preferredMaxLayoutWidth` | done |  |
 | `CYLPlaceholderView` `contentMargin` | `CYLPlaceholderView.contentMargin` | done |  |
@@ -1160,8 +1160,8 @@
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderView.showPlaceholderAnimationLastFrame()` | done |  |
 | `CYLPlaceholderView` `-setPlaceholderAnimationProgress:` | `CYLPlaceholderView.setPlaceholderAnimationProgress(progress)` | done |  |
 | `CYLPlaceholderView` `-setPlaceholderAnimationSpeed:` | `CYLPlaceholderView.setPlaceholderAnimationSpeed(speed)` | done |  |
-| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | `CYLPlaceholderView.fromItemAttributes(context, attributes, error)` | partial | no image bundle: names are drawable resources |
-| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | `CYLPlaceholderView.fromItemContentsOfURL(context, path, error)` | partial | reads a .json file or "asset:name"; a property list is an iOS format; no image bundle |
+| `CYLPlaceholderView` `-initWithItemAttributes:imageBundle:error:` | `CYLPlaceholderView.fromItemAttributes(context, attributes, error)` | done | images are drawable resource ids, Android's counterpart of the image bundle |
+| `CYLPlaceholderView` `-initWithItemContentsOfURL:imageBundle:error:` | `CYLPlaceholderView.fromItemContentsOfURL(context, path, error)` | done | reads a .json or XML .plist file (a path or "asset:name"); images are drawable resources, Android's counterpart of the image bundle |
 | `CYLPlaceholderView` `-initWithStyle:message:` | `CYLPlaceholderView(context, style, message)` | done |  |
 | `CYLPlaceholderView` `-initWithStyle:text:` | `CYLPlaceholderView(context, style, text)` | done |  |
 | `CYLPlaceholderView` `-initWithImage:text:` | `CYLPlaceholderView(context, image, text)` | done |  |
