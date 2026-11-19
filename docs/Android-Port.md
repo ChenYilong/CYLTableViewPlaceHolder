@@ -906,6 +906,16 @@
 
 ### TODO: HarmonyOS NEXT support for the Android and cross-platform (Flutter, then React Native) versions
 
+- **Status (2026-11-19, Windows session): 50 / 100, blocked on a decision.** HarmonyOS NEXT runs no Android apps, so
+  the Android version's support is the native ArkTS port, which exists and is checked on the emulator:
+  `CrossPlatform/harmonyos-cylplaceholder` (placeholder, HUD, status bar, CYLRefresh, SVGA, 91 unit tests, quality
+  score in `docs/HarmonyOS.md`). The cross-platform half cannot start: this repository has no Flutter or React Native
+  package (the Flutter and React Native examples in `docs/Example-Animation-Playback.md` are CYLTabBarController's
+  `flutter_cyltabbar` and `react-native-cyltabbar`). TODO (-50), needs the owner: whether to create Flutter and React
+  Native packages of CYLTableViewPlaceHolder (each then ported to OpenHarmony: the Flutter OpenHarmony SDK, then
+  react-native-harmony, per the order in the prompt); not on this machine yet either (no Flutter SDK installed, only
+  the zip).
+
 - **Status:** not started (recorded 2026-11-12, while branch `an earlier parity branch` was in progress). It follows
   the Android task above; when work starts, create a new branch and open its pull request per "A pull request for
   every new branch".
