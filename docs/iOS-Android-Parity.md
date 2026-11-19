@@ -989,11 +989,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStateTrailer` | A trailer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshStateTrailer` |
+| `CYLRefreshStateTrailer` | A trailer with a vertical state text. | `com.cyl.refresh.CYLRefreshStateTrailer` |
 | `CYLRefreshStateTrailer` `stateLabel` | The state text. | `CYLRefreshStateTrailer.stateLabel` |
 | `CYLRefreshStateTrailer` `-setTitle:forState:` | Sets the text shown in [state]. | `CYLRefreshStateTrailer.setTitle(title, state)` |
-| `CYLRefreshStateTrailer` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshStateTrailer.titleForState` |
-| `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | Lays the state label out as a vertical column centered at `centerX`, so the whole text stays readable in every language: CJK text stands upright one character per line (as in MJRefresh) when it fits the height; any ot... | n/a (iOS only: frame layout helper; the Android label is placed by a LinearLayout) |
+| `CYLRefreshStateTrailer` `-titleForState:` | The text shown in [state], as on the state footers. | `CYLRefreshStateTrailer.titleForState` |
+| `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | Method of `CYLRefreshStateTrailer`. | n/a (iOS only: frame layout helper; the Android label is placed by a LinearLayout) |
 
 ## `CYLRefresh/NSBundle+CYLRefresh.h`
 

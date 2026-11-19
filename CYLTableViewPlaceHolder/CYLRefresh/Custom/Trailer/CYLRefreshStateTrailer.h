@@ -5,44 +5,30 @@
 //  Created by kinarobin on 2020/5/3.
 //  Copyright © 2020 小码哥. All rights reserved.
 //
+//  [EN] Swift since 2026-11-20: the class is in `CYLRefreshStateTrailer.swift` (docs/Swift-Migration.md, step 10), with the same
+//       Objective-C API (`stateLabel`, `setTitle:forState:`, `titleForState:`,
+//       `cyl_placeStateLabelAtCenterX:`).
+//       Objective-C code that uses it imports the umbrella header `CYLTableViewPlaceHolder.h`, which brings the
+//       generated Swift header; this header keeps the forward declaration. Objective-C cannot subclass a Swift class:
+//       subclasses are written in Swift.
+//  [CN] 自 2026-11-20 起该类用 Swift 编写（`CYLRefreshStateTrailer.swift`，docs/Swift-Migration.md 第 10 步），
+//       Objective-C API 不变（`stateLabel`、`setTitle:forState:`、`titleForState:`、`cyl_placeStateLabelAtCenterX:`）。
+//       使用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）；本头文件保留前向声明。
+//       Objective-C 不能继承 Swift 类：子类请用 Swift 编写。
+//
 
 #import "CYLRefreshTrailer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 /*!
- * [EN] A trailer that shows a localized text for each state (`setTitle:forState:`).
- * [CN] 按状态显示本地化文字（`setTitle:forState:`）的 trailer。
+ * [EN] A trailer that shows a localized text for each state (`setTitle:forState:`), as a vertical column
+ *      readable in every language (`cyl_placeStateLabelAtCenterX:`).
+ *      The class is Swift (`CYLRefreshStateTrailer.swift`); Objective-C code that messages it imports the umbrella header
+ *      `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 按状态显示本地化文字（`setTitle:forState:`）的 trailer，文字排成任何语言都可读的竖列（`cyl_placeStateLabelAtCenterX:`）。
+ *      该类用 Swift 编写（`CYLRefreshStateTrailer.swift`）；需要调用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLRefreshStateTrailer : CYLRefreshTrailer
-
-#pragma mark - 状态相关
-/*!
- * 显示刷新状态的label
- */
-@property (weak, nonatomic, readonly) UILabel *stateLabel;
-/*!
- * 设置state状态下的文字
- */
-- (instancetype)setTitle:(NSString *)title forState:(CYLRefreshState)state;
-/*!
- * [EN] The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`).
- * [CN] `state` 显示的文字，或 nil（与 `CYLRefreshBackStateFooter` 相同的读取方法）。
- */
-- (nullable NSString *)titleForState:(CYLRefreshState)state;
-/*!
- * [EN] Lays the state label out as a vertical column centered at `centerX`, so the whole text stays readable in every
- *      language: CJK text stands upright one character per line (as in MJRefresh) when it fits the height; any other
- *      text (English, Russian, …) or CJK text that does not fit is rotated 90° clockwise to read top to bottom, and
- *      wraps to more lines instead of being cut off. Returns the column's width. Does nothing to a label with
- *      constraints. Subclasses call it from `placeSubviews`.
- * [CN] 把状态文字排成以 `centerX` 为中心的竖列，使任何语言的文字都能完整、可读地显示：中日韩文字放得下时逐字竖排、保持正立（与
- *      MJRefresh 相同）；其他文字（英文、俄文等）或放不下的中日韩文字顺时针旋转 90°，从上往下读，过长时换行而不是截断。返回竖列宽度。
- *      带约束的 label 不处理。子类在 `placeSubviews` 中调用。
- */
-- (CGFloat)cyl_placeStateLabelAtCenterX:(CGFloat)centerX NS_SWIFT_NAME(cyl_placeStateLabel(centerX:));
-
-@end
+@class CYLRefreshStateTrailer;
 
 NS_ASSUME_NONNULL_END
