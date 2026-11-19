@@ -584,6 +584,19 @@ Objective-C to Swift, and its score after every commit.
     every remaining `.m` is a Swift-compatible shim of something Swift cannot declare (exported C constants and
     functions, `+load`, Objective-C exception guards, variadic methods), and every class is Swift, so the core counts
     as **100 / 100 by rule 6**; the tests (14 Objective-C files under `Tests/`) are excluded until step 13.
+  - 2026-11-20, step 13 (branch `feat/android-refresh-port-followup`), **TODO, in progress**: the tests.
+    **Decision (the owner, 2026-11-20):** asked as a choice for the 14 Objective-C test files, answered "Swift tests +
+    small ObjC smoke test": every test file under `Tests/` becomes Swift with the same assertions and the same test
+    method names (`- (void)testX` is `func testX()`), and one small Objective-C file,
+    `Tests/CYLObjectiveCAPISmokeTests.m`, calls the public Objective-C API surface (each public class through its
+    Objective-C initializers and factories, the categories, the CYLRefresh factories, the variadic shims, the exported
+    constants, the error domains and codes, and the `NSDictionary` entry points given a wrong type), so CI still proves
+    that Objective-C callers compile and work. The smoke file counts as a rule-6 shim. Checks that only Objective-C can
+    express (nil for a nonnull parameter, a wrong type for an `id` parameter) move to the smoke file. Plan: the core
+    runner compiles `Tests/*.swift` and `Tests/*.m` (the smoke file) into the library's module, so the Swift tests reach
+    internal members without `@testable`; the animation runner compiles its three Swift tests against the pods (static
+    and dynamic linkage); the accessibility runner its Swift UI tests and a Swift host app. Targets: core 207 tests plus
+    the smoke tests, animation 13, accessibility 4, with every old test name kept.
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
