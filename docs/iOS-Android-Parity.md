@@ -884,11 +884,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoStateFooter` | An automatic footer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshAutoStateFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoStateFooter` | The automatic footer with a state text. | `com.cyl.refresh.CYLRefreshAutoStateFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | The gap between the icon and the text, in dp. | `CYLRefreshAutoStateFooter.labelLeftInset` |
 | `CYLRefreshAutoStateFooter` `stateLabel` | The state text. | `CYLRefreshAutoStateFooter.stateLabel` |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | The text of [state]. | `CYLRefreshAutoStateFooter.setTitle` |
-| `CYLRefreshAutoStateFooter` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshAutoStateFooter.titleForState` |
+| `CYLRefreshAutoStateFooter` `-titleForState:` | The text of [state]. | `CYLRefreshAutoStateFooter.titleForState` |
 | `CYLRefreshAutoStateFooter` `refreshingTitleHidden` | Whether the text hides while loading. | `CYLRefreshAutoStateFooter.refreshingTitleHidden` |
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
@@ -924,7 +924,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackStateFooter` | A back footer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshBackStateFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackStateFooter` | The back footer with a state text. | `com.cyl.refresh.CYLRefreshBackStateFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackStateFooter` `labelLeftInset` | The gap between the icon and the text, in dp. | `CYLRefreshBackStateFooter.labelLeftInset` |
 | `CYLRefreshBackStateFooter` `stateLabel` | The state text. | `CYLRefreshBackStateFooter.stateLabel` |
 | `CYLRefreshBackStateFooter` `-setTitle:forState:` | The text of [state]. | `CYLRefreshBackStateFooter.setTitle` |

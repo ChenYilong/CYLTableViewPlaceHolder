@@ -19,6 +19,12 @@
 /** 一个新的拖拽 */
 @property (nonatomic) BOOL triggerByDrag;
 @property (nonatomic) NSInteger leftTriggerTimes;
+/// [EN] Begins refreshing through CYLRefreshFooter's `-beginRefreshing`, past this class's trigger-count check: the tap
+///      on `CYLRefreshAutoStateFooter`'s idle text, which reaches it by selector (it was the `TapTriggerFix` category of
+///      `CYLRefreshAutoStateFooter.m` until that class became Swift in step 10 of docs/Swift-Migration.md).
+/// [CN] 经由 CYLRefreshFooter 的 `-beginRefreshing` 开始刷新，跳过本类的触发次数检查：供 `CYLRefreshAutoStateFooter` 点击闲置文字时
+///      按选择器调用（该类在 docs/Swift-Migration.md 第 10 步改为 Swift 之前，它是 `CYLRefreshAutoStateFooter.m` 中的 `TapTriggerFix` 分类）。
+- (void)cyl_beginRefreshingWithoutValidation;
 @end
 
 @implementation CYLRefreshAutoFooter
@@ -152,6 +158,11 @@
         return;
     }
 
+    [super beginRefreshing];
+}
+
+- (void)cyl_beginRefreshingWithoutValidation
+{
     [super beginRefreshing];
 }
 
