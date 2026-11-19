@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The base class of the pull-up (load more) controls; set one as a scroll view's `cyl_footer`.
+ * [CN] 上拉加载更多控件的基类；设为滚动视图的 `cyl_footer` 使用。
+ */
 @interface CYLRefreshFooter : CYLRefreshComponent
 /*!
  * 创建footer
@@ -24,6 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * 提示没有更多的数据
  */
 - (void)endRefreshingWithNoMoreData;
+/*!
+ * [EN] Deprecated: does the same as `endRefreshingWithNoMoreData`; use that instead.
+ * [CN] 已废弃：与 `endRefreshingWithNoMoreData` 作用相同，请改用它。
+ */
 - (void)noticeNoMoreData CYLRefreshDeprecated("使用endRefreshingWithNoMoreData");
 
 /*!

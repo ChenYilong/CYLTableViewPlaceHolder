@@ -10,6 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The base class of the horizontal controls at the trailing end of the content: swiping past the end and
+ *      releasing runs the refreshing callback (for example to open details); set one as a scroll view's
+ *      `cyl_trailer`.
+ * [CN] 位于内容末端的横向控件基类：越过末端滑动并松手时执行刷新回调（例如打开详情）；设为滚动视图的 `cyl_trailer` 使用。
+ */
 @interface CYLRefreshTrailer : CYLRefreshComponent
 
 /*!

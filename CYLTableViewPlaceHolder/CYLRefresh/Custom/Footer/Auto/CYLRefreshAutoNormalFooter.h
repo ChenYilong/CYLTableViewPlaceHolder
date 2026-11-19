@@ -10,7 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The standard automatic footer: the state text with a spinner while loading.
+ * [CN] 标准自动刷新尾：状态文字，加载时显示菊花。
+ */
 @interface CYLRefreshAutoNormalFooter : CYLRefreshAutoStateFooter
+/*!
+ * [EN] The spinner shown while loading, created on first access and hidden when stopped; style it here.
+ * [CN] 加载时显示的菊花，首次访问时创建，停止时隐藏；可在此设置样式。
+ */
 @property (weak, nonatomic, readonly) UIActivityIndicatorView *loadingView;
 /*!
  * [EN] Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`).

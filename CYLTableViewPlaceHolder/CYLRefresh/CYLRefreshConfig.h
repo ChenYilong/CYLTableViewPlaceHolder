@@ -11,6 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The shared settings of every refresh control (language, strings table and bundle, default controls), read
+ *      through `defaultConfig`.
+ * [CN] 所有刷新控件共用的设置（语言、字符串表与 bundle、默认控件），通过 `defaultConfig` 读取。
+ */
 @interface CYLRefreshConfig : NSObject
 
 /*!
@@ -58,7 +63,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (class, nonatomic, readonly) CYLRefreshConfig *defaultConfig NS_SWIFT_NAME(default);
 
+/*!
+ * [EN] Unavailable: use the shared `defaultConfig`.
+ * [CN] 不可用：请使用共享的 `defaultConfig`。
+ */
 - (instancetype)init NS_UNAVAILABLE;
+/*!
+ * [EN] Unavailable: use the shared `defaultConfig`.
+ * [CN] 不可用：请使用共享的 `defaultConfig`。
+ */
 + (instancetype)new NS_UNAVAILABLE;
 
 @end

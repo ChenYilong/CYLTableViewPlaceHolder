@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] A header that shows a localized text for each state and the time of the last refresh.
+ * [CN] 按状态显示本地化文字以及上次刷新时间的刷新头。
+ */
 @interface CYLRefreshStateHeader : CYLRefreshHeader
 #pragma mark - 刷新时间相关
 /*!
@@ -72,8 +76,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) BOOL iconOnTrailingSide;
 @end
 
+/*!
+ * [EN] Chainable setters of the state header for Swift.
+ * [CN] 状态刷新头为 Swift 提供的链式设置方法。
+ */
 @interface CYLRefreshStateHeader (ChainingGrammar)
 
+/*!
+ * [EN] Sets `lastUpdatedTimeText`, the block that turns the last refresh time (nil when there is none) into the text
+ *      shown, and returns the header.
+ * [CN] 设置 `lastUpdatedTimeText`（把上次刷新时间转换为显示文字的 block，没有记录时传入 nil），并返回刷新头本身。
+ */
 - (instancetype)cyl_modifyLastUpdatedTimeText:(NSString * (^)(NSDate * _Nullable lastUpdatedTime))handler;
 
 @end

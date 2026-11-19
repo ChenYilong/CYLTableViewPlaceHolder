@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] A footer that stays hidden below the content and loads more when the user pulls up past it and releases; the
+ *      scroll view rebounds when loading ends. The base of the back footers, with the optional second floor.
+ * [CN] 隐藏在内容下方的刷新尾，用户上拉越过它并松手时加载更多，加载结束后滚动视图回弹。各回弹刷新尾的基类，支持可选的二楼。
+ */
 @interface CYLRefreshBackFooter : CYLRefreshFooter
 
 /*!
@@ -70,13 +75,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (copy, nonatomic, nullable) CYLRefreshComponentAction secondaryClosedBlock;
 /*!
- * [EN] Opens the second floor (flutter_easy_refresh's `openFooterSecondary`). [CN] 打开二楼（对应 flutter_easy_refresh 的 `openFooterSecondary`）。
- */
-/*!
  * [EN] Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0
  *      (default) turns it off. [CN] 越过加载触发点后，以至少这个速度（点/秒）松手即打开二楼；0（默认）关闭。
  */
 @property (nonatomic) CGFloat secondaryVelocity;
+/*!
+ * [EN] Opens the second floor (flutter_easy_refresh's `openFooterSecondary`). [CN] 打开二楼（对应 flutter_easy_refresh 的 `openFooterSecondary`）。
+ */
 - (void)openSecondary;
 /*!
  * [EN] Closes the second floor (flutter_easy_refresh's `closeFooterSecondary`). [CN] 关闭二楼（对应 flutter_easy_refresh 的 `closeFooterSecondary`）。

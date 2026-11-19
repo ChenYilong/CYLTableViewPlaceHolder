@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] A back footer that shows a localized text for each state (`setTitle:forState:`).
+ * [CN] 按状态显示本地化文字（`setTitle:forState:`）的回弹刷新尾。
+ */
 @interface CYLRefreshBackStateFooter : CYLRefreshBackFooter
 /*!
  * 文字距离圈圈、箭头的距离

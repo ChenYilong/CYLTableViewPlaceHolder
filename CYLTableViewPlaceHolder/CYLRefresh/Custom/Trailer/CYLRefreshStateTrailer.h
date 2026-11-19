@@ -11,6 +11,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/*!
+ * [EN] A trailer that shows a localized text for each state (`setTitle:forState:`).
+ * [CN] 按状态显示本地化文字（`setTitle:forState:`）的 trailer。
+ */
 @interface CYLRefreshStateTrailer : CYLRefreshTrailer
 
 #pragma mark - 状态相关

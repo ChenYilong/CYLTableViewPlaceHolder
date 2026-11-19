@@ -215,6 +215,12 @@ typedef void (^CYLRefreshComponentAction)(void);
  * 进入刷新状态
  */
 - (void)beginRefreshing;
+/*!
+ * [EN] Stores `completionBlock` as `beginRefreshingCompletionBlock`, then calls `beginRefreshing`; the block runs
+ *      once the control has entered the refreshing state.
+ * [CN] 把 `completionBlock` 存为 `beginRefreshingCompletionBlock` 后调用
+ *      `beginRefreshing`；控件进入刷新状态后调用该 block。
+ */
 - (void)beginRefreshingWithCompletionBlock:(void (^)(void))completionBlock
     NS_SWIFT_NAME(beginRefreshing(completionBlock:));
 /*!
@@ -225,6 +231,12 @@ typedef void (^CYLRefreshComponentAction)(void);
  * 带动画的结束刷新的回调
  */
 @property (copy, nonatomic, nullable) CYLRefreshComponentAction endRefreshingAnimateCompletionBlock CYLRefreshDeprecated("first deprecated in 3.3.0 - Use `endRefreshingAnimationBeginAction` instead");
+/*!
+ * [EN] Called when the animation that ends a refresh begins (before `endRefreshingCompletionBlock`, which runs when
+ *      it has finished); replaces the deprecated `endRefreshingAnimateCompletionBlock`.
+ * [CN] 结束刷新的动画开始时调用（在动画结束时调用的 `endRefreshingCompletionBlock` 之前）；取代已废弃的
+ *      `endRefreshingAnimateCompletionBlock`。
+ */
 @property (copy, nonatomic, nullable) CYLRefreshComponentAction endRefreshingAnimationBeginAction;
 /*!
  * 结束刷新的回调
@@ -234,6 +246,12 @@ typedef void (^CYLRefreshComponentAction)(void);
  * 结束刷新状态
  */
 - (void)endRefreshing;
+/*!
+ * [EN] Stores `completionBlock` as `endRefreshingCompletionBlock`, then calls `endRefreshing`; the block runs when
+ *      the end animation has finished.
+ * [CN] 把 `completionBlock` 存为 `endRefreshingCompletionBlock` 后调用
+ *      `endRefreshing`；结束动画完成后调用该 block。
+ */
 - (void)endRefreshingWithCompletionBlock:(void (^)(void))completionBlock
     NS_SWIFT_NAME(endRefreshing(completionBlock:));
 /*!
@@ -691,8 +709,22 @@ typedef void (^CYLRefreshComponentAction)(void);
 - (BOOL)openForAutoRefreshWithDuration:(NSTimeInterval)duration;
 @end
 
+/*!
+ * [EN] Label helpers of the refresh controls.
+ * [CN] 刷新控件使用的 UILabel 辅助方法。
+ */
 @interface UILabel(CYLRefresh)
+/*!
+ * [EN] A label styled as the refresh controls' texts: `CYLRefreshLabelFont`, `CYLRefreshLabelTextColor`, centered,
+ *      clear background, flexible width.
+ * [CN] 按刷新控件文字样式创建的
+ *      label：`CYLRefreshLabelFont`、`CYLRefreshLabelTextColor`、居中、透明背景、宽度自适应。
+ */
 + (instancetype)cyl_label;
+/*!
+ * [EN] The width the label's text (or attributed text) needs on one line, in points; 0 when it is empty.
+ * [CN] label 的文字（或富文本）单行显示所需的宽度（点）；为空时为 0。
+ */
 - (CGFloat)cyl_textWidth;
 @end
 
@@ -714,6 +746,10 @@ typedef void (^CYLRefreshComponentAction)(void);
 - (nullable NSString *)cyl_stateTitleForState:(CYLRefreshState)state NS_SWIFT_NAME(cyl_stateTitle(for:));
 @end
 
+/*!
+ * [EN] Chainable setters for Swift: each sets one property of the control and returns it, so calls can be chained.
+ * [CN] 为 Swift 提供的链式设置方法：每个方法设置控件的一个属性并返回控件本身，便于链式调用。
+ */
 @interface CYLRefreshComponent (ChainingGrammar)
 
 #pragma mark - <<< 为 Swift 扩展链式语法 >>> -

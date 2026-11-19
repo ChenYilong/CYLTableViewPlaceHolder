@@ -10,6 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] A footer that sits right after the content and loads more by itself when it scrolls into view (see
+ *      `automaticallyRefresh` and `triggerAutomaticallyRefreshPercent`), or when tapped; the base of the automatic
+ *      footers.
+ * [CN] 紧跟在内容之后的刷新尾，滚动到可见时自动加载更多（见 `automaticallyRefresh` 与
+ *      `triggerAutomaticallyRefreshPercent`），也可点击加载；各自动刷新尾的基类。
+ */
 @interface CYLRefreshAutoFooter : CYLRefreshFooter
 /*!
  * 是否自动刷新(默认为YES)

@@ -13,6 +13,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The refresh controls of a scroll view: header, footer and trailer, and their settings.
+ * [CN] 滚动视图的刷新控件：刷新头、刷新尾、trailer 及其设置。
+ */
 @interface UIScrollView (CYLRefresh)
 /*!
  * 下拉刷新控件
@@ -80,6 +84,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cyl_installDefaultRefreshControls;
 
 #pragma mark - other
+/*!
+ * [EN] The number of rows of a table view, or items of a collection view, over all sections; 0 for any other scroll
+ *      view.
+ * [CN] 表格视图所有 section 的行数之和，或集合视图所有 section 的 item 数之和；其他滚动视图为 0。
+ */
 - (NSInteger)cyl_totalDataCount;
 
 @end

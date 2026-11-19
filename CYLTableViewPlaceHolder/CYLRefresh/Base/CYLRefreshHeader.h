@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] The base class of the pull-down refresh controls: it watches the pull above the content and refreshes on
+ *      release; set one as a scroll view's `cyl_header`.
+ * [CN] 下拉刷新控件的基类：监视内容上方的下拉，松手时刷新；设为滚动视图的 `cyl_header` 使用。
+ */
 @interface CYLRefreshHeader : CYLRefreshComponent
 /*!
  * 创建header

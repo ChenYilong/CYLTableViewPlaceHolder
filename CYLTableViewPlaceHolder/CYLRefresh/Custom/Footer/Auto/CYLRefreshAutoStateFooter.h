@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ * [EN] An automatic footer that shows a localized text for each state (`setTitle:forState:`).
+ * [CN] 按状态显示本地化文字（`setTitle:forState:`）的自动刷新尾。
+ */
 @interface CYLRefreshAutoStateFooter : CYLRefreshAutoFooter
 /*!
  * 文字距离圈圈、箭头的距离

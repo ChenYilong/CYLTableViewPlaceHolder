@@ -27,6 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class CYLPlaceholderView;
 
+/*!
+ * [EN] The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or a
+ *      GIF, Lottie, PAG or Rive animation that plays by the control's state, as the file header describes.
+ * [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片或 GIF、Lottie、PAG、Rive
+ *      动画，按文件开头所述随控件状态播放。
+ */
 @interface CYLRefreshIconView : UIView
 
 /*!
@@ -164,6 +170,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) NSArray<NSString *> *bundledIconAnimationFileNames;
 @end
 
+/*!
+ * [EN] Builders of the item attributes that `setAnimationAttributes:forState:` takes.
+ * [CN] 构造 `setAnimationAttributes:forState:` 所需 item 属性的方法。
+ */
 @interface CYLRefreshIconView (CYLRefreshIconAttributes)
 /*!
  * [EN] The item attributes of an animation file at `size`; nil for an empty path. [CN] 动画文件在 `size` 大小下的 item 属性；路径为空时为 nil。
