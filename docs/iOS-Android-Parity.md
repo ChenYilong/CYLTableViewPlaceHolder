@@ -329,19 +329,19 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshFooter` | The base class of the pull-up (load more) controls; set one as a scroll view's `cyl_footer`. | `com.cyl.refresh.CYLRefreshFooter` |
+| `CYLRefreshFooter` | The iOS `CYLRefreshFooter` on Android: pull up to load more. | `com.cyl.refresh.CYLRefreshFooter` |
 | `CYLRefreshFooter` `+footerWithRefreshingBlock:` | A classic footer calling [block] when it loads. | `CYLRefreshFooter.footerWithRefreshingBlock(context, block)` |
 | `CYLRefreshFooter` `+footerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshFooter`. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` | Ends loading and shows "no more data". | `CYLRefreshFooter.endRefreshingWithNoMoreData()` |
-| `CYLRefreshFooter` `-noticeNoMoreData` | Deprecated: does the same as `endRefreshingWithNoMoreData`; use that instead. | `CYLRefreshFooter.noticeNoMoreData()` |
+| `CYLRefreshFooter` `-noticeNoMoreData` | Shows "no more data". | `CYLRefreshFooter.noticeNoMoreData()` |
 | `CYLRefreshFooter` `-resetNoMoreData` | Clears "no more data". | `CYLRefreshFooter.resetNoMoreData()` |
-| `CYLRefreshFooter` `noMoreData` | YES while the footer shows that all data is loaded (`CYLRefreshStateNoMoreData`). | `CYLRefreshFooter.noMoreData` |
-| `CYLRefreshFooter` `loadsAfterNoMoreData` | Pulling past the end loads again after "no more data": the footer resets and refreshes (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO. | `CYLRefreshFooter.loadsAfterNoMoreData` — on, "no more data" clears right after it shows, so the next pull loads |
+| `CYLRefreshFooter` `noMoreData` | Whether there is no more data. | `CYLRefreshFooter.noMoreData` |
+| `CYLRefreshFooter` `loadsAfterNoMoreData` | Whether a pull still loads after "no more data"; when on, a pull clears "no more data" first. | `CYLRefreshFooter.loadsAfterNoMoreData` — on, "no more data" clears right after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | The bottom inset the footer ignores, in dp: the layout's footer inset start. | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshFooter`. | n/a (iOS only: deprecated iOS aliases) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | The image shown beside the text in the no-more-data state, kept once for both normal footers (`CYLRefreshAutoNormalFooter` / `CYLRefreshBackNormalFooter`, whose `noMoreDataImage` uses it). | `CYLRefreshFooter.cyl_noMoreDataImage` — CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | Shows `image` only in the no-more-data state (nil hides it); call when the image or the state changes. | `CYLRefreshFooter.cyl_updateNoMoreDataImage` — CYLRefreshFooter.cyl_updateNoMoreDataImage(image) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | Places the image left of `label`'s text (`inset` apart), at `size` or, when zero, the image's own size; call from `placeSubviews`. | n/a (iOS only: an iOS layout helper; Android lays the image out in the classic footer view) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | Category. | `CYLRefreshFooter.cyl_noMoreDataImage` — CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | Method of `CYLRefreshFooter(CYLRefreshNoMoreDataImage)`. | `CYLRefreshFooter.cyl_updateNoMoreDataImage` — CYLRefreshFooter.cyl_updateNoMoreDataImage(image) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | Method of `CYLRefreshFooter(CYLRefreshNoMoreDataImage)`. | n/a (iOS only: an iOS layout helper; Android lays the image out in the classic footer view) |
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
 
