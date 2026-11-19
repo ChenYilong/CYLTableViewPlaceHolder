@@ -275,8 +275,11 @@ spans several lines must reach them as one comment.
   When a platform's official rule changes, update this table and follow it.
 - **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a one-line
   block, an opening marker with text after it, a line inside a block that does not start with `*`, a trailing comment
-  after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review
-  new public declarations for a missing documentation comment by hand.
+  after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. It also
+  fails on a public declaration without a documentation comment directly above it (classes, categories, protocols,
+  methods, properties, enums and each enum value, typedefs, exported constants and functions and macros of the public
+  headers; `public` / `open` Swift declarations and the cases of public enums, overrides excepted); `--list` prints
+  only those declarations.
 
 ### Reuse CYLPlaceholderView in the core
 

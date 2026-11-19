@@ -116,7 +116,8 @@ Before committing a verified change, check the message contains the author line
 Run `python3 scripts/check_doc_comments.py` after changing a public header or a Swift file of the library: every
 documentation comment, single-line or multi-line, is a three-line-or-longer `/*!` (Objective-C) or `/**` (Swift) block
 with the markers on their own lines, no trailing comment follows code, and a file never mixes formats
-(`instructions.md`, "Code conventions").
+(`instructions.md`, "Code conventions"). It also fails on a public declaration without a documentation comment
+(`--list` prints them).
 
 ## License in every published package
 
