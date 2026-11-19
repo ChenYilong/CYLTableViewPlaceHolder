@@ -117,7 +117,9 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   action = ENV.fetch('CYL_TEST_ACTION', 'test')
   destination = ENV.fetch('DESTINATION', action == 'test' ? 'platform=iOS Simulator,name=iPhone 15,OS=17.5' : 'generic/platform=iOS Simulator')
   signing = ENV['DEVELOPMENT_TEAM'].to_s.empty? ? ['CODE_SIGNING_ALLOWED=NO'] : ['-allowProvisioningUpdates']
+  # CYL_ONLY_TESTING=PlaceholderTests/testName runs one test (xcodebuild -only-testing), e.g. to repeat it under load.
+  only = ENV['CYL_ONLY_TESTING'].to_s.empty? ? [] : ["-only-testing:#{ENV['CYL_ONLY_TESTING']}"]
   success = system('xcodebuild', action, '-workspace', File.join(dir, 'Tests.xcworkspace'), '-scheme', 'PlaceholderTests',
-                   '-destination', destination, '-derivedDataPath', File.join(dir, 'DerivedData'), *signing)
+                   '-destination', destination, '-derivedDataPath', File.join(dir, 'DerivedData'), *only, *signing)
   exit(success ? 0 : 1)
 end
