@@ -157,16 +157,21 @@ static NSString *const CYLEmptyLottie = @"{\"v\":\"5.7.4\",\"fr\":30,\"ip\":0,\"
         [placeholder playPlaceholderAnimation];
         XCTAssertTrue([[lottie valueForKey:@"isAnimationPlaying"] boolValue]);
         // A one-shot animation that finished replays from progress 0 (the examples' "Play all" with the loop off).
+        // Polled at speed 1, not sampled once after a fixed wait: a slow runner can deliver a single late sample after
+        // the replay already ended on its last frame (seen: 0.99999 at speed 2). Without a replay the progress stays at 1.
         placeholder.animationRepeatCount = 1;
+        XCTAssertTrue([placeholder setPlaceholderAnimationSpeed:1]);
         [placeholder showPlaceholderAnimationLastFrame];
         XCTAssertEqualWithAccuracy([[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue], 1, 0.01);
         [placeholder playPlaceholderAnimation];
         XCTAssertTrue([[lottie valueForKey:@"isAnimationPlaying"] boolValue]);
-        XCTestExpectation *replayed = [self expectationWithDescription:@"Lottie replays from 0"];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
-                       dispatch_get_main_queue(), ^{ [replayed fulfill]; });
-        [self waitForExpectations:@[replayed] timeout:15];
-        XCTAssertLessThan([[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue], 0.9,
+        double lowestProgress = [[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue];
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
+        while (lowestProgress >= 0.9 && deadline.timeIntervalSinceNow > 0) {
+            [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            lowestProgress = MIN(lowestProgress, [[lottie valueForKey:@"realtimeAnimationProgress"] doubleValue]);
+        }
+        XCTAssertLessThan(lowestProgress, 0.9,
                           @"the 1 s animation restarted at 0, it did not stay on its last frame");
     }
     [placeholder removeFromSuperview];
