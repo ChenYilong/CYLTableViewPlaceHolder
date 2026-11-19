@@ -12,8 +12,8 @@ import UIKit
 import CYLTableViewPlaceHolder
 
 /// Simulated loading time of the header and footer; `-slowLoad` (UI tests, MJRefresh #1483) makes it long enough to
-/// drag the collection again while the header refreshes.
-private let CYLDuration: TimeInterval = ProcessInfo.processInfo.arguments.contains("-slowLoad") ? 8 : 0.8
+/// drag the collection again while the header refreshes (20 s: three drags took longer than 8 s on a loaded CI runner).
+private let CYLDuration: TimeInterval = ProcessInfo.processInfo.arguments.contains("-slowLoad") ? 20 : 0.8
 private let CYLCollectionViewCellIdentifier = "color"
 
 final class CYLCollectionViewController: UICollectionViewController {

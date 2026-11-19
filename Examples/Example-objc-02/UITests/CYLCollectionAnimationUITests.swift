@@ -38,7 +38,7 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         }
     }
 
-    // MJRefresh #1483: drag the collection again, down and up, while the header refreshes (`-slowLoad`: 8 s), three
+    // MJRefresh #1483: drag the collection again, down and up, while the header refreshes (`-slowLoad`: 20 s), three
     // refreshes in a row; after each one the first item is back at its launch position, not moved up.
     @MainActor
     func testDraggingDuringHeaderRefreshKeepsFirstItemPosition() {
@@ -64,7 +64,7 @@ final class CYLCollectionAnimationUITests: XCTestCase {
             top.press(forDuration: 0.1, thenDragTo: middle)
             // The push up may reach the end and start the footer too (title "Footer refreshing"), as a user's would.
             XCTAssertFalse(app.navigationBars["Header completed \(index)"].exists, "the drags happen during the refresh")
-            XCTAssertTrue(app.navigationBars["Header completed \(index)"].waitForExistence(timeout: 15))
+            XCTAssertTrue(app.navigationBars["Header completed \(index)"].waitForExistence(timeout: 30))
             // The dragged content may rest below the top; scroll back with the status bar like a user.
             app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.01)).tap()
             let deadline = Date().addingTimeInterval(10)
