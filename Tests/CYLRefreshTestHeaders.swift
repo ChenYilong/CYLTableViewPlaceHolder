@@ -2,18 +2,18 @@
 //  CYLRefreshTestHeaders.swift
 //  CYLTableViewPlaceHolder tests
 //
-//  [EN] The refresh control subclasses the Objective-C tests use. Objective-C cannot subclass a Swift class, so since the
-//       controls moved to Swift (docs/Swift-Migration.md, step 9) these helpers are Swift; the Objective-C tests get them
-//       from the test module's generated Swift header (through `CYLTableViewPlaceHolder.h`) under the same class names.
-//  [CN] Objective-C 测试使用的刷新控件子类。Objective-C 不能继承 Swift 类，因此在控件改为 Swift（docs/Swift-Migration.md 第 9 步）之后，
-//       这些辅助类用 Swift 编写；Objective-C 测试通过测试模块生成的 Swift 头文件（经由 `CYLTableViewPlaceHolder.h`）以相同类名使用它们。
+//  [EN] The refresh control subclasses the tests use (Tests/CYLRefreshStylesAPITests.swift and
+//       Tests/CYLRefreshDrawnHeaderTests.swift). Objective-C cannot subclass a Swift class, so since the controls moved to
+//       Swift (docs/Swift-Migration.md, step 9) these helpers are Swift; the tests are Swift too since step 13.
+//  [CN] 测试使用的刷新控件子类（Tests/CYLRefreshStylesAPITests.swift 与 Tests/CYLRefreshDrawnHeaderTests.swift）。Objective-C 不能继承
+//       Swift 类，因此在控件改为 Swift（docs/Swift-Migration.md 第 9 步）之后，这些辅助类用 Swift 编写；自第 13 步起测试本身也用 Swift 编写。
 //
 
 import UIKit
 
 /**
- * [EN] Records every status the drawn header base reports (`Tests/CYLRefreshDrawnHeaderTests.m`).
- * [CN] 记录手绘刷新头基类报告的每个状态（`Tests/CYLRefreshDrawnHeaderTests.m`）。
+ * [EN] Records every status the drawn header base reports (`Tests/CYLRefreshDrawnHeaderTests.swift`).
+ * [CN] 记录手绘刷新头基类报告的每个状态（`Tests/CYLRefreshDrawnHeaderTests.swift`）。
  */
 @objc(CYLStatusRecordingHeader)
 public final class CYLStatusRecordingHeader: CYLRefreshBezierRadarHeader {
@@ -35,8 +35,8 @@ public final class CYLStatusRecordingHeader: CYLRefreshBezierRadarHeader {
 }
 
 /**
- * [EN] Records the subclass hooks of a normal header (`Tests/CYLRefreshStylesAPITests.m`).
- * [CN] 记录普通刷新头的子类钩子（`Tests/CYLRefreshStylesAPITests.m`）。
+ * [EN] Records the subclass hooks of a normal header (`Tests/CYLRefreshStylesAPITests.swift`).
+ * [CN] 记录普通刷新头的子类钩子（`Tests/CYLRefreshStylesAPITests.swift`）。
  */
 @objc(CYLHookHeader)
 public final class CYLHookHeader: CYLRefreshNormalHeader {
@@ -84,8 +84,8 @@ public final class CYLHookHeader: CYLRefreshNormalHeader {
 }
 
 /**
- * [EN] Records every `autoRefreshDidChange:` of a normal header (`Tests/CYLRefreshStylesAPITests.m`).
- * [CN] 记录普通刷新头的每次 `autoRefreshDidChange:`（`Tests/CYLRefreshStylesAPITests.m`）。
+ * [EN] Records every `autoRefreshDidChange:` of a normal header (`Tests/CYLRefreshStylesAPITests.swift`).
+ * [CN] 记录普通刷新头的每次 `autoRefreshDidChange:`（`Tests/CYLRefreshStylesAPITests.swift`）。
  */
 @objc(CYLAutoHookHeader)
 public final class CYLAutoHookHeader: CYLRefreshNormalHeader {
