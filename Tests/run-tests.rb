@@ -25,10 +25,15 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     # CYL_EXTRA_CFLAGS adds more (scripts/ios12-build.sh: -Werror=unguarded-availability).
     config.build_settings['OTHER_CFLAGS'] = "$(inherited) -Werror=unguarded-availability-new #{ENV['CYL_EXTRA_CFLAGS']}".strip
   end
-  ['Tests/PlaceholderTests.m', 'Tests/CYLAutomaticPlaceholderTests.m', 'Tests/CYLPlaceholderScenarioTests.m',
-   'Tests/CYLRefreshIconTests.m', 'Tests/CYLRefreshStylesAPITests.m', 'Tests/CYLRefreshDrawnHeaderTests.m',
-   # The refresh control subclasses the Objective-C tests use are Swift (Objective-C cannot subclass the Swift controls).
-   'Tests/CYLRefreshTestHeaders.swift', 'Tests/CYLPlaceholderStatusViewTests.m', 'Tests/CYLPlaceholderHUDTests.m', 'Tests/CYLAndroidParityTests.m', 'Tests/CYLRefreshConsolidationTests.m',
+  # The tests are Swift since 2026-11-20 (docs/Swift-Migration.md, step 13), compiled into the library's module, so they
+  # reach internal members without @testable; the one Objective-C file is the smoke test of the Objective-C API
+  # (Tests/CYLObjectiveCAPISmokeTests.m). The animation and accessibility tests have their own runners.
+  other_runners = %w[CYLPlaceholderLottiePlaybackTests CYLPlaceholderBackendPlaybackTests CYLPlaceholderAnimationRegistryTests
+                     CYLPlaceholderAccessibilityUITests]
+  tests = Dir.glob(File.join(root, 'Tests/*.{swift,m}')).reject do |path|
+    File.basename(path).start_with?('._') || other_runners.include?(File.basename(path, '.*'))
+  end
+  tests.sort.map { |path| path.delete_prefix("#{root}/") }.concat([
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholder.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIScrollView+CYLPlaceholderSupport.m',
@@ -46,7 +51,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUDSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitorSupport.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.swift'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.swift']).each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
