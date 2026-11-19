@@ -163,7 +163,30 @@ class CYLPlaceholderStackView internal constructor(
      * Adds [component] at the end (`appendComponent:`).
      */
     fun appendComponent(component: CYLPlaceholderComponent) {
-        appendComponentView(viewFor(component), component.action, component.spacingBefore)
+        val view = viewFor(component)
+        appendComponentView(view, component.action, component.spacingBefore)
+        if (component.action != null) showTapsWithStyle(view, component)
+    }
+
+    // iOS `tapHighlightStyle` of a component that acts: a finger on it dims it (Dim, the default), shrinks it to 95 %
+    // (Shrink) or leaves it as it is (None); the tap still reaches the click listener.
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private fun showTapsWithStyle(view: View, component: CYLPlaceholderComponent) {
+        view.setOnTouchListener { touched, event ->
+            val style = component.tapHighlightStyle
+            val pressed = (event.actionMasked == android.view.MotionEvent.ACTION_DOWN) && touched.isEnabled &&
+                component.interactionEnabled && style != CYLPlaceholderTapHighlightStyle.None
+            when (event.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN, android.view.MotionEvent.ACTION_UP,
+                android.view.MotionEvent.ACTION_CANCEL -> {
+                    touched.alpha = if (pressed && style == CYLPlaceholderTapHighlightStyle.Dim) 0.5f else 1f
+                    val scale = if (pressed && style == CYLPlaceholderTapHighlightStyle.Shrink) 0.95f else 1f
+                    touched.scaleX = scale
+                    touched.scaleY = scale
+                }
+            }
+            false
+        }
     }
 
     /**

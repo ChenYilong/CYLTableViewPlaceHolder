@@ -64,6 +64,17 @@ open class StoreHouseHeader @JvmOverloads constructor(context: Context, attrs: A
     @JvmField protected var mProgress = 0f
 
     /**
+     * Whether the loading flash runs back and forth instead of one way (iOS `enableReverseFlash`). Default false.
+     */
+    @JvmField var mReverseFlash = false
+
+    /**
+     * Whether the bars fade in while they assemble with the pull (iOS `enableFadeAnimation`); false shows them at
+     * full alpha. Default true.
+     */
+    @JvmField var mFadeAnimation = true
+
+    /**
      * The word's width.
      */
     @JvmField protected var mDrawZoneWidth = 0
@@ -198,7 +209,7 @@ open class StoreHouseHeader @JvmOverloads constructor(context: Context, attrs: A
                     mMatrix.postRotate(360 * realProgress)
                     mMatrix.postScale(realProgress, realProgress)
                     mMatrix.postTranslate(offsetX, offsetY)
-                    item.setAlpha(mBarDarkAlpha * realProgress)
+                    item.setAlpha(if (mFadeAnimation) mBarDarkAlpha * realProgress else mBarDarkAlpha)
                     canvas.concat(mMatrix)
                 }
             }
@@ -388,6 +399,8 @@ open class StoreHouseHeader @JvmOverloads constructor(context: Context, attrs: A
                 var index = i * mCountPerSeg + pos
                 if (index > mTick) continue
                 index %= mItemList.size
+                // Back and forth: every other pass over the bars runs from the last one to the first.
+                if (mReverseFlash && (mTick / mItemList.size) % 2 == 1) index = mItemList.size - 1 - index
                 val item = mItemList[index]
                 item.fillAfter = false
                 item.isFillEnabled = true

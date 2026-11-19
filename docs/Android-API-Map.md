@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：95 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 597、partial 63、planned 0、n/a 194）。 | **Migration score: 95 / 100** (done + 0.5 × partial over 660 counted symbols; done 597, partial 63, planned 0, n/a 194). |
+| **迁移完成率：96 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 602、partial 58、planned 0、n/a 194）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 660 counted symbols; done 602, partial 58, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -555,8 +555,8 @@
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHouseHeader` | `com.cyl.refresh.CYLRefreshStoreHouseHeader` | done |  |
 | `CYLRefreshStoreHouseHeader` `lineWidth` | `CYLRefreshStoreHouseHeader.lineWidth` | done |  |
-| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | `CYLRefreshStoreHouseHeader.enableReverseFlash` | partial | kept; the Android header flashes one way |
-| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | `CYLRefreshStoreHouseHeader.enableFadeAnimation` | partial | kept; the Android header always fades the lines in |
+| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | `CYLRefreshStoreHouseHeader.enableReverseFlash` | done | every other pass of the loading flash runs from the last bar to the first |
+| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | `CYLRefreshStoreHouseHeader.enableFadeAnimation` | done | false shows the assembling bars at full alpha |
 | `CYLRefreshStoreHouseHeader` `+newWithString:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
 | `CYLRefreshStoreHouseHeader` `+newWithString:scale:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
 | `CYLRefreshStoreHouseHeader` `+newWithString:scale:padding:` | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` | done |  |
@@ -1018,7 +1018,7 @@
 | `CYLPlaceholderComponent` `imageBundle` | — | n/a | the iOS resource bundle; Android components take a drawable resource |
 | `CYLPlaceholderComponent` `spacingBefore` | `CYLPlaceholderComponent.spacingBefore (dp)` | done |  |
 | `CYLPlaceholderComponent` `interactionEnabled` | `CYLPlaceholderComponent.interactionEnabled` | done |  |
-| `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` | partial | kept; the stacked views show taps their own way |
+| `CYLPlaceholderComponent` `tapHighlightStyle` | `CYLPlaceholderComponent.tapHighlightStyle` | done | a finger on a component with an action dims it, shrinks it to 95 % or leaves it (the stack view) |
 | `CYLPlaceholderComponent` `animationRepeatCount` | `CYLPlaceholderComponent.animationRepeatCount` | partial | passed to the stack view's CYLPlaceholderView; applies when the item plays an animation (GIF repeats the count, Lottie / PAG / Rive loop above 1) |
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` | partial | the keys of attributes |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.icon(image, title, side, tinted, action)` | partial | builds an icon component from the fallback image; a scenario's stack view plays the scenario's animation in its place (CYLAnimatedItem engine, when the app adds the library) |
@@ -1105,8 +1105,8 @@
 | `CYLPlaceholderBadgeAppearance` `font` | `CYLPlaceholderBadgeAppearance.font` | partial | the text size in sp (Android takes no UIFont) |
 | `CYLPlaceholderBadgeAppearance` `cornerRadius` | `CYLPlaceholderBadgeAppearance.cornerRadius` | done |  |
 | `CYLPlaceholderBadgeAppearance` `contentInsets` | `CYLPlaceholderBadgeAppearance.contentInsets` | done |  |
-| `CYLPlaceholderBadgeAppearance` `animationDuration` | `CYLPlaceholderBadgeAppearance.animationDuration` | partial | kept; badge changes do not animate yet |
-| `CYLPlaceholderBadgeAppearance` `animatesChanges` | `CYLPlaceholderBadgeAppearance.animatesChanges` | partial | kept; badge changes do not animate yet |
+| `CYLPlaceholderBadgeAppearance` `animationDuration` | `CYLPlaceholderBadgeAppearance.animationDuration` | done | the pop of a badge change (0.6 to its size) |
+| `CYLPlaceholderBadgeAppearance` `animatesChanges` | `CYLPlaceholderBadgeAppearance.animatesChanges` | done | pops a badge change when on screen and animations are on |
 | `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | `CYLPlaceholderBadgeAppearance.sharedAppearance` | done |  |
 | `CYLPlaceholderAnimationPlayer` | `com.cyl.placeholder.CYLPlaceholderAnimationPlayer` | done |  |
 | `CYLPlaceholderAnimationPlayer` `ready` | `CYLPlaceholderAnimationPlayer.ready` | done |  |

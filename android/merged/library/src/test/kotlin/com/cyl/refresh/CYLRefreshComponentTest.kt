@@ -643,4 +643,17 @@ class CYLRefreshComponentTest {
     }
 
 
+
+    /** iOS `enableReverseFlash` / `enableFadeAnimation` reach the drawn StoreHouse view. */
+    @Test
+    fun storeHouseReverseFlashAndFadeOptions() {
+        val header = CYLRefreshStoreHouseHeader(activity)
+        val view = header.view as com.cyl.refresh.header.StoreHouseHeader
+        assertEquals(false, header.enableReverseFlash)
+        assertEquals(true, header.enableFadeAnimation)
+        header.enableReverseFlash = true
+        header.enableFadeAnimation = false
+        assertEquals(true, view.mReverseFlash)
+        assertEquals(false, view.mFadeAnimation)
+    }
 }

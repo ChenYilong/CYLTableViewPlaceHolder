@@ -205,10 +205,10 @@ class CYLPlaceholderBadgeAppearance {
     /** The text's insets, in dp: top, left, bottom, right. */
     var contentInsets: FloatArray = floatArrayOf(1f, 5f, 1f, 5f)
 
-    /** How long a change animates, in seconds. */
+    /** How long a badge change pops (scales from 0.6 to its size), in seconds (`animationDuration`). */
     var animationDuration: Double = 0.2
 
-    /** Whether changes animate. */
+    /** Whether a badge change pops; off when the device turns animations off (`animatesChanges`). */
     var animatesChanges: Boolean = true
 
     /**
@@ -489,6 +489,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
     /** The badge's value: null for none, "" for a dot, else the text (`badgeValue`). */
     var badgeValue: String? = null
         set(value) {
+            val changed = field != value
             field = value
             showBadgeWithStyle(
                 when {
@@ -499,7 +500,26 @@ class CYLPlaceholderView @JvmOverloads constructor(
                 },
                 value,
             )
+            if (changed) popBadge()
         }
+
+    /**
+     * iOS `cyl_setBadgeValue:`: a new value pops the badge from 0.6 to its size over the shared appearance's
+     * `animationDuration`, when `animatesChanges` is on, the view is on screen and animations are not turned off.
+     */
+    private fun popBadge() {
+        val appearance = CYLPlaceholderBadgeAppearance.sharedAppearance
+        val animatorScale = runCatching {
+            android.provider.Settings.Global.getFloat(context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
+        }.getOrDefault(1f)
+        if (badgeValue == null || !appearance.animatesChanges || appearance.animationDuration <= 0 || !isAttachedToWindow ||
+            animatorScale == 0f) return
+        badgeLabel.animate().cancel()
+        badgeLabel.scaleX = 0.6f
+        badgeLabel.scaleY = 0.6f
+        badgeLabel.animate().scaleX(1f).scaleY(1f).setDuration((appearance.animationDuration * 1000).toLong())
+            .setInterpolator(android.view.animation.OvershootInterpolator()).start()
+    }
 
     /** The badge's offset from the icon's top right corner, in dp, x and y (`badgeCenterOffset`). */
     var badgeCenterOffset: FloatArray = floatArrayOf(0f, 0f)

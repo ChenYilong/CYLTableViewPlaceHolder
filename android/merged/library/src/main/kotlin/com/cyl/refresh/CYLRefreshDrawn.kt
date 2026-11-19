@@ -351,14 +351,19 @@ open class CYLRefreshStoreHouseHeader(context: Context) : CYLRefreshDrawnHeader(
         }
 
     /**
-     * Whether the flash runs back and forth (`enableReverseFlash`); the Android header flashes one way.
+     * Whether the loading flash runs back and forth (`enableReverseFlash`). Default false.
      */
-    var enableReverseFlash: Boolean = false
+    var enableReverseFlash: Boolean
+        get() = storeHouse.mReverseFlash
+        set(value) { storeHouse.mReverseFlash = value }
 
     /**
-     * Whether the lines fade in as they assemble (`enableFadeAnimation`); the Android header always fades them.
+     * Whether the lines fade in as they assemble with the pull (`enableFadeAnimation`); false shows them at full
+     * alpha. Default true.
      */
-    var enableFadeAnimation: Boolean = true
+    var enableFadeAnimation: Boolean
+        get() = storeHouse.mFadeAnimation
+        set(value) { storeHouse.mFadeAnimation = value }
 
     /**
      * Draws [string] at the default size (`initLinesWithString:`).

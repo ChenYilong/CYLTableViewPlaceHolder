@@ -161,4 +161,23 @@ class CYLPlaceholderStackViewTest {
         // Every bundled scenario file is either a spinner or plays once.
         assertTrue(catalog.allAnimationFileNames().any { !catalog.animationLoopsByDefault(it) })
     }
+
+    /** iOS `tapHighlightStyle`: a finger on a component with an action dims or shrinks it, None leaves it. */
+    @Test
+    fun componentTapHighlightStyles() {
+        fun touch(view: android.view.View, action: Int) = view.dispatchTouchEvent(android.view.MotionEvent.obtain(0, 0, action, 1f, 1f, 0))
+        for ((style, alpha, scale) in listOf(Triple(CYLPlaceholderTapHighlightStyle.Dim, 0.5f, 1f),
+                Triple(CYLPlaceholderTapHighlightStyle.Shrink, 1f, 0.95f), Triple(CYLPlaceholderTapHighlightStyle.None, 1f, 1f))) {
+            val button = CYLPlaceholderComponent.buttonComponentWithTitle("Retry", CYLPlaceholderButtonStyle.Filled, CYLPlaceholderAction.Retry)
+            button.tapHighlightStyle = style
+            val stack = CYLPlaceholderStackView(context, listOf(button))
+            val view = stack.componentViewForAction(CYLPlaceholderAction.Retry)!!
+            touch(view, android.view.MotionEvent.ACTION_DOWN)
+            assertEquals("$style alpha", alpha, view.alpha, 0.001f)
+            assertEquals("$style scale", scale, view.scaleX, 0.001f)
+            touch(view, android.view.MotionEvent.ACTION_UP)
+            assertEquals(1f, view.alpha, 0.001f)
+            assertEquals(1f, view.scaleX, 0.001f)
+        }
+    }
 }

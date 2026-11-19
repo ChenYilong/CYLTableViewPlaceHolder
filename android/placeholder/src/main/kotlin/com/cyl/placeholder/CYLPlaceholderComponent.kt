@@ -54,7 +54,8 @@ class CYLPlaceholderComponent private constructor(
         internal set
 
     /**
-     * How a tap on the component is shown (`tapHighlightStyle`); kept for views that show taps.
+     * How a finger on a component with an action is shown in the stack view (`tapHighlightStyle`): Dim (default),
+     * Shrink or None.
      */
     var tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim
 

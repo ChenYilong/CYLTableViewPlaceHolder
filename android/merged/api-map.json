@@ -73,14 +73,14 @@
   "android": "CYLPlaceholderBadgeAppearance.sharedAppearance"
  },
  "CYLPlaceholderBadgeAppearance animatesChanges": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.animatesChanges",
-  "note": "kept; badge changes do not animate yet"
+  "note": "pops a badge change when on screen and animations are on"
  },
  "CYLPlaceholderBadgeAppearance animationDuration": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.animationDuration",
-  "note": "kept; badge changes do not animate yet"
+  "note": "the pop of a badge change (0.6 to its size)"
  },
  "CYLPlaceholderBadgeAppearance backgroundColor": {
   "status": "done",
@@ -178,9 +178,9 @@
   "android": "CYLPlaceholderComponent.spacingBefore (dp)"
  },
  "CYLPlaceholderComponent tapHighlightStyle": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.tapHighlightStyle",
-  "note": "kept; the stacked views show taps their own way"
+  "note": "a finger on a component with an action dims it, shrinks it to 95 % or leaves it (the stack view)"
  },
  "CYLPlaceholderHUD": {
   "status": "partial",
@@ -2516,14 +2516,14 @@
   "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
  },
  "CYLRefreshStoreHouseHeader enableFadeAnimation": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshStoreHouseHeader.enableFadeAnimation",
-  "note": "kept; the Android header always fades the lines in"
+  "note": "false shows the assembling bars at full alpha"
  },
  "CYLRefreshStoreHouseHeader enableReverseFlash": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshStoreHouseHeader.enableReverseFlash",
-  "note": "kept; the Android header flashes one way"
+  "note": "every other pass of the loading flash runs from the last bar to the first"
  },
  "CYLRefreshStoreHouseHeader lineWidth": {
   "status": "done",

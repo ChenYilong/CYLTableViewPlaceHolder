@@ -175,4 +175,26 @@ class CYLPlaceholderViewTest {
         assertEquals(null, CYLPlaceholderView.fromItemAttributes(context, mapOf("CYLPlaceholderItemImages" to listOf("x"))) { message = it.message })
         assertEquals("CYLPlaceholderItemImages must be a list of drawables.", message)
     }
+
+    /** iOS `cyl_setBadgeValue:`: a new value pops the badge from 0.6 when animatesChanges is on and it is on screen. */
+    @Test
+    fun badgeChangesPopWhenAnimated() {
+        val activity = org.robolectric.Robolectric.buildActivity(android.app.Activity::class.java).setup().get()
+        val view = CYLPlaceholderView(activity)
+        activity.setContentView(view)
+        val appearance = CYLPlaceholderBadgeAppearance.sharedAppearance
+        val wasAnimating = appearance.animatesChanges
+        try {
+            appearance.animatesChanges = true
+            view.badgeValue = "7"
+            assertEquals("starts small", 0.6f, view.badgeLabel.scaleX, 0.001f)
+            org.robolectric.shadows.ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS)
+            assertEquals("ends at its size", 1f, view.badgeLabel.scaleX, 0.001f)
+            appearance.animatesChanges = false
+            view.badgeValue = "8"
+            assertEquals("no pop when off", 1f, view.badgeLabel.scaleX, 0.001f)
+        } finally {
+            appearance.animatesChanges = wasAnimating
+        }
+    }
 }
