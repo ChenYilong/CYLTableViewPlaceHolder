@@ -16,6 +16,9 @@
 @property (nonatomic, assign) CFTimeInterval timeOffset;
 
 @property (nonatomic, copy) NSArray<NSNumber*> *points;
+/// [EN] A target or a delegate was set: when both are gone, nobody reads the value any more.
+/// [CN] 设置过 target 或 delegate：两者都释放后，再没有人读取数值。
+@property (nonatomic, assign) BOOL cyl_hasOwner;
 
 @end
 
@@ -54,6 +57,12 @@
 - (void)setTarget:(id)target selector:(SEL)action {
     self.target = target;
     self.action = action;
+    if (target) self.cyl_hasOwner = YES;
+}
+
+- (void)setDelegate:(id<CYLRefreshValueAnimatorDelegate>)delegate {
+    _delegate = delegate;
+    if (delegate) self.cyl_hasOwner = YES;
 }
 
 - (void)setFrom:(CGFloat)from to:(CGFloat)to {
@@ -145,6 +154,15 @@
 }
 
 - (void)step:(CADisplayLink*) link {
+    // [EN] The display link retains the animator, and an endless animator (repeatCount INFINITY) never stops by itself:
+    //      once its owner (target and delegate, both weak) is released, stop, so the link and the animator are released
+    //      instead of ticking every frame for the rest of the app's life.
+    // [CN] display link 强持有动画器，无限重复（repeatCount INFINITY）的动画器不会自己停止：其拥有者（target 与 delegate，都是弱引用）
+    //      释放后就停止，使 display link 与动画器被释放，而不是在应用余下的生命周期里每帧空转。
+    if (self.cyl_hasOwner && !self.target && !self.delegate) {
+        [self stop];
+        return;
+    }
     CFTimeInterval thisStep = CACurrentMediaTime();
     CFTimeInterval stepDuration = thisStep - self.timeStart;
     //update time offset

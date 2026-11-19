@@ -163,7 +163,11 @@ static BOOL CYLRefreshDefaultAutoHide(void)
     [self.cyl_header endRefreshingAfterDelay:delay success:success];
     CYLRefreshFooter *footer = self.cyl_footer;
     if (!footer) return;
+    // [EN] Weak, as in cyl_endLoadingMoreAfterDelay: a pending delay does not keep a torn-down footer alive.
+    // [CN] 弱引用，与 cyl_endLoadingMoreAfterDelay 相同：等待中的延迟不会让已销毁的刷新尾继续存活。
+    __weak CYLRefreshFooter *weakFooter = footer;
     void (^apply)(void) = ^{
+        CYLRefreshFooter *footer = weakFooter;
         if (noMoreData) {
             [footer endRefreshingWithNoMoreData];
         } else if (footer.isNoMoreData) {

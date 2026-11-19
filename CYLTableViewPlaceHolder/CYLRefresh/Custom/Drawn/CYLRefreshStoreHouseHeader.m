@@ -38,6 +38,10 @@
 
 @implementation CYLRefreshStoreHouseHeader
 
+- (void)dealloc {
+    [_timerLoading invalidate];
+}
+
 + (instancetype)newWithString:(NSString *)string {
     return [self newWithString:string scale:DEFAULT_SCALE];
 }
@@ -152,8 +156,21 @@
     [self.animatorLoading setRepeatCount:INFINITY];
     [self.animatorLoading start];
     
-    SEL action = @selector(onAnimationTimer);
-    NSTimer *timer = [NSTimer timerWithTimeInterval:0.075 target:self selector:action userInfo:nil repeats:TRUE];
+    // [EN] A block timer holding the header weakly: a target-action timer retains its target, and the run loop retains a
+    //      repeating timer until it is invalidated, which happened only on the next tick after the refresh ended. A
+    //      header torn down while refreshing (its controller closed) therefore stayed alive, ticking, for ever.
+    // [CN] 用弱引用刷新头的 block 定时器：target-action 定时器强持有 target，run loop 又持有重复定时器直到它失效，而失效只发生在刷新结束后的
+    //      下一次触发。刷新中被销毁的刷新头（控制器已关闭）因此永远不会释放，并一直触发。
+    [self.timerLoading invalidate];
+    __weak typeof(self) weakSelf = self;
+    NSTimer *timer = [NSTimer timerWithTimeInterval:0.075 repeats:YES block:^(NSTimer *aTimer) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            [aTimer invalidate];
+            return;
+        }
+        [self onAnimationTimer];
+    }];
     [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     [self setTimerLoading:timer];
 }

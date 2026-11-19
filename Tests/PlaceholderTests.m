@@ -3,6 +3,7 @@
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h"
 #import "../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h"
 #import "CYLRefresh.h"
+#import "CYLRefreshValueAnimator.h"
 // CYLPlaceholderView is Swift: its interface comes with the umbrella header (the generated Swift header).
 #import "CYLTableViewPlaceHolder.h"
 
@@ -889,9 +890,10 @@ static const NSTimeInterval CYLTestTimeout = 30;
 
 // FIX: issue MJRefresh#1630
 // [EN] A controller torn down while its table's header and footer refresh, after the footer moved to another table and
-//      back, 100 times: no "not registered as an observer" exception, and the table and the header are released.
+//      back, 100 times: no "not registered as an observer" exception, and the table, the header and the footer are
+//      released.
 // [CN] 控制器在表格的刷新头和刷新尾正在刷新时销毁（刷新尾先移到另一个表格再移回），重复 100 次：不抛出“未注册为观察者”的异常，
-//      表格和刷新头都被释放。
+//      表格、刷新头和刷新尾都被释放。
 - (void)testControllerTeardownWhileRefreshingReleasesWithoutObserverExceptions {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
@@ -899,6 +901,7 @@ static const NSTimeInterval CYLTestTimeout = 30;
     [window makeKeyAndVisible];
     __weak UITableView *weakTable = nil;
     __weak CYLRefreshComponent *weakHeader = nil;
+    __weak CYLRefreshComponent *weakFooter = nil;
     for (NSUInteger index = 0; index < 100; index++) {
         @autoreleasepool {
             UIViewController *controller = [UIViewController new];
@@ -923,19 +926,165 @@ static const NSTimeInterval CYLTestTimeout = 30;
             [footer beginRefreshing];
             weakTable = table;
             weakHeader = header;
+            weakFooter = footer;
             XCTAssertNoThrow([navigation popViewControllerAnimated:NO]);
             XCTAssertNoThrow([table removeFromSuperview]);
         }
         // [EN] Let the queued start, animation and layout work run after the teardown; then the table and header are released.
         // [CN] 让排队的开始、动画与布局任务在销毁后执行；之后表格和刷新头被释放。
         NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
-        while ((weakTable || weakHeader) && deadline.timeIntervalSinceNow > 0) {
+        while ((weakTable || weakHeader || weakFooter) && deadline.timeIntervalSinceNow > 0) {
             [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
         }
         XCTAssertNil(weakTable);
         XCTAssertNil(weakHeader);
+        XCTAssertNil(weakFooter, @"iteration %lu", (unsigned long)index);
     }
     window.hidden = YES;
+}
+
+/// [EN] Tears down a controller whose table refreshes with `component` (a footer, a trailer or a header) and waits, at
+///      most CYLTestTimeout, for the table and the component to be released. Returns YES when both were released.
+/// [CN] 销毁一个控制器，其表格正在用 `component`（刷新尾、trailer 或刷新头）刷新，并最多等待 CYLTestTimeout，直到表格与该控件都被释放。
+///      两者都释放时返回 YES。
+- (BOOL)cyl_tearDownWhileRefreshing:(CYLRefreshComponent * (^)(void))makeComponent
+                         navigation:(UINavigationController *)navigation
+                      zeroDurations:(BOOL)zeroDurations
+{
+    __weak CYLRefreshComponent *weakComponent = nil;
+    __weak UITableView *weakTable = nil;
+    @autoreleasepool {
+        UIViewController *controller = [UIViewController new];
+        UITableView *table = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+        UITableView *other = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+        [controller.view addSubview:table];
+        [controller.view addSubview:other];
+        CYLRefreshComponent *component = makeComponent();
+        component.refreshingBlock = ^{};
+        BOOL isHeader = [component isKindOfClass:CYLRefreshHeader.class];
+        CYLRefreshHeader *header = isHeader ? (CYLRefreshHeader *)component
+                                            : [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+        for (CYLRefreshComponent *each in @[header, component]) {
+            if (!zeroDurations) continue;
+            each.fastAnimationDuration = 0;
+            each.slowAnimationDuration = 0;
+        }
+        table.cyl_header = header;
+        if ([component isKindOfClass:CYLRefreshTrailer.class]) {
+            table.cyl_trailer = (CYLRefreshTrailer *)component;
+        } else if ([component isKindOfClass:CYLRefreshFooter.class]) {
+            table.cyl_footer = (CYLRefreshFooter *)component;
+        }
+        [navigation pushViewController:controller animated:NO];
+        [controller.view layoutIfNeeded];
+        if (!isHeader) {
+            [other addSubview:component];
+            [table addSubview:component];
+        }
+        [header beginRefreshing];
+        [component beginRefreshing];
+        // [EN] Let the refresh start and its animations, timers and display links run. [CN] 让刷新开始，并让其动画、定时器与 display link 运行。
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+        weakComponent = component;
+        weakTable = table;
+        [navigation popViewControllerAnimated:NO];
+        [table removeFromSuperview];
+    }
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+    while ((weakTable || weakComponent) && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+    return !weakTable && !weakComponent;
+}
+
+// FIX: issue MJRefresh#1630
+// [EN] Every footer kind and both trailers (with icon images where the kind takes them, and a drawn footer hosting the
+//      StoreHouse style, which runs a timer), torn down while refreshing, with zero and with default animation
+//      durations: the table and the footer are released.
+// [CN] 每种刷新尾和两种 trailer（支持图标图片的设置图片，另加一个内嵌 StoreHouse 样式、会运行定时器的手绘刷新尾），在刷新中销毁，动画时长为 0
+//      与默认值各一次：表格和刷新尾都被释放。
+- (void)testEveryFooterKindIsReleasedAfterTeardownWhileRefreshing {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    window.rootViewController = navigation;
+    [window makeKeyAndVisible];
+    UIImage *image = [UIImage systemImageNamed:@"star"];
+    NSArray<Class> *kinds = @[
+        CYLRefreshAutoFooter.class, CYLRefreshAutoStateFooter.class, CYLRefreshAutoNormalFooter.class,
+        CYLRefreshAutoAnimationFooter.class, CYLRefreshAutoGifFooter.class,
+        CYLRefreshBackFooter.class, CYLRefreshBackStateFooter.class, CYLRefreshBackNormalFooter.class,
+        CYLRefreshBackAnimationFooter.class, CYLRefreshBackGifFooter.class,
+        CYLRefreshCupertinoFooter.class, CYLRefreshBallPulseFooter.class,
+        CYLRefreshBezierRadarFooter.class, CYLRefreshMaterialFooter.class, CYLRefreshDeliveryFooter.class,
+        CYLRefreshPhoenixFooter.class, CYLRefreshTaurusFooter.class, CYLRefreshDrawnFooter.class,
+        CYLRefreshStateTrailer.class, CYLRefreshNormalTrailer.class,
+    ];
+    for (NSNumber *zero in @[@YES, @NO]) {
+        for (Class kind in kinds) {
+            BOOL released = [self cyl_tearDownWhileRefreshing:^CYLRefreshComponent *{
+                if (kind == CYLRefreshDrawnFooter.class) {
+                    return [[CYLRefreshDrawnFooter alloc] initWithStyle:[CYLRefreshStoreHouseHeader newWithString:@"CYL"]];
+                }
+                if ([kind isSubclassOfClass:CYLRefreshTrailer.class]) return [kind trailerWithRefreshingBlock:^{}];
+                CYLRefreshFooter *footer = [kind footerWithRefreshingBlock:^{}];
+                if ([footer conformsToProtocol:@protocol(CYLRefreshIconAnimating)]) {
+                    [footer cyl_setIconImages:@[image, image] duration:0.2 forState:CYLRefreshStateIdle];
+                    [footer cyl_setIconImages:@[image, image] duration:0.2 forState:CYLRefreshStateRefreshing];
+                }
+                return footer;
+            } navigation:navigation zeroDurations:zero.boolValue];
+            XCTAssertTrue(released, @"%@ (zero durations: %@) is still alive", NSStringFromClass(kind), zero);
+        }
+    }
+    window.hidden = YES;
+}
+
+// [EN] Every header kind torn down while refreshing is released. The StoreHouse header was not: its loading timer was a
+//      target-action NSTimer, which retains the header, and it was invalidated only on a tick after the refresh ended.
+// [CN] 每种刷新头在刷新中销毁后都被释放。StoreHouse 刷新头此前不会：其加载定时器是强持有刷新头的 target-action NSTimer，只在刷新结束后的某次
+//      触发时才失效。
+- (void)testEveryHeaderKindIsReleasedAfterTeardownWhileRefreshing {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    window.rootViewController = navigation;
+    [window makeKeyAndVisible];
+    NSArray<Class> *kinds = @[
+        CYLRefreshStateHeader.class, CYLRefreshNormalHeader.class, CYLRefreshAnimationHeader.class,
+        CYLRefreshGifHeader.class, CYLRefreshCupertinoHeader.class, CYLRefreshBezierCircleHeader.class,
+        CYLRefreshBezierRadarHeader.class, CYLRefreshDeliveryHeader.class, CYLRefreshDropBoxHeader.class,
+        CYLRefreshFlyHeader.class, CYLRefreshGameBattleCityHeader.class, CYLRefreshGameHitBlockHeader.class,
+        CYLRefreshMaterialHeader.class, CYLRefreshOriginalHeader.class, CYLRefreshPhoenixHeader.class,
+        CYLRefreshStoreHouseHeader.class, CYLRefreshTaurusHeader.class, CYLRefreshWaveSwipeHeader.class,
+    ];
+    for (Class kind in kinds) {
+        BOOL released = [self cyl_tearDownWhileRefreshing:^CYLRefreshComponent *{
+            if (kind == CYLRefreshStoreHouseHeader.class) return [CYLRefreshStoreHouseHeader newWithString:@"CYL"];
+            return [kind headerWithRefreshingBlock:^{}];
+        } navigation:navigation zeroDurations:NO];
+        XCTAssertTrue(released, @"%@ is still alive", NSStringFromClass(kind));
+    }
+    window.hidden = YES;
+}
+
+// [EN] An endless value animator (repeatCount INFINITY) stops once its weak target is released, so its display link and
+//      the animator itself are released instead of ticking for ever.
+// [CN] 无限重复（repeatCount INFINITY）的数值动画器在其弱引用 target 释放后停止，使 display link 与动画器本身被释放，而不是永远空转。
+- (void)testEndlessValueAnimatorStopsWhenItsTargetIsReleased {
+    __weak CYLRefreshValueAnimator *weakAnimator = nil;
+    @autoreleasepool {
+        UIView *target = [UIView new];
+        CYLRefreshValueAnimator *animator = [CYLRefreshValueAnimator newWithTarget:target selector:@selector(setNeedsDisplay)];
+        animator.repeatCount = INFINITY;
+        animator.duration = 0.1;
+        [animator start];
+        XCTAssertTrue(animator.isRunning);
+        weakAnimator = animator;
+    }
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+    while (weakAnimator && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+    XCTAssertNil(weakAnimator);
 }
 
 - (void)testAutoFooterRestoresInsetWhenRemoved {
