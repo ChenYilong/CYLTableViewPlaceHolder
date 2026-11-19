@@ -413,6 +413,11 @@ Objective-C to Swift, and its score after every commit.
     "正在刷新数据中...", "最后更新：今天 00:45") and Russian ("Отпустите чтобы обновить", "Загрузка...",
     "Последнее обновление: Сегодня 00:49", 24-hour time in both). Measured: core 65 Swift files (20,348 lines) and 17
     Objective-C `.m` files (3,376 lines). Score by lines: 20,348 / (20,348 + 3,376) ≈ **86 / 100** (was 83).
+  - TODO 2026-11-20, step 11 (branch `feat/android-refresh-port-followup`, in progress): the subclassing bases in
+    `Base/`, leaves first: `CYLRefreshHeader`, `CYLRefreshBackFooter`, `CYLRefreshAutoFooter`, `CYLRefreshTrailer`, then
+    their parent `CYLRefreshFooter`; `CYLRefreshComponent` stays Objective-C until step 12. One commit per class, each
+    with the core tests; then animation, accessibility, Example-objc-02 and Example-SwiftUI UI tests, the example builds,
+    the repo checks and a simulator check of More > Refresh and the Feed tab.
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
