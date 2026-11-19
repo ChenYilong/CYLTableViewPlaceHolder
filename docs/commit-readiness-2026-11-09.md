@@ -26,3 +26,9 @@ repository commit instructions, alongside the existing pre-commit TODO audit.
   at 100 with test evidence.
 - TODO: The placeholder and upstream-refresh issues below 100 are tracked in
   the `TODO` section of [issue-progress.md](issue-progress.md).
+- Audit (2026-11-19, Mac session): the Carthage and iOS 12 row stays at 95,
+  blocked on a physical iOS 12 device (no iOS 12 runtime can run on this
+  Mac). Every row of the issue-progress `TODO` section was rescored the same
+  day: three rows reached 100 (#1628 with a core fix, CYLTabBarController by
+  commit, bundled animations), the others carry a dated blocker or a "not done
+  in this pass" note; see the audit line at the top of that section.
