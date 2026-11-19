@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 86 / 100 (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 94 / 100 (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -413,11 +413,87 @@ Objective-C to Swift, and its score after every commit.
     "正在刷新数据中...", "最后更新：今天 00:45") and Russian ("Отпустите чтобы обновить", "Загрузка...",
     "Последнее обновление: Сегодня 00:49", 24-hour time in both). Measured: core 65 Swift files (20,348 lines) and 17
     Objective-C `.m` files (3,376 lines). Score by lines: 20,348 / (20,348 + 3,376) ≈ **86 / 100** (was 83).
-  - TODO 2026-11-20, step 11 (branch `feat/android-refresh-port-followup`, in progress): the subclassing bases in
-    `Base/`, leaves first: `CYLRefreshHeader`, `CYLRefreshBackFooter`, `CYLRefreshAutoFooter`, `CYLRefreshTrailer`, then
-    their parent `CYLRefreshFooter`; `CYLRefreshComponent` stays Objective-C until step 12. One commit per class, each
-    with the core tests; then animation, accessibility, Example-objc-02 and Example-SwiftUI UI tests, the example builds,
-    the repo checks and a simulator check of More > Refresh and the Feed tab.
+  - 2026-11-20, step 11 (branch `feat/android-refresh-port-followup`; `9b2f455`, `843fb8a`, `0c5a18c`, `5bbcfa5`,
+    `35c694d`; leaves first): the subclassing bases in `Base/` are Swift. Checked before each class with
+    `git grep -P "@interface \w+ : <Class>\b"` across the repo (Examples, Tests, CrossPlatform): **no Objective-C
+    subclass** of any of the five; their subclasses were already Swift (the state layer, Cupertino, the drawn header and
+    footers, Ball Pulse, the Example-Scenarios DIY controls), so no test helper had to move. Translated, with the same
+    Objective-C API (class names, selectors, Swift spellings, overridable members `open`; the overrides of
+    `CYLRefreshComponent`, still Objective-C, keep its selectors and the super-call order; the `.h` files keep
+    doc-commented forward declarations; Objective-C callers get the classes from the generated Swift header through the
+    umbrella header):
+    - part 1 (`9b2f455`): `Base/CYLRefreshHeader.swift`. `+headerWithRefreshingBlock:` /
+      `+headerWithRefreshingTarget:refreshingAction:` are class methods hidden from Swift (`@available(swift, obsoleted:
+      1)`, returning `Self`, so a subclass gets its own type), and Swift keeps the initializers `init(refreshingBlock:)` /
+      `init(refreshingTarget:refreshingAction:)` it imported before (convenience initializers, inherited by the Swift
+      subclasses); `secondaryOpen` keeps its `isSecondaryOpen` getter. Kept: issue #1628 (an inset written by someone
+      else during a refresh becomes the new baseline, a list at rest scrolls back to show the header), #1483 (a footer's
+      side-inset write is not a new top; the start of a refresh measures from the original top), PR #1444 (rotation:
+      the original top is rebuilt from the header's own delta), the first-item position across repeated refreshes,
+      `ignoredScrollViewContentInsetTop`, `lastUpdatedTimeKey` (its setter still runs from `prepare` and from
+      `lastUpdatedTime`, so the state header redraws the time), the end-of-refresh animation (`slowAnimationDuration`,
+      `reboundAnimationOptions`) and the bounds animations of `isCollectionViewAnimationBug` (their delegate is a private
+      object that holds the header strongly, as the animation held the header when it was its own delegate).
+      `UIScrollView+CYLExtensionSupport.m` now hands Swift, from `+load`, the reader of the side-inset depth (replacing
+      the C function `CYLRefreshIsWritingSideInset()`, which only `CYLRefreshHeader.m` called) and an `@try` / `@finally`
+      guard, so `updatingRefreshInset` is reset when a `contentInset` observer throws (Swift cannot catch an Objective-C
+      exception).
+    - part 2 (`843fb8a`): `Base/CYLRefreshBackFooter.swift`: the bottom inset while loading, the paging restore
+      (MJRefresh #1430), `noMoreDataDisplayDuration` / `followsContentWhenNoMoreData` (#1585, the hold token, the weak
+      delayed restore), `scrollsContentAfterLoading`, the trigger mode and the second floor. The private `-happenOffsetY`
+      is the internal `happenOffsetY`, read directly by `CYLRefreshDrawnFooter.swift` (no selector any more).
+    - part 3 (`0c5a18c`): `Base/CYLRefreshAutoFooter.swift`: `isAutomaticallyRefresh`,
+      `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` (once per drag), `loadsWhenContentNotFull`,
+      `loadsAfterNoMoreData`, the inset kept by `setHidden:` and the page alignment after a load (#1610). The private
+      `-cyl_beginRefreshingWithoutValidation` of step 10 is the internal `cyl_beginRefreshingWithoutValidation()`
+      (`super.beginRefreshing()`, past the trigger-count check), called directly by `CYLRefreshAutoStateFooter`.
+    - part 4 (`5bbcfa5`): `Base/CYLRefreshTrailer.swift`: the horizontal pull, the right inset and its refresh
+      generation, the automatic trailer once per drag (#1623), the end of a refresh and the bounce settings given back
+      when it leaves its scroll view; the factories as for the header.
+    - part 5 (`35c694d`): `Base/CYLRefreshFooter.swift`: the factories, `endRefreshingWithNoMoreData` /
+      `resetNoMoreData` (main-queue hop without retaining the footer), the deprecated `noticeNoMoreData` and
+      `automaticallyHidden`, `isNoMoreData`, `loadsAfterNoMoreData`, `ignoredScrollViewContentInsetBottom`, the auto-hide
+      below the bottom bars, and the `CYLRefreshNoMoreDataImage` methods as a Swift extension.
+    The leak fixes of `bce488f` are untouched (they live in `UIScrollView+CYLRefresh.swift`, the drawn styles and the
+    value animator); the delayed work in the new files holds the controls weakly as before (the no-more-data hold, the
+    main-queue hops). **The private members of the Objective-C `CYLRefreshComponent` the Swift classes still reach**, by
+    selector in the internal `Base/CYLRefreshComponentPrivateAccess.swift` (a header Swift can read would be public; the
+    file goes in step 12): `-cyl_reportPhase` (header and back footer, second floor), `-cyl_offsetForDragRate:happenOffset:`
+    (header and back footer, `dragRate`) and the new `-cyl_setScrollViewOriginalInset:` (header, back footer, trailer),
+    which writes the protected ivar `_scrollViewOriginalInset` (Swift cannot reach ivars; `_scrollView` is read through
+    the public `scrollView`). `CYLRefreshComponent.m` also still uses the five classes (`attach:`, `-cyl_pullsUp`,
+    `beginRefreshingWithDuration:...`) through the generated Swift header. **Still Objective-C:** `CYLRefreshComponent`
+    (step 12), the rule-6 shims and the tests (step 13). **Not kept identical, on purpose:** the two exported string
+    globals `CYLRefreshHeaderRefreshing2IdleBoundsKey` / `CYLRefreshHeaderRefreshingBoundsKey` (never in a header) and
+    the C function `CYLRefreshIsWritingSideInset()` (never in a header) are gone (private Swift constants and the reader
+    block); the header no longer conforms to `CAAnimationDelegate` itself; `lastUpdatedTime` returns nil for a non-date
+    object stored under the key (as step 10's time label does); `secondaryShouldOpenBlock` takes `CYLRefreshHeader`
+    instead of `__kindof CYLRefreshHeader` in the generated header (a block typed with the base class, as the tests
+    write it, still fits); a KVO change whose value is not an `NSValue` counts as zero (Objective-C raised); the dead
+    iOS 10 branch of `resetInset` (no reset without a window) is dropped (the library needs iOS 12); the private
+    Objective-C selectors of the five classes (`happenOffsetY`, `heightForContentBreakView`, `happenOffsetX`,
+    `cyl_dragStartedAtEdge`, ...) are no longer in the runtime. Podspec unchanged (the Core already globs
+    `CYLRefresh/Base/*.swift`); the framework target (the five `.m` references now point at the `.swift` files, plus the
+    access file), the cyl-api-map skill, `CYLRefresh/instructions.md` and the regenerated parity table are updated; the
+    test, accessibility and animation runners glob. Tests: core 207/207 after each part, animation 13/13 (static, PAG),
+    accessibility 4/4 (CI runner on CYL Placeholder Screens); Example-objc-02 UI tests 12/13 on the full run (load
+    average up to 92), the failure only `testDraggingDuringHeaderRefreshKeepsFirstItemPosition` ("the drags happen
+    during the refresh"), which then passed 2 of 2 reruns; Example-SwiftUI UI tests 4/4 on CYL Placeholder Audit iOS26
+    (#1628, the real pull included); Example-Scenarios, Example-objc-02, Example-SwiftUI, Example-objc-01, the root
+    Example app and the `CYLTableViewPlaceHolderFramework` target build (0 CYLRefresh warnings);
+    `check_doc_comments.py`, `check_localizations.py`, the iOS and Android API maps, the parity table,
+    `check_package_licenses.py` and the docs navigation check pass. Simulator check (Example-Scenarios on CYL Placeholder
+    Screens, English, held drags with axe): More → Refresh → Default (arrow down with "Pull down to refresh", arrow up
+    with "Release to refresh", spinner and "Loading...", new rows after, "Last update: Today 1:35 AM"), the pull-up
+    Default ("Tap or pull up to load more"; a pull-up release and a tap each load a row with "Loading..."), Everything
+    loaded ("No more data"), Springing-back footer 01 ("Release to load more", spinner and "Loading...", a new row and
+    the rebound), Springing-back footer 02 ("No more data"), Pull left (vertical "Release to see details"; release opens
+    the details page), Paging (pull up loads page 2, Test data 11 to 20), BezierRadar (drawn header: dots, wave, radar
+    sweep, retract) and BezierRadar footer (drawn footer: dots, then the radar while loading); More → Feed (pull to
+    refresh with "Loading..." and the time, the failing refresh shows the error placeholder as designed, the next one
+    the posts; scrolling loads more up to Post 30 and "No more data"). Measured: core 71 Swift files (22,892 lines) and
+    12 Objective-C `.m` files (1,520 lines; `CYLRefreshComponent.m` 1,070 of them). Score by lines: 22,892 /
+    (22,892 + 1,520) ≈ **94 / 100** (was 86).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -442,7 +518,7 @@ Objective-C to Swift, and its score after every commit.
     - step 10: the state layer: `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter`, `CYLRefreshBackStateFooter`,
       `CYLRefreshStateTrailer` — done;
     - step 11: `CYLRefreshHeader`, `CYLRefreshAutoFooter`, `CYLRefreshBackFooter`, `CYLRefreshTrailer`, then
-      `CYLRefreshFooter`;
+      `CYLRefreshFooter` — done;
     - step 12: `CYLRefreshComponent` (the root);
     - step 13: the tests (14 Objective-C files under `Tests/`).
 
