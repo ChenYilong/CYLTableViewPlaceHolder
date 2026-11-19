@@ -541,18 +541,18 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshDrawnFooter` | A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content, the progress and the CYLRefresh styles' status order, and draws in the revealed area under the content. | `com.cyl.refresh.CYLRefreshDrawnFooter` — a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text) |
-| `CYLRefreshDrawnFooter` `styleClass` | The drawn header class a subclass hosts; nil in the base class. | `CYLRefreshDrawnFooter.styleClass` — the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class |
-| `CYLRefreshDrawnFooter` `-initWithStyle:` | A footer drawn by `style`; the footer takes the style's open height. | `CYLRefreshDrawnFooter(style)` |
-| `CYLRefreshDrawnFooter` `style` | The hosted drawn header; set its colors and options here or through the footer's `colorAccent` / `colorPrimary`. | `CYLRefreshDrawnFooter.style` |
-| `CYLRefreshBezierRadarFooter` | flutter_easy_refresh's `BezierFooter`, drawn by CYLRefreshBezierRadarHeader. | `com.cyl.refresh.CYLRefreshBezierRadarFooter` |
-| `CYLRefreshMaterialFooter` | flutter_easy_refresh's `MaterialFooter`, drawn by CYLRefreshMaterialHeader. | `com.cyl.refresh.CYLRefreshMaterialFooter` |
-| `CYLRefreshDeliveryFooter` | flutter_easy_refresh's `DeliveryFooter`, drawn by CYLRefreshDeliveryHeader. | `com.cyl.refresh.CYLRefreshDeliveryFooter` |
-| `CYLRefreshPhoenixFooter` | flutter_easy_refresh's `PhoenixFooter`, drawn by CYLRefreshPhoenixHeader. | `com.cyl.refresh.CYLRefreshPhoenixFooter` |
-| `CYLRefreshTaurusFooter` | flutter_easy_refresh's `TaurusFooter`, drawn by CYLRefreshTaurusHeader. | `com.cyl.refresh.CYLRefreshTaurusFooter` |
-| `CYLRefreshBallPulseFooter` | Three balls that pulse in turn while loading more; an auto footer (Android CYLRefreshLayout's `BallPulseFooter`). | `com.cyl.refresh.footer.BallPulseFooter` — added 2026-11-17 for Android parity |
-| `CYLRefreshBallPulseFooter` `normalColor` | The balls' color while idle; default #EEEEEE (`setNormalColor`). | `com.cyl.refresh.footer.BallPulseFooter.setNormalColor` — added 2026-11-17 for Android parity |
-| `CYLRefreshBallPulseFooter` `animatingColor` | The balls' color while loading; default #E75946 (`setAnimatingColor`). | `com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor` — added 2026-11-17 for Android parity |
+| `CYLRefreshDrawnFooter` | A back footer drawn like a header style, upside down. | `com.cyl.refresh.CYLRefreshDrawnFooter` — a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text) |
+| `CYLRefreshDrawnFooter` `styleClass` | The header class this footer draws: CYLRefreshMaterialHeader for CYLRefreshMaterialFooter, and so on. | `CYLRefreshDrawnFooter.styleClass` — the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class |
+| `CYLRefreshDrawnFooter` `-initWithStyle:` | A back footer drawn like a header style, upside down. | `CYLRefreshDrawnFooter(style)` |
+| `CYLRefreshDrawnFooter` `style` | The header whose drawing the footer shows. | `CYLRefreshDrawnFooter.style` |
+| `CYLRefreshBezierRadarFooter` | The Bezier radar below the list. | `com.cyl.refresh.CYLRefreshBezierRadarFooter` |
+| `CYLRefreshMaterialFooter` | The Material spinner below the list. | `com.cyl.refresh.CYLRefreshMaterialFooter` |
+| `CYLRefreshDeliveryFooter` | The delivery box below the list. | `com.cyl.refresh.CYLRefreshDeliveryFooter` |
+| `CYLRefreshPhoenixFooter` | The sunrise below the list. | `com.cyl.refresh.CYLRefreshPhoenixFooter` |
+| `CYLRefreshTaurusFooter` | The plane among clouds below the list. | `com.cyl.refresh.CYLRefreshTaurusFooter` |
+| `CYLRefreshBallPulseFooter` | The footer with three pulsing balls. | `com.cyl.refresh.footer.BallPulseFooter` — added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `normalColor` | Property of `CYLRefreshBallPulseFooter`. | `com.cyl.refresh.footer.BallPulseFooter.setNormalColor` — added 2026-11-17 for Android parity |
+| `CYLRefreshBallPulseFooter` `animatingColor` | Property of `CYLRefreshBallPulseFooter`. | `com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -591,10 +591,10 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshFlyHeader` | A paper plane over mountains that flies off while refreshing (after FlyRefresh). Always open: the scene stays above the list and refreshing does not push the content. | `com.cyl.refresh.CYLRefreshFlyHeader` |
-| `CYLRefreshFlyHeader` `mountainView` | The mountains above the content, tinted with `colorPrimary`; the same as Android's `mountainView`. | `CYLRefreshFlyHeader.mountainView` |
-| `CYLRefreshFlyHeader` `flyView` | The paper plane, tinted with `colorAccent`; the same as Android's `flyView`. | `CYLRefreshFlyHeader.flyView` |
-| `CYLRefreshFlyHeader` `floatView` | The round button under the plane, in the primary color; the same as Android's `floatView`. | `CYLRefreshFlyHeader.floatView` |
+| `CYLRefreshFlyHeader` | The paper plane: like iOS, it brings its own scene. | `com.cyl.refresh.CYLRefreshFlyHeader` |
+| `CYLRefreshFlyHeader` `mountainView` | The mountains above the content. | `CYLRefreshFlyHeader.mountainView` |
+| `CYLRefreshFlyHeader` `flyView` | The paper plane. | `CYLRefreshFlyHeader.flyView` |
+| `CYLRefreshFlyHeader` `floatView` | The round button under the plane, in the primary color. | `CYLRefreshFlyHeader.floatView` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 

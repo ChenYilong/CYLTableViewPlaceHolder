@@ -1,34 +1,27 @@
 //
 //  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from Header/UIRefreshFlyHeader.h (commit 9319448)
 //  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
+//
+//  [EN] Swift since 2026-11-19: the class is in `CYLRefreshFlyHeader.swift` (docs/Swift-Migration.md, step 8), with the
+//       same Objective-C API (`mountainView`, `flyView`, `floatView`). Objective-C code that uses it imports the umbrella
+//       header `CYLTableViewPlaceHolder.h`, which brings the generated Swift header; this header keeps the forward
+//       declaration.
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLRefreshFlyHeader.swift`，docs/Swift-Migration.md 第 8 步），Objective-C API 不变
+//       （`mountainView`、`flyView`、`floatView`）。使用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的
+//       Swift 头文件）；本头文件保留前向声明。
+//
 
 #import "CYLRefreshDrawnHeader.h"
-
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- * [EN] A paper plane over mountains that flies off while refreshing (after FlyRefresh). Always open: the scene stays above the list and refreshing does not push the content.
- * [CN] 山上的纸飞机，刷新时飞走（参考 FlyRefresh）。常态展开：场景一直显示在列表上方，刷新时不推动内容。
+ * [EN] A paper plane over mountains that flies off while refreshing (after FlyRefresh). The class is Swift
+ *      (`CYLRefreshFlyHeader.swift`); Objective-C code that messages it imports the umbrella header
+ *      `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 山上的纸飞机，刷新时飞走（参考 FlyRefresh）。该类用 Swift 编写（`CYLRefreshFlyHeader.swift`）；需要调用它的 Objective-C 代码请导入
+ *      总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLRefreshFlyHeader : CYLRefreshDrawnHeader
-
-/*!
- * [EN] The mountains above the content, tinted with `colorPrimary`; the same as Android's `mountainView`.
- * [CN] 内容上方的山，使用 `colorPrimary` 着色；与 Android 的 `mountainView` 相同。
- */
-@property (nonatomic, strong, readonly) UIView *mountainView;
-/*!
- * [EN] The paper plane, tinted with `colorAccent`; the same as Android's `flyView`.
- * [CN] 纸飞机，使用 `colorAccent` 着色；与 Android 的 `flyView` 相同。
- */
-@property (nonatomic, strong, readonly) UIView *flyView;
-/*!
- * [EN] The round button under the plane, in the primary color; the same as Android's `floatView`.
- * [CN] 纸飞机下方的圆形按钮，使用主色；与 Android 的 `floatView` 相同。
- */
-@property (nonatomic, strong, readonly) UIView *floatView;
-
-@end
+@class CYLRefreshFlyHeader;
 
 NS_ASSUME_NONNULL_END
