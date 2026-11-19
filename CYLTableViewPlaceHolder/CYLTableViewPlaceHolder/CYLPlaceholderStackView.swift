@@ -223,8 +223,13 @@ open class CYLPlaceholderStackView: UIView {
      */
     @objc(initWithConfiguration:actions:error:)
     @available(swift, obsoleted: 1, message: "Use init(configuration:actions:)")
-    public convenience init(objcConfiguration configuration: [String: Any], actions: NSDictionary?) throws {
-        try self.init(configuration: configuration, actions: CYLPlaceholderStackView.handlers(from: actions))
+    public convenience init(objcConfiguration configuration: Any, actions: NSDictionary?) throws {
+        // [EN] Any object, as the Objective-C initializer took: anything but a dictionary is a configuration error, not a
+        //      crash in the Swift bridge. [CN] 与原 Objective-C 初始化方法一样接受任意对象：不是字典时返回配置错误，而不是在 Swift 桥接时崩溃。
+        guard let dictionary = configuration as? [String: Any] else {
+            throw CYLStackConfigurationError("The configuration must be a dictionary.")
+        }
+        try self.init(configuration: dictionary, actions: CYLPlaceholderStackView.handlers(from: actions))
     }
 
     /**

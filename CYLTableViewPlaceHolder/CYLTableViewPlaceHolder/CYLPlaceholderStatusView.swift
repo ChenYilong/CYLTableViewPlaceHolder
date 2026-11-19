@@ -131,7 +131,7 @@ open class CYLPlaceholderStatusView: UIView {
      *      is invalid. See docs/Status-Bar.md.
      * [CN] 根据配置字典（JSON 或属性列表）创建状态条；缺少的键使用网络提示条的值。值无效时抛出错误。见 docs/Status-Bar.md。
      */
-    @objc(initWithConfiguration:error:)
+    @nonobjc
     public convenience init(configuration: [String: Any]) throws {
         let keys = [
             "image": CYLPlaceholderItemImage, "titleColor": CYLPlaceholderItemTitleColor,
@@ -148,6 +148,21 @@ open class CYLPlaceholderStatusView: UIView {
         if let textKey = configuration["textKey"] as? String { text = CYLPlaceholderLocalizedStringForKey(textKey, text) }
         if let text = text { attributes[CYLPlaceholderItemTitle] = text }
         try self.init(itemAttributes: attributes)
+    }
+
+    /**
+     * [EN] Objective-C: `-initWithConfiguration:error:`. It takes any object, as the Objective-C initializer did, so that
+     *      a configuration that is not a dictionary returns the configuration error instead of failing in the Swift bridge.
+     * [CN] Objective-C：`-initWithConfiguration:error:`。与原 Objective-C 初始化方法一样接受任意对象，配置不是字典时返回配置错误，
+     *      而不是在 Swift 桥接时崩溃。
+     */
+    @objc(initWithConfiguration:error:)
+    @available(swift, obsoleted: 1, message: "Use init(configuration:)")
+    public convenience init(objcConfiguration configuration: Any) throws {
+        guard let dictionary = configuration as? [String: Any] else {
+            throw CYLStatusConfigurationError("The status bar configuration must be a dictionary.")
+        }
+        try self.init(configuration: dictionary)
     }
 
     /**

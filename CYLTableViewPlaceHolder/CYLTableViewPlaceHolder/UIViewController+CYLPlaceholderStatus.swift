@@ -298,7 +298,7 @@ extension UIViewController {
      * [CN] 应用配置字典："statusBar"、"display"（缺省时有 "statusBar" 则为 "statusAndPlaceholder"，否则为 "placeholder"）与
      *      "showsWhenOffline"（布尔值）。值无效时抛出错误，不做任何修改。
      */
-    @objc(cyl_applyStatusConfiguration:error:)
+    @nonobjc
     public func cyl_applyStatusConfiguration(_ configuration: [String: Any]) throws {
         let barValue = configuration["statusBar"]
         var bar: CYLPlaceholderStatusView?
@@ -332,5 +332,20 @@ extension UIViewController {
         }
         if let offline = offline as? NSNumber { cyl_showsStatusViewWhenOffline = offline.boolValue }
         cyl_statusDisplay = resolvedDisplay
+    }
+
+    /**
+     * [EN] Objective-C: `-cyl_applyStatusConfiguration:error:`. It takes any object, as the Objective-C method did, so that
+     *      a configuration that is not a dictionary returns the configuration error instead of failing in the Swift bridge.
+     * [CN] Objective-C：`-cyl_applyStatusConfiguration:error:`。与原 Objective-C 方法一样接受任意对象，配置不是字典时返回配置错误，
+     *      而不是在 Swift 桥接时崩溃。
+     */
+    @objc(cyl_applyStatusConfiguration:error:)
+    @available(swift, obsoleted: 1, message: "Use cyl_applyStatusConfiguration(_:)")
+    public func cyl_applyStatusConfiguration(objcConfiguration configuration: Any) throws {
+        guard let dictionary = configuration as? [String: Any] else {
+            throw CYLStatusPresentationError("The configuration must be a dictionary.")
+        }
+        try cyl_applyStatusConfiguration(dictionary)
     }
 }

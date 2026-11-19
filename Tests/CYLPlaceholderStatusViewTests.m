@@ -230,4 +230,34 @@
     XCTAssertEqual(controller.cyl_statusDisplay, CYLPlaceholderStatusDisplayPlaceholder);
 }
 
+- (void)testConfigurationsThatAreNotDictionariesReturnTheConfigurationError {
+    // [EN] A configuration read from JSON is `id`: an array or a string returns nil / NO with the configuration error, as
+    //      the Objective-C code did, instead of crashing in the Swift bridge (regression of the Swift port a3c02c1).
+    // [CN] 从 JSON 读取的配置是 `id`：数组或字符串返回 nil / NO 与配置错误，与原 Objective-C 代码一致，而不是在 Swift 桥接时崩溃
+    //      （Swift 迁移 a3c02c1 的回归）。
+    UITableViewController *controller = [self hostedTableController];
+    for (id configuration in @[@[@{@"text": @"Server busy"}], @"statusBar"]) {
+        NSError *error = nil;
+        XCTAssertNil([[CYLPlaceholderStatusView alloc] initWithConfiguration:configuration error:&error], @"%@", configuration);
+        XCTAssertEqualObjects(error.domain, CYLPlaceholderConfigurationErrorDomain);
+        XCTAssertEqual(error.code, CYLPlaceholderConfigurationErrorStatusView);
+        XCTAssertEqualObjects(error.localizedDescription, @"The status bar configuration must be a dictionary.");
+
+        error = nil;
+        XCTAssertNil([[CYLPlaceholderStackView alloc] initWithConfiguration:configuration actions:nil error:&error],
+                     @"%@", configuration);
+        XCTAssertEqualObjects(error.domain, CYLPlaceholderConfigurationErrorDomain);
+        XCTAssertEqual(error.code, CYLPlaceholderConfigurationErrorStackView);
+        XCTAssertEqualObjects(error.localizedDescription, @"The configuration must be a dictionary.");
+
+        error = nil;
+        CYLPlaceholderStatusDisplay display = controller.cyl_statusDisplay;
+        XCTAssertFalse([controller cyl_applyStatusConfiguration:configuration error:&error], @"%@", configuration);
+        XCTAssertEqualObjects(error.domain, CYLPlaceholderConfigurationErrorDomain);
+        XCTAssertEqual(error.code, CYLPlaceholderConfigurationErrorStatusConfiguration);
+        XCTAssertEqualObjects(error.localizedDescription, @"The configuration must be a dictionary.");
+        XCTAssertEqual(controller.cyl_statusDisplay, display, @"nothing changes");
+    }
+}
+
 @end
