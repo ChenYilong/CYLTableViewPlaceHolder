@@ -76,9 +76,15 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         sleep(2)
         saveScreenshot("\(name)-2-after-footer")
 
-        // Tapping the status bar scrolls to the top without pulling the header.
+        // Tapping the status bar scrolls to the top without pulling the header. Wait for the scroll to finish (up to
+        // 10 s) instead of a fixed 2 s: on a slow runner (e984868, the test took 75 s) the first item was still 91 pt
+        // below its launch position after 2 s. A content that never returns still fails the assertion below.
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.01)).tap()
-        sleep(2)
+        let scrollDeadline = Date().addingTimeInterval(10)
+        while abs(first.frame.minY - initialFirstY) > 2 && Date() < scrollDeadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+        sleep(1)
         saveScreenshot("\(name)-3-back-at-top")
         XCTAssertTrue(app.navigationBars["Footer completed"].exists, "scrolling back must not start a header refresh")
         XCTAssertEqual(first.frame.minY, initialFirstY, accuracy: 2, "the content returns to its launch position")
