@@ -523,7 +523,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBezierCircleHeader` | A ball that drops out of a bezier wave and spins while refreshing (after "Pull Down To Refresh" on Dribbble). | `com.cyl.refresh.CYLRefreshBezierCircleHeader` |
+| `CYLRefreshBezierCircleHeader` | The Bezier circle. | `com.cyl.refresh.CYLRefreshBezierCircleHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`
 
@@ -535,7 +535,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshDeliveryHeader` | A parcel on an umbrella drifting over a town; it is delivered while refreshing (after "Refresh your delivery"). | `com.cyl.refresh.CYLRefreshDeliveryHeader` |
+| `CYLRefreshDeliveryHeader` | The delivery box and balloon. | `com.cyl.refresh.CYLRefreshDeliveryHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`
 
@@ -585,7 +585,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshDropBoxHeader` | A box whose lid opens and drops files while refreshing. | `com.cyl.refresh.CYLRefreshDropBoxHeader` |
+| `CYLRefreshDropBoxHeader` | The drop box. | `com.cyl.refresh.CYLRefreshDropBoxHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`
 
@@ -619,53 +619,53 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshMaterialSize` | The Material spinner's size (Android MaterialProgressDrawable's `DEFAULT` and `LARGE`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize` — added 2026-11-17 for Android parity |
-| `CYLRefreshMaterialHeader` | The Material Design swipe-refresh spinner, floating in front of the content. | `com.cyl.refresh.CYLRefreshMaterialHeader` |
-| `CYLRefreshMaterialHeader` `colorSchemeColors` | The colors the arc takes in turn while refreshing; an empty array is ignored (Android MaterialProgressDrawable's `setColorSchemeColors`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)` — added 2026-11-17 for Android parity |
-| `CYLRefreshMaterialHeader` `progressSize` | The spinner's size; changing it sets the header height to twice the circle (Android MaterialProgressDrawable's `updateSizes`). | `com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)` — added 2026-11-17 for Android parity |
+| `CYLRefreshMaterialHeader` | The Material circle spinner. | `com.cyl.refresh.CYLRefreshMaterialHeader` |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | The arc's colors, in turn. | `com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)` — added 2026-11-17 for Android parity |
+| `CYLRefreshMaterialHeader` `progressSize` | Sets the size: [LARGE] or [DEFAULT]. | `com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshOriginalHeader` | The original iOS 6 pull-to-refresh: a drop that stretches while pulling, snaps and turns into a spinner. | `com.cyl.refresh.CYLRefreshOriginalHeader` |
-| `CYLRefreshOriginalHeader` `enableAutoRefresh` | YES (default): the drop snaps and refreshing starts as soon as it is fully stretched, without waiting for the release. NO: the stretch slows down instead and refreshing starts on release. | `CYLRefreshOriginalHeader.enableAutoRefresh` |
+| `CYLRefreshOriginalHeader` | CYLRefreshLayout's original classic header. | `com.cyl.refresh.CYLRefreshOriginalHeader` |
+| `CYLRefreshOriginalHeader` `enableAutoRefresh` | Whether the header refreshes by itself once attached. | `CYLRefreshOriginalHeader.enableAutoRefresh` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshPhoenixHeader` | A sun rising over a town (after Yalantis Phoenix). | `com.cyl.refresh.CYLRefreshPhoenixHeader` |
+| `CYLRefreshPhoenixHeader` | The sunrise over a town. | `com.cyl.refresh.CYLRefreshPhoenixHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStoreHouseHeader` | Text drawn as line segments that gather while pulling and flash while refreshing (after CRefreshLayout StoreHouse). | `com.cyl.refresh.CYLRefreshStoreHouseHeader` |
-| `CYLRefreshStoreHouseHeader` `lineWidth` | Width of the line segments, in points. | `CYLRefreshStoreHouseHeader.lineWidth` |
-| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | Flashes the segments in reverse order while refreshing. | `CYLRefreshStoreHouseHeader.enableReverseFlash` — every other pass of the loading flash runs from the last bar to the first |
-| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | Fades the segments out when the refresh ends. | `CYLRefreshStoreHouseHeader.enableFadeAnimation` — false shows the assembling bars at full alpha |
-| `CYLRefreshStoreHouseHeader` `+newWithString:` | A header that draws `string` (letters, digits and common punctuation). | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `+newWithString:scale:` | The same, with the text scaled by `scale`. | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `+newWithString:scale:padding:` | The same, with `padding` points between letters. | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:` | Replaces the drawn text with `string`. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:` | The same, with the text scaled by `scale`. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` | The same, with `padding` points between letters. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:` | Draws custom segments: `array` holds point strings like `@"{24, 0}"`, two per segment (start, end). | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` |
-| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:padding:` | The same, with `padding` points around the drawing. | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` |
+| `CYLRefreshStoreHouseHeader` | Text drawn as line segments that assemble as you pull. | `com.cyl.refresh.CYLRefreshStoreHouseHeader` |
+| `CYLRefreshStoreHouseHeader` `lineWidth` | The lines' width, in pixels. | `CYLRefreshStoreHouseHeader.lineWidth` |
+| `CYLRefreshStoreHouseHeader` `enableReverseFlash` | Whether the loading flash runs back and forth. | `CYLRefreshStoreHouseHeader.enableReverseFlash` — every other pass of the loading flash runs from the last bar to the first |
+| `CYLRefreshStoreHouseHeader` `enableFadeAnimation` | Whether the lines fade in as they assemble with the pull; false shows them at full alpha. | `CYLRefreshStoreHouseHeader.enableFadeAnimation` — false shows the assembling bars at full alpha |
+| `CYLRefreshStoreHouseHeader` `+newWithString:` | A header drawing [string]. | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `+newWithString:scale:` | A header drawing [string]. | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `+newWithString:scale:padding:` | A header drawing [string]. | `CYLRefreshStoreHouseHeader.newWithString(context, string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:` | Draws [string] at the default size. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:` | Draws [string] at the default size. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithString:scale:padding:` | Draws [string] at the default size. | `CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)` |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:` | Draws lines given as "x1,y1,x2,y2" strings. | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` |
+| `CYLRefreshStoreHouseHeader` `-initLinesWithArray:padding:` | Draws lines given as "x1,y1,x2,y2" strings. | `CYLRefreshStoreHouseHeader.initLinesWithArray(array, padding)` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshTaurusHeader` | An airplane flying through clouds (after Yalantis Taurus). | `com.cyl.refresh.CYLRefreshTaurusHeader` |
+| `CYLRefreshTaurusHeader` | The plane among clouds. | `com.cyl.refresh.CYLRefreshTaurusHeader` |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshWaveSwipeHeader` | A wave pulled down from the top, with a spinner in its drop (after WaveSwipeRefreshLayout); floats in front of the content. | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` |
-| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | The blur radius of the wave's and the drop's shadow, in points; default 1.5 (Android WaveView's `setShadow(radius, color)`). | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)` — added 2026-11-17 for Android parity |
-| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | The color of the wave's and the drop's shadow; default black at 30% (Android WaveView's `setShadow(radius, color)`). | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)` — added 2026-11-17 for Android parity |
+| `CYLRefreshWaveSwipeHeader` | The wave and drop. | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | The shadow's [radius] and [color]. | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)` — added 2026-11-17 for Android parity |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | The shadow's [radius] and [color]. | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
