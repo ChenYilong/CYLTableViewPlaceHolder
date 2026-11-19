@@ -284,6 +284,7 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
         }
         if (icon != null || !statusText.isNullOrEmpty()) {
             val view = CYLPlaceholderView(context, icon, statusText).apply {
+                reportsContentSize = true
                 contentMargin = 0f
                 defaultTitleColor = contentColor
                 defaultIconColor = contentColor

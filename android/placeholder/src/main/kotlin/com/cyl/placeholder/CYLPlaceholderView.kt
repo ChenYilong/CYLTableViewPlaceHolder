@@ -490,8 +490,29 @@ class CYLPlaceholderView @JvmOverloads constructor(
     var preferredMaxLayoutWidth: Int = 0
         set(value) { field = value; titleView.maxWidth = if (value > 0) value else Int.MAX_VALUE }
 
-    /** Whether the view measures to its content rather than filling its parent (`reportsContentSize`). */
+    /**
+     * false (the default, as on iOS): the view fills the room it is given (a wrap-content size up to its limit) and
+     * centers its content. true: it measures to its content, so a container can size it; CYLPlaceholderStackView, the
+     * HUD, the status view and the refresh icon set it on their placeholder views, as on iOS (`reportsContentSize`).
+     */
     var reportsContentSize: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            requestLayout()
+        }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (reportsContentSize) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            return
+        }
+        // iOS: no intrinsic size; the view keeps the size it is given. An AT_MOST (wrap-content) limit is that size.
+        fun fill(spec: Int) = if (MeasureSpec.getMode(spec) == MeasureSpec.AT_MOST) {
+            MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(spec), MeasureSpec.EXACTLY)
+        } else spec
+        super.onMeasure(fill(widthMeasureSpec), fill(heightMeasureSpec))
+    }
 
     /** The badge's value: null for none, "" for a dot, else the text (`badgeValue`). */
     var badgeValue: String? = null

@@ -197,4 +197,20 @@ class CYLPlaceholderViewTest {
             appearance.animatesChanges = wasAnimating
         }
     }
+
+    /** iOS reportsContentSize: off (default) the view fills a wrap-content limit; on, it measures to its content. */
+    @Test
+    fun reportsContentSizeChoosesBetweenFillingAndContent() {
+        val view = CYLPlaceholderView(context, null, "Title")
+        val limit = View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.AT_MOST)
+        assertFalse(view.reportsContentSize)
+        view.measure(limit, limit)
+        assertEquals(1000, view.measuredWidth)
+        assertEquals(1000, view.measuredHeight)
+        view.reportsContentSize = true
+        view.measure(limit, limit)
+        assertTrue("content size", view.measuredWidth < 1000 && view.measuredHeight < 1000)
+        val stack = CYLPlaceholderStackView(context, CYLPlaceholderScenario.NoSearchResults)
+        assertTrue("stack items report their content", (stack.componentViews.first() as CYLPlaceholderView).reportsContentSize)
+    }
 }

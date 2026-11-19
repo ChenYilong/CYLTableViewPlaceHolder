@@ -235,6 +235,7 @@ class CYLPlaceholderStatusView @JvmOverloads constructor(context: Context, attri
         val used = attributes ?: networkUnavailableItemAttributes(context)
         val image = (used["CYLPlaceholderItemImage"] as? Int)?.let { androidx.core.content.ContextCompat.getDrawable(context, it) }
         placeholderView = CYLPlaceholderView(context, image, used["CYLPlaceholderItemTitle"] as? CharSequence).apply {
+            reportsContentSize = true
             contentMargin = 8f
             defaultTitleFont = 15f
             defaultTitleColor = (used["CYLPlaceholderItemTitleColor"] as? Int) ?: Color.rgb(0x66, 0x66, 0x66)

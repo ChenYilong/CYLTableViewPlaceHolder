@@ -250,11 +250,14 @@ class CYLPlaceholderStackView internal constructor(
             // animation type: a new type added there works in every stack view too.
             CYLPlaceholderComponent.Kind.Item -> {
                 if (component.usesItemAttributes) {
-                    CYLPlaceholderView.fromItemAttributes(context, component.attributes)?.let { return it.apply { contentMargin = 0f } }
+                    CYLPlaceholderView.fromItemAttributes(context, component.attributes)?.let {
+                        return it.apply { contentMargin = 0f; reportsContentSize = true }
+                    }
                 }
                 val image = if (component.image != 0) ContextCompat.getDrawable(context, component.image) else null
                 CYLPlaceholderView(context, image, component.title).apply {
                     itemComponents[this] = component
+                    reportsContentSize = true
                     contentMargin = 0f
                     tintsIcon = component.tinted
                     if (image != null) setIconSide(component.imageSide)

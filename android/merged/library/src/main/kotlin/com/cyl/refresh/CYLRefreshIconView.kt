@@ -34,6 +34,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
      * The view that shows the icon and the title (`placeholderView`).
      */
     val placeholderView: CYLPlaceholderView = CYLPlaceholderView(context).apply {
+        reportsContentSize = true
         contentMargin = 0f
         // The icon follows the pull and the refresh; it does not play by itself.
         autoPlaysAnimation = false

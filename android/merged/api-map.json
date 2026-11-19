@@ -965,9 +965,9 @@
   "android": "CYLPlaceholderView.preferredMaxLayoutWidth"
  },
  "CYLPlaceholderView reportsContentSize": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.reportsContentSize",
-  "note": "kept; the view always measures to its content on Android"
+  "note": "false (default): fills a wrap-content limit and centers its content; true: measures to its content (set by the stack view, the HUD, the status view and the refresh icon, as on iOS)"
  },
  "CYLPlaceholderView selected": {
   "status": "done",

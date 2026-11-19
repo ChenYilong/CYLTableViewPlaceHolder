@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：97 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 622、partial 38、planned 0、n/a 194）。 | **Migration score: 97 / 100** (done + 0.5 × partial over 660 counted symbols; done 622, partial 38, planned 0, n/a 194). |
+| **迁移完成率：97 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 623、partial 37、planned 0、n/a 194）。 | **Migration score: 97 / 100** (done + 0.5 × partial over 660 counted symbols; done 623, partial 37, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -1142,7 +1142,7 @@
 | `CYLPlaceholderView` `defaultSelectionIndicatorImage` | `CYLPlaceholderView.defaultSelectionIndicatorImage` | done |  |
 | `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | `CYLPlaceholderView.defaultSelectionIndicatorTintColor` | done |  |
 | `CYLPlaceholderView` `itemAttributes` | `CYLPlaceholderView.itemAttributes` | partial | the title, image and animation file keys |
-| `CYLPlaceholderView` `reportsContentSize` | `CYLPlaceholderView.reportsContentSize` | partial | kept; the view always measures to its content on Android |
+| `CYLPlaceholderView` `reportsContentSize` | `CYLPlaceholderView.reportsContentSize` | done | false (default): fills a wrap-content limit and centers its content; true: measures to its content (set by the stack view, the HUD, the status view and the refresh icon, as on iOS) |
 | `CYLPlaceholderView` `preferredMaxLayoutWidth` | `CYLPlaceholderView.preferredMaxLayoutWidth` | done |  |
 | `CYLPlaceholderView` `contentMargin` | `CYLPlaceholderView.contentMargin` | done |  |
 | `CYLPlaceholderTapHandler` | `com.cyl.placeholder.CYLPlaceholderTapHandler` | done |  |

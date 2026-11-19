@@ -1142,7 +1142,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderView` `defaultSelectionIndicatorImage` | The image drawn behind a selected placeholder by default. | `CYLPlaceholderView.defaultSelectionIndicatorImage` |
 | `CYLPlaceholderView` `defaultSelectionIndicatorTintColor` | Property of `CYLPlaceholderView`. | `CYLPlaceholderView.defaultSelectionIndicatorTintColor` |
 | `CYLPlaceholderView` `itemAttributes` | The description the view was made from, with the iOS keys. | `CYLPlaceholderView.itemAttributes` — the title, image and animation file keys |
-| `CYLPlaceholderView` `reportsContentSize` | Whether the view measures to its content rather than filling its parent. | `CYLPlaceholderView.reportsContentSize` — kept; the view always measures to its content on Android |
+| `CYLPlaceholderView` `reportsContentSize` | false (the default, as on iOS): the view fills the room it is given (a wrap-content size up to its limit) and centers its content. | `CYLPlaceholderView.reportsContentSize` — false (default): fills a wrap-content limit and centers its content; true: measures to its content (set by the stack view, the HUD, the status view and the refresh icon, as on iOS) |
 | `CYLPlaceholderView` `preferredMaxLayoutWidth` | The widest the text lays out, in px, or 0 for no limit. | `CYLPlaceholderView.preferredMaxLayoutWidth` |
 | `CYLPlaceholderView` `contentMargin` | The margin around the content, in dp: the view's padding. | `CYLPlaceholderView.contentMargin` |
 | `CYLPlaceholderTapHandler` | Runs when the placeholder is tapped. Called on the main thread. Swift sees the property as `((CYLPlaceholderView) -> Void)?`. | `com.cyl.placeholder.CYLPlaceholderTapHandler` |
