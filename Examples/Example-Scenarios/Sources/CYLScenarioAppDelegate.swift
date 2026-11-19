@@ -43,10 +43,10 @@ final class CYLScenarioSceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         // As in CYLTabBarController's Objective-C demo: the root is rebuilt after every language change
         // (`CYLScenarioLanguage.select(_:)` posts it), so every text, core and example, shows in the new language.
+        // The plus button comes from the configuration file (`CYLTabBarControllerPlusButton`), registered by the tab bar
+        // controller for the file's context, so nothing is registered here.
         window.cyl_setRootViewControllerProvider {
-            // Register the plus button before creating the tab bar controller.
-            CYLScenarioPlusButton.register()
-            return CYLScenarioTabBarController.makeForDemo()
+            CYLScenarioTabBarController.makeForDemo()
         }
         window.makeKeyAndVisible()
         self.window = window
