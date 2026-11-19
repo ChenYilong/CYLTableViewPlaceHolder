@@ -7,6 +7,10 @@
 - A localization header next to a bundle (`#define <Prefix>L10n<Name> @"<key>"`) names only keys of its table, and
   every key of the table has a macro. A Swift example's `*Localization.swift` next to a bundle does the same with
   the cases of its `<Prefix>L10n` key enum (`case name = "<key>"`), as Swift cannot use function-like macros.
+- Every layer (a bundle with `.lproj` folders) has its own lookup macro next to the bundle: a function-like
+  `#define <Prefix>LocalizedString(` in a `*Localization.h`, or a Swift `func <Prefix>LocalizedString(` in a
+  `*Localization.swift`; and the repository has at least two different lookup macros (instructions.md, "Lookup
+  macros: one per layer, at least two per project").
 
 Usage: python3 scripts/check_localizations.py [repository root]. Exits 1 and lists every problem otherwise.
 """
@@ -23,6 +27,8 @@ FORMAT = re.compile(r'%(?:\d+\$)?[-+ #0]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?[@dD
 MACRO = re.compile(r'^\s*#define\s+\w+L10n\w+\s+@"([^"]+)"', re.M)
 SWIFT_ENUM = re.compile(r'^\s*enum\s+\w+L10n\b[^{]*\{(.*?)^\}', re.M | re.S)
 SWIFT_CASE = re.compile(r'^\s*case\s+\w+\s*=\s*"([^"]+)"', re.M)
+LOOKUP_MACRO = re.compile(r'^\s*#define\s+(\w+LocalizedString)\s*\(', re.M)
+LOOKUP_FUNC = re.compile(r'^\s*(?:public\s+|internal\s+)?func\s+(\w+LocalizedString)\s*\(', re.M)
 problems = []
 
 
@@ -65,7 +71,18 @@ for path in sorted(p for p in ROOT.rglob('*') if p.suffix in {'.strings', '.stri
         problems.append(f'{path.relative_to(ROOT)}: localization file outside <language>.lproj in a .bundle')
 
 bundles = sorted(p for p in ROOT.rglob('*.bundle') if p.is_dir() and visible(p) and any(p.glob('*.lproj')))
+lookups = set()
 for bundle in bundles:
+    layer_lookups = set()
+    for header in bundle.parent.glob('*Localization.h'):
+        layer_lookups |= set(LOOKUP_MACRO.findall(header.read_text(encoding='utf-8')))
+    for source in bundle.parent.glob('*Localization.swift'):
+        layer_lookups |= set(LOOKUP_FUNC.findall(source.read_text(encoding='utf-8')))
+    if not layer_lookups:
+        problems.append(f'{bundle.relative_to(ROOT)}: this layer has no lookup macro (a *Localization.h with '
+                        f'#define <Prefix>LocalizedString( or a *Localization.swift with func <Prefix>LocalizedString( '
+                        f'next to the bundle)')
+    lookups |= layer_lookups
     tables = sorted({f.stem for f in bundle.glob('*.lproj/*.strings')})
     for table in tables:
         reference_path = bundle / 'en.lproj' / f'{table}.strings'
@@ -109,6 +126,11 @@ for bundle in bundles:
                 problems.append(f'{source.relative_to(ROOT)}: no case for {table}.strings key {key}')
     print(f'{bundle.relative_to(ROOT)}: {len(tables)} table(s), '
           f'{len(list(bundle.glob("*.lproj")))} language(s)')
+
+if bundles and len(lookups) < 2:
+    problems.append(f'only {len(lookups)} lookup macro(s) ({", ".join(sorted(lookups)) or "none"}); the project needs '
+                    f'the core macro and at least one example macro, each reading its own bundle')
+print(f'Lookup macros: {", ".join(sorted(lookups))}')
 
 if problems:
     print('\n'.join(problems))
