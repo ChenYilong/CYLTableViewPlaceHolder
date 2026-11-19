@@ -43,9 +43,12 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
   ui.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.accessibility.uitests'
     config.build_settings['TEST_TARGET_NAME'] = 'AccessibilityHost'
+    config.build_settings['SWIFT_VERSION'] = '5.0'
   end
 
-  sources = [File.join(root, 'Tests/AccessibilityHost/main.m')] +
+  # The host app and the UI tests are Swift (docs/Swift-Migration.md, step 13); the host compiles into the library's
+  # module, so it uses the library without an import.
+  sources = Dir.glob(File.join(root, 'Tests/AccessibilityHost/*.swift')).select(&visible) +
             Dir.glob(File.join(core_dir, '*.{m,swift}')).select(&visible) +
             Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible) +
             # The CYLRefresh Swift files except the Rive header, which needs RiveRuntime (as in the podspec's Core).
@@ -66,7 +69,7 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
     app.frameworks_build_phase.add_file_reference(ref)
     embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
   end
-  ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.m')))
+  ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.swift')))
   project.save
 
   scheme = Xcodeproj::XCScheme.new
