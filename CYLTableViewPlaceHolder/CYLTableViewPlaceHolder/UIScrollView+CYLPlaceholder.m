@@ -56,17 +56,19 @@ void CYLPlaceholderStartTrackingKeyboard(void) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         CYLKeyboardScreenFrame = CGRectNull;
+        // [EN] The blocks call defaultCenter instead of capturing `center` (-Warc-retain-cycles; the singleton never leaks).
+        // [CN] block 内直接调用 defaultCenter，而不捕获 `center`（避免 -Warc-retain-cycles；单例不会泄漏）。
         NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
         [center addObserverForName:UIKeyboardWillChangeFrameNotification object:nil queue:nil
                         usingBlock:^(NSNotification *note) {
             NSValue *end = note.userInfo[UIKeyboardFrameEndUserInfoKey];
             CYLKeyboardScreenFrame = end ? end.CGRectValue : CGRectNull;
-            [center postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
+            [NSNotificationCenter.defaultCenter postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
         }];
         [center addObserverForName:UIKeyboardWillHideNotification object:nil queue:nil
                         usingBlock:^(NSNotification *note) {
             CYLKeyboardScreenFrame = CGRectNull;
-            [center postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
+            [NSNotificationCenter.defaultCenter postNotificationName:CYLPlaceholderVisibleAreaDidChangeNotification object:nil];
         }];
     });
 }
