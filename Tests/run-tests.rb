@@ -5,8 +5,8 @@ require 'xcodeproj'
 root = File.expand_path('..', __dir__)
 Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   project = Xcodeproj::Project.new(File.join(dir, 'Tests.xcodeproj'))
-  # TEST_DEPLOYMENT_TARGET builds the suite at another deployment target: 15.0 (the lowest Xcode 27 allows) or 12.0
-  # (the podspec's minimum, CI: .github/workflows/ios12-runtime.yml on the Intel runner with the iOS 12.4 simulator).
+  # TEST_DEPLOYMENT_TARGET builds the suite at another deployment target: 15.0 (the lowest Xcode 26/27 allow; CI:
+  # .github/workflows/ios15-runtime.yml on an iOS 15 simulator). iOS 12 is no longer buildable (CYLAnimatedItem needs iOS 13+).
   deployment = ENV.fetch('TEST_DEPLOYMENT_TARGET', '17.0')
   target = project.new_target(:unit_test_bundle, 'PlaceholderTests', :ios, deployment)
   target.build_configurations.each do |config|
@@ -22,7 +22,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
       config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "org.cyl.placeholder.tests.#{ENV['DEVELOPMENT_TEAM'].downcase}"
     end
     # Any newer API the suite or the library uses without @available fails the build at a low deployment target.
-    # CYL_EXTRA_CFLAGS adds more (scripts/ios12-build.sh: -Werror=unguarded-availability).
+    # CYL_EXTRA_CFLAGS adds more (scripts/ios15-build.sh: -Werror=unguarded-availability).
     config.build_settings['OTHER_CFLAGS'] = "$(inherited) -Werror=unguarded-availability-new #{ENV['CYL_EXTRA_CFLAGS']}".strip
   end
   # The tests are Swift since 2026-11-20 (docs/Swift-Migration.md, step 13), compiled into the library's module, so they
@@ -89,8 +89,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   scheme.save_as(project.path, 'PlaceholderTests', true)
   # CYLPlaceholderView is a subclass of CYLAnimatedItemView: the CYLAnimatedItem pod (CYLTabBarController repository, not
   # on the trunk yet) at the commit the Cartfile pins, with its engine and no animator, so CYL_ANIMATION_ENGINE_AVAILABLE
-  # is 1 and the tests register their own animators. CocoaPods builds it with the same Xcode as the tests (the iOS 12
-  # jobs use Xcode 16, which cannot import a framework built by Xcode 26).
+  # is 1 and the tests register their own animators. CocoaPods builds it with the same Xcode as the tests (one Xcode for the pod and the tests).
   tabbar_sha = File.read(File.join(root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
   File.write(File.join(dir, 'Podfile'), <<~PODFILE)
     platform :ios, '#{deployment}'
@@ -113,7 +112,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     ENV['LC_ALL'] ||= 'en_US.UTF-8'
     abort 'pod install failed' unless system('pod', 'install', '--silent')
   end
-  # CYL_TEST_ACTION=build-for-testing only builds (scripts/ios12-build.sh, generic simulator destination).
+  # CYL_TEST_ACTION=build-for-testing only builds (scripts/ios15-build.sh, generic simulator destination).
   action = ENV.fetch('CYL_TEST_ACTION', 'test')
   destination = ENV.fetch('DESTINATION', action == 'test' ? 'platform=iOS Simulator,name=iPhone 15,OS=17.5' : 'generic/platform=iOS Simulator')
   signing = ENV['DEVELOPMENT_TEAM'].to_s.empty? ? ['CODE_SIGNING_ALLOWED=NO'] : ['-allowProvisioningUpdates']

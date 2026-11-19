@@ -16,9 +16,12 @@ import XCTest
 /**
  * Upper bound for condition-based waits. UIView animation completions, even for 0-second
  * animations, have stalled for over 5 s on loaded CI runners; waits still end as soon as the
- * expectation is fulfilled, so a generous bound costs nothing when tests pass.
+ * expectation is fulfilled, so a generous bound costs nothing when tests pass. 30 s was not enough once: on the macOS 26
+ * runner (Xcode 26.6, iOS 26.6 simulator) testHeaderKeepsItsRefreshingInsetWhenTheInsetIsResetDuringARefresh took 65 s,
+ * because the main thread was starved for tens of seconds (CI run 44587370593, 2026-11-19); every later assertion of that
+ * test passed, so the completion was late, not lost.
  */
-private let CYLTestTimeout: TimeInterval = 30
+private let CYLTestTimeout: TimeInterval = 120
 
 extension Bundle {
 
