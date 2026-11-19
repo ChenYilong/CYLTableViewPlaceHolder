@@ -962,21 +962,21 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStateHeader` | A header that shows a localized text for each state and the time of the last refresh. | `com.cyl.refresh.CYLRefreshStateHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshStateHeader` | A header with a state text and a "last updated" line. | `com.cyl.refresh.CYLRefreshStateHeader` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshStateHeader` `lastUpdatedTimeText` | Makes the "last updated" text from the last time, null for never. | `CYLRefreshStateHeader.lastUpdatedTimeText` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeLabel` | The "last updated" text. | `CYLRefreshStateHeader.lastUpdatedTimeLabel` |
 | `CYLRefreshStateHeader` `labelLeftInset` | The gap between the icon and the texts, in dp. | `CYLRefreshStateHeader.labelLeftInset` |
 | `CYLRefreshStateHeader` `stateLabel` | The state text. | `CYLRefreshStateHeader.stateLabel` |
 | `CYLRefreshStateHeader` `-setTitle:forState:` | The text of [state]. | `CYLRefreshStateHeader.setTitle` |
-| `CYLRefreshStateHeader` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshStateHeader.titleForState` |
-| `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | Formats the last update time instead of the built-in, locale-aware format ("Last update: " stays in front). `lastUpdatedTimeText` still wins when set. | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` |
-| `CYLRefreshStateHeader` `lastUpdatedTimeString` | The text the time label shows now. | `CYLRefreshStateHeader.lastUpdatedTimeString` |
-| `CYLRefreshStateHeader` `titleTimeSpacing` | Points between the state text and the time text; 0 (default) splits the height in halves as before. | `CYLRefreshStateHeader.titleTimeSpacing` |
-| `CYLRefreshStateHeader` `succeededImage` | Shown in place of the icon while the header holds after a successful refresh (`finishDuration` > 0) (flutter_easy_refresh's `ClassicHeader.succeededIcon`). | `CYLRefreshStateHeader.succeededImage` |
-| `CYLRefreshStateHeader` `failedImage` | Shown in place of the icon while the header holds after a failed refresh (`failedIcon`). | `CYLRefreshStateHeader.failedImage` |
-| `CYLRefreshStateHeader` `iconOnTrailingSide` | Puts the icon on the trailing side of the text instead of the leading side (flutter_easy_refresh's `ClassicHeader.reverse`). Default NO. | `CYLRefreshStateHeader.iconOnTrailingSide` |
-| `CYLRefreshStateHeader(ChainingGrammar)` | Chainable setters of the state header for Swift. | `com.cyl.refresh.CYLRefreshStateHeader` |
-| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | Sets `lastUpdatedTimeText`, the block that turns the last refresh time (nil when there is none) into the text shown, and returns the header. | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` |
+| `CYLRefreshStateHeader` `-titleForState:` | The text of [state], as on the state footers. | `CYLRefreshStateHeader.titleForState` |
+| `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | The date format of the "last updated" line. | `CYLRefreshStateHeader.lastUpdatedTimeFormatter` |
+| `CYLRefreshStateHeader` `lastUpdatedTimeString` | The "last updated" text now shown. | `CYLRefreshStateHeader.lastUpdatedTimeString` |
+| `CYLRefreshStateHeader` `titleTimeSpacing` | The gap between the state text and the "last updated" line, in dp. | `CYLRefreshStateHeader.titleTimeSpacing` |
+| `CYLRefreshStateHeader` `succeededImage` | Shown in place of the icon while the header holds after a successful refresh; needs a `finishDuration` above 0. | `CYLRefreshStateHeader.succeededImage` |
+| `CYLRefreshStateHeader` `failedImage` | Shown in place of the icon while the header holds after a failed refresh. | `CYLRefreshStateHeader.failedImage` |
+| `CYLRefreshStateHeader` `iconOnTrailingSide` | Puts the icon after the text instead of before it. | `CYLRefreshStateHeader.iconOnTrailingSide` |
+| `CYLRefreshStateHeader(ChainingGrammar)` | A header with a state text and a "last updated" line. | `com.cyl.refresh.CYLRefreshStateHeader` |
+| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | Sets [lastUpdatedTimeText]. | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`
 
