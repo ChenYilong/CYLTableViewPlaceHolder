@@ -29,10 +29,12 @@ Pod::Spec.new do |s|
                         'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m,swift}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}',
                         # The CYLRefresh root (configuration, categories), CYLRefreshIconView, CYLRefreshPaging, the drawn
-                        # styles' support classes and the drawn styles, footers and games are Swift since 2026-11-19;
-                        # Custom/Rive/*.swift needs RiveRuntime and stays in the Rive subspec.
+                        # styles' support classes, the drawn styles, footers and games, and the concrete header, footer
+                        # and trailer controls are Swift since 2026-11-19; Custom/Rive/*.swift needs RiveRuntime and stays
+                        # in the Rive subspec.
                         'CYLTableViewPlaceHolder/CYLRefresh/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Base/*.swift',
+                        'CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.swift'
     # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal; its Swift

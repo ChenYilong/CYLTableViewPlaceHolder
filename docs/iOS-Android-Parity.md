@@ -934,28 +934,28 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAnimationHeader` | Animated images (`setAnimationImages:forState:`), or an icon animation (GIF, Lottie, PAG or Rive) through `CYLRefreshIconAnimating`, which takes the animation view's place with the same layout. | `com.cyl.refresh.CYLRefreshAnimationHeader` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshAnimationHeader` `animationView` | The image view that plays the per-state images. | `CYLRefreshAnimationHeader.animationView` |
-| `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:` | Sets the images of `state`, played in `duration` seconds; a single image is shown still. The control grows to the first image's height. | `CYLRefreshAnimationHeader.setAnimationImages` |
-| `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` | The same, 0.1 seconds per image. | `CYLRefreshAnimationHeader.setAnimationImages` |
+| `CYLRefreshAnimationHeader` | The state header with an animation per state. | `com.cyl.refresh.CYLRefreshAnimationHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAnimationHeader` `animationView` | The view that shows the animation. | `CYLRefreshAnimationHeader.animationView` |
+| `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAnimationHeader.setAnimationImages` |
+| `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshAnimationHeader.setAnimationImages` |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshGifHeader` | The MJRefresh name of `CYLRefreshAnimationHeader`, kept for compatibility: `gifView` and `setImages:…` call the general methods. New code can use `CYLRefreshAnimationHeader`. | `com.cyl.refresh.CYLRefreshGifHeader` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshGifHeader` `gifView` | The same view as `animationView`. | `CYLRefreshGifHeader.gifView` |
-| `CYLRefreshGifHeader` `-setImages:duration:forState:` | Calls `-setAnimationImages:duration:forState:`. | `CYLRefreshGifHeader.setImages` |
-| `CYLRefreshGifHeader` `-setImages:forState:` | Calls `-setAnimationImages:forState:`. | `CYLRefreshGifHeader.setImages` |
+| `CYLRefreshGifHeader` | The state header with image frames per state. | `com.cyl.refresh.CYLRefreshGifHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshGifHeader` `gifView` | The view that shows the frames. | `CYLRefreshGifHeader.gifView` |
+| `CYLRefreshGifHeader` `-setImages:duration:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshGifHeader.setImages` |
+| `CYLRefreshGifHeader` `-setImages:forState:` | The frames of [state], [duration] seconds in all. | `CYLRefreshGifHeader.setImages` |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshNormalHeader` | The standard header: the state and last-updated texts with an arrow that turns when releasing will refresh, and a spinner while refreshing. | `com.cyl.refresh.CYLRefreshNormalHeader` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshNormalHeader` `arrowView` | The arrow beside the texts (the bundle's `CYLRefreshArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshNormalHeader.arrowView` |
-| `CYLRefreshNormalHeader` `iconSize` | Size of the icon (the arrow); CGSizeZero (default) uses the image's own size (flutter_easy_refresh's `iconDimension`). | `CYLRefreshNormalHeader.iconSize` |
-| `CYLRefreshNormalHeader` `loadingView` | The spinner shown while refreshing, created on first access and hidden when stopped; style it here. | `CYLRefreshNormalHeader.loadingView` |
+| `CYLRefreshNormalHeader` | The state header with an arrow and a spinner. | `com.cyl.refresh.CYLRefreshNormalHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshNormalHeader` `arrowView` | The arrow. | `CYLRefreshNormalHeader.arrowView` |
+| `CYLRefreshNormalHeader` `iconSize` | The arrow's and spinner's side, in dp. | `CYLRefreshNormalHeader.iconSize` |
+| `CYLRefreshNormalHeader` `loadingView` | The spinner. | `CYLRefreshNormalHeader.loadingView` |
 | `CYLRefreshNormalHeader` `CYLRefreshDeprecated` | Property of `CYLRefreshNormalHeader`. | n/a (iOS only: deprecated iOS aliases) |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`

@@ -11,20 +11,10 @@
 @property (nonatomic, weak) id lastSender;
 @end
 
-@interface CYLHookHeader : CYLRefreshNormalHeader
-@property (nonatomic) NSInteger attachCount;
-@property (nonatomic) NSMutableArray<NSNumber *> *phases;
-@property (nonatomic) NSNumber *finishedWith;
-@end
-
-@implementation CYLHookHeader
-- (void)didAttachToScrollView:(UIScrollView *)scrollView { [super didAttachToScrollView:scrollView]; self.attachCount++; }
-- (void)phaseDidChangeFrom:(CYLRefreshPhase)oldPhase to:(CYLRefreshPhase)phase {
-    if (!self.phases) self.phases = [NSMutableArray array];
-    [self.phases addObject:@(phase)];
-}
-- (void)refreshDidFinishWithSuccess:(BOOL)success { [super refreshDidFinishWithSuccess:success]; self.finishedWith = @(success); }
-@end
+// [EN] CYLHookHeader and CYLAutoHookHeader (CYLRefreshNormalHeader subclasses that record the hooks) are Swift since the
+//      normal header moved to Swift (Tests/CYLRefreshTestHeaders.swift): Objective-C cannot subclass a Swift class.
+// [CN] CYLHookHeader 与 CYLAutoHookHeader（记录钩子的 CYLRefreshNormalHeader 子类）自普通刷新头改为 Swift 后用 Swift 编写
+//      （Tests/CYLRefreshTestHeaders.swift）：Objective-C 不能继承 Swift 类。
 
 /// [EN] A target for -addTarget:action: that ends whichever header is attached. [CN] -addTarget:action: 的目标，结束当前挂着的刷新头。
 @interface CYLStartHeaderTarget : NSObject
@@ -39,17 +29,6 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.scrollView.cyl_header endRefreshing];
     });
-}
-@end
-
-@interface CYLAutoHookHeader : CYLRefreshNormalHeader
-@property (nonatomic) NSMutableArray<NSNumber *> *autoChanges;
-@end
-
-@implementation CYLAutoHookHeader
-- (void)autoRefreshDidChange:(BOOL)autoRefresh {
-    if (!self.autoChanges) self.autoChanges = [NSMutableArray array];
-    [self.autoChanges addObject:@(autoRefresh)];
 }
 @end
 

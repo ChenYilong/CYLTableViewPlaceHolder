@@ -33,3 +33,73 @@ public final class CYLStatusRecordingHeader: CYLRefreshBezierRadarHeader {
         statuses?.add(NSNumber(value: status.rawValue))
     }
 }
+
+/**
+ * [EN] Records the subclass hooks of a normal header (`Tests/CYLRefreshStylesAPITests.m`).
+ * [CN] 记录普通刷新头的子类钩子（`Tests/CYLRefreshStylesAPITests.m`）。
+ */
+@objc(CYLHookHeader)
+public final class CYLHookHeader: CYLRefreshNormalHeader {
+
+    /**
+     * [EN] How many times the header was attached. [CN] 刷新头被挂上的次数。
+     */
+    @objc public var attachCount = 0
+
+    /**
+     * [EN] The phases in the order reported, as `NSNumber`s; nil before the first one.
+     * [CN] 按报告顺序记录的阶段（`NSNumber`）；第一个之前为 nil。
+     */
+    @objc public var phases: NSMutableArray?
+
+    /**
+     * [EN] The last result passed to `refreshDidFinishWithSuccess:`, as an `NSNumber`; nil before the first one.
+     * [CN] 最近一次传给 `refreshDidFinishWithSuccess:` 的结果（`NSNumber`）；第一次之前为 nil。
+     */
+    @objc public var finishedWith: NSNumber?
+
+    /**
+     * [EN] Counts the attachment. [CN] 记录挂上次数。
+     */
+    public override func didAttach(to scrollView: UIScrollView) {
+        super.didAttach(to: scrollView)
+        attachCount += 1
+    }
+
+    /**
+     * [EN] Records `phase` (without calling super, as the Objective-C helper did). [CN] 记录 `phase`（与 Objective-C 辅助类相同，不调用 super）。
+     */
+    public override func phaseDidChange(from oldPhase: CYLRefreshPhase, to phase: CYLRefreshPhase) {
+        if phases == nil { phases = NSMutableArray() }
+        phases?.add(NSNumber(value: phase.rawValue))
+    }
+
+    /**
+     * [EN] Records the result after the base handled it. [CN] 基类处理后记录结果。
+     */
+    public override func refreshDidFinish(withSuccess success: Bool) {
+        super.refreshDidFinish(withSuccess: success)
+        finishedWith = NSNumber(value: success)
+    }
+}
+
+/**
+ * [EN] Records every `autoRefreshDidChange:` of a normal header (`Tests/CYLRefreshStylesAPITests.m`).
+ * [CN] 记录普通刷新头的每次 `autoRefreshDidChange:`（`Tests/CYLRefreshStylesAPITests.m`）。
+ */
+@objc(CYLAutoHookHeader)
+public final class CYLAutoHookHeader: CYLRefreshNormalHeader {
+
+    /**
+     * [EN] The values passed, as `NSNumber`s; nil before the first one. [CN] 传入的值（`NSNumber`）；第一次之前为 nil。
+     */
+    @objc public var autoChanges: NSMutableArray?
+
+    /**
+     * [EN] Records `autoRefresh`. [CN] 记录 `autoRefresh`。
+     */
+    public override func autoRefreshDidChange(_ autoRefresh: Bool) {
+        if autoChanges == nil { autoChanges = NSMutableArray() }
+        autoChanges?.add(NSNumber(value: autoRefresh))
+    }
+}
