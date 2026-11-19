@@ -44,7 +44,7 @@
 		382DDA436AFC30D5AAFD5B86 /* UIScrollView+CYLRefresh.h in Headers */ = {isa = PBXBuildFile; fileRef = 6576D12C43227964CA968B67 /* UIScrollView+CYLRefresh.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3832F0ECAD66799F6C0CC212 /* CYLRefreshAutoStateFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E9EC73DB03C091D1B3C649 /* CYLRefreshAutoStateFooter.swift */; };
 		3B7E9C2A5D184F6A9E0B1C47 /* UIScrollView+CYLPlaceholderSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C4D2E6F1A3B5C7D9E0F2A4B /* UIScrollView+CYLPlaceholderSupport.m */; };
-		3BC87DC8F5113D4704C8EC80 /* CYLRefreshTrailer.m in Sources */ = {isa = PBXBuildFile; fileRef = A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.m */; };
+		3BC87DC8F5113D4704C8EC80 /* CYLRefreshTrailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.swift */; };
 		3E836A2701FA3D75FA471924 /* CYLRefreshValueAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = C78E797080E21B49B69A1DAC /* CYLRefreshValueAnimator.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3E8D2E42283DBEAE3E4FB35E /* CYLRefreshDrawnHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5382343C8DFAA56936B79EF0 /* CYLRefreshDrawnHeader.swift */; };
 		3F9BB7EDDF8E0047F7E2D381 /* UICollectionView+CYLPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = AE03F9B2739CC6716E553C0D /* UICollectionView+CYLPlaceholder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -334,7 +334,7 @@
 		A1C3E5F7092B4D6F8A0C2E41 /* UIScrollView+CYLExtensionSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+CYLExtensionSupport.m"; sourceTree = "<group>"; };
 		A1C3E5F7092B4D6F8A0C2E43 /* UICollectionViewLayout+CYLRefreshSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewLayout+CYLRefreshSupport.m"; sourceTree = "<group>"; };
 		A2BFD9E03E1297946F866D2E /* CYLTableViewPlaceHolder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CYLTableViewPlaceHolder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshTrailer.m; sourceTree = "<group>"; };
+		A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshTrailer.swift; sourceTree = "<group>"; };
 		A75A5D636B2D44CBB7D40939 /* CYLRefreshBezierRadarHeader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshBezierRadarHeader.swift; sourceTree = "<group>"; };
 		AC9A11EEA1254D7B84FA0002 /* LICENSE.third-party */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LICENSE.third-party"; sourceTree = "<group>"; };
 		AC9A11EEA1254D7B84FA0012 /* LICENSE.refresh-third-party.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LICENSE.refresh-third-party.txt"; sourceTree = "<group>"; };
@@ -736,7 +736,7 @@
 				EBAB2C50F85B633922613D64 /* CYLRefreshHeader.h */,
 				271B9AE5193C25D8586A2719 /* CYLRefreshHeader.swift */,
 				4BCB3D19D840E95F5F9D4DF8 /* CYLRefreshTrailer.h */,
-				A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.m */,
+				A684DA50FF14A39BD2798FEC /* CYLRefreshTrailer.swift */,
 				1753313E45A78A4B2AD240AD /* CYLRefreshIconView.swift */,
 				FAB60554ECE553B28C5E57D1 /* CYLRefreshIconView.h */,
 				CEDE0E00F7930065D4FE8765 /* CYLRefreshPaging.h */,
@@ -1022,7 +1022,7 @@
 				E1413511215EA4393B793296 /* CYLRefreshComponent.m in Sources */,
 				F91D3DDFF9B8B80F22433E29 /* CYLRefreshFooter.m in Sources */,
 				EEE46BBC14128E895046BF11 /* CYLRefreshHeader.swift in Sources */,
-				3BC87DC8F5113D4704C8EC80 /* CYLRefreshTrailer.m in Sources */,
+				3BC87DC8F5113D4704C8EC80 /* CYLRefreshTrailer.swift in Sources */,
 				5FBF03E14A3867370C4E5A0C /* CYLRefreshConfig.swift in Sources */,
 				9F4884276D5F46988B364146 /* CYLRefreshConst.m in Sources */,
 				3832F0ECAD66799F6C0CC212 /* CYLRefreshAutoStateFooter.swift in Sources */,

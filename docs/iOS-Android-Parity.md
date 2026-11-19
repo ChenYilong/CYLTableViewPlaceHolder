@@ -446,13 +446,13 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshTrailer` | The base class of the horizontal controls at the trailing end of the content: swiping past the end and releasing runs the refreshing callback (for example to open details); set one as a scroll view's `cyl_trailer`. | `com.cyl.refresh.CYLRefreshTrailer` |
+| `CYLRefreshTrailer` | A control at the end of a horizontal list, pulled from the right. | `com.cyl.refresh.CYLRefreshTrailer` |
 | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | A trailer that runs [refreshingBlock] when released past the trigger. | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }` |
 | `CYLRefreshTrailer` `+trailerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshTrailer`. | n/a (iOS only: Objective-C target-action; Kotlin uses the block) |
 | `CYLRefreshTrailer` `ignoredScrollViewContentInsetRight` | Property of `CYLRefreshTrailer`. | n/a (iOS only: the Android trailer moves the list itself, there is no content inset to ignore) |
-| `CYLRefreshTrailer` `automaticallyRefresh` | Whether scrolling to the end starts refreshing without a release (default NO, which keeps the pull-and-release behavior). Only applies when the content is wider than the scroll view. | `CYLRefreshTrailer.automaticallyRefresh` — a fling that reaches the end also refreshes |
-| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | How much of the trailer must be visible before it refreshes automatically (default 1.0, fully visible). | `CYLRefreshTrailer.triggerAutomaticallyRefreshPercent` |
-| `CYLRefreshTrailer` `autoTriggerTimes` | Automatic refreshes allowed per drag (default 1); -1 means unlimited. Scrolling without a drag is not limited. | `CYLRefreshTrailer.autoTriggerTimes` |
+| `CYLRefreshTrailer` `automaticallyRefresh` | Whether pulling the trailer into view refreshes without a release; false, the default, keeps the pull-and-release behavior. | `CYLRefreshTrailer.automaticallyRefresh` — a fling that reaches the end also refreshes |
+| `CYLRefreshTrailer` `triggerAutomaticallyRefreshPercent` | How much of the trailer must be in view before it refreshes automatically, 1 for fully. | `CYLRefreshTrailer.triggerAutomaticallyRefreshPercent` |
+| `CYLRefreshTrailer` `autoTriggerTimes` | Automatic refreshes allowed per drag, 1 by default; -1 for no limit. | `CYLRefreshTrailer.autoTriggerTimes` |
 
 ## `CYLRefresh/CYLRefreshConfig.h`
 
