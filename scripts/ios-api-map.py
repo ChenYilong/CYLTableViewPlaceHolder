@@ -18,12 +18,16 @@ Score = rows whose iOS column is not TODO / every row that is not n/a, from 0 (a
 
 Usage: python3 scripts/ios-api-map.py [--check]
 """
+import importlib.util
 import json
 import os
 import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_AMAP_SPEC = importlib.util.spec_from_file_location('android_api_map', os.path.join(ROOT, 'scripts', 'android-api-map.py'))
+amap = importlib.util.module_from_spec(_AMAP_SPEC)
+_AMAP_SPEC.loader.exec_module(amap)
 SOURCES = [
     # The former animator modules placeholder-lottie / -pag / -rive are gone: the core plays animations through
     # CYLTabBarController's CYLAnimatedItem engine (module :cylanimateditem), which is not part of this repository.
@@ -309,7 +313,7 @@ def render(by_file, counted, done):
 
 def main():
     by_file, counted, done, stale = build()
-    text = render(by_file, counted, done)
+    text = amap.with_navigation_of('', render(by_file, counted, done)).rstrip('\n')
     if '--check' in sys.argv:
         problems = []
         if stale:

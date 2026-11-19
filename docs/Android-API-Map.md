@@ -2,6 +2,93 @@
 
 <!-- bound-classes: none -->
 
+<!-- docs-navigation:start -->
+
+| 中文 | English |
+| --- | --- |
+| [`CYLPlaceholderHUD/CYLPlaceholderHUD.h`](#cylplaceholderhudcylplaceholderhudh) | [`CYLPlaceholderHUD/CYLPlaceholderHUD.h`](#cylplaceholderhudcylplaceholderhudh) |
+| [`CYLRefresh/Base/CYLRefreshAutoFooter.h`](#cylrefreshbasecylrefreshautofooterh) | [`CYLRefresh/Base/CYLRefreshAutoFooter.h`](#cylrefreshbasecylrefreshautofooterh) |
+| [`CYLRefresh/Base/CYLRefreshBackFooter.h`](#cylrefreshbasecylrefreshbackfooterh) | [`CYLRefresh/Base/CYLRefreshBackFooter.h`](#cylrefreshbasecylrefreshbackfooterh) |
+| [`CYLRefresh/Base/CYLRefreshComponent.h`](#cylrefreshbasecylrefreshcomponenth) | [`CYLRefresh/Base/CYLRefreshComponent.h`](#cylrefreshbasecylrefreshcomponenth) |
+| [`CYLRefresh/Base/CYLRefreshFooter.h`](#cylrefreshbasecylrefreshfooterh) | [`CYLRefresh/Base/CYLRefreshFooter.h`](#cylrefreshbasecylrefreshfooterh) |
+| [`CYLRefresh/Base/CYLRefreshHeader.h`](#cylrefreshbasecylrefreshheaderh) | [`CYLRefresh/Base/CYLRefreshHeader.h`](#cylrefreshbasecylrefreshheaderh) |
+| [`CYLRefresh/Base/CYLRefreshIconView.h`](#cylrefreshbasecylrefreshiconviewh) | [`CYLRefresh/Base/CYLRefreshIconView.h`](#cylrefreshbasecylrefreshiconviewh) |
+| [`CYLRefresh/Base/CYLRefreshPaging.h`](#cylrefreshbasecylrefreshpagingh) | [`CYLRefresh/Base/CYLRefreshPaging.h`](#cylrefreshbasecylrefreshpagingh) |
+| [`CYLRefresh/Base/CYLRefreshTrailer.h`](#cylrefreshbasecylrefreshtrailerh) | [`CYLRefresh/Base/CYLRefreshTrailer.h`](#cylrefreshbasecylrefreshtrailerh) |
+| [`CYLRefresh/CYLRefreshConfig.h`](#cylrefreshcylrefreshconfigh) | [`CYLRefresh/CYLRefreshConfig.h`](#cylrefreshcylrefreshconfigh) |
+| [`CYLRefresh/CYLRefreshConst.h`](#cylrefreshcylrefreshconsth) | [`CYLRefresh/CYLRefreshConst.h`](#cylrefreshcylrefreshconsth) |
+| [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`](#cylrefreshcustomcupertinocylrefreshcupertinofooterh) | [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`](#cylrefreshcustomcupertinocylrefreshcupertinofooterh) |
+| [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`](#cylrefreshcustomcupertinocylrefreshcupertinoheaderh) | [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`](#cylrefreshcustomcupertinocylrefreshcupertinoheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`](#cylrefreshcustomdrawncylrefreshbeziercircleheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`](#cylrefreshcustomdrawncylrefreshbeziercircleheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`](#cylrefreshcustomdrawncylrefreshbezierradarheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`](#cylrefreshcustomdrawncylrefreshbezierradarheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`](#cylrefreshcustomdrawncylrefreshdeliveryheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`](#cylrefreshcustomdrawncylrefreshdeliveryheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`](#cylrefreshcustomdrawncylrefreshdrawnfooterh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`](#cylrefreshcustomdrawncylrefreshdrawnfooterh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`](#cylrefreshcustomdrawncylrefreshdrawnheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`](#cylrefreshcustomdrawncylrefreshdrawnheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`](#cylrefreshcustomdrawncylrefreshdropboxheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`](#cylrefreshcustomdrawncylrefreshdropboxheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`](#cylrefreshcustomdrawncylrefreshflyheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`](#cylrefreshcustomdrawncylrefreshflyheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`](#cylrefreshcustomdrawncylrefreshgamebattlecityheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`](#cylrefreshcustomdrawncylrefreshgamebattlecityheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`](#cylrefreshcustomdrawncylrefreshgameheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`](#cylrefreshcustomdrawncylrefreshgameheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`](#cylrefreshcustomdrawncylrefreshgamehitblockheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`](#cylrefreshcustomdrawncylrefreshgamehitblockheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`](#cylrefreshcustomdrawncylrefreshmaterialheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`](#cylrefreshcustomdrawncylrefreshmaterialheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`](#cylrefreshcustomdrawncylrefreshoriginalheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`](#cylrefreshcustomdrawncylrefreshoriginalheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`](#cylrefreshcustomdrawncylrefreshphoenixheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`](#cylrefreshcustomdrawncylrefreshphoenixheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`](#cylrefreshcustomdrawncylrefreshstorehouseheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`](#cylrefreshcustomdrawncylrefreshstorehouseheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`](#cylrefreshcustomdrawncylrefreshtaurusheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`](#cylrefreshcustomdrawncylrefreshtaurusheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`](#cylrefreshcustomdrawncylrefreshwaveswipeheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`](#cylrefreshcustomdrawncylrefreshwaveswipeheaderh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`](#cylrefreshcustomdrawnsupportcylrefreshflyviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`](#cylrefreshcustomdrawnsupportcylrefreshflyviewh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgameplayingsceneh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgameplayingsceneh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgamestartsceneh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgamestartsceneh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`](#cylrefreshcustomdrawnsupportcylrefreshmountainviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`](#cylrefreshcustomdrawnsupportcylrefreshmountainviewh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehouselineh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehouselineh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehousepathh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehousepathh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`](#cylrefreshcustomdrawnsupportcylrefreshvalueanimatorh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`](#cylrefreshcustomdrawnsupportcylrefreshvalueanimatorh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorelementh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorelementh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorimageh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorimageh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathelementh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathelementh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathsparserh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathsparserh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorutilitiesh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorutilitiesh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorviewh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`](#cylrefreshcustomfooterautocylrefreshautoanimationfooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`](#cylrefreshcustomfooterautocylrefreshautoanimationfooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`](#cylrefreshcustomfooterautocylrefreshautogiffooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`](#cylrefreshcustomfooterautocylrefreshautogiffooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`](#cylrefreshcustomfooterautocylrefreshautonormalfooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`](#cylrefreshcustomfooterautocylrefreshautonormalfooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`](#cylrefreshcustomfooterautocylrefreshautostatefooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`](#cylrefreshcustomfooterautocylrefreshautostatefooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackanimationfooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackanimationfooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackgiffooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackgiffooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`](#cylrefreshcustomfooterbackcylrefreshbacknormalfooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`](#cylrefreshcustomfooterbackcylrefreshbacknormalfooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackstatefooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackstatefooterh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`](#cylrefreshcustomheadercylrefreshanimationheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`](#cylrefreshcustomheadercylrefreshanimationheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`](#cylrefreshcustomheadercylrefreshgifheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`](#cylrefreshcustomheadercylrefreshgifheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`](#cylrefreshcustomheadercylrefreshnormalheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`](#cylrefreshcustomheadercylrefreshnormalheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`](#cylrefreshcustomheadercylrefreshstateheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`](#cylrefreshcustomheadercylrefreshstateheaderh) |
+| [`CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`](#cylrefreshcustomtrailercylrefreshnormaltrailerh) | [`CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`](#cylrefreshcustomtrailercylrefreshnormaltrailerh) |
+| [`CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`](#cylrefreshcustomtrailercylrefreshstatetrailerh) | [`CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`](#cylrefreshcustomtrailercylrefreshstatetrailerh) |
+| [`CYLRefresh/NSBundle+CYLRefresh.h`](#cylrefreshnsbundlecylrefreshh) | [`CYLRefresh/NSBundle+CYLRefresh.h`](#cylrefreshnsbundlecylrefreshh) |
+| [`CYLRefresh/UICollectionViewLayout+CYLRefresh.h`](#cylrefreshuicollectionviewlayoutcylrefreshh) | [`CYLRefresh/UICollectionViewLayout+CYLRefresh.h`](#cylrefreshuicollectionviewlayoutcylrefreshh) |
+| [`CYLRefresh/UIScrollView+CYLExtension.h`](#cylrefreshuiscrollviewcylextensionh) | [`CYLRefresh/UIScrollView+CYLExtension.h`](#cylrefreshuiscrollviewcylextensionh) |
+| [`CYLRefresh/UIScrollView+CYLRefresh.h`](#cylrefreshuiscrollviewcylrefreshh) | [`CYLRefresh/UIScrollView+CYLRefresh.h`](#cylrefreshuiscrollviewcylrefreshh) |
+| [`CYLRefresh/UIView+CYLExtension.h`](#cylrefreshuiviewcylextensionh) | [`CYLRefresh/UIView+CYLExtension.h`](#cylrefreshuiviewcylextensionh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`](#cyltableviewplaceholdercylplaceholderlocalizationh) | [`CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`](#cyltableviewplaceholdercylplaceholderlocalizationh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`](#cyltableviewplaceholdercylplaceholdernetworkmonitorh) | [`CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`](#cyltableviewplaceholdercylplaceholdernetworkmonitorh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`](#cyltableviewplaceholdercylplaceholderscenarioh) | [`CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`](#cyltableviewplaceholdercylplaceholderscenarioh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](#cyltableviewplaceholdercylplaceholderstackviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](#cyltableviewplaceholdercylplaceholderstackviewh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`](#cyltableviewplaceholdercylplaceholderstatusviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`](#cyltableviewplaceholdercylplaceholderstatusviewh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderView.h`](#cyltableviewplaceholdercylplaceholderviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderView.h`](#cyltableviewplaceholdercylplaceholderviewh) |
+| [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`](#cyltableviewplaceholdercyltableviewplaceholderdelegateh) | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`](#cyltableviewplaceholdercyltableviewplaceholderdelegateh) |
+| [`CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`](#cyltableviewplaceholderuicollectionviewcylplaceholderh) | [`CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`](#cyltableviewplaceholderuicollectionviewcylplaceholderh) |
+| [`CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`](#cyltableviewplaceholderuitableviewcylplaceholderh) | [`CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`](#cyltableviewplaceholderuitableviewcylplaceholderh) |
+| [`CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`](#cyltableviewplaceholderuitableviewcyltableviewplaceholderh) | [`CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`](#cyltableviewplaceholderuitableviewcyltableviewplaceholderh) |
+| [`CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`](#cyltableviewplaceholderuiviewcontrollercylplaceholderstatush) | [`CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`](#cyltableviewplaceholderuiviewcontrollercylplaceholderstatush) |
+
+<!-- docs-navigation:end -->
+
+<!-- docs-binding:start -->
+
+| 类 / Class | 头文件 / Header |
+| --- | --- |
+| 无 / none | — |
+
+<!-- docs-binding:end -->
+
 <!-- Generated by scripts/android-api-map.py from the public headers and android/merged/api-map.json; do not edit by hand. -->
 <!-- 由 scripts/android-api-map.py 根据公开头文件与 android/merged/api-map.json 生成；请勿手动编辑。 -->
 
@@ -12,7 +99,7 @@
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderHUDStyle` | `com.cyl.placeholder.CYLPlaceholderHUDStyle` | done |  |
 | `CYLPlaceholderHUDMaskType` | `com.cyl.placeholder.CYLPlaceholderHUDMaskType` | done |  |
@@ -92,7 +179,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshAutoFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAutoFooter` | `com.cyl.refresh.CYLRefreshAutoFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooter.automaticallyRefresh` | done |  |
@@ -102,7 +189,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackFooter` | `com.cyl.refresh.CYLRefreshBackFooter` | done | pull to load and the second floor (secondary*) |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooter.noMoreDataDisplayDuration` | done |  |
@@ -121,7 +208,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshComponent.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshState` | `com.cyl.refresh.CYLRefreshState` | done |  |
 | `CYLRefreshScrollMode` | `com.cyl.refresh.CYLRefreshScrollMode` | done | maps to CYLRefreshLayout's SpinnerStyle |
@@ -240,7 +327,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshFooter` | `com.cyl.refresh.CYLRefreshFooter` | done |  |
 | `CYLRefreshFooter` `+footerWithRefreshingBlock:` | `CYLRefreshFooter.footerWithRefreshingBlock(context, block)` | done |  |
@@ -258,7 +345,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshHeader` | `com.cyl.refresh.CYLRefreshHeader` | done | pull to refresh and the second floor (secondary*) |
 | `CYLRefreshHeader` `+headerWithRefreshingBlock:` | `CYLRefreshHeader.headerWithRefreshingBlock(context, block)` | done |  |
@@ -286,7 +373,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshIconView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshIconView` | `com.cyl.refresh.CYLRefreshIconView` | done |  |
 | `CYLRefreshIconView` `-setAnimationAttributes:forState:` | `CYLRefreshIconView.setAnimationAttributes(attributes, state)` | done |  |
@@ -332,7 +419,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshPaging.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshPagingCompletion` | `com.cyl.refresh.CYLRefreshPagingCompletion` | done |  |
 | `CYLRefreshPagingLoader` | `com.cyl.refresh.CYLRefreshPagingLoader` | done |  |
@@ -357,7 +444,7 @@
 
 ## `CYLRefresh/Base/CYLRefreshTrailer.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshTrailer` | `com.cyl.refresh.CYLRefreshTrailer` | done |  |
 | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }` | done |  |
@@ -369,7 +456,7 @@
 
 ## `CYLRefresh/CYLRefreshConfig.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshConfig` | `com.cyl.refresh.CYLRefreshConfig` | done |  |
 | `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.languageCode` | done | the built-in texts of classic headers and footers made after the change, and the placeholder texts |
@@ -384,7 +471,7 @@
 
 ## `CYLRefresh/CYLRefreshConst.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshLabelLeftInset` | `CYLRefreshConst.CYLRefreshLabelLeftInset` | done |  |
 | `CYLRefreshHeaderHeight` | `CYLRefreshConst.CYLRefreshHeaderHeight` | done |  |
@@ -420,39 +507,39 @@
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCupertinoFooter` | `com.cyl.refresh.CYLRefreshCupertinoFooter` | done |  |
 | `CYLRefreshCupertinoFooter` `activityIndicator` | `CYLRefreshCupertinoFooter.activityIndicator` | done | CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCupertinoHeader` | `com.cyl.refresh.CYLRefreshCupertinoHeader` | done |  |
 | `CYLRefreshCupertinoHeader` `activityIndicator` | `CYLRefreshCupertinoHeader.activityIndicator` | done | CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBezierCircleHeader` | `com.cyl.refresh.CYLRefreshBezierCircleHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBezierRadarHeader` | `com.cyl.refresh.CYLRefreshBezierRadarHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshDeliveryHeader` | `com.cyl.refresh.CYLRefreshDeliveryHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshDrawnFooter` | `com.cyl.refresh.CYLRefreshDrawnFooter` | done | a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text) |
 | `CYLRefreshDrawnFooter` `styleClass` | `CYLRefreshDrawnFooter.styleClass` | done | the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class |
@@ -469,7 +556,7 @@
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshDrawnHeader` | `com.cyl.refresh.CYLRefreshDrawnHeader` | done | the drawing is CYLRefreshLayout's header; the hooks are the iOS ones |
 | `CYLRefreshDrawnHeader` `width` | `CYLRefreshDrawnHeader.width` | done |  |
@@ -496,13 +583,13 @@
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshDropBoxHeader` | `com.cyl.refresh.CYLRefreshDropBoxHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshFlyHeader` | `com.cyl.refresh.CYLRefreshFlyHeader` | done |  |
 | `CYLRefreshFlyHeader` `mountainView` | `CYLRefreshFlyHeader.mountainView` | done |  |
@@ -511,25 +598,25 @@
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGameBattleCityHeader` | `com.cyl.refresh.CYLRefreshGameBattleCityHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGameHeader` | `com.cyl.refresh.CYLRefreshGameHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGameHitBlockHeader` | `com.cyl.refresh.CYLRefreshGameHitBlockHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshMaterialSize` | `com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshMaterialHeader` | `com.cyl.refresh.CYLRefreshMaterialHeader` | done |  |
@@ -538,20 +625,20 @@
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshOriginalHeader` | `com.cyl.refresh.CYLRefreshOriginalHeader` | done |  |
 | `CYLRefreshOriginalHeader` `enableAutoRefresh` | `CYLRefreshOriginalHeader.enableAutoRefresh` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshPhoenixHeader` | `com.cyl.refresh.CYLRefreshPhoenixHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHouseHeader` | `com.cyl.refresh.CYLRefreshStoreHouseHeader` | done |  |
 | `CYLRefreshStoreHouseHeader` `lineWidth` | `CYLRefreshStoreHouseHeader.lineWidth` | done |  |
@@ -568,13 +655,13 @@
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshTaurusHeader` | `com.cyl.refresh.CYLRefreshTaurusHeader` | done |  |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshWaveSwipeHeader` | `com.cyl.refresh.CYLRefreshWaveSwipeHeader` | done |  |
 | `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | `com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)` | done | added 2026-11-17 for Android parity |
@@ -582,14 +669,14 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshFlyView` | `com.cyl.refresh.header.flyrefresh.FlyView` | n/a | an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (FlyView), no API counterpart needed |
 | `CYLRefreshFlyView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FlyView (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGamePlayingScene` | `com.cyl.refresh.header.fungame.FunGameView` | n/a | an internal drawing helper of the game headers (CYLRefreshGameHitBlockHeader, CYLRefreshGameBattleCityHeader), which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed |
 | `CYLRefreshGamePlayingScene` `title` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
@@ -604,7 +691,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGameStartScene` | `com.cyl.refresh.header.fungame.FunGameView` | n/a | an internal drawing helper of the game headers, which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed |
 | `CYLRefreshGameStartScene` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with FunGameView (its own API) |
@@ -612,7 +699,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshMountainView` | `com.cyl.refresh.header.flyrefresh.MountainSceneView` | n/a | an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (MountainSceneView), no API counterpart needed |
 | `CYLRefreshMountainView` `colorAccent` | — | n/a | an iOS drawing internal; Android draws with MountainSceneView (its own API) |
@@ -621,7 +708,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHouseLine` | `com.cyl.refresh.header.storehouse.StoreHouseBarItem` | n/a | an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHouseBarItem), no API counterpart needed |
 | `CYLRefreshStoreHouseLine` `start` | — | n/a | an iOS drawing internal; Android draws with StoreHouseBarItem (its own API) |
@@ -634,7 +721,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStoreHousePath` | `com.cyl.refresh.header.storehouse.StoreHousePath` | n/a | an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHousePath), no API counterpart needed |
 | `CYLRefreshStoreHousePath` `+linesFromArray:` | — | n/a | an iOS drawing internal; Android draws with StoreHousePath (its own API) |
@@ -644,7 +731,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAnimatorInterpolator` | — | n/a | Android has android.view.animation interpolators |
 | `CYLRefreshAnimatorRepeatMode` | — | n/a | Android has ValueAnimator.RESTART / REVERSE |
@@ -677,7 +764,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorElement.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorElement` | `com.cyl.refresh.drawable.PathsDrawable` | n/a | an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed |
 | `CYLRefreshVectorElement` `identifier` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -693,7 +780,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorImage` | `com.cyl.refresh.drawable.PathsDrawable` | n/a | an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed |
 | `CYLRefreshVectorImage` `elements` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -712,7 +799,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorPathElement` | `com.cyl.refresh.drawable.PathsDrawable` | n/a | an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed |
 | `CYLRefreshVectorPathElement` `+newWith:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
@@ -720,7 +807,7 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCurveType` | `com.cyl.refresh.drawable.path.PathParser` | n/a | an internal drawing helper of the vector path parser, which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed |
 | `CYLRefreshVectorPathsParser` | `com.cyl.refresh.drawable.path.PathParser` | n/a | an internal drawing helper of the vector styles (StoreHouse, Delivery, DropBox…), which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed |
@@ -752,14 +839,14 @@
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorUtilities` | `com.cyl.refresh.drawable.PathsDrawable` | n/a | an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed |
 | `CYLRefreshVectorUtilities` `+newLayerForElement:withPath:` | — | n/a | an iOS drawing internal; Android draws with PathsDrawable (its own API) |
 
 ## `CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshVectorView` | `com.cyl.refresh.drawable.view.PathsView` | n/a | an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsView), no API counterpart needed |
 | `CYLRefreshVectorView` `image` | — | n/a | an iOS drawing internal; Android draws with PathsView (its own API) |
@@ -768,7 +855,7 @@
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAutoAnimationFooter` | `com.cyl.refresh.CYLRefreshAutoAnimationFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoAnimationFooter` `animationView` | `CYLRefreshAutoAnimationFooter.animationView` | done |  |
@@ -777,7 +864,7 @@
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAutoGifFooter` | `com.cyl.refresh.CYLRefreshAutoGifFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoGifFooter` `gifView` | `CYLRefreshAutoGifFooter.gifView` | done |  |
@@ -786,7 +873,7 @@
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAutoNormalFooter` | `com.cyl.refresh.CYLRefreshAutoNormalFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoNormalFooter` `loadingView` | `CYLRefreshAutoNormalFooter.loadingView` | done |  |
@@ -795,7 +882,7 @@
 
 ## `CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAutoStateFooter` | `com.cyl.refresh.CYLRefreshAutoStateFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | `CYLRefreshAutoStateFooter.labelLeftInset` | done |  |
@@ -806,7 +893,7 @@
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackAnimationFooter` | `com.cyl.refresh.CYLRefreshBackAnimationFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackAnimationFooter` `animationView` | `CYLRefreshBackAnimationFooter.animationView` | done |  |
@@ -815,7 +902,7 @@
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackGifFooter` | `com.cyl.refresh.CYLRefreshBackGifFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackGifFooter` `gifView` | `CYLRefreshBackGifFooter.gifView` | done |  |
@@ -824,7 +911,7 @@
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackNormalFooter` | `com.cyl.refresh.CYLRefreshBackNormalFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackNormalFooter` `arrowView` | `CYLRefreshBackNormalFooter.arrowView` | done |  |
@@ -835,7 +922,7 @@
 
 ## `CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshBackStateFooter` | `com.cyl.refresh.CYLRefreshBackStateFooter` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackStateFooter` `labelLeftInset` | `CYLRefreshBackStateFooter.labelLeftInset` | done |  |
@@ -845,7 +932,7 @@
 
 ## `CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshAnimationHeader` | `com.cyl.refresh.CYLRefreshAnimationHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAnimationHeader` `animationView` | `CYLRefreshAnimationHeader.animationView` | done |  |
@@ -854,7 +941,7 @@
 
 ## `CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshGifHeader` | `com.cyl.refresh.CYLRefreshGifHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshGifHeader` `gifView` | `CYLRefreshGifHeader.gifView` | done |  |
@@ -863,7 +950,7 @@
 
 ## `CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshNormalHeader` | `com.cyl.refresh.CYLRefreshNormalHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshNormalHeader` `arrowView` | `CYLRefreshNormalHeader.arrowView` | done |  |
@@ -873,7 +960,7 @@
 
 ## `CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStateHeader` | `com.cyl.refresh.CYLRefreshStateHeader` | done | on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshStateHeader` `lastUpdatedTimeText` | `CYLRefreshStateHeader.lastUpdatedTimeText` | done |  |
@@ -893,14 +980,14 @@
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshNormalTrailer` | `com.cyl.refresh.CYLRefreshNormalTrailer` | done |  |
 | `CYLRefreshNormalTrailer` `arrowView` | `CYLRefreshNormalTrailer.arrowView` | done | a drawn arrow instead of the bundle image |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshStateTrailer` | `com.cyl.refresh.CYLRefreshStateTrailer` | done |  |
 | `CYLRefreshStateTrailer` `stateLabel` | `CYLRefreshStateTrailer.stateLabel` | done |  |
@@ -910,7 +997,7 @@
 
 ## `CYLRefresh/NSBundle+CYLRefresh.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `NSBundle(CYLRefresh)` | — | n/a | the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module |
 | `NSBundle(CYLRefresh)` `+cyl_refreshBundle` | — | n/a | the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module |
@@ -921,13 +1008,13 @@
 
 ## `CYLRefresh/UICollectionViewLayout+CYLRefresh.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `UICollectionViewLayout(CYLRefresh)` | — | n/a | a UICollectionView layout hook with no Android counterpart |
 
 ## `CYLRefresh/UIScrollView+CYLExtension.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLScrollDirection` | — | n/a | UIKit scroll metrics; Android uses the scrolling view's own scroll state |
 | `UIScrollView(CYLExtension)` | — | n/a | UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding |
@@ -946,7 +1033,7 @@
 
 ## `CYLRefresh/UIScrollView+CYLRefresh.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `UIScrollView(CYLRefresh)` | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` | done | extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…) |
 | `UIScrollView(CYLRefresh)` `cyl_header` | `CYLRefreshLayout.cyl_header` | done |  |
@@ -963,7 +1050,7 @@
 
 ## `CYLRefresh/UIView+CYLExtension.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `UIView(CYLExtension)` | — | n/a | UIKit frame helpers; Android views have x / y / width / height |
 | `UIView(CYLExtension)` `cyl_x` | — | n/a | UIKit frame helpers; Android views have x / y / width / height |
@@ -975,7 +1062,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderLocalization` | `com.cyl.placeholder.CYLPlaceholderLocalization` | done |  |
 | `CYLPlaceholderLocalization` `supportedLanguages` | `CYLPlaceholderLocalization.supportedLanguages` | done |  |
@@ -987,7 +1074,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderNetworkStatus` | `com.cyl.placeholder.CYLPlaceholderNetworkStatus` | done |  |
 | `CYLPlaceholderNetworkStatusBlock` | `com.cyl.placeholder.CYLPlaceholderNetworkStatusBlock` | done |  |
@@ -1005,7 +1092,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderScenario` | `com.cyl.placeholder.CYLPlaceholderScenario` | done |  |
 | `CYLPlaceholderScenarioCategory` | `com.cyl.placeholder.CYLPlaceholderScenarioCategory` | done |  |
@@ -1048,7 +1135,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderActionHandler` | `com.cyl.placeholder.CYLPlaceholderActionHandler` | done |  |
 | `CYLPlaceholderStackView` | `com.cyl.placeholder.CYLPlaceholderStackView` | done | each icon + title component is a CYLPlaceholderView reporting its content size; a scenario's first item plays the scenario's animation |
@@ -1075,7 +1162,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderStatusViewDelegate` | `com.cyl.placeholder.CYLPlaceholderStatusViewDelegate` | done |  |
 | `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | `CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)` | done |  |
@@ -1093,7 +1180,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderView.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderStyle` | `com.cyl.placeholder.CYLPlaceholderStyle` | done |  |
 | `CYLPlaceholderMessage` | `com.cyl.placeholder.CYLPlaceholderMessage` | done |  |
@@ -1173,7 +1260,7 @@
 
 ## `CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLTableViewPlaceHolderDelegate` | `com.cyl.placeholder.CYLTableViewPlaceHolderDelegate` | done | implemented by the adapter |
 | `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | `CYLTableViewPlaceHolderDelegate.makePlaceHolderView()` | done |  |
@@ -1182,7 +1269,7 @@
 
 ## `CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLCollectionPlaceholderViewBlock` | `com.cyl.placeholder.CYLCollectionPlaceholderViewBlock` | done |  |
 | `CYLCollectionPlaceholderNormalBlock` | `com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock` | done |  |
@@ -1192,7 +1279,7 @@
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLTablePlaceholderViewBlock` | `com.cyl.placeholder.CYLTablePlaceholderViewBlock` | done |  |
 | `CYLTablePlaceholderNormalBlock` | `com.cyl.placeholder.CYLTablePlaceholderNormalBlock` | done |  |
@@ -1202,14 +1289,14 @@
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `UITableView(CYLTableViewPlaceHolder)` | `RecyclerView extensions` | done | on Android a table and a collection are both a RecyclerView |
 | `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | `RecyclerView.cyl_reloadData()` | done | adapter changes also update the placeholder by themselves |
 
 ## `CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`
 
-| iOS API | Android API | 状态 Status | 说明 / Note |
+| iOS API | Android API | 状态 / Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLPlaceholderStatusDisplay` | `com.cyl.placeholder.CYLPlaceholderStatusDisplay` | done | Int flags combined with or |
 | `UIViewController(CYLPlaceholderStatus)` | `Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)` | done | the Activity is the view controller's counterpart |

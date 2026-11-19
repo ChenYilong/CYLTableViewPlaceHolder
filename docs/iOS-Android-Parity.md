@@ -2,6 +2,93 @@
 
 <!-- bound-classes: none -->
 
+<!-- docs-navigation:start -->
+
+| 中文 | English |
+| --- | --- |
+| [`CYLPlaceholderHUD/CYLPlaceholderHUD.h`](#cylplaceholderhudcylplaceholderhudh) | [`CYLPlaceholderHUD/CYLPlaceholderHUD.h`](#cylplaceholderhudcylplaceholderhudh) |
+| [`CYLRefresh/Base/CYLRefreshAutoFooter.h`](#cylrefreshbasecylrefreshautofooterh) | [`CYLRefresh/Base/CYLRefreshAutoFooter.h`](#cylrefreshbasecylrefreshautofooterh) |
+| [`CYLRefresh/Base/CYLRefreshBackFooter.h`](#cylrefreshbasecylrefreshbackfooterh) | [`CYLRefresh/Base/CYLRefreshBackFooter.h`](#cylrefreshbasecylrefreshbackfooterh) |
+| [`CYLRefresh/Base/CYLRefreshComponent.h`](#cylrefreshbasecylrefreshcomponenth) | [`CYLRefresh/Base/CYLRefreshComponent.h`](#cylrefreshbasecylrefreshcomponenth) |
+| [`CYLRefresh/Base/CYLRefreshFooter.h`](#cylrefreshbasecylrefreshfooterh) | [`CYLRefresh/Base/CYLRefreshFooter.h`](#cylrefreshbasecylrefreshfooterh) |
+| [`CYLRefresh/Base/CYLRefreshHeader.h`](#cylrefreshbasecylrefreshheaderh) | [`CYLRefresh/Base/CYLRefreshHeader.h`](#cylrefreshbasecylrefreshheaderh) |
+| [`CYLRefresh/Base/CYLRefreshIconView.h`](#cylrefreshbasecylrefreshiconviewh) | [`CYLRefresh/Base/CYLRefreshIconView.h`](#cylrefreshbasecylrefreshiconviewh) |
+| [`CYLRefresh/Base/CYLRefreshPaging.h`](#cylrefreshbasecylrefreshpagingh) | [`CYLRefresh/Base/CYLRefreshPaging.h`](#cylrefreshbasecylrefreshpagingh) |
+| [`CYLRefresh/Base/CYLRefreshTrailer.h`](#cylrefreshbasecylrefreshtrailerh) | [`CYLRefresh/Base/CYLRefreshTrailer.h`](#cylrefreshbasecylrefreshtrailerh) |
+| [`CYLRefresh/CYLRefreshConfig.h`](#cylrefreshcylrefreshconfigh) | [`CYLRefresh/CYLRefreshConfig.h`](#cylrefreshcylrefreshconfigh) |
+| [`CYLRefresh/CYLRefreshConst.h`](#cylrefreshcylrefreshconsth) | [`CYLRefresh/CYLRefreshConst.h`](#cylrefreshcylrefreshconsth) |
+| [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`](#cylrefreshcustomcupertinocylrefreshcupertinofooterh) | [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`](#cylrefreshcustomcupertinocylrefreshcupertinofooterh) |
+| [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`](#cylrefreshcustomcupertinocylrefreshcupertinoheaderh) | [`CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`](#cylrefreshcustomcupertinocylrefreshcupertinoheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`](#cylrefreshcustomdrawncylrefreshbeziercircleheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`](#cylrefreshcustomdrawncylrefreshbeziercircleheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`](#cylrefreshcustomdrawncylrefreshbezierradarheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshBezierRadarHeader.h`](#cylrefreshcustomdrawncylrefreshbezierradarheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`](#cylrefreshcustomdrawncylrefreshdeliveryheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDeliveryHeader.h`](#cylrefreshcustomdrawncylrefreshdeliveryheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`](#cylrefreshcustomdrawncylrefreshdrawnfooterh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnFooter.h`](#cylrefreshcustomdrawncylrefreshdrawnfooterh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`](#cylrefreshcustomdrawncylrefreshdrawnheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`](#cylrefreshcustomdrawncylrefreshdrawnheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`](#cylrefreshcustomdrawncylrefreshdropboxheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshDropBoxHeader.h`](#cylrefreshcustomdrawncylrefreshdropboxheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`](#cylrefreshcustomdrawncylrefreshflyheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshFlyHeader.h`](#cylrefreshcustomdrawncylrefreshflyheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`](#cylrefreshcustomdrawncylrefreshgamebattlecityheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`](#cylrefreshcustomdrawncylrefreshgamebattlecityheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`](#cylrefreshcustomdrawncylrefreshgameheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameHeader.h`](#cylrefreshcustomdrawncylrefreshgameheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`](#cylrefreshcustomdrawncylrefreshgamehitblockheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshGameHitBlockHeader.h`](#cylrefreshcustomdrawncylrefreshgamehitblockheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`](#cylrefreshcustomdrawncylrefreshmaterialheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshMaterialHeader.h`](#cylrefreshcustomdrawncylrefreshmaterialheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`](#cylrefreshcustomdrawncylrefreshoriginalheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`](#cylrefreshcustomdrawncylrefreshoriginalheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`](#cylrefreshcustomdrawncylrefreshphoenixheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshPhoenixHeader.h`](#cylrefreshcustomdrawncylrefreshphoenixheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`](#cylrefreshcustomdrawncylrefreshstorehouseheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshStoreHouseHeader.h`](#cylrefreshcustomdrawncylrefreshstorehouseheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`](#cylrefreshcustomdrawncylrefreshtaurusheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshTaurusHeader.h`](#cylrefreshcustomdrawncylrefreshtaurusheaderh) |
+| [`CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`](#cylrefreshcustomdrawncylrefreshwaveswipeheaderh) | [`CYLRefresh/Custom/Drawn/CYLRefreshWaveSwipeHeader.h`](#cylrefreshcustomdrawncylrefreshwaveswipeheaderh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`](#cylrefreshcustomdrawnsupportcylrefreshflyviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`](#cylrefreshcustomdrawnsupportcylrefreshflyviewh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgameplayingsceneh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGamePlayingScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgameplayingsceneh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgamestartsceneh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshGameStartScene.h`](#cylrefreshcustomdrawnsupportcylrefreshgamestartsceneh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`](#cylrefreshcustomdrawnsupportcylrefreshmountainviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshMountainView.h`](#cylrefreshcustomdrawnsupportcylrefreshmountainviewh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehouselineh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHouseLine.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehouselineh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehousepathh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshStoreHousePath.h`](#cylrefreshcustomdrawnsupportcylrefreshstorehousepathh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`](#cylrefreshcustomdrawnsupportcylrefreshvalueanimatorh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshValueAnimator.h`](#cylrefreshcustomdrawnsupportcylrefreshvalueanimatorh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorelementh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorelementh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorimageh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorImage.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorimageh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathelementh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathElement.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathelementh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathsparserh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorPathsParser.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorpathsparserh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorutilitiesh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorUtilities.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorutilitiesh) |
+| [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorviewh) | [`CYLRefresh/Custom/Drawn/Support/CYLRefreshVectorView.h`](#cylrefreshcustomdrawnsupportcylrefreshvectorviewh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`](#cylrefreshcustomfooterautocylrefreshautoanimationfooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoAnimationFooter.h`](#cylrefreshcustomfooterautocylrefreshautoanimationfooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`](#cylrefreshcustomfooterautocylrefreshautogiffooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoGifFooter.h`](#cylrefreshcustomfooterautocylrefreshautogiffooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`](#cylrefreshcustomfooterautocylrefreshautonormalfooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoNormalFooter.h`](#cylrefreshcustomfooterautocylrefreshautonormalfooterh) |
+| [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`](#cylrefreshcustomfooterautocylrefreshautostatefooterh) | [`CYLRefresh/Custom/Footer/Auto/CYLRefreshAutoStateFooter.h`](#cylrefreshcustomfooterautocylrefreshautostatefooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackanimationfooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackAnimationFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackanimationfooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackgiffooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackGifFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackgiffooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`](#cylrefreshcustomfooterbackcylrefreshbacknormalfooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackNormalFooter.h`](#cylrefreshcustomfooterbackcylrefreshbacknormalfooterh) |
+| [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackstatefooterh) | [`CYLRefresh/Custom/Footer/Back/CYLRefreshBackStateFooter.h`](#cylrefreshcustomfooterbackcylrefreshbackstatefooterh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`](#cylrefreshcustomheadercylrefreshanimationheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`](#cylrefreshcustomheadercylrefreshanimationheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`](#cylrefreshcustomheadercylrefreshgifheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshGifHeader.h`](#cylrefreshcustomheadercylrefreshgifheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`](#cylrefreshcustomheadercylrefreshnormalheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`](#cylrefreshcustomheadercylrefreshnormalheaderh) |
+| [`CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`](#cylrefreshcustomheadercylrefreshstateheaderh) | [`CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`](#cylrefreshcustomheadercylrefreshstateheaderh) |
+| [`CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`](#cylrefreshcustomtrailercylrefreshnormaltrailerh) | [`CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`](#cylrefreshcustomtrailercylrefreshnormaltrailerh) |
+| [`CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`](#cylrefreshcustomtrailercylrefreshstatetrailerh) | [`CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`](#cylrefreshcustomtrailercylrefreshstatetrailerh) |
+| [`CYLRefresh/NSBundle+CYLRefresh.h`](#cylrefreshnsbundlecylrefreshh) | [`CYLRefresh/NSBundle+CYLRefresh.h`](#cylrefreshnsbundlecylrefreshh) |
+| [`CYLRefresh/UICollectionViewLayout+CYLRefresh.h`](#cylrefreshuicollectionviewlayoutcylrefreshh) | [`CYLRefresh/UICollectionViewLayout+CYLRefresh.h`](#cylrefreshuicollectionviewlayoutcylrefreshh) |
+| [`CYLRefresh/UIScrollView+CYLExtension.h`](#cylrefreshuiscrollviewcylextensionh) | [`CYLRefresh/UIScrollView+CYLExtension.h`](#cylrefreshuiscrollviewcylextensionh) |
+| [`CYLRefresh/UIScrollView+CYLRefresh.h`](#cylrefreshuiscrollviewcylrefreshh) | [`CYLRefresh/UIScrollView+CYLRefresh.h`](#cylrefreshuiscrollviewcylrefreshh) |
+| [`CYLRefresh/UIView+CYLExtension.h`](#cylrefreshuiviewcylextensionh) | [`CYLRefresh/UIView+CYLExtension.h`](#cylrefreshuiviewcylextensionh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`](#cyltableviewplaceholdercylplaceholderlocalizationh) | [`CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`](#cyltableviewplaceholdercylplaceholderlocalizationh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`](#cyltableviewplaceholdercylplaceholdernetworkmonitorh) | [`CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`](#cyltableviewplaceholdercylplaceholdernetworkmonitorh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`](#cyltableviewplaceholdercylplaceholderscenarioh) | [`CYLTableViewPlaceHolder/CYLPlaceholderScenario.h`](#cyltableviewplaceholdercylplaceholderscenarioh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](#cyltableviewplaceholdercylplaceholderstackviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](#cyltableviewplaceholdercylplaceholderstackviewh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`](#cyltableviewplaceholdercylplaceholderstatusviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`](#cyltableviewplaceholdercylplaceholderstatusviewh) |
+| [`CYLTableViewPlaceHolder/CYLPlaceholderView.h`](#cyltableviewplaceholdercylplaceholderviewh) | [`CYLTableViewPlaceHolder/CYLPlaceholderView.h`](#cyltableviewplaceholdercylplaceholderviewh) |
+| [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`](#cyltableviewplaceholdercyltableviewplaceholderdelegateh) | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolderDelegate.h`](#cyltableviewplaceholdercyltableviewplaceholderdelegateh) |
+| [`CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`](#cyltableviewplaceholderuicollectionviewcylplaceholderh) | [`CYLTableViewPlaceHolder/UICollectionView+CYLPlaceholder.h`](#cyltableviewplaceholderuicollectionviewcylplaceholderh) |
+| [`CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`](#cyltableviewplaceholderuitableviewcylplaceholderh) | [`CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`](#cyltableviewplaceholderuitableviewcylplaceholderh) |
+| [`CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`](#cyltableviewplaceholderuitableviewcyltableviewplaceholderh) | [`CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`](#cyltableviewplaceholderuitableviewcyltableviewplaceholderh) |
+| [`CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`](#cyltableviewplaceholderuiviewcontrollercylplaceholderstatush) | [`CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`](#cyltableviewplaceholderuiviewcontrollercylplaceholderstatush) |
+
+<!-- docs-navigation:end -->
+
+<!-- docs-binding:start -->
+
+| 类 / Class | 头文件 / Header |
+| --- | --- |
+| 无 / none | — |
+
+<!-- docs-binding:end -->
+
 <!-- Generated by scripts/ios-android-parity.py from the public headers and android/merged/api-map.json; do not edit by hand. -->
 
 Every public API and feature of the iOS library (the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included), what it does (from its header comment, else from the Android counterpart's KDoc), and its Android counterpart in `android/` (Kotlin). This table is written in English only, as the task asked; the bilingual status table is [Android-API-Map.md](Android-API-Map.md) and the reverse table (Android → iOS, table A) is [iOS-API-Map.md](iOS-API-Map.md).

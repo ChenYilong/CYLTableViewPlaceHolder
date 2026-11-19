@@ -180,11 +180,11 @@ def document(rows, mapping):
 def main():
     rows = amap.inventory()
     mapping = amap.load_map()
-    text = document(rows, mapping)
+    text = amap.with_navigation_of('', document(rows, mapping))
     current = open(DOC_PATH, encoding='utf-8').read() if os.path.exists(DOC_PATH) else ''
     percent, total, todo = score(rows, mapping)
     if '--check' in sys.argv:
-        if amap.without_navigation(current).rstrip('\n') != amap.without_navigation(text).rstrip('\n'):
+        if current.rstrip('\n') != text.rstrip('\n'):
             print('docs/iOS-Android-Parity.md is out of date: run python3 scripts/ios-android-parity.py')
             return 1
         print('docs/iOS-Android-Parity.md is up to date (score %d, %d TODO of %d).' % (percent, todo, total))
