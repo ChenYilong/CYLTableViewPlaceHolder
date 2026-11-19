@@ -252,9 +252,27 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
         isClickable = maskType != CYLPlaceholderHUDMaskType.None
     }
 
+    /**
+     * Where the HUD is added: [container] when it lays children over each other (a FrameLayout, RelativeLayout,
+     * ConstraintLayout or CoordinatorLayout), else its nearest such ancestor (the window's content at worst). In a
+     * LinearLayout the HUD would get only the space left after the other children, so a long status could not widen
+     * the box (CYLSearchViewController's report: "Uploading tags…" clipped to "Uploa" in the 100 dp minimum box).
+     */
+    private fun hostFor(container: ViewGroup): ViewGroup {
+        fun overlays(view: ViewGroup) = view is FrameLayout || view is android.widget.RelativeLayout ||
+            view.javaClass.name.let { it.endsWith(".ConstraintLayout") || it.endsWith(".CoordinatorLayout") }
+        var view: ViewGroup? = container
+        while (view != null) {
+            if (overlays(view)) return view
+            view = view.parent as? ViewGroup
+        }
+        return container
+    }
+
     private fun present() {
-        val container = containerView ?: return
+        val container = containerView?.let(::hostFor) ?: return
         applyLook()
+        if (parent != null && parent !== container) (parent as ViewGroup).removeView(this)
         if (parent == null) {
             alpha = 0f
             container.addView(this, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
@@ -293,8 +311,15 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
                 iconSizeDp = com.cyl.animateditem.CYLSize(animationSize, animationSize)
                 animation?.let { setAnimationFile(it); playPlaceholderAnimation() }
             }
+            // FIX (CYLSearchViewController's report, "Uploading tags…" clipped to "Uploa"): added without layout params,
+            // the view took a vertical LinearLayout's default width, MATCH_PARENT, which a wrap-content column leaves
+            // out of its own width and then forces to the spinner's width. Wrap-content lets the status widen the box,
+            // up to iOS's maximum: min(260 dp, the container's width - 32 dp), less the box's 16 dp padding on each side.
+            val hostWidthDp = ((containerView?.width?.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels) / density)
+            val maxBoxWidthDp = minOf(MAXIMUM_WIDTH_DP, maxOf(hostWidthDp - 32f, minimumSize[0]))
+            view.preferredMaxLayoutWidth = dp(maxOf(0f, maxBoxWidthDp - 2 * 16f))
             placeholderView = view
-            column.addView(view)
+            column.addView(view, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
         }
         contentView.addView(column)
         hudView.contentDescription = statusText
@@ -418,6 +443,9 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
      */
     companion object {
         private var shared: CYLPlaceholderHUD? = null
+
+        /** The box's widest size, in dp (iOS `CYLPlaceholderHUDMaximumWidth`, 260 pt). */
+        const val MAXIMUM_WIDTH_DP = 260f
 
         /**
          * The shared HUD for [containerView]'s window; set its container once (`sharedHUD`).
