@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 进行中（TODO）：CI 中的 iOS 12 改为 iOS 15，并修复三个 CI 错误 / In progress (TODO): Move the iOS 12 CI jobs to iOS 15 and fix the three CI failures
+
+- Date and branch: 2026-11-20, `feat/android-refresh-port-followup` (PR #31).
+- User's original prompt (verbatim): "将ci测试里的iOS12改为测试iOS 15 并修复 ci错误 https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/44587370571/job/135783971793 https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/44587370593/job/135784268304 https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/44587370593/job/135784269950"
+- Requirements: (1) the CI jobs "iOS 12 deployment build" (`ios12` in `.github/workflows/ios.yml`, `scripts/ios12-build.sh`) and "iOS 12 runtime" (`.github/workflows/ios12-runtime.yml`) test iOS 15 instead (deployment target 15.0, `-Werror=unguarded-availability-new`, Core's unit tests on an iOS 15 simulator, with a warning fallback when no iOS 15 runtime can be installed); (2) fix the failing "Unit tests" job (`testHeaderKeepsItsRefreshingInsetWhenTheInsetIsResetDuringARefresh` timed out after 30 s on the CI runner); (3) update every mention of iOS 12 as a CI target in scripts, rules, skills and docs; historical entries keep their dated history.
+- Context: both iOS 12 jobs fail to build with Xcode 16 at deployment target 12.0: `CYLAnimatedItemView.swift:382/394` and `CYLAnimatedItemStackView.swift:88` use `UITabBarItemAppearance` / `UITabBarItemStateAppearance` (iOS 13+) in the pinned upstream pod CYLAnimatedItem (CYLTabBarController repository), so iOS 12 is no longer buildable. The unit-test failure: 211 tests, 1 failure, the test waited the full 30 s for `beginRefreshing(completionBlock:)`; it passes locally in about 0 s.
+- QUESTION FOR THE OWNER: `CYLTableViewPlaceHolder.podspec` still says `s.platform = :ios, '12.0'`, which is no longer true (the dependency needs iOS 13+). CI now covers 15.0. Recommendation: raise the podspec platform to 15.0. Not changed here (public contract); the owner decides.
+- Acceptance: full marks (100) = both renamed iOS 15 jobs and "Unit tests" are green on GitHub for the pushed head, the root cause of the flaky test is found and fixed without weakening the test, all docs and scripts are updated, local checks pass; pass (60) = jobs renamed and the flaky test fixed, with remaining CI failures recorded precisely.
+- Status: TODO.
+
 ### 已完成（100 / 100）：移除第三方刷新项目名称的全部痕迹，改用 CYLRefresh 命名 / Done (100 / 100): Remove every trace of the third-party refresh project names, use CYLRefresh names
 
 - Date and branch: 2026-11-19, `feat/android-refresh-port-followup` (PR #31). Sessions, by the session-roles rule: winCYLTableViewPlaceHolder (Android, HarmonyOS, mini program, docs, scripts) and Mac-CYLTableViewPlaceHolder (iOS core, iOS examples, tests, podspec).
