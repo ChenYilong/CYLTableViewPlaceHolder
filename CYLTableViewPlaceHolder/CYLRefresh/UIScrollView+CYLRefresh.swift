@@ -25,31 +25,6 @@ private enum CYLRefreshKey {
     static let autoHideFooter = UnsafeRawPointer(UnsafeMutablePointer<UInt8>.allocate(capacity: 1))
 }
 
-// [EN] CYLRefreshComponent's private callback helpers (`CYLRefreshComponent.m`), called by selector while the component
-//      is Objective-C (docs/Swift-Migration.md, step 7 makes them internal Swift).
-// [CN] CYLRefreshComponent 私有的回调辅助方法（`CYLRefreshComponent.m`），在该组件仍是 Objective-C 时按选择器调用
-//      （docs/Swift-Migration.md 第 7 步将其改为 internal Swift）。
-private extension CYLRefreshComponent {
-
-    // [EN] `-cyl_hasCallbacks`: a block, a handler, a target or a target-action is set.
-    // [CN] `-cyl_hasCallbacks`：设置了 block、handler、target 或 target-action。
-    var cyl_hasCallbacksForStartHeader: Bool {
-        let selector = NSSelectorFromString("cyl_hasCallbacks")
-        guard responds(to: selector) else { return false }
-        typealias Function = @convention(c) (AnyObject, Selector) -> ObjCBool
-        return unsafeBitCast(method(for: selector), to: Function.self)(self, selector).boolValue
-    }
-
-    // [EN] `-cyl_copyTargetActionsFrom:`: adds `other`'s target-actions of `-addTarget:action:`.
-    // [CN] `-cyl_copyTargetActionsFrom:`：加入 `other` 通过 `-addTarget:action:` 添加的 target-action。
-    func cyl_copyTargetActionsForStartHeader(from other: CYLRefreshComponent) {
-        let selector = NSSelectorFromString("cyl_copyTargetActionsFrom:")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector, AnyObject) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector, other)
-    }
-}
-
 extension UIScrollView {
 
     // MARK: - Controls
@@ -281,8 +256,8 @@ extension UIScrollView {
         // [CN] 起始刷新头没有自己的回调时，使用常规刷新头的回调。
         // [EN] Target-actions of -addTarget:action: (the attach:target:action: family) count and are copied too.
         // [CN] -addTarget:action:（attach:target:action: 系列）的 target-action 也计入并复制。
-        if let regular = regular, !startHeader.cyl_hasCallbacksForStartHeader {
-            startHeader.cyl_copyTargetActionsForStartHeader(from: regular)
+        if let regular = regular, !startHeader.cyl_hasCallbacks {
+            startHeader.cyl_copyTargetActions(from: regular)
             startHeader.refreshingBlock = regular.refreshingBlock
             // [EN] Without a target there is nothing to call (the start header has none, having no callbacks).
             // [CN] 没有 target 时无可调用（起始刷新头没有回调，因而也没有 target）。

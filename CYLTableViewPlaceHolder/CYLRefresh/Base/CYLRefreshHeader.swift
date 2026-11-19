@@ -14,14 +14,15 @@
 //      refreshing inset, the scroll modes and the second floor) and the same behavior: the inset written by someone else
 //      during a refresh becomes the new baseline (issue MJRefresh#1628), a footer's or trailer's own side-inset write is
 //      not taken for a new top inset (issue MJRefresh#1483), rotation during a refresh rebuilds the original top from the
-//      header's own delta (MJRefresh PR #1444). The Objective-C root `CYLRefreshComponent` keeps the KVO of the scroll view;
-//      its private members are reached through `CYLRefreshComponentPrivateAccess.swift`.
+//      header's own delta (MJRefresh PR #1444). The root `CYLRefreshComponent` (Swift since step 12) keeps the KVO of the
+//      scroll view; its internal members (`cyl_reportPhaseChange()`, `cyl_offset(forDragRate:happenOffset:)`, ...) are
+//      called directly.
 // [CN] 自 2026-11-20 起用 Swift 编写（docs/Swift-Migration.md 第 11 步），Objective-C API（工厂方法 `+headerWithRefreshingBlock:` /
 //      `+headerWithRefreshingTarget:refreshingAction:`，Swift 仍写作初始化方法 `init(refreshingBlock:)` / `init(refreshingTarget:refreshingAction:)`；
 //      `lastUpdatedTimeKey`、`lastUpdatedTime`、`ignoredScrollViewContentInsetTop`、`isCollectionViewAnimationBug`、`setExpandHeight:`、刷新 inset、
 //      滚动模式与二楼）和行为均不变：刷新期间其他代码写入的 inset 成为新的基准（issue MJRefresh#1628），刷新尾或 trailer 写入自己那一侧的 inset
 //      不会被当作新的顶部 inset（issue MJRefresh#1483），刷新期间旋转时用刷新头自己的差值重建原始 top（MJRefresh PR #1444）。滚动视图的 KVO
-//      仍由 Objective-C 根类 `CYLRefreshComponent` 负责；其私有成员通过 `CYLRefreshComponentPrivateAccess.swift` 调用。
+//      仍由根类 `CYLRefreshComponent`（自第 12 步起用 Swift 编写）负责；直接调用其 internal 成员。
 
 import UIKit
 

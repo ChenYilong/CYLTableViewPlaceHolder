@@ -21,11 +21,11 @@
 //
 //  [EN] Swift since 2026-11-19: the class `CYLRefreshIconView` (with the former `CYLRefreshIconAttributes` category's class
 //       members) is in `CYLRefreshIconView.swift` (docs/Swift-Migration.md, step 7), with the same Objective-C API; this
-//       header keeps its forward declaration, the `CYLRefreshIconAnimating` protocol and the `CYLRefreshComponent
-//       (CYLRefreshIconLayout)` category (implemented in `CYLRefreshComponent.m`).
+//       header keeps its forward declaration and the `CYLRefreshIconAnimating` protocol; the `CYLRefreshComponent
+//       (CYLRefreshIconLayout)` methods are a Swift extension in `CYLRefreshComponent.swift` since 2026-11-20 (step 12).
 //  [CN] 自 2026-11-19 起 `CYLRefreshIconView` 类（含原 `CYLRefreshIconAttributes` 分类的类成员）用 Swift 编写（`CYLRefreshIconView.swift`，
-//       docs/Swift-Migration.md 第 7 步），Objective-C API 不变；本头文件保留其前向声明、`CYLRefreshIconAnimating` 协议与
-//       `CYLRefreshComponent (CYLRefreshIconLayout)` 分类（实现在 `CYLRefreshComponent.m`）。
+//       docs/Swift-Migration.md 第 7 步），Objective-C API 不变；本头文件保留其前向声明与 `CYLRefreshIconAnimating` 协议；
+//       `CYLRefreshComponent (CYLRefreshIconLayout)` 的方法自 2026-11-20 起是 `CYLRefreshComponent.swift` 中的 Swift 扩展（第 12 步）。
 //
 
 #import <UIKit/UIKit.h>
@@ -97,95 +97,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) NSArray<NSString *> *bundledIconAnimationFileNames;
 @end
 
-/*!
- * [EN] The plumbing behind `CYLRefreshIconAnimating`, for refresh controls (and custom subclasses) that replace a view
- *      with the icon. [CN] `CYLRefreshIconAnimating` 背后的实现，供用图标替换某个视图的刷新控件（及自定义子类）使用。
- */
-@interface CYLRefreshComponent (CYLRefreshIconLayout)
-/*!
- * [EN] The icon, created on first use and following the control's state. [CN] 图标，首次使用时创建并跟随控件状态。
- */
-@property (strong, nonatomic, readonly) CYLRefreshIconView *cyl_iconView;
-/*!
- * [EN] YES once any icon animation is set. [CN] 设置了任意图标动画后为 YES。
- */
-@property (nonatomic, readonly) BOOL cyl_usesIconView;
-/*!
- * [EN] Sets the icon for a state and lays the control out again; nil removes it. [CN] 设置某个状态的图标并重新布局；nil 表示移除。
- */
-- (void)cyl_setIconAnimationAttributes:(nullable NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(cyl_setIconAnimation(attributes:for:));
-/*!
- * [EN] When an icon animation is set: places the icon at `center` with `iconView.iconSize`, shows it when `visible`
- *      and hides `views` (the animation view it replaces). Call at the end of `placeSubviews`. Does nothing otherwise.
- * [CN] 设置了图标动画时：把图标以 `iconView.iconSize` 放在 `center`，`visible` 为 YES 时显示，并隐藏被替换的 `views`（动画视图）。
- *      在 `placeSubviews` 末尾调用；未设置时不做任何事。
- */
-- (void)cyl_placeIconViewAtCenter:(CGPoint)center visible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
-    NS_SWIFT_NAME(cyl_placeIconView(at:visible:replacing:));
-/*!
- * [EN] The same without moving the icon, for the end of `setState:`. [CN] 同上但不移动图标，在 `setState:` 末尾调用。
- */
-- (void)cyl_updateIconViewVisible:(BOOL)visible replacingViews:(NSArray<UIView *> *)views
-    NS_SWIFT_NAME(cyl_updateIconView(visible:replacing:));
-/*!
- * [EN] When an icon animation is set: shows the icon and `title` as one CYLPlaceholderView centered in the control,
- *      and fades out `labels` (the state and time labels whose text it carries) and hides `views` (the animation view).
- *      When not `visible`, the labels come back and the icon hides. Call at the end of `placeSubviews` and `setState:`.
- * [CN] 设置了图标动画时：把图标与 `title` 作为一个 CYLPlaceholderView 居中显示在控件中，淡出 `labels`（文字已由它显示的状态与时间
- *      文字），并隐藏 `views`（动画视图）。`visible` 为 NO 时恢复文字并隐藏图标。在 `placeSubviews` 与 `setState:` 末尾调用。
- */
-- (void)cyl_placeIconViewWithTitle:(nullable NSString *)title labels:(NSArray<UILabel *> *)labels visible:(BOOL)visible
-                    replacingViews:(NSArray<UIView *> *)views
-    NS_SWIFT_NAME(cyl_placeIconView(title:labels:visible:replacing:));
-/*!
- * [EN] MJRefresh's image sequences (`setAnimationImages:` / `setImages:`) as the icon of a state, drawn by the icon's
- *      CYLPlaceholderView like any other icon: several images play as one animated image of `duration` seconds; the
- *      idle state shows one frame, chosen by `cyl_showIconImageFrameOf:pullingPercent:`. The idle state, when it has no
- *      icon yet, gets the first image as a still frame. With Reduce Motion on, the first image stays still.
- * [CN] MJRefresh 的图片序列（`setAnimationImages:` / `setImages:`）作为某个状态的图标，与其他图标一样由图标的 CYLPlaceholderView
- *      绘制：多张图片作为一张时长 `duration` 秒的动画图片播放；空闲状态只显示一帧，由 `cyl_showIconImageFrameOf:pullingPercent:`
- *      选择。空闲状态尚无图标时，以第一张图片作为静止帧。开启“减弱动态效果”时，第一张图片保持静止。
- */
-- (void)cyl_setIconImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(cyl_setIconImages(_:duration:for:));
-/*!
- * [EN] While idle, shows the frame of `images` that matches `pullingPercent`, as MJRefresh does while pulling.
- * [CN] 空闲时显示 `images` 中与 `pullingPercent` 对应的那一帧，与 MJRefresh 下拉时的做法相同。
- */
-- (void)cyl_showIconImageFrameOf:(nullable NSArray<UIImage *> *)images pullingPercent:(CGFloat)pullingPercent
-    NS_SWIFT_NAME(cyl_showIconImageFrame(of:pullingPercent:));
-/*!
- * [EN] The one implementation of `setAnimationImages:duration:forState:` for the animation header and both animation
- *      footers: keeps the images of `state`, grows the control to the tallest image and shows them as the icon
- *      (`cyl_setIconImages:duration:forState:`). nil is ignored.
- * [CN] 动画刷新头与两种动画尾部的 `setAnimationImages:duration:forState:` 的唯一实现：保存 `state` 的图片，控件高度随最高的图片
- *      增大，并作为图标显示（`cyl_setIconImages:duration:forState:`）。nil 被忽略。
- */
-- (void)cyl_setAnimationImages:(nullable NSArray<UIImage *> *)images duration:(NSTimeInterval)duration
-                      forState:(CYLRefreshState)state NS_SWIFT_NAME(cyl_setAnimationImages(_:duration:for:));
-/*!
- * [EN] The images set for `state` with `cyl_setAnimationImages:duration:forState:`, or nil.
- * [CN] 用 `cyl_setAnimationImages:duration:forState:` 为 `state` 设置的图片，或 nil。
- */
-- (nullable NSArray<UIImage *> *)cyl_animationImagesForState:(CYLRefreshState)state
-    NS_SWIFT_NAME(cyl_animationImages(for:));
-/*!
- * [EN] While idle, shows the idle images' frame for the current `pullingPercent`. [CN] 空闲时显示空闲图片中与当前 `pullingPercent` 对应的帧。
- */
-- (void)cyl_showIdleAnimationFrame;
-/*!
- * [EN] The one implementation of `CYLRefreshIconAnimating`'s `setIconAnimationFilePath:size:forState:`.
- * [CN] `CYLRefreshIconAnimating` 的 `setIconAnimationFilePath:size:forState:` 的唯一实现。
- */
-- (void)cyl_setIconAnimationFilePath:(NSString *)filePath size:(CGSize)size forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(cyl_setIconAnimation(filePath:size:for:));
-/*!
- * [EN] The one implementation of `CYLRefreshIconAnimating`'s `setBundledIconAnimation:size:forState:`.
- * [CN] `CYLRefreshIconAnimating` 的 `setBundledIconAnimation:size:forState:` 的唯一实现。
- */
-- (void)cyl_setBundledIconAnimation:(NSString *)fileName size:(CGSize)size forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(cyl_setBundledIconAnimation(_:size:for:));
-@end
+// [EN] The `CYLRefreshComponent (CYLRefreshIconLayout)` methods (`cyl_iconView`, `cyl_usesIconView`,
+//      `cyl_setIconAnimationAttributes:forState:`, `cyl_placeIconViewAtCenter:visible:replacingViews:`,
+//      `cyl_updateIconViewVisible:replacingViews:`, `cyl_placeIconViewWithTitle:labels:visible:replacingViews:`,
+//      `cyl_setIconImages:duration:forState:`, `cyl_showIconImageFrameOf:pullingPercent:`,
+//      `cyl_setAnimationImages:duration:forState:`, `cyl_animationImagesForState:`, `cyl_showIdleAnimationFrame`,
+//      `cyl_setIconAnimationFilePath:size:forState:`, `cyl_setBundledIconAnimation:size:forState:`) are a Swift extension
+//      of the class since 2026-11-20 (`CYLRefreshComponent.swift`, docs/Swift-Migration.md, step 12): Objective-C gets
+//      them from the generated Swift header through the umbrella header `CYLTableViewPlaceHolder.h`.
+// [CN] `CYLRefreshComponent (CYLRefreshIconLayout)` 的方法自 2026-11-20 起是该类的 Swift 扩展（`CYLRefreshComponent.swift`，
+//      docs/Swift-Migration.md 第 12 步）：Objective-C 通过总头文件 `CYLTableViewPlaceHolder.h` 从生成的 Swift 头文件获得它们。
 
 NS_ASSUME_NONNULL_END

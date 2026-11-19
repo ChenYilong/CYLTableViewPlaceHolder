@@ -30,8 +30,9 @@ Pod::Spec.new do |s|
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}',
                         # The CYLRefresh root (configuration, categories), CYLRefreshIconView, CYLRefreshPaging, the drawn
                         # styles' support classes, the drawn styles, footers and games, and the concrete header, footer
-                        # and trailer controls are Swift since 2026-11-19; Custom/Rive/*.swift needs RiveRuntime and stays
-                        # in the Rive subspec.
+                        # and trailer controls are Swift since 2026-11-19, the bases and the root CYLRefreshComponent since
+                        # 2026-11-20 (the remaining .m files are rule-6 shims); Custom/Rive/*.swift needs RiveRuntime and
+                        # stays in the Rive subspec.
                         'CYLTableViewPlaceHolder/CYLRefresh/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Base/*.swift',
                         'CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/*.swift',

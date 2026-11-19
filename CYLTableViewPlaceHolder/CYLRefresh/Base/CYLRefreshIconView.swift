@@ -8,13 +8,13 @@
 //      `animationAttributes(for:)`, `update(for:)`, `update(pullingPercent:)`), the properties, `-replayAnimation`, and the
 //      class members of the former `CYLRefreshIconView (CYLRefreshIconAttributes)` category. The playback policy is the one
 //      the header describes, with the 2026-11-19 speed / loop / replay API; bundled icons keep their attributes without
-//      the scenario repeat count. The `CYLRefreshIconAnimating` protocol and the `CYLRefreshComponent
-//      (CYLRefreshIconLayout)` category stay in `CYLRefreshIconView.h` (implemented in `CYLRefreshComponent.m`).
+//      the scenario repeat count. The `CYLRefreshIconAnimating` protocol stays in `CYLRefreshIconView.h`; the
+//      `CYLRefreshComponent (CYLRefreshIconLayout)` methods are a Swift extension in `CYLRefreshComponent.swift` (step 12).
 // [CN] 自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 7 步），Objective-C API 不变：类名、选择器、原 `NS_SWIFT_NAME` 写法作为
 //      Swift 名称（`setAnimationAttributes(_:for:)`、`animationAttributes(for:)`、`update(for:)`、`update(pullingPercent:)`）、各属性、
 //      `-replayAnimation`，以及原 `CYLRefreshIconView (CYLRefreshIconAttributes)` 分类的类成员。播放策略与头文件所述相同，包括 2026-11-19
-//      的速度 / 循环 / 重播 API；内置图标保留其属性，但去掉场景的播放次数。`CYLRefreshIconAnimating` 协议与 `CYLRefreshComponent
-//      (CYLRefreshIconLayout)` 分类保留在 `CYLRefreshIconView.h`（实现在 `CYLRefreshComponent.m`）。
+//      的速度 / 循环 / 重播 API；内置图标保留其属性，但去掉场景的播放次数。`CYLRefreshIconAnimating` 协议保留在 `CYLRefreshIconView.h`；`CYLRefreshComponent
+//      (CYLRefreshIconLayout)` 的方法是 `CYLRefreshComponent.swift` 中的 Swift 扩展（第 12 步）。
 
 import UIKit
 

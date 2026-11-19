@@ -22,7 +22,7 @@
 
 // [EN] CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy `cyl_reloadData` category,
 //      CYLPlaceholderStatusView, CYLPlaceholderStackView, the view controller status category, CYLPlaceholderComponent,
-//      CYLPlaceholderScenarioCatalog, CYLPlaceholderHUD, the automatic placeholder (UITableView / UICollectionView
+//      CYLPlaceholderScenarioCatalog, CYLPlaceholderHUD, the refresh controls (CYLRefreshComponent and every subclass, 2026-11-20), the automatic placeholder (UITableView / UICollectionView
 //      `cyl_placeholderViewBlock:`, `UIScrollView (CYLPlaceholderVisibility)`) and the CYLRefresh root (CYLRefreshConfig and the
 //      `UIView` / `UIScrollView` / `NSBundle` / `UICollectionViewLayout` categories) are Swift (2026-11-19): Objective-C code gets their interfaces from the module's generated Swift
 //      header, imported last so that every Objective-C type it mentions is declared. Not for Swift (`__swift__`): the
@@ -49,3 +49,4 @@
 // [CN] 只有 Objective-C 能声明的 Swift 类的分类（可变参数方法），放在声明其类的生成头文件之后；对 Swift 为空（各分类只在 `__swift__`
 //      之外声明），但始终导入，使总头文件包含模块的每个公开头文件。
 #import "CYLRefreshDrawnHeader+CYLStatusList.h"
+#import "CYLRefreshComponent+CYLPhaseList.h"
