@@ -181,11 +181,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoFooter` | A footer that sits right after the content and loads more by itself when it scrolls into view (see `automaticallyRefresh` and `triggerAutomaticallyRefreshPercent`), or when tapped; the base of the automatic footers. | `com.cyl.refresh.CYLRefreshAutoFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoFooter` | A footer that loads by itself when it comes into view. | `com.cyl.refresh.CYLRefreshAutoFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | Whether reaching the end loads by itself. | `CYLRefreshAutoFooter.automaticallyRefresh` |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | How much of the footer must show before it loads, 0 to 1. | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` |
 | `CYLRefreshAutoFooter` `autoTriggerTimes` | How many times one drag may load by itself, -1 for no limit, as on iOS: once the count is used up the footer stops loading by itself until the next drag begins. | `CYLRefreshAutoFooter.autoTriggerTimes` — loads a drag may start by itself (-1 no limit); used up, auto loading stops until the next touch, as on iOS |
-| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | Loads more on a pull-up release when the content does not fill the scroll view; NO waits for content that fills it (CYLRefreshLayout's `setEnableLoadMoreWhenContentNotFull`). Default YES. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull` — added 2026-11-17 for Android parity |
+| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | Loads more when the content does not fill the layout. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull` — added 2026-11-17 for Android parity |
 
 ## `CYLRefresh/Base/CYLRefreshBackFooter.h`
 

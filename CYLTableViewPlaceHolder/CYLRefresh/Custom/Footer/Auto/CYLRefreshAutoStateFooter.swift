@@ -16,21 +16,6 @@
 
 import UIKit
 
-// [EN] CYLRefreshAutoFooter's private `-cyl_beginRefreshingWithoutValidation` (`CYLRefreshAutoFooter.m`): it begins
-//      refreshing through CYLRefreshFooter's `-beginRefreshing`, past the auto footer's trigger-count check, which a tap
-//      must not be subject to. Reached by selector until the auto footer is Swift (step 11).
-// [CN] CYLRefreshAutoFooter 私有的 `-cyl_beginRefreshingWithoutValidation`（`CYLRefreshAutoFooter.m`）：经由 CYLRefreshFooter 的
-//      `-beginRefreshing` 开始刷新，跳过自动刷新尾的触发次数检查（点击不受其限制）。在自动刷新尾改为 Swift（第 11 步）之前按选择器调用。
-private extension CYLRefreshAutoFooter {
-
-    func cyl_beginRefreshingWithoutValidationForStateFooter() {
-        let selector = NSSelectorFromString("cyl_beginRefreshingWithoutValidation")
-        guard responds(to: selector) else { return }
-        typealias Function = @convention(c) (AnyObject, Selector) -> Void
-        unsafeBitCast(method(for: selector), to: Function.self)(self, selector)
-    }
-}
-
 /**
  * [EN] An automatic footer that shows a localized text for each state (`setTitle:forState:`).
  * [CN] 按状态显示本地化文字（`setTitle:forState:`）的自动刷新尾。
@@ -98,7 +83,7 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
 
     @objc private func stateLabelClick() {
         if state == .idle {
-            cyl_beginRefreshingWithoutValidationForStateFooter()
+            cyl_beginRefreshingWithoutValidation()
         }
     }
 

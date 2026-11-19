@@ -142,7 +142,7 @@
 		B2F170548F556D3B76703235 /* CYLRefreshVectorPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDFA70D3364C81E0974BD66B /* CYLRefreshVectorPathElement.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B2FEB27E58A56D4CEB7F0C89 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BC5FFE1C7556568F92CA58F6 /* PrivacyInfo.xcprivacy */; };
 		B311D389E1A6D99A826433AD /* CYLPlaceholderExampleLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1230EC1BB2C6FF5B1656573 /* CYLPlaceholderExampleLocalization.swift */; };
-		B32F8EB18ED9991486EEA334 /* CYLRefreshAutoFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.m */; };
+		B32F8EB18ED9991486EEA334 /* CYLRefreshAutoFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.swift */; };
 		B4EF9099A29C7055CC77807A /* CYLRefreshVectorElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A046F080C5EF77549F46E36 /* CYLRefreshVectorElement.swift */; };
 		B5E3F8657049466A1E017A91 /* CYLWeChatStylePlaceHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B572203D33AF9A6B00DEBF /* CYLWeChatStylePlaceHolder.swift */; };
 		B78D146542C5AFF16A593304 /* CYLRefreshAnimationHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C200F206AF47ADA6FA3055A0 /* CYLRefreshAnimationHeader.swift */; };
@@ -272,7 +272,7 @@
 		39C8C968CFDDEFE69693C68A /* NSBundle+CYLRefresh.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "NSBundle+CYLRefresh.swift"; sourceTree = "<group>"; };
 		407E41A2C3E6DFF42F6A6D47 /* CYLRefreshVectorImage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshVectorImage.h; sourceTree = "<group>"; };
 		408CA1AEAE8B167856A3CEEC /* Pods-CYLTableViewPlaceHolder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLTableViewPlaceHolder.release.xcconfig"; path = "Target Support Files/Pods-CYLTableViewPlaceHolder/Pods-CYLTableViewPlaceHolder.release.xcconfig"; sourceTree = "<group>"; };
-		44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshAutoFooter.m; sourceTree = "<group>"; };
+		44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshAutoFooter.swift; sourceTree = "<group>"; };
 		44110D2AADB1242C0FFE50B1 /* CYLRefreshAutoStateFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshAutoStateFooter.h; sourceTree = "<group>"; };
 		4679CA9F7EC02AEA0C677F6A /* CYLRefreshDrawnFooter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshDrawnFooter.swift; sourceTree = "<group>"; };
 		487C62CDD1109CE8C19752A9 /* CYLRefreshStoreHousePath.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshStoreHousePath.h; sourceTree = "<group>"; };
@@ -726,7 +726,7 @@
 			isa = PBXGroup;
 			children = (
 				0035C4673AA01E386B34CE11 /* CYLRefreshAutoFooter.h */,
-				44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.m */,
+				44102D559239A591F350DDA9 /* CYLRefreshAutoFooter.swift */,
 				32597B8F56F991E5387282A0 /* CYLRefreshBackFooter.h */,
 				2B26861B1CC8F343181297B5 /* CYLRefreshBackFooter.swift */,
 				00A720C7959BDC73A6E87C44 /* CYLRefreshComponent.h */,
@@ -1017,7 +1017,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1A0CEB3B6EC0F7D6675B362 /* UITableView+CYLTableViewPlaceHolder.swift in Sources */,
-				B32F8EB18ED9991486EEA334 /* CYLRefreshAutoFooter.m in Sources */,
+				B32F8EB18ED9991486EEA334 /* CYLRefreshAutoFooter.swift in Sources */,
 				B172487FEC2CC6C6CAC4C175 /* CYLRefreshBackFooter.swift in Sources */,
 				E1413511215EA4393B793296 /* CYLRefreshComponent.m in Sources */,
 				F91D3DDFF9B8B80F22433E29 /* CYLRefreshFooter.m in Sources */,
