@@ -34,6 +34,17 @@ abstract class CYLRefreshComponent internal constructor(
 ) {
     internal abstract val isHeader: Boolean
 
+    init {
+        // iOS `finishingDurationWithSuccess:` (finishDuration by default): the classic views hold their finished text
+        // as long as the component says, so a subclass that overrides the hook is honored, as on iOS. A drawn style
+        // keeps its own finish animation (on iOS too, a drawn header defines its own hold).
+        val hold: (Boolean) -> Int = { success -> (finishingDurationWithSuccess(success) * 1000).toInt().coerceAtLeast(0) }
+        when (val classic = view) {
+            is CYLClassicsHeaderView -> classic.finishHold = hold
+            is CYLClassicsFooterView -> classic.finishHold = hold
+        }
+    }
+
     /**
      * The layout the component is attached to (the iOS `scrollView`'s counterpart), or null.
      */
@@ -263,7 +274,12 @@ abstract class CYLRefreshComponent internal constructor(
                 CYLRefreshScrollMode.Front -> SpinnerStyle.FixedFront
                 CYLRefreshScrollMode.Behind -> SpinnerStyle.FixedBehind
             }
-            (view as? ClassicsAbstract<*>)?.setSpinnerStyle(style)
+            when (val component = view) {
+                is ClassicsAbstract<*> -> component.setSpinnerStyle(style)
+                // Every drawn style is a SimpleComponent: it moves as asked too (iOS sets it on any component).
+                is com.cyl.refresh.layout.simple.SimpleComponent -> component.cylSpinnerStyle = style
+            }
+            view.view.requestLayout()
         }
 
     /**
@@ -332,13 +348,15 @@ abstract class CYLRefreshComponent internal constructor(
         }
 
     /**
-     * Whether the component keeps reporting while hidden (`notifiesWhenHidden`); CYLRefreshLayout always reports.
+     * Whether the component keeps reporting the pull while its view is hidden (`notifiesWhenHidden`). Off, a hidden
+     * component skips the pull: no pullingPercent, didScrollWithOffset or icon scrubbing, as iOS's KVO returns early.
      */
     var notifiesWhenHidden: Boolean = true
 
     /**
-     * Whether reaching the trigger starts at once, without a release (`triggersWhenReached`); a footer loads when
-     * reached (CYLRefreshLayout's auto load more), a header keeps waiting for the release.
+     * Whether reaching the trigger starts at once, without a release (`triggersWhenReached`): a footer loads when
+     * reached (CYLRefreshLayout's auto load more); a header refreshes as soon as the pull arms it (iOS
+     * CYLRefreshHeader: `beginRefreshing` on reaching Pulling).
      */
     var triggersWhenReached: Boolean = false
         set(value) {
@@ -451,6 +469,7 @@ abstract class CYLRefreshComponent internal constructor(
     // MARK: - Driven by the layout
 
     internal fun moved(offset: Int, percent: Float, dragging: Boolean) {
+        if (!notifiesWhenHidden && view.view.visibility != View.VISIBLE) return
         dragOffset = offset
         pullingPercent = percent
         // FIX: the icon's animation follows the pull at rest, as iOS `setPullingPercent:` and HarmonyOS do (an animated
@@ -472,6 +491,10 @@ abstract class CYLRefreshComponent internal constructor(
         if (old == new) return
         phase = new
         if (new == CYLRefreshPhase.ReleaseToRefresh && hapticFeedback) view.view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+        // iOS triggersWhenReached: an armed header refreshes now, without waiting for the release.
+        if (new == CYLRefreshPhase.ReleaseToRefresh && isHeader && triggersWhenReached) {
+            refreshLayout?.let { layout -> layout.post { if (phase == CYLRefreshPhase.ReleaseToRefresh) layout.cylRefreshNow() } }
+        }
         if (autoHideRefresh) updateAutoHideVisibility()
         phaseDidChangeFrom(old, new)
         phaseObservers.forEach { it(this, old, new) }

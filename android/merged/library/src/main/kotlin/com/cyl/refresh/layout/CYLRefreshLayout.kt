@@ -1146,6 +1146,13 @@ open class CYLRefreshLayout @JvmOverloads constructor(
     /**
      * Opens the header and starts refreshing.
      */
+    /**
+     * Refreshes now, as a release past the trigger would (iOS `triggersWhenReached` on a header).
+     */
+    internal fun cylRefreshNow() {
+        if (mState == RefreshState.ReleaseToRefresh || mState == RefreshState.PullDownToRefresh) setStateRefreshing(true)
+    }
+
     protected open fun setStateRefreshing(notify: Boolean) {
         val start = { setStateDirectRefreshing(notify) }
         val listener = object : AnimatorListenerAdapter() {

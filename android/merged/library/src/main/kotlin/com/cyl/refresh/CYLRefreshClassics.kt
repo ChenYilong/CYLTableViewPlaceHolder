@@ -79,8 +79,12 @@ internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(cylLocal
         }
     }
 
+    /** The owning component's `finishingDurationWithSuccess:` in ms, or null for the view's own duration. */
+    var finishHold: ((Boolean) -> Int)? = null
+
     override fun onFinish(refreshLayout: RefreshLayout, success: Boolean): Int {
-        val hold = super.onFinish(refreshLayout, success)
+        val own = super.onFinish(refreshLayout, success)
+        val hold = finishHold?.invoke(success) ?: own
         val image = if (success) succeededImage else failedImage
         val view = mProgressView
         if (image != null && view != null) {
@@ -136,6 +140,15 @@ internal class CYLClassicsFooterView(context: Context) : ClassicsFooter(cylLocal
             field = value
             if (mNoMoreData) showNoMoreDataImage()
         }
+
+    /** The owning component's `finishingDurationWithSuccess:` in ms, or null for the view's own duration. */
+    var finishHold: ((Boolean) -> Int)? = null
+
+    // No more data shows no finished text, so no hold (0), as before; otherwise the component decides.
+    override fun onFinish(refreshLayout: RefreshLayout, success: Boolean): Int {
+        val own = super.onFinish(refreshLayout, success)
+        return if (own == 0) 0 else finishHold?.invoke(success) ?: own
+    }
 
     private var arrowDrawable: Drawable? = null
     private var showingImage = false

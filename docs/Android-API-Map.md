@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：96 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 612、partial 48、planned 0、n/a 194）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 660 counted symbols; done 612, partial 48, planned 0, n/a 194). |
+| **迁移完成率：97 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 622、partial 38、planned 0、n/a 194）。 | **Migration score: 97 / 100** (done + 0.5 × partial over 660 counted symbols; done 622, partial 38, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -174,8 +174,8 @@
 | `CYLRefreshComponent` `refreshingHandler` | `CYLRefreshComponent.refreshingHandler` | done |  |
 | `CYLRefreshComponent` `attached` | `CYLRefreshComponent.attached` | done |  |
 | `CYLRefreshComponent` `triggerRate` | `CYLRefreshComponent.triggerRate` | done |  |
-| `CYLRefreshComponent` `finishDuration` | `CYLRefreshComponent.finishDuration` | partial | applied by the classic header and footer (ClassicsAbstract.setFinishDuration) |
-| `CYLRefreshComponent` `scrollMode` | `CYLRefreshComponent.scrollMode` | partial | read for every component; set for the classic header and footer |
+| `CYLRefreshComponent` `finishDuration` | `CYLRefreshComponent.finishDuration` | done | the classic header and footer hold their finished text this long (through finishingDurationWithSuccess) |
+| `CYLRefreshComponent` `scrollMode` | `CYLRefreshComponent.scrollMode` | done | set on the classic views and on every drawn style (SimpleComponent spinner style) |
 | `CYLRefreshComponent` `colorAccent` | `CYLRefreshComponent.colorAccent` | done |  |
 | `CYLRefreshComponent` `colorPrimary` | `CYLRefreshComponent.colorPrimary` | done |  |
 | `CYLRefreshComponent` `expanded` | `CYLRefreshComponent.expanded` | done |  |
@@ -191,11 +191,11 @@
 | `CYLRefreshComponent` `-isReadyToAutoHide` | `CYLRefreshComponent.isReadyToAutoHide()` | done |  |
 | `CYLRefreshComponent` `-updateAutoHideVisibility` | `CYLRefreshComponent.updateAutoHideVisibility()` | done |  |
 | `CYLRefreshComponent` `refreshEnabled` | `CYLRefreshComponent.refreshEnabled` | done |  |
-| `CYLRefreshComponent` `triggersWhenReached` | `CYLRefreshComponent.triggersWhenReached` | partial | a footer loads when reached; a header waits for the release |
-| `CYLRefreshComponent` `triggerMode` | `CYLRefreshComponent.triggerMode` | partial | kept; CYLRefreshLayout pulls from the content's edge |
+| `CYLRefreshComponent` `triggersWhenReached` | `CYLRefreshComponent.triggersWhenReached` | done | a footer loads when reached; a header refreshes as soon as the pull arms it, before the release |
+| `CYLRefreshComponent` `triggerMode` | `CYLRefreshComponent.triggerMode` | done | Anywhere or OnEdge: a scroll boundary decider lets only a drag that started at the edge pull (test triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle) |
 | `CYLRefreshComponent` `hapticFeedback` | `CYLRefreshComponent.hapticFeedback` | done |  |
 | `CYLRefreshComponent` `maxPullDistance` | `CYLRefreshComponent.maxPullDistance` | done |  |
-| `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponent.notifiesWhenHidden` | partial | kept; CYLRefreshLayout always reports |
+| `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponent.notifiesWhenHidden` | done | off, a hidden component skips the pull (no pullingPercent, didScrollWithOffset or icon scrubbing) |
 | `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponent.addPhaseObserver(observer)` | done |  |
 | `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponent.removePhaseObserver(observer)` | done |  |
 | `CYLRefreshComponent` `autoRefresh` | `com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh` | done | added 2026-11-17 for Android parity |
@@ -221,7 +221,7 @@
 | `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` | `CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)` | done |  |
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` | done |  |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` | done |  |
-| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | partial | an overridable hook; CYLRefreshLayout reads the component's own finish duration |
+| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponent.finishingDurationWithSuccess(success)` | done | an overridable hook the classic views ask for their hold, as on iOS; drawn styles keep their own finish animation, as iOS drawn headers do |
 | `CYLRefreshComponent` `-autoRefreshDidChange:` | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | `com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag` | done | added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | `com.cyl.refresh.layout.api.RefreshComponent.autoOpen` | done | added 2026-11-17 for Android parity |
@@ -249,7 +249,7 @@
 | `CYLRefreshFooter` `-noticeNoMoreData` | `CYLRefreshFooter.noticeNoMoreData()` | done |  |
 | `CYLRefreshFooter` `-resetNoMoreData` | `CYLRefreshFooter.resetNoMoreData()` | done |  |
 | `CYLRefreshFooter` `noMoreData` | `CYLRefreshFooter.noMoreData` | done |  |
-| `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooter.loadsAfterNoMoreData` | partial | clears "no more data" shortly after it shows, so the next pull loads |
+| `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooter.loadsAfterNoMoreData` | done | on, "no more data" clears right after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` | done |  |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
 | `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshFooter.cyl_noMoreDataImage` | done | CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others) |
@@ -372,7 +372,7 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshConfig` | `com.cyl.refresh.CYLRefreshConfig` | done |  |
-| `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.languageCode` | partial | sets the placeholder texts' language; the refresh texts are string resources in the system's language |
+| `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.languageCode` | done | the built-in texts of classic headers and footers made after the change, and the placeholder texts |
 | `CYLRefreshConfig` `i18nFilename` | — | n/a | iOS string tables in a bundle; Android texts are string resources an app overrides by name |
 | `CYLRefreshConfig` `i18nBundle` | — | n/a | iOS string tables in a bundle; Android texts are string resources an app overrides by name |
 | `CYLRefreshConfig` `defaultHeaderCreator` | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` | done | added 2026-11-17 for Android parity |
@@ -423,14 +423,14 @@
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCupertinoFooter` | `com.cyl.refresh.CYLRefreshCupertinoFooter` | done |  |
-| `CYLRefreshCupertinoFooter` `activityIndicator` | `CYLRefreshCupertinoFooter.activityIndicator` | partial | CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
+| `CYLRefreshCupertinoFooter` `activityIndicator` | `CYLRefreshCupertinoFooter.activityIndicator` | done | CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`
 
 | iOS API | Android API | 状态 Status | 说明 / Note |
 |:---|:---|:---|:---|
 | `CYLRefreshCupertinoHeader` | `com.cyl.refresh.CYLRefreshCupertinoHeader` | done |  |
-| `CYLRefreshCupertinoHeader` `activityIndicator` | `CYLRefreshCupertinoHeader.activityIndicator` | partial | CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
+| `CYLRefreshCupertinoHeader` `activityIndicator` | `CYLRefreshCupertinoHeader.activityIndicator` | done | CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`
 

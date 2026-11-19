@@ -174,8 +174,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `refreshingHandler` | Called on every refresh with the control. | `CYLRefreshComponent.refreshingHandler` |
 | `CYLRefreshComponent` `attached` | YES while the control is on a scroll view. | `CYLRefreshComponent.attached` |
 | `CYLRefreshComponent` `triggerRate` | How far to pull, as a multiple of `expandHeight`, before releasing refreshes. Default 1. | `CYLRefreshComponent.triggerRate` |
-| `CYLRefreshComponent` `finishDuration` | Seconds the control stays open after the refresh ends, before retracting. Default 0. | `CYLRefreshComponent.finishDuration` — applied by the classic header and footer (ClassicsAbstract.setFinishDuration) |
-| `CYLRefreshComponent` `scrollMode` | How the header moves while pulled (headers only). Default `CYLRefreshScrollModeMove`. | `CYLRefreshComponent.scrollMode` — read for every component; set for the classic header and footer |
+| `CYLRefreshComponent` `finishDuration` | Seconds the control stays open after the refresh ends, before retracting. Default 0. | `CYLRefreshComponent.finishDuration` — the classic header and footer hold their finished text this long (through finishingDurationWithSuccess) |
+| `CYLRefreshComponent` `scrollMode` | How the header moves while pulled (headers only). Default `CYLRefreshScrollModeMove`. | `CYLRefreshComponent.scrollMode` — set on the classic views and on every drawn style (SimpleComponent spinner style) |
 | `CYLRefreshComponent` `colorAccent` | Foreground color: every label, image tint and spinner of the control. nil keeps each view's own color. | `CYLRefreshComponent.colorAccent` |
 | `CYLRefreshComponent` `colorPrimary` | Background color of the control. nil keeps a clear background. | `CYLRefreshComponent.colorPrimary` |
 | `CYLRefreshComponent` `expanded` | YES while the control holds its refreshing position (refreshing or about to). | `CYLRefreshComponent.expanded` |
@@ -191,11 +191,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `-isReadyToAutoHide` | Subclass hook: YES when the control may be hidden now (`autoHideRefresh`). Headers and footers override it; the base returns NO. | `CYLRefreshComponent.isReadyToAutoHide()` |
 | `CYLRefreshComponent` `-updateAutoHideVisibility` | Applies `autoHideRefresh` again; call it when something `isReadyToAutoHide` reads has changed. | `CYLRefreshComponent.updateAutoHideVisibility()` |
 | `CYLRefreshComponent` `refreshEnabled` | NO turns the refresh off while keeping the bounce: pulling never arms the control (flutter_easy_refresh's `NotRefreshHeader` / `NotLoadFooter`). Default YES. | `CYLRefreshComponent.refreshEnabled` |
-| `CYLRefreshComponent` `triggersWhenReached` | Starts refreshing as soon as the pull reaches the trigger point, without waiting for the release (flutter_easy_refresh's `triggerWhenReach`). Default NO. | `CYLRefreshComponent.triggersWhenReached` — a footer loads when reached; a header waits for the release |
-| `CYLRefreshComponent` `triggerMode` | When a pull may arm the control; default `CYLRefreshTriggerModeAnywhere` (flutter_easy_refresh's `IndicatorTriggerMode`). Headers and back footers. | `CYLRefreshComponent.triggerMode` — kept; CYLRefreshLayout pulls from the content's edge |
+| `CYLRefreshComponent` `triggersWhenReached` | Starts refreshing as soon as the pull reaches the trigger point, without waiting for the release (flutter_easy_refresh's `triggerWhenReach`). Default NO. | `CYLRefreshComponent.triggersWhenReached` — a footer loads when reached; a header refreshes as soon as the pull arms it, before the release |
+| `CYLRefreshComponent` `triggerMode` | When a pull may arm the control; default `CYLRefreshTriggerModeAnywhere` (flutter_easy_refresh's `IndicatorTriggerMode`). Headers and back footers. | `CYLRefreshComponent.triggerMode` — Anywhere or OnEdge: a scroll boundary decider lets only a drag that started at the edge pull (test triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle) |
 | `CYLRefreshComponent` `hapticFeedback` | A light haptic tap when the pull crosses the trigger point (flutter_easy_refresh's `hapticFeedback`). Default NO. | `CYLRefreshComponent.hapticFeedback` |
 | `CYLRefreshComponent` `maxPullDistance` | The farthest the user can pull the control open, in points; 0 (default) means no limit (flutter_easy_refresh's `maxOverOffset`). Headers and back footers. | `CYLRefreshComponent.maxPullDistance` |
-| `CYLRefreshComponent` `notifiesWhenHidden` | Keeps following the scroll view while the control is hidden, so hooks and observers still run (flutter_easy_refresh's `notifyWhenInvisible`). Default NO. | `CYLRefreshComponent.notifiesWhenHidden` — kept; CYLRefreshLayout always reports |
+| `CYLRefreshComponent` `notifiesWhenHidden` | Keeps following the scroll view while the control is hidden, so hooks and observers still run (flutter_easy_refresh's `notifyWhenInvisible`). Default NO. | `CYLRefreshComponent.notifiesWhenHidden` — off, a hidden component skips the pull (no pullingPercent, didScrollWithOffset or icon scrubbing) |
 | `CYLRefreshComponent` `-addPhaseObserver:` | Calls `observer` on every phase change, with the old and the new phase (flutter_easy_refresh's `listenable`). A plain `CYLRefreshHeader` draws nothing, so with an observer it is a listener header (`ListenerHeader`). | `CYLRefreshComponent.addPhaseObserver(observer)` |
 | `CYLRefreshComponent` `-removePhaseObserver:` | Removes an observer added with `addPhaseObserver:`. | `CYLRefreshComponent.removePhaseObserver(observer)` |
 | `CYLRefreshComponent` `autoRefresh` | YES while the current refresh was started in code (`beginRefreshing` and its variants) rather than by a pull or a scroll; NO once it ends (CYLRefreshLayout's `isAutoRefresh`). | `com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh` — added 2026-11-17 for Android parity |
@@ -221,7 +221,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `-didScrollWithOffset:percent:dragging:` | Called on every scroll with the pulled points, the percent and whether the user drags. | `CYLRefreshComponent.didScrollWithOffset(offset, percent, dragging)` |
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | Called when `phase` changes. | `CYLRefreshComponent.phaseDidChangeFrom(old, new)` |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | Called when the refresh ends, with its result; state controls show it here. | `CYLRefreshComponent.refreshDidFinishWithSuccess(success)` |
-| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | Seconds to stay open after the refresh ends; returns `finishDuration` by default. | `CYLRefreshComponent.finishingDurationWithSuccess(success)` — an overridable hook; CYLRefreshLayout reads the component's own finish duration |
+| `CYLRefreshComponent` `-finishingDurationWithSuccess:` | Seconds to stay open after the refresh ends; returns `finishDuration` by default. | `CYLRefreshComponent.finishingDurationWithSuccess(success)` — an overridable hook the classic views ask for their hold, as on iOS; drawn styles keep their own finish animation, as iOS drawn headers do |
 | `CYLRefreshComponent` `-autoRefreshDidChange:` | Called with YES when a refresh started in code begins and with NO when it ends (CYLRefreshLayout's `RefreshComponent.onAutoRefresh`), so a control can tell it from a pull. | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` — added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | With `supportsHorizontalDrag`, called on every sideways finger move while the control is pulled: `offset` is the horizontal move in points since the drag began, `percent` the control's `pullingPercent` (CYLRefreshLayo... | `com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag` — added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | Called when a refresh starts in code: return YES when the control opens itself with its own animation (lasting `duration`), so the scroll view takes its refreshing position without animating; NO (default) lets the con... | `com.cyl.refresh.layout.api.RefreshComponent.autoOpen` — added 2026-11-17 for Android parity |
@@ -249,7 +249,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshFooter` `-noticeNoMoreData` | Shows "no more data". | `CYLRefreshFooter.noticeNoMoreData()` |
 | `CYLRefreshFooter` `-resetNoMoreData` | Clears "no more data". | `CYLRefreshFooter.resetNoMoreData()` |
 | `CYLRefreshFooter` `noMoreData` | YES while the footer shows that all data is loaded (`CYLRefreshStateNoMoreData`). | `CYLRefreshFooter.noMoreData` |
-| `CYLRefreshFooter` `loadsAfterNoMoreData` | Pulling past the end loads again after "no more data": the footer resets and refreshes (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO. | `CYLRefreshFooter.loadsAfterNoMoreData` — clears "no more data" shortly after it shows, so the next pull loads |
+| `CYLRefreshFooter` `loadsAfterNoMoreData` | Pulling past the end loads again after "no more data": the footer resets and refreshes (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO. | `CYLRefreshFooter.loadsAfterNoMoreData` — on, "no more data" clears right after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | The bottom inset the footer ignores, in dp: the layout's footer inset start. | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshFooter`. | n/a (iOS only: deprecated iOS aliases) |
 | `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | The image shown beside the text in the no-more-data state, kept once for both normal footers (`CYLRefreshAutoNormalFooter` / `CYLRefreshBackNormalFooter`, whose `noMoreDataImage` uses it). | `CYLRefreshFooter.cyl_noMoreDataImage` — CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others) |
@@ -372,7 +372,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshConfig` | The refresh components' settings. | `com.cyl.refresh.CYLRefreshConfig` |
-| `CYLRefreshConfig` `languageCode` | The language of the built-in texts, or null for the system's. | `CYLRefreshConfig.languageCode` — sets the placeholder texts' language; the refresh texts are string resources in the system's language |
+| `CYLRefreshConfig` `languageCode` | The language of the built-in texts, or null for the system's. | `CYLRefreshConfig.languageCode` — the built-in texts of classic headers and footers made after the change, and the placeholder texts |
 | `CYLRefreshConfig` `i18nFilename` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
 | `CYLRefreshConfig` `i18nBundle` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
 | `CYLRefreshConfig` `defaultHeaderCreator` | Makes the header `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (CYLRefreshLayout's `setDefaultRefreshHeaderCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` — added 2026-11-17 for Android parity |
@@ -423,14 +423,14 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshCupertinoFooter` | The iOS-style footer: an automatic footer that shows a system activity indicator while loading and nothing otherwise (flutter_easy_refresh's `CupertinoFooter`). `colorAccent` colors the indicator. | `com.cyl.refresh.CYLRefreshCupertinoFooter` |
-| `CYLRefreshCupertinoFooter` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoFooter.activityIndicator` — CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
+| `CYLRefreshCupertinoFooter` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoFooter.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshCupertinoHeader` | The iOS-style header: a system activity indicator that fades and turns in while pulled and spins while refreshing, with no text (flutter_easy_refresh's `CupertinoHeader`). `colorAccent` colors the indicator. | `com.cyl.refresh.CYLRefreshCupertinoHeader` |
-| `CYLRefreshCupertinoHeader` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoHeader.activityIndicator` — CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView |
+| `CYLRefreshCupertinoHeader` `activityIndicator` | The activity indicator. | `CYLRefreshCupertinoHeader.activityIndicator` — CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class) |
 
 ## `CYLRefresh/Custom/Drawn/CYLRefreshBezierCircleHeader.h`
 

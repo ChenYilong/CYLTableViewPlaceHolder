@@ -63,6 +63,13 @@ abstract class SimpleComponent : RelativeLayout, RefreshComponent {
     @JvmField protected var mSpinnerStyle: SpinnerStyle? = null
 
     /**
+     * Sets the spinner style from outside (CYLRefreshComponent.scrollMode), replacing the one worked out.
+     */
+    var cylSpinnerStyle: SpinnerStyle?
+        get() = mSpinnerStyle
+        set(value) { mSpinnerStyle = value }
+
+    /**
      * True during an auto refresh (pull request #1095).
      */
     @JvmField protected var mIsAutoRefresh = false

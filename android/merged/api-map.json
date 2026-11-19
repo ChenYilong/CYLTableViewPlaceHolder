@@ -1364,9 +1364,9 @@
   "android": "CYLRefreshComponent.executeRefreshingCallback()"
  },
  "CYLRefreshComponent -finishingDurationWithSuccess:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.finishingDurationWithSuccess(success)",
-  "note": "an overridable hook; CYLRefreshLayout reads the component's own finish duration"
+  "note": "an overridable hook the classic views ask for their hold, as on iOS; drawn styles keep their own finish animation, as iOS drawn headers do"
  },
  "CYLRefreshComponent -i18nDidChange": {
   "status": "n/a",
@@ -1510,9 +1510,9 @@
   "android": "CYLRefreshComponent.fastAnimationDuration"
  },
  "CYLRefreshComponent finishDuration": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.finishDuration",
-  "note": "applied by the classic header and footer (ClassicsAbstract.setFinishDuration)"
+  "note": "the classic header and footer hold their finished text this long (through finishingDurationWithSuccess)"
  },
  "CYLRefreshComponent flipsHorizontallyInOppositeLayoutDirectionViews": {
   "status": "n/a",
@@ -1531,9 +1531,9 @@
   "android": "CYLRefreshComponent.maxPullDistance"
  },
  "CYLRefreshComponent notifiesWhenHidden": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.notifiesWhenHidden",
-  "note": "kept; CYLRefreshLayout always reports"
+  "note": "off, a hidden component skips the pull (no pullingPercent, didScrollWithOffset or icon scrubbing)"
  },
  "CYLRefreshComponent phase": {
   "status": "done",
@@ -1568,9 +1568,9 @@
   "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
  },
  "CYLRefreshComponent scrollMode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.scrollMode",
-  "note": "read for every component; set for the classic header and footer"
+  "note": "set on the classic views and on every drawn style (SimpleComponent spinner style)"
  },
  "CYLRefreshComponent scrollView": {
   "status": "done",
@@ -1589,18 +1589,18 @@
   "android": "CYLRefreshComponent.state"
  },
  "CYLRefreshComponent triggerMode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.triggerMode",
-  "note": "kept; CYLRefreshLayout pulls from the content's edge"
+  "note": "Anywhere or OnEdge: a scroll boundary decider lets only a drag that started at the edge pull (test triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle)"
  },
  "CYLRefreshComponent triggerRate": {
   "status": "done",
   "android": "CYLRefreshComponent.triggerRate"
  },
  "CYLRefreshComponent triggersWhenReached": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.triggersWhenReached",
-  "note": "a footer loads when reached; a header waits for the release"
+  "note": "a footer loads when reached; a header refreshes as soon as the pull arms it, before the release"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout)": {
   "status": "done",
@@ -1707,27 +1707,27 @@
   "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
  },
  "CYLRefreshConfig languageCode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshConfig.languageCode",
-  "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
+  "note": "the built-in texts of classic headers and footers made after the change, and the placeholder texts"
  },
  "CYLRefreshCupertinoFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshCupertinoFooter"
  },
  "CYLRefreshCupertinoFooter activityIndicator": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshCupertinoFooter.activityIndicator",
-  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+  "note": "CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class)"
  },
  "CYLRefreshCupertinoHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshCupertinoHeader"
  },
  "CYLRefreshCupertinoHeader activityIndicator": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshCupertinoHeader.activityIndicator",
-  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+  "note": "CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class)"
  },
  "CYLRefreshCurveType": {
   "status": "partial",
@@ -1907,9 +1907,9 @@
   "android": "CYLRefreshFooter.ignoredScrollViewContentInsetBottom"
  },
  "CYLRefreshFooter loadsAfterNoMoreData": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshFooter.loadsAfterNoMoreData",
-  "note": "clears \"no more data\" shortly after it shows, so the next pull loads"
+  "note": "on, \"no more data\" clears right after it shows, so the next pull loads"
  },
  "CYLRefreshFooter noMoreData": {
   "status": "done",

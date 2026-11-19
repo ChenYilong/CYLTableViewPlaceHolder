@@ -681,4 +681,54 @@ class CYLRefreshComponentTest {
         icon.titleTypeface = android.graphics.Typeface.DEFAULT_BOLD
         assertEquals(android.graphics.Typeface.DEFAULT_BOLD, icon.placeholderView.defaultTitleTypeface)
     }
+
+    /** iOS triggersWhenReached on a header: it refreshes when the pull arms it, before the finger lifts. */
+    @Test
+    fun headerTriggersWhenReachedRefreshesBeforeTheRelease() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        header.triggersWhenReached = true
+        val down = SystemClock.uptimeMillis()
+        var y = 300f
+        layout.dispatchTouchEvent(MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        repeat(20) {
+            y += 45f
+            layout.dispatchTouchEvent(MotionEvent.obtain(down, down + 16L * (it + 1), MotionEvent.ACTION_MOVE, 200f, y, 0))
+        }
+        idle(600)
+        assertTrue("refreshing while the finger is still down", header.isRefreshing)
+    }
+
+    /** iOS finishingDurationWithSuccess: a subclass's hold is what the classic view returns to the layout. */
+    @Test
+    fun classicViewsHoldAsLongAsTheComponentSays() {
+        val layout = show(layout())
+        val header = object : CYLRefreshNormalHeader(activity) {
+            override fun finishingDurationWithSuccess(success: Boolean) = if (success) 1.5 else 0.25
+        }
+        layout.cyl_header = header
+        val view = header.view as com.cyl.refresh.layout.api.RefreshHeader
+        assertEquals(1500, view.onFinish(layout, true))
+        assertEquals(250, view.onFinish(layout, false))
+        header.finishDuration = 0.8
+        val plain = CYLRefreshNormalHeader(activity).apply { finishDuration = 0.8 }
+        assertEquals(800, (plain.view as com.cyl.refresh.layout.api.RefreshHeader).onFinish(layout, true))
+    }
+
+    /** iOS notifiesWhenHidden off: a hidden component skips the pull. scrollMode reaches drawn styles too. */
+    @Test
+    fun hiddenComponentsSkipThePullAndDrawnStylesTakeScrollMode() {
+        val header = CYLRefreshNormalHeader(activity)
+        header.notifiesWhenHidden = false
+        header.view.view.visibility = View.GONE
+        header.moved(40, 0.5f, true)
+        assertEquals(0f, header.pullingPercent, 0f)
+        header.view.view.visibility = View.VISIBLE
+        header.moved(40, 0.5f, true)
+        assertEquals(0.5f, header.pullingPercent, 0f)
+        val material = CYLRefreshMaterialHeader(activity)
+        material.scrollMode = CYLRefreshScrollMode.Front
+        assertEquals(CYLRefreshScrollMode.Front, material.scrollMode)
+    }
 }
