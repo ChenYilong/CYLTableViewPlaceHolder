@@ -174,6 +174,10 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderScenario) {
      *      页面上方的方框中（进度、成功、错误、关闭）。
      */
     CYLPlaceholderScenarioHUD NS_SWIFT_NAME(hud),
+    /*!
+     * [EN] The number of scenarios; not a scenario itself.
+     * [CN] 场景的数量；本身不是一个场景。
+     */
     CYLPlaceholderScenarioCount
 };
 
@@ -211,13 +215,45 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderPermission) {
      * Not a permission scenario, or a permission of no particular kind (CYLPlaceholderScenarioNoPermission).
      */
     CYLPlaceholderPermissionNone,
+    /*!
+     * [EN] Location access (CYLPlaceholderScenarioLocationPermissionDenied).
+     * [CN] 定位权限（CYLPlaceholderScenarioLocationPermissionDenied）。
+     */
     CYLPlaceholderPermissionLocation,
+    /*!
+     * [EN] Camera access (CYLPlaceholderScenarioCameraPermissionDenied).
+     * [CN] 相机权限（CYLPlaceholderScenarioCameraPermissionDenied）。
+     */
     CYLPlaceholderPermissionCamera,
+    /*!
+     * [EN] Photo library access (CYLPlaceholderScenarioPhotoLibraryPermissionDenied).
+     * [CN] 相册权限（CYLPlaceholderScenarioPhotoLibraryPermissionDenied）。
+     */
     CYLPlaceholderPermissionPhotoLibrary,
+    /*!
+     * [EN] Microphone access (CYLPlaceholderScenarioMicrophonePermissionDenied).
+     * [CN] 麦克风权限（CYLPlaceholderScenarioMicrophonePermissionDenied）。
+     */
     CYLPlaceholderPermissionMicrophone,
+    /*!
+     * [EN] Contacts access (CYLPlaceholderScenarioContactsPermissionDenied).
+     * [CN] 通讯录权限（CYLPlaceholderScenarioContactsPermissionDenied）。
+     */
     CYLPlaceholderPermissionContacts,
+    /*!
+     * [EN] Calendar access (CYLPlaceholderScenarioCalendarPermissionDenied).
+     * [CN] 日历权限（CYLPlaceholderScenarioCalendarPermissionDenied）。
+     */
     CYLPlaceholderPermissionCalendar,
+    /*!
+     * [EN] Bluetooth access (CYLPlaceholderScenarioBluetoothPermissionDenied).
+     * [CN] 蓝牙权限（CYLPlaceholderScenarioBluetoothPermissionDenied）。
+     */
     CYLPlaceholderPermissionBluetooth,
+    /*!
+     * [EN] Notifications (CYLPlaceholderScenarioNotificationPermissionDenied).
+     * [CN] 通知权限（CYLPlaceholderScenarioNotificationPermissionDenied）。
+     */
     CYLPlaceholderPermissionNotifications,
 };
 
@@ -225,10 +261,31 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderPermission) {
  * What a tap on a component asks the app to do. Apps may define their own values.
  */
 typedef NSString *CYLPlaceholderAction NS_TYPED_EXTENSIBLE_ENUM;
+/*!
+ * [EN] Try the failed request again; the button title is "Retry" (localized).
+ * [CN] 重新发起失败的请求；按钮标题为“重试”（已本地化）。
+ */
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionRetry;
+/*!
+ * [EN] Contact the app's support; the button title is "Contact support" (localized).
+ * [CN] 联系应用客服；按钮标题为“联系客服”（已本地化）。
+ */
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionContactSupport;
+/*!
+ * [EN] Open the app's page in Settings, so the user can allow a permission; the button title is "Open Settings"
+ *      (localized).
+ * [CN] 打开设置中本应用的页面，以便用户授予权限；按钮标题为“打开设置”（已本地化）。
+ */
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionOpenSettings;
+/*!
+ * [EN] Leave the empty cart to browse products; the button title is "Go shopping" (localized).
+ * [CN] 离开空购物车去浏览商品；按钮标题为“去逛逛”（已本地化）。
+ */
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionGoShopping;
+/*!
+ * [EN] Close the finished task's page; the button title is "Done" (localized).
+ * [CN] 关闭已完成任务的页面；按钮标题为“完成”（已本地化）。
+ */
 FOUNDATION_EXPORT CYLPlaceholderAction const CYLPlaceholderActionDone;
 /*!
  * Go on without the permission by entering the value by hand, such as choosing an address instead of locating.

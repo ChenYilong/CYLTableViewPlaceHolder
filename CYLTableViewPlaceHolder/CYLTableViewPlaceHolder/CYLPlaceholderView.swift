@@ -924,6 +924,12 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         cyl_placeholderSetUp()
     }
 
+    /**
+     * [EN] Creates the view from a storyboard or nib, set up like `init(frame:)`: the `CYLPlaceholderStyleEmpty` icon,
+     *      the "Nothing here yet" text (localized) in gray Body text style, a vertical layout and a hidden badge.
+     * [CN] 从 storyboard 或 nib 创建视图，设置与 `init(frame:)` 相同：`CYLPlaceholderStyleEmpty` 图标、灰色 Body 文字样式的“暂无内容”
+     *      （已本地化）文字、纵向布局，角标隐藏。
+     */
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         cyl_placeholderSetUp()

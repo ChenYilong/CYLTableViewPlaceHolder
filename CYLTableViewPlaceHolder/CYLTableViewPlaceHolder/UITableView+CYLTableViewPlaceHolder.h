@@ -15,6 +15,12 @@
 #import <UIKit/UIKit.h>
 
 #ifndef __swift__
+/*!
+ * [EN] The legacy placeholder API, `cyl_reloadData` with `CYLTableViewPlaceHolderDelegate`; declared for Objective-C
+ *      callers only, implemented in Swift.
+ * [CN] 旧的占位图接口：`cyl_reloadData` 与 `CYLTableViewPlaceHolderDelegate`；只为
+ *      Objective-C 调用方声明，用 Swift 实现。
+ */
 @interface UITableView (CYLTableViewPlaceHolder)
 
 /*!

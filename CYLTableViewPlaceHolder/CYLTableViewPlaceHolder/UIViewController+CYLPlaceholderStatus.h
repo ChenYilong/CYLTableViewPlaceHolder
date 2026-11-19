@@ -55,6 +55,11 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
 // [CN] 自 2026-11-19 起用 Swift 实现（`UIViewController+CYLPlaceholderStatus.swift`，选择器不变）。这里的声明只供 Objective-C 调用方使用：
 //      Swift 直接读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。
 #ifndef __swift__
+/*!
+ * [EN] The status bar of a view controller (a network bar by default) and the display rules that decide when it and
+ *      the placeholder show; declared for Objective-C callers only, implemented in Swift.
+ * [CN] 视图控制器的状态条（默认为网络提示条），以及决定它与占位图何时显示的规则；只为 Objective-C 调用方声明，用 Swift 实现。
+ */
 @interface UIViewController (CYLPlaceholderStatus)
 
 /*!
@@ -112,6 +117,10 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
 @end
 #endif
 
+/*!
+ * [EN] Whether a list's placeholder may show, and the placeholder it shows now.
+ * [CN] 列表的占位图是否可以显示，以及当前显示的占位图。
+ */
 @interface UIScrollView (CYLPlaceholderVisibility)
 /*!
  * [EN] YES keeps the placeholder from showing even when the list is empty; NO (the default) shows it as before.
