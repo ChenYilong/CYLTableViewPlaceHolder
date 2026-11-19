@@ -187,8 +187,15 @@ Objective-C to Swift, and its score after every commit.
     lines: 7,576 / (7,576 + 14,477) ≈ **34 / 100** (was 32). `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/` (the
     placeholder core outside CYLRefresh) is now fully Swift except the rule-6 shims (the six `*Support.m` files: exported
     constants and C functions, `+load` and the exception guard) and the public headers.
-  - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests:
-    `CYLRefresh/` (the largest part), then the tests.
+  - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
+    example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
+    - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines);
+    - step 7: `Base/` (component, header, footer, icon view; 8 files, 3,363 lines; two commits if needed);
+    - step 8: `Custom/Header`, `Custom/Footer/Auto`, `Custom/Footer/Back`, `Custom/Trailer`, `Custom/Cupertino`
+      (16 files, 1,805 lines);
+    - step 9: `Custom/Drawn/Support` (13 files, 2,606 lines);
+    - step 10: `Custom/Drawn` (the drawn styles; 16 files, 5,620 lines; two commits);
+    - step 11: the tests (14 Objective-C files under `Tests/`).
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 
