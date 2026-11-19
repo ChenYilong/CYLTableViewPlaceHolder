@@ -94,7 +94,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoFooter` | A footer that loads by itself when it comes into view. | `com.cyl.refresh.CYLRefreshAutoFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoFooter` | A footer that sits right after the content and loads more by itself when it scrolls into view (see `automaticallyRefresh` and `triggerAutomaticallyRefreshPercent`), or when tapped; the base of the automatic footers. | `com.cyl.refresh.CYLRefreshAutoFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | Whether reaching the end loads by itself. | `CYLRefreshAutoFooter.automaticallyRefresh` |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | How much of the footer must show before it loads, 0 to 1. | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` |
 | `CYLRefreshAutoFooter` `autoTriggerTimes` | How many times one drag may load by itself, -1 for no limit, as on iOS: once the count is used up the footer stops loading by itself until the next drag begins. | `CYLRefreshAutoFooter.autoTriggerTimes` — loads a drag may start by itself (-1 no limit); used up, auto loading stops until the next touch, as on iOS |
@@ -104,7 +104,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackFooter` | A footer that loads when pulled up and released. | `com.cyl.refresh.CYLRefreshBackFooter` — pull to load and the second floor (secondary*) |
+| `CYLRefreshBackFooter` | A footer that stays hidden below the content and loads more when the user pulls up past it and releases; the scroll view rebounds when loading ends. The base of the back footers, with the optional second floor. | `com.cyl.refresh.CYLRefreshBackFooter` — pull to load and the second floor (secondary*) |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | Seconds the "no more data" text stays visible, with the footer held open, after a load that ends with `endRefreshingWithNoMoreData`, before the scroll view rebounds (upstream #1585, case 2). | `CYLRefreshBackFooter.noMoreDataDisplayDuration` |
 | `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | Keeps the footer shown after the content while there is no more data, until the state changes (CYLRefreshLayout's `setEnableFooterFollowWhenNoMoreData`). Default NO. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData` — added 2026-11-17 for Android parity |
 | `CYLRefreshBackFooter` `scrollsContentAfterLoading` | After loading more, leaves the new rows in the place the footer showed, so they come into view; NO keeps the old end of the content in place (CYLRefreshLayout's `setEnableScrollContentWhenLoaded`). Default YES. | `com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded` — added 2026-11-17 for Android parity |
@@ -116,7 +116,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshBackFooter` `secondaryOpenedBlock` | Called when the second floor has opened. | `CYLRefreshBackFooter.secondaryOpenedBlock` |
 | `CYLRefreshBackFooter` `secondaryClosedBlock` | Called when the second floor has closed. | `CYLRefreshBackFooter.secondaryClosedBlock` |
 | `CYLRefreshBackFooter` `secondaryVelocity` | Releasing a pull-up at least this fast (points per second) past the load trigger opens the second floor; 0 (default) turns it off. | `CYLRefreshBackFooter.secondaryVelocity` — a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor |
-| `CYLRefreshBackFooter` `-openSecondary` | Opens the second floor. | `CYLRefreshBackFooter.openSecondary()` |
+| `CYLRefreshBackFooter` `-openSecondary` | Opens the second floor (flutter_easy_refresh's `openFooterSecondary`). | `CYLRefreshBackFooter.openSecondary()` |
 | `CYLRefreshBackFooter` `-closeSecondary` | Closes the second floor (flutter_easy_refresh's `closeFooterSecondary`). | `CYLRefreshBackFooter.closeSecondary()` |
 
 ## `CYLRefresh/Base/CYLRefreshComponent.h`
@@ -142,13 +142,13 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `refreshingAction` | Property of `CYLRefreshComponent`. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshComponent` `-executeRefreshingCallback` | Calls [refreshingBlock], [refreshingHandler], then [beginRefreshingCompletionBlock], in the iOS order. | `CYLRefreshComponent.executeRefreshingCallback()` |
 | `CYLRefreshComponent` `-beginRefreshing` | Starts refreshing; before the layout is on screen, the state is [CYLRefreshState.WillRefresh] until it shows. | `CYLRefreshComponent.beginRefreshing()` |
-| `CYLRefreshComponent` `-beginRefreshingWithCompletionBlock:` | Starts refreshing and calls [completion] once it has begun. | `CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)` |
+| `CYLRefreshComponent` `-beginRefreshingWithCompletionBlock:` | Stores `completionBlock` as `beginRefreshingCompletionBlock`, then calls `beginRefreshing`; the block runs once the control has entered the refreshing state. | `CYLRefreshComponent.beginRefreshingWithCompletionBlock(completion)` |
 | `CYLRefreshComponent` `beginRefreshingCompletionBlock` | Called once a refresh has begun. | `CYLRefreshComponent.beginRefreshingCompletionBlock` |
 | `CYLRefreshComponent` `CYLRefreshDeprecated` | Property of `CYLRefreshComponent`. | n/a (iOS only: deprecated iOS aliases) |
-| `CYLRefreshComponent` `endRefreshingAnimationBeginAction` | Called when the closing animation of a refresh starts. | `CYLRefreshComponent.endRefreshingAnimationBeginAction` |
+| `CYLRefreshComponent` `endRefreshingAnimationBeginAction` | Called when the animation that ends a refresh begins (before `endRefreshingCompletionBlock`, which runs when it has finished); replaces the deprecated `endRefreshingAnimateCompletionBlock`. | `CYLRefreshComponent.endRefreshingAnimationBeginAction` |
 | `CYLRefreshComponent` `endRefreshingCompletionBlock` | Called once a refresh has ended and closed. | `CYLRefreshComponent.endRefreshingCompletionBlock` |
 | `CYLRefreshComponent` `-endRefreshing` | Ends refreshing. | `CYLRefreshComponent.endRefreshing()` |
-| `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | Ends refreshing and calls [completion] once it has closed. | `CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)` |
+| `CYLRefreshComponent` `-endRefreshingWithCompletionBlock:` | Stores `completionBlock` as `endRefreshingCompletionBlock`, then calls `endRefreshing`; the block runs when the end animation has finished. | `CYLRefreshComponent.endRefreshingWithCompletionBlock(completion)` |
 | `CYLRefreshComponent` `refreshing` | Whether the component is refreshing or about to. | `CYLRefreshComponent.isRefreshing` |
 | `CYLRefreshComponent` `exclusiveWithOtherRefresh` | Mutual exclusion with the other refresh components of the same scroll view (header, footer, trailer). Default NO: they run independently, except that a header refresh already holds back the automatic footer. | `CYLRefreshComponent.exclusiveWithOtherRefresh` — on: refused while the other control is busy; off: not refused, but CYLRefreshLayout shows one control at a time, so the busy one finishes and this one starts (iOS runs both at once) |
 | `CYLRefreshComponent` `blockedByOtherRefreshBlock` | Runs on the main thread each time a start was held back by `exclusiveWithOtherRefresh`, for example to show "refreshing, please wait". | `CYLRefreshComponent.blockedByOtherRefreshBlock` |
@@ -225,13 +225,13 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshComponent` `-autoRefreshDidChange:` | Called with YES when a refresh started in code begins and with NO when it ends (CYLRefreshLayout's `RefreshComponent.onAutoRefresh`), so a control can tell it from a pull. | `com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh` — added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | With `supportsHorizontalDrag`, called on every sideways finger move while the control is pulled: `offset` is the horizontal move in points since the drag began, `percent` the control's `pullingPercent` (CYLRefreshLayo... | `com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag` — added 2026-11-17 for Android parity |
 | `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | Called when a refresh starts in code: return YES when the control opens itself with its own animation (lasting `duration`), so the scroll view takes its refreshing position without animating; NO (default) lets the con... | `com.cyl.refresh.layout.api.RefreshComponent.autoOpen` — added 2026-11-17 for Android parity |
-| `UILabel(CYLRefresh)` | Category. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
-| `UILabel(CYLRefresh)` `+cyl_label` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
-| `UILabel(CYLRefresh)` `-cyl_textWidth` | Method of `UILabel(CYLRefresh)`. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
+| `UILabel(CYLRefresh)` | Label helpers of the refresh controls. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
+| `UILabel(CYLRefresh)` `+cyl_label` | A label styled as the refresh controls' texts: `CYLRefreshLabelFont`, `CYLRefreshLabelTextColor`, centered, clear background, flexible width. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
+| `UILabel(CYLRefresh)` `-cyl_textWidth` | The width the label's text (or attributed text) needs on one line, in points; 0 when it is empty. | n/a (iOS only: a UILabel helper; Android uses TextView directly) |
 | `CYLRefreshComponent(CYLRefreshStateTitles)` | The text of each state, kept once for every control that shows a state text (the state header, both state footers and the state trailer, whose `setTitle:forState:` / `titleForState:` use it). | `com.cyl.refresh.CYLRefreshStateHeader` — cyl_setStateTitle / cyl_stateTitleForState on every control (shown by the state header and state footers, kept by others) |
 | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | Sets the text of `state`; nil is ignored, as in `setTitle:forState:`. | `CYLRefreshComponent.cyl_setStateTitle` — CYLRefreshComponent.cyl_setStateTitle(title, state) |
 | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | The text of `state`, or nil. | `CYLRefreshComponent.cyl_stateTitleForState` — CYLRefreshComponent.cyl_stateTitleForState(state) |
-| `CYLRefreshComponent(ChainingGrammar)` | Category. | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` |
+| `CYLRefreshComponent(ChainingGrammar)` | Chainable setters for Swift: each sets one property of the control and returns it, so calls can be chained. | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | Sets [automaticallyChangeAlpha]. | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | Sets [beginRefreshingCompletionBlock]. | `CYLRefreshComponent.cyl_afterBeginningAction(action)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_endingAnimationBeginningAction:` | Sets [endRefreshingAnimationBeginAction]. | `CYLRefreshComponent.cyl_endingAnimationBeginningAction(action)` |
@@ -242,11 +242,11 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshFooter` | The iOS `CYLRefreshFooter` on Android: pull up to load more. | `com.cyl.refresh.CYLRefreshFooter` |
+| `CYLRefreshFooter` | The base class of the pull-up (load more) controls; set one as a scroll view's `cyl_footer`. | `com.cyl.refresh.CYLRefreshFooter` |
 | `CYLRefreshFooter` `+footerWithRefreshingBlock:` | A classic footer calling [block] when it loads. | `CYLRefreshFooter.footerWithRefreshingBlock(context, block)` |
 | `CYLRefreshFooter` `+footerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshFooter`. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshFooter` `-endRefreshingWithNoMoreData` | Ends loading and shows "no more data". | `CYLRefreshFooter.endRefreshingWithNoMoreData()` |
-| `CYLRefreshFooter` `-noticeNoMoreData` | Shows "no more data". | `CYLRefreshFooter.noticeNoMoreData()` |
+| `CYLRefreshFooter` `-noticeNoMoreData` | Deprecated: does the same as `endRefreshingWithNoMoreData`; use that instead. | `CYLRefreshFooter.noticeNoMoreData()` |
 | `CYLRefreshFooter` `-resetNoMoreData` | Clears "no more data". | `CYLRefreshFooter.resetNoMoreData()` |
 | `CYLRefreshFooter` `noMoreData` | YES while the footer shows that all data is loaded (`CYLRefreshStateNoMoreData`). | `CYLRefreshFooter.noMoreData` |
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | Pulling past the end loads again after "no more data": the footer resets and refreshes (flutter_easy_refresh's `canLoadAfterNoMore`). Default NO. | `CYLRefreshFooter.loadsAfterNoMoreData` — on, "no more data" clears right after it shows, so the next pull loads |
@@ -260,7 +260,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshHeader` | The iOS `CYLRefreshHeader` on Android: pull down to refresh. | `com.cyl.refresh.CYLRefreshHeader` — pull to refresh and the second floor (secondary*) |
+| `CYLRefreshHeader` | The base class of the pull-down refresh controls: it watches the pull above the content and refreshes on release; set one as a scroll view's `cyl_header`. | `com.cyl.refresh.CYLRefreshHeader` — pull to refresh and the second floor (secondary*) |
 | `CYLRefreshHeader` `+headerWithRefreshingBlock:` | A classic header calling [block] when it refreshes. | `CYLRefreshHeader.headerWithRefreshingBlock(context, block)` |
 | `CYLRefreshHeader` `+headerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshHeader`. | n/a (iOS only: Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)) |
 | `CYLRefreshHeader` `lastUpdatedTimeKey` | The key the last update time is stored under. | `CYLRefreshHeader.lastUpdatedTimeKey` |
@@ -288,7 +288,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshIconView` | The icon of a refresh component: one animation (or image sequence) per state, with an optional title. | `com.cyl.refresh.CYLRefreshIconView` |
+| `CYLRefreshIconView` | The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or a GIF, Lottie, PAG or Rive animation that plays by the control's state, as the file header describes. | `com.cyl.refresh.CYLRefreshIconView` |
 | `CYLRefreshIconView` `-setAnimationAttributes:forState:` | The item attributes of CYLPlaceholderView for a state, such as `CYLPlaceholderItemAnimationFilePath`, `CYLPlaceholderItemAnimationSize`, `CYLPlaceholderItemAnimationOptions`, `CYLPlaceholderItemAnimationColors` or `CY... | `CYLRefreshIconView.setAnimationAttributes(attributes, state)` |
 | `CYLRefreshIconView` `-animationAttributesForState:` | The attributes set for a state, without the idle fallback. | `CYLRefreshIconView.animationAttributesForState(state)` |
 | `CYLRefreshIconView` `hasAnimations` | YES when any state has attributes. | `CYLRefreshIconView.hasAnimations` |
@@ -311,7 +311,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | An animation file (.gif, .json Lottie, .pag, .riv) at `size` for a state. | `setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers` |
 | `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | An animation of the core bundle (`bundledIconAnimationFileNames`) at `size` for a state, with the options it needs. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
 | `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | The animations of the core bundle meant for a refresh icon: the `CYLRefresh*` files and the placeholder animations that also suit a refresh control. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` | The icon of a refresh component: one animation (or image sequence) per state, with an optional title. | `com.cyl.refresh.CYLRefreshIconView (companion)` |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` | Builders of the item attributes that `setAnimationAttributes:forState:` takes. | `com.cyl.refresh.CYLRefreshIconView (companion)` |
 | `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` | The item attributes of an animation file at `size`; nil for an empty path. | `CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)` |
 | `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForBundledAnimation:size:` | The item attributes of a core-bundle animation at `size`, with the options it needs (Rive state machines, line icon colors); nil when the file is missing. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
 | `CYLRefreshIconView(CYLRefreshIconAttributes)` `bundledAnimationFileNames` | The refresh icon animations of the core bundle (see `CYLRefreshIconAnimating`). | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
@@ -359,7 +359,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshTrailer` | A control at the end of a horizontal list, pulled from the right. | `com.cyl.refresh.CYLRefreshTrailer` |
+| `CYLRefreshTrailer` | The base class of the horizontal controls at the trailing end of the content: swiping past the end and releasing runs the refreshing callback (for example to open details); set one as a scroll view's `cyl_trailer`. | `com.cyl.refresh.CYLRefreshTrailer` |
 | `CYLRefreshTrailer` `+trailerWithRefreshingBlock:` | A trailer that runs [refreshingBlock] when released past the trigger. | `CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }` |
 | `CYLRefreshTrailer` `+trailerWithRefreshingTarget:refreshingAction:` | Method of `CYLRefreshTrailer`. | n/a (iOS only: Objective-C target-action; Kotlin uses the block) |
 | `CYLRefreshTrailer` `ignoredScrollViewContentInsetRight` | Property of `CYLRefreshTrailer`. | n/a (iOS only: the Android trailer moves the list itself, there is no content inset to ignore) |
@@ -371,7 +371,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshConfig` | The refresh components' settings. | `com.cyl.refresh.CYLRefreshConfig` |
+| `CYLRefreshConfig` | The shared settings of every refresh control (language, strings table and bundle, default controls), read through `defaultConfig`. | `com.cyl.refresh.CYLRefreshConfig` |
 | `CYLRefreshConfig` `languageCode` | The language of the built-in texts, or null for the system's. | `CYLRefreshConfig.languageCode` — the built-in texts of classic headers and footers made after the change, and the placeholder texts |
 | `CYLRefreshConfig` `i18nFilename` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
 | `CYLRefreshConfig` `i18nBundle` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
@@ -379,44 +379,44 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshConfig` `defaultFooterCreator` | Makes the footer `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (CYLRefreshLayout's `setDefaultRefreshFooterCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator` — added 2026-11-17 for Android parity |
 | `CYLRefreshConfig` `defaultInitializer` | Sets up every control once, when it is first attached to a scroll view, before its own `didAttachToScrollView:` (CYLRefreshLayout's `setDefaultRefreshInitializer`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer` — added 2026-11-17 for Android parity |
 | `CYLRefreshConfig` `defaultConfig` | Singleton Config instance | `CYLRefreshConfig.defaultConfig` |
-| `CYLRefreshConfig` `-init` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
-| `CYLRefreshConfig` `+new` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
+| `CYLRefreshConfig` `-init` | Unavailable: use the shared `defaultConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
+| `CYLRefreshConfig` `+new` | Unavailable: use the shared `defaultConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
 
 ## `CYLRefresh/CYLRefreshConst.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLRefreshLabelLeftInset` | Layout constants and keys of the refresh components. | `CYLRefreshConst.CYLRefreshLabelLeftInset` |
-| `CYLRefreshHeaderHeight` | The header's height, in dp. | `CYLRefreshConst.CYLRefreshHeaderHeight` |
-| `CYLRefreshFooterHeight` | The footer's height, in dp. | `CYLRefreshConst.CYLRefreshFooterHeight` |
-| `CYLRefreshTrailWidth` | The trailer's width, in dp. | `CYLRefreshConst.CYLRefreshTrailWidth` |
-| `CYLRefreshFastAnimationDuration` | The fast animation's duration, in seconds. | `CYLRefreshConst.CYLRefreshFastAnimationDuration` |
-| `CYLRefreshSlowAnimationDuration` | The slow animation's duration, in seconds. | `CYLRefreshConst.CYLRefreshSlowAnimationDuration` |
-| `CYLRefreshKeyPathContentOffset` | The key path of a scroll view's content offset (an iOS key-value observing name, kept for portable code). | `CYLRefreshConst.CYLRefreshKeyPathContentOffset` |
-| `CYLRefreshKeyPathContentSize` | The key path of a scroll view's content size. | `CYLRefreshConst.CYLRefreshKeyPathContentSize` |
-| `CYLRefreshKeyPathContentInset` | The key path of a scroll view's content inset. | `CYLRefreshConst.CYLRefreshKeyPathContentInset` |
-| `CYLRefreshKeyPathPanState` | The key path of a pan gesture's state. | `CYLRefreshConst.CYLRefreshKeyPathPanState` |
-| `CYLRefreshHeaderLastUpdatedTimeKey` | The default key under which a header stores its last update time. | `CYLRefreshConst.CYLRefreshHeaderLastUpdatedTimeKey` |
-| `CYLRefreshHeaderIdleText` | Text key: the header at rest. | `CYLRefreshConst.CYLRefreshHeaderIdleText` |
-| `CYLRefreshHeaderPullingText` | Text key: the header pulled past the trigger. | `CYLRefreshConst.CYLRefreshHeaderPullingText` |
-| `CYLRefreshHeaderRefreshingText` | Text key: the header refreshing. | `CYLRefreshConst.CYLRefreshHeaderRefreshingText` |
-| `CYLRefreshTrailerIdleText` | Text key: the trailer at rest. | `CYLRefreshConst.CYLRefreshTrailerIdleText` |
-| `CYLRefreshTrailerPullingText` | Text key: the trailer pulled past the trigger. | `CYLRefreshConst.CYLRefreshTrailerPullingText` |
-| `CYLRefreshAutoFooterIdleText` | Text key: the automatic footer at rest. | `CYLRefreshConst.CYLRefreshAutoFooterIdleText` |
-| `CYLRefreshAutoFooterRefreshingText` | Text key: the automatic footer loading. | `CYLRefreshConst.CYLRefreshAutoFooterRefreshingText` |
-| `CYLRefreshAutoFooterNoMoreDataText` | Text key: the automatic footer with no more data. | `CYLRefreshConst.CYLRefreshAutoFooterNoMoreDataText` |
-| `CYLRefreshBackFooterIdleText` | Text key: the back footer at rest. | `CYLRefreshConst.CYLRefreshBackFooterIdleText` |
-| `CYLRefreshBackFooterPullingText` | Text key: the back footer pulled past the trigger. | `CYLRefreshConst.CYLRefreshBackFooterPullingText` |
-| `CYLRefreshBackFooterRefreshingText` | Text key: the back footer loading. | `CYLRefreshConst.CYLRefreshBackFooterRefreshingText` |
-| `CYLRefreshBackFooterNoMoreDataText` | Text key: the back footer with no more data. | `CYLRefreshConst.CYLRefreshBackFooterNoMoreDataText` |
-| `CYLRefreshHeaderFinishedText` | Text key: the header after a successful refresh. | `CYLRefreshConst.CYLRefreshHeaderFinishedText` |
-| `CYLRefreshHeaderFailedText` | Text key: the header after a failed refresh. | `CYLRefreshConst.CYLRefreshHeaderFailedText` |
-| `CYLRefreshFooterFinishedText` | Text key: the footer after a successful load. | `CYLRefreshConst.CYLRefreshFooterFinishedText` |
-| `CYLRefreshFooterFailedText` | Text key: the footer after a failed load. | `CYLRefreshConst.CYLRefreshFooterFailedText` |
-| `CYLRefreshHeaderLastTimeText` | Text key: the "last update" prefix. | `CYLRefreshConst.CYLRefreshHeaderLastTimeText` |
-| `CYLRefreshHeaderDateTodayText` | Text key: "today" in the last update time. | `CYLRefreshConst.CYLRefreshHeaderDateTodayText` |
-| `CYLRefreshHeaderNoneLastDateText` | Text key: no last update yet. | `CYLRefreshConst.CYLRefreshHeaderNoneLastDateText` |
-| `CYLRefreshDidChangeLanguageNotification` | The name of the notice sent when the refresh texts' language changes. | `CYLRefreshConst.CYLRefreshDidChangeLanguageNotification` |
+| `CYLRefreshHeaderHeight` | The height of a refresh header, 54 points; a header sets it as its height when it is prepared. | `CYLRefreshConst.CYLRefreshHeaderHeight` |
+| `CYLRefreshFooterHeight` | The height of a refresh footer, 44 points; a footer sets it as its height when it is prepared. | `CYLRefreshConst.CYLRefreshFooterHeight` |
+| `CYLRefreshTrailWidth` | The width of a refresh trailer (the horizontal "swipe to see details" component), 60 points. | `CYLRefreshConst.CYLRefreshTrailWidth` |
+| `CYLRefreshFastAnimationDuration` | 0.25 seconds: the duration of the fast refresh animations, the default of `fastAnimationDuration`. | `CYLRefreshConst.CYLRefreshFastAnimationDuration` |
+| `CYLRefreshSlowAnimationDuration` | 0.4 seconds: the duration of the slow refresh animations, the default of `slowAnimationDuration`. | `CYLRefreshConst.CYLRefreshSlowAnimationDuration` |
+| `CYLRefreshKeyPathContentOffset` | The key path `contentOffset`, which a refresh component observes on its scroll view to follow the pull. | `CYLRefreshConst.CYLRefreshKeyPathContentOffset` |
+| `CYLRefreshKeyPathContentSize` | The key path `contentSize`, which a refresh component observes on its scroll view (a footer follows the content's end). | `CYLRefreshConst.CYLRefreshKeyPathContentSize` |
+| `CYLRefreshKeyPathContentInset` | The key path `contentInset` of the scroll view, as the refresh components spell it. | `CYLRefreshConst.CYLRefreshKeyPathContentInset` |
+| `CYLRefreshKeyPathPanState` | The key path `state`, which a refresh component observes on the scroll view's pan gesture recognizer to see the drag end. | `CYLRefreshConst.CYLRefreshKeyPathPanState` |
+| `CYLRefreshHeaderLastUpdatedTimeKey` | The default `lastUpdatedTimeKey` of a header: the `NSUserDefaults` key under which it saves the time of its last refresh. | `CYLRefreshConst.CYLRefreshHeaderLastUpdatedTimeKey` |
+| `CYLRefreshHeaderIdleText` | The localization key of the header's idle text (English "Pull down to refresh"). | `CYLRefreshConst.CYLRefreshHeaderIdleText` |
+| `CYLRefreshHeaderPullingText` | The localization key of the header's pulling text (English "Release to refresh"). | `CYLRefreshConst.CYLRefreshHeaderPullingText` |
+| `CYLRefreshHeaderRefreshingText` | The localization key of the header's refreshing text (English "Loading..."). | `CYLRefreshConst.CYLRefreshHeaderRefreshingText` |
+| `CYLRefreshTrailerIdleText` | The localization key of the trailer's idle text (English "Swipe to see details"). | `CYLRefreshConst.CYLRefreshTrailerIdleText` |
+| `CYLRefreshTrailerPullingText` | The localization key of the trailer's pulling text (English "Release to see details"). | `CYLRefreshConst.CYLRefreshTrailerPullingText` |
+| `CYLRefreshAutoFooterIdleText` | The localization key of the automatic footer's idle text (English "Tap or pull up to load more"). | `CYLRefreshConst.CYLRefreshAutoFooterIdleText` |
+| `CYLRefreshAutoFooterRefreshingText` | The localization key of the automatic footer's loading text (English "Loading..."). | `CYLRefreshConst.CYLRefreshAutoFooterRefreshingText` |
+| `CYLRefreshAutoFooterNoMoreDataText` | The localization key of the automatic footer's no-more-data text (English "No more data"). | `CYLRefreshConst.CYLRefreshAutoFooterNoMoreDataText` |
+| `CYLRefreshBackFooterIdleText` | The localization key of the back footer's idle text (English "Pull up to load more"). | `CYLRefreshConst.CYLRefreshBackFooterIdleText` |
+| `CYLRefreshBackFooterPullingText` | The localization key of the back footer's pulling text (English "Release to load more"). | `CYLRefreshConst.CYLRefreshBackFooterPullingText` |
+| `CYLRefreshBackFooterRefreshingText` | The localization key of the back footer's loading text (English "Loading..."). | `CYLRefreshConst.CYLRefreshBackFooterRefreshingText` |
+| `CYLRefreshBackFooterNoMoreDataText` | The localization key of the back footer's no-more-data text (English "No more data"). | `CYLRefreshConst.CYLRefreshBackFooterNoMoreDataText` |
+| `CYLRefreshHeaderFinishedText` | The localization key of the text a state header shows after a successful refresh (English "Refresh complete"). | `CYLRefreshConst.CYLRefreshHeaderFinishedText` |
+| `CYLRefreshHeaderFailedText` | The localization key of the text a state header shows after a failed refresh (English "Refresh failed"). | `CYLRefreshConst.CYLRefreshHeaderFailedText` |
+| `CYLRefreshFooterFinishedText` | The localization key of the text a state footer shows after a successful load (English "Load complete"). | `CYLRefreshConst.CYLRefreshFooterFinishedText` |
+| `CYLRefreshFooterFailedText` | The localization key of the text a state footer shows after a failed load (English "Load failed"). | `CYLRefreshConst.CYLRefreshFooterFailedText` |
+| `CYLRefreshHeaderLastTimeText` | The localization key of the prefix of the header's last-updated line (English "Last update: "). | `CYLRefreshConst.CYLRefreshHeaderLastTimeText` |
+| `CYLRefreshHeaderDateTodayText` | The localization key of the word for today in the header's last-updated line (English "Today"). | `CYLRefreshConst.CYLRefreshHeaderDateTodayText` |
+| `CYLRefreshHeaderNoneLastDateText` | The localization key shown in the last-updated line when the header has never refreshed (English "No record"). | `CYLRefreshConst.CYLRefreshHeaderNoneLastDateText` |
+| `CYLRefreshDidChangeLanguageNotification` | Posted by `CYLRefreshConfig.defaultConfig` when its language changes; every refresh component observes it and reloads its texts. | `CYLRefreshConst.CYLRefreshDidChangeLanguageNotification` |
 
 ## `CYLRefresh/Custom/Cupertino/CYLRefreshCupertinoFooter.h`
 
@@ -788,8 +788,8 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoNormalFooter` | The automatic state footer with a spinner. | `com.cyl.refresh.CYLRefreshAutoNormalFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshAutoNormalFooter` `loadingView` | The spinner. | `CYLRefreshAutoNormalFooter.loadingView` |
+| `CYLRefreshAutoNormalFooter` | The standard automatic footer: the state text with a spinner while loading. | `com.cyl.refresh.CYLRefreshAutoNormalFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoNormalFooter` `loadingView` | The spinner shown while loading, created on first access and hidden when stopped; style it here. | `CYLRefreshAutoNormalFooter.loadingView` |
 | `CYLRefreshAutoNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`). | `CYLRefreshAutoNormalFooter.noMoreDataImage` |
 | `CYLRefreshAutoNormalFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshAutoNormalFooter`. | n/a (iOS only: deprecated iOS aliases) |
 
@@ -797,7 +797,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshAutoStateFooter` | The automatic footer with a state text. | `com.cyl.refresh.CYLRefreshAutoStateFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshAutoStateFooter` | An automatic footer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshAutoStateFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshAutoStateFooter` `labelLeftInset` | The gap between the icon and the text, in dp. | `CYLRefreshAutoStateFooter.labelLeftInset` |
 | `CYLRefreshAutoStateFooter` `stateLabel` | The state text. | `CYLRefreshAutoStateFooter.stateLabel` |
 | `CYLRefreshAutoStateFooter` `-setTitle:forState:` | The text of [state]. | `CYLRefreshAutoStateFooter.setTitle` |
@@ -826,9 +826,9 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackNormalFooter` | The back state footer with an arrow and a spinner. | `com.cyl.refresh.CYLRefreshBackNormalFooter` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshBackNormalFooter` `arrowView` | The arrow. | `CYLRefreshBackNormalFooter.arrowView` |
-| `CYLRefreshBackNormalFooter` `loadingView` | The spinner. | `CYLRefreshBackNormalFooter.loadingView` |
+| `CYLRefreshBackNormalFooter` | The standard back footer: the state text with an arrow that turns when releasing will load, and a spinner while loading. | `com.cyl.refresh.CYLRefreshBackNormalFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackNormalFooter` `arrowView` | The arrow beside the text (the bundle's `CYLRefreshArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshBackNormalFooter.arrowView` |
+| `CYLRefreshBackNormalFooter` `loadingView` | The spinner shown while loading, created on first access and hidden when stopped; style it here. | `CYLRefreshBackNormalFooter.loadingView` |
 | `CYLRefreshBackNormalFooter` `noMoreDataImage` | Shown beside the text while there is no more data (flutter_easy_refresh's `ClassicFooter.noMoreIcon`). | `CYLRefreshBackNormalFooter.noMoreDataImage` |
 | `CYLRefreshBackNormalFooter` `iconSize` | Size of the icon (the arrow and noMoreDataImage); CGSizeZero (default) uses the image's own size (flutter_easy_refresh's `iconDimension`). | `CYLRefreshBackNormalFooter.iconSize` |
 | `CYLRefreshBackNormalFooter` `CYLRefreshDeprecated` | Property of `CYLRefreshBackNormalFooter`. | n/a (iOS only: deprecated iOS aliases) |
@@ -837,7 +837,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshBackStateFooter` | The back footer with a state text. | `com.cyl.refresh.CYLRefreshBackStateFooter` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshBackStateFooter` | A back footer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshBackStateFooter` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshBackStateFooter` `labelLeftInset` | The gap between the icon and the text, in dp. | `CYLRefreshBackStateFooter.labelLeftInset` |
 | `CYLRefreshBackStateFooter` `stateLabel` | The state text. | `CYLRefreshBackStateFooter.stateLabel` |
 | `CYLRefreshBackStateFooter` `-setTitle:forState:` | The text of [state]. | `CYLRefreshBackStateFooter.setTitle` |
@@ -865,17 +865,17 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshNormalHeader` | The state header with an arrow and a spinner. | `com.cyl.refresh.CYLRefreshNormalHeader` — on CYLRefreshLayout's classic header / footer |
-| `CYLRefreshNormalHeader` `arrowView` | The arrow. | `CYLRefreshNormalHeader.arrowView` |
+| `CYLRefreshNormalHeader` | The standard header: the state and last-updated texts with an arrow that turns when releasing will refresh, and a spinner while refreshing. | `com.cyl.refresh.CYLRefreshNormalHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshNormalHeader` `arrowView` | The arrow beside the texts (the bundle's `CYLRefreshArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshNormalHeader.arrowView` |
 | `CYLRefreshNormalHeader` `iconSize` | Size of the icon (the arrow); CGSizeZero (default) uses the image's own size (flutter_easy_refresh's `iconDimension`). | `CYLRefreshNormalHeader.iconSize` |
-| `CYLRefreshNormalHeader` `loadingView` | The spinner. | `CYLRefreshNormalHeader.loadingView` |
+| `CYLRefreshNormalHeader` `loadingView` | The spinner shown while refreshing, created on first access and hidden when stopped; style it here. | `CYLRefreshNormalHeader.loadingView` |
 | `CYLRefreshNormalHeader` `CYLRefreshDeprecated` | Property of `CYLRefreshNormalHeader`. | n/a (iOS only: deprecated iOS aliases) |
 
 ## `CYLRefresh/Custom/Header/CYLRefreshStateHeader.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStateHeader` | A header with a state text and a "last updated" line. | `com.cyl.refresh.CYLRefreshStateHeader` — on CYLRefreshLayout's classic header / footer |
+| `CYLRefreshStateHeader` | A header that shows a localized text for each state and the time of the last refresh. | `com.cyl.refresh.CYLRefreshStateHeader` — on CYLRefreshLayout's classic header / footer |
 | `CYLRefreshStateHeader` `lastUpdatedTimeText` | Makes the "last updated" text from the last time, null for never. | `CYLRefreshStateHeader.lastUpdatedTimeText` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeLabel` | The "last updated" text. | `CYLRefreshStateHeader.lastUpdatedTimeLabel` |
 | `CYLRefreshStateHeader` `labelLeftInset` | The gap between the icon and the texts, in dp. | `CYLRefreshStateHeader.labelLeftInset` |
@@ -888,21 +888,21 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshStateHeader` `succeededImage` | Shown in place of the icon while the header holds after a successful refresh (`finishDuration` > 0) (flutter_easy_refresh's `ClassicHeader.succeededIcon`). | `CYLRefreshStateHeader.succeededImage` |
 | `CYLRefreshStateHeader` `failedImage` | Shown in place of the icon while the header holds after a failed refresh (`failedIcon`). | `CYLRefreshStateHeader.failedImage` |
 | `CYLRefreshStateHeader` `iconOnTrailingSide` | Puts the icon on the trailing side of the text instead of the leading side (flutter_easy_refresh's `ClassicHeader.reverse`). Default NO. | `CYLRefreshStateHeader.iconOnTrailingSide` |
-| `CYLRefreshStateHeader(ChainingGrammar)` | A header with a state text and a "last updated" line. | `com.cyl.refresh.CYLRefreshStateHeader` |
-| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | Sets [lastUpdatedTimeText]. | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` |
+| `CYLRefreshStateHeader(ChainingGrammar)` | Chainable setters of the state header for Swift. | `com.cyl.refresh.CYLRefreshStateHeader` |
+| `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` | Sets `lastUpdatedTimeText`, the block that turns the last refresh time (nil when there is none) into the text shown, and returns the header. | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText(block)` |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshNormalTrailer.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshNormalTrailer` | A trailer with an arrow that turns around past the trigger. | `com.cyl.refresh.CYLRefreshNormalTrailer` |
-| `CYLRefreshNormalTrailer` `arrowView` | The arrow, pointing left until the pull passes the trigger. | `CYLRefreshNormalTrailer.arrowView` — a drawn arrow instead of the bundle image |
+| `CYLRefreshNormalTrailer` | The standard trailer: the state text with an arrow. | `com.cyl.refresh.CYLRefreshNormalTrailer` |
+| `CYLRefreshNormalTrailer` `arrowView` | The arrow beside the text (the bundle's `CYLRefreshTrailArrow` image, template-rendered so it takes the tint color), created on first access. | `CYLRefreshNormalTrailer.arrowView` — a drawn arrow instead of the bundle image |
 
 ## `CYLRefresh/Custom/Trailer/CYLRefreshStateTrailer.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshStateTrailer` | A trailer with a vertical state text. | `com.cyl.refresh.CYLRefreshStateTrailer` |
+| `CYLRefreshStateTrailer` | A trailer that shows a localized text for each state (`setTitle:forState:`). | `com.cyl.refresh.CYLRefreshStateTrailer` |
 | `CYLRefreshStateTrailer` `stateLabel` | The state text. | `CYLRefreshStateTrailer.stateLabel` |
 | `CYLRefreshStateTrailer` `-setTitle:forState:` | Sets the text shown in [state]. | `CYLRefreshStateTrailer.setTitle(title, state)` |
 | `CYLRefreshStateTrailer` `-titleForState:` | The text shown in `state`, or nil (the same getter as `CYLRefreshBackStateFooter`). | `CYLRefreshStateTrailer.titleForState` |
@@ -912,43 +912,43 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `NSBundle(CYLRefresh)` | Category. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
+| `NSBundle(CYLRefresh)` | Resource and string lookups of the refresh controls. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
 | `NSBundle(CYLRefresh)` `+cyl_refreshBundle` | The library's single resource bundle, CYLTableViewPlaceHolder.bundle. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
-| `NSBundle(CYLRefresh)` `+cyl_arrowImage` | Method of `NSBundle(CYLRefresh)`. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
-| `NSBundle(CYLRefresh)` `+cyl_trailArrowImage` | Method of `NSBundle(CYLRefresh)`. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
-| `NSBundle(CYLRefresh)` `+cyl_localizedStringForKey:value:` | Method of `NSBundle(CYLRefresh)`. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
-| `NSBundle(CYLRefresh)` `+cyl_localizedStringForKey:` | Method of `NSBundle(CYLRefresh)`. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
+| `NSBundle(CYLRefresh)` `+cyl_arrowImage` | The header and footer arrow, `CYLRefreshArrow@2x.png` of the library bundle, template-rendered and cached after the first call. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
+| `NSBundle(CYLRefresh)` `+cyl_trailArrowImage` | The trailer arrow, `CYLRefreshTrailArrow@2x.png` of the library bundle, template-rendered and cached after the first call. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
+| `NSBundle(CYLRefresh)` `+cyl_localizedStringForKey:value:` | The refresh text of `key`: looked up in the library's `CYLRefresh.strings` in the language of `CYLRefreshConfig.defaultConfig.languageCode` (else the preferred language, else English), then in the app's table `i18nFil... | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
+| `NSBundle(CYLRefresh)` `+cyl_localizedStringForKey:` | `cyl_localizedStringForKey:value:` with no fallback value. | n/a (iOS only: the iOS resource bundle; Android reads its resources (R.string / R.drawable) per module) |
 
 ## `CYLRefresh/UICollectionViewLayout+CYLRefresh.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UICollectionViewLayout(CYLRefresh)` | Category. | n/a (iOS only: a UICollectionView layout hook with no Android counterpart) |
+| `UICollectionViewLayout(CYLRefresh)` | Keeps a collection view's footer in place after batch updates: when `finalizeCollectionViewUpdates` changes the content size, the footer is told at once, without animation (installed by method swizzling at load time;... | n/a (iOS only: a UICollectionView layout hook with no Android counterpart) |
 
 ## `CYLRefresh/UIScrollView+CYLExtension.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLScrollDirection` | Enumeration. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scroll state) |
-| `UIScrollView(CYLExtension)` | Category. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_inset` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_insetT` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_insetB` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_insetL` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_insetR` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_offsetX` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_offsetY` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_contentW` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_contentH` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `CYLScrollDirection` | The direction of the last change of `contentOffset` that `cyl_updateScrollMetrics` sampled. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scroll state) |
+| `UIScrollView(CYLExtension)` | Shorthand accessors for the scroll view's insets, offset and content size, used by the refresh controls. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_inset` | The effective content inset: `adjustedContentInset` (iOS 11 and later), else `contentInset`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_insetT` | The top of `cyl_inset`; setting it changes `contentInset.top` so that the effective top inset becomes the value. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_insetB` | The bottom of `cyl_inset`; setting it changes `contentInset.bottom` so that the effective bottom inset becomes the value. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_insetL` | The left of `cyl_inset`; setting it changes `contentInset.left` so that the effective left inset becomes the value. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_insetR` | The right of `cyl_inset`; setting it changes `contentInset.right` so that the effective right inset becomes the value. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_offsetX` | `contentOffset.x`, readable and writable on its own. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_offsetY` | `contentOffset.y`, readable and writable on its own. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_contentW` | `contentSize.width`, readable and writable on its own. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_contentH` | `contentSize.height`, readable and writable on its own. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
 | `UIScrollView(CYLExtension)` `-cyl_updateScrollMetrics` | Call once before scrolling, then once per scroll event, to sample contentOffset. The first sample has zero distance and no direction. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_scrollDistance` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
-| `UIScrollView(CYLExtension)` `cyl_scrollDirection` | Property of `UIScrollView(CYLExtension)`. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_scrollDistance` | The signed change of the last `cyl_updateScrollMetrics` sample along its larger axis, in points; 0 before the second sample. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
+| `UIScrollView(CYLExtension)` `cyl_scrollDirection` | The direction of the last `cyl_updateScrollMetrics` sample; `CYLScrollDirectionNone` before the second sample. | n/a (iOS only: UIKit scroll metrics; Android uses the scrolling view's own scrollX / scrollY and padding) |
 
 ## `CYLRefresh/UIScrollView+CYLRefresh.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UIScrollView(CYLRefresh)` | The refresh layout: a content of any kind with a header pulled down to refresh and a footer pulled up to load more. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…) |
+| `UIScrollView(CYLRefresh)` | The refresh controls of a scroll view: header, footer and trailer, and their settings. | `com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)` — extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…) |
 | `UIScrollView(CYLRefresh)` `cyl_header` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_header` |
 | `UIScrollView(CYLRefresh)` `cyl_footer` | Property of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_footer` |
 | `UIScrollView(CYLRefresh)` `cyl_trailer` | Property of `UIScrollView(CYLRefresh)`. | `RecyclerView.cyl_trailer` — horizontal RecyclerView only; set it once the list is in its parent |
@@ -959,19 +959,19 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | Ends the header's refresh after `delay` seconds with `success`, and sets the footer's no-more-data state: YES shows no more data, NO resets it (CYLRefreshLayout's `finishRefresh(delayed, success, noMoreData)`; to leav... | `com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, noMoreData)` — added 2026-11-17 for Android parity |
 | `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | Ends the footer's load more after `delay` seconds with `success`; `noMoreData` YES then shows no more data (CYLRefreshLayout's `finishLoadMore(delayed, success, noMoreData)`). | `com.cyl.refresh.layout.api.RefreshLayout.finishLoadMore(delayed, success, noMoreData)` — added 2026-11-17 for Android parity |
 | `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | Sets `cyl_header` and `cyl_footer`, where nil, from `CYLRefreshConfig.defaultConfig`'s `defaultHeaderCreator` / `defaultFooterCreator` (CYLRefreshLayout's default header and footer of every layout). | `com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)` — added 2026-11-17 for Android parity |
-| `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | Method of `UIScrollView(CYLRefresh)`. | `CYLRefreshLayout.cyl_totalDataCount()` |
+| `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | The number of rows of a table view, or items of a collection view, over all sections; 0 for any other scroll view. | `CYLRefreshLayout.cyl_totalDataCount()` |
 
 ## `CYLRefresh/UIView+CYLExtension.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UIView(CYLExtension)` | Category. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_x` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_y` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_w` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_h` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_size` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
-| `UIView(CYLExtension)` `cyl_origin` | Property of `UIView(CYLExtension)`. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` | Shorthand accessors for the parts of a view's frame, used by the refresh controls. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_x` | `frame.origin.x`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_y` | `frame.origin.y`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_w` | `frame.size.width`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_h` | `frame.size.height`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_size` | `frame.size`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
+| `UIView(CYLExtension)` `cyl_origin` | `frame.origin`, readable and writable on its own. | n/a (iOS only: UIKit frame helpers; Android views have x / y / width / height) |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`
 
@@ -1095,31 +1095,31 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLPlaceholderStyle` | The built-in icons, in the iOS order. | `com.cyl.placeholder.CYLPlaceholderStyle` |
-| `CYLPlaceholderMessage` | The built-in texts. | `com.cyl.placeholder.CYLPlaceholderMessage` |
+| `CYLPlaceholderStyle` | The bundled icon of a placeholder. Each value selects one image of the library's resource bundle, named "CYLPlaceholder" followed by the value's name (see `+imageNameForStyle:`), loaded by `+imageForStyle:` and used b... | `com.cyl.placeholder.CYLPlaceholderStyle` |
+| `CYLPlaceholderMessage` | The bundled text of a placeholder. Each value selects one string of the library's resource bundle, returned by `+localizedTextForMessage:` in the app's current language with an English fallback, and used as the title... | `com.cyl.placeholder.CYLPlaceholderMessage` |
 | `CYLPlaceholderTapHighlightStyle` | How a tappable placeholder looks while it is pressed. | `com.cyl.placeholder.CYLPlaceholderTapHighlightStyle` |
-| `CYLPlaceholderBadgeStyle` | The badge of a placeholder. | `com.cyl.placeholder.CYLPlaceholderBadgeStyle` |
+| `CYLPlaceholderBadgeStyle` | The kind of badge `-showBadgeWithStyle:value:` shows. The badge sits at the top-right corner of the icon (of the title when the icon is hidden), moved by `badgeCenterOffset`, and is drawn with `CYLPlaceholderBadgeAppe... | `com.cyl.placeholder.CYLPlaceholderBadgeStyle` |
 | `CYLPlaceholderBadgeAppearance` | Badge appearance configuration for shared/customizable badge styling. Use with UIAppearance proxy for global defaults. | `com.cyl.placeholder.CYLPlaceholderBadgeAppearance` |
-| `CYLPlaceholderBadgeAppearance` `backgroundColor` | Property of `CYLPlaceholderBadgeAppearance`. | `CYLPlaceholderBadgeAppearance.backgroundColor` |
-| `CYLPlaceholderBadgeAppearance` `textColor` | Property of `CYLPlaceholderBadgeAppearance`. | `CYLPlaceholderBadgeAppearance.textColor` |
-| `CYLPlaceholderBadgeAppearance` `font` | The text's size, in sp (the size of the iOS `font`). | `CYLPlaceholderBadgeAppearance.font` — font (size in sp) and fontTypeface: the size, family and weight of the UIFont |
-| `CYLPlaceholderBadgeAppearance` `cornerRadius` | The corner radius, in dp; below 0 makes a capsule. | `CYLPlaceholderBadgeAppearance.cornerRadius` |
-| `CYLPlaceholderBadgeAppearance` `contentInsets` | The text's insets, in dp: top, left, bottom, right. | `CYLPlaceholderBadgeAppearance.contentInsets` |
+| `CYLPlaceholderBadgeAppearance` `backgroundColor` | The badge's fill color. The shared appearance uses Apple's high-contrast system red #D70015 (white text on it reaches about 5.4:1); nil keeps the badge label's current color. | `CYLPlaceholderBadgeAppearance.backgroundColor` |
+| `CYLPlaceholderBadgeAppearance` `textColor` | The color of the badge text. The shared appearance uses white; nil keeps the badge label's current color. | `CYLPlaceholderBadgeAppearance.textColor` |
+| `CYLPlaceholderBadgeAppearance` `font` | The font of the badge text. The shared appearance uses the bold Caption 1 text style (12 points at the default text size), which follows Dynamic Type; nil keeps the badge label's current font. | `CYLPlaceholderBadgeAppearance.font` — font (size in sp) and fontTypeface: the size, family and weight of the UIFont |
+| `CYLPlaceholderBadgeAppearance` `cornerRadius` | The corner radius of the badge, in points. 0 (the default) rounds it into a capsule or, for a dot, a circle (half its height); a positive value is capped at half the height. | `CYLPlaceholderBadgeAppearance.cornerRadius` |
+| `CYLPlaceholderBadgeAppearance` `contentInsets` | The padding between the text and the edge of a text or number badge, in points; the shared appearance uses 4 on every side. The badge is never narrower than it is tall. Not used by a dot. | `CYLPlaceholderBadgeAppearance.contentInsets` |
 | `CYLPlaceholderBadgeAppearance` `animationDuration` | Animation duration for badge show/hide. Default 0.2s. | `CYLPlaceholderBadgeAppearance.animationDuration` — the pop of a badge change (0.6 to its size) |
 | `CYLPlaceholderBadgeAppearance` `animatesChanges` | Whether to animate badge changes. Default YES. | `CYLPlaceholderBadgeAppearance.animatesChanges` — pops a badge change when on screen and animations are on |
-| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | The shared appearance. | `CYLPlaceholderBadgeAppearance.sharedAppearance` |
+| `CYLPlaceholderBadgeAppearance` `+sharedAppearance` | The one instance every CYLPlaceholderView reads when it shows or lays out a badge, created on first use with the defaults listed on each property. | `CYLPlaceholderBadgeAppearance.sharedAppearance` |
 | `CYLPlaceholderAnimationPlayer` | A view made by a factory registered with `+registerAnimationFactory:forFileExtension:`. It must invoke its handlers on the main thread. | `com.cyl.placeholder.CYLPlaceholderAnimationPlayer` |
-| `CYLPlaceholderAnimationPlayer` `ready` | Whether the animation is loaded. | `CYLPlaceholderAnimationPlayer.ready` |
-| `CYLPlaceholderAnimationPlayer` `errorHandler` | Called when the animation cannot load. | `CYLPlaceholderAnimationPlayer.errorHandler` |
-| `CYLPlaceholderAnimationPlayer` `readyHandler` | Called once the animation is loaded. | `CYLPlaceholderAnimationPlayer.readyHandler` |
-| `CYLPlaceholderAnimationPlayer` `-play` | Plays from the start. | `CYLPlaceholderAnimationPlayer.play` |
-| `CYLPlaceholderAnimationPlayer` `-stop` | Stops. | `CYLPlaceholderAnimationPlayer.stop` |
-| `CYLPlaceholderAnimationPlayer` `-showLastFrame` | Shows the last frame. | `CYLPlaceholderAnimationPlayer.showLastFrame` |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationProgress:` | Moves to [progress], 0 to 1. | `CYLPlaceholderAnimationPlayer.setAnimationProgress` |
-| `CYLPlaceholderAnimationPlayer` `-setAnimationSpeed:` | Plays at [speed]. | `CYLPlaceholderAnimationPlayer.setAnimationSpeed` |
+| `CYLPlaceholderAnimationPlayer` `ready` | YES when the animation is loaded and can play. A view that is not ready when the factory returns it shows the static image until it calls `readyHandler`. | `CYLPlaceholderAnimationPlayer.ready` |
+| `CYLPlaceholderAnimationPlayer` `errorHandler` | Set by CYLPlaceholderView after the factory returns the view; call it on the main thread when loading or playback fails later. The error is logged and the static image shows again. | `CYLPlaceholderAnimationPlayer.errorHandler` |
+| `CYLPlaceholderAnimationPlayer` `readyHandler` | Set by CYLPlaceholderView after the factory returns the view; call it on the main thread when a view that was not ready finishes loading, so the animation replaces the static image. | `CYLPlaceholderAnimationPlayer.readyHandler` |
+| `CYLPlaceholderAnimationPlayer` `-play` | Starts playback. | `CYLPlaceholderAnimationPlayer.play` |
+| `CYLPlaceholderAnimationPlayer` `-stop` | Stops playback. | `CYLPlaceholderAnimationPlayer.stop` |
+| `CYLPlaceholderAnimationPlayer` `-showLastFrame` | Shows the animation's last frame without playing it (CYLPlaceholderView's `showPlaceholderAnimationLastFrame`). | `CYLPlaceholderAnimationPlayer.showLastFrame` |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationProgress:` | Moves the animation to `progress`, from 0 (the first frame) to 1 (the last frame). Return NO when unsupported; without it, progress cannot be set. | `CYLPlaceholderAnimationPlayer.setAnimationProgress` |
+| `CYLPlaceholderAnimationPlayer` `-setAnimationSpeed:` | Sets the playback speed, a multiplier where 1 is the file's own speed. Return NO when unsupported; without it, a speed set on the view is logged as unsupported. | `CYLPlaceholderAnimationPlayer.setAnimationSpeed` |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationRepeatCount:` | 0 loops until stopped; N plays N times. Return NO when unsupported (the animation then plays once). | `CYLPlaceholderAnimationPlayer.setAnimationRepeatCount` |
 | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` | Replace all keypath color overrides. Return NO when unsupported. | `CYLPlaceholderAnimationPlayer.setAnimationColors` |
-| `CYLPlaceholderAnimationFactory` | Makes a player for an animation file; null when it cannot. | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` |
+| `CYLPlaceholderAnimationFactory` | Creates the view that plays one animation file of an extension registered with `+registerAnimationFactory:forFileExtension:`. | `com.cyl.placeholder.CYLPlaceholderAnimationFactory` |
 | `CYLPlaceholderView` | An icon (or an animation) above a text, with an optional badge and tap. | `com.cyl.placeholder.CYLPlaceholderView` — fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations |
 | `CYLPlaceholderView` `imageView` | The icon: the inherited `iconView`. | `CYLPlaceholderView.imageView` |
 | `CYLPlaceholderView` `textLabel` | The text: the inherited `titleView`; set it through `title`. | `CYLPlaceholderView.textLabel` |
@@ -1175,7 +1175,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLTableViewPlaceHolderDelegate` | Gives an empty list its placeholder; an adapter that implements it needs no block: [cyl_reloadData] asks it. | `com.cyl.placeholder.CYLTableViewPlaceHolderDelegate` — implemented by the adapter |
+| `CYLTableViewPlaceHolderDelegate` | The legacy placeholder API: a table view's data source that adopts it gets its placeholder from `makePlaceHolderView` when `cyl_reloadData` finds the table empty. | `com.cyl.placeholder.CYLTableViewPlaceHolderDelegate` — implemented by the adapter |
 | `CYLTableViewPlaceHolderDelegate` `-makePlaceHolderView` | @brief make an empty overlay view when the tableView is empty | `CYLTableViewPlaceHolderDelegate.makePlaceHolderView()` |
 | `CYLTableViewPlaceHolderDelegate` `-enableScrollWhenPlaceHolderViewShowing` | @brief enable tableView scroll when place holder view is showing, it is disabled by default. | `CYLTableViewPlaceHolderDelegate.enableScrollWhenPlaceHolderViewShowing()` |
 | `CYLTableViewPlaceHolderDelegate` `-frameForPlaceHolderViewInTableView:` | @brief Customize the placeholder frame in the table view's coordinate system. | `CYLTableViewPlaceHolderDelegate.frameForPlaceHolderViewInTableView(tableView)` |
@@ -1184,27 +1184,27 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLCollectionPlaceholderViewBlock` | The same as [CYLTablePlaceholderViewBlock]. | `com.cyl.placeholder.CYLCollectionPlaceholderViewBlock` |
-| `CYLCollectionPlaceholderNormalBlock` | The same as [CYLTablePlaceholderNormalBlock]. | `com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock` |
-| `UICollectionView(CYLPlaceholder)` | Category. | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` — on Android a table and a collection are both a RecyclerView |
+| `CYLCollectionPlaceholderViewBlock` | Returns the placeholder view to show while the collection view is empty, or nil to show none; called on the main queue after each reload or update that leaves it empty. | `com.cyl.placeholder.CYLCollectionPlaceholderViewBlock` |
+| `CYLCollectionPlaceholderNormalBlock` | Called when the placeholder is removed because the collection view has content again (or the placeholder is turned off), to restore the normal state. | `com.cyl.placeholder.CYLCollectionPlaceholderNormalBlock` |
+| `UICollectionView(CYLPlaceholder)` | The automatic placeholder: once a block is set, the collection view shows its view whenever a reload or update leaves it with no items, and removes it when content comes back; no `cyl_reloadData` call is needed. | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` — on Android a table and a collection are both a RecyclerView |
 | `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | Pass nil to disable automatic placeholder handling and restore the normal state. The blocks should not retain the collection view or its owner strongly. | `RecyclerView.cyl_placeholderViewBlock(block)` |
-| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | Method of `UICollectionView(CYLPlaceholder)`. | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` |
+| `UICollectionView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | Like `cyl_placeholderViewBlock:`, and also sets the block called when the placeholder is removed (the collection view has content again); nil for both turns the automatic placeholder off. | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` |
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLPlaceholder.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLTablePlaceholderViewBlock` | Makes the placeholder of an empty list, or null for none. | `com.cyl.placeholder.CYLTablePlaceholderViewBlock` |
-| `CYLTablePlaceholderNormalBlock` | Called when the list has data again. | `com.cyl.placeholder.CYLTablePlaceholderNormalBlock` |
-| `UITableView(CYLPlaceholder)` | Category. | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` — on Android a table and a collection are both a RecyclerView |
+| `CYLTablePlaceholderViewBlock` | Returns the placeholder view to show while the table view is empty, or nil to show none; called on the main queue after each reload or update that leaves it empty. | `com.cyl.placeholder.CYLTablePlaceholderViewBlock` |
+| `CYLTablePlaceholderNormalBlock` | Called when the placeholder is removed because the table view has content again (or the placeholder is turned off), to restore the normal state. | `com.cyl.placeholder.CYLTablePlaceholderNormalBlock` |
+| `UITableView(CYLPlaceholder)` | The automatic placeholder: once a block is set, the table view shows its view whenever a reload or update leaves it with no rows, and removes it when content comes back; no `cyl_reloadData` call is needed. | `RecyclerView extensions (com.cyl.placeholder.CYLTableViewPlaceHolderKt)` — on Android a table and a collection are both a RecyclerView |
 | `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:` | Pass nil to disable automatic placeholder handling and restore the normal state. The blocks should not retain the table view or its owner strongly. | `RecyclerView.cyl_placeholderViewBlock(block)` |
-| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | Method of `UITableView(CYLPlaceholder)`. | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` |
+| `UITableView(CYLPlaceholder)` `-cyl_placeholderViewBlock:backToNormalBlock:` | Like `cyl_placeholderViewBlock:`, and also sets the block called when the placeholder is removed (the table view has content again); nil for both turns the automatic placeholder off. | `RecyclerView.cyl_placeholderViewBlock(block, backToNormalBlock)` |
 
 ## `CYLTableViewPlaceHolder/UITableView+CYLTableViewPlaceHolder.h`
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `UITableView(CYLTableViewPlaceHolder)` | Category. | `RecyclerView extensions` — on Android a table and a collection are both a RecyclerView |
+| `UITableView(CYLTableViewPlaceHolder)` | The legacy placeholder API, `cyl_reloadData` with `CYLTableViewPlaceHolderDelegate`; declared for Objective-C callers only, implemented in Swift. | `RecyclerView extensions` — on Android a table and a collection are both a RecyclerView |
 | `UITableView(CYLTableViewPlaceHolder)` `-cyl_reloadData` | @brief just use this method to replace `reloadData` ,and it can help you to add or remove place holder view automatically @attention this method has already reload the tableView,so do not reload tableView any more. | `RecyclerView.cyl_reloadData()` — adapter changes also update the placeholder by themselves |
 
 ## `CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.h`
@@ -1212,7 +1212,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
 | `CYLPlaceholderStatusDisplay` | What a view controller shows; combine the options. | `com.cyl.placeholder.CYLPlaceholderStatusDisplay` — Int flags combined with or |
-| `UIViewController(CYLPlaceholderStatus)` | Category. | `Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)` — the Activity is the view controller's counterpart |
+| `UIViewController(CYLPlaceholderStatus)` | The status bar of a view controller (a network bar by default) and the display rules that decide when it and the placeholder show; declared for Objective-C callers only, implemented in Swift. | `Activity extensions (com.cyl.placeholder.CYLPlaceholderStatusKt)` — the Activity is the view controller's counterpart |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_statusView` | The bar: the network bar (`-[CYLPlaceholderStatusView initWithFrame:]`) until another is assigned; nil restores it. Assigning while the bar shows replaces it in place. | `Activity.cyl_statusView` |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_placeholderScrollView` | The table or collection view whose placeholder `cyl_statusDisplay` shows or hides; by default the controller's view when it is a scroll view (a UITableViewController). | `Activity.cyl_placeholderScrollView` — the scrolling view whose container the placeholder covers; null covers the activity's content |
 | `UIViewController(CYLPlaceholderStatus)` `cyl_statusDisplay` | What shows; `CYLPlaceholderStatusDisplayPlaceholder` by default, so nothing changes until it is set. | `Activity.cyl_statusDisplay` |
@@ -1220,6 +1220,6 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `UIViewController(CYLPlaceholderStatus)` `cyl_showsStatusViewWhenOffline` | YES: starts the shared network monitor and adds the bar while the network is not reachable, removing it when it comes back (the placeholder option is kept as it is). | `Activity.cyl_showsStatusViewWhenOffline` |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfiguration:error:` | Applies a configuration dictionary: "statusBar" (the bar: true or "networkUnavailable" for the network bar, or a dictionary for `-[CYLPlaceholderStatusView initWithConfiguration:error:]`), "display" ("statusAndPlaceho... | `Activity.cyl_applyStatusConfiguration(configuration, error)` |
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | The same, from a local ".json" or ".plist" file. | `Activity.cyl_applyStatusConfigurationWithContentsOfURL(path, error)` — reads a .json file or "asset:name"; a property list is an iOS format |
-| `UIScrollView(CYLPlaceholderVisibility)` | Category. | `RecyclerView extensions` |
+| `UIScrollView(CYLPlaceholderVisibility)` | Whether a list's placeholder may show, and the placeholder it shows now. | `RecyclerView extensions` |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | YES keeps the placeholder from showing even when the list is empty; NO (the default) shows it as before. `cyl_statusDisplay` sets it. | `RecyclerView.cyl_placeholderHidden` |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderView` | The placeholder shown for this list now, or nil: the view of `cyl_placeholderViewBlock:` (or of the delegate API, `cyl_reloadData`) while the list is empty. | `RecyclerView.cyl_placeholderView` |
