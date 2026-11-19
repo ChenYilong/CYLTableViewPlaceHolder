@@ -91,7 +91,10 @@ final class CYLSectionsUITests: XCTestCase {
         }
         XCTAssertLessThanOrEqual(pinned, restTop + 1, "\(step): the floating section header pins at the content's top edge")
         XCTAssertGreaterThanOrEqual(pinned, restTop - 33, "\(step): pinned header within one header height")
-        XCTAssertFalse(app.cells["row-0-0"].isHittable, "\(step): the content is scrolled up")
+        // `isHittable` raises "Failed to determine hittability" once the cell is fully off screen (no activation
+        // point), so check the frame: the first row is gone or lies above the content's top edge.
+        let firstRow = app.cells["row-0-0"]
+        XCTAssertTrue(!firstRow.exists || firstRow.frame.maxY <= restTop + 1, "\(step): the content is scrolled up")
     }
 
     /// Saves a screenshot to CYL_SCREENSHOT_DIR (set by scripts/ci-build-example.sh through TEST_RUNNER_) and attaches it.
