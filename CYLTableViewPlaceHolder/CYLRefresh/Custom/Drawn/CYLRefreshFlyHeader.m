@@ -6,6 +6,8 @@
 
 #import "CYLRefreshFlyView.h"
 #import "CYLRefreshMountainView.h"
+// [EN] The generated Swift interface of the fly and mountain views (Swift since 2026-11-19). [CN] 纸飞机与山脉视图的 Swift 接口（自 2026-11-19 起用 Swift 编写）。
+#import "CYLTableViewPlaceHolder.h"
 
 #define FLOAT_VIEW_SIZE 50
 #define RGB(rgb)[UIColor colorWithRed:((float)((rgb&0xFF0000)>> 16))/ 255.0 green:((float)((rgb&0x00FF00)>> 8))/ 255.0 blue: ((float)(rgb&0x0000FF))/ 255.0 alpha:1]

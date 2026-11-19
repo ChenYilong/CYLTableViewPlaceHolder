@@ -65,9 +65,11 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE'
   end
   File.write(File.join(dir, 'PlaceholderTests-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n")
-  # The CYLRefresh root (configuration, categories) is Swift since 2026-11-19 (docs/Swift-Migration.md, step 6); the
-  # Rive header in Custom/Rive/ needs RiveRuntime and is left out, as in the podspec's Core.
-  (Dir.glob(File.join(refresh_dir, '**/*.m')) + Dir.glob(File.join(refresh_dir, '*.swift'))).reject { |path| File.basename(path).start_with?('._') }.each do |path|
+  # The CYLRefresh root (configuration, categories) is Swift since 2026-11-19 (docs/Swift-Migration.md, step 6), and so
+  # are CYLRefreshIconView, CYLRefreshPaging and the drawn styles' support classes (step 7); the Rive header in
+  # Custom/Rive/ needs RiveRuntime and is left out, as in the podspec's Core.
+  refresh_swift = Dir.glob(File.join(refresh_dir, '**/*.swift')).reject { |path| path.include?('/Custom/Rive/') }
+  (Dir.glob(File.join(refresh_dir, '**/*.m')) + refresh_swift).reject { |path| File.basename(path).start_with?('._') }.each do |path|
     target.source_build_phase.add_file_reference(project.main_group.new_file(path))
   end
   # One resource bundle holds the placeholder and refresh localizations and images.

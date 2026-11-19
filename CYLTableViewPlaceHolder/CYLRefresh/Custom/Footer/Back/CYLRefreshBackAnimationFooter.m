@@ -8,6 +8,9 @@
 
 #import "CYLRefreshBackAnimationFooter.h"
 #import "CYLRefreshIconView.h"
+// [EN] CYLRefreshIconView is Swift (2026-11-19): the umbrella header brings the generated Swift header.
+// [CN] CYLRefreshIconView 用 Swift 编写（2026-11-19）：总头文件导入生成的 Swift 头文件。
+#import "CYLTableViewPlaceHolder.h"
 #import "NSBundle+CYLRefresh.h"
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"

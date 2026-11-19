@@ -6,6 +6,8 @@
 
 #import "CYLRefreshValueAnimator.h"
 #import "CYLRefreshStoreHousePath.h"
+// [EN] The generated Swift interface of the value animator and the StoreHouse paths (Swift since 2026-11-19). [CN] 数值动画器与 StoreHouse 路径的 Swift 接口（自 2026-11-19 起用 Swift 编写）。
+#import "CYLTableViewPlaceHolder.h"
 
 #define toAlpha                     0.4f
 #define fromAlpha                   1.0f

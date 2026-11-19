@@ -19,6 +19,14 @@
 //       空闲未拖动时停在静止帧；拖动中按下拉百分比定位（Lottie、PAG 可定位），否则播放；松开即可刷新时循环播放；
 //       刷新中循环播放；没有更多数据时停止。
 //
+//  [EN] Swift since 2026-11-19: the class `CYLRefreshIconView` (with the former `CYLRefreshIconAttributes` category's class
+//       members) is in `CYLRefreshIconView.swift` (docs/Swift-Migration.md, step 7), with the same Objective-C API; this
+//       header keeps its forward declaration, the `CYLRefreshIconAnimating` protocol and the `CYLRefreshComponent
+//       (CYLRefreshIconLayout)` category (implemented in `CYLRefreshComponent.m`).
+//  [CN] 自 2026-11-19 起 `CYLRefreshIconView` 类（含原 `CYLRefreshIconAttributes` 分类的类成员）用 Swift 编写（`CYLRefreshIconView.swift`，
+//       docs/Swift-Migration.md 第 7 步），Objective-C API 不变；本头文件保留其前向声明、`CYLRefreshIconAnimating` 协议与
+//       `CYLRefreshComponent (CYLRefreshIconLayout)` 分类（实现在 `CYLRefreshComponent.m`）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLRefreshComponent.h"
@@ -29,99 +37,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  * [EN] The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or a
- *      GIF, Lottie, PAG or Rive animation that plays by the control's state, as the file header describes.
- * [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片或 GIF、Lottie、PAG、Rive
- *      动画，按文件开头所述随控件状态播放。
+ *      GIF, Lottie, PAG or Rive animation that plays by the control's state, as the file header describes. The class is
+ *      Swift (`CYLRefreshIconView.swift`), with the same Objective-C API (`-setAnimationAttributes:forState:`,
+ *      `-animationAttributesForState:`, `hasAnimations`, `placeholderView`, `iconSize`, `title`, `titleFont`, `titleColor`,
+ *      `fittingSize`, `scrubsWhilePulling`, `animationSpeed`, `loopsWhilePlaying`, `-replayAnimation`, `-updateForState:`,
+ *      `-updateForPullingPercent:`, and the class members `+attributesForAnimationFilePath:size:`,
+ *      `+attributesForBundledAnimation:size:`, `bundledAnimationFileNames`); Objective-C code that messages it imports
+ *      the umbrella header `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 刷新控件的图标，由本库的图标组件（CYLPlaceholderView）绘制：静态图片或 GIF、Lottie、PAG、Rive 动画，按文件开头所述随控件状态播放。
+ *      该类用 Swift 编写（`CYLRefreshIconView.swift`），Objective-C API 不变；需要调用它的 Objective-C 代码请导入总头文件
+ *      `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLRefreshIconView : UIView
-
-/*!
- * [EN] The item attributes of CYLPlaceholderView for a state, such as `CYLPlaceholderItemAnimationFilePath`,
- *      `CYLPlaceholderItemAnimationSize`, `CYLPlaceholderItemAnimationOptions`, `CYLPlaceholderItemAnimationColors` or
- *      `CYLPlaceholderItemImage`; nil removes it. A state without attributes uses the idle state's.
- * [CN] 某个状态的 CYLPlaceholderView item 属性；nil 表示移除。没有属性的状态使用空闲状态的属性。
- */
-- (void)setAnimationAttributes:(nullable NSDictionary<NSString *, id> *)attributes forState:(CYLRefreshState)state
-    NS_SWIFT_NAME(setAnimationAttributes(_:for:));
-/*!
- * [EN] The attributes set for a state, without the idle fallback. [CN] 某个状态设置的属性（不含空闲状态的回退）。
- */
-- (nullable NSDictionary<NSString *, id> *)animationAttributesForState:(CYLRefreshState)state
-    NS_SWIFT_NAME(animationAttributes(for:));
-/*!
- * [EN] YES when any state has attributes. [CN] 任意状态设置了属性时为 YES。
- */
-@property (nonatomic, readonly) BOOL hasAnimations;
-/*!
- * [EN] The icon component showing the current state's attributes; nil before any is set or when they are invalid.
- * [CN] 显示当前状态属性的图标组件；尚未设置或属性无效时为 nil。
- */
-@property (nonatomic, strong, readonly, nullable) CYLPlaceholderView *placeholderView;
-/*!
- * [EN] The size the control lays the icon out at: `CYLPlaceholderItemAnimationSize` of the current state's attributes,
- *      else 30 × 30. [CN] 控件布局图标使用的尺寸：当前状态属性中的 `CYLPlaceholderItemAnimationSize`，否则为 30 × 30。
- */
-@property (nonatomic, readonly) CGSize iconSize;
-/*!
- * [EN] The text shown after the icon inside the same CYLPlaceholderView (horizontal axis), so icon and text are one
- *      view and cannot drift apart; nil shows the icon alone. The control sets it to its state text.
- * [CN] 在同一个 CYLPlaceholderView 中显示在图标之后的文字（横向排列），图标与文字是同一个视图，不会错位；nil 只显示图标。
- *      控件把它设为状态文字。
- */
-@property (nonatomic, copy, nullable) NSString *title;
-/*!
- * [EN] The font of `title` (the state label's font). [CN] `title` 的字体（状态文字的字体）。
- */
-@property (nonatomic, strong, nullable) UIFont *titleFont;
-/*!
- * [EN] The color of `title` (the state label's color). [CN] `title` 的颜色（状态文字的颜色）。
- */
-@property (nonatomic, strong, nullable) UIColor *titleColor;
-/*!
- * [EN] The size of the icon and its `title` together, as the CYLPlaceholderView measures them; `iconSize` without a
- *      title. [CN] 图标与 `title` 合在一起的尺寸，由 CYLPlaceholderView 测量；没有 title 时为 `iconSize`。
- */
-@property (nonatomic, readonly) CGSize fittingSize;
-/*!
- * [EN] YES (the default): while the idle control is pulled, the animation follows the pulling percent when the engine can
- *      seek. NO: it plays instead. [CN] YES（默认）：空闲状态下拖动时，可定位的动画跟随下拉百分比；NO：改为播放。
- */
-@property (nonatomic) BOOL scrubsWhilePulling;
-/*!
- * [EN] The playback rate of the icon's animation, 1 by default, applied live and kept when the icon changes with the
- *      state (the examples' speed slider, docs/Example-Animation-Playback.md; Android and HarmonyOS
- *      `animationSpeed`). Engines without a playback speed (PAG on iOS) ignore it. Values that are not positive and
- *      finite are ignored.
- * [CN] 图标动画的播放速率，默认 1，实时生效，图标随状态切换时保持（示例的倍速滑块）。没有播放速度的引擎（iOS 上的 PAG）忽略它。
- *      非正数或非有限值被忽略。
- */
-@property (nonatomic) CGFloat animationSpeed;
-/*!
- * [EN] YES (the default): the icon loops while it plays (pulling, refreshing); NO plays it once and rests on its last
- *      frame (the examples' loop switch; Android and HarmonyOS `loopsWhilePlaying`). Applied live. An animation whose
- *      attributes name `CYLPlaceholderItemAnimationRepeatCount` keeps that count.
- * [CN] YES（默认）：播放时（下拉、刷新中）循环；NO：播放一次并停在最后一帧（示例的循环开关）。实时生效。属性中指定了
- *      `CYLPlaceholderItemAnimationRepeatCount` 的动画保持该次数。
- */
-@property (nonatomic) BOOL loopsWhilePlaying;
-
-/*!
- * [EN] Restarts the shown icon from its first frame with the current speed and loop setting (the examples' Play all;
- *      Android and HarmonyOS `replayAnimation()`). Does nothing without an icon.
- * [CN] 以当前速度与循环设置从第一帧重新播放当前图标（示例的“全部播放”）。没有图标时不做任何事。
- */
-- (void)replayAnimation;
-
-/*!
- * [EN] Applies the playback policy for the control's state; the control calls it. [CN] 按控件状态应用播放策略；由控件调用。
- */
-- (void)updateForState:(CYLRefreshState)state NS_SWIFT_NAME(update(for:));
-/*!
- * [EN] Follows the pulling percent while idle; the control calls it. [CN] 空闲状态下跟随下拉百分比；由控件调用。
- */
-- (void)updateForPullingPercent:(CGFloat)pullingPercent NS_SWIFT_NAME(update(pullingPercent:));
-
-@end
+@class CYLRefreshIconView;
 
 /*!
  * [EN] The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and
@@ -168,28 +95,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      animations that also suit a refresh control. [CN] 核心 bundle 中适合作为刷新图标的动画：`CYLRefresh*` 文件与同样适合刷新控件的占位动画。
  */
 @property (class, nonatomic, readonly) NSArray<NSString *> *bundledIconAnimationFileNames;
-@end
-
-/*!
- * [EN] Builders of the item attributes that `setAnimationAttributes:forState:` takes.
- * [CN] 构造 `setAnimationAttributes:forState:` 所需 item 属性的方法。
- */
-@interface CYLRefreshIconView (CYLRefreshIconAttributes)
-/*!
- * [EN] The item attributes of an animation file at `size`; nil for an empty path. [CN] 动画文件在 `size` 大小下的 item 属性；路径为空时为 nil。
- */
-+ (nullable NSDictionary<NSString *, id> *)attributesForAnimationFilePath:(NSString *)filePath size:(CGSize)size
-    NS_SWIFT_NAME(attributes(forAnimationFilePath:size:));
-/*!
- * [EN] The item attributes of a core-bundle animation at `size`, with the options it needs (Rive state machines, line
- *      icon colors); nil when the file is missing. [CN] 核心 bundle 动画在 `size` 大小下的 item 属性，带上所需选项；文件不存在时为 nil。
- */
-+ (nullable NSDictionary<NSString *, id> *)attributesForBundledAnimation:(NSString *)fileName size:(CGSize)size
-    NS_SWIFT_NAME(attributes(forBundledAnimation:size:));
-/*!
- * [EN] The refresh icon animations of the core bundle (see `CYLRefreshIconAnimating`). [CN] 核心 bundle 中的刷新图标动画。
- */
-@property (class, nonatomic, readonly) NSArray<NSString *> *bundledAnimationFileNames;
 @end
 
 /*!

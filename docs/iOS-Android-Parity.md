@@ -375,22 +375,22 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshIconView` | The icon of a refresh control, drawn by the library's icon component (CYLPlaceholderView): a static image or a GIF, Lottie, PAG or Rive animation that plays by the control's state, as the file header describes. | `com.cyl.refresh.CYLRefreshIconView` |
-| `CYLRefreshIconView` `-setAnimationAttributes:forState:` | The item attributes of CYLPlaceholderView for a state, such as `CYLPlaceholderItemAnimationFilePath`, `CYLPlaceholderItemAnimationSize`, `CYLPlaceholderItemAnimationOptions`, `CYLPlaceholderItemAnimationColors` or `CY... | `CYLRefreshIconView.setAnimationAttributes(attributes, state)` |
-| `CYLRefreshIconView` `-animationAttributesForState:` | The attributes set for a state, without the idle fallback. | `CYLRefreshIconView.animationAttributesForState(state)` |
-| `CYLRefreshIconView` `hasAnimations` | YES when any state has attributes. | `CYLRefreshIconView.hasAnimations` |
-| `CYLRefreshIconView` `placeholderView` | The icon component showing the current state's attributes; nil before any is set or when they are invalid. | `CYLRefreshIconView.placeholderView` |
-| `CYLRefreshIconView` `iconSize` | The size the control lays the icon out at: `CYLPlaceholderItemAnimationSize` of the current state's attributes, else 30 × 30. | `CYLRefreshIconView.iconSize` |
-| `CYLRefreshIconView` `title` | The text shown after the icon inside the same CYLPlaceholderView (horizontal axis), so icon and text are one view and cannot drift apart; nil shows the icon alone. The control sets it to its state text. | `CYLRefreshIconView.title` |
-| `CYLRefreshIconView` `titleFont` | The font of `title` (the state label's font). | `CYLRefreshIconView.titleFont` — titleFont (size in sp) and titleTypeface: the size, family and weight of the UIFont |
-| `CYLRefreshIconView` `titleColor` | The color of `title` (the state label's color). | `CYLRefreshIconView.titleColor` |
-| `CYLRefreshIconView` `fittingSize` | The size of the icon and its `title` together, as the CYLPlaceholderView measures them; `iconSize` without a title. | `CYLRefreshIconView.fittingSize` |
-| `CYLRefreshIconView` `scrubsWhilePulling` | YES (the default): while the idle control is pulled, the animation follows the pulling percent when the engine can seek. NO: it plays instead. | `CYLRefreshIconView.scrubsWhilePulling` |
-| `CYLRefreshIconView` `animationSpeed` | The playback rate of the icon's animation, 1 by default, applied live and kept when the icon changes with the state (the examples' speed slider, docs/Example-Animation-Playback.md; Android and HarmonyOS `animationSpee... | `CYLRefreshIconView.animationSpeed` |
-| `CYLRefreshIconView` `loopsWhilePlaying` | YES (the default): the icon loops while it plays (pulling, refreshing); NO plays it once and rests on its last frame (the examples' loop switch; Android and HarmonyOS `loopsWhilePlaying`). Applied live. | `CYLRefreshIconView.loopsWhilePlaying` |
-| `CYLRefreshIconView` `-replayAnimation` | Restarts the shown icon from its first frame with the current speed and loop setting (the examples' Play all; Android and HarmonyOS `replayAnimation()`). Does nothing without an icon. | `CYLRefreshIconView.replayAnimation()` |
-| `CYLRefreshIconView` `-updateForState:` | Applies the playback policy for the control's state; the control calls it. | `CYLRefreshIconView.updateForState(state)` |
-| `CYLRefreshIconView` `-updateForPullingPercent:` | Follows the pulling percent while idle; the control calls it. | `CYLRefreshIconView.updateForPullingPercent(percent)` |
+| `CYLRefreshIconView` | The icon of a refresh component: one animation (or image sequence) per state, with an optional title. | `com.cyl.refresh.CYLRefreshIconView` |
+| `CYLRefreshIconView` `-setAnimationAttributes:forState:` | The icon of [state]: [ANIMATION_FILE_PATH] (a file for a registered player), [IMAGES] (a list of drawables) with [DURATION] in seconds, and [SIZE] (width and height in dp); null remov | `CYLRefreshIconView.setAnimationAttributes(attributes, state)` |
+| `CYLRefreshIconView` `-animationAttributesForState:` | The icon of [state], or null. | `CYLRefreshIconView.animationAttributesForState(state)` |
+| `CYLRefreshIconView` `hasAnimations` | Whether any state has an icon. | `CYLRefreshIconView.hasAnimations` |
+| `CYLRefreshIconView` `placeholderView` | The view that shows the icon and the title. | `CYLRefreshIconView.placeholderView` |
+| `CYLRefreshIconView` `iconSize` | The icon's size in dp, width and height: the shown state's, else the first one's, else 0. | `CYLRefreshIconView.iconSize` |
+| `CYLRefreshIconView` `title` | The title below the icon. | `CYLRefreshIconView.title` |
+| `CYLRefreshIconView` `titleFont` | The title's size in sp, or 0 for the default. | `CYLRefreshIconView.titleFont` — titleFont (size in sp) and titleTypeface: the size, family and weight of the UIFont |
+| `CYLRefreshIconView` `titleColor` | Property of `CYLRefreshIconView`. | `CYLRefreshIconView.titleColor` |
+| `CYLRefreshIconView` `fittingSize` | The size the view needs, in pixels: width and height. | `CYLRefreshIconView.fittingSize` |
+| `CYLRefreshIconView` `scrubsWhilePulling` | Whether the pull scrubs the animation instead of playing it. | `CYLRefreshIconView.scrubsWhilePulling` |
+| `CYLRefreshIconView` `animationSpeed` | The playback rate of the icon's animation, 1 by default, applied live (the examples' speed slider, docs/Example-Animation-Playback.md; HarmonyOS `CYLRefreshIconViewModel.animationSpeed`). | `CYLRefreshIconView.animationSpeed` |
+| `CYLRefreshIconView` `loopsWhilePlaying` | Whether the icon loops while it plays (refreshing), true by default; false plays it once and rests on its last frame (the examples' loop switch; HarmonyOS `loopsWhilePlaying`). | `CYLRefreshIconView.loopsWhilePlaying` |
+| `CYLRefreshIconView` `-replayAnimation` | Restarts the shown icon from its first frame with the current speed and loop (the examples' Play all; HarmonyOS `replayAnimation()`). | `CYLRefreshIconView.replayAnimation()` |
+| `CYLRefreshIconView` `-updateForState:` | Shows and plays the icon of [state]; a state without one keeps the last icon. | `CYLRefreshIconView.updateForState(state)` |
+| `CYLRefreshIconView` `-updateForPullingPercent:` | Scrubs the icon to [pullingPercent], 0 to 1, while pulling. | `CYLRefreshIconView.updateForPullingPercent(percent)` |
 | `CYLRefreshIconAnimating` | The icon animation of MJRefresh's animated images: CYLRefreshAnimationHeader, CYLRefreshBackAnimationFooter and CYLRefreshAutoAnimationFooter adopt it, next to `setAnimationImages:forState:`. | `com.cyl.refresh.CYLRefreshIconAnimating` — the same interface; every component gets its calls as cyl_ extensions (cyl_iconView, cyl_setIconAnimationAttributes…) |
 | `CYLRefreshIconAnimating` `iconView` | The icon, created when an icon animation is first set; the animation view is then hidden. Without an icon animation the control draws its images as before. | `CYLRefreshComponent.cyl_iconView` |
 | `CYLRefreshIconAnimating` `usesIconView` | YES once any icon animation is set. | `CYLRefreshComponent.cyl_usesIconView` |
@@ -398,10 +398,10 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshIconAnimating` `-setIconAnimationFilePath:size:forState:` | An animation file (.gif, .json Lottie, .pag, .riv) at `size` for a state. | `setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers` |
 | `CYLRefreshIconAnimating` `-setBundledIconAnimation:size:forState:` | An animation of the core bundle (`bundledIconAnimationFileNames`) at `size` for a state, with the options it needs. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
 | `CYLRefreshIconAnimating` `bundledIconAnimationFileNames` | The animations of the core bundle meant for a refresh icon: the `CYLRefresh*` files and the placeholder animations that also suit a refresh control. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` | Builders of the item attributes that `setAnimationAttributes:forState:` takes. | `com.cyl.refresh.CYLRefreshIconView (companion)` |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` | The item attributes of an animation file at `size`; nil for an empty path. | `CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)` |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForBundledAnimation:size:` | The item attributes of a core-bundle animation at `size`, with the options it needs (Rive state machines, line icon colors); nil when the file is missing. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
-| `CYLRefreshIconView(CYLRefreshIconAttributes)` `bundledAnimationFileNames` | The refresh icon animations of the core bundle (see `CYLRefreshIconAnimating`). | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` | The icon of a refresh component: one animation (or image sequence) per state, with an optional title. | `com.cyl.refresh.CYLRefreshIconView (companion)` |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForAnimationFilePath:size:` | The attributes of the animation at [filePath], [width] by [height] dp. | `CYLRefreshIconView.attributesForAnimationFilePath(path, width, height)` |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `+attributesForBundledAnimation:size:` | Method of `CYLRefreshIconView(CYLRefreshIconAttributes)`. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
+| `CYLRefreshIconView(CYLRefreshIconAttributes)` `bundledAnimationFileNames` | Property of `CYLRefreshIconView(CYLRefreshIconAttributes)`. | n/a (iOS only: Android ships no animation files; pass a file path (attributesForAnimationFilePath)) |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` | The plumbing behind `CYLRefreshIconAnimating`, for refresh controls (and custom subclasses) that replace a view with the icon. | `com.cyl.refresh.CYLRefreshComponent (cyl_ icon extensions)` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_iconView` | The icon, created on first use and following the control's state. | `CYLRefreshComponent.cyl_iconView` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `cyl_usesIconView` | YES once any icon animation is set. | `CYLRefreshComponent.cyl_usesIconView` |
@@ -423,24 +423,24 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 |:---|:---|:---|
 | `CYLRefreshPagingCompletion` | Reports one page: its items, the total item count or the total page count (NSNotFound when unknown), or an error. A request that reports an error changes nothing. | `com.cyl.refresh.CYLRefreshPagingCompletion` |
 | `CYLRefreshPagingLoader` | Requests page `page`; call `completion` exactly once, on any queue. | `com.cyl.refresh.CYLRefreshPagingLoader` |
-| `CYLRefreshPaging` | Pagination driven by a header (refresh: the first page replaces the items) and a footer (load: the next page is appended). | `com.cyl.refresh.CYLRefreshPaging` |
-| `CYLRefreshPaging` `-initWithHeader:footer:loader:` | Pagination with `header` and `footer` (either may be nil) and the page loader; the controls' callbacks are replaced by the paging's. | `CYLRefreshPaging(header, footer, loader)` |
-| `CYLRefreshPaging` `-init` | Use `initWithHeader:footer:loader:`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
-| `CYLRefreshPaging` `header` | The refresh header. | `CYLRefreshPaging.header` |
-| `CYLRefreshPaging` `footer` | The load-more footer. | `CYLRefreshPaging.footer` |
-| `CYLRefreshPaging` `firstPage` | Number of the first page. Default 1. | `CYLRefreshPaging.firstPage` |
-| `CYLRefreshPaging` `items` | All items loaded so far; nil before the first successful request. | `CYLRefreshPaging.items` |
-| `CYLRefreshPaging` `count` | Number of items (`count`). | `CYLRefreshPaging.count` |
-| `CYLRefreshPaging` `page` | The last page loaded successfully; NSNotFound before the first. | `CYLRefreshPaging.page` |
-| `CYLRefreshPaging` `total` | Total item count from the last successful request; NSNotFound when unknown. | `CYLRefreshPaging.total` |
-| `CYLRefreshPaging` `totalPage` | Total page count from the last successful request; NSNotFound when unknown. | `CYLRefreshPaging.totalPage` |
-| `CYLRefreshPaging` `isEmpty` | YES after a successful request that left no items (easy_paging's `isEmpty`). | `CYLRefreshPaging.isEmpty` |
-| `CYLRefreshPaging` `isNoMore` | YES when every item is loaded: `count >= total`, else `page >= totalPage`; NO when neither is known (easy_paging's `isNoMore`). | `CYLRefreshPaging.isNoMore` |
-| `CYLRefreshPaging` `resetsFooterAfterRefresh` | Resets the footer's no-more-data state after a successful refresh (easy_paging's `resetAfterRefresh`). Default YES. | `CYLRefreshPaging.resetsFooterAfterRefresh` |
-| `CYLRefreshPaging` `itemsDidChange` | Called on the main queue after the items changed; reload the list here. | `CYLRefreshPaging.itemsDidChange` |
-| `CYLRefreshPaging` `-start` | Starts a refresh through the header (easy_paging's `refreshOnStart`), or requests the first page directly when there is no header. | `CYLRefreshPaging.start` |
-| `CYLRefreshPaging` `-refresh` | Requests the first page; on success it replaces the items. | `CYLRefreshPaging.refresh` |
-| `CYLRefreshPaging` `-loadMore` | Requests the page after `page`; on success it appends the items. | `CYLRefreshPaging.loadMore` |
+| `CYLRefreshPaging` | Pages a list through a header and a footer: the header reloads the first page, the footer loads the next one, and the footer shows "no more data" at the end. | `com.cyl.refresh.CYLRefreshPaging` |
+| `CYLRefreshPaging` `-initWithHeader:footer:loader:` | Pages a list through a header and a footer: the header reloads the first page, the footer loads the next one, and the footer shows "no more data" at the end. | `CYLRefreshPaging(header, footer, loader)` |
+| `CYLRefreshPaging` `-init` | Method of `CYLRefreshPaging`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
+| `CYLRefreshPaging` `header` | The header that refreshes, or null. | `CYLRefreshPaging.header` |
+| `CYLRefreshPaging` `footer` | The footer that loads more, or null. | `CYLRefreshPaging.footer` |
+| `CYLRefreshPaging` `firstPage` | The first page's number. | `CYLRefreshPaging.firstPage` |
+| `CYLRefreshPaging` `items` | The items loaded so far, or null before the first page. | `CYLRefreshPaging.items` |
+| `CYLRefreshPaging` `count` | How many items are loaded. | `CYLRefreshPaging.count` |
+| `CYLRefreshPaging` `page` | The last page loaded. | `CYLRefreshPaging.page` |
+| `CYLRefreshPaging` `total` | The total number of items, 0 when unknown. | `CYLRefreshPaging.total` |
+| `CYLRefreshPaging` `totalPage` | The total number of pages, 0 when unknown. | `CYLRefreshPaging.totalPage` |
+| `CYLRefreshPaging` `isEmpty` | Whether a page was loaded and there are no items. | `CYLRefreshPaging.isEmpty` |
+| `CYLRefreshPaging` `isNoMore` | Whether the last page is loaded. | `CYLRefreshPaging.isNoMore` |
+| `CYLRefreshPaging` `resetsFooterAfterRefresh` | Whether a refresh clears the footer's "no more data". | `CYLRefreshPaging.resetsFooterAfterRefresh` |
+| `CYLRefreshPaging` `itemsDidChange` | Called after the items change. | `CYLRefreshPaging.itemsDidChange` |
+| `CYLRefreshPaging` `-start` | Loads the first page, through the header when there is one. | `CYLRefreshPaging.start` |
+| `CYLRefreshPaging` `-refresh` | Reloads the first page. | `CYLRefreshPaging.refresh` |
+| `CYLRefreshPaging` `-loadMore` | Loads the next page; nothing after the last one. | `CYLRefreshPaging.loadMore` |
 
 ## `CYLRefresh/Base/CYLRefreshTrailer.h`
 
@@ -739,7 +739,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationStart:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationRepeat:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
 | `CYLRefreshValueAnimatorDelegate` `-onAnimationEnd:` | Method of `CYLRefreshValueAnimatorDelegate`. | n/a (iOS only: Android has android.animation.Animator.AnimatorListener) |
-| `CYLRefreshAnimatorInterpolatorBlock` | Type. | n/a (iOS only: an internal drawing helper of the drawn styles' animations, which is ported (done); Android draws it with its own class (ValueAnimator), no API counterpart needed) |
+| `CYLRefreshAnimatorInterpolatorBlock` | A custom easing curve: takes the linear progress (0 to 1) and returns the eased one. | n/a (iOS only: an internal drawing helper of the drawn styles' animations, which is ported (done); Android draws it with its own class (ValueAnimator), no API counterpart needed) |
 | `CYLRefreshValueAnimator` | Class. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |
 | `CYLRefreshValueAnimator` `+newWithFrom:to:` | Method of `CYLRefreshValueAnimator`. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |
 | `CYLRefreshValueAnimator` `+newWithTarget:selector:` | Method of `CYLRefreshValueAnimator`. | n/a (iOS only: Android has the platform's android.animation.ValueAnimator) |

@@ -28,10 +28,14 @@ Pod::Spec.new do |s|
     core.source_files = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/**/*.{h,m,swift}',
                         'CYLTableViewPlaceHolder/CYLPlaceholderHUD/*.{h,m,swift}',
                         'CYLTableViewPlaceHolder/CYLRefresh/**/*.{h,m}',
-                        # The CYLRefresh root (configuration, categories) is Swift since 2026-11-19; Custom/Rive/*.swift
-                        # needs RiveRuntime and stays in the Rive subspec.
-                        'CYLTableViewPlaceHolder/CYLRefresh/*.swift'
-    # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal.
+                        # The CYLRefresh root (configuration, categories), CYLRefreshIconView, CYLRefreshPaging and the drawn
+                        # styles' support classes are Swift since 2026-11-19; Custom/Rive/*.swift needs RiveRuntime and
+                        # stays in the Rive subspec.
+                        'CYLTableViewPlaceHolder/CYLRefresh/*.swift',
+                        'CYLTableViewPlaceHolder/CYLRefresh/Base/*.swift',
+                        'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.swift'
+    # The drawn headers' support code (vector parser, value animator, StoreHouse paths, scenes) is internal; its Swift
+    # classes are public only so the Objective-C drawn styles can read them through the generated Swift header.
     core.private_header_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Drawn/Support/*.h'
     # The core bundle: <language>.lproj/Localizable.strings (placeholder, scenario and component texts) and
     # CYLRefresh.strings, the images, and Animations/ (the scenario animations and CYLRefresh icons: Lottie, PAG, Rive,

@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 38 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 52 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -219,6 +219,58 @@ Objective-C to Swift, and its score after every commit.
     and the `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder warnings, no warning in the new
     files); in the example (More → Refresh) the normal header ("Loading...", "Last update: Today …", spinner left of the texts), the animated-image header (icon beside the two lines) and the automatic footer ("Loading..." right below the last row) show and place their texts as before, in English and Simplified Chinese ("正在刷新数据中...", "最后更新：今天 …"). Measured: core 18 Swift files (8,551 lines) and 63 Objective-C `.m` files (13,808 lines).
     Score by lines: 8,551 / (8,551 + 13,808) ≈ **38 / 100** (was 34).
+  - 2026-11-19, step 7 (branch `feat/android-refresh-port-followup`, this commit; leaves first): the classes with no
+    Objective-C subclass are Swift, with the same Objective-C API (class names, selectors, the former `NS_SWIFT_NAME`
+    spellings as the Swift names). Checked before translating each one with
+    `git grep -P "@interface\s+\w+\s*:\s*<Class>(?!\w)"` (the `\b` form of `git grep -E` matches nothing on macOS, so it
+    misses subclasses). Translated:
+    - `Base/CYLRefreshIconView.swift` (with the class members of the former `CYLRefreshIconView (CYLRefreshIconAttributes)`
+      category): the playback policy, the 2026-11-19 speed / loop / replay API (`animationSpeed`, `loopsWhilePlaying`,
+      `replayAnimation`) and the bundled-icon attributes without the scenario repeat count; the setters with side effects
+      (`title`, `titleFont`, `titleColor`, `animationSpeed`, `loopsWhilePlaying`) are computed properties over private
+      storage; the state attributes stay an `NSMutableDictionary` and the shown attributes an `NSDictionary`, so the
+      "any state" fallback and the equality check are the same. `CYLRefreshIconView.h` keeps the forward declaration, the
+      `CYLRefreshIconAnimating` protocol and the `CYLRefreshComponent (CYLRefreshIconLayout)` category (implemented in
+      `CYLRefreshComponent.m`).
+    - `Base/CYLRefreshPaging.swift`: the easy_paging rules (generation check, commit after success, no more data from the
+      total, then the page count); the block types stay in `CYLRefreshPaging.h`; `-init` is unavailable.
+    - `Custom/Drawn/Support/`: `CYLRefreshValueAnimator.swift` (display link and `CACurrentMediaTime`, the original float
+      literals of the bounce curve and the `floatValue` reads of the points kept; the 2026-11-19 leak fix kept: it stops
+      once its target and delegate are gone, `testEndlessValueAnimatorStopsWhenItsTargetIsReleased`), with the
+      `CYLRefreshAnimatorInterpolator` / `CYLRefreshAnimatorRepeatMode` enums (Swift `@objc` enums whose Objective-C case
+      names stay `AnimatorInterpolatorLinear`, ...) and the `CYLRefreshValueAnimatorDelegate` protocol; the vector classes
+      `CYLRefreshVectorElement` and its subclass `CYLRefreshVectorPathElement` (converted together), `CYLRefreshVectorImage`
+      (the `float` scale of `-scaleToFitInside:` kept), `CYLRefreshVectorUtilities`, `CYLRefreshVectorView`;
+      `CYLRefreshVectorPathsParser.swift` (internal: its only caller is the path element and its API passes a C struct,
+      so `CYLRefreshCurve` is a Swift struct and `CYLRefreshVectorPathsParser.h` is deleted; it calls the same `NSScanner`
+      selectors as before through the runtime, so numbers parse exactly as before and the iOS 13 deprecations are not
+      reported); `CYLRefreshStoreHouseLine`, `CYLRefreshStoreHousePath` (the glyph tables built once on first use; the
+      original's '-' entry overwritten by the dot's stroke is kept); `CYLRefreshFlyView`, `CYLRefreshMountainView`;
+      `CYLRefreshGameStartScene` (nil colors reach SpriteKit through key-value coding, as the Objective-C messages sent
+      them).
+    The Swift support classes are `public` only because the module's Objective-C drawn styles read them through the
+    generated Swift header (a framework's generated header has only public declarations); the private headers keep
+    forward declarations, the `CYLRefreshAnimatorInterpolatorBlock` typedef and the `CYLREFRESH_SCREEN_WIDTH` /
+    `CYLREFRESH_RATIO_X` / `CYLREFRESH_RATIO_Y` macros (rule 6). Objective-C files that use the Swift classes import the
+    umbrella header (the eleven drawn styles that use them, the animation header and both animation footers).
+    **Skipped:** `CYLRefreshGamePlayingScene` stays Objective-C: `BattleCityScene` and `HitBlockScene`
+    (`CYLRefreshGameBattleCityHeader.m`, `CYLRefreshGameHitBlockHeader.m`) subclass it; it moves with them in step 8.
+    **Not kept identical, on purpose:** `CYLRefreshMountainView` mixes a grayscale `colorPrimary` as gray (the
+    Objective-C code read past its two components, undefined behavior); `CYLRefreshIconView` treats a size array whose
+    last element does not answer `doubleValue` as no size (Objective-C raised an unrecognized-selector exception);
+    `CYLRefreshVectorView` ignores a nil tint color (Objective-C raised when adding nil to an array);
+    `-[CYLRefreshVectorImage renderInContext:]` does nothing without a context. Podspec (Core adds
+    `CYLRefresh/Base/*.swift` and `CYLRefresh/Custom/Drawn/Support/*.swift`), the framework target, `Tests/run-tests.rb`,
+    `Tests/run-accessibility-tests.rb` (every CYLRefresh Swift file but the Rive header), the cyl-api-map skill and the
+    regenerated parity table (its iOS descriptions of `CYLRefreshIconView` now come from the Android KDoc, as for the
+    earlier steps' classes) are updated. Tests: core 207/207, animation 13/13 (static, PAG), accessibility 4/4,
+    Example-objc-02 UI tests 13/13 (collection animation, paging, sections, localization); Example-Scenarios and the
+    `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder warnings, no warning in the new files; the
+    7 reported CYLRefresh warnings are in unchanged Objective-C files); in the example (English, More → Refresh →
+    CYLRefresh styles) StoreHouse, Phoenix, Taurus, Fly and GameHitBlock (start scene and game) draw and animate while
+    refreshing, and More → Feed → Refresh icons → `CYLRefreshActivity.gif` shows the playing icon beside "Loading...".
+    Measured: core 32 Swift files (11,763 lines) and 49 Objective-C `.m` files (10,880 lines). Score by lines:
+    11,763 / (11,763 + 10,880) ≈ **52 / 100** (was 38).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -233,7 +285,7 @@ Objective-C to Swift, and its score after every commit.
   - **Order: leaves first.** A Swift class may subclass an Objective-C class, not the reverse, so each class is
     translated only after all its subclasses (plan of 2026-11-19, replacing the bottom-up plan above):
     - step 7: `Custom/Drawn/Support` and the internal helpers with no subclasses (`CYLRefreshPaging`,
-      `CYLRefreshIconView`, the vector, StoreHouse, value-animator, fly/mountain views and the SpriteKit game scenes);
+      `CYLRefreshIconView`, the vector, StoreHouse, value-animator, fly/mountain views and the SpriteKit game scenes) — done, except `CYLRefreshGamePlayingScene` (subclassed by the two games; step 8);
     - step 8: the whole `Custom/Drawn` tree (the styles, `CYLRefreshGameHeader` after its two games, then
       `CYLRefreshDrawnHeader` and `CYLRefreshDrawnFooter`);
     - step 9: the remaining concrete controls: Normal / Animation (Gif) headers, the auto and back Normal / Animation

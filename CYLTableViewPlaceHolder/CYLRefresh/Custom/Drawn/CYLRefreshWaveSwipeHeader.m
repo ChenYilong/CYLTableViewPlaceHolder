@@ -5,6 +5,8 @@
 #import "CYLRefreshWaveSwipeHeader.h"
 
 #import "CYLRefreshValueAnimator.h"
+// [EN] The generated Swift interface of the value animator (Swift since 2026-11-19). [CN] 数值动画器的 Swift 接口（自 2026-11-19 起用 Swift 编写）。
+#import "CYLTableViewPlaceHolder.h"
 
 #define kCircleSize 40
 

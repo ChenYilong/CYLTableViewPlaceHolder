@@ -7,6 +7,8 @@
 #import "CYLRefreshGameHeader.h"
 #import "CYLRefreshGameStartScene.h"
 #import "CYLRefreshGamePlayingScene.h"
+// [EN] The generated Swift interface of the start scene (Swift since 2026-11-19). [CN] 开始场景的 Swift 接口（自 2026-11-19 起用 Swift 编写）。
+#import "CYLTableViewPlaceHolder.h"
 
 @interface CYLRefreshGameHeader ()
 

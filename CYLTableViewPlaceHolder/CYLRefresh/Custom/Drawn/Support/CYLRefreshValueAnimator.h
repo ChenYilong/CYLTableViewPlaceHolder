@@ -1,64 +1,28 @@
 //
 //  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from Vector/ValueAnimator.h (commit 9319448)
 //  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
+//
+//  [EN] Swift since 2026-11-19: the class, the `CYLRefreshValueAnimatorDelegate` protocol and the
+//       `CYLRefreshAnimatorInterpolator` / `CYLRefreshAnimatorRepeatMode` enums (with their Objective-C case names
+//       `AnimatorInterpolatorLinear`, ...) are in `CYLRefreshValueAnimator.swift` (docs/Swift-Migration.md, step 7), with
+//       the same Objective-C API. Objective-C code that uses them imports the umbrella header `CYLTableViewPlaceHolder.h`,
+//       which brings the generated Swift header; this header keeps the forward declarations and the block typedef.
+//  [CN] 自 2026-11-19 起，该类、`CYLRefreshValueAnimatorDelegate` 协议与 `CYLRefreshAnimatorInterpolator` /
+//       `CYLRefreshAnimatorRepeatMode` 枚举（Objective-C case 名 `AnimatorInterpolatorLinear` 等不变）用 Swift 编写
+//       （`CYLRefreshValueAnimator.swift`，docs/Swift-Migration.md 第 7 步），Objective-C API 不变。使用它们的 Objective-C 代码请导入总头文件
+//       `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）；本头文件保留前向声明与块类型。
 
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-typedef NS_ENUM(NSUInteger, CYLRefreshAnimatorInterpolator) {
-    AnimatorInterpolatorLinear,
-    AnimatorInterpolatorAccelerate,
-    AnimatorInterpolatorDecelerate,
-    AnimatorInterpolatorAccelerateDecelerate,
-    AnimatorInterpolatorBounce,
-};
-typedef NS_ENUM(NSUInteger, CYLRefreshAnimatorRepeatMode) {
-    AnimatorRepeatModeRestart,
-    AnimatorRepeatModeReverse,
-};
-
 @class CYLRefreshValueAnimator;
-@protocol CYLRefreshValueAnimatorDelegate <NSObject>
+@protocol CYLRefreshValueAnimatorDelegate;
 
-@optional
-- (void) onAnimationStart:(CYLRefreshValueAnimator*) animator;
-- (void) onAnimationRepeat:(CYLRefreshValueAnimator*) animator;
-- (void) onAnimationEnd:(CYLRefreshValueAnimator*) animator;
-
-@end
-
+/*!
+ * [EN] A custom easing curve: takes the linear progress (0 to 1) and returns the eased one.
+ * [CN] 自定义缓动曲线：输入线性进度（0 到 1），返回缓动后的进度。
+ */
 typedef CGFloat(^CYLRefreshAnimatorInterpolatorBlock)(CGFloat);
-
-@interface CYLRefreshValueAnimator : NSObject
-
-+ (CYLRefreshValueAnimator*)newWithFrom:(CGFloat) from to:(CGFloat) to;
-+ (CYLRefreshValueAnimator*)newWithTarget:(id) target selector:(SEL) action;
-
-- (void)setTarget:(id)target selector:(SEL)action;
-- (void)setFrom:(CGFloat) from to:(CGFloat) to;                 //设置开始结束
-- (void)setFromToPoints:(NSArray<NSNumber*>*) points;           //设置多断点
-
-@property (nonatomic, assign) CGFloat fromValue;
-@property (nonatomic, assign) CGFloat toValue;
-@property (nonatomic, assign) CGFloat speed;
-@property (nonatomic, assign) CGFloat repeatCount;              //INFINITY 表示无限
-@property (nonatomic, assign) CFTimeInterval beginTime;
-@property (nonatomic, assign) CFTimeInterval duration;          //动画持续时间（秒）
-@property (nonatomic, assign) CYLRefreshAnimatorRepeatMode repeatMode;
-@property (nonatomic, assign) CYLRefreshAnimatorInterpolator interpolator;
-
-@property (nonatomic, weak) id<CYLRefreshValueAnimatorDelegate> delegate;
-@property (nonatomic, copy) CYLRefreshAnimatorInterpolatorBlock interpolatorBlock;
-
-@property (nonatomic, readonly) BOOL isRunning;
-@property (nonatomic, readonly) CGFloat value;
-@property (nonatomic, readonly) CGFloat percent;
-
-- (void) start;
-- (void) stop;
-
-@end
 
 NS_ASSUME_NONNULL_END
