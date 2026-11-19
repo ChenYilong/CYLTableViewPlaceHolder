@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 94 / 100 (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 98 / 100 by lines, 100 / 100 by rule 6 for the core (tests excluded until step 13) (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -494,6 +494,96 @@ Objective-C to Swift, and its score after every commit.
     the posts; scrolling loads more up to Post 30 and "No more data"). Measured: core 71 Swift files (22,892 lines) and
     12 Objective-C `.m` files (1,520 lines; `CYLRefreshComponent.m` 1,070 of them). Score by lines: 22,892 /
     (22,892 + 1,520) ≈ **94 / 100** (was 86).
+  - 2026-11-20, step 12 (branch `feat/android-refresh-port-followup`; `6944b32`, `5c0c159`): the root class
+    `CYLRefreshComponent` is Swift. Checked first with `git grep -P "@interface \w+ : CYLRefreshComponent\b"` across the
+    repo (Examples, Tests, CrossPlatform): **no Objective-C subclass** (all of them became Swift in steps 8 to 11), so no
+    test helper had to move. Translated, with the same Objective-C API:
+    - part 1 (`6944b32`): `Base/CYLRefreshComponent.m` (1,070 lines) is `Base/CYLRefreshComponent.swift`: class name,
+      every selector (the `is…` getters of `refreshing`, `exclusiveWithOtherRefresh`, `autoChangeAlpha`,
+      `automaticallyChangeAlpha`, `attached`, `expanded`, `refreshEnabled`, `autoRefresh` kept with `@objc(name)` on the
+      property and `@objc(isName)` on the getter), the Swift spellings Swift imported from the header (including the
+      odd imported ones kept for source compatibility: `UILabel.cyl_()`, `cyl_(afterBeginningAction:)`,
+      `cyl_(afterEndingAction:)`), the overridable hooks `open` with the same selectors, `+attach:` returning `Self`
+      (`self.init()`), and the former categories `CYLRefreshIconLayout`, `CYLRefreshStateTitles`, `ChainingGrammar`
+      and `UILabel (CYLRefresh)` as Swift extensions. **KVO:** `addObserver(_:forKeyPath:options:context:)` with a
+      private static context for `contentOffset`, `contentSize`, `contentInset` and the pan gesture's `state`;
+      `observeValue` hands other contexts to super and gives the hooks the change dictionary with the same string keys
+      (`"new"`, `"old"`); the observed scroll view (weak) and pan gesture (strong) are cleared after removal, so nothing
+      is removed twice; `removeObservers` runs on `willMove(toSuperview:)` as before and the KVO part again in
+      `deinit`; `addObservers` called twice does not register twice. The setters with side effects (`state`,
+      `pullingPercent`, `automaticallyChangeAlpha`, `triggerRate`, `autoHideRefresh`, `disablesContentWhileRefreshing`,
+      `colorAccent`, `colorPrimary`) are computed properties over private storage, written by the initializer in the
+      Objective-C order (`prepare`, then `state = idle` with the first phase report from 0, then the durations,
+      `triggerRate` 1, `refreshEnabled` YES); `state` and `pullingPercent` are `@objc dynamic`, so key-value observers
+      of them still see every change, also the ones Swift subclasses make. The delayed and off-main-thread work holds
+      the control weakly as before (the async `setNeedsLayout`, `-endRefreshingWithSuccess:` off the main thread, the
+      finishing hold, `beginRefreshingAfterDelay:` / `endRefreshingAfterDelay:success:`, the overshoot of
+      `beginRefreshingWithDuration:overOffset:force:`, `didMoveToWindow`'s start), so the 2026-11-19 teardown fixes
+      hold (`testControllerTeardownWhileRefreshingReleasesWithoutObserverExceptions` and the table-driven teardown
+      tests pass). **Rule 6:** the enums (`CYLRefreshState`, `CYLRefreshScrollMode`, `CYLRefreshTriggerMode`,
+      `CYLRefreshPhase`) and block typedefs stay in `CYLRefreshComponent.h` (with a doc-commented forward declaration
+      and the `UILabel (CYLRefresh)` declarations for Objective-C only, `#ifndef __swift__`); the variadic
+      `-isInPhases:` cannot be `@objc`, so it is the Objective-C category `CYLRefreshComponent+CYLPhaseList.h` /
+      `CYLRefreshComponentSupport.m` (34 lines), imported by the umbrella header after the generated Swift header, as
+      step 9 did for `-inStatus:`. The `CYLRefreshIconLayout` declarations left `CYLRefreshIconView.h` (Objective-C
+      gets them from the generated header). **Selector access removed:** `Base/CYLRefreshComponentPrivateAccess.swift`
+      and the start header's selector helpers in `UIScrollView+CYLRefresh.swift` are deleted; `git grep -n
+      "NSSelectorFromString\|#selector(" CYLTableViewPlaceHolder/CYLRefresh` now lists only target-action and display
+      link selectors and the `NSScanner` calls of the vector parser.
+    - part 2 (`5c0c159`): the internal members drop their selector-era names: `reportPhaseChange()`,
+      `offset(forDragRate:happenOffset:)`, `hasCallbacks`, `copyTargetActions(from:)`; `-cyl_setScrollViewOriginalInset:`
+      is removed, the header, back footer and trailer set `scrollViewOriginalInset` (settable inside the module,
+      read-only outside).
+    **Not kept identical, on purpose:** target-actions of `-addTarget:action:` are held weakly (the Objective-C code
+    kept an unretained pointer and messaged a released target); `addTarget:action:` / `removeTarget:action:`,
+    `addPhaseObserver:` / `addScrollObserver:` and `removePhaseObserver:` / `removeScrollObserver:` take nullable
+    arguments (Objective-C passed nil and the code checked it; Swift callers are unaffected); the Swift `async` variants
+    `beginRefreshing() async` / `endRefreshing() async` that Swift derived from the completion-block methods are gone
+    (nothing used them; the stored completion block runs on every refresh, so they could resume twice); the deprecated
+    `endRefreshingAnimateCompletionBlock` getter returns `endRefreshingAnimationBeginAction` (it returned an ivar that
+    was never written, always nil); the block parameters of `canTriggerBlock`, `addPhaseObserver:` and
+    `addScrollObserver:` are `CYLRefreshComponent *` instead of `__kindof CYLRefreshComponent *` in the generated header
+    (`refreshingHandler` keeps the `CYLRefreshComponentHandler` typedef); `scrollView` is a read-only computed property
+    (the generated header prints it `strong`, the storage is weak); `NS_REQUIRES_SUPER` is gone with the Objective-C
+    declarations; the private Objective-C selectors (`-cyl_reportPhase`, `-cyl_hasCallbacks`, ...) are no longer in
+    the runtime. Framework target (the `.m` reference points at the `.swift` file, the access file's at
+    `CYLRefreshComponentSupport.m`, plus the public `+CYLPhaseList.h`), podspec comment, cyl-api-map skill and the
+    regenerated parity table (its `CYLRefreshComponent` descriptions now come from the Android KDoc, as for the earlier
+    steps' classes) are updated; the test, accessibility and animation runners glob the folder. Tests: core 207/207
+    after each part and 207/207 twice more at the end; animation 13/13 (static, PAG); accessibility 4/4 (CI runner on CYL Placeholder
+    Screens); Example-objc-02 UI tests 13/13 on the first full run (collection animation, paging, sections,
+    localization); Example-SwiftUI UI tests 4/4 on CYL Placeholder Audit iOS26; Example-Scenarios, Example-objc-01, the
+    root Example app and the `CYLTableViewPlaceHolderFramework` target build, and a simulator archive of the framework
+    with `BUILD_LIBRARY_FOR_DISTRIBUTION=YES` packs into an XCFramework (the device slice and `scripts/pod-lint.sh
+    xcframework` were skipped: they need CYLTabBarController's device slices, not built locally);
+    `check_doc_comments.py`, `check_localizations.py`, the iOS and Android API maps, the parity table,
+    `check_package_licenses.py` and the docs navigation check pass. Simulator check (Example-Scenarios on CYL Placeholder
+    Screens, English, held drags with axe): Scenarios list scrolls; More → Refresh → Default (arrow with "Pull down to
+    refresh", spinner and "Loading...", new rows after), the pull-up Default ("Tap or pull up to load more"; a tap and a
+    pull-up each load a row with "Loading..."), Springing-back footer 01 ("Release to load more" with the arrow, then
+    "Loading..."), Pull left (rotated "Swipe to see details"; a fast swipe past the end opens the details page),
+    DropBox (drawn header) and Delivery footer (drawn footer), Rive · Bow and SVGA · Bubbles, SVGA refresh icon (the
+    icon beside "Loading..."), each animating (two frames 0.6 s apart differ); More → Feed (refresh with "Loading..."
+    and the time, the failing refresh shows the error placeholder as designed, scrolling loads up to Post 30 and "No
+    more data"); Flows → Refresh controls (pull to refresh on the empty list, then 12 items and "No more data").
+    **Remaining `.m` files under `CYLTableViewPlaceHolder/` (12 files, 484 lines), each a rule-6 shim Swift cannot
+    express:** `CYLPlaceholderHUD/CYLPlaceholderHUDSupport.m` (24; six exported notification names and a userInfo key,
+    `FOUNDATION_EXPORT` constants); `CYLRefresh/Base/CYLRefreshComponentSupport.m` (34; the variadic `-isInPhases:`);
+    `CYLRefresh/CYLRefreshConst.m` (44; exported `CGFloat` and string constants of `CYLRefreshConst.h`);
+    `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeaderSupport.m` (31; the variadic `-inStatus:`);
+    `CYLRefresh/UICollectionViewLayout+CYLRefreshSupport.m` (32; `+load`, which Swift has none of);
+    `CYLRefresh/UIScrollView+CYLExtensionSupport.m` (61; `+load` and the `@try` / `@finally` guards Swift cannot
+    write); `CYLTableViewPlaceHolder/CYLPlaceholderLocalizationSupport.m` (47; an exported notification name and the
+    C functions `CYLPlaceholderResourceBundle`, `CYLPlaceholderResourceURLForPath`, `CYLPlaceholderLocalizedStringForKey`
+    behind the lookup macros); `CYLPlaceholderNetworkMonitorSupport.m` (16; an exported notification name);
+    `CYLPlaceholderScenarioSupport.m` (21; the six `CYLPlaceholderAction` constants); `CYLPlaceholderStatusViewSupport.m`
+    (17; the two exported height constants); `CYLPlaceholderViewSupport.m` (115; the exported `CYLPlaceholderItem*`
+    keys and the other constants of `CYLPlaceholderView.h`); `UIScrollView+CYLPlaceholderSupport.m` (42; `+load` and
+    the `@try` / `@finally` guard of batch updates). Measured: core 71 Swift files (24,655 lines) and 12 Objective-C
+    `.m` files (484 lines). **Score by lines:** 24,655 / (24,655 + 484) ≈ **98 / 100** (was 94). **Score by rule 6:**
+    every remaining `.m` is a Swift-compatible shim of something Swift cannot declare (exported C constants and
+    functions, `+load`, Objective-C exception guards, variadic methods), and every class is Swift, so the core counts
+    as **100 / 100 by rule 6**; the tests (14 Objective-C files under `Tests/`) are excluded until step 13.
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -519,7 +609,7 @@ Objective-C to Swift, and its score after every commit.
       `CYLRefreshStateTrailer` — done;
     - step 11: `CYLRefreshHeader`, `CYLRefreshAutoFooter`, `CYLRefreshBackFooter`, `CYLRefreshTrailer`, then
       `CYLRefreshFooter` — done;
-    - step 12: `CYLRefreshComponent` (the root);
+    - step 12: `CYLRefreshComponent` (the root) — done;
     - step 13: the tests (14 Objective-C files under `Tests/`).
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
