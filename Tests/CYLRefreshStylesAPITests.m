@@ -554,10 +554,20 @@
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.hidden = NO;
     [window addSubview:scrollView];
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.6]];
+    // [EN] Polled, not fixed waits (0.6 s, then 1.5 s): on a slow runner the refresh had not called back yet when
+    //      endRefreshing ran, so the regular header's block never ran (714d4fc: refreshes == 0, the test took 24 s).
+    // [CN] 轮询而非固定等待（0.6 秒、1.5 秒）：在慢速 runner 上 endRefreshing 执行时刷新尚未回调，常规刷新头的 block 从未执行
+    //      （714d4fc：refreshes == 0，测试耗时 24 秒）。
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:15];
+    while (refreshes == 0 && deadline.timeIntervalSinceNow > 0) {
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+    }
     XCTAssertTrue(start.isRefreshing);
     [scrollView.cyl_header endRefreshing];
-    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.5]];
+    deadline = [NSDate dateWithTimeIntervalSinceNow:15];
+    while (scrollView.cyl_header != regular && deadline.timeIntervalSinceNow > 0) {
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+    }
     XCTAssertEqual(scrollView.cyl_header, regular, @"the regular header is back");
     XCTAssertEqual(refreshes, 1);
     window.hidden = YES;
