@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 34 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 38 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -187,6 +187,38 @@ Objective-C to Swift, and its score after every commit.
     lines: 7,576 / (7,576 + 14,477) ≈ **34 / 100** (was 32). `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/` (the
     placeholder core outside CYLRefresh) is now fully Swift except the rule-6 shims (the six `*Support.m` files: exported
     constants and C functions, `+load` and the exception guard) and the public headers.
+  - 2026-11-19, step 6 (branch `feat/android-refresh-port-followup`, this commit): the `CYLRefresh/` root is Swift:
+    `CYLRefreshConfig.swift`, `NSBundle+CYLRefresh.swift`, `UIView+CYLExtension.swift`, `UIScrollView+CYLExtension.swift`,
+    `UIScrollView+CYLRefresh.swift` and `UICollectionViewLayout+CYLRefresh.swift` replace the six `.m` files (757 lines),
+    with the same Objective-C API (class name, `+defaultConfig` as Swift `default`, every selector, the Swift spellings
+    of `cyl_beginRefreshing(startHeader:)`, `cyl_endRefreshing(afterDelay:success:noMoreData:)`, ...). The accessors and
+    category methods are `@objc dynamic`, so Swift callers dispatch through the Objective-C runtime as before (method
+    replacement, as `testMissingRefreshBundleFallsBackWithoutException` does with `+cyl_refreshBundle`, and KVO keep
+    working); every setter writes `frame` / `contentInset` / `contentOffset` / `contentSize` once, as before. The setter
+    of `languageCode` is computed over private storage (nil never equals, so setting nil always resets the caches and
+    posts `CYLRefreshDidChangeLanguageNotification`, as `isEqualToString:` on nil did); the language lookup and its
+    caches are kept (`languageCode`, else the preferred language, else English; `i18nBundle` / `i18nFilename` win). The
+    categories are declared for Objective-C only (`#ifndef __swift__`) in their headers, so `Base/`, `Custom/` and the
+    tests compile unchanged; `CYLRefreshConfig.h` keeps a forward declaration and `CYLRefreshStateHeader.m` imports the
+    umbrella header for the generated Swift header (`CYLRefreshComponent.m` already did). Swift spellings that changed:
+    `Bundle.cyl_refresh()` returns `Bundle!` (was `Self`; the bundle lookup can return nil), `cyl_arrowImage()` /
+    `cyl_trailArrowImage()` return `UIImage!`, and `cyl_beginRefreshing(startHeader:)` takes an optional (the method
+    always handled nil). `cyl_inset` reads `adjustedContentInset` without the iOS 11 check (the library needs iOS 12).
+    The start header calls `CYLRefreshComponent`'s private `-cyl_hasCallbacks` / `-cyl_copyTargetActionsFrom:` by
+    selector until step 7, and copies the refreshing target and action only when there is a target (without one, the
+    Objective-C copy called nothing either). Still Objective-C (rule 6): `CYLRefreshConst.h` / `.m` (exported constants,
+    C macros, the inline `CYLRefreshExchangeImplementations`; all Swift-readable, nothing Swift can declare);
+    `UIScrollView+CYLExtensionSupport.m` (53 lines: `+load`, which hands Swift the writer of the bottom, left and right
+    insets with its `@try` / `@finally` depth count, and the C function `CYLRefreshIsWritingSideInset()` that
+    `CYLRefreshHeader.m` calls); `UICollectionViewLayout+CYLRefreshSupport.m` (32 lines: `+load`, which calls the Swift
+    entry point that exchanges `finalizeCollectionViewUpdates` once); the umbrella `CYLRefresh.h` and the headers. The
+    podspec (Core adds `CYLRefresh/*.swift`; `Custom/Rive/*.swift` stays in the Rive subspec), the framework target,
+    `Tests/run-tests.rb`, `Tests/run-accessibility-tests.rb`, the cyl-api-map skill, `instructions.md` and the
+    regenerated parity table are updated. Tests: core 207/207, animation 13/13 (static, PAG), accessibility 4/4,
+    Example-objc-02 UI tests (collection animation, paging, sections, localization) 12/13 on the first full run, with `testDraggingDuringHeaderRefreshKeepsFirstItemPosition` flaky under a load average of 76 to 208 (it then passed 1 of 2 reruns; the same test on the parent commit `3013f38` failed 2 of 2 reruns in the same conditions, so it is not a regression of this step); Example-Scenarios
+    and the `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder warnings, no warning in the new
+    files); in the example (More → Refresh) the normal header ("Loading...", "Last update: Today …", spinner left of the texts), the animated-image header (icon beside the two lines) and the automatic footer ("Loading..." right below the last row) show and place their texts as before, in English and Simplified Chinese ("正在刷新数据中...", "最后更新：今天 …"). Measured: core 18 Swift files (8,551 lines) and 63 Objective-C `.m` files (13,808 lines).
+    Score by lines: 8,551 / (8,551 + 13,808) ≈ **38 / 100** (was 34).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines);

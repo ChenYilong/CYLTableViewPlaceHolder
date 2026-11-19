@@ -671,7 +671,7 @@ in manual integrations, look it up by name, and override its tables through
 - Both tables support `en`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `ru`, `uk`.
   Adding a language means adding both tables and listing it in
   `CYLPlaceholderLocalization.supportedLanguages` (`CYLPlaceholderLocalization.swift`) and
-  `cyl_defaultI18nBundleWithLanguage:` (`NSBundle+CYLRefresh.m`).
+  `cyl_defaultI18nBundle(language:)` (`NSBundle+CYLRefresh.swift`).
   `testPlaceholderLocalizationsHaveAllMessageKeys` and
   `testRefreshResourcesLiveInTheSingleLibraryBundle` check every key in every
   language.

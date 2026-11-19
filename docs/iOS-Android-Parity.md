@@ -458,16 +458,16 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 
 | iOS API / feature | Description | Android counterpart |
 |:---|:---|:---|
-| `CYLRefreshConfig` | The shared settings of every refresh control (language, strings table and bundle, default controls), read through `defaultConfig`. | `com.cyl.refresh.CYLRefreshConfig` |
+| `CYLRefreshConfig` | The refresh components' settings. | `com.cyl.refresh.CYLRefreshConfig` |
 | `CYLRefreshConfig` `languageCode` | The language of the built-in texts, or null for the system's. | `CYLRefreshConfig.languageCode` — the built-in texts of classic headers and footers made after the change, and the placeholder texts |
 | `CYLRefreshConfig` `i18nFilename` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
 | `CYLRefreshConfig` `i18nBundle` | Property of `CYLRefreshConfig`. | n/a (iOS only: iOS string tables in a bundle; Android texts are string resources an app overrides by name) |
-| `CYLRefreshConfig` `defaultHeaderCreator` | Makes the header `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (CYLRefreshLayout's `setDefaultRefreshHeaderCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` — added 2026-11-17 for Android parity |
-| `CYLRefreshConfig` `defaultFooterCreator` | Makes the footer `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none (CYLRefreshLayout's `setDefaultRefreshFooterCreator`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator` — added 2026-11-17 for Android parity |
-| `CYLRefreshConfig` `defaultInitializer` | Sets up every control once, when it is first attached to a scroll view, before its own `didAttachToScrollView:` (CYLRefreshLayout's `setDefaultRefreshInitializer`). Default nil. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer` — added 2026-11-17 for Android parity |
-| `CYLRefreshConfig` `defaultConfig` | Singleton Config instance | `CYLRefreshConfig.defaultConfig` |
-| `CYLRefreshConfig` `-init` | Unavailable: use the shared `defaultConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
-| `CYLRefreshConfig` `+new` | Unavailable: use the shared `defaultConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
+| `CYLRefreshConfig` `defaultHeaderCreator` | Sets the header every layout gets when it has none. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator` — added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultFooterCreator` | Sets the footer every layout gets when it has none. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator` — added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultInitializer` | Sets up every new layout. | `com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer` — added 2026-11-17 for Android parity |
+| `CYLRefreshConfig` `defaultConfig` | The shared settings. | `CYLRefreshConfig.defaultConfig` |
+| `CYLRefreshConfig` `-init` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
+| `CYLRefreshConfig` `+new` | Method of `CYLRefreshConfig`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
 
 ## `CYLRefresh/CYLRefreshConst.h`
 

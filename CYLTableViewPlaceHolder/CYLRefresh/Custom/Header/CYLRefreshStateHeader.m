@@ -12,6 +12,9 @@
 #import "UIView+CYLExtension.h"
 #import "UIScrollView+CYLExtension.h"
 #import "CYLRefreshConfig.h"
+// [EN] CYLRefreshConfig is Swift (2026-11-19): the umbrella header brings the generated Swift header.
+// [CN] CYLRefreshConfig 用 Swift 编写（2026-11-19）：总头文件导入生成的 Swift 头文件。
+#import "CYLTableViewPlaceHolder.h"
 
 @interface CYLRefreshStateHeader()
 {

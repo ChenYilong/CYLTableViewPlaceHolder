@@ -22,12 +22,14 @@
 
 // [EN] CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy `cyl_reloadData` category,
 //      CYLPlaceholderStatusView, CYLPlaceholderStackView, the view controller status category, CYLPlaceholderComponent,
-//      CYLPlaceholderScenarioCatalog, CYLPlaceholderHUD and the automatic placeholder (UITableView / UICollectionView
-//      `cyl_placeholderViewBlock:`, `UIScrollView (CYLPlaceholderVisibility)`) are Swift (2026-11-19): Objective-C code gets their interfaces from the module's generated Swift
+//      CYLPlaceholderScenarioCatalog, CYLPlaceholderHUD, the automatic placeholder (UITableView / UICollectionView
+//      `cyl_placeholderViewBlock:`, `UIScrollView (CYLPlaceholderVisibility)`) and the CYLRefresh root (CYLRefreshConfig and the
+//      `UIView` / `UIScrollView` / `NSBundle` / `UICollectionViewLayout` categories) are Swift (2026-11-19): Objective-C code gets their interfaces from the module's generated Swift
 //      header, imported last so that every Objective-C type it mentions is declared. Not for Swift (`__swift__`): the
 //      module's own Swift files must not import their generated header.
 // [CN] CYLPlaceholderView、CYLPlaceholderLocalization、CYLPlaceholderNetworkMonitor、旧的 `cyl_reloadData` 分类、CYLPlaceholderStatusView、
-//      CYLPlaceholderStackView、视图控制器状态分类、CYLPlaceholderComponent、CYLPlaceholderScenarioCatalog、CYLPlaceholderHUD 与自动占位图用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
+//      CYLPlaceholderStackView、视图控制器状态分类、CYLPlaceholderComponent、CYLPlaceholderScenarioCatalog、CYLPlaceholderHUD、自动占位图与 CYLRefresh 根目录（CYLRefreshConfig 及
+//      `UIView` / `UIScrollView` / `NSBundle` / `UICollectionViewLayout` 分类）用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
 //      Objective-C 类型都已声明。不供 Swift 使用（`__swift__`）：模块自己的 Swift 文件不能导入自己生成的头文件。
 #ifndef __swift__
 #if __has_include(<CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>)

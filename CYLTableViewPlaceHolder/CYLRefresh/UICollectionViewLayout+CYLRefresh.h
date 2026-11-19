@@ -11,6 +11,11 @@
 
 #import <UIKit/UIKit.h>
 
+// [EN] Implemented in Swift since 2026-11-19 (`UICollectionViewLayout+CYLRefresh.swift`; `+load` in
+//      `UICollectionViewLayout+CYLRefreshSupport.m`). The category declares no API.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UICollectionViewLayout+CYLRefresh.swift`；`+load` 在
+//      `UICollectionViewLayout+CYLRefreshSupport.m`）。该分类不声明 API。
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*!

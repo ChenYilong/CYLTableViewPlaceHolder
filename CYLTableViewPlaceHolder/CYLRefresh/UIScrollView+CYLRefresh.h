@@ -13,6 +13,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIScrollView+CYLRefresh.swift`, the same selectors; docs/Swift-Migration.md, step 6). This
+//      declaration is for Objective-C callers only: Swift reads the Swift extension itself (`__swift__` is defined while
+//      Swift imports the header), so the two never meet.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIScrollView+CYLRefresh.swift`，选择器不变；docs/Swift-Migration.md 第 6 步）。这里的声明只供 Objective-C
+//      调用方使用：Swift 直接读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。
+#ifndef __swift__
 /*!
  * [EN] The refresh controls of a scroll view: header, footer and trailer, and their settings.
  * [CN] 滚动视图的刷新控件：刷新头、刷新尾、trailer 及其设置。
@@ -92,5 +98,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)cyl_totalDataCount;
 
 @end
+#endif
 
 NS_ASSUME_NONNULL_END

@@ -1,4 +1,9 @@
 //  代码地址: https://github.com/ChenYilong/CYLTableViewPlaceHolder
+// [EN] Stays Objective-C in the Swift migration (docs/Swift-Migration.md, rule 6, step 6): exported constants (defined in
+//      `CYLRefreshConst.m`), C macros and an inline C function, which Swift reads as they are (`CYLRefreshHeaderHeight`,
+//      `NSNotification.Name.CYLRefreshDidChangeLanguage`, ...) but cannot declare.
+// [CN] Swift 迁移中保留为 Objective-C（docs/Swift-Migration.md 第 6 条，第 6 步）：导出常量（定义在 `CYLRefreshConst.m`）、C 宏与内联
+//      C 函数；Swift 可以直接读取（`CYLRefreshHeaderHeight`、`NSNotification.Name.CYLRefreshDidChangeLanguage` 等），但无法声明。
 #import <UIKit/UIKit.h>
 #import <objc/message.h>
 #import <objc/runtime.h>

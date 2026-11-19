@@ -42,6 +42,12 @@ typedef NS_ENUM(NSInteger, CYLScrollDirection) {
     CYLScrollDirectionRight,
 };
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIScrollView+CYLExtension.swift`, the same selectors; docs/Swift-Migration.md, step 6). This
+//      declaration is for Objective-C callers only: Swift reads the Swift extension itself (`__swift__` is defined while
+//      Swift imports the header), so the two never meet.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIScrollView+CYLExtension.swift`，选择器不变；docs/Swift-Migration.md 第 6 步）。这里的声明只供 Objective-C
+//      调用方使用：Swift 直接读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。
+#ifndef __swift__
 /*!
  * [EN] Shorthand accessors for the scroll view's insets, offset and content size, used by the refresh controls.
  * [CN] 刷新控件使用的滚动视图 inset、偏移与内容尺寸的便捷访问方法。
@@ -118,5 +124,6 @@ typedef NS_ENUM(NSInteger, CYLScrollDirection) {
  */
 @property (readonly, nonatomic) CYLScrollDirection cyl_scrollDirection;
 @end
+#endif
 
 NS_ASSUME_NONNULL_END

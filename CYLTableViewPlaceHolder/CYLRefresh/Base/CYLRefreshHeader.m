@@ -45,7 +45,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (CGFloat)cyl_offsetForDragRate:(CGFloat)offsetY happenOffset:(CGFloat)happenOffsetY;
 @end
 
-/// [EN] YES while cyl_insetB / L / R write the inset (UIScrollView+CYLExtension.m). [CN] cyl_insetB / L / R 写入 inset 期间为 YES。
+/// [EN] YES while cyl_insetB / L / R write the inset (UIScrollView+CYLExtensionSupport.m). [CN] cyl_insetB / L / R 写入 inset 期间为 YES。
 FOUNDATION_EXTERN BOOL CYLRefreshIsWritingSideInset(void);
 
 @implementation CYLRefreshHeader
