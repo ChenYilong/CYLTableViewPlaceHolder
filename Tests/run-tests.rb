@@ -35,12 +35,13 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalizationSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenario.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.m',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitorSupport.m',
-   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.m'].each do |path|
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/UIViewController+CYLPlaceholderStatus.swift'].each do |path|
     ref = project.main_group.new_file(File.join(root, path))
     target.source_build_phase.add_file_reference(ref)
   end
@@ -49,8 +50,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
-    # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor and the legacy cyl_reloadData category
-    # are Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
+    # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy cyl_reloadData category,
+    # CYLPlaceholderStatusView, CYLPlaceholderStackView and the view controller status category are Swift (2026-11-19). The module is named like the pod, so the library's Objective-C files find
     # the generated header as CYLTableViewPlaceHolder-Swift.h; the bridging header gives the Swift file the Objective-C
     # declarations the pod's umbrella header gives it; the CYLAnimatedItem pod below has the engine, so the Swift
     # condition is set as the pod's animation subspecs set it.

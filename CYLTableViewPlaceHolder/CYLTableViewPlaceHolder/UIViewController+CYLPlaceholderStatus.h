@@ -13,6 +13,14 @@
 //       一个参数 `cyl_statusDisplay` 决定显示什么：状态条加占位图、只显示状态条、只显示占位图或都不显示。`cyl_showsStatusViewWhenOffline`
 //       让网络监测（`CYLPlaceholderNetworkMonitor`）自动添加和移除状态条。
 //
+//  [EN] Swift since 2026-11-19: the category is in `UIViewController+CYLPlaceholderStatus.swift`. The
+//       `CYLPlaceholderStatusDisplay` options (used by Objective-C callers) and the `UIScrollView (CYLPlaceholderVisibility)`
+//       category (implemented in `UIScrollView+CYLPlaceholder.m`) stay here in Objective-C, made Swift-compatible
+//       (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该分类用 Swift 编写（`UIViewController+CYLPlaceholderStatus.swift`）。`CYLPlaceholderStatusDisplay` 选项
+//       （Objective-C 调用方会用到）与 `UIScrollView (CYLPlaceholderVisibility)` 分类（实现在 `UIScrollView+CYLPlaceholder.m`）保留在
+//       Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderStatusView.h"
@@ -41,6 +49,12 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
     CYLPlaceholderStatusDisplayAll = CYLPlaceholderStatusDisplayStatusBar | CYLPlaceholderStatusDisplayPlaceholder,
 };
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIViewController+CYLPlaceholderStatus.swift`, the same selectors). This
+//      declaration is for Objective-C callers only: Swift reads the Swift extension itself (`__swift__` is defined while
+//      Swift imports the header), so the two never meet.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIViewController+CYLPlaceholderStatus.swift`，选择器不变）。这里的声明只供 Objective-C 调用方使用：
+//      Swift 直接读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。
+#ifndef __swift__
 @interface UIViewController (CYLPlaceholderStatus)
 
 /*!
@@ -96,6 +110,7 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
     NS_SWIFT_NAME(cyl_applyStatusConfiguration(contentsOf:));
 
 @end
+#endif
 
 @interface UIScrollView (CYLPlaceholderVisibility)
 /*!

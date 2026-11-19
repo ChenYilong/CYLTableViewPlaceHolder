@@ -7,7 +7,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 17 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 22 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -58,6 +58,28 @@ Objective-C to Swift, and its score after every commit.
     files (17,363 lines). Score by lines: 3,592 / (3,592 + 17,363) ≈ **17 / 100** (was 15). The work stays on
     `feat/android-refresh-port-followup`, shared with the other sessions, instead of a new branch: a separate branch
     would conflict with their changes to the same core files.
+  - 2026-11-19, step 2 (branch `feat/android-refresh-port-followup`, this commit): `CYLPlaceholderStatusView`,
+    `CYLPlaceholderStackView` and the view controller status category (`UIViewController+CYLPlaceholderStatus`) are
+    Swift, with the same Objective-C API (class names, selectors including the throwing initializers' `...error:`
+    selectors, the former `NS_SWIFT_NAME` spellings as the Swift names, the configuration error codes). The stack view
+    keeps its design: `CYLPlaceholderItemStackView` (`dispatchesItemTaps` NO, `isItemViewInteractive` = the component's
+    `isTapInteractive`) lays the components out, components keep their own `tapHandler`, and the inner stack's
+    background handler calls `performAction:`. Its four `...actions:` initializers take a dictionary of blocks, which an
+    `@objc` signature cannot express in Swift: Swift callers get `[CYLPlaceholderAction: CYLPlaceholderActionHandler]?`
+    (unchanged), Objective-C callers an `NSDictionary` initializer with the same selector, hidden from Swift (the
+    pattern of CYLTabBarController's `CYLAnimatedItemStackView`). The status category's `cyl_statusView` is `null_resettable`
+    in the Objective-C header and an implicitly unwrapped optional in Swift. Still Objective-C, made Swift-compatible
+    (rule 6): the delegate protocol, the height constants (`CYLPlaceholderStatusViewSupport.m`) and the tap block type
+    (`CYLPlaceholderStatusView.h`), the action handler block type (`CYLPlaceholderStackView.h`), the
+    `CYLPlaceholderStatusDisplay` options and the `UIScrollView (CYLPlaceholderVisibility)` category
+    (`UIViewController+CYLPlaceholderStatus.h`, implemented in `UIScrollView+CYLPlaceholder.m`). The private
+    `CYLPlaceholderComponent` members the stack view reads (`cyl_kind`, `cyl_applyConfiguration:error:`, in
+    `CYLPlaceholderScenario.m`) are declared for Swift in the internal header `CYLPlaceholderComponentInternal.h`
+    (`NS_REFINED_FOR_SWIFT`, left out of the API maps). Tests: core 195/195, animation 13/13 (static, PAG);
+    Example-Scenarios and the `CYLTableViewPlaceHolderFramework` target build (0 placeholder warnings); in the example,
+    "Tap to reload" shows the icon and the wrapped hint centered and a tap on an empty area loads the list. Measured: core
+    9 Swift files (4,664 lines) and 67 Objective-C `.m` files (16,441 lines). Score by lines: 4,664 / (4,664 + 16,441)
+    ≈ **22 / 100** (was 17).
   - Next, bottom-up and one commit per file group, each with the core (195) and animation (13) tests: the UIKit
     categories and small model classes of `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/`, then
     `CYLPlaceholderStackView`, scenarios, HUD and status view, then `CYLRefresh/` (the largest part), then the tests.

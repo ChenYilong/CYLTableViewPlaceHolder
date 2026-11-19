@@ -1052,26 +1052,26 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 |:---|:---|:---|
 | `CYLPlaceholderActionHandler` | Runs on the main thread when a component's action is performed. | `com.cyl.placeholder.CYLPlaceholderActionHandler` |
 | `CYLPlaceholderStackView` | Components stacked and centered: a scenario's components ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. | `com.cyl.placeholder.CYLPlaceholderStackView` — each icon + title component is a CYLPlaceholderView reporting its content size; a scenario's first item plays the scenario's animation |
-| `CYLPlaceholderStackView` `stackView` | The vertical stack holding the components: centered, sized by its components. | `CYLPlaceholderStackView.stackView` |
-| `CYLPlaceholderStackView` `placeholderView` | The reserved first component: the icon and title. | `CYLPlaceholderStackView.placeholderView` — the first component view |
-| `CYLPlaceholderStackView` `componentViews` | Every component, the reserved one first. | `CYLPlaceholderStackView.componentViews` |
-| `CYLPlaceholderStackView` `imageView` | The first icon of the components (the reserved component's image view when none shows one); the same as Android's `CYLPlaceholderStackView.imageView`. | `CYLPlaceholderStackView.imageView` |
-| `CYLPlaceholderStackView` `titleLabel` | The first title that is not a hint, a button or a separator (the reserved component's label when there is none); the same as Android's `titleLabel`. | `CYLPlaceholderStackView.titleLabel` |
-| `CYLPlaceholderStackView` `hintLabel` | The label of the first hint component (`hintComponentWithText:`), or nil; the same as Android's `hintLabel`. | `CYLPlaceholderStackView.hintLabel` |
-| `CYLPlaceholderStackView` `button` | The first button component (`buttonComponentWithTitle:style:action:`), or nil; `performTap` taps it. The same as Android's `button`. | `CYLPlaceholderStackView.button` |
-| `CYLPlaceholderStackView` `scenario` | The scenario the view was created from; CYLPlaceholderScenarioCount when it was created from components. | `CYLPlaceholderStackView.scenario` |
-| `CYLPlaceholderStackView` `backgroundAction` | The action of a tap anywhere outside a tappable component; nil turns that off. Set from the scenario. | `CYLPlaceholderStackView.backgroundAction` |
-| `CYLPlaceholderStackView` `-initWithScenario:actions:` | The scenario's components, with handlers for its actions (for example `CYLPlaceholderActionRetry` and `CYLPlaceholderActionContactSupport`). An action without a handler does nothing. | `CYLPlaceholderStackView(context, scenario, actions)` |
-| `CYLPlaceholderStackView` `-initWithComponents:actions:` | Custom components; the first is the reserved one (a default icon and title when the array is empty or the first component's attributes are invalid). | `CYLPlaceholderStackView(context, components, actions)` |
-| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | A placeholder from a configuration dictionary (JSON or property list), as described in docs/Placeholder-Scenarios.md: "scenario" (a name, see `+[CYLPlaceholderScenarioCatalog scenarioNamed:]`), "components" (component... | `CYLPlaceholderStackView.fromConfiguration(context, configuration, actions, error)` |
-| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | The configuration in a local ".json" or ".plist" file. | `CYLPlaceholderStackView.fromContentsOfURL(context, path, actions, error)` — reads a .json file or "asset:name"; a property list is an iOS format |
+| `CYLPlaceholderStackView` `stackView` | The stacked views. | `CYLPlaceholderStackView.stackView` |
+| `CYLPlaceholderStackView` `placeholderView` | The reserved first component, the icon and title. | `CYLPlaceholderStackView.placeholderView` — the first component view |
+| `CYLPlaceholderStackView` `componentViews` | One view per component, in order. | `CYLPlaceholderStackView.componentViews` |
+| `CYLPlaceholderStackView` `imageView` | The first icon (hidden and empty when there is none). | `CYLPlaceholderStackView.imageView` |
+| `CYLPlaceholderStackView` `titleLabel` | The first title. | `CYLPlaceholderStackView.titleLabel` |
+| `CYLPlaceholderStackView` `hintLabel` | The first hint, or null. | `CYLPlaceholderStackView.hintLabel` |
+| `CYLPlaceholderStackView` `button` | The first button, or null. | `CYLPlaceholderStackView.button` |
+| `CYLPlaceholderStackView` `scenario` | The scenario shown, or null for a stack of your own components. | `CYLPlaceholderStackView.scenario` |
+| `CYLPlaceholderStackView` `backgroundAction` | The action a tap anywhere on the placeholder runs, or null. | `CYLPlaceholderStackView.backgroundAction` |
+| `CYLPlaceholderStackView` `-initWithScenario:actions:` | Components stacked and centered: a scenario's components ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. | `CYLPlaceholderStackView(context, scenario, actions)` |
+| `CYLPlaceholderStackView` `-initWithComponents:actions:` | Components stacked and centered: a scenario's components ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. | `CYLPlaceholderStackView(context, components, actions)` |
+| `CYLPlaceholderStackView` `-initWithConfiguration:actions:error:` | Method of `CYLPlaceholderStackView`. | `CYLPlaceholderStackView.fromConfiguration(context, configuration, actions, error)` |
+| `CYLPlaceholderStackView` `-initWithContentsOfURL:actions:error:` | Method of `CYLPlaceholderStackView`. | `CYLPlaceholderStackView.fromContentsOfURL(context, path, actions, error)` — reads a .json file or "asset:name"; a property list is an iOS format |
 | `CYLPlaceholderStackView` `-initWithFrame:` | Method of `CYLPlaceholderStackView`. | n/a (iOS only: UIKit initializers; Android views take a Context) |
 | `CYLPlaceholderStackView` `-initWithCoder:` | Method of `CYLPlaceholderStackView`. | n/a (iOS only: UIKit initializers; Android views take a Context) |
-| `CYLPlaceholderStackView` `-appendComponent:` | Appends a component under the last one and returns its view; nil, with a log, when its attributes are invalid. | `CYLPlaceholderStackView.appendComponent(component)` |
-| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | Appends a view the app made itself; a tap on it performs `action` when that is not nil. | `CYLPlaceholderStackView.appendComponentView(view, action, spacingBefore)` |
-| `CYLPlaceholderStackView` `-setHandler:forAction:` | Sets or, with nil, removes the handler of an action. | `CYLPlaceholderStackView.setHandler(handler, action)` |
-| `CYLPlaceholderStackView` `-componentViewForAction:` | The first component whose tap performs `action`. | `CYLPlaceholderStackView.componentViewForAction(action)` |
-| `CYLPlaceholderStackView` `-performAction:` | Runs the handler of `action`; NO when it has none. | `CYLPlaceholderStackView.performAction(action)` |
+| `CYLPlaceholderStackView` `-appendComponent:` | Adds [component] at the end. | `CYLPlaceholderStackView.appendComponent(component)` |
+| `CYLPlaceholderStackView` `-appendComponentView:action:spacingBefore:` | Adds your own [view] at the end, [spacingBefore] dp below the previous one; a tap runs [action]. | `CYLPlaceholderStackView.appendComponentView(view, action, spacingBefore)` |
+| `CYLPlaceholderStackView` `-setHandler:forAction:` | Runs [handler] for [action], replacing its handler; null removes it. | `CYLPlaceholderStackView.setHandler(handler, action)` |
+| `CYLPlaceholderStackView` `-componentViewForAction:` | The view of the first component that runs [action], or null. | `CYLPlaceholderStackView.componentViewForAction(action)` |
+| `CYLPlaceholderStackView` `-performAction:` | Runs the handler of [action], as a tap would; false when it has none. | `CYLPlaceholderStackView.performAction(action)` |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`
 
@@ -1081,15 +1081,15 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` | The bar was tapped; `sender` is the status view. | `CYLPlaceholderStatusViewDelegate.statusViewClicked(sender)` |
 | `CYLPlaceholderStatusViewTapHandler` | Runs on the main thread when the bar is tapped. | `com.cyl.placeholder.CYLPlaceholderStatusViewTapHandler` |
 | `CYLPlaceholderStatusView` | A banner with an icon and a text, by default "Network unavailable". | `com.cyl.placeholder.CYLPlaceholderStatusView` — CYLPlaceholderStatusView.fromConfiguration makes one from a configuration |
-| `CYLPlaceholderStatusView` `delegate` | Told about taps, as in CYLChatKit. | `CYLPlaceholderStatusView.delegate` |
-| `CYLPlaceholderStatusView` `-initWithFrame:` | The network bar of CYLChatKit: the failure icon and the localized "Network unavailable, Check network" (`CYLPlaceholderStatusNetworkUnavailable` in the core strings). | `CYLPlaceholderStatusView(context)` |
-| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | A bar with its own icon and title: CYLPlaceholderView item attributes (`CYLPlaceholderItemTitle`, `CYLPlaceholderItemImage`, `CYLPlaceholderItemTitleColor`, `CYLPlaceholderItemBackgroundColor` for the red…); missing k... | `CYLPlaceholderStatusView(context, attributes)` — every item key, applied over the banner's defaults |
-| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | The item attributes of the network bar, to start a custom one from. | `CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)` |
-| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | A bar from a configuration dictionary (JSON or property list): "text", "textKey" (a key of the core strings, "text" being its fallback), "image" (an image name in the core bundle or "system:<SF Symbol>"), "titleColor"... | `CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)` — "image" is a drawable name; "system:" names are iOS only |
+| `CYLPlaceholderStatusView` `delegate` | Hears taps. | `CYLPlaceholderStatusView.delegate` |
+| `CYLPlaceholderStatusView` `-initWithFrame:` | A banner with an icon and a text, by default "Network unavailable". | `CYLPlaceholderStatusView(context)` |
+| `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | A banner with an icon and a text, by default "Network unavailable". | `CYLPlaceholderStatusView(context, attributes)` — every item key, applied over the banner's defaults |
+| `CYLPlaceholderStatusView` `networkUnavailableItemAttributes` | The attributes of the "Network unavailable" banner, with the iOS keys. | `CYLPlaceholderStatusView.networkUnavailableItemAttributes(context)` |
+| `CYLPlaceholderStatusView` `-initWithConfiguration:error:` | Method of `CYLPlaceholderStatusView`. | `CYLPlaceholderStatusView.fromConfiguration(context, configuration, error)` — "image" is a drawable name; "system:" names are iOS only |
 | `CYLPlaceholderStatusView` `-initWithCoder:` | Method of `CYLPlaceholderStatusView`. | n/a (iOS only: unavailable on iOS too (NS_UNAVAILABLE)) |
-| `CYLPlaceholderStatusView` `placeholderView` | The icon and the title, laid out horizontally; a subview filling the bar. | `CYLPlaceholderStatusView.placeholderView` |
-| `CYLPlaceholderStatusView` `text` | The title shown; setting it updates the bar. | `CYLPlaceholderStatusView.text` |
-| `CYLPlaceholderStatusView` `tapHandler` | Runs on a tap, after the delegate. With neither a handler nor a delegate, the bar is plain text for VoiceOver; with one, it is a button. | `CYLPlaceholderStatusView.tapHandler` |
+| `CYLPlaceholderStatusView` `placeholderView` | The icon and text. | `CYLPlaceholderStatusView.placeholderView` |
+| `CYLPlaceholderStatusView` `text` | The text. | `CYLPlaceholderStatusView.text` |
+| `CYLPlaceholderStatusView` `tapHandler` | Called when the banner is tapped. | `CYLPlaceholderStatusView.tapHandler` |
 
 ## `CYLTableViewPlaceHolder/CYLPlaceholderView.h`
 

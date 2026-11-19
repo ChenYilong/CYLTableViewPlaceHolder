@@ -54,7 +54,8 @@
 		4278A5A6519B64FD624EE475 /* CYLRefreshPhoenixHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 074DB04053DF1D6A0122372C /* CYLRefreshPhoenixHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42BAE20F4F08EC2A5FEB1666 /* CYLRefreshAnimationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E052C621D0D5E801442F86 /* CYLRefreshAnimationHeader.m */; };
 		430305709B9F5EF91A1286B2 /* CYLRefreshBezierCircleHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC986DE0FA2F9A1763DCE5E /* CYLRefreshBezierCircleHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4468C9C0DEEB3BA9A3D1066B /* CYLPlaceholderStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */; };
+		B1D5A3B6D514FE5A5C29C661 /* CYLPlaceholderStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013F8A0D66AE193A241AEFE5 /* CYLPlaceholderStatusView.swift */; };
+		4468C9C0DEEB3BA9A3D1066B /* CYLPlaceholderStatusViewSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusViewSupport.m */; };
 		44C126BFD41F147EE05C0DDC /* CYLRefreshStoreHousePath.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E5E89296F2969745FAEE761 /* CYLRefreshStoreHousePath.m */; };
 		452C8AF0C59657321DA31B1D /* UIView+CYLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 23ED1838B37A7E229CD569A7 /* UIView+CYLExtension.m */; };
 		46FE727E1B7A296DAAFC2B53 /* CYLRefreshAutoAnimationFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 138D61B821A53B9AC272EE00 /* CYLRefreshAutoAnimationFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -101,7 +102,7 @@
 		7BFEAD7D32E403C060603A07 /* CYLRefreshAutoStateFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 44110D2AADB1242C0FFE50B1 /* CYLRefreshAutoStateFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7C8671F67A5EABB7876A55EE /* UIScrollView+CYLExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CF19EAF1DA21AF31CE1C3C5 /* UIScrollView+CYLExtension.m */; };
 		7CC93F05C99D87B2A2295E2C /* CYLRefreshTrailer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCB3D19D840E95F5F9D4DF8 /* CYLRefreshTrailer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7F55EE79C678A177B57B2C2D /* CYLPlaceholderStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.m */; };
+		7F55EE79C678A177B57B2C2D /* CYLPlaceholderStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.swift */; };
 		7FDEA826DEF32B9D33FA4AD6 /* CYLRefreshPaging.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D0787B1ACCBB46031B765D /* CYLRefreshPaging.m */; };
 		829573EB2C0910461CEEA754 /* CYLRefreshDropBoxHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = B520A70534B252DC5894336A /* CYLRefreshDropBoxHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		835438E93B1069A768D440D8 /* CYLRefreshStateTrailer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FF4D93FBBB2508A8E616092 /* CYLRefreshStateTrailer.m */; };
@@ -176,8 +177,9 @@
 		E3508FDDE0492CA871BBAF43 /* CYLRefreshBackNormalFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 984FC0171E3404165E40FFAA /* CYLRefreshBackNormalFooter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E55C4A1A4B848060DF5F1E68 /* UICollectionViewLayout+CYLRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D982B458E456DEFD3ABC6B /* UICollectionViewLayout+CYLRefresh.m */; };
 		E840000FE9EC72560CD08EBC /* CYLPlaceholderLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = FA49637A77B00AB2A0A1A54D /* CYLPlaceholderLocalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E99C3324A58252FCD319D781 /* UIViewController+CYLPlaceholderStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.m */; };
+		E99C3324A58252FCD319D781 /* UIViewController+CYLPlaceholderStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.swift */; };
 		EA71CB9C9CD43E4024E13EB9 /* libPods-CYLTableViewPlaceHolder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA758383F348F5CEE18E8703 /* libPods-CYLTableViewPlaceHolder.a */; };
+		42BF83471DE9A638445BB410 /* CYLPlaceholderComponentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AE65CB4A89876F8000FAE445 /* CYLPlaceholderComponentInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ECFD3CC1BC1A9F3B4C769B30 /* CYLPlaceholderVisibleArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE9B81CA4B519D93C289FD9F /* CYLRefreshAutoGifFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1F8068D4C726CE5404006B /* CYLRefreshAutoGifFooter.m */; };
 		EEE46BBC14128E895046BF11 /* CYLRefreshHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 271B9AE5193C25D8586A2719 /* CYLRefreshHeader.m */; };
@@ -273,7 +275,8 @@
 		51885C4A8199724AA4C62462 /* CYLRefreshNormalHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshNormalHeader.h; sourceTree = "<group>"; };
 		52877987520AFF01DD3827B8 /* CYLRefreshCupertinoHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshCupertinoHeader.h; sourceTree = "<group>"; };
 		53F2B65CDDD866E0EDDEAC5C /* CYLPlaceholderLocalizationSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderLocalizationSupport.m; sourceTree = "<group>"; };
-		54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderStackView.m; sourceTree = "<group>"; };
+		54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderStackView.swift; sourceTree = "<group>"; };
+		AE65CB4A89876F8000FAE445 /* CYLPlaceholderComponentInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderComponentInternal.h; sourceTree = "<group>"; };
 		55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLPlaceholderVisibleArea.h; sourceTree = "<group>"; };
 		5705C2DCD607A49AA129B0AC /* CYLRefreshAutoAnimationFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshAutoAnimationFooter.m; sourceTree = "<group>"; };
 		575720B60DB69A24E46C1BD8 /* UIScrollView+CYLExtension.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+CYLExtension.h"; sourceTree = "<group>"; };
@@ -376,7 +379,7 @@
 		F50301A51491F25FA375EC5C /* CYLRefreshStoreHouseHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshStoreHouseHeader.m; sourceTree = "<group>"; };
 		F65CF45B82CDFB05797D0BEE /* CYLRefreshPhoenixHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshPhoenixHeader.m; sourceTree = "<group>"; };
 		F6A32051DE8A5B0408417D84 /* CYLRefreshConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshConst.h; sourceTree = "<group>"; };
-		F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CYLPlaceholderStatus.m"; sourceTree = "<group>"; };
+		F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIViewController+CYLPlaceholderStatus.swift"; sourceTree = "<group>"; };
 		F6E43C3F1D07C1925B84A94E /* LICENSE.placeholder-third-party */ = {isa = PBXFileReference; includeInIndex = 1; path = "LICENSE.placeholder-third-party"; sourceTree = "<group>"; };
 		F73B232FB8AAE714E27D3876 /* CYLRefreshBackStateFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshBackStateFooter.h; sourceTree = "<group>"; };
 		F768F733F5853A57648D2948 /* CYLRefreshDrawnFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLRefreshDrawnFooter.m; sourceTree = "<group>"; };
@@ -389,7 +392,8 @@
 		FB02DCE9394552CC4A81511A /* CYLRefreshVectorView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshVectorView.h; sourceTree = "<group>"; };
 		FEB2E2B5116BACD4EFB63967 /* CYLRefreshStateHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshStateHeader.h; sourceTree = "<group>"; };
 		FEF48ED28050EE9E255147C1 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SpriteKit.framework; sourceTree = DEVELOPER_DIR; };
-		FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderStatusView.m; sourceTree = "<group>"; };
+		013F8A0D66AE193A241AEFE5 /* CYLPlaceholderStatusView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderStatusView.swift; sourceTree = "<group>"; };
+		FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusViewSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = CYLPlaceholderStatusViewSupport.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -601,16 +605,18 @@
 				F93B4C7B0348C886F781DC23 /* CYLPlaceholderScenario.h */,
 				27BDCF96BBE7D4E274471D80 /* CYLPlaceholderScenario.m */,
 				83F08F3F75DC7D778742A230 /* CYLPlaceholderStackView.h */,
-				54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.m */,
+				54613561E324F2ADDE3FB118 /* CYLPlaceholderStackView.swift */,
 				C4CF5772B9A452E75C78C9B9 /* CYLPlaceholderStatusView.h */,
-				FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusView.m */,
+				FFFB7E0F3C7C67C831884D38 /* CYLPlaceholderStatusViewSupport.m */,
+				013F8A0D66AE193A241AEFE5 /* CYLPlaceholderStatusView.swift */,
 				B28457D5975BE7EE3112EBF5 /* CYLPlaceholderNetworkMonitor.h */,
 				E12DA508DC4E722A3C1D5D25 /* CYLPlaceholderNetworkMonitorSupport.m */,
 				5A1457F39CECB45740B23D7A /* UIViewController+CYLPlaceholderStatus.h */,
-				F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.m */,
+				F6A55EF3BAAD1BBA494022A5 /* UIViewController+CYLPlaceholderStatus.swift */,
 				1D4723EA240F44948945D058 /* CYLPlaceholderLocalization.swift */,
 				6E58D51B7B48B51DC5D986F8 /* CYLPlaceholderNetworkMonitor.swift */,
 				55458777137CD5376474EA03 /* CYLPlaceholderVisibleArea.h */,
+				AE65CB4A89876F8000FAE445 /* CYLPlaceholderComponentInternal.h */,
 			);
 			path = CYLTableViewPlaceHolder/CYLTableViewPlaceHolder;
 			sourceTree = "<group>";
@@ -852,6 +858,7 @@
 				013ED51982451921ED54D3FD /* CYLRefreshDrawnFooter.h in Headers */,
 				1F275A309492E6E479666C67 /* CYLRefreshPaging.h in Headers */,
 				ECFD3CC1BC1A9F3B4C769B30 /* CYLPlaceholderVisibleArea.h in Headers */,
+				42BF83471DE9A638445BB410 /* CYLPlaceholderComponentInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1034,12 +1041,13 @@
 				B928FF987752F38D66AF618A /* CYLPlaceholderViewSupport.m in Sources */,
 				42640DB769795BD9EF0DC5CC /* CYLPlaceholderLocalizationSupport.m in Sources */,
 				23E19E4B10F06FFF4A9E9DD9 /* CYLPlaceholderScenario.m in Sources */,
-				7F55EE79C678A177B57B2C2D /* CYLPlaceholderStackView.m in Sources */,
+				7F55EE79C678A177B57B2C2D /* CYLPlaceholderStackView.swift in Sources */,
 				55FAFD1FCA27E4C30B1639C1 /* CYLRefreshIconView.m in Sources */,
-				4468C9C0DEEB3BA9A3D1066B /* CYLPlaceholderStatusView.m in Sources */,
+				4468C9C0DEEB3BA9A3D1066B /* CYLPlaceholderStatusViewSupport.m in Sources */,
+				B1D5A3B6D514FE5A5C29C661 /* CYLPlaceholderStatusView.swift in Sources */,
 				DCED9F14F8A5CFCCA66AC1E8 /* CYLPlaceholderHUD.m in Sources */,
 				50748BDE87FDB5A9EE800169 /* CYLPlaceholderNetworkMonitorSupport.m in Sources */,
-				E99C3324A58252FCD319D781 /* UIViewController+CYLPlaceholderStatus.m in Sources */,
+				E99C3324A58252FCD319D781 /* UIViewController+CYLPlaceholderStatus.swift in Sources */,
 				156867BDF29FD827B01D1C82 /* CYLRefreshBezierCircleHeader.m in Sources */,
 				C65AD1B2F4DB0B78543A3985 /* CYLRefreshBezierRadarHeader.m in Sources */,
 				6F1B135784DF03958EB7B687 /* CYLRefreshDeliveryHeader.m in Sources */,
