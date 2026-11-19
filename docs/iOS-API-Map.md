@@ -8,14 +8,25 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（800 / 800 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (800 of 800 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（810 / 810 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (810 of 810 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
+
+## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
+
+| Android API | 描述 / Description | iOS API | 说明 / Note |
+|:---|:---|:---|:---|
+| `cyl_setStateTitle` (fun) | The text of [state] (`cyl_setStateTitle:forState:`): shown by a control with a state text, kept by any other. | `cyl_setStateTitle:forState:` | matched by the iOS name its KDoc cites |
+| `cyl_stateTitleForState` (fun) | The text of [state], or null (`cyl_stateTitleForState:`). | `cyl_stateTitleForState:` | matched by the iOS name its KDoc cites |
+| `cyl_setAnimationImages` (fun) | Image frames as the icon of [state], [duration] seconds in all (`cyl_setAnimationImages:duration:forState:`). | `cyl_setAnimationImages:duration:forState:` | matched by the iOS name its KDoc cites |
+| `cyl_setBundledIconAnimation` (fun) | One of the placeholder's bundled animation files, [name] in its `CYLPlaceholderAnimations` assets (the iOS CYLTableViewPlaceHolder.bundle), as the icon of [state], [width] × [height] dp (`cyl_setBundledIconAnimation:size | `cyl_setBundledIconAnimation:size:forState:` | matched by the iOS name its KDoc cites |
+| `cyl_noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`): the normal footers show it, any other footer keeps it. | `noMoreDataImage` | matched by the iOS name its KDoc cites |
+| `cyl_updateNoMoreDataImage` (fun) | Sets [cyl_noMoreDataImage] (`cyl_updateNoMoreDataImage:`). | `cyl_updateNoMoreDataImage:` | matched by the iOS name its KDoc cites |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshClassics.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStateHeader` (class) | A header with a state text and a "last updated" line (iOS `CYLRefreshStateHeader`). | `CYLRefreshStateHeader`, `CYLRefreshStateHeader(ChainingGrammar)`, `CYLRefreshComponent(CYLRefreshStateTitles)` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshStateHeader` (class) | A header with a state text and a "last updated" line (iOS `CYLRefreshStateHeader`). | `CYLRefreshStateHeader`, `CYLRefreshStateHeader(ChainingGrammar)`, `CYLRefreshComponent(CYLRefreshStateTitles)` |  |
 | `CYLRefreshStateHeader.stateLabel` (val) | The state text (`stateLabel`). | `CYLRefreshStateHeader` `stateLabel` |  |
 | `CYLRefreshStateHeader.lastUpdatedTimeLabel` (val) | The "last updated" text (`lastUpdatedTimeLabel`). | `CYLRefreshStateHeader` `lastUpdatedTimeLabel` |  |
 | `CYLRefreshStateHeader.labelLeftInset` (var) | The gap between the icon and the texts, in dp (`labelLeftInset`). | `CYLRefreshStateHeader` `labelLeftInset` |  |
@@ -26,8 +37,8 @@
 | `CYLRefreshStateHeader.failedImage` (var) | Shown in place of the icon while the header holds after a failed refresh (`failedImage`). | `CYLRefreshStateHeader` `failedImage` |  |
 | `CYLRefreshStateHeader.iconOnTrailingSide` (var) | Puts the icon after the text instead of before it (`iconOnTrailingSide`). | `CYLRefreshStateHeader` `iconOnTrailingSide` |  |
 | `CYLRefreshStateHeader.lastUpdatedTimeString` (val) | The "last updated" text now shown (`lastUpdatedTimeString`). | `CYLRefreshStateHeader` `lastUpdatedTimeString` |  |
-| `CYLRefreshStateHeader.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshStateHeader` `-setTitle:forState:`, `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshStateHeader.titleForState` (fun) | The text of [state] (`titleForState:`), as on the state footers. | `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:`, `CYLRefreshStateHeader` `-titleForState:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshStateHeader.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshStateHeader` `-setTitle:forState:` |  |
+| `CYLRefreshStateHeader.titleForState` (fun) | The text of [state] (`titleForState:`), as on the state footers. | `CYLRefreshStateHeader` `-titleForState:` |  |
 | `CYLRefreshStateHeader.cyl_modifyLastUpdatedTimeText` (fun) | Sets [lastUpdatedTimeText] (`cyl_modifyLastUpdatedTimeText:`). | `CYLRefreshStateHeader(ChainingGrammar)` `-cyl_modifyLastUpdatedTimeText:` |  |
 | `CYLRefreshNormalHeader` (class) | The state header with an arrow and a spinner (iOS `CYLRefreshNormalHeader`). | `CYLRefreshNormalHeader` |  |
 | `CYLRefreshNormalHeader.arrowView` (val) | The arrow (`arrowView`). | `CYLRefreshNormalHeader` `arrowView` |  |
@@ -41,8 +52,8 @@
 | `CYLRefreshGifHeader.setIconAnimationAttributes` (fun) | The icon of [state] as attributes (`setIconAnimationAttributes:forState:`). | `CYLRefreshGifHeader` `setIconAnimationAttributes:forState:` | matched by the iOS name its KDoc cites |
 | `CYLRefreshAnimationHeader` (class) | The state header with an animation per state (iOS `CYLRefreshAnimationHeader`). | `CYLRefreshAnimationHeader` |  |
 | `CYLRefreshAnimationHeader.animationView` (val) | The view that shows the animation (`animationView`). | `CYLRefreshAnimationHeader` `animationView` |  |
-| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], [duration] seconds in all (`setAnimationImages:duration:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:`, `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | partial (see docs/Android-API-Map.md) |
-| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], 0.1 seconds each (`setAnimationImages:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:`, `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], [duration] seconds in all (`setAnimationImages:duration:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` |  |
+| `CYLRefreshAnimationHeader.setAnimationImages` (fun) | The frames of [state], 0.1 seconds each (`setAnimationImages:forState:`). | `CYLRefreshAnimationHeader` `-setAnimationImages:duration:forState:`, `CYLRefreshAnimationHeader` `-setAnimationImages:forState:` |  |
 | `CYLRefreshAutoFooter` (class) | A footer that loads by itself when it comes into view (iOS `CYLRefreshAutoFooter`). | `CYLRefreshAutoFooter` |  |
 | `CYLRefreshAutoFooter.automaticallyRefresh` (var) | Whether reaching the end loads by itself (`automaticallyRefresh`). | `CYLRefreshAutoFooter` `automaticallyRefresh` |  |
 | `CYLRefreshAutoFooter.triggerAutomaticallyRefreshPercent` (var) | How much of the footer must show before it loads, 0 to 1 (`triggerAutomaticallyRefreshPercent`). | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` |  |
@@ -54,7 +65,7 @@
 | `CYLRefreshAutoStateFooter.setTitle` (fun) | The text of [state] (`setTitle:forState:`). | `CYLRefreshAutoStateFooter` `-setTitle:forState:` |  |
 | `CYLRefreshAutoStateFooter.titleForState` (fun) | The text of [state] (`titleForState:`). | `CYLRefreshAutoStateFooter` `-titleForState:` |  |
 | `CYLRefreshAutoNormalFooter` (class) | The automatic state footer with a spinner (iOS `CYLRefreshAutoNormalFooter`). | `CYLRefreshAutoNormalFooter` |  |
-| `CYLRefreshAutoNormalFooter.noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`). | `CYLRefreshAutoNormalFooter` `noMoreDataImage`, `CYLRefreshFooter(CYLRefreshNoMoreDataImage)`, `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshAutoNormalFooter.noMoreDataImage` (var) | Shown beside the text while there is no more data (`noMoreDataImage`). | `CYLRefreshAutoNormalFooter` `noMoreDataImage` |  |
 | `CYLRefreshAutoNormalFooter.loadingView` (val) | The spinner (`loadingView`). | `CYLRefreshAutoNormalFooter` `loadingView` |  |
 | `CYLRefreshAutoGifFooter` (class) | The automatic state footer with image frames per state (iOS `CYLRefreshAutoGifFooter`). | `CYLRefreshAutoGifFooter` |  |
 | `CYLRefreshAutoGifFooter.gifView` (val) | The view that shows the frames (`gifView`). | `CYLRefreshAutoGifFooter` `gifView` |  |
@@ -319,7 +330,8 @@
 | `CYLRefreshIconView.hasAnimations` (val) | Whether any state has an icon (`hasAnimations`). | `CYLRefreshIconView` `hasAnimations` |  |
 | `CYLRefreshIconView.iconSize` (val) | The icon's size in dp, width and height (`iconSize`): the shown state's, else the first one's, else 0. | `CYLRefreshIconView` `iconSize` |  |
 | `CYLRefreshIconView.title` (var) | The title below the icon (`title`). | `CYLRefreshIconView` `title` |  |
-| `CYLRefreshIconView.titleFont` (var) | The title's size in sp, or 0 for the default (`titleFont`). | `CYLRefreshIconView` `titleFont` | partial (see docs/Android-API-Map.md) |
+| `CYLRefreshIconView.titleFont` (var) | The title's size in sp, or 0 for the default (`titleFont`). | `CYLRefreshIconView` `titleFont` |  |
+| `CYLRefreshIconView.titleTypeface` (var) | The title's typeface, or null for the default (the family and weight of the iOS `titleFont`). | `CYLRefreshIconView` `titleFont` | matched by the iOS name its KDoc cites |
 | `CYLRefreshIconView.fittingSize` (val) | The size the view needs, in pixels: width and height (`fittingSize`). | `CYLRefreshIconView` `fittingSize` |  |
 | `CYLRefreshIconView.scrubsWhilePulling` (var) | Whether the pull scrubs the animation instead of playing it (`scrubsWhilePulling`). | `CYLRefreshIconView` `scrubsWhilePulling` |  |
 | `CYLRefreshIconView.animationSpeed` (var) | The playback rate of the icon's animation, 1 by default, applied live (the examples' speed slider, docs/Example-Animation-Playback.md; HarmonyOS `CYLRefreshIconViewModel.animationSpeed`). | `CYLRefreshIconView` `animationSpeed` |  |
@@ -1047,7 +1059,8 @@
 | `CYLPlaceholderTapHighlightStyle` (enum) | How a tappable placeholder answers a finger (iOS `CYLPlaceholderTapHighlightStyle`). | `CYLPlaceholderTapHighlightStyle` |  |
 | `CYLPlaceholderBadgeStyle` (enum) | The badge of a placeholder (iOS `CYLPlaceholderBadgeStyle`). | `CYLPlaceholderBadgeStyle` |  |
 | `CYLPlaceholderBadgeAppearance` (class) | The look of every badge (iOS `CYLPlaceholderBadgeAppearance`). | `CYLPlaceholderBadgeAppearance` |  |
-| `CYLPlaceholderBadgeAppearance.font` (var) | The text's size, in sp (the iOS `font`). | `CYLPlaceholderBadgeAppearance` `font` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderBadgeAppearance.font` (var) | The text's size, in sp (the size of the iOS `font`). | `CYLPlaceholderBadgeAppearance` `font` |  |
+| `CYLPlaceholderBadgeAppearance.fontTypeface` (var) | The text's typeface, or null for the default (the family and weight of the iOS `font`). | `CYLPlaceholderBadgeAppearance` `font` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderBadgeAppearance.cornerRadius` (var) | The corner radius, in dp; below 0 makes a capsule. | `CYLPlaceholderBadgeAppearance` `cornerRadius` |  |
 | `CYLPlaceholderBadgeAppearance.contentInsets` (var) | The text's insets, in dp: top, left, bottom, right. | `CYLPlaceholderBadgeAppearance` `contentInsets` |  |
 | `CYLPlaceholderBadgeAppearance.animationDuration` (var) | How long a badge change pops (scales from 0.6 to its size), in seconds (`animationDuration`). | `CYLPlaceholderBadgeAppearance` `animationDuration` |  |
@@ -1072,7 +1085,8 @@
 | `CYLPlaceholderView.textLabel` (val) | The text (`textLabel`): the inherited `titleView`; set it through `title`. | `CYLPlaceholderView` `textLabel` |  |
 | `CYLPlaceholderView.badgeLabel` (val) | The badge's label (`badgeLabel`). | `CYLPlaceholderView` `badgeLabel` |  |
 | `CYLPlaceholderView.autoPlaysAnimation` (var) | Whether the animation (a file or an image sequence) plays by itself while the view is on screen, true by default; a component that drives it, such as a refresh icon following the pull, sets false and calls [playPlacehold | -[CYLPlaceholderView stopPlaceholderAnimation] | iOS has no flag: a component that drives the animation stops it after creating the view (CYLRefreshIconView) and plays or scrubs it itself |
-| `CYLPlaceholderView.defaultTitleFont` (var) | The text size in sp (`defaultTitleFont`). | `CYLPlaceholderView` `defaultTitleFont` |  |
+| `CYLPlaceholderView.defaultTitleFont` (var) | The text size in sp (`defaultTitleFont`, the size of the iOS UIFont). | `CYLPlaceholderView` `defaultTitleFont` |  |
+| `CYLPlaceholderView.defaultTitleTypeface` (var) | The text's typeface, or null for the default (the family and weight of the iOS `defaultTitleFont`). | `CYLPlaceholderView` `defaultTitleFont` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderView.defaultTitlePositionAdjustment` (var) | The text's offset in dp, x and y (`defaultTitlePositionAdjustment`). | `CYLPlaceholderView` `defaultTitlePositionAdjustment` |  |
 | `CYLPlaceholderView.defaultSelectedTitleFont` (var) | The text size in sp when selected, or 0 for [defaultTitleFont] (`defaultSelectedTitleFont`). | `CYLPlaceholderView` `defaultSelectedTitleFont` |  |
 | `CYLPlaceholderView.defaultSelectionIndicatorImage` (var) | The image drawn behind a selected placeholder by default (`defaultSelectionIndicatorImage`). | `CYLPlaceholderView` `defaultSelectionIndicatorImage` |  |
@@ -1144,7 +1158,8 @@
 | `CYLPlaceholderHUD.activityCount` (var) | How many [show] calls wait for [popActivity] (`activityCount`). | `CYLPlaceholderHUD` `activityCount` |  |
 | `CYLPlaceholderHUD.style` (var) | The colors (`style`). | `CYLPlaceholderHUD` `style` |  |
 | `CYLPlaceholderHUD.maskType` (var) | What covers the screen (`maskType`). | `CYLPlaceholderHUD` `maskType` |  |
-| `CYLPlaceholderHUD.font` (var) | The status text size, in sp (`font`). | `CYLPlaceholderHUD` `font` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderHUD.font` (var) | The status text size, in sp (the size of the iOS `font`). | `CYLPlaceholderHUD` `font` |  |
+| `CYLPlaceholderHUD.fontTypeface` (var) | The status text's typeface, or null for the default (the family and weight of the iOS `font`). | `CYLPlaceholderHUD` `font` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderHUD.cornerRadius` (var) | The box's corner radius, in dp (`cornerRadius`). | `CYLPlaceholderHUD` `cornerRadius` |  |
 | `CYLPlaceholderHUD.minimumSize` (var) | The box's smallest size, in dp: width and height (`minimumSize`). | `CYLPlaceholderHUD` `minimumSize` |  |
 | `CYLPlaceholderHUD.animationSize` (var) | The icon's side, in dp (`animationSize`). | `CYLPlaceholderHUD` `animationSize` |  |
