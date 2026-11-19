@@ -1,6 +1,8 @@
-# Runs Core's unit tests on an iOS 12.4 simulator, the podspec's minimum. iOS 12 simulator runtimes are Intel-only,
-# so this uses the Intel image and Apple's public simulator runtime download. See docs/CI-CD.md.
-name: iOS 12 runtime
+# Runs Core's unit tests on an iOS 15.x simulator, built at the 15.0 deployment target (the lowest the Xcode 26/27 SDKs
+# allow; iOS 12 is no longer buildable because the pinned CYLAnimatedItem pod needs iOS 13+). When the runner cannot
+# install an iOS 15 runtime, the tests still build at 15.0 and run on the newest iPhone simulator, with a warning.
+# See docs/CI-CD.md.
+name: iOS 15 runtime
 
 on:
   pull_request:
@@ -10,45 +12,25 @@ permissions:
   contents: read
 
 concurrency:
-  group: ios12-${{ github.ref }}
+  group: ios15-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   probe:
-    name: iOS 12 runtime
-    runs-on: macos-15-intel
+    name: iOS 15 runtime
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Environment
         run: |
           uname -m
-          ls -d /Applications/Xcode*.app
-          xcrun simctl list runtimes
-      - name: Apple's simulator runtime index (iOS 12-13)
-        run: |
-          curl -fsSL -o index.plist https://devimages-cdn.apple.com/downloads/xcode/simulators/index2.dvtdownloadableindex
-          python3 - <<'PY'
-          import plistlib
-          index = plistlib.load(open("index.plist", "rb"))
-          for d in index.get("downloadables", []):
-              name = d.get("name", "")
-              if "iOS 12" in name or "iOS 13" in name:
-                  print(name, d.get("identifier"), d.get("source"), d.get("fileSize"))
-          PY
-      - name: Select Xcode 16
-        run: |
-          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_16*.app' | sort -V | tail -1)
-          echo "Using $XCODE"
-          sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
-      # Apple does not run the iOS 12.4 runtime on macOS 13 or later ("not supported on hosts after macOS 12.99.0"),
-      # and GitHub offers no macOS 12 runner. When it cannot install, the tests still build at the 12.0 deployment
-      # target and run on the newest iPhone simulator, with a warning that iOS 12.4 itself was not run.
-      - name: Install and boot an iOS 12.4 simulator
+          xcrun simctl list runtimes
+      - name: Install and boot an iOS 15 simulator
         id: simulator
         run: |
-          destination=$(scripts/install-ios12-simulator.sh | tail -1) || destination=""
+          destination=$(scripts/install-ios15-simulator.sh | tail -1) || destination=""
           case "$destination" in
             platform=*) echo "destination=$destination" >> "$GITHUB_OUTPUT" ;;
             *)
@@ -64,24 +46,24 @@ jobs:
                   if device["name"].startswith("iPhone") and (best is None or version > best[0]):
                       best = (version, device["udid"])
           print(best[1] if best else "")')
-              echo "::warning::The iOS 12.4 simulator runtime is not supported on this macOS host; the unit tests are built for iOS 12.0 and run on the newest iPhone simulator instead."
+              echo "::warning::No iOS 15 simulator runtime could be installed on this runner; the unit tests are built for iOS 15.0 and run on the newest iPhone simulator instead."
               echo "destination=platform=iOS Simulator,id=$id" >> "$GITHUB_OUTPUT"
               ;;
           esac
-      - name: Unit tests on iOS 12.4, built at deployment target 12.0
+      - name: Unit tests on iOS 15, built at deployment target 15.0
         env:
           DESTINATION: ${{ steps.simulator.outputs.destination }}
-          TEST_DEPLOYMENT_TARGET: "12.0"
+          TEST_DEPLOYMENT_TARGET: "15.0"
         run: |
           ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
           pod --version || sudo gem install cocoapods
           set -o pipefail
           mkdir -p build
-          ruby Tests/run-tests.rb 2>&1 | tee build/ios12-unit-tests.log
+          ruby Tests/run-tests.rb 2>&1 | tee build/ios15-unit-tests.log
       - uses: actions/upload-artifact@v4
         continue-on-error: true
         if: always()
         with:
-          name: ios12-unit-tests-log
-          path: build/ios12-unit-tests.log
+          name: ios15-unit-tests-log
+          path: build/ios15-unit-tests.log
           if-no-files-found: ignore

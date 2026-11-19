@@ -1,16 +1,15 @@
 #!/bin/bash
-# Usage: scripts/device-tests.sh <device UDID> <Apple Developer team ID> [deployment target, default 12.0]
+# Usage: scripts/device-tests.sh <device UDID> <Apple Developer team ID> [deployment target, default 15.0]
 #
 # Runs the unit suite (Tests/run-tests.rb) on a connected physical device, built at the given deployment target —
-# the evidence for the podspec's iOS 12 minimum, which no simulator on a current Mac can run. Needs an Xcode that still
-# targets iOS 12 (Xcode 16 or earlier: select it with DEVELOPER_DIR or xcode-select) and the device trusted, unlocked
-# and in Developer Mode where applicable. List devices with: xcrun xctrace list devices
+# real-device evidence at that target (15.0 is the lowest the Xcode 26/27 SDKs allow; iOS 12 is no longer buildable because
+# the pinned CYLAnimatedItem pod needs iOS 13+). Needs the device trusted, unlocked and in Developer Mode where applicable. List devices with: xcrun xctrace list devices
 # The log is build/device-tests.log.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 UDID="${1:?usage: scripts/device-tests.sh <device UDID> <team ID> [deployment target]}"
 TEAM="${2:?usage: scripts/device-tests.sh <device UDID> <team ID> [deployment target]}"
-DEPLOYMENT="${3:-12.0}"
+DEPLOYMENT="${3:-15.0}"
 mkdir -p build
 xcodebuild -version
 set +e

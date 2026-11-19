@@ -23,7 +23,7 @@ if [[ -f "$OUTPUT/Info.plist" && ( -f "$STAMP" || ( "$SLICES" == simulator && -f
 fi
 CHECKOUT=$(scripts/cyltabbarcontroller-checkout.sh)
 # CYLTabBarController uses iOS 26 SDK APIs (e.g. UITabBarController.MinimizeBehavior), so it needs Xcode 26 or newer.
-# The iOS 12 jobs select Xcode 16 for this repository's own build; build the dependency with the newest Xcode instead.
+# Build the dependency with the newest Xcode, whichever Xcode this repository's own build selects.
 # Its Objective-C interface is what this repository imports, and a dynamic framework links across Xcode versions.
 major=$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]+).*/\1/p')
 if [[ "${major:-0}" -lt 26 ]]; then
