@@ -1111,5 +1111,29 @@
  "CYLPlaceholderConfiguration_fromPropertyList": {
   "ios": "`NSPropertyListSerialization` (Foundation)",
   "note": "iOS reads .plist item files with the system parser inside -initWithItemContentsOfURL:imageBundle:error: and the configuration-file initializers; Android has no system parser, so it brings its own"
+ },
+ "PathsDrawable": {
+  "ios": "n/a",
+  "note": "an internal drawing helper of the vector styles, which are ported; iOS draws them with its own classes (CYLRefreshVectorImage, CYLRefreshVectorElement), no API counterpart needed"
+ },
+ "PathParser": {
+  "ios": "n/a",
+  "note": "an internal helper of the vector path parser, which is ported; iOS parses with its own classes (CYLRefreshVectorPathsParser), no API counterpart needed"
+ },
+ "PathsView": {
+  "ios": "n/a",
+  "note": "an internal drawing helper of the vector styles, which are ported; iOS draws them with its own class (CYLRefreshVectorView), no API counterpart needed"
+ },
+ "MountainSceneView": {
+  "ios": "n/a",
+  "note": "an internal drawing helper of the fly header, which is ported; iOS draws it with its own class (CYLRefreshMountainView), no API counterpart needed"
+ },
+ "FunGameView": {
+  "ios": "n/a",
+  "note": "an internal drawing helper of the game headers, which are ported; iOS draws them with its own classes (CYLRefreshGameStartScene, CYLRefreshGamePlayingScene), no API counterpart needed"
+ },
+ "StoreHouseBarItem": {
+  "ios": "n/a",
+  "note": "an internal drawing helper of the StoreHouse header, which is ported; iOS draws it with its own class (CYLRefreshStoreHouseLine), no API counterpart needed"
  }
 }
