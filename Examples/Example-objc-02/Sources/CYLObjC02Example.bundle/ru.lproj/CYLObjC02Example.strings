@@ -13,3 +13,6 @@
 "CYLObjC02HintRefresh" = "Обновляет таблицу и возвращает на страницу 2.";
 "CYLObjC02HintLastPage" = "Прокручивает к последней странице.";
 "CYLObjC02FormatPage" = "Страница %ld";
+"CYLObjC02TitleSections" = "Разделы";
+"CYLObjC02FormatSection" = "Раздел %ld";
+"CYLObjC02HintRefreshSections" = "Обновляет таблицу.";

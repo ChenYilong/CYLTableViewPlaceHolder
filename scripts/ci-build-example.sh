@@ -62,7 +62,7 @@ capture_screenshot() {
 # SwiftUIIntrospect 26.0.0 has no iOS 27 selector, so they need an iOS 26 or earlier simulator, as on the CI runner.
 ui_tests_for_scheme() {
   case "$SCHEME" in
-    ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests ExampleObjC02UITests/CYLPagingUITests" ;;
+    ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests ExampleObjC02UITests/CYLPagingUITests ExampleObjC02UITests/CYLSectionsUITests" ;;
     ExampleSwiftUI) echo "ExampleSwiftUIUITests/CYLExampleSwiftUIUITests" ;;
   esac
 }

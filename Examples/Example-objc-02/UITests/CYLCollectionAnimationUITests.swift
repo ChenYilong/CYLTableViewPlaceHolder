@@ -38,6 +38,46 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         }
     }
 
+    // MJRefresh #1483: drag the collection again, down and up, while the header refreshes (`-slowLoad`: 8 s), three
+    // refreshes in a row; after each one the first item is back at its launch position, not moved up.
+    @MainActor
+    func testDraggingDuringHeaderRefreshKeepsFirstItemPosition() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-slowLoad"]
+        app.launch()
+        let collection = app.collectionViews["issue1523Collection"]
+        XCTAssertTrue(collection.waitForExistence(timeout: 10))
+        let first = app.cells["item-0"]
+        XCTAssertTrue(first.waitForExistence(timeout: 5))
+        sleep(1)
+        let initialY = first.frame.minY
+        let top = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+        let bottom = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
+        let middle = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        let lower = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+        for index in 1...3 {
+            top.press(forDuration: 0.1, thenDragTo: bottom)
+            XCTAssertTrue(app.navigationBars["Header refreshing"].waitForExistence(timeout: 5))
+            // Pull further while refreshing, push the content up, and pull again before the load ends.
+            middle.press(forDuration: 0.1, thenDragTo: lower)
+            lower.press(forDuration: 0.1, thenDragTo: top)
+            top.press(forDuration: 0.1, thenDragTo: middle)
+            // The push up may reach the end and start the footer too (title "Footer refreshing"), as a user's would.
+            XCTAssertFalse(app.navigationBars["Header completed \(index)"].exists, "the drags happen during the refresh")
+            XCTAssertTrue(app.navigationBars["Header completed \(index)"].waitForExistence(timeout: 15))
+            // The dragged content may rest below the top; scroll back with the status bar like a user.
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.01)).tap()
+            let deadline = Date().addingTimeInterval(10)
+            while abs(first.frame.minY - initialY) > 2 && Date() < deadline {
+                RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+            }
+            sleep(1)
+            XCTAssertTrue(first.exists)
+            XCTAssertEqual(first.frame.minY, initialY, accuracy: 2, "refresh \(index): the first item did not move up")
+        }
+        saveScreenshot("1483-after-dragging-during-refresh")
+    }
+
     // Reported with #1523: after scrolling to the end and loading more (nothing new arrives), the header must return to
     // where it was at launch, laid out from the navigation bar's origin like the content, not lower.
     @MainActor

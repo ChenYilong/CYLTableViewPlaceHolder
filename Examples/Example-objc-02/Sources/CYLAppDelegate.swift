@@ -2,8 +2,10 @@
 //  CYLAppDelegate.swift
 //  Example-objc-02
 //
-//  Launch arguments (UI tests): `-paging` opens the paging table (MJRefresh #1430) instead of the collection
-//  (MJRefresh #1523, #1506, #1483); `-noMoreData` makes the collection footer end with "no more data".
+//  Launch arguments (UI tests): `-paging` opens the paging table (MJRefresh #1430, and with `-pagingAutoFooter` the
+//  automatic footer of MJRefresh #1610; `-pagingNoGrowth` makes its loads add no page) instead of the collection
+//  (MJRefresh #1523, #1506, #1483); `-noMoreData` makes the collection footer end with "no more data"; `-sections`
+//  opens the table with floating section headers (MJRefresh PR #1444).
 //
 
 import UIKit
@@ -32,8 +34,15 @@ class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
-        let controller: UIViewController = ProcessInfo.processInfo.arguments.contains("-paging")
-            ? CYLPagingViewController() : CYLCollectionViewController()
+        let arguments = ProcessInfo.processInfo.arguments
+        let controller: UIViewController
+        if arguments.contains("-sections") {
+            controller = CYLSectionsViewController()
+        } else if arguments.contains("-paging") {
+            controller = CYLPagingViewController()
+        } else {
+            controller = CYLCollectionViewController()
+        }
         window.rootViewController = UINavigationController(rootViewController: controller)
         self.window = window
         window.makeKeyAndVisible()

@@ -37,6 +37,9 @@ enum CYLObjC02L10n: String, CaseIterable {
     case hintRefresh = "CYLObjC02HintRefresh"
     case hintLastPage = "CYLObjC02HintLastPage"
     case formatPage = "CYLObjC02FormatPage"
+    case titleSections = "CYLObjC02TitleSections"
+    case formatSection = "CYLObjC02FormatSection"
+    case hintRefreshSections = "CYLObjC02HintRefreshSections"
 }
 
 private enum CYLObjC02LocalizationBundle {
