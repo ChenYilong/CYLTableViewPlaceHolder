@@ -387,13 +387,11 @@ open class CYLPlaceholderHUD: UIView {
         @objc(setHapticsEnabled:) set { storedHapticsEnabled = newValue }
     }
 
-    // [EN] An SF Symbol (iOS 13 and later), else the style's image, as a template. [CN] SF Symbol（iOS 13 起），否则使用样式图片，均为模板图。
+    // [EN] An SF Symbol, else the style's image, as a template. [CN] SF Symbol，否则使用样式图片，均为模板图。
     private func symbol(_ name: String, fallback style: CYLPlaceholderStyle) -> UIImage {
-        if #available(iOS 13.0, *) {
-            let configuration = UIImage.SymbolConfiguration(pointSize: 28, weight: .semibold)
-            if let image = UIImage(systemName: name, withConfiguration: configuration) {
-                return image.withRenderingMode(.alwaysTemplate)
-            }
+        let configuration = UIImage.SymbolConfiguration(pointSize: 28, weight: .semibold)
+        if let image = UIImage(systemName: name, withConfiguration: configuration) {
+            return image.withRenderingMode(.alwaysTemplate)
         }
         return CYLPlaceholderView.image(for: style)?.withRenderingMode(.alwaysTemplate) ?? UIImage()
     }
@@ -734,16 +732,14 @@ open class CYLPlaceholderHUD: UIView {
         let applicationClass = applicationType as AnyObject
         guard applicationClass.responds(to: NSSelectorFromString("sharedApplication")),
               let application = applicationClass.value(forKey: "sharedApplication") as? UIApplication else { return nil }
-        if #available(iOS 13.0, *) {
-            for scene in application.connectedScenes {
-                guard let windowScene = scene as? UIWindowScene else { continue }
-                if scene.activationState != .foregroundActive && scene.activationState != .foregroundInactive { continue }
-                if let key = windowScene.windows.first(where: { $0.isKeyWindow }) { return key }
-                if let first = windowScene.windows.first { return first }
-            }
+        for scene in application.connectedScenes {
+            guard let windowScene = scene as? UIWindowScene else { continue }
+            if scene.activationState != .foregroundActive && scene.activationState != .foregroundInactive { continue }
+            if let key = windowScene.windows.first(where: { $0.isKeyWindow }) { return key }
+            if let first = windowScene.windows.first { return first }
         }
-        // [EN] iOS 12, before scenes; read through key-value coding, as `windows` is deprecated since iOS 15.
-        // [CN] iOS 12（没有 scene）；`windows` 自 iOS 15 起已废弃，因此通过 KVC 读取。
+        // [EN] No foreground scene yet; read through key-value coding, as `windows` is deprecated since iOS 15.
+        // [CN] 还没有前台 scene；`windows` 自 iOS 15 起已废弃，因此通过 KVC 读取。
         let windows = application.value(forKey: "windows") as? [UIWindow] ?? []
         if let key = windows.first(where: { $0.isKeyWindow }) { return key }
         return windows.first
@@ -905,8 +901,7 @@ open class CYLPlaceholderHUD: UIView {
         case .dark: return .white
         case .custom: return foregroundColor
         default:
-            if #available(iOS 13.0, *) { return .label }
-            return .black
+            return .label
         }
     }
 
@@ -926,10 +921,7 @@ open class CYLPlaceholderHUD: UIView {
         case .custom:
             return hudBackgroundColor
         default:
-            if #available(iOS 13.0, *) {
-                return solid ? .secondarySystemBackground : UIColor.secondarySystemBackground.withAlphaComponent(0.94)
-            }
-            return UIColor(white: 0.96, alpha: solid ? 1 : 0.94)
+            return solid ? .secondarySystemBackground : UIColor.secondarySystemBackground.withAlphaComponent(0.94)
         }
     }
 

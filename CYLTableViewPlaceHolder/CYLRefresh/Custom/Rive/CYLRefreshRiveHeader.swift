@@ -149,7 +149,6 @@ public final class CYLRefreshRiveStyle: NSObject {
  * [CN] 由 Rive 文件绘制的刷新头（对应 flutter_easy_refresh 的 Rive 样式）。随下拉变高，并让动画至少按 `minimumHeight` 布局。需要
  *      iOS 14（RiveRuntime）。
  */
-@available(iOS 14.0, *)
 @available(*, deprecated, message: "Uses Rive's legacy API: the style packages' files have state machine inputs and linear animations, not view models.")
 @objc(CYLRefreshRiveHeader)
 public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {

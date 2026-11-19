@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/ChenYilong/CYLTableViewPlaceHolder"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { "ChenYilong" => "luohanchenyilong@163.com" }
-  s.platform     = :ios, '12.0'
+  s.platform     = :ios, '15.0'
   s.source       = { :git => "https://github.com/ChenYilong/CYLTableViewPlaceHolder.git", :tag => s.version.to_s }
   s.requires_arc = true
   # SpriteKit draws the two game headers of the CYLRefresh styles (BattleCity, HitBlock).
@@ -65,17 +65,15 @@ Pod::Spec.new do |s|
   # own. An app that adds `CYLAnimatedItem/<Type>` directly, without one of these subspecs, therefore shows static images
   # in CYLPlaceholderView: add the matching subspec of this pod instead.
   engine_condition = { 'SWIFT_ACTIVE_COMPILATION_CONDITIONS' => '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE' }
-  # Lottie uses the Swift version of lottie-ios (iOS 13).
+  # Lottie uses the Swift version of lottie-ios.
   s.subspec 'Lottie' do |lottie|
     lottie.dependency 'CYLTableViewPlaceHolder/LottieSwift'
-    lottie.ios.deployment_target = '13.0'
   end
 
   s.subspec 'LottieSwift' do |lottieswift|
     lottieswift.dependency 'CYLTableViewPlaceHolder/Core'
     lottieswift.dependency 'CYLAnimatedItem/LottieSwift'
     lottieswift.pod_target_xcconfig = engine_condition
-    lottieswift.ios.deployment_target = '13.0'
   end
 
   # PAG animations (Tencent libpag, a binary pod).
@@ -93,14 +91,13 @@ Pod::Spec.new do |s|
     pagenterprise.pod_target_xcconfig = engine_condition
   end
 
-  # Rive animations (`RiveRuntime`, iOS 14). The Rive refresh header lives with the other refresh controls in
+  # Rive animations (`RiveRuntime`). The Rive refresh header lives with the other refresh controls in
   # CYLRefresh/Custom/Rive/ and is compiled here, since it needs RiveRuntime.
   s.subspec 'Rive' do |rive|
     rive.dependency 'CYLTableViewPlaceHolder/Core'
     rive.dependency 'CYLAnimatedItem/Rive'
     rive.pod_target_xcconfig = engine_condition
     rive.source_files = 'CYLTableViewPlaceHolder/CYLRefresh/Custom/Rive/*.swift'
-    rive.ios.deployment_target = '14.0'
   end
 
   # SVGA animations (`SVGAPlayerLite`).

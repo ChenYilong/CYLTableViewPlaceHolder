@@ -18,13 +18,9 @@ import UIKit
 
 extension UIActivityIndicatorView.Style {
 
-    // [EN] The spinner style of the MJRefresh controls: medium from iOS 13, else gray. Gray (raw value 2, deprecated in
-    //      iOS 13) is spelled by its raw value, so builds with an iOS 13+ deployment target report no deprecation for
-    //      the iOS 12 branch. [CN] MJRefresh 控件的菊花样式：iOS 13 起为 medium，否则为 gray。gray（原始值 2，iOS 13 起废弃）用原始值
-    //      表示，使部署目标为 iOS 13 及以上的构建不会因 iOS 12 分支报告废弃警告。
+    // [EN] The spinner style of the refresh controls: medium. [CN] 刷新控件的菊花样式：medium。
     static var cyl_refreshDefault: UIActivityIndicatorView.Style {
-        if #available(iOS 13.0, *) { return .medium }
-        return UIActivityIndicatorView.Style(rawValue: 2) ?? UIActivityIndicatorView().style
+        return .medium
     }
 }
 
@@ -104,7 +100,7 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
     // MARK: - Overrides
 
     /**
-     * [EN] Picks the spinner style (medium from iOS 13, else gray). [CN] 选择菊花样式（iOS 13 起为 medium，否则为 gray）。
+     * [EN] Picks the spinner style (medium). [CN] 选择菊花样式（medium）。
      */
     open override func prepare() {
         super.prepare()

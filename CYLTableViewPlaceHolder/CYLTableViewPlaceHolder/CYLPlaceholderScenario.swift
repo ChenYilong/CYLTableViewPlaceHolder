@@ -18,13 +18,11 @@ import UIKit
 // MARK: - Look
 
 private func CYLScenarioAccentColor() -> UIColor {
-    if #available(iOS 13.0, *) { return .systemBlue }
-    return UIColor(red: 0, green: 122.0 / 255, blue: 1, alpha: 1)
+    return .systemBlue
 }
 
 private func CYLScenarioSecondaryTextColor() -> UIColor {
-    if #available(iOS 13.0, *) { return .secondaryLabel }
-    return .gray
+    return .secondaryLabel
 }
 
 private func CYLScenarioLineIconColor() -> UIColor {

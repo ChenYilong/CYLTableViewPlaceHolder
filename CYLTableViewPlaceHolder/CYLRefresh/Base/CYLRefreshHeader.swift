@@ -589,8 +589,8 @@ open class CYLRefreshHeader: CYLRefreshComponent {
 
     private func resetInset() {
         if updatingRefreshInset { return }
-        // [EN] The iOS 10 check of the Objective-C code (no reset without a window) is gone: the library needs iOS 12.
-        // [CN] Objective-C 代码中针对 iOS 10 的检查（没有 window 时不重置）已删除：库最低支持 iOS 12。
+        // [EN] The iOS 10 check of the Objective-C code (no reset without a window) is gone: the library needs iOS 15.
+        // [CN] Objective-C 代码中针对 iOS 10 的检查（没有 window 时不重置）已删除：库最低支持 iOS 15。
         guard let scrollView = scrollView else { return }
 
         // FIX: MJRefresh PR #1444 (device rotation)

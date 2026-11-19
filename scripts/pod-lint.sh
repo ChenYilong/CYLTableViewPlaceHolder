@@ -6,7 +6,7 @@
 #        scripts/pod-lint.sh xcframework                build/CYLTableViewPlaceHolder.xcframework.zip with Carthage
 #
 # Adapted from CYLTabBarController's scripts/pod-lint.sh. Xcode 27 SDKs require iOS 15, so validation builds use
-# scripts/pod-lint.xcconfig; the podspec's declared platform is unchanged (12.0, see the Task-Log question of 2026-11-20). `--allow-warnings` covers upstream libpag
+# scripts/pod-lint.xcconfig; the podspec itself says 15.0 (the pinned CYLAnimatedItem still declares 12.0). `--allow-warnings` covers upstream libpag
 # warnings (license file, OpenGL ES deprecations, umbrella header).
 set -euo pipefail
 cd "$(dirname "$0")/.."

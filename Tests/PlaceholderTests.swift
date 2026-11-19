@@ -1035,12 +1035,7 @@ final class PlaceholderTests: XCTestCase {
         let navigation = UINavigationController(rootViewController: UIViewController())
         window.rootViewController = navigation
         window.makeKeyAndVisible()
-        let image: UIImage
-        if #available(iOS 13.0, *) {
-            image = UIImage(systemName: "star")!
-        } else {
-            image = UIGraphicsImageRenderer(size: CGSize(width: 12, height: 12)).image { _ in }
-        }
+        let image = UIImage(systemName: "star")!
         let kinds: [CYLRefreshComponent.Type] = [
             CYLRefreshAutoFooter.self, CYLRefreshAutoStateFooter.self, CYLRefreshAutoNormalFooter.self,
             CYLRefreshAutoAnimationFooter.self, CYLRefreshAutoGifFooter.self,

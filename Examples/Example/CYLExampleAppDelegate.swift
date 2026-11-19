@@ -32,7 +32,6 @@ final class CYLExampleAppDelegate: UIResponder, UIApplicationDelegate {
 /// UIScene lifecycle: iOS 26 apps built with a current SDK must adopt it, or UIKit stops at launch.
 /// Named in Info.plist (UIApplicationSceneManifest) as `CYLSceneDelegate`; `@objc(CYLSceneDelegate)` keeps that
 /// Objective-C class name independent of the Swift module name.
-@available(iOS 13.0, *)
 @objc(CYLSceneDelegate)
 final class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
 

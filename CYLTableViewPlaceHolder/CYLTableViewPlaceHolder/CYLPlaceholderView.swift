@@ -102,42 +102,27 @@ private func CYLPlaceholderValue(_ value: Any?, hasTypeOf sample: NSValue) -> NS
 
 private func CYLPlaceholderScanDouble(_ text: String) -> Double? {
     let scanner = Scanner(string: text)
-    if #available(iOS 13.0, *) {
-        guard let number = scanner.scanDouble(), scanner.isAtEnd else { return nil }
-        return number
-    }
-    var number = 0.0
-    guard scanner.scanDouble(&number), scanner.isAtEnd else { return nil }
+    guard let number = scanner.scanDouble(), scanner.isAtEnd else { return nil }
     return number
 }
 
 private func CYLPlaceholderScanInt64(_ text: String) -> Int64? {
     let scanner = Scanner(string: text)
     scanner.charactersToBeSkipped = nil
-    if #available(iOS 13.0, *) {
-        guard let number = scanner.scanInt64(), scanner.isAtEnd else { return nil }
-        return number
-    }
-    var number: Int64 = 0
-    guard scanner.scanInt64(&number), scanner.isAtEnd else { return nil }
+    guard let number = scanner.scanInt64(), scanner.isAtEnd else { return nil }
     return number
 }
 
 private func CYLPlaceholderScanHex(_ text: String) -> UInt64? {
     let scanner = Scanner(string: text)
-    if #available(iOS 13.0, *) {
-        return scanner.scanUInt64(representation: .hexadecimal)
-    }
-    var number: UInt64 = 0
-    return scanner.scanHexInt64(&number) ? number : nil
+    return scanner.scanUInt64(representation: .hexadecimal)
 }
 
 private func CYLPlaceholderConfiguredImage(_ value: Any?, _ imageBundle: Bundle?) -> UIImage? {
     if let image = value as? UIImage { return image }
     guard let name = value as? String else { return nil }
     if name.hasPrefix("system:") {
-        if #available(iOS 13.0, *) { return UIImage(systemName: String(name.dropFirst(7))) }
-        return nil
+        return UIImage(systemName: String(name.dropFirst(7)))
     }
     guard let bundle = imageBundle ?? CYLPlaceholderResourceBundle() else { return nil }
     return UIImage(named: name, in: bundle, compatibleWith: nil)
@@ -145,27 +130,24 @@ private func CYLPlaceholderConfiguredImage(_ value: Any?, _ imageBundle: Bundle?
 
 private func CYLPlaceholderAppearanceImage(_ light: UIImage?, _ dark: UIImage?) -> UIImage? {
     guard let light = light, let dark = dark else { return light ?? dark }
-    if #available(iOS 13.0, *) {
-        let lightStyle = UITraitCollection(traitsFrom: [UITraitCollection(displayScale: light.scale),
-                                                        UITraitCollection(userInterfaceStyle: .light)])
-        let darkStyle = UITraitCollection(traitsFrom: [UITraitCollection(displayScale: dark.scale),
-                                                       UITraitCollection(userInterfaceStyle: .dark)])
-        var lightVariant = light.imageAsset?.image(with: lightStyle) ?? light
-        var darkVariant = dark.imageAsset?.image(with: darkStyle) ?? dark
-        if let cgImage = lightVariant.cgImage {
-            lightVariant = UIImage(cgImage: cgImage, scale: lightVariant.scale, orientation: lightVariant.imageOrientation)
-                .withRenderingMode(light.renderingMode)
-        }
-        if let cgImage = darkVariant.cgImage {
-            darkVariant = UIImage(cgImage: cgImage, scale: darkVariant.scale, orientation: darkVariant.imageOrientation)
-                .withRenderingMode(dark.renderingMode)
-        }
-        let asset = UIImageAsset()
-        asset.register(lightVariant, with: UITraitCollection(displayScale: lightVariant.scale))
-        asset.register(darkVariant, with: darkStyle)
-        return asset.image(with: UITraitCollection.current)
+    let lightStyle = UITraitCollection(traitsFrom: [UITraitCollection(displayScale: light.scale),
+                                                    UITraitCollection(userInterfaceStyle: .light)])
+    let darkStyle = UITraitCollection(traitsFrom: [UITraitCollection(displayScale: dark.scale),
+                                                   UITraitCollection(userInterfaceStyle: .dark)])
+    var lightVariant = light.imageAsset?.image(with: lightStyle) ?? light
+    var darkVariant = dark.imageAsset?.image(with: darkStyle) ?? dark
+    if let cgImage = lightVariant.cgImage {
+        lightVariant = UIImage(cgImage: cgImage, scale: lightVariant.scale, orientation: lightVariant.imageOrientation)
+            .withRenderingMode(light.renderingMode)
     }
-    return light
+    if let cgImage = darkVariant.cgImage {
+        darkVariant = UIImage(cgImage: cgImage, scale: darkVariant.scale, orientation: darkVariant.imageOrientation)
+            .withRenderingMode(dark.renderingMode)
+    }
+    let asset = UIImageAsset()
+    asset.register(lightVariant, with: UITraitCollection(displayScale: lightVariant.scale))
+    asset.register(darkVariant, with: darkStyle)
+    return asset.image(with: UITraitCollection.current)
 }
 
 private func CYLPlaceholderColor(_ value: Any?) -> UIColor? {
@@ -1032,7 +1014,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             image = configured
         } else if let name = imageValue as? String {
             if name.hasPrefix("system:") {
-                if #available(iOS 13.0, *) { image = UIImage(systemName: String(name.dropFirst(7))) }
+                image = UIImage(systemName: String(name.dropFirst(7)))
             } else {
                 guard let bundle = imageBundle ?? CYLPlaceholderResourceBundle() else {
                     throw CYLPlaceholderConfigurationFailure("The placeholder resource bundle was not found.")
@@ -1855,20 +1837,18 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         var animationColors = [String: UIColor]()
         var colorSources = [Any]()
         if let colors = attributes[CYLPlaceholderItemAnimationColors] { colorSources.append(colors) }
-        if #available(iOS 13.0, *) {
-            if traitCollection.userInterfaceStyle == .dark {
-                if let colors = attributes[CYLPlaceholderItemAnimationDarkColors] { colorSources.append(colors) }
-                let fileExtension = url.pathExtension.lowercased()
-                let specificKey = fileExtension == "json" ? CYLPlaceholderTypeKey.lottieDarkColors :
-                    (fileExtension == "riv" ? CYLPlaceholderTypeKey.riveDarkColors : nil)
-                if let key = specificKey, let colors = attributes[key] { colorSources.append(colors) }
-            }
+        if traitCollection.userInterfaceStyle == .dark {
+            if let colors = attributes[CYLPlaceholderItemAnimationDarkColors] { colorSources.append(colors) }
+            let fileExtension = url.pathExtension.lowercased()
+            let specificKey = fileExtension == "json" ? CYLPlaceholderTypeKey.lottieDarkColors :
+                (fileExtension == "riv" ? CYLPlaceholderTypeKey.riveDarkColors : nil)
+            if let key = specificKey, let colors = attributes[key] { colorSources.append(colors) }
         }
         for source in colorSources {
             guard let dictionary = source as? NSDictionary else { continue }
             for (path, value) in dictionary {
                 var color = CYLPlaceholderColor(value)
-                if #available(iOS 13.0, *) { color = color?.resolvedColor(with: traitCollection) }
+                color = color?.resolvedColor(with: traitCollection)
                 if let name = path as? String, let resolved = color { animationColors[name] = resolved }
             }
         }
@@ -2185,9 +2165,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
                 chromeView.layer.cornerRadius = min(max(0, titleCornerRadius), chrome.height / 2)
                 chromeView.layer.borderWidth = titleBorderWidth
                 var borderColor = titleBorderColor
-                if #available(iOS 13.0, *) {
-                    borderColor = borderColor?.resolvedColor(with: traitCollection)
-                }
+                borderColor = borderColor?.resolvedColor(with: traitCollection)
                 chromeView.layer.borderColor = borderColor?.cgColor
                 insertSubview(chromeView, belowSubview: titleLabel)
             }

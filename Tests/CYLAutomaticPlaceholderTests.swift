@@ -253,47 +253,45 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
     }
 
     func testConfiguredImagesResolveForLightDarkAndSelection() throws {
-        if #available(iOS 13.0, *) {
-            let image = { (color: UIColor) in solidImage(color, CGSize(width: 12, height: 12)) }
-            let light = image(.red), dark = image(.blue)
-            let selected = image(.green), selectedDark = image(.yellow)
-            var result = makePlaceholder([
-                CYLPlaceholderItemImage: light, CYLPlaceholderItemDarkImage: dark,
-                CYLPlaceholderItemSelectedImage: selected, CYLPlaceholderItemSelectedDarkImage: selectedDark
-            ])
-            XCTAssertNotNil(result.view)
-            XCTAssertNil(result.error)
-            let placeholder = try XCTUnwrap(result.view)
-            let lightTraits = UITraitCollection(traitsFrom: [
-                UITraitCollection(displayScale: light.scale), UITraitCollection(userInterfaceStyle: .light)])
-            let darkTraits = UITraitCollection(traitsFrom: [
-                UITraitCollection(displayScale: dark.scale), UITraitCollection(userInterfaceStyle: .dark)])
-            let resolved = { (traits: UITraitCollection) in placeholder.imageView.image?.imageAsset?.image(with: traits).cgImage }
-            XCTAssertIdentical(resolved(lightTraits), light.cgImage)
-            XCTAssertIdentical(resolved(darkTraits), dark.cgImage)
-            placeholder.isSelected = true
-            XCTAssertIdentical(resolved(lightTraits), selected.cgImage)
-            XCTAssertIdentical(resolved(darkTraits), selectedDark.cgImage)
-            placeholder.isSelected = false
-            XCTAssertIdentical(resolved(darkTraits), dark.cgImage)
-            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-            window.overrideUserInterfaceStyle = .light
-            window.addSubview(placeholder)
-            XCTAssertEqual(placeholder.imageView.traitCollection.userInterfaceStyle, .light)
-            XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), light.cgImage)
-            window.overrideUserInterfaceStyle = .dark
-            expectation(for: NSPredicate { _, _ in
-                placeholder.imageView.traitCollection.userInterfaceStyle == .dark
-            }, evaluatedWith: placeholder, handler: nil)
-            waitForExpectations(timeout: 3, handler: nil)
-            XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), dark.cgImage)
-            placeholder.isSelected = true
-            XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), selectedDark.cgImage)
-            placeholder.removeFromSuperview()
-            result = makePlaceholder([CYLPlaceholderItemDarkImage: 42])
-            XCTAssertNil(result.view)
-            XCTAssertNotNil(result.error)
-        }
+        let image = { (color: UIColor) in solidImage(color, CGSize(width: 12, height: 12)) }
+        let light = image(.red), dark = image(.blue)
+        let selected = image(.green), selectedDark = image(.yellow)
+        var result = makePlaceholder([
+            CYLPlaceholderItemImage: light, CYLPlaceholderItemDarkImage: dark,
+            CYLPlaceholderItemSelectedImage: selected, CYLPlaceholderItemSelectedDarkImage: selectedDark
+        ])
+        XCTAssertNotNil(result.view)
+        XCTAssertNil(result.error)
+        let placeholder = try XCTUnwrap(result.view)
+        let lightTraits = UITraitCollection(traitsFrom: [
+            UITraitCollection(displayScale: light.scale), UITraitCollection(userInterfaceStyle: .light)])
+        let darkTraits = UITraitCollection(traitsFrom: [
+            UITraitCollection(displayScale: dark.scale), UITraitCollection(userInterfaceStyle: .dark)])
+        let resolved = { (traits: UITraitCollection) in placeholder.imageView.image?.imageAsset?.image(with: traits).cgImage }
+        XCTAssertIdentical(resolved(lightTraits), light.cgImage)
+        XCTAssertIdentical(resolved(darkTraits), dark.cgImage)
+        placeholder.isSelected = true
+        XCTAssertIdentical(resolved(lightTraits), selected.cgImage)
+        XCTAssertIdentical(resolved(darkTraits), selectedDark.cgImage)
+        placeholder.isSelected = false
+        XCTAssertIdentical(resolved(darkTraits), dark.cgImage)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        window.overrideUserInterfaceStyle = .light
+        window.addSubview(placeholder)
+        XCTAssertEqual(placeholder.imageView.traitCollection.userInterfaceStyle, .light)
+        XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), light.cgImage)
+        window.overrideUserInterfaceStyle = .dark
+        expectation(for: NSPredicate { _, _ in
+            placeholder.imageView.traitCollection.userInterfaceStyle == .dark
+        }, evaluatedWith: placeholder, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), dark.cgImage)
+        placeholder.isSelected = true
+        XCTAssertIdentical(resolved(placeholder.imageView.traitCollection), selectedDark.cgImage)
+        placeholder.removeFromSuperview()
+        result = makePlaceholder([CYLPlaceholderItemDarkImage: 42])
+        XCTAssertNil(result.view)
+        XCTAssertNotNil(result.error)
     }
 
     func testBadgeDotTextLayoutAndAccessibility() {
@@ -423,7 +421,6 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
     }
 
     func testRegisteredAnimationReceivesResolvedAppearanceColors() throws {
-        guard #available(iOS 13.0, *) else { return } // Dark Mode needs iOS 13; iOS 12 runs the rest of the suite.
         var player: TestAnimationPlayer?
         XCTAssertTrue(CYLPlaceholderView.registerAnimationFactory({ _, _, _, _, _ in
             let made = TestAnimationPlayer()
@@ -902,10 +899,8 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         result = makePlaceholder([CYLPlaceholderItemTitleFont: "bold:-1"])
         XCTAssertNil(result.view)
         XCTAssertNotNil(result.error)
-        if #available(iOS 13.0, *) {
-            result = makePlaceholder([CYLPlaceholderItemImage: "system:house"])
-            XCTAssertNotNil(result.view?.imageView.image)
-        }
+        result = makePlaceholder([CYLPlaceholderItemImage: "system:house"])
+        XCTAssertNotNil(result.view?.imageView.image)
     }
 
     func testAdditionalPlaceholderImagesLoadFromResourceBundle() throws {

@@ -118,7 +118,7 @@ open class CYLPlaceholderNetworkMonitor: NSObject {
             // [CN] 在监测器队列上读取路径；在主队列、本回调之外应用。
             let status = CYLPlaceholderNetworkMonitor.status(for: path)
             var constrained = false
-            if #available(iOS 13.0, *) { constrained = path.isConstrained }
+            constrained = path.isConstrained
             let expensive = path.isExpensive
             DispatchQueue.main.async { [weak self] in
                 // [EN] Ignore an update a cancelled monitor had queued. [CN] 忽略已取消的监测器排队中的更新。

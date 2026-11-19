@@ -105,7 +105,7 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
     // MARK: - Overrides
 
     /**
-     * [EN] Picks the spinner style (medium from iOS 13, else gray). [CN] 选择菊花样式（iOS 13 起为 medium，否则为 gray）。
+     * [EN] Picks the spinner style (medium). [CN] 选择菊花样式（medium）。
      */
     open override func prepare() {
         super.prepare()

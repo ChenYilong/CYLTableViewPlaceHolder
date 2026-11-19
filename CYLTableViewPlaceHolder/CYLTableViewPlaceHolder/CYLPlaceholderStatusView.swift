@@ -24,22 +24,16 @@ private let CYLPlaceholderStatusVerticalPadding: CGFloat = 12
 // [EN] ChatKit's pink, rgb(255, 199, 199); a dark red in Dark Mode. [CN] ChatKit 的粉红色；深色模式下为暗红色。
 private func CYLPlaceholderStatusBackgroundColor() -> UIColor {
     let light = UIColor(red: 255 / 255.0, green: 199 / 255.0, blue: 199 / 255.0, alpha: 1)
-    if #available(iOS 13.0, *) {
-        let dark = UIColor(red: 90 / 255.0, green: 30 / 255.0, blue: 30 / 255.0, alpha: 1)
-        return UIColor { traits in traits.userInterfaceStyle == .dark ? dark : light }
-    }
-    return light
+    let dark = UIColor(red: 90 / 255.0, green: 30 / 255.0, blue: 30 / 255.0, alpha: 1)
+    return UIColor { traits in traits.userInterfaceStyle == .dark ? dark : light }
 }
 
 // [EN] ChatKit used gray (about 3:1 on the pink); #555555 keeps the look and reaches 4.9:1 (WCAG AA). Light pink text in
 //      Dark Mode. [CN] ChatKit 使用灰色（在粉红背景上约 3:1）；#555555 保持观感并达到 4.9:1（WCAG AA）。深色模式下为浅粉色文字。
 private func CYLPlaceholderStatusTextColor() -> UIColor {
     let light = UIColor(white: 0x55 / 255.0, alpha: 1)
-    if #available(iOS 13.0, *) {
-        let dark = UIColor(red: 242 / 255.0, green: 208 / 255.0, blue: 208 / 255.0, alpha: 1)
-        return UIColor { traits in traits.userInterfaceStyle == .dark ? dark : light }
-    }
-    return light
+    let dark = UIColor(red: 242 / 255.0, green: 208 / 255.0, blue: 208 / 255.0, alpha: 1)
+    return UIColor { traits in traits.userInterfaceStyle == .dark ? dark : light }
 }
 
 private func CYLStatusConfigurationError(_ description: String) -> NSError {

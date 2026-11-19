@@ -107,7 +107,7 @@ extension UIScrollView {
      * [CN] 实际生效的内容 inset：iOS 11 及以后为 `adjustedContentInset`，否则为 `contentInset`。
      */
     @objc public dynamic var cyl_inset: UIEdgeInsets {
-        // [EN] The library needs iOS 12, so `adjustedContentInset` always exists. [CN] 库最低 iOS 12，`adjustedContentInset` 总是存在。
+        // [EN] The library needs iOS 15, so `adjustedContentInset` always exists. [CN] 库最低 iOS 15，`adjustedContentInset` 总是存在。
         adjustedContentInset
     }
 
