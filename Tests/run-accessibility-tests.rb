@@ -7,6 +7,7 @@ require 'xcodeproj'
 root = File.expand_path('..', __dir__)
 core_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder')
 refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
+hud_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLPlaceholderHUD')
 visible = ->(path) { !File.basename(path).start_with?('._') }
 
 Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
@@ -29,7 +30,7 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
     config.build_settings['INFOPLIST_KEY_UILaunchScreen_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UIApplicationSceneManifest_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UISupportedInterfaceOrientations'] = 'UIInterfaceOrientationPortrait'
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\" \"#{hud_dir}\""
     # CYLPlaceholderView is Swift (2026-11-19): the module is named like the pod (so the Objective-C files find
     # CYLTableViewPlaceHolder-Swift.h), the bridging header plays the pod's umbrella header for the Swift file, and the
     # CYLAnimatedItem framework always has the engine.
@@ -46,7 +47,8 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
 
   sources = [File.join(root, 'Tests/AccessibilityHost/main.m')] +
             Dir.glob(File.join(core_dir, '*.{m,swift}')).select(&visible) +
-            Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible)
+            Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible) +
+            Dir.glob(File.join(hud_dir, '*.m')).select(&visible)
   sources.sort.each { |path| app.source_build_phase.add_file_reference(project.main_group.new_file(path)) }
   # One resource bundle holds the placeholder and refresh localizations and images.
   app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
