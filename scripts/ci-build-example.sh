@@ -57,10 +57,13 @@ capture_screenshot() {
   [[ -s "$SCREENSHOT" ]]
 }
 
-# Demos with UI tests that also save step screenshots next to the launch screenshot (CYL_SCREENSHOT_DIR).
+# Demos with UI tests run after the launch screenshot; objc-02's also save step screenshots (CYL_SCREENSHOT_DIR).
+# The SwiftUI tests guard MJRefresh#1628 (the header stays visible through a SwiftUI data update, real pull included);
+# SwiftUIIntrospect 26.0.0 has no iOS 27 selector, so they need an iOS 26 or earlier simulator, as on the CI runner.
 ui_tests_for_scheme() {
   case "$SCHEME" in
     ExampleObjC02) echo "ExampleObjC02UITests/CYLCollectionAnimationUITests ExampleObjC02UITests/CYLPagingUITests" ;;
+    ExampleSwiftUI) echo "ExampleSwiftUIUITests/CYLExampleSwiftUIUITests" ;;
   esac
 }
 

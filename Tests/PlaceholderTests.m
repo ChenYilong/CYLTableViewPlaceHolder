@@ -43,6 +43,16 @@ static const NSTimeInterval CYLTestTimeout = 30;
 - (BOOL)isDecelerating { return self.cyl_testDecelerating; }
 @end
 
+// [EN] A scroll view that reports a drag and a pan state set by the test. [CN] 由测试设置拖动与手势状态的滚动视图。
+@interface CYLTestDraggingScrollView : UIScrollView
+@property (nonatomic) BOOL cyl_testDragging;
+@property (nonatomic, strong) CYLTestPanGestureRecognizer *cyl_testPan;
+@end
+@implementation CYLTestDraggingScrollView
+- (BOOL)isDragging { return self.cyl_testDragging; }
+- (UIPanGestureRecognizer *)panGestureRecognizer { return self.cyl_testPan ?: [super panGestureRecognizer]; }
+@end
+
 @interface CYLTestReentrantScrollView : UIScrollView
 @property (nonatomic) BOOL cyl_triggerInsetFeedback;
 @property (nonatomic) NSInteger cyl_insetDepth;
@@ -525,6 +535,50 @@ static const NSTimeInterval CYLTestTimeout = 30;
     window.hidden = YES;
 }
 
+// FIX: issue MJRefresh#1628
+// [EN] SwiftUI's ScrollView resets the inset and the offset when its data changes during a refresh; the header adds its
+//      refreshing inset again on the new original inset and stays visible, and ending the refresh returns to that inset.
+// [CN] 刷新期间 SwiftUI 的 ScrollView 在数据变化时重置 inset 和 offset；刷新头在新的原始 inset 上重新加上刷新 inset 并保持可见，
+//      结束刷新后回到该 inset。
+- (void)testHeaderKeepsItsRefreshingInsetWhenTheInsetIsResetDuringARefresh {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    [window.rootViewController.view addSubview:self.table];
+    self.table.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    self.table.contentInset = UIEdgeInsetsZero;
+    [window makeKeyAndVisible];
+    CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    header.fastAnimationDuration = 0;
+    header.slowAnimationDuration = 0;
+    self.table.cyl_header = header;
+    XCTestExpectation *started = [self expectationWithDescription:@"header started"];
+    [header beginRefreshingWithCompletionBlock:^{ [started fulfill]; }];
+    [self waitForExpectations:@[started] timeout:CYLTestTimeout];
+    XCTAssertEqualWithAccuracy(self.table.cyl_insetT, header.cyl_h, 0.001);
+
+    // [EN] The reset of the original issue: inset and offset back to zero. [CN] 原 issue 中的重置：inset 与 offset 归零。
+    self.table.contentOffset = CGPointZero;
+    self.table.contentInset = UIEdgeInsetsZero;
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertEqualWithAccuracy(self.table.cyl_insetT, header.cyl_h, 0.001);
+    XCTAssertEqualWithAccuracy(self.table.contentOffset.y, -header.cyl_h, 0.001);
+    CGRect headerFrame = [header convertRect:header.bounds toView:window];
+    CGRect viewport = [self.table convertRect:self.table.bounds toView:window];
+    XCTAssertTrue(CGRectIntersectsRect(headerFrame, viewport));
+
+    // [EN] A new inset written during the refresh becomes the original inset. [CN] 刷新期间写入的新 inset 成为原始 inset。
+    self.table.contentInset = UIEdgeInsetsMake(20, 0, 0, 0);
+    XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20 + header.cyl_h, 0.001);
+    XCTAssertEqualWithAccuracy(self.table.contentOffset.y, -(20 + header.cyl_h), 0.001);
+
+    XCTestExpectation *ended = [self expectationWithDescription:@"header ended"];
+    [header endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+    [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
+    XCTAssertEqualWithAccuracy(self.table.cyl_insetT, 20, 0.001);
+    self.table.cyl_header = nil;
+    window.hidden = YES;
+}
+
 - (void)testHeaderInsetFeedbackDuringStartAndResetDoesNotReenterSetter {
     UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
     window.rootViewController = [UIViewController new];
@@ -833,6 +887,57 @@ static const NSTimeInterval CYLTestTimeout = 30;
     }
 }
 
+// FIX: issue MJRefresh#1630
+// [EN] A controller torn down while its table's header and footer refresh, after the footer moved to another table and
+//      back, 100 times: no "not registered as an observer" exception, and the table and the header are released.
+// [CN] 控制器在表格的刷新头和刷新尾正在刷新时销毁（刷新尾先移到另一个表格再移回），重复 100 次：不抛出“未注册为观察者”的异常，
+//      表格和刷新头都被释放。
+- (void)testControllerTeardownWhileRefreshingReleasesWithoutObserverExceptions {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    window.rootViewController = navigation;
+    [window makeKeyAndVisible];
+    __weak UITableView *weakTable = nil;
+    __weak CYLRefreshComponent *weakHeader = nil;
+    for (NSUInteger index = 0; index < 100; index++) {
+        @autoreleasepool {
+            UIViewController *controller = [UIViewController new];
+            UITableView *table = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+            UITableView *other = [[UITableView alloc] initWithFrame:controller.view.bounds style:UITableViewStylePlain];
+            [controller.view addSubview:table];
+            [controller.view addSubview:other];
+            CYLRefreshHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+            CYLRefreshFooter *footer = index % 2 ? [CYLRefreshAutoNormalFooter footerWithRefreshingBlock:^{}]
+                                                 : [CYLRefreshBackNormalFooter footerWithRefreshingBlock:^{}];
+            for (CYLRefreshComponent *component in @[header, footer]) {
+                component.fastAnimationDuration = 0;
+                component.slowAnimationDuration = 0;
+            }
+            table.cyl_header = header;
+            table.cyl_footer = footer;
+            [navigation pushViewController:controller animated:NO];
+            [controller.view layoutIfNeeded];
+            XCTAssertNoThrow([other addSubview:footer]);
+            XCTAssertNoThrow([table addSubview:footer]);
+            [header beginRefreshing];
+            [footer beginRefreshing];
+            weakTable = table;
+            weakHeader = header;
+            XCTAssertNoThrow([navigation popViewControllerAnimated:NO]);
+            XCTAssertNoThrow([table removeFromSuperview]);
+        }
+        // [EN] Let the queued start, animation and layout work run after the teardown; then the table and header are released.
+        // [CN] 让排队的开始、动画与布局任务在销毁后执行；之后表格和刷新头被释放。
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:CYLTestTimeout];
+        while ((weakTable || weakHeader) && deadline.timeIntervalSinceNow > 0) {
+            [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+        }
+        XCTAssertNil(weakTable);
+        XCTAssertNil(weakHeader);
+    }
+    window.hidden = YES;
+}
+
 - (void)testAutoFooterRestoresInsetWhenRemoved {
     self.table.contentInset = UIEdgeInsetsMake(0, 0, 12, 0);
     CGFloat initialInset = self.table.cyl_insetB;
@@ -1025,6 +1130,64 @@ static const NSTimeInterval CYLTestTimeout = 30;
     [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
     XCTAssertEqualWithAccuracy(scrollView.cyl_insetR, 0, 0.001);
     XCTAssertEqual(callbacks, 1u);
+    scrollView.cyl_trailer = nil;
+    window.hidden = YES;
+}
+
+// FIX: issue MJRefresh#1623
+// [EN] autoTriggerTimes: one drag triggers the automatic trailer once (default 1); moving back and forth in the same
+//      drag does not load again, and the next drag (pan began) may trigger once more.
+// [CN] autoTriggerTimes：一次拖动只自动触发一次 trailer（默认 1）；同一次拖动中来回移动不会再次加载，下一次拖动（手势开始）可以再触发一次。
+- (void)testAutomaticTrailerTriggersOncePerDrag {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.rootViewController = [UIViewController new];
+    CYLTestDraggingScrollView *scrollView = [[CYLTestDraggingScrollView alloc] initWithFrame:window.bounds];
+    scrollView.cyl_testPan = [CYLTestPanGestureRecognizer new];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(1000, window.bounds.size.height);
+    [window.rootViewController.view addSubview:scrollView];
+    [window makeKeyAndVisible];
+    __block NSUInteger callbacks = 0;
+    __block XCTestExpectation *refreshed = nil;
+    CYLRefreshTrailer *trailer = [CYLRefreshNormalTrailer trailerWithRefreshingBlock:^{
+        callbacks++;
+        [refreshed fulfill];
+    }];
+    trailer.fastAnimationDuration = 0;
+    trailer.slowAnimationDuration = 0;
+    trailer.automaticallyRefresh = YES;
+    trailer.triggerAutomaticallyRefreshPercent = 0.5;
+    scrollView.cyl_trailer = trailer;
+    [trailer layoutIfNeeded];
+
+    for (NSUInteger drag = 1; drag <= 2; drag++) {
+        // [EN] A new drag begins. [CN] 新的一次拖动开始。
+        scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateBegan;
+        [trailer scrollViewPanStateDidChange:nil];
+        scrollView.cyl_testDragging = YES;
+        scrollView.contentOffset = CGPointMake(690, 0);
+        refreshed = [self expectationWithDescription:@"automatic trailer refresh"];
+        scrollView.contentOffset = CGPointMake(711, 0);
+        XCTAssertEqual(trailer.state, CYLRefreshStateRefreshing);
+        [self waitForExpectations:@[refreshed] timeout:CYLTestTimeout];
+        refreshed = nil;
+        XCTestExpectation *ended = [self expectationWithDescription:@"automatic trailer ended"];
+        [trailer endRefreshingWithCompletionBlock:^{ [ended fulfill]; }];
+        [self waitForExpectations:@[ended] timeout:CYLTestTimeout];
+        XCTAssertEqual(callbacks, drag);
+
+        // [EN] Back and forth in the same drag: no second load. [CN] 同一次拖动中来回移动：不再加载。
+        scrollView.contentOffset = CGPointMake(690, 0);
+        scrollView.contentOffset = CGPointMake(711, 0);
+        XCTAssertNotEqual(trailer.state, CYLRefreshStateRefreshing);
+        XCTAssertEqual(callbacks, drag);
+
+        // [EN] The drag ends back inside the content. [CN] 拖动在内容范围内结束。
+        scrollView.contentOffset = CGPointMake(600, 0);
+        scrollView.cyl_testDragging = NO;
+        scrollView.cyl_testPan.cyl_testState = UIGestureRecognizerStateEnded;
+        [trailer scrollViewPanStateDidChange:nil];
+    }
     scrollView.cyl_trailer = nil;
     window.hidden = YES;
 }

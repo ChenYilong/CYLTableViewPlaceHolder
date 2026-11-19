@@ -444,6 +444,34 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     }
 }
 
+// FIX: issue MJRefresh#1628
+// [EN] Someone else wrote the content inset during a refresh (SwiftUI's ScrollView resets its inset and offset when its
+//      data changes; an app may set a new inset). The written top becomes the new original inset, the refreshing inset
+//      is added on top of it again, and a list resting at its top edge moves back to show the header. Writes of the
+//      header itself (`updatingRefreshInset`) and refreshes that add no inset (front scroll mode) are left alone.
+// [CN] 刷新期间有其他代码写入了 contentInset（SwiftUI 的 ScrollView 在数据变化时会重置 inset 和 offset；应用也可能设置新的 inset）。
+//      写入的 top 作为新的原始 inset，在其上重新加上刷新 inset；停在顶部边缘的列表移回到能看到刷新头的位置。刷新头自己的写入
+//      （`updatingRefreshInset`）和不增加 inset 的刷新（前置滚动模式）不受影响。
+- (void)scrollViewContentInsetDidChange:(NSDictionary *)change
+{
+    [super scrollViewContentInsetDidChange:change];
+    if (self.updatingRefreshInset || self.state != CYLRefreshStateRefreshing || !self.cyl_addedRefreshingInset ||
+        ![self cyl_movesContentWhileRefreshing] || !self.scrollView) return;
+    UIScrollView *scrollView = self.scrollView;
+    CGFloat originalTop = scrollView.cyl_insetT;
+    CGFloat refreshingTop = originalTop + self.expandHeight;
+    UIEdgeInsets original = _scrollViewOriginalInset;
+    original.top = originalTop;
+    _scrollViewOriginalInset = original;
+    BOOL restingAtTop = !scrollView.isTracking && !scrollView.isDecelerating &&
+        scrollView.cyl_offsetY <= -originalTop + FLT_EPSILON;
+    [self setRefreshingInsetTop:refreshingTop];
+    self.insetTDelta = originalTop - scrollView.cyl_insetT;
+    if (restingAtTop && scrollView.cyl_offsetY > -refreshingTop + FLT_EPSILON) {
+        [scrollView setContentOffset:CGPointMake(scrollView.cyl_offsetX, -refreshingTop) animated:NO];
+    }
+}
+
 - (void)setState:(CYLRefreshState)state
 {
     CYLRefreshCheckState
