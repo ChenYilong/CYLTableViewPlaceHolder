@@ -221,7 +221,7 @@
 - Score (then): 90 / 100. TODO (-5): upstream event forwarding and title properties (CYLTabBarController). TODO (-5): the published npm package (CYLTabBarController).
 - Update 2026-11-19: the event forwarding and title properties landed upstream (59a1cb0f `bind:animationcomplete`, 52569d68 and 5582685f title properties, pinned). Left: the npm package. Upstream `cyl-tabbar-miniprogram` 0.2.0 (CrossPlatform/wechat-miniprogram-cyltabbar, branch feat/cross-platform-components) is ready with `src/cyl-animated-item`, but is not on npm (`npm view` 404) and this machine is not logged in to npm (`npm whoami`: need auth). Score: 95 / 100. TODO (-5): publish `cyl-tabbar-miniprogram` (needs the owner's `npm login` and the upstream session), then depend on it instead of `npm run sync-animated-item`.
 
-### TODO：在 Mac 的 arm64 鸿蒙模拟器上补完质量分 Q12、Q15、Q17、Q7 / TODO: Finish HarmonyOS quality rows Q12, Q15, Q17 and Q7 on the Mac's arm64 emulator
+### 已完成（100 / 100）：在 Mac 的 arm64 鸿蒙模拟器上补完质量分 Q12、Q15、Q17、Q7 / Done (100 / 100): Finish HarmonyOS quality rows Q12, Q15, Q17 and Q7 on the Mac's arm64 emulator
 
 - Date: 2026-11-18. Branch: `feat/android-refresh-port-followup` (PR #31). Session: Mac CYLTableViewPlaceHolder.
 - User's original prompt (verbatim): "通知所有的活跃session，continue fix TODO"
@@ -230,6 +230,8 @@
 - Acceptance: full marks (100) = Q12, Q15, Q17 checked on the emulator with labeled screenshots in `docs/assets`; Q7 implemented (or a documented reason it cannot be) and checked; `node scripts/harmony-quality-score.js` rerun; pushed. Pass (60) = Q12 and Q15 checked with screenshots and the score rerun.
 - Progress (2026-11-18): Q12 done (Lottie, PAG, Rive, GIF draw; Rive does not crash on arm64), Q15 done (HUD page, HUD states, life cycle, status bar); quality score 93 → 96 (`node scripts/harmony-quality-score.js`). Q17 fails: the example keeps white backgrounds in dark mode while system text turns white (screenshot in `docs/HarmonyOS.md`); fixing with dark-aware color resources next. Found on the way, TODO: `CYLScenarioExampleMoonlight.pag` draws nothing. Q7 (Rive speed) after Q17.
 - Progress (2026-11-18, `e80de84`): Q17 done: dark-aware color resources in the example, scenario line icons gray in the core (as iOS); quality score 100 / 100 (`docs/assets/harmonyos-q17-dark-mode-fixed-mate70pro-emulator-arm64-e80de84-20261118.png`). Left: Q7 (Rive speed), still marked "N/A" with an outdated reason (an emulator exists now), and `CYLScenarioExampleMoonlight.pag` drawing nothing.
+
+- Closed (2026-11-19, Mac session): by this entry's acceptance ("Q7 implemented (or a documented reason it cannot be)"): Q12, Q15, Q17 were checked on the arm64 emulator with screenshots (quality score 100 / 100, `e80de84`), and Q7 has its documented reason (@ohos/rive has no speed or advance API; rechecked today, the ohpm registry still lists 1.0.4 as the newest). Q7 itself is tracked in the entry "鸿蒙 Q7 Rive 倍速 …" (90 / 100) until a newer @ohos/rive exists.
 
 ### 已完成（100 / 100）：模拟器重启后继续中断的设备测试 / Done (100 / 100): Continue the on-device checks interrupted by the hung emulator
 

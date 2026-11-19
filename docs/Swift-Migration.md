@@ -7,7 +7,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** not started (recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 15 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -36,7 +36,17 @@ Objective-C to Swift, and its score after every commit.
     callers (`@objc` names must keep today's selectors).
   - The parallel task in `docs/Refresh-Library-Parity.md` keeps adding Objective-C API to CYLRefresh; the two tasks
     touch the same files, so they must not run at the same time on different branches without a plan for merging.
-- **Progress and scores:** none yet.
+- **Progress and scores:**
+  - 2026-11-19 (branch `feat/android-refresh-port-followup`): `CYLPlaceholderView` is Swift (`97b0591`), forced by
+    CYLTabBarController porting its base class `CYLAnimatedItemView` to Swift (Objective-C cannot subclass a Swift
+    class); its Objective-C API is unchanged (selectors, `CYLPlaceholderItem*` keys and enums stay in
+    `CYLPlaceholderView.h` / `CYLPlaceholderViewSupport.m`). `CYLPlaceholderItemStackView` (Swift, `e12af1f`) lays out
+    `CYLPlaceholderStackView`. Already Swift before: `CYLRefresh/Custom/Rive/CYLRefreshRiveHeader.swift`.
+  - Measured 2026-11-19: core 3 Swift files (3,090 lines) and 70 Objective-C `.m` files (17,748 lines), plus 14
+    Objective-C test files. Score by lines: 3,090 / (3,090 + 17,748) ≈ **15 / 100**.
+  - Next, bottom-up and one commit per file group, each with the core (195) and animation (13) tests: the UIKit
+    categories and small model classes of `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/`, then
+    `CYLPlaceholderStackView`, scenarios, HUD and status view, then `CYLRefresh/` (the largest part), then the tests.
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 
