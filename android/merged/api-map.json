@@ -95,9 +95,9 @@
   "android": "CYLPlaceholderBadgeAppearance.cornerRadius"
  },
  "CYLPlaceholderBadgeAppearance font": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.font",
-  "note": "the text size in sp (Android takes no UIFont)"
+  "note": "font (size in sp) and fontTypeface: the size, family and weight of the UIFont"
  },
  "CYLPlaceholderBadgeAppearance textColor": {
   "status": "done",
@@ -392,9 +392,9 @@
   "android": "CYLPlaceholderHUD.fadeOutAnimationDuration"
  },
  "CYLPlaceholderHUD font": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderHUD.font",
-  "note": "the status text size in sp (Android takes no UIFont)"
+  "note": "font (size in sp) and fontTypeface: the size, family and weight of the UIFont"
  },
  "CYLPlaceholderHUD foregroundColor": {
   "status": "done",
@@ -2223,9 +2223,9 @@
   "android": "CYLRefreshIconView.titleColor"
  },
  "CYLRefreshIconView titleFont": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshIconView.titleFont",
-  "note": "the size in sp"
+  "note": "titleFont (size in sp) and titleTypeface: the size, family and weight of the UIFont"
  },
  "CYLRefreshIconView(CYLRefreshIconAttributes)": {
   "status": "done",
@@ -3319,24 +3319,24 @@
   "android": "RecyclerView.cyl_placeholderView"
  },
  "CYLRefreshComponent(CYLRefreshStateTitles)": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshStateHeader",
-  "note": "Android keeps each control's texts in its own view (setTitle / titleForState on the state header, footers and trailer)"
+  "note": "cyl_setStateTitle / cyl_stateTitleForState on every control (shown by the state header and state footers, kept by others)"
  },
  "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_setStateTitle:forState:": {
-  "status": "partial",
-  "android": "CYLRefreshStateHeader.setTitle",
-  "note": "the per-control setTitle(title, state) on Android"
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setStateTitle",
+  "note": "CYLRefreshComponent.cyl_setStateTitle(title, state)"
  },
  "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_stateTitleForState:": {
-  "status": "partial",
-  "android": "CYLRefreshStateHeader.titleForState",
-  "note": "the per-control titleForState(state) on Android"
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_stateTitleForState",
+  "note": "CYLRefreshComponent.cyl_stateTitleForState(state)"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setAnimationImages:duration:forState:": {
-  "status": "partial",
-  "android": "CYLRefreshAnimationHeader.setAnimationImages",
-  "note": "the per-control setAnimationImages(images, duration, state) on Android"
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setAnimationImages",
+  "note": "CYLRefreshComponent.cyl_setAnimationImages(images, duration, state)"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_animationImagesForState:": {
   "status": "n/a",
@@ -3352,9 +3352,9 @@
   "android": "CYLRefreshIconView.setIconAnimationFilePath"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setBundledIconAnimation:size:forState:": {
-  "status": "partial",
-  "android": "CYLRefreshIconView.setIconAnimationFilePath",
-  "note": "Android names a bundled file as \"asset:Animations/<name>\""
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setBundledIconAnimation",
+  "note": "CYLRefreshComponent.cyl_setBundledIconAnimation(name, width, height, state): the placeholder's CYLPlaceholderAnimations assets"
  },
  "CYLRefreshAutoStateFooter -titleForState:": {
   "status": "done",
@@ -3369,14 +3369,14 @@
   "android": "CYLRefreshStateTrailer.titleForState"
  },
  "CYLRefreshFooter(CYLRefreshNoMoreDataImage)": {
-  "status": "partial",
-  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage",
-  "note": "Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage)"
+  "status": "done",
+  "android": "CYLRefreshFooter.cyl_noMoreDataImage",
+  "note": "CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others)"
  },
  "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_updateNoMoreDataImage:": {
-  "status": "partial",
-  "android": "CYLRefreshAutoNormalFooter.noMoreDataImage",
-  "note": "Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage)"
+  "status": "done",
+  "android": "CYLRefreshFooter.cyl_updateNoMoreDataImage",
+  "note": "CYLRefreshFooter.cyl_updateNoMoreDataImage(image)"
  },
  "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_placeNoMoreDataImageBesideLabel:inset:size:": {
   "status": "n/a",

@@ -656,4 +656,29 @@ class CYLRefreshComponentTest {
         assertEquals(true, view.mReverseFlash)
         assertEquals(false, view.mFadeAnimation)
     }
+
+    /** The iOS categories on every control: state titles, animation images, bundled icons, the no-more-data image. */
+    @Test
+    fun iosCategoriesOnEveryControl() {
+        val state = CYLRefreshNormalHeader(activity)
+        state.cyl_setStateTitle("Pull me", CYLRefreshState.Idle)
+        assertEquals("Pull me", state.cyl_stateTitleForState(CYLRefreshState.Idle))
+        assertEquals("shown by the state header", "Pull me", state.titleForState(CYLRefreshState.Idle))
+        val drawn = CYLRefreshMaterialHeader(activity)
+        drawn.cyl_setStateTitle("Kept", CYLRefreshState.Refreshing)
+        assertEquals("kept by a control without text", "Kept", drawn.cyl_stateTitleForState(CYLRefreshState.Refreshing))
+        val footer = CYLRefreshBackNormalFooter(activity)
+        val image = android.graphics.drawable.ColorDrawable(android.graphics.Color.RED)
+        footer.cyl_updateNoMoreDataImage(image)
+        assertEquals(image, footer.noMoreDataImage)
+        assertEquals(image, footer.cyl_noMoreDataImage)
+        val header = CYLRefreshAnimationHeader(activity)
+        header.cyl_setBundledIconAnimation("CYLPlaceholderLoading.json", 30f, 30f, CYLRefreshState.Refreshing)
+        assertTrue(header.cyl_usesIconView)
+        header.cyl_setAnimationImages(listOf(image, image), 0.4, CYLRefreshState.Idle)
+        assertTrue(header.cyl_iconView.hasAnimations)
+        val icon = CYLRefreshIconView(activity)
+        icon.titleTypeface = android.graphics.Typeface.DEFAULT_BOLD
+        assertEquals(android.graphics.Typeface.DEFAULT_BOLD, icon.placeholderView.defaultTitleTypeface)
+    }
 }

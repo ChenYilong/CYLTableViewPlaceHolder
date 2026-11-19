@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | iOS 库的每个公开符号（`CYLTableViewPlaceHolder/` 下公开头文件中的类、协议、方法、属性、常量、枚举、函数，含 CYLRefresh）及其在 `android/merged` 中的 Android 对应项（Kotlin，见 [Android-Port.md](Android-Port.md)）。状态：done 行为相同；partial 部分行为（见说明）；planned 尚未对齐（TODO）；n/a 仅 iOS（没有 Android 对应物的 UIKit 分类、Lottie / PAG / Rive 运行库等），不计入完成率。 | Every public symbol of the iOS library (classes, protocols, methods, properties, constants, enums and functions of the public headers under `CYLTableViewPlaceHolder/`, CYLRefresh included) with its Android counterpart in `android/merged` (Kotlin, see [Android-Port.md](Android-Port.md)). Status: done, the same behavior; partial, part of it (see the note); planned, not aligned yet (TODO); n/a, iOS only (UIKit categories with no Android counterpart, the Lottie / PAG / Rive runtimes...), left out of the score. |
-| **迁移完成率：96 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 602、partial 58、planned 0、n/a 194）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 660 counted symbols; done 602, partial 58, planned 0, n/a 194). |
+| **迁移完成率：96 / 100**（done + 0.5 × partial，共 660 个计入的符号；done 612、partial 48、planned 0、n/a 194）。 | **Migration score: 96 / 100** (done + 0.5 × partial over 660 counted symbols; done 612, partial 48, planned 0, n/a 194). |
 
 ## `CYLPlaceholderHUD/CYLPlaceholderHUD.h`
 
@@ -39,7 +39,7 @@
 | `CYLPlaceholderHUD` `foregroundColor` | `CYLPlaceholderHUD.foregroundColor` | done |  |
 | `CYLPlaceholderHUD` `hudBackgroundColor` | `CYLPlaceholderHUD.hudBackgroundColor` | done |  |
 | `CYLPlaceholderHUD` `backgroundLayerColor` | `CYLPlaceholderHUD.backgroundLayerColor` | done |  |
-| `CYLPlaceholderHUD` `font` | `CYLPlaceholderHUD.font` | partial | the status text size in sp (Android takes no UIFont) |
+| `CYLPlaceholderHUD` `font` | `CYLPlaceholderHUD.font` | done | font (size in sp) and fontTypeface: the size, family and weight of the UIFont |
 | `CYLPlaceholderHUD` `cornerRadius` | `CYLPlaceholderHUD.cornerRadius` | done |  |
 | `CYLPlaceholderHUD` `minimumSize` | `CYLPlaceholderHUD.minimumSize` | done |  |
 | `CYLPlaceholderHUD` `animationSize` | `CYLPlaceholderHUD.animationSize` | done |  |
@@ -228,9 +228,9 @@
 | `UILabel(CYLRefresh)` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `+cyl_label` | — | n/a | a UILabel helper; Android uses TextView directly |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | — | n/a | a UILabel helper; Android uses TextView directly |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` | `com.cyl.refresh.CYLRefreshStateHeader` | partial | Android keeps each control's texts in its own view (setTitle / titleForState on the state header, footers and trailer) |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | `CYLRefreshStateHeader.setTitle` | partial | the per-control setTitle(title, state) on Android |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | `CYLRefreshStateHeader.titleForState` | partial | the per-control titleForState(state) on Android |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` | `com.cyl.refresh.CYLRefreshStateHeader` | done | cyl_setStateTitle / cyl_stateTitleForState on every control (shown by the state header and state footers, kept by others) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | `CYLRefreshComponent.cyl_setStateTitle` | done | CYLRefreshComponent.cyl_setStateTitle(title, state) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | `CYLRefreshComponent.cyl_stateTitleForState` | done | CYLRefreshComponent.cyl_stateTitleForState(state) |
 | `CYLRefreshComponent(ChainingGrammar)` | `com.cyl.refresh.CYLRefreshComponent (cyl_ chaining functions)` | done |  |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | `CYLRefreshComponent.cyl_autoChangeTransparency(enabled)` | done |  |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | `CYLRefreshComponent.cyl_afterBeginningAction(action)` | done |  |
@@ -252,8 +252,8 @@
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooter.loadsAfterNoMoreData` | partial | clears "no more data" shortly after it shows, so the next pull loads |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooter.ignoredScrollViewContentInsetBottom` | done |  |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | — | n/a | deprecated iOS aliases |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | partial | Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshAutoNormalFooter.noMoreDataImage` | partial | Android keeps it once in the classic footer view behind both normal footers (noMoreDataImage) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshFooter.cyl_noMoreDataImage` | done | CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshFooter.cyl_updateNoMoreDataImage` | done | CYLRefreshFooter.cyl_updateNoMoreDataImage(image) |
 | `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | — | n/a | an iOS layout helper; Android lays the image out in the classic footer view |
 
 ## `CYLRefresh/Base/CYLRefreshHeader.h`
@@ -295,7 +295,7 @@
 | `CYLRefreshIconView` `placeholderView` | `CYLRefreshIconView.placeholderView` | done |  |
 | `CYLRefreshIconView` `iconSize` | `CYLRefreshIconView.iconSize` | done |  |
 | `CYLRefreshIconView` `title` | `CYLRefreshIconView.title` | done |  |
-| `CYLRefreshIconView` `titleFont` | `CYLRefreshIconView.titleFont` | partial | the size in sp |
+| `CYLRefreshIconView` `titleFont` | `CYLRefreshIconView.titleFont` | done | titleFont (size in sp) and titleTypeface: the size, family and weight of the UIFont |
 | `CYLRefreshIconView` `titleColor` | `CYLRefreshIconView.titleColor` | done |  |
 | `CYLRefreshIconView` `fittingSize` | `CYLRefreshIconView.fittingSize` | done |  |
 | `CYLRefreshIconView` `scrubsWhilePulling` | `CYLRefreshIconView.scrubsWhilePulling` | done |  |
@@ -324,11 +324,11 @@
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | `CYLRefreshComponent.cyl_placeIconViewWithTitle(title, labels, visible, views)` | done |  |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | `CYLRefreshComponent.cyl_setIconImages(images, duration, state)` | done |  |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | `CYLRefreshComponent.cyl_showIconImageFrameOf(images, percent)` | done |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | `CYLRefreshAnimationHeader.setAnimationImages` | partial | the per-control setAnimationImages(images, duration, state) on Android |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | `CYLRefreshComponent.cyl_setAnimationImages` | done | CYLRefreshComponent.cyl_setAnimationImages(images, duration, state) |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_animationImagesForState:` | — | n/a | an iOS implementation helper shared by the iOS controls; Android controls keep their images in their own views |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIdleAnimationFrame` | `CYLRefreshComponent.cyl_showIconImageFrameOf` | done | Android passes the idle images itself |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationFilePath:size:forState:` | `CYLRefreshIconView.setIconAnimationFilePath` | done |  |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | `CYLRefreshIconView.setIconAnimationFilePath` | partial | Android names a bundled file as "asset:Animations/<name>" |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | `CYLRefreshComponent.cyl_setBundledIconAnimation` | done | CYLRefreshComponent.cyl_setBundledIconAnimation(name, width, height, state): the placeholder's CYLPlaceholderAnimations assets |
 
 ## `CYLRefresh/Base/CYLRefreshPaging.h`
 
@@ -1102,7 +1102,7 @@
 | `CYLPlaceholderBadgeAppearance` | `com.cyl.placeholder.CYLPlaceholderBadgeAppearance` | done |  |
 | `CYLPlaceholderBadgeAppearance` `backgroundColor` | `CYLPlaceholderBadgeAppearance.backgroundColor` | done |  |
 | `CYLPlaceholderBadgeAppearance` `textColor` | `CYLPlaceholderBadgeAppearance.textColor` | done |  |
-| `CYLPlaceholderBadgeAppearance` `font` | `CYLPlaceholderBadgeAppearance.font` | partial | the text size in sp (Android takes no UIFont) |
+| `CYLPlaceholderBadgeAppearance` `font` | `CYLPlaceholderBadgeAppearance.font` | done | font (size in sp) and fontTypeface: the size, family and weight of the UIFont |
 | `CYLPlaceholderBadgeAppearance` `cornerRadius` | `CYLPlaceholderBadgeAppearance.cornerRadius` | done |  |
 | `CYLPlaceholderBadgeAppearance` `contentInsets` | `CYLPlaceholderBadgeAppearance.contentInsets` | done |  |
 | `CYLPlaceholderBadgeAppearance` `animationDuration` | `CYLPlaceholderBadgeAppearance.animationDuration` | done | the pop of a badge change (0.6 to its size) |

@@ -94,6 +94,15 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         }
 
     /**
+     * The title's typeface, or null for the default (the family and weight of the iOS `titleFont`).
+     */
+    var titleTypeface: android.graphics.Typeface? = null
+        set(value) {
+            field = value
+            placeholderView.defaultTitleTypeface = value
+        }
+
+    /**
      * The title's color, or 0 for the default (`titleColor`).
      */
     @ColorInt var titleColor: Int = 0

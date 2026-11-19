@@ -196,8 +196,11 @@ class CYLPlaceholderBadgeAppearance {
     /** The text's color. */
     @ColorInt var textColor: Int = Color.WHITE
 
-    /** The text's size, in sp (the iOS `font`). */
+    /** The text's size, in sp (the size of the iOS `font`). */
     var font: Float = 12f
+
+    /** The text's typeface, or null for the default (the family and weight of the iOS `font`). */
+    var fontTypeface: android.graphics.Typeface? = null
 
     /** The corner radius, in dp; below 0 makes a capsule. */
     var cornerRadius: Float = -1f
@@ -429,8 +432,12 @@ class CYLPlaceholderView @JvmOverloads constructor(
     @ColorInt var defaultBackgroundColor: Int = Color.TRANSPARENT
         set(value) { field = value; refreshColors() }
 
-    /** The text size in sp (`defaultTitleFont`). */
+    /** The text size in sp (`defaultTitleFont`, the size of the iOS UIFont). */
     var defaultTitleFont: Float = 17f
+        set(value) { field = value; refreshColors() }
+
+    /** The text's typeface, or null for the default (the family and weight of the iOS `defaultTitleFont`). */
+    var defaultTitleTypeface: android.graphics.Typeface? = null
         set(value) { field = value; refreshColors() }
 
     /** The text's offset in dp, x and y (`defaultTitlePositionAdjustment`). */
@@ -616,6 +623,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
         val size = if (selected && defaultSelectedTitleFont != 0f) defaultSelectedTitleFont else defaultTitleFont
         titleView.setTextColor(title)
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+        defaultTitleTypeface?.let { titleView.typeface = it }
         if (tintsIcon) ImageViewCompat.setImageTintList(iconView, ColorStateList.valueOf(icon)) else ImageViewCompat.setImageTintList(iconView, null)
         val indicator = if (selected) (selectionIndicatorImage ?: defaultSelectionIndicatorImage) else null
         background = indicator?.mutate()?.also { drawable ->
@@ -638,6 +646,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
         badgeLabel.text = if (style == CYLPlaceholderBadgeStyle.Dot) "" else value
         badgeLabel.setTextColor(appearance.textColor)
         badgeLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, appearance.font)
+        appearance.fontTypeface?.let { badgeLabel.typeface = it }
         val insets = appearance.contentInsets
         if (style == CYLPlaceholderBadgeStyle.Dot) {
             badgeLabel.setPadding(0, 0, 0, 0)

@@ -151,8 +151,11 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
     /** The mask color for [CYLPlaceholderHUDMaskType.Custom] (`backgroundLayerColor`). */
     @ColorInt var backgroundLayerColor: Int = Color.argb(0x66, 0, 0, 0)
 
-    /** The status text size, in sp (`font`). */
+    /** The status text size, in sp (the size of the iOS `font`). */
     var font: Float = 15f
+
+    /** The status text's typeface, or null for the default (the family and weight of the iOS `font`). */
+    var fontTypeface: android.graphics.Typeface? = null
 
     /** The box's corner radius, in dp (`cornerRadius`). */
     var cornerRadius: Float = 14f
@@ -285,6 +288,7 @@ class CYLPlaceholderHUD(context: Context, containerView: ViewGroup? = null) : Fr
                 defaultTitleColor = contentColor
                 defaultIconColor = contentColor
                 defaultTitleFont = font
+                defaultTitleTypeface = fontTypeface
                 iconSizeDp = com.cyl.animateditem.CYLSize(animationSize, animationSize)
                 animation?.let { setAnimationFile(it); playPlaceholderAnimation() }
             }
