@@ -26,10 +26,12 @@ Objective-C to Swift, and its score after every commit.
 
 ## Tasks
 
-### TODO: Transcribe the core to Swift
+### 已完成 / Done: Transcribe the core to Swift
 
-- **Status:** in progress, 98 / 100 by lines, 100 / 100 by rule 6 for the core (tests excluded until step 13) (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
-  starts, create a new branch and open its pull request per "A pull request for every new branch").
+- **Status:** 已完成 / Done (2026-11-20, step 13): **100 / 100 by rule 6** for the core and the tests (98 / 100 by
+  lines: 32,265 Swift lines against 758 Objective-C `.m` lines, every one a rule-6 shim or the agreed Objective-C smoke
+  test). Recorded 2026-11-12, while branch `an earlier parity branch` was in progress; done on
+  `feat/android-refresh-port-followup`.
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
   1. iOS only; the focus is the project's core code. Third-party libraries are out of scope.
@@ -584,19 +586,71 @@ Objective-C to Swift, and its score after every commit.
     every remaining `.m` is a Swift-compatible shim of something Swift cannot declare (exported C constants and
     functions, `+load`, Objective-C exception guards, variadic methods), and every class is Swift, so the core counts
     as **100 / 100 by rule 6**; the tests (14 Objective-C files under `Tests/`) are excluded until step 13.
-  - 2026-11-20, step 13 (branch `feat/android-refresh-port-followup`), **TODO, in progress**: the tests.
+  - 2026-11-20, step 13 (branch `feat/android-refresh-port-followup`), **done**: the tests.
     **Decision (the owner, 2026-11-20):** asked as a choice for the 14 Objective-C test files, answered "Swift tests +
     small ObjC smoke test": every test file under `Tests/` becomes Swift with the same assertions and the same test
     method names (`- (void)testX` is `func testX()`), and one small Objective-C file,
-    `Tests/CYLObjectiveCAPISmokeTests.m`, calls the public Objective-C API surface (each public class through its
-    Objective-C initializers and factories, the categories, the CYLRefresh factories, the variadic shims, the exported
-    constants, the error domains and codes, and the `NSDictionary` entry points given a wrong type), so CI still proves
-    that Objective-C callers compile and work. The smoke file counts as a rule-6 shim. Checks that only Objective-C can
-    express (nil for a nonnull parameter, a wrong type for an `id` parameter) move to the smoke file. Plan: the core
-    runner compiles `Tests/*.swift` and `Tests/*.m` (the smoke file) into the library's module, so the Swift tests reach
-    internal members without `@testable`; the animation runner compiles its three Swift tests against the pods (static
-    and dynamic linkage); the accessibility runner its Swift UI tests and a Swift host app. Targets: core 207 tests plus
-    the smoke tests, animation 13, accessibility 4, with every old test name kept.
+    `Tests/CYLObjectiveCAPISmokeTests.m`, calls the public Objective-C API surface so CI still proves that Objective-C
+    callers compile and work. The smoke file counts as a rule-6 shim; the rule is also in `Tests/instructions.md`.
+    - **Runners:** `590c28c` the core runner compiles every `Tests/*.swift` and `Tests/*.m` (except the animation and
+      accessibility tests) into the library's own module, so the Swift tests reach internal members without
+      `@testable` or selectors; `f8db9ef` the animation runner compiles its three Swift tests, which import the
+      `CYLTableViewPlaceHolder` and `CYLAnimatedItem` modules (static and dynamic frameworks; its Swift runtime file
+      and the PAGEnterprise `-fno-modules` case are gone); `f806e71` the accessibility runner compiles the Swift UI
+      tests and the Swift host app. CI (`.github/workflows/ios.yml`, `ios12-runtime.yml`) and the scripts call the
+      runners only, so nothing else named the test files.
+    - **Files and commits** (one commit per file, or per runner group; the core runner passed after each group):
+      `f8db9ef` `CYLPlaceholderLottiePlaybackTests`, `CYLPlaceholderBackendPlaybackTests`,
+      `CYLPlaceholderAnimationRegistryTests`; `f806e71` `CYLPlaceholderAccessibilityUITests` and
+      `Tests/AccessibilityHost/main.m` (now `CYLAccessibilityHostApp.swift`, `@main`); `1fffed0` `PlaceholderTests`;
+      `4e1fbd3` `CYLAutomaticPlaceholderTests`; `c143884` `CYLRefreshConsolidationTests`; `deb446f`
+      `CYLRefreshStylesAPITests` (with the polling of `7ca7a56`, which another session pushed to the Objective-C file
+      meanwhile, carried over); `f43c3cd` `CYLRefreshIconTests`; `808c1f3` `CYLRefreshDrawnHeaderTests` (the comments of
+      `CYLRefreshTestHeaders.swift` updated); `2b349c2` `CYLAndroidParityTests`; `6885eca` `CYLPlaceholderHUDTests`;
+      `efb1439` `CYLPlaceholderStatusViewTests`; `b58a6c0` `CYLPlaceholderScenarioTests`; `4d19388` the smoke test.
+    - **Smoke test** (`4d19388`, 4 tests, 274 lines): `CYLPlaceholderView` (`initWithItemAttributes:imageBundle:error:`,
+      `initWithImage:text:`, `initWithStyle:text:`, `+imageForStyle:`, `+pathForBundledAnimation:`, a bad attribute
+      returning the item-attributes error), `CYLPlaceholderStackView` (`initWithScenario:actions:` with an action block,
+      `initWithComponents:actions:`, `initWithConfiguration:actions:error:`, `initWithContentsOfURL:actions:error:`),
+      every `CYLPlaceholderComponent` factory, `CYLPlaceholderScenarioCatalog`, `CYLPlaceholderStatusView` (both
+      initializers, the height constants), `CYLPlaceholderHUD` (`initWithContainerView:`, show and dismiss, the class
+      methods, the notification names and userInfo key), `CYLPlaceholderLocalization` with the lookup macros and C
+      functions, `CYLPlaceholderNetworkMonitor`, `UITableView` `cyl_placeholderViewBlock:` and `cyl_reloadData`,
+      `UICollectionView` `cyl_placeholderViewBlock:`, `UIViewController` `cyl_statusDisplay` and
+      `cyl_applyStatusConfiguration:error:`, the `CYLPlaceholderAction` constants; every concrete CYLRefresh header,
+      footer and trailer through `headerWith…` / `footerWith…` / `trailerWith…` (block and target-action, drawn styles,
+      the MJRefresh-named `CYLRefreshGifHeader`, `CYLRefreshAutoGifFooter`, `CYLRefreshBackGifFooter`),
+      `setTitle:forState:`, `setIconAnimationFilePath:size:forState:` (`CYLRefreshIconAnimating`), `setImages:forState:`,
+      `beginRefreshingWithCompletionBlock:` / `endRefreshingWithCompletionBlock:` on a table in a window, the variadic
+      `-isInPhases:` and `-inStatus:`, `CYLRefreshConfig.defaultConfig`, the `CYLRefresh` constants and
+      `+[NSBundle cyl_localizedStringForKey:value:]`. It also holds the checks only Objective-C can make: the
+      `NSDictionary` entry points (`-[CYLPlaceholderStatusView initWithConfiguration:error:]`,
+      `-[CYLPlaceholderStackView initWithConfiguration:actions:error:]`, `-cyl_applyStatusConfiguration:error:`,
+      `+componentWithDictionary:error:`) given an `NSArray` or `NSString` return the configuration error (domain, code,
+      message), and a refresh control moving between views raises no Objective-C exception (`XCTAssertNoThrow`).
+    - **Tests:** core 207 before, 211 after (207 + the 4 smoke tests), 0 failures; animation 13 / 13 before and after,
+      with static PAG, dynamic PAG and static PAGEnterprise; accessibility 4 / 4 before and after (the CI runner on CYL
+      Placeholder Screens). **Test names:** the 224 `- (void)test…` names of the 14 Objective-C files (class plus
+      method) diffed against the 224 `func test…` names of the Swift files: identical.
+    - **Not kept identical, on purpose:** checks wrapped in `XCTAssertNoThrow` in Swift tests are plain calls (Swift
+      cannot catch an Objective-C exception; an exception still fails the run, and the smoke file keeps the
+      `XCTAssertNoThrow` form); the variadic calls are `isIn(phases:)` / `isIn(statuses:)` in Swift (the smoke file keeps
+      the variadic form); the PAG view is read by class name and key-value coding instead of libpag's header (the
+      PAGEnterprise umbrella header cannot be imported as a module); the `NSDictionary` entry points and
+      `-cyl_setStatus:constrained:expensive:` (private in Swift) are reached by selector in the Swift tests; a few values
+      read by key-value coding are internal members now; failure messages print Swift type names; some optional results
+      are unwrapped with `XCTUnwrap`, which is stricter. No core bug was found.
+    - Repo checks pass: `check_doc_comments.py`, `check_localizations.py`, `ios-api-map.py --check`,
+      `android-api-map.py --check`, `ios-android-parity.py --check`, `check_package_licenses.py`, the docs navigation
+      check; Example-Scenarios builds. Not checked locally: the iOS 12 deployment-target job
+      (`ios12-runtime.yml`, Xcode 16), which this Mac (Xcode 27 only) cannot run; the Swift tests guard iOS 13+ API with
+      `#available` as the Objective-C tests did.
+    - **Remaining `.m` files:** the 12 rule-6 shims of the core listed in step 12 (484 lines) and
+      `Tests/CYLObjectiveCAPISmokeTests.m` (274 lines). Measured: 87 Swift files (24,655 lines in the core, 7,610 in
+      `Tests/`) and 13 `.m` files (758 lines). **Score by lines:** 32,265 / (32,265 + 758) ≈ **98 / 100**. **Score by
+      rule 6: 100 / 100**: every class and test is Swift, and every remaining `.m` is a shim Swift cannot express
+      (exported C constants and functions, `+load`, Objective-C exception guards, variadic methods) or the agreed
+      Objective-C smoke test. The task is done.
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -623,7 +677,7 @@ Objective-C to Swift, and its score after every commit.
     - step 11: `CYLRefreshHeader`, `CYLRefreshAutoFooter`, `CYLRefreshBackFooter`, `CYLRefreshTrailer`, then
       `CYLRefreshFooter` — done;
     - step 12: `CYLRefreshComponent` (the root) — done;
-    - step 13: the tests (14 Objective-C files under `Tests/`).
+    - step 13: the tests (14 Objective-C files under `Tests/`) — done.
 
 ## Rule: examples have the lowest weight (owner, 2026-11-13)
 

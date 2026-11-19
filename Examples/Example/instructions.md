@@ -83,7 +83,7 @@ artifacts.
 [#16](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/16) and
 [#17](https://github.com/ChenYilong/CYLTableViewPlaceHolder/issues/17) (the
 placeholder covering a footer or table header) need the frame callback; they are
-covered by `Tests/PlaceholderTests.m` (`ruby Tests/run-tests.rb`), not by a demo.
+covered by `Tests/PlaceholderTests.swift` (`ruby Tests/run-tests.rb`), not by a demo.
 
 ## Styles and FlatDesign items
 
