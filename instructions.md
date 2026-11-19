@@ -951,13 +951,13 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   (2026-11-10) uses `macos-26`, overridable with the repository variable
   `MACOS_RUNNER`.
 - Jobs that need an older toolchain on purpose keep their own runner (for
-  example the iOS 12 Core build on `macos-15` with Xcode 16); say why in a
+  example a build that needs an Xcode other than the runner's newest); say why in a
   comment next to `runs-on`.
 - **Local runs ignore this restriction.** A local run does not go through
   GitHub CI/CD: it uses the developer's own Mac directly, where the simulator
   and Xcode can be started for testing. Assume that Mac runs **macOS 27 with
   Xcode 27**, so builds there need the deployment-target override for Xcode 27
-  (at least iOS 15.0 for the build; the library's iOS 12.0 minimum stays). Run
+  (at least iOS 15.0 for the build; CI builds and tests iOS 15.0 since 2026-11-20, the podspec's 12.0 is an open owner question). Run
   the same scripts as CI (`scripts/`, `ruby Tests/run-tests.rb` with
   `DESTINATION`), choosing an installed simulator with
   `xcrun simctl list devices available`.
