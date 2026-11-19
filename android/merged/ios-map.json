@@ -1107,5 +1107,9 @@
  "SimpleComponent.cylSpinnerStyle": {
   "ios": "`CYLRefreshComponent` `scrollMode`",
   "note": "the Android styles take the spinner style CYLRefreshComponent.scrollMode works out; iOS sets scrollMode on the component itself"
+ },
+ "CYLPlaceholderConfiguration_fromPropertyList": {
+  "ios": "`NSPropertyListSerialization` (Foundation)",
+  "note": "iOS reads .plist item files with the system parser inside -initWithItemContentsOfURL:imageBundle:error: and the configuration-file initializers; Android has no system parser, so it brings its own"
  }
 }

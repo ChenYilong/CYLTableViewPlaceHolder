@@ -8,7 +8,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（811 / 811 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (811 of 811 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（813 / 813 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (813 of 813 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
@@ -914,7 +914,7 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderComponent` (class) | One piece of a placeholder: an icon (with an optional title), a text, a hint, a button or a separator (iOS `CYLPlaceholderComponent`). | `CYLPlaceholderComponent` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderComponent` (class) | One piece of a placeholder: an icon (with an optional title), a text, a hint, a button or a separator (iOS `CYLPlaceholderComponent`). | `CYLPlaceholderComponent` |  |
 | `CYLPlaceholderComponent.image` (val) | The icon, or 0 for none. | `CYLPlaceholderComponent` `attributes[CYLPlaceholderItemImage]` / `CYLPlaceholderItemStyle` |  |
 | `CYLPlaceholderComponent.tinted` (val) | Whether the icon takes the accent color. | `CYLPlaceholderComponent` `attributes[CYLPlaceholderItemIconColor]` |  |
 | `CYLPlaceholderComponent.imageSide` (val) | The icon's side, in dp. | `CYLPlaceholderComponent` `attributes[CYLPlaceholderItemAnimationSize]` |  |
@@ -927,10 +927,11 @@
 | `CYLPlaceholderComponent.accessibilityIdentifier` (var) | The identifier tests find the component's view by (`accessibilityIdentifier`), or null. | `CYLPlaceholderComponent` `accessibilityIdentifier` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderComponent.spacingBefore` (var) | The space above the component, in dp (`spacingBefore`). | `CYLPlaceholderComponent` `spacingBefore` |  |
 | `CYLPlaceholderComponent.interactionEnabled` (var) | Whether the component reacts to taps (`interactionEnabled`); a button that does not is shown disabled. | `CYLPlaceholderComponent` `interactionEnabled` |  |
-| `CYLPlaceholderComponent.animationRepeatCount` (var) | How often the item's animation repeats (`animationRepeatCount`), 0 for ever: the stack view's CYLPlaceholderView plays it. | `CYLPlaceholderComponent` `animationRepeatCount` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderComponent.animationRepeatCount` (var) | How often the item's animation repeats (`animationRepeatCount`), 0 for ever: the stack view's CYLPlaceholderView plays it. | `CYLPlaceholderComponent` `animationRepeatCount` |  |
 | `CYLPlaceholderComponent.attributes` (val) | The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize", and every other | `CYLPlaceholderComponent` `attributes` |  |
-| `CYLPlaceholderComponent.componentWithAttributes` (fun) | A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action] when tapped (`componentWithAttributes:action:`). | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | partial (see docs/Android-API-Map.md) |
-| `CYLPlaceholderComponent.icon` (fun) | An icon of [side] dp with an optional [title] below it, running [action] when tapped. | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderComponent.componentWithAttributes` (fun) | A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action] when tapped (`componentWithAttributes:action:`). | `CYLPlaceholderComponent` `+componentWithAttributes:action:` |  |
+| `CYLPlaceholderComponent.componentWithBundledAnimation` (fun) | A bundled animation, [fileName] in the placeholder's `CYLPlaceholderAnimations` assets (the iOS CYLTableViewPlaceHolder.bundle), [side] dp, over the image of [fallbackStyle], with an optional [title], running [action] wh | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` |  |
+| `CYLPlaceholderComponent.icon` (fun) | An icon of [side] dp with an optional [title] below it, running [action] when tapped. | `CYLPlaceholderComponent` `componentWithBundledAnimation:fallbackStyle:title:size:action:` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderComponent.text` (fun) | A text of its own, [sizeSp] large and [color] colored (0 for the default). | `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | added 2026-11-16 for Android parity |
 | `CYLPlaceholderComponent.hintComponentWithText` (fun) | A smaller, lighter line of text (`hintComponentWithText:`). | `CYLPlaceholderComponent` `+hintComponentWithText:` |  |
 | `CYLPlaceholderComponent.buttonComponentWithTitle` (fun) | A button titled [title] in [style], running [action] (`buttonComponentWithTitle:style:action:`). | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` |  |
@@ -943,6 +944,7 @@
 | `CYLPlaceholderConfigurationError` (class) | Why a configuration was refused (iOS `CYLPlaceholderConfigurationError`). | `CYLPlaceholderConfigurationErrorDomain` (Swift `CYLPlaceholderConfigurationError`) | added 2026-11-16 for Android parity |
 | `CYLPlaceholderConfigurationErrorHandler` (typealias) | Called with the reason when a configuration is refused (the iOS `error:` out parameter). | `error:` | matched by the iOS name its KDoc cites |
 | `CYLPlaceholderConfiguration_fromJSON` (fun) | A JSON object as a map, an array as a list: the shapes a configuration has. | `NSJSONSerialization` (Foundation) | Android's JSON-to-map helper; iOS reads JSON with Foundation |
+| `CYLPlaceholderConfiguration_fromPropertyList` (fun) | An XML property list (the iOS `.plist` format): dict, array, string, integer, real, true, false and date (as text); data is skipped. | `NSPropertyListSerialization` (Foundation) | iOS reads .plist item files with the system parser inside -initWithItemContentsOfURL:imageBundle:error: and the configuration-file initializers; Android has no system parser, so it brings its own |
 | `componentWithDictionary` (fun) | A component from a configuration dictionary (iOS `+[CYLPlaceholderComponent componentWithDictionary:error:]`): "type" ("icon", "hint", "button", "separator" or "item"), "title" / "titleKey", "action", and the fields of " | `componentWithDictionary:error:` | matched by the iOS name its KDoc cites |
 | `fromConfiguration` (fun) | A placeholder from a configuration dictionary (iOS `-[CYLPlaceholderStackView initWithConfiguration:actions:error:]`): "scenario" (a name), "components" (component dictionaries, replacing the scenario's), "overrides" (di | `initWithConfiguration:actions:error:` | matched by the iOS name its KDoc cites |
 | `fromContentsOfURL` (fun) | The configuration in a local ".json" file, a path or "asset:name" (iOS `-initWithContentsOfURL:actions:error:`). | `initWithContentsOfURL:actions:error:` | matched by the iOS name its KDoc cites |
@@ -982,13 +984,13 @@
 | `CYLPlaceholderScenarioCatalog.categoryForScenario` (fun) | The scenario's group (`categoryForScenario:`). | `CYLPlaceholderScenarioCatalog` `+categoryForScenario:` |  |
 | `CYLPlaceholderScenarioCatalog.permissionForScenario` (fun) | The permission the scenario is about (`permissionForScenario:`). | `CYLPlaceholderScenarioCatalog` `+permissionForScenario:` |  |
 | `CYLPlaceholderScenarioCatalog.scenarioForPermission` (fun) | The scenario of a missing [permission]; None gives the generic NoPermission (`scenarioForPermission:`). | `CYLPlaceholderScenarioCatalog` `+scenarioForPermission:` |  |
-| `CYLPlaceholderScenarioCatalog.componentsForScenario` (fun) | The scenario's components, in order, with its localized texts (`componentsForScenario:`); each icon is the static fallback image of the iOS animation. | `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderScenarioCatalog.componentsForScenario` (fun) | The scenario's components, in order, with its localized texts (`componentsForScenario:`); each icon is the static fallback image of the iOS animation. | `CYLPlaceholderScenarioCatalog` `+componentsForScenario:` |  |
 
 ## `android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderStackView.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLPlaceholderStackView` (class) | Components stacked and centered (iOS `CYLPlaceholderStackView`): a scenario's components ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. | `CYLPlaceholderStackView`, `CYLPlaceholderStackView` `-initWithComponents:actions:`, `CYLPlaceholderStackView` `-initWithScenario:actions:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderStackView` (class) | Components stacked and centered (iOS `CYLPlaceholderStackView`): a scenario's components ([CYLPlaceholderScenarioCatalog.componentsForScenario]) or your own. | `CYLPlaceholderStackView`, `CYLPlaceholderStackView` `-initWithComponents:actions:`, `CYLPlaceholderStackView` `-initWithScenario:actions:` |  |
 | `CYLPlaceholderStackView.scenario` (val) | The scenario shown, or null for a stack of your own components (`scenario`). | `CYLPlaceholderStackView` `scenario` |  |
 | `CYLPlaceholderStackView.placeholderView` (val) | The reserved first component, the icon and title (`placeholderView`). | `CYLPlaceholderStackView` `placeholderView` |  |
 | `CYLPlaceholderStackView.stackView` (val) | The stacked views (`stackView`). | `CYLPlaceholderStackView` `stackView` |  |
@@ -1033,7 +1035,7 @@
 | `CYLPlaceholderStatusViewDelegate` (interface) | Hears taps on a status view (iOS `CYLPlaceholderStatusViewDelegate`). | `CYLPlaceholderStatusViewDelegate` |  |
 | `CYLPlaceholderStatusViewDelegate.statusViewClicked` (fun) | The status view was tapped (`statusViewClicked:`). | `CYLPlaceholderStatusViewDelegate` `-statusViewClicked:` |  |
 | `CYLPlaceholderStatusViewTapHandler` (typealias) | Called when a status view is tapped (iOS `CYLPlaceholderStatusViewTapHandler`). | `CYLPlaceholderStatusViewTapHandler` |  |
-| `CYLPlaceholderStatusView` (class) | A banner with an icon and a text, by default "Network unavailable" (iOS `CYLPlaceholderStatusView`). | `CYLPlaceholderStatusView`, `CYLPlaceholderStatusView` `-initWithFrame:`, `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderStatusView` (class) | A banner with an icon and a text, by default "Network unavailable" (iOS `CYLPlaceholderStatusView`). | `CYLPlaceholderStatusView`, `CYLPlaceholderStatusView` `-initWithFrame:`, `CYLPlaceholderStatusView` `-initWithItemAttributes:error:` |  |
 | `CYLPlaceholderStatusView.delegate` (var) | Hears taps (`delegate`). | `CYLPlaceholderStatusView` `delegate` |  |
 | `CYLPlaceholderStatusView.placeholderView` (val) | The icon and text (`placeholderView`). | `CYLPlaceholderStatusView` `placeholderView` |  |
 | `CYLPlaceholderStatusView.text` (var) | The text (`text`). | `CYLPlaceholderStatusView` `text` |  |
@@ -1081,7 +1083,7 @@
 | `CYLPlaceholderAnimationPlayer.setAnimationColors` (fun) | Recolors the animation (`setAnimationColors:`). | `CYLPlaceholderAnimationPlayer` `-setAnimationColors:` |  |
 | `CYLPlaceholderAnimationFactory` (typealias) | Makes a player for an animation file (iOS `CYLPlaceholderAnimationFactory`); null when it cannot. | `CYLPlaceholderAnimationFactory` |  |
 | `CYLPlaceholderTapHandler` (typealias) | Called when a tappable placeholder is tapped (iOS `CYLPlaceholderTapHandler`). | `CYLPlaceholderTapHandler` |  |
-| `CYLPlaceholderView` (class) | An icon (or an animation) above a text, with an optional badge and tap (iOS `CYLPlaceholderView`). | `CYLPlaceholderView`, `CYLPlaceholderView` `-initWithImage:text:`, `CYLPlaceholderView` `-initWithStyle:message:` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderView` (class) | An icon (or an animation) above a text, with an optional badge and tap (iOS `CYLPlaceholderView`). | `CYLPlaceholderView`, `CYLPlaceholderView` `-initWithImage:text:`, `CYLPlaceholderView` `-initWithStyle:message:` |  |
 | `CYLPlaceholderView.imageView` (val) | The icon (`imageView`): the inherited `iconView`. | `CYLPlaceholderView` `imageView` |  |
 | `CYLPlaceholderView.textLabel` (val) | The text (`textLabel`): the inherited `titleView`; set it through `title`. | `CYLPlaceholderView` `textLabel` |  |
 | `CYLPlaceholderView.badgeLabel` (val) | The badge's label (`badgeLabel`). | `CYLPlaceholderView` `badgeLabel` |  |
@@ -1105,7 +1107,7 @@
 | `CYLPlaceholderView.tapInteractive` (val) | Whether a tap does something now (`tapInteractive`). | `CYLPlaceholderView` `tapInteractive` |  |
 | `CYLPlaceholderView.animationRepeatCount` (var) | How often the animation repeats, 0 for ever (`animationRepeatCount`). | `CYLPlaceholderView` `animationRepeatCount` |  |
 | `CYLPlaceholderView.accessibilityLabel` (var) | What accessibility services read for the placeholder (iOS `accessibilityLabel`); null reads the text and the badge. | `UIView` `accessibilityLabel` (UIKit, inherited by `CYLPlaceholderView`) | Android reads it into the view's contentDescription, which CYLAnimatedItemView rebuilds from the title |
-| `CYLPlaceholderView.itemAttributes` (var) | The description the view was made from, with the iOS keys (`itemAttributes`). | `CYLPlaceholderView` `itemAttributes` | partial (see docs/Android-API-Map.md) |
+| `CYLPlaceholderView.itemAttributes` (var) | The description the view was made from, with the iOS keys (`itemAttributes`). | `CYLPlaceholderView` `itemAttributes` |  |
 | `CYLPlaceholderView.showBadgeWithStyle` (fun) | Shows a badge of [style] with [value] (`showBadgeWithStyle:value:`). | `CYLPlaceholderView` `-showBadgeWithStyle:value:` |  |
 | `CYLPlaceholderView.performTap` (fun) | Calls [tapHandler] as a tap would; false when the placeholder is not interactive (`performTap`). | `CYLPlaceholderView` `-performTap` |  |
 | `CYLPlaceholderView.setAnimationFile` (fun) | Shows the animation at [path] instead of the icon (the inherited `animationURL`), through the animator of the CYLAnimatedItem engine for it (an app's [registerAnimationFactory] first); false when no animator plays it (fo | `CYLPlaceholderView` `-setAnimationFile:` | added 2026-11-16 for Android parity |
