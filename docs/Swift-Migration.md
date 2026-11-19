@@ -28,7 +28,7 @@ Objective-C to Swift, and its score after every commit.
 
 ### TODO: Transcribe the core to Swift
 
-- **Status:** in progress, 83 / 100 (2026-11-19; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
+- **Status:** in progress, 86 / 100 (2026-11-20; recorded 2026-11-12, while branch `an earlier parity branch` was in progress; when work
   starts, create a new branch and open its pull request per "A pull request for every new branch").
 - **The user's original prompt (verbatim):** "将下面的任务找一个合适的文档，标注 TODO：全英文写入：注意本操作仅仅设计iOS端，重点修改 本项目的Core核心层面代码。 不涉及第三方库，首先创建swift编码规范文档，更新instructions和skills相关文档。如果网络有现成的swift skills请直接复制安装到本项目中，按照swift编码规范以及swift相关skilla，将Core 核心层面代码全部转录为Swift代码，如果无必要不要修改example层代码。在该文档中记录swift翻译进度。以项目中不存在objc代码为准，如果无法翻译为swift以宏定义 关键字形式 进行兼容swift的也可以算作翻译成功。不存在objc代码为满分，每提交一次就打一次分。每提交一次检查是否满分。一直到满分为止。"
 - **Requirements:**
@@ -358,6 +358,61 @@ Objective-C to Swift, and its score after every commit.
     Example-SwiftUI, Example-objc-01 and the `CYLTableViewPlaceHolderFramework` target build and analyze (0 placeholder
     warnings, 0 CYLRefresh warnings, was 5). Simulator check (Example-Scenarios on CYL Placeholder Screens, held drags with axe): More → Refresh → Default (normal header: arrow turned up at "Release to refresh", spinner and "Loading...", "Last update: Today …", new rows after), Animated images (ring frames beside both texts), Springing-back footer 01 (arrow, "Release to load more", spinner), Springing-back footer 02 ("No more data"), Everything loaded (auto footer "No more data"), Cupertino style (indicator fades in with the pull and spins; footer spinner below the last row), Pull left (trailer arrow and the vertical "Release to see details"), BezierRadar (dots, wave, radar sweep); More → Feed → Refresh icons → `CYLRefreshActivity.gif` (playing icon beside "Loading..."); Simplified Chinese, Default ("松开立即刷新", "正在刷新数据中...", "最后更新：今天 …"). Measured: core 61 Swift files (19,426 lines)
     and 21 Objective-C `.m` files (4,023 lines). Score by lines: 19,426 / (19,426 + 4,023) ≈ **83 / 100** (was 75).
+  - 2026-11-20, step 10 (branch `feat/android-refresh-port-followup`; `c4684c9`, `06aae63`, `1323018`; leaves first): the
+    state layer is Swift. Checked before each class with `git grep -P "@interface\s+\w+\s*:\s*<Class>(?!\w)"` across the
+    repo (Examples, Tests, CrossPlatform): **no Objective-C subclass** of any of the four; their subclasses were already
+    Swift (normal / animation / GIF headers and footers, the drawn footers, `CYLRefreshNormalTrailer`). The only other
+    Objective-C file under `CYLRefresh/Custom` is the rule-6 shim `CYLRefreshDrawnHeaderSupport.m` (variadic `-inStatus:`),
+    which stays. Translated, with the same Objective-C API (class names, selectors, Swift spellings, overridable hooks
+    `open` + `@objc`: `prepare`, `placeSubviews`, `state`, `i18nDidChange`, `refreshDidFinishWithSuccess:`,
+    `flipsHorizontallyInOppositeLayoutDirectionViews`, `lastUpdatedTimeKey`; the inherited factories still return the
+    class they are sent to; the `.h` files keep doc-commented forward declarations):
+    - part 1 (`c4684c9`): `Custom/Header/CYLRefreshStateHeader.swift`: `stateLabel`, `lastUpdatedTimeLabel` (weak storage,
+      created on first access, `UILabel!` as before), `lastUpdatedTimeText`, `labelLeftInset`, `setTitle:forState:`,
+      `titleForState:`, `lastUpdatedTimeFormatter`, `lastUpdatedTimeString`, `titleTimeSpacing`, `succeededImage` /
+      `failedImage` (the private result image view), `iconOnTrailingSide`, and the former `ChainingGrammar` category's
+      `cyl_modifyLastUpdatedTimeText:` as an extension. The localized default titles and the locale-aware last-updated
+      text (`CYLRefreshConfig.languageCode`, else the current locale; `jmm` / `MMddjmm` / `yyyyMMddjmm` templates) are
+      unchanged. The `setState:` override keeps the order of its side effects (`CYLRefreshCheckState`, hide the result
+      image, state text, the time again through the `lastUpdatedTimeKey` setter); `self.lastUpdatedTimeKey =
+      self.lastUpdatedTimeKey` is a private `reapplyLastUpdatedTimeKey()` (Swift rejects a self-assignment).
+      `+[UILabel cyl_label]` is imported by Swift as `UILabel.cyl_()` (its name minus the class name), so the Swift files
+      call that spelling; the Objective-C declaration is not renamed (it shipped).
+    - part 2 (`06aae63`): `Custom/Footer/Auto/CYLRefreshAutoStateFooter.swift` (`refreshingTitleHidden`, property name and
+      setter `setRefreshingTitleHidden:` with the getter `isRefreshingTitleHidden`, Swift `isRefreshingTitleHidden`) and
+      `Custom/Footer/Back/CYLRefreshBackStateFooter.swift`. The tap on the auto footer's idle text called the
+      `CYLRefreshAutoFooter (TapTriggerFix)` category of `CYLRefreshAutoStateFooter.m`, which messaged `super`
+      (`CYLRefreshFooter`'s `-beginRefreshing`, past the trigger-count check); Swift cannot call a grandparent's method,
+      so it is now the private method `-cyl_beginRefreshingWithoutValidation` of `Base/CYLRefreshAutoFooter.m` (still
+      Objective-C until step 11), reached by selector as `CYLRefreshDrawnFooter.swift` reaches `-happenOffsetY`.
+    - part 3 (`1323018`): `Custom/Trailer/CYLRefreshStateTrailer.swift` (`cyl_placeStateLabelAtCenterX:`, Swift
+      `cyl_placeStateLabel(centerX:)`, `@discardableResult`; the upright / rotated vertical text, the same regular
+      expression through `NSString`, the flip inside flipped collection views, the empty flip list).
+    **Not kept identical, on purpose:** `setTitle:forState:` takes a nullable title in Swift and in the generated header
+    (nil is ignored, as the Objective-C code did; a nonnull Swift parameter would have turned an Objective-C nil into an
+    empty title); `-[CYLRefreshBackStateFooter titleForState:]` is nullable like the other three (it could always return
+    nil; Swift callers now get `String?` instead of an empty string); a non-date object stored under
+    `lastUpdatedTimeKey` counts as no date (Objective-C passed it on); the labels are weak instead of
+    `__unsafe_unretained`, so a removed label is created again instead of dangling. Podspec unchanged (the Core globs
+    already cover `Custom/Header`, `Custom/Footer/**` and `Custom/Trailer`); the framework target (the four `.m`
+    references now point at the `.swift` files), the cyl-api-map skill and the regenerated parity table are updated;
+    the test, accessibility and animation runners glob. Tests: core 207/207 after each part, animation 13/13 (static,
+    PAG), accessibility 4/4 (CI runner on CYL Placeholder Screens); Example-objc-02 UI tests 12/13 on the full run, the
+    failure only `testDraggingDuringHeaderRefreshKeepsFirstItemPosition` (load average 66 to 86), which then passed 2 of 2
+    reruns; Example-Scenarios, Example-objc-02, Example-SwiftUI, Example-objc-01, the root Example app and the
+    `CYLTableViewPlaceHolderFramework` target build (0 CYLRefresh warnings); `check_doc_comments.py`,
+    `check_localizations.py`, the iOS and Android API maps, the parity table, `check_package_licenses.py` and the docs
+    navigation check pass. Simulator check (Example-Scenarios on CYL Placeholder Screens, English, held drags with axe):
+    More → Refresh → Default ("Pull down to refresh" with the arrow down, "Release to refresh" with the arrow up, spinner
+    and "Loading...", "Last update: Today 12:38 AM"), Hide the time (one centered line beside the arrow, then spinner and
+    "Loading..."), Hide the state and time (icon only), No automatic loading ("Tap or pull up to load more"; a tap loads
+    a row with "Loading..."), Hide the refreshing text (spinner only while loading), Everything loaded ("No more data"),
+    Springing-back footer 01 ("Release to load more" with the arrow, then spinner and "Loading..."), Springing-back
+    footer 02 ("No more data"), Pull left (rotated "Swipe to see details", then "Release to see details" with the arrow
+    turned; release opens the details page), Refresh text languages in Simplified Chinese ("松开立即刷新",
+    "正在刷新数据中...", "最后更新：今天 00:45") and Russian ("Отпустите чтобы обновить", "Загрузка...",
+    "Последнее обновление: Сегодня 00:49", 24-hour time in both). Measured: core 65 Swift files (20,348 lines) and 17
+    Objective-C `.m` files (3,376 lines). Score by lines: 20,348 / (20,348 + 3,376) ≈ **86 / 100** (was 83).
   - Next, bottom-up and one commit per file group, each with the core (207) and animation (13) tests, the
     example builds and a simulator check (plan of 2026-11-19, `CYLRefresh/` measured at 14,000 Objective-C lines):
     - step 6: the `CYLRefresh/` root (configuration, categories; 7 files, 801 lines) — done (`804b73d`).
@@ -380,7 +435,7 @@ Objective-C to Swift, and its score after every commit.
       (Gif) footers, Ball Pulse, Cupertino header and footer, `CYLRefreshNormalTrailer` — done, with `CYLRefreshDrawnHeader`
       and `CYLRefreshBezierRadarHeader` (their test subclass moved to Swift);
     - step 10: the state layer: `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter`, `CYLRefreshBackStateFooter`,
-      `CYLRefreshStateTrailer`;
+      `CYLRefreshStateTrailer` — done;
     - step 11: `CYLRefreshHeader`, `CYLRefreshAutoFooter`, `CYLRefreshBackFooter`, `CYLRefreshTrailer`, then
       `CYLRefreshFooter`;
     - step 12: `CYLRefreshComponent` (the root);
