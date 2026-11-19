@@ -117,7 +117,10 @@ static const NSTimeInterval CYLTestTimeout = 30;
     [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
         return placeholder.animationView != nil && placeholder.imageView.layer.hidden;
     }] evaluatedWithObject:placeholder handler:nil];
-    [self waitForExpectationsWithTimeout:CYLTestTimeout handler:nil];
+    // [EN] Four times the usual timeout: the first Rive render compiles its Metal shaders, which took over 30 s on a slow
+    //      runner (Animation dynamic PAG, 22a2b1b: shader warnings from 10:51:48 to 10:52:20, timeout at 10:52:23).
+    // [CN] 超时为通常的四倍：首次渲染 Rive 时会编译 Metal 着色器，在慢速 runner 上超过 30 秒（Animation dynamic PAG，22a2b1b）。
+    [self waitForExpectationsWithTimeout:CYLTestTimeout * 4 handler:nil];
     [placeholder stopPlaceholderAnimation];
     [placeholder playPlaceholderAnimation];
     [placeholder removeFromSuperview];
