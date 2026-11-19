@@ -32,6 +32,11 @@
 //      `UIView` / `UIScrollView` / `NSBundle` / `UICollectionViewLayout` 分类）用 Swift 编写（2026-11-19）：Objective-C 代码从模块生成的 Swift 头文件获得其接口；放在最后导入，确保其中用到的
 //      Objective-C 类型都已声明。不供 Swift 使用（`__swift__`）：模块自己的 Swift 文件不能导入自己生成的头文件。
 #ifndef __swift__
+// [EN] The generated header declares CYLRefreshGameStartScene as a subclass of SpriteKit's SKScene; an Objective-C file
+//      built without modules does not get SpriteKit from it, so import it first (the podspec links SpriteKit).
+// [CN] 生成的头文件把 CYLRefreshGameStartScene 声明为 SpriteKit 的 SKScene 子类；未启用模块编译的 Objective-C 文件不会因此得到
+//      SpriteKit，因此先导入它（podspec 已链接 SpriteKit）。
+#import <SpriteKit/SpriteKit.h>
 #if __has_include(<CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>)
 #import <CYLTableViewPlaceHolder/CYLTableViewPlaceHolder-Swift.h>
 #elif __has_include("CYLTableViewPlaceHolder-Swift.h")
