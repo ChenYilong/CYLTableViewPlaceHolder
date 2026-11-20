@@ -11,6 +11,7 @@
 | [API 对照](#api-对照--api-alignment) | [API alignment](#api-对照--api-alignment) |
 | [验证](#验证--verification) | [Verification](#验证--verification) |
 | [CYLRefresh in one folder](#cylrefresh-in-one-folder) | [CYLRefresh in one folder](#cylrefresh-in-one-folder) |
+| [README 中的微信小程序说明（2026-11-20 移入）](#readme-中的微信小程序说明2026-11-20-移入--wechat-mini-program-notes-from-the-readme-moved-2026-11-20) | [WeChat Mini Program notes from the README (moved 2026-11-20)](#readme-中的微信小程序说明2026-11-20-移入--wechat-mini-program-notes-from-the-readme-moved-2026-11-20) |
 
 <!-- docs-navigation:end -->
 
@@ -445,3 +446,50 @@ Every refresh component of the mini program lives in `src/cyl-refresh/`: `cyl_re
 and the trailer component (CYLRefreshNormalTrailer) in `src/cyl-refresh/trailer/`. The HUD lives in
 `src/cyl-placeholder-hud/`. The example copies `cyl-refresh/` with `scripts/sync-example.js`. TODO (not verified):
 open the trailer in WeChat DevTools (needs the owner's DevTools login).
+
+## README 中的微信小程序说明（2026-11-20 移入） / WeChat Mini Program notes from the README (moved 2026-11-20)
+
+| 中文 | English |
+| --- | --- |
+| `CrossPlatform/wechat-miniprogram-cylplaceholder` 是本库的微信小程序版：`cyl-placeholder` 组件，35 个场景、七种语言，从 Android 版 `android/placeholder` 翻译而来。用微信开发者工具打开该文件夹即可运行示例。用法、属性与事件见其 README，进度与 TODO 见 [WeChat-MiniProgram.md](WeChat-MiniProgram.md)。 | `CrossPlatform/wechat-miniprogram-cylplaceholder` is the WeChat Mini Program version: the `cyl-placeholder` component with 35 scenarios in seven languages, translated from `android/placeholder`. Open that folder in WeChat DevTools to run the example. Usage, properties and events: its README; progress and TODOs: [WeChat-MiniProgram.md](WeChat-MiniProgram.md). |
+| 截图：微信开发者工具 2.02.2609250 模拟器，基础库 3.17.6，Windows 11，提交 `83c8bd0`，2026-11-15 12:14（+13:00）。场景列表与五个场景页。 | Screenshot: WeChat DevTools 2.02.2609250 simulator, base library 3.17.6, Windows 11, commit `83c8bd0`, 2026-11-15 12:14 (+13:00). The scenario list and five scenario pages. |
+
+![WeChat Mini Program example: scenario list and scenario pages](assets/wechat-miniprogram-example.png)
+
+| 中文 | English |
+| --- | --- |
+| `cyl-placeholder-hud`（`CYLPlaceholderHUD`）：加载中、进度、遮罩下的场景、深色错误提示。同一模拟器与基础库，提交 `dfc0495`，2026-11-15 12:29（+13:00）。 | `cyl-placeholder-hud` (`CYLPlaceholderHUD`): loading, progress, a scenario under the black mask, a dark error. Same simulator and base library, commit `dfc0495`, 2026-11-15 12:29 (+13:00). |
+
+![WeChat Mini Program HUD: loading, progress, scenario under a mask, dark error](assets/wechat-miniprogram-hud.png)
+
+| 中文 | English |
+| --- | --- |
+| Lottie 动效与播放控制（全部播放、倍速、循环）：无内容（2 倍速、不循环）、空购物车、提交成功。同一模拟器与基础库，提交 `f8089ef`，2026-11-15 12:37（+13:00）。 | Lottie animations with playback controls (Play all, speed, loop): no content (2×, no loop), empty cart, success. Same simulator and base library, commit `f8089ef`, 2026-11-15 12:37 (+13:00). |
+
+![WeChat Mini Program Lottie animations with Play all, speed and loop](assets/wechat-miniprogram-animation.png)
+
+| 中文 | English |
+| --- | --- |
+| 配置文件初始化（`CYLPlaceholderConfiguration`）：三种按下样式与关闭交互、三种播放策略、原始 item 属性，下方为文件内容。同一模拟器与基础库，提交 `3e164da`，2026-11-15 13:03（+13:00）。 | Configuration files (`CYLPlaceholderConfiguration`): three highlight styles and interaction off, three playback policies, raw item attributes, each with the file below. Same simulator and base library, commit `3e164da`, 2026-11-15 13:03 (+13:00). |
+
+![WeChat Mini Program configuration files](assets/wechat-miniprogram-configuration.png)
+
+| 中文 | English |
+| --- | --- |
+| 红条（`cyl-placeholder-status`，`CYLPlaceholderStatusView`）与占位图：默认红条，以及应用状态配置后的黄色红条。同一模拟器与基础库，提交 `2368eb0`，2026-11-15 13:07（+13:00）。 | The status bar (`cyl-placeholder-status`, `CYLPlaceholderStatusView`) with the placeholder: the default bar, and the yellow bar of a status configuration. Same simulator and base library, commit `2368eb0`, 2026-11-15 13:07 (+13:00). |
+
+![WeChat Mini Program status bar](assets/wechat-miniprogram-status.png)
+
+| 中文 | English |
+| --- | --- |
+| 示例一比一复刻 iOS 的 `Example-Scenarios`：CYLTabBarController 的 TabBar（五个 Tab、第 4 位的凸起加号按钮）、场景、动效、流程、动态与刷新五个 Tab，刷新 Tab 的 65 个示例（MJRefresh 表格与集合视图、CYLRefresh styles 27 种样式、flutter_easy_refresh 8 种用法）。同一模拟器与基础库，提交 `66f0dbc`，2026-11-15 13:54（+13:00）。差异见 [WeChat-MiniProgram.md](WeChat-MiniProgram.md)。 | The example is a 1:1 copy of the iOS `Example-Scenarios`: CYLTabBarController's tab bar (five tabs, the raised plus button at index 3), the Scenarios, Animations, Flows, Feed and Refresh tabs, and the Refresh tab's 65 demos (MJRefresh tables and collections, 27 CYLRefresh styles, 8 flutter_easy_refresh samples). Same simulator and base library, commit `66f0dbc`, 2026-11-15 13:54 (+13:00). Differences: [WeChat-MiniProgram.md](WeChat-MiniProgram.md). |
+
+![WeChat Mini Program 1:1 example: the five tabs and a refresh example](assets/wechat-miniprogram-example-tabs.png)
+
+![WeChat Mini Program CYLRefresh styles drawn mid-refresh](assets/wechat-miniprogram-refresh-styles.png)
+
+| 中文 | English |
+| --- | --- |
+| `cyl-refresh` 提供：Cupertino 头部与尾部、监听头部、触发方式（anywhere / onEdge）、二楼、头部固定在内容下方、结束提示（`finishDuration`）、上拉尾部的拖动进度、自定义文字表（`CYLRefresh.registerStrings`）、即时切换语言，以及左拉「查看图文详情」的尾随组件 `cyl-refresh/trailer`。左图：Cupertino 头部刷新中；右图：结束提示「Refresh complete」。微信开发者工具 2.02.2609250，基础库 3.17.6，2026-11-15 17:21（+13:00）。 | `cyl-refresh` provides the Cupertino header and footer, a listener header, trigger modes (anywhere / onEdge), the second floor, the behind mode, the finish phase (`finishDuration`), the back footer's pull progress, custom string tables (`CYLRefresh.registerStrings`), live language changes, and the trailer component `cyl-refresh/trailer` (pull left to see details). Left: the Cupertino header refreshing; right: the finish phase, "Refresh complete". WeChat DevTools 2.02.2609250, base library 3.17.6, 2026-11-15 17:21 (+13:00). |
+
+<img src="assets/wechat-miniprogram-refresh-cupertino.png" alt="cyl-refresh Cupertino header refreshing" width="300"> <img src="assets/wechat-miniprogram-refresh-finish.png" alt="cyl-refresh finish phase: Refresh complete" width="300">
