@@ -1,0 +1,32 @@
+# [EN] Normalize line endings on checkout regardless of a contributor's local `core.autocrlf`, so text files (shell
+#      scripts, source, docs, metadata such as `UPSTREAM_COMMIT`) are always LF. Without this file, a Windows checkout
+#      with `core.autocrlf=true` silently rewrites tracked text files to CRLF, which breaks `scripts/*.sh` (the
+#      shebang line) and the strict `^commit=[0-9a-f]{40}$` check in `scripts/check_package_licenses.py` (see
+#      `docs/Task-Log.md`, "git cz style, English only" session's fix, 2026-11-20). Binary assets are listed
+#      explicitly so Git's content-sniffing heuristic never mis-normalizes them.
+# [CN] 无论贡献者本地 `core.autocrlf` 如何设置，检出时统一换行符，使文本文件（shell 脚本、源码、文档、`UPSTREAM_COMMIT` 等元数据文件）始终为
+#      LF。没有本文件时，Windows 上 `core.autocrlf=true` 的检出会把已跟踪的文本文件悄悄改为 CRLF，既会破坏 `scripts/*.sh` 的 shebang 行，
+#      也会让 `scripts/check_package_licenses.py` 中 `^commit=[0-9a-f]{40}$` 的严格匹配失败。下面显式列出二进制资源，避免 Git
+#      的内容嗅探启发式误判。
+
+* text=auto eol=lf
+
+*.sh text eol=lf
+
+# [EN] Binary assets: never normalized, never diffed as text.
+# [CN] 二进制资源：不做换行符归一化，也不按文本做 diff。
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.riv binary
+*.pag binary
+*.svga binary
+*.bin binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.car binary
+*.zip binary
+*.icns binary
