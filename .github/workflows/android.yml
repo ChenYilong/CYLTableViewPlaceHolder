@@ -26,12 +26,12 @@ jobs:
       run:
         working-directory: android
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       # CYLTabBarController for Android, built from source at its latest commit across all branches (instructions.md,
       # "Depending on CYLTabBarController"): the core module :placeholder depends on its :cylanimateditem
       # (CYLAnimatedItemView and the animation engine) and the example on its tab bar, so it is cloned before every
