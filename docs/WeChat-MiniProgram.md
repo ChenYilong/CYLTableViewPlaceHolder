@@ -201,8 +201,11 @@
   4. Icon tinting: Android tints template icons; the mini program uses 45 % opacity (no `tintColor` on `<image>`).
   5. Done: branch pushed; pull request https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/31 targets
      `feat/android-refresh-port`.
-- **Doc discrepancy found:** `docs/Placeholder-Scenarios.md` says "36 scenarios (including HUD)", but the iOS-derived
-  Kotlin enum has 35 entries (HUD included). The unit test pins the mini program list to the Kotlin enum.
+- **Doc discrepancy found, fixed 2026-11-20:** `docs/Placeholder-Scenarios.md` said "36 scenarios (including HUD)" in
+  two places, but the iOS header (`CYLPlaceholderScenario.h`: `CYLPlaceholderScenarioNetworkUnavailable` through
+  `CYLPlaceholderScenarioHUD`, then the `CYLPlaceholderScenarioCount` sentinel) and the Kotlin enum both have 35
+  entries (HUD included); the same document's own text already said "35 of 35" two sentences later. Both header cells
+  of `docs/Placeholder-Scenarios.md` now say 35. The unit test pins the mini program list to the Kotlin enum.
 
 ### TODO: The mini program example as a 1:1 copy of the iOS example (score 85)
 
