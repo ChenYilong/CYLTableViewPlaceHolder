@@ -8,6 +8,7 @@
 | --- | --- |
 | [现状](#现状--current-state) | [Current state](#现状--current-state) |
 | [任务](#任务--tasks) | [Tasks](#任务--tasks) |
+| [README 中的 Android 说明（2026-11-20 移入）](#readme-中的-android-说明2026-11-20-移入--android-notes-from-the-readme-moved-2026-11-20) | [Android notes from the README (moved 2026-11-20)](#readme-中的-android-说明2026-11-20-移入--android-notes-from-the-readme-moved-2026-11-20) |
 
 <!-- docs-navigation:end -->
 
@@ -976,3 +977,28 @@
 | 用户原始提示词：“Android animated placeholder: CYLTableViewPlaceHolder PR #28 merged with a Lottie animator. order is 3。4 1 2。” | The user's original prompt (verbatim, left). The order means: this task first, then CYLTabBarController's raised plus button, then the mini program components, then HarmonyOS. |
 | 要求：①Lottie 动画器（`com.airbnb.android:lottie`），单独模块，对应 iOS 的 `CYLPlaceholderAnimation/Lottie` subspec；②场景的 Lottie JSON 进入 Android assets（iOS `Animations/CYLPlaceholder<Name>.json`，表为 `animationFileNamesForScenario`）；③`CYLPlaceholderStackView` 播放场景动画，静态图作后备；④测试；⑤合并进 PR #28（合并到 master 前先问）；⑥CYLSearchViewController 的 `cylsearch` 依赖该模块并更新 pin。 | Requirements: (1) a Lottie animator (`com.airbnb.android:lottie`) in its own module, the counterpart of the iOS `CYLPlaceholderAnimation/Lottie` subspec; (2) the scenarios' Lottie JSON in the Android assets (iOS `Animations/CYLPlaceholder<Name>.json`, table `animationFileNamesForScenario`); (3) `CYLPlaceholderStackView` plays its scenario's animation, the still image as the fallback; (4) tests; (5) merged into PR #28 (ask before merging to master); (6) CYLSearchViewController's `cylsearch` depends on the module, pin updated. |
 | 上下文：PR #28 已有动画基础设施（`CYLPlaceholderItemAnimationFactory`、动画器注册表、`CYLPlaceholderAnimationView`、GIF 动画器），但没有 Lottie 动画器，栈视图不播放动画，JSON 不在 assets（`android/scripts/import-ios-resources.py` 只导入图片与字符串）。iOS 由 CYLSearchViewController 核心依赖 Lottie subspec，空缓存占位图播放 `CYLPlaceholderNoDrafts.json`。 | Context: PR #28 has the animation infrastructure (`CYLPlaceholderItemAnimationFactory`, the animator registry, `CYLPlaceholderAnimationView`, a GIF animator) but no Lottie animator, the stack view plays nothing, and the JSON is not in the assets (`android/scripts/import-ios-resources.py` imports images and strings only). On iOS, CYLSearchViewController's core depends on the Lottie subspec and the empty-cache placeholder plays `CYLPlaceholderNoDrafts.json`. |
+
+## README 中的 Android 说明（2026-11-20 移入） / Android notes from the README (moved 2026-11-20)
+
+| 中文 | English |
+| --- | --- |
+| `android/` 是本库的 Android 版本（Kotlin）：`placeholder`（占位图与 HUD，HUD 在 `placeholder/.../hud/`）与 CYLRefresh（`android/merged/library`，包名 `com.cyl.refresh.*`）。CYLRefresh 是唯一的刷新内核：容器 `CYLRefreshLayout`，各样式在 `com.cyl.refresh.header` / `footer` / `classics` / `drawable`，Rive 刷新头在 `android/merged/library/rive`（模块 `:merged-rive`）。用法与 iOS 相同：`layout.cyl_header = CYLRefreshNormalHeader(context)`、`layout.cyl_footer = CYLRefreshAutoNormalFooter(context)`，`cyl_header = null` 关闭下拉。示例 `:merged-example` 用 CYLTabBarController 的 Android TabBar，中间是凸出的加号按钮。API 对照见 [Android-API-Map.md](Android-API-Map.md) 与 [iOS-Android-Parity.md](iOS-Android-Parity.md)，进度见 [Android-Port.md](Android-Port.md)。 | `android/` is this library's Android version (Kotlin): `placeholder` (the placeholder views and the HUD, in `placeholder/.../hud/`) and CYLRefresh (`android/merged/library`, packages `com.cyl.refresh.*`). CYLRefresh is the only refresh kernel: the container `CYLRefreshLayout`, the styles in `com.cyl.refresh.header` / `footer` / `classics` / `drawable`, and the Rive refresh header in `android/merged/library/rive` (module `:merged-rive`). Usage matches iOS: `layout.cyl_header = CYLRefreshNormalHeader(context)`, `layout.cyl_footer = CYLRefreshAutoNormalFooter(context)`, and `cyl_header = null` turns pull to refresh off. The example `:merged-example` uses CYLTabBarController's Android tab bar with a raised plus button. API tables: [Android-API-Map.md](Android-API-Map.md) and [iOS-Android-Parity.md](iOS-Android-Parity.md); progress: [Android-Port.md](Android-Port.md). |
+| 构建：在 `android/` 运行 `./gradlew :merged-example:assembleDebug`。CYLTabBarController 的 Android 模块（`cylanimateditem`、`cyltabbar`）尚未发布到 Maven Central，按 commit 从源码构建：依次使用 `-PcylTabBarDir=<检出>/Example-Android`、`Carthage/Checkouts/CYLTabBarController`、与本仓库同级的 `CYLTabBarController/`；都没有时 Gradle 自动运行 `scripts/cyltabbarcontroller-checkout.sh` 检出 `Cartfile` 固定的 commit（与 iOS 相同）。截图：Android 15 模拟器（API 35），提交 `2623a1c`，2026-11-14。 | Build: in `android/`, run `./gradlew :merged-example:assembleDebug`. CYLTabBarController's Android modules (`cylanimateditem`, `cyltabbar`) are not on Maven Central yet, so they are built from source at a commit: `-PcylTabBarDir=<checkout>/Example-Android`, else `Carthage/Checkouts/CYLTabBarController`, else the `CYLTabBarController/` next to this repository; with none of them, Gradle runs `scripts/cyltabbarcontroller-checkout.sh` and checks out the commit the `Cartfile` pins (the same as iOS). Screenshots: Android 15 emulator (API 35), commit `2623a1c`, 2026-11-14. |
+
+![Android merged example: placeholder tab and tab bar](assets/android-merged-example-tabs.png)
+
+| 中文 | English |
+| --- | --- |
+| 第一个 Tab 是 iOS 示例“场景”页的移植：三个分组列出全部占位场景，点击进入场景页，最后一组是 JSON 配置文件，顶部切换七种语言；第五个 Tab 是“动态”页（下拉刷新交替失败并显示“重试”，上拉加载到“没有更多”），加号按钮页是“上传中 → 成功”（Android 15 模拟器，API 35，提交 `d11eb93`，2026-11-14）。其余页面的移植进度见 [Android-Port.md](Android-Port.md)。 | The first tab is a port of the iOS example's "Scenarios" page: three sections list every placeholder scenario, a row opens its page, the last group is the JSON configuration files, and the top row switches the seven languages; the fifth tab is the "Feed" page (a pull-down refresh that alternately fails and shows "Retry", pull-up loading to "No more data"), and the plus button page is "Uploading → Success" (Android 15 emulator, API 35, commit `d11eb93`, 2026-11-14). The progress of the other pages is in [Android-Port.md](Android-Port.md). |
+
+![Android merged example: Scenarios tab, scenario page and configuration file](assets/android-merged-scenarios.png)
+
+![Android merged example: Feed tab](assets/android-merged-feed.png)
+
+![Android merged example: plus button page](assets/android-merged-plus.png)
+
+![Android merged example: HUD page](assets/android-merged-hud.png)
+
+![Android merged example: network status bar page](assets/android-merged-status.png)
+
+![Android merged example: flows](assets/android-merged-flows-1.png)
