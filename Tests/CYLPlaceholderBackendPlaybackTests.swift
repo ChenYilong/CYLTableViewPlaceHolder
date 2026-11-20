@@ -24,6 +24,19 @@ import XCTest
  */
 private let CYLTestTimeout: TimeInterval = 30
 
+/// [EN] Spins the main run loop until `condition` holds or `timeout` passes, and returns whether it held. Used instead of
+///      a fixed delay or an NSPredicate expectation: on a loaded CI runner the display link can tick late, and an
+///      NSPredicate expectation was seen evaluating its predicate only once. [CN] 旋转主 run loop，直到 `condition`
+///      成立或超时，并返回是否成立；用来代替固定延时或 NSPredicate 期望（后者在 CI 上只计算过一次谓词）。
+private func CYLSpinUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+    let deadline = Date().addingTimeInterval(timeout)
+    while !condition() {
+        if Date() >= deadline { return false }
+        RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.02))
+    }
+    return true
+}
+
 /**
  * Reads a number through key-value coding (for `progress`, key-value coding calls the PAG view's `-getProgress`).
  */
@@ -58,9 +71,9 @@ final class CYLPlaceholderBackendPlaybackTests: XCTestCase {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         window.addSubview(placeholder)
         if !UIAccessibility.isReduceMotionEnabled {
-            let elapsed = expectation(description: "PAG advances")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { elapsed.fulfill() }
-            wait(for: [elapsed], timeout: 15)
+            // [EN] Poll for the first moved frame, not a fixed delay: a loaded CI runner can tick late (2026-11-20, SVGA).
+            // [CN] 轮询第一帧的移动，而不是固定延时：负载高的 CI 会晚到（2026-11-20，SVGA 测试）。
+            _ = CYLSpinUntil(timeout: 60) { CYLDouble(pag, "progress") > 0 }
             XCTAssertGreaterThan(CYLDouble(pag, "progress"), 0)
             placeholder.stopPlaceholderAnimation()
             XCTAssertEqual(CYLDouble(pag, "progress"), 0, accuracy: 0.01)
@@ -103,9 +116,13 @@ final class CYLPlaceholderBackendPlaybackTests: XCTestCase {
         XCTAssertTrue(placeholder.animationLoops)
         if !UIAccessibility.isReduceMotionEnabled {
             placeholder.playPlaceholderAnimation()
-            let elapsed = expectation(description: "SVGA advances at 2x")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { elapsed.fulfill() }
-            wait(for: [elapsed], timeout: 15)
+            // [EN] Poll for the first moved frame instead of waiting a fixed 0.3 s: on a loaded CI runner the display link
+            //      can tick late (the run of 2026-11-20 saw progress 0.0 after 0.3 s). The bound is generous; the wait
+            //      ends as soon as the frame moves. [CN] 轮询第一帧的移动，而不是固定等 0.3 秒：负载高的 CI 上 display link
+            //      会晚到（2026-11-20 的运行中 0.3 秒后进度仍为 0）。上限宽松，帧一动就结束。
+            _ = CYLSpinUntil(timeout: 60) {
+                CYLDouble(placeholder.value(forKey: "animationPlayer") as? NSObject, "progress") > 0
+            }
             let player = placeholder.value(forKey: "animationPlayer") as? NSObject
             XCTAssertGreaterThan(CYLDouble(player, "progress"), 0, "playing moves the frame")
         }

@@ -43,6 +43,19 @@ private func CYLRenderedCenterColor(_ view: UIView) -> UIColor {
  */
 private let CYLTestTimeout: TimeInterval = 30
 
+/// [EN] Spins the main run loop until `condition` holds or `timeout` passes, and returns whether it held. Used instead of
+///      a fixed delay or an NSPredicate expectation: on a loaded CI runner the display link can tick late, and an
+///      NSPredicate expectation was seen evaluating its predicate only once. [CN] 旋转主 run loop，直到 `condition`
+///      成立或超时，并返回是否成立；用来代替固定延时或 NSPredicate 期望（后者在 CI 上只计算过一次谓词）。
+private func CYLSpinUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+    let deadline = Date().addingTimeInterval(timeout)
+    while !condition() {
+        if Date() >= deadline { return false }
+        RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.02))
+    }
+    return true
+}
+
 private func CYLWriteLottie(_ json: String, _ name: String) -> URL {
     let url = URL(fileURLWithPath: (NSTemporaryDirectory() as NSString).appendingPathComponent("\(name)-\(UUID().uuidString).json"))
     try? json.write(to: url, atomically: true, encoding: .utf8)
@@ -163,9 +176,9 @@ final class CYLPlaceholderLottiePlaybackTests: XCTestCase {
         XCTAssertEqual(lottie?.frame.width ?? 0, 80, accuracy: 0.1)
         if !UIAccessibility.isReduceMotionEnabled {
             XCTAssertTrue(CYLBool(lottie, "isAnimationPlaying"))
-            let elapsed = expectation(description: "Lottie advances")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { elapsed.fulfill() }
-            wait(for: [elapsed], timeout: 15)
+            // [EN] Poll for the first moved frame, not a fixed delay: a loaded CI runner can tick late (2026-11-20, SVGA).
+            // [CN] 轮询第一帧的移动，而不是固定延时：负载高的 CI 会晚到（2026-11-20，SVGA 测试）。
+            _ = CYLSpinUntil(timeout: 60) { CYLDouble(lottie, "realtimeAnimationProgress") > 0 }
             XCTAssertGreaterThan(CYLDouble(lottie, "realtimeAnimationProgress"), 0)
             placeholder.stopPlaceholderAnimation()
             XCTAssertFalse(CYLBool(lottie, "isAnimationPlaying"))
