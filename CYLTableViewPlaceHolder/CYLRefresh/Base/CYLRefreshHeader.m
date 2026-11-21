@@ -29,6 +29,13 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 @property (assign, nonatomic) CGFloat cyl_storedExpandHeight;
 /// [EN] YES while this refresh added the header height to the top inset. [CN] 本次刷新把刷新头高度加到顶部 inset 期间为 YES。
 @property (assign, nonatomic) BOOL cyl_addedRefreshingInset;
+/// [EN] How many times this refresh put back an inset that someone else removed (#1628). [CN] 本次刷新恢复被外部移除的 inset 的次数（#1628）。
+@property (assign, nonatomic) NSInteger cyl_insetRestoreCount;
+/// [EN] YES while the container owns the inset and the refreshing header floats in front instead (#1628).
+/// [CN] 容器占有 inset、刷新中的刷新头改为浮在内容前面时为 YES（#1628）。
+@property (assign, nonatomic) BOOL cyl_floatsOverOwnedInset;
+/// [EN] The background before floating, put back afterwards. [CN] 浮动前的背景色，结束后还原。
+@property (strong, nonatomic, nullable) UIColor *cyl_backgroundBeforeFloating;
 /// [EN] Whether the current drag started with the list at the top edge (triggerMode). [CN] 当前拖动开始时列表是否在顶部边缘（triggerMode）。
 @property (assign, nonatomic) BOOL cyl_dragStartedAtEdge;
 /// [EN] Second floor: pulled past the trigger while dragging. [CN] 二楼：拖动中已拉过触发点。
@@ -342,6 +349,102 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
     self.insetTDelta = _scrollViewOriginalInset.top - self.scrollView.cyl_insetT;
 }
 
+/// [EN] Most restores per refresh, so the header never fights a container that keeps resetting the inset.
+/// [CN] 每次刷新最多恢复的次数，避免与反复重置 inset 的容器相互争夺。
+static const NSInteger CYLRefreshHeaderMaximumInsetRestores = 3;
+
+/*!
+ * [EN] MJRefresh #1628: SwiftUI's ScrollView (iOS 27) resets contentInset and contentOffset to zero right after a refresh
+ *      begins, on its next update, so the refreshing header ended up above the visible area. While refreshing, an inset
+ *      lowered by someone else (not by the header, not by the user's drag) is put back on the next run loop, with the
+ *      offset that shows the header when the content rested at its top.
+ * [CN] MJRefresh #1628：SwiftUI 的 ScrollView（iOS 27）在刷新开始后的下一次更新中把 contentInset 与 contentOffset 重置为 0，
+ *      刷新中的刷新头因此位于可见区域之外。刷新期间，若 inset 被外部（不是刷新头，也不是用户拖动）降低，下一个 run loop 恢复它；
+ *      内容停在顶部时同时恢复显示刷新头的 offset。
+ */
+- (void)scrollViewContentInsetDidChange:(NSDictionary *)change
+{
+    [super scrollViewContentInsetDidChange:change];
+    if (![self cyl_insetWasRemovedByAnotherOwner]) return;
+    if (self.cyl_insetRestoreCount >= CYLRefreshHeaderMaximumInsetRestores) {
+        // [EN] The container takes the inset back every time (SwiftUI): float in front until the refresh ends.
+        // [CN] 容器每次都收回 inset（SwiftUI）：在刷新结束前改为浮在内容前面。
+        [self cyl_floatOverOwnedInset];
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf cyl_restoreRemovedRefreshingInset];
+    });
+}
+
+- (void)cyl_floatOverOwnedInset
+{
+    // [EN] The inset is not ours any more: ending the refresh must not change it. [CN] inset 已不属于刷新头：结束刷新时不能修改它。
+    self.cyl_addedRefreshingInset = NO;
+    self.insetTDelta = 0;
+    self.cyl_floatsOverOwnedInset = YES;
+    // [EN] In front of the content, an opaque background keeps the text readable over the rows.
+    // [CN] 位于内容前面时，不透明背景让文字在列表行上方仍然清晰。
+    self.cyl_backgroundBeforeFloating = self.backgroundColor;
+    UIColor *background = self.scrollView.backgroundColor;
+    if (!background || CGColorGetAlpha(background.CGColor) < 1) {
+        if (@available(iOS 13.0, *)) background = UIColor.systemBackgroundColor;
+        else background = UIColor.whiteColor;
+    }
+    self.backgroundColor = background;
+    [self cyl_placeFloatingHeader];
+}
+
+- (void)cyl_placeFloatingHeader
+{
+    if (!self.cyl_floatsOverOwnedInset || !self.scrollView) return;
+    self.cyl_y = self.scrollView.cyl_offsetY + self.scrollView.cyl_inset.top;
+    self.layer.zPosition = 1;
+    if (self.superview.subviews.lastObject != self) [self.superview bringSubviewToFront:self];
+}
+
+- (void)cyl_endFloatingOverOwnedInset
+{
+    if (!self.cyl_floatsOverOwnedInset) return;
+    self.cyl_floatsOverOwnedInset = NO;
+    self.backgroundColor = self.cyl_backgroundBeforeFloating;
+    self.cyl_backgroundBeforeFloating = nil;
+    self.layer.zPosition = 0;
+    self.cyl_y = -self.cyl_h - self.ignoredScrollViewContentInsetTop;
+    [self cyl_applyScrollMode];
+}
+
+- (BOOL)cyl_insetWasRemovedByAnotherOwner
+{
+    UIScrollView *scrollView = self.scrollView;
+    if (!scrollView || self.updatingRefreshInset || self.retracting) return NO;
+    if (self.state != CYLRefreshStateRefreshing || !self.cyl_addedRefreshingInset) return NO;
+    if (self.scrollMode == CYLRefreshScrollModeFront) return NO;
+    if (scrollView.isTracking || scrollView.isDragging || scrollView.isDecelerating) return NO;
+    CGFloat top = self.scrollViewOriginalInset.top + self.expandHeight;
+    return scrollView.cyl_insetT < top - 0.5;
+}
+
+- (void)cyl_restoreRemovedRefreshingInset
+{
+    if (![self cyl_insetWasRemovedByAnotherOwner] ||
+        self.cyl_insetRestoreCount >= CYLRefreshHeaderMaximumInsetRestores) return;
+    self.cyl_insetRestoreCount += 1;
+    UIScrollView *scrollView = self.scrollView;
+    CGFloat originalTop = self.scrollViewOriginalInset.top;
+    CGFloat top = originalTop + self.expandHeight;
+    // [EN] Resting at the top of the content: show the header again. [CN] 内容停在顶部：重新显示刷新头。
+    BOOL restingAtTop = scrollView.cyl_offsetY >= -top - 0.5 && scrollView.cyl_offsetY <= -originalTop + 0.5;
+    self.insetTDelta = scrollView.cyl_insetT - top;
+    [self setRefreshingInsetTop:top];
+    if (restingAtTop) {
+        CGPoint offset = scrollView.contentOffset;
+        offset.y = -top;
+        [scrollView setContentOffset:offset animated:NO];
+    }
+}
+
 - (void)scrollViewContentOffsetDidChange:(NSDictionary *)change
 {
     [super scrollViewContentOffsetDidChange:change];
@@ -350,6 +453,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
     // 在刷新的refreshing状态
     if (self.state == CYLRefreshStateRefreshing) {
+        [self cyl_placeFloatingHeader];
         if (self.cyl_addedRefreshingInset && self.scrollMode != CYLRefreshScrollModeFront) [self resetInset];
         return;
     }
@@ -418,6 +522,8 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 - (void)setState:(CYLRefreshState)state
 {
     CYLRefreshCheckState
+
+    if (state != CYLRefreshStateRefreshing) [self cyl_endFloatingOverOwnedInset];
 
     // 根据状态做事情
     if (state == CYLRefreshStateIdle) {
@@ -523,6 +629,7 @@ NSString * const CYLRefreshHeaderRefreshingBoundsKey = @"CYLRefreshHeaderRefresh
 
 - (void)headerRefreshingAction {
     self.insetTDelta = 0;
+    self.cyl_insetRestoreCount = 0;
     if (![self cyl_movesContentWhileRefreshing]) {
         // [EN] Front: the content stays where it is. [CN] 前置：内容保持不动。
         self.cyl_addedRefreshingInset = NO;

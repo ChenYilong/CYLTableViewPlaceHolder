@@ -582,4 +582,57 @@
     window.hidden = YES;
 }
 
+/// MJRefresh #1628 on iOS 27: SwiftUI resets contentInset and contentOffset right after a refresh begins. The header puts
+/// its inset back (and shows itself again) while refreshing, at most three times per refresh, and never during a drag.
+- (void)testRefreshingHeaderRestoresAnInsetRemovedByItsContainer {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:window.bounds];
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    scrollView.contentSize = CGSizeMake(320, 2000);
+    [window addSubview:scrollView];
+    CYLRefreshNormalHeader *header = [CYLRefreshNormalHeader headerWithRefreshingBlock:^{}];
+    scrollView.cyl_header = header;
+    UIColor *ownBackground = header.backgroundColor;
+    [header beginRefreshing];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    CGFloat top = header.cyl_h;
+    XCTAssertEqualWithAccuracy(scrollView.contentInset.top, top, 0.5, @"refreshing: the header's inset");
+
+    // [EN] What SwiftUI does on its next update. [CN] SwiftUI 在下一次更新中的行为。
+    scrollView.contentInset = UIEdgeInsetsZero;
+    scrollView.contentOffset = CGPointZero;
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertEqualWithAccuracy(scrollView.contentInset.top, top, 0.5, @"the inset is put back");
+    XCTAssertEqualWithAccuracy(scrollView.contentOffset.y, -top, 0.5, @"the header is visible again");
+
+    // [EN] A container that keeps resetting (SwiftUI) wins after three restores; the header then floats in front at the
+    //      visible top until the refresh ends. [CN] 反复重置的容器（SwiftUI）在三次恢复后获胜；刷新头随后浮在可见区域顶部的内容前面，直到刷新结束。
+    for (NSInteger attempt = 0; attempt < 3; attempt++) {
+        scrollView.contentInset = UIEdgeInsetsZero;
+        scrollView.contentOffset = CGPointZero;
+        [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+    }
+    XCTAssertEqualWithAccuracy(scrollView.contentInset.top, 0, 0.5, @"no endless fight");
+    XCTAssertTrue(header.isRefreshing);
+    XCTAssertEqualWithAccuracy(header.frame.origin.y, scrollView.contentOffset.y, 0.5, @"floats at the visible top");
+    XCTAssertTrue(CGRectIntersectsRect(header.frame, scrollView.bounds), @"visible while refreshing");
+    XCTAssertEqual(scrollView.subviews.lastObject, header, @"in front of the content");
+    XCTAssertEqual(CGColorGetAlpha(header.backgroundColor.CGColor), 1, @"opaque over the rows");
+    scrollView.contentOffset = CGPointMake(0, 120);
+    XCTAssertEqualWithAccuracy(header.frame.origin.y, 120, 0.5, @"follows the visible top");
+    scrollView.contentOffset = CGPointZero;
+
+    // [EN] Ending the refresh leaves the container's inset alone and puts the header back above the content.
+    // [CN] 结束刷新不修改容器的 inset，并把刷新头放回内容上方。
+    [header endRefreshing];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+    XCTAssertFalse(header.isRefreshing);
+    XCTAssertEqualWithAccuracy(scrollView.contentInset.top, 0, 0.5);
+    XCTAssertEqualWithAccuracy(CGRectGetMaxY(header.frame), 0, 0.5, @"back above the content");
+    XCTAssertEqualObjects(header.backgroundColor, ownBackground, @"its own background again");
+    [scrollView removeFromSuperview];
+}
+
 @end

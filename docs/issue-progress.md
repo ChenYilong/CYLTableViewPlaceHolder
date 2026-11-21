@@ -67,7 +67,7 @@
 | Issue 地址 | Issue 描述 | 修复近况 |
 | --- | --- | --- |
 | [#1630](https://github.com/CoderMJLee/MJRefresh/issues/1630) | 偶发移除 KVO 观察者崩溃 | 60/100：按实际注册对象解绑，并在 iOS 26.3.1 模拟器让自动 footer 在普通容器及两个滚动视图之间切换 100 次；原偶发崩溃及真实控制器销毁场景仍未复现，不能确认根因，尚未进行三轮独立修复。 |
-| [#1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | SwiftUI 刷新动画消失 | 50/100：原 demo 的 introspection 回调每次重新安装刷新控件并重置 inset；数据更新后复现状态丢失。示例改为仅初始化一次后，程序触发的刷新在数据更新期间仍可见，但真实下拉时可见性检查失败，仍需调查；不能认为已完全修复。 |
+| [#1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | SwiftUI 刷新动画消失 | 90/100（2026-11-22，Xcode 27.2 / iOS 27.2）：根因二：SwiftUI 的 ScrollView 在刷新开始后的下一次更新中把 contentInset 与 contentOffset 重置为 0（日志：beginRefreshing 后同步为 inset 54 / offset -54，20 ms 后均为 0，每次恢复后再次被重置），刷新头因此位于可见区域之外。核心修复（`CYLRefreshHeader`）：刷新中 inset 被外部降低且用户未拖动时，下一个 run loop 恢复 inset 与 offset，每次刷新最多 3 次；容器仍收回 inset 时，刷新头改为以不透明背景浮在可见区域顶部的内容前面，直到刷新结束（结束时不修改容器的 inset）。示例的 introspect 改为开放区间 `.iOS(.v13...)`（原列表 .v13…v26 在 iOS 27 上不调用回调）。验证：单元测试 `testRefreshingHeaderRestoresAnInsetRemovedByItsContainer`，174 个测试通过；Example-SwiftUI 4/4 UI 测试通过（含真实下拉 `testPullGestureSurvivesSwiftUIDataUpdate`）；objc-02 6/6 UI 测试回归通过；截图 `docs/assets/ios-1628-swiftui-refresh.png`。剩余：SwiftUI 下内容不会被推下（浮动样式），原报告的 iOS 版本未验证。 / EN: SwiftUI (iOS 27) resets contentInset and contentOffset right after a refresh begins; the header now restores them (3 times at most) and otherwise floats in front with an opaque background until the refresh ends. 174 unit tests, 4/4 SwiftUI UI tests (real pull included), 6/6 objc-02 UI tests. |
 | [#1627](https://github.com/CoderMJLee/MJRefresh/issues/1627) | Plain 表格 section header 回弹异常 | 0/100：未调查，未修复。 |
 | [#1626](https://github.com/CoderMJLee/MJRefresh/issues/1626) | 本地化 bundle 路径为空 | 100/100：对语言目录和资源 bundle 路径进行空值防护；模拟器验证未知语言回退英文，以及整个资源 bundle 缺失时保留调用方提供的回退文本。 |
 | [#1625](https://github.com/CoderMJLee/MJRefresh/issues/1625) | SPM 包解析失败 | 0/100：未调查，未修复。 |
@@ -145,7 +145,7 @@
 | TODO | 剩余工作与实现说明 | 所需验证 |
 | --- | --- | --- |
 | TODO — #1630 KVO 移除崩溃（60） | 已按注册对象解绑；未复现原偶发崩溃。 | 真实控制器销毁场景的压力测试；Zombie/ASan 下运行。 |
-| TODO — #1628 SwiftUI 刷新动画消失（50） | 程序触发刷新可见；真实下拉时可见性检查失败。 | 修复后用 XCUITest 真实下拉验证刷新控件全程可见。 |
+| TODO — #1628 SwiftUI 刷新动画消失（90） | 2026-11-22 已修复并验证（见上表）：程序触发与真实下拉在 iOS 27.2 上均可见（4/4 UI 测试）。剩余：SwiftUI 收回 inset 时刷新头浮在内容前面而不是推下内容；原报告者的 iOS 版本未验证。 | 在原报告的 iOS 版本（本机无 iOS 18 以下运行时以外的版本限制见 Task-Log）复测；评估是否需要 SwiftUI 专用的推下内容方式（例如 safeAreaInset）。 |
 | TODO — #1610 自动 footer 复位（75） | 受控状态分支已测；真实减速、数据变化、分页对齐未测。 | XCUITest 真实手势 + 分页数据增长场景。 |
 | TODO — #1593 真机编译参数错误（45） | strict objc_msgSend 下通用真机目标可编译；缺原始报错。 | 获取原工程或报错文本，在真机构建确认。 |
 | TODO — #1589 SwiftUI 非 scroll view KVO 崩溃（90） | iOS 17.5 往返未崩溃；未在 iOS 15.4 验证。 | iOS 15 模拟器运行同一 SwiftUI 页面测试。 |

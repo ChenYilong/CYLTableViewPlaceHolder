@@ -8,7 +8,7 @@ original demo author and keep the local CocoaPods dependency path portable.
 
 | Issue | Problem | Status (docs/issue-progress.md) |
 | --- | --- | --- |
-| [MJRefresh #1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | The refresh animation disappears in SwiftUI after a data update | 50/100: fixed for refreshes started in code; a real pull still needs investigation |
+| [MJRefresh #1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | The refresh animation disappears in SwiftUI after a data update | 90/100 (2026-11-22): SwiftUI on iOS 27 resets the inset; the header restores it or floats in front while refreshing; refreshes started in code and real pulls pass on iOS 27.2 |
 | [MJRefresh #1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | Removing the KVO observer crashes when a footer leaves a SwiftUI non-scroll-view container | 90/100: no crash in five round trips on iOS 17.5; iOS 15.4 not verified |
 
 ## Run
