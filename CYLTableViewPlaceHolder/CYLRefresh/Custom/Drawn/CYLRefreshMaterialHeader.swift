@@ -525,8 +525,9 @@ open class CYLRefreshMaterialHeader: CYLRefreshDrawnHeader, CYLRefreshValueAnima
             return 1.0
         }
         // FIX: issue MJRefresh#1615
-        // [EN] NaN (a pull over a header of height 0) is neither >= 1 nor <= 0, and Int(NaN) traps; it counts as 0.
-        // [CN] NaN（拉动高度为 0 的刷新头）既不 >= 1 也不 <= 0，而 Int(NaN) 会崩溃；按 0 处理。
+        // [EN] Defensive: NaN is neither >= 1 nor <= 0, and Int(NaN) would trap; it counts as 0. The fast-pull stress test
+        //      (Tests/CYLRefreshFastPullTests.swift) did not reach this with NaN.
+        // [CN] 防御性处理：NaN 既不 >= 1 也不 <= 0，Int(NaN) 会崩溃；按 0 处理。快速下拉压力测试（Tests/CYLRefreshFastPullTests.swift）未以 NaN 走到这里。
         if !(input > 0.0) {
             return 0.0
         }
