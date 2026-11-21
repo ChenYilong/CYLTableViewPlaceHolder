@@ -107,3 +107,7 @@ TODO until each page has the three controls and a screenshot. The order follows 
   2.83, measured from a screen recording, frame timestamps), stopped on its last frame with the loop off, and kept
   changing for the whole 6.8 s recording with the loop on; on the Refresh icons page Play all started the header with its
   GIF icon.
+
+![iOS 27.2, iPhone 18 Pro simulator, macOS 27.3, Xcode 27.2 (27B52), CYLTableViewPlaceHolder 4806919, feat/android-refresh-port, 2026-11-21. Purpose: Play all, speed and loop on the animation pages](assets/ios-animation-playback-controls.png)
+
+Commit: `4806919`.
