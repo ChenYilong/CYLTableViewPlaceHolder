@@ -75,7 +75,7 @@ launch argument `-paging` (Edit Scheme → Run → Arguments) for the paging tab
 
 ## Reproduce PR #1444 (floating section headers, run with `-sections`)
 
-1. Tap **Refresh** (an 8 s load) and drag the content up: the section header at the top must pin right below the
+1. Tap **Refresh** (a 20 s load) and drag the content up: the section header at the top must pin right below the
    bar, not 54 points (the header's height) lower.
 2. Tap **Refresh**, rotate to landscape, drag, and wait for **Header completed 1**: in landscape and back in portrait
    the content rests where it does without a refresh (before the fix a gap of the bars' height difference stayed).
