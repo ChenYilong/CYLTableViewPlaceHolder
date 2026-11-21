@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：修复 docs 中所有 iOS / Swift 相关 TODO，并用 Xcode 测试 / TODO: Fix every iOS / Swift TODO in docs and test with Xcode
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-22，分支 `fix/ios-swift-todos-placeholder`，基于 `feat/android-refresh-port-followup` / PR #31）。 | Status: TODO (2026-11-22, branch `fix/ios-swift-todos-placeholder`, based on `feat/android-refresh-port-followup` / PR #31). |
+| 用户原始提示词：“fix all todo in docs about ios/swift and test with  Xcode” | The user's original prompt (verbatim): "fix all todo in docs about ios/swift and test with  Xcode" |
+| 要求：①找出 `docs/` 中所有与 iOS / Swift 相关的 TODO；②逐条修复；③用 Xcode（本机 Xcode 27.2，iOS 27.2 模拟器 089139CC）测试；④分数只在有测试证据时提高。 | Requirements: (1) find every iOS / Swift TODO in `docs/`; (2) fix them one by one; (3) test with Xcode (local Xcode 27.2, iOS 27.2 simulator 089139CC); (4) raise a score only with test evidence. |
+| 上下文：第一轮（2026-11-21，提交 `87d6818`..`76e509f`）误在过时分支 `feat/android-refresh-port` 上进行，其中播放控件、GIF/PAG/Rive 调速与 #1628 修复在本分支已存在（2026-11-19），已作废，不合并（会恢复本分支已删除的 Objective-C 核心文件）。可沿用的发现：iOS 27 上 Example-SwiftUI 的 introspect 版本列表（.v13…v26）不调用回调；SwiftUI 在刷新开始后 20 ms 内重置 inset。本轮在本分支重新盘点 TODO，只做本分支缺少的修复。 | Context: the first pass (2026-11-21, commits `87d6818`..`76e509f`) ran by mistake on the stale branch `feat/android-refresh-port`; its playback controls, GIF/PAG/Rive speed and #1628 fix already exist here (2026-11-19), so it is abandoned and not merged (it would bring back the Objective-C core files this branch removed). Findings that carry over: on iOS 27 Example-SwiftUI's introspect version list (.v13…v26) never calls its closure; SwiftUI resets the inset within 20 ms of a refresh starting. This pass re-surveys the TODOs on this branch and only does what it lacks. |
+
 ### 已完成（90 / 100）：在 Android 与鸿蒙模拟器上运行示例 / Done (90 / 100): Run the examples on the Android and HarmonyOS emulators
 
 | 中文 | English |
