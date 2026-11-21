@@ -54,3 +54,11 @@ images (no Rive engine is registered, `cylRiveIsSupported()`; PAG cannot load), 
 only on arm64 devices or arm64 emulators with the unmodified HAP. Never commit a stripped HAP or a `nativeLib` filter.
 Setup details: the `cyl-harmonyos-setup` skill; rule: root `instructions.md`, "HarmonyOS: IDE preparation and
 emulator prerequisites", item 5.
+
+Preferred home (owner's direction, 2026-11-22): this x86_64 test path belongs in CYLTabBarController's HarmonyOS
+CYLAnimatedItem (`CYLAnimatedItemView` / `CYLAnimatedItemEngines`): the strip and install helper, an ABI guard that
+registers the Rive and PAG engines only on arm64-v8a (the item shows its still image on x86_64), and an x86_64 test plan
+(fully testable there: GIF, Lottie, still-image fallback, `showsImageWhenAnimationEnds` through Lottie, layout,
+accessibility; arm64 only: Rive and PAG playback), so every example and library that depends on the item can test fully
+on the x86_64 emulator. Requested from the CYLTabBarController session; once a pinned CYLTabBarController commit has it,
+this repository re-pins, syncs `cylanimateditem` and uses the upstream helper instead of its own script.

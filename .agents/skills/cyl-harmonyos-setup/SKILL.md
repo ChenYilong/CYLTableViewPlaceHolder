@@ -45,6 +45,13 @@ the status and score are in `docs/HarmonyOS.md`.
      playback as verified there; use an arm64 emulator (Apple silicon) or a phone with the unmodified HAP.
   The older alternative, `"nativeLib": { "filter": { "excludes": ["**/*.so"] } }` in `entry/build-profile.json5`
   `buildOption`, also works locally but must never be committed; the strip script leaves the project untouched.
+  Preferred home (owner's direction, 2026-11-22): this x86_64 test path belongs in CYLTabBarController's HarmonyOS
+  CYLAnimatedItem (`CYLAnimatedItemView` / `CYLAnimatedItemEngines`): the strip and install helper, an ABI guard that
+  registers the Rive and PAG engines only on arm64-v8a (the item shows its still image on x86_64), and an x86_64 test plan
+  (fully testable there: GIF, Lottie, still-image fallback, `showsImageWhenAnimationEnds` through Lottie, layout,
+  accessibility; arm64 only: Rive and PAG playback), so every example and library that depends on the item can test fully
+  on the x86_64 emulator. Requested from the CYLTabBarController session; once a pinned CYLTabBarController commit has it,
+  this repository re-pins, syncs `cylanimateditem` and uses the upstream helper instead of its own script.
 
 ## 2. Emulator prerequisites
 
