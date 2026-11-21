@@ -1,0 +1,16 @@
+.page { position: relative; height: 100vh; background: #fff; }
+
+/* Grid: item margin 10 + grid padding 10 = section insets 20 and spacing 20 between items. */
+.grid__header { height: 30px; background: #af52de; }
+.grid { display: flex; flex-direction: row; flex-wrap: wrap; padding: 10px; }
+.grid__item { width: 80px; height: 80px; margin: 10px; }
+.grid__item--pressed { opacity: 0.6; }
+
+/* Horizontal pager: frame y = 150, height 200, full width. */
+.hpager { position: absolute; left: 0; right: 0; top: 150px; height: 200px; overflow: hidden; }
+.hpager__page { flex-shrink: 0; width: 100vw; height: 200px; }
+
+@media (prefers-color-scheme: dark) {
+  .page { background: #000; }
+  .grid__header { background: #bf5af2; }
+}

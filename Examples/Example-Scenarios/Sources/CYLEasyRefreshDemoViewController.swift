@@ -135,7 +135,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             }
         }
         paging.itemsDidChange = { [weak self] paging in
-            self?.rows = (paging.items as? [Int] ?? []).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0) }
+            self?.rows = (paging.items as? [Int] ?? []).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0) }
             self?.tableView.reloadData()
         }
         self.paging = paging
@@ -188,7 +188,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
     // MARK: - Data
 
     private func reloadCounted() {
-        rows = (0..<count).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0 + 1) }
+        rows = (0..<count).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0 + 1) }
         tableView.reloadData()
     }
 
@@ -200,7 +200,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             String(format: CYLScenarioLocalizedString(.easyLoadCount), loadCount),
             CYLScenarioLocalizedString(headerOnEdge ? .easyHeaderOnEdge : .easyHeaderAnywhere),
             CYLScenarioLocalizedString(footerOnEdge ? .easyFooterOnEdge : .easyFooterAnywhere),
-        ] + (0..<count).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0 + 1) }
+        ] + (0..<count).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0 + 1) }
         tableView.reloadData()
     }
 

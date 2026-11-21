@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'tmpdir'
+require 'fileutils'
 require 'xcodeproj'
 
 root = File.expand_path('..', __dir__)
@@ -12,20 +13,12 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.animation.tests'
     config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
   end
-  %w[CYLPlaceholderLottiePlaybackTests.m CYLPlaceholderBackendPlaybackTests.m CYLPlaceholderAnimationRegistryTests.m].each do |filename|
-    ref = project.main_group.new_file(File.join(root, 'Tests', filename))
-    build_file = target.source_build_phase.add_file_reference(ref)
-    # libpag-enterprise 4.4.x-4.5.98 ships an umbrella header that imports a missing header, so files that import
-    # libpag are compiled without modules (as the PAGEnterprise subspec does).
-    if ENV['PAG_SUBSPEC'] == 'PAGEnterprise' && filename == 'CYLPlaceholderBackendPlaybackTests.m'
-      build_file.settings = { 'COMPILER_FLAGS' => '-fno-modules' }
-    end
+  # The tests are Swift (docs/Swift-Migration.md, step 13) and import the pods' modules, so they build with static and
+  # dynamic frameworks alike. The PAG view is read by class name and key-value coding: the PAGEnterprise umbrella header
+  # of libpag-enterprise 4.4.x-4.5.98 imports a missing header, so libpag cannot be imported as a module there.
+  %w[CYLPlaceholderLottiePlaybackTests.swift CYLPlaceholderBackendPlaybackTests.swift CYLPlaceholderAnimationRegistryTests.swift].each do |filename|
+    target.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests', filename)))
   end
-  # An Objective-C-only test target linking static Swift pods needs the Swift compatibility libraries; Xcode 26
-  # adds them only when the target itself compiles Swift (Xcode 27 does not need this).
-  swift_file = File.join(dir, 'SwiftRuntime.swift')
-  File.write(swift_file, "// Links the Swift runtime libraries into the test bundle.\n")
-  target.source_build_phase.add_file_reference(project.main_group.new_file(swift_file))
   target.build_configurations.each { |config| config.build_settings['SWIFT_VERSION'] = '5.0' }
   fixtures = {
     'CYLPlaceholderTest.pag' => ENV.fetch('PAG_FIXTURE', File.expand_path('../CYLTabBarController/Example-Shared/PAGResources/tab-icons/tab_home.pag', root)),
@@ -33,8 +26,13 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
     'CYLPlaceholderTrigger.riv' => ENV.fetch('RIVE_TRIGGER_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/check.riv', root)),
     'CYLPlaceholderLinear.riv' => ENV.fetch('RIVE_LINEAR_FIXTURE', File.expand_path('../CYLTabBarController/Example-SwiftUI-Rive/AnimatedApp/RiveAssets/button.riv', root)),
     # rive-app/rive-ios Tests/Assets/data_binding_test.riv (MIT); scripts/animation-tests.sh downloads it.
-    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv'))
+    'CYLPlaceholderBinding.riv' => ENV.fetch('RIVE_BINDING_FIXTURE', File.join(root, 'build/fixtures/data_binding_test.riv')),
+    # CYLTabBarController's tab_list.svga (Apache-2.0, Examples/Example-Scenarios/.../Animations/NOTICE.svga-samples.md).
+    'CYLPlaceholderTest.svga' => File.join(dir, 'tab_list.svga')
   }
+  # Copied out of the example's .bundle folder: a file reference inside a bundle is not copied as a resource.
+  FileUtils.cp(File.join(root, 'Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Animations/tab_list.svga'),
+               File.join(dir, 'tab_list.svga'))
   fixtures.each do |name, path|
     abort "Missing animation fixture: #{path}" unless File.file?(path)
     ref = project.main_group.new_file(path)
@@ -48,15 +46,19 @@ Dir.mktmpdir('cyl-placeholder-animation-tests-') do |dir|
   scheme.save_as(project.path, 'AnimationTests', true)
   linkage = ENV.fetch('LINKAGE', 'static')
   abort 'LINKAGE must be static or dynamic' unless %w[static dynamic].include?(linkage)
+  # Core depends on the CYLAnimatedItem pod (CYLTabBarController repository): the commit the Cartfile pins.
+  tabbar_sha = File.read(File.join(root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
   File.write(File.join(dir, 'Podfile'), <<~PODFILE)
     platform :ios, '15.0'
     project 'AnimationTests.xcodeproj'
     use_frameworks! :linkage => :#{linkage}
     target 'AnimationTests' do
+      pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
       pod 'CYLTableViewPlaceHolder/LottieSwift', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/GIF', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/#{ENV.fetch('PAG_SUBSPEC', 'PAG')}', :path => #{root.dump}
       pod 'CYLTableViewPlaceHolder/Rive', :path => #{root.dump}
+      pod 'CYLTableViewPlaceHolder/SVGA', :path => #{root.dump}
     end
     post_install do |installer|
       installer.pods_project.targets.each do |target|

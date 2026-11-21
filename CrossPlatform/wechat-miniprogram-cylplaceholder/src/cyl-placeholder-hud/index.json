@@ -1,0 +1,14 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "cyl-placeholder": "../cyl-placeholder/index",
+    "cyl-animated-item": "../cyl-animated-item/index"
+  },
+  "componentGenerics": {
+    "animation": { "default": "../cyl-animation-placeholder/index" },
+    "cyl-pag-view": { "default": "../cyl-animation-placeholder/index" },
+    "cyl-rive-view": { "default": "../cyl-animation-placeholder/index" },
+    "cyl-svga-view": { "default": "../cyl-animation-placeholder/index" }
+  }
+}

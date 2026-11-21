@@ -11,8 +11,12 @@
 import UIKit
 import CYLTableViewPlaceHolder
 
-/// Simulated loading time of the header and footer.
-private let CYLDuration: TimeInterval = 0.8
+/// Simulated loading time of the header; `-slowLoad` (UI tests, MJRefresh #1483) makes it long enough to drag the
+/// collection again while the header refreshes (20 s: three drags took longer than 8 s on a loaded CI runner).
+private let CYLDuration: TimeInterval = ProcessInfo.processInfo.arguments.contains("-slowLoad") ? 20 : 0.8
+/// Simulated loading time of the footer, never slowed: a footer the drags start must end before the next pull, or the
+/// header cannot start (seen with a 20 s footer: "Header refreshing" never appeared).
+private let CYLFooterDuration: TimeInterval = 0.8
 private let CYLCollectionViewCellIdentifier = "color"
 
 final class CYLCollectionViewController: UICollectionViewController {
@@ -66,7 +70,7 @@ final class CYLCollectionViewController: UICollectionViewController {
         header.isCollectionViewAnimationBug = true
         collectionView.cyl_footer = CYLRefreshBackNormalFooter { [weak self] in
             self?.title = CYLObjC02LocalizedString(.titleFooterRefreshing)
-            DispatchQueue.main.asyncAfter(deadline: .now() + CYLDuration) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + CYLFooterDuration) { [weak self] in
                 guard let self = self else { return }
                 self.collectionView.reloadData()
                 // `-noMoreData` (UI tests): the load returns nothing new and the footer shows "no more data".

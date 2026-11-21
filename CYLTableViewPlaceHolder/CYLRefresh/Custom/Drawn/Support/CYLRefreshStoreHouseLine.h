@@ -1,21 +1,13 @@
 //
-//  Ported from SmartRefreshControl (https://github.com/scwang90/SmartRefreshControl, MIT, commit 9319448,
-//  StoreHouse/StoreHouseLine.h) into CYLRefresh; identifiers renamed with the CYLRefresh prefix. See CYLRefresh/LICENSE.third-party.
+//  Third-party refresh code (MIT, see LICENSE.refresh-third-party.txt), ported from StoreHouse/StoreHouseLine.h (commit 9319448)
+//  into CYLRefresh; identifiers renamed with the CYLRefresh prefix.
+//
+//  [EN] Swift since 2026-11-19: the class is in `CYLRefreshStoreHouseLine.swift` (docs/Swift-Migration.md, step 7), with the same
+//       Objective-C API. Objective-C code that uses it imports the umbrella header `CYLTableViewPlaceHolder.h`, which
+//       brings the generated Swift header; this header keeps the forward declaration.
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLRefreshStoreHouseLine.swift`，docs/Swift-Migration.md 第 7 步），Objective-C API 不变。使用它的
+//       Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）；本头文件保留前向声明。
 
 #import <UIKit/UIKit.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface CYLRefreshStoreHouseLine : NSObject
-
-@property (nonatomic, assign) CGPoint start;
-@property (nonatomic, assign) CGPoint end;
-@property (nonatomic, assign) CGPoint middle;
-@property (nonatomic, assign) CGFloat alpha;
-@property (nonatomic, assign) CGFloat offset;
-@property (nonatomic, assign) NSInteger index;
-@property (nonatomic, assign) CGAffineTransform transform;
-
-@end
-
-NS_ASSUME_NONNULL_END
+@class CYLRefreshStoreHouseLine;

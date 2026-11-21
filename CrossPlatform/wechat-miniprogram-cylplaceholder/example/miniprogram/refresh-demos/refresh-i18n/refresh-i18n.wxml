@@ -1,0 +1,19 @@
+<view class="page">
+  <cyl-refresh id="refresh" header="normal" footer="auto" automatically-change-alpha="{{true}}" generic:animation="cyl-lottie"
+               bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+    <view class="inset">
+      <block wx:for="{{sections}}" wx:for-item="section" wx:key="header">
+        <view class="section__header">{{section.header}}</view>
+        <view class="section__body">
+          <view wx:for="{{section.rows}}" wx:key="code" class="cell" hover-class="cell--pressed" bindtap="onRow"
+                data-code="{{item.code}}" data-custom="{{section.custom}}" aria-role="button">
+            <view class="cell__text">
+              <text class="cell__title">{{item.code}}</text>
+              <text class="cell__subtitle">{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </cyl-refresh>
+</view>

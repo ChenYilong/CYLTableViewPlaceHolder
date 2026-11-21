@@ -18,7 +18,7 @@ import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * The rows "Item n" of the life cycle page.
@@ -81,7 +81,7 @@ internal fun ScenariosPage.hudLifecyclePage(): View {
             .apply { setBackgroundColor(Color.WHITE) }
     }
     // Loaded: pull down to refresh, pull up to load more.
-    val layout = SmartRefreshLayout(context).apply {
+    val layout = CYLRefreshLayout(context).apply {
         setRefreshContent(frame)
         val header = CYLRefreshNormalHeader(context)
         cyl_header = header

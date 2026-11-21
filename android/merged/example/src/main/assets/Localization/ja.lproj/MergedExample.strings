@@ -1,7 +1,10 @@
 /* The merged example's tab titles (docs/Android-Port.md, step 3). */
 "tab.placeholder" = "プレースホルダー";
-"tab.svpulltorefresh" = "SVPull";
-"tab.ultraptr" = "Ultra 更新";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.loadmore" = "もっと読み込む";
+"tab.storehouse" = "StoreHouse";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "フィード";
 "tab.refresh" = "リフレッシュ";
+"tab.animations" = "アニメーション";
+"tab.scenarios" = "シナリオ";
+"tab.flows" = "フロー";

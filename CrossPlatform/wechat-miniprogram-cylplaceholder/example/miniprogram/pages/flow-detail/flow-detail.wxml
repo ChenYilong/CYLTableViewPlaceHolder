@@ -1,0 +1,71 @@
+<!-- CYLFlowDetailViewController: a plain table (insetGrouped for keepSectionHeaders) with its placeholder. -->
+
+<!-- The table's content: the header, the sections and the placeholder (one copy for both list kinds below). -->
+<template name="flow-content">
+  <!-- keepTableHeader: the 56 pt search bar of the table header. -->
+  <view wx:if="{{flow === 'keepTableHeader'}}" class="search">
+    <view class="search__field">
+      <text class="search__glass">⌕</text>
+      <input class="search__input" placeholder="{{searchPlaceholder}}" confirm-type="search" />
+    </view>
+  </view>
+
+  <!-- keepSectionHeaders: two sections, Pinned and All, each with the rows. -->
+  <block wx:if="{{flow === 'keepSectionHeaders'}}">
+    <view class="grouped">
+      <view class="section__header">{{sectionHeaders[0]}}</view>
+      <view wx:if="{{rows.length}}" class="section__body">
+        <view wx:for="{{rows}}" wx:key="id" class="cell cell--icon">
+          <view class="cell__icon flow__doc">▤</view>
+          <text class="cell__title">{{item.title}}</text>
+        </view>
+      </view>
+      <view class="section__header">{{sectionHeaders[1]}}</view>
+      <view wx:if="{{rows.length}}" class="section__body">
+        <view wx:for="{{rows}}" wx:key="id" class="cell cell--icon">
+          <view class="cell__icon flow__doc">▤</view>
+          <text class="cell__title">{{item.title}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="plain">
+    <view wx:for="{{rows}}" wx:key="id" class="cell cell--icon">
+      <view class="cell__icon flow__doc">▤</view>
+      <text class="cell__title">{{item.title}}</text>
+    </view>
+  </view>
+
+  <!-- The placeholder frame starts here (frameForPlaceHolderViewInTableView:). -->
+  <view id="placeholder-top" />
+  <view wx:if="{{showsPlaceholder}}" class="placeholder" style="height: {{placeholderHeight}}px">
+    <cyl-placeholder scenario="{{scenario}}" generic:animation="cyl-lottie" animated="{{true}}"
+                     bind:action="onPlaceholderAction" />
+  </view>
+</template>
+
+<view class="page {{flow === 'keepSectionHeaders' ? 'page--grouped' : ''}}">
+  <!-- switchStates: the segmented control of the navigation title view. -->
+  <view wx:if="{{flow === 'switchStates'}}" class="switcher">
+    <view class="segmented" id="stateSwitcher">
+      <view wx:for="{{segments}}" wx:key="index" data-index="{{index}}" bindtap="onSegmentTap"
+            class="segmented__item {{index === stateIndex ? 'segmented__item--selected' : ''}}"
+            aria-role="tab" aria-label="{{item}}">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="flow-list">
+    <!-- refreshControls / scrollable: CYLRefreshNormalHeader (and, for refreshControls, CYLRefreshAutoAnimationFooter
+         with the 28x28 CYLRefreshActivity.gif while refreshing). -->
+    <cyl-refresh wx:if="{{hasHeader}}" id="refresh" header="normal" footer="{{hasFooter ? 'auto' : 'none'}}"
+                 footer-icons="{{footerIcons}}" footer-hidden="{{!rows.length}}"
+                 bind:refresh="onHeaderRefresh" bind:loadmore="onFooterRefresh">
+      <template is="flow-content" data="{{flow, rows, sectionHeaders, searchPlaceholder, showsPlaceholder, placeholderHeight, scenario}}" />
+    </cyl-refresh>
+    <!-- The other flows have no refresh controls; keepTableHeader / keepSectionHeaders stop scrolling while the
+         placeholder shows. -->
+    <scroll-view wx:else class="flow-scroll" scroll-y="{{scrollY}}" enhanced="{{true}}" bounces="{{true}}">
+      <template is="flow-content" data="{{flow, rows, sectionHeaders, searchPlaceholder, showsPlaceholder, placeholderHeight, scenario}}" />
+    </scroll-view>
+  </view>
+</view>

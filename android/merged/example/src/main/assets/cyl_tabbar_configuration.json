@@ -6,34 +6,28 @@
   },
   "CYLTabBarControllerStyleType": "default",
   "CYLTabBarControllerTitlePositionAdjustment": "{0, -2}",
+  "CYLTabBarControllerShowsAllTabs": true,
   "CYLTabBarControllerTabBarItemsAttributes": [
     {
       "CYLTabBarItemIdentifier": "placeholder",
-      "CYLTabBarItemTitle": "tab.placeholder",
-      "CYLTabBarItemAccessibilityLabel": "tab.placeholder",
-      "CYLTabBarItemImage": "system:tray",
-      "CYLTabBarItemSelectedImage": "system:tray.fill"
+      "CYLTabBarItemTitle": "tab.scenarios",
+      "CYLTabBarItemAccessibilityLabel": "tab.scenarios",
+      "CYLTabBarItemImage": "system:rectangle.stack",
+      "CYLTabBarItemSelectedImage": "system:rectangle.stack.fill"
     },
     {
-      "CYLTabBarItemIdentifier": "svpulltorefresh",
-      "CYLTabBarItemTitle": "tab.svpulltorefresh",
-      "CYLTabBarItemAccessibilityLabel": "tab.svpulltorefresh",
-      "CYLTabBarItemImage": "system:arrow.down",
-      "CYLTabBarItemSelectedImage": "system:arrow.down"
+      "CYLTabBarItemIdentifier": "animations",
+      "CYLTabBarItemTitle": "tab.animations",
+      "CYLTabBarItemAccessibilityLabel": "tab.animations",
+      "CYLTabBarItemImage": "system:sparkles",
+      "CYLTabBarItemSelectedImage": "system:sparkles"
     },
     {
-      "CYLTabBarItemIdentifier": "ultraptr",
-      "CYLTabBarItemTitle": "tab.ultraptr",
-      "CYLTabBarItemAccessibilityLabel": "tab.ultraptr",
-      "CYLTabBarItemImage": "system:arrow.clockwise",
-      "CYLTabBarItemSelectedImage": "system:arrow.clockwise"
-    },
-    {
-      "CYLTabBarItemIdentifier": "refresh",
-      "CYLTabBarItemTitle": "tab.refresh",
-      "CYLTabBarItemAccessibilityLabel": "tab.refresh",
-      "CYLTabBarItemImage": "system:arrow.clockwise.circle",
-      "CYLTabBarItemSelectedImage": "system:arrow.clockwise.circle.fill"
+      "CYLTabBarItemIdentifier": "flows",
+      "CYLTabBarItemTitle": "tab.flows",
+      "CYLTabBarItemAccessibilityLabel": "tab.flows",
+      "CYLTabBarItemImage": "system:arrow.triangle.branch",
+      "CYLTabBarItemSelectedImage": "system:arrow.triangle.branch"
     },
     {
       "CYLTabBarItemIdentifier": "feed",
@@ -41,6 +35,13 @@
       "CYLTabBarItemAccessibilityLabel": "tab.feed",
       "CYLTabBarItemImage": "system:bubble.left.and.bubble.right",
       "CYLTabBarItemSelectedImage": "system:bubble.left.and.bubble.right.fill"
+    },
+    {
+      "CYLTabBarItemIdentifier": "refresh",
+      "CYLTabBarItemTitle": "tab.refresh",
+      "CYLTabBarItemAccessibilityLabel": "tab.refresh",
+      "CYLTabBarItemImage": "system:arrow.clockwise.circle",
+      "CYLTabBarItemSelectedImage": "system:arrow.clockwise.circle.fill"
     }
   ]
 }

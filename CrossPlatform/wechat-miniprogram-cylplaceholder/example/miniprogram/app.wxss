@@ -1,0 +1,50 @@
+/* Shared styles of the example: the iOS example's table styles (insetGrouped / plain), bar buttons and texts.
+   Light values; Dark Mode below (app.json "darkmode": true). */
+page { background: #f2f2f7; color: #000; font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; }
+
+/* Bar buttons: the right (or left) bar button items of a navigation bar. A mini program navigation bar has no
+   buttons, so they sit in a row right under it, aligned like the iOS bar (first item at the far right). */
+.bar { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; padding: 6px 12px; }
+.bar--left { justify-content: space-between; }
+.bar__button { padding: 6px 8px; font-size: 16px; color: #30b0c7; }
+.bar__button--pressed { opacity: 0.5; }
+
+/* insetGrouped table: sections of rounded cards with uppercase gray headers. */
+.inset { padding: 0 16px 24px; }
+.section__header { padding: 18px 16px 6px; font-size: 13px; color: #6d6d72; text-transform: uppercase; }
+.section__footer { padding: 6px 16px 0; font-size: 13px; line-height: 18px; color: #6d6d72; }
+.section__body { background: #fff; border-radius: 10px; overflow: hidden; }
+
+/* plain table: full-width rows. */
+.plain { background: #fff; }
+
+/* A cell: optional leading icon, title, subtitle, trailing detail / switch / chevron. */
+.cell { position: relative; display: flex; flex-direction: row; align-items: center; min-height: 44px;
+  padding: 8px 16px; box-sizing: border-box; background: #fff; }
+.cell + .cell::before { content: ''; position: absolute; left: 16px; right: 0; top: 0; height: 1px;
+  background: #c6c6c8; transform: scaleY(0.5); }
+.cell--icon + .cell::before, .cell--icon + .cell--icon::before { left: 54px; }
+.cell--pressed { background: #d1d1d6; }
+.cell__icon { width: 26px; height: 26px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 18px; color: #30b0c7; }
+.cell__text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cell__title { font-size: 17px; line-height: 22px; color: #000; }
+.cell__title--accent { color: #30b0c7; }
+.cell__title--destructive { color: #ff3b30; }
+.cell__subtitle { margin-top: 2px; font-size: 12px; line-height: 16px; color: #8e8e93; }
+.cell__detail { margin-left: 8px; font-size: 17px; color: #8e8e93; }
+.cell__chevron { margin-left: 8px; font-size: 20px; color: #c4c4c7; }
+.cell__check { margin-left: 8px; font-size: 17px; color: #30b0c7; }
+
+/* Feedback texts. */
+.error-text { padding: 40px 24px; text-align: center; color: #ff3b30; font-size: 15px; }
+.mono { font-family: Menlo, "SF Mono", monospace; font-size: 12px; line-height: 17px; white-space: pre-wrap; word-break: break-all; }
+
+@media (prefers-color-scheme: dark) {
+  page { background: #000; color: #fff; }
+  .section__body, .cell, .plain { background: #1c1c1e; }
+  .cell__title { color: #fff; }
+  .cell + .cell::before { background: #38383a; }
+  .cell--pressed { background: #3a3a3c; }
+  .section__header, .section__footer { color: #8d8d93; }
+}

@@ -111,4 +111,30 @@ class CYLPlaceholderHUDTest {
         idle(500)
         assertFalse(CYLPlaceholderHUD.isVisible())
     }
+
+    /** In a LinearLayout page the HUD goes to the nearest overlaying ancestor, so it has the page's full size. */
+    @Test
+    fun hudInALinearLayoutCoversTheNearestOverlayingAncestor() {
+        val page = android.widget.LinearLayout(activity).apply { orientation = android.widget.LinearLayout.VERTICAL }
+        page.addView(android.view.View(activity), android.widget.LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT))
+        container.addView(page, android.view.ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT))
+        val hud = CYLPlaceholderHUD(activity, page)
+        hud.showWithStatus("Uploading tags…")
+        org.robolectric.shadows.ShadowLooper.idleMainLooper(500, java.util.concurrent.TimeUnit.MILLISECONDS)
+        assertTrue("not squeezed into the LinearLayout", hud.parent === container)
+        hud.dismiss()
+    }
+
+    /** The status view wraps its content (not the column's spinner width) and is capped at iOS's maximum width. */
+    @Test
+    fun statusWrapsItsContentUpToTheMaximumWidth() {
+        val hud = CYLPlaceholderHUD(activity, container)
+        hud.showWithStatus("Uploading tags…")
+        org.robolectric.shadows.ShadowLooper.idleMainLooper(500, java.util.concurrent.TimeUnit.MILLISECONDS)
+        val view = hud.placeholderView!!
+        assertEquals(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, view.layoutParams.width)
+        val density = activity.resources.displayMetrics.density
+        assertTrue(view.preferredMaxLayoutWidth in 1..((CYLPlaceholderHUD.MAXIMUM_WIDTH_DP - 32f) * density + 1).toInt())
+        hud.dismiss()
+    }
 }

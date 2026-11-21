@@ -1,0 +1,89 @@
+{
+  "pages": [
+    "pages/scenarios/scenarios",
+    "pages/animations/animations",
+    "pages/flows/flows",
+    "pages/feed/feed",
+    "pages/refresh/refresh",
+    "pages/publish/publish",
+    "pages/scenario-detail/scenario-detail",
+    "pages/support/support",
+    "pages/configuration/configuration",
+    "pages/text-file/text-file",
+    "pages/animation-detail/animation-detail",
+    "pages/flow-detail/flow-detail",
+    "pages/collection-flow/collection-flow",
+    "pages/status/status",
+    "pages/hud/hud",
+    "pages/hud-lifecycle/hud-lifecycle",
+    "pages/refresh-icons/refresh-icons",
+    "pages/refresh-icon-demo/refresh-icon-demo"
+  ],
+  "window": {
+    "navigationBarTitleText": "CYLTableViewPlaceHolder",
+    "navigationBarBackgroundColor": "#f2f2f7",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f2f2f7"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8E8E93",
+    "selectedColor": "#30B0C7",
+    "list": [
+      {
+        "pagePath": "pages/scenarios/scenarios",
+        "text": "Scenarios"
+      },
+      {
+        "pagePath": "pages/animations/animations",
+        "text": "Animations"
+      },
+      {
+        "pagePath": "pages/flows/flows",
+        "text": "Flows"
+      },
+      {
+        "pagePath": "pages/feed/feed",
+        "text": "Feed"
+      },
+      {
+        "pagePath": "pages/refresh/refresh",
+        "text": "Refresh"
+      }
+    ]
+  },
+  "usingComponents": {
+    "cyl-placeholder": "/components/cyl-placeholder/index",
+    "cyl-placeholder-hud": "/components/cyl-placeholder-hud/index",
+    "cyl-placeholder-status": "/components/cyl-placeholder-status/index",
+    "cyl-lottie": "/libs/cyl-lottie-miniprogram/cyl-lottie/index",
+    "cyl-svga": "/libs/cyl-svga-miniprogram/cyl-svga/index",
+    "playback-controls": "/widgets/playback-controls/index"
+  },
+  "style": "v2",
+  "darkmode": true,
+  "sitemapLocation": "sitemap.json",
+  "subPackages": [
+    {
+      "root": "refresh-demos/",
+      "name": "refreshDemos",
+      "pages": [
+        "refresh-table/refresh-table",
+        "refresh-test/refresh-test",
+        "refresh-collection/refresh-collection",
+        "refresh-web/refresh-web",
+        "refresh-i18n/refresh-i18n",
+        "refresh-easy/refresh-easy",
+        "refresh-styles/refresh-styles"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/refresh/refresh": {
+      "network": "all",
+      "packages": [
+        "refreshDemos"
+      ]
+    }
+  }
+}

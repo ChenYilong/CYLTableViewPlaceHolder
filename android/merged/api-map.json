@@ -7,14 +7,6 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLCollectionPlaceholderViewBlock"
  },
- "CYLGIFPlaceholderItemAnimator": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLGIFPlaceholderItemAnimator"
- },
- "CYLGIFPlaceholderItemAnimator animator": {
-  "status": "done",
-  "android": "CYLGIFPlaceholderItemAnimator.animator"
- },
  "CYLPlaceholderAction": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderAction",
@@ -24,61 +16,9 @@
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderActionHandler"
  },
- "CYLPlaceholderAnimationBackend": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationBackend"
- },
- "CYLPlaceholderAnimationErrorHandler": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationErrorHandler"
- },
  "CYLPlaceholderAnimationFactory": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderAnimationFactory"
- },
- "CYLPlaceholderAnimationOption": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationOption"
- },
- "CYLPlaceholderAnimationOptionRiveActiveDuration": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveActiveDuration"
- },
- "CYLPlaceholderAnimationOptionRiveActiveProperty": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveActiveProperty"
- },
- "CYLPlaceholderAnimationOptionRiveAnimation": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveAnimation"
- },
- "CYLPlaceholderAnimationOptionRiveArtboard": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveArtboard"
- },
- "CYLPlaceholderAnimationOptionRiveColor": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveColor"
- },
- "CYLPlaceholderAnimationOptionRiveInput": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveInput"
- },
- "CYLPlaceholderAnimationOptionRiveLegacyRuntime": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveLegacyRuntime"
- },
- "CYLPlaceholderAnimationOptionRiveStateMachine": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveStateMachine"
- },
- "CYLPlaceholderAnimationOptionRiveTriggerInput": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveTriggerInput"
- },
- "CYLPlaceholderAnimationOptionRiveTriggerProperty": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationOptions.RiveTriggerProperty"
  },
  "CYLPlaceholderAnimationPlayer": {
   "status": "done",
@@ -124,88 +64,6 @@
   "status": "done",
   "android": "CYLPlaceholderAnimationPlayer.readyHandler"
  },
- "CYLPlaceholderAnimationView": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderAnimationView"
- },
- "CYLPlaceholderAnimationView -initWithCoder:": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:error:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
-  "note": "null when no animator plays the file"
- },
- "CYLPlaceholderAnimationView -initWithFileURL:size:contentMode:options:error:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.withFileURL(context, fileURL, width, height, contentMode, options, errorHandler)",
-  "note": "null when no animator plays the file"
- },
- "CYLPlaceholderAnimationView -initWithFrame:": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderAnimationView -play": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.play"
- },
- "CYLPlaceholderAnimationView -setAnimationColors:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationColors"
- },
- "CYLPlaceholderAnimationView -setAnimationProgress:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationProgress"
- },
- "CYLPlaceholderAnimationView -setAnimationRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationRepeatCount"
- },
- "CYLPlaceholderAnimationView -setAnimationSpeed:": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.setAnimationSpeed"
- },
- "CYLPlaceholderAnimationView -showLastFrame": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.showLastFrame"
- },
- "CYLPlaceholderAnimationView -stop": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.stop"
- },
- "CYLPlaceholderAnimationView animationView": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.animationView"
- },
- "CYLPlaceholderAnimationView animatorIdentifier": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.animatorIdentifier"
- },
- "CYLPlaceholderAnimationView backend": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.backend"
- },
- "CYLPlaceholderAnimationView errorHandler": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.errorHandler"
- },
- "CYLPlaceholderAnimationView player": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.player"
- },
- "CYLPlaceholderAnimationView playing": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.playing"
- },
- "CYLPlaceholderAnimationView ready": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.ready"
- },
- "CYLPlaceholderAnimationView readyHandler": {
-  "status": "done",
-  "android": "CYLPlaceholderAnimationView.readyHandler"
- },
  "CYLPlaceholderBadgeAppearance": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderBadgeAppearance"
@@ -215,14 +73,14 @@
   "android": "CYLPlaceholderBadgeAppearance.sharedAppearance"
  },
  "CYLPlaceholderBadgeAppearance animatesChanges": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.animatesChanges",
-  "note": "kept; badge changes do not animate yet"
+  "note": "pops a badge change when on screen and animations are on"
  },
  "CYLPlaceholderBadgeAppearance animationDuration": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.animationDuration",
-  "note": "kept; badge changes do not animate yet"
+  "note": "the pop of a badge change (0.6 to its size)"
  },
  "CYLPlaceholderBadgeAppearance backgroundColor": {
   "status": "done",
@@ -237,9 +95,9 @@
   "android": "CYLPlaceholderBadgeAppearance.cornerRadius"
  },
  "CYLPlaceholderBadgeAppearance font": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderBadgeAppearance.font",
-  "note": "the text size in sp (Android takes no UIFont)"
+  "note": "font (size in sp) and fontTypeface: the size, family and weight of the UIFont"
  },
  "CYLPlaceholderBadgeAppearance textColor": {
   "status": "done",
@@ -254,23 +112,23 @@
   "android": "com.cyl.placeholder.CYLPlaceholderButtonStyle"
  },
  "CYLPlaceholderComponent": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderComponent",
-  "note": "icons are the static fallback images; Android plays no animation yet"
+  "note": "icon, text, hint, button and separator components; an animation component plays its file through the stack view's CYLPlaceholderView, the fallback image showing until it is ready"
  },
  "CYLPlaceholderComponent +buttonComponentWithTitle:style:action:": {
   "status": "done",
   "android": "CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)"
  },
  "CYLPlaceholderComponent +componentWithAttributes:action:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.componentWithAttributes(attributes, action)",
-  "note": "the keys of attributes"
+  "note": "every item key, shown through fromItemAttributes in the stack view"
  },
  "CYLPlaceholderComponent +componentWithBundledAnimation:fallbackStyle:title:size:action:": {
-  "status": "partial",
-  "android": "CYLPlaceholderComponent.icon(image, title, side, tinted, action)",
-  "note": "shows the fallback image (the iOS animation is not played)"
+  "status": "done",
+  "android": "CYLPlaceholderComponent.componentWithBundledAnimation(fileName, fallbackStyle, title, side, action)",
+  "note": "the bundled file (CYLPlaceholderAnimations assets) over the fallback style's image; once, a spinner loops"
  },
  "CYLPlaceholderComponent +componentWithDictionary:error:": {
   "status": "done",
@@ -298,14 +156,14 @@
   "android": "CYLPlaceholderComponent.action"
  },
  "CYLPlaceholderComponent animationRepeatCount": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.animationRepeatCount",
-  "note": "kept for apps that play the animation; Android shows the static icon"
+  "note": "passed to the item's CYLPlaceholderView; unset, a scenario animation plays once and a spinner loops (iOS default)"
  },
  "CYLPlaceholderComponent attributes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.attributes",
-  "note": "title, image, title color and font size; the other iOS item keys come with CYLPlaceholderView (TODO)"
+  "note": "every item key is kept; keys beyond the title, image, color and size show through CYLPlaceholderView.fromItemAttributes"
  },
  "CYLPlaceholderComponent imageBundle": {
   "status": "n/a",
@@ -320,14 +178,14 @@
   "android": "CYLPlaceholderComponent.spacingBefore (dp)"
  },
  "CYLPlaceholderComponent tapHighlightStyle": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderComponent.tapHighlightStyle",
-  "note": "kept; the stacked views show taps their own way"
+  "note": "a finger on a component with an action dims it, shrinks it to 95 % or leaves it (the stack view)"
  },
  "CYLPlaceholderHUD": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderHUD",
-  "note": "an overlay on a container view; the class-level calls use the shared HUD of a container"
+  "note": "the same HUD and API, shown over a container view (the activity's content by default) instead of a window"
  },
  "CYLPlaceholderHUD +dismiss": {
   "status": "done",
@@ -534,9 +392,9 @@
   "android": "CYLPlaceholderHUD.fadeOutAnimationDuration"
  },
  "CYLPlaceholderHUD font": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderHUD.font",
-  "note": "the status text size in sp (Android takes no UIFont)"
+  "note": "font (size in sp) and fontTypeface: the size, family and weight of the UIFont"
  },
  "CYLPlaceholderHUD foregroundColor": {
   "status": "done",
@@ -645,337 +503,6 @@
  "CYLPlaceholderHUDStyle": {
   "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderHUDStyle"
- },
- "CYLPlaceholderItemAnimationBasePlayer": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationBasePlayer"
- },
- "CYLPlaceholderItemAnimationBasePlayer +new": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderItemAnimationBasePlayer -init": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderItemAnimationBasePlayer -initWithAnimationView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationBasePlayer.initWithAnimationView"
- },
- "CYLPlaceholderItemAnimationBasePlayer animationView": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationBasePlayer.animationView"
- },
- "CYLPlaceholderItemAnimationFactory": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFactory"
- },
- "CYLPlaceholderItemAnimationFactory +animationViewWithURL:size:contentMode:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.animationViewWithURL",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimationFactory +isAnimationView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.isAnimationView",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimationFactory +playerForView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.playerForView",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimationFactory +sharedFactory": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.sharedFactory",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimationFactory -init": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.init"
- },
- "CYLPlaceholderItemAnimationFactory -initWithRegistry:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.initWithRegistry"
- },
- "CYLPlaceholderItemAnimationFactory registry": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFactory.registry"
- },
- "CYLPlaceholderItemAnimationFileMatching": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationFileMatching"
- },
- "CYLPlaceholderItemAnimationFileMatching -canAnimateFileAtURL:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.canAnimateFileAtURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimationFileMatching attributeKeys": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.attributeKeys"
- },
- "CYLPlaceholderItemAnimationFileMatching fileExtensions": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.fileExtensions"
- },
- "CYLPlaceholderItemAnimationFileMatching identifier": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.identifier"
- },
- "CYLPlaceholderItemAnimationFileMatching priority": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationFileMatching.priority"
- },
- "CYLPlaceholderItemAnimationPlayableView": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayableView"
- },
- "CYLPlaceholderItemAnimationPlayableView -cyl_applyAnimationViewColors:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_applyAnimationViewColors"
- },
- "CYLPlaceholderItemAnimationPlayableView -cyl_playAnimationView": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_playAnimationView"
- },
- "CYLPlaceholderItemAnimationPlayableView -cyl_setAnimationViewRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_setAnimationViewRepeatCount"
- },
- "CYLPlaceholderItemAnimationPlayableView -cyl_showAnimationViewLastFrame": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_showAnimationViewLastFrame"
- },
- "CYLPlaceholderItemAnimationPlayableView -cyl_stopAnimationView": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_stopAnimationView"
- },
- "CYLPlaceholderItemAnimationPlayableView cyl_animationViewErrorHandler": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewErrorHandler"
- },
- "CYLPlaceholderItemAnimationPlayableView cyl_animationViewReadyHandler": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_animationViewReadyHandler"
- },
- "CYLPlaceholderItemAnimationPlayableView cyl_isAnimationViewReady": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayableView.cyl_isAnimationViewReady"
- },
- "CYLPlaceholderItemAnimationPlayer": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationPlayer"
- },
- "CYLPlaceholderItemAnimationPlayer -applyColors:traitCollection:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.applyColors",
-  "note": "a night flag instead of a trait collection"
- },
- "CYLPlaceholderItemAnimationPlayer -applyDarkColors:traitCollection:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.applyDarkColors",
-  "note": "a night flag instead of a trait collection"
- },
- "CYLPlaceholderItemAnimationPlayer -play": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.play"
- },
- "CYLPlaceholderItemAnimationPlayer -setAnimationRepeatCount:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.setAnimationRepeatCount"
- },
- "CYLPlaceholderItemAnimationPlayer -showLastFrame": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.showLastFrame"
- },
- "CYLPlaceholderItemAnimationPlayer -stop": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.stop"
- },
- "CYLPlaceholderItemAnimationPlayer animationSpeed": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.animationSpeed"
- },
- "CYLPlaceholderItemAnimationPlayer animationView": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.animationView"
- },
- "CYLPlaceholderItemAnimationPlayer progress": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationPlayer.progress"
- },
- "CYLPlaceholderItemAnimationViewFactory": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewFactory"
- },
- "CYLPlaceholderItemAnimationViewFactory -animationViewWithURL:size:contentMode:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewFactory.animationViewWithURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimationViewFactory -playerForAnimationView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewFactory.playerForAnimationView"
- },
- "CYLPlaceholderItemAnimationViewMaking": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewMaking"
- },
- "CYLPlaceholderItemAnimationViewMaking -animationViewWithURL:size:contentMode:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.animationViewWithURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimationViewMaking -isAnimationView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.isAnimationView"
- },
- "CYLPlaceholderItemAnimationViewMaking -playerForView:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewMaking.playerForView"
- },
- "CYLPlaceholderItemAnimationViewProviding": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimationViewProviding"
- },
- "CYLPlaceholderItemAnimationViewProviding +cyl_animationViewWithFileURL:options:contentMode:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimationViewProviding.cyl_animationViewWithFileURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimator": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimator"
- },
- "CYLPlaceholderItemAnimatorPriority": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorPriority"
- },
- "CYLPlaceholderItemAnimatorRegistering": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistering"
- },
- "CYLPlaceholderItemAnimatorRegistering -animatorForAttributes:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForAttributes"
- },
- "CYLPlaceholderItemAnimatorRegistering -animatorForURL:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorForURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimatorRegistering -animatorWithIdentifier:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animatorWithIdentifier"
- },
- "CYLPlaceholderItemAnimatorRegistering -animators": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.animators"
- },
- "CYLPlaceholderItemAnimatorRegistering -attributeKeyForGenericKey:inAttributes:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeyForGenericKey"
- },
- "CYLPlaceholderItemAnimatorRegistering -attributeKeysForGenericKey:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.attributeKeysForGenericKey"
- },
- "CYLPlaceholderItemAnimatorRegistering -bindURL:toAnimator:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.bindURL",
-  "note": "a file is a path, \"asset:<name>\" or a URL string"
- },
- "CYLPlaceholderItemAnimatorRegistering -fileExtensions": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.fileExtensions"
- },
- "CYLPlaceholderItemAnimatorRegistering -registerAnimator:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.registerAnimator"
- },
- "CYLPlaceholderItemAnimatorRegistering -unregisterAnimatorWithIdentifier:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistering.unregisterAnimatorWithIdentifier"
- },
- "CYLPlaceholderItemAnimatorRegistry": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemAnimatorRegistry"
- },
- "CYLPlaceholderItemAnimatorRegistry +animatorForAttributes:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForAttributes",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +animatorForURL:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorForURL",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +animatorWithIdentifier:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animatorWithIdentifier",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +animators": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.animators",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +attributeKeyForGenericKey:inAttributes:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeyForGenericKey",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +attributeKeysForGenericKey:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.attributeKeysForGenericKey",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +bindURL:toAnimator:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.bindURL",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +fileExtensions": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.fileExtensions",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +registerAnimator:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.registerAnimator",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +sharedRegistry": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.sharedRegistry",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemAnimatorRegistry +unregisterAnimatorWithIdentifier:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier",
-  "note": "companion call on the shared instance"
- },
- "CYLPlaceholderItemViewAnimator": {
-  "status": "done",
-  "android": "com.cyl.placeholder.CYLPlaceholderItemViewAnimator"
- },
- "CYLPlaceholderItemViewAnimator +new": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderItemViewAnimator -init": {
-  "status": "n/a",
-  "note": "unavailable on iOS too (NS_UNAVAILABLE)"
- },
- "CYLPlaceholderItemViewAnimator -initWithIdentifier:fileExtensions:attributeKeys:viewProvider:": {
-  "status": "done",
-  "android": "CYLPlaceholderItemViewAnimator.initWithIdentifier"
- },
- "CYLPlaceholderItemViewAnimator viewProvider": {
-  "status": "done",
-  "android": "CYLPlaceholderItemViewAnimator.viewProvider"
  },
  "CYLPlaceholderLocalization": {
   "status": "done",
@@ -1090,9 +617,9 @@
   "android": "CYLPlaceholderScenarioCatalog.categoryForScenario(scenario)"
  },
  "CYLPlaceholderScenarioCatalog +componentsForScenario:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario)",
-  "note": "every scenario's components; icons are the static fallback images"
+  "note": "every scenario's components; the first icon plays the scenario's bundled animation (once, a spinner loops) when the app adds an engine, as on iOS"
  },
  "CYLPlaceholderScenarioCatalog +localizedNameForScenario:": {
   "status": "done",
@@ -1139,9 +666,9 @@
   "android": "com.cyl.placeholder.CYLPlaceholderScenarioCategory"
  },
  "CYLPlaceholderStackView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderStackView",
-  "note": "no CYLPlaceholderView inside yet; built from components"
+  "note": "each icon + title component is a CYLPlaceholderView reporting its content size; a scenario's first item plays the scenario's animation"
  },
  "CYLPlaceholderStackView -appendComponent:": {
   "status": "done",
@@ -1215,9 +742,9 @@
   "note": "Int flags combined with or"
  },
  "CYLPlaceholderStatusView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderStatusView",
-  "note": "creating one from a configuration is TODO"
+  "note": "CYLPlaceholderStatusView.fromConfiguration makes one from a configuration"
  },
  "CYLPlaceholderStatusView -initWithCoder:": {
   "status": "n/a",
@@ -1233,9 +760,9 @@
   "android": "CYLPlaceholderStatusView(context)"
  },
  "CYLPlaceholderStatusView -initWithItemAttributes:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderStatusView(context, attributes)",
-  "note": "the title, image and title color keys"
+  "note": "every item key, applied over the banner's defaults"
  },
  "CYLPlaceholderStatusView delegate": {
   "status": "done",
@@ -1282,9 +809,9 @@
   "android": "com.cyl.placeholder.CYLPlaceholderTapHighlightStyle"
  },
  "CYLPlaceholderView": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.placeholder.CYLPlaceholderView",
-  "note": "creating one from an item configuration (dictionary or file) is TODO"
+  "note": "fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations"
  },
  "CYLPlaceholderView +bundledAnimationFileNames": {
   "status": "n/a",
@@ -1315,14 +842,14 @@
   "android": "CYLPlaceholderView(context, image, text)"
  },
  "CYLPlaceholderView -initWithItemAttributes:imageBundle:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.fromItemAttributes(context, attributes, error)",
-  "note": "no image bundle: names are drawable resources"
+  "note": "images are drawable resource ids, Android's counterpart of the image bundle"
  },
  "CYLPlaceholderView -initWithItemContentsOfURL:imageBundle:error:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.fromItemContentsOfURL(context, path, error)",
-  "note": "reads a .json file or \"asset:name\"; a property list is an iOS format; no image bundle"
+  "note": "reads a .json or XML .plist file (a path or \"asset:name\"); images are drawable resources, Android's counterpart of the image bundle"
  },
  "CYLPlaceholderView -initWithStyle:message:": {
   "status": "done",
@@ -1429,18 +956,18 @@
   "android": "CYLPlaceholderView.imageView"
  },
  "CYLPlaceholderView itemAttributes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.itemAttributes",
-  "note": "the title, image and animation file keys"
+  "note": "every key the view was made from, plus the animation file and images set later"
  },
  "CYLPlaceholderView preferredMaxLayoutWidth": {
   "status": "done",
   "android": "CYLPlaceholderView.preferredMaxLayoutWidth"
  },
  "CYLPlaceholderView reportsContentSize": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLPlaceholderView.reportsContentSize",
-  "note": "kept; the view always measures to its content on Android"
+  "note": "false (default): fills a wrap-content limit and centers its content; true: measures to its content (set by the stack view, the HUD, the status view and the refresh icon, as on iOS)"
  },
  "CYLPlaceholderView selected": {
   "status": "done",
@@ -1482,7 +1009,7 @@
  "CYLRefreshAnimationHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAnimationHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAnimationHeader -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1501,9 +1028,9 @@
   "note": "Android has android.view.animation interpolators"
  },
  "CYLRefreshAnimatorInterpolatorBlock": {
-  "status": "partial",
+  "status": "n/a",
   "android": "android.animation.ValueAnimator",
-  "note": "the Android class with the same role; its members are its own"
+  "note": "an internal drawing helper of the drawn styles' animations, which is ported (done); Android draws it with its own class (ValueAnimator), no API counterpart needed"
  },
  "CYLRefreshAnimatorRepeatMode": {
   "status": "n/a",
@@ -1512,7 +1039,7 @@
  "CYLRefreshAutoAnimationFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoAnimationFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoAnimationFooter -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1529,12 +1056,12 @@
  "CYLRefreshAutoFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoFooter autoTriggerTimes": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshAutoFooter.autoTriggerTimes",
-  "note": "kept; SmartRefreshLayout loads once per drag"
+  "note": "loads a drag may start by itself (-1 no limit); used up, auto loading stops until the next touch, as on iOS"
  },
  "CYLRefreshAutoFooter automaticallyRefresh": {
   "status": "done",
@@ -1559,7 +1086,7 @@
  "CYLRefreshAutoGifFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoGifFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoGifFooter -setImages:duration:forState:": {
   "status": "done",
@@ -1576,7 +1103,7 @@
  "CYLRefreshAutoNormalFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoNormalFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoNormalFooter CYLRefreshDeprecated": {
   "status": "n/a",
@@ -1593,7 +1120,7 @@
  "CYLRefreshAutoStateFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshAutoStateFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshAutoStateFooter -setTitle:forState:": {
   "status": "done",
@@ -1614,7 +1141,7 @@
  "CYLRefreshBackAnimationFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackAnimationFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackAnimationFooter -setAnimationImages:duration:forState:": {
   "status": "done",
@@ -1629,9 +1156,9 @@
   "android": "CYLRefreshBackAnimationFooter.animationView"
  },
  "CYLRefreshBackFooter": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackFooter",
-  "note": "the second floor (secondary*) is TODO"
+  "note": "pull to load and the second floor (secondary*)"
  },
  "CYLRefreshBackFooter -closeSecondary": {
   "status": "done",
@@ -1670,9 +1197,9 @@
   "android": "CYLRefreshBackFooter.secondaryTriggerOffset"
  },
  "CYLRefreshBackFooter secondaryVelocity": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshBackFooter.secondaryVelocity",
-  "note": "kept; the release speed is not measured on Android"
+  "note": "a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor"
  },
  "CYLRefreshBackFooter secondaryView": {
   "status": "done",
@@ -1698,7 +1225,7 @@
  "CYLRefreshBackGifFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackGifFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackGifFooter -setImages:duration:forState:": {
   "status": "done",
@@ -1715,7 +1242,7 @@
  "CYLRefreshBackNormalFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackNormalFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackNormalFooter CYLRefreshDeprecated": {
   "status": "n/a",
@@ -1740,7 +1267,7 @@
  "CYLRefreshBackStateFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshBackStateFooter",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshBackStateFooter -setTitle:forState:": {
   "status": "done",
@@ -1771,14 +1298,14 @@
   "android": "com.cyl.refresh.CYLRefreshBezierRadarHeader"
  },
  "CYLRefreshComponent": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshComponent",
-  "note": "wraps a SmartRefreshLayout RefreshComponent; attached to the SmartRefreshLayout around the content"
+  "note": "the same class and API; on Android it wraps the CYLRefreshLayout header or footer view it shows"
  },
  "CYLRefreshComponent +attach:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.attach(layout)",
-  "note": "Android creates the component with its view, then attaches it (an instance call)"
+  "note": "attach(layout) on the component (Android makes the component with its view first); refreshLayout.cyl_header / cyl_footer too"
  },
  "CYLRefreshComponent +attach:target:action:": {
   "status": "n/a",
@@ -1837,9 +1364,9 @@
   "android": "CYLRefreshComponent.executeRefreshingCallback()"
  },
  "CYLRefreshComponent -finishingDurationWithSuccess:": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.finishingDurationWithSuccess(success)",
-  "note": "an overridable hook; SmartRefreshLayout reads the component's own finish duration"
+  "note": "an overridable hook the classic views ask for their hold, as on iOS; drawn styles keep their own finish animation, as iOS drawn headers do"
  },
  "CYLRefreshComponent -i18nDidChange": {
   "status": "n/a",
@@ -1968,7 +1495,7 @@
  "CYLRefreshComponent exclusiveWithOtherRefresh": {
   "status": "partial",
   "android": "CYLRefreshComponent.exclusiveWithOtherRefresh",
-  "note": "SmartRefreshLayout always excludes; it cannot be turned off"
+  "note": "on: refused while the other control is busy; off: not refused, but CYLRefreshLayout shows one control at a time, so the busy one finishes and this one starts (iOS runs both at once)"
  },
  "CYLRefreshComponent expandHeight": {
   "status": "done",
@@ -1983,9 +1510,9 @@
   "android": "CYLRefreshComponent.fastAnimationDuration"
  },
  "CYLRefreshComponent finishDuration": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.finishDuration",
-  "note": "applied by the classic header and footer (ClassicsAbstract.setFinishDuration)"
+  "note": "the classic header and footer hold their finished text this long (through finishingDurationWithSuccess)"
  },
  "CYLRefreshComponent flipsHorizontallyInOppositeLayoutDirectionViews": {
   "status": "n/a",
@@ -2004,9 +1531,9 @@
   "android": "CYLRefreshComponent.maxPullDistance"
  },
  "CYLRefreshComponent notifiesWhenHidden": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.notifiesWhenHidden",
-  "note": "kept; SmartRefreshLayout always reports"
+  "note": "off, a hidden component skips the pull (no pullingPercent, didScrollWithOffset or icon scrubbing)"
  },
  "CYLRefreshComponent phase": {
   "status": "done",
@@ -2041,9 +1568,9 @@
   "note": "Objective-C target-action; Kotlin and Java pass a function (refreshingBlock / refreshingHandler)"
  },
  "CYLRefreshComponent scrollMode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.scrollMode",
-  "note": "read for every component; set for the classic header and footer"
+  "note": "set on the classic views and on every drawn style (SimpleComponent spinner style)"
  },
  "CYLRefreshComponent scrollView": {
   "status": "done",
@@ -2062,18 +1589,18 @@
   "android": "CYLRefreshComponent.state"
  },
  "CYLRefreshComponent triggerMode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.triggerMode",
-  "note": "kept; SmartRefreshLayout pulls from the content's edge"
+  "note": "Anywhere or OnEdge: a scroll boundary decider lets only a drag that started at the edge pull (test triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle)"
  },
  "CYLRefreshComponent triggerRate": {
   "status": "done",
   "android": "CYLRefreshComponent.triggerRate"
  },
  "CYLRefreshComponent triggersWhenReached": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshComponent.triggersWhenReached",
-  "note": "a footer loads when reached; a header waits for the release"
+  "note": "a footer loads when reached; a header refreshes as soon as the pull arms it, before the release"
  },
  "CYLRefreshComponent(CYLRefreshIconLayout)": {
   "status": "done",
@@ -2180,32 +1707,32 @@
   "note": "iOS string tables in a bundle; Android texts are string resources an app overrides by name"
  },
  "CYLRefreshConfig languageCode": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshConfig.languageCode",
-  "note": "sets the placeholder texts' language; the refresh texts are string resources in the system's language"
+  "note": "the built-in texts of classic headers and footers made after the change, and the placeholder texts"
  },
  "CYLRefreshCupertinoFooter": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshCupertinoFooter"
  },
  "CYLRefreshCupertinoFooter activityIndicator": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshCupertinoFooter.activityIndicator",
-  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+  "note": "CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class)"
  },
  "CYLRefreshCupertinoHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshCupertinoHeader"
  },
  "CYLRefreshCupertinoHeader activityIndicator": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshCupertinoHeader.activityIndicator",
-  "note": "CYLActivityIndicatorView, a twelve-spoke view drawn the same way, not UIActivityIndicatorView"
+  "note": "CYLActivityIndicatorView: the twelve-spoke indicator drawn the same way (UIActivityIndicatorView has no Android class)"
  },
  "CYLRefreshCurveType": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.path.PathParser",
-  "note": "the Android class with the same role; its members are its own"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.path.PathParser",
+  "note": "an internal drawing helper of the vector path parser, which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed"
  },
  "CYLRefreshDeliveryFooter": {
   "status": "done",
@@ -2220,9 +1747,9 @@
   "android": "CYLRefreshConst.CYLRefreshDidChangeLanguageNotification"
  },
  "CYLRefreshDrawnFooter": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshDrawnFooter",
-  "note": "extends CYLRefreshBackFooter, not the state footer (it shows no text)"
+  "note": "a footer that shows a drawn header style, as on iOS (a back footer: a drawn style shows no state text)"
  },
  "CYLRefreshDrawnFooter -initWithStyle:": {
   "status": "done",
@@ -2233,14 +1760,14 @@
   "android": "CYLRefreshDrawnFooter.style"
  },
  "CYLRefreshDrawnFooter styleClass": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshDrawnFooter.styleClass",
-  "note": "kept; each subclass builds its own style header"
+  "note": "the header class the footer draws; CYLRefreshDrawnFooter(context, styleClass) makes a footer from a header class"
  },
  "CYLRefreshDrawnHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshDrawnHeader",
-  "note": "the drawing is SmartRefreshLayout's header; the hooks are the iOS ones"
+  "note": "the drawing is CYLRefreshLayout's header; the hooks are the iOS ones"
  },
  "CYLRefreshDrawnHeader -beginRefresh": {
   "status": "done",
@@ -2339,9 +1866,9 @@
   "android": "com.cyl.refresh.CYLRefreshFlyHeader"
  },
  "CYLRefreshFlyView": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.flyrefresh.FlyView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.flyrefresh.FlyView",
+  "note": "an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (FlyView), no API counterpart needed"
  },
  "CYLRefreshFlyView colorAccent": {
   "status": "n/a",
@@ -2380,9 +1907,9 @@
   "android": "CYLRefreshFooter.ignoredScrollViewContentInsetBottom"
  },
  "CYLRefreshFooter loadsAfterNoMoreData": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshFooter.loadsAfterNoMoreData",
-  "note": "clears \"no more data\" shortly after it shows, so the next pull loads"
+  "note": "on, \"no more data\" clears right after it shows, so the next pull loads"
  },
  "CYLRefreshFooter noMoreData": {
   "status": "done",
@@ -2413,9 +1940,9 @@
   "android": "com.cyl.refresh.CYLRefreshGameHitBlockHeader"
  },
  "CYLRefreshGamePlayingScene": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.fungame.FunGameView",
+  "note": "an internal drawing helper of the game headers (CYLRefreshGameHitBlockHeader, CYLRefreshGameBattleCityHeader), which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed"
  },
  "CYLRefreshGamePlayingScene -finishWithSuccess:": {
   "status": "n/a",
@@ -2454,9 +1981,9 @@
   "note": "an iOS drawing internal; Android draws with FunGameView (its own API)"
  },
  "CYLRefreshGameStartScene": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.fungame.FunGameView",
-  "note": "the Android class with the same role; its members are its own"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.fungame.FunGameView",
+  "note": "an internal drawing helper of the game headers, which is ported (done); Android draws it with its own class (FunGameView), no API counterpart needed"
  },
  "CYLRefreshGameStartScene colorAccent": {
   "status": "n/a",
@@ -2469,7 +1996,7 @@
  "CYLRefreshGifHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshGifHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshGifHeader -setImages:duration:forState:": {
   "status": "done",
@@ -2484,9 +2011,9 @@
   "android": "CYLRefreshGifHeader.gifView"
  },
  "CYLRefreshHeader": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshHeader",
-  "note": "pull to refresh; the second floor (secondary*) is TODO"
+  "note": "pull to refresh and the second floor (secondary*)"
  },
  "CYLRefreshHeader +headerWithRefreshingBlock:": {
   "status": "done",
@@ -2557,9 +2084,9 @@
   "android": "CYLRefreshHeader.secondaryTriggerOffset"
  },
  "CYLRefreshHeader secondaryVelocity": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshHeader.secondaryVelocity",
-  "note": "kept; the release speed is not measured on Android"
+  "note": "a release at least this fast (dp/s, from the last drag samples) past the refresh trigger opens the second floor"
  },
  "CYLRefreshHeader secondaryView": {
   "status": "done",
@@ -2607,9 +2134,9 @@
   "android": "CYLRefreshConst.CYLRefreshHeaderRefreshingText"
  },
  "CYLRefreshIconAnimating": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshIconAnimating",
-  "note": "an interface; every component gets the same calls as cyl_ extensions"
+  "note": "the same interface; every component gets its calls as cyl_ extensions (cyl_iconView, cyl_setIconAnimationAttributes…)"
  },
  "CYLRefreshIconAnimating -setBundledIconAnimation:size:forState:": {
   "status": "n/a",
@@ -2617,11 +2144,11 @@
  },
  "CYLRefreshIconAnimating -setIconAnimationAttributes:forState:": {
   "status": "done",
-  "android": "CYLRefreshComponent.cyl_setIconAnimationAttributes(attributes, state)"
+  "android": "setIconAnimationAttributes(attributes, state) on the GIF / animation headers and footers; CYLRefreshComponent.cyl_setIconAnimationAttributes on any component"
  },
  "CYLRefreshIconAnimating -setIconAnimationFilePath:size:forState:": {
   "status": "done",
-  "android": "cyl_setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(path, w, h), state)"
+  "android": "setIconAnimationFilePath(path, width, height, state) on the GIF / animation headers and footers"
  },
  "CYLRefreshIconAnimating bundledIconAnimationFileNames": {
   "status": "n/a",
@@ -2655,6 +2182,18 @@
   "status": "done",
   "android": "CYLRefreshIconView.updateForState(state)"
  },
+ "CYLRefreshIconView -replayAnimation": {
+  "status": "done",
+  "android": "CYLRefreshIconView.replayAnimation()"
+ },
+ "CYLRefreshIconView animationSpeed": {
+  "status": "done",
+  "android": "CYLRefreshIconView.animationSpeed"
+ },
+ "CYLRefreshIconView loopsWhilePlaying": {
+  "status": "done",
+  "android": "CYLRefreshIconView.loopsWhilePlaying"
+ },
  "CYLRefreshIconView fittingSize": {
   "status": "done",
   "android": "CYLRefreshIconView.fittingSize"
@@ -2684,9 +2223,9 @@
   "android": "CYLRefreshIconView.titleColor"
  },
  "CYLRefreshIconView titleFont": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshIconView.titleFont",
-  "note": "the size in sp"
+  "note": "titleFont (size in sp) and titleTypeface: the size, family and weight of the UIFont"
  },
  "CYLRefreshIconView(CYLRefreshIconAttributes)": {
   "status": "done",
@@ -2733,9 +2272,9 @@
   "android": "com.cyl.refresh.CYLRefreshMaterialHeader"
  },
  "CYLRefreshMountainView": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.flyrefresh.MountainSceneView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.flyrefresh.MountainSceneView",
+  "note": "an internal drawing helper of CYLRefreshFlyHeader, which is ported (done); Android draws it with its own class (MountainSceneView), no API counterpart needed"
  },
  "CYLRefreshMountainView -onScrollingWithOffset:percent:": {
   "status": "n/a",
@@ -2752,7 +2291,7 @@
  "CYLRefreshNormalHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshNormalHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshNormalHeader CYLRefreshDeprecated": {
   "status": "n/a",
@@ -2873,7 +2412,7 @@
  "CYLRefreshScrollMode": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshScrollMode",
-  "note": "maps to SmartRefreshLayout's SpinnerStyle"
+  "note": "maps to CYLRefreshLayout's SpinnerStyle"
  },
  "CYLRefreshSlowAnimationDuration": {
   "status": "done",
@@ -2886,7 +2425,7 @@
  "CYLRefreshStateHeader": {
   "status": "done",
   "android": "com.cyl.refresh.CYLRefreshStateHeader",
-  "note": "on SmartRefreshLayout's classic header / footer"
+  "note": "on CYLRefreshLayout's classic header / footer"
  },
  "CYLRefreshStateHeader -setTitle:forState:": {
   "status": "done",
@@ -2977,23 +2516,23 @@
   "android": "CYLRefreshStoreHouseHeader.initLinesWithString(string, scale, padding)"
  },
  "CYLRefreshStoreHouseHeader enableFadeAnimation": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshStoreHouseHeader.enableFadeAnimation",
-  "note": "kept; the Android header always fades the lines in"
+  "note": "false shows the assembling bars at full alpha"
  },
  "CYLRefreshStoreHouseHeader enableReverseFlash": {
-  "status": "partial",
+  "status": "done",
   "android": "CYLRefreshStoreHouseHeader.enableReverseFlash",
-  "note": "kept; the Android header flashes one way"
+  "note": "every other pass of the loading flash runs from the last bar to the first"
  },
  "CYLRefreshStoreHouseHeader lineWidth": {
   "status": "done",
   "android": "CYLRefreshStoreHouseHeader.lineWidth"
  },
  "CYLRefreshStoreHouseLine": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.storehouse.StoreHouseBarItem",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.storehouse.StoreHouseBarItem",
+  "note": "an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHouseBarItem), no API counterpart needed"
  },
  "CYLRefreshStoreHouseLine alpha": {
   "status": "n/a",
@@ -3024,9 +2563,9 @@
   "note": "an iOS drawing internal; Android draws with StoreHouseBarItem (its own API)"
  },
  "CYLRefreshStoreHousePath": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.header.storehouse.StoreHousePath",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.header.storehouse.StoreHousePath",
+  "note": "an internal drawing helper of CYLRefreshStoreHouseHeader, which is ported (done); Android draws it with its own class (StoreHousePath), no API counterpart needed"
  },
  "CYLRefreshStoreHousePath +arrayAkta": {
   "status": "n/a",
@@ -3065,9 +2604,9 @@
   "android": "CYLRefreshConst.CYLRefreshTrailerPullingText"
  },
  "CYLRefreshTriggerMode": {
-  "status": "partial",
+  "status": "done",
   "android": "com.cyl.refresh.CYLRefreshTriggerMode",
-  "note": "the enum exists; triggerMode is not wired yet (TODO)"
+  "note": "read by CYLRefreshComponent.triggerMode (OnEdge / Anywhere)"
  },
  "CYLRefreshValueAnimator": {
   "status": "n/a",
@@ -3170,9 +2709,9 @@
   "note": "Android has android.animation.Animator.AnimatorListener"
  },
  "CYLRefreshVectorElement": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorElement -newLayer": {
   "status": "n/a",
@@ -3215,9 +2754,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorImage": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorImage -addElement:": {
   "status": "n/a",
@@ -3272,9 +2811,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorPathElement": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorPathElement +newWith:": {
   "status": "n/a",
@@ -3285,9 +2824,9 @@
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorPathsParser": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.path.PathParser",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.path.PathParser",
+  "note": "an internal drawing helper of the vector styles (StoreHouse, Delivery, DropBox…), which is ported (done); Android draws it with its own class (PathParser), no API counterpart needed"
  },
  "CYLRefreshVectorPathsParser +readCloseCommand:path:relativeTo:": {
   "status": "n/a",
@@ -3390,18 +2929,18 @@
   "note": "an iOS drawing internal; Android draws with PathParser (its own API)"
  },
  "CYLRefreshVectorUtilities": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.PathsDrawable",
-  "note": "the Android class with the same role; its members are its own"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.PathsDrawable",
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsDrawable), no API counterpart needed"
  },
  "CYLRefreshVectorUtilities +newLayerForElement:withPath:": {
   "status": "n/a",
   "note": "an iOS drawing internal; Android draws with PathsDrawable (its own API)"
  },
  "CYLRefreshVectorView": {
-  "status": "partial",
-  "android": "com.scwang.smart.drawable.view.PathsView",
-  "note": "the type exists in android/merged; its members are aligned one by one (TODO)"
+  "status": "n/a",
+  "android": "com.cyl.refresh.drawable.view.PathsView",
+  "note": "an internal drawing helper of the vector styles, which is ported (done); Android draws it with its own class (PathsView), no API counterpart needed"
  },
  "CYLRefreshVectorView -parserColors:": {
   "status": "n/a",
@@ -3562,37 +3101,37 @@
   "android": "RecyclerView.cyl_placeholderHidden"
  },
  "UIScrollView(CYLRefresh)": {
-  "status": "partial",
-  "android": "com.scwang.smart.refresh.layout.SmartRefreshLayout (extensions in com.cyl.refresh)",
-  "note": "the SmartRefreshLayout around the content is the scroll view's counterpart"
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout (extensions in com.cyl.refresh)",
+  "note": "extensions on CYLRefreshLayout, the view that wraps the scrolling content (cyl_header, cyl_footer, cyl_trailer…)"
  },
  "UIScrollView(CYLRefresh) -cyl_beginRefreshingWithStartHeader:": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
+  "android": "CYLRefreshLayout.cyl_beginRefreshingWithStartHeader(header)"
  },
  "UIScrollView(CYLRefresh) -cyl_totalDataCount": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_totalDataCount()"
+  "android": "CYLRefreshLayout.cyl_totalDataCount()"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefresh": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefresh"
+  "android": "CYLRefreshLayout.cyl_autoHideRefresh"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefreshFooter": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefreshFooter"
+  "android": "CYLRefreshLayout.cyl_autoHideRefreshFooter"
  },
  "UIScrollView(CYLRefresh) cyl_autoHideRefreshHeader": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_autoHideRefreshHeader"
+  "android": "CYLRefreshLayout.cyl_autoHideRefreshHeader"
  },
  "UIScrollView(CYLRefresh) cyl_footer": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_footer"
+  "android": "CYLRefreshLayout.cyl_footer"
  },
  "UIScrollView(CYLRefresh) cyl_header": {
   "status": "done",
-  "android": "SmartRefreshLayout.cyl_header"
+  "android": "CYLRefreshLayout.cyl_header"
  },
  "UITableView(CYLPlaceholder)": {
   "status": "done",
@@ -3664,9 +3203,9 @@
   "android": "Activity.cyl_setStatusDisplay(display, animated)"
  },
  "UIViewController(CYLPlaceholderStatus) cyl_placeholderScrollView": {
-  "status": "partial",
+  "status": "done",
   "android": "Activity.cyl_placeholderScrollView",
-  "note": "kept; the placeholder covers the activity's content"
+  "note": "the scrolling view whose container the placeholder covers; null covers the activity's content"
  },
  "UIViewController(CYLPlaceholderStatus) cyl_showsStatusViewWhenOffline": {
   "status": "done",
@@ -3679,5 +3218,358 @@
  "UIViewController(CYLPlaceholderStatus) cyl_statusView": {
   "status": "done",
   "android": "Activity.cyl_statusView"
+ },
+ "CYLRefreshTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshTrailer"
+ },
+ "CYLRefreshTrailer +trailerWithRefreshingBlock:": {
+  "status": "done",
+  "android": "CYLRefreshNormalTrailer.trailerWithRefreshingBlock(context) { }"
+ },
+ "CYLRefreshTrailer +trailerWithRefreshingTarget:refreshingAction:": {
+  "status": "n/a",
+  "note": "Objective-C target-action; Kotlin uses the block"
+ },
+ "CYLRefreshTrailer ignoredScrollViewContentInsetRight": {
+  "status": "n/a",
+  "note": "the Android trailer moves the list itself, there is no content inset to ignore"
+ },
+ "CYLRefreshTrailer automaticallyRefresh": {
+  "status": "done",
+  "android": "CYLRefreshTrailer.automaticallyRefresh",
+  "note": "a fling that reaches the end also refreshes"
+ },
+ "CYLRefreshTrailer triggerAutomaticallyRefreshPercent": {
+  "status": "done",
+  "android": "CYLRefreshTrailer.triggerAutomaticallyRefreshPercent"
+ },
+ "CYLRefreshTrailer autoTriggerTimes": {
+  "status": "done",
+  "android": "CYLRefreshTrailer.autoTriggerTimes"
+ },
+ "CYLRefreshNormalTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshNormalTrailer"
+ },
+ "CYLRefreshNormalTrailer arrowView": {
+  "status": "done",
+  "android": "CYLRefreshNormalTrailer.arrowView",
+  "note": "a drawn arrow instead of the bundle image"
+ },
+ "CYLRefreshStateTrailer": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateTrailer"
+ },
+ "CYLRefreshStateTrailer stateLabel": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.stateLabel"
+ },
+ "CYLRefreshStateTrailer -setTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.setTitle(title, state)"
+ },
+ "CYLRefreshStateTrailer -cyl_placeStateLabelAtCenterX:": {
+  "status": "n/a",
+  "note": "frame layout helper; the Android label is placed by a LinearLayout"
+ },
+ "UIScrollView(CYLRefresh) cyl_trailer": {
+  "status": "done",
+  "android": "RecyclerView.cyl_trailer",
+  "note": "horizontal RecyclerView only; set it once the list is in its parent"
+ },
+ "CYLRefreshFlyHeader mountainView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.mountainView"
+ },
+ "CYLRefreshFlyHeader flyView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.flyView"
+ },
+ "CYLRefreshFlyHeader floatView": {
+  "status": "done",
+  "android": "CYLRefreshFlyHeader.floatView"
+ },
+ "CYLPlaceholderComponent +textComponentWithText:fontSize:color:": {
+  "status": "done",
+  "android": "CYLPlaceholderComponent.text(title, sizeSp, color)"
+ },
+ "CYLPlaceholderStackView imageView": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.imageView"
+ },
+ "CYLPlaceholderStackView titleLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.titleLabel"
+ },
+ "CYLPlaceholderStackView hintLabel": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.hintLabel"
+ },
+ "CYLPlaceholderStackView button": {
+  "status": "done",
+  "android": "CYLPlaceholderStackView.button"
+ },
+ "CYLPlaceholderView -setAnimationFile:": {
+  "status": "done",
+  "android": "CYLPlaceholderView.setAnimationFile(path)"
+ },
+ "UIScrollView(CYLPlaceholderVisibility) cyl_placeholderView": {
+  "status": "done",
+  "android": "RecyclerView.cyl_placeholderView"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles)": {
+  "status": "done",
+  "android": "com.cyl.refresh.CYLRefreshStateHeader",
+  "note": "cyl_setStateTitle / cyl_stateTitleForState on every control (shown by the state header and state footers, kept by others)"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_setStateTitle:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setStateTitle",
+  "note": "CYLRefreshComponent.cyl_setStateTitle(title, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshStateTitles) -cyl_stateTitleForState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_stateTitleForState",
+  "note": "CYLRefreshComponent.cyl_stateTitleForState(state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setAnimationImages:duration:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setAnimationImages",
+  "note": "CYLRefreshComponent.cyl_setAnimationImages(images, duration, state)"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_animationImagesForState:": {
+  "status": "n/a",
+  "note": "an iOS implementation helper shared by the iOS controls; Android controls keep their images in their own views"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_showIdleAnimationFrame": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_showIconImageFrameOf",
+  "note": "Android passes the idle images itself"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setIconAnimationFilePath:size:forState:": {
+  "status": "done",
+  "android": "CYLRefreshIconView.setIconAnimationFilePath"
+ },
+ "CYLRefreshComponent(CYLRefreshIconLayout) -cyl_setBundledIconAnimation:size:forState:": {
+  "status": "done",
+  "android": "CYLRefreshComponent.cyl_setBundledIconAnimation",
+  "note": "CYLRefreshComponent.cyl_setBundledIconAnimation(name, width, height, state): the placeholder's CYLPlaceholderAnimations assets"
+ },
+ "CYLRefreshAutoStateFooter -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshAutoStateFooter.titleForState"
+ },
+ "CYLRefreshStateHeader -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshStateHeader.titleForState"
+ },
+ "CYLRefreshStateTrailer -titleForState:": {
+  "status": "done",
+  "android": "CYLRefreshStateTrailer.titleForState"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage)": {
+  "status": "done",
+  "android": "CYLRefreshFooter.cyl_noMoreDataImage",
+  "note": "CYLRefreshFooter.cyl_noMoreDataImage (shown by the normal footers, kept by others)"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_updateNoMoreDataImage:": {
+  "status": "done",
+  "android": "CYLRefreshFooter.cyl_updateNoMoreDataImage",
+  "note": "CYLRefreshFooter.cyl_updateNoMoreDataImage(image)"
+ },
+ "CYLRefreshFooter(CYLRefreshNoMoreDataImage) -cyl_placeNoMoreDataImageBesideLabel:inset:size:": {
+  "status": "n/a",
+  "note": "an iOS layout helper; Android lays the image out in the classic footer view"
+ },
+ "CYLRefreshComponent autoRefresh": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.simple.SimpleComponent.isAutoRefresh",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -beginRefreshingAfterDelay:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.autoRefresh(delayed) / autoLoadMore(delayed)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -beginRefreshingAnimationOnly": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.autoRefreshAnimationOnly() / autoLoadMoreAnimationOnly()",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -endRefreshingAfterDelay:success:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, null) / finishLoadMore(delayed, success, false)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -addScrollObserver:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener (onHeaderMoving / onFooterMoving)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -removeScrollObserver:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setOnMultiListener(null)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent canTriggerBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setScrollBoundaryDecider",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -canTrigger": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.ScrollBoundaryDecider.canRefresh / canLoadMore",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent disablesContentWhileRefreshing": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setDisableContentWhenRefresh / setDisableContentWhenLoading",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -autoRefreshDidChange:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.onAutoRefresh",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader secondaryShouldOpenBlock": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.listener.OnTwoLevelListener.onTwoLevel (TwoLevelHeader.setOnTwoLevelListener)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader secondaryAnimationDuration": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshKernel.requestFloorDuration",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultHeaderCreator": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshHeaderCreator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultFooterCreator": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshFooterCreator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshConfig defaultInitializer": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout.setDefaultRefreshInitializer",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_endRefreshingAfterDelay:success:noMoreData:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishRefresh(delayed, success, noMoreData)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_endLoadingMoreAfterDelay:success:noMoreData:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.finishLoadMore(delayed, success, noMoreData)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "UIScrollView(CYLRefresh) -cyl_installDefaultRefreshControls": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.CYLRefreshLayout (a layout with no header or footer takes the default creators' ones)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter normalColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter.setNormalColor",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBallPulseFooter animatingColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.footer.BallPulseFooter.setAnimatingColor",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialSize": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.ProgressDrawableSize",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialHeader colorSchemeColors": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.setColorSchemeColors (MaterialHeader.setColorSchemeColors)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshMaterialHeader progressSize": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.material.MaterialProgressDrawable.updateSizes (MaterialHeader.setSize)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshWaveSwipeHeader waveShadowRadius": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.waveswipe.WaveView.setShadow (radius)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshWaveSwipeHeader waveShadowColor": {
+  "status": "done",
+  "android": "com.cyl.refresh.header.waveswipe.WaveView.setShadow (color)",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshAutoFooter loadsWhenContentNotFull": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableLoadMoreWhenContentNotFull",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBackFooter followsContentWhenNoMoreData": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableFooterFollowWhenNoMoreData",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshBackFooter scrollsContentAfterLoading": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableScrollContentWhenLoaded",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent dragRate": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setDragRate",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent reboundAnimationOptions": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setReboundInterpolator",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent insetStart": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setHeaderInsetStart / setFooterInsetStart",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent pinnedView": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setFixedHeaderViewId / setFixedFooterViewId",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent translationView": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setHeaderTranslationViewId / setFooterTranslationViewId",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent supportsHorizontalDrag": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.isSupportHorizontalDrag",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -didDragHorizontallyWithOffset:percent:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.onHorizontalDrag",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshComponent -openForAutoRefreshWithDuration:": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshComponent.autoOpen",
+  "note": "added 2026-11-17 for Android parity"
+ },
+ "CYLRefreshHeader clipsWhenBehind": {
+  "status": "done",
+  "android": "com.cyl.refresh.layout.api.RefreshLayout.setEnableClipHeaderWhenFixedBehind",
+  "note": "added 2026-11-17 for Android parity"
  }
 }

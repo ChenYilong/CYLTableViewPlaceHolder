@@ -1,0 +1,52 @@
+{
+  "CYLTabBarControllerContext": "CYLScenarioExample",
+  "CYLTabBarControllerLocalization": {
+    "CYLTabBarLocalizationTableName": "CYLScenarioExample",
+    "CYLTabBarLocalizationPath": "bundle:CYLScenarioExample.bundle"
+  },
+  "CYLTabBarControllerTabBarItemsAttributes": [
+    {
+      "CYLTabBarItemTitle": "CYLScenarioTabScenarios",
+      "CYLTabBarItemImage": "system:rectangle.stack",
+      "CYLTabBarItemSelectedImage": "system:rectangle.stack.fill",
+      "CYLTabBarItemIdentifier": "scenarios",
+      "CYLTabBarItemPageIdentifier": "scenarios"
+    },
+    {
+      "CYLTabBarItemTitle": "CYLScenarioTabAnimations",
+      "CYLTabBarItemImage": "system:sparkles",
+      "CYLTabBarItemSelectedImage": "system:sparkles",
+      "CYLTabBarItemIdentifier": "animations",
+      "CYLTabBarItemPageIdentifier": "animations"
+    },
+    {
+      "CYLTabBarItemTitle": "CYLScenarioSectionFlows",
+      "CYLTabBarItemImage": "system:arrow.triangle.branch",
+      "CYLTabBarItemSelectedImage": "system:arrow.triangle.branch",
+      "CYLTabBarItemIdentifier": "flows",
+      "CYLTabBarItemPageIdentifier": "flows"
+    },
+    {
+      "CYLTabBarItemTitle": "CYLScenarioTabFeed",
+      "CYLTabBarItemImage": "system:bubble.left.and.bubble.right",
+      "CYLTabBarItemSelectedImage": "system:bubble.left.and.bubble.right.fill",
+      "CYLTabBarItemIdentifier": "feed",
+      "CYLTabBarItemPageIdentifier": "feed"
+    },
+    {
+      "CYLTabBarItemTitle": "CYLScenarioTabRefresh",
+      "CYLTabBarItemImage": "system:arrow.clockwise.circle",
+      "CYLTabBarItemSelectedImage": "system:arrow.clockwise.circle.fill",
+      "CYLTabBarItemIdentifier": "refresh",
+      "CYLTabBarItemPageIdentifier": "refresh"
+    }
+  ],
+  "CYLTabBarControllerPlusButton": {
+    "CYLTabBarItemTitle": "CYLScenarioActionPublish",
+    "CYLTabBarItemImage": "CYLScenarioPlusButton",
+    "CYLTabBarItemIdentifier": "publish",
+    "CYLTabBarItemPageIdentifier": "publish",
+    "CYLPlusButtonIndexInTabBar": 3,
+    "CYLPlusButtonCenterYOffset": -24
+  }
+}

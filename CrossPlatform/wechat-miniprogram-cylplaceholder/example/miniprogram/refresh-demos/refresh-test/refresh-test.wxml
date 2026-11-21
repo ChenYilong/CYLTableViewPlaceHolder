@@ -1,0 +1,3 @@
+<view class="bar">
+  <view class="bar__button" style="font-weight:600" hover-class="bar__button--pressed" bindtap="onClose">{{close}}</view>
+</view>

@@ -1,0 +1,13 @@
+<!-- CYLCollectionFlowViewController: the right bar button, then the grid or its placeholder. -->
+<view class="page">
+  <view class="bar">
+    <text class="bar__button" hover-class="bar__button--pressed" bindtap="toggleItems" aria-role="button">{{buttonTitle}}</text>
+  </view>
+  <view wx:if="{{items.length}}" class="grid">
+    <view wx:for="{{items}}" wx:key="id" class="grid__item" style="background: {{item.color}}" />
+  </view>
+  <!-- NoFavorites with no actions (actions: nil). -->
+  <view wx:else class="placeholder">
+    <cyl-placeholder scenario="NoFavorites" generic:animation="cyl-lottie" animated="{{true}}" />
+  </view>
+</view>

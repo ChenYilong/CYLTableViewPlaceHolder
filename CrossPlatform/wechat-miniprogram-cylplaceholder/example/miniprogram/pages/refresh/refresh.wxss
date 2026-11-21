@@ -1,0 +1,2 @@
+.page { height: 100vh; padding-bottom: calc(50px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.section__header { text-transform: none; }

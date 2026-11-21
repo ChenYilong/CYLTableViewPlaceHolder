@@ -1,0 +1,5 @@
+<!-- The style's canvas, anchored at the bottom of the header (twice its height) or filling the footer. -->
+<view class="box" style="height: {{boxHeight}}px">
+  <canvas wx:if="{{visible}}" id="c" type="2d" class="canvas"
+          bindtouchstart="onTouch" bindtouchmove="onTouch" bindtouchend="onTouch"></canvas>
+</view>

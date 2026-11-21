@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CYLRefreshTrailerIdleText -->
+    <string name="cyl_refresh_trailer_idle">밀어서 상세 정보 보기</string>
+    <!-- CYLRefreshTrailerPullingText -->
+    <string name="cyl_refresh_trailer_pulling">놓으면 상세 정보 보기</string>
+</resources>

@@ -1,0 +1,5 @@
+repository: https://github.com/ChenYilong/CYLTabBarController
+commit: b13b88f1ac6645dde8a7381e21547e161c09623f
+paths: CrossPlatform/wechat-miniprogram-cyltabbar/src/cyl-animated-item, CrossPlatform/wechat-miniprogram-cyltabbar/src/cyl-animation-placeholder, CrossPlatform/wechat-miniprogram-cyltabbar/test/cyl_animated_item.test.js
+license: MIT, LICENSE.CYLTabBarController in each copied folder (the same commit's CrossPlatform/wechat-miniprogram-cyltabbar/src/LICENSE)
+copied unchanged by scripts/sync-cyl-animated-item.js (npm run sync-animated-item) at the commit of the repository Cartfile; do not edit

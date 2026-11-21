@@ -13,3 +13,6 @@
 "CYLObjC02HintRefresh" = "表を更新して 2 ページ目に戻ります。";
 "CYLObjC02HintLastPage" = "最後のページまでスクロールします。";
 "CYLObjC02FormatPage" = "ページ %ld";
+"CYLObjC02TitleSections" = "セクション";
+"CYLObjC02FormatSection" = "セクション %ld";
+"CYLObjC02HintRefreshSections" = "表を更新します。";

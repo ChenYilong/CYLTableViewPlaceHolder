@@ -1,0 +1,15 @@
+<!-- CYLConfigurationViewController: right bar items read "Replay | File"; the placeholder is inset 16px horizontally. -->
+<view class="page">
+  <view class="bar">
+    <view class="bar__button" hover-class="bar__button--pressed" bindtap="reload" aria-role="button">{{replayTitle}}</view>
+    <view class="bar__button" hover-class="bar__button--pressed" bindtap="onShowFile" aria-role="button">{{fileTitle}}</view>
+  </view>
+  <view class="content">
+    <view wx:if="{{error}}" class="error-text">{{error}}</view>
+    <cyl-placeholder wx:else id="placeholder" configuration="{{configuration}}" language="{{language}}"
+                     generic:animation="cyl-lottie" animated="{{true}}" loop="{{loop}}" speed="{{speed}}"
+                     bind:action="onAction" bind:configerror="onConfigError" />
+  </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
+</view>

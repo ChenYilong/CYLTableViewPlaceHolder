@@ -8,44 +8,28 @@
 //  [CN] 核心层的国际化：占位文案、场景标题和组件标题都通过核心查找宏 `CYLPlaceholderLocalizedString` 读取
 //  `CYLTableViewPlaceHolder.bundle/<语言>.lproj/Localizable.strings`；应用可在运行时切换语言。
 //
+//  [EN] Swift since 2026-11-19: the class is in `CYLPlaceholderLocalization.swift`. What Swift cannot declare stays here
+//       in Objective-C, made Swift-compatible (docs/Swift-Migration.md, rule 6), and is defined in
+//       `CYLPlaceholderLocalizationSupport.m`: the notification constant (a FOUNDATION_EXPORT symbol, `NS_SWIFT_NAME`),
+//       the C functions with C linkage (callable from Swift) and the two function-like macros.
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLPlaceholderLocalization.swift`）。Swift 无法声明的部分保留在 Objective-C 中并兼容 Swift
+//       （docs/Swift-Migration.md 第 6 条），定义在 `CYLPlaceholderLocalizationSupport.m`：通知常量（FOUNDATION_EXPORT 符号，带
+//       `NS_SWIFT_NAME`）、C 链接的 C 函数（Swift 可直接调用）以及两个函数式宏。
+//
 
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- * Language selection for the core bundle's tables.
+ * [EN] Language selection for the core bundle's tables. The class is Swift since 2026-11-19
+ *      (`CYLPlaceholderLocalization.swift`) with the same Objective-C API: `supportedLanguages`, `language`,
+ *      `effectiveLanguage` and `+localizedStringForKey:fallback:`. Objective-C code that messages it imports the umbrella
+ *      header `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 核心 bundle 字符串表的语言选择。该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderLocalization.swift`），Objective-C API 不变。
+ *      需要调用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLPlaceholderLocalization : NSObject
-
-/*!
- * The languages the core tables provide: en, zh-Hans, zh-Hant, ja, ko, ru, uk.
- */
-@property (class, nonatomic, copy, readonly) NSArray<NSString *> *supportedLanguages;
-
-/*!
- * The language used for core texts. nil (the default) follows the app's preferred languages. A language that is
- * not supported falls back to its base language when that is supported (for example "zh-HK" to "zh-Hant", "ja-JP"
- * to "ja"), else to English. Views read texts when they are created; recreate them after a change.
- */
-@property (class, nonatomic, copy, nullable) NSString *language;
-
-/*!
- * The supported language actually in use.
- */
-@property (class, nonatomic, copy, readonly) NSString *effectiveLanguage;
-
-/*!
- * The text for a key of the core `Localizable.strings` in `effectiveLanguage`; the fallback (or the key) when the
- * bundle, the language or the key is missing.
- */
-+ (NSString *)localizedStringForKey:(NSString *)key fallback:(nullable NSString *)fallback
-    NS_SWIFT_NAME(localizedString(forKey:fallback:));
-
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
-
-@end
+@class CYLPlaceholderLocalization;
 
 /*!
  * Posted on the main thread after `CYLPlaceholderLocalization.language` changes.

@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="bar">
+    <view class="bar__button bar__button--icon" hover-class="bar__button--pressed" bindtap="onBegin" aria-role="button" aria-label="Refresh">⟳</view>
+  </view>
+  <view class="content">
+    <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}" header-icons="{{setup.headerIcons}}"
+                 footer-icons="{{setup.footerIcons}}" icon-speed="{{speed}}" icon-loop="{{loop}}" generic:animation="cyl-lottie" generic:cyl-svga-view="cyl-svga" bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+      <view class="plain">
+        <view wx:for="{{rows}}" wx:key="*this" class="cell cell--icon">
+          <view class="cell__icon">⇅</view>
+          <view class="cell__text">
+            <text class="cell__title">{{item}}</text>
+            <text class="cell__subtitle">{{hint}}</text>
+          </view>
+        </view>
+      </view>
+    </cyl-refresh>
+  </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
+</view>

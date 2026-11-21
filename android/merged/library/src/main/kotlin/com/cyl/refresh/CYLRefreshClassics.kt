@@ -4,17 +4,17 @@ import android.content.Context
 import android.content.res.Configuration
 import android.view.ContextThemeWrapper
 import java.util.Locale
-import com.scwang.smart.refresh.layout.api.RefreshFooter
+import com.cyl.refresh.layout.api.RefreshFooter
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.constant.RefreshState
-import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.api.RefreshLayout
+import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.footer.ClassicsFooter
+import com.cyl.refresh.header.ClassicsHeader
+import com.cyl.refresh.layout.CYLRefreshLayout
 import java.text.DateFormat
 import java.util.Date
 
@@ -53,7 +53,7 @@ internal fun cylLocalizedContext(context: Context): Context {
 }
 
 /**
- * The classic header with its texts and views reachable (they are protected in SmartRefreshLayout).
+ * The classic header with its texts and views reachable (they are protected in CYLRefreshLayout).
  */
 internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(cylLocalizedContext(context)) {
     val titleView: TextView? get() = mTitleText
@@ -79,8 +79,12 @@ internal class CYLClassicsHeaderView(context: Context) : ClassicsHeader(cylLocal
         }
     }
 
+    /** The owning component's `finishingDurationWithSuccess:` in ms, or null for the view's own duration. */
+    var finishHold: ((Boolean) -> Int)? = null
+
     override fun onFinish(refreshLayout: RefreshLayout, success: Boolean): Int {
-        val hold = super.onFinish(refreshLayout, success)
+        val own = super.onFinish(refreshLayout, success)
+        val hold = finishHold?.invoke(success) ?: own
         val image = if (success) succeededImage else failedImage
         val view = mProgressView
         if (image != null && view != null) {
@@ -136,6 +140,15 @@ internal class CYLClassicsFooterView(context: Context) : ClassicsFooter(cylLocal
             field = value
             if (mNoMoreData) showNoMoreDataImage()
         }
+
+    /** The owning component's `finishingDurationWithSuccess:` in ms, or null for the view's own duration. */
+    var finishHold: ((Boolean) -> Int)? = null
+
+    // No more data shows no finished text, so no hold (0), as before; otherwise the component decides.
+    override fun onFinish(refreshLayout: RefreshLayout, success: Boolean): Int {
+        val own = super.onFinish(refreshLayout, success)
+        return if (own == 0) 0 else finishHold?.invoke(success) ?: own
+    }
 
     private var arrowDrawable: Drawable? = null
     private var showingImage = false
@@ -277,6 +290,11 @@ open class CYLRefreshStateHeader(context: Context) : CYLRefreshHeader(CYLClassic
         if (this.state == state) stateLabel?.text = title
     }
 
+    /**
+     * The text of [state] (`titleForState:`), as on the state footers.
+     */
+    fun titleForState(state: CYLRefreshState): String? = classics.text(state)
+
     override fun didEndRefreshing() {
         super.didEndRefreshing()
         lastUpdatedTimeText?.let { classics.setLastUpdateText(it(lastUpdatedTime)) }
@@ -333,6 +351,21 @@ open class CYLRefreshGifHeader(context: Context) : CYLRefreshStateHeader(context
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**
@@ -383,12 +416,36 @@ open class CYLRefreshAutoFooter internal constructor(view: RefreshFooter) : CYLR
         }
 
     /**
-     * How many times one drag may load, -1 for no limit (`autoTriggerTimes`); SmartRefreshLayout loads once per drag.
+     * How many times one drag may load by itself, -1 for no limit (`autoTriggerTimes`), as on iOS: once the count is
+     * used up the footer stops loading by itself until the next drag begins.
      */
     var autoTriggerTimes: Int = 1
+        set(value) {
+            field = value
+            leftTriggerTimes = value
+            refreshLayout?.setEnableAutoLoadMore(automaticallyRefresh && value != 0)
+        }
 
-    override fun didAttachToScrollView(layout: SmartRefreshLayout) {
-        layout.setEnableAutoLoadMore(automaticallyRefresh)
+    /** The loads the current drag may still start (iOS `leftTriggerTimes`); below 0 for no limit. */
+    internal var leftTriggerTimes: Int = 1
+
+    private val resetTriggerTimes: () -> Unit = {
+        leftTriggerTimes = autoTriggerTimes
+        refreshLayout?.setEnableAutoLoadMore(automaticallyRefresh && autoTriggerTimes != 0)
+    }
+
+    override fun didAttachToScrollView(layout: CYLRefreshLayout) {
+        layout.setEnableAutoLoadMore(automaticallyRefresh && autoTriggerTimes != 0)
+        if (resetTriggerTimes !in layout.cylTouchDownListeners) layout.cylTouchDownListeners += resetTriggerTimes
+    }
+
+    override fun phaseDidChangeFrom(old: CYLRefreshPhase, new: CYLRefreshPhase) {
+        super.phaseDidChangeFrom(old, new)
+        // Each load the footer starts by itself uses one of the drag's loads (iOS decrements leftTriggerTimes).
+        if (new == CYLRefreshPhase.Refreshing && leftTriggerTimes > 0) {
+            leftTriggerTimes--
+            if (leftTriggerTimes == 0) refreshLayout?.setEnableAutoLoadMore(false)
+        }
     }
 }
 
@@ -429,6 +486,7 @@ open class CYLRefreshAutoStateFooter(context: Context) : CYLRefreshAutoFooter(co
     fun titleForState(state: CYLRefreshState): String? = classics.text(state)
 
     override fun phaseDidChangeFrom(old: CYLRefreshPhase, new: CYLRefreshPhase) {
+        super.phaseDidChangeFrom(old, new)
         if (refreshingTitleHidden) stateLabel?.visibility = if (new == CYLRefreshPhase.Refreshing) View.INVISIBLE else View.VISIBLE
     }
 }
@@ -471,6 +529,21 @@ open class CYLRefreshAutoGifFooter(context: Context) : CYLRefreshAutoStateFooter
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**
@@ -502,7 +575,7 @@ open class CYLRefreshBackFooter internal constructor(view: RefreshFooter) : CYLR
 
     internal val classics: CYLClassicsFooterView get() = view as CYLClassicsFooterView
 
-    override fun didAttachToScrollView(layout: SmartRefreshLayout) {
+    override fun didAttachToScrollView(layout: CYLRefreshLayout) {
         layout.setEnableAutoLoadMore(false)
     }
 
@@ -533,8 +606,8 @@ open class CYLRefreshBackFooter internal constructor(view: RefreshFooter) : CYLR
     var secondaryCloseTriggerOffset: Float by floor::closeTriggerOffset
 
     /**
-     * A release this fast opens the second floor (`secondaryVelocity`); kept, a release's speed is not measured on
-     * Android.
+     * A release at least this fast (dp per second), past the refresh trigger, opens the second floor (`secondaryVelocity`), as on
+     * iOS.
      */
     var secondaryVelocity: Float by floor::velocity
 
@@ -657,6 +730,21 @@ open class CYLRefreshBackGifFooter(context: Context) : CYLRefreshBackStateFooter
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**

@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="content">
+    <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}"
+                  header-trigger="{{headerTrigger}}" footer-trigger="{{footerTrigger}}"
+                  secondary-offset="{{setup.secondaryOffset || 0}}" behind="{{setup.behind || false}}"
+                  footer-hidden="{{rows.length === 0}}"
+                  bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:secondary="onSecondary" bind:pull="onPull">
+      <!-- easyListener: the table header is a 4pt progress bar (UIProgressView, bar style). -->
+      <progress wx:if="{{method === 'easyListener'}}" class="progress" percent="{{progress}}" stroke-width="4"
+                activeColor="#007aff" backgroundColor="transparent" aria-label="{{texts.pullProgress}}" />
+      <!-- easyUserProfile: the 160pt systemTeal banner. -->
+      <view wx:if="{{method === 'easyUserProfile'}}" class="banner">{{texts.banner}}</view>
+      <view class="rows">
+        <view wx:for="{{rows}}" wx:key="id" class="row" hover-class="{{item.tappable ? 'cell--pressed' : 'none'}}"
+              aria-role="{{item.tappable ? 'button' : 'text'}}" bindtap="onRow" data-index="{{index}}">{{item.text}}</view>
+      </view>
+    </cyl-refresh>
+    <!-- easySecondary: the second floor, a full systemIndigo view; its button closes it. -->
+    <view wx:if="{{method === 'easySecondary'}}" class="floor {{floorOpen ? 'floor--open' : ''}}" aria-hidden="{{!floorOpen}}">
+      <text class="floor__title">{{texts.secondFloor}}</text>
+      <view class="floor__close" hover-class="bar__button--pressed" aria-role="button" bindtap="onCloseFloor">{{texts.closeSecondFloor}}</view>
+    </view>
+  </view>
+</view>

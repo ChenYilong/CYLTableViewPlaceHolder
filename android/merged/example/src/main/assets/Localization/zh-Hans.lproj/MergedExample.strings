@@ -1,7 +1,10 @@
 /* The merged example's tab titles (docs/Android-Port.md, step 3). */
 "tab.placeholder" = "占位图";
-"tab.svpulltorefresh" = "SVPull";
-"tab.ultraptr" = "Ultra 刷新";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.loadmore" = "加载更多";
+"tab.storehouse" = "StoreHouse";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "动态";
 "tab.refresh" = "刷新";
+"tab.animations" = "动画";
+"tab.scenarios" = "场景";
+"tab.flows" = "交互流程";

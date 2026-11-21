@@ -12,6 +12,9 @@ recyclerview = "1.3.2"
 swiperefreshlayout = "1.1.0"
 material = "1.12.0"
 lottie = "6.6.2"
+libpag = "4.5.98"
+rive = "10.3.0"
+svgaplayer = "2.6.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -23,6 +26,10 @@ androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+libpag = { module = "com.tencent.tav:libpag", version.ref = "libpag" }
+rive = { module = "app.rive:rive-android", version.ref = "rive" }
+# SVGAPlayer-Android is only on JitPack (settings.gradle.kts limits that repository to it).
+svgaplayer = { module = "com.github.yyued:SVGAPlayer-Android", version.ref = "svgaplayer" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

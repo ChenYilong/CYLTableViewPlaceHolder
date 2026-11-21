@@ -1,0 +1,1 @@
+.hud__value { flex-shrink: 1; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

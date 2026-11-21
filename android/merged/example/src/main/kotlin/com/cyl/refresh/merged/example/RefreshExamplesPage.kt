@@ -23,18 +23,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.refresh.CYLRefreshAutoAnimationFooter
 import com.cyl.refresh.CYLRefreshAutoFooter
+import com.cyl.refresh.CYLRefreshAutoGifFooter
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshBackAnimationFooter
 import com.cyl.refresh.CYLRefreshBackFooter
 import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshComponent
 import com.cyl.refresh.CYLRefreshAnimationHeader
+import com.cyl.refresh.CYLRefreshGifHeader
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.CYLRefreshState
 import com.cyl.refresh.CYLRefreshStateHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.cyl_iconView
+import com.cyl.refresh.layout.CYLRefreshLayout
 import kotlin.random.Random
 
 /*
@@ -73,11 +76,10 @@ class RefreshExamplesPage : StackPage() {
                 "example18", "example19", "example20", "example21"),
             "CYLRefreshTableViewController",
         ),
-        // example42 (pull left) needs a trailer, which the Android library does not have yet.
         RefreshExample(
             R.string.merged_mj_section_collection,
-            listOf(R.string.merged_mj_pull_up_and_down, R.string.merged_mj_pin_header),
-            listOf("example31", "example31"),
+            listOf(R.string.merged_mj_pull_up_and_down, R.string.merged_mj_pin_header, R.string.merged_mj_pull_left),
+            listOf("example31", "example31", "example42"),
             "CYLRefreshCollectionViewController",
         ),
         RefreshExample(
@@ -86,10 +88,21 @@ class RefreshExamplesPage : StackPage() {
             listOf("example40", "example41"),
             "CYLRefreshWKWebViewController",
         ),
+        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG and Rive icons.
+        RefreshExample(
+            R.string.merged_mj_section_animations,
+            listOf(R.string.merged_mj_gif_icon, R.string.merged_mj_lottie_states, R.string.merged_mj_pag_ring,
+                R.string.merged_mj_rive_icon, R.string.merged_mj_svga_icon, R.string.merged_mj_gif_frames,
+                R.string.merged_mj_mixed_engines, R.string.merged_mj_collection_icons),
+            listOf("example51", "example52", "example53", "example54", "example57", "example55", "example56", "example32"),
+            "CYLRefreshTableViewController",
+        ),
         RefreshExample(R.string.merged_mj_section_i18n, listOf(R.string.merged_mj_languages), listOf("i18n"),
             "CYLRefreshI18NExampleViewController"),
-        RefreshExample(R.string.merged_smart_section, smartStyles.map { it.first }, smartStyles.map { it.second },
-            "CYLSmartRefreshDemoViewController"),
+        RefreshExample(R.string.merged_style_section, refreshStyles.map { it.first }, refreshStyles.map { it.second },
+            "CYLRefreshStylesDemoViewController"),
+        RefreshExample(R.string.merged_easy_section, easyPages.map { it.first }, easyPages.map { it.second },
+            "CYLEasyRefreshDemoViewController"),
     )
 
     override fun root(): View {
@@ -101,18 +114,22 @@ class RefreshExamplesPage : StackPage() {
                 column.addView(row(context, context.t(title), "${exam.page} - ${exam.methods[i]}", "refresh-${exam.methods[i]}") {
                     val name = context.t(title)
                     push(when {
+                        exam.header == R.string.merged_mj_section_collection && i == 2 ->
+                            horizontalCollectionPage(name) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_collection ->
                             collectionPage(name, pinHeader = i == 1) { push(testPage()) }
+                        exam.methods[i] == "example32" -> collectionPage(name, pinHeader = false, animatedIcons = true) { push(testPage()) }
                         exam.header == R.string.merged_mj_section_web -> webPage()
                         exam.header == R.string.merged_mj_section_i18n -> i18nPage(name)
-                        exam.header == R.string.merged_smart_section -> smartStylePage(name, exam.methods[i])
+                        exam.header == R.string.merged_style_section -> refreshStylePage(name, exam.methods[i])
+                        exam.header == R.string.merged_easy_section -> easyPage(name, exam.methods[i])
                         else -> tablePage(name, exam.methods[i])
                     })
                 })
             }
         }
         // Pull down to refresh, pull up to load: each ends 2 seconds later.
-        return SmartRefreshLayout(context).apply {
+        return CYLRefreshLayout(context).apply {
             setRefreshContent(ScrollView(context).apply { addView(column) })
             val header = CYLRefreshNormalHeader(context)
             cyl_header = header
@@ -140,7 +157,7 @@ class RefreshExamplesPage : StackPage() {
      */
     private fun tablePage(title: String, method: String): View {
         val context = requireContext()
-        val layout = SmartRefreshLayout(context)
+        val layout = CYLRefreshLayout(context)
         val data = MutableList(5) { randomData(context) }
         val list = RecyclerView(context).apply { layoutManager = LinearLayoutManager(context); tag = "refreshExample" }
         val rows = DataRows(data) { testPage().let(::push) }
@@ -169,7 +186,7 @@ class RefreshExamplesPage : StackPage() {
         // Data that loads only once: the footer hides afterwards.
         fun loadOnceData() {
             repeat(5) { data += randomData(context) }
-            later(DURATION) { reload(); layout.cyl_footer?.endRefreshing(); layout.setEnableLoadMore(false) }
+            later(DURATION) { reload(); layout.cyl_footer?.endRefreshing(); layout.cyl_footer?.refreshEnabled = false }
         }
 
         fun <T : CYLRefreshComponent> T.on(block: () -> Unit): T = apply { refreshingBlock = block }
@@ -279,8 +296,111 @@ class RefreshExamplesPage : StackPage() {
                 layout.cyl_footer = DIYAutoFooter(context).on(::loadMoreData).apply { autoTriggerTimes = 2 }
             }
             "example21" -> { example01(); layout.cyl_footer = DIYBackFooter(context).on(::loadMoreData) }
+            "example51" -> {
+                // A GIF icon in place of the images.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshArrows.gif"), 32f, 32f, CYLRefreshState.Idle)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshRing.gif"), 28f, 28f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example52" -> {
+                // A Lottie icon for each state; the footer shows load-more dots, then "no more data".
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshPullArrow.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshClockwise.json"), 28f, 28f, CYLRefreshState.Pulling)
+                    setIconAnimationFilePath(animation("CYLRefreshMaterialSpinner.json"), 36f, 36f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshBackAnimationFooter(context).on(::loadLastData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshLoadMore.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshMoreDots.json"), 40f, 24f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example53" -> {
+                // The PAG progress ring.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 32f, 32f, CYLRefreshState.Idle)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 28f, 28f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example54" -> {
+                // The Rive refresh icon: its "refresh" artboard rests while pulling and turns while refreshing.
+                val resting = animation("CYLRefreshIcon.riv#artboard=refresh&animation=idle")
+                val turning = animation("CYLRefreshIcon.riv#artboard=refresh&animation=active")
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example57" -> {
+                // The SVGA twin of example54 (Task-Log "SVGA animations, every Rive demo copied 1:1"): SVGA files have
+                // no artboards, so a resting icon shows while pulling and another plays while refreshing.
+                val resting = animation("tab_list.svga")
+                val turning = animation("tab_activity.svga")
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(resting, 32f, 32f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(turning, 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example55" -> {
+                // MJRefresh's animated-images API on its own names: frames of the refresh GIFs.
+                layout.cyl_header = CYLRefreshGifHeader(context).on(::loadNewData).apply {
+                    setImages(ExampleImages.idle(context), CYLRefreshState.Idle)
+                    setImages(ExampleImages.refreshing(context), 0.8, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoGifFooter(context).on(::loadMoreData).apply {
+                    setImages(ExampleImages.refreshing(context), CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
+            "example56" -> {
+                // A different engine for each state: Lottie while idle, GIF when released, PAG while refreshing; the
+                // footer rests on SVGA and loads with Rive.
+                layout.cyl_header = CYLRefreshAnimationHeader(context).on(::loadNewData).apply {
+                    setIconAnimationFilePath(animation("CYLRefreshPullCircle.json"), 28f, 28f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshArrows.gif"), 30f, 30f, CYLRefreshState.Pulling)
+                    setIconAnimationFilePath(animation("CYLPlaceholderProgress.pag"), 32f, 32f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_footer = CYLRefreshAutoAnimationFooter(context).on(::loadMoreData).apply {
+                    setIconAnimationFilePath(animation("tab_list.svga"), 30f, 30f, CYLRefreshState.Idle)
+                    setIconAnimationFilePath(animation("CYLRefreshIcon.riv"), 30f, 30f, CYLRefreshState.Refreshing)
+                }
+                layout.cyl_header?.beginRefreshing()
+            }
         }
-        return page(context, bar(context, title, *buttons.toTypedArray()), layout)
+        if (method !in ANIMATED_ICON_EXAMPLES) return page(context, bar(context, title, *buttons.toTypedArray()), layout)
+        // The animated-icon examples get the playback controls, applied to the header's and the footer's icons through
+        // the core (CYLRefreshIconView animationSpeed, loopsWhilePlaying, replayAnimation).
+        fun icons() = listOfNotNull(layout.cyl_header, layout.cyl_footer).map { it.cyl_iconView }
+        fun playAll() {
+            val header = layout.cyl_header
+            // Play all shows the refreshing icon from its first frame: a header at rest refreshes again.
+            if (header != null && !header.isRefreshing) header.beginRefreshing()
+            icons().forEach { it.replayAnimation() }
+        }
+        val content = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(playbackControls(context, onPlayAll = ::playAll, onSpeed = { speed -> icons().forEach { it.animationSpeed = speed } },
+                onLoop = { loops -> icons().forEach { it.loopsWhilePlaying = loops }; playAll() }))
+            addView(layout, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        }
+        return page(context, bar(context, title, *buttons.toTypedArray()), content)
     }
 
     private companion object {
@@ -288,6 +408,16 @@ class RefreshExamplesPage : StackPage() {
          * MJRefresh's MJDuration: long enough to see the refreshing state.
          */
         const val DURATION = 2000L
+
+        /**
+         * The examples whose header and footer draw animated icons: they show the playback controls.
+         */
+        val ANIMATED_ICON_EXAMPLES = setOf("example51", "example52", "example53", "example54", "example55", "example56", "example57")
+
+        /**
+         * A file of the example's assets/Animations, for a registered player.
+         */
+        fun animation(name: String) = "asset:Animations/$name"
 
         fun randomData(context: Context) = context.t(R.string.merged_mj_random_data, Random.nextInt(1_000_000))
     }

@@ -2,7 +2,8 @@
 //  CYLPagingViewController.swift
 //  Example-objc-02
 //
-//  A paging table that restores its page after a header or footer refresh (MJRefresh #1430).
+//  A paging table that restores its page after a header or footer refresh (MJRefresh #1430), and keeps its pages
+//  aligned when the automatic footer ends a load (MJRefresh #1610, `-pagingAutoFooter`).
 //
 
 import UIKit
@@ -40,10 +41,14 @@ final class CYLPagingViewController: UIViewController, UITableViewDataSource, UI
                 })
             }
         }
-        tableView.cyl_footer = CYLRefreshBackNormalFooter { [weak self] in
+        // `-pagingAutoFooter` (UI tests, MJRefresh #1610): the automatic footer, which loads as soon as the last page
+        // shows; `-pagingNoGrowth`: a load returns no new page.
+        let arguments = ProcessInfo.processInfo.arguments
+        let grows = !arguments.contains("-pagingNoGrowth")
+        let load: () -> Void = { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLPagingDuration) { [weak self] in
                 guard let self = self else { return }
-                self.rowCount += 1
+                if grows { self.rowCount += 1 }
                 self.tableView.reloadData()
                 self.tableView.layoutIfNeeded()
                 self.tableView.cyl_footer?.endRefreshing(completionBlock: { [weak self] in
@@ -51,6 +56,9 @@ final class CYLPagingViewController: UIViewController, UITableViewDataSource, UI
                 })
             }
         }
+        tableView.cyl_footer = arguments.contains("-pagingAutoFooter")
+            ? CYLRefreshAutoNormalFooter(refreshingBlock: load)
+            : CYLRefreshBackNormalFooter(refreshingBlock: load)
 
         let refreshItem = UIBarButtonItem(title: CYLObjC02LocalizedString(.actionRefresh), style: .plain,
                                           target: self, action: #selector(startRefresh))

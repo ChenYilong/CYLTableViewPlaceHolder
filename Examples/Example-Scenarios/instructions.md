@@ -10,7 +10,21 @@ belong to the core.
 | Animations | `Sources/CYLAnimationListViewController.swift` | Every file of `CYLTableViewPlaceHolder.bundle/Animations`, by engine; "Sources" shows `NOTICE.animations`. |
 | Flows | `Sources/CYLFlowListViewController.swift` | Switching states (#3), keeping the table header (#17) and section headers (#16), refresh controls (#8), a scrollable placeholder, a collection view (#11). |
 | Feed | `Sources/CYLFeedViewController.swift` | Loading, alternately failing refresh with a Retry scenario, load more. |
-| Plus button | `Sources/CYLScenarioTabBarController.swift` | The Uploading scenario, then Success with a Done button. |
+| Refresh | `Sources/CYLRefreshExampleViewController.swift` | MJRefresh's example layer in Swift on the CYLRefresh API. |
+| Plus button | `Sources/CYLScenarioTabBarController.swift` (`CYLPublishViewController`) | The plus button's own page (`plusChildViewController`): the Uploading scenario, then Success with a Done button that goes back to Scenarios. |
+
+- Tab bar: created the examples' default way (root `instructions.md`, "Integrating CYLTabBarController in the
+  examples") from `Sources/CYLScenarioExample.bundle/TabBar/tabbar.json` with `try CYLTabBarController(configurationFile:)`
+  (context `CYLScenarioExample`). The file lists the five tabs in order (`CYLTabBarItemPageIdentifier` scenarios,
+  animations, flows, feed, refresh) and the plus button (`CYLTabBarControllerPlusButton`: title, the teal image asset `CYLScenarioPlusButton` (an SVG in
+  `Sources/Assets.xcassets`, original rendering, so Liquid Glass's stand-in shows the same color when its page is selected),
+  page `publish`, `CYLPlusButtonIndexInTabBar` 3 because five tabs are an odd count, `CYLPlusButtonCenterYOffset` -24 so it
+  bulges). Titles are keys of `CYLScenarioExample.strings`, translated by CYLTabBarController
+  (`CYLTabBarControllerLocalization` with the example bundle's table) in the language `CYLScenarioLanguage.select(_:)` sets.
+  `CYLScenarioTabBarController.registerPages()` registers each page identifier in `CYLTabBarPageRegistry.shared`; code
+  only adds what the file cannot hold (the plus button's localized accessibility label and the `plusButton`
+  accessibility identifier). On Liquid Glass, five tabs plus the plus page are six, so UIKit's More tab holds Feed and
+  Refresh, as before. To change a tab, edit the file and its provider together.
 
 - Run `pod install` here, then open `Example-Scenarios.xcworkspace`. The Podfile uses the local library
   (`:path => '../..'`) with the LottieSwift, PAG, Rive and GIF subspecs, CYLTabBarController at its newest commit

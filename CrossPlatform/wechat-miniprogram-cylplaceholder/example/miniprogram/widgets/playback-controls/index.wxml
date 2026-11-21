@@ -1,0 +1,17 @@
+<!-- Play all, the loop switch and the speed slider, accessible: the slider reads its value ("1.5x"), the switch "Loop". -->
+<view class="playback">
+  <view class="playback__row">
+    <view class="playback__play" hover-class="playback__play--pressed" bindtap="onPlayAll" aria-role="button"
+          aria-label="{{texts.playAll}}">{{texts.playAll}}</view>
+    <view class="playback__loop">
+      <text class="playback__label" aria-hidden="true">{{texts.loop}}</text>
+      <switch checked="{{loop}}" bindchange="onLoop" aria-label="{{texts.loop}}" />
+    </view>
+  </view>
+  <view class="playback__row">
+    <text class="playback__label" aria-hidden="true">{{texts.speed}}</text>
+    <slider class="playback__slider" min="0.25" max="3" step="0.25" value="{{speed}}" bindchanging="onSpeed"
+            bindchange="onSpeed" aria-label="{{texts.speed}} {{speedText}}" />
+    <text class="playback__value" aria-hidden="true">{{speedText}}</text>
+  </view>
+</view>

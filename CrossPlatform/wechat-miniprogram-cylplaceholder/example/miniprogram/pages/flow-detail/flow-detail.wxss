@@ -1,0 +1,26 @@
+/* The segmented control (shared with the status page). */
+@import "./refresh.wxss";
+
+/* A plain table on systemBackground; the keepSectionHeaders flow is insetGrouped. */
+page { background: #fff; }
+.page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.page--grouped { background: #f2f2f7; }
+.flow-list { flex: 1; min-height: 0; }
+.flow-scroll { height: 100%; }
+.switcher { padding: 6px 16px 8px; background: #f2f2f7; }
+.grouped { padding: 0 16px; }
+.flow__doc { color: #007aff; }
+.placeholder { display: flex; flex-direction: column; justify-content: center; }
+
+/* UISearchBar as the table header: 56 pt. */
+.search { height: 56px; padding: 10px 8px; box-sizing: border-box; background: #fff; }
+.search__field { height: 36px; display: flex; flex-direction: row; align-items: center; padding: 0 8px;
+  border-radius: 10px; background: #eeeef0; }
+.search__glass { font-size: 18px; color: #8e8e93; margin-right: 6px; }
+.search__input { flex: 1; font-size: 17px; }
+
+@media (prefers-color-scheme: dark) {
+  page, .page, .search { background: #000; }
+  .page--grouped, .switcher { background: #000; }
+  .search__field { background: #1c1c1e; }
+}

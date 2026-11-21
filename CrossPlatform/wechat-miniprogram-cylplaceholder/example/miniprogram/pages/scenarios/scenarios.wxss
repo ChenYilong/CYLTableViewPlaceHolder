@@ -1,0 +1,16 @@
+/* Room for the custom tab bar (with the raised plus button). */
+.list { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+
+/* The language menu. */
+.sheet-mask { position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 100; background: rgba(0, 0, 0, 0.3);
+  display: flex; flex-direction: column; justify-content: flex-end; }
+.sheet { padding: 0 16px calc(16px + env(safe-area-inset-bottom)); }
+.sheet__header { padding: 10px 16px; text-align: center; font-size: 13px; color: #8e8e93; background: #fff;
+  border-radius: 10px 10px 0 0; }
+.sheet__body { border-radius: 0 0 10px 10px; }
+.sheet__check { width: 24px; flex-shrink: 0; color: #30b0c7; font-size: 17px; }
+.sheet__gear { color: #8e8e93; font-size: 17px; }
+
+@media (prefers-color-scheme: dark) {
+  .sheet__header { background: #1c1c1e; }
+}

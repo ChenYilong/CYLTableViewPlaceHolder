@@ -1,0 +1,16 @@
+<!-- CYLAnimationDetailViewController: the right bar item "Replay", then the animation and its title, centered, in one
+     cyl-animated-item (instructions.md, "Icon and title: CYLAnimatedItemView"). -->
+<view class="page">
+  <view class="bar">
+    <view class="bar__button" hover-class="bar__button--pressed" bindtap="replay">{{replayTitle}}</view>
+  </view>
+  <view class="stage">
+    <view wx:if="{{note}}" class="note">{{note}}</view>
+    <cyl-animated-item id="item" generic:cyl-lottie-view="cyl-lottie" generic:cyl-svga-view="cyl-svga" title="{{title}}" animation-url="{{path}}" axis="vertical" icon-size="{{180}}"
+      loop="{{loop}}" speed="{{speed}}" autoplay="{{true}}" bare="{{true}}"
+      title-font-size="{{17}}" title-font-weight="600" title-color="#000000" title-dark-color="#ffffff"
+      title-lines="{{0}}" title-spacing="{{16}}" />
+  </view>
+  <playback-controls class="playback" language="{{language}}" speed="{{speed}}" loop="{{loop}}"
+                     bind:playall="onPlayAll" bind:speedchange="onSpeedChange" bind:loopchange="onLoopChange" />
+</view>

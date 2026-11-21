@@ -1,0 +1,247 @@
+// Shared looks of the example: the iOS table styles (insetGrouped / plain), bar buttons and texts, as in the mini
+// program's app.wxss. Colors are iOS system colors as color resources (resources/base and resources/dark), so the
+// example follows the system light / dark appearance like the iOS example.
+
+export class UiColor {
+  static readonly teal: ResourceColor = $r('app.color.cyl_teal'); // UIColor.systemTeal
+  static readonly gray: ResourceColor = $r('app.color.cyl_gray');
+  static readonly background: ResourceColor = $r('app.color.cyl_background'); // systemBackground
+  static readonly groupedBackground: ResourceColor = $r('app.color.cyl_grouped_background');
+  static readonly cell: ResourceColor = $r('app.color.cyl_cell');
+  static readonly pressed: ResourceColor = $r('app.color.cyl_pressed');
+  static readonly separator: ResourceColor = $r('app.color.cyl_separator');
+  static readonly sectionHeader: ResourceColor = $r('app.color.cyl_section_header');
+  static readonly chevron: ResourceColor = $r('app.color.cyl_chevron');
+  static readonly destructive: ResourceColor = $r('app.color.cyl_destructive');
+  static readonly label: ResourceColor = $r('app.color.cyl_label');
+  static readonly tabBar: ResourceColor = $r('app.color.cyl_tab_bar');
+  static readonly segmentBackground: ResourceColor = $r('app.color.cyl_segment_background');
+  static readonly segmentSelected: ResourceColor = $r('app.color.cyl_segment_selected');
+}
+
+/** A row of an insetGrouped / plain table. */
+export class TableRow {
+  key: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  detail: string;
+  chevron: boolean;
+  checked: boolean;
+
+  constructor(key: string, title: string, subtitle: string = '', icon: string = '', chevron: boolean = true) {
+    this.key = key;
+    this.title = title;
+    this.subtitle = subtitle;
+    this.icon = icon;
+    this.detail = '';
+    this.chevron = chevron;
+    this.checked = false;
+  }
+}
+
+/** A section of an insetGrouped table. */
+export class TableSection {
+  title: string;
+  rows: TableRow[];
+  footer: string;
+
+  constructor(title: string, rows: TableRow[], footer: string = '') {
+    this.title = title;
+    this.rows = rows;
+    this.footer = footer;
+  }
+}
+
+/** The large title of a tab's root page, with right bar buttons drawn by the caller. */
+@Builder
+export function LargeTitle(title: string) {
+  Text(title)
+    .fontSize(34)
+    .fontWeight(FontWeight.Bold)
+    .fontColor(UiColor.label)
+    .width('100%')
+    .padding({ left: 16, right: 16, top: 4, bottom: 8 })
+}
+
+/** A bar button item (teal text). */
+@Builder
+export function BarButton(title: string, action: () => void) {
+  Text(title)
+    .accessibilityRole(AccessibilityRoleType.BUTTON)
+    .fontSize(17)
+    .fontColor(UiColor.teal)
+    // One line: long translations shrink instead of wrapping in the navigation bar.
+    .maxLines(1)
+    .minFontSize(12)
+    .maxFontSize(17)
+    .padding({ left: 8, right: 8, top: 6, bottom: 6 })
+    .stateStyles({ pressed: { .opacity(0.5) }, normal: { .opacity(1) } })
+    .onClick(action)
+}
+
+/** The gray uppercase header of an insetGrouped section. */
+@Builder
+export function SectionHeader(title: string) {
+  Text(title.toUpperCase())
+    .fontSize(13)
+    .fontColor(UiColor.sectionHeader)
+    .width('100%')
+    .padding({ left: 32, right: 32, top: 18, bottom: 6 })
+}
+
+/** The gray footer of an insetGrouped section. */
+@Builder
+export function SectionFooter(title: string) {
+  Text(title)
+    .fontSize(13)
+    .lineHeight(18)
+    .fontColor(UiColor.sectionHeader)
+    .width('100%')
+    .padding({ left: 32, right: 32, top: 6 })
+}
+
+/**
+ * Space after a tab's list so its last row clears the plus button, which rises about 34 vp above the tab bar
+ * (a 66 vp image centred 24 vp above the bar's centre). Without it the last row ended under the plus button.
+ */
+export const TAB_LIST_END_INSET: number = 36;
+
+/**
+ * Space after a pushed page's list so its last row (a refresh footer such as "已经全部加载完毕") clears the gesture
+ * bar: pushed pages have no tab bar and their lists reach the bottom edge, where the last item was cut off.
+ */
+export const PAGE_LIST_END_INSET: number = 28;
+
+/** One cell: optional leading glyph, title, subtitle, trailing detail, check mark or chevron. */
+@Builder
+export function TableCell(row: TableRow, action: () => void) {
+  Row() {
+    if (row.icon.length > 0) {
+      Text(row.icon)
+        .fontSize(18)
+        .fontColor(UiColor.teal)
+        .width(26)
+        .textAlign(TextAlign.Center)
+        .margin({ right: 12 })
+    }
+    Column() {
+      // One line, cut at the end, as a UITableViewCell title (long file names used to wrap mid-word).
+      Text(row.title).fontSize(17).fontColor(UiColor.label)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+      if (row.subtitle.length > 0) {
+        Text(row.subtitle).fontSize(12).fontColor(UiColor.gray).margin({ top: 2 })
+      }
+    }
+    .alignItems(HorizontalAlign.Start)
+    .layoutWeight(1)
+    if (row.detail.length > 0) {
+      Text(row.detail).fontSize(17).fontColor(UiColor.gray).margin({ left: 8 })
+    }
+    if (row.checked) {
+      Text('✓').fontSize(17).fontColor(UiColor.teal).margin({ left: 8 })
+    }
+    if (row.chevron) {
+      Text('›').fontSize(20).fontColor(UiColor.chevron).margin({ left: 8 })
+    }
+  }
+  .width('100%')
+  .constraintSize({ minHeight: 44 })
+  .padding({ left: 16, right: 16, top: 8, bottom: 8 })
+  .backgroundColor(UiColor.cell)
+  .stateStyles({
+    pressed: { .backgroundColor(UiColor.pressed) },
+    normal: { .backgroundColor(UiColor.cell) }
+  })
+  // A row reads as one element (its title and detail) and acts as a button.
+  .accessibilityGroup(true)
+  .accessibilityRole(AccessibilityRoleType.BUTTON)
+  .onClick(action)
+}
+
+/** Formats a byte count like ByteCountFormatter (.file style): "981 bytes", "12 KB", "1.2 MB". */
+export function formatBytes(bytes: number): string {
+  if (bytes === 0) {
+    return 'Zero KB';
+  }
+  if (bytes < 1000) {
+    return bytes === 1 ? '1 byte' : bytes + ' bytes';
+  }
+  if (bytes < 1000 * 1000) {
+    return Math.round(bytes / 1000) + ' KB';
+  }
+  return (bytes / 1000 / 1000).toFixed(1) + ' MB';
+}
+
+/** Called with the section and row index of a tapped row. */
+export type TableRowAction = (section: number, row: number) => void;
+
+/**
+ * An insetGrouped UITableView: sections of rounded cards with gray headers and footers. `header` is drawn above the
+ * first section (a tab's large title and bar buttons). Pass a new `sections` array to reload.
+ */
+@Component
+export struct InsetTable {
+  @Prop sections: TableSection[] = [];
+  @BuilderParam header: () => void = EmptyHeader;
+  onRow: TableRowAction = (section: number, row: number) => {
+  };
+
+  build() {
+    List() {
+      ListItem() {
+        this.header()
+      }
+      ForEach(this.sections, (section: TableSection, s: number) => {
+        ListItem() {
+          Column() {
+            if (section.title.length > 0) {
+              SectionHeader(section.title)
+            }
+            Column() {
+              ForEach(section.rows, (row: TableRow, r: number) => {
+                if (r > 0) {
+                  Divider().strokeWidth(0.5).color(UiColor.separator).margin({ left: row.icon.length > 0 ? 54 : 16 })
+                }
+                TableCell(row, () => this.onRow(s, r))
+              }, (row: TableRow, r: number) => s + '-' + r + '-' + row.key + row.title + row.checked)
+            }
+            .borderRadius(10)
+            .clip(true)
+            .margin({ left: 16, right: 16 })
+            if (section.footer.length > 0) {
+              SectionFooter(section.footer)
+            }
+          }
+        }
+      }, (section: TableSection, s: number) => s + section.title + section.rows.length)
+      ListItem() {
+        Column().height(24 + TAB_LIST_END_INSET)
+      }
+    }
+    .width('100%')
+    .height('100%')
+    .backgroundColor(UiColor.groupedBackground)
+  }
+}
+
+@Builder
+export function EmptyHeader() {
+}
+
+/**
+ * A pushed page's title on one line, as a UINavigationBar title: it shrinks to 14 fp, then ends with an ellipsis
+ * (long translations, file names and scenario names used to wrap onto two lines in the 56 vp bar).
+ */
+@Builder
+export function NavTitle(title: string) {
+  Text(title)
+    .fontSize(20)
+    .fontWeight(FontWeight.Bold)
+    .maxLines(1)
+    .minFontSize(14)
+    .maxFontSize(20)
+    .textOverflow({ overflow: TextOverflow.Ellipsis })
+    .height('100%')
+}

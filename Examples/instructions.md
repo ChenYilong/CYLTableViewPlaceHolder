@@ -7,10 +7,8 @@ CocoaPods dependency path.
 
 ## Dependencies
 
-Every example's Podfile also contains `pod 'MJRefresh', '<latest version>'` (the highest stable version on the
-CocoaPods trunk), so each example is built with the original library next to `CYLRefresh`. Set it with
-`scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile` before building (`scripts/ci-build-example.sh`
-does it in CI). See "Depending on MJRefresh in the examples" in the root `instructions.md`.
+Examples use no refresh library besides CYLRefresh (no `pod 'MJRefresh'`); see "One refresh library: CYLRefresh"
+in the root `instructions.md`.
 
 ## Animation playback controls
 
@@ -53,3 +51,9 @@ reproduction and the automated test command.
 
 Status scores come from `docs/issue-progress.md`; update both when an issue changes.
 
+Bugs: fix them in the core (the code published to CocoaPods, Maven / Gradle, npm, ohpm, pub.dev), not in an example;
+an example-only fix needs the owner's approval and a written reason in the related document (`instructions.md`,
+"Fix bugs in the core first").
+Animation bugs: record them, screenshot them, and fix them in CYLTabBarController's animation component; a demo that
+must change calls an interface CYLTabBarController adds for it (`instructions.md`, "Animation bugs: record,
+screenshot, fix in CYLTabBarController").

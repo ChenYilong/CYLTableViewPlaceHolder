@@ -1,0 +1,67 @@
+// cyl-placeholder-hud: CYLPlaceholderHUD for WeChat Mini Program. Put one in a page and drive it like SVProgressHUD:
+//
+// <cyl-placeholder-hud id="hud" bind:action="onHUDAction" />
+// const hud = this.selectComponent('#hud').hud
+// hud.showWithStatus('Loading…'); … hud.showSuccessWithStatus('Done') / hud.dismiss()
+//
+// Events: `action` (a component in the box was tapped, detail as cyl-placeholder's), `touch` (the mask was tapped).
+//
+// The loading and image icons are cyl-animated-item (CYLTabBarController's CYLAnimatedItem, src/cyl-animated-item):
+// `loadingAnimationFileName` (or a `showImage` animation file) plays once its engine is ready, else the static image
+// (the CYLRefreshActivity GIF while loading), else the placeholder. Engines come through the abstract nodes
+// `animation` (Lottie, generic:animation="cyl-lottie"), `cyl-pag-view`, `cyl-rive-view` and `cyl-svga-view`.
+'use strict'
+
+const { CYLPlaceholderHUD } = require('./cyl_placeholder_hud')
+const { localizedString } = require('../cyl-placeholder/cyl_localization')
+const { cylResolvePath, cylIconSource } = require('../cyl-placeholder/cyl_animated_icon')
+
+Component({
+  properties: {
+    /** Language of the default "Loading…" text; empty follows CYLPlaceholderLocalization. */
+    language: { type: String, value: '' },
+  },
+  data: { view: { visible: false }, shown: false, defaultStatus: '', loadingImage: '', icon: { image: '', animationUrl: '' } },
+  lifetimes: {
+    created() {
+      this.hud = new CYLPlaceholderHUD((view) => this._render(view), { vibrate: () => wx.vibrateShort({ type: 'medium' }) })
+    },
+    attached() {
+      this.setData({
+        defaultStatus: localizedString('scenario_h_u_d_title', this.data.language || undefined),
+        // cyl-animated-item draws files from its own folder: the package GIF needs an absolute path.
+        loadingImage: cylResolvePath('../cyl-placeholder/images/refresh_activity.gif', this.is),
+      })
+    },
+    detached() {
+      clearTimeout(this._fadeTimer)
+      this.hud.dismiss()
+    },
+  },
+  methods: {
+    _render(view) {
+      clearTimeout(this._fadeTimer)
+      const wasVisible = !!this.data.view.visible
+      if (view.visible) {
+        const source = cylIconSource(view.state === 'Image' ? cylResolvePath(view.image, this.is) : '')
+        this.setData({ view, shown: true, icon: { image: source.image, animationUrl: source.animationUrl } })
+        // CYLPlaceholderHUDDidAppearNotification / DidDisappearNotification as events.
+        if (!wasVisible) this.triggerEvent('appear', { state: view.state })
+      } else {
+        // Keep the box while it fades out.
+        this.setData({ 'view.visible': false })
+        this._fadeTimer = setTimeout(() => {
+          this.setData({ shown: false })
+          if (wasVisible) this.triggerEvent('disappear', {})
+        }, view.fadeOut * 1000)
+      }
+    },
+    onAction(e) {
+      this.triggerEvent('action', e.detail)
+    },
+    onMaskTap() {
+      this.triggerEvent('touch', { state: this.hud.state })
+    },
+    noop() {},
+  },
+})

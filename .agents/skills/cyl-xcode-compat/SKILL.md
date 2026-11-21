@@ -8,7 +8,7 @@ description: Maintain Xcode project format, deployment targets, schemes, and Coc
 Use this skill when changing an Xcode project, scheme, build configuration,
 deployment target, or podspec.
 
-- The library podspec minimum is iOS 12.0. Runnable projects' Podfiles follow
+- The library podspec minimum is iOS 15.0 (raised from 12.0 on 2026-11-20; CI builds and tests 15.0). Runnable projects' Podfiles follow
   the iOS 15.0 and CocoaPods `post_install` checks in `instructions.md`;
   these settings do not change the library's published minimum. Availability-check
   newer APIs.
@@ -19,12 +19,7 @@ deployment target, or podspec.
   Only a project named CYLTabBarController uses `:path` (relative, to the folder containing the podspec).
   Run `pod install`, or `pod update CYLTabBarController` when a lock pins an older commit
   (`instructions.md`, "Depending on CYLTabBarController").
-- Every example Podfile (`Examples/*/Podfile`) also has `pod 'MJRefresh', '<latest version>'` in the app target:
-  the highest stable version on the CocoaPods trunk, set before every build with
-  `scripts/resolve-mjrefresh-version.sh [--write <Podfile>...]`. Run `pod install` (`pod update MJRefresh` when a
-  lock pins an older version) and check the example compiles. If the newest MJRefresh breaks the build, fix the code
-  in `CYLRefresh/` and rebuild until it succeeds; never pin an older MJRefresh. The root `Podfile` of the main app is excluded
-  (`instructions.md`, "Depending on MJRefresh in the examples").
+- Example Podfiles list no refresh pod besides CYLRefresh (`instructions.md`, "One refresh library: CYLRefresh").
 - `CYLTableViewPlaceHolder.xcodeproj/project.pbxproj` uses object version 46
   and compatibility version `Xcode 3.2`. Keep explicit file references; do not
   silently switch to synchronized groups or a newer project format.

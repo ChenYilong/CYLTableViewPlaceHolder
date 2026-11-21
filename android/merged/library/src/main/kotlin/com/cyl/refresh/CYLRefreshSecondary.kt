@@ -5,7 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * Holds a second floor's content over the list and follows the finger on it (iOS "second floor": a pull past
@@ -48,6 +48,20 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
 
     /** The pull's distance in pixels at the last drag, read when the finger lets go. */
     var lastDragOffset = 0
+        set(value) {
+            val now = android.os.SystemClock.uptimeMillis()
+            val dt = now - lastDragTime
+            // The pull's speed at the release, in dp per second, from the last two drag samples (iOS reads the pan's velocity).
+            if (lastDragTime > 0 && dt in 1..100) releaseVelocity = (kotlin.math.abs(value) - kotlin.math.abs(field)) * 1000f / dt / density()
+            else if (dt > 100) releaseVelocity = 0f
+            lastDragTime = now
+            field = value
+        }
+
+    private var lastDragTime = 0L
+
+    /** The pull's speed at the last drag sample, in dp per second (away from the content's edge is positive). */
+    var releaseVelocity = 0f
 
     private var host: CYLSecondaryHost? = null
     private var closing = false
@@ -61,7 +75,10 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
      */
     fun openOnReleaseIfPulledFar(): Boolean {
         if (view == null || triggerOffset <= 0f || isOpen) return false
-        if (kotlin.math.abs(lastDragOffset) < triggerOffset * density()) return false
+        val pulled = kotlin.math.abs(lastDragOffset)
+        // iOS secondaryVelocity: a fast release past the refresh trigger opens the second floor too.
+        val fast = velocity > 0f && releaseVelocity >= velocity && pulled >= component.view.view.height * component.triggerRate
+        if (pulled < triggerOffset * density() && !fast) return false
         open()
         return true
     }
@@ -71,7 +88,7 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
         show(animated = true)
     }
 
-    private fun parentOf(layout: SmartRefreshLayout): ViewGroup? =
+    private fun parentOf(layout: CYLRefreshLayout): ViewGroup? =
         (layout.parent as? FrameLayout) ?: layout.rootView.findViewById(android.R.id.content)
 
     private fun show(animated: Boolean) {
@@ -85,8 +102,16 @@ internal class CYLRefreshSecondaryFloor(private val component: CYLRefreshCompone
             if (swipe >= closeTriggerOffset * density()) close()
         }
         floor.addView(content, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        val gravity = if (header) android.view.Gravity.TOP else android.view.Gravity.BOTTOM
-        parent.addView(floor, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height, gravity))
+        // The floor covers the layout's own area: when the layout is not directly in a FrameLayout, the floor goes into
+        // the window's content and is placed at the layout's position there, not at the window's top.
+        val layoutAt = IntArray(2).also(layout::getLocationInWindow)
+        val parentAt = IntArray(2).also(parent::getLocationInWindow)
+        val top = layoutAt[1] - parentAt[1] + if (header) 0 else layout.height - height
+        val params = FrameLayout.LayoutParams(layout.width, height, android.view.Gravity.TOP or android.view.Gravity.START).apply {
+            leftMargin = layoutAt[0] - parentAt[0]
+            topMargin = top
+        }
+        parent.addView(floor, params)
         host = floor
         isOpen = true
         closing = false

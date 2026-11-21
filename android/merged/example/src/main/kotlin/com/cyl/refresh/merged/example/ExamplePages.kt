@@ -8,18 +8,18 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import com.cyl.placeholder.CYLPlaceholderScenario
 import com.cyl.placeholder.CYLPlaceholderStackView
-import com.cyl.svpulltorefresh.SVPullToRefreshLayout
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import `in`.srain.cube.views.ptr.PtrClassicFrameLayout
-import `in`.srain.cube.views.ptr.PtrDefaultHandler
-import `in`.srain.cube.views.ptr.PtrFrameLayout
+import com.cyl.refresh.CYLRefreshAutoNormalFooter
+import com.cyl.refresh.CYLRefreshNormalHeader
+import com.cyl.refresh.CYLRefreshStoreHouseHeader
+import com.cyl.refresh.cyl_footer
+import com.cyl.refresh.cyl_header
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * A list of text rows for the pages: an intro line, then the loaded rows; with no rows it shows a placeholder.
@@ -92,36 +92,40 @@ class PlaceholderPage : Fragment() {
 }
 
 /**
- * The SVPullToRefresh tab: pull to refresh at the top, infinite scrolling at the end.
+ * The load-more tab: CYLRefresh's classic header pulls to refresh, its automatic footer loads more at the end (it
+ * replaced the SVPullToRefresh tab when CYLRefresh became the only refresh kernel).
  */
-class SVPullToRefreshPage : Fragment() {
+class LoadMorePage : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val context = requireContext()
-        val list = RowList(context, R.string.merged_intro_svpulltorefresh)
-        val layout = SVPullToRefreshLayout(context)
-        layout.addView(list, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        layout.addPullToRefresh { later { list.reload(20); layout.pullToRefreshView?.stopAnimating() } }
-        layout.addInfiniteScrolling { later { list.more(10); layout.infiniteScrollingView?.stopAnimating() } }
+        val list = RowList(context, R.string.merged_intro_loadmore)
+        val layout = CYLRefreshLayout(context)
+        layout.setRefreshContent(list)
+        val header = CYLRefreshNormalHeader(context)
+        header.refreshingBlock = { later { list.reload(20); header.endRefreshing() } }
+        layout.cyl_header = header
+        val footer = CYLRefreshAutoNormalFooter(context)
+        footer.refreshingBlock = { later { list.more(10); footer.endRefreshing() } }
+        layout.cyl_footer = footer
         return layout
     }
 }
 
 /**
- * The android-Ultra-Pull-To-Refresh tab: the classic header.
+ * The StoreHouse tab: CYLRefresh's StoreHouse header, a word drawn by falling bars (it replaced the
+ * android-Ultra-Pull-To-Refresh tab, whose signature header this was).
  */
-class UltraPullToRefreshPage : Fragment() {
+class StoreHousePage : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val context = requireContext()
-        val list = RowList(context, R.string.merged_intro_ultraptr)
-        val frame = PtrClassicFrameLayout(context)
-        frame.addView(list, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        frame.setPtrHandler(object : PtrDefaultHandler() {
-            override fun onRefreshBegin(frame: PtrFrameLayout) {
-                later { list.reload(20); frame.refreshComplete() }
-            }
-        })
-        return frame
+        val list = RowList(context, R.string.merged_intro_storehouse)
+        val layout = CYLRefreshLayout(context)
+        layout.setRefreshContent(list)
+        val header = CYLRefreshStoreHouseHeader.newWithString(context, "CYLRefresh")
+        header.refreshingBlock = { later { list.reload(20); header.endRefreshing() } }
+        layout.cyl_header = header
+        return layout
     }
 }

@@ -1,0 +1,8 @@
+/* A plain table: white background; the placeholder fills the space under the bar. */
+page { background: #fff; }
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.placeholder { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+@media (prefers-color-scheme: dark) {
+  page { background: #1c1c1e; }
+}

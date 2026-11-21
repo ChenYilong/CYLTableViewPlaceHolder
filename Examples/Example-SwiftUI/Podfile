@@ -5,9 +5,12 @@ use_frameworks!
 
 target 'ExampleSwiftUI' do
   pod 'CYLTableViewPlaceHolder', :path => '../..'
-  # The original library CYLRefresh is adapted from, always at its latest version (scripts/resolve-mjrefresh-version.sh
-  # sets it before every build; instructions.md, "Depending on MJRefresh in the examples").
-  pod 'MJRefresh', '3.7.9'
+  # CYLTableViewPlaceHolder's Core depends on the CYLAnimatedItem pod (CYLPlaceholderView is a CYLAnimatedItemView), which
+  # lives in the CYLTabBarController repository and is not on the trunk yet. Always that repository's newest commit on
+  # any branch (instructions.md, "Depending on CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh
+  # rewrites the commit before every build.
+  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => 'b13b88f1ac6645dde8a7381e21547e161c09623f'
+  # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
   pod 'SwiftUIIntrospect', '26.0.0'
 end
 

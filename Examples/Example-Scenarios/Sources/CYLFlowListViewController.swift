@@ -273,6 +273,12 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
         } else {
             tableView.reloadData()
         }
+        // The placeholder shows on the next run loop turn; `cyl_placeholderView` (Android's
+        // `RecyclerView.cyl_placeholderView`) then names it, so VoiceOver moves to the new state.
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            UIAccessibility.post(notification: .layoutChanged, argument: self.tableView.cyl_placeholderView)
+        }
     }
 
     // MARK: Refresh controls (issue #8)

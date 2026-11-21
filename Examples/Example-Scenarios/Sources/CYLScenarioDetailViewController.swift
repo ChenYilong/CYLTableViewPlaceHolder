@@ -144,6 +144,9 @@ final class CYLSupportViewController: UIViewController {
                                     size: CGSize(width: 120, height: 120), action: nil),
             CYLPlaceholderComponent.hint(text: CYLScenarioLocalizedString(.supportText)),
         ], actions: nil)
+        // `hintLabel` (Android's `CYLPlaceholderStackView.hintLabel`) reaches the hint's label: the support text wraps
+        // over as many lines as it needs.
+        placeholder.hintLabel?.numberOfLines = 0
         placeholder.frame = view.bounds
         placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         placeholder.accessibilityIdentifier = "supportPage"

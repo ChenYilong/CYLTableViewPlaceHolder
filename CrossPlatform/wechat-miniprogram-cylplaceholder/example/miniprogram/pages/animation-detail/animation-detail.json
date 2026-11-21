@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "cyl-animated-item": "/components/cyl-animated-item/index"
+  }
+}

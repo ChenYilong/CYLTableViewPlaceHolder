@@ -4,7 +4,8 @@
 //
 //  MJTableViewController of MJRefresh's example layer (MIT; originally created by MJ Lee, Copyright (c) 2015 小码哥),
 //  transcribed to Swift on this project's API (`MJ` → `CYL`, `mj_` → `cyl_`): example01–06 (pull down),
-//  example11–21 (pull up), then example51–56, which draw GIF, Lottie, PAG and Rive icons on the same list.
+//  example11–21 (pull up), then example51–57, which draw GIF, Lottie, PAG, Rive and SVGA icons on the same list
+//  and show the playback controls (Play all, speed, loop) of docs/Example-Animation-Playback.md.
 //
 
 import UIKit
@@ -21,6 +22,11 @@ private func label(_ label: UILabel?) -> UILabel? {
 final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExampleRunning {
 
     var method = ""
+    /// The examples with animated icons, which get the playback controls (as the Android example).
+    private static let animatedIconExamples: Set<String> = [
+        "example51", "example52", "example53", "example54", "example55", "example56", "example57",
+    ]
+    private let controls = CYLPlaybackControlsView(loops: true)
     /// The fake data shown in the list.
     private lazy var data: [String] = (0..<5).map { _ in Self.randomData() }
 
@@ -269,8 +275,27 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         header.beginRefreshing()
     }
 
-    /// A different engine for each state: Lottie while idle, GIF when released, PAG while refreshing; the footer loads
-    /// with Rive.
+    /// The SVGA twin of example54 (Task-Log "SVGA animations, every Rive demo copied 1:1"): SVGA files have no
+    /// artboards, so a resting icon shows while pulling and another plays while refreshing. The files are
+    /// CYLTabBarController's samples in the example bundle (Animations/NOTICE.svga-samples.md); the
+    /// CYLTableViewPlaceHolder/SVGA subspec plays them.
+    func example57() {
+        guard let resting = CYLScenarioExampleResourceURL("Animations/tab_list.svga")?.path,
+              let turning = CYLScenarioExampleResourceURL("Animations/tab_activity.svga")?.path else { return }
+        let size = CGSize(width: 32, height: 32)
+        let header = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
+        header.setIconAnimation(filePath: resting, size: size, for: .idle)
+        header.setIconAnimation(filePath: turning, size: size, for: .refreshing)
+        tableView.cyl_header = header
+        let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+        footer.setIconAnimation(filePath: resting, size: size, for: .idle)
+        footer.setIconAnimation(filePath: turning, size: size, for: .refreshing)
+        tableView.cyl_footer = footer
+        header.beginRefreshing()
+    }
+
+    /// A different engine for each state: Lottie while idle, GIF when released, PAG while refreshing; the footer rests
+    /// on SVGA and loads with Rive.
     func example56() {
         let header = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
         header.setIconAnimation(bundled: "CYLRefreshPullCircle.json", size: CGSize(width: 28, height: 28), for: .idle)
@@ -279,6 +304,9 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
                                 for: .refreshing)
         tableView.cyl_header = header
         let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+        if let resting = CYLScenarioExampleResourceURL("Animations/tab_list.svga")?.path {
+            footer.setIconAnimation(filePath: resting, size: CGSize(width: 30, height: 30), for: .idle)
+        }
         footer.setIconAnimation(bundled: "CYLRefreshIcon.riv", size: CGSize(width: 30, height: 30), for: .refreshing)
         tableView.cyl_footer = footer
         header.beginRefreshing()
@@ -339,6 +367,14 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         tableView.accessibilityIdentifier = "refreshExample"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         run(method)
+        if Self.animatedIconExamples.contains(method) {
+            controls.installAsRefreshIconControls(in: tableView)
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        CYLPlaybackControlsView.sizeTableHeader(of: tableView)
     }
 
     /// Runs an example by name (MJRefresh calls `performSelector:` with the method name).
@@ -350,6 +386,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
             "example17": example17, "example18": example18, "example19": example19, "example20": example20,
             "example21": example21, "example51": example51, "example52": example52, "example53": example53,
             "example54": example54, "example55": example55, "example56": example56,
+            "example57": example57,
         ]
         examples[method]?()
     }

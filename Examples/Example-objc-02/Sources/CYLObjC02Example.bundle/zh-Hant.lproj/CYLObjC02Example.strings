@@ -13,3 +13,6 @@
 "CYLObjC02HintRefresh" = "重新整理列表並回到第 2 頁。";
 "CYLObjC02HintLastPage" = "捲動到最後一頁。";
 "CYLObjC02FormatPage" = "第 %ld 頁";
+"CYLObjC02TitleSections" = "分組";
+"CYLObjC02FormatSection" = "第 %ld 組";
+"CYLObjC02HintRefreshSections" = "重新整理列表。";

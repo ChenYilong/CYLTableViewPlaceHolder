@@ -59,35 +59,41 @@ final class CYLRefreshExampleViewController: UITableViewController {
             viewControllers: [("CYLRefreshWKWebViewController", { CYLRefreshWKWebViewController() })])
         let exam4 = CYLRefreshExample(header: .mjSectionI18n, titles: [.mjLanguages], methods: ["i18n"],
             viewControllers: [("CYLRefreshI18NExampleViewController", { CYLRefreshI18NExampleViewController() })])
-        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG and Rive icons.
+        // Beyond MJRefresh: the animated-image controls drawing GIF, Lottie, PAG, Rive and SVGA icons.
         let exam5 = CYLRefreshExample(header: .mjSectionAnimations,
-            titles: [.mjGifIcon, .mjLottieStates, .mjPagRing, .mjRiveIcon, .mjGifFrames, .mjMixedEngines,
+            titles: [.mjGifIcon, .mjLottieStates, .mjPagRing, .mjRiveIcon, .mjSVGAIcon, .mjGifFrames, .mjMixedEngines,
                      .mjCollectionIcons],
-            methods: ["example51", "example52", "example53", "example54", "example55", "example56", "example32"],
-            viewControllers: [table, table, table, table, table, table,
+            methods: ["example51", "example52", "example53", "example54", "example57", "example55", "example56",
+                      "example32"],
+            viewControllers: [table, table, table, table, table, table, table,
                               ("CYLRefreshCollectionViewController", { CYLRefreshCollectionViewController() })])
-        // Beyond MJRefresh: SmartRefreshControl's demo (CYLSmartRefreshDemoViewController), one method per style.
-        let smart: (name: String, make: () -> CYLRefreshExampleRunning) =
-            ("CYLSmartRefreshDemoViewController", { CYLSmartRefreshDemoViewController() })
+        // Beyond MJRefresh: the CYLRefresh styles demo (CYLRefreshStylesDemoViewController), one method per style.
+        let stylesDemo: (name: String, make: () -> CYLRefreshExampleRunning) =
+            ("CYLRefreshStylesDemoViewController", { CYLRefreshStylesDemoViewController() })
         let styles: [(CYLScenarioL10n, String)] = [
-            (.smartDelivery, "smartDelivery"), (.smartClassics, "smartClassics"), (.smartDropBox, "smartDropBox"),
-            (.smartPhoenix, "smartPhoenix"), (.smartTaurus, "smartTaurus"), (.smartBezierRadar, "smartBezierRadar"),
-            (.smartBezierCircle, "smartBezierCircle"), (.smartStoreHouse, "smartStoreHouse"),
-            (.smartWaveSwipe, "smartWaveSwipe"), (.smartOriginal, "smartOriginal"), (.smartMaterial, "smartMaterial"),
-            (.smartGameHitBlock, "smartGameHitBlock"), (.smartGameBattleCity, "smartGameBattleCity"),
-            (.smartFly, "smartFly"), (.smartClassicsFooter, "smartClassicsFooter"),
+            (.refreshStyleDelivery, "styleDelivery"), (.refreshStyleClassics, "styleClassics"), (.refreshStyleDropBox, "styleDropBox"),
+            (.refreshStylePhoenix, "stylePhoenix"), (.refreshStyleTaurus, "styleTaurus"), (.refreshStyleBezierRadar, "styleBezierRadar"),
+            (.refreshStyleBezierCircle, "styleBezierCircle"), (.refreshStyleStoreHouse, "styleStoreHouse"),
+            (.refreshStyleWaveSwipe, "styleWaveSwipe"), (.refreshStyleOriginal, "styleOriginal"), (.refreshStyleMaterial, "styleMaterial"),
+            (.refreshStyleGameHitBlock, "styleGameHitBlock"), (.refreshStyleGameBattleCity, "styleGameBattleCity"),
+            (.refreshStyleFly, "styleFly"), (.refreshStyleClassicsFooter, "styleClassicsFooter"),
             // flutter_easy_refresh's drawn footers (CYLRefreshDrawnFooter), on the same page.
-            (.smartBezierRadarFooter, "smartBezierRadarFooter"), (.smartMaterialFooter, "smartMaterialFooter"),
-            (.smartDeliveryFooter, "smartDeliveryFooter"), (.smartPhoenixFooter, "smartPhoenixFooter"),
-            (.smartTaurusFooter, "smartTaurusFooter"),
+            (.refreshStyleBezierRadarFooter, "styleBezierRadarFooter"), (.refreshStyleMaterialFooter, "styleMaterialFooter"),
+            (.refreshStyleDeliveryFooter, "styleDeliveryFooter"), (.refreshStylePhoenixFooter, "stylePhoenixFooter"),
+            (.refreshStyleTaurusFooter, "styleTaurusFooter"),
             // flutter_easy_refresh's Rive style packages (CYLRefreshRiveHeader), with the example's own .riv files.
-            (.smartRiveBow, "smartRiveBow"), (.smartRiveBubbles, "smartRiveBubbles"),
-            (.smartRiveHalloween, "smartRiveHalloween"), (.smartRiveSkating, "smartRiveSkating"),
-            (.smartRiveSpace, "smartRiveSpace"), (.smartRiveSquats, "smartRiveSquats"),
-            (.smartRiveSpaceFooter, "smartRiveSpaceFooter"),
+            (.refreshStyleRiveBow, "styleRiveBow"), (.refreshStyleRiveBubbles, "styleRiveBubbles"),
+            (.refreshStyleRiveHalloween, "styleRiveHalloween"), (.refreshStyleRiveSkating, "styleRiveSkating"),
+            (.refreshStyleRiveSpace, "styleRiveSpace"), (.refreshStyleRiveSquats, "styleRiveSquats"),
+            (.refreshStyleRiveSpaceFooter, "styleRiveSpaceFooter"),
+            // The SVGA twins of the Rive scenes (scripts/make_svga_scenes.py), as on the other platforms.
+            (.refreshStyleSVGABow, "styleSvgaBow"), (.refreshStyleSVGABubbles, "styleSvgaBubbles"),
+            (.refreshStyleSVGAHalloween, "styleSvgaHalloween"), (.refreshStyleSVGASkating, "styleSvgaSkating"),
+            (.refreshStyleSVGASpace, "styleSvgaSpace"), (.refreshStyleSVGASquats, "styleSvgaSquats"),
+            (.refreshStyleSVGASpaceFooter, "styleSvgaSpaceFooter"),
         ]
-        let exam6 = CYLRefreshExample(header: .smartSection, titles: styles.map { $0.0 },
-                                      methods: styles.map { $0.1 }, viewControllers: [smart])
+        let exam6 = CYLRefreshExample(header: .refreshStyleSection, titles: styles.map { $0.0 },
+                                      methods: styles.map { $0.1 }, viewControllers: [stylesDemo])
         // Beyond MJRefresh: flutter_easy_refresh's demo pages (CYLEasyRefreshDemoViewController), one method per page.
         let easy: (name: String, make: () -> CYLRefreshExampleRunning) =
             ("CYLEasyRefreshDemoViewController", { CYLEasyRefreshDemoViewController() })

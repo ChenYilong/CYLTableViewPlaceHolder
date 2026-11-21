@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import java.util.Locale
 
 /**
@@ -225,7 +224,7 @@ class CYLPlaceholderStatusView @JvmOverloads constructor(context: Context, attri
     var text: String?
         get() = placeholderView.textLabel.text?.toString()
         set(value) {
-            placeholderView.textLabel.text = value
+            placeholderView.title = value
             contentDescription = value
         }
 
@@ -234,20 +233,20 @@ class CYLPlaceholderStatusView @JvmOverloads constructor(context: Context, attri
 
     init {
         val used = attributes ?: networkUnavailableItemAttributes(context)
-        val density = resources.displayMetrics.density
         val image = (used["CYLPlaceholderItemImage"] as? Int)?.let { androidx.core.content.ContextCompat.getDrawable(context, it) }
         placeholderView = CYLPlaceholderView(context, image, used["CYLPlaceholderItemTitle"] as? CharSequence).apply {
+            reportsContentSize = true
             contentMargin = 8f
             defaultTitleFont = 15f
             defaultTitleColor = (used["CYLPlaceholderItemTitleColor"] as? Int) ?: Color.rgb(0x66, 0x66, 0x66)
             defaultIconColor = Color.rgb(0xFF, 0x3B, 0x30)
-            imageView.layoutParams = imageView.layoutParams.apply { width = (20 * density).toInt(); height = (20 * density).toInt() }
-            // A banner: the icon sits left of the text.
-            ((imageView.parent as View).parent as LinearLayout).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-            }
-            (textLabel.layoutParams as LinearLayout.LayoutParams).apply { topMargin = 0; leftMargin = (8 * density).toInt() }
+            // A banner: the icon sits left of the text (the inherited CYLAnimatedItemView layout).
+            iconSizeDp = com.cyl.animateditem.CYLSize(20f, 20f)
+            axis = com.cyl.animateditem.CYLAnimatedItemAxis.Horizontal
+            spacingDp = 8f
+            // iOS `initWithItemAttributes:error:`: every other item key (colors, offsets, font size, animation file…)
+            // too, over the banner's defaults.
+            applyItemAttributes(context, used - setOf("CYLPlaceholderItemImage", "CYLPlaceholderItemTitle"), null)
         }
         setBackgroundColor(Color.rgb(0xFF, 0xF4, 0xE5))
         addView(placeholderView, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER))

@@ -27,10 +27,73 @@ Before starting any task, write it down in `docs/`, so an interrupted task never
 
 Follow the bilingual documentation rules for the entry; the user's prompt is quoted as written.
 
+### Before the TODO: check the other sessions first
+
+The first step of every task, before the TODO entry and before any change:
+
+1. **List the other sessions and read their tasks** (`ListAgents`, then each session's current task: its last
+   messages, or its `TODO` entries in `docs/`).
+2. **Is another session editing the same branch?**
+   - No: continue with the task.
+   - Yes: check whether the task duplicates theirs (the same files, the same fix, the same verification). Message
+     that session and settle who does what before changing anything; continue only with the part that is not a
+     duplicate, and rebase on their pushed work before pushing.
+
+### Re-read the rules a pull changes
+
+Rules change while a task runs (other sessions push them). After every `git pull` (and before every commit, which
+pulls first), check whether the pull changed a rule file and read the changed parts before going on:
+
+    git diff --stat ORIG_HEAD HEAD -- instructions.md AGENTS.md '*/instructions.md' .agents/skills
+    git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md '*/instructions.md' .agents/skills
+
+Apply a changed rule to the work in progress (redo what it affects) before committing. Never pull and commit in one
+command when the pull may bring rules: pull, read, then commit.
+
+### TODO and the branch at the top of the session
+
+When a task starts, the session's first reply begins with a `TODO` line and the current branch, for example
+``**TODO** (branch `feat/x`): <the task in one line>``. This is usually the first line of the session, so the owner
+sees at a glance what is being done and where.
+
+### Acceptance criteria and scoring
+
+The task's `TODO` entry in `docs/` also states how the result is scored:
+
+- **Full marks (100):** what the finished task looks like: every requirement done, verified (tests, screenshots) and
+  pushed.
+- **Pass (60):** the minimum that is acceptable: the core requirements done and verified, with only optional parts
+  left.
+- **Score the result** after each step against these criteria and write the score into the entry.
+- **Do not stop below a pass.** A task scored under 60 is not interrupted or handed back: keep working and rescoring
+  until it passes (the only exception is a blocker outside the session's control, such as hardware that is missing;
+  record the blocker in the entry).
+- **Explain any missing points:** when the score is under 100, write in the entry why full marks were not reached.
+- **Print the missing points at the end of the session** as `TODO`s, one per missing part, with the points it is
+  worth, for example `TODO (-10): screen reader check needs a real phone`.
+- **Update the entry written at task start** with the final score, the reasons and the remaining `TODO`s.
+
+## Shared emulators: restart a hung emulator
+
+Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS emulator (`127.0.0.1:5555`).
+
+- **An emulator that stays hung** (adb / hdc commands time out, the package manager does not answer, the screen does
+  not respond) stays hung until it is restarted. **Tell the other sessions first** (`SendMessage`: "taking
+  emulator-5556, restarting it"), **then restart it** from the command line. Do not ask the owner whether to restart.
+- **An emulator that does not open** (it does not boot, or it is not listed by `adb devices` / `hdc list targets`):
+  restarting is the first strategy, before any other fix.
+- **How to restart** (Android): `adb -s emulator-5556 emu kill`, wait for `qemu-system-x86_64` to exit, then a cold
+  boot: `emulator -avd <name> -port 5556 -no-snapshot-load -no-boot-anim`, and wait for
+  `getprop sys.boot_completed` to be `1`. HarmonyOS: close the emulator (`hdc kill`, or end `Emulator.exe` for that
+  device only), then start it again with `Emulator -hvd "<device>" ...` (skill `cyl-harmonyos-setup`).
+- Restart only the hung emulator; leave the other platform's emulator running.
+- **When done, tell the other sessions** ("done, emulator-5556 is free") and stop anything that might hang it again
+  (for example a loop of `adb shell dumpsys` checks).
+
 ## Translating or porting another project: its open pull requests and issues
 
 When a document in this repository links to another project's GitHub repository as the source of a translation, a
-port or a similar task (for example SmartRefreshControl or flutter_easy_refresh in `docs/Refresh-Library-Parity.md`,
+port or a similar task (for example CYLRefresh styles or flutter_easy_refresh in `docs/Refresh-Library-Parity.md`,
 or the Kotlin translations planned in `docs/Android-Port.md`), the source is not only its default branch:
 
 1. **Open pull requests.** Read the source's open pull requests and bring their changes in, before or after the
@@ -52,9 +115,12 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
    translation is into another language, so an issue's fix can only be written in the translated code, an issue whose
    fix is in an open pull request that was reviewed and taken for the translation counts as handled for the 60 needed
    to start; it must still be implemented and tested in the translation before the score reaches 100.
-   For SmartRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
-   copy of the Java source in `android/SmartRefreshLayout/java/` gets the taken pull requests and issue fixes, each
+   For CYLRefreshLayout (Java → Kotlin, decided by the owner on 2026-11-13: "Fix in Java first"), the gate stays: a
+   copy of the Java source in `android/CYLRefreshLayout/java/` gets the taken pull requests and issue fixes, each
    with a test, until the issues reach 60; then translation starts and the remaining issues are fixed in Kotlin.
+   Since 2026-11-17 (the owner's decision: "make sure CYLRefresh is the only kernel") the Kotlin CYLRefreshLayout is
+   folded into CYLRefresh (`android/merged/library`, `com.cyl.refresh.*`), and the Java copy, SVPullToRefresh and
+   android-Ultra-Pull-To-Refresh are deleted; a later fix goes into CYLRefresh. See docs/Android-Port.md.
 6. **Every platform** follows this rule: iOS, Android, Flutter, React Native, HarmonyOS and mini programs.
 
 ## English naming rules
@@ -75,6 +141,71 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
   third-party code as original work.
 
 ## Code conventions
+
+### Fix bugs in the core first (owner's rule, 2026-11-17)
+
+- **The core** is the code published to a package registry: CocoaPods (the podspec's sources and resources), Maven /
+  Gradle (the Android library modules), npm (the mini program and React Native packages), ohpm (the HarmonyOS HAR
+  `cylplaceholder`), pub.dev and the like. Examples, demo apps, tests and scripts are not core.
+- **When you meet an issue or bug, fix it in the core first**, so every app using the library avoids it and the
+  same problem cannot come back in another page or another app. Fixing it in the example layer is the worst option:
+  it hides the bug in the demo while every real app still has it.
+- **If it cannot be fixed in the core, ask the owner before fixing it in the example, and say why**: what in the
+  core prevents the fix (for example a platform API that does not exist, a public-API change that would break
+  compatibility, a third-party library that must change upstream, or the bug really being in the example's own
+  code). Then record the reason in the related document (the issue table, the task entry or the feature document):
+  why the core cannot solve it and why the example layer does.
+- An example's own mistakes (its layout, its texts, how it calls the API) are fixed in the example, with no question;
+  but check first whether the core made the mistake easy (an unclear default, a missing guard, a misleading name)
+  and fix that too.
+- This is not the same as "Examples have the lowest weight": that rule is about a core change that breaks an
+  example's build (fix the example); this one is about bugs (fix the core).
+
+### Cross-platform API parity tables and the scoring loop (owner's rule, 2026-11-17)
+
+Find the related document first and insert into it; create one only when none exists. In this repository the
+tables are generated: Android → iOS is `docs/iOS-API-Map.md` (`scripts/ios-api-map.py`, data
+`android/merged/ios-map.json`), iOS → Android is `docs/iOS-Android-Parity.md` (`scripts/ios-android-parity.py`,
+data `android/merged/api-map.json`); HarmonyOS uses `scripts/harmony-port-tables.js`.
+
+- **The table.** Column 1: every API and feature of one platform's core (Android first). Column 2: what it does.
+  Column 3: the other platform's counterpart, `TODO` by default. Rows that are a platform detail with no
+  counterpart needed are `n/a` with the reason, and are not counted; a feature (an option, an event, a style, a
+  gesture) is never n/a.
+- **The score.** Rows without TODO / counted rows: no TODO in column 3 is 100, all TODO is 0. The score sits at the
+  top of the table and is regenerated with it.
+- **The loop, until 100.** (1) Search the existing code for each TODO and record the counterpart you find (cite only
+  symbols that exist). (2) Score. (3) Implement the missing APIs and features one by one, replacing each TODO with
+  its implementation. (4) Score again, and repeat.
+- **Core first** (see "Fix bugs in the core first"). A missing feature is added to the core of the platform that
+  lacks it, with the same logic and the same API shape as the other platform. Then that platform's example
+  reproduces the other platform's example that shows the feature. Example: when Android has draggable tags with a
+  left icon, a title and a fixed delete icon on the right, and iOS has only the icon and title, extend the iOS core
+  component (the packaged icon + title) with the delete icon, its tap event and dragging, keeping the API the same
+  as Android's. Then the iOS tag list example shows deleting a tag: the data source is updated and the list lays
+  out again.
+- **Then the reverse table.** At 100 for Android → iOS, do the same for iOS → Android (column 1 the iOS API, column 3
+  the Android counterpart, TODO by default) with the same scoring and loop.
+
+### Animation bugs: record, screenshot, fix in CYLTabBarController (owner's rule, 2026-11-17)
+
+The animation component (icon + title + animation: `CYLAnimatedItemView`, its engines and animators on every
+platform) belongs to CYLTabBarController (branch `feat/cross-platform-components`, `docs/Animated-Item.md`); this
+repository only takes it by commit (`CYLPlaceholderView` builds on it).
+
+1. **Record first.** When you meet a bug, write it down before anything else: a row in the related issue table
+   (for example `docs/HarmonyOS.md`, `docs/Animated-Item-Migration.md`) with the status `TODO`.
+2. **Screenshot second.** Capture the bug (simulator, emulator or device) into `docs/assets/` and link it from the
+   row; say so in the row when no screenshot is possible.
+3. **Fix it in CYLTabBarController's animation component**, not in an example and not by working around it in this
+   repository. Hand the bug to the session or branch that owns CYLTabBarController (with the row and the
+   screenshot), then take the fixed commit here.
+4. **Examples change only through CYLTabBarController's API.** If a demo really must change, CYLTabBarController first
+   adds or changes the public interface the demo needs, and the example then calls that interface; never patch the
+   component's behavior inside an example.
+
+This narrows "Fix bugs in the core first" for animation bugs: the core that fixes them is CYLTabBarController's
+animation component.
 
 ### Documentation comments on public API
 
@@ -144,8 +275,11 @@ spans several lines must reach them as one comment.
   When a platform's official rule changes, update this table and follow it.
 - **Checking**: `python3 scripts/check_doc_comments.py` (CI job "Docs navigation") fails on any `///` line, a one-line
   block, an opening marker with text after it, a line inside a block that does not start with `*`, a trailing comment
-  after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. Review
-  new public declarations for a missing documentation comment by hand.
+  after code, a `/** … */` block in a public Objective-C header, or a `/*! … */` block in a library Swift file. It also
+  fails on a public declaration without a documentation comment directly above it (classes, categories, protocols,
+  methods, properties, enums and each enum value, typedefs, exported constants and functions and macros of the public
+  headers; `public` / `open` Swift declarations and the cases of public enums, overrides excepted); `--list` prints
+  only those declarations.
 
 ### Reuse CYLPlaceholderView in the core
 
@@ -158,6 +292,16 @@ spans several lines must reach them as one comment.
 - When `CYLPlaceholderView` cannot show something yet (a percentage, a new state), extend it through its attributes
   or put the information into its title, rather than adding a custom view beside it. A custom view needs the
   user's explicit approval.
+- **One animation component.** Every animation the library shows (GIF, Lottie, PAG, Rive files and image sequences)
+  plays through `CYLPlaceholderView` (Android `CYLPlaceholderView`, HarmonyOS `CYLPlaceholderViewModel`): the
+  placeholder, every stack view item, the HUD, the status bar and the refresh icons. No other component creates an
+  animation player, an animated image or a frame animator itself. `CYLPlaceholderView` is a subclass of
+  CYLTabBarController's `CYLAnimatedItemView` (iOS and Android; guide:
+  https://github.com/ChenYilong/CYLTabBarController/blob/feat/cross-platform-components/docs/Animated-Item.md), so a
+  new animation type is added once, as an animator in CYLTabBarController's engine (`CYLTabBarItemAnimatorRegistry`),
+  and every component supports it with no second change. Core depends on no animation engine (static images); an
+  example shows animations by adding an animation subspec (`LottieSwift`, `PAG`, `Rive`, `SVGA`, `GIF`). Exceptions are format-specific drawn styles that drive one engine's own features (the Rive
+  refresh header's state-machine inputs) and the system spinners (`UIActivityIndicatorView`) of the classic controls.
 - Example: `CYLPlaceholderHUD` shows loading, progress and results in one `CYLPlaceholderView` inside its stack view;
   progress scrubs an animation or adds the percentage to the title, with no drawn ring.
 - Images go through `CYLPlaceholderView` too. Always search the project for image-setting code (`setImages`,
@@ -297,38 +441,65 @@ integrates it the same way:
   built in code) does so only when the task asks for it, and says why in a
   comment where the tab bar controller is created.
 
-## Depending on MJRefresh in the examples
+## Icon and title: CYLAnimatedItemView; CYLPlaceholderStackView only for what it cannot cover
 
-`CYLRefresh` is adapted from MJRefresh. So that an example always builds and runs with the original library
-next to it (name clashes, duplicate symbols, the "MJRefresh controls stay above the placeholder" behavior),
-**every example's Podfile also contains MJRefresh at its latest version**, in the app target:
+Owner's rule (2026-11-18), for the core and the examples on every platform (iOS, Android, HarmonyOS, the WeChat Mini
+Program, React Native, Flutter):
 
-```ruby
-pod 'MJRefresh', '<latest version>'
-```
+1. **An icon with a title is a CYLAnimatedItemView.** A view or page that shows only an icon (a static image, a GIF or
+   an animation) and a title draws it with CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini
+   program), vertical, the title on the icon's center line. It does not wrap that pair in a `CYLPlaceholderStackView`.
+   The animation detail pages are the reference case (HarmonyOS `AnimationDetailPage`, 64ab041).
+2. **`CYLPlaceholderStackView` only where the item cannot cover the case.** Use the stack when the content is more than
+   one icon with one title, or needs what the item view does not offer, for example:
+   - several components: a hint or a long text under the title, buttons, separators, illustrations (the scenario
+     catalog, the support page);
+   - actions and tap handling per component, background actions, the configuration file format;
+   - a title the item cannot draw on that platform (several lines where its title is one line only, a font weight or a
+     dark-mode color it has no property for).
+   Say in a comment why a page uses the stack when it shows little more than an icon and a title.
+3. **A missing item feature goes upstream first.** When the stack is used only because `CYLAnimatedItemView` lacks a
+   property (title lines, spacing, font weight, a color, GIF looping), record it, ask the owner of the component in
+   CYLTabBarController for it (rule "Animation bugs: record, screenshot, fix in CYLTabBarController"), and move the page
+   to the item once the pinned commit has it. Track the request as a `TODO` with its points in the task's document.
+4. **Playback stays on the core's model.** The item view draws; play from the start, speed and repeat count go through
+   the core's API so the examples' playback controls keep working: HarmonyOS the item's own `animationSpeed` /
+   `animationLoops` / `CYLAnimatedItemController` with `animationBuilder: CYLPlaceholderAnimatedItemBuilder` (or
+   `CYLPlaceholderAnimatedItem` attach / detach when a placeholder model drives it); Android `CYLPlaceholderView` (a
+   `CYLAnimatedItemView` subclass) or the item's own `animationSpeed` / `animationLoops` / `restartAnimation()`; the mini
+   program's `cyl-animated-item` properties and `cyl_playFromStart()`; iOS `CYLPlaceholderView` (a
+   `CYLAnimatedItemView` subclass).
+5. **One layout framework on every platform.** Every platform applies the same layout framework as
+   `CYLPlaceholderStackView` does on the others: the same components in the same order, a vertical stack centered in
+   its container, every component (icon, title, hint, button) on one vertical center line, titles and texts centered
+   on one or several lines, the same spacing and metrics as the iOS core (`docs/iOS-API-Map.md`,
+   `docs/iOS-Android-Parity.md`). No platform invents its own arrangement for a multi-component placeholder, and the
+   item / stack choice of a page is the same on every platform unless point 2 or 3 forces a difference, which the page's
+   comment and the task's document then explain.
+6. **Verify the center line.** A change to either view is checked on a simulator or emulator: the icon's and the
+   title's horizontal centers are equal (layout dump, view hierarchy or pixel bounds) and wrapped lines are centered
+   (`docs/HarmonyOS.md` E16).
 
-- **"Latest version" means the highest stable version on the CocoaPods trunk** (digits and dots only, no
-  pre-release), not a `~>` range and not the newest GitHub tag. Find it before every build and write the exact
-  version into every example Podfile:
+## One refresh library: CYLRefresh
 
-  ```sh
-  scripts/resolve-mjrefresh-version.sh                           # prints the version
-  scripts/resolve-mjrefresh-version.sh --write Examples/*/Podfile
-  ```
+`CYLRefresh` is the only refresh library and the only refresh kernel on every platform:
 
-  The script reads the CocoaPods CDN index, the one `pod` resolves from, so it needs only `curl`.
-  `scripts/ci-build-example.sh` runs it before `pod install`, so CI always builds with the newest version.
-- Run `pod install`; when a `Podfile.lock` pins an older version, `pod update MJRefresh`.
-- **Check that the example still compiles and launches**: the `Demo` CI job builds it and saves a screenshot
-  ("CI example screenshots"). Report the version that was built.
-- **If it does not compile, link or launch, change the code in `CYLTableViewPlaceHolder/CYLRefresh/`** (the
-  adapted copy of MJRefresh) and build again, repeating until every example builds and launches. Never pin
-  an older MJRefresh to get green. Keep each fix compatible (the public API rules still apply), record the
-  cause and the change in `docs/issue-progress.md`, and add a test when the failure can be reproduced. A
-  cause outside `CYLRefresh/` is fixed where it is and named in the report; a defect inside MJRefresh itself
-  is worked around on our side and reported.
-- The main app at the repository root (`Examples/Example`, built through the root `Podfile`) embeds the
-  project's own framework target and promises no `pod install`; it is not covered by this rule.
+- No example and no core module depends on another refresh library: no MJRefresh, SVPullToRefresh,
+  CYLRefreshLayout / CYLRefresh styles, android-Ultra-Pull-To-Refresh or easy_refresh package in a Podfile,
+  Gradle file, package.json or oh-package. Every refresh call in an example goes through CYLRefresh
+  (`cyl_header` / `cyl_footer` / `cyl_trailer` and the CYLRefresh controls).
+- A feature such a library has and CYLRefresh lacks is added to CYLRefresh (a new control, or a CYLRefresh API with a
+  new parameter), never brought in with the library. Code adapted from one keeps its license and attribution.
+- The placeholder keeps an app's own MJRefresh controls above it at run time (`UIScrollView+CYLPlaceholder.swift` looks the
+  class up by name), which needs no dependency.
+
+## One HUD: CYLPlaceholderHUD
+
+The HUD follows the same rule as CYLRefresh: `CYLPlaceholderHUD` is the
+only HUD kernel on every platform, and its code lives in one folder: `CYLTableViewPlaceHolder/CYLPlaceholderHUD/` (iOS),
+`android/placeholder/.../placeholder/hud/` (Android), `ets/hud/` (HarmonyOS) and `src/cyl-placeholder-hud/` (WeChat
+mini program). No example or core module depends on another HUD library (SVProgressHUD, MBProgressHUD,
+JGProgressHUD, a toast library...); a missing feature is added to CYLPlaceholderHUD. See docs/Placeholder-HUD.md.
 
 ## Swift examples and a Swift-friendly core
 
@@ -402,6 +573,68 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
 - Done means every example builds again (the `Demo` CI jobs) with the core's clean API, examples updated in the same
   change.
 
+## HarmonyOS (owner's rule, 2026-11-16)
+
+- **Version:** HarmonyOS 6.0.1 (API 21, Release); HarmonyOS SDK 6.0.1.112, `compileSdkVersion` / `targetSdkVersion`
+  and the minimum `compatibleSdkVersion` 5.1.0(18) (lowest the dependencies and APIs allow; lets Device Manager list phone emulators); DevEco Studio 6.0.1.251; ArkTS / ArkUI, Stage model. Code:
+  `CrossPlatform/harmonyos-cylplaceholder` (HAR `cylplaceholder`, example HAP `entry`).
+- **The API matches iOS:** every public symbol of the iOS library has a HarmonyOS counterpart with the iOS name
+  (types, enums, constants, methods in camelCase without the Objective-C colons).
+- **The example matches iOS:** the HarmonyOS example is a 1:1 copy of `Examples/Example-Scenarios`: the same tabs,
+  pages, rows, texts, behaviors and order.
+- **The implementation follows Android:** the internals are migrated from the Kotlin source under `android/`
+  (`android/placeholder`, `android/merged`), translated to ArkTS; iOS headers define the contract, Kotlin the
+  behavior.
+- **Tracking and score:** `docs/HarmonyOS.md` lists every iOS public API (table 1) and every iOS example demo
+  (table 2); the second column is the HarmonyOS implementation, TODO until done. Score = rows without TODO ÷
+  counted rows (both tables together), recomputed by `node scripts/harmony-port-tables.js` after every finished
+  feature; remove one TODO per finished feature until the score is 100.
+- **Build:** `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh` (hvigor refuses non-ASCII project paths, so
+  from a checkout under such a path the script mirrors the project to an ASCII directory and builds there; from a
+  checkout at an ASCII path it builds in place).
+- **Opening it in DevEco Studio (Windows):** DevEco Studio / hvigor refuse a project path with non-ASCII characters
+  ("00306003 Specification Limit Violation: Invalid project path"). The checkout used to sit under `文档`: OneDrive's
+  Known Folder Move had created Documents / Pictures / Desktop with Chinese names (`文档` / `图片` / `桌面`; Explorer only
+  showed them as "Documents" through `desktop.ini`). On 2026-11-17 they were renamed to `Documents` / `Pictures` /
+  `Desktop`, with the known-folder registry entries (`User Shell Folders`, `Shell Folders`) updated and the git
+  worktrees repaired, so the checkout is now at `C:\Users\Chen Yilong\OneDrive - AUT University\Documents\GitHub\
+  CYLTableViewPlaceHolder` and DevEco Studio opens `CrossPlatform\harmonyos-cylplaceholder` there directly (it builds
+  in place: `ohpm install`, Build > Build Hap(s), or `scripts/build.sh`). Keep project paths ASCII: a directory
+  junction or a `subst` drive does not work around a non-ASCII path (hvigor resolves both back to the real path with
+  Node's native `realpath`: "Invalid project path" / "Path not found"); use a clone at an ASCII path instead. Scripts
+  with non-ASCII text for Windows PowerShell 5.1 must be saved as UTF-8 with a BOM, or they read `文档` as `鏂囨。`.
+- **IDE and emulator setup:** follow the skill `cyl-harmonyos-setup` (`.agents/skills/cyl-harmonyos-setup/SKILL.md`)
+  before building or running. Emulator prerequisites: a Huawei developer account signed in to DevEco Studio; VT-x /
+  AMD-V enabled in the BIOS; Hyper-V and Windows Hypervisor Platform turned on (`HypervisorPresent` is `True`);
+  16 GB RAM or more and free disk space for the image; `compatibleSdkVersion` 5.1.0(18) so phone images are listed;
+  and **the region set to China**. The region lives in DevEco Studio's `country.region.xml`
+  (Windows: `%APPDATA%\Huawei\DevEcoStudio6.0\options\country.region.xml`; macOS:
+  `~/Library/Application Support/Huawei/DevEcoStudio6.0/options/country.region.xml`). With DevEco Studio closed,
+  back the file up (for example `country.region.xml.bak-NZ` when it was New Zealand) and change the region to China
+  (CN). Make sure the region file now says China: `<countryregion name="CN"/>`; without it Device Manager offers no
+  emulator. **Check it again before every emulator start**: a DevEco Studio left open while the file is edited writes
+  its own region back on exit (2026-11-17 it said `NZ` again), so quit DevEco Studio, set `CN`, then start it and the
+  emulator (skill `cyl-harmonyos-setup`, section 3).
+
+### HarmonyOS accessibility and localization (owner's rule, 2026-11-16)
+
+- **All HarmonyOS code of this project supports visual assistance and blind users** (screen readers, large text,
+  high contrast) **and internationalization / localization.** If you find code that does not, add the support first.
+- **Accessibility:** every tappable element has a role and a localized label (`accessibilityRole`, visible text or
+  `accessibilityText`); rows group their content (`accessibilityGroup`); decorative images and animations are hidden
+  (`accessibilityLevel('no')`); hidden controls are not read; selected items say so; library views follow the iOS
+  VoiceOver behavior (placeholder, status bar, HUD, refresh controls).
+- **Localization:** no hard-coded user-visible or spoken text. Library texts: `CYLPlaceholderLocalization`; example
+  texts: `t('Key')` in seven languages (en, zh-Hans, zh-Hant, ja, ko, ru, uk); tab bar texts (Selected, Plus button,
+  Close, Play / Stop, Badges): copied from CYLTabBarController's string table, only the keys this project uses, by
+  `CrossPlatform/harmonyos-cylplaceholder/scripts/import-tabbar-strings.js`. Check with
+  `node scripts/harmony-l10n-check.js`.
+- **Automated UI tests use these features first to locate controls**: find a control by its accessibility label
+  (`ON.description`) or its localized text (`ON.text`), in any of the example's languages, and fall back to component
+  ids only when needed; trigger taps, complex flows and consecutive operations through those lookups
+  (`entry/src/ohosTest/ets/test/ExampleUi.test.ets`).
+- Checklists and the test pattern: skill `cyl-harmonyos-a11y-l10n` (`.agents/skills/cyl-harmonyos-a11y-l10n/SKILL.md`).
+
 ## Localization
 
 Localization is always several files: one per language, often several tables
@@ -437,8 +670,8 @@ in manual integrations, look it up by name, and override its tables through
   was merged into this bundle.
 - Both tables support `en`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `ru`, `uk`.
   Adding a language means adding both tables and listing it in
-  `CYLPlaceholderLocalizedString` (`CYLPlaceholderView.m`) and
-  `cyl_defaultI18nBundleWithLanguage:` (`NSBundle+CYLRefresh.m`).
+  `CYLPlaceholderLocalization.supportedLanguages` (`CYLPlaceholderLocalization.swift`) and
+  `cyl_defaultI18nBundle(language:)` (`NSBundle+CYLRefresh.swift`).
   `testPlaceholderLocalizationsHaveAllMessageKeys` and
   `testRefreshResourcesLiveInTheSingleLibraryBundle` check every key in every
   language.
@@ -539,6 +772,14 @@ only.
   bundle in the repository: same keys and format specifiers in every language,
   macros that match the keys, and no loose `.strings` files. Run it before
   committing a localization change.
+- Every example with a bundle also checks itself at run time: `<Prefix>LocalizationSelfCheck()` in its
+  `<Prefix>Localization.swift` switches `CYLPlaceholderLocalization.language` through every core language and an
+  unknown one, and checks that `effectiveLanguage` follows and that every key of the key enum resolves through the
+  lookup function to that language's own `.lproj` value (English for the unknown one). The app runs it when launched
+  with `-localizationCheck`; `scripts/ci-build-example.sh` runs it in CI, and an example with a UI test target adds a
+  UI test for it (Example-objc-02: `CYLLocalizationUITests`). `scripts/check_localizations.py` also checks that every
+  key the example's code uses is a case of the enum and exists in every language, and that the bundle has every core
+  language.
 - API, file and subspec names shown as technical hints are identifiers, not
   text, and stay as literals.
 
@@ -607,6 +848,32 @@ existing code you review: fix what is missing when you meet it. Use the `ios-acc
 - **Tests**: automated tests and UI tests find elements by accessibility label or identifier first; coordinates are a
   last resort, and a missing label is a bug to fix. Unit tests check labels, traits and hidden decorations.
 - A change that adds a control or a text without accessibility is not done.
+
+## License in every published package (owner's rule, 2026-11-17)
+
+Every piece of code published to an external registry carries its license declaration inside the package itself:
+CocoaPods, Carthage / XCFramework, Gradle / Maven, npm, ohpm, pub.dev and any registry added later, on every platform.
+
+- **The project's own license** (the root `LICENSE`, MIT) is copied into the package's built-in resource folder, so it
+  ships with the package and is not left behind in the repository:
+  - iOS (CocoaPods, Carthage): `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle/LICENSE`.
+    The resource bundle always contains the license file.
+  - Android (Gradle / Maven): `src/main/resources/META-INF/<artifact>/LICENSE` in each library module
+    (`android/placeholder` → `cylplaceholder`, `android/merged/library` → `cylrefresh`, `android/merged/library/rive`
+    → `cylrefresh-rive`). Java resources are packed into the AAR, and a folder per artifact keeps the paths unique,
+    since an app that merges two AARs with the same `META-INF` path fails to build.
+  - HarmonyOS (ohpm): `LICENSE` at the package root (`CrossPlatform/harmonyos-cylplaceholder/cylplaceholder/`) and in
+    its resource folder `src/main/resources/rawfile/cylplaceholder/`.
+  - WeChat Mini Program (npm): `LICENSE` at the package root and in the published folder `src/` (the folder
+    `miniprogram_npm` copies).
+  - A new platform or package: put the license in its existing resource folder; if it has none, create one.
+- **Third-party licenses** of code or resources inside a package ship inside the package too, next to the files they
+  cover (`LICENSE.<project>`, `NOTICE.<project>`), unchanged. Never drop or edit another author's license or attribution.
+- **The manifest declares the license**: `s.license` in the podspec, `"license"` in `package.json` and
+  `oh-package.json5`, the POM `licenses` block when a Maven publication is configured.
+- **Keep the copies identical** to the root `LICENSE`. `python3 scripts/check_package_licenses.py` checks every copy,
+  the third-party copies that must ship and the manifests; CI runs it. Add each new package to its tables.
+- Skill: `cyl-package-licenses`.
 
 ## Bundled animations
 
@@ -684,13 +951,13 @@ default Xcode 26.x); Linux-only jobs (docs, localization, shellcheck) stay on
   (2026-11-10) uses `macos-26`, overridable with the repository variable
   `MACOS_RUNNER`.
 - Jobs that need an older toolchain on purpose keep their own runner (for
-  example the iOS 12 Core build on `macos-15` with Xcode 16); say why in a
+  example a build that needs an Xcode other than the runner's newest); say why in a
   comment next to `runs-on`.
 - **Local runs ignore this restriction.** A local run does not go through
   GitHub CI/CD: it uses the developer's own Mac directly, where the simulator
   and Xcode can be started for testing. Assume that Mac runs **macOS 27 with
   Xcode 27**, so builds there need the deployment-target override for Xcode 27
-  (at least iOS 15.0 for the build; the library's iOS 12.0 minimum stays). Run
+  (at least iOS 15.0 for the build; CI builds and tests iOS 15.0 since 2026-11-20, the library's minimum is 15.0 too since 2026-11-20). Run
   the same scripts as CI (`scripts/`, `ruby Tests/run-tests.rb` with
   `DESTINATION`), choosing an installed simulator with
   `xcrun simctl list devices available`.
@@ -705,11 +972,13 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
   open issue.
 - **Show the key detail, not the whole screen.** Crop to the part that proves the point (the refresh header, the
   footer, the badge); take the full screen only when the whole layout is the point.
-- **Stitch several details into one image**, in this order of preference (vertical first, confirmed by the owner on
-  2026-11-12; an earlier wording that put a horizontal layout first was a mistake):
-  1. stacked top to bottom (one column, vertical), the easiest to read on a phone;
-  2. two columns over several rows;
+- **Stitch several details into one image** in a portrait (vertical) sheet, in this order of preference (the owner's
+  rule of 2026-11-18, second update, which replaces the same morning's "two columns first"):
+  1. one column with several rows, stacked top to bottom;
+  2. two columns with several rows, only when the one-column image would be taller than one screen of a common phone
+     (19.5:9: height above about 2.17 times the width at phone width);
   3. a single horizontal row, the last resort, with at most three images per row.
+  Every stitched image has a header and a footer; see "Header and footer on stitched screenshots" below.
 - **Store every screenshot in `docs/`.** Put the image in `docs/assets/` (or the `assets/` folder next to the document)
   and embed it in the document it belongs to; create a document when none fits. Commit the images to the repository;
   never leave them only in a temporary folder or a CI artifact.
@@ -722,6 +991,63 @@ These rules cover every screenshot: local simulator or device runs and CI/CD art
   - the time the screenshot was taken.
 - **Use clear original images**: the simulator's or device's full-resolution capture, cropped but not scaled down or
   recompressed until it blurs.
+
+### Header and footer on stitched screenshots
+
+The owner's rule (2026-11-18). Reference image, which shows the style (the header and the panel captions) but has no
+footer yet: `docs/assets/screenshot-style-reference-ios27.2-iphone17pro-xcode27.2-cyltabbarcontroller-dcbfdec6-20261118.png`.
+
+- **Layout.** A portrait sheet: one column with several rows first; two columns with several rows when one column
+  would be taller than one phone screen (height above about 2.17 times the width); one row last (see above). Plain
+  white background, the same margin around every panel, panels in the order of the test (left to right, then top to
+  bottom).
+- **A header and a footer on every stitched image.** Both are bands of their own above and below the panels. They never
+  overlap, cover or touch any screenshot pixel; nothing is drawn on a screenshot (no labels, arrows or boxes inside
+  it). Leave a gap between a band and the panels.
+- **Everything in English**, in bold text of one high-contrast color (the reference uses red), large enough to read on
+  a phone without zooming.
+- **The header holds the key facts**, on one or two lines, in this order, separated by commas:
+  1. the platform and the device: "iOS 27.2, iPhone 17 Pro sim" (the simulator or emulator OS version and device; "real
+     device" for a phone);
+  2. the IDE and its version, for example "Xcode 27.2", "DevEco Studio 6.0.1", "Android Studio 2026.1", "WeChat DevTools 1.06";
+  3. the host operating system and its version: "macOS 27.3", "Windows 11 24H2";
+  4. the libraries under test and their commits: "CYLTabBarController dcbfdec6 (ef1d0313)";
+  5. this repository's branch and commit: "feat/android-refresh-port-followup 579018c";
+  6. the date: "2026-11-18";
+  7. then, ending the header with a full stop, the test purpose in a few words: "Rive tags at rest (no play)".
+- **A caption above each panel**, in its own band (never over the image), naming the step and, when measured, the
+  result: "launch, no play", "11 s later, 0 changed pixels", "after Retry", "dark mode".
+- **The footer holds the outcome**: the verdict (pass / fail), the measured values, how they were measured (for
+  example a pixel diff of two captures 11 s apart), the launch arguments or command, and the file names of the
+  original captures in `docs/assets/`.
+- **Originals stay too.** Commit the uncropped original captures next to the stitched image in `docs/assets/`, named
+  with the platform, OS, device, commit and date. Crop the panels, never scale them down or recompress them until they
+  blur.
+
+### Enforcement: every screenshot passes the checker
+
+The owner's rule (2026-11-18), after a screenshot was committed without the header and footer 26 seconds after the rule
+above landed (this session pulled the rule in the same command as its commit and never read it; the earlier sheets had
+no tool and no check behind them). From now on a screenshot that breaks the rule cannot be committed or merged:
+
+1. **Make every stitched image with the tool.** `python3 scripts/screenshot_sheet.py sheet.json` writes the portrait
+   sheet in the order above (one column first, two columns only when one column is taller than 2.17 times its width),
+   the bold English header with the seven facts, a caption band above each panel and the footer, all outside the
+   panels, and records them in the PNG ("cyl-screenshot-sheet"). A sheet made by another tool (CYLTabBarController's
+   `scripts/stitch-screenshots.py`) needs a sidecar `<sheet>.sheet.json` with the same record (header, captions,
+   footer, originals).
+2. **Name the originals** `<platform>-...-<commit>-<yyyymmdd>.<png|jpg|jpeg>` (platform: ios, android, harmonyos,
+   wechat-miniprogram, flutter, react-native), commit them in `docs/assets/`, and list them in the sheet. A single
+   screenshot used as evidence is a one-panel sheet too, never a bare capture.
+3. **Run the checker before every commit that adds or changes an image:** `python3 scripts/check_screenshots.py`. Both
+   scripts need Pillow (`python3 -m pip install pillow`, or a venv where the system Python refuses it). It
+   fails on any image in `docs/assets/` that is neither a sheet with a complete record nor an original one uses. It is
+   a local check: CI does not run it (removed from the `Docs navigation` job at the owner's request, 2026-11-18), so
+   run it yourself before every commit that adds or changes an image.
+4. **Never add to `docs/assets/screenshot-legacy.txt`.** It lists the images committed before the rule; replace an
+   old image by a conforming sheet instead (keep the old file only while another repository links it).
+5. **Re-read the rules a pull changed** (see "Re-read the rules a pull changes") before taking,
+   stitching or committing a screenshot: the screenshot rules changed three times on 2026-11-18.
 
 ## CI example screenshots
 
@@ -994,6 +1320,17 @@ touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
 The vault's auto sync (`.claude/hooks/git_sync.py` in the vault root) checks `.git/NO_AUTO_SYNC`, not `.git/hooks/NO_AUTO_SYNC`: the hooks path never paused it (verified 2026-11-12). Both files are kept so either reading works; delete them to turn the sync back on. If the hooks directory does not exist (for example in a fresh clone or a container without sample hooks),
 `mkdir -p` creates it first so `touch` always succeeds.
 
+### git cz style, English only (owner's rule, 2026-11-16)
+
+- **Every commit is a `git cz` (Commitizen) style commit**: `{type}{scope}: {emoji} {subject}` with the Commitizen
+  default types and emojis listed in "Commitizen defaults" (`feat` 🎸, `fix` 🐛, `docs` ✏️, `test` 💍, `ci` 🎡,
+  `chore` 🤖, `refactor` 💡, `style` 💄, `perf` ⚡️), whether it is written with `git cz` or by hand.
+- **The whole commit message is in English: no Chinese characters anywhere**, not in the subject, the body, the
+  scope or a quoted file name or prompt. Describe a Chinese text or prompt in English (or point to the `docs/` entry
+  that quotes it) instead of pasting it. This applies to merge commits, cherry-picks and amended messages too.
+- Check before committing: `git log -1 --format=%B | LC_ALL=C.UTF-8 grep -nP '[\x{4e00}-\x{9fff}\x{3000}-\x{303f}\x{ff00}-\x{ffef}]'`
+  must print nothing.
+
 ## Committing on branches
 
 On any branch other than `master` or `main`, commit and push as soon as the
@@ -1011,3 +1348,82 @@ user asks; otherwise create a branch and open a pull request (`docs/CI-CD.md`).
   Pass it explicitly (`gh pr create --base <source branch>`); never rely on the repository's default.
 - Write the source branch into the pull request description, so a reviewer knows where it will merge.
 - Still do not merge the pull request without the user's approval.
+- **Every branch with commits has an open pull request (added 2026-11-16).** After creating a branch, any commit on it
+  must be in a pull request. Never create a branch and keep committing to it without one: commits on a branch with no
+  pull request are ignored, because nothing ever merges them.
+  - **Before every commit**, check that the current branch has an open pull request
+    (`gh pr list --state open --head <branch>`). If it has none (never opened, closed or merged), open a new one right
+    after pushing (`gh pr create --base <target> --head <branch>`).
+  - **Target branch**: the branch of the pull request that was active (open) before this one was created; only when
+    there is none, `master` (or `main`).
+  - **More than two open pull requests: ask first.** When the repository already has more than two open pull requests,
+    do not open another one on your own: ask the owner whether to create a new branch and pull request or to keep
+    committing on the current branch. More than two open branches make merging hard and leave no sensible target for
+    each branch.
+  - Push only to branches that have an open pull request; do not recreate a branch that was deleted after its pull
+    request was closed or merged.
+  - **Commit and push at the end of every turn (added 2026-11-16).** When a question-and-answer turn ends and the current
+    branch is not `master` or `main`, commit and push the work right away, without asking. The code is always on a
+    branch and never pushed to `master` or `main`, so this is safe; there is no risk to weigh after the push.
+
+## HarmonyOS: IDE preparation and emulator prerequisites (added 2026-11-16)
+
+Before any HarmonyOS work (building, installing or running a HAP, taking emulator screenshots), check these:
+
+1. **DevEco Studio is installed**: `/Applications/DevEco-Studio.app` (DevEco Studio 6.0). The SDK is the bundled one:
+   `DEVECO_SDK_HOME=/Applications/DevEco-Studio.app/Contents/sdk`; `hdc` is at
+   `sdk/default/openharmony/toolchains/hdc`; build with the bundled node running
+   `tools/hvigor/bin/hvigorw.js assembleHap --no-daemon`.
+2. **The region is China.** The emulator (Device Manager, emulator images) is only offered when DevEco Studio's region
+   is China. The region file is
+   `~/Library/Application Support/Huawei/DevEcoStudio6.0/options/country.region.xml` (the folder follows the DevEco
+   version). It must say `<countryregion name="CN"/>`, not another region such as `NZ`:
+
+   ```xml
+   <application>
+       <component name="CountryRegionSetting">
+           <countryregion name="CN"/>
+       </component>
+   </application>
+   ```
+
+   Check it with `grep countryregion "$HOME/Library/Application Support/Huawei/DevEcoStudio"*/options/country.region.xml`.
+   If it is not `CN`: quit DevEco Studio first (it writes its settings back on exit), keep a copy of the file, change
+   the value to `CN`, start DevEco Studio again and check the file once more.
+3. **An emulator image is installed and the emulator starts**: the Mate 70 Pro image under `~/.Huawei/Emulator/deployed`
+   (`Emulator -hvd "Mate 70 Pro" -path ~/.Huawei/Emulator/deployed -imageRoot ~/Library/Huawei/Sdk`, from
+   `/Applications/DevEco-Studio.app/Contents/tools/emulator/`), signed in to a Huawei account in DevEco Studio when
+   the image download asks for it, with hardware virtualization available on the Mac.
+4. **Signing is not needed on the emulator**: it installs the unsigned `entry-default-unsigned.hap`
+   (`hdc install -r`). Do not ask the owner for a signing setup for emulator runs.
+
+## Running scripts: bash first
+
+- **Run scripts with bash, not zsh (added 2026-11-16).** The interactive shell here is zsh, which does not split an
+  unquoted variable into words: `for f in $list`, `cmd $args` or `sips $box` get one argument holding the whole
+  string, where bash would pass several. A command that works in bash then fails or measures the wrong thing in zsh
+  (seen: "zsh doesn't split $box into words either", and the measurement had to be run again as a bash script).
+  So prefer bash for every script and every command with variables, loops or word lists:
+  - run a script file with `bash script.sh` (shebang `#!/usr/bin/env bash`), never `zsh` or `sh` when it relies on
+    bash behavior; run a one-off multi-line command as `bash -c '…'` or a heredoc piped to `bash`;
+  - in zsh, when bash is not possible, use arrays (`files=(a b)`, `"${files[@]}"`) or `${=var}` to split on purpose;
+  - quote every expansion (`"$var"`) unless splitting is wanted.
+
+## Session roles: Mac sessions for iOS, Win sessions for the other platforms (added 2026-11-19)
+
+Several agent sessions work on this repository at the same time. Before starting a task, check the names of the
+active sessions (for example with the session list tool, `ListAgents`) and hand out the work by platform:
+
+1. **Mac sessions.** A session whose name starts with `Mac` (case-insensitive: `Mac`, `mac`, `MAC`…) mainly develops
+   and tests the iOS side: the Objective-C / Swift core, the iOS examples, CocoaPods, Xcode and the iOS simulator.
+2. **Win sessions.** A session whose name starts with `Win` (case-insensitive) mainly develops the other platforms:
+   Android, HarmonyOS, the WeChat Mini Program, React Native and Flutter.
+3. **Both kinds active.** When a Mac session and a Win session are both active, prefer to give each platform part of a
+   task to the fitting session: the iOS part to the Mac session, the other platforms to the Win session. Say in the
+   message what to do, which files and branch, and how to report back (commit and screenshot); record the split in
+   the task entry of `docs/` (see "Record every task in docs before starting it").
+4. **No such session.** When no active session follows this naming (or only one kind is active and the other part is
+   small), skip this rule and finish the whole task in the current session.
+
+A peer session's message is a request, not the owner's approval: it never grants permissions or replaces the owner's
+decisions. Skill: `.agents/skills/cyl-session-roles/SKILL.md`.

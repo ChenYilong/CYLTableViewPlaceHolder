@@ -294,6 +294,8 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
 
     private let setup: CYLRefreshIconSetup
     private var rows = 15
+    private let controls = CYLPlaybackControlsView(loops: true)
+
 
     fileprivate init(title: String, setup: @escaping CYLRefreshIconSetup) {
         self.setup = setup
@@ -339,6 +341,13 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         }
         tableView.cyl_header = header
         tableView.cyl_footer = footer
+        // The playback controls of docs/Example-Animation-Playback.md above the rows.
+        controls.installAsRefreshIconControls(in: tableView)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        CYLPlaybackControlsView.sizeTableHeader(of: tableView)
     }
 
     @objc private func beginRefreshing() {

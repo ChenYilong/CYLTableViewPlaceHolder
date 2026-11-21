@@ -27,6 +27,7 @@ import com.cyl.placeholder.CYLPlaceholderAction
 import com.cyl.placeholder.CYLPlaceholderComponent
 import com.cyl.placeholder.CYLPlaceholderConfiguration_fromJSON
 import com.cyl.placeholder.CYLPlaceholderLocalization
+import com.cyl.placeholder.CYLPlaceholderPermission
 import com.cyl.placeholder.CYLPlaceholderScenario
 import com.cyl.placeholder.CYLPlaceholderScenarioCategory
 import com.cyl.placeholder.CYLPlaceholderScenarioCatalog
@@ -84,17 +85,26 @@ abstract class StackPage : Fragment() {
      */
     protected abstract fun root(): View
 
-    internal fun row(context: Context, title: String, subtitle: String?, id: String, onClick: () -> Unit) = LinearLayout(context).apply {
-        orientation = LinearLayout.VERTICAL
+    internal fun row(context: Context, title: String, subtitle: String?, id: String, icon: String? = null, onClick: () -> Unit) = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
         setPadding(context.dp(16f), context.dp(10f), context.dp(16f), context.dp(10f))
         minimumHeight = context.dp(56f)
         gravity = Gravity.CENTER_VERTICAL
         tag = id
         contentDescription = listOfNotNull(title, subtitle).joinToString(", ")
-        addView(TextView(context).apply { text = title; textSize = 17f; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
-        subtitle?.let {
-            addView(TextView(context).apply { text = it; textSize = 13f; setTextColor(Color.GRAY); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        // The iOS rows' leading SF Symbol, as a teal text glyph (emoji where none fits), like the HarmonyOS example.
+        icon?.let {
+            addView(TextView(context).apply {
+                text = it; textSize = 20f; setTextColor(Color.rgb(0x30, 0xB0, 0xC7)); gravity = Gravity.CENTER
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }, LinearLayout.LayoutParams(context.dp(40f), ViewGroup.LayoutParams.WRAP_CONTENT))
         }
+        val texts = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        texts.addView(TextView(context).apply { text = title; textSize = 17f; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        subtitle?.let {
+            texts.addView(TextView(context).apply { text = it; textSize = 13f; setTextColor(Color.GRAY); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        }
+        addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         isClickable = true
         isFocusable = true
         setBackgroundResource(android.R.drawable.list_selector_background)
@@ -130,7 +140,7 @@ abstract class StackPage : Fragment() {
  * The Scenarios tab (the iOS example's first tab): every scenario of the placeholder catalog in three sections, the
  * configuration files, and a language button. A row opens the scenario's page; the system back button returns.
  */
-class ScenariosPage : StackPage() {
+open class ScenariosPage : StackPage() {
 
     override fun root(): View = list()
 
@@ -155,21 +165,39 @@ class ScenariosPage : StackPage() {
                 var detail = context.t(R.string.merged_format_components, count)
                 val numbers = CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)
                 if (numbers.isNotEmpty()) detail = context.t(R.string.merged_format_readme_numbers, numbers.joinToString(", ") { "#%02d".format(it) }) + " · " + detail
-                column.addView(row(context, CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), detail, "scenario-${scenario.ordinal}") { push(detail(scenario)) })
+                column.addView(row(context, CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), detail, "scenario-${scenario.ordinal}", symbolForScenario(context, scenario)) { push(detail(scenario)) })
             }
         }
-        column.addView(header(context, context.t(R.string.merged_section_flows)))
-        for (flow in CYLFlow.values()) {
-            column.addView(row(context, context.t(flow.title), flow.detail, "flow-${flow.name}") { push(flowPage(flow)) })
-        }
-        column.addView(row(context, context.t(R.string.merged_title_hud), null, "flow-hud") { push(hudPage()) })
-        column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
-            startActivity(Intent(context, StatusBarActivity::class.java))
-        })
+        // The iOS main example (Examples/Example): pull to refresh with two custom placeholders, Auto, Styles.
+        column.addView(header(context, "Examples/Example"))
+        column.addView(row(context, "CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", "main-example") { push(mainExampleScreen()) })
+        // The iOS issue reproductions Examples/Example-objc-01 and Example-objc-02.
+        column.addView(header(context, "Examples/Example-objc-01 · Example-objc-02"))
+        column.addView(row(context, "MJRefresh #1575", "Example-objc-01", "issue-1575") { push(issue1575Page()) })
+        column.addView(row(context, context.t(R.string.o2_title_collection), "Example-objc-02 · MJRefresh #1523 #1506 #1483", "issue-1523") { push(issue1523Page()) })
+        column.addView(row(context, context.t(R.string.o2_title_paging), "Example-objc-02 · MJRefresh #1430", "issue-1430") { push(issue1430Page()) })
         column.addView(header(context, context.t(R.string.merged_section_configurations)))
         for (name in context.assets.list("Configurations").orEmpty().sorted()) {
-            column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })
+            column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}", "📄") { push(configuration(name)) })
         }
+        return ScrollView(context).apply { addView(column) }
+    }
+
+    /**
+     * The Flows tab (iOS `CYLFlowListViewController`): every flow, then the HUD and the status bar, each with its icon.
+     */
+    internal fun flowsList(): View {
+        val context = requireContext()
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        for (flow in CYLFlow.values()) {
+            column.addView(row(context, context.t(flow.title), flow.detail, "flow-${flow.name}", flow.icon) { push(flowPage(flow)) })
+        }
+        column.addView(header(context, context.t(R.string.merged_title_status_bar)))
+        column.addView(row(context, context.t(R.string.merged_title_status_bar), "CYLPlaceholderStatusView · statusView", "flow-status-bar", "!") {
+            startActivity(Intent(context, StatusBarActivity::class.java))
+        })
+        column.addView(header(context, "HUD"))
+        column.addView(row(context, context.t(R.string.merged_title_hud), "CYLPlaceholderHUD", "flow-hud", "⌛") { push(hudPage()) })
         return ScrollView(context).apply { addView(column) }
     }
 
@@ -304,3 +332,38 @@ class ScenariosPage : StackPage() {
         return page(context, bar(context, name), content)
     }
 }
+
+/**
+ * The Flows tab (the iOS example's third tab): the flows, the status bar and the HUD of the Scenarios page's helpers.
+ */
+class FlowsPage : ScenariosPage() {
+    override fun root(): View = flowsList()
+}
+
+/**
+ * The list icon of a scenario (iOS `symbol(for:)`): its permission, else the action it offers, as a text glyph.
+ */
+internal fun symbolForScenario(context: Context, scenario: CYLPlaceholderScenario): String {
+    when (CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)) {
+        CYLPlaceholderPermission.Location -> return "📍"
+        CYLPlaceholderPermission.Camera -> return "📷"
+        CYLPlaceholderPermission.PhotoLibrary -> return "🖼"
+        CYLPlaceholderPermission.Microphone -> return "🎙"
+        CYLPlaceholderPermission.Contacts -> return "👥"
+        CYLPlaceholderPermission.Calendar -> return "📅"
+        CYLPlaceholderPermission.Bluetooth -> return "📡"
+        CYLPlaceholderPermission.Notifications -> return "🔕"
+        else -> Unit
+    }
+    if (CYLPlaceholderScenarioCatalog.categoryForScenario(scenario) == CYLPlaceholderScenarioCategory.Permission) return "🔒"
+    val actions = CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario).mapNotNull { it.action }
+    return when {
+        CYLPlaceholderAction.ContactSupport in actions -> "🎧"
+        CYLPlaceholderAction.OpenSettings in actions -> "⚙"
+        CYLPlaceholderAction.GoShopping in actions -> "🛒"
+        CYLPlaceholderAction.Done in actions -> "✓"
+        CYLPlaceholderAction.Retry in actions || CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario) != null -> "↻"
+        else -> "⬚"
+    }
+}
+

@@ -8,7 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.cyl.refresh.layout.listener.ScrollBoundaryDecider
+import com.cyl.refresh.layout.CYLRefreshLayout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -36,15 +40,15 @@ class CYLRefreshComponentTest {
 
     private fun idle(ms: Long = 2000) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
 
-    private fun layout(contentHeight: Int = 3000): SmartRefreshLayout {
-        val layout = SmartRefreshLayout(activity)
+    private fun layout(contentHeight: Int = 3000): CYLRefreshLayout {
+        val layout = CYLRefreshLayout(activity)
         layout.setRefreshContent(ScrollView(activity).apply {
             addView(LinearLayout(activity).apply { addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, contentHeight)) })
         })
         return layout
     }
 
-    private fun show(layout: SmartRefreshLayout): SmartRefreshLayout {
+    private fun show(layout: CYLRefreshLayout): CYLRefreshLayout {
         activity.setContentView(layout)
         idle(100)
         return layout
@@ -60,6 +64,39 @@ class CYLRefreshComponentTest {
         }
         view.dispatchTouchEvent(MotionEvent.obtain(down, down + 700, MotionEvent.ACTION_MOVE, 200f, y, 0))
         view.dispatchTouchEvent(MotionEvent.obtain(down, down + 716, MotionEvent.ACTION_UP, 200f, y, 0))
+    }
+
+    @Test
+    fun aPlainHeaderDrawsNothingAndReportsThePull() {
+        val layout = show(layout())
+        var largest = 0f
+        var refreshes = 0
+        // As a plain iOS CYLRefreshHeader: no drawing, the pull reaches the subclass hook (a listener header).
+        val listener = object : CYLRefreshHeader(activity) {
+            override fun didScrollWithOffset(offset: Int, percent: Float, dragging: Boolean) {
+                largest = maxOf(largest, percent)
+            }
+        }.apply { refreshingBlock = { refreshes++ } }
+        layout.cyl_header = listener
+        idle(100)
+        drag(layout, 900f)
+        idle()
+        assertTrue("the pull is reported", largest > 0f)
+        assertEquals(1, refreshes)
+        listener.endRefreshing()
+        idle()
+    }
+
+    @Test
+    fun removingTheHeaderTurnsPullToRefreshOff() {
+        val layout = show(layout())
+        var refreshes = 0
+        layout.cyl_header = CYLRefreshNormalHeader(activity).apply { refreshingBlock = { refreshes++ } }
+        layout.cyl_header = null
+        assertNull(layout.cyl_header)
+        drag(layout, 900f)
+        idle()
+        assertEquals("no header, no refresh", 0, refreshes)
     }
 
     @Test
@@ -478,6 +515,32 @@ class CYLRefreshComponentTest {
 
 
     @Test
+    fun secondFloorCoversTheLayoutInsideALinearLayout() {
+        // A bar above the layout: the floor must start at the layout, not at the window's top.
+        val layout = layout(300)
+        val column = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(View(activity), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100))
+            addView(layout, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        }
+        activity.setContentView(column)
+        idle(100)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        val page = View(activity)
+        header.secondaryView = page
+        header.secondaryTriggerOffset = 50f
+        idle(50)
+        header.floor.open()
+        idle(1000)
+        val floorAt = IntArray(2).also { (page.parent as View).getLocationInWindow(it) }
+        val layoutAt = IntArray(2).also(layout::getLocationInWindow)
+        assertEquals("top", layoutAt[1], floorAt[1])
+        assertEquals("height", layout.height, (page.parent as View).height)
+    }
+
+
+    @Test
     fun theStateClassesShowResultAndNoMoreDataImages() {
         val layout = show(layout())
         val header = CYLRefreshNormalHeader(activity)
@@ -492,7 +555,7 @@ class CYLRefreshComponentTest {
         classics.onFinish(layout, true)
         assertSame("the spinner shows the check", ok, header.loadingView!!.drawable)
         assertEquals(View.VISIBLE, header.loadingView!!.visibility)
-        classics.onStateChanged(layout, com.scwang.smart.refresh.layout.constant.RefreshState.RefreshFinish, com.scwang.smart.refresh.layout.constant.RefreshState.None)
+        classics.onStateChanged(layout, com.cyl.refresh.layout.constant.RefreshState.RefreshFinish, com.cyl.refresh.layout.constant.RefreshState.None)
         assertSame("the spinner is back and hidden", spinner, header.loadingView!!.drawable)
         assertEquals(View.GONE, header.loadingView!!.visibility)
         classics.onFinish(layout, false)
@@ -523,4 +586,222 @@ class CYLRefreshComponentTest {
 
 
 
+
+    @Test
+    fun triggerModeOnEdgeBlocksAPullThatStartedInTheMiddle() {
+        val list = RecyclerView(activity).apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                override fun getItemCount() = 50
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    object : RecyclerView.ViewHolder(TextView(activity).apply { layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100) }) {}
+                override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = Unit
+            }
+        }
+        val layout = CYLRefreshLayout(activity).apply { setRefreshContent(list) }
+        show(layout)
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        assertEquals("default, as on iOS", CYLRefreshTriggerMode.Anywhere, header.triggerMode)
+        header.triggerMode = CYLRefreshTriggerMode.OnEdge
+        idle(50)
+        val field = CYLRefreshLayout::class.java.getDeclaredField("mScrollBoundaryDecider").apply { isAccessible = true }
+        val decider = field.get(layout) as ScrollBoundaryDecider
+        val bridge = CYLRefreshBridge.of(layout)
+        // The drag starts in the middle, then scrolls back to the top: no pull.
+        list.scrollBy(0, 1000)
+        bridge.dragStarted(list)
+        list.scrollBy(0, -1000)
+        assertFalse("started in the middle", decider.canRefresh(list))
+        // A drag that starts at the top pulls.
+        bridge.dragStarted(list)
+        assertTrue("started at the top", decider.canRefresh(list))
+        // Anywhere removes the decider.
+        header.triggerMode = CYLRefreshTriggerMode.Anywhere
+        assertNull(field.get(layout))
+    }
+
+
+
+    @Test
+    fun flyHeaderBringsItsSceneAndRestoresTheContent() {
+        val layout = show(layout())
+        val content = layout.cyl_header.let { (0 until layout.childCount).map(layout::getChildAt).first() }
+        val header = CYLRefreshFlyHeader(activity)
+        layout.cyl_header = header
+        idle(100)
+        val density = activity.resources.displayMetrics.density
+        assertEquals("scene height", (150 * density).toInt(), header.mountainView.height)
+        val sceneAt = IntArray(2).also(header.mountainView::getLocationInWindow)
+        val contentAt = IntArray(2).also(content::getLocationInWindow)
+        assertEquals("content below the scene", sceneAt[1] + header.mountainView.height, contentAt[1])
+        assertTrue("plane shown", header.flyView.width > 0 && header.flyView.isShown)
+        layout.cyl_header = null
+        idle(50)
+        assertSame("content restored", layout, content.parent)
+        assertNull(header.mountainView.parent)
+    }
+
+
+
+    /** iOS `enableReverseFlash` / `enableFadeAnimation` reach the drawn StoreHouse view. */
+    @Test
+    fun storeHouseReverseFlashAndFadeOptions() {
+        val header = CYLRefreshStoreHouseHeader(activity)
+        val view = header.view as com.cyl.refresh.header.StoreHouseHeader
+        assertEquals(false, header.enableReverseFlash)
+        assertEquals(true, header.enableFadeAnimation)
+        header.enableReverseFlash = true
+        header.enableFadeAnimation = false
+        assertEquals(true, view.mReverseFlash)
+        assertEquals(false, view.mFadeAnimation)
+    }
+
+    /** The iOS categories on every control: state titles, animation images, bundled icons, the no-more-data image. */
+    @Test
+    fun iosCategoriesOnEveryControl() {
+        val state = CYLRefreshNormalHeader(activity)
+        state.cyl_setStateTitle("Pull me", CYLRefreshState.Idle)
+        assertEquals("Pull me", state.cyl_stateTitleForState(CYLRefreshState.Idle))
+        assertEquals("shown by the state header", "Pull me", state.titleForState(CYLRefreshState.Idle))
+        val drawn = CYLRefreshMaterialHeader(activity)
+        drawn.cyl_setStateTitle("Kept", CYLRefreshState.Refreshing)
+        assertEquals("kept by a control without text", "Kept", drawn.cyl_stateTitleForState(CYLRefreshState.Refreshing))
+        val footer = CYLRefreshBackNormalFooter(activity)
+        val image = android.graphics.drawable.ColorDrawable(android.graphics.Color.RED)
+        footer.cyl_updateNoMoreDataImage(image)
+        assertEquals(image, footer.noMoreDataImage)
+        assertEquals(image, footer.cyl_noMoreDataImage)
+        val header = CYLRefreshAnimationHeader(activity)
+        header.cyl_setBundledIconAnimation("CYLPlaceholderLoading.json", 30f, 30f, CYLRefreshState.Refreshing)
+        assertTrue(header.cyl_usesIconView)
+        header.cyl_setAnimationImages(listOf(image, image), 0.4, CYLRefreshState.Idle)
+        assertTrue(header.cyl_iconView.hasAnimations)
+        val icon = CYLRefreshIconView(activity)
+        icon.titleTypeface = android.graphics.Typeface.DEFAULT_BOLD
+        assertEquals(android.graphics.Typeface.DEFAULT_BOLD, icon.placeholderView.defaultTitleTypeface)
+    }
+
+    /** iOS triggersWhenReached on a header: it refreshes when the pull arms it, before the finger lifts. */
+    @Test
+    fun headerTriggersWhenReachedRefreshesBeforeTheRelease() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        header.triggersWhenReached = true
+        val down = SystemClock.uptimeMillis()
+        var y = 300f
+        layout.dispatchTouchEvent(MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 200f, y, 0))
+        repeat(20) {
+            y += 45f
+            layout.dispatchTouchEvent(MotionEvent.obtain(down, down + 16L * (it + 1), MotionEvent.ACTION_MOVE, 200f, y, 0))
+        }
+        idle(600)
+        assertTrue("refreshing while the finger is still down", header.isRefreshing)
+    }
+
+    /** iOS finishingDurationWithSuccess: a subclass's hold is what the classic view returns to the layout. */
+    @Test
+    fun classicViewsHoldAsLongAsTheComponentSays() {
+        val layout = show(layout())
+        val header = object : CYLRefreshNormalHeader(activity) {
+            override fun finishingDurationWithSuccess(success: Boolean) = if (success) 1.5 else 0.25
+        }
+        layout.cyl_header = header
+        val view = header.view as com.cyl.refresh.layout.api.RefreshHeader
+        assertEquals(1500, view.onFinish(layout, true))
+        assertEquals(250, view.onFinish(layout, false))
+        header.finishDuration = 0.8
+        val plain = CYLRefreshNormalHeader(activity).apply { finishDuration = 0.8 }
+        assertEquals(800, (plain.view as com.cyl.refresh.layout.api.RefreshHeader).onFinish(layout, true))
+    }
+
+    /** iOS notifiesWhenHidden off: a hidden component skips the pull. scrollMode reaches drawn styles too. */
+    @Test
+    fun hiddenComponentsSkipThePullAndDrawnStylesTakeScrollMode() {
+        val header = CYLRefreshNormalHeader(activity)
+        header.notifiesWhenHidden = false
+        header.view.view.visibility = View.GONE
+        header.moved(40, 0.5f, true)
+        assertEquals(0f, header.pullingPercent, 0f)
+        header.view.view.visibility = View.VISIBLE
+        header.moved(40, 0.5f, true)
+        assertEquals(0.5f, header.pullingPercent, 0f)
+        val material = CYLRefreshMaterialHeader(activity)
+        material.scrollMode = CYLRefreshScrollMode.Front
+        assertEquals(CYLRefreshScrollMode.Front, material.scrollMode)
+    }
+
+    private fun autoLoadMoreOn(layout: CYLRefreshLayout) =
+        CYLRefreshLayout::class.java.getDeclaredField("mEnableAutoLoadMore").apply { isAccessible = true }.getBoolean(layout)
+
+    /** iOS autoTriggerTimes: a drag may load by itself that many times; the next touch resets the count. */
+    @Test
+    fun autoTriggerTimesCountsLoadsPerDrag() {
+        val layout = show(layout())
+        val footer = CYLRefreshAutoNormalFooter(activity)
+        layout.cyl_footer = footer
+        footer.autoTriggerTimes = 2
+        footer.setPhase(CYLRefreshPhase.Refreshing)
+        footer.setPhase(CYLRefreshPhase.Idle)
+        assertTrue("one load left", autoLoadMoreOn(layout))
+        footer.setPhase(CYLRefreshPhase.Refreshing)
+        footer.setPhase(CYLRefreshPhase.Idle)
+        assertFalse("used up", autoLoadMoreOn(layout))
+        layout.dispatchTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 10f, 10f, 0))
+        assertTrue("a new drag", autoLoadMoreOn(layout))
+        footer.autoTriggerTimes = -1
+        repeat(5) { footer.setPhase(CYLRefreshPhase.Refreshing); footer.setPhase(CYLRefreshPhase.Idle) }
+        assertTrue("no limit", autoLoadMoreOn(layout))
+    }
+
+    /** iOS styleClass: a drawn footer made from a header class, and the class each footer draws. */
+    @Test
+    fun drawnFooterStyleClass() {
+        val footer = CYLRefreshDrawnFooter(activity, CYLRefreshMaterialHeader::class.java)
+        assertTrue(footer.style is CYLRefreshMaterialHeader)
+        assertEquals(CYLRefreshBezierRadarHeader::class.java, CYLRefreshBezierRadarFooter(activity).styleClass)
+    }
+
+    /** iOS secondaryVelocity: a fast release past the refresh trigger opens the second floor. */
+    @Test
+    fun fastReleaseOpensTheSecondFloor() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        header.secondaryView = View(activity)
+        header.secondaryTriggerOffset = 2000f
+        header.secondaryVelocity = 300f
+        idle(50)
+        val floor = header.floor
+        val trigger = (header.view.view.height * header.triggerRate).toInt() + 10
+        floor.lastDragOffset = trigger - 60
+        SystemClock.sleep(20)
+        floor.lastDragOffset = trigger
+        assertTrue("fast enough: ${floor.releaseVelocity}", floor.releaseVelocity >= 300f)
+        assertTrue(floor.openOnReleaseIfPulledFar())
+    }
+
+    /** iOS exclusiveWithOtherRefresh off: a refresh asked during a load is not refused (here: the load ends, then it starts). */
+    @Test
+    fun nonExclusiveRefreshIsNotRefused() {
+        val layout = show(layout())
+        val header = CYLRefreshNormalHeader(activity)
+        val footer = CYLRefreshBackNormalFooter(activity)
+        layout.cyl_header = header
+        layout.cyl_footer = footer
+        var blocked = false
+        header.blockedByOtherRefreshBlock = { blocked = true }
+        footer.beginRefreshing()
+        idle(600)
+        assertTrue(footer.isRefreshing)
+        header.beginRefreshing()
+        assertTrue("exclusive by default", blocked)
+        blocked = false
+        header.exclusiveWithOtherRefresh = false
+        header.beginRefreshing()
+        idle(1500)
+        assertFalse(blocked)
+        assertTrue("the header refreshes after the load", header.isRefreshing)
+    }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "cylplaceholder",
+  "version": "0.1.0",
+  "description": "CYLTableViewPlaceHolder for HarmonyOS (ArkTS): placeholder scenarios, HUD, network status bar and CYLRefresh, with the iOS names. Icons are CYLTabBarController's CYLAnimatedItemView; depends on no animation library (apps register the engines they play).",
+  "main": "Index.ets",
+  "author": "ChenYilong",
+  "license": "MIT",
+  "dependencies": {
+    "cylanimateditem": "file:../cylanimateditem"
+  },
+  "devDependencies": {},
+  "dynamicDependencies": {}
+}

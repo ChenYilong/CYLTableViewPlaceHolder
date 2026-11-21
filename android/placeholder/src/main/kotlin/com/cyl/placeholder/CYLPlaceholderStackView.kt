@@ -1,7 +1,6 @@
 package com.cyl.placeholder
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import androidx.core.widget.ImageViewCompat
 
 /**
  * Components stacked and centered (iOS `CYLPlaceholderStackView`): a scenario's components
@@ -96,11 +94,18 @@ class CYLPlaceholderStackView internal constructor(
         }
 
     /**
-     * The animation playing in place of the first icon, or null when no registered animator plays any of the
-     * scenario's files and the still image shows (`animationView`).
+     * The animation view playing in place of the first icon (made by CYLTabBarController's CYLAnimatedItem engine,
+     * the first item's inherited `animationView`), or null when no animator plays any of the scenario's files (the app
+     * added no animation library for them) and the still image shows (`animationView`).
      */
-    var animationView: CYLPlaceholderAnimationView? = null
-        private set
+    val animationView: View?
+        get() = animatedItem?.animationView
+
+    // The item that plays the scenario's animation file, if one was found.
+    private var animatedItem: CYLPlaceholderView? = null
+
+    // The component each item view was made from.
+    private val itemComponents = mutableMapOf<View, CYLPlaceholderComponent>()
 
     private val density = resources.displayMetrics.density
 
@@ -115,9 +120,10 @@ class CYLPlaceholderStackView internal constructor(
             rightMargin = margin
         })
         components.forEach { appendComponent(it) }
-        imageView = componentViews.flatMap { allViews(it) }.filterIsInstance<ImageView>().firstOrNull()
+        imageView = componentViews.flatMap { allViews(it) }.filterIsInstance<ImageView>().firstOrNull { it.visibility == VISIBLE && it.drawable != null }
             ?: ImageView(context).apply { visibility = GONE }
-        titleLabel = componentViews.flatMap { allViews(it) }.firstOrNull { it is TextView && it !is Button && it.tag != HINT_TAG } as? TextView
+        titleLabel = componentViews.flatMap { allViews(it) }
+            .firstOrNull { it is TextView && it !is Button && it.tag != HINT_TAG && it.visibility == VISIBLE && !it.text.isNullOrEmpty() } as? TextView
             ?: TextView(context).apply { visibility = GONE }
         hintLabel = componentViews.firstOrNull { it.tag == HINT_TAG } as? TextView
         button = componentViews.filterIsInstance<Button>().firstOrNull()
@@ -126,43 +132,63 @@ class CYLPlaceholderStackView internal constructor(
         updateBackgroundTap()
     }
 
-    // The first of the scenario's animation files (its own icon first) that is in the assets and has a registered
-    // animator replaces the first icon, at the icon's size; the still image stays as the fallback.
+    // The first of the scenario's animation files (its own icon first) that is in the assets and that an animator of
+    // the CYLAnimatedItem engine plays (its library is in the app) replaces the first icon, through the first item's
+    // CYLPlaceholderView; the still image stays as the fallback.
     private fun attachScenarioAnimation(scenario: CYLPlaceholderScenario) {
-        val item = imageView.parent as? LinearLayout ?: return
-        if (imageView.visibility != VISIBLE || imageView.drawable == null) return
-        val side = imageView.layoutParams?.width?.takeIf { it > 0 } ?: return
+        val item = componentViews.firstOrNull { it is CYLPlaceholderView } as? CYLPlaceholderView ?: return
+        if (item.imageView.drawable == null) return
         val bundled = runCatching { context.assets.list(ANIMATION_FOLDER)?.toSet() }.getOrNull().orEmpty()
-        for (name in CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario)) {
-            if (name !in bundled) continue
-            val view = CYLPlaceholderAnimationView.withFileURL(context, "asset:$ANIMATION_FOLDER/$name", side, side) ?: continue
-            view.contentDescription = imageView.contentDescription
-            view.importantForAccessibility = imageView.importantForAccessibility
-            item.addView(view, item.indexOfChild(imageView), LinearLayout.LayoutParams(side, side))
-            imageView.visibility = GONE
-            animationView = view
+        val names = CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(scenario).filter { it in bundled }
+        for (name in names) {
+            if (!item.setAnimationFile("asset:$ANIMATION_FOLDER/$name")) continue
+            animatedItem = item
+            item.animationRepeatCount = CYLPlaceholderScenarioCatalog.scenarioAnimationRepeatCount(name, itemComponents[item])
+            // [EN] An animation whose last frame is empty (Success) hands back to the still image when it ends.
+            item.showsImageWhenAnimationEnds = itemComponents[item]?.showsImageWhenAnimationEnds == true
+            item.animationView?.let { view ->
+                view.contentDescription = item.imageView.contentDescription
+                view.importantForAccessibility = item.imageView.importantForAccessibility
+            }
             return
         }
+        // [EN] None plays: no animation file stays on the item, so its still image shows.
+        if (names.isNotEmpty()) item.animationURL = null
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        animationView?.play()
+    private fun allViews(view: View): List<View> = when {
+        view is CYLPlaceholderView -> listOf(view.imageView, view.textLabel)
+        else -> listOf(view)
     }
-
-    override fun onDetachedFromWindow() {
-        animationView?.stop()
-        super.onDetachedFromWindow()
-    }
-
-    private fun allViews(view: View): List<View> =
-        if (view is LinearLayout && view.tag == ITEM_TAG) (0 until view.childCount).map { view.getChildAt(it) } else listOf(view)
 
     /**
      * Adds [component] at the end (`appendComponent:`).
      */
     fun appendComponent(component: CYLPlaceholderComponent) {
-        appendComponentView(viewFor(component), component.action, component.spacingBefore)
+        val view = viewFor(component)
+        appendComponentView(view, component.action, component.spacingBefore)
+        if (component.action != null) showTapsWithStyle(view, component)
+    }
+
+    // iOS `tapHighlightStyle` of a component that acts: a finger on it dims it (Dim, the default), shrinks it to 95 %
+    // (Shrink) or leaves it as it is (None); the tap still reaches the click listener.
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private fun showTapsWithStyle(view: View, component: CYLPlaceholderComponent) {
+        view.setOnTouchListener { touched, event ->
+            val style = component.tapHighlightStyle
+            val pressed = (event.actionMasked == android.view.MotionEvent.ACTION_DOWN) && touched.isEnabled &&
+                component.interactionEnabled && style != CYLPlaceholderTapHighlightStyle.None
+            when (event.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN, android.view.MotionEvent.ACTION_UP,
+                android.view.MotionEvent.ACTION_CANCEL -> {
+                    touched.alpha = if (pressed && style == CYLPlaceholderTapHighlightStyle.Dim) 0.5f else 1f
+                    val scale = if (pressed && style == CYLPlaceholderTapHighlightStyle.Shrink) 0.95f else 1f
+                    touched.scaleX = scale
+                    touched.scaleY = scale
+                }
+            }
+            false
+        }
     }
 
     /**
@@ -222,34 +248,30 @@ class CYLPlaceholderStackView internal constructor(
     private fun viewFor(component: CYLPlaceholderComponent): View {
         val secondary = Color.rgb(0x8E, 0x8E, 0x93)
         return when (component.kind) {
+            // Every item is a CYLPlaceholderView, the one component that shows an icon with a title and plays every
+            // animation type: a new type added there works in every stack view too.
             CYLPlaceholderComponent.Kind.Item -> {
-                val text = component.title?.let { title ->
-                    TextView(context).apply {
-                        this.text = title
-                        setTextSize(TypedValue.COMPLEX_UNIT_SP, if (component.titleSizeSp != 0f) component.titleSizeSp else 17f)
-                        setTextColor(if (component.titleColor != 0) component.titleColor else secondary)
-                        gravity = Gravity.CENTER
+                if (component.usesItemAttributes) {
+                    CYLPlaceholderView.fromItemAttributes(context, component.attributes)?.let {
+                        return it.apply { contentMargin = 0f; reportsContentSize = true }
                     }
                 }
-                if (component.image == 0) return text ?: View(context)
-                val image = ImageView(context).apply {
-                    setImageDrawable(ContextCompat.getDrawable(context, component.image))
-                    scaleType = ImageView.ScaleType.FIT_CENTER
-                    if (component.tinted) ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(ACCENT))
+                val image = if (component.image != 0) ContextCompat.getDrawable(context, component.image) else null
+                CYLPlaceholderView(context, image, component.title).apply {
+                    itemComponents[this] = component
+                    reportsContentSize = true
+                    contentMargin = 0f
+                    tintsIcon = component.tinted
+                    if (image != null) setIconSide(component.imageSide)
+                    if (component.titleSizeSp != 0f) defaultTitleFont = component.titleSizeSp
+                    if (component.titleColor != 0) defaultTitleColor = component.titleColor
+                    animationRepeatCount = component.animationRepeatCount
                     val iconAction = component.action
-                    if (iconAction != null) {
+                    if (iconAction != null && image != null) {
                         // [EN] An icon that acts (RefreshIcon) is a button named by its action.
-                        contentDescription = CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, iconAction)
-                    } else {
-                        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+                        imageView.contentDescription = CYLPlaceholderScenarioCatalog.localizedTitleForAction(context, iconAction)
+                        imageView.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
                     }
-                }
-                LinearLayout(context).apply {
-                    tag = ITEM_TAG
-                    orientation = LinearLayout.VERTICAL
-                    gravity = Gravity.CENTER_HORIZONTAL
-                    addView(image, LinearLayout.LayoutParams(dp(component.imageSide), dp(component.imageSide)))
-                    text?.let { addView(it, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply { topMargin = dp(12f) }) }
                 }
             }
             CYLPlaceholderComponent.Kind.Hint -> TextView(context).apply {
@@ -295,7 +317,6 @@ class CYLPlaceholderStackView internal constructor(
      * The iOS names of the catalog lookups that lived here.
      */
     companion object {
-        private const val ITEM_TAG = "cyl_placeholder_item"
         private const val HINT_TAG = "cyl_placeholder_hint"
 
         /**

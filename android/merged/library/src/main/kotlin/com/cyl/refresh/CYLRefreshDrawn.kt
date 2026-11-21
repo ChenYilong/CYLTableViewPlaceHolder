@@ -1,25 +1,35 @@
 package com.cyl.refresh
 
 import android.content.Context
-import com.scwang.smart.refresh.header.BezierCircleHeader
-import com.scwang.smart.refresh.header.BezierRadarHeader
-import com.scwang.smart.refresh.header.ClassicsHeader
-import com.scwang.smart.refresh.header.DeliveryHeader
-import com.scwang.smart.refresh.header.DropBoxHeader
-import com.scwang.smart.refresh.header.FlyRefreshHeader
-import com.scwang.smart.refresh.header.FunGameBattleCityHeader
-import com.scwang.smart.refresh.header.FunGameHitBlockHeader
-import com.scwang.smart.refresh.header.MaterialHeader
-import com.scwang.smart.refresh.header.PhoenixHeader
-import com.scwang.smart.refresh.header.StoreHouseHeader
-import com.scwang.smart.refresh.header.TaurusHeader
-import com.scwang.smart.refresh.header.WaveSwipeHeader
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.scwang.smart.refresh.layout.api.RefreshHeader
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import com.cyl.refresh.header.BezierCircleHeader
+import com.cyl.refresh.header.BezierRadarHeader
+import com.cyl.refresh.header.ClassicsHeader
+import com.cyl.refresh.header.DeliveryHeader
+import com.cyl.refresh.header.DropBoxHeader
+import com.cyl.refresh.header.FlyRefreshHeader
+import com.cyl.refresh.header.FunGameBattleCityHeader
+import com.cyl.refresh.header.FunGameHitBlockHeader
+import com.cyl.refresh.header.MaterialHeader
+import com.cyl.refresh.header.PhoenixHeader
+import com.cyl.refresh.header.StoreHouseHeader
+import com.cyl.refresh.header.TaurusHeader
+import com.cyl.refresh.header.WaveSwipeHeader
+import com.cyl.refresh.header.flyrefresh.FlyView
+import com.cyl.refresh.header.flyrefresh.MountainSceneView
+import com.cyl.refresh.layout.CYLRefreshLayout
+import com.cyl.refresh.layout.api.RefreshHeader
 
 /**
  * A header drawn in code, with the hooks its subclasses override (iOS `CYLRefreshDrawnHeader`). On Android the drawing
- * is done by the SmartRefreshLayout header given as [view]; the hooks tell a subclass what happens.
+ * is done by the CYLRefreshLayout header given as [view]; the hooks tell a subclass what happens.
  */
 open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
 
@@ -75,7 +85,7 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
     /**
      * Called as the pull moves, with the layout (`scrollView:didScroll:percent:drag:`).
      */
-    protected open fun scrollView(scrollView: SmartRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {}
+    protected open fun scrollView(scrollView: CYLRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {}
 
     /**
      * Called as the pull moves (`onScrollingWithOffset:percent:drag:`).
@@ -106,7 +116,7 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
     /**
      * Called when the header joins or leaves a layout (`scrollView:attached:`).
      */
-    protected open fun scrollView(scrollView: SmartRefreshLayout, attached: Boolean) {}
+    protected open fun scrollView(scrollView: CYLRefreshLayout, attached: Boolean) {}
 
     /**
      * Starts refreshing (`beginRefresh`).
@@ -128,12 +138,12 @@ open class CYLRefreshDrawnHeader(view: RefreshHeader) : CYLRefreshHeader(view) {
      */
     fun inStatus(vararg statuses: CYLRefreshPhase): Boolean = isInAnyPhase(*statuses)
 
-    final override fun didAttachToScrollView(layout: SmartRefreshLayout) {
+    final override fun didAttachToScrollView(layout: CYLRefreshLayout) {
         setUpComponent()
         scrollView(layout, true)
     }
 
-    final override fun willDetachFromScrollView(layout: SmartRefreshLayout) = scrollView(layout, false)
+    final override fun willDetachFromScrollView(layout: CYLRefreshLayout) = scrollView(layout, false)
 
     final override fun didScrollWithOffset(offset: Int, percent: Float, dragging: Boolean) {
         refreshLayout?.let { scrollView(it, offset, percent, dragging) }
@@ -178,9 +188,107 @@ open class CYLRefreshDeliveryHeader(context: Context) : CYLRefreshDrawnHeader(De
 open class CYLRefreshDropBoxHeader(context: Context) : CYLRefreshDrawnHeader(DropBoxHeader(context))
 
 /**
- * The paper plane (iOS `CYLRefreshFlyHeader`).
+ * The paper plane (iOS `CYLRefreshFlyHeader`): like iOS, it brings its own scene. Attaching puts a 150 dp mountain
+ * scene above the content and the plane on a round button at the scene's bottom left; detaching restores the content.
  */
-open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefreshHeader(context))
+open class CYLRefreshFlyHeader(context: Context) : CYLRefreshDrawnHeader(FlyRefreshHeader(context)) {
+
+    /**
+     * The mountains above the content (`mountainView`).
+     */
+    val mountainView = MountainSceneView(context)
+
+    /**
+     * The paper plane (`flyView`).
+     */
+    val flyView = FlyView(context)
+
+    /**
+     * The round button under the plane, in the primary color (`floatView`).
+     */
+    val floatView: View = object : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        override fun onDraw(canvas: Canvas) {
+            paint.color = if (colorPrimary != 0) colorPrimary else DEFAULT_PRIMARY
+            canvas.drawCircle(width / 2f, height / 2f, minOf(width, height) / 2f, paint)
+        }
+    }
+
+    private var scene: FrameLayout? = null
+    private var content: View? = null
+    private var baseHeight = 0
+    private var stretch = 0
+
+    override fun scrollView(scrollView: CYLRefreshLayout, didScroll: Int, percent: Float, drag: Boolean) {
+        val added = maxOf(0, didScroll)
+        if (scene == null || added == stretch) return
+        val delta = added - stretch
+        stretch = added
+        mountainView.layoutParams = mountainView.layoutParams.apply { height = baseHeight + added }
+        for (child in listOf(floatView, flyView)) {
+            child.layoutParams = (child.layoutParams as FrameLayout.LayoutParams).apply { topMargin += delta }
+        }
+    }
+
+    init {
+        colorPrimary = DEFAULT_PRIMARY
+        colorAccent = Color.WHITE
+    }
+
+    override fun scrollView(scrollView: CYLRefreshLayout, attached: Boolean) {
+        if (attached) wrapContent(scrollView) else unwrapContent(scrollView)
+    }
+
+    private fun wrapContent(layout: CYLRefreshLayout) {
+        if (scene != null) return
+        val original = (0 until layout.childCount).map(layout::getChildAt).firstOrNull { it !== view.view && it !== layout.refreshFooter?.view } ?: return
+        val density = layout.resources.displayMetrics.density
+        val sceneHeight = (SCENE_HEIGHT_DP * density).toInt()
+        val size = (FLOAT_SIZE_DP * density).toInt()
+        val frame = FrameLayout(layout.context)
+        val column = LinearLayout(layout.context).apply { orientation = LinearLayout.VERTICAL }
+        frame.addView(column, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        layout.setRefreshContent(frame)
+        column.addView(mountainView, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, sceneHeight))
+        column.addView(original, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        // The button sits on the scene's bottom edge, a quarter of its size from the left (iOS FLOAT_VIEW_SIZE * 3 / 4).
+        val buttonParams = FrameLayout.LayoutParams(size, size, Gravity.TOP or Gravity.START).apply {
+            leftMargin = size / 4
+            topMargin = sceneHeight - size / 2
+        }
+        frame.addView(floatView, buttonParams)
+        // The plane keeps its own 25 dp size, centered on the button.
+        val plane = (PLANE_SIZE_DP * density).toInt()
+        frame.addView(flyView, FrameLayout.LayoutParams(plane, plane, Gravity.TOP or Gravity.START).apply {
+            leftMargin = buttonParams.leftMargin + (size - plane) / 2
+            topMargin = buttonParams.topMargin + (size - plane) / 2
+        })
+        // As on iOS, the pull stretches the scene and pushes the content down, instead of moving the whole page.
+        layout.setEnableHeaderTranslationContent(false)
+        baseHeight = sceneHeight
+        (view as FlyRefreshHeader).setUp(mountainView, flyView)
+        scene = frame
+        content = original
+    }
+
+    private fun unwrapContent(layout: CYLRefreshLayout) {
+        val original = content ?: return
+        for (child in listOf(original, mountainView, floatView, flyView)) (child.parent as? ViewGroup)?.removeView(child)
+        layout.setRefreshContent(original)
+        layout.setEnableHeaderTranslationContent(true)
+        (view as FlyRefreshHeader).setUp(null, null)
+        scene = null
+        content = null
+    }
+
+    private companion object {
+        const val DEFAULT_PRIMARY = 0xFF33AAFF.toInt()
+        const val SCENE_HEIGHT_DP = 150
+        const val FLOAT_SIZE_DP = 56
+        const val PLANE_SIZE_DP = 25
+    }
+}
 
 /**
  * A header with a small game to play while refreshing (iOS `CYLRefreshGameHeader`).
@@ -213,7 +321,7 @@ open class CYLRefreshTaurusHeader(context: Context) : CYLRefreshDrawnHeader(Taur
 open class CYLRefreshWaveSwipeHeader(context: Context) : CYLRefreshDrawnHeader(WaveSwipeHeader(context))
 
 /**
- * SmartRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`).
+ * CYLRefreshLayout's original classic header (iOS `CYLRefreshOriginalHeader`).
  */
 open class CYLRefreshOriginalHeader(context: Context) : CYLRefreshDrawnHeader(ClassicsHeader(context)) {
     /**
@@ -243,14 +351,19 @@ open class CYLRefreshStoreHouseHeader(context: Context) : CYLRefreshDrawnHeader(
         }
 
     /**
-     * Whether the flash runs back and forth (`enableReverseFlash`); the Android header flashes one way.
+     * Whether the loading flash runs back and forth (`enableReverseFlash`). Default false.
      */
-    var enableReverseFlash: Boolean = false
+    var enableReverseFlash: Boolean
+        get() = storeHouse.mReverseFlash
+        set(value) { storeHouse.mReverseFlash = value }
 
     /**
-     * Whether the lines fade in as they assemble (`enableFadeAnimation`); the Android header always fades them.
+     * Whether the lines fade in as they assemble with the pull (`enableFadeAnimation`); false shows them at full
+     * alpha. Default true.
      */
-    var enableFadeAnimation: Boolean = true
+    var enableFadeAnimation: Boolean
+        get() = storeHouse.mFadeAnimation
+        set(value) { storeHouse.mFadeAnimation = value }
 
     /**
      * Draws [string] at the default size (`initLinesWithString:`).

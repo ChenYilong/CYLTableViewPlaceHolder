@@ -6,63 +6,39 @@
 //  (https://github.com/xuelongqy/flutter_easy_refresh, MIT) reuse the drawing of the matching headers. Here a footer
 //  hosts one drawn header and passes it the pull, the progress and the status, so every drawn style can load more.
 //
+//  [EN] Swift since 2026-11-19: the classes are in `CYLRefreshDrawnFooter.swift` (docs/Swift-Migration.md, step 8), with
+//       the same Objective-C API (`+styleClass`, `-initWithStyle:`, `style`; `normalColor` and `animatingColor` of the
+//       Ball Pulse footer). Objective-C code that uses them imports the umbrella header `CYLTableViewPlaceHolder.h`, which
+//       brings the generated Swift header; this header keeps the forward declarations.
+//  [CN] 自 2026-11-19 起这些类用 Swift 编写（`CYLRefreshDrawnFooter.swift`，docs/Swift-Migration.md 第 8 步），Objective-C API 不变
+//       （`+styleClass`、`-initWithStyle:`、`style`；Ball Pulse 刷新尾的 `normalColor` 与 `animatingColor`）。使用它们的 Objective-C 代码请
+//       导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）；本头文件保留前向声明。
+//
 
 #import "CYLRefreshBackStateFooter.h"
 #import "CYLRefreshDrawnHeader.h"
+#import "CYLRefreshAutoFooter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- * [EN] A pull-up footer drawn by a hosted drawn header (`style`): the header gets the distance pulled past the content,
- *      the progress and SmartRefreshControl's status order, and draws in the revealed area under the content. Only
- *      the "no more data" text is shown as a label (from `CYLRefresh.strings`).
- * [CN] 由内嵌的手绘刷新头（`style`）绘制的上拉刷新尾：刷新头收到拉出内容底部的距离、进度和 SmartRefreshControl 顺序的状态，在内容
- *      下方露出的区域里绘制。只有“没有更多数据”以文字标签显示（来自 `CYLRefresh.strings`）。
+ * [EN] A pull-up footer drawn by a hosted drawn header (`style`), with its five subclasses
+ *      `CYLRefreshBezierRadarFooter`, `CYLRefreshMaterialFooter`, `CYLRefreshDeliveryFooter`, `CYLRefreshPhoenixFooter`
+ *      and `CYLRefreshTaurusFooter`. The classes are Swift (`CYLRefreshDrawnFooter.swift`); Objective-C code that messages
+ *      them imports the umbrella header `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 由内嵌的手绘刷新头（`style`）绘制的上拉刷新尾，及其五个子类 `CYLRefreshBezierRadarFooter`、`CYLRefreshMaterialFooter`、
+ *      `CYLRefreshDeliveryFooter`、`CYLRefreshPhoenixFooter` 与 `CYLRefreshTaurusFooter`。这些类用 Swift 编写
+ *      （`CYLRefreshDrawnFooter.swift`）；需要调用它们的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLRefreshDrawnFooter : CYLRefreshBackStateFooter
-/*!
- * [EN] The drawn header class a subclass hosts; nil in the base class. [CN] 子类内嵌的手绘刷新头类；基类为 nil。
- */
-@property (class, nonatomic, readonly, nullable) Class styleClass;
-/*!
- * [EN] A footer drawn by `style`; the footer takes the style's open height. [CN] 由 `style` 绘制的刷新尾；刷新尾使用该样式的展开高度。
- */
-- (instancetype)initWithStyle:(CYLRefreshDrawnHeader *)style;
-/*!
- * [EN] The hosted drawn header; set its colors and options here or through the footer's `colorAccent` /
- *      `colorPrimary`. [CN] 内嵌的手绘刷新头；可直接设置它的颜色与选项，或通过刷新尾的 `colorAccent` / `colorPrimary` 设置。
- */
-@property (strong, nonatomic, readonly, nullable) CYLRefreshDrawnHeader *style;
-@end
+@class CYLRefreshDrawnFooter, CYLRefreshBezierRadarFooter, CYLRefreshMaterialFooter, CYLRefreshDeliveryFooter,
+    CYLRefreshPhoenixFooter, CYLRefreshTaurusFooter;
 
 /*!
- * [EN] flutter_easy_refresh's `BezierFooter`, drawn by CYLRefreshBezierRadarHeader. [CN] flutter_easy_refresh 的 `BezierFooter`，由 CYLRefreshBezierRadarHeader 绘制。
+ * [EN] Three balls that pulse in turn while loading more; an auto footer (Android CYLRefreshLayout's
+ *      `BallPulseFooter`). The class is Swift (`CYLRefreshDrawnFooter.swift`).
+ * [CN] 加载更多时依次跳动的三个小球；自动加载尾部（对应 Android CYLRefreshLayout 的 `BallPulseFooter`）。该类用 Swift 编写
+ *      （`CYLRefreshDrawnFooter.swift`）。
  */
-@interface CYLRefreshBezierRadarFooter : CYLRefreshDrawnFooter
-@end
-
-/*!
- * [EN] flutter_easy_refresh's `MaterialFooter`, drawn by CYLRefreshMaterialHeader. [CN] flutter_easy_refresh 的 `MaterialFooter`，由 CYLRefreshMaterialHeader 绘制。
- */
-@interface CYLRefreshMaterialFooter : CYLRefreshDrawnFooter
-@end
-
-/*!
- * [EN] flutter_easy_refresh's `DeliveryFooter`, drawn by CYLRefreshDeliveryHeader. [CN] flutter_easy_refresh 的 `DeliveryFooter`，由 CYLRefreshDeliveryHeader 绘制。
- */
-@interface CYLRefreshDeliveryFooter : CYLRefreshDrawnFooter
-@end
-
-/*!
- * [EN] flutter_easy_refresh's `PhoenixFooter`, drawn by CYLRefreshPhoenixHeader. [CN] flutter_easy_refresh 的 `PhoenixFooter`，由 CYLRefreshPhoenixHeader 绘制。
- */
-@interface CYLRefreshPhoenixFooter : CYLRefreshDrawnFooter
-@end
-
-/*!
- * [EN] flutter_easy_refresh's `TaurusFooter`, drawn by CYLRefreshTaurusHeader. [CN] flutter_easy_refresh 的 `TaurusFooter`，由 CYLRefreshTaurusHeader 绘制。
- */
-@interface CYLRefreshTaurusFooter : CYLRefreshDrawnFooter
-@end
+@class CYLRefreshBallPulseFooter;
 
 NS_ASSUME_NONNULL_END
