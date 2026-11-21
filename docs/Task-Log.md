@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO：在 Android 与鸿蒙模拟器上运行示例 / TODO: Run the examples on the Android and HarmonyOS emulators
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“run the examples on the Android and HarmonyOS emulators” | The user's original prompt (verbatim): "run the examples on the Android and HarmonyOS emulators" |
+| 上下文：上一个任务（Maven 发布与非 iOS 测试）只运行了单元测试与构建，缺少模拟器运行与截图（-5）；期间 `cyl-animated-item` 副本同步到 CYLTabBarController `b4d68cfe`，需要在设备上确认。Android：`emulator-5554`（Medium_Phone_API_37.0，x86_64），示例 `android/merged/example`；鸿蒙：DevEco 模拟器 Mate 70 Pro（x86_64），示例 `CrossPlatform/harmonyos-cylplaceholder/entry`。已通知其他会话将使用这两个模拟器。 | Context: the previous task (Maven publication and non-iOS tests) ran only unit tests and builds, missing emulator runs and screenshots (-5); it also synced the `cyl-animated-item` copies to CYLTabBarController `b4d68cfe`, which needs a check on a device. Android: `emulator-5554` (Medium_Phone_API_37.0, x86_64), example `android/merged/example`; HarmonyOS: the DevEco emulator Mate 70 Pro (x86_64), example `CrossPlatform/harmonyos-cylplaceholder/entry`. The other sessions were told these emulators are in use. |
+| 评分标准：100 = 两个示例在模拟器上安装并启动无崩溃，主要 Tab（场景、动效、刷新、HUD、加号页）可打开，拼接截图按截图规则生成并通过 `check_screenshots.py`，记录在文档中，鸿蒙 UI 测试套件通过；60 = 两个示例在模拟器上安装、启动无崩溃，并各有一张带规定标注的截图记录在文档中。 | Acceptance: 100 = both examples install and launch on the emulators without a crash, the main tabs (scenarios, animations, refresh, HUD, plus page) open, stitched screenshots made by the screenshot rules pass `check_screenshots.py` and are recorded in the docs, and the HarmonyOS UI test suite passes; 60 = both examples install and launch without a crash, each with one labeled screenshot recorded in the docs. |
+
 ### 已完成（90 / 100）：Android 库模块的 Maven 发布（io.github.chenyilong，0.1.0）并测试所有非 iOS 平台 / Done (90 / 100): Maven publication of the Android library modules (io.github.chenyilong, 0.1.0) and tests on every non-iOS platform
 
 | 中文 | English |
