@@ -18,6 +18,10 @@ const { cylResolvePath } = require('./cyl_animated_icon')
 
 Component({
   options: { pureDataPattern: /^_/ },
+  // Inside a cyl-refresh, the refresh hides its load-more footer while this placeholder shows.
+  relations: {
+    '../cyl-refresh/index': { type: 'ancestor' },
+  },
   properties: {
     /** A CYLPlaceholderScenario name ("RetryButton", "CYLPlaceholderScenarioRetryButton"). */
     scenario: { type: String, value: '' },

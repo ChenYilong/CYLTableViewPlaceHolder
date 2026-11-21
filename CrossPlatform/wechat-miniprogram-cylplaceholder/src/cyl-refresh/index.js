@@ -34,6 +34,15 @@ const TICKS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
 Component({
   options: { multipleSlots: true, pureDataPattern: /^_/ },
+  // An empty list has nothing more to load: while a cyl-placeholder shows inside the refresh (in its slot), the
+  // footer is hidden and does not load, as iOS hides footers over the placeholder. The header stays.
+  relations: {
+    '../cyl-placeholder/index': {
+      type: 'descendant',
+      linked() { this._setPlaceholderCount((this._placeholderCount || 0) + 1) },
+      unlinked() { this._setPlaceholderCount((this._placeholderCount || 0) - 1) },
+    },
+  },
   properties: {
     header: { type: String, value: 'normal' },
     footer: { type: String, value: 'auto' },
@@ -87,6 +96,8 @@ Component({
     finishDuration: { type: Number, value: 0 },
   },
   data: {
+    // A cyl-placeholder shows inside the refresh (the relation above); the footer is hidden.
+    placeholderShown: false,
     headerState: S.Idle,
     footerState: S.Idle,
     finishing: '',
@@ -224,8 +235,16 @@ Component({
     _headerAllowed() {
       return this.data.headerTrigger !== 'onEdge' || this._startedAtTop !== false
     },
+    _footerHidden() {
+      return this.data.footerHidden || this.data.placeholderShown
+    },
+    _setPlaceholderCount(count) {
+      this._placeholderCount = Math.max(0, count)
+      const shown = this._placeholderCount > 0
+      if (shown !== this.data.placeholderShown) this.setData({ placeholderShown: shown })
+    },
     _footerActive() {
-      return this.data.footer !== 'none' && !this.data.footerHidden && this.data.footerState !== S.NoMoreData
+      return this.data.footer !== 'none' && !this._footerHidden() && this.data.footerState !== S.NoMoreData
     },
     onTouchStart(e) {
       this._dragging = true
@@ -340,7 +359,7 @@ Component({
 
     // Footer.
     onScrollToLower() {
-      if (this.data.footer === 'none' || this.data.footerHidden) return
+      if (this.data.footer === 'none' || this._footerHidden()) return
       if (this._isBack()) {
         // Back footers load from the drag (onTouchEnd); "anywhere" also loads on a fling to the end.
         if (this.data.footerTrigger === 'onEdge' || this._dragging) return
@@ -357,7 +376,7 @@ Component({
       if (!this._isBack()) this._beginFooter()
     },
     _beginFooter() {
-      if (this.data.footer === 'none' || this.data.footerHidden) return
+      if (this.data.footer === 'none' || this._footerHidden()) return
       const s = this.data.footerState
       if ((s !== S.Idle && s !== S.Pulling) || this.data.headerState === S.Refreshing) return
       this.setData({ footerState: S.Refreshing, footerFinishing: '', footerPull: 0 })
