@@ -14,6 +14,7 @@
                                bind:animationcomplete="onAnimationComplete"
                                image="{{item.image ? imageFolder + item.image + '.png' : ''}}"
                                animation-url="{{animated && item.animation ? animationFolder + item.animation : ''}}"
+                               shows-image-when-animation-ends="{{!!item.showsImageWhenAnimationEnds}}"
                                icon-size="{{item.side}}" loop="{{item.ownLoop !== null ? item.ownLoop : (loop === null ? item.defaultLoop : loop)}}" speed="{{speed}}"
                                accessibility-label="{{item.title}}"
                                title="{{item.title}}" axis="vertical" title-color="#333333" title-font-size="{{16}}"

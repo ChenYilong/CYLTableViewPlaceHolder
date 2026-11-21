@@ -14,7 +14,7 @@
 // the app registered (CYLPlaceholderItemAnimatorRegistry), drawn by the core's animationBuilder, and the type must be
 // registered with CYLAnimatedItemEngines (registering an animator in the shared registry does it).
 import { drawing, common2D } from '@kit.ArkGraphics2D';
-import { CYLAnimatedItemAnimationContext, CYLAnimatedItemView } from 'cylanimateditem';
+import { CYLAnimatedItemAnimationContext, CYLAnimatedItemController, CYLAnimatedItemView } from 'cylanimateditem';
 import {
   CYLEdgeInsets,
   CYLOffset,
@@ -72,6 +72,7 @@ import {
   CYLPlaceholderAnimationOptionsOfURL,
   CYLPlaceholderAnimationPlayer,
   CYLPlaceholderAnimationViewModel,
+  CYLPlaceholderPlayableContentView,
   CYLPlaceholderRegisterAnimationFactory
 } from './CYLPlaceholderAnimation';
 import {
@@ -223,6 +224,17 @@ export class CYLPlaceholderViewModel {
   animationReady: boolean = false;
   /** true when animationFileName cannot be played: the image stays. */
   animationFailed: boolean = false;
+  /**
+   * Whether the image replaces a play-once animation when it ends (CYLAnimatedItemView `showsImageWhenAnimationEnds`,
+   * CYLTabBarController b13b88f1): for an animation whose last frame is empty, such as the Success scenario's.
+   */
+  showsImageWhenAnimationEnds: boolean = false;
+  /** true while the image shows in place of the ended animation (the icon is tinted again); false once it replays. */
+  animationEndedShowsImage: boolean = false;
+  /** Set by the item content: tells CYLAnimatedItemView that the animation ended (its context's `onEnded`). */
+  cyl_animationEndHandler: (() => void) | null = null;
+  /** Set by CYLPlaceholderView: replays through CYLAnimatedItemView, so it shows the animation again. */
+  cyl_animationReplayHandler: (() => void) | null = null;
   private animationAttachedFileName: string | null = null;
   /** The key that finds this model from CYLAnimatedItemView's animation context (set while a view shows it). */
   cyl_animatedItemKey: string = '';
@@ -408,6 +420,20 @@ export class CYLPlaceholderViewModel {
         this.cyl_runAnimationCommand();
       }
     };
+    if (made.view instanceof CYLPlaceholderPlayableContentView) {
+      (made.view as CYLPlaceholderPlayableContentView).cyl_animationViewEndHandler = () => {
+        if (this.animationPlayer !== made || this.animationRepeatCount === 0) {
+          return;
+        }
+        if (this.showsImageWhenAnimationEnds) {
+          this.animationEndedShowsImage = true;
+        }
+        const handler = this.cyl_animationEndHandler;
+        if (handler !== null) {
+          handler();
+        }
+      };
+    }
     this.animationFailed = false;
     this.animationPlayer = made;
     if (made.ready) {
@@ -453,6 +479,16 @@ export class CYLPlaceholderViewModel {
 
   /** Replays the animation (iOS `-playPlaceholderAnimation`); a view still loading plays once ready. */
   playPlaceholderAnimation(): void {
+    if (this.animationEndedShowsImage) {
+      // The image replaced the ended animation: replay through CYLAnimatedItemView, which shows the animation again
+      // and calls back here (then animationEndedShowsImage is false).
+      this.animationEndedShowsImage = false;
+      const replay = this.cyl_animationReplayHandler;
+      if (replay !== null) {
+        replay();
+        return;
+      }
+    }
     this.animationCommand = 1;
     this.animationStopped = false;
     if (this.animationPlayer !== null) {
@@ -659,6 +695,7 @@ export class CYLPlaceholderViewModel {
     m.tapInteractionEnabled = component.interactionEnabled;
     m.tapHighlightStyle = component.tapHighlightStyle;
     m.animationRepeatCount = component.animationRepeatCount;
+    m.showsImageWhenAnimationEnds = component.showsImageWhenAnimationEnds;
     m.animationFileName = component.animationFileName;
     if (CYLScenarioIsLineIcon(component.animationFileName)) {
       // The black line art stays visible on dark backgrounds (iOS CYLPlaceholderScenario "**.Color").
@@ -812,6 +849,9 @@ struct CYLPlaceholderAnimatedItemContent {
   private reported: number = 0;
 
   aboutToAppear(): void {
+    this.model.cyl_animationEndHandler = () => {
+      this.animationContext.onEnded();
+    };
     this.cylReportAnimationState();
   }
 
@@ -996,8 +1036,13 @@ export function CYLPlaceholderTintFilter(color: ResourceColor | null): ColorFilt
 @Component
 export struct CYLPlaceholderView {
   @ObjectLink model: CYLPlaceholderViewModel;
+  /** Replays the icon's item when the image replaced its ended animation (showsImageWhenAnimationEnds). */
+  private iconController: CYLAnimatedItemController = new CYLAnimatedItemController();
 
   aboutToAppear(): void {
+    this.model.cyl_animationReplayHandler = () => {
+      this.iconController.restartAnimation();
+    };
     CYLPlaceholderAnimatedItem.attach(this.model);
   }
 
@@ -1051,9 +1096,12 @@ export struct CYLPlaceholderView {
         // the item's inner box was 8vp narrower than the icon in this imageSide Stack, and the icon overflowed to the
         // left only: 4vp off the title's center line (the Celebrate detail page, 2026-11-18).
         isBare: true,
+        showsImageWhenAnimationEnds: this.model.showsImageWhenAnimationEnds,
+        controller: this.iconController,
         animationBuilder: cylPlaceholderAnimatedItemBuilder
       })
-      if (this.model.tintsIcon && !(this.model.animationVisible && this.model.animationReady)) {
+      if (this.model.tintsIcon && (!(this.model.animationVisible && this.model.animationReady) ||
+        this.model.animationEndedShowsImage)) {
         Column()
           .width('100%')
           .height('100%')

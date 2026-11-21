@@ -97,6 +97,7 @@ Top-level keys: `scenario`, `components`, `overrides`, `backgroundAction` (`""` 
 `accessibilityIdentifier`. Component keys: `type` (`icon`, `hint`, `button`, `separator`, `item`), `title` / `text`
 or `titleKey` / `textKey`, `animation`, `style` (an icon name such as `WifiOff`), `size`, `buttonStyle`, `action`,
 `interactionEnabled`, `highlightStyle` (`dim`, `shrink`, `none`), `repeatCount` (`"loop"`, `"once"`, N),
+`showsImageWhenAnimationEnds` (an icon's still image replaces its play-once animation when it ends; on for Success),
 `spacingBefore`, `accessibilityIdentifier` (the element's `id`), `attributes` (`item`: title color, background
 color, corner radius, content insets, minimum width). An invalid configuration renders nothing and sends
 `configerror` with the reason; `CYLPlaceholderConfiguration.parse` throws it instead.
