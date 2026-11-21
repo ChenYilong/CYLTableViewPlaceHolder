@@ -12,7 +12,8 @@
 // loop): a named animation restarts; a trigger input restarts the state machine, then fires 50 ms later; a boolean
 // (input or view model `active`) goes false, then true 50 ms later; `numberInput` is set to the next of `values`; a
 // state machine without a usable input restarts. A repeat count of 0 loops a state machine by playing it again after
-// each pass.
+// each pass. A play-once pass reports its end (didEnd, CYLAnimatedItemView's showsImageWhenAnimationEnds) when
+// RiveAnimationView.isPlaying() turns false after its last input change (CYLRivePlayOnceEndWatcher).
 import { Fit, Loop, RendererType, RiveAnimationView, SMINumber, ViewModelInstance, initializeRive } from '@ohos/rive';
 import { deviceInfo } from '@kit.BasicServicesKit';
 import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
@@ -43,6 +44,7 @@ import {
   CYLPlaceholderItemViewAnimator,
   CYLPlaceholderPlayableContentView
 } from 'cylplaceholder';
+import { CYLRivePlayOnceEndWatcher } from './CYLRivePlayOnceEndWatcher';
 import {
   CYLPlaceholderItemAnimationDarkColors,
   CYLPlaceholderItemAnimationDarkFilePath,
@@ -142,6 +144,15 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   /** The file's colors before they were overridden, by property path. */
   private originalColors: Map<string, number> = new Map<string, number>();
   private overriddenColorPaths: Set<string> = new Set<string>();
+  /**
+   * Reports the end of a play-once pass (didEnd: CYLAnimatedItemView's showsImageWhenAnimationEnds), armed after the
+   * pass's last input change.
+   */
+  private readonly endWatcher: CYLRivePlayOnceEndWatcher = new CYLRivePlayOnceEndWatcher(
+    () => {
+      const view = this.riveView;
+      return view !== null && view.isPlaying();
+    }, () => this.didEnd());
 
   constructor(fileURL: string, options: Record<string, string>, contentMode: ImageFit) {
     super();
@@ -182,6 +193,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   }
 
   cyl_detach(): void {
+    this.endWatcher.cancel();
     this.cancelDeactivate();
     this.cancelLoop();
     this.riveView = null;
@@ -301,6 +313,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
 
   /** CYLRiveIcon.cylPlay: plays from the start (see the file comment). */
   private play(view: RiveAnimationView): void {
+    this.endWatcher.cancel();
     this.cancelDeactivate();
     this.cancelLoop();
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
@@ -308,6 +321,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       // The repeat count picks the loop mode (Loop.LOOP for 0): no loop timer.
       view.reset();
       view.play(animation, this.loop);
+      this.armEnd(view);
       return;
     }
     const legacy = CYLRiveUsesLegacyRuntime(this.options);
@@ -328,6 +342,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
           } catch (e) {
             // No such trigger.
           }
+          this.armEnd(view);
         }
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else if (numberInput !== undefined && machine !== undefined && this.hasInput(view, machine, numberInput)) {
@@ -335,6 +350,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       view.play();
       view.setNumberState(machine, numberInput, CYLRiveNextNumber(this.option(CYLPlaceholderAnimationOptionRiveNumberValues),
         this.numberValue(view, machine, numberInput)));
+      this.armEnd(view);
     } else if (trigger !== null && instance !== null) {
       view.play();
       try {
@@ -342,6 +358,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       } catch (e) {
         // No such trigger.
       }
+      this.armEnd(view);
     } else if (instance !== null || (input !== undefined && machine !== undefined && this.hasInput(view, machine, input))) {
       view.play();
       this.setActive(view, false);
@@ -357,15 +374,30 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
             this.deactivateTimer = -1;
             if (this.riveView === view) {
               this.setActive(view, false);
+              this.armEnd(view);
             }
           }, duration * 1000);
+        } else {
+          this.armEnd(view);
         }
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else {
       view.reset();
       view.play();
+      this.armEnd(view);
     }
     this.scheduleLoop(view, trigger !== null || triggerInput !== undefined);
+  }
+
+  /**
+   * Waits for the end of a play-once pass (a repeat count of 0 loops and never ends), once its last input change is
+   * made: a trigger fired, a number set, `active` back to false (or set true with a duration of 0), a restart.
+   */
+  private armEnd(view: RiveAnimationView): void {
+    if (this.riveView !== view || this.repeatCount === 0 || this.loopsStateMachine) {
+      return;
+    }
+    this.endWatcher.arm();
   }
 
   /** Whether a play restarts the file (no usable input or trigger, no view model). */
@@ -415,6 +447,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
 
   cyl_stopAnimationView(): void {
     this.pendingCommand = 0;
+    this.endWatcher.cancel();
     this.cancelDeactivate();
     this.cancelLoop();
     const view = this.riveView;
@@ -471,11 +504,16 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.repeatCount = repeatCount;
     if (this.option(CYLPlaceholderAnimationOptionRiveAnimation) !== undefined) {
       this.loop = repeatCount === 0 ? Loop.LOOP : Loop.ONESHOT;
+      if (repeatCount === 0) {
+        this.endWatcher.cancel();
+      }
       return true;
     }
     this.loopsStateMachine = repeatCount === 0;
     if (!this.loopsStateMachine) {
       this.cancelLoop();
+    } else {
+      this.endWatcher.cancel();
     }
     return true;
   }

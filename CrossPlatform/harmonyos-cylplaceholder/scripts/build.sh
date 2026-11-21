@@ -6,7 +6,7 @@
 # (for example C:/dev/CYLTableViewPlaceHolder, the one to open in DevEco Studio) is built in place.
 #
 #   scripts/build.sh                 the example HAP (entry) and the library HAR (cylplaceholder)
-#   scripts/build.sh test            also the ohosTest HAP (when entry/src/ohosTest exists) and the host-run local unit tests (cylplaceholder/src/test)
+#   scripts/build.sh test            also the ohosTest HAP (when entry/src/ohosTest exists) and the host-run local unit tests (cylplaceholder/src/test, entry/src/test)
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 DEVECO="${DEVECO_STUDIO:-/c/Program Files/Huawei/DevEco Studio}"
@@ -38,5 +38,7 @@ if [ "${1:-}" = "test" ]; then
   fi
   hvigorw.bat test -p module=cylplaceholder@default -p product=default --no-daemon
   tail -n 1 cylplaceholder/.test/default/intermediates/test/coverage_data/test_result.txt
+  hvigorw.bat test -p module=entry@default -p product=default --no-daemon
+  tail -n 1 entry/.test/default/intermediates/test/coverage_data/test_result.txt
 fi
 ls "$OUT"/entry/build/default/outputs/default/entry-default-*.hap
