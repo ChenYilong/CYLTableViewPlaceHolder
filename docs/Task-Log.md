@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO：动画结束后显示静态的成功图标 / TODO: Show a static success icon after the animation ends
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“show a static success icon after the animation ends” | The user's original prompt (verbatim): "show a static success icon after the animation ends" |
+| 背景：模拟器运行（见下方 2026-11-21 “Run the examples on the Android and HarmonyOS emulators”）发现 Android 加号页的成功状态没有图标：`CYLPlaceholderSuccess.json` 只播放一次，最后一帧几乎为空。用户在三个选项中选择“动画结束后显示静态的成功图标”。现状：Success 场景的静态图是信息图标（`cyl_placeholder_info`，iOS `.info`），没有成功（对勾）图标；CYLTabBarController 的 `CYLAnimatedItemView` 没有“播放结束”的通知。 | Context: the emulator run (2026-11-21, "Run the examples on the Android and HarmonyOS emulators", below) found no icon in the Android plus page's Success state: `CYLPlaceholderSuccess.json` plays once and its last frame is nearly empty. Of the three options, the user chose "show a static success icon after the animation ends". Today the Success scenario's still image is the info icon (`cyl_placeholder_info`, iOS `.info`), there is no success (check mark) icon, and CYLTabBarController's `CYLAnimatedItemView` has no "playback ended" notification. |
+| 计划：(1) 新增静态图标 `CYLPlaceholderCheckCircle@2x.png`（google/material-design-icons `action/check_circle`，与其他图标同一版本，Apache-2.0，记入 `ICON-SOURCES.material-design-icons`），作为 Success 场景的静态图（Android、鸿蒙、小程序；iOS 留给 Mac 会话）；(2) 播放结束后回到静态图：按规则（“Animation bugs … fix in CYLTabBarController”）在 CYLTabBarController 的 `CYLAnimatedItemView` 中实现（请求已发给 CYLTabBarController 会话），本仓库在上游可用后接入并重新固定。 | Plan: (1) a new still icon `CYLPlaceholderCheckCircle@2x.png` (google/material-design-icons `action/check_circle`, the same revision as the other icons, Apache-2.0, listed in `ICON-SOURCES.material-design-icons`) as the Success scenario's still image (Android, HarmonyOS, mini program; iOS left to the Mac session); (2) back to the still image when playback ends: by the rules ("Animation bugs … fix in CYLTabBarController") in CYLTabBarController's `CYLAnimatedItemView` (request sent to the CYLTabBarController session); this repository wires it in and re-pins once upstream has it. |
+| 评分标准：100 = 各非 iOS 平台的成功状态在动画结束后显示对勾图标，模拟器截图证明，测试通过，iOS 的剩余工作记为 TODO；60 = 对勾图标作为 Success 静态图在 Android 上可见（未播放动画或播放结束后），测试通过。 | Acceptance: 100 = on every non-iOS platform the Success state shows the check mark icon after its animation ends, proven by emulator screenshots, tests pass, and the iOS remainder is a TODO; 60 = the check mark icon is the Success still image and visible on Android (without an animation or after it ends), tests pass. |
+
 ### 已完成（90 / 100）：在 Android 与鸿蒙模拟器上运行示例 / Done (90 / 100): Run the examples on the Android and HarmonyOS emulators
 
 | 中文 | English |
