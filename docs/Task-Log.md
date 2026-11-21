@@ -31,6 +31,7 @@
 
 | 中文 | English |
 | --- | --- |
+| 已被取代（2026-11-22）：本分支已过时；活跃分支是 `feat/android-refresh-port-followup`（PR #31，核心已大部分转写为 Swift，播放控件已于 2026-11-19 完成）。本条工作（`87d6818`..`7b6953c`）移到该分支重做，只移植该分支缺少的修复（#1628 等）。 | Superseded (2026-11-22): this branch is stale; the active branch is `feat/android-refresh-port-followup` (PR #31: the core is mostly Swift, the playback controls were done on 2026-11-19). This entry's work (`87d6818`..`7b6953c`) is redone there, porting only the fixes it lacks (#1628 and others). |
 | 状态：TODO（2026-11-21，分支 `feat/android-refresh-port`）。进行中的 Android 第 5 步暂停：本条指令明确限定 iOS / Swift 范围，优先执行。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port`). The Android step 5 in progress is paused: this instruction explicitly scopes the work to iOS / Swift, so it goes first. |
 | 用户原始提示词：“fix all todo in docs about ios/swift and test with  Xcode” | The user's original prompt (verbatim): "fix all todo in docs about ios/swift and test with  Xcode" |
 | 要求：①找出 `docs/` 中所有与 iOS / Swift 相关的 TODO；②逐条修复；③用 Xcode（本机 Xcode 27.2，iOS 27.2 模拟器）测试验证；④分数只在有测试证据时提高。 | Requirements: (1) find every iOS / Swift TODO in `docs/`; (2) fix them one by one; (3) verify with Xcode (local Xcode 27.2, iOS 27.2 simulator); (4) raise a score only with test evidence. |
