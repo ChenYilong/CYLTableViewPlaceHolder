@@ -9,3 +9,5 @@ example/miniprogram/components/cyl-animated-item/
 example/miniprogram/components/cyl-animation-placeholder/
 example/miniprogram/libs/
 project.private.config.json
+# scripts/success-timing-screenshots.js output (default folder).
+out/

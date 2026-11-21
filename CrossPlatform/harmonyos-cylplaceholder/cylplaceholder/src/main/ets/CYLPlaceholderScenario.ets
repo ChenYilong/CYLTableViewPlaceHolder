@@ -198,6 +198,11 @@ export class CYLPlaceholderComponent {
   tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim;
   /** 0 loops the animation, N plays it N times; once by default, spinners loop (componentWithBundledAnimation, iOS). */
   animationRepeatCount: number = 1;
+  /**
+   * Whether the image replaces the play-once animation when it ends (CYLAnimatedItemView `showsImageWhenAnimationEnds`);
+   * off by default, so the last frame stays. The Success scenario's icon turns it on: its animation ends on an empty frame.
+   */
+  showsImageWhenAnimationEnds: boolean = false;
   /** The bundled animation of the component ("CYLPlaceholderNoInternet.json"), played in place of its image. */
   animationFileName: string | null = null;
   accessibilityIdentifier: string | null = null;
@@ -262,6 +267,7 @@ export class CYLPlaceholderComponent {
     c.interactionEnabled = this.interactionEnabled;
     c.tapHighlightStyle = this.tapHighlightStyle;
     c.animationRepeatCount = this.animationRepeatCount;
+    c.showsImageWhenAnimationEnds = this.showsImageWhenAnimationEnds;
     c.animationFileName = this.animationFileName;
     c.accessibilityIdentifier = this.accessibilityIdentifier;
     return c;
@@ -722,6 +728,12 @@ function withSpacing(c: CYLPlaceholderComponent, spacing: number): CYLPlaceholde
   return c;
 }
 
+/** Turns on showsImageWhenAnimationEnds and returns the component. */
+function cylShowsImageWhenAnimationEnds(component: CYLPlaceholderComponent): CYLPlaceholderComponent {
+  component.showsImageWhenAnimationEnds = true;
+  return component;
+}
+
 function staticComponents(scenario: CYLPlaceholderScenario): CYLPlaceholderComponent[] {
   const s = 'scenario_' + CYLPlaceholderSnakeCase(SCENARIO_NAMES[scenario]) + '_';
   const own = (image: string, side: number = CYLScenarioIconSide): CYLPlaceholderComponent =>
@@ -809,7 +821,8 @@ function staticComponents(scenario: CYLPlaceholderScenario): CYLPlaceholderCompo
     case CYLPlaceholderScenario.Uploading:
       return [own('upload_off', CYLScenarioIllustrationSide)];
     case CYLPlaceholderScenario.Success:
-      return [own('check_circle', CYLScenarioIllustrationSide), actionButton(CYLPlaceholderActions.Done, F)];
+      // CYLPlaceholderSuccess.json ends on an empty frame: the check mark shows once it has played.
+      return [cylShowsImageWhenAnimationEnds(own('check_circle', CYLScenarioIllustrationSide)), actionButton(CYLPlaceholderActions.Done, F)];
     case CYLPlaceholderScenario.HUD:
       return [own('hourglass', 56)];
     default:

@@ -37,3 +37,22 @@ every placeholder icon is a `CYLAnimatedItemView`, the core ships only the GIF e
   `animationBuilder: CYLPlaceholderAnimatedItemBuilder`, which plays any file through the registered animators.
   `CYLPlaceholderAnimatedItem` (attach / detach) stays for pages that drive playback through a placeholder model. Since CYLTabBarController 0ce518a8 (B21) the item applies `spacing`
   (8 vp on the detail page, checked on the emulator) and has `titleLines` (1 by default, 0 = no limit).
+
+## x86_64 emulator: arm64-only Rive and PAG libraries
+
+The default HAP of `entry` does not install on the x86_64 emulator ("install parse native so failed"): `@ohos/rive`
+and `@tencent/libpag` ship native libraries for arm64-v8a only. The test path comes from CYLTabBarController's
+HarmonyOS CYLAnimatedItem (`cylanimateditem/README.md`, "x86_64 emulator", pinned at 882ece17), shared by every app and
+library that depends on the item:
+
+```sh
+scripts/build.sh emulator    # entry/build/default/outputs/emulator/entry-emulator-unsigned.hap, no arm64-v8a libraries
+python3 cylanimateditem/tools/cyl_hap_x86_64.py install entry/build/default/outputs/emulator/entry-emulator-unsigned.hap
+```
+
+`entry/build-profile.json5` defines the `emulator` target (and the `emulatorTest` build mode for `ohosTest`);
+`scripts/emulator-check.sh` installs the emulator HAP through the tool on a device without arm64-v8a. On x86_64,
+`CYLAnimatedItemEngines.canPlay` is false for Rive and PAG, so those items show their still images; Rive and PAG
+playback is verified only on arm64 devices or arm64 emulators with the `default` target. Never commit a stripped HAP.
+Setup details: the `cyl-harmonyos-setup` skill; rule: root `instructions.md`, "HarmonyOS: IDE preparation and
+emulator prerequisites", item 5.

@@ -91,6 +91,13 @@ class CYLPlaceholderComponent private constructor(
             animationRepeatCountIsSet = true
         }
 
+    /**
+     * Whether the still image replaces the item's play-once animation when it ends (CYLAnimatedItemView
+     * `showsImageWhenAnimationEnds`, CYLTabBarController b13b88f1); off by default, so the last frame stays. For an
+     * animation whose last frame is empty: the Success scenario's icon turns it on, so its check mark shows afterwards.
+     */
+    var showsImageWhenAnimationEnds: Boolean = false
+
     /** Whether [animationRepeatCount] was set, so the scenario default does not replace it. */
     internal var animationRepeatCountIsSet: Boolean = false
         private set

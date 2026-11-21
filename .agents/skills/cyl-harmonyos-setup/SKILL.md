@@ -31,11 +31,23 @@ the status and score are in `docs/HarmonyOS.md`.
   junction or a `subst` drive does not work around a non-ASCII path (hvigor resolves both back to the real path with
   Node's native `realpath`: "Invalid project path" / "Path not found"); use a clone at an ASCII path instead. Scripts
   with non-ASCII text for Windows PowerShell 5.1 must be saved as UTF-8 with a BOM, or they read `文档` as `鏂囨。`.
-- **x86_64 emulator:** the Windows emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native
-  libraries only, so the normal HAP does not install ("install parse native so failed"). Test on an arm64 emulator
-  (Apple silicon) or a phone; or, for checks that need no PAG / Rive, build an emulator-only HAP without them by
-  adding `"nativeLib": { "filter": { "excludes": ["**/*.so"] } }` to `entry/build-profile.json5` `buildOption`
-  locally (never commit it; PAG and Rive cannot play in that build).
+- **x86_64 emulator: the HAP does not install because its Rive and PAG libraries are arm64-only.** The Windows
+  emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native libraries only
+  (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so the normal HAP does not install ("install parse native so
+  failed", error 9568347). The fix comes from CYLTabBarController's HarmonyOS CYLAnimatedItem (882ece17,
+  `cylanimateditem/README.md`, "x86_64 emulator"), so every app and library that depends on the item tests the same way:
+  1. Build the `emulator` target, which leaves out every arm64-v8a library: `scripts/build.sh emulator` (output
+     `entry/build/default/outputs/emulator/entry-emulator-unsigned.hap`; UI tests: build mode `emulatorTest`).
+  2. Install it with `python3 cylanimateditem/tools/cyl_hap_x86_64.py install <app.hap>` (on Windows `py -3`): it reads
+     the device ABIs (`hdc shell param get const.product.cpu.abilist`), leaves out what the device cannot load, and runs
+     `hdc install -r`; `CYL_HAP_STRIP_LIBS=1` / `0` forces stripping. `scripts/emulator-check.sh` does steps 1-2 for
+     you when the emulator HAP exists.
+  3. Expect still images for Rive and PAG items: `CYLAnimatedItemEngines.canPlay` is false without arm64-v8a
+     (`isSupportedOnDevice`, `unsupportedReason`). Views created outside `animationBuilder` check
+     `isSupportedOnDevice(type)` first.
+  4. Testable on x86_64: Lottie, SVGA, GIF, still images, placeholders, `showsImageWhenAnimationEnds` with Lottie or
+     SVGA, layout, dark mode, accessibility, localization. Rive and PAG playback need an arm64 device or arm64 emulator
+     with the `default` target. Never commit a stripped HAP.
 
 ## 2. Emulator prerequisites
 

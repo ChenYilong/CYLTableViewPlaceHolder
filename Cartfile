@@ -1,4 +1,4 @@
 # CYLTableViewPlaceHolder's core depends on CYLTabBarController's CYLAnimatedItem component (CYLPlaceholderView is a
 # CYLAnimatedItemView). Always CYLTabBarController's newest commit on any branch (instructions.md, "Depending on
 # CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh --write Cartfile updates it.
-github "ChenYilong/CYLTabBarController" "b4d68cfe2be7e2cec0f2542bbccc502e9668c3be"
+github "ChenYilong/CYLTabBarController" "882ece172f23690c5f0a2510a1fe2dfc01f5052b"

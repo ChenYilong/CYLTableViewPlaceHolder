@@ -150,6 +150,12 @@ export class CYLLottieAnimationContentView extends CYLPlaceholderPlayableContent
       item.addEventListener('data_failed', () => {
         this.didFail('Lottie', null);
       });
+      // A play-once animation played all its passes (showsImageWhenAnimationEnds: the Success scenario's check mark).
+      item.addEventListener('complete', () => {
+        if (this.item === item && this.repeatCount > 0) {
+          this.didEnd();
+        }
+      });
     } catch (e) {
       this.didFail('Lottie', e as Error);
     }

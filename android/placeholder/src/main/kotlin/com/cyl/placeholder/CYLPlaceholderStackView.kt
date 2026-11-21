@@ -144,6 +144,8 @@ class CYLPlaceholderStackView internal constructor(
             if (!item.setAnimationFile("asset:$ANIMATION_FOLDER/$name")) continue
             animatedItem = item
             item.animationRepeatCount = CYLPlaceholderScenarioCatalog.scenarioAnimationRepeatCount(name, itemComponents[item])
+            // [EN] An animation whose last frame is empty (Success) hands back to the still image when it ends.
+            item.showsImageWhenAnimationEnds = itemComponents[item]?.showsImageWhenAnimationEnds == true
             item.animationView?.let { view ->
                 view.contentDescription = item.imageView.contentDescription
                 view.importantForAccessibility = item.imageView.importantForAccessibility

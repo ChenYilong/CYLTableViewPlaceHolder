@@ -11,8 +11,10 @@ import UIKit
 import CYLTableViewPlaceHolder
 
 private let CYLSectionsCellIdentifier = "row"
-/// Simulated loading time; long enough for the UI tests to scroll and rotate while the header refreshes.
-private let CYLSectionsDuration: TimeInterval = 8
+/// Simulated loading time; long enough for the UI tests to scroll and rotate while the header refreshes. 20 s, not 8:
+/// on GitHub's macOS runners an XCUITest drag can take several seconds, and with 8 s the refresh sometimes ended
+/// before the drag did ("the drag happens during the refresh" failed, 2026-11-21).
+private let CYLSectionsDuration: TimeInterval = 20
 
 final class CYLSectionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let tableView = UITableView(frame: .zero, style: .plain)

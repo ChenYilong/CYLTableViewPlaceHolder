@@ -46,6 +46,10 @@ class CYLPlaceholderStackViewTest {
         // [CN] Success 场景的静态图是对勾（动画结束后显示），不是信息图标。
         val icon = CYLPlaceholderScenarioCatalog.componentsForScenario(context, CYLPlaceholderScenario.Success).first { it.image != 0 }
         assertEquals(R.drawable.cyl_placeholder_check_circle, icon.image)
+        assertTrue("Success hands back to the still image", icon.showsImageWhenAnimationEnds)
+        val others = CYLPlaceholderScenario.entries.filter { it != CYLPlaceholderScenario.Success }
+            .flatMap { CYLPlaceholderScenarioCatalog.componentsForScenario(context, it) }
+        assertTrue("only Success turns it on", others.none { it.showsImageWhenAnimationEnds })
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    `maven-publish`
 }
 
 android {
@@ -55,4 +56,57 @@ kotlin {
 //      全项目的 testDebugUnitTest 会停在这里。
 tasks.withType<Test>().configureEach {
     failOnNoDiscoveredTests.set(false)
+}
+
+// [EN] Maven publication (docs/Android-Port.md, "Maven publication coordinates"; decided 2026-11-22, docs/Task-Log.md
+//      "Decide the :merged-rive publication"): the optional Rive refresh header, like the iOS `Rive` subspec, so apps
+//      without Rive do not ship rive-android's native libraries. Versioned with the other two modules (0.1.0 unless
+//      -PcylPlaceholderVersion is given). Check with ./gradlew publishToMavenLocal.
+// [CN] Maven 发布（docs/Android-Port.md “Maven publication coordinates”；2026-11-22 决定，docs/Task-Log.md
+//      “Decide the :merged-rive publication”）：可选的 Rive 刷新头部，与 iOS 的 `Rive` 子 spec 相同，不用 Rive 的应用
+//      不带 rive-android 的原生库。版本与另外两个模块一致（默认 0.1.0，可用 -PcylPlaceholderVersion 指定）。
+//      用 ./gradlew publishToMavenLocal 检查。
+group = "io.github.chenyilong"
+version = providers.gradleProperty("cylPlaceholderVersion").orNull ?: "0.1.0"
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                artifactId = "cyltableviewplaceholder-refresh-rive"
+                from(components["release"])
+                pom {
+                    name.set("CYLRefresh Rive")
+                    description.set("The Rive refresh header of CYLRefresh for Android (CYLRefreshRiveHeader, the iOS Rive subspec), drawn by rive-android.")
+                    url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder")
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder/blob/master/LICENSE")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("ChenYilong")
+                            name.set("ChenYilong")
+                            url.set("https://github.com/ChenYilong")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder")
+                        connection.set("scm:git:https://github.com/ChenYilong/CYLTableViewPlaceHolder.git")
+                        developerConnection.set("scm:git:ssh://git@github.com/ChenYilong/CYLTableViewPlaceHolder.git")
+                    }
+                }
+            }
+        }
+    }
 }

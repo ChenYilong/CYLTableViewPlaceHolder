@@ -474,6 +474,11 @@ export class CYLPlaceholderPlayableContentView extends CYLPlaceholderAnimationCo
   failed: boolean = false;
   cyl_animationViewReadyHandler: (() => void) | null = null;
   cyl_animationViewErrorHandler: CYLPlaceholderAnimationErrorHandler | null = null;
+  /**
+   * Called when a play-once animation (repeat count above 0) has played all its passes; an engine that cannot tell
+   * never calls it. CYLPlaceholderViewModel forwards it to CYLAnimatedItemView (`showsImageWhenAnimationEnds`).
+   */
+  cyl_animationViewEndHandler: (() => void) | null = null;
   /** 0 loops, N plays N times. */
   repeatCount: number = 1;
   /** The playback rate, 1 is normal (HarmonyOS addition: iOS sets speed on the engine view itself). */
@@ -510,6 +515,14 @@ export class CYLPlaceholderPlayableContentView extends CYLPlaceholderAnimationCo
       this.cyl_playAnimationView();
     } else if (command === 2) {
       this.cyl_showAnimationViewLastFrame();
+    }
+  }
+
+  /** Called by subclasses when a play-once animation has ended (not for a loop, nor after a stop). */
+  protected didEnd(): void {
+    const handler = this.cyl_animationViewEndHandler;
+    if (handler !== null) {
+      handler();
     }
   }
 

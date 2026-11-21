@@ -380,6 +380,25 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
    the image download asks for it, with hardware virtualization available on the Mac.
 4. **Signing is not needed on the emulator**: it installs the unsigned `entry-default-unsigned.hap`
    (`hdc install -r`). Do not ask the owner for a signing setup for emulator runs.
+5. **x86_64 emulator: install a HAP without the arm64-only Rive and PAG libraries.** The Windows (and Intel) emulator
+   is x86_64, but the example `entry` depends on `@ohos/rive` and `@tencent/libpag`, which ship native libraries for
+   arm64-v8a only (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so `hdc install` refuses the HAP as built
+   ("install parse native so failed", error 9568347). The test path lives in CYLTabBarController's HarmonyOS
+   CYLAnimatedItem (owner's direction, 2026-11-22; CYLTabBarController 882ece17, `cylanimateditem/README.md`, "x86_64
+   emulator"), so every example and library that depends on the item tests the same way:
+   - **Build the emulator target:** `entry/build-profile.json5` has an `emulator` target that leaves out every
+     arm64-v8a library (and an `emulatorTest` build mode for `ohosTest`). `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh
+     emulator` builds `entry/build/default/outputs/emulator/entry-emulator-unsigned.hap`.
+   - **Install:** `python3 CrossPlatform/harmonyos-cylplaceholder/cylanimateditem/tools/cyl_hap_x86_64.py install <app.hap>`
+     asks the device for its ABIs, leaves out the libraries it cannot load and runs `hdc install -r`
+     (`CYL_HAP_STRIP_LIBS=1` / `0` forces it); `scripts/emulator-check.sh` uses the emulator HAP and this tool.
+   - **At run time:** `CYLAnimatedItemEngines` reads `deviceInfo.abiList`; without arm64-v8a, `canPlay` is false for
+     Rive and PAG, so the item shows its still image (`isSupportedOnDevice`, `unsupportedReason`). Code that creates
+     Rive or PAG views outside `animationBuilder` checks `CYLAnimatedItemEngines.isSupportedOnDevice(type)` first.
+   - **What x86_64 verifies:** Lottie, SVGA and GIF playback, still images and placeholders, Rive / PAG items on their
+     still images, `showsImageWhenAnimationEnds` with Lottie or SVGA, layout, dark mode, accessibility, localization.
+     Rive and PAG playback (and their end) need an arm64 device or arm64 emulator with the `default` target; say in
+     every report which part ran where. Never commit a stripped HAP; phones and releases use the `default` target.
 
 ## Running scripts: bash first
 

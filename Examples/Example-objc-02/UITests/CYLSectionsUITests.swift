@@ -1,6 +1,6 @@
 import XCTest
 
-/// MJRefresh PR #1444: a plain table with floating section headers (`-sections`, 8 s loads).
+/// MJRefresh PR #1444: a plain table with floating section headers (`-sections`, 20 s loads).
 final class CYLSectionsUITests: XCTestCase {
     override func tearDown() {
         XCUIDevice.shared.orientation = .portrait
@@ -25,7 +25,7 @@ final class CYLSectionsUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Header refreshing"].exists, "the drag happens during the refresh")
         saveScreenshot("1444-1-pinned-while-refreshing")
         assertPinnedSectionHeader(app: app, restTop: restTop, step: "while refreshing")
-        XCTAssertTrue(app.navigationBars["Header completed 1"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.navigationBars["Header completed 1"].waitForExistence(timeout: 30))
         sleep(1)
         assertPinnedSectionHeader(app: app, restTop: restTop, step: "after the refresh")
     }
@@ -55,7 +55,7 @@ final class CYLSectionsUITests: XCTestCase {
         upper.press(forDuration: 0.1, thenDragTo: lower)
         XCTAssertTrue(app.navigationBars["Header refreshing"].exists, "the rotation and the drag happen during the refresh")
         saveScreenshot("1444-2-landscape-refreshing")
-        XCTAssertTrue(app.navigationBars["Header completed 1"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.navigationBars["Header completed 1"].waitForExistence(timeout: 30))
         sleep(2)
         saveScreenshot("1444-3-landscape-after-refresh")
         XCTAssertEqual(section.frame.minY, landscapeY, accuracy: 2, "landscape: the content rests where it does without a refresh")

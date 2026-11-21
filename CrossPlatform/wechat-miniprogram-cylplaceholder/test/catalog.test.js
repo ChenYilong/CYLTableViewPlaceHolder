@@ -139,3 +139,17 @@ test('bundled animations play once by default, spinners loop (iOS e8e9eb6)', () 
     assert.strictEqual(catalog.animationLoopsByDefault(spinner), true, spinner)
   }
 })
+
+test('the Success icon shows its still image when its animation ends (CYLTabBarController b13b88f1)', () => {
+  const [icon] = C.componentsForScenario('Success', 'en')
+  assert.strictEqual(icon.image, 'check_circle')
+  assert.strictEqual(icon.showsImageWhenAnimationEnds, true)
+  const others = CYLPlaceholderScenario.allScenarios
+    ? CYLPlaceholderScenario.allScenarios.filter((s) => s !== 'Success')
+    : Object.values(CYLPlaceholderScenario).filter((s) => typeof s === 'string' && s !== 'Success')
+  for (const s of others) {
+    for (const c of C.componentsForScenario(s, 'en')) assert.ok(!c.showsImageWhenAnimationEnds, s)
+  }
+  const wxml = fs.readFileSync(path.join(SRC, 'index.wxml'), 'utf8')
+  assert.match(wxml, /shows-image-when-animation-ends="\{\{!!item\.showsImageWhenAnimationEnds\}\}"/)
+})

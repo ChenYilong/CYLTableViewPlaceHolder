@@ -61,6 +61,10 @@ class FakePlayableView extends CYLPlaceholderPlayableContentView {
     this.didFail('Fake', null);
   }
 
+  finishPlaying(): void {
+    this.didEnd();
+  }
+
   cyl_playAnimationView(): void {
     if (!this.cyl_isAnimationViewReady) {
       this.pendingCommand = 1;
@@ -406,6 +410,39 @@ export default function placeholderAnimationTest() {
       expect(failing.animationFailed).assertTrue();
       expect(failing.animationVisible).assertFalse();
       failing.cyl_releaseAnimation();
+
+      // showsImageWhenAnimationEnds (CYLTabBarController b13b88f1): the end of a play-once pass reaches the item and
+      // the image (tinted again) replaces the animation; a replay goes through the item, which shows the animation.
+      const success = CYLPlaceholderScenarioCatalog.componentsForScenario(CYLPlaceholderScenario.Success)
+        .filter((c: CYLPlaceholderComponent) => c.kind === CYLPlaceholderComponentKind.Item)[0];
+      expect(success.image).assertEqual('check_circle');
+      expect(success.showsImageWhenAnimationEnds).assertTrue();
+      expect(CYLPlaceholderScenarioCatalog.componentsForScenario(CYLPlaceholderScenario.NoContent)
+        .some((c: CYLPlaceholderComponent) => c.showsImageWhenAnimationEnds)).assertFalse();
+      const once = CYLPlaceholderViewModel.initWithImageText('check_circle', 'Done');
+      once.showsImageWhenAnimationEnds = true;
+      once.animationFileName = 'c.fakefactory';
+      let ends = 0;
+      let replays = 0;
+      once.cyl_animationEndHandler = () => {
+        ends++;
+      };
+      once.cyl_animationReplayHandler = () => {
+        replays++;
+      };
+      once.cyl_attachAnimation();
+      const onceView = (made as CYLPlaceholderAnimationViewModel | null)?.animationView as FakePlayableView;
+      onceView.finishLoading();
+      onceView.finishPlaying();
+      expect(ends).assertEqual(1);
+      expect(once.animationEndedShowsImage).assertTrue();
+      once.playPlaceholderAnimation();
+      expect(replays).assertEqual(1);
+      expect(once.animationEndedShowsImage).assertFalse();
+      once.animationRepeatCount = 0;
+      onceView.finishPlaying();
+      expect(ends).assertEqual(1);
+      once.cyl_releaseAnimation();
       CYLPlaceholderViewModel.registerAnimationFactory(null, 'fakefactory');
       CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier('FakeFactory');
     });
