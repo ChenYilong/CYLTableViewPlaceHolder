@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### TODO（0 / 100）：在微信开发者工具中截取小程序 Success 截图 / TODO (0/100): Take the mini program Success screenshot in WeChat DevTools
+
+| 中文 | English |
+| --- | --- |
+| 状态：进行中（2026-11-22 开始，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: in progress (started 2026-11-22, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“take the mini program Success screenshot in WeChat DevTools” | The user's original prompt (verbatim): "take the mini program Success screenshot in WeChat DevTools" |
+| 背景：下方“Show a static success icon after the animation ends”（80 / 100）在小程序中为 Success 开启了 `showsImageWhenAnimationEnds`（`cyl_scenario_catalog.js`、`index.wxml` 传给 `cyl-animated-item`），但只有单元测试，没有开发者工具截图（TODO −3）。小程序的 Success 播放 `CYLPlaceholderSuccess.json`（Lottie，最后一帧几乎为空），结束后应显示对勾 `check_circle`。工具：WeChat DevTools Skills（`wechatide`）；以前客户端授权超时时用经典 CLI 与 miniprogram-automator（`docs/WeChat-MiniProgram.md`）。 | Context: "Show a static success icon after the animation ends" (below, 80 / 100) turned on `showsImageWhenAnimationEnds` for the mini program's Success (`cyl_scenario_catalog.js`, passed to `cyl-animated-item` in `index.wxml`), with unit tests only and no DevTools screenshot (TODO −3). The mini program's Success plays `CYLPlaceholderSuccess.json` (Lottie, its last frame nearly empty) and should show the check mark `check_circle` when it ends. Tools: the WeChat DevTools Skills (`wechatide`); when the client authorization timed out before, the classic CLI and miniprogram-automator were used (`docs/WeChat-MiniProgram.md`). |
+| 评分标准：100 = 开发者工具模拟器中 Success 动画播放时与结束后的截图（结束后显示对勾），用 `scripts/screenshot_sheet.py` 拼成带页眉页脚的图，`check_screenshots.py` 通过，嵌入文档；60 = 至少一张结束后显示对勾的模拟器截图，按命名规则存入 `docs/assets` 并嵌入文档。 | Acceptance: 100 = DevTools simulator screenshots of Success while the animation plays and after it ends (the check mark showing), stitched by `scripts/screenshot_sheet.py` with header and footer, `check_screenshots.py` passing, embedded in the docs; 60 = at least one simulator screenshot after the end showing the check mark, named by the rules, stored in `docs/assets` and embedded. |
+
 ### 完成（70 / 100）：让鸿蒙的 Rive 引擎报告播放结束 / Done (70/100): Make the HarmonyOS Rive engine report the end
 
 | 中文 | English |
