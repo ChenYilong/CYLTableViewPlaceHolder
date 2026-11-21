@@ -409,4 +409,64 @@
     XCTAssertFalse(footer.hidden, @"hidden is never touched");
 }
 
+/// Playback controls of the examples (docs/Example-Animation-Playback.md): speed and repeat count survive the icon being
+/// rebuilt for another state, apply live, and Play all restarts the icon; the built-in GIF decoder changes speed live.
+- (void)testIconSpeedAndRepeatCountApplyLiveAndSurviveStateChanges {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+    window.hidden = NO;
+    CYLRefreshAnimationHeader *header = [CYLRefreshAnimationHeader headerWithRefreshingBlock:^{}];
+    // File paths: attributes without their own repeat count, so the icon view's count applies (a bundled file may name
+    // one through the component builder, and that one is kept).
+    [header setIconAnimationFilePath:[CYLPlaceholderView pathForBundledAnimation:@"CYLRefreshArrows.gif"]
+                                size:CGSizeMake(32, 32) forState:CYLRefreshStateIdle];
+    [header setIconAnimationFilePath:[CYLPlaceholderView pathForBundledAnimation:@"CYLRefreshRing.gif"]
+                                size:CGSizeMake(32, 32) forState:CYLRefreshStateRefreshing];
+    XCTAssertNil([header.iconView animationAttributesForState:CYLRefreshStateRefreshing][CYLPlaceholderItemAnimationRepeatCount]);
+    [window addSubview:header];
+    [self layOut:header];
+    CYLRefreshIconView *icon = header.iconView;
+    XCTAssertEqual(icon.animationSpeed, 1, @"the file's own speed by default");
+    XCTAssertEqual(icon.animationRepeatCount, 0, @"loops while the control acts by default");
+
+    icon.animationSpeed = 2;
+    CYLPlaceholderView *idleView = icon.placeholderView;
+    XCTAssertEqualObjects([idleView valueForKey:@"animationSpeed"], @2, @"applied to the icon shown now");
+    XCTAssertEqualWithAccuracy([[idleView valueForKeyPath:@"itemView.animationView.layer.speed"] doubleValue], 2, 0.001,
+                               @"the GIF layer runs at the new rate, without a restart");
+    icon.animationSpeed = 0;
+    icon.animationSpeed = NAN;
+    XCTAssertEqual(icon.animationSpeed, 2, @"invalid speeds are ignored");
+
+    icon.animationRepeatCount = 1;
+    header.state = CYLRefreshStateRefreshing;
+    CYLPlaceholderView *refreshingView = icon.placeholderView;
+    XCTAssertNotEqual(refreshingView, idleView, @"another file: the icon is rebuilt");
+    XCTAssertEqualObjects([refreshingView valueForKey:@"animationSpeed"], @2, @"the rebuilt icon keeps the speed");
+    XCTAssertEqual(refreshingView.animationRepeatCount, 1, @"loop off: plays once");
+    icon.animationRepeatCount = 0;
+    XCTAssertEqual(refreshingView.animationRepeatCount, 0, @"loop on, live, while playing");
+
+    [refreshingView stopPlaceholderAnimation];
+    [icon restartAnimation];
+    XCTAssertNotNil([[refreshingView valueForKeyPath:@"itemView.animationView"] layer].animationKeys,
+                    @"Play all starts the icon again");
+    XCTAssertEqual(refreshingView.animationRepeatCount, 0);
+    [header removeFromSuperview];
+}
+
+- (void)testBuiltInGIFDecoderSupportsPlaybackSpeed {
+    NSString *path = [CYLPlaceholderView pathForBundledAnimation:@"CYLRefreshRing.gif"];
+    XCTAssertNotNil(path);
+    NSError *error = nil;
+    CYLPlaceholderView *view = [[CYLPlaceholderView alloc] initWithItemAttributes:@{
+        CYLPlaceholderItemAnimationFilePath: path,
+        CYLPlaceholderItemAnimationSize: @[@40, @40],
+    } imageBundle:nil error:&error];
+    XCTAssertNotNil(view, @"%@", error);
+    XCTAssertTrue([view setPlaceholderAnimationSpeed:0.5]);
+    XCTAssertFalse([view setPlaceholderAnimationSpeed:0]);
+    XCTAssertFalse([view setPlaceholderAnimationSpeed:-1]);
+    XCTAssertEqualWithAccuracy([[view valueForKeyPath:@"itemView.animationView.layer.speed"] doubleValue], 0.5, 0.001);
+}
+
 @end

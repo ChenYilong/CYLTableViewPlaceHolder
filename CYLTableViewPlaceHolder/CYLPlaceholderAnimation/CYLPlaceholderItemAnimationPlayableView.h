@@ -64,6 +64,11 @@ NS_SWIFT_UI_ACTOR
  * [CN] `cyl_playAnimationView` 播放的次数：0 表示循环直到停止，1 表示播放一次。不支持时返回 NO。
  */
 - (BOOL)cyl_setAnimationViewRepeatCount:(NSInteger)repeatCount NS_SWIFT_NAME(setAnimationRepeatCount(_:));
+/*!
+ * [EN] Placeholder addition: the playback speed, a positive finite number, applied live (1 is the file's speed). NO when
+ *      unsupported. [CN] 播放速度，正的有限数，实时生效（1 为文件自身速度）。不支持时返回 NO。
+ */
+- (BOOL)cyl_setAnimationViewSpeed:(CGFloat)speed NS_SWIFT_NAME(setAnimationSpeed(_:));
 
 @property (nonatomic, readonly) BOOL cyl_isAnimationViewReady NS_SWIFT_NAME(isAnimationReady);
 /*!

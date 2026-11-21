@@ -45,6 +45,8 @@ static NSURL *CYLPlaceholderItemAnimationFileURLFromURL(NSURL *URL) {
 @implementation CYLPlaceholderItemPlayableViewPlayer {
     /// [EN] Whether the dark colors are applied now. [CN] 当前是否已应用深色颜色。
     BOOL _darkColorsApplied;
+    /// [EN] The speed last applied; 0 until set (reads as 1). [CN] 最近应用的速度；未设置时为 0（读取为 1）。
+    CGFloat _animationSpeed;
 }
 
 - (id<CYLPlaceholderItemAnimationPlayableView>)playableView {
@@ -62,6 +64,26 @@ static NSURL *CYLPlaceholderItemAnimationFileURLFromURL(NSURL *URL) {
 
 - (void)stop {
     [self.playableView cyl_stopAnimationView];
+}
+
+/// [EN] Speed only when the view supports it, so CYLPlaceholderAnimationView reports NO otherwise.
+/// [CN] 仅当视图支持时才响应速度设置，否则 CYLPlaceholderAnimationView 返回 NO。
+- (BOOL)respondsToSelector:(SEL)selector {
+    if (selector == @selector(setAnimationSpeed:)) {
+        return [self.playableView respondsToSelector:@selector(cyl_setAnimationViewSpeed:)];
+    }
+    return [super respondsToSelector:selector];
+}
+
+- (CGFloat)animationSpeed {
+    return _animationSpeed > 0 ? _animationSpeed : 1;
+}
+
+- (void)setAnimationSpeed:(CGFloat)animationSpeed {
+    id<CYLPlaceholderItemAnimationPlayableView> view = self.playableView;
+    if ([view respondsToSelector:@selector(cyl_setAnimationViewSpeed:)] && [view cyl_setAnimationViewSpeed:animationSpeed]) {
+        _animationSpeed = animationSpeed;
+    }
 }
 
 - (BOOL)setAnimationRepeatCount:(NSInteger)repeatCount {

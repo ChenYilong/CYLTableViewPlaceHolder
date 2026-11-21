@@ -272,6 +272,10 @@ enum CYLScenarioL10n: String, CaseIterable {
     case statusFollowNetwork = "CYLScenarioStatusFollowNetwork"
     case statusFollowingNetwork = "CYLScenarioStatusFollowingNetwork"
     case formatNetworkStatus = "CYLScenarioFormatNetworkStatus"
+    case playbackPlayAll = "CYLScenarioPlaybackPlayAll"
+    case playbackSpeed = "CYLScenarioPlaybackSpeed"
+    case playbackLoop = "CYLScenarioPlaybackLoop"
+    case formatPlaybackSpeed = "CYLScenarioFormatPlaybackSpeed"
 }
 
 private enum CYLScenarioLocalizationBundle {

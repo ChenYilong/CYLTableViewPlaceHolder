@@ -235,3 +235,10 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+/* Animation playback controls (docs/Example-Animation-Playback.md). */
+"CYLScenarioPlaybackPlayAll" = "모두 재생";
+"CYLScenarioPlaybackSpeed" = "속도";
+"CYLScenarioPlaybackLoop" = "반복";
+/* A playback speed, such as "1.5x". */
+"CYLScenarioFormatPlaybackSpeed" = "%@x";

@@ -81,6 +81,25 @@ NS_ASSUME_NONNULL_BEGIN
  *      seek. NO: it plays instead. [CN] YES（默认）：空闲状态下拖动时，可定位的动画跟随下拉百分比；NO：改为播放。
  */
 @property (nonatomic) BOOL scrubsWhilePulling;
+/*!
+ * [EN] The playback speed of the icon, a positive finite number; 1 (the default) is the file's own speed. Applied live to
+ *      the playing icon and to every icon built later for another state. Engines without speed control ignore it.
+ * [CN] 图标的播放速度，正的有限数；1（默认）为文件自身速度。实时应用于正在播放的图标，以及之后为其他状态构建的图标。不支持调速的引擎忽略它。
+ */
+@property (nonatomic) CGFloat animationSpeed;
+/*!
+ * [EN] How many times the icon plays while the control acts (pulling, refreshing): 0 (the default) loops, N plays N times
+ *      and stops on its last frame. An icon whose attributes name `CYLPlaceholderItemAnimationRepeatCount` keeps it.
+ *      Applied live. [CN] 控件工作期间（拖动、刷新中）图标的播放次数：0（默认）循环，N 播放 N 次后停在最后一帧。属性中指定了
+ *      `CYLPlaceholderItemAnimationRepeatCount` 的图标保持该设置。实时应用。
+ */
+@property (nonatomic) NSInteger animationRepeatCount;
+/*!
+ * [EN] Plays the icon again from progress 0 with the current speed and repeat count, whatever the state; the next state
+ *      change applies the playback policy again. [CN] 以当前速度与播放次数从进度 0 重新播放图标，不论当前状态；下一次状态变化时
+ *      重新应用播放策略。
+ */
+- (void)restartAnimation;
 
 /*!
  * [EN] Applies the playback policy for the control's state; the control calls it. [CN] 按控件状态应用播放策略；由控件调用。

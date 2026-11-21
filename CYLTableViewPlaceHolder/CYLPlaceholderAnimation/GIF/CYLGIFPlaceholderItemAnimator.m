@@ -138,6 +138,18 @@ static const uint64_t CYLGIFPlaceholderMaximumPixelBytes = 64 * 1024 * 1024;
     return YES;
 }
 
+- (BOOL)cyl_setAnimationViewSpeed:(CGFloat)speed {
+    if (!isfinite(speed) || speed <= 0) return NO;
+    // The layer's own speed changes the keyframe animation's rate live, from the current frame on; a replay keeps it.
+    CALayer *layer = self.layer;
+    CFTimeInterval now = CACurrentMediaTime();
+    CFTimeInterval local = [layer convertTime:now fromLayer:nil];
+    layer.speed = (float)speed;
+    layer.timeOffset = local;
+    layer.beginTime = now;
+    return YES;
+}
+
 - (void)cyl_showAnimationViewLastFrame {
     [self.layer removeAnimationForKey:CYLGIFPlaceholderPlayAnimationKey];
     self.image = self.frames.lastObject;
