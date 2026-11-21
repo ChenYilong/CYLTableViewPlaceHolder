@@ -1002,3 +1002,12 @@
 ![Android merged example: network status bar page](assets/android-merged-status.png)
 
 ![Android merged example: flows](assets/android-merged-flows-1.png)
+
+### TODO：为 Android 库模块配置 Maven 发布坐标 / TODO: Maven publication coordinates for the Android library modules
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port-followup`，PR #31），评分 0 / 100。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port-followup`, PR #31), score 0 / 100. |
+| 来源：CYLSearchViewController 的会话（分支 `feat/harmonyos-parity`）告知：其 Android 库已有 Maven 发布（`com.cyl:cylsearch:0.1.0`），但 POM 中本仓库的 `:placeholder`（`android/placeholder`）与 `:placeholder-refresh`（`android/merged/library`）显示为 `CYLSearchAndroid:placeholder:unspecified`，因为这两个模块没有 `maven-publish` 坐标。 | Source: the CYLSearchViewController session (branch `feat/harmonyos-parity`) reported that its Android library now has a Maven publication (`com.cyl:cylsearch:0.1.0`), but its POM lists this repository's `:placeholder` (`android/placeholder`) and `:placeholder-refresh` (`android/merged/library`) as `CYLSearchAndroid:placeholder:unspecified`, because neither module has `maven-publish` coordinates. |
+| 需要 owner 决定：groupId、artifactId 与版本号（公开约定，例如与上游 `io.github.chenyilong:cyltabbarcontroller-animateditem` 同一个 groupId）。之后：两个模块加 `maven-publish`（含 `LICENSE`，见 "License in every published package"），`publishToMavenLocal` 验证 POM，再把坐标告诉 CYLSearchViewController 以便映射。 | Needs the owner's decision: groupId, artifactIds and version (a public contract; for example the same groupId as upstream `io.github.chenyilong:cyltabbarcontroller-animateditem`). Then: add `maven-publish` to both modules (with the `LICENSE`, see "License in every published package"), check the POM with `publishToMavenLocal`, and send the coordinates to CYLSearchViewController so it can map them. |
+| 评分标准：100 = 两个模块以 owner 确定的坐标发布（至少 `publishToMavenLocal` 生成正确的 POM 与 LICENSE），CYLSearchViewController 的 POM 引用这些坐标；60 = 坐标已确定并在两个模块中配置，`publishToMavenLocal` 通过。 | Acceptance: 100 = both modules publish under the owner's coordinates (at least `publishToMavenLocal` produces a correct POM and LICENSE) and CYLSearchViewController's POM references them; 60 = the coordinates are decided and configured in both modules, and `publishToMavenLocal` passes. |
