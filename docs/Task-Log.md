@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO（0 / 100）：让鸿蒙的 Rive 引擎报告播放结束 / TODO (0/100): Make the HarmonyOS Rive engine report the end
+
+| 中文 | English |
+| --- | --- |
+| 状态：进行中（2026-11-22 开始，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: in progress (started 2026-11-22, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“make the HarmonyOS Rive engine report the end” | The user's original prompt (verbatim): "make the HarmonyOS Rive engine report the end" |
+| 背景：上一个任务（下方“Show a static success icon after the animation ends”，80 / 100）让鸿蒙的核心播放器报告只播放一次的动画结束（`CYLPlaceholderPlayableContentView.didEnd()`），示例的 Lottie 引擎已接入，但 Success 场景在鸿蒙上先播放 `CYLPlaceholderSuccess.riv`，而示例的 Rive 引擎（`entry/src/main/ets/engines/CYLRivePlaceholderItemAnimator.ets`，`CYLRiveAnimationContentView`）从不调用 `didEnd()`，所以 `showsImageWhenAnimationEnds` 在 Rive 上不起作用（该任务的 TODO −8）。 | Context: the previous task ("Show a static success icon after the animation ends", below, 80 / 100) made the HarmonyOS core player report the end of a play-once animation (`CYLPlaceholderPlayableContentView.didEnd()`) and wired the example's Lottie engine, but on HarmonyOS the Success scenario plays `CYLPlaceholderSuccess.riv` first, and the example's Rive engine (`entry/src/main/ets/engines/CYLRivePlaceholderItemAnimator.ets`, `CYLRiveAnimationContentView`) never calls `didEnd()`, so `showsImageWhenAnimationEnds` does nothing for Rive (that task's TODO −8). |
+| 计划：播放一次（重复次数 1）时，在本次播放的最后一次输入变化之后，等 `RiveAnimationView.isPlaying()` 变为 false（命名动画 ONESHOT 停止，或状态机静止）即调用 `didEnd()`；停止、显示最后一帧、重新播放、卸载时取消；循环（重复次数 0）不报告。判断逻辑放在不依赖 @ohos/rive 的小类中，以便单元测试。 | Plan: for a play-once (repeat count 1) play, once the pass's last input change is made, wait until `RiveAnimationView.isPlaying()` turns false (a ONESHOT named animation stopped, or the state machine settled), then call `didEnd()`; stopping, showing the last frame, playing again and detaching cancel it; loops (repeat count 0) never end. The decision logic lives in a small class without @ohos/rive, so it can be unit tested. |
+| 评分标准：100 = Rive 引擎在只播放一次的 Rive 动画结束时报告结束，Success 在 arm64 设备上播放完 `.riv` 后显示对勾（截图证明），单元测试覆盖，构建与测试通过；60 = 实现完成并有单元测试覆盖结束、取消与循环，构建与已有测试通过，arm64 验证记为 TODO。 | Acceptance: 100 = the Rive engine reports the end when a play-once Rive animation ends, Success shows the check mark after the `.riv` plays on an arm64 device (screenshot proof), unit tests cover it, builds and tests pass; 60 = implemented, with unit tests covering the end, the cancel paths and loops, builds and existing tests pass, the arm64 check recorded as a TODO. |
+
 ### 完成（80 / 100）：动画结束后显示静态的成功图标 / Done (80/100): Show a static success icon after the animation ends
 
 | 中文 | English |
