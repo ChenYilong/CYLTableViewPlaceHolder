@@ -1,16 +1,25 @@
 PODS:
-  - CYLTableViewPlaceHolder (1.1.0)
+  - CYLTableViewPlaceHolder (1.1.0):
+    - CYLTableViewPlaceHolder/Core (= 1.1.0)
+  - CYLTableViewPlaceHolder/Core (1.1.0)
+  - MJRefresh (3.7.9)
 
 DEPENDENCIES:
   - CYLTableViewPlaceHolder (from `../..`)
+  - MJRefresh (= 3.7.9)
+
+SPEC REPOS:
+  trunk:
+    - MJRefresh
 
 EXTERNAL SOURCES:
   CYLTableViewPlaceHolder:
     :path: "../.."
 
 SPEC CHECKSUMS:
-  CYLTableViewPlaceHolder: 9010940bbdf7596f6f79c5189027486600db7678
+  CYLTableViewPlaceHolder: 2cf43940d6a518b80fd4941264ddb17cd3a400d8
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
 
-PODFILE CHECKSUM: 8af6ec78337fb8bc8eefb0436482551ec23d0d2b
+PODFILE CHECKSUM: 7ecb09a4a0d31e27fa04e6633282b8929e197986
 
 COCOAPODS: 1.17.0

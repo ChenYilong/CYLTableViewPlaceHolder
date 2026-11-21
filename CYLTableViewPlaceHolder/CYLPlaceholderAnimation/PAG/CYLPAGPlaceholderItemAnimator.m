@@ -26,7 +26,11 @@
 @interface CYLPAGPlaceholderItemAnimationPlayer : CYLPlaceholderItemAnimationBasePlayer <CYLPlaceholderItemAnimationPlayer>
 @end
 
-@implementation CYLPAGPlaceholderItemAnimationPlayer
+@implementation CYLPAGPlaceholderItemAnimationPlayer {
+    /// [EN] The file's own duration in microseconds, read before the first speed change. [CN] 文件自身时长（微秒），首次调速前读取。
+    int64_t _originalDuration;
+    CGFloat _animationSpeed;
+}
 
 - (PAGView *)pagView {
     return (PAGView *)self.animationView;
@@ -62,6 +66,25 @@
     // [EN] libpag: 0 repeats forever. [CN] libpag：0 表示无限循环。
     [pagView setRepeatCount:(int)repeatCount];
     return YES;
+}
+
+- (CGFloat)animationSpeed {
+    return _animationSpeed > 0 ? _animationSpeed : 1;
+}
+
+/// [EN] libpag's view has no rate: the file's duration is stretched instead (progress stays where it is, so the change is
+///      live). [CN] libpag 的视图没有播放速率：改为拉伸文件时长（进度保持不变，因此实时生效）。
+- (void)setAnimationSpeed:(CGFloat)animationSpeed {
+    if (!isfinite(animationSpeed) || animationSpeed <= 0) return;
+    PAGComposition *composition = [self.pagView getComposition];
+    if (![composition isKindOfClass:PAGFile.class]) return;
+    PAGFile *file = (PAGFile *)composition;
+    if (_originalDuration <= 0) _originalDuration = [file duration];
+    if (_originalDuration <= 0) return;
+    double progress = [self.pagView getProgress];
+    [file setDuration:(int64_t)llround((double)_originalDuration / animationSpeed)];
+    [self.pagView setProgress:progress];
+    _animationSpeed = animationSpeed;
 }
 
 - (CGFloat)progress {

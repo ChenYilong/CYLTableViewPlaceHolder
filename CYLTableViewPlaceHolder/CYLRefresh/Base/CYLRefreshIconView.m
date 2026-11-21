@@ -29,6 +29,7 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
         _stateAttributes = [NSMutableDictionary dictionary];
         _state = CYLRefreshStateIdle;
         _scrubsWhilePulling = YES;
+        _animationSpeed = 1;
         self.backgroundColor = UIColor.clearColor;
         self.userInteractionEnabled = NO;
         // [EN] Decorative: the state label says what is happening. [CN] 装饰性内容：状态文字已说明当前状态。
@@ -160,6 +161,30 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:view];
     self.placeholderView = view;
+    // [EN] A new icon for another state keeps the speed. [CN] 为其他状态新建的图标沿用速度。
+    if (self.animationSpeed != 1) [view setPlaceholderAnimationSpeed:self.animationSpeed];
+}
+
+#pragma mark - Speed and repeat count
+
+- (void)setAnimationSpeed:(CGFloat)animationSpeed {
+    if (!isfinite(animationSpeed) || animationSpeed <= 0) return;
+    _animationSpeed = animationSpeed;
+    [self.placeholderView setPlaceholderAnimationSpeed:animationSpeed];
+}
+
+- (void)setAnimationRepeatCount:(NSInteger)animationRepeatCount {
+    if (animationRepeatCount < 0 || _animationRepeatCount == animationRepeatCount) return;
+    _animationRepeatCount = animationRepeatCount;
+    if (self.playing && !self.shownAttributes[CYLPlaceholderItemAnimationRepeatCount]) {
+        self.placeholderView.animationRepeatCount = animationRepeatCount;
+    }
+}
+
+- (void)restartAnimation {
+    if (!self.placeholderView) return;
+    self.playing = NO;
+    [self cyl_playLooping];
 }
 
 #pragma mark - Playback policy
@@ -206,7 +231,9 @@ static const CGFloat CYLRefreshIconDefaultSide = 30;
     if (self.playing) return;
     // [EN] An animation that names its own repeat count keeps it; otherwise it loops while the control acts.
     // [CN] 属性中指定了播放次数的动画保持该设置；否则在控件工作期间循环播放。
-    if (!self.shownAttributes[CYLPlaceholderItemAnimationRepeatCount]) self.placeholderView.animationRepeatCount = 0;
+    if (!self.shownAttributes[CYLPlaceholderItemAnimationRepeatCount]) {
+        self.placeholderView.animationRepeatCount = self.animationRepeatCount;
+    }
     [self.placeholderView playPlaceholderAnimation];
     self.playing = YES;
 }

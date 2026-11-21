@@ -8,6 +8,9 @@
 #
 # With --write, also rewrites the `:commit => '<sha>'` of the `pod 'CYLTabBarController'` line in each given Podfile;
 # it fails when a Podfile has no such line. CYL_TABBARCONTROLLER_URL overrides the repository (default: GitHub).
+# Since 2026-11-17 CYLTabBarController's CYLUtils depends on its sibling pod CYLAnimatedItem (CYLAnimatedItem.podspec in
+# the same repository, not on the trunk yet), so when that commit has the podspec, --write also keeps a
+# `pod 'CYLAnimatedItem', :git => …, :commit => '<sha>'` line next to it, adding the line when it is missing.
 set -euo pipefail
 URL="${CYL_TABBARCONTROLLER_URL:-https://github.com/ChenYilong/CYLTabBarController.git}"
 WRITE=()
@@ -33,5 +36,17 @@ for podfile in "${WRITE[@]+"${WRITE[@]}"}"; do
     { echo "error: $podfile has no pod 'CYLTabBarController' ... :commit => '<sha>' line" >&2; exit 1; }
   sed -E -i.bak "/pod +'CYLTabBarController'/ s/(:commit *=> *')[0-9a-f]{40}(')/\1$SHA\2/" "$podfile"
   rm -f "$podfile.bak"
+  if git -C "$WORK/repo" cat-file -e "$SHA:CYLAnimatedItem.podspec" 2>/dev/null; then
+    if grep -Eq "pod +'CYLAnimatedItem'.*:commit *=> *'[0-9a-f]{40}'" "$podfile"; then
+      sed -E -i.bak "/pod +'CYLAnimatedItem'/ s/(:commit *=> *')[0-9a-f]{40}(')/\1$SHA\2/" "$podfile"
+    else
+      # The same indentation as the CYLTabBarController line, right after it.
+      sed -E -i.bak "/pod +'CYLTabBarController'.*:commit/ {
+p
+s/pod +'CYLTabBarController'/pod 'CYLAnimatedItem'/
+}" "$podfile"
+    fi
+    rm -f "$podfile.bak"
+  fi
   echo "updated $podfile"
 done

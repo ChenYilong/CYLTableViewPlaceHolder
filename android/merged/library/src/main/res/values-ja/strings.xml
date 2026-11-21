@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CYLRefreshTrailerIdleText -->
+    <string name="cyl_refresh_trailer_idle">スワイプして詳細を表示</string>
+    <!-- CYLRefreshTrailerPullingText -->
+    <string name="cyl_refresh_trailer_pulling">離すと詳細を表示</string>
+</resources>

@@ -333,6 +333,21 @@ open class CYLRefreshGifHeader(context: Context) : CYLRefreshStateHeader(context
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**
@@ -471,6 +486,21 @@ open class CYLRefreshAutoGifFooter(context: Context) : CYLRefreshAutoStateFooter
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**
@@ -657,6 +687,21 @@ open class CYLRefreshBackGifFooter(context: Context) : CYLRefreshBackStateFooter
      * The frames of [state], 0.1 seconds each (`setImages:forState:`).
      */
     fun setImages(images: List<Drawable>, state: CYLRefreshState) = setImages(images, images.size * 0.1, state)
+
+    /**
+     * The animation file of [state], [width] by [height] dp, played by the player registered for its extension (GIF
+     * built in; Lottie, PAG and Rive with their modules) (`setIconAnimationFilePath:size:forState:`).
+     */
+    fun setIconAnimationFilePath(filePath: String, width: Float, height: Float, state: CYLRefreshState) =
+        setIconAnimationAttributes(CYLRefreshIconView.attributesForAnimationFilePath(filePath, width, height), state)
+
+    /**
+     * The icon of [state] as attributes (`setIconAnimationAttributes:forState:`).
+     */
+    fun setIconAnimationAttributes(attributes: Map<String, Any>?, state: CYLRefreshState) {
+        cyl_setIconAnimationAttributes(attributes, state)
+        cyl_updateIconViewVisible(true, listOfNotNull<View>(classics.arrow, classics.progress))
+    }
 }
 
 /**

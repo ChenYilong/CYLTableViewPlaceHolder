@@ -413,7 +413,8 @@ typedef void (^CYLPlaceholderTapHandler)(CYLPlaceholderView *placeholderView);
  */
 - (BOOL)setPlaceholderAnimationProgress:(CGFloat)progress;
 /*!
- * Sets a positive finite playback speed when supported. Returns NO otherwise.
+ * Sets a positive finite playback speed when supported (the built-in GIF decoder and every engine with speed control),
+ * applied live without restarting. Returns NO otherwise.
  */
 - (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed;
 /*!

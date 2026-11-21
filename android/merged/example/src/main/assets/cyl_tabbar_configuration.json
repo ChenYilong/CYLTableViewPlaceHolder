@@ -15,6 +15,13 @@
       "CYLTabBarItemSelectedImage": "system:tray.fill"
     },
     {
+      "CYLTabBarItemIdentifier": "animations",
+      "CYLTabBarItemTitle": "tab.animations",
+      "CYLTabBarItemAccessibilityLabel": "tab.animations",
+      "CYLTabBarItemImage": "system:sparkles",
+      "CYLTabBarItemSelectedImage": "system:sparkles"
+    },
+    {
       "CYLTabBarItemIdentifier": "svpulltorefresh",
       "CYLTabBarItemTitle": "tab.svpulltorefresh",
       "CYLTabBarItemAccessibilityLabel": "tab.svpulltorefresh",

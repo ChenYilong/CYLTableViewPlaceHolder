@@ -235,3 +235,10 @@
 "CYLScenarioSmartGameHitBlock" = "GameHitBlock";
 "CYLScenarioSmartGameBattleCity" = "GameBattleCity";
 "CYLScenarioSmartFly" = "Fly";
+
+/* Animation playback controls (docs/Example-Animation-Playback.md). */
+"CYLScenarioPlaybackPlayAll" = "Play all";
+"CYLScenarioPlaybackSpeed" = "Speed";
+"CYLScenarioPlaybackLoop" = "Loop";
+/* A playback speed, such as "1.5x". */
+"CYLScenarioFormatPlaybackSpeed" = "%@x";

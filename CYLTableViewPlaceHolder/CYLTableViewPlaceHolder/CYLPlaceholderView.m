@@ -1859,6 +1859,8 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 }
 
 - (void)playPlaceholderAnimation {
+    // A replay starts from progress 0 even while playing: the GIF path removes and adds its animation again, the
+    // engines' -play starts from the beginning.
     self.animationStopped = NO;
     self.animationShowsLastFrame = NO;
     self.animationSeekProgress = nil;
@@ -1890,8 +1892,20 @@ CYL_PLACEHOLDER_APPEARANCE_SETTER(setDefaultSelectionIndicatorTintColor, UIColor
 }
 
 - (BOOL)setPlaceholderAnimationSpeed:(CGFloat)speed {
-    if (!NSThread.isMainThread || !isfinite(speed) || speed <= 0 ||
-        ![self.backendView respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
+    if (!NSThread.isMainThread || !isfinite(speed) || speed <= 0) return NO;
+    if (!self.backendView && self.gifFrames.count > 1 && self.itemView.animationView) {
+        // The built-in GIF decoder plays a keyframe animation on the image view's layer: the layer's own speed changes
+        // the rate live, keeping the current frame (the layer time continues from where it is).
+        CALayer *layer = self.itemView.animationView.layer;
+        CFTimeInterval now = CACurrentMediaTime();
+        CFTimeInterval local = [layer convertTime:now fromLayer:nil];
+        layer.speed = (float)speed;
+        layer.timeOffset = local;
+        layer.beginTime = now;
+        self.animationSpeed = @(speed);
+        return YES;
+    }
+    if (![self.backendView respondsToSelector:@selector(setAnimationSpeed:)]) return NO;
     if (![self.backendView setAnimationSpeed:speed]) return NO;
     self.animationSpeed = @(speed);
     return YES;

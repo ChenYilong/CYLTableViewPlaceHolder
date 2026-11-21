@@ -1,13 +1,18 @@
 PODS:
-  - CYLTableViewPlaceHolder (1.1.0)
+  - CYLTableViewPlaceHolder (1.1.0):
+    - CYLTableViewPlaceHolder/Core (= 1.1.0)
+  - CYLTableViewPlaceHolder/Core (1.1.0)
+  - MJRefresh (3.7.9)
   - SwiftUIIntrospect (26.0.0)
 
 DEPENDENCIES:
   - CYLTableViewPlaceHolder (from `../..`)
+  - MJRefresh (= 3.7.9)
   - SwiftUIIntrospect (= 26.0.0)
 
 SPEC REPOS:
   trunk:
+    - MJRefresh
     - SwiftUIIntrospect
 
 EXTERNAL SOURCES:
@@ -15,9 +20,10 @@ EXTERNAL SOURCES:
     :path: "../.."
 
 SPEC CHECKSUMS:
-  CYLTableViewPlaceHolder: 9010940bbdf7596f6f79c5189027486600db7678
+  CYLTableViewPlaceHolder: 2cf43940d6a518b80fd4941264ddb17cd3a400d8
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   SwiftUIIntrospect: 74b21afe4589aa3979192844ac1cbba381712e61
 
-PODFILE CHECKSUM: c6dc31301d090a9d9ad36adba6a76e6c9fef9b75
+PODFILE CHECKSUM: 7eb66e4e69270d3497f71957fa804ea88e8b35b5
 
 COCOAPODS: 1.17.0

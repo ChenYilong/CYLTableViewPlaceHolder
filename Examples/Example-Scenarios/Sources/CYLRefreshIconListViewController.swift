@@ -289,7 +289,8 @@ enum CYLRefreshIconConfiguration {
     }
 }
 
-/// A list with a CYLRefresh header and footer whose icons the row set up; "Refresh" starts the header by code.
+/// A list with a CYLRefresh header and footer whose icons the row set up; "Refresh" starts the header by code. Rows with
+/// an animated icon show the playback controls as the table header (docs/Example-Animation-Playback.md).
 final class CYLRefreshIconDemoViewController: UITableViewController {
 
     private let setup: CYLRefreshIconSetup
@@ -339,6 +340,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
         }
         tableView.cyl_header = header
         tableView.cyl_footer = footer
+        addPlaybackControls(to: self)
     }
 
     @objc private func beginRefreshing() {

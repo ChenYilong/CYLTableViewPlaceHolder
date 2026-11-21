@@ -3,4 +3,5 @@
 <resources>
     <item name="cyl_refresh_bridge" type="id" />
     <item name="cyl_refresh_icon_view" type="id" />
+    <item name="cyl_refresh_trailer" type="id" />
 </resources>

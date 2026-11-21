@@ -28,6 +28,7 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
      */
     private var loop: RiveLoop = .autoLoop
     private var deactivateTask: Task<Void, Never>?
+    private var riveView: CYLPlaceholderRiveSpeedView?
 
     @objc var cyl_inputActive: Bool {
         guard let input = configuration.stateMachineInput else { return false }
@@ -78,7 +79,10 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
         isUserInteractionEnabled = false
         backgroundColor = .clear
         accessibilityElementsHidden = true
-        let riveView = viewModel.createRiveView()
+        // A RiveView that scales the time it advances by, for the playback speed (Rive has no rate of its own).
+        let riveView = CYLPlaceholderRiveSpeedView()
+        viewModel.setView(riveView)
+        self.riveView = riveView
         riveView.frame = bounds
         riveView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         riveView.isUserInteractionEnabled = false
@@ -143,6 +147,17 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
         return true
     }
 
+    /**
+     * [EN] The playback speed: every frame advances by its time multiplied by it, live. [CN] 播放速度：每一帧按其时间乘以速度推进，实时生效。
+     */
+    public func setAnimationSpeed(_ speed: CGFloat) -> Bool {
+        guard speed.isFinite, speed > 0, let riveView else {
+            return false
+        }
+        riveView.speed = Double(speed)
+        return true
+    }
+
     public func showAnimationLastFrame() {
         stopAnimation()
     }
@@ -158,6 +173,18 @@ public final class CYLPlaceholderRiveLegacyItemAnimationView: UIView, CYLPlaceho
             viewModel.setInput(input, value: false)
         }
         viewModel.pause()
+    }
+}
+
+/**
+ * [EN] A RiveView that advances by the frame time multiplied by `speed`. [CN] 按帧时间乘以 `speed` 推进的 RiveView。
+ */
+@available(iOS 14.0, *)
+final class CYLPlaceholderRiveSpeedView: RiveView {
+    var speed: Double = 1
+
+    override func advance(delta: Double) {
+        super.advance(delta: delta * speed)
     }
 }
 #endif

@@ -339,6 +339,8 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         tableView.accessibilityIdentifier = "refreshExample"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         run(method)
+        // example51–56 draw animated icons: Play all, speed and loop (docs/Example-Animation-Playback.md).
+        addPlaybackControls(to: self)
     }
 
     /// Runs an example by name (MJRefresh calls `performSelector:` with the method name).

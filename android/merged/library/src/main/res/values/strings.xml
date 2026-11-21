@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CYLRefreshTrailerIdleText -->
+    <string name="cyl_refresh_trailer_idle">Swipe to see details</string>
+    <!-- CYLRefreshTrailerPullingText -->
+    <string name="cyl_refresh_trailer_pulling">Release to see details</string>
+</resources>
