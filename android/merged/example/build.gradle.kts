@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 // The merged example (docs/Android-Port.md, step 3): one app, one tab per library, on CYLTabBarController's Android
 // tab bar (built from source, see settings.gradle.kts), with a raised plus button that has its own page.
 plugins {
@@ -22,10 +24,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/kotlin")
@@ -48,4 +46,11 @@ dependencies {
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
+}
+
+// [EN] Kotlin compiler options at the top level: kotlinOptions {} inside android {} is deprecated and fails on Gradle 10.
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
