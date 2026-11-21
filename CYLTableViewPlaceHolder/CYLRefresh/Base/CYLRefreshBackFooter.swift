@@ -35,6 +35,15 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     private var lastBottomDelta: CGFloat = 0
     private var pagingRestingOffset: CGFloat = 0
     private var pagingRefreshOffset: CGFloat = 0
+    // FIX: issue #1627 / #1507
+    // [EN] Moves the offset when loading starts and ends in a scroll view that pins its section headers. An offset written
+    //      inside a UIView animation animates the bounds, while the pinned header is placed once, at the final offset: it
+    //      showed above the top (up to the footer's height) and slid back while the bounds animated. Written frame by
+    //      frame, every frame lays out and pins the header again.
+    // [CN] 在固定 section header 的滚动视图中，加载开始和结束时移动 offset。在 UIView 动画内写 offset 会动画 bounds，而固定的
+    //      header 只按最终 offset 放置一次：它露出顶部之外（最多一个刷新尾高度），随 bounds 动画慢慢滑回。逐帧写入时，每一帧都重新布局并固定 header。
+    private let offsetDriver = CYLRefreshOffsetDriver()
+
     private var holdingNoMoreData = false
     // [EN] Second floor state. [CN] 二楼状态。
     private var secondaryArmed = false
@@ -142,6 +151,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
      */
     open override func willMove(toSuperview newSuperview: UIView?) {
         if newSuperview == nil {
+            offsetDriver.stop()
             // Give back the held-open bottom inset while the scroll view is still known.
             endNoMoreDataHold()
         }
@@ -296,6 +306,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
                     // [EN] scrollsContentAfterLoading NO: the old end of the content stays at the bottom. [CN] 为 NO 时原来的内容末尾停在底部。
                     if !scrollsContentAfterLoading && scrollView.cyl_offsetY > pagingRestingOffset {
                         scrollView.cyl_offsetY = pagingRestingOffset
+                        offsetDriver.retarget(to: pagingRestingOffset)
                     }
                 }
             } else if newValue == .refreshing {
@@ -303,6 +314,23 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
                 lastRefreshCount = scrollView?.cyl_totalDataCount() ?? 0
                 pagingRestingOffset = happenOffsetY
 
+                if let scrollView = scrollView, pinsSectionHeaders(of: scrollView), fastAnimationDuration > 0 {
+                    // FIX: issue #1627 / #1507: see offsetDriver.
+                    let from = scrollView.cyl_offsetY
+                    var bottom = cyl_h + scrollViewOriginalInset.bottom
+                    let deltaH = heightForContentBreakView
+                    if deltaH < 0 {
+                        bottom -= deltaH
+                    }
+                    lastBottomDelta = bottom - scrollView.cyl_insetB
+                    scrollView.cyl_insetB = bottom
+                    pagingRefreshOffset = happenOffsetY + cyl_h
+                    scrollView.cyl_offsetY = from
+                    offsetDriver.move(scrollView, from: from, to: pagingRefreshOffset, duration: fastAnimationDuration) {
+                        [weak self] in self?.executeRefreshingCallback()
+                    }
+                    return
+                }
                 UIView.animate(withDuration: fastAnimationDuration, animations: {
                     var bottom = self.cyl_h + self.scrollViewOriginalInset.bottom
                     let deltaH = self.heightForContentBreakView
@@ -322,6 +350,19 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     }
 
     // MARK: - 刷新结束：归还底部 inset
+
+    // [EN] YES for a plain table and a flow layout that pins its section headers or footers.
+    // [CN] plain 表格、以及固定 section header 或 footer 的 flow layout 为 YES。
+    private func pinsSectionHeaders(of scrollView: UIScrollView) -> Bool {
+        if let table = scrollView as? UITableView {
+            return table.style == .plain
+        }
+        if let collection = scrollView as? UICollectionView,
+           let layout = collection.collectionViewLayout as? UICollectionViewFlowLayout {
+            return layout.sectionHeadersPinToVisibleBounds || layout.sectionFootersPinToVisibleBounds
+        }
+        return false
+    }
 
     // [EN] YES when a paging scroll view rests between two pages, as UIKit's paging deceleration can leave it after the
     //      footer's refresh animation moved the offset (MJRefresh #1430: the page ended about 0.22 of a page off).
@@ -357,6 +398,23 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         if let scrollView = scrollView {
             restorePagingOffset = scrollView.isPagingEnabled && !scrollView.isDragging && !scrollView.isDecelerating &&
                 (abs(scrollView.cyl_offsetY - pagingRefreshOffset) < 0.001 || isBetweenPages)
+        }
+        if !restorePagingOffset, let scrollView = scrollView, pinsSectionHeaders(of: scrollView), slowAnimationDuration > 0 {
+            // FIX: issue #1627 / #1507: see offsetDriver.
+            let from = scrollView.cyl_offsetY
+            scrollView.cyl_insetB -= lastBottomDelta
+            let maxOffset = max(-scrollView.cyl_insetT, scrollView.cyl_contentH - scrollView.cyl_h + scrollView.cyl_insetB)
+            scrollView.cyl_offsetY = from
+            UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
+                self.endRefreshingAnimationBeginAction?()
+                if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
+            })
+            offsetDriver.move(scrollView, from: from, to: min(from, maxOffset), duration: slowAnimationDuration) { [weak self] in
+                guard let self = self else { return }
+                self.pullingPercent = 0.0
+                self.endRefreshingCompletionBlock?()
+            }
+            return
         }
         UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
             self.endRefreshingAnimationBeginAction?()
@@ -547,6 +605,66 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             secondaryClosePending = pulled >= secondaryCloseTriggerOffset
         } else if secondaryClosePending {
             closeSecondary()
+        }
+    }
+}
+
+// FIX: issue #1627 / #1507
+// [EN] Moves a scroll view's offset frame by frame (ease in, ease out), then runs the completion. A drag, a new move or
+//      stop() ends it where it is and runs the completion then, as an interrupted UIView animation does.
+// [CN] 逐帧移动滚动视图的 offset（缓入缓出），结束后执行 completion。拖动、新的移动或 stop() 让它停在当前位置并立即执行
+//      completion，与被打断的 UIView 动画一致。
+final class CYLRefreshOffsetDriver: NSObject {
+    private weak var scrollView: UIScrollView?
+    private var link: CADisplayLink?
+    private var from: CGFloat = 0
+    private var to: CGFloat = 0
+    private var duration: TimeInterval = 0
+    private var start: CFTimeInterval = 0
+    private var completion: (() -> Void)?
+
+    var isMoving: Bool { link != nil }
+
+    func move(_ scrollView: UIScrollView, from: CGFloat, to: CGFloat, duration: TimeInterval,
+              completion: @escaping () -> Void) {
+        stop()
+        self.scrollView = scrollView
+        self.from = from
+        self.to = to
+        self.duration = duration
+        self.completion = completion
+        start = CACurrentMediaTime()
+        let link = CADisplayLink(target: self, selector: #selector(step(_:)))
+        link.add(to: .main, forMode: .common)
+        self.link = link
+    }
+
+    func stop() {
+        link?.invalidate()
+        link = nil
+        let done = completion
+        completion = nil
+        done?()
+    }
+
+    // [EN] Moves on to another target from where it is now. [CN] 从当前位置改为移向另一个目标。
+    func retarget(to target: CGFloat) {
+        guard let scrollView = scrollView, isMoving else { return }
+        from = scrollView.contentOffset.y
+        to = target
+        start = CACurrentMediaTime()
+    }
+
+    @objc private func step(_ link: CADisplayLink) {
+        guard let scrollView = scrollView, !scrollView.isDragging else {
+            stop()
+            return
+        }
+        let t = min(1, (CACurrentMediaTime() - start) / duration)
+        let eased = t < 0.5 ? 2 * t * t : 1 - pow(-2 * t + 2, 2) / 2
+        scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: from + (to - from) * CGFloat(eased))
+        if t >= 1 {
+            stop()
         }
     }
 }

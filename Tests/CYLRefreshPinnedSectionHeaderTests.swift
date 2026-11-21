@@ -1,0 +1,77 @@
+import XCTest
+import UIKit
+
+// FIX: issue #1627 / #1507
+// [EN] A plain table pins its section header; a back footer that starts or ends loading must not show it above the top.
+// [CN] plain 表格固定 section header；back footer 开始或结束加载时不能让它露出顶部之外。
+final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSource, UITableViewDelegate {
+    private var count = 4
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { count }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.dequeueReusableCell(withIdentifier: "c") ?? UITableViewCell(style: .default, reuseIdentifier: "c")
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        tableView.dequeueReusableHeaderFooterView(withIdentifier: "h") ?? UITableViewHeaderFooterView(reuseIdentifier: "h")
+    }
+
+    private func spin(_ seconds: TimeInterval) {
+        RunLoop.main.run(until: Date().addingTimeInterval(seconds))
+    }
+
+    // [EN] The largest distance between the pinned header and the visible top while the animation runs, as drawn.
+    // [CN] 动画期间（按屏幕绘制）固定 header 与可见顶边的最大距离。
+    private func largestHeaderGap(of table: UITableView, for seconds: TimeInterval) -> CGFloat {
+        var gap: CGFloat = 0
+        let start = Date()
+        while Date().timeIntervalSince(start) < seconds {
+            spin(0.016)
+            guard let header = table.headerView(forSection: 0),
+                  let headerY = header.layer.presentation()?.frame.minY,
+                  let top = table.layer.presentation()?.bounds.minY else { continue }
+            gap = max(gap, abs(headerY - top))
+        }
+        return gap
+    }
+
+    func testBackFooterKeepsThePinnedSectionHeaderAtTheTopWhenLoadingStartsAndEnds() {
+        // The table of MJRefresh #1627: rows of 150, a section header of 100, no automatic insets.
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        let controller = UIViewController()
+        window.rootViewController = controller
+        window.isHidden = false
+        let table = UITableView(frame: CGRect(x: 0, y: 64, width: 375, height: 603), style: .plain)
+        table.contentInsetAdjustmentBehavior = .never
+        table.dataSource = self
+        table.delegate = self
+        table.rowHeight = 150
+        table.sectionHeaderHeight = 100
+        if #available(iOS 15.0, *) { table.sectionHeaderTopPadding = 0 }
+        var completions = 0
+        let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
+        footer.endRefreshingCompletionBlock = { completions += 1 }
+        table.cyl_footer = footer
+        controller.view.addSubview(table)
+        table.layoutIfNeeded()
+        let maxOffset = table.contentSize.height - table.bounds.height
+
+        // Released past the footer: loading starts and the offset moves back onto the footer.
+        table.contentOffset = CGPoint(x: 0, y: maxOffset + 60)
+        table.layoutIfNeeded()
+        footer.state = .refreshing
+        XCTAssertLessThan(largestHeaderGap(of: table, for: 0.5), 1, "the header stays pinned when loading starts")
+        XCTAssertEqual(table.contentOffset.y, maxOffset + footer.frame.height, accuracy: 0.5)
+        XCTAssertEqual(table.contentInset.bottom, footer.frame.height, accuracy: 0.5)
+
+        // The order of the issue: one more row, endRefreshing, reloadData. The smaller inset pulls the offset back.
+        count = 5
+        footer.endRefreshing()
+        table.reloadData()
+        XCTAssertEqual(table.contentInset.bottom, 0, accuracy: 0.5, "the inset is given back at once")
+        XCTAssertLessThan(largestHeaderGap(of: table, for: 0.7), 1, "the header stays pinned when loading ends")
+        XCTAssertEqual(table.contentOffset.y, maxOffset, accuracy: 0.5)
+        XCTAssertEqual(completions, 1, "the end completion runs once")
+    }
+}
