@@ -4,7 +4,8 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
+// Advanced SPI: open version ranges (`.iOS(.v13...)`), so a new iOS release keeps finding the scroll view.
+@_spi(Advanced) import SwiftUIIntrospect
 import CYLTableViewPlaceHolder
 
 private final class CYLScrollViewReference: ObservableObject {
@@ -42,7 +43,9 @@ struct CYLContentView: View {
                 }
             }
             .accessibilityIdentifier("songList")
-            .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+            // An open range: the closed list (.v13 … .v26) never called the closure on iOS 27, so no refresh control was
+            // installed and every #1628 check failed (2026-11-22, Xcode 27.2, iOS 27.2 simulator).
+            .introspect(.scrollView, on: .iOS(.v13...)) { scrollView in
                 scrollReference.scrollView = scrollView
                 if reproducesOriginalIssue {
                     scrollView.contentInsetAdjustmentBehavior = .automatic
