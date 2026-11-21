@@ -17,7 +17,8 @@
     ],
     "buildModeSet": [
       { "name": "debug" },
-      { "name": "release" }
+      { "name": "release" },
+      { "name": "emulatorTest" }
     ]
   },
   "modules": [
@@ -25,7 +26,8 @@
       "name": "entry",
       "srcPath": "./entry",
       "targets": [
-        { "name": "default", "applyToProducts": ["default"] }
+        { "name": "default", "applyToProducts": ["default"] },
+        { "name": "emulator", "applyToProducts": ["default"] }
       ]
     },
     {

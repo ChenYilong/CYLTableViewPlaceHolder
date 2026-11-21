@@ -6,6 +6,8 @@
 # (for example C:/dev/CYLTableViewPlaceHolder, the one to open in DevEco Studio) is built in place.
 #
 #   scripts/build.sh                 the example HAP (entry) and the library HAR (cylplaceholder)
+#   scripts/build.sh emulator        also the x86_64 emulator HAP (target "emulator": no arm64-only Rive / PAG libraries;
+#                                    entry/build/default/outputs/emulator/entry-emulator-unsigned.hap)
 #   scripts/build.sh test            also the ohosTest HAP (when entry/src/ohosTest exists) and the host-run local unit tests (cylplaceholder/src/test, entry/src/test)
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
@@ -32,6 +34,10 @@ if [ -f "$SIGNED" ] && [ "$OUT" != "$HERE" ]; then cp "$SIGNED" build-profile.js
 ohpm install >/dev/null
 hvigorw.bat assembleHap --mode module -p module=entry@default -p product=default --no-daemon
 hvigorw.bat assembleHar --mode module -p module=cylplaceholder@default -p product=default --no-daemon
+if [ "${1:-}" = "emulator" ]; then
+  hvigorw.bat assembleHap --mode module -p module=entry@emulator -p product=default --no-daemon
+  ls "$OUT"/entry/build/default/outputs/emulator/entry-emulator-*.hap
+fi
 if [ "${1:-}" = "test" ]; then
   if [ -d entry/src/ohosTest ]; then
     hvigorw.bat --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --no-daemon

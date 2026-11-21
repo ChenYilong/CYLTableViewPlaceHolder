@@ -3,10 +3,10 @@
 # rows (Q9-Q18) of docs/HarmonyOS.md "Full-marks standard". Build first with `scripts/build.sh` and a signed profile
 # (see build.sh).
 #
-# x86_64 emulator: @ohos/rive and @tencent/libpag ship arm64-v8a native libraries only, so the normal HAP does not
-# install there ("install parse native so failed"). When the device's ABI list (const.product.cpu.abilist) has no
-# arm64-v8a, or CYL_HAP_STRIP_LIBS=1, this script installs a copy without libs/ (scripts/strip-hap-native-libs.py);
-# Rive and PAG files then show their still images. Set CYL_HAP_STRIP_LIBS=0 to install the HAP as built.
+# x86_64 emulator (cylanimateditem/README.md, "x86_64 emulator"): @ohos/rive and @tencent/libpag ship arm64-v8a native
+# libraries only. The HAP of the "emulator" target (scripts/build.sh emulator) has none and is used when present on a
+# device without arm64-v8a; any HAP is installed through CYLTabBarController's cylanimateditem/tools/cyl_hap_x86_64.py,
+# which asks the device for its ABIs and leaves out the libraries it cannot load (CYL_HAP_STRIP_LIBS=1 / 0 forces it).
 #
 #   scripts/emulator-check.sh            install, launch, screenshot to docs/assets/harmonyos-launch.png
 #   scripts/emulator-check.sh shot NAME  screenshot only, to docs/assets/harmonyos-NAME.png
@@ -46,19 +46,14 @@ fi
 "$HDC" list targets
 HAP=$(ls "$OUT"/entry/build/default/outputs/default/entry-default-signed.hap 2>/dev/null || ls "$OUT"/entry/build/default/outputs/default/entry-default-unsigned.hap)
 ABIS=$("$HDC" shell param get const.product.cpu.abilist 2>/dev/null | tr -d '\r' || true)
-STRIP="${CYL_HAP_STRIP_LIBS:-}"
-if [ -z "$STRIP" ]; then
-  case "$ABIS" in *arm64-v8a*) STRIP=0 ;; *) STRIP=1 ;; esac
-fi
-if [ "$STRIP" = "1" ]; then
-  # arm64-only Rive and PAG libraries: install a copy without libs/ (see the header).
-  STRIPPED="${TMPDIR:-/tmp}/entry-default-no-native-libs.hap"
-  py -3 "$HERE/scripts/strip-hap-native-libs.py" "$HAP" "$STRIPPED" 2>/dev/null || python3 "$HERE/scripts/strip-hap-native-libs.py" "$HAP" "$STRIPPED"
-  echo "device ABIs '${ABIS}': installing without arm64-only native libraries (Rive / PAG show still images)"
-  HAP="$STRIPPED"
-fi
-# The emulator takes the unsigned HAP (no signing needed for emulator tests); a signed one is used when present.
-"$HDC" install -r "$HAP"
+EMULATOR_HAP=$(ls "$OUT"/entry/build/default/outputs/emulator/entry-emulator-*.hap 2>/dev/null | head -1 || true)
+case "$ABIS" in *arm64-v8a*) ;; *) [ -n "$EMULATOR_HAP" ] && HAP="$EMULATOR_HAP" ;; esac
+# The emulator takes the unsigned HAP (no signing needed for emulator tests); a signed one is used when present. The
+# tool finds DevEco Studio's hdc itself.
+# On Windows hdc reads a forward-slash "C:/..." path as relative: hand the tool a native path.
+TOOL="$HERE/cylanimateditem/tools/cyl_hap_x86_64.py"
+if command -v cygpath >/dev/null 2>&1; then HAP="$(cygpath -w "$HAP")"; TOOL="$(cygpath -w "$TOOL")"; fi
+py -3 "$TOOL" install "$HAP" 2>/dev/null || python3 "$TOOL" install "$HAP"
 "$HDC" shell aa start -a EntryAbility -b "$BUNDLE"
 sleep 4
 shot launch

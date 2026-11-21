@@ -9,7 +9,7 @@ target 'ExampleSwiftUI' do
   # lives in the CYLTabBarController repository and is not on the trunk yet. Always that repository's newest commit on
   # any branch (instructions.md, "Depending on CYLTabBarController"); scripts/resolve-cyltabbarcontroller-commit.sh
   # rewrites the commit before every build.
-  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => 'b13b88f1ac6645dde8a7381e21547e161c09623f'
+  pod 'CYLAnimatedItem', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '882ece172f23690c5f0a2510a1fe2dfc01f5052b'
   # CYLRefresh is the only refresh library; no other refresh pod (instructions.md, "One refresh library: CYLRefresh").
   pod 'SwiftUIIntrospect', '26.0.0'
 end
