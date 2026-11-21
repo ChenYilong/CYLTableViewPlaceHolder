@@ -16,6 +16,7 @@
 //   this.list.cyl_reloadData();
 import { CYLPlaceholderStackView, CYLPlaceholderStackViewModel } from './CYLPlaceholderStackView';
 import { CYLPlaceholderView, CYLPlaceholderViewModel } from './CYLPlaceholderView';
+import { CYLRefreshComponentModel, CYLRefreshScrollViewModel } from './refresh/CYLRefreshComponent';
 
 /** What a placeholder block returns: a stack (scenario, components) or a single icon-and-title view. */
 export type CYLPlaceholderListPlaceholder = CYLPlaceholderStackViewModel | CYLPlaceholderViewModel;
@@ -76,6 +77,14 @@ export class CYLPlaceholderListController {
   placeholderScrollEnabled: boolean = false;
   /** The shown placeholder's frame, or null to fill the list (frameForPlaceHolderViewInTableView). */
   placeholderFrame: CYLPlaceholderRect | null = null;
+  /**
+   * The refresh scroll view around the list, or null (iOS: the list is that scroll view). An empty list has nothing
+   * more to load, so its footer and trailer are hidden while the placeholder shows and shown again when it goes; the
+   * header stays. A control the app hid itself stays hidden.
+   */
+  refreshScrollView: CYLRefreshScrollViewModel | null = null;
+  /** The footer and trailer this controller hid while the placeholder shows. */
+  private hiddenLoadMoreControls: CYLRefreshComponentModel[] = [];
   /** The placeholder provider of cyl_reloadData when no block is set (iOS: the data source as the delegate). */
   delegate: CYLTableViewPlaceHolderDelegate | null = null;
   /** Bumped every time a placeholder is made, so the component rebuilds it. */
@@ -170,9 +179,37 @@ export class CYLPlaceholderListController {
     this.stackPlaceholder = made instanceof CYLPlaceholderStackViewModel ? made as CYLPlaceholderStackViewModel : null;
     this.viewPlaceholder = made instanceof CYLPlaceholderViewModel ? made as CYLPlaceholderViewModel : null;
     this.placeholder = made;
+    this.hideLoadMoreControls();
+  }
+
+  private hideLoadMoreControls(): void {
+    const scrollView = this.refreshScrollView;
+    if (scrollView === null) {
+      return;
+    }
+    const controls: (CYLRefreshComponentModel | null)[] = [scrollView.cyl_footer, scrollView.cyl_trailer];
+    for (const control of controls) {
+      if (control !== null && !control.hidden) {
+        control.hidden = true;
+        this.hiddenLoadMoreControls.push(control);
+      }
+    }
+  }
+
+  private restoreLoadMoreControls(): void {
+    const scrollView = this.refreshScrollView;
+    for (const control of this.hiddenLoadMoreControls) {
+      if (scrollView !== null && (scrollView.cyl_footer === control || scrollView.cyl_trailer === control)) {
+        control.hidden = false;
+      }
+    }
+    this.hiddenLoadMoreControls = [];
   }
 
   private remove(): void {
+    if (this.placeholder !== null) {
+      this.restoreLoadMoreControls();
+    }
     this.placeholder = null;
     this.stackPlaceholder = null;
     this.viewPlaceholder = null;

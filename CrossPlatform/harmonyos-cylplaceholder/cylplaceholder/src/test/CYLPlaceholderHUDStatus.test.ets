@@ -19,6 +19,12 @@ import { CYLPlaceholderNetworkMonitor, CYLPlaceholderNetworkStatus } from '../ma
 import { CYLPlaceholderStatusViewModel } from '../main/ets/CYLPlaceholderStatusView';
 import { CYLPlaceholderStatusController, CYLPlaceholderStatusDisplay } from '../main/ets/CYLPlaceholderStatus';
 import { CYLPlaceholderListController } from '../main/ets/CYLPlaceholderList';
+import { CYLRefreshScrollViewModel } from '../main/ets/refresh/CYLRefreshComponent';
+import {
+  CYLRefreshAutoNormalFooterModel,
+  CYLRefreshNormalHeaderModel,
+  CYLRefreshNormalTrailerModel
+} from '../main/ets/refresh/CYLRefreshClassics';
 
 class FakeTask {
   id: number;
@@ -314,6 +320,38 @@ export default function placeholderHUDStatusTest() {
       expect(page.cyl_statusDisplay).assertEqual(CYLPlaceholderStatusDisplay.Placeholder);
       page.cyl_showsStatusViewWhenOffline = false;
       monitor.stopMonitoring();
+    });
+
+    it('listPlaceholderHidesLoadMore', 0, () => {
+      // An empty list has nothing more to load: its footer and trailer hide while the placeholder shows (the header
+      // stays) and show again with the data; a footer the app hid itself stays hidden (iOS bbd1190).
+      let items = 0;
+      const list = new CYLPlaceholderListController(() => items);
+      const scrollView = new CYLRefreshScrollViewModel();
+      const header = new CYLRefreshNormalHeaderModel();
+      const footer = new CYLRefreshAutoNormalFooterModel();
+      const trailer = new CYLRefreshNormalTrailerModel();
+      scrollView.cyl_header = header;
+      scrollView.cyl_footer = footer;
+      scrollView.cyl_trailer = trailer;
+      list.refreshScrollView = scrollView;
+      list.cyl_placeholderViewBlock((t: CYLPlaceholderListController) =>
+      CYLPlaceholderStackViewModel.initWithScenario(CYLPlaceholderScenario.RetryButton));
+      expect(list.placeholder !== null).assertTrue();
+      expect(footer.hidden).assertTrue();
+      expect(trailer.hidden).assertTrue();
+      expect(header.hidden).assertFalse();
+      items = 3;
+      list.cyl_reloadData();
+      expect(list.placeholder === null).assertTrue();
+      expect(footer.hidden).assertFalse();
+      expect(trailer.hidden).assertFalse();
+      footer.hidden = true;
+      items = 0;
+      list.cyl_reloadData();
+      items = 3;
+      list.cyl_reloadData();
+      expect(footer.hidden).assertTrue();
     });
 
     it('listPlaceholderRules', 0, () => {
