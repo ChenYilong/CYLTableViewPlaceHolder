@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO：修复 docs 中的所有 TODO（Win 会话：非 iOS 部分）/ TODO: Fix every TODO in docs (Win session: the non-iOS part)
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“fix all todo in docs” | The user's original prompt (verbatim): "fix all todo in docs" |
+| 要求：处理 `docs/` 中所有未完成的 TODO。 | Requirements: work through every open TODO in `docs/`. |
+| 上下文：`git pull` 后扫描到 17 个文档中 161 行含 TODO（158 行未标完成）。之前的会话（2026-11-14、2026-11-20）已确认大部分剩余项被真机、owner 登录 / 批准（npm、DevTools）或上游发布阻塞。本会话在 Windows 上（Win 会话：Android、鸿蒙、小程序、RN、Flutter 与纯文档），iOS 项留给 Mac 会话；已向 3 个活跃会话询问分工。先做可在本机独立完成并验证的项：Android 四个 `build.gradle.kts` 的 `kotlinOptions {}` → `compilerOptions {}`（2026-11-20 留下的 TODO），以及已过时的 TODO 条目（如 iOS 12 相关项，最低版本已于 2026-11-20 改为 iOS 15）。 | Context: after `git pull`, 161 lines in 17 documents mention TODO (158 not marked done). Earlier sessions (2026-11-14, 2026-11-20) found most remaining items blocked on a real device, the owner's login / approval (npm, DevTools) or an upstream release. This session runs on Windows (Win session: Android, HarmonyOS, mini program, RN, Flutter and docs-only work); iOS items stay with the Mac session; the 3 active sessions were asked how to split the work. First the items this machine can finish and verify on its own: the `kotlinOptions {}` → `compilerOptions {}` move in the four Android `build.gradle.kts` files (the TODO left on 2026-11-20), and stale TODO entries (such as iOS 12 items; the minimum became iOS 15 on 2026-11-20). |
+| 评分标准：100 = 每个本机可完成的 TODO 都已修复并验证，被阻塞的 TODO 各自写明阻塞原因与负责方；60 = Gradle 迁移完成且单元测试通过，过时条目已更新。 | Acceptance: 100 = every TODO this machine can finish is fixed and verified, and every blocked TODO names its blocker and owner; 60 = the Gradle migration is done with the unit tests passing, and the stale entries are updated. |
+
 ### 已完成：Advisor 模式配置（advisorModel 与 CLAUDE_CODE_ATTRIBUTION_HEADER）/ Done: Advisor-mode settings (advisorModel and CLAUDE_CODE_ATTRIBUTION_HEADER)
 
 - **日期 / Date:** 2026-11-21, branch `feat/android-refresh-port-followup`.
