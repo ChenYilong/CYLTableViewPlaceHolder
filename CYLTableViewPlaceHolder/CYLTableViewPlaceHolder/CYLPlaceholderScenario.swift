@@ -603,6 +603,17 @@ private func CYLScenarioIcon(_ fileName: String, _ style: CYLPlaceholderStyle, _
                             size: CGSize(width: side, height: side), action: nil)
 }
 
+extension CYLPlaceholderComponent {
+    // [EN] Shows the bundled image `name` (tinted like the styles) in place of the fallback style; unchanged if missing.
+    // [CN] 用内置图片 `name`（与样式一样着色）代替回退样式；图片缺失时不变。
+    fileprivate func withStillImage(named name: String) -> CYLPlaceholderComponent {
+        if let image = UIImage(named: name, in: CYLPlaceholderResourceBundle(), compatibleWith: nil) {
+            attributes[CYLPlaceholderItemImage] = image.withRenderingMode(.alwaysTemplate)
+        }
+        return self
+    }
+}
+
 private func CYLScenarioButton(_ action: CYLPlaceholderAction, _ style: CYLPlaceholderButtonStyle) -> CYLPlaceholderComponent {
     CYLPlaceholderComponent.button(title: CYLPlaceholderScenarioCatalog.localizedTitle(for: action) ?? "", style: style,
                                    action: action)
@@ -1078,8 +1089,12 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
             return [CYLScenarioIcon("CYLPlaceholderUploading.gif", .uploadOff,
                 CYLScenarioText("CYLPlaceholderScenarioUploadingTitle", "Uploading…"), art)]
         case .success:
+            // [EN] The check mark is the still image (before the animation plays, or without an engine), as on Android,
+            //      the mini program and HarmonyOS; the Info style stays as the fallback if the image is missing.
+            // [CN] 静态图为对勾（动画播放前或没有动画引擎时），与 Android、小程序、鸿蒙一致；图片缺失时仍回退到 Info 样式。
             return [CYLScenarioIcon("CYLPlaceholderSuccess.riv", .info,
-                        CYLScenarioText("CYLPlaceholderScenarioSuccessTitle", "Submitted"), art),
+                        CYLScenarioText("CYLPlaceholderScenarioSuccessTitle", "Submitted"), art)
+                        .withStillImage(named: "CYLPlaceholderCheckCircle"),
                     CYLScenarioButton(.done, .filled)]
         case .hud:
             // [EN] A refresh-bundle spinner (GIF, played by the GIF subspec's animator), looping like every spinner;

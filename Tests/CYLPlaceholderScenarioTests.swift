@@ -115,6 +115,16 @@ final class CYLPlaceholderScenarioTests: XCTestCase {
         for number in 1...43 { XCTAssertTrue(numbers.contains(NSNumber(value: number)), "#\(number)") }
     }
 
+    func testSuccessScenarioStillImageIsTheCheckMark() {
+        let icon = CYLPlaceholderScenarioCatalog.components(for: .success)[0]
+        let image = icon.attributes[CYLPlaceholderItemImage] as? UIImage
+        XCTAssertNotNil(image, "the Success icon has the bundled check mark as its still image")
+        XCTAssertEqual(image?.renderingMode, .alwaysTemplate, "tinted like the styles")
+        XCTAssertNotEqual(image?.pngData(), CYLPlaceholderView.image(for: .info)?.pngData(), "not the Info icon")
+        XCTAssertEqual((icon.attributes[CYLPlaceholderItemStyle] as? NSNumber)?.intValue,
+                       CYLPlaceholderStyle.info.rawValue, "Info stays the fallback style")
+    }
+
     func testMostScenariosUseAnAnimatedIcon() {
         var animated = 0
         for scenario in allScenarios {

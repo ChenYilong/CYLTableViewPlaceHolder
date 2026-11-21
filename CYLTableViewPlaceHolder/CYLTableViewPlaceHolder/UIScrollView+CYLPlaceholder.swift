@@ -110,6 +110,9 @@ final class CYLPlaceholderController: NSObject {
     var batchCallDepth = 0
     var scheduled = false
     var generation = 0
+    // [EN] The footers and trailers this controller hid while the placeholder shows (shown again when it goes).
+    // [CN] 占位图显示期间由本控制器隐藏的刷新尾与 trailer（占位图移除时重新显示）。
+    private let hiddenLoadMoreControls = NSHashTable<UIView>.weakObjects()
 
     // [EN] Set from `+load` (`UIScrollView+CYLPlaceholderSupport.m`). [CN] 由 `+load` 设置（`UIScrollView+CYLPlaceholderSupport.m`）。
     static var exceptionGuard: CYLPlaceholderExceptionGuard?
@@ -190,8 +193,48 @@ final class CYLPlaceholderController: NSObject {
         constraints[3].constant = -insets.bottom
     }
 
+    // [EN] The load-more controls (footers and trailers of CYLRefresh or MJRefresh): an empty list has nothing more to
+    //      load, and with a zero content size a footer would sit at the top, over the placeholder. Headers stay (issue #8).
+    // [CN] 加载更多类控件（CYLRefresh 或 MJRefresh 的刷新尾与 trailer）：空列表没有更多可加载；内容高度为 0 时刷新尾会
+    //      跑到顶部、压在占位图上。刷新头保留（issue #8）。
+    private static let loadMoreClasses: [AnyClass] =
+        ["CYLRefreshFooter", "CYLRefreshTrailer", "MJRefreshFooter", "MJRefreshTrailer"].compactMap { NSClassFromString($0) }
+
+    static func isLoadMoreControl(_ view: UIView) -> Bool {
+        loadMoreClasses.contains { view.isKind(of: $0) }
+    }
+
+    // [EN] Hides every visible load-more control of `scrollView` and records it in `hidden` (the legacy
+    //      `cyl_reloadData` placeholder uses it too).
+    // [CN] 隐藏 `scrollView` 中所有可见的加载更多控件并记入 `hidden`（旧的 `cyl_reloadData` 占位图也使用）。
+    static func hideLoadMoreControls(of scrollView: UIScrollView, recordingIn hidden: NSHashTable<UIView>) {
+        for subview in scrollView.subviews where !subview.isHidden && isLoadMoreControl(subview) {
+            subview.isHidden = true
+            hidden.add(subview)
+        }
+    }
+
+    // [EN] Shows again the controls recorded in `hidden` that are still in `scrollView`, then forgets them.
+    // [CN] 重新显示 `hidden` 中仍在 `scrollView` 里的控件，然后清空记录。
+    static func restoreLoadMoreControls(of scrollView: UIScrollView?, recordedIn hidden: NSHashTable<UIView>) {
+        for control in hidden.allObjects where control.superview === scrollView {
+            control.isHidden = false
+        }
+        hidden.removeAllObjects()
+    }
+
+    func hideLoadMoreControls() {
+        guard let scrollView = scrollView else { return }
+        CYLPlaceholderController.hideLoadMoreControls(of: scrollView, recordingIn: hiddenLoadMoreControls)
+    }
+
+    func restoreLoadMoreControls() {
+        CYLPlaceholderController.restoreLoadMoreControls(of: scrollView, recordedIn: hiddenLoadMoreControls)
+    }
+
     func removeView() {
         guard let shown = view else { return }
+        restoreLoadMoreControls()
         NSLayoutConstraint.deactivate(constraints)
         constraints = []
         shown.removeFromSuperview()
@@ -255,6 +298,7 @@ final class CYLPlaceholderController: NSObject {
             }
             controller.updateVisibleArea()
             CYLPlaceholderController.bringPlaceholderToFront(view, in: scrollView)
+            controller.hideLoadMoreControls()
         }
     }
 }

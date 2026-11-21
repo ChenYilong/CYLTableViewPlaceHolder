@@ -1054,6 +1054,62 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         collection.cyl_placeholderViewBlock(nil)
     }
 
+    // [EN] An empty list has nothing more to load: its footer and trailer hide while the placeholder shows (the header
+    //      stays, issue #8) and show again with the data; a footer the app hid itself stays hidden.
+    // [CN] 空列表没有更多可加载：占位图显示期间刷新尾与 trailer 隐藏（刷新头保留，issue #8），数据恢复后重新显示；应用自己隐藏的刷新尾保持隐藏。
+    func testLoadMoreControlsHideWhileThePlaceholderShows() {
+        let source = AutomaticTestSource()
+        let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        table.dataSource = source
+        let header = CYLRefreshNormalHeader(refreshingBlock: {})
+        let footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        let trailer = CYLRefreshNormalTrailer(refreshingBlock: {})
+        table.cyl_header = header
+        table.cyl_footer = footer
+        table.cyl_trailer = trailer
+        let view = UIView()
+        table.cyl_placeholderViewBlock { _ in view }
+        table.reloadData()
+        drainUpdates()
+        XCTAssertIdentical(view.superview, table)
+        XCTAssertTrue(footer.isHidden, "no load-more footer over an empty list")
+        XCTAssertTrue(trailer.isHidden, "no load-more trailer over an empty list")
+        XCTAssertFalse(header.isHidden, "pull to refresh stays on an empty list")
+
+        source.count = 3
+        table.reloadData()
+        drainUpdates()
+        XCTAssertNil(view.superview)
+        XCTAssertFalse(footer.isHidden, "the footer returns with the data")
+        XCTAssertFalse(trailer.isHidden)
+
+        footer.isHidden = true
+        source.count = 0
+        table.reloadData()
+        drainUpdates()
+        source.count = 3
+        table.reloadData()
+        drainUpdates()
+        XCTAssertTrue(footer.isHidden, "a footer the app hid stays hidden")
+        table.cyl_placeholderViewBlock(nil)
+    }
+
+    func testLegacyPlaceholderHidesTheFooterToo() {
+        let source = AutomaticTestSource()
+        source.legacyView = UIView()
+        let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        table.dataSource = source
+        let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
+        table.cyl_footer = footer
+        table.cyl_reloadData()
+        XCTAssertIdentical(source.legacyView?.superview, table)
+        XCTAssertTrue(footer.isHidden)
+        source.count = 2
+        table.cyl_reloadData()
+        XCTAssertNil(source.legacyView?.superview)
+        XCTAssertFalse(footer.isHidden)
+    }
+
     func testCollectionSectionsAndFrameLayoutWithOffset() {
         let source = MultipleAutomaticTestSource()
         source.sections = 2
