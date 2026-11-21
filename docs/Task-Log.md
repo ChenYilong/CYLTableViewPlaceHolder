@@ -27,6 +27,15 @@
 
 ## 任务 / Tasks
 
+### 进行中：Rive 与 PAG 只能在 arm64 上运行的测试：两个方案 / In progress: Rive and PAG tests that only run on arm64: two options
+
+| 中文 | English |
+| --- | --- |
+| 状态：规则已写入，方案 1 已交给 CYLTabBarController 会话（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: the rule is written down, option 1 handed to the CYLTabBarController session (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“找到本项目instructions 相关文件以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入：Rive; pag 编译问题：针对需要只能在arm64上才能执行的测试， 有两个方案可供实现， 第一个方案是在CYLTabBarController的CYLAnimatedItemView中进行改造， 从GitHub中引入x86 架构的依赖库， 以完成测试功能。判断guards条件为， 运行系统的版本。 为x86架构， 首先你要保证x86架构能编译通过，且不会crash影响其他功能，其次才是实现功能运行正常。 在该方案未测试通过前使用debug环境编译选项进行guards，因为该方案目前只在运行模拟器时候会触发， 当该方案验证可行时候才再移除debug编译guards，你在移除该guards前需要经过我的同意。如果该方案实现失败， 则选择第二个方案， 将任务转发给正在macOS上的session进行测试， 因为macOS就是arm64架构的。” | The user's original prompt (verbatim): see the Chinese column; in English: for tests that only run on arm64 (the Rive / PAG build problem), option 1: change CYLTabBarController's CYLAnimatedItemView to bring in x86 builds of the dependency libraries from GitHub; the guard is the running system's architecture (x86); first it must compile and not crash or affect other features, then work correctly; until it passes, also guard it with a debug build option, and remove that guard only after it is verified and with the owner's approval; if option 1 fails, option 2: forward the tests to a session on macOS (arm64). |
+| 完成：英文规则 “Rive and PAG: tests that only run on arm64” 写入根 `instructions.md`、`AGENTS.md`、技能 `cyl-harmonyos-setup`（第 1a 节）与 `cyl-session-roles`、`CrossPlatform/harmonyos-cylplaceholder/instructions.md`。方案 1 的请求已发给 chen-yilong-b6（CYLTabBarController）。目前没有 macOS 会话，方案 2 只能记为 TODO。 | Done: the English rule "Rive and PAG: tests that only run on arm64" is in the root `instructions.md`, `AGENTS.md`, the skills `cyl-harmonyos-setup` (section 1a) and `cyl-session-roles`, and `CrossPlatform/harmonyos-cylplaceholder/instructions.md`. The option 1 request went to chen-yilong-b6 (CYLTabBarController). No macOS session is active, so option 2 can only be a TODO. |
+| TODO：方案 1 在上游实现（x86_64 编译通过、不崩溃、不影响其他功能，然后 Rive / PAG 播放正确），debug 编译守卫保留，移除前征得 owner 同意；本仓库随后重新固定并在 x86_64 模拟器上验证。方案 1 失败则交给 macOS 会话。 | TODO: option 1 upstream (x86_64 compiles, no crash, no effect on other features, then correct Rive / PAG playback), the debug-build guard kept, removed only with the owner's approval; this repository then re-pins and verifies on the x86_64 emulator. If option 1 fails, hand the tests to a macOS session. |
+
 ### 完成（100 / 100）：在说明与技能文件中写入 x86_64 模拟器 HAP 安装修复 / Done (100/100): Document the x86_64 emulator HAP install fix in the instructions and skills
 
 | 中文 | English |

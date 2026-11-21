@@ -28,3 +28,12 @@ Several agent sessions work on this repository at once. Use this skill at the st
   they report back.
 
 Source: `instructions.md`, "Session roles: Mac sessions for iOS, Win sessions for the other platforms" (2026-11-19).
+
+## arm64-only tests (Rive and PAG on HarmonyOS)
+
+When a Windows session cannot run a test because it needs arm64 (Rive and PAG playback; their native libraries are
+arm64-v8a only and the Windows HarmonyOS emulator is x86_64), first try option 1 of `instructions.md`, "Rive and PAG:
+tests that only run on arm64" (x86_64 libraries in CYLTabBarController's CYLAnimatedItemView, behind a debug-build guard
+whose removal needs the owner's approval). If option 1 fails, forward the test to an active macOS session (Apple silicon
+is arm64) with the build, the steps and the expected result; with no macOS session active, record it as a `TODO` for
+the next one.

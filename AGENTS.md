@@ -400,6 +400,30 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
      Rive and PAG playback (and their end) need an arm64 device or arm64 emulator with the `default` target; say in
      every report which part ran where. Never commit a stripped HAP; phones and releases use the `default` target.
 
+### Rive and PAG: tests that only run on arm64 (owner's rule, 2026-11-22)
+
+`@ohos/rive` and `@tencent/libpag` ship native libraries for arm64-v8a only, so Rive and PAG playback cannot be tested
+on the x86_64 HarmonyOS emulator today. For every test that can only run on arm64, use these two options, in order:
+
+1. **Option 1: x86_64 libraries in CYLTabBarController's CYLAnimatedItemView.** Change CYLTabBarController's
+   HarmonyOS CYLAnimatedItem (`CYLAnimatedItemView` / `CYLAnimatedItemEngines`) so that it brings in x86_64 builds of
+   the Rive and PAG native libraries from GitHub (built from the libraries' own GitHub sources, with their licenses
+   kept), and plays Rive and PAG on the x86_64 emulator with them.
+   - **Guard condition:** the architecture of the running system: the x86_64 libraries are used only when the device
+     ABI list (`deviceInfo.abiList`) is x86_64 (no arm64-v8a). arm64 devices keep the official arm64 libraries.
+   - **Order of work:** first the x86_64 build must compile and must not crash or break any other feature (every other
+     engine, the still-image fallback, layout, accessibility); only then make Rive and PAG playback work correctly.
+   - **Debug guard:** until option 1 has passed its tests, it is also guarded by a debug build option (debug builds
+     only), because today it only matters when running on the emulator. Remove the debug guard only after option 1 is
+     verified, and **only with the owner's approval**: ask first, never remove it on your own.
+2. **Option 2: hand the test to a macOS session.** If option 1 fails, forward the arm64-only tests to an active
+   session running on macOS (Apple silicon is arm64; a session whose name starts with `Mac`, see "Session roles"),
+   with the build, the HAP, the steps and the expected result, and record which tests it ran and their results. When no
+   macOS session is active, record the tests as a `TODO` for the next macOS session.
+
+Until one option has passed, report Rive and PAG playback as not verified on x86_64 (still images only), and say in
+every report and screenshot footer which part ran on x86_64 and which needs arm64.
+
 ## Running scripts: bash first
 
 - **Run scripts with bash, not zsh (added 2026-11-16).** The interactive shell here is zsh, which does not split an
