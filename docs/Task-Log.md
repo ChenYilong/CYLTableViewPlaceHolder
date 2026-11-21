@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO（0 / 100）：记录 Success 开始的时间戳，让截图标注精确的秒数 / TODO (0/100): Record the Success start timestamp for exact screenshot seconds
+
+| 中文 | English |
+| --- | --- |
+| 状态：进行中（2026-11-22 开始，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: in progress (started 2026-11-22, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“record the Success start timestamp for exact screenshot seconds” | The user's original prompt (verbatim): "record the Success start timestamp for exact screenshot seconds" |
+| 背景：下方“Take the mini program Success screenshot in WeChat DevTools”（95 / 100）的截图时间只由命令调用间隔估计（`wechatide` 每次调用约 3–4 秒），剩余 TODO −5。 | Context: the screenshots of "Take the mini program Success screenshot in WeChat DevTools" (below, 95 / 100) have times estimated from the command timing only (each `wechatide` call takes about 3–4 s); remaining TODO −5. |
+| 计划：(1) 示例加号页（`pages/publish/publish`）在 Success 显示时记录 `successStartedAt`（`Date.now()`，页面 data，可由自动化读取）；(2) 脚本 `scripts/success-timing-screenshots.js` 用 miniprogram-automator 连接开发者工具，重新打开该页，读取 `successStartedAt`，在目标秒数截图，每张截图前后各读一次运行时的 `Date.now()`，记录截图时刻相对 Success 开始的区间；(3) 用这些秒数重新拼图。 | Plan: (1) the example's plus page (`pages/publish/publish`) records `successStartedAt` (`Date.now()`, in the page data, readable by automation) when Success shows; (2) a script `scripts/success-timing-screenshots.js` connects to DevTools with miniprogram-automator, opens the page again, reads `successStartedAt`, takes screenshots at target seconds and reads the runtime's `Date.now()` right before and after each one, recording each screenshot's interval after the start of Success; (3) the sheet is remade with those seconds. |
+| 评分标准：100 = 页面记录时间戳，脚本可重复运行，新截图的标题给出相对 Success 开始的秒数（误差区间不超过 0.5 秒），拼图检查通过，文档更新，测试通过；60 = 页面记录时间戳并且至少一张截图带有测得的秒数。 | Acceptance: 100 = the page records the timestamp, the script can be run again, the new screenshots' captions give the seconds after the start of Success (interval at most 0.5 s wide), the screenshot check passes, the docs are updated, tests pass; 60 = the page records the timestamp and at least one screenshot carries measured seconds. |
+
 ### 完成（95 / 100）：在微信开发者工具中截取小程序 Success 截图 / Done (95/100): Take the mini program Success screenshot in WeChat DevTools
 
 | 中文 | English |
