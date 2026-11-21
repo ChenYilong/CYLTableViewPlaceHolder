@@ -22,6 +22,7 @@ private enum CYLLegacyPlaceholderKey {
     static let scrollWasEnabled = UnsafeRawPointer(UnsafeMutablePointer<UInt8>.allocate(capacity: 1))
     static let placeHolderView = UnsafeRawPointer(UnsafeMutablePointer<UInt8>.allocate(capacity: 1))
     static let visibleAreaObserver = UnsafeRawPointer(UnsafeMutablePointer<UInt8>.allocate(capacity: 1))
+    static let hiddenLoadMoreControls = UnsafeRawPointer(UnsafeMutablePointer<UInt8>.allocate(capacity: 1))
 }
 
 extension UITableView {
@@ -62,6 +63,22 @@ extension UITableView {
         isScrollEnabled = cyl_scrollWasEnabled
         view.removeFromSuperview()
         cyl_legacyPlaceHolderView = nil
+        cyl_restoreLegacyLoadMoreControls()
+    }
+
+    // [EN] The footers and trailers hidden while this placeholder shows (see `CYLPlaceholderController.isLoadMoreControl`).
+    // [CN] 本占位图显示期间隐藏的刷新尾与 trailer（见 `CYLPlaceholderController.isLoadMoreControl`）。
+    private var cyl_legacyHiddenLoadMoreControls: NSHashTable<UIView> {
+        if let table = objc_getAssociatedObject(self, CYLLegacyPlaceholderKey.hiddenLoadMoreControls) as? NSHashTable<UIView> {
+            return table
+        }
+        let table = NSHashTable<UIView>.weakObjects()
+        objc_setAssociatedObject(self, CYLLegacyPlaceholderKey.hiddenLoadMoreControls, table, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return table
+    }
+
+    private func cyl_restoreLegacyLoadMoreControls() {
+        CYLPlaceholderController.restoreLoadMoreControls(of: self, recordedIn: cyl_legacyHiddenLoadMoreControls)
     }
 
     // MARK: Private
@@ -130,6 +147,7 @@ extension UITableView {
                 isScrollEnabled = cyl_scrollWasEnabled
                 shown.removeFromSuperview()
                 cyl_legacyPlaceHolderView = nil
+                cyl_restoreLegacyLoadMoreControls()
             }
             return
         }
@@ -142,6 +160,7 @@ extension UITableView {
                 isScrollEnabled = cyl_scrollWasEnabled
                 shown.removeFromSuperview()
                 cyl_legacyPlaceHolderView = nil
+                cyl_restoreLegacyLoadMoreControls()
             }
             return
         }
@@ -174,5 +193,6 @@ extension UITableView {
             addSubview(view)
         }
         CYLPlaceholderController.bringPlaceholderToFront(view, in: self)
+        CYLPlaceholderController.hideLoadMoreControls(of: self, recordingIn: cyl_legacyHiddenLoadMoreControls)
     }
 }
