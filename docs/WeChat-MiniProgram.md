@@ -183,6 +183,9 @@
      (`open_project_window`, `simulator_open_page`, `simulator_screenshot`) worked; run `npm run sync-example` first,
      because `simulator_open_page` does not run the `beforeCompile` hook that refreshes the git-ignored example copies
      (`docs/Task-Log.md`, "Take the mini program Success screenshot in WeChat DevTools").
+     Screenshots at exact seconds after Success started: `npm run success-timing` (miniprogram-automator, DevTools
+     started with `cli auto --auto-port 9420`; `--calibrate` measures the screenshot capture delay; `docs/Task-Log.md`,
+     "Record the Success start timestamp for exact screenshot seconds").
   2. Animations (`f8089ef`): Lottie done for the 31 scenarios whose file list has a `CYLPlaceholder*.json`; the
      example has "Play all", a speed slider and a loop switch. Left: PAG / Rive / GIF variants (TitleAboveIllustration
      PAG, Uploading GIF, Success Rive; the mini program shows those scenarios' static icon or the first JSON variant),

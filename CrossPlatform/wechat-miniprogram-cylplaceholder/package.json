@@ -35,6 +35,10 @@
     "import-android": "node scripts/import-android-resources.js",
     "sync-example": "node scripts/sync-example.js",
     "sync-animated-item": "node scripts/sync-cyl-animated-item.js",
-    "test": "node --test \"test/*.test.js\""
+    "test": "node --test \"test/*.test.js\"",
+    "success-timing": "node scripts/success-timing-screenshots.js"
+  },
+  "devDependencies": {
+    "miniprogram-automator": "^0.13.0"
   }
 }
