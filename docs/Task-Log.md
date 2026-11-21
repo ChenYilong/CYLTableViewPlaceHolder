@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（待 CI）：修复 CI 错误 / Done (pending CI): Fix the CI error
+
+| 中文 | English |
+| --- | --- |
+| 状态：完成，等待 CI 结果（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: done, waiting for CI (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“fix ci error” | The user's original prompt (verbatim): "fix ci error" |
+| 背景：本分支最近完成的 iOS 工作流（运行 44908035550，提交 `e822b76`）失败；之后的运行都被更新的推送取消。两个作业失败：(1) “Docs navigation”：`docs/iOS-API-Map.md is stale`，因为 Android 新增的 `CYLPlaceholderComponent.showsImageWhenAnimationEnds`（`150772a`）没有重新生成该表；(2) “Demo Examples/Example-objc-02”：UI 测试 `CYLSectionsUITests.testFloatingSectionHeaderPinsBelowTheBarWhileRefreshing`（“the drag happens during the refresh”）与 `CYLPagingUITests.testAutoFooterLoadWithoutNewDataReturnsToTheLastPage`（-44 而非 0，“the last page is aligned”）。前者在 `a2ff08c` 的运行中也失败过（连同旋转测试），后者那次通过：都是时间相关的竞争，不是代码回归。 | Context: the branch's latest completed iOS workflow (run 44908035550, commit `e822b76`) failed; later runs were all cancelled by newer pushes. Two jobs failed: (1) "Docs navigation": `docs/iOS-API-Map.md is stale`, because the table was not regenerated after Android's new `CYLPlaceholderComponent.showsImageWhenAnimationEnds` (`150772a`); (2) "Demo Examples/Example-objc-02": the UI tests `CYLSectionsUITests.testFloatingSectionHeaderPinsBelowTheBarWhileRefreshing` ("the drag happens during the refresh") and `CYLPagingUITests.testAutoFooterLoadWithoutNewDataReturnsToTheLastPage` (-44 instead of 0, "the last page is aligned"). The first also failed in the `a2ff08c` run (with the rotation test), the second passed there: both are timing races, not code regressions. |
+| 修复：(1) 用 `scripts/ios-api-map.py` 重新生成 `docs/iOS-API-Map.md`；新行的 iOS 对应写为 TODO（iOS 还没有 `showsImageWhenAnimationEnds`，Mac 会话），评分仍为 100（808 / 809）。(2) `CYLSectionsViewController` 的模拟加载从 8 秒改为 20 秒（GitHub macOS 运行器上 XCUITest 的拖动可能要几秒，8 秒时刷新有时先结束），UI 测试等待 “Header completed 1” 的超时从 15 秒改为 30 秒；`CYLPagingUITests` 新增 `waitForTop(of:toMatch:)`，在断言对齐前最多等 8 秒让表格停稳（替代只靠固定的 2 秒），用于两个自动尾部测试。 | Fix: (1) regenerated `docs/iOS-API-Map.md` with `scripts/ios-api-map.py`; the new row's iOS counterpart is TODO (iOS has no `showsImageWhenAnimationEnds` yet, Mac session), the score stays 100 (808 / 809). (2) `CYLSectionsViewController`'s simulated load is 20 s instead of 8 (an XCUITest drag can take several seconds on GitHub's macOS runners, and with 8 s the refresh sometimes ended first); the UI tests wait 30 s instead of 15 for "Header completed 1"; `CYLPagingUITests` gains `waitForTop(of:toMatch:)`, which waits up to 8 s for the table to settle before the alignment is asserted (instead of the fixed 2 s alone), used by the two automatic footer tests. |
+| 验证：Windows 会话不能运行 iOS UI 测试；`ios-api-map.py --check` 在本地通过，iOS 部分以推送后的 CI 结果为准。 | Verification: a Windows session cannot run the iOS UI tests; `ios-api-map.py --check` passes locally, and the iOS part is verified by the CI run after the push. |
+
 ### TODO（0 / 100）：决定 `:merged-rive` 的发布 / TODO (0/100): Decide the `:merged-rive` publication
 
 | 中文 | English |

@@ -63,6 +63,7 @@ final class CYLPagingUITests: XCTestCase {
         let next = app.cells["page-8"]
         XCTAssertTrue(next.waitForExistence(timeout: 5))
         sleep(2)
+        waitForTop(of: next, toMatch: table)
         XCTAssertTrue(next.isHittable)
         XCTAssertEqual(next.frame.minY, table.frame.minY, accuracy: 2, "the new page is aligned")
     }
@@ -79,6 +80,9 @@ final class CYLPagingUITests: XCTestCase {
         table.swipeUp()
         XCTAssertTrue(app.navigationBars["Load completed"].waitForExistence(timeout: 8))
         sleep(2)
+        // The table may still be settling back after the footer ends (seen on CI: still 44 pt, the footer's height,
+        // off after the 2 s sleep): wait for the resting position before asserting it.
+        waitForTop(of: last, toMatch: table)
         log("1610-2-no-new-data", table, last)
         XCTAssertTrue(last.isHittable)
         XCTAssertEqual(last.frame.minY, table.frame.minY, accuracy: 2, "the last page is aligned")
@@ -108,6 +112,18 @@ final class CYLPagingUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tables["pagingTable"].waitForExistence(timeout: 10))
         return app
+    }
+
+    /// Waits up to `timeout` seconds for `element` to start at `table`'s top edge (2 pt accuracy); the caller asserts.
+    @MainActor
+    private func waitForTop(of element: XCUIElement, toMatch table: XCUIElement, timeout: TimeInterval = 8) {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if element.exists && abs(element.frame.minY - table.frame.minY) <= 2 {
+                return
+            }
+            usleep(250_000)
+        }
     }
 
     /// One of the pages in `range` starts exactly at the table's top edge (paging alignment).
