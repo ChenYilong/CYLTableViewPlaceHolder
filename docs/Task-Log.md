@@ -27,6 +27,18 @@
 
 ## 任务 / Tasks
 
+### TODO：修复 docs 中所有 iOS / Swift 相关 TODO，并用 Xcode 测试 / TODO: Fix every iOS / Swift TODO in docs and test with Xcode
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port`）。进行中的 Android 第 5 步暂停：本条指令明确限定 iOS / Swift 范围，优先执行。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port`). The Android step 5 in progress is paused: this instruction explicitly scopes the work to iOS / Swift, so it goes first. |
+| 用户原始提示词：“fix all todo in docs about ios/swift and test with  Xcode” | The user's original prompt (verbatim): "fix all todo in docs about ios/swift and test with  Xcode" |
+| 要求：①找出 `docs/` 中所有与 iOS / Swift 相关的 TODO；②逐条修复；③用 Xcode（本机 Xcode 27.2，iOS 27.2 模拟器）测试验证；④分数只在有测试证据时提高。 | Requirements: (1) find every iOS / Swift TODO in `docs/`; (2) fix them one by one; (3) verify with Xcode (local Xcode 27.2, iOS 27.2 simulator); (4) raise a score only with test evidence. |
+| 上下文：接续 2026-11-14 的 “完成文档中的所有 TODO” 条目。本机运行时：iOS 17.5、26.x、27.x；iOS 15 运行时在 macOS 15 以后的主机不可用，无 iOS 16 运行时。测试模拟器：“iPhone 18 Pro (CYL test)” 089139CC。 | Context: continues the 2026-11-14 entry "finish every TODO in the documents". Local runtimes: iOS 17.5, 26.x, 27.x; the iOS 15 runtime refuses hosts after macOS 14.99 and there is no iOS 16 runtime. Test simulator: "iPhone 18 Pro (CYL test)" 089139CC. |
+| 分组 A（可在模拟器上修复和测试）：`Example-Animation-Playback.md` 的三个 iOS 页面；`issue-progress.md` 的 #1430、#1628、#1610、#1585 场景①、#1587、#1586、#1483、#1317、#1523（27.2 复测）、PR #1444、示例默认集成 CYLTabBarController（0）、公开 API 文档注释（80）、无障碍（60）、本地化宏 / 最新 MJRefresh / CYLTabBarController commit（待 CI，本机构建可证明）。 | Group A (fixable and testable on the simulator): the three iOS pages in `Example-Animation-Playback.md`; in `issue-progress.md`: #1430, #1628, #1610, #1585 scenario 1, #1587, #1586, #1483, #1317, #1523 (rerun on 27.2), PR #1444, the examples' default CYLTabBarController integration (0), public API doc comments (80), accessibility (60), the localization macros / latest MJRefresh / CYLTabBarController commit rows (pending CI; local builds can prove them). |
+| 分组 B（受阻：需要真机、人工或报告者）：iOS 12 真机（95，`flatdesign-item-comparison.md`、`commit-readiness-2026-11-09.md`）、#1593、#1563、#1041（真机 Instruments）、#1589（iOS 15 运行时不可用）、#1575（无 iOS 16 运行时）、#1（需报告者）、译文审校、人工查看。记录原因，分数不变。 | Group B (blocked: needs a device, a person or the reporter): the iOS 12 device run (95, `flatdesign-item-comparison.md`, `commit-readiness-2026-11-09.md`), #1593, #1563, #1041 (device Instruments), #1589 (iOS 15 runtime unavailable), #1575 (no iOS 16 runtime), #1 (needs the reporter), translation review, manual viewing. Reasons recorded, scores unchanged. |
+| 分组 C（多日工作，需分支决定）：`Swift-Migration.md` 核心转写为 Swift（其条目要求新分支与 PR，且与 `Refresh-Library-Parity.md` 改同一批 CYLRefresh 文件）、SVPullToRefresh 的 Swift demo、31 个未调查 issue。排在最后。 | Group C (multi-day, needs a branch decision): `Swift-Migration.md`, the core in Swift (its entry asks for a new branch and pull request, and it touches the same CYLRefresh files as `Refresh-Library-Parity.md`), the SVPullToRefresh Swift demo, the 31 uninvestigated issues. Last. |
+
 ### TODO：继续未结束的任务，并完成文档中的所有 TODO / TODO: Continue the unfinished tasks and finish every TODO in the documents
 
 | 中文 | English |
