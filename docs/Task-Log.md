@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO：Android 库模块的 Maven 发布（io.github.chenyilong，0.1.0）并测试所有非 iOS 平台 / TODO: Maven publication of the Android library modules (io.github.chenyilong, 0.1.0) and tests on every non-iOS platform
+
+| 中文 | English |
+| --- | --- |
+| 状态：TODO（2026-11-21，分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: TODO (2026-11-21, branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“use io.github.chenyilong, version 0.1.0  process test all platform (not include ios)” | The user's original prompt (verbatim): "use io.github.chenyilong, version 0.1.0  process test all platform (not include ios)" |
+| 要求：(1) 为 `android/placeholder`（`:placeholder`）与 `android/merged/library`（`:merged`）配置 `maven-publish`：groupId `io.github.chenyilong`，版本 `0.1.0`；(2) 测试 iOS 以外的所有平台（Android、鸿蒙、微信小程序）。 | Requirements: (1) `maven-publish` for `android/placeholder` (`:placeholder`) and `android/merged/library` (`:merged`): groupId `io.github.chenyilong`, version `0.1.0`; (2) test every platform except iOS (Android, HarmonyOS, WeChat Mini Program). |
+| 上下文：CYLSearchViewController 的 Android 库 POM 把这两个模块写成 `CYLSearchAndroid:placeholder:unspecified`（见 `docs/Android-Port.md` “Maven publication coordinates”）。artifactId 采用上游的命名方式（`cyltabbarcontroller-animateditem`）：`cyltableviewplaceholder`（`:placeholder`）与 `cyltableviewplaceholder-refresh`（`:merged`，CYLRefresh）。 | Context: CYLSearchViewController's Android POM lists these modules as `CYLSearchAndroid:placeholder:unspecified` (see `docs/Android-Port.md`, "Maven publication coordinates"). The artifactIds follow upstream's naming (`cyltabbarcontroller-animateditem`): `cyltableviewplaceholder` (`:placeholder`) and `cyltableviewplaceholder-refresh` (`:merged`, CYLRefresh). |
+| 评分标准：100 = 两个模块 `publishToMavenLocal` 生成正确的 POM（坐标、依赖带版本、MIT 许可）、AAR 内含 LICENSE；Android 单元测试与示例构建、鸿蒙构建与单元测试、小程序 `npm test` 全部通过，结果记录在文档中，坐标告知 CYLSearchViewController；60 = 发布配置完成且 `publishToMavenLocal` 通过，Android 测试通过。 | Acceptance: 100 = `publishToMavenLocal` gives correct POMs for both modules (coordinates, versioned dependencies, MIT license) with the LICENSE inside each AAR; the Android unit tests and example build, the HarmonyOS build and unit tests, and the mini program's `npm test` all pass, the results are recorded, and CYLSearchViewController has the coordinates; 60 = the publication is configured, `publishToMavenLocal` passes, and the Android tests pass. |
+
 ### 已完成（70 / 100）：修复 docs 中的所有 TODO（Win 会话：非 iOS 部分）/ Done (70 / 100): Fix every TODO in docs (Win session: the non-iOS part)
 
 | 中文 | English |
