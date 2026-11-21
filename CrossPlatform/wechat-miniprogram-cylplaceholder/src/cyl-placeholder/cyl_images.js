@@ -5,6 +5,7 @@ module.exports = [
   "blocked",
   "bluetooth_disabled",
   "broken_image",
+  "check_circle",
   "cloud",
   "cloud_off",
   "delete",

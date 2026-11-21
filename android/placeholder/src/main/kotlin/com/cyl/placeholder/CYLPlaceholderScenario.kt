@@ -692,7 +692,7 @@ object CYLPlaceholderScenarioCatalog {
             CYLPlaceholderScenario.Loading -> listOf(icon(R.drawable.cyl_placeholder_hourglass, R.string.cyl_placeholder_scenario_loading_title, ILLUSTRATION_SIDE))
             CYLPlaceholderScenario.Uploading -> listOf(icon(R.drawable.cyl_placeholder_upload_off, R.string.cyl_placeholder_scenario_uploading_title, ILLUSTRATION_SIDE))
             CYLPlaceholderScenario.Success -> listOf(
-                icon(R.drawable.cyl_placeholder_info, R.string.cyl_placeholder_scenario_success_title, ILLUSTRATION_SIDE),
+                icon(R.drawable.cyl_placeholder_check_circle, R.string.cyl_placeholder_scenario_success_title, ILLUSTRATION_SIDE),
                 button(CYLPlaceholderAction.Done, CYLPlaceholderButtonStyle.Filled),
             )
             CYLPlaceholderScenario.HUD -> listOf(icon(R.drawable.cyl_placeholder_hourglass, R.string.cyl_placeholder_scenario_h_u_d_title, 56f))

@@ -339,7 +339,7 @@ function componentsForScenario(scenario, language) {
     case 'SyncFailed': return [own('sync_problem'), button(A.Retry, 'Outlined')]
     case 'Loading': return [own('hourglass', ILLUSTRATION_SIDE)]
     case 'Uploading': return [own('upload_off', ILLUSTRATION_SIDE)]
-    case 'Success': return [own('info', ILLUSTRATION_SIDE), button(A.Done, 'Filled')]
+    case 'Success': return [own('check_circle', ILLUSTRATION_SIDE), button(A.Done, 'Filled')]
     case 'HUD': return [own('hourglass', 56)]
     default: return []
   }

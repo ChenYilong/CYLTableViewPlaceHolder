@@ -41,6 +41,14 @@ class CYLPlaceholderStackViewTest {
     }
 
     @Test
+    fun successScenarioStillImageIsTheCheckMark() {
+        // [EN] The Success scenario's still image is the check mark (shown once its animation ends), not the info icon.
+        // [CN] Success 场景的静态图是对勾（动画结束后显示），不是信息图标。
+        val icon = CYLPlaceholderScenarioCatalog.componentsForScenario(context, CYLPlaceholderScenario.Success).first { it.image != 0 }
+        assertEquals(R.drawable.cyl_placeholder_check_circle, icon.image)
+    }
+
+    @Test
     fun everyScenarioHasItsComponents() {
         // Every iOS scenario (35), each with its components; every icon has its image and every text is filled.
         assertEquals(35, CYLPlaceholderScenarioCatalog.allScenarios.size)

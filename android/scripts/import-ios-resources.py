@@ -25,6 +25,8 @@ IMAGES = [
     'Delete', 'Search', 'Mail', 'Image', 'Cloud', 'NotificationsOff', 'History',
     # The status banner's icon (CYLPlaceholderStatusView).
     'StatusFail',
+    # The Success scenario's still icon (shown after its animation ends).
+    'CheckCircle',
 ]
 LANGS = {'en': 'values', 'ja': 'values-ja', 'ko': 'values-ko', 'ru': 'values-ru', 'uk': 'values-uk',
          'zh-Hans': 'values-b+zh+Hans', 'zh-Hant': 'values-b+zh+Hant'}

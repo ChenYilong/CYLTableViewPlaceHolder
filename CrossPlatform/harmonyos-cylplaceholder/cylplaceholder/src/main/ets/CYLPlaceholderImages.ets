@@ -26,6 +26,7 @@ const IMAGES: Record<string, Resource> = {
   'image_unavailable': $rawfile('cylplaceholder/images/image_unavailable.png'),
   'inbox': $rawfile('cylplaceholder/images/inbox.png'),
   'info': $rawfile('cylplaceholder/images/info.png'),
+  'check_circle': $rawfile('cylplaceholder/images/check_circle.png'),
   'location_off': $rawfile('cylplaceholder/images/location_off.png'),
   'locked': $rawfile('cylplaceholder/images/locked.png'),
   'mail': $rawfile('cylplaceholder/images/mail.png'),

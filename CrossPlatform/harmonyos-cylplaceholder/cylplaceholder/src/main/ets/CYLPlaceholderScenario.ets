@@ -809,7 +809,7 @@ function staticComponents(scenario: CYLPlaceholderScenario): CYLPlaceholderCompo
     case CYLPlaceholderScenario.Uploading:
       return [own('upload_off', CYLScenarioIllustrationSide)];
     case CYLPlaceholderScenario.Success:
-      return [own('info', CYLScenarioIllustrationSide), actionButton(CYLPlaceholderActions.Done, F)];
+      return [own('check_circle', CYLScenarioIllustrationSide), actionButton(CYLPlaceholderActions.Done, F)];
     case CYLPlaceholderScenario.HUD:
       return [own('hourglass', 56)];
     default:
