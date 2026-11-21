@@ -31,11 +31,20 @@ the status and score are in `docs/HarmonyOS.md`.
   junction or a `subst` drive does not work around a non-ASCII path (hvigor resolves both back to the real path with
   Node's native `realpath`: "Invalid project path" / "Path not found"); use a clone at an ASCII path instead. Scripts
   with non-ASCII text for Windows PowerShell 5.1 must be saved as UTF-8 with a BOM, or they read `文档` as `鏂囨。`.
-- **x86_64 emulator:** the Windows emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native
-  libraries only, so the normal HAP does not install ("install parse native so failed"). Test on an arm64 emulator
-  (Apple silicon) or a phone; or, for checks that need no PAG / Rive, build an emulator-only HAP without them by
-  adding `"nativeLib": { "filter": { "excludes": ["**/*.so"] } }` to `entry/build-profile.json5` `buildOption`
-  locally (never commit it; PAG and Rive cannot play in that build).
+- **x86_64 emulator: the HAP does not install because its Rive and PAG libraries are arm64-only.** The Windows
+  emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native libraries only
+  (`libs/arm64-v8a/*.so`), so the normal HAP does not install ("install parse native so failed"). The fix:
+  1. Build as usual (`scripts/build.sh`).
+  2. Make a copy without `libs/`: `python3 scripts/strip-hap-native-libs.py
+     entry/build/default/outputs/default/entry-default-unsigned.hap /tmp/entry-no-native-libs.hap` (on Windows
+     `py -3`).
+  3. `hdc install -r /tmp/entry-no-native-libs.hap`. `scripts/emulator-check.sh` does steps 2 and 3 by itself when
+     `hdc shell param get const.product.cpu.abilist` has no arm64-v8a (`CYL_HAP_STRIP_LIBS=1` / `0` forces it).
+  4. Expect still images for Rive and PAG files: the example registers no Rive engine on that ABI
+     (`cylRiveIsSupported()`, issue E15 in `docs/HarmonyOS.md`) and PAG cannot load. Do not report Rive or PAG
+     playback as verified there; use an arm64 emulator (Apple silicon) or a phone with the unmodified HAP.
+  The older alternative, `"nativeLib": { "filter": { "excludes": ["**/*.so"] } }` in `entry/build-profile.json5`
+  `buildOption`, also works locally but must never be committed; the strip script leaves the project untouched.
 
 ## 2. Emulator prerequisites
 

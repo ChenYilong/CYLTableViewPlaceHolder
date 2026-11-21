@@ -1396,6 +1396,17 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
    the image download asks for it, with hardware virtualization available on the Mac.
 4. **Signing is not needed on the emulator**: it installs the unsigned `entry-default-unsigned.hap`
    (`hdc install -r`). Do not ask the owner for a signing setup for emulator runs.
+5. **x86_64 emulator: install the HAP without its arm64-only native libraries.** The Windows (and Intel) emulator is
+   x86_64, but the example `entry` depends on `@ohos/rive` and `@tencent/libpag`, which ship native libraries for
+   arm64-v8a only (`libs/arm64-v8a/*.so`), so `hdc install` refuses the HAP as built ("install parse native so
+   failed"). Fix: install a copy without `libs/`: `python3 CrossPlatform/harmonyos-cylplaceholder/scripts/strip-hap-native-libs.py
+   <entry.hap> <entry-no-native-libs.hap>`, then `hdc install -r` the copy.
+   `CrossPlatform/harmonyos-cylplaceholder/scripts/emulator-check.sh` does this by itself when the device's ABI list
+   (`hdc shell param get const.product.cpu.abilist`) has no arm64-v8a (`CYL_HAP_STRIP_LIBS=1` / `0` forces it on /
+   off). In that build the example registers no Rive engine (`cylRiveIsSupported()` checks the ABI; HarmonyOS issue
+   E15 in `docs/HarmonyOS.md`) and PAG cannot load, so Rive and PAG files show their still images: never report Rive
+   or PAG playback as verified on the x86_64 emulator; check it on an arm64 device or arm64 emulator with the unmodified
+   HAP. Never commit a stripped HAP or a `nativeLib` filter in `build-profile.json5`.
 
 ## Running scripts: bash first
 
