@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    `maven-publish`
 }
 
 android {
@@ -77,5 +78,56 @@ dependencies {
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
+// [EN] Maven publication (docs/Android-Port.md, "Maven publication coordinates"), in this module's own build file so a
+//      host that includes only this module (CYLSearchViewController's android/merged) gets the same coordinates.
+//      Version 0.1.0 unless -PcylPlaceholderVersion is given. Check with ./gradlew publishToMavenLocal.
+// [CN] Maven 发布（docs/Android-Port.md “Maven publication coordinates”），写在本模块自己的构建文件中，使只引入本模块的
+//      宿主（CYLSearchViewController 的 android/merged）得到相同的坐标。版本默认 0.1.0，可用 -PcylPlaceholderVersion 指定。
+//      用 ./gradlew publishToMavenLocal 检查。
+group = "io.github.chenyilong"
+version = providers.gradleProperty("cylPlaceholderVersion").orNull ?: "0.1.0"
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                artifactId = "cyltableviewplaceholder"
+                from(components["release"])
+                pom {
+                    name.set("CYLTableViewPlaceHolder")
+                    description.set("Placeholder views for Android with the iOS names: CYLPlaceholderView, CYLPlaceholderStackView, the scenario catalog, the HUD and the status bar.")
+                    url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder")
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder/blob/master/LICENSE")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("ChenYilong")
+                            name.set("ChenYilong")
+                            url.set("https://github.com/ChenYilong")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/ChenYilong/CYLTableViewPlaceHolder")
+                        connection.set("scm:git:https://github.com/ChenYilong/CYLTableViewPlaceHolder.git")
+                        developerConnection.set("scm:git:ssh://git@github.com/ChenYilong/CYLTableViewPlaceHolder.git")
+                    }
+                }
+            }
+        }
     }
 }
