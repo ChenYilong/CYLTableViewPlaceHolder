@@ -35,13 +35,22 @@ android {
     }
 }
 
+val cylAnimatedItemVersion: String = gradle.includedBuilds
+    .firstOrNull { it.projectDir.resolve("../CYLTabBarController.podspec").exists() }
+    ?.let { Regex("""s\.version\s*=\s*["']([^"']+)["']""").find(it.projectDir.resolve("../CYLTabBarController.podspec").readText())?.groupValues?.get(1) }
+    ?: throw GradleException("The CYLTabBarController checkout (included build) has no CYLTabBarController.podspec with s.version.")
+
 dependencies {
     // CYLPlaceholderView subclasses CYLAnimatedItemView, CYLTabBarController's animated icon + title view, and plays its
     // animations through that module's engine (docs/Animated-Item.md of CYLTabBarController). Built from source by
     // commit: settings.gradle.kts substitutes the coordinate with the included build's :cylanimateditem. The engine
     // reaches Lottie, libpag and rive-android by reflection, so this module depends on no animation library: the app
     // adds the libraries it wants to animate, otherwise the static image shows.
-    api("io.github.chenyilong:cyltabbarcontroller-animateditem")
+    // [EN] The version is the one of the CYLTabBarController checkout that is built (its podspec's s.version, the same
+    //      version its Gradle build publishes), so the published POM names a versioned dependency.
+    // [CN] 版本取自所构建的 CYLTabBarController 副本（其 podspec 的 s.version，即其 Gradle 构建发布的版本），使发布的 POM
+    //      中的依赖带有版本。
+    api("io.github.chenyilong:cyltabbarcontroller-animateditem:$cylAnimatedItemVersion")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     // Only for the RecyclerView extensions (cyl_placeholderViewBlock, cyl_reloadData): an app that uses them has

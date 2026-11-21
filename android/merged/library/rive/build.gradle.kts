@@ -48,3 +48,11 @@ kotlin {
         jvmTarget.set(JvmTarget.JVM_17)
     }
 }
+
+// [EN] This module has no unit tests yet (the Rive header needs the native runtime, checked on an emulator); Gradle 9
+//      fails a test task that finds none, so a project-wide testDebugUnitTest would stop here.
+// [CN] 本模块暂无单元测试（Rive 头部需要原生运行时，在模拟器上检查）；Gradle 9 会让找不到测试的测试任务失败，
+//      全项目的 testDebugUnitTest 会停在这里。
+tasks.withType<Test>().configureEach {
+    failOnNoDiscoveredTests.set(false)
+}
