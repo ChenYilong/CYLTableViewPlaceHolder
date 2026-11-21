@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### 已完成：Advisor 模式配置（advisorModel 与 CLAUDE_CODE_ATTRIBUTION_HEADER）/ Done: Advisor-mode settings (advisorModel and CLAUDE_CODE_ATTRIBUTION_HEADER)
+
+- **日期 / Date:** 2026-11-21, branch `feat/android-refresh-port-followup`.
+- **用户原话 / Prompt (verbatim, Chinese):** "模仿我在其他项目的操作，进行类似操作：Advisor 模式已写入三份配置……修改CLAUDE_CODE_ATTRIBUTION_HEADER 提高缓存命中率：.claude/settings.json: advisorModel: claude-opus-5-5 and env.CLAUDE_CODE_ATTRIBUTION_HEADER: \"0\". This file is shared, so it will be committed."
+- **要求 / Requirements:** the same three files as in the user's other projects. `~/.claude/settings.json` (global, already had both keys, left as is); `.claude/settings.json` in this repository's root (shared, committed): `advisorModel: claude-opus-5-5` and `env.CLAUDE_CODE_ATTRIBUTION_HEADER: "0"` (a stable request header keeps the prompt cache hit rate up); `.claude/settings.local.json` (local override, ignored by git globally): `advisorModel: claude-opus-5-5`. Other keys of the earlier attachment (`defaultModel`, `themeStatusBar`, `browser`, `maxInferenceStrength`) are not written: they are not keys of the binary.
+- **结果 / Result:** all three files parse as JSON. Takes effect after Claude Code restarts; `/advisor` turns it on in a running session.
+
 ### 已完成：监控本分支 CI 与静态检查，修复发现的问题 / Done: Monitor this branch's CI and static-analysis checks, fix what they find
 
 | 中文 | English |
