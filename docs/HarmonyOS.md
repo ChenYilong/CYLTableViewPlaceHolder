@@ -1716,3 +1716,11 @@
 | flutter_easy_refresh samples · User profile (CYLEasyRefreshDemoViewController - easyUserProfile) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 
 <!-- harmony-tables:end -->
+
+### 模拟器运行（2026-11-21）/ Emulator run (2026-11-21)
+
+| 中文 | English |
+| --- | --- |
+| 示例在 Mate 70 Pro x86_64 模拟器（HarmonyOS 6.0.1，API 21）上运行，`cylanimateditem` 已同步到 CYLTabBarController `b4d68cfe`：各 Tab、场景页、加号页、HUD 页无崩溃，UI 测试 5 / 5。x86_64 模拟器需要去掉 HAP 中只有 arm64 的 `libs/` 才能安装（code 9568347）。 | The example on the Mate 70 Pro x86_64 emulator (HarmonyOS 6.0.1, API 21), with `cylanimateditem` synced to CYLTabBarController `b4d68cfe`: every tab, a scenario page, the plus page and the HUD page run without a crash, UI tests 5 / 5. The x86_64 emulator installs the HAP only without its arm64-only `libs/` (code 9568347). |
+
+![HarmonyOS example on the Mate 70 Pro emulator](assets/harmonyos-6.0.1-api21-mate70pro-emulator-x86_64-example-run-590e6e6-20261121-sheet.png)
