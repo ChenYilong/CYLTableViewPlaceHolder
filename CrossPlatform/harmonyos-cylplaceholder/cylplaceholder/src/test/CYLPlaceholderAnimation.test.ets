@@ -26,7 +26,8 @@ import {
   CYLPlaceholderRegisterAnimatedItemType
 } from '../main/ets/CYLPlaceholderAnimation';
 import { CYLAnimatedItemEngines, cylAnimatedItemTypeOf } from 'cylanimateditem';
-import { CYLGIFFrameDurations, CYLGIFIterations, CYLGIFPlaceholderItemAnimator } from '../main/ets/CYLGIFPlaceholderItemAnimator';
+import { CYLAnimatedItemEnginePlaceholderAnimator, CYLAnimatedItemEngineContentView } from '../main/ets/CYLAnimatedItemEnginePlaceholderAnimator';
+import { CYLAnimatedItemGIF } from 'cylanimateditem';
 import { CYLPlaceholderViewModel, CYLScenarioIsLineIcon, CYLScenarioLineIconColor } from '../main/ets/CYLPlaceholderView';
 import { CYLPlaceholderHUD, CYLPlaceholderHUDState } from '../main/ets/hud/CYLPlaceholderHUD';
 import {
@@ -309,17 +310,29 @@ export default function placeholderAnimationTest() {
       expect(CYLPlaceholderViewModel.initWithImageText('info', null).cyl_showsIcon).assertTrue();
     });
 
-    it('gifRepeatCountsAndFrameDurations', 0, () => {
-      expect(CYLGIFIterations(0)).assertEqual(-1);
-      expect(CYLGIFIterations(1)).assertEqual(1);
-      expect(CYLGIFIterations(3)).assertEqual(3);
-      expect(CYLGIFFrameDurations([0, 10, 50], 4).join(',')).assertEqual('100,100,50,100');
-      const gif = CYLGIFPlaceholderItemAnimator.animator;
-      expect(gif.identifier).assertEqual('GIF');
-      expect(gif.canAnimateFileAtURL('cylplaceholder/animations/CYLRefreshActivity.GIF')).assertTrue();
-      expect(gif.canAnimateFileAtURL('x.json')).assertFalse();
-      expect(gif.attributeKeys[CYLPlaceholderItemAnimationFilePath]).assertEqual(CYLPlaceholderItemGIFFilePath);
-      expect(CYLGIFPlaceholderItemAnimator.animator === gif).assertTrue();
+    it('engineAnimatorMatchesRegisteredEnginesAndMapsRepeatCounts', 0, () => {
+      // The core registers CYLTabBarController's GIF engine at import (CYLPlaceholderItemAnimationEngine, through Index.ets);
+      // this test imports the files directly, so it registers it itself.
+      CYLAnimatedItemGIF.register();
+      const gif = new CYLAnimatedItemEnginePlaceholderAnimator('GIF');
+      expect(gif.fileExtensions.join(',')).assertEqual('gif');
+      expect(gif.canAnimateFileAtURL('Animations/a.gif')).assertTrue();
+      expect(gif.canAnimateFileAtURL('Animations/a.png')).assertFalse();
+      // No engine view registered for the type: the file is not claimed (it shows the static image).
+      expect(new CYLAnimatedItemEnginePlaceholderAnimator('APNG', ['apng']).canAnimateFileAtURL('a.apng')).assertFalse();
+      expect(new CYLAnimatedItemEnginePlaceholderAnimator('Lottie').priority < gif.priority).assertTrue();
+      const view = gif.animationViewWithURL('Animations/a.gif#loop=1', 40, 30, ImageFit.Contain);
+      expect(view instanceof CYLAnimatedItemEngineContentView).assertTrue();
+      const content = view as CYLAnimatedItemEngineContentView;
+      expect(content.engineState.width).assertEqual(40);
+      expect(content.engineState.drivesPlayback).assertFalse();
+      expect(content.cyl_setAnimationViewRepeatCount(0)).assertTrue();
+      expect(content.repeatCount).assertEqual(0);
+      expect(content.cyl_setAnimationViewRepeatCount(-1)).assertFalse();
+      // Before the engine has loaded, a play waits.
+      content.cyl_playAnimationView();
+      expect(content.pendingCommand).assertEqual(1);
+      expect(gif.playerForAnimationView(content) !== null).assertTrue();
     });
 
     it('fileURLKeepsItsFragmentOptions', 0, () => {

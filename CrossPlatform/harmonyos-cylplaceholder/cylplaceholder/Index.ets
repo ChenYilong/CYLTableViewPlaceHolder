@@ -167,7 +167,9 @@ export {
   CYLPlaceholderAnimationURLWithOptions,
   CYLPlaceholderAnimationOptionsOfURL
 } from './src/main/ets/CYLPlaceholderAnimation';
-export { CYLGIFPlaceholderItemAnimator } from './src/main/ets/CYLGIFPlaceholderItemAnimator';
+export {
+  CYLAnimatedItemEnginePlaceholderAnimator, CYLAnimatedItemEngineContentView
+} from './src/main/ets/CYLAnimatedItemEnginePlaceholderAnimator';
 // The engines' building blocks. The core depends on no animation library: Lottie, PAG and Rive engines are the app's
 // (the example's entry/src/main/ets/engines), built on these and registered by the app.
 export {
@@ -177,7 +179,6 @@ export {
   CYLPlaceholderAnimationArrayBuffer,
   CYLPlaceholderRegisterAnimatedItemType
 } from './src/main/ets/CYLPlaceholderAnimation';
-export { CYLPAGDrivenStep, CYLPAGDrivenProgress } from './src/main/ets/CYLPAGPlayback';
 export {
   CYLRiveUsesLegacyRuntime,
   CYLRiveActivePropertyPath,

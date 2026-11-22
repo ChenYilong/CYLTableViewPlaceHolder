@@ -10,7 +10,6 @@ import lottie, { AnimationItem } from '@ohos/lottie';
 import { util } from '@kit.ArkTS';
 import { CYLPlaceholderAnimationReadFileSync } from 'cylplaceholder';
 import { CYLPlaceholderDrawingColor } from 'cylplaceholder';
-import { CYLLottieContentMode } from './CYLLottiePlaceholderItemAnimator';
 import {
   CYLCompatibleLOTCopyData,
   CYLCompatibleLOTDurationOfData,
@@ -45,6 +44,17 @@ export class CYLPlaceholderCompatibleLOTAnimation {
   get isLoaded(): boolean {
     return this.animationData !== null;
   }
+}
+
+/** lottie's contentMode for an ImageFit. */
+function CYLLottieContentMode(fit: ImageFit): string {
+  if (fit === ImageFit.Cover) {
+    return 'Cover';
+  }
+  if (fit === ImageFit.Fill) {
+    return 'Fill';
+  }
+  return 'Contain';
 }
 
 let compatibleNameCounter = 0;
