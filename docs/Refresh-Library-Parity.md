@@ -221,7 +221,7 @@
 
 ## flutter_easy_refresh to Flutter package (CYL API) / Flutter package score table
 
-Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBarController's `flutter_cyltabbar`. The reference API is the CYLRefresh already ported to iOS Swift and Android (Kotlin names, lowerCamelCase; the iOS selector is named in column 2). flutter_easy_refresh (`dcdbb81`, MIT) is vendored under `lib/src/vendor/` and wrapped by a thin CYL adapter. Component objects are long-lived `ChangeNotifier`s that hold both configuration and state, like iOS and Android. Design by the advisor, 2026-11-23.
+Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBarController's `flutter_cyltabbar`. The reference API is the CYLRefresh already ported to iOS Swift and Android (Kotlin names, lowerCamelCase; the iOS selector is named in column 2). flutter_easy_refresh (`dcdbb81`, MIT) is only the behavior reference: the package is a complete rewrite named `cyl_refresh` (no vendored copy, no adapter layer, no `EasyRefresh` names; owner decision 2026-11-23: more customization, simpler architecture), with the MIT attribution kept in `NOTICE`. Component objects are long-lived `ChangeNotifier`s that hold both configuration and state, like iOS and Android. Design by the advisor, 2026-11-23.
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
