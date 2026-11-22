@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（95 / 100）：固定 CYLTabBarController 5b7af8c4 / Done (95/100): Pin CYLTabBarController 5b7af8c4
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a），95 / 100。 | Status: done (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a), 95 / 100. |
+| 提示词（原文）。 | Prompt (verbatim): "pin CYLTabBarController 5b7af8c4" |
+| 验收：满分（100）= Cartfile、4 个 Podfile、HarmonyOS 与小程序副本固定到 5b7af8c4，同步检查与测试通过，已推送。及格（60）= 固定并推送。 | Acceptance: full marks (100) = the Cartfile, the 4 Podfiles and the HarmonyOS and mini program copies pinned to 5b7af8c4, sync checks and tests pass, pushed. Pass (60) = pinned and pushed. |
+| 结果：Cartfile、4 个 Podfile 从 143fadff 改为 5b7af8c4（feat/cross-platform-components，“HarmonyOS Rive icon waits for the file before playing”）；`cyltabbarcontroller-checkout.sh`、`sync-harmonyos-cylanimateditem.sh`（`--check` 一致）与小程序 `sync-animated-item` / `sync-example` 已运行。5b7af8c4 只改了 CYLTabBarController 自己的 `cyltabbar` 模块（`CYLRiveTabBarItemAnimator.ets`），本仓库复制的 cylanimateditem 与小程序副本只有 `UPSTREAM_COMMIT` 变化；示例自己的 Rive 动画器已有同样的等待（b6 的 cf5ea470）。`harmonyos-cylplaceholder/instructions.md` 的固定提交已更新。测试：小程序 78/78。 | Result: the Cartfile and the 4 Podfiles move from 143fadff to 5b7af8c4 (feat/cross-platform-components, "HarmonyOS Rive icon waits for the file before playing"); `cyltabbarcontroller-checkout.sh`, `sync-harmonyos-cylanimateditem.sh` (`--check` matches) and the mini program's `sync-animated-item` / `sync-example` ran. 5b7af8c4 changes only CYLTabBarController's own `cyltabbar` module (`CYLRiveTabBarItemAnimator.ets`), so the copied cylanimateditem and mini program copies change only their `UPSTREAM_COMMIT`; the example's own Rive animator already has the same wait (b6's cf5ea470). The pin in `harmonyos-cylplaceholder/instructions.md` is updated. Tests: mini program 78/78. |
+| 评分：95 / 100。TODO（-5）：按 “任意分支的最新提交” 规则，最新提交是草稿分支 feat/dealloc-block-executor-dependency 的 098b963d；按用户要求固定 5b7af8c4（CI 的示例构建仍会自动改用最新提交）。 | Score: 95 / 100. TODO (-5): under the "newest commit on any branch" rule the newest is 098b963d on the draft branch feat/dealloc-block-executor-dependency; pinned 5b7af8c4 as the user asked (CI's example builds still switch to the newest commit themselves). |
+
 ### 完成（待 CI，80 / 100）：修复 CI 失败（CYLDeallocBlockExecutor 1.4 未发布） / Done (pending CI, 80/100): Fix the CI failure (CYLDeallocBlockExecutor 1.4 not published)
 
 | 中文 | English |
