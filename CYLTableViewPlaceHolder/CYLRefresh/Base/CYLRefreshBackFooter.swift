@@ -314,7 +314,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
                 lastRefreshCount = scrollView?.cylTotalDataCount() ?? 0
                 pagingRestingOffset = happenOffsetY
 
-                if let scrollView = scrollView, pinsSectionHeaders(of: scrollView), fastAnimationDuration > 0 {
+                if let scrollView = scrollView, CYLRefreshOffsetDriver.isNeeded(for: scrollView), fastAnimationDuration > 0 {
                     // FIX: issue #1627 / #1507: see offsetDriver.
                     let from = scrollView.cylOffsetY
                     var bottom = cylH + scrollViewOriginalInset.bottom
@@ -351,18 +351,6 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
 
     // MARK: - 刷新结束：归还底部 inset
 
-    // [EN] YES for a plain table and a flow layout that pins its section headers or footers.
-    // [CN] plain 表格、以及固定 section header 或 footer 的 flow layout 为 YES。
-    private func pinsSectionHeaders(of scrollView: UIScrollView) -> Bool {
-        if let table = scrollView as? UITableView {
-            return table.style == .plain
-        }
-        if let collection = scrollView as? UICollectionView,
-           let layout = collection.collectionViewLayout as? UICollectionViewFlowLayout {
-            return layout.sectionHeadersPinToVisibleBounds || layout.sectionFootersPinToVisibleBounds
-        }
-        return false
-    }
 
     // [EN] YES when a paging scroll view rests between two pages, as UIKit's paging deceleration can leave it after the
     //      footer's refresh animation moved the offset (MJRefresh #1430: the page ended about 0.22 of a page off).
@@ -399,7 +387,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             restorePagingOffset = scrollView.isPagingEnabled && !scrollView.isDragging && !scrollView.isDecelerating &&
                 (abs(scrollView.cylOffsetY - pagingRefreshOffset) < 0.001 || isBetweenPages)
         }
-        if !restorePagingOffset, let scrollView = scrollView, pinsSectionHeaders(of: scrollView), slowAnimationDuration > 0 {
+        if !restorePagingOffset, let scrollView = scrollView, CYLRefreshOffsetDriver.isNeeded(for: scrollView), slowAnimationDuration > 0 {
             // FIX: issue #1627 / #1507: see offsetDriver.
             let from = scrollView.cylOffsetY
             scrollView.cylInsetB -= lastBottomDelta
@@ -614,6 +602,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
 //      stop() ends it where it is and runs the completion then, as an interrupted UIView animation does.
 // [CN] 逐帧移动滚动视图的 offset（缓入缓出），结束后执行 completion。拖动、新的移动或 stop() 让它停在当前位置并立即执行
 //      completion，与被打断的 UIView 动画一致。
+// [EN] Used by CYLRefreshBackFooter and CYLRefreshHeader. [CN] CYLRefreshBackFooter 与 CYLRefreshHeader 使用。
 final class CYLRefreshOffsetDriver: NSObject {
     private weak var scrollView: UIScrollView?
     private var link: CADisplayLink?
@@ -624,6 +613,25 @@ final class CYLRefreshOffsetDriver: NSObject {
     private var completion: (() -> Void)?
 
     var isMoving: Bool { link != nil }
+
+    // FIX: issue #1627 / #1507 / MJRefresh #1568
+    // [EN] YES when UIKit places views of the scroll view once per layout from its bounds, so an offset written inside a
+    //      UIView animation leaves them behind while the bounds animate: the pinned section headers of a plain table or of
+    //      a flow layout that pins headers or footers, and the background view of a table or collection view.
+    // [CN] UIKit 每次布局按 bounds 放置滚动视图中的某些视图时为 YES：在 UIView 动画内写 offset 会让它们在 bounds 动画期间落在后面。
+    //      包括 plain 表格及固定 header/footer 的 flow layout 的 section header，以及表格、collection view 的背景视图。
+    static func isNeeded(for scrollView: UIScrollView) -> Bool {
+        if let table = scrollView as? UITableView {
+            return table.style == .plain || table.backgroundView != nil
+        }
+        if let collection = scrollView as? UICollectionView {
+            if collection.backgroundView != nil { return true }
+            if let layout = collection.collectionViewLayout as? UICollectionViewFlowLayout {
+                return layout.sectionHeadersPinToVisibleBounds || layout.sectionFootersPinToVisibleBounds
+            }
+        }
+        return false
+    }
 
     func move(_ scrollView: UIScrollView, from: CGFloat, to: CGFloat, duration: TimeInterval,
               completion: @escaping () -> Void) {

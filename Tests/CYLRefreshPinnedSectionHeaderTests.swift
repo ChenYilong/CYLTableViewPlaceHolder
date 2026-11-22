@@ -128,4 +128,41 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.7, header: header), 1, "pinned when loading ends")
         XCTAssertEqual(collection.contentInset.bottom, 0, accuracy: 0.5)
     }
+
+    // FIX: issue MJRefresh#1568
+    // [EN] A collection view's background view stays in place while the header starts and ends refreshing.
+    // [CN] 刷新头开始和结束刷新时，collection view 的背景视图保持不动。
+    func testHeaderKeepsTheCollectionBackgroundViewInPlaceWhenRefreshingStartsAndEnds() {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        let controller = UIViewController()
+        window.rootViewController = controller
+        window.isHidden = false
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 375, height: 80)
+        let collection = UICollectionView(frame: window.bounds, collectionViewLayout: layout)
+        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "c")
+        collection.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: "h")
+        count = 20
+        collection.dataSource = self
+        collection.contentInsetAdjustmentBehavior = .never
+        let background = UIView()
+        collection.backgroundView = background
+        controller.view.addSubview(collection)
+        var completions = 0
+        let header = CYLRefreshNormalHeader(refreshingBlock: {})
+        header.endRefreshingCompletionBlock = { completions += 1 }
+        collection.cylHeader = header
+        collection.layoutIfNeeded()
+        collection.contentOffset.y = -120
+        collection.layoutIfNeeded()
+        header.state = .refreshing
+        XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.5) { background }, 1, "in place when refreshing starts")
+        XCTAssertEqual(collection.contentOffset.y, -header.frame.height, accuracy: 0.5)
+        header.endRefreshing()
+        XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.8) { background }, 1, "in place when refreshing ends")
+        XCTAssertEqual(collection.contentOffset.y, 0, accuracy: 0.5)
+        XCTAssertEqual(collection.contentInset.top, 0, accuracy: 0.5)
+        XCTAssertEqual(completions, 1)
+    }
 }

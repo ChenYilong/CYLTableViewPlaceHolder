@@ -169,6 +169,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
      */
     @objc open var isCollectionViewAnimationBug = false
 
+    // [EN] Moves the offset frame by frame where UIKit places views from the bounds (MJRefresh #1568).
+    // [CN] 在 UIKit 按 bounds 放置视图的滚动视图中逐帧移动 offset（MJRefresh #1568）。
+    private let offsetDriver = CYLRefreshOffsetDriver()
+
     /**
      * [EN] Whether refreshing adds the header's height to the top inset, pushing the content down. Default YES; NO (and
      *      `CYLRefreshScrollModeFront`) keeps the content where it is, for headers that are always open or float in front.
@@ -319,6 +323,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
      * [EN] Places the header above the content. [CN] 把刷新头放到内容上方。
      */
     open override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil { offsetDriver.stop() }
         super.willMove(toSuperview: newSuperview)
         if scrollView != nil {
             cylY = -cylH - ignoredScrollViewContentInsetTop
@@ -779,6 +784,26 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             return
         }
 
+        // FIX: MJRefresh #1568: see CYLRefreshOffsetDriver.isNeeded(for:).
+        if !isCollectionViewAnimationBug, slowAnimationDuration > 0, let scrollView = scrollView,
+           CYLRefreshOffsetDriver.isNeeded(for: scrollView) {
+            let from = scrollView.cylOffsetY
+            setRefreshingInsetTop(scrollView.cylInsetT + insetTDelta)
+            scrollView.cylOffsetY = from
+            UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
+                self.endRefreshingAnimationBeginAction?()
+                if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
+            })
+            offsetDriver.move(scrollView, from: from, to: max(from, -scrollView.adjustedContentInset.top),
+                              duration: slowAnimationDuration) { [weak self] in
+                guard let self = self else { return }
+                self.retracting = false
+                self.pullingPercent = 0.0
+                self.endRefreshingCompletionBlock?()
+            }
+            return
+        }
+
         // 默认使用 UIViewAnimation 动画
         if !isCollectionViewAnimationBug {
             // 恢复inset和offset
@@ -851,6 +876,19 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             return
         }
         addedRefreshingInset = true
+        // FIX: MJRefresh #1568: see CYLRefreshOffsetDriver.isNeeded(for:).
+        if !isCollectionViewAnimationBug, fastAnimationDuration > 0, let scrollView = scrollView,
+           CYLRefreshOffsetDriver.isNeeded(for: scrollView), scrollView.panGestureRecognizer.state != .cancelled {
+            let top = scrollViewOriginalInset.top + expandHeight
+            insetTDelta = scrollViewOriginalInset.top - top
+            let from = scrollView.cylOffsetY
+            setRefreshingInsetTop(top)
+            scrollView.cylOffsetY = from
+            offsetDriver.move(scrollView, from: from, to: -top, duration: fastAnimationDuration) { [weak self] in
+                self?.executeRefreshingCallback()
+            }
+            return
+        }
         // 默认使用 UIViewAnimation 动画
         if !isCollectionViewAnimationBug {
             UIView.animate(withDuration: fastAnimationDuration, animations: {
