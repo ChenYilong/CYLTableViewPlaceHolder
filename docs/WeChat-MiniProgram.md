@@ -233,8 +233,10 @@
 - **Not 1:1 (platform limits, documented in the pages):**
   - No SF Symbols: row icons are emoji / text glyphs; tab icons are original SVGs in the iOS gray and teal.
   - Navigation bar buttons sit in a row under the native bar; no large titles; modal pages are pushed pages.
-  - PAG and Rive have no mini program player: such files are listed but show a note (Animations), a spinner
-    (refresh icons) or a drawn equivalent (CYLRefresh Rive styles).
+  - PAG and Rive play in the refresh icons (2026-11-22): the example's `refresh-engines/` subpackage holds cyl-pag and
+    cyl-rive (about 1.7 MB, over the main package budget), `refresh-icon-demo` passes them to `cyl-refresh` as
+    `cyl-pag-view` / `cyl-rive-view` with `pag-wasm-path` / `rive-wasm-path` (docs/Task-Log.md). The Animations tab
+    still lists PAG and Rive files with a note, and the CYLRefresh Rive styles stay drawn equivalents.
   - The web view page is a native page (a `<web-view>` cannot host the refresh header or overlays, and github.com
     is not a business domain of the AppID).
   - `cyl-refresh` cannot report the pull beyond the threshold or the footer's pull, and hides the header when a

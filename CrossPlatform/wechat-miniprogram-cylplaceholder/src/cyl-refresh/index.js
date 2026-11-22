@@ -44,6 +44,13 @@ Component({
      */
     iconSpeed: { type: Number, value: 1 },
     iconLoop: { type: Boolean, value: true },
+    /**
+     * Where the PAG and Rive engines the page passes (`cyl-pag-view`, `cyl-rive-view`) load their WebAssembly from,
+     * forwarded to cyl-animated-item's `pagWasmPath` / `riveWasmPath`: set them when the engine lives in a subpackage;
+     * '' keeps each engine's default path.
+     */
+    pagWasmPath: { type: String, value: '' },
+    riveWasmPath: { type: String, value: '' },
     headerIcons: { type: null, value: null },
     /** { Idle, Refreshing, NoMoreData } of the footer. */
     footerIcons: { type: null, value: null },

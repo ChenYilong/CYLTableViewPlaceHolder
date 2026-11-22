@@ -41,6 +41,9 @@ test('pull distance and icons', () => {
     { path: '/a/x.pag', width: 32, height: 32, type: 'pag', image: '', animationUrl: '/a/x.pag' })
   assert.strictEqual(R.iconForState({ Idle: '/a/x.riv' }, S.Idle).type, 'rive')
   assert.strictEqual(R.iconForState({ Idle: '/a/x.svga' }, S.Idle).type, 'svga')
+  // Package copies of PAG and Rive files (*.pag.bin, *.riv.bin, the example's refresh-engines/ subpackage) play.
+  assert.deepStrictEqual([R.iconForState({ Idle: '/e/x.pag.bin' }, S.Idle).type, R.iconForState({ Idle: '/e/x.pag.bin' }, S.Idle).animationUrl], ['pag', '/e/x.pag.bin'])
+  assert.deepStrictEqual([R.iconForState({ Idle: '/e/x.riv.bin' }, S.Idle).type, R.iconForState({ Idle: '/e/x.riv.bin' }, S.Idle).animationUrl], ['rive', '/e/x.riv.bin'])
   assert.strictEqual(R.iconForState({ Idle: '/a/x.png' }, S.Idle).image, '/a/x.png')
   assert.deepStrictEqual([R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).type, R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).image], ['unsupported', ''])
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.Pulling).path, '/a.json') // Idle covers every state
@@ -75,4 +78,18 @@ test('finish phase and trailer texts', () => {
   assert.strictEqual(R.finishText('footer', true, 'en'), 'Load complete')
   assert.strictEqual(R.finishText('footer', false, 'en'), 'Load failed')
   assert.strictEqual(R.stateText('trailer', S.Pulling, 'en'), 'Release to see details')
+})
+
+test('cyl-refresh forwards the PAG and Rive wasm paths, and the example wires both engines', () => {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  const wxml = fs.readFileSync(path.join(__dirname, '../src/cyl-refresh/index.wxml'), 'utf8')
+  assert.strictEqual((wxml.match(/pag-wasm-path="\{\{pagWasmPath\}\}" rive-wasm-path="\{\{riveWasmPath\}\}"/g) || []).length, 2)
+  const demo = path.join(__dirname, '../example/miniprogram/refresh-engines/refresh-icon-demo/refresh-icon-demo')
+  const page = fs.readFileSync(demo + '.wxml', 'utf8')
+  assert.match(page, /generic:cyl-pag-view="cyl-pag" generic:cyl-rive-view="cyl-rive"/)
+  assert.match(page, /pag-wasm-path="\/refresh-engines\/libs\/cyl-pag-miniprogram\/libpag\/libpag\.wasm\.br"/)
+  assert.match(page, /rive-wasm-path="\/refresh-engines\/libs\/cyl-rive-miniprogram\/rive\/rive\.wasm\.br"/)
+  const app = JSON.parse(fs.readFileSync(path.join(__dirname, '../example/miniprogram/app.json'), 'utf8'))
+  assert.ok(app.subPackages.some((s) => s.root === 'refresh-engines/' && s.pages.includes('refresh-icon-demo/refresh-icon-demo')))
 })

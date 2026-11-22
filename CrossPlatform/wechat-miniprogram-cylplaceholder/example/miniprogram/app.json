@@ -16,8 +16,7 @@
     "pages/status/status",
     "pages/hud/hud",
     "pages/hud-lifecycle/hud-lifecycle",
-    "pages/refresh-icons/refresh-icons",
-    "pages/refresh-icon-demo/refresh-icon-demo"
+    "pages/refresh-icons/refresh-icons"
   ],
   "window": {
     "navigationBarTitleText": "CYLTableViewPlaceHolder",
@@ -64,6 +63,12 @@
   "darkmode": true,
   "sitemapLocation": "sitemap.json",
   "subPackages": [
+    {
+      "root": "refresh-engines/",
+      "pages": [
+        "refresh-icon-demo/refresh-icon-demo"
+      ]
+    },
     {
       "root": "refresh-demos/",
       "name": "refreshDemos",

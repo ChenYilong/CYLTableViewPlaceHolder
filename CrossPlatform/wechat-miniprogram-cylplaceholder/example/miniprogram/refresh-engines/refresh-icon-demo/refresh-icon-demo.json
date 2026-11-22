@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "",
+  "disableScroll": true,
+  "usingComponents": {
+    "cyl-refresh": "/components/cyl-refresh/index",
+    "cyl-pag": "../libs/cyl-pag-miniprogram/cyl-pag/index",
+    "cyl-rive": "../libs/cyl-rive-miniprogram/cyl-rive/index"
+  }
+}
