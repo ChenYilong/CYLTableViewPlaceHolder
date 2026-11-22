@@ -9,7 +9,7 @@ the repository root `instructions.md` (see "HarmonyOS") and `AGENTS.md`.
 
 The default HAP of `entry` does not install on the x86_64 emulator ("install parse native so failed"): `@ohos/rive`
 and `@tencent/libpag` ship native libraries for arm64-v8a only. The test path comes from CYLTabBarController's
-HarmonyOS CYLAnimatedItem (`cylanimateditem/README.md`, "x86_64 emulator", pinned at c8fee654), shared by every app and
+HarmonyOS CYLAnimatedItem (`cylanimateditem/README.md`, "x86_64 emulator", pinned at 143fadff), shared by every app and
 library that depends on the item:
 
 ```sh
@@ -20,7 +20,7 @@ python3 cylanimateditem/tools/cyl_hap_x86_64.py install entry/build/default/outp
 `entry/build-profile.json5` defines the `emulator` target (and the `emulatorTest` build mode for `ohosTest`);
 `scripts/emulator-check.sh` installs the emulator HAP through the tool on a device without arm64-v8a. On x86_64,
 `CYLAnimatedItemEngines.canPlay` is false for Rive and PAG, so those items show their still images; Rive and PAG
-playback is verified only on arm64 devices or arm64 emulators with the `default` target. Never commit a stripped HAP.
+playback is verified only on arm64 devices or arm64 emulators with the `default` target. Never commit a stripped HAP. In debug builds, `cyl_hap_x86_64.py install` also adds CYLTabBarController's x86_64 debug engine kit (Rive; PAG for @tencent/libpag 4.5.102), only when the app's package version matches the kit exactly, so Rive and PAG play there (verified 2026-11-22, 143fadff).
 Setup details: the `cyl-harmonyos-setup` skill; rule: root `instructions.md`, "HarmonyOS: IDE preparation and
 emulator prerequisites", item 5.
 

@@ -1,7 +1,7 @@
 {
   "apiType": "stageMode",
   "buildOption": {},
-  // x86_64 emulator (cylanimateditem/README.md, "x86_64 emulator"; CYLTabBarController c8fee654): @ohos/rive and
+  // x86_64 emulator (cylanimateditem/README.md, "x86_64 emulator"; CYLTabBarController 143fadff): @ohos/rive and
   // @tencent/libpag ship arm64-v8a libraries only, so the "emulator" target leaves every arm64-v8a library out
   // (libc++_shared.so too) and installs there; its Rive and PAG items show their still images. Phones, arm64 emulators
   // and releases use the "default" target. scripts/build.sh emulator builds it.
