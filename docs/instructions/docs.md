@@ -15,7 +15,7 @@ so the detailed text is read only when its keyword or tag is triggered.
 
 - **Which files:** `instructions.md`, `AGENTS.md` (loaded through `CLAUDE.md`), `CLAUDE.md`, every folder
   `instructions.md`, and `.github/copilot-instructions.md`.
-- **Tags** (the same set in every file): `guidelines` (Behavioral guidelines: the first tag of the root files, linking `Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md`, which must be read in full; `CLAUDE.md` imports it), `workflow` (Task workflow), `testing` (Testing scenario), `ci` (CI/CD scenario), `windows` (Windows scenario), `macos` (macOS-only scenario), `harmonyos` (HarmonyOS scenario), `code` (Code and architecture), `l10n-a11y` (Localization and accessibility), `docs` (Documentation scenario), `git` (Git and commits).
+- **Tags** (the same set in every file): `behavioral` (Behavioral guidelines: the first tag of the root files, linking `behavioral.md`, which must be read in full; `CLAUDE.md` imports it), `workflow` (Task workflow), `testing` (Testing scenario), `ci` (CI/CD scenario), `windows` (Windows scenario), `macos` (macOS-only scenario), `harmonyos` (HarmonyOS scenario), `code` (Code and architecture), `l10n-a11y` (Localization and accessibility), `docs` (Documentation scenario), `git` (Git and commits).
 - **Headings:** each tag is a visible `## Tag: <Title> (\`<tag>\`)` heading; never inside `<details>` or another
   collapsed block. A file shows only the tags it has content for; `instructions.md` and `AGENTS.md` show all of them.
 - **200 lines:** an instruction file never exceeds 200 lines. Overflow goes to `docs/instructions/<tag>.md` (one file per
