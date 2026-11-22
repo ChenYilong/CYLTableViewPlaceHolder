@@ -4,7 +4,9 @@ This folder contains the WeChat Mini Program port, published to npm as `cyl-plac
 `miniprogram` folder is `src/`), with its example and tests. It inherits the repository root `instructions.md` and
 `AGENTS.md`.
 
-## License in every published package
+## Tag: Code and architecture (`code`)
+
+### License in every published package
 
 The npm package carries the project's license: `LICENSE` at the package root and a copy in the published folder
 `src/LICENSE`, because `miniprogram_npm` copies only `src/`; the third-party licenses of the bundled resources stay
@@ -14,7 +16,7 @@ and never edited by hand) carry its MIT license as `LICENSE.CYLTabBarController`
 `"license": "MIT"`. See "License in every published package" in the root `instructions.md` and the
 `cyl-package-licenses` skill; `python3 scripts/check_package_licenses.py` checks it.
 
-## Icon and title vs. the stack view
+### Icon and title vs. the stack view
 
 - **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
   CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.

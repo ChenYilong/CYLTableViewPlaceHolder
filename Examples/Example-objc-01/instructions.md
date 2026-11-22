@@ -3,7 +3,9 @@
 This folder contains the adapted issue 1575 reproduction. Preserve the
 original demo author's attribution and inherit the repository instructions.
 
-## Linked issue
+## Tag: Testing scenario (`testing`)
+
+### Linked issue
 
 | Issue | Problem | Status (docs/issue-progress.md) |
 | --- | --- | --- |
@@ -12,16 +14,7 @@ original demo author's attribution and inherit the repository instructions.
 The demo is the reporter's collection view, moved to a `SceneDelegate` and
 pointed at the local pod. It does not include JXSegmentedView.
 
-## Run
-
-```sh
-cd Examples/Example-objc-01 && pod install && open Example-objc-01.xcworkspace
-```
-
-Run the `ExampleObjC01` scheme. To match the report, use an iPhone 14 Pro
-simulator or device on iOS 16 if available.
-
-## Reproduce
+### Reproduce
 
 1. The navigation title shows **Ready**.
 2. Pull the collection view (`issue1575Collection`) down until the header
@@ -31,7 +24,7 @@ simulator or device on iOS 16 if available.
    point comparison of the top inset). Expected: no crash, title **Finished**.
 5. Repeat several pulls, including pulling again while it is refreshing.
 
-## Automated test
+### Automated test
 
 ```sh
 xcodebuild test -workspace Examples/Example-objc-01/Example-objc-01.xcworkspace -scheme ExampleObjC01 \
@@ -40,3 +33,14 @@ xcodebuild test -workspace Examples/Example-objc-01/Example-objc-01.xcworkspace 
 
 `testSceneDelegateCollectionRefreshCompletes` performs one pull and waits for
 **Finished**.
+
+## Tag: macOS-only scenario (`macos`)
+
+### Run
+
+```sh
+cd Examples/Example-objc-01 && pod install && open Example-objc-01.xcworkspace
+```
+
+Run the `ExampleObjC01` scheme. To match the report, use an iPhone 14 Pro
+simulator or device on iOS 16 if available.

@@ -4,22 +4,16 @@ This folder contains the SwiftUI reproduction for upstream refresh issues. It
 inherits the repository and vault instructions. Preserve attribution to the
 original demo author and keep the local CocoaPods dependency path portable.
 
-## Linked issues
+## Tag: Testing scenario (`testing`)
+
+### Linked issues
 
 | Issue | Problem | Status (docs/issue-progress.md) |
 | --- | --- | --- |
 | [MJRefresh #1628](https://github.com/CoderMJLee/MJRefresh/issues/1628) | The refresh animation disappears in SwiftUI after a data update | 50/100: fixed for refreshes started in code; a real pull still needs investigation |
 | [MJRefresh #1589](https://github.com/CoderMJLee/MJRefresh/issues/1589) | Removing the KVO observer crashes when a footer leaves a SwiftUI non-scroll-view container | 90/100: no crash in five round trips on iOS 17.5; iOS 15.4 not verified |
 
-## Run
-
-```sh
-cd Examples/Example-SwiftUI && pod install && open Example-SwiftUI.xcworkspace
-```
-
-Run the `ExampleSwiftUI` scheme on an iPhone simulator.
-
-## Reproduce #1628 (the original, broken configuration)
+### Reproduce #1628 (the original, broken configuration)
 
 1. In Xcode, Product → Scheme → Edit Scheme → Run → Arguments, add the launch
    argument `-reproduce-1628`. It restores the original demo's introspection
@@ -28,7 +22,7 @@ Run the `ExampleSwiftUI` scheme on an iPhone simulator.
 3. Bug: the status text under the button shows **Lost refresh**; the refresh
    header disappears while the list data updates.
 
-## Check the #1628 fix
+### Check the #1628 fix
 
 1. Run without `-reproduce-1628`.
 2. Tap **Start refresh**: the status shows **Refreshing**, then **Finished**
@@ -37,7 +31,7 @@ Run the `ExampleSwiftUI` scheme on an iPhone simulator.
    **Refreshing** then **Finished**. If the header vanishes during a real pull,
    that is the open part of #1628.
 
-## Reproduce #1589
+### Reproduce #1589
 
 1. Tap **Open footer lifecycle**; the page shows **Footer lifecycle** and a
    footer wrapped in `UIViewRepresentable`.
@@ -45,7 +39,7 @@ Run the `ExampleSwiftUI` scheme on an iPhone simulator.
 3. Bug (before the fix): a crash removing the KVO observer when the footer
    leaves its container. Expected now: no crash.
 
-## Automated tests
+### Automated tests
 
 ```sh
 xcodebuild test -workspace Examples/Example-SwiftUI/Example-SwiftUI.xcworkspace -scheme ExampleSwiftUI \
@@ -55,3 +49,13 @@ xcodebuild test -workspace Examples/Example-SwiftUI/Example-SwiftUI.xcworkspace 
 `testOriginalConfigurationLosesRefreshAfterDataUpdate` reproduces #1628;
 `testRefreshSurvivesSwiftUIDataUpdate` and `testPullGestureSurvivesSwiftUIDataUpdate`
 check the fix; `testRepresentedFooterSurvivesRepeatedNavigationTeardown` covers #1589.
+
+## Tag: macOS-only scenario (`macos`)
+
+### Run
+
+```sh
+cd Examples/Example-SwiftUI && pod install && open Example-SwiftUI.xcworkspace
+```
+
+Run the `ExampleSwiftUI` scheme on an iPhone simulator.

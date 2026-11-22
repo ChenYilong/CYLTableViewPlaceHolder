@@ -4,7 +4,9 @@ This folder contains the Android (Kotlin) port: the library modules published to
 `merged/library` for CYLRefresh, `merged/library/rive`) and the example app. It inherits the repository root
 `instructions.md` and `AGENTS.md`.
 
-## License in every published package
+## Tag: Code and architecture (`code`)
+
+### License in every published package
 
 Every library module published to Maven carries the project's license inside its AAR: a copy of the root `LICENSE` in
 `src/main/resources/META-INF/<artifact>/LICENSE` (`cylplaceholder`, `cylrefresh`, `cylrefresh-rive`), with the
@@ -13,7 +15,7 @@ third-party licenses it must ship next to it (`LICENSE.placeholder-third-party`,
 module adds its own folder and an entry in `scripts/check_package_licenses.py`. See "License in every published
 package" in the root `instructions.md` and the `cyl-package-licenses` skill.
 
-## CYLTabBarController by commit
+### CYLTabBarController by commit
 
 `:placeholder` depends on CYLTabBarController's `cyltabbarcontroller-animateditem` (module `:cylanimateditem`), which is
 not on Maven Central yet, so `settings.gradle.kts` builds it from source at a commit (a composite build): from
@@ -21,7 +23,7 @@ not on Maven Central yet, so `settings.gradle.kts` builds it from source at a co
 runs `scripts/cyltabbarcontroller-checkout.sh`, which checks out the commit the repository's `Cartfile` pins. CI passes
 `-PcylTabBarDir` with the newest commit across all branches. Switch to the Maven coordinate once it is published.
 
-## Icon and title vs. the stack view
+### Icon and title vs. the stack view
 
 - **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with
   CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.

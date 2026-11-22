@@ -3,7 +3,9 @@
 This folder contains regression tests for the placeholder library. It inherits
 the vault's root `instructions.md`.
 
-## Language: Swift tests and one Objective-C smoke test (owner's decision, 2026-11-20)
+## Tag: macOS-only scenario (`macos`)
+
+### Language: Swift tests and one Objective-C smoke test (owner's decision, 2026-11-20)
 
 - The tests are Swift (`docs/Swift-Migration.md`, step 13). The core runner (`run-tests.rb`) compiles every
   `Tests/*.swift` and `Tests/*.m` into the library's own module (`CYLTableViewPlaceHolder`), so a test reaches internal
