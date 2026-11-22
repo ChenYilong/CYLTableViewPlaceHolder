@@ -877,7 +877,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         }
         addedRefreshingInset = true
         // FIX: MJRefresh #1568: see CYLRefreshOffsetDriver.isNeeded(for:).
-        if !isCollectionViewAnimationBug, fastAnimationDuration > 0, let scrollView = scrollView,
+        if !isCollectionViewAnimationBug, !startsRefreshingWithoutAnimation, fastAnimationDuration > 0, let scrollView = scrollView,
            CYLRefreshOffsetDriver.isNeeded(for: scrollView), scrollView.panGestureRecognizer.state != .cancelled {
             let top = scrollViewOriginalInset.top + expandHeight
             insetTDelta = scrollViewOriginalInset.top - top

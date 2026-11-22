@@ -1168,6 +1168,12 @@ open class CYLRefreshComponent: UIView {
     }
 
     /**
+     * [EN] True while a refresh started off screen begins in its window, without animation (MJRefresh #862).
+     * [CN] 上屏前开始的刷新在进入窗口后无动画开始期间为 true（MJRefresh #862）。
+     */
+    var startsRefreshingWithoutAnimation = false
+
+    /**
      * [EN] A refresh started before the control was on screen starts once it is in a window (on the next main-queue turn,
      *      without retaining the control).
      * [CN] 控件上屏前开始的刷新，在其进入窗口后开始（在下一次主队列循环中，不持有控件）。
@@ -1181,7 +1187,13 @@ open class CYLRefreshComponent: UIView {
             guard let self = self, self.window != nil, self.state == .willRefresh else { return }
             self.layoutIfNeeded()
             if self.window != nil && self.state == .willRefresh {
-                self.state = .refreshing
+                // FIX: issue MJRefresh#862
+                // [EN] The content was never shown at rest, so it starts at the refreshing position instead of moving
+                //      there during the screen's transition (a push would slide in diagonally).
+                // [CN] 内容从未以静止状态显示过，因此直接从刷新位置开始，而不是在页面转场期间移动过去（push 时会斜着进入）。
+                self.startsRefreshingWithoutAnimation = true
+                UIView.performWithoutAnimation { self.state = .refreshing }
+                self.startsRefreshingWithoutAnimation = false
             }
         }
     }
