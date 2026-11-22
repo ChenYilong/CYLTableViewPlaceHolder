@@ -391,6 +391,21 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             // FIX: issue #1627 / #1507: see offsetDriver.
             let from = scrollView.cylOffsetY
             scrollView.cylInsetB -= lastBottomDelta
+            // FIX: issue MJRefresh#1146
+            // [EN] New rows arrived: the offset is left to UIKit. With self-sizing rows, the next layout corrects it for the
+            //      rows above that reloadData laid out at their estimate; a moving offset would override that and jump.
+            // [CN] 有新数据时 offset 交给 UIKit。自适应行高下，下一次布局会按 reloadData 以预估值布局的上方各行修正它；逐帧移动 offset
+            //      会覆盖这次修正而跳动。
+            if scrollView.cylTotalDataCount() != lastRefreshCount {
+                UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
+                    self.endRefreshingAnimationBeginAction?()
+                    if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
+                }, completion: { _ in
+                    self.pullingPercent = 0.0
+                    self.endRefreshingCompletionBlock?()
+                })
+                return
+            }
             let maxOffset = max(-scrollView.cylInsetT, scrollView.cylContentH - scrollView.cylH + scrollView.cylInsetB)
             scrollView.cylOffsetY = from
             UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
