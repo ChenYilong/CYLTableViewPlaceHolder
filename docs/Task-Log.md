@@ -28,13 +28,14 @@
 
 ## 任务 / Tasks
 
-### TODO：让 iTerm2 标签页显示会话名或当前文件夹名 / TODO: Show the session name or the current folder name in the iTerm2 tab
+### 完成（85 / 100）：让 iTerm2 标签页显示会话名或当前文件夹名 / Done (85/100): Show the session name or the current folder name in the iTerm2 tab
 
 | 中文 | English |
 | :-- | :-- |
 | 背景：多个 Claude Code 会话同时运行在 iTerm2 中，标签页标题由 Claude Code 按对话主题自动改写，看不出哪个标签是哪个会话、哪个文件夹。 | Context: several Claude Code sessions run in iTerm2 at once, and Claude Code rewrites the tab title from the conversation topic, so a tab does not tell which session or folder it is. |
 | 要求：标签页至少显示当前文件夹名，有会话名时一并显示；每次启动自动生效；在 docs/ 中写明操作步骤。 | Requirements: the tab shows at least the current folder name, plus the session name when there is one; it works on every start without manual steps; docs/ explains what to do. |
 | 用户原始提示词：“让这个iterm2 显示我们session的名字， 至少展示我们当前文件夹的名字。 并更新docs/ 文档告诉我我应该怎么操作，才能保证每一次都能自动显示” | The user's prompt (translated): "Make iTerm2 show our session's name, or at least the name of our current folder, and update the docs/ document to tell me what to do so that it shows automatically every time." |
+| 结果：用户级钩子 `~/.claude/hooks/iterm-session-title.sh`（SessionStart、UserPromptSubmit、Stop）通过 `terminalSequence` 把标题设为 `<会话名> · <文件夹名>`；`CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1` 防止 Claude Code 覆盖。操作说明：[iTerm2-Session-Title.md](iTerm2-Session-Title.md)。TODO（-10）：在 iTerm2 中目视确认。TODO（-5）：`/rename` 的名字是否进入钩子输入。 | Result: a user-level hook `~/.claude/hooks/iterm-session-title.sh` (SessionStart, UserPromptSubmit, Stop) sets the title to `<session name> · <folder name>` through `terminalSequence`; `CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1` keeps Claude Code from overwriting it. Steps: [iTerm2-Session-Title.md](iTerm2-Session-Title.md). TODO (-10): confirm by eye in iTerm2. TODO (-5): whether the `/rename` name reaches the hook input. |
 
 ### 完成（待 CI，80 / 100）：修复 CI 失败（CYLDeallocBlockExecutor 1.4 未发布） / Done (pending CI, 80/100): Fix the CI failure (CYLDeallocBlockExecutor 1.4 not published)
 
