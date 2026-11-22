@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：把所有动效代码迁移到 CYLTabBarController 的 CYLAnimatedItemView（所有平台） / TODO: Move all animation code into CYLTabBarController's CYLAnimatedItemView (all platforms)
+
+| 中文 | English |
+| --- | --- |
+| 状态：进行中（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a；CYLTabBarController 侧由 chen-yilong-a8 在 `feat/harmony-animated-item-engines` 进行，分工已定（2026-11-22）：3a 负责 HarmonyOS 的 `cylanimateditem_rive` HAR（合并 cyltabbar、本仓库与 CollectionViewClassifyMenu 的 Rive 播放器）、`cylanimateditem` 内的 SVGA，之后是小程序；a8 负责公共引擎接口、Lottie、PAG、GIF、cyltabbar、Android 与 iOS；3a 在 a8 的接口提交之后开始）。 | Status: in progress (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a; the CYLTabBarController side is being done by chen-yilong-a8 on `feat/harmony-animated-item-engines`, split agreed 2026-11-22: 3a takes the HarmonyOS `cylanimateditem_rive` HAR (merging the Rive players of cyltabbar, this repo and CollectionViewClassifyMenu), SVGA inside `cylanimateditem`, then the mini program; a8 takes the shared engine API, Lottie, PAG, GIF, cyltabbar, Android and iOS; 3a starts after a8's API commit). |
+| 提示词（原文）："你应该将CYLRiveIcon 和CYLPagIcon等等所有动效相关的也可能涉及Lottie， gif ，svga， 等等， 你都需要封装进 CYLTabBarController 的CYLAnimatedItemView中， 然后调用的CYLAnimatedItemView中接口来完成example实现。你在 CYLRiveIcon 和CYLPagIcon 等等动效里修复的bug，其他项目也遇到了， 现在要让你帮忙修复后，他们直接更新  CYLTabBarController 的CYLAnimatedItemView，来共共享你的成果。刚刚我提交的要求，不仅仅适用于鸿蒙os，同时适用与所有平台， 包括iOS， Android ， 小程序， react native， flutter等等平台。迁移动效相关的代码， 重构到 cylanimateditem。。。" | Prompt (verbatim, Chinese): see the left column. English: wrap everything animation-related (CYLRiveIcon, CYLPagIcon, and Lottie, GIF, SVGA, ...) into CYLTabBarController's CYLAnimatedItemView, and implement the examples by calling its API; the bugs fixed in these players also hit other projects, which should get the fixes by updating CYLTabBarController. This applies to every platform (iOS, Android, mini program, React Native, Flutter): move the animation code into cylanimateditem. |
+| 验收：满分（100）= 本仓库各平台的动效播放代码（播放器、引擎视图、修复）进入 CYLTabBarController 的 cylanimateditem，本仓库示例与核心只调用其接口，测试与截图通过，已推送。及格（60）= 迁移清单与分工确定，至少一个平台迁移完成并切换。 | Acceptance: full marks (100) = this repo's animation playback code on every platform (players, engine views, fixes) lives in CYLTabBarController's cylanimateditem, and this repo's examples and core only call its API, with tests and screenshots, pushed. Pass (60) = the inventory and split agreed, at least one platform moved and switched. |
+
 ### 完成（95 / 100）：固定 CYLTabBarController 5b7af8c4 / Done (95/100): Pin CYLTabBarController 5b7af8c4
 
 | 中文 | English |
