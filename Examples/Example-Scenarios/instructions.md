@@ -1,5 +1,7 @@
 # Folder instructions
 
+## Tag: macOS-only scenario (`macos`)
+
 Aggregated placeholder demo, written in Swift: a CYLTabBarController tab bar with a plus button, modeled on
 CYLTabBarController's Objective-C demo. It only calls the library's core API; scenario structure, texts and animations
 belong to the core.

@@ -114,3 +114,16 @@ solve it and why the example layer does.
   (`git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md .agents/skills`) before committing; never pull and commit in
   one command. See `instructions.md`, "Enforcement: every screenshot passes the checker" and "Re-read the rules a pull
   changes".
+
+## Instruction files: tags and the 200-line limit (owner's rule, 2026-11-22)
+
+- Every instruction file (`instructions.md`, `AGENTS.md`, `CLAUDE.md`, each folder `instructions.md`,
+  `.github/copilot-instructions.md`) groups its content under visible `## Tag: <Title> (\`<tag>\`)` headings, never
+  hidden or collapsed. Tags: `behavioral` (first in the root files: `docs/instructions/behavioral.md`, read in full; `CLAUDE.md` imports it), `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git` (for example the testing scenario, the Windows
+  scenario, the macOS-only scenario, the documentation scenario).
+- Each instruction file stays within 200 lines. When a tag's content pushes a file past 200 lines, move the overflow
+  verbatim to `docs/instructions/<tag>.md` (English only; outside the bilingual rule and the docs navigation) and keep
+  one summary line per rule with a relative link to the exact heading, so the details are read when the tag or keyword
+  applies.
+- New rule: full text in the tag file, one summary line under the tag heading; check `wc -l` afterwards. Full rule:
+  `docs/instructions/docs.md`, "Instruction files: tags and the 200-line limit".

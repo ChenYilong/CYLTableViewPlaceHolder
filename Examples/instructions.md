@@ -5,39 +5,9 @@ Each example inherits the repository instructions and any instructions in its
 own folder. Keep upstream attribution and use the repository root as the local
 CocoaPods dependency path.
 
-## Dependencies
+## Tag: Testing scenario (`testing`)
 
-Examples use no refresh library besides CYLRefresh (no `pod 'MJRefresh'`); see "One refresh library: CYLRefresh"
-in the root `instructions.md`.
-
-## Animation playback controls
-
-A page that shows animations has "Play all" (restarts from progress 0), a speed slider and a loop switch, applied
-live; see "Animation playback controls in examples" in the root `instructions.md` and
-`docs/Example-Animation-Playback.md` (the per-page TODO list).
-
-## Examples have the lowest weight
-
-When a core change (the Swift migration of the core, or a refactor) breaks an example, the example is fixed first:
-update its call sites to the core's new API in the same change. An example's usage never keeps an old spelling, an
-alias or a shim in the core, and never lowers the core's Swift quality; the Swift coding standard decides. See
-`instructions.md`, "Examples have the lowest weight", and `docs/Swift-Migration.md`.
-
-## Language
-
-Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples
-and a Swift-friendly core" in the root `instructions.md`). Current state:
-
-| Example | Source language | Status |
-| --- | --- | --- |
-| `Example-SwiftUI` | Swift | Done |
-| `Example-objc-01` | Swift (the name is historical) | Done |
-| `Example-objc-02` | Swift (the name is historical) | Done (CI compile pending) |
-| `Example-Scenarios` | Swift (9 files), core API only | Done (CI compile pending) |
-| `Example` (main app, root workspace) | Swift (6 files), embeds `CYLTableViewPlaceHolderFramework` | Done (CI compile pending) |
-| `Example-placeholder` | — | Retired (a copy of the third-party KLTableViewAndCollectionViewPlaceholder, Objective-C; upstream: https://github.com/klaus01/KLTableViewAndCollectionViewPlaceholder, MIT, credited in `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party`) |
-
-## Examples and the issues they reproduce
+### Examples and the issues they reproduce
 
 Each example's `instructions.md` links its issues and gives step-by-step
 reproduction and the automated test command.
@@ -57,3 +27,39 @@ an example-only fix needs the owner's approval and a written reason in the relat
 Animation bugs: record them, screenshot them, and fix them in CYLTabBarController's animation component; a demo that
 must change calls an interface CYLTabBarController adds for it (`instructions.md`, "Animation bugs: record,
 screenshot, fix in CYLTabBarController").
+
+## Tag: macOS-only scenario (`macos`)
+
+### Language
+
+Examples are Swift; the Objective-C library API is adapted in the core (see "Swift examples
+and a Swift-friendly core" in the root `instructions.md`). Current state:
+
+| Example | Source language | Status |
+| --- | --- | --- |
+| `Example-SwiftUI` | Swift | Done |
+| `Example-objc-01` | Swift (the name is historical) | Done |
+| `Example-objc-02` | Swift (the name is historical) | Done (CI compile pending) |
+| `Example-Scenarios` | Swift (9 files), core API only | Done (CI compile pending) |
+| `Example` (main app, root workspace) | Swift (6 files), embeds `CYLTableViewPlaceHolderFramework` | Done (CI compile pending) |
+| `Example-placeholder` | — | Retired (a copy of the third-party KLTableViewAndCollectionViewPlaceholder, Objective-C; upstream: https://github.com/klaus01/KLTableViewAndCollectionViewPlaceholder, MIT, credited in `CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party`) |
+
+## Tag: Code and architecture (`code`)
+
+### Dependencies
+
+Examples use no refresh library besides CYLRefresh (no `pod 'MJRefresh'`); see "One refresh library: CYLRefresh"
+in the root `instructions.md`.
+
+### Animation playback controls
+
+A page that shows animations has "Play all" (restarts from progress 0), a speed slider and a loop switch, applied
+live; see "Animation playback controls in examples" in the root `instructions.md` and
+`docs/Example-Animation-Playback.md` (the per-page TODO list).
+
+### Examples have the lowest weight
+
+When a core change (the Swift migration of the core, or a refactor) breaks an example, the example is fixed first:
+update its call sites to the core's new API in the same change. An example's usage never keeps an old spelling, an
+alias or a shim in the core, and never lowers the core's Swift quality; the Swift coding standard decides. See
+`instructions.md`, "Examples have the lowest weight", and `docs/Swift-Migration.md`.

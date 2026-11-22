@@ -20,8 +20,19 @@ fi
 
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/cyltbc-resolve.XXXXXX")
 trap 'rm -rf "${WORK:?}"' EXIT
-# Commits and trees only (no file contents), every branch.
-git clone --bare --filter=blob:none --quiet "$URL" "$WORK/repo"
+# Commits and trees only (no file contents), every branch. GitHub sometimes drops an anonymous clone on CI ("fatal: could
+# not read Username for 'https://github.com': Device not configured", "expected flush after ref listing", 2026-11-22):
+# never prompt for credentials, and try up to 4 times with a growing pause before failing.
+export GIT_TERMINAL_PROMPT=0
+for attempt in 1 2 3 4; do
+  rm -rf "$WORK/repo"
+  if git clone --bare --filter=blob:none --quiet "$URL" "$WORK/repo"; then
+    break
+  fi
+  [[ $attempt -lt 4 ]] || { echo "error: could not clone $URL after $attempt attempts" >&2; exit 1; }
+  echo "clone of $URL failed (attempt $attempt), retrying" >&2
+  sleep $((attempt * 5))
+done
 LINE=$(git -C "$WORK/repo" for-each-ref --sort=-committerdate --count=1 \
   --format='%(objectname) %(committerdate:iso-strict) %(refname:short)' refs/heads)
 [[ -n "$LINE" ]] || { echo "error: no branches found in $URL" >&2; exit 1; }
