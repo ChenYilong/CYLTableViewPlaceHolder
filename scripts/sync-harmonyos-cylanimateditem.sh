@@ -3,7 +3,7 @@
 #
 # [EN] Copies CYLTabBarController's HarmonyOS CYLAnimatedItem module (CrossPlatform/harmonyos-cyltabbar/cylanimateditem,
 #      ohpm package `cylanimateditem`, component `CYLAnimatedItemView` with its GIF and SVGA engines) and its engine
-#      modules cylanimateditem_lottie, cylanimateditem_pag and cylanimateditem_rive at the commit the Cartfile pins into
+#      modules cylanimateditem_lottie, cylanimateditem_pag cylanimateditem_rive and cylanimateditemrive (Rive engine implementation) at the commit the Cartfile pins into
 #      CrossPlatform/harmonyos-cylplaceholder/<module>, and writes that commit into each UPSTREAM_COMMIT.
 #      The module is not published to ohpm yet, so this repository takes it by commit, as CYLTabBarController's
 #      docs/Animated-Item.md describes ("copy, or depend with `file:` on, the cylanimateditem folder at a pinned
@@ -16,7 +16,7 @@
 #      并把该 commit 写入其中的 UPSTREAM_COMMIT。复制的文件保持上游原样（MIT，ChenYilong，自带 LICENSE），不要修改；--check 只比较。
 set -euo pipefail
 cd "$(dirname "$0")/.."
-MODULES=(cylanimateditem cylanimateditem_lottie cylanimateditem_pag cylanimateditem_rive)
+MODULES=(cylanimateditem cylanimateditem_lottie cylanimateditem_pag cylanimateditem_rive cylanimateditemrive)
 CHECKOUT=$(bash scripts/cyltabbarcontroller-checkout.sh | tail -n 1)
 SHA=$(git -C "$CHECKOUT" rev-parse HEAD)
 STAGE=$(mktemp -d)
