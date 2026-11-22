@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（待 CI，80 / 100）：修复 CI 失败（CYLDeallocBlockExecutor 1.4 未发布） / Done (pending CI, 80/100): Fix the CI failure (CYLDeallocBlockExecutor 1.4 not published)
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成，待 CI 确认（2026-11-22，分支 `feat/android-refresh-port-followup` 与 `feat/android-refresh-port`，PR #31 / #36，Windows 会话 chen-yilong-3a），80 / 100。 | Status: done, pending CI (2026-11-22, branches `feat/android-refresh-port-followup` and `feat/android-refresh-port`, PR #31 / #36, Windows session chen-yilong-3a), 80 / 100. |
+| 提示词（原文）。 | Prompt (verbatim): "fix ci fail" |
+| 验收：满分（100）= 原因查明，修复后两个 PR 的 iOS 工作流通过。及格（60）= 原因查明并有修复提交。 | Acceptance: full marks (100) = cause found, and after the fix both PRs' iOS workflows pass. Pass (60) = cause found and a fix committed. |
+| 原因（2026-11-22）：Demo Examples/Example-Scenarios 在 `pod install` 失败：CI 把 CYLTabBarController 固定到任意分支上的最新提交，现为 81d012a3（CYLTabBarController 草稿 PR #823），其 podspec 需要 `CYLDeallocBlockExecutor ~> 1.4`；CocoaPods trunk 只有 1.3.0，1.4.0 只在 CYLDeallocBlockExecutor 的 `feat/lifecycle-callbacks`（6fb97053）。修复：`scripts/ci-build-example.sh` 把 `CYLDeallocBlockExecutor` 固定到它自己任意分支上的最新提交（同一解析脚本，`CYL_TABBARCONTROLLER_URL`），写在 CYLTabBarController 那行之后；在 Podfile 副本上运行写入 6fb97053。Accessibility job 的 “Failed to terminate org.cyl.placeholder.accessibility.host” 是模拟器偶发问题，未改。 | Cause (2026-11-22): Demo Examples/Example-Scenarios failed in `pod install`: the CI pins CYLTabBarController to its newest commit on any branch, now 81d012a3 (CYLTabBarController draft PR #823), whose podspec needs `CYLDeallocBlockExecutor ~> 1.4`; CocoaPods trunk has 1.3.0, and 1.4.0 is only on CYLDeallocBlockExecutor's `feat/lifecycle-callbacks` (6fb97053). Fix: `scripts/ci-build-example.sh` pins `CYLDeallocBlockExecutor` to its own newest commit on any branch (the same resolver, `CYL_TABBARCONTROLLER_URL`) next to the CYLTabBarController line; run on a Podfile copy it wrote 6fb97053. The Accessibility job's "Failed to terminate org.cyl.placeholder.accessibility.host" is a simulator flake, not changed. |
+| 评分：80 / 100。TODO（-20）：两个 PR 新提交上的 iOS 运行待确认；CYLDeallocBlockExecutor 1.4.0 发布到 trunk 后可去掉这段固定，或由所有者决定解析脚本是否跳过草稿分支。 | Score: 80 / 100. TODO (-20): the iOS runs on both PRs' new commits are pending; once CYLDeallocBlockExecutor 1.4.0 is on trunk this pin can go, or the owner decides whether the resolver skips draft branches. |
+
 ### 完成（90 / 100）：小程序无法上拉加载更多 / Done (90/100): The mini program cannot pull up to load more
 
 | 中文 | English |
