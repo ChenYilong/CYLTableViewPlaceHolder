@@ -115,6 +115,7 @@ Rules are grouped by tag (same tags as `instructions.md`). Each line is the rule
 
 ## Tag: Git and commits (`git`)
 
+- **Before any git operation, read [docs/instructions/git.md](docs/instructions/git.md) in full (owner's rule, 2026-11-22).** Commit, push, pull, branch, merge, rebase, tag, pull request: read the whole git tag file first, every time, then run the git command.
 - **Before every Commitizen-style (`git cz`) commit**, run `touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC` in the repository root, so the vault's auto sync pauses. ([details](docs/instructions/git.md#agentsmd-commit-readiness))
 - Before every commit, update `.gitignore`: add any ignore pattern from CYLTabBarController's `.gitignore` that is missing (changing only its project name to `CYLTableViewPlaceHolder`), and make sure every generated or… ([details](docs/instructions/git.md#agentsmd-commit-readiness))
 - Before a Commitizen-style commit, follow the commit-message hook instructions in `instructions.md`; inspect an existing hook before replacing it. ([details](docs/instructions/git.md#agentsmd-commit-readiness))

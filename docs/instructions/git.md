@@ -4,6 +4,12 @@ Full text of the `git` rules (commit readiness, Commitizen, branches and pull re
 rule: instruction files by tag, at most 200 lines each). Summaries: [instructions.md](../../instructions.md) and
 [AGENTS.md](../../AGENTS.md), heading "Tag: Git and commits". English only.
 
+## Read this file in full before any git operation
+
+Owner's rule (2026-11-22): before any git operation (commit, push, pull, fetch-and-merge, branch, merge, rebase, tag,
+cherry-pick, opening or updating a pull request), read this whole file first, every time, and only then run the git
+command. A summary line in `AGENTS.md` or `instructions.md` is not enough.
+
 ## Commit readiness and TODO tracking
 
 ### `.gitignore` before every commit

@@ -99,6 +99,7 @@ Bilingual docs, instruction files and their tags. Full text: [docs/instructions/
 
 Commit readiness, Commitizen, branches and pull requests. Full text: [docs/instructions/git.md](docs/instructions/git.md).
 
+- **Before any git operation, read [docs/instructions/git.md](docs/instructions/git.md) in full (owner's rule, 2026-11-22).** Commit, push, pull, branch, merge, rebase, tag, pull request: read the whole git tag file first, every time, then run the git command.
 - [Commit readiness and TODO tracking](docs/instructions/git.md#commit-readiness-and-todo-tracking): Before every commit, update `.gitignore`:
   - Subsections: [`.gitignore` before every commit](docs/instructions/git.md#gitignore-before-every-commit), [Commitizen defaults](docs/instructions/git.md#commitizen-defaults), [Author line in every commit message](docs/instructions/git.md#author-line-in-every-commit-message), [Commit-message hook before Commitizen commits](docs/instructions/git.md#commit-message-hook-before-commitizen-commits).
 - [Commitizen commits](docs/instructions/git.md#commitizen-commits): Before every Commitizen-style (`git cz`) commit, run this first in the repository root:

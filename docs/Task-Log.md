@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### 完成（100 / 100）：执行 git 操作前必须全文阅读 git tag 文件 / Done (100/100): Read the git tag file in full before any git operation
+
+| 中文 | English |
+| --- | --- |
+| 状态：完成（2026-11-22，本条所在提交；分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: done (2026-11-22, the commit with this entry; branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“找到本项目instructions 相关文件（可能包含根目录的agent Claude文件instructions 文件， 首先确认下面内容的归类。如果agent Claude文件文件超出每个文件200行限制，则优先放入docs 里的instructions文件夹合适文件，）以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入，并且在本次任务中就执行一次下面的指令：执行git 操作前，必须全文阅读git 对应的tag文件。再进行git操作。” | The user's original prompt (verbatim): see the Chinese column. In English: write into the instruction and skill files (English, 200-line limit, overflow in `docs/instructions/`) and apply once now: before any git operation, read the git tag file in full, then run the git operation. |
+| 完成：归类为 tag `git`。规则写入 `AGENTS.md`（141 行）与 `instructions.md`（108 行）的 git tag 第一行、`docs/instructions/git.md` 顶部新节 “Read this file in full before any git operation”，并新建技能 `.agents/skills/cyl-git/SKILL.md`。本次已执行：提交前全文阅读 `docs/instructions/git.md`（320 行），并按其中的提交准备检查（`.gitignore` / 未跟踪文件、分支的打开 PR、提交信息无中文、`NO_AUTO_SYNC`）后提交并推送。 | Done: classified under the tag `git`. The rule is the first line of the git tag in `AGENTS.md` (141 lines) and `instructions.md` (108 lines), a new section "Read this file in full before any git operation" at the top of `docs/instructions/git.md`, and a new skill `.agents/skills/cyl-git/SKILL.md`. Applied now: read `docs/instructions/git.md` (320 lines) in full before committing, then committed and pushed after its readiness checks (`.gitignore` / untracked files, an open pull request for the branch, no Chinese in the commit message, `NO_AUTO_SYNC`). |
+
 ### 完成（100 / 100）：在根目录说明文件顶部链接行为准则（必须全文阅读） / Done (100/100): Link the behavioral guidelines at the top of the root instruction files (read in full)
 
 | 中文 | English |
