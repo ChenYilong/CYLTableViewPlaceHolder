@@ -31,6 +31,17 @@ fi
 if grep -q "pod 'CYLTabBarController'.*:commit" Podfile; then
   "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
 fi
+# CYLTabBarController's newest commit can depend on a CYLDeallocBlockExecutor version that is not on CocoaPods trunk yet
+# (81d012a3, CYLTabBarController draft PR #823, needs ~> 1.4 while trunk has 1.3.0; 1.4.0 is on CYLDeallocBlockExecutor's
+# feat/lifecycle-callbacks, 2026-11-22). Pin that pod to its own newest commit on any branch, as CYLTabBarController is.
+if grep -Eq "pod '(CYLTabBarController|CYLAnimatedItem)'.*:commit" Podfile && ! grep -q "pod 'CYLDeallocBlockExecutor'" Podfile; then
+  DEALLOC=$(CYL_TABBARCONTROLLER_URL=https://github.com/ChenYilong/CYLDeallocBlockExecutor.git "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh")
+  echo "CYLDeallocBlockExecutor newest commit: $DEALLOC"
+  sed -E -i.bak "/pod +'CYLTabBarController'/ a\\
+  pod 'CYLDeallocBlockExecutor', :git => 'https://github.com/ChenYilong/CYLDeallocBlockExecutor.git', :commit => '${DEALLOC%% *}'
+" Podfile
+  rm -f Podfile.bak
+fi
 pod install
 WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
 LOG="$ROOT/build/$SCHEME.log"
