@@ -33,7 +33,13 @@ cd "$DEMO"
 if grep -Eq "pod '(CYLTabBarController|CYLAnimatedItem)'.*:commit" Podfile; then
   "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
 fi
-pod install
+# CI runners sometimes cannot reach github.com for a moment ("could not read Username"); retry before failing.
+for attempt in 1 2 3; do
+  if pod install; then break; fi
+  if [ "$attempt" -eq 3 ]; then echo "pod install failed after 3 attempts" >&2; exit 1; fi
+  echo "pod install failed (attempt $attempt of 3), retrying" >&2
+  sleep $((15 * attempt))
+done
 WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
 LOG="$ROOT/build/$SCHEME.log"
 SCREENSHOT="$ROOT/build/screenshots/$SCHEME.png"
