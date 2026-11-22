@@ -313,6 +313,22 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.play(view);
   }
 
+  /**
+   * `RiveAnimationView.reset()` of @ohos/rive 1.0.4 re-selects the file's first artboard; select the item's
+   * `artboard` option again after it, so a file with several artboards keeps playing the one the item names.
+   */
+  private resetKeepingArtboard(view: RiveAnimationView): void {
+    view.reset();
+    const artboard = this.option(CYLPlaceholderAnimationOptionRiveArtboard);
+    if (artboard !== undefined) {
+      try {
+        view.setArtboardName(artboard);
+      } catch (e) {
+        // No such artboard: the load already reported it.
+      }
+    }
+  }
+
   /** CYLRiveIcon.cylPlay: plays from the start (see the file comment). */
   private play(view: RiveAnimationView): void {
     this.endWatcher.cancel();
@@ -321,7 +337,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
     if (animation !== undefined) {
       // The repeat count picks the loop mode (Loop.LOOP for 0): no loop timer.
-      view.reset();
+      this.resetKeepingArtboard(view);
       view.play(animation, this.loop);
       this.armEnd(view);
       return;
@@ -334,7 +350,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     const input = legacy ? this.option(CYLPlaceholderAnimationOptionRiveInput) : undefined;
     const numberInput = this.option(CYLPlaceholderAnimationOptionRiveNumberInput);
     if (triggerInput !== undefined && machine !== undefined && this.hasInput(view, machine, triggerInput)) {
-      view.reset();
+      this.resetKeepingArtboard(view);
       view.play();
       this.deactivateTimer = setTimeout(() => {
         this.deactivateTimer = -1;
@@ -384,7 +400,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
         }
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else {
-      view.reset();
+      this.resetKeepingArtboard(view);
       view.play();
       this.armEnd(view);
     }
