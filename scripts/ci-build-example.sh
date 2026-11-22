@@ -33,7 +33,15 @@ cd "$DEMO"
 if grep -Eq "pod '(CYLTabBarController|CYLAnimatedItem)'.*:commit" Podfile; then
   "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
 fi
-pod install
+# pod install clones CYLTabBarController; GitHub sometimes drops an anonymous clone on CI (2026-11-22): never prompt,
+# retry up to 4 times.
+export GIT_TERMINAL_PROMPT=0
+for attempt in 1 2 3 4; do
+  pod install && break
+  [[ $attempt -lt 4 ]] || { echo "error: pod install failed after $attempt attempts" >&2; exit 1; }
+  echo "pod install failed (attempt $attempt), retrying" >&2
+  sleep $((attempt * 5))
+done
 WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
 LOG="$ROOT/build/$SCHEME.log"
 SCREENSHOT="$ROOT/build/screenshots/$SCHEME.png"

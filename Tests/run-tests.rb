@@ -110,7 +110,18 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   Dir.chdir(dir) do
     ENV['LANG'] ||= 'en_US.UTF-8'
     ENV['LC_ALL'] ||= 'en_US.UTF-8'
-    abort 'pod install failed' unless system('pod', 'install', '--silent')
+    # GitHub sometimes drops an anonymous clone on CI ("could not read Username for 'https://github.com'", "expected flush
+    # after ref listing", 2026-11-22), and pod install clones CYLTabBarController: never prompt, retry up to 4 times.
+    ENV['GIT_TERMINAL_PROMPT'] = '0'
+    installed = (1..4).any? do |attempt|
+      next true if system('pod', 'install', '--silent')
+      if attempt < 4
+        warn "pod install failed (attempt #{attempt}), retrying"
+        sleep(attempt * 5)
+      end
+      false
+    end
+    abort 'pod install failed' unless installed
   end
   # CYL_TEST_ACTION=build-for-testing only builds (scripts/ios15-build.sh, generic simulator destination).
   action = ENV.fetch('CYL_TEST_ACTION', 'test')
