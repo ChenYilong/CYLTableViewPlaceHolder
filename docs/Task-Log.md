@@ -28,6 +28,14 @@
 
 ## 任务 / Tasks
 
+### TODO：把 CYLTabBarController 固定提交移到公开名改名之后（f51057a7） / TODO: Move the CYLTabBarController pin past the public-name rename (f51057a7)
+
+| 中文 | English |
+| :-- | :-- |
+| 背景：chenyilong-e3 在 CYLTabBarController `feat/cross-platform-components` 完成公开 Swift 名改名（tip f51057a7：2bf6c409 库、e465e5e4 测试与示例、8164ea95 Sonar 排除、f51057a7 文档），Objective-C 选择子不变，旧 Swift 名保留为废弃转发；同一分支还有共享鸿蒙 Rive 模块（3074c51d）。本仓库 Cartfile 当前为 143fadff。 | Context: chenyilong-e3 finished the public Swift-name rename on CYLTabBarController `feat/cross-platform-components` (tip f51057a7: 2bf6c409 library, e465e5e4 tests and examples, 8164ea95 Sonar exclusion, f51057a7 docs); Objective-C selectors are unchanged and old Swift names stay as deprecated forwards; the same branch has the shared HarmonyOS Rive module (3074c51d). This repository's Cartfile is at 143fadff. |
+| 要求：按 “依赖 CYLTabBarController 的最新提交” 规则移动固定提交，跑 231 个单元测试与 objc-02 UI 测试，确认本仓库 Swift 不调用已废弃的名字。 | Requirements: move the pin by the "newest CYLTabBarController commit" rule, run the 231 unit tests and the objc-02 UI tests, and check that this repository's Swift calls no deprecated name. |
+| 来源：本会话此前答应 chenyilong-e3 “公开名落地后移动一次固定提交”（无单独的用户提示词；属于命名任务的后续）。 | Source: this session told chenyilong-e3 it would move the pin once the public names landed (no separate user prompt; a follow-up of the naming task). |
+
 ### TODO：所有端统一使用 CYLTabBarController 的 CYLAnimatedItemView 播放 Rive / TODO: Every platform plays Rive through CYLTabBarController's CYLAnimatedItemView
 
 | 中文 | English |
