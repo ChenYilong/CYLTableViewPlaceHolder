@@ -65,6 +65,14 @@ class CYLPlaceholderStackView internal constructor(
         get() = viewActions.map { it.first }
 
     /**
+     * Plays every item's animation again from progress 0 (the examples' "Play all"), as each item's `restartAnimation()`
+     * does (iOS `restartAnimation()`).
+     */
+    fun restartAnimation() {
+        componentViews.filterIsInstance<CYLPlaceholderView>().forEach { it.restartAnimation() }
+    }
+
+    /**
      * The first icon (hidden and empty when there is none).
      */
     val imageView: ImageView
@@ -144,6 +152,7 @@ class CYLPlaceholderStackView internal constructor(
             if (!item.setAnimationFile("asset:$ANIMATION_FOLDER/$name")) continue
             animatedItem = item
             item.animationRepeatCount = CYLPlaceholderScenarioCatalog.scenarioAnimationRepeatCount(name, itemComponents[item])
+            itemComponents[item]?.animationSpeed?.takeIf { it != 1f }?.let { item.animationSpeed = it }
             // [EN] An animation whose last frame is empty (Success) hands back to the still image when it ends.
             item.showsImageWhenAnimationEnds = itemComponents[item]?.showsImageWhenAnimationEnds == true
             item.animationView?.let { view ->
@@ -266,6 +275,7 @@ class CYLPlaceholderStackView internal constructor(
                     if (component.titleSizeSp != 0f) defaultTitleFont = component.titleSizeSp
                     if (component.titleColor != 0) defaultTitleColor = component.titleColor
                     animationRepeatCount = component.animationRepeatCount
+                    if (component.animationSpeed != 1f) animationSpeed = component.animationSpeed
                     val iconAction = component.action
                     if (iconAction != null && image != null) {
                         // [EN] An icon that acts (RefreshIcon) is a button named by its action.
