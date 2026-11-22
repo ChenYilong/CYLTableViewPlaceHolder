@@ -1,16 +1,12 @@
 // CYLAnimationDetailViewController: one animation, 180 x 180, titled with its name; it replays every 4 seconds while
 // visible and on "Replay". The animation and its title are one <cyl-animated-item> (Lottie, GIF; speed, loop and
-// restart are its properties and restartAnimation()); SVGA plays through cyl-svga (cyl-svga-view); PAG and Rive have no player in this example, so the page says so.
+// restart are its properties and restartAnimation()); SVGA plays through cyl-svga (cyl-svga-view), PAG and Rive
+// through cyl-pag and cyl-rive (cyl-pag-view, cyl-rive-view), which live in this page's refresh-engines/ subpackage.
 const { t, effectiveLanguage } = require('../../utils/l10n')
-const { sections } = require('../animations/animation_list')
-
-const UNSUPPORTED_NOTE = {
-  pag: 'PAG files play in the iOS example (CYLTableViewPlaceHolder/PAG). The mini program has no PAG player.',
-  riv: 'Rive files play in the iOS example (CYLTableViewPlaceHolder/Rive). The mini program has no Rive player.',
-}
+const { sections } = require('../../pages/animations/animation_list')
 
 Page({
-  data: { name: '', title: '', engine: '', path: '', note: '', replayTitle: '', language: '', speed: 1, loop: false },
+  data: { name: '', title: '', engine: '', path: '', dark: false, replayTitle: '', language: '', speed: 1, loop: false },
   onLoad(query) {
     const section = sections[Number(query.section)]
     const file = section && section.files[Number(query.row)]
@@ -22,7 +18,9 @@ Page({
       title,
       engine: file.engine,
       path: file.path,
-      note: file.path ? '' : UNSUPPORTED_NOTE[file.engine] || '',
+      // CYLScenarioExampleMoonlight.pag is white artwork made for a black composition background that libpag does not
+      // draw: a black backdrop and a white title, as on iOS, Android and HarmonyOS (docs/Task-Log.md, "Moonlight.pag").
+      dark: file.name === 'CYLScenarioExampleMoonlight.pag',
     })
     wx.setNavigationBarTitle({ title: file.name })
   },

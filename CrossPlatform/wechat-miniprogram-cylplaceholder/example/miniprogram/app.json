@@ -10,7 +10,6 @@
     "pages/support/support",
     "pages/configuration/configuration",
     "pages/text-file/text-file",
-    "pages/animation-detail/animation-detail",
     "pages/flow-detail/flow-detail",
     "pages/collection-flow/collection-flow",
     "pages/status/status",
@@ -66,7 +65,8 @@
     {
       "root": "refresh-engines/",
       "pages": [
-        "refresh-icon-demo/refresh-icon-demo"
+        "refresh-icon-demo/refresh-icon-demo",
+        "animation-detail/animation-detail"
       ]
     },
     {

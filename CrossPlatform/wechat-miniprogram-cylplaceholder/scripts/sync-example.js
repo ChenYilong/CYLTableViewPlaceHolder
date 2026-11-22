@@ -66,13 +66,19 @@ for (const library of libraries) {
   }
 }
 
-// The PAG and Rive refresh icons of CYLRefreshIconListViewController (the iOS core bundle's files) for the
-// refresh-engines/ subpackage. A code package leaves out .pag and .riv files, so the copies are named *.pag.bin and
-// *.riv.bin, which cyl-animated-item reads by the extension before ".bin".
-const coreAnimations = path.resolve(pkg, '../../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle/Animations')
+// Every PAG and Rive file of the iOS core bundle and of the example bundle, for the refresh-engines/ subpackage (the
+// refresh icon demo and the Animations tab play them). A code package leaves out .pag and .riv files, so the copies are
+// named *.pag.bin and *.riv.bin, which cyl-animated-item reads by the extension before ".bin".
 const engineAssets = path.join(pkg, 'example/miniprogram/refresh-engines/assets')
+fs.rmSync(engineAssets, { recursive: true, force: true })
 fs.mkdirSync(engineAssets, { recursive: true })
-for (const name of ['CYLPlaceholderProgress.pag', 'CYLRefreshIcon.riv']) {
-  fs.copyFileSync(path.join(coreAnimations, name), path.join(engineAssets, name + '.bin'))
-  console.log('synced', path.relative(pkg, path.join(engineAssets, name + '.bin')))
+let engineFiles = 0
+for (const folder of ['CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle/Animations',
+  'Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Animations']) {
+  const from = path.resolve(pkg, '../..', folder)
+  for (const name of fs.readdirSync(from).filter((n) => /\.(pag|riv)$/i.test(n))) {
+    fs.copyFileSync(path.join(from, name), path.join(engineAssets, name + '.bin'))
+    engineFiles++
+  }
 }
+console.log('synced', engineFiles, 'PAG and Rive files into', path.relative(pkg, engineAssets))

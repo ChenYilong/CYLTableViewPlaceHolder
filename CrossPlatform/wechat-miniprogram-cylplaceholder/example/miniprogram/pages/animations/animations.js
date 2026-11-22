@@ -36,6 +36,6 @@ Page({
   },
   openAnimation(e) {
     const { section, row } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/animation-detail/animation-detail?section=${section}&row=${row}` })
+    wx.navigateTo({ url: `/refresh-engines/animation-detail/animation-detail?section=${section}&row=${row}` })
   },
 })

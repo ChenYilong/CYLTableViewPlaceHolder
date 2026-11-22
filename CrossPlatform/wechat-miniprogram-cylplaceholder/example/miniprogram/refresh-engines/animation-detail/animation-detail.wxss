@@ -1,7 +1,7 @@
 .page { min-height: 100vh; display: flex; flex-direction: column; background: #fff; }
 .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 0 24px 80px; }
-.note { width: 180px; margin-bottom: 16px; font-size: 14px; line-height: 20px; color: #8e8e93; text-align: center; }
+.backdrop--dark { padding: 16px; background: #000; }
 
 @media (prefers-color-scheme: dark) {
   .page { background: #000; }
