@@ -58,7 +58,7 @@ jobs:
               :merged-rive:compileDebugKotlin 2>&1 | tee "$RUNNER_TEMP/gradle-tests.log"
           }
           if run_tests; then exit 0; fi
-          if grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download" "$RUNNER_TEMP/gradle-tests.log"; then
+          if grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download|MavenArtifactFetcher" "$RUNNER_TEMP/gradle-tests.log"; then
             echo "Gradle could not download a plugin or dependency; retrying once with --refresh-dependencies."
             sleep 30
             run_tests --refresh-dependencies
