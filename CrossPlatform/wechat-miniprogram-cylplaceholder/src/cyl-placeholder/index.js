@@ -49,6 +49,12 @@ Component({
     loop: { type: null, value: null },
     /** Animation speed, above 0 (applied live). */
     speed: { type: Number, value: 1 },
+    /**
+     * A number that plays every animation again from progress 0 each time it grows (the name of
+     * CYLTabBarController's `animationRestartToken` / `restartToken`), next to `restartAnimation()`. The value at
+     * creation is not a restart; a lower value is not one either.
+     */
+    restartToken: { type: Number, value: 0 },
     /** The package path of the animations; empty uses this component's own `animations/` folder. */
     animationBase: { type: String, value: '' },
     /**
@@ -62,6 +68,7 @@ Component({
     attached() {
       // `this.is` is the component's package path ("components/cyl-placeholder/index"). cyl-animated-item draws the
       // files from its own folder and the engines need absolute paths, so both folders become absolute.
+      this.cylRestartToken = this.data.restartToken
       this.setData({
         animationFolder: this.data.animationBase || cylResolvePath('./animations/', this.is),
         imageFolder: cylResolvePath(this.data.imageBase, this.is),
@@ -75,6 +82,13 @@ Component({
     animationBase(base) {
       if (base) this.setData({ animationFolder: base })
     },
+    restartToken(token) {
+      // [EN] The value at creation is the baseline (set in `attached`); only a larger one restarts. [CN] 创建时的值为基准（在 `attached` 中设置）；只有更大的值才重播。
+      const last = this.cylRestartToken
+      this.cylRestartToken = token
+      if (last === undefined || !(Number(token) > Number(last))) return
+      this.restartAnimation()
+    },
     imageBase(base) {
       if (this.is) this.setData({ imageFolder: cylResolvePath(base, this.is) })
     },
@@ -87,6 +101,13 @@ Component({
         const engine = this._engineAt(index)
         if (engine && engine.cyl_playFromStart) engine.cyl_playFromStart()
       })
+    },
+    /**
+     * Plays every animation of the placeholder again from progress 0: the same as `playAll()`, under the name
+     * CYLTabBarController's `CYLAnimatedItemView` and the iOS / Android placeholder stack views use.
+     */
+    restartAnimation() {
+      this.playAll()
     },
     /**
      * The engine component inside the cyl-animated-item of item `index` (cyl-lottie, cyl-pag, … or the
