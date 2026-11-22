@@ -26,6 +26,8 @@ COPIES = [
     ('ohpm (HarmonyOS rawfile)', 'CrossPlatform/harmonyos-cylplaceholder/cylplaceholder/src/main/resources/rawfile/cylplaceholder/LICENSE'),
     ('npm (WeChat Mini Program package root)', 'CrossPlatform/wechat-miniprogram-cylplaceholder/LICENSE'),
     ('npm (WeChat Mini Program published folder src/)', 'CrossPlatform/wechat-miniprogram-cylplaceholder/src/LICENSE'),
+    ('pub.dev (Flutter package root)', 'CrossPlatform/flutter_cylplaceholder/LICENSE'),
+    ('npm (React Native package root)', 'CrossPlatform/react-native-cylplaceholder/LICENSE'),
 ]
 
 # [EN] Third-party licenses that must ship inside a package too: (copy, original). [CN] 必须随包发布的第三方协议：（副本，原件）。
@@ -52,6 +54,8 @@ MANIFESTS = [
     ('CrossPlatform/harmonyos-cylplaceholder/cylplaceholder/oh-package.json5', r'"license"\s*:\s*"MIT"'),
     ('CrossPlatform/harmonyos-cylplaceholder/cylanimateditem/oh-package.json5', r'"license"\s*:\s*"MIT"'),
     ('CrossPlatform/wechat-miniprogram-cylplaceholder/package.json', r'"license"\s*:\s*"MIT"'),
+    ('CrossPlatform/flutter_cylplaceholder/pubspec.yaml', r'^license:\s*MIT\s*$'),
+    ('CrossPlatform/react-native-cylplaceholder/package.json', r'"license"\s*:\s*"MIT"'),
 ]
 
 
@@ -82,7 +86,7 @@ def main():
                 not re.search(r'^commit=[0-9a-f]{40}$', read(commit_path).decode('utf-8'), re.M):
             problems.append('%s does not record the upstream commit' % commit_path)
     for path, pattern in MANIFESTS:
-        if not re.search(pattern, read(path).decode('utf-8')):
+        if not re.search(pattern, read(path).decode('utf-8'), re.M):
             problems.append('%s does not declare the MIT license' % path)
     if problems:
         print('\n'.join(problems))

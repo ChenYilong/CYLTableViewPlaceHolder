@@ -8,7 +8,7 @@
 #
 # With --write, also rewrites the `:commit => '<sha>'` of the `pod 'CYLTabBarController'` and `pod 'CYLAnimatedItem'`
 # lines in each given Podfile;
-# for a Cartfile, the `github "ChenYilong/CYLTabBarController" "<sha>"` line. It fails when a file has no such line. CYL_TABBARCONTROLLER_URL overrides the repository (default: GitHub).
+# for a Flutter pubspec.yaml, the `ref: <sha>` line; for a Cartfile, the `github "ChenYilong/CYLTabBarController" "<sha>"` line. It fails when a file has no such line. CYL_TABBARCONTROLLER_URL overrides the repository (default: GitHub).
 set -euo pipefail
 URL="${CYL_TABBARCONTROLLER_URL:-https://github.com/ChenYilong/CYLTabBarController.git}"
 WRITE=()
@@ -46,6 +46,15 @@ for podfile in "${WRITE[@]+"${WRITE[@]}"}"; do
     grep -Eq '^github "ChenYilong/CYLTabBarController" "[0-9a-f]{40}"' "$podfile" ||
       { echo "error: $podfile has no github \"ChenYilong/CYLTabBarController\" \"<sha>\" line" >&2; exit 1; }
     sed -E -i.bak "s|^(github \"ChenYilong/CYLTabBarController\" \")[0-9a-f]{40}(\")|\1$SHA\2|" "$podfile"
+    rm -f "$podfile.bak"
+    echo "updated $podfile"
+    continue
+  fi
+  if [[ "$(basename "$podfile")" == pubspec.yaml ]]; then
+    # A Flutter pubspec pins the package as `ref: <sha>` under `flutter_cyltabbar: git:`.
+    grep -Eq '^ +ref: [0-9a-f]{40}' "$podfile" ||
+      { echo "error: $podfile has no ref: <sha> line" >&2; exit 1; }
+    sed -E -i.bak "s|^( +ref: )[0-9a-f]{40}$|\1$SHA|" "$podfile"
     rm -f "$podfile.bak"
     echo "updated $podfile"
     continue

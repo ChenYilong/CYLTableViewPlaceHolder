@@ -1,0 +1,25 @@
+name: flutter_cylplaceholder
+description: "CYLTableViewPlaceHolder for Flutter: a placeholder item (animation plus title) over CYLTabBarController's CYLAnimationView"
+version: 0.0.1
+homepage: https://github.com/ChenYilong/CYLTableViewPlaceHolder
+license: MIT
+
+environment:
+  sdk: ^3.13.7
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # [EN] CYLTabBarController is not on pub.dev: its Flutter package is taken by commit, the one the Cartfile pins
+  #      (scripts/resolve-cyltabbarcontroller-commit.sh --write rewrites `ref`).
+  # [CN] CYLTabBarController 不在 pub.dev 上：其 Flutter 包按 Cartfile 固定的 commit 获取（脚本会重写 `ref`）。
+  flutter_cyltabbar:
+    git:
+      url: https://github.com/ChenYilong/CYLTabBarController.git
+      ref: f66e85d55551f9f084cf08d22ec160c73d72ddd1
+      path: CrossPlatform/flutter_cyltabbar
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

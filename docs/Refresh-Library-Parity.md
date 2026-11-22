@@ -12,6 +12,7 @@
 | [CYLRefresh styles 对照表](#cylrefresh-styles-对照表--cylrefresh-styles-comparison) | [CYLRefresh styles comparison](#cylrefresh-styles-对照表--cylrefresh-styles-comparison) |
 | [CYLRefresh styles 示例截图](#cylrefresh-styles-示例截图--cylrefresh-styles-demo-screenshots) | [CYLRefresh styles demo screenshots](#cylrefresh-styles-示例截图--cylrefresh-styles-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
+| [flutter_easy_refresh to Flutter package (CYL API)](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) | [Flutter package score table](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
 | [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
@@ -217,6 +218,82 @@
 | `fit` / `clipBehavior` | 不适用：Flutter 布局 / not applicable: Flutter layout | 不适用 / N/A |
 | `scrollBehaviorBuilder` / `ERScrollBehavior` / `_ERScrollPhysics` | 不适用：UIKit 没有可替换的滚动物理 / not applicable: UIKit has no replaceable scroll physics | 不适用 / N/A |
 | `HeaderLocator` / `FooterLocator`（`IndicatorPosition.locator`，放进 sliver） | 不适用：Flutter slivers / not applicable: Flutter slivers | 不适用 / N/A |
+
+## flutter_easy_refresh to Flutter package (CYL API) / Flutter package score table
+
+Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBarController's `flutter_cyltabbar`. The reference API is the CYLRefresh already ported to iOS Swift and Android (Kotlin names, lowerCamelCase; the iOS selector is named in column 2). flutter_easy_refresh (`dcdbb81`, MIT) is vendored under `lib/src/vendor/` and wrapped by a thin CYL adapter. Component objects are long-lived `ChangeNotifier`s that hold both configuration and state, like iOS and Android. Design by the advisor, 2026-11-23.
+
+**Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
+
+**Current score: 0 / 100 (0 of 65 rows).** Package does not exist yet (2026-11-23).
+
+| flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
+| --- | --- | --- |
+| `EasyRefresh(child:)` | Wrap a scrollable; iOS `cyl_header` / `cyl_footer` / `cyl_trailer`, `+attach:` | TODO |
+| `header` / `footer` | Attach a header and a footer component | TODO |
+| Component as a long-lived object | iOS / Android components hold config and state; Flutter `CYLRefreshComponent extends ChangeNotifier`, created in `initState`, disposed in `dispose` | TODO |
+| `onRefresh` / `onLoad` returning `IndicatorResult` | `refreshingHandler`; the caller always ends refreshing (`endRefreshing`) | TODO |
+| `EasyRefreshController.callRefresh` / `callLoad` | `beginRefreshing()` | TODO |
+| `callRefresh(overOffset, duration, curve, force)` | `beginRefreshing(duration, overOffset, force)` | TODO |
+| `callRefreshOverOffset` / `callLoadOverOffset` | Default over-offset of `beginRefreshing` | TODO |
+| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshing(success)`, `endRefreshingWithNoMoreData()` | TODO |
+| `resetHeader` / `resetFooter` | `endRefreshing()` / `resetNoMoreData()` | TODO |
+| `controlFinishRefresh` / `controlFinishLoad` | Always ended by the caller; documented, no switch | TODO |
+| `headerState` / `footerState` (`IndicatorState`) | `phase`, `state`, `dragOffset`, `pullingPercent`, `lastRefreshSucceeded` | TODO |
+| `IndicatorMode` | `CYLRefreshPhase` (idle, pullToRefresh, releaseToRefresh, releasing, refreshing, finishing) | TODO |
+| `IndicatorResult` (none, success, fail, noMore) | `lastRefreshSucceeded`, `isNoMoreData` | TODO |
+| `simultaneously` | `exclusiveWithOtherRefresh` | TODO |
+| `refreshOnStart` | `CYLRefresh(refreshOnStart:)` / call `beginRefreshing` after the first frame | TODO |
+| `refreshOnStartHeader` | iOS `cyl_beginRefreshingWithStartHeader:`; a header used only for the first refresh | TODO |
+| `scrollController` / `triggerAxis` | Pass-through `scrollController`; vertical header / footer, horizontal `CYLRefreshTrailer` | TODO |
+| `triggerOffset` | `expandHeight` times `triggerRate` | TODO |
+| `processedDuration` | `finishDuration` | TODO |
+| `clamping` | `scrollMode = front`; indicator floats over the content | TODO |
+| `IndicatorPosition.behind` | `scrollMode = behind` | TODO |
+| `IndicatorPosition.locator`, `HeaderLocator` / `FooterLocator` | Place an indicator inside a sliver list; Flutter-only, kept | TODO |
+| `safeArea` | Respect the safe area / `ignoredScrollViewContentInsetTop` | TODO |
+| `infiniteOffset` | `CYLRefreshAutoFooter`: `automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` | TODO |
+| `IndicatorTriggerMode` (anywhere, onEdge) | `triggerMode` | TODO |
+| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`; refreshing on release is the default | TODO |
+| `frictionFactor` / `horizontalFrictionFactor` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
+| `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
+| `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`; `autoTriggerTimes` | TODO |
+| `hapticFeedback` | `hapticFeedback` | TODO |
+| `notifyWhenInvisible` | `notifiesWhenHidden` | TODO |
+| `listenable` (`IndicatorStateListenable`) | `addPhaseObserver` / `removePhaseObserver` | TODO |
+| `ListenerHeader` / `ListenerFooter` | Drawing-free header / footer plus `addPhaseObserver` | TODO |
+| `NotRefreshHeader` / `NotLoadFooter` | `refreshEnabled = false` | TODO |
+| `OverrideHeader` / `OverrideFooter` | Set properties on the component instance; no wrapper class | TODO |
+| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | `loadsAfterNoMoreData` | TODO |
+| `resetAfterRefresh` | `resetsFooterAfterRefresh` | TODO |
+| `isNested` / `nestedOuterController` / `nestedInnerController` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
+| `childBuilder` | Optional `CYLRefresh` parameter (Flutter-only, kept) | TODO |
+| `fit` / `clipBehavior` | Optional `CYLRefresh` parameters (Flutter-only, kept) | TODO |
+| `scrollBehaviorBuilder`, `ERScrollBehavior` | Optional `CYLRefresh` parameter (Flutter-only, kept) | TODO |
+| `ClassicHeader` / `ClassicFooter` | `CYLRefreshClassicHeader` / `CYLRefreshClassicFooter` | TODO |
+| Classic per-state texts (drag, armed, ready, processing, processed, noMore, failed) | `setTitle(text, state)` plus done and failed texts | TODO |
+| Classic `messageText` / `showMessage` | `lastUpdatedTimeText`, `lastUpdatedTimeFormatter` | TODO |
+| Classic icons (`succeededIcon`, `failedIcon`, `noMoreIcon`, `pullIconBuilder`, `reverse`, `iconDimension`, `spacing`, `textBuilder`, `messageBuilder`) | `succeededImage`, `failedImage`, `noMoreDataImage`, `iconOnTrailingSide`, `iconSize`, builders | TODO |
+| `BuilderHeader` / `BuilderFooter` | Subclass `CYLRefreshComponent` or pass a `builder` | TODO |
+| `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | TODO |
+| `BezierHeader` / `BezierFooter` | `CYLRefreshBezierRadarHeader` / `CYLRefreshBezierRadarFooter` | TODO |
+| `BezierCircleHeader` | `CYLRefreshBezierCircleHeader` | TODO |
+| `MaterialHeader` / `MaterialFooter` | `CYLRefreshMaterialHeader` / `CYLRefreshMaterialFooter` | TODO |
+| `DeliveryHeader` / `DeliveryFooter` | `CYLRefreshDeliveryHeader` / `CYLRefreshDeliveryFooter` | TODO |
+| `PhoenixHeader` / `PhoenixFooter` | `CYLRefreshPhoenixHeader` / `CYLRefreshPhoenixFooter` | TODO |
+| `TaurusHeader` / `TaurusFooter` | `CYLRefreshTaurusHeader` / `CYLRefreshTaurusFooter` | TODO |
+| Header second floor (`openHeaderSecondary`, `closeHeaderSecondary`, `SecondaryHeader`, trigger / dimension fields) | `openSecondary`, `closeSecondary`, `secondaryView`, `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset` | TODO |
+| Footer second floor (`openFooterSecondary`, `closeFooterSecondary`, `SecondaryBuilderFooter`) | `CYLRefreshBackFooter`: same secondary API, `secondaryOpenedBlock` / `secondaryClosedBlock` | TODO |
+| Rive style packages (`easy_refresh_bow`, `bubbles`, `halloween`, `skating`, `space`, `squats`) | `CYLRefreshRiveHeader(style: CYLRefreshRiveStyle)`; footer through `CYLRefreshDrawnFooter(style:)` | TODO |
+| `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | TODO |
+| Example pages (49 Dart files in `example/lib`) | Ported pages run in `example/` with the iOS / Android demo's names and data | TODO |
+| Placeholder: `CYLPlaceholderView` | Error / empty placeholder widget, same item API as iOS / Android | TODO |
+| Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | TODO |
+| Placeholder: HUD and status bar | `CYLPlaceholderHUD` equivalent | TODO |
+| Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()` |
+| Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | TODO |
+| Example screenshots in `docs/` | Original pixels, labeled per `docs/instructions/testing.md` | TODO |
+| Unit and widget tests | One test per API group above, `flutter test` green | TODO |
 
 ## flutter_easy_refresh 示例复刻 / flutter_easy_refresh demo port
 
