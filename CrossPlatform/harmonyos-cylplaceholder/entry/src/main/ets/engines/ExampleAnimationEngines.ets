@@ -1,6 +1,6 @@
 // The animation engines of the example. The cylplaceholder core depends on no animation library (CYLTabBarController's
 // CYLAnimatedItem rule, docs/Animated-Item.md upstream); the engines that play the files are CYLTabBarController's
-// (cylanimateditem: GIF and SVGA; the modules cylanimateditem_lottie, cylanimateditem_pag and cylanimateditem_rive: Lottie,
+// (cylanimateditem: GIF and SVGA; the modules cylanimateditem_lottie, cylanimateditem_pag and cylanimateditemrive: Lottie,
 // PAG and Rive, the libraries the example adds in entry/oh-package.json5), shared by every app that shows
 // CYLAnimatedItemView, so their fixes reach every app. At launch (EntryAbility) the example registers:
 //   1. each engine (`CYLAnimatedItemLottie.register()`, ...), so CYLAnimatedItemView plays the type;
@@ -12,7 +12,7 @@
 import { CYLAnimatedItemEngines, CYLAnimatedItemGIF, CYLAnimatedItemSVGA } from 'cylanimateditem';
 import { CYLAnimatedItemLottie } from 'cylanimateditem_lottie';
 import { CYLAnimatedItemPAG } from 'cylanimateditem_pag';
-import { CYLAnimatedItemRive, cylRiveIsSupported } from 'cylanimateditem_rive';
+import { CYLAnimatedItemRive, cylRiveIsSupported } from 'cylanimateditemrive';
 import { CYLAnimatedItemEnginePlaceholderAnimator, CYLRefreshRiveRegisterViewBuilder } from 'cylplaceholder';
 import { cylRefreshSceneViewBuilder, cylRefreshSetRiveRuns } from './CYLRefreshSVGASceneView';
 

@@ -1,5 +1,5 @@
 // The bridge from CYLPlaceholderView's animators to CYLTabBarController's animated-item engines (cylanimateditem: GIF and
-// SVGA; cylanimateditem_lottie, cylanimateditem_pag, cylanimateditem_rive: Lottie, PAG and Rive). The engines play the
+// SVGA; cylanimateditem_lottie, cylanimateditem_pag, cylanimateditemrive: Lottie, PAG and Rive). The engines play the
 // files and carry every playback fix in one place, shared by every app that shows CYLAnimatedItemView; this animator only
 // hosts the engine view an app registered (`CYLAnimatedItemLottie.register()`, ...) inside the placeholder's animation slot
 // and maps the placeholder's player (play, last frame, stop, progress, speed, repeat counts, the end of the last pass,

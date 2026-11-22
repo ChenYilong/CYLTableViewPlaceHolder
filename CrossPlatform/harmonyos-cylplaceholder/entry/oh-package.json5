@@ -10,7 +10,7 @@
     "cylanimateditem": "file:../cylanimateditem",
     "cylanimateditem_lottie": "file:../cylanimateditem_lottie",
     "cylanimateditem_pag": "file:../cylanimateditem_pag",
-    "cylanimateditem_rive": "file:../cylanimateditem_rive",
+    "cylanimateditemrive": "file:../cylanimateditemrive",
     "@ohos/lottie": "^2.0.38",
     "@tencent/libpag": "4.5.102",
     "@ohos/rive": "1.0.4"
