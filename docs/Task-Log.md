@@ -28,13 +28,14 @@
 
 ## 任务 / Tasks
 
-### TODO：把 CYLTabBarController 固定提交移到公开名改名之后（f51057a7） / TODO: Move the CYLTabBarController pin past the public-name rename (f51057a7)
+### 完成（95 / 100）：把 CYLTabBarController 固定提交移到公开名改名之后（f51057a7） / Done (95/100): Move the CYLTabBarController pin past the public-name rename (f51057a7)
 
 | 中文 | English |
 | :-- | :-- |
 | 背景：chenyilong-e3 在 CYLTabBarController `feat/cross-platform-components` 完成公开 Swift 名改名（tip f51057a7：2bf6c409 库、e465e5e4 测试与示例、8164ea95 Sonar 排除、f51057a7 文档），Objective-C 选择子不变，旧 Swift 名保留为废弃转发；同一分支还有共享鸿蒙 Rive 模块（3074c51d）。本仓库 Cartfile 当前为 143fadff。 | Context: chenyilong-e3 finished the public Swift-name rename on CYLTabBarController `feat/cross-platform-components` (tip f51057a7: 2bf6c409 library, e465e5e4 tests and examples, 8164ea95 Sonar exclusion, f51057a7 docs); Objective-C selectors are unchanged and old Swift names stay as deprecated forwards; the same branch has the shared HarmonyOS Rive module (3074c51d). This repository's Cartfile is at 143fadff. |
 | 要求：按 “依赖 CYLTabBarController 的最新提交” 规则移动固定提交，跑 231 个单元测试与 objc-02 UI 测试，确认本仓库 Swift 不调用已废弃的名字。 | Requirements: move the pin by the "newest CYLTabBarController commit" rule, run the 231 unit tests and the objc-02 UI tests, and check that this repository's Swift calls no deprecated name. |
 | 来源：本会话此前答应 chenyilong-e3 “公开名落地后移动一次固定提交”（无单独的用户提示词；属于命名任务的后续）。 | Source: this session told chenyilong-e3 it would move the pin once the public names landed (no separate user prompt; a follow-up of the naming task). |
+| 结果（2026-11-23）：Cartfile 固定为 f51057a7（`feat/cross-platform-components`，包含 3074c51d 共享鸿蒙 Rive 模块）。`resolve-cyltabbarcontroller-commit.sh` 选出的最新提交是 9e383feb（`feat/harmony-animated-item-engines`，PR #824，基于 090b0b4e），它不含公开名改名与 3074c51d，因此没有采用；#824 合并后再移动一次。单元测试 231 个 0 失败（iOS 27.2 模拟器），编译日志中没有改名产生的废弃警告（只有原有的 “引擎不在本构建中” 提示）。TODO（-5）：示例 Podfile 仍固定 882ece17，由 `ci-build-example.sh` 在 CI 中移到最新，本次未改。 | Result (2026-11-23): the Cartfile pins f51057a7 (`feat/cross-platform-components`, which contains 3074c51d, the shared HarmonyOS Rive module). `resolve-cyltabbarcontroller-commit.sh` picked 9e383feb as the newest commit (`feat/harmony-animated-item-engines`, PR #824, based on 090b0b4e), which has neither the public-name rename nor 3074c51d, so it was not taken; the pin moves once more when #824 merges. 231 unit tests pass with 0 failures (iOS 27.2 simulator), and the build log has no deprecation warning from the rename (only the existing "engine not part of this build" notices). TODO (-5): the example Podfiles still pin 882ece17; `ci-build-example.sh` moves them to the newest commit on CI, not changed here. |
 
 ### TODO：所有端统一使用 CYLTabBarController 的 CYLAnimatedItemView 播放 Rive / TODO: Every platform plays Rive through CYLTabBarController's CYLAnimatedItemView
 
