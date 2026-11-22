@@ -392,7 +392,7 @@ module.exports = {
           "name": "CYLPlaceholderSuccess.riv",
           "engine": "riv",
           "bytes": 4597,
-          "path": "/refresh-engines/assets/CYLPlaceholderSuccess.riv.bin#stateMachine=State%20Machine%201",
+          "path": "/refresh-engines/assets/CYLPlaceholderSuccess.riv.bin#stateMachine=State%20Machine%201&triggerInput=Trigger%20explosion",
           "example": false
         },
         {
@@ -507,7 +507,7 @@ module.exports = {
           "name": "CYLScenarioExampleRefreshBow.riv",
           "engine": "riv",
           "bytes": 56983,
-          "path": "/refresh-engines/assets/CYLScenarioExampleRefreshBow.riv.bin",
+          "path": "/refresh-engines/assets/CYLScenarioExampleRefreshBow.riv.bin#animation=strainLoop",
           "example": true
         },
         {

@@ -52,8 +52,13 @@ const copy = (from, name, asText = false) => {
 // state machine, else the first animation, as the legacy runtime does).
 const ENGINE_ASSETS = '/refresh-engines/assets/'
 const RIVE_OPTIONS = {
-  'CYLPlaceholderSuccess.riv': 'stateMachine=' + encodeURIComponent('State Machine 1'),
+  // Its state machine waits for the "Trigger explosion" input: fired on every play (and the detail page's replay), the
+  // confetti burst plays; without it nothing draws.
+  'CYLPlaceholderSuccess.riv': 'stateMachine=' + encodeURIComponent('State Machine 1') + '&triggerInput=' + encodeURIComponent('Trigger explosion'),
   'CYLRefreshIcon.riv': 'artboard=refresh&animation=active',
+  // The Bow refresh style's file: its state machines stay black until a refresh header drives the "pull" number
+  // (CYLRefreshStylesDemoViewController); on its own the detail page plays "strainLoop", the pulled bow, looping.
+  'CYLScenarioExampleRefreshBow.riv': 'animation=strainLoop',
 }
 const shipped = new Set()
 const enginePath = (name) => {

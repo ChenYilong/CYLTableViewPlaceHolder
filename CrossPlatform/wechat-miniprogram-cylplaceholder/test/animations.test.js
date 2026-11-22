@@ -14,6 +14,9 @@ test('every PAG and Rive file of the Animations tab has a subpackage path', () =
   for (const f of files) assert.ok(f.path.startsWith('/refresh-engines/assets/' + f.name + '.bin'), f.name + ': ' + f.path)
   const icon = files.find((f) => f.name === 'CYLRefreshIcon.riv')
   assert.ok(icon.path.endsWith('#artboard=refresh&animation=active'))
+  // Files whose state machine waits for input: Success fires its trigger, Bow plays its pulled-bow loop.
+  assert.ok(files.find((f) => f.name === 'CYLPlaceholderSuccess.riv').path.endsWith('&triggerInput=Trigger%20explosion'))
+  assert.ok(files.find((f) => f.name === 'CYLScenarioExampleRefreshBow.riv').path.endsWith('#animation=strainLoop'))
 })
 
 test('the animation detail page lives in the subpackage and passes both engines', () => {
