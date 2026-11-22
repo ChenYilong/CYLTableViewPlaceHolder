@@ -5,7 +5,12 @@ integrated refresh component, and an iOS example. It inherits the vault's root
 instructions. Read `AGENTS.md` before changing the project.
 
 Rules are grouped by tag. Each line is a summary; follow its link to `docs/instructions/<tag>.md` for the full rule when
-the tag or keyword matches the task. Tags: `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
+the tag or keyword matches the task. Tags: `guidelines`, `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
+
+## Tag: Behavioral guidelines (`guidelines`)
+
+- **Read this file in full before any task (mandatory, owner's rule, 2026-11-22):** [docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md](docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md). Its rules (think before
+  coding, simplicity first, surgical changes, goal-driven execution) apply to every task; do not skim or summarize it.
 
 ## Tag: Task workflow (`workflow`)
 

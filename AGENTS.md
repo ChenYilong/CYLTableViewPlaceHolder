@@ -7,6 +7,11 @@ the integrated `CYLRefresh` component, and an example application. Read
 Rules are grouped by tag (same tags as `instructions.md`). Each line is the rule in short; its link leads to the full text in
 `docs/instructions/<tag>.md`: read it whenever the tag or a keyword of the line applies to the task.
 
+## Tag: Behavioral guidelines (`guidelines`)
+
+- **Read this file in full before any task (mandatory, owner's rule, 2026-11-22):** [docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md](docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md). Its rules (think before
+  coding, simplicity first, surgical changes, goal-driven execution) apply to every task; do not skim or summarize it.
+
 ## Tag: Task workflow (`workflow`)
 
 - Before starting any task, record it as a `TODO` in the fitting document in `docs/` (`docs/Task-Log.md` when none fits): date, branch, the user's original prompt verbatim, the user's requirements and the detailed context. ([details](docs/instructions/workflow.md#agentsmd-record-every-task-in-docs-first))

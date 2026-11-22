@@ -119,7 +119,7 @@ solve it and why the example layer does.
 
 - Every instruction file (`instructions.md`, `AGENTS.md`, `CLAUDE.md`, each folder `instructions.md`,
   `.github/copilot-instructions.md`) groups its content under visible `## Tag: <Title> (\`<tag>\`)` headings, never
-  hidden or collapsed. Tags: `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git` (for example the testing scenario, the Windows
+  hidden or collapsed. Tags: `guidelines` (first in the root files: `docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md`, read in full; `CLAUDE.md` imports it), `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git` (for example the testing scenario, the Windows
   scenario, the macOS-only scenario, the documentation scenario).
 - Each instruction file stays within 200 lines. When a tag's content pushes a file past 200 lines, move the overflow
   verbatim to `docs/instructions/<tag>.md` (English only; outside the bilingual rule and the docs navigation) and keep

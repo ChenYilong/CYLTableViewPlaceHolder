@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### 完成（100 / 100）：在根目录说明文件顶部链接行为准则（必须全文阅读） / Done (100/100): Link the behavioral guidelines at the top of the root instruction files (read in full)
+
+| 中文 | English |
+| --- | --- |
+| 状态：完成（2026-11-22，本条所在提交；分支 `feat/android-refresh-port-followup`，PR #31）。 | Status: done (2026-11-22, the commit with this entry; branch `feat/android-refresh-port-followup`, PR #31). |
+| 用户原始提示词：“找到本项目instructions 相关文件（可能包含根目录的agent Claude文件instructions 文件， 首先确认下面内容的归类。如果agent Claude文件文件超出每个文件200行限制，则优先放入docs 里的instructions文件夹合适文件，）以及skills相关文件，如果没有就新增文件保证写入成功，全英文写入，并且在本次任务中就执行一次下面的指令：找到本项目docs文件夹或者子文件夹里的如下文件，Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes 使用相对路径的方式放入根目录instructions 相关文件 ，相关文件顶部，并标注必须全文阅读该文件。新建分类，新建tag标题。” | The user's original prompt (verbatim): see the Chinese column. In English: find `Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes` under `docs/`, link it by relative path at the top of the root instruction files (including the agent / Claude files), marked as required reading in full, under a new category and tag heading; keep the 200-line limit (overflow to `docs/instructions/`); write the rule in English into the instruction and skill files. |
+| 完成：文件位于 `docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md`（用户添加，内容未改，本次一并提交）。新 tag `guidelines`（“Behavioral guidelines”）作为第一个 tag 标题加在 `instructions.md`（107 行）、`AGENTS.md`（140 行）与 `.github/copilot-instructions.md` 顶部，标明必须全文阅读；`CLAUDE.md` 第一行 `@` 导入该文件，Claude 每次会话都会全文加载；tag 规则（`docs/instructions/docs.md`）与技能 `cyl-docs` 的 tag 列表加入 `guidelines`。 | Done: the file is `docs/instructions/Behavioral_guidelines_to_reduce_common_LLM_coding_mistakes.md` (added by the user, content unchanged, committed with this change). A new tag `guidelines` ("Behavioral guidelines") is the first tag heading at the top of `instructions.md` (107 lines), `AGENTS.md` (140 lines) and `.github/copilot-instructions.md`, marked as required reading in full; `CLAUDE.md` imports the file with `@` on its first line, so Claude loads it in full in every session; the tag rule (`docs/instructions/docs.md`) and the `cyl-docs` skill list `guidelines`. |
+
 ### 完成（95 / 100）：按 tag 整理说明文件，每个不超过 200 行 / Done (95/100): Organize the instruction files by tag, at most 200 lines each
 
 | 中文 | English |
