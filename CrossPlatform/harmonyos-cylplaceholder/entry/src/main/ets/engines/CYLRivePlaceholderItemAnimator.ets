@@ -138,6 +138,8 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   /** How a named animation plays: AUTO follows the file (iOS `.autoLoop`). */
   private loop: Loop = Loop.AUTO;
   private deactivateTimer: number = -1;
+  /** Frames play() has waited for @ohos/rive to build the file (see play()). */
+  private fileWaits: number = 0;
   /** A repeat count of 0 on a state machine: play again after each pass. */
   private loopsStateMachine: boolean = false;
   private loopTimer: number = -1;
@@ -347,6 +349,20 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.endWatcher.cancel();
     this.cancelDeactivate();
     this.cancelLoop();
+    // setRiveBytes() returns before @ohos/rive builds the file (about a frame later, on the x86_64 emulator): a play in
+    // between selected no artboard and was lost, so a linear animation ("animation" option, the Animations tab's
+    // RefreshBow.riv) stayed on its first frame. Wait for the file, a frame at a time (at most 60 frames).
+    if ((view.controller === null || view.controller.file === null) && this.fileWaits < 60) {
+      this.fileWaits++;
+      this.deactivateTimer = setTimeout(() => {
+        this.deactivateTimer = -1;
+        if (this.riveView === view) {
+          this.play(view);
+        }
+      }, CYL_RIVE_NEXT_FRAME_MS);
+      return;
+    }
+    this.fileWaits = 0;
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
     if (animation !== undefined) {
       // The repeat count picks the loop mode (Loop.LOOP for 0): no loop timer.
