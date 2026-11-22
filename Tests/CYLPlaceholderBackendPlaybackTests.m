@@ -61,7 +61,7 @@ static const NSTimeInterval CYLRiveFirstLoadTimeout = 120;
         [placeholder removeFromSuperview];
         [window addSubview:placeholder];
         XCTAssertEqualWithAccuracy([pag getProgress], seekFrame, 0.001);
-        XCTAssertFalse([placeholder setPlaceholderAnimationSpeed:2]);
+        XCTAssertTrue([placeholder setPlaceholderAnimationSpeed:2], @"PAG stretches its duration for speed (48069191)");
         [placeholder playPlaceholderAnimation];
     }
     [placeholder removeFromSuperview];
