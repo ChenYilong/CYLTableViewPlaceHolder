@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### 进行中（TODO）：修复 PR #31 的 Android CI（Robolectric 下载 429）/ In progress (TODO): Fix PR #31's Android CI (Robolectric download answered 429)
+
+- **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim, Chinese):** "阅读pr  #31 以及分支feat/android-refresh-port-followup 并修复该pr的ci 错误https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/45038131330/job/137256312788#step:6:1"
+- **要求 / Requirements:** read PR #31 and the branch; fix the failing check "Android unit tests" (run 45038131330, job 137256312788, head 3569628); the only failing check of the PR.
+- **上下文 / Context:** every test of `:placeholder` and `:merged` fails (172 tests) with `Failed to fetch maven artifact org.robolectric:android-all-instrumented:14-robolectric-10818077-i7`, cause `Server returned HTTP response code: 429 for URL: https://repo1.maven.org/...`: Maven Central rate-limits the shared GitHub runner address. Not a code failure: the Android workflow alternates green and red on the same code (45030305266 success, 45031954264 failure, 45029662579 success, 45028554775 failure on a Gradle `Could not HEAD ... nativeruntime-dist-compat` download). The existing one-retry step re-ran after 30 s and was answered 429 again. Robolectric caches the jar in `~/.m2/repository/org/robolectric/android-all-instrumented/` and reads the repository from `robolectric.dependency.repo.url`.
+- **计划 / Plan:** cache `~/.m2/repository/org/robolectric` between runs (key from `android/gradle/libs.versions.toml`), and point Robolectric at the Google-hosted Maven Central mirror in CI only (`JAVA_TOOL_OPTIONS`), so a cold cache does not hit repo1.maven.org; verify the property locally with an empty `user.home`.
+
 ### TODO：把所有动效代码迁移到 CYLTabBarController 的 CYLAnimatedItemView（所有平台） / TODO: Move all animation code into CYLTabBarController's CYLAnimatedItemView (all platforms)
 
 | 中文 | English |
