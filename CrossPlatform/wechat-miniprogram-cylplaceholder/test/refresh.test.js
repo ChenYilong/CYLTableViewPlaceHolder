@@ -51,6 +51,19 @@ test('pull distance and icons', () => {
   assert.strictEqual(R.iconForState(null, S.Idle), null)
 })
 
+test('auto footer drag rule (MJRefreshAutoFooter scrollViewPanStateDidChange)', () => {
+  // Content shorter than the view (5 rows, the refresh-table examples): it cannot scroll, so a drag up loads.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), true)
+  // A tap (finger travel within the slop) or a drag down does not.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 10, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), false)
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: -40, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), false)
+  // Long content: only a drag that ends at the end loads (scrolltolower does not fire again there).
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 1000, scrollHeight: 1753, viewHeight: 753 }), true)
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 400, scrollHeight: 1753, viewHeight: 753 }), false)
+  // Not measured yet: no load.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 0, scrollHeight: 0, viewHeight: 0 }), false)
+})
+
 test('custom string tables and live language changes', () => {
   const seen = []
   const off = R.onLanguageChange((code) => seen.push(code))

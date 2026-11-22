@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（90 / 100）：小程序无法上拉加载更多 / Done (90/100): The mini program cannot pull up to load more
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a），90 / 100。 | Status: done (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a), 90 / 100. |
+| 提示词（原文）。 | Prompt (verbatim): "小程序上无法pull up to load more" |
+| 验收：满分（100）= 在微信开发者工具中复现，原因查明，在核心 `cyl-refresh` 修复，上拉加载在示例页面中可用，有测试与截图表，已推送。及格（60）= 复现并查明原因，有修复提交。 | Acceptance: full marks (100) = reproduced in WeChat DevTools, cause found, fixed in the core `cyl-refresh`, pull-up loading works on the example pages, with tests and a screenshot sheet, pushed. Pass (60) = reproduced, cause found, a fix committed. |
+| 结果：原因：自动 footer 只靠 scroll-view 的 `scrolltolower` 加载；内容比视图短时（refresh-table 的 example11–21 开始只有 5 行，加载后约 10 行，753 px 的视图中 `scrollHeight` 等于视图高度）scroll-view 无法滚动，`scrolltolower` 永远不触发，上拉也不处理，而 footer 文案写着 “Tap or pull up to load more”。已在末尾时再次上拉同样不加载。修复（核心）：`cyl_refresh.js` 新增 `autoFooterLoadsOnDragEnd`（MJRefreshAutoFooter 的 scrollViewPanStateDidChange 规则：向上拖动超过 10 px 后松手，内容不高于视图或停在末尾时加载），`index.js` 在 touchend 时先测量再判断；`automaticallyRefresh: false` 的说明改为与 MJRefresh example15 一致（拖到末尾松手也加载）。测试：小程序 75/75（新增拖动规则测试）。微信开发者工具：example12 上拉松手加载（10 → 11 → 12 行），轻点（4 px）不加载，Feed 长列表顶部上拉不加载，[截图表](assets/wechat-miniprogram-cylrefresh-auto-footer-drag-up-devtools-8b8cf34-20261122-sheet.png)。 | Result: cause: the auto footer loaded only on the scroll-view's `scrolltolower`; when the content is shorter than the view (refresh-table example11–21 start with 5 rows, about 10 after the first refresh; in the 753 px view `scrollHeight` equals the view height) the scroll-view cannot scroll, `scrolltolower` never fires and a drag up was ignored, although the footer reads "Tap or pull up to load more". A second drag up while resting at the end did not load either. Fix (core): `cyl_refresh.js` adds `autoFooterLoadsOnDragEnd` (MJRefreshAutoFooter's scrollViewPanStateDidChange rule: a drag that moved up more than 10 px loads on release when the content is no taller than the view or the view rests at the end), and `index.js` measures and applies it on touchend; the `automaticallyRefresh: false` comment now matches MJRefresh example15 (a drag up that ends at the end also loads). Tests: mini program 75/75 (new drag-rule test). WeChat DevTools: example12 loads on drag up and release (10 → 11 → 12 rows), a tap (4 px) does not, a drag up at the top of the long Feed list does not, [screenshot sheet](assets/wechat-miniprogram-cylrefresh-auto-footer-drag-up-devtools-8b8cf34-20261122-sheet.png). |
+| 评分：90 / 100。TODO（-10）：拖动通过 cyl-refresh 的 touch 处理函数在开发者工具运行时中驱动（工具无法选中组件内部的 scroll-view 发送原生触摸）；真机上的手指拖动未验证。 | Score: 90 / 100. TODO (-10): the drag was driven through cyl-refresh's touch handlers in the DevTools runtime (the tool cannot select the scroll-view inside the component to send native touches); a finger drag on a real phone is not verified. |
+
 ### 完成（95 / 100）：小程序 CYLRefresh 播放 PAG 与 Rive 图标 / Done (95/100): CYLRefresh plays PAG and Rive icons in the mini program
 
 | 中文 | English |
