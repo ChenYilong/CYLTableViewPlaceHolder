@@ -71,7 +71,7 @@ open class CYLRefreshComponent: UIView {
     // [CN] 当前监听的滚动视图与拖动手势；未注册时为 nil（不会重复移除）。
     private weak var observedScrollView: UIScrollView?
     private var pan: UIPanGestureRecognizer?
-    // [EN] The icon behind `cyl_iconView`, created on first use. [CN] `cyl_iconView` 的存储，首次使用时创建。
+    // [EN] The icon behind `refreshIconView`, created on first use. [CN] `refreshIconView` 的存储，首次使用时创建。
     fileprivate var iconViewStorage: CYLRefreshIconView?
     // [EN] Target-actions added with -addTarget:action:. [CN] -addTarget:action: 添加的 target-action。
     private var targetActions: [CYLRefreshTargetAction] = []
@@ -561,11 +561,11 @@ open class CYLRefreshComponent: UIView {
     @objc(attach:)
     open func attach(to scrollView: UIScrollView) {
         if let header = self as? CYLRefreshHeader {
-            scrollView.cyl_header = header
+            scrollView.cylHeader = header
         } else if let footer = self as? CYLRefreshFooter {
-            scrollView.cyl_footer = footer
+            scrollView.cylFooter = footer
         } else if let trailer = self as? CYLRefreshTrailer {
-            scrollView.cyl_trailer = trailer
+            scrollView.cylTrailer = trailer
         } else {
             scrollView.addSubview(self)
         }
@@ -672,7 +672,7 @@ open class CYLRefreshComponent: UIView {
      * [CN] 控件展开时的高度；`scrollMode` 拉伸 frame 时保持不变。
      */
     @objc open var expandHeight: CGFloat {
-        cyl_h
+        cylH
     }
 
     /**
@@ -1137,14 +1137,14 @@ open class CYLRefreshComponent: UIView {
             scrollViewStorage = newScrollView
 
             // 设置宽度
-            cyl_w = newScrollView.cyl_w
+            cylW = newScrollView.cylW
             // 设置位置
-            cyl_x = -newScrollView.cyl_insetL
+            cylX = -newScrollView.cylInsetL
 
             // 设置永远支持垂直弹簧效果
             newScrollView.alwaysBounceVertical = true
             // 记录UIScrollView最开始的contentInset
-            scrollViewOriginalInset = newScrollView.cyl_inset
+            scrollViewOriginalInset = newScrollView.cylInset
 
             // 添加监听
             addObservers()
@@ -1434,7 +1434,7 @@ open class CYLRefreshComponent: UIView {
     // 与其他刷新控件互斥
     private func otherComponentIsRefreshing() -> Bool {
         guard let scrollView = scrollView else { return false }
-        let others: [CYLRefreshComponent?] = [scrollView.cyl_header, scrollView.cyl_footer, scrollView.cyl_trailer]
+        let others: [CYLRefreshComponent?] = [scrollView.cylHeader, scrollView.cylFooter, scrollView.cylTrailer]
         return others.contains { other in
             guard let other = other else { return false }
             return other !== self && other.isRefreshing
@@ -1477,9 +1477,9 @@ open class CYLRefreshComponent: UIView {
         let up = pullsUp
         let inset = scrollViewOriginalInset
         let pulled = up
-            ? max(0, scrollView.cyl_offsetY + scrollView.cyl_h
-                - max(scrollView.cyl_contentH, scrollView.cyl_h - inset.top - inset.bottom) - inset.bottom)
-            : max(0, -(scrollView.cyl_offsetY + inset.top))
+            ? max(0, scrollView.cylOffsetY + scrollView.cylH
+                - max(scrollView.cylContentH, scrollView.cylH - inset.top - inset.bottom) - inset.bottom)
+            : max(0, -(scrollView.cylOffsetY + inset.top))
         let sign: CGFloat = up ? 1 : -1
         if supportsHorizontalDrag && scrollView.isDragging && pullingPercent > 0 {
             let dx = scrollView.panGestureRecognizer.translation(in: scrollView).x
@@ -1515,7 +1515,7 @@ extension CYLRefreshComponent {
      * [EN] The icon, created on first use and following the control's state.
      * [CN] 图标，首次使用时创建并跟随控件状态。
      */
-    @objc open var cyl_iconView: CYLRefreshIconView {
+    @objc(cyl_iconView) open var refreshIconView: CYLRefreshIconView {
         if let iconView = iconViewStorage { return iconView }
         let iconView = CYLRefreshIconView(frame: .zero)
         iconView.update(for: state)
@@ -1528,7 +1528,7 @@ extension CYLRefreshComponent {
      * [EN] YES once any icon animation is set.
      * [CN] 设置了任意图标动画后为 YES。
      */
-    @objc open var cyl_usesIconView: Bool {
+    @objc(cyl_usesIconView) open var usesRefreshIconView: Bool {
         iconViewStorage?.hasAnimations ?? false
     }
 
@@ -1537,9 +1537,9 @@ extension CYLRefreshComponent {
      * [CN] 设置某个状态的图标并重新布局；nil 表示移除。
      */
     @objc(cyl_setIconAnimationAttributes:forState:)
-    open func cyl_setIconAnimation(attributes: [String: Any]? = nil, for state: CYLRefreshState) {
+    open func applyIconAnimation(attributes: [String: Any]? = nil, for state: CYLRefreshState) {
         if attributes == nil && iconViewStorage == nil { return }
-        cyl_iconView.setAnimationAttributes(attributes, for: state)
+        refreshIconView.setAnimationAttributes(attributes, for: state)
         setNeedsLayout()
     }
 
@@ -1550,12 +1550,12 @@ extension CYLRefreshComponent {
      *      在 `placeSubviews` 末尾调用；未设置时不做任何事。
      */
     @objc(cyl_placeIconViewAtCenter:visible:replacingViews:)
-    open func cyl_placeIconView(at center: CGPoint, visible: Bool, replacing views: [UIView]) {
-        if !cyl_usesIconView { return }
-        let size = cyl_iconView.iconSize
-        cyl_iconView.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        cyl_iconView.center = center
-        cyl_updateIconView(visible: visible, replacing: views)
+    open func placeIconView(at center: CGPoint, visible: Bool, replacing views: [UIView]) {
+        if !usesRefreshIconView { return }
+        let size = refreshIconView.iconSize
+        refreshIconView.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        refreshIconView.center = center
+        updateIconView(visible: visible, replacing: views)
     }
 
     /**
@@ -1563,9 +1563,9 @@ extension CYLRefreshComponent {
      * [CN] 同上但不移动图标，在 `setState:` 末尾调用。
      */
     @objc(cyl_updateIconViewVisible:replacingViews:)
-    open func cyl_updateIconView(visible: Bool, replacing views: [UIView]) {
-        if !cyl_usesIconView { return }
-        cyl_iconView.isHidden = !visible
+    open func updateIconView(visible: Bool, replacing views: [UIView]) {
+        if !usesRefreshIconView { return }
+        refreshIconView.isHidden = !visible
         for view in views {
             (view as? UIActivityIndicatorView)?.stopAnimating()
             view.isHidden = true
@@ -1581,9 +1581,9 @@ extension CYLRefreshComponent {
      *      文字），并隐藏 `views`（动画视图）。`visible` 为 NO 时恢复文字并隐藏图标。在 `placeSubviews` 与 `setState:` 末尾调用。
      */
     @objc(cyl_placeIconViewWithTitle:labels:visible:replacingViews:)
-    open func cyl_placeIconView(title: String?, labels: [UILabel], visible: Bool, replacing views: [UIView]) {
-        if !cyl_usesIconView { return }
-        let iconView = cyl_iconView
+    open func placeIconView(title: String?, labels: [UILabel], visible: Bool, replacing views: [UIView]) {
+        if !usesRefreshIconView { return }
+        let iconView = refreshIconView
         let font = labels.first
         iconView.titleFont = font?.font
         iconView.titleColor = font?.textColor
@@ -1604,7 +1604,7 @@ extension CYLRefreshComponent {
         let size = iconView.fittingSize
         iconView.bounds = CGRect(x: 0, y: 0, width: min(size.width, bounds.width), height: size.height)
         iconView.center = CGPoint(x: bounds.midX, y: bounds.midY)
-        cyl_updateIconView(visible: visible, replacing: views)
+        updateIconView(visible: visible, replacing: views)
     }
 
     /**
@@ -1617,11 +1617,11 @@ extension CYLRefreshComponent {
      *      选择。空闲状态尚无图标时，以第一张图片作为静止帧。开启“减弱动态效果”时，第一张图片保持静止。
      */
     @objc(cyl_setIconImages:duration:forState:)
-    open func cyl_setIconImages(_ images: [UIImage], duration: TimeInterval, for state: CYLRefreshState) {
+    open func setIconImages(_ images: [UIImage], duration: TimeInterval, for state: CYLRefreshState) {
         // [EN] Checked through NSArray: an Objective-C array may hold something else. [CN] 通过 NSArray 检查：Objective-C 数组可能含有其他对象。
         guard let first = (images as NSArray).firstObject as? UIImage else { return }
-        if state != .idle && cyl_iconView.animationAttributes(for: .idle) == nil {
-            cyl_iconView.setAnimationAttributes([CYLPlaceholderItemImage: first], for: .idle)
+        if state != .idle && refreshIconView.animationAttributes(for: .idle) == nil {
+            refreshIconView.setAnimationAttributes([CYLPlaceholderItemImage: first], for: .idle)
         }
         // [EN] The idle state shows one frame (chosen by the pull); the other states hand the sequence to
         //      CYLPlaceholderView, which plays every kind of animation (and keeps the first frame with Reduce Motion).
@@ -1630,7 +1630,7 @@ extension CYLRefreshComponent {
             ? [CYLPlaceholderItemImage: first]
             : [CYLPlaceholderItemImages: images,
                CYLPlaceholderItemAnimationDuration: NSNumber(value: duration > 0 ? duration : Double(images.count) * 0.1)]
-        cyl_setIconAnimation(attributes: attributes, for: state)
+        applyIconAnimation(attributes: attributes, for: state)
     }
 
     /**
@@ -1641,14 +1641,14 @@ extension CYLRefreshComponent {
      *      增大，并作为图标显示（`cyl_setIconImages:duration:forState:`）。nil 被忽略。
      */
     @objc(cyl_setAnimationImages:duration:forState:)
-    open func cyl_setAnimationImages(_ images: [UIImage]?, duration: TimeInterval, for state: CYLRefreshState) {
+    open func applyAnimationImages(_ images: [UIImage]?, duration: TimeInterval, for state: CYLRefreshState) {
         guard let images = images else { return }
         animationImageTable[state] = images
         // [EN] The control grows to the tallest image, as in MJRefresh. [CN] 控件高度随最高的图片增大，与 MJRefresh 相同。
-        if let image = (images as NSArray).firstObject as? UIImage, image.size.height > cyl_h {
-            cyl_h = image.size.height
+        if let image = (images as NSArray).firstObject as? UIImage, image.size.height > cylH {
+            cylH = image.size.height
         }
-        cyl_setIconImages(images, duration: duration, for: state)
+        setIconImages(images, duration: duration, for: state)
     }
 
     /**
@@ -1656,7 +1656,7 @@ extension CYLRefreshComponent {
      * [CN] 用 `cyl_setAnimationImages:duration:forState:` 为 `state` 设置的图片，或 nil。
      */
     @objc(cyl_animationImagesForState:)
-    open func cyl_animationImages(for state: CYLRefreshState) -> [UIImage]? {
+    open func animationImages(for state: CYLRefreshState) -> [UIImage]? {
         animationImageTable[state]
     }
 
@@ -1664,8 +1664,8 @@ extension CYLRefreshComponent {
      * [EN] While idle, shows the idle images' frame for the current `pullingPercent`.
      * [CN] 空闲时显示空闲图片中与当前 `pullingPercent` 对应的帧。
      */
-    @objc open func cyl_showIdleAnimationFrame() {
-        cyl_showIconImageFrame(of: cyl_animationImages(for: .idle), pullingPercent: pullingPercent)
+    @objc(cyl_showIdleAnimationFrame) open func showIdleAnimationFrame() {
+        showIconImageFrame(of: animationImages(for: .idle), pullingPercent: pullingPercent)
     }
 
     /**
@@ -1673,9 +1673,9 @@ extension CYLRefreshComponent {
      * [CN] `CYLRefreshIconAnimating` 的 `setIconAnimationFilePath:size:forState:` 的唯一实现。
      */
     @objc(cyl_setIconAnimationFilePath:size:forState:)
-    open func cyl_setIconAnimation(filePath: String, size: CGSize, for state: CYLRefreshState) {
+    open func applyIconAnimation(filePath: String, size: CGSize, for state: CYLRefreshState) {
         if let attributes = CYLRefreshIconView.attributes(forAnimationFilePath: filePath, size: size) {
-            cyl_setIconAnimation(attributes: attributes, for: state)
+            applyIconAnimation(attributes: attributes, for: state)
         }
     }
 
@@ -1684,9 +1684,9 @@ extension CYLRefreshComponent {
      * [CN] `CYLRefreshIconAnimating` 的 `setBundledIconAnimation:size:forState:` 的唯一实现。
      */
     @objc(cyl_setBundledIconAnimation:size:forState:)
-    open func cyl_setBundledIconAnimation(_ fileName: String, size: CGSize, for state: CYLRefreshState) {
+    open func setBundledIconAnimation(_ fileName: String, size: CGSize, for state: CYLRefreshState) {
         if let attributes = CYLRefreshIconView.attributes(forBundledAnimation: fileName, size: size) {
-            cyl_setIconAnimation(attributes: attributes, for: state)
+            applyIconAnimation(attributes: attributes, for: state)
         }
     }
 
@@ -1695,7 +1695,7 @@ extension CYLRefreshComponent {
      * [CN] 空闲时显示 `images` 中与 `pullingPercent` 对应的那一帧，与 MJRefresh 下拉时的做法相同。
      */
     @objc(cyl_showIconImageFrameOf:pullingPercent:)
-    open func cyl_showIconImageFrame(of images: [UIImage]?, pullingPercent: CGFloat) {
+    open func showIconImageFrame(of images: [UIImage]?, pullingPercent: CGFloat) {
         guard let images = images, state == .idle, !images.isEmpty, let iconView = iconViewStorage else { return }
         let percent = pullingPercent.isFinite ? max(0, pullingPercent) : 0
         let index = min(Int(CGFloat(images.count) * percent), images.count - 1)
@@ -1715,7 +1715,7 @@ extension CYLRefreshComponent {
      * [CN] 设置 `state` 的文字；nil 被忽略，与 `setTitle:forState:` 相同。
      */
     @objc(cyl_setStateTitle:forState:)
-    open func cyl_setStateTitle(_ title: String?, for state: CYLRefreshState) {
+    open func setStateTitle(_ title: String?, for state: CYLRefreshState) {
         guard let title = title else { return }
         stateTitleTable[state] = title
     }
@@ -1725,7 +1725,7 @@ extension CYLRefreshComponent {
      * [CN] `state` 的文字，或 nil。
      */
     @objc(cyl_stateTitleForState:)
-    open func cyl_stateTitle(for state: CYLRefreshState) -> String? {
+    open func stateTitle(for state: CYLRefreshState) -> String? {
         stateTitleTable[state]
     }
 }
@@ -1740,7 +1740,7 @@ extension CYLRefreshComponent {
      */
     @objc(cyl_autoChangeTransparency:)
     @discardableResult
-    open func cyl_autoChangeTransparency(_ isAutoChange: Bool) -> Self {
+    open func autoChangeTransparency(_ isAutoChange: Bool) -> Self {
         isAutomaticallyChangeAlpha = isAutoChange
         return self
     }
@@ -1751,7 +1751,7 @@ extension CYLRefreshComponent {
      */
     @objc(cyl_afterBeginningAction:)
     @discardableResult
-    open func cyl_(afterBeginningAction action: @escaping CYLRefreshComponentAction) -> Self {
+    open func afterBeginningAction(_ action: @escaping CYLRefreshComponentAction) -> Self {
         beginRefreshingCompletionBlock = action
         return self
     }
@@ -1762,7 +1762,7 @@ extension CYLRefreshComponent {
      */
     @objc(cyl_endingAnimationBeginningAction:)
     @discardableResult
-    open func cyl_endingAnimationBeginningAction(_ action: @escaping CYLRefreshComponentAction) -> Self {
+    open func endingAnimationBeginningAction(_ action: @escaping CYLRefreshComponentAction) -> Self {
         endRefreshingAnimationBeginAction = action
         return self
     }
@@ -1773,7 +1773,7 @@ extension CYLRefreshComponent {
      */
     @objc(cyl_afterEndingAction:)
     @discardableResult
-    open func cyl_(afterEndingAction action: @escaping CYLRefreshComponentAction) -> Self {
+    open func afterEndingAction(_ action: @escaping CYLRefreshComponentAction) -> Self {
         endRefreshingCompletionBlock = action
         return self
     }
@@ -1785,7 +1785,7 @@ extension CYLRefreshComponent {
      */
     @objc(cyl_linkTo:)
     @discardableResult
-    open func cyl_link(to scrollView: UIScrollView) -> Self {
+    open func link(to scrollView: UIScrollView) -> Self {
         self
     }
 }
@@ -1801,7 +1801,7 @@ extension UILabel {
      *      （Objective-C 的 `+cyl_label`）。
      */
     @objc(cyl_label)
-    open class func cyl_() -> Self {
+    open class func cylLabel() -> Self {
         let label = self.init()
         // [EN] CYLRefreshLabelFont and CYLRefreshLabelTextColor (macros of CYLRefreshConst.h).
         // [CN] 即 CYLRefreshConst.h 的宏 CYLRefreshLabelFont 与 CYLRefreshLabelTextColor。
@@ -1817,7 +1817,7 @@ extension UILabel {
      * [EN] The width the label's text (or attributed text) needs on one line, in points; 0 when it is empty.
      * [CN] label 的文字（或富文本）单行显示所需的宽度（点）；为空时为 0。
      */
-    @objc open func cyl_textWidth() -> CGFloat {
+    @objc(cyl_textWidth) open func cylTextWidth() -> CGFloat {
         let size = CGSize(width: CGFloat(Float.greatestFiniteMagnitude), height: CGFloat(Float.greatestFiniteMagnitude))
         if let attributedText = attributedText {
             if attributedText.length == 0 { return 0 }

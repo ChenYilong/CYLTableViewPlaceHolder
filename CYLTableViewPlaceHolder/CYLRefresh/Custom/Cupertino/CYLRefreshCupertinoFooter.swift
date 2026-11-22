@@ -23,7 +23,7 @@ open class CYLRefreshCupertinoFooter: CYLRefreshAutoFooter {
     /**
      * [EN] The activity indicator. [CN] 菊花视图。
      */
-    @objc public let activityIndicator = UIActivityIndicatorView(style: .cyl_refreshDefault)
+    @objc public let activityIndicator = UIActivityIndicatorView(style: .cylRefreshDefault)
 
     /**
      * [EN] Adds the indicator, shown only while loading. [CN] 添加菊花，只在加载时显示。
@@ -32,7 +32,7 @@ open class CYLRefreshCupertinoFooter: CYLRefreshAutoFooter {
         super.prepare()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.isAccessibilityElement = true
-        activityIndicator.accessibilityLabel = Bundle.cyl_localizedString(forKey: CYLRefreshAutoFooterRefreshingText)
+        activityIndicator.accessibilityLabel = Bundle.cylLocalizedString(forKey: CYLRefreshAutoFooterRefreshingText)
         addSubview(activityIndicator)
     }
 
@@ -41,7 +41,7 @@ open class CYLRefreshCupertinoFooter: CYLRefreshAutoFooter {
      */
     open override func placeSubviews() {
         super.placeSubviews()
-        activityIndicator.center = CGPoint(x: cyl_w * 0.5, y: cyl_h * 0.5)
+        activityIndicator.center = CGPoint(x: cylW * 0.5, y: cylH * 0.5)
     }
 
     /**

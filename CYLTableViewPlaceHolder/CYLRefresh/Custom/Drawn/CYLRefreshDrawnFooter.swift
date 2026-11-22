@@ -64,9 +64,9 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
     private func installStyle(_ style: CYLRefreshDrawnHeader) {
         self.style?.removeFromSuperview()
         self.style = style
-        style.cyl_beginDriven()
+        style.beginDriven()
         insertSubview(style, at: 0)
-        cyl_h = style.expandHeight
+        cylH = style.expandHeight
         stateLabel?.isHidden = state != .noMoreData
         setNeedsLayout()
     }
@@ -101,7 +101,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
     // [EN] Points pulled past the content's bottom, the open height included while loading. [CN] 拉出内容底部的点数，加载中包含展开高度。
     private var pulled: CGFloat {
         guard let scrollView = scrollView else { return 0 }
-        return max(0, scrollView.cyl_offsetY - happenOffsetY)
+        return max(0, scrollView.cylOffsetY - happenOffsetY)
     }
 
     // [EN] Stretch styles fill the revealed area; the others keep their open height. [CN] 拉伸类样式铺满露出区域；其他样式保持展开高度。
@@ -109,7 +109,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style else { return }
         var height = style.expandHeight
         if style.scrollMode == .stretch { height = max(height, pulled) }
-        style.cyl_driveFrame(CGRect(x: 0, y: 0, width: cyl_w, height: height))
+        style.driveFrame(CGRect(x: 0, y: 0, width: cylW, height: height))
     }
 
     /**
@@ -128,10 +128,10 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style, state != .noMoreData else { return }
         let pulled = self.pulled
         if style.status == .finishing && state == .idle && pulled <= 0.5 {
-            style.cyl_driveStatus(.idle)
+            style.driveStatus(.idle)
         }
         layoutStyle()
-        style.cyl_driveOffset(pulled, drag: scrollView?.isDragging ?? false, in: scrollView)
+        style.driveOffset(pulled, drag: scrollView?.isDragging ?? false, in: scrollView)
     }
 
     /**
@@ -174,15 +174,15 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
         guard let style = style else { return }
         switch phase {
         case .refreshing:
-            if style.status != .releasing { style.cyl_driveStatus(.releasing) }
-            style.cyl_driveStatus(.refreshing)
+            if style.status != .releasing { style.driveStatus(.releasing) }
+            style.driveStatus(.refreshing)
         case .idle:
-            if style.status == .refreshing { style.cyl_driveStatus(.finishing) }
-            if style.status != .finishing || pulled <= 0.5 { style.cyl_driveStatus(.idle) }
+            if style.status == .refreshing { style.driveStatus(.finishing) }
+            if style.status != .finishing || pulled <= 0.5 { style.driveStatus(.idle) }
         case .noMoreData:
-            style.cyl_driveStatus(.idle)
+            style.driveStatus(.idle)
         default:
-            style.cyl_driveStatus(phase)
+            style.driveStatus(phase)
         }
     }
 
@@ -191,7 +191,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
      */
     open override func refreshDidFinish(withSuccess success: Bool) {
         super.refreshDidFinish(withSuccess: success)
-        style?.cyl_driveFinished(success)
+        style?.driveFinished(success)
     }
 
     /**
@@ -308,7 +308,7 @@ open class CYLRefreshBallPulseFooter: CYLRefreshAutoFooter {
      */
     open override func prepare() {
         super.prepare()
-        cyl_h = 60
+        cylH = 60
         var balls: [CAShapeLayer] = []
         for _ in 0..<3 {
             let ball = CAShapeLayer()
@@ -327,11 +327,11 @@ open class CYLRefreshBallPulseFooter: CYLRefreshAutoFooter {
     open override func placeSubviews() {
         super.placeSubviews()
         let spacing: CGFloat = 4
-        let radius = (min(cyl_w, cyl_h) - spacing * 2) / 6
-        let x = cyl_w / 2 - (radius * 2 + spacing)
+        let radius = (min(cylW, cylH) - spacing * 2) / 6
+        let x = cylW / 2 - (radius * 2 + spacing)
         for (i, ball) in balls.enumerated() {
             ball.bounds = CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2)
-            ball.position = CGPoint(x: x + CGFloat(i) * (radius * 2 + spacing), y: cyl_h / 2)
+            ball.position = CGPoint(x: x + CGFloat(i) * (radius * 2 + spacing), y: cylH / 2)
             ball.path = UIBezierPath(ovalIn: ball.bounds).cgPath
         }
     }
@@ -353,7 +353,7 @@ open class CYLRefreshBallPulseFooter: CYLRefreshAutoFooter {
             let loading = newValue == .refreshing
             for ball in balls { ball.isHidden = newValue == .noMoreData }
             fillBalls(loading ? animatingColor : normalColor)
-            accessibilityLabel = loading ? Bundle.cyl_localizedString(forKey: CYLRefreshAutoFooterRefreshingText) : nil
+            accessibilityLabel = loading ? Bundle.cylLocalizedString(forKey: CYLRefreshAutoFooterRefreshingText) : nil
             if loading {
                 startPulsing()
             } else {

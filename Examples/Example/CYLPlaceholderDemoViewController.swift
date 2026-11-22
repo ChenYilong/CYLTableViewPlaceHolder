@@ -21,7 +21,7 @@ private let placeholderMessageCount = CYLPlaceholderMessage.count.rawValue
 private extension UIViewController {
 
     /// Pushes a plain screen that shows `placeholder` filling its view.
-    func cyl_pushPreview(of placeholder: UIView, title: String) {
+    func cylPushPreview(of placeholder: UIView, title: String) {
         let preview = UIViewController()
         preview.title = title
         preview.view.backgroundColor = .white
@@ -31,7 +31,7 @@ private extension UIViewController {
         navigationController?.pushViewController(preview, animated: true)
     }
 
-    func cyl_showConfigurationError(_ message: String) {
+    func cylShowConfigurationError(_ message: String) {
         let alert = UIAlertController(title: CYLPlaceholderExampleLocalizedString(.titleConfigurationError),
                                       message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: CYLPlaceholderExampleLocalizedString(.actionOK), style: .default))
@@ -102,7 +102,7 @@ final class CYLPlaceholderStyleDemoViewController: UITableViewController {
         case 2: _ = placeholder.showBadge(with: .text, value: CYLPlaceholderExampleLocalizedString(.badgeNew))
         default: break
         }
-        cyl_pushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.titleBadgePreview))
+        cylPushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.titleBadgePreview))
     }
 
     private func showFlatDesignItem(fromPropertyList: Bool) {
@@ -113,7 +113,7 @@ final class CYLPlaceholderStyleDemoViewController: UITableViewController {
                 // [CN] 演示配置放在示例自己的 bundle 中，而不是本库的核心 bundle。
                 let fileName = "CYLPlaceholderItemDemo.plist"
                 guard let url = CYLPlaceholderExampleResourceURL(fileName) else {
-                    cyl_showConfigurationError(CYLPlaceholderExampleLocalizedFormat(.formatMissingFile, fileName))
+                    cylShowConfigurationError(CYLPlaceholderExampleLocalizedFormat(.formatMissingFile, fileName))
                     return
                 }
                 placeholder = try CYLPlaceholderView(itemContentsOf: url, imageBundle: nil)
@@ -128,10 +128,10 @@ final class CYLPlaceholderStyleDemoViewController: UITableViewController {
                 placeholder = try CYLPlaceholderView(itemAttributes: attributes, imageBundle: nil)
             }
         } catch {
-            cyl_showConfigurationError(error.localizedDescription)
+            cylShowConfigurationError(error.localizedDescription)
             return
         }
-        cyl_pushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.titleFlatDesignItem))
+        cylPushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.titleFlatDesignItem))
     }
 }
 
@@ -206,7 +206,7 @@ final class CYLPlaceholderMessageDemoViewController: UITableViewController {
         } else {
             placeholder = CYLPlaceholderView(style: placeholderStyle, message: message)
         }
-        cyl_pushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.actionPreview))
+        cylPushPreview(of: placeholder, title: CYLPlaceholderExampleLocalizedString(.actionPreview))
     }
 }
 
@@ -276,10 +276,10 @@ final class CYLPlaceholderDemoViewController: UIViewController, UITableViewDataS
     }
 
     private func enablePlaceholder() {
-        tableView.cyl_placeholderViewBlock({ _ in
+        tableView.cylPlaceholderViewBlock({ _ in
             CYLPlaceholderView()
         })
-        collectionView.cyl_placeholderViewBlock({ _ in
+        collectionView.cylPlaceholderViewBlock({ _ in
             CYLPlaceholderView()
         })
     }
@@ -290,8 +290,8 @@ final class CYLPlaceholderDemoViewController: UIViewController, UITableViewDataS
         if placeholderEnabled {
             enablePlaceholder()
         } else {
-            tableView.cyl_placeholderViewBlock(nil)
-            collectionView.cyl_placeholderViewBlock(nil)
+            tableView.cylPlaceholderViewBlock(nil)
+            collectionView.cylPlaceholderViewBlock(nil)
         }
     }
 

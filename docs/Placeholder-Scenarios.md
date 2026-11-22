@@ -278,7 +278,7 @@ let placeholder = CYLPlaceholderStackView(scenario: .retryOrContactSupport, acti
         self?.navigationController?.pushViewController(SupportViewController(), animated: true)
     },
 ])
-tableView.cyl_placeholderViewBlock({ _ in placeholder })
+tableView.cylPlaceholderViewBlock({ _ in placeholder })
 ```
 
 ```swift

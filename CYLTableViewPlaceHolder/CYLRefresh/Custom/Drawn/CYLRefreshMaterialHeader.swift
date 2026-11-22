@@ -281,11 +281,12 @@ open class CYLRefreshMaterialHeader: CYLRefreshDrawnHeader, CYLRefreshValueAnima
 
         var distance = max(0, (offset - circleSize) / 2)
 
-        // 公式 y = M(1-8^(-x/H))；M 能够达到的最大值，H 接近最大值的点
-        let M = circleSize * 3
-        let H = circleSize * 6
+        // 公式 y = M(1-8^(-x/H))；M 能够达到的最大值（maxDistance），H 接近最大值的点（nearMaxDistance）
+        // [EN] y = M(1-8^(-x/H)): M is the largest value reached (maxDistance), H the point near it (nearMaxDistance).
+        let maxDistance = circleSize * 3
+        let nearMaxDistance = circleSize * 6
         let x = distance
-        let y = M * (1 - pow(8, -x / H))
+        let y = maxDistance * (1 - pow(8, -x / nearMaxDistance))
 
         distance = y
 

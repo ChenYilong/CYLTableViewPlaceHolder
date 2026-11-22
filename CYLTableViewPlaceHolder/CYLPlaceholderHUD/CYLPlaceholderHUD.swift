@@ -14,10 +14,10 @@
 import UIKit
 
 // [EN] The widest the box gets. [CN] 方框的最大宽度。
-private let CYLPlaceholderHUDMaximumWidth: CGFloat = 260
-// [EN] The margin the stack view keeps around its components (CYLPlaceholderStackMargin).
-// [CN] 组件栈在组件四周保留的边距（CYLPlaceholderStackMargin）。
-private let CYLPlaceholderHUDStackMargin: CGFloat = 16
+private let placeholderHUDMaximumWidth: CGFloat = 260
+// [EN] The margin the stack view keeps around its components (placeholderStackMargin).
+// [CN] 组件栈在组件四周保留的边距（placeholderStackMargin）。
+private let placeholderHUDStackMargin: CGFloat = 16
 
 // [EN] `CYLPlaceholderActionHandler` as the Objective-C block it is (Swift imports the typedef as a closure).
 // [CN] `CYLPlaceholderActionHandler` 的 Objective-C block 形式（Swift 把该 typedef 导入为闭包）。
@@ -638,7 +638,7 @@ open class CYLPlaceholderHUD: UIView {
                 view = CYLPlaceholderView(frame: .zero)
             }
             view.reportsContentSize = true
-            view.contentMargin = CYLPlaceholderHUDStackMargin
+            view.contentMargin = placeholderHUDStackMargin
             // [EN] An absent component messaged in Objective-C gave 0. [CN] Objective-C 中向 nil 组件发消息得到 0。
             view.animationRepeatCount = component?.animationRepeatCount ?? 0
             view.isAccessibilityElement = true
@@ -966,14 +966,14 @@ open class CYLPlaceholderHUD: UIView {
     private func measureAndPlaceBox() {
         gradientLayer.frame = bounds
         guard let box = boxView else { return }
-        let maxWidth = min(CYLPlaceholderHUDMaximumWidth, max(bounds.size.width - 32, minimumSize.width))
+        let maxWidth = min(placeholderHUDMaximumWidth, max(bounds.size.width - 32, minimumSize.width))
         var content: CGSize
         if let iconView = iconView {
             // [EN] The CYLPlaceholderView measures itself; its content margin is the box's side padding.
             // [CN] CYLPlaceholderView 自行测量；其内容边距就是方框左右的留白。
             iconView.preferredMaxLayoutWidth = maxWidth
             let size = iconView.intrinsicContentSize
-            content = CGSize(width: ceil(size.width) - 2 * CYLPlaceholderHUDStackMargin, height: ceil(size.height))
+            content = CGSize(width: ceil(size.width) - 2 * placeholderHUDStackMargin, height: ceil(size.height))
         } else if let placeholderView = placeholderView {
             placeholderView.frame = CGRect(x: 0, y: 0, width: maxWidth, height: 1000)
             placeholderView.layoutIfNeeded()
@@ -981,8 +981,8 @@ open class CYLPlaceholderHUD: UIView {
         } else {
             content = .zero
         }
-        let width = min(maxWidth, max(minimumSize.width, ceil(content.width) + 2 * CYLPlaceholderHUDStackMargin))
-        let height = max(minimumSize.height, ceil(content.height) + 2 * CYLPlaceholderHUDStackMargin)
+        let width = min(maxWidth, max(minimumSize.width, ceil(content.width) + 2 * placeholderHUDStackMargin))
+        let height = max(minimumSize.height, ceil(content.height) + 2 * placeholderHUDStackMargin)
         let center = CGPoint(x: bounds.midX + offsetFromCenter.horizontal, y: bounds.midY + offsetFromCenter.vertical)
         hudView.bounds = CGRect(x: 0, y: 0, width: width, height: height)
         hudView.center = center

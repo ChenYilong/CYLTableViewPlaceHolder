@@ -2,10 +2,10 @@
 //  PlaceholderTests.swift
 //  CYLTableViewPlaceHolder tests
 //
-//  [EN] Regression tests of the legacy `cyl_reloadData` placeholder and of CYLRefresh (insets, trailers, paging,
+//  [EN] Regression tests of the legacy `cylReloadData` placeholder and of CYLRefresh (insets, trailers, paging,
 //       teardown, localization). Swift since 2026-11-20 (docs/Swift-Migration.md, step 13): the same tests and
 //       assertions as the former `PlaceholderTests.m`, compiled into the library's module.
-//  [CN] 旧版 `cyl_reloadData` 占位图与 CYLRefresh（inset、trailer、分页、销毁、本地化）的回归测试。自 2026-11-20 起用 Swift 编写
+//  [CN] 旧版 `cylReloadData` 占位图与 CYLRefresh（inset、trailer、分页、销毁、本地化）的回归测试。自 2026-11-20 起用 Swift 编写
 //       （docs/Swift-Migration.md 第 13 步）：测试与断言与原 `PlaceholderTests.m` 相同，编译进库的模块。
 //
 
@@ -29,63 +29,63 @@ extension Bundle {
      * [EN] Exchanged with `+cyl_refreshBundle` by `testMissingRefreshBundleFallsBackWithoutException`: no bundle.
      * [CN] 由 `testMissingRefreshBundleFallsBackWithoutException` 与 `+cyl_refreshBundle` 交换：没有 bundle。
      */
-    @objc fileprivate class func cyl_testMissingRefreshBundle() -> Bundle? { nil }
+    @objc fileprivate class func testMissingRefreshBundle() -> Bundle? { nil }
 }
 
 private final class CYLTestPanGestureRecognizer: UIPanGestureRecognizer {
-    var cyl_testState: UIGestureRecognizer.State = .possible
+    var testState: UIGestureRecognizer.State = .possible
 
     override var state: UIGestureRecognizer.State {
-        get { cyl_testState }
+        get { testState }
         set { super.state = newValue }
     }
 }
 
 private final class CYLTestScrollView: UIScrollView {
-    var cyl_testOffset: CGPoint = .zero
-    var cyl_testPan: CYLTestPanGestureRecognizer?
+    var testOffset: CGPoint = .zero
+    var testPan: CYLTestPanGestureRecognizer?
 
     override var contentOffset: CGPoint {
-        get { cyl_testOffset }
+        get { testOffset }
         set { super.contentOffset = newValue }
     }
 
-    override var panGestureRecognizer: UIPanGestureRecognizer { cyl_testPan ?? super.panGestureRecognizer }
+    override var panGestureRecognizer: UIPanGestureRecognizer { testPan ?? super.panGestureRecognizer }
 }
 
 private final class CYLTestPagingScrollView: UIScrollView {
-    var cyl_testDragging = false
-    var cyl_testDecelerating = false
+    var testDragging = false
+    var testDecelerating = false
 
-    override var isDragging: Bool { cyl_testDragging }
-    override var isDecelerating: Bool { cyl_testDecelerating }
+    override var isDragging: Bool { testDragging }
+    override var isDecelerating: Bool { testDecelerating }
 }
 
 // [EN] A scroll view that reports a drag and a pan state set by the test. [CN] 由测试设置拖动与手势状态的滚动视图。
 private final class CYLTestDraggingScrollView: UIScrollView {
-    var cyl_testDragging = false
-    var cyl_testPan: CYLTestPanGestureRecognizer?
+    var testDragging = false
+    var testPan: CYLTestPanGestureRecognizer?
 
-    override var isDragging: Bool { cyl_testDragging }
-    override var panGestureRecognizer: UIPanGestureRecognizer { cyl_testPan ?? super.panGestureRecognizer }
+    override var isDragging: Bool { testDragging }
+    override var panGestureRecognizer: UIPanGestureRecognizer { testPan ?? super.panGestureRecognizer }
 }
 
 private final class CYLTestReentrantScrollView: UIScrollView {
-    var cyl_triggerInsetFeedback = false
-    var cyl_insetDepth = 0
-    var cyl_maxInsetDepth = 0
+    var triggerInsetFeedback = false
+    var insetDepth = 0
+    var maxInsetDepth = 0
 
     override var contentInset: UIEdgeInsets {
         get { super.contentInset }
         set {
-            cyl_insetDepth += 1
-            cyl_maxInsetDepth = max(cyl_maxInsetDepth, cyl_insetDepth)
+            insetDepth += 1
+            maxInsetDepth = max(maxInsetDepth, insetDepth)
             super.contentInset = newValue
-            if cyl_triggerInsetFeedback && cyl_insetDepth < 8 {
+            if triggerInsetFeedback && insetDepth < 8 {
                 let offset: CGFloat = contentOffset.y < -15 ? -10 : -20
                 contentOffset = CGPoint(x: contentOffset.x, y: offset)
             }
-            cyl_insetDepth -= 1
+            insetDepth -= 1
         }
     }
 }
@@ -121,7 +121,7 @@ private class CYLTestSource: NSObject, UITableViewDataSource, CYLTableViewPlaceH
 private final class CYLRefreshSource: CYLTestSource {
     @objc(frameForPlaceHolderViewInTableView:)
     func frameForPlaceHolderView(in tableView: UITableView) -> CGRect {
-        let top = tableView.cyl_footer?.frame.maxY ?? 0
+        let top = tableView.cylFooter?.frame.maxY ?? 0
         return CGRect(x: 0, y: top, width: tableView.bounds.width, height: max(0, tableView.bounds.height - top))
     }
 }
@@ -203,12 +203,12 @@ final class PlaceholderTests: XCTestCase {
 
     func testDefaultSectionAndScrollRestoration() {
         table.isScrollEnabled = true
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertIdentical(source.view?.superview, table)
         XCTAssertFalse(table.isScrollEnabled)
         XCTAssertTrue(source.view!.frame.equalTo(CGRect(x: 0, y: 0, width: 320, height: 480)))
         source.rows = 1
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertNil(source.view?.superview)
         XCTAssertTrue(table.isScrollEnabled)
     }
@@ -217,11 +217,11 @@ final class PlaceholderTests: XCTestCase {
         let child = UIView()
         source.view!.addSubview(child)
         let first = source.view!
-        table.cyl_reloadData()
-        table.cyl_reloadData()
+        table.cylReloadData()
+        table.cylReloadData()
         XCTAssertIdentical(child.superview, first)
         source.view = UIView()
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertNil(first.superview)
         XCTAssertIdentical(source.view?.superview, table)
     }
@@ -229,10 +229,10 @@ final class PlaceholderTests: XCTestCase {
     func testOptionalScrollAndNilPlaceholder() {
         source.allowScroll = true
         let oldView = source.view!
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertTrue(table.isScrollEnabled)
         source.view = nil
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertNil(oldView.superview)
         XCTAssertTrue(table.isScrollEnabled)
     }
@@ -240,10 +240,10 @@ final class PlaceholderTests: XCTestCase {
     func testInitiallyDisabledScrollIsRestored() {
         table.isScrollEnabled = false
         source.allowScroll = true
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertTrue(table.isScrollEnabled)
         source.rows = 1
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertFalse(table.isScrollEnabled)
     }
 
@@ -251,15 +251,15 @@ final class PlaceholderTests: XCTestCase {
         let source = CYLMultipleSectionsSource()
         source.view = UIView()
         table.dataSource = source
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertIdentical(source.view?.superview, table)
         source.rows = 1
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertNil(source.view?.superview)
     }
 
     func testDefaultFrameFollowsTableResize() {
-        table.cyl_reloadData()
+        table.cylReloadData()
         table.frame = CGRect(x: 0, y: 0, width: 375, height: 700)
         table.layoutIfNeeded()
         XCTAssertEqual(source.view!.frame.width, 375, accuracy: 0.1)
@@ -269,14 +269,14 @@ final class PlaceholderTests: XCTestCase {
     func testDefaultFrameStaysAboveTheKeyboard() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         window.addSubview(table)
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertEqual(source.view!.frame.height, 480, accuracy: 0.1, "no keyboard: the whole table")
         // [EN] A 200-point keyboard at the bottom of the screen (CYLSearchViewController's report). [CN] 屏幕底部 200 点高的键盘。
         let keyboard = window.convert(CGRect(x: 0, y: 280, width: 320, height: 200), to: window.screen.coordinateSpace)
         NotificationCenter.default.post(name: UIResponder.keyboardWillChangeFrameNotification, object: nil,
                                         userInfo: [UIResponder.keyboardFrameEndUserInfoKey: NSValue(cgRect: keyboard)])
         XCTAssertEqual(source.view!.frame.height, 280, accuracy: 0.1, "above the keyboard, live")
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertEqual(source.view!.frame.height, 280, accuracy: 0.1, "a reload keeps it above the keyboard")
         NotificationCenter.default.post(name: UIResponder.keyboardWillHideNotification, object: nil, userInfo: nil)
         XCTAssertEqual(source.view!.frame.height, 480, accuracy: 0.1, "the keyboard hides: the whole table again")
@@ -292,7 +292,7 @@ final class PlaceholderTests: XCTestCase {
         let keyboard = window.convert(CGRect(x: 0, y: 280, width: 320, height: 200), to: window.screen.coordinateSpace)
         NotificationCenter.default.post(name: UIResponder.keyboardWillChangeFrameNotification, object: nil,
                                         userInfo: [UIResponder.keyboardFrameEndUserInfoKey: NSValue(cgRect: keyboard)])
-        table.cyl_reloadData()
+        table.cylReloadData()
         let inset = table.adjustedContentInset.top
         XCTAssertEqual(source.view!.frame.height, 480 - inset - 200, accuracy: 0.1,
                        "from below the top bar to the keyboard's top")
@@ -305,7 +305,7 @@ final class PlaceholderTests: XCTestCase {
         let delegate = CYLTestDelegate()
         delegate.view = UIView()
         table.delegate = delegate
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertIdentical(delegate.view?.superview, table)
         XCTAssertNil(source.view?.superview)
     }
@@ -316,7 +316,7 @@ final class PlaceholderTests: XCTestCase {
         table.dataSource = source
         let header = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 40))
         table.tableHeaderView = header
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertTrue(source.view!.frame.equalTo(CGRect(x: 0, y: 40, width: 320, height: 400)))
         XCTAssertFalse(source.view!.frame.intersects(header.frame))
         XCTAssertIdentical(source.view?.superview, table)
@@ -325,17 +325,17 @@ final class PlaceholderTests: XCTestCase {
     func testDefaultPlaceholderKeepsRefreshControlsVisible() {
         let tableHeader = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 40))
         table.tableHeaderView = tableHeader
-        table.cyl_header = CYLRefreshNormalHeader(refreshingBlock: {})
-        table.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        table.cylHeader = CYLRefreshNormalHeader(refreshingBlock: {})
+        table.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         for _ in 0..<2 {
-            table.cyl_reloadData()
+            table.cylReloadData()
             let subviews = table.subviews as NSArray
             let placeholderIndex = subviews.index(of: source.view!)
             XCTAssertNotEqual(placeholderIndex, NSNotFound)
             // The placeholder still covers ordinary content but stays below refresh controls (issue #8).
             XCTAssertGreaterThan(placeholderIndex, subviews.index(of: tableHeader))
-            XCTAssertGreaterThan(subviews.index(of: table.cyl_footer!), placeholderIndex)
-            XCTAssertGreaterThan(subviews.index(of: table.cyl_header!), placeholderIndex)
+            XCTAssertGreaterThan(subviews.index(of: table.cylFooter!), placeholderIndex)
+            XCTAssertGreaterThan(subviews.index(of: table.cylHeader!), placeholderIndex)
             XCTAssertTrue(source.view!.frame.equalTo(CGRect(x: 0, y: 0, width: 320, height: 480)))
         }
     }
@@ -350,7 +350,7 @@ final class PlaceholderTests: XCTestCase {
         for size in [CGSize(width: 320, height: 480), CGSize(width: 480, height: 320)] {
             // Rotation: the app reloads after the size changes and the frame is recomputed.
             table.frame = CGRect(origin: .zero, size: size)
-            table.cyl_reloadData()
+            table.cylReloadData()
             table.layoutIfNeeded()
             let placeholder = source.view!.frame
             XCTAssertIdentical(source.view?.superview, table)
@@ -371,34 +371,34 @@ final class PlaceholderTests: XCTestCase {
         let source = CYLRefreshSource()
         source.view = UIView()
         table.dataSource = source
-        table.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        table.cyl_reloadData()
+        table.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        table.cylReloadData()
         table.layoutIfNeeded()
-        XCTAssertGreaterThan(table.cyl_footer!.frame.height, 0)
-        XCTAssertFalse(source.view!.frame.intersects(table.cyl_footer!.frame))
-        XCTAssertIdentical(table.cyl_footer?.superview, table)
+        XCTAssertGreaterThan(table.cylFooter!.frame.height, 0)
+        XCTAssertFalse(source.view!.frame.intersects(table.cylFooter!.frame))
+        XCTAssertIdentical(table.cylFooter?.superview, table)
     }
 
     func testRefreshResourcesAndCategoryAccessors() {
-        table.cyl_header = CYLRefreshNormalHeader(refreshingBlock: {})
-        XCTAssertIdentical(table.cyl_header?.superview, table)
-        XCTAssertNotNil(Bundle.cyl_refresh())
-        XCTAssertNotNil(Bundle.cyl_arrowImage())
+        table.cylHeader = CYLRefreshNormalHeader(refreshingBlock: {})
+        XCTAssertIdentical(table.cylHeader?.superview, table)
+        XCTAssertNotNil(Bundle.cylRefresh())
+        XCTAssertNotNil(Bundle.cylArrowImage())
         CYLRefreshConfig.default.languageCode = "en"
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText), "Pull down to refresh")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText), "Pull down to refresh")
         CYLRefreshConfig.default.languageCode = nil
-        table.cyl_header = nil
-        XCTAssertNil(table.cyl_header)
+        table.cylHeader = nil
+        XCTAssertNil(table.cylHeader)
     }
 
     func testNormalHeaderAndArrowViewDeallocateAfterRemoval() {
         weak var weakHeader: CYLRefreshNormalHeader?
         weak var weakArrow: UIImageView?
-        let cachedArrow: UIImage? = Bundle.cyl_arrowImage()
+        let cachedArrow: UIImage? = Bundle.cylArrowImage()
         XCTAssertNotNil(cachedArrow)
         autoreleasepool {
             let header = CYLRefreshNormalHeader(refreshingBlock: {})
-            table.cyl_header = header
+            table.cylHeader = header
             header.layoutIfNeeded()
             var arrow: UIImageView?
             for view in header.subviews {
@@ -410,11 +410,11 @@ final class PlaceholderTests: XCTestCase {
             XCTAssertNotNil(arrow)
             weakHeader = header
             weakArrow = arrow
-            table.cyl_header = nil
+            table.cylHeader = nil
         }
         XCTAssertNil(weakHeader)
         XCTAssertNil(weakArrow)
-        XCTAssertIdentical(Bundle.cyl_arrowImage(), cachedArrow)
+        XCTAssertIdentical(Bundle.cylArrowImage(), cachedArrow)
     }
 
     func testHeaderRefreshingCallbackAndCompletion() {
@@ -423,21 +423,21 @@ final class PlaceholderTests: XCTestCase {
         window.rootViewController!.view.addSubview(table)
         window.makeKeyAndVisible()
         let started = expectation(description: "refresh callback")
-        table.cyl_header = CYLRefreshNormalHeader(refreshingBlock: {
+        table.cylHeader = CYLRefreshNormalHeader(refreshingBlock: {
             started.fulfill()
         })
-        table.cyl_header!.fastAnimationDuration = 0
-        table.cyl_header!.slowAnimationDuration = 0
-        table.cyl_header!.beginRefreshing()
+        table.cylHeader!.fastAnimationDuration = 0
+        table.cylHeader!.slowAnimationDuration = 0
+        table.cylHeader!.beginRefreshing()
         wait(for: [started], timeout: CYLTestTimeout)
-        XCTAssertTrue(table.cyl_header!.isRefreshing)
+        XCTAssertTrue(table.cylHeader!.isRefreshing)
         let ended = expectation(description: "refresh completion")
-        table.cyl_header!.endRefreshing(completionBlock: {
+        table.cylHeader!.endRefreshing(completionBlock: {
             ended.fulfill()
         })
         wait(for: [ended], timeout: CYLTestTimeout)
-        XCTAssertFalse(table.cyl_header!.isRefreshing)
-        table.cyl_header = nil
+        XCTAssertFalse(table.cylHeader!.isRefreshing)
+        table.cylHeader = nil
         window.isHidden = true
     }
 
@@ -549,18 +549,18 @@ final class PlaceholderTests: XCTestCase {
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
-        table.cyl_header = header
+        table.cylHeader = header
         for _ in 0..<3 {
             let started = expectation(description: "header started")
             header.beginRefreshing(completionBlock: { started.fulfill() })
             wait(for: [started], timeout: CYLTestTimeout)
-            XCTAssertEqual(table.cyl_insetT, 20 + header.cyl_h, accuracy: 0.001)
+            XCTAssertEqual(table.cylInsetT, 20 + header.cylH, accuracy: 0.001)
             let ended = expectation(description: "header ended")
             header.endRefreshing(completionBlock: { ended.fulfill() })
             wait(for: [ended], timeout: CYLTestTimeout)
-            XCTAssertEqual(table.cyl_insetT, 20, accuracy: 0.001)
+            XCTAssertEqual(table.cylInsetT, 20, accuracy: 0.001)
         }
-        table.cyl_header = nil
+        table.cylHeader = nil
         window.isHidden = true
     }
 
@@ -579,32 +579,32 @@ final class PlaceholderTests: XCTestCase {
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
-        table.cyl_header = header
+        table.cylHeader = header
         let started = expectation(description: "header started")
         header.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
-        XCTAssertEqual(table.cyl_insetT, header.cyl_h, accuracy: 0.001)
+        XCTAssertEqual(table.cylInsetT, header.cylH, accuracy: 0.001)
 
         // [EN] The reset of the original issue: inset and offset back to zero. [CN] 原 issue 中的重置：inset 与 offset 归零。
         table.contentOffset = .zero
         table.contentInset = .zero
         XCTAssertTrue(header.isRefreshing)
-        XCTAssertEqual(table.cyl_insetT, header.cyl_h, accuracy: 0.001)
-        XCTAssertEqual(table.contentOffset.y, -header.cyl_h, accuracy: 0.001)
+        XCTAssertEqual(table.cylInsetT, header.cylH, accuracy: 0.001)
+        XCTAssertEqual(table.contentOffset.y, -header.cylH, accuracy: 0.001)
         let headerFrame = header.convert(header.bounds, to: window)
         let viewport = table.convert(table.bounds, to: window)
         XCTAssertTrue(headerFrame.intersects(viewport))
 
         // [EN] A new inset written during the refresh becomes the original inset. [CN] 刷新期间写入的新 inset 成为原始 inset。
         table.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-        XCTAssertEqual(table.cyl_insetT, 20 + header.cyl_h, accuracy: 0.001)
-        XCTAssertEqual(table.contentOffset.y, -(20 + header.cyl_h), accuracy: 0.001)
+        XCTAssertEqual(table.cylInsetT, 20 + header.cylH, accuracy: 0.001)
+        XCTAssertEqual(table.contentOffset.y, -(20 + header.cylH), accuracy: 0.001)
 
         let ended = expectation(description: "header ended")
         header.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
-        XCTAssertEqual(table.cyl_insetT, 20, accuracy: 0.001)
-        table.cyl_header = nil
+        XCTAssertEqual(table.cylInsetT, 20, accuracy: 0.001)
+        table.cylHeader = nil
         window.isHidden = true
     }
 
@@ -618,25 +618,25 @@ final class PlaceholderTests: XCTestCase {
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
-        scrollView.cyl_header = header
-        scrollView.cyl_triggerInsetFeedback = true
+        scrollView.cylHeader = header
+        scrollView.triggerInsetFeedback = true
         let started = expectation(description: "header started")
         header.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
-        scrollView.cyl_triggerInsetFeedback = false
-        XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1)
-        XCTAssertEqual(scrollView.cyl_insetT, header.cyl_h, accuracy: 0.001)
+        scrollView.triggerInsetFeedback = false
+        XCTAssertEqual(scrollView.maxInsetDepth, 1)
+        XCTAssertEqual(scrollView.cylInsetT, header.cylH, accuracy: 0.001)
 
-        scrollView.cyl_maxInsetDepth = 0
-        scrollView.cyl_triggerInsetFeedback = true
+        scrollView.maxInsetDepth = 0
+        scrollView.triggerInsetFeedback = true
         scrollView.contentOffset = CGPoint(x: 0, y: -20)
-        scrollView.cyl_triggerInsetFeedback = false
-        XCTAssertEqual(scrollView.cyl_maxInsetDepth, 1)
+        scrollView.triggerInsetFeedback = false
+        XCTAssertEqual(scrollView.maxInsetDepth, 1)
         let ended = expectation(description: "header ended")
         header.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
-        XCTAssertEqual(scrollView.cyl_insetT, 0, accuracy: 0.001)
-        scrollView.cyl_header = nil
+        XCTAssertEqual(scrollView.cylInsetT, 0, accuracy: 0.001)
+        scrollView.cylHeader = nil
         window.isHidden = true
     }
 
@@ -656,7 +656,7 @@ final class PlaceholderTests: XCTestCase {
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
-        table.cyl_header = header
+        table.cylHeader = header
         let started = expectation(description: "search header started")
         header.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
@@ -664,7 +664,7 @@ final class PlaceholderTests: XCTestCase {
         controller.view.layoutIfNeeded()
         header.endRefreshing()
         XCTAssertEqual(table.contentInset.top, initialInset, accuracy: 0.01)
-        table.cyl_header = nil
+        table.cylHeader = nil
         window.isHidden = true
     }
 
@@ -679,19 +679,19 @@ final class PlaceholderTests: XCTestCase {
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
         header.isHidden = true
-        table.cyl_header = header
-        XCTAssertEqual(header.cyl_y, -header.cyl_h, accuracy: 0.001)
+        table.cylHeader = header
+        XCTAssertEqual(header.cylY, -header.cylH, accuracy: 0.001)
         for _ in 0..<3 {
             let started = expectation(description: "hidden header started")
             header.beginRefreshing(completionBlock: { started.fulfill() })
             wait(for: [started], timeout: CYLTestTimeout)
-            XCTAssertEqual(table.cyl_insetT, 20 + header.cyl_h, accuracy: 0.001)
+            XCTAssertEqual(table.cylInsetT, 20 + header.cylH, accuracy: 0.001)
             let ended = expectation(description: "hidden header ended")
             header.endRefreshing(completionBlock: { ended.fulfill() })
             wait(for: [ended], timeout: CYLTestTimeout)
-            XCTAssertEqual(table.cyl_insetT, 20, accuracy: 0.001)
+            XCTAssertEqual(table.cylInsetT, 20, accuracy: 0.001)
         }
-        table.cyl_header = nil
+        table.cylHeader = nil
         window.isHidden = true
     }
 
@@ -708,28 +708,28 @@ final class PlaceholderTests: XCTestCase {
         header.isCollectionViewAnimationBug = true
         header.fastAnimationDuration = 0.01
         header.slowAnimationDuration = 0.01
-        collection.cyl_header = header
+        collection.cylHeader = header
         for index in 0..<4 {
             header.isHidden = index % 2 == 0
             let started = expectation(description: "collection header started")
             header.beginRefreshing(completionBlock: { started.fulfill() })
             wait(for: [started], timeout: CYLTestTimeout)
-            XCTAssertEqual(collection.cyl_insetT, 20 + header.cyl_h, accuracy: 0.001)
+            XCTAssertEqual(collection.cylInsetT, 20 + header.cylH, accuracy: 0.001)
             let ended = expectation(description: "collection header ended")
             header.endRefreshing(completionBlock: { ended.fulfill() })
             wait(for: [ended], timeout: CYLTestTimeout)
-            XCTAssertEqual(collection.cyl_insetT, 20, accuracy: 0.001)
+            XCTAssertEqual(collection.cylInsetT, 20, accuracy: 0.001)
             XCTAssertTrue(collection.isUserInteractionEnabled)
         }
-        collection.cyl_header = nil
+        collection.cylHeader = nil
         window.isHidden = true
     }
 
     func testRefreshLocaleCanChange() {
         CYLRefreshConfig.default.languageCode = "zh-Hans"
-        let chinese = Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText)
+        let chinese = Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText)
         CYLRefreshConfig.default.languageCode = "en"
-        let english = Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText)
+        let english = Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText)
         XCTAssertNotEqual(chinese, english)
         XCTAssertEqual(english, "Pull down to refresh")
         CYLRefreshConfig.default.languageCode = nil
@@ -737,20 +737,20 @@ final class PlaceholderTests: XCTestCase {
 
     func testRefreshUnsupportedLocaleFallsBackToEnglish() {
         CYLRefreshConfig.default.languageCode = "zz-XX"
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText), "Pull down to refresh")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText), "Pull down to refresh")
         CYLRefreshConfig.default.languageCode = nil
     }
 
     func testRefreshResourcesLiveInTheSingleLibraryBundle() {
-        let bundle: Bundle? = Bundle.cyl_refresh()
+        let bundle: Bundle? = Bundle.cylRefresh()
         XCTAssertNotNil(bundle)
         XCTAssertEqual((bundle?.bundlePath as NSString?)?.lastPathComponent, "CYLTableViewPlaceHolder.bundle")
         // The former separate resource bundle is gone everywhere it used to be copied.
         let container = Bundle(for: CYLRefreshComponent.self)
         XCTAssertNil(container.path(forResource: "CYLRefresh", ofType: "bundle"))
         XCTAssertNil(Bundle.main.path(forResource: "CYLRefresh", ofType: "bundle"))
-        XCTAssertNotNil(Bundle.cyl_arrowImage())
-        XCTAssertNotNil(Bundle.cyl_trailArrowImage())
+        XCTAssertNotNil(Bundle.cylArrowImage())
+        XCTAssertNotNil(Bundle.cylTrailArrowImage())
         let keys = ["CYLRefreshHeaderIdleText", "CYLRefreshHeaderPullingText",
                     "CYLRefreshHeaderRefreshingText", "CYLRefreshTrailerIdleText", "CYLRefreshTrailerPullingText",
                     "CYLRefreshAutoFooterIdleText", "CYLRefreshAutoFooterRefreshingText", "CYLRefreshAutoFooterNoMoreDataText",
@@ -774,11 +774,11 @@ final class PlaceholderTests: XCTestCase {
         defer { CYLRefreshConfig.default.languageCode = nil }
         // Before the bundles were merged, the trailer texts existed only in Chinese.
         CYLRefreshConfig.default.languageCode = "en"
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshTrailerIdleText), "Swipe to see details")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshTrailerIdleText), "Swipe to see details")
         CYLRefreshConfig.default.languageCode = "ja-JP"
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText), "下に引っ張って更新")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText), "下に引っ張って更新")
         CYLRefreshConfig.default.languageCode = "ko"
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshTrailerPullingText), "놓으면 상세 정보 보기")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshTrailerPullingText), "놓으면 상세 정보 보기")
     }
 
     func testLastUpdatedTimeIsLocaleAwareAndComparesWholeDates() {
@@ -813,8 +813,8 @@ final class PlaceholderTests: XCTestCase {
     }
 
     func testMissingRefreshBundleFallsBackWithoutException() {
-        let original = class_getClassMethod(Bundle.self, #selector(Bundle.cyl_refresh))!
-        let missing = class_getClassMethod(Bundle.self, #selector(Bundle.cyl_testMissingRefreshBundle))!
+        let original = class_getClassMethod(Bundle.self, #selector(Bundle.cylRefresh))!
+        let missing = class_getClassMethod(Bundle.self, #selector(Bundle.testMissingRefreshBundle))!
         method_exchangeImplementations(original, missing)
         defer {
             method_exchangeImplementations(original, missing)
@@ -823,18 +823,18 @@ final class PlaceholderTests: XCTestCase {
         CYLRefreshConfig.default.languageCode = "zz-test-missing"
         // [EN] An Objective-C exception here would end the test run (Swift cannot catch it), which fails as well.
         // [CN] 此处若抛出 Objective-C 异常会终止测试运行（Swift 无法捕获），同样算作失败。
-        XCTAssertEqual(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText, value: "Fallback"), "Fallback")
+        XCTAssertEqual(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText, value: "Fallback"), "Fallback")
     }
 
     func testResetNoMoreDataBeforeBeginningRefresh() {
         let footer: CYLRefreshFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        table.cyl_footer = footer
+        table.cylFooter = footer
         footer.endRefreshingWithNoMoreData()
         XCTAssertEqual(footer.state, .noMoreData)
         footer.resetNoMoreData()
         footer.beginRefreshing()
         XCTAssertTrue(footer.isRefreshing)
-        table.cyl_footer = nil
+        table.cylFooter = nil
     }
 
     func testAutoFooterDoesNotTriggerWhileHeaderRefreshes() {
@@ -842,8 +842,8 @@ final class PlaceholderTests: XCTestCase {
         table.contentSize = CGSize(width: 320, height: 390)
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        table.cyl_header = header
-        table.cyl_footer = footer
+        table.cylHeader = header
+        table.cylFooter = footer
         header.beginRefreshing()
         table.contentOffset = CGPoint(x: 0, y: -30)
         table.contentOffset = CGPoint(x: 0, y: -20)
@@ -853,30 +853,30 @@ final class PlaceholderTests: XCTestCase {
         table.contentOffset = CGPoint(x: 0, y: -30)
         table.contentOffset = CGPoint(x: 0, y: -20)
         XCTAssertTrue(footer.isRefreshing)
-        table.cyl_footer = nil
-        table.cyl_header = nil
+        table.cylFooter = nil
+        table.cylHeader = nil
     }
 
     func testScrollMetricsAreStableAndUseOffsetDeltas() {
         let scrollView = UIScrollView()
         scrollView.contentOffset = CGPoint(x: 10, y: -20)
-        scrollView.cyl_updateScrollMetrics()
-        XCTAssertEqual(scrollView.cyl_scrollDirection, .none)
-        XCTAssertEqual(scrollView.cyl_scrollDistance, 0)
+        scrollView.cylUpdateScrollMetrics()
+        XCTAssertEqual(scrollView.cylScrollDirection, .none)
+        XCTAssertEqual(scrollView.cylScrollDistance, 0)
         let previousY = scrollView.contentOffset.y
         scrollView.contentOffset = CGPoint(x: 10, y: -17.5)
         let expectedDistance = scrollView.contentOffset.y - previousY
-        scrollView.cyl_updateScrollMetrics()
-        XCTAssertEqual(scrollView.cyl_scrollDirection, .down)
-        XCTAssertEqual(scrollView.cyl_scrollDistance, expectedDistance, accuracy: 0.001)
-        XCTAssertEqual(scrollView.cyl_scrollDirection, .down)
+        scrollView.cylUpdateScrollMetrics()
+        XCTAssertEqual(scrollView.cylScrollDirection, .down)
+        XCTAssertEqual(scrollView.cylScrollDistance, expectedDistance, accuracy: 0.001)
+        XCTAssertEqual(scrollView.cylScrollDirection, .down)
         scrollView.contentOffset = CGPoint(x: 5, y: -17)
-        scrollView.cyl_updateScrollMetrics()
-        XCTAssertEqual(scrollView.cyl_scrollDirection, .left)
-        XCTAssertEqual(scrollView.cyl_scrollDistance, -5, accuracy: 0.001)
-        scrollView.cyl_updateScrollMetrics()
-        XCTAssertEqual(scrollView.cyl_scrollDirection, .none)
-        XCTAssertEqual(scrollView.cyl_scrollDistance, 0)
+        scrollView.cylUpdateScrollMetrics()
+        XCTAssertEqual(scrollView.cylScrollDirection, .left)
+        XCTAssertEqual(scrollView.cylScrollDistance, -5, accuracy: 0.001)
+        scrollView.cylUpdateScrollMetrics()
+        XCTAssertEqual(scrollView.cylScrollDirection, .none)
+        XCTAssertEqual(scrollView.cylScrollDistance, 0)
     }
 
     func testRefreshComponentMovesBetweenScrollAndOrdinaryViews() {
@@ -900,14 +900,14 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         let container = UIView()
         let secondScrollView = UIScrollView(frame: table.frame)
-        let initialInset = table.cyl_insetB
+        let initialInset = table.cylInsetB
         for _ in 0..<100 {
             container.addSubview(footer)
             XCTAssertNil(footer.scrollView)
             table.addSubview(footer)
             XCTAssertIdentical(footer.scrollView, table)
             secondScrollView.addSubview(footer)
-            XCTAssertEqual(table.cyl_insetB, initialInset, accuracy: 0.001)
+            XCTAssertEqual(table.cylInsetB, initialInset, accuracy: 0.001)
             footer.removeFromSuperview()
             XCTAssertNil(footer.scrollView)
         }
@@ -941,8 +941,8 @@ final class PlaceholderTests: XCTestCase {
                     component.fastAnimationDuration = 0
                     component.slowAnimationDuration = 0
                 }
-                table.cyl_header = header
-                table.cyl_footer = footer
+                table.cylHeader = header
+                table.cylFooter = footer
                 navigation.pushViewController(controller, animated: false)
                 controller.view.layoutIfNeeded()
                 // [EN] An observer exception (XCTAssertNoThrow in the Objective-C test) now ends the run, which fails as well.
@@ -976,7 +976,7 @@ final class PlaceholderTests: XCTestCase {
      * [CN] 销毁一个控制器，其表格正在用 `component`（刷新尾、trailer 或刷新头）刷新，并最多等待 CYLTestTimeout，直到表格与该控件都被释放。
      *      两者都释放时返回 true。
      */
-    private func cyl_tearDownWhileRefreshing(_ makeComponent: () -> CYLRefreshComponent,
+    private func tearDownWhileRefreshing(_ makeComponent: () -> CYLRefreshComponent,
                                              navigation: UINavigationController,
                                              zeroDurations: Bool) -> Bool {
         weak var weakComponent: CYLRefreshComponent?
@@ -996,11 +996,11 @@ final class PlaceholderTests: XCTestCase {
                 each.fastAnimationDuration = 0
                 each.slowAnimationDuration = 0
             }
-            table.cyl_header = header
+            table.cylHeader = header
             if let trailer = component as? CYLRefreshTrailer {
-                table.cyl_trailer = trailer
+                table.cylTrailer = trailer
             } else if let footer = component as? CYLRefreshFooter {
-                table.cyl_footer = footer
+                table.cylFooter = footer
             }
             navigation.pushViewController(controller, animated: false)
             controller.view.layoutIfNeeded()
@@ -1048,15 +1048,15 @@ final class PlaceholderTests: XCTestCase {
         ]
         for zero in [true, false] {
             for kind in kinds {
-                let released = cyl_tearDownWhileRefreshing({
+                let released = tearDownWhileRefreshing({
                     if kind === CYLRefreshDrawnFooter.self {
                         return CYLRefreshDrawnFooter(style: CYLRefreshStoreHouseHeader(string: "CYL"))
                     }
                     if kind.isSubclass(of: CYLRefreshTrailer.self) { return CYLMakeRefreshComponent(kind) }
                     let footer = CYLMakeRefreshComponent(kind)
                     if footer.conforms(to: CYLRefreshIconAnimating.self) {
-                        footer.cyl_setIconImages([image, image], duration: 0.2, for: .idle)
-                        footer.cyl_setIconImages([image, image], duration: 0.2, for: .refreshing)
+                        footer.setIconImages([image, image], duration: 0.2, for: .idle)
+                        footer.setIconImages([image, image], duration: 0.2, for: .refreshing)
                     }
                     return footer
                 }, navigation: navigation, zeroDurations: zero)
@@ -1084,7 +1084,7 @@ final class PlaceholderTests: XCTestCase {
             CYLRefreshStoreHouseHeader.self, CYLRefreshTaurusHeader.self, CYLRefreshWaveSwipeHeader.self,
         ]
         for kind in kinds {
-            let released = cyl_tearDownWhileRefreshing({
+            let released = tearDownWhileRefreshing({
                 if kind === CYLRefreshStoreHouseHeader.self { return CYLRefreshStoreHouseHeader(string: "CYL") }
                 return CYLMakeRefreshComponent(kind)
             }, navigation: navigation, zeroDurations: false)
@@ -1135,7 +1135,7 @@ final class PlaceholderTests: XCTestCase {
         let header: CYLRefreshHeader = CYLRefreshNormalHeader(refreshingBlock: {})
         header.fastAnimationDuration = 0
         header.slowAnimationDuration = 0
-        table.cyl_header = header
+        table.cylHeader = header
         table.contentOffset = CGPoint(x: 0, y: -table.adjustedContentInset.top)
         header.beginRefreshing()
         var deadline = Date(timeIntervalSinceNow: CYLTestTimeout)
@@ -1143,7 +1143,7 @@ final class PlaceholderTests: XCTestCase {
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
         }
         XCTAssertEqual(header.state, .refreshing)
-        XCTAssertEqual(table.contentInset.top, header.cyl_h, accuracy: 0.5)
+        XCTAssertEqual(table.contentInset.top, header.cylH, accuracy: 0.5)
 
         // [EN] "Rotate": the system inset shrinks from 100 to 30 + the safe area. [CN] “旋转”：系统 inset 从 100 缩小到 30 + 安全区。
         controller.additionalSafeAreaInsets = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
@@ -1152,10 +1152,10 @@ final class PlaceholderTests: XCTestCase {
         XCTAssertEqual(systemTop - newSystemTop, 70, accuracy: 0.5)
         // [EN] The user scrolls 20 pt up into the header, then back to the refreshing position.
         // [CN] 用户向上滚入刷新头 20 点，然后回到刷新位置。
-        table.contentOffset = CGPoint(x: 0, y: -(newSystemTop + header.cyl_h) + 20)
-        XCTAssertLessThanOrEqual(table.contentInset.top, header.cyl_h + 0.5, "never more than the header's own height")
-        table.contentOffset = CGPoint(x: 0, y: -(newSystemTop + header.cyl_h))
-        XCTAssertEqual(table.contentInset.top, header.cyl_h, accuracy: 0.5)
+        table.contentOffset = CGPoint(x: 0, y: -(newSystemTop + header.cylH) + 20)
+        XCTAssertLessThanOrEqual(table.contentInset.top, header.cylH + 0.5, "never more than the header's own height")
+        table.contentOffset = CGPoint(x: 0, y: -(newSystemTop + header.cylH))
+        XCTAssertEqual(table.contentInset.top, header.cylH, accuracy: 0.5)
 
         header.endRefreshing()
         deadline = Date(timeIntervalSinceNow: CYLTestTimeout)
@@ -1192,21 +1192,21 @@ final class PlaceholderTests: XCTestCase {
                 component.fastAnimationDuration = 0.05
                 component.slowAnimationDuration = 0.05
             }
-            collection.cyl_header = header
-            collection.cyl_footer = footer
+            collection.cylHeader = header
+            collection.cylFooter = footer
             collection.layoutIfNeeded()
             let initial = collection.contentInset
             for round in 0..<3 {
                 header.beginRefreshing()
-                cyl_spinUntil { header.state == .refreshing && collection.isUserInteractionEnabled }
+                spinUntil { header.state == .refreshing && collection.isUserInteractionEnabled }
                 footer.isExclusiveWithOtherRefresh = false
                 footer.beginRefreshing()
-                cyl_spinUntil { footer.state == .refreshing }
+                spinUntil { footer.state == .refreshing }
                 header.endRefreshing()
-                cyl_spinUntil { header.state == .idle && collection.isUserInteractionEnabled }
+                spinUntil { header.state == .idle && collection.isUserInteractionEnabled }
                 RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.2))
                 footer.endRefreshing()
-                cyl_spinUntil { footer.state == .idle }
+                spinUntil { footer.state == .idle }
                 RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.2))
                 XCTAssertEqual(collection.contentInset.top, initial.top, accuracy: 0.5, "bug path \(NSNumber(value: animationBug)), round \(round)")
                 XCTAssertEqual(collection.contentInset.bottom, initial.bottom, accuracy: 0.5, "bug path \(NSNumber(value: animationBug)), round \(round)")
@@ -1237,17 +1237,17 @@ final class PlaceholderTests: XCTestCase {
             header.isCollectionViewAnimationBug = animationBug
             header.fastAnimationDuration = 0.1
             header.slowAnimationDuration = 0.1
-            collection.cyl_header = header
+            collection.cylHeader = header
             collection.layoutIfNeeded()
             for round in 0..<3 {
                 collection.contentOffset = CGPoint(x: 0, y: -30 - 90)
                 header.beginRefreshing()
                 collection.contentOffset = CGPoint(x: 0, y: -30 - 80)
-                cyl_spinUntil { header.state == .refreshing && collection.isUserInteractionEnabled }
+                spinUntil { header.state == .refreshing && collection.isUserInteractionEnabled }
                 RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.2))
-                XCTAssertEqual(collection.contentInset.top, 30 + header.cyl_h, accuracy: 0.5, "bug path \(NSNumber(value: animationBug)), round \(round)")
+                XCTAssertEqual(collection.contentInset.top, 30 + header.cylH, accuracy: 0.5, "bug path \(NSNumber(value: animationBug)), round \(round)")
                 header.endRefreshing()
-                cyl_spinUntil { header.state == .idle && collection.isUserInteractionEnabled }
+                spinUntil { header.state == .idle && collection.isUserInteractionEnabled }
                 RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.2))
                 XCTAssertEqual(collection.contentInset.top, 30, accuracy: 0.5, "bug path \(NSNumber(value: animationBug)), round \(round)")
             }
@@ -1255,7 +1255,7 @@ final class PlaceholderTests: XCTestCase {
         }
     }
 
-    private func cyl_spinUntil(_ condition: () -> Bool) {
+    private func spinUntil(_ condition: () -> Bool) {
         let deadline = Date(timeIntervalSinceNow: CYLTestTimeout)
         while !condition() && deadline.timeIntervalSinceNow > 0 {
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
@@ -1264,11 +1264,11 @@ final class PlaceholderTests: XCTestCase {
 
     func testAutoFooterRestoresInsetWhenRemoved() {
         table.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
-        let initialInset = table.cyl_insetB
-        table.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        XCTAssertGreaterThan(table.cyl_insetB, initialInset)
-        table.cyl_footer = nil
-        XCTAssertEqual(table.cyl_insetB, initialInset, accuracy: 0.001)
+        let initialInset = table.cylInsetB
+        table.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        XCTAssertGreaterThan(table.cylInsetB, initialInset)
+        table.cylFooter = nil
+        XCTAssertEqual(table.cylInsetB, initialInset, accuracy: 0.001)
     }
 
     func testRemovingActiveTrailerRestoresHorizontalInsetAndBounce() {
@@ -1284,22 +1284,22 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0
-        collection.cyl_trailer = trailer
+        collection.cylTrailer = trailer
         trailer.layoutIfNeeded()
         let started = expectation(description: "trailer started")
         trailer.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
-        XCTAssertGreaterThan(collection.cyl_insetR, 17)
-        collection.cyl_insetR += 8
-        collection.cyl_trailer = nil
-        XCTAssertEqual(collection.cyl_insetR, 25, accuracy: 0.001)
+        XCTAssertGreaterThan(collection.cylInsetR, 17)
+        collection.cylInsetR += 8
+        collection.cylTrailer = nil
+        XCTAssertEqual(collection.cylInsetR, 25, accuracy: 0.001)
         XCTAssertEqual(trailer.state, .idle)
         XCTAssertFalse(collection.alwaysBounceHorizontal)
         layout.scrollDirection = .vertical
-        collection.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        collection.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         XCTAssertTrue(collection.alwaysBounceVertical)
         XCTAssertFalse(collection.alwaysBounceHorizontal)
-        collection.cyl_footer = nil
+        collection.cylFooter = nil
         window.isHidden = true
     }
 
@@ -1309,17 +1309,17 @@ final class PlaceholderTests: XCTestCase {
         scrollView.alwaysBounceVertical = true
         scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
-        scrollView.cyl_trailer = trailer
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = trailer
+        scrollView.cylTrailer = nil
         XCTAssertTrue(scrollView.alwaysBounceHorizontal)
         XCTAssertTrue(scrollView.alwaysBounceVertical)
-        XCTAssertEqual(scrollView.cyl_insetR, 15, accuracy: 0.001)
+        XCTAssertEqual(scrollView.cylInsetR, 15, accuracy: 0.001)
         trailer.beginRefreshing()
         XCTAssertEqual(trailer.state, .willRefresh)
-        scrollView.cyl_trailer = trailer
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = trailer
+        scrollView.cylTrailer = nil
         XCTAssertEqual(trailer.state, .idle)
-        XCTAssertEqual(scrollView.cyl_insetR, 15, accuracy: 0.001)
+        XCTAssertEqual(scrollView.cylInsetR, 15, accuracy: 0.001)
     }
 
     func testReparentingActiveTrailerRestoresOldScrollView() {
@@ -1341,8 +1341,8 @@ final class PlaceholderTests: XCTestCase {
         trailer.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
         newView.addSubview(trailer)
-        XCTAssertEqual(oldView.cyl_insetR, 12, accuracy: 0.001)
-        XCTAssertEqual(newView.cyl_insetR, 24, accuracy: 0.001)
+        XCTAssertEqual(oldView.cylInsetR, 12, accuracy: 0.001)
+        XCTAssertEqual(newView.cylInsetR, 24, accuracy: 0.001)
         XCTAssertFalse(oldView.alwaysBounceHorizontal)
         XCTAssertTrue(newView.alwaysBounceHorizontal)
         XCTAssertEqual(trailer.state, .idle)
@@ -1370,21 +1370,21 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0
-        collection.cyl_trailer = trailer
+        collection.cylTrailer = trailer
         trailer.layoutIfNeeded()
         let started = expectation(description: "collection trailer started")
         trailer.beginRefreshing(completionBlock: { started.fulfill() })
         wait(for: [started], timeout: CYLTestTimeout)
-        collection.cyl_trailer = nil
+        collection.cylTrailer = nil
         layout.scrollDirection = .vertical
         layout.invalidateLayout()
-        collection.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        collection.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         collection.layoutIfNeeded()
         XCTAssertEqual(collection.contentSize.width, collection.bounds.size.width, accuracy: 0.001)
-        XCTAssertEqual(collection.cyl_insetR, 0, accuracy: 0.001)
+        XCTAssertEqual(collection.cylInsetR, 0, accuracy: 0.001)
         XCTAssertFalse(collection.alwaysBounceHorizontal)
         XCTAssertGreaterThan(collection.contentSize.height, collection.bounds.size.height)
-        collection.cyl_footer = nil
+        collection.cylFooter = nil
         window.isHidden = true
     }
 
@@ -1398,7 +1398,7 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         let started = expectation(description: "trailer began")
         trailer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -1406,13 +1406,13 @@ final class PlaceholderTests: XCTestCase {
         let ended = expectation(description: "trailer ended")
         trailer.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
-        XCTAssertEqual(scrollView.cyl_insetR, 18, accuracy: 0.001)
-        scrollView.cyl_trailer = nil
-        XCTAssertEqual(scrollView.cyl_insetR, 18, accuracy: 0.001)
+        XCTAssertEqual(scrollView.cylInsetR, 18, accuracy: 0.001)
+        scrollView.cylTrailer = nil
+        XCTAssertEqual(scrollView.cylInsetR, 18, accuracy: 0.001)
         window.isHidden = true
     }
 
-    private func cyl_wideScrollView(in window: UIWindow, contentWidth: CGFloat) -> UIScrollView {
+    private func wideScrollView(in window: UIWindow, contentWidth: CGFloat) -> UIScrollView {
         window.rootViewController = UIViewController()
         let scrollView = UIScrollView(frame: window.bounds)
         scrollView.contentInsetAdjustmentBehavior = .never
@@ -1424,7 +1424,7 @@ final class PlaceholderTests: XCTestCase {
 
     func testTrailerRefreshesAutomaticallyAtTheEndWhenEnabled() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let scrollView = cyl_wideScrollView(in: window, contentWidth: 1000)
+        let scrollView = wideScrollView(in: window, contentWidth: 1000)
         let refreshed = expectation(description: "automatic trailer refresh")
         var callbacks = 0
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {
@@ -1438,7 +1438,7 @@ final class PlaceholderTests: XCTestCase {
         XCTAssertEqual(trailer.autoTriggerTimes, 1)
         trailer.isAutomaticallyRefresh = true
         trailer.triggerAutomaticallyRefreshPercent = 0.5
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         // The end of the content is at 680; half of the 60 pt trailer is 30 pt.
         scrollView.contentOffset = CGPoint(x: 700, y: 0)
@@ -1450,9 +1450,9 @@ final class PlaceholderTests: XCTestCase {
         let ended = expectation(description: "automatic trailer ended")
         trailer.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
-        XCTAssertEqual(scrollView.cyl_insetR, 0, accuracy: 0.001)
+        XCTAssertEqual(scrollView.cylInsetR, 0, accuracy: 0.001)
         XCTAssertEqual(callbacks, 1)
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
@@ -1465,7 +1465,7 @@ final class PlaceholderTests: XCTestCase {
         window.rootViewController = UIViewController()
         let scrollView = CYLTestDraggingScrollView(frame: window.bounds)
         let pan = CYLTestPanGestureRecognizer()
-        scrollView.cyl_testPan = pan
+        scrollView.testPan = pan
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.contentSize = CGSize(width: 1000, height: window.bounds.size.height)
         window.rootViewController!.view.addSubview(scrollView)
@@ -1480,14 +1480,14 @@ final class PlaceholderTests: XCTestCase {
         trailer.slowAnimationDuration = 0
         trailer.isAutomaticallyRefresh = true
         trailer.triggerAutomaticallyRefreshPercent = 0.5
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
 
         for drag in 1...2 {
             // [EN] A new drag begins. [CN] 新的一次拖动开始。
-            pan.cyl_testState = .began
+            pan.testState = .began
             trailer.scrollViewPanStateDidChange(nil)
-            scrollView.cyl_testDragging = true
+            scrollView.testDragging = true
             scrollView.contentOffset = CGPoint(x: 690, y: 0)
             let expectation = expectation(description: "automatic trailer refresh")
             refreshed = expectation
@@ -1508,11 +1508,11 @@ final class PlaceholderTests: XCTestCase {
 
             // [EN] The drag ends back inside the content. [CN] 拖动在内容范围内结束。
             scrollView.contentOffset = CGPoint(x: 600, y: 0)
-            scrollView.cyl_testDragging = false
-            pan.cyl_testState = .ended
+            scrollView.testDragging = false
+            pan.testState = .ended
             trailer.scrollViewPanStateDidChange(nil)
         }
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
@@ -1531,8 +1531,8 @@ final class PlaceholderTests: XCTestCase {
             component.isExclusiveWithOtherRefresh = true
             component.blockedByOtherRefreshBlock = { blocked += 1 }
         }
-        table.cyl_header = header
-        table.cyl_footer = footer
+        table.cylHeader = header
+        table.cylFooter = footer
 
         // The header refreshes: loading more is held back and reported.
         let headerStarted = expectation(description: "header started")
@@ -1564,8 +1564,8 @@ final class PlaceholderTests: XCTestCase {
         let footerEnded = expectation(description: "footer ended")
         footer.endRefreshing(completionBlock: { footerEnded.fulfill() })
         wait(for: [footerEnded], timeout: CYLTestTimeout)
-        table.cyl_header = nil
-        table.cyl_footer = nil
+        table.cylHeader = nil
+        table.cylFooter = nil
         window.isHidden = true
     }
 
@@ -1580,25 +1580,25 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshFooter = CYLRefreshBackNormalFooter(refreshingBlock: { footerCalls += 1 })
         footer.fastAnimationDuration = 0
         header.fastAnimationDuration = footer.fastAnimationDuration
-        table.cyl_header = header
-        table.cyl_footer = footer
+        table.cylHeader = header
+        table.cylFooter = footer
         header.beginRefreshing()
         footer.beginRefreshing()
         XCTAssertTrue(header.isRefreshing)
         XCTAssertTrue(footer.isRefreshing, "unchanged default: the footer starts while the header refreshes")
-        table.cyl_header = nil
-        table.cyl_footer = nil
+        table.cylHeader = nil
+        table.cylFooter = nil
         window.isHidden = true
     }
 
     func testTrailerKeepsPullAndReleaseBehaviorByDefault() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let scrollView = cyl_wideScrollView(in: window, contentWidth: 1000)
+        let scrollView = wideScrollView(in: window, contentWidth: 1000)
         var callbacks = 0
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: { callbacks += 1 })
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         scrollView.contentOffset = CGPoint(x: 760, y: 0)
         let nextTurn = expectation(description: "no automatic refresh")
@@ -1606,17 +1606,17 @@ final class PlaceholderTests: XCTestCase {
         wait(for: [nextTurn], timeout: CYLTestTimeout)
         XCTAssertEqual(trailer.state, .idle)
         XCTAssertEqual(callbacks, 0)
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
     func testAutomaticTrailerIgnoresBounceBackShortContentAndActiveHeader() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let scrollView = cyl_wideScrollView(in: window, contentWidth: 1000)
+        let scrollView = wideScrollView(in: window, contentWidth: 1000)
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         // Moving back toward the start must not trigger, even past the threshold.
         scrollView.contentOffset = CGPoint(x: 780, y: 0)
@@ -1625,18 +1625,18 @@ final class PlaceholderTests: XCTestCase {
         XCTAssertEqual(trailer.state, .idle)
         // While the header refreshes, the trailer waits.
         let header = CYLRefreshNormalHeader(refreshingBlock: {})
-        scrollView.cyl_header = header
+        scrollView.cylHeader = header
         header.beginRefreshing()
         scrollView.contentOffset = CGPoint(x: 790, y: 0)
         XCTAssertEqual(trailer.state, .idle)
         header.endRefreshing()
-        scrollView.cyl_header = nil
+        scrollView.cylHeader = nil
         // Content narrower than the view keeps pull-and-release.
         scrollView.contentOffset = .zero
         scrollView.contentSize = CGSize(width: 200, height: 480)
         scrollView.contentOffset = CGPoint(x: 80, y: 0)
         XCTAssertEqual(trailer.state, .idle)
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
@@ -1688,13 +1688,13 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: { refreshCallbacks += 1 })
         trailer.fastAnimationDuration = 0.5
         trailer.slowAnimationDuration = 0.2
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         let ended = expectation(description: "detached refresh ended")
         trailer.endRefreshingCompletionBlock = { ended.fulfill() }
         trailer.beginRefreshing(completionBlock: { beginCallbacks += 1 })
-        scrollView.cyl_trailer = nil
-        XCTAssertEqual(scrollView.cyl_insetR, 19, accuracy: 0.001)
+        scrollView.cylTrailer = nil
+        XCTAssertEqual(scrollView.cylInsetR, 19, accuracy: 0.001)
         let startAnimationFinished = expectation(description: "cancelled start animation finished")
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             startAnimationFinished.fulfill()
@@ -1714,7 +1714,7 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0.5
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         let started = expectation(description: "first refresh started")
         trailer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -1727,7 +1727,7 @@ final class PlaceholderTests: XCTestCase {
         XCTAssertTrue(trailer.isRefreshing)
         XCTAssertEqual(trailer.pullingPercent, 1, accuracy: 0.001)
         trailer.endRefreshingCompletionBlock = nil
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
@@ -1740,7 +1740,7 @@ final class PlaceholderTests: XCTestCase {
         let trailer: CYLRefreshTrailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         trailer.fastAnimationDuration = 0
         trailer.slowAnimationDuration = 0.5
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         trailer.layoutIfNeeded()
         var firstEnds = 0
         var secondEnds = 0
@@ -1759,56 +1759,56 @@ final class PlaceholderTests: XCTestCase {
         wait(for: [settled], timeout: CYLTestTimeout)
         XCTAssertEqual(firstEnds, 1)
         XCTAssertEqual(secondEnds, 1)
-        scrollView.cyl_trailer = nil
+        scrollView.cylTrailer = nil
         window.isHidden = true
     }
 
     func testAutoFooterPanEndToleratesFloatingPointRounding() {
         let scrollView = CYLTestScrollView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         let pan = CYLTestPanGestureRecognizer()
-        scrollView.cyl_testPan = pan
-        pan.cyl_testState = .ended
+        scrollView.testPan = pan
+        pan.testState = .ended
         scrollView.contentSize = CGSize(width: 320, height: 1800)
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        scrollView.cyl_footer = footer
-        let threshold = scrollView.cyl_contentH + scrollView.cyl_insetB - scrollView.cyl_h
+        scrollView.cylFooter = footer
+        let threshold = scrollView.cylContentH + scrollView.cylInsetB - scrollView.cylH
 
-        scrollView.cyl_testOffset = CGPoint(x: 0, y: threshold - 0.01)
+        scrollView.testOffset = CGPoint(x: 0, y: threshold - 0.01)
         footer.scrollViewPanStateDidChange(nil)
         XCTAssertFalse(footer.isRefreshing)
 
-        scrollView.cyl_testOffset = CGPoint(x: 0, y: threshold - 1e-11)
+        scrollView.testOffset = CGPoint(x: 0, y: threshold - 1e-11)
         footer.scrollViewPanStateDidChange(nil)
         XCTAssertTrue(footer.isRefreshing)
         footer.state = .idle
-        pan.cyl_testState = .began
+        pan.testState = .began
         footer.scrollViewPanStateDidChange(nil)
-        pan.cyl_testState = .ended
-        scrollView.cyl_testOffset = CGPoint(x: 0, y: threshold)
+        pan.testState = .ended
+        scrollView.testOffset = CGPoint(x: 0, y: threshold)
         footer.scrollViewPanStateDidChange(nil)
         XCTAssertTrue(footer.isRefreshing)
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
     }
 
     func testPagingAutoFooterAcceptsReportedFloatingPointValues() {
         let scrollView = CYLTestScrollView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         let pan = CYLTestPanGestureRecognizer()
-        scrollView.cyl_testPan = pan
-        pan.cyl_testState = .ended
+        scrollView.testPan = pan
+        pan.testState = .ended
         scrollView.isPagingEnabled = true
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
 
         let reportedThreshold: CGFloat = 1367.666666666698
         let reportedOffset: CGFloat = 1367.666666666687
-        scrollView.contentSize = CGSize(width: 320, height: reportedThreshold + scrollView.cyl_h - scrollView.cyl_insetB)
-        let actualThreshold = scrollView.cyl_contentH + scrollView.cyl_insetB - scrollView.cyl_h
+        scrollView.contentSize = CGSize(width: 320, height: reportedThreshold + scrollView.cylH - scrollView.cylInsetB)
+        let actualThreshold = scrollView.cylContentH + scrollView.cylInsetB - scrollView.cylH
         XCTAssertEqual(actualThreshold, reportedThreshold, accuracy: 1e-12)
         XCTAssertLessThan(reportedOffset, actualThreshold)
-        scrollView.cyl_testOffset = CGPoint(x: 0, y: reportedOffset)
+        scrollView.testOffset = CGPoint(x: 0, y: reportedOffset)
         footer.scrollViewPanStateDidChange(nil)
         XCTAssertTrue(footer.isRefreshing)
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
     }
 
     func testPagingAutoFooterEndPreservesValidAndInteractiveOffsets() {
@@ -1824,7 +1824,7 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
 
         footer.beginRefreshing()
         scrollView.contentOffset = CGPoint(x: 0, y: 480)
@@ -1838,19 +1838,19 @@ final class PlaceholderTests: XCTestCase {
 
         footer.beginRefreshing()
         scrollView.contentOffset = CGPoint(x: 0, y: 550)
-        scrollView.cyl_testDragging = true
+        scrollView.testDragging = true
         footer.endRefreshing()
         XCTAssertEqual(scrollView.contentOffset.y, 550, accuracy: 0.001)
-        scrollView.cyl_testDragging = false
+        scrollView.testDragging = false
 
         footer.beginRefreshing()
         scrollView.contentOffset = CGPoint(x: 0, y: 550)
-        scrollView.cyl_testDecelerating = true
+        scrollView.testDecelerating = true
         footer.endRefreshing()
         XCTAssertEqual(scrollView.contentOffset.y, 550, accuracy: 0.001)
-        scrollView.cyl_testDecelerating = false
+        scrollView.testDecelerating = false
 
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
@@ -1872,18 +1872,18 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshAutoFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         footer.beginRefreshing()
-        scrollView.contentOffset = CGPoint(x: 0, y: 480 + footer.cyl_h)
+        scrollView.contentOffset = CGPoint(x: 0, y: 480 + footer.cylH)
         scrollView.contentSize = CGSize(width: 320, height: 1440)
         footer.endRefreshing()
         XCTAssertEqual(scrollView.contentOffset.y, 480, accuracy: 0.001)
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
     // CoderMJLee/MJRefresh#1585 (case 2): keep "no more data" visible for a while after the last load, then rebound.
-    private func cyl_scrollViewAtBottomWithBackFooter(in window: UIWindow) -> (UIScrollView, CYLRefreshBackFooter) {
+    private func scrollViewAtBottomWithBackFooter(in window: UIWindow) -> (UIScrollView, CYLRefreshBackFooter) {
         window.rootViewController = UIViewController()
         let scrollView = UIScrollView(frame: window.bounds)
         scrollView.contentInsetAdjustmentBehavior = .never
@@ -1893,7 +1893,7 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshBackFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         scrollView.contentOffset = CGPoint(x: 0, y: 960)
         let started = expectation(description: "back footer started")
         footer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -1905,60 +1905,60 @@ final class PlaceholderTests: XCTestCase {
 
     func testBackFooterHoldsNoMoreDataForTheConfiguredDuration() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let (scrollView, footer) = cyl_scrollViewAtBottomWithBackFooter(in: window)
+        let (scrollView, footer) = scrollViewAtBottomWithBackFooter(in: window)
         footer.noMoreDataDisplayDuration = 0.6
-        let refreshingInset = scrollView.cyl_insetB
+        let refreshingInset = scrollView.cylInsetB
         XCTAssertGreaterThan(refreshingInset, 0)
         let began = CACurrentMediaTime()
         footer.endRefreshingWithNoMoreData()
         XCTAssertEqual(footer.state, .noMoreData)
-        XCTAssertEqual(scrollView.cyl_insetB, refreshingInset, accuracy: 0.01, "the footer stays held open")
+        XCTAssertEqual(scrollView.cylInsetB, refreshingInset, accuracy: 0.01, "the footer stays held open")
         expectation(for: NSPredicate { _, _ in
-            abs(scrollView.cyl_insetB) < 0.01
+            abs(scrollView.cylInsetB) < 0.01
         }, evaluatedWith: scrollView, handler: nil)
         waitForExpectations(timeout: CYLTestTimeout, handler: nil)
         XCTAssertGreaterThanOrEqual(CACurrentMediaTime() - began, 0.5, "released only after the configured time")
         XCTAssertEqual(footer.state, .noMoreData, "the state itself is unchanged")
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
     func testBackFooterNoMoreDataReboundsAtOnceByDefault() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let (scrollView, footer) = cyl_scrollViewAtBottomWithBackFooter(in: window)
+        let (scrollView, footer) = scrollViewAtBottomWithBackFooter(in: window)
         XCTAssertEqual(footer.noMoreDataDisplayDuration, 0, accuracy: 0.0001)
         footer.endRefreshingWithNoMoreData()
-        XCTAssertEqual(scrollView.cyl_insetB, 0, accuracy: 0.01, "unchanged default")
-        scrollView.cyl_footer = nil
+        XCTAssertEqual(scrollView.cylInsetB, 0, accuracy: 0.01, "unchanged default")
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
     func testBackFooterNoMoreDataHoldEndsOnResetNewLoadAndRemoval() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
-        let (scrollView, footer) = cyl_scrollViewAtBottomWithBackFooter(in: window)
+        let (scrollView, footer) = scrollViewAtBottomWithBackFooter(in: window)
         footer.noMoreDataDisplayDuration = 60
         footer.endRefreshingWithNoMoreData()
-        XCTAssertGreaterThan(scrollView.cyl_insetB, 0)
+        XCTAssertGreaterThan(scrollView.cylInsetB, 0)
         footer.resetNoMoreData()
         XCTAssertEqual(footer.state, .idle)
-        XCTAssertEqual(scrollView.cyl_insetB, 0, accuracy: 0.01, "reset gives the held inset back")
+        XCTAssertEqual(scrollView.cylInsetB, 0, accuracy: 0.01, "reset gives the held inset back")
 
         // A new load after the hold: the inset is neither lost nor doubled.
         footer.beginRefreshing()
-        let refreshingInset = scrollView.cyl_insetB
+        let refreshingInset = scrollView.cylInsetB
         footer.endRefreshingWithNoMoreData()
-        XCTAssertEqual(scrollView.cyl_insetB, refreshingInset, accuracy: 0.01)
+        XCTAssertEqual(scrollView.cylInsetB, refreshingInset, accuracy: 0.01)
         footer.beginRefreshing()
         XCTAssertEqual(footer.state, .refreshing)
-        XCTAssertEqual(scrollView.cyl_insetB, refreshingInset, accuracy: 0.01, "one footer height, not two")
+        XCTAssertEqual(scrollView.cylInsetB, refreshingInset, accuracy: 0.01, "one footer height, not two")
         footer.endRefreshing()
-        XCTAssertEqual(scrollView.cyl_insetB, 0, accuracy: 0.01)
+        XCTAssertEqual(scrollView.cylInsetB, 0, accuracy: 0.01)
 
         footer.beginRefreshing()
         footer.endRefreshingWithNoMoreData()
-        XCTAssertGreaterThan(scrollView.cyl_insetB, 0)
-        scrollView.cyl_footer = nil
-        XCTAssertEqual(scrollView.cyl_insetB, 0, accuracy: 0.01, "removing the footer gives the held inset back")
+        XCTAssertGreaterThan(scrollView.cylInsetB, 0)
+        scrollView.cylFooter = nil
+        XCTAssertEqual(scrollView.cylInsetB, 0, accuracy: 0.01, "removing the footer gives the held inset back")
         window.isHidden = true
     }
 
@@ -1974,7 +1974,7 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshBackFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         scrollView.contentOffset = CGPoint(x: 0, y: 960)
         let started = expectation(description: "paging back footer started")
         footer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -1984,7 +1984,7 @@ final class PlaceholderTests: XCTestCase {
         footer.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
         XCTAssertEqual(scrollView.contentOffset.y, 960, accuracy: 0.01)
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
@@ -2000,7 +2000,7 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshBackFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         scrollView.contentOffset = CGPoint(x: 0, y: 960)
         let started = expectation(description: "paging back footer started")
         footer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -2010,7 +2010,7 @@ final class PlaceholderTests: XCTestCase {
         footer.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
         XCTAssertEqual(scrollView.contentOffset.y, 960, accuracy: 0.01)
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
@@ -2028,7 +2028,7 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshBackFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         scrollView.contentOffset = CGPoint(x: 0, y: 960)
         let started = expectation(description: "paging back footer started")
         footer.beginRefreshing(completionBlock: { started.fulfill() })
@@ -2039,7 +2039,7 @@ final class PlaceholderTests: XCTestCase {
         footer.endRefreshing(completionBlock: { ended.fulfill() })
         wait(for: [ended], timeout: CYLTestTimeout)
         XCTAssertEqual(scrollView.contentOffset.y, 960, accuracy: 0.01, "back on the page shown before the refresh")
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
@@ -2055,10 +2055,10 @@ final class PlaceholderTests: XCTestCase {
         let footer: CYLRefreshBackFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.fastAnimationDuration = 0
         footer.slowAnimationDuration = 0
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         for scenario in 0..<3 {
-            scrollView.cyl_testDragging = false
-            scrollView.cyl_testDecelerating = false
+            scrollView.testDragging = false
+            scrollView.testDecelerating = false
             scrollView.contentSize = CGSize(width: 320, height: 1440)
             scrollView.contentOffset = CGPoint(x: 0, y: 960)
             let started = expectation(description: "paging footer started")
@@ -2066,21 +2066,21 @@ final class PlaceholderTests: XCTestCase {
             wait(for: [started], timeout: CYLTestTimeout)
             scrollView.contentSize = CGSize(width: 320, height: 1920)
             if scenario == 0 { scrollView.contentOffset = CGPoint(x: 0, y: 1440) }
-            if scenario == 1 { scrollView.cyl_testDragging = true }
-            if scenario == 2 { scrollView.cyl_testDecelerating = true }
+            if scenario == 1 { scrollView.testDragging = true }
+            if scenario == 2 { scrollView.testDecelerating = true }
             let expectedOffset = scrollView.contentOffset.y
             let ended = expectation(description: "paging footer ended")
             footer.endRefreshing(completionBlock: { ended.fulfill() })
             wait(for: [ended], timeout: CYLTestTimeout)
             XCTAssertEqual(scrollView.contentOffset.y, expectedOffset, accuracy: 0.01)
         }
-        scrollView.cyl_footer = nil
+        scrollView.cylFooter = nil
         window.isHidden = true
     }
 
     func testEndRefreshingDoesNotOverrideImmediateStateChange() {
         let footer: CYLRefreshFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
-        table.cyl_footer = footer
+        table.cylFooter = footer
         footer.beginRefreshing()
         footer.endRefreshing()
         footer.state = .noMoreData
@@ -2088,6 +2088,6 @@ final class PlaceholderTests: XCTestCase {
         DispatchQueue.main.async { nextTurn.fulfill() }
         wait(for: [nextTurn], timeout: CYLTestTimeout)
         XCTAssertEqual(footer.state, .noMoreData)
-        table.cyl_footer = nil
+        table.cylFooter = nil
     }
 }

@@ -201,55 +201,55 @@ final class CYLPlaceholderStatusViewTests: XCTestCase, CYLPlaceholderStatusViewD
 
     func testTheBarAndThePlaceholderAreIndependentAndChosenByOneParameter() {
         let controller = hostedTableController()
-        XCTAssertEqual(controller.cyl_statusDisplay, .placeholder, "nothing changes by default")
-        XCTAssertNil(controller.cyl_statusView.superview)
-        XCTAssertEqual(controller.cyl_placeholderScrollView, controller.tableView, "a table view controller's own table")
+        XCTAssertEqual(controller.cylStatusDisplay, .placeholder, "nothing changes by default")
+        XCTAssertNil(controller.cylStatusView.superview)
+        XCTAssertEqual(controller.cylPlaceholderScrollView, controller.tableView, "a table view controller's own table")
 
-        controller.cyl_statusDisplay = .all
+        controller.cylStatusDisplay = .all
         controller.view.layoutIfNeeded()
-        let bar: CYLPlaceholderStatusView = controller.cyl_statusView
+        let bar: CYLPlaceholderStatusView = controller.cylStatusView
         XCTAssertEqual(bar.superview, controller.view, "added to the controller's view, as CYLChatKit does")
         XCTAssertGreaterThanOrEqual(controller.additionalSafeAreaInsets.top, CYLPlaceholderStatusViewHight,
                                     "the content starts below the bar")
-        XCTAssertFalse(controller.tableView.cyl_placeholderHidden)
+        XCTAssertFalse(controller.tableView.cylPlaceholderHidden)
         XCTAssertEqual(bar.bounds.width, 375, accuracy: 0.5)
 
-        controller.cyl_statusDisplay = .statusBar
-        XCTAssertTrue(controller.tableView.cyl_placeholderHidden, "only the bar")
+        controller.cylStatusDisplay = .statusBar
+        XCTAssertTrue(controller.tableView.cylPlaceholderHidden, "only the bar")
         XCTAssertNotNil(bar.superview)
 
-        controller.cyl_statusDisplay = .placeholder
+        controller.cylStatusDisplay = .placeholder
         XCTAssertNil(bar.superview, "only the placeholder")
         XCTAssertEqual(controller.additionalSafeAreaInsets.top, 0, accuracy: 0.01, "the safe area is restored")
-        XCTAssertFalse(controller.tableView.cyl_placeholderHidden)
+        XCTAssertFalse(controller.tableView.cylPlaceholderHidden)
 
         let custom = try? CYLPlaceholderStatusView(itemAttributes: [CYLPlaceholderItemTitle: "Offline"])
-        controller.cyl_statusDisplay = .all
-        controller.cyl_statusView = custom
+        controller.cylStatusDisplay = .all
+        controller.cylStatusView = custom
         XCTAssertEqual(custom?.superview, controller.view, "replaced in place")
         XCTAssertNil(bar.superview)
-        controller.cyl_statusView = nil
-        XCTAssertEqual(controller.cyl_statusView.text, "Network unavailable, Check network", "nil restores the network bar")
-        controller.cyl_statusDisplay = []
-        XCTAssertTrue(controller.tableView.cyl_placeholderHidden)
-        XCTAssertNil(controller.cyl_statusView.superview)
+        controller.cylStatusView = nil
+        XCTAssertEqual(controller.cylStatusView.text, "Network unavailable, Check network", "nil restores the network bar")
+        controller.cylStatusDisplay = []
+        XCTAssertTrue(controller.tableView.cylPlaceholderHidden)
+        XCTAssertNil(controller.cylStatusView.superview)
     }
 
     func testAHiddenPlaceholderStaysAwayFromAnEmptyList() {
         let controller = hostedTableController()
         let table = controller.tableView!
         let placeholder = UIView()
-        table.cyl_placeholderViewBlock { _ in placeholder }
+        table.cylPlaceholderViewBlock { _ in placeholder }
         table.reloadData()
         spinMainQueue { placeholder.superview === table }
         XCTAssertEqual(placeholder.superview, table, "an empty list shows its placeholder")
-        table.cyl_placeholderHidden = true
+        table.cylPlaceholderHidden = true
         spinMainQueue { placeholder.superview == nil }
         XCTAssertNil(placeholder.superview)
-        table.cyl_placeholderHidden = false
+        table.cylPlaceholderHidden = false
         spinMainQueue { placeholder.superview === table }
         XCTAssertEqual(placeholder.superview, table)
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
     }
 
     func testTheNetworkMonitorKeepsChatKitsStatusesAndAddsTheBarWhenOffline() {
@@ -272,14 +272,14 @@ final class CYLPlaceholderStatusViewTests: XCTestCase, CYLPlaceholderStatusViewD
 
         let controller = hostedTableController()
         let shared = CYLPlaceholderNetworkMonitor.shared
-        controller.cyl_showsStatusViewWhenOffline = true
+        controller.cylShowsStatusViewWhenOffline = true
         XCTAssertTrue(shared.isMonitoring)
         CYLSetNetworkStatus(shared, .notReachable, constrained: false, expensive: false)
-        XCTAssertEqual(controller.cyl_statusView.superview, controller.view, "offline adds the bar")
-        XCTAssertEqual(controller.cyl_statusDisplay, .placeholder, "the chosen display is kept")
+        XCTAssertEqual(controller.cylStatusView.superview, controller.view, "offline adds the bar")
+        XCTAssertEqual(controller.cylStatusDisplay, .placeholder, "the chosen display is kept")
         CYLSetNetworkStatus(shared, .reachableViaWiFi, constrained: false, expensive: false)
         XCTAssertEqual(controller.additionalSafeAreaInsets.top, 0, accuracy: 0.01, "back online removes it")
-        controller.cyl_showsStatusViewWhenOffline = false
+        controller.cylShowsStatusViewWhenOffline = false
         shared.stopMonitoring()
         XCTAssertEqual(shared.networkStatus, .unknown)
     }
@@ -295,18 +295,18 @@ final class CYLPlaceholderStatusViewTests: XCTestCase, CYLPlaceholderStatusViewD
 
         let controller = hostedTableController()
         let statusOnly: [String: Any] = ["statusBar": ["text": "Server busy"], "display": "status"]
-        XCTAssertNotNil(captureError(&error) { try controller.cyl_applyStatusConfiguration(statusOnly) },
+        XCTAssertNotNil(captureError(&error) { try controller.cylApplyStatusConfiguration(statusOnly) },
                         "\(String(describing: error))")
-        XCTAssertEqual(controller.cyl_statusView.text, "Server busy")
-        XCTAssertTrue(controller.tableView.cyl_placeholderHidden)
-        XCTAssertNotNil(captureError(&error) { try controller.cyl_applyStatusConfiguration(["statusBar": true]) })
-        XCTAssertEqual(controller.cyl_statusDisplay, .all, "a bar without \"display\" shows with the placeholder")
-        XCTAssertEqual(controller.cyl_statusView.text, "Network unavailable, Check network")
-        XCTAssertNil(captureError(&error) { try controller.cyl_applyStatusConfiguration(["display": "banner"]) })
-        XCTAssertEqual(controller.cyl_statusDisplay, .all, "an invalid file changes nothing")
-        XCTAssertNil(captureError(&error) { try controller.cyl_applyStatusConfiguration(["statusBar": "red"]) })
-        XCTAssertNotNil(captureError(&error) { try controller.cyl_applyStatusConfiguration([:]) })
-        XCTAssertEqual(controller.cyl_statusDisplay, .placeholder)
+        XCTAssertEqual(controller.cylStatusView.text, "Server busy")
+        XCTAssertTrue(controller.tableView.cylPlaceholderHidden)
+        XCTAssertNotNil(captureError(&error) { try controller.cylApplyStatusConfiguration(["statusBar": true]) })
+        XCTAssertEqual(controller.cylStatusDisplay, .all, "a bar without \"display\" shows with the placeholder")
+        XCTAssertEqual(controller.cylStatusView.text, "Network unavailable, Check network")
+        XCTAssertNil(captureError(&error) { try controller.cylApplyStatusConfiguration(["display": "banner"]) })
+        XCTAssertEqual(controller.cylStatusDisplay, .all, "an invalid file changes nothing")
+        XCTAssertNil(captureError(&error) { try controller.cylApplyStatusConfiguration(["statusBar": "red"]) })
+        XCTAssertNotNil(captureError(&error) { try controller.cylApplyStatusConfiguration([:]) })
+        XCTAssertEqual(controller.cylStatusDisplay, .placeholder)
     }
 
     func testConfigurationsThatAreNotDictionariesReturnTheConfigurationError() {
@@ -335,12 +335,12 @@ final class CYLPlaceholderStatusViewTests: XCTestCase, CYLPlaceholderStatusViewD
             XCTAssertEqual(error?.localizedDescription, "The configuration must be a dictionary.")
 
             error = nil
-            let display = controller.cyl_statusDisplay
+            let display = controller.cylStatusDisplay
             XCTAssertFalse(CYLApplyObjectiveCStatusConfiguration(controller, configuration, &error), "\(configuration)")
             XCTAssertEqual(error?.domain, CYLPlaceholderConfigurationErrorDomain)
             XCTAssertEqual(error?.code, CYLPlaceholderConfigurationError.Code.statusConfiguration.rawValue)
             XCTAssertEqual(error?.localizedDescription, "The configuration must be a dictionary.")
-            XCTAssertEqual(controller.cyl_statusDisplay, display, "nothing changes")
+            XCTAssertEqual(controller.cylStatusDisplay, display, "nothing changes")
         }
     }
 }

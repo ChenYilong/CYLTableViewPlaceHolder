@@ -28,7 +28,7 @@ struct CYLContentView: View {
             Text(refreshStatus)
                 .accessibilityIdentifier("refreshStatus")
             Button("Start refresh") {
-                scrollReference.scrollView?.cyl_header?.beginRefreshing()
+                scrollReference.scrollView?.cylHeader?.beginRefreshing()
             }
             ScrollView {
                 LazyVStack(spacing: 1) {
@@ -51,13 +51,13 @@ struct CYLContentView: View {
                     scrollView.contentInsetAdjustmentBehavior = .automatic
                     scrollView.contentInset = .zero
                     configureRefresh(for: scrollView)
-                } else if scrollView.cyl_header == nil && scrollView.cyl_footer == nil {
+                } else if scrollView.cylHeader == nil && scrollView.cylFooter == nil {
                     scrollView.contentInsetAdjustmentBehavior = .automatic
                     configureRefresh(for: scrollView)
                 }
             }
           }
-          .background(Color(cyl_hexString: "#F4F4F4"))
+          .background(Color(cylHexString: "#F4F4F4"))
           .navigationTitle("Refresh demo")
         }
     }
@@ -88,7 +88,7 @@ struct CYLContentView: View {
             viewModel.refreshData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                 guard let scrollView = scrollView,
-                      let header = scrollView.cyl_header,
+                      let header = scrollView.cylHeader,
                       let window = scrollView.window else {
                     refreshStatus = "Lost refresh"
                     return
@@ -101,15 +101,15 @@ struct CYLContentView: View {
                     ? "Refreshing" : "Lost refresh"
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                scrollView?.cyl_header?.endRefreshing()
+                scrollView?.cylHeader?.endRefreshing()
                 refreshStatus = "Finished"
             }
         }
-        scrollView.cyl_header = header
-        scrollView.cyl_footer = CYLRefreshAutoNormalFooter { [weak scrollView] in
+        scrollView.cylHeader = header
+        scrollView.cylFooter = CYLRefreshAutoNormalFooter { [weak scrollView] in
             viewModel.loadMoreData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                scrollView?.cyl_footer?.endRefreshing()
+                scrollView?.cylFooter?.endRefreshing()
             }
         }
     }

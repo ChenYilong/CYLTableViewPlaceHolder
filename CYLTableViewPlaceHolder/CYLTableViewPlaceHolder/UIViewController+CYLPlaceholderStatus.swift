@@ -5,12 +5,12 @@
 //  [EN] CYLChatKit adds its bar to the controller's view (`[self.view addSubview:self.clientStatusView]`) and hides it
 //       while the IM client is connected (-[LCCKConversationViewController updateStatusView]). This does the same
 //       through one presenter per controller: the bar sits on the safe area's top edge, the safe area grows by its
-//       height while it shows, and the placeholder is switched on or off through `cyl_placeholderHidden`.
+//       height while it shows, and the placeholder is switched on or off through `cylPlaceholderHidden`.
 //       Swift since 2026-11-19 with the same Objective-C API; the `CYLPlaceholderStatusDisplay` options stay in
 //       `UIViewController+CYLPlaceholderStatus.h`, and the `UIScrollView (CYLPlaceholderVisibility)` category is in
 //       `UIScrollView+CYLPlaceholder.swift`.
 //  [CN] CYLChatKit 把状态条加到控制器的 view 上，并在 IM 客户端连接时隐藏它。这里每个控制器用一个 presenter 完成同样的事：状态条位于安全
-//       区域的顶边，显示时安全区域增加其高度，占位图通过 `cyl_placeholderHidden` 打开或关闭。自 2026-11-19 起用 Swift 编写，
+//       区域的顶边，显示时安全区域增加其高度，占位图通过 `cylPlaceholderHidden` 打开或关闭。自 2026-11-19 起用 Swift 编写，
 //       Objective-C API 不变；`CYLPlaceholderStatusDisplay` 选项保留在 `UIViewController+CYLPlaceholderStatus.h` 中，
 //       `UIScrollView (CYLPlaceholderVisibility)` 分类在 `UIScrollView+CYLPlaceholder.swift` 中。
 //
@@ -18,7 +18,7 @@
 import UIKit
 
 // [EN] Above the cells and the placeholder of a table that is the controller's view. [CN] 位于列表单元格与占位图之上。
-private let CYLPlaceholderStatusZPosition: CGFloat = 1000
+private let placeholderStatusZPosition: CGFloat = 1000
 
 private var CYLPlaceholderStatusPresenterKey: UInt8 = 0
 
@@ -94,7 +94,7 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
 
     func apply(animated: Bool) {
         let display = effectiveDisplay
-        placeholderScrollView?.cyl_placeholderHidden = !display.contains(.placeholder)
+        placeholderScrollView?.cylPlaceholderHidden = !display.contains(.placeholder)
         let showBar = display.contains(.statusBar) && (viewController?.isViewLoaded ?? false)
         if showBar {
             attachBar()
@@ -129,7 +129,7 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
             detachBar()
             bar.translatesAutoresizingMaskIntoConstraints = false
             bar.alpha = 0
-            bar.layer.zPosition = CYLPlaceholderStatusZPosition
+            bar.layer.zPosition = placeholderStatusZPosition
             host.addSubview(bar)
             // [EN] A scroll view's edges belong to its content; its frame guide does not scroll.
             // [CN] 滚动视图的边对应其内容；frame 布局参考不随滚动移动。
@@ -207,7 +207,7 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
  */
 extension UIViewController {
 
-    private var cyl_statusPresenter: CYLPlaceholderStatusPresenter {
+    private var cylStatusPresenter: CYLPlaceholderStatusPresenter {
         if let presenter = objc_getAssociatedObject(self, &CYLPlaceholderStatusPresenterKey) as? CYLPlaceholderStatusPresenter {
             return presenter
         }
@@ -221,21 +221,21 @@ extension UIViewController {
      *      Assigning while the bar shows replaces it in place. [CN] 状态条：在赋值其他状态条之前为网络提示条；赋值 nil 恢复默认。
      *      显示中赋值会原地替换。
      */
-    @objc public var cyl_statusView: CYLPlaceholderStatusView! {
-        get { cyl_statusPresenter.statusView }
-        set { cyl_statusPresenter.statusView = newValue }
+    @objc(cyl_statusView) public var cylStatusView: CYLPlaceholderStatusView! {
+        get { cylStatusPresenter.statusView }
+        set { cylStatusPresenter.statusView = newValue }
     }
 
     /**
-     * [EN] The table or collection view whose placeholder `cyl_statusDisplay` shows or hides; by default the controller's
-     *      view when it is a scroll view (a UITableViewController). [CN] 由 `cyl_statusDisplay` 控制占位图显示的列表；默认是控制器的
+     * [EN] The table or collection view whose placeholder `cylStatusDisplay` shows or hides; by default the controller's
+     *      view when it is a scroll view (a UITableViewController). [CN] 由 `cylStatusDisplay` 控制占位图显示的列表；默认是控制器的
      *      view（如果它是滚动视图，如 UITableViewController）。
      */
-    @objc public var cyl_placeholderScrollView: UIScrollView? {
-        get { cyl_statusPresenter.placeholderScrollView }
+    @objc(cyl_placeholderScrollView) public var cylPlaceholderScrollView: UIScrollView? {
+        get { cylStatusPresenter.placeholderScrollView }
         set {
-            let presenter = cyl_statusPresenter
-            if presenter.scrollView !== newValue { presenter.placeholderScrollView?.cyl_placeholderHidden = false }
+            let presenter = cylStatusPresenter
+            if presenter.scrollView !== newValue { presenter.placeholderScrollView?.cylPlaceholderHidden = false }
             presenter.scrollView = newValue
             presenter.apply(animated: false)
         }
@@ -247,39 +247,39 @@ extension UIViewController {
      * [CN] 显示的内容；默认 `.placeholder`，设置之前一切不变。显示状态条时，控制器的 `additionalSafeAreaInsets.top` 增加状态条的高度；
      *      状态条随动态字体变高。
      */
-    @objc public var cyl_statusDisplay: CYLPlaceholderStatusDisplay {
-        get { cyl_statusPresenter.display }
-        set { cyl_setStatusDisplay(newValue, animated: false) }
+    @objc(cyl_statusDisplay) public var cylStatusDisplay: CYLPlaceholderStatusDisplay {
+        get { cylStatusPresenter.display }
+        set { cylSetStatusDisplay(newValue, animated: false) }
     }
 
     /**
-     * [EN] Sets `cyl_statusDisplay`, fading the bar in or out when `animated` (no movement, so it suits Reduce Motion).
-     * [CN] 设置 `cyl_statusDisplay`；`animated` 为 YES 时状态条淡入淡出（不移动，适合“减弱动态效果”）。
+     * [EN] Sets `cylStatusDisplay`, fading the bar in or out when `animated` (no movement, so it suits Reduce Motion).
+     * [CN] 设置 `cylStatusDisplay`；`animated` 为 YES 时状态条淡入淡出（不移动，适合“减弱动态效果”）。
      */
     @objc(cyl_setStatusDisplay:animated:)
-    public func cyl_setStatusDisplay(_ display: CYLPlaceholderStatusDisplay, animated: Bool) {
+    public func cylSetStatusDisplay(_ display: CYLPlaceholderStatusDisplay, animated: Bool) {
         assert(Thread.isMainThread, "Set the status display on the main thread.")
-        let presenter = cyl_statusPresenter
+        let presenter = cylStatusPresenter
         presenter.display = display
         presenter.apply(animated: animated)
     }
 
     /**
      * [EN] YES: starts the shared network monitor and adds the bar while the network is not reachable, removing it when it
-     *      comes back (the placeholder option is kept as it is). NO (the default) leaves the bar to `cyl_statusDisplay`.
-     * [CN] YES：启动共享的网络监测，网络不可达时添加状态条，恢复后移除（占位图选项保持不变）。NO（默认）由 `cyl_statusDisplay` 决定。
+     *      comes back (the placeholder option is kept as it is). NO (the default) leaves the bar to `cylStatusDisplay`.
+     * [CN] YES：启动共享的网络监测，网络不可达时添加状态条，恢复后移除（占位图选项保持不变）。NO（默认）由 `cylStatusDisplay` 决定。
      */
-    @objc public var cyl_showsStatusViewWhenOffline: Bool {
-        get { cyl_statusPresenter.showsWhenOffline }
-        set { cyl_statusPresenter.showsWhenOffline = newValue }
+    @objc(cyl_showsStatusViewWhenOffline) public var cylShowsStatusViewWhenOffline: Bool {
+        get { cylStatusPresenter.showsWhenOffline }
+        set { cylStatusPresenter.showsWhenOffline = newValue }
     }
 
     /**
-     * [EN] The same as `cyl_applyStatusConfiguration(_:)`, from a local ".json" or ".plist" file.
-     * [CN] 同 `cyl_applyStatusConfiguration(_:)`，读取本地 ".json" 或 ".plist" 文件。
+     * [EN] The same as `cylApplyStatusConfiguration(_:)`, from a local ".json" or ".plist" file.
+     * [CN] 同 `cylApplyStatusConfiguration(_:)`，读取本地 ".json" 或 ".plist" 文件。
      */
     @objc(cyl_applyStatusConfigurationWithContentsOfURL:error:)
-    public func cyl_applyStatusConfiguration(contentsOf url: URL) throws {
+    public func cylApplyStatusConfiguration(contentsOf url: URL) throws {
         let data = try Data(contentsOf: url)
         let object: Any = url.pathExtension.lowercased() == "plist" ?
             try PropertyListSerialization.propertyList(from: data, options: [], format: nil) :
@@ -287,7 +287,7 @@ extension UIViewController {
         guard let configuration = object as? [String: Any] else {
             throw CYLStatusPresentationError("The configuration must be a dictionary.")
         }
-        try cyl_applyStatusConfiguration(configuration)
+        try cylApplyStatusConfiguration(configuration)
     }
 
     /**
@@ -299,7 +299,7 @@ extension UIViewController {
      *      "showsWhenOffline"（布尔值）。值无效时抛出错误，不做任何修改。
      */
     @nonobjc
-    public func cyl_applyStatusConfiguration(_ configuration: [String: Any]) throws {
+    public func cylApplyStatusConfiguration(_ configuration: [String: Any]) throws {
         let barValue = configuration["statusBar"]
         var bar: CYLPlaceholderStatusView?
         if let dictionary = barValue as? [String: Any] {
@@ -325,13 +325,13 @@ extension UIViewController {
             throw CYLStatusPresentationError("\"showsWhenOffline\" must be a boolean.")
         }
         if let bar = bar {
-            cyl_statusView = bar
+            cylStatusView = bar
         } else if wantsBar {
             // [EN] Back to the network bar. [CN] 恢复为网络提示条。
-            cyl_statusView = nil
+            cylStatusView = nil
         }
-        if let offline = offline as? NSNumber { cyl_showsStatusViewWhenOffline = offline.boolValue }
-        cyl_statusDisplay = resolvedDisplay
+        if let offline = offline as? NSNumber { cylShowsStatusViewWhenOffline = offline.boolValue }
+        cylStatusDisplay = resolvedDisplay
     }
 
     /**
@@ -342,10 +342,10 @@ extension UIViewController {
      */
     @objc(cyl_applyStatusConfiguration:error:)
     @available(swift, obsoleted: 1, message: "Use cyl_applyStatusConfiguration(_:)")
-    public func cyl_applyStatusConfiguration(objcConfiguration configuration: Any) throws {
+    public func cylApplyStatusConfiguration(objcConfiguration configuration: Any) throws {
         guard let dictionary = configuration as? [String: Any] else {
             throw CYLStatusPresentationError("The configuration must be a dictionary.")
         }
-        try cyl_applyStatusConfiguration(dictionary)
+        try cylApplyStatusConfiguration(dictionary)
     }
 }

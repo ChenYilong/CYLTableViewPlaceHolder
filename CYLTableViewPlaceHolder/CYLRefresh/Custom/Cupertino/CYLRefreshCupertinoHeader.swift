@@ -25,14 +25,14 @@ open class CYLRefreshCupertinoHeader: CYLRefreshHeader {
     /**
      * [EN] The activity indicator. [CN] 菊花视图。
      */
-    @objc public let activityIndicator = UIActivityIndicatorView(style: .cyl_refreshDefault)
+    @objc public let activityIndicator = UIActivityIndicatorView(style: .cylRefreshDefault)
 
     /**
      * [EN] Sets the height and adds the indicator, hidden until pulled. [CN] 设置高度并添加菊花，下拉前不可见。
      */
     open override func prepare() {
         super.prepare()
-        cyl_h = 60
+        cylH = 60
         activityIndicator.hidesWhenStopped = false
         activityIndicator.alpha = 0
         activityIndicator.isAccessibilityElement = true
@@ -44,7 +44,7 @@ open class CYLRefreshCupertinoHeader: CYLRefreshHeader {
      */
     open override func placeSubviews() {
         super.placeSubviews()
-        activityIndicator.center = CGPoint(x: cyl_w * 0.5, y: cyl_h * 0.5)
+        activityIndicator.center = CGPoint(x: cylW * 0.5, y: cylH * 0.5)
     }
 
     /**
@@ -76,11 +76,11 @@ open class CYLRefreshCupertinoHeader: CYLRefreshHeader {
                 activityIndicator.alpha = 1
                 activityIndicator.transform = .identity
                 activityIndicator.startAnimating()
-                activityIndicator.accessibilityLabel = Bundle.cyl_localizedString(forKey: CYLRefreshHeaderRefreshingText)
+                activityIndicator.accessibilityLabel = Bundle.cylLocalizedString(forKey: CYLRefreshHeaderRefreshingText)
             } else {
                 activityIndicator.stopAnimating()
                 activityIndicator.alpha = max(0, min(1, pullingPercent))
-                activityIndicator.accessibilityLabel = Bundle.cyl_localizedString(
+                activityIndicator.accessibilityLabel = Bundle.cylLocalizedString(
                     forKey: newValue == .pulling ? CYLRefreshHeaderPullingText : CYLRefreshHeaderIdleText)
             }
         }

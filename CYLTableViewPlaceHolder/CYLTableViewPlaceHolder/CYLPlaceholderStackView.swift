@@ -19,7 +19,7 @@ import CYLTabBarController
 #endif
 
 // [EN] Side margin between the view and its components. [CN] 视图与组件之间的两侧边距。
-private let CYLPlaceholderStackMargin: CGFloat = 16
+private let placeholderStackMargin: CGFloat = 16
 
 // [EN] `CYLPlaceholderActionHandler` as the Objective-C block it is (Swift imports the typedef as a closure).
 // [CN] `CYLPlaceholderActionHandler` 的 Objective-C block 形式（Swift 把该 typedef 导入为闭包）。
@@ -75,7 +75,7 @@ open class CYLPlaceholderStackView: UIView {
     public init(components: [CYLPlaceholderComponent], actions: [CYLPlaceholderAction: CYLPlaceholderActionHandler]?) {
         super.init(frame: .zero)
         handlers = actions ?? [:]
-        itemStack.contentMargin = CYLPlaceholderStackMargin
+        itemStack.contentMargin = placeholderStackMargin
         itemStack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(itemStack)
         NSLayoutConstraint.activate([
@@ -478,7 +478,7 @@ open class CYLPlaceholderStackView: UIView {
 
     private var componentMaxWidth: CGFloat {
         let width = bounds.width
-        return width > 0 ? max(0, width - 2 * CYLPlaceholderStackMargin) : 0
+        return width > 0 ? max(0, width - 2 * placeholderStackMargin) : 0
     }
 
     open override func layoutSubviews() {

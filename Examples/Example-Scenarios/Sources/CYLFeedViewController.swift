@@ -32,7 +32,7 @@ final class CYLFeedViewController: UITableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "feed")
         tableView.tableFooterView = UIView()
-        tableView.cyl_placeholderViewBlock({ [weak self] _ in
+        tableView.cylPlaceholderViewBlock({ [weak self] _ in
             self?.makePlaceholder()
         })
         // The animated-image header and footer (MJRefresh's GIF controls, general names) draw refresh icons with the
@@ -45,12 +45,12 @@ final class CYLFeedViewController: UITableViewController {
         header.setIconAnimation(bundled: "CYLRefreshPullArrow.json", size: CGSize(width: 28, height: 28), for: .idle)
         header.setIconAnimation(bundled: "CYLRefreshClockwise.json", size: CGSize(width: 28, height: 28), for: .pulling)
         header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32), for: .refreshing)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoAnimationFooter { [weak self] in
             self?.loadMore()
         }
         footer.setIconAnimation(bundled: "CYLRefreshRing.gif", size: CGSize(width: 28, height: 28), for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         // Every refresh icon animation of the core bundle, each on its own page, and the ways to set one at init.
         let icons = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise.circle"), style: .plain, target: self,
                                     action: #selector(showRefreshIcons))
@@ -83,7 +83,7 @@ final class CYLFeedViewController: UITableViewController {
             guard let self = self else { return }
             self.state = .loaded
             self.rows = 15
-            self.tableView.cyl_footer?.resetNoMoreData()
+            self.tableView.cylFooter?.resetNoMoreData()
             self.tableView.reloadData()
         }
     }
@@ -96,9 +96,9 @@ final class CYLFeedViewController: UITableViewController {
             let fails = self.refreshCount % 2 == 1
             self.state = fails ? .failed : .loaded
             self.rows = fails ? 0 : 15
-            self.tableView.cyl_footer?.resetNoMoreData()
+            self.tableView.cylFooter?.resetNoMoreData()
             self.tableView.reloadData()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -106,12 +106,12 @@ final class CYLFeedViewController: UITableViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self = self else { return }
             if self.rows >= 30 {
-                self.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+                self.tableView.cylFooter?.endRefreshingWithNoMoreData()
                 return
             }
             self.rows += 15
             self.tableView.reloadData()
-            self.tableView.cyl_footer?.endRefreshing()
+            self.tableView.cylFooter?.endRefreshing()
         }
     }
 

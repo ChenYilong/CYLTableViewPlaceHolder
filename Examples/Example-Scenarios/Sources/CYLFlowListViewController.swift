@@ -2,8 +2,8 @@
 //  CYLFlowListViewController.swift
 //  Example-Scenarios
 //
-//  How a placeholder is attached to a list. Most flows use the block API (`cyl_placeholderViewBlock`), asked again on
-//  every empty reload; the "keep header" and "scrollable" flows use the delegate API (`cyl_reloadData` with
+//  How a placeholder is attached to a list. Most flows use the block API (`cylPlaceholderViewBlock`), asked again on
+//  every empty reload; the "keep header" and "scrollable" flows use the delegate API (`cylReloadData` with
 //  `CYLTableViewPlaceHolderDelegate`), which supports a custom frame and scrolling. Every placeholder is a scenario of
 //  the core catalog.
 //
@@ -198,12 +198,12 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 56))
             searchBar.placeholder = CYLScenarioLocalizedString(.searchPlaceholder)
             tableView.tableHeaderView = searchBar
-            tableView.cyl_reloadData()
+            tableView.cylReloadData()
         case .keepSectionHeaders:
-            tableView.cyl_reloadData()
+            tableView.cylReloadData()
         case .scrollable:
             setUpRefreshHeader(usesDelegateAPI: true)
-            tableView.cyl_reloadData()
+            tableView.cylReloadData()
         case .switchStates:
             setUpStateSwitcher()
             installPlaceholderBlock()
@@ -213,12 +213,12 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             // footer, which loads with a refresh GIF (CYLRefreshIconAnimating).
             let footer = CYLRefreshAutoAnimationFooter { [weak self] in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self?.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+                    self?.tableView.cylFooter?.endRefreshingWithNoMoreData()
                 }
             }
             footer.setIconAnimation(bundled: "CYLRefreshActivity.gif", size: CGSize(width: 28, height: 28),
                                     for: .refreshing)
-            tableView.cyl_footer = footer
+            tableView.cylFooter = footer
             installPlaceholderBlock()
         case .collection:
             installPlaceholderBlock()
@@ -228,7 +228,7 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
     // MARK: Block API
 
     private func installPlaceholderBlock() {
-        tableView.cyl_placeholderViewBlock({ [weak self] _ in
+        tableView.cylPlaceholderViewBlock({ [weak self] _ in
             self?.makePlaceholder()
         })
         tableView.reloadData()
@@ -269,32 +269,32 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
         (navigationItem.titleView as? UISegmentedControl)?.selectedSegmentIndex = newState.rawValue
         // Each empty reload asks the block again, so the same table switches between different placeholders.
         if flow == .keepTableHeader || flow == .keepSectionHeaders || flow == .scrollable {
-            tableView.cyl_reloadData()
+            tableView.cylReloadData()
         } else {
             tableView.reloadData()
         }
-        // The placeholder shows on the next run loop turn; `cyl_placeholderView` (Android's
-        // `RecyclerView.cyl_placeholderView`) then names it, so VoiceOver moves to the new state.
+        // The placeholder shows on the next run loop turn; `cylPlaceholderView` (Android's
+        // `RecyclerView.cylPlaceholderView`) then names it, so VoiceOver moves to the new state.
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            UIAccessibility.post(notification: .layoutChanged, argument: self.tableView.cyl_placeholderView)
+            UIAccessibility.post(notification: .layoutChanged, argument: self.tableView.cylPlaceholderView)
         }
     }
 
     // MARK: Refresh controls (issue #8)
 
     private func setUpRefreshHeader(usesDelegateAPI: Bool) {
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 guard let self = self else { return }
                 self.rows = self.rows > 0 ? 0 : 12
-                self.tableView.cyl_footer?.resetNoMoreData()
+                self.tableView.cylFooter?.resetNoMoreData()
                 if usesDelegateAPI {
-                    self.tableView.cyl_reloadData()
+                    self.tableView.cylReloadData()
                 } else {
                     self.tableView.reloadData()
                 }
-                self.tableView.cyl_header?.endRefreshing()
+                self.tableView.cylHeader?.endRefreshing()
             }
         }
     }
@@ -378,7 +378,7 @@ final class CYLCollectionFlowViewController: UICollectionViewController {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "photo")
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionAdd),
                                                             style: .plain, target: self, action: #selector(toggleItems))
-        collectionView.cyl_placeholderViewBlock({ [weak self] _ in
+        collectionView.cylPlaceholderViewBlock({ [weak self] _ in
             guard let self = self else { return nil }
             return CYLPlaceholderStackView(scenario: self.flow.scenario, actions: nil)
         })

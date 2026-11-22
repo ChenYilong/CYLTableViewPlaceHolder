@@ -11,6 +11,10 @@
 - 最低 iOS 版本现为 **iOS 15.0**（原为 12.0）：podspec 为 `s.platform = :ios, '15.0'`，framework 工程的
   `IPHONEOS_DEPLOYMENT_TARGET` 为 15.0，Lottie、LottieSwift、Rive 子 spec 不再设置更低的目标版本。仍需支持 iOS 12-14 的
   App 请停留在上一个版本。原因：依赖 CYLAnimatedItem 需要 iOS 13 及以上，Xcode 26/27 的 SDK 也无法编译 iOS 15 以下。（所有者决定，2026-11-20。）
+- Swift names follow SonarCloud S100/S115/S116 (see `docs/Swift-Naming.md`): members of the library's own types lost the
+  `cyl_` prefix (`link(to:)`), members of extensions on system types are `cylName` (`scrollView.cylHeader`). Objective-C
+  selectors are unchanged. / Swift 名按 SonarCloud S100/S115/S116 调整（见 `docs/Swift-Naming.md`）：本库自有类型的成员去掉
+  `cyl_` 前缀（`link(to:)`），系统类型扩展的成员改为 `cylName`（`scrollView.cylHeader`）。Objective-C 选择子不变。
 - The Swift migration of the core (see `docs/Swift-Migration.md`): an app can no longer subclass the CYLRefresh classes in
   Objective-C. / 核心迁移到 Swift（见 `docs/Swift-Migration.md`）：App 不能再用 Objective-C 继承 CYLRefresh 的类。
 

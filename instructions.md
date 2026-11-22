@@ -129,7 +129,9 @@ or the Kotlin translations planned in `docs/Android-Port.md`), the source is not
 - Prefix new project-owned Objective-C class names and corresponding class
   filenames with `CYL`, following `CYLRefreshComponent`.
 - Name UIKit category files `<SystemClass>+CYL<Feature>.h` and `.m`, and prefix
-  new category selectors and properties with `cyl_`. Objective-C property
+  new category selectors and properties with `cyl_`. In Swift the selector stays `cyl_name` through
+  `@objc(cyl_name)` while the Swift name is `cylName`; members of the library's own Swift types have no prefix
+  (see "Making the Objective-C core Swift-friendly", rule 3, and `docs/Swift-Naming.md`). Objective-C property
   setters use `setCyl_`. Do not rename required system overrides such as `load`.
 - Use `CYL` for project-defined type and constant prefixes. Do not copy
   unrelated vendor prefixes into new project APIs.
@@ -535,11 +537,16 @@ iOS examples are written in Swift; the library stays Objective-C. The core adapt
    notification names drop the `Notification` suffix, and factory methods become initializers
    or `static` members. Example from that guide: `-cyl_showBadgeValue:animationType:` is
    called as `cyl_showBadgeValue(_:animationType:)`.
-3. **`cyl_` members stay `cyl_` in Swift.** Category methods and properties keep the prefix
-   (`scrollView.cyl_header`, `scrollView.cyl_footer`, `beginRefreshing()`), and so do
-   Swift extensions of system types written in this repository (`Color(cyl_hexString:)`).
-   Look up how CYLTabBarController adapted the equivalent method before inventing a
-   spelling, and record the result in `docs/Swift-Guide.md`.
+3. **Swift names follow the static analysis (SonarCloud swift:S100/S115/S116, 2026-11-22, user's decision).** See
+   [`docs/Swift-Naming.md`](docs/Swift-Naming.md). Members of the library's own types have no prefix
+   (`header.link(to:)`, `control.setStateTitle(_:for:)`): the type is the namespace. Members of extensions on
+   system types keep the prefix without the underscore (`scrollView.cylHeader`, `tableView.cylReloadData()`,
+   `Color(cylHexString:)`), because same-named extension members of two modules are ambiguous in Swift and collide
+   silently as Objective-C categories. The Objective-C selector never changes: write `@objc(cyl_header)` explicitly, and
+   keep an explicit `@objc(cyl_…)` on Objective-C-visible members of UIKit subclasses even when the Swift name lost the
+   prefix. `CYL` type names stay. File-private Swift constants are lowerCamel (`scenarioIconSide`); constants
+   Objective-C reads stay `CYL` in the `.h` / `.m`. Prove a rename with a before/after diff of the generated
+   `CYLTableViewPlaceHolder-Swift.h` (identical except for intended changes).
 4. **Underscores in protocol methods.** Swift method names should not contain underscores.
    For a method that has already shipped, never rename it and never add `NS_SWIFT_NAME` to
    it, which would change an existing Swift API. Add a second method whose name is the same

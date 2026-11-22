@@ -32,10 +32,10 @@ class CYLRefreshCollectionViewController: UICollectionViewController, CYLRefresh
             // A delayed load, so the refresh ends 2 seconds later (remove the delay in a real app)
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshCollectionDuration) {
                 self?.collectionView.reloadData()
-                self?.collectionView.cyl_header?.endRefreshing()
+                self?.collectionView.cylHeader?.endRefreshing()
             }
-        }.cyl_link(to: collectionView)
-        collectionView.cyl_header?.isCollectionViewAnimationBug = true
+        }.link(to: collectionView)
+        collectionView.cylHeader?.isCollectionViewAnimationBug = true
 
         // Pull up, the short way
         CYLRefreshBackNormalFooter { [weak self] in
@@ -46,12 +46,12 @@ class CYLRefreshCollectionViewController: UICollectionViewController, CYLRefresh
                 self?.collectionView.performBatchUpdates({
                     self?.collectionView.reloadSections(IndexSet(integer: 0))
                 }, completion: { _ in
-                    self?.collectionView.cyl_footer?.endRefreshing()
+                    self?.collectionView.cylFooter?.endRefreshing()
                 })
             }
-        }.setAnimationDisabled().cyl_autoChangeTransparency(true).cyl_link(to: collectionView)
+        }.setAnimationDisabled().autoChangeTransparency(true).link(to: collectionView)
 
-        collectionView.cyl_header?.beginRefreshing()
+        collectionView.cylHeader?.beginRefreshing()
     }
 
     /// Beyond MJRefresh: the same collection with animated icons (a Lottie header, a GIF back footer).
@@ -62,14 +62,14 @@ class CYLRefreshCollectionViewController: UICollectionViewController, CYLRefresh
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshCollectionDuration) {
                 self?.collectionView.reloadData()
-                self?.collectionView.cyl_header?.endRefreshing()
+                self?.collectionView.cylHeader?.endRefreshing()
             }
         }
         header.setIconAnimation(bundled: "CYLRefreshCounterClockwise.json", size: CGSize(width: 28, height: 28),
                                 for: .idle)
         header.setIconAnimation(bundled: "CYLRefreshGradientSpinner.json", size: CGSize(width: 32, height: 32),
                                 for: .refreshing)
-        header.cyl_link(to: collectionView)
+        header.link(to: collectionView)
         header.isCollectionViewAnimationBug = true
 
         let footer = CYLRefreshBackAnimationFooter { [weak self] in
@@ -78,11 +78,11 @@ class CYLRefreshCollectionViewController: UICollectionViewController, CYLRefresh
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshCollectionDuration) {
                 self?.collectionView.reloadData()
-                self?.collectionView.cyl_footer?.endRefreshing()
+                self?.collectionView.cylFooter?.endRefreshing()
             }
         }
         footer.setIconAnimation(bundled: "CYLRefreshActivity.gif", size: CGSize(width: 28, height: 28), for: .idle)
-        footer.cyl_autoChangeTransparency(true).cyl_link(to: collectionView)
+        footer.autoChangeTransparency(true).link(to: collectionView)
 
         header.beginRefreshing()
     }
@@ -125,7 +125,7 @@ class CYLRefreshCollectionViewController: UICollectionViewController, CYLRefresh
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Show the footer only when there is something to load after
-        collectionView.cyl_footer?.isHidden = colors.isEmpty
+        collectionView.cylFooter?.isHidden = colors.isEmpty
         return colors.count
     }
 
@@ -185,10 +185,10 @@ final class CYLRefreshHorizontalCollectionViewController: UICollectionViewContro
 
     /// UICollectionView: pull left
     func example42() {
-        collectionView.cyl_trailer = CYLRefreshNormalTrailer { [weak self] in
+        collectionView.cylTrailer = CYLRefreshNormalTrailer { [weak self] in
             guard let self = self else { return }
             self.navigationController?.pushViewController(CYLRefreshTestViewController(), animated: true)
-            self.collectionView.cyl_trailer?.endRefreshing()
+            self.collectionView.cylTrailer?.endRefreshing()
         }
     }
 

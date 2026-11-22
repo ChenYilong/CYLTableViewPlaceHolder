@@ -40,8 +40,8 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
      */
     @objc open var stateLabel: UILabel! {
         if let label = storedStateLabel { return label }
-        // [EN] `+[UILabel cyl_label]`, which Swift imports as `cyl_()`. [CN] 即 `+[UILabel cyl_label]`，Swift 导入为 `cyl_()`。
-        let label = UILabel.cyl_()
+        // [EN] `+[UILabel cyl_label]`, which Swift calls `cylLabel()`. [CN] 即 `+[UILabel cyl_label]`，Swift 中为 `cylLabel()`。
+        let label = UILabel.cylLabel()
         addSubview(label)
         storedStateLabel = label
         return label
@@ -55,8 +55,8 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
     @discardableResult
     open func setTitle(_ title: String?, for state: CYLRefreshState) -> Self {
         guard let title = title else { return self }
-        cyl_setStateTitle(title, for: state)
-        stateLabel.text = cyl_stateTitle(for: self.state)
+        setStateTitle(title, for: state)
+        stateLabel.text = stateTitle(for: self.state)
         return self
     }
 
@@ -66,7 +66,7 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
      */
     @objc(titleForState:)
     open func title(for state: CYLRefreshState) -> String? {
-        cyl_stateTitle(for: state)
+        stateTitle(for: state)
     }
 
     /**
@@ -83,15 +83,15 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
 
     @objc private func stateLabelClick() {
         if state == .idle {
-            cyl_beginRefreshingWithoutValidation()
+            beginRefreshingWithoutValidation()
         }
     }
 
     private func textConfiguration() {
         // 初始化文字
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshAutoFooterIdleText), for: .idle)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshAutoFooterRefreshingText), for: .refreshing)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshAutoFooterNoMoreDataText), for: .noMoreData)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshAutoFooterIdleText), for: .idle)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshAutoFooterRefreshingText), for: .refreshing)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshAutoFooterNoMoreDataText), for: .noMoreData)
     }
 
     // MARK: - Overrides
@@ -149,7 +149,7 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
             if isRefreshingTitleHidden && newValue == .refreshing {
                 stateLabel.text = nil
             } else {
-                stateLabel.text = cyl_stateTitle(for: newValue)
+                stateLabel.text = stateTitle(for: newValue)
             }
         }
     }
@@ -168,6 +168,6 @@ open class CYLRefreshAutoStateFooter: CYLRefreshAutoFooter {
     open override func refreshDidFinish(withSuccess success: Bool) {
         super.refreshDidFinish(withSuccess: success)
         if finishingDuration(withSuccess: success) <= 0 { return }
-        stateLabel.text = Bundle.cyl_localizedString(forKey: success ? CYLRefreshFooterFinishedText : CYLRefreshFooterFailedText)
+        stateLabel.text = Bundle.cylLocalizedString(forKey: success ? CYLRefreshFooterFinishedText : CYLRefreshFooterFailedText)
     }
 }

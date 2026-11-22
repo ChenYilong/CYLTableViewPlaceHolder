@@ -116,8 +116,8 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
      * [EN] The frame width. [CN] frame 宽度。
      */
     @objc open var width: CGFloat {
-        get { cyl_w }
-        set { cyl_w = newValue }
+        get { cylW }
+        set { cylW = newValue }
     }
 
     /**
@@ -125,7 +125,7 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
      *      pull in stretch mode. [CN] 展开高度；设置时调用 `setExpandHeight:`。读取时返回 frame 高度，拉伸模式下随下拉变化。
      */
     @objc open var height: CGFloat {
-        get { cyl_h }
+        get { cylH }
         set { setExpandHeight(newValue) }
     }
 
@@ -136,7 +136,7 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
     open override var dragOffset: CGFloat {
         if driven { return drivenOffset }
         guard let scrollView = scrollView else { return 0 }
-        return max(0, -(scrollView.cyl_offsetY + scrollViewOriginalInset.top))
+        return max(0, -(scrollView.cylOffsetY + scrollViewOriginalInset.top))
     }
 
     /**
@@ -361,18 +361,18 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
     }
 
     // [EN] Called once by CYLRefreshDrawnFooter when it hosts the header. [CN] CYLRefreshDrawnFooter 内嵌刷新头时调用一次。
-    func cyl_beginDriven() {
+    func beginDriven() {
         driven = true
         autoHideRefresh = false
         isUserInteractionEnabled = false
     }
 
-    func cyl_driveFrame(_ frame: CGRect) {
+    func driveFrame(_ frame: CGRect) {
         drivenFrame = frame
         if self.frame != frame { self.frame = frame }
     }
 
-    func cyl_driveOffset(_ offset: CGFloat, drag isDragging: Bool, in scrollView: UIScrollView?) {
+    func driveOffset(_ offset: CGFloat, drag isDragging: Bool, in scrollView: UIScrollView?) {
         if offset == drivenOffset && offset == lastOffset { return }
         drivenOffset = offset
         lastOffset = offset
@@ -383,12 +383,12 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
         setNeedsDisplay()
     }
 
-    func cyl_driveStatus(_ status: CYLRefreshPhase) {
+    func driveStatus(_ status: CYLRefreshPhase) {
         self.status = status
         setNeedsDisplay()
     }
 
-    func cyl_driveFinished(_ success: Bool) {
+    func driveFinished(_ success: Bool) {
         drivenSuccess = success
         status = .finishing
         onRefreshFinished(success)

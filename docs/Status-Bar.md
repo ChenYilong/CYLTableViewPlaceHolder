@@ -63,15 +63,15 @@
 
 ```swift
 // [CN] 红条 + 占位图 / [EN] the bar and the placeholder
-tableView.cyl_placeholderViewBlock({ _ in CYLPlaceholderStackView(scenario: .networkUnavailable, actions: nil) })
-cyl_statusView.delegate = self            // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
-cyl_setStatusDisplay(.all, animated: true)
+tableView.cylPlaceholderViewBlock({ _ in CYLPlaceholderStackView(scenario: .networkUnavailable, actions: nil) })
+cylStatusView.delegate = self            // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
+cylSetStatusDisplay(.all, animated: true)
 // [CN] 只显示红条 / [EN] only the bar
-cyl_statusDisplay = .statusBar
+cylStatusDisplay = .statusBar
 // [CN] 断网时自动显示红条 / [EN] the bar while offline
-cyl_showsStatusViewWhenOffline = true
+cylShowsStatusViewWhenOffline = true
 // [CN] 配置文件 / [EN] a configuration file
-try cyl_applyStatusConfiguration(contentsOf: url)
+try cylApplyStatusConfiguration(contentsOf: url)
 ```
 
 ```json

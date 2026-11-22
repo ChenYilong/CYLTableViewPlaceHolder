@@ -10,7 +10,7 @@ final class CYLFastPullCustomHeader: CYLRefreshHeader {
 
     override func prepare() {
         super.prepare()
-        cyl_h = 60
+        cylH = 60
         addSubview(label)
     }
 
@@ -46,8 +46,8 @@ final class CYLRefreshFastPullTests: XCTestCase {
         let table = UITableView(frame: window.bounds, style: .plain)
         controller.view.addSubview(table)
         let header = make()
-        table.cyl_header = header as? CYLRefreshHeader
-        if zeroHeight { header.cyl_h = 0 }
+        table.cylHeader = header as? CYLRefreshHeader
+        if zeroHeight { header.cylH = 0 }
         table.layoutIfNeeded()
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 320, height: 200))
         let offsets: [CGFloat] = [-2000, 0, -5000, 30, -1_000_000, -61, 0]
@@ -98,7 +98,7 @@ final class CYLRefreshFastPullTests: XCTestCase {
     func testCustomHeaderSeesEveryFastOffsetChange() {
         let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480), style: .plain)
         let header = CYLFastPullCustomHeader(refreshingBlock: {})
-        table.cyl_header = header
+        table.cylHeader = header
         for offset in stride(from: CGFloat(0), through: -3000, by: -500) {
             table.contentOffset = CGPoint(x: 0, y: offset)
         }

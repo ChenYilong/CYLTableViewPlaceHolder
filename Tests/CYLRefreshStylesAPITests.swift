@@ -28,7 +28,7 @@ private final class CYLStartHeaderTarget: NSObject {
     @objc func refresh() {
         log.add("refresh")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.scrollView?.cyl_header?.endRefreshing()
+            self.scrollView?.cylHeader?.endRefreshing()
         }
     }
 }
@@ -63,13 +63,13 @@ final class CYLRefreshStylesAPITests: XCTestCase {
     func testAttachPicksTheSlotByClassAndCallsEveryTarget() {
         let scrollView = self.scrollView()
         let header = CYLRefreshNormalHeader.attach(to: scrollView, target: self, action: #selector(onRefresh(_:)))
-        XCTAssertTrue(scrollView.cyl_header === header)
+        XCTAssertTrue(scrollView.cylHeader === header)
         XCTAssertTrue(header.isAttached)
         let footer = CYLRefreshAutoNormalFooter.attach(to: scrollView)
-        XCTAssertTrue(scrollView.cyl_footer === footer)
+        XCTAssertTrue(scrollView.cylFooter === footer)
         let trailer = CYLRefreshNormalTrailer()
         trailer.attach(to: scrollView)
-        XCTAssertTrue(scrollView.cyl_trailer === trailer)
+        XCTAssertTrue(scrollView.cylTrailer === trailer)
 
         var handled: CYLRefreshComponent?
         header.refreshingHandler = { component in handled = component }
@@ -81,7 +81,7 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         header.removeTarget(self, action: #selector(onRefresh(_:)))
         header.executeRefreshingCallback()
         XCTAssertEqual(targetCalls, 2, "removed")
-        scrollView.cyl_header = nil
+        scrollView.cylHeader = nil
         XCTAssertFalse(header.isAttached)
     }
 
@@ -114,7 +114,7 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         XCTAssertTrue(header.isIn(phases: numbers(.refreshing, .finishing)))
         XCTAssertTrue(header.isIn(phases: [NSNumber(value: CYLRefreshPhase.finishing.rawValue)]))
         XCTAssertFalse(header.isIn(phases: numbers(.idle)))
-        XCTAssertEqual(header.stateLabel?.text, Bundle.cyl_localizedString(forKey: CYLRefreshHeaderFailedText))
+        XCTAssertEqual(header.stateLabel?.text, Bundle.cylLocalizedString(forKey: CYLRefreshHeaderFailedText))
         let done = expectation(description: "retracts")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             XCTAssertEqual(header.state, .idle)
@@ -137,16 +137,16 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         let height = header.expandHeight
         header.scrollMode = .stretch
         scrollView.contentOffset = CGPoint(x: 0, y: -150)
-        XCTAssertEqual(header.cyl_h, 150, accuracy: 0.5, "stretched over the pulled distance")
-        XCTAssertEqual(header.cyl_y, -150, accuracy: 0.5)
+        XCTAssertEqual(header.cylH, 150, accuracy: 0.5, "stretched over the pulled distance")
+        XCTAssertEqual(header.cylY, -150, accuracy: 0.5)
         XCTAssertEqual(header.expandHeight, height, accuracy: 0.5, "the open height is kept")
         header.scrollMode = .front
         scrollView.contentOffset = CGPoint(x: 0, y: -150)
-        XCTAssertEqual(header.cyl_h, height, accuracy: 0.5)
-        XCTAssertEqual(header.cyl_y, -150, accuracy: 0.5, "pinned at the visible top, in front")
+        XCTAssertEqual(header.cylH, height, accuracy: 0.5)
+        XCTAssertEqual(header.cylY, -150, accuracy: 0.5, "pinned at the visible top, in front")
         XCTAssertEqual(header.layer.zPosition, 1)
         header.scrollMode = .move
-        XCTAssertEqual(header.cyl_y, -height, accuracy: 0.5, "back to moving with the content")
+        XCTAssertEqual(header.cylY, -height, accuracy: 0.5, "back to moving with the content")
     }
 
     func testThemeColorsAndHeaderDetails() {
@@ -252,15 +252,15 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         var calls = 0
         header.refreshingBlock = { calls += 1 }
         let start = CYLRefreshCupertinoHeader()
-        scrollView.cyl_beginRefreshing(startHeader: start)
-        XCTAssertTrue(scrollView.cyl_header === start)
+        scrollView.cylBeginRefreshing(startHeader: start)
+        XCTAssertTrue(scrollView.cylHeader === start)
         XCTAssertTrue(start.isRefreshing || start.state == .willRefresh)
         start.executeRefreshingCallback()
         XCTAssertEqual(calls, 1, "the regular header's callback runs")
         let back = expectation(description: "regular header back")
         start.endRefreshing(completionBlock: {})
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertTrue(scrollView.cyl_header === header)
+            XCTAssertTrue(scrollView.cylHeader === header)
             back.fulfill()
         }
         waitForExpectations(timeout: 3)
@@ -419,8 +419,8 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         let leading = header.arrowView.center.x
         header.iconOnTrailingSide = true
         header.layoutIfNeeded()
-        XCTAssertLessThan(leading, header.cyl_w * 0.5)
-        XCTAssertGreaterThan(header.arrowView.center.x, header.cyl_w * 0.5)
+        XCTAssertLessThan(leading, header.cylW * 0.5)
+        XCTAssertGreaterThan(header.arrowView.center.x, header.cylW * 0.5)
         header.secondaryVelocity = 1500
         XCTAssertEqual(header.secondaryVelocity, 1500, accuracy: 0.01)
         window.isHidden = true
@@ -451,10 +451,10 @@ final class CYLRefreshStylesAPITests: XCTestCase {
             footer.layoutIfNeeded()
             XCTAssertNotNil(find(), "\(cls)")
             XCTAssertFalse(find()?.isHidden ?? true, "\(cls): shown with no more data")
-            XCTAssertLessThan(find()?.center.x ?? .greatestFiniteMagnitude, footer.cyl_w * 0.5, "\(cls): before the text")
+            XCTAssertLessThan(find()?.center.x ?? .greatestFiniteMagnitude, footer.cylW * 0.5, "\(cls): before the text")
             footer.resetNoMoreData()
             XCTAssertTrue(find()?.isHidden ?? false, "\(cls): hidden again")
-            scrollView.cyl_footer = nil
+            scrollView.cylFooter = nil
         }
         let back = CYLRefreshBackNormalFooter.attach(to: scrollView)
         back.iconSize = CGSize(width: 30, height: 20)
@@ -589,8 +589,8 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         var refreshes = 0
         regular.refreshingBlock = { refreshes += 1 }
         let start = CYLRefreshCupertinoHeader()
-        scrollView.cyl_beginRefreshing(startHeader: start)   // viewDidLoad: not in a window yet
-        XCTAssertTrue(scrollView.cyl_header === start)
+        scrollView.cylBeginRefreshing(startHeader: start)   // viewDidLoad: not in a window yet
+        XCTAssertTrue(scrollView.cylHeader === start)
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         window.isHidden = false
         window.addSubview(scrollView)
@@ -603,12 +603,12 @@ final class CYLRefreshStylesAPITests: XCTestCase {
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
         }
         XCTAssertTrue(start.isRefreshing)
-        scrollView.cyl_header?.endRefreshing()
+        scrollView.cylHeader?.endRefreshing()
         deadline = Date(timeIntervalSinceNow: 15)
-        while scrollView.cyl_header !== regular && deadline.timeIntervalSinceNow > 0 {
+        while scrollView.cylHeader !== regular && deadline.timeIntervalSinceNow > 0 {
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
         }
-        XCTAssertTrue(scrollView.cyl_header === regular, "the regular header is back")
+        XCTAssertTrue(scrollView.cylHeader === regular, "the regular header is back")
         XCTAssertEqual(refreshes, 1)
         window.isHidden = true
     }
@@ -633,7 +633,7 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         _ = start.addPhaseObserver { _, old, phase in
             log.add("start \(old.rawValue)>\(phase.rawValue)")
         }
-        page.tableView.cyl_beginRefreshing(startHeader: start)
+        page.tableView.cylBeginRefreshing(startHeader: start)
         nav.pushViewController(page, animated: true)
         // [EN] Poll instead of a fixed 3 s: on a loaded CI runner the animated push and the first refresh can take longer
         //      (the fixed wait failed once on CI while every other test passed).
@@ -643,7 +643,7 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         //      by -didMoveToWindow not yet run). So wait up to 60 s, and drain the queue once more after the deadline.
         // [CN] CI 上的 iOS 12 模拟器可能让一次 run loop 卡住一分钟（203b0c1：限时 15 秒，测试用时 75 秒，结束时起始刷新头已在窗口中但仍为
         //      WillRefresh，-didMoveToWindow 排队的切换尚未执行）。因此最多等 60 秒，并在超时后再处理一次队列。
-        let done = { log.contains("refresh") && page.tableView.cyl_header === regular }
+        let done = { log.contains("refresh") && page.tableView.cylHeader === regular }
         let deadline = Date(timeIntervalSinceNow: 60)
         while !done() && deadline.timeIntervalSinceNow > 0 {
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
@@ -655,9 +655,9 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         // [EN] The messages carry the phase log and the start header's state, so a failure shows where it stopped (waiting
         //      for a window, never refreshing, or refreshing without the callback).
         // [CN] 失败信息包含阶段日志与起始刷新头的状态，便于看出停在哪一步（等待窗口、未开始刷新、或刷新了但没有回调）。
-        let where_ = "log \(log), start state \(start.state.rawValue), in window \(start.window != nil ? 1 : 0), header \(page.tableView.cyl_header === start ? "start" : "other")"
+        let where_ = "log \(log), start state \(start.state.rawValue), in window \(start.window != nil ? 1 : 0), header \(page.tableView.cylHeader === start ? "start" : "other")"
         XCTAssertTrue(log.contains("refresh"), "the start header calls the regular header's target-action (\(where_))")
-        XCTAssertTrue(page.tableView.cyl_header === regular, "the regular header is back after the first refresh (\(where_))")
+        XCTAssertTrue(page.tableView.cylHeader === regular, "the regular header is back after the first refresh (\(where_))")
         window.isHidden = true
     }
 
@@ -741,12 +741,12 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         let header = CYLRefreshNormalHeader.attach(to: scrollView)
         let footer = CYLRefreshBackNormalFooter.attach(to: scrollView)
         header.state = .refreshing
-        scrollView.cyl_endRefreshing(afterDelay: 0, success: true, noMoreData: true)
+        scrollView.cylEndRefreshing(afterDelay: 0, success: true, noMoreData: true)
         XCTAssertTrue(footer.isNoMoreData, "finishRefresh(noMoreData: true)")
-        scrollView.cyl_endRefreshing(afterDelay: 0, success: true, noMoreData: false)
+        scrollView.cylEndRefreshing(afterDelay: 0, success: true, noMoreData: false)
         XCTAssertFalse(footer.isNoMoreData, "finishRefresh(noMoreData: false) resets it")
         footer.state = .refreshing
-        scrollView.cyl_endLoadingMore(afterDelay: 0, success: true, noMoreData: true)
+        scrollView.cylEndLoadingMore(afterDelay: 0, success: true, noMoreData: true)
         XCTAssertTrue(footer.isNoMoreData, "finishLoadMore(noMoreData: true)")
 
         let config = CYLRefreshConfig.default
@@ -755,12 +755,12 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         config.defaultFooterCreator = { _ in CYLRefreshBackNormalFooter() }
         config.defaultInitializer = { _ in initialized += 1 }
         let fresh = self.scrollView()
-        fresh.cyl_installDefaultRefreshControls()
+        fresh.cylInstallDefaultRefreshControls()
         config.defaultHeaderCreator = nil
         config.defaultFooterCreator = nil
         config.defaultInitializer = nil
-        XCTAssertTrue(fresh.cyl_header is CYLRefreshNormalHeader)
-        XCTAssertTrue(fresh.cyl_footer is CYLRefreshBackNormalFooter)
+        XCTAssertTrue(fresh.cylHeader is CYLRefreshNormalHeader)
+        XCTAssertTrue(fresh.cylFooter is CYLRefreshBackNormalFooter)
         XCTAssertEqual(initialized, 2, "every new control is set up once")
     }
 
@@ -779,11 +779,11 @@ final class CYLRefreshStylesAPITests: XCTestCase {
         XCTAssertTrue(autoFooter.loadsWhenContentNotFull, "setEnableLoadMoreWhenContentNotFull defaults to true")
 
         header.layoutIfNeeded()
-        let y = header.cyl_y
+        let y = header.cylY
         header.insetStart = 44
         header.setNeedsLayout()
         header.layoutIfNeeded()
-        XCTAssertEqual(header.cyl_y, y + 44, accuracy: 0.5, "setHeaderInsetStart")
+        XCTAssertEqual(header.cylY, y + 44, accuracy: 0.5, "setHeaderInsetStart")
 
         let pinned = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 44))
         scrollView.addSubview(pinned)

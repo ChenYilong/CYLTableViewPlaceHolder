@@ -85,7 +85,7 @@ final class CYLAnimationListViewController: UITableViewController {
                             action: #selector(showEngines)),
         ]
         // The empty state of this list, should the bundle be missing.
-        tableView.cyl_placeholderViewBlock({ _ in
+        tableView.cylPlaceholderViewBlock({ _ in
             CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
         })
     }

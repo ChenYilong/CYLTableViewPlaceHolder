@@ -170,7 +170,8 @@ the integrated `CYLRefresh` component, and an example application. Read
   wrapper or a lower-quality Swift API in the core; the Swift coding standard decides.
 - iOS examples are written in Swift (the library stays Objective-C). When a Swift call
   reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
-  declarations, `cyl_` members keep their prefix, and underscored protocol methods get an
+  declarations, Swift names follow SonarCloud S100/S115/S116 (`docs/Swift-Naming.md`: own-type members
+  without a prefix, system-type extension members `cylName` with `@objc(cyl_name)`), and underscored protocol methods get an
   underscore-free sibling instead of a rename. Follow CYLTabBarController's
   `docs/Swift-Guide.md` and record verified spellings in `docs/Swift-Guide.md`. See
   "Swift examples and a Swift-friendly core" in `instructions.md`.

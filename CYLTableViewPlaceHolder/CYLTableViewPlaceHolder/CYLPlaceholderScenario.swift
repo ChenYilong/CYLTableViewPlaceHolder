@@ -37,7 +37,7 @@ private func CYLScenarioFont(_ style: UIFont.TextStyle, _ size: CGFloat, _ weigh
 
 // [EN] The capsule button's background image: a red-to-orange gradient, drawn once.
 // [CN] 胶囊按钮的背景图：红到橙的渐变，只绘制一次。
-private let CYLScenarioCapsuleBackgroundImage: UIImage = {
+private let scenarioCapsuleBackgroundImage: UIImage = {
     let size = CGSize(width: 160, height: 44)
     let start = UIColor(red: 1, green: 0.45, blue: 0.35, alpha: 1)
     let end = UIColor(red: 0.92, green: 0.2, blue: 0.27, alpha: 1)
@@ -113,13 +113,13 @@ private func CYLScenarioIndex(of value: Any, in names: [String]) -> Int? {
     return names.firstIndex(of: name.lowercased())
 }
 
-private let CYLScenarioHighlightStyleNames = ["dim", "shrink", "none"]
+private let scenarioHighlightStyleNames = ["dim", "shrink", "none"]
 
 // MARK: - Bundled animations
 
 // [EN] Options some bundled Rive files need to play (the same as the aggregate demo used before).
 // [CN] 部分内置 Rive 文件播放所需的选项（与之前的汇总示例相同）。
-private let CYLScenarioAnimationOptions: [String: [String: String]] = [
+private let scenarioAnimationOptions: [String: [String: String]] = [
     "CYLPlaceholderLoading.riv": ["legacy": "1"],
     "CYLPlaceholderPullToRefresh.riv": ["legacy": "1"],
     "CYLPlaceholderSuccess.riv": ["stateMachine": "State Machine 1"],
@@ -141,7 +141,7 @@ private func CYLScenarioAnimationLoopsByDefault(_ fileName: String) -> Bool {
 
 // [EN] The black line icons from useAnimations (NOTICE.animations), tinted so they read on any background.
 // [CN] 来自 useAnimations 的黑色线条图标（NOTICE.animations），着色后在任何背景上都清晰。
-private let CYLScenarioLineIcons: Set<String> = [
+private let scenarioLineIcons: Set<String> = [
     "CYLPlaceholderNoInternet.json", "CYLPlaceholderLoadFailed.json", "CYLPlaceholderServerError.json",
     "CYLPlaceholderRefresh.json", "CYLPlaceholderNoResults.json", "CYLPlaceholderNoPermission.json",
     "CYLPlaceholderContactSupport.json", "CYLPlaceholderNoMessages.json",
@@ -160,8 +160,8 @@ private let CYLScenarioLineIcons: Set<String> = [
 // MARK: - Component
 
 // [EN] Line icons are drawn smaller than illustrations. [CN] 线条图标比插图小。
-private let CYLScenarioIconSide: CGFloat = 96
-private let CYLScenarioIllustrationSide: CGFloat = 160
+private let scenarioIconSide: CGFloat = 96
+private let scenarioIllustrationSide: CGFloat = 160
 
 /**
  * [EN] One component of a placeholder: the item attributes of a CYLPlaceholderView (an icon, a title or both, see
@@ -272,7 +272,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
         get {
             let value = attributes[CYLPlaceholderItemTapHighlightStyle]
             if let name = value as? String {
-                let index = CYLScenarioIndex(of: name, in: CYLScenarioHighlightStyleNames)
+                let index = CYLScenarioIndex(of: name, in: scenarioHighlightStyleNames)
                 return index.flatMap { CYLPlaceholderTapHighlightStyle(rawValue: $0) } ?? .dim
             }
             if let number = value as? NSNumber { return CYLPlaceholderTapHighlightStyle(rawValue: number.intValue) ?? .dim }
@@ -358,7 +358,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
                 }
                 style = parsed
             }
-            var size = CGSize(width: CYLScenarioIconSide, height: CYLScenarioIconSide)
+            var size = CGSize(width: scenarioIconSide, height: scenarioIconSide)
             if let value = dictionary["size"] {
                 guard let parsed = CYLScenarioSize(from: value) else {
                     throw CYLScenarioConfigurationError("A component size must be [width, height] or a number.")
@@ -409,7 +409,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
             interactionEnabled = number.boolValue
         }
         if let highlight = dictionary["highlightStyle"] {
-            guard let index = CYLScenarioIndex(of: highlight, in: CYLScenarioHighlightStyleNames),
+            guard let index = CYLScenarioIndex(of: highlight, in: scenarioHighlightStyleNames),
                   let style = CYLPlaceholderTapHighlightStyle(rawValue: index) else {
                 throw CYLScenarioConfigurationError("highlightStyle must be dim, shrink or none.")
             }
@@ -488,8 +488,8 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
             // [EN] Played once by default (owner, 2026-11-19), spinners loop; set `animationRepeatCount` to change it.
             // [CN] 默认播放一次（2026-11-19 维护者决定），加载类动画循环；可通过 `animationRepeatCount` 修改。
             attributes[CYLPlaceholderItemAnimationRepeatCount] = NSNumber(value: CYLScenarioAnimationLoopsByDefault(fileName) ? 0 : 1)
-            if let options = CYLScenarioAnimationOptions[fileName] { attributes[CYLPlaceholderItemAnimationOptions] = options }
-            if CYLScenarioLineIcons.contains(fileName) {
+            if let options = scenarioAnimationOptions[fileName] { attributes[CYLPlaceholderItemAnimationOptions] = options }
+            if scenarioLineIcons.contains(fileName) {
                 attributes[CYLPlaceholderItemAnimationColors] = ["**.Color": CYLScenarioLineIconColor()]
             }
         } else if let fileName = fileName {
@@ -561,7 +561,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
             attributes[CYLPlaceholderItemTitleMinimumWidth] = NSNumber(value: 128)
         case .capsule:
             attributes[CYLPlaceholderItemTitleColor] = UIColor.white
-            attributes[CYLPlaceholderItemTitleBackgroundImage] = CYLScenarioCapsuleBackgroundImage
+            attributes[CYLPlaceholderItemTitleBackgroundImage] = scenarioCapsuleBackgroundImage
             attributes[CYLPlaceholderItemTitleCornerRadius] = NSNumber(value: 999)
             attributes[CYLPlaceholderItemTitleContentInsets] = [10, 30, 10, 30].map { NSNumber(value: $0) }
             attributes[CYLPlaceholderItemTitleMinimumWidth] = NSNumber(value: 140)
@@ -625,7 +625,7 @@ private func CYLScenarioHint(_ key: String, _ fallback: String) -> CYLPlaceholde
 
 // [EN] Each scenario's name key and English fallback, in declaration order.
 // [CN] 每个场景的名称键与英文默认值，按声明顺序。
-private let CYLScenarioNameEntries: [(key: String, fallback: String)] = [
+private let scenarioNameEntries: [(key: String, fallback: String)] = [
     ("CYLPlaceholderScenarioNetworkUnavailableName", "Network unavailable"),
     ("CYLPlaceholderScenarioNoContentName", "No content"),
     ("CYLPlaceholderScenarioTapToReloadName", "Tap to reload"),
@@ -664,7 +664,7 @@ private let CYLScenarioNameEntries: [(key: String, fallback: String)] = [
 ]
 
 // [EN] Each action's title key and English fallback. [CN] 每个动作的标题键与英文默认值。
-private let CYLScenarioActionTitles: [CYLPlaceholderAction: (key: String, fallback: String)] = [
+private let scenarioActionTitles: [CYLPlaceholderAction: (key: String, fallback: String)] = [
     .retry: ("CYLPlaceholderActionRetryTitle", "Retry"),
     .contactSupport: ("CYLPlaceholderActionContactSupportTitle", "Contact support"),
     .openSettings: ("CYLPlaceholderActionOpenSettingsTitle", "Open Settings"),
@@ -674,7 +674,7 @@ private let CYLScenarioActionTitles: [CYLPlaceholderAction: (key: String, fallba
 ]
 
 // [EN] The other bundled animations that fit a scenario, after its own icon. [CN] 场景自身图标之外其他合适的内置动画。
-private let CYLScenarioAnimationVariants: [CYLPlaceholderScenario: [String]] = [
+private let scenarioAnimationVariants: [CYLPlaceholderScenario: [String]] = [
     .noContent: ["CYLPlaceholderNoDrafts.json"],
     .tapToReload: ["CYLPlaceholderPullToRefresh.riv"],
     .retryOrContactSupport: ["CYLPlaceholderContactSupport.json"],
@@ -696,7 +696,7 @@ private let CYLScenarioAnimationVariants: [CYLPlaceholderScenario: [String]] = [
 
 // [EN] Every permission scenario, indexed by CYLPlaceholderPermission (None maps to the generic NoPermission).
 // [CN] 所有权限场景，以 CYLPlaceholderPermission 为下标（None 对应通用的 NoPermission）。
-private let CYLScenarioPermissionScenarios: [CYLPlaceholderScenario] = [
+private let scenarioPermissionScenarios: [CYLPlaceholderScenario] = [
     .noPermission,
     .locationPermissionDenied,
     .cameraPermissionDenied,
@@ -714,7 +714,7 @@ private let CYLScenarioPermissionScenarios: [CYLPlaceholderScenario] = [
 private func CYLScenarioPermissionComponents(_ name: String, _ fileName: String, _ style: CYLPlaceholderStyle,
                                              _ title: String, _ hint: String) -> [CYLPlaceholderComponent] {
     let prefix = "CYLPlaceholderScenario\(name)PermissionDenied"
-    return [CYLScenarioIcon(fileName, style, CYLScenarioText(prefix + "Title", title), CYLScenarioIconSide),
+    return [CYLScenarioIcon(fileName, style, CYLScenarioText(prefix + "Title", title), scenarioIconSide),
             CYLScenarioHint(prefix + "Hint", hint),
             CYLScenarioButton(.openSettings, .filled)]
 }
@@ -745,7 +745,7 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(localizedTitleForAction:)
     public class func localizedTitle(for action: CYLPlaceholderAction) -> String? {
-        guard let text = CYLScenarioActionTitles[action] else { return nil }
+        guard let text = scenarioActionTitles[action] else { return nil }
         return CYLScenarioText(text.key, text.fallback)
     }
 
@@ -754,8 +754,8 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(localizedNameForScenario:)
     public class func localizedName(for scenario: CYLPlaceholderScenario) -> String {
-        guard CYLScenarioNameEntries.indices.contains(scenario.rawValue) else { return "" }
-        let entry = CYLScenarioNameEntries[scenario.rawValue]
+        guard scenarioNameEntries.indices.contains(scenario.rawValue) else { return "" }
+        let entry = scenarioNameEntries[scenario.rawValue]
         return CYLScenarioText(entry.key, entry.fallback)
     }
 
@@ -765,9 +765,9 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(nameForScenario:)
     public class func name(for scenario: CYLPlaceholderScenario) -> String {
-        guard CYLScenarioNameEntries.indices.contains(scenario.rawValue) else { return "" }
+        guard scenarioNameEntries.indices.contains(scenario.rawValue) else { return "" }
         // [EN] "CYLPlaceholderScenarioRetryButtonName" -> "RetryButton". [CN] 去掉前缀与 "Name" 后缀。
-        let key = CYLScenarioNameEntries[scenario.rawValue].key
+        let key = scenarioNameEntries[scenario.rawValue].key
         return String(key.dropFirst("CYLPlaceholderScenario".count).dropLast(4))
     }
 
@@ -867,7 +867,7 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
             let name = (path as NSString).lastPathComponent
             if !names.contains(name) { names.append(name) }
         }
-        for name in CYLScenarioAnimationVariants[scenario] ?? [] {
+        for name in scenarioAnimationVariants[scenario] ?? [] {
             if !names.contains(name) && CYLPlaceholderView.path(forBundledAnimation: name) != nil { names.append(name) }
         }
         return names
@@ -897,8 +897,8 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(permissionForScenario:)
     public class func permission(for scenario: CYLPlaceholderScenario) -> CYLPlaceholderPermission {
-        for index in CYLPlaceholderPermission.location.rawValue..<CYLScenarioPermissionScenarios.count
-            where CYLScenarioPermissionScenarios[index] == scenario {
+        for index in CYLPlaceholderPermission.location.rawValue..<scenarioPermissionScenarios.count
+            where scenarioPermissionScenarios[index] == scenario {
             return CYLPlaceholderPermission(rawValue: index) ?? CYLPlaceholderPermission.none
         }
         return .none
@@ -910,8 +910,8 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(scenarioForPermission:)
     public class func scenario(for permission: CYLPlaceholderPermission) -> CYLPlaceholderScenario {
-        guard CYLScenarioPermissionScenarios.indices.contains(permission.rawValue) else { return .noPermission }
-        return CYLScenarioPermissionScenarios[permission.rawValue]
+        guard scenarioPermissionScenarios.indices.contains(permission.rawValue) else { return .noPermission }
+        return scenarioPermissionScenarios[permission.rawValue]
     }
 
     /**
@@ -920,8 +920,8 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
      */
     @objc(componentsForScenario:)
     public class func components(for scenario: CYLPlaceholderScenario) -> [CYLPlaceholderComponent] {
-        let icon = CYLScenarioIconSide
-        let art = CYLScenarioIllustrationSide
+        let icon = scenarioIconSide
+        let art = scenarioIllustrationSide
         switch scenario {
         case .networkUnavailable:
             return [CYLScenarioIcon("CYLPlaceholderNoInternet.json", .wifiOff,

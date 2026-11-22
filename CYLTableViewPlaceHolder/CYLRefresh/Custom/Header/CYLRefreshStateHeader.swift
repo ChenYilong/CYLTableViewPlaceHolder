@@ -57,8 +57,8 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
      */
     @objc open var lastUpdatedTimeLabel: UILabel! {
         if let label = storedLastUpdatedTimeLabel { return label }
-        // [EN] `+[UILabel cyl_label]`, which Swift imports as `cyl_()`. [CN] 即 `+[UILabel cyl_label]`，Swift 导入为 `cyl_()`。
-        let label = UILabel.cyl_()
+        // [EN] `+[UILabel cyl_label]`, which Swift calls `cylLabel()`. [CN] 即 `+[UILabel cyl_label]`，Swift 中为 `cylLabel()`。
+        let label = UILabel.cylLabel()
         addSubview(label)
         storedLastUpdatedTimeLabel = label
         return label
@@ -78,7 +78,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
      */
     @objc open var stateLabel: UILabel! {
         if let label = storedStateLabel { return label }
-        let label = UILabel.cyl_()
+        let label = UILabel.cylLabel()
         addSubview(label)
         storedStateLabel = label
         return label
@@ -92,8 +92,8 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
     @discardableResult
     open func setTitle(_ title: String?, for state: CYLRefreshState) -> Self {
         guard let title = title else { return self }
-        cyl_setStateTitle(title, for: state)
-        stateLabel.text = cyl_stateTitle(for: self.state)
+        setStateTitle(title, for: state)
+        stateLabel.text = stateTitle(for: self.state)
         return self
     }
 
@@ -103,7 +103,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
      */
     @objc(titleForState:)
     open func title(for state: CYLRefreshState) -> String? {
-        cyl_stateTitle(for: state)
+        stateTitle(for: state)
     }
 
     /**
@@ -188,7 +188,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
         if lastUpdatedTimeLabel.isHidden { return }
 
         let lastUpdatedTime = UserDefaults.standard.object(forKey: key) as? Date
-        let lastTimeText = Bundle.cyl_localizedString(forKey: CYLRefreshHeaderLastTimeText)
+        let lastTimeText = Bundle.cylLocalizedString(forKey: CYLRefreshHeaderLastTimeText)
 
         // 如果有block
         if let lastUpdatedTimeText = lastUpdatedTimeText {
@@ -198,13 +198,13 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
 
         if let formatter = lastUpdatedTimeFormatter {
             let time = lastUpdatedTime.map { formatter.string(from: $0) }
-                ?? Bundle.cyl_localizedString(forKey: CYLRefreshHeaderNoneLastDateText)
+                ?? Bundle.cylLocalizedString(forKey: CYLRefreshHeaderNoneLastDateText)
             lastUpdatedTimeLabel.text = lastTimeText + time
             return
         }
 
         guard let lastUpdatedTime = lastUpdatedTime else {
-            lastUpdatedTimeLabel.text = lastTimeText + Bundle.cyl_localizedString(forKey: CYLRefreshHeaderNoneLastDateText)
+            lastUpdatedTimeLabel.text = lastTimeText + Bundle.cylLocalizedString(forKey: CYLRefreshHeaderNoneLastDateText)
             return
         }
         // 1.判断今天、今年（比较完整日期，而不只是“日”）
@@ -223,15 +223,15 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
         if isToday { time = " " + time }
 
         // 3.显示日期
-        let todayText = isToday ? Bundle.cyl_localizedString(forKey: CYLRefreshHeaderDateTodayText) : ""
+        let todayText = isToday ? Bundle.cylLocalizedString(forKey: CYLRefreshHeaderDateTodayText) : ""
         lastUpdatedTimeLabel.text = lastTimeText + todayText + time
     }
 
     private func textConfiguration() {
         // 初始化文字
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderIdleText), for: .idle)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderPullingText), for: .pulling)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshHeaderRefreshingText), for: .refreshing)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderIdleText), for: .idle)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderPullingText), for: .pulling)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshHeaderRefreshingText), for: .refreshing)
         lastUpdatedTimeKey = CYLRefreshHeaderLastUpdatedTimeKey
     }
 
@@ -265,7 +265,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
         super.placeSubviews()
 
         if let resultImageView = resultImageView, !resultImageView.isHidden {
-            resultImageView.cyl_size = resultImageView.image?.size ?? .zero
+            resultImageView.cylSize = resultImageView.image?.size ?? .zero
             resultImageView.center = iconCenterBesideText()
         }
         if stateLabel.isHidden { return }
@@ -277,30 +277,30 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
             if noConstrainsOnStatusLabel { stateLabel.frame = bounds }
             return
         }
-        var stateLabelH = cyl_h * 0.5
+        var stateLabelH = cylH * 0.5
         var stateLabelY: CGFloat = 0
         if titleTimeSpacing > 0 {
             // [EN] Both lines centered as a block, `titleTimeSpacing` apart. [CN] 两行作为一个整体居中，间距 `titleTimeSpacing`。
             let stateH = ceil(stateLabel.font.lineHeight)
             let timeH = ceil(lastUpdatedTimeLabel.font.lineHeight)
-            stateLabelY = max(0, (cyl_h - stateH - titleTimeSpacing - timeH) * 0.5)
+            stateLabelY = max(0, (cylH - stateH - titleTimeSpacing - timeH) * 0.5)
             stateLabelH = stateH
         }
         // 状态
         if noConstrainsOnStatusLabel {
-            stateLabel.cyl_x = 0
-            stateLabel.cyl_y = stateLabelY
-            stateLabel.cyl_w = cyl_w
-            stateLabel.cyl_h = stateLabelH
+            stateLabel.cylX = 0
+            stateLabel.cylY = stateLabelY
+            stateLabel.cylW = cylW
+            stateLabel.cylH = stateLabelH
         }
 
         // 更新时间
         if lastUpdatedTimeLabel.constraints.isEmpty {
-            lastUpdatedTimeLabel.cyl_x = 0
-            lastUpdatedTimeLabel.cyl_y = titleTimeSpacing > 0 ? stateLabelY + stateLabelH + titleTimeSpacing : stateLabelH
-            lastUpdatedTimeLabel.cyl_w = cyl_w
-            lastUpdatedTimeLabel.cyl_h = titleTimeSpacing > 0 ? ceil(lastUpdatedTimeLabel.font.lineHeight)
-                                                              : cyl_h - lastUpdatedTimeLabel.cyl_y
+            lastUpdatedTimeLabel.cylX = 0
+            lastUpdatedTimeLabel.cylY = titleTimeSpacing > 0 ? stateLabelY + stateLabelH + titleTimeSpacing : stateLabelH
+            lastUpdatedTimeLabel.cylW = cylW
+            lastUpdatedTimeLabel.cylH = titleTimeSpacing > 0 ? ceil(lastUpdatedTimeLabel.font.lineHeight)
+                                                              : cylH - lastUpdatedTimeLabel.cylY
         }
     }
 
@@ -317,7 +317,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
             if newValue != .refreshing { hideResultImage() }
 
             // 设置状态文字
-            stateLabel.text = cyl_stateTitle(for: newValue)
+            stateLabel.text = stateTitle(for: newValue)
 
             // 重新设置key（重新显示时间）
             reapplyLastUpdatedTimeKey()
@@ -338,7 +338,7 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
     open override func refreshDidFinish(withSuccess success: Bool) {
         super.refreshDidFinish(withSuccess: success)
         if finishingDuration(withSuccess: success) <= 0 { return }
-        stateLabel.text = Bundle.cyl_localizedString(forKey: success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText)
+        stateLabel.text = Bundle.cylLocalizedString(forKey: success ? CYLRefreshHeaderFinishedText : CYLRefreshHeaderFailedText)
         showResultImage(success ? succeededImage : failedImage)
         setNeedsLayout()
     }
@@ -379,14 +379,14 @@ open class CYLRefreshStateHeader: CYLRefreshHeader {
 
     // [EN] The icon's center beside the text, on the leading or trailing side. [CN] 图标在文字旁边的中心点（前面或后面）。
     private func iconCenterBesideText() -> CGPoint {
-        var centerX = cyl_w * 0.5
+        var centerX = cylW * 0.5
         if !stateLabel.isHidden {
-            var textWidth = stateLabel.cyl_textWidth()
-            if !lastUpdatedTimeLabel.isHidden { textWidth = max(textWidth, lastUpdatedTimeLabel.cyl_textWidth()) }
+            var textWidth = stateLabel.cylTextWidth()
+            if !lastUpdatedTimeLabel.isHidden { textWidth = max(textWidth, lastUpdatedTimeLabel.cylTextWidth()) }
             let shift = textWidth / 2 + labelLeftInset
             centerX += iconOnTrailingSide ? shift : -shift
         }
-        return CGPoint(x: centerX, y: cyl_h * 0.5)
+        return CGPoint(x: centerX, y: cylH * 0.5)
     }
 }
 
@@ -401,7 +401,7 @@ extension CYLRefreshStateHeader {
      */
     @objc(cyl_modifyLastUpdatedTimeText:)
     @discardableResult
-    public func cyl_modifyLastUpdatedTimeText(_ handler: @escaping (Date?) -> String) -> Self {
+    public func modifyLastUpdatedTimeText(_ handler: @escaping (Date?) -> String) -> Self {
         lastUpdatedTimeText = handler
         return self
     }

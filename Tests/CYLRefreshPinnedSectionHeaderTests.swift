@@ -69,7 +69,7 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         var completions = 0
         let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
         footer.endRefreshingCompletionBlock = { completions += 1 }
-        table.cyl_footer = footer
+        table.cylFooter = footer
         controller.view.addSubview(table)
         table.layoutIfNeeded()
         let maxOffset = table.contentSize.height - table.bounds.height
@@ -109,7 +109,7 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
                             withReuseIdentifier: "h")
         collection.dataSource = self
         let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
-        collection.cyl_footer = footer
+        collection.cylFooter = footer
         controller.view.addSubview(collection)
         collection.layoutIfNeeded()
         let header = { collection.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader,

@@ -177,10 +177,10 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         }
 
         guard let scrollView = scrollView else { return }
-        scrollViewOriginalInset = scrollView.cyl_inset
+        scrollViewOriginalInset = scrollView.cylInset
 
         // 当前的contentOffset
-        var currentOffsetY = scrollView.cyl_offsetY
+        var currentOffsetY = scrollView.cylOffsetY
         // 尾部控件刚好出现的offsetY
         let happenOffsetY = self.happenOffsetY
         // 如果是向下滚动到看不见尾部控件，直接返回
@@ -190,9 +190,9 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         if state != .noMoreData {
             currentOffsetY = offset(forDragRate: currentOffsetY, happenOffset: happenOffsetY)
         }
-        var pullingPercent = (currentOffsetY - happenOffsetY) / (cyl_h * triggerRate)
+        var pullingPercent = (currentOffsetY - happenOffsetY) / (cylH * triggerRate)
 
-        let normal2pullingOffsetY = happenOffsetY + cyl_h * triggerRate
+        let normal2pullingOffsetY = happenOffsetY + cylH * triggerRate
         // 如果已全部加载，仅设置pullingPercent，然后返回
         if state == .noMoreData {
             // [EN] loadsAfterNoMoreData: pulling past the trigger point loads again. [CN] loadsAfterNoMoreData：拉过触发点再次加载。
@@ -220,8 +220,8 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             // [EN] maxPullDistance: hold the pull at the limit. [CN] maxPullDistance：把上拉停在上限。
             if maxPullDistance > 0 && currentOffsetY - happenOffsetY > maxPullDistance {
                 currentOffsetY = happenOffsetY + maxPullDistance
-                pullingPercent = maxPullDistance / (cyl_h * triggerRate)
-                scrollView.contentOffset = CGPoint(x: scrollView.cyl_offsetX, y: currentOffsetY)
+                pullingPercent = maxPullDistance / (cylH * triggerRate)
+                scrollView.contentOffset = CGPoint(x: scrollView.cylOffsetX, y: currentOffsetY)
             }
             self.pullingPercent = pullingPercent
             // 普通 和 即将刷新 的临界点
@@ -253,16 +253,16 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         placeSecondaryView()
 
         let size = (change?[NSKeyValueChangeKey.newKey.rawValue] as? NSValue)?.cgSizeValue ?? .zero
-        var contentHeight = size.height == 0 ? (scrollView?.cyl_contentH ?? 0) : size.height
+        var contentHeight = size.height == 0 ? (scrollView?.cylContentH ?? 0) : size.height
         // 内容的高度
         contentHeight += ignoredScrollViewContentInsetBottom
         // 表格的高度
-        let scrollHeight = (scrollView?.cyl_h ?? 0) - scrollViewOriginalInset.top - scrollViewOriginalInset.bottom +
+        let scrollHeight = (scrollView?.cylH ?? 0) - scrollViewOriginalInset.top - scrollViewOriginalInset.bottom +
             ignoredScrollViewContentInsetBottom
         // 设置位置
         let y = max(contentHeight, scrollHeight) - insetStart
-        if cyl_y != y {
-            cyl_y = y
+        if cylY != y {
+            cylY = y
         }
     }
 
@@ -301,47 +301,47 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
                 let deltaH = heightForContentBreakView
                 // 刚刷新完毕
                 if oldState == .refreshing && deltaH > 0, let scrollView = scrollView,
-                   scrollView.cyl_totalDataCount() != lastRefreshCount {
-                    scrollView.cyl_offsetY = scrollView.cyl_offsetY
+                   scrollView.cylTotalDataCount() != lastRefreshCount {
+                    scrollView.cylOffsetY = scrollView.cylOffsetY
                     // [EN] scrollsContentAfterLoading NO: the old end of the content stays at the bottom. [CN] 为 NO 时原来的内容末尾停在底部。
-                    if !scrollsContentAfterLoading && scrollView.cyl_offsetY > pagingRestingOffset {
-                        scrollView.cyl_offsetY = pagingRestingOffset
+                    if !scrollsContentAfterLoading && scrollView.cylOffsetY > pagingRestingOffset {
+                        scrollView.cylOffsetY = pagingRestingOffset
                         offsetDriver.retarget(to: pagingRestingOffset)
                     }
                 }
             } else if newValue == .refreshing {
                 // 记录刷新前的数量
-                lastRefreshCount = scrollView?.cyl_totalDataCount() ?? 0
+                lastRefreshCount = scrollView?.cylTotalDataCount() ?? 0
                 pagingRestingOffset = happenOffsetY
 
                 if let scrollView = scrollView, pinsSectionHeaders(of: scrollView), fastAnimationDuration > 0 {
                     // FIX: issue #1627 / #1507: see offsetDriver.
-                    let from = scrollView.cyl_offsetY
-                    var bottom = cyl_h + scrollViewOriginalInset.bottom
+                    let from = scrollView.cylOffsetY
+                    var bottom = cylH + scrollViewOriginalInset.bottom
                     let deltaH = heightForContentBreakView
                     if deltaH < 0 {
                         bottom -= deltaH
                     }
-                    lastBottomDelta = bottom - scrollView.cyl_insetB
-                    scrollView.cyl_insetB = bottom
-                    pagingRefreshOffset = happenOffsetY + cyl_h
-                    scrollView.cyl_offsetY = from
+                    lastBottomDelta = bottom - scrollView.cylInsetB
+                    scrollView.cylInsetB = bottom
+                    pagingRefreshOffset = happenOffsetY + cylH
+                    scrollView.cylOffsetY = from
                     offsetDriver.move(scrollView, from: from, to: pagingRefreshOffset, duration: fastAnimationDuration) {
                         [weak self] in self?.executeRefreshingCallback()
                     }
                     return
                 }
                 UIView.animate(withDuration: fastAnimationDuration, animations: {
-                    var bottom = self.cyl_h + self.scrollViewOriginalInset.bottom
+                    var bottom = self.cylH + self.scrollViewOriginalInset.bottom
                     let deltaH = self.heightForContentBreakView
                     // 如果内容高度小于view的高度
                     if deltaH < 0 {
                         bottom -= deltaH
                     }
-                    self.lastBottomDelta = bottom - (self.scrollView?.cyl_insetB ?? 0)
-                    self.scrollView?.cyl_insetB = bottom
-                    self.pagingRefreshOffset = self.happenOffsetY + self.cyl_h
-                    self.scrollView?.cyl_offsetY = self.pagingRefreshOffset
+                    self.lastBottomDelta = bottom - (self.scrollView?.cylInsetB ?? 0)
+                    self.scrollView?.cylInsetB = bottom
+                    self.pagingRefreshOffset = self.happenOffsetY + self.cylH
+                    self.scrollView?.cylOffsetY = self.pagingRefreshOffset
                 }, completion: { _ in
                     self.executeRefreshingCallback()
                 })
@@ -369,23 +369,23 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     // [CN] 分页滚动视图停在两页之间时为 YES；刷新尾的动画改动 offset 后，UIKit 的分页减速可能把它留在这种位置（MJRefresh #1430）。
     private var isBetweenPages: Bool {
         guard let scrollView = scrollView else { return false }
-        let page = scrollView.cyl_h
+        let page = scrollView.cylH
         if page <= 0 { return false }
-        let position = (scrollView.cyl_offsetY + scrollView.cyl_insetT) / page
+        let position = (scrollView.cylOffsetY + scrollView.cylInsetT) / page
         return abs(position - position.rounded()) > 0.001
     }
 
     // [EN] Moves a paging scroll view onto the nearest page inside its content. [CN] 把分页滚动视图移到内容范围内最近的一页。
     private func alignToNearestPage() {
         guard let scrollView = scrollView else { return }
-        let page = scrollView.cyl_h
+        let page = scrollView.cylH
         if page <= 0 { return }
-        let top = -scrollView.cyl_insetT
-        let maxOffset = max(top, scrollView.cyl_contentH - page + scrollView.cyl_insetB)
-        var aligned = top + ((scrollView.cyl_offsetY - top) / page).rounded() * page
+        let top = -scrollView.cylInsetT
+        let maxOffset = max(top, scrollView.cylContentH - page + scrollView.cylInsetB)
+        var aligned = top + ((scrollView.cylOffsetY - top) / page).rounded() * page
         aligned = min(max(aligned, top), maxOffset)
-        if abs(aligned - scrollView.cyl_offsetY) > 0.001 {
-            scrollView.setContentOffset(CGPoint(x: scrollView.cyl_offsetX, y: aligned), animated: false)
+        if abs(aligned - scrollView.cylOffsetY) > 0.001 {
+            scrollView.setContentOffset(CGPoint(x: scrollView.cylOffsetX, y: aligned), animated: false)
         }
     }
 
@@ -397,14 +397,14 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         var restorePagingOffset = false
         if let scrollView = scrollView {
             restorePagingOffset = scrollView.isPagingEnabled && !scrollView.isDragging && !scrollView.isDecelerating &&
-                (abs(scrollView.cyl_offsetY - pagingRefreshOffset) < 0.001 || isBetweenPages)
+                (abs(scrollView.cylOffsetY - pagingRefreshOffset) < 0.001 || isBetweenPages)
         }
         if !restorePagingOffset, let scrollView = scrollView, pinsSectionHeaders(of: scrollView), slowAnimationDuration > 0 {
             // FIX: issue #1627 / #1507: see offsetDriver.
-            let from = scrollView.cyl_offsetY
-            scrollView.cyl_insetB -= lastBottomDelta
-            let maxOffset = max(-scrollView.cyl_insetT, scrollView.cyl_contentH - scrollView.cyl_h + scrollView.cyl_insetB)
-            scrollView.cyl_offsetY = from
+            let from = scrollView.cylOffsetY
+            scrollView.cylInsetB -= lastBottomDelta
+            let maxOffset = max(-scrollView.cylInsetT, scrollView.cylContentH - scrollView.cylH + scrollView.cylInsetB)
+            scrollView.cylOffsetY = from
             UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
                 self.endRefreshingAnimationBeginAction?()
                 if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
@@ -420,10 +420,10 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
             self.endRefreshingAnimationBeginAction?()
 
             if let scrollView = self.scrollView {
-                scrollView.cyl_insetB -= self.lastBottomDelta
+                scrollView.cylInsetB -= self.lastBottomDelta
             }
             if restorePagingOffset {
-                self.scrollView?.cyl_offsetY = self.pagingRestingOffset
+                self.scrollView?.cylOffsetY = self.pagingRestingOffset
             }
             // 自动调整透明度
             if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
@@ -483,7 +483,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
 
     private func recordDragStart() {
         guard let scrollView = scrollView, scrollView.panGestureRecognizer.state == .began else { return }
-        dragStartedAtEdge = scrollView.cyl_offsetY >= happenOffsetY - 0.5
+        dragStartedAtEdge = scrollView.cylOffsetY >= happenOffsetY - 0.5
     }
 
     /**
@@ -498,8 +498,8 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
                 !isRefreshing && state != .noMoreData {
                 // [EN] A fast release past the load trigger opens the second floor. [CN] 越过加载触发点后快速松手即打开二楼。
                 let velocity = -pan.velocity(in: scrollView).y
-                let pulled = scrollView.cyl_offsetY - happenOffsetY
-                if velocity >= secondaryVelocity && pulled >= cyl_h * triggerRate {
+                let pulled = scrollView.cylOffsetY - happenOffsetY
+                if velocity >= secondaryVelocity && pulled >= cylH * triggerRate {
                     openSecondary()
                     return
                 }
@@ -513,7 +513,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     private var secondaryHeight: CGFloat {
         if secondaryDimension > 0 { return secondaryDimension }
         let height = scrollView?.bounds.height ?? 0
-        return max(cyl_h, height - scrollViewOriginalInset.top - scrollViewOriginalInset.bottom)
+        return max(cylH, height - scrollViewOriginalInset.top - scrollViewOriginalInset.bottom)
     }
 
     /**
@@ -530,9 +530,9 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     private func placeSecondaryView() {
         guard let view = secondaryView, let scrollView = scrollView else { return }
         if view.superview !== scrollView { scrollView.insertSubview(view, belowSubview: self) }
-        let top = max(scrollView.cyl_contentH,
+        let top = max(scrollView.cylContentH,
                       scrollView.bounds.height - scrollViewOriginalInset.top - scrollViewOriginalInset.bottom)
-        view.frame = CGRect(x: -scrollView.cyl_insetL, y: top, width: scrollView.cyl_w, height: secondaryHeight)
+        view.frame = CGRect(x: -scrollView.cylInsetL, y: top, width: scrollView.cylW, height: secondaryHeight)
     }
 
     /**
@@ -565,8 +565,8 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         let bottom = scrollViewOriginalInset.bottom + height
         let target = happenOffsetY + height
         UIView.animate(withDuration: slowAnimationDuration, animations: {
-            self.scrollView?.cyl_insetB = bottom
-            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cyl_offsetX ?? 0, y: target)
+            self.scrollView?.cylInsetB = bottom
+            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cylOffsetX ?? 0, y: target)
         }, completion: { _ in
             self.secondaryOpenedBlock?()
         })
@@ -583,8 +583,8 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         let bottom = scrollViewOriginalInset.bottom
         let target = max(happenOffsetY, -scrollViewOriginalInset.top)
         UIView.animate(withDuration: slowAnimationDuration, animations: {
-            self.scrollView?.cyl_insetB = bottom
-            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cyl_offsetX ?? 0, y: target)
+            self.scrollView?.cylInsetB = bottom
+            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cylOffsetX ?? 0, y: target)
         }, completion: { _ in
             self.secondaryClosing = false
             self.storedSecondaryOpen = false
@@ -600,7 +600,7 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     private func followOpenSecondary() {
         if secondaryClosing { return }
         let openOffsetY = happenOffsetY + secondaryHeight
-        let pulled = openOffsetY - (scrollView?.cyl_offsetY ?? 0)
+        let pulled = openOffsetY - (scrollView?.cylOffsetY ?? 0)
         if scrollView?.isDragging == true {
             secondaryClosePending = pulled >= secondaryCloseTriggerOffset
         } else if secondaryClosePending {
