@@ -100,7 +100,7 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
    is x86_64, but the example `entry` depends on `@ohos/rive` and `@tencent/libpag`, which ship native libraries for
    arm64-v8a only (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so `hdc install` refuses the HAP as built
    ("install parse native so failed", error 9568347). The test path lives in CYLTabBarController's HarmonyOS
-   CYLAnimatedItem (owner's direction, 2026-11-22; CYLTabBarController 882ece17, `cylanimateditem/README.md`, "x86_64
+   CYLAnimatedItem (owner's direction, 2026-11-22; CYLTabBarController c8fee654, `cylanimateditem/README.md`, "x86_64
    emulator"), so every example and library that depends on the item tests the same way:
    - **Build the emulator target:** `entry/build-profile.json5` has an `emulator` target that leaves out every
      arm64-v8a library (and an `emulatorTest` build mode for `ohosTest`). `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh
@@ -192,7 +192,7 @@ Before any HarmonyOS work (building, installing or running a HAP, taking emulato
    is x86_64, but the example `entry` depends on `@ohos/rive` and `@tencent/libpag`, which ship native libraries for
    arm64-v8a only (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so `hdc install` refuses the HAP as built
    ("install parse native so failed", error 9568347). The test path lives in CYLTabBarController's HarmonyOS
-   CYLAnimatedItem (owner's direction, 2026-11-22; CYLTabBarController 882ece17, `cylanimateditem/README.md`, "x86_64
+   CYLAnimatedItem (owner's direction, 2026-11-22; CYLTabBarController c8fee654, `cylanimateditem/README.md`, "x86_64
    emulator"), so every example and library that depends on the item tests the same way:
    - **Build the emulator target:** `entry/build-profile.json5` has an `emulator` target that leaves out every
      arm64-v8a library (and an `emulatorTest` build mode for `ohosTest`). `CrossPlatform/harmonyos-cylplaceholder/scripts/build.sh

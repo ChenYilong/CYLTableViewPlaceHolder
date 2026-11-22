@@ -18,15 +18,19 @@ import { cylRefreshSceneViewBuilder, cylRefreshSetRiveRuns } from './CYLRefreshS
 
 /**
  * Registers the example's Lottie, PAG, SVGA and Rive engines (types, animators and the Rive refresh header's view).
- * Registering again replaces them.
+ * Registering again replaces them. `context` lets a debug build installed with CYLTabBarController's x86_64 debug engine
+ * kit (`cylanimateditem/tools/cyl_hap_x86_64.py install`) play Rive on the x86_64 emulator.
  */
-export function ExampleRegisterAnimationEngines(): void {
+export function ExampleRegisterAnimationEngines(context?: Context): void {
+  // Owner's Plan 1 (instructions.md, "Rive and PAG: tests that only run on arm64"): debug builds only, behind
+  // CYLTabBarController's debug guard; release builds and HAPs without the kit change nothing.
+  CYLAnimatedItemEngines.loadX86_64DebugEngines(context);
   CYLAnimatedItemEngines.register('Lottie');
   CYLAnimatedItemEngines.register('PAG');
   // SVGA: CYLTabBarController's own decoder and renderer on a Canvas (no native library), so on every ABI.
   CYLAnimatedItemEngines.register('SVGA');
-  // FIX: issue E15: Rive only where @ohos/rive has its native library (arm64-v8a); elsewhere Rive files show the
-  // static image or the placeholder, as with a type that is left out.
+  // FIX: issue E15: Rive only where @ohos/rive has its native library (arm64-v8a, or x86_64 with the debug engine kit);
+  // elsewhere Rive files show the static image or the placeholder, as with a type that is left out.
   const riveSupported = cylRiveIsSupported();
   if (riveSupported) {
     CYLAnimatedItemEngines.register('Rive');

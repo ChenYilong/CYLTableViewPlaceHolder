@@ -34,7 +34,7 @@ the status and score are in `docs/HarmonyOS.md`.
 - **x86_64 emulator: the HAP does not install because its Rive and PAG libraries are arm64-only.** The Windows
   emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native libraries only
   (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so the normal HAP does not install ("install parse native so
-  failed", error 9568347). The fix comes from CYLTabBarController's HarmonyOS CYLAnimatedItem (882ece17,
+  failed", error 9568347). The fix comes from CYLTabBarController's HarmonyOS CYLAnimatedItem (c8fee654,
   `cylanimateditem/README.md`, "x86_64 emulator"), so every app and library that depends on the item tests the same way:
   1. Build the `emulator` target, which leaves out every arm64-v8a library: `scripts/build.sh emulator` (output
      `entry/build/default/outputs/emulator/entry-emulator-unsigned.hap`; UI tests: build mode `emulatorTest`).

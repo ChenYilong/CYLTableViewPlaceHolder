@@ -9,7 +9,7 @@ the repository root `instructions.md` (see "HarmonyOS") and `AGENTS.md`.
 
 The default HAP of `entry` does not install on the x86_64 emulator ("install parse native so failed"): `@ohos/rive`
 and `@tencent/libpag` ship native libraries for arm64-v8a only. The test path comes from CYLTabBarController's
-HarmonyOS CYLAnimatedItem (`cylanimateditem/README.md`, "x86_64 emulator", pinned at 882ece17), shared by every app and
+HarmonyOS CYLAnimatedItem (`cylanimateditem/README.md`, "x86_64 emulator", pinned at c8fee654), shared by every app and
 library that depends on the item:
 
 ```sh

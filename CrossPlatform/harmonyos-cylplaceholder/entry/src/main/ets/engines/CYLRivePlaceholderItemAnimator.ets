@@ -16,6 +16,7 @@
 // RiveAnimationView.isPlaying() turns false after its last input change (CYLRivePlayOnceEndWatcher).
 import { Fit, Loop, RendererType, RiveAnimationView, SMINumber, ViewModelInstance, initializeRive } from '@ohos/rive';
 import { deviceInfo } from '@kit.BasicServicesKit';
+import { CYLAnimatedItemEngines } from 'cylanimateditem';
 import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
 import {
   CYLRiveActivePropertyPath,
@@ -79,12 +80,13 @@ let riveInitialized = false;
 /**
  * Whether @ohos/rive can run here. FIX: HarmonyOS issue E15 (docs/HarmonyOS.md): @ohos/rive 1.0.4 ships its native
  * library (libohos_rive.so) for arm64-v8a only, so on an x86_64 emulator a Rive view crashed the app later
- * ("Accessing released C++ object: RiveArtboardRenderer" in onSurfaceChanged). Without arm64-v8a the example does not
- * register Rive, and every Rive file shows its static image or the placeholder instead.
+ * ("Accessing released C++ object: RiveArtboardRenderer" in onSurfaceChanged). CYLTabBarController's
+ * CYLAnimatedItemEngines decides it: arm64-v8a, or x86_64 in a debug build installed with its x86_64 debug engine kit
+ * (after `CYLAnimatedItemEngines.loadX86_64DebugEngines`, called by ExampleRegisterAnimationEngines). Otherwise the example
+ * does not register Rive, and every Rive file shows its static image or the placeholder instead.
  */
 export function cylRiveIsSupported(): boolean {
-  const abis: string = deviceInfo.abiList ?? '';
-  return abis.split(',').map((abi: string) => abi.trim()).indexOf('arm64-v8a') >= 0;
+  return CYLAnimatedItemEngines.isSupportedOnDevice('Rive');
 }
 
 /** Initializes @ohos/rive once for the library (throws when the runtime cannot load or the device cannot run it). */
