@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（85 / 100）：Rive 输入路径按名称播放状态机，使播放一次的结束能被检测 / Done (85/100): Play the Rive state machine by name on the input paths so the play-once end is detected
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a），85 / 100。 | Status: done (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a), 85 / 100. |
+| 来源：chen-yilong-b6 的会话消息（非用户提示）：@ohos/rive 中不带名称的 `view.play()` 也会启动循环的线性动画，`isPlaying()` 永远不会变为 false。 | Source: a message from session chen-yilong-b6 (not a user prompt): in @ohos/rive an unnamed `view.play()` also starts looping linear animations, so `isPlaying()` never turns false. |
+| 验收：满分（100）= 触发器、数值、视图模型与布尔输入路径按名称播放状态机，结束检测在有状态机的文件上经模拟器验证，测试通过，已推送。及格（60）= 代码修改并通过测试。 | Acceptance: full marks (100) = the trigger, number, view-model and boolean-input paths play the state machine by name, the end detection checked on the emulator with a file that has a state machine, tests pass, pushed. Pass (60) = the change made and tests pass. |
+| 结果：`CYLRivePlaceholderItemAnimator` 的 5 处 `view.play()` 改为 `playStateMachine(view, machine)`：有状态机时 `view.play(machine, undefined, undefined, true)`，否则保持不带名称的调用。HarmonyOS 核心 91/91、entry 5/5。x86_64 模拟器：`CYLPlaceholderSuccess.riv`（没有状态机，走回退路径）仍在播放后由对勾替换（点击后 1.5 s 为上传火箭，2.3 s 为对勾），无崩溃。 | Result: the 5 `view.play()` calls of `CYLRivePlaceholderItemAnimator` now go through `playStateMachine(view, machine)`: `view.play(machine, undefined, undefined, true)` when there is a state machine, the unnamed call otherwise. HarmonyOS core 91/91, entry 5/5. x86_64 emulator: `CYLPlaceholderSuccess.riv` (no state machine, so the fallback path) is still replaced by the check mark after it plays (tap + 1.5 s the uploading rocket, + 2.3 s the check mark), no crash. |
+| 评分：85 / 100。TODO（-15）：在有状态机且使用输入或触发器的 Rive 文件上，在模拟器中验证结束检测（本次的 Success 文件没有状态机）。 | Score: 85 / 100. TODO (-15): check the end detection on the emulator with a Rive file that has a state machine driven by an input or trigger (this run's Success file has none). |
+
 ### 完成（待 CI，85 / 100）：修复 CI 失败（Android 插件下载、Example-objc-02 自动 footer UI 测试） / Done (pending CI, 85/100): Fix the CI failures (Android plugin download, Example-objc-02 automatic-footer UI test)
 
 | 中文 | English |

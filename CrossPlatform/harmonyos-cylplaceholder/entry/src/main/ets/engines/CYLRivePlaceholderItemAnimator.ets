@@ -329,6 +329,19 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     }
   }
 
+  /**
+   * Plays `machine` by name. An unnamed `RiveAnimationView.play()` in @ohos/rive 1.0.4 also starts the file's looping
+   * linear animations, so `isPlaying()` never turns false and the play-once end is never reported (found in
+   * CYLTabBarController's CYLRiveIcon, 2026-11-22). Without a state machine it falls back to the unnamed call.
+   */
+  private playStateMachine(view: RiveAnimationView, machine: string | undefined): void {
+    if (machine !== undefined) {
+      view.play(machine, undefined, undefined, true);
+    } else {
+      view.play();
+    }
+  }
+
   /** CYLRiveIcon.cylPlay: plays from the start (see the file comment). */
   private play(view: RiveAnimationView): void {
     this.endWatcher.cancel();
@@ -351,7 +364,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     const numberInput = this.option(CYLPlaceholderAnimationOptionRiveNumberInput);
     if (triggerInput !== undefined && machine !== undefined && this.hasInput(view, machine, triggerInput)) {
       this.resetKeepingArtboard(view);
-      view.play();
+      this.playStateMachine(view, machine);
       this.deactivateTimer = setTimeout(() => {
         this.deactivateTimer = -1;
         if (this.riveView === view) {
@@ -365,12 +378,12 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else if (numberInput !== undefined && machine !== undefined && this.hasInput(view, machine, numberInput)) {
       // The next value: house.riv moves only when Rooms changes.
-      view.play();
+      this.playStateMachine(view, machine);
       view.setNumberState(machine, numberInput, CYLRiveNextNumber(this.option(CYLPlaceholderAnimationOptionRiveNumberValues),
         this.numberValue(view, machine, numberInput)));
       this.armEnd(view);
     } else if (trigger !== null && instance !== null) {
-      view.play();
+      this.playStateMachine(view, machine);
       try {
         instance.getTriggerProperty(trigger).trigger();
       } catch (e) {
@@ -378,7 +391,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }
       this.armEnd(view);
     } else if (instance !== null || (input !== undefined && machine !== undefined && this.hasInput(view, machine, input))) {
-      view.play();
+      this.playStateMachine(view, machine);
       this.setActive(view, false);
       const duration = CYLRiveActiveDuration(this.options);
       this.deactivateTimer = setTimeout(() => {
@@ -401,7 +414,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else {
       this.resetKeepingArtboard(view);
-      view.play();
+      this.playStateMachine(view, machine);
       this.armEnd(view);
     }
     this.scheduleLoop(view, trigger !== null || triggerInput !== undefined);
