@@ -28,6 +28,15 @@
 
 ## 任务 / Tasks
 
+### TODO：所有端统一使用 CYLTabBarController 的 CYLAnimatedItemView 播放 Rive / TODO: Every platform plays Rive through CYLTabBarController's CYLAnimatedItemView
+
+| 中文 | English |
+| :-- | :-- |
+| 背景：CYLTabBarController 鸿蒙端修好的 Rive 播放在 `cyltabbar` 模块的 `CYLRiveIcon`（`CYLRiveTabBarItemAnimator.ets`）中，不在 `cylanimateditem` 的 `CYLAnimatedItemView` 里；CYLSearchViewController 直接引用 `CYLRiveIcon`；本仓库鸿蒙示例另有一份移植副本 `CYLRivePlaceholderItemAnimator`（`entry/src/main/ets/engines/`，约 700 行）。 | Context: CYLTabBarController's fixed HarmonyOS Rive playback lives in `CYLRiveIcon` in the `cyltabbar` module (`CYLRiveTabBarItemAnimator.ets`), not in `cylanimateditem`'s `CYLAnimatedItemView`; CYLSearchViewController uses `CYLRiveIcon` directly; this repository's HarmonyOS example keeps its own ported copy, `CYLRivePlaceholderItemAnimator` (`entry/src/main/ets/engines/`, about 700 lines). |
+| 已做（2026-11-23）：已通知 CYLTabBarController 会话（chenyilong-0b、chenyilong-e3）把 Rive 引擎放进 `cylanimateditem` 作为 `CYLAnimatedItemView` 的 Rive animator 并在各端同样处理；已通知 CYLSearchViewController 会话（chenyilong-e4）随后改用它。本会话不修改 CYLTabBarController。 | Done (2026-11-23): asked the CYLTabBarController sessions (chenyilong-0b, chenyilong-e3) to put the Rive engine in `cylanimateditem` as a Rive animator of `CYLAnimatedItemView`, the same on every platform; asked the CYLSearchViewController session (chenyilong-e4) to switch to it afterwards. This session does not edit CYLTabBarController. |
+| TODO：CYLTabBarController 提供提交后，本仓库重新固定该提交，删除 `CYLRivePlaceholderItemAnimator`，鸿蒙、Android、小程序、iOS 的 Rive 一律经 `CYLAnimatedItemView` 播放；在 x86_64 模拟器（debug 引擎包）与 arm64 设备上验证。 | TODO: once CYLTabBarController has the commit, this repository re-pins it, deletes `CYLRivePlaceholderItemAnimator`, and plays Rive through `CYLAnimatedItemView` on HarmonyOS, Android, the mini program and iOS; verified on the x86_64 emulator (debug engine kit) and an arm64 device. |
+| 用户原始提示词：“你应该通知   CYLSearch's CYLRiveIcon， 让他把 CYLRiveIcon，封装进 CYLTabBarController 里的CYLAnimatedItemView中， 这样所有引用rive的库都能共享修复好的rive动画， 并且其他端也应该这样，统一使用CYLTabBarController 里的CYLAnimatedItemView。 请通知 CYLSearch来重构， 或者你自己修复，通知相关session。” | The user's prompt (translated): "You should notify CYLSearch (its CYLRiveIcon) to wrap CYLRiveIcon into CYLTabBarController's CYLAnimatedItemView, so every library that uses Rive shares the fixed Rive animation; the other platforms should do the same and all use CYLTabBarController's CYLAnimatedItemView. Ask CYLSearch to refactor, or fix it yourself, and notify the related sessions." |
+
 ### 完成（85 / 100）：让 iTerm2 标签页显示会话名或当前文件夹名 / Done (85/100): Show the session name or the current folder name in the iTerm2 tab
 
 | 中文 | English |
