@@ -28,6 +28,14 @@
 
 ## 任务 / Tasks
 
+### TODO：让 iTerm2 标签页显示会话名或当前文件夹名 / TODO: Show the session name or the current folder name in the iTerm2 tab
+
+| 中文 | English |
+| :-- | :-- |
+| 背景：多个 Claude Code 会话同时运行在 iTerm2 中，标签页标题由 Claude Code 按对话主题自动改写，看不出哪个标签是哪个会话、哪个文件夹。 | Context: several Claude Code sessions run in iTerm2 at once, and Claude Code rewrites the tab title from the conversation topic, so a tab does not tell which session or folder it is. |
+| 要求：标签页至少显示当前文件夹名，有会话名时一并显示；每次启动自动生效；在 docs/ 中写明操作步骤。 | Requirements: the tab shows at least the current folder name, plus the session name when there is one; it works on every start without manual steps; docs/ explains what to do. |
+| 用户原始提示词：“让这个iterm2 显示我们session的名字， 至少展示我们当前文件夹的名字。 并更新docs/ 文档告诉我我应该怎么操作，才能保证每一次都能自动显示” | The user's prompt (translated): "Make iTerm2 show our session's name, or at least the name of our current folder, and update the docs/ document to tell me what to do so that it shows automatically every time." |
+
 ### 完成（待 CI，80 / 100）：修复 CI 失败（CYLDeallocBlockExecutor 1.4 未发布） / Done (pending CI, 80/100): Fix the CI failure (CYLDeallocBlockExecutor 1.4 not published)
 
 | 中文 | English |
