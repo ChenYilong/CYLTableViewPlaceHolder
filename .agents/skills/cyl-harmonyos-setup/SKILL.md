@@ -34,7 +34,7 @@ the status and score are in `docs/HarmonyOS.md`.
 - **x86_64 emulator: the HAP does not install because its Rive and PAG libraries are arm64-only.** The Windows
   emulator is x86_64, but `@tencent/libpag` and `@ohos/rive` ship arm64-v8a native libraries only
   (`libs/arm64-v8a/*.so`, with `libc++_shared.so`), so the normal HAP does not install ("install parse native so
-  failed", error 9568347). The fix comes from CYLTabBarController's HarmonyOS CYLAnimatedItem (882ece17,
+  failed", error 9568347). The fix comes from CYLTabBarController's HarmonyOS CYLAnimatedItem (143fadff,
   `cylanimateditem/README.md`, "x86_64 emulator"), so every app and library that depends on the item tests the same way:
   1. Build the `emulator` target, which leaves out every arm64-v8a library: `scripts/build.sh emulator` (output
      `entry/build/default/outputs/emulator/entry-emulator-unsigned.hap`; UI tests: build mode `emulatorTest`).
@@ -45,6 +45,7 @@ the status and score are in `docs/HarmonyOS.md`.
   3. Expect still images for Rive and PAG items: `CYLAnimatedItemEngines.canPlay` is false without arm64-v8a
      (`isSupportedOnDevice`, `unsupportedReason`). Views created outside `animationBuilder` check
      `isSupportedOnDevice(type)` first.
+     In debug builds, `cyl_hap_x86_64.py install` also adds CYLTabBarController's x86_64 debug engine kit (Rive; PAG for @tencent/libpag 4.5.102), only when the app's package version matches the kit exactly, so Rive and PAG play there (verified 2026-11-22, 143fadff).
   4. Testable on x86_64: Lottie, SVGA, GIF, still images, placeholders, `showsImageWhenAnimationEnds` with Lottie or
      SVGA, layout, dark mode, accessibility, localization. Rive and PAG playback need an arm64 device or arm64 emulator
      with the `default` target. Never commit a stripped HAP.

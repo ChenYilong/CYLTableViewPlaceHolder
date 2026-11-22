@@ -160,8 +160,13 @@ class AnimationsPage : StackPage() {
          * The options some bundled Rive files need (iOS `CYLScenarioAnimationOptions`), after '#' in the file URL.
          */
         val RIVE_OPTIONS = mapOf(
-            "CYLPlaceholderSuccess.riv" to "stateMachine=State%20Machine%201",
+            // Its state machine waits for the "Trigger explosion" input: fired on every play, the confetti burst
+            // plays; without it nothing draws.
+            "CYLPlaceholderSuccess.riv" to "stateMachine=State%20Machine%201&triggerInput=Trigger%20explosion",
             "CYLRefreshIcon.riv" to "artboard=refresh&animation=active",
+            // The Bow refresh style's file: its state machines stay black until a refresh header drives the "pull"
+            // number, so on its own it plays "strainLoop", the pulled bow, looping.
+            "CYLScenarioExampleRefreshBow.riv" to "animation=strainLoop",
         )
     }
 }

@@ -24,6 +24,18 @@ import { UiColor } from '../common/Ui';
  */
 const DARK_BACKDROP_FILES: string[] = ['CYLScenarioExampleMoonlight.pag'];
 
+/**
+ * The options some Rive files need, written into the URL's fragment (iOS CYLScenarioAnimationOptions; the same table
+ * as Android's AnimationsPage.RIVE_OPTIONS and the mini program's). Success's state machine waits for its "Trigger
+ * explosion" input; the Bow refresh style's file stays black until a refresh header drives its "pull" number, so on its
+ * own it plays "strainLoop", the pulled bow, looping.
+ */
+const RIVE_OPTIONS: Record<string, string> = {
+  'CYLPlaceholderSuccess.riv': 'stateMachine=State%20Machine%201&triggerInput=Trigger%20explosion',
+  'CYLRefreshIcon.riv': 'artboard=refresh&animation=active',
+  'CYLScenarioExampleRefreshBow.riv': 'animation=strainLoop',
+};
+
 @Component
 export struct AnimationDetailPage {
   param: RouteParam = new RouteParam();
@@ -53,7 +65,8 @@ export struct AnimationDetailPage {
     this.look = CYLPlaceholderViewModel.initWithComponent(
       CYLPlaceholderComponent.componentWithBundledAnimation(file.path, CYLPlaceholderStyle.Image, title, 180, null));
     const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(file.path);
-    this.animationURL = bundled !== null ? bundled : file.path;
+    const options: string | undefined = RIVE_OPTIONS[file.name];
+    this.animationURL = (bundled !== null ? bundled : file.path) + (options !== undefined ? '#' + options : '');
     this.itemTitle = title;
     this.loop = loopsByDefault(file.name);
   }

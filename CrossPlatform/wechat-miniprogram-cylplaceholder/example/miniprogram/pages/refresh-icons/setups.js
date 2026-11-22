@@ -1,7 +1,13 @@
 // The setups of CYLRefreshIconListViewController: each row's header / footer and icons per state. Used by the list
-// and by the demo page (refresh-icon-demo?setup=<id>). Paths are package paths; PAG and Rive files have no player in
-// the mini program (cyl-refresh shows its spinner for them).
+// and by the demo page (refresh-engines/refresh-icon-demo?setup=<id>). Paths are package paths. PAG and Rive files are
+// in the refresh-engines/ subpackage as *.pag.bin / *.riv.bin (scripts/sync-example.js), played by cyl-pag and cyl-rive,
+// which that page passes to cyl-refresh.
 const A = '/assets/animations/'
+const ENGINES = '/refresh-engines/assets/'
+// CYLRefreshIcon.riv is rive-flutter's web_icons_pack.riv: its "refresh" artboard turning ("active" animation), the
+// options iOS gives it (CYLScenarioAnimationOptions) and HarmonyOS's refresh setups pass; cyl-rive reads them from the
+// fragment. Without them the file's first artboard (a padlock) plays.
+const RIVE_REFRESH = ENGINES + 'CYLRefreshIcon.riv.bin#artboard=refresh&animation=active'
 const PLACEHOLDER = '/components/cyl-placeholder/animations/'
 
 const GIFS = ['CYLRefreshActivity', 'CYLRefreshArrows', 'CYLRefreshPetals', 'CYLRefreshRing', 'CYLRefreshThrobber']
@@ -39,8 +45,8 @@ const SECTIONS = [
     rows: [{ id: 'CYLPlaceholderRefresh', title: 'CYLPlaceholderRefresh.json', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(PLACEHOLDER + 'CYLPlaceholderRefresh.json', 'CYLPlaceholderRefresh') }]
       .concat(LOTTIES.map((n) => ({ id: n, title: n + '.json', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + n + '.json', n) }))),
   },
-  { title: 'PAG · CYLTableViewPlaceHolder/PAG', rows: [{ id: 'CYLPlaceholderProgress', title: 'CYLPlaceholderProgress.pag', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + 'CYLPlaceholderProgress.pag', 'Progress') }] },
-  { title: 'Rive · CYLTableViewPlaceHolder/Rive', rows: [{ id: 'CYLRefreshIcon', title: 'CYLRefreshIcon.riv', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + 'CYLRefreshIcon.riv', 'CYLRefreshIcon') }] },
+  { title: 'PAG · CYLTableViewPlaceHolder/PAG', rows: [{ id: 'CYLPlaceholderProgress', title: 'CYLPlaceholderProgress.pag', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(ENGINES + 'CYLPlaceholderProgress.pag.bin', 'Progress') }] },
+  { title: 'Rive · CYLTableViewPlaceHolder/Rive', rows: [{ id: 'CYLRefreshIcon', title: 'CYLRefreshIcon.riv', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(RIVE_REFRESH, 'CYLRefreshIcon') }] },
   // The SVGA twin of the Rive row (Task-Log "SVGA animations"): cyl-svga, the files as *.svga.bin.
   { title: 'SVGA · CYLTableViewPlaceHolder/SVGA', rows: ['tab_activity', 'tab_list'].map((n) => ({ id: 'svga-' + n, title: n + '.svga', subtitle: 'setIconAnimation(bundled:size:for:)', setup: one(A + n + '.svga.bin', n) })) },
   {
@@ -53,7 +59,7 @@ const SECTIONS = [
         footerIcons: { Refreshing: { path: A + 'CYLRefreshRing.gif', size: 40 } } } },
       { id: 'byStates', titleKey: 'CYLScenarioRefreshByStates', subtitle: 'setIconAnimation(bundled:size:for:)', setup: {
         header: 'animation', footer: 'auto',
-        headerIcons: { Idle: { path: A + 'CYLRefreshPullCircle.json', size: 28 }, Pulling: { path: A + 'CYLRefreshCounterClockwise.json', size: 28 }, Refreshing: { path: A + 'CYLPlaceholderProgress.pag', size: 32 } },
+        headerIcons: { Idle: { path: A + 'CYLRefreshPullCircle.json', size: 28 }, Pulling: { path: A + 'CYLRefreshCounterClockwise.json', size: 28 }, Refreshing: { path: ENGINES + 'CYLPlaceholderProgress.pag.bin', size: 32 } },
         footerIcons: { Refreshing: { path: A + 'CYLRefreshActivity.gif', size: 28 } } } },
       { id: 'backFooter', titleKey: 'CYLScenarioRefreshBackFooter', subtitle: 'CYLRefreshBackAnimationFooter', setup: {
         header: 'animation', footer: 'back',
@@ -65,11 +71,11 @@ const SECTIONS = [
         footerIcons: { Refreshing: { path: A + 'CYLRefreshGradientSpinner.json', size: 32 } } } },
       { id: 'byAttributes', titleKey: 'CYLScenarioRefreshByAttributes', subtitle: 'setIconAnimation(attributes:for:)', setup: {
         header: 'animation', footer: 'auto',
-        headerIcons: { Idle: { path: A + 'CYLRefreshIcon.riv', size: 32 } }, footerIcons: { Refreshing: { path: A + 'CYLRefreshIcon.riv', size: 32 } } } },
+        headerIcons: { Idle: { path: RIVE_REFRESH, size: 32 } }, footerIcons: { Refreshing: { path: RIVE_REFRESH, size: 32 } } } },
       { id: 'byConfiguration', titleKey: 'CYLScenarioRefreshByConfiguration', subtitle: 'RefreshIcons/refresh-icons.json', setup: {
         header: 'animation', footer: 'auto',
         headerIcons: { Idle: { path: A + 'CYLRefreshPullArrow.json', size: 28 }, Pulling: { path: A + 'CYLRefreshClockwise.json', size: 28 }, Refreshing: { path: A + 'CYLRefreshMaterialSpinner.json', size: 36 } },
-        footerIcons: { Idle: { path: A + 'CYLRefreshLoadMore.json', size: 28 }, Refreshing: { path: A + 'CYLRefreshIcon.riv', size: 32 }, NoMoreData: { path: A + 'CYLRefreshDoneCircle.json', size: 28 } } } },
+        footerIcons: { Idle: { path: A + 'CYLRefreshLoadMore.json', size: 28 }, Refreshing: { path: RIVE_REFRESH, size: 32 }, NoMoreData: { path: A + 'CYLRefreshDoneCircle.json', size: 28 } } } },
       { id: 'gifNames', titleKey: 'CYLScenarioRefreshGifNames', subtitle: 'CYLRefreshGifHeader · setImages(_:for:)', setup: {
         header: 'animation', footer: 'auto',
         headerIcons: { Idle: { path: A + 'CYLRefreshArrows.gif', size: 40 }, Refreshing: { path: A + 'CYLRefreshArrows.gif', size: 40 } },

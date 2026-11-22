@@ -15,6 +15,6 @@ Page({
   },
   onOpen(e) {
     const { id, title } = e.currentTarget.dataset
-    wx.navigateTo({ url: '/pages/refresh-icon-demo/refresh-icon-demo?setup=' + id + '&title=' + encodeURIComponent(title) })
+    wx.navigateTo({ url: '/refresh-engines/refresh-icon-demo/refresh-icon-demo?setup=' + id + '&title=' + encodeURIComponent(title) })
   },
 })

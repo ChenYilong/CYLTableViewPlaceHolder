@@ -53,6 +53,13 @@ Component({
      */
     iconSpeed: { type: Number, value: 1 },
     iconLoop: { type: Boolean, value: true },
+    /**
+     * Where the PAG and Rive engines the page passes (`cyl-pag-view`, `cyl-rive-view`) load their WebAssembly from,
+     * forwarded to cyl-animated-item's `pagWasmPath` / `riveWasmPath`: set them when the engine lives in a subpackage;
+     * '' keeps each engine's default path.
+     */
+    pagWasmPath: { type: String, value: '' },
+    riveWasmPath: { type: String, value: '' },
     headerIcons: { type: null, value: null },
     /** { Idle, Refreshing, NoMoreData } of the footer. */
     footerIcons: { type: null, value: null },
@@ -78,7 +85,10 @@ Component({
     footerStyle: { type: null, value: null },
     /** Hides the footer's text while refreshing (refreshingTitleHidden). */
     refreshingTitleHidden: { type: Boolean, value: false },
-    /** false: the auto footer loads only on tap (automaticallyRefresh). */
+    /**
+     * false: the auto footer does not load when its end scrolls into view; a tap, or a drag up that ends at the end,
+     * loads (automaticallyRefresh, MJRefresh example15).
+     */
     automaticallyRefresh: { type: Boolean, value: true },
     /** How many times the auto footer loads by itself before it needs a tap; 0 is unlimited (autoTriggerTimes). */
     autoTriggerTimes: { type: Number, value: 0 },
@@ -215,10 +225,10 @@ Component({
 
     // Drag tracking: trigger modes and the back footer's pull.
     /** Reads the scroll offset and sizes (a list shorter than the view never fires scroll events). */
-    _measure() {
+    _measure(done) {
       this.createSelectorQuery().select('.cyl-refresh__scroll')
         .fields({ size: true, scrollOffset: true }, (r) => {
-          if (!r) return
+          if (!r) return done && done()
           this._viewHeight = r.height
           this._scrollHeight = r.scrollHeight || this._scrollHeight
           this._scrollTop = r.scrollTop
@@ -226,6 +236,7 @@ Component({
             this._startedAtBottom = true
             this._footerTouchY = this._touchY
           }
+          if (done) done()
         }).exec()
     },
     _atBottom() {
@@ -251,12 +262,14 @@ Component({
       this._startedAtTop = this._scrollTop <= 0
       this._startedAtBottom = this._atBottom()
       this._touchY = e.touches && e.touches[0] ? e.touches[0].clientY : null
+      this._lastTouchY = this._touchY
       this._footerTouchY = this._startedAtBottom ? this._touchY : null
       this._measure()
     },
     onTouchMove(e) {
-      if (!this._isBack() || !this._footerActive() || this.data.footerState === S.Refreshing) return
       const y = e.touches && e.touches[0] ? e.touches[0].clientY : null
+      if (y != null) this._lastTouchY = y
+      if (!this._isBack() || !this._footerActive() || this.data.footerState === S.Refreshing) return
       if (y == null) return
       if (this._footerTouchY == null) {
         // "anywhere": the pull starts when the end is reached during the drag.
@@ -271,12 +284,25 @@ Component({
     },
     onTouchEnd() {
       this._dragging = false
-      if (!this._isBack()) return
+      if (!this._isBack()) return this._autoFooterDragEnd()
       const armed = this.data.footerState === S.Pulling
       // onEdge: a drag that began at the end and lets go there loads, as does a release past the footer's height.
       const edge = this.data.footerTrigger === 'onEdge' && this._startedAtBottom && this._atBottom()
       if (this.data.footerState !== S.Refreshing && this.data.footerState !== S.NoMoreData) this.setData({ footerPull: 0, footerState: S.Idle })
       if (armed || edge) this._beginFooter()
+    },
+    /**
+     * Auto footers: a drag up that ends on content shorter than the view, or at the end, loads (MJRefreshAutoFooter);
+     * scrolltolower cannot fire there. Measures first, as the rows may have changed since the last scroll event.
+     */
+    _autoFooterDragEnd() {
+      const dragUp = this._touchY != null && this._lastTouchY != null ? this._touchY - this._lastTouchY : 0
+      this._lastTouchY = null
+      if (!(dragUp > 0) || !this._footerActive() || this.data.footerState !== S.Idle) return
+      this._measure(() => {
+        const geometry = { dragUp, scrollTop: this._scrollTop, scrollHeight: this._scrollHeight, viewHeight: this._viewHeight }
+        if (CYLRefresh.autoFooterLoadsOnDragEnd(geometry)) this._beginFooter()
+      })
     },
     onScroll(e) {
       const { scrollTop, scrollHeight } = e.detail

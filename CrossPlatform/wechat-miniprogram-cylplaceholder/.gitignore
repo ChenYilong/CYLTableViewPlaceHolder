@@ -8,6 +8,8 @@ example/miniprogram/components/cyl-refresh/
 example/miniprogram/components/cyl-animated-item/
 example/miniprogram/components/cyl-animation-placeholder/
 example/miniprogram/libs/
+example/miniprogram/refresh-engines/libs/
+example/miniprogram/refresh-engines/assets/
 project.private.config.json
 # scripts/success-timing-screenshots.js output (default folder).
 out/

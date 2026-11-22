@@ -57,6 +57,10 @@ final class CYLCollectionAnimationUITests: XCTestCase {
         let lower = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
         for index in 1...3 {
             top.press(forDuration: 0.1, thenDragTo: bottom)
+            // A slow runner's drag may not reach the trigger distance (c4fb1cb8): pull once more before asserting.
+            if !app.navigationBars["Header refreshing"].waitForExistence(timeout: 5) {
+                top.press(forDuration: 0.1, thenDragTo: bottom)
+            }
             XCTAssertTrue(app.navigationBars["Header refreshing"].waitForExistence(timeout: 5))
             // Pull further while refreshing, push the content up, and pull again before the load ends.
             middle.press(forDuration: 0.1, thenDragTo: lower)

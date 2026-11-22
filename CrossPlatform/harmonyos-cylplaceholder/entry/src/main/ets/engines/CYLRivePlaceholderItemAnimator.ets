@@ -16,6 +16,7 @@
 // RiveAnimationView.isPlaying() turns false after its last input change (CYLRivePlayOnceEndWatcher).
 import { Fit, Loop, RendererType, RiveAnimationView, SMINumber, ViewModelInstance, initializeRive } from '@ohos/rive';
 import { deviceInfo } from '@kit.BasicServicesKit';
+import { CYLAnimatedItemEngines } from 'cylanimateditem';
 import { RiveFileController } from '@ohos/rive/src/main/ets/runtime/controllers/RiveFileController';
 import {
   CYLRiveActivePropertyPath,
@@ -79,12 +80,13 @@ let riveInitialized = false;
 /**
  * Whether @ohos/rive can run here. FIX: HarmonyOS issue E15 (docs/HarmonyOS.md): @ohos/rive 1.0.4 ships its native
  * library (libohos_rive.so) for arm64-v8a only, so on an x86_64 emulator a Rive view crashed the app later
- * ("Accessing released C++ object: RiveArtboardRenderer" in onSurfaceChanged). Without arm64-v8a the example does not
- * register Rive, and every Rive file shows its static image or the placeholder instead.
+ * ("Accessing released C++ object: RiveArtboardRenderer" in onSurfaceChanged). CYLTabBarController's
+ * CYLAnimatedItemEngines decides it: arm64-v8a, or x86_64 in a debug build installed with its x86_64 debug engine kit
+ * (after `CYLAnimatedItemEngines.loadX86_64DebugEngines`, called by ExampleRegisterAnimationEngines). Otherwise the example
+ * does not register Rive, and every Rive file shows its static image or the placeholder instead.
  */
 export function cylRiveIsSupported(): boolean {
-  const abis: string = deviceInfo.abiList ?? '';
-  return abis.split(',').map((abi: string) => abi.trim()).indexOf('arm64-v8a') >= 0;
+  return CYLAnimatedItemEngines.isSupportedOnDevice('Rive');
 }
 
 /** Initializes @ohos/rive once for the library (throws when the runtime cannot load or the device cannot run it). */
@@ -136,6 +138,8 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
   /** How a named animation plays: AUTO follows the file (iOS `.autoLoop`). */
   private loop: Loop = Loop.AUTO;
   private deactivateTimer: number = -1;
+  /** Frames play() has waited for @ohos/rive to build the file (see play()). */
+  private fileWaits: number = 0;
   /** A repeat count of 0 on a state machine: play again after each pass. */
   private loopsStateMachine: boolean = false;
   private loopTimer: number = -1;
@@ -311,15 +315,58 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     this.play(view);
   }
 
+  /**
+   * `RiveAnimationView.reset()` of @ohos/rive 1.0.4 re-selects the file's first artboard; select the item's
+   * `artboard` option again after it, so a file with several artboards keeps playing the one the item names.
+   */
+  private resetKeepingArtboard(view: RiveAnimationView): void {
+    view.reset();
+    const artboard = this.option(CYLPlaceholderAnimationOptionRiveArtboard);
+    if (artboard !== undefined) {
+      try {
+        view.setArtboardName(artboard);
+      } catch (e) {
+        // No such artboard: the load already reported it.
+      }
+    }
+  }
+
+  /**
+   * Plays `machine` by name. An unnamed `RiveAnimationView.play()` in @ohos/rive 1.0.4 also starts the file's looping
+   * linear animations, so `isPlaying()` never turns false and the play-once end is never reported (found in
+   * CYLTabBarController's CYLRiveIcon, 2026-11-22). Without a state machine it falls back to the unnamed call.
+   */
+  private playStateMachine(view: RiveAnimationView, machine: string | undefined): void {
+    if (machine !== undefined) {
+      view.play(machine, undefined, undefined, true);
+    } else {
+      view.play();
+    }
+  }
+
   /** CYLRiveIcon.cylPlay: plays from the start (see the file comment). */
   private play(view: RiveAnimationView): void {
     this.endWatcher.cancel();
     this.cancelDeactivate();
     this.cancelLoop();
+    // setRiveBytes() returns before @ohos/rive builds the file (about a frame later, on the x86_64 emulator): a play in
+    // between selected no artboard and was lost, so a linear animation ("animation" option, the Animations tab's
+    // RefreshBow.riv) stayed on its first frame. Wait for the file, a frame at a time (at most 60 frames).
+    if ((view.controller === null || view.controller.file === null) && this.fileWaits < 60) {
+      this.fileWaits++;
+      this.deactivateTimer = setTimeout(() => {
+        this.deactivateTimer = -1;
+        if (this.riveView === view) {
+          this.play(view);
+        }
+      }, CYL_RIVE_NEXT_FRAME_MS);
+      return;
+    }
+    this.fileWaits = 0;
     const animation = this.option(CYLPlaceholderAnimationOptionRiveAnimation);
     if (animation !== undefined) {
       // The repeat count picks the loop mode (Loop.LOOP for 0): no loop timer.
-      view.reset();
+      this.resetKeepingArtboard(view);
       view.play(animation, this.loop);
       this.armEnd(view);
       return;
@@ -332,8 +379,8 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
     const input = legacy ? this.option(CYLPlaceholderAnimationOptionRiveInput) : undefined;
     const numberInput = this.option(CYLPlaceholderAnimationOptionRiveNumberInput);
     if (triggerInput !== undefined && machine !== undefined && this.hasInput(view, machine, triggerInput)) {
-      view.reset();
-      view.play();
+      this.resetKeepingArtboard(view);
+      this.playStateMachine(view, machine);
       this.deactivateTimer = setTimeout(() => {
         this.deactivateTimer = -1;
         if (this.riveView === view) {
@@ -347,12 +394,12 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else if (numberInput !== undefined && machine !== undefined && this.hasInput(view, machine, numberInput)) {
       // The next value: house.riv moves only when Rooms changes.
-      view.play();
+      this.playStateMachine(view, machine);
       view.setNumberState(machine, numberInput, CYLRiveNextNumber(this.option(CYLPlaceholderAnimationOptionRiveNumberValues),
         this.numberValue(view, machine, numberInput)));
       this.armEnd(view);
     } else if (trigger !== null && instance !== null) {
-      view.play();
+      this.playStateMachine(view, machine);
       try {
         instance.getTriggerProperty(trigger).trigger();
       } catch (e) {
@@ -360,7 +407,7 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
       }
       this.armEnd(view);
     } else if (instance !== null || (input !== undefined && machine !== undefined && this.hasInput(view, machine, input))) {
-      view.play();
+      this.playStateMachine(view, machine);
       this.setActive(view, false);
       const duration = CYLRiveActiveDuration(this.options);
       this.deactivateTimer = setTimeout(() => {
@@ -382,8 +429,8 @@ export class CYLRiveAnimationContentView extends CYLPlaceholderPlayableContentVi
         }
       }, CYL_RIVE_NEXT_FRAME_MS);
     } else {
-      view.reset();
-      view.play();
+      this.resetKeepingArtboard(view);
+      this.playStateMachine(view, machine);
       this.armEnd(view);
     }
     this.scheduleLoop(view, trigger !== null || triggerInput !== undefined);

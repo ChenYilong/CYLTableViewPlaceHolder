@@ -41,11 +41,27 @@ test('pull distance and icons', () => {
     { path: '/a/x.pag', width: 32, height: 32, type: 'pag', image: '', animationUrl: '/a/x.pag' })
   assert.strictEqual(R.iconForState({ Idle: '/a/x.riv' }, S.Idle).type, 'rive')
   assert.strictEqual(R.iconForState({ Idle: '/a/x.svga' }, S.Idle).type, 'svga')
+  // Package copies of PAG and Rive files (*.pag.bin, *.riv.bin, the example's refresh-engines/ subpackage) play.
+  assert.deepStrictEqual([R.iconForState({ Idle: '/e/x.pag.bin' }, S.Idle).type, R.iconForState({ Idle: '/e/x.pag.bin' }, S.Idle).animationUrl], ['pag', '/e/x.pag.bin'])
+  assert.deepStrictEqual([R.iconForState({ Idle: '/e/x.riv.bin' }, S.Idle).type, R.iconForState({ Idle: '/e/x.riv.bin' }, S.Idle).animationUrl], ['rive', '/e/x.riv.bin'])
   assert.strictEqual(R.iconForState({ Idle: '/a/x.png' }, S.Idle).image, '/a/x.png')
   assert.deepStrictEqual([R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).type, R.iconForState({ Idle: '/a/x.mp4' }, S.Idle).image], ['unsupported', ''])
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.Pulling).path, '/a.json') // Idle covers every state
   assert.strictEqual(R.iconForState({ Idle: '/a.json' }, S.NoMoreData), null) // no-more-data shows text only
   assert.strictEqual(R.iconForState(null, S.Idle), null)
+})
+
+test('auto footer drag rule (MJRefreshAutoFooter scrollViewPanStateDidChange)', () => {
+  // Content shorter than the view (5 rows, the refresh-table examples): it cannot scroll, so a drag up loads.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), true)
+  // A tap (finger travel within the slop) or a drag down does not.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 10, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), false)
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: -40, scrollTop: 0, scrollHeight: 753, viewHeight: 753 }), false)
+  // Long content: only a drag that ends at the end loads (scrolltolower does not fire again there).
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 1000, scrollHeight: 1753, viewHeight: 753 }), true)
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 400, scrollHeight: 1753, viewHeight: 753 }), false)
+  // Not measured yet: no load.
+  assert.strictEqual(R.autoFooterLoadsOnDragEnd({ dragUp: 40, scrollTop: 0, scrollHeight: 0, viewHeight: 0 }), false)
 })
 
 test('custom string tables and live language changes', () => {
@@ -120,4 +136,18 @@ test('cyl-placeholder declares the cyl-refresh ancestor relation', () => {
   require('../src/cyl-placeholder/index.js')
   delete global.Component
   assert.strictEqual(definition.relations['../cyl-refresh/index'].type, 'ancestor')
+})
+
+test('cyl-refresh forwards the PAG and Rive wasm paths, and the example wires both engines', () => {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  const wxml = fs.readFileSync(path.join(__dirname, '../src/cyl-refresh/index.wxml'), 'utf8')
+  assert.strictEqual((wxml.match(/pag-wasm-path="\{\{pagWasmPath\}\}" rive-wasm-path="\{\{riveWasmPath\}\}"/g) || []).length, 2)
+  const demo = path.join(__dirname, '../example/miniprogram/refresh-engines/refresh-icon-demo/refresh-icon-demo')
+  const page = fs.readFileSync(demo + '.wxml', 'utf8')
+  assert.match(page, /generic:cyl-pag-view="cyl-pag" generic:cyl-rive-view="cyl-rive"/)
+  assert.match(page, /pag-wasm-path="\/refresh-engines\/libs\/cyl-pag-miniprogram\/libpag\/libpag\.wasm\.br"/)
+  assert.match(page, /rive-wasm-path="\/refresh-engines\/libs\/cyl-rive-miniprogram\/rive\/rive\.wasm\.br"/)
+  const app = JSON.parse(fs.readFileSync(path.join(__dirname, '../example/miniprogram/app.json'), 'utf8'))
+  assert.ok(app.subPackages.some((s) => s.root === 'refresh-engines/' && s.pages.includes('refresh-icon-demo/refresh-icon-demo')))
 })

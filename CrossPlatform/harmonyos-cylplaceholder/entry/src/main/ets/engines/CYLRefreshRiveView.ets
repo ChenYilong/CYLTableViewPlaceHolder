@@ -104,6 +104,10 @@ class CYLRefreshRiveViewDriver implements CYLRefreshRiveDriver {
   reset(): void {
     try {
       this.view.reset();
+      // @ohos/rive 1.0.4's reset() re-selects the file's first artboard: select the style's artboard again.
+      if (this.style.artboardName !== null) {
+        this.view.setArtboardName(this.style.artboardName);
+      }
     } catch (e) {
       // Nothing loaded.
     }

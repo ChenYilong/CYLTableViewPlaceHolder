@@ -1,7 +1,7 @@
 // CYLRefreshIconDemoViewController: 15 rows; the header ends after 1.5 s; the footer adds 15 up to 45, then
 // "No more data". The bar's Refresh button starts the header in code (beginRefreshing).
 const { t, effectiveLanguage } = require('../../utils/l10n')
-const { setupFor } = require('../refresh-icons/setups')
+const { setupFor } = require('../../pages/refresh-icons/setups')
 
 Page({
   // The default setup from the start: an empty one passed null header / footer to cyl-refresh's String properties.

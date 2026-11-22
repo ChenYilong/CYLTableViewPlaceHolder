@@ -15,7 +15,7 @@ export default class EntryAbility extends UIAbility {
     }
     CYLPlaceholderAnimationSetDefaultContext(this.context);
     // The core plays no Lottie, PAG or Rive by itself: the example registers the engines it depends on.
-    ExampleRegisterAnimationEngines();
+    ExampleRegisterAnimationEngines(this.context);
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
   }
 

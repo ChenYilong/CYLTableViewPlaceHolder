@@ -1,7 +1,8 @@
 // Copies the package's components (src/cyl-placeholder, src/cyl-placeholder-hud, src/cyl-placeholder-status,
 // src/cyl-refresh and the copied CYLTabBarController components they build on, src/cyl-animated-item and
 // src/cyl-animation-placeholder) into the example (a mini program cannot load files outside its miniprogramRoot), plus
-// the example's Lottie player. Runs from `npm run sync-example` and from the DevTools beforeCompile hook in
+// the example's Lottie, SVGA, PAG and Rive players (PAG and Rive into the refresh-engines/ subpackage, with the PAG and
+// Rive refresh icons). Runs from `npm run sync-example` and from the DevTools beforeCompile hook in
 // project.config.json.
 'use strict'
 const fs = require('fs')
@@ -36,16 +37,22 @@ for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-s
 // commit the repository takes ("Depending on CYLTabBarController"), not whatever a neighbouring working tree holds.
 const tabBar = process.env.CYL_TABBAR_DIR || [path.resolve(pkg, '../../Carthage/Checkouts/CYLTabBarController'), path.resolve(pkg, '../../../CYLTabBarController')]
   .find((folder) => fs.existsSync(path.join(folder, 'CrossPlatform'))) || path.resolve(pkg, '../../../CYLTabBarController')
+const REFRESH_ENGINES_LIBS = 'example/miniprogram/refresh-engines/libs'
 // The example's tab bar (cyl-tab-bar, as the iOS example uses CYLTabBarController) and Lottie player.
 const libraries = [
   { name: 'cyl-lottie-miniprogram', from: 'CrossPlatform/lottie-miniprogram', dist: 'miniprogram_dist', check: 'cyl-lottie/index.js' },
   // The SVGA player (cyl-svga) the example passes as cyl-svga-view, as the Lottie one as cyl-lottie-view.
   { name: 'cyl-svga-miniprogram', from: 'CrossPlatform/svga-miniprogram', dist: 'miniprogram_dist', check: 'cyl-svga/index.js' },
   { name: 'cyl-tabbar-miniprogram', from: 'CrossPlatform/wechat-miniprogram-cyltabbar', dist: 'src', check: 'cyl-tab-bar/index.js' },
+  // The PAG and Rive players (cyl-pag, cyl-rive) with their WebAssembly, about 1.7 MB together: they go into the
+  // refresh-engines/ subpackage (2 MB main package limit), next to the page that passes them to cyl-refresh as
+  // cyl-pag-view / cyl-rive-view with their wasm paths.
+  { name: 'cyl-pag-miniprogram', from: 'CrossPlatform/pag-miniprogram', dist: 'miniprogram_dist', check: 'cyl-pag/index.js', into: REFRESH_ENGINES_LIBS },
+  { name: 'cyl-rive-miniprogram', from: 'CrossPlatform/rive-miniprogram', dist: 'miniprogram_dist', check: 'cyl-rive/index.js', into: REFRESH_ENGINES_LIBS },
 ]
 for (const library of libraries) {
   const root = path.join(tabBar, library.from)
-  const to = path.join(pkg, 'example/miniprogram/libs', library.name)
+  const to = path.join(pkg, library.into || 'example/miniprogram/libs', library.name)
   if (fs.existsSync(path.join(root, library.dist, library.check))) {
     fs.rmSync(to, { recursive: true, force: true })
     copyDir(path.join(root, library.dist), to)
@@ -58,3 +65,20 @@ for (const library of libraries) {
     process.exitCode = 1
   }
 }
+
+// Every PAG and Rive file of the iOS core bundle and of the example bundle, for the refresh-engines/ subpackage (the
+// refresh icon demo and the Animations tab play them). A code package leaves out .pag and .riv files, so the copies are
+// named *.pag.bin and *.riv.bin, which cyl-animated-item reads by the extension before ".bin".
+const engineAssets = path.join(pkg, 'example/miniprogram/refresh-engines/assets')
+fs.rmSync(engineAssets, { recursive: true, force: true })
+fs.mkdirSync(engineAssets, { recursive: true })
+let engineFiles = 0
+for (const folder of ['CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle/Animations',
+  'Examples/Example-Scenarios/Sources/CYLScenarioExample.bundle/Animations']) {
+  const from = path.resolve(pkg, '../..', folder)
+  for (const name of fs.readdirSync(from).filter((n) => /\.(pag|riv)$/i.test(n))) {
+    fs.copyFileSync(path.join(from, name), path.join(engineAssets, name + '.bin'))
+    engineFiles++
+  }
+}
+console.log('synced', engineFiles, 'PAG and Rive files into', path.relative(pkg, engineAssets))

@@ -121,6 +121,21 @@ function headerStateForPull(distance, threshold = CYLRefreshHeaderHeight) {
   return distance >= threshold ? CYLRefreshState.Pulling : CYLRefreshState.Idle
 }
 
+/** Finger travel in px below which a touch is a tap, not a drag (the auto footer's drag rule). */
+const CYLRefreshDragSlop = 10
+
+/**
+ * MJRefreshAutoFooter's drag rule (scrollViewPanStateDidChange): when a drag that moved up ends, the auto footer loads if
+ * the content is no taller than the view (it cannot scroll, so its end never scrolls into view) or the view rests at the
+ * end (scrolltolower fires only when the end comes into view, not on a second drag there). dragUp is how far the finger
+ * moved up in px; scrollTop, scrollHeight and viewHeight are the scroll-view's.
+ */
+function autoFooterLoadsOnDragEnd({ dragUp, scrollTop, scrollHeight, viewHeight }) {
+  if (!(dragUp > CYLRefreshDragSlop) || !(viewHeight > 0)) return false
+  if (!(scrollHeight > viewHeight + 2)) return true
+  return scrollTop >= scrollHeight - viewHeight - 2
+}
+
 /**
  * An icon spec for a state: { path, size }. cyl-refresh draws it with cyl-animated-item (CYLTabBarController's
  * CYLAnimatedItem): Lottie (.json / .lottie), PAG, Rive (.riv) and SVGA files play through the engine the page passes in
@@ -146,5 +161,5 @@ module.exports = {
   CYLRefreshHeaderHeight,
   CYLRefreshFooterHeight,
   CYLRefreshCupertinoHeaderHeight,
-  CYLRefresh: { setLanguageCode, onLanguageChange, reloadLanguage, registerStrings, finishText, refreshText, stateText, lastUpdatedText, headerStateForPull, iconForState },
+  CYLRefresh: { setLanguageCode, onLanguageChange, reloadLanguage, registerStrings, finishText, refreshText, stateText, lastUpdatedText, headerStateForPull, autoFooterLoadsOnDragEnd, iconForState },
 }
