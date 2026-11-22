@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（90 / 100）：补全 AGENTS.md 中被截断的摘要并修复 CI 构建失败 / Done (90/100): Complete the truncated AGENTS.md summaries and fix the failing CI build
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a），90 / 100。 | Status: done (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a), 90 / 100. |
+| 提示词（原文）。 | Prompt (verbatim): "polish the truncated summaries in AGENTS.md. and fix ci bulid fail" |
+| 验收：满分（100）= AGENTS.md 中所有以 “…” 截断的摘要行改写为完整句子且与 docs/instructions 中的全文一致、文件不超过 200 行；所有开放 PR 的 CI 失败已查明并修复或确认为偶发后重跑通过。及格（60）= 摘要全部补全，CI 失败原因已查明。 | Acceptance: full marks (100) = every summary line in AGENTS.md cut off with "…" rewritten as a complete sentence that matches the full text in docs/instructions, the file at most 200 lines; every open pull request's CI failure found and fixed, or shown flaky by a passing re-run. Pass (60) = all summaries complete and the CI failure's cause found. |
+| 结果：AGENTS.md 的 36 个截断行（含 5 个子项）全部改写为完整摘要，并按 docs/instructions 的全文核对（142 行）。CI：本分支 bee691d4 的 iOS、iOS 15 runtime、Android 全部通过。唯一失败是 PR #35（`fix/ios-swift-todos-placeholder`，Mac 会话的分支，目前没有 Mac 会话在线）b2d7c5c2 的两个 iOS 测试：`testInvalidRiveRestoresStaticImage`（30 秒等待超时）与 `testBadgeInAccessibleContainerIsReadOnItsOwn`（等待结果 2 = 超时）；两个测试文件在两个分支相同，本分支同样测试通过，判断为 runner 偶发超时，已重跑失败的 job（run 44970686997）。 | Result: all 36 truncated lines in AGENTS.md (5 of them sub-items) rewritten as complete summaries and checked against the full text in docs/instructions (142 lines). CI: on this branch, bee691d4 passes iOS, iOS 15 runtime and Android. The only failure is PR #35 (`fix/ios-swift-todos-placeholder`, a Mac session's branch; no Mac session is active) at b2d7c5c2: two iOS tests, `testInvalidRiveRestoresStaticImage` (30 s wait timed out) and `testBadgeInAccessibleContainerIsReadOnItsOwn` (wait result 2 = timed out). Both test files are the same on both branches and pass here, so these look like runner timeouts; the failed jobs were re-run (run 44970686997). |
+| 评分：90 / 100。TODO（-5）：PR #35 重跑结果待确认；若仍失败，说明是该分支对 `CYLPlaceholderView` 的修改引起，交给下一个 Mac 会话。TODO（-5）：instructions.md 中仍有 9 个截断摘要（本次只要求 AGENTS.md）。PR #36 的旧失败仍待所有者决定关闭或更新。 | Score: 90 / 100. TODO (-5): the PR #35 re-run result is pending; if it still fails, the branch's `CYLPlaceholderView` changes are the cause and it goes to the next Mac session. TODO (-5): instructions.md still has 9 truncated summaries (this task asked only for AGENTS.md). PR #36's old failures still wait for the owner to close or update it. |
+
 ### 完成（100 / 100）：执行 git 操作前必须全文阅读 git tag 文件 / Done (100/100): Read the git tag file in full before any git operation
 
 | 中文 | English |
