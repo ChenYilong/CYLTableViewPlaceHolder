@@ -54,8 +54,7 @@ final class CYLPagingUITests: XCTestCase {
         let table = app.tables["pagingTable"]
         app.buttons["Last page"].tap()
         XCTAssertTrue(app.cells["page-7"].waitForExistence(timeout: 5))
-        table.swipeUp()
-        XCTAssertTrue(app.navigationBars["Load completed"].waitForExistence(timeout: 8))
+        swipeUpUntilLoadCompletes(app: app, table: table)
         sleep(2)
         log("1610-1-after-auto-load", table, app.cells["page-7"])
         assertAlignedPage(app: app, table: table, among: 6...8, step: "after the load")
@@ -77,8 +76,7 @@ final class CYLPagingUITests: XCTestCase {
         app.buttons["Last page"].tap()
         let last = app.cells["page-7"]
         XCTAssertTrue(last.waitForExistence(timeout: 5))
-        table.swipeUp()
-        XCTAssertTrue(app.navigationBars["Load completed"].waitForExistence(timeout: 8))
+        swipeUpUntilLoadCompletes(app: app, table: table)
         sleep(2)
         // The table may still be settling back after the footer ends (seen on CI: still 44 pt, the footer's height,
         // off after the 2 s sleep): wait for the resting position before asserting it.
@@ -112,6 +110,20 @@ final class CYLPagingUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tables["pagingTable"].waitForExistence(timeout: 10))
         return app
+    }
+
+    /// Swipes up on the last page until the automatic footer's load completes. On a slow CI runner a synthesized swipe
+    /// sometimes ends before the footer's trigger (seen on CI: no load, the last page simply snaps back), so one more
+    /// swipe is allowed before the test fails.
+    @MainActor
+    private func swipeUpUntilLoadCompletes(app: XCUIApplication, table: XCUIElement) {
+        let completed = app.navigationBars["Load completed"]
+        table.swipeUp()
+        if completed.waitForExistence(timeout: 8) {
+            return
+        }
+        table.swipeUp()
+        XCTAssertTrue(completed.waitForExistence(timeout: 8), "the automatic footer loaded after a swipe on the last page")
     }
 
     /// Waits up to `timeout` seconds for `element` to start at `table`'s top edge (2 pt accuracy); the caller asserts.

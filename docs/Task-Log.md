@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### 完成（待 CI，85 / 100）：修复 CI 失败（Android 插件下载、Example-objc-02 自动 footer UI 测试） / Done (pending CI, 85/100): Fix the CI failures (Android plugin download, Example-objc-02 automatic-footer UI test)
+
+| 中文 | English |
+| --- | --- |
+| 状态：已完成，待 CI 确认（2026-11-22，分支 `feat/android-refresh-port-followup`，PR #31，Windows 会话 chen-yilong-3a），85 / 100。 | Status: done, pending CI (2026-11-22, branch `feat/android-refresh-port-followup`, PR #31, Windows session chen-yilong-3a), 85 / 100. |
+| 提示词（原文）。 | Prompt (verbatim): "fix ci fail" |
+| 验收：满分（100）= 失败原因查明，修复后 Android 与 iOS 工作流在新提交上全部通过。及格（60）= 原因查明并有修复提交。 | Acceptance: full marks (100) = causes found, and after the fix the Android and iOS workflows pass on the new commit. Pass (60) = causes found and a fix committed. |
+| 结果：(1) Android（f51eb698、fee08e92）：“Plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found”。上游 Example-Android 在 fe60097a 之后没有变化，插件在 Plugin Portal 与 Maven Central 都可下载（HTTP 200），本地同一命令通过，重跑失败的 job 通过：属于下载偶发失败。修复：`.github/workflows/android.yml` 的单元测试步骤仅在 Gradle 无法下载插件或依赖时等待 30 秒后用 `--refresh-dependencies` 重试一次，测试失败不重试。(2) iOS（fee08e92）：Example-objc-02 的 `testAutoFooterLoadWithoutNewDataReturnsToTheLastPage` 8 秒内没有出现 “Load completed”，之后最后一页对齐、无第 8 页：慢 runner 上合成的上滑没有到达自动 footer 的触发点。修复：两个自动 footer 测试改用 `swipeUpUntilLoadCompletes`，未加载时再上滑一次后才失败。 | Result: (1) Android (f51eb698, fee08e92): "Plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found". The upstream Example-Android has not changed since fe60097a, the plugin downloads from the Plugin Portal and Maven Central (HTTP 200), the same command passes locally, and re-running the failed job passed: a transient download failure. Fix: the unit-test step of `.github/workflows/android.yml` retries once with `--refresh-dependencies` after 30 s, only when Gradle could not download a plugin or dependency; test failures do not retry. (2) iOS (fee08e92): Example-objc-02's `testAutoFooterLoadWithoutNewDataReturnsToTheLastPage` saw no "Load completed" within 8 s, and afterwards the last page was aligned with no page 8: on a slow runner the synthesized swipe did not reach the automatic footer's trigger. Fix: both automatic-footer tests use `swipeUpUntilLoadCompletes`, which swipes once more before failing when no load started. |
+| 评分：85 / 100。TODO（-15）：新提交上的 Android 与 iOS 运行结果待确认（无法在 Windows 上运行 iOS UI 测试）。 | Score: 85 / 100. TODO (-15): the Android and iOS runs on the new commit are pending (iOS UI tests cannot run on Windows). |
+
 ### 完成（90 / 100）：跟进 CYLTabBarController 014cf3b5 / 143fadff 的 PAG x86_64 调试套件与 Rive reset() 画板问题 / Done (90/100): Follow up CYLTabBarController 014cf3b5 / 143fadff (PAG x86_64 debug kit) and the Rive reset() artboard issue
 
 | 中文 | English |
