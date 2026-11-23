@@ -36,7 +36,7 @@ import {
   CYLRefreshStateHeaderModel,
   CYLRefreshStateTrailerModel
 } from './CYLRefreshClassics';
-import { CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
+import { CYLRefreshHeaderHeightFor, CYLRefreshHeaderYFor, CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
 import { CYLRefreshBundle } from './CYLRefreshBundle';
 import { CYLRefreshImage } from './CYLRefreshImage';
 import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
@@ -798,14 +798,11 @@ export struct CYLRefreshContainer {
   }
 
   private headerHeight(h: CYLRefreshHeaderModel): number {
-    return h.scrollMode === CYLRefreshScrollMode.Stretch ? Math.max(0, this.sv().revealTop) : h.cyl_h;
+    return CYLRefreshHeaderHeightFor(h.scrollMode, this.sv().revealTop, h.cyl_h);
   }
 
   private headerY(h: CYLRefreshHeaderModel): number {
-    if (h.scrollMode === CYLRefreshScrollMode.Move) {
-      return this.sv().revealTop - h.cyl_h - h.ignoredScrollViewContentInsetTop;
-    }
-    return 0;
+    return CYLRefreshHeaderYFor(h.scrollMode, this.sv().revealTop, h.cyl_h, h.ignoredScrollViewContentInsetTop);
   }
 
   private headerSecondaryHeight(): number {

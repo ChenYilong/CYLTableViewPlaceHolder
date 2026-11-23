@@ -11,6 +11,12 @@ import { CYLRefreshStringsJa } from './locales/CYLRefreshStringsJa';
 import { CYLRefreshStringsKo } from './locales/CYLRefreshStringsKo';
 import { CYLRefreshStringsRu } from './locales/CYLRefreshStringsRu';
 import { CYLRefreshStringsUk } from './locales/CYLRefreshStringsUk';
+import {
+  CYLRefreshComponentModel,
+  CYLRefreshFooterModel,
+  CYLRefreshHeaderModel,
+  CYLRefreshScrollViewModel
+} from './CYLRefreshComponent';
 
 /** The gap between the state label and the arrow, in vp. */
 export const CYLRefreshLabelLeftInset: number = 25;
@@ -82,6 +88,40 @@ export enum CYLRefreshScrollMode {
   Front = 2,
   /** Pinned at the visible top, behind the content, revealed as the content moves. */
   Behind = 3
+}
+
+/**
+ * The scroll mode for a mode name (the mini program's `scrollMode`: "move", "stretch", "front", "behind") and the older
+ * `behind` flag (`behind` wins); null or an unknown name is Move.
+ */
+export function CYLRefreshScrollModeFor(name: string | null, behind: boolean = false): CYLRefreshScrollMode {
+  if (behind) {
+    return CYLRefreshScrollMode.Behind;
+  }
+  switch (name) {
+    case 'stretch':
+      return CYLRefreshScrollMode.Stretch;
+    case 'front':
+      return CYLRefreshScrollMode.Front;
+    case 'behind':
+      return CYLRefreshScrollMode.Behind;
+    default:
+      return CYLRefreshScrollMode.Move;
+  }
+}
+
+/** The header's height while pulled: Stretch is exactly the revealed area, the other modes the header's own height. */
+export function CYLRefreshHeaderHeightFor(mode: CYLRefreshScrollMode, revealTop: number, headerHeight: number): number {
+  return mode === CYLRefreshScrollMode.Stretch ? Math.max(0, revealTop) : headerHeight;
+}
+
+/**
+ * The header's top edge in the view: Move rides above the content (revealTop - height - ignored inset); Stretch, Front
+ * and Behind are pinned at the visible top (0), Front in front of the content, Behind behind it.
+ */
+export function CYLRefreshHeaderYFor(mode: CYLRefreshScrollMode, revealTop: number, headerHeight: number,
+  ignoredInsetTop: number): number {
+  return mode === CYLRefreshScrollMode.Move ? revealTop - headerHeight - ignoredInsetTop : 0;
 }
 
 /** Where a pull may start (iOS `CYLRefreshTriggerMode`). */
@@ -162,6 +202,13 @@ export class CYLRefreshConfig {
       }
     });
   }
+
+  /** Makes the header `cyl_installDefaultRefreshControls` installs where there is none; null for none (`defaultHeaderCreator`). */
+  defaultHeaderCreator: ((scrollView: CYLRefreshScrollViewModel) => CYLRefreshHeaderModel | null) | null = null;
+  /** Makes the footer `cyl_installDefaultRefreshControls` installs where there is none; null for none (`defaultFooterCreator`). */
+  defaultFooterCreator: ((scrollView: CYLRefreshScrollViewModel) => CYLRefreshFooterModel | null) | null = null;
+  /** Sets up every control once, when it is first attached to a scroll view, before `didAttachToScrollView` (`defaultInitializer`). */
+  defaultInitializer: ((component: CYLRefreshComponentModel) => void) | null = null;
 
   /** The shared settings (`defaultConfig`). */
   static get defaultConfig(): CYLRefreshConfig {

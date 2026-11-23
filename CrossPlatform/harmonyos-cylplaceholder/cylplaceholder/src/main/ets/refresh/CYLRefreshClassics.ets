@@ -188,6 +188,11 @@ export class CYLRefreshStateHeaderModel extends CYLRefreshHeaderModel {
     return this;
   }
 
+  /** The text of a state (`-titleForState:`). */
+  titleForState(state: CYLRefreshState): string {
+    return titlesText(this.stateTitles, state);
+  }
+
   /** Sets lastUpdatedTimeText (`-cyl_modifyLastUpdatedTimeText:`). */
   cyl_modifyLastUpdatedTimeText(handler: CYLRefreshLastUpdatedTimeTextBlock): CYLRefreshStateHeaderModel {
     this.lastUpdatedTimeText = handler;
@@ -870,6 +875,11 @@ export class CYLRefreshStateTrailerModel extends CYLRefreshTrailerModel {
     this.stateLabel.text = titlesText(this.stateTitles, this.state);
     this.cyl_setNeedsLayout();
     return this;
+  }
+
+  /** The text of a state (`-titleForState:`). */
+  titleForState(state: CYLRefreshState): string {
+    return titlesText(this.stateTitles, state);
   }
 
   /** Places the (vertical) state label centered at `centerX`; returns its width (`-cyl_placeStateLabelAtCenterX:`). */
