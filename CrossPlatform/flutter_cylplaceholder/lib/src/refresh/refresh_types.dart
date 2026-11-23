@@ -44,6 +44,10 @@ enum CYLRefreshScrollMode {
 
   /// The indicator stays behind the content, which moves away and reveals it.
   behind,
+
+  /// `CYLRefresh` draws nothing: the indicator is drawn where a `CYLRefreshHeaderLocator` / `CYLRefreshFooterLocator`
+  /// sits inside the content's slivers, and the locator takes the pull as its height.
+  locator,
 }
 
 /// Where a pull may start, like Android's `CYLRefreshTriggerMode`.

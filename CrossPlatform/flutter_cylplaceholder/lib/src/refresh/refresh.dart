@@ -33,6 +33,14 @@ class CYLRefresh extends StatefulWidget {
     this.fit = StackFit.expand,
     this.clipBehavior = Clip.hardEdge,
     this.safeArea = false,
+    this.scrollController,
+    this.triggerAxis = Axis.vertical,
+    this.readySpringBuilder,
+    this.horizontalReadySpringBuilder,
+    this.springRebound = true,
+    this.isNested = false,
+    this.nestedOuterController,
+    this.nestedInnerController,
   });
 
   /// Pulled down at the top: refreshes.
@@ -74,6 +82,32 @@ class CYLRefresh extends StatefulWidget {
 
   /// True: the indicators keep out of the system areas (status bar, home indicator).
   final bool safeArea;
+
+  /// Handed to the child's scrollables as their primary controller (`PrimaryScrollController`), so the host can read or
+  /// drive the position the pull comes from.
+  final ScrollController? scrollController;
+
+  /// The axis the pull is read on: [Axis.vertical] (the header is pulled down, the footer up) or [Axis.horizontal] (the
+  /// header is pulled right, the footer or a [CYLRefreshTrailer] left, so it sits at the end).
+  final Axis triggerAxis;
+
+  /// The vertical spring after a release; null keeps the bouncing default.
+  final CYLRefreshSpringBuilder? readySpringBuilder;
+
+  /// The horizontal spring after a release; null keeps the bouncing default.
+  final CYLRefreshSpringBuilder? horizontalReadySpringBuilder;
+
+  /// False: a fling stops at the edge instead of springing past it.
+  final bool springRebound;
+
+  /// True: the header and the footer belong to different scrollables, a `NestedScrollView`'s outer and inner ones.
+  final bool isNested;
+
+  /// With [isNested]: the controller of the scrollable that carries the header.
+  final ScrollController? nestedOuterController;
+
+  /// With [isNested]: the controller of the scrollable that carries the footer.
+  final ScrollController? nestedInnerController;
 
   @override
   State<CYLRefresh> createState() => _CYLRefreshState();
@@ -205,8 +239,12 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
   }
 
   bool _onScroll(ScrollNotification notification) {
-    if (notification.depth != 0 || notification.metrics.axis != Axis.vertical) return false;
+    if ((!widget.isNested && notification.depth != 0) || notification.metrics.axis != widget.triggerAxis) return false;
     final metrics = notification.metrics;
+    final position = notification.context == null ? null : Scrollable.maybeOf(notification.context!)?.position;
+    final isOuter = !widget.isNested || (position != null && (widget.nestedOuterController?.positions.contains(position) ?? false));
+    final isInner = !widget.isNested || (position != null && (widget.nestedInnerController?.positions.contains(position) ?? false));
+    if (!isOuter && !isInner) return false;
     final header = _header.component;
     final footer = _footer.component;
     if (notification is ScrollStartNotification) {
@@ -220,12 +258,14 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
         _release();
       }
     }
-    final headerPull = math.max(0.0, metrics.minScrollExtent - metrics.pixels);
-    final footerPull = math.max(0.0, metrics.pixels - metrics.maxScrollExtent);
+    final headerPull = isOuter ? math.max(0.0, metrics.minScrollExtent - metrics.pixels) : _pull.value.$1;
+    final footerPull = isInner ? math.max(0.0, metrics.pixels - metrics.maxScrollExtent) : _pull.value.$2;
     if (_pull.value != (headerPull, footerPull)) _pull.value = (headerPull, footerPull);
-    header?.handlePull(headerPull, dragging: _dragging, startedAtEdge: _startedAtTop);
-    footer?.handlePull(footerPull, dragging: _dragging, startedAtEdge: _startedAtBottom);
-    if (footer is CYLRefreshAutoFooter) footer.handleDistanceToEnd(metrics.maxScrollExtent - metrics.pixels);
+    if (isOuter) header?.handlePull(headerPull, dragging: _dragging, startedAtEdge: _startedAtTop);
+    if (isInner) {
+      footer?.handlePull(footerPull, dragging: _dragging, startedAtEdge: _startedAtBottom);
+      if (footer is CYLRefreshAutoFooter) footer.handleDistanceToEnd(metrics.maxScrollExtent - metrics.pixels);
+    }
     if (notification is ScrollEndNotification && _dragging) _release();
     return false;
   }
@@ -246,6 +286,9 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       horizontalFrictionFactorOf: widget.horizontalFrictionFactor,
       maxHeaderPull: header?.maxPullDistance ?? 0,
       maxFooterPull: footer?.maxPullDistance ?? 0,
+      readySpringBuilder: widget.readySpringBuilder,
+      horizontalReadySpringBuilder: widget.horizontalReadySpringBuilder,
+      springRebound: widget.springRebound,
     );
     Widget child;
     if (widget.childBuilder != null) {
@@ -254,6 +297,9 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       var behavior = ScrollConfiguration.of(context).copyWith(physics: physics);
       if (widget.scrollBehaviorBuilder != null) behavior = widget.scrollBehaviorBuilder!(behavior);
       child = ScrollConfiguration(behavior: behavior, child: widget.child);
+    }
+    if (widget.scrollController != null) {
+      child = PrimaryScrollController(controller: widget.scrollController!, scrollDirection: widget.triggerAxis, child: child);
     }
     child = NotificationListener<ScrollNotification>(onNotification: _onScroll, child: child);
     return ClipRect(
@@ -270,17 +316,24 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
           }
 
           final shift = extra(_header, headerPull) - extra(_footer, footerPull);
-          return Stack(
+          final horizontal = widget.triggerAxis == Axis.horizontal;
+          return _CYLRefreshScope(
+            header: _header.controller,
+            footer: _footer.controller,
+            pull: _pull,
+            headerComponent: header,
+            footerComponent: footer,
+            child: Stack(
             fit: widget.fit,
             clipBehavior: Clip.none,
             children: [
               if (header != null && header.scrollMode == CYLRefreshScrollMode.behind) _indicator(header, headerTotal),
               if (footer != null && footer.scrollMode == CYLRefreshScrollMode.behind) _indicator(footer, footerTotal),
-              Transform.translate(offset: Offset(0, shift), child: child),
+              Transform.translate(offset: horizontal ? Offset(shift, 0) : Offset(0, shift), child: child),
               if (header != null && header.scrollMode != CYLRefreshScrollMode.behind) _indicator(header, headerTotal),
               if (footer != null && footer.scrollMode != CYLRefreshScrollMode.behind) _indicator(footer, footerTotal),
             ],
-          );
+          ));
         },
       ),
     );
@@ -289,42 +342,123 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
   Widget _indicator(CYLRefreshComponent component, double total) {
     final expand = component.expandHeight;
     final isHeader = component.isHeader;
-    Widget body = SizedBox(height: expand, child: _IndicatorBody(component: component));
-    if (widget.safeArea) {
+    final horizontal = widget.triggerAxis == Axis.horizontal;
+    Widget body = horizontal
+        ? SizedBox(width: expand, child: _IndicatorBody(component: component))
+        : SizedBox(height: expand, child: _IndicatorBody(component: component));
+    if (widget.safeArea && !horizontal) {
       body = SafeArea(top: isHeader, bottom: !isHeader, left: false, right: false, child: body);
     }
+    if (component.scrollMode == CYLRefreshScrollMode.locator) return const SizedBox.shrink();
     final visible = total > 0 || component.holdsSpace;
     if (!visible) return const SizedBox.shrink();
+    // The near edge of the axis: top / left for the header, bottom / right for the footer.
+    Positioned place({required double offset, required double extent, required Widget child}) => horizontal
+        ? Positioned(top: 0, bottom: 0, left: isHeader ? offset : null, right: isHeader ? null : offset, width: extent, child: child)
+        : Positioned(left: 0, right: 0, top: isHeader ? offset : null, bottom: isHeader ? null : offset, height: extent, child: child);
     switch (component.scrollMode) {
       case CYLRefreshScrollMode.front:
-        final slide = math.min(total, expand);
-        return Positioned(
-          left: 0,
-          right: 0,
-          top: isHeader ? slide - expand : null,
-          bottom: isHeader ? null : slide - expand,
-          height: expand,
-          child: body,
-        );
+        return place(offset: math.min(total, expand) - expand, extent: expand, child: body);
       case CYLRefreshScrollMode.behind:
-        return Positioned(left: 0, right: 0, top: isHeader ? 0 : null, bottom: isHeader ? null : 0, height: expand, child: body);
+        return place(offset: 0, extent: expand, child: body);
       case CYLRefreshScrollMode.move:
-        return Positioned(
-          left: 0,
-          right: 0,
-          top: isHeader ? 0 : null,
-          bottom: isHeader ? null : 0,
-          height: total,
+        return place(
+          offset: 0,
+          extent: total,
           child: ClipRect(
             child: OverflowBox(
-              minHeight: expand,
-              maxHeight: expand,
-              alignment: isHeader ? Alignment.bottomCenter : Alignment.topCenter,
+              minWidth: horizontal ? expand : null,
+              maxWidth: horizontal ? expand : null,
+              minHeight: horizontal ? null : expand,
+              maxHeight: horizontal ? null : expand,
+              alignment: horizontal ? (isHeader ? Alignment.centerRight : Alignment.centerLeft) : (isHeader ? Alignment.bottomCenter : Alignment.topCenter),
               child: body,
             ),
           ),
         );
+      case CYLRefreshScrollMode.locator:
+        return const SizedBox.shrink();
     }
+  }
+}
+
+/// What the locators read from the `CYLRefresh` above them.
+class _CYLRefreshScope extends InheritedWidget {
+  const _CYLRefreshScope({
+    required this.header,
+    required this.footer,
+    required this.pull,
+    required this.headerComponent,
+    required this.footerComponent,
+    required super.child,
+  });
+
+  final AnimationController header;
+  final AnimationController footer;
+  final ValueNotifier<(double, double)> pull;
+  final CYLRefreshComponent? headerComponent;
+  final CYLRefreshComponent? footerComponent;
+
+  static _CYLRefreshScope? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<_CYLRefreshScope>();
+
+  @override
+  bool updateShouldNotify(_CYLRefreshScope old) => headerComponent != old.headerComponent || footerComponent != old.footerComponent;
+}
+
+/// Places the header's indicator inside the content's slivers (use it as the first sliver of a `CustomScrollView`, with
+/// the header's `scrollMode` set to [CYLRefreshScrollMode.locator]): it is as tall as the pull and the open indicator, and
+/// draws the indicator.
+class CYLRefreshHeaderLocator extends StatelessWidget {
+  /// Creates a header locator.
+  const CYLRefreshHeaderLocator({super.key});
+
+  @override
+  Widget build(BuildContext context) => const _CYLRefreshLocator(isHeader: true);
+}
+
+/// Places the footer's indicator inside the content's slivers (the last sliver of a `CustomScrollView`, with the footer's
+/// `scrollMode` set to [CYLRefreshScrollMode.locator]).
+class CYLRefreshFooterLocator extends StatelessWidget {
+  /// Creates a footer locator.
+  const CYLRefreshFooterLocator({super.key});
+
+  @override
+  Widget build(BuildContext context) => const _CYLRefreshLocator(isHeader: false);
+}
+
+class _CYLRefreshLocator extends StatelessWidget {
+  const _CYLRefreshLocator({required this.isHeader});
+
+  final bool isHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = _CYLRefreshScope.maybeOf(context);
+    final component = isHeader ? scope?.headerComponent : scope?.footerComponent;
+    if (scope == null || component == null || component.scrollMode != CYLRefreshScrollMode.locator) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+    final slot = isHeader ? scope.header : scope.footer;
+    return SliverToBoxAdapter(
+      child: ListenableBuilder(
+        listenable: Listenable.merge([scope.pull, slot]),
+        builder: (context, _) {
+          final pull = isHeader ? scope.pull.value.$1 : scope.pull.value.$2;
+          final total = math.max(slot.value, pull);
+          return SizedBox(
+            height: total,
+            child: ClipRect(
+              child: OverflowBox(
+                minHeight: component.expandHeight,
+                maxHeight: component.expandHeight,
+                alignment: isHeader ? Alignment.bottomCenter : Alignment.topCenter,
+                child: SizedBox(height: component.expandHeight, child: _IndicatorBody(component: component)),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 

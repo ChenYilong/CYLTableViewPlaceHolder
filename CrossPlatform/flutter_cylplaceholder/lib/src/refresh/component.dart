@@ -515,3 +515,28 @@ class CYLRefreshListenerFooter extends CYLRefreshFooter {
   /// Creates a drawing-free footer.
   CYLRefreshListenerFooter({super.refreshingHandler, super.notifiesWhenHidden, super.expandHeight, super.scrollMode});
 }
+
+/// A footer for the horizontal axis (`CYLRefresh.triggerAxis` = [Axis.horizontal]): pulled left at the end of the
+/// content, like the iOS `cyl_trailer`. It behaves as a back footer; `expandHeight` is its width.
+class CYLRefreshTrailer extends CYLRefreshBackFooter {
+  /// Creates a trailer; see [CYLRefreshComponent] for the shared arguments.
+  CYLRefreshTrailer({
+    super.refreshingHandler,
+    super.builder,
+    super.refreshEnabled,
+    super.expandHeight,
+    super.triggerRate,
+    super.finishDuration,
+    super.scrollMode,
+    super.triggerMode,
+    super.triggersWhenReached,
+    super.maxPullDistance,
+    super.hapticFeedback,
+    super.notifiesWhenHidden,
+    super.exclusiveWithOtherRefresh,
+    super.defaultOverOffset,
+    super.colorAccent,
+    super.colorPrimary,
+    super.loadsAfterNoMoreData,
+  });
+}
