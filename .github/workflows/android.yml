@@ -14,9 +14,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: android-${{ github.ref }}
-  # A newer push does not cancel a running check on the long-lived port branch (a cancelled macOS job shows no
-  # steps and hides real failures); every other branch still cancels the superseded run.
+  group: android-${{ github.head_ref == 'feat/android-refresh-port-followup' && github.sha || github.ref }}
+  # The long-lived port branch gets one group per commit: a newer push neither cancels the running check nor replaces
+  # the pending one (GitHub keeps one pending run per group and cancels the older pending run, which shows no steps).
+  # Every other branch keeps one group per ref and cancels the superseded run.
   cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}
 
 jobs:
