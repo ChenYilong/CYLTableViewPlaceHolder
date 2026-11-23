@@ -166,4 +166,110 @@ class CYLRefreshDrivenLayoutTest {
             (view is TextView && view.currentTextColor == 0xffff6600.toInt()) || (view as? ViewGroup)?.let { g -> (0 until g.childCount).any { anyOrange(g.getChildAt(it)) } } == true
         assertFalse(anyOrange(layout))
     }
+
+    private fun drivenFooter(footer: CYLRefreshFooter = CYLRefreshBackNormalFooter(activity)): Pair<CYLRefreshDrivenLayout, CYLRefreshFooter> {
+        val layout = CYLRefreshDrivenLayout(activity)
+        layout.cyl_footer = footer
+        activity.setContentView(layout)
+        idle(100)
+        return layout to footer
+    }
+
+    // Footer path of drive (negative offset). Port of the Dart "footer" cases, which use a back footer.
+
+    @Test
+    fun aNegativeOffsetPullsTheFooterThroughPullToLoadToReleaseToLoad() {
+        val (layout, footer) = drivenFooter()
+        val h = footer.expandHeight
+        val phases = mutableListOf<CYLRefreshPhase>()
+        footer.addPhaseObserver { _, _, new -> phases += new }
+        layout.drive(-(h / 3), dragging = true)
+        assertEquals(CYLRefreshPhase.PullToRefresh, footer.phase)
+        assertEquals(CYLRefreshState.Idle, footer.state)
+        layout.drive(-(h + 5), dragging = true)
+        assertEquals(CYLRefreshPhase.ReleaseToRefresh, footer.phase)
+        layout.drive(0, dragging = true)
+        assertEquals(CYLRefreshPhase.Idle, footer.phase)
+        assertEquals(listOf(CYLRefreshPhase.PullToRefresh, CYLRefreshPhase.ReleaseToRefresh, CYLRefreshPhase.Idle), phases)
+    }
+
+    @Test
+    fun releasingAnArmedFooterLoadsOnceAndAShortPullIsCanceled() {
+        val (layout, footer) = drivenFooter()
+        var calls = 0
+        footer.refreshingHandler = { calls++ }
+        footer.finishDuration = 0.01
+        layout.drive(-(footer.expandHeight / 2), dragging = true)
+        layout.release()
+        idle()
+        assertEquals(CYLRefreshPhase.Idle, footer.phase)
+        assertFalse(footer.isRefreshing)
+        layout.drive(-(footer.expandHeight + 5), dragging = true)
+        layout.release()
+        idle()
+        assertTrue(footer.isRefreshing)
+        assertEquals(1, calls)
+        footer.endRefreshing()
+        idle()
+        assertEquals(CYLRefreshPhase.Idle, footer.phase)
+    }
+
+    @Test
+    fun endRefreshingWithNoMoreDataStopsLoadingUntilResetNoMoreData() {
+        val (layout, footer) = drivenFooter()
+        assertFalse(footer.noMoreData)
+        layout.drive(-80, dragging = true)
+        layout.release()
+        idle()
+        footer.endRefreshingWithNoMoreData()
+        idle()
+        assertTrue(footer.noMoreData)
+        assertEquals(CYLRefreshState.NoMoreData, footer.state)
+        layout.drive(-80, dragging = true)
+        layout.release()
+        idle()
+        assertFalse("no more data: a pull must not load", footer.isRefreshing)
+        footer.resetNoMoreData()
+        assertFalse(footer.noMoreData)
+    }
+
+    @Test
+    fun loadsAfterNoMoreDataLetsAPullLoadAgainAndClearsTheFlag() {
+        val (layout, footer) = drivenFooter()
+        footer.loadsAfterNoMoreData = true
+        footer.noticeNoMoreData()
+        layout.drive(-(footer.expandHeight + 5), dragging = true)
+        assertEquals(CYLRefreshPhase.ReleaseToRefresh, footer.phase)
+        layout.release()
+        idle()
+        assertTrue(footer.isRefreshing)
+        assertFalse(footer.noMoreData)
+    }
+
+    @Test
+    fun hapticFeedbackVibratesOnceWhenThePullIsArmed() {
+        var buzzes = 0
+        val header = CYLRefreshHeader(object : com.cyl.refresh.header.ClassicsHeader(activity) {
+            override fun performHapticFeedback(feedbackConstant: Int): Boolean { buzzes++; return true }
+        })
+        header.hapticFeedback = true
+        val (layout, _) = driven(header)
+        layout.drive(header.expandHeight + 5, dragging = true)
+        layout.drive(header.expandHeight + 15, dragging = true)
+        assertEquals(1, buzzes)
+    }
+
+    @Test
+    fun notifiesWhenHiddenDecidesWhetherAHiddenComponentReportsThePull() {
+        val (layout, quiet) = driven()
+        quiet.notifiesWhenHidden = false
+        quiet.view.view.visibility = View.GONE
+        layout.drive(10, dragging = true)
+        assertEquals(0, quiet.dragOffset)
+        assertTrue(CYLRefreshNormalHeader(activity).notifiesWhenHidden)
+        val (layout2, loud) = driven()
+        loud.view.view.visibility = View.GONE
+        layout2.drive(10, dragging = true)
+        assertEquals(10, loud.dragOffset)
+    }
 }
