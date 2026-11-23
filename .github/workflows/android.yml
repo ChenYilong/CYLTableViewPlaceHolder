@@ -4,10 +4,10 @@ name: Android
 
 on:
   pull_request:
-    paths: [ 'android/**', '.github/workflows/android.yml' ]
+    paths: [ 'android/**', 'CrossPlatform/react-native-cylplaceholder/android/**', '.github/workflows/android.yml' ]
   push:
     branches: [ master ]
-    paths: [ 'android/**', '.github/workflows/android.yml' ]
+    paths: [ 'android/**', 'CrossPlatform/react-native-cylplaceholder/android/**', '.github/workflows/android.yml' ]
   workflow_dispatch:
 
 permissions:
@@ -81,9 +81,25 @@ jobs:
           fi
       - name: Build the example
         run: bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" :merged-example:assembleDebug
+      # The React Native library (CrossPlatform/react-native-cylplaceholder/android) depends on this repository's
+      # :merged (io.github.chenyilong:cyltableviewplaceholder-refresh), which depends on :placeholder and
+      # CYLTabBarController's :cylanimateditem; all three are published to the local Maven repository first
+      # (docs/Refresh-Library-Parity.md, hand-off item 9). Its own build uses another Android Gradle plugin version,
+      # so it is a separate Gradle build (-p), not part of this composite.
+      - name: Publish the native components to the local Maven repository
+        run: |
+          bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" \
+            :placeholder:publishToMavenLocal :merged:publishToMavenLocal
+          bash ./gradlew --no-daemon -p "$RUNNER_TEMP/CYLTabBarController/Example-Android" :cylanimateditem:publishToMavenLocal
+      - name: React Native library unit tests
+        env:
+          JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2
+        run: bash ./gradlew --no-daemon -p "$GITHUB_WORKSPACE/CrossPlatform/react-native-cylplaceholder/android" testDebugUnitTest
       - name: Test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: android-test-reports
-          path: android/**/build/reports/tests/
+          path: |
+            android/**/build/reports/tests/
+            CrossPlatform/react-native-cylplaceholder/android/build/reports/tests/
