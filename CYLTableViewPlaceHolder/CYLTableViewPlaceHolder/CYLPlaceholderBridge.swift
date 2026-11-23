@@ -16,19 +16,50 @@ public enum CYLPlaceholderBridge {
     /**
      * [EN] A placeholder view from an item dictionary (the `CYLPlaceholderItem*` keys of `docs/Placeholder-Scenarios.md`), or nil
      *      when it is invalid. The optional keys "animationLoops" (a boolean) and "animationSpeed" (a number above 0) are applied too.
+     *      As on Android, the style may be a name ("wifiOff") as well as a number, a message that is text (not a
+     *      `CYLPlaceholderMessage` number) becomes the title, or a second line under it, and an animation file may be named by
+     *      "asset:<file name>" (a file of the app's bundle or a bundled animation) instead of a full path.
      * [CN] 由条目字典（`docs/Placeholder-Scenarios.md` 的 `CYLPlaceholderItem*` 键）创建占位视图，字典无效时为 nil；
-     *      可选键 "animationLoops"（布尔）与 "animationSpeed"（大于 0 的数）也会生效。
+     *      可选键 "animationLoops"（布尔）与 "animationSpeed"（大于 0 的数）也会生效。与 Android 一样，样式可以是名称（"wifiOff"）
+     *      或数字；文字形式的 message 成为标题或标题下的第二行；动画文件可用 "asset:<文件名>"（应用包内文件或内置动画）代替完整路径。
      */
     public static func placeholderView(params: [String: Any]) -> CYLPlaceholderView? {
         var attributes = params
         attributes["animationLoops"] = nil
         attributes["animationSpeed"] = nil
+        normalizeItemAttributes(&attributes)
         guard let view = try? CYLPlaceholderView(itemAttributes: attributes, imageBundle: nil) else { return nil }
         if let loops = params["animationLoops"] as? Bool { view.animationLoops = loops }
         if let speed = params["animationSpeed"] as? NSNumber, speed.doubleValue.isFinite, speed.doubleValue > 0 {
             view.animationSpeed = CGFloat(speed.doubleValue)
         }
         return view
+    }
+
+    // [EN] Turns the forms a host sends (style names, message text, "asset:" animation names) into the keys the item initializer reads.
+    // [CN] 把宿主传来的形式（样式名称、文字 message、"asset:" 动画名）转换为条目初始化器读取的键。
+    static func normalizeItemAttributes(_ attributes: inout [String: Any]) {
+        if let name = attributes[CYLPlaceholderItemStyle] as? String, let style = CYLScenarioStyle(from: name) {
+            attributes[CYLPlaceholderItemStyle] = NSNumber(value: style.rawValue)
+        }
+        if let text = attributes[CYLPlaceholderItemMessage] as? String {
+            attributes[CYLPlaceholderItemMessage] = nil
+            if let title = attributes[CYLPlaceholderItemTitle] as? String, !title.isEmpty {
+                if !text.isEmpty { attributes[CYLPlaceholderItemTitle] = title + "\n" + text }
+            } else {
+                attributes[CYLPlaceholderItemTitle] = text
+            }
+        }
+        // A bare file name in the URL key is a bundled file, not a URL (the URL key wins over the path key).
+        if let name = attributes[CYLPlaceholderItemAnimationURL] as? String, !name.contains("/") {
+            attributes[CYLPlaceholderItemAnimationURL] = nil
+            if attributes[CYLPlaceholderItemAnimationFilePath] == nil { attributes[CYLPlaceholderItemAnimationFilePath] = "asset:" + name }
+        }
+        if let path = attributes[CYLPlaceholderItemAnimationFilePath] as? String, path.hasPrefix("asset:") {
+            let name = String(path.dropFirst(6))
+            let resolved = Bundle.main.path(forResource: name, ofType: nil) ?? CYLPlaceholderView.path(forBundledAnimation: name)
+            attributes[CYLPlaceholderItemAnimationFilePath] = resolved
+        }
     }
 
     /**

@@ -36,13 +36,18 @@ repository through platform views and method channels; the Dart widgets stay the
 |:---|:---|:---|:---|
 | `flutter_cylplaceholder/CYLPlaceholderView` (`/<id>`) | `CYLNativePlaceholderView`, used by `CYLPlaceholderView` | creation: the item map plus `animationLoops`, `animationSpeed`, `tappable`; `update` (`name`, `value`) | `onTap` |
 | `flutter_cylplaceholder/CYLPlaceholderStackView` (`/<id>`) | `CYLNativePlaceholderStack`, used by `CYLPlaceholderStackView` | creation: `components` (the maps of `CYLPlaceholderComponent.toConfiguration`, an animated icon as an `item`), `backgroundAction`; `update` (`restartAnimation`) | `onAction` (`component-<i>` or `background`) |
-| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by `CYLRefreshClassicHeader` | `drive` (`offset` in logical pixels, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
+| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by `CYLRefreshClassicHeader`, `CYLRefreshClassicFooter` and `CYLRefreshClassicAutoFooter` | creation: `footer` (bool), `loadsAfterNoMoreData`; `drive` (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`; footer: `noMoreData`), footer only `noMoreData` (`value`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
 | `flutter_cylplaceholder/hud` | `CYLPlaceholderHUD` | the HUD method names (`showWithStatus`, `showComponents`, ...) | `onAction` |
 
 The refresh view hosts `CYLRefreshDrivenLayout` (the driven mode of `android/merged`) with a `CYLRefreshNormalHeader`. Flutter
 keeps the scrolling and the phase machine (`CYLRefreshComponent`, still ended with `endRefreshing`); the indicator mirrors it:
-`drive` while pulled, `release` when the finger lifts or a refresh starts, `finishRefresh` when it ends. Header only: the footer
-path of `drive` is untested in the core, so footers keep the Dart indicator.
+`drive` while pulled, `release` when the finger lifts or a refresh starts, `finishRefresh` when it ends. A footer (creation parameter
+`footer: true`) hosts a `CYLRefreshBackNormalFooter` in the same driven layout: the pull is driven as a negative offset,
+`finishRefresh` with `noMoreData: true` ends a load and shows "no more data" in one call, and `noMoreData` (`value`) shows or clears it
+without a load; `loadsAfterNoMoreData` is a creation parameter. The Dart indicator stays the fallback off Android, in `flutter test`, and
+for a footer with a builder, text, icon or image. The Dart contract is tested with mock channels (`test/native_backend_test.dart`); the
+native side is `CYLRefreshDrivenLayout` (footer path: `CYLRefreshDrivenLayoutTest`). Not run on a device: the footer view's placement
+in the list slot and the native footer's trigger height versus the Dart `expandHeight`.
 
 ## Not covered (TODO)
 

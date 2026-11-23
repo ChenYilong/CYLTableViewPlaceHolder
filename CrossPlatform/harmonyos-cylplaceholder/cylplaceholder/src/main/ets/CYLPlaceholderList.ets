@@ -88,6 +88,11 @@ export class CYLPlaceholderListController {
     this.itemCount = itemCount;
   }
 
+  /** The placeholder shown for this list now, or null (iOS `cyl_placeholderView`). */
+  get cyl_placeholderView(): CYLPlaceholderListPlaceholder | null {
+    return this.placeholder;
+  }
+
   /** Whether the list is empty now. */
   get isEmpty(): boolean {
     return this.itemCount() <= 0;

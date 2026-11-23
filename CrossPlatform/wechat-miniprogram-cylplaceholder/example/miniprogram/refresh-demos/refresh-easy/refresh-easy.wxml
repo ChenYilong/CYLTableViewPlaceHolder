@@ -2,7 +2,7 @@
   <view class="content">
     <cyl-refresh id="refresh" header="{{setup.header}}" footer="{{setup.footer}}"
                   header-trigger="{{headerTrigger}}" footer-trigger="{{footerTrigger}}"
-                  secondary-offset="{{setup.secondaryOffset || 0}}" behind="{{setup.behind || scrollBehind}}"
+                  secondary-offset="{{setup.secondaryOffset || 0}}" behind="{{setup.behind || false}}" scroll-mode="{{scrollMode}}"
                   footer-hidden="{{rows.length === 0}}"
                   bind:refresh="onRefresh" bind:loadmore="onLoadMore" bind:secondary="onSecondary" bind:pull="onPull">
       <!-- easyListener: the table header is a 4pt progress bar (UIProgressView, bar style). -->

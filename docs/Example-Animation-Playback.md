@@ -10,6 +10,7 @@
 | [Controls](#controls) | [Controls](#controls) |
 | [Engines](#engines) | [Engines](#engines) |
 | [Pages](#pages) | [Pages](#pages) |
+| [iOS 截图](#ios-截图--ios-screenshots) | [iOS screenshots](#ios-截图--ios-screenshots) |
 
 <!-- docs-navigation:end -->
 
@@ -85,3 +86,34 @@ TODO until each page has the three controls and a screenshot. The order follows 
 | WeChat Mini Program example: scenario detail, animation detail and configuration pages (`CrossPlatform/wechat-miniprogram-cylplaceholder/example/miniprogram/pages/{scenario-detail,animation-detail,configuration}`, controls in `widgets/playback-controls`): "Play all" from frame 0, speed slider 0.25–3×, loop switch | mini program | Done for these pages (2026-11-17): Play all, loop and speed work live (speed fixed in CYLTabBarController PR #818, `2b09d007`; see MP2 / MP4 in `docs/WeChat-MiniProgram.md`). The refresh icon demo has them too (2026-11-17): `cyl-refresh` takes `icon-speed` / `icon-loop` and `playIconsFromStart()` (core), checked in the simulator ([screenshot](assets/wechat-miniprogram-refresh-icon-controls.jpg)). |
 | HarmonyOS example, animation detail, scenario and refresh icon pages (`AnimationDetailPage.ets`, `ScenarioDetailPage.ets`, `RefreshIconDemoPage.ets` under `CrossPlatform/harmonyos-cylplaceholder/entry/src/main/ets/pages`, controls in `common/Playback.ets`): Play all from 0, speed slider 0.25–3x, loop switch, live; Lottie, PAG (driven progress) and GIF (scaled frame durations) | HarmonyOS | Done in code, 2026-11-16; Rive speed and the emulator screenshot TODO (`docs/HarmonyOS.md`, Q7 and Q13) |
 | React Native and Flutter examples (CYLTabBarController `react-native-cyltabbar` and `flutter_cyltabbar`, Messages tab, Playback card) | cross-platform | Done (2026-11-18, Android emulator-5556, CYLTabBarController 4cb61807): Play all, speed (2.75×) and loop with Rive tab icons: icons keep playing with loop on and stop after one play with loop off (pixel diffs of the icons, badges excluded). Screenshots: `assets/android-17-api37-x86_64-emulator-playback-controls-5f3f774-20261118-sheet.png`, `assets/android-17-api37-x86_64-emulator-playback-controls-5f3f774-20261118-sheet.png`. Found: in Flutter, turning on "Rive tab icons" jumps back to the first tab (React Native stays on Messages); reported to the CYLTabBarController session. The search examples (`react-native-cylsearch`, `flutter_cylsearch`) show no animations: launch checked only. |
+
+
+## iOS 截图 / iOS screenshots
+
+| 中文 | English |
+| --- | --- |
+| iOS 27.2、iPhone 18 Pro 模拟器、Xcode 27.2、macOS 27.3，CYLTabBarController 12ed11ff，本仓库 d327a4e，2026-11-24：Example-Scenarios“动画”页的 87 个动画文件详情页（每个文件一张原图 `ios-27.2-iphone18pro-sim-ph-anim-*-d327a4e-20261124.png`，页面上可见“全部播放”、速度与循环控件），拼成 12 张图（占位 5、刷新 3、场景示例 3、标签页 1），每张有页眉、说明与页脚。 | iOS 27.2, iPhone 18 Pro simulator, Xcode 27.2, macOS 27.3, CYLTabBarController 12ed11ff, this repository d327a4e, 2026-11-24: the 87 animation file detail pages of the Example-Scenarios "Animations" page (one original per file, `ios-27.2-iphone18pro-sim-ph-anim-*-d327a4e-20261124.png`, the Play all, speed and loop controls are visible on each page), stitched into 12 sheets (placeholder 5, refresh 3, scenario examples 3, tabs 1), each with header, captions and footer. |
+
+![iOS animation detail pages, placeholder-1of5](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-placeholder-1of5-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, placeholder-2of5](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-placeholder-2of5-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, placeholder-3of5](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-placeholder-3of5-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, placeholder-4of5](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-placeholder-4of5-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, placeholder-5of5](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-placeholder-5of5-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, refresh-1of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-refresh-1of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, refresh-2of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-refresh-2of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, refresh-3of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-refresh-3of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, scenario-examples-1of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-scenario-examples-1of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, scenario-examples-2of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-scenario-examples-2of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, scenario-examples-3of3](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-scenario-examples-3of3-d327a4e-20261124-sheet.png)
+
+![iOS animation detail pages, tabs-1of1](assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-tabs-1of1-d327a4e-20261124-sheet.png)

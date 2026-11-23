@@ -73,7 +73,7 @@ private func CYLScenarioConfiguredText(_ dictionary: [String: Any], _ literalNam
 
 // [EN] A style from a number or a name such as "WifiOff" or "CYLPlaceholderWifiOff" (any case).
 // [CN] 从数字或名称（如 "WifiOff"、"CYLPlaceholderWifiOff"，不区分大小写）得到样式。
-private func CYLScenarioStyle(from value: Any) -> CYLPlaceholderStyle? {
+func CYLScenarioStyle(from value: Any) -> CYLPlaceholderStyle? {
     let count = CYLPlaceholderStyle.count.rawValue
     if let number = value as? NSNumber {
         let integer = number.intValue

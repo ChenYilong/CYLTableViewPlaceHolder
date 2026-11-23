@@ -4,11 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-/// Where the placeholder and the HUD come from: the native components of the host platform (the Android
-/// `CYLPlaceholderView` and `CYLPlaceholderHUD`, through this package's Android plugin) or the Dart implementation.
+/// Where the placeholder and the HUD come from: the native components of the host platform (`CYLPlaceholderView`,
+/// `CYLPlaceholderStackView` and `CYLPlaceholderHUD` on Android and iOS, through this package's plugins) or the Dart
+/// implementation.
 ///
-/// The Dart implementation is the fallback for the platforms that have no native half yet (iOS, web, desktop) and for
-/// `flutter test`. The native half is used on Android, unless [override] says otherwise.
+/// The Dart implementation is the fallback for the platforms that have no native half (web, desktop) and for
+/// `flutter test`. The native half is used on Android and iOS, unless [override] says otherwise. The native refresh header
+/// exists on Android only ([refreshEnabled]).
 abstract final class CYLPlaceholderNative {
   /// The type of the platform view of the native `CYLPlaceholderView`.
   static const String viewType = 'flutter_cylplaceholder/CYLPlaceholderView';
@@ -19,12 +21,38 @@ abstract final class CYLPlaceholderNative {
   /// true or false forces the native half on or off (tests use it); null decides by platform.
   static bool? override;
 
-  /// Whether the native components are used now: Android, outside `flutter test`, unless [override] says otherwise.
+  /// Whether the native components are used now: Android or iOS, outside `flutter test`, unless [override] says otherwise.
   static bool get enabled {
     final forced = override;
     if (forced != null) return forced;
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return false;
+    if (kIsWeb || (defaultTargetPlatform != TargetPlatform.android && defaultTargetPlatform != TargetPlatform.iOS)) return false;
     return !Platform.environment.containsKey('FLUTTER_TEST');
+  }
+
+  /// Whether the native refresh header is used: [enabled] on Android (iOS has no native driven header yet).
+  static bool get refreshEnabled => enabled && defaultTargetPlatform == TargetPlatform.android;
+
+  /// The platform view of [viewType] for the host platform: a `UiKitView` on iOS, an `AndroidView` elsewhere, both created
+  /// from [creationParams] with the standard codec.
+  static Widget platformView({
+    required String viewType,
+    required Map<String, Object?> creationParams,
+    required PlatformViewCreatedCallback onPlatformViewCreated,
+  }) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return UiKitView(
+        viewType: viewType,
+        creationParams: creationParams,
+        creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: onPlatformViewCreated,
+      );
+    }
+    return AndroidView(
+      viewType: viewType,
+      creationParams: creationParams,
+      creationParamsCodec: const StandardMessageCodec(),
+      onPlatformViewCreated: onPlatformViewCreated,
+    );
   }
 }
 
@@ -106,10 +134,9 @@ class _CYLNativePlaceholderViewState extends State<CYLNativePlaceholderView> {
       builder: (context, constraints) => SizedBox(
         width: constraints.hasBoundedWidth ? constraints.maxWidth : null,
         height: constraints.hasBoundedHeight ? constraints.maxHeight : widget.height,
-        child: AndroidView(
+        child: CYLPlaceholderNative.platformView(
           viewType: CYLPlaceholderNative.viewType,
           creationParams: widget.creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
           onPlatformViewCreated: _created,
         ),
       ),

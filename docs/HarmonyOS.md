@@ -242,7 +242,7 @@
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：94 / 100**（两张表合计：没有 TODO 的行 1000 / 计入的行 1059；n/a 14 行不计入）。API 表 809 / 868，演示表 191 / 191。 | **HarmonyOS score: 94 / 100** (both tables: rows without TODO 1000 / counted rows 1059; 14 n/a rows not counted). API table 809 / 868, demo table 191 / 191. |
+| **鸿蒙完成度：97 / 100**（两张表合计：没有 TODO 的行 1032 / 计入的行 1060；n/a 14 行不计入）。API 表 841 / 868，演示表 191 / 192。 | **HarmonyOS score: 97 / 100** (both tables: rows without TODO 1032 / counted rows 1060; 14 n/a rows not counted). API table 841 / 868, demo table 191 / 192. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -334,7 +334,7 @@
 | `CYLRefreshAutoFooter` `automaticallyRefresh` | `CYLRefreshAutoFooterModel.automaticallyRefresh` |
 | `CYLRefreshAutoFooter` `triggerAutomaticallyRefreshPercent` | `CYLRefreshAutoFooterModel.triggerAutomaticallyRefreshPercent` |
 | `CYLRefreshAutoFooter` `autoTriggerTimes` | `CYLRefreshAutoFooterModel.autoTriggerTimes` |
-| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | TODO |
+| `CYLRefreshAutoFooter` `loadsWhenContentNotFull` | `CYLRefreshAutoFooterModel.loadsWhenContentNotFull` |
 
 #### `CYLRefresh/Base/CYLRefreshBackFooter.h`
 
@@ -434,16 +434,16 @@
 | `CYLRefreshComponent` `notifiesWhenHidden` | `CYLRefreshComponentModel.notifiesWhenHidden` |
 | `CYLRefreshComponent` `-addPhaseObserver:` | `CYLRefreshComponentModel.addPhaseObserver(observer)` |
 | `CYLRefreshComponent` `-removePhaseObserver:` | `CYLRefreshComponentModel.removePhaseObserver(token)` |
-| `CYLRefreshComponent` `autoRefresh` | TODO |
-| `CYLRefreshComponent` `-beginRefreshingAfterDelay:` | TODO |
-| `CYLRefreshComponent` `-beginRefreshingAnimationOnly` | TODO |
-| `CYLRefreshComponent` `-endRefreshingAfterDelay:success:` | TODO |
-| `CYLRefreshComponent` `-addScrollObserver:` | TODO |
-| `CYLRefreshComponent` `-removeScrollObserver:` | TODO |
-| `CYLRefreshComponent` `canTriggerBlock` | TODO |
-| `CYLRefreshComponent` `-canTrigger` | TODO |
+| `CYLRefreshComponent` `autoRefresh` | `CYLRefreshComponentModel.autoRefresh` |
+| `CYLRefreshComponent` `-beginRefreshingAfterDelay:` | `CYLRefreshComponentModel.beginRefreshingAfterDelay(delay)` |
+| `CYLRefreshComponent` `-beginRefreshingAnimationOnly` | `CYLRefreshComponentModel.beginRefreshingAnimationOnly()` |
+| `CYLRefreshComponent` `-endRefreshingAfterDelay:success:` | `CYLRefreshComponentModel.endRefreshingAfterDelay(delay, success)` |
+| `CYLRefreshComponent` `-addScrollObserver:` | `CYLRefreshComponentModel.addScrollObserver(observer)` |
+| `CYLRefreshComponent` `-removeScrollObserver:` | `CYLRefreshComponentModel.removeScrollObserver(token)` |
+| `CYLRefreshComponent` `canTriggerBlock` | `CYLRefreshComponentModel.canTriggerBlock` |
+| `CYLRefreshComponent` `-canTrigger` | `CYLRefreshComponentModel.canTrigger()` |
 | `CYLRefreshComponent` `disablesContentWhileRefreshing` | TODO |
-| `CYLRefreshComponent` `dragRate` | TODO |
+| `CYLRefreshComponent` `dragRate` | `CYLRefreshComponentModel.dragRate` (applied in `CYLRefreshScrollViewModel.cyl_panChanged`) |
 | `CYLRefreshComponent` `reboundAnimationOptions` | TODO |
 | `CYLRefreshComponent` `insetStart` | TODO |
 | `CYLRefreshComponent` `pinnedView` | TODO |
@@ -458,15 +458,15 @@
 | `CYLRefreshComponent` `-phaseDidChangeFrom:to:` | `CYLRefreshComponentModel.phaseDidChangeFrom(oldPhase, phase)` |
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponentModel.refreshDidFinishWithSuccess(success)` |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponentModel.finishingDurationWithSuccess(success)` |
-| `CYLRefreshComponent` `-autoRefreshDidChange:` | TODO |
+| `CYLRefreshComponent` `-autoRefreshDidChange:` | `CYLRefreshComponentModel.autoRefreshDidChange(autoRefresh)` |
 | `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | TODO |
-| `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | TODO |
+| `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | `CYLRefreshComponentModel.openForAutoRefresh(duration)` |
 | `UILabel(CYLRefresh)` | `CYLRefreshLabel` |
 | `UILabel(CYLRefresh)` `+cyl_label` | `CYLRefreshLabel.cyl_label()` |
 | `UILabel(CYLRefresh)` `-cyl_textWidth` | `CYLRefreshLabel.cyl_textWidth()` |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` | TODO |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | TODO |
-| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | TODO |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` | `CYLRefreshComponentModel` (state titles) |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_setStateTitle:forState:` | `CYLRefreshComponentModel.cyl_setStateTitle(title, state)` |
+| `CYLRefreshComponent(CYLRefreshStateTitles)` `-cyl_stateTitleForState:` | `CYLRefreshComponentModel.cyl_stateTitleForState(state)` |
 | `CYLRefreshComponent(ChainingGrammar)` | `CYLRefreshComponentModel` (chaining) |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_autoChangeTransparency:` | `CYLRefreshComponentModel.cyl_autoChangeTransparency(enabled)` |
 | `CYLRefreshComponent(ChainingGrammar)` `-cyl_afterBeginningAction:` | `CYLRefreshComponentModel.cyl_afterBeginningAction(action)` |
@@ -516,8 +516,8 @@
 | `CYLRefreshHeader` `secondaryOpenedBlock` | `CYLRefreshHeaderModel.secondaryOpenedBlock` |
 | `CYLRefreshHeader` `secondaryClosedBlock` | `CYLRefreshHeaderModel.secondaryClosedBlock` |
 | `CYLRefreshHeader` `-openSecondary` | `CYLRefreshHeaderModel.openSecondary()` |
-| `CYLRefreshHeader` `secondaryShouldOpenBlock` | TODO |
-| `CYLRefreshHeader` `secondaryAnimationDuration` | TODO |
+| `CYLRefreshHeader` `secondaryShouldOpenBlock` | `CYLRefreshHeaderModel.secondaryShouldOpenBlock` |
+| `CYLRefreshHeader` `secondaryAnimationDuration` | `CYLRefreshHeaderModel.secondaryAnimationDuration` |
 | `CYLRefreshHeader` `-closeSecondary` | `CYLRefreshHeaderModel.closeSecondary()` |
 
 #### `CYLRefresh/Base/CYLRefreshIconView.h`
@@ -560,11 +560,11 @@
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_placeIconViewWithTitle:labels:visible:replacingViews:` | `CYLRefreshComponentModel.cyl_placeIconViewWithTitle(title, labels, visible, views)` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconImages:duration:forState:` | `CYLRefreshComponentModel.cyl_setIconImages(images, duration, state)` |
 | `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIconImageFrameOf:pullingPercent:` | `CYLRefreshComponentModel.cyl_showIconImageFrameOf(images, pullingPercent)` |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | TODO |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_animationImagesForState:` | TODO |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIdleAnimationFrame` | TODO |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationFilePath:size:forState:` | TODO |
-| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | TODO |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setAnimationImages:duration:forState:` | `CYLRefreshComponentModel.cyl_setAnimationImages(images, duration, state)` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_animationImagesForState:` | `CYLRefreshComponentModel.cyl_animationImagesForState(state)` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_showIdleAnimationFrame` | `CYLRefreshComponentModel.cyl_showIdleAnimationFrame()` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setIconAnimationFilePath:size:forState:` | `CYLRefreshComponentModel.cyl_setIconAnimationFilePath(filePath, size, state)` |
+| `CYLRefreshComponent(CYLRefreshIconLayout)` `-cyl_setBundledIconAnimation:size:forState:` | `CYLRefreshComponentModel.cyl_setBundledIconAnimation(fileName, size, state)` |
 
 #### `CYLRefresh/Base/CYLRefreshPaging.h`
 
@@ -611,9 +611,9 @@
 | `CYLRefreshConfig` `languageCode` | `CYLRefreshConfig.defaultConfig.languageCode` |
 | `CYLRefreshConfig` `i18nFilename` | `CYLRefreshConfig.defaultConfig.i18nFilename` |
 | `CYLRefreshConfig` `i18nBundle` | `CYLRefreshConfig.defaultConfig.i18nBundle` |
-| `CYLRefreshConfig` `defaultHeaderCreator` | TODO |
-| `CYLRefreshConfig` `defaultFooterCreator` | TODO |
-| `CYLRefreshConfig` `defaultInitializer` | TODO |
+| `CYLRefreshConfig` `defaultHeaderCreator` | `CYLRefreshConfig.defaultHeaderCreator` |
+| `CYLRefreshConfig` `defaultFooterCreator` | `CYLRefreshConfig.defaultFooterCreator` |
+| `CYLRefreshConfig` `defaultInitializer` | `CYLRefreshConfig.defaultInitializer` |
 | `CYLRefreshConfig` `defaultConfig` | `CYLRefreshConfig.defaultConfig` |
 | `CYLRefreshConfig` `-init` | n/a (NS_UNAVAILABLE on iOS) |
 | `CYLRefreshConfig` `+new` | n/a (NS_UNAVAILABLE on iOS) |
@@ -1117,7 +1117,7 @@
 | `CYLRefreshStateHeader` `labelLeftInset` | `CYLRefreshStateHeaderModel.labelLeftInset` |
 | `CYLRefreshStateHeader` `stateLabel` | `CYLRefreshStateHeaderModel.stateLabel` |
 | `CYLRefreshStateHeader` `-setTitle:forState:` | `CYLRefreshStateHeaderModel.setTitle(title, state)` |
-| `CYLRefreshStateHeader` `-titleForState:` | TODO |
+| `CYLRefreshStateHeader` `-titleForState:` | `CYLRefreshStateHeaderModel.titleForState(state)` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeFormatter` | `CYLRefreshStateHeaderModel.lastUpdatedTimeFormatter` |
 | `CYLRefreshStateHeader` `lastUpdatedTimeString` | `CYLRefreshStateHeaderModel.lastUpdatedTimeString` |
 | `CYLRefreshStateHeader` `titleTimeSpacing` | `CYLRefreshStateHeaderModel.titleTimeSpacing` |
@@ -1141,7 +1141,7 @@
 | `CYLRefreshStateTrailer` | `CYLRefreshStateTrailerModel` |
 | `CYLRefreshStateTrailer` `stateLabel` | `CYLRefreshStateTrailerModel.stateLabel` |
 | `CYLRefreshStateTrailer` `-setTitle:forState:` | `CYLRefreshStateTrailerModel.setTitle(title, state)` |
-| `CYLRefreshStateTrailer` `-titleForState:` | TODO |
+| `CYLRefreshStateTrailer` `-titleForState:` | `CYLRefreshStateTrailerModel.titleForState(state)` |
 | `CYLRefreshStateTrailer` `-cyl_placeStateLabelAtCenterX:` | `CYLRefreshStateTrailerModel.cyl_placeStateLabelAtCenterX(centerX)` |
 
 #### `CYLRefresh/NSBundle+CYLRefresh.h`
@@ -1192,9 +1192,9 @@
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshHeader` | `CYLRefreshScrollViewModel.cyl_autoHideRefreshHeader` |
 | `UIScrollView(CYLRefresh)` `cyl_autoHideRefreshFooter` | `CYLRefreshScrollViewModel.cyl_autoHideRefreshFooter` |
 | `UIScrollView(CYLRefresh)` `-cyl_beginRefreshingWithStartHeader:` | `CYLRefreshScrollViewModel.cyl_beginRefreshingWithStartHeader(startHeader)` |
-| `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | TODO |
-| `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | TODO |
-| `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | TODO |
+| `UIScrollView(CYLRefresh)` `-cyl_endRefreshingAfterDelay:success:noMoreData:` | `CYLRefreshScrollViewModel.cyl_endRefreshingAfterDelay(delay, success, noMoreData)` |
+| `UIScrollView(CYLRefresh)` `-cyl_endLoadingMoreAfterDelay:success:noMoreData:` | `CYLRefreshScrollViewModel.cyl_endLoadingMoreAfterDelay(delay, success, noMoreData)` |
+| `UIScrollView(CYLRefresh)` `-cyl_installDefaultRefreshControls` | `CYLRefreshScrollViewModel.cyl_installDefaultRefreshControls()` |
 | `UIScrollView(CYLRefresh)` `-cyl_totalDataCount` | `CYLRefreshScrollViewModel.cyl_totalDataCount()` |
 
 #### `CYLRefresh/UIView+CYLExtension.h`
@@ -1259,7 +1259,7 @@
 | `CYLPlaceholderComponent` `+componentWithAttributes:action:` | `CYLPlaceholderComponent.componentWithAttributes(attributes, action)` |
 | `CYLPlaceholderComponent` `+componentWithBundledAnimation:fallbackStyle:title:size:action:` | `CYLPlaceholderComponent.componentWithBundledAnimation(fileName, fallbackStyle, title, size, action)` (played by the stack view, fallback icon until ready) |
 | `CYLPlaceholderComponent` `+hintComponentWithText:` | `CYLPlaceholderComponent.hintComponentWithText(text)` |
-| `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | TODO |
+| `CYLPlaceholderComponent` `+textComponentWithText:fontSize:color:` | `CYLPlaceholderComponent.textComponent(title, size, color)` |
 | `CYLPlaceholderComponent` `+buttonComponentWithTitle:style:action:` | `CYLPlaceholderComponent.buttonComponentWithTitle(title, style, action)` |
 | `CYLPlaceholderComponent` `+separatorComponentWithText:` | `CYLPlaceholderComponent.separatorComponentWithText(text)` |
 | `CYLPlaceholderComponent` `+componentWithDictionary:error:` | `CYLPlaceholderComponent.componentWithDictionary(dictionary, onError)` |
@@ -1458,7 +1458,7 @@
 | `UIViewController(CYLPlaceholderStatus)` `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `CYLPlaceholderStatusController.cyl_applyStatusConfigurationWithContentsOfURL(path, onError)` |
 | `UIScrollView(CYLPlaceholderVisibility)` | `CYLPlaceholderListController` |
 | `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderHidden` | `CYLPlaceholderListController.cyl_placeholderHidden` |
-| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderView` | TODO |
+| `UIScrollView(CYLPlaceholderVisibility)` `cyl_placeholderView` | `CYLPlaceholderListController.cyl_placeholderView` |
 
 #### `CYLRefresh/Custom/Rive/CYLRefreshRiveHeader.swift`
 
@@ -1712,6 +1712,7 @@
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Refresh on start (CYLEasyRefreshDemoViewController - easyRefreshOnStart) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Paging (CYLEasyRefreshDemoViewController - easyPaging) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
+| flutter_easy_refresh samples · Scroll mode (CYLEasyRefreshDemoViewController - easyScrollMode) | TODO |
 | flutter_easy_refresh samples · Listener header (CYLEasyRefreshDemoViewController - easyListener) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Chat (CYLEasyRefreshDemoViewController - easyChat) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · User profile (CYLEasyRefreshDemoViewController - easyUserProfile) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
