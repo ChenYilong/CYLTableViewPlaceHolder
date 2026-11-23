@@ -62,4 +62,7 @@ dependencies {
     // [CN] 本插件承载的原生占位图、堆叠与 HUD（本仓库的 android/placeholder，发布为 io.github.chenyilong:cyltableviewplaceholder）。
     //      在本仓库内，示例从源码构建它：示例的 android/settings.gradle.kts 引入本仓库的 android 构建，由它替换这个坐标。
     implementation("io.github.chenyilong:cyltableviewplaceholder:${findProperty("cylPlaceholderVersion") ?: "0.1.0"}")
+    // [EN] The refresh kernel with its driven mode (CYLRefreshDrivenLayout) and the native headers (android/merged, which brings the placeholder too).
+    // [CN] 带驱动模式（CYLRefreshDrivenLayout）与原生刷新头的刷新内核（android/merged，同时带有占位图）。
+    implementation("io.github.chenyilong:cyltableviewplaceholder-refresh:${findProperty("cylPlaceholderVersion") ?: "0.1.0"}")
 }

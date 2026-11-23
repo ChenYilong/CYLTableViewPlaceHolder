@@ -128,6 +128,7 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   CYLRefreshPhase _phase = CYLRefreshPhase.idle;
   double _pullingPercent = 0;
   double _dragOffset = 0;
+  bool _dragging = false;
   bool _lastRefreshSucceeded = true;
   bool _noMoreData = false;
   bool _disposed = false;
@@ -162,6 +163,9 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
 
   /// The current pull in logical pixels.
   double get dragOffset => _dragOffset;
+
+  /// Whether a finger holds the content (the `dragging` of the last [handlePull]); the native indicator feeds it to the driven mode.
+  bool get dragging => _dragging;
 
   /// Whether the last refresh succeeded.
   bool get lastRefreshSucceeded => _lastRefreshSucceeded;
@@ -305,6 +309,7 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
     if (!visible && !notifiesWhenHidden) return;
     final changed = offset != _dragOffset;
     _dragOffset = offset < 0 ? 0 : offset;
+    _dragging = dragging;
     final wasSecondaryArmed = _secondaryArmed;
     _secondaryArmed = secondaryView != null && refreshEnabled && !_secondaryOpen && dragging && !isRefreshing && _dragOffset >= secondaryTriggerOffset;
     if (_secondaryArmed != wasSecondaryArmed) notifyListeners();

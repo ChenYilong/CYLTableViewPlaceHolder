@@ -237,6 +237,9 @@ class CYLPlaceholderView extends StatelessWidget {
         params: {
           ...itemAttributes,
           CYLPlaceholderItemKey.animationSize: [animationSize.width, animationSize.height],
+          // [EN] The native view plays the animation file of this key, an Android asset (the example copies it into its android/ project).
+          // [CN] 原生视图播放此键指定的动画文件，它是 Android 的 asset（示例把它复制进自己的 android/ 工程）。
+          if (animationFile != null) 'CYLPlaceholderItemAnimationFilePath': 'asset:$animationFile',
         },
         animationLoops: animationLoops,
         animationSpeed: animationSpeed,

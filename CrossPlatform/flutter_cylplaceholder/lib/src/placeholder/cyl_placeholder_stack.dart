@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'cyl_placeholder_view.dart';
+import 'native_backend.dart';
+import 'native_stack.dart';
 
 /// What a [CYLPlaceholderComponent] shows, like the iOS and Android component kinds.
 enum CYLPlaceholderComponentKind {
@@ -199,8 +201,25 @@ class CYLPlaceholderStackView extends StatelessWidget {
   /// The space around the stack.
   final EdgeInsets padding;
 
+  /// Whether the native component draws the stack: the native half is on, and no component asks for what only Flutter can draw
+  /// (a Flutter [CYLPlaceholderComponent.image]).
+  bool get _usesNative => CYLPlaceholderNative.enabled && components.every((c) => c.image == null);
+
   @override
   Widget build(BuildContext context) {
+    if (_usesNative) {
+      return ListenableBuilder(
+        listenable: Listenable.merge(<Listenable>[?controller]),
+        builder: (context, _) => Padding(
+          padding: padding,
+          child: CYLNativePlaceholderStack(
+            components: components,
+            backgroundAction: backgroundAction,
+            animationRestartToken: controller?.animationRestartToken ?? 0,
+          ),
+        ),
+      );
+    }
     final body = ListenableBuilder(
       listenable: Listenable.merge(<Listenable>[?controller]),
       builder: (context, _) {
