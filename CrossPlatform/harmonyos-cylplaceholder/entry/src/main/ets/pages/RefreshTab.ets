@@ -95,7 +95,7 @@ const SECTIONS: MenuSection[] = [
   ]),
   new MenuSection('CYLScenarioEasySection', [
     easy('Cupertino', 'easyCupertino'), easy('Secondary', 'easySecondary'), easy('TriggerMode', 'easyTriggerMode'),
-    easy('RefreshOnStart', 'easyRefreshOnStart'), easy('Paging', 'easyPaging'), easy('Listener', 'easyListener'),
+    easy('RefreshOnStart', 'easyRefreshOnStart'), easy('Paging', 'easyPaging'), easy('ScrollMode', 'easyScrollMode'), easy('Listener', 'easyListener'),
     easy('Chat', 'easyChat'), easy('UserProfile', 'easyUserProfile'),
   ]),
 ];

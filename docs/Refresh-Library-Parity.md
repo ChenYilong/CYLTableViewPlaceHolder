@@ -421,7 +421,7 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 
 | Demo | iOS | Android | HarmonyOS | Mini program | React Native | Flutter |
 | --- | --- | --- | --- | --- | --- | --- |
-| Scroll modes (move, stretch, front, behind) on one page, chosen by chips | TODO | `EasyRefreshPage` (`easyScrollMode`, 2026-11-23: four tappable rows, the current one marked; built with `:merged-example:assembleDebug`, not run on a device) | TODO | TODO | TODO | has the three modes in the styles / layout tests only: TODO |
+| Scroll modes (move, stretch, front, behind) on one page, chosen by chips | TODO | `EasyRefreshPage` (`easyScrollMode`, 2026-11-23: four tappable rows, the current one marked; built with `:merged-example:assembleDebug`, not run on a device) | `RefreshEasyPage` (`easyScrollMode`, 2026-11-23: the same four rows; written statically, **not built**: no DevEco here) | TODO | TODO | has the three modes in the styles / layout tests only: TODO |
 | Styles page completeness | present | present | present | TODO (no Bezier circle, no StoreHouse) | TODO | present |
 | The easy-refresh demos Flutter lacks (trigger mode, refresh on start, listener, chat, user profile) | present | present | present | present | TODO | TODO |
 | A React Native example app | n/a | n/a | n/a | n/a | TODO (needs the native container first) | n/a |
