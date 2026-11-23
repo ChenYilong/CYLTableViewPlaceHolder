@@ -210,6 +210,22 @@ open class CYLRefreshAutoFooter: CYLRefreshFooter {
         }
     }
 
+    // [EN] The driven mode (`CYLRefreshDrivenLayout`): a new drag resets the trigger count, as a pan `.began` does.
+    // [CN] 驱动模式（`CYLRefreshDrivenLayout`）：新的拖动重置触发次数，与手势 `.began` 相同。
+    func cyl_drivenDragBegan() {
+        resetTriggerTimes()
+    }
+
+    // [EN] The driven mode: the finger lifted after a pull at the end of the host's content, which is the footer being in
+    //      view, so it loads as a release at the end does (the driven scroll view has no content of its own, so the
+    //      content-not-full test does not apply).
+    // [CN] 驱动模式：宿主内容末端被上拉后手指抬起，即刷新尾已可见，按末端松手加载（驱动的滚动视图自身没有内容，故不适用内容不满一屏的判断）。
+    func cyl_drivenReleased() {
+        if state != .idle || !isRefreshEnabled || scrollView?.cyl_header?.isRefreshing == true || !canTrigger() { return }
+        triggerByDrag = true
+        beginRefreshing()
+    }
+
     private var unlimitedTrigger: Bool {
         leftTriggerTimes == -1
     }
