@@ -40,6 +40,9 @@ export type CYLRefreshTargetAction = (component: CYLRefreshComponentModel) => vo
 /** Called with the component, the old and the new phase (iOS `addPhaseObserver:`). */
 export type CYLRefreshPhaseObserver = (component: CYLRefreshComponentModel, oldPhase: CYLRefreshPhase,
   phase: CYLRefreshPhase) => void;
+/** Called on every move of a control with the component, the pulled vp, the pulling percent and whether a finger drags. */
+export type CYLRefreshScrollObserver = (component: CYLRefreshComponentModel, offset: number, percent: number,
+  dragging: boolean) => void;
 /** Counts the rows of the wrapped list (iOS `cyl_totalDataCount` reads the table's data source). */
 export type CYLRefreshDataCountProvider = () => number;
 
@@ -519,6 +522,66 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
   }
 
   /**
+   * Ends the header's refresh after `delay` seconds with `success` and sets the footer's no-more-data state: true shows
+   * no more data, false resets it (`-cyl_endRefreshingAfterDelay:success:noMoreData:`).
+   */
+  cyl_endRefreshingAfterDelay(delay: number, success: boolean, noMoreData: boolean): void {
+    if (this.header !== null) {
+      this.header.endRefreshingAfterDelay(delay, success);
+    }
+    const footer = this.footer;
+    if (footer === null) {
+      return;
+    }
+    const apply = (): void => {
+      if (noMoreData) {
+        footer.endRefreshingWithNoMoreData();
+      } else if (footer.noMoreData) {
+        footer.resetNoMoreData();
+      }
+    };
+    if (!(delay > 0)) {
+      apply();
+    } else {
+      setTimeout(apply, delay * 1000);
+    }
+  }
+
+  /**
+   * Ends the footer's load more after `delay` seconds with `success`; `noMoreData` then shows no more data
+   * (`-cyl_endLoadingMoreAfterDelay:success:noMoreData:`).
+   */
+  cyl_endLoadingMoreAfterDelay(delay: number, success: boolean, noMoreData: boolean): void {
+    const footer = this.footer;
+    if (footer === null) {
+      return;
+    }
+    if (!noMoreData) {
+      footer.endRefreshingAfterDelay(delay, success);
+      return;
+    }
+    if (!(delay > 0)) {
+      footer.endRefreshingWithNoMoreData();
+    } else {
+      setTimeout(() => footer.endRefreshingWithNoMoreData(), delay * 1000);
+    }
+  }
+
+  /**
+   * Sets `cyl_header` and `cyl_footer`, where null, from `CYLRefreshConfig.defaultConfig`'s `defaultHeaderCreator` /
+   * `defaultFooterCreator` (`-cyl_installDefaultRefreshControls`).
+   */
+  cyl_installDefaultRefreshControls(): void {
+    const config = CYLRefreshConfig.defaultConfig;
+    if (this.header === null && config.defaultHeaderCreator !== null) {
+      this.cyl_header = config.defaultHeaderCreator(this);
+    }
+    if (this.footer === null && config.defaultFooterCreator !== null) {
+      this.cyl_footer = config.defaultFooterCreator(this);
+    }
+  }
+
+  /**
    * Refreshes once with `startHeader` in place of `cyl_header`, then puts `cyl_header` back
    * (`-cyl_beginRefreshingWithStartHeader:`); without callbacks of its own it uses the regular header's.
    */
@@ -614,6 +677,15 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
   cyl_panChanged(top: number, bottom: number, right: number): void {
     const oldX = this.cyl_offsetX;
     const oldY = this.cyl_offsetY;
+    // dragRate: the pulled distance per finger distance for a header or back footer; 0 and 1 follow the finger.
+    const header = this.cyl_header;
+    const footer = this.cyl_footer;
+    if (header !== null && header.dragRate > 0 && header.dragRate < 1 && top > 0) {
+      top = top * header.dragRate;
+    }
+    if (footer instanceof CYLRefreshBackFooterModel && footer.dragRate > 0 && footer.dragRate < 1 && bottom > 0) {
+      bottom = bottom * footer.dragRate;
+    }
     this.revealTop = Math.max(this.restTop, top);
     this.revealBottom = top > 0 ? this.restBottom : Math.max(this.restBottom, bottom);
     this.revealRight = Math.max(this.restRight, right);
@@ -712,6 +784,7 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
       }
       c.scrollViewContentOffsetDidChange(change);
       c.didScrollWithOffset(c.dragOffset, c.pullingPercent, this.isDragging);
+      c.cyl_notifyScrollObservers(c.dragOffset, c.pullingPercent, this.isDragging);
       c.cyl_reportPhase();
     });
     this.dispatchDepth--;
@@ -768,6 +841,11 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   triggerMode: CYLRefreshTriggerMode = CYLRefreshTriggerMode.Anywhere;
   /** Whether pulling can refresh (`refreshEnabled`). */
   refreshEnabled: boolean = true;
+  /**
+   * Pull distance per finger distance while pulling the control open, from 0 to 1; 0 (default) and 1 follow the finger
+   * (`dragRate`). Headers and back footers.
+   */
+  dragRate: number = 0;
   /** How the control moves with the pull (`scrollMode`). */
   scrollMode: CYLRefreshScrollMode = CYLRefreshScrollMode.Move;
   /** True while the auto hide keeps the control invisible (the UI reads it). */
@@ -820,6 +898,17 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   private succeeded: boolean = true;
   private reportedPhase: CYLRefreshPhase = CYLRefreshPhase.Idle;
   private phaseObservers: Map<number, CYLRefreshPhaseObserver> = new Map();
+  private scrollObservers: Map<number, CYLRefreshScrollObserver> = new Map();
+  private storedAutoRefresh: boolean = false;
+  private skipsCallbacks: boolean = false;
+  private initializedByConfig: boolean = false;
+  private animationImageTable: Map<CYLRefreshState, CYLRefreshImage[]> = new Map();
+  private stateTitleTable: Map<CYLRefreshState, string> = new Map();
+  /**
+   * Decides whether a pull may arm the control now; null (default) is the built-in edge check (`canTriggerBlock`).
+   * Return false, for example, while a nested horizontal list is being dragged.
+   */
+  canTriggerBlock: ((component: CYLRefreshComponentModel) => boolean) | null = null;
   private targetActions: CYLTargetActionPair[] = [];
   private icon: CYLRefreshIconViewModel | null = null;
   private languageObserver: CYLRefreshLanguageObserver = () => this.i18nDidChange();
@@ -863,6 +952,9 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
 
   /** Calls refreshingBlock, refreshingHandler, the target-actions, the target, then beginRefreshingCompletionBlock. */
   executeRefreshingCallback(): void {
+    if (this.skipsCallbacks) {
+      return;
+    }
     if (this.refreshingBlock !== null) {
       this.refreshingBlock();
     }
@@ -896,9 +988,25 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
     if (this.cyl_holdsBackStartForOtherRefresh()) {
       return;
     }
+    const scrollView = this.cyl_scrollView;
+    const pan = scrollView !== null ? scrollView.panState : CYLRefreshPanState.Possible;
+    const byUser = this.state === CYLRefreshState.Pulling || (scrollView !== null && scrollView.isDragging) ||
+      pan === CYLRefreshPanState.Began || pan === CYLRefreshPanState.Changed || pan === CYLRefreshPanState.Ended;
+    if (!byUser && !this.refreshing && !this.storedAutoRefresh) {
+      this.storedAutoRefresh = true;
+      this.autoRefreshDidChange(true);
+    }
     this.alpha = 1;
     this.pullingPercent = 1;
     if (this.cyl_scrollView !== null && this.cyl_scrollView.cyl_window) {
+      if (this.storedAutoRefresh && !this.refreshing && this.openForAutoRefresh(this.fastAnimationDuration)) {
+        // The control opens itself with its own animation: the inset snaps.
+        const saved = this.fastAnimationDuration;
+        this.fastAnimationDuration = 0;
+        this.state = CYLRefreshState.Refreshing;
+        this.fastAnimationDuration = saved;
+        return;
+      }
       this.state = CYLRefreshState.Refreshing;
     } else if (this.state !== CYLRefreshState.Refreshing) {
       this.state = CYLRefreshState.WillRefresh;
@@ -941,6 +1049,86 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
       }, () => {
       });
     });
+  }
+
+  /** Starts refreshing after `delay` seconds, as `beginRefreshing` does (`-beginRefreshingAfterDelay:`). */
+  beginRefreshingAfterDelay(delay: number): void {
+    if (!(delay > 0)) {
+      this.beginRefreshing();
+      return;
+    }
+    setTimeout(() => this.beginRefreshing(), delay * 1000);
+  }
+
+  /**
+   * Shows the refreshing state without calling the refreshing callbacks (block, handler, target-actions); end it with
+   * `endRefreshing` (`-beginRefreshingAnimationOnly`).
+   */
+  beginRefreshingAnimationOnly(): void {
+    if (this.refreshing) {
+      return;
+    }
+    this.skipsCallbacks = true;
+    this.beginRefreshing();
+    if (!this.refreshing) {
+      // Held back by another refresh: nothing started, so the next start calls back again.
+      this.skipsCallbacks = false;
+    }
+  }
+
+  /** Ends refreshing after `delay` seconds with the result `success` (`-endRefreshingAfterDelay:success:`). */
+  endRefreshingAfterDelay(delay: number, success: boolean): void {
+    if (!(delay > 0)) {
+      this.endRefreshingWithSuccess(success);
+      return;
+    }
+    setTimeout(() => this.endRefreshingWithSuccess(success), delay * 1000);
+  }
+
+  /** Whether the current refresh was started in code rather than by a pull or a scroll (`autoRefresh`). */
+  get autoRefresh(): boolean {
+    return this.storedAutoRefresh;
+  }
+
+  /** Called with true when a refresh started in code begins and with false when it ends (`-autoRefreshDidChange:`). */
+  autoRefreshDidChange(autoRefresh: boolean): void {
+  }
+
+  /**
+   * Called when a refresh starts in code: return true when the control opens itself with its own animation (lasting
+   * `duration` seconds), so the inset snaps (`-openForAutoRefreshWithDuration:`); false by default.
+   */
+  openForAutoRefresh(duration: number): boolean {
+    return false;
+  }
+
+  /**
+   * Calls `observer` on every move of the control with the pulled vp, the percent and whether the user drags
+   * (`-addScrollObserver:`); returns the token for `removeScrollObserver`.
+   */
+  addScrollObserver(observer: CYLRefreshScrollObserver): number {
+    phaseTokens++;
+    this.scrollObservers.set(phaseTokens, observer);
+    return phaseTokens;
+  }
+
+  /** Stops the observer of `token` (`-removeScrollObserver:`). */
+  removeScrollObserver(token: number): void {
+    this.scrollObservers.delete(token);
+  }
+
+  /** Tells the scroll observers about a move (called by the scroll view model after every offset change). */
+  cyl_notifyScrollObservers(offset: number, percent: number, dragging: boolean): void {
+    Array.from(this.scrollObservers.values()).forEach((o: CYLRefreshScrollObserver) => o(this, offset, percent,
+      dragging));
+  }
+
+  /**
+   * Whether a pull may arm the control now: `canTriggerBlock`'s answer, true without one (`-canTrigger`). Headers and
+   * footers check it before arming.
+   */
+  canTrigger(): boolean {
+    return this.canTriggerBlock === null ? true : this.canTriggerBlock(this);
   }
 
   /** Ends refreshing (`-endRefreshing`). */
@@ -1004,6 +1192,13 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
     }
     const old = this.stateValue;
     this.stateValue = value;
+    if (value === CYLRefreshState.Idle || value === CYLRefreshState.NoMoreData) {
+      if (this.storedAutoRefresh) {
+        this.storedAutoRefresh = false;
+        this.autoRefreshDidChange(false);
+      }
+      this.skipsCallbacks = false;
+    }
     this.cyl_stateDidChange(old, value);
   }
 
@@ -1246,6 +1441,12 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
       this.cyl_originalInset = scrollView.cyl_inset;
       this.cyl_willMoveToScrollView(scrollView);
       this.addObservers();
+      // The app-wide setup runs once per control (`CYLRefreshConfig.defaultInitializer`).
+      const initializer = CYLRefreshConfig.defaultConfig.defaultInitializer;
+      if (!this.initializedByConfig && initializer !== null) {
+        this.initializedByConfig = true;
+        initializer(this);
+      }
       this.didAttachToScrollView(scrollView);
       this.cyl_setNeedsLayout();
     }
@@ -1411,6 +1612,55 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
     const p = Math.min(1, Math.max(0, pullingPercent));
     this.cyl_iconView.frameIndex = Math.floor((images.length - 1) * p);
     this.cyl_setNeedsLayout();
+  }
+
+  /**
+   * Keeps the frame images of `state` and shows them as the icon (`-cyl_setAnimationImages:duration:forState:`).
+   * Unlike iOS the control does not grow to the tallest image (a `CYLRefreshImage` carries no size here).
+   */
+  cyl_setAnimationImages(images: CYLRefreshImage[], duration: number, state: CYLRefreshState): void {
+    this.animationImageTable.set(state, images.slice());
+    this.cyl_setIconImages(images, duration, state);
+  }
+
+  /** The images set for `state` with `cyl_setAnimationImages`, or null (`-cyl_animationImagesForState:`). */
+  cyl_animationImagesForState(state: CYLRefreshState): CYLRefreshImage[] | null {
+    const images = this.animationImageTable.get(state);
+    return images === undefined ? null : images;
+  }
+
+  /** While idle, shows the idle images' frame for the current `pullingPercent` (`-cyl_showIdleAnimationFrame`). */
+  cyl_showIdleAnimationFrame(): void {
+    this.cyl_showIconImageFrameOf(this.cyl_animationImagesForState(CYLRefreshState.Idle), this.pullingPercent);
+  }
+
+  /** Sets the icon animation of `state` from a file path (`-cyl_setIconAnimationFilePath:size:forState:`). */
+  cyl_setIconAnimationFilePath(filePath: string, size: CYLRefreshIconSize, state: CYLRefreshState): void {
+    const attributes = CYLRefreshIconViewModel.attributesForAnimationFilePath(filePath, size);
+    if (attributes !== null) {
+      this.cyl_setIconAnimationAttributes(attributes, state);
+    }
+  }
+
+  /** Sets the icon animation of `state` from a bundled file (`-cyl_setBundledIconAnimation:size:forState:`). */
+  cyl_setBundledIconAnimation(fileName: string, size: CYLRefreshIconSize, state: CYLRefreshState): void {
+    const attributes = CYLRefreshIconViewModel.attributesForBundledAnimation(fileName, size);
+    if (attributes !== null) {
+      this.cyl_setIconAnimationAttributes(attributes, state);
+    }
+  }
+
+  /** Sets the text of `state`; null is ignored (`-cyl_setStateTitle:forState:`). */
+  cyl_setStateTitle(title: string | null, state: CYLRefreshState): void {
+    if (title !== null) {
+      this.stateTitleTable.set(state, title);
+    }
+  }
+
+  /** The text of `state`, or null (`-cyl_stateTitleForState:`). */
+  cyl_stateTitleForState(state: CYLRefreshState): string | null {
+    const title = this.stateTitleTable.get(state);
+    return title === undefined ? null : title;
   }
 
   // MARK: - Chaining (`CYLRefreshComponent (ChainingGrammar)`)
@@ -1642,10 +1892,28 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
     return super.cyl_phase();
   }
 
+  /**
+   * Asked before the second floor opens (by a pull or by `openSecondary`); return false to keep it closed; null
+   * (default) always opens (`secondaryShouldOpenBlock`).
+   */
+  secondaryShouldOpenBlock: ((header: CYLRefreshHeaderModel) => boolean) | null = null;
+  /** Seconds the second floor takes to open and to close; 0 uses `slowAnimationDuration` (`secondaryAnimationDuration`). */
+  secondaryAnimationDuration: number = 0;
+
+  /** The second floor's open / close duration. */
+  get cyl_secondaryDuration(): number {
+    return this.secondaryAnimationDuration > 0 ? this.secondaryAnimationDuration : this.slowAnimationDuration;
+  }
+
   /** Opens the second floor (`-openSecondary`). */
   openSecondary(): void {
     const scrollView = this.cyl_scrollView;
     if (this.floor.open || scrollView === null || this.refreshing) {
+      return;
+    }
+    if (this.secondaryShouldOpenBlock !== null && !this.secondaryShouldOpenBlock(this)) {
+      // Vetoed: the armed pull is dropped, the header stays as it is.
+      this.floor.armed = false;
       return;
     }
     this.floor.armed = false;
@@ -1655,7 +1923,7 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
     this.floor.open = true;
     this.cyl_reportPhase();
     const top = this.cyl_originalInset.top + this.cyl_secondaryHeight;
-    scrollView.animator(this.slowAnimationDuration, () => {
+    scrollView.animator(this.cyl_secondaryDuration, () => {
       this.setRefreshingInsetTop(top);
       scrollView.cyl_offsetY = -top;
     }, () => {
@@ -1676,7 +1944,7 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
     this.floor.closePending = false;
     this.cyl_reportPhase();
     const top = this.cyl_originalInset.top;
-    scrollView.animator(this.slowAnimationDuration, () => {
+    scrollView.animator(this.cyl_secondaryDuration, () => {
       this.setRefreshingInsetTop(top);
       scrollView.cyl_offsetY = -top;
     }, () => {
@@ -1817,7 +2085,8 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
       }
       this.pullingPercent = pullingPercent;
       const mayArm = this.triggerMode === CYLRefreshTriggerMode.Anywhere || this.cyl_dragStartedAtEdge;
-      if (this.state === CYLRefreshState.Idle && this.refreshEnabled && mayArm && offsetY < normal2pullingOffsetY) {
+      if (this.state === CYLRefreshState.Idle && this.refreshEnabled && mayArm && this.canTrigger() &&
+        offsetY < normal2pullingOffsetY) {
         this.state = CYLRefreshState.Pulling;
         if (this.triggersWhenReached) {
           this.beginRefreshing();
@@ -1991,6 +2260,8 @@ export class CYLRefreshFooterModel extends CYLRefreshComponentModel {
 export class CYLRefreshAutoFooterModel extends CYLRefreshFooterModel {
   /** Whether the footer loads by itself when it shows (`automaticallyRefresh`, default true). */
   automaticallyRefresh: boolean = true;
+  /** Whether a pull-up release loads when the content does not fill the view; false waits (`loadsWhenContentNotFull`). */
+  loadsWhenContentNotFull: boolean = true;
   /** How much of the footer must show before it loads (`triggerAutomaticallyRefreshPercent`, default 1). */
   triggerAutomaticallyRefreshPercent: number = 1;
   /** The visible share of the footer (0..1), reported by the footer view. */
@@ -2045,7 +2316,7 @@ export class CYLRefreshAutoFooterModel extends CYLRefreshFooterModel {
     if (!this.cyl_contentFillsView(scrollView) || !movingUp) {
       return;
     }
-    if (this.cyl_visibleRatio + 0.001 >= this.triggerAutomaticallyRefreshPercent) {
+    if (this.canTrigger() && this.cyl_visibleRatio + 0.001 >= this.triggerAutomaticallyRefreshPercent) {
       if (scrollView.isDragging) {
         this.triggerByDrag = true;
       }
@@ -2075,12 +2346,13 @@ export class CYLRefreshAutoFooterModel extends CYLRefreshFooterModel {
       this.resetNoMoreData();
     }
     const header = scrollView.cyl_header;
-    if (this.state !== CYLRefreshState.Idle || !this.refreshEnabled || (header !== null && header.refreshing)) {
+    if (this.state !== CYLRefreshState.Idle || !this.refreshEnabled || (header !== null && header.refreshing) ||
+      !this.canTrigger()) {
       return;
     }
     if (state === CYLRefreshPanState.Ended) {
       if (!this.cyl_contentFillsView(scrollView)) {
-        if (scrollView.cyl_offsetY >= -scrollView.cyl_insetT) {
+        if (this.loadsWhenContentNotFull && scrollView.cyl_offsetY >= -scrollView.cyl_insetT) {
           this.triggerByDrag = true;
           this.beginRefreshing();
         }
@@ -2402,7 +2674,7 @@ export class CYLRefreshBackFooterModel extends CYLRefreshFooterModel {
       }
       this.pullingPercent = pullingPercent;
       const mayArm = this.triggerMode === CYLRefreshTriggerMode.Anywhere || this.cyl_dragStartedAtEdge;
-      if (this.state === CYLRefreshState.Idle && this.refreshEnabled && mayArm &&
+      if (this.state === CYLRefreshState.Idle && this.refreshEnabled && mayArm && this.canTrigger() &&
         currentOffsetY > normal2pullingOffsetY) {
         this.state = CYLRefreshState.Pulling;
         if (this.triggersWhenReached) {

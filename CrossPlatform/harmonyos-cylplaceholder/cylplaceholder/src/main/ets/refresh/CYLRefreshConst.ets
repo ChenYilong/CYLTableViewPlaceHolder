@@ -11,6 +11,12 @@ import { CYLRefreshStringsJa } from './locales/CYLRefreshStringsJa';
 import { CYLRefreshStringsKo } from './locales/CYLRefreshStringsKo';
 import { CYLRefreshStringsRu } from './locales/CYLRefreshStringsRu';
 import { CYLRefreshStringsUk } from './locales/CYLRefreshStringsUk';
+import {
+  CYLRefreshComponentModel,
+  CYLRefreshFooterModel,
+  CYLRefreshHeaderModel,
+  CYLRefreshScrollViewModel
+} from './CYLRefreshComponent';
 
 /** The gap between the state label and the arrow, in vp. */
 export const CYLRefreshLabelLeftInset: number = 25;
@@ -196,6 +202,13 @@ export class CYLRefreshConfig {
       }
     });
   }
+
+  /** Makes the header `cyl_installDefaultRefreshControls` installs where there is none; null for none (`defaultHeaderCreator`). */
+  defaultHeaderCreator: ((scrollView: CYLRefreshScrollViewModel) => CYLRefreshHeaderModel | null) | null = null;
+  /** Makes the footer `cyl_installDefaultRefreshControls` installs where there is none; null for none (`defaultFooterCreator`). */
+  defaultFooterCreator: ((scrollView: CYLRefreshScrollViewModel) => CYLRefreshFooterModel | null) | null = null;
+  /** Sets up every control once, when it is first attached to a scroll view, before `didAttachToScrollView` (`defaultInitializer`). */
+  defaultInitializer: ((component: CYLRefreshComponentModel) => void) | null = null;
 
   /** The shared settings (`defaultConfig`). */
   static get defaultConfig(): CYLRefreshConfig {
