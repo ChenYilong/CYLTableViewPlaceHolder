@@ -99,10 +99,17 @@ public enum CYLPlaceholderBridge {
  * [CN] 以方法名与参数字典驱动 `CYLPlaceholderHUD`，与方法通道或 React Native 模块的传递方式一致；HUD 覆盖在宿主内容视图 `container` 上。
  */
 public final class CYLPlaceholderHUDBridge {
-    /// [EN] The HUD that is driven. [CN] 被驱动的 HUD。
+    /**
+     * [EN] The HUD that is driven.
+     * [CN] 被驱动的 HUD。
+     */
     public let hud: CYLPlaceholderHUD
     private let onAction: (String) -> Void
 
+    /**
+     * [EN] A bridge whose HUD lays itself over `container`; `onAction` receives the name of every button action that is tapped.
+     * [CN] HUD 覆盖在 `container` 上的桥接；`onAction` 接收每个被点按的按钮动作名。
+     */
     public init(container: UIView, onAction: @escaping (String) -> Void = { _ in }) {
         hud = CYLPlaceholderHUD(containerView: container)
         self.onAction = onAction
