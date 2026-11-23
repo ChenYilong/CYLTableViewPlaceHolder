@@ -210,6 +210,12 @@
 "CYLScenarioEasyTriggerMode" = "Режим спрацювання";
 "CYLScenarioEasyRefreshOnStart" = "Оновлення під час запуску";
 "CYLScenarioEasyPaging" = "Посторінкове завантаження";
+"CYLScenarioEasyScrollMode" = "Режим прокручування";
+"CYLScenarioEasyScrollMove" = "Зсув";
+"CYLScenarioEasyScrollStretch" = "Розтягнення";
+"CYLScenarioEasyScrollFront" = "Поверх";
+"CYLScenarioEasyScrollBehind" = "Позаду";
+"CYLScenarioEasyScrollSelected" = "✓ %@";
 "CYLScenarioEasyListener" = "Заголовок-слухач";
 "CYLScenarioEasyChat" = "Чат";
 "CYLScenarioEasyUserProfile" = "Профіль користувача";

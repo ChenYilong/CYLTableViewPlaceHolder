@@ -99,7 +99,7 @@ final class CYLRefreshExampleViewController: UITableViewController {
             ("CYLEasyRefreshDemoViewController", { CYLEasyRefreshDemoViewController() })
         let pages: [(CYLScenarioL10n, String)] = [
             (.easyCupertino, "easyCupertino"), (.easySecondary, "easySecondary"), (.easyTriggerMode, "easyTriggerMode"),
-            (.easyRefreshOnStart, "easyRefreshOnStart"), (.easyPaging, "easyPaging"), (.easyListener, "easyListener"),
+            (.easyRefreshOnStart, "easyRefreshOnStart"), (.easyPaging, "easyPaging"), (.easyScrollMode, "easyScrollMode"), (.easyListener, "easyListener"),
             (.easyChat, "easyChat"), (.easyUserProfile, "easyUserProfile"),
         ]
         let exam7 = CYLRefreshExample(header: .easySection, titles: pages.map { $0.0 },
