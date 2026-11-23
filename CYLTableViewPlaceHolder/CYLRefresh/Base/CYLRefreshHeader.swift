@@ -67,7 +67,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
     // [EN] YES while this refresh added the header height to the top inset. [CN] 本次刷新把刷新头高度加到顶部 inset 期间为 YES。
     private var addedRefreshingInset = false
     // [EN] Whether the current drag started with the list at the top edge (triggerMode). [CN] 当前拖动开始时列表是否在顶部边缘（triggerMode）。
-    private var dragStartedAtEdge = false
+    var dragStartedAtEdge = false
     // [EN] Second floor: pulled past the trigger while dragging. [CN] 二楼：拖动中已拉过触发点。
     private var secondaryArmed = false
     // [EN] Second floor: pushed up far enough to close on release. [CN] 二楼：已上推足够距离，松手即关闭。
