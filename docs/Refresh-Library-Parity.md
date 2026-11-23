@@ -410,6 +410,21 @@ Design (advisor, 2026-11-23): two layers. Pure TypeScript with no React import (
 | Paging | `CYLRefreshPaging<T>` | `CYLRefreshPaging` (if present; to be confirmed) | `CYLRefreshPaging.kt` | The loader crosses the channel as a callback with a completion token | TODO |
 | Flutter-only layout | `CYLRefreshHeaderLocator` / `FooterLocator`, `readySpringBuilder`, nested controllers, `scrollMode`, `triggerAxis` | none | none | Stay in Dart: they are about Flutter's scrolling | N/A: Flutter-only |
 
+**The same 8 rows by half (2026-11-24, evidence).** "Done" means built, tested and seen where the row says so; the Flutter-only layout row is N/A and not counted. The Android half is the Android native component plus the Flutter and React Native glue that calls it; the iOS half is the iOS native component plus the same glue. Status words: done, partial, NEEDS NATIVE API (the native interface does not exist), TODO (not started).
+
+| # | Bridge group | Android half | iOS half |
+| --- | --- | --- | --- |
+| 1 | Placeholder view | **done**: `CYLPlaceholderBridge` (7 Robolectric tests), Flutter platform view seen on emulator-5556 | **partial**: native entry point `CYLPlaceholderBridge` exists (iOS API map 823 / 823); Flutter iOS plugin half in progress (Mac session, not committed), no bridge unit test in `Tests/` yet |
+| 2 | Components and stack | **done**: `stackView` / `updateStackView`, Flutter native stack platform view (`fd00aa80`), animated icon plays through the native `icon` component, seen on emulator-5556 | **partial**: native entry point exists; the Flutter iOS plugin half is not written |
+| 3 | HUD | **done** to the native call: `CYLPlaceholderHUDBridge`, method channel, Dart contract tests; **not run on a device** | **partial**: `CYLPlaceholderHUDBridge` exists; Flutter iOS plugin half not written |
+| 4 | Refresh state machine | **partial**: `CYLRefreshDrivenLayout.drive` / `release`, header and footer paths tested (`:merged` 54 tests, `b87c5c20`); Flutter glue covers the header only, footers still use the Dart indicator | **NEEDS NATIVE API**: `driveOffset(offset, dragging, startedAtEdge)` / `endDrag()` do not exist on iOS |
+| 5 | Refresh container | **partial**: React Native `CYLRefreshContainer` with header and load-more footer, 9 Robolectric tests, three example pages seen on emulator-5556 (`464f7bef`); `CYLRefreshPaging` is not wired to it | **partial**: `CYLRefreshContainerView` written, **not built**, no footer |
+| 6 | Drawn indicators | **NEEDS NATIVE API**: an indicator view that draws from a driven component | **NEEDS NATIVE API**: same |
+| 7 | Second floor | **TODO**: the native container has no second floor | **TODO** |
+| 8 | Paging | **TODO**: `CYLRefreshPaging.kt` is not wired to the bridge | **TODO** |
+
+**Count:** Android half: 3 of 8 done (rows 1 to 3), 2 partial (rows 4, 5), 1 NEEDS NATIVE API, 2 TODO. iOS half: 0 of 8 done, 4 partial (rows 1 to 3 as native entry points only, row 5 written not built), 2 NEEDS NATIVE API, 2 TODO. The iOS halves are the Mac session's (c32b88, in progress); nothing here counts a row that is not built.
+
 
 ## Demo porting map (the Flutter example to every other platform)
 
@@ -470,7 +485,7 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 | Mini program | `npm test` 84 / 84 after syncing the copy to `12ed11ff` (`78709546`) | Stretch and Front header geometry seen in WeChat DevTools with an injected pull (`12cd27ba`) | 78 | A real finger pull not driven; Stretch / Front rows not in the demo |
 | Flutter | Dart 115 tests (2026-11-23) | Android: native placeholder, stack, refresh header and HUD seen on emulator-5556 | 72 | iOS half (Mac session, hand-off #10); native footers |
 | React Native | `node --test` 24 / 24; library Robolectric 9; example `tsc` clean | Native container Android: three pages of the example (refresh, paging, error placeholder) built (release APK) and seen on emulator-5556, sheet `react-native-android17-emulator5556-demo-pages-464f7bef-20261124-sheet.png` | 62 | Styles, secondary (second floor) and stack pages need library exports that do not exist; iOS app not built (Mac session) |
-| Native bridge map | not recounted | see Flutter and React Native rows | not scored | Recount the 8 rows before quoting a number |
+| Native bridge map | Android half 3 of 8 rows done, 2 partial; iOS half 0 of 8 done, 4 partial (counted 2026-11-24, table "the same 8 rows by half" in the native bridge map section) | Rows 1 to 5 as listed there | not scored (no scoring rule for rows yet) | iOS halves (Mac session); rows 6 to 8 need native API or are TODO |
 
 **Animated-Item-Migration:** its "93 / 100" is dated 2026-11-17 (upstream pin `57a527ef`) and the "done at 100" in `13c02db9` is the colour check task; neither is quoted here as a current score.
 
