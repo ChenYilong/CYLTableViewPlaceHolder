@@ -409,23 +409,22 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 | Flutter demo (`example/lib`) | What it shows | iOS (`Examples/Example-Scenarios`) | Android (`android/merged/example`) | HarmonyOS (`entry/.../pages`) | Mini program (`example/miniprogram`) | React Native |
 | --- | --- | --- | --- | --- | --- | --- |
 | `refresh_page.dart` | Classic header and footer, load more, no more data | `CYLEasyRefreshDemoViewController` | `EasyRefreshPage` | `RefreshEasyPage` | `refresh-demos/refresh-easy` | TODO |
-| `paging_page.dart` | `CYLRefreshPaging` with a header and a footer | `CYLEasyRefreshDemoViewController` (paging) | TODO (`CYLRefreshPaging.kt` exists) | TODO (`CYLRefreshPaging.ets` exists) | TODO (no paging model yet) | TODO |
+| `paging_page.dart` | `CYLRefreshPaging` with a header and a footer | `CYLEasyRefreshDemoViewController` (paging) | `EasyRefreshPage` (`easyPaging`) | `RefreshEasyPage` (paging) | `refresh-demos/refresh-easy` (paging) | TODO |
 | `styles_page.dart` | Every refresh style on one list, chosen by chips | `CYLRefreshStylesDemoViewController` | `RefreshStylesPage` | `RefreshStylesPage` | `refresh-demos/refresh-styles` (no Bezier circle, no StoreHouse) | TODO |
-| `secondary_page.dart` | The second floor, opened by a far pull, a button or code | `CYLEasyRefreshDemoViewController` (second floor) | TODO (the component has `floor`) | TODO (`CYLRefreshComponent.ets` has it) | TODO (`cyl-refresh` has it) | TODO |
+| `secondary_page.dart` | The second floor, opened by a far pull, a button or code | `CYLEasyRefreshDemoViewController` (second floor) | `EasyRefreshPage` (`easySecondary`) | `RefreshEasyPage` (secondary) | `refresh-demos/refresh-easy` (secondary) | TODO |
 | `error_placeholder_page.dart` | A failed first load shows the placeholder, a tap retries | `CYLScenarioDetailViewController` (error scenarios with retry) | `ScenariosPage` | `ScenarioDetailPage` | `pages/scenario-detail` | TODO |
 | `placeholder_stack_page.dart` | The placeholder stack, the HUD, and Play all, a speed slider and a loop switch | `CYLAnimationListViewController`, `CYLHUDViewController`, `CYLPlaybackControlsView` | `AnimationsPage`, `HudPage`, `PlaybackControls` | `AnimationsTab`, `HUDPage` | `pages/animations`, `pages/hud` | TODO |
 
-**More demo styles for the other platforms (each a `TODO`):**
+**Correction (2026-11-23, found when the Android work started):** the first version of this map said that Android, HarmonyOS and the mini program lacked the Cupertino, second floor and paging demos. That was wrong: a search whose output was cut off had listed only iOS files. Every platform's easy-refresh page already ports the whole set (Cupertino, second floor, trigger mode, refresh on start, paging, listener, chat, user profile); the verified counts of files that mention each topic are in `docs/Task-Log.md`. The demos that really are missing are listed below; the Flutter example, in turn, lacks the demos the other platforms have (trigger mode, refresh on start, listener, chat, user profile).
 
-| Demo style | Why it is missing | iOS | Android | HarmonyOS | Mini program | React Native |
+**What is really missing (each a `TODO`):**
+
+| Demo | iOS | Android | HarmonyOS | Mini program | React Native | Flutter |
 | --- | --- | --- | --- | --- | --- | --- |
-| Cupertino header and footer | No styles-page entry although the component exists on iOS and Android; HarmonyOS has `CYLRefreshClassics.ets` styles to check | present in `CYLEasyRefreshDemoViewController` | TODO (`CYLRefreshCupertinoHeader` / `Footer` exist) | TODO (check the component) | TODO (check the component) | TODO |
-| Second floor, header and footer | See the table above | present | TODO | TODO | TODO | TODO |
-| Paging | See the table above | present | TODO | TODO | TODO | TODO |
-| Scroll modes (move, front, behind) | A page that shows the three modes side by side | TODO | TODO | TODO | TODO | TODO |
-| Horizontal trailer | Only the collection page has it | present (`CYLRefreshCollectionViewController`) | present (`RefreshCollectionPage`) | present (`RefreshCollectionPage`) | TODO | TODO |
-| Styles page completeness | The mini program's styles page lacks Bezier circle and StoreHouse | present | present | present | TODO | TODO |
-| A React Native example app | None exists; it needs the native container first (see the native bridge map) | n/a | n/a | n/a | n/a | TODO |
+| Scroll modes (move, stretch, front, behind) on one page, chosen by chips | TODO | TODO | TODO | TODO | TODO | has the three modes in the styles / layout tests only: TODO |
+| Styles page completeness | present | present | present | TODO (no Bezier circle, no StoreHouse) | TODO | present |
+| The easy-refresh demos Flutter lacks (trigger mode, refresh on start, listener, chat, user profile) | present | present | present | present | TODO | TODO |
+| A React Native example app | n/a | n/a | n/a | n/a | TODO (needs the native container first) | n/a |
 
 
 ## Flutter example screenshots
