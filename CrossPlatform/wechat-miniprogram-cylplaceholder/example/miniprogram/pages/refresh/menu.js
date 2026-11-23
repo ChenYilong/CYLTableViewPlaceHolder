@@ -53,7 +53,7 @@ const SECTIONS = [
   ].map(([suffix, method]) => style('CYLScenarioRefreshStyle' + suffix, method)) },
   { key: 'CYLScenarioEasySection', rows: [
     ['Cupertino', 'easyCupertino'], ['Secondary', 'easySecondary'], ['TriggerMode', 'easyTriggerMode'],
-    ['RefreshOnStart', 'easyRefreshOnStart'], ['Paging', 'easyPaging'], ['Listener', 'easyListener'],
+    ['RefreshOnStart', 'easyRefreshOnStart'], ['Paging', 'easyPaging'], ['ScrollMode', 'easyScrollMode'], ['Listener', 'easyListener'],
     ['Chat', 'easyChat'], ['UserProfile', 'easyUserProfile'],
   ].map(([suffix, method]) => easy('CYLScenarioEasy' + suffix, method)) },
 ]

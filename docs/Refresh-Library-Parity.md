@@ -410,7 +410,7 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 | --- | --- | --- | --- | --- | --- | --- |
 | `refresh_page.dart` | Classic header and footer, load more, no more data | `CYLEasyRefreshDemoViewController` | `EasyRefreshPage` | `RefreshEasyPage` | `refresh-demos/refresh-easy` | TODO |
 | `paging_page.dart` | `CYLRefreshPaging` with a header and a footer | `CYLEasyRefreshDemoViewController` (paging) | `EasyRefreshPage` (`easyPaging`) | `RefreshEasyPage` (paging) | `refresh-demos/refresh-easy` (paging) | TODO |
-| `styles_page.dart` | Every refresh style on one list, chosen by chips | `CYLRefreshStylesDemoViewController` | `RefreshStylesPage` | `RefreshStylesPage` | `refresh-demos/refresh-styles` (no Bezier circle, no StoreHouse) | TODO |
+| `styles_page.dart` | Every refresh style on one list, chosen by chips | `CYLRefreshStylesDemoViewController` | `RefreshStylesPage` | `RefreshStylesPage` | `refresh-demos/refresh-styles` | TODO |
 | `secondary_page.dart` | The second floor, opened by a far pull, a button or code | `CYLEasyRefreshDemoViewController` (second floor) | `EasyRefreshPage` (`easySecondary`) | `RefreshEasyPage` (secondary) | `refresh-demos/refresh-easy` (secondary) | TODO |
 | `error_placeholder_page.dart` | A failed first load shows the placeholder, a tap retries | `CYLScenarioDetailViewController` (error scenarios with retry) | `ScenariosPage` | `ScenarioDetailPage` | `pages/scenario-detail` | TODO |
 | `placeholder_stack_page.dart` | The placeholder stack, the HUD, and Play all, a speed slider and a loop switch | `CYLAnimationListViewController`, `CYLHUDViewController`, `CYLPlaybackControlsView` | `AnimationsPage`, `HudPage`, `PlaybackControls` | `AnimationsTab`, `HUDPage` | `pages/animations`, `pages/hud` | TODO |
@@ -421,8 +421,8 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 
 | Demo | iOS | Android | HarmonyOS | Mini program | React Native | Flutter |
 | --- | --- | --- | --- | --- | --- | --- |
-| Scroll modes (move, stretch, front, behind) on one page, chosen by chips | TODO | `EasyRefreshPage` (`easyScrollMode`, 2026-11-23: four tappable rows, the current one marked; built with `:merged-example:assembleDebug`, not run on a device) | `RefreshEasyPage` (`easyScrollMode`, 2026-11-23: the same four rows; written statically, **not built**: no DevEco here) | TODO | TODO | has the three modes in the styles / layout tests only: TODO |
-| Styles page completeness | present | present | present | TODO (no Bezier circle, no StoreHouse) | TODO | present |
+| Scroll modes (move, stretch, front, behind) on one page, chosen by chips | TODO | `EasyRefreshPage` (`easyScrollMode`, 2026-11-23: four tappable rows, the current one marked; built with `:merged-example:assembleDebug`, not run on a device) | `RefreshEasyPage` (`easyScrollMode`, 2026-11-23: the same four rows; written statically, **not built**: no DevEco here) | `refresh-demos/refresh-easy` (`easyScrollMode`, 2026-11-23: Move and Behind, the two modes `cyl-refresh` has; 4 node tests; Stretch and Front need a new `cyl-refresh` property: TODO) | TODO | has the three modes in the styles / layout tests only: TODO |
+| Styles page completeness | present | present | present | present (verified 2026-11-23: `pages/refresh/menu.js` lists the same 35 styles as iOS, with `bezier-circle.js` and `store-house.js` among the renderers; the first map was wrong, I had only searched the page's own file) | TODO | present |
 | The easy-refresh demos Flutter lacks (trigger mode, refresh on start, listener, chat, user profile) | present | present | present | present | TODO | TODO |
 | A React Native example app | n/a | n/a | n/a | n/a | TODO (needs the native container first) | n/a |
 
