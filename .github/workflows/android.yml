@@ -68,6 +68,7 @@ jobs:
               -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" \
               :placeholder:testDebugUnitTest \
               :merged:testDebugUnitTest \
+              :merged-example:testDebugUnitTest \
               :merged-rive:compileDebugKotlin 2>&1 | tee "$RUNNER_TEMP/gradle-tests.log"
           }
           if run_tests; then exit 0; fi
