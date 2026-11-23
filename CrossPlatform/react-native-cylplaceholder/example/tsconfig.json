@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": []
   },
-  "include": ["App.tsx", "index.js"]
+  "include": ["App.tsx", "index.js", "pages"]
 }
