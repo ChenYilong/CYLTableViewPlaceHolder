@@ -137,4 +137,93 @@ void main() {
       expect(find.byKey(const ValueKey('mine')), findsOneWidget);
     });
   });
+
+  group('the native placeholder stack', () {
+    // The id the engine gave the created platform view: the channel of the native stack ends with it.
+    int? viewId;
+
+    Future<void> platformMessage(MethodCall call) => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+          '${CYLNativePlaceholderStack.viewType}/$viewId',
+          const StandardMethodCodec().encodeMethodCall(call),
+          (_) {},
+        );
+
+    void mockPlatformViews(WidgetTester tester) {
+      viewId = null;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async {
+        if (call.method != 'create') return null;
+        viewId = (call.arguments as Map)['id'] as int;
+        return viewId;
+      });
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
+    }
+
+    testWidgets('CYLPlaceholderStackView builds an AndroidView whose creation parameters are the component maps with action names', (tester) async {
+      mockPlatformViews(tester);
+      var retries = 0;
+      var background = 0;
+      await tester.pumpWidget(MaterialApp(
+        home: SizedBox(
+          width: 300,
+          height: 500,
+          child: CYLPlaceholderStackView(
+            backgroundAction: () => background++,
+            components: [
+              CYLPlaceholderComponent.icon(style: CYLPlaceholderStyle.cloudOff, title: 'Offline', animationFile: 'CYLPlaceholderLoadFailed.json', animationLoops: true, animationSpeed: 2),
+              CYLPlaceholderComponent.hint('Try again'),
+              CYLPlaceholderComponent.button('Retry', action: () => retries++),
+            ],
+          ),
+        ),
+      ));
+      final android = tester.widget<AndroidView>(find.byType(AndroidView));
+      expect(android.viewType, CYLNativePlaceholderStack.viewType);
+      final params = android.creationParams as Map<String, Object?>;
+      expect(params['backgroundAction'], 'background');
+      final components = params['components'] as List;
+      // An animated icon is an item component whose attributes name the animation asset (the native icon component would show its still).
+      expect(components[0], allOf(containsPair('type', 'item'), containsPair('title', 'Offline'), containsPair('animationLoops', true), containsPair('animationSpeed', 2.0)));
+      expect((components[0] as Map)['attributes'], {'CYLPlaceholderItemStyle': 'cloudOff', 'CYLPlaceholderItemAnimationFilePath': 'asset:CYLPlaceholderLoadFailed.json'});
+      expect((components[0] as Map).containsKey('animation'), isFalse);
+      expect(components[2], allOf(containsPair('type', 'button'), containsPair('action', 'component-2')));
+      expect((components[1] as Map).containsKey('action'), isFalse);
+
+      // The native stack reports the tapped action by name.
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await platformMessage(const MethodCall('onAction', 'component-2'));
+      await platformMessage(const MethodCall('onAction', 'background'));
+      expect(retries, 1);
+      expect(background, 1);
+    });
+
+    testWidgets('a controller restart reaches the native stack as an update', (tester) async {
+      mockPlatformViews(tester);
+      final controller = CYLPlaceholderStackController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(MaterialApp(
+        home: SizedBox(width: 300, height: 500, child: CYLPlaceholderStackView(controller: controller, components: [CYLPlaceholderComponent.hint('Hi')])),
+      ));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump();
+      // The view's creation made Dart listen on the channel (for the actions); stand in for the native side again to record.
+      final updates = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(MethodChannel('${CYLNativePlaceholderStack.viewType}/$viewId'), (call) async {
+        updates.add(call);
+        return null;
+      });
+      controller.restartAnimation();
+      await tester.pump();
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      expect(updates.single.method, 'update');
+      expect(updates.single.arguments, {'name': 'restartAnimation', 'value': 1});
+    });
+
+    testWidgets('a component with a Flutter image keeps the Dart stack', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: CYLPlaceholderStackView(components: [CYLPlaceholderComponent.icon(image: const SizedBox(key: ValueKey('mine'), width: 10, height: 10))]),
+      ));
+      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byKey(const ValueKey('mine')), findsOneWidget);
+    });
+  });
 }

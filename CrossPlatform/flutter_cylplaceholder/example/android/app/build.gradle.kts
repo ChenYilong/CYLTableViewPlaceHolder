@@ -38,6 +38,13 @@ android {
     }
 }
 
+dependencies {
+    // [EN] The native placeholder's animation engine reaches Lottie by reflection (the app brings the library it wants to play), so
+    //      the stack's CYLPlaceholderLoadFailed.json animates instead of showing its still image.
+    // [CN] 原生占位图的动画引擎通过反射调用 Lottie（由 App 自带要播放的库），堆叠里的 CYLPlaceholderLoadFailed.json 才会播放而不是只显示静态图。
+    implementation("com.airbnb.android:lottie:6.6.2")
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17

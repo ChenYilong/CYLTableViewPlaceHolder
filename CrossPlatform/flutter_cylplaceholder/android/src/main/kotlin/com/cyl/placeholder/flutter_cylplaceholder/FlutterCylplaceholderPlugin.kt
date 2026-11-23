@@ -10,7 +10,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * The Android half of flutter_cylplaceholder: it registers the platform view factory of the native `CYLPlaceholderView` and the
+ * The Android half of flutter_cylplaceholder: it registers the platform view factories of the native `CYLPlaceholderView` and `CYLPlaceholderStackView` and the
  * method channel that drives the native `CYLPlaceholderHUD`. Everything they show is the native component of this repository
  * (`com.cyl.placeholder`), reached through `com.cyl.placeholder.bridge`; there is no second implementation here.
  */
@@ -21,6 +21,7 @@ class FlutterCylplaceholderPlugin : FlutterPlugin, ActivityAware, MethodChannel.
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         binding.platformViewRegistry.registerViewFactory(CYLPlaceholderPlatformViewFactory.VIEW_TYPE, CYLPlaceholderPlatformViewFactory(binding.binaryMessenger))
+        binding.platformViewRegistry.registerViewFactory(CYLPlaceholderStackPlatformViewFactory.VIEW_TYPE, CYLPlaceholderStackPlatformViewFactory(binding.binaryMessenger))
         hudChannel = MethodChannel(binding.binaryMessenger, HUD_CHANNEL).also { it.setMethodCallHandler(this) }
     }
 
