@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.cyl.refresh.CYLRefreshPhase
+import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -100,5 +101,70 @@ class CYLRefreshContainerViewTest {
         idle(500)
         assertEquals(0, pulled)
         assertFalse(view.cyl_header!!.isRefreshing)
+    }
+
+    @Test
+    fun theFooterIsAttachedAndLoadMoreIsOffByDefault() {
+        val view = scrollingContainer()
+        assertNotNull(view.cyl_footer)
+        var loaded = 0
+        view.onLoadMore = { loaded++ }
+        drag(view, -900f)
+        idle(500)
+        assertEquals(0, loaded)
+        assertFalse(view.cyl_footer!!.isRefreshing)
+    }
+
+    @Test
+    fun loadingMoreFromJsRunsTheFooterWithoutCallingOnLoadMore() {
+        val view = scrollingContainer()
+        var loaded = 0
+        view.onLoadMore = { loaded++ }
+        view.setLoadMoreEnabled(true)
+        view.setLoadingMoreFromJs(true)
+        idle(100)
+        assertTrue(view.cyl_footer!!.isRefreshing)
+        assertEquals(0, loaded)
+        view.setLoadingMoreFromJs(false)
+        idle(3000)
+        assertFalse(view.cyl_footer!!.isRefreshing)
+    }
+
+    @Test
+    fun noMoreDataFromJsShowsAndClearsTheFooterState() {
+        val view = scrollingContainer()
+        view.setLoadMoreEnabled(true)
+        view.setNoMoreDataFromJs(true)
+        idle(100)
+        assertTrue(view.cyl_footer!!.noMoreData)
+        view.setNoMoreDataFromJs(false)
+        idle(100)
+        assertFalse(view.cyl_footer!!.noMoreData)
+    }
+
+    @Test
+    fun endingALoadWithNoMoreDataKeepsTheNoMoreDataState() {
+        val view = scrollingContainer()
+        view.setLoadMoreEnabled(true)
+        view.setLoadingMoreFromJs(true)
+        idle(100)
+        view.setNoMoreDataFromJs(true)
+        idle(3000)
+        assertTrue(view.cyl_footer!!.noMoreData)
+        assertFalse(view.cyl_footer!!.isRefreshing)
+    }
+
+    @Test
+    fun aRealPullUpReachesOnLoadMoreWhenItIsOn() {
+        val view = container()
+        var loaded = 0
+        view.onLoadMore = { loaded++ }
+        view.setLoadMoreEnabled(true)
+        drag(view, -900f)
+        idle(500)
+        assertEquals(1, loaded)
+        assertTrue(view.cyl_footer!!.isRefreshing)
+        view.setLoadingMoreFromJs(false)
+        idle(3000)
     }
 }
