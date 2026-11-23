@@ -6,12 +6,15 @@ import 'package:flutter/widgets.dart';
 import 'component.dart';
 import 'refresh_types.dart';
 
-/// The native refresh header (the Android `CYLRefreshDrivenLayout` with a `CYLRefreshNormalHeader`) as the indicator of a
+/// The native refresh header or footer (the Android `CYLRefreshDrivenLayout` with a `CYLRefreshNormalHeader` or `CYLRefreshBackNormalFooter`) as the indicator of a
 /// [CYLRefreshComponent]: a platform view that follows the component. Flutter keeps the scrolling and the phase machine
 /// (the component stays the reference and the caller still ends refreshing with `endRefreshing`); this view feeds the native
 /// header the pull over the method channel `flutter_cylplaceholder/CYLRefreshView/<id>`:
 ///
-/// - Dart to native: "drive" (`offset` in logical pixels, `dragging`, `startedAtEdge`), "release" and "finishRefresh" (`success`).
+/// - Creation parameters: `footer` (true: the native footer, pulled up) and `loadsAfterNoMoreData`.
+/// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
+///   "finishRefresh" (`success`; a footer adds `noMoreData`: end the load and show "no more data") and, for a footer, "noMoreData" (`value`:
+///   show or clear it without a load).
 /// - Native to Dart: "onPhase" (`phase` and `oldPhase`, the names of [CYLRefreshPhase]) and "onRefreshing".
 class CYLNativeRefreshIndicator extends StatefulWidget {
   /// Creates a native indicator that follows [component].
@@ -40,6 +43,10 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
   bool _wasDragging = false;
   bool _released = false;
   bool _finished = false;
+  // Whether the native footer was told "no more data" (footers only).
+  bool _noMoreData = false;
+
+  bool get _isFooter => !widget.component.isHeader;
 
   @override
   void initState() {
@@ -76,8 +83,14 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
 
   void _drive(double offset, bool dragging) {
     if (offset == _offset && dragging == _wasDragging) return;
-    _channel!.invokeMethod<void>('drive', {'offset': offset, 'dragging': dragging, 'startedAtEdge': true});
+    // A footer is pulled up: the native layout takes the pull as a negative offset.
+    _channel!.invokeMethod<void>('drive', {'offset': _isFooter && offset != 0 ? -offset : offset, 'dragging': dragging, 'startedAtEdge': true});
     _offset = offset;
+  }
+
+  void _setNoMoreData(bool value) {
+    _noMoreData = value;
+    _channel!.invokeMethod<void>('noMoreData', {'value': value});
   }
 
   /// Mirrors the component: the pull while it is pulled, the release when it starts to refresh (armed through the trigger
@@ -91,18 +104,24 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       case CYLRefreshPhase.refreshing:
         if (_released) return;
         _released = true;
+        // A load begun after "no more data" (loadsAfterNoMoreData) clears it first, as the Dart footer does.
+        if (_isFooter && _noMoreData) _setNoMoreData(false);
         _drive(math.max(c.dragOffset, c.triggerOffset), true);
         channel.invokeMethod<void>('release');
         _wasDragging = false;
       case CYLRefreshPhase.finishing:
         if (_finished) return;
         _finished = true;
-        channel.invokeMethod<void>('finishRefresh', {'success': c.lastRefreshSucceeded});
+        // A footer may end with "no more data": the native footer ends the load and shows it in one call.
+        final noMore = _isFooter && c.isNoMoreData;
+        channel.invokeMethod<void>('finishRefresh', {'success': c.lastRefreshSucceeded, if (_isFooter) 'noMoreData': noMore});
+        _noMoreData = noMore;
       case CYLRefreshPhase.idle:
       case CYLRefreshPhase.pullToRefresh:
       case CYLRefreshPhase.releaseToRefresh:
         _released = false;
         _finished = false;
+        if (_isFooter && c.isNoMoreData != _noMoreData) _setNoMoreData(c.isNoMoreData);
         _drive(c.dragOffset, c.dragging);
         // The finger lifted short of the trigger: the native header cancels the pull.
         if (_wasDragging && !c.dragging && c.phase != CYLRefreshPhase.idle) channel.invokeMethod<void>('release');
@@ -114,6 +133,11 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
   Widget build(BuildContext context) {
     return AndroidView(
       viewType: CYLNativeRefreshIndicator.viewType,
+      // A footer asks for the native footer (a pull up); loadsAfterNoMoreData lets a pull load again after "no more data".
+      creationParams: <String, Object?>{
+        'footer': _isFooter,
+        if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,
+      },
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: _created,
     );

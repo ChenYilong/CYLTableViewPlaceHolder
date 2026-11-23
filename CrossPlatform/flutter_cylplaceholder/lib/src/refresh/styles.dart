@@ -96,6 +96,17 @@ mixin CYLRefreshClassicStyle on CYLRefreshComponent {
     return SizedBox(width: iconSize, height: iconSize, child: Center(child: icon));
   }
 
+  /// Whether the native indicator (header or footer) draws this one: the native half is on, and nothing asks for what only
+  /// Flutter can draw (a custom builder, text, icon or image).
+  bool get _usesNative =>
+      CYLPlaceholderNative.enabled &&
+      builder == null &&
+      textBuilder == null &&
+      messageBuilder == null &&
+      pullIconBuilder == null &&
+      succeededImage == null &&
+      failedImage == null;
+
   @override
   Widget buildIndicator(BuildContext context) {
     final title = currentTitle;
@@ -158,17 +169,6 @@ class CYLRefreshClassicHeader extends CYLRefreshHeader with CYLRefreshClassicSty
   /// Formats the time of the second line; the default is `Last updated: HH:mm`.
   String Function(DateTime time)? lastUpdatedTimeFormatter;
 
-  /// Whether the native header draws this one: the native half is on, and nothing asks for what only Flutter can draw (a
-  /// custom builder, text, icon or image).
-  bool get _usesNative =>
-      CYLPlaceholderNative.enabled &&
-      builder == null &&
-      textBuilder == null &&
-      messageBuilder == null &&
-      pullIconBuilder == null &&
-      succeededImage == null &&
-      failedImage == null;
-
   @override
   Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
 
@@ -216,6 +216,9 @@ class CYLRefreshClassicFooter extends CYLRefreshBackFooter with CYLRefreshClassi
   });
 
   @override
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
+
+  @override
   Map<CYLRefreshTitleState, String> get defaultTitles => _footerTitles;
 }
 
@@ -239,6 +242,9 @@ class CYLRefreshClassicAutoFooter extends CYLRefreshAutoFooter with CYLRefreshCl
     super.triggerAutomaticallyRefreshPercent,
     super.autoTriggerTimes,
   });
+
+  @override
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
 
   @override
   Map<CYLRefreshTitleState, String> get defaultTitles => _footerTitles;
