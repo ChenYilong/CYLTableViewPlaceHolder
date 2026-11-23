@@ -227,7 +227,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 82 / 100 (53 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
+**Current score: 85 / 100 (55 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
@@ -284,8 +284,8 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 | `DeliveryHeader` / `DeliveryFooter` | `CYLRefreshDeliveryHeader` / `CYLRefreshDeliveryFooter` | TODO |
 | `PhoenixHeader` / `PhoenixFooter` | `CYLRefreshPhoenixHeader` / `CYLRefreshPhoenixFooter` | TODO |
 | `TaurusHeader` / `TaurusFooter` | `CYLRefreshTaurusHeader` / `CYLRefreshTaurusFooter` | TODO |
-| Header second floor (`openHeaderSecondary`, `closeHeaderSecondary`, `SecondaryHeader`, trigger / dimension fields) | `openSecondary`, `closeSecondary`, `secondaryView`, `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset` | TODO |
-| Footer second floor (`openFooterSecondary`, `closeFooterSecondary`, `SecondaryBuilderFooter`) | `CYLRefreshBackFooter`: same secondary API, `secondaryOpenedBlock` / `secondaryClosedBlock` | TODO |
+| Header second floor (`openHeaderSecondary`, `closeHeaderSecondary`, `SecondaryHeader`, trigger / dimension fields) | `openSecondary`, `closeSecondary`, `secondaryView`, `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.openSecondary` / `closeSecondary` / `secondaryView` / `secondaryTriggerOffset` / `secondaryDimension` / `secondaryCloseTriggerOffset` / `isSecondaryArmed`, drawn by `CYLRefresh` (`CrossPlatform/flutter_cylplaceholder/test/refresh_secondary_test.dart`, header group) |
+| Footer second floor (`openFooterSecondary`, `closeFooterSecondary`, `SecondaryBuilderFooter`) | `CYLRefreshBackFooter`: same secondary API, `secondaryOpenedBlock` / `secondaryClosedBlock` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` the same API on every footer, `secondaryOpenedBlock` / `secondaryClosedBlock` (`CrossPlatform/flutter_cylplaceholder/test/refresh_secondary_test.dart`, footer group) |
 | Rive style packages (`easy_refresh_bow`, `bubbles`, `halloween`, `skating`, `space`, `squats`) | `CYLRefreshRiveHeader(style: CYLRefreshRiveStyle)`; footer through `CYLRefreshDrawnFooter(style:)` | TODO |
 | `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/paging.dart` `CYLRefreshPaging<T>` (`test/refresh_paging_test.dart`) |
 | Example pages (49 Dart files in `example/lib`) | Ported pages run in `example/` with the iOS / Android demo's names and data | TODO |

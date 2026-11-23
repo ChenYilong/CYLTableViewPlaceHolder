@@ -92,6 +92,25 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   /// The over-offset [beginRefreshing] uses when none is passed.
   double defaultOverOffset;
 
+  /// The second floor: a view opened by pulling past [secondaryTriggerOffset] and releasing, instead of refreshing. null
+  /// (the default) means no second floor.
+  Widget? secondaryView;
+
+  /// The pull, in logical pixels, past which a release opens the second floor; larger than [triggerOffset].
+  double secondaryTriggerOffset = 120;
+
+  /// The extent of the open second floor along the pull axis, or 0 for the whole viewport.
+  double secondaryDimension = 0;
+
+  /// While the second floor is open, scrolling the content back by this many logical pixels closes it.
+  double secondaryCloseTriggerOffset = 60;
+
+  /// Called after the second floor opened.
+  VoidCallback? secondaryOpenedBlock;
+
+  /// Called after the second floor closed.
+  VoidCallback? secondaryClosedBlock;
+
   /// The accent color of the indicator, or null for the theme's.
   Color? colorAccent;
 
@@ -108,6 +127,8 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   bool _noMoreData = false;
   bool _disposed = false;
   bool _wantsBegin = false;
+  bool _secondaryOpen = false;
+  bool _secondaryArmed = false;
   Timer? _finishTimer;
   CYLRefreshHost? _host;
   final List<CYLRefreshPhaseObserver> _observers = [];
@@ -147,7 +168,38 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   bool get isNoMoreData => _noMoreData;
 
   /// Whether the indicator keeps its [expandHeight] open: while refreshing, finishing, and (footer) with no more data.
-  bool get holdsSpace => isRefreshing || _phase == CYLRefreshPhase.finishing || _noMoreData;
+  bool get holdsSpace => isRefreshing || _phase == CYLRefreshPhase.finishing || _noMoreData || _secondaryOpen;
+
+  /// Whether the second floor is open.
+  bool get isSecondaryOpen => _secondaryOpen;
+
+  /// Whether the pull is past [secondaryTriggerOffset]: releasing opens the second floor.
+  bool get isSecondaryArmed => _secondaryArmed;
+
+  /// Opens the second floor ([secondaryView] must be set). Does nothing while it is open.
+  void openSecondary() {
+    if (_disposed || secondaryView == null || _secondaryOpen) return;
+    _finishTimer?.cancel();
+    _finishTimer = null;
+    _secondaryArmed = false;
+    _secondaryOpen = true;
+    _dragOffset = 0;
+    _pullingPercent = 0;
+    if (_phase != CYLRefreshPhase.idle) {
+      _setPhase(CYLRefreshPhase.idle);
+    } else {
+      notifyListeners();
+    }
+    secondaryOpenedBlock?.call();
+  }
+
+  /// Closes the second floor. Does nothing unless it is open.
+  void closeSecondary() {
+    if (_disposed || !_secondaryOpen) return;
+    _secondaryOpen = false;
+    notifyListeners();
+    secondaryClosedBlock?.call();
+  }
 
   /// The duration the next opening animation takes, or null for the default; read by `CYLRefresh`.
   Duration? openDuration;
@@ -248,6 +300,9 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
     if (!visible && !notifiesWhenHidden) return;
     final changed = offset != _dragOffset;
     _dragOffset = offset < 0 ? 0 : offset;
+    final wasSecondaryArmed = _secondaryArmed;
+    _secondaryArmed = secondaryView != null && refreshEnabled && !_secondaryOpen && dragging && !isRefreshing && _dragOffset >= secondaryTriggerOffset;
+    if (_secondaryArmed != wasSecondaryArmed) notifyListeners();
     _pullingPercent = triggerOffset > 0 ? _dragOffset / triggerOffset : 0;
     final armed = refreshEnabled && !(_noMoreData && !canLoadAfterNoMore) && !(triggerMode == CYLRefreshTriggerMode.onEdge && !startedAtEdge);
     if (dragging && !isRefreshing && _phase != CYLRefreshPhase.finishing) {
@@ -272,6 +327,12 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   /// Called by `CYLRefresh` when the finger lifts: an armed component starts refreshing.
   void handleRelease() {
     if (_disposed) return;
+    if (_secondaryArmed) {
+      _secondaryArmed = false;
+      if (_phase != CYLRefreshPhase.idle) _setPhase(CYLRefreshPhase.idle);
+      openSecondary();
+      return;
+    }
     if (_phase == CYLRefreshPhase.releaseToRefresh) {
       if (exclusiveWithOtherRefresh && (_host?.isOtherRefreshing(this) ?? false)) {
         _setPhase(CYLRefreshPhase.idle);

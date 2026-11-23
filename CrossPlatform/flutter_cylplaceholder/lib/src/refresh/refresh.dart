@@ -120,6 +120,7 @@ class _Slot {
   CYLRefreshComponent? component;
   VoidCallback? listener;
   bool open = false;
+  bool secondary = false;
   int generation = 0;
 
   double get hold => controller.value;
@@ -134,6 +135,7 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
   bool _startedAtBottom = true;
   late bool _startActive = widget.refreshOnStartHeader != null;
   bool _startRefreshed = false;
+  Size _viewport = Size.zero;
 
   CYLRefreshHeader? get _activeHeader => _startActive ? widget.refreshOnStartHeader : widget.header;
 
@@ -196,7 +198,8 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
     slot.listener = () => _componentChanged(slot);
     component.addListener(slot.listener!);
     slot.open = component.holdsSpace;
-    slot.controller.value = slot.open ? component.expandHeight : 0;
+    slot.secondary = component.isSecondaryOpen;
+    slot.controller.value = slot.open ? _extentOf(component) : 0;
     component.attach(this);
   }
 
@@ -216,14 +219,16 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       widget.footer?.resetNoMoreData();
     }
     final open = component.holdsSpace;
-    if (open == slot.open) return;
+    final secondary = component.isSecondaryOpen;
+    if (open == slot.open && secondary == slot.secondary) return;
     slot.open = open;
+    slot.secondary = secondary;
     final generation = ++slot.generation;
     final controller = slot.controller;
     if (open) {
       final over = component.openOverOffset;
       final duration = component.openDuration ?? const Duration(milliseconds: 200);
-      final target = component.expandHeight;
+      final target = _extentOf(component);
       if (over > 0) {
         controller.animateTo(target + over, duration: duration, curve: Curves.easeOut).whenComplete(() {
           if (mounted && slot.generation == generation) controller.animateTo(target, duration: const Duration(milliseconds: 150));
@@ -266,8 +271,22 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       footer?.handlePull(footerPull, dragging: _dragging, startedAtEdge: _startedAtBottom);
       if (footer is CYLRefreshAutoFooter) footer.handleDistanceToEnd(metrics.maxScrollExtent - metrics.pixels);
     }
+    if (_dragging && header != null && header.isSecondaryOpen && metrics.pixels - metrics.minScrollExtent >= header.secondaryCloseTriggerOffset) {
+      header.closeSecondary();
+    }
+    if (_dragging && footer != null && footer.isSecondaryOpen && metrics.maxScrollExtent - metrics.pixels >= footer.secondaryCloseTriggerOffset) {
+      footer.closeSecondary();
+    }
     if (notification is ScrollEndNotification && _dragging) _release();
     return false;
+  }
+
+  /// The extent the indicator holds along the pull axis: [CYLRefreshComponent.expandHeight], or the second floor's.
+  double _extentOf(CYLRefreshComponent component) {
+    if (!component.isSecondaryOpen) return component.expandHeight;
+    if (component.secondaryDimension > 0) return component.secondaryDimension;
+    final extent = widget.triggerAxis == Axis.horizontal ? _viewport.width : _viewport.height;
+    return extent.isFinite && extent > 0 ? extent : component.expandHeight;
   }
 
   void _release() {
@@ -302,6 +321,15 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       child = PrimaryScrollController(controller: widget.scrollController!, scrollDirection: widget.triggerAxis, child: child);
     }
     child = NotificationListener<ScrollNotification>(onNotification: _onScroll, child: child);
+    return LayoutBuilder(builder: (context, constraints) {
+      _viewport = constraints.biggest;
+      return _body(child);
+    });
+  }
+
+  Widget _body(Widget child) {
+    final header = _header.component;
+    final footer = _footer.component;
     return ClipRect(
       clipBehavior: widget.clipBehavior,
       child: ListenableBuilder(
@@ -340,7 +368,7 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
   }
 
   Widget _indicator(CYLRefreshComponent component, double total) {
-    final expand = component.expandHeight;
+    final expand = _extentOf(component);
     final isHeader = component.isHeader;
     final horizontal = widget.triggerAxis == Axis.horizontal;
     Widget body = horizontal
@@ -468,5 +496,7 @@ class _IndicatorBody extends StatelessWidget {
   final CYLRefreshComponent component;
 
   @override
-  Widget build(BuildContext context) => ListenableBuilder(listenable: component, builder: (context, _) => component.buildIndicator(context));
+  Widget build(BuildContext context) => ListenableBuilder(listenable: component,
+        builder: (context, _) => component.isSecondaryOpen && component.secondaryView != null ? component.secondaryView! : component.buildIndicator(context),
+      );
 }
