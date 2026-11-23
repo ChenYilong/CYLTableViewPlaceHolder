@@ -1,0 +1,11 @@
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'CYLExample'
+include ':app'
+// [EN] react-native-cylplaceholder's own android/ build targets a newer Android Gradle plugin than React Native 0.76 uses,
+//      so autolinking is switched off for it (react-native.config.js) and its sources are compiled by ':cyl-rn'.
+// [CN] react-native-cylplaceholder 自带的 android/ 构建用的 Android Gradle 插件比 React Native 0.76 新，
+//      所以关闭它的自动链接（react-native.config.js），改由 ':cyl-rn' 编译其源码。
+include ':cyl-rn'
+includeBuild('../node_modules/@react-native/gradle-plugin')
