@@ -210,8 +210,13 @@ fun CYLPlaceholderComponent.Companion.componentWithDictionary(context: Context, 
             if (dictionary.containsKey("size")) side = sizeFromValue(dictionary["size"])?.first ?: return error.fail("A component size must be [width, height] or a number.")
             val animation = string(dictionary["animation"])
             if (animation != null && CYLPlaceholderScenarioCatalog.allAnimationFileNames().none { it == animation }) return error.fail("Bundled animation $animation was not found.")
-            val image = drawableId(context, "cyl_placeholder_" + snake(style.name))
-            CYLPlaceholderComponent.icon(image, title, side.toFloat(), style != CYLPlaceholderStyle.Empty, action)
+            if (animation != null) {
+                // As iOS does (`bundledAnimationParts`): a named animation plays over the style's image, its fallback.
+                CYLPlaceholderComponent.componentWithBundledAnimation(animation, style, title, side.toFloat(), action)
+            } else {
+                val image = drawableId(context, "cyl_placeholder_" + snake(style.name))
+                CYLPlaceholderComponent.icon(image, title, side.toFloat(), style != CYLPlaceholderStyle.Empty, action)
+            }
         }
         "hint" -> CYLPlaceholderComponent.hintComponentWithText(title ?: "")
         "button" -> {
