@@ -2,10 +2,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'cyl_placeholder_stack.dart';
+import 'native_backend.dart';
 
 /// The native `CYLPlaceholderStackView` as a widget: a platform view created from the configuration map of its components
 /// (`CYLPlaceholderComponent.toConfiguration`, the "components" of `docs/Placeholder-Scenarios.md`), whose button and
-/// background actions come back by name through a method channel. Used by [CYLPlaceholderStackView] on Android.
+/// background actions come back by name through a method channel. Used by [CYLPlaceholderStackView] on Android and iOS.
 class CYLNativePlaceholderStack extends StatefulWidget {
   /// Creates a native placeholder stack for [components].
   const CYLNativePlaceholderStack({
@@ -83,10 +84,9 @@ class _CYLNativePlaceholderStackState extends State<CYLNativePlaceholderStack> {
       builder: (context, constraints) => SizedBox(
         width: constraints.hasBoundedWidth ? constraints.maxWidth : null,
         height: constraints.hasBoundedHeight ? constraints.maxHeight : widget.height,
-        child: AndroidView(
+        child: CYLPlaceholderNative.platformView(
           viewType: CYLNativePlaceholderStack.viewType,
           creationParams: widget.creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
           onPlatformViewCreated: _created,
         ),
       ),

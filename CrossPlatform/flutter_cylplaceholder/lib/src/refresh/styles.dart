@@ -158,10 +158,10 @@ class CYLRefreshClassicHeader extends CYLRefreshHeader with CYLRefreshClassicSty
   /// Formats the time of the second line; the default is `Last updated: HH:mm`.
   String Function(DateTime time)? lastUpdatedTimeFormatter;
 
-  /// Whether the native header draws this one: the native half is on, and nothing asks for what only Flutter can draw (a
+  /// Whether the native header draws this one: the native refresh header is on (Android), and nothing asks for what only Flutter can draw (a
   /// custom builder, text, icon or image).
   bool get _usesNative =>
-      CYLPlaceholderNative.enabled &&
+      CYLPlaceholderNative.refreshEnabled &&
       builder == null &&
       textBuilder == null &&
       messageBuilder == null &&
