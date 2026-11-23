@@ -216,11 +216,11 @@ jobs:
           - { linkage: static, pag: PAGEnterprise }
     steps:
       - uses: actions/checkout@v4
-      # CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
-      - name: Newest CYLTabBarController commit
+      # CYLTabBarController is exactly the commit the Cartfile pins (the examples' Podfiles pin the same one).
+      - name: Pinned CYLTabBarController commit
         id: cyltabbarcontroller
         if: needs.changes.outputs.code == 'true'
-        run: echo "sha=$(scripts/resolve-cyltabbarcontroller-commit.sh | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+        run: echo "sha=$(sed -nE 's/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})".*/\1/p' Cartfile)" >> "$GITHUB_OUTPUT"
       - name: Animation fixtures (CYLTabBarController)
         if: needs.changes.outputs.code == 'true'
         uses: actions/checkout@v4

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage: scripts/ci-build-example.sh <demo folder>    e.g. . or Examples/Example-Scenarios
 #
-# Resolves CYLTabBarController's latest commit into the demo's Podfile, installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
+# Installs the demo's pods, builds it for the simulator (like CYLTabBarController's scripts/ci-build-example.sh),
 # then installs and launches the app on a booted simulator and saves a screenshot to build/screenshots/<scheme>.png.
 # A build without a screenshot fails: every CI build must show the example running (see instructions.md).
 # ExampleObjC02 then runs its collection UI tests, which save step screenshots to build/screenshots too.
@@ -25,14 +25,12 @@ case "$DEMO" in
 esac
 # The main example embeds the framework target, which links CYLTabBarController.xcframework (the Cartfile's commit).
 if [[ "$DEMO" == . ]]; then
-  "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$ROOT/Cartfile"
   "$ROOT/scripts/cyltabbarcontroller-xcframework.sh" simulator
 fi
 cd "$DEMO"
-# CYLTabBarController is always its newest commit on any branch (instructions.md, "Depending on CYLTabBarController").
-if grep -Eq "pod '(CYLTabBarController|CYLAnimatedItem)'.*:commit" Podfile; then
-  "$ROOT/scripts/resolve-cyltabbarcontroller-commit.sh" --write "$PWD/Podfile"
-fi
+# CYLTabBarController stays at exactly the commit the Podfile pins (owner's decision, 2026-11-24: the newest commit of
+# feat/harmony-animated-item-engines). The CI used to rewrite it to the newest commit on any branch, which picked
+# c1d55e9f (feat/dealloc-block-executor-dependency, no `onAnimationEnd`) and broke the build (run 45161339463).
 # CYLTabBarController's newest commit can depend on a CYLDeallocBlockExecutor version that is not on CocoaPods trunk yet
 # (81d012a3, CYLTabBarController draft PR #823, needs ~> 1.4 while trunk has 1.3.0; 1.4.0 is on CYLDeallocBlockExecutor's
 # feat/lifecycle-callbacks, 2026-11-22). Pin that pod to its own newest commit on any branch, as CYLTabBarController is.
