@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### TODO：Flutter 原生页脚（Kotlin footer 模式）在 Android 上的运行证据 / TODO: Flutter native footer (Kotlin footer mode) running on Android
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` at `bc799668` (includes footer glue `91665425`); local commit only, not pushed.
+- **要求 / Requirements:** prove `CYLRefreshPlatformView.kt` footer mode compiles and runs; no code changed.
+- **证据 / Evidence:** core published to mavenLocal with the Windows-fixed script (exit 0); copy of the plugin under `C:/cylbuild/fpf`: `flutter test` 120 of 120, `flutter analyze` 28 issues (27 `deprecated_member_use` infos plus 1 `unnecessary_import` info in `test/native_backend_test.dart`), `flutter build apk --debug` of the example built (Kotlin compiled, no error); installed on emulator-5556 (API 37). On the example's Refresh page an adb swipe up showed the native footer "Loading..." and the load added 5 rows (10 to 15). Sheet: `docs/assets/android-17-api37-x86_64-emulator-flutter-native-footer-pull-up-load-bc799668-20261124-sheet.png`; `check_screenshots.py` passes.
+- **未解决 / Open (TODO):** after the list reached 20 rows ("no more data"), a pull up (panel 3) shows the overscroll gap but no "no more data" text on the Android native footer; not investigated, cause unknown (Dart side may not drive the native view in that state). iOS shows the label. Header-style pages and the other styles were not run.
+
 ### TODO：Windows 脚本、两个核心缺口与 Flutter 变通方法的移除 / TODO: Windows script, two core gaps and removing the Flutter workarounds
 
 - **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31), worktree branch of a Sonnet agent; local commits only, not pushed.
