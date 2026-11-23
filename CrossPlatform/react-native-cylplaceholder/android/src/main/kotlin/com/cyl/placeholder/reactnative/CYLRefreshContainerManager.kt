@@ -9,8 +9,8 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
 /**
- * The React Native view manager of [CYLRefreshContainerView] ("CYLRefreshContainer"): props `refreshing` and `enabled`,
- * the direct event `onRefresh`.
+ * The React Native view manager of [CYLRefreshContainerView] ("CYLRefreshContainer"): props `refreshing`, `enabled`,
+ * `loadingMore`, `noMoreData` and `loadMoreEnabled`, the direct events `onRefresh` and `onLoadMore`.
  */
 class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
     override fun getName(): String = NAME
@@ -20,6 +20,10 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
             view.onRefresh = {
                 @Suppress("DEPRECATION")
                 context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topRefresh", Arguments.createMap())
+            }
+            view.onLoadMore = {
+                @Suppress("DEPRECATION")
+                context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topLoadMore", Arguments.createMap())
             }
         }
 
@@ -35,8 +39,29 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
     @ReactProp(name = "enabled", defaultBoolean = true)
     fun setEnabled(view: CYLRefreshContainerView, enabled: Boolean) = view.setPullEnabled(enabled)
 
+    /**
+     * The `loadingMore` prop: the footer shows its loading state while true.
+     */
+    @ReactProp(name = "loadingMore")
+    fun setLoadingMore(view: CYLRefreshContainerView, loadingMore: Boolean) = view.setLoadingMoreFromJs(loadingMore)
+
+    /**
+     * The `noMoreData` prop: the footer shows "no more data" while true.
+     */
+    @ReactProp(name = "noMoreData")
+    fun setNoMoreData(view: CYLRefreshContainerView, noMoreData: Boolean) = view.setNoMoreDataFromJs(noMoreData)
+
+    /**
+     * The `loadMoreEnabled` prop (default false).
+     */
+    @ReactProp(name = "loadMoreEnabled")
+    fun setLoadMoreEnabled(view: CYLRefreshContainerView, enabled: Boolean) = view.setLoadMoreEnabled(enabled)
+
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
-        MapBuilder.of("topRefresh", MapBuilder.of("registrationName", "onRefresh"))
+        MapBuilder.of(
+            "topRefresh", MapBuilder.of("registrationName", "onRefresh"),
+            "topLoadMore", MapBuilder.of("registrationName", "onLoadMore"),
+        )
 
     companion object {
         /**

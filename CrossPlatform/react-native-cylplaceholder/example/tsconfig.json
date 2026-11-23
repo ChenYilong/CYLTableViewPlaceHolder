@@ -1,0 +1,7 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": ["App.tsx", "index.js"]
+}

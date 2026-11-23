@@ -9,6 +9,14 @@ export interface CYLRefreshContainerProps {
   onRefresh: () => void;
   /** Whether the pull is on, default true. */
   enabled?: boolean;
+  /** Whether the native footer (load more) is on, default false. Android only: the iOS half has no footer yet (TODO). */
+  loadMoreEnabled?: boolean;
+  /** Shows the footer's loading state while true, as `refreshing` does for the header. */
+  loadingMore?: boolean;
+  /** Shows "no more data" in the footer while true; set together with `loadingMore: false` to end a load with it. */
+  noMoreData?: boolean;
+  /** Called when the footer starts loading (not when `loadingMore` was set from JavaScript). */
+  onLoadMore?: () => void;
   style?: StyleProp<ViewStyle>;
   /** One scroll view (`ScrollView`, `FlatList`, `SectionList`): it gets the native CYLRefresh header. */
   children: ReactNode;
@@ -25,7 +33,11 @@ const Native = isCYLRefreshContainerAvailable()
   ? requireNativeComponent<{
       refreshing: boolean;
       enabled: boolean;
+      loadMoreEnabled: boolean;
+      loadingMore: boolean;
+      noMoreData: boolean;
       onRefresh: () => void;
+      onLoadMore?: () => void;
       style?: StyleProp<ViewStyle>;
       children: ReactNode;
     }>(NATIVE_NAME)
@@ -36,10 +48,29 @@ const Native = isCYLRefreshContainerAvailable()
  * `CYLRefreshLayout` around it, so the native headers and their phase machine do the pulling. Returns null when the app has
  * no native half (use `CYLRefresh`, the JavaScript implementation, then; `isCYLRefreshContainerAvailable()` tells).
  */
-export function CYLRefreshContainer({ refreshing, onRefresh, enabled = true, style, children }: CYLRefreshContainerProps): ReactElement | null {
+export function CYLRefreshContainer({
+  refreshing,
+  onRefresh,
+  enabled = true,
+  loadMoreEnabled = false,
+  loadingMore = false,
+  noMoreData = false,
+  onLoadMore,
+  style,
+  children,
+}: CYLRefreshContainerProps): ReactElement | null {
   if (Native == null) return null;
   return (
-    <Native refreshing={refreshing} enabled={enabled} onRefresh={onRefresh} style={[{ flex: 1 }, style]}>
+    <Native
+      refreshing={refreshing}
+      enabled={enabled}
+      onRefresh={onRefresh}
+      loadMoreEnabled={loadMoreEnabled}
+      loadingMore={loadingMore}
+      noMoreData={noMoreData}
+      onLoadMore={onLoadMore}
+      style={[{ flex: 1 }, style]}
+    >
       {children}
     </Native>
   );
