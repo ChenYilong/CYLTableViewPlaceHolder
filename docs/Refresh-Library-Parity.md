@@ -227,7 +227,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 97 / 100 (63 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
+**Current score: 98 / 100 (64 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
@@ -295,7 +295,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 | Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()`; also `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView(animationFile:)` builds the same `CYLAnimationView` (`test/placeholder_view_test.dart`) |
 | Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | `CrossPlatform/flutter_cylplaceholder/example/lib/error_placeholder_page.dart` (first load fails, `CYLPlaceholderView` shown, tap retries), `refresh_page.dart`, `paging_page.dart`; run on iOS 27.2 simulator (screenshots below) |
 | Example screenshots in `docs/` | Original pixels, labeled per `docs/instructions/testing.md` | `docs/assets/flutter-ios27.2-iphone18pro-cylplaceholder-error-placeholder-0356b56-20261123-sheet.png` and `...-refresh-0356b56-20261123-sheet.png` (originals next to them; `scripts/check_screenshots.py` passes) |
-| Unit and widget tests | One test per API group above, `flutter test` green | TODO |
+| Unit and widget tests | One test per API group above, `flutter test` green | `CrossPlatform/flutter_cylplaceholder/test/` 12 files, 100 tests, one group per API group above (component state, trigger rules, footer, paging, widget wiring, layout / axis / springs / locators / nested, second floor, styles, drawn styles, Rive styles, placeholder view, stack, HUD), `flutter test` green on Flutter 3.50.1 (2026-11-23); `CrossPlatform/flutter_cylplaceholder/example/test/example_pages_test.dart` 4 tests; `flutter analyze` has no issue beyond the framework's own deprecation notices |
 
 ## React Native package score table (react-native-cylplaceholder)
 

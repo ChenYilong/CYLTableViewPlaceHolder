@@ -200,7 +200,15 @@ class CYLPlaceholderStackView extends StatelessWidget {
         );
       },
     );
-    final centered = Center(child: body);
+    // Centered when it fits, scrollable when the components are taller than the space.
+    final centered = LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0),
+          child: Center(child: body),
+        ),
+      ),
+    );
     return backgroundAction == null ? centered : GestureDetector(behavior: HitTestBehavior.opaque, onTap: backgroundAction, child: centered);
   }
 

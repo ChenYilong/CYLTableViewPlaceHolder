@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'error_placeholder_page.dart';
 import 'paging_page.dart';
+import 'placeholder_stack_page.dart';
 import 'refresh_page.dart';
+import 'secondary_page.dart';
+import 'styles_page.dart';
 
 void main() => runApp(const ExampleApp());
 
@@ -29,7 +32,10 @@ class HomePage extends StatelessWidget {
     final pages = <(String, Widget)>[
       ('Refresh', const RefreshPage()),
       ('Paging', const PagingPage()),
+      ('Refresh styles', const StylesPage()),
+      ('Second floor', const SecondaryPage()),
       ('Error placeholder', const ErrorPlaceholderPage()),
+      ('Placeholder stack and HUD', const PlaceholderStackPage()),
     ];
     return Scaffold(
       appBar: AppBar(title: const Text('CYLRefresh')),
