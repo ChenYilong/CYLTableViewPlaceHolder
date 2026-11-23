@@ -93,12 +93,13 @@ void main() {
     test('notifiesWhenHidden decides whether a hidden component notifies', () {
       var hidden = 0;
       var always = 0;
-      final quiet = CYLRefreshHeader()..addListener(() => hidden++);
-      final loud = CYLRefreshHeader(notifiesWhenHidden: true)..addListener(() => always++);
+      final quiet = CYLRefreshHeader(notifiesWhenHidden: false)..addListener(() => hidden++);
+      final loud = CYLRefreshHeader()..addListener(() => always++);
       quiet.handlePull(0, dragging: false);
       loud.handlePull(0, dragging: false);
       expect(hidden, 0);
       expect(always, 1);
+      expect(CYLRefreshHeader().notifiesWhenHidden, isTrue, reason: 'the default of iOS and Android');
       quiet.dispose();
       loud.dispose();
     });

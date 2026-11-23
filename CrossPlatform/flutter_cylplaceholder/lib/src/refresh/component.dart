@@ -39,7 +39,7 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
     this.triggersWhenReached = false,
     this.maxPullDistance = 0,
     this.hapticFeedback = false,
-    this.notifiesWhenHidden = false,
+    this.notifiesWhenHidden = true,
     this.exclusiveWithOtherRefresh = true,
     this.defaultOverOffset = 20,
     this.colorAccent,
@@ -82,8 +82,9 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   /// Vibrate when the pull passes the trigger offset.
   bool hapticFeedback;
 
-  /// True: notify the listeners on every scroll update, even while the indicator is hidden (lets a drawing-free
-  /// component follow the scroll position). False (the default here): only while it is visible.
+  /// True (the default, as on iOS and Android): notify the listeners on every scroll update, even while the indicator is
+  /// hidden (lets a drawing-free component follow the scroll position). A hidden indicator is not built, so this costs
+  /// one listener call per scroll update and no rebuild. False: only while the indicator is visible.
   bool notifiesWhenHidden;
 
   /// True: do not start while another component of the same `CYLRefresh` is refreshing.
@@ -371,6 +372,9 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
     _noMoreData = value;
     notifyListeners();
   }
+
+  /// Rebuilds the indicator after properties such as [colorPrimary] changed.
+  void refreshIndicator() => notifyListeners();
 
   /// Draws the indicator inside the space the pull opens; the default calls [builder].
   Widget buildIndicator(BuildContext context) => builder?.call(context, this) ?? const SizedBox.shrink();

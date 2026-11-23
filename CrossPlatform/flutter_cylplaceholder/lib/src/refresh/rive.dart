@@ -34,6 +34,10 @@ class CYLRefreshRiveStyle {
     this.loadingNumberMaximum = 99,
     this.loadingNumberFinished = 100,
     this.loadingNumberDuration = 2,
+    this.pullAnimation,
+    this.triggerAnimation,
+    this.loadingAnimation,
+    this.idleAnimation,
   });
 
   /// The Rive file.
@@ -94,7 +98,28 @@ class CYLRefreshRiveStyle {
   double loadingNumberDuration;
 
   /// The options of `CYLAnimationView` this style asks for.
-  Map<String, Object> get animationOptions => {
+  /// The linear animation scrubbed with the pull (for a file without a state machine).
+  String? pullAnimation;
+
+  /// The linear animation that plays when the pull passes the trigger offset.
+  String? triggerAnimation;
+
+  /// The linear animation that plays while refreshing.
+  String? loadingAnimation;
+
+  /// The linear animation shown at rest (and scrubbed with the pull when there is no [pullAnimation]).
+  String? idleAnimation;
+
+  /// The options of the file for `CYLAnimationView` at rest; see [animationOptionsFor] while refreshing.
+  Map<String, Object> get animationOptions => animationOptionsFor(refreshing: false);
+
+  /// The options of the file: the linear animation to play (`animation`, upstream's Rive option) for the phase.
+  Map<String, Object> animationOptionsFor({required bool refreshing}) => {
+        'animation': ?(refreshing ? (loadingAnimation ?? idleAnimation ?? pullAnimation) : (idleAnimation ?? pullAnimation)),
+        ..._stateMachineOptions,
+      };
+
+  Map<String, Object> get _stateMachineOptions => {
         'artboard': ?artboardName,
         'stateMachine': ?stateMachineName,
         'input': ?loadingBoolean,
@@ -124,6 +149,7 @@ class CYLRefreshRiveIndicator extends StatefulWidget {
 class _CYLRefreshRiveIndicatorState extends State<CYLRefreshRiveIndicator> {
   final CYLAnimationController _controller = CYLAnimationController();
   CYLRefreshPhase? _lastPhase;
+  bool _refreshing = false;
 
   @override
   void initState() {
@@ -140,6 +166,10 @@ class _CYLRefreshRiveIndicatorState extends State<CYLRefreshRiveIndicator> {
   void _changed() {
     final component = widget.component;
     final phase = component.phase;
+    final refreshing = component.isRefreshing;
+    if (refreshing != _refreshing && widget.style.loadingAnimation != null && mounted) {
+      setState(() => _refreshing = refreshing);
+    }
     if (phase == CYLRefreshPhase.refreshing && _lastPhase != CYLRefreshPhase.refreshing) {
       _controller.play();
     } else if (component.state == CYLRefreshState.pulling || phase == CYLRefreshPhase.idle) {
@@ -156,7 +186,7 @@ class _CYLRefreshRiveIndicatorState extends State<CYLRefreshRiveIndicator> {
         height: math.max(widget.style.minimumHeight, widget.component.expandHeight),
         child: CYLAnimationView(
           file: widget.style.fileURL,
-          options: widget.style.animationOptions,
+          options: widget.style.animationOptionsFor(refreshing: _refreshing),
           drivesAnimationPlayback: false,
           controller: _controller,
         ),

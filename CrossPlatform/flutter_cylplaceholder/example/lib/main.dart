@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'demo_pages.dart';
 import 'error_placeholder_page.dart';
 import 'paging_page.dart';
 import 'placeholder_stack_page.dart';
 import 'refresh_page.dart';
+import 'rive_page.dart';
 import 'secondary_page.dart';
 import 'styles_page.dart';
 
@@ -36,6 +38,19 @@ class HomePage extends StatelessWidget {
       ('Second floor', const SecondaryPage()),
       ('Error placeholder', const ErrorPlaceholderPage()),
       ('Placeholder stack and HUD', const PlaceholderStackPage()),
+      ('Cupertino style', cupertinoPage()),
+      ('Rive styles', const RiveListPage()),
+      ('Refresh on start', refreshOnStartPage()),
+      ('Trigger mode', triggerModePage()),
+      ('Listener header', const ListenerHeaderPage()),
+      ('Chat', const ChatPage()),
+      ('User profile', const UserProfilePage()),
+      ('Theme switch', const ThemeSwitchPage()),
+      ('Carousel', const PagerPage(title: 'Carousel', carousel: true)),
+      ('Page view', const PagerPage(title: 'Page view')),
+      ('Tab bar view', const PagerPage(title: 'Tab bar view', tabs: true)),
+      ('Nested scrolling', const NestedPage()),
+      ('Centre indicator', const CenterRefreshPage()),
     ];
     return Scaffold(
       appBar: AppBar(title: const Text('CYLRefresh')),
