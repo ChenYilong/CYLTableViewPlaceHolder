@@ -29,7 +29,7 @@ final class CYLPlaceholderPlatformViewFactory: NSObject, FlutterPlatformViewFact
 
 /**
  * [EN] One native placeholder in a Flutter widget. The channel `flutter_cylplaceholder/CYLPlaceholderView/<id>` carries "update"
- *      from Dart (a name and a value, applied by `CYLPlaceholderBridge.updatePlaceholderView`) and "onTap" back. The container
+ *      from Dart (a name and a value, applied by `CYLPlaceholderBridge.updatePlaceholderView`) and "onTap" back. The view
  *      has the accessibility identifier `cyl.native.placeholder`, so a UI dump tells this view from the Dart fallback.
  * [CN] Flutter 控件里的一个原生占位视图。通道 `flutter_cylplaceholder/CYLPlaceholderView/<id>` 承载来自 Dart 的 "update"
  *      （名称与值，由 `CYLPlaceholderBridge.updatePlaceholderView` 应用）以及回传的 "onTap"。容器的 accessibilityIdentifier 为
@@ -45,9 +45,11 @@ final class CYLPlaceholderPlatformView: NSObject, FlutterPlatformView {
         container = UIView(frame: frame)
         var item = params
         item["tappable"] = nil
+        // [EN] The native view carries the identifier of its container, so a UI dump tells it from the Dart fallback.
+        // [CN] 原生视图带有容器的标识符，便于在界面树里区分原生视图与 Dart 回退。
+        if item["CYLPlaceholderItemAccessibilityIdentifier"] == nil { item["CYLPlaceholderItemAccessibilityIdentifier"] = "cyl.native.placeholder" }
         placeholder = CYLPlaceholderBridge.placeholderView(params: item)
         super.init()
-        container.accessibilityIdentifier = "cyl.native.placeholder"
         if let view = placeholder {
             view.frame = container.bounds
             view.autoresizingMask = [.flexibleWidth, .flexibleHeight]

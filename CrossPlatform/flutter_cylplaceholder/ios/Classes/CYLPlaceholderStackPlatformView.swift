@@ -31,7 +31,7 @@ final class CYLPlaceholderStackPlatformViewFactory: NSObject, FlutterPlatformVie
 /**
  * [EN] One native placeholder stack in a Flutter widget. The channel `flutter_cylplaceholder/CYLPlaceholderStackView/<id>`
  *      carries "update" from Dart (a name and a value, applied by `CYLPlaceholderBridge.updateStackView`) and "onAction" back
- *      (the name of the tapped button or background action). The container has the accessibility identifier
+ *      (the name of the tapped button or background action). The stack has the accessibility identifier
  *      `cyl.native.placeholderStack`.
  * [CN] Flutter 控件里的一个原生占位堆叠视图。通道 `flutter_cylplaceholder/CYLPlaceholderStackView/<id>` 承载来自 Dart 的 "update"
  *      （名称与值，由 `CYLPlaceholderBridge.updateStackView` 应用）与回传的 "onAction"（被点按的按钮或背景动作名）。
@@ -46,11 +46,13 @@ final class CYLPlaceholderStackPlatformView: NSObject, FlutterPlatformView {
         let channel = FlutterMethodChannel(name: "\(CYLPlaceholderStackPlatformViewFactory.viewType)/\(viewId)", binaryMessenger: messenger)
         self.channel = channel
         container = UIView(frame: frame)
-        stack = CYLPlaceholderBridge.stackView(configuration: params) { action in
+        // [EN] The identifier tells the native stack from the Dart fallback in a UI dump. [CN] 该标识符便于在界面树里区分原生堆叠视图与 Dart 回退。
+        var configuration = params
+        if configuration["accessibilityIdentifier"] == nil { configuration["accessibilityIdentifier"] = "cyl.native.placeholderStack" }
+        stack = CYLPlaceholderBridge.stackView(configuration: configuration) { action in
             channel.invokeMethod("onAction", arguments: action)
         }
         super.init()
-        container.accessibilityIdentifier = "cyl.native.placeholderStack"
         if let view = stack {
             view.frame = container.bounds
             view.autoresizingMask = [.flexibleWidth, .flexibleHeight]

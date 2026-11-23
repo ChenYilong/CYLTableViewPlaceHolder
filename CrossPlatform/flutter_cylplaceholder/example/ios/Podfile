@@ -32,12 +32,18 @@ target 'Runner' do
   # [EN] Static: CYLTabBarController is a static framework. [CN] 静态链接：CYLTabBarController 是静态 framework。
   use_frameworks! :linkage => :static
 
-  # [EN] The animation engine of CYLAnimationView: the CYLTabBarController checkout next to this repository
-  #      (the environment variable CYL_TAB_BAR_CONTROLLER overrides the path).
-  # [CN] CYLAnimationView 的动画引擎：与本仓库同级的 CYLTabBarController（环境变量 CYL_TAB_BAR_CONTROLLER 可改路径）。
-  cyl_path = ENV['CYL_TAB_BAR_CONTROLLER'] || File.expand_path('../../../../../CYLTabBarController', __dir__)
-  pod 'CYLTabBarController', :path => cyl_path
-  pod 'CYLAnimatedItem/Engine', :path => cyl_path
+  # [EN] The pods the plugins need, from the sources this repository pins (CYLTabBarController's `CYLAnimatedItem` engine at the commit of
+  #      the Cartfile, `:git` + `:commit`; the environment variable CYL_TAB_BAR_CONTROLLER_GIT points `:git` at a local clone) and
+  #      CYLTableViewPlaceHolder from this repository (`:path`). The Lottie subspec plays the placeholder animation of the demos.
+  # [CN] 插件所需的 pod，来源为本仓库固定的版本：CYLTabBarController 的 `CYLAnimatedItem` 引擎取 Cartfile 固定的提交（`:git` + `:commit`；
+  #      环境变量 CYL_TAB_BAR_CONTROLLER_GIT 可把 `:git` 指向本地克隆），CYLTableViewPlaceHolder 取本仓库（`:path`）。
+  #      Lottie 子库用于播放示例中的占位动画。
+  repository_root = File.expand_path('../../../..', __dir__)
+  tab_bar_git = ENV['CYL_TAB_BAR_CONTROLLER_GIT'] || 'https://github.com/ChenYilong/CYLTabBarController.git'
+  tab_bar_commit = File.read(File.join(repository_root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
+  pod 'CYLTabBarController', :git => tab_bar_git, :commit => tab_bar_commit
+  pod 'CYLAnimatedItem/Engine', :git => tab_bar_git, :commit => tab_bar_commit
+  pod 'CYLTableViewPlaceHolder/LottieSwift', :path => repository_root
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
