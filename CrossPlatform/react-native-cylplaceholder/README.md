@@ -31,4 +31,4 @@ need (iOS subspec, Android dependency), as upstream documents.
 ## Not covered (TODO)
 
 The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog, HUD and status views are not in
-this package. Not built or run (written statically). MIT, see `LICENSE`.
+this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half is not built or run (written statically). MIT, see `LICENSE`.
