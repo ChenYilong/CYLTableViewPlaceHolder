@@ -1134,9 +1134,10 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
             return [CYLScenarioIcon("CYLPlaceholderUploading.gif", .uploadOff,
                 CYLScenarioText("CYLPlaceholderScenarioUploadingTitle", "Uploading…"), art)]
         case .success:
-            // [EN] The animation ends on an empty frame: the still image shows once it has played.
-            // [CN] 动画结束在空白帧：播放完后显示静态图。
-            let successIcon = CYLScenarioIcon("CYLPlaceholderSuccess.riv", .info,
+            // [EN] The animation ends on an empty frame: the still image shows once it has played. The Lottie file, not the
+            //      Rive one: iOS Rive's player has no `onEnded`, so the end never came and the icon stayed blank (2026-11-24).
+            // [CN] 动画结束在空白帧：播放完后显示静态图。使用 Lottie 文件而不是 Rive 文件：iOS 的 Rive 播放器没有 `onEnded`，结束回调永远不会触发，图标会一直空白（2026-11-24）。
+            let successIcon = CYLScenarioIcon("CYLPlaceholderSuccess.json", .info,
                         CYLScenarioText("CYLPlaceholderScenarioSuccessTitle", "Submitted"), art)
             successIcon.showsImageWhenAnimationEnds = true
             return [successIcon, CYLScenarioButton(.done, .filled)]
