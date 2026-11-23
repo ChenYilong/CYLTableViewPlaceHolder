@@ -27,6 +27,14 @@
 
 ## 任务 / Tasks
 
+### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
+
+- **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup`.
+- **用户原话 / Prompt (verbatim):** "fix to and score to 100"
+- **要求 / Requirements:** `docs/iOS-API-Map.md` shows 819 of 820 rows with an iOS counterpart; the score line says 100 but one row is still TODO. Bring it to 820 / 820.
+- **上下文 / Context:** the only TODO row is `CYLPlaceholderComponent.showsImageWhenAnimationEnds` (Android: `CYLPlaceholderComponent.kt`, wired in `CYLPlaceholderStackView.kt` as `item.showsImageWhenAnimationEnds`). iOS has no such property on `CYLPlaceholderComponent` (`CYLPlaceholderScenario.swift`) and `CYLPlaceholderItemStackView.swift` never sets it on the item view; the property to forward to is `CYLAnimatedItemView.showsImageWhenAnimationEnds` from CYLTabBarController (HarmonyOS already has it). The Success scenario's icon turns it on on Android (`CYLPlaceholderScenario.kt:697`).
+- **计划 / Plan:** iOS is a Mac session's work (`cyl-session-roles`): add the property to `CYLPlaceholderComponent` (default off, Objective-C visible), forward it to the animated item view in the stack view, turn it on for the Success icon, then add the `android/merged/ios-map.json` entry, regenerate the table with `py -3.12 scripts/ios-api-map.py` and run its `--check`. Handed to the Mac session (`Mac-CYLTableViewPlaceHolder 文件夹`); verification: iOS unit tests and a simulator screenshot of the Success scenario.
+
 ### 已完成：修复 PR #31 的 Android CI（Robolectric 下载 429）/ Done: Fix PR #31's Android CI (Robolectric download answered 429)
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup` (PR #31).
