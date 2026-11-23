@@ -4,7 +4,10 @@
   "description": "CYLTableViewPlaceHolder for React Native: a placeholder item (animation plus title) over CYLTabBarController's CYLAnimationView",
   "main": "./src/index.tsx",
   "types": "./src/index.tsx",
-  "files": ["src", "LICENSE"],
+  "files": [
+    "src",
+    "LICENSE"
+  ],
   "license": "MIT",
   "author": "ChenYilong",
   "repository": "https://github.com/ChenYilong/CYLTableViewPlaceHolder",
@@ -12,5 +15,15 @@
     "react": "*",
     "react-native": "*",
     "react-native-cyltabbar": "*"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "typecheck": "tsc"
+  },
+  "peerDependenciesMeta": {
+    "react-native-cyltabbar": {
+      "optional": true
+    }
   }
 }

@@ -303,47 +303,47 @@ Task: `CrossPlatform/react-native-cylplaceholder`, interface aligned with `flutt
 
 Design (advisor, 2026-11-23): two layers. Pure TypeScript with no React import (types as `as const` objects, `CYLRefreshComponent` and its Header / Footer / AutoFooter / BackFooter subclasses, `CYLRefreshPaging`), long-lived objects holding configuration and state, with a small subscribe / notify base in place of `ChangeNotifier`, tested with `node --test --experimental-strip-types`. React layer: a `useSyncExternalStore` hook, `<CYLRefresh>` with a render-prop child that receives the scroll props, the Classic / Cupertino / Material indicators and `CYLPlaceholderView`. No native code. The pull-down header on Android has no negative overscroll offset and no `contentInset` in `ScrollView`, so the header is driven by a `PanResponder` at the top (JavaScript only, behaves differently from iOS bounce); the limitation stays a `TODO` in the header rows until it is checked on a device.
 
-**Current score: 11 / 100 (7 of 65 rows are not TODO).** The package has only `CYLPlaceholderItem` so far.
+**Current score: 49 / 100 (32 of 65 rows are not TODO).** The pure TypeScript layer (types, components, paging) exists with 17 `node --test` tests and a clean `tsc`; the React layer (`CYLRefresh`, indicators, `CYLPlaceholderView`) is still TODO.
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | React Native API (this package) |
 | --- | --- | --- |
 | `EasyRefresh(child:)` | Wrap a scrollable; iOS `cyl_header` / `cyl_footer` / `cyl_trailer`, `+attach:` | TODO |
 | `header` / `footer` | Attach a header and a footer component | TODO |
-| Component as a long-lived object | iOS / Android components hold config and state; Flutter `CYLRefreshComponent extends ChangeNotifier`, created in `initState`, disposed in `dispose` | TODO |
-| `onRefresh` / `onLoad` returning `IndicatorResult` | `refreshingHandler`; the caller always ends refreshing (`endRefreshing`) | TODO |
-| `EasyRefreshController.callRefresh` / `callLoad` | `beginRefreshing()` | TODO |
-| `callRefresh(overOffset, duration, curve, force)` | `beginRefreshing(duration, overOffset, force)` | TODO |
-| `callRefreshOverOffset` / `callLoadOverOffset` | Default over-offset of `beginRefreshing` | TODO |
-| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshing(success)`, `endRefreshingWithNoMoreData()` | TODO |
-| `resetHeader` / `resetFooter` | `endRefreshing()` / `resetNoMoreData()` | TODO |
-| `controlFinishRefresh` / `controlFinishLoad` | Always ended by the caller; documented, no switch | TODO |
+| Component as a long-lived object | iOS / Android components hold config and state; Flutter `CYLRefreshComponent extends ChangeNotifier`, created in `initState`, disposed in `dispose` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `CYLRefreshComponent extends CYLRefreshNotifier` (subscribe / notify base, `version` snapshot for `useSyncExternalStore`) (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `onRefresh` / `onLoad` returning `IndicatorResult` | `refreshingHandler`; the caller always ends refreshing (`endRefreshing`) | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `refreshingHandler` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `EasyRefreshController.callRefresh` / `callLoad` | `beginRefreshing()` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `beginRefreshing()` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`, footer tests) |
+| `callRefresh(overOffset, duration, curve, force)` | `beginRefreshing(duration, overOffset, force)` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `beginRefreshing({duration, overOffset, force})`, durations in milliseconds (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `callRefreshOverOffset` / `callLoadOverOffset` | Default over-offset of `beginRefreshing` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `defaultOverOffset` |
+| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshing(success)`, `endRefreshingWithNoMoreData()` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `endRefreshing(success)`, `CYLRefreshFooter.endRefreshingWithNoMoreData()` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `resetHeader` / `resetFooter` | `endRefreshing()` / `resetNoMoreData()` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `endRefreshing()`, `CYLRefreshFooter.resetNoMoreData()` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `controlFinishRefresh` / `controlFinishLoad` | Always ended by the caller; documented, no switch | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` no switch: the component stays in `refreshing` until the caller ends it (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`, 'the caller always ends refreshing') |
 | `headerState` / `footerState` (`IndicatorState`) | `phase`, `state`, `dragOffset`, `pullingPercent`, `lastRefreshSucceeded` | TODO |
-| `IndicatorMode` | `CYLRefreshPhase` (idle, pullToRefresh, releaseToRefresh, releasing, refreshing, finishing) | TODO |
-| `IndicatorResult` (none, success, fail, noMore) | `lastRefreshSucceeded`, `isNoMoreData` | TODO |
-| `simultaneously` | `exclusiveWithOtherRefresh` | TODO |
+| `IndicatorMode` | `CYLRefreshPhase` (idle, pullToRefresh, releaseToRefresh, releasing, refreshing, finishing) | `CrossPlatform/react-native-cylplaceholder/src/refresh/refreshTypes.ts` `CYLRefreshPhase` (constant object plus union type) (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `IndicatorResult` (none, success, fail, noMore) | `lastRefreshSucceeded`, `isNoMoreData` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `lastRefreshSucceeded`, `isNoMoreData` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `simultaneously` | `exclusiveWithOtherRefresh` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `exclusiveWithOtherRefresh` and the `CYLRefreshHost.isOtherRefreshing` hook (the view side is TODO with `CYLRefresh`) |
 | `refreshOnStart` | `CYLRefresh(refreshOnStart:)` / call `beginRefreshing` after the first frame | TODO |
 | `refreshOnStartHeader` | iOS `cyl_beginRefreshingWithStartHeader:`; a header used only for the first refresh | TODO |
 | `scrollController` / `triggerAxis` | Pass-through `scrollController`; vertical header / footer, horizontal `CYLRefreshTrailer` | TODO |
-| `triggerOffset` | `expandHeight` times `triggerRate` | TODO |
-| `processedDuration` | `finishDuration` | TODO |
+| `triggerOffset` | `expandHeight` times `triggerRate` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `triggerOffset` = `expandHeight * triggerRate` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `processedDuration` | `finishDuration` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `finishDuration` in milliseconds (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
 | `clamping` | `scrollMode = front`; indicator floats over the content | TODO |
 | `IndicatorPosition.behind` | `scrollMode = behind` | TODO |
 | `IndicatorPosition.locator`, `HeaderLocator` / `FooterLocator` | Place an indicator inside a sliver list; Flutter-only, kept | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
 | `safeArea` | Respect the safe area / `ignoredScrollViewContentInsetTop` | TODO |
-| `infiniteOffset` | `CYLRefreshAutoFooter`: `automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` | TODO |
-| `IndicatorTriggerMode` (anywhere, onEdge) | `triggerMode` | TODO |
-| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`; refreshing on release is the default | TODO |
+| `infiniteOffset` | `CYLRefreshAutoFooter`: `automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `CYLRefreshAutoFooter` (`automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes`, `handleDistanceToEnd`); the scroll hookup is TODO with `CYLRefresh` |
+| `IndicatorTriggerMode` (anywhere, onEdge) | `triggerMode` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `triggerMode` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`; refreshing on release is the default | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `triggersWhenReached` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
 | `frictionFactor` / `horizontalFrictionFactor` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
 | `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
 | `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`; `autoTriggerTimes` | TODO |
-| `hapticFeedback` | `hapticFeedback` | TODO |
-| `notifyWhenInvisible` | `notifiesWhenHidden` | TODO |
-| `listenable` (`IndicatorStateListenable`) | `addPhaseObserver` / `removePhaseObserver` | TODO |
-| `ListenerHeader` / `ListenerFooter` | Drawing-free header / footer plus `addPhaseObserver` | TODO |
-| `NotRefreshHeader` / `NotLoadFooter` | `refreshEnabled = false` | TODO |
-| `OverrideHeader` / `OverrideFooter` | Set properties on the component instance; no wrapper class | TODO |
-| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | `loadsAfterNoMoreData` | TODO |
-| `resetAfterRefresh` | `resetsFooterAfterRefresh` | TODO |
+| `hapticFeedback` | `hapticFeedback` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `hapticFeedback` through `CYLRefreshComponent.hapticImpact` (the React layer sets it) (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `notifyWhenInvisible` | `notifiesWhenHidden` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `notifiesWhenHidden` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `listenable` (`IndicatorStateListenable`) | `addPhaseObserver` / `removePhaseObserver` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `addPhaseObserver` / `removePhaseObserver`, `subscribe` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `ListenerHeader` / `ListenerFooter` | Drawing-free header / footer plus `addPhaseObserver` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `CYLRefreshListenerHeader` / `CYLRefreshListenerFooter` |
+| `NotRefreshHeader` / `NotLoadFooter` | `refreshEnabled = false` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `refreshEnabled = false` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `OverrideHeader` / `OverrideFooter` | Set properties on the component instance; no wrapper class | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` properties set on the instance, no wrapper class (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | `loadsAfterNoMoreData` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `CYLRefreshFooter.loadsAfterNoMoreData` (`CrossPlatform/react-native-cylplaceholder/test/refresh_component.test.ts`) |
+| `resetAfterRefresh` | `resetsFooterAfterRefresh` | `CrossPlatform/react-native-cylplaceholder/src/refresh/component.ts` `CYLRefreshHeader.resetsFooterAfterRefresh`, `CrossPlatform/react-native-cylplaceholder/src/refresh/paging.ts` `CYLRefreshPaging.resetsFooterAfterRefresh` (`CrossPlatform/react-native-cylplaceholder/test/refresh_paging.test.ts`) |
 | `isNested` / `nestedOuterController` / `nestedInnerController` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
 | `childBuilder` | Optional `CYLRefresh` parameter (Flutter-only, kept) | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
 | `fit` / `clipBehavior` | Optional `CYLRefresh` parameters (Flutter-only, kept) | N/A: Flutter-only API (sliver locators, scroll physics objects, nested controllers, `ScrollBehavior`, `Clip`, `childBuilder`); React Native passes `ScrollView` / `FlatList` props straight through the child render prop |
@@ -363,7 +363,7 @@ Design (advisor, 2026-11-23): two layers. Pure TypeScript with no React import (
 | Header second floor (`openHeaderSecondary`, `closeHeaderSecondary`, `SecondaryHeader`, trigger / dimension fields) | `openSecondary`, `closeSecondary`, `secondaryView`, `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset` | TODO |
 | Footer second floor (`openFooterSecondary`, `closeFooterSecondary`, `SecondaryBuilderFooter`) | `CYLRefreshBackFooter`: same secondary API, `secondaryOpenedBlock` / `secondaryClosedBlock` | TODO |
 | Rive style packages (`easy_refresh_bow`, `bubbles`, `halloween`, `skating`, `space`, `squats`) | `CYLRefreshRiveHeader(style: CYLRefreshRiveStyle)`; footer through `CYLRefreshDrawnFooter(style:)` | TODO |
-| `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | TODO |
+| `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | `CrossPlatform/react-native-cylplaceholder/src/refresh/paging.ts` `CYLRefreshPaging<T>` (`CrossPlatform/react-native-cylplaceholder/test/refresh_paging.test.ts`) |
 | Example pages (49 Dart files in `example/lib`) | Ported pages run in `example/` with the iOS / Android demo's names and data | TODO |
 | Placeholder: `CYLPlaceholderView` | Error / empty placeholder widget, same item API as iOS / Android | TODO |
 | Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | TODO |
