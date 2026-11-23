@@ -227,7 +227,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 85 / 100 (55 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
+**Current score: 86 / 100 (56 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
@@ -290,7 +290,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 | `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/paging.dart` `CYLRefreshPaging<T>` (`test/refresh_paging_test.dart`) |
 | Example pages (49 Dart files in `example/lib`) | Ported pages run in `example/` with the iOS / Android demo's names and data | TODO |
 | Placeholder: `CYLPlaceholderView` | Error / empty placeholder widget, same item API as iOS / Android | `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView` (`test/placeholder_view_test.dart`) |
-| Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | TODO |
+| Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_stack.dart` `CYLPlaceholderComponent` (icon, hint, button, separator, item; `animationLoops`, `animationSpeed`, `interactionEnabled`, `spacingBefore`), `CYLPlaceholderStackView` and `CYLPlaceholderStackController.restartAnimation()` (bumps each animation's upstream `animationRestartToken`; no engine here); `CYLPlaceholderView.animationLoops` / `animationSpeed` / `animationRestartToken` (`CrossPlatform/flutter_cylplaceholder/test/placeholder_stack_test.dart`) |
 | Placeholder: HUD and status bar | `CYLPlaceholderHUD` equivalent | TODO |
 | Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()`; also `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView(animationFile:)` builds the same `CYLAnimationView` (`test/placeholder_view_test.dart`) |
 | Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | `CrossPlatform/flutter_cylplaceholder/example/lib/error_placeholder_page.dart` (first load fails, `CYLPlaceholderView` shown, tap retries), `refresh_page.dart`, `paging_page.dart`; run on iOS 27.2 simulator (screenshots below) |

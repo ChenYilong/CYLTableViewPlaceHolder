@@ -110,6 +110,9 @@ class CYLPlaceholderView extends StatelessWidget {
     this.animationOptions = const {},
     this.animationSize = const Size(120, 120),
     this.animationPlaying = true,
+    this.animationLoops = false,
+    this.animationSpeed = 1,
+    this.animationRestartToken = 0,
     this.titleColor,
     this.iconColor,
     this.backgroundColor,
@@ -183,6 +186,15 @@ class CYLPlaceholderView extends StatelessWidget {
   /// Whether the animation plays.
   final bool animationPlaying;
 
+  /// Whether the animation plays again after each pass (upstream's `animationLoops`).
+  final bool animationLoops;
+
+  /// The playback rate, 1 is the file's own speed (upstream's `animationSpeed`).
+  final double animationSpeed;
+
+  /// Plays the animation again from the start when it changes (upstream's `animationRestartToken`).
+  final int animationRestartToken;
+
   /// The color of the title and the message, or null for the theme's.
   final Color? titleColor;
 
@@ -221,7 +233,14 @@ class CYLPlaceholderView extends StatelessWidget {
       picture = SizedBox(
         width: animationSize.width,
         height: animationSize.height,
-        child: CYLAnimationView(file: animationFile!, options: animationOptions, playing: animationPlaying),
+        child: CYLAnimationView(
+          file: animationFile!,
+          options: animationOptions,
+          playing: animationPlaying,
+          animationLoops: animationLoops,
+          animationSpeed: animationSpeed,
+          animationRestartToken: animationRestartToken,
+        ),
       );
     } else {
       picture = image ?? Icon(style.icon, size: imageSize, color: iconColor ?? theme.colorScheme.outline);

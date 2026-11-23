@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cylplaceholder/flutter_cylplaceholder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
