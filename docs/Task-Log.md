@@ -27,6 +27,13 @@
 
 ## 任务 / Tasks
 
+### TODO：Flutter 原生页脚（Kotlin footer 模式）在 Android 上的运行证据 / TODO: Flutter native footer (Kotlin footer mode) running on Android
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` at `bc799668` (includes footer glue `91665425`); local commit only, not pushed.
+- **要求 / Requirements:** prove `CYLRefreshPlatformView.kt` footer mode compiles and runs; no code changed.
+- **证据 / Evidence:** core published to mavenLocal with the Windows-fixed script (exit 0); copy of the plugin under `C:/cylbuild/fpf`: `flutter test` 120 of 120, `flutter analyze` 28 issues (27 `deprecated_member_use` infos plus 1 `unnecessary_import` info in `test/native_backend_test.dart`), `flutter build apk --debug` of the example built (Kotlin compiled, no error); installed on emulator-5556 (API 37). On the example's Refresh page an adb swipe up showed the native footer "Loading..." and the load added 5 rows (10 to 15). Sheet: `docs/assets/android-17-api37-x86_64-emulator-flutter-native-footer-pull-up-load-bc799668-20261124-sheet.png`; `check_screenshots.py` passes.
+- **未解决 / Open (TODO):** after the list reached 20 rows ("no more data"), a pull up (panel 3) shows the overscroll gap but no "no more data" text on the Android native footer; not investigated, cause unknown (Dart side may not drive the native view in that state). iOS shows the label. Header-style pages and the other styles were not run.
+
 ### TODO：Windows 脚本、两个核心缺口与 Flutter 变通方法的移除 / TODO: Windows script, two core gaps and removing the Flutter workarounds
 
 - **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31), worktree branch of a Sonnet agent; local commits only, not pushed.
@@ -51,6 +58,27 @@
   - Mini program tests: the two failures seen were a missing generated folder (`npm run sync-example`), no code fault.
   - Item 8 (Android driven mode): in progress in a Sonnet agent's worktree.
   - Items 3, 4, 7, 10 and the HarmonyOS build (5): **TODO**.
+
+### 已完成（证据）：交接第 5 项，HarmonyOS 构建、本地测试与模拟器 / Done (evidence): hand-off item 5, HarmonyOS build, local tests and emulator
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, code at `7fdeae45`, Windows 11, DevEco Studio 6.0.1 (hvigor, bundled SDK and JBR).
+- **用户原话 / Prompt (verbatim, abridged to the task):** take over hand-off item 5 (and the verify part of 6): run `scripts/build.sh emulator`, the host-run local unit tests, install the unsigned emulator HAP and screenshot the easy-refresh scroll mode demo; no signing; do not implement Stretch / Front.
+- **Build (`scripts/build.sh emulator`):** exit 0. entry `default` HAP `entry-default-unsigned.hap` (36.6 MB), `cylplaceholder.har` (838 KB), entry `emulator` HAP `entry-emulator-unsigned.hap` (26.9 MB); three `BUILD SUCCESSFUL`. The checkout path is ASCII, so it was built in place (no mirror).
+- **Tests (`scripts/build.sh test`):** exit 0. ohosTest HAP built; cylplaceholder 84 run, 84 pass, 0 failure, 0 error; entry 1 run, 1 pass (85 in total, equal to the 85 `it(` cases in `cylplaceholder/src/test` and `entry/src/test`; the "88-89" in the hand-off does not match the source).
+- **Emulator:** `127.0.0.1:5555`, model `emulator`, OpenHarmony 6.0.1.112, ABI x86_64. `cyl_hap_x86_64.py install entry-emulator-unsigned.hap`: "install bundle successfully", no signing config used or created.
+- **Screenshots:** `docs/assets/harmonyos-x86_64-easy-refresh-scroll-mode-6.0.1-api21-emulator-x86_64-7fdeae4-20261124-sheet.png` (originals `...-move-idle-...jpeg`, `...-move-pulled-...jpeg`); `scripts/check_screenshots.py` passes. Page route: Refresh tab, easy_refresh section, "Scroll mode" row; Move-mode pull shows the refreshing header.
+- **Blocker / not verified:** tapping the 拉伸 (Stretch), 前置 (Front) and 后置 (Behind) rows (click, long click, double click via `uitest uiInput`) leaves the checkmark on 移动 (Move); the code path (`RefreshEasyPage.onRow`) looks correct, so the cause is open (not fixed, not part of this task). Stretch / Front for `cyl-refresh` on HarmonyOS not implemented here.
+- **Rive / PAG x86_64 rule (read only):** the project follows it. `docs/instructions/harmonyos.md` / `AGENTS.md` say the debug guard was removed on 2026-11-23; the code reads `deviceInfo.abiList` and the kit is added only by `cyl_hap_x86_64.py` on an x86_64 device (the installer logged "x86_64 debug engine kit: PAG, Rive"; PAG 4.4.31 skipped because the app uses 4.5.102).
+
+### 已完成（证据）：HarmonyOS 滚动模式页点击 拉伸 / 前置 / 后置 不更新勾选 / Done (evidence): HarmonyOS scroll mode page did not move the check mark
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, fix at `83b038d0`, Windows 11, DevEco Studio 6.0.1, x86_64 emulator `127.0.0.1:5555`.
+- **Reproduced first** (code `32a0d723`, HAP of the previous task): `uitest uiInput click` on the 拉伸 row (centre of its layout bounds `[0,488][1316,642]`) left the check on 移动 (screenshot `harmonyos-easy-scroll-mode-stretch-tapped-before-fix-32a0d72-20261124.jpeg`). `uitest dumpLayout` also listed a stale copy of the page after navigating away, so the layout dump is not a reliable check here; screenshots were used.
+- **Root cause:** not the input and not `onRow`. `RefreshEasyPage.list()` keyed its `ForEach` by `row.id` only, and `EasyRow` is a plain (not `@Observed`) object. `reloadScrollMode()` replaced `this.rows` with new rows with the same ids and new text (`✓ 拉伸`); ForEach saw unchanged keys, kept the old row components and never rebuilt them, so the text stayed. `onRow` did set `header.scrollMode` / `footer.scrollMode`. The trigger mode page uses the same ids with changing texts (counts, On edge / Anywhere) and had the same defect.
+- **Fix:** the key is `easyRowKey(row.id, row.text)` (`entry/src/main/ets/common/EasyRowKey.ets`: `id + '|' + text`), so a row whose text changed is rebuilt. Test: `entry/src/test/EasyRowKey.test.ets` (2 cases, in `List.test.ets`).
+- **Tests (`scripts/build.sh test`, exit 0):** cylplaceholder 84 run, 84 pass; entry 3 run, 3 pass (was 1).
+- **Emulator after:** `scripts/build.sh emulator` BUILD SUCCESSFUL, `cyl_hap_x86_64.py install` "install bundle successfully" (no signing). Each of 移动, 拉伸, 前置, 后置 now shows the check mark after one tap. A fling pull right after the tap: Front shows the header over the first row (the rows do not move for it); the other modes push the rows down. Stretch and Behind look alike in a refreshing frame. Sheet: `docs/assets/harmonyos-x86_64-easy-refresh-scroll-mode-fix-6.0.1-api21-emulator-x86_64-83b038d-20261124-sheet.png`; `scripts/check_screenshots.py` passes.
+- **Not done / not verified:** a held finger pull per mode (uitest gives a fling, not a hold), so Stretch (header height = pulled distance) versus Behind is not told apart on the emulator. Stretch / Front as `cyl-refresh` features were not touched.
 
 ### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
 
@@ -1374,6 +1402,14 @@
 - **原因 / Cause:** jobs showed "cancelled" with 0 steps for two reasons. (1) `cancel-in-progress: true` in `ios.yml`, `ios15-runtime.yml` and `android.yml`: every push cancels the previous run, and re-running an old commit's run is cancelled by the newer run. (2) GitHub macOS arm64 capacity: "The job was not acquired by Runner of type hosted even after multiple attempts" after about 33 minutes in the queue (job 137966415098); that one cannot be fixed in the repository, re-run the job.
 - **修复 / Fix:** the three workflows use `cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}`: runs of this branch's pull request are never cancelled by a newer push (GitHub keeps one running and one pending run per group); other branches still cancel superseded runs. `release.yml` already had `false`.
 - **状态 / Status:** pushed; effect checked on the next push's runs. Capacity cancellations still need a manual re-run.
+- **结果：iOS 截图（2026-11-24，Mac 会话）/ Results: iOS screenshots (2026-11-24, Mac session):**
+  - Task 1 (commit `d1ad10ef`, pushed): `scripts/screenshot_sheet.py` made 12 two-column sheets (originals cropped to y 170-1700, never scaled; header with platform, Xcode, macOS, libraries, branch commit, date, purpose; captions; footer) for the 87 `ph-anim` originals (placeholder 5, refresh 3, scenario examples 3, tabs 1): `docs/assets/ios-27.2-iphone18pro-sim-ph-anim-sheet-*-d327a4e-20261124-sheet.png`. `scripts/check_screenshots.py`: 87 errors to 0, checker unchanged.
+  - Task 2: built Example-Scenarios (`xcodebuild -workspace Example-Scenarios.xcworkspace -scheme ExampleScenarios`, clean derived data, own simulator ADAFD92B, BUILD SUCCEEDED) and took 32 originals with `xcrun simctl io ... screenshot` and axe taps by label (`ios-27.2-iphone18pro-sim-ph-scenario-<name>-d1ad10e-20261124.png`), plus the Animations tab list and a detail page with Loop on and Play all (speed 1x): `...-ph-animations-tab-list-...`, `...-ph-animations-detail-play-all-loop-...`. Sheets: 4 scenario sheets (`...-ph-scenario-sheet-{1..4}of4-...-sheet.png`) and `...-ph-animations-tab-controls-...-sheet.png`. Referenced from `docs/Placeholder-Scenarios.md` and `docs/Example-Animation-Playback.md` (section "iOS 截图 / iOS screenshots"); `scripts/update-docs-navigation.py` run.
+  - Lesson: a row that sits behind the tab bar is tapped as a tab; the first pass put 9 of 34 shots on list pages. Retaken after scrolling the row to y < 680; the machine load was 600-1000, each axe call took up to 30 s.
+  - TODO (-3): two scenarios have no screenshot, "Sync failed" and "Title above the illustration". While retaking them another session launched a Flutter debug app on my simulator ADAFD92B (the screen showed "Error placeholder" with the DEBUG banner), so I stopped instead of fighting over the device. Retake with `shoot2.py`-style label taps once the device is free (rows must be scrolled above the tab bar first).
+  - Checks: `check_screenshots.py` 0 errors (404 screenshots, 73 sheets); `ios-api-map.py --check` current (823 / 823); `update-docs-navigation.py --check` 26 documents. No core bug found. The sheets' PASS line is a per-sheet visual check of a downsized contact sheet, not a pixel diff.
+  - Score: 97 / 100 (open: the two missing scenario screenshots; owner's pin decision unchanged).
+
 
 ### TODO（进行中）：Flutter / React Native 的 iOS 原生一半（交接 #10、#2），目标 100 / TODO (in progress): the iOS native half of Flutter and React Native (hand-off #10, #2), target 100
 
@@ -1388,3 +1424,17 @@
   3. Done: the Dart contract tests run for Android and iOS (`TargetPlatformVariant`); the native refresh header stays Android only (`CYLPlaceholderNative.refreshEnabled`). `flutter test` 125 tests pass (the package; 115 before), the example's 18 pass, `flutter analyze` no issues.
   4. Done: `flutter build ios --simulator` of the example (clean + `pod install`), run on ADAFD92B: the Error placeholder page, the Placeholder stack page and the HUD are native (`axe describe-ui`: `platform_view[0]` > `cyl.native.placeholderStack`; `platform_view[1]` native placeholder), sheet `docs/assets/flutter-ios27.2-iphone18pro-cylplaceholderscreens-native-placeholder-stack-hud-aca2e528-20261124-sheet.png`, `check_screenshots.py` clean. No file copied into `example/ios`: the core bundle holds `CYLPlaceholderLoadFailed.json`. Found on the way: the example needs `CYL_TAB_BAR_CONTROLLER_GIT` only to avoid the network (it defaults to GitHub at the Cartfile commit); `Error placeholder` shows the data instead of the failure when its first load is started twice (Dart behaviour, seen once after a relaunch; not changed, feature freeze).
   5. Docs: bridge-map rows 1 to 3 and the scoreboard updated with this evidence only; TODO left: React Native iOS (hand-off #2 second half), the iOS driven footer, loop / speed / tap checks on iOS, a physical device, CI result of this push (not seen).
+
+### 已完成（跟进）：CI 取消 “没有步骤” 的真正原因，每个提交一个并发组 / Done (follow-up): the real cause of "cancelled with no steps", one concurrency group per commit
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/31 fix pr ci error , cancel coz no steps" (an earlier message wrote "#834"; no PR with that number exists in any ChenYilong repository, the user then gave the PR 31 link).
+- **原因 / Cause:** `0984d928` (`cancel-in-progress` false for this branch) was not enough. GitHub allows one running and one pending run per concurrency group; a newer run replaces the older *pending* run, which is shown as cancelled with no steps (run 45262012540 on `0984d928` was pending behind the running `d1ad10ef` run, and was cancelled at 21:10:52, one second after run 45266996390 started). macOS jobs take hours to get through, so every push replaced the pending run.
+- **修复 / Fix:** for this branch's pull request the three workflows (`ios.yml`, `ios15-runtime.yml`, `android.yml`) use one concurrency group per commit (`github.sha`); other branches keep one group per ref and still cancel superseded runs. Cost: several runs of this branch can run in parallel, so macOS runner capacity ("job was not acquired by Runner of type hosted") is used faster; push at milestones, not after every commit.
+
+### 已完成：Android CI 找不到 Kotlin 插件（run 45278544433）/ Done: Android CI could not resolve the Kotlin plugin (run 45278544433)
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "fix ci error https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/45278544433/job/138056604238#step:7:1".
+- **原因 / Cause:** step 7 of "Android unit tests" on `32a0d723` failed twice (the retry one minute later too) with "Plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found in any of the following sources" (Google, MavenRepo, Gradle Central Plugin Repository): the runner could not fetch the plugin from any of the three; five earlier Android runs on this branch passed, so this is the transient refusal of the shared runner address, the same class as the Robolectric 429.
+- **修复 / Fix:** `android/settings.gradle.kts` lists Google's Maven Central mirror (`maven-central.storage-download.googleapis.com`, which serves the Kotlin plugin marker and `kotlin-gradle-plugin` 2.0.21, HTTP 200 checked) before `mavenCentral()` in both `pluginManagement` and `dependencyResolutionManagement`. Not verified locally (no JDK 17 on this Mac, the Windows session builds Android); the next Android run of this branch is the check.

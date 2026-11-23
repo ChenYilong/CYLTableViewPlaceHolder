@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,12 +164,16 @@ void main() {
   group('the native refresh header', () {
     int? viewId;
     final sent = <MethodCall>[];
+    Map<Object?, Object?>? creationParams;
 
     // Records what Dart sends to the native header and lets the test play the native side back.
-    Future<void> pumpHeader(WidgetTester tester, CYLRefreshClassicHeader header, {void Function(String, String)? onPhase, VoidCallback? onRefreshing}) async {
+    Future<void> pumpHeader(WidgetTester tester, CYLRefreshComponent header, {void Function(String, String)? onPhase, VoidCallback? onRefreshing}) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async {
         if (call.method != 'create') return null;
         viewId = (call.arguments as Map)['id'] as int;
+        final params = (call.arguments as Map)['params'];
+        final bytes = params is Uint8List ? ByteData.sublistView(params) : params is ByteData ? params : null;
+        creationParams = bytes == null ? null : const StandardMessageCodec().decodeMessage(bytes) as Map<Object?, Object?>?;
         return viewId;
       });
       addTearDown(() async {
@@ -270,6 +276,114 @@ void main() {
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
       expect(find.byType(AndroidView), findsNothing);
       expect(find.textContaining('mine'), findsOneWidget);
+    });
+
+    testWidgets('a footer asks for the native footer and drives the pull up as a negative offset', (tester) async {
+      final footer = CYLRefreshClassicFooter();
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer);
+      expect(creationParams, {'footer': true, 'loadsAfterNoMoreData': false});
+      footer.handlePull(20, dragging: true);
+      expect(sent.map((c) => c.method), ['drive']);
+      expect(sent[0].arguments, {'offset': -20.0, 'dragging': true, 'startedAtEdge': true});
+      footer.handlePull(footer.triggerOffset + 10, dragging: true);
+      expect(footer.phase, CYLRefreshPhase.releaseToRefresh);
+      expect(sent[1].arguments, containsPair('offset', -(footer.triggerOffset + 10)));
+      sent.clear();
+      footer.handleRelease();
+      expect(sent.map((c) => c.method), ['release']);
+      // A short pull: the finger lifts below the trigger, the native footer cancels it.
+      final short = CYLRefreshClassicFooter();
+      addTearDown(short.dispose);
+      await pumpHeader(tester, short);
+      short.handlePull(30, dragging: true);
+      sent.clear();
+      short.handlePull(30, dragging: false);
+      short.handleRelease();
+      expect(sent.map((c) => c.method), ['drive', 'release']);
+      expect(sent[0].arguments, {'offset': -30.0, 'dragging': false, 'startedAtEdge': true});
+    });
+
+    testWidgets('a footer ends a load with the result or with no more data, and shows or clears no more data without a load', (tester) async {
+      final footer = CYLRefreshClassicFooter(finishDuration: const Duration(milliseconds: 10));
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer);
+      footer.attach(_NoOtherRefresh());
+      footer.beginRefreshing(force: true);
+      expect(sent.map((c) => c.method), ['drive', 'release']);
+      expect(sent[0].arguments, containsPair('offset', -footer.triggerOffset));
+      sent.clear();
+      footer.endRefreshingWithNoMoreData();
+      expect(sent.map((c) => c.method), ['finishRefresh'], reason: 'one call: the native footer ends the load and shows no more data');
+      expect(sent.single.arguments, {'success': true, 'noMoreData': true});
+      sent.clear();
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(footer.phase, CYLRefreshPhase.idle);
+      expect(sent.map((c) => c.method), ['drive'], reason: 'back to rest; no second noMoreData call');
+      expect(sent.single.arguments, containsPair('offset', 0.0));
+      sent.clear();
+      footer.resetNoMoreData();
+      expect(sent.map((c) => c.method), ['noMoreData']);
+      expect(sent.single.arguments, {'value': false});
+      sent.clear();
+      footer.noticeNoMoreData();
+      expect(sent.single.arguments, {'value': true});
+      // A plain load ends with the result alone.
+      final plain = CYLRefreshClassicFooter(finishDuration: const Duration(milliseconds: 10));
+      addTearDown(plain.dispose);
+      await pumpHeader(tester, plain);
+      plain.attach(_NoOtherRefresh());
+      plain.beginRefreshing(force: true);
+      sent.clear();
+      plain.endRefreshing(success: false);
+      expect(sent.single.arguments, {'success': false, 'noMoreData': false});
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+
+    testWidgets('loadsAfterNoMoreData reaches the native footer and a load after no more data clears it first', (tester) async {
+      final footer = CYLRefreshClassicFooter(loadsAfterNoMoreData: true);
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer);
+      expect(creationParams, containsPair('loadsAfterNoMoreData', true));
+      footer.noticeNoMoreData();
+      expect(sent.single.arguments, {'value': true});
+      sent.clear();
+      footer.attach(_NoOtherRefresh());
+      footer.beginRefreshing();
+      expect(sent.map((c) => c.method), ['noMoreData', 'drive', 'release']);
+      expect(sent[0].arguments, {'value': false});
+    });
+
+    testWidgets('a header sends no footer parameters or no-more-data calls', (tester) async {
+      final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      expect(creationParams, {'footer': false});
+      header.attach(_NoOtherRefresh());
+      header.beginRefreshing(force: true);
+      sent.clear();
+      header.endRefreshing();
+      expect(sent.single.arguments, {'success': true});
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+
+    testWidgets('the classic footers draw the native indicator, the Cupertino footer stays Dart', (tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
+      final footers = <CYLRefreshComponent>[CYLRefreshClassicFooter(), CYLRefreshClassicAutoFooter()];
+      final cupertino = CYLRefreshCupertinoFooter();
+      addTearDown(cupertino.dispose);
+      for (final footer in footers) {
+        addTearDown(footer.dispose);
+        await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: footer.buildIndicator))));
+        expect(find.byType(AndroidView), findsOneWidget, reason: '${footer.runtimeType}');
+      }
+      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: cupertino.buildIndicator))));
+      expect(find.byType(AndroidView), findsNothing);
+      final custom = CYLRefreshClassicFooter()..textBuilder = (context, component, text) => Text('mine $text');
+      addTearDown(custom.dispose);
+      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
+      expect(find.byType(AndroidView), findsNothing);
     });
   });
 

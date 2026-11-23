@@ -18,6 +18,7 @@ import {
   CYLRefreshScrollViewModel,
   CYLRefreshTriggerMode
 } from 'cylplaceholder';
+import { easyRowKey } from '../common/EasyRowKey';
 import { t } from '../common/L10n';
 import { RouteParam } from '../common/Routes';
 import { UiColor, PAGE_LIST_END_INSET, NavTitle } from '../common/Ui';
@@ -458,7 +459,7 @@ export struct RefreshEasyPage {
         .accessibilityGroup(true)
         .accessibilityRole(AccessibilityRoleType.BUTTON)
         .onClick(() => this.onRow(index))
-      }, (row: EasyRow) => row.id)
+      }, (row: EasyRow) => easyRowKey(row.id, row.text))
       if (this.method === 'easyCupertino') {
         ListItem() {
           CYLRefreshFooterView({ scrollView: this.scrollView })

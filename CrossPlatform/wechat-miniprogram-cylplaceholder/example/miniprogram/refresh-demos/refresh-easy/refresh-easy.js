@@ -5,13 +5,12 @@ const { t } = require('../../utils/l10n')
 
 const METHODS = ['easyCupertino', 'easySecondary', 'easyTriggerMode', 'easyRefreshOnStart', 'easyPaging', 'easyScrollMode', 'easyListener', 'easyChat', 'easyUserProfile']
 
-/**
- * The scroll modes cyl-refresh has: the header moves with the content (Move) or stays pinned behind it (Behind, the
- * `behind` property). Stretch and Front need a cyl-refresh property that does not exist yet (docs/Refresh-Library-Parity.md).
- */
+/** The scroll modes of cyl-refresh's `scrollMode` property (CYLRefreshScrollMode); `id` is the property value. */
 const SCROLL_MODES = [
-  { id: 'move', key: 'CYLScenarioEasyScrollMove', behind: false },
-  { id: 'behind', key: 'CYLScenarioEasyScrollBehind', behind: true },
+  { id: 'move', key: 'CYLScenarioEasyScrollMove' },
+  { id: 'stretch', key: 'CYLScenarioEasyScrollStretch' },
+  { id: 'front', key: 'CYLScenarioEasyScrollFront' },
+  { id: 'behind', key: 'CYLScenarioEasyScrollBehind' },
 ]
 
 /** Header / footer options per page. */
@@ -37,7 +36,7 @@ Page({
     rows: [],
     headerTrigger: 'anywhere',
     footerTrigger: 'anywhere',
-    scrollBehind: false,
+    scrollMode: 'move',
     floorOpen: false,
     progress: 0,
     texts: {},
@@ -99,10 +98,10 @@ Page({
 
   /** Scroll modes: one tappable row per mode the component has, the current one marked; the counts show nothing here. */
   reloadScrollMode() {
-    const behind = this.data.scrollBehind
+    const current = this.data.scrollMode
     const top = SCROLL_MODES.map((mode) => {
       const name = t(mode.key)
-      return { id: 'scrollMode' + mode.id, text: mode.behind === behind ? t('CYLScenarioEasyScrollSelected', name) : name, tappable: true }
+      return { id: 'scrollMode' + mode.id, text: mode.id === current ? t('CYLScenarioEasyScrollSelected', name) : name, tappable: true }
     })
     this.setData({ rows: top.concat(this.testRows(this.count)) })
   },
@@ -176,7 +175,7 @@ Page({
     if (this.method === 'easyScrollMode') {
       const mode = SCROLL_MODES[index]
       if (!mode) return
-      this.setData({ scrollBehind: mode.behind })
+      this.setData({ scrollMode: mode.id })
       this.reloadScrollMode()
       return
     }
