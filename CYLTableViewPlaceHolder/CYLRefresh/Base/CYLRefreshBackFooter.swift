@@ -43,7 +43,8 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
     private var storedSecondaryOpen = false
     private var noMoreDataHoldToken: UInt = 0
     // [EN] Whether the current drag started with the list at the bottom edge (triggerMode). [CN] 当前拖动开始时列表是否在底部边缘（triggerMode）。
-    private var dragStartedAtEdge = false
+    // [EN] Also set by `CYLRefreshDrivenLayout`, whose host reports the edge itself. [CN] 驱动布局的宿主自己报告边缘，故该布局也会设置它。
+    var dragStartedAtEdge = false
     private var storedSecondaryCloseTriggerOffset: CGFloat = 0
     private var storedSecondaryView: UIView?
 
@@ -174,7 +175,14 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         // 尾部控件刚好出现的offsetY
         let happenOffsetY = self.happenOffsetY
         // 如果是向下滚动到看不见尾部控件，直接返回
-        if currentOffsetY <= happenOffsetY { return }
+        if currentOffsetY <= happenOffsetY {
+            // [EN] A pull dragged back to the edge disarms the footer; left armed, the next move would load. [CN] 拉回边缘即取消就绪；否则下一次移动会触发加载。
+            if state == .pulling || state == .idle {
+                if pullingPercent != 0 { pullingPercent = 0 }
+                if state == .pulling { state = .idle }
+            }
+            return
+        }
 
         // [EN] dragRate scales the pull. [CN] dragRate 按比例缩放拉动距离。
         if state != .noMoreData {
