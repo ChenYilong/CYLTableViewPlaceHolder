@@ -15,4 +15,5 @@ export 'src/refresh/paging.dart';
 export 'src/refresh/physics.dart';
 export 'src/refresh/refresh.dart';
 export 'src/refresh/refresh_types.dart';
+export 'src/refresh/rive.dart';
 export 'src/refresh/styles.dart';
