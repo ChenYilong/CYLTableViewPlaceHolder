@@ -51,3 +51,24 @@ const styles = StyleSheet.create({
   fill: { width: '100%', height: '100%' },
   title: { marginTop: 8, textAlign: 'center' },
 });
+
+/**
+ * A `renderAnimation` for `CYLPlaceholderView` (`react-native-cylplaceholder`): draws the animation file with upstream's
+ * `CYLAnimationView`.
+ */
+export function renderCYLAnimation(animation: {
+  file: string;
+  options: Record<string, string | number>;
+  size: { width: number; height: number };
+  playing: boolean;
+}) {
+  return (
+    <CYLAnimationView
+      file={animation.file}
+      options={animation.options}
+      playing={animation.playing}
+      iconSize={Math.min(animation.size.width, animation.size.height)}
+      style={{ width: animation.size.width, height: animation.size.height }}
+    />
+  );
+}
