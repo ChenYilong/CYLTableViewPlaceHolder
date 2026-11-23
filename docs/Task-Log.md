@@ -27,6 +27,18 @@
 
 ## 任务 / Tasks
 
+### TODO：Windows 脚本、两个核心缺口与 Flutter 变通方法的移除 / TODO: Windows script, two core gaps and removing the Flutter workarounds
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31), worktree branch of a Sonnet agent; local commits only, not pushed.
+- **用户原话 / Prompt (verbatim, abridged by the owner's hand-off):** "advisor点评 ... 脚本在 Windows 上坏了 ... 核心有两个缺口 ... 将得分优化到100"
+- **要求 / Requirements:** four fixes in order, one commit each, no new public declarations (`ios-api-map.py --check` stays 823 / 823, `android-api-map.py --check` passes): (1) `scripts/cyltabbarcontroller-checkout.sh` prints a mixed-form path (`C:/...`) on Windows and `scripts/publish-android-native-to-maven-local.sh` checks out first and publishes `:merged`; (2) `CYLRefreshDrivenLayout` supplies its own empty content so the orange warning text never shows; (3) the native `icon` component plays its `animation` like iOS; (4) remove the Flutter workarounds and show both fixes in screenshots. 100 = each fix has a test or a build log or a screenshot I saw; 60 = code written and unit tests pass. No score row moves without evidence; CI is not claimed.
+- **上下文 / Context:** the earlier Flutter agent (`fd00aa80`, `81abbd77`) substituted an `item` component with `CYLPlaceholderItemAnimationFilePath` for the icon animation and added an empty child view to the driven layout; both hid core bugs (rule "Fix bugs in the core first").
+- **进度 / Progress:** see the commits of this task; **TODO** until each fix below is marked with its evidence.
+  - Fix 1: done locally (2026-11-24): the checkout script prints `C:/...` under Git Bash (`cygpath -m`, unchanged elsewhere); every consumer checked (`settings.gradle.kts`, `sync-harmonyos-cylanimateditem.sh`, `cyltabbarcontroller-xcframework.sh`, `pod-lint.sh`; the mini program scripts and workflows do not call it); `scripts/publish-android-native-to-maven-local.sh` ran end to end on Windows, exit 0, fresh timestamps of `cyltableviewplaceholder`, `cyltableviewplaceholder-refresh` and `cyltabbarcontroller-animateditem` AARs in `~/.m2`. `where.exe bash` lists only `C:Program FilesGitSrbinbash.exe` (no WSL bash), so the `ProcessBuilder("bash")` fallback is fine here. shellcheck is not installed (`bash -n` only). **TODO** CI not seen.
+  - Fix 2: TODO.
+  - Fix 3: TODO.
+  - Fix 4: TODO.
+
 ### TODO：交接任务（Refresh-Library-Parity.md 的 10 项）中非 iOS 的部分，以及全平台评分 / TODO: Non-iOS hand-off items (the 10 items of Refresh-Library-Parity.md) and the all-platform scores
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup` (PR #31).
