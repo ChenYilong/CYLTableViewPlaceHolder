@@ -6,6 +6,9 @@
   "types": "./src/index.tsx",
   "files": [
     "src",
+    "android",
+    "ios",
+    "react-native-cylplaceholder.podspec",
     "LICENSE"
   ],
   "license": "MIT",
