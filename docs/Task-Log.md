@@ -28,6 +28,14 @@
 
 ## 任务 / Tasks
 
+### TODO：修复剩余 TODO 并把分数提到 100 / TODO: Fix the remaining TODOs and bring the scores to 100
+
+| 中文 | English |
+| :-- | :-- |
+| 背景：本分支（PR #35）仍有未满分项：iOS API 映射表合并后新增 3 行 TODO；示例 Podfile 固定提交未随 Cartfile 移动（固定任务 95）；MJRefresh 问题 #920（60）、#1238（60）、#1535（50）；`docs/Swift-Naming.md` 尚无双语导航标记；iTerm2 标题（85）。 | Context: this branch (PR #35) still has items below 100: 3 TODO rows in the iOS API map after the merge; the example Podfiles' pin did not move with the Cartfile (pin task 95); MJRefresh issues #920 (60), #1238 (60), #1535 (50); `docs/Swift-Naming.md` has no bilingual navigation markers; the iTerm2 title (85). |
+| 要求：逐项修复或用证据结案，测试通过，更新分数；需要用户本人操作的部分（iTerm2 目视确认）写明步骤。 | Requirements: fix each item or close it with evidence, tests pass, scores updated; parts only the user can do (checking the iTerm2 tab by eye) get written steps. |
+| 用户原始提示词：“fix to do and score to 100” | The user's prompt (verbatim): "fix to do and score to 100" |
+
 ### 完成（95 / 100）：把 CYLTabBarController 固定提交移到公开名改名之后（f51057a7） / Done (95/100): Move the CYLTabBarController pin past the public-name rename (f51057a7)
 
 | 中文 | English |
