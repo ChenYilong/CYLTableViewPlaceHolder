@@ -193,6 +193,12 @@
     <string name="merged_easy_trigger_mode">触发模式</string>
     <string name="merged_easy_refresh_on_start">启动时刷新</string>
     <string name="merged_easy_paging">分页</string>
+    <string name="merged_easy_scroll_mode">滚动模式</string>
+    <string name="merged_easy_scroll_move">移动</string>
+    <string name="merged_easy_scroll_stretch">拉伸</string>
+    <string name="merged_easy_scroll_front">前置</string>
+    <string name="merged_easy_scroll_behind">后置</string>
+    <string name="merged_easy_scroll_mode_selected">✓ %1$s</string>
     <string name="merged_easy_listener">监听式刷新头</string>
     <string name="merged_easy_chat">聊天</string>
     <string name="merged_easy_user_profile">个人主页</string>

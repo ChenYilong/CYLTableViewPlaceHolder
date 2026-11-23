@@ -193,6 +193,12 @@
     <string name="merged_easy_trigger_mode">トリガーモード</string>
     <string name="merged_easy_refresh_on_start">開始時に更新</string>
     <string name="merged_easy_paging">ページング</string>
+    <string name="merged_easy_scroll_mode">スクロールモード</string>
+    <string name="merged_easy_scroll_move">移動</string>
+    <string name="merged_easy_scroll_stretch">ストレッチ</string>
+    <string name="merged_easy_scroll_front">前面</string>
+    <string name="merged_easy_scroll_behind">背面</string>
+    <string name="merged_easy_scroll_mode_selected">✓ %1$s</string>
     <string name="merged_easy_listener">リスナーヘッダー</string>
     <string name="merged_easy_chat">チャット</string>
     <string name="merged_easy_user_profile">ユーザープロフィール</string>

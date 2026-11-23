@@ -193,6 +193,12 @@
     <string name="merged_easy_trigger_mode">트리거 모드</string>
     <string name="merged_easy_refresh_on_start">시작 시 새로고침</string>
     <string name="merged_easy_paging">페이징</string>
+    <string name="merged_easy_scroll_mode">스크롤 모드</string>
+    <string name="merged_easy_scroll_move">이동</string>
+    <string name="merged_easy_scroll_stretch">늘이기</string>
+    <string name="merged_easy_scroll_front">앞</string>
+    <string name="merged_easy_scroll_behind">뒤</string>
+    <string name="merged_easy_scroll_mode_selected">✓ %1$s</string>
     <string name="merged_easy_listener">리스너 헤더</string>
     <string name="merged_easy_chat">채팅</string>
     <string name="merged_easy_user_profile">사용자 프로필</string>

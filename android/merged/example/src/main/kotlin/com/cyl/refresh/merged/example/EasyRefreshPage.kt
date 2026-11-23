@@ -37,8 +37,20 @@ import com.cyl.refresh.layout.CYLRefreshLayout
 internal val easyPages = listOf(
     R.string.merged_easy_cupertino to "easyCupertino", R.string.merged_easy_secondary to "easySecondary",
     R.string.merged_easy_trigger_mode to "easyTriggerMode", R.string.merged_easy_refresh_on_start to "easyRefreshOnStart",
-    R.string.merged_easy_paging to "easyPaging", R.string.merged_easy_listener to "easyListener",
+    R.string.merged_easy_paging to "easyPaging", R.string.merged_easy_scroll_mode to "easyScrollMode",
+    R.string.merged_easy_listener to "easyListener",
     R.string.merged_easy_chat to "easyChat", R.string.merged_easy_user_profile to "easyUserProfile",
+)
+
+/** The scroll modes the "Scroll mode" page offers, in the order of the enum. */
+private val scrollModes = listOf(CYLRefreshScrollMode.Move, CYLRefreshScrollMode.Stretch, CYLRefreshScrollMode.Front, CYLRefreshScrollMode.Behind)
+
+/** The names of the scroll modes (resource ids). */
+private val scrollModeNames = mapOf(
+    CYLRefreshScrollMode.Move to R.string.merged_easy_scroll_move,
+    CYLRefreshScrollMode.Stretch to R.string.merged_easy_scroll_stretch,
+    CYLRefreshScrollMode.Front to R.string.merged_easy_scroll_front,
+    CYLRefreshScrollMode.Behind to R.string.merged_easy_scroll_behind,
 )
 
 /**
@@ -88,7 +100,16 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
     var header: CYLRefreshHeader? = null
     var footer: CYLRefreshFooter? = null
     lateinit var reloadTriggerMode: () -> Unit
+    lateinit var reloadScrollMode: () -> Unit
     val adapter = TextRows { position ->
+        if (method == "easyScrollMode") {
+            // One row per scroll mode: a tap makes it the header's and the footer's mode.
+            val mode = scrollModes.getOrNull(position) ?: return@TextRows
+            header?.scrollMode = mode
+            footer?.scrollMode = mode
+            reloadScrollMode()
+            return@TextRows
+        }
         if (method != "easyTriggerMode") return@TextRows
         when (position) {
             2 -> header?.let { it.triggerMode = if (it.triggerMode == CYLRefreshTriggerMode.OnEdge) CYLRefreshTriggerMode.Anywhere else CYLRefreshTriggerMode.OnEdge }
@@ -98,6 +119,7 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
         reloadTriggerMode()
     }
     if (method == "easyTriggerMode") adapter.tappable = { it == 2 || it == 3 }
+    if (method == "easyScrollMode") adapter.tappable = { it < scrollModes.size }
     val list = RecyclerView(context).apply {
         tag = "easyRefreshDemo"
         layoutManager = LinearLayoutManager(context)
@@ -106,6 +128,13 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
     fun testRow(i: Int) = context.t(R.string.merged_style_test_data_row, i)
     fun show(rows: List<String>) { adapter.rows = rows; adapter.notifyDataSetChanged() }
     fun reloadCounted() = show((1..count).map(::testRow))
+    reloadScrollMode = {
+        val current = header?.scrollMode
+        show(scrollModes.map { mode ->
+            val name = context.t(scrollModeNames.getValue(mode))
+            if (mode == current) context.t(R.string.merged_easy_scroll_mode_selected, name) else name
+        } + (1..count).map(::testRow))
+    }
     reloadTriggerMode = {
         val headerOnEdge = header?.triggerMode == CYLRefreshTriggerMode.OnEdge
         val footerOnEdge = footer?.triggerMode == CYLRefreshTriggerMode.OnEdge
@@ -184,6 +213,16 @@ internal fun RefreshExamplesPage.easyPage(title: String, method: String): View {
             attach(h, f)
             count = 30
             reloadTriggerMode()
+        }
+        // Scroll modes: the four CYLRefreshScrollMode values on one list; a tap on a mode row switches the header and the footer.
+        "easyScrollMode" -> {
+            val h = CYLRefreshNormalHeader(context)
+            val f = CYLRefreshBackNormalFooter(context)
+            h.refreshingBlock = { later(1500) { layout.cyl_header?.endRefreshing() } }
+            f.refreshingBlock = { later(1500) { f.endRefreshing() } }
+            attach(h, f)
+            count = 30
+            reloadScrollMode()
         }
         // refresh_on_start_page.dart: the first refresh uses the Cupertino header, later pulls the classic one.
         "easyRefreshOnStart" -> {
