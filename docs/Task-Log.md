@@ -63,6 +63,16 @@
 - **Blocker / not verified:** tapping the 拉伸 (Stretch), 前置 (Front) and 后置 (Behind) rows (click, long click, double click via `uitest uiInput`) leaves the checkmark on 移动 (Move); the code path (`RefreshEasyPage.onRow`) looks correct, so the cause is open (not fixed, not part of this task). Stretch / Front for `cyl-refresh` on HarmonyOS not implemented here.
 - **Rive / PAG x86_64 rule (read only):** the project follows it. `docs/instructions/harmonyos.md` / `AGENTS.md` say the debug guard was removed on 2026-11-23; the code reads `deviceInfo.abiList` and the kit is added only by `cyl_hap_x86_64.py` on an x86_64 device (the installer logged "x86_64 debug engine kit: PAG, Rive"; PAG 4.4.31 skipped because the app uses 4.5.102).
 
+### 已完成（证据）：HarmonyOS 滚动模式页点击 拉伸 / 前置 / 后置 不更新勾选 / Done (evidence): HarmonyOS scroll mode page did not move the check mark
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, fix at `83b038d0`, Windows 11, DevEco Studio 6.0.1, x86_64 emulator `127.0.0.1:5555`.
+- **Reproduced first** (code `32a0d723`, HAP of the previous task): `uitest uiInput click` on the 拉伸 row (centre of its layout bounds `[0,488][1316,642]`) left the check on 移动 (screenshot `harmonyos-easy-scroll-mode-stretch-tapped-before-fix-32a0d72-20261124.jpeg`). `uitest dumpLayout` also listed a stale copy of the page after navigating away, so the layout dump is not a reliable check here; screenshots were used.
+- **Root cause:** not the input and not `onRow`. `RefreshEasyPage.list()` keyed its `ForEach` by `row.id` only, and `EasyRow` is a plain (not `@Observed`) object. `reloadScrollMode()` replaced `this.rows` with new rows with the same ids and new text (`✓ 拉伸`); ForEach saw unchanged keys, kept the old row components and never rebuilt them, so the text stayed. `onRow` did set `header.scrollMode` / `footer.scrollMode`. The trigger mode page uses the same ids with changing texts (counts, On edge / Anywhere) and had the same defect.
+- **Fix:** the key is `easyRowKey(row.id, row.text)` (`entry/src/main/ets/common/EasyRowKey.ets`: `id + '|' + text`), so a row whose text changed is rebuilt. Test: `entry/src/test/EasyRowKey.test.ets` (2 cases, in `List.test.ets`).
+- **Tests (`scripts/build.sh test`, exit 0):** cylplaceholder 84 run, 84 pass; entry 3 run, 3 pass (was 1).
+- **Emulator after:** `scripts/build.sh emulator` BUILD SUCCESSFUL, `cyl_hap_x86_64.py install` "install bundle successfully" (no signing). Each of 移动, 拉伸, 前置, 后置 now shows the check mark after one tap. A fling pull right after the tap: Front shows the header over the first row (the rows do not move for it); the other modes push the rows down. Stretch and Behind look alike in a refreshing frame. Sheet: `docs/assets/harmonyos-x86_64-easy-refresh-scroll-mode-fix-6.0.1-api21-emulator-x86_64-83b038d-20261124-sheet.png`; `scripts/check_screenshots.py` passes.
+- **Not done / not verified:** a held finger pull per mode (uitest gives a fling, not a hold), so Stretch (header height = pulled distance) versus Behind is not told apart on the emulator. Stretch / Front as `cyl-refresh` features were not touched.
+
 ### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup`.
