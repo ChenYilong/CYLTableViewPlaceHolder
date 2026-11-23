@@ -3,6 +3,7 @@ description: "CYLTableViewPlaceHolder for Flutter: a placeholder item (animation
 version: 0.0.1
 homepage: https://github.com/ChenYilong/CYLTableViewPlaceHolder
 license: MIT
+publish_to: none
 
 environment:
   sdk: ^3.13.7
@@ -23,3 +24,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^6.0.0

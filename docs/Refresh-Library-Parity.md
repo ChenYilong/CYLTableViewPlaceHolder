@@ -225,72 +225,72 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 0 / 100 (0 of 65 rows).** Package does not exist yet (2026-11-23).
+**Current score: 72 / 100 (47 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
-| `EasyRefresh(child:)` | Wrap a scrollable; iOS `cyl_header` / `cyl_footer` / `cyl_trailer`, `+attach:` | TODO |
-| `header` / `footer` | Attach a header and a footer component | TODO |
-| Component as a long-lived object | iOS / Android components hold config and state; Flutter `CYLRefreshComponent extends ChangeNotifier`, created in `initState`, disposed in `dispose` | TODO |
-| `onRefresh` / `onLoad` returning `IndicatorResult` | `refreshingHandler`; the caller always ends refreshing (`endRefreshing`) | TODO |
-| `EasyRefreshController.callRefresh` / `callLoad` | `beginRefreshing()` | TODO |
-| `callRefresh(overOffset, duration, curve, force)` | `beginRefreshing(duration, overOffset, force)` | TODO |
-| `callRefreshOverOffset` / `callLoadOverOffset` | Default over-offset of `beginRefreshing` | TODO |
-| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshing(success)`, `endRefreshingWithNoMoreData()` | TODO |
-| `resetHeader` / `resetFooter` | `endRefreshing()` / `resetNoMoreData()` | TODO |
-| `controlFinishRefresh` / `controlFinishLoad` | Always ended by the caller; documented, no switch | TODO |
-| `headerState` / `footerState` (`IndicatorState`) | `phase`, `state`, `dragOffset`, `pullingPercent`, `lastRefreshSucceeded` | TODO |
-| `IndicatorMode` | `CYLRefreshPhase` (idle, pullToRefresh, releaseToRefresh, releasing, refreshing, finishing) | TODO |
-| `IndicatorResult` (none, success, fail, noMore) | `lastRefreshSucceeded`, `isNoMoreData` | TODO |
-| `simultaneously` | `exclusiveWithOtherRefresh` | TODO |
-| `refreshOnStart` | `CYLRefresh(refreshOnStart:)` / call `beginRefreshing` after the first frame | TODO |
-| `refreshOnStartHeader` | iOS `cyl_beginRefreshingWithStartHeader:`; a header used only for the first refresh | TODO |
+| `EasyRefresh(child:)` | Wrap a scrollable; iOS `cyl_header` / `cyl_footer` / `cyl_trailer`, `+attach:` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh` (tests: `test/refresh_widget_test.dart`, header group) |
+| `header` / `footer` | Attach a header and a footer component | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.header` / `CYLRefresh.footer` (`test/refresh_widget_test.dart`, header and footer groups) |
+| Component as a long-lived object | iOS / Android components hold config and state; Flutter `CYLRefreshComponent extends ChangeNotifier`, created in `initState`, disposed in `dispose` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent extends ChangeNotifier` (`test/refresh_component_test.dart`, component state group) |
+| `onRefresh` / `onLoad` returning `IndicatorResult` | `refreshingHandler`; the caller always ends refreshing (`endRefreshing`) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.refreshingHandler` (`test/refresh_component_test.dart`) |
+| `EasyRefreshController.callRefresh` / `callLoad` | `beginRefreshing()` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.beginRefreshing` (`test/refresh_widget_test.dart`, beginRefreshing group) |
+| `callRefresh(overOffset, duration, curve, force)` | `beginRefreshing(duration, overOffset, force)` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `beginRefreshing({duration, overOffset, force})` (`test/refresh_widget_test.dart`) |
+| `callRefreshOverOffset` / `callLoadOverOffset` | Default over-offset of `beginRefreshing` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.defaultOverOffset`, used by `beginRefreshing()` (`test/refresh_widget_test.dart`) |
+| `finishRefresh([result])` / `finishLoad([result])` | `endRefreshing(success)`, `endRefreshingWithNoMoreData()` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `endRefreshing({success})`, `CYLRefreshFooter.endRefreshingWithNoMoreData` (`test/refresh_component_test.dart`, footer group) |
+| `resetHeader` / `resetFooter` | `endRefreshing()` / `resetNoMoreData()` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `endRefreshing()`, `CYLRefreshFooter.resetNoMoreData` (`test/refresh_component_test.dart`) |
+| `controlFinishRefresh` / `controlFinishLoad` | Always ended by the caller; documented, no switch | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` no switch: the component stays in `refreshing` until the caller's `endRefreshing` (`test/refresh_component_test.dart`, 'the caller always ends refreshing') |
+| `headerState` / `footerState` (`IndicatorState`) | `phase`, `state`, `dragOffset`, `pullingPercent`, `lastRefreshSucceeded` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `phase`, `state`, `dragOffset`, `pullingPercent`, `lastRefreshSucceeded` (`test/refresh_component_test.dart`) |
+| `IndicatorMode` | `CYLRefreshPhase` (idle, pullToRefresh, releaseToRefresh, releasing, refreshing, finishing) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh_types.dart` `CYLRefreshPhase` (`test/refresh_component_test.dart`) |
+| `IndicatorResult` (none, success, fail, noMore) | `lastRefreshSucceeded`, `isNoMoreData` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `lastRefreshSucceeded`, `CYLRefreshFooter.isNoMoreData` (`test/refresh_component_test.dart`) |
+| `simultaneously` | `exclusiveWithOtherRefresh` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `exclusiveWithOtherRefresh`; `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.exclusiveWithOtherRefresh` (`test/refresh_widget_test.dart`, exclusive test) |
+| `refreshOnStart` | `CYLRefresh(refreshOnStart:)` / call `beginRefreshing` after the first frame | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.refreshOnStart` (`test/refresh_widget_test.dart`) |
+| `refreshOnStartHeader` | iOS `cyl_beginRefreshingWithStartHeader:`; a header used only for the first refresh | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.refreshOnStartHeader` (`test/refresh_widget_test.dart`) |
 | `scrollController` / `triggerAxis` | Pass-through `scrollController`; vertical header / footer, horizontal `CYLRefreshTrailer` | TODO |
-| `triggerOffset` | `expandHeight` times `triggerRate` | TODO |
-| `processedDuration` | `finishDuration` | TODO |
-| `clamping` | `scrollMode = front`; indicator floats over the content | TODO |
-| `IndicatorPosition.behind` | `scrollMode = behind` | TODO |
+| `triggerOffset` | `expandHeight` times `triggerRate` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.triggerOffset` = `expandHeight * triggerRate` (`test/refresh_component_test.dart`) |
+| `processedDuration` | `finishDuration` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.finishDuration` (`test/refresh_component_test.dart`) |
+| `clamping` | `scrollMode = front`; indicator floats over the content | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh_types.dart` `CYLRefreshScrollMode.front` (`test/refresh_widget_test.dart`, scroll modes group) |
+| `IndicatorPosition.behind` | `scrollMode = behind` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh_types.dart` `CYLRefreshScrollMode.behind` (`test/refresh_widget_test.dart`) |
 | `IndicatorPosition.locator`, `HeaderLocator` / `FooterLocator` | Place an indicator inside a sliver list; Flutter-only, kept | TODO |
-| `safeArea` | Respect the safe area / `ignoredScrollViewContentInsetTop` | TODO |
-| `infiniteOffset` | `CYLRefreshAutoFooter`: `automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` | TODO |
-| `IndicatorTriggerMode` (anywhere, onEdge) | `triggerMode` | TODO |
-| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`; refreshing on release is the default | TODO |
-| `frictionFactor` / `horizontalFrictionFactor` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
+| `safeArea` | Respect the safe area / `ignoredScrollViewContentInsetTop` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.safeArea` (`test/refresh_widget_test.dart`) |
+| `infiniteOffset` | `CYLRefreshAutoFooter`: `automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshAutoFooter` (`automaticallyRefresh`, `triggerAutomaticallyRefreshPercent`, `autoTriggerTimes`; `test/refresh_widget_test.dart`, auto footer group) |
+| `IndicatorTriggerMode` (anywhere, onEdge) | `triggerMode` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.triggerMode` (`test/refresh_component_test.dart`) |
+| `triggerWhenReach` / `triggerWhenRelease` / `triggerWhenReleaseNoWait` | `triggersWhenReached`; refreshing on release is the default | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.triggersWhenReached` (`test/refresh_component_test.dart`) |
+| `frictionFactor` / `horizontalFrictionFactor` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/physics.dart` `CYLRefreshPhysics` via `CYLRefresh.frictionFactor` / `horizontalFrictionFactor` (`test/refresh_widget_test.dart`) |
 | `readySpringBuilder` / `horizontalReadySpringBuilder` / `springRebound` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
-| `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`; `autoTriggerTimes` | TODO |
-| `hapticFeedback` | `hapticFeedback` | TODO |
-| `notifyWhenInvisible` | `notifiesWhenHidden` | TODO |
-| `listenable` (`IndicatorStateListenable`) | `addPhaseObserver` / `removePhaseObserver` | TODO |
-| `ListenerHeader` / `ListenerFooter` | Drawing-free header / footer plus `addPhaseObserver` | TODO |
-| `NotRefreshHeader` / `NotLoadFooter` | `refreshEnabled = false` | TODO |
-| `OverrideHeader` / `OverrideFooter` | Set properties on the component instance; no wrapper class | TODO |
-| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | `loadsAfterNoMoreData` | TODO |
-| `resetAfterRefresh` | `resetsFooterAfterRefresh` | TODO |
+| `maxOverOffset` / `hitOver` / `infiniteHitOver` | `maxPullDistance`; `autoTriggerTimes` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/physics.dart` `CYLRefreshPhysics.maxHeaderPull` / `maxFooterPull` from `maxPullDistance`; `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `autoTriggerTimes` (`test/refresh_widget_test.dart`) |
+| `hapticFeedback` | `hapticFeedback` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.hapticFeedback` (`test/refresh_component_test.dart`) |
+| `notifyWhenInvisible` | `notifiesWhenHidden` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.notifiesWhenHidden` (default false in Flutter, to avoid a rebuild per scroll update; `test/refresh_component_test.dart`) |
+| `listenable` (`IndicatorStateListenable`) | `addPhaseObserver` / `removePhaseObserver` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `addPhaseObserver` / `removePhaseObserver` (`test/refresh_component_test.dart`) |
+| `ListenerHeader` / `ListenerFooter` | Drawing-free header / footer plus `addPhaseObserver` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshListenerHeader` / `CYLRefreshListenerFooter` (`test/refresh_styles_test.dart`) |
+| `NotRefreshHeader` / `NotLoadFooter` | `refreshEnabled = false` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.refreshEnabled = false` (`test/refresh_component_test.dart`) |
+| `OverrideHeader` / `OverrideFooter` | Set properties on the component instance; no wrapper class | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` properties set on the instance, no wrapper class (`test/refresh_component_test.dart`) |
+| `canRefreshAfterNoMore` / `canLoadAfterNoMore` | `loadsAfterNoMoreData` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshFooter.loadsAfterNoMoreData` (`test/refresh_component_test.dart`) |
+| `resetAfterRefresh` | `resetsFooterAfterRefresh` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshHeader.resetsFooterAfterRefresh`, `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/paging.dart` `CYLRefreshPaging.resetsFooterAfterRefresh` (`test/refresh_widget_test.dart`, `test/refresh_paging_test.dart`) |
 | `isNested` / `nestedOuterController` / `nestedInnerController` | Optional `CYLRefresh` parameters, same names (Flutter-only, kept) | TODO |
-| `childBuilder` | Optional `CYLRefresh` parameter (Flutter-only, kept) | TODO |
-| `fit` / `clipBehavior` | Optional `CYLRefresh` parameters (Flutter-only, kept) | TODO |
-| `scrollBehaviorBuilder`, `ERScrollBehavior` | Optional `CYLRefresh` parameter (Flutter-only, kept) | TODO |
-| `ClassicHeader` / `ClassicFooter` | `CYLRefreshClassicHeader` / `CYLRefreshClassicFooter` | TODO |
-| Classic per-state texts (drag, armed, ready, processing, processed, noMore, failed) | `setTitle(text, state)` plus done and failed texts | TODO |
-| Classic `messageText` / `showMessage` | `lastUpdatedTimeText`, `lastUpdatedTimeFormatter` | TODO |
-| Classic icons (`succeededIcon`, `failedIcon`, `noMoreIcon`, `pullIconBuilder`, `reverse`, `iconDimension`, `spacing`, `textBuilder`, `messageBuilder`) | `succeededImage`, `failedImage`, `noMoreDataImage`, `iconOnTrailingSide`, `iconSize`, builders | TODO |
-| `BuilderHeader` / `BuilderFooter` | Subclass `CYLRefreshComponent` or pass a `builder` | TODO |
-| `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | TODO |
+| `childBuilder` | Optional `CYLRefresh` parameter (Flutter-only, kept) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.childBuilder` (`test/refresh_widget_test.dart`) |
+| `fit` / `clipBehavior` | Optional `CYLRefresh` parameters (Flutter-only, kept) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.fit` / `clipBehavior` (`test/refresh_widget_test.dart`) |
+| `scrollBehaviorBuilder`, `ERScrollBehavior` | Optional `CYLRefresh` parameter (Flutter-only, kept) | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/refresh.dart` `CYLRefresh.scrollBehaviorBuilder`, `CYLRefreshPhysics` (`test/refresh_widget_test.dart`) |
+| `ClassicHeader` / `ClassicFooter` | `CYLRefreshClassicHeader` / `CYLRefreshClassicFooter` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `CYLRefreshClassicHeader` / `CYLRefreshClassicFooter` / `CYLRefreshClassicAutoFooter` (`test/refresh_styles_test.dart`) |
+| Classic per-state texts (drag, armed, ready, processing, processed, noMore, failed) | `setTitle(text, state)` plus done and failed texts | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `CYLRefreshClassicStyle.setTitle(text, state)` / `titleForState` with `CYLRefreshTitleState` (`test/refresh_styles_test.dart`) |
+| Classic `messageText` / `showMessage` | `lastUpdatedTimeText`, `lastUpdatedTimeFormatter` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `CYLRefreshClassicHeader.lastUpdatedTimeText` / `lastUpdatedTimeFormatter` / `showsLastUpdatedTime` (`test/refresh_styles_test.dart`) |
+| Classic icons (`succeededIcon`, `failedIcon`, `noMoreIcon`, `pullIconBuilder`, `reverse`, `iconDimension`, `spacing`, `textBuilder`, `messageBuilder`) | `succeededImage`, `failedImage`, `noMoreDataImage`, `iconOnTrailingSide`, `iconSize`, builders | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `succeededImage`, `failedImage`, `noMoreDataImage`, `iconOnTrailingSide`, `iconSize`, `iconSpacing`, `pullIconBuilder`, `textBuilder`, `messageBuilder` (`test/refresh_styles_test.dart`) |
+| `BuilderHeader` / `BuilderFooter` | Subclass `CYLRefreshComponent` or pass a `builder` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/component.dart` `CYLRefreshComponent.builder` / overridable `buildIndicator` (`test/refresh_widget_test.dart` uses `builder`) |
+| `CupertinoHeader` / `CupertinoFooter` | `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `CYLRefreshCupertinoHeader` / `CYLRefreshCupertinoFooter` (`test/refresh_styles_test.dart`) |
 | `BezierHeader` / `BezierFooter` | `CYLRefreshBezierRadarHeader` / `CYLRefreshBezierRadarFooter` | TODO |
 | `BezierCircleHeader` | `CYLRefreshBezierCircleHeader` | TODO |
-| `MaterialHeader` / `MaterialFooter` | `CYLRefreshMaterialHeader` / `CYLRefreshMaterialFooter` | TODO |
+| `MaterialHeader` / `MaterialFooter` | `CYLRefreshMaterialHeader` / `CYLRefreshMaterialFooter` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/styles.dart` `CYLRefreshMaterialHeader` / `CYLRefreshMaterialFooter` (`test/refresh_styles_test.dart`) |
 | `DeliveryHeader` / `DeliveryFooter` | `CYLRefreshDeliveryHeader` / `CYLRefreshDeliveryFooter` | TODO |
 | `PhoenixHeader` / `PhoenixFooter` | `CYLRefreshPhoenixHeader` / `CYLRefreshPhoenixFooter` | TODO |
 | `TaurusHeader` / `TaurusFooter` | `CYLRefreshTaurusHeader` / `CYLRefreshTaurusFooter` | TODO |
 | Header second floor (`openHeaderSecondary`, `closeHeaderSecondary`, `SecondaryHeader`, trigger / dimension fields) | `openSecondary`, `closeSecondary`, `secondaryView`, `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset` | TODO |
 | Footer second floor (`openFooterSecondary`, `closeFooterSecondary`, `SecondaryBuilderFooter`) | `CYLRefreshBackFooter`: same secondary API, `secondaryOpenedBlock` / `secondaryClosedBlock` | TODO |
 | Rive style packages (`easy_refresh_bow`, `bubbles`, `halloween`, `skating`, `space`, `squats`) | `CYLRefreshRiveHeader(style: CYLRefreshRiveStyle)`; footer through `CYLRefreshDrawnFooter(style:)` | TODO |
-| `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | TODO |
+| `easy_paging` (`EasyPaging`) | `CYLRefreshPaging<T>`: `items`, `page`, `total`, `isEmpty`, `isNoMore`, `start`, `itemsDidChange` | `CrossPlatform/flutter_cylplaceholder/lib/src/refresh/paging.dart` `CYLRefreshPaging<T>` (`test/refresh_paging_test.dart`) |
 | Example pages (49 Dart files in `example/lib`) | Ported pages run in `example/` with the iOS / Android demo's names and data | TODO |
-| Placeholder: `CYLPlaceholderView` | Error / empty placeholder widget, same item API as iOS / Android | TODO |
+| Placeholder: `CYLPlaceholderView` | Error / empty placeholder widget, same item API as iOS / Android | `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView` (`test/placeholder_view_test.dart`) |
 | Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | TODO |
 | Placeholder: HUD and status bar | `CYLPlaceholderHUD` equivalent | TODO |
-| Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()` |
+| Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()`; also `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView(animationFile:)` builds the same `CYLAnimationView` (`test/placeholder_view_test.dart`) |
 | Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | TODO |
 | Example screenshots in `docs/` | Original pixels, labeled per `docs/instructions/testing.md` | TODO |
 | Unit and widget tests | One test per API group above, `flutter test` green | TODO |
