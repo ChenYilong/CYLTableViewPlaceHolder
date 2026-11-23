@@ -13,7 +13,9 @@ permissions:
 
 concurrency:
   group: ios15-${{ github.ref }}
-  cancel-in-progress: true
+  # A newer push does not cancel a running check on the long-lived port branch (a cancelled macOS job shows no
+  # steps and hides real failures); every other branch still cancels the superseded run.
+  cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}
 
 jobs:
   probe:

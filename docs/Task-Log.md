@@ -1364,3 +1364,13 @@
 - Why: `scripts/resolve-cyltabbarcontroller-commit.sh` currently resolves to `18d8dc98` (PR #823, branch `feat/dealloc-block-executor-dependency`), and `git grep onAnimationEnd 18d8dc98` finds nothing, so a revert brings back the red iOS Demo jobs (`cannot find 'onAnimationEnd'`).
 - **TODO** once CYLTabBarController PR #823 / #824 are merged: remove the exact-pin step from ios.yml and resolve the newest commit again. Until then `android.yml` still resolves the newest commit on any branch, so the two workflows differ and Android CI can break the same way if a branch without the engine API becomes the newest.
 - Owner also decided: the last Flutter pure-Dart table row is not built now (freeze rule); hand-off #10 (Flutter iOS native half) comes first.
+
+- **TODO: iOS screenshots (2026-11-24, Mac session, claimed before starting):** (1) stitched labeled sheets for the 87 `ph-anim` originals so `scripts/check_screenshots.py` reaches 0 errors; (2) one original screenshot per Example-Scenarios scenario plus the Animations tab with Play all, speed and loop; sheets, originals and the doc reference; (3) the three checkers; (4) results and score here. Prompt (relayed by a peer session): finish the screenshot part of this iOS verification.
+
+### 已完成：CI 不再取消 port 分支上正在运行的检查 / Done: CI no longer cancels running checks on the port branch
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "fix ci error ：coz no  steps then be canceled" and "改 workflow，让这个分支不再取消正在运行的任务".
+- **原因 / Cause:** jobs showed "cancelled" with 0 steps for two reasons. (1) `cancel-in-progress: true` in `ios.yml`, `ios15-runtime.yml` and `android.yml`: every push cancels the previous run, and re-running an old commit's run is cancelled by the newer run. (2) GitHub macOS arm64 capacity: "The job was not acquired by Runner of type hosted even after multiple attempts" after about 33 minutes in the queue (job 137966415098); that one cannot be fixed in the repository, re-run the job.
+- **修复 / Fix:** the three workflows use `cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}`: runs of this branch's pull request are never cancelled by a newer push (GitHub keeps one running and one pending run per group); other branches still cancel superseded runs. `release.yml` already had `false`.
+- **状态 / Status:** pushed; effect checked on the next push's runs. Capacity cancellations still need a manual re-run.
