@@ -203,6 +203,15 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
      */
     @objc public var spacingBefore: CGFloat
 
+    /**
+     * [EN] Whether the still image replaces the icon animation when a play-once animation ends
+     *      (`CYLAnimatedItemView.showsImageWhenAnimationEnds`); off by default, so the last frame stays. For an animation
+     *      whose last frame is empty: the Success scenario's icon turns it on, so its still image shows afterwards.
+     * [CN] 播放一次的图标动画结束后，是否用静态图替换动画（`CYLAnimatedItemView.showsImageWhenAnimationEnds`）；默认关闭，停在最后一帧。
+     *      用于最后一帧为空的动画：Success 场景的图标开启它，结束后显示静态图。
+     */
+    @objc public var showsImageWhenAnimationEnds = false
+
     // [EN] "item", "hint", "button" or "separator": which factory made it (CYLPlaceholderStackView reads it for its
     //      `hintLabel`, `titleLabel` and `button`, as Android's component kinds).
     // [CN] 由哪个工厂方法创建（CYLPlaceholderStackView 据此提供 `hintLabel`、`titleLabel` 与 `button`，同 Android 的组件种类）。
@@ -246,6 +255,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
         copy.imageBundle = imageBundle
         copy.spacingBefore = spacingBefore
         copy.kind = kind
+        copy.showsImageWhenAnimationEnds = showsImageWhenAnimationEnds
         return copy
     }
 
@@ -1124,9 +1134,12 @@ public final class CYLPlaceholderScenarioCatalog: NSObject {
             return [CYLScenarioIcon("CYLPlaceholderUploading.gif", .uploadOff,
                 CYLScenarioText("CYLPlaceholderScenarioUploadingTitle", "Uploading…"), art)]
         case .success:
-            return [CYLScenarioIcon("CYLPlaceholderSuccess.riv", .info,
-                        CYLScenarioText("CYLPlaceholderScenarioSuccessTitle", "Submitted"), art),
-                    CYLScenarioButton(.done, .filled)]
+            // [EN] The animation ends on an empty frame: the still image shows once it has played.
+            // [CN] 动画结束在空白帧：播放完后显示静态图。
+            let successIcon = CYLScenarioIcon("CYLPlaceholderSuccess.riv", .info,
+                        CYLScenarioText("CYLPlaceholderScenarioSuccessTitle", "Submitted"), art)
+            successIcon.showsImageWhenAnimationEnds = true
+            return [successIcon, CYLScenarioButton(.done, .filled)]
         case .hud:
             // [EN] A refresh-bundle spinner (GIF, played by the GIF subspec's animator), looping like every spinner;
             //      without an animation engine the Hourglass style shows.

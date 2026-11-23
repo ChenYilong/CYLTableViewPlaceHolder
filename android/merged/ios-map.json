@@ -1166,5 +1166,9 @@
  },
  "CYLPlaceholderHUDBridge.handle": {
   "ios": "`CYLPlaceholderHUDBridge.handle(method:arguments:)`"
+ },
+ "CYLPlaceholderComponent.showsImageWhenAnimationEnds": {
+  "ios": "`CYLPlaceholderComponent` `showsImageWhenAnimationEnds`",
+  "note": "forwarded to `CYLAnimatedItemView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView; on for the Success icon"
  }
 }

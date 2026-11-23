@@ -352,6 +352,7 @@ open class CYLPlaceholderStackView: UIView {
             NSLog("CYLTableViewPlaceHolder: component not added: %@", error.localizedDescription)
             return nil
         }
+        view.showsImageWhenAnimationEnds = component.showsImageWhenAnimationEnds
         append(view, action: component.action, spacingBefore: component.spacingBefore)
         let kinds = componentKinds ?? NSMapTable.weakToStrongObjects()
         componentKinds = kinds
