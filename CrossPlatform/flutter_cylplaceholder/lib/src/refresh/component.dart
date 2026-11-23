@@ -92,6 +92,10 @@ abstract class CYLRefreshComponent extends ChangeNotifier {
   /// The over-offset [beginRefreshing] uses when none is passed.
   double defaultOverOffset;
 
+  /// True: in [CYLRefreshScrollMode.move] the indicator is laid out as tall as the whole pulled area instead of a fixed
+  /// [expandHeight] at its edge. The drawn styles use it, so their background grows with the pull.
+  bool stretchIndicator = false;
+
   /// The second floor: a view opened by pulling past [secondaryTriggerOffset] and releasing, instead of refreshing. null
   /// (the default) means no second floor.
   Widget? secondaryView;

@@ -95,10 +95,10 @@ class CYLRefreshRiveStyle {
 
   /// The options of `CYLAnimationView` this style asks for.
   Map<String, Object> get animationOptions => {
-        if (artboardName != null) 'artboard': artboardName!,
-        if (stateMachineName != null) 'stateMachine': stateMachineName!,
-        if (loadingBoolean != null) 'input': loadingBoolean!,
-        if (releaseTrigger != null) 'triggerInput': releaseTrigger!,
+        'artboard': ?artboardName,
+        'stateMachine': ?stateMachineName,
+        'input': ?loadingBoolean,
+        'triggerInput': ?releaseTrigger,
       };
 }
 

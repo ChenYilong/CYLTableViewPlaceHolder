@@ -390,6 +390,12 @@ class _CYLRefreshState extends State<CYLRefresh> with TickerProviderStateMixin i
       case CYLRefreshScrollMode.behind:
         return place(offset: 0, extent: expand, child: body);
       case CYLRefreshScrollMode.move:
+        if (component.stretchIndicator) {
+          final stretched = horizontal
+              ? SizedBox(width: total, child: _IndicatorBody(component: component))
+              : SizedBox(height: total, child: _IndicatorBody(component: component));
+          return place(offset: 0, extent: total, child: ClipRect(child: stretched));
+        }
         return place(
           offset: 0,
           extent: total,
