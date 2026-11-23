@@ -2,8 +2,8 @@
   <!-- Header: placed over the native refresher area, following the pull distance (pinned at the top when behind).
        It stays during the finish phase ("Refresh complete"). "listener" draws nothing. -->
   <view wx:if="{{header !== 'none' && header !== 'listener' && (pull > 0 || headerState === 'Refreshing' || finishing)}}"
-        class="cyl-refresh__header {{behind ? 'cyl-refresh__header--behind' : ''}}"
-        style="height: {{threshold}}px; {{behind ? '' : 'transform: translateY(' + (pull - threshold) + 'px);'}} {{automaticallyChangeAlpha && headerState !== 'Refreshing' && !finishing ? 'opacity:' + (pull / threshold) : ''}}"
+        class="cyl-refresh__header cyl-refresh__header--{{mode}}"
+        style="height: {{mode === 'stretch' ? pull : threshold}}px; {{mode === 'move' || mode === 'front' ? 'transform: translateY(' + (pull - threshold) + 'px);' : ''}} {{automaticallyChangeAlpha && headerState !== 'Refreshing' && !finishing ? 'opacity:' + (pull / threshold) : ''}}"
         aria-role="progressbar" aria-label="{{texts.header}}">
     <!-- "diy": the page draws the header (slot "header", driven by the statechange / pull events). -->
     <slot wx:if="{{header === 'diy'}}" name="header"></slot>
@@ -43,7 +43,7 @@
       </view>
     </block>
   </view>
-  <scroll-view class="cyl-refresh__scroll {{behind ? 'cyl-refresh__scroll--behind' : ''}}" scroll-y enhanced="{{true}}" bounces="{{true}}"
+  <scroll-view class="cyl-refresh__scroll cyl-refresh__scroll--{{mode}}" scroll-y enhanced="{{true}}" bounces="{{true}}"
                scroll-top="{{scrollTarget}}"
                refresher-enabled="{{header !== 'none'}}" refresher-threshold="{{threshold}}"
                refresher-default-style="none" refresher-background="transparent" refresher-triggered="{{triggered}}"
