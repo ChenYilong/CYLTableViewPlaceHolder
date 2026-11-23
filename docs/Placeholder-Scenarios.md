@@ -18,6 +18,7 @@
 | [无障碍与资源查找](#无障碍与资源查找--accessibility-and-resource-lookups) | [Accessibility and resource lookups](#无障碍与资源查找--accessibility-and-resource-lookups) |
 | [已知限制](#已知限制--known-limits) | [Known limits](#已知限制--known-limits) |
 | [场景化占位、状态栏与无障碍（自 README 移入，2026-11-20）](#场景化占位状态栏与无障碍自-readme-移入2026-11-20--scenario-placeholders-status-bar-and-accessibility-moved-from-the-readme-2026-11-20) | [Scenario placeholders, status bar and accessibility (moved from the README, 2026-11-20)](#场景化占位状态栏与无障碍自-readme-移入2026-11-20--scenario-placeholders-status-bar-and-accessibility-moved-from-the-readme-2026-11-20) |
+| [iOS 截图](#ios-截图--ios-screenshots) | [iOS screenshots](#ios-截图--ios-screenshots) |
 
 <!-- docs-navigation:end -->
 
@@ -302,3 +303,24 @@ let placeholder = CYLPlaceholderStackView(scenario: .illustrationRetry, actions:
 | 动画图标：`CYLRefreshAnimationHeader`、`CYLRefreshBackAnimationFooter`、`CYLRefreshAutoAnimationFooter` 采用 `CYLRefreshIconAnimating`，可以用本库的图标组件显示 GIF、Lottie、PAG 或 Rive 图标（`setBundledIconAnimation:size:forState:`、`setIconAnimationFilePath:size:forState:`、`setIconAnimationAttributes:forState:`），放在 动画视图绘制图片的位置；`setAnimationImages:forState:` 显示图片序列，子类 `CYLRefreshGifHeader` 等提供 `gifView` 与 `setImages:…`；箭头样式的 Normal 控件使用箭头与菊花。拖动时播放或跟随下拉进度，刷新中循环播放，结束时停止。详见 [Refresh-Icon-Animation.md](Refresh-Icon-Animation.md)。 | Animated icons: `CYLRefreshAnimationHeader`, `CYLRefreshBackAnimationFooter` and `CYLRefreshAutoAnimationFooter` adopt `CYLRefreshIconAnimating` and can show a GIF, Lottie, PAG or Rive icon with the library's icon component (`setBundledIconAnimation:size:forState:`, `setIconAnimationFilePath:size:forState:`, `setIconAnimationAttributes:forState:`) where the animation view draws its images; `setAnimationImages:forState:` shows an image sequence, the subclasses such as `CYLRefreshGifHeader` offer `gifView` and `setImages:…`, and the Normal controls use the arrow and the spinner. Pulling plays the icon or follows the pull, refreshing loops it, and ending stops it. See [Refresh-Icon-Animation.md](Refresh-Icon-Animation.md). |
 | 内置刷新动画：核心资源包有 22 个只表示刷新状态的 `CYLRefresh*` 图标动画（GIF 旋转箭头与 4 种加载圈；Lottie 下拉箭头、循环/顺时针/逆时针刷新箭头、加载圈、圆点、加载更多与完成对勾；Rive 刷新图标），`CYLRefreshAnimationHeader.bundledIconAnimationFileNames` 列出它们以及同样表示刷新的两个占位动画（`CYLPlaceholderRefresh.json`、PAG 进度圆环 `CYLPlaceholderProgress.pag`）。`Examples/Example-Scenarios` 的“动态”Tab 右上角“刷新图标”页为每个文件提供一个演示页面，并演示图片序列、每个状态不同图标、返回式刷新尾、文件路径、item 属性、配置文件与 MJRefresh Gif 名称的用法。详见 [`Refresh-Icon-Animation.md`](Refresh-Icon-Animation.md)。 | Bundled refresh animations: the core bundle has 22 `CYLRefresh*` icon animations that only mean refresh states (a GIF of turning arrows and 4 GIF spinners; Lottie pull arrows, cycle/clockwise/counter-clockwise refresh arrows, spinners, dots, load-more and done checks; a Rive refresh icon), and `CYLRefreshAnimationHeader.bundledIconAnimationFileNames` lists them with the two placeholder animations that also mean refresh (`CYLPlaceholderRefresh.json` and the PAG progress ring `CYLPlaceholderProgress.pag`). The "Refresh icons" page (top right of the Feed tab in `Examples/Example-Scenarios`) has a demo page for every file and shows image sequences, an icon per state, the back footer, file path, item attributes, a configuration file and the MJRefresh Gif names. See [`Refresh-Icon-Animation.md`](Refresh-Icon-Animation.md). |
 | 与 Android（CYLRefreshLayout）一致的刷新 API：代码开始的刷新可识别（`isAutoRefresh`）、延迟开始 / 结束、只显示动画不回调、结束时设置“没有更多数据”、外部偏移监听、自定义触发判断、二楼打开前可拒绝、全局默认刷新头 / 尾部，见 [Refresh-Library-Parity.md](Refresh-Library-Parity.md#android-cylrefreshlayout-对齐ios--matching-androids-cylrefreshlayout-ios) 与 [iOS-API-Map.md](iOS-API-Map.md)。 | Refresh APIs that match Android (CYLRefreshLayout): a refresh started in code can be told apart (`isAutoRefresh`), delayed starts and ends, the animation without the callbacks, ending with "no more data", outside offset observers, a custom trigger decider, a veto before the second floor opens, and app-wide default headers and footers; see [Refresh-Library-Parity.md](Refresh-Library-Parity.md#android-cylrefreshlayout-对齐ios--matching-androids-cylrefreshlayout-ios) and [iOS-API-Map.md](iOS-API-Map.md). |
+
+
+## iOS 截图 / iOS screenshots
+
+| 中文 | English |
+| --- | --- |
+| iOS 27.2、iPhone 18 Pro 模拟器（CYL Placeholder Screens）、Xcode 27.2、macOS 27.3，CYLTabBarController 12ed11ff，本仓库 d1ad10e，2026-11-24（模拟器时间 09:42–10:55）：Example-Scenarios 的“场景”页，每个场景一张原图（32 张，`docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`），拼成 4 张带页眉、说明与页脚的图（“Sync failed”与“Title above the illustration”两个场景尚未截图：另一个会话占用了模拟器，见 Task-Log）。 | iOS 27.2, iPhone 18 Pro simulator (CYL Placeholder Screens), Xcode 27.2, macOS 27.3, CYLTabBarController 12ed11ff, this repository d1ad10e, 2026-11-24 (simulator clock 09:42-10:55): the Example-Scenarios "Scenarios" page, one original per scenario (32 files, `docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`), stitched into 4 sheets with header, captions and footer (TODO: the scenarios "Sync failed" and "Title above the illustration" have no screenshot yet: another session took over the simulator, see Task-Log). |
+
+![iOS scenario screenshots, sheet 1](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-1of4-d1ad10e-20261124-sheet.png)
+
+![iOS scenario screenshots, sheet 2](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-2of4-d1ad10e-20261124-sheet.png)
+
+![iOS scenario screenshots, sheet 3](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-3of4-d1ad10e-20261124-sheet.png)
+
+![iOS scenario screenshots, sheet 4](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-4of4-d1ad10e-20261124-sheet.png)
+
+| 中文 | English |
+| --- | --- |
+| “动画”页：列表，以及详情页上的“全部播放”、速度滑块与循环开关（同一环境，d1ad10e）。87 张动画详情原图（d327a4e）的拼图见 [Example-Animation-Playback.md](Example-Animation-Playback.md#ios-截图--ios-screenshots)。 | The "Animations" page: the list, and a detail page with Play all, the speed slider and the loop switch (same environment, d1ad10e). The 87 animation detail originals (d327a4e) are stitched in [Example-Animation-Playback.md](Example-Animation-Playback.md#ios-截图--ios-screenshots). |
+
+![iOS Animations tab and playback controls](assets/ios-27.2-iphone18pro-sim-ph-animations-tab-controls-d1ad10e-20261124-sheet.png)
