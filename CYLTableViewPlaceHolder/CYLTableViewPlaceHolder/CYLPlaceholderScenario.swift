@@ -205,7 +205,7 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
 
     /**
      * [EN] Whether the still image replaces the icon animation when a play-once animation ends
-     *      (`CYLAnimatedItemView.showsImageWhenAnimationEnds`); off by default, so the last frame stays. For an animation
+     *      (`CYLPlaceholderView.showsImageWhenAnimationEnds`); off by default, so the last frame stays. For an animation
      *      whose last frame is empty: the Success scenario's icon turns it on, so its still image shows afterwards.
      * [CN] 播放一次的图标动画结束后，是否用静态图替换动画（`CYLAnimatedItemView.showsImageWhenAnimationEnds`）；默认关闭，停在最后一帧。
      *      用于最后一帧为空的动画：Success 场景的图标开启它，结束后显示静态图。

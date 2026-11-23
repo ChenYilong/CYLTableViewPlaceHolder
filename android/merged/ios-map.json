@@ -1169,6 +1169,16 @@
  },
  "CYLPlaceholderComponent.showsImageWhenAnimationEnds": {
   "ios": "`CYLPlaceholderComponent` `showsImageWhenAnimationEnds`",
-  "note": "forwarded to `CYLAnimatedItemView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView; on for the Success icon"
+  "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView has no such property, only onAnimationEnd); on for the Success icon"
+ },
+ "CYLRefreshDrivenLayout": {
+  "ios": "`CYLRefreshDrivenLayout`",
+  "note": "Swift UIView with an internal content-less scroll view whose isDragging is the driven flag; header only (a negative offset, the footer, is treated as rest)"
+ },
+ "CYLRefreshDrivenLayout.drive": {
+  "ios": "`CYLRefreshDrivenLayout` `drive(offset:dragging:startedAtEdge:)`"
+ },
+ "CYLRefreshDrivenLayout.release": {
+  "ios": "`CYLRefreshDrivenLayout` `release()`"
  }
 }

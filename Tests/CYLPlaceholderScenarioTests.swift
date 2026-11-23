@@ -662,4 +662,21 @@ final class CYLPlaceholderScenarioTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - showsImageWhenAnimationEnds
+
+    func testOnlyTheSuccessIconShowsTheImageWhenItsAnimationEnds() {
+        for scenario in allScenarios {
+            let components = CYLPlaceholderScenarioCatalog.components(for: scenario)
+            let stack = CYLPlaceholderStackView(scenario: scenario, actions: nil)
+            let flags = components.map { $0.showsImageWhenAnimationEnds }
+            XCTAssertEqual(flags.contains(true), scenario == .success, "scenario \(scenario.rawValue)")
+            // [EN] The stack forwards each component's flag to its view. [CN] 堆叠视图把每个组件的开关转给它的视图。
+            XCTAssertEqual(stack.componentViews.map { $0.showsImageWhenAnimationEnds }, flags, "scenario \(scenario.rawValue)")
+        }
+        let component = CYLPlaceholderComponent(attributes: [:], action: nil)
+        XCTAssertFalse(component.showsImageWhenAnimationEnds, "off by default")
+        component.showsImageWhenAnimationEnds = true
+        XCTAssertTrue((component.copy() as! CYLPlaceholderComponent).showsImageWhenAnimationEnds, "a copy keeps it")
+    }
 }

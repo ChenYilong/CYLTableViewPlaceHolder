@@ -799,6 +799,44 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     /**
+     * [EN] Whether the still image replaces the animation when a play-once animation ends (Android, HarmonyOS and the Mini
+     *      Program's `showsImageWhenAnimationEnds`, CYLTabBarController b13b88f1; iOS `CYLAnimatedItemView` has only the
+     *      `onAnimationEnd` callback, which this view uses). Off by default, so the last frame stays; for an animation
+     *      whose last frame is empty. Only an engine that reports the end (`CYLTabBarItemAnimationPlayer.onEnded`) triggers
+     *      it; the next play, stop or last-frame request shows the animation again.
+     * [CN] 播放一次的动画结束后，是否用静态图替换动画（Android、鸿蒙与小程序的 `showsImageWhenAnimationEnds`，CYLTabBarController b13b88f1；
+     *      iOS 的 `CYLAnimatedItemView` 只有 `onAnimationEnd` 回调，本视图使用它）。默认关闭，停在最后一帧；用于最后一帧为空的动画。
+     *      只有能报告结束的引擎（`CYLTabBarItemAnimationPlayer.onEnded`）才会触发；下一次播放、停止或显示最后一帧时重新显示动画。
+     */
+    @objc open var showsImageWhenAnimationEnds = false {
+        didSet {
+            guard showsImageWhenAnimationEnds != oldValue else { return }
+            onAnimationEnd = showsImageWhenAnimationEnds ? { [weak self] in self?.cyl_showImageInsteadOfAnimation() } : nil
+            if !showsImageWhenAnimationEnds { cyl_showAnimationAgain() }
+        }
+    }
+
+    /**
+     * [EN] Whether the still image shows in the animation's place (`showsImageWhenAnimationEnds` took effect). Internal, for tests.
+     * [CN] 静态图是否正替代动画显示（`showsImageWhenAnimationEnds` 已生效）。内部使用，供测试。
+     */
+    private(set) var isShowingImageAfterAnimationEnd = false
+
+    private func cyl_showImageInsteadOfAnimation() {
+        guard showsImageWhenAnimationEnds, let animationView = animationView else { return }
+        isShowingImageAfterAnimationEnd = true
+        animationView.isHidden = true
+        imageView.isHidden = false
+    }
+
+    private func cyl_showAnimationAgain() {
+        guard isShowingImageAfterAnimationEnd else { return }
+        isShowingImageAfterAnimationEnd = false
+        animationView?.isHidden = false
+        imageView.isHidden = true
+    }
+
+    /**
      * How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times.
      * Defaults to 1, or to `CYLPlaceholderItemAnimationRepeatCount`. Players that loop or report their progress (Lottie,
      * PAG) support every value; others (GIF, Rive, SVGA) play as their file defines. Reduce Motion still stops the
@@ -2307,6 +2345,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc open func playPlaceholderAnimation() {
         cyl_leaveSeekMode()
+        cyl_showAnimationAgain()
         animationStopped = false
         animationShowsLastFrame = false
         animationRestartPending = true
@@ -2318,6 +2357,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc open func stopPlaceholderAnimation() {
         cyl_leaveSeekMode()
+        cyl_showAnimationAgain()
         animationStopped = true
         animationShowsLastFrame = false
         cyl_updateAnimationPlayback()
@@ -2328,6 +2368,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc open func showPlaceholderAnimationLastFrame() {
         cyl_leaveSeekMode()
+        cyl_showAnimationAgain()
         animationStopped = true
         animationShowsLastFrame = true
         cyl_updateAnimationPlayback()
