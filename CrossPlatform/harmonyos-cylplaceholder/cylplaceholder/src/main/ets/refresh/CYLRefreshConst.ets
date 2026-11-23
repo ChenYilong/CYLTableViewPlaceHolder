@@ -84,6 +84,40 @@ export enum CYLRefreshScrollMode {
   Behind = 3
 }
 
+/**
+ * The scroll mode for a mode name (the mini program's `scrollMode`: "move", "stretch", "front", "behind") and the older
+ * `behind` flag (`behind` wins); null or an unknown name is Move.
+ */
+export function CYLRefreshScrollModeFor(name: string | null, behind: boolean = false): CYLRefreshScrollMode {
+  if (behind) {
+    return CYLRefreshScrollMode.Behind;
+  }
+  switch (name) {
+    case 'stretch':
+      return CYLRefreshScrollMode.Stretch;
+    case 'front':
+      return CYLRefreshScrollMode.Front;
+    case 'behind':
+      return CYLRefreshScrollMode.Behind;
+    default:
+      return CYLRefreshScrollMode.Move;
+  }
+}
+
+/** The header's height while pulled: Stretch is exactly the revealed area, the other modes the header's own height. */
+export function CYLRefreshHeaderHeightFor(mode: CYLRefreshScrollMode, revealTop: number, headerHeight: number): number {
+  return mode === CYLRefreshScrollMode.Stretch ? Math.max(0, revealTop) : headerHeight;
+}
+
+/**
+ * The header's top edge in the view: Move rides above the content (revealTop - height - ignored inset); Stretch, Front
+ * and Behind are pinned at the visible top (0), Front in front of the content, Behind behind it.
+ */
+export function CYLRefreshHeaderYFor(mode: CYLRefreshScrollMode, revealTop: number, headerHeight: number,
+  ignoredInsetTop: number): number {
+  return mode === CYLRefreshScrollMode.Move ? revealTop - headerHeight - ignoredInsetTop : 0;
+}
+
 /** Where a pull may start (iOS `CYLRefreshTriggerMode`). */
 export enum CYLRefreshTriggerMode {
   /** Any drag that reaches the edge. */
