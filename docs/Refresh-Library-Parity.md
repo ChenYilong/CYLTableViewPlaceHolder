@@ -13,6 +13,7 @@
 | [CYLRefresh styles 示例截图](#cylrefresh-styles-示例截图--cylrefresh-styles-demo-screenshots) | [CYLRefresh styles demo screenshots](#cylrefresh-styles-示例截图--cylrefresh-styles-demo-screenshots) |
 | [flutter_easy_refresh 对照表](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) | [flutter_easy_refresh comparison](#flutter_easy_refresh-对照表--flutter_easy_refresh-comparison) |
 | [flutter_easy_refresh to Flutter package (CYL API)](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) | [Flutter package score table](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) |
+| [Flutter example screenshots](#flutter-example-screenshots) | [Flutter example screenshots](#flutter-example-screenshots) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
 | [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
@@ -225,7 +226,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 72 / 100 (47 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
+**Current score: 75 / 100 (49 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
@@ -291,9 +292,17 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 | Placeholder: `CYLPlaceholderComponent` and stack | Components, `restartAnimation()`, `animationLoops`, `animationSpeed` | TODO |
 | Placeholder: HUD and status bar | `CYLPlaceholderHUD` equivalent | TODO |
 | Placeholder animations | Depend on `flutter_cyltabbar`'s `CYLAnimationView`; no duplicate engine | `CYLPlaceholderItem` (`lib/src/cyl_placeholder_item.dart`, 2026-11-23, written statically, not built) re-exports upstream's `CYLAnimationView` and `CYLAnimationController`; names `animationSpeed`, `animationLoops`, `animationRestartToken`, `controller.restart()`; also `CrossPlatform/flutter_cylplaceholder/lib/src/placeholder/cyl_placeholder_view.dart` `CYLPlaceholderView(animationFile:)` builds the same `CYLAnimationView` (`test/placeholder_view_test.dart`) |
-| Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | TODO |
-| Example screenshots in `docs/` | Original pixels, labeled per `docs/instructions/testing.md` | TODO |
+| Refresh + error-placeholder example | Example page: pull to refresh, a failed load shows the placeholder, retry refreshes | `CrossPlatform/flutter_cylplaceholder/example/lib/error_placeholder_page.dart` (first load fails, `CYLPlaceholderView` shown, tap retries), `refresh_page.dart`, `paging_page.dart`; run on iOS 27.2 simulator (screenshots below) |
+| Example screenshots in `docs/` | Original pixels, labeled per `docs/instructions/testing.md` | `docs/assets/flutter-ios27.2-iphone18pro-cylplaceholder-error-placeholder-0356b56-20261123-sheet.png` and `...-refresh-0356b56-20261123-sheet.png` (originals next to them; `scripts/check_screenshots.py` passes) |
 | Unit and widget tests | One test per API group above, `flutter test` green | TODO |
+
+## Flutter example screenshots
+
+Flutter 3.47.9 debug build of `CrossPlatform/flutter_cylplaceholder/example` on the iOS 27.2 simulator (iPhone 18 Pro), Xcode 27.2, macOS 27.3, commit `0356b56`, 2026-11-23. The Error placeholder page (a failed load shows `CYLPlaceholderView`, a tap retries) and the Refresh page (pull down, pull up, load, no more data). Originals are next to the sheets in `docs/assets/`.
+
+![Flutter Error placeholder page](assets/flutter-ios27.2-iphone18pro-cylplaceholder-error-placeholder-0356b56-20261123-sheet.png)
+
+![Flutter Refresh page](assets/flutter-ios27.2-iphone18pro-cylplaceholder-refresh-0356b56-20261123-sheet.png)
 
 ## flutter_easy_refresh 示例复刻 / flutter_easy_refresh demo port
 
