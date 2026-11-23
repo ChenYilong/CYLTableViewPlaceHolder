@@ -35,7 +35,7 @@
 - **上下文 / Context:** the earlier Flutter agent (`fd00aa80`, `81abbd77`) substituted an `item` component with `CYLPlaceholderItemAnimationFilePath` for the icon animation and added an empty child view to the driven layout; both hid core bugs (rule "Fix bugs in the core first").
 - **进度 / Progress:** see the commits of this task; **TODO** until each fix below is marked with its evidence.
   - Fix 1: done locally (2026-11-24): the checkout script prints `C:/...` under Git Bash (`cygpath -m`, unchanged elsewhere); every consumer checked (`settings.gradle.kts`, `sync-harmonyos-cylanimateditem.sh`, `cyltabbarcontroller-xcframework.sh`, `pod-lint.sh`; the mini program scripts and workflows do not call it); `scripts/publish-android-native-to-maven-local.sh` ran end to end on Windows, exit 0, fresh timestamps of `cyltableviewplaceholder`, `cyltableviewplaceholder-refresh` and `cyltabbarcontroller-animateditem` AARs in `~/.m2`. `where.exe bash` lists only `C:Program FilesGitSrbinbash.exe` (no WSL bash), so the `ProcessBuilder("bash")` fallback is fine here. shellcheck is not installed (`bash -n` only). **TODO** CI not seen.
-  - Fix 2: TODO.
+  - Fix 2: done locally (2026-11-24): `CYLRefreshDrivenLayout` adds its own empty content view in `init`; the new Robolectric test `anAttachedDrivenLayoutShowsNoEmptyContentWarning` failed before the change and passes after; `:merged:testDebugUnitTest` 48 tests (47 before), `:placeholder:testDebugUnitTest` 55, 0 failures; API maps 823 / 823 and Android check pass. The Flutter workaround is removed in Fix 4. **TODO** CI not seen; screenshot in Fix 4.
   - Fix 3: TODO.
   - Fix 4: TODO.
 
