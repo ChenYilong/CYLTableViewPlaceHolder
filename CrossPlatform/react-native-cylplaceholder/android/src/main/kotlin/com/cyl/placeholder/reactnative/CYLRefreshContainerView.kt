@@ -1,6 +1,7 @@
 package com.cyl.placeholder.reactnative
 
 import android.content.Context
+import android.graphics.Canvas
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
@@ -37,6 +38,17 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
         cyl_footer = footer
         // Off until the `loadMoreEnabled` prop turns it on, so a container without a footer behaves as before.
         setEnableLoadMore(false)
+    }
+
+    // [EN] The header rests above the container, and React Native lets children draw outside their parent, so the resting
+    //      header showed over the title above the list (found on the emulator); clip the drawing to the container.
+    // [CN] 头部静止时在容器上方，而 React Native 允许子视图画到父视图外面，于是静止的头部盖在列表上方的标题上（在模拟器上发现）；
+    //      所以把绘制裁剪在容器内。
+    override fun dispatchDraw(canvas: Canvas) {
+        canvas.save()
+        canvas.clipRect(0, 0, width, height)
+        super.dispatchDraw(canvas)
+        canvas.restore()
     }
 
     /**
