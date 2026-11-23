@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cylplaceholder/flutter_cylplaceholder.dart';
@@ -10,9 +9,16 @@ class _NoOtherRefresh implements CYLRefreshHost {
   bool isOtherRefreshing(CYLRefreshComponent component) => false;
 }
 
-/// The contract of the Android half, tested on the Dart side with a mock method channel: the calls this package sends to the
-/// native HUD, the creation parameters of the native placeholder view, and what comes back. The native behavior behind them
-/// is tested by the Android Robolectric tests (`CYLPlaceholderBridgeTest`).
+/// The contract of the native halves, tested on the Dart side with a mock method channel: the calls this package sends to the
+/// native HUD, the creation parameters of the native placeholder view and stack, and what comes back. The same tests run for
+/// Android and iOS (they differ only in the platform view class: `AndroidView` or `UiKitView`; the channel names, method names
+/// and keys are one contract). The native behavior behind them is tested by the Android Robolectric tests
+/// (`CYLPlaceholderBridgeTest`) and the iOS XCTest `CYLPlaceholderBridgeTests`.
+const _bothPlatforms = TargetPlatformVariant({TargetPlatform.android, TargetPlatform.iOS});
+
+/// The platform view class the platform under test uses.
+Type get _platformViewType => debugDefaultTargetPlatformOverride == TargetPlatform.iOS ? UiKitView : AndroidView;
+
 void main() {
   final calls = <MethodCall>[];
 
@@ -37,8 +43,16 @@ void main() {
     expect(CYLPlaceholderNative.enabled, isTrue);
   });
 
+  test('the native refresh header is Android only: iOS has the placeholder, the stack and the HUD, not the driven header', () {
+    expect(CYLPlaceholderNative.refreshEnabled, isTrue, reason: 'forced on, and the default test platform is Android');
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    expect(CYLPlaceholderNative.enabled, isTrue);
+    expect(CYLPlaceholderNative.refreshEnabled, isFalse);
+  });
+
   group('the HUD calls the native HUD by name', () {
-    test('show, status, progress, timed messages and dismiss', () {
+    testWidgets('show, status, progress, timed messages and dismiss', variant: _bothPlatforms, (tester) async {
       final hud = CYLPlaceholderHUD();
       hud
         ..showWithStatus('Please wait')
@@ -67,7 +81,7 @@ void main() {
       hud.dispose();
     });
 
-    test('showComponents sends the component maps with action names, and a native tap calls the Dart action', () async {
+    testWidgets('showComponents sends the component maps with action names, and a native tap calls the Dart action', variant: _bothPlatforms, (tester) async {
       final hud = CYLPlaceholderHUD();
       var retries = 0;
       hud.showComponents([
@@ -81,16 +95,16 @@ void main() {
       expect(components[1], allOf(containsPair('type', 'button'), containsPair('title', 'Retry'), containsPair('action', 'component-1')));
       expect(components[0].containsKey('action'), isFalse, reason: 'a component without an action sends none');
       // The native HUD reports the tapped action by name.
-      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
-        CYLPlaceholderNative.hudChannel.name,
-        const StandardMethodCodec().encodeMethodCall(const MethodCall('onAction', 'component-1')),
-        (_) {},
-      );
+      await tester.runAsync(() => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+            CYLPlaceholderNative.hudChannel.name,
+            const StandardMethodCodec().encodeMethodCall(const MethodCall('onAction', 'component-1')),
+            (_) {},
+          ));
       expect(retries, 1);
       hud.dispose();
     });
 
-    testWidgets('the host draws nothing of its own: the native HUD draws over the activity', (tester) async {
+    testWidgets('the host draws nothing of its own: the native HUD draws over the activity or the key window', variant: _bothPlatforms, (tester) async {
       final hud = CYLPlaceholderHUD();
       await tester.pumpWidget(MaterialApp(home: CYLPlaceholderHUDHost(hud: hud, child: const Text('content'))));
       hud.showWithStatus('Please wait');
@@ -118,7 +132,7 @@ void main() {
       });
     });
 
-    testWidgets('CYLPlaceholderView builds an AndroidView with the item map when the native half is on', (tester) async {
+    testWidgets('CYLPlaceholderView builds the platform view with the item map when the native half is on', variant: _bothPlatforms, (tester) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
       await tester.pumpWidget(MaterialApp(
@@ -128,9 +142,9 @@ void main() {
           child: CYLPlaceholderView(style: CYLPlaceholderStyle.cloudOff, title: 'Offline', message: 'Try again', animationLoops: true, animationSpeed: 1.5, tapHandler: () {}),
         ),
       ));
-      final android = tester.widget<AndroidView>(find.byType(AndroidView));
-      expect(android.viewType, CYLPlaceholderNative.viewType);
-      final params = android.creationParams as Map<String, Object?>;
+      final dynamic platformView = tester.widget<Widget>(find.byType(_platformViewType));
+      expect(platformView.viewType, CYLPlaceholderNative.viewType);
+      final params = platformView.creationParams as Map<String, Object?>;
       expect(params[CYLPlaceholderItemKey.title], 'Offline');
       expect(params[CYLPlaceholderItemKey.style], 'cloudOff');
       expect(params['animationLoops'], true);
@@ -138,9 +152,9 @@ void main() {
       expect(params['tappable'], true);
     });
 
-    testWidgets('a Flutter image or title style keeps the Dart widget, which can draw them', (tester) async {
+    testWidgets('a Flutter image or title style keeps the Dart widget, which can draw them', variant: _bothPlatforms, (tester) async {
       await tester.pumpWidget(const MaterialApp(home: CYLPlaceholderView(image: SizedBox(key: ValueKey('mine'), width: 10, height: 10))));
-      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(_platformViewType), findsNothing);
       expect(find.byKey(const ValueKey('mine')), findsOneWidget);
     });
   });
@@ -238,6 +252,14 @@ void main() {
       );
       expect(phases, ['releasing>refreshing']);
       expect(refreshing, 1);
+    });
+
+    testWidgets('on iOS the classic header stays the Dart indicator: there is no native driven header there', variant: TargetPlatformVariant.only(TargetPlatform.iOS), (tester) async {
+      final plain = CYLRefreshClassicHeader();
+      addTearDown(plain.dispose);
+      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: plain.buildIndicator))));
+      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(UiKitView), findsNothing);
     });
 
     testWidgets('the classic header draws the native indicator when the native half is on, and Dart when a builder asks for it', (tester) async {
@@ -383,7 +405,7 @@ void main() {
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
     }
 
-    testWidgets('CYLPlaceholderStackView builds an AndroidView whose creation parameters are the component maps with action names', (tester) async {
+    testWidgets('CYLPlaceholderStackView builds the platform view whose creation parameters are the component maps with action names', variant: _bothPlatforms, (tester) async {
       mockPlatformViews(tester);
       var retries = 0;
       var background = 0;
@@ -401,9 +423,9 @@ void main() {
           ),
         ),
       ));
-      final android = tester.widget<AndroidView>(find.byType(AndroidView));
-      expect(android.viewType, CYLNativePlaceholderStack.viewType);
-      final params = android.creationParams as Map<String, Object?>;
+      final dynamic platformView = tester.widget<Widget>(find.byType(_platformViewType));
+      expect(platformView.viewType, CYLNativePlaceholderStack.viewType);
+      final params = platformView.creationParams as Map<String, Object?>;
       expect(params['backgroundAction'], 'background');
       final components = params['components'] as List;
       // An animated icon is an icon component whose "animation" names the bundled file; the native core plays it.
@@ -420,7 +442,7 @@ void main() {
       expect(background, 1);
     });
 
-    testWidgets('a controller restart reaches the native stack as an update', (tester) async {
+    testWidgets('a controller restart reaches the native stack as an update', variant: _bothPlatforms, (tester) async {
       mockPlatformViews(tester);
       final controller = CYLPlaceholderStackController();
       addTearDown(controller.dispose);
@@ -442,11 +464,11 @@ void main() {
       expect(updates.single.arguments, {'name': 'restartAnimation', 'value': 1});
     });
 
-    testWidgets('a component with a Flutter image keeps the Dart stack', (tester) async {
+    testWidgets('a component with a Flutter image keeps the Dart stack', variant: _bothPlatforms, (tester) async {
       await tester.pumpWidget(MaterialApp(
         home: CYLPlaceholderStackView(components: [CYLPlaceholderComponent.icon(image: const SizedBox(key: ValueKey('mine'), width: 10, height: 10))]),
       ));
-      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(_platformViewType), findsNothing);
       expect(find.byKey(const ValueKey('mine')), findsOneWidget);
     });
   });

@@ -96,10 +96,10 @@ mixin CYLRefreshClassicStyle on CYLRefreshComponent {
     return SizedBox(width: iconSize, height: iconSize, child: Center(child: icon));
   }
 
-  /// Whether the native indicator (header or footer) draws this one: the native half is on, and nothing asks for what only
-  /// Flutter can draw (a custom builder, text, icon or image).
+  /// Whether the native indicator (header or footer) draws this one: the native refresh half is on (Android), and nothing
+  /// asks for what only Flutter can draw (a custom builder, text, icon or image).
   bool get _usesNative =>
-      CYLPlaceholderNative.enabled &&
+      CYLPlaceholderNative.refreshEnabled &&
       builder == null &&
       textBuilder == null &&
       messageBuilder == null &&
