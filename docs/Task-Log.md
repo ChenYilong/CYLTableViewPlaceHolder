@@ -52,6 +52,17 @@
   - Item 8 (Android driven mode): in progress in a Sonnet agent's worktree.
   - Items 3, 4, 7, 10 and the HarmonyOS build (5): **TODO**.
 
+### 已完成（证据）：交接第 5 项，HarmonyOS 构建、本地测试与模拟器 / Done (evidence): hand-off item 5, HarmonyOS build, local tests and emulator
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, code at `7fdeae45`, Windows 11, DevEco Studio 6.0.1 (hvigor, bundled SDK and JBR).
+- **用户原话 / Prompt (verbatim, abridged to the task):** take over hand-off item 5 (and the verify part of 6): run `scripts/build.sh emulator`, the host-run local unit tests, install the unsigned emulator HAP and screenshot the easy-refresh scroll mode demo; no signing; do not implement Stretch / Front.
+- **Build (`scripts/build.sh emulator`):** exit 0. entry `default` HAP `entry-default-unsigned.hap` (36.6 MB), `cylplaceholder.har` (838 KB), entry `emulator` HAP `entry-emulator-unsigned.hap` (26.9 MB); three `BUILD SUCCESSFUL`. The checkout path is ASCII, so it was built in place (no mirror).
+- **Tests (`scripts/build.sh test`):** exit 0. ohosTest HAP built; cylplaceholder 84 run, 84 pass, 0 failure, 0 error; entry 1 run, 1 pass (85 in total, equal to the 85 `it(` cases in `cylplaceholder/src/test` and `entry/src/test`; the "88-89" in the hand-off does not match the source).
+- **Emulator:** `127.0.0.1:5555`, model `emulator`, OpenHarmony 6.0.1.112, ABI x86_64. `cyl_hap_x86_64.py install entry-emulator-unsigned.hap`: "install bundle successfully", no signing config used or created.
+- **Screenshots:** `docs/assets/harmonyos-x86_64-easy-refresh-scroll-mode-6.0.1-api21-emulator-x86_64-7fdeae4-20261124-sheet.png` (originals `...-move-idle-...jpeg`, `...-move-pulled-...jpeg`); `scripts/check_screenshots.py` passes. Page route: Refresh tab, easy_refresh section, "Scroll mode" row; Move-mode pull shows the refreshing header.
+- **Blocker / not verified:** tapping the 拉伸 (Stretch), 前置 (Front) and 后置 (Behind) rows (click, long click, double click via `uitest uiInput`) leaves the checkmark on 移动 (Move); the code path (`RefreshEasyPage.onRow`) looks correct, so the cause is open (not fixed, not part of this task). Stretch / Front for `cyl-refresh` on HarmonyOS not implemented here.
+- **Rive / PAG x86_64 rule (read only):** the project follows it. `docs/instructions/harmonyos.md` / `AGENTS.md` say the debug guard was removed on 2026-11-23; the code reads `deviceInfo.abiList` and the kit is added only by `cyl_hap_x86_64.py` on an x86_64 device (the installer logged "x86_64 debug engine kit: PAG, Rive"; PAG 4.4.31 skipped because the app uses 4.5.102).
+
 ### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup`.
