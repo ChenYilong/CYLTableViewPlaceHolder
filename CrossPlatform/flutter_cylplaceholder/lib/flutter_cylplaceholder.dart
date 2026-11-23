@@ -7,6 +7,7 @@ library;
 
 export 'package:flutter_cyltabbar/flutter_cyltabbar.dart' show CYLAnimationView, CYLAnimationController, animationURLWithOptions;
 export 'src/cyl_placeholder_item.dart';
+export 'src/hud/cyl_placeholder_hud.dart';
 export 'src/placeholder/cyl_placeholder_stack.dart';
 export 'src/placeholder/cyl_placeholder_view.dart';
 export 'src/refresh/component.dart';
