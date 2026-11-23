@@ -47,6 +47,21 @@ class CYLPlaceholderConfigurationTest {
     }
 
     @Test
+    fun anIconComponentPlaysItsNamedAnimationLikeIOS() {
+        // The "animation" key was validated and then dropped; as on iOS (bundledAnimationParts) it now plays over the style's image.
+        val icon = CYLPlaceholderComponent.componentWithDictionary(context, mapOf("style" to "Error", "animation" to "CYLPlaceholderLoadFailed.json", "title" to "Failed", "repeatCount" to "loop"))!!
+        assertTrue(icon.usesItemAttributes)
+        assertEquals("asset:CYLPlaceholderAnimations/CYLPlaceholderLoadFailed.json", icon.attributes["CYLPlaceholderItemAnimationFilePath"])
+        assertEquals(CYLPlaceholderStyle.Error, icon.attributes["CYLPlaceholderItemStyle"])
+        assertEquals(0, icon.animationRepeatCount)
+        val stack = CYLPlaceholderStackView.fromConfiguration(context, mapOf("components" to listOf(mapOf("type" to "icon", "animation" to "CYLPlaceholderLoadFailed.json"))))!!
+        val view = stack.componentViews.first() as CYLPlaceholderView
+        assertEquals("asset:CYLPlaceholderAnimations/CYLPlaceholderLoadFailed.json", view.itemAttributes["CYLPlaceholderItemAnimationFilePath"])
+        // Without the key the icon is still the plain image.
+        assertFalse(CYLPlaceholderComponent.componentWithDictionary(context, mapOf("style" to "Error"))!!.usesItemAttributes)
+    }
+
+    @Test
     fun aBadComponentSaysWhy() {
         assertEquals("Unknown placeholder style.", failure { e -> CYLPlaceholderComponent.componentWithDictionary(context, mapOf("style" to "Nope"), e) })
         assertEquals("A button needs an action.", failure { e -> CYLPlaceholderComponent.componentWithDictionary(context, mapOf("type" to "button"), e) })

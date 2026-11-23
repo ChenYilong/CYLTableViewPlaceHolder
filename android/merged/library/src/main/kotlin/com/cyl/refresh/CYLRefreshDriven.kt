@@ -2,6 +2,8 @@ package com.cyl.refresh
 
 import android.content.Context
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import com.cyl.refresh.layout.CYLRefreshLayout
 import com.cyl.refresh.layout.constant.RefreshState
 
@@ -13,6 +15,12 @@ import com.cyl.refresh.layout.constant.RefreshState
  * reports its phases. It has no scrolling content and ignores touches.
  */
 class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
+
+    init {
+        // The content is the host's (Flutter's); without a content view the base layout draws its orange "content view is
+        // empty" warning text on attach, so the driven layout supplies an empty content of its own.
+        addView(View(context), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    }
 
     /**
      * Feeds the pull: [offset] pixels past the edge (positive pulls the header, negative the footer, 0 is rest);

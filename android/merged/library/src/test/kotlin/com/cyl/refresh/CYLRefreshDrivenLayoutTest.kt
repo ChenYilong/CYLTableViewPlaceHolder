@@ -153,4 +153,17 @@ class CYLRefreshDrivenLayoutTest {
         idle()
         assertNotEquals(armed, texts(header.view.view))
     }
+
+    @Test
+    fun anAttachedDrivenLayoutShowsNoEmptyContentWarning() {
+        // The base layout draws an orange warning text when it has no content view; the host's content is Flutter's, so the
+        // driven layout supplies an empty content of its own and no child shows the warning.
+        val (layout, _) = driven()
+        assertTrue(layout.isAttachedToWindow)
+        val warning = activity.getString(com.cyl.refresh.merged.R.string.srl_content_empty)
+        assertFalse(texts(layout).any { it == warning })
+        fun anyOrange(view: View): Boolean =
+            (view is TextView && view.currentTextColor == 0xffff6600.toInt()) || (view as? ViewGroup)?.let { g -> (0 until g.childCount).any { anyOrange(g.getChildAt(it)) } } == true
+        assertFalse(anyOrange(layout))
+    }
 }
