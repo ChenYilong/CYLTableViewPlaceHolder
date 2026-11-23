@@ -99,3 +99,6 @@ Example-loadTabBarIconsFroNework/
 # From CYLTabBarController .gitignore (local mini program tool checkouts)
 CrossPlatform/LottieWMC/
 CrossPlatform/RiveViewer-miniapp/
+
+# Claude Code agent worktrees (machine-local)
+.claude/worktrees/
