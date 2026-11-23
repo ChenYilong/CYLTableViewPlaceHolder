@@ -3,6 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cylplaceholder/flutter_cylplaceholder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class _NoOtherRefresh implements CYLRefreshHost {
+  @override
+  bool isOtherRefreshing(CYLRefreshComponent component) => false;
+}
+
 /// The contract of the Android half, tested on the Dart side with a mock method channel: the calls this package sends to the
 /// native HUD, the creation parameters of the native placeholder view, and what comes back. The native behavior behind them
 /// is tested by the Android Robolectric tests (`CYLPlaceholderBridgeTest`).
@@ -135,6 +140,112 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: CYLPlaceholderView(image: SizedBox(key: ValueKey('mine'), width: 10, height: 10))));
       expect(find.byType(AndroidView), findsNothing);
       expect(find.byKey(const ValueKey('mine')), findsOneWidget);
+    });
+  });
+
+  group('the native refresh header', () {
+    int? viewId;
+    final sent = <MethodCall>[];
+
+    // Records what Dart sends to the native header and lets the test play the native side back.
+    Future<void> pumpHeader(WidgetTester tester, CYLRefreshClassicHeader header, {void Function(String, String)? onPhase, VoidCallback? onRefreshing}) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async {
+        if (call.method != 'create') return null;
+        viewId = (call.arguments as Map)['id'] as int;
+        return viewId;
+      });
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox());
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null);
+      });
+      sent.clear();
+      await tester.pumpWidget(MaterialApp(home: SizedBox(width: 300, height: 60, child: CYLNativeRefreshIndicator(component: header, onPhase: onPhase, onRefreshing: onRefreshing))));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump();
+      // Dart listens on the channel now (for the events); stand in for the native side to record the calls.
+      final channel = MethodChannel('${CYLNativeRefreshIndicator.viewType}/$viewId');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
+        sent.add(call);
+        return null;
+      });
+    }
+
+    testWidgets('the pull is driven with logical pixels and the finger state, a short release cancels, a long one releases', (tester) async {
+      final header = CYLRefreshClassicHeader();
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      header.handlePull(20, dragging: true);
+      header.handlePull(80, dragging: true);
+      expect(sent.map((c) => c.method), ['drive', 'drive']);
+      expect(sent[0].arguments, {'offset': 20.0, 'dragging': true, 'startedAtEdge': true});
+      expect(sent[1].arguments, containsPair('offset', 80.0));
+      expect(header.phase, CYLRefreshPhase.releaseToRefresh);
+      sent.clear();
+      header.handleRelease();
+      expect(sent.map((c) => c.method), ['release'], reason: 'an armed release opens the native header once, at the offset it was driven to');
+      // A short pull: the finger lifts below the trigger, the native header cancels it.
+      final short = CYLRefreshClassicHeader();
+      addTearDown(short.dispose);
+      await pumpHeader(tester, short);
+      short.handlePull(30, dragging: true);
+      sent.clear();
+      short.handlePull(30, dragging: false);
+      short.handleRelease();
+      expect(sent.map((c) => c.method), ['drive', 'release']);
+      expect(sent[0].arguments, containsPair('dragging', false));
+    });
+
+    testWidgets('endRefreshing calls finishRefresh once with the result; a refresh begun without a pull arms the native header first', (tester) async {
+      final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      header.attach(_NoOtherRefresh());
+      header.beginRefreshing(force: true);
+      expect(sent.map((c) => c.method), ['drive', 'release']);
+      expect(sent[0].arguments, allOf(containsPair('offset', header.triggerOffset), containsPair('dragging', true)));
+      sent.clear();
+      header.endRefreshing(success: false);
+      expect(sent.map((c) => c.method), ['finishRefresh']);
+      expect(sent.single.arguments, {'success': false});
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(header.phase, CYLRefreshPhase.idle);
+      expect(sent.map((c) => c.method), ['finishRefresh', 'drive'], reason: 'back to rest: drive 0, not dragging');
+    });
+
+    testWidgets('onPhase and onRefreshing come back from the native header', (tester) async {
+      final phases = <String>[];
+      var refreshing = 0;
+      final header = CYLRefreshClassicHeader();
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, onPhase: (phase, old) => phases.add('$old>$phase'), onRefreshing: () => refreshing++);
+      // The Dart listener replaced the recorder when the view was created; deliver as the native side would.
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(MethodChannel('${CYLNativeRefreshIndicator.viewType}/$viewId'), null);
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+        '${CYLNativeRefreshIndicator.viewType}/$viewId',
+        const StandardMethodCodec().encodeMethodCall(const MethodCall('onPhase', {'phase': 'refreshing', 'oldPhase': 'releasing'})),
+        (_) {},
+      );
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+        '${CYLNativeRefreshIndicator.viewType}/$viewId',
+        const StandardMethodCodec().encodeMethodCall(const MethodCall('onRefreshing')),
+        (_) {},
+      );
+      expect(phases, ['releasing>refreshing']);
+      expect(refreshing, 1);
+    });
+
+    testWidgets('the classic header draws the native indicator when the native half is on, and Dart when a builder asks for it', (tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
+      final plain = CYLRefreshClassicHeader();
+      final custom = CYLRefreshClassicHeader()..textBuilder = (context, component, text) => Text('mine $text');
+      addTearDown(plain.dispose);
+      addTearDown(custom.dispose);
+      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: plain.buildIndicator))));
+      expect(find.byType(AndroidView), findsOneWidget);
+      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
+      expect(find.byType(AndroidView), findsNothing);
+      expect(find.textContaining('mine'), findsOneWidget);
     });
   });
 

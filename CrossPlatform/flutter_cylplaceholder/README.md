@@ -24,6 +24,26 @@ The package depends on `flutter_cyltabbar` by git and commit (the commit the rep
 `scripts/resolve-cyltabbarcontroller-commit.sh --write Cartfile CrossPlatform/flutter_cylplaceholder/pubspec.yaml`). The apps
 add the animation libraries they need (iOS subspec, Android dependency), as upstream documents.
 
+## Native Android half (channel contract)
+
+On Android (outside `flutter test`, `CYLPlaceholderNative.enabled`) the widgets below host the native components of this
+repository through platform views and method channels; the Dart widgets stay the fallback elsewhere. The Android plugin is in
+`android/` and needs `io.github.chenyilong:cyltableviewplaceholder` and `...-refresh` in the local Maven repository
+(`scripts/publish-android-native-to-maven-local.sh`, then `:merged:publishToMavenLocal`). Contract tests:
+`test/native_backend_test.dart` (mock channels; the native side is covered by the Robolectric tests of `android/`).
+
+| View type / channel | Dart widget | Dart to native | Native to Dart |
+|:---|:---|:---|:---|
+| `flutter_cylplaceholder/CYLPlaceholderView` (`/<id>`) | `CYLNativePlaceholderView`, used by `CYLPlaceholderView` | creation: the item map plus `animationLoops`, `animationSpeed`, `tappable`; `update` (`name`, `value`) | `onTap` |
+| `flutter_cylplaceholder/CYLPlaceholderStackView` (`/<id>`) | `CYLNativePlaceholderStack`, used by `CYLPlaceholderStackView` | creation: `components` (the maps of `CYLPlaceholderComponent.toConfiguration`, an animated icon as an `item`), `backgroundAction`; `update` (`restartAnimation`) | `onAction` (`component-<i>` or `background`) |
+| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by `CYLRefreshClassicHeader` | `drive` (`offset` in logical pixels, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
+| `flutter_cylplaceholder/hud` | `CYLPlaceholderHUD` | the HUD method names (`showWithStatus`, `showComponents`, ...) | `onAction` |
+
+The refresh view hosts `CYLRefreshDrivenLayout` (the driven mode of `android/merged`) with a `CYLRefreshNormalHeader`. Flutter
+keeps the scrolling and the phase machine (`CYLRefreshComponent`, still ended with `endRefreshing`); the indicator mirrors it:
+`drive` while pulled, `release` when the finger lifts or a refresh starts, `finishRefresh` when it ends. Header only: the footer
+path of `drive` is untested in the core, so footers keep the Dart indicator.
+
 ## Not covered (TODO)
 
 The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog, HUD and status views are not in

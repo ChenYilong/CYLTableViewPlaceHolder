@@ -14,6 +14,7 @@ export 'src/placeholder/native_stack.dart';
 export 'src/placeholder/cyl_placeholder_view.dart';
 export 'src/refresh/component.dart';
 export 'src/refresh/drawn_styles.dart';
+export 'src/refresh/native_refresh.dart';
 export 'src/refresh/paging.dart';
 export 'src/refresh/physics.dart';
 export 'src/refresh/refresh.dart';

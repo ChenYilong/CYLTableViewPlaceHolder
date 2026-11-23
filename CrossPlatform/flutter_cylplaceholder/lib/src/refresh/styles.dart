@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../placeholder/native_backend.dart';
 import 'component.dart';
+import 'native_refresh.dart';
 import 'refresh_types.dart';
 
 /// Builds the title of a classic indicator from its default text.
@@ -155,6 +157,20 @@ class CYLRefreshClassicHeader extends CYLRefreshHeader with CYLRefreshClassicSty
 
   /// Formats the time of the second line; the default is `Last updated: HH:mm`.
   String Function(DateTime time)? lastUpdatedTimeFormatter;
+
+  /// Whether the native header draws this one: the native half is on, and nothing asks for what only Flutter can draw (a
+  /// custom builder, text, icon or image).
+  bool get _usesNative =>
+      CYLPlaceholderNative.enabled &&
+      builder == null &&
+      textBuilder == null &&
+      messageBuilder == null &&
+      pullIconBuilder == null &&
+      succeededImage == null &&
+      failedImage == null;
+
+  @override
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
 
   @override
   String? messageText() {
