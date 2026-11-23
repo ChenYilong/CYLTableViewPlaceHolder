@@ -292,10 +292,9 @@ void main() {
       final params = android.creationParams as Map<String, Object?>;
       expect(params['backgroundAction'], 'background');
       final components = params['components'] as List;
-      // An animated icon is an item component whose attributes name the animation asset (the native icon component would show its still).
-      expect(components[0], allOf(containsPair('type', 'item'), containsPair('title', 'Offline'), containsPair('animationLoops', true), containsPair('animationSpeed', 2.0)));
-      expect((components[0] as Map)['attributes'], {'CYLPlaceholderItemStyle': 'cloudOff', 'CYLPlaceholderItemAnimationFilePath': 'asset:CYLPlaceholderLoadFailed.json'});
-      expect((components[0] as Map).containsKey('animation'), isFalse);
+      // An animated icon is an icon component whose "animation" names the bundled file; the native core plays it.
+      expect(components[0], allOf(containsPair('type', 'icon'), containsPair('title', 'Offline'), containsPair('style', 'cloudOff'), containsPair('animation', 'CYLPlaceholderLoadFailed.json'), containsPair('animationLoops', true), containsPair('animationSpeed', 2.0)));
+      expect((components[0] as Map).containsKey('attributes'), isFalse);
       expect(components[2], allOf(containsPair('type', 'button'), containsPair('action', 'component-2')));
       expect((components[1] as Map).containsKey('action'), isFalse);
 

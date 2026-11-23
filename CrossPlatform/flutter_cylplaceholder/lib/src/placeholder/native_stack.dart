@@ -39,27 +39,9 @@ class CYLNativePlaceholderStack extends StatefulWidget {
 
   /// The creation parameters the native side receives: the "components" list and, with a [backgroundAction], its name.
   Map<String, Object?> get creationParams => {
-        'components': [for (var i = 0; i < components.length; i++) _configurationOf(i)],
+        'components': [for (var i = 0; i < components.length; i++) components[i].toConfiguration(actionName: actionName(i))],
         if (backgroundAction != null) 'backgroundAction': backgroundName,
       };
-
-  /// The configuration map of the component at [index]. The native `icon` component only checks its "animation" name and shows
-  /// the still icon, while an `item` component plays the animation file of its attributes (an Android asset, which the example
-  /// copies into its `android/` project), so a component with an animation file is sent as an `item`.
-  Map<String, Object?> _configurationOf(int index) {
-    final component = components[index];
-    final map = component.toConfiguration(actionName: actionName(index));
-    final file = component.animationFile;
-    if (file == null || (component.kind != CYLPlaceholderComponentKind.icon && component.kind != CYLPlaceholderComponentKind.item)) return map;
-    return {
-      ...map,
-      'type': 'item',
-      'attributes': {
-        'CYLPlaceholderItemStyle': component.style.name,
-        'CYLPlaceholderItemAnimationFilePath': 'asset:$file',
-      },
-    }..remove('animation')..remove('style')..remove('size');
-  }
 
   @override
   State<CYLNativePlaceholderStack> createState() => _CYLNativePlaceholderStackState();

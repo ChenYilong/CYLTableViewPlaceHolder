@@ -2,7 +2,6 @@ package com.cyl.placeholder.flutter_cylplaceholder
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.cyl.refresh.CYLRefreshDrivenLayout
 import com.cyl.refresh.CYLRefreshNormalHeader
@@ -45,8 +44,6 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
     init {
         header.addPhaseObserver { _, old, new -> channel.invokeMethod("onPhase", mapOf("phase" to lowerCamel(new.name), "oldPhase" to lowerCamel(old.name))) }
         header.refreshingHandler = { channel.invokeMethod("onRefreshing", null) }
-        // A layout without a content view draws a warning text ("The content view in CYLRefreshLayout is empty"); the content here is Flutter's.
-        layout.addView(View(context), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         layout.cyl_header = header
         container.addView(layout, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         channel.setMethodCallHandler(this)
