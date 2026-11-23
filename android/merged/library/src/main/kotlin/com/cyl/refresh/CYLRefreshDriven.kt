@@ -4,8 +4,11 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import com.cyl.refresh.layout.CYLRefreshLayout
 import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.layout.constant.SpinnerStyle
+import kotlin.math.min
 
 /**
  * The driven mode of the refresh kernel (docs/Refresh-Library-Parity.md, native bridge map): a [CYLRefreshLayout] that
@@ -44,6 +47,39 @@ class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
      * Feeds the lifted finger: an armed component starts refreshing, a short pull is canceled (`handleRelease`).
      */
     fun release() = overSpinner()
+
+    private var footerHeldVisible = false
+
+    /**
+     * "No more data" has to stay readable: the host (Flutter) keeps the footer's space open after the last page, but the
+     * footer is a translating view that rests just below the layout and only moves in with the pull, so at rest it was
+     * outside the host's space and drew nothing. While [CYLRefreshFooter.noMoreData] is set the footer is held fully in
+     * (or further in while it is pulled) and returns to the pull's position when it is cleared.
+     */
+    private fun holdNoMoreDataFooter() {
+        val footer = mRefreshFooter?.takeIf { it.spinnerStyle == SpinnerStyle.Translate } ?: return
+        val view = footer.view
+        val target = if (cyl_footer?.noMoreData == true) min(mSpinner, -view.height).toFloat() else if (footerHeldVisible) min(mSpinner, 0).toFloat() else return
+        footerHeldVisible = cyl_footer?.noMoreData == true
+        if (view.translationY != target) view.translationY = target
+    }
+
+    // Before every frame: a child that only invalidates itself (the footer's text) does not redraw this layout, so a
+    // draw hook would miss the moment "no more data" is set.
+    private val holdBeforeDraw = ViewTreeObserver.OnPreDrawListener {
+        holdNoMoreDataFooter()
+        true
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        viewTreeObserver.addOnPreDrawListener(holdBeforeDraw)
+    }
+
+    override fun onDetachedFromWindow() {
+        viewTreeObserver.removeOnPreDrawListener(holdBeforeDraw)
+        super.onDetachedFromWindow()
+    }
 
     /**
      * Ignores touches: the host feeds the pull through [drive].

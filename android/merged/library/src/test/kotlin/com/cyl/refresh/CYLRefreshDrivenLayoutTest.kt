@@ -272,4 +272,49 @@ class CYLRefreshDrivenLayoutTest {
         layout2.drive(10, dragging = true)
         assertEquals(10, loud.dragOffset)
     }
+
+    // The footer's visible band inside the layout, before the next frame (a Translate footer rests below the layout until pulled).
+    private fun visibleFooterBand(layout: CYLRefreshDrivenLayout, footer: CYLRefreshFooter): Pair<Float, Float> {
+        layout.viewTreeObserver.dispatchOnPreDraw()
+        val view = footer.view.view
+        val top = view.top + view.translationY
+        return top to top + view.height
+    }
+
+    @Test
+    fun noMoreDataFooterStaysInsideTheLayoutAtRest() {
+        // Flutter keeps the footer's space open after "no more data", but the footer rested below the layout: no label showed.
+        val (layout, footer) = drivenFooter()
+        layout.drive(-80, dragging = true)
+        layout.release()
+        idle()
+        footer.endRefreshingWithNoMoreData()
+        idle()
+        assertEquals(CYLRefreshState.NoMoreData, footer.state)
+        val (top, bottom) = visibleFooterBand(layout, footer)
+        assertTrue("footer top $top inside layout height ${layout.height}", top < layout.height - footer.view.view.height / 2f)
+        assertTrue("footer bottom $bottom inside layout height ${layout.height}", bottom <= layout.height)
+        assertTrue(texts(footer.view.view).contains("No More Data"))
+    }
+
+    @Test
+    fun noticeNoMoreDataShowsTheFooterAtRestAndResetNoMoreDataHidesItAgain() {
+        val (layout, footer) = drivenFooter()
+        footer.noticeNoMoreData()
+        idle()
+        assertTrue(visibleFooterBand(layout, footer).second <= layout.height)
+        footer.resetNoMoreData()
+        idle()
+        assertTrue("cleared: the footer rests below the layout again", visibleFooterBand(layout, footer).first >= layout.height)
+    }
+
+    @Test
+    fun aPullPastTheFooterWhileNoMoreDataKeepsItFullyVisible() {
+        val (layout, footer) = drivenFooter()
+        footer.noticeNoMoreData()
+        idle()
+        layout.drive(-(footer.view.view.height * 2), dragging = true)
+        val (top, _) = visibleFooterBand(layout, footer)
+        assertTrue("pulled: the footer follows the pull", top <= layout.height - footer.view.view.height * 2f)
+    }
 }

@@ -338,6 +338,26 @@ void main() {
       await tester.pump(const Duration(milliseconds: 20));
     });
 
+    testWidgets('a pull up after no more data keeps driving the native footer (it must keep showing the label) and never clears it or loads', (tester) async {
+      final footer = CYLRefreshClassicFooter(finishDuration: const Duration(milliseconds: 10));
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer);
+      footer.attach(_NoOtherRefresh());
+      footer.beginRefreshing(force: true);
+      footer.endRefreshingWithNoMoreData();
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(footer.isNoMoreData, isTrue);
+      sent.clear();
+      footer.handlePull(40, dragging: true);
+      expect(sent.map((c) => c.method), ['drive'], reason: 'the native footer is still told the pull, and no noMoreData call clears the label');
+      expect(sent.single.arguments, {'offset': -40.0, 'dragging': true, 'startedAtEdge': true});
+      footer.handlePull(footer.triggerOffset + 10, dragging: true);
+      footer.handleRelease();
+      expect(sent.map((c) => c.method), ['drive', 'drive'], reason: 'no release: the footer is not armed after no more data');
+      expect(footer.isRefreshing, isFalse);
+      expect(footer.isNoMoreData, isTrue);
+    });
+
     testWidgets('loadsAfterNoMoreData reaches the native footer and a load after no more data clears it first', (tester) async {
       final footer = CYLRefreshClassicFooter(loadsAfterNoMoreData: true);
       addTearDown(footer.dispose);
