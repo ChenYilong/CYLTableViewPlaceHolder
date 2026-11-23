@@ -16,6 +16,7 @@
 | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) |
 | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) |
 | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) |
+| [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) | [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) |
 | [Flutter example screenshots](#flutter-example-screenshots) | [Flutter example screenshots](#flutter-example-screenshots) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
 | [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
@@ -229,7 +230,7 @@ Task: `CrossPlatform/flutter_cylplaceholder` (planned), structured like CYLTabBa
 
 **Score** = rows whose column 3 is not `TODO` divided by all rows, times 100. All `TODO` is 0; no `TODO` is 100. A row may be `N/A: <reason>` only when the feature cannot exist in Flutter. Loop: (1) search existing code and match TODO rows; (2) score; (3) work TODO rows one by one and replace `TODO` with the implementation (file and symbol); (4) score again; repeat to 100. Sonnet writes the code.
 
-**Current score: 98 / 100 (64 of 65 rows).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
+**Current score: 98 / 100 (64 of 65 rows), the API surface of the Dart fallback (not native-backed; see the native bridge map and the scoreboard).** The package exists at `CrossPlatform/flutter_cylplaceholder` (updated 2026-11-23).
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | Flutter API (this package) |
 | --- | --- | --- |
@@ -305,7 +306,7 @@ Task: `CrossPlatform/react-native-cylplaceholder`, interface aligned with `flutt
 
 Design (advisor, 2026-11-23): two layers. Pure TypeScript with no React import (types as `as const` objects, `CYLRefreshComponent` and its Header / Footer / AutoFooter / BackFooter subclasses, `CYLRefreshPaging`), long-lived objects holding configuration and state, with a small subscribe / notify base in place of `ChangeNotifier`, tested with `node --test --experimental-strip-types`. React layer: a `useSyncExternalStore` hook, `<CYLRefresh>` with a render-prop child that receives the scroll props, the Classic / Cupertino / Material indicators and `CYLPlaceholderView`. No native code. The pull-down header on Android has no negative overscroll offset and no `contentInset` in `ScrollView`, so the header is driven by a `PanResponder` at the top (JavaScript only, behaves differently from iOS bounce); the limitation stays a `TODO` in the header rows until it is checked on a device.
 
-**Current score: 65 / 100 (42 of 65 rows are not TODO).** Done: the pure TypeScript layer (types, components, paging, classic styles, placeholder attributes; 24 `node --test` tests, clean `tsc`) and the React layer (`CYLRefresh`, `CYLRefreshClassicIndicator`, `useCYLRefreshComponent`, `CYLPlaceholderView`, `CYLPlaceholderItem`; type-checked only, never run on a device). Rows marked "Partial" are implemented for iOS-style overscroll only. Still TODO: Cupertino / Material / Bezier / Delivery / Phoenix / Taurus styles, the second floor, the Rive styles, the Android pull-down header, placeholder components and stack, HUD, the example pages and the tests of the React layer.
+**Current score: 65 / 100 (42 of 65 rows are not TODO), the API surface of the TypeScript fallback (not native-backed).** Done: the pure TypeScript layer (types, components, paging, classic styles, placeholder attributes; 24 `node --test` tests, clean `tsc`) and the React layer (`CYLRefresh`, `CYLRefreshClassicIndicator`, `useCYLRefreshComponent`, `CYLPlaceholderView`, `CYLPlaceholderItem`; type-checked only, never run on a device). Rows marked "Partial" are implemented for iOS-style overscroll only. Still TODO: Cupertino / Material / Bezier / Delivery / Phoenix / Taurus styles, the second floor, the Rive styles, the Android pull-down header, placeholder components and stack, HUD, the example pages and the tests of the React layer.
 
 | flutter_easy_refresh feature | Description (iOS / Android reference) | React Native API (this package) |
 | --- | --- | --- |
@@ -426,6 +427,26 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 | The easy-refresh demos Flutter lacks (trigger mode, refresh on start, listener, chat, user profile) | present | present | present | present | TODO | TODO |
 | A React Native example app | n/a | n/a | n/a | n/a | TODO (needs the native container first) | n/a |
 
+
+## Progress scoreboard, all platforms (2026-11-23, advisor)
+
+**How to read it.** "API names (measured)" comes from a score table of this repository; every other column is a judgement, marked as such. The owner's current requirement is that Flutter and React Native are backed by the iOS and Android components (see the native bridge map above), so the Dart / TypeScript API surface counts as a fallback, not as done. **CI: not seen.** Every push of today's iOS, Android and example edits (`d61c599`, `aa178d0`, `491e314`) was cancelled by the next push (`cancel-in-progress`); the run of `b297962` was still running when this was written. No edit of today has a completed CI result yet.
+
+| Area | API names (measured) | Uses the native components (judgement) | How verified | Score (judgement) | Biggest gaps |
+| --- | --- | --- | --- | --- | --- |
+| iOS core | API map 810 / 820 | No bridge entry points; the component dictionary lacks `animationLoops` / `animationSpeed` | `CYLPlaceholderView` overrides, component properties, `restartAnimation()` on the stack and the scroll mode demo are written without a build; no CI result | 70 | Unverified core edits; the 8 TODO rows of the API map |
+| Android core | complete | Placeholder, stack and HUD native entry points done, 7 Robolectric tests | Built and tested here (`:placeholder` 55 tests, `:merged-example` 4 tests); CI result not seen | 80 | Driven mode not started; no Flutter or RN glue |
+| HarmonyOS | `speed` / `loops` / `restartToken` existed | n/a | The `cylanimateditemrive` import change and the scroll mode demo were never built | 60 | A DevEco build |
+| Mini program | `restartAnimation`, `restartToken`, scroll modes (Move, Behind) | n/a | node tests pass (82 of 83; the one failure predates this work) | 75 | Stretch and Front need a new `cyl-refresh` property |
+| Flutter | Dart table 64 / 65, 100 tests really run | None: no `android/` or `ios/` plugin half, no Dart code calls native | Dart only | 45 | Under the current requirement it is a fallback |
+| React Native | TypeScript table 42 / 65, `tsc` and 24 tests | None: no native container | Never run in an RN app; not synced to Flutter's newer names | 30 | The native container; the example app |
+| Native bridge map | n/a | 0 of 8 rows complete; 3 rows have the Android native half only | n/a | 15 | The driven mode, the iOS half, all the glue |
+
+**Headline:** the six platforms average about 60; the native bridge map, which is what the owner now asks for, is about 15.
+
+**Next steps, in order:** (1) look at the CI of the current head before building more (iOS unit tests, the iOS Demo jobs, the Android workflow, the forced `43f94ad`, the new `:merged-example:testDebugUnitTest`); the bridge work sits on top of unbuilt iOS edits. (2) One complete Android path, Flutter → the native placeholder view: settle how a Flutter plugin's Android build gets `android/placeholder` (with the CYLTabBarController included build and JitPack), then the plugin's `android/` with a platform view factory and a method channel, the Dart side using `AndroidView` on Android and the current widget elsewhere, a mock-channel contract test, `flutter build apk --debug`; done = row 1 of the bridge map says "Android complete". (3) iOS entry points with the Android names, the two dictionary keys, regenerate `docs/iOS-API-Map.md`. (4) A timeboxed driven-mode spike on Android with a go / no-go (can `CYLRefreshComponent` run its phase machine without a `CYLRefreshLayout`?). (5) React Native after 2 to 4: the native container with Android `CYLRefreshLayout` as the parent, then the example app. (6) Freeze new pure Dart / TypeScript features. (7) Hand off what cannot be built here: the two HarmonyOS edits (DevEco), the `cyl-refresh` Stretch and Front property, the upstream request for named Rive inputs.
+
+**Process guards:** count per platform across the whole tree, without `head`, before writing a gap (two TODOs this round came from truncated searches); run `ios-api-map.py --check` after any public API change; never call something CI-green without having seen the run.
 
 ## Flutter example screenshots
 
