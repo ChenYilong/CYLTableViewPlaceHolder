@@ -29,6 +29,9 @@ class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
      */
     fun drive(offset: Int, dragging: Boolean, startedAtEdge: Boolean = true) {
         if (dragging && !startedAtEdge && cyl_header?.triggerMode == CYLRefreshTriggerMode.OnEdge) return
+        // loadsAfterNoMoreData: a pull up clears "no more data" first, so it can arm and load again (the Dart footer's
+        // handlePull). Touches never reach this: the base layout ignores a pull up while "no more data" is set.
+        if (dragging && offset < 0) cyl_footer?.takeIf { it.loadsAfterNoMoreData && it.noMoreData }?.resetNoMoreData()
         if (dragging && mState == RefreshState.None && offset != 0) {
             mKernel.setState(if (offset > 0) RefreshState.PullDownToRefresh else RefreshState.PullUpToLoad)
         }

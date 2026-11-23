@@ -4,6 +4,9 @@
 pluginManagement {
     repositories {
         google()
+        // Google's mirror of Maven Central first: the shared GitHub runner address is sometimes refused by repo1.maven.org
+        // and plugins.gradle.org (run 45278544433: the Kotlin plugin could not be resolved); the mirror serves the same files.
+        maven("https://maven-central.storage-download.googleapis.com/maven2")
         mavenCentral()
         gradlePluginPortal()
     }
@@ -12,6 +15,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
+        maven("https://maven-central.storage-download.googleapis.com/maven2")
         mavenCentral()
         // SVGAPlayer-Android (com.github.yyued), which the example's SVGA files need, is only on JitPack; so is
         // CYLDeallocBlockExecutor (com.github.ChenYilong, or com.github.ChenYilong.CYLDeallocBlockExecutor for its multi-module

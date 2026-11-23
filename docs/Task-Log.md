@@ -52,6 +52,17 @@
   - Item 8 (Android driven mode): in progress in a Sonnet agent's worktree.
   - Items 3, 4, 7, 10 and the HarmonyOS build (5): **TODO**.
 
+### 已完成（证据）：交接第 5 项，HarmonyOS 构建、本地测试与模拟器 / Done (evidence): hand-off item 5, HarmonyOS build, local tests and emulator
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, code at `7fdeae45`, Windows 11, DevEco Studio 6.0.1 (hvigor, bundled SDK and JBR).
+- **用户原话 / Prompt (verbatim, abridged to the task):** take over hand-off item 5 (and the verify part of 6): run `scripts/build.sh emulator`, the host-run local unit tests, install the unsigned emulator HAP and screenshot the easy-refresh scroll mode demo; no signing; do not implement Stretch / Front.
+- **Build (`scripts/build.sh emulator`):** exit 0. entry `default` HAP `entry-default-unsigned.hap` (36.6 MB), `cylplaceholder.har` (838 KB), entry `emulator` HAP `entry-emulator-unsigned.hap` (26.9 MB); three `BUILD SUCCESSFUL`. The checkout path is ASCII, so it was built in place (no mirror).
+- **Tests (`scripts/build.sh test`):** exit 0. ohosTest HAP built; cylplaceholder 84 run, 84 pass, 0 failure, 0 error; entry 1 run, 1 pass (85 in total, equal to the 85 `it(` cases in `cylplaceholder/src/test` and `entry/src/test`; the "88-89" in the hand-off does not match the source).
+- **Emulator:** `127.0.0.1:5555`, model `emulator`, OpenHarmony 6.0.1.112, ABI x86_64. `cyl_hap_x86_64.py install entry-emulator-unsigned.hap`: "install bundle successfully", no signing config used or created.
+- **Screenshots:** `docs/assets/harmonyos-x86_64-easy-refresh-scroll-mode-6.0.1-api21-emulator-x86_64-7fdeae4-20261124-sheet.png` (originals `...-move-idle-...jpeg`, `...-move-pulled-...jpeg`); `scripts/check_screenshots.py` passes. Page route: Refresh tab, easy_refresh section, "Scroll mode" row; Move-mode pull shows the refreshing header.
+- **Blocker / not verified:** tapping the 拉伸 (Stretch), 前置 (Front) and 后置 (Behind) rows (click, long click, double click via `uitest uiInput`) leaves the checkmark on 移动 (Move); the code path (`RefreshEasyPage.onRow`) looks correct, so the cause is open (not fixed, not part of this task). Stretch / Front for `cyl-refresh` on HarmonyOS not implemented here.
+- **Rive / PAG x86_64 rule (read only):** the project follows it. `docs/instructions/harmonyos.md` / `AGENTS.md` say the debug guard was removed on 2026-11-23; the code reads `deviceInfo.abiList` and the kit is added only by `cyl_hap_x86_64.py` on an x86_64 device (the installer logged "x86_64 debug engine kit: PAG, Rive"; PAG 4.4.31 skipped because the app uses 4.5.102).
+
 ### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup`.
@@ -1381,3 +1392,26 @@
   - TODO (-3): two scenarios have no screenshot, "Sync failed" and "Title above the illustration". While retaking them another session launched a Flutter debug app on my simulator ADAFD92B (the screen showed "Error placeholder" with the DEBUG banner), so I stopped instead of fighting over the device. Retake with `shoot2.py`-style label taps once the device is free (rows must be scrolled above the tab bar first).
   - Checks: `check_screenshots.py` 0 errors (404 screenshots, 73 sheets); `ios-api-map.py --check` current (823 / 823); `update-docs-navigation.py --check` 26 documents. No core bug found. The sheets' PASS line is a per-sheet visual check of a downsized contact sheet, not a pixel diff.
   - Score: 97 / 100 (open: the two missing scenario screenshots; owner's pin decision unchanged).
+
+
+### TODO（进行中）：Flutter / React Native 的 iOS 原生一半（交接 #10、#2），目标 100 / TODO (in progress): the iOS native half of Flutter and React Native (hand-off #10, #2), target 100
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "advisor点评目前全平台接口实现得分 以及下一步计划与建议。并立即让默认模型sonnet按照建议去实现。将得分优化到100". A peer session relayed the owner's go-ahead for hand-off #10 and said this session is the single iOS owner (the pin stays `12ed11ff`; the last pure-Dart Flutter row is not to be built, feature freeze).
+- **要求 / Requirements:** the bridge map's iOS column (Flutter plugin `ios/` calling `CYLPlaceholderBridge` / `CYLPlaceholderHUDBridge` through a `UiKitView`, same channel, method names and keys as the Android plugin); a bridge unit test in `Tests/`; the iOS driven footer in `CYLRefreshDrivenLayout`; Flutter iOS native refresh; React Native iOS (`CYLRefreshContainerView`, example `ios/`). A row counts as done only with build and run evidence (test output or a labeled screenshot); never from Dart / TypeScript fallback code.
+- **上下文 / Context:** advisor review (2026-11-24): measured tables are iOS 823 / 823, Android 100, parity 100, HarmonyOS quality 100 (completeness 94), mini program 95, Flutter Dart 98 (64 / 65), RN TypeScript 65 (42 / 65); the native bridge map is 0 of 8 rows complete and is the headline number. Android halves, HarmonyOS, the mini program layout check and the frozen 49-page Dart example row stay with the Windows session (no JDK 17 on this Mac). The uncommitted Flutter edits in `/tmp/xpa/ph-ci` (example `Podfile`, `Runner.xcodeproj`) are kept unpushed.
+- **验收 / Acceptance:** 100 = the iOS rows of the bridge map are done with evidence, `run-tests.rb` green with the new bridge and footer tests, `ios-api-map.py --check` passes, labeled screenshots pass `check_screenshots.py`; 60 = the Flutter iOS placeholder path builds and shows the native view on the simulator.
+
+### 已完成（跟进）：CI 取消 “没有步骤” 的真正原因，每个提交一个并发组 / Done (follow-up): the real cause of "cancelled with no steps", one concurrency group per commit
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "https://github.com/ChenYilong/CYLTableViewPlaceHolder/pull/31 fix pr ci error , cancel coz no steps" (an earlier message wrote "#834"; no PR with that number exists in any ChenYilong repository, the user then gave the PR 31 link).
+- **原因 / Cause:** `0984d928` (`cancel-in-progress` false for this branch) was not enough. GitHub allows one running and one pending run per concurrency group; a newer run replaces the older *pending* run, which is shown as cancelled with no steps (run 45262012540 on `0984d928` was pending behind the running `d1ad10ef` run, and was cancelled at 21:10:52, one second after run 45266996390 started). macOS jobs take hours to get through, so every push replaced the pending run.
+- **修复 / Fix:** for this branch's pull request the three workflows (`ios.yml`, `ios15-runtime.yml`, `android.yml`) use one concurrency group per commit (`github.sha`); other branches keep one group per ref and still cancel superseded runs. Cost: several runs of this branch can run in parallel, so macOS runner capacity ("job was not acquired by Runner of type hosted") is used faster; push at milestones, not after every commit.
+
+### 已完成：Android CI 找不到 Kotlin 插件（run 45278544433）/ Done: Android CI could not resolve the Kotlin plugin (run 45278544433)
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim):** "fix ci error https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/45278544433/job/138056604238#step:7:1".
+- **原因 / Cause:** step 7 of "Android unit tests" on `32a0d723` failed twice (the retry one minute later too) with "Plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found in any of the following sources" (Google, MavenRepo, Gradle Central Plugin Repository): the runner could not fetch the plugin from any of the three; five earlier Android runs on this branch passed, so this is the transient refusal of the shared runner address, the same class as the Robolectric 429.
+- **修复 / Fix:** `android/settings.gradle.kts` lists Google's Maven Central mirror (`maven-central.storage-download.googleapis.com`, which serves the Kotlin plugin marker and `kotlin-gradle-plugin` 2.0.21, HTTP 200 checked) before `mavenCentral()` in both `pluginManagement` and `dependencyResolutionManagement`. Not verified locally (no JDK 17 on this Mac, the Windows session builds Android); the next Android run of this branch is the check.

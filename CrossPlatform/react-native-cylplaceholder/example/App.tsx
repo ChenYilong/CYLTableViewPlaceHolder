@@ -1,44 +1,32 @@
-import React, {useCallback, useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {
-  CYLPlaceholderStyle,
-  CYLPlaceholderView,
-  CYLRefreshContainer,
-  isCYLRefreshContainerAvailable,
-} from 'react-native-cylplaceholder';
-
-const PAGE = 10;
-const LAST_PAGE = 3;
+import React, {useEffect, useState} from 'react';
+import {BackHandler, Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {isCYLRefreshContainerAvailable} from 'react-native-cylplaceholder';
+import ErrorPlaceholderPage from './pages/ErrorPlaceholderPage';
+import PagingPage from './pages/PagingPage';
+import RefreshPage from './pages/RefreshPage';
 
 /**
- * [EN] One screen: a list inside the native `CYLRefreshContainer`. It starts empty and shows the placeholder; pulling down
- *      loads page 1, pulling up loads the next page, after page 3 the footer says "no more data".
- * [CN] 一个页面：原生 `CYLRefreshContainer` 里放一个列表。起初为空并显示占位图；下拉加载第 1 页，上拉加载下一页，
- *      第 3 页之后尾部显示“没有更多数据”。
+ * [EN] The demo menu: the pages of the Flutter example (`refresh_page`, `paging_page`, `error_placeholder_page`) that this
+ *      package's native container can show on Android. The styles, second floor and stack pages are not here (see README).
+ * [CN] 示例菜单：Flutter 示例中此包的原生容器在 Android 上能展示的页面。样式页、二楼页和 stack 页不在这里（见 README）。
  */
+const PAGES = [
+  {key: 'refresh', title: 'Refresh (refresh_page)', Page: RefreshPage},
+  {key: 'paging', title: 'Paging (paging_page)', Page: PagingPage},
+  {key: 'error', title: 'Error placeholder (error_placeholder_page)', Page: ErrorPlaceholderPage},
+];
+
 export default function App() {
-  const [rows, setRows] = useState<number[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [current, setCurrent] = useState<string | null>(null);
 
-  const pages = rows.length / PAGE;
-  const range = (page: number) => Array.from({length: PAGE}, (_, i) => page * PAGE + i + 1);
-
-  const refresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRows(range(0));
-      setRefreshing(false);
-    }, 1500);
-  }, []);
-
-  const loadMore = useCallback(() => {
-    setLoadingMore(true);
-    setTimeout(() => {
-      setRows(current => [...current, ...range(current.length / PAGE)]);
-      setLoadingMore(false);
-    }, 1500);
-  }, []);
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (current === null) return false;
+      setCurrent(null);
+      return true;
+    });
+    return () => subscription.remove();
+  }, [current]);
 
   if (!isCYLRefreshContainerAvailable()) {
     return (
@@ -48,38 +36,26 @@ export default function App() {
     );
   }
 
+  const page = PAGES.find(p => p.key === current);
   return (
     <SafeAreaView style={styles.screen}>
-      <Text style={styles.title}>CYLRefreshContainer</Text>
-      <CYLRefreshContainer
-        refreshing={refreshing}
-        onRefresh={refresh}
-        loadMoreEnabled={rows.length > 0}
-        loadingMore={loadingMore}
-        noMoreData={pages >= LAST_PAGE}
-        onLoadMore={loadMore}>
-        <FlatList
-          // [EN] The native header sits behind the content, so the list needs its own background to cover it at rest.
-          // [CN] 原生头部在内容后面，列表要有自己的背景，静止时才盖住它。
-          style={styles.list}
-          data={rows}
-          keyExtractor={n => String(n)}
-          renderItem={({item}) => (
-            <View style={styles.row}>
-              <Text>{`Row ${item}`}</Text>
-            </View>
-          )}
-          contentContainerStyle={rows.length === 0 ? styles.empty : undefined}
-          ListEmptyComponent={
-            <CYLPlaceholderView
-              style={CYLPlaceholderStyle.empty}
-              title="Nothing here yet"
-              message="Pull down to load the first page."
-              tapHandler={refresh}
-            />
-          }
-        />
-      </CYLRefreshContainer>
+      {page === undefined ? (
+        <View>
+          <Text style={styles.title}>CYLTableViewPlaceHolder demos</Text>
+          {PAGES.map(p => (
+            <Pressable key={p.key} accessibilityRole="button" style={styles.item} onPress={() => setCurrent(p.key)}>
+              <Text style={styles.itemText}>{p.title}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : (
+        <>
+          <Pressable accessibilityRole="button" onPress={() => setCurrent(null)}>
+            <Text style={styles.back}>{'< Demos'}</Text>
+          </Pressable>
+          <page.Page />
+        </>
+      )}
     </SafeAreaView>
   );
 }
@@ -87,7 +63,7 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {flex: 1, backgroundColor: '#fff'},
   title: {fontSize: 20, fontWeight: '600', padding: 16},
-  list: {backgroundColor: '#fff'},
-  row: {padding: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#ccc'},
-  empty: {flexGrow: 1, justifyContent: 'center'},
+  item: {padding: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#ccc'},
+  itemText: {fontSize: 16},
+  back: {fontSize: 16, color: '#0a58ca', paddingHorizontal: 16, paddingTop: 8},
 });
