@@ -210,6 +210,12 @@
 "CYLScenarioEasyTriggerMode" = "トリガーモード";
 "CYLScenarioEasyRefreshOnStart" = "開始時に更新";
 "CYLScenarioEasyPaging" = "ページング";
+"CYLScenarioEasyScrollMode" = "スクロールモード";
+"CYLScenarioEasyScrollMove" = "移動";
+"CYLScenarioEasyScrollStretch" = "ストレッチ";
+"CYLScenarioEasyScrollFront" = "前面";
+"CYLScenarioEasyScrollBehind" = "背面";
+"CYLScenarioEasyScrollSelected" = "✓ %@";
 "CYLScenarioEasyListener" = "リスナーヘッダー";
 "CYLScenarioEasyChat" = "チャット";
 "CYLScenarioEasyUserProfile" = "ユーザープロフィール";

@@ -193,6 +193,12 @@
     <string name="merged_easy_trigger_mode">Режим спрацювання</string>
     <string name="merged_easy_refresh_on_start">Оновлення під час запуску</string>
     <string name="merged_easy_paging">Посторінкове завантаження</string>
+    <string name="merged_easy_scroll_mode">Режим прокручування</string>
+    <string name="merged_easy_scroll_move">Зсув</string>
+    <string name="merged_easy_scroll_stretch">Розтягнення</string>
+    <string name="merged_easy_scroll_front">Поверх</string>
+    <string name="merged_easy_scroll_behind">Позаду</string>
+    <string name="merged_easy_scroll_mode_selected">✓ %1$s</string>
     <string name="merged_easy_listener">Заголовок-слухач</string>
     <string name="merged_easy_chat">Чат</string>
     <string name="merged_easy_user_profile">Профіль користувача</string>

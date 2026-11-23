@@ -193,6 +193,12 @@
     <string name="merged_easy_trigger_mode">Trigger mode</string>
     <string name="merged_easy_refresh_on_start">Refresh on start</string>
     <string name="merged_easy_paging">Paging</string>
+    <string name="merged_easy_scroll_mode">Scroll mode</string>
+    <string name="merged_easy_scroll_move">Move</string>
+    <string name="merged_easy_scroll_stretch">Stretch</string>
+    <string name="merged_easy_scroll_front">Front</string>
+    <string name="merged_easy_scroll_behind">Behind</string>
+    <string name="merged_easy_scroll_mode_selected">✓ %1$s</string>
     <string name="merged_easy_listener">Listener header</string>
     <string name="merged_easy_chat">Chat</string>
     <string name="merged_easy_user_profile">User profile</string>

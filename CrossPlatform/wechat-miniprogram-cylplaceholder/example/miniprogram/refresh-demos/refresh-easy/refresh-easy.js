@@ -1,9 +1,18 @@
 // CYLEasyRefreshDemoViewController: the flutter_easy_refresh samples (example/lib/page), one method per page:
-// easyCupertino, easySecondary, easyTriggerMode, easyRefreshOnStart, easyPaging, easyListener, easyChat,
+// easyCupertino, easySecondary, easyTriggerMode, easyRefreshOnStart, easyPaging, easyScrollMode, easyListener, easyChat,
 // easyUserProfile. Headers and footers are cyl-refresh's (Cupertino, listener, trigger modes, second floor, behind, scroll helpers).
 const { t } = require('../../utils/l10n')
 
-const METHODS = ['easyCupertino', 'easySecondary', 'easyTriggerMode', 'easyRefreshOnStart', 'easyPaging', 'easyListener', 'easyChat', 'easyUserProfile']
+const METHODS = ['easyCupertino', 'easySecondary', 'easyTriggerMode', 'easyRefreshOnStart', 'easyPaging', 'easyScrollMode', 'easyListener', 'easyChat', 'easyUserProfile']
+
+/**
+ * The scroll modes cyl-refresh has: the header moves with the content (Move) or stays pinned behind it (Behind, the
+ * `behind` property). Stretch and Front need a cyl-refresh property that does not exist yet (docs/Refresh-Library-Parity.md).
+ */
+const SCROLL_MODES = [
+  { id: 'move', key: 'CYLScenarioEasyScrollMove', behind: false },
+  { id: 'behind', key: 'CYLScenarioEasyScrollBehind', behind: true },
+]
 
 /** Header / footer options per page. */
 function pageSetup(method) {
@@ -14,6 +23,7 @@ function pageSetup(method) {
     // The first refresh uses the Cupertino header (startHeader), later pulls the classic one.
     case 'easyRefreshOnStart': return { header: 'cupertino', footer: 'back', count: 0 }
     case 'easyPaging': return { header: 'normal', footer: 'back', count: 0 }
+    case 'easyScrollMode': return { header: 'normal', footer: 'back', count: 30 }
     case 'easyListener': return { header: 'listener', footer: 'back', count: 10 }
     case 'easyChat': return { header: 'normal', footer: 'none', count: 0 }
     default: return { header: 'normal', footer: 'none', behind: true, count: 10 }
@@ -27,6 +37,7 @@ Page({
     rows: [],
     headerTrigger: 'anywhere',
     footerTrigger: 'anywhere',
+    scrollBehind: false,
     floorOpen: false,
     progress: 0,
     texts: {},
@@ -50,6 +61,7 @@ Page({
       },
     })
     if (this.method === 'easyTriggerMode') this.reloadTriggerMode()
+    else if (this.method === 'easyScrollMode') this.reloadScrollMode()
     else if (this.method === 'easyChat') this.setUpChat()
     else if (this.method !== 'easyPaging') this.reloadCounted()
   },
@@ -85,10 +97,21 @@ Page({
     this.setData({ rows: top.concat(this.testRows(this.count)) })
   },
 
+  /** Scroll modes: one tappable row per mode the component has, the current one marked; the counts show nothing here. */
+  reloadScrollMode() {
+    const behind = this.data.scrollBehind
+    const top = SCROLL_MODES.map((mode) => {
+      const name = t(mode.key)
+      return { id: 'scrollMode' + mode.id, text: mode.behind === behind ? t('CYLScenarioEasyScrollSelected', name) : name, tappable: true }
+    })
+    this.setData({ rows: top.concat(this.testRows(this.count)) })
+  },
+
   // Header and footer callbacks.
   onRefresh() {
     switch (this.method) {
       case 'easyTriggerMode': return this.refreshTriggerMode()
+      case 'easyScrollMode': return this.later(1500, () => this.refresher().endRefreshing())
       case 'easyPaging': return this.loadPage(1)
       case 'easyChat': return this.loadEarlierMessages()
       default: return this.refreshCounted()
@@ -97,6 +120,7 @@ Page({
   onLoadMore() {
     switch (this.method) {
       case 'easyTriggerMode': return this.loadTriggerMode()
+      case 'easyScrollMode': return this.later(1500, () => this.refresher().endFooterRefreshing())
       case 'easyPaging': return this.loadPage(this.page + 1)
       case 'easyRefreshOnStart': return this.loadByTen()
       default: return this.loadCounted()
@@ -148,8 +172,15 @@ Page({
     })
   },
   onRow(e) {
-    if (this.method !== 'easyTriggerMode') return
     const index = e.currentTarget.dataset.index
+    if (this.method === 'easyScrollMode') {
+      const mode = SCROLL_MODES[index]
+      if (!mode) return
+      this.setData({ scrollBehind: mode.behind })
+      this.reloadScrollMode()
+      return
+    }
+    if (this.method !== 'easyTriggerMode') return
     const flip = (mode) => (mode === 'onEdge' ? 'anywhere' : 'onEdge')
     if (index === 2) this.setData({ headerTrigger: flip(this.data.headerTrigger) })
     else if (index === 3) this.setData({ footerTrigger: flip(this.data.footerTrigger) })

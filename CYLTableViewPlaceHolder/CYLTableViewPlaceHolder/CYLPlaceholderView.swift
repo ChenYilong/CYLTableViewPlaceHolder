@@ -809,8 +809,38 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         set {
             if newValue < 0 || storedAnimationRepeatCount == newValue { return }
             storedAnimationRepeatCount = newValue
-            animationLoops = newValue == 0
+            super.animationLoops = newValue == 0
             updateAnimationPlayback()
+        }
+    }
+
+    /**
+     * [EN] Whether the animation loops. A value set directly is kept: it is the same as `animationRepeatCount` 0 (true) or
+     *      1 (false), so a reload of the item's attributes does not undo it.
+     * [CN] 动画是否循环。直接设置的值会被保留：等同于把 `animationRepeatCount` 设为 0（true）或 1（false），因此重新加载 item 属性不会撤销它。
+     */
+    open override var animationLoops: Bool {
+        get { super.animationLoops }
+        set {
+            super.animationLoops = newValue
+            // [EN] Only a change of kind (loop or not) writes the count; a count N > 1 stays. [CN] 只有类型变化（循环与否）才写入次数；N > 1 保持不变。
+            if (storedAnimationRepeatCount == 0) != newValue {
+                storedAnimationRepeatCount = newValue ? 0 : 1
+                updateAnimationPlayback()
+            }
+        }
+    }
+
+    /**
+     * [EN] The playback speed, 1 by default. A positive value set directly is kept, as with
+     *      `setPlaceholderAnimationSpeed(_:)`, so a reload of the item's attributes does not undo it.
+     * [CN] 播放速度，默认 1。直接设置的正数会被保留（与 `setPlaceholderAnimationSpeed(_:)` 相同），因此重新加载 item 属性不会撤销它。
+     */
+    open override var animationSpeed: CGFloat {
+        get { super.animationSpeed }
+        set {
+            if newValue.isFinite && newValue > 0 { explicitAnimationSpeed = newValue }
+            super.animationSpeed = newValue
         }
     }
 
@@ -1895,8 +1925,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         let validSpeed = speedOption != nil && speed.isFinite && speed > 0
         if speedOption != nil && !validSpeed { NSLog("CYLTableViewPlaceHolder: animationSpeed must be positive.") }
         optionAnimationSpeed = validSpeed ? CGFloat(speed) : nil
-        animationSpeed = explicitAnimationSpeed ?? optionAnimationSpeed ?? 1
-        animationLoops = animationRepeatCount == 0
+        super.animationSpeed = explicitAnimationSpeed ?? optionAnimationSpeed ?? 1
+        super.animationLoops = animationRepeatCount == 0
         itemAnimationSize = animation?.size ?? .zero
         preservingIconVisibility {
             // [EN] Clear first, so the new size applies and the file is always loaded again (a trait change, a new file).

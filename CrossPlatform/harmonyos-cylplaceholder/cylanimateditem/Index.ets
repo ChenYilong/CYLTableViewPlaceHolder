@@ -18,3 +18,18 @@ export {
   CYLAnimatedItemCountdown, CYLAnimatedItemCountdownStorage, CYLAnimatedItemCountdownListener, CYLCountdownIdle, CYLCountdownRunning,
   CYLCountdownFinished, cylCountdownText, cylCountdownTitleWidth
 } from './src/main/ets/CYLAnimatedItemCountdown';
+export { CYLAnimatedItemSource, CYLAnimatedItemRawFileReader, cylAnimatedItemFileAndOptions } from './src/main/ets/CYLAnimatedItemSource';
+export {
+  CYLAnimatedItemPlayer, CYLAnimatedItemTimedPlayer, CYLAnimatedItemClock, CYL_ANIMATED_ITEM_SYSTEM_CLOCK, CYLAnimatedItemPlayback,
+  CYLAnimatedItemPlaybackDriver, CYLAnimatedItemEngineHost, CYLAnimatedItemEngineBinding
+} from './src/main/ets/CYLAnimatedItemPlayer';
+export { CYLAnimatedItemEngineState, CYLAnimatedItemEngineViews, CYLAnimatedItemEngineView } from './src/main/ets/CYLAnimatedItemEngine';
+export { CYLAnimatedItemGIF, CYLAnimatedItemGIFPlayer, CYLAnimatedItemGIFView } from './src/main/ets/CYLAnimatedItemGIF';
+export { CYL_GIF_DEFAULT_DELAY_MS, CYL_GIF_MIN_DELAY_MS, cylGIFDelays, cylGIFDuration, cylGIFFrameIndex } from './src/main/ets/CYLAnimatedItemGIFTiming';
+export { CYLAnimatedItemSVGA, CYLAnimatedItemSVGAPlayer, CYLAnimatedItemSVGAView } from './src/main/ets/CYLAnimatedItemSVGA';
+export { CYLAnimatedItemRGBA, cylAnimatedItemParseHexColor, cylAnimatedItemARGBInteger } from './src/main/ets/CYLAnimatedItemColors';
+export {
+  CYLSVGALayout, CYLSVGATransform, CYLSVGAColor, CYLSVGAStyle, CYLSVGARect, CYLSVGAEllipse, CYLSVGAShape, CYLSVGAFrame,
+  CYLSVGASprite, CYLSVGAMovie, cylLoadSVGAMovie, cylDecodeSVGAMovie
+} from './src/main/ets/svga/CYLSVGAMovie';
+export { cylDrawSVGAFrame, cylParseSVGAPath } from './src/main/ets/svga/CYLSVGARenderer';

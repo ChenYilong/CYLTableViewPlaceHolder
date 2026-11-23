@@ -13,8 +13,15 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // SVGAPlayer-Android (com.github.yyued), which the example's SVGA files need, is only on JitPack.
-        maven("https://jitpack.io") { content { includeGroup("com.github.yyued") } }
+        // SVGAPlayer-Android (com.github.yyued), which the example's SVGA files need, is only on JitPack; so is
+        // CYLDeallocBlockExecutor (com.github.ChenYilong, or com.github.ChenYilong.CYLDeallocBlockExecutor for its multi-module
+        // coordinates), a dependency of CYLTabBarController's animateditem and cyltabbar modules.
+        maven("https://jitpack.io") {
+            content {
+                includeGroup("com.github.yyued")
+                includeGroupByRegex("com\\.github\\.ChenYilong(\\..+)?")
+            }
+        }
     }
 }
 rootProject.name = "CYLTableViewPlaceHolderAndroid"

@@ -595,6 +595,18 @@ class CYLPlaceholderView @JvmOverloads constructor(
         }
 
     /**
+     * Whether the animation loops. A value set directly is kept: a change of kind writes [animationRepeatCount] (0 for
+     * true, 1 for false), so [applyRepeatCount] does not undo it when the animation is loaded again; a count above 1
+     * stays when false is set.
+     */
+    override var animationLoops: Boolean
+        get() = super.animationLoops
+        set(value) {
+            super.animationLoops = value
+            if ((animationRepeatCount != 1) != value) animationRepeatCount = if (value) 0 else 1
+        }
+
+    /**
      * What accessibility services read for the placeholder (iOS `accessibilityLabel`); null reads the text and the
      * badge.
      */

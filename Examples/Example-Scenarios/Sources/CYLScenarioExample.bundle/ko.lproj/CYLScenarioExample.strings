@@ -210,6 +210,12 @@
 "CYLScenarioEasyTriggerMode" = "트리거 모드";
 "CYLScenarioEasyRefreshOnStart" = "시작 시 새로고침";
 "CYLScenarioEasyPaging" = "페이징";
+"CYLScenarioEasyScrollMode" = "스크롤 모드";
+"CYLScenarioEasyScrollMove" = "이동";
+"CYLScenarioEasyScrollStretch" = "늘이기";
+"CYLScenarioEasyScrollFront" = "앞";
+"CYLScenarioEasyScrollBehind" = "뒤";
+"CYLScenarioEasyScrollSelected" = "✓ %@";
 "CYLScenarioEasyListener" = "리스너 헤더";
 "CYLScenarioEasyChat" = "채팅";
 "CYLScenarioEasyUserProfile" = "사용자 프로필";

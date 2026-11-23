@@ -58,6 +58,9 @@ case "$command" in
     # Newer commits split CYLAnimatedItem out of CYLTabBarController-Framework (the framework target links both).
     [[ ! -d Carthage/Build/CYLAnimatedItem.xcframework ]] || cp -R Carthage/Build/CYLAnimatedItem.xcframework "$work/Carthage/Build/"
     rm -f "$work/Cartfile" "$work/Cartfile.resolved"
+    # Carthage runs `xcodebuild -list` on every Xcode project it finds; the Flutter example's Runner project needs generated
+    # Swift packages that a clean copy lacks, and no part of CrossPlatform is built into the framework.
+    rm -rf "$work/CrossPlatform"
     (cd "$work" && carthage build --no-skip-current --use-xcframeworks --platform iOS)
     test -f "$work/Carthage/Build/CYLTableViewPlaceHolder.xcframework/Info.plist"
     rm -f build/CYLTableViewPlaceHolder.xcframework.zip

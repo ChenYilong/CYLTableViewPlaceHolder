@@ -14,8 +14,7 @@ import {
   CYLRefreshScrollViewModel,
   cylRefreshRiveHeader
 } from 'cylplaceholder';
-import { CYLSVGAMovie, cylLoadSVGAMovie } from './svga/CYLSVGAMovie';
-import { cylDrawSVGAFrame } from './svga/CYLSVGARenderer';
+import { CYLSVGAMovie, cylDrawSVGAFrame, cylLoadSVGAMovie } from 'cylanimateditem';
 import { CYLRefreshRiveView } from './CYLRefreshRiveView';
 
 /** Whether a style plays an SVGA file. */

@@ -1,5 +1,5 @@
-import riveEndWatcherTest from './CYLRivePlayOnceEndWatcher.test';
+import exampleEnginesTest from './ExampleEngines.test';
 
 export default function testsuite() {
-  riveEndWatcherTest();
+  exampleEnginesTest();
 }

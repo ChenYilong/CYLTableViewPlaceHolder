@@ -29,6 +29,10 @@ android {
             java.srcDirs("src/main/kotlin")
         }
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -46,6 +50,10 @@ dependencies {
     implementation("io.github.chenyilong:cyltabbar")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
+    testImplementation(libs.androidx.recyclerview)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
 }
 
 // [EN] Kotlin compiler options at the top level: kotlinOptions {} inside android {} is deprecated and fails on Gradle 10.

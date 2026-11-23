@@ -1,5 +1,5 @@
 // CYLEasyRefreshDemoViewController: the flutter_easy_refresh samples (example/lib/page), one per method
-// (param.value): easyCupertino, easySecondary, easyTriggerMode, easyRefreshOnStart, easyPaging, easyListener,
+// (param.value): easyCupertino, easySecondary, easyTriggerMode, easyRefreshOnStart, easyPaging, easyScrollMode, easyListener,
 // easyChat, easyUserProfile, on CYLRefresh's Cupertino controls, second floor, trigger modes, start header, paging,
 // plain listener header and Behind scroll mode.
 import {
@@ -49,6 +49,16 @@ function secondFloor() {
   .justifyContent(FlexAlign.Center)
   .backgroundColor('#5856D6')
 }
+
+/** The scroll modes the "Scroll mode" page offers, in the order of the enum. */
+const SCROLL_MODES: CYLRefreshScrollMode[] = [
+  CYLRefreshScrollMode.Move, CYLRefreshScrollMode.Stretch, CYLRefreshScrollMode.Front, CYLRefreshScrollMode.Behind
+];
+
+/** The string keys of the scroll mode names, indexed by the enum value. */
+const SCROLL_MODE_NAMES: string[] = [
+  'CYLScenarioEasyScrollMove', 'CYLScenarioEasyScrollStretch', 'CYLScenarioEasyScrollFront', 'CYLScenarioEasyScrollBehind'
+];
 
 class EasyRow {
   id: string;
@@ -107,6 +117,9 @@ export struct RefreshEasyPage {
         break;
       case 'easyPaging':
         this.setUpPaging();
+        break;
+      case 'easyScrollMode':
+        this.setUpScrollMode();
         break;
       case 'easyListener':
         this.setUpListener();
@@ -174,6 +187,25 @@ export struct RefreshEasyPage {
     this.attach(header, this.backFooter(() => this.loadTriggerMode()));
     this.count = 30;
     this.reloadTriggerMode();
+  }
+
+  /** Scroll modes: the four CYLRefreshScrollMode values on one list; a tap on a mode row switches the header and the footer. */
+  private setUpScrollMode(): void {
+    const header = new CYLRefreshNormalHeaderModel();
+    header.refreshingBlock = () => this.later(1500, () => header.endRefreshing());
+    const footer = this.backFooter(() => this.later(1500, () => this.footer?.endRefreshing()));
+    this.attach(header, footer);
+    this.count = 30;
+    this.reloadScrollMode();
+  }
+
+  private reloadScrollMode(): void {
+    const current = this.header !== null ? this.header.scrollMode : CYLRefreshScrollMode.Move;
+    const top: EasyRow[] = SCROLL_MODES.map((mode: CYLRefreshScrollMode) => {
+      const name = t(SCROLL_MODE_NAMES[mode]);
+      return new EasyRow('scrollMode' + mode, mode === current ? t('CYLScenarioEasyScrollSelected', name) : name);
+    });
+    this.rows = top.concat(this.testRows(this.count));
   }
 
   private setUpRefreshOnStart(): void {
@@ -359,6 +391,18 @@ export struct RefreshEasyPage {
   }
 
   private onRow(index: number): void {
+    if (this.method === 'easyScrollMode') {
+      if (index < SCROLL_MODES.length) {
+        if (this.header !== null) {
+          this.header.scrollMode = SCROLL_MODES[index];
+        }
+        if (this.footer !== null) {
+          this.footer.scrollMode = SCROLL_MODES[index];
+        }
+        this.reloadScrollMode();
+      }
+      return;
+    }
     if (this.method !== 'easyTriggerMode') {
       return;
     }

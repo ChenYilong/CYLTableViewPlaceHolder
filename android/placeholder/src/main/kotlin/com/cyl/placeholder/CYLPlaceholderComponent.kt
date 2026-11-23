@@ -92,6 +92,21 @@ class CYLPlaceholderComponent private constructor(
         }
 
     /**
+     * Whether the item's animation loops: the same as [animationRepeatCount] being 0 (true) or 1 (false), the name
+     * CYLTabBarController's `CYLAnimatedItemView` uses.
+     */
+    var animationLoops: Boolean
+        get() = animationRepeatCount != 1
+        set(value) { animationRepeatCount = if (value) 0 else 1 }
+
+    /**
+     * The item animation's playback speed, 1 by default (`animationSpeed`); the stack view's CYLPlaceholderView applies
+     * it when it is not 1. A value that is not positive is ignored.
+     */
+    var animationSpeed: Float = 1f
+        set(value) { if (value > 0f && value.isFinite()) field = value }
+
+    /**
      * Whether the still image replaces the item's play-once animation when it ends (CYLAnimatedItemView
      * `showsImageWhenAnimationEnds`, CYLTabBarController b13b88f1); off by default, so the last frame stays. For an
      * animation whose last frame is empty: the Success scenario's icon turns it on, so its check mark shows afterwards.

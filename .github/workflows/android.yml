@@ -32,6 +32,15 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
+      # Robolectric downloads the Android framework jar of each SDK level it runs (android-all-instrumented) into
+      # ~/.m2/repository on first use. Maven Central answered the shared runner address with "HTTP 429 Too Many
+      # Requests" (CI 2026-11-22, PR #31: every Robolectric test failed, the retry too), so the jars are cached between
+      # runs; the key changes with the Robolectric version.
+      - name: Cache the Robolectric Android jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('android/gradle/libs.versions.toml') }}
       # CYLTabBarController for Android, built from source at its latest commit across all branches (instructions.md,
       # "Depending on CYLTabBarController"): the core module :placeholder depends on its :cylanimateditem
       # (CYLAnimatedItemView and the animation engine) and the example on its tab bar, so it is cloned before every
@@ -45,6 +54,10 @@ jobs:
           git clone --quiet --filter=blob:none --no-checkout https://github.com/ChenYilong/CYLTabBarController.git "$RUNNER_TEMP/CYLTabBarController"
           git -C "$RUNNER_TEMP/CYLTabBarController" checkout --quiet "$SHA"
       - name: Unit tests (placeholder, CYLRefresh)
+        # On a cold cache Robolectric fetches from Google's Maven Central mirror instead of repo1.maven.org, which
+        # rate-limits GitHub runners (robolectric.dependency.repo.url is read by every JVM that Gradle starts here).
+        env:
+          JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2
         # One retry, only when Gradle could not download a plugin or dependency (seen on CI 2026-11-22: "Plugin
         # [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found", passing on re-run); test failures fail
         # at once.
@@ -55,12 +68,13 @@ jobs:
               -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" \
               :placeholder:testDebugUnitTest \
               :merged:testDebugUnitTest \
+              :merged-example:testDebugUnitTest \
               :merged-rive:compileDebugKotlin 2>&1 | tee "$RUNNER_TEMP/gradle-tests.log"
           }
           if run_tests; then exit 0; fi
           if grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download|MavenArtifactFetcher" "$RUNNER_TEMP/gradle-tests.log"; then
             echo "Gradle could not download a plugin or dependency; retrying once with --refresh-dependencies."
-            sleep 30
+            sleep 60
             run_tests --refresh-dependencies
           else
             exit 1

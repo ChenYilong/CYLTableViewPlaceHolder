@@ -134,7 +134,7 @@ icon.
 ```
 
 `animated` switches between the animation and the static icon; `loop` and `speed` apply live;
-`this.selectComponent('#placeholder').playAll()` restarts every animation from frame 0. An engine needs the
+`this.selectComponent('#placeholder').playAll()` (also `restartAnimation()`, or a growing `restart-token`) restarts every animation from frame 0. An engine needs the
 properties `path`, `loop`, `speed`, `autoplay`, the events `ready` and `error`, and a `cyl_playFromStart()` method
 (`cyl_animation()` returning an object with `addEventListener('complete')` for a `repeatCount` above 1), as
 cyl-lottie has. `cyl-refresh`'s `headerIcons` / `footerIcons` and the HUD's `loadingAnimationFileName` /

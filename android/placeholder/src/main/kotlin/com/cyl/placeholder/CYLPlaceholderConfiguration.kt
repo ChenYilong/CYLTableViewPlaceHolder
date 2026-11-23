@@ -162,6 +162,14 @@ private fun applyConfiguration(component: CYLPlaceholderComponent, map: Map<Stri
         if (count < 0 || count > 10000) { error.fail("repeatCount must be 0 (loop) or more, \"loop\" or \"once\"."); return false }
         component.animationRepeatCount = count
     }
+    map["animationLoops"]?.let {
+        if (it !is Boolean) { error.fail("animationLoops must be true or false."); return false }
+        component.animationLoops = it
+    }
+    map["animationSpeed"]?.let {
+        if (it !is Number || !it.toDouble().isFinite() || it.toDouble() <= 0) { error.fail("animationSpeed must be a positive number."); return false }
+        component.animationSpeed = it.toFloat()
+    }
     map["spacingBefore"]?.let {
         if (it !is Number || !it.toDouble().isFinite() || it.toDouble() < 0) { error.fail("spacingBefore must be a number of points."); return false }
         component.spacingBefore = it.toFloat()
@@ -181,7 +189,7 @@ private fun applyConfiguration(component: CYLPlaceholderComponent, map: Map<Stri
  * A component from a configuration dictionary (iOS `+[CYLPlaceholderComponent componentWithDictionary:error:]`):
  * "type" ("icon", "hint", "button", "separator" or "item"), "title" / "titleKey", "action", and the fields of
  * "icon" (style, size, animation), "button" (buttonStyle) and "item" (attributes); every type takes
- * "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore" and "accessibilityIdentifier". Null, with the
+ * "interactionEnabled", "highlightStyle", "repeatCount", "animationLoops", "animationSpeed", "spacingBefore" and "accessibilityIdentifier". Null, with the
  * reason given to [error], when a value is invalid.
  */
 fun CYLPlaceholderComponent.Companion.componentWithDictionary(context: Context, dictionary: Map<String, Any?>?, error: CYLPlaceholderConfigurationErrorHandler? = null): CYLPlaceholderComponent? {

@@ -299,6 +299,40 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
         set { setAttribute(NSNumber(value: max(0, newValue)), forKey: CYLPlaceholderItemAnimationRepeatCount) }
     }
 
+    /**
+     * [EN] Whether the icon animation loops: the same as `animationRepeatCount` 0 (true) or 1 (false), the name
+     *      CYLTabBarController's `CYLAnimatedItemView` uses.
+     * [CN] 图标动画是否循环：等同于 `animationRepeatCount` 为 0（true）或 1（false），名称与 CYLTabBarController 的
+     *      `CYLAnimatedItemView` 一致。
+     */
+    @objc public var animationLoops: Bool {
+        get { animationRepeatCount == 0 }
+        set { animationRepeatCount = newValue ? 0 : 1 }
+    }
+
+    /**
+     * [EN] The icon animation's playback speed, 1 by default: the `animationSpeed` entry of the animation options
+     *      (`CYLPlaceholderItemAnimationOptions`), which the item view applies. A value that is not a positive number is
+     *      ignored.
+     * [CN] 图标动画的播放速度，默认 1：动画选项（`CYLPlaceholderItemAnimationOptions`）中的 `animationSpeed` 项，由 item 视图应用。
+     *      不是正数的值会被忽略。
+     */
+    @objc public var animationSpeed: CGFloat {
+        get {
+            let options = attributes[CYLPlaceholderItemAnimationOptions] as? NSDictionary
+            let value = options?["animationSpeed"]
+            let speed = (value as? NSNumber)?.doubleValue ?? (value as? NSString)?.doubleValue ?? .nan
+            return speed.isFinite && speed > 0 ? CGFloat(speed) : 1
+        }
+        set {
+            guard newValue.isFinite, newValue > 0 else { return }
+            let options = (attributes[CYLPlaceholderItemAnimationOptions] as? NSDictionary)?.mutableCopy() as? NSMutableDictionary
+                ?? NSMutableDictionary()
+            options["animationSpeed"] = NSNumber(value: Double(newValue))
+            setAttribute(options, forKey: CYLPlaceholderItemAnimationOptions)
+        }
+    }
+
     // MARK: Configuration
 
     /**
@@ -427,6 +461,18 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
                 throw CYLScenarioConfigurationError("repeatCount must be 0 (loop) or more, \"loop\" or \"once\".")
             }
             animationRepeatCount = count
+        }
+        if let loops = dictionary["animationLoops"] {
+            guard let number = loops as? NSNumber else {
+                throw CYLScenarioConfigurationError("animationLoops must be a boolean.")
+            }
+            animationLoops = number.boolValue
+        }
+        if let speed = dictionary["animationSpeed"] {
+            guard let number = speed as? NSNumber, number.doubleValue.isFinite, number.doubleValue > 0 else {
+                throw CYLScenarioConfigurationError("animationSpeed must be a number above 0.")
+            }
+            animationSpeed = CGFloat(number.doubleValue)
         }
         if let spacing = dictionary["spacingBefore"] {
             guard let number = spacing as? NSNumber, number.doubleValue.isFinite, number.doubleValue >= 0 else {

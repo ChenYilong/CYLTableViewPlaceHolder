@@ -1,6 +1,7 @@
 // Rive state machine inputs as placeholders, one demo per input kind, like the iOS Rive Home page
 // (CYLRiveRoomsViewController). Each demo is a CYLAnimatedItemView playing a Rive file through the example's
-// CYLRivePlaceholderItemAnimator, with the Rive options in the animation URL:
+// CYLTabBarController's Rive engine (cylanimateditemrive, through CYLAnimatedItemEnginePlaceholderAnimator), with the Rive
+// options in the animation URL:
 // - Number: house.riv, "State Machine 1", numberInput=Rooms, values=3,4,5,6: each play sets the next value. The
 //   picker and the slider set Rooms by hand (one play per step); Loop plays every 1.5 s and the label follows.
 // - Boolean: Space Reload, "Reload", input=Start: each play sets Start false, then true 50 ms later.

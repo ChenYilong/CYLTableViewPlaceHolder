@@ -210,6 +210,12 @@
 "CYLScenarioEasyTriggerMode" = "Trigger mode";
 "CYLScenarioEasyRefreshOnStart" = "Refresh on start";
 "CYLScenarioEasyPaging" = "Paging";
+"CYLScenarioEasyScrollMode" = "Scroll mode";
+"CYLScenarioEasyScrollMove" = "Move";
+"CYLScenarioEasyScrollStretch" = "Stretch";
+"CYLScenarioEasyScrollFront" = "Front";
+"CYLScenarioEasyScrollBehind" = "Behind";
+"CYLScenarioEasyScrollSelected" = "✓ %@";
 "CYLScenarioEasyListener" = "Listener header";
 "CYLScenarioEasyChat" = "Chat";
 "CYLScenarioEasyUserProfile" = "User profile";

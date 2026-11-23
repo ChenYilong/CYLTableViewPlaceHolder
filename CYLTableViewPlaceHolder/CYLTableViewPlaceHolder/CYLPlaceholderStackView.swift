@@ -289,6 +289,15 @@ open class CYLPlaceholderStackView: UIView {
     @objc open var componentViews: [CYLPlaceholderView] { componentViewList }
 
     /**
+     * [EN] Plays every component's animation again from progress 0 (the examples' "Play all"), as each component's
+     *      `restartAnimation()` does.
+     * [CN] 让每个组件的动画从进度 0 重新播放（示例中的“全部播放”），与各组件的 `restartAnimation()` 相同。
+     */
+    @objc open func restartAnimation() {
+        componentViewList.forEach { $0.restartAnimation() }
+    }
+
+    /**
      * [EN] The first icon of the components (the reserved component's image view when none shows one); the same as
      *      Android's `CYLPlaceholderStackView.imageView`.
      * [CN] 组件中的第一个图标（都没有图标时为保留组件的图片视图）；与 Android 的 `CYLPlaceholderStackView.imageView` 相同。

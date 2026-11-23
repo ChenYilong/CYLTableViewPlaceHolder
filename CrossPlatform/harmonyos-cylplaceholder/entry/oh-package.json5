@@ -8,7 +8,10 @@
   "dependencies": {
     "cylplaceholder": "file:../cylplaceholder",
     "cylanimateditem": "file:../cylanimateditem",
-    "@ohos/lottie": "2.0.28",
+    "cylanimateditem_lottie": "file:../cylanimateditem_lottie",
+    "cylanimateditem_pag": "file:../cylanimateditem_pag",
+    "cylanimateditemrive": "file:../cylanimateditemrive",
+    "@ohos/lottie": "^2.0.38",
     "@tencent/libpag": "4.5.102",
     "@ohos/rive": "1.0.4"
   }

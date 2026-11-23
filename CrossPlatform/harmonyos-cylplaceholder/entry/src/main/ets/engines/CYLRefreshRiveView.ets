@@ -14,7 +14,7 @@ import {
   CYLRefreshScrollViewModel,
   cylRefreshRiveHeader
 } from 'cylplaceholder';
-import { cylEnsureRiveInitialized, cylRiveRendererType } from './CYLRivePlaceholderItemAnimator';
+import { cylEnsureRiveInitialized, cylRiveRendererType } from 'cylanimateditemrive';
 
 /** A RiveAnimationView as the header's driver (iOS RiveViewModel). */
 class CYLRefreshRiveViewDriver implements CYLRefreshRiveDriver {

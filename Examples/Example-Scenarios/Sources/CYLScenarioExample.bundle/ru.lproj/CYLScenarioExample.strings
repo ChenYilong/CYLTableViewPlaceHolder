@@ -210,6 +210,12 @@
 "CYLScenarioEasyTriggerMode" = "Режим срабатывания";
 "CYLScenarioEasyRefreshOnStart" = "Обновление при запуске";
 "CYLScenarioEasyPaging" = "Постраничная загрузка";
+"CYLScenarioEasyScrollMode" = "Режим прокрутки";
+"CYLScenarioEasyScrollMove" = "Сдвиг";
+"CYLScenarioEasyScrollStretch" = "Растяжение";
+"CYLScenarioEasyScrollFront" = "Поверх";
+"CYLScenarioEasyScrollBehind" = "Позади";
+"CYLScenarioEasyScrollSelected" = "✓ %@";
 "CYLScenarioEasyListener" = "Заголовок-слушатель";
 "CYLScenarioEasyChat" = "Чат";
 "CYLScenarioEasyUserProfile" = "Профиль пользователя";

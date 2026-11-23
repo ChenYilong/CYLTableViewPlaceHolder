@@ -300,7 +300,7 @@ export const REFRESH_ICON_SECTIONS: RefreshIconSection[] = [
     LOTTIES.map((n: string) => fileRow(n + '.json'))),
   new RefreshIconSection('PAG · CYLTableViewPlaceHolder/PAG', false, [fileRow('CYLPlaceholderProgress.pag')]),
   new RefreshIconSection('Rive · CYLTableViewPlaceHolder/Rive', false, [fileRow('CYLRefreshIcon.riv')]),
-  // The SVGA twin of the Rive row (Task-Log "SVGA animations"): the example's engine (CYLSVGAPlaceholderItemAnimator).
+  // The SVGA twin of the Rive row (Task-Log "SVGA animations"): CYLTabBarController's SVGA engine (CYLAnimatedItemSVGA).
   new RefreshIconSection('SVGA · CYLTableViewPlaceHolder/SVGA', false,
     [fileRow('tab_activity.svga'), fileRow('tab_list.svga')]),
   new RefreshIconSection('CYLScenarioSectionRefreshInit', true, [
