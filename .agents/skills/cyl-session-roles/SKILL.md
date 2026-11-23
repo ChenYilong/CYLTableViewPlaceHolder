@@ -33,7 +33,7 @@ Source: `instructions.md`, "Session roles: Mac sessions for iOS, Win sessions fo
 
 When a Windows session cannot run a test because it needs arm64 (Rive and PAG playback; their native libraries are
 arm64-v8a only and the Windows HarmonyOS emulator is x86_64), first try option 1 of `instructions.md`, "Rive and PAG:
-tests that only run on arm64" (x86_64 libraries in CYLTabBarController's CYLAnimatedItemView, behind a debug-build guard
-whose removal needs the owner's approval). If option 1 fails, forward the test to an active macOS session (Apple silicon
+tests that only run on arm64" (x86_64 libraries in CYLTabBarController's CYLAnimatedItemView; its debug-build guard was
+removed with the owner's approval on 2026-11-23). If option 1 fails, forward the test to an active macOS session (Apple silicon
 is arm64) with the build, the steps and the expected result; with no macOS session active, record it as a `TODO` for
 the next one.

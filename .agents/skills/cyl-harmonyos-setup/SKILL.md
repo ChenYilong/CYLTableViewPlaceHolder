@@ -66,6 +66,7 @@ on the x86_64 HarmonyOS emulator today. For every test that can only run on arm6
    - **Debug guard:** until option 1 has passed its tests, it is also guarded by a debug build option (debug builds
      only), because today it only matters when running on the emulator. Remove the debug guard only after option 1 is
      verified, and **only with the owner's approval**: ask first, never remove it on your own.
+   - **Debug guard removed (2026-11-23):** option 1 passed (Rive and PAG 4.5.102 play on the x86_64 emulator, no crash) and the owner approved removing the guard; CYLTabBarController `269eff24` loads the kit in debug and release builds, still only when `cyl_hap_x86_64.py install` added it and the device is x86_64.
 2. **Option 2: hand the test to a macOS session.** If option 1 fails, forward the arm64-only tests to an active
    session running on macOS (Apple silicon is arm64; a session whose name starts with `Mac`, see "Session roles"),
    with the build, the HAP, the steps and the expected result, and record which tests it ran and their results. When no
