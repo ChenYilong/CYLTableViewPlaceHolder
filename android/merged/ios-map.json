@@ -1139,5 +1139,32 @@
  "CYLPlaceholderHUD.MAXIMUM_WIDTH_DP": {
   "ios": "`CYLPlaceholderHUD`",
   "note": "iOS keeps the same 260 pt limit as a private constant (private CYLPlaceholderHUDMaximumWidth in CYLPlaceholderHUD.swift); no public iOS constant"
+ },
+ "CYLPlaceholderStackView.restartAnimation": {
+  "ios": "`CYLPlaceholderStackView.restartAnimation()`"
+ },
+ "CYLPlaceholderBridge": {
+  "ios": "`CYLPlaceholderBridge` (enum, `CYLPlaceholderBridge.swift`)"
+ },
+ "CYLPlaceholderBridge.placeholderView": {
+  "ios": "`CYLPlaceholderBridge.placeholderView(params:)`"
+ },
+ "CYLPlaceholderBridge.updatePlaceholderView": {
+  "ios": "`CYLPlaceholderBridge.updatePlaceholderView(_:name:value:)`"
+ },
+ "CYLPlaceholderBridge.stackView": {
+  "ios": "`CYLPlaceholderBridge.stackView(configuration:onAction:)`"
+ },
+ "CYLPlaceholderBridge.updateStackView": {
+  "ios": "`CYLPlaceholderBridge.updateStackView(_:name:value:)`"
+ },
+ "CYLPlaceholderHUDBridge": {
+  "ios": "`CYLPlaceholderHUDBridge` (class, `CYLPlaceholderBridge.swift`)"
+ },
+ "CYLPlaceholderHUDBridge.hud": {
+  "ios": "`CYLPlaceholderHUDBridge.hud`"
+ },
+ "CYLPlaceholderHUDBridge.handle": {
+  "ios": "`CYLPlaceholderHUDBridge.handle(method:arguments:)`"
  }
 }

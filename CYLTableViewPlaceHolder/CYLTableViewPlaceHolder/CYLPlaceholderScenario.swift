@@ -462,6 +462,18 @@ open class CYLPlaceholderComponent: NSObject, NSCopying {
             }
             animationRepeatCount = count
         }
+        if let loops = dictionary["animationLoops"] {
+            guard let number = loops as? NSNumber else {
+                throw CYLScenarioConfigurationError("animationLoops must be a boolean.")
+            }
+            animationLoops = number.boolValue
+        }
+        if let speed = dictionary["animationSpeed"] {
+            guard let number = speed as? NSNumber, number.doubleValue.isFinite, number.doubleValue > 0 else {
+                throw CYLScenarioConfigurationError("animationSpeed must be a number above 0.")
+            }
+            animationSpeed = CGFloat(number.doubleValue)
+        }
         if let spacing = dictionary["spacingBefore"] {
             guard let number = spacing as? NSNumber, number.doubleValue.isFinite, number.doubleValue >= 0 else {
                 throw CYLScenarioConfigurationError("spacingBefore must be a number of points.")
