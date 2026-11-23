@@ -61,9 +61,11 @@ jobs:
         # rate-limits GitHub runners (robolectric.dependency.repo.url is read by every JVM that Gradle starts here).
         env:
           JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2
-        # One retry, only when Gradle could not download a plugin or dependency (seen on CI 2026-11-22: "Plugin
-        # [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found", passing on re-run); test failures fail
-        # at once.
+        # Up to two retries (three attempts), only when Gradle could not download a plugin or dependency (seen on CI
+        # 2026-11-22 and on PR #31 runs 45278544433 and 45282480036, 2026-11-24: "Plugin
+        # [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found" at line 1 of CYLTabBarController's
+        # Example-Android/build.gradle.kts; the next run of the same code passed, so it is the runner's network, not
+        # the code, and one retry after 60 s was not always enough); test failures fail at once.
         run: |
           set -o pipefail
           run_tests() {
@@ -75,13 +77,15 @@ jobs:
               :merged-rive:compileDebugKotlin 2>&1 | tee "$RUNNER_TEMP/gradle-tests.log"
           }
           if run_tests; then exit 0; fi
-          if grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download|MavenArtifactFetcher" "$RUNNER_TEMP/gradle-tests.log"; then
-            echo "Gradle could not download a plugin or dependency; retrying once with --refresh-dependencies."
-            sleep 60
-            run_tests --refresh-dependencies
-          else
-            exit 1
-          fi
+          for wait in 60 180; do
+            if ! grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download|MavenArtifactFetcher" "$RUNNER_TEMP/gradle-tests.log"; then
+              exit 1
+            fi
+            echo "Gradle could not download a plugin or dependency; retrying with --refresh-dependencies after ${wait} s."
+            sleep "$wait"
+            if run_tests --refresh-dependencies; then exit 0; fi
+          done
+          exit 1
       - name: Build the example
         run: bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" :merged-example:assembleDebug
       # The React Native library (CrossPlatform/react-native-cylplaceholder/android) depends on this repository's
