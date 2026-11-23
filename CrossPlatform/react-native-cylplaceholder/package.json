@@ -25,5 +25,10 @@
     "react-native-cyltabbar": {
       "optional": true
     }
+  },
+  "exports": {
+    ".": "./src/index.tsx",
+    "./item": "./src/item.tsx",
+    "./package.json": "./package.json"
   }
 }

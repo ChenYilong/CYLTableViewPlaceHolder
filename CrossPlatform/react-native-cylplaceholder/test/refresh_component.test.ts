@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  CYLRefreshAutoFooter,
   CYLRefreshBackFooter,
+  CYLRefreshClassicFooter,
+  CYLRefreshClassicHeader,
   CYLRefreshComponent,
   CYLRefreshHeader,
   CYLRefreshPhase,
   CYLRefreshState,
+  CYLRefreshTitleState,
   CYLRefreshTriggerMode,
 } from '../src/refresh/index.ts';
 
@@ -176,5 +180,47 @@ test('loadsAfterNoMoreData lets a pull load again and clears the flag', () => {
   footer.handleRelease();
   assert.equal(footer.isRefreshing, true);
   assert.equal(footer.isNoMoreData, false);
+  footer.dispose();
+});
+
+test('classic titles follow the phase, can be set per state, and the header shows the last update', async () => {
+  const header = new CYLRefreshClassicHeader({ finishDuration: 0 });
+  assert.equal(header.currentTitle, 'Pull down to refresh');
+  assert.equal(header.messageText(), 'Not updated yet');
+  header.handlePull(100, true);
+  assert.equal(header.currentTitle, 'Release to refresh');
+  header.setTitle('Let go', CYLRefreshTitleState.releaseToRefresh);
+  assert.equal(header.currentTitle, 'Let go');
+  header.handleRelease();
+  assert.equal(header.currentTitle, 'Refreshing...');
+  header.endRefreshing();
+  assert.equal(header.currentTitle, 'Refresh complete');
+  assert.match(header.messageText() ?? '', /^Last updated: \d\d:\d\d$/);
+  header.showsLastUpdatedTime = false;
+  assert.equal(header.messageText(), null);
+  await delay(10);
+  header.dispose();
+});
+
+test('the classic footer says no more data', () => {
+  const footer = new CYLRefreshClassicFooter();
+  footer.noticeNoMoreData();
+  assert.equal(footer.currentTitle, 'No more data');
+  footer.dispose();
+});
+
+test('the auto footer loads near the end, once per autoTriggerTimes', () => {
+  const footer = new CYLRefreshAutoFooter({ finishDuration: 0 });
+  const host = { isOtherRefreshing: () => false };
+  footer.attach(host);
+  let loads = 0;
+  footer.refreshingHandler = () => (loads += 1);
+  footer.handleDistanceToEnd(500);
+  assert.equal(loads, 0, 'far from the end');
+  footer.handleDistanceToEnd(0);
+  assert.equal(loads, 1);
+  footer.endRefreshing();
+  footer.handleDistanceToEnd(0);
+  assert.equal(loads, 1, 'autoTriggerTimes = 1');
   footer.dispose();
 });
