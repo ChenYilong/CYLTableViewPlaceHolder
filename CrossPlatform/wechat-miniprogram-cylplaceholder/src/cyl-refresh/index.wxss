@@ -4,6 +4,8 @@
 .cyl-refresh__scroll { position: relative; z-index: 0; height: 100%; }
 /* Behind: the content scrolls above the pinned header; the page gives its rows a background. */
 .cyl-refresh__scroll--behind { z-index: 2; }
+/* Front: the header slides in over the content. */
+.cyl-refresh__header--front { z-index: 3; }
 .cyl-refresh__header { position: absolute; left: 0; right: 0; top: 0; z-index: 1; display: flex; flex-direction: row;
   align-items: center; justify-content: center; pointer-events: none; }
 .cyl-refresh__mark { font-size: 20px; color: #8e8e93; }

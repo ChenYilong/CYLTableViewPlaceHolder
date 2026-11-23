@@ -27,6 +27,19 @@
 
 ## 任务 / Tasks
 
+### TODO：交接任务（Refresh-Library-Parity.md 的 10 项）中非 iOS 的部分，以及全平台评分 / TODO: Non-iOS hand-off items (the 10 items of Refresh-Library-Parity.md) and the all-platform scores
+
+- **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup` (PR #31).
+- **用户原话 / Prompt (verbatim, Chinese):** "继续完成下面的交接任务" (followed by the hand-off report of the earlier container session), then "advisor点评目前全平台接口实现得分 以及下一步计划与建议。并立即让默认模型sonnet按照建议去实现。将得分优化到100".
+- **要求 / Requirements:** do the hand-off items of `docs/Refresh-Library-Parity.md` ("Feature freeze and hand-off") that a Windows session can do; score every platform from evidence only. 100 = every row verified by a build log, test count, screenshot or finished CI run; 60 = code written and unit-tested but not seen running or in CI.
+- **上下文 / Context:** iOS items (1, 2, the iOS half of 4, the last iOS API-map row) belong to a Mac session; `Mac-CYLTabBarController` [4c18ab] started them in an agent of its own, `c32b88` stays offline. A Windows session is working on HarmonyOS (`80452f9c`), so item 5 is not taken here. No other session was asked about item 7 (upstream issue on CYLTabBarController, outward-facing; waits for the owner's approval).
+- **进度 / Progress (2026-11-23):**
+  - Item 9 done: Android workflow run 45150180315 on `4bcd358b` is green; the new steps published `:placeholder`, `:merged`, `:cylanimateditem` and ran `testDebugUnitTest` of the React Native library (task executed, build successful; the test count is not in Gradle's log).
+  - Item 6, mini program half: `cyl-refresh` `scrollMode` (`move`, `stretch`, `front`, `behind`), 84 of 84 tests with the CYLTabBarController checkout; **TODO** WeChat DevTools check of the real layout, and the HarmonyOS half.
+  - Mini program tests: the two failures seen were a missing generated folder (`npm run sync-example`), no code fault.
+  - Item 8 (Android driven mode): in progress in a Sonnet agent's worktree.
+  - Items 3, 4, 7, 10 and the HarmonyOS build (5): **TODO**.
+
 ### TODO：iOS API 对照表补齐最后一行 showsImageWhenAnimationEnds / TODO: Close the last TODO row of the iOS API map (`showsImageWhenAnimationEnds`)
 
 - **日期 / Date:** 2026-11-23, branch `feat/android-refresh-port-followup`.

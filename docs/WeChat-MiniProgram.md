@@ -278,7 +278,9 @@
   page then drops its own component.
 - **Status (2026-11-15, commit `b6fbd4f` + the finish-phase fix):** done. A second `endRefreshing` during the finish phase is ignored. Screenshots: `docs/assets/wechat-miniprogram-refresh-cupertino.png`, `docs/assets/wechat-miniprogram-refresh-finish.png`. `cyl-refresh` has header "cupertino" / "listener", footer "cupertino", the back
   footer's pull ("Release to load more", `pull` event for the footer), `headerTrigger` / `footerTrigger`,
-  `secondaryOffset` + `secondary`, `behind`, `finishDuration` with `endRefreshing({ success })` /
+  `secondaryOffset` + `secondary`, `behind`, `scrollMode` (`move` / `stretch` / `front` / `behind`, as iOS
+  `CYLRefreshScrollMode`; **TODO:** node tests only, the real layout of `stretch` and `front` was not seen in WeChat
+  DevTools), `finishDuration` with `endRefreshing({ success })` /
   `endFooterRefreshing({ success })`, the `pull` event (percent beyond 1), `scroll` event and the scroll helpers;
   `CYLRefresh.registerStrings`, `onLanguageChange`, `reloadLanguage`, `finishText`; the new
   `cyl-refresh-trailer` component (CYLRefreshNormalTrailer). The easy_refresh page uses `cyl-refresh` (its

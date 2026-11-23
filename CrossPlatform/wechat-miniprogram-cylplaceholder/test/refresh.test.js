@@ -106,3 +106,24 @@ test('cyl-refresh forwards the PAG and Rive wasm paths, and the example wires bo
   const app = JSON.parse(fs.readFileSync(path.join(__dirname, '../example/miniprogram/app.json'), 'utf8'))
   assert.ok(app.subPackages.some((s) => s.root === 'refresh-engines/' && s.pages.includes('refresh-icon-demo/refresh-icon-demo')))
 })
+
+test('scroll modes as CYLRefreshScrollMode (move, stretch, front, behind)', () => {
+  const { CYLRefreshScrollMode: M } = require('../src/cyl-refresh/cyl_refresh')
+  assert.deepStrictEqual({ ...M }, { Move: 'move', Stretch: 'stretch', Front: 'front', Behind: 'behind' })
+  assert.strictEqual(R.scrollModeFor(undefined, false), 'move', 'the default is move')
+  for (const mode of ['move', 'stretch', 'front', 'behind']) assert.strictEqual(R.scrollModeFor(mode, false), mode)
+  assert.strictEqual(R.scrollModeFor('stretch', true), 'behind', 'the older behind flag wins')
+  assert.strictEqual(R.scrollModeFor('bogus', false), 'move', 'an unknown value is move')
+})
+
+test('cyl-refresh lays the header out per scroll mode', () => {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  const wxml = fs.readFileSync(path.join(__dirname, '../src/cyl-refresh/index.wxml'), 'utf8')
+  const wxss = fs.readFileSync(path.join(__dirname, '../src/cyl-refresh/index.wxss'), 'utf8')
+  assert.match(wxml, /cyl-refresh__header--\{\{mode\}\}/)
+  assert.match(wxml, /height: \{\{mode === 'stretch' \? pull : threshold\}\}px/, 'stretch fills the pulled distance')
+  assert.match(wxml, /mode === 'move' \|\| mode === 'front' \? 'transform: translateY/, 'only move and front slide in')
+  assert.match(wxss, /\.cyl-refresh__header--front \{ z-index: 3; \}/, 'front is above the content')
+  assert.match(wxss, /\.cyl-refresh__scroll--behind \{ z-index: 2; \}/, 'behind is under the content')
+})

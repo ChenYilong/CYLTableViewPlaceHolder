@@ -14,8 +14,8 @@
 // footer with only a spinner), "diy" / "diyBack" (slot "footer"), "none".
 //
 // Also: headerTrigger / footerTrigger "anywhere" | "onEdge" (CYLRefreshTriggerMode); secondaryOffset (a release past
-// it fires `secondary`, the second floor); behind (the header stays pinned under the content,
-// CYLRefreshScrollModeBehind); finishDuration (endRefreshing({ success }) shows "Refresh complete" / "Refresh failed"
+// it fires `secondary`, the second floor); scrollMode "move" | "stretch" | "front" | "behind" (CYLRefreshScrollMode;
+// behind: the header stays pinned under the content, as the older `behind` flag); finishDuration (endRefreshing({ success }) shows "Refresh complete" / "Refresh failed"
 // first); the `pull` event ({ part, state, percent } with percent beyond 1); the scroll helpers measureContent /
 // getScrollTop / setScrollTop / scrollToBottom (keep the offset when rows are prepended, a chat). Texts follow
 // CYLRefresh.setLanguageCode and CYLRefresh.registerStrings live.
@@ -93,6 +93,8 @@ Component({
     secondaryOffset: { type: Number, value: 0 },
     /** The header stays pinned at the top under the content (CYLRefreshScrollModeBehind); give the rows a background. */
     behind: { type: Boolean, value: false },
+    /** "move" (default), "stretch", "front" or "behind" (CYLRefreshScrollMode); `behind` true means "behind". */
+    scrollMode: { type: String, value: 'move' },
     /** ms the finish text ("Refresh complete") shows after endRefreshing / endFooterRefreshing; 0 hides at once. */
     finishDuration: { type: Number, value: 0 },
   },
@@ -115,8 +117,12 @@ Component({
     headerLabelStyle: '',
     timeLabelStyle: '',
     footerLabelStyle: '',
+    mode: 'move',
   },
   observers: {
+    'scrollMode, behind': function (scrollMode, behind) {
+      this.setData({ mode: CYLRefresh.scrollModeFor(scrollMode, behind) })
+    },
     'headerIcons, footerIcons, language, headerState, footerState, finishing, footerFinishing, headerTitles, footerTitles, headerStyle, footerStyle, footer': function () {
       this._render()
     },

@@ -116,6 +116,23 @@ function finishText(part, success, language) {
   return refreshText('CYLRefresh' + p + (success === false ? 'Failed' : 'Finished') + 'Text', language)
 }
 
+/**
+ * [EN] How the header moves while it is pulled (CYLRefreshScrollMode on iOS): move (with the content, default), stretch
+ *      (fills the whole pulled distance), front (slides in at the top, in front of the content), behind (pinned behind
+ *      the content). [CN] 下拉时刷新头的移动方式（对应 iOS 的 CYLRefreshScrollMode）：move（随内容移动，默认）、stretch（拉伸铺满
+ *      整个下拉距离）、front（从顶部滑入，位于内容前面）、behind（固定在内容后面）。
+ */
+const CYLRefreshScrollMode = Object.freeze({ Move: 'move', Stretch: 'stretch', Front: 'front', Behind: 'behind' })
+
+/**
+ * [EN] The scroll mode for the component's `scrollMode` and the older `behind` flag (`behind` wins); an unknown value is move.
+ * [CN] 由组件的 `scrollMode` 与旧的 `behind` 开关得出的移动方式（`behind` 优先）；未知值按 move 处理。
+ */
+function scrollModeFor(scrollMode, behind) {
+  if (behind) return CYLRefreshScrollMode.Behind
+  return Object.values(CYLRefreshScrollMode).includes(scrollMode) ? scrollMode : CYLRefreshScrollMode.Move
+}
+
 /** The header's state for a pull distance while not refreshing. */
 function headerStateForPull(distance, threshold = CYLRefreshHeaderHeight) {
   return distance >= threshold ? CYLRefreshState.Pulling : CYLRefreshState.Idle
@@ -158,8 +175,9 @@ function iconForState(icons, state) {
 
 module.exports = {
   CYLRefreshState,
+  CYLRefreshScrollMode,
   CYLRefreshHeaderHeight,
   CYLRefreshFooterHeight,
   CYLRefreshCupertinoHeaderHeight,
-  CYLRefresh: { setLanguageCode, onLanguageChange, reloadLanguage, registerStrings, finishText, refreshText, stateText, lastUpdatedText, headerStateForPull, autoFooterLoadsOnDragEnd, iconForState },
+  CYLRefresh: { setLanguageCode, onLanguageChange, reloadLanguage, registerStrings, finishText, refreshText, stateText, lastUpdatedText, headerStateForPull, scrollModeFor, autoFooterLoadsOnDragEnd, iconForState },
 }
