@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cyltabbar/flutter_cyltabbar.dart';
 
+import 'native_backend.dart';
+
 /// The built-in icon styles of a placeholder, in the order of iOS `CYLPlaceholderStyle` (the first twenty).
 enum CYLPlaceholderStyle {
   /// An empty tray: nothing here yet.
@@ -224,8 +226,24 @@ class CYLPlaceholderView extends StatelessWidget {
         CYLPlaceholderItemKey.animationURL: ?animationFile,
       };
 
+  /// Whether the native component draws this view: the native half is on, and nothing asks for what only Flutter can draw
+  /// (a Flutter [image], a Flutter [titleStyle] or an [imageSize], a Flutter [backgroundColor] around it).
+  bool get _usesNative => CYLPlaceholderNative.enabled && image == null && titleStyle == null;
+
   @override
   Widget build(BuildContext context) {
+    if (_usesNative) {
+      return CYLNativePlaceholderView(
+        params: {
+          ...itemAttributes,
+          CYLPlaceholderItemKey.animationSize: [animationSize.width, animationSize.height],
+        },
+        animationLoops: animationLoops,
+        animationSpeed: animationSpeed,
+        animationRestartToken: animationRestartToken,
+        onTap: tapHandler != null && tapInteractionEnabled ? tapHandler : null,
+      );
+    }
     final theme = Theme.of(context);
     final textColor = titleColor ?? theme.colorScheme.onSurfaceVariant;
     Widget picture;

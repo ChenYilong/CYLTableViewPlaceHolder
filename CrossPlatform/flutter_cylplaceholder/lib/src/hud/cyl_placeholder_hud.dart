@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cyltabbar/flutter_cyltabbar.dart';
 
 import '../placeholder/cyl_placeholder_stack.dart';
+import '../placeholder/native_backend.dart';
 
 /// The look of the HUD, like the iOS and Android `CYLPlaceholderHUDStyle`.
 enum CYLPlaceholderHUDStyle {
@@ -74,7 +75,22 @@ typedef CYLPlaceholderHUDDismissCompletion = void Function();
 /// the configuration and the state. Draw it with a [CYLPlaceholderHUDHost] around your content, and call `dispose` with it.
 class CYLPlaceholderHUD extends ChangeNotifier {
   /// Creates a hidden HUD.
-  CYLPlaceholderHUD();
+  CYLPlaceholderHUD() {
+    if (CYLPlaceholderNative.enabled) {
+      CYLPlaceholderNative.hudChannel.setMethodCallHandler((call) async {
+        if (call.method == 'onAction') _actions[call.arguments as String]?.call();
+      });
+    }
+  }
+
+  final Map<String, VoidCallback> _actions = {};
+
+  /// Calls the native HUD (the Android `CYLPlaceholderHUD`) when the native half is on; the Dart state below stays in step, so
+  /// `visible`, `state` and `status` mean the same with either.
+  void _native(String method, [Map<String, Object?>? arguments]) {
+    if (!CYLPlaceholderNative.enabled) return;
+    CYLPlaceholderNative.hudChannel.invokeMethod<void>(method, arguments).ignore();
+  }
 
   /// The look.
   CYLPlaceholderHUDStyle style = CYLPlaceholderHUDStyle.automatic;
@@ -180,6 +196,7 @@ class CYLPlaceholderHUD extends ChangeNotifier {
   /// Shows a spinner with [status] (`showWithStatus`).
   void showWithStatus(String? status) {
     if (_disposed) return;
+    _native('showWithStatus', {'status': status});
     _activityCount++;
     void start() {
       _graceTimer = null;
@@ -197,25 +214,33 @@ class CYLPlaceholderHUD extends ChangeNotifier {
   /// Shows a progress bar at [progress], 0 to 1, with [status] (`showProgress`).
   void showProgress(double progress, [String? status]) {
     if (_disposed) return;
+    _native('showProgress', {'progress': progress, 'status': status});
     _progress = progress.clamp(0.0, 1.0);
     _present(CYLPlaceholderHUDState.progress, status: status ?? _status, animation: progressAnimationFileName);
   }
 
   /// Changes the status text in place (`setStatus`).
   void setStatus(String? status) {
+    _native('setStatus', {'status': status});
     _status = status;
     notifyListeners();
   }
 
   /// Shows the info icon with [status], then hides (`showInfoWithStatus`).
-  void showInfoWithStatus(String? status) => _showTimed(CYLPlaceholderHUDState.info, infoImage ?? const Icon(Icons.info_outline), status);
+  void showInfoWithStatus(String? status) => _showTimedNative('showInfoWithStatus', status, () => _showTimed(CYLPlaceholderHUDState.info, infoImage ?? const Icon(Icons.info_outline), status));
 
   /// Shows the success icon with [status], then hides (`showSuccessWithStatus`).
-  void showSuccessWithStatus(String? status) =>
-      _showTimed(CYLPlaceholderHUDState.success, successImage ?? const Icon(Icons.check_circle_outline), status, animation: successAnimationFileName);
+  void showSuccessWithStatus(String? status) => _showTimedNative('showSuccessWithStatus', status,
+      () => _showTimed(CYLPlaceholderHUDState.success, successImage ?? const Icon(Icons.check_circle_outline), status, animation: successAnimationFileName));
 
   /// Shows the error icon with [status], then hides (`showErrorWithStatus`).
-  void showErrorWithStatus(String? status) => _showTimed(CYLPlaceholderHUDState.error, errorImage ?? const Icon(Icons.error_outline), status);
+  void showErrorWithStatus(String? status) =>
+      _showTimedNative('showErrorWithStatus', status, () => _showTimed(CYLPlaceholderHUDState.error, errorImage ?? const Icon(Icons.error_outline), status));
+
+  void _showTimedNative(String method, String? status, VoidCallback show) {
+    _native(method, {'status': status});
+    show();
+  }
 
   /// Shows [image] with [status], then hides (`showImage`).
   void showImage(Widget? image, String? status) => _showTimed(CYLPlaceholderHUDState.image, image, status);
@@ -223,14 +248,23 @@ class CYLPlaceholderHUD extends ChangeNotifier {
   /// Shows your [components] until [dismiss] (`showComponents`).
   void showComponents(List<CYLPlaceholderComponent> components) {
     if (_disposed) return;
+    _actions.clear();
+    final maps = <Map<String, Object?>>[];
+    for (var i = 0; i < components.length; i++) {
+      final action = components[i].action;
+      if (action != null) _actions['component-$i'] = action;
+      maps.add(components[i].toConfiguration(actionName: 'component-$i'));
+    }
+    _native('showComponents', {'components': maps});
     _components = components;
     _present(CYLPlaceholderHUDState.custom, status: null, animation: null);
   }
 
   /// Ends one [show]; the HUD hides once every one has ended (`popActivity`).
   void popActivity() {
+    _native('popActivity');
     if (_activityCount > 0) _activityCount--;
-    if (_activityCount == 0) dismiss();
+    if (_activityCount == 0) _dismissDart(0);
   }
 
   /// Hides at once (`dismiss`).
@@ -241,6 +275,14 @@ class CYLPlaceholderHUD extends ChangeNotifier {
 
   /// Hides after [delay] seconds, then calls [completion] (`dismissWithDelay`).
   void dismissWithDelay(double delay, [CYLPlaceholderHUDDismissCompletion? completion]) {
+    if (_disposed) return;
+    _native('dismissWithDelay', {'delay': delay});
+    _dismissDart(delay, completion);
+  }
+
+  /// The Dart state of a dismiss: the native HUD already hides itself (a timed one after its time, [popActivity] when the
+  /// last activity ends), so it is not called again.
+  void _dismissDart(double delay, [CYLPlaceholderHUDDismissCompletion? completion]) {
     if (_disposed) return;
     _dismissTimer?.cancel();
     _graceTimer?.cancel();
@@ -280,7 +322,7 @@ class CYLPlaceholderHUD extends ChangeNotifier {
     if (hapticsEnabled && (state == CYLPlaceholderHUDState.success || state == CYLPlaceholderHUDState.error)) {
       HapticFeedback.mediumImpact();
     }
-    _dismissTimer = Timer(Duration(milliseconds: (displayDurationForString(status) * 1000).round()), () => dismiss());
+    _dismissTimer = Timer(Duration(milliseconds: (displayDurationForString(status) * 1000).round()), () => _dismissDart(0));
   }
 
   @override
@@ -306,6 +348,8 @@ class CYLPlaceholderHUDHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The native HUD (the Android CYLPlaceholderHUD) draws itself over the activity: nothing to draw here.
+    if (CYLPlaceholderNative.enabled) return child;
     return Stack(
       fit: StackFit.passthrough,
       children: [

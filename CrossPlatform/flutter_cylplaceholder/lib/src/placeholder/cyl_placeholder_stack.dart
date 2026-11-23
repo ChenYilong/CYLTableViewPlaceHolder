@@ -145,6 +145,25 @@ class CYLPlaceholderComponent {
 
   /// The space above the component in logical pixels.
   double spacingBefore;
+
+  /// The component as the configuration map the native stack and HUD read (`docs/Placeholder-Scenarios.md`), with the action
+  /// named [actionName] when it has one.
+  Map<String, Object?> toConfiguration({String? actionName}) => {
+        'type': kind.name,
+        'title': ?title,
+        if (kind == CYLPlaceholderComponentKind.icon || kind == CYLPlaceholderComponentKind.item) ...{
+          'style': style.name,
+          'animation': ?animationFile,
+          'size': [animationSize.width, animationSize.height],
+          'animationLoops': animationLoops,
+          'animationSpeed': animationSpeed,
+        },
+        if (kind == CYLPlaceholderComponentKind.button) 'buttonStyle': buttonStyle.name,
+        'action': ?(action != null ? actionName : null),
+        'interactionEnabled': interactionEnabled,
+        'spacingBefore': spacingBefore,
+        'accessibilityIdentifier': ?accessibilityIdentifier,
+      };
 }
 
 /// Plays the animations of a [CYLPlaceholderStackView] again, like `restartAnimation()` of the iOS and Android stack views.

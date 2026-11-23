@@ -25,3 +25,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      # [EN] The Android half hosts the native CYLPlaceholderView and CYLPlaceholderHUD (android/); the other platforms use the
+      #      Dart implementation until their native halves exist (docs/Refresh-Library-Parity.md, "Native bridge map").
+      # [CN] Android 一半承载原生的 CYLPlaceholderView 与 CYLPlaceholderHUD（android/）；其他平台在原生一半完成前使用 Dart 实现。
+      android:
+        package: com.cyl.placeholder.flutter_cylplaceholder
+        pluginClass: FlutterCylplaceholderPlugin
