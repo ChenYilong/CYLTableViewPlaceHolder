@@ -65,6 +65,7 @@
 | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderStatus.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercylplaceholderstatuskt) | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderStatus.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercylplaceholderstatuskt) |
 | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderView.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercylplaceholderviewkt) | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLPlaceholderView.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercylplaceholderviewkt) |
 | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLTableViewPlaceHolder.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercyltableviewplaceholderkt) | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/CYLTableViewPlaceHolder.kt`](#androidplaceholdersrcmainkotlincomcylplaceholdercyltableviewplaceholderkt) |
+| [`android/placeholder/src/main/kotlin/com/cyl/placeholder/bridge/CYLPlaceholderBridge.kt`](#androidplaceholdersrcmainkotlincomcylplaceholderbridgecylplaceholderbridgekt) | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/bridge/CYLPlaceholderBridge.kt`](#androidplaceholdersrcmainkotlincomcylplaceholderbridgecylplaceholderbridgekt) |
 | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/CYLPlaceholderHUD.kt`](#androidplaceholdersrcmainkotlincomcylplaceholderhudcylplaceholderhudkt) | [`android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/CYLPlaceholderHUD.kt`](#androidplaceholdersrcmainkotlincomcylplaceholderhudcylplaceholderhudkt) |
 
 <!-- docs-navigation:end -->
@@ -83,7 +84,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（810 / 812 行已有 iOS 对应，TODO 2 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (810 of 812 rows have an iOS counterpart, 2 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：99 / 100**（810 / 820 行已有 iOS 对应，TODO 10 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 99 / 100** (810 of 820 rows have an iOS counterpart, 10 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
@@ -1218,6 +1219,19 @@
 | `cyl_reloadData` (fun) | Reloads the list and shows or removes its placeholder (iOS `cyl_reloadData`); an adapter that is a [CYLTableViewPlaceHolderDelegate] gives the placeholder. | `cyl_reloadData` | matched by the iOS name its KDoc cites |
 | `cyl_placeholderHidden` (var) | Hides the placeholder even while the list is empty (iOS `UIScrollView.cyl_placeholderHidden`). | `cyl_placeholderHidden` | matched by the iOS name its KDoc cites |
 | `cyl_placeholderView` (val) | The placeholder now shown for the list, or null. | `UIScrollView` `cyl_placeholderView` | added 2026-11-16 for Android parity |
+
+## `android/placeholder/src/main/kotlin/com/cyl/placeholder/bridge/CYLPlaceholderBridge.kt`
+
+| Android API | 描述 / Description | iOS API | 说明 / Note |
+|:---|:---|:---|:---|
+| `CYLPlaceholderBridge` (object) | Builds and updates the placeholder views of a bridge from the item and configuration maps with the iOS keys. | TODO |  |
+| `CYLPlaceholderBridge.placeholderView` (fun) | A placeholder view from an item map (the `CYLPlaceholderItem*` keys of `docs/Placeholder-Scenarios.md`), or null when the map is invalid. | TODO |  |
+| `CYLPlaceholderBridge.updatePlaceholderView` (fun) | Applies one live update to a placeholder view: "animationLoops" (a boolean), "animationSpeed" (a number above 0) or "restartAnimation" (any value, plays again from the start). | TODO |  |
+| `CYLPlaceholderBridge.stackView` (fun) | A placeholder stack from a configuration map (the "scenario" or "components" of `docs/Placeholder-Scenarios.md`, whose components may carry "animationLoops" and "animationSpeed"), or null when it is invalid. | TODO |  |
+| `CYLPlaceholderBridge.updateStackView` (fun) | Applies one live update to a stack: "restartAnimation" plays every animation again from the start. | TODO |  |
+| `CYLPlaceholderHUDBridge` (class) | Drives a [CYLPlaceholderHUD] from method names and argument maps, the way a method channel or a React Native module delivers them. | TODO |  |
+| `CYLPlaceholderHUDBridge.hud` (val) | The HUD that is driven. | TODO |  |
+| `CYLPlaceholderHUDBridge.handle` (fun) | Runs [method] with [arguments]: "show", "showWithStatus" ("status"), "showProgress" ("progress", "status"), "setStatus", "showInfoWithStatus", "showSuccessWithStatus", "showErrorWithStatus" ("status"), "showComponents" ( | TODO |  |
 
 ## `android/placeholder/src/main/kotlin/com/cyl/placeholder/hud/CYLPlaceholderHUD.kt`
 
