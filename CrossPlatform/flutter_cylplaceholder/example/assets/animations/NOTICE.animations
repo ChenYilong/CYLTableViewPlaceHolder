@@ -1,0 +1,8 @@
+Animation files of the Flutter example, copied unmodified from CYLTableViewPlaceHolder.bundle/Animations (the core's
+NOTICE.animations has the full list). Each entry: source repository (commit), path, license, SHA-256.
+
+CYLPlaceholderLoadFailed.json
+  source:  https://github.com/useAnimations/react-useanimations (f7af6f53f6f1a97486ad95756b281a34e9f7c670)
+  path:    icons/alertCircle.json
+  license: MIT (LICENSE.useanimations)
+  sha256:  44c61ede9d21bc71dfdf0283985549898cff767e83f619375ee6553fcb5781b2

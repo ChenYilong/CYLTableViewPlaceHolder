@@ -27,3 +27,8 @@ flutter:
   config:
     enable-swift-package-manager: false
   uses-material-design: true
+  # The animation files of the demos (with their license and NOTICE), kept next to the example so every platform's port
+  # takes the same files. CYLAnimationView finds a file by name in the native bundle (iOS main bundle, Android assets):
+  # copy them there too (docs/Refresh-Library-Parity.md, "Demo porting map").
+  assets:
+    - assets/animations/

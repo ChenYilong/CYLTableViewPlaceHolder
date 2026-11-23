@@ -15,6 +15,7 @@
 | [flutter_easy_refresh to Flutter package (CYL API)](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) | [Flutter package score table](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) |
 | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) |
 | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) |
+| [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) |
 | [Flutter example screenshots](#flutter-example-screenshots) | [Flutter example screenshots](#flutter-example-screenshots) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
 | [flutter_easy_refresh 示例截图](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) | [flutter_easy_refresh demo screenshots](#flutter_easy_refresh-示例截图--flutter_easy_refresh-demo-screenshots) |
@@ -397,6 +398,34 @@ Design (advisor, 2026-11-23): two layers. Pure TypeScript with no React import (
 | Second floor | `secondaryView`, `openSecondary`, `closeSecondary`, trigger and dimension fields | `openSecondary` / `closeSecondary` and the secondary fields | `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset`, `floor` | Method channel calls and events | TODO |
 | Paging | `CYLRefreshPaging<T>` | `CYLRefreshPaging` (if present; to be confirmed) | `CYLRefreshPaging.kt` | The loader crosses the channel as a callback with a completion token | TODO |
 | Flutter-only layout | `CYLRefreshHeaderLocator` / `FooterLocator`, `readySpringBuilder`, nested controllers, `scrollMode`, `triggerAxis` | none | none | Stay in Dart: they are about Flutter's scrolling | N/A: Flutter-only |
+
+
+## Demo porting map (the Flutter example to every other platform)
+
+**Decision (2026-11-23, the owner's prompt):** the Flutter example (`CrossPlatform/flutter_cylplaceholder/example`) is kept as it is. Each of its demos is a `TODO` to be ported to every other platform, **with its resource files**, and every other platform gets more demo styles where it lacks them. The Flutter example now carries its resource file next to it: `example/assets/animations/CYLPlaceholderLoadFailed.json` with `LICENSE.useanimations` and a `NOTICE.animations` entry (copied unmodified; SHA-256 `44c61ede...81b2`, the same as the core's `NOTICE.animations`), declared as assets in its `pubspec.yaml`. `CYLAnimationView` finds a file by name in the native bundle (iOS main bundle, Android assets), so a Flutter app also copies the files there (a `TODO` for the example's `ios/` and the missing `android/` folder).
+
+Cells: the existing equivalent demo of that platform, or `TODO`. Resource files: every platform already has `CYLPlaceholderLoadFailed.json` in its animation folder (iOS `CYLTableViewPlaceHolder.bundle/Animations`, Android `android/placeholder/src/main/assets/CYLPlaceholderAnimations`, HarmonyOS `cylplaceholder/src/main/resources/rawfile/cylplaceholder/animations`, mini program `src/cyl-placeholder/animations`); React Native has none yet.
+
+| Flutter demo (`example/lib`) | What it shows | iOS (`Examples/Example-Scenarios`) | Android (`android/merged/example`) | HarmonyOS (`entry/.../pages`) | Mini program (`example/miniprogram`) | React Native |
+| --- | --- | --- | --- | --- | --- | --- |
+| `refresh_page.dart` | Classic header and footer, load more, no more data | `CYLEasyRefreshDemoViewController` | `EasyRefreshPage` | `RefreshEasyPage` | `refresh-demos/refresh-easy` | TODO |
+| `paging_page.dart` | `CYLRefreshPaging` with a header and a footer | `CYLEasyRefreshDemoViewController` (paging) | TODO (`CYLRefreshPaging.kt` exists) | TODO (`CYLRefreshPaging.ets` exists) | TODO (no paging model yet) | TODO |
+| `styles_page.dart` | Every refresh style on one list, chosen by chips | `CYLRefreshStylesDemoViewController` | `RefreshStylesPage` | `RefreshStylesPage` | `refresh-demos/refresh-styles` (no Bezier circle, no StoreHouse) | TODO |
+| `secondary_page.dart` | The second floor, opened by a far pull, a button or code | `CYLEasyRefreshDemoViewController` (second floor) | TODO (the component has `floor`) | TODO (`CYLRefreshComponent.ets` has it) | TODO (`cyl-refresh` has it) | TODO |
+| `error_placeholder_page.dart` | A failed first load shows the placeholder, a tap retries | `CYLScenarioDetailViewController` (error scenarios with retry) | `ScenariosPage` | `ScenarioDetailPage` | `pages/scenario-detail` | TODO |
+| `placeholder_stack_page.dart` | The placeholder stack, the HUD, and Play all, a speed slider and a loop switch | `CYLAnimationListViewController`, `CYLHUDViewController`, `CYLPlaybackControlsView` | `AnimationsPage`, `HudPage`, `PlaybackControls` | `AnimationsTab`, `HUDPage` | `pages/animations`, `pages/hud` | TODO |
+
+**More demo styles for the other platforms (each a `TODO`):**
+
+| Demo style | Why it is missing | iOS | Android | HarmonyOS | Mini program | React Native |
+| --- | --- | --- | --- | --- | --- | --- |
+| Cupertino header and footer | No styles-page entry although the component exists on iOS and Android; HarmonyOS has `CYLRefreshClassics.ets` styles to check | present in `CYLEasyRefreshDemoViewController` | TODO (`CYLRefreshCupertinoHeader` / `Footer` exist) | TODO (check the component) | TODO (check the component) | TODO |
+| Second floor, header and footer | See the table above | present | TODO | TODO | TODO | TODO |
+| Paging | See the table above | present | TODO | TODO | TODO | TODO |
+| Scroll modes (move, front, behind) | A page that shows the three modes side by side | TODO | TODO | TODO | TODO | TODO |
+| Horizontal trailer | Only the collection page has it | present (`CYLRefreshCollectionViewController`) | present (`RefreshCollectionPage`) | present (`RefreshCollectionPage`) | TODO | TODO |
+| Styles page completeness | The mini program's styles page lacks Bezier circle and StoreHouse | present | present | present | TODO | TODO |
+| A React Native example app | None exists; it needs the native container first (see the native bridge map) | n/a | n/a | n/a | n/a | TODO |
 
 
 ## Flutter example screenshots

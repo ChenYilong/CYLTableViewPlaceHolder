@@ -29,7 +29,7 @@ class _PlaceholderStackPageState extends State<PlaceholderStackPage> {
           style: CYLPlaceholderStyle.cloudOff,
           title: 'Something went wrong',
           message: 'Check your connection and try again',
-          animationFile: 'CYLPlaceholderError.json',
+          animationFile: 'CYLPlaceholderLoadFailed.json',
           animationLoops: _loops,
           animationSpeed: _speed,
         ),
