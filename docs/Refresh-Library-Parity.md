@@ -17,6 +17,7 @@
 | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) |
 | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) |
 | [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) | [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) |
+| [Progress scoreboard, all platforms (2026-11-24, evidence)](#progress-scoreboard-all-platforms-2026-11-24-evidence) | [Progress scoreboard, all platforms (2026-11-24, evidence)](#progress-scoreboard-all-platforms-2026-11-24-evidence) |
 | [Feature freeze and hand-off (2026-11-23, steps 6 and 7 of the advisor plan)](#feature-freeze-and-hand-off-2026-11-23-steps-6-and-7-of-the-advisor-plan) | [Feature freeze and hand-off (2026-11-23, steps 6 and 7 of the advisor plan)](#feature-freeze-and-hand-off-2026-11-23-steps-6-and-7-of-the-advisor-plan) |
 | [Flutter example screenshots](#flutter-example-screenshots) | [Flutter example screenshots](#flutter-example-screenshots) |
 | [flutter_easy_refresh 示例复刻](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) | [flutter_easy_refresh demo port](#flutter_easy_refresh-示例复刻--flutter_easy_refresh-demo-port) |
@@ -456,6 +457,24 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 **Next steps, in order:** (1) look at the CI of the current head before building more (iOS unit tests, the iOS Demo jobs, the Android workflow, the forced `43f94ad`, the new `:merged-example:testDebugUnitTest`); the bridge work sits on top of unbuilt iOS edits. (2) One complete Android path, Flutter → the native placeholder view: settle how a Flutter plugin's Android build gets `android/placeholder` (with the CYLTabBarController included build and JitPack), then the plugin's `android/` with a platform view factory and a method channel, the Dart side using `AndroidView` on Android and the current widget elsewhere, a mock-channel contract test, `flutter build apk --debug`; done = row 1 of the bridge map says "Android complete". (3) iOS entry points with the Android names, the two dictionary keys, regenerate `docs/iOS-API-Map.md`. (4) A timeboxed driven-mode spike on Android with a go / no-go (can `CYLRefreshComponent` run its phase machine without a `CYLRefreshLayout`?). (5) React Native after 2 to 4: the native container with Android `CYLRefreshLayout` as the parent, then the example app. (6) Freeze new pure Dart / TypeScript features. (7) Hand off what cannot be built here: the two HarmonyOS edits (DevEco), the `cyl-refresh` Stretch and Front property, the upstream request for named Rive inputs.
 
 **Process guards:** count per platform across the whole tree, without `head`, before writing a gap (two TODOs this round came from truncated searches); run `ios-api-map.py --check` after any public API change; never call something CI-green without having seen the run.
+
+## Progress scoreboard, all platforms (2026-11-24, evidence)
+
+**How to read it.** Replaces the 2026-11-23 table above (kept as history). A score is a judgement: 100 means every hand-off "Done when" item of the platform has evidence, a finished green CI run was seen, and the screenshots pass `scripts/check_screenshots.py`; nothing is 100 yet. **CI seen:** the `Android` workflow finished green on `7e3f328f`, `be57edeb` and `745173aa` (steps include the local Maven publish and the React Native library tests, hand-off #9 verified). The `iOS` workflow had finished green on `abb5bc3b` (run 45171150542, 19 jobs); later runs were still queued when this was written, so no later iOS result is claimed.
+
+| Area | Measured | Verified by | Score (judgement) | Open |
+| --- | --- | --- | --- | --- |
+| iOS core | API map 823 / 823 (`ios-api-map.py --check`) | 219 unit tests, 0 failures at pin `12ed11ff` (Mac session); run 45171150542 | 90 | Sheet for the 87 `ph-anim` originals (`check_screenshots.py` errors), one screenshot per scenario; a green iOS run on the current head |
+| Android core | API map 854 symbols, score 100 (`android-api-map.py --check`) | `:placeholder` 56, `:merged` 54 (48 before the footer ports `b87c5c20`), Android CI green | 92 | Footer ports done; a real pull on a device for the footer; `hapticFeedback` checks the call only |
+| HarmonyOS | not re-measured here | none new | 60 | DevEco build (another Windows session owns it); `animation` key never read |
+| Mini program | `npm test` 84 / 84 after syncing the copy to `12ed11ff` (`78709546`) | Stretch and Front header geometry seen in WeChat DevTools with an injected pull (`12cd27ba`) | 78 | A real finger pull not driven; Stretch / Front rows not in the demo |
+| Flutter | Dart 115 tests (2026-11-23) | Android: native placeholder, stack, refresh header and HUD seen on emulator-5556 | 72 | iOS half (Mac session, hand-off #10); native footers |
+| React Native | `node --test` 24 / 24; library Robolectric 9; example `tsc` clean | Native container Android: three pages of the example (refresh, paging, error placeholder) built (release APK) and seen on emulator-5556, sheet `react-native-android17-emulator5556-demo-pages-464f7bef-20261124-sheet.png` | 62 | Styles, secondary (second floor) and stack pages need library exports that do not exist; iOS app not built (Mac session) |
+| Native bridge map | not recounted | see Flutter and React Native rows | not scored | Recount the 8 rows before quoting a number |
+
+**Animated-Item-Migration:** its "93 / 100" is dated 2026-11-17 (upstream pin `57a527ef`) and the "done at 100" in `13c02db9` is the colour check task; neither is quoted here as a current score.
+
+**Decisions of 2026-11-24 (owner):** the CYLTabBarController CI pin of `abb5bc3b` stays as a temporary exception until PR #823 / #824 merge (Task-Log TODO); the last Flutter pure-Dart table row is not built (freeze).
 
 ## Feature freeze and hand-off (2026-11-23, steps 6 and 7 of the advisor plan)
 
