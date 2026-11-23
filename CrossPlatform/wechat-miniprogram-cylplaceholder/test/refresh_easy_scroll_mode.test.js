@@ -33,35 +33,36 @@ test('the page shows one tappable row per scroll mode, the current one marked, t
   assert.strictEqual(page.data.setup.header, 'normal')
   assert.strictEqual(page.data.setup.footer, 'back')
   const rows = page.data.rows
-  assert.strictEqual(rows.length, 2 + 30)
-  assert.deepStrictEqual(rows.slice(0, 2).map((r) => r.tappable), [true, true])
+  assert.strictEqual(rows.length, 4 + 30)
+  assert.deepStrictEqual(rows.slice(0, 4).map((r) => r.tappable), [true, true, true, true])
+  assert.deepStrictEqual(rows.slice(0, 4).map((r) => r.text.replace(/^✓ /, '')), ['Move', 'Stretch', 'Front', 'Behind'])
   assert.match(rows[0].text, /^✓ /, 'Move is the current mode')
-  assert.doesNotMatch(rows[1].text, /^✓ /)
-  assert.strictEqual(page.data.scrollBehind, false)
+  assert.deepStrictEqual(rows.slice(1, 4).map((r) => /^✓ /.test(r.text)), [false, false, false])
+  assert.strictEqual(page.data.scrollMode, 'move')
 })
 
 test('a tap on a mode row switches the header to that mode', () => {
   const page = instance(loadPage())
   page.onLoad({ method: 'easyScrollMode' })
-  page.onRow({ currentTarget: { dataset: { index: 1 } } })
-  assert.strictEqual(page.data.scrollBehind, true)
-  assert.match(page.data.rows[1].text, /^✓ /)
-  assert.doesNotMatch(page.data.rows[0].text, /^✓ /)
-  page.onRow({ currentTarget: { dataset: { index: 0 } } })
-  assert.strictEqual(page.data.scrollBehind, false)
+  for (const [index, mode] of [[1, 'stretch'], [2, 'front'], [3, 'behind'], [0, 'move']]) {
+    page.onRow({ currentTarget: { dataset: { index } } })
+    assert.strictEqual(page.data.scrollMode, mode)
+    assert.deepStrictEqual(page.data.rows.slice(0, 4).map((r) => /^✓ /.test(r.text)), [0, 1, 2, 3].map((i) => i === index))
+  }
   page.onRow({ currentTarget: { dataset: { index: 5 } } })
-  assert.strictEqual(page.data.scrollBehind, false, 'a test row changes nothing')
+  assert.strictEqual(page.data.scrollMode, 'move', 'a test row changes nothing')
 })
 
-test('the template passes the mode to cyl-refresh as behind', () => {
+test('the template passes the mode to cyl-refresh as scroll-mode, and behind no longer overrides it', () => {
   const wxml = fs.readFileSync(path.join(EXAMPLE, 'refresh-demos/refresh-easy/refresh-easy.wxml'), 'utf8')
-  assert.match(wxml, /behind="\{\{setup\.behind \|\| scrollBehind\}\}"/)
+  assert.match(wxml, /scroll-mode="\{\{scrollMode\}\}"/)
+  assert.match(wxml, /behind="\{\{setup\.behind \|\| false\}\}"/)
 })
 
 test('the strings exist in every language and the menu lists the page', () => {
   for (const language of LANGUAGES) {
     const text = fs.readFileSync(path.join(EXAMPLE, 'utils/strings', language + '.js'), 'utf8')
-    for (const key of ['CYLScenarioEasyScrollMode', 'CYLScenarioEasyScrollMove', 'CYLScenarioEasyScrollBehind', 'CYLScenarioEasyScrollSelected']) {
+    for (const key of ['CYLScenarioEasyScrollMode', 'CYLScenarioEasyScrollMove', 'CYLScenarioEasyScrollStretch', 'CYLScenarioEasyScrollFront', 'CYLScenarioEasyScrollBehind', 'CYLScenarioEasyScrollSelected']) {
       assert.match(text, new RegExp('"' + key + '": "[^"]+"'), language + ' ' + key)
     }
   }
