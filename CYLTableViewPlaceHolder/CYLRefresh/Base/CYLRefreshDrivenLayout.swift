@@ -65,6 +65,11 @@ open class CYLRefreshDrivenLayout: UIView {
     //      每次布局时重新定位，宿主会改变视图大小（Flutter 的刷新尾槽位随下拉变大）。
     open override func layoutSubviews() {
         super.layoutSubviews()
+        // [EN] The content is as tall as the view, so an automatic footer (it follows the content) also rests at the bottom edge,
+        //      as a back footer does, and a pull scrolls it into view instead of past the top.
+        // [CN] 内容与视图等高，自动刷新尾（跟随内容）也和回弹刷新尾一样停在底部边缘，上拉时滚入视野，而不是滚到顶部之外。
+        let contentSize = CGSize(width: bounds.width, height: bounds.height)
+        if drivenScrollView.contentSize != contentSize { drivenScrollView.contentSize = contentSize }
         footer?.scrollViewContentSizeDidChange(nil)
         applyDrivenOffset()
     }

@@ -244,14 +244,15 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
     }
 
     /// Non-transparent pixels of the container's render. [CN] 容器渲染结果中不透明的像素数。
-    private func drawnPixels(_ view: UIView) -> Int {
+    private func drawnPixels(_ view: UIView, rows: Int? = nil) -> Int {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         let image = UIGraphicsImageRenderer(size: view.bounds.size, format: format).image { view.layer.render(in: $0.cgContext) }
         guard let cg = image.cgImage, let data = cg.dataProvider?.data, let bytes = CFDataGetBytePtr(data) else { return 0 }
         let step = cg.bitsPerPixel / 8
         var count = 0
-        for index in stride(from: 0, to: CFDataGetLength(data) - 3, by: step) where bytes[index + 3] > 0 { count += 1 }
+        let limit = rows.map { min(CFDataGetLength(data), $0 * cg.bytesPerRow) } ?? CFDataGetLength(data)
+        for index in stride(from: 0, to: limit - 3, by: step) where bytes[index + 3] > 0 { count += 1 }
         return count
     }
 
@@ -269,6 +270,36 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
             XCTAssertTrue(host.component.isRefreshing, style.key)
             XCTAssertEqual(host.layout.frame.height, 100, accuracy: 0.5, "\(style.key): the held slot")
             XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style.key) draws while refreshing: layout=\(host.layout.frame) header=\(host.component.frame) alpha=\(host.component.alpha) hidden=\(host.component.isHidden) mask=\(String(describing: host.component.layer.mask))")
+            host.container.removeFromSuperview()
+        }
+    }
+
+    /// Every footer style in the Flutter slot: drawn while pulled up and while loading in the held slot (the Flutter example's
+    /// Delivery footer was blank while loading). [CN] 每种刷新尾在 Flutter 槽位中：上拉时与加载中（保持的槽位）都有绘制
+    /// （Flutter 示例中 Delivery 刷新尾加载时是空白）。
+    func testEveryFooterStyleDrawsMidPullAndWhileLoadingInTheHeldSlot() {
+        for style in CYLRefreshStyle.allCases {
+            // Dart sends no expandHeight: its slot is 100 points, the native open height is the style's own.
+            let host = slotHost(["style": style.key, "footer": true], height: 100)
+            // The Cupertino footer is an auto footer: it draws nothing until it loads (a system spinner, which a layer render
+            // does not capture), so its pixels are checked only while loading, by where the footer sits in the slot.
+            let isCupertino = style == .cupertino
+            drive(host, -50)
+            host.container.layoutIfNeeded()
+            host.component.layer.displayIfNeeded()
+            if !isCupertino { XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style.key) footer draws mid-pull") }
+            drive(host, -300)
+            XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
+            spin(0.8)
+            host.container.layoutIfNeeded()
+            XCTAssertTrue(host.component.isRefreshing, style.key)
+            let inSlot = host.container.convert(host.component.bounds, from: host.component).intersection(host.container.bounds)
+            XCTAssertGreaterThanOrEqual(inSlot.height, min(host.component.expandHeight, 100) - 1, "\(style.key) footer sits in the held slot: footer=\(host.container.convert(host.component.bounds, from: host.component)) container=\(host.container.bounds)")
+            if !isCupertino {
+                XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style.key) footer draws while loading")
+                // Count the pixels of the first rows only: a stretched style fills the whole slot with its background.
+                XCTAssertGreaterThan(drawnPixels(host.container, rows: 20), 0, "\(style.key) footer fills the top of its slot while loading")
+            }
             host.container.removeFromSuperview()
         }
     }
