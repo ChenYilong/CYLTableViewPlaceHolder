@@ -4,7 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.View
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
+import com.cyl.refresh.CYLRefreshFooter
+import com.cyl.refresh.CYLRefreshHeader
 import com.cyl.refresh.CYLRefreshNormalHeader
+import com.cyl.refresh.CYLRefreshStyle
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import com.cyl.refresh.layout.CYLRefreshLayout
@@ -13,7 +16,11 @@ import com.cyl.refresh.layout.CYLRefreshLayout
  * The native container a React Native scroll view sits in: a [CYLRefreshLayout] whose first child is the scroll view, with
  * the iOS-named header (`cyl_header`) and footer (`cyl_footer`) attached. The JS side passes `refreshing`, `enabled`,
  * `loadingMore`, `noMoreData` and `loadMoreEnabled` as props and gets [onRefresh] when the user pulls the header and
- * [onLoadMore] when the footer starts loading (docs/Refresh-Library-Parity.md, "Native bridge map").
+ * [onLoadMore] when the footer starts loading (docs/Refresh-Library-Parity.md, "Native bridge map"). `headerStyle` / `footerStyle` name a
+ * [CYLRefreshStyle] (`rive` also reads `headerRive` / `footerRive`: the `rive...` keys, `riveFile` first); they are applied together by
+ * [applyStyles] after a batch of props. Without a style the header is the classic [CYLRefreshNormalHeader] and the footer the auto
+ * [CYLRefreshAutoNormalFooter]; a style, `classic` too, makes the style's own header and footer (the classic back footer), as iOS does.
+ * `rive` without the optional `:merged-rive` module, a `riveFile` or a readable file is the classic style and one log line says why.
  */
 class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
     /**
@@ -36,8 +43,19 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
      */
     var onSecondaryClose: (() -> Unit)? = null
 
-    private val header = CYLRefreshNormalHeader(context)
-    private val footer = CYLRefreshAutoNormalFooter(context)
+    private var header: CYLRefreshHeader = CYLRefreshNormalHeader(context)
+    private var footer: CYLRefreshFooter = CYLRefreshAutoNormalFooter(context)
+    private var headerStyleKey: String? = null
+    private var footerStyleKey: String? = null
+    private var headerRive: Map<*, *>? = null
+    private var footerRive: Map<*, *>? = null
+    private var appliedHeaderStyle: Pair<String?, Map<*, *>?> = null to null
+    private var appliedFooterStyle: Pair<String?, Map<*, *>?> = null to null
+    private var loadMoreOn = false
+    private var loadsAfterNoMoreDataOn = false
+    private var secondaryTrigger = 0f
+    private var secondaryDimensionDp = 0f
+    private var secondaryCloseTrigger = 80f
     // The floor JavaScript asked to open or close runs its blocks later; they must not call the events back.
     private var openAskedByJs = false
     private var closeAskedByJs = false
@@ -50,20 +68,82 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
     private var loadAskedByJs = false
 
     init {
-        header.refreshingBlock = { if (askedByJs) askedByJs = false else onRefresh?.invoke() }
-        cyl_header = header
-        footer.refreshingBlock = { if (loadAskedByJs) loadAskedByJs = false else onLoadMore?.invoke() }
-        cyl_footer = footer
+        installHeader(header)
+        installFooter(footer)
+    }
+
+    private fun installHeader(new: CYLRefreshHeader) {
+        header = new
+        new.refreshingBlock = { if (askedByJs) askedByJs = false else onRefresh?.invoke() }
+        new.secondaryOpenedBlock = { if (openAskedByJs) openAskedByJs = false else onSecondaryOpen?.invoke() }
+        new.secondaryClosedBlock = { if (closeAskedByJs) closeAskedByJs = false else onSecondaryClose?.invoke() }
+        new.secondaryTriggerOffset = secondaryTrigger
+        new.secondaryDimension = secondaryDimensionDp
+        new.secondaryCloseTriggerOffset = secondaryCloseTrigger
+        new.secondaryView = floorChild
+        cyl_header = new
+    }
+
+    private fun installFooter(new: CYLRefreshFooter) {
+        footer = new
+        new.refreshingBlock = { if (loadAskedByJs) loadAskedByJs = false else onLoadMore?.invoke() }
+        new.loadsAfterNoMoreData = loadsAfterNoMoreDataOn
+        cyl_footer = new
         // Off until the `loadMoreEnabled` prop turns it on, so a container without a footer behaves as before.
-        setEnableLoadMore(false)
-        header.secondaryOpenedBlock = { if (openAskedByJs) openAskedByJs = false else onSecondaryOpen?.invoke() }
-        header.secondaryClosedBlock = { if (closeAskedByJs) closeAskedByJs = false else onSecondaryClose?.invoke() }
+        setEnableLoadMore(loadMoreOn)
+    }
+
+    /** The `headerStyle` prop: a [CYLRefreshStyle] key; null or an unknown name keeps the default header. Applied by [applyStyles]. */
+    fun setHeaderStyle(key: String?) {
+        headerStyleKey = key
+    }
+
+    /** The `footerStyle` prop, as [setHeaderStyle]. */
+    fun setFooterStyle(key: String?) {
+        footerStyleKey = key
+    }
+
+    /** The `headerRive` prop: the `rive...` keys of the `rive` header (a React Native object as a map). Applied by [applyStyles]. */
+    fun setHeaderRive(options: Map<*, *>?) {
+        headerRive = options
+    }
+
+    /** The `footerRive` prop, as [setHeaderRive]. */
+    fun setFooterRive(options: Map<*, *>?) {
+        footerRive = options
+    }
+
+    /**
+     * Makes the header and footer the style props name, once for a batch of props (the manager calls it after the update): a header or
+     * footer is only replaced when its style key or Rive parameters changed since the last call.
+     */
+    fun applyStyles() {
+        val headerStyle = headerStyleKey?.let { CYLRefreshStyle.fromKey(it) }
+        val headerState = headerStyle?.key to (if (headerStyle == CYLRefreshStyle.Rive) headerRive else null)
+        if (headerState != appliedHeaderStyle) {
+            appliedHeaderStyle = headerState
+            header.secondaryView = null
+            installHeader(headerStyle?.newHeader(context, headerRive) ?: CYLRefreshNormalHeader(context))
+        }
+        val footerStyle = footerStyleKey?.let { CYLRefreshStyle.fromKey(it) }
+        val footerState = footerStyle?.key to (if (footerStyle == CYLRefreshStyle.Rive) footerRive else null)
+        if (footerState != appliedFooterStyle) {
+            appliedFooterStyle = footerState
+            installFooter(footerStyle?.newFooter(context, footerRive) ?: CYLRefreshAutoNormalFooter(context))
+        }
+    }
+
+    /** The `loadsAfterNoMoreData` prop (default false): a pull past the end loads again after "no more data". */
+    fun setLoadsAfterNoMoreData(enabled: Boolean) {
+        loadsAfterNoMoreDataOn = enabled
+        footer.loadsAfterNoMoreData = enabled
     }
 
     /**
      * The `secondaryTriggerOffset` prop, in dp: the pull past which a release opens the second floor; 0 (default) is none.
      */
     fun setSecondaryTriggerOffset(offset: Float) {
+        secondaryTrigger = offset
         header.secondaryTriggerOffset = offset
     }
 
@@ -71,6 +151,7 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
      * The `secondaryDimension` prop, in dp: the open extent of the floor; 0 is the container's height.
      */
     fun setSecondaryDimension(dimension: Float) {
+        secondaryDimensionDp = dimension
         header.secondaryDimension = dimension
     }
 
@@ -78,6 +159,7 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
      * The `secondaryCloseTriggerOffset` prop, in dp (default 80).
      */
     fun setSecondaryCloseTriggerOffset(offset: Float) {
+        secondaryCloseTrigger = offset
         header.secondaryCloseTriggerOffset = offset
     }
 
@@ -171,6 +253,7 @@ class CYLRefreshContainerView(context: Context) : CYLRefreshLayout(context) {
      * Whether loading more is on (default off).
      */
     fun setLoadMoreEnabled(enabled: Boolean) {
+        loadMoreOn = enabled
         setEnableLoadMore(enabled)
     }
 

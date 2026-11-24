@@ -17,10 +17,10 @@ class CYLRefreshStyleTest {
     private val activity: Activity = Robolectric.buildActivity(Activity::class.java).setup().get()
 
     @Test
-    fun theEightKeysMapToTheirStylesAndUnknownOrMissingKeysToNull() {
-        val keys = listOf("classic", "cupertino", "material", "bezierRadar", "bezierCircle", "delivery", "phoenix", "taurus")
+    fun theNineKeysMapToTheirStylesAndUnknownOrMissingKeysToNull() {
+        val keys = listOf("classic", "cupertino", "material", "bezierRadar", "bezierCircle", "delivery", "phoenix", "taurus", "rive")
         assertEquals(keys, keys.map { CYLRefreshStyle.fromKey(it)!!.key })
-        assertEquals(8, CYLRefreshStyle.values().size)
+        assertEquals(9, CYLRefreshStyle.values().size)
         listOf(null, "", "Classic", "bezier_radar", "storeHouse", 3, true).forEach { assertNull("$it", CYLRefreshStyle.fromKey(it)) }
     }
 

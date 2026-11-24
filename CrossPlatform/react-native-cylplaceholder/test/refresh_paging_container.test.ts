@@ -33,7 +33,7 @@ test('the props mirror the header and footer: refreshing, loadingMore, noMoreDat
   const detach = attachCYLRefreshPagingHost(paging);
   assert.deepEqual(
     { ...cylRefreshPagingContainerProps(paging), onRefresh: undefined, onLoadMore: undefined },
-    { refreshing: false, enabled: true, loadMoreEnabled: true, loadingMore: false, noMoreData: false, onRefresh: undefined, onLoadMore: undefined }
+    { refreshing: false, enabled: true, loadMoreEnabled: true, loadingMore: false, noMoreData: false, loadsAfterNoMoreData: false, onRefresh: undefined, onLoadMore: undefined }
   );
   paging.start();
   assert.equal(cylRefreshPagingContainerProps(paging).refreshing, true);
@@ -49,6 +49,13 @@ test('the props mirror the header and footer: refreshing, loadingMore, noMoreDat
   assert.equal(props.enabled, false);
   assert.equal(props.loadMoreEnabled, false);
   detach();
+});
+
+test('loadsAfterNoMoreData of the footer is a prop of the container, false without a footer', () => {
+  const { paging, footer } = pager();
+  assert.equal(cylRefreshPagingContainerProps(paging).loadsAfterNoMoreData, false);
+  footer!.loadsAfterNoMoreData = true;
+  assert.equal(cylRefreshPagingContainerProps(paging).loadsAfterNoMoreData, true);
 });
 
 test('a native pull and a native load more call the pager through its header and footer, and the last page sets noMoreData', () => {

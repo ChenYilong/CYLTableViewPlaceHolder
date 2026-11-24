@@ -15,7 +15,8 @@ import 'refresh_types.dart';
 /// - Creation parameters: `style` (see [style]; one per view, a header and a footer are separate views), `footer` (true: the native
 ///   footer, pulled up), `loadsAfterNoMoreData` and, for the drawn styles only, `foregroundColor` and `backgroundColor` (ARGB integers,
 ///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]), `scrollMode` (always: the `name` of
-///   [CYLRefreshScrollMode], `move`, `front`, `behind` or `locator`; front and behind pin the native indicator at its open height at the far
+///   [CYLRefreshScrollMode], `move`, `front`, `behind` or `locator`, and `stretch` for a [CYLRefreshComponent.stretchIndicator] in `move` mode: Dart's stretch is that
+///   flag, so the enum has no `stretch` value; front and behind pin the native indicator at its open height at the far
 ///   edge of the slot; an unknown or missing value is `move` natively) and `expandHeight` (always: [CYLRefreshComponent.expandHeight] in
 ///   logical pixels, the native indicator's open height).
 ///   Sizing rule on both platforms: the slot is never shorter than the native indicator while refreshing; the indicator keeps its
@@ -30,7 +31,7 @@ import 'refresh_types.dart';
 ///   `secondaryOpen` and `secondaryClosing`), "onRefreshing" and the informational "onSecondaryOpened" / "onSecondaryClosed".
 class CYLNativeRefreshIndicator extends StatefulWidget {
   /// Creates a native indicator that follows [component], drawn in [style].
-  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
+  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.riveParameters, this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
 
   /// Whether [component] may use the native indicator: the native refresh switch is on (Android and iOS) and no Flutter-only
   /// [CYLRefreshComponent.builder] is set. The style classes add their own checks for the text, icon and image options.
@@ -43,9 +44,14 @@ class CYLNativeRefreshIndicator extends StatefulWidget {
   final CYLRefreshComponent component;
 
   /// The creation parameter `style`: one of `classic`, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`,
-  /// `phoenix` and `taurus` (the styles of this package's Dart API). The native side falls back to `classic` and logs one line for
+  /// `phoenix`, `taurus` and `rive` (the styles of this package's Dart API). The native side falls back to `classic` and logs one line for
   /// an unknown value.
   final String style;
+
+  /// The `rive...` creation parameters of `style: 'rive'` (see `CYLRefreshRiveStyle.nativeParameters`), spread into the creation parameters
+  /// after `style`; null for every other style. `riveFile` is required natively: without it, without the optional Rive runtime or with
+  /// an unreadable file the native view is classic and logs one line.
+  final Map<String, Object?>? riveParameters;
 
   /// The creation parameter `foregroundColor` (the drawing's color, an ARGB integer), or null to leave the native style's own. Only the
   /// drawn styles (`bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`) pass it, from their Dart `foregroundColor`.
@@ -79,6 +85,13 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
 
   bool get _isFooter => !widget.component.isHeader;
 
+  /// The creation parameter `scrollMode`: the name of [CYLRefreshScrollMode], except that a component with [CYLRefreshComponent.stretchIndicator]
+  /// in the default `move` mode sends `stretch` (the native hosts size the view as tall as the pull for it, the same rule Dart's slot uses).
+  String get _scrollModeKey {
+    final c = widget.component;
+    return c.scrollMode == CYLRefreshScrollMode.move && c.stretchIndicator ? 'stretch' : c.scrollMode.name;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -107,7 +120,9 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       final arguments = call.arguments as Map<Object?, Object?>?;
       if (call.method == 'onPhase') widget.onPhase?.call(arguments!['phase'] as String, arguments['oldPhase'] as String);
       if (call.method == 'onRefreshing') widget.onRefreshing?.call();
-      // 'onSecondaryOpened' and 'onSecondaryClosed' are informational (Dart owns the floor): nothing to do, nothing sent back.
+      // 'onSecondaryOpened' and 'onSecondaryClosed' are informational (Dart owns the floor and does not wait for them: it replaces this
+      // view by the floor's widget right after 'openSecondary', so the event may arrive after the view is gone, or never): nothing to do,
+      // nothing sent back.
     });
     _channel = channel;
     _sync();
@@ -174,10 +189,11 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       // A footer asks for the native footer (a pull up); loadsAfterNoMoreData lets a pull load again after "no more data".
       creationParams: <String, Object?>{
         'style': widget.style,
+        ...?widget.riveParameters,
         'footer': _isFooter,
         // The slot rule (docs/Refresh-Library-Parity.md): both hosts size the slot from the scroll mode (front and behind pin the
         // indicator at its open height) and open the indicator at Dart's expandHeight (logical pixels), so no gap is left at the edge.
-        'scrollMode': widget.component.scrollMode.name,
+        'scrollMode': _scrollModeKey,
         'expandHeight': widget.component.expandHeight,
         // The second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): sent only with a floor, so the native view
         // arms and opens it; its content stays a Flutter widget.

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cylplaceholder/flutter_cylplaceholder.dart';
 
+import 'rive_page.dart' show riveStyle;
+
+/// The Bow file of flutter_easy_refresh, an app asset on every platform (Flutter assets are shared: `flutter_assets/` inside the Android APK and
+/// the iOS app), found by its Flutter asset key by the native `rive` style.
+const _riveBowAsset = 'assets/animations/CYLScenarioExampleRefreshBow.riv';
+
 /// One refresh style: a name and a way to make its header and footer.
 class _Style {
   const _Style(this.name, this.header, this.footer);
@@ -30,6 +36,9 @@ class _StylesPageState extends State<StylesPage> {
     _Style('Delivery', (r) => CYLRefreshDeliveryHeader(refreshingHandler: r), (l) => CYLRefreshDeliveryFooter(refreshingHandler: l)),
     _Style('Phoenix', (r) => CYLRefreshPhoenixHeader(refreshingHandler: r), (l) => CYLRefreshPhoenixFooter(refreshingHandler: l)),
     _Style('Taurus', (r) => CYLRefreshTaurusHeader(refreshingHandler: r), (l) => CYLRefreshTaurusFooter(refreshingHandler: l)),
+    // The native `rive` style (docs/Refresh-Library-Parity.md): needs the Rive runtime in the app (iOS `Rive` subspec, Android `:merged-rive`); without it the
+    // native view is classic and logs one line.
+    _Style('Rive', (r) => CYLRefreshRiveNativeHeader(style: riveStyle('Bow', _riveBowAsset), refreshingHandler: r), (l) => CYLRefreshRiveNativeFooter(style: riveStyle('Bow', _riveBowAsset), refreshingHandler: l)),
   ];
 
   late CYLRefreshHeader _header;
