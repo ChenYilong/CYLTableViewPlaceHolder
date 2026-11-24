@@ -399,6 +399,13 @@ final class CYLPlaceholderItemLabel: UILabel {
     }
 }
 
+// [EN] `url` without its fragment: the animation file itself. [CN] 去掉 fragment 的 `url`，即动画文件本身。
+private func CYLPlaceholderAnimationFileURL(_ url: URL) -> URL {
+    guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true) else { return url }
+    components.fragment = nil
+    return components.url ?? url
+}
+
 #if CYL_ANIMATION_ENGINE_AVAILABLE
 
 // MARK: - Factories registered with registerAnimationFactory(_:forFileExtension:)
@@ -417,13 +424,6 @@ private func CYLPlaceholderAnimationOptionsFromURL(_ url: URL) -> [String: Any] 
         options[name] = value
     }
     return options
-}
-
-// [EN] `url` without its fragment: the animation file itself. [CN] 去掉 fragment 的 `url`，即动画文件本身。
-private func CYLPlaceholderAnimationFileURL(_ url: URL) -> URL {
-    guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true) else { return url }
-    components.fragment = nil
-    return components.url ?? url
 }
 
 // [EN] Plays a factory's `CYLPlaceholderAnimationPlayer` view through the engine's player protocol. It answers only
