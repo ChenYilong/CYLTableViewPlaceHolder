@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.SurfaceTexture
+import android.util.Log
 import android.view.View
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.core.Direction
@@ -72,6 +73,15 @@ class CYLRefreshRiveStyle(
 
     /** Trigger fired before the next pull, after the file was reset (`restartTrigger`). */
     var restartTrigger: String? = null
+
+    /**
+     * Longest time in seconds the header stays open after the refresh ends so that the end of the animation ([finishTrigger] or the [loadingNumber]
+     * finished value) can play; ignored when the style has neither. Default 1.5 (`finishTimeout`).
+     */
+    var finishTimeout: Double = 1.5
+
+    /** Whether the style has an end part to play: a [finishTrigger] or a [loadingNumber]. */
+    val playsFinish: Boolean get() = finishTrigger != null || loadingNumber != null
 
     /** Boolean input that is true from the release until the header is idle again (`loadingBoolean`). */
     var loadingBoolean: String? = null
@@ -151,6 +161,12 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
         override fun onTouchEvent(event: android.view.MotionEvent): Boolean = false
     }
 
+    /** Milliseconds the layout keeps the header open after the refresh ended (set by the header: the finish rule). */
+    var finishHold: (Boolean) -> Int = { 0 }
+
+    // The layout waits this long before it collapses the header and the header goes idle (which resets the state machine).
+    override fun onFinish(refreshLayout: com.cyl.refresh.layout.api.RefreshLayout, success: Boolean): Int = finishHold(success)
+
     init {
         addView(rive)
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
@@ -201,6 +217,7 @@ class CYLRefreshRiveHeader private constructor(
 
     init {
         headerView.surfaceChanged = ::redraw
+        headerView.finishHold = { success -> (finishingDurationWithSuccess(success) * 1000).toInt().coerceAtLeast(0) }
     }
 
     /**
@@ -228,13 +245,21 @@ class CYLRefreshRiveHeader private constructor(
     override fun onScrollingWithOffset(offset: Int, percent: Float, drag: Boolean) {
         if (rivePlaysRefresh) return
         val dp = offset / density
+        if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "rive pull offset=${offset}px ${dp}dp input=${riveStyle.pullValue(dp)} view=${headerView.width}x${headerView.height}@${loc(headerView)} rive=${rive.width}x${rive.height}@${loc(rive)}")
         riveStyle.pullInput?.let { number(it, riveStyle.pullValue(dp)) }
         val pull = riveStyle.pullAnimation
         if (pull != null && riveStyle.idleAnimation == null) scrub(pull, (dp / max(1f, riveStyle.triggerOffset)).coerceIn(0f, 1f))
     }
 
+    private fun loc(view: View): String = IntArray(2).also { view.getLocationOnScreen(it) }.let { "${it[0]},${it[1]}" }
+
+    /** The finish rule: [CYLRefreshRiveStyle.finishTimeout] (at least the host's `finishDuration`) when the style has an end part, else `finishDuration`. */
+    override fun finishingDurationWithSuccess(success: Boolean): Double =
+        if (riveStyle.playsFinish) max(riveStyle.finishTimeout, finishDuration) else finishDuration
+
     override fun onStatus(oldStatus: CYLRefreshPhase, status: CYLRefreshPhase) {
         val style = riveStyle
+        if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "rive status $oldStatus -> $status playsRefresh=$rivePlaysRefresh")
         when (status) {
             CYLRefreshPhase.Releasing, CYLRefreshPhase.Refreshing -> {
                 if (rivePlaysRefresh) return
@@ -337,6 +362,9 @@ class CYLRefreshRiveHeader private constructor(
     }
 
     companion object {
+        /** The permanent diagnostic log tag (`adb shell setprop log.tag.CYLRefreshView DEBUG`). */
+        private const val TAG = "CYLRefreshView"
+
         @Volatile private var riveInitialized = false
 
         // rive-android needs Rive.init before its first view; its androidx.startup initializer is not in every app

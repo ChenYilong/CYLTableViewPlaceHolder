@@ -52,6 +52,12 @@ class CYLRefreshRiveOptions private constructor(private val values: Map<*, *>) {
     /** `riveRestartTrigger`. */
     val restartTrigger: String? = string("riveRestartTrigger")
 
+    /**
+     * `riveFinishTimeout` in seconds (the finish rule, docs/Refresh-Library-Parity.md): the longest the header stays at its refreshing height after the
+     * refresh ends so that the end of the animation (`riveFinishTrigger` or the `riveLoadingNumber` finished value) can play (default 1.5; 0 or less keeps it).
+     */
+    val finishTimeout: Double = number("riveFinishTimeout", 1.5).let { if (it > 0) it else 1.5 }
+
     /** `riveLoadingBoolean`. */
     val loadingBoolean: String? = string("riveLoadingBoolean")
 
