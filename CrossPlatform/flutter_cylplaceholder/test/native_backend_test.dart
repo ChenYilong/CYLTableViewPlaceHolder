@@ -445,7 +445,7 @@ void main() {
     });
 
     // Its own test: a second pump in one testWidgets keeps the first platform view's creation parameters.
-    testWidgets('a drawn style without colors sends the Dart style's own colors', variant: _bothPlatforms, (tester) async {
+    testWidgets('a drawn style without colors sends the Dart style own colors', variant: _bothPlatforms, (tester) async {
       final defaults = CYLRefreshTaurusHeader();
       addTearDown(defaults.dispose);
       await pumpHeader(tester, defaults, indicator: (c) => Builder(builder: c.buildIndicator));
