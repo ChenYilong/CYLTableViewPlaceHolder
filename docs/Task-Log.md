@@ -1700,4 +1700,98 @@ The iOS native side takes `style: 'rive'` plus the `rive...` creation parameters
 3. `native_backend_test.dart`: a creation-parameter test that `style: 'rive'` and the keys reach `creationParams`.
 4. The example `styles_page.dart` (not Windows-owned) then gets a `Rive` chip using that class.
 
-Seen on the Mac: with exactly that change applied locally and not committed (reverted afterwards), see the entry below.
+The exact diff applied locally on the Mac (not committed, reverted afterwards; `native_refresh.dart` plus a `Rive` chip with example-local header and footer classes in `example/lib/styles_page.dart`), as a starting point:
+
+```diff
+diff --git a/CrossPlatform/flutter_cylplaceholder/example/lib/styles_page.dart b/CrossPlatform/flutter_cylplaceholder/example/lib/styles_page.dart
+index 4a172d0d..700e0936 100644
+--- a/CrossPlatform/flutter_cylplaceholder/example/lib/styles_page.dart
++++ b/CrossPlatform/flutter_cylplaceholder/example/lib/styles_page.dart
+@@ -1,6 +1,38 @@
+ import 'package:flutter/material.dart';
+ import 'package:flutter_cylplaceholder/flutter_cylplaceholder.dart';
+ 
++/// The native `rive` style (docs/Refresh-Library-Parity.md, "The rive style: creation parameters"): the Bow file of flutter_easy_refresh,
++/// driven by its state machine's input names.
++const _riveBow = <String, Object?>{
++  'riveFile': 'CYLScenarioExampleRefreshBow',
++  'riveStateMachine': 'numberSimulation',
++  'riveTriggerOffset': 200.0,
++  'riveFitsWidth': true,
++  'rivePullInput': 'pull',
++  'rivePullInputMinimum': 10.0,
++  'riveReleaseTrigger': 'advance',
++  'riveFinishTrigger': 'advance',
++  'riveRestartTrigger': 'restart',
++};
++
++class _NativeRiveHeader extends CYLRefreshHeader {
++  _NativeRiveHeader({super.refreshingHandler}) : super(expandHeight: 200) {
++    stretchIndicator = true;
++  }
++
++  @override
++  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator(component: this, style: 'rive', riveParameters: _riveBow);
++}
++
++class _NativeRiveFooter extends CYLRefreshBackFooter {
++  _NativeRiveFooter({super.refreshingHandler}) : super(expandHeight: 200) {
++    stretchIndicator = true;
++  }
++
++  @override
++  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator(component: this, style: 'rive', riveParameters: _riveBow);
++}
++
+ /// One refresh style: a name and a way to make its header and footer.
+ class _Style {
+   const _Style(this.name, this.header, this.footer);
+@@ -30,6 +62,7 @@ class _StylesPageState extends State<StylesPage> {
+     _Style('Delivery', (r) => CYLRefreshDeliveryHeader(refreshingHandler: r), (l) => CYLRefreshDeliveryFooter(refreshingHandler: l)),
+     _Style('Phoenix', (r) => CYLRefreshPhoenixHeader(refreshingHandler: r), (l) => CYLRefreshPhoenixFooter(refreshingHandler: l)),
+     _Style('Taurus', (r) => CYLRefreshTaurusHeader(refreshingHandler: r), (l) => CYLRefreshTaurusFooter(refreshingHandler: l)),
++    _Style('Rive', (r) => _NativeRiveHeader(refreshingHandler: r), (l) => _NativeRiveFooter(refreshingHandler: l)),
+   ];
+ 
+   late CYLRefreshHeader _header;
+diff --git a/CrossPlatform/flutter_cylplaceholder/lib/src/refresh/native_refresh.dart b/CrossPlatform/flutter_cylplaceholder/lib/src/refresh/native_refresh.dart
+index bfbac226..c91b427a 100644
+--- a/CrossPlatform/flutter_cylplaceholder/lib/src/refresh/native_refresh.dart
++++ b/CrossPlatform/flutter_cylplaceholder/lib/src/refresh/native_refresh.dart
+@@ -28,7 +28,7 @@ import 'refresh_types.dart';
+ ///   `secondaryOpen` and `secondaryClosing`), "onRefreshing" and the informational "onSecondaryOpened" / "onSecondaryClosed".
+ class CYLNativeRefreshIndicator extends StatefulWidget {
+   /// Creates a native indicator that follows [component], drawn in [style].
+-  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
++  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.riveParameters, this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
+ 
+   /// Whether [component] may use the native indicator: the native refresh switch is on (Android and iOS) and no Flutter-only
+   /// [CYLRefreshComponent.builder] is set. The style classes add their own checks for the text, icon and image options.
+@@ -45,6 +45,9 @@ class CYLNativeRefreshIndicator extends StatefulWidget {
+   /// an unknown value.
+   final String style;
+ 
++  /// The `rive...` creation parameters of `style: 'rive'` (docs/Refresh-Library-Parity.md, "The rive style: creation parameters"), or null.
++  final Map<String, Object?>? riveParameters;
++
+   /// The creation parameter `foregroundColor` (the drawing's color, an ARGB integer), or null to leave the native style's own. Only the
+   /// drawn styles (`bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`) pass it, from their Dart `foregroundColor`.
+   final Color? foregroundColor;
+@@ -172,6 +175,7 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
+       // A footer asks for the native footer (a pull up); loadsAfterNoMoreData lets a pull load again after "no more data".
+       creationParams: <String, Object?>{
+         'style': widget.style,
++        ...?widget.riveParameters,
+         'footer': _isFooter,
+         // The behind scroll mode keeps the indicator at the far edge while the content moves over it: the native slot anchors there.
+         if (widget.component.scrollMode == CYLRefreshScrollMode.behind) 'behind': true,
+```
+
+### 已完成（批次已运行）：iOS 原生 `rive` 刷新样式 / Done (batch run): the native `rive` refresh style on iOS (2026-11-24, Mac, worktree `/tmp/xpa/ph-rive2`)
+
+- **Commits (branch `feat/android-refresh-port-followup`):** `f165bd64` (decision logged first), `f2cb31e4` (feature, tests, contract doc), then the evidence commit.
+- **Names:** style key `rive`; iOS `CYLRefreshStyle.rive`, `newHeader(riveOptions:)` / `newFooter(riveOptions:)`, `CYLRefreshStyleFactory.header(style:options:onFallback:)` / `footer(...)`, `CYLRefreshStyleFactory.riveBuilder`, `CYLRefreshRiveOptions`, `CYLRefreshRiveBuilding`, `CYLRefreshRiveBuilder` (Rive subspec); Flutter creation parameters `style: 'rive'` + `riveFile` ... (all keys in the Parity doc, "The rive style: creation parameters"); React Native `headerStyle` / `footerStyle` `'rive'` with `headerRive` / `footerRive`. Fallback to classic with one log line `CYLRefresh: <reason>, using classic`.
+- **Counts:** `DESTINATION=... ADAFD92B ruby Tests/run-tests.rb` **342 tests, 0 failures** (327 expected, 15 new in `Tests/CYLRefreshRiveStyleTests.swift`; the two existing factory tests now say 9 styles; the new tests use a fake `CYLRefreshRiveBuilder` because RiveRuntime is not in the test target, so they were written together with the code and "failing first" holds only as compile failure before the API existed); `npm test` 33 pass; `flutter test` 188 pass (no Dart change committed); `flutter analyze` no issues (also with the local Dart patch); `check_doc_comments.py` 1291 / 1291; `ios-api-map.py --check` 829 / 829; `check_screenshots.py` passes.
+- **Seen on ADAFD92B (Flutter example, `flutter build ios --simulator --debug` with the Rive subspec in the example Podfile, RiveRuntime.framework embedded, local uncommitted Dart patch above):** the Rive chip with a real axe pull draws the Bow file in the native view at a partial and a deeper pull (the bow draws further with the pull: state machine input `pull`), sheet `docs/assets/flutter-ios27.2-iphone18pro-cylplaceholderscreens-rive-header-f2cb31e4-20261124-sheet.png`. The simulator needed one reboot first (axe swipes and a Mach error -308 'server died'; after `simctl shutdown` / `boot` of ADAFD92B the classic pull worked again).
+- **Not seen:** the refreshing frame after release (timing missed twice), the Rive footer, the missing-file / no-runtime fallback on a device (covered by unit tests only), React Native `headerStyle="rive"` on the simulator (the example page, `headerRive` props, Podfile subspec and the .riv resource in the Xcode project are written but the RN app was not built or run), Android, a device, CI.
+- **Self-score of the iOS half of row 6: 93** (all 9 headers/footers by key, contract written, 15 tests, Flutter header seen with a real pull; minus 7: Rive refreshing frame and footer not seen, RN not run, Flutter needs the Windows Dart change, no device, CI not seen).
