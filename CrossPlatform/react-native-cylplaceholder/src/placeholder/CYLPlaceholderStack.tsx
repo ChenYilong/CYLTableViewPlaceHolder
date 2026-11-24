@@ -12,7 +12,11 @@ export interface CYLPlaceholderStackProps {
   backgroundAction?: string;
   /** Called with the `action` name of a tapped component. */
   onAction?: (action: string) => void;
-  /** Grows: every animation plays again from the start (the `restartAnimation()` of the native stack, as a prop). */
+  /**
+   * Grows: every animation plays again from the start (the `restartAnimation()` of the native stack, as a prop). The rule is the same on
+   * Android and iOS: the animations replay only when the token GROWS once the stack exists; the first value is a baseline, and an equal
+   * or smaller value (a reset to 0) never replays.
+   */
   restartToken?: number;
   style?: StyleProp<ViewStyle>;
 }
@@ -25,7 +29,7 @@ export interface CYLPlaceholderStackHandle {
 
 const NATIVE_NAME = 'CYLPlaceholderStack';
 
-/** Whether the app was built with the native stack (the Android half of this package; the iOS half is a TODO). */
+/** Whether the app was built with the native stack (the Android half and the iOS half of this package: `CYLPlaceholderStackManager` on both). */
 export function isCYLPlaceholderStackAvailable(): boolean {
   return UIManager.getViewManagerConfig?.(NATIVE_NAME) != null;
 }

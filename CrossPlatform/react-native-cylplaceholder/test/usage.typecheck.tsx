@@ -15,6 +15,25 @@ import {
 const header = new CYLRefreshClassicHeader({ refreshingHandler: () => header.endRefreshing() });
 const footer = new CYLRefreshClassicAutoFooter({ refreshingHandler: () => footer.endRefreshing() });
 
+// The second floor (Android and iOS, 2026-11-24): controlled like `refreshing`; its content is the child with nativeID "cyl.refresh.secondary".
+export function SecondFloorExample({ open, setOpen }: { open: boolean; setOpen: (value: boolean) => void }) {
+  return (
+    <CYLRefreshContainer
+      refreshing={false}
+      onRefresh={() => {}}
+      secondaryTriggerOffset={120}
+      secondaryDimension={0}
+      secondaryCloseTriggerOffset={80}
+      secondaryOpen={open}
+      onSecondaryOpen={() => setOpen(true)}
+      onSecondaryClose={() => setOpen(false)}
+    >
+      <FlatList data={[1, 2, 3]} keyExtractor={(n) => String(n)} renderItem={({ item }) => <Text>{item}</Text>} />
+      <Text nativeID="cyl.refresh.secondary">Second floor</Text>
+    </CYLRefreshContainer>
+  );
+}
+
 export function ScrollViewExample() {
   return <CYLRefresh header={header}>{(props) => <ScrollView {...props}><Text>row</Text></ScrollView>}</CYLRefresh>;
 }
