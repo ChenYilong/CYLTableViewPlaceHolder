@@ -108,4 +108,6 @@ export const CYLPlaceholderStringsZhHans: Record<string, string> = {
   "scenario_notification_permission_denied_title": "通知已关闭",
   "scenario_notification_permission_denied_hint": "请在设置中开启通知，才能及时收到消息。",
   "status_network_unavailable": "当前网络不可用，请检查你的网络设置",
+  "resource_missing": "缺少资源：%s（%s）",
+  "resources_missing": "缺少资源：%1$s，另有 %2$d 项",
 };

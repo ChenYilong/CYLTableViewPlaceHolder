@@ -16,6 +16,7 @@ import { CYLPlaceholderStatusView, CYLPlaceholderStatusViewModel } from './CYLPl
 import { CYLPlaceholderListController } from './CYLPlaceholderList';
 import { CYLPlaceholderNetworkMonitor, CYLPlaceholderNetworkStatus } from './CYLPlaceholderNetworkMonitor';
 import { CYLPlaceholderConfiguration, CYLPlaceholderConfigurationErrorHandler } from './CYLPlaceholderConfiguration';
+import { CYLPlaceholderResourceReporter } from './CYLPlaceholderResourceReporter';
 
 /** What a page shows; the values combine with | (iOS `CYLPlaceholderStatusDisplay`, NS_OPTIONS). */
 export class CYLPlaceholderStatusDisplay {
@@ -48,6 +49,17 @@ export class CYLPlaceholderStatusController {
   private networkObserver: (monitor: CYLPlaceholderNetworkMonitor) => void = (m: CYLPlaceholderNetworkMonitor) => {
     this.networkChanged(m);
   };
+  private showsMissing: boolean = false;
+  private reporter: CYLPlaceholderResourceReporter | null = null;
+  private resourceObserver: (reporter: CYLPlaceholderResourceReporter) => void =
+    (r: CYLPlaceholderResourceReporter) => {
+      this.applyMissingResources();
+    };
+  /** Whether the bar's text is the missing resources' text now, and the text it had before. */
+  private showingResourceText: boolean = false;
+  private ownText: string | null = null;
+  /** Whether the missing resources opened the bar (they close it again; a bar the page opened stays). */
+  private openedByResources: boolean = false;
 
   /** The network monitor cyl_showsStatusViewWhenOffline follows; the shared one by default (tests set their own). */
   set networkMonitor(monitor: CYLPlaceholderNetworkMonitor) {
@@ -67,7 +79,44 @@ export class CYLPlaceholderStatusController {
   }
 
   set cyl_statusView(value: CYLPlaceholderStatusViewModel | null) {
+    this.showingResourceText = false;
     this.statusViewValue = value !== null ? value : CYLPlaceholderStatusViewModel.initWithFrame();
+    this.applyMissingResources();
+  }
+
+  /** The reporter cyl_showsMissingResources follows; the shared one by default (tests set their own). */
+  set resourceReporter(reporter: CYLPlaceholderResourceReporter) {
+    const was = this.showsMissing;
+    this.cyl_showsMissingResources = false;
+    this.reporter = reporter;
+    this.cyl_showsMissingResources = was;
+  }
+
+  get resourceReporter(): CYLPlaceholderResourceReporter {
+    return this.reporter !== null ? this.reporter : CYLPlaceholderResourceReporter.sharedReporter;
+  }
+
+  /**
+   * true names the animation files of this page that are missing in the bar (iOS `cyl_showsMissingResources`, docs/
+   * Status-Bar.md): `Missing resource: x (file not found)`, or `Missing resources: x +N more` for several. The
+   * network text wins while cyl_showsStatusViewWhenOffline is on and the network is not reachable; the bar is opened
+   * when it was not showing and closed again when nothing is missing. false (the default) shows nothing.
+   */
+  get cyl_showsMissingResources(): boolean {
+    return this.showsMissing;
+  }
+
+  set cyl_showsMissingResources(value: boolean) {
+    if (value === this.showsMissing) {
+      return;
+    }
+    this.showsMissing = value;
+    if (value) {
+      this.resourceReporter.addObserver(this.resourceObserver);
+    } else {
+      this.resourceReporter.removeObserver(this.resourceObserver);
+    }
+    this.applyMissingResources();
   }
 
   /** The list whose placeholder cyl_statusDisplay shows or hides (iOS `cyl_placeholderScrollView`). */
@@ -188,6 +237,10 @@ export class CYLPlaceholderStatusController {
     }
   }
 
+  private get isOffline(): boolean {
+    return this.showsWhenOffline && this.networkMonitor.networkStatus === CYLPlaceholderNetworkStatus.NotReachable;
+  }
+
   private networkChanged(monitor: CYLPlaceholderNetworkMonitor): void {
     if (!this.showsWhenOffline) {
       return;
@@ -197,6 +250,38 @@ export class CYLPlaceholderStatusController {
       (this.displayValue & ~CYLPlaceholderStatusDisplay.StatusBar);
     if (display !== this.displayValue) {
       this.cyl_setStatusDisplay(display, true);
+    }
+    this.applyMissingResources();
+  }
+
+  /**
+   * Shows the missing resources' text in the bar, or gives the bar its own text back: the network text wins, a bar
+   * the page did not open is opened by the resources and closed by them again.
+   */
+  private applyMissingResources(): void {
+    const text = this.showsMissing ? this.resourceReporter.text : null;
+    const offline = this.isOffline;
+    if (text !== null && !offline) {
+      if (!this.showingResourceText) {
+        this.ownText = this.statusViewValue.text;
+        this.showingResourceText = true;
+      }
+      this.statusViewValue.text = text;
+      if ((this.displayValue & CYLPlaceholderStatusDisplay.StatusBar) === 0) {
+        this.openedByResources = true;
+        this.cyl_setStatusDisplay(this.displayValue | CYLPlaceholderStatusDisplay.StatusBar, true);
+      }
+      return;
+    }
+    if (this.showingResourceText) {
+      this.statusViewValue.text = this.ownText;
+      this.showingResourceText = false;
+    }
+    if (this.openedByResources && !offline && text === null) {
+      this.openedByResources = false;
+      if ((this.displayValue & CYLPlaceholderStatusDisplay.StatusBar) !== 0) {
+        this.cyl_setStatusDisplay(this.displayValue & ~CYLPlaceholderStatusDisplay.StatusBar, true);
+      }
     }
   }
 }

@@ -255,6 +255,9 @@ module.exports = {
   "CYLScenarioPlaybackPlayAll": "모두 재생",
   "CYLScenarioPlaybackSpeed": "속도",
   "CYLScenarioPlaybackLoop": "반복",
+  "CYLScenarioTitleMissingResource": "애니메이션 파일 누락",
+  "CYLScenarioMissingResourceAdd": "누락된 파일 추가",
+  "CYLScenarioMissingResourceFix": "파일 불러오기",
   "CYLRefreshHeaderIdleText": "🍬 당기기(사용자 지정)",
   "CYLRefreshHeaderPullingText": "🍬 놓기(사용자 지정)",
   "CYLRefreshHeaderRefreshingText": "🍬 불러오는 중(사용자 지정)"

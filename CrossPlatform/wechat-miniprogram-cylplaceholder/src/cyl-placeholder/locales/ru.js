@@ -107,5 +107,7 @@ module.exports = {
   "scenario_bluetooth_permission_denied_hint": "Чтобы подключаться к устройствам поблизости, разрешите Bluetooth в настройках.",
   "scenario_notification_permission_denied_title": "Уведомления выключены",
   "scenario_notification_permission_denied_hint": "Чтобы вовремя получать сообщения, включите уведомления в настройках.",
-  "status_network_unavailable": "Сеть недоступна. Проверьте подключение"
+  "status_network_unavailable": "Сеть недоступна. Проверьте подключение",
+  "resource_missing": "Отсутствует ресурс: %s (%s)",
+  "resources_missing": "Отсутствуют ресурсы: %1$s и ещё %2$d"
 }

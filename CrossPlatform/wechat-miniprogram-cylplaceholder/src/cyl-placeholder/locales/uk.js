@@ -107,5 +107,7 @@ module.exports = {
   "scenario_bluetooth_permission_denied_hint": "Щоб під'єднуватися до пристроїв поблизу, дозвольте Bluetooth у налаштуваннях.",
   "scenario_notification_permission_denied_title": "Сповіщення вимкнено",
   "scenario_notification_permission_denied_hint": "Щоб вчасно отримувати повідомлення, увімкніть сповіщення в налаштуваннях.",
-  "status_network_unavailable": "Мережа недоступна. Перевірте підключення"
+  "status_network_unavailable": "Мережа недоступна. Перевірте підключення",
+  "resource_missing": "Відсутній ресурс: %s (%s)",
+  "resources_missing": "Відсутні ресурси: %1$s та ще %2$d"
 }

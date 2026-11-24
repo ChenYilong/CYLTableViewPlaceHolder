@@ -84,6 +84,11 @@ export {
   CYLPlaceholderStatusPage
 } from './src/main/ets/CYLPlaceholderStatus';
 export {
+  CYLPlaceholderResourceReporter,
+  CYLPlaceholderResourceMissingHandler,
+  CYLPlaceholderResourceObserver
+} from './src/main/ets/CYLPlaceholderResourceReporter';
+export {
   CYLPlaceholderHUD,
   CYLPlaceholderHUDStyle,
   CYLPlaceholderHUDMaskType,

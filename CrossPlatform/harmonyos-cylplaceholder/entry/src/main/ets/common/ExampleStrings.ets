@@ -260,6 +260,9 @@ const ExampleStringsEn: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 Pull down, custom table",
   "CYLRefreshHeaderPullingText": "🍬 Let go, custom table",
   "CYLRefreshHeaderRefreshingText": "🍬 Loading, custom table",
+  "CYLScenarioTitleMissingResource": "Missing animation file",
+  "CYLScenarioMissingResourceAdd": "Add a missing file",
+  "CYLScenarioMissingResourceFix": "Load a file",
 };
 
 const ExampleStringsZhHans: Record<string, string> = {
@@ -522,6 +525,9 @@ const ExampleStringsZhHans: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 下拉（自定义文字表）",
   "CYLRefreshHeaderPullingText": "🍬 松开（自定义文字表）",
   "CYLRefreshHeaderRefreshingText": "🍬 加载中（自定义文字表）",
+  "CYLScenarioTitleMissingResource": "动画文件缺失",
+  "CYLScenarioMissingResourceAdd": "再添加一个缺失文件",
+  "CYLScenarioMissingResourceFix": "加载文件",
 };
 
 const ExampleStringsZhHant: Record<string, string> = {
@@ -784,6 +790,9 @@ const ExampleStringsZhHant: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 下拉（自訂文字表）",
   "CYLRefreshHeaderPullingText": "🍬 放開（自訂文字表）",
   "CYLRefreshHeaderRefreshingText": "🍬 載入中（自訂文字表）",
+  "CYLScenarioTitleMissingResource": "動畫檔案缺失",
+  "CYLScenarioMissingResourceAdd": "再新增一個缺失檔案",
+  "CYLScenarioMissingResourceFix": "載入檔案",
 };
 
 const ExampleStringsJa: Record<string, string> = {
@@ -1046,6 +1055,9 @@ const ExampleStringsJa: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 引っ張って（カスタム）",
   "CYLRefreshHeaderPullingText": "🍬 離して（カスタム）",
   "CYLRefreshHeaderRefreshingText": "🍬 読み込み中（カスタム）",
+  "CYLScenarioTitleMissingResource": "アニメーションファイルなし",
+  "CYLScenarioMissingResourceAdd": "欠けたファイルを追加",
+  "CYLScenarioMissingResourceFix": "ファイルを読み込む",
 };
 
 const ExampleStringsKo: Record<string, string> = {
@@ -1308,6 +1320,9 @@ const ExampleStringsKo: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 당기기(사용자 지정)",
   "CYLRefreshHeaderPullingText": "🍬 놓기(사용자 지정)",
   "CYLRefreshHeaderRefreshingText": "🍬 불러오는 중(사용자 지정)",
+  "CYLScenarioTitleMissingResource": "애니메이션 파일 누락",
+  "CYLScenarioMissingResourceAdd": "누락된 파일 추가",
+  "CYLScenarioMissingResourceFix": "파일 불러오기",
 };
 
 const ExampleStringsRu: Record<string, string> = {
@@ -1570,6 +1585,9 @@ const ExampleStringsRu: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 Потяните (своя таблица)",
   "CYLRefreshHeaderPullingText": "🍬 Отпустите (своя таблица)",
   "CYLRefreshHeaderRefreshingText": "🍬 Загрузка (своя таблица)",
+  "CYLScenarioTitleMissingResource": "Нет файла анимации",
+  "CYLScenarioMissingResourceAdd": "Добавить ещё один файл",
+  "CYLScenarioMissingResourceFix": "Загрузить файл",
 };
 
 const ExampleStringsUk: Record<string, string> = {
@@ -1832,6 +1850,9 @@ const ExampleStringsUk: Record<string, string> = {
   "CYLRefreshHeaderIdleText": "🍬 Потягніть (власна таблиця)",
   "CYLRefreshHeaderPullingText": "🍬 Відпустіть (власна таблиця)",
   "CYLRefreshHeaderRefreshingText": "🍬 Завантаження (власна таблиця)",
+  "CYLScenarioTitleMissingResource": "Немає файлу анімації",
+  "CYLScenarioMissingResourceAdd": "Додати ще один файл",
+  "CYLScenarioMissingResourceFix": "Завантажити файл",
 };
 
 /** Language code -> the example texts in that language. */

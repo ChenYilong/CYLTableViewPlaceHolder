@@ -255,6 +255,9 @@ module.exports = {
   "CYLScenarioPlaybackPlayAll": "すべて再生",
   "CYLScenarioPlaybackSpeed": "速度",
   "CYLScenarioPlaybackLoop": "ループ",
+  "CYLScenarioTitleMissingResource": "アニメーションファイルなし",
+  "CYLScenarioMissingResourceAdd": "欠けたファイルを追加",
+  "CYLScenarioMissingResourceFix": "ファイルを読み込む",
   "CYLRefreshHeaderIdleText": "🍬 引っ張って（カスタム）",
   "CYLRefreshHeaderPullingText": "🍬 離して（カスタム）",
   "CYLRefreshHeaderRefreshingText": "🍬 読み込み中（カスタム）"
