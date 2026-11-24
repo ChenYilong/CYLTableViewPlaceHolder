@@ -1296,5 +1296,25 @@
  "CYLPlaceholderResourceMonitor.attach": {
   "ios": "`UIViewController` `cyl_showsMissingResources`",
   "note": "Android hooks one view's `onResourceMissing`; iOS turns the bar on per view controller"
+ },
+ "CYLRefreshRiveDrawnTable.isEmpty": {
+  "ios": "`[[Double]]` `isEmpty` (no table: fraction 1, no clip)",
+  "note": "iOS keeps the raw `[[Double]]`"
+ },
+ "CYLRefreshRiveDrawnTable.pairs": {
+  "ios": "`CYLRefreshRiveStyle.drawnTable` (`[[Double]]`)"
+ },
+ "CYLRefreshRiveDrawnTable.fraction": {
+  "ios": "`CYLRefreshRiveDrawnTable` `fraction(forInput:table:)`"
+ },
+ "CYLRefreshRiveDrawnTable.EMPTY": {
+  "ios": "`CYLRefreshRiveStyle.drawnTable` default `[]`"
+ },
+ "CYLRefreshRiveDrawnTable.parse": {
+  "ios": "`CYLRefreshRiveOptions.drawnTable` (`riveDrawnTable`)",
+  "note": "iOS ignores malformed pairs with one log line"
+ },
+ "CYLRefreshRiveDrawnTable.of": {
+  "ios": "`CYLRefreshRiveStyle.drawnTable` (set in code)"
  }
 }
