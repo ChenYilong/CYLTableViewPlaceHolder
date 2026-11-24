@@ -31,7 +31,7 @@ need (iOS subspec, Android dependency), as upstream documents.
 ## CYLRefreshPaging on the native container
 
 `CYLRefreshPagingContainer` puts a `CYLRefreshPaging` on the native `CYLRefreshContainer` (Android: header and load-more footer;
-the iOS container has no footer yet). The pager keeps loading and ending pages through its JavaScript header and footer; the
+iOS: header and the back footer). The pager keeps loading and ending pages through its JavaScript header and footer; the
 container only shows their state:
 
 | Container prop | From the pager |
@@ -79,4 +79,4 @@ defaults apply; the Dart-only look fields are a TODO). Tests: 9 Robolectric test
 ## Not covered (TODO)
 
 The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog and status views are not in
-this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half is not built or run (written statically). MIT, see `LICENSE`.
+this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half (`ios/`, header, back footer, `example/ios`) builds and runs on the iOS 27.2 simulator with real gestures (docs/Refresh-Library-Parity.md, row 5); the iOS placeholder stack and HUD are not bridged (TODO). MIT, see `LICENSE`.
