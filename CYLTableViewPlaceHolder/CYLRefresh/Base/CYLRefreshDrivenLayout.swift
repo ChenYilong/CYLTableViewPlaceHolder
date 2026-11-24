@@ -75,7 +75,7 @@ open class CYLRefreshDrivenLayout: UIView {
      */
     @objc open var header: CYLRefreshHeader? {
         get { drivenScrollView.cyl_header }
-        set { drivenScrollView.cyl_header = newValue }
+        set { drivenScrollView.cyl_header = newValue; forwardSecondaryBlocks() }
     }
 
     /**
@@ -84,7 +84,7 @@ open class CYLRefreshDrivenLayout: UIView {
      */
     @objc open var footer: CYLRefreshFooter? {
         get { drivenScrollView.cyl_footer }
-        set { drivenScrollView.cyl_footer = newValue }
+        set { drivenScrollView.cyl_footer = newValue; forwardSecondaryBlocks() }
     }
 
     // [EN] Whether the last fed offset pulled the footer (negative), for the release. [CN] 最近一次输入的偏移是否在上拉刷新尾（负数），供抬起时使用。
@@ -128,6 +128,13 @@ open class CYLRefreshDrivenLayout: UIView {
     func applyDrivenOffset() {
         var pulled = -drivenOffset
         if let footer = footer, footer.isNoMoreData { pulled = max(pulled, footer.cyl_h) }
+        // [EN] An open second floor holds the content scrolled by the floor's extent (a header floor above the content, a
+        //      footer floor below it), whatever pull is fed: the floor's own opening animation ends there.
+        // [CN] 打开的二楼让内容保持滚动二楼的高度（刷新头的二楼在内容上方，刷新尾的二楼在内容下方），无论输入的拉动是多少：
+        //      二楼自己的打开动画也停在那里。
+        if let side = secondaryHolder, side.open, side.phase != .secondaryClosing {
+            pulled = side.header ? min(pulled, -secondaryExtent) : max(pulled, secondaryExtent)
+        }
         drivenScrollView.contentOffset = CGPoint(x: 0, y: pulled)
     }
 
@@ -144,5 +151,92 @@ open class CYLRefreshDrivenLayout: UIView {
         header?.scrollViewContentOffsetDidChange(nil)
         footer?.scrollViewContentOffsetDidChange(nil)
         if footerPulled { (footer as? CYLRefreshAutoFooter)?.cyl_drivenReleased() }
+    }
+
+    // MARK: - Second floor
+
+    // [EN] The component that holds the second floor: the header, else a back footer (the only footer with one). `header`
+    //      says which. [CN] 持有二楼的组件：刷新头，否则是回弹刷新尾（唯一有二楼的刷新尾）；`header` 表示是哪一个。
+    private var secondaryHolder: (open: Bool, phase: CYLRefreshPhase, header: Bool)? {
+        if let header = header { return (header.isSecondaryOpen, header.phase, true) }
+        if let footer = footer as? CYLRefreshBackFooter { return (footer.isSecondaryOpen, footer.phase, false) }
+        return nil
+    }
+
+    // [EN] The open extent of the floor: its dimension, else this view's height (the host sizes the view to the floor). [CN] 二楼打开后的高度：
+    //      其 dimension，否则为本视图高度（宿主把视图设为二楼大小）。
+    private var secondaryExtent: CGFloat {
+        let dimension = header?.secondaryDimension ?? (footer as? CYLRefreshBackFooter)?.secondaryDimension ?? 0
+        return dimension > 0 ? dimension : bounds.height
+    }
+
+    /**
+     * [EN] Turns the second floor on for the attached header (or back footer): pulling `triggerOffset` points (and releasing)
+     *      opens it instead of refreshing; `triggerOffset` 0 turns it off. `dimension` is its open extent (0: this view's
+     *      height) and `closeTriggerOffset` how far pushing back closes it (the native default stays when 0). Call it after
+     *      setting `header` / `footer`. The floor's content is the host's (`secondaryView` of the header is not used here:
+     *      Flutter draws it in Dart). Android: `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset`.
+     * [CN] 为挂上的刷新头（或回弹刷新尾）开启二楼：拉动 `triggerOffset` 点后松手即打开二楼而不是刷新；`triggerOffset` 为 0 表示关闭。
+     *      `dimension` 为打开后的高度（0：本视图高度），`closeTriggerOffset` 为推回多远即关闭（为 0 时保持原生默认值）。
+     *      请在设置 `header` / `footer` 之后调用。二楼内容归宿主所有（此处不使用刷新头的 `secondaryView`：Flutter 在 Dart 里绘制）。
+     *      对应 Android 的 `secondaryTriggerOffset`、`secondaryDimension`、`secondaryCloseTriggerOffset`。
+     */
+    @objc(configureSecondaryWithTriggerOffset:dimension:closeTriggerOffset:)
+    open func configureSecondary(triggerOffset: CGFloat, dimension: CGFloat = 0, closeTriggerOffset: CGFloat = 0) {
+        if let header = header {
+            header.secondaryTriggerOffset = max(0, triggerOffset)
+            header.secondaryDimension = max(0, dimension)
+            if closeTriggerOffset > 0 { header.secondaryCloseTriggerOffset = closeTriggerOffset }
+        } else if let footer = footer as? CYLRefreshBackFooter {
+            footer.secondaryTriggerOffset = max(0, triggerOffset)
+            footer.secondaryDimension = max(0, dimension)
+            if closeTriggerOffset > 0 { footer.secondaryCloseTriggerOffset = closeTriggerOffset }
+        }
+    }
+
+    /**
+     * [EN] YES while the second floor is open. Android: `floor`. [CN] 二楼打开时为 YES。对应 Android 的 `floor`。
+     */
+    @objc open var isSecondaryOpen: Bool { secondaryHolder?.open == true }
+
+    /**
+     * [EN] Opens the second floor; nothing while it is open or the component is refreshing. [CN] 打开二楼；已打开或正在刷新时不做任何事。
+     */
+    @objc open func openSecondary() {
+        if let header = header { header.openSecondary() } else { (footer as? CYLRefreshBackFooter)?.openSecondary() }
+        applyDrivenOffset()
+    }
+
+    /**
+     * [EN] Closes the second floor; nothing unless it is open. [CN] 关闭二楼；未打开时不做任何事。
+     */
+    @objc open func closeSecondary() {
+        if let header = header { header.closeSecondary() } else { (footer as? CYLRefreshBackFooter)?.closeSecondary() }
+    }
+
+    /**
+     * [EN] Called after the second floor opened. [CN] 二楼打开后调用。
+     */
+    @objc open var secondaryOpenedBlock: (() -> Void)? {
+        didSet { forwardSecondaryBlocks() }
+    }
+
+    /**
+     * [EN] Called after the second floor closed. [CN] 二楼关闭后调用。
+     */
+    @objc open var secondaryClosedBlock: (() -> Void)? {
+        didSet { forwardSecondaryBlocks() }
+    }
+
+    // [EN] Hands the two blocks to the attached component; the blocks are read when the floor finishes, so the layout's
+    //      current blocks are used. Set again after `header` / `footer` changes. [CN] 把两个 block 交给挂上的组件；
+    //      二楼完成时才读取，所以使用布局当前的 block。`header` / `footer` 变化后需再次设置。
+    private func forwardSecondaryBlocks() {
+        let opened: CYLRefreshComponentAction = { [weak self] in self?.secondaryOpenedBlock?() }
+        let closed: CYLRefreshComponentAction = { [weak self] in self?.secondaryClosedBlock?() }
+        header?.secondaryOpenedBlock = opened
+        header?.secondaryClosedBlock = closed
+        (footer as? CYLRefreshBackFooter)?.secondaryOpenedBlock = opened
+        (footer as? CYLRefreshBackFooter)?.secondaryClosedBlock = closed
     }
 }
