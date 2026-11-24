@@ -101,19 +101,22 @@ try cyl_applyStatusConfiguration(contentsOf: url)
 
 | 中文 | English |
 | --- | --- |
-| 动画资源（.pag / .riv / Lottie 路径）缺失时，红条显示缺了哪一个。各平台共用的约定：本地化键 `CYLPlaceholderResourceMissing`，回调名 `onResourceMissing(resource, reason)`；`resource` 是调用方给出的名称或路径，`reason` 是简短的英文原因（`file not found`、`unreadable`、`no runtime`，不翻译）；同一资源只显示一次；页面消失或该资源之后加载成功时清除。 | When an animation resource (a .pag / .riv / Lottie path) is missing, the red bar names which one. The contract shared by every platform: localization key `CYLPlaceholderResourceMissing`, callback `onResourceMissing(resource, reason)`; `resource` is the name or path as the caller gave it, `reason` a short English word (`file not found`, `unreadable`, `no runtime`; not translated); a resource shows once; the entry is cleared when the page goes away or the resource later loads. |
+| 动画资源（.pag / .riv / Lottie 路径）缺失时，红条显示缺了哪一个。各平台共用的约定：回调名 `onResourceMissing(resource, reason)`；`resource` 缩短为路径的最后一段（`asset:Folder/home.pag` 显示为 `home.pag`），使核心与引擎的报告合并为一条；`reason` 是简短的英文原因（不翻译）：`file not found`、`unreadable`。`no runtime` 属于引擎：没有运行时而退回静态图片是预期行为，核心不为它显示红条。每个页面一条红条：一个资源用 `CYLPlaceholderResourceMissing`，多个资源用 `CYLPlaceholderResourcesMissing`（第一个资源加“另有 N 项”）。同一资源只报告一次；页面消失或该资源之后加载成功时清除。网络离线时，离线文字优先；网络恢复后红条显示资源文字。 | When an animation resource (a .pag / .riv / Lottie path) is missing, the red bar names which one. The contract shared by every platform: callback `onResourceMissing(resource, reason)`; `resource` is shortened to the last path segment (`asset:Folder/home.pag` shows as `home.pag`) so the core and the engine dedupe to one entry; `reason` is a short English word (not translated): `file not found`, `unreadable`. `no runtime` belongs to the engine: falling back to a static image without the runtime is intended, so the core shows no bar for it. One bar per page: one resource reads with `CYLPlaceholderResourceMissing`, several with `CYLPlaceholderResourcesMissing` (the first resource plus "N more"). A resource is reported once; the entry is cleared when the page goes away or the resource later loads. While the network is offline, the offline text wins; the resource text returns with the network. |
+| iOS 接口：`CYLPlaceholderResourceReporter.shared`（`report(resource:reason:source:)`、`resolve(resource:source:)`、`removeSource(_:)`、`reset()`、`missingResourceNames`、`text(visibleIn:)`、`onResourceMissing`）；`CYLPlaceholderView.onResourceMissing`；`UIViewController.cyl_showsMissingResources`（默认 NO）。`CYLPlaceholderView` 在解析动画路径时检测文件（`file not found`、`unreadable`），Rive 刷新头 / 刷新尾在文件导致退回经典样式时同样报告。引擎（CYLTabBarController `12ed11ff`）还没有 `onResourceMissing`，所以由核心检测；以后引擎的回调只需调用 `report`。视图被释放时其条目清除；没有来源视图的条目（刷新头）用 `resolve` 或 `reset` 清除。网络离线（`cyl_showsStatusViewWhenOffline`）时离线文字优先，网络恢复后显示资源文字，红条自己的文字在没有缺失资源时恢复。演示：Example-Scenarios“交互流程 → 状态条 → 动画文件缺失”。 | iOS API: `CYLPlaceholderResourceReporter.shared` (`report(resource:reason:source:)`, `resolve(resource:source:)`, `removeSource(_:)`, `reset()`, `missingResourceNames`, `text(visibleIn:)`, `onResourceMissing`); `CYLPlaceholderView.onResourceMissing`; `UIViewController.cyl_showsMissingResources` (NO by default). `CYLPlaceholderView` checks the file where it resolves the animation path (`file not found`, `unreadable`); the Rive refresh header and footer report too when the file is the reason for the classic fallback. The engine (CYLTabBarController `12ed11ff`) has no `onResourceMissing` yet, so the core detects it; a later engine callback only has to call `report`. A view's entries go when the view is released; entries without a source view (the refresh header) go with `resolve` or `reset`. While the network is offline (`cyl_showsStatusViewWhenOffline`) the offline text wins and the resource text returns with the network; the bar's own text comes back when nothing is missing. Demo: Example-Scenarios, "Flows → Status bar → Missing animation file". |
 
-Text of `CYLPlaceholderResourceMissing` (the first `%@` is the resource, the second the reason), for the core tables of every platform:
+![Missing resource bar on iOS](assets/ios-27.2-iphone18pro-sim-ph-missing-resource-bar-sheet-47918a9b-20261125-sheet.png)
 
-| 语言 / Language | Text |
-| --- | --- |
-| en | `Missing resource: %@ (%@)` |
-| zh-Hans | `缺少资源：%@（%@）` |
-| zh-Hant | `缺少資源：%@（%@）` |
-| ja | `リソースが見つかりません：%@（%@）` |
-| ko | `리소스 누락: %@ (%@)` |
-| ru | `Отсутствует ресурс: %@ (%@)` |
-| uk | `Відсутній ресурс: %@ (%@)` |
+Texts of the two keys, for the core tables of every platform (`CYLPlaceholderResourceMissing`: first `%@` the resource, second the reason; `CYLPlaceholderResourcesMissing`: `%1$@` the first resource, `%2$ld` the number of the others):
+
+| 语言 / Language | `CYLPlaceholderResourceMissing` | `CYLPlaceholderResourcesMissing` |
+| --- | --- | --- |
+| en | `Missing resource: %@ (%@)` | `Missing resources: %1$@ +%2$ld more` |
+| zh-Hans | `缺少资源：%@（%@）` | `缺少资源：%1$@，另有 %2$ld 项` |
+| zh-Hant | `缺少資源：%@（%@）` | `缺少資源：%1$@，另有 %2$ld 項` |
+| ja | `リソースが見つかりません：%@（%@）` | `リソースが見つかりません：%1$@ ほか%2$ld件` |
+| ko | `리소스 누락: %@ (%@)` | `리소스 누락: %1$@ 외 %2$ld개` |
+| ru | `Отсутствует ресурс: %@ (%@)` | `Отсутствуют ресурсы: %1$@ и ещё %2$ld` |
+| uk | `Відсутній ресурс: %@ (%@)` | `Відсутні ресурси: %1$@ та ще %2$ld` |
 
 ## 资源缺失监视（Android） / Missing resource monitor (Android)
 

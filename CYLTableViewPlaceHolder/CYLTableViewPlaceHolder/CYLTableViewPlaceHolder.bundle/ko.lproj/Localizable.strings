@@ -110,3 +110,5 @@
 
 /* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
 "CYLPlaceholderStatusNetworkUnavailable" = "네트워크를 사용할 수 없습니다. 네트워크 설정을 확인하세요";
+"CYLPlaceholderResourceMissing" = "리소스 누락: %@ (%@)";
+"CYLPlaceholderResourcesMissing" = "리소스 누락: %1$@ 외 %2$ld개";

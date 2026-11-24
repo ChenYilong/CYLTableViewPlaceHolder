@@ -40,6 +40,10 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
     private var networkObserver: NSObjectProtocol?
     private var contentSizeObserver: NSObjectProtocol?
     private var storedStatusView: CYLPlaceholderStatusView?
+    // [EN] The bar's own text while it shows the missing resources. [CN] 状态条显示缺失资源时，保存它自己的文字。
+    private var savedText: String?
+    private var showsResourceText = false
+    private var resourceObserver: NSObjectProtocol?
 
     init(viewController: UIViewController) {
         self.viewController = viewController
@@ -55,6 +59,7 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
     deinit {
         if let observer = networkObserver { NotificationCenter.default.removeObserver(observer) }
         if let observer = contentSizeObserver { NotificationCenter.default.removeObserver(observer) }
+        if let observer = resourceObserver { NotificationCenter.default.removeObserver(observer) }
     }
 
     var statusView: CYLPlaceholderStatusView? {
@@ -65,6 +70,7 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
         set {
             if storedStatusView === newValue { return }
             let showing = storedStatusView?.superview != nil
+            showsResourceText = false
             detachBar()
             storedStatusView = newValue
             if showing { apply(animated: false) }
@@ -92,8 +98,55 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
         return display
     }
 
+    // MARK: - Missing resources
+
+    var showsMissingResources = false {
+        didSet {
+            if oldValue == showsMissingResources { return }
+            if showsMissingResources {
+                resourceObserver = NotificationCenter.default.addObserver(
+                    forName: CYLPlaceholderResourceReporter.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+                    self?.apply(animated: true)
+                }
+            } else if let observer = resourceObserver {
+                NotificationCenter.default.removeObserver(observer)
+                resourceObserver = nil
+            }
+            apply(animated: false)
+        }
+    }
+
+    // [EN] The text of the missing resources of this page; nil when off or none. [CN] 本页缺失资源的文字；关闭或没有时为 nil。
+    private var missingResourceText: String? {
+        guard showsMissingResources, let controller = viewController, controller.isViewLoaded else { return nil }
+        return CYLPlaceholderResourceReporter.shared.text(visibleIn: controller.view)
+    }
+
+    // [EN] The offline text wins while the network is out; the resource text returns with the network. [CN] 断网时离线文字优先，
+    //      网络恢复后显示资源文字。
+    private var isOfflineBarShowing: Bool {
+        showsWhenOffline && CYLPlaceholderNetworkMonitor.shared.networkStatus == .notReachable
+    }
+
+    private func syncBarText(_ resourceText: String?) {
+        guard let bar = storedStatusView ?? (resourceText != nil ? statusView : nil) else { return }
+        if let text = resourceText, !isOfflineBarShowing {
+            if !showsResourceText {
+                savedText = bar.text
+                showsResourceText = true
+            }
+            if bar.text != text { bar.text = text }
+        } else if showsResourceText {
+            bar.text = savedText
+            showsResourceText = false
+        }
+    }
+
     func apply(animated: Bool) {
-        let display = effectiveDisplay
+        let resourceText = missingResourceText
+        syncBarText(resourceText)
+        var display = effectiveDisplay
+        if resourceText != nil { display.insert(.statusBar) }
         placeholderScrollView?.cyl_placeholderHidden = !display.contains(.placeholder)
         let showBar = display.contains(.statusBar) && (viewController?.isViewLoaded ?? false)
         if showBar {
@@ -109,13 +162,14 @@ private final class CYLPlaceholderStatusPresenter: NSObject {
             if animated {
                 removeInset()
                 UIView.animate(withDuration: 0.25, animations: { bar.alpha = 0 }, completion: { _ in
-                    if !self.effectiveDisplay.contains(.statusBar) { self.detachBar() }
+                    if !self.effectiveDisplay.contains(.statusBar) && self.missingResourceText == nil { self.detachBar() }
                 })
             } else {
                 detachBar()
             }
         }
         // [EN] VoiceOver hears the bar when it appears. [CN] 状态条出现时告知 VoiceOver。
+        if showBar { updateInset() }
         if showBar && UIAccessibility.isVoiceOverRunning, let text = statusView?.text, !text.isEmpty {
             UIAccessibility.post(notification: .announcement, argument: text)
         }
@@ -272,6 +326,17 @@ extension UIViewController {
     @objc public var cyl_showsStatusViewWhenOffline: Bool {
         get { cyl_statusPresenter.showsWhenOffline }
         set { cyl_statusPresenter.showsWhenOffline = newValue }
+    }
+
+    /**
+     * [EN] YES: the red bar names the animation resources of this page that are missing (`CYLPlaceholderResourceReporter`,
+     *      docs/Status-Bar.md): `Missing resource: x (file not found)`, or `Missing resources: x +N more`. The bar's own text
+     *      comes back when nothing is missing; while the network is offline (`cyl_showsStatusViewWhenOffline`) the offline
+     *      text wins. NO (the default) shows nothing. [CN] YES：红条显示本页缺失的动画资源。
+     */
+    @objc public var cyl_showsMissingResources: Bool {
+        get { cyl_statusPresenter.showsMissingResources }
+        set { cyl_statusPresenter.showsMissingResources = newValue }
     }
 
     /**
