@@ -27,6 +27,9 @@ import kotlin.math.min
  * rive-android. The styles are flutter_easy_refresh's Rive style packages (MIT).
  */
 
+/** Milliseconds before the finish hold ends at which the Rive view stops drawing (a hidden TextureView shows its last surface for a few frames). */
+private const val HIDE_LEAD_MILLIS = 500
+
 /**
  * How a Rive file is driven by the pull, the refresh and its end (iOS `CYLRefreshRiveStyle`). Every name is optional;
  * unset ones are skipped.
@@ -172,8 +175,24 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
     /** Milliseconds the layout keeps the header open after the refresh ended (set by the header: the finish rule). */
     var finishHold: (Boolean) -> Int = { 0 }
 
+    private val hideForCollapse = Runnable { collapseHidden = true }
+
     // The layout waits this long before it collapses the header and the header goes idle (which resets the state machine).
-    override fun onFinish(refreshLayout: com.cyl.refresh.layout.api.RefreshLayout, success: Boolean): Int = finishHold(success)
+    // The Rive view is hidden a little BEFORE the hold ends: a TextureView keeps showing its last surface for a few frames
+    // after it is hidden, and that surface goes black as the state machine resets and the surface resizes.
+    override fun onFinish(refreshLayout: com.cyl.refresh.layout.api.RefreshLayout, success: Boolean): Int {
+        val hold = finishHold(success)
+        removeCallbacks(hideForCollapse)
+        postDelayed(hideForCollapse, max(0, hold - HIDE_LEAD_MILLIS).toLong())
+        return hold
+    }
+
+    /** Shows the Rive view again (the next pull) and forgets a pending hide. */
+    fun showAgain() {
+        removeCallbacks(hideForCollapse)
+        finishHeight = 0
+        collapseHidden = false
+    }
 
     init {
         addView(rive)
@@ -192,9 +211,29 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
             applyClip()
         }
 
+    /**
+     * True while the Rive view does not draw: during the collapse after the finish, so the black the surface shows while the
+     * state machine resets and the surface resizes is never seen. Alpha 0, INVISIBLE (the size is kept, so the surface is not
+     * resized) and an empty [clipBounds] together; the next pull ([showAgain]) restores it.
+     */
+    var collapseHidden: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            rive.alpha = if (value) 0f else 1f
+            rive.visibility = if (value) View.INVISIBLE else View.VISIBLE
+            applyClip()
+        }
+
+    /**
+     * The height the header had when the finish hold started, or 0 when not finishing: a layout shorter than this is the
+     * collapse, and the Rive view is hidden in that layout pass when the timer of [onFinish] has not done it yet (a hold of 0).
+     */
+    var finishHeight: Int = 0
+
     private fun applyClip() {
         val fraction = drawnFraction
-        clipBounds = if (fraction == null || width <= 0 || height <= 0) null else Rect(0, 0, width, (height * fraction).toInt())
+        clipBounds = if (collapseHidden) Rect(0, 0, 0, 0) else if (fraction == null || width <= 0 || height <= 0) null else Rect(0, 0, width, (height * fraction).toInt())
         invalidate()
     }
 
@@ -211,6 +250,7 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val width = r - l
         val height = b - t
+        if (finishHeight > 0 && height < finishHeight) collapseHidden = true
         measureRive(width, height)
         rive.layout(0, height - rive.measuredHeight, width, height)
         applyClip()
@@ -239,6 +279,13 @@ class CYLRefreshRiveHeader private constructor(
     private val rive get() = headerView.rive
     private var rivePlaysRefresh = false
     private var loadingAnimator: ValueAnimator? = null
+    // The finish hold has started (Finishing) and the header has not been pulled again: a shrinking pull is the collapse.
+    private var finishing = false
+
+    private fun showAfterCollapse() {
+        finishing = false
+        headerView.showAgain()
+    }
     private val density get() = headerView.resources.displayMetrics.density
 
     init {
@@ -269,6 +316,8 @@ class CYLRefreshRiveHeader private constructor(
     }
 
     override fun onScrollingWithOffset(offset: Int, percent: Float, drag: Boolean) {
+        // A new pull shows the view again (hidden for the collapse); the collapse hides it before anything resets.
+        if (drag && offset > 0) showAfterCollapse()
         if (rivePlaysRefresh) return
         val dp = offset / density
         if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "rive pull offset=${offset}px ${dp}dp input=${riveStyle.pullValue(dp)} view=${headerView.width}x${headerView.height}@${loc(headerView)} rive=${rive.width}x${rive.height}@${loc(rive)}")
@@ -288,6 +337,7 @@ class CYLRefreshRiveHeader private constructor(
         val style = riveStyle
         if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "rive status $oldStatus -> $status playsRefresh=$rivePlaysRefresh")
         when (status) {
+            CYLRefreshPhase.PullToRefresh -> showAfterCollapse()
             CYLRefreshPhase.Releasing, CYLRefreshPhase.Refreshing -> {
                 if (rivePlaysRefresh) return
                 rivePlaysRefresh = true
@@ -310,11 +360,17 @@ class CYLRefreshRiveHeader private constructor(
                 }
             }
             CYLRefreshPhase.Finishing -> {
+                finishing = true
+                headerView.finishHeight = headerView.height
                 stopLoadingNumber()
                 style.loadingNumber?.let { number(it, style.loadingNumberFinished) }
                 style.finishTrigger?.let(::fire)
             }
             CYLRefreshPhase.Idle -> {
+                // Before the reset and the surface resize: nothing of the collapse is drawn.
+                if (finishing) headerView.collapseHidden = true
+                finishing = false
+                headerView.finishHeight = 0
                 if (!rivePlaysRefresh) return
                 rivePlaysRefresh = false
                 reset()
