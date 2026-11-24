@@ -9,7 +9,7 @@ export interface CYLRefreshContainerProps {
   onRefresh: () => void;
   /** Whether the pull is on, default true. */
   enabled?: boolean;
-  /** Whether the native footer (load more) is on, default false. Android only: the iOS half has no footer yet (TODO). */
+  /** Whether the native footer (load more) is on, default false. Android and iOS. */
   loadMoreEnabled?: boolean;
   /** Shows the footer's loading state while true, as `refreshing` does for the header. */
   loadingMore?: boolean;

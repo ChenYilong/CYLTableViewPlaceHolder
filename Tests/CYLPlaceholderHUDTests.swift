@@ -264,4 +264,19 @@ final class CYLPlaceholderHUDTests: XCTestCase {
         XCTAssertFalse(CYLPlaceholderHUD.isVisible())
         shared.containerView = nil
     }
+
+    func testTheSuccessHUDShowsTheCheckmarkNotTheInfoGlyphWhileTheAnimationFileIsSet() {
+        let hud = makeHUD()
+        XCTAssertNotNil(CYLPlaceholderView.path(forBundledAnimation: hud.successAnimationFileName ?? ""), "the default success animation is bundled")
+        func png(_ image: UIImage?) -> Data? { image?.withRenderingMode(.alwaysOriginal).pngData() }
+        hud.showSuccess(status: nil)
+        let success = png(hud.contentView?.imageView.image)
+        XCTAssertNotNil(success)
+        XCTAssertEqual(success, png(hud.successImage), "the static picture under the success animation is the checkmark")
+        XCTAssertNotEqual(success, png(hud.infoImage), "not the info glyph")
+        hud.showInfo(status: nil)
+        XCTAssertEqual(png(hud.contentView?.imageView.image), png(hud.infoImage))
+        XCTAssertNotEqual(png(hud.contentView?.imageView.image), png(hud.successImage))
+        hud.dismiss()
+    }
 }
