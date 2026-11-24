@@ -1,21 +1,21 @@
 import React, {useCallback, useState} from 'react';
-import {FlatList, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
 import {CYLRefreshContainer, isCYLRefreshContainerAvailable} from 'react-native-cylplaceholder';
 
 const PAGE = 10;
 const LAST_PAGE = 3;
-const START_ROWS = 20;
+const START_ROWS = 10;
 const STYLES = ['classic', 'cupertino', 'material', 'bezierRadar', 'bezierCircle', 'delivery', 'phoenix', 'taurus'];
 
 const range = (from: number, count: number) => Array.from({length: count}, (_, i) => from + i + 1);
 
 /**
  * [EN] The styles page of the Flutter example for iOS: chips choose the look of the native header and footer
- *      (`headerStyle` / `footerStyle`). It starts with two pages: pull down to refresh (page 1 again), pull up to load page 3,
- *      after which the footer says "no more data". "Reset" brings the two pages back. On iOS the Cupertino footer is the auto footer
+ *      (`headerStyle` / `footerStyle`). It starts with one page that fits the screen: pull down to refresh (page 1 again), pull up twice to load pages 2 and 3,
+ *      after which the footer says "no more data". "Reset" brings the first page back. On iOS the Cupertino footer is the auto footer
  *      (it loads on reaching the bottom, no pull), and Bezier circle has no drawn footer (the classic one shows).
  * [CN] Flutter 示例中样式页在 iOS 上的对应：用标签选择原生刷新头与刷新尾的样式（`headerStyle` / `footerStyle`）。
- *      起初有两页：下拉刷新（回到第 1 页），上拉加载第 3 页，之后刷新尾显示“没有更多数据”。“Reset” 恢复两页与加载状态。
+ *      起初只有一页（不超出屏幕）：下拉刷新（回到第 1 页），上拉两次加载第 2、3 页，之后刷新尾显示“没有更多数据”。“Reset” 恢复第一页与加载状态。
  */
 export default function RefreshStylesPage() {
   const [style, setStyle] = useState('classic');
@@ -28,7 +28,7 @@ export default function RefreshStylesPage() {
     setTimeout(() => {
       setRows(range(0, START_ROWS));
       setRefreshing(false);
-    }, 2500);
+    }, 4000);
   }, []);
 
   const loadMore = useCallback(() => {
@@ -36,7 +36,7 @@ export default function RefreshStylesPage() {
     setTimeout(() => {
       setRows(current => [...current, ...range(current.length, PAGE)]);
       setLoadingMore(false);
-    }, 2500);
+    }, 4000);
   }, []);
 
   const reset = useCallback(() => setRows(range(0, START_ROWS)), []);
@@ -52,8 +52,7 @@ export default function RefreshStylesPage() {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>{`Refresh styles: ${style}`}</Text>
-      <View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+      <View style={styles.chips}>
           {STYLES.map(name => (
             <Pressable
               key={name}
@@ -67,7 +66,6 @@ export default function RefreshStylesPage() {
           <Pressable accessibilityRole="button" accessibilityLabel="reset rows" style={styles.chip} onPress={reset}>
             <Text>Reset</Text>
           </Pressable>
-        </ScrollView>
       </View>
       <CYLRefreshContainer
         headerStyle={style}
@@ -96,8 +94,8 @@ export default function RefreshStylesPage() {
 const styles = StyleSheet.create({
   screen: {flex: 1, backgroundColor: '#fff'},
   title: {fontSize: 20, fontWeight: '600', padding: 16},
-  chips: {paddingHorizontal: 12, paddingBottom: 8},
-  chip: {paddingHorizontal: 12, paddingVertical: 6, marginRight: 8, borderRadius: 16, borderWidth: 1, borderColor: '#999'},
+  chips: {flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingBottom: 4},
+  chip: {paddingHorizontal: 12, paddingVertical: 6, marginRight: 8, marginBottom: 6, borderRadius: 16, borderWidth: 1, borderColor: '#999'},
   chipOn: {backgroundColor: '#0a58ca', borderColor: '#0a58ca'},
   chipTextOn: {color: '#fff'},
   list: {backgroundColor: '#fff'},
