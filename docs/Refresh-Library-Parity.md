@@ -577,6 +577,8 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 
 **Decisions of 2026-11-24 (owner, answered in session chenyilong-d4):** simulators and emulators are enough, no physical device is needed (a missing device run no longer costs points); the React Native new architecture is out of scope (the old-architecture example is the target). Rive is required ('支持rive', recorded by c32b88).
 
+**Decision of 2026-11-25 (owner, typed in this session, first hand):** '不要真机' (no physical devices). This confirms the 2026-11-24 line above, which until now came second-hand through chenyilong-d4.
+
 **Decisions of 2026-11-24 (owner):** the CYLTabBarController CI pin of `abb5bc3b` stays as a temporary exception until PR #823 / #824 merge (Task-Log TODO); the last Flutter pure-Dart table row is not built (freeze).
 
 ## Feature freeze and hand-off (2026-11-23, steps 6 and 7 of the advisor plan)

@@ -1962,3 +1962,10 @@ Owner decision for item 1 (2026-11-24, "支持rive", required on every platform)
 - **B, ratio (finger travel from touch-down -> logged offset):** 20 -> 10.1; 60 -> 29.9; 120 -> 57.5; 160 -> 74.7; 200 -> 91.0; 213 (560 px at 2.625) -> about 96.1 = **0.451**; 220 -> 98.8 = 0.449; 280 -> 121.2; 320 -> 135.2; 400 (1050 px at 2.625) -> 161.2 = **0.403**. Android: 0.45 and 0.41. **Yes, the same**: the damping is Dart's shared `component.dart`; the iOS native header is as tall as the offset (frame check: 98.8 pt = 296 px).
 - **C:** options A (`rivePullInputMinimum` 50), B (clip to the drawn height), C (leave) written in `docs/Refresh-Library-Parity.md`, "Rive Bow file: black pixels at a low pull input"; recommendation A for the examples; **not implemented**, owner decides.
 - **Sheet:** `docs/assets/flutter-ios27.2-iphone18pro-phrivefinish-rive-header-low-pull-black-568b58c1-20261125-sheet.png` (eight panels, eight originals); `scripts/check_screenshots.py` passes. No code committed.
+
+## 2026-11-25 owner decision: no physical devices (DONE)
+
+- **Prompt (verbatim):** "不要真机"
+- **English:** No physical devices.
+- **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4; a missing device run costs no points. Simulators and emulators are the target. Recorded in `docs/Refresh-Library-Parity.md` (Decisions block).
+- **Still open (asked, unanswered):** Rive black band A/B/C, CYLTabBarController pin policy, corner-radius survey, and whether the React Native new architecture is out of scope (only the device half was typed by the owner here).
