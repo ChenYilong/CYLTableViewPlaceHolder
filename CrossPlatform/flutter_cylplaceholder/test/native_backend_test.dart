@@ -419,6 +419,47 @@ void main() {
       }
     }
 
+    // Written, not run (docs/Task-Log.md, "Batch hand-off W1b"): the drawn styles' Dart colors are creation parameters `foregroundColor`
+    // and `backgroundColor`, ARGB integers.
+    testWidgets('the drawn styles send their foregroundColor and backgroundColor as ARGB integers, header and footer', variant: _bothPlatforms, (tester) async {
+      const foreground = Color(0xFF112233);
+      const background = Color(0x80445566);
+      final components = <CYLRefreshComponent Function()>[
+        () => CYLRefreshBezierRadarHeader(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshBezierRadarFooter(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshBezierCircleHeader(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshDeliveryHeader(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshDeliveryFooter(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshPhoenixHeader(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshPhoenixFooter(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshTaurusHeader(foregroundColor: foreground, backgroundColor: background),
+        () => CYLRefreshTaurusFooter(foregroundColor: foreground, backgroundColor: background),
+      ];
+      for (final make in components) {
+        final component = make();
+        addTearDown(component.dispose);
+        await pumpHeader(tester, component, indicator: (c) => Builder(builder: c.buildIndicator));
+        expect(creationParams, containsPair('foregroundColor', 0xFF112233), reason: '${component.runtimeType}');
+        expect(creationParams, containsPair('backgroundColor', 0x80445566), reason: '${component.runtimeType}');
+      }
+      // The defaults are sent too: the Dart style's own colors are what the native view should draw.
+      final defaults = CYLRefreshTaurusHeader();
+      addTearDown(defaults.dispose);
+      await pumpHeader(tester, defaults, indicator: (c) => Builder(builder: c.buildIndicator));
+      expect(creationParams, containsPair('foregroundColor', 0xFF263238));
+      expect(creationParams, containsPair('backgroundColor', 0xFF81D4FA));
+    });
+
+    testWidgets('the classic, Cupertino and Material styles send no color keys', variant: _bothPlatforms, (tester) async {
+      for (final make in <CYLRefreshComponent Function()>[() => CYLRefreshClassicHeader(), () => CYLRefreshCupertinoHeader(), () => CYLRefreshMaterialHeader(), () => CYLRefreshClassicFooter()]) {
+        final component = make();
+        addTearDown(component.dispose);
+        await pumpHeader(tester, component, indicator: (c) => Builder(builder: c.buildIndicator));
+        expect(creationParams!.containsKey('foregroundColor'), isFalse, reason: '${component.runtimeType}');
+        expect(creationParams!.containsKey('backgroundColor'), isFalse, reason: '${component.runtimeType}');
+      }
+    });
+
     testWidgets('the style classes route to CYLNativeRefreshIndicator with their style only when the native switch is on and no Flutter-only builder is set', variant: _bothPlatforms, (tester) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));

@@ -618,6 +618,10 @@ class CYLPlaceholderView @JvmOverloads constructor(
         internal set
 
     init {
+        // [EN] The placeholder plays through its own API (playPlaceholderAnimation on attach, restartAnimation, the stack), never
+        //      because its selection changed: CYLTabBarController's CYLAnimatedItemView defaults drivesAnimationPlayback to true
+        //      (commit 82b85e064), which would let `selectedState` (-> isSelected) start or restart the player.
+        drivesAnimationPlayback = false
         axis = CYLAnimatedItemAxis.Vertical
         spacingDp = TITLE_SPACING
         iconSizeDp = CYLSize(ICON_SIDE, ICON_SIDE)

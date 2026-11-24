@@ -49,8 +49,13 @@ throws; any other creation key is ignored. Android maps it in `CYLRefreshStyle` 
 style's header (`CYLRefreshMaterialFooter`, ... `CYLRefreshTaurusFooter`; `bezierCircle` has no footer class, so it wraps
 `CYLRefreshBezierCircleHeader` directly). Every style has an Android class. The Dart style classes build `CYLNativeRefreshIndicator(style: ...)`
 only when the native switch is on (`CYLPlaceholderNative.refreshEnabled`) and no builder, text builder, icon builder or image is set; the
-drawn styles' `foregroundColor` / `backgroundColor` are Dart-only and are not sent. Drawn footers have no "no more data" drawing
-(`CYLDrawnFooterView.setNoMoreData` returns false).
+drawn styles' colors are sent as creation parameters (written, not built; iOS is the Mac session's to mirror): `foregroundColor` (the
+drawing: Android `colorAccent`) and `backgroundColor` (the background: Android `colorPrimary`), both an ARGB integer `0xAARRGGBB`
+(`Color.toARGB32()`; it arrives as an Int or a Long, read it as a number), sent only by the drawn Dart classes (`bezierRadar`, `bezierCircle`,
+`delivery`, `phoenix`, `taurus`, header and footer) with their Dart values (the defaults too); `classic`, `cupertino` and `material` send neither
+key; a missing or non-number value leaves the native style's own color. There is no channel update: the Dart color fields are final.
+Drawn footers show the localized "no more data" text (`CYLDrawnFooterView.noMoreDataLabel`, the string of the classic footer) and hide the
+style while it is set (written, not built).
 
 The refresh view hosts `CYLRefreshDrivenLayout` (the driven mode of `android/merged`) with the header of the `style` (`CYLRefreshNormalHeader` for `classic`). Flutter
 keeps the scrolling and the phase machine (`CYLRefreshComponent`, still ended with `endRefreshing`); the indicator mirrors it:
@@ -60,7 +65,11 @@ keeps the scrolling and the phase machine (`CYLRefreshComponent`, still ended wi
 without a load; `loadsAfterNoMoreData` is a creation parameter. The Dart indicator stays the fallback off Android, in `flutter test`, and
 for a footer with a builder, text, icon or image. The Dart contract is tested with mock channels (`test/native_backend_test.dart`); the
 native side is `CYLRefreshDrivenLayout` (footer path: `CYLRefreshDrivenLayoutTest`). Not run on a device: the footer view's placement
-in the list slot and the native footer's trigger height versus the Dart `expandHeight`.
+in the list slot and the native footer's trigger height versus the Dart `expandHeight`. Slot fit (written, not built): the Dart slot shows
+the bottom (header) or top (footer) `pull` points of a view one open height tall, so `CYLRefreshPlatformView` sizes the driven layout to the pull
+(`CYLRefreshDrivenLayout.slotHeight`) anchored at that edge, as iOS `CYLRefreshDrivenHost` does; the indicator keeps its own open height (the view's
+height changes with every pull for the stretched drawn styles). TODO: the native classic header is shorter than Dart's `expandHeight`, so the trigger distance
+differs; an optional `expandHeight` creation parameter is not sent (iOS's host would adopt it).
 
 ## Not covered (TODO)
 

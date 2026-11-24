@@ -379,7 +379,7 @@ class CYLRefreshBezierRadarHeader extends CYLRefreshHeader {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierRadar') : _indicator(this, cylRefreshPaintBezierRadar, foregroundColor, backgroundColor, null);
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierRadar', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintBezierRadar, foregroundColor, backgroundColor, null);
 }
 
 /// The Bezier radar footer.
@@ -397,7 +397,7 @@ class CYLRefreshBezierRadarFooter extends CYLRefreshBackFooter {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierRadar') : _indicator(this, cylRefreshPaintBezierRadar, foregroundColor, backgroundColor, null);
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierRadar', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintBezierRadar, foregroundColor, backgroundColor, null);
 }
 
 /// The Bezier circle header.
@@ -415,7 +415,7 @@ class CYLRefreshBezierCircleHeader extends CYLRefreshHeader {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierCircle') : _indicator(this, cylRefreshPaintBezierCircle, foregroundColor, backgroundColor, null);
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'bezierCircle', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintBezierCircle, foregroundColor, backgroundColor, null);
 }
 
 /// The Delivery header.
@@ -433,7 +433,7 @@ class CYLRefreshDeliveryHeader extends CYLRefreshHeader {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'delivery') : _indicator(this, cylRefreshPaintDelivery, foregroundColor, backgroundColor, null);
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'delivery', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintDelivery, foregroundColor, backgroundColor, null);
 }
 
 /// The Delivery footer.
@@ -451,7 +451,7 @@ class CYLRefreshDeliveryFooter extends CYLRefreshBackFooter {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'delivery') : _indicator(this, cylRefreshPaintDelivery, foregroundColor, backgroundColor, null);
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'delivery', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintDelivery, foregroundColor, backgroundColor, null);
 }
 
 /// The Phoenix header.
@@ -469,7 +469,7 @@ class CYLRefreshPhoenixHeader extends CYLRefreshHeader {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'phoenix') : _indicator(this, cylRefreshPaintPhoenix, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 700));
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'phoenix', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintPhoenix, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 700));
 }
 
 /// The Phoenix footer.
@@ -487,7 +487,7 @@ class CYLRefreshPhoenixFooter extends CYLRefreshBackFooter {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'phoenix') : _indicator(this, cylRefreshPaintPhoenix, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 700));
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'phoenix', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintPhoenix, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 700));
 }
 
 /// The Taurus header.
@@ -505,7 +505,7 @@ class CYLRefreshTaurusHeader extends CYLRefreshHeader {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'taurus') : _indicator(this, cylRefreshPaintTaurus, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 1600));
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'taurus', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintTaurus, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 1600));
 }
 
 /// The Taurus footer.
@@ -523,5 +523,5 @@ class CYLRefreshTaurusFooter extends CYLRefreshBackFooter {
 
   @override
   Widget buildIndicator(BuildContext context) =>
-      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'taurus') : _indicator(this, cylRefreshPaintTaurus, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 1600));
+      CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'taurus', foregroundColor: foregroundColor, backgroundColor: backgroundColor) : _indicator(this, cylRefreshPaintTaurus, foregroundColor, backgroundColor, null, loop: const Duration(milliseconds: 1600));
 }
