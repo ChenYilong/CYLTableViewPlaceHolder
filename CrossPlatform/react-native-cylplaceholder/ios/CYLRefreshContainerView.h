@@ -54,6 +54,27 @@ typedef void (^CYLRefreshContainerEventBlock)(NSDictionary *body);
 /** [EN] The footer's look, same names as `headerStyle`; `bezierCircle` has no drawn footer and shows the classic one. iOS only. [CN] 尾部外观，名称同 `headerStyle`；`bezierCircle` 没有手绘尾部，显示经典样式。仅 iOS。 */
 @property (nonatomic, copy, nullable) NSString *footerStyle;
 
+/** [EN] Second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): a pull of this many points (then a release) opens it instead of refreshing; 0 (default) turns it off. [CN] 二楼：拉动这么多点后松手即打开二楼而不是刷新；0（默认）关闭。 */
+@property (nonatomic, assign) CGFloat secondaryTriggerOffset;
+
+/** [EN] The open extent of the floor in points; 0 (default) is the scroll view's visible height. [CN] 二楼打开后的高度（点）；0（默认）为滚动视图的可见高度。 */
+@property (nonatomic, assign) CGFloat secondaryDimension;
+
+/** [EN] Pushing the content up this far and releasing closes the floor; default 80 (also when set to 0 or less). [CN] 把内容上推这么远再松手即关闭二楼；默认 80（设为 0 或更小时同样取 80）。 */
+@property (nonatomic, assign) CGFloat secondaryCloseTriggerOffset;
+
+/** [EN] Controlled like `refreshing`: YES opens the floor, NO closes it; a change made from JS does not call the events back. [CN] 与 `refreshing` 一样由 JS 控制：YES 打开二楼，NO 关闭；JS 引起的变化不回调事件。 */
+@property (nonatomic, assign) BOOL secondaryOpen;
+
+/** [EN] Called after the floor opened from a pull (not from `secondaryOpen`). [CN] 二楼由下拉打开后调用（`secondaryOpen` 引起的不调用）。 */
+@property (nonatomic, copy, nullable) CYLRefreshContainerEventBlock onSecondaryOpen;
+
+/** [EN] Called after the floor closed from a push (not from `secondaryOpen`). [CN] 二楼由上推关闭后调用（`secondaryOpen` 引起的不调用）。 */
+@property (nonatomic, copy, nullable) CYLRefreshContainerEventBlock onSecondaryClose;
+
+/** [EN] The `nativeID` of the child view that is the floor's content; the container makes it the header's `secondaryView`. [CN] 作为二楼内容的子视图的 `nativeID`；容器把它设为刷新头的 `secondaryView`。 */
+@property (class, nonatomic, readonly) NSString *secondaryViewNativeID;
+
 /** [EN] The scroll view the container found and attached the header and footer to, nil until React Native has added it. [CN] 容器找到并挂上头尾的滚动视图；React Native 添加之前为 nil。 */
 @property (nonatomic, weak, readonly, nullable) UIScrollView *scrollView;
 
