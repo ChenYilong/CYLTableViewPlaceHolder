@@ -57,7 +57,7 @@ run on a device.
 both too (2026-11-24, built and run on the iOS 27.2 simulator, `docs/Task-Log.md`: `ios/CYLPlaceholderStackHostView.swift`, `CYLPlaceholderHUDController.swift`, the
 React-facing `CYLPlaceholderStackManager.swift` / `CYLPlaceholderHUDModule.swift` and `CYLPlaceholderReactBridge.m`, over the core's
 `CYLPlaceholderBridge` / `CYLPlaceholderHUDBridge`; the HUD covers the topmost view controller of the foreground window). On iOS
-`restartToken` restarts only when it grows (Android: on any change), and an action given by a catalog name (`"retry"`) comes back
+`restartToken` restarts only when it grows (on both platforms; Android restarted on any change until 2026-11-24), and an action given by a catalog name (`"retry"`) comes back
 as given. Without the native half the stack renders null and the HUD does nothing
 (`isCYLPlaceholderStackAvailable()`, `isCYLPlaceholderHUDAvailable()`).
 
