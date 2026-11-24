@@ -273,6 +273,19 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         }
     }
 
+    func testAFrontHeaderDrawsInItsOpenHeightViewAtALargePull() {
+        // [EN] Dart slides the Material view (front mode, one open height tall) down itself; a deep pull must not draw it above the clip.
+        // [CN] Dart 自己下移 Material 视图（前置模式，高度为一个展开高度）；深度下拉不能把它画到裁剪区之上。
+        let host = slotHost(["style": "material"], height: 80)
+        for pull: CGFloat in [50, 120, 200, 300] {
+            drive(host, pull)
+            host.container.layoutIfNeeded()
+            host.component.layer.displayIfNeeded()
+            XCTAssertGreaterThan(drawnPixels(host.container), 0, "material draws at a pull of \(pull): layout=\(host.layout.frame)")
+        }
+        host.container.removeFromSuperview()
+    }
+
     func testAStretchedViewThatChangesHeightWithThePullKeepsTheIndicatorVisibleWhileRefreshing() {
         // [EN] Dart sizes the drawn styles' view to the pull, with no expandHeight parameter: the view's height is never the open height.
         // [CN] Dart 把手绘样式的视图高度设为下拉量，且不带 expandHeight 参数：视图高度不是展开高度。

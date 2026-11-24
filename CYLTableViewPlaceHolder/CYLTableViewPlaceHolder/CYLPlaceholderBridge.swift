@@ -119,7 +119,10 @@ public enum CYLPlaceholderBridge {
         }
         if let name = configuration["backgroundAction"] as? String, !name.isEmpty { names.insert(name) }
         var handlers: [CYLPlaceholderAction: CYLPlaceholderActionHandler] = [:]
-        for name in names { handlers[CYLPlaceholderAction(rawValue: name)] = { _, _ in onAction(name) } }
+        // [EN] Keyed as the components key their action (`action(named:)`): a catalog name such as "retry" is the catalog constant, so
+        //      the handler is found when the button is tapped, and the given name comes back.
+        // [CN] 键与组件解析动作的方式一致（`action(named:)`）：“retry” 等目录名称对应目录常量，点按按钮时才能找到处理器，回传的仍是给定名称。
+        for name in names { handlers[CYLPlaceholderScenarioCatalog.action(named: name)] = { _, _ in onAction(name) } }
         return handlers
     }
 }

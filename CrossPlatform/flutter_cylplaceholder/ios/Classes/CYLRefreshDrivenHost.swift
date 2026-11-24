@@ -115,7 +115,11 @@ final class CYLRefreshDrivenHost {
         let open = component.expandHeight
         let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true
         let pull = max(abs(lastOffset), held ? open : 0)
-        let frame = CGRect(x: 0, y: params.footer ? 0 : height - pull, width: container.bounds.width, height: pull)
+        // A header that sits in front (the Material circle) is drawn from the top of the pulled area, and Dart slides that
+        // open-height view down itself: anchor it at the top, or its drawing leaves the view above the clip.
+        // [CN] 前置的刷新头（Material 圆圈）从下拉区域顶部开始绘制，Dart 自己把这个展开高度的视图下移：贴着视图顶部，否则绘制内容会跑到裁剪区之上。
+        let atTop = params.footer || (component as? CYLRefreshHeader)?.scrollMode == .front
+        let frame = CGRect(x: 0, y: atTop ? 0 : height - pull, width: container.bounds.width, height: pull)
         if layout.frame != frame { layout.frame = frame }
     }
 

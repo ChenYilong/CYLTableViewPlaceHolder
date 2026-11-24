@@ -51,6 +51,10 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    # The React Native refresh container: an Objective-C view with no React import (its event block type is spelled out), so
    # it is compiled here and Tests/CYLRefreshContainerViewTests.swift reaches it through the bridging header.
    'CrossPlatform/react-native-cylplaceholder/ios/CYLRefreshContainerView.m',
+   # The React Native placeholder stack host view and HUD controller: Swift with no React import (the two manager / module files that
+   # import React are not compiled here), so Tests/CYLPlaceholderReactBridgeTests.swift builds them without a React Native runtime.
+   'CrossPlatform/react-native-cylplaceholder/ios/CYLPlaceholderStackHostView.swift',
+   'CrossPlatform/react-native-cylplaceholder/ios/CYLPlaceholderHUDController.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.swift',
