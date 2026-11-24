@@ -36,7 +36,7 @@ repository through platform views and method channels; the Dart widgets stay the
 |:---|:---|:---|:---|
 | `flutter_cylplaceholder/CYLPlaceholderView` (`/<id>`) | `CYLNativePlaceholderView`, used by `CYLPlaceholderView` | creation: the item map plus `animationLoops`, `animationSpeed`, `tappable`; `update` (`name`, `value`) | `onTap` |
 | `flutter_cylplaceholder/CYLPlaceholderStackView` (`/<id>`) | `CYLNativePlaceholderStack`, used by `CYLPlaceholderStackView` | creation: `components` (the maps of `CYLPlaceholderComponent.toConfiguration`, an animated icon as an `item`), `backgroundAction`; `update` (`restartAnimation`) | `onAction` (`component-<i>` or `background`) |
-| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by the classic, Cupertino, Material, Bezier radar / circle, Delivery, Phoenix and Taurus header and footer classes | creation: `style` (string, see below), `footer` (bool), `loadsAfterNoMoreData`; `drive` (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`; footer: `noMoreData`), footer only `noMoreData` (`value`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
+| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by the classic, Cupertino, Material, Bezier radar / circle, Delivery, Phoenix and Taurus header and footer classes | creation: `style` (string, see below), `footer` (bool), `scrollMode` (`move`, `front`, `behind`, `locator`: the `name` of `CYLRefreshScrollMode`), `expandHeight` (logical pixels), `loadsAfterNoMoreData`; `drive` (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`; footer: `noMoreData`), footer only `noMoreData` (`value`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
 | `flutter_cylplaceholder/hud` | `CYLPlaceholderHUD` | the HUD method names (`showWithStatus`, `showComponents`, ...) | `onAction` |
 
 **Creation parameter `style`** (one per view; a header and a footer are separate views): the lower camel case name of exactly the styles the
@@ -68,8 +68,16 @@ native side is `CYLRefreshDrivenLayout` (footer path: `CYLRefreshDrivenLayoutTes
 in the list slot and the native footer's trigger height versus the Dart `expandHeight`. Slot fit (written, not built): the Dart slot shows
 the bottom (header) or top (footer) `pull` points of a view one open height tall, so `CYLRefreshPlatformView` sizes the driven layout to the pull
 (`CYLRefreshDrivenLayout.slotHeight`) anchored at that edge, as iOS `CYLRefreshDrivenHost` does; the indicator keeps its own open height (the view's
-height changes with every pull for the stretched drawn styles). TODO: the native classic header is shorter than Dart's `expandHeight`, so the trigger distance
-differs; an optional `expandHeight` creation parameter is not sent (iOS's host would adopt it).
+height changes with every pull for the stretched drawn styles).
+
+**Creation parameters `scrollMode` and `expandHeight`** (always sent, written, not run; one key for Android and iOS; `behind` replaces the earlier Android-only flag):
+`scrollMode` is the `.name` of Dart's `CYLRefreshScrollMode` (`move`, `front`, `behind`, `locator`; the hosts also accept `stretch`). `front` and `behind`
+pin the native indicator at its own open height at the slot's far edge in a layout as tall as the slot (Dart slides or covers the view); `move` and `stretch`
+size the layout to the pull. A missing value is `move`; an unknown one (`locator` included) is `move` and logs one line (Android: `Log.w`, tag `CYLRefreshView`), never
+throws. `expandHeight` is Dart's `expandHeight` in dp: Android converts it with the display density and sets it as the header or footer height
+(`setHeaderHeightPx` / `setFooterHeightPx`), so the native indicator opens at Dart's height (60 dp, not the classic default 54 dp) and the 6 dp gap
+at the slot edge closes; missing or 0 keeps the style's own height. The second floor creation parameters (`secondaryTriggerOffset`,
+`secondaryDimension`, `secondaryCloseTriggerOffset`) are sent only with a `secondaryView`, and `openSecondary` / `closeSecondary` follow `isSecondaryOpen`.
 
 ## Not covered (TODO)
 

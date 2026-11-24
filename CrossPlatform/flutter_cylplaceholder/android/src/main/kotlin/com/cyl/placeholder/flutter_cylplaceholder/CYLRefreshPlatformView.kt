@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /** The log tag of this file (the permanent diagnostic log of [CYLRefreshPlatformView.fitSlot] and the unknown-style warning). */
@@ -68,10 +69,24 @@ private fun CYLRefreshComponent.closeSecondaryFloor() {
 }
 
 /**
+ * The creation parameter `scrollMode` (the `.name` of Dart's `CYLRefreshScrollMode`; `stretch` is accepted too, the host's own spelling):
+ * how the slot sizes the native indicator. [pinned] modes (front, behind) keep it at its own height at the slot's far edge; move and
+ * stretch size the layout to the pull. `locator` and anything else is not a native mode ([fromKey] returns null).
+ */
+enum class CYLRefreshSlotMode(val key: String, val pinned: Boolean) {
+    Move("move", false), Stretch("stretch", false), Front("front", true), Behind("behind", true);
+
+    companion object {
+        fun fromKey(key: Any?): CYLRefreshSlotMode? = values().firstOrNull { it.key == key }
+    }
+}
+
+/**
  * Creates the platform view of the native refresh header or footer: a `CYLRefreshDrivenLayout` (the driven mode of the refresh
  * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]), or with the
  * footer of that style (`CYLRefreshBackNormalFooter` for classic) when the creation parameters say `footer: true` (and optionally
  * `loadsAfterNoMoreData: true`). A missing or unknown `style` is classic and one warning is logged. The drawn styles may also get
+ * `scrollMode` (`move`, `stretch`, `front`, `behind`; missing or unknown is move, an unknown one logged once), `expandHeight` (dp, the indicator's open height; missing or 0 keeps the style's own) and
  * `secondaryTriggerOffset` (dp; above 0 turns the second floor on), `secondaryDimension`, `secondaryCloseTriggerOffset`, `foregroundColor` (the drawing, the layout's accent color) and `backgroundColor` (the layout's primary color), ARGB integers; a
  * missing or non-number value leaves the style's own color. The Dart side feeds the pull through the view's channel.
  */
@@ -83,9 +98,14 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
             // An unknown or missing style falls back to classic and is reported once per view, never thrown.
             Log.w(TAG, "Unknown refresh style $key for view $viewId: using classic.")
         }
+        val modeKey = params?.get("scrollMode")
+        // A missing key is the default (move) and needs no word; an unknown value falls back to move and is reported once per view.
+        val scrollMode = CYLRefreshSlotMode.fromKey(modeKey) ?: CYLRefreshSlotMode.Move.also {
+            if (modeKey != null) Log.w(TAG, "Unknown refresh scrollMode $modeKey for view $viewId: using move.")
+        }
         return CYLRefreshPlatformView(context, viewId, messenger, footer = params?.get("footer") == true, loadsAfterNoMoreData = params?.get("loadsAfterNoMoreData") == true, style = style,
             foregroundColor = (params?.get("foregroundColor") as? Number)?.toInt(), backgroundColor = (params?.get("backgroundColor") as? Number)?.toInt(),
-            behind = params?.get("behind") == true,
+            scrollMode = scrollMode, expandHeight = (params?.get("expandHeight") as? Number)?.toFloat() ?: 0f,
             secondaryTriggerOffset = (params?.get("secondaryTriggerOffset") as? Number)?.toFloat() ?: 0f,
             secondaryDimension = (params?.get("secondaryDimension") as? Number)?.toFloat() ?: 0f,
             secondaryCloseTriggerOffset = (params?.get("secondaryCloseTriggerOffset") as? Number)?.toFloat())
@@ -106,7 +126,7 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
  * "onRefreshing" (the component started to refresh).
  */
 class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false, style: CYLRefreshStyle = CYLRefreshStyle.Classic,
-    foregroundColor: Int? = null, backgroundColor: Int? = null, private val behind: Boolean = false,
+    foregroundColor: Int? = null, backgroundColor: Int? = null, private val scrollMode: CYLRefreshSlotMode = CYLRefreshSlotMode.Move, expandHeight: Float = 0f,
     secondaryTriggerOffset: Float = 0f, secondaryDimension: Float = 0f, secondaryCloseTriggerOffset: Float? = null) :
     PlatformView, MethodChannel.MethodCallHandler {
     private val channel = MethodChannel(messenger, "${CYLRefreshPlatformViewFactory.VIEW_TYPE}/$viewId")
@@ -134,6 +154,12 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         container.addView(layout, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         container.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (bottom - top != oldBottom - oldTop || right - left != oldRight - oldLeft) fitSlot()
+        }
+        // The Dart `expandHeight` (dp) is the indicator's open height, in place of the native default (54 dp for the classic header),
+        // so the native indicator and the Dart slot agree and no gap is left at the slot's edge. Missing or 0: the style's own.
+        if (expandHeight > 0f) {
+            val px = (expandHeight * density).roundToInt()
+            if (component is CYLRefreshFooter) layout.setFooterHeightPx(px) else layout.setHeaderHeightPx(px)
         }
         // The Dart drawn styles' colors: the layout's accent color is the drawing and its primary color the background
         // (`setPrimaryColors(primary, accent)` of every drawn header; the drawn footer forwards them to its header).
@@ -169,8 +195,12 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         val held = component.isRefreshing || (component as? CYLRefreshFooter)?.noMoreData == true
         val params = layout.layoutParams as FrameLayout.LayoutParams
         val shown = layout.shownPull
-        // Behind: the content moves over a fixed indicator, so the layout is the whole slot and the indicator sits at the far edge.
-        val height = if (behind) full else CYLRefreshDrivenLayout.slotHeight(full, shown, held, layout.indicatorExtent)
+        // Front and behind (the slot rule): the indicator is pinned at its own height at the far edge of a layout as tall as the whole
+        // slot (Dart slides or covers the view itself); move and stretch: the layout is the pull, anchored at the near edge.
+        val behind = scrollMode.pinned
+        // A pinned layout is at least as tall as the pull (W3: one open height clipped the indicator, which sits at the pull inside the layout
+        // and is only moved by the shift, to a sliver of 2 * extent - pull pixels).
+        val height = if (behind) max(full, shown) else CYLRefreshDrivenLayout.slotHeight(full, shown, held, layout.indicatorExtent)
         val gravity = if (footerMode != behind) Gravity.TOP else Gravity.BOTTOM
         if (params.height != height || params.gravity != gravity) {
             params.height = height

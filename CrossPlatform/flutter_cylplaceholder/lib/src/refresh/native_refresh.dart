@@ -14,8 +14,10 @@ import 'refresh_types.dart';
 ///
 /// - Creation parameters: `style` (see [style]; one per view, a header and a footer are separate views), `footer` (true: the native
 ///   footer, pulled up), `loadsAfterNoMoreData` and, for the drawn styles only, `foregroundColor` and `backgroundColor` (ARGB integers,
-///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]) and `behind` (true only in
-///   [CYLRefreshScrollMode.behind]: the native indicator stays at the far edge of the slot).
+///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]), `scrollMode` (always: the `name` of
+///   [CYLRefreshScrollMode], `move`, `front`, `behind` or `locator`; front and behind pin the native indicator at its open height at the far
+///   edge of the slot; an unknown or missing value is `move` natively) and `expandHeight` (always: [CYLRefreshComponent.expandHeight] in
+///   logical pixels, the native indicator's open height).
 ///   Sizing rule on both platforms: the slot is never shorter than the native indicator while refreshing; the indicator keeps its
 ///   intrinsic height at the slot's edge (the Dart view is as tall as the pull for the stretched styles, `expandHeight` otherwise).
 /// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
@@ -173,8 +175,10 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       creationParams: <String, Object?>{
         'style': widget.style,
         'footer': _isFooter,
-        // The behind scroll mode keeps the indicator at the far edge while the content moves over it: the native slot anchors there.
-        if (widget.component.scrollMode == CYLRefreshScrollMode.behind) 'behind': true,
+        // The slot rule (docs/Refresh-Library-Parity.md): both hosts size the slot from the scroll mode (front and behind pin the
+        // indicator at its open height) and open the indicator at Dart's expandHeight (logical pixels), so no gap is left at the edge.
+        'scrollMode': widget.component.scrollMode.name,
+        'expandHeight': widget.component.expandHeight,
         // The second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): sent only with a floor, so the native view
         // arms and opens it; its content stays a Flutter widget.
         if (widget.component.secondaryView != null && widget.component.secondaryTriggerOffset > 0) ...<String, Object?>{
