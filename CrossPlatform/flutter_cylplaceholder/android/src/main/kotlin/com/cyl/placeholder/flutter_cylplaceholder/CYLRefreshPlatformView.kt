@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /** The log tag of this file (the permanent diagnostic log of [CYLRefreshPlatformView.fitSlot] and the unknown-style warning). */
@@ -197,7 +198,9 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         // Front and behind (the slot rule): the indicator is pinned at its own height at the far edge of a layout as tall as the whole
         // slot (Dart slides or covers the view itself); move and stretch: the layout is the pull, anchored at the near edge.
         val behind = scrollMode.pinned
-        val height = if (behind) full else CYLRefreshDrivenLayout.slotHeight(full, shown, held, layout.indicatorExtent)
+        // A pinned layout is at least as tall as the pull (W3: one open height clipped the indicator, which sits at the pull inside the layout
+        // and is only moved by the shift, to a sliver of 2 * extent - pull pixels).
+        val height = if (behind) max(full, shown) else CYLRefreshDrivenLayout.slotHeight(full, shown, held, layout.indicatorExtent)
         val gravity = if (footerMode != behind) Gravity.TOP else Gravity.BOTTOM
         if (params.height != height || params.gravity != gravity) {
             params.height = height
