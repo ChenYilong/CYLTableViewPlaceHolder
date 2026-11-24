@@ -630,10 +630,9 @@ class CYLPlaceholderView @JvmOverloads constructor(
         internal set
 
     init {
-        // TODO(PR #824): CYLTabBarController 82b85e064 defaults `drivesAnimationPlayback` to true on Android, which would let
-        //      `selectedState` (-> isSelected) start or restart the player; set `drivesAnimationPlayback = false` here once that
-        //      commit is in every commit the CI resolver can pick (the property does not exist on feat/cross-platform-components
-        //      eff4fbc7, so setting it breaks :placeholder there; docs/Task-Log.md, 2026-11-24).
+        // [EN] The item base class defaults `drivesAnimationPlayback` to true (CYLTabBarController 82b85e064), which would
+        //      let `selectedState` (-> isSelected) start or restart the player; this view's playback belongs to its own state.
+        drivesAnimationPlayback = false
         axis = CYLAnimatedItemAxis.Vertical
         spacingDp = TITLE_SPACING
         iconSizeDp = CYLSize(ICON_SIDE, ICON_SIDE)
