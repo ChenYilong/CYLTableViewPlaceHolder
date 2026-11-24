@@ -167,7 +167,7 @@ void main() {
     Map<Object?, Object?>? creationParams;
 
     // Records what Dart sends to the native header and lets the test play the native side back.
-    Future<void> pumpHeader(WidgetTester tester, CYLRefreshComponent header, {void Function(String, String)? onPhase, VoidCallback? onRefreshing}) async {
+    Future<void> pumpHeader(WidgetTester tester, CYLRefreshComponent header, {void Function(String, String)? onPhase, VoidCallback? onRefreshing, Widget Function(CYLRefreshComponent)? indicator}) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async {
         if (call.method != 'create') return null;
         viewId = (call.arguments as Map)['id'] as int;
@@ -181,7 +181,7 @@ void main() {
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null);
       });
       sent.clear();
-      await tester.pumpWidget(MaterialApp(home: SizedBox(width: 300, height: 60, child: CYLNativeRefreshIndicator(component: header, onPhase: onPhase, onRefreshing: onRefreshing))));
+      await tester.pumpWidget(MaterialApp(home: SizedBox(width: 300, height: 60, child: indicator?.call(header) ?? CYLNativeRefreshIndicator(component: header, onPhase: onPhase, onRefreshing: onRefreshing))));
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await tester.pump();
       // Dart listens on the channel now (for the events); stand in for the native side to record the calls.
@@ -274,7 +274,7 @@ void main() {
       final footer = CYLRefreshClassicFooter();
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
-      expect(creationParams, {'footer': true, 'loadsAfterNoMoreData': false});
+      expect(creationParams, {'style': 'classic', 'footer': true, 'loadsAfterNoMoreData': false});
       footer.handlePull(20, dragging: true);
       expect(sent.map((c) => c.method), ['drive']);
       expect(sent[0].arguments, {'offset': -20.0, 'dragging': true, 'startedAtEdge': true});
@@ -370,7 +370,7 @@ void main() {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
-      expect(creationParams, {'footer': false});
+      expect(creationParams, {'style': 'classic', 'footer': false});
       header.attach(_NoOtherRefresh());
       header.beginRefreshing(force: true);
       sent.clear();
@@ -379,23 +379,77 @@ void main() {
       await tester.pump(const Duration(milliseconds: 20));
     });
 
-    testWidgets('the classic footers draw the native indicator, the Cupertino footer stays Dart', variant: _bothPlatforms, (tester) async {
+    testWidgets('the classic footers draw the native indicator, a custom builder keeps them Dart', variant: _bothPlatforms, (tester) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
       final footers = <CYLRefreshComponent>[CYLRefreshClassicFooter(), CYLRefreshClassicAutoFooter()];
-      final cupertino = CYLRefreshCupertinoFooter();
-      addTearDown(cupertino.dispose);
       for (final footer in footers) {
         addTearDown(footer.dispose);
         await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: footer.buildIndicator))));
         expect(find.byType(_platformViewType), findsOneWidget, reason: '${footer.runtimeType}');
       }
-      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: cupertino.buildIndicator))));
-      expect(find.byType(_platformViewType), findsNothing);
       final custom = CYLRefreshClassicFooter()..textBuilder = (context, component, text) => Text('mine $text');
       addTearDown(custom.dispose);
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
       expect(find.byType(_platformViewType), findsNothing);
+    });
+
+    // Every style class of the Dart API, with the `style` value its native view gets (lower camel case, the same on Android and iOS).
+    final styled = <(String, CYLRefreshComponent Function(), CYLRefreshComponent Function()?)>[
+      ('classic', () => CYLRefreshClassicHeader(), () => CYLRefreshClassicFooter()),
+      ('cupertino', () => CYLRefreshCupertinoHeader(), () => CYLRefreshCupertinoFooter()),
+      ('material', () => CYLRefreshMaterialHeader(), () => CYLRefreshMaterialFooter()),
+      ('bezierRadar', () => CYLRefreshBezierRadarHeader(), () => CYLRefreshBezierRadarFooter()),
+      ('bezierCircle', () => CYLRefreshBezierCircleHeader(), null),
+      ('delivery', () => CYLRefreshDeliveryHeader(), () => CYLRefreshDeliveryFooter()),
+      ('phoenix', () => CYLRefreshPhoenixHeader(), () => CYLRefreshPhoenixFooter()),
+      ('taurus', () => CYLRefreshTaurusHeader(), () => CYLRefreshTaurusFooter()),
+    ];
+
+    for (final (style, header, footer) in styled) {
+      for (final (kind, make) in [('header', header), if (footer != null) ('footer', footer)]) {
+        testWidgets('the $style $kind passes the creation parameter style: $style', variant: _bothPlatforms, (tester) async {
+          final component = make();
+          addTearDown(component.dispose);
+          // Through the style class itself: it builds the native indicator with its style.
+          await pumpHeader(tester, component, indicator: (c) => Builder(builder: c.buildIndicator));
+          expect(creationParams, containsPair('style', style));
+          expect(creationParams, containsPair('footer', kind == 'footer'));
+        });
+      }
+    }
+
+    testWidgets('the style classes route to CYLNativeRefreshIndicator with their style only when the native switch is on and no Flutter-only builder is set', variant: _bothPlatforms, (tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
+      Future<void> show(WidgetTester tester, CYLRefreshComponent c) =>
+          tester.pumpWidget(MaterialApp(home: SizedBox(height: 120, child: OverflowBox(maxWidth: 3000, child: Builder(builder: c.buildIndicator)))));
+      for (final (style, header, footer) in styled) {
+        for (final component in [header(), if (footer != null) footer()]) {
+          addTearDown(component.dispose);
+          await show(tester, component);
+          expect(find.byType(_platformViewType), findsOneWidget, reason: '${component.runtimeType}');
+          expect(tester.widget<CYLNativeRefreshIndicator>(find.byType(CYLNativeRefreshIndicator)).style, style, reason: '${component.runtimeType}');
+        }
+      }
+      // The Dart indicator is the fallback: native switch off, or a Flutter-only builder.
+      CYLPlaceholderNative.override = null;
+      for (final (_, header, footer) in styled) {
+        for (final component in [header(), if (footer != null) footer()]) {
+          addTearDown(component.dispose);
+          await show(tester, component);
+          expect(find.byType(CYLNativeRefreshIndicator), findsNothing, reason: '${component.runtimeType} with the native switch off');
+        }
+      }
+      CYLPlaceholderNative.override = true;
+      final withBuilder = CYLRefreshTaurusHeader()..builder = (context, component) => const Text('mine');
+      addTearDown(withBuilder.dispose);
+      await show(tester, withBuilder);
+      expect(find.byType(CYLNativeRefreshIndicator), findsNothing);
+      final custom = CYLRefreshClassicHeader()..textBuilder = (context, component, text) => Text('mine $text');
+      addTearDown(custom.dispose);
+      await show(tester, custom);
+      expect(find.byType(CYLNativeRefreshIndicator), findsNothing);
     });
   });
 

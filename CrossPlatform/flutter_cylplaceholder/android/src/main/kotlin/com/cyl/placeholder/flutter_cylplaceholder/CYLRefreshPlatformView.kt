@@ -1,14 +1,14 @@
 package com.cyl.placeholder.flutter_cylplaceholder
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshComponent
 import com.cyl.refresh.CYLRefreshDrivenLayout
 import com.cyl.refresh.CYLRefreshFooter
 import com.cyl.refresh.CYLRefreshHeader
-import com.cyl.refresh.CYLRefreshNormalHeader
+import com.cyl.refresh.CYLRefreshStyle
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import io.flutter.plugin.common.BinaryMessenger
@@ -21,18 +21,26 @@ import kotlin.math.roundToInt
 
 /**
  * Creates the platform view of the native refresh header or footer: a `CYLRefreshDrivenLayout` (the driven mode of the refresh
- * kernel) with a `CYLRefreshNormalHeader`, or with a `CYLRefreshBackNormalFooter` when the creation parameters say
- * `footer: true` (and optionally `loadsAfterNoMoreData: true`). The Dart side feeds the pull through the view's channel.
+ * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]), or with the
+ * footer of that style (`CYLRefreshBackNormalFooter` for classic) when the creation parameters say `footer: true` (and optionally
+ * `loadsAfterNoMoreData: true`). A missing or unknown `style` is classic and one warning is logged. The Dart side feeds the pull through the view's channel.
  */
 class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
         val params = args as? Map<*, *>
-        return CYLRefreshPlatformView(context, viewId, messenger, footer = params?.get("footer") == true, loadsAfterNoMoreData = params?.get("loadsAfterNoMoreData") == true)
+        val key = params?.get("style")
+        val style = CYLRefreshStyle.fromKey(key) ?: CYLRefreshStyle.Classic.also {
+            // An unknown or missing style falls back to classic and is reported once per view, never thrown.
+            Log.w(TAG, "Unknown refresh style $key for view $viewId: using classic.")
+        }
+        return CYLRefreshPlatformView(context, viewId, messenger, footer = params?.get("footer") == true, loadsAfterNoMoreData = params?.get("loadsAfterNoMoreData") == true, style = style)
     }
 
     companion object {
         /** The view type the Dart side asks for. */
         const val VIEW_TYPE = "flutter_cylplaceholder/CYLRefreshView"
+
+        private const val TAG = "CYLRefreshView"
     }
 }
 
@@ -44,7 +52,7 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
  * load, or clears it), and back "onPhase" (`phase` and `oldPhase`, the lower camel case names of `CYLRefreshPhase`) and
  * "onRefreshing" (the component started to refresh).
  */
-class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false) :
+class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false, style: CYLRefreshStyle = CYLRefreshStyle.Classic) :
     PlatformView, MethodChannel.MethodCallHandler {
     private val channel = MethodChannel(messenger, "${CYLRefreshPlatformViewFactory.VIEW_TYPE}/$viewId")
     private val density = context.resources.displayMetrics.density
@@ -53,7 +61,7 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
 
     /** The header, or in footer mode the [CYLRefreshFooter], the view hosts. */
     internal val component: CYLRefreshComponent =
-        if (footer) CYLRefreshBackNormalFooter(context).also { it.loadsAfterNoMoreData = loadsAfterNoMoreData } else CYLRefreshNormalHeader(context)
+        if (footer) style.newFooter(context).also { it.loadsAfterNoMoreData = loadsAfterNoMoreData } else style.newHeader(context)
 
     init {
         component.addPhaseObserver { _, old, new -> channel.invokeMethod("onPhase", mapOf("phase" to lowerCamel(new.name), "oldPhase" to lowerCamel(old.name))) }

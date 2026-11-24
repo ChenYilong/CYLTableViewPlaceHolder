@@ -12,20 +12,30 @@ import 'refresh_types.dart';
 /// (the component stays the reference and the caller still ends refreshing with `endRefreshing`); this view feeds the native
 /// header the pull over the method channel `flutter_cylplaceholder/CYLRefreshView/<id>`:
 ///
-/// - Creation parameters: `footer` (true: the native footer, pulled up) and `loadsAfterNoMoreData`.
+/// - Creation parameters: `style` (see [style]; one per view, a header and a footer are separate views), `footer` (true: the native
+///   footer, pulled up) and `loadsAfterNoMoreData`.
 /// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
 ///   "finishRefresh" (`success`; a footer adds `noMoreData`: end the load and show "no more data") and, for a footer, "noMoreData" (`value`:
 ///   show or clear it without a load).
 /// - Native to Dart: "onPhase" (`phase` and `oldPhase`, the names of [CYLRefreshPhase]) and "onRefreshing".
 class CYLNativeRefreshIndicator extends StatefulWidget {
-  /// Creates a native indicator that follows [component].
-  const CYLNativeRefreshIndicator({super.key, required this.component, this.onPhase, this.onRefreshing});
+  /// Creates a native indicator that follows [component], drawn in [style].
+  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.onPhase, this.onRefreshing});
+
+  /// Whether [component] may use the native indicator: the native refresh switch is on (Android and iOS) and no Flutter-only
+  /// [CYLRefreshComponent.builder] is set. The style classes add their own checks for the text, icon and image options.
+  static bool supports(CYLRefreshComponent component) => CYLPlaceholderNative.refreshEnabled && component.builder == null;
 
   /// The type of the platform view of the native refresh header.
   static const String viewType = 'flutter_cylplaceholder/CYLRefreshView';
 
   /// The header whose pull and result the native header shows.
   final CYLRefreshComponent component;
+
+  /// The creation parameter `style`: one of `classic`, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`,
+  /// `phoenix` and `taurus` (the styles of this package's Dart API). The native side falls back to `classic` and logs one line for
+  /// an unknown value.
+  final String style;
 
   /// Called with the phase name when the native header's phase changes.
   final void Function(String phase, String oldPhase)? onPhase;
@@ -136,6 +146,7 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       viewType: CYLNativeRefreshIndicator.viewType,
       // A footer asks for the native footer (a pull up); loadsAfterNoMoreData lets a pull load again after "no more data".
       creationParams: <String, Object?>{
+        'style': widget.style,
         'footer': _isFooter,
         if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,
       },

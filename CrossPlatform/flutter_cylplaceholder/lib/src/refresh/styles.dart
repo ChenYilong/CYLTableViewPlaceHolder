@@ -170,7 +170,7 @@ class CYLRefreshClassicHeader extends CYLRefreshHeader with CYLRefreshClassicSty
   String Function(DateTime time)? lastUpdatedTimeFormatter;
 
   @override
-  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this, style: 'classic') : super.buildIndicator(context);
 
   @override
   String? messageText() {
@@ -216,7 +216,7 @@ class CYLRefreshClassicFooter extends CYLRefreshBackFooter with CYLRefreshClassi
   });
 
   @override
-  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this, style: 'classic') : super.buildIndicator(context);
 
   @override
   Map<CYLRefreshTitleState, String> get defaultTitles => _footerTitles;
@@ -244,7 +244,7 @@ class CYLRefreshClassicAutoFooter extends CYLRefreshAutoFooter with CYLRefreshCl
   });
 
   @override
-  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this) : super.buildIndicator(context);
+  Widget buildIndicator(BuildContext context) => _usesNative ? CYLNativeRefreshIndicator(component: this, style: 'classic') : super.buildIndicator(context);
 
   @override
   Map<CYLRefreshTitleState, String> get defaultTitles => _footerTitles;
@@ -281,7 +281,7 @@ class CYLRefreshCupertinoHeader extends CYLRefreshHeader {
   });
 
   @override
-  Widget buildIndicator(BuildContext context) => _cupertino(this, context);
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'cupertino') : _cupertino(this, context);
 }
 
 /// A footer with the iOS activity indicator that reveals as you pull.
@@ -307,8 +307,9 @@ class CYLRefreshCupertinoFooter extends CYLRefreshBackFooter {
   });
 
   @override
-  Widget buildIndicator(BuildContext context) =>
-      isNoMoreData ? const Center(child: Text('No more data', style: TextStyle(fontSize: 13))) : _cupertino(this, context);
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this)
+      ? CYLNativeRefreshIndicator(component: this, style: 'cupertino')
+      : isNoMoreData ? const Center(child: Text('No more data', style: TextStyle(fontSize: 13))) : _cupertino(this, context);
 }
 
 Widget _material(CYLRefreshComponent c, BuildContext context) {
@@ -354,7 +355,7 @@ class CYLRefreshMaterialHeader extends CYLRefreshHeader {
   });
 
   @override
-  Widget buildIndicator(BuildContext context) => _material(this, context);
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this) ? CYLNativeRefreshIndicator(component: this, style: 'material') : _material(this, context);
 }
 
 /// A footer with a Material circular progress indicator.
@@ -380,6 +381,7 @@ class CYLRefreshMaterialFooter extends CYLRefreshBackFooter {
   });
 
   @override
-  Widget buildIndicator(BuildContext context) =>
-      isNoMoreData ? const Center(child: Text('No more data', style: TextStyle(fontSize: 13))) : _material(this, context);
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this)
+      ? CYLNativeRefreshIndicator(component: this, style: 'material')
+      : isNoMoreData ? const Center(child: Text('No more data', style: TextStyle(fontSize: 13))) : _material(this, context);
 }

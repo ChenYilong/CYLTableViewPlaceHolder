@@ -36,10 +36,23 @@ repository through platform views and method channels; the Dart widgets stay the
 |:---|:---|:---|:---|
 | `flutter_cylplaceholder/CYLPlaceholderView` (`/<id>`) | `CYLNativePlaceholderView`, used by `CYLPlaceholderView` | creation: the item map plus `animationLoops`, `animationSpeed`, `tappable`; `update` (`name`, `value`) | `onTap` |
 | `flutter_cylplaceholder/CYLPlaceholderStackView` (`/<id>`) | `CYLNativePlaceholderStack`, used by `CYLPlaceholderStackView` | creation: `components` (the maps of `CYLPlaceholderComponent.toConfiguration`, an animated icon as an `item`), `backgroundAction`; `update` (`restartAnimation`) | `onAction` (`component-<i>` or `background`) |
-| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by `CYLRefreshClassicHeader`, `CYLRefreshClassicFooter` and `CYLRefreshClassicAutoFooter` | creation: `footer` (bool), `loadsAfterNoMoreData`; `drive` (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`; footer: `noMoreData`), footer only `noMoreData` (`value`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
+| `flutter_cylplaceholder/CYLRefreshView` (`/<id>`) | `CYLNativeRefreshIndicator`, used by the classic, Cupertino, Material, Bezier radar / circle, Delivery, Phoenix and Taurus header and footer classes | creation: `style` (string, see below), `footer` (bool), `loadsAfterNoMoreData`; `drive` (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`), `release`, `finishRefresh` (`success`; footer: `noMoreData`), footer only `noMoreData` (`value`) | `onPhase` (`phase`, `oldPhase`), `onRefreshing` |
 | `flutter_cylplaceholder/hud` | `CYLPlaceholderHUD` | the HUD method names (`showWithStatus`, `showComponents`, ...) | `onAction` |
 
-The refresh view hosts `CYLRefreshDrivenLayout` (the driven mode of `android/merged`) with a `CYLRefreshNormalHeader`. Flutter
+**Creation parameter `style`** (one per view; a header and a footer are separate views): the lower camel case name of exactly the styles the
+Dart API exposes, the same eight values on Android and iOS: `classic`, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`,
+`phoenix`, `taurus`. A missing or unknown value falls back to `classic`, logs one line (Android: `Log.w`, tag `CYLRefreshView`) and never
+throws; any other creation key is ignored. Android maps it in `CYLRefreshStyle` (`android/merged/library`): headers are
+`CYLRefreshNormalHeader`, `CYLRefreshCupertinoHeader`, `CYLRefreshMaterialHeader`, `CYLRefreshBezierRadarHeader`,
+`CYLRefreshBezierCircleHeader`, `CYLRefreshDeliveryHeader`, `CYLRefreshPhoenixHeader`, `CYLRefreshTaurusHeader`; footers are
+`CYLRefreshBackNormalFooter` (`classic`), `CYLRefreshCupertinoFooter` (an auto footer) and, for the rest, a `CYLRefreshDrawnFooter` around the
+style's header (`CYLRefreshMaterialFooter`, ... `CYLRefreshTaurusFooter`; `bezierCircle` has no footer class, so it wraps
+`CYLRefreshBezierCircleHeader` directly). Every style has an Android class. The Dart style classes build `CYLNativeRefreshIndicator(style: ...)`
+only when the native switch is on (`CYLPlaceholderNative.refreshEnabled`) and no builder, text builder, icon builder or image is set; the
+drawn styles' `foregroundColor` / `backgroundColor` are Dart-only and are not sent. Drawn footers have no "no more data" drawing
+(`CYLDrawnFooterView.setNoMoreData` returns false).
+
+The refresh view hosts `CYLRefreshDrivenLayout` (the driven mode of `android/merged`) with the header of the `style` (`CYLRefreshNormalHeader` for `classic`). Flutter
 keeps the scrolling and the phase machine (`CYLRefreshComponent`, still ended with `endRefreshing`); the indicator mirrors it:
 `drive` while pulled, `release` when the finger lifts or a refresh starts, `finishRefresh` when it ends. A footer (creation parameter
 `footer: true`) hosts a `CYLRefreshBackNormalFooter` in the same driven layout: the pull is driven as a negative offset,
