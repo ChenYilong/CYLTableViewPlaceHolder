@@ -10,7 +10,8 @@
 | [接口](#接口--api) | [API](#接口--api) |
 | [与占位图组合](#与占位图组合--combined-with-the-placeholder) | [Combined with the placeholder](#与占位图组合--combined-with-the-placeholder) |
 | [网络检测](#网络检测--network-detection) | [Network detection](#网络检测--network-detection) |
-| [资源缺失](#资源缺失--missing-resources) | [Missing resources](#资源缺失--missing-resources) |
+| [资源缺失](#资源缺失--missing-resource) | [Missing resource](#资源缺失--missing-resource) |
+| [资源缺失监视（Android）](#资源缺失监视android--missing-resource-monitor-android) | [Missing resource monitor (Android)](#资源缺失监视android--missing-resource-monitor-android) |
 | [演示](#演示--demo) | [Demo](#演示--demo) |
 | [限制](#限制--limits) | [Limits](#限制--limits) |
 
@@ -96,7 +97,25 @@ try cyl_applyStatusConfiguration(contentsOf: url)
 | 参照 Sentry 的 [getsentry/sentry-cocoa#5440](https://github.com/getsentry/sentry-cocoa/issues/5440)（由 #6019 改用 `NWPathMonitor`）：按主机名创建的 `SCNetworkReachability` 会在每次网络变化时发起 DNS 查询（即使关闭了遥测），因此这里不监测主机，只监测设备的网络路径；已启动的 `NWPathMonitor` 在取消前一直运行（即使没有强引用），取消后不能重新启动，所以每次 `startMonitoring` 新建监测器，`stopMonitoring` 与释放时取消；已取消的监测器可能仍送达排队中的更新，用启动序号忽略它们；在监测器自己的回调中取消会卡住其队列，所以监测器运行在私有串行队列（utility QoS），状态、回调与通知转到主队列。低数据模式或昂贵网络变化而状态不变时也会发送通知（回调只在状态变化时执行）。 | Following Sentry's [getsentry/sentry-cocoa#5440](https://github.com/getsentry/sentry-cocoa/issues/5440) (moved to `NWPathMonitor` by #6019): an `SCNetworkReachability` created with a host name makes a DNS query on every network change (even with telemetry off), so no host is watched here, only the device's network path; a started `NWPathMonitor` keeps running until it is cancelled (even without a strong reference) and cannot be restarted once cancelled, so every `startMonitoring` creates a new monitor and `stopMonitoring` and dealloc cancel it; a cancelled monitor can still deliver a queued update, which a start counter ignores; cancelling a monitor inside its own update handler wedges its queue, so the monitor runs on a private serial queue (utility QoS) and the status, the block and the notification move to the main queue. A change of Low Data Mode or of an expensive path without a status change posts the notification too (the block runs on status changes only). |
 | 限制：有可用路径不代表服务器可达（例如需要登录的 Wi-Fi 在登录前可能仍是 satisfied）；请求失败时仍应由应用显示网络失败占位图。 | Limit: a usable path does not mean the server is reachable (a captive Wi-Fi may report satisfied before login); a failed request should still show the network-failure placeholder. |
 
-## 资源缺失 / Missing resources
+## 资源缺失 / Missing resource
+
+| 中文 | English |
+| --- | --- |
+| 动画资源（.pag / .riv / Lottie 路径）缺失时，红条显示缺了哪一个。各平台共用的约定：本地化键 `CYLPlaceholderResourceMissing`，回调名 `onResourceMissing(resource, reason)`；`resource` 是调用方给出的名称或路径，`reason` 是简短的英文原因（`file not found`、`unreadable`、`no runtime`，不翻译）；同一资源只显示一次；页面消失或该资源之后加载成功时清除。 | When an animation resource (a .pag / .riv / Lottie path) is missing, the red bar names which one. The contract shared by every platform: localization key `CYLPlaceholderResourceMissing`, callback `onResourceMissing(resource, reason)`; `resource` is the name or path as the caller gave it, `reason` a short English word (`file not found`, `unreadable`, `no runtime`; not translated); a resource shows once; the entry is cleared when the page goes away or the resource later loads. |
+
+Text of `CYLPlaceholderResourceMissing` (the first `%@` is the resource, the second the reason), for the core tables of every platform:
+
+| 语言 / Language | Text |
+| --- | --- |
+| en | `Missing resource: %@ (%@)` |
+| zh-Hans | `缺少资源：%@（%@）` |
+| zh-Hant | `缺少資源：%@（%@）` |
+| ja | `リソースが見つかりません：%@（%@）` |
+| ko | `리소스 누락: %@ (%@)` |
+| ru | `Отсутствует ресурс: %@ (%@)` |
+| uk | `Відсутній ресурс: %@ (%@)` |
+
+## 资源缺失监视（Android） / Missing resource monitor (Android)
 
 | 中文 | English |
 | --- | --- |
