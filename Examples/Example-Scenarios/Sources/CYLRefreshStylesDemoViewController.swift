@@ -180,7 +180,8 @@ final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefres
             style.triggerOffset = 200
             style.fitsWidth = true
             style.pullInput = "pull"
-            style.pullInputMinimum = 10
+            // Bow draws black pixels below an input of about 45 to 50 (docs/Refresh-Library-Parity.md, black band): start at 50.
+            style.pullInputMinimum = 50
             style.releaseTrigger = "advance"
             style.finishTrigger = "advance"
             style.restartTrigger = "restart"
