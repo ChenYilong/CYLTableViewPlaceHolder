@@ -35,14 +35,19 @@ final class CYLRefreshDrivenHost {
     struct Params: Equatable {
         var footer = false
         var loadsAfterNoMoreData = false
+        /// The look: a style name of `CYLRefreshStyleFactory`, nil when the key is missing or not a string. [CN] 外观：`CYLRefreshStyleFactory` 的样式名，键缺失或不是字符串时为 nil。
+        var style: String?
 
         init(_ dictionary: [String: Any]?) {
             footer = dictionary?["footer"] as? Bool == true
+            style = dictionary?["style"] as? String
             loadsAfterNoMoreData = dictionary?["loadsAfterNoMoreData"] as? Bool == true
         }
     }
 
     let params: Params
+    /// The view the host puts into a platform view: it clips, and its height is the open height of the indicator. [CN] 放进 platform view 的视图：负责裁剪，其高度就是指示器的展开高度。
+    let container: UIView
     let layout: CYLRefreshDrivenLayout
     /// The header, or in footer mode the footer, the view hosts. [CN] 视图承载的刷新头（刷新尾模式下为刷新尾）。
     let component: CYLRefreshComponent
@@ -55,22 +60,54 @@ final class CYLRefreshDrivenHost {
     init(frame: CGRect, params: [String: Any]?, onEvent: @escaping (String, [String: Any]?) -> Void) {
         self.params = Params(params)
         self.onEvent = onEvent
-        layout = CYLRefreshDrivenLayout(frame: frame)
-        layout.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        let container = CYLRefreshSlotContainerView(frame: frame)
+        container.clipsToBounds = true
+        self.container = container
+        layout = CYLRefreshDrivenLayout(frame: CGRect(origin: .zero, size: frame.size))
+        container.addSubview(layout)
+        // The contract's fallback: a missing or unknown style is the classic one, reported once (a log line here; the channel is not
+        // listening yet while the view is created, so an event would be lost).
+        let unknownStyle: (String?) -> Void = { name in
+            NSLog("CYLRefresh: unknown refresh style %@, using classic", name ?? "(missing)")
+        }
         if self.params.footer {
-            let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
+            let footer = CYLRefreshStyleFactory.footer(style: self.params.style, onUnknownStyle: unknownStyle)
             footer.loadsAfterNoMoreData = self.params.loadsAfterNoMoreData
             layout.footer = footer
             component = footer
         } else {
-            let header = CYLRefreshNormalHeader(refreshingBlock: {})
+            let header = CYLRefreshStyleFactory.header(style: self.params.style, onUnknownStyle: unknownStyle)
             layout.header = header
             component = header
         }
+        container.onLayout = { [weak self] in self?.updateSlot() }
         phaseObserver = component.addPhaseObserver { [weak self] _, old, new in
+            self?.updateSlot()
             self?.onEvent("onPhase", ["phase": Self.name(of: new), "oldPhase": Self.name(of: old)])
         }
         component.refreshingHandler = { [weak self] _ in self?.onEvent("onRefreshing", nil) }
+        updateSlot()
+    }
+
+    /// Fits the indicator to the Dart slot. Dart shows the bottom (header) or top (footer) `pull` points of a view that is
+    /// always one open height tall, so the layout is sized to the pull and anchored at that edge: the indicator then moves in
+    /// the slot exactly as under a finger, instead of being shifted a second time by the scroll the pull makes inside a
+    /// full-height layout (that second shift left the classic header blank or clipped until the pull passed half of it). The
+    /// indicator also takes the open height of the view, so the trigger distance Dart measures is the one it arms at.
+    /// [CN] 把指示器放进 Dart 的槽位。Dart 只显示一个固定为展开高度的视图的底部（刷新头）或顶部（刷新尾）`pull` 点，因此布局高度取下拉量并贴着
+    /// 该边：指示器在槽位里的移动与手指下拉时相同，不再被满高度布局内的滚动再移动一次（那次多余的移动让经典刷新头在拉过一半之前空白或被裁剪）。
+    /// 指示器同时采用视图的展开高度，使 Dart 测得的触发距离就是它就绪的距离。
+    private func updateSlot() {
+        guard layout.superview === container else { return }
+        let full = container.bounds.height
+        guard full > 0 else { return }
+        if abs(component.expandHeight - full) > 0.5 {
+            if let header = component as? CYLRefreshHeader { header.setExpandHeight(full) } else { component.cyl_h = full }
+        }
+        let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true
+        let pull = max(abs(lastOffset), held ? full : 0)
+        let frame = CGRect(x: 0, y: params.footer ? 0 : full - pull, width: container.bounds.width, height: pull)
+        if layout.frame != frame { layout.frame = frame }
     }
 
     /// The lower camel case name of a phase, as Android sends it. [CN] 阶段的小驼峰名称，与 Android 发送的相同。
@@ -101,23 +138,37 @@ final class CYLRefreshDrivenHost {
             }
             lastOffset = CGFloat(offset)
             lastDragging = arguments?["dragging"] as? Bool == true
+            updateSlot()
             layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: arguments?["startedAtEdge"] as? Bool != false)
         case "release":
             layout.release()
+            updateSlot()
         case "finishRefresh":
             if let footer = footer, arguments?["noMoreData"] as? Bool == true {
                 footer.endRefreshingWithNoMoreData()
             } else {
                 component.endRefreshing(success: arguments?["success"] as? Bool != false)
             }
+            updateSlot()
         case "noMoreData":
             guard let footer = footer else { return .error(code: "not_a_footer", message: "noMoreData needs a footer view.") }
             if arguments?["value"] as? Bool == true { footer.noticeNoMoreData() } else { footer.resetNoMoreData() }
             // The footer shows "no more data" only in a scrolled layout: feed the last pull again so the layout scrolls to it.
+            updateSlot()
             layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: true)
         default:
             return .notImplemented
         }
         return .success
+    }
+}
+
+/// A container that reports its layout passes, so the host can refit the indicator when Flutter sizes the view. [CN] 报告布局的容器，Flutter 改变视图大小时宿主据此重新放置指示器。
+private final class CYLRefreshSlotContainerView: UIView {
+    var onLayout: (() -> Void)?
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        onLayout?()
     }
 }

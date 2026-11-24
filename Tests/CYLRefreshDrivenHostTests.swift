@@ -165,4 +165,66 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         XCTAssertEqual(header.handle(method: "noMoreData", arguments: ["value": true]), .error(code: "not_a_footer", message: "noMoreData needs a footer view."))
         XCTAssertEqual(header.handle(method: "nope", arguments: nil), .notImplemented)
     }
+
+    // MARK: - style and the slot (row 6, the row-4 clip)
+
+    func testTheStyleParameterChoosesTheLook() {
+        XCTAssertEqual(CYLRefreshDrivenHost.Params(["style": "phoenix"]).style, "phoenix")
+        XCTAssertNil(CYLRefreshDrivenHost.Params(["style": 3]).style)
+        XCTAssertTrue(host(["style": "phoenix"]).component is CYLRefreshPhoenixHeader)
+        XCTAssertTrue(host(["style": "taurus", "footer": true]).component is CYLRefreshTaurusFooter)
+        XCTAssertTrue(host(["style": "cupertino"]).component is CYLRefreshCupertinoHeader)
+    }
+
+    func testAMissingOrUnknownStyleIsTheClassicOneAndNeverCrashes() {
+        XCTAssertTrue(host(nil).component is CYLRefreshNormalHeader)
+        XCTAssertTrue(host(["style": "rainbow"]).component is CYLRefreshNormalHeader)
+        XCTAssertTrue(host(["style": "rainbow", "footer": true]).component is CYLRefreshBackNormalFooter)
+        XCTAssertTrue(host(["style": 7]).component is CYLRefreshNormalHeader)
+    }
+
+    private func slotHost(_ params: [String: Any]?, height: CGFloat = 60) -> CYLRefreshDrivenHost {
+        let host = CYLRefreshDrivenHost(frame: CGRect(x: 0, y: 0, width: 320, height: height), params: params) { _, _ in }
+        window.addSubview(host.container)
+        host.container.layoutIfNeeded()
+        spin(0.1)
+        return host
+    }
+
+    func testTheHeaderTakesTheOpenHeightOfItsViewAndIsAnchoredAtTheBottomOfTheSlot() {
+        for style in ["classic", "phoenix"] {
+            let host = slotHost(["style": style], height: 90)
+            XCTAssertEqual(host.component.expandHeight, 90, accuracy: 0.5, style)
+            XCTAssertEqual(host.layout.frame.height, 0, accuracy: 0.5, "\(style): nothing is shown at rest")
+            drive(host, 20)
+            XCTAssertEqual(host.layout.frame.height, 20, accuracy: 0.5, style)
+            XCTAssertEqual(host.layout.frame.maxY, 90, accuracy: 0.5, "\(style): the slot is the bottom of the view")
+            drive(host, 95)
+            XCTAssertEqual(host.layout.frame.minY, -5, accuracy: 0.5, style)
+            XCTAssertEqual(host.component.phase, .releaseToRefresh, "\(style): armed at the view's height")
+        }
+    }
+
+    func testTheFooterSlotIsTheTopOfTheView() {
+        let host = slotHost(["footer": true], height: 60)
+        XCTAssertEqual(host.component.expandHeight, 60, accuracy: 0.5)
+        drive(host, -20)
+        XCTAssertEqual(host.layout.frame.minY, 0, accuracy: 0.5)
+        XCTAssertEqual(host.layout.frame.height, 20, accuracy: 0.5)
+        drive(host, 0, dragging: false)
+        XCTAssertEqual(host.handle(method: "finishRefresh", arguments: ["noMoreData": true]), .success)
+        XCTAssertEqual(host.layout.frame.height, 60, accuracy: 0.5, "no more data keeps the label's room")
+    }
+
+    func testAMidPullClassicHeaderDrawsInTheSlot() {
+        let host = slotHost(nil, height: 60)
+        drive(host, 25)
+        host.container.layoutIfNeeded()
+        let label = host.layout.header.flatMap { header in header.subviews.compactMap { $0 as? UILabel }.first }
+        XCTAssertNotNil(label)
+        let inSlot = label.map { host.container.convert($0.bounds, from: $0) }
+        XCTAssertNotNil(inSlot)
+        let slot = CGRect(x: 0, y: 35, width: 320, height: 25)
+        XCTAssertTrue(inSlot.map { $0.intersects(slot) } ?? false, "the title is inside the 25 points Dart shows: \(String(describing: inSlot))")
+    }
 }

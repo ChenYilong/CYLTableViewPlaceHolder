@@ -4,7 +4,7 @@ import CYLTableViewPlaceHolder
 
 /**
  * [EN] Creates the platform view of the native refresh header or footer: the creation parameters are the Android ones, `footer`
- *      and `loadsAfterNoMoreData` (see `CYLRefreshDrivenHost`).
+ *      and `loadsAfterNoMoreData`, plus iOS's `style` (see `CYLRefreshDrivenHost`).
  * [CN] 创建原生刷新头或刷新尾的 platform view：创建参数与 Android 相同，`footer` 与 `loadsAfterNoMoreData`（见 `CYLRefreshDrivenHost`）。
  */
 final class CYLRefreshPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
@@ -43,15 +43,13 @@ final class CYLRefreshPlatformView: NSObject, FlutterPlatformView {
     init(frame: CGRect, viewId: Int64, messenger: FlutterBinaryMessenger, params: [String: Any]?) {
         let channel = FlutterMethodChannel(name: "\(CYLRefreshPlatformViewFactory.viewType)/\(viewId)", binaryMessenger: messenger)
         self.channel = channel
-        container = UIView(frame: frame)
-        container.clipsToBounds = true
-        container.isAccessibilityElement = false
-        container.accessibilityIdentifier = "cyl.native.refresh"
-        host = CYLRefreshDrivenHost(frame: container.bounds, params: params) { event, arguments in
+        host = CYLRefreshDrivenHost(frame: frame, params: params) { event, arguments in
             channel.invokeMethod(event, arguments: arguments)
         }
+        container = host.container
+        container.isAccessibilityElement = false
+        container.accessibilityIdentifier = "cyl.native.refresh"
         super.init()
-        container.addSubview(host.layout)
         channel.setMethodCallHandler { [weak self] call, result in
             guard let host = self?.host else { return result(nil) }
             switch host.handle(method: call.method, arguments: call.arguments as? [String: Any]) {
