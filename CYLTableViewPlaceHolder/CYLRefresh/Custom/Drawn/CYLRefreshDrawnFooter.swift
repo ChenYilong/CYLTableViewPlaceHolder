@@ -64,7 +64,7 @@ open class CYLRefreshDrawnFooter: CYLRefreshBackStateFooter {
     private func installStyle(_ style: CYLRefreshDrawnHeader) {
         self.style?.removeFromSuperview()
         self.style = style
-        style.cyl_beginDriven()
+        style.cyl_beginDriven(host: self)
         insertSubview(style, at: 0)
         cyl_h = style.expandHeight
         stateLabel?.isHidden = state != .noMoreData

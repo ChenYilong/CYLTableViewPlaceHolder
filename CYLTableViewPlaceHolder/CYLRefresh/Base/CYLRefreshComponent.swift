@@ -77,6 +77,8 @@ open class CYLRefreshComponent: UIView {
     private var targetActions: [CYLRefreshTargetAction] = []
     // [EN] YES while the control holds after the refresh ends (finishDuration). [CN] 刷新结束后停留期间为 YES。
     private var finishing = false
+    // [EN] Counts the holds, so a hold that ended early is not ended a second time by its timer. [CN] 对停留计数，提前结束的停留不会被其定时器再次结束。
+    private var finishingGeneration = 0
     // [EN] The phase last reported to -phaseDidChangeFrom:to: (0 until the first report, as the Objective-C ivar).
     // [CN] 上次通知 -phaseDidChangeFrom:to: 的阶段（首次通知前为 0，与 Objective-C 实例变量相同）。
     private var reportedPhase = CYLRefreshPhase(rawValue: 0)!
@@ -740,13 +742,27 @@ open class CYLRefreshComponent: UIView {
         }
         // [EN] Hold open for `duration`, showing the result, then retract. [CN] 停留 `duration` 显示结果，然后收回。
         finishing = true
+        finishingGeneration += 1
+        let generation = finishingGeneration
         reportPhaseChange()
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
-            guard let self = self else { return }
-            self.finishing = false
-            if self.isRefreshing { self.state = .idle }
-            self.reportPhaseChange()
+            self?.endFinishingHold(generation: generation)
         }
+    }
+
+    private func endFinishingHold(generation: Int) {
+        guard finishing, generation == finishingGeneration else { return }
+        finishing = false
+        if isRefreshing { state = .idle }
+        reportPhaseChange()
+    }
+
+    // [EN] Ends the hold of `endRefreshing(success:)` now, as its timer would later: a control whose end animation reached its
+    //      end (CYLRefreshRiveHeader) retracts at that moment. Does nothing when no hold is running.
+    // [CN] 立即结束 `endRefreshing(success:)` 的停留（其定时器稍后也会这样做）：结束动画播放完毕的控件（CYLRefreshRiveHeader）在此刻收回。
+    //      没有停留时什么也不做。
+    func cyl_endFinishingHold() {
+        endFinishingHold(generation: finishingGeneration)
     }
 
     /**

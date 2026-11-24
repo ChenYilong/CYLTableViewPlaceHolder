@@ -36,6 +36,8 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
     // [EN] Driven by a CYLRefreshDrawnFooter: the values below replace the scroll view's.
     // [CN] 由 CYLRefreshDrawnFooter 驱动：下列值代替滚动视图的值。
     private var driven = false
+    // [EN] The footer that hosts this header (its hold is the one that matters when driven). [CN] 内嵌此刷新头的刷新尾（被驱动时起作用的停留属于它）。
+    private weak var drivenHost: CYLRefreshComponent?
     private var drivenOffset: CGFloat = 0
     private var drivenSuccess = false
     private var drivenFrame: CGRect = .zero
@@ -361,7 +363,8 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
     }
 
     // [EN] Called once by CYLRefreshDrawnFooter when it hosts the header. [CN] CYLRefreshDrawnFooter 内嵌刷新头时调用一次。
-    func cyl_beginDriven() {
+    func cyl_beginDriven(host: CYLRefreshComponent? = nil) {
+        drivenHost = host
         driven = true
         autoHideRefresh = false
         isUserInteractionEnabled = false
@@ -381,6 +384,12 @@ open class CYLRefreshDrawnHeader: CYLRefreshHeader {
             self.scrollView(scrollView, didScroll: offset, percent: dragPercent, drag: isDragging)
         }
         setNeedsDisplay()
+    }
+
+    // [EN] The style's end animation reached its end: retract now instead of when `onRefreshFinishing:` runs out (that time is only
+    //      the longest hold). [CN] 样式的结束动画已播放完毕：立即收回，而不是等 `onRefreshFinishing:` 的时间用完（该时间只是最长停留）。
+    func cyl_finishAnimationDidEnd() {
+        (drivenHost ?? self).cyl_endFinishingHold()
     }
 
     func cyl_driveStatus(_ status: CYLRefreshPhase) {

@@ -14,7 +14,7 @@ import Foundation
 /**
  * [EN] The `rive` style's parameters read from a creation-parameter dictionary (a Flutter creation parameter map, or the object of
  *      React Native's `headerRive` / `footerRive`). `riveFile` is required; every other key is optional and an unset name is skipped by
- *      the header. Keys: `riveFile`, `riveArtboard`, `riveStateMachine`, `riveTriggerOffset`, `riveMinimumHeight`, `riveFitsWidth`,
+ *      the header. Keys: `riveFile`, `riveArtboard`, `riveStateMachine`, `riveTriggerOffset`, `riveMinimumHeight`, `riveFitsWidth`, `riveFinishTimeout`,
  *      `rivePullInput`, `rivePullInputMinimum`, `rivePullInputMaximum`, `rivePullInputStart`, `rivePullInputRefreshingValue`,
  *      `riveReleaseTrigger`, `riveFinishTrigger`, `riveRestartTrigger`, `riveLoadingBoolean`, `riveLoadingNumber`,
  *      `riveLoadingNumberMaximum`, `riveLoadingNumberFinished`, `riveLoadingNumberDuration`, `rivePullAnimation`,
@@ -29,6 +29,21 @@ public final class CYLRefreshRiveOptions: NSObject {
      * [EN] The key of the required file name or path. [CN] 必填的文件名或路径的键。
      */
     @objc public static let fileKey = "riveFile"
+
+    /**
+     * [EN] Seconds a finish holds the header open at most when `riveFinishTimeout` is not set (1.5): the Rive runtimes do not report
+     *      how long the end of a state machine takes. [CN] 未设置 `riveFinishTimeout` 时，结束最多让刷新头保持展开的秒数（1.5）：Rive
+     *      运行时不会告知状态机结束部分的时长。
+     */
+    @objc public static let defaultFinishTimeout: TimeInterval = 1.5
+
+    /**
+     * [EN] `riveFinishTimeout` when it is a number above 0, else `defaultFinishTimeout`. [CN] `riveFinishTimeout` 为大于 0 的数字时取其值，否则为 `defaultFinishTimeout`。
+     */
+    @objc public var finishTimeout: TimeInterval {
+        if let value = number("riveFinishTimeout"), value > 0 { return value }
+        return Self.defaultFinishTimeout
+    }
 
     /**
      * [EN] The `riveFile` value: an absolute path, or a file name (with or without `.riv`) or relative path of an app or Flutter

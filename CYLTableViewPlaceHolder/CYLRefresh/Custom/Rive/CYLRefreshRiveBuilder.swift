@@ -31,6 +31,7 @@ public final class CYLRefreshRiveBuilder: NSObject, CYLRefreshRiveBuilding {
         if let value = options.number("riveTriggerOffset"), value > 0 { style.triggerOffset = CGFloat(value) }
         if let value = options.number("riveMinimumHeight"), value > 0 { style.minimumHeight = CGFloat(value) }
         style.fitsWidth = options.bool("riveFitsWidth")
+        style.finishTimeout = options.finishTimeout
         style.pullInput = options.string("rivePullInput")
         if let value = options.number("rivePullInputMinimum") { style.pullInputMinimum = value }
         if let value = options.number("rivePullInputMaximum") { style.pullInputMaximum = value }
