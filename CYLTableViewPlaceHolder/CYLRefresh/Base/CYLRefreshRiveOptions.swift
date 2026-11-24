@@ -210,3 +210,24 @@ enum CYLRefreshRiveDrawnTable {
         return (pairs, dropped > 0 ? "\(dropped) malformed pair\(dropped == 1 ? "" : "s") dropped" : nil)
     }
 }
+
+/**
+ * [EN] The rules of the `rive` style for the retract after a refresh. Pure Foundation, so they are tested without the Rive runtime.
+ * [CN] `rive` 样式在刷新结束后收回时的规则。纯 Foundation，所以不需要 Rive 运行时即可测试。
+ */
+enum CYLRefreshRiveRetract {
+
+    // [EN] Whether the art stays as it is while the header retracts: a style whose art is a pull animation scrubbed by the offset (a `pullAnimation` and no
+    //      `idleAnimation`, Halloween). Scrubbing it back to 0 draws pure black over the whole header; the other styles reset at once.
+    // [CN] 刷新头收回时画面是否保持原样：画面是由偏移擦洗的下拉动画的样式（有 `pullAnimation` 且无 `idleAnimation`，如 Halloween）。把它擦回 0 会让整个刷新头变成纯黑；其他样式立即重置。
+    static func keepsArt(pullAnimation: String?, idleAnimation: String?) -> Bool {
+        pullAnimation != nil && idleAnimation == nil
+    }
+
+    // [EN] Whether the retracting header is out of view: the larger of its model height and its presented height is under half a point (the model height is
+    //      already 0 when the retract animation starts), or `elapsed` passed `limit` seconds.
+    // [CN] 收回中的刷新头是否已离开视野：模型高度与呈现高度中较大者不足半点（收回动画开始时模型高度已是 0），或 `elapsed` 超过 `limit` 秒。
+    static func isOutOfView(modelHeight: CGFloat, shownHeight: CGFloat, elapsed: TimeInterval, limit: TimeInterval) -> Bool {
+        max(modelHeight, shownHeight) < 0.5 || elapsed > limit
+    }
+}
