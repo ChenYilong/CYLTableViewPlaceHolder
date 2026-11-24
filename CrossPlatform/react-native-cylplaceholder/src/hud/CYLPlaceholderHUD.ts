@@ -1,7 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { CYLPlaceholderHUDBase, type CYLPlaceholderHUDBackend } from './hudBase.ts';
 
-/** Whether the app was built with the native HUD module (the Android half of this package; the iOS half is a TODO). */
+/** Whether the app was built with the native HUD module (the Android half and the iOS half of this package: `CYLPlaceholderHUDModule` on both). */
 export function isCYLPlaceholderHUDAvailable(): boolean {
   return NativeModules.CYLPlaceholderHUD != null;
 }

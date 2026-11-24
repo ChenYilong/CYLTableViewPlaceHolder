@@ -24,6 +24,10 @@ class CYLPlaceholderStackHostView(context: Context) : FrameLayout(context) {
     private var dirty = false
     private var restartToken = 0
 
+    /** How many times the animations were restarted (the command and the `restartToken` rule), for the tests and for logs (as on iOS). */
+    var restartCount = 0
+        private set
+
     /** Sets the component dictionaries (the `components` prop); the stack is rebuilt by [applyPendingConfiguration]. */
     fun setComponents(value: List<Any?>?) { components = value; dirty = true }
 
@@ -34,15 +38,17 @@ class CYLPlaceholderStackHostView(context: Context) : FrameLayout(context) {
     fun setBackgroundAction(value: String?) { backgroundAction = value; dirty = true }
 
     /**
-     * The `restartToken` prop: a change plays every animation again from the start (the first value is not a change).
+     * The `restartToken` prop: a value above the last one plays every animation again from the start (as on iOS: the first value is a
+     * baseline, and an equal or smaller value, such as a reset to 0, never replays).
      */
     fun setRestartToken(value: Int) {
-        if (value != restartToken && stack != null) restartAnimation()
+        if (value > restartToken && stack != null) restartAnimation()
         restartToken = value
     }
 
     /** Plays every animation of the stack again from the start (the `restartAnimation` command). */
     fun restartAnimation() {
+        restartCount++
         stack?.let { CYLPlaceholderBridge.updateStackView(it, "restartAnimation", null) }
     }
 

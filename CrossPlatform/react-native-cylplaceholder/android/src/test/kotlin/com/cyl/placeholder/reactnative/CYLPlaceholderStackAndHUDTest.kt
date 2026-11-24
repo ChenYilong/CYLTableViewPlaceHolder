@@ -91,6 +91,25 @@ class CYLPlaceholderStackAndHUDTest {
     }
 
     @Test
+    fun restartTokenReplaysOnlyWhenItGrowsOnceTheStackExists() {
+        val host = CYLPlaceholderStackHostView(activity)
+        host.setRestartToken(3)
+        assertEquals("no stack yet: the first value is a baseline", 0, host.restartCount)
+        host.setComponents(retryComponents)
+        host.applyPendingConfiguration()
+        host.setRestartToken(3)
+        assertEquals("an equal value does not replay", 0, host.restartCount)
+        host.setRestartToken(4)
+        assertEquals("growing replays", 1, host.restartCount)
+        host.setRestartToken(2)
+        assertEquals("a smaller value (a reset) does not replay", 1, host.restartCount)
+        host.setRestartToken(3)
+        assertEquals("growing again from the lower baseline replays", 2, host.restartCount)
+        host.restartAnimation()
+        assertEquals("the command always replays", 3, host.restartCount)
+    }
+
+    @Test
     fun theManagerReadsReactPropsAndExportsTheActionEventAndCommand() {
         val manager = CYLPlaceholderStackManager()
         assertEquals("CYLPlaceholderStack", manager.name)

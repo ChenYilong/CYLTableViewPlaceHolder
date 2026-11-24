@@ -154,6 +154,77 @@ class CYLRefreshContainerViewTest {
         assertFalse(view.cyl_footer!!.isRefreshing)
     }
 
+    // The floor's content: a child with nativeID "cyl.refresh.secondary" (React Native stores it under this tag).
+    private fun floorContent(): android.view.View = android.view.View(activity).also {
+        it.setTag(com.facebook.react.R.id.view_tag_native_id, CYLRefreshContainerView.SECONDARY_NATIVE_ID)
+    }
+
+    @Test
+    fun theSecondaryNativeIdChildIsTheFloorAndNotAChildOfTheLayout() {
+        val view = CYLRefreshContainerView(activity)
+        val scroll = ScrollView(activity)
+        val floor = floorContent()
+        view.addReactChild(scroll, 0)
+        view.addReactChild(floor, 1)
+        activity.setContentView(view)
+        idle(100)
+        assertEquals("React Native counts both children", 2, view.reactChildCount)
+        assertTrue(view.reactChildAt(1) === floor)
+        assertEquals("the floor is not a child of the layout", null, floor.parent)
+        assertTrue("the header got it as the floor's content", view.cyl_header!!.secondaryView === floor)
+        view.removeReactChildAt(1)
+        assertEquals(1, view.reactChildCount)
+        assertEquals(null, view.cyl_header!!.secondaryView)
+    }
+
+    @Test
+    fun secondaryOpenFromJsOpensWithoutTheEventAndAPullOrPushReportsIt() {
+        val view = CYLRefreshContainerView(activity)
+        view.addReactChild(ScrollView(activity), 0)
+        view.addReactChild(floorContent(), 1)
+        activity.setContentView(view)
+        idle(100)
+        var opened = 0
+        var closed = 0
+        view.onSecondaryOpen = { opened++ }
+        view.onSecondaryClose = { closed++ }
+        view.setSecondaryTriggerOffset(120f)
+        view.setSecondaryDimension(300f)
+        view.setSecondaryCloseTriggerOffset(80f)
+        assertEquals(120f, view.cyl_header!!.secondaryTriggerOffset, 0f)
+        view.setSecondaryOpenFromJs(true)
+        idle(1500)
+        assertTrue(view.cyl_header!!.secondaryOpen)
+        assertEquals("opened by the prop: no event", 0, opened)
+        view.setSecondaryOpenFromJs(false)
+        idle(1500)
+        assertFalse(view.cyl_header!!.secondaryOpen)
+        assertEquals("closed by the prop: no event", 0, closed)
+        // Opened and closed by the native side (a pull or a push): the events are sent.
+        view.cyl_header!!.openSecondary()
+        idle(1500)
+        assertEquals(1, opened)
+        view.cyl_header!!.closeSecondary()
+        idle(1500)
+        assertEquals(1, closed)
+    }
+
+    @Test
+    fun noFloorContentOrWhileRefreshingSecondaryOpenDoesNothing() {
+        val view = container()
+        view.setSecondaryOpenFromJs(true)
+        assertFalse("no floor content: nothing opens", view.cyl_header!!.secondaryOpen)
+        val withFloor = CYLRefreshContainerView(activity)
+        withFloor.addReactChild(ScrollView(activity), 0)
+        withFloor.addReactChild(floorContent(), 1)
+        activity.setContentView(withFloor)
+        idle(100)
+        withFloor.setRefreshingFromJs(true)
+        idle(100)
+        withFloor.setSecondaryOpenFromJs(true)
+        assertFalse("no second floor while refreshing", withFloor.cyl_header!!.secondaryOpen)
+    }
+
     @Test
     fun aRealPullUpReachesOnLoadMoreWhenItIsOn() {
         val view = container()

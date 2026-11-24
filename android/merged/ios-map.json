@@ -1198,5 +1198,21 @@
  "CYLRefreshDrivenLayout.slotHeight": {
   "ios": "`CYLRefreshDrivenHost.updateSlot()` (the Flutter iOS plugin sizes the layout to the pull and anchors it at the slot edge: the Slot rule in docs/Refresh-Library-Parity.md)",
   "note": "iOS has no public property: the host owns the slot rule, `CYLRefreshDrivenLayout` itself is sized by its frame"
+ },
+ "CYLRefreshDrivenLayout.shownPull": {
+  "ios": "n/a",
+  "note": "read by the Android Flutter slot every frame (the spinner rebounds without a call); the iOS host anchors its own slot in CYLRefreshDrivenHost"
+ },
+ "CYLRefreshDrivenLayout.indicatorExtent": {
+  "ios": "n/a",
+  "note": "the Android slot rule's header height (mHeaderHeight is protected there); iOS reads the header's frame"
+ },
+ "CYLRefreshDrivenLayout.onBeforeDraw": {
+  "ios": "n/a",
+  "note": "Android re-fits the slot in the pre-draw hook; iOS lays out in layoutSubviews"
+ },
+ "CYLRefreshDrivenLayout.anchorShift": {
+  "ios": "n/a",
+  "note": "Android moves the layout by translationY to keep the header at the slot edge; the iOS host anchors its view at the edge"
  }
 }

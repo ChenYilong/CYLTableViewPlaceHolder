@@ -366,7 +366,43 @@ void main() {
       expect(sent[0].arguments, {'value': false});
     });
 
-    testWidgets('a header sends no footer parameters or no-more-data calls', variant: _bothPlatforms, (tester) async {
+    // One testWidgets per mode: a second pumpHeader in the same test keeps the first platform view's creation parameters.
+    for (final mode in [CYLRefreshScrollMode.move, CYLRefreshScrollMode.front, CYLRefreshScrollMode.behind]) {
+      testWidgets('only the behind scroll mode asks the native slot to anchor at the far edge (${mode.name})', variant: _bothPlatforms, (tester) async {
+        final header = CYLRefreshClassicHeader()..scrollMode = mode;
+        addTearDown(header.dispose);
+        await pumpHeader(tester, header);
+        expect(creationParams, {'style': 'classic', 'footer': false, if (mode == CYLRefreshScrollMode.behind) 'behind': true}, reason: mode.name);
+      });
+    }
+
+    testWidgets('a header with a second floor sends its creation parameters and opens and closes the native floor', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshClassicHeader()
+        ..secondaryView = const SizedBox()
+        ..secondaryTriggerOffset = 130
+        ..secondaryDimension = 300
+        ..secondaryCloseTriggerOffset = 70;
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      expect(creationParams, {'style': 'classic', 'footer': false, 'secondaryTriggerOffset': 130.0, 'secondaryDimension': 300.0, 'secondaryCloseTriggerOffset': 70.0});
+      header.openSecondary();
+      expect(sent.map((c) => c.method), contains('openSecondary'));
+      sent.clear();
+      header.closeSecondary();
+      expect(sent.map((c) => c.method), ['closeSecondary']);
+      sent.clear();
+      header.closeSecondary();
+      expect(sent, isEmpty, reason: 'a closed floor sends nothing again');
+    });
+
+    testWidgets('a header without a second floor sends no second floor parameters', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshClassicHeader();
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      expect(creationParams!.keys.where((k) => (k as String).startsWith('secondary')), isEmpty);
+    });
+
+    testWidgets('a header sends no footer parameters or no-more-data calls',variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
