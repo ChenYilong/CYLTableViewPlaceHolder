@@ -93,7 +93,11 @@ final class CYLFlowListViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 0 ? CYLFlow.allCases.count : 1
+        switch section {
+        case 0: return CYLFlow.allCases.count
+        case 1: return 2
+        default: return 1
+        }
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -123,15 +127,17 @@ final class CYLFlowListViewController: UITableViewController {
         if indexPath.section == 1 {
             // The red bar ported from CYLChatKit, alone or with a placeholder.
             var content = UIListContentConfiguration.subtitleCell()
-            content.text = CYLScenarioLocalizedString(.titleStatusBar)
-            content.secondaryText = "CYLPlaceholderStatusView · statusView"
+            let missing = indexPath.row == 1
+            content.text = CYLScenarioLocalizedString(missing ? .titleMissingResource : .titleStatusBar)
+            content.secondaryText = missing ? "CYLPlaceholderResourceReporter · cyl_showsMissingResources"
+                                            : "CYLPlaceholderStatusView · statusView"
             content.secondaryTextProperties.color = .secondaryLabel
             // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
             content.image = UIImage(systemName: "exclamationmark.circle")
             content.imageProperties.tintColor = .systemRed
             cell.contentConfiguration = content
             cell.accessoryType = .disclosureIndicator
-            cell.accessibilityIdentifier = "statusBarFlow"
+            cell.accessibilityIdentifier = missing ? "missingResourceFlow" : "statusBarFlow"
             return cell
         }
         let flow = CYLFlow.allCases[indexPath.row]
@@ -154,7 +160,8 @@ final class CYLFlowListViewController: UITableViewController {
             return
         }
         if indexPath.section == 1 {
-            navigationController?.pushViewController(CYLStatusBarViewController(), animated: true)
+            let next: UIViewController = indexPath.row == 1 ? CYLMissingResourceViewController() : CYLStatusBarViewController()
+            navigationController?.pushViewController(next, animated: true)
             return
         }
         let flow = CYLFlow.allCases[indexPath.row]

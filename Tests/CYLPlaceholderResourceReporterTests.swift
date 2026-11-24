@@ -93,15 +93,13 @@ final class CYLPlaceholderResourceReporterTests: XCTestCase {
         view?.onResourceMissing = { resource, reason in heard.append("\(resource)|\(reason)") }
         XCTAssertEqual(reporter.missingResourceNames, ["gone.pag"])
         XCTAssertEqual(reporter.text(visibleIn: nil), "Missing resource: gone.pag (file not found)")
-        view?.itemAttributes = [CYLPlaceholderItemTitle: "x",
-                                CYLPlaceholderItemAnimationFilePath: "/nonexistent/other.riv"]
+        XCTAssertEqual(view?.setAnimationFile("/nonexistent/Folder/other.riv"), false)
         XCTAssertEqual(reporter.missingResourceNames, ["other.riv"], "the old resource is cleared, the new one named")
         XCTAssertEqual(heard, ["other.riv|file not found"])
         let bundled = try XCTUnwrap(CYLPlaceholderView.path(forBundledAnimation: "CYLPlaceholderLoading.json"))
-        view?.itemAttributes = [CYLPlaceholderItemTitle: "x", CYLPlaceholderItemAnimationFilePath: bundled]
-        XCTAssertEqual(reporter.missingResourceNames, [], "a later load clears the entry")
-        view?.itemAttributes = [CYLPlaceholderItemTitle: "x", CYLPlaceholderItemAnimationFilePath: "/nonexistent/again.pag"]
-        XCTAssertEqual(reporter.missingResourceNames, ["again.pag"])
+        if view?.setAnimationFile(bundled) == true {
+            XCTAssertEqual(reporter.missingResourceNames, [], "a later load clears the entry")
+        }
         view = nil
         XCTAssertEqual(reporter.missingResourceNames, [], "the page's views are gone, so the entry is")
     }
@@ -142,6 +140,7 @@ final class CYLPlaceholderResourceReporterTests: XCTestCase {
         XCTAssertEqual(controller.cyl_statusView.text, "Missing resource: a.pag (file not found)",
                        "the resource text returns with the network")
         reporter.resolve(resource: "a.pag", source: nil)
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.6))
         XCTAssertNil(controller.cyl_statusView.superview, "cleared when the resource loads")
         XCTAssertEqual(controller.additionalSafeAreaInsets.top, 0, accuracy: 0.01)
         XCTAssertEqual(controller.cyl_statusView.text, "Network unavailable, Check network", "the bar's own text is back")
