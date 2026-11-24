@@ -30,6 +30,41 @@ class CYLRefreshDrivenSlotTest {
     }
 
     @Test
+    fun theSlotIsNeverShorterThanTheIndicatorWhileRefreshing() {
+        assertEquals("held: the indicator's own height, not the whole slot", 59, CYLRefreshDrivenLayout.slotHeight(158, 12, true, 59))
+        assertEquals("held and pulled past it: the pull", 300, CYLRefreshDrivenLayout.slotHeight(158, 300, true, 59))
+        assertEquals("a footer held open: its height", 59, CYLRefreshDrivenLayout.slotHeight(158, 0, true, 59))
+        assertEquals("not held, a small pull: the pull", 20, CYLRefreshDrivenLayout.slotHeight(158, 20, false, 59))
+    }
+
+    @Test
+    fun theIndicatorIsAnchoredAtTheSlotEdgeWhateverTheLayoutHeight() {
+        // The header sits `shown` pixels into the layout, so a taller layout moves down by the difference (a footer up).
+        assertEquals(0, CYLRefreshDrivenLayout.anchorShift(300, 300, false))
+        assertEquals(47, CYLRefreshDrivenLayout.anchorShift(59, 12, false))
+        assertEquals(-47, CYLRefreshDrivenLayout.anchorShift(59, 12, true))
+        assertEquals("never negative for a header", 0, CYLRefreshDrivenLayout.anchorShift(10, 20, false))
+        // Behind: the indicator stays at the far edge at its own height.
+        assertEquals(59, CYLRefreshDrivenLayout.behindShift(0, 59, false))
+        assertEquals(-241, CYLRefreshDrivenLayout.behindShift(300, 59, false))
+        assertEquals(-59, CYLRefreshDrivenLayout.behindShift(0, 59, true))
+    }
+
+    @Test
+    fun theLayoutReportsTheShownPullAndTheIndicatorsOwnHeight() {
+        val layout = CYLRefreshDrivenLayout(activity)
+        layout.cyl_header = CYLRefreshNormalHeader(activity)
+        assertEquals(0, layout.shownPull)
+        layout.drive(80, true)
+        assertEquals(80, layout.shownPull)
+        assertTrue("the extent is the header's height", layout.indicatorExtent > 0)
+        val footerLayout = CYLRefreshDrivenLayout(activity)
+        footerLayout.cyl_footer = CYLRefreshBackNormalFooter(activity)
+        footerLayout.drive(-50, true)
+        assertEquals("a footer pull counts positive", 50, footerLayout.shownPull)
+    }
+
+    @Test
     fun aDrawnFooterShowsTheLocalizedNoMoreDataTextAndHidesTheStyle() {
         for (style in listOf(CYLRefreshStyle.Material, CYLRefreshStyle.BezierRadar, CYLRefreshStyle.Delivery, CYLRefreshStyle.Phoenix, CYLRefreshStyle.Taurus, CYLRefreshStyle.BezierCircle)) {
             val footer = style.newFooter(activity) as CYLRefreshDrawnFooter

@@ -70,6 +70,7 @@ class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
     // draw hook would miss the moment "no more data" is set.
     private val holdBeforeDraw = ViewTreeObserver.OnPreDrawListener {
         holdNoMoreDataFooter()
+        onBeforeDraw?.invoke()
         true
     }
 
@@ -88,15 +89,51 @@ class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
      */
     override fun dispatchTouchEvent(e: MotionEvent): Boolean = false
 
+    /**
+     * The pull the layout shows now, in pixels (>= 0): the spinner's size, or the footer's height while "no more data" holds it
+     * in. The Flutter slot reads it before every frame, because the rebound after a release moves the spinner without any call.
+     */
+    val shownPull: Int
+        get() = max(abs(mSpinner), if (cyl_footer?.noMoreData == true) mFooterHeight else 0)
+
+    /**
+     * The indicator's own (intrinsic) height in pixels: the footer's for a layout with a footer, else the header's.
+     */
+    val indicatorExtent: Int get() = if (cyl_footer != null) mFooterHeight else mHeaderHeight
+
+    /**
+     * Called before every frame this layout draws (the hook that holds the "no more data" footer): the host re-fits its slot.
+     */
+    var onBeforeDraw: (() -> Unit)? = null
+
     companion object {
         /**
          * The height, in pixels, a driven layout takes in a slot that is [slotHeight] tall and shows only the pulled part of the
          * indicator (the Flutter plugin's slot, anchored at the bottom edge for a header and the top edge for a footer): the
-         * pull ([offset], either sign) so the indicator moves in the slot as it does under a finger, or the whole slot while the
-         * indicator is [held] open; at least 1, never 0. A layout as tall as the slot would scroll the indicator by the pull a
-         * second time inside the slot, which left the classic header blank until the pull passed half of it.
+         * pull ([offset], either sign), or while the indicator is [held] open the indicator's own height [extent] (the whole slot
+         * when [extent] is 0, unknown), whichever is larger; at least 1, never 0. The layout is thus never shorter than the
+         * indicator while refreshing. The indicator sits at the pull inside the layout, so the host also moves the layout by
+         * [anchorShift] to keep it at the slot's edge (a layout as tall as the slot once scrolled the indicator by the pull a
+         * second time, which left the classic header blank until the pull passed half of it).
          */
         @JvmStatic
-        fun slotHeight(slotHeight: Int, offset: Int, held: Boolean): Int = max(1, max(abs(offset), if (held) slotHeight else 0))
+        @JvmOverloads
+        fun slotHeight(slotHeight: Int, offset: Int, held: Boolean, extent: Int = 0): Int =
+            max(1, max(abs(offset), if (held) (if (extent > 0) extent else slotHeight) else 0))
+
+        /**
+         * How far, in pixels, the host moves a layout of [height] pixels so an indicator that sits [shown] pixels into it ends
+         * at the slot's edge: down for a header, up (negative) for a [footer]. Zero when the layout is as tall as the pull.
+         */
+        @JvmStatic
+        fun anchorShift(height: Int, shown: Int, footer: Boolean): Int = max(0, height - shown).let { if (footer) -it else it }
+
+        /**
+         * The same for a slot whose indicator stays put while the content moves over it (Flutter's `behind` scroll mode): the
+         * layout is as tall as the whole slot and the indicator ends at the slot's FAR edge (top for a header, bottom for a
+         * [footer]), at its [extent], whatever the pull [shown]; the moving content uncovers it from that edge.
+         */
+        @JvmStatic
+        fun behindShift(shown: Int, extent: Int, footer: Boolean): Int = if (footer) shown - extent else extent - shown
     }
 }

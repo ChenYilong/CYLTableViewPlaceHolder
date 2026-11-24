@@ -366,7 +366,16 @@ void main() {
       expect(sent[0].arguments, {'value': false});
     });
 
-    testWidgets('a header sends no footer parameters or no-more-data calls', variant: _bothPlatforms, (tester) async {
+    testWidgets('only the behind scroll mode asks the native slot to anchor at the far edge', variant: _bothPlatforms, (tester) async {
+      for (final mode in [CYLRefreshScrollMode.move, CYLRefreshScrollMode.front, CYLRefreshScrollMode.behind]) {
+        final header = CYLRefreshClassicHeader()..scrollMode = mode;
+        addTearDown(header.dispose);
+        await pumpHeader(tester, header);
+        expect(creationParams, {'style': 'classic', 'footer': false, if (mode == CYLRefreshScrollMode.behind) 'behind': true}, reason: mode.name);
+      }
+    });
+
+    testWidgets('a header sends no footer parameters or no-more-data calls',variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);

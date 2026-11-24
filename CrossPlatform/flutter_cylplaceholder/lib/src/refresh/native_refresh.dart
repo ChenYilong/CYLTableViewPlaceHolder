@@ -14,7 +14,10 @@ import 'refresh_types.dart';
 ///
 /// - Creation parameters: `style` (see [style]; one per view, a header and a footer are separate views), `footer` (true: the native
 ///   footer, pulled up), `loadsAfterNoMoreData` and, for the drawn styles only, `foregroundColor` and `backgroundColor` (ARGB integers,
-///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]).
+///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]) and `behind` (true only in
+///   [CYLRefreshScrollMode.behind]: the native indicator stays at the far edge of the slot).
+///   Sizing rule on both platforms: the slot is never shorter than the native indicator while refreshing; the indicator keeps its
+///   intrinsic height at the slot's edge (the Dart view is as tall as the pull for the stretched styles, `expandHeight` otherwise).
 /// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
 ///   "finishRefresh" (`success`; a footer adds `noMoreData`: end the load and show "no more data") and, for a footer, "noMoreData" (`value`:
 ///   show or clear it without a load).
@@ -157,6 +160,8 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       creationParams: <String, Object?>{
         'style': widget.style,
         'footer': _isFooter,
+        // The behind scroll mode keeps the indicator at the far edge while the content moves over it: the native slot anchors there.
+        if (widget.component.scrollMode == CYLRefreshScrollMode.behind) 'behind': true,
         if (widget.foregroundColor case final Color color) 'foregroundColor': color.toARGB32(),
         if (widget.backgroundColor case final Color color) 'backgroundColor': color.toARGB32(),
         if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,
