@@ -158,7 +158,7 @@ class CYLPlaceholderResourceMonitorTest {
         view.setAnimationFile("asset:CYLPlaceholderAnimations/NoSuchAnimation.json")
         assertEquals(listOf("NoSuchAnimation.json"), CYLPlaceholderResourceMonitor.missingResources(activity))
         assertEquals("Missing resource: NoSuchAnimation.json (file not found)", activity.cyl_statusView.text)
-        view.setAnimationFile("asset:CYLPlaceholderAnimations/CYLPlaceholderLoading.gif")
+        view.setAnimationFile("asset:CYLPlaceholderAnimations/CYLPlaceholderLoading.json")
         assertEquals("a file that is there is not reported", listOf("NoSuchAnimation.json"), CYLPlaceholderResourceMonitor.missingResources(activity))
     }
 }
