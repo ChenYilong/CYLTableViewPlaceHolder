@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import com.cyl.refresh.CYLRefreshBackFooter
 import com.cyl.refresh.CYLRefreshComponent
 import com.cyl.refresh.CYLRefreshDrivenLayout
 import com.cyl.refresh.CYLRefreshFooter
@@ -20,6 +21,51 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 import kotlin.math.roundToInt
+
+/** The log tag of this file (the permanent diagnostic log of [CYLRefreshPlatformView.fitSlot] and the unknown-style warning). */
+private const val TAG = "CYLRefreshView"
+
+/**
+ * The second floor lives on [CYLRefreshHeader] and on [CYLRefreshBackFooter], not on the shared base [CYLRefreshComponent]; a footer of
+ * another kind has none (the calls do nothing).
+ */
+private fun CYLRefreshComponent.setUpSecondary(content: View, trigger: Float, dimension: Float, closeTrigger: Float?, opened: () -> Unit, closed: () -> Unit) {
+    when (this) {
+        is CYLRefreshHeader -> {
+            secondaryView = content
+            secondaryTriggerOffset = trigger
+            secondaryDimension = dimension
+            closeTrigger?.let { secondaryCloseTriggerOffset = it }
+            secondaryOpenedBlock = { opened() }
+            secondaryClosedBlock = { closed() }
+        }
+        is CYLRefreshBackFooter -> {
+            secondaryView = content
+            secondaryTriggerOffset = trigger
+            secondaryDimension = dimension
+            closeTrigger?.let { secondaryCloseTriggerOffset = it }
+            secondaryOpenedBlock = { opened() }
+            secondaryClosedBlock = { closed() }
+        }
+        else -> Unit
+    }
+}
+
+private fun CYLRefreshComponent.openSecondaryFloor() {
+    when (this) {
+        is CYLRefreshHeader -> openSecondary()
+        is CYLRefreshBackFooter -> openSecondary()
+        else -> Unit
+    }
+}
+
+private fun CYLRefreshComponent.closeSecondaryFloor() {
+    when (this) {
+        is CYLRefreshHeader -> closeSecondary()
+        is CYLRefreshBackFooter -> closeSecondary()
+        else -> Unit
+    }
+}
 
 /**
  * Creates the platform view of the native refresh header or footer: a `CYLRefreshDrivenLayout` (the driven mode of the refresh
@@ -48,8 +94,6 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
     companion object {
         /** The view type the Dart side asks for. */
         const val VIEW_TYPE = "flutter_cylplaceholder/CYLRefreshView"
-
-        private const val TAG = "CYLRefreshView"
     }
 }
 
@@ -98,13 +142,8 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         // The second floor (contract "Row 7 and 8 native contract"): the core opens it only with a view, and its content is a Flutter
         // widget, so the native floor is an empty view. The creation parameters are dp (logical pixels); a trigger of 0 or less: no floor.
         if (secondaryTriggerOffset > 0f) {
-            component.secondaryView = View(context)
-            component.secondaryTriggerOffset = secondaryTriggerOffset
-            component.secondaryDimension = secondaryDimension
-            secondaryCloseTriggerOffset?.let { component.secondaryCloseTriggerOffset = it }
-            // Informational for Dart (it owns the floor and never echoes these back).
-            component.secondaryOpenedBlock = { channel.invokeMethod("onSecondaryOpened", null) }
-            component.secondaryClosedBlock = { channel.invokeMethod("onSecondaryClosed", null) }
+            component.setUpSecondary(View(context), secondaryTriggerOffset, secondaryDimension, secondaryCloseTriggerOffset,
+                opened = { channel.invokeMethod("onSecondaryOpened", null) }, closed = { channel.invokeMethod("onSecondaryClosed", null) })
         }
         channel.setMethodCallHandler(this)
     }
@@ -160,8 +199,8 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
                 fitSlot()
             }
             // A no-op while open or refreshing (open) and unless open (close): the core's floor already ignores the repeats.
-            "openSecondary" -> if (!component.isRefreshing) component.openSecondary()
-            "closeSecondary" -> component.closeSecondary()
+            "openSecondary" -> if (!component.isRefreshing) component.openSecondaryFloor()
+            "closeSecondary" -> component.closeSecondaryFloor()
             "release" -> {
                 layout.release()
                 fitSlot()

@@ -366,14 +366,15 @@ void main() {
       expect(sent[0].arguments, {'value': false});
     });
 
-    testWidgets('only the behind scroll mode asks the native slot to anchor at the far edge', variant: _bothPlatforms, (tester) async {
-      for (final mode in [CYLRefreshScrollMode.move, CYLRefreshScrollMode.front, CYLRefreshScrollMode.behind]) {
+    // One testWidgets per mode: a second pumpHeader in the same test keeps the first platform view's creation parameters.
+    for (final mode in [CYLRefreshScrollMode.move, CYLRefreshScrollMode.front, CYLRefreshScrollMode.behind]) {
+      testWidgets('only the behind scroll mode asks the native slot to anchor at the far edge (${mode.name})', variant: _bothPlatforms, (tester) async {
         final header = CYLRefreshClassicHeader()..scrollMode = mode;
         addTearDown(header.dispose);
         await pumpHeader(tester, header);
         expect(creationParams, {'style': 'classic', 'footer': false, if (mode == CYLRefreshScrollMode.behind) 'behind': true}, reason: mode.name);
-      }
-    });
+      });
+    }
 
     testWidgets('a header with a second floor sends its creation parameters and opens and closes the native floor', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader()
