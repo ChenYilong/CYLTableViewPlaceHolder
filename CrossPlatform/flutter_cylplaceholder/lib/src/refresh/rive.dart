@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_cyltabbar/flutter_cyltabbar.dart';
 
 import 'component.dart';
+import 'native_refresh.dart';
 import 'refresh_types.dart';
 
 /// Describes a Rive file that draws a refresh indicator, with the names of the iOS and Android `CYLRefreshRiveStyle`.
@@ -119,6 +120,39 @@ class CYLRefreshRiveStyle {
         ..._stateMachineOptions,
       };
 
+  /// The creation parameters of the native `rive` style (`style: 'rive'`; docs/Refresh-Library-Parity.md, "The rive style: creation
+  /// parameters"): `riveFile` is [fileURL] and every other `rive...` key is this style's field of the same name. Only what the style sets is
+  /// sent (numbers of an input group only with that input), so the native defaults stay for the rest. Lengths are logical pixels.
+  Map<String, Object?> get nativeParameters => {
+        'riveFile': fileURL,
+        'riveArtboard': ?artboardName,
+        'riveStateMachine': ?stateMachineName,
+        'riveTriggerOffset': triggerOffset,
+        if (minimumHeight > 0) 'riveMinimumHeight': minimumHeight,
+        if (fitsWidth) 'riveFitsWidth': true,
+        if (pullInput != null) ...{
+          'rivePullInput': pullInput,
+          'rivePullInputMinimum': pullInputMinimum,
+          'rivePullInputMaximum': pullInputMaximum,
+          'rivePullInputStart': pullInputStart,
+          if (pullInputRefreshingValue >= 0) 'rivePullInputRefreshingValue': pullInputRefreshingValue,
+        },
+        'riveReleaseTrigger': ?releaseTrigger,
+        'riveFinishTrigger': ?finishTrigger,
+        'riveRestartTrigger': ?restartTrigger,
+        'riveLoadingBoolean': ?loadingBoolean,
+        if (loadingNumber != null) ...{
+          'riveLoadingNumber': loadingNumber,
+          'riveLoadingNumberMaximum': loadingNumberMaximum,
+          'riveLoadingNumberFinished': loadingNumberFinished,
+          'riveLoadingNumberDuration': loadingNumberDuration,
+        },
+        'rivePullAnimation': ?pullAnimation,
+        'riveTriggerAnimation': ?triggerAnimation,
+        'riveLoadingAnimation': ?loadingAnimation,
+        'riveIdleAnimation': ?idleAnimation,
+      };
+
   Map<String, Object> get _stateMachineOptions => {
         'artboard': ?artboardName,
         'stateMachine': ?stateMachineName,
@@ -219,4 +253,30 @@ class CYLRefreshDrawnFooter extends CYLRefreshBackFooter {
 
   @override
   Widget buildIndicator(BuildContext context) => CYLRefreshRiveIndicator(component: this, style: style);
+}
+
+/// A header drawn by the native `rive` style (creation parameter `style: 'rive'` and the `rive...` keys of
+/// [CYLRefreshRiveStyle.nativeParameters]) when the native half is on; otherwise the Dart-drawn [CYLRefreshRiveHeader]. The native view is
+/// classic with one log line when the optional Rive runtime, the file or a `riveFile` is missing (iOS `Rive` subspec, Android
+/// `:merged-rive` module). [CYLRefreshRiveStyle.fileURL] is an absolute path or the name of an app asset (`Bow`, `Bow.riv` or
+/// `assets/animations/Bow.riv` all find a Flutter asset of that name).
+class CYLRefreshRiveNativeHeader extends CYLRefreshRiveHeader {
+  /// Creates a header for [style].
+  CYLRefreshRiveNativeHeader({required super.style, super.refreshingHandler, super.finishDuration, super.scrollMode, super.triggersWhenReached});
+
+  @override
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this)
+      ? CYLNativeRefreshIndicator(component: this, style: 'rive', riveParameters: style.nativeParameters)
+      : super.buildIndicator(context);
+}
+
+/// A footer drawn by the native `rive` style, the footer of [CYLRefreshRiveNativeHeader] (the header drawn upside down).
+class CYLRefreshRiveNativeFooter extends CYLRefreshDrawnFooter {
+  /// Creates a footer for [style].
+  CYLRefreshRiveNativeFooter({required super.style, super.refreshingHandler, super.finishDuration, super.scrollMode, super.loadsAfterNoMoreData});
+
+  @override
+  Widget buildIndicator(BuildContext context) => CYLNativeRefreshIndicator.supports(this)
+      ? CYLNativeRefreshIndicator(component: this, style: 'rive', riveParameters: style.nativeParameters)
+      : super.buildIndicator(context);
 }

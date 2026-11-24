@@ -17,6 +17,6 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # [CN] 先检出：:placeholder 构建会包含 CYLTabBarController 的 Example-Android，不传 -PcylTabBarDir 会误用同级目录（另一个 commit）；
 #      :merged 是刷新库（React Native 与 Flutter 需要）。
 TAB="$(bash "$ROOT/scripts/cyltabbarcontroller-checkout.sh" | tail -n 1)/Example-Android"
-bash "$ROOT/android/gradlew" --no-daemon -p "$ROOT/android" -PcylTabBarDir="$TAB" :placeholder:publishToMavenLocal :merged:publishToMavenLocal
+bash "$ROOT/android/gradlew" --no-daemon -p "$ROOT/android" -PcylTabBarDir="$TAB" :placeholder:publishToMavenLocal :merged:publishToMavenLocal :merged-rive:publishToMavenLocal
 bash "$ROOT/android/gradlew" --no-daemon -p "$TAB" :cylanimateditem:publishToMavenLocal
 echo "Published to $HOME/.m2/repository/io/github/chenyilong"

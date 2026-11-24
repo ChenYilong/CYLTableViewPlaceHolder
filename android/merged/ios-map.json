@@ -1173,14 +1173,15 @@
  },
  "CYLRefreshStyle": {
   "ios": "`CYLRefreshStyle`",
-  "note": "Swift enum with the same eight keys; the Objective-C hosts use `CYLRefreshStyleFactory`"
+  "note": "Swift enum with the same nine keys (`rive` added 2026-11-24); the Objective-C hosts use `CYLRefreshStyleFactory`"
  },
  "CYLRefreshStyle.newHeader": {
-  "ios": "`CYLRefreshStyle` `newHeader()`"
+  "ios": "`CYLRefreshStyle` `newHeader(riveOptions:)`",
+  "note": "`riveOptions` is the `rive...` map; `onFallback` is the iOS `onFallback` of `CYLRefreshStyleFactory.header(style:options:onFallback:)`"
  },
  "CYLRefreshStyle.newFooter": {
-  "ios": "`CYLRefreshStyle` `newFooter()`",
-  "note": "bezierCircle: the classic footer (no drawn footer class); cupertino: the automatic footer, as on Android"
+  "ios": "`CYLRefreshStyle` `newFooter(riveOptions:)`",
+  "note": "as `newHeader`"
  },
  "CYLRefreshStyle.fromKey": {
   "ios": "`CYLRefreshStyle` `fromKey(_:)`"
@@ -1214,5 +1215,65 @@
  "CYLRefreshDrivenLayout.anchorShift": {
   "ios": "n/a",
   "note": "Android moves the layout by translationY to keep the header at the slot edge; the iOS host anchors its view at the edge"
+ },
+ "CYLRefreshRiveOptions": {
+  "ios": "`CYLRefreshRiveOptions`",
+  "note": "the parsed `rive...` keys; Kotlin properties are named without the `rive` prefix, as iOS"
+ },
+ "CYLRefreshRiveOptions.fileIsPath": {
+  "ios": "n/a",
+  "note": "Android resolves the file itself: a path, or an app asset (iOS `resolvedFileURL`)"
+ },
+ "CYLRefreshRiveOptions.assetCandidates": {
+  "ios": "`CYLRefreshRiveOptions` `resolvedFileURL(bundles:)`",
+  "note": "the same name rules (name with or without `.riv`, relative path, Flutter asset folder); Android returns the asset names the Rive module tries"
+ },
+ "CYLRefreshRiveOptions.from": {
+  "ios": "`CYLRefreshRiveOptions` `init(dictionary:)`",
+  "note": "Android never returns null: a missing file is `file == null`"
+ },
+ "CYLRefreshRiveBuilding": {
+  "ios": "`CYLRefreshRiveBuilding`"
+ },
+ "CYLRefreshRiveBuilding.header": {
+  "ios": "`CYLRefreshRiveBuilding` `riveHeader(options:)`"
+ },
+ "CYLRefreshRiveBuilding.footer": {
+  "ios": "`CYLRefreshRiveBuilding` `riveFooter(options:)`"
+ },
+ "CYLRefreshRiveSupport": {
+  "ios": "`CYLRefreshStyleFactory`",
+  "note": "the `rive` part of the factory: `header(style:options:onFallback:)` / `footer(...)` and `riveBuilder`"
+ },
+ "CYLRefreshRiveSupport.BUILDER_CLASS": {
+  "ios": "n/a",
+  "note": "iOS finds the class `CYLRefreshRiveBuilder` by `NSClassFromString`; Android by the class name of the `:merged-rive` module"
+ },
+ "CYLRefreshRiveSupport.NOT_LINKED": {
+  "ios": "n/a",
+  "note": "the reason text; iOS says `rive runtime not linked (add the CYLTableViewPlaceHolder/Rive subspec)`"
+ },
+ "CYLRefreshRiveSupport.NO_FILE": {
+  "ios": "n/a",
+  "note": "the reason text; iOS says `rive needs the creation parameter riveFile`"
+ },
+ "CYLRefreshRiveSupport.builder": {
+  "ios": "`CYLRefreshStyleFactory` `riveBuilder`"
+ },
+ "CYLRefreshRiveSupport.unreadable": {
+  "ios": "n/a",
+  "note": "the reason text; iOS says `rive file <riveFile> not found or unreadable`"
+ },
+ "CYLRefreshRiveSupport.logFallback": {
+  "ios": "n/a",
+  "note": "the one `CYLRefresh: <reason>, using classic` log line; iOS passes it to `onFallback` and logs it"
+ },
+ "CYLRefreshRiveSupport.header": {
+  "ios": "`CYLRefreshStyleFactory` `header(style:options:onFallback:)`",
+  "note": "for the `rive` style"
+ },
+ "CYLRefreshRiveSupport.footer": {
+  "ios": "`CYLRefreshStyleFactory` `footer(style:options:onFallback:)`",
+  "note": "for the `rive` style"
  }
 }

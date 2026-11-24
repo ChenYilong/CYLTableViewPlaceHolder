@@ -5,12 +5,24 @@ import android.os.SystemClock
 import android.view.MotionEvent
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import com.cyl.refresh.CYLRefreshAutoNormalFooter
+import com.cyl.refresh.CYLRefreshBackNormalFooter
+import com.cyl.refresh.CYLRefreshFooter
+import com.cyl.refresh.CYLRefreshHeader
+import com.cyl.refresh.CYLRefreshMaterialFooter
+import com.cyl.refresh.CYLRefreshMaterialHeader
+import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.CYLRefreshPhase
+import com.cyl.refresh.CYLRefreshRiveBuilding
+import com.cyl.refresh.CYLRefreshRiveOptions
+import com.cyl.refresh.CYLRefreshRiveSupport
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,6 +30,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLog
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -237,5 +250,112 @@ class CYLRefreshContainerViewTest {
         assertTrue(view.cyl_footer!!.isRefreshing)
         view.setLoadingMoreFromJs(false)
         idle(3000)
+    }
+
+    // --- headerStyle / footerStyle / headerRive / footerRive and loadsAfterNoMoreData ---
+
+    @Test
+    fun loadsAfterNoMoreDataReachesTheFooterAndSurvivesAStyleChange() {
+        val view = container()
+        assertFalse(view.cyl_footer!!.loadsAfterNoMoreData)
+        view.setLoadsAfterNoMoreData(true)
+        assertTrue(view.cyl_footer!!.loadsAfterNoMoreData)
+        view.setFooterStyle("material")
+        view.applyStyles()
+        assertEquals(CYLRefreshMaterialFooter::class.java, view.cyl_footer!!.javaClass)
+        assertTrue("the new footer keeps the prop", view.cyl_footer!!.loadsAfterNoMoreData)
+        view.setLoadsAfterNoMoreData(false)
+        assertFalse(view.cyl_footer!!.loadsAfterNoMoreData)
+    }
+
+    @Test
+    fun styleKeysMakeTheStyleHeaderAndFooterAndKeepLoadMoreOn() {
+        val view = container()
+        view.setHeaderStyle("material")
+        view.setFooterStyle("classic")
+        view.applyStyles()
+        assertEquals(CYLRefreshMaterialHeader::class.java, view.cyl_header!!.javaClass)
+        assertEquals(CYLRefreshBackNormalFooter::class.java, view.cyl_footer!!.javaClass)
+        // Load more stays on after the footer was replaced: a pull up of the auto Cupertino footer reaches onLoadMore.
+        val more = container()
+        var loaded = 0
+        more.onLoadMore = { loaded++ }
+        more.setLoadMoreEnabled(true)
+        more.setFooterStyle("cupertino")
+        more.applyStyles()
+        drag(more, -900f)
+        idle(500)
+        assertEquals(1, loaded)
+        more.setLoadingMoreFromJs(false)
+        idle(3000)
+    }
+
+    @Test
+    fun aMissingOrUnknownStyleKeepsTheDefaultHeaderAndFooter() {
+        val view = container()
+        val header = view.cyl_header
+        val footer = view.cyl_footer
+        view.setHeaderStyle("storeHouse")
+        view.setFooterStyle(null)
+        view.applyStyles()
+        assertSame(header, view.cyl_header)
+        assertSame(footer, view.cyl_footer)
+        assertEquals(CYLRefreshAutoNormalFooter::class.java, view.cyl_footer!!.javaClass)
+        view.applyStyles()
+        assertSame("applying the same styles again replaces nothing", header, view.cyl_header)
+    }
+
+    @Test
+    fun theRiveStyleWithoutTheRiveModuleIsClassicWithOneLogLine() {
+        CYLRefreshRiveSupport.builder = null
+        ShadowLog.clear()
+        val view = container()
+        view.setHeaderStyle("rive")
+        view.setHeaderRive(mapOf("riveFile" to "Bow"))
+        view.applyStyles()
+        assertEquals(CYLRefreshNormalHeader::class.java, view.cyl_header!!.javaClass)
+        val lines = ShadowLog.getLogs().filter { it.tag == "CYLRefresh" }.map { it.msg }
+        assertEquals(listOf("CYLRefresh: ${CYLRefreshRiveSupport.NOT_LINKED}, using classic"), lines)
+    }
+
+    @Test
+    fun headerRiveAndFooterRiveReachTheBuilderAndAnUnreadableFileIsClassic() {
+        val asked = ArrayList<String?>()
+        val made = CYLRefreshNormalHeader(activity)
+        CYLRefreshRiveSupport.builder = object : CYLRefreshRiveBuilding {
+            override fun header(context: android.content.Context, options: CYLRefreshRiveOptions): CYLRefreshHeader? { asked.add(options.file); return made }
+            override fun footer(context: android.content.Context, options: CYLRefreshRiveOptions): CYLRefreshFooter? { asked.add(options.file); return null }
+        }
+        try {
+            ShadowLog.clear()
+            val view = container()
+            view.setHeaderStyle("rive")
+            view.setHeaderRive(mapOf("riveFile" to "Bow", "rivePullInput" to "pull"))
+            view.setFooterStyle("rive")
+            view.setFooterRive(mapOf("riveFile" to "Missing.riv"))
+            view.applyStyles()
+            assertSame(made, view.cyl_header)
+            assertEquals(listOf<String?>("Bow", "Missing.riv"), asked)
+            assertEquals(CYLRefreshBackNormalFooter::class.java, view.cyl_footer!!.javaClass)
+            val lines = ShadowLog.getLogs().filter { it.tag == "CYLRefresh" }.map { it.msg }
+            assertEquals(listOf("CYLRefresh: rive file Missing.riv not found or unreadable, using classic"), lines)
+        } finally {
+            CYLRefreshRiveSupport.builder = null
+        }
+    }
+
+    @Test
+    fun theSecondFloorSettingsSurviveAStyleChange() {
+        val view = container()
+        view.setSecondaryTriggerOffset(120f)
+        view.setSecondaryDimension(300f)
+        view.setSecondaryCloseTriggerOffset(60f)
+        val before = view.cyl_header
+        view.setHeaderStyle("material")
+        view.applyStyles()
+        assertNotSame(before, view.cyl_header)
+        assertEquals(120f, view.cyl_header!!.secondaryTriggerOffset, 0f)
+        assertEquals(300f, view.cyl_header!!.secondaryDimension, 0f)
+        assertEquals(60f, view.cyl_header!!.secondaryCloseTriggerOffset, 0f)
     }
 }

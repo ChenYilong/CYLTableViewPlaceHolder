@@ -49,11 +49,13 @@ export interface CYLRefreshContainerProps {
   noMoreData?: boolean;
   /** Called when the footer starts loading (not when `loadingMore` was set from JavaScript). */
   onLoadMore?: () => void;
-  /** The header's look on iOS (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`, `rive` with `headerRive`); an unknown name is the classic one. Android ignores it for now. */
+  /** A pull past the end loads again after "no more data" (`CYLRefreshFooter.loadsAfterNoMoreData`), default false. Android and iOS. */
+  loadsAfterNoMoreData?: boolean;
+  /** The header's look on iOS and Android (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`, `rive` with `headerRive`); an unknown name is the default one. */
   headerStyle?: string;
-  /** The footer's look on iOS, the same names as `headerStyle`. */
+  /** The footer's look, the same names as `headerStyle`. */
   footerStyle?: string;
-  /** The `rive` header's parameters (read while `headerStyle` is `'rive'`). iOS now; Android follows the same keys. */
+  /** The `rive` header's parameters (read while `headerStyle` is `'rive'`). iOS and Android, the same keys; Android needs the optional `:merged-rive` module. */
   headerRive?: CYLRefreshRiveOptions;
   /** The `rive` footer's parameters (read while `footerStyle` is `'rive'`). */
   footerRive?: CYLRefreshRiveOptions;
@@ -90,6 +92,7 @@ const Native = isCYLRefreshContainerAvailable()
       noMoreData: boolean;
       onRefresh: () => void;
       onLoadMore?: () => void;
+      loadsAfterNoMoreData: boolean;
       headerStyle?: string;
       footerStyle?: string;
       headerRive?: CYLRefreshRiveOptions;
@@ -119,6 +122,7 @@ export function CYLRefreshContainer({
   loadingMore = false,
   noMoreData = false,
   onLoadMore,
+  loadsAfterNoMoreData = false,
   headerStyle,
   footerStyle,
   headerRive,
@@ -142,6 +146,7 @@ export function CYLRefreshContainer({
       loadingMore={loadingMore}
       noMoreData={noMoreData}
       onLoadMore={onLoadMore}
+      loadsAfterNoMoreData={loadsAfterNoMoreData}
       headerStyle={headerStyle}
       footerStyle={footerStyle}
       headerRive={headerRive}

@@ -15,6 +15,7 @@
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshDriven.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshdrivenkt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshDriven.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshdrivenkt) |
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshIconView.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshiconviewkt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshIconView.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshiconviewkt) |
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshPaging.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshpagingkt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshPaging.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshpagingkt) |
+| [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshRive.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshrivekt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshRive.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshrivekt) |
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshStyle.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshstylekt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshStyle.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshstylekt) |
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshTrailer.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshtrailerkt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshTrailer.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshcylrefreshtrailerkt) |
 | [`android/merged/library/src/main/kotlin/com/cyl/refresh/classics/Classics.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshclassicsclassicskt) | [`android/merged/library/src/main/kotlin/com/cyl/refresh/classics/Classics.kt`](#androidmergedlibrarysrcmainkotlincomcylrefreshclassicsclassicskt) |
@@ -86,7 +87,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（829 / 829 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (829 of 829 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（862 / 862 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (862 of 862 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
@@ -476,13 +477,57 @@
 | `CYLRefreshConfig.languageCode` (var) | The language of the built-in texts, or null for the system's (`languageCode`). | `CYLRefreshConfig` `languageCode` |  |
 | `CYLRefreshConfig.defaultConfig` (val) | The shared settings (`defaultConfig`). | `CYLRefreshConfig` `defaultConfig` |  |
 
+## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshRive.kt`
+
+| Android API | 描述 / Description | iOS API | 说明 / Note |
+|:---|:---|:---|:---|
+| `CYLRefreshRiveOptions` (class) | The `rive...` creation parameters of the `rive` refresh style, parsed (iOS `CYLRefreshRiveOptions`; docs/Refresh-Library-Parity.md, "The rive style: creation parameters"). | `CYLRefreshRiveOptions` | the parsed `rive...` keys; Kotlin properties are named without the `rive` prefix, as iOS |
+| `CYLRefreshRiveOptions.file` (val) | `riveFile` (required by the style): an absolute path, or the name (with or without `.riv`) or relative path of an app asset; null when missing or empty. | `CYLRefreshRiveOptions` `riveFile` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.artboard` (val) | `riveArtboard`: null is the file's default artboard. | `CYLRefreshRiveOptions` `riveArtboard` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.stateMachine` (val) | `riveStateMachine`: the state machine the inputs belong to. | `CYLRefreshRiveOptions` `riveStateMachine` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.triggerOffset` (val) | `riveTriggerOffset` in dp: the pull that counts as fully pulled, also the open height (default 180; a value of 0 or less keeps it). | `CYLRefreshRiveOptions` `riveTriggerOffset` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.minimumHeight` (val) | `riveMinimumHeight` in dp: the smallest layout height of the art (default 0, the trigger offset). | `CYLRefreshRiveOptions` `riveMinimumHeight` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.fitsWidth` (val) | `riveFitsWidth`: true fits the artboard to the width, otherwise it covers. | `CYLRefreshRiveOptions` `riveFitsWidth` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullInput` (val) | `rivePullInput`: the number input set from the pull. | `CYLRefreshRiveOptions` `rivePullInput` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullInputMinimum` (val) | `rivePullInputMinimum` (default 0). | `CYLRefreshRiveOptions` `rivePullInputMinimum` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullInputMaximum` (val) | `rivePullInputMaximum` (default 100). | `CYLRefreshRiveOptions` `rivePullInputMaximum` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullInputStart` (val) | `rivePullInputStart`: the fraction of the trigger offset where the input starts to rise (default 0). | `CYLRefreshRiveOptions` `rivePullInputStart` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullInputRefreshingValue` (val) | `rivePullInputRefreshingValue`: the input's value while refreshing; a negative or missing value is -1 (keep the maximum). | `CYLRefreshRiveOptions` `rivePullInputRefreshingValue` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.releaseTrigger` (val) | `riveReleaseTrigger`. | `CYLRefreshRiveOptions` `riveReleaseTrigger` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.finishTrigger` (val) | `riveFinishTrigger`. | `CYLRefreshRiveOptions` `riveFinishTrigger` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.restartTrigger` (val) | `riveRestartTrigger`. | `CYLRefreshRiveOptions` `riveRestartTrigger` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingBoolean` (val) | `riveLoadingBoolean`. | `CYLRefreshRiveOptions` `riveLoadingBoolean` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingNumber` (val) | `riveLoadingNumber`. | `CYLRefreshRiveOptions` `riveLoadingNumber` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingNumberMaximum` (val) | `riveLoadingNumberMaximum` (default 99). | `CYLRefreshRiveOptions` `riveLoadingNumberMaximum` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingNumberFinished` (val) | `riveLoadingNumberFinished` (default 100). | `CYLRefreshRiveOptions` `riveLoadingNumberFinished` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingNumberDuration` (val) | `riveLoadingNumberDuration` in seconds (default 2; 0 or less keeps it). | `CYLRefreshRiveOptions` `riveLoadingNumberDuration` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.pullAnimation` (val) | `rivePullAnimation`. | `CYLRefreshRiveOptions` `rivePullAnimation` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.triggerAnimation` (val) | `riveTriggerAnimation`. | `CYLRefreshRiveOptions` `riveTriggerAnimation` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.loadingAnimation` (val) | `riveLoadingAnimation`. | `CYLRefreshRiveOptions` `riveLoadingAnimation` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.idleAnimation` (val) | `riveIdleAnimation`. | `CYLRefreshRiveOptions` `riveIdleAnimation` | matched by the iOS name its KDoc cites |
+| `CYLRefreshRiveOptions.fileIsPath` (val) | Whether [file] is a path (absolute, or a `file://` URL) rather than the name of an app asset. | n/a | Android resolves the file itself: a path, or an app asset (iOS `resolvedFileURL`) |
+| `CYLRefreshRiveOptions.assetCandidates` (fun) | The asset names to try, in order, for an asset [file]: the name as given and with `.riv` added, each as is, inside `flutter_assets/` (a Flutter app's assets) and under `assets/animations/` (the Flutter example's folder), | `CYLRefreshRiveOptions` `resolvedFileURL(bundles:)` | the same name rules (name with or without `.riv`, relative path, Flutter asset folder); Android returns the asset names the Rive module tries |
+| `CYLRefreshRiveOptions.from` (fun) | Options from a creation parameter map (a Flutter map, or a React Native `headerRive` / `footerRive` object); null is an empty map. | `CYLRefreshRiveOptions` `init(dictionary:)` | Android never returns null: a missing file is `file == null` |
+| `CYLRefreshRiveBuilding` (interface) | What the optional module `:merged-rive` provides (iOS `CYLRefreshRiveBuilding`): the Rive header and footer for options. | `CYLRefreshRiveBuilding` |  |
+| `CYLRefreshRiveBuilding.header` (fun) | The Rive header, or null when [options] name a file that cannot be read. | `CYLRefreshRiveBuilding` `riveHeader(options:)` |  |
+| `CYLRefreshRiveBuilding.footer` (fun) | The Rive footer (the header drawn upside down by [CYLRefreshDrawnFooter]), or null as for [header]. | `CYLRefreshRiveBuilding` `riveFooter(options:)` |  |
+| `CYLRefreshRiveSupport` (object) | The seam between the core and the optional Rive module (iOS `CYLRefreshStyleFactory.riveBuilder`): the core finds the builder `com.cyl.refresh.rive.CYLRefreshRiveBuilder` by name at run time, so it needs no Rive runtime. | `CYLRefreshStyleFactory` | the `rive` part of the factory: `header(style:options:onFallback:)` / `footer(...)` and `riveBuilder` |
+| `CYLRefreshRiveSupport.BUILDER_CLASS` (val) | The class of the builder in the module `:merged-rive`. | n/a | iOS finds the class `CYLRefreshRiveBuilder` by `NSClassFromString`; Android by the class name of the `:merged-rive` module |
+| `CYLRefreshRiveSupport.NOT_LINKED` (val) | The reason when no builder is found (the module or the Rive runtime is not on the class path). | n/a | the reason text; iOS says `rive runtime not linked (add the CYLTableViewPlaceHolder/Rive subspec)` |
+| `CYLRefreshRiveSupport.NO_FILE` (val) | The reason when the creation parameters have no `riveFile`. | n/a | the reason text; iOS says `rive needs the creation parameter riveFile` |
+| `CYLRefreshRiveSupport.builder` (var) | A builder set by the app or a test; null finds [BUILDER_CLASS] by name. | `CYLRefreshStyleFactory` `riveBuilder` |  |
+| `CYLRefreshRiveSupport.unreadable` (fun) | The reason when [file] cannot be found or read. | n/a | the reason text; iOS says `rive file <riveFile> not found or unreadable` |
+| `CYLRefreshRiveSupport.logFallback` (fun) | Writes the one log line of a fallback: `CYLRefresh: <reason>, using classic`. | n/a | the one `CYLRefresh: <reason>, using classic` log line; iOS passes it to `onFallback` and logs it |
+| `CYLRefreshRiveSupport.header` (fun) | The Rive header for [parameters], or the classic header after one [onFallback] call. | `CYLRefreshStyleFactory` `header(style:options:onFallback:)` | for the `rive` style |
+| `CYLRefreshRiveSupport.footer` (fun) | The Rive footer for [parameters], or the classic back footer after one [onFallback] call. | `CYLRefreshStyleFactory` `footer(style:options:onFallback:)` | for the `rive` style |
+
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshStyle.kt`
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStyle` (enum) | The refresh styles a cross-platform host (the Flutter plugin's native refresh view) names by one lower camel case string, the same eight values on Android and iOS: `classic`, `cupertino`, `material`, `bezierRadar`, `bezi | `CYLRefreshStyle` | Swift enum with the same eight keys; the Objective-C hosts use `CYLRefreshStyleFactory` |
-| `CYLRefreshStyle.newHeader` (fun) | A new header of this style. | `CYLRefreshStyle` `newHeader()` |  |
-| `CYLRefreshStyle.newFooter` (fun) | A new footer of this style. | `CYLRefreshStyle` `newFooter()` | bezierCircle: the classic footer (no drawn footer class); cupertino: the automatic footer, as on Android |
+| `CYLRefreshStyle` (enum) | The refresh styles a cross-platform host (the Flutter plugin's native refresh view) names by one lower camel case string, the same nine values on Android and iOS: `classic`, `cupertino`, `material`, `bezierRadar`, `bezie | `CYLRefreshStyle` | Swift enum with the same nine keys (`rive` added 2026-11-24); the Objective-C hosts use `CYLRefreshStyleFactory` |
+| `CYLRefreshStyle.newHeader` (fun) | A new header of this style. | `CYLRefreshStyle` `newHeader(riveOptions:)` | `riveOptions` is the `rive...` map; `onFallback` is the iOS `onFallback` of `CYLRefreshStyleFactory.header(style:options:onFallback:)` |
+| `CYLRefreshStyle.newFooter` (fun) | A new footer of this style; the parameters are those of [newHeader]. | `CYLRefreshStyle` `newFooter(riveOptions:)` | as `newHeader` |
 | `CYLRefreshStyle.fromKey` (fun) | The style named [key], or null for a missing or unknown name (the caller falls back to [Classic] and reports it). | `CYLRefreshStyle` `fromKey(_:)` |  |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshTrailer.kt`

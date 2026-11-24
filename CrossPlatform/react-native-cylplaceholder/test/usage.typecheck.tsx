@@ -55,6 +55,24 @@ export function NativeContainerExample({ loading, done, more }: { loading: boole
   );
 }
 
+// The footer loads again after "no more data", and the styles (the rive one with its parameters) on both platforms.
+export function NativeContainerStylesExample() {
+  return (
+    <CYLRefreshContainer
+      refreshing={false}
+      onRefresh={() => {}}
+      loadMoreEnabled
+      loadsAfterNoMoreData
+      headerStyle="rive"
+      headerRive={{ riveFile: 'Bow', riveStateMachine: 'numberSimulation', rivePullInput: 'pull', riveFitsWidth: true }}
+      footerStyle="rive"
+      footerRive={{ riveFile: 'Bow' }}
+    >
+      <FlatList data={[1, 2, 3]} keyExtractor={(n) => String(n)} renderItem={({ item }) => <Text>{item}</Text>} />
+    </CYLRefreshContainer>
+  );
+}
+
 // A pager on the native container: the pager's header and footer show as the native ones.
 const pagingHeader = new CYLRefreshClassicHeader();
 const pagingFooter = new CYLRefreshClassicAutoFooter();

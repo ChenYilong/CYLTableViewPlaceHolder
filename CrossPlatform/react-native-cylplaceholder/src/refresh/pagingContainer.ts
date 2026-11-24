@@ -13,6 +13,8 @@ export interface CYLRefreshPagingContainerState {
   loadingMore: boolean;
   /** True while the footer shows "no more data". */
   noMoreData: boolean;
+  /** The footer's `loadsAfterNoMoreData`: a pull loads again after "no more data". */
+  loadsAfterNoMoreData: boolean;
   /** The native header was pulled: loads the first page through the header (or directly, with no header). */
   onRefresh: () => void;
   /** The native footer started to load: loads the next page through the footer. */
@@ -33,6 +35,7 @@ export function cylRefreshPagingContainerProps<T>(paging: CYLRefreshPaging<T>): 
     loadMoreEnabled: footer !== undefined && footer.refreshEnabled,
     loadingMore: footer?.isRefreshing ?? false,
     noMoreData: footer?.isNoMoreData ?? false,
+    loadsAfterNoMoreData: footer?.loadsAfterNoMoreData ?? false,
     onRefresh: () => paging.refresh(),
     onLoadMore: () => paging.loadMore(),
   };
