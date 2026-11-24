@@ -20,7 +20,7 @@ CYLRefreshRiveStyle riveStyle(String name, String path) {
         ..triggerOffset = 200
         ..fitsWidth = true
         ..pullInput = 'pull'
-        ..pullInputMinimum = 50
+        ..pullInputMinimum = 10
         ..releaseTrigger = 'advance'
         ..finishTrigger = 'advance'
         ..restartTrigger = 'restart';

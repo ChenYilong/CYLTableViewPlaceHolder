@@ -148,7 +148,7 @@ function riveStyle(method: string): CYLRefreshRiveStyle | null {
       style.triggerOffset = 200;
       style.fitsWidth = true;
       style.pullInput = 'pull';
-      style.pullInputMinimum = 50;
+      style.pullInputMinimum = 10;
       style.releaseTrigger = 'advance';
       style.finishTrigger = 'advance';
       style.restartTrigger = 'restart';

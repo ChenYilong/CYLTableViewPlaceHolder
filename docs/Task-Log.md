@@ -2014,3 +2014,7 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **Bow 黑带 / Bow black band: option A.** 不改库默认值（`pullInputMinimum` 默认 0，已是 `min + progress × (max − min)` 的线性重映射，不是截断）；各 Rive 示例页把 Bow 的 `pullInputMinimum` 设为 50（Android、Flutter、HarmonyOS 已改；iOS 示例由 Mac 改，参数名相同）。验收：低拉伸截图无黑带，满拉伸截图结束动画仍播完。 / Library default unchanged (`pullInputMinimum` is already a linear remap, not a clamp); the Rive example pages set Bow to 50. Pass condition: a low-pull capture without the band and a full-pull capture whose end animation still plays.
 - **多个缺失资源 / Several missing resources:** 保持一条红条 “Missing resources: first +N more”，不再询问负责人。 / Keep one bar; do not ask the owner again.
 - **红条位置 / Bar placement:** 示例页红条被操作栏遮住一部分、长文字被裁，须修好并重新截图。 / The example's bar is partly under the action bar; fix and recapture.
+
+### 更正（2026-11-25）/ Correction: Bow 黑带改为选项 B / Bow black band is option B
+
+负责人亲自选了 B（经 Mac 会话转述：“把 header 裁到实际画出的高度，需要每个文件一张表”），取代上面 advisor 的 A。示例页的 `pullInputMinimum` 恢复为 10。契约（iOS 先实现）：`riveDrawnTable`（[pullInput, drawnFraction] 对，按输入排序、线性插值，首值以下取首值、末值以上取末值；Rive 视图从顶部裁到 fraction × header 高度；默认无表 = 不裁）。Flutter 创建参数 `riveDrawnTable`，RN `headerRive.drawnTable`/`footerRive.drawnTable`，Android `CYLRefreshRiveStyle.drawnTable`。Bow 表：`[[30,0],[31.8,0.14],[35.9,0.43],[39.8,0.66],[43.6,0.82],[47.3,0.94],[50,1]]`。 / The owner chose B themselves (relayed by the Mac session), superseding the advisor's A above; examples keep `pullInputMinimum` 10.
