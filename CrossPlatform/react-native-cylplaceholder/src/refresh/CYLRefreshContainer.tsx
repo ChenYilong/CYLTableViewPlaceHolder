@@ -31,6 +31,8 @@ export interface CYLRefreshRiveOptions {
   riveTriggerAnimation?: string;
   riveLoadingAnimation?: string;
   riveIdleAnimation?: string;
+  /** [pullInput, drawnFraction] pairs sorted by input: the share of the header the file draws; the rest is clipped from the top. Default: no clip. */
+  riveDrawnTable?: number[][];
 }
 
 /** The properties of the native container `CYLRefreshContainer`. */

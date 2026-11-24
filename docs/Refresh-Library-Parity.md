@@ -15,6 +15,7 @@
 | [flutter_easy_refresh to Flutter package (CYL API)](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) | [Flutter package score table](#flutter_easy_refresh-to-flutter-package-cyl-api--flutter-package-score-table) |
 | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) | [React Native package score table (react-native-cylplaceholder)](#react-native-package-score-table-react-native-cylplaceholder) |
 | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) | [Native bridge map (Flutter and React Native call the iOS and Android components)](#native-bridge-map-flutter-and-react-native-call-the-ios-and-android-components) |
+| [Rive drawn-height table](#rive-drawn-height-table) | [Rive drawn-height table](#rive-drawn-height-table) |
 | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) | [Demo porting map (the Flutter example to every other platform)](#demo-porting-map-the-flutter-example-to-every-other-platform) |
 | [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) | [Progress scoreboard, all platforms (2026-11-23, advisor)](#progress-scoreboard-all-platforms-2026-11-23-advisor) |
 | [Progress scoreboard, all platforms (2026-11-24, evidence)](#progress-scoreboard-all-platforms-2026-11-24-evidence) | [Progress scoreboard, all platforms (2026-11-24, evidence)](#progress-scoreboard-all-platforms-2026-11-24-evidence) |
@@ -512,6 +513,16 @@ iOS names: `CYLRefreshRiveOptions` (Core, pure Foundation: parses the keys, `res
 - **Option C, leave it:** the black is the Bow file's own drawing at low input; whether flutter_easy_refresh shows it too was not checked.
 - **DECISION (2026-11-25, owner, typed in this session): B.** 'B： 把 header 裁到实际画出的高度，需要每个文件一张表。' This overrides the Option A a peer relayed earlier the same day (the iOS example is back at `pullInputMinimum = 10`). Contract: see "Rive drawn-height table" below.
 - **Recommendation:** Option A for the Bow style in the examples (the parameter already exists), keep the library default 0; decision belongs to the owner, not implemented.
+
+## Rive drawn-height table
+
+**Decision (2026-11-25, owner): option B of "Rive Bow file: black pixels at a low pull input".** A Rive file may draw black at the bottom of its view at a low pull input; the header is clipped to the height the file actually draws, with one table per file.
+
+**Contract (names fixed, the same on every platform).** Creation parameter `riveDrawnTable`: an array of `[pullInput, drawnFraction]` pairs sorted by input (React Native: `number[][]` inside `headerRive` / `footerRive`; Flutter sends it only when non-empty). The drawn fraction is linearly interpolated between pairs; below the first pair it is the first fraction, above the last pair the last fraction. The Rive view is clipped to the **top** `fraction x header height` of the header (the black is at the bottom of the file's drawing and is cut; the rows below the clip show the list background until the file draws the whole header). No table (the default) means no clip. The pull input is the number the header already sends to `rivePullInput` (`rivePullInputMinimum + progress x (maximum - minimum)`); the clip is computed from the input last sent (pull, then the refreshing value, 0 on reset), so it is held through the finish hold and no black shows while the header is held. Malformed pairs (not two finite numbers) are ignored; one log line `CYLRefresh: riveDrawnTable ignored (<reason>)`.
+
+**Bow table** (from the iOS measurements above; input -> drawn fraction): `[[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]]`, with `rivePullInputMinimum` 10.
+
+**iOS (done, 2026-11-25):** `CYLRefreshRiveStyle.drawnTable` (`[[Double]]`), the option key `riveDrawnTable` read by `CYLRefreshRiveOptions.drawnTable` and `CYLRefreshRiveBuilder`, the pure helper `CYLRefreshRiveDrawnTable.fraction(forInput:table:)` (outside the `RiveRuntime` conditional, tested without it), and a layer mask on the Rive view in `CYLRefreshRiveHeader`, updated at every layout (pull, hold, retract). The Bow demo in `CYLRefreshStylesDemoViewController` uses the table. React Native iOS needs no native change: `headerRive` / `footerRive` are passed whole to `CYLRefreshStyleFactory`, which hands them to `CYLRefreshRiveOptions` (every `rive...` key), so only the TypeScript type `riveDrawnTable?: number[][]` was added. Tests: `Tests/CYLRefreshRiveDrawnTableTests.swift` (10). Not seen on a simulator: see the Task-Log entry.
 
 ## Demo porting map (the Flutter example to every other platform)
 

@@ -12,6 +12,8 @@
 | [Batch hand-off W4: rive style and queued items (written, not run)](#batch-hand-off-w4-rive-style-and-queued-items-written-not-run) | [Batch hand-off W4: rive style and queued items (written, not run)](#batch-hand-off-w4-rive-style-and-queued-items-written-not-run) |
 | [Batch hand-off W5: resource missing in the red status bar (written, not run)](#batch-hand-off-w5-resource-missing-in-the-red-status-bar-written-not-run) | [Batch hand-off W5: resource missing in the red status bar (written, not run)](#batch-hand-off-w5-resource-missing-in-the-red-status-bar-written-not-run) |
 | [2026-11-25 owner decision: no physical devices (DONE)](#2026-11-25-owner-decision-no-physical-devices-done) | [2026-11-25 owner decision: no physical devices (DONE)](#2026-11-25-owner-decision-no-physical-devices-done) |
+| [2026-11-25 owner decision: RN new architecture out of scope (DONE)](#2026-11-25-owner-decision-rn-new-architecture-out-of-scope-done) | [2026-11-25 owner decision: RN new architecture out of scope (DONE)](#2026-11-25-owner-decision-rn-new-architecture-out-of-scope-done) |
+| [2026-11-25 owner decision: Rive black band option B (TODO)](#2026-11-25-owner-decision-rive-black-band-option-b-todo) | [2026-11-25 owner decision: Rive black band option B (TODO)](#2026-11-25-owner-decision-rive-black-band-option-b-todo) |
 
 <!-- docs-navigation:end -->
 
@@ -2021,3 +2023,5 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **English:** Black band: option B, clip the header to the height actually drawn; it needs one table per file.
 - **Context:** the owner answered first hand; this replaces the peer-relayed option A (iOS example reverted to 10; Windows told to revert its 50). Bow measurements are in `docs/Refresh-Library-Parity.md`.
 - **Requirements:** a per-file table input -> drawn fraction of the header; the Rive view is clipped from the top to that fraction; library default = no table (no clip); Bow table from the measurements; same names on iOS, Android, Flutter, React Native; pass = low-pull capture with no black and a full pull whose end animation still plays.
+
+- **Progress (2026-11-25, Mac, iOS half of the drawn-height table, DONE in code):** `riveDrawnTable` on iOS (style property, builder key, pure helper, mask in `CYLRefreshRiveHeader` held through the finish hold, Bow table in the example, React Native type), 10 new tests, `Tests/run-tests.rb` 366 tests, 0 failures (baseline 356). Section "Rive drawn-height table" in `docs/Refresh-Library-Parity.md`. Capture: see the commit message / report; the pass criterion "low-pull capture with no black" is only claimed where a capture is committed.
