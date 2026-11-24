@@ -17,6 +17,10 @@ export interface CYLRefreshContainerProps {
   noMoreData?: boolean;
   /** Called when the footer starts loading (not when `loadingMore` was set from JavaScript). */
   onLoadMore?: () => void;
+  /** The header's look on iOS (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`); an unknown name is the classic one. Android ignores it for now. */
+  headerStyle?: string;
+  /** The footer's look on iOS, the same names as `headerStyle`. */
+  footerStyle?: string;
   style?: StyleProp<ViewStyle>;
   /** One scroll view (`ScrollView`, `FlatList`, `SectionList`): it gets the native CYLRefresh header. */
   children: ReactNode;
@@ -38,6 +42,8 @@ const Native = isCYLRefreshContainerAvailable()
       noMoreData: boolean;
       onRefresh: () => void;
       onLoadMore?: () => void;
+      headerStyle?: string;
+      footerStyle?: string;
       style?: StyleProp<ViewStyle>;
       children: ReactNode;
     }>(NATIVE_NAME)
@@ -56,6 +62,8 @@ export function CYLRefreshContainer({
   loadingMore = false,
   noMoreData = false,
   onLoadMore,
+  headerStyle,
+  footerStyle,
   style,
   children,
 }: CYLRefreshContainerProps): ReactElement | null {
@@ -69,6 +77,8 @@ export function CYLRefreshContainer({
       loadingMore={loadingMore}
       noMoreData={noMoreData}
       onLoadMore={onLoadMore}
+      headerStyle={headerStyle}
+      footerStyle={footerStyle}
       style={[{ flex: 1 }, style]}
     >
       {children}

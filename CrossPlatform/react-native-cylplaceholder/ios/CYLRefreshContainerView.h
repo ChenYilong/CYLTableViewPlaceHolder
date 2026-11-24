@@ -48,6 +48,12 @@ typedef void (^CYLRefreshContainerEventBlock)(NSDictionary *body);
 /** [EN] A pull past the end loads again after "no more data" (`CYLRefreshFooter.loadsAfterNoMoreData`), default NO. iOS only: Android has no such prop yet. [CN] “没有更多数据”后拉过底部仍会再次加载，默认 NO。仅 iOS：Android 尚无此属性。 */
 @property (nonatomic, assign) BOOL loadsAfterNoMoreData;
 
+/** [EN] The header's look: `classic` (default), `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix` or `taurus` (`CYLRefreshStyleFactory`); an unknown name is the classic one and is logged. iOS only. [CN] 头部外观，取值见上（`CYLRefreshStyleFactory`）；未知名称按经典样式处理并记录日志。仅 iOS。 */
+@property (nonatomic, copy, nullable) NSString *headerStyle;
+
+/** [EN] The footer's look, same names as `headerStyle`; `bezierCircle` has no drawn footer and shows the classic one. iOS only. [CN] 尾部外观，名称同 `headerStyle`；`bezierCircle` 没有手绘尾部，显示经典样式。仅 iOS。 */
+@property (nonatomic, copy, nullable) NSString *footerStyle;
+
 /** [EN] The scroll view the container found and attached the header and footer to, nil until React Native has added it. [CN] 容器找到并挂上头尾的滚动视图；React Native 添加之前为 nil。 */
 @property (nonatomic, weak, readonly, nullable) UIScrollView *scrollView;
 
