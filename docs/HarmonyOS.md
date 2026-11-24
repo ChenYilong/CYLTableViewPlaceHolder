@@ -442,12 +442,12 @@
 | `CYLRefreshComponent` `-removeScrollObserver:` | `CYLRefreshComponentModel.removeScrollObserver(token)` |
 | `CYLRefreshComponent` `canTriggerBlock` | `CYLRefreshComponentModel.canTriggerBlock` |
 | `CYLRefreshComponent` `-canTrigger` | `CYLRefreshComponentModel.canTrigger()` |
-| `CYLRefreshComponent` `disablesContentWhileRefreshing` | `CYLRefreshComponentModel.disablesContentWhileRefreshing` sets `CYLRefreshScrollViewModel.interactionEnabled`; `CYLRefreshContainer` ignores touches and drags while it is false (written, not built) |
+| `CYLRefreshComponent` `disablesContentWhileRefreshing` | `CYLRefreshComponentModel.disablesContentWhileRefreshing` sets `CYLRefreshScrollViewModel.interactionEnabled`; `CYLRefreshContainer` ignores touches and drags while it is false (built, host-tested, not seen on a device) |
 | `CYLRefreshComponent` `dragRate` | `CYLRefreshComponentModel.dragRate` (applied in `CYLRefreshScrollViewModel.cyl_panChanged`) |
 | `CYLRefreshComponent` `reboundAnimationOptions` | TODO: reason: the rebound runs through `CYLRefreshAnimator` (13 call sites, no curve parameter, no animateTo wired yet); an animation curve needs the container animator and a device to judge it |
-| `CYLRefreshComponent` `insetStart` | `CYLRefreshComponentModel.insetStart` (header and back footer `cyl_y`, `CYLRefreshHeaderYFor`, `CYLRefreshFooterYFor`, used by `CYLRefreshContainer`) (written, not built) |
-| `CYLRefreshComponent` `pinnedView` | `CYLRefreshComponentModel.pinnedView` (a `CYLRefreshViewModel` whose `cyl_translateY` the control sets; the app applies it with `.translate`) (written, not built) |
-| `CYLRefreshComponent` `translationView` | `CYLRefreshComponentModel.translationView` (same mechanism as `pinnedView`, the opposite sign) (written, not built) |
+| `CYLRefreshComponent` `insetStart` | `CYLRefreshComponentModel.insetStart` (header and back footer `cyl_y`, `CYLRefreshHeaderYFor`, `CYLRefreshFooterYFor`, used by `CYLRefreshContainer`) (built, host-tested, not seen on a device) |
+| `CYLRefreshComponent` `pinnedView` | `CYLRefreshComponentModel.pinnedView` (a `CYLRefreshViewModel` whose `cyl_translateY` the control sets; the app applies it with `.translate`) (built, host-tested, not seen on a device) |
+| `CYLRefreshComponent` `translationView` | `CYLRefreshComponentModel.translationView` (same mechanism as `pinnedView`, the opposite sign) (built, host-tested, not seen on a device) |
 | `CYLRefreshComponent` `supportsHorizontalDrag` | TODO: `CYLRefreshComponentModel.supportsHorizontalDrag` and `CYLRefreshScrollViewModel.panTranslationX` are written, not built; the container PanGesture is vertical only, so it never sets `panTranslationX` (needs `PanDirection.All` and a device to check it against nested scrolling) |
 | `CYLRefreshComponent` `-addObservers` | `CYLRefreshComponentModel.addObservers()` |
 | `CYLRefreshComponent` `-removeObservers` | `CYLRefreshComponentModel.removeObservers()` |
@@ -488,9 +488,9 @@
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooterModel.loadsAfterNoMoreData` |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooterModel.ignoredScrollViewContentInsetBottom` |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | `CYLRefreshFooterModel.automaticallyHidden` |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshFooterModel.cyl_noMoreDataImageView` (`CYLRefreshImageViewModel`) (written, not built) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshFooterModel.cyl_updateNoMoreDataImage(image)` (written, not built) |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | `CYLRefreshFooterModel.cyl_placeNoMoreDataImageBesideLabel(label, inset, size)`; a zero size gives 0 x 0, as a ResourceStr has no intrinsic size (written, not built) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshFooterModel.cyl_noMoreDataImageView` (`CYLRefreshImageViewModel`) (built, host-tested, not seen on a device) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshFooterModel.cyl_updateNoMoreDataImage(image)` (built, host-tested, not seen on a device) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | `CYLRefreshFooterModel.cyl_placeNoMoreDataImageBesideLabel(label, inset, size)`; a zero size gives 0 x 0, as a ResourceStr has no intrinsic size (built, host-tested, not seen on a device) |
 
 #### `CYLRefresh/Base/CYLRefreshHeader.h`
 
@@ -506,7 +506,7 @@
 | `CYLRefreshHeader` `-setExpandHeight:` | `CYLRefreshHeaderModel.setExpandHeight(expandHeight)` |
 | `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeaderModel.addsRefreshingInset` |
 | `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeaderModel.resetsFooterAfterRefresh` |
-| `CYLRefreshHeader` `clipsWhenBehind` | `CYLRefreshHeaderModel.clipsWhenBehind` (`CYLRefreshHeaderClipHeightFor`, an outer clipped Stack in `CYLRefreshContainer`) (written, not built) |
+| `CYLRefreshHeader` `clipsWhenBehind` | `CYLRefreshHeaderModel.clipsWhenBehind` (`CYLRefreshHeaderClipHeightFor`, an outer clipped Stack in `CYLRefreshContainer`) (built, host-tested, not seen on a device) |
 | `CYLRefreshHeader` `secondaryTriggerOffset` | `CYLRefreshHeaderModel.secondaryTriggerOffset` |
 | `CYLRefreshHeader` `secondaryDimension` | `CYLRefreshHeaderModel.secondaryDimension` |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | `CYLRefreshHeaderModel.secondaryCloseTriggerOffset` |
@@ -699,9 +699,9 @@
 | `CYLRefreshDeliveryFooter` | `CYLRefreshDeliveryFooterModel` |
 | `CYLRefreshPhoenixFooter` | `CYLRefreshPhoenixFooterModel` |
 | `CYLRefreshTaurusFooter` | `CYLRefreshTaurusFooterModel` |
-| `CYLRefreshBallPulseFooter` | `CYLRefreshBallPulseFooterModel` (refresh/drawn/CYLRefreshBallPulse.ets) drawn by `CYLRefreshBallPulseView` (written, not built) |
-| `CYLRefreshBallPulseFooter` `normalColor` | `CYLRefreshBallPulseFooterModel.normalColor` (written, not built) |
-| `CYLRefreshBallPulseFooter` `animatingColor` | `CYLRefreshBallPulseFooterModel.animatingColor` (written, not built) |
+| `CYLRefreshBallPulseFooter` | `CYLRefreshBallPulseFooterModel` (refresh/drawn/CYLRefreshBallPulse.ets) drawn by `CYLRefreshBallPulseView` (built, host-tested, not seen on a device) |
+| `CYLRefreshBallPulseFooter` `normalColor` | `CYLRefreshBallPulseFooterModel.normalColor` (built, host-tested, not seen on a device) |
+| `CYLRefreshBallPulseFooter` `animatingColor` | `CYLRefreshBallPulseFooterModel.animatingColor` (built, host-tested, not seen on a device) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -743,7 +743,7 @@
 | `CYLRefreshFlyHeader` | `CYLRefreshFlyHeaderModel` (always open: adds its height to the top inset) |
 | `CYLRefreshFlyHeader` `mountainView` | `CYLRefreshFlyHeaderModel.mountainView` (refresh/drawn/CYLRefreshFly.ets) |
 | `CYLRefreshFlyHeader` `flyView` | `CYLRefreshFlyHeaderModel.flyView` |
-| `CYLRefreshFlyHeader` `floatView` | `CYLRefreshFlyHeaderModel.floatView` (`CYLRefreshFloatViewModel`: `color`, `hidden`, `alpha`, read by the drawing) (written, not built) |
+| `CYLRefreshFlyHeader` `floatView` | `CYLRefreshFlyHeaderModel.floatView` (`CYLRefreshFloatViewModel`: `color`, `hidden`, `alpha`, read by the drawing) (built, host-tested, not seen on a device) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
@@ -767,10 +767,10 @@
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLRefreshMaterialSize` | `CYLRefreshMaterialSize` (refresh/drawn/CYLRefreshDrawnShapes.ets) (written, not built) |
+| `CYLRefreshMaterialSize` | `CYLRefreshMaterialSize` (refresh/drawn/CYLRefreshDrawnShapes.ets) (built, host-tested, not seen on a device) |
 | `CYLRefreshMaterialHeader` | `CYLRefreshMaterialHeaderModel` |
-| `CYLRefreshMaterialHeader` `colorSchemeColors` | `CYLRefreshMaterialHeaderModel.colorSchemeColors` (written, not built) |
-| `CYLRefreshMaterialHeader` `progressSize` | `CYLRefreshMaterialHeaderModel.progressSize` (written, not built) |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | `CYLRefreshMaterialHeaderModel.colorSchemeColors` (built, host-tested, not seen on a device) |
+| `CYLRefreshMaterialHeader` `progressSize` | `CYLRefreshMaterialHeaderModel.progressSize` (built, host-tested, not seen on a device) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
@@ -813,8 +813,8 @@
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
 | `CYLRefreshWaveSwipeHeader` | `CYLRefreshWaveSwipeHeaderModel` |
-| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | `CYLRefreshWaveSwipeHeaderModel.waveShadowRadius` (written, not built) |
-| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | `CYLRefreshWaveSwipeHeaderModel.waveShadowColor` (written, not built) |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | `CYLRefreshWaveSwipeHeaderModel.waveShadowRadius` (built, host-tested, not seen on a device) |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | `CYLRefreshWaveSwipeHeaderModel.waveShadowColor` (built, host-tested, not seen on a device) |
 
 #### `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
@@ -1291,10 +1291,10 @@
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackViewModel.entries` (the stacked rows) |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackViewModel.placeholderView` |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackViewModel.componentViews` |
-| `CYLPlaceholderStackView` `imageView` | `CYLPlaceholderStackViewModel.imageView` (a `CYLPlaceholderViewModel`; its `image` is the icon) (written, not built) |
-| `CYLPlaceholderStackView` `titleLabel` | `CYLPlaceholderStackViewModel.titleLabel` (its `text` is the title) (written, not built) |
-| `CYLPlaceholderStackView` `hintLabel` | `CYLPlaceholderStackViewModel.hintLabel` (null without a hint) (written, not built) |
-| `CYLPlaceholderStackView` `button` | `CYLPlaceholderStackViewModel.button` (null without a button) (written, not built) |
+| `CYLPlaceholderStackView` `imageView` | `CYLPlaceholderStackViewModel.imageView` (a `CYLPlaceholderViewModel`; its `image` is the icon) (built, host-tested, not seen on a device) |
+| `CYLPlaceholderStackView` `titleLabel` | `CYLPlaceholderStackViewModel.titleLabel` (its `text` is the title) (built, host-tested, not seen on a device) |
+| `CYLPlaceholderStackView` `hintLabel` | `CYLPlaceholderStackViewModel.hintLabel` (null without a hint) (built, host-tested, not seen on a device) |
+| `CYLPlaceholderStackView` `button` | `CYLPlaceholderStackViewModel.button` (null without a button) (built, host-tested, not seen on a device) |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackViewModel.scenario` (null for components) |
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackViewModel.backgroundAction` |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackViewModel.initWithScenario(scenario, actions)` |
@@ -1712,7 +1712,7 @@
 | flutter_easy_refresh samples · Trigger mode (CYLEasyRefreshDemoViewController - easyTriggerMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Refresh on start (CYLEasyRefreshDemoViewController - easyRefreshOnStart) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Paging (CYLEasyRefreshDemoViewController - easyPaging) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
-| flutter_easy_refresh samples · Scroll mode (CYLEasyRefreshDemoViewController - easyScrollMode) | TODO |
+| flutter_easy_refresh samples · Scroll mode (CYLEasyRefreshDemoViewController - easyScrollMode) | `entry/src/main/ets/pages/RefreshEasyPage.ets` (`setUpScrollMode`; four modes measured on the x86_64 emulator, docs/Task-Log.md 175b504) |
 | flutter_easy_refresh samples · Listener header (CYLEasyRefreshDemoViewController - easyListener) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · Chat (CYLEasyRefreshDemoViewController - easyChat) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
 | flutter_easy_refresh samples · User profile (CYLEasyRefreshDemoViewController - easyUserProfile) | `entry/src/main/ets/pages/RefreshEasyPage.ets` |
