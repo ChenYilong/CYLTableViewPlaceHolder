@@ -43,6 +43,10 @@ dependencies {
     //      the stack's CYLPlaceholderLoadFailed.json animates instead of showing its still image.
     // [CN] 原生占位图的动画引擎通过反射调用 Lottie（由 App 自带要播放的库），堆叠里的 CYLPlaceholderLoadFailed.json 才会播放而不是只显示静态图。
     implementation("com.airbnb.android:lottie:6.6.2")
+    // [EN] The optional Rive refresh header (module :merged-rive, with rive-android): the Styles page's Rive chip is classic with one log line without it.
+    //      Publish it first: android/ `./gradlew :merged-rive:publishToMavenLocal`.
+    // [CN] 可选的 Rive 刷新头部（模块 :merged-rive，带 rive-android）：没有它时，样式页的 Rive 标签是经典样式并记录一行日志。先发布：android/ `./gradlew :merged-rive:publishToMavenLocal`。
+    implementation("io.github.chenyilong:cyltableviewplaceholder-refresh-rive:${findProperty("cylPlaceholderVersion") ?: "0.1.0"}")
 }
 
 kotlin {

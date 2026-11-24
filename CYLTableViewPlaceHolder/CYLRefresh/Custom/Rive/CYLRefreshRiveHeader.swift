@@ -49,6 +49,13 @@ public final class CYLRefreshRiveStyle: NSObject {
      */
     @objc public var fitsWidth = false
     /**
+     * [EN] Longest time in seconds the header stays open after the refresh ends so that the end of the animation (`finishTrigger`
+     *      or the `loadingNumber` finished value) can play; it retracts earlier when the animation stops. Ignored when the style has
+     *      neither. Default 1.5. [CN] 刷新结束后为让动画的结束部分（`finishTrigger` 或 `loadingNumber` 的结束值）播放完，刷新头最长保持展开的秒数；
+     *      动画停止时会提前收回。两者都没有时忽略。默认 1.5。
+     */
+    @objc public var finishTimeout: TimeInterval = 1.5
+    /**
      * [EN] Number input set from the pull. [CN] 随下拉设置的数字输入。
      */
     @objc public var pullInput: String?
@@ -134,12 +141,33 @@ public final class CYLRefreshRiveStyle: NSObject {
     /**
      * [EN] `pullInput` for a pull of `offset` points. [CN] 拉动 `offset` 点时 `pullInput` 的值。
      */
+    // [EN] YES when the end of a refresh has a part of the animation to wait for. [CN] 刷新结束时是否有动画的结束部分需要等待。
+    var playsFinish: Bool { finishTrigger != nil || loadingNumber != nil }
+
     func pullValue(offset: CGFloat) -> Double {
         let trigger = Double(max(1, triggerOffset))
         let start = trigger * min(max(pullInputStart, 0), 0.99)
         let progress = min(max((Double(offset) - start) / (trigger - start), 0), 1)
         if progress == 0 { return 0 }
         return pullInputMinimum + progress * (pullInputMaximum - pullInputMinimum)
+    }
+}
+
+// [EN] A view model that tells when Rive paused or stopped (the state machine settled, a one-shot animation ended) after calling
+//      its own handling, which keeps the view model's play state right. [CN] 在 Rive 暂停或停止（状态机稳定、单次动画结束）时通知的
+//      ViewModel；先执行自身的处理，以保持 ViewModel 的播放状态正确。
+@available(*, deprecated, message: "Uses Rive's legacy API.")
+private final class CYLRiveStopReportingViewModel: RiveViewModel {
+    var onStop: (() -> Void)?
+
+    override func player(pausedWithModel riveModel: RiveModel?) {
+        super.player(pausedWithModel: riveModel)
+        onStop?()
+    }
+
+    override func player(stoppedWithModel riveModel: RiveModel?) {
+        super.player(stoppedWithModel: riveModel)
+        onStop?()
     }
 }
 
@@ -156,11 +184,13 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
      * [EN] The style this header was made with. [CN] 创建此刷新头所用的样式。
      */
     @objc public private(set) var riveStyle: CYLRefreshRiveStyle?
-    private var viewModel: RiveViewModel?
+    private var viewModel: CYLRiveStopReportingViewModel?
     private var riveView: RiveView?
     private var loadingTimer: Timer?
     private var loadingStart: Date?
     private var rivePlaysRefresh = false
+    // [EN] YES from the finish trigger until the animation stops or the hold ends. [CN] 从触发结束触发器到动画停止或停留结束期间为 YES。
+    private var awaitsFinishEnd = false
 
     /**
      * [EN] A header drawn by `style`; nil when the file cannot be read. [CN] 由 `style` 绘制的刷新头；文件无法读取时为 nil。
@@ -186,15 +216,16 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         setExpandHeight(style.triggerOffset)
         let model = RiveModel(riveFile: file)
         let fit: RiveFit = style.fitsWidth ? .fitWidth : .cover
-        let viewModel: RiveViewModel
+        let viewModel: CYLRiveStopReportingViewModel
         if style.stateMachineName != nil {
-            viewModel = RiveViewModel(model, stateMachineName: style.stateMachineName, fit: fit, alignment: .center,
+            viewModel = CYLRiveStopReportingViewModel(model, stateMachineName: style.stateMachineName, fit: fit, alignment: .center,
                                       autoPlay: true, artboardName: style.artboardName)
         } else {
-            viewModel = RiveViewModel(model, animationName: style.idleAnimation ?? style.pullAnimation, fit: fit,
+            viewModel = CYLRiveStopReportingViewModel(model, animationName: style.idleAnimation ?? style.pullAnimation, fit: fit,
                                       alignment: .center, autoPlay: style.idleAnimation != nil, artboardName: style.artboardName)
         }
         self.viewModel = viewModel
+        viewModel.onStop = { [weak self] in self?.finishAnimationStopped() }
         let view = viewModel.createRiveView()
         view.isUserInteractionEnabled = false
         view.backgroundColor = .clear
@@ -265,15 +296,37 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
             }
         case .finishing:
             stopLoadingNumber()
+            // [EN] The end of the animation plays while the header is held open (`onRefreshFinishing:`). [CN] 刷新头被保持展开（`onRefreshFinishing:`）期间播放动画的结束部分。
+            awaitsFinishEnd = style.playsFinish
             if let input = style.loadingNumber { viewModel.setInput(input, value: style.loadingNumberFinished) }
             if let trigger = style.finishTrigger { viewModel.triggerInput(trigger) }
         case .idle:
+            awaitsFinishEnd = false
             guard rivePlaysRefresh else { break }
             rivePlaysRefresh = false
             reset()
         default:
             break
         }
+    }
+
+    // MARK: - The end of the refresh
+
+    /**
+     * [EN] How long the header stays open after the refresh ends: `finishTimeout` when the style has an end part to play, else
+     *      `finishDuration`. [CN] 刷新结束后刷新头保持展开的时间：样式有结束部分要播放时为 `finishTimeout`，否则为 `finishDuration`。
+     */
+    override public func onRefreshFinishing(_ success: Bool) -> CGFloat {
+        guard awaitsFinishEnd, let style = riveStyle else { return super.onRefreshFinishing(success) }
+        return CGFloat(max(style.finishTimeout, finishDuration))
+    }
+
+    // [EN] The state machine settled or the animation stopped after the finish trigger: the end part has played, retract now.
+    // [CN] 结束触发器之后状态机已稳定或动画已停止：结束部分已播放完，立即收回。
+    private func finishAnimationStopped() {
+        guard awaitsFinishEnd else { return }
+        awaitsFinishEnd = false
+        cyl_finishAnimationDidEnd()
     }
 
     // [EN] Back to the file's first state, as flutter_easy_refresh recreates the controller. [CN] 回到文件的初始状态，与 flutter_easy_refresh 重建控制器相同。

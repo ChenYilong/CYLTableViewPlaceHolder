@@ -110,13 +110,9 @@ class CYLPlaceholderViewTest {
         }
     }
 
-    // Written, not run (docs/Task-Log.md, "Batch hand-off W1b"): CYLTabBarController 82b85e064 defaults drivesAnimationPlayback to
-    // true on Android; the placeholder plays through its own API and sets it to false.
-    @Test
-    fun aPlaceholderViewDoesNotLetTheItemBaseClassDrivePlayback() {
-        assertFalse(CYLPlaceholderView(context, CYLPlaceholderStyle.Empty, CYLPlaceholderMessage.Empty).drivesAnimationPlayback)
-        assertFalse(CYLPlaceholderView(context, null, "Title").drivesAnimationPlayback)
-    }
+    // TODO(PR #824): re-add `aPlaceholderViewDoesNotLetTheItemBaseClassDrivePlayback` (a new CYLPlaceholderView reports
+    // drivesAnimationPlayback == false) together with the explicit `drivesAnimationPlayback = false` in the view's init, once
+    // CYLTabBarController 82b85e064 is in every commit the CI resolver can pick (docs/Task-Log.md, 2026-11-24).
 
     @Test
     fun aSelectionChangeDoesNotStartOrRestartThePlayer() {

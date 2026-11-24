@@ -83,7 +83,7 @@ enum class CYLRefreshSlotMode(val key: String, val pinned: Boolean) {
 
 /**
  * Creates the platform view of the native refresh header or footer: a `CYLRefreshDrivenLayout` (the driven mode of the refresh
- * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]), or with the
+ * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]; `rive` also reads the `rive...` keys, `riveFile` first, and is classic with one log line without the optional `:merged-rive` module, a `riveFile` or a readable file), or with the
  * footer of that style (`CYLRefreshBackNormalFooter` for classic) when the creation parameters say `footer: true` (and optionally
  * `loadsAfterNoMoreData: true`). A missing or unknown `style` is classic and one warning is logged. The drawn styles may also get
  * `scrollMode` (`move`, `stretch`, `front`, `behind`; missing or unknown is move, an unknown one logged once), `expandHeight` (dp, the indicator's open height; missing or 0 keeps the style's own) and
@@ -108,7 +108,7 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
             scrollMode = scrollMode, expandHeight = (params?.get("expandHeight") as? Number)?.toFloat() ?: 0f,
             secondaryTriggerOffset = (params?.get("secondaryTriggerOffset") as? Number)?.toFloat() ?: 0f,
             secondaryDimension = (params?.get("secondaryDimension") as? Number)?.toFloat() ?: 0f,
-            secondaryCloseTriggerOffset = (params?.get("secondaryCloseTriggerOffset") as? Number)?.toFloat())
+            secondaryCloseTriggerOffset = (params?.get("secondaryCloseTriggerOffset") as? Number)?.toFloat(), riveParameters = params)
     }
 
     companion object {
@@ -127,7 +127,7 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
  */
 class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false, style: CYLRefreshStyle = CYLRefreshStyle.Classic,
     foregroundColor: Int? = null, backgroundColor: Int? = null, private val scrollMode: CYLRefreshSlotMode = CYLRefreshSlotMode.Move, expandHeight: Float = 0f,
-    secondaryTriggerOffset: Float = 0f, secondaryDimension: Float = 0f, secondaryCloseTriggerOffset: Float? = null) :
+    secondaryTriggerOffset: Float = 0f, secondaryDimension: Float = 0f, secondaryCloseTriggerOffset: Float? = null, riveParameters: Map<*, *>? = null) :
     PlatformView, MethodChannel.MethodCallHandler {
     private val channel = MethodChannel(messenger, "${CYLRefreshPlatformViewFactory.VIEW_TYPE}/$viewId")
     private val density = context.resources.displayMetrics.density
@@ -136,16 +136,16 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
 
     /** The header, or in footer mode the [CYLRefreshFooter], the view hosts. */
     internal val component: CYLRefreshComponent =
-        if (footer) style.newFooter(context).also { it.loadsAfterNoMoreData = loadsAfterNoMoreData } else style.newHeader(context)
+        if (footer) style.newFooter(context, riveParameters).also { it.loadsAfterNoMoreData = loadsAfterNoMoreData } else style.newHeader(context, riveParameters)
 
     init {
         component.addPhaseObserver { _, old, new ->
             // Refreshing holds the indicator open, so the slot grows to the whole view (and shrinks again when it closes).
             fitSlot()
-            channel.invokeMethod("onPhase", mapOf("phase" to lowerCamel(new.name), "oldPhase" to lowerCamel(old.name)))
+            emit("onPhase", mapOf("phase" to lowerCamel(new.name), "oldPhase" to lowerCamel(old.name)))
         }
         layout.onBeforeDraw = { fitSlot() }
-        component.refreshingHandler = { channel.invokeMethod("onRefreshing", null) }
+        component.refreshingHandler = { emit("onRefreshing", null) }
         when (component) {
             is CYLRefreshFooter -> layout.cyl_footer = component
             is CYLRefreshHeader -> layout.cyl_header = component
@@ -169,7 +169,7 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         // widget, so the native floor is an empty view. The creation parameters are dp (logical pixels); a trigger of 0 or less: no floor.
         if (secondaryTriggerOffset > 0f) {
             component.setUpSecondary(View(context), secondaryTriggerOffset, secondaryDimension, secondaryCloseTriggerOffset,
-                opened = { channel.invokeMethod("onSecondaryOpened", null) }, closed = { channel.invokeMethod("onSecondaryClosed", null) })
+                opened = { emit("onSecondaryOpened", null) }, closed = { emit("onSecondaryClosed", null) })
         }
         channel.setMethodCallHandler(this)
     }
@@ -216,7 +216,16 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         }
     }
 
+    // Dart is the authority of the second floor and replaces this view by the floor's own widget right after it sent `openSecondary`, so the
+    // native `onSecondaryOpened` may come after the view was disposed (or never be heard): no event is sent after dispose, and Dart never waits for one.
+    private var disposed = false
+
+    private fun emit(method: String, arguments: Any?) {
+        if (!disposed) channel.invokeMethod(method, arguments)
+    }
+
     override fun dispose() {
+        disposed = true
         channel.setMethodCallHandler(null)
     }
 

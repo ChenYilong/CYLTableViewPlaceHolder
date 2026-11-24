@@ -1,6 +1,7 @@
 package com.cyl.placeholder.reactnative
 
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.uimanager.ThemedReactContext
@@ -10,7 +11,8 @@ import com.facebook.react.uimanager.events.RCTEventEmitter
 
 /**
  * The React Native view manager of [CYLRefreshContainerView] ("CYLRefreshContainer"): props `refreshing`, `enabled`,
- * `loadingMore`, `noMoreData`, `loadMoreEnabled` and the second floor's `secondaryTriggerOffset`, `secondaryDimension`,
+ * `loadingMore`, `noMoreData`, `loadMoreEnabled`, `loadsAfterNoMoreData`, `headerStyle` / `footerStyle` with `headerRive` / `footerRive`
+ * (the `rive` style's parameters) and the second floor's `secondaryTriggerOffset`, `secondaryDimension`,
  * `secondaryCloseTriggerOffset` and `secondaryOpen`, the direct events `onRefresh`, `onLoadMore`, `onSecondaryOpen` and `onSecondaryClose`.
  */
 class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
@@ -65,6 +67,42 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
      */
     @ReactProp(name = "loadMoreEnabled")
     fun setLoadMoreEnabled(view: CYLRefreshContainerView, enabled: Boolean) = view.setLoadMoreEnabled(enabled)
+
+    /**
+     * The `loadsAfterNoMoreData` prop (default false): a pull past the end loads again after "no more data".
+     */
+    @ReactProp(name = "loadsAfterNoMoreData")
+    fun setLoadsAfterNoMoreData(view: CYLRefreshContainerView, enabled: Boolean) = view.setLoadsAfterNoMoreData(enabled)
+
+    /**
+     * The `headerStyle` prop: a style key (`classic`, `cupertino`, ..., `rive`); applied after the batch of props.
+     */
+    @ReactProp(name = "headerStyle")
+    fun setHeaderStyle(view: CYLRefreshContainerView, style: String?) = view.setHeaderStyle(style)
+
+    /**
+     * The `footerStyle` prop, as `headerStyle`.
+     */
+    @ReactProp(name = "footerStyle")
+    fun setFooterStyle(view: CYLRefreshContainerView, style: String?) = view.setFooterStyle(style)
+
+    /**
+     * The `headerRive` prop: the `rive...` keys of the `rive` header.
+     */
+    @ReactProp(name = "headerRive")
+    fun setHeaderRive(view: CYLRefreshContainerView, options: ReadableMap?) = view.setHeaderRive(options?.toHashMap())
+
+    /**
+     * The `footerRive` prop: the `rive...` keys of the `rive` footer.
+     */
+    @ReactProp(name = "footerRive")
+    fun setFooterRive(view: CYLRefreshContainerView, options: ReadableMap?) = view.setFooterRive(options?.toHashMap())
+
+    // The style props arrive one by one; the header and footer are made once from all of them.
+    override fun onAfterUpdateTransaction(view: CYLRefreshContainerView) {
+        super.onAfterUpdateTransaction(view)
+        view.applyStyles()
+    }
 
     /**
      * The `secondaryTriggerOffset` prop (dp, default 0: no second floor).

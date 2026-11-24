@@ -110,3 +110,5 @@
 
 /* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
 "CYLPlaceholderStatusNetworkUnavailable" = "Network unavailable, Check network";
+"CYLPlaceholderResourceMissing" = "Missing resource: %@ (%@)";
+"CYLPlaceholderResourcesMissing" = "Missing resources: %1$@ +%2$ld more";

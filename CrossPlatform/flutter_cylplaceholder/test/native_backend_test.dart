@@ -404,6 +404,126 @@ void main() {
       expect(sent, isEmpty, reason: 'a closed floor sends nothing again');
     });
 
+    // Written, not run (docs/Task-Log.md, "Batch hand-off W4"): the native `rive` style (docs/Refresh-Library-Parity.md, "The rive style: creation parameters").
+    CYLRefreshRiveStyle bowStyle() => CYLRefreshRiveStyle(fileURL: 'assets/animations/CYLScenarioExampleRefreshBow.riv')
+      ..stateMachineName = 'numberSimulation'
+      ..triggerOffset = 200
+      ..fitsWidth = true
+      ..pullInput = 'pull'
+      ..pullInputMinimum = 10
+      ..releaseTrigger = 'advance'
+      ..finishTrigger = 'advance'
+      ..restartTrigger = 'restart';
+
+    final bowParameters = <String, Object?>{
+      'riveFile': 'assets/animations/CYLScenarioExampleRefreshBow.riv',
+      'riveStateMachine': 'numberSimulation',
+      'riveTriggerOffset': 200.0,
+      'riveFitsWidth': true,
+      'rivePullInput': 'pull',
+      'rivePullInputMinimum': 10.0,
+      'rivePullInputMaximum': 100.0,
+      'rivePullInputStart': 0.0,
+      'riveReleaseTrigger': 'advance',
+      'riveFinishTrigger': 'advance',
+      'riveRestartTrigger': 'restart',
+    };
+
+    test('the rive style sends only the keys it sets, with the contract names', () {
+      expect(bowStyle().nativeParameters, bowParameters);
+      expect(CYLRefreshRiveStyle(fileURL: '/data/x.riv').nativeParameters, {'riveFile': '/data/x.riv', 'riveTriggerOffset': 180.0});
+      final loading = CYLRefreshRiveStyle(fileURL: 'Bubbles')
+        ..loadingNumber = 'numLoad'
+        ..pullInputRefreshingValue = 100
+        ..pullInput = 'numDrag'
+        ..loadingAnimation = 'Loading';
+      expect(loading.nativeParameters, containsPair('riveLoadingNumber', 'numLoad'));
+      expect(loading.nativeParameters, containsPair('riveLoadingNumberDuration', 2.0));
+      expect(loading.nativeParameters, containsPair('rivePullInputRefreshingValue', 100.0));
+      expect(loading.nativeParameters, containsPair('riveLoadingAnimation', 'Loading'));
+      expect(loading.nativeParameters.containsKey('riveLoadingBoolean'), isFalse);
+    });
+
+    testWidgets('the native rive header passes style rive and the rive keys in the creation parameters', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshRiveNativeHeader(style: bowStyle());
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, indicator: (c) => Builder(builder: c.buildIndicator));
+      expect(creationParams, {'style': 'rive', ...bowParameters, 'footer': false, 'scrollMode': 'move', 'expandHeight': 200.0});
+    });
+
+    testWidgets('the native rive footer passes style rive, the rive keys and footer true', variant: _bothPlatforms, (tester) async {
+      final footer = CYLRefreshRiveNativeFooter(style: bowStyle(), loadsAfterNoMoreData: true);
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer, indicator: (c) => Builder(builder: c.buildIndicator));
+      expect(creationParams, {'style': 'rive', ...bowParameters, 'footer': true, 'scrollMode': 'move', 'expandHeight': 200.0, 'loadsAfterNoMoreData': true});
+    });
+
+    testWidgets('a CYLNativeRefreshIndicator spreads riveParameters into the creation parameters', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshClassicHeader();
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, indicator: (c) => CYLNativeRefreshIndicator(component: c, style: 'rive', riveParameters: const {'riveFile': 'Bow'}));
+      expect(creationParams, containsPair('style', 'rive'));
+      expect(creationParams, containsPair('riveFile', 'Bow'));
+    });
+
+    // The stretch rule: Dart's stretch is `stretchIndicator`, sent as the scrollMode `stretch` in move mode (front and behind keep their names).
+    testWidgets('a stretched style sends scrollMode stretch', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshBezierRadarHeader();
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, indicator: (c) => Builder(builder: c.buildIndicator));
+      expect(creationParams, containsPair('scrollMode', 'stretch'));
+    });
+
+    testWidgets('a stretched style in front mode keeps the name front', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshBezierRadarHeader(scrollMode: CYLRefreshScrollMode.front);
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, indicator: (c) => Builder(builder: c.buildIndicator));
+      expect(creationParams, containsPair('scrollMode', 'front'));
+    });
+
+    // The second floor lifecycle (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): Dart is the authority and replaces the native
+    // view by the floor's widget right after openSecondary; the native events are informational and may arrive after the view is gone.
+    Widget floorSwap(CYLRefreshComponent c) => ListenableBuilder(
+          listenable: c,
+          builder: (context, _) => c.isSecondaryOpen ? const SizedBox(key: ValueKey('floor')) : CYLNativeRefreshIndicator(component: c),
+        );
+
+    testWidgets('openSecondary reaches the native view before Dart disposes it, and a late native onSecondaryOpened is ignored without an echo', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshClassicHeader()
+        ..secondaryView = const SizedBox()
+        ..secondaryTriggerOffset = 130;
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header, indicator: floorSwap);
+      header.openSecondary();
+      expect(sent.map((c) => c.method), ['openSecondary'], reason: 'sent synchronously, before the rebuild disposes the native view');
+      await tester.pump();
+      expect(find.byKey(const ValueKey('floor')), findsOneWidget);
+      expect(find.byType(_platformViewType), findsNothing, reason: 'the native view is gone: Dart did not wait for onSecondaryOpened');
+      sent.clear();
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+        '${CYLNativeRefreshIndicator.viewType}/$viewId',
+        const StandardMethodCodec().encodeMethodCall(const MethodCall('onSecondaryOpened')),
+        (_) {},
+      );
+      expect(tester.takeException(), isNull);
+      expect(sent, isEmpty);
+      expect(header.isSecondaryOpen, isTrue, reason: 'Dart stays the authority');
+    });
+
+    testWidgets('a native onSecondaryOpened or onSecondaryClosed while the view is mounted sends nothing back and changes nothing', variant: _bothPlatforms, (tester) async {
+      final header = CYLRefreshClassicHeader()
+        ..secondaryView = const SizedBox()
+        ..secondaryTriggerOffset = 130;
+      addTearDown(header.dispose);
+      await pumpHeader(tester, header);
+      final channelName = '${CYLNativeRefreshIndicator.viewType}/$viewId';
+      for (final event in ['onSecondaryOpened', 'onSecondaryClosed']) {
+        await tester.binding.defaultBinaryMessenger.handlePlatformMessage(channelName, const StandardMethodCodec().encodeMethodCall(MethodCall(event)), (_) {});
+      }
+      expect(sent, isEmpty);
+      expect(header.isSecondaryOpen, isFalse);
+    });
+
     testWidgets('a header without a second floor sends no second floor parameters', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader();
       addTearDown(header.dispose);

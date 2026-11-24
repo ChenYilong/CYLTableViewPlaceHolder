@@ -263,3 +263,6 @@
 "CYLScenarioPlaybackPlayAll" = "全部播放";
 "CYLScenarioPlaybackSpeed" = "倍速";
 "CYLScenarioPlaybackLoop" = "循环";
+"CYLScenarioTitleMissingResource" = "动画文件缺失";
+"CYLScenarioMissingResourceAdd" = "再添加一个缺失文件";
+"CYLScenarioMissingResourceFix" = "加载文件";

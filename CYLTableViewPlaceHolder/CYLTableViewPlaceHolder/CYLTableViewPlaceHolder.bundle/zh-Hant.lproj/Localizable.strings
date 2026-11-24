@@ -110,3 +110,5 @@
 
 /* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
 "CYLPlaceholderStatusNetworkUnavailable" = "目前網路無法使用，請檢查你的網路設定";
+"CYLPlaceholderResourceMissing" = "缺少資源：%@（%@）";
+"CYLPlaceholderResourcesMissing" = "缺少資源：%1$@，另有 %2$ld 項";
