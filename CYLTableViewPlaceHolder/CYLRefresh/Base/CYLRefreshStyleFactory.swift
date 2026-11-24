@@ -202,6 +202,7 @@ public final class CYLRefreshStyleFactory: NSObject {
     fileprivate static func riveHeader(options: [String: Any]?, onFallback: ((String) -> Void)?) -> CYLRefreshHeader? {
         guard let (builder, parsed) = riveParts(options, onFallback) else { return nil }
         if let header = builder.riveHeader(options: parsed) { return header }
+        reportMissingRiveFile(parsed.file)
         onFallback?("rive file \(parsed.file) not found or unreadable")
         return nil
     }
@@ -210,8 +211,17 @@ public final class CYLRefreshStyleFactory: NSObject {
     fileprivate static func riveFooter(options: [String: Any]?, onFallback: ((String) -> Void)?) -> CYLRefreshFooter? {
         guard let (builder, parsed) = riveParts(options, onFallback) else { return nil }
         if let footer = builder.riveFooter(options: parsed) { return footer }
+        reportMissingRiveFile(parsed.file)
         onFallback?("rive file \(parsed.file) not found or unreadable")
         return nil
+    }
+
+    // [EN] Names the Rive file to the red status bar's reporter when the file is the reason for the classic fallback (a missing
+    //      runtime is not reported: the static fallback is intended). [CN] Rive 文件是退回经典样式的原因时，把文件名报告给红条。
+    private static func reportMissingRiveFile(_ file: String) {
+        let exists = FileManager.default.fileExists(atPath: file)
+        guard !exists || !FileManager.default.isReadableFile(atPath: file) else { return }
+        CYLPlaceholderResourceReporter.shared.report(resource: file, reason: exists ? "unreadable" : "file not found", source: nil)
     }
 
     private static func riveParts(_ options: [String: Any]?, _ onFallback: ((String) -> Void)?) -> (CYLRefreshRiveBuilding.Type, CYLRefreshRiveOptions)? {

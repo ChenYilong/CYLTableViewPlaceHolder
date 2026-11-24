@@ -55,6 +55,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    # import React are not compiled here), so Tests/CYLPlaceholderReactBridgeTests.swift builds them without a React Native runtime.
    'CrossPlatform/react-native-cylplaceholder/ios/CYLPlaceholderStackHostView.swift',
    'CrossPlatform/react-native-cylplaceholder/ios/CYLPlaceholderHUDController.swift',
+   'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderResourceReporter.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.swift',

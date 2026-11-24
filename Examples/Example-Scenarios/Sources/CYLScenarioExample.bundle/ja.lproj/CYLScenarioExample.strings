@@ -263,3 +263,6 @@
 "CYLScenarioPlaybackPlayAll" = "すべて再生";
 "CYLScenarioPlaybackSpeed" = "速度";
 "CYLScenarioPlaybackLoop" = "ループ";
+"CYLScenarioTitleMissingResource" = "アニメーションファイルなし";
+"CYLScenarioMissingResourceAdd" = "欠けたファイルを追加";
+"CYLScenarioMissingResourceFix" = "ファイルを読み込む";

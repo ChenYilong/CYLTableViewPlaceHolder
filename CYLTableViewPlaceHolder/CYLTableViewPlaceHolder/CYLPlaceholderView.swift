@@ -717,6 +717,15 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc public private(set) var itemAttributes: [String: Any] = [:]
 
+    // [EN] The short name this view reported as missing, if any. [CN] 本视图报告为缺失的资源短名（如有）。
+    private var reportedResource: String?
+
+    /**
+     * Called with the resource name and the reason (`file not found`, `unreadable`) when this view's animation file is
+     * missing; the red status bar shows the same report (`CYLPlaceholderResourceReporter`, docs/Status-Bar.md).
+     */
+    @objc open var onResourceMissing: ((String, String) -> Void)?
+
     /**
      * NO (the default): the view fills the frame it is given and centers its content, as before. YES: it also reports its
      * content size as `intrinsicContentSize`, so a UIStackView or Auto Layout can size it. CYLPlaceholderStackView sets it
@@ -1298,6 +1307,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     deinit {
+        CYLPlaceholderResourceReporter.shared.removeSource(self)
         repeatTimer?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
@@ -1793,6 +1803,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
+        if reportedResource != nil { CYLPlaceholderResourceReporter.shared.sourceDidMove(self) }
         cyl_applyAppearance()
     }
 
@@ -1812,7 +1823,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     open func setAnimationFile(_ path: String) -> Bool {
         if path.isEmpty { return false }
         let resolved = (path as NSString).isAbsolutePath ? path : (CYLPlaceholderView.path(forBundledAnimation: path) ?? path)
-        if !FileManager.default.fileExists(atPath: resolved) { return false }
+        if !FileManager.default.fileExists(atPath: resolved) {
+            cyl_applyResourceReport((path, "file not found"))
+            return false
+        }
         let previous = itemAttributes
         var attributes = previous
         for key in [CYLPlaceholderItemAnimationURL, CYLPlaceholderTypeKey.gifFilePath, CYLPlaceholderTypeKey.gifURL,
@@ -1838,7 +1852,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] The animation file of the item attributes (the engine-specific keys first, then the generic ones), with its
     //      size and options; nil when there is none or it is invalid.
     // [CN] item 属性中的动画文件（先看各引擎专用的 key，再看通用 key）及其尺寸与选项；没有或无效时返回 nil。
-    private func cyl_animationURL(from attributes: [String: Any]) -> (url: URL, size: CGSize, options: NSDictionary)? {
+    private func cyl_animationURL(from attributes: [String: Any]) -> (url: URL, size: CGSize, options: NSDictionary, resource: String)? {
         let sources = [
             [CYLPlaceholderTypeKey.gifURL, CYLPlaceholderTypeKey.gifFilePath, CYLPlaceholderTypeKey.gifSize],
             [CYLPlaceholderTypeKey.lottieURL, CYLPlaceholderTypeKey.lottieFilePath, CYLPlaceholderTypeKey.lottieSize],
@@ -1896,7 +1910,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             return nil
         }
         cyl_validateAnimationOptions(options, forExtension: fileURL.pathExtension.lowercased())
-        return (CYLPlaceholderAnimationURLWithOptions(fileURL, options), size, options)
+        let resource = (source as? String) ?? fileURL.absoluteString
+        return (CYLPlaceholderAnimationURLWithOptions(fileURL, options), size, options, resource)
     }
 
     // [EN] Color overrides for the current appearance: `CYLPlaceholderItemAnimationColors`, plus the dark colors in Dark
@@ -1975,7 +1990,38 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
                 self.animationURL = animation.url
             }
         }
+        cyl_reportMissingResource(of: animation?.url, named: animation?.resource)
         setNeedsLayout()
+    }
+
+    // [EN] Names a missing or unreadable animation file to the reporter (the red status bar); the engine swallows that
+    //      error. A resource that loads, changes or goes away clears its entry. Without the runtime a static image shows,
+    //      which is intended, so that is not reported. [CN] 把缺失或不可读的动画文件报告给红色状态条（引擎会吞掉这个错误）；
+    //      资源加载成功、更换或消失时清除其条目。没有运行时则显示静态图片（预期行为），不报告。
+    private func cyl_reportMissingResource(of url: URL?, named resource: String?) {
+        var missing: (name: String, reason: String)?
+        if let url = url, let resource = resource {
+            let file = CYLPlaceholderAnimationFileURL(url)
+            if file.isFileURL {
+                if !FileManager.default.fileExists(atPath: file.path) {
+                    missing = (resource, "file not found")
+                } else if !FileManager.default.isReadableFile(atPath: file.path) {
+                    missing = (resource, "unreadable")
+                }
+            }
+        }
+        cyl_applyResourceReport(missing)
+    }
+
+    private func cyl_applyResourceReport(_ missing: (name: String, reason: String)?) {
+        let reporter = CYLPlaceholderResourceReporter.shared
+        let name = missing.map { CYLPlaceholderResourceReporter.shortName(of: $0.name) }
+        if let old = reportedResource, old != name { reporter.resolve(resource: old, source: self) }
+        let changed = reportedResource != name
+        reportedResource = name
+        guard let missing = missing, let shortName = name else { return }
+        reporter.report(resource: missing.name, reason: missing.reason, source: self)
+        if changed { onResourceMissing?(shortName, missing.reason) }
     }
 
     /**
@@ -2685,6 +2731,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     open override func didMoveToWindow() {
         super.didMoveToWindow()
+        if reportedResource != nil { CYLPlaceholderResourceReporter.shared.sourceDidMove(self) }
         cyl_updateAnimationPlayback()
     }
 

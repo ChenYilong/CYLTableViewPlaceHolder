@@ -110,3 +110,5 @@
 
 /* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
 "CYLPlaceholderStatusNetworkUnavailable" = "Сеть недоступна. Проверьте подключение";
+"CYLPlaceholderResourceMissing" = "Отсутствует ресурс: %@ (%@)";
+"CYLPlaceholderResourcesMissing" = "Отсутствуют ресурсы: %1$@ и ещё %2$ld";

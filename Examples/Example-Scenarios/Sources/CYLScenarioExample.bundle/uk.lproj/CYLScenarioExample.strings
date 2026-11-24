@@ -263,3 +263,6 @@
 "CYLScenarioPlaybackPlayAll" = "Відтворити все";
 "CYLScenarioPlaybackSpeed" = "Швидкість";
 "CYLScenarioPlaybackLoop" = "Повтор";
+"CYLScenarioTitleMissingResource" = "Немає файлу анімації";
+"CYLScenarioMissingResourceAdd" = "Додати ще один файл";
+"CYLScenarioMissingResourceFix" = "Завантажити файл";
