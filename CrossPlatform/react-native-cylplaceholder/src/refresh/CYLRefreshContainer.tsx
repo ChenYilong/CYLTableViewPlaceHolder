@@ -1,6 +1,38 @@
 import type { ReactElement, ReactNode } from 'react';
 import { requireNativeComponent, UIManager, type StyleProp, type ViewStyle } from 'react-native';
 
+/**
+ * The creation parameters of the `rive` style (`headerStyle` / `footerStyle` `'rive'`), the same keys as the Flutter creation
+ * parameters and Android (docs/Refresh-Library-Parity.md, "The rive style: creation parameters"). Only `riveFile` is required; a name left
+ * out is skipped by the header. Without the Rive runtime or a readable file the native side makes the classic style and logs one line.
+ */
+export interface CYLRefreshRiveOptions {
+  /** An absolute path, or the name (with or without `.riv`) or relative path of an app asset. */
+  riveFile: string;
+  riveArtboard?: string;
+  riveStateMachine?: string;
+  riveTriggerOffset?: number;
+  riveMinimumHeight?: number;
+  riveFitsWidth?: boolean;
+  rivePullInput?: string;
+  rivePullInputMinimum?: number;
+  rivePullInputMaximum?: number;
+  rivePullInputStart?: number;
+  rivePullInputRefreshingValue?: number;
+  riveReleaseTrigger?: string;
+  riveFinishTrigger?: string;
+  riveRestartTrigger?: string;
+  riveLoadingBoolean?: string;
+  riveLoadingNumber?: string;
+  riveLoadingNumberMaximum?: number;
+  riveLoadingNumberFinished?: number;
+  riveLoadingNumberDuration?: number;
+  rivePullAnimation?: string;
+  riveTriggerAnimation?: string;
+  riveLoadingAnimation?: string;
+  riveIdleAnimation?: string;
+}
+
 /** The properties of the native container `CYLRefreshContainer`. */
 export interface CYLRefreshContainerProps {
   /** Shows the refreshing state while true, as `RefreshControl.refreshing`. */
@@ -17,10 +49,14 @@ export interface CYLRefreshContainerProps {
   noMoreData?: boolean;
   /** Called when the footer starts loading (not when `loadingMore` was set from JavaScript). */
   onLoadMore?: () => void;
-  /** The header's look on iOS (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`); an unknown name is the classic one. Android ignores it for now. */
+  /** The header's look on iOS (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`, `rive` with `headerRive`); an unknown name is the classic one. Android ignores it for now. */
   headerStyle?: string;
   /** The footer's look on iOS, the same names as `headerStyle`. */
   footerStyle?: string;
+  /** The `rive` header's parameters (read while `headerStyle` is `'rive'`). iOS now; Android follows the same keys. */
+  headerRive?: CYLRefreshRiveOptions;
+  /** The `rive` footer's parameters (read while `footerStyle` is `'rive'`). */
+  footerRive?: CYLRefreshRiveOptions;
   /** The pull, in points (dp on Android), past which a release opens the second floor instead of refreshing; 0 (default) is no second floor. Same names on iOS and Android. */
   secondaryTriggerOffset?: number;
   /** The open extent of the second floor; 0 (default) is the scroll view's visible height. */
@@ -56,6 +92,8 @@ const Native = isCYLRefreshContainerAvailable()
       onLoadMore?: () => void;
       headerStyle?: string;
       footerStyle?: string;
+      headerRive?: CYLRefreshRiveOptions;
+      footerRive?: CYLRefreshRiveOptions;
       secondaryTriggerOffset?: number;
       secondaryDimension?: number;
       secondaryCloseTriggerOffset?: number;
@@ -83,6 +121,8 @@ export function CYLRefreshContainer({
   onLoadMore,
   headerStyle,
   footerStyle,
+  headerRive,
+  footerRive,
   secondaryTriggerOffset,
   secondaryDimension,
   secondaryCloseTriggerOffset,
@@ -104,6 +144,8 @@ export function CYLRefreshContainer({
       onLoadMore={onLoadMore}
       headerStyle={headerStyle}
       footerStyle={footerStyle}
+      headerRive={headerRive}
+      footerRive={footerRive}
       secondaryTriggerOffset={secondaryTriggerOffset}
       secondaryDimension={secondaryDimension}
       secondaryCloseTriggerOffset={secondaryCloseTriggerOffset}

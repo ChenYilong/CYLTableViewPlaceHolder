@@ -11,6 +11,8 @@ info = group.new_file('Info.plist')
 target.resources_build_phase.add_file_reference(group.new_file('LaunchScreen.storyboard'))
 target.resources_build_phase.add_file_reference(group.new_file('Images.xcassets'))
 target.resources_build_phase.add_file_reference(group.new_file('PrivacyInfo.xcprivacy'))
+# [EN] The Bow file of the `rive` style on the styles page (MIT; credits in the Flutter example's assets/animations/NOTICE.animations). [CN] 样式页 `rive` 样式用的 Bow 文件（MIT；来源见 Flutter 示例的 assets/animations/NOTICE.animations）。
+target.resources_build_phase.add_file_reference(project.main_group.new_file('../../../flutter_cylplaceholder/example/assets/animations/CYLScenarioExampleRefreshBow.riv'))
 phase = target.new_shell_script_build_phase('Bundle React Native code and images')
 phase.shell_script = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n"
 target.build_configurations.each do |config|

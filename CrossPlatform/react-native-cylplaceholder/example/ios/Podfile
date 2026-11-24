@@ -22,6 +22,8 @@ target 'CYLExample' do
 
   # CYLTableViewPlaceHolder from this repository (the core: CYLRefresh and the placeholder views).
   pod 'CYLTableViewPlaceHolder', :path => '../../../..'
+  # The rive refresh style (headerStyle / footerStyle 'rive') draws with RiveRuntime; without this subspec it is the classic style with one log line.
+  pod 'CYLTableViewPlaceHolder/Rive', :path => '../../../..'
   # CYLAnimatedItem, which the core depends on: CYLTabBarController at the commit the Cartfile pins. CYL_TAB_BAR_CONTROLLER_DIR is a
   # local checkout at that commit (no network); without it CocoaPods clones GitHub.
   # CYLAnimatedItem 是核心的依赖：CYLTabBarController 的 Cartfile 固定提交。CYL_TAB_BAR_CONTROLLER_DIR 为该提交的本地检出（无需联网）。

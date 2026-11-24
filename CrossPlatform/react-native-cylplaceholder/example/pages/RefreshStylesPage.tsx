@@ -1,11 +1,29 @@
 import React, {useCallback, useState} from 'react';
 import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
-import {CYLRefreshContainer, isCYLRefreshContainerAvailable} from 'react-native-cylplaceholder';
+import {CYLRefreshContainer, isCYLRefreshContainerAvailable, type CYLRefreshRiveOptions} from 'react-native-cylplaceholder';
 
 const PAGE = 10;
 const LAST_PAGE = 3;
 const START_ROWS = 10;
-const STYLES = ['classic', 'cupertino', 'material', 'bezierRadar', 'bezierCircle', 'delivery', 'phoenix', 'taurus'];
+const STYLES = ['classic', 'cupertino', 'material', 'bezierRadar', 'bezierCircle', 'delivery', 'phoenix', 'taurus', 'rive'];
+
+/**
+ * [EN] The `rive` style's parameters: flutter_easy_refresh's Bow file (MIT, credits in the Flutter example's `assets/animations/NOTICE.animations`),
+ *      which the app target carries as a resource, driven by the names of its state machine (the same names as `CYLRefreshStylesDemoViewController`).
+ * [CN] `rive` 样式的参数：flutter_easy_refresh 的 Bow 文件（MIT，来源见 Flutter 示例的 `assets/animations/NOTICE.animations`），由应用 target 作为资源携带，
+ *      按其状态机的名称驱动（与 `CYLRefreshStylesDemoViewController` 的名称相同）。
+ */
+const RIVE: CYLRefreshRiveOptions = {
+  riveFile: 'CYLScenarioExampleRefreshBow',
+  riveStateMachine: 'numberSimulation',
+  riveTriggerOffset: 200,
+  riveFitsWidth: true,
+  rivePullInput: 'pull',
+  rivePullInputMinimum: 10,
+  riveReleaseTrigger: 'advance',
+  riveFinishTrigger: 'advance',
+  riveRestartTrigger: 'restart',
+};
 
 const range = (from: number, count: number) => Array.from({length: count}, (_, i) => from + i + 1);
 
@@ -70,6 +88,8 @@ export default function RefreshStylesPage() {
       <CYLRefreshContainer
         headerStyle={style}
         footerStyle={style}
+        headerRive={style === 'rive' ? RIVE : undefined}
+        footerRive={style === 'rive' ? RIVE : undefined}
         refreshing={refreshing}
         onRefresh={refresh}
         loadMoreEnabled

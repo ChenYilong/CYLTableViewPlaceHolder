@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01CCEBB3611B8FB16FCEEE86 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0D2FC723B27F19E6D0E0C37F /* LaunchScreen.storyboard */; };
+		0BCB0733977B8C2A3E2381D2 /* CYLScenarioExampleRefreshBow.riv in Resources */ = {isa = PBXBuildFile; fileRef = 4E38CADDC417B5AC7ECD633E /* CYLScenarioExampleRefreshBow.riv */; };
 		220F52CD1B193F3B9B5941FB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F43311AFE6C417103763D19 /* Images.xcassets */; };
 		2B4361C99AE231C87F755DA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389E8C803E0FEFA9501E4079 /* AppDelegate.swift */; };
 		92815A3236E9C395B9215A66 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D13A8A9997C2DF4F760606A /* Foundation.framework */; };
@@ -24,6 +25,7 @@
 		389E8C803E0FEFA9501E4079 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DDADE449F7F81965823B4BB /* SceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		3EC3F3BEEA3A0A41DBB5B908 /* CYLExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CYLExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E38CADDC417B5AC7ECD633E /* CYLScenarioExampleRefreshBow.riv */ = {isa = PBXFileReference; includeInIndex = 1; name = CYLScenarioExampleRefreshBow.riv; path = ../../../flutter_cylplaceholder/example/assets/animations/CYLScenarioExampleRefreshBow.riv; sourceTree = "<group>"; };
 		7CAE7037DE7DA4714FCF1EF5 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F43311AFE6C417103763D19 /* Images.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		ABF8DBD80A05F79E6DAAD499 /* Pods_CYLExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CYLExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +93,7 @@
 				DF61A1E9AC9503D76FD3649A /* Frameworks */,
 				94BEB3EE1D296C7C87A1AE85 /* CYLExample */,
 				589D6F6E67864875DD431F99 /* Pods */,
+				4E38CADDC417B5AC7ECD633E /* CYLScenarioExampleRefreshBow.riv */,
 			);
 			sourceTree = "<group>";
 		};
@@ -163,6 +166,7 @@
 				01CCEBB3611B8FB16FCEEE86 /* LaunchScreen.storyboard in Resources */,
 				220F52CD1B193F3B9B5941FB /* Images.xcassets in Resources */,
 				9A4A8D5A2A5E44F9187BEDF8 /* PrivacyInfo.xcprivacy in Resources */,
+				0BCB0733977B8C2A3E2381D2 /* CYLScenarioExampleRefreshBow.riv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

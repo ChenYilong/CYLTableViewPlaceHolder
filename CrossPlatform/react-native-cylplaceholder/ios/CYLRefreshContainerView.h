@@ -54,6 +54,12 @@ typedef void (^CYLRefreshContainerEventBlock)(NSDictionary *body);
 /** [EN] The footer's look, same names as `headerStyle`; `bezierCircle` has no drawn footer and shows the classic one. iOS only. [CN] 尾部外观，名称同 `headerStyle`；`bezierCircle` 没有手绘尾部，显示经典样式。仅 iOS。 */
 @property (nonatomic, copy, nullable) NSString *footerStyle;
 
+/** [EN] The `rive...` creation parameters of the `rive` style for the header (the keys of "The rive style: creation parameters" in docs/Refresh-Library-Parity.md; `riveFile` is required). Read only while `headerStyle` is `rive`; without a usable file the classic header is made and one line is logged. iOS only for now. [CN] 头部 `rive` 样式的 `rive...` 创建参数（键见 docs/Refresh-Library-Parity.md “The rive style: creation parameters”，`riveFile` 必填）。仅当 `headerStyle` 为 `rive` 时读取；没有可用文件时使用经典头部并记录一行日志。目前仅 iOS。 */
+@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *headerRive;
+
+/** [EN] The same for the footer (`footerStyle` `rive`). [CN] 尾部的同名参数（`footerStyle` 为 `rive`）。 */
+@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *footerRive;
+
 /** [EN] Second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): a pull of this many points (then a release) opens it instead of refreshing; 0 (default) turns it off. [CN] 二楼：拉动这么多点后松手即打开二楼而不是刷新；0（默认）关闭。 */
 @property (nonatomic, assign) CGFloat secondaryTriggerOffset;
 

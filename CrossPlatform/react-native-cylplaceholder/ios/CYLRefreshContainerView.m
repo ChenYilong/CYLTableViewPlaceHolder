@@ -52,9 +52,11 @@ static BOOL CYLIsFloorView(UIView *view) {
 //      除非是 JavaScript 要求的刷新，它们的刷新块会回调事件。
 - (CYLRefreshHeader *)makeHeader {
     __weak __typeof(self) weakSelf = self;
-    CYLRefreshHeader *header = [CYLRefreshStyleFactory headerWithStyle:_headerStyle onUnknownStyle:^(NSString *name) {
-        if (!name) return;
-        NSLog(@"CYLRefreshContainer: unknown headerStyle %@, using classic", name);
+    NSString *styleName = _headerStyle;
+    CYLRefreshHeader *header = [CYLRefreshStyleFactory headerWithStyle:styleName options:_headerRive onFallback:^(NSString *reason) {
+        // A missing style is the classic one without a report.
+        if (!styleName) return;
+        NSLog(@"CYLRefreshContainer: headerStyle: %@, using classic", reason);
     }];
     header.refreshingBlock = ^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
@@ -79,9 +81,10 @@ static BOOL CYLIsFloorView(UIView *view) {
 
 - (CYLRefreshFooter *)makeFooter {
     __weak __typeof(self) weakSelf = self;
-    CYLRefreshFooter *footer = [CYLRefreshStyleFactory footerWithStyle:_footerStyle onUnknownStyle:^(NSString *name) {
-        if (!name) return;
-        NSLog(@"CYLRefreshContainer: unknown footerStyle %@, using classic", name);
+    NSString *styleName = _footerStyle;
+    CYLRefreshFooter *footer = [CYLRefreshStyleFactory footerWithStyle:styleName options:_footerRive onFallback:^(NSString *reason) {
+        if (!styleName) return;
+        NSLog(@"CYLRefreshContainer: footerStyle: %@, using classic", reason);
     }];
     footer.loadsAfterNoMoreData = _loadsAfterNoMoreData;
     footer.refreshingBlock = ^{
@@ -228,6 +231,25 @@ static BOOL CYLIsFloorView(UIView *view) {
 - (void)setFooterStyle:(NSString *)footerStyle {
     if ((footerStyle == _footerStyle) || [footerStyle isEqualToString:_footerStyle]) return;
     _footerStyle = [footerStyle copy];
+    if (_scrollView.cyl_footer == _footer) _scrollView.cyl_footer = nil;
+    _footer = [self makeFooter];
+    [self applyState];
+}
+
+// [EN] The `rive...` parameters of the `rive` style: only a header or footer of that style is made again. [CN] `rive` 样式的 `rive...` 参数：只有该样式的刷新头或刷新尾才会重新创建。
+- (void)setHeaderRive:(NSDictionary *)headerRive {
+    if ((headerRive == _headerRive) || [headerRive isEqualToDictionary:_headerRive]) return;
+    _headerRive = [headerRive copy];
+    if (![_headerStyle isEqualToString:@"rive"]) return;
+    if (_scrollView.cyl_header == _header) _scrollView.cyl_header = nil;
+    _header = [self makeHeader];
+    [self applyState];
+}
+
+- (void)setFooterRive:(NSDictionary *)footerRive {
+    if ((footerRive == _footerRive) || [footerRive isEqualToDictionary:_footerRive]) return;
+    _footerRive = [footerRive copy];
+    if (![_footerStyle isEqualToString:@"rive"]) return;
     if (_scrollView.cyl_footer == _footer) _scrollView.cyl_footer = nil;
     _footer = [self makeFooter];
     [self applyState];

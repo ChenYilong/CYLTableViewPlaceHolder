@@ -44,6 +44,8 @@ target 'Runner' do
   pod 'CYLTabBarController', :git => tab_bar_git, :commit => tab_bar_commit
   pod 'CYLAnimatedItem/Engine', :git => tab_bar_git, :commit => tab_bar_commit
   pod 'CYLTableViewPlaceHolder/LottieSwift', :path => repository_root
+  # The rive refresh style (style: 'rive') draws with RiveRuntime; without this subspec it is the classic style with one log line.
+  pod 'CYLTableViewPlaceHolder/Rive', :path => repository_root
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths

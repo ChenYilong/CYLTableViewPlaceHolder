@@ -39,6 +39,9 @@ final class CYLRefreshDrivenHost {
         var loadsAfterNoMoreData = false
         /// The look: a style name of `CYLRefreshStyleFactory`, nil when the key is missing or not a string. [CN] 外观：`CYLRefreshStyleFactory` 的样式名，键缺失或不是字符串时为 nil。
         var style: String?
+        /// The `rive...` creation parameters of the `rive` style (docs/Refresh-Library-Parity.md, "The rive style: creation parameters"):
+        /// every entry whose key starts with `rive`, empty when there is none. [CN] `rive` 样式的 `rive...` 创建参数：键以 `rive` 开头的所有项，没有时为空。
+        var riveParameters: NSDictionary = [:]
         /// The open height Dart uses (its `expandHeight`), when it sends one: the indicator takes it. Optional, so the native
         /// default stays when a Dart version does not send it. [CN] Dart 使用的展开高度（其 `expandHeight`），Dart 发送时指示器采用；
         /// 可选，Dart 版本不发送时保持原生默认值。
@@ -65,6 +68,7 @@ final class CYLRefreshDrivenHost {
             secondaryCloseTriggerOffset = length("secondaryCloseTriggerOffset")
             footer = dictionary?["footer"] as? Bool == true
             style = dictionary?["style"] as? String
+            riveParameters = (dictionary ?? [:]).filter { $0.key.hasPrefix("rive") } as NSDictionary
             if let height = (dictionary?["expandHeight"] as? NSNumber)?.doubleValue, height.isFinite, height > 0 { expandHeight = CGFloat(height) }
             switch dictionary?["scrollMode"] as? String {
             case "front": scrollMode = .front
@@ -98,16 +102,18 @@ final class CYLRefreshDrivenHost {
         container.addSubview(layout)
         // The contract's fallback: a missing or unknown style is the classic one, reported once (a log line here; the channel is not
         // listening yet while the view is created, so an event would be lost).
-        let unknownStyle: (String?) -> Void = { name in
-            NSLog("CYLRefresh: unknown refresh style %@, using classic", name ?? "(missing)")
+        // The `rive` style adds its own reasons (no `riveFile`, no Rive subspec, the file missing) to the same one line.
+        let fallback: (String) -> Void = { reason in
+            NSLog("CYLRefresh: %@, using classic", reason)
         }
+        let rive = self.params.riveParameters as? [String: Any]
         if self.params.footer {
-            let footer = CYLRefreshStyleFactory.footer(style: self.params.style, onUnknownStyle: unknownStyle)
+            let footer = CYLRefreshStyleFactory.footer(style: self.params.style, options: rive, onFallback: fallback)
             footer.loadsAfterNoMoreData = self.params.loadsAfterNoMoreData
             layout.footer = footer
             component = footer
         } else {
-            let header = CYLRefreshStyleFactory.header(style: self.params.style, onUnknownStyle: unknownStyle)
+            let header = CYLRefreshStyleFactory.header(style: self.params.style, options: rive, onFallback: fallback)
             if let mode = self.params.scrollMode { header.scrollMode = mode }
             layout.header = header
             component = header
