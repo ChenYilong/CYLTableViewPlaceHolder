@@ -2008,3 +2008,9 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **English:** No physical devices.
 - **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4; a missing device run costs no points. Simulators and emulators are the target. Recorded in `docs/Refresh-Library-Parity.md` (Decisions block).
 - **Still open (asked, unanswered):** Rive black band A/B/C, CYLTabBarController pin policy, corner-radius survey, and whether the React Native new architecture is out of scope (only the device half was typed by the owner here).
+
+### 决定（2026-11-25，负责人交由 advisor 决定）/ Decision (2026-11-25, owner delegated to the advisor)
+
+- **Bow 黑带 / Bow black band: option A.** 不改库默认值（`pullInputMinimum` 默认 0，已是 `min + progress × (max − min)` 的线性重映射，不是截断）；各 Rive 示例页把 Bow 的 `pullInputMinimum` 设为 50（Android、Flutter、HarmonyOS 已改；iOS 示例由 Mac 改，参数名相同）。验收：低拉伸截图无黑带，满拉伸截图结束动画仍播完。 / Library default unchanged (`pullInputMinimum` is already a linear remap, not a clamp); the Rive example pages set Bow to 50. Pass condition: a low-pull capture without the band and a full-pull capture whose end animation still plays.
+- **多个缺失资源 / Several missing resources:** 保持一条红条 “Missing resources: first +N more”，不再询问负责人。 / Keep one bar; do not ask the owner again.
+- **红条位置 / Bar placement:** 示例页红条被操作栏遮住一部分、长文字被裁，须修好并重新截图。 / The example's bar is partly under the action bar; fix and recapture.

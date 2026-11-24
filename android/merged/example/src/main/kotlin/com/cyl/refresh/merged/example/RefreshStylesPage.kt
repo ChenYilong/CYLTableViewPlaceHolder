@@ -103,7 +103,7 @@ private fun riveStyle(method: String): CYLRefreshRiveStyle? {
                 triggerOffset = 200f
                 fitsWidth = true
                 pullInput = "pull"
-                pullInputMinimum = 10.0
+                pullInputMinimum = 50.0
                 releaseTrigger = "advance"
                 finishTrigger = "advance"
                 restartTrigger = "restart"
