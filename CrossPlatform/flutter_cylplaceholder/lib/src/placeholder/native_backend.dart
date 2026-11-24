@@ -9,8 +9,8 @@ import 'package:flutter/widgets.dart';
 /// implementation.
 ///
 /// The Dart implementation is the fallback for the platforms that have no native half (web, desktop) and for
-/// `flutter test`. The native half is used on Android and iOS, unless [override] says otherwise. The native refresh header
-/// exists on Android only ([refreshEnabled]).
+/// `flutter test`. The native half is used on Android and iOS, unless [override] says otherwise. The native refresh header and footer
+/// are used on both ([refreshEnabled]).
 abstract final class CYLPlaceholderNative {
   /// The type of the platform view of the native `CYLPlaceholderView`.
   static const String viewType = 'flutter_cylplaceholder/CYLPlaceholderView';
@@ -29,8 +29,8 @@ abstract final class CYLPlaceholderNative {
     return !Platform.environment.containsKey('FLUTTER_TEST');
   }
 
-  /// Whether the native refresh header is used: [enabled] on Android (iOS has no native driven header yet).
-  static bool get refreshEnabled => enabled && defaultTargetPlatform == TargetPlatform.android;
+  /// Whether the native refresh header and footer are used: [enabled] on Android and on iOS (the driven `CYLRefreshDrivenLayout` of each).
+  static bool get refreshEnabled => enabled;
 
   /// The platform view of [viewType] for the host platform: a `UiKitView` on iOS, an `AndroidView` elsewhere, both created
   /// from [creationParams] with the standard codec.

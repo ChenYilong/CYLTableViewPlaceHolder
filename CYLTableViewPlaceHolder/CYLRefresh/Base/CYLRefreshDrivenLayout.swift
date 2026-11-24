@@ -58,6 +58,17 @@ open class CYLRefreshDrivenLayout: UIView {
         addSubview(drivenScrollView)
     }
 
+    // [EN] The scroll view has no content, so its content size never changes and the footer is never placed below the
+    //      visible area (the footer places itself on a content size change): place it whenever the layout is sized, as a
+    //      host that resizes the view (Flutter's footer slot grows with the pull) needs.
+    // [CN] 滚动视图没有内容，内容尺寸从不变化，刷新尾因此从未被放到可见区域下方（刷新尾在内容尺寸变化时自行定位）：
+    //      每次布局时重新定位，宿主会改变视图大小（Flutter 的刷新尾槽位随下拉变大）。
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        footer?.scrollViewContentSizeDidChange(nil)
+        applyDrivenOffset()
+    }
+
     /**
      * [EN] The attached refresh header (`cyl_header`); nil removes it. Android: `cyl_header`.
      * [CN] 挂上的刷新头（`cyl_header`）；nil 表示移除。对应 Android 的 `cyl_header`。
@@ -102,7 +113,22 @@ open class CYLRefreshDrivenLayout: UIView {
         }
         footerPulled = offset < 0
         drivenScrollView.drivenDragging = dragging
-        drivenScrollView.contentOffset = CGPoint(x: 0, y: -offset)
+        drivenOffset = offset
+        applyDrivenOffset()
+    }
+
+    // [EN] The last fed offset. [CN] 最近一次输入的偏移。
+    private var drivenOffset: CGFloat = 0
+
+    // [EN] Scrolls the content: the fed pull, but never less than the footer's own height while it shows "no more data",
+    //      since a footer rests below the visible area and only a scrolled view shows it (a real scroll view at its end
+    //      is scrolled that far by the content).
+    // [CN] 滚动内容：输入的下拉量；刷新尾显示“无更多数据”时至少滚动刷新尾自身的高度，因为刷新尾停在可见区域之下，
+    //      只有滚动后才看得到（真实滚动视图在底部时由内容滚到那里）。
+    func applyDrivenOffset() {
+        var pulled = -drivenOffset
+        if let footer = footer, footer.isNoMoreData { pulled = max(pulled, footer.cyl_h) }
+        drivenScrollView.contentOffset = CGPoint(x: 0, y: pulled)
     }
 
     /**
