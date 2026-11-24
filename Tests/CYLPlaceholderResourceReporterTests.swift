@@ -37,6 +37,22 @@ final class CYLPlaceholderResourceReporterTests: XCTestCase {
         super.tearDown()
     }
 
+    // [EN] The guard: `isEnabled` is `#if DEBUG` (tests run in a debug build); switched off, nothing is reported.
+    func testTheGuardTurnsTheLogicOffInAReleaseBuild() {
+        let was = CYLPlaceholderResourceReporter.isEnabled
+        defer { CYLPlaceholderResourceReporter.isEnabled = was }
+        #if DEBUG
+        XCTAssertTrue(was, "a debug build runs the red bar's logic")
+        #else
+        XCTAssertFalse(was, "a release build does not")
+        #endif
+        CYLPlaceholderResourceReporter.isEnabled = false
+        XCTAssertFalse(reporter.report(resource: "home.pag", reason: "file not found", source: nil))
+        XCTAssertTrue(reporter.missingResourceNames.isEmpty)
+        CYLPlaceholderResourceReporter.isEnabled = true
+        XCTAssertTrue(reporter.report(resource: "home.pag", reason: "file not found", source: nil))
+    }
+
     func testAResourceIsReportedOnceAndNamedByItsLastPathSegment() {
         var calls = [String]()
         reporter.onResourceMissing = { resource, reason in calls.append("\(resource)|\(reason)") }

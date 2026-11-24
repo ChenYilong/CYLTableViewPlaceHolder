@@ -1999,6 +1999,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     //      which is intended, so that is not reported. [CN] 把缺失或不可读的动画文件报告给红色状态条（引擎会吞掉这个错误）；
     //      资源加载成功、更换或消失时清除其条目。没有运行时则显示静态图片（预期行为），不报告。
     private func cyl_reportMissingResource(of url: URL?, named resource: String?) {
+        // [EN] Debug builds only (CYLPlaceholderResourceReporter.isEnabled, `#if DEBUG`): no file checks in a release build.
+        guard CYLPlaceholderResourceReporter.isEnabled else { return }
         var missing: (name: String, reason: String)?
         if let url = url, let resource = resource {
             let file = CYLPlaceholderAnimationFileURL(url)

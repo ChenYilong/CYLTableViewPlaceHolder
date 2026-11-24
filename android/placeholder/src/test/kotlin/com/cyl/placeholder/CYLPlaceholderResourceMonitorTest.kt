@@ -2,6 +2,7 @@ package com.cyl.placeholder
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.net.NetworkCapabilities
 import android.os.Looper
 import android.view.View
@@ -161,5 +162,35 @@ class CYLPlaceholderResourceMonitorTest {
         view.setAnimationFile("asset:CYLPlaceholderAnimations/CYLPlaceholderLoading.json")
         // [EN] The engine may list the file too (no Lottie runtime in a unit test); the missing one stays listed either way.
         assertTrue("NoSuchAnimation.json" in CYLPlaceholderResourceMonitor.missingResources(activity))
+    }
+
+    // [EN] The guard: only a debuggable app (the build type decides when the app is built) runs the red bar's logic.
+    @Test
+    fun aReleaseAppReportsNothingAndADebuggableAppDoes() {
+        val info = activity.applicationInfo
+        val original = info.flags
+        try {
+            CYLPlaceholderResourceMonitor.enabled = null
+            info.flags = original and ApplicationInfo.FLAG_DEBUGGABLE.inv()
+            CYLPlaceholderResourceMonitor.report(activity, "home.pag", "file not found")
+            assertTrue(CYLPlaceholderResourceMonitor.missingResources(activity).isEmpty())
+            assertFalse(CYLPlaceholderResourceMonitor.attach(CYLFakeAnimatedView(activity)))
+            info.flags = original or ApplicationInfo.FLAG_DEBUGGABLE
+            CYLPlaceholderResourceMonitor.report(activity, "home.pag", "file not found")
+            assertEquals(listOf("home.pag"), CYLPlaceholderResourceMonitor.missingResources(activity))
+        } finally {
+            info.flags = original
+        }
+    }
+
+    @Test
+    fun enabledFalseTurnsTheLogicOffEvenInADebuggableApp() {
+        activity.applicationInfo.flags = activity.applicationInfo.flags or ApplicationInfo.FLAG_DEBUGGABLE
+        CYLPlaceholderResourceMonitor.enabled = false
+        CYLPlaceholderResourceMonitor.report(activity, "home.pag", "file not found")
+        assertTrue(CYLPlaceholderResourceMonitor.missingResources(activity).isEmpty())
+        CYLPlaceholderResourceMonitor.enabled = true
+        CYLPlaceholderResourceMonitor.report(activity, "home.pag", "file not found")
+        assertEquals(listOf("home.pag"), CYLPlaceholderResourceMonitor.missingResources(activity))
     }
 }

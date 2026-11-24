@@ -41,6 +41,19 @@ public final class CYLPlaceholderResourceReporter: NSObject {
     private var entries = [Entry]()
 
     /**
+     * [EN] The guard of the red bar's logic: `true` only in a debug build (`#if DEBUG`, decided when the app is built), so a
+     *      release build reports nothing and the core skips its file checks for it. Set it to force either value (tests).
+     * [CN] 红条逻辑的守卫：只在调试构建中为 `true`（`#if DEBUG`，构建时确定），发布构建不报告，核心也不做文件检查；可手动设置（测试）。
+     */
+    @objc public static var isEnabled: Bool = {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }()
+
+    /**
      * The reporter the views of the core report to.
      */
     @objc public static let shared = CYLPlaceholderResourceReporter()
@@ -81,6 +94,7 @@ public final class CYLPlaceholderResourceReporter: NSObject {
     @discardableResult
     @objc(reportResource:reason:source:)
     public func report(resource: String, reason: String, source: AnyObject?) -> Bool {
+        guard CYLPlaceholderResourceReporter.isEnabled else { return false }
         let name = CYLPlaceholderResourceReporter.shortName(of: resource)
         var isNew = false
         if let index = entries.firstIndex(where: { $0.name == name }) {

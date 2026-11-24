@@ -3,6 +3,7 @@ package com.cyl.placeholder
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.ContextWrapper
 import android.os.Bundle
 import android.os.Handler
@@ -52,6 +53,20 @@ object CYLPlaceholderResourceMonitor {
     private var resumed: WeakReference<Activity>? = null
     private val handler by lazy { Handler(Looper.getMainLooper()) }
 
+    /**
+     * The guard of the red bar's logic. null (the default): it runs only in a debuggable app ([ApplicationInfo.FLAG_DEBUGGABLE],
+     * which the app's build type sets when it is built; a library's own BuildConfig.DEBUG is always false once an app uses
+     * it), so a release build reports nothing. true / false force it (tests, or a host that wants the bar in a release build).
+     */
+    @JvmStatic
+    var enabled: Boolean? = null
+
+    private fun active(context: Context?): Boolean {
+        enabled?.let { return it }
+        val info = (context?.applicationContext ?: context)?.applicationInfo ?: return false
+        return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+    }
+
     // The engine's class name; a test points it at a stand-in or at a class that does not exist.
     internal var enginesClassName = ENGINES_CLASS
 
@@ -76,6 +91,7 @@ object CYLPlaceholderResourceMonitor {
     @JvmStatic
     fun report(activity: Activity?, resource: String, reason: String) = onMain {
         val target = activity ?: resumed?.get()
+        if (!active(target)) return@onMain
         val name = nameOf(resource)
         if (target == null) {
             Log.d(TAG, "Missing resource: $name ($reason), no activity to show it in")
@@ -95,6 +111,7 @@ object CYLPlaceholderResourceMonitor {
     @JvmStatic
     fun clear(activity: Activity?, resource: String) = onMain {
         val target = activity ?: resumed?.get() ?: return@onMain
+        if (!active(target)) return@onMain
         val state = states[target] ?: return@onMain
         if (state.missing.remove(nameOf(resource)) != null) render(target, state)
     }
@@ -114,6 +131,7 @@ object CYLPlaceholderResourceMonitor {
     @JvmStatic
     @JvmOverloads
     fun installEngineListener(context: Context? = null): Boolean {
+        if (context != null && !active(context)) return false
         context?.let { observe(it) }
         return try {
             val type = Class.forName(enginesClassName)
@@ -139,6 +157,7 @@ object CYLPlaceholderResourceMonitor {
      */
     @JvmStatic
     fun attach(view: View): Boolean {
+        if (!active(view.context)) return false
         val setter = view.javaClass.methods.firstOrNull { it.name == "setOnResourceMissing" && it.parameterTypes.size == 1 }
         if (setter == null) {
             Log.d(TAG, "${view.javaClass.name} has no onResourceMissing; the engine is older than the hook")
@@ -163,6 +182,7 @@ object CYLPlaceholderResourceMonitor {
         states.clear()
         resumed = null
         observed = null
+        enabled = null
         enginesClassName = ENGINES_CLASS
     }
 
