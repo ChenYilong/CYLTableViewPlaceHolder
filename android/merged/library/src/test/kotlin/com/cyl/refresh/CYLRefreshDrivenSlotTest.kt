@@ -4,11 +4,13 @@ import android.app.Activity
 import android.view.View
 import com.cyl.refresh.merged.R
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 /**
@@ -62,6 +64,40 @@ class CYLRefreshDrivenSlotTest {
         footerLayout.cyl_footer = CYLRefreshBackNormalFooter(activity)
         footerLayout.drive(-50, true)
         assertEquals("a footer pull counts positive", 50, footerLayout.shownPull)
+    }
+
+    @Test
+    fun aDrivenLayoutWithAnEmptyFloorOpensAndClosesItAsTheFlutterPlatformViewDoes() {
+        // The Flutter platform view gives the core an empty floor view (the content is a Flutter widget) and calls these.
+        val frame = android.widget.FrameLayout(activity)
+        activity.setContentView(frame, android.view.ViewGroup.LayoutParams(300, 600))
+        val layout = CYLRefreshDrivenLayout(activity)
+        frame.addView(layout, android.widget.FrameLayout.LayoutParams(300, 600))
+        val header = CYLRefreshNormalHeader(activity)
+        layout.cyl_header = header
+        header.secondaryView = View(activity)
+        header.secondaryTriggerOffset = 40f
+        header.secondaryCloseTriggerOffset = 30f
+        val phases = ArrayList<CYLRefreshPhase>()
+        header.addPhaseObserver { _, _, new -> phases += new }
+        var opened = 0
+        var closed = 0
+        header.secondaryOpenedBlock = { opened++ }
+        header.secondaryClosedBlock = { closed++ }
+        header.openSecondary()
+        assertTrue(header.secondaryOpen)
+        assertTrue("the floor is announced as the secondaryOpen phase", phases.contains(CYLRefreshPhase.SecondaryOpen))
+        header.openSecondary()
+        assertEquals("opening an open floor is a no-op", 1, phases.count { it == CYLRefreshPhase.SecondaryOpen })
+        shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1500))
+        assertEquals(1, opened)
+        header.closeSecondary()
+        shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1500))
+        assertFalse(header.secondaryOpen)
+        assertEquals(1, closed)
+        assertTrue(phases.contains(CYLRefreshPhase.SecondaryClosing))
+        header.closeSecondary()
+        assertEquals("closing a closed floor is a no-op", 1, closed)
     }
 
     @Test

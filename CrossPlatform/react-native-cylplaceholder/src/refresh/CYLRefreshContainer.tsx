@@ -21,7 +21,7 @@ export interface CYLRefreshContainerProps {
   headerStyle?: string;
   /** The footer's look on iOS, the same names as `headerStyle`. */
   footerStyle?: string;
-  /** The pull, in points, past which a release opens the second floor instead of refreshing; 0 (default) is no second floor. iOS first; Android follows the same names. */
+  /** The pull, in points (dp on Android), past which a release opens the second floor instead of refreshing; 0 (default) is no second floor. Same names on iOS and Android. */
   secondaryTriggerOffset?: number;
   /** The open extent of the second floor; 0 (default) is the scroll view's visible height. */
   secondaryDimension?: number;

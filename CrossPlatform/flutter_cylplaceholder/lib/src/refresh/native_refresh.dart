@@ -21,7 +21,11 @@ import 'refresh_types.dart';
 /// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
 ///   "finishRefresh" (`success`; a footer adds `noMoreData`: end the load and show "no more data") and, for a footer, "noMoreData" (`value`:
 ///   show or clear it without a load).
-/// - Native to Dart: "onPhase" (`phase` and `oldPhase`, the names of [CYLRefreshPhase]) and "onRefreshing".
+/// - Second floor (only when the component has a `secondaryView`): the creation parameters `secondaryTriggerOffset`, `secondaryDimension` and
+///   `secondaryCloseTriggerOffset` (logical pixels), then "openSecondary" and "closeSecondary" (no arguments, no-ops when already in that
+///   state) when the component opens or closes its floor.
+/// - Native to Dart: "onPhase" (`phase` and `oldPhase`, the names of [CYLRefreshPhase]; the native view may also send `secondaryArmed`,
+///   `secondaryOpen` and `secondaryClosing`), "onRefreshing" and the informational "onSecondaryOpened" / "onSecondaryClosed".
 class CYLNativeRefreshIndicator extends StatefulWidget {
   /// Creates a native indicator that follows [component], drawn in [style].
   const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
@@ -68,6 +72,8 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
   bool _finished = false;
   // Whether the native footer was told "no more data" (footers only).
   bool _noMoreData = false;
+  // Whether the native view was told the second floor is open.
+  bool _secondaryOpenSent = false;
 
   bool get _isFooter => !widget.component.isHeader;
 
@@ -99,6 +105,7 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       final arguments = call.arguments as Map<Object?, Object?>?;
       if (call.method == 'onPhase') widget.onPhase?.call(arguments!['phase'] as String, arguments['oldPhase'] as String);
       if (call.method == 'onRefreshing') widget.onRefreshing?.call();
+      // 'onSecondaryOpened' and 'onSecondaryClosed' are informational (Dart owns the floor): nothing to do, nothing sent back.
     });
     _channel = channel;
     _sync();
@@ -122,6 +129,12 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
     final channel = _channel;
     if (channel == null) return;
     final c = widget.component;
+    // The second floor: Dart is the authority and tells the native view (a no-op there if it is already in that state). The
+    // native floor's own events are informational and never sent back.
+    if (c.isSecondaryOpen != _secondaryOpenSent) {
+      _secondaryOpenSent = c.isSecondaryOpen;
+      channel.invokeMethod<void>(c.isSecondaryOpen ? 'openSecondary' : 'closeSecondary');
+    }
     switch (c.phase) {
       case CYLRefreshPhase.releasing:
       case CYLRefreshPhase.refreshing:
@@ -162,6 +175,13 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
         'footer': _isFooter,
         // The behind scroll mode keeps the indicator at the far edge while the content moves over it: the native slot anchors there.
         if (widget.component.scrollMode == CYLRefreshScrollMode.behind) 'behind': true,
+        // The second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): sent only with a floor, so the native view
+        // arms and opens it; its content stays a Flutter widget.
+        if (widget.component.secondaryView != null && widget.component.secondaryTriggerOffset > 0) ...<String, Object?>{
+          'secondaryTriggerOffset': widget.component.secondaryTriggerOffset,
+          'secondaryDimension': widget.component.secondaryDimension,
+          'secondaryCloseTriggerOffset': widget.component.secondaryCloseTriggerOffset,
+        },
         if (widget.foregroundColor case final Color color) 'foregroundColor': color.toARGB32(),
         if (widget.backgroundColor case final Color color) 'backgroundColor': color.toARGB32(),
         if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,

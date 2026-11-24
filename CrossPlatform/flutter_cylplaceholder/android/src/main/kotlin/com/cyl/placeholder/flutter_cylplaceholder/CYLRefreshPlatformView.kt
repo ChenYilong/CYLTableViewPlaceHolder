@@ -26,7 +26,7 @@ import kotlin.math.roundToInt
  * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]), or with the
  * footer of that style (`CYLRefreshBackNormalFooter` for classic) when the creation parameters say `footer: true` (and optionally
  * `loadsAfterNoMoreData: true`). A missing or unknown `style` is classic and one warning is logged. The drawn styles may also get
- * `foregroundColor` (the drawing, the layout's accent color) and `backgroundColor` (the layout's primary color), ARGB integers; a
+ * `secondaryTriggerOffset` (dp; above 0 turns the second floor on), `secondaryDimension`, `secondaryCloseTriggerOffset`, `foregroundColor` (the drawing, the layout's accent color) and `backgroundColor` (the layout's primary color), ARGB integers; a
  * missing or non-number value leaves the style's own color. The Dart side feeds the pull through the view's channel.
  */
 class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
@@ -39,7 +39,10 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
         }
         return CYLRefreshPlatformView(context, viewId, messenger, footer = params?.get("footer") == true, loadsAfterNoMoreData = params?.get("loadsAfterNoMoreData") == true, style = style,
             foregroundColor = (params?.get("foregroundColor") as? Number)?.toInt(), backgroundColor = (params?.get("backgroundColor") as? Number)?.toInt(),
-            behind = params?.get("behind") == true)
+            behind = params?.get("behind") == true,
+            secondaryTriggerOffset = (params?.get("secondaryTriggerOffset") as? Number)?.toFloat() ?: 0f,
+            secondaryDimension = (params?.get("secondaryDimension") as? Number)?.toFloat() ?: 0f,
+            secondaryCloseTriggerOffset = (params?.get("secondaryCloseTriggerOffset") as? Number)?.toFloat())
     }
 
     companion object {
@@ -59,7 +62,8 @@ class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : Pl
  * "onRefreshing" (the component started to refresh).
  */
 class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false, style: CYLRefreshStyle = CYLRefreshStyle.Classic,
-    foregroundColor: Int? = null, backgroundColor: Int? = null, private val behind: Boolean = false) :
+    foregroundColor: Int? = null, backgroundColor: Int? = null, private val behind: Boolean = false,
+    secondaryTriggerOffset: Float = 0f, secondaryDimension: Float = 0f, secondaryCloseTriggerOffset: Float? = null) :
     PlatformView, MethodChannel.MethodCallHandler {
     private val channel = MethodChannel(messenger, "${CYLRefreshPlatformViewFactory.VIEW_TYPE}/$viewId")
     private val density = context.resources.displayMetrics.density
@@ -91,6 +95,17 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
         // (`setPrimaryColors(primary, accent)` of every drawn header; the drawn footer forwards them to its header).
         foregroundColor?.let { component.colorAccent = it }
         backgroundColor?.let { component.colorPrimary = it }
+        // The second floor (contract "Row 7 and 8 native contract"): the core opens it only with a view, and its content is a Flutter
+        // widget, so the native floor is an empty view. The creation parameters are dp (logical pixels); a trigger of 0 or less: no floor.
+        if (secondaryTriggerOffset > 0f) {
+            component.secondaryView = View(context)
+            component.secondaryTriggerOffset = secondaryTriggerOffset
+            component.secondaryDimension = secondaryDimension
+            secondaryCloseTriggerOffset?.let { component.secondaryCloseTriggerOffset = it }
+            // Informational for Dart (it owns the floor and never echoes these back).
+            component.secondaryOpenedBlock = { channel.invokeMethod("onSecondaryOpened", null) }
+            component.secondaryClosedBlock = { channel.invokeMethod("onSecondaryClosed", null) }
+        }
         channel.setMethodCallHandler(this)
     }
 
@@ -144,6 +159,9 @@ class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMes
                 layout.drive((offset.toDouble() * density).roundToInt(), call.argument<Boolean>("dragging") == true, call.argument<Boolean>("startedAtEdge") != false)
                 fitSlot()
             }
+            // A no-op while open or refreshing (open) and unless open (close): the core's floor already ignores the repeats.
+            "openSecondary" -> if (!component.isRefreshing) component.openSecondary()
+            "closeSecondary" -> component.closeSecondary()
             "release" -> {
                 layout.release()
                 fitSlot()
