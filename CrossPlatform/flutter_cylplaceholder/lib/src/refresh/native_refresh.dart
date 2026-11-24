@@ -13,14 +13,15 @@ import 'refresh_types.dart';
 /// header the pull over the method channel `flutter_cylplaceholder/CYLRefreshView/<id>`:
 ///
 /// - Creation parameters: `style` (see [style]; one per view, a header and a footer are separate views), `footer` (true: the native
-///   footer, pulled up) and `loadsAfterNoMoreData`.
+///   footer, pulled up), `loadsAfterNoMoreData` and, for the drawn styles only, `foregroundColor` and `backgroundColor` (ARGB integers,
+///   `0xAARRGGBB`, sent only when the Dart style class has them; see [foregroundColor]).
 /// - Dart to native: "drive" (`offset` in logical pixels, positive for a header and negative for a footer; `dragging`, `startedAtEdge`), "release",
 ///   "finishRefresh" (`success`; a footer adds `noMoreData`: end the load and show "no more data") and, for a footer, "noMoreData" (`value`:
 ///   show or clear it without a load).
 /// - Native to Dart: "onPhase" (`phase` and `oldPhase`, the names of [CYLRefreshPhase]) and "onRefreshing".
 class CYLNativeRefreshIndicator extends StatefulWidget {
   /// Creates a native indicator that follows [component], drawn in [style].
-  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.onPhase, this.onRefreshing});
+  const CYLNativeRefreshIndicator({super.key, required this.component, this.style = 'classic', this.foregroundColor, this.backgroundColor, this.onPhase, this.onRefreshing});
 
   /// Whether [component] may use the native indicator: the native refresh switch is on (Android and iOS) and no Flutter-only
   /// [CYLRefreshComponent.builder] is set. The style classes add their own checks for the text, icon and image options.
@@ -36,6 +37,14 @@ class CYLNativeRefreshIndicator extends StatefulWidget {
   /// `phoenix` and `taurus` (the styles of this package's Dart API). The native side falls back to `classic` and logs one line for
   /// an unknown value.
   final String style;
+
+  /// The creation parameter `foregroundColor` (the drawing's color, an ARGB integer), or null to leave the native style's own. Only the
+  /// drawn styles (`bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`) pass it, from their Dart `foregroundColor`.
+  final Color? foregroundColor;
+
+  /// The creation parameter `backgroundColor` (the background's color, an ARGB integer), or null to leave the native style's own.
+  /// Only the drawn styles pass it, from their Dart `backgroundColor`.
+  final Color? backgroundColor;
 
   /// Called with the phase name when the native header's phase changes.
   final void Function(String phase, String oldPhase)? onPhase;
@@ -148,6 +157,8 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
       creationParams: <String, Object?>{
         'style': widget.style,
         'footer': _isFooter,
+        if (widget.foregroundColor case final Color color) 'foregroundColor': color.toARGB32(),
+        if (widget.backgroundColor case final Color color) 'backgroundColor': color.toARGB32(),
         if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,
       },
       onPlatformViewCreated: _created,

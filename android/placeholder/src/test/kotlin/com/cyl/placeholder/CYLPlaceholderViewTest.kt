@@ -110,6 +110,45 @@ class CYLPlaceholderViewTest {
         }
     }
 
+    // Written, not run (docs/Task-Log.md, "Batch hand-off W1b"): CYLTabBarController 82b85e064 defaults drivesAnimationPlayback to
+    // true on Android; the placeholder plays through its own API and sets it to false.
+    @Test
+    fun aPlaceholderViewDoesNotLetTheItemBaseClassDrivePlayback() {
+        assertFalse(CYLPlaceholderView(context, CYLPlaceholderStyle.Empty, CYLPlaceholderMessage.Empty).drivesAnimationPlayback)
+        assertFalse(CYLPlaceholderView(context, null, "Title").drivesAnimationPlayback)
+    }
+
+    @Test
+    fun aSelectionChangeDoesNotStartOrRestartThePlayer() {
+        val calls = ArrayList<String>()
+        CYLPlaceholderView.registerAnimationFactory({ ctx, path ->
+            object : CYLPlaceholderAnimationPlayer {
+                override val view = View(ctx)
+                override val ready = true
+                override var errorHandler: ((Throwable) -> Unit)? = null
+                override var readyHandler: (() -> Unit)? = null
+                override fun play() { calls += "play:$path" }
+                override fun stop() { calls += "stop" }
+                override fun showLastFrame() { calls += "last" }
+                override fun setAnimationProgress(progress: Float) { calls += "progress:$progress" }
+                override fun setAnimationSpeed(speed: Float) { calls += "speed:$speed" }
+                override fun setAnimationRepeatCount(count: Int) { calls += "repeat:$count" }
+                override fun setAnimationColors(colors: List<Int>) {}
+            }
+        }, "json")
+        try {
+            val view = CYLPlaceholderView(context, CYLPlaceholderStyle.Empty, CYLPlaceholderMessage.Empty)
+            assertTrue(view.setAnimationFile("CYLPlaceholderEmpty.json"))
+            calls.clear()
+            view.selectedState = true
+            view.selectedState = false
+            view.isSelected = true
+            assertEquals("selecting the view never touches the player", emptyList<String>(), calls)
+        } finally {
+            CYLPlaceholderView.registerAnimationFactory(null, "json")
+        }
+    }
+
     @Test
     fun isACYLAnimatedItemViewOnTheVerticalAxis() {
         val view = CYLPlaceholderView(context, CYLPlaceholderStyle.WifiOff, CYLPlaceholderMessage.NoInternet)

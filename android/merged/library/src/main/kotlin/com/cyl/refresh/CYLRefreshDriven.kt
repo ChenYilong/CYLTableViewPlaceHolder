@@ -8,6 +8,8 @@ import android.view.ViewTreeObserver
 import com.cyl.refresh.layout.CYLRefreshLayout
 import com.cyl.refresh.layout.constant.RefreshState
 import com.cyl.refresh.layout.constant.SpinnerStyle
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -85,4 +87,16 @@ class CYLRefreshDrivenLayout(context: Context) : CYLRefreshLayout(context) {
      * Ignores touches: the host feeds the pull through [drive].
      */
     override fun dispatchTouchEvent(e: MotionEvent): Boolean = false
+
+    companion object {
+        /**
+         * The height, in pixels, a driven layout takes in a slot that is [slotHeight] tall and shows only the pulled part of the
+         * indicator (the Flutter plugin's slot, anchored at the bottom edge for a header and the top edge for a footer): the
+         * pull ([offset], either sign) so the indicator moves in the slot as it does under a finger, or the whole slot while the
+         * indicator is [held] open; at least 1, never 0. A layout as tall as the slot would scroll the indicator by the pull a
+         * second time inside the slot, which left the classic header blank until the pull passed half of it.
+         */
+        @JvmStatic
+        fun slotHeight(slotHeight: Int, offset: Int, held: Boolean): Int = max(1, max(abs(offset), if (held) slotHeight else 0))
+    }
 }
