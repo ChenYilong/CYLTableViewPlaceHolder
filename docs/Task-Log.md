@@ -2008,3 +2008,9 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **English:** No physical devices.
 - **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4; a missing device run costs no points. Simulators and emulators are the target. Recorded in `docs/Refresh-Library-Parity.md` (Decisions block).
 - **Still open (asked, unanswered):** Rive black band A/B/C, CYLTabBarController pin policy, corner-radius survey, and whether the React Native new architecture is out of scope (only the device half was typed by the owner here).
+
+## 2026-11-25 owner decision: RN new architecture out of scope (DONE)
+
+- **Prompt (verbatim):** "RN 新架构不在范围"
+- **English:** The React Native new architecture is out of scope.
+- **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4. Both halves of it (no devices, no new architecture) are now first-hand. No score changed yet: the scoreboard has no itemised new-architecture deduction, so the RN judgement score (72) is re-judged by the Windows session against the old-architecture example.
