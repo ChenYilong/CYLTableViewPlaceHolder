@@ -6,15 +6,19 @@ import HUDPage from './pages/HUDPage';
 import PagingPage from './pages/PagingPage';
 import PlaceholderStackPage from './pages/PlaceholderStackPage';
 import RefreshPage from './pages/RefreshPage';
+import RefreshStylesPage from './pages/RefreshStylesPage';
+import SecondFloorPage from './pages/SecondFloorPage';
 
 /**
  * [EN] The demo menu: the pages of the Flutter example (`refresh_page`, `paging_page`, `error_placeholder_page`,
- *      `placeholder_stack_page`) that this package's native components can show on Android, and a HUD page. The styles and
- *      second floor pages are not here (see README).
- * [CN] 示例菜单：Flutter 示例中此包的原生组件在 Android 上能展示的页面，以及 HUD 页。样式页和二楼页不在这里（见 README）。
+ *      `placeholder_stack_page`) that this package's native components can show, a HUD page, and the styles and second floor
+ *      pages (iOS: the Android native container does not take the style and floor props yet).
+ * [CN] 示例菜单：Flutter 示例中此包的原生组件能展示的页面，HUD 页，以及样式页与二楼页（iOS：Android 原生容器暂不支持样式与二楼属性）。
  */
 const PAGES = [
   {key: 'refresh', title: 'Refresh (refresh_page)', Page: RefreshPage},
+  {key: 'styles', title: 'Refresh styles (styles_page, iOS)', Page: RefreshStylesPage},
+  {key: 'second', title: 'Second floor (secondary_page, iOS)', Page: SecondFloorPage},
   {key: 'paging', title: 'Paging (paging_page)', Page: PagingPage},
   {key: 'error', title: 'Error placeholder (error_placeholder_page)', Page: ErrorPlaceholderPage},
   {key: 'stack', title: 'Placeholder stack (placeholder_stack_page)', Page: PlaceholderStackPage},
