@@ -29,8 +29,8 @@ abstract final class CYLPlaceholderNative {
     return !Platform.environment.containsKey('FLUTTER_TEST');
   }
 
-  /// Whether the native refresh header is used: [enabled] on Android (iOS has no native driven header yet).
-  static bool get refreshEnabled => enabled && defaultTargetPlatform == TargetPlatform.android;
+  /// Whether the native refresh header and footer are used: [enabled] on Android and on iOS (the driven `CYLRefreshDrivenLayout` of each).
+  static bool get refreshEnabled => enabled;
 
   /// The platform view of [viewType] for the host platform: a `UiKitView` on iOS, an `AndroidView` elsewhere, both created
   /// from [creationParams] with the standard codec.

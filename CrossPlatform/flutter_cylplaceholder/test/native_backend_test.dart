@@ -43,12 +43,14 @@ void main() {
     expect(CYLPlaceholderNative.enabled, isTrue);
   });
 
-  test('the native refresh header is Android only: iOS has the placeholder, the stack and the HUD, not the driven header', () {
-    expect(CYLPlaceholderNative.refreshEnabled, isTrue, reason: 'forced on, and the default test platform is Android');
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  test('the native refresh header and footer are on for Android and iOS, and off for the other platforms (the Dart indicator is the fallback)', () {
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
-    expect(CYLPlaceholderNative.enabled, isTrue);
-    expect(CYLPlaceholderNative.refreshEnabled, isFalse);
+    for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+      debugDefaultTargetPlatformOverride = platform;
+      expect(CYLPlaceholderNative.refreshEnabled, isTrue, reason: '$platform');
+    }
+    CYLPlaceholderNative.override = null;
+    expect(CYLPlaceholderNative.refreshEnabled, isFalse, reason: 'flutter test without the override');
   });
 
   group('the HUD calls the native HUD by name', () {
@@ -190,7 +192,7 @@ void main() {
       });
     }
 
-    testWidgets('the pull is driven with logical pixels and the finger state, a short release cancels, a long one releases', (tester) async {
+    testWidgets('the pull is driven with logical pixels and the finger state, a short release cancels, a long one releases', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader();
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
@@ -215,7 +217,7 @@ void main() {
       expect(sent[0].arguments, containsPair('dragging', false));
     });
 
-    testWidgets('endRefreshing calls finishRefresh once with the result; a refresh begun without a pull arms the native header first', (tester) async {
+    testWidgets('endRefreshing calls finishRefresh once with the result; a refresh begun without a pull arms the native header first', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
@@ -232,7 +234,7 @@ void main() {
       expect(sent.map((c) => c.method), ['finishRefresh', 'drive'], reason: 'back to rest: drive 0, not dragging');
     });
 
-    testWidgets('onPhase and onRefreshing come back from the native header', (tester) async {
+    testWidgets('onPhase and onRefreshing come back from the native header', variant: _bothPlatforms, (tester) async {
       final phases = <String>[];
       var refreshing = 0;
       final header = CYLRefreshClassicHeader();
@@ -254,15 +256,7 @@ void main() {
       expect(refreshing, 1);
     });
 
-    testWidgets('on iOS the classic header stays the Dart indicator: there is no native driven header there', variant: TargetPlatformVariant.only(TargetPlatform.iOS), (tester) async {
-      final plain = CYLRefreshClassicHeader();
-      addTearDown(plain.dispose);
-      await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: plain.buildIndicator))));
-      expect(find.byType(AndroidView), findsNothing);
-      expect(find.byType(UiKitView), findsNothing);
-    });
-
-    testWidgets('the classic header draws the native indicator when the native half is on, and Dart when a builder asks for it', (tester) async {
+    testWidgets('the classic header draws the native indicator when the native half is on, and Dart when a builder asks for it', variant: _bothPlatforms, (tester) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
       final plain = CYLRefreshClassicHeader();
@@ -270,13 +264,13 @@ void main() {
       addTearDown(plain.dispose);
       addTearDown(custom.dispose);
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: plain.buildIndicator))));
-      expect(find.byType(AndroidView), findsOneWidget);
+      expect(find.byType(_platformViewType), findsOneWidget);
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
-      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(_platformViewType), findsNothing);
       expect(find.textContaining('mine'), findsOneWidget);
     });
 
-    testWidgets('a footer asks for the native footer and drives the pull up as a negative offset', (tester) async {
+    testWidgets('a footer asks for the native footer and drives the pull up as a negative offset', variant: _bothPlatforms, (tester) async {
       final footer = CYLRefreshClassicFooter();
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
@@ -302,7 +296,7 @@ void main() {
       expect(sent[0].arguments, {'offset': -30.0, 'dragging': false, 'startedAtEdge': true});
     });
 
-    testWidgets('a footer ends a load with the result or with no more data, and shows or clears no more data without a load', (tester) async {
+    testWidgets('a footer ends a load with the result or with no more data, and shows or clears no more data without a load', variant: _bothPlatforms, (tester) async {
       final footer = CYLRefreshClassicFooter(finishDuration: const Duration(milliseconds: 10));
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
@@ -338,7 +332,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 20));
     });
 
-    testWidgets('a pull up after no more data keeps driving the native footer (it must keep showing the label) and never clears it or loads', (tester) async {
+    testWidgets('a pull up after no more data keeps driving the native footer (it must keep showing the label) and never clears it or loads', variant: _bothPlatforms, (tester) async {
       final footer = CYLRefreshClassicFooter(finishDuration: const Duration(milliseconds: 10));
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
@@ -358,7 +352,7 @@ void main() {
       expect(footer.isNoMoreData, isTrue);
     });
 
-    testWidgets('loadsAfterNoMoreData reaches the native footer and a load after no more data clears it first', (tester) async {
+    testWidgets('loadsAfterNoMoreData reaches the native footer and a load after no more data clears it first', variant: _bothPlatforms, (tester) async {
       final footer = CYLRefreshClassicFooter(loadsAfterNoMoreData: true);
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
@@ -372,7 +366,7 @@ void main() {
       expect(sent[0].arguments, {'value': false});
     });
 
-    testWidgets('a header sends no footer parameters or no-more-data calls', (tester) async {
+    testWidgets('a header sends no footer parameters or no-more-data calls', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
@@ -385,7 +379,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 20));
     });
 
-    testWidgets('the classic footers draw the native indicator, the Cupertino footer stays Dart', (tester) async {
+    testWidgets('the classic footers draw the native indicator, the Cupertino footer stays Dart', variant: _bothPlatforms, (tester) async {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async => call.method == 'create' ? 1 : null);
       addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform_views, null));
       final footers = <CYLRefreshComponent>[CYLRefreshClassicFooter(), CYLRefreshClassicAutoFooter()];
@@ -394,14 +388,14 @@ void main() {
       for (final footer in footers) {
         addTearDown(footer.dispose);
         await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: footer.buildIndicator))));
-        expect(find.byType(AndroidView), findsOneWidget, reason: '${footer.runtimeType}');
+        expect(find.byType(_platformViewType), findsOneWidget, reason: '${footer.runtimeType}');
       }
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: Builder(builder: cupertino.buildIndicator))));
-      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(_platformViewType), findsNothing);
       final custom = CYLRefreshClassicFooter()..textBuilder = (context, component, text) => Text('mine $text');
       addTearDown(custom.dispose);
       await tester.pumpWidget(MaterialApp(home: SizedBox(height: 60, child: OverflowBox(maxWidth: 3000, child: Builder(builder: custom.buildIndicator)))));
-      expect(find.byType(AndroidView), findsNothing);
+      expect(find.byType(_platformViewType), findsNothing);
     });
   });
 

@@ -3,10 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../placeholder/native_backend.dart';
 import 'component.dart';
 import 'refresh_types.dart';
 
-/// The native refresh header or footer (the Android `CYLRefreshDrivenLayout` with a `CYLRefreshNormalHeader` or `CYLRefreshBackNormalFooter`) as the indicator of a
+/// The native refresh header or footer (the Android or iOS `CYLRefreshDrivenLayout` with a `CYLRefreshNormalHeader` or `CYLRefreshBackNormalFooter`) as the indicator of a
 /// [CYLRefreshComponent]: a platform view that follows the component. Flutter keeps the scrolling and the phase machine
 /// (the component stays the reference and the caller still ends refreshing with `endRefreshing`); this view feeds the native
 /// header the pull over the method channel `flutter_cylplaceholder/CYLRefreshView/<id>`:
@@ -131,14 +132,13 @@ class _CYLNativeRefreshIndicatorState extends State<CYLNativeRefreshIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return AndroidView(
+    return CYLPlaceholderNative.platformView(
       viewType: CYLNativeRefreshIndicator.viewType,
       // A footer asks for the native footer (a pull up); loadsAfterNoMoreData lets a pull load again after "no more data".
       creationParams: <String, Object?>{
         'footer': _isFooter,
         if (widget.component case final CYLRefreshFooter footer) 'loadsAfterNoMoreData': footer.loadsAfterNoMoreData,
       },
-      creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: _created,
     );
   }
