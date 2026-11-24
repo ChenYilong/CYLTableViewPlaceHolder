@@ -37,6 +37,8 @@ class _PlaceholderStackPageState extends State<PlaceholderStackPage> {
         CYLPlaceholderComponent.button('Retry', action: () => _hud.showSuccessWithStatus('Loaded')),
         CYLPlaceholderComponent.separator('or'),
         CYLPlaceholderComponent.button('Show progress', style: CYLPlaceholderButtonStyle.outlined, action: _progress),
+        CYLPlaceholderComponent.button('HUD error', style: CYLPlaceholderButtonStyle.outlined, action: () => _hud.showErrorWithStatus('Failed')),
+        CYLPlaceholderComponent.button('HUD info', style: CYLPlaceholderButtonStyle.outlined, action: () => _hud.showInfoWithStatus('Note')),
       ];
 
   Future<void> _progress() async {

@@ -41,11 +41,21 @@ final class CYLRefreshDrivenHost {
         /// default stays when a Dart version does not send it. [CN] Dart 使用的展开高度（其 `expandHeight`），Dart 发送时指示器采用；
         /// 可选，Dart 版本不发送时保持原生默认值。
         var expandHeight: CGFloat?
+        /// How the header moves, when Dart sends it: "front", "behind" (pinned like front) or "stretch";
+        /// anything else keeps the style's own mode. [CN] 刷新头的移动方式（Dart 发送时）："front"、"behind"（固定）或 "stretch"；
+        /// 其他值保持样式自身的模式。
+        var scrollMode: CYLRefreshScrollMode?
 
         init(_ dictionary: [String: Any]?) {
             footer = dictionary?["footer"] as? Bool == true
             style = dictionary?["style"] as? String
             if let height = (dictionary?["expandHeight"] as? NSNumber)?.doubleValue, height.isFinite, height > 0 { expandHeight = CGFloat(height) }
+            switch dictionary?["scrollMode"] as? String {
+            case "front": scrollMode = .front
+            case "behind": scrollMode = .behind
+            case "stretch": scrollMode = .stretch
+            default: break
+            }
             loadsAfterNoMoreData = dictionary?["loadsAfterNoMoreData"] as? Bool == true
         }
     }
@@ -82,6 +92,7 @@ final class CYLRefreshDrivenHost {
             component = footer
         } else {
             let header = CYLRefreshStyleFactory.header(style: self.params.style, onUnknownStyle: unknownStyle)
+            if let mode = self.params.scrollMode { header.scrollMode = mode }
             layout.header = header
             component = header
         }
@@ -115,11 +126,35 @@ final class CYLRefreshDrivenHost {
         let open = component.expandHeight
         let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true
         let pull = max(abs(lastOffset), held ? open : 0)
-        // A header that sits in front (the Material circle) is drawn from the top of the pulled area, and Dart slides that
-        // open-height view down itself: anchor it at the top, or its drawing leaves the view above the clip.
-        // [CN] 前置的刷新头（Material 圆圈）从下拉区域顶部开始绘制，Dart 自己把这个展开高度的视图下移：贴着视图顶部，否则绘制内容会跑到裁剪区之上。
-        let atTop = params.footer || (component as? CYLRefreshHeader)?.scrollMode == .front
-        let frame = CGRect(x: 0, y: atTop ? 0 : height - pull, width: container.bounds.width, height: pull)
+        // Where the header is inside the layout decides where the layout goes, so that the header lands on the slot edge at its
+        // own height at every pull (never moved a second time by the scroll, never taller than the layout, never above the view):
+        // - move and stretch: the header spans the layout's bottom `pull` points; the layout is anchored at the slot's bottom;
+        // - front and behind (a behind header is pinned like a front one, see below): the header is `open` tall at the top of the
+        //   layout whatever the pull, and Dart slides or covers the view itself; the layout is anchored at the top and is at least
+        //   as tall as the header, and the container does not clip, so what a front header draws below its own frame (the
+        //   Material circle, which drops up to about 1.5 open heights at a deep pull) stays visible as under a finger;
+        // - footer: anchored at the top.
+        // [CN] 刷新头在布局内的位置决定布局的位置，使刷新头在任何下拉量下都以自身高度落在槽位边缘（不被滚动再移动一次、不高于布局、
+        //      不跑到视图之上）：
+        // - 移动与拉伸：刷新头占布局底部 `pull` 点，布局贴着槽位底部；
+        // - 前置与后置（后置刷新头按前置固定，见下）：无论下拉多少，刷新头都在布局顶部、高度为 `open`，视图的滑动或遮盖由 Dart
+        //   自己完成；布局贴着顶部且不低于刷新头高度，容器不裁剪，前置刷新头画在自身 frame 之下的内容（Material 圆圈，深度下拉时最多下落
+        //   约 1.5 个展开高度）像手指下拉时一样保持可见；
+        // - 刷新尾：贴着顶部。
+        // A behind header slides in with the content until the pull passes its height; Dart already covers the pinned view with the
+        // content, so the host pins it like a front header. [CN] 后置刷新头在下拉超过其高度之前随内容滑入；Dart 已用内容遮盖固定的视图，宿主按前置刷新头固定它。
+        if let header = component as? CYLRefreshHeader, header.scrollMode == .behind { header.scrollMode = .front }
+        let mode = (component as? CYLRefreshHeader)?.scrollMode
+        let pinned = mode == .front || mode == .behind
+        let frame: CGRect
+        if params.footer {
+            frame = CGRect(x: 0, y: 0, width: container.bounds.width, height: pull)
+        } else if pinned {
+            frame = CGRect(x: 0, y: 0, width: container.bounds.width, height: pull > 0 ? max(pull, open) : 0)
+        } else {
+            frame = CGRect(x: 0, y: height - pull, width: container.bounds.width, height: pull)
+        }
+        container.clipsToBounds = !pinned
         if layout.frame != frame { layout.frame = frame }
     }
 

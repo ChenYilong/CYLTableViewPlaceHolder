@@ -586,7 +586,12 @@ open class CYLPlaceholderHUD: UIView {
         let base = CYLPlaceholderComponent(bundledAnimation: file, fallbackStyle: style, title: status,
                                            size: animationSize, action: nil)
         var attributes = base.attributes
-        if let image = image, file == nil {
+        // [EN] The state's own image is the static picture even when an animation file is set: the animation covers it while the
+        //      engine plays, and without an engine (the Flutter and React Native plugins) it is all that shows. Keeping the
+        //      `fallbackStyle` (info) here made the Success HUD show the info glyph (2026-11-24).
+        // [CN] 即使设置了动画文件，状态自己的图片也是静态图：引擎播放时动画覆盖它，没有引擎（Flutter 与 React Native 插件）时只显示它。
+        //      此处保留 `fallbackStyle`（info）曾让 Success HUD 显示 info 图标（2026-11-24）。
+        if let image = image {
             attributes[CYLPlaceholderItemImage] = image
             attributes.removeValue(forKey: CYLPlaceholderItemStyle)
         }

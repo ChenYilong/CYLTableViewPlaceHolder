@@ -306,4 +306,77 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
             host.container.removeFromSuperview()
         }
     }
+
+    // MARK: - The header is laid out at its own height in the slot at every pull (2026-11-24, the owner's "stretch is clipped")
+
+    /// The header's frame in the container's coordinates. [CN] 刷新头在容器坐标系中的 frame。
+    private func headerInSlot(_ host: CYLRefreshDrivenHost) -> CGRect {
+        host.container.layoutIfNeeded()
+        return host.container.convert(host.component.bounds, from: host.component)
+    }
+
+    func testAMoveHeaderKeepsItsOwnHeightInTheSlotAtEveryPull() {
+        for style in ["classic", "cupertino"] {
+            let host = slotHost(["style": style, "expandHeight": 60], height: 60)
+            for factor: CGFloat in [0.5, 1, 2, 3] {
+                drive(host, 60 * factor)
+                let header = headerInSlot(host)
+                XCTAssertEqual(header.height, 60, accuracy: 0.5, "\(style) at \(factor)x: intrinsic height")
+                XCTAssertEqual(header.maxY, 60, accuracy: 0.5, "\(style) at \(factor)x: anchored at the slot edge: \(header)")
+                XCTAssertGreaterThanOrEqual(header.minY, -0.5, "\(style) at \(factor)x: not above the view")
+            }
+            host.container.removeFromSuperview()
+        }
+    }
+
+    func testABehindHeaderStaysWholeInTheSlotAtEveryPull() {
+        let host = slotHost(["expandHeight": 60], height: 60)
+        (host.component as! CYLRefreshHeader).scrollMode = .behind
+        for factor: CGFloat in [0.5, 1, 2, 3] {
+            drive(host, 60 * factor)
+            let header = headerInSlot(host)
+            XCTAssertEqual(header.minY, 0, accuracy: 0.5, "behind at \(factor)x: at the top of the view, not lifted off it: \(header)")
+            XCTAssertEqual(header.height, 60, accuracy: 0.5, "behind at \(factor)x: intrinsic height")
+            XCTAssertLessThanOrEqual(host.layout.frame.minY, 0.5, "behind at \(factor)x: the layout covers the header: \(host.layout.frame)")
+            XCTAssertGreaterThanOrEqual(host.layout.frame.maxY, 59.5, "behind at \(factor)x: the layout covers the header: \(host.layout.frame)")
+        }
+        host.container.removeFromSuperview()
+    }
+
+    func testAFrontHeaderIsWholeAndItsDrawingBelowItsFrameIsNotClipped() {
+        let host = slotHost(["style": "material"], height: 80)
+        XCTAssertEqual((host.component as! CYLRefreshHeader).scrollMode, .front)
+        for factor: CGFloat in [0.5, 1, 2, 3] {
+            drive(host, 80 * factor)
+            let header = headerInSlot(host)
+            XCTAssertEqual(header.minY, 0, accuracy: 0.5, "front at \(factor)x: \(header)")
+            XCTAssertEqual(header.height, host.component.expandHeight, accuracy: 0.5, "front at \(factor)x: intrinsic height")
+            XCTAssertGreaterThanOrEqual(host.layout.frame.height, header.height - 0.5, "front at \(factor)x: the layout is never shorter than the header")
+            XCTAssertFalse(host.container.clipsToBounds, "front at \(factor)x: the circle drops below the header's frame at a deep pull and must not be cut at the view's edge")
+        }
+        host.container.removeFromSuperview()
+    }
+
+    func testAStretchedHeaderIsAsTallAsTheViewAtEveryPull() {
+        for style in ["bezierCircle", "phoenix"] {
+            let host = slotHost(["style": style], height: 40)
+            for pull: CGFloat in [40, 100, 200, 300] {
+                host.container.frame.size.height = pull
+                drive(host, pull)
+                let header = headerInSlot(host)
+                XCTAssertEqual(header.minY, 0, accuracy: 0.5, "\(style) at \(pull): \(header)")
+                XCTAssertEqual(header.height, pull, accuracy: 0.5, "\(style) at \(pull): fills the view")
+            }
+            host.container.removeFromSuperview()
+        }
+    }
+
+    func testTheScrollModeParameterIsAppliedAndABehindHeaderIsPinned() {
+        XCTAssertEqual(CYLRefreshDrivenHost.Params(["scrollMode": "behind"]).scrollMode, .behind)
+        XCTAssertNil(CYLRefreshDrivenHost.Params(["scrollMode": "sideways"]).scrollMode)
+        XCTAssertEqual((slotHost(["scrollMode": "stretch"]).component as! CYLRefreshHeader).scrollMode, .stretch)
+        let behind = slotHost(["scrollMode": "behind"])
+        drive(behind, 30)
+        XCTAssertEqual((behind.component as! CYLRefreshHeader).scrollMode, .front, "pinned like a front header")
+    }
 }
