@@ -22,8 +22,10 @@ enum CYLRefreshHostResult: Equatable {
  *      `CYLRefreshBackNormalFooter` (with `loadsAfterNoMoreData` when asked). Dart feeds the pull through `handle(method:arguments:)`
  *      with the Android contract: "drive" (`offset` in logical pixels, which are points here, negative for a footer, `dragging`,
  *      `startedAtEdge`), "release", "finishRefresh" (`success`; a footer's `noMoreData: true` ends the load and shows "no more
- *      data") and, footer only, "noMoreData" (`value`). The view reports back through `onEvent`: "onPhase" (`phase` and
- *      `oldPhase`, the lower camel case names of `CYLRefreshPhase`) and "onRefreshing". The Flutter view class only forwards
+ *      data"), footer only, "noMoreData" (`value`), and the second floor's "openSecondary" and "closeSecondary" (creation parameters
+ *      `secondaryTriggerOffset`, `secondaryDimension`, `secondaryCloseTriggerOffset`). The view reports back through `onEvent`: "onPhase" (`phase` and
+ *      `oldPhase`, the lower camel case names of `CYLRefreshPhase`, including `secondaryArmed`, `secondaryOpen`, `secondaryClosing`),
+ *      "onRefreshing", "onSecondaryOpened" and "onSecondaryClosed" (informational: Dart never answers them with a call). The Flutter view class only forwards
  *      the channel to this type, so the behavior is testable without Flutter (`Tests/CYLRefreshDrivenHostTests.swift`).
  * [CN] 原生刷新视图中不依赖 Flutter 的部分，对应 Android 的 `CYLRefreshPlatformView`：`CYLRefreshDrivenLayout` 挂 `CYLRefreshNormalHeader`，
  *      创建参数为 `footer: true` 时挂 `CYLRefreshBackNormalFooter`（按需带 `loadsAfterNoMoreData`）。Dart 通过
@@ -42,7 +44,21 @@ final class CYLRefreshDrivenHost {
         /// 可选，Dart 版本不发送时保持原生默认值。
         var expandHeight: CGFloat?
 
+        /// The second floor (docs/Refresh-Library-Parity.md, "Row 7 and 8 native contract"): `secondaryTriggerOffset` > 0 turns it
+        /// on, `secondaryDimension` and `secondaryCloseTriggerOffset` are optional. [CN] 二楼：`secondaryTriggerOffset` > 0 时开启，
+        /// `secondaryDimension` 与 `secondaryCloseTriggerOffset` 可选。
+        var secondaryTriggerOffset: CGFloat = 0
+        var secondaryDimension: CGFloat = 0
+        var secondaryCloseTriggerOffset: CGFloat = 0
+
         init(_ dictionary: [String: Any]?) {
+            func length(_ key: String) -> CGFloat {
+                guard let value = (dictionary?[key] as? NSNumber)?.doubleValue, value.isFinite, value > 0 else { return 0 }
+                return CGFloat(value)
+            }
+            secondaryTriggerOffset = length("secondaryTriggerOffset")
+            secondaryDimension = length("secondaryDimension")
+            secondaryCloseTriggerOffset = length("secondaryCloseTriggerOffset")
             footer = dictionary?["footer"] as? Bool == true
             style = dictionary?["style"] as? String
             if let height = (dictionary?["expandHeight"] as? NSNumber)?.doubleValue, height.isFinite, height > 0 { expandHeight = CGFloat(height) }
@@ -85,6 +101,13 @@ final class CYLRefreshDrivenHost {
             layout.header = header
             component = header
         }
+        if self.params.secondaryTriggerOffset > 0 {
+            layout.configureSecondary(triggerOffset: self.params.secondaryTriggerOffset, dimension: self.params.secondaryDimension,
+                                      closeTriggerOffset: self.params.secondaryCloseTriggerOffset)
+        }
+        // Informational events, as the contract says: Dart is the authority and never answers them with a call.
+        layout.secondaryOpenedBlock = { [weak self] in self?.onEvent("onSecondaryOpened", nil) }
+        layout.secondaryClosedBlock = { [weak self] in self?.onEvent("onSecondaryClosed", nil) }
         container.onLayout = { [weak self] in self?.updateSlot() }
         phaseObserver = component.addPhaseObserver { [weak self] _, old, new in
             self?.updateSlot()
@@ -114,7 +137,8 @@ final class CYLRefreshDrivenHost {
         }
         let open = component.expandHeight
         let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true
-        let pull = max(abs(lastOffset), held ? open : 0)
+        // An open second floor fills the slot Dart gives it (Dart sizes the slot to the floor).
+        let pull = layout.isSecondaryOpen ? height : max(abs(lastOffset), held ? open : 0)
         // A header that sits in front (the Material circle) is drawn from the top of the pulled area, and Dart slides that
         // open-height view down itself: anchor it at the top, or its drawing leaves the view above the clip.
         // [CN] 前置的刷新头（Material 圆圈）从下拉区域顶部开始绘制，Dart 自己把这个展开高度的视图下移：贴着视图顶部，否则绘制内容会跑到裁剪区之上。
@@ -178,6 +202,12 @@ final class CYLRefreshDrivenHost {
             // The footer shows "no more data" only in a scrolled layout: feed the last pull again so the layout scrolls to it.
             updateSlot()
             layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: true)
+        case "openSecondary":
+            layout.openSecondary()
+            updateSlot()
+        case "closeSecondary":
+            layout.closeSecondary()
+            updateSlot()
         default:
             return .notImplemented
         }
