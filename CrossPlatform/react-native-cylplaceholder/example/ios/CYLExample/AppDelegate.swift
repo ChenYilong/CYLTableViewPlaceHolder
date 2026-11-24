@@ -12,7 +12,18 @@ class AppDelegate: RCTAppDelegate {
   ) -> Bool {
     moduleName = "CYLExample"
     initialProps = [:]
+    // [EN] iOS 27 ends an app with no UIScene lifecycle at launch; React Native 0.76 builds its own window, so the SceneDelegate does it.
+    // [CN] iOS 27 会在启动时终止没有 UIScene 生命周期的应用；React Native 0.76 自己创建窗口，所以改由 SceneDelegate 创建。
+    automaticallyLoadReactNativeWindow = false
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  override func application(
+    _ application: UIApplication,
+    configurationForConnecting connectingSceneSession: UISceneSession,
+    options: UIScene.ConnectionOptions
+  ) -> UISceneConfiguration {
+    UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
   }
 
   override func sourceURL(for bridge: RCTBridge) -> URL? {

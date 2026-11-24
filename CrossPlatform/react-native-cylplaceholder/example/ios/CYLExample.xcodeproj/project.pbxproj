@@ -7,112 +7,115 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0D540A68137C9C9C0F69A677 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195EF47AF7F6E276E92433A9 /* AppDelegate.swift */; };
-		1B4D9D9CD9267709401B3F4F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC214575E728872EC727EF9B /* Images.xcassets */; };
-		569413BAE06247A7010DA7CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB3DAE2E1F5CC3A8E0E623F7 /* LaunchScreen.storyboard */; };
-		C168FC2ACB65F40EFB8DD5D9 /* Pods_CYLExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819DC6287A86F30CEB60AEDE /* Pods_CYLExample.framework */; };
-		D2386B0002BD955F0481703B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 77A60797CE4F8201008B991C /* PrivacyInfo.xcprivacy */; };
-		EDC6135DD52FC31AA39C3407 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E63F04E8283B038D954CEEBE /* Foundation.framework */; };
+		01CCEBB3611B8FB16FCEEE86 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0D2FC723B27F19E6D0E0C37F /* LaunchScreen.storyboard */; };
+		220F52CD1B193F3B9B5941FB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F43311AFE6C417103763D19 /* Images.xcassets */; };
+		2B4361C99AE231C87F755DA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389E8C803E0FEFA9501E4079 /* AppDelegate.swift */; };
+		92815A3236E9C395B9215A66 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D13A8A9997C2DF4F760606A /* Foundation.framework */; };
+		9A4A8D5A2A5E44F9187BEDF8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E3B619BD665389DE2B744BDA /* PrivacyInfo.xcprivacy */; };
+		CD6443C9BA52DC1A76EDFB61 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDADE449F7F81965823B4BB /* SceneDelegate.swift */; };
+		FFD10DCB7499239C3B925CBD /* Pods_CYLExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABF8DBD80A05F79E6DAAD499 /* Pods_CYLExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		195EF47AF7F6E276E92433A9 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		2766893721FC0A794BF73DA4 /* Pods-CYLExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLExample.release.xcconfig"; path = "Target Support Files/Pods-CYLExample/Pods-CYLExample.release.xcconfig"; sourceTree = "<group>"; };
-		2CC3DF9C8B94BBED90F31CEF /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		77A60797CE4F8201008B991C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		819DC6287A86F30CEB60AEDE /* Pods_CYLExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CYLExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA06894A577FD97A4AFCED23 /* CYLExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CYLExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D43ABA20BCEE74FD638A273C /* Pods-CYLExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLExample.debug.xcconfig"; path = "Target Support Files/Pods-CYLExample/Pods-CYLExample.debug.xcconfig"; sourceTree = "<group>"; };
-		DB3DAE2E1F5CC3A8E0E623F7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		DC214575E728872EC727EF9B /* Images.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		E63F04E8283B038D954CEEBE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		0B4FBF60F87CCFCDCFC39453 /* Pods-CYLExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLExample.release.xcconfig"; path = "Target Support Files/Pods-CYLExample/Pods-CYLExample.release.xcconfig"; sourceTree = "<group>"; };
+		0D13A8A9997C2DF4F760606A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		0D2FC723B27F19E6D0E0C37F /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1F1B924D180DE361585B1609 /* Pods-CYLExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CYLExample.debug.xcconfig"; path = "Target Support Files/Pods-CYLExample/Pods-CYLExample.debug.xcconfig"; sourceTree = "<group>"; };
+		389E8C803E0FEFA9501E4079 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3DDADE449F7F81965823B4BB /* SceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		3EC3F3BEEA3A0A41DBB5B908 /* CYLExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CYLExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CAE7037DE7DA4714FCF1EF5 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9F43311AFE6C417103763D19 /* Images.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		ABF8DBD80A05F79E6DAAD499 /* Pods_CYLExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CYLExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3B619BD665389DE2B744BDA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		50A602D60B724590F6302C75 /* Frameworks */ = {
+		97F11EA327C5450A401173A9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDC6135DD52FC31AA39C3407 /* Foundation.framework in Frameworks */,
-				C168FC2ACB65F40EFB8DD5D9 /* Pods_CYLExample.framework in Frameworks */,
+				92815A3236E9C395B9215A66 /* Foundation.framework in Frameworks */,
+				FFD10DCB7499239C3B925CBD /* Pods_CYLExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		053A443DDE5FC8CB645805C5 /* iOS */ = {
+		589D6F6E67864875DD431F99 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E63F04E8283B038D954CEEBE /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		306BAA12D6189A6E426307A4 /* CYLExample */ = {
-			isa = PBXGroup;
-			children = (
-				195EF47AF7F6E276E92433A9 /* AppDelegate.swift */,
-				2CC3DF9C8B94BBED90F31CEF /* Info.plist */,
-				DB3DAE2E1F5CC3A8E0E623F7 /* LaunchScreen.storyboard */,
-				DC214575E728872EC727EF9B /* Images.xcassets */,
-				77A60797CE4F8201008B991C /* PrivacyInfo.xcprivacy */,
-			);
-			name = CYLExample;
-			path = CYLExample;
-			sourceTree = "<group>";
-		};
-		65445B574A5A60471D2B1ACE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AA06894A577FD97A4AFCED23 /* CYLExample.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		807382D9F16FEB94FD03AC96 = {
-			isa = PBXGroup;
-			children = (
-				65445B574A5A60471D2B1ACE /* Products */,
-				A61613171F59053A9AFC6B2A /* Frameworks */,
-				306BAA12D6189A6E426307A4 /* CYLExample */,
-				F200DAB1D95CA2F6D9C297D9 /* Pods */,
-			);
-			sourceTree = "<group>";
-		};
-		A61613171F59053A9AFC6B2A /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				053A443DDE5FC8CB645805C5 /* iOS */,
-				819DC6287A86F30CEB60AEDE /* Pods_CYLExample.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		F200DAB1D95CA2F6D9C297D9 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2766893721FC0A794BF73DA4 /* Pods-CYLExample.release.xcconfig */,
-				D43ABA20BCEE74FD638A273C /* Pods-CYLExample.debug.xcconfig */,
+				0B4FBF60F87CCFCDCFC39453 /* Pods-CYLExample.release.xcconfig */,
+				1F1B924D180DE361585B1609 /* Pods-CYLExample.debug.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		9051AD28E5E97E5E92A2F8D7 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				0D13A8A9997C2DF4F760606A /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		94BEB3EE1D296C7C87A1AE85 /* CYLExample */ = {
+			isa = PBXGroup;
+			children = (
+				389E8C803E0FEFA9501E4079 /* AppDelegate.swift */,
+				3DDADE449F7F81965823B4BB /* SceneDelegate.swift */,
+				7CAE7037DE7DA4714FCF1EF5 /* Info.plist */,
+				0D2FC723B27F19E6D0E0C37F /* LaunchScreen.storyboard */,
+				9F43311AFE6C417103763D19 /* Images.xcassets */,
+				E3B619BD665389DE2B744BDA /* PrivacyInfo.xcprivacy */,
+			);
+			name = CYLExample;
+			path = CYLExample;
+			sourceTree = "<group>";
+		};
+		DF61A1E9AC9503D76FD3649A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9051AD28E5E97E5E92A2F8D7 /* iOS */,
+				ABF8DBD80A05F79E6DAAD499 /* Pods_CYLExample.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EB93698CA058869600AFEF15 = {
+			isa = PBXGroup;
+			children = (
+				F26720551371254AF01C4D5B /* Products */,
+				DF61A1E9AC9503D76FD3649A /* Frameworks */,
+				94BEB3EE1D296C7C87A1AE85 /* CYLExample */,
+				589D6F6E67864875DD431F99 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		F26720551371254AF01C4D5B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3EC3F3BEEA3A0A41DBB5B908 /* CYLExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3C64A9404A0BFC52A110FC01 /* CYLExample */ = {
+		03747651430B03A66D68DCF1 /* CYLExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4A86922FDC1E31F420F6DD3D /* Build configuration list for PBXNativeTarget "CYLExample" */;
+			buildConfigurationList = 4F4CA0E0AC51D1638EADC257 /* Build configuration list for PBXNativeTarget "CYLExample" */;
 			buildPhases = (
-				464F4DE867CE045F07076A8F /* [CP] Check Pods Manifest.lock */,
-				07061520BC1C717EA486A2E8 /* Sources */,
-				50A602D60B724590F6302C75 /* Frameworks */,
-				7351A71801450361FCE2DCC3 /* Resources */,
-				189A6095C9D04ACA1F5FAD00 /* Bundle React Native code and images */,
-				A86AF922A88529EA181D50EB /* [CP] Embed Pods Frameworks */,
-				1CCCFD408BAF2E903D3B9847 /* [CP] Copy Pods Resources */,
+				4B5744B8F98F4C906075A211 /* [CP] Check Pods Manifest.lock */,
+				DC787AD6076C854EB8E31652 /* Sources */,
+				97F11EA327C5450A401173A9 /* Frameworks */,
+				226D377C56626545154DF76D /* Resources */,
+				787FE145D25CAF5D733A0903 /* Bundle React Native code and images */,
+				7E36495502D7EEE270E18E85 /* [CP] Embed Pods Frameworks */,
+				C715DFDC1FE6207FD34E2ECC /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -120,19 +123,19 @@
 			);
 			name = CYLExample;
 			productName = CYLExample;
-			productReference = AA06894A577FD97A4AFCED23 /* CYLExample.app */;
+			productReference = 3EC3F3BEEA3A0A41DBB5B908 /* CYLExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		BAAE8FB9756B3A9ECEEB84D1 /* Project object */ = {
+		3D565F82DA58AD57C88B97E3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 			};
-			buildConfigurationList = 0EBDA6EC8BBC0C54F423DC09 /* Build configuration list for PBXProject "CYLExample" */;
+			buildConfigurationList = 503C6F21DBB2E80041045F57 /* Build configuration list for PBXProject "CYLExample" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -140,33 +143,55 @@
 				en,
 				Base,
 			);
-			mainGroup = 807382D9F16FEB94FD03AC96;
+			mainGroup = EB93698CA058869600AFEF15;
 			minimizedProjectReferenceProxies = 0;
 			preferredProjectObjectVersion = 100;
-			productRefGroup = 65445B574A5A60471D2B1ACE /* Products */;
+			productRefGroup = F26720551371254AF01C4D5B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3C64A9404A0BFC52A110FC01 /* CYLExample */,
+				03747651430B03A66D68DCF1 /* CYLExample */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		7351A71801450361FCE2DCC3 /* Resources */ = {
+		226D377C56626545154DF76D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				569413BAE06247A7010DA7CA /* LaunchScreen.storyboard in Resources */,
-				1B4D9D9CD9267709401B3F4F /* Images.xcassets in Resources */,
-				D2386B0002BD955F0481703B /* PrivacyInfo.xcprivacy in Resources */,
+				01CCEBB3611B8FB16FCEEE86 /* LaunchScreen.storyboard in Resources */,
+				220F52CD1B193F3B9B5941FB /* Images.xcassets in Resources */,
+				9A4A8D5A2A5E44F9187BEDF8 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		189A6095C9D04ACA1F5FAD00 /* Bundle React Native code and images */ = {
+		4B5744B8F98F4C906075A211 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CYLExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		787FE145D25CAF5D733A0903 /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -184,7 +209,25 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		1CCCFD408BAF2E903D3B9847 /* [CP] Copy Pods Resources */ = {
+		7E36495502D7EEE270E18E85 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CYLExample/Pods-CYLExample-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CYLExample/Pods-CYLExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C715DFDC1FE6207FD34E2ECC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -222,61 +265,46 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CYLExample/Pods-CYLExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		464F4DE867CE045F07076A8F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CYLExample-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A86AF922A88529EA181D50EB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CYLExample/Pods-CYLExample-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CYLExample/Pods-CYLExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		07061520BC1C717EA486A2E8 /* Sources */ = {
+		DC787AD6076C854EB8E31652 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D540A68137C9C9C0F69A677 /* AppDelegate.swift in Sources */,
+				2B4361C99AE231C87F755DA2 /* AppDelegate.swift in Sources */,
+				CD6443C9BA52DC1A76EDFB61 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		A9F21B7D0EAD880B50F77457 /* Debug */ = {
+		257CFA634E95D426922F36A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0B4FBF60F87CCFCDCFC39453 /* Pods-CYLExample.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = CYLExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.reactnative.example;
+				PRODUCT_NAME = CYLExample;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		79FF97E7FF59D756898F7F38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -354,55 +382,7 @@
 			};
 			name = Debug;
 		};
-		EBD9561CF9A6C488F5D4FBF8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2766893721FC0A794BF73DA4 /* Pods-CYLExample.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = CYLExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.reactnative.example;
-				PRODUCT_NAME = CYLExample;
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		EC2BF0C544F438F7F80DFB98 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D43ABA20BCEE74FD638A273C /* Pods-CYLExample.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = CYLExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.reactnative.example;
-				PRODUCT_NAME = CYLExample;
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		FAF87CC12CDDFB6DD16CE5FB /* Release */ = {
+		DCBD41C2B8A807FEBCB08080 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -473,28 +453,52 @@
 			};
 			name = Release;
 		};
+		E1286DB50CE787E470CB19C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1F1B924D180DE361585B1609 /* Pods-CYLExample.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = CYLExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cyl.placeholder.reactnative.example;
+				PRODUCT_NAME = CYLExample;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0EBDA6EC8BBC0C54F423DC09 /* Build configuration list for PBXProject "CYLExample" */ = {
+		4F4CA0E0AC51D1638EADC257 /* Build configuration list for PBXNativeTarget "CYLExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9F21B7D0EAD880B50F77457 /* Debug */,
-				FAF87CC12CDDFB6DD16CE5FB /* Release */,
+				257CFA634E95D426922F36A0 /* Release */,
+				E1286DB50CE787E470CB19C8 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4A86922FDC1E31F420F6DD3D /* Build configuration list for PBXNativeTarget "CYLExample" */ = {
+		503C6F21DBB2E80041045F57 /* Build configuration list for PBXProject "CYLExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EBD9561CF9A6C488F5D4FBF8 /* Release */,
-				EC2BF0C544F438F7F80DFB98 /* Debug */,
+				79FF97E7FF59D756898F7F38 /* Debug */,
+				DCBD41C2B8A807FEBCB08080 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = BAAE8FB9756B3A9ECEEB84D1 /* Project object */;
+	rootObject = 3D565F82DA58AD57C88B97E3 /* Project object */;
 }

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C64A9404A0BFC52A110FC01"
+               BlueprintIdentifier = "03747651430B03A66D68DCF1"
                BuildableName = "CYLExample.app"
                BlueprintName = "CYLExample"
                ReferencedContainer = "container:CYLExample.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C64A9404A0BFC52A110FC01"
+            BlueprintIdentifier = "03747651430B03A66D68DCF1"
             BuildableName = "CYLExample.app"
             BlueprintName = "CYLExample"
             ReferencedContainer = "container:CYLExample.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C64A9404A0BFC52A110FC01"
+            BlueprintIdentifier = "03747651430B03A66D68DCF1"
             BuildableName = "CYLExample.app"
             BlueprintName = "CYLExample"
             ReferencedContainer = "container:CYLExample.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C64A9404A0BFC52A110FC01"
+            BlueprintIdentifier = "03747651430B03A66D68DCF1"
             BuildableName = "CYLExample.app"
             BlueprintName = "CYLExample"
             ReferencedContainer = "container:CYLExample.xcodeproj">
