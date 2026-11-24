@@ -1194,5 +1194,9 @@
  },
  "CYLRefreshDrivenLayout.release": {
   "ios": "`CYLRefreshDrivenLayout` `release()`"
+ },
+ "CYLRefreshDrivenLayout.slotHeight": {
+  "ios": "`CYLRefreshDrivenHost.updateSlot()` (the Flutter iOS plugin sizes the layout to the pull and anchors it at the slot edge: the Slot rule in docs/Refresh-Library-Parity.md)",
+  "note": "iOS has no public property: the host owns the slot rule, `CYLRefreshDrivenLayout` itself is sized by its frame"
  }
 }

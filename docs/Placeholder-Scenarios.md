@@ -309,7 +309,7 @@ let placeholder = CYLPlaceholderStackView(scenario: .illustrationRetry, actions:
 
 | 中文 | English |
 | --- | --- |
-| iOS 27.2、iPhone 18 Pro 模拟器（CYL Placeholder Screens）、Xcode 27.2、macOS 27.3，CYLTabBarController 12ed11ff，本仓库 d1ad10e，2026-11-24（模拟器时间 09:42–10:55）：Example-Scenarios 的“场景”页，每个场景一张原图（32 张，`docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`），拼成 4 张带页眉、说明与页脚的图（“Sync failed”与“Title above the illustration”两个场景尚未截图：另一个会话占用了模拟器，见 Task-Log）。 | iOS 27.2, iPhone 18 Pro simulator (CYL Placeholder Screens), Xcode 27.2, macOS 27.3, CYLTabBarController 12ed11ff, this repository d1ad10e, 2026-11-24 (simulator clock 09:42-10:55): the Example-Scenarios "Scenarios" page, one original per scenario (32 files, `docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`), stitched into 4 sheets with header, captions and footer (TODO: the scenarios "Sync failed" and "Title above the illustration" have no screenshot yet: another session took over the simulator, see Task-Log). |
+| iOS 27.2、iPhone 18 Pro 模拟器（CYL Placeholder Screens）、Xcode 27.2、macOS 27.3，CYLTabBarController 12ed11ff，本仓库 d1ad10e，2026-11-24（模拟器时间 09:42–10:55）：Example-Scenarios 的“场景”页，每个场景一张原图（32 张，`docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`），拼成 4 张带页眉、说明与页脚的图（“Sync failed”与“Title above the illustration”两个场景于 2026-11-24 补拍，见下方第 5 张图）。 | iOS 27.2, iPhone 18 Pro simulator (CYL Placeholder Screens), Xcode 27.2, macOS 27.3, CYLTabBarController 12ed11ff, this repository d1ad10e, 2026-11-24 (simulator clock 09:42-10:55): the Example-Scenarios "Scenarios" page, one original per scenario (32 files, `docs/assets/ios-27.2-iphone18pro-sim-ph-scenario-*-d1ad10e-20261124.png`), stitched into 4 sheets with header, captions and footer (the scenarios "Sync failed" and "Title above the illustration" were taken later, on 2026-11-24, see sheet 5 below). |
 
 ![iOS scenario screenshots, sheet 1](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-1of4-d1ad10e-20261124-sheet.png)
 
@@ -318,6 +318,8 @@ let placeholder = CYLPlaceholderStackView(scenario: .illustrationRetry, actions:
 ![iOS scenario screenshots, sheet 3](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-3of4-d1ad10e-20261124-sheet.png)
 
 ![iOS scenario screenshots, sheet 4](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-4of4-d1ad10e-20261124-sheet.png)
+
+![iOS scenario screenshots, sheet 5: Sync failed and Title above the illustration](assets/ios-27.2-iphone18pro-sim-ph-scenario-sheet-5of5-4eb3595f-20261124-sheet.png)
 
 | 中文 | English |
 | --- | --- |
