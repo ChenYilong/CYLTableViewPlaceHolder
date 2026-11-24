@@ -510,6 +510,7 @@ iOS names: `CYLRefreshRiveOptions` (Core, pure Foundation: parses the keys, `res
 - **Option A, raise `rivePullInputStart`:** no effect on the black itself (the input already starts at 10 and rises with the pull), but it moves where the input is below 50: start the input at 10 + 40 = 50 at once, e.g. `rivePullInputMinimum: 50`, so every visible frame has input >= 50 and no black is drawn; the bow would then lose its first 40 percent of the pull animation. Cheap, per style, no code change; the cost is the animation. Not tested (the measurement above is the evidence for the 50 threshold).
 - **Option B, clip the header to the drawn height:** hide the rows that are black by sizing the Rive view (or a mask) to the part the file draws at the current input: at input `i` below 50 the drawn height is about `header * (1 - black share)`; needs a per-file table, so it is file specific.
 - **Option C, leave it:** the black is the Bow file's own drawing at low input; whether flutter_easy_refresh shows it too was not checked.
+- **DECISION (2026-11-25, owner, typed in this session): B.** 'B： 把 header 裁到实际画出的高度，需要每个文件一张表。' This overrides the Option A a peer relayed earlier the same day (the iOS example is back at `pullInputMinimum = 10`). Contract: see "Rive drawn-height table" below.
 - **Recommendation:** Option A for the Bow style in the examples (the parameter already exists), keep the library default 0; decision belongs to the owner, not implemented.
 
 ## Demo porting map (the Flutter example to every other platform)

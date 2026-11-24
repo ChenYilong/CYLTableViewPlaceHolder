@@ -2014,3 +2014,10 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **Prompt (verbatim):** "RN 新架构不在范围"
 - **English:** The React Native new architecture is out of scope.
 - **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4. Both halves of it (no devices, no new architecture) are now first-hand. No score changed yet: the scoreboard has no itemised new-architecture deduction, so the RN judgement score (72) is re-judged by the Windows session against the old-architecture example.
+
+## 2026-11-25 owner decision: Rive black band option B (TODO)
+
+- **Prompt (verbatim):** "黑带：	•	B： 把 header 裁到实际画出的高度，需要每个文件一张表。"
+- **English:** Black band: option B, clip the header to the height actually drawn; it needs one table per file.
+- **Context:** the owner answered first hand; this replaces the peer-relayed option A (iOS example reverted to 10; Windows told to revert its 50). Bow measurements are in `docs/Refresh-Library-Parity.md`.
+- **Requirements:** a per-file table input -> drawn fraction of the header; the Rive view is clipped from the top to that fraction; library default = no table (no clip); Bow table from the measurements; same names on iOS, Android, Flutter, React Native; pass = low-pull capture with no black and a full pull whose end animation still plays.
