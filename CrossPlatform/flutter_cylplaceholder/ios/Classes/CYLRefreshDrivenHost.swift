@@ -49,6 +49,8 @@ final class CYLRefreshDrivenHost {
 
     private let onEvent: (String, [String: Any]?) -> Void
     private var phaseObserver: Any?
+    private var lastOffset: CGFloat = 0
+    private var lastDragging = false
 
     init(frame: CGRect, params: [String: Any]?, onEvent: @escaping (String, [String: Any]?) -> Void) {
         self.params = Params(params)
@@ -97,7 +99,9 @@ final class CYLRefreshDrivenHost {
             guard let offset = (arguments?["offset"] as? NSNumber)?.doubleValue, offset.isFinite else {
                 return .error(code: "bad_arguments", message: "drive needs an offset.")
             }
-            layout.drive(offset: CGFloat(offset), dragging: arguments?["dragging"] as? Bool == true, startedAtEdge: arguments?["startedAtEdge"] as? Bool != false)
+            lastOffset = CGFloat(offset)
+            lastDragging = arguments?["dragging"] as? Bool == true
+            layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: arguments?["startedAtEdge"] as? Bool != false)
         case "release":
             layout.release()
         case "finishRefresh":
@@ -109,6 +113,8 @@ final class CYLRefreshDrivenHost {
         case "noMoreData":
             guard let footer = footer else { return .error(code: "not_a_footer", message: "noMoreData needs a footer view.") }
             if arguments?["value"] as? Bool == true { footer.noticeNoMoreData() } else { footer.resetNoMoreData() }
+            // The footer shows "no more data" only in a scrolled layout: feed the last pull again so the layout scrolls to it.
+            layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: true)
         default:
             return .notImplemented
         }

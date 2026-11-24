@@ -65,6 +65,20 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         XCTAssertEqual(footer.frame.minY, 90, accuracy: 0.5, "the footer follows the slot the host resizes")
     }
 
+    func testNoMoreDataIsScrolledIntoViewAndAPullStillMovesPastIt() {
+        let host = host(["footer": true])
+        let footer = host.component as! CYLRefreshFooter
+        _ = host.handle(method: "noMoreData", arguments: ["value": true])
+        host.layout.layoutIfNeeded()
+        let scrollView = host.layout.subviews.compactMap { $0 as? UIScrollView }.first!
+        XCTAssertEqual(scrollView.contentOffset.y, footer.frame.height, accuracy: 0.5, "the label is inside the visible area at rest")
+        drive(host, -(footer.frame.height + 30))
+        XCTAssertEqual(scrollView.contentOffset.y, footer.frame.height + 30, accuracy: 0.5)
+        _ = host.handle(method: "noMoreData", arguments: ["value": false])
+        drive(host, 0, dragging: false)
+        XCTAssertEqual(scrollView.contentOffset.y, 0, accuracy: 0.5)
+    }
+
     func testPhaseNamesAreTheAndroidLowerCamelNames() {
         XCTAssertEqual(CYLRefreshDrivenHost.name(of: .idle), "idle")
         XCTAssertEqual(CYLRefreshDrivenHost.name(of: .pullToRefresh), "pullToRefresh")
