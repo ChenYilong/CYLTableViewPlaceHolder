@@ -1275,5 +1275,26 @@
  "CYLRefreshRiveSupport.footer": {
   "ios": "`CYLRefreshStyleFactory` `footer(style:options:onFallback:)`",
   "note": "for the `rive` style"
+ },
+ "CYLPlaceholderResourceMonitor": {
+  "ios": "`CYLPlaceholderResourceReporter`",
+  "note": "the per-page list of missing animation resources behind the status bar message (key `CYLPlaceholderResourceMissing`); iOS: Swift core `CYLPlaceholderResourceReporter`"
+ },
+ "CYLPlaceholderResourceMonitor.report": {
+  "ios": "`CYLPlaceholderResourceReporter` `report`"
+ },
+ "CYLPlaceholderResourceMonitor.clear": {
+  "ios": "`CYLPlaceholderResourceReporter` `resolve` / `reset`"
+ },
+ "CYLPlaceholderResourceMonitor.missingResources": {
+  "ios": "`CYLPlaceholderResourceReporter` `missingResourceNames`"
+ },
+ "CYLPlaceholderResourceMonitor.installEngineListener": {
+  "ios": "`CYLPlaceholderResourceReporter` `onResourceMissing`",
+  "note": "Android installs the engine's global listener by reflection until the engine commit is in every resolvable commit; iOS detects missing files itself at the pin 12ed11ff"
+ },
+ "CYLPlaceholderResourceMonitor.attach": {
+  "ios": "`UIViewController` `cyl_showsMissingResources`",
+  "note": "Android hooks one view's `onResourceMissing`; iOS turns the bar on per view controller"
  }
 }

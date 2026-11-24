@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.placeholder.CYLPlaceholderNetworkMonitor
 import com.cyl.placeholder.CYLPlaceholderStatusDisplay
+import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStatusView
 import com.cyl.placeholder.CYLPlaceholderStatusViewDelegate
 import com.cyl.placeholder.cyl_applyStatusConfigurationWithContentsOfURL
@@ -81,8 +82,15 @@ class StatusBarActivity : AppCompatActivity(), CYLPlaceholderStatusViewDelegate 
         }
         network = Button(this).apply { tag = "statusFollowNetwork"; text = t(R.string.merged_status_follow_network); setOnClickListener { toggleNetwork() } }
         val files = Button(this).apply { text = t(R.string.merged_action_show_file); setOnClickListener { showFiles(this) } }
+        // [EN] An animation file that is not in the assets: the red bar names it ("Missing resource: ... (file not found)").
+        val missing = Button(this).apply {
+            tag = "statusMissingResource"
+            text = t(R.string.merged_status_missing_resource)
+            setOnClickListener { CYLPlaceholderView(this@StatusBarActivity).setAnimationFile("asset:CYLPlaceholderAnimations/CYLMissingDemo.pag") }
+        }
         val buttons = LinearLayout(this).apply {
             gravity = Gravity.END
+            addView(missing)
             addView(network)
             addView(files)
         }
