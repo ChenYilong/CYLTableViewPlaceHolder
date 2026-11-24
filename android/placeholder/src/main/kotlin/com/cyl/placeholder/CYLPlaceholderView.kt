@@ -296,6 +296,18 @@ private class CYLPlaceholderFactoryAnimator(extension: String, private val facto
     override fun animationViewWithURL(context: Context, url: String, size: CYLSize, contentMode: ImageView.ScaleType): View? {
         val player = factory(context, url) ?: return null
         player.view.setTag(R.id.cyl_placeholder_factory_player, player)
+        // [EN] A file the app's player cannot load is listed in the status bar; it leaves the list when the player is ready.
+        val activity = CYLPlaceholderResourceMonitor.activityOf(context)
+        val failed = player.errorHandler
+        player.errorHandler = { error ->
+            failed?.invoke(error)
+            CYLPlaceholderResourceMonitor.report(activity, url, "unreadable")
+        }
+        val ready = player.readyHandler
+        player.readyHandler = {
+            ready?.invoke()
+            CYLPlaceholderResourceMonitor.clear(activity, url)
+        }
         return player.view
     }
 
@@ -797,8 +809,13 @@ class CYLPlaceholderView @JvmOverloads constructor(
     fun setAnimationFile(path: String): Boolean {
         // [EN] The display priority is the inherited one (docs/Animated-Item.md of CYLTabBarController): the animation
         //      when it can play, else the static image, else the component's placeholder; `animationURL` is kept.
+        // [EN] A file that is not there is listed in the status bar at the top of the page (CYLPlaceholderResourceMonitor);
+        //      a file that is there but has no animator (no runtime) is the engine's report, not this one.
+        val activity = CYLPlaceholderResourceMonitor.activityOf(context)
+        if (isMissingFile(path)) CYLPlaceholderResourceMonitor.report(activity, path, "file not found")
         animationURL = engineURL(path)
         if (!isAnimationReady) return false
+        CYLPlaceholderResourceMonitor.clear(activity, path)
         frames?.stop()
         frames = null
         wantsToPlay = false
@@ -807,6 +824,20 @@ class CYLPlaceholderView @JvmOverloads constructor(
         itemAttributes = itemAttributes + ("CYLPlaceholderItemAnimationFilePath" to path)
         if (autoPlaysAnimation && isAttachedToWindow) playPlaceholderAnimation()
         return true
+    }
+
+    // Whether an "asset:" name or an absolute / file: path does not exist; other strings (a URL, an app's own name for its
+    // factory) are not checked.
+    private fun isMissingFile(path: String): Boolean {
+        val bare = path.substringBefore('#').substringBefore('?')
+        val asset = when {
+            bare.startsWith("asset:") -> bare.removePrefix("asset:").trimStart('/')
+            bare.startsWith("file:///android_asset/") -> bare.removePrefix("file:///android_asset/")
+            else -> null
+        }
+        if (asset != null) return try { context.assets.open(asset).close(); false } catch (_: java.io.IOException) { true }
+        val file = bare.removePrefix("file://")
+        return (bare.startsWith("file:") || bare.startsWith("/")) && !java.io.File(file.removePrefix("file:")).exists()
     }
 
     // The engine reads options after '#'; this view's earlier Android API put them after '?' for local files.

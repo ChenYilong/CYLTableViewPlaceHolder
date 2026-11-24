@@ -291,4 +291,5 @@
     <string name="o2_hint_refresh">표를 새로 고치고 2페이지로 돌아갑니다.</string>
     <string name="o2_hint_last_page">마지막 페이지로 스크롤합니다.</string>
     <string name="o2_format_page">페이지 %1$d</string>
+    <string name="merged_status_missing_resource">리소스 누락</string>
 </resources>

@@ -109,4 +109,6 @@
     <string name="cyl_placeholder_scenario_notification_permission_denied_title">Уведомления выключены</string>
     <string name="cyl_placeholder_scenario_notification_permission_denied_hint">Чтобы вовремя получать сообщения, включите уведомления в настройках.</string>
     <string name="cyl_placeholder_status_network_unavailable">Сеть недоступна. Проверьте подключение</string>
+    <string name="cyl_placeholder_resource_missing">Отсутствует ресурс: %1$s (%2$s)</string>
+    <string name="cyl_placeholder_resources_missing">Missing resources: %1$s +%2$d more</string>
 </resources>

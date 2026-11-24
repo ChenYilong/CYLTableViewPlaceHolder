@@ -291,4 +291,5 @@
     <string name="o2_hint_refresh">刷新列表并回到第 2 页。</string>
     <string name="o2_hint_last_page">滚动到最后一页。</string>
     <string name="o2_format_page">第 %1$d 页</string>
+    <string name="merged_status_missing_resource">缺失资源</string>
 </resources>

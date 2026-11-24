@@ -109,4 +109,6 @@
     <string name="cyl_placeholder_scenario_notification_permission_denied_title">通知がオフです</string>
     <string name="cyl_placeholder_scenario_notification_permission_denied_hint">メッセージをすぐに受け取るには、設定で通知をオンにしてください。</string>
     <string name="cyl_placeholder_status_network_unavailable">ネットワークに接続できません。ネットワーク設定を確認してください</string>
+    <string name="cyl_placeholder_resource_missing">リソースが見つかりません：%1$s（%2$s）</string>
+    <string name="cyl_placeholder_resources_missing">Missing resources: %1$s +%2$d more</string>
 </resources>

@@ -390,6 +390,8 @@ var Activity.cyl_showsStatusViewWhenOffline: Boolean
             if (!isFinishing && status().showsWhenOffline) {
                 val offline = networkStatus == CYLPlaceholderNetworkStatus.NotReachable
                 cyl_setStatusDisplay(if (offline) cyl_statusDisplay or CYLPlaceholderStatusDisplay.StatusBar else cyl_statusDisplay and CYLPlaceholderStatusDisplay.StatusBar.inv(), true)
+                // [EN] The network text wins while offline; missing resources show again once the network is back.
+                CYLPlaceholderResourceMonitor.refresh(this)
             }
         }
         monitor.startMonitoring()

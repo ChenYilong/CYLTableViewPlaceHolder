@@ -109,4 +109,6 @@
     <string name="cyl_placeholder_scenario_notification_permission_denied_title">Сповіщення вимкнено</string>
     <string name="cyl_placeholder_scenario_notification_permission_denied_hint">Щоб вчасно отримувати повідомлення, увімкніть сповіщення в налаштуваннях.</string>
     <string name="cyl_placeholder_status_network_unavailable">Мережа недоступна. Перевірте підключення</string>
+    <string name="cyl_placeholder_resource_missing">Відсутній ресурс: %1$s (%2$s)</string>
+    <string name="cyl_placeholder_resources_missing">Missing resources: %1$s +%2$d more</string>
 </resources>
