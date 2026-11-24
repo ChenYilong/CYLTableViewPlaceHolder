@@ -48,6 +48,9 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderBridge.swift',
    # The Flutter-free core of the Flutter iOS refresh view (its plugin file imports nothing without Flutter).
    'CrossPlatform/flutter_cylplaceholder/ios/Classes/CYLRefreshDrivenHost.swift',
+   # The React Native refresh container: an Objective-C view with no React import (its event block type is spelled out), so
+   # it is compiled here and Tests/CYLRefreshContainerViewTests.swift reaches it through the bridging header.
+   'CrossPlatform/react-native-cylplaceholder/ios/CYLRefreshContainerView.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.swift',
@@ -60,7 +63,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   end
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\" \"#{root}/CrossPlatform/react-native-cylplaceholder/ios\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
     # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy cyl_reloadData category,
@@ -74,7 +77,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] = File.join(dir, 'PlaceholderTests-Bridging-Header.h')
     config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE'
   end
-  File.write(File.join(dir, 'PlaceholderTests-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n")
+  File.write(File.join(dir, 'PlaceholderTests-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n#import \"CYLRefreshContainerView.h\"\n")
   # The CYLRefresh root (configuration, categories) is Swift since 2026-11-19 (docs/Swift-Migration.md, step 6), and so
   # are CYLRefreshIconView, CYLRefreshPaging and the drawn styles' support classes (step 7); the Rive header in
   # Custom/Rive/ needs RiveRuntime and is left out, as in the podspec's Core.
