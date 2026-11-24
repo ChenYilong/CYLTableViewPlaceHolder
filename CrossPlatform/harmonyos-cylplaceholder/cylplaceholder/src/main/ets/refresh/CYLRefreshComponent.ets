@@ -2420,6 +2420,17 @@ export class CYLRefreshAutoFooterModel extends CYLRefreshFooterModel {
 export class CYLRefreshBackFooterModel extends CYLRefreshFooterModel {
   /** Seconds "no more data" stays visible, held open, after a load ending with it (`noMoreDataDisplayDuration`). */
   noMoreDataDisplayDuration: number = 0;
+  /**
+   * Keeps the footer shown after the content while there is no more data, until the state changes
+   * (`followsContentWhenNoMoreData`, default false).
+   */
+  followsContentWhenNoMoreData: boolean = false;
+  /**
+   * After loading more, leaves the new rows in the place the footer showed; false keeps the old end of the content in
+   * place (`scrollsContentAfterLoading`, default true).
+   */
+  scrollsContentAfterLoading: boolean = true;
+  private pagingRestingOffset: number = 0;
   protected floor: CYLRefreshSecondaryFloor = new CYLRefreshSecondaryFloor();
   private lastBottomDelta: number = 0;
   private holdingNoMoreData: boolean = false;
@@ -2704,14 +2715,25 @@ export class CYLRefreshBackFooterModel extends CYLRefreshFooterModel {
     }
     if (state === CYLRefreshState.NoMoreData || state === CYLRefreshState.Idle) {
       if (oldState === CYLRefreshState.Refreshing) {
-        if (state === CYLRefreshState.NoMoreData && this.noMoreDataDisplayDuration > 0) {
+        if (state === CYLRefreshState.NoMoreData && this.followsContentWhenNoMoreData) {
+          // Held until the state changes (cyl_endNoMoreDataHold).
+          this.holdingNoMoreData = true;
+          this.holdGeneration++;
+        } else if (state === CYLRefreshState.NoMoreData && this.noMoreDataDisplayDuration > 0) {
           this.cyl_holdNoMoreDataForDuration(this.noMoreDataDisplayDuration);
         } else {
           this.cyl_restoreBottomInsetAfterRefresh();
         }
       }
+      if (oldState === CYLRefreshState.Refreshing && this.heightForContentBreakView() > 0 &&
+        scrollView.cyl_totalDataCount() !== this.lastRefreshCount &&
+        !this.scrollsContentAfterLoading && scrollView.cyl_offsetY > this.pagingRestingOffset) {
+        // The old end of the content stays at the bottom.
+        scrollView.cyl_offsetY = this.pagingRestingOffset;
+      }
     } else if (state === CYLRefreshState.Refreshing) {
       this.lastRefreshCount = scrollView.cyl_totalDataCount();
+      this.pagingRestingOffset = this.cyl_happenOffsetY();
       scrollView.animator(this.fastAnimationDuration, () => {
         let bottom = this.cyl_h + this.cyl_originalInset.bottom;
         const deltaH = this.heightForContentBreakView();

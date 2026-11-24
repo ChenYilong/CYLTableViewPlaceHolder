@@ -150,6 +150,53 @@ export default function refreshCoreTest() {
       expect(footer.state).assertEqual(CYLRefreshState.Idle);
     });
 
+    it('followsContentWhenNoMoreData', 0, () => {
+      const sv = makeScrollView(400);
+      const footer = CYLRefreshBackNormalFooterModel.footerWithRefreshingBlock(() => {
+      });
+      expect(footer.followsContentWhenNoMoreData).assertFalse();
+      footer.followsContentWhenNoMoreData = true;
+      sv.cyl_footer = footer;
+      sv.cyl_panBegan();
+      sv.cyl_panChanged(0, 50, 0);
+      sv.cyl_panEnded(0, 0);
+      expect(footer.state).assertEqual(CYLRefreshState.Refreshing);
+      expect(sv.revealBottom).assertEqual(44);
+      footer.endRefreshingWithNoMoreData();
+      expect(footer.noMoreData).assertTrue();
+      // Held after the content until the state changes (without the flag it is 0 here).
+      expect(sv.revealBottom).assertEqual(44);
+      footer.resetNoMoreData();
+      expect(footer.state).assertEqual(CYLRefreshState.Idle);
+      expect(sv.revealBottom).assertEqual(0);
+    });
+
+    it('scrollsContentAfterLoading', 0, () => {
+      const offsets: number[] = [];
+      for (const scrolls of [true, false]) {
+        const sv = makeScrollView(400);
+        let rows = 10;
+        sv.dataCountProvider = () => rows;
+        const footer = CYLRefreshBackNormalFooterModel.footerWithRefreshingBlock(() => {
+        });
+        expect(footer.scrollsContentAfterLoading).assertTrue();
+        footer.scrollsContentAfterLoading = scrolls;
+        sv.cyl_footer = footer;
+        sv.cyl_panBegan();
+        sv.cyl_panChanged(0, 50, 0);
+        sv.cyl_panEnded(0, 0);
+        expect(footer.state).assertEqual(CYLRefreshState.Refreshing);
+        // New rows arrive and the content grows, the offset moved on by 50.
+        rows = 20;
+        sv.cyl_reportScroll(0, 450, 400, 600, 400, 1400);
+        footer.endRefreshing();
+        offsets.push(sv.cyl_offsetY);
+      }
+      expect(offsets[0]).assertEqual(450);
+      // NO keeps the old end of the content (the offset the footer began to show at) in place.
+      expect(offsets[1]).assertEqual(400);
+    });
+
     it('countsAutoFooterTriggers', 0, () => {
       const sv = makeScrollView(0);
       let loads = 0;
