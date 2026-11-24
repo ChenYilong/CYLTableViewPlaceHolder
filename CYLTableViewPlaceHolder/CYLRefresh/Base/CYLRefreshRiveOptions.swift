@@ -179,6 +179,16 @@ enum CYLRefreshRiveDrawnTable {
         return last[1]
     }
 
+    // [EN] The part of a header of `headerHeight` that the file does not draw at `fraction` (0...1, clamped): the Rive view moves down by it, so the drawn art
+    //      (`headerHeight x fraction`) touches the bottom edge of the header. 0 at fraction 1 and for a non-finite or negative height.
+    // [CN] 高度为 `headerHeight` 的刷新头中文件在 `fraction`（0...1，已限制范围）下没有画出的部分：Rive 视图下移该值，使画出的内容
+    //      （`headerHeight x fraction`）贴着刷新头底边。fraction 为 1 时为 0；高度非有限或为负时也为 0。
+    static func slack(headerHeight: CGFloat, fraction: Double) -> CGFloat {
+        guard headerHeight.isFinite, headerHeight > 0 else { return 0 }
+        let drawn = fraction.isFinite ? min(max(fraction, 0), 1) : 1
+        return headerHeight * CGFloat(1 - drawn)
+    }
+
     // [EN] The valid pairs of `value` sorted by input, and a reason when something was dropped or the whole value is ignored.
     // [CN] `value` 中有效的数对（按输入排序），以及有内容被丢弃或整个值被忽略时的原因。
     static func parse(_ value: Any?) -> (pairs: [[Double]], reason: String?) {

@@ -85,4 +85,26 @@ final class CYLRefreshRiveDrawnTableTests: XCTestCase {
         XCTAssertEqual(plain?.drawnTable.pairs.count, 0)
         XCTAssertNil(plain?.drawnTable.reason)
     }
+
+    func testSlackIsTheUndrawnPartOfTheHeader() {
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 200, fraction: 1), 0, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 200, fraction: 0.25), 150, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 80, fraction: 0), 80, accuracy: 0.0001)
+    }
+
+    func testSlackClampsAndIgnoresBadInput() {
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 100, fraction: 2), 0, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 100, fraction: -1), 100, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: 100, fraction: .nan), 0, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: -5, fraction: 0.5), 0, accuracy: 0.0001)
+        XCTAssertEqual(CYLRefreshRiveDrawnTable.slack(headerHeight: .infinity, fraction: 0.5), 0, accuracy: 0.0001)
+    }
+
+    func testSlackIsContinuousWhereTheFractionReachesOne() {
+        let table: [[Double]] = [[30, 0], [50, 1]]
+        let below = CYLRefreshRiveDrawnTable.slack(headerHeight: 180, fraction: CYLRefreshRiveDrawnTable.fraction(forInput: 49.9, table: table))
+        let at = CYLRefreshRiveDrawnTable.slack(headerHeight: 180, fraction: CYLRefreshRiveDrawnTable.fraction(forInput: 50, table: table))
+        XCTAssertEqual(at, 0, accuracy: 0.0001)
+        XCTAssertLessThan(below, 1)
+    }
 }
