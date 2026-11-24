@@ -39,6 +39,7 @@ dependencies {
     add("api", "io.github.chenyilong:cyltableviewplaceholder-refresh:${findProperty("cylPlaceholderVersion") ?: "0.1.0"}")
     // The host app provides React Native.
     add("compileOnly", "com.facebook.react:react-android:${findProperty("reactNativeVersion") ?: "0.76.9"}")
+    add("testImplementation", "com.facebook.react:react-android:${findProperty("reactNativeVersion") ?: "0.76.9"}")
     add("testImplementation", "androidx.core:core:1.13.1")
     add("testImplementation", "androidx.appcompat:appcompat:1.6.1")
     add("testImplementation", "androidx.recyclerview:recyclerview:1.3.2")

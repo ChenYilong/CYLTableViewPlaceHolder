@@ -48,7 +48,35 @@ It returns null without the native half (`isCYLRefreshContainerAvailable()`); us
 by `test/refresh_paging_container.test.ts` (`node --test`); the component is only type-checked (`tsc` not run here) and was not
 run on a device.
 
+## CYLPlaceholderStack and CYLPlaceholderHUD on the Android native components
+
+`CYLPlaceholderStack` is the Android `CYLPlaceholderStackView` as a view, `CYLPlaceholderHUD` drives the Android
+`CYLPlaceholderHUD` over the current activity's content view (both through the core's `CYLPlaceholderBridge` /
+`CYLPlaceholderHUDBridge`, registered by `CYLPlaceholderPackage`). The components are the configuration dictionary of
+`docs/Placeholder-Scenarios.md`; the `CYLPlaceholderComponent` builders (`icon`, `hint`, `button`, `separator`) make it. iOS is
+not done (TODO). Without the native half the stack renders null and the HUD does nothing
+(`isCYLPlaceholderStackAvailable()`, `isCYLPlaceholderHUDAvailable()`).
+
+```tsx
+const hud = new CYLPlaceholderHUD();
+hud.showProgress(0.5, 'Uploading'); hud.showSuccessWithStatus('Saved'); hud.dismissWithDelay(1);
+<CYLPlaceholderStack
+  components={[CYLPlaceholderComponent.icon({ style: 'cloudOff', title: 'Failed', animationLoops: true }), CYLPlaceholderComponent.button('Retry', 'retry')]}
+  restartToken={token} // grows: every animation plays again; ref.restartAnimation() does the same
+  onAction={(action) => { /* 'retry' */ }}
+/>
+```
+
+| Native | Names |
+|:---|:---|
+| `CYLPlaceholderStack` props | `components`, `scenario`, `backgroundAction`, `restartToken`, event `onAction(action)`, command `restartAnimation` |
+| `CYLPlaceholderHUD` methods | `show`, `showWithStatus`, `showProgress`, `setStatus`, `showInfoWithStatus`, `showSuccessWithStatus`, `showErrorWithStatus`, `showComponents` (a component's `action` is a function), `popActivity`, `dismiss`, `dismissWithCompletion`, `dismissWithDelay`, `dispose` |
+
+`CYLPlaceholderHUD` keeps no state of its own (no `visible`, `state`, `style`, `maskType` of the Dart class: the native HUD's
+defaults apply; the Dart-only look fields are a TODO). Tests: 9 Robolectric tests in
+`android/src/test/.../CYLPlaceholderStackAndHUDTest.kt`, 4 `node --test` tests in `test/placeholder_hud.test.ts`.
+
 ## Not covered (TODO)
 
-The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog, HUD and status views are not in
+The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog and status views are not in
 this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half is not built or run (written statically). MIT, see `LICENSE`.

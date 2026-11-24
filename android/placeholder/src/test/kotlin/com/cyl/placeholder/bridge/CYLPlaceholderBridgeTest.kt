@@ -117,4 +117,12 @@ class CYLPlaceholderBridgeTest {
         idle(300)
         assertEquals(CYLPlaceholderHUDState.Custom, bridge.hud.state)
     }
+
+    @Test
+    fun aCatalogActionNameComesBackAsTheNameThatWasGiven() {
+        val actions = ArrayList<String>()
+        val stack = CYLPlaceholderBridge.stackView(activity, mapOf("components" to listOf(mapOf("type" to "button", "title" to "Retry", "action" to "retry")))) { actions += it }
+        stack!!.button!!.performClick()
+        assertEquals(listOf("retry"), actions)
+    }
 }

@@ -6,11 +6,13 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 
 /**
- * Registers [CYLRefreshContainerManager]; add it to the host app's `getPackages()` (autolinking does it).
+ * Registers [CYLRefreshContainerManager], [CYLPlaceholderStackManager] and [CYLPlaceholderHUDModule]; add it to the host app's
+ * `getPackages()` (autolinking does it).
  */
 class CYLPlaceholderPackage : ReactPackage {
-    override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> = emptyList()
+    override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
+        listOf(CYLPlaceholderHUDModule(reactContext))
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
-        listOf(CYLRefreshContainerManager())
+        listOf(CYLRefreshContainerManager(), CYLPlaceholderStackManager())
 }
