@@ -147,6 +147,20 @@ final class CYLPlaceholderBridgeTests: XCTestCase {
         XCTAssertEqual(received, ["component-2"])
     }
 
+    func testACatalogActionNameComesBackAsGiven() throws {
+        // "retry" and "contactSupport" are catalog names: the component holds the catalog constant, and the handler must be keyed by it.
+        var received: [String] = []
+        let configuration: [String: Any] = ["components": [
+            ["type": "button", "title": "Retry", "action": "retry"],
+            ["type": "button", "title": "Support", "action": "contactSupport"],
+        ], "backgroundAction": "done"]
+        let stack = try XCTUnwrap(CYLPlaceholderBridge.stackView(configuration: configuration) { received.append($0) })
+        XCTAssertTrue(try XCTUnwrap(stack.componentViews.first).performTap())
+        XCTAssertTrue(try XCTUnwrap(stack.componentViews.last).performTap())
+        XCTAssertTrue(stack.performAction(.done))
+        XCTAssertEqual(received, ["retry", "contactSupport", "done"])
+    }
+
     func testTheBackgroundActionComesBackByName() throws {
         var received: [String] = []
         var configuration: [String: Any] = ["components": components()]
