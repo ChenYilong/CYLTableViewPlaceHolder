@@ -2,18 +2,23 @@ import React, {useEffect, useState} from 'react';
 import {BackHandler, Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {isCYLRefreshContainerAvailable} from 'react-native-cylplaceholder';
 import ErrorPlaceholderPage from './pages/ErrorPlaceholderPage';
+import HUDPage from './pages/HUDPage';
 import PagingPage from './pages/PagingPage';
+import PlaceholderStackPage from './pages/PlaceholderStackPage';
 import RefreshPage from './pages/RefreshPage';
 
 /**
- * [EN] The demo menu: the pages of the Flutter example (`refresh_page`, `paging_page`, `error_placeholder_page`) that this
- *      package's native container can show on Android. The styles, second floor and stack pages are not here (see README).
- * [CN] 示例菜单：Flutter 示例中此包的原生容器在 Android 上能展示的页面。样式页、二楼页和 stack 页不在这里（见 README）。
+ * [EN] The demo menu: the pages of the Flutter example (`refresh_page`, `paging_page`, `error_placeholder_page`,
+ *      `placeholder_stack_page`) that this package's native components can show on Android, and a HUD page. The styles and
+ *      second floor pages are not here (see README).
+ * [CN] 示例菜单：Flutter 示例中此包的原生组件在 Android 上能展示的页面，以及 HUD 页。样式页和二楼页不在这里（见 README）。
  */
 const PAGES = [
   {key: 'refresh', title: 'Refresh (refresh_page)', Page: RefreshPage},
   {key: 'paging', title: 'Paging (paging_page)', Page: PagingPage},
   {key: 'error', title: 'Error placeholder (error_placeholder_page)', Page: ErrorPlaceholderPage},
+  {key: 'stack', title: 'Placeholder stack (placeholder_stack_page)', Page: PlaceholderStackPage},
+  {key: 'hud', title: 'HUD', Page: HUDPage},
 ];
 
 export default function App() {
