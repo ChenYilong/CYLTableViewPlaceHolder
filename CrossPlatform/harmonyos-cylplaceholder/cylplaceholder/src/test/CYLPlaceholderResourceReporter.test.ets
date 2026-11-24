@@ -25,6 +25,21 @@ export default function placeholderResourceReporterTest() {
       expect(CYLPlaceholderResourceReporter.shortName('')).assertEqual('');
     });
 
+    it('theGuardTurnsTheLogicOffInAReleaseBuild', 0, () => {
+      const reporter = new CYLPlaceholderResourceReporter();
+      const source = new Source('v');
+      const was = CYLPlaceholderResourceReporter.enabled;
+      // The guard is BuildProfile.DEBUG, so the host tests (a debug build) run with the logic on.
+      expect(was).assertTrue();
+      CYLPlaceholderResourceReporter.enabled = false;
+      expect(reporter.report('x.pag', 'file not found', source)).assertFalse();
+      expect(reporter.text === null).assertTrue();
+      expect(reporter.missingResourceNames.length).assertEqual(0);
+      CYLPlaceholderResourceReporter.enabled = true;
+      expect(reporter.report('x.pag', 'file not found', source)).assertTrue();
+      CYLPlaceholderResourceReporter.enabled = was;
+    });
+
     it('formatFillsJavaStylePlaceholders', 0, () => {
       expect(CYLPlaceholderResourceReporter.format('Missing resource: %1$s (%2$s)', ['a.pag', 'file not found']))
         .assertEqual('Missing resource: a.pag (file not found)');

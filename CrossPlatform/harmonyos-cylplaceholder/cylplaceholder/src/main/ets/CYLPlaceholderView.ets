@@ -390,7 +390,7 @@ export class CYLPlaceholderViewModel {
     const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(name);
     const path = bundled !== null ? bundled : name;
     const side = Math.max(1, this.imageSide);
-    if (!CYLPlaceholderAnimationFileExists(path)) {
+    if (CYLPlaceholderResourceReporter.enabled && !CYLPlaceholderAnimationFileExists(path)) {
       // The red status bar names it (CYLPlaceholderStatusController.cyl_showsMissingResources); the player is still tried.
       CYLPlaceholderResourceReporter.sharedReporter.report(name, 'file not found', this);
     }
@@ -425,7 +425,7 @@ export class CYLPlaceholderViewModel {
       if (this.animationPlayer === made) {
         this.animationReady = true;
         // An animator can be ready for a file that is not there: clear the report only for a file that exists.
-        if (CYLPlaceholderAnimationFileExists(path)) {
+        if (CYLPlaceholderResourceReporter.enabled && CYLPlaceholderAnimationFileExists(path)) {
           CYLPlaceholderResourceReporter.sharedReporter.resolve(name, this);
         }
         this.cyl_runAnimationCommand();

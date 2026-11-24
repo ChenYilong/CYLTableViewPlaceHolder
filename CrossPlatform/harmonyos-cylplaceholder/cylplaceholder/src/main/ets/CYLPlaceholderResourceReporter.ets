@@ -11,6 +11,10 @@
 //     a page has one bar however many files are missing (localized keys `resource_missing` / `resources_missing`);
 //   - a resource that loads later, or a source (a view) that goes away, clears its reports.
 // CYLPlaceholderStatusController.cyl_showsMissingResources shows the text in the bar, the network text first.
+//
+// A development aid: the guard `CYLPlaceholderResourceReporter.enabled` is `BuildProfile.DEBUG`, fixed when the app is
+// built, so a release build neither reports nor checks files for it (iOS `#if DEBUG`, Android `BuildConfig.DEBUG`).
+import BuildProfile from '../../../BuildProfile';
 import { CYLPlaceholderLocalization } from './CYLPlaceholderLocalization';
 
 /** Runs, in the main thread, for a resource that is reported for the first time (iOS `onResourceMissing`). */
@@ -35,6 +39,12 @@ export class CYLPlaceholderResourceReporter {
   private static sharedValue: CYLPlaceholderResourceReporter | null = null;
   private missing: CYLPlaceholderMissingResource[] = [];
   private observers: CYLPlaceholderResourceObserver[] = [];
+
+  /**
+   * Whether the red bar's logic runs: `BuildProfile.DEBUG`, decided at build time (false in a release build, where
+   * report() does nothing and the core skips its file checks). Tests set it to check both states.
+   */
+  static enabled: boolean = BuildProfile.DEBUG;
 
   /** Told about every resource reported for the first time; null for none. */
   onResourceMissing: CYLPlaceholderResourceMissingHandler | null = null;
@@ -85,6 +95,9 @@ export class CYLPlaceholderResourceReporter {
    * counted once, whoever reports it (a second report only adds its source).
    */
   report(resource: string, reason: string, source: Object): boolean {
+    if (!CYLPlaceholderResourceReporter.enabled) {
+      return false;
+    }
     const name = CYLPlaceholderResourceReporter.shortName(resource);
     if (name.length === 0) {
       return false;
