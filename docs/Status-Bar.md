@@ -100,19 +100,19 @@ try cyl_applyStatusConfiguration(contentsOf: url)
 
 | 中文 | English |
 | --- | --- |
-| 动画资源（.pag / .riv / Lottie 路径）缺失时，红条显示缺了哪一个。各平台共用的约定：本地化键 `CYLPlaceholderResourceMissing`，回调名 `onResourceMissing(resource, reason)`；`resource` 是调用方给出的名称或路径，`reason` 是简短的英文原因（`file not found`、`unreadable`、`no runtime`，不翻译）；同一资源只显示一次；页面消失或该资源之后加载成功时清除。 | When an animation resource (a .pag / .riv / Lottie path) is missing, the red bar names which one. The contract shared by every platform: localization key `CYLPlaceholderResourceMissing`, callback `onResourceMissing(resource, reason)`; `resource` is the name or path as the caller gave it, `reason` a short English word (`file not found`, `unreadable`, `no runtime`; not translated); a resource shows once; the entry is cleared when the page goes away or the resource later loads. |
+| 动画资源（.pag / .riv / Lottie 路径）缺失时，红条显示缺了哪一个。各平台共用的约定：回调名 `onResourceMissing(resource, reason)`；`resource` 缩短为路径的最后一段（`asset:Folder/home.pag` 显示为 `home.pag`），使核心与引擎的报告合并为一条；`reason` 是简短的英文原因（不翻译）：`file not found`、`unreadable`。`no runtime` 属于引擎：没有运行时而退回静态图片是预期行为，核心不为它显示红条。每个页面一条红条：一个资源用 `CYLPlaceholderResourceMissing`，多个资源用 `CYLPlaceholderResourcesMissing`（第一个资源加“另有 N 项”）。同一资源只报告一次；页面消失或该资源之后加载成功时清除。网络离线时，离线文字优先；网络恢复后红条显示资源文字。 | When an animation resource (a .pag / .riv / Lottie path) is missing, the red bar names which one. The contract shared by every platform: callback `onResourceMissing(resource, reason)`; `resource` is shortened to the last path segment (`asset:Folder/home.pag` shows as `home.pag`) so the core and the engine dedupe to one entry; `reason` is a short English word (not translated): `file not found`, `unreadable`. `no runtime` belongs to the engine: falling back to a static image without the runtime is intended, so the core shows no bar for it. One bar per page: one resource reads with `CYLPlaceholderResourceMissing`, several with `CYLPlaceholderResourcesMissing` (the first resource plus "N more"). A resource is reported once; the entry is cleared when the page goes away or the resource later loads. While the network is offline, the offline text wins; the resource text returns with the network. |
 
-Text of `CYLPlaceholderResourceMissing` (the first `%@` is the resource, the second the reason), for the core tables of every platform:
+Texts of the two keys, for the core tables of every platform (`CYLPlaceholderResourceMissing`: first `%@` the resource, second the reason; `CYLPlaceholderResourcesMissing`: `%1$@` the first resource, `%2$ld` the number of the others):
 
-| 语言 / Language | Text |
-| --- | --- |
-| en | `Missing resource: %@ (%@)` |
-| zh-Hans | `缺少资源：%@（%@）` |
-| zh-Hant | `缺少資源：%@（%@）` |
-| ja | `リソースが見つかりません：%@（%@）` |
-| ko | `리소스 누락: %@ (%@)` |
-| ru | `Отсутствует ресурс: %@ (%@)` |
-| uk | `Відсутній ресурс: %@ (%@)` |
+| 语言 / Language | `CYLPlaceholderResourceMissing` | `CYLPlaceholderResourcesMissing` |
+| --- | --- | --- |
+| en | `Missing resource: %@ (%@)` | `Missing resources: %1$@ +%2$ld more` |
+| zh-Hans | `缺少资源：%@（%@）` | `缺少资源：%1$@，另有 %2$ld 项` |
+| zh-Hant | `缺少資源：%@（%@）` | `缺少資源：%1$@，另有 %2$ld 項` |
+| ja | `リソースが見つかりません：%@（%@）` | `リソースが見つかりません：%1$@ ほか%2$ld件` |
+| ko | `리소스 누락: %@ (%@)` | `리소스 누락: %1$@ 외 %2$ld개` |
+| ru | `Отсутствует ресурс: %@ (%@)` | `Отсутствуют ресурсы: %1$@ и ещё %2$ld` |
+| uk | `Відсутній ресурс: %@ (%@)` | `Відсутні ресурси: %1$@ та ще %2$ld` |
 
 ## 演示 / Demo
 
