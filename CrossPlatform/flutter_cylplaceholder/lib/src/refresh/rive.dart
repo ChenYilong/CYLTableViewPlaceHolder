@@ -30,6 +30,7 @@ class CYLRefreshRiveStyle {
     this.releaseTrigger,
     this.finishTrigger,
     this.restartTrigger,
+    this.finishTimeout = 1.5,
     this.loadingBoolean,
     this.loadingNumber,
     this.loadingNumberMaximum = 99,
@@ -82,6 +83,11 @@ class CYLRefreshRiveStyle {
 
   /// The trigger fired to start over (kept as data).
   String? restartTrigger;
+
+  /// The finish rule (docs/Refresh-Library-Parity.md): the longest the header stays at its refreshing height after the refresh ends, so the end of
+  /// the animation ([finishTrigger] or the [loadingNumber] finished value) plays; also the default `finishDuration` of the Rive headers and footers,
+  /// because Dart decides when the slot collapses.
+  double finishTimeout;
 
   /// The boolean set while loading; passed as the `input` option.
   String? loadingBoolean;
@@ -140,6 +146,7 @@ class CYLRefreshRiveStyle {
         'riveReleaseTrigger': ?releaseTrigger,
         'riveFinishTrigger': ?finishTrigger,
         'riveRestartTrigger': ?restartTrigger,
+        if (finishTimeout != 1.5) 'riveFinishTimeout': finishTimeout,
         'riveLoadingBoolean': ?loadingBoolean,
         if (loadingNumber != null) ...{
           'riveLoadingNumber': loadingNumber,
@@ -229,11 +236,17 @@ class _CYLRefreshRiveIndicatorState extends State<CYLRefreshRiveIndicator> {
   }
 }
 
+/// The default `finishDuration` of a Rive header or footer: the style's [CYLRefreshRiveStyle.finishTimeout] (1.5 s), not the component's 600 ms, so the
+/// end of the animation plays before Dart collapses the slot. A style with no [CYLRefreshRiveStyle.finishTrigger] and no
+/// [CYLRefreshRiveStyle.loadingNumber] has no end part: the component's own default stays.
+Duration _riveFinishDuration(CYLRefreshRiveStyle style) =>
+    style.finishTrigger != null || style.loadingNumber != null ? Duration(milliseconds: (style.finishTimeout * 1000).round()) : const Duration(milliseconds: 600);
+
 /// A header drawn by a Rive file (`CYLRefreshRiveHeader`).
 class CYLRefreshRiveHeader extends CYLRefreshHeader {
   /// Creates a header for [style]; its [CYLRefreshRiveStyle.triggerOffset] is the expand height.
-  CYLRefreshRiveHeader({required this.style, super.refreshingHandler, super.finishDuration, super.scrollMode, super.triggersWhenReached})
-      : super(expandHeight: style.triggerOffset);
+  CYLRefreshRiveHeader({required this.style, super.refreshingHandler, Duration? finishDuration, super.scrollMode, super.triggersWhenReached})
+      : super(expandHeight: style.triggerOffset, finishDuration: finishDuration ?? _riveFinishDuration(style));
 
   /// The Rive file and its inputs.
   final CYLRefreshRiveStyle style;
@@ -245,8 +258,8 @@ class CYLRefreshRiveHeader extends CYLRefreshHeader {
 /// A footer drawn by a Rive file (`CYLRefreshDrawnFooter`).
 class CYLRefreshDrawnFooter extends CYLRefreshBackFooter {
   /// Creates a footer for [style]; its [CYLRefreshRiveStyle.triggerOffset] is the expand height.
-  CYLRefreshDrawnFooter({required this.style, super.refreshingHandler, super.finishDuration, super.scrollMode, super.loadsAfterNoMoreData})
-      : super(expandHeight: style.triggerOffset);
+  CYLRefreshDrawnFooter({required this.style, super.refreshingHandler, Duration? finishDuration, super.scrollMode, super.loadsAfterNoMoreData})
+      : super(expandHeight: style.triggerOffset, finishDuration: finishDuration ?? _riveFinishDuration(style));
 
   /// The Rive file and its inputs.
   final CYLRefreshRiveStyle style;

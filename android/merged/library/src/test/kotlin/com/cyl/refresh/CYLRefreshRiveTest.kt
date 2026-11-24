@@ -38,6 +38,14 @@ class CYLRefreshRiveTest {
     private fun riveLogLines() = ShadowLog.getLogs().filter { it.tag == "CYLRefresh" }.map { it.msg }
 
     @Test
+    fun theFinishTimeoutIsParsedAndKeepsItsDefaultForABadValue() {
+        assertEquals(1.5, CYLRefreshRiveOptions.from(emptyMap<String, Any?>()).finishTimeout, 0.0)
+        assertEquals(2.5, CYLRefreshRiveOptions.from(mapOf("riveFinishTimeout" to 2.5)).finishTimeout, 0.0)
+        assertEquals(1.5, CYLRefreshRiveOptions.from(mapOf("riveFinishTimeout" to 0)).finishTimeout, 0.0)
+        assertEquals(1.5, CYLRefreshRiveOptions.from(mapOf("riveFinishTimeout" to "2")).finishTimeout, 0.0)
+    }
+
+    @Test
     fun theKeysAreParsedWithTheirTypes() {
         val options = CYLRefreshRiveOptions.from(mapOf(
             "riveFile" to "Bow", "riveArtboard" to "Main", "riveStateMachine" to "numberSimulation", "riveTriggerOffset" to 200.0,

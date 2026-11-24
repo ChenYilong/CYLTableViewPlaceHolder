@@ -44,6 +44,7 @@ internal fun CYLRefreshRiveStyle.copyFrom(options: CYLRefreshRiveOptions) {
     releaseTrigger = options.releaseTrigger
     finishTrigger = options.finishTrigger
     restartTrigger = options.restartTrigger
+    finishTimeout = options.finishTimeout
     loadingBoolean = options.loadingBoolean
     loadingNumber = options.loadingNumber
     loadingNumberMaximum = options.loadingNumberMaximum

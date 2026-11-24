@@ -444,6 +444,21 @@ void main() {
       expect(loading.nativeParameters.containsKey('riveLoadingBoolean'), isFalse);
     });
 
+    test('the finish rule: a Rive header or footer holds the style finishTimeout (1.5 s) when the style has an end part, else the component default', () {
+      expect(CYLRefreshRiveNativeHeader(style: bowStyle()).finishDuration, const Duration(milliseconds: 1500));
+      expect(CYLRefreshRiveHeader(style: bowStyle()).finishDuration, const Duration(milliseconds: 1500));
+      expect(CYLRefreshRiveNativeFooter(style: bowStyle()).finishDuration, const Duration(milliseconds: 1500));
+      expect(CYLRefreshDrawnFooter(style: bowStyle()).finishDuration, const Duration(milliseconds: 1500));
+      expect((CYLRefreshRiveStyle(fileURL: 'x.riv')..finishTimeout = 3).finishTimeout, 3);
+      final custom = bowStyle()..finishTimeout = 2.25;
+      expect(CYLRefreshRiveNativeHeader(style: custom).finishDuration, const Duration(milliseconds: 2250));
+      expect(custom.nativeParameters, containsPair('riveFinishTimeout', 2.25));
+      expect(bowStyle().nativeParameters.containsKey('riveFinishTimeout'), isFalse, reason: 'the default 1.5 is the native default: not sent');
+      final noEnd = CYLRefreshRiveStyle(fileURL: 'x.riv')..pullInput = 'pull';
+      expect(CYLRefreshRiveNativeHeader(style: noEnd).finishDuration, const Duration(milliseconds: 600), reason: 'no finish trigger and no loading number: no end part');
+      expect(CYLRefreshRiveNativeHeader(style: bowStyle(), finishDuration: const Duration(milliseconds: 100)).finishDuration, const Duration(milliseconds: 100));
+    });
+
     testWidgets('the native rive header passes style rive and the rive keys in the creation parameters', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshRiveNativeHeader(style: bowStyle());
       addTearDown(header.dispose);
