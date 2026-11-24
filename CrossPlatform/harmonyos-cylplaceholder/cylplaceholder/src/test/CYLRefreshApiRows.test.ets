@@ -218,11 +218,13 @@ export default function refreshApiRowsTest() {
 
     it('laysTheBallPulseBallsOut', 0, () => {
       const radius = CYLRefreshBallPulseRadius(100, 60);
-      expect(radius).assertEqual(52 / 6);
-      expect(CYLRefreshBallPulseCenterX(100, radius, 1)).assertEqual(50);
-      expect(CYLRefreshBallPulseCenterX(100, radius, 1) - CYLRefreshBallPulseCenterX(100, radius, 0))
-        .assertEqual(radius * 2 + 4);
-      expect(CYLRefreshBallPulseCenterX(100, radius, 2) - 50).assertEqual(50 - CYLRefreshBallPulseCenterX(100, radius, 0));
+      // Floats: compared with a tolerance (21.33333333333333 against 21.333333333333332 was seen on the host).
+      expect(Math.abs(radius - 52 / 6) < 1e-9).assertTrue();
+      expect(Math.abs(CYLRefreshBallPulseCenterX(100, radius, 1) - 50) < 1e-9).assertTrue();
+      expect(Math.abs(CYLRefreshBallPulseCenterX(100, radius, 1) - CYLRefreshBallPulseCenterX(100, radius, 0) - (radius * 2 + 4)) < 1e-9)
+        .assertTrue();
+      expect(Math.abs((CYLRefreshBallPulseCenterX(100, radius, 2) - 50) - (50 - CYLRefreshBallPulseCenterX(100, radius, 0))) < 1e-9)
+        .assertTrue();
     });
 
     it('pulsesTheBallsInTurn', 0, () => {
