@@ -38,7 +38,7 @@ class CYLRefreshDrivenSlotTest {
             assertTrue("${style.key}: the footer supports no more data", view.setNoMoreData(true))
             assertEquals(style.key, View.VISIBLE, view.noMoreDataLabel.visibility)
             assertEquals(style.key, activity.getString(R.string.srl_footer_nothing), view.noMoreDataLabel.text.toString())
-            assertEquals("${style.key}: the style is hidden", View.INVISIBLE, footer.style.view.visibility)
+            assertEquals("${style.key}: the style is hidden", View.INVISIBLE, footer.style.view.view.visibility)
         }
     }
 
@@ -49,6 +49,6 @@ class CYLRefreshDrivenSlotTest {
         view.setNoMoreData(true)
         assertTrue(view.setNoMoreData(false))
         assertEquals(View.GONE, view.noMoreDataLabel.visibility)
-        assertEquals(View.VISIBLE, footer.style.view.visibility)
+        assertEquals(View.VISIBLE, footer.style.view.view.visibility)
     }
 }

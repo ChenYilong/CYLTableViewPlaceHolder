@@ -1286,7 +1286,7 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
       return;
     }
     const pulled = this.cyl_pulledDistance();
-    const sign = this.cyl_pullsUp() ? 1 : -1;
+    const sign: number = this.cyl_pullsUp() ? 1 : -1;
     if (this.supportsHorizontalDrag && scrollView.isDragging && this.pullingPercent > 0) {
       this.didDragHorizontally(scrollView.panTranslationX, this.pullingPercent);
     }

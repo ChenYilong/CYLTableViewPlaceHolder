@@ -442,7 +442,10 @@ void main() {
         expect(creationParams, containsPair('foregroundColor', 0xFF112233), reason: '${component.runtimeType}');
         expect(creationParams, containsPair('backgroundColor', 0x80445566), reason: '${component.runtimeType}');
       }
-      // The defaults are sent too: the Dart style's own colors are what the native view should draw.
+    });
+
+    // Its own test: a second pump in one testWidgets keeps the first platform view's creation parameters.
+    testWidgets('a drawn style without colors sends the Dart style's own colors', variant: _bothPlatforms, (tester) async {
       final defaults = CYLRefreshTaurusHeader();
       addTearDown(defaults.dispose);
       await pumpHeader(tester, defaults, indicator: (c) => Builder(builder: c.buildIndicator));
