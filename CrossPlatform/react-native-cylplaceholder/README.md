@@ -54,7 +54,7 @@ run on a device.
 `CYLPlaceholderHUD` over the current activity's content view (both through the core's `CYLPlaceholderBridge` /
 `CYLPlaceholderHUDBridge`, registered by `CYLPlaceholderPackage`). The components are the configuration dictionary of
 `docs/Placeholder-Scenarios.md`; the `CYLPlaceholderComponent` builders (`icon`, `hint`, `button`, `separator`) make it. iOS has
-both too (written 2026-11-24, **not built yet**: `ios/CYLPlaceholderStackHostView.swift`, `CYLPlaceholderHUDController.swift`, the
+both too (2026-11-24, built and run on the iOS 27.2 simulator, `docs/Task-Log.md`: `ios/CYLPlaceholderStackHostView.swift`, `CYLPlaceholderHUDController.swift`, the
 React-facing `CYLPlaceholderStackManager.swift` / `CYLPlaceholderHUDModule.swift` and `CYLPlaceholderReactBridge.m`, over the core's
 `CYLPlaceholderBridge` / `CYLPlaceholderHUDBridge`; the HUD covers the topmost view controller of the foreground window). On iOS
 `restartToken` restarts only when it grows (Android: on any change), and an action given by a catalog name (`"retry"`) comes back
@@ -83,4 +83,4 @@ defaults apply; the Dart-only look fields are a TODO). Tests: 9 Robolectric test
 ## Not covered (TODO)
 
 The native placeholder's repeat count N > 1, its Reduce Motion policy, the scenario catalog and status views are not in
-this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half (`ios/`, header, back footer, `example/ios`) builds and runs on the iOS 27.2 simulator with real gestures (docs/Refresh-Library-Parity.md, row 5); the iOS placeholder stack and HUD are written, not built (see above). MIT, see `LICENSE`.
+this package. The Android native container (header, footer) builds and runs in `example/` on an emulator (docs/Refresh-Library-Parity.md); the iOS half (`ios/`, header, back footer, `example/ios`) builds and runs on the iOS 27.2 simulator with real gestures (docs/Refresh-Library-Parity.md, row 5); the iOS placeholder stack and HUD run on the iOS 27.2 simulator (see above). MIT, see `LICENSE`.
