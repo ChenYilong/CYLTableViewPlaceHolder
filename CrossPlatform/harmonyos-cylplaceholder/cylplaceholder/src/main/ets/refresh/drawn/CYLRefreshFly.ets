@@ -57,6 +57,41 @@ class CYLTreeCommand {
   }
 }
 
+/**
+ * The round button under the plane (iOS `CYLRefreshFlyHeader.floatView`): a circle of the header's primary color at
+ * the plane's resting place. Set `hidden`, `alpha` or `color` to change how it is drawn; a null `color` follows
+ * `colorPrimary`.
+ */
+export class CYLRefreshFloatViewModel {
+  /** The fill; null follows the header's `colorPrimary`. */
+  color: string | null = null;
+  /** Whether the button is hidden (UIView hidden). */
+  hidden: boolean = false;
+  /** The opacity, 0..1 (UIView alpha). */
+  alpha: number = 1;
+  /** The diameter in vp. */
+  readonly size: number = FLOAT_VIEW_SIZE;
+
+  /** The center's x: three quarters of the size from the left; its y is the bottom edge of the header's frame. */
+  centerX(): number {
+    return this.size * 3 / 4;
+  }
+
+  /** Draws the circle with its center on the bottom edge of a frame `height` high. */
+  drawInContext(ctx: CanvasRenderingContext2D, height: number, primary: string): void {
+    if (this.hidden || this.alpha <= 0) {
+      return;
+    }
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.centerX(), height, this.size / 2, 0, Math.PI * 2);
+    ctx.fillStyle = this.color !== null ? this.color : primary;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
 /** The mountains and trees behind the plane (iOS `CYLRefreshMountainView`). */
 export class CYLRefreshMountainViewModel {
   private offset: number = 0;
@@ -283,6 +318,8 @@ export class CYLRefreshFlyHeaderModel extends CYLRefreshDrawnHeaderModel {
   mountainView: CYLRefreshMountainViewModel = new CYLRefreshMountainViewModel();
   /** The plane (iOS `flyView`). */
   flyView: CYLRefreshFlyViewModel = new CYLRefreshFlyViewModel();
+  /** The round button under the plane (iOS `floatView`). */
+  floatView: CYLRefreshFloatViewModel = new CYLRefreshFloatViewModel();
   private flight: CYLFlyPath | null = null;
   private flownAway: boolean = false;
   private addedInset: number = 0;
@@ -376,10 +413,7 @@ export class CYLRefreshFlyHeaderModel extends CYLRefreshDrawnHeaderModel {
     }
     this.mountainView.drawInContext(ctx, w, h);
     // The float view: a circle of colorPrimary under the plane's resting place.
-    ctx.beginPath();
-    ctx.arc(FLOAT_VIEW_SIZE * 3 / 4, h, FLOAT_VIEW_SIZE / 2, 0, Math.PI * 2);
-    ctx.fillStyle = this.cyl_primaryColor;
-    ctx.fill();
+    this.floatView.drawInContext(ctx, h, this.cyl_primaryColor);
     ctx.save();
     const flight = this.flight;
     if (flight !== null) {

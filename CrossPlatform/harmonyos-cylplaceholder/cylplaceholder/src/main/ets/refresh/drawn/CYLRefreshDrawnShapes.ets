@@ -28,6 +28,23 @@ function cylFromPoints(points: number[], t: number): number {
   return points[0];
 }
 
+/** The default blur radius of the wave's and the drop's shadow, in vp (iOS `waveShadowRadius`). */
+export const CYLRefreshWaveShadowDefaultRadius: number = 1.5;
+/** The default color of the wave's and the drop's shadow: black at 30% (iOS `waveShadowColor`). */
+export const CYLRefreshWaveShadowDefaultColor: string = 'rgba(0,0,0,0.3)';
+
+/** The canvas shadowBlur for a shadow radius (a CALayer shadowRadius is half the canvas blur). */
+export function CYLRefreshWaveShadowBlur(radius: number): number {
+  return Math.max(0, radius) * 2;
+}
+
+function cylShadowColor(ctx: CanvasRenderingContext2D, blur: number, color: string): void {
+  ctx.shadowColor = color;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 1;
+  ctx.shadowBlur = blur;
+}
+
 function cylCircle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
   ctx.beginPath();
   ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2);
@@ -478,14 +495,28 @@ const NUM_POINTS: number = 5;
 const FULL_ROTATION: number = 1080;
 const SPINNER_DURATION: number = 1.332;
 const MATERIAL_SCHEME: string[] = ['#0099cc', '#ff4444', '#669900', '#aa66cc', '#ff8800'];
+/** The size of the Material spinner (iOS `CYLRefreshMaterialSize`). */
+export enum CYLRefreshMaterialSize {
+  /** A 40 vp circle. */
+  Default = 0,
+  /** A 56 vp circle. */
+  Large = 1
+}
+
+/** The circle's diameter in vp for a Material size (iOS `circleSize`). */
+export function CYLRefreshMaterialCircleSize(size: CYLRefreshMaterialSize): number {
+  return size === CYLRefreshMaterialSize.Large ? 56 : 40;
+}
+
 const MIN_PROGRESS_ARC: number = (kMaxArrowSize / (2 * Math.PI * kMaxArrowRadius)) * Math.PI / 180;
 
 /** The Material progress arc with its arrow head, as the current path (begin / end / rotate in turns). */
 function cylArrowPath(ctx: CanvasRenderingContext2D, ox: number, oy: number, begin: number, end: number,
-  rotate: number, scale: number): void {
-  const size = kMaxArrowSize;
-  const big = kMaxArrowRadius + size / 2;
-  const small = kMaxArrowRadius - size / 2;
+  rotate: number, scale: number, unit: number = 1): void {
+  const size = kMaxArrowSize * unit;
+  const arrowRadius = kMaxArrowRadius * unit;
+  const big = arrowRadius + size / 2;
+  const small = arrowRadius - size / 2;
   const angleEnd = Math.max(begin, end);
   const angleStart = Math.min(begin, end);
   const pct = Math.min(1, Math.max(0, angleEnd - angleStart));
@@ -509,6 +540,8 @@ function cylArrowPath(ctx: CanvasRenderingContext2D, ox: number, oy: number, beg
 
 /** The Material spinner's trims and rotation, shared by Material and WaveSwipe. */
 class CYLMaterialSpinner {
+  /** The colors the arc takes in turn (iOS `colorSchemeColors`). */
+  scheme: string[] = MATERIAL_SCHEME.slice();
   color: number = 0;
   finishing: boolean = false;
   start: number = 0;
@@ -524,7 +557,7 @@ class CYLMaterialSpinner {
   /** onStartAnimationWhenRefreshing: trims the pulled arc first when there is one, then spins. */
   begin(now: number, nextColor: boolean): void {
     if (nextColor) {
-      this.color = (this.color + 1) % MATERIAL_SCHEME.length;
+      this.color = (this.color + 1) % this.scheme.length;
     }
     this.count = 0;
     this.bStart = this.startTrim;
@@ -562,7 +595,7 @@ class CYLMaterialSpinner {
       this.rotation = this.bRot + (target - this.bRot) * t;
       if (t >= 1) {
         if (nextColor) {
-          this.color = (this.color + 1) % MATERIAL_SCHEME.length;
+          this.color = (this.color + 1) % this.scheme.length;
         }
         this.bStart = this.startTrim;
         this.bEnd = this.endTrim;
@@ -576,7 +609,7 @@ class CYLMaterialSpinner {
     let t = (now - this.start) / (SPINNER_DURATION * 1000);
     while (t >= 1) {
       if (nextColor) {
-        this.color = (this.color + 1) % MATERIAL_SCHEME.length;
+        this.color = (this.color + 1) % this.scheme.length;
       }
       this.bStart = this.startTrim;
       this.bEnd = this.endTrim;
@@ -598,7 +631,7 @@ class CYLMaterialSpinner {
   }
 
   colorFor(accent: string): string {
-    return CYLRefreshDrawnColor.isClear(accent) ? MATERIAL_SCHEME[this.color] : accent;
+    return CYLRefreshDrawnColor.isClear(accent) ? this.scheme[this.color % this.scheme.length] : accent;
   }
 }
 
@@ -613,6 +646,43 @@ function cylStrokeArrow(ctx: CanvasRenderingContext2D, color: string): void {
 /** The Material Design swipe-refresh spinner, floating in front of the content (iOS `CYLRefreshMaterialHeader`). */
 export class CYLRefreshMaterialHeaderModel extends CYLRefreshDrawnHeaderModel {
   private spinner: CYLMaterialSpinner = new CYLMaterialSpinner();
+  private storedProgressSize: CYLRefreshMaterialSize = CYLRefreshMaterialSize.Default;
+
+  /**
+   * The spinner's size; changing it sets the header height to twice the circle, default `Default`
+   * (`progressSize`).
+   */
+  get progressSize(): CYLRefreshMaterialSize {
+    return this.storedProgressSize;
+  }
+
+  set progressSize(value: CYLRefreshMaterialSize) {
+    if (value === this.storedProgressSize) {
+      return;
+    }
+    this.storedProgressSize = value;
+    this.height = this.cyl_circleSize() * 2;
+    this.cyl_setNeedsLayout();
+  }
+
+  /**
+   * The colors the arc takes in turn while refreshing; an empty array is ignored (`colorSchemeColors`). Default:
+   * the five Material colors.
+   */
+  get colorSchemeColors(): string[] {
+    return this.spinner.scheme.slice();
+  }
+
+  set colorSchemeColors(value: string[]) {
+    if (value.length > 0) {
+      this.spinner.scheme = value.slice();
+    }
+  }
+
+  /** The circle's diameter for `progressSize` (iOS `circleSize`). */
+  private cyl_circleSize(): number {
+    return CYLRefreshMaterialCircleSize(this.storedProgressSize);
+  }
 
   setUpComponent(): void {
     super.setUpComponent();
@@ -625,7 +695,7 @@ export class CYLRefreshMaterialHeaderModel extends CYLRefreshDrawnHeaderModel {
   }
 
   cyl_overflowHeight(): number {
-    return kCircleSize * 4 + 10;
+    return this.cyl_circleSize() * 4 + 10;
   }
 
   onStartAnimationWhenRefreshing(): void {
@@ -641,7 +711,8 @@ export class CYLRefreshMaterialHeaderModel extends CYLRefreshDrawnHeaderModel {
   }
 
   drawInContext(ctx: CanvasRenderingContext2D): void {
-    const radius = kCircleSize / 2;
+    const circle = this.cyl_circleSize();
+    const radius = circle / 2;
     const s = this.spinner;
     const accent = this.cyl_accentColor;
     let ox = Math.floor(this.width / 2);
@@ -653,9 +724,9 @@ export class CYLRefreshMaterialHeaderModel extends CYLRefreshDrawnHeaderModel {
       scale = s.step(this.cyl_now, CYLRefreshDrawnColor.isClear(accent));
     } else {
       const offset = this.dragOffset;
-      let distance = Math.max(0, (offset - kCircleSize) / 2);
-      distance = kCircleSize * 3 * (1 - Math.pow(8, -distance / (kCircleSize * 6)));
-      p = Math.min(distance / kCircleSize, 1);
+      let distance = Math.max(0, (offset - circle) / 2);
+      distance = circle * 3 * (1 - Math.pow(8, -distance / (circle * 6)));
+      p = Math.min(distance / circle, 1);
       oy = distance === 0 ? offset - radius : radius + distance;
       const extra = Math.abs(offset) - this.expandHeight;
       const sling = Math.max(0, Math.min(extra, this.expandHeight * 2) / this.expandHeight);
@@ -677,7 +748,7 @@ export class CYLRefreshMaterialHeaderModel extends CYLRefreshDrawnHeaderModel {
     ctx.fillStyle = 'rgba(255,255,255,0.2)';
     ctx.fill();
     if (p > 0) {
-      cylArrowPath(ctx, ox, oy, s.startTrim, s.endTrim, s.rotation, scale);
+      cylArrowPath(ctx, ox, oy, s.startTrim, s.endTrim, s.rotation, scale, circle / kCircleSize);
       cylStrokeArrow(ctx, s.colorFor(accent));
     }
   }
@@ -872,6 +943,10 @@ export class CYLRefreshWaveSwipeHeaderModel extends CYLRefreshDrawnHeaderModel {
   private circleFrom: number = 0;
   private dropTarget: number = 0;
   private spinner: CYLMaterialSpinner = new CYLMaterialSpinner();
+  /** The blur radius of the wave's and the drop's shadow in vp, default 1.5 (`waveShadowRadius`). */
+  waveShadowRadius: number = CYLRefreshWaveShadowDefaultRadius;
+  /** The color of the wave's and the drop's shadow, default black at 30% (`waveShadowColor`). */
+  waveShadowColor: string = CYLRefreshWaveShadowDefaultColor;
   private refreshAt: number = 0;
 
   setUpComponent(): void {
@@ -983,7 +1058,7 @@ export class CYLRefreshWaveSwipeHeaderModel extends CYLRefreshDrawnHeaderModel {
       const first = seed * (5 - 2 * seed) / 3.5;
       const segs = this.wavePull(w, first);
       if (segs !== null) {
-        cylShadow(ctx, true, 3, 0.3);
+        cylShadowColor(ctx, CYLRefreshWaveShadowBlur(this.waveShadowRadius), this.waveShadowColor);
         ctx.beginPath();
         ctx.moveTo(0, 0);
         segs.forEach((g: number[]) => ctx.bezierCurveTo(g[0], g[1], g[2], g[3], g[4], g[5]));
@@ -1011,7 +1086,7 @@ export class CYLRefreshWaveSwipeHeaderModel extends CYLRefreshDrawnHeaderModel {
     if (t < WAVE_DURATION) {
       const hh = Math.min(0.1, 0.2) * w * (1 - easeBounce(t / WAVE_DURATION));
       if (hh > 0.008) {
-        cylShadow(ctx, true, 3, 0.3);
+        cylShadowColor(ctx, CYLRefreshWaveShadowBlur(this.waveShadowRadius), this.waveShadowColor);
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.quadraticCurveTo(w * 0.25, 0, w * 0.333, hh * 0.5);
@@ -1031,7 +1106,7 @@ export class CYLRefreshWaveSwipeHeaderModel extends CYLRefreshDrawnHeaderModel {
     const bhStart = DROP_VERTEX + DROP_BOUNCE * 0.25;
     const bh = t > bhStart ? cylDropBounce(Math.min(1, (t - bhStart) / DROP_BOUNCE)) : 0;
     ctx.fillStyle = primary;
-    cylShadow(ctx, true, 3, 0.3);
+    cylShadowColor(ctx, CYLRefreshWaveShadowBlur(this.waveShadowRadius), this.waveShadowColor);
     ctx.beginPath();
     if (vertex > 0) {
       const arcos = Math.acos(R / (R + vertex));

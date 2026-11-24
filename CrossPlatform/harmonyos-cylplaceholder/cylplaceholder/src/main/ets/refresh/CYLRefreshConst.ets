@@ -117,11 +117,32 @@ export function CYLRefreshHeaderHeightFor(mode: CYLRefreshScrollMode, revealTop:
 
 /**
  * The header's top edge in the view: Move rides above the content (revealTop - height - ignored inset); Stretch, Front
- * and Behind are pinned at the visible top (0), Front in front of the content, Behind behind it.
+ * and Behind are pinned at the visible top (0), Front in front of the content, Behind behind it. `insetStart` moves the
+ * control that many vp into the content, except in Stretch, which is exactly the pulled area (iOS `insetStart`).
  */
 export function CYLRefreshHeaderYFor(mode: CYLRefreshScrollMode, revealTop: number, headerHeight: number,
-  ignoredInsetTop: number): number {
-  return mode === CYLRefreshScrollMode.Move ? revealTop - headerHeight - ignoredInsetTop : 0;
+  ignoredInsetTop: number, insetStart: number = 0): number {
+  if (mode === CYLRefreshScrollMode.Move) {
+    return revealTop - headerHeight - ignoredInsetTop + insetStart;
+  }
+  return mode === CYLRefreshScrollMode.Stretch ? 0 : insetStart;
+}
+
+/**
+ * The height of the part of the header that shows. Only `clipsWhenBehind` in Behind mode clips: just the part the
+ * content has revealed, min(revealTop, headerHeight) (iOS `clipsWhenBehind`); every other case shows all of it.
+ */
+export function CYLRefreshHeaderClipHeightFor(mode: CYLRefreshScrollMode, clipsWhenBehind: boolean, revealTop: number,
+  headerHeight: number): number {
+  if (mode !== CYLRefreshScrollMode.Behind || !clipsWhenBehind) {
+    return headerHeight;
+  }
+  return Math.max(0, Math.min(revealTop, headerHeight));
+}
+
+/** The back footer's top edge in the view: the over-scroll's start, `insetStart` vp further into the content. */
+export function CYLRefreshFooterYFor(viewHeight: number, revealBottom: number, insetStart: number = 0): number {
+  return viewHeight - revealBottom - insetStart;
 }
 
 /** Where a pull may start (iOS `CYLRefreshTriggerMode`). */

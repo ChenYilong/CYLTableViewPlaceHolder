@@ -10,6 +10,7 @@ import { CYLPlaceholderView, CYLPlaceholderViewModel } from './CYLPlaceholderVie
 import {
   CYLPlaceholderAction,
   CYLPlaceholderComponent,
+  CYLPlaceholderComponentKind,
   CYLPlaceholderScenario,
   CYLPlaceholderScenarioCatalog
 } from './CYLPlaceholderScenario';
@@ -65,6 +66,37 @@ export class CYLPlaceholderStackViewModel {
   /** The reserved first component: the icon and title. */
   get placeholderView(): CYLPlaceholderViewModel {
     return this.entries[0].view;
+  }
+
+  /**
+   * The first component view with an image (the reserved component's when none has one); the same as Android's
+   * `imageView`. Its `image` is the icon: there is no separate image object on HarmonyOS.
+   */
+  get imageView(): CYLPlaceholderViewModel {
+    const found = this.entries.find((e: CYLPlaceholderStackEntry) => e.view.image !== null);
+    return found !== undefined ? found.view : this.placeholderView;
+  }
+
+  /**
+   * The first item with a title (not a hint, a button or a separator; the reserved component's when none has one);
+   * the same as Android's `titleLabel`. Its `text` is the title.
+   */
+  get titleLabel(): CYLPlaceholderViewModel {
+    const found = this.entries.find((e: CYLPlaceholderStackEntry) => e.view.kind === CYLPlaceholderComponentKind.Item &&
+      e.view.text !== null && e.view.text.length > 0);
+    return found !== undefined ? found.view : this.placeholderView;
+  }
+
+  /** The first hint component (`hintComponentWithText:`), or null; the same as Android's `hintLabel`. */
+  get hintLabel(): CYLPlaceholderViewModel | null {
+    const found = this.entries.find((e: CYLPlaceholderStackEntry) => e.view.kind === CYLPlaceholderComponentKind.Hint);
+    return found !== undefined ? found.view : null;
+  }
+
+  /** The first button component (`buttonComponentWithTitle:style:action:`), or null; the same as Android's `button`. */
+  get button(): CYLPlaceholderViewModel | null {
+    const found = this.entries.find((e: CYLPlaceholderStackEntry) => e.view.kind === CYLPlaceholderComponentKind.Button);
+    return found !== undefined ? found.view : null;
   }
 
   /** The scenario's components, with handlers for its actions; an action without a handler does nothing. */

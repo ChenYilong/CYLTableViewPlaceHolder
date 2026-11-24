@@ -215,6 +215,8 @@ export * from './src/main/ets/refresh/drawn/CYLRefreshStoreHouseHeader';
 export * from './src/main/ets/refresh/drawn/CYLRefreshFly';
 export * from './src/main/ets/refresh/drawn/CYLRefreshGame';
 export * from './src/main/ets/refresh/drawn/CYLRefreshDrawnFooters';
+export * from './src/main/ets/refresh/drawn/CYLRefreshBallPulse';
+export { CYLRefreshBallPulseView } from './src/main/ets/refresh/drawn/CYLRefreshBallPulseView';
 export { CYLRefreshDrawnView, CYLRefreshVectorViewComponent, cylRefreshDrawnStyle } from './src/main/ets/refresh/drawn/CYLRefreshDrawnView';
 export * from './src/main/ets/refresh/drawn/CYLRefreshRiveHeader';
 // The Rive refresh header's view is the app's (it needs a Rive runtime): registered with CYLRefreshRiveRegisterViewBuilder.

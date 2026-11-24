@@ -104,7 +104,24 @@ export class CYLRefreshViewModel {
   /** The view's opacity (UIView alpha). */
   alpha: number = 1;
   private hiddenValue: boolean = false;
+  private translateYValue: number = 0;
   private changeListeners: CYLRefreshChangeListener[] = [];
+
+  /**
+   * The vertical translation of the view (the `ty` of the iOS view's transform) in vp. A control sets it on its
+   * `pinnedView` / `translationView`; the ArkUI component drawing the model applies it with `.translate({ y })`.
+   */
+  get cyl_translateY(): number {
+    return this.translateYValue;
+  }
+
+  set cyl_translateY(value: number) {
+    if (value === this.translateYValue) {
+      return;
+    }
+    this.translateYValue = value;
+    this.changeListeners.slice().forEach((l: CYLRefreshChangeListener) => l());
+  }
 
   /** Whether the view is hidden (UIView hidden); a change re-renders the component drawing the model. */
   get hidden(): boolean {
@@ -237,6 +254,28 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
   cyl_window: boolean = false;
   /** Whether a finger drags the content (iOS isDragging). */
   isDragging: boolean = false;
+  /**
+   * The finger's horizontal move in vp since the drag began (iOS `panGestureRecognizer.translation.x`), read by a
+   * control with `supportsHorizontalDrag`. TODO: the container's PanGesture is vertical only and does not set it yet.
+   */
+  panTranslationX: number = 0;
+  private interactionEnabledValue: boolean = true;
+
+  /**
+   * Whether the content takes touches (iOS `isUserInteractionEnabled`); a control with
+   * `disablesContentWhileRefreshing` turns it off while it refreshes. The container ignores touches when false.
+   */
+  get interactionEnabled(): boolean {
+    return this.interactionEnabledValue;
+  }
+
+  set interactionEnabled(value: boolean) {
+    if (value === this.interactionEnabledValue) {
+      return;
+    }
+    this.interactionEnabledValue = value;
+    this.cyl_setNeedsLayout();
+  }
   /** The pan gesture's state. */
   panState: CYLRefreshPanState = CYLRefreshPanState.Possible;
   /** The release velocity in vp/s (positive: down / right). */
@@ -668,6 +707,7 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
   /** A finger went down (pan Began). */
   cyl_panBegan(): void {
     this.isDragging = true;
+    this.panTranslationX = 0;
     this.panState = CYLRefreshPanState.Began;
     this.cyl_dispatchPan();
     this.panState = CYLRefreshPanState.Changed;
@@ -785,6 +825,7 @@ export class CYLRefreshScrollViewModel extends CYLRefreshViewModel {
       c.scrollViewContentOffsetDidChange(change);
       c.didScrollWithOffset(c.dragOffset, c.pullingPercent, this.isDragging);
       c.cyl_notifyScrollObservers(c.dragOffset, c.pullingPercent, this.isDragging);
+      c.cyl_followPull();
       c.cyl_reportPhase();
     });
     this.dispatchDepth--;
@@ -846,6 +887,24 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
    * (`dragRate`). Headers and back footers.
    */
   dragRate: number = 0;
+  /** Moves the control this many vp into the content from its edge, default 0 (`insetStart`). */
+  insetStart: number = 0;
+  /**
+   * A view that stays where it is while the control is pulled (`pinnedView`). The control sets its `cyl_translateY`;
+   * strong reference (iOS weak), the app sets it to null when done.
+   */
+  pinnedView: CYLRefreshViewModel | null = null;
+  /**
+   * A view that moves with the control by the pulled distance (`translationView`); strong reference (iOS weak).
+   */
+  translationView: CYLRefreshViewModel | null = null;
+  /**
+   * Calls `didDragHorizontally` for sideways finger moves while the control is pulled (`supportsHorizontalDrag`,
+   * default false). TODO: needs the container's gesture to report the horizontal move (`panTranslationX`).
+   */
+  supportsHorizontalDrag: boolean = false;
+  private storedDisablesContent: boolean = false;
+  private disabledContent: boolean = false;
   /** How the control moves with the pull (`scrollMode`). */
   scrollMode: CYLRefreshScrollMode = CYLRefreshScrollMode.Move;
   /** True while the auto hide keeps the control invisible (the UI reads it). */
@@ -1176,6 +1235,76 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
     return this.succeeded;
   }
 
+  /** Ignores touches on the scroll view while this control refreshes, default false (`disablesContentWhileRefreshing`). */
+  get disablesContentWhileRefreshing(): boolean {
+    return this.storedDisablesContent;
+  }
+
+  set disablesContentWhileRefreshing(value: boolean) {
+    this.storedDisablesContent = value;
+    this.updateContentTouches();
+  }
+
+  // Turns the scroll view's touches off while refreshing and back on after (iOS updateContentTouches).
+  private updateContentTouches(): void {
+    const busy = this.refreshing;
+    const scrollView = this.cyl_scrollView;
+    if (this.storedDisablesContent && busy && !this.disabledContent && scrollView !== null) {
+      this.disabledContent = true;
+      scrollView.interactionEnabled = false;
+    } else if (this.disabledContent && (!busy || !this.storedDisablesContent)) {
+      this.disabledContent = false;
+      if (scrollView !== null) {
+        scrollView.interactionEnabled = true;
+      }
+    }
+  }
+
+  /** Whether the control sits below the content and is pulled up (iOS `pullsUp`): footers. */
+  protected cyl_pullsUp(): boolean {
+    return false;
+  }
+
+  /** The distance pulled past the edge in vp, from the geometry (iOS `followPull`). */
+  cyl_pulledDistance(): number {
+    const scrollView = this.cyl_scrollView;
+    if (scrollView === null) {
+      return 0;
+    }
+    const inset = this.cyl_originalInset;
+    if (this.cyl_pullsUp()) {
+      return Math.max(0, scrollView.cyl_offsetY + scrollView.cyl_h -
+        Math.max(scrollView.cyl_contentH, scrollView.cyl_h - inset.top - inset.bottom) - inset.bottom);
+    }
+    return Math.max(0, -(scrollView.cyl_offsetY + inset.top));
+  }
+
+  /** On every move: the horizontal drag hook, the pinned view and the translation view (iOS `followPull`). */
+  cyl_followPull(): void {
+    const scrollView = this.cyl_scrollView;
+    if (scrollView === null) {
+      return;
+    }
+    const pulled = this.cyl_pulledDistance();
+    const sign = this.cyl_pullsUp() ? 1 : -1;
+    if (this.supportsHorizontalDrag && scrollView.isDragging && this.pullingPercent > 0) {
+      this.didDragHorizontally(scrollView.panTranslationX, this.pullingPercent);
+    }
+    if (this.pinnedView !== null) {
+      this.pinnedView.cyl_translateY = sign * pulled;
+    }
+    if (this.translationView !== null) {
+      this.translationView.cyl_translateY = -sign * pulled;
+    }
+  }
+
+  /**
+   * With `supportsHorizontalDrag`, called on every sideways finger move while the control is pulled: `offset` is the
+   * horizontal move since the drag began, `percent` the `pullingPercent` (`-didDragHorizontallyWithOffset:percent:`).
+   */
+  didDragHorizontally(offset: number, percent: number): void {
+  }
+
   /** Whether the control refreshes or is about to (`refreshing`). */
   get refreshing(): boolean {
     return this.state === CYLRefreshState.Refreshing || this.state === CYLRefreshState.WillRefresh;
@@ -1192,6 +1321,7 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
     }
     const old = this.stateValue;
     this.stateValue = value;
+    this.updateContentTouches();
     if (value === CYLRefreshState.Idle || value === CYLRefreshState.NoMoreData) {
       if (this.storedAutoRefresh) {
         this.storedAutoRefresh = false;
@@ -1431,6 +1561,11 @@ export class CYLRefreshComponentModel extends CYLRefreshViewModel {
   cyl_moveToScrollView(scrollView: CYLRefreshScrollViewModel | null): void {
     const old = this.cyl_scrollView;
     if (old !== null && old !== scrollView) {
+      if (this.disabledContent) {
+        // Deviation from iOS: never leave a detached scroll view without touches.
+        this.disabledContent = false;
+        old.interactionEnabled = true;
+      }
       this.willDetachFromScrollView(old);
       this.removeObservers();
     }
@@ -1720,6 +1855,11 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
   addsRefreshingInset: boolean = true;
   /** Whether a successful refresh resets the footer's "no more data" (`resetsFooterAfterRefresh`). */
   resetsFooterAfterRefresh: boolean = false;
+  /**
+   * In `CYLRefreshScrollMode.Behind`, shows only the part of the header the content has revealed, default false
+   * (`clipsWhenBehind`; see `CYLRefreshHeaderClipHeightFor`).
+   */
+  clipsWhenBehind: boolean = false;
   /** iOS `isCollectionViewAnimationBug`: kept; both inset animations are the same animateTo on HarmonyOS. */
   isCollectionViewAnimationBug: boolean = false;
   /** True while the header retracts after a refresh. */
@@ -1782,7 +1922,7 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
 
   set ignoredScrollViewContentInsetTop(value: number) {
     this.ignoredTop = value;
-    this.cyl_y = -this.cyl_h - value;
+    this.cyl_y = -this.cyl_h - value + this.insetStart;
     this.cyl_setNeedsLayout();
   }
 
@@ -1794,7 +1934,7 @@ export class CYLRefreshHeaderModel extends CYLRefreshComponentModel {
 
   placeSubviews(): void {
     super.placeSubviews();
-    this.cyl_y = -this.cyl_h - this.ignoredTop;
+    this.cyl_y = -this.cyl_h - this.ignoredTop + this.insetStart;
   }
 
   // MARK: - Second floor
@@ -2190,9 +2330,60 @@ export class CYLRefreshFooterModel extends CYLRefreshComponentModel {
   /** Deprecated (`automaticallyHidden`); kept, the app shows and hides the footer. */
   automaticallyHidden: boolean = false;
 
+  private noMoreImageView: CYLRefreshImageViewModel | null = null;
+
   prepare(): void {
     super.prepare();
     this.cyl_h = CYLRefreshFooterHeight;
+  }
+
+  protected cyl_pullsUp(): boolean {
+    return true;
+  }
+
+  /**
+   * The image view of `cyl_updateNoMoreDataImage`, or null before it was first shown (iOS `noMoreDataImageView`). A
+   * custom footer builder draws it; the Normal footers draw their own `noMoreDataImage` and do not use it.
+   */
+  get cyl_noMoreDataImageView(): CYLRefreshImageViewModel | null {
+    return this.noMoreImageView;
+  }
+
+  /**
+   * Shows `image` only in the no-more-data state (null hides it); call when the image or the state changes
+   * (`-cyl_updateNoMoreDataImage:`).
+   */
+  cyl_updateNoMoreDataImage(image: CYLRefreshImage | null): void {
+    const show = image !== null && this.state === CYLRefreshState.NoMoreData;
+    if (show && this.noMoreImageView === null) {
+      this.noMoreImageView = new CYLRefreshImageViewModel();
+    }
+    if (this.noMoreImageView !== null) {
+      this.noMoreImageView.image = image;
+      this.noMoreImageView.hidden = !show;
+    }
+    this.cyl_setNeedsLayout();
+  }
+
+  /**
+   * Places the image left of `label`'s text, `inset` apart, at `size` or, when a side is 0, at 0 x 0: iOS uses the
+   * image's own size there, which a ResourceStr does not give without decoding, so pass a size. Call from
+   * `placeSubviews` (`-cyl_placeNoMoreDataImageBesideLabel:inset:size:`).
+   */
+  cyl_placeNoMoreDataImageBesideLabel(label: CYLRefreshLabel | null, inset: number, size: CYLSize): void {
+    const view = this.noMoreImageView;
+    if (view === null || view.hidden) {
+      return;
+    }
+    const sized = size.width > 0 && size.height > 0;
+    view.cyl_w = sized ? size.width : 0;
+    view.cyl_h = sized ? size.height : 0;
+    let centerX = this.cyl_w * 0.5;
+    if (label !== null && !label.hidden) {
+      centerX -= inset + label.cyl_textWidth() * 0.5;
+    }
+    view.cyl_x = centerX - view.cyl_w / 2;
+    view.cyl_y = this.cyl_h * 0.5 - view.cyl_h / 2;
   }
 
   /** A footer calling `block` when it loads (`+footerWithRefreshingBlock:`). */
@@ -2454,7 +2645,7 @@ export class CYLRefreshBackFooterModel extends CYLRefreshFooterModel {
       return;
     }
     const contentHeight = scrollView.cyl_contentH + this.ignoredScrollViewContentInsetBottom;
-    this.cyl_y = Math.max(contentHeight, scrollView.cyl_h);
+    this.cyl_y = Math.max(contentHeight, scrollView.cyl_h) - this.insetStart;
   }
 
   private heightForContentBreakView(): number {

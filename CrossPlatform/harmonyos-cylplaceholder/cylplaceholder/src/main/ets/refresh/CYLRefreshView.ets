@@ -36,7 +36,16 @@ import {
   CYLRefreshStateHeaderModel,
   CYLRefreshStateTrailerModel
 } from './CYLRefreshClassics';
-import { CYLRefreshHeaderHeightFor, CYLRefreshHeaderYFor, CYLRefreshScrollMode, CYLRefreshState } from './CYLRefreshConst';
+import {
+  CYLRefreshFooterYFor,
+  CYLRefreshHeaderClipHeightFor,
+  CYLRefreshHeaderHeightFor,
+  CYLRefreshHeaderYFor,
+  CYLRefreshScrollMode,
+  CYLRefreshState
+} from './CYLRefreshConst';
+import { CYLRefreshBallPulseFooterModel } from './drawn/CYLRefreshBallPulse';
+import { CYLRefreshBallPulseView } from './drawn/CYLRefreshBallPulseView';
 import { CYLRefreshBundle } from './CYLRefreshBundle';
 import { CYLRefreshImage } from './CYLRefreshImage';
 import { CYLRefreshIconEngine, CYLRefreshIconViewModel } from './CYLRefreshIconView';
@@ -482,6 +491,8 @@ export struct CYLRefreshComponentView {
           }
         } else if (this.role !== 'trailer' && cylDrawnShown(this.model())) {
           CYLRefreshDrawnView({ scrollView: this.scrollView, role: this.role })
+        } else if (this.role === 'footer' && this.model() instanceof CYLRefreshBallPulseFooterModel) {
+          CYLRefreshBallPulseView({ scrollView: this.scrollView })
         } else if (this.role === 'trailer') {
           Row({ space: 4 }) {
             if (cylArrow(this.model() as CYLRefreshComponentModel) !== null) {
@@ -671,6 +682,8 @@ export struct CYLRefreshContainer {
   private baseBottom: number = Number.NaN;
   private baseRight: number = Number.NaN;
   private fingerTop: number = 0;
+  /** A drag that began while `interactionEnabled` was false is ignored until it ends. */
+  private blocked: boolean = false;
   private fingerBottom: number = 0;
   private fingerRight: number = 0;
   private pollTimer: number = -1;
@@ -802,7 +815,13 @@ export struct CYLRefreshContainer {
   }
 
   private headerY(h: CYLRefreshHeaderModel): number {
-    return CYLRefreshHeaderYFor(h.scrollMode, this.sv().revealTop, h.cyl_h, h.ignoredScrollViewContentInsetTop);
+    return CYLRefreshHeaderYFor(h.scrollMode, this.sv().revealTop, h.cyl_h, h.ignoredScrollViewContentInsetTop,
+      h.insetStart);
+  }
+
+  /** The height of the part of a Behind header that shows (`clipsWhenBehind`). */
+  private behindClipHeight(h: CYLRefreshHeaderModel): number {
+    return CYLRefreshHeaderClipHeightFor(h.scrollMode, h.clipsWhenBehind, this.sv().revealTop, h.cyl_h);
   }
 
   private headerSecondaryHeight(): number {
@@ -830,10 +849,17 @@ export struct CYLRefreshContainer {
     Stack({ alignContent: Alignment.TopStart }) {
       if (this.sv().cyl_header !== null &&
         (this.sv().cyl_header as CYLRefreshHeaderModel).scrollMode === CYLRefreshScrollMode.Behind) {
-        Stack() { this.controlView('header') }
-          .width('100%')
-          .height((this.sv().cyl_header as CYLRefreshHeaderModel).cyl_h)
-          .position({ x: 0, y: 0 })
+        // clipsWhenBehind: an outer container as high as the revealed part clips; the header keeps its full height
+        // inside it, aligned to the top, so the revealed part shows and the rest is cut off.
+        Stack({ alignContent: Alignment.TopStart }) {
+          Stack() { this.controlView('header') }
+            .width('100%')
+            .height((this.sv().cyl_header as CYLRefreshHeaderModel).cyl_h)
+        }
+        .width('100%')
+        .height(this.behindClipHeight(this.sv().cyl_header as CYLRefreshHeaderModel))
+        .clip(true)
+        .position({ x: 0, y: (this.sv().cyl_header as CYLRefreshHeaderModel).insetStart })
       }
       if (this.sv().cyl_header !== null && (this.sv().cyl_header as CYLRefreshHeaderModel).secondaryView !== null) {
         Column() {
@@ -852,6 +878,7 @@ export struct CYLRefreshContainer {
       .width('100%')
       .height('100%')
       .translate({ x: -this.sv().revealRight, y: this.sv().revealTop - this.sv().revealBottom })
+      .hitTestBehavior(this.sv().interactionEnabled ? HitTestMode.Default : HitTestMode.None)
       .zIndex(1)
 
       if (this.sv().cyl_header !== null &&
@@ -866,7 +893,8 @@ export struct CYLRefreshContainer {
         Stack() { this.controlView('footer') }
           .width('100%')
           .height((this.sv().cyl_footer as CYLRefreshBackFooterModel).cyl_h)
-          .position({ x: 0, y: this.viewH - this.sv().revealBottom })
+          .position({ x: 0, y: CYLRefreshFooterYFor(this.viewH, this.sv().revealBottom,
+            (this.sv().cyl_footer as CYLRefreshBackFooterModel).insetStart) })
           .zIndex(1)
         if ((this.sv().cyl_footer as CYLRefreshBackFooterModel).secondaryView !== null) {
           Column() {
@@ -899,16 +927,31 @@ export struct CYLRefreshContainer {
     .parallelGesture(
       PanGesture({ direction: this.horizontal ? PanDirection.Horizontal : PanDirection.Vertical, distance: 2 })
         .onActionStart((event: GestureEvent) => {
+          this.blocked = !this.scrollView.interactionEnabled;
+          if (this.blocked) {
+            return;
+          }
           this.sample();
           this.scrollView.cyl_panBegan();
         })
         .onActionUpdate((event: GestureEvent) => {
+          if (this.blocked) {
+            return;
+          }
           this.panUpdate(event);
         })
         .onActionEnd((event: GestureEvent) => {
+          if (this.blocked) {
+            this.blocked = false;
+            return;
+          }
           this.panEnd(event, false);
         })
         .onActionCancel(() => {
+          if (this.blocked) {
+            this.blocked = false;
+            return;
+          }
           this.panEnd(null, true);
         })
     )

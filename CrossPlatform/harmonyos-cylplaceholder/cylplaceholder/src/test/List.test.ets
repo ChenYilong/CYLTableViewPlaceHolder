@@ -7,6 +7,7 @@ import refreshIconsTest from './CYLRefreshIcons.test';
 import refreshRiveTest from './CYLRefreshRive.test';
 import refreshScrollModeTest from './CYLRefreshScrollMode.test';
 import refreshApiTest from './CYLRefreshApi.test';
+import refreshApiRowsTest from './CYLRefreshApiRows.test';
 import swiftAPITest from './CYLSwiftAPI.test';
 import playbackControlsTest from './CYLPlaybackControls.test';
 import binaryPropertyListTest from './CYLBinaryPropertyList.test';
@@ -21,6 +22,7 @@ export default function testsuite() {
   refreshRiveTest();
   refreshScrollModeTest();
   refreshApiTest();
+  refreshApiRowsTest();
   swiftAPITest();
   playbackControlsTest();
   binaryPropertyListTest();

@@ -242,7 +242,7 @@
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：97 / 100**（两张表合计：没有 TODO 的行 1035 / 计入的行 1060；n/a 14 行不计入）。API 表 844 / 868，演示表 191 / 192。 | **HarmonyOS score: 97 / 100** (both tables: rows without TODO 1035 / counted rows 1060; 14 n/a rows not counted). API table 844 / 868, demo table 191 / 192. |
+| **鸿蒙完成度：99 / 100**（两张表合计：没有 TODO 的行 1056 / 计入的行 1060；n/a 14 行不计入）。API 表 865 / 868，演示表 191 / 192。 | **HarmonyOS score: 99 / 100** (both tables: rows without TODO 1056 / counted rows 1060; 14 n/a rows not counted). API table 865 / 868, demo table 191 / 192. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -442,13 +442,13 @@
 | `CYLRefreshComponent` `-removeScrollObserver:` | `CYLRefreshComponentModel.removeScrollObserver(token)` |
 | `CYLRefreshComponent` `canTriggerBlock` | `CYLRefreshComponentModel.canTriggerBlock` |
 | `CYLRefreshComponent` `-canTrigger` | `CYLRefreshComponentModel.canTrigger()` |
-| `CYLRefreshComponent` `disablesContentWhileRefreshing` | TODO |
+| `CYLRefreshComponent` `disablesContentWhileRefreshing` | `CYLRefreshComponentModel.disablesContentWhileRefreshing` sets `CYLRefreshScrollViewModel.interactionEnabled`; `CYLRefreshContainer` ignores touches and drags while it is false (written, not built) |
 | `CYLRefreshComponent` `dragRate` | `CYLRefreshComponentModel.dragRate` (applied in `CYLRefreshScrollViewModel.cyl_panChanged`) |
-| `CYLRefreshComponent` `reboundAnimationOptions` | TODO |
-| `CYLRefreshComponent` `insetStart` | TODO |
-| `CYLRefreshComponent` `pinnedView` | TODO |
-| `CYLRefreshComponent` `translationView` | TODO |
-| `CYLRefreshComponent` `supportsHorizontalDrag` | TODO |
+| `CYLRefreshComponent` `reboundAnimationOptions` | TODO: reason: the rebound runs through `CYLRefreshAnimator` (13 call sites, no curve parameter, no animateTo wired yet); an animation curve needs the container animator and a device to judge it |
+| `CYLRefreshComponent` `insetStart` | `CYLRefreshComponentModel.insetStart` (header and back footer `cyl_y`, `CYLRefreshHeaderYFor`, `CYLRefreshFooterYFor`, used by `CYLRefreshContainer`) (written, not built) |
+| `CYLRefreshComponent` `pinnedView` | `CYLRefreshComponentModel.pinnedView` (a `CYLRefreshViewModel` whose `cyl_translateY` the control sets; the app applies it with `.translate`) (written, not built) |
+| `CYLRefreshComponent` `translationView` | `CYLRefreshComponentModel.translationView` (same mechanism as `pinnedView`, the opposite sign) (written, not built) |
+| `CYLRefreshComponent` `supportsHorizontalDrag` | TODO: `CYLRefreshComponentModel.supportsHorizontalDrag` and `CYLRefreshScrollViewModel.panTranslationX` are written, not built; the container PanGesture is vertical only, so it never sets `panTranslationX` (needs `PanDirection.All` and a device to check it against nested scrolling) |
 | `CYLRefreshComponent` `-addObservers` | `CYLRefreshComponentModel.addObservers()` |
 | `CYLRefreshComponent` `-removeObservers` | `CYLRefreshComponentModel.removeObservers()` |
 | `CYLRefreshComponent` `-didAttachToScrollView:` | `CYLRefreshComponentModel.didAttachToScrollView(scrollView)` |
@@ -459,7 +459,7 @@
 | `CYLRefreshComponent` `-refreshDidFinishWithSuccess:` | `CYLRefreshComponentModel.refreshDidFinishWithSuccess(success)` |
 | `CYLRefreshComponent` `-finishingDurationWithSuccess:` | `CYLRefreshComponentModel.finishingDurationWithSuccess(success)` |
 | `CYLRefreshComponent` `-autoRefreshDidChange:` | `CYLRefreshComponentModel.autoRefreshDidChange(autoRefresh)` |
-| `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | TODO |
+| `CYLRefreshComponent` `-didDragHorizontallyWithOffset:percent:` | TODO: `CYLRefreshComponentModel.didDragHorizontally(offset, percent)` hook and its call from `cyl_followPull` are written, not built; it is called only once the container reports the horizontal move (see `supportsHorizontalDrag`) |
 | `CYLRefreshComponent` `-openForAutoRefreshWithDuration:` | `CYLRefreshComponentModel.openForAutoRefresh(duration)` |
 | `UILabel(CYLRefresh)` | `CYLRefreshLabel` |
 | `UILabel(CYLRefresh)` `+cyl_label` | `CYLRefreshLabel.cyl_label()` |
@@ -488,9 +488,9 @@
 | `CYLRefreshFooter` `loadsAfterNoMoreData` | `CYLRefreshFooterModel.loadsAfterNoMoreData` |
 | `CYLRefreshFooter` `ignoredScrollViewContentInsetBottom` | `CYLRefreshFooterModel.ignoredScrollViewContentInsetBottom` |
 | `CYLRefreshFooter` `CYLRefreshDeprecated` | `CYLRefreshFooterModel.automaticallyHidden` |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | TODO |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | TODO |
-| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | TODO |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` | `CYLRefreshFooterModel.cyl_noMoreDataImageView` (`CYLRefreshImageViewModel`) (written, not built) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_updateNoMoreDataImage:` | `CYLRefreshFooterModel.cyl_updateNoMoreDataImage(image)` (written, not built) |
+| `CYLRefreshFooter(CYLRefreshNoMoreDataImage)` `-cyl_placeNoMoreDataImageBesideLabel:inset:size:` | `CYLRefreshFooterModel.cyl_placeNoMoreDataImageBesideLabel(label, inset, size)`; a zero size gives 0 x 0, as a ResourceStr has no intrinsic size (written, not built) |
 
 #### `CYLRefresh/Base/CYLRefreshHeader.h`
 
@@ -506,7 +506,7 @@
 | `CYLRefreshHeader` `-setExpandHeight:` | `CYLRefreshHeaderModel.setExpandHeight(expandHeight)` |
 | `CYLRefreshHeader` `addsRefreshingInset` | `CYLRefreshHeaderModel.addsRefreshingInset` |
 | `CYLRefreshHeader` `resetsFooterAfterRefresh` | `CYLRefreshHeaderModel.resetsFooterAfterRefresh` |
-| `CYLRefreshHeader` `clipsWhenBehind` | TODO |
+| `CYLRefreshHeader` `clipsWhenBehind` | `CYLRefreshHeaderModel.clipsWhenBehind` (`CYLRefreshHeaderClipHeightFor`, an outer clipped Stack in `CYLRefreshContainer`) (written, not built) |
 | `CYLRefreshHeader` `secondaryTriggerOffset` | `CYLRefreshHeaderModel.secondaryTriggerOffset` |
 | `CYLRefreshHeader` `secondaryDimension` | `CYLRefreshHeaderModel.secondaryDimension` |
 | `CYLRefreshHeader` `secondaryCloseTriggerOffset` | `CYLRefreshHeaderModel.secondaryCloseTriggerOffset` |
@@ -699,9 +699,9 @@
 | `CYLRefreshDeliveryFooter` | `CYLRefreshDeliveryFooterModel` |
 | `CYLRefreshPhoenixFooter` | `CYLRefreshPhoenixFooterModel` |
 | `CYLRefreshTaurusFooter` | `CYLRefreshTaurusFooterModel` |
-| `CYLRefreshBallPulseFooter` | TODO |
-| `CYLRefreshBallPulseFooter` `normalColor` | TODO |
-| `CYLRefreshBallPulseFooter` `animatingColor` | TODO |
+| `CYLRefreshBallPulseFooter` | `CYLRefreshBallPulseFooterModel` (refresh/drawn/CYLRefreshBallPulse.ets) drawn by `CYLRefreshBallPulseView` (written, not built) |
+| `CYLRefreshBallPulseFooter` `normalColor` | `CYLRefreshBallPulseFooterModel.normalColor` (written, not built) |
+| `CYLRefreshBallPulseFooter` `animatingColor` | `CYLRefreshBallPulseFooterModel.animatingColor` (written, not built) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshDrawnHeader.h`
 
@@ -743,7 +743,7 @@
 | `CYLRefreshFlyHeader` | `CYLRefreshFlyHeaderModel` (always open: adds its height to the top inset) |
 | `CYLRefreshFlyHeader` `mountainView` | `CYLRefreshFlyHeaderModel.mountainView` (refresh/drawn/CYLRefreshFly.ets) |
 | `CYLRefreshFlyHeader` `flyView` | `CYLRefreshFlyHeaderModel.flyView` |
-| `CYLRefreshFlyHeader` `floatView` | TODO |
+| `CYLRefreshFlyHeader` `floatView` | `CYLRefreshFlyHeaderModel.floatView` (`CYLRefreshFloatViewModel`: `color`, `hidden`, `alpha`, read by the drawing) (written, not built) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshGameBattleCityHeader.h`
 
@@ -767,10 +767,10 @@
 
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
-| `CYLRefreshMaterialSize` | TODO |
+| `CYLRefreshMaterialSize` | `CYLRefreshMaterialSize` (refresh/drawn/CYLRefreshDrawnShapes.ets) (written, not built) |
 | `CYLRefreshMaterialHeader` | `CYLRefreshMaterialHeaderModel` |
-| `CYLRefreshMaterialHeader` `colorSchemeColors` | TODO |
-| `CYLRefreshMaterialHeader` `progressSize` | TODO |
+| `CYLRefreshMaterialHeader` `colorSchemeColors` | `CYLRefreshMaterialHeaderModel.colorSchemeColors` (written, not built) |
+| `CYLRefreshMaterialHeader` `progressSize` | `CYLRefreshMaterialHeaderModel.progressSize` (written, not built) |
 
 #### `CYLRefresh/Custom/Drawn/CYLRefreshOriginalHeader.h`
 
@@ -813,8 +813,8 @@
 | iOS API | 鸿蒙对应实现 / HarmonyOS |
 |:---|:---|
 | `CYLRefreshWaveSwipeHeader` | `CYLRefreshWaveSwipeHeaderModel` |
-| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | TODO |
-| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | TODO |
+| `CYLRefreshWaveSwipeHeader` `waveShadowRadius` | `CYLRefreshWaveSwipeHeaderModel.waveShadowRadius` (written, not built) |
+| `CYLRefreshWaveSwipeHeader` `waveShadowColor` | `CYLRefreshWaveSwipeHeaderModel.waveShadowColor` (written, not built) |
 
 #### `CYLRefresh/Custom/Drawn/Support/CYLRefreshFlyView.h`
 
@@ -1291,10 +1291,10 @@
 | `CYLPlaceholderStackView` `stackView` | `CYLPlaceholderStackViewModel.entries` (the stacked rows) |
 | `CYLPlaceholderStackView` `placeholderView` | `CYLPlaceholderStackViewModel.placeholderView` |
 | `CYLPlaceholderStackView` `componentViews` | `CYLPlaceholderStackViewModel.componentViews` |
-| `CYLPlaceholderStackView` `imageView` | TODO |
-| `CYLPlaceholderStackView` `titleLabel` | TODO |
-| `CYLPlaceholderStackView` `hintLabel` | TODO |
-| `CYLPlaceholderStackView` `button` | TODO |
+| `CYLPlaceholderStackView` `imageView` | `CYLPlaceholderStackViewModel.imageView` (a `CYLPlaceholderViewModel`; its `image` is the icon) (written, not built) |
+| `CYLPlaceholderStackView` `titleLabel` | `CYLPlaceholderStackViewModel.titleLabel` (its `text` is the title) (written, not built) |
+| `CYLPlaceholderStackView` `hintLabel` | `CYLPlaceholderStackViewModel.hintLabel` (null without a hint) (written, not built) |
+| `CYLPlaceholderStackView` `button` | `CYLPlaceholderStackViewModel.button` (null without a button) (written, not built) |
 | `CYLPlaceholderStackView` `scenario` | `CYLPlaceholderStackViewModel.scenario` (null for components) |
 | `CYLPlaceholderStackView` `backgroundAction` | `CYLPlaceholderStackViewModel.backgroundAction` |
 | `CYLPlaceholderStackView` `-initWithScenario:actions:` | `CYLPlaceholderStackViewModel.initWithScenario(scenario, actions)` |
