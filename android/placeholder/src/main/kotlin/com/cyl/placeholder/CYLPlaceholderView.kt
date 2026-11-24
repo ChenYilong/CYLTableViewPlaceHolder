@@ -812,10 +812,12 @@ class CYLPlaceholderView @JvmOverloads constructor(
         // [EN] A file that is not there is listed in the status bar at the top of the page (CYLPlaceholderResourceMonitor);
         //      a file that is there but has no animator (no runtime) is the engine's report, not this one.
         val activity = CYLPlaceholderResourceMonitor.activityOf(context)
-        if (isMissingFile(path)) CYLPlaceholderResourceMonitor.report(activity, path, "file not found")
+        val missing = isMissingFile(path)
+        if (missing) CYLPlaceholderResourceMonitor.report(activity, path, "file not found")
         animationURL = engineURL(path)
         if (!isAnimationReady) return false
-        CYLPlaceholderResourceMonitor.clear(activity, path)
+        // [EN] An animator that exists says nothing about the file: a missing one stays listed.
+        if (!missing) CYLPlaceholderResourceMonitor.clear(activity, path)
         frames?.stop()
         frames = null
         wantsToPlay = false
