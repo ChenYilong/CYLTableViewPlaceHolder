@@ -67,6 +67,24 @@ class CYLRefreshDrivenSlotTest {
     }
 
     @Test
+    fun theFlutterExpandHeightBecomesTheIndicatorExtentAndTheHeldSlot() {
+        // The platform view converts Dart's expandHeight (dp) with the density and sets it before the first layout; 60 dp at 2.75 is 165 px.
+        val px = (60f * 2.75f).toInt()
+        val header = CYLRefreshDrivenLayout(activity)
+        header.cyl_header = CYLRefreshNormalHeader(activity)
+        val classicDefault = header.indicatorExtent
+        header.setHeaderHeightPx(px)
+        assertEquals("the header extent follows expandHeight", px, header.indicatorExtent)
+        assertTrue("it replaces the native default", classicDefault != px)
+        val footer = CYLRefreshDrivenLayout(activity)
+        footer.cyl_footer = CYLRefreshBackNormalFooter(activity)
+        footer.setFooterHeightPx(px)
+        assertEquals("the footer extent follows expandHeight", px, footer.indicatorExtent)
+        assertEquals("held open: never shorter than the indicator", px, CYLRefreshDrivenLayout.slotHeight(400, 30, true, header.indicatorExtent))
+        assertEquals("behind: the indicator sits at the far edge at the new extent", px, CYLRefreshDrivenLayout.behindShift(0, header.indicatorExtent, false))
+    }
+
+    @Test
     fun aDrivenLayoutWithAnEmptyFloorOpensAndClosesItAsTheFlutterPlatformViewDoes() {
         // The Flutter platform view gives the core an empty floor view (the content is a Flutter widget) and calls these.
         val frame = android.widget.FrameLayout(activity)
