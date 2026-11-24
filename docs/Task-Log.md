@@ -27,6 +27,16 @@
 
 ## 任务 / Tasks
 
+### TODO：Flutter 原生刷新视图的 `style` 参数（手绘指示器，Android 一半）/ TODO: Flutter native refresh view `style` creation parameter (drawn indicators, Android half)
+
+- **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup`, code commit `d4a9652a` (local, not pushed).
+- **用户原话 / Prompt (abridged):** bridge-map row 6, drawn indicators, Android half: `CYLRefreshPlatformView` takes one creation param `style` (`classic`, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`), unknown or missing falls back to `classic` and is reported, never crashes; Dart style classes route to `CYLNativeRefreshIndicator(style: ...)` only when the native switch is on; README contract; check the classic header clipped mid-pull.
+- **做了什么 / Done:** `CYLRefreshStyle` (`android/merged/library`, `newHeader` / `newFooter` / `fromKey`); `CYLRefreshPlatformView.kt` reads `style` (fallback `classic` plus one `Log.w`); Dart: `CYLNativeRefreshIndicator.style` and `.supports`, the eight style classes (headers and footers) route native; README contract.
+- **证据 / Evidence:** `:merged:testDebugUnitTest` 60 tests, 0 failures (57 before; 3 new in `CYLRefreshStyleTest`: keys, header class per style, footer class per style); `flutter test` 172 passed (131 before; 41 new in `native_backend_test.dart`, two existing expectations updated: creation params now carry `style`, and the Cupertino footer is native now); `flutter analyze` 27 issues, all `deprecated_member_use` infos as before. Core published to mavenLocal (script exit 0); example `flutter build apk --debug` built from `C:/cylbuild/fpf3` (Kotlin compiled); on emulator-5554 (API 37) the Refresh styles page showed a native header for all 8 styles during a held pull: [sheet](assets/android-17-api37-x86_64-emulator-flutter-native-refresh-style-8-styles-headers-mid-pull-d4a9652a-20261124-sheet.png); `check_screenshots.py` passes.
+- **没有 Android 类的样式 / Styles without an Android class:** none; headers exist for all 8. Footers: there is no `CYLRefreshBezierCircleFooter`, so `bezierCircle` wraps `CYLRefreshBezierCircleHeader` in `CYLRefreshDrawnFooter`; `cupertino` uses `CYLRefreshCupertinoFooter`, which is an auto footer (not a back footer like the Dart one).
+- **经典页眉裁剪 / Classic header clipped (checked, not fixed):** reproduced on Android: during a held pull and while refreshing, the classic header shows no text. uiautomator dump of a held pull: platform view 0,353-1080,511 (158 px = Dart `expandHeight` 60 dp), but inside it the header view is 59 px high and the title text 6 px high (arrow 6 px), so the content is clipped; the other seven styles are not. The cause (Dart slot 60 dp versus the native classic header's own height, or the driven layout's translate) is not proven, so nothing was changed.
+- **仍未做 / Still open:** footers of the non-classic styles were not run on a device (class mapping only); drawn styles' Dart `foregroundColor` / `backgroundColor` are not sent to native; drawn footers show no "no more data" drawing; the classic header clipping above; CI not seen.
+
 ### TODO：Flutter 原生页脚（Kotlin footer 模式）在 Android 上的运行证据 / TODO: Flutter native footer (Kotlin footer mode) running on Android
 
 - **日期 / Date:** 2026-11-24, branch `feat/android-refresh-port-followup` at `bc799668` (includes footer glue `91665425`); local commit only, not pushed.
