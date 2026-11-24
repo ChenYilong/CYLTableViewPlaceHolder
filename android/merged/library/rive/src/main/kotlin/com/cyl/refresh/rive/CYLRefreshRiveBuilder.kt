@@ -54,4 +54,5 @@ internal fun CYLRefreshRiveStyle.copyFrom(options: CYLRefreshRiveOptions) {
     triggerAnimation = options.triggerAnimation
     loadingAnimation = options.loadingAnimation
     idleAnimation = options.idleAnimation
+    drawnTable = options.drawnTable
 }

@@ -3,6 +3,7 @@ package com.cyl.refresh.rive
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import app.rive.runtime.kotlin.core.Loop
 import app.rive.runtime.kotlin.core.Rive
 import com.cyl.refresh.CYLRefreshDrawnHeader
 import com.cyl.refresh.CYLRefreshPhase
+import com.cyl.refresh.CYLRefreshRiveDrawnTable
 import com.cyl.refresh.CYLRefreshScrollMode
 import com.cyl.refresh.layout.api.RefreshHeader
 import com.cyl.refresh.layout.simple.SimpleComponent
@@ -111,6 +113,12 @@ class CYLRefreshRiveStyle(
     var idleAnimation: String? = null
 
     /**
+     * The drawn-height table (`drawnTable`, parameter `riveDrawnTable`): the fraction of the header height, from the top, that shows the Rive view
+     * as a function of the pull input value actually sent. Empty (default) does not clip.
+     */
+    var drawnTable: CYLRefreshRiveDrawnTable = CYLRefreshRiveDrawnTable.EMPTY
+
+    /**
      * [pullInput] for a pull of [offset] dp (`pullValueWithOffset:`).
      */
     fun pullValue(offset: Float): Double {
@@ -173,6 +181,23 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
         clipChildren = true
     }
 
+    /**
+     * The fraction (0..1) of this view's height that shows the art from the top (the drawn-height table), or null for no clip. The black band at
+     * the bottom of a file such as Bow's is cut by clipping this view, so the Rive view keeps its size and alignment.
+     */
+    var drawnFraction: Double? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            applyClip()
+        }
+
+    private fun applyClip() {
+        val fraction = drawnFraction
+        clipBounds = if (fraction == null || width <= 0 || height <= 0) null else Rect(0, 0, width, (height * fraction).toInt())
+        invalidate()
+    }
+
     private val minimum: Int
         get() = ((if (style.minimumHeight > 0) style.minimumHeight else style.triggerOffset) * resources.displayMetrics.density).toInt()
 
@@ -188,6 +213,7 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
         val height = b - t
         measureRive(width, height)
         rive.layout(0, height - rive.measuredHeight, width, height)
+        applyClip()
     }
 
     private fun measureRive(width: Int, height: Int) {
@@ -247,6 +273,7 @@ class CYLRefreshRiveHeader private constructor(
         val dp = offset / density
         if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "rive pull offset=${offset}px ${dp}dp input=${riveStyle.pullValue(dp)} view=${headerView.width}x${headerView.height}@${loc(headerView)} rive=${rive.width}x${rive.height}@${loc(rive)}")
         riveStyle.pullInput?.let { number(it, riveStyle.pullValue(dp)) }
+        applyDrawnTable(riveStyle.pullValue(dp))
         val pull = riveStyle.pullAnimation
         if (pull != null && riveStyle.idleAnimation == null) scrub(pull, (dp / max(1f, riveStyle.triggerOffset)).coerceIn(0f, 1f))
     }
@@ -264,7 +291,11 @@ class CYLRefreshRiveHeader private constructor(
             CYLRefreshPhase.Releasing, CYLRefreshPhase.Refreshing -> {
                 if (rivePlaysRefresh) return
                 rivePlaysRefresh = true
-                style.pullInput?.let { number(it, if (style.pullInputRefreshingValue >= 0) style.pullInputRefreshingValue else style.pullInputMaximum) }
+                style.pullInput?.let {
+                    val refreshing = if (style.pullInputRefreshingValue >= 0) style.pullInputRefreshingValue else style.pullInputMaximum
+                    number(it, refreshing)
+                    applyDrawnTable(refreshing)
+                }
                 style.releaseTrigger?.let(::fire)
                 style.loadingBoolean?.let { boolean(it, true) }
                 if (style.loadingNumber != null) startLoadingNumber()
@@ -298,6 +329,7 @@ class CYLRefreshRiveHeader private constructor(
         runCatching { rive.reset() }
         style.loadingBoolean?.let { boolean(it, false) }
         style.pullInput?.let { number(it, 0.0) }
+        applyDrawnTable(0.0)
         style.loadingNumber?.let { number(it, 0.0) }
         style.restartTrigger?.let(::fire)
         val idle = style.idleAnimation
@@ -307,6 +339,11 @@ class CYLRefreshRiveHeader private constructor(
             pull != null -> scrub(pull, 0f)
             else -> runCatching { rive.play(Loop.AUTO, Direction.AUTO, true) }
         }
+    }
+
+    /** Clips the Rive view to the table's fraction for the pull input value [input] just sent (the value stays while finishing); no table, no clip. */
+    private fun applyDrawnTable(input: Double) {
+        headerView.drawnFraction = riveStyle.drawnTable.fraction(input)
     }
 
     private fun startLoadingNumber() {

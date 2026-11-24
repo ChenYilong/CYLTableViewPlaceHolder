@@ -40,6 +40,7 @@ class CYLRefreshRiveStyle {
     this.triggerAnimation,
     this.loadingAnimation,
     this.idleAnimation,
+    this.drawnTable,
   });
 
   /// The Rive file.
@@ -117,6 +118,12 @@ class CYLRefreshRiveStyle {
   /// The linear animation shown at rest (and scrubbed with the pull when there is no [pullAnimation]).
   String? idleAnimation;
 
+  /// The drawn-height table (`riveDrawnTable`, docs/Refresh-Library-Parity.md, "Rive drawn-height table"): `[pullInput, drawnFraction]` pairs sorted
+  /// by input, where pullInput is the value sent to the state-machine input (after [pullInputMinimum], [pullInputMaximum] and [pullInputStart]) and
+  /// drawnFraction (0..1) is the part of the header height, from the top, that shows the art; linear between pairs, the first or last fraction
+  /// beyond them. Null or empty does not clip. Applied by the native `rive` style only (the Dart-drawn indicator keeps it as data).
+  List<List<double>>? drawnTable;
+
   /// The options of the file for `CYLAnimationView` at rest; see [animationOptionsFor] while refreshing.
   Map<String, Object> get animationOptions => animationOptionsFor(refreshing: false);
 
@@ -158,6 +165,7 @@ class CYLRefreshRiveStyle {
         'riveTriggerAnimation': ?triggerAnimation,
         'riveLoadingAnimation': ?loadingAnimation,
         'riveIdleAnimation': ?idleAnimation,
+        if (drawnTable != null && drawnTable!.isNotEmpty) 'riveDrawnTable': drawnTable,
       };
 
   Map<String, Object> get _stateMachineOptions => {

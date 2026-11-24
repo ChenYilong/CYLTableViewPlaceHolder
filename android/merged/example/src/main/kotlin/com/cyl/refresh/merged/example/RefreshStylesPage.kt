@@ -14,6 +14,7 @@ import com.cyl.refresh.CYLRefreshDeliveryHeader
 import com.cyl.refresh.CYLRefreshDropBoxHeader
 import com.cyl.refresh.CYLRefreshDrawnFooter
 import com.cyl.refresh.CYLRefreshFlyHeader
+import com.cyl.refresh.CYLRefreshRiveDrawnTable
 import com.cyl.refresh.rive.CYLRefreshRiveHeader
 import com.cyl.refresh.rive.CYLRefreshRiveStyle
 import com.cyl.refresh.CYLRefreshFooter
@@ -104,6 +105,7 @@ private fun riveStyle(method: String): CYLRefreshRiveStyle? {
                 fitsWidth = true
                 pullInput = "pull"
                 pullInputMinimum = 10.0
+                drawnTable = CYLRefreshRiveDrawnTable.of(30.0 to 0.0, 31.8 to 0.14, 35.9 to 0.43, 39.8 to 0.66, 43.6 to 0.82, 47.3 to 0.94, 50.0 to 1.0)
                 releaseTrigger = "advance"
                 finishTrigger = "advance"
                 restartTrigger = "restart"

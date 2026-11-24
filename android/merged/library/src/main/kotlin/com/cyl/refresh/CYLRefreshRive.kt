@@ -85,6 +85,12 @@ class CYLRefreshRiveOptions private constructor(private val values: Map<*, *>) {
     /** `riveIdleAnimation`. */
     val idleAnimation: String? = string("riveIdleAnimation")
 
+    /**
+     * `riveDrawnTable`: a list of `[pullInput, drawnFraction]` pairs (see [CYLRefreshRiveDrawnTable]); empty (no clip) when missing or with no valid pair.
+     * Lists arrive as `List` (Flutter's method-channel codec, React Native's `toHashMap`).
+     */
+    val drawnTable: CYLRefreshRiveDrawnTable = CYLRefreshRiveDrawnTable.parse(values["riveDrawnTable"])
+
     /** Whether [file] is a path (absolute, or a `file://` URL) rather than the name of an app asset. */
     val fileIsPath: Boolean get() = file?.let { it.startsWith("/") || it.startsWith("file://") } == true
 
@@ -110,6 +116,61 @@ class CYLRefreshRiveOptions private constructor(private val values: Map<*, *>) {
         /** Options from a creation parameter map (a Flutter map, or a React Native `headerRive` / `footerRive` object); null is an empty map. */
         @JvmStatic
         fun from(parameters: Map<*, *>?): CYLRefreshRiveOptions = CYLRefreshRiveOptions(parameters ?: emptyMap<String, Any?>())
+    }
+}
+
+/**
+ * The Rive drawn-height table (`riveDrawnTable`, docs/Refresh-Library-Parity.md, "Rive drawn-height table"; the same contract on iOS): pairs of
+ * `[pullInput, drawnFraction]`, where pullInput is the value sent to the Rive state-machine input (after `rivePullInputMinimum` / `Maximum` / `Start`)
+ * and drawnFraction (0..1) is how much of the header height, from the top, shows the art (the black band at the bottom of the file is clipped).
+ * The fraction is linearly interpolated; below the first pair it is the first fraction, above the last it is the last. An empty table does not clip.
+ */
+class CYLRefreshRiveDrawnTable private constructor(private val inputs: DoubleArray, private val fractions: DoubleArray) {
+    /** True when there is no valid pair: no clip. */
+    val isEmpty: Boolean get() = inputs.isEmpty()
+
+    /** The valid pairs, sorted by input, with the fractions clamped to 0..1. */
+    val pairs: List<Pair<Double, Double>> get() = inputs.indices.map { inputs[it] to fractions[it] }
+
+    /** The drawn fraction (0..1) for [input]; null when the table is empty (no clip). */
+    fun fraction(input: Double): Double? {
+        val n = inputs.size
+        if (n == 0) return null
+        if (input.isNaN() || input <= inputs[0]) return fractions[0]
+        if (input >= inputs[n - 1]) return fractions[n - 1]
+        var i = 1
+        while (inputs[i] < input) i++
+        val span = inputs[i] - inputs[i - 1]
+        if (span <= 0.0) return fractions[i]
+        return fractions[i - 1] + (fractions[i] - fractions[i - 1]) * ((input - inputs[i - 1]) / span)
+    }
+
+    companion object {
+        /** The table without pairs. */
+        @JvmField
+        val EMPTY = CYLRefreshRiveDrawnTable(DoubleArray(0), DoubleArray(0))
+
+        /**
+         * A table from [raw] (a list of two-number lists): a malformed element (not a list, fewer than two numbers, a non-number or non-finite
+         * value) is ignored, the rest is sorted by input and the fractions are clamped to 0..1. Anything that is not a list is the empty table.
+         */
+        @JvmStatic
+        fun parse(raw: Any?): CYLRefreshRiveDrawnTable {
+            val list = raw as? List<*> ?: return EMPTY
+            val pairs = list.mapNotNull { element ->
+                val pair = element as? List<*> ?: return@mapNotNull null
+                if (pair.size < 2) return@mapNotNull null
+                val input = (pair[0] as? Number)?.toDouble()
+                val fraction = (pair[1] as? Number)?.toDouble()
+                if (input == null || fraction == null || !input.isFinite() || !fraction.isFinite()) null else input to fraction.coerceIn(0.0, 1.0)
+            }.sortedBy { it.first }
+            return if (pairs.isEmpty()) EMPTY
+            else CYLRefreshRiveDrawnTable(DoubleArray(pairs.size) { pairs[it].first }, DoubleArray(pairs.size) { pairs[it].second })
+        }
+
+        /** A table from typed [pairs] (a style set in code); validated as [parse]. */
+        @JvmStatic
+        fun of(vararg pairs: Pair<Double, Double>): CYLRefreshRiveDrawnTable = parse(pairs.map { listOf(it.first, it.second) })
     }
 }
 

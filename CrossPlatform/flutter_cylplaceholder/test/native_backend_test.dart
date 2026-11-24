@@ -429,6 +429,13 @@ void main() {
       'riveRestartTrigger': 'restart',
     };
 
+    test('the drawn table is sent as riveDrawnTable only when it has pairs', () {
+      final table = <List<double>>[[30, 0], [31.8, 0.14], [50, 1]];
+      expect((bowStyle()..drawnTable = table).nativeParameters, containsPair('riveDrawnTable', table));
+      expect((bowStyle()..drawnTable = <List<double>>[]).nativeParameters.containsKey('riveDrawnTable'), isFalse);
+      expect(bowStyle().nativeParameters.containsKey('riveDrawnTable'), isFalse);
+    });
+
     test('the rive style sends only the keys it sets, with the contract names', () {
       expect(bowStyle().nativeParameters, bowParameters);
       expect(CYLRefreshRiveStyle(fileURL: '/data/x.riv').nativeParameters, {'riveFile': '/data/x.riv', 'riveTriggerOffset': 180.0});

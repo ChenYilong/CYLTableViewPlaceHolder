@@ -70,6 +70,45 @@ class CYLRefreshRiveTest {
         assertNull(options.finishTrigger)
     }
 
+    private val bow = listOf(listOf(30.0, 0.0), listOf(31.8, 0.14), listOf(35.9, 0.43), listOf(39.8, 0.66), listOf(43.6, 0.82), listOf(47.3, 0.94), listOf(50.0, 1.0))
+
+    @Test
+    fun theDrawnTableInterpolatesLinearlyAndHoldsTheEndValues() {
+        val table = CYLRefreshRiveOptions.from(mapOf("riveDrawnTable" to bow)).drawnTable
+        assertFalse(table.isEmpty)
+        assertEquals(7, table.pairs.size)
+        assertEquals(0.0, table.fraction(0.0)!!, 1e-9)
+        assertEquals(0.0, table.fraction(30.0)!!, 1e-9)
+        assertEquals(0.14, table.fraction(31.8)!!, 1e-9)
+        assertEquals(0.07, table.fraction(30.9)!!, 1e-9)
+        assertEquals((0.43 + 0.66) / 2, table.fraction(37.85)!!, 1e-9)
+        assertEquals(1.0, table.fraction(50.0)!!, 1e-9)
+        assertEquals(1.0, table.fraction(80.0)!!, 1e-9)
+    }
+
+    @Test
+    fun aTableOfOnePairIsConstantAndNoTableMeansNoClip() {
+        val one = CYLRefreshRiveDrawnTable.parse(listOf(listOf(10, 0.5)))
+        assertEquals(0.5, one.fraction(-5.0)!!, 0.0)
+        assertEquals(0.5, one.fraction(99.0)!!, 0.0)
+        listOf(null, emptyMap<String, Any?>(), mapOf("riveDrawnTable" to emptyList<Any>()), mapOf("riveDrawnTable" to "x"), mapOf("riveDrawnTable" to listOf(listOf("a", 1), listOf(1)))).forEach {
+            val table = CYLRefreshRiveOptions.from(it as Map<*, *>?).drawnTable
+            assertTrue(table.isEmpty)
+            assertNull(table.fraction(40.0))
+        }
+    }
+
+    @Test
+    fun theDrawnTableIgnoresMalformedPairsSortsAndClampsTheFractions() {
+        val table = CYLRefreshRiveDrawnTable.parse(listOf(
+            listOf(50, 2.0), "bad", listOf(10), listOf(10, "x"), listOf(Double.NaN, 0.5), listOf(20, Double.POSITIVE_INFINITY),
+            listOf(30, -1), listOf(40, 0.5, 9), null,
+        ))
+        assertEquals(listOf(30.0 to 0.0, 40.0 to 0.5, 50.0 to 1.0), table.pairs)
+        assertEquals(0.25, table.fraction(35.0)!!, 1e-9)
+        assertEquals(listOf(1.0 to 0.2, 2.0 to 0.4), CYLRefreshRiveDrawnTable.of(2.0 to 0.4, 1.0 to 0.2).pairs)
+    }
+
     @Test
     fun missingOrInvalidValuesKeepTheDefaults() {
         listOf(null, emptyMap(), mapOf("riveTriggerOffset" to 0, "riveMinimumHeight" to -3, "riveFitsWidth" to "yes", "riveFile" to "",

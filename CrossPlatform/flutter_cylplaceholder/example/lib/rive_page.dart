@@ -21,6 +21,7 @@ CYLRefreshRiveStyle riveStyle(String name, String path) {
         ..fitsWidth = true
         ..pullInput = 'pull'
         ..pullInputMinimum = 10
+        ..drawnTable = const [[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]]
         ..releaseTrigger = 'advance'
         ..finishTrigger = 'advance'
         ..restartTrigger = 'restart';
