@@ -69,6 +69,7 @@ import {
   CYLPlaceholderAnimationError,
   CYLPlaceholderAnimationFactory,
   CYLPlaceholderAnimationFactoryForURL,
+  CYLPlaceholderAnimationFileExists,
   CYLPlaceholderAnimationOptionsOfURL,
   CYLPlaceholderAnimationPlayer,
   CYLPlaceholderAnimationViewModel,
@@ -440,6 +441,33 @@ export class CYLPlaceholderViewModel {
       this.animationReady = true;
     }
     this.cyl_runAnimationCommand();
+  }
+
+  /**
+   * Shows the animation file at `path` (a sandbox path, or the name of a bundled animation) instead of the icon (iOS
+   * `-setAnimationFile:`). false, with the icon kept, when the path is empty, the file is missing or no animator plays
+   * it; true once a player exists. The same as Android's `CYLPlaceholderView.setAnimationFile(path)`.
+   */
+  setAnimationFile(path: string): boolean {
+    if (path.length === 0) {
+      return false;
+    }
+    const bundled = CYLPlaceholderViewModel.pathForBundledAnimation(path);
+    if (!CYLPlaceholderAnimationFileExists(bundled !== null ? bundled : path)) {
+      return false;
+    }
+    const previous = this.animationFileName;
+    this.animationFileName = path;
+    this.cyl_releaseAnimation();
+    this.cyl_attachAnimation();
+    if (this.animationPlayer === null) {
+      // No animator plays it: keep the icon.
+      this.animationFileName = previous;
+      this.cyl_releaseAnimation();
+      this.cyl_attachAnimation();
+      return false;
+    }
+    return true;
   }
 
   /** Stops and drops the player (called when the view disappears; it is made again when it reappears). */

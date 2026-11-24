@@ -9,6 +9,7 @@ import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.fromConfiguration
 import com.cyl.placeholder.fromItemAttributes
 import com.cyl.placeholder.CYLPlaceholderHUD
+import com.cyl.placeholder.CYLPlaceholderScenarioCatalog
 
 /*
  * The map-driven entry points the Flutter and React Native Android halves call (docs/Refresh-Library-Parity.md, "Native
@@ -57,7 +58,8 @@ object CYLPlaceholderBridge {
             ((entry as? Map<*, *>)?.get("action") as? String)?.takeIf { it.isNotEmpty() }?.let(names::add)
         }
         (configuration["backgroundAction"] as? String)?.takeIf { it.isNotEmpty() }?.let(names::add)
-        val actions: Map<String, (String) -> Unit> = names.associateWith { name -> { _: String -> onAction(name) } }
+        // [EN] A catalog name ("retry") is stored by the component as its constant, so the handler is keyed by that constant. [CN] 目录名称（"retry"）在组件中以常量保存，处理器按该常量登记。
+        val actions: Map<String, (String) -> Unit> = names.associate { name -> CYLPlaceholderScenarioCatalog.actionNamed(name) to { _: String -> onAction(name) } }
         return CYLPlaceholderStackView.fromConfiguration(context, configuration, actions)
     }
 
@@ -105,7 +107,7 @@ class CYLPlaceholderHUDBridge(context: Context, container: ViewGroup, onAction: 
                     CYLPlaceholderComponent.componentWithDictionary(context, entry as? Map<String, Any?>) ?: return false
                 }
                 val names = entries.mapNotNull { ((it as? Map<*, *>)?.get("action") as? String)?.takeIf(String::isNotEmpty) }.toSet()
-                hud.showComponents(components, names.associateWith { name -> { _: String -> onAction(name) } })
+                hud.showComponents(components, names.associate { name -> CYLPlaceholderScenarioCatalog.actionNamed(name) to { _: String -> onAction(name) } })
             }
             "popActivity" -> hud.popActivity()
             "dismiss" -> hud.dismiss()

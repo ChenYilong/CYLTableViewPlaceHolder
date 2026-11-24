@@ -1,6 +1,9 @@
 // Type-checked only (`tsc`): the way an app spreads CYLRefresh's props onto a ScrollView and a FlatList.
 import { FlatList, ScrollView, Text } from 'react-native';
 import {
+  CYLPlaceholderComponent,
+  CYLPlaceholderHUD,
+  CYLPlaceholderStack,
   CYLRefresh,
   CYLRefreshClassicAutoFooter,
   CYLRefreshClassicHeader,
@@ -44,4 +47,25 @@ export function NativePagingExample() {
       <FlatList data={pager.items ?? []} keyExtractor={(n) => String(n)} renderItem={({ item }) => <Text>{item}</Text>} />
     </CYLRefreshPagingContainer>
   );
+}
+
+// The native placeholder stack and the HUD: the component list is the configuration dictionary, actions come back by name.
+export function StackExample({ token }: { token: number }) {
+  return (
+    <CYLPlaceholderStack
+      components={[
+        CYLPlaceholderComponent.icon({ style: 'cloudOff', title: 'Failed', animation: 'CYLPlaceholderLoadFailed.json', animationLoops: true }),
+        CYLPlaceholderComponent.button('Retry', 'retry'),
+      ]}
+      restartToken={token}
+      onAction={(action: string) => void action}
+    />
+  );
+}
+
+export function hudExample() {
+  const hud = new CYLPlaceholderHUD();
+  hud.showProgress(0.5, 'Uploading');
+  hud.showComponents([{ type: 'button', title: 'OK', action: () => hud.dismiss() }]);
+  hud.dismissWithDelay(1, () => hud.dispose());
 }

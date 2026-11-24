@@ -242,7 +242,7 @@
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：97 / 100**（两张表合计：没有 TODO 的行 1032 / 计入的行 1060；n/a 14 行不计入）。API 表 841 / 868，演示表 191 / 192。 | **HarmonyOS score: 97 / 100** (both tables: rows without TODO 1032 / counted rows 1060; 14 n/a rows not counted). API table 841 / 868, demo table 191 / 192. |
+| **鸿蒙完成度：97 / 100**（两张表合计：没有 TODO 的行 1035 / 计入的行 1060；n/a 14 行不计入）。API 表 844 / 868，演示表 191 / 192。 | **HarmonyOS score: 97 / 100** (both tables: rows without TODO 1035 / counted rows 1060; 14 n/a rows not counted). API table 844 / 868, demo table 191 / 192. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
@@ -342,8 +342,8 @@
 |:---|:---|
 | `CYLRefreshBackFooter` | `CYLRefreshBackFooterModel` |
 | `CYLRefreshBackFooter` `noMoreDataDisplayDuration` | `CYLRefreshBackFooterModel.noMoreDataDisplayDuration` |
-| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | TODO |
-| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | TODO |
+| `CYLRefreshBackFooter` `followsContentWhenNoMoreData` | `CYLRefreshBackFooterModel.followsContentWhenNoMoreData` (false by default; host test `followsContentWhenNoMoreData`) |
+| `CYLRefreshBackFooter` `scrollsContentAfterLoading` | `CYLRefreshBackFooterModel.scrollsContentAfterLoading` (true by default; host test `scrollsContentAfterLoading`) |
 | `CYLRefreshBackFooter` `secondaryTriggerOffset` | `CYLRefreshBackFooterModel.secondaryTriggerOffset` |
 | `CYLRefreshBackFooter` `secondaryDimension` | `CYLRefreshBackFooterModel.secondaryDimension` |
 | `CYLRefreshBackFooter` `secondaryCloseTriggerOffset` | `CYLRefreshBackFooterModel.secondaryCloseTriggerOffset` |
@@ -1390,7 +1390,7 @@
 | `CYLPlaceholderView` `-performTap` | `CYLPlaceholderViewModel.performTap()` |
 | `CYLPlaceholderView` `animationRepeatCount` | `CYLPlaceholderViewModel.animationRepeatCount` (1 by default) |
 | `CYLPlaceholderView` `+registerAnimationFactory:forFileExtension:` | `CYLPlaceholderViewModel.registerAnimationFactory(factory, fileExtension)` |
-| `CYLPlaceholderView` `-setAnimationFile:` | TODO |
+| `CYLPlaceholderView` `-setAnimationFile:` | `CYLPlaceholderViewModel.setAnimationFile(path)` (false for an empty path, a missing file or no animator; host test `setAnimationFileChecksTheFileAndTheAnimator`) |
 | `CYLPlaceholderView` `-playPlaceholderAnimation` | `CYLPlaceholderViewModel.playPlaceholderAnimation()` |
 | `CYLPlaceholderView` `-stopPlaceholderAnimation` | `CYLPlaceholderViewModel.stopPlaceholderAnimation()` |
 | `CYLPlaceholderView` `-showPlaceholderAnimationLastFrame` | `CYLPlaceholderViewModel.showPlaceholderAnimationLastFrame()` |

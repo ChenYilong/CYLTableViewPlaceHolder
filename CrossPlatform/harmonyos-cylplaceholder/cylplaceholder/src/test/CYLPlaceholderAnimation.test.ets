@@ -2,6 +2,7 @@
 // animator, CYLPlaceholderAnimationViewModel's checks, repeat counts, fallbacks and the HUD's animation files. The
 // engines' native libraries are not loaded here (fake animators stand in for them).
 import { describe, expect, it } from '@ohos/hypium';
+import { fileIo } from '@kit.CoreFileKit';
 import {
   CYLPlaceholderAnimationBackend,
   CYLPlaceholderAnimationColors,
@@ -458,6 +459,35 @@ export default function placeholderAnimationTest() {
       once.cyl_releaseAnimation();
       CYLPlaceholderViewModel.registerAnimationFactory(null, 'fakefactory');
       CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier('FakeFactory');
+    });
+
+    it('setAnimationFileChecksTheFileAndTheAnimator', 0, () => {
+      const view = CYLPlaceholderViewModel.initWithImageText('info', 'x');
+      // Empty path, or a file that does not exist: false, the icon stays.
+      expect(view.setAnimationFile('')).assertFalse();
+      expect(view.setAnimationFile('/data/storage/el2/base/missing-cyl.fakefile')).assertFalse();
+      expect(view.animationFileName).assertNull();
+      expect(view.animationPlayer === null).assertTrue();
+      // A file that does not exist is refused even though an animator plays its extension.
+      CYLPlaceholderItemAnimatorRegistry.registerAnimator(
+        new CYLPlaceholderItemViewAnimator('FakeFile', ['fakefile'], null, new FakeProvider()));
+      expect(view.setAnimationFile('/data/storage/el2/base/missing-cyl.fakefile')).assertFalse();
+      expect(view.animationFileName).assertNull();
+      // An existing file that an animator plays: true, the animation replaces the icon.
+      const path = '/tmp/cylSetAnimationFile.fakefile';
+      fileIo.closeSync(fileIo.openSync(path, fileIo.OpenMode.CREATE | fileIo.OpenMode.READ_WRITE));
+      expect(view.setAnimationFile(path)).assertTrue();
+      expect(view.animationFileName).assertEqual(path);
+      expect(view.animationPlayer !== null).assertTrue();
+      // An existing file no animator plays: false, the previous animation stays.
+      const other = '/tmp/cylSetAnimationFile.nobody';
+      fileIo.closeSync(fileIo.openSync(other, fileIo.OpenMode.CREATE | fileIo.OpenMode.READ_WRITE));
+      expect(view.setAnimationFile(other)).assertFalse();
+      expect(view.animationFileName).assertEqual(path);
+      view.cyl_releaseAnimation();
+      fileIo.unlinkSync(path);
+      fileIo.unlinkSync(other);
+      CYLPlaceholderItemAnimatorRegistry.unregisterAnimatorWithIdentifier('FakeFile');
     });
 
     it('hudUsesItsAnimationFiles', 0, () => {
