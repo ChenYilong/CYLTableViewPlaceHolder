@@ -127,3 +127,13 @@ test('cyl-refresh lays the header out per scroll mode', () => {
   assert.match(wxss, /\.cyl-refresh__header--front \{ z-index: 3; \}/, 'front is above the content')
   assert.match(wxss, /\.cyl-refresh__scroll--behind \{ z-index: 2; \}/, 'behind is under the content')
 })
+
+test('front keeps the rows still: the content cancels the native refresher push (seen with a real drag in DevTools)', () => {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  const wxml = fs.readFileSync(path.join(__dirname, '../src/cyl-refresh/index.wxml'), 'utf8')
+  const content = wxml.match(/<view class="cyl-refresh__content"[^\n]*/)[0]
+  assert.match(content, /mode === 'front' && pull > 0/, 'only front, only while pulled')
+  assert.match(content, /translateY\(-' \+ pull \+ 'px\)/, 'by the pull distance, upward')
+  assert.doesNotMatch(content, /mode === 'move'|mode === 'stretch'|mode === 'behind'/)
+})

@@ -51,7 +51,8 @@
                bindrefresherrestore="onRefresherRestore" bindrefresherabort="onRefresherAbort"
                lower-threshold="40" bindscrolltolower="onScrollToLower" bindscroll="onScroll"
                bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" bindtouchcancel="onTouchEnd">
-    <view class="cyl-refresh__content">
+    <!-- Front: the native refresher pushes the content down by the pull; the translate cancels it so the rows stay and the header slides over them. -->
+    <view class="cyl-refresh__content" style="{{mode === 'front' && pull > 0 ? 'transform: translateY(-' + pull + 'px);' : ''}}">
       <slot></slot>
     </view>
     <view wx:if="{{footer !== 'none' && !footerHidden}}" class="cyl-refresh__footer" style="height: {{footerSize}}px"
