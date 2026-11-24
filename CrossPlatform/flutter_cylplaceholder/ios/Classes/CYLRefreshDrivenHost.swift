@@ -37,16 +37,21 @@ final class CYLRefreshDrivenHost {
         var loadsAfterNoMoreData = false
         /// The look: a style name of `CYLRefreshStyleFactory`, nil when the key is missing or not a string. [CN] 外观：`CYLRefreshStyleFactory` 的样式名，键缺失或不是字符串时为 nil。
         var style: String?
+        /// The open height Dart uses (its `expandHeight`), when it sends one: the indicator takes it. Optional, so the native
+        /// default stays when a Dart version does not send it. [CN] Dart 使用的展开高度（其 `expandHeight`），Dart 发送时指示器采用；
+        /// 可选，Dart 版本不发送时保持原生默认值。
+        var expandHeight: CGFloat?
 
         init(_ dictionary: [String: Any]?) {
             footer = dictionary?["footer"] as? Bool == true
             style = dictionary?["style"] as? String
+            if let height = (dictionary?["expandHeight"] as? NSNumber)?.doubleValue, height.isFinite, height > 0 { expandHeight = CGFloat(height) }
             loadsAfterNoMoreData = dictionary?["loadsAfterNoMoreData"] as? Bool == true
         }
     }
 
     let params: Params
-    /// The view the host puts into a platform view: it clips, and its height is the open height of the indicator. [CN] 放进 platform view 的视图：负责裁剪，其高度就是指示器的展开高度。
+    /// The view the host puts into a platform view: it clips and shows the slot Dart gives it. [CN] 放进 platform view 的视图：负责裁剪，显示 Dart 给它的槽位。
     let container: UIView
     let layout: CYLRefreshDrivenLayout
     /// The header, or in footer mode the footer, the view hosts. [CN] 视图承载的刷新头（刷新尾模式下为刷新尾）。
@@ -89,24 +94,28 @@ final class CYLRefreshDrivenHost {
         updateSlot()
     }
 
-    /// Fits the indicator to the Dart slot. Dart shows the bottom (header) or top (footer) `pull` points of a view that is
-    /// always one open height tall, so the layout is sized to the pull and anchored at that edge: the indicator then moves in
-    /// the slot exactly as under a finger, instead of being shifted a second time by the scroll the pull makes inside a
+    /// Fits the indicator to the Dart slot. Dart shows the bottom (header) or top (footer) `pull` points of the native view; the
+    /// view is either one open height tall (the classic indicator, in an `OverflowBox`) or as tall as the pull (the stretched
+    /// drawn styles). In both cases the layout is sized to the pull and anchored at that edge of the view, so the indicator
+    /// moves in the slot exactly as under a finger, instead of being shifted a second time by the scroll the pull makes inside a
     /// full-height layout (that second shift left the classic header blank or clipped until the pull passed half of it). The
-    /// indicator also takes the open height of the view, so the trigger distance Dart measures is the one it arms at.
-    /// [CN] 把指示器放进 Dart 的槽位。Dart 只显示一个固定为展开高度的视图的底部（刷新头）或顶部（刷新尾）`pull` 点，因此布局高度取下拉量并贴着
-    /// 该边：指示器在槽位里的移动与手指下拉时相同，不再被满高度布局内的滚动再移动一次（那次多余的移动让经典刷新头在拉过一半之前空白或被裁剪）。
-    /// 指示器同时采用视图的展开高度，使 Dart 测得的触发距离就是它就绪的距离。
+    /// open height is the indicator's own, or Dart's when the creation parameters carry `expandHeight`; never the view's height,
+    /// which for the stretched styles changes with every pull.
+    /// [CN] 把指示器放进 Dart 的槽位。Dart 只显示原生视图的底部（刷新头）或顶部（刷新尾）`pull` 点；视图要么固定为一个展开高度
+    /// （经典指示器，放在 `OverflowBox` 里），要么与下拉量等高（拉伸的手绘样式）。两种情况下布局高度都取下拉量并贴着视图的该边，
+    /// 指示器在槽位里的移动与手指下拉时相同，不再被满高度布局内的滚动再移动一次（那次多余的移动让经典刷新头在拉过一半之前空白或被裁剪）。
+    /// 展开高度取指示器自身的值，创建参数带 `expandHeight` 时取 Dart 的值；绝不取视图高度，拉伸样式的视图高度每次下拉都在变。
     private func updateSlot() {
         guard layout.superview === container else { return }
-        let full = container.bounds.height
-        guard full > 0 else { return }
-        if abs(component.expandHeight - full) > 0.5 {
-            if let header = component as? CYLRefreshHeader { header.setExpandHeight(full) } else { component.cyl_h = full }
+        let height = container.bounds.height
+        guard height > 0 else { return }
+        if let open = params.expandHeight, abs(component.expandHeight - open) > 0.5 {
+            if let header = component as? CYLRefreshHeader { header.setExpandHeight(open) } else { component.cyl_h = open }
         }
+        let open = component.expandHeight
         let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true
-        let pull = max(abs(lastOffset), held ? full : 0)
-        let frame = CGRect(x: 0, y: params.footer ? 0 : full - pull, width: container.bounds.width, height: pull)
+        let pull = max(abs(lastOffset), held ? open : 0)
+        let frame = CGRect(x: 0, y: params.footer ? 0 : height - pull, width: container.bounds.width, height: pull)
         if layout.frame != frame { layout.frame = frame }
     }
 
@@ -142,6 +151,15 @@ final class CYLRefreshDrivenHost {
             layout.drive(offset: lastOffset, dragging: lastDragging, startedAtEdge: arguments?["startedAtEdge"] as? Bool != false)
         case "release":
             layout.release()
+            // A pull past the open height that starts a refresh settles at the open height (the header holds its inset, as under
+            // a finger); a pull that is canceled settles at rest. Keep the last fed offset in step, or the layout stays sized
+            // and scrolled for the overpull and the held indicator sits outside the slot.
+            // [CN] 拉过展开高度并开始刷新的拉动，最终停在展开高度（刷新头保持其 inset，与手指下拉时相同）；被取消的拉动回到静止。
+            // 让最近输入的偏移同步，否则布局仍按过度下拉定尺寸与滚动，被保持的指示器会落在槽位之外。
+            let open = component.expandHeight
+            lastOffset = component.isRefreshing ? (params.footer ? -open : open) : 0
+            lastDragging = false
+            layout.drive(offset: lastOffset, dragging: false, startedAtEdge: true)
             updateSlot()
         case "finishRefresh":
             if let footer = footer, arguments?["noMoreData"] as? Bool == true {
