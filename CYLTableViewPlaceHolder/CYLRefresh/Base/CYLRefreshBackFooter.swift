@@ -444,6 +444,11 @@ open class CYLRefreshBackFooter: CYLRefreshFooter {
         super.scrollViewPanStateDidChange(change)
         if let scrollView = scrollView {
             let pan = scrollView.panGestureRecognizer
+            // [EN] A pull past the close trigger closes the floor when the finger lifts, even at rest. [CN] 下拉超过关闭触发距离后，手指抬起（即使静止）即关闭二楼。
+            if (pan.state == .ended || pan.state == .cancelled) && isSecondaryOpen && secondaryClosePending && !secondaryClosing {
+                closeSecondary()
+                return
+            }
             if pan.state == .ended && secondaryVelocity > 0 && secondaryTriggerOffset > 0 && !isSecondaryOpen &&
                 !isRefreshing && state != .noMoreData {
                 // [EN] A fast release past the load trigger opens the second floor. [CN] 越过加载触发点后快速松手即打开二楼。

@@ -461,6 +461,12 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         super.scrollViewPanStateDidChange(change)
         guard let scrollView = scrollView else { return }
         let pan = scrollView.panGestureRecognizer
+        // [EN] A push past the close trigger closes the floor when the finger lifts, even at rest (no deceleration means no later
+        //      offset change to notice it). [CN] 上推超过关闭触发距离后，手指抬起（即使静止，没有减速就没有后续偏移变化）即关闭二楼。
+        if (pan.state == .ended || pan.state == .cancelled) && isSecondaryOpen && secondaryClosePending && !secondaryClosing {
+            closeSecondary()
+            return
+        }
         if pan.state == .ended && secondaryVelocity > 0 && secondaryTriggerOffset > 0 && !isSecondaryOpen && !isRefreshing {
             // [EN] A fast release past the refresh trigger opens the second floor. [CN] 越过刷新触发点后快速松手即打开二楼。
             let velocity = pan.velocity(in: scrollView).y

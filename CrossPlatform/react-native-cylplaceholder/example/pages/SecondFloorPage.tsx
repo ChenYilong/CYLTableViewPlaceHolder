@@ -46,7 +46,7 @@ export default function SecondFloorPage() {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Second floor</Text>
-      <Text accessibilityLabel="floor status" style={styles.status}>
+      <Text style={styles.status}>
         {`floor ${open ? 'open' : 'closed'} | onSecondaryOpen ${opened} | onSecondaryClose ${closed} | onRefresh ${refreshes}`}
       </Text>
       <View style={styles.buttons}>
@@ -86,7 +86,7 @@ export default function SecondFloorPage() {
           />
         </CYLRefreshContainer>
       ) : (
-        <Text accessibilityLabel="container unmounted" style={styles.status}>Container unmounted: no crash. Tap Mount.</Text>
+        <Text style={styles.status}>Container unmounted: no crash. Tap Mount.</Text>
       )}
     </View>
   );

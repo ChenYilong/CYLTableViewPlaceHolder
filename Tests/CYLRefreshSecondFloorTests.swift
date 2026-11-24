@@ -260,6 +260,55 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
         XCTAssertEqual(secondaryCloseEvents, 0, "nor onSecondaryClose")
     }
 
+    // MARK: - Closing by a push (real scroll view, faked finger)
+
+    private final class FingerPan: UIPanGestureRecognizer {
+        var fakeState: UIGestureRecognizer.State = .possible
+        override var state: UIGestureRecognizer.State {
+            get { fakeState }
+            set { fakeState = newValue }
+        }
+    }
+
+    private final class FingerScrollView: UIScrollView {
+        var fakeDragging = false
+        let fakePan = FingerPan()
+        override var isDragging: Bool { fakeDragging }
+        override var panGestureRecognizer: UIPanGestureRecognizer { fakePan }
+    }
+
+    /// A push that ends with the finger still (no deceleration, so no further offset change) must still close the floor: the
+    /// close was only checked on an offset change after the release, so a release at rest left it open (React Native example,
+    /// axe swipe). [CN] 手指静止抬起（没有减速，也就没有后续偏移变化）的上推也必须关闭二楼：此前只在松手之后的偏移变化时检查，
+    /// 静止松手就一直打开（React Native 示例，axe 滑动）。
+    func testAPushPastTheCloseTriggerClosesTheFloorWhenTheFingerLiftsAtRest() {
+        let scrollView = FingerScrollView(frame: window.bounds)
+        scrollView.contentSize = CGSize(width: 320, height: 3000)
+        window.addSubview(scrollView)
+        let header = CYLRefreshNormalHeader(refreshingBlock: {})
+        header.secondaryAnimationDuration = 0.05
+        header.secondaryTriggerOffset = 120
+        header.secondaryDimension = 300
+        header.secondaryCloseTriggerOffset = 80
+        var closed = 0
+        header.secondaryClosedBlock = { closed += 1 }
+        scrollView.cyl_header = header
+        scrollView.layoutIfNeeded()
+        header.openSecondary()
+        waitUntil { header.isSecondaryOpen && abs(scrollView.contentOffset.y + 300) < 1 }
+        XCTAssertTrue(header.isSecondaryOpen)
+        scrollView.fakeDragging = true
+        scrollView.contentOffset = CGPoint(x: 0, y: -300 + 150)
+        spin(0.1)
+        XCTAssertTrue(header.isSecondaryOpen, "still held by the finger")
+        scrollView.fakeDragging = false
+        scrollView.fakePan.fakeState = .ended
+        header.scrollViewPanStateDidChange(nil)
+        waitUntil { closed == 1 }
+        XCTAssertEqual(closed, 1, "the floor closed on the lift")
+        XCTAssertFalse(header.isSecondaryOpen)
+    }
+
     func testAFloorOpenedByTheHeaderItselfSendsOnSecondaryOpenOnceAndOnSecondaryCloseOnce() {
         let (container, scrollView, _) = container()
         let header = scrollView.cyl_header as? CYLRefreshHeader
