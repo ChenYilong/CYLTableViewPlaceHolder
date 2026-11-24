@@ -1605,6 +1605,7 @@
   - English: continue the missing points; the advisor reviews the all-platform interface score, the next plan and advice; the default model Sonnet implements it at once to reach 100; forward suitable tasks to other sessions; test on the local machines (iOS on the macOS machine, the rest on the Windows machine); forward without waiting for CI. ("opus" as advisor was refused earlier; the advisor ran on the session default.)
   - Score now (merged `bae6ef1d`): iOS half rows 1-3, 5 done; 4, 6 partial; 7, 8 TODO. Android half rows 1-3 done; 4, 5, 6 partial; 7 TODO; 8 by design. HarmonyOS 1056/1060. Flutter Dart 64/65 (frozen). Swift 307 tests, 0 failures.
   - Plan: (1) header clip on deep pull, both platforms (Android: slot 157 px, header 59 px, title 6 px); (2) rows 7 and 8 native contract in the bridge map, then iOS (Mac) and Android (Windows); (3) Success HUD glyph, Error/Info HUD captures; (4) Windows: float tolerance in `CYLRefreshApiRows.test.ets:225`, last 4 HarmonyOS rows, TS comments and `restartToken`; (5) iOS: drawn footers, RN `footerStyle`, 2 missing scenario screenshots.
+  - **Owner decisions (2026-11-24, answered in session chenyilong-d4):** "模拟器就够了，不需要真机；RN新架构不在范围内" (simulators and emulators are enough, no physical device; the React Native new architecture is out of scope). Rive: required ('支持rive').
   - **100 depends on the owner's Rive decision** (row 6 cannot reach 100 without Rive unless ruled optional).
 
 ### Batch hand-off: rows 7 and 8, iOS half (written, not built) (2026-11-24, Mac, static)

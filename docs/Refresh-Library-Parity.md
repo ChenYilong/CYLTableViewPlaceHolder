@@ -564,6 +564,8 @@ Cells: the existing equivalent demo of that platform, or `TODO`. Resource files:
 
 **Animated-Item-Migration:** its "93 / 100" is dated 2026-11-17 (upstream pin `57a527ef`) and the "done at 100" in `13c02db9` is the colour check task; neither is quoted here as a current score.
 
+**Decisions of 2026-11-24 (owner, answered in session chenyilong-d4):** simulators and emulators are enough, no physical device is needed (a missing device run no longer costs points); the React Native new architecture is out of scope (the old-architecture example is the target). Rive is required ('支持rive', recorded by c32b88).
+
 **Decisions of 2026-11-24 (owner):** the CYLTabBarController CI pin of `abb5bc3b` stays as a temporary exception until PR #823 / #824 merge (Task-Log TODO); the last Flutter pure-Dart table row is not built (freeze).
 
 ## Feature freeze and hand-off (2026-11-23, steps 6 and 7 of the advisor plan)
