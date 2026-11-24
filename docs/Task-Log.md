@@ -2083,3 +2083,11 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **Owner rule applied (verbatim rule above):** 'all -> clip the end phase, only one -> accept'. Two of six is neither case. **Advisor judgement (owner delegated, 'advisor需要纵观…'), revisable: accept.** The end black follows the file, not the library; no end-phase table is built; the two files are documented as ending on black. **One-word owner override: `也裁`.**
 - **Not part of 'accept':** the retract strip (6.3 pt pure black for about 15 ms in a released mid pull, Bow) is a different mechanism. Windows traced the same on Android to the Rive surface while the slot resizes (hide 500 ms before the finish hold ends gave 0 black rows). Open: a mid-pull retract capture on Squats (transparent) and Space decides surface vs file; Windows is asked to run the pull-start flash (17-35 rows) on Squats.
 - **Checks at head 6a1a9acd:** no Swift change since the verified 369/0 run at `b8e3fba7` (`git diff --stat b8e3fba7..HEAD -- '*.swift'` is empty); `ios-api-map.py --check` current (877 / 877).
+
+## 2026-11-25 CI error in run 45491722942 (Android unit tests) (DONE: fixed upstream, re-run pending)
+
+- **Prompt (verbatim):** "继续修复ci错误https://github.com/ChenYilong/CYLTableViewPlaceHolder/actions/runs/45491722942/job/138791537046#step:7:1"
+- **English:** Continue fixing the CI error (Android unit tests job of run 45491722942).
+- **Cause (log read with `gh run view --log-failed`):** the run is at `cd740118`; `:placeholder:testDebugUnitTest` failed 2 of 70: `CYLPlaceholderResourceMonitorTest.kt:162` and `CYLPlaceholderViewTest.kt:142` (`aSelectionChangeDoesNotStartOrRestartThePlayer`). CI resolves the newest CYLTabBarController commit, where `drivesAnimationPlayback` defaults to true and the engine reports missing resources itself.
+- **Fix:** already pushed by the Windows session in `72726a22` (placeholder view sets `drivesAnimationPlayback = false`; the resource test tolerates the engine's own report). `cd740118` did not contain it (`git merge-base --is-ancestor 72726a22 cd740118` fails); the next run `adcf3a09` (contains it): Android completed with success.
+- **Still open:** iOS and iOS 15 jobs stay queued on `macos-26` (runner queue, not a test result); Android runs for `6a1a9acd` and `28a6afff` were still running when this was written.
