@@ -274,7 +274,7 @@ void main() {
       final footer = CYLRefreshClassicFooter();
       addTearDown(footer.dispose);
       await pumpHeader(tester, footer);
-      expect(creationParams, {'style': 'classic', 'footer': true, 'loadsAfterNoMoreData': false});
+      expect(creationParams, {'style': 'classic', 'footer': true, 'scrollMode': 'move', 'expandHeight': 60.0, 'loadsAfterNoMoreData': false});
       footer.handlePull(20, dragging: true);
       expect(sent.map((c) => c.method), ['drive']);
       expect(sent[0].arguments, {'offset': -20.0, 'dragging': true, 'startedAtEdge': true});
@@ -368,13 +368,22 @@ void main() {
 
     // One testWidgets per mode: a second pumpHeader in the same test keeps the first platform view's creation parameters.
     for (final mode in [CYLRefreshScrollMode.move, CYLRefreshScrollMode.front, CYLRefreshScrollMode.behind]) {
-      testWidgets('only the behind scroll mode asks the native slot to anchor at the far edge (${mode.name})', variant: _bothPlatforms, (tester) async {
+      testWidgets('the creation parameters carry the scroll mode by name for the native slot (${mode.name})', variant: _bothPlatforms, (tester) async {
         final header = CYLRefreshClassicHeader()..scrollMode = mode;
         addTearDown(header.dispose);
         await pumpHeader(tester, header);
-        expect(creationParams, {'style': 'classic', 'footer': false, if (mode == CYLRefreshScrollMode.behind) 'behind': true}, reason: mode.name);
+        expect(creationParams, {'style': 'classic', 'footer': false, 'scrollMode': mode.name, 'expandHeight': 60.0}, reason: mode.name);
+        expect(creationParams!.containsKey('behind'), isFalse, reason: 'the old behind flag is replaced by scrollMode');
       });
     }
+
+    testWidgets('the creation parameters carry the component expandHeight in logical pixels', variant: _bothPlatforms, (tester) async {
+      final footer = CYLRefreshClassicFooter(expandHeight: 80);
+      addTearDown(footer.dispose);
+      await pumpHeader(tester, footer);
+      expect(creationParams, containsPair('expandHeight', 80.0));
+      expect(creationParams, containsPair('scrollMode', 'move'));
+    });
 
     testWidgets('a header with a second floor sends its creation parameters and opens and closes the native floor', variant: _bothPlatforms, (tester) async {
       final header = CYLRefreshClassicHeader()
@@ -384,7 +393,7 @@ void main() {
         ..secondaryCloseTriggerOffset = 70;
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
-      expect(creationParams, {'style': 'classic', 'footer': false, 'secondaryTriggerOffset': 130.0, 'secondaryDimension': 300.0, 'secondaryCloseTriggerOffset': 70.0});
+      expect(creationParams, {'style': 'classic', 'footer': false, 'scrollMode': 'move', 'expandHeight': 60.0, 'secondaryTriggerOffset': 130.0, 'secondaryDimension': 300.0, 'secondaryCloseTriggerOffset': 70.0});
       header.openSecondary();
       expect(sent.map((c) => c.method), contains('openSecondary'));
       sent.clear();
@@ -406,7 +415,7 @@ void main() {
       final header = CYLRefreshClassicHeader(finishDuration: const Duration(milliseconds: 10));
       addTearDown(header.dispose);
       await pumpHeader(tester, header);
-      expect(creationParams, {'style': 'classic', 'footer': false});
+      expect(creationParams, {'style': 'classic', 'footer': false, 'scrollMode': 'move', 'expandHeight': 60.0});
       header.attach(_NoOtherRefresh());
       header.beginRefreshing(force: true);
       sent.clear();
