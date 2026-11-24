@@ -242,7 +242,7 @@
 
 | 中文 | English |
 |:---|:---|
-| **鸿蒙完成度：99 / 100**（两张表合计：没有 TODO 的行 1056 / 计入的行 1060；n/a 14 行不计入）。API 表 865 / 868，演示表 191 / 192。 | **HarmonyOS score: 99 / 100** (both tables: rows without TODO 1056 / counted rows 1060; 14 n/a rows not counted). API table 865 / 868, demo table 191 / 192. |
+| **鸿蒙完成度：99 / 100**（两张表合计：没有 TODO 的行 1057 / 计入的行 1060；n/a 14 行不计入）。API 表 865 / 868，演示表 192 / 192。 | **HarmonyOS score: 99 / 100** (both tables: rows without TODO 1057 / counted rows 1060; 14 n/a rows not counted). API table 865 / 868, demo table 192 / 192. |
 
 ### 表 1：iOS 公开 API / Table 1: iOS public API
 
