@@ -1598,3 +1598,10 @@
   - Sheets: ![stack](assets/react-native-ios27.2-iphone18pro-cylplaceholderscreens-native-placeholder-stack-retry-e35e49a3-20261124-sheet.png) ![HUD](assets/react-native-ios27.2-iphone18pro-cylplaceholderscreens-native-hud-progress-components-e35e49a3-20261124-sheet.png)
   - Score for this task: **90 / 100** (built, unit-tested, seen on the simulator with real taps and JS round trips; minus: restart and speed/loop not shown, success glyph unexplained, no device haptics or release build run).
 
+
+- [ ] **TODO (2026-11-24): all-platform score to 100, advisor plan, Sonnet implements, Windows session takes the non-iOS half**
+  - Prompt (verbatim): "continue TODO (missing points): opus advisor点评目前全平台接口实现得分 以及下一步计划与建议。并立即让默认模型sonnet按照建议去实现。将得分优化到100转发合适任务给其他session 直接使用本机环境进行测试，iOS在macos机器，其余在windows机器。转发任务给相应session无需等待ci结果。"
+  - English: continue the missing points; the advisor reviews the all-platform interface score, the next plan and advice; the default model Sonnet implements it at once to reach 100; forward suitable tasks to other sessions; test on the local machines (iOS on the macOS machine, the rest on the Windows machine); forward without waiting for CI. ("opus" as advisor was refused earlier; the advisor ran on the session default.)
+  - Score now (merged `bae6ef1d`): iOS half rows 1-3, 5 done; 4, 6 partial; 7, 8 TODO. Android half rows 1-3 done; 4, 5, 6 partial; 7 TODO; 8 by design. HarmonyOS 1056/1060. Flutter Dart 64/65 (frozen). Swift 307 tests, 0 failures.
+  - Plan: (1) header clip on deep pull, both platforms (Android: slot 157 px, header 59 px, title 6 px); (2) rows 7 and 8 native contract in the bridge map, then iOS (Mac) and Android (Windows); (3) Success HUD glyph, Error/Info HUD captures; (4) Windows: float tolerance in `CYLRefreshApiRows.test.ets:225`, last 4 HarmonyOS rows, TS comments and `restartToken`; (5) iOS: drawn footers, RN `footerStyle`, 2 missing scenario screenshots.
+  - **100 depends on the owner's Rive decision** (row 6 cannot reach 100 without Rive unless ruled optional).
