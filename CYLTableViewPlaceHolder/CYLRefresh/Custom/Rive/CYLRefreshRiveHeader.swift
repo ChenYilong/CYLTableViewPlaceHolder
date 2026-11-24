@@ -79,6 +79,14 @@ public final class CYLRefreshRiveStyle: NSObject {
      */
     @objc public var pullInputRefreshingValue: Double = -1
     /**
+     * [EN] Per-file table of [pullInput, drawnFraction] pairs sorted by input: the share of the header height the file draws at that input
+     *      (the rest, at the bottom, is black). Linear between pairs, the first fraction below the first pair, the last above the last. The Rive view is
+     *      moved down so that this share touches the bottom of the header (the black below the art falls outside; the slack shows above it); empty (default) means no change. [CN] 按文件的 [pullInput, drawnFraction] 数对表（按输入排序）：
+     *      文件在该输入下画出的刷新头高度比例（其余部分，在底部，为黑色）。数对之间线性插值，低于第一对取第一个比例，高于最后一对取最后一个比例。
+     *      Rive 视图下移，使该比例贴着刷新头底边（艺术图下方的黑色落在刷新头之外，空余显示在其上方）；为空（默认）表示不变。
+     */
+    @objc public var drawnTable: [[Double]] = []
+    /**
      * [EN] Trigger fired on release. [CN] 松手时触发的触发器。
      */
     @objc public var releaseTrigger: String?
@@ -144,6 +152,11 @@ public final class CYLRefreshRiveStyle: NSObject {
     // [EN] YES when the end of a refresh has a part of the animation to wait for. [CN] 刷新结束时是否有动画的结束部分需要等待。
     var playsFinish: Bool { finishTrigger != nil || loadingNumber != nil }
 
+    // [EN] The share of the header height that is drawn at `input`; 1 without a table. [CN] `input` 处已绘制的刷新头高度比例；没有表时为 1。
+    func drawnFraction(forInput input: Double) -> Double {
+        CYLRefreshRiveDrawnTable.fraction(forInput: input, table: drawnTable)
+    }
+
     func pullValue(offset: CGFloat) -> Double {
         let trigger = Double(max(1, triggerOffset))
         let start = trigger * min(max(pullInputStart, 0), 0.99)
@@ -189,6 +202,9 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
     private var loadingTimer: Timer?
     private var loadingStart: Date?
     private var rivePlaysRefresh = false
+    // [EN] The pull input last set, for the drawn-height placement. [CN] 最近一次设置的下拉输入，供已绘制高度的裁剪使用。
+    private var currentInput: Double = 0
+    private let drawnMask = CALayer()
     // [EN] YES from the finish trigger until the animation stops or the hold ends. [CN] 从触发结束触发器到动画停止或停留结束期间为 YES。
     private var awaitsFinishEnd = false
 
@@ -236,12 +252,45 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
 
     override public func placeSubviews() {
         super.placeSubviews()
+        placeRiveView()
+    }
+
+    // [EN] Lays the Rive view out bottom-aligned in at least minimumHeight, so the art sits against the content while it grows.
+    //      With a `drawnTable` the view is also moved down by the part of the header the file does not draw at the current input
+    //      (`CYLRefreshRiveDrawnTable.slack`): the drawn art touches the first row, the slack shows above it, and the black the file
+    //      draws below its art falls outside the header (`clipsToBounds`), and a mask hides the slack above the art. The list's own slot is not changed, so the finish hold is
+    //      as before. Runs on every layout and input change, so it follows the pull, the hold and the retract.
+    // [CN] 至少按 minimumHeight 布局并底部对齐，变高时动画贴着内容。有 `drawnTable` 时，Rive 视图还会下移文件在当前输入下没有画出的那部分
+    //      刷新头高度（`CYLRefreshRiveDrawnTable.slack`）：画出的内容贴着第一行，空余在其上方，文件在内容下方画的黑色落在刷新头之外
+    //      （`clipsToBounds`），遮罩隐藏艺术图上方的空余。列表自己的占位不变，所以结束停留与之前相同。每次布局与输入变化都会执行，因此随下拉、停留与收回变化。
+    private func placeRiveView() {
         guard let style = riveStyle, let riveView = riveView else { return }
-        // [EN] Laid out bottom-aligned in at least minimumHeight, so the art sits against the content while it grows.
-        // [CN] 至少按 minimumHeight 布局并底部对齐，变高时动画贴着内容。
         let minimum = style.minimumHeight > 0 ? style.minimumHeight : style.triggerOffset
         let height = max(bounds.height, minimum)
-        riveView.frame = CGRect(x: 0, y: bounds.height - height, width: bounds.width, height: height)
+        guard !style.drawnTable.isEmpty else {
+            riveView.layer.mask = nil
+            riveView.frame = CGRect(x: 0, y: bounds.height - height, width: bounds.width, height: height)
+            return
+        }
+        // [EN] While pulling or retracting (not refreshing) the input also follows the header's own height (stretch mode: the pulled distance), and the
+        //      smaller drawn fraction wins: a fast retract changes the height a frame before the input that was sent reaches the file, and the
+        //      stale larger fraction showed 5 to 6 rows of black at the bottom of the art in 3 frames. [CN] 下拉或收回（非刷新中）时，输入也按刷新头自身高度
+        //      （拉伸模式下即下拉距离）计算，取较小的已绘制比例：快速收回时高度比已发送的输入早一帧变化，过时的较大比例曾在 3 帧中让艺术图底部露出 5 到 6 行黑色。
+        var fraction = style.drawnFraction(forInput: currentInput)
+        if style.pullInput != nil && !rivePlaysRefresh {
+            fraction = min(fraction, style.drawnFraction(forInput: style.pullValue(offset: bounds.height)))
+        }
+        let slack = CYLRefreshRiveDrawnTable.slack(headerHeight: bounds.height, fraction: fraction)
+        riveView.frame = CGRect(x: 0, y: bounds.height - height + slack, width: bounds.width, height: height)
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        drawnMask.backgroundColor = UIColor.black.cgColor
+        // [EN] Keeps the top `visible` points of the header's share of the view (the file's art); the black below it is cut, and the view
+        //      was moved down by `slack`, so the art ends at the bottom of the header and the slack above it stays empty.
+        // [CN] 保留 Rive 视图中刷新头那一段的顶部 `visible` 点（文件画出的部分），其下的黑色被裁掉；视图已下移 `slack`，所以内容止于刷新头底边，其上的空余保持为空。
+        drawnMask.frame = CGRect(x: 0, y: height - bounds.height, width: bounds.width, height: bounds.height - slack)
+        riveView.layer.mask = drawnMask
+        CATransaction.commit()
     }
 
     // MARK: - Pull
@@ -250,8 +299,11 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         super.onScrolling(withOffset: offset, percent: percent, drag: isDragging)
         guard let style = riveStyle, let viewModel = viewModel, !rivePlaysRefresh else { return }
         if let input = style.pullInput {
-            viewModel.setInput(input, value: style.pullValue(offset: offset))
+            let value = style.pullValue(offset: offset)
+            viewModel.setInput(input, value: value)
+            currentInput = value
         }
+        placeRiveView()
         if let animation = style.pullAnimation, style.idleAnimation == nil {
             scrub(animation, to: Float(min(max(offset / max(1, style.triggerOffset), 0), 1)))
         }
@@ -280,6 +332,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
             if let input = style.pullInput {
                 let value = style.pullInputRefreshingValue >= 0 ? style.pullInputRefreshingValue : style.pullInputMaximum
                 viewModel.setInput(input, value: value)
+                currentInput = value
             }
             if let trigger = style.releaseTrigger { viewModel.triggerInput(trigger) }
             if let input = style.loadingBoolean { viewModel.setInput(input, value: true) }
@@ -336,6 +389,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         viewModel.reset()
         if let input = style.loadingBoolean { viewModel.setInput(input, value: false) }
         if let input = style.pullInput { viewModel.setInput(input, value: 0.0) }
+        currentInput = 0
         if let input = style.loadingNumber { viewModel.setInput(input, value: 0.0) }
         if let trigger = style.restartTrigger { viewModel.triggerInput(trigger) }
         if let idle = style.idleAnimation {

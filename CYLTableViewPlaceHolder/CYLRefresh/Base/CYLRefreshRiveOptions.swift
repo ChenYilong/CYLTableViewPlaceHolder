@@ -46,6 +46,15 @@ public final class CYLRefreshRiveOptions: NSObject {
     }
 
     /**
+     * [EN] The pairs of `riveDrawnTable` that are valid (two finite numbers: pull input, drawn fraction 0...1), sorted by input, and why
+     *      anything was dropped; empty pairs mean no clip. [CN] `riveDrawnTable` 中有效的数对（两个有限数字：下拉输入、已绘制比例 0...1），
+     *      按输入排序，以及丢弃内容的原因；数对为空表示不裁剪。
+     */
+    public var drawnTable: (pairs: [[Double]], reason: String?) {
+        CYLRefreshRiveDrawnTable.parse(values["riveDrawnTable"])
+    }
+
+    /**
      * [EN] The `riveFile` value: an absolute path, or a file name (with or without `.riv`) or relative path of an app or Flutter
      *      asset. [CN] `riveFile` 的值：绝对路径，或应用 / Flutter 资源的文件名（带不带 `.riv` 均可）或相对路径。
      */
@@ -145,4 +154,59 @@ public final class CYLRefreshRiveOptions: NSObject {
      * [EN] A footer drawn by the file of `options`; nil when it cannot be read. [CN] 由 `options` 的文件绘制的刷新尾；无法读取时为 nil。
      */
     @objc static func riveFooter(options: CYLRefreshRiveOptions) -> CYLRefreshFooter?
+}
+
+/**
+ * [EN] The per-file table of the `rive` style (`riveDrawnTable`): the fraction of the header height that a Rive file draws at a pull
+ *      input (below it the file draws black). Pure Foundation, so it is tested without the Rive runtime.
+ * [CN] `rive` 样式按文件的表（`riveDrawnTable`）：Rive 文件在某个下拉输入下实际画出的刷新头高度比例（其下方文件画的是黑色）。
+ *      纯 Foundation，所以不需要 Rive 运行时即可测试。
+ */
+enum CYLRefreshRiveDrawnTable {
+
+    // [EN] The drawn fraction at `input`: linear between pairs, the first fraction below the first pair, the last above the last; 1 (no clip) for an empty table.
+    // [CN] `input` 处的已绘制比例：数对之间线性插值，低于第一对取第一个比例，高于最后一对取最后一个比例；表为空时为 1（不裁剪）。
+    static func fraction(forInput input: Double, table: [[Double]]) -> Double {
+        guard let first = table.first, let last = table.last, first.count == 2, last.count == 2 else { return 1 }
+        if !input.isFinite || input <= first[0] { return first[1] }
+        if input >= last[0] { return last[1] }
+        for index in 1..<table.count where input <= table[index][0] {
+            let low = table[index - 1], high = table[index]
+            let span = high[0] - low[0]
+            if span <= 0 { return high[1] }
+            return low[1] + (high[1] - low[1]) * (input - low[0]) / span
+        }
+        return last[1]
+    }
+
+    // [EN] The part of a header of `headerHeight` that the file does not draw at `fraction` (0...1, clamped): the Rive view moves down by it, so the drawn art
+    //      (`headerHeight x fraction`) touches the bottom edge of the header. 0 at fraction 1 and for a non-finite or negative height.
+    // [CN] 高度为 `headerHeight` 的刷新头中文件在 `fraction`（0...1，已限制范围）下没有画出的部分：Rive 视图下移该值，使画出的内容
+    //      （`headerHeight x fraction`）贴着刷新头底边。fraction 为 1 时为 0；高度非有限或为负时也为 0。
+    static func slack(headerHeight: CGFloat, fraction: Double) -> CGFloat {
+        guard headerHeight.isFinite, headerHeight > 0 else { return 0 }
+        let drawn = fraction.isFinite ? min(max(fraction, 0), 1) : 1
+        return headerHeight * CGFloat(1 - drawn)
+    }
+
+    // [EN] The valid pairs of `value` sorted by input, and a reason when something was dropped or the whole value is ignored.
+    // [CN] `value` 中有效的数对（按输入排序），以及有内容被丢弃或整个值被忽略时的原因。
+    static func parse(_ value: Any?) -> (pairs: [[Double]], reason: String?) {
+        guard let value = value else { return ([], nil) }
+        guard let list = value as? [Any] else { return ([], "not an array") }
+        var pairs = [[Double]]()
+        var dropped = 0
+        for item in list {
+            guard let pair = item as? [Any], pair.count == 2,
+                  let input = (pair[0] as? NSNumber)?.doubleValue, let drawn = (pair[1] as? NSNumber)?.doubleValue,
+                  input.isFinite, drawn.isFinite else {
+                dropped += 1
+                continue
+            }
+            pairs.append([input, min(max(drawn, 0), 1)])
+        }
+        pairs.sort { $0[0] < $1[0] }
+        if pairs.isEmpty { return ([], list.isEmpty ? "empty" : "no valid pair") }
+        return (pairs, dropped > 0 ? "\(dropped) malformed pair\(dropped == 1 ? "" : "s") dropped" : nil)
+    }
 }

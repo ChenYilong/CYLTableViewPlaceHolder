@@ -37,6 +37,9 @@ public final class CYLRefreshRiveBuilder: NSObject, CYLRefreshRiveBuilding {
         if let value = options.number("rivePullInputMaximum") { style.pullInputMaximum = value }
         if let value = options.number("rivePullInputStart") { style.pullInputStart = value }
         if let value = options.number("rivePullInputRefreshingValue") { style.pullInputRefreshingValue = value }
+        let drawn = options.drawnTable
+        if let reason = drawn.reason { NSLog("CYLRefresh: riveDrawnTable ignored (%@)", reason) }
+        style.drawnTable = drawn.pairs
         style.releaseTrigger = options.string("riveReleaseTrigger")
         style.finishTrigger = options.string("riveFinishTrigger")
         style.restartTrigger = options.string("riveRestartTrigger")

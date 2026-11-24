@@ -12,6 +12,9 @@
 | [Batch hand-off W4: rive style and queued items (written, not run)](#batch-hand-off-w4-rive-style-and-queued-items-written-not-run) | [Batch hand-off W4: rive style and queued items (written, not run)](#batch-hand-off-w4-rive-style-and-queued-items-written-not-run) |
 | [Batch hand-off W5: resource missing in the red status bar (written, not run)](#batch-hand-off-w5-resource-missing-in-the-red-status-bar-written-not-run) | [Batch hand-off W5: resource missing in the red status bar (written, not run)](#batch-hand-off-w5-resource-missing-in-the-red-status-bar-written-not-run) |
 | [2026-11-25 owner decision: no physical devices (DONE)](#2026-11-25-owner-decision-no-physical-devices-done) | [2026-11-25 owner decision: no physical devices (DONE)](#2026-11-25-owner-decision-no-physical-devices-done) |
+| [2026-11-25 owner decision: RN new architecture out of scope (DONE)](#2026-11-25-owner-decision-rn-new-architecture-out-of-scope-done) | [2026-11-25 owner decision: RN new architecture out of scope (DONE)](#2026-11-25-owner-decision-rn-new-architecture-out-of-scope-done) |
+| [2026-11-25 owner decision: Rive black band option B (TODO)](#2026-11-25-owner-decision-rive-black-band-option-b-todo) | [2026-11-25 owner decision: Rive black band option B (TODO)](#2026-11-25-owner-decision-rive-black-band-option-b-todo) |
+| [2026-11-25 advisor recommendations on three open items (owner delegated, revisable)](#2026-11-25-advisor-recommendations-on-three-open-items-owner-delegated-revisable) | [2026-11-25 advisor recommendations on three open items (owner delegated, revisable)](#2026-11-25-advisor-recommendations-on-three-open-items-owner-delegated-revisable) |
 
 <!-- docs-navigation:end -->
 
@@ -2036,3 +2039,29 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **B, flush slot (`265e0d74`): PASS, kept.** With a table the Rive view is translated down by `height - drawn height` and the clip keeps the art rows, so the art touches row 1 and the slack is above; the layout and driven slot are untouched (the Bow rows shift only by the pull). Finger 500, 600, 700, 750 px: art flush against row 1, slack above shrinking smoothly to 0 near fraction 1, no jump. At header 40 and 110 px the table fraction is about 0, so no art yet (the table starts at input 30, header about 116 px). Revert with `git revert 265e0d74` if the owner prefers the art at the top.
 - **Not done:** no Robolectric test for the hide or the flush (rive-android needs its native library; `merged-rive` has no test source set); covered by the frame series.
 - **Sheet:** `docs/assets/android-api37-x86_64-emulator-rive-bow-hide-and-flush-265e0d74-20261125-sheet.png` (ten panels, originals `...-rive-bow-hide-and-flush-*-265e0d74-20261125.png`); `scripts/check_screenshots.py` passes.
+
+## 2026-11-25 owner decision: RN new architecture out of scope (DONE)
+
+- **Prompt (verbatim):** "RN 新架构不在范围"
+- **English:** The React Native new architecture is out of scope.
+- **Effect:** confirms the 2026-11-24 decision relayed by chenyilong-d4. Both halves of it (no devices, no new architecture) are now first-hand. No score changed yet: the scoreboard has no itemised new-architecture deduction, so the RN judgement score (72) is re-judged by the Windows session against the old-architecture example.
+
+## 2026-11-25 owner decision: Rive black band option B (TODO)
+
+- **Prompt (verbatim):** "黑带：	•	B： 把 header 裁到实际画出的高度，需要每个文件一张表。"
+- **English:** Black band: option B, clip the header to the height actually drawn; it needs one table per file.
+- **Context:** the owner answered first hand; this replaces the peer-relayed option A (iOS example reverted to 10; Windows told to revert its 50). Bow measurements are in `docs/Refresh-Library-Parity.md`.
+- **Requirements:** a per-file table input -> drawn fraction of the header; the Rive view is clipped from the top to that fraction; library default = no table (no clip); Bow table from the measurements; same names on iOS, Android, Flutter, React Native; pass = low-pull capture with no black and a full pull whose end animation still plays.
+
+- **Progress (2026-11-25, Mac, iOS half of the drawn-height table, DONE in code):** `riveDrawnTable` on iOS (style property, builder key, pure helper, mask in `CYLRefreshRiveHeader` held through the finish hold, Bow table in the example, React Native type), 10 new tests, `Tests/run-tests.rb` 366 tests, 0 failures (baseline 356). Section "Rive drawn-height table" in `docs/Refresh-Library-Parity.md`. Capture (simulator ADAFD92B, Flutter Rive chip, temporary Dart patch for the key): four held frames with no black, sheet in `docs/assets`; retract, finish hold and the end animation were not captured.
+
+## 2026-11-25 advisor recommendations on three open items (owner delegated, revisable)
+
+- **Prompt (verbatim):** "advisor帮我做推荐方案"
+- **English:** Advisor, make the recommendation for me.
+- **Status:** these are advisor recommendations the owner delegated, NOT typed owner decisions; the owner can override (an earlier delegated option A on the Bow band was overridden by the typed B the same day).
+- **1. CYLTabBarController pin: keep (固定).** The local pin is `12ed11ff` (`Cartfile`, `UPSTREAM_COMMIT`); the CI pin `abb5bc3b` stays a temporary exception until PR #823 / #824 merge. `feat/harmony-animated-item-engines` is unmerged and does not cover the UIKit buttons yet; the red bar already works with our own detection. **Move trigger:** re-pin once `onResourceMissing` is on CYLTabBarController's mainline, then map the engine reasons (`not found` -> `file not found`, `engine library missing` -> `no runtime`) and call our reporter from the engine callback.
+- **2. Corner radius: survey (盘点), docs only, queued last.** One table: site, current value, fits the rule '0 = square, capsule = 1000' or not (iOS PlaceholderView / HUD / Scenario, Android HUD, Flutter HUD, HarmonyOS placeholder view). No code change: the rule arrived second-hand and core visuals need the owner's OK.
+- **3. Low-pull gap: flush (贴齐).** Clip the header itself to the drawn height so it sits on the first row; the slack shows above the art. Pass: art touches row 1, no black, no jump where the fraction reaches 1; otherwise fall back to keep and say why. Android must land the same.
+
+- **Progress (2026-11-25, Mac, flush layout, DONE in code, advisor recommendation):** `ba0c4d8a`: with a drawn table the Rive view moves down by the undrawn part of the header (pure helper `CYLRefreshRiveDrawnTable.slack`, 3 tests), so the art touches Row 1 and the slack is above it; no table: unchanged; finish hold unchanged. `Tests/run-tests.rb` 369 tests, 0 failures. Capture on ADAFD92B (Flutter example, Rive chip, Bow, temporary Dart patch, reverted): held pulls 80, 130, 170 flush with 0 near-black rows; no jump at fraction 1; full pull released: the refreshing hold and the END animation played (the file's own black wipe, up to 600 pure-black px rows over 0.35 s, not covered by the table); retract after finish: art vanishes in one frame, empty slot collapses, 0 black; retract of a mid pull: one frame with a 6.3 pt black strip (not fixed). Sheet `docs/assets/flutter-ios27.2-iphone18pro-chip-rive-flush-held-pulls-end-and-retract-ba0c4d8a-20261125-sheet.png`; section "Rive drawn-height table" in `docs/Refresh-Library-Parity.md` updated.

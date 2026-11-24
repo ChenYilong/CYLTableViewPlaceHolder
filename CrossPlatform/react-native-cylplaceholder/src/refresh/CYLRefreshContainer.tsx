@@ -31,7 +31,7 @@ export interface CYLRefreshRiveOptions {
   riveTriggerAnimation?: string;
   riveLoadingAnimation?: string;
   riveIdleAnimation?: string;
-  /** `[pullInput, drawnFraction]` pairs: the part (0..1) of the header height, from the top, that shows the art (docs/Refresh-Library-Parity.md, "Rive drawn-height table"). */
+  /** [pullInput, drawnFraction] pairs sorted by input: the share of the header the file draws; the rest is clipped from the top. Default: no clip. */
   riveDrawnTable?: number[][];
 }
 

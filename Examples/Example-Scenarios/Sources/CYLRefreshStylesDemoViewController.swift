@@ -181,6 +181,8 @@ final class CYLRefreshStylesDemoViewController: UITableViewController, CYLRefres
             style.fitsWidth = true
             style.pullInput = "pull"
             style.pullInputMinimum = 10
+            // [EN] What Bow draws of the header at a pull input (measured, docs/Refresh-Library-Parity.md); the rest is black. [CN] Bow 在各下拉输入下画出的刷新头比例（实测），其余为黑色。
+            style.drawnTable = [[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]]
             style.releaseTrigger = "advance"
             style.finishTrigger = "advance"
             style.restartTrigger = "restart"
