@@ -25,6 +25,7 @@ public final class FlutterCylplaceholderPlugin: NSObject, FlutterPlugin {
         let messenger = registrar.messenger()
         registrar.register(CYLPlaceholderPlatformViewFactory(messenger: messenger), withId: CYLPlaceholderPlatformViewFactory.viewType)
         registrar.register(CYLPlaceholderStackPlatformViewFactory(messenger: messenger), withId: CYLPlaceholderStackPlatformViewFactory.viewType)
+        registrar.register(CYLRefreshPlatformViewFactory(messenger: messenger), withId: CYLRefreshPlatformViewFactory.viewType)
         let channel = FlutterMethodChannel(name: hudChannelName, binaryMessenger: messenger)
         let plugin = FlutterCylplaceholderPlugin(channel: channel)
         registrar.addMethodCallDelegate(plugin, channel: channel)

@@ -46,6 +46,8 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderScenarioSupport.m',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderBridge.swift',
+   # The Flutter-free core of the Flutter iOS refresh view (its plugin file imports nothing without Flutter).
+   'CrossPlatform/flutter_cylplaceholder/ios/Classes/CYLRefreshDrivenHost.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.swift',
    'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusViewSupport.m',
    'CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.swift',
