@@ -12,6 +12,8 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.placeholder.CYLPlaceholderNetworkMonitor
@@ -106,6 +108,13 @@ class StatusBarActivity : AppCompatActivity(), CYLPlaceholderStatusViewDelegate 
             addView(bottom)
         }
         setContentView(root)
+        // [EN] Edge-to-edge (targetSdk 35): the content frame starts at the screen top, under the status and action bars,
+        // where the bar would be clipped; push the frame below them so the bar sits directly under the action bar.
+        val content = findViewById<ViewGroup>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
+            view.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
+            insets
+        }
         // The placeholder covers the list's own frame, so the modes stay in reach.
         cyl_placeholderScrollView = list
         cyl_statusView.delegate = this
