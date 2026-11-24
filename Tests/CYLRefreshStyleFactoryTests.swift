@@ -87,4 +87,15 @@ final class CYLRefreshStyleFactoryTests: XCTestCase {
         }
         XCTAssertEqual(CYLRefreshStyleFactory.styleNames.count, 8)
     }
+
+    func testTheEnumMirrorsAndroidsCYLRefreshStyle() {
+        XCTAssertEqual(CYLRefreshStyle.allCases.map { $0.key },
+                       ["classic", "cupertino", "material", "bezierRadar", "bezierCircle", "delivery", "phoenix", "taurus"])
+        XCTAssertEqual(CYLRefreshStyle.fromKey("phoenix"), .phoenix)
+        XCTAssertNil(CYLRefreshStyle.fromKey("rainbow"))
+        XCTAssertNil(CYLRefreshStyle.fromKey(nil))
+        XCTAssertNil(CYLRefreshStyle.fromKey(3))
+        XCTAssertTrue(CYLRefreshStyle.taurus.newHeader() is CYLRefreshTaurusHeader)
+        XCTAssertTrue(CYLRefreshStyle.taurus.newFooter() is CYLRefreshTaurusFooter)
+    }
 }

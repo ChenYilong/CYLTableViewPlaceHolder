@@ -191,4 +191,30 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         XCTAssertTrue(container.scrollView === new)
         XCTAssertTrue(new.cyl_header is CYLRefreshNormalHeader)
     }
+
+    func testHeaderStyleAndFooterStyleChooseTheLookAndAnUnknownNameIsClassic() {
+        let (container, scrollView) = container()
+        container.loadMoreEnabled = true
+        container.headerStyle = "phoenix"
+        container.footerStyle = "taurus"
+        XCTAssertTrue(scrollView.cyl_header is CYLRefreshPhoenixHeader)
+        XCTAssertTrue(scrollView.cyl_footer is CYLRefreshTaurusFooter)
+        container.headerStyle = "rainbow"
+        container.footerStyle = nil
+        XCTAssertTrue(scrollView.cyl_header is CYLRefreshNormalHeader)
+        XCTAssertTrue(scrollView.cyl_footer is CYLRefreshBackNormalFooter)
+        // [EN] A style set before the scroll view arrives is applied when it does. [CN] 滚动视图出现之前设置的样式，在它出现时生效。
+        let (late, lateScrollView) = self.container(attach: false)
+        late.headerStyle = "delivery"
+        addScrollView(lateScrollView, to: late)
+        XCTAssertTrue(lateScrollView.cyl_header is CYLRefreshDeliveryHeader)
+    }
+
+    func testAStyledHeaderStillCallsOnRefreshOnce() {
+        let (container, scrollView) = container()
+        container.headerStyle = "material"
+        scrollView.cyl_header?.beginRefreshing()
+        spin()
+        XCTAssertEqual(refreshEvents, 1)
+    }
 }

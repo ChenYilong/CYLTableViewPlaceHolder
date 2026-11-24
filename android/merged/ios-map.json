@@ -1171,6 +1171,20 @@
   "ios": "`CYLPlaceholderComponent` `showsImageWhenAnimationEnds`",
   "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView has no such property, only onAnimationEnd); on for the Success icon"
  },
+ "CYLRefreshStyle": {
+  "ios": "`CYLRefreshStyle`",
+  "note": "Swift enum with the same eight keys; the Objective-C hosts use `CYLRefreshStyleFactory`"
+ },
+ "CYLRefreshStyle.newHeader": {
+  "ios": "`CYLRefreshStyle` `newHeader()`"
+ },
+ "CYLRefreshStyle.newFooter": {
+  "ios": "`CYLRefreshStyle` `newFooter()`",
+  "note": "bezierCircle: the classic footer (no drawn footer class); cupertino: the automatic footer, as on Android"
+ },
+ "CYLRefreshStyle.fromKey": {
+  "ios": "`CYLRefreshStyle` `fromKey(_:)`"
+ },
  "CYLRefreshDrivenLayout": {
   "ios": "`CYLRefreshDrivenLayout`",
   "note": "Swift UIView with an internal content-less scroll view whose isDragging is the driven flag; header only (a negative offset, the footer, is treated as rest)"

@@ -86,7 +86,7 @@
 | 中文 | English |
 |:---|:---|
 | Android core（`android/placeholder` 及其 Lottie / PAG / Rive 动画器、`android/merged/library` 中的 CYLRefresh）的每个公开 API：第一列为 Android API，第二列为功能描述（KDoc 首句），第三列为 iOS 对应的 API 或功能，默认 TODO。iOS → Android 方向见 [Android-API-Map.md](Android-API-Map.md)。数据：`android/merged/ios-map.json`（手动对照）与 `android/merged/api-map.json` 的反向映射。 | Every public API of the Android core (`android/placeholder` with its Lottie / PAG / Rive animators, and CYLRefresh in `android/merged/library`): the Android API, a description (the first sentence of its KDoc), and the iOS API or feature, TODO by default. The iOS → Android direction is [Android-API-Map.md](Android-API-Map.md). Data: `android/merged/ios-map.json` (hand-written matches) and the reverse of `android/merged/api-map.json`. |
-| **评分：100 / 100**（824 / 827 行已有 iOS 对应，TODO 3 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (824 of 827 rows have an iOS counterpart, 3 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
+| **评分：100 / 100**（827 / 827 行已有 iOS 对应，TODO 0 行；n/a 为仅 Android 平台的细节，不计入）。第三列没有 TODO 为满分，全部 TODO 为 0 分。 | **Score: 100 / 100** (827 of 827 rows have an iOS counterpart, 0 TODO; n/a rows are Android platform details, counted out). No TODO in the third column is 100; all TODO is 0. |
 | 流程：① 搜索现有 iOS 代码，为每个 TODO 找到对应的 API 或功能，写入 `android/merged/ios-map.json`；② 重新生成本表并打分；③ 逐个实现 iOS 缺少的 API 与功能（优先 core，再在 iOS example 中复刻 Android example 的用法），把 TODO 换成实现；④ 再次打分。循环直到满分。 | Process: (1) search the existing iOS code for each TODO and write the match into `android/merged/ios-map.json`; (2) regenerate this table and score it; (3) implement each API and feature iOS lacks, one by one (in the core first, then the iOS example reproduces the Android example that uses it) and replace its TODO with the implementation; (4) score again. Repeat until the score is 100. |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshCategories.kt`
@@ -474,10 +474,10 @@
 
 | Android API | 描述 / Description | iOS API | 说明 / Note |
 |:---|:---|:---|:---|
-| `CYLRefreshStyle` (enum) | The refresh styles a cross-platform host (the Flutter plugin's native refresh view) names by one lower camel case string, the same eight values on Android and iOS: `classic`, `cupertino`, `material`, `bezierRadar`, `bezi | `classic` | matched by the iOS name its KDoc cites |
-| `CYLRefreshStyle.newHeader` (fun) | A new header of this style. | TODO |  |
-| `CYLRefreshStyle.newFooter` (fun) | A new footer of this style. | TODO |  |
-| `CYLRefreshStyle.fromKey` (fun) | The style named [key], or null for a missing or unknown name (the caller falls back to [Classic] and reports it). | TODO |  |
+| `CYLRefreshStyle` (enum) | The refresh styles a cross-platform host (the Flutter plugin's native refresh view) names by one lower camel case string, the same eight values on Android and iOS: `classic`, `cupertino`, `material`, `bezierRadar`, `bezi | `CYLRefreshStyle` | Swift enum with the same eight keys; the Objective-C hosts use `CYLRefreshStyleFactory` |
+| `CYLRefreshStyle.newHeader` (fun) | A new header of this style. | `CYLRefreshStyle` `newHeader()` |  |
+| `CYLRefreshStyle.newFooter` (fun) | A new footer of this style. | `CYLRefreshStyle` `newFooter()` | bezierCircle: the classic footer (no drawn footer class); cupertino: the automatic footer, as on Android |
+| `CYLRefreshStyle.fromKey` (fun) | The style named [key], or null for a missing or unknown name (the caller falls back to [Classic] and reports it). | `CYLRefreshStyle` `fromKey(_:)` |  |
 
 ## `android/merged/library/src/main/kotlin/com/cyl/refresh/CYLRefreshTrailer.kt`
 

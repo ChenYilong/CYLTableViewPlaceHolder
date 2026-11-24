@@ -193,7 +193,7 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
 
     func testTheHeaderTakesTheOpenHeightOfItsViewAndIsAnchoredAtTheBottomOfTheSlot() {
         for style in ["classic", "phoenix"] {
-            let host = slotHost(["style": style], height: 90)
+            let host = slotHost(["style": style, "expandHeight": 90], height: 90)
             XCTAssertEqual(host.component.expandHeight, 90, accuracy: 0.5, style)
             XCTAssertEqual(host.layout.frame.height, 0, accuracy: 0.5, "\(style): nothing is shown at rest")
             drive(host, 20)
@@ -206,7 +206,7 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
     }
 
     func testTheFooterSlotIsTheTopOfTheView() {
-        let host = slotHost(["footer": true], height: 60)
+        let host = slotHost(["footer": true, "expandHeight": 60], height: 60)
         XCTAssertEqual(host.component.expandHeight, 60, accuracy: 0.5)
         drive(host, -20)
         XCTAssertEqual(host.layout.frame.minY, 0, accuracy: 0.5)
@@ -217,7 +217,7 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
     }
 
     func testAMidPullClassicHeaderDrawsInTheSlot() {
-        let host = slotHost(nil, height: 60)
+        let host = slotHost(["expandHeight": 60], height: 60)
         drive(host, 25)
         host.container.layoutIfNeeded()
         let label = host.layout.header.flatMap { header in header.subviews.compactMap { $0 as? UILabel }.first }
@@ -226,5 +226,71 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         XCTAssertNotNil(inSlot)
         let slot = CGRect(x: 0, y: 35, width: 320, height: 25)
         XCTAssertTrue(inSlot.map { $0.intersects(slot) } ?? false, "the title is inside the 25 points Dart shows: \(String(describing: inSlot))")
+    }
+
+    func testARefreshingClassicHeaderShowsItsTitleInTheHeldSlot() {
+        let host = slotHost(["expandHeight": 60], height: 60)
+        drive(host, 300)
+        XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
+        spin(0.8)
+        XCTAssertEqual(host.layout.frame.height, 60, accuracy: 0.5, "the held slot is the open height, not the overpull")
+        XCTAssertTrue(host.component.isRefreshing)
+        host.container.layoutIfNeeded()
+        let labels = host.component.subviews.compactMap { $0 as? UILabel }.filter { ($0.text ?? "").count > 0 }
+        let report = labels.map { "\($0.text ?? "") hidden=\($0.isHidden) alpha=\($0.alpha) frame=\(host.container.convert($0.bounds, from: $0))" }
+        XCTAssertFalse(labels.isEmpty, "a title label exists")
+        let shown = labels.contains { !$0.isHidden && $0.alpha > 0.5 && host.container.bounds.intersects(host.container.convert($0.bounds, from: $0)) }
+        XCTAssertTrue(shown, "layout=\(host.layout.frame) header=\(host.component.frame) alpha=\(host.component.alpha) labels=\(report)")
+    }
+
+    /// Non-transparent pixels of the container's render. [CN] 容器渲染结果中不透明的像素数。
+    private func drawnPixels(_ view: UIView) -> Int {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: view.bounds.size, format: format).image { view.layer.render(in: $0.cgContext) }
+        guard let cg = image.cgImage, let data = cg.dataProvider?.data, let bytes = CFDataGetBytePtr(data) else { return 0 }
+        let step = cg.bitsPerPixel / 8
+        var count = 0
+        for index in stride(from: 0, to: CFDataGetLength(data) - 3, by: step) where bytes[index + 3] > 0 { count += 1 }
+        return count
+    }
+
+    func testEveryStyleDrawsMidPullAndWhileRefreshingInTheHeldSlot() {
+        for style in CYLRefreshStyle.allCases {
+            let host = slotHost(["style": style.key, "expandHeight": 100], height: 100)
+            drive(host, 50)
+            host.container.layoutIfNeeded()
+            host.component.layer.displayIfNeeded()
+            XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style.key) draws mid-pull")
+            drive(host, 300)
+            XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
+            spin(0.8)
+            host.container.layoutIfNeeded()
+            XCTAssertTrue(host.component.isRefreshing, style.key)
+            XCTAssertEqual(host.layout.frame.height, 100, accuracy: 0.5, "\(style.key): the held slot")
+            XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style.key) draws while refreshing: layout=\(host.layout.frame) header=\(host.component.frame) alpha=\(host.component.alpha) hidden=\(host.component.isHidden) mask=\(String(describing: host.component.layer.mask))")
+            host.container.removeFromSuperview()
+        }
+    }
+
+    func testAStretchedViewThatChangesHeightWithThePullKeepsTheIndicatorVisibleWhileRefreshing() {
+        // [EN] Dart sizes the drawn styles' view to the pull, with no expandHeight parameter: the view's height is never the open height.
+        // [CN] Dart 把手绘样式的视图高度设为下拉量，且不带 expandHeight 参数：视图高度不是展开高度。
+        for style in ["bezierRadar", "phoenix", "classic"] {
+            let host = slotHost(["style": style], height: 40)
+            let open = host.component.expandHeight
+            drive(host, 40)
+            host.container.frame.size.height = 300
+            drive(host, 300)
+            XCTAssertEqual(host.handle(method: "release", arguments: nil), .success)
+            spin(0.8)
+            host.container.frame.size.height = open
+            host.container.layoutIfNeeded()
+            XCTAssertTrue(host.component.isRefreshing, style)
+            XCTAssertEqual(host.component.expandHeight, open, accuracy: 0.5, "\(style): the view's height never becomes the open height")
+            XCTAssertEqual(host.layout.frame.height, open, accuracy: 0.5, "\(style): the held slot")
+            XCTAssertGreaterThan(drawnPixels(host.container), 0, "\(style) draws while refreshing")
+            host.container.removeFromSuperview()
+        }
     }
 }
