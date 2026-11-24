@@ -233,8 +233,15 @@ internal class CYLRiveHeaderView(context: Context, private val style: CYLRefresh
 
     private fun applyClip() {
         val fraction = drawnFraction
-        clipBounds = if (collapseHidden) Rect(0, 0, 0, 0) else if (fraction == null || width <= 0 || height <= 0) null else Rect(0, 0, width, (height * fraction).toInt())
+        rive.translationY = slack().toFloat()
+        clipBounds = if (collapseHidden) Rect(0, 0, 0, 0) else if (fraction == null || width <= 0 || height <= 0) null else Rect(0, slack(), width, height)
         invalidate()
+    }
+
+    /** The empty rows above the drawn art (flush slot): the art touches the bottom edge, where the first row starts; 0 without a table. */
+    private fun slack(): Int {
+        val fraction = drawnFraction ?: return 0
+        return (height - (height * fraction).toInt()).coerceAtLeast(0)
     }
 
     private val minimum: Int
