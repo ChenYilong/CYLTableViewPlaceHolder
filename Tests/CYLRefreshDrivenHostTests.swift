@@ -56,6 +56,15 @@ final class CYLRefreshDrivenHostTests: XCTestCase {
         XCTAssertFalse((host(["footer": true]).component as! CYLRefreshFooter).loadsAfterNoMoreData)
     }
 
+    func testTheFooterSitsBelowTheVisibleAreaAndFollowsAResize() {
+        let host = host(["footer": true])
+        let footer = host.component
+        XCTAssertEqual(footer.frame.minY, host.layout.bounds.height, accuracy: 0.5)
+        host.layout.frame = CGRect(x: 0, y: 0, width: 320, height: 90)
+        host.layout.layoutIfNeeded()
+        XCTAssertEqual(footer.frame.minY, 90, accuracy: 0.5, "the footer follows the slot the host resizes")
+    }
+
     func testPhaseNamesAreTheAndroidLowerCamelNames() {
         XCTAssertEqual(CYLRefreshDrivenHost.name(of: .idle), "idle")
         XCTAssertEqual(CYLRefreshDrivenHost.name(of: .pullToRefresh), "pullToRefresh")
