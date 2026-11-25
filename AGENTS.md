@@ -81,7 +81,7 @@ Rules are grouped by tag (same tags as `instructions.md`). Each line is the rule
 
 ## Tag: Example demos (`examples`)
 
-- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a title on every section header, content-wide tags (as many per row as fit), More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
 - Use the project skill `cyl-examples` in `.agents/skills/` for demo screens.
 
 ## Tag: Code and architecture (`code`)

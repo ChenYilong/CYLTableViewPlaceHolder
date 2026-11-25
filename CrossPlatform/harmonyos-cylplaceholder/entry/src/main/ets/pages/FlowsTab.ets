@@ -76,7 +76,7 @@ function buildSections(): FlowSection[] {
   const hud: FlowRow = new FlowRow(new TableRow('hudFlow', t('CYLScenarioTitleHUD'), 'CYLPlaceholderHUD · .hud'),
     $r('sys.symbol.hourglass'));
   return [
-    new FlowSection(new TableSection('', []), flows),
+    new FlowSection(new TableSection(t('CYLScenarioSectionFlows'), []), flows),
     new FlowSection(new TableSection(t('CYLScenarioSectionStatusBar'), []), [status]),
     new FlowSection(new TableSection(t('CYLScenarioSectionHUD'), []), [hud]),
   ];

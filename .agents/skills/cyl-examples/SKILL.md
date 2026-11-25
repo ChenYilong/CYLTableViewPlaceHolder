@@ -16,6 +16,8 @@ an inset-grouped list, ArkUI `List` with groups). Build it with the tag list, no
 ## How
 
 1. One tag list, one section per group. The section title is the header. A tag shows the **main title and the icon only**.
+   Every section header must have a title (add a localized one for an untitled group). Tags are content-wide: leave
+   `numberOfItemsPerRow` at 0 so a row holds as many tags as fit.
 2. More than `defaultVisibleRows` rows in a section: the core's More / Less fold control (`foldControl`, header trailing).
 3. A tap on a tag does what the replaced cell's tap did (open the screen, select the row). Do not leave the tag selected.
 4. The secondary line (detail, subtitle) is shown on a **long press** in a small floating callout with an arrow:

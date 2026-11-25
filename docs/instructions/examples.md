@@ -12,11 +12,14 @@ heading "Tag: Example demos". English only. The same rule lives in CollectionVie
   `CYLTagListState` on HarmonyOS) instead of the platform's own grouped list:
   - One tag list; one section per group; the section title is the section header.
   - A tag shows only the **main title and the icon**; the secondary line (detail, subtitle) is not drawn in the tag.
+  - **Every section header has a title**: a group without a natural title gets a localized one (never an empty header).
   - A section with more rows than `defaultVisibleRows` uses the core's **More / Less** fold control.
   - A tap on a tag does exactly what a tap on the replaced cell did (open the screen). The tag does not stay selected.
   - A **long press** shows the secondary line in a small floating callout with an arrow, through the tag list's
     long-press action API (`menuSubtitleForItem` / item key `subtitle`, `longPressAction` `"callout"`). Never draw a popup
     in the example.
+  - **Tag width is adaptive**: leave `numberOfItemsPerRow` at 0 so a tag is as wide as its content and a row holds as many
+    tags as fit; never fix a number of tags per row in a demo.
   - A title that does not fit one line wraps with the style's `titleMaxLines` (default 1; any number; every line shown with the
     named constant `CYLTagTitleMaxLinesUnlimited`, never a literal such as 0 or 999). The app picks the number; the
     placeholder example uses 3.
