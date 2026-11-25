@@ -2394,6 +2394,34 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     private var ownedIconColor: UIColor?
 
     /**
+     * [EN] The engine tints a single-color animation in the icon color through the player's `applyColors` with `**.Color` (and removes it
+     *      with nil), the same call that carries the item's color overrides (`CYLPlaceholderItemAnimationColors`), and the last call wins
+     *      (since CYLTabBarController 3c6a4d2 the tint pass runs on every state, trait and tint change). So the overrides, which are the
+     *      item's own explicit colors, are applied again after each pass this view can see.
+     * [CN] 引擎通过播放器的 `applyColors`（`**.Color`；nil 表示移除）用图标颜色为单色动画着色，与承载条目颜色覆盖
+     *      （`CYLPlaceholderItemAnimationColors`）的是同一个调用，且以最后一次为准（自 CYLTabBarController 3c6a4d2 起，每次状态、trait 与 tint
+     *      变化都会执行着色）。所以作为条目自己显式颜色的覆盖，在本视图能看到的每次着色之后重新应用。
+     */
+    open override func applyIconTintColor(_ color: UIColor?) {
+        super.applyIconTintColor(color)
+        cyl_reapplyAnimationColors()
+    }
+
+    // [EN] The engine's pass on state, appearance, tint and trait changes and when the animation view loads. [CN] 引擎在状态、外观、tint、trait 变化以及动画视图加载时的执行入口。
+    open override func applyItemAppearance() {
+        super.applyItemAppearance()
+        cyl_reapplyAnimationColors()
+    }
+
+    private func cyl_reapplyAnimationColors() {
+        #if CYL_ANIMATION_ENGINE_AVAILABLE
+        guard let colors = animationColors, !colors.isEmpty, let player = animationPlayer,
+              player.responds(to: #selector(CYLTabBarItemAnimationPlayer.applyColors(_:traitCollection:))) else { return }
+        player.applyColors?(colors, traitCollection: traitCollection)
+        #endif
+    }
+
+    /**
      * [EN] Sets the icon color this view owns (nil: the icon follows `tintColor`). Since CYLTabBarController 3c6a4d2 the engine
      *      paints the icon with its own built-in color (`UIColor.label` when normal) on every state or trait change, so the color
      *      goes to the engine as the subclass level (`applyIconTintColor(_:)`), which the engine keeps applying.

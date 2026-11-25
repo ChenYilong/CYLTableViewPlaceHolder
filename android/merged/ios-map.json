@@ -1169,7 +1169,7 @@
  },
  "CYLPlaceholderComponent.showsImageWhenAnimationEnds": {
   "ios": "`CYLPlaceholderComponent` `showsImageWhenAnimationEnds`",
-  "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView has no such property, only onAnimationEnd); on for the Success icon"
+  "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView declares `showsImageWhenAnimationEnds` itself since CYLTabBarController d0aadcd7); on for the Success icon"
  },
  "CYLRefreshStyle": {
   "ios": "`CYLRefreshStyle`",

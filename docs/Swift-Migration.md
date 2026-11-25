@@ -8,6 +8,7 @@
 | --- | --- |
 | [Tasks](#tasks) | [Tasks](#tasks) |
 | [Rule: examples have the lowest weight (owner, 2026-11-13)](#rule-examples-have-the-lowest-weight-owner-2026-11-13) | [Rule: examples have the lowest weight (owner, 2026-11-13)](#rule-examples-have-the-lowest-weight-owner-2026-11-13) |
+| [Migration note: three `CYLPlaceholderView` properties moved to the engine (2026-11-25, `999049e7`)](#migration-note-three-cylplaceholderview-properties-moved-to-the-engine-2026-11-25-999049e7) | [Migration note: three `CYLPlaceholderView` properties moved to the engine (2026-11-25, `999049e7`)](#migration-note-three-cylplaceholderview-properties-moved-to-the-engine-2026-11-25-999049e7) |
 
 <!-- docs-navigation:end -->
 
@@ -701,3 +702,10 @@ but when it breaks one, the example changes, never the core for the example.
   for an example.
 - Done means every example builds again (the `Demo` CI jobs) with the core's clean API, examples updated in the same
   change.
+
+## Migration note: three `CYLPlaceholderView` properties moved to the engine (2026-11-25, `999049e7`)
+
+| 中文 | English |
+| --- | --- |
+| `CYLPlaceholderView` 自己声明的 `onResourceMissing`、`showsImageWhenAnimationEnds`、`isShowingImageAfterAnimationEnd` 已删除，改用引擎 `CYLAnimatedItemView`（CYLTabBarController `d0aadcd7`）的同名属性。引擎把它们声明为不带 `@objc` 的 Swift 属性，所以从 Objective-C 看不到。检查结果：本仓库没有 Objective-C 调用者（`Tests/CYLObjectiveCAPISmokeTests.m`、`Examples/Example-objc-01`、`Examples/Example-objc-02`、`CrossPlatform/` 的 iOS 宿主都不使用），`scripts/ios-public-api.json` 与 `docs/iOS-API-Map.md` 也没有列出它们（`isShowingImageAfterAnimationEnd` 一直只是 `private(set)` 的内部属性，从未公开），所以不添加不同名称的 Objective-C 转发。按照“示例权重最低”规则，不为示例增加额外的 `@objc` 名称。 | `CYLPlaceholderView` no longer declares its own `onResourceMissing`, `showsImageWhenAnimationEnds` and `isShowingImageAfterAnimationEnd`; it uses the properties of the same names on the engine's `CYLAnimatedItemView` (CYLTabBarController `d0aadcd7`). The engine declares them as Swift properties without `@objc`, so Objective-C does not see them. Checked: this repository has no Objective-C caller (neither `Tests/CYLObjectiveCAPISmokeTests.m`, `Examples/Example-objc-01`, `Examples/Example-objc-02` nor the iOS hosts under `CrossPlatform/` use them), and neither `scripts/ios-public-api.json` nor `docs/iOS-API-Map.md` lists them (`isShowingImageAfterAnimationEnd` was only ever an internal `private(set)` property, never public), so no Objective-C forwarder with a different name is added, and under the rule "examples have the lowest weight" no extra `@objc` name is added for an example. |
+| **Swift 替代**：`view.onResourceMissing = { resource, reason in … }`、`view.showsImageWhenAnimationEnds = true`、`view.isShowingImageAfterAnimationEnd`（只读）。仍有 `@objc` 的：`CYLPlaceholderComponent.showsImageWhenAnimationEnds`（组件，由 `CYLPlaceholderStackView` 转发给视图）与 `CYLPlaceholderResourceReporter.onResourceMissing`。需要从 Objective-C 读取视图上的这三项的应用，应在自己的 Swift 文件中用 `@objc` 包装并向 `CYLAnimatedItemView` 提出声明 `@objc` 的请求。 | **Swift replacement**: `view.onResourceMissing = { resource, reason in … }`, `view.showsImageWhenAnimationEnds = true`, `view.isShowingImageAfterAnimationEnd` (read-only). Still `@objc`: `CYLPlaceholderComponent.showsImageWhenAnimationEnds` (the component; `CYLPlaceholderStackView` passes it on to the view) and `CYLPlaceholderResourceReporter.onResourceMissing`. An app that needs these three on the view from Objective-C wraps them with `@objc` in its own Swift file (and may ask for `@objc` on `CYLAnimatedItemView`'s declarations). |
