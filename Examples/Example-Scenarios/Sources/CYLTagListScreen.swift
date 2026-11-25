@@ -136,8 +136,11 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
         if bottomConstraint?.constant != -inset { bottomConstraint?.constant = -inset }
     }
 
+    private var itemStyles: [IndexPath: CYLMenuStyle] = [:]
+
     /// Reloads the tag list after `sections` changed, and swaps in `emptyView` while there is nothing to list.
     func reloadSections() {
+        itemStyles.removeAll()
         tagList.reloadMenuData()
         guard let emptyView = emptyView else { return }
         if sections.isEmpty, emptyView.superview == nil {
@@ -172,9 +175,20 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     }
 
     func menuImageForItem(at indexPath: IndexPath) -> UIImage? {
-        let entry = entry(at: indexPath)
-        // System image on a tag: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-        return entry.symbol.flatMap { UIImage(systemName: $0) }?.withTintColor(entry.tint, renderingMode: .alwaysOriginal)
+        // System image on a tag: a row icon, not a placeholder, so CYLPlaceholderView does not apply. A template image: the
+        // colour comes from the tag style (`menuStyleForItem`), so the core can adapt it to the glass (dark mode).
+        entry(at: indexPath).symbol.flatMap { UIImage(systemName: $0) }?.withRenderingMode(.alwaysTemplate)
+    }
+
+    /// The list style with the entry's icon colour; one copy per tag, kept until the next reload (the core asks for the same
+    /// object while nothing changes).
+    func menuStyleForItem(at indexPath: IndexPath) -> CYLMenuStyle? {
+        if let style = itemStyles[indexPath] { return style }
+        let style = tagList.style.copy() as! CYLMenuStyle
+        // The lists use selection mode none, so the normal state is the only one drawn.
+        style.setIconColor(entry(at: indexPath).tint, for: .normal)
+        itemStyles[indexPath] = style
+        return style
     }
 
     func menuIdentifierForItem(at indexPath: IndexPath) -> String {
