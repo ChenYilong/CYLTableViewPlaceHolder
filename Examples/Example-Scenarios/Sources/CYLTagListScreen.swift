@@ -5,7 +5,8 @@
 //  A sectioned index screen drawn with CollectionViewClassifyMenu's tag list (`CYLTagListView`) instead of a grouped
 //  table (docs/instructions/examples.md, "Sectioned lists in demos use the tag list"): one tag list, one section per
 //  group, the section title is the header, a tag shows the main title and the icon only, a long section folds behind
-//  the core's More / Less control, a tap does what the replaced row did and leaves nothing selected, and a long press
+//  the core's More control at the trailing edge of the section header (`.headerTrailing`, "More" and the chevron; expanded,
+//  the chevron turned), a tap does what the replaced row did and leaves nothing selected, and a long press
 //  shows the secondary line in the tag list's own callout (`menuSubtitleForItem`, `CYLTagLongPressActions.callout`).
 //  Examples only: the library itself does not depend on CollectionViewClassifyMenu.
 //
@@ -43,7 +44,7 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     /// Shown instead of the list while there is no section, should the bundle be missing.
     var emptyView: UIView?
 
-    let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .footer, content: .title))
+    let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .headerTrailing, content: .iconAndTitle))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +82,7 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         // The floating tab bar and the plus button float over the view and are not in the bottom safe area: end the list
-        // above them, so the last row (More / Less) is never covered.
+        // above them, so the last row is never covered.
         // A screen pushed above a root hides the tab bar, then nothing is covered.
         let isRoot = navigationController.map { $0.viewControllers.first === self } ?? true
         var inset: CGFloat = 0
