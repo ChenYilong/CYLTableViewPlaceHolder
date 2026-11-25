@@ -69,6 +69,10 @@ have the expected Rive artboard and state machine. Trigger and linear fixtures
 must be named `check.riv` and `button.riv` and contain the corresponding
 `Check` trigger and `active` animation used by the tests.
 Select a real device and runtime with `xcrun simctl list devices available`.
+**Before running a simulator, read the simulator rules** (`docs/instructions/macos.md`, "Simulator rules: stop the app and the
+simulator after a run"). Owner's rule, 2026-11-25: 运行模拟器 测试截图结束后 ，立即杀掉终止app，以及模拟器进程。使用时在重新启动。避免运行后，任务完毕也不关掉app ，也不关闭模拟器进程。 In English: when the tests or screenshots are done, terminate the app
+and shut down the simulator process at once (`xcrun simctl terminate <UDID> <bundle id>`, `xcrun simctl shutdown <UDID>`, your own
+UDIDs only, never `shutdown all`), then boot it again on the next use.
 When an example shows CYLTabBarController, check it follows the default integration (`instructions.md`,
 "Integrating CYLTabBarController in the examples"): built from a configuration file in the example's bundle,
 a PlusButton whose `plusChildViewController` page is selectable (`hasPlusChildViewController` is YES), localized
