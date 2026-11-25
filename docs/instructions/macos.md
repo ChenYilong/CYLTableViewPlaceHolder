@@ -123,7 +123,9 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
 
 ## Simulator rules: stop the app and the simulator after a run (owner's rule, 2026-11-25)
 
-Read this section, or the short text in `instructions.md` / `AGENTS.md`, before running any simulator.
+Read this section, or the short text in `instructions.md` / `AGENTS.md`, before running any simulator. It is the iOS part of the
+cross-platform rule in [testing.md, "Emulator run rules"](testing.md#emulator-run-rules-stop-the-app-and-the-emulator-when-the-test-is-over)
+(Android and HarmonyOS commands, shared emulators); the two say the same thing, this one carries the `simctl` commands.
 
 - **Owner's words (verbatim):** 运行模拟器 测试截图结束后 ，立即杀掉终止app，以及模拟器进程。使用时在重新启动。避免运行后，任务完毕也不关掉app ，也不关闭模拟器进程。
 - **In English:** when a simulator run (tests, screenshots) is finished, immediately terminate the app and shut down the simulator
