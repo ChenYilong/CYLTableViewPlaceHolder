@@ -207,6 +207,8 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
     private let drawnMask = CALayer()
     // [EN] YES from the finish trigger until the animation stops or the hold ends. [CN] 从触发结束触发器到动画停止或停留结束期间为 YES。
     private var awaitsFinishEnd = false
+    // [EN] The poll that ends the post-refresh retract (see `beginRetract`); nil when the header is not retracting. [CN] 结束刷新后收回阶段的轮询（见 `beginRetract`）；未收回时为 nil。
+    private var retractTimer: Timer?
 
     /**
      * [EN] A header drawn by `style`; nil when the file cannot be read. [CN] 由 `style` 绘制的刷新头；文件无法读取时为 nil。
@@ -264,7 +266,8 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
     //      刷新头高度（`CYLRefreshRiveDrawnTable.slack`）：画出的内容贴着第一行，空余在其上方，文件在内容下方画的黑色落在刷新头之外
     //      （`clipsToBounds`），遮罩隐藏艺术图上方的空余。列表自己的占位不变，所以结束停留与之前相同。每次布局与输入变化都会执行，因此随下拉、停留与收回变化。
     private func placeRiveView() {
-        guard let style = riveStyle, let riveView = riveView else { return }
+        // [EN] The art keeps its place while the header retracts (`beginRetract`). [CN] 刷新头收回期间，画面保持原位（见 `beginRetract`）。
+        guard let style = riveStyle, let riveView = riveView, retractTimer == nil else { return }
         let minimum = style.minimumHeight > 0 ? style.minimumHeight : style.triggerOffset
         let height = max(bounds.height, minimum)
         guard !style.drawnTable.isEmpty else {
@@ -297,6 +300,8 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
 
     override public func onScrolling(withOffset offset: CGFloat, percent: CGFloat, drag isDragging: Bool) {
         super.onScrolling(withOffset: offset, percent: percent, drag: isDragging)
+        // [EN] A new drag during the retract ends the freeze at once, so the pull starts from the file's first state. [CN] 收回期间开始新的拖动时立即结束冻结，使下拉从文件的初始状态开始。
+        if retractTimer != nil && isDragging && offset > 0.5 { endRetract() }
         guard let style = riveStyle, let viewModel = viewModel, !rivePlaysRefresh else { return }
         if let input = style.pullInput {
             let value = style.pullValue(offset: offset)
@@ -327,6 +332,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         guard let style = riveStyle, let viewModel = viewModel else { return }
         switch status {
         case .releasing:
+            if retractTimer != nil { endRetract() }
             guard !rivePlaysRefresh else { break }
             rivePlaysRefresh = true
             if let input = style.pullInput {
@@ -356,8 +362,12 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         case .idle:
             awaitsFinishEnd = false
             guard rivePlaysRefresh else { break }
-            rivePlaysRefresh = false
-            reset()
+            if CYLRefreshRiveRetract.keepsArt(pullAnimation: style.pullAnimation, idleAnimation: style.idleAnimation) {
+                beginRetract()
+            } else {
+                rivePlaysRefresh = false
+                reset()
+            }
         default:
             break
         }
@@ -380,6 +390,35 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         guard awaitsFinishEnd else { return }
         awaitsFinishEnd = false
         cyl_finishAnimationDidEnd()
+    }
+
+    // [EN] After a refresh the header retracts while it is still on screen. Going back to the file's first state at once (`reset()`, the pull
+    //      input 0, the pull animation at 0) drew pure black over the whole header for the retract (Halloween's Pull at time 0 and Bow's state
+    //      machine at input 0 are black), and in a host that holds the slot (Flutter) before the retract. So the art stays as it is until the
+    //      header is out of view, then `reset()` runs; a new drag or release ends the wait at once. Only for a style whose art is a pull animation scrubbed
+    //      by the offset (Halloween); the state-machine styles keep their reset at once (their art is empty or hidden by the table at input 0). [CN] 刷新结束后，刷新头收回时仍在屏幕上。
+    //      若立刻回到文件的初始状态（`reset()`、下拉输入 0、Pull 动画 0），整个刷新头在收回期间会是纯黑（Halloween 的 Pull 在 0 秒、Bow 的状态机在输入 0
+    //      都是黑色），在先停留槽位再收回的宿主（Flutter）中则在收回之前就是黑色。所以画面保持原样直到刷新头离开视野，再执行 `reset()`；新的拖动或松手立即结束等待。
+    private func beginRetract() {
+        retractTimer?.invalidate()
+        let started = Date()
+        let timer = Timer(timeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            let outOfView = CYLRefreshRiveRetract.isOutOfView(modelHeight: self.bounds.height, shownHeight: self.layer.presentation()?.bounds.height ?? 0,
+                                                              elapsed: Date().timeIntervalSince(started), limit: 3)
+            if outOfView || self.window == nil { self.endRetract() }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        retractTimer = timer
+    }
+
+    private func endRetract() {
+        retractTimer?.invalidate()
+        retractTimer = nil
+        guard rivePlaysRefresh else { return }
+        rivePlaysRefresh = false
+        reset()
+        placeRiveView()
     }
 
     // [EN] Back to the file's first state, as flutter_easy_refresh recreates the controller. [CN] 回到文件的初始状态，与 flutter_easy_refresh 重建控制器相同。
@@ -420,6 +459,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
 
     deinit {
         loadingTimer?.invalidate()
+        retractTimer?.invalidate()
     }
 }
 #endif
