@@ -25,6 +25,7 @@ Recording tasks, scoring, other sessions, porting another project. Full text: [d
 
 Verification, shared emulators, screenshots. Full text: [docs/instructions/testing.md](docs/instructions/testing.md).
 
+- [Emulator run rules: stop the app and the emulator when the test is over](docs/instructions/testing.md#emulator-run-rules-stop-the-app-and-the-emulator-when-the-test-is-over): read before every emulator or simulator run (owner's rule, 2026-11-25). After a test and its screenshots are finished, immediately kill the app and the emulator process; start the emulator again only when needed; never leave them running after the task is done.
 - [Shared emulators: restart a hung emulator](docs/instructions/testing.md#shared-emulators-restart-a-hung-emulator): Several sessions share the Android emulator (`emulator-5556`) and the HarmonyOS emulator (`127.0.0.1:5555`).
 - [Screenshots of local builds and CI/CD](docs/instructions/testing.md#screenshots-of-local-builds-and-cicd): These rules cover every screenshot: local simulator or device runs and CI/CD artifacts.
   - Subsections: [Header and footer on stitched screenshots](docs/instructions/testing.md#header-and-footer-on-stitched-screenshots), [Enforcement: every screenshot passes the checker](docs/instructions/testing.md#enforcement-every-screenshot-passes-the-checker).

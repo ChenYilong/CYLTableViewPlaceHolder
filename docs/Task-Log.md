@@ -2316,3 +2316,10 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
   5. Counts: `Tests/run-tests.rb` 383 tests, 0 failures; `scripts/framework-build.sh` 0 source warnings; ExampleScenarios, ExampleObjC01, ExampleObjC02, ExampleSwiftUI built (BUILD SUCCEEDED; the root-project example is part of the test build); ios-api-map --check 877 / 877; check_doc_comments 1308 / 1308; update-docs-navigation run; check_screenshots ok.
 - **DONE (see above).**
 
+
+### 2026-11-25 TODO: Emulator run rules in the instruction files (branch `feat/android-refresh-port-followup`)
+
+- **Prompt (verbatim, translated):** the root instruction file must prompt that the emulator run rules are read before any emulator run: after a test and its screenshots are finished, immediately kill the app and the emulator process; start the emulator again only when needed; never leave the app or the emulator process running after the task is done.
+- **中文:** 根目录说明文件必须提示:运行模拟器前先读"模拟器运行规则";测试截图结束后立即杀掉应用和模拟器进程,需要时再启动,任务完成后不得留下应用或模拟器进程。
+- **Acceptance:** 100 = rule in `docs/instructions/testing.md` (full text), `AGENTS.md` and `instructions.md` (mandatory-read line, under 200 lines), skill `cyl-verify`, navigation check passes, rule applied once in this session; 60 = text written only.
+- **Done:** the four files above. Safeguard added: an emulator another session is using is not killed; tell that session it is free. Applied: workers were told to stop their app and the emulator they started when their captures end.

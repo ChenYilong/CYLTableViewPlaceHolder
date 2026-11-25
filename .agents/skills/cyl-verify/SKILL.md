@@ -243,3 +243,10 @@ component (hand it to the owning session); an example changes only by calling an
   (`git diff ORIG_HEAD HEAD -- instructions.md AGENTS.md .agents/skills`) before committing; never pull and commit in
   one command. See `instructions.md`, "Enforcement: every screenshot passes the checker" and "Re-read the rules a pull
   changes".
+
+## Emulator run rules (read before every emulator or simulator run)
+
+After a test and its screenshots are finished, immediately force-stop the app and end the emulator process you started;
+start the emulator again only when it is needed. Never leave the app or the emulator running after the task is done.
+Do not kill an emulator another session is using: tell that session it is free instead. Full text:
+`docs/instructions/testing.md`, "Emulator run rules".
