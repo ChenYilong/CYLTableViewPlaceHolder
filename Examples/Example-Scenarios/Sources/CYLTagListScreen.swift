@@ -32,6 +32,38 @@ struct CYLTagSection {
     let entries: [CYLTagEntry]
 }
 
+/// A soft diagonal gradient of four hues behind a tag list, so the Liquid Glass tags have something to refract; the colours
+/// follow light and dark mode.
+final class CYLTagListBackdropView: UIView {
+    override class var layerClass: AnyClass { CAGradientLayer.self }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = false
+        let gradient = layer as! CAGradientLayer
+        gradient.startPoint = CGPoint(x: 0, y: 0)
+        gradient.endPoint = CGPoint(x: 1, y: 1)
+        updateColors()
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    override func traitCollectionDidChange(_ previous: UITraitCollection?) {
+        super.traitCollectionDidChange(previous)
+        updateColors()
+    }
+
+    private func updateColors() {
+        let dark = traitCollection.userInterfaceStyle == .dark
+        let colors: [UIColor] = dark
+            ? [UIColor(red: 0.20, green: 0.10, blue: 0.40, alpha: 1), UIColor(red: 0.05, green: 0.25, blue: 0.45, alpha: 1),
+               UIColor(red: 0.05, green: 0.35, blue: 0.30, alpha: 1), UIColor(red: 0.45, green: 0.15, blue: 0.25, alpha: 1)]
+            : [UIColor(red: 0.80, green: 0.72, blue: 1.00, alpha: 1), UIColor(red: 0.62, green: 0.84, blue: 1.00, alpha: 1),
+               UIColor(red: 0.65, green: 0.95, blue: 0.82, alpha: 1), UIColor(red: 1.00, green: 0.78, blue: 0.80, alpha: 1)]
+        (layer as! CAGradientLayer).colors = colors.map { $0.cgColor }
+    }
+}
+
 /// Base class of the sectioned index screens: set `sections` (before the view loads or later, then `reloadSections()`).
 class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMenuDelegate {
 
@@ -49,11 +81,20 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
+        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so a soft colourful
+        // gradient sits behind the list (examples only; the tag list itself stays transparent).
+        let backdrop = CYLTagListBackdropView()
+        backdrop.frame = view.bounds
+        backdrop.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(backdrop)
         let style = tagList.style
         // 0 items per row: a tag is as wide as its content and a row holds as many tags as fit.
         style.numberOfItemsPerRow = 0
         style.titleMaxLines = Self.titleMaxLines
-        style.backgroundColor = .systemGroupedBackground
+        // The one Liquid Glass parameter (docs/tag-liquid-glass.md of CollectionViewClassifyMenu): glass where the system
+        // draws it (iOS 27 and later, iOS 26 without `UIDesignRequiresCompatibility`), the flat tag elsewhere.
+        style.backgroundStyle = .liquidGlass
+        style.backgroundColor = .clear
         tagList.style = style
         tagList.defaultVisibleRows = Self.defaultVisibleRows
         // A tap reports through the delegate and leaves the tag unselected.
