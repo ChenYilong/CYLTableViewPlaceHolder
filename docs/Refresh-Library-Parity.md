@@ -26,6 +26,7 @@
 | [flutter_easy_refresh 刷新尾截图](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) | [flutter_easy_refresh footer screenshots](#flutter_easy_refresh-刷新尾截图--flutter_easy_refresh-footer-screenshots) |
 | [flutter_easy_refresh Rive 样式截图](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) | [flutter_easy_refresh Rive style screenshots](#flutter_easy_refresh-rive-样式截图--flutter_easy_refresh-rive-style-screenshots) |
 | [外部项目的 open PR 与 issue](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) | [Open pull requests and issues of the source projects](#外部项目的-open-pr-与-issue--open-pull-requests-and-issues-of-the-source-projects) |
+| [Progress scoreboard, all platforms (2026-11-25, advisor)](#progress-scoreboard-all-platforms-2026-11-25-advisor) | [Progress scoreboard, all platforms (2026-11-25, advisor)](#progress-scoreboard-all-platforms-2026-11-25-advisor) |
 
 <!-- docs-navigation:end -->
 
@@ -749,3 +750,16 @@ Flutter 3.47.9 debug build of `CrossPlatform/flutter_cylplaceholder/example` on 
 | <https://github.com/xuelongqy/flutter_easy_refresh/issues/631> | Web 上鼠标滚轮不能触发加载更多，只能拖拽。本项目对应：滚轮 / 触控板滚动到底部时自动加载尾是否触发（自动加载尾按偏移触发、不要求拖动，预计可用，待验证）。 / On the web a mouse wheel does not trigger load more, only a drag does. Counterpart here: whether the auto footer triggers when a wheel or trackpad scrolls to the end (it triggers on the offset without requiring a drag, so it should work; to verify). | ✅ 已验证（`testAutoFooterLoadsWhenWheelReachesBottom`，`afb5735` 之后的提交） / Verified (`testAutoFooterLoadsWhenWheelReachesBottom`, in the commit after `afb5735`)：滚轮只移动偏移、不拖动也不越界；自动加载尾按偏移触发，到底部即加载。返回式尾与下拉刷新头需要越界再松手，滚轮做不到（与系统 `UIRefreshControl` 相同），用鼠标的页面应使用自动加载尾 / a wheel only moves the offset, with no drag and no overscroll; the auto footer triggers on the offset and loads at the bottom. The back footer and the pull-down header need an overscroll and a release, which a wheel cannot give (as with the system `UIRefreshControl`), so pages used with a mouse should use the auto footer |
 | <https://github.com/xuelongqy/flutter_easy_refresh/issues/145> | 置顶说明：如何提一条有用的 issue（英文）。 / Pinned note: how to write a useful issue (English). | 不适用（不是缺陷） / Does not apply (not a defect) |
 | <https://github.com/xuelongqy/flutter_easy_refresh/issues/144> | 置顶说明：如何提一条有用的 issue（中文）。 / Pinned note: how to write a useful issue (Chinese). | 不适用（不是缺陷） / Does not apply (not a defect) |
+
+## Progress scoreboard, all platforms (2026-11-25, advisor)
+
+Every number is an advisor judgement from the evidence rows of the 2026-11-24 table (not edited) and of today's work. A row reaches 100 only with local proof; while CI is pending it says "100 pending CI". New architecture of React Native is out of scope (owner) and carries no deduction. No physical devices (owner): the mini program's "phone" deduction is dropped.
+
+| Row | 11-24 | Now | What blocks 100 |
+| --- | --- | --- | --- |
+| iOS core | 92 | ~95 | No green iOS CI on any current head; the Example-objc-01 / -02 failures of run 45389973115 were never diagnosed; `onResourceMissing`, `showsImageWhenAnimationEnds`, `isShowingImageAfterAnimationEnd` lost `@objc` when the core adopted the engine's properties (999049e7), no forwarder or migration note; the Rive "stop ends the hold early" path was never seen on screen or in a test. |
+| Android | 94 | 94, at risk | The Cartfile moved to CYLTabBarController `e62659cf`; Android has not been built at that commit and the last newest-commit build broke on `drivesAnimationPlayback`. Unchanged: drawn-footer colours, `hapticFeedback`, front / behind footers, the Rive footer, `onSecondaryOpened`, `loadsAfterNoMoreData`, resource symbols, the stretch enum. |
+| HarmonyOS | 85 | 85 | The Feed footer's frozen spinner; the Rive header has no `finishTimeout`, drawn table or early hide (owner decision B applies to every platform with a Rive header), so the END measurement could not run; no CI. |
+| Flutter | 84 | ~85 | Drawn table landed, END 0 rows (Android emulator). Open: the Rive footer pull-up, the late `onSecondaryOpened`, the spinner style from the creation parameter, footers not run on a device. |
+| React Native | 72 | 72 | `loadsAfterNoMoreData` (TypeScript spec and Android), Rive style never seen in RN, iOS drawn-footer loading frames, iOS Rive early end, footer second floor. |
+| Mini program | 86 | ~87 | Dark mode and other device sizes not seen. |

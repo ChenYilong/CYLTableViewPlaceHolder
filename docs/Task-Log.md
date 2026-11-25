@@ -2197,3 +2197,12 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **EN:** the advisor decides the Bow END black bars from the context.
 - **Result:** accept, under the owner's own rule (only one file, Bow, still has the END black; Halloween's was our bug and is fixed in `b04700f7`). Logged as a revisable advisor recommendation, not an owner decision. `finishTimeout` stays 1.5 s, no example changed. Full reasoning, the visible iOS / Android difference and the revisit trigger (Android Bow with the 500 ms early hide off): docs/Refresh-Library-Parity.md, section 'Rive drawn-height table'.
 - **DONE.**
+
+### 进行中：全平台接口得分点评与优化到 100 / TODO: advisor scores every platform, optimise to 100 (2026-11-25, Mac)
+
+- **Context:** branch `feat/android-refresh-port-followup`, no new branch or PR. iOS runs on this Mac, Android / Flutter / HarmonyOS / mini program on the Windows machine; tasks are forwarded without waiting for CI (a row still says "100 pending CI" until a CI run is green).
+- **Owner prompt (verbatim):** continue TODO (missing points): opus advisor点评目前全平台接口实现得分 以及下一步计划与建议。并立即让默认模型sonnet按照建议去实现。将得分优化到100转发合适任务给其他session 直接使用本机环境进行测试，iOS在macos机器，其余在windows机器。转发任务给相应session无需等待ci结果。
+- **EN:** the advisor reviews the current API implementation score of every platform plus the next plan and advice; the default model (Sonnet) implements it at once; optimise the scores to 100; forward suitable tasks to the other sessions to test directly on their own machines (iOS on the macOS machine, the rest on the Windows machine); forward without waiting for CI.
+- **Advisor scores (judgement, section 'Progress scoreboard, all platforms (2026-11-25, advisor)' in docs/Refresh-Library-Parity.md):** iOS ~95, Android 94 (at risk after the pin move), HarmonyOS 85, Flutter ~85, React Native 72, mini program ~87.
+- **Dispatch:** Mac Sonnet agent A (iOS CI jobs run locally, `@objc` forwarders, Rive early-end test); Mac Sonnet agent B (RN / Flutter iOS items on the spare simulator); Windows session: Android build at `e62659cf`, HarmonyOS Feed footer, HarmonyOS Rive header parity, `loadsAfterNoMoreData`, `onSecondaryOpened`, push `e391bdcd`; last: corner-radius survey (docs only).
+- **TODO.**
