@@ -72,17 +72,17 @@ export interface CYLRefreshContainerProps {
   secondaryCloseTriggerOffset?: number;
   /** Controlled like `refreshing`: true opens the second floor, false closes it; set it from `onSecondaryOpen` / `onSecondaryClose`. */
   secondaryOpen?: boolean;
-  /** Called after a second floor opened from a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one (Android: always `'header'`). */
+  /** Called after a second floor opened from a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one (Android sends the footer's `{edge: 'footer'}` and an empty body for the header). */
   onSecondaryOpen?: (edge: CYLRefreshSecondaryEdge) => void;
   /** Called after a second floor closed from a push (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one. */
   onSecondaryClose?: (edge: CYLRefreshSecondaryEdge) => void;
-  /** iOS only: the footer's second floor, opened by a pull up of this many points past the end (needs `loadMoreEnabled` and a back footer style, not `cupertino`; never arms while `noMoreData`); 0 (default) is none. Its content is the child with `nativeID="cyl.refresh.secondary.footer"`. */
+  /** The footer's second floor, opened by a pull up of this many points past the end (needs `loadMoreEnabled` and a back footer style, not `cupertino`; on Android also a `footerStyle` (the default auto footer has no floor); never arms while `noMoreData`); 0 (default) is none. Its content is the child with `nativeID="cyl.refresh.secondary.footer"`. */
   footerSecondaryTriggerOffset?: number;
   /** iOS only: the open extent of the footer's second floor; 0 (default) is the scroll view's visible height. */
   footerSecondaryDimension?: number;
-  /** iOS only: pulling the content down this far and releasing closes the footer's second floor; default 80. */
+  /** Pulling the content down this far and releasing closes the footer's second floor; default 80. */
   footerSecondaryCloseTriggerOffset?: number;
-  /** iOS only: controlled like `secondaryOpen`, for the footer's second floor; set it from `onSecondaryOpen` / `onSecondaryClose` with `edge === 'footer'`. */
+  /** Controlled like `secondaryOpen`, for the footer's second floor; set it from `onSecondaryOpen` / `onSecondaryClose` with `edge === 'footer'`. */
   footerSecondaryOpen?: boolean;
   style?: StyleProp<ViewStyle>;
   /** One scroll view (`ScrollView`, `FlatList`, `SectionList`): it gets the native CYLRefresh header. */

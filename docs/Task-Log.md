@@ -2274,3 +2274,9 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
   - **Not done / gaps:** no Swift or Objective-C unit test for the new container props (`Tests/` is agent A's area); the container change was compiled and run, not unit-tested. Rive early end (3a) not measured. Android footer floor and `riveFinishTimeout` on Android: Windows.
   - **Self-score of the iOS halves:** React Native 72 -> about 80 (Rive seen with the table, footer frames, footer floor), Flutter about 85 -> about 87; neither is 100. CI not seen.
 - **DONE (see above).**
+
+- **DONE (2026-11-25, Windows agent; React Native Android footer second floor and riveFinishTimeout; code commit see the git log of branch `rn-android-secondfloor`):**
+  1. EN: `CYLRefreshContainerView` / `Manager` bind the footer second floor with the iOS prop names (`footerSecondaryTriggerOffset`, `footerSecondaryDimension`, `footerSecondaryCloseTriggerOffset`, `footerSecondaryOpen`) on the existing native `CYLRefreshBackFooter` floor; the child with `nativeID` `cyl.refresh.secondary.footer` is its content. `onSecondaryOpen` / `onSecondaryClose` carry `{edge: 'footer'}` for it; the header floor's events are unchanged (empty body, JavaScript reads `'header'`). The floor needs a back `footerStyle`; the default auto footer has none. CN: 安卓容器绑定底部二楼，属性名与 iOS 相同，子视图 `nativeID` 为 `cyl.refresh.secondary.footer`；事件带 `{edge: 'footer'}`，头部二楼事件不变；需要回弹式 `footerStyle`。
+  2. EN: `riveFinishTimeout` needed no new Android code: the container already passes the whole `headerRive` / `footerRive` map to the style, which reads it (default 1.5 unchanged); now pinned by a test. CN: `riveFinishTimeout` 在安卓上无需新代码（容器把整个 `headerRive` / `footerRive` 交给样式读取，默认值仍为 1.5），已加测试固定。
+  - **Not done:** no device or emulator run (Robolectric only; Robolectric cannot load Rive or Lottie natives); the footer-floor swipe was not tried on a real RN screen.
+- **DONE (see above).**
