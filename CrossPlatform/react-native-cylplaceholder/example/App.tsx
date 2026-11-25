@@ -9,6 +9,8 @@ import RefreshPage from './pages/RefreshPage';
 import RefreshStylesPage from './pages/RefreshStylesPage';
 import SecondFloorPage from './pages/SecondFloorPage';
 
+const SecondFloorFooterPage = () => <SecondFloorPage edge="footer" />;
+
 /**
  * [EN] The demo menu: the pages of the Flutter example (`refresh_page`, `paging_page`, `error_placeholder_page`,
  *      `placeholder_stack_page`) that this package's native components can show, a HUD page, and the styles and second floor
@@ -19,6 +21,7 @@ const PAGES = [
   {key: 'refresh', title: 'Refresh (refresh_page)', Page: RefreshPage},
   {key: 'styles', title: 'Refresh styles (styles_page, iOS)', Page: RefreshStylesPage},
   {key: 'second', title: 'Second floor (secondary_page, iOS)', Page: SecondFloorPage},
+  {key: 'secondfooter', title: 'Second floor, footer (iOS)', Page: SecondFloorFooterPage},
   {key: 'paging', title: 'Paging (paging_page)', Page: PagingPage},
   {key: 'error', title: 'Error placeholder (error_placeholder_page)', Page: ErrorPlaceholderPage},
   {key: 'stack', title: 'Placeholder stack (placeholder_stack_page)', Page: PlaceholderStackPage},
