@@ -9,11 +9,11 @@
 import {
   CYLIndexPath, CYLMenuDataSource, CYLMenuDelegate, CYLMenuFoldControl, CYLMenuFoldControlContent,
   CYLMenuFoldControlPosition, CYLMenuSelectionMode, CYLMenuStyle, CYLTagLongPressActions, CYLTagListState,
-  CYLTagListView, CYLTagTap, CYLTagTitleMaxLines
+  CYLTagBackgroundStyle, CYLTagListView, CYLTagTap, CYLTagTitleMaxLines
 } from '@cyl/classifymenu';
 import { t } from '../common/L10n';
 import { Route, RouteParam, push } from '../common/Routes';
-import { LargeTitle, TableRow, TableSection, UiColor } from '../common/Ui';
+import { LargeTitle, TableRow, TableSection } from '../common/Ui';
 
 /** CYLFlow: identifier, title key, API detail (not translated) and the system symbol standing in for the SF Symbol. */
 class Flow {
@@ -45,6 +45,9 @@ export const FLOWS: Flow[] = [
 
 /** The most lines a title takes in this example (the tag list leaves the number to the app). */
 const TITLE_LINES: number = 3;
+/** A colorful backdrop, so that the Liquid Glass of the tags is visible (glass on a plain page looks like a flat tag). */
+const BACKDROP_ANGLE: number = 160;
+const BACKDROP_COLORS: Array<[ResourceColor, number]> = [[0xFFB6E3FF, 0], [0xFFFFD6E8, 0.5], [0xFFFFF2B8, 1]];
 /** The rows a section shows before More. */
 const VISIBLE_ROWS: number = 2;
 
@@ -122,6 +125,8 @@ function buildTagList(sections: FlowSection[]): CYLTagListState {
   const style = new CYLMenuStyle();
   // numberOfItemsPerRow stays 0: a tag is as wide as its content and a row holds as many tags as fit.
   style.titleMaxLines = TITLE_LINES;
+  // Liquid Glass tags (the core draws glass where the device supports it and a flat tag elsewhere).
+  style.backgroundStyle = CYLTagBackgroundStyle.liquidGlass;
   list.style = style;
   list.longPressAction = CYLTagLongPressActions.callout;
   // A data source set from code is read by reloadMenuData() (a configuration does this itself).
@@ -178,7 +183,7 @@ export struct FlowsTab {
       .width('100%')
     }
     .align(Alignment.Top)
-    .backgroundColor(UiColor.background)
+    .linearGradient({ angle: BACKDROP_ANGLE, colors: BACKDROP_COLORS })
     .width('100%')
     .height('100%')
   }

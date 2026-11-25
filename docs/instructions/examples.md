@@ -12,6 +12,11 @@ heading "Tag: Example demos". English only. The same rule lives in CollectionVie
   `CYLTagListState` on HarmonyOS) instead of the platform's own grouped list:
   - One tag list; one section per group; the section title is the section header.
   - A tag shows only the **main title and the icon**; the secondary line (detail, subtitle) is not drawn in the tag.
+  - **Tags use the Liquid Glass style**: set the style's background style to the core's Liquid Glass value
+    (`style.backgroundStyle = CYLTagBackgroundStyle.liquidGlass` on HarmonyOS; the same style key on the other platforms). The core
+    draws glass where the device supports it and falls back to a flat tag elsewhere; never fake glass in an example. Set the style
+    in one shared place per example, and make the glass visible in captures (a colorful background behind the list when the page
+    background is plain).
   - **Every section header has a title**: a group without a natural title gets a localized one (never an empty header).
   - A section with more rows than `defaultVisibleRows` uses the core's **More / Less** fold control.
   - A tap on a tag does exactly what a tap on the replaced cell did (open the screen). The tag does not stay selected.

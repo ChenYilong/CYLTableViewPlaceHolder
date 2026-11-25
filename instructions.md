@@ -65,7 +65,7 @@ The HarmonyOS port, DevEco Studio, the emulator, arm64-only Rive and PAG. Full t
 
 ## Tag: Example demos (`examples`)
 
-- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number), a title on every section header, content-wide tags, and the Liquid Glass tag style (`backgroundStyle`, never faked). ([details](docs/instructions/examples.md))
 
 ## Tag: Code and architecture (`code`)
 
