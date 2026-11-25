@@ -99,6 +99,19 @@ export class CYLAnimatedItemEngineContentView extends CYLPlaceholderPlayableCont
     }
     if (replaced && this.playing) {
       player.play();
+      return;
+    }
+    // The view was loaded before and its engine view went away (a refresh footer removes its icon between loads) and
+    // came back: a play asked while there was no player waits in `pendingCommand`, and `didLoad` does not run again, so
+    // the new player runs it here. Without this the GIF of the footer stayed on its first frame (2026-11-25).
+    if (this.cyl_isAnimationViewReady && this.pendingCommand !== 0) {
+      const command = this.pendingCommand;
+      this.pendingCommand = 0;
+      if (command === 1) {
+        this.cyl_playAnimationView();
+      } else if (command === 2) {
+        this.cyl_showAnimationViewLastFrame();
+      }
     }
   }
 

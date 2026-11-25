@@ -7,7 +7,7 @@
 // and a long press shows the row's detail line in a small callout with an arrow (the tag list's long-press action API).
 // A title wraps onto up to TITLE_LINES lines.
 import {
-  CYLIndexPath, CYLMenuDataSource, CYLMenuDelegate, CYLMenuFoldControl, CYLMenuFoldControlContent,
+  CYLColor, CYLIndexPath, CYLMenuDataSource, CYLMenuDelegate, CYLMenuFoldControl, CYLMenuFoldControlContent,
   CYLMenuFoldControlPosition, CYLMenuSelectionMode, CYLMenuStyle, CYLTagLongPressActions, CYLTagListState,
   CYLTagBackgroundStyle, CYLTagListView, CYLTagTap, CYLTagTitleMaxLines
 } from '@cyl/classifymenu';
@@ -47,6 +47,8 @@ export const FLOWS: Flow[] = [
 const TITLE_LINES: number = 3;
 /** A colorful backdrop, so that the Liquid Glass of the tags is visible (glass on a plain page looks like a flat tag). */
 const BACKDROP_ANGLE: number = 160;
+/** The tint of the built-in header and fold views: dark, because the plate is light pastel in light and dark mode. */
+const PLATE_TINT: string = '#FF1C1C1E';
 const BACKDROP_COLORS: Array<[ResourceColor, number]> = [[0xFFB6E3FF, 0], [0xFFFFD6E8, 0.5], [0xFFFFF2B8, 1]];
 /** The rows a section shows before More. */
 const VISIBLE_ROWS: number = 2;
@@ -126,8 +128,14 @@ function buildTagList(sections: FlowSection[]): CYLTagListState {
   const style = new CYLMenuStyle();
   // numberOfItemsPerRow stays 0: a tag is as wide as its content and a row holds as many tags as fit.
   style.titleMaxLines = TITLE_LINES;
-  // Liquid Glass tags (the core draws glass where the device supports it and a flat tag elsewhere).
+  // The whole look of the example's tag list, in this one place: Liquid Glass tags AND a Liquid Glass board (the section card),
+  // on a clear list so that the gradient page behind shows through (the core draws glass where the device supports it and a
+  // flat tag or card elsewhere). The gradient page is a fixed light pastel in both modes, so the built-in header and fold views
+  // get an explicit dark tint: the default tint follows the system mode and would be white on the pastel in dark mode.
   style.backgroundStyle = CYLTagBackgroundStyle.liquidGlass;
+  style.sectionBackgroundStyle = CYLTagBackgroundStyle.liquidGlass;
+  style.backgroundColor = CYLColor.CLEAR;
+  style.tintColor = PLATE_TINT;
   list.style = style;
   list.longPressAction = CYLTagLongPressActions.callout;
   // A data source set from code is read by reloadMenuData() (a configuration does this itself).

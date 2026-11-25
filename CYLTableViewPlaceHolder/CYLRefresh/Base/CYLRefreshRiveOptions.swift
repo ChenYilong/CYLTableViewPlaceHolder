@@ -231,3 +231,35 @@ enum CYLRefreshRiveRetract {
         max(modelHeight, shownHeight) < 0.5 || elapsed > limit
     }
 }
+
+/**
+ * [EN] The gate between Rive's paused / stopped report and the end of the finish hold (`CYLRefreshRiveHeader`): armed by the finish
+ *      trigger (only for a style that plays a finish part), it lets the first report after that end the hold early, once; a report
+ *      while no finish plays (the pull, the loading loop, after the hold) is ignored, and the end of the hold disarms it so a stale
+ *      report cannot reach the next refresh. Pure Foundation, so it is tested without the Rive runtime.
+ * [CN] Rive 的暂停 / 停止报告与结束停留之间的开关（`CYLRefreshRiveHeader`）：由结束触发器启动（仅限有结束部分的样式），之后的第一个报告
+ *      会让停留提前结束，且只有一次；没有结束动画在播放时（下拉、加载循环、停留结束后）收到的报告被忽略，停留结束时关闭开关，
+ *      过时的报告就不会影响下一次刷新。纯 Foundation，所以不需要 Rive 运行时即可测试。
+ */
+struct CYLRefreshRiveFinishLatch {
+
+    // [EN] YES from the finish trigger until the first stop report or the end of the hold. [CN] 从触发结束触发器到第一个停止报告或停留结束期间为 YES。
+    private(set) var isArmed = false
+
+    // [EN] The finish trigger fired; a style without a finish part (`playsFinish` NO) does not wait for a report. [CN] 结束触发器已触发；没有结束部分的样式（`playsFinish` 为 NO）不等待报告。
+    mutating func arm(playsFinish: Bool) {
+        isArmed = playsFinish
+    }
+
+    // [EN] The hold ended (by the timer or by a report) or the header went idle. [CN] 停留已结束（定时器或报告）或刷新头回到空闲。
+    mutating func disarm() {
+        isArmed = false
+    }
+
+    // [EN] A paused / stopped report arrived: YES exactly once per arming, when the hold should end now. [CN] 收到暂停 / 停止报告：每次启动后恰好返回一次 YES，表示停留应立即结束。
+    mutating func consumeStop() -> Bool {
+        guard isArmed else { return false }
+        isArmed = false
+        return true
+    }
+}

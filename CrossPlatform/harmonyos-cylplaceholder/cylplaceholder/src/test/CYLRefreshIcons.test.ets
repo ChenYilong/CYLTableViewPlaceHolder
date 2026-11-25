@@ -11,6 +11,7 @@ import { CYLRefreshState } from '../main/ets/refresh/CYLRefreshConst';
 import { CYLRefreshScrollViewModel } from '../main/ets/refresh/CYLRefreshComponent';
 import {
   CYLRefreshAnimationHeaderModel,
+  CYLRefreshAutoAnimationFooterModel,
   CYLRefreshBackNormalFooterModel,
   CYLRefreshNormalHeaderModel
 } from '../main/ets/refresh/CYLRefreshClassics';
@@ -18,7 +19,8 @@ import {
   CYLRefreshIconAttributes,
   CYLRefreshIconEngine,
   CYLRefreshIconPlayback,
-  CYLRefreshIconPlaybackFor
+  CYLRefreshIconPlaybackFor,
+  CYLRefreshIconSize
 } from '../main/ets/refresh/CYLRefreshIconView';
 import {
   CYLPlaceholderImageBundle,
@@ -108,6 +110,22 @@ export default function refreshIconsTest() {
       expect(animated.cyl_flipScaleX(animated.animationView)).assertEqual(1);
       const back = new CYLRefreshBackNormalFooterModel();
       expect(back.flipsHorizontallyInOppositeLayoutDirectionViews.length).assertEqual(2);
+    });
+
+    it('animationFootersShowTheIconWhereIosDoes', 0, () => {
+      // The Feed footer (auto, Ring.gif for Refreshing only) showed the icon in every state, which hides the state
+      // text: "No more data" never appeared. iOS: the auto footer's icon shows only while loading.
+      const auto = new CYLRefreshAutoAnimationFooterModel();
+      auto.setIconAnimationFilePath('example/core-animations/CYLRefreshRing.gif', new CYLRefreshIconSize(28, 28),
+        CYLRefreshState.Refreshing);
+      expect(auto.cyl_iconView.hidden).assertTrue();
+      auto.state = CYLRefreshState.Refreshing;
+      expect(auto.cyl_iconView.hidden).assertFalse();
+      auto.endRefreshingWithNoMoreData();
+      expect(auto.cyl_iconView.hidden).assertTrue();
+      expect(auto.stateLabel.text).assertEqual(auto.titleForState(CYLRefreshState.NoMoreData));
+      auto.resetNoMoreData();
+      expect(auto.cyl_iconView.hidden).assertTrue();
     });
 
     it('looksUpImagesInTheImageBundle', 0, () => {

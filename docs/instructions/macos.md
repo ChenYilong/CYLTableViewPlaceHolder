@@ -121,6 +121,24 @@ Applies to the Swift migration of the core (`docs/Swift-Migration.md`) and to ev
   - in zsh, when bash is not possible, use arrays (`files=(a b)`, `"${files[@]}"`) or `${=var}` to split on purpose;
   - quote every expansion (`"$var"`) unless splitting is wanted.
 
+## Simulator rules: stop the app and the simulator after a run (owner's rule, 2026-11-25)
+
+Read this section, or the short text in `instructions.md` / `AGENTS.md`, before running any simulator. It is the iOS part of the
+cross-platform rule in [testing.md, "Emulator run rules"](testing.md#emulator-run-rules-stop-the-app-and-the-emulator-when-the-test-is-over)
+(Android and HarmonyOS commands, shared emulators); the two say the same thing, this one carries the `simctl` commands.
+
+- **Owner's words (verbatim):** 运行模拟器 测试截图结束后 ，立即杀掉终止app，以及模拟器进程。使用时在重新启动。避免运行后，任务完毕也不关掉app ，也不关闭模拟器进程。
+- **In English:** when a simulator run (tests, screenshots) is finished, immediately terminate the app and shut down the simulator
+  process; boot it again only when the next run needs it. Never leave the app running or the simulator booted after the task is done.
+- **How:** at the end of each run or capture batch, `xcrun simctl terminate <UDID> <bundle id>` for each app you started,
+  `xcrun simctl shutdown <UDID>`, then stop the helper processes you started (a `simctl io … recordVideo` recording, an `axe`
+  driver, a leftover `xcodebuild test`), and check with `xcrun simctl list devices booted` that your UDIDs are gone.
+- **Only your own simulators.** The Mac is shared: shut down only the UDIDs you booted, never `simctl shutdown all`, never a
+  simulator another session or agent is using (see the own-simulator rules in `cyl-verify`). A batch that still has steps to run
+  keeps its simulator until the last step; stopping is part of finishing the batch, not an optional cleanup.
+- **Subagents:** every brief that uses a simulator must say "terminate the app and shut down your own simulator when you finish,
+  and report that you did".
+
 ## AGENTS.md: Naming and compatibility
 
 - The library supports iOS 15.0 and later (raised from 12.0 on 2026-11-20, the owner's decision: "raise iOS .spec the

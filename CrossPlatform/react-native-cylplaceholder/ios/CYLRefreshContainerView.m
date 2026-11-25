@@ -14,18 +14,27 @@
     // The floor opened or closed because JavaScript set `secondaryOpen`: the matching event is not sent.
     BOOL _openAskedByJS;
     BOOL _closeAskedByJS;
+    // The same for the footer's floor.
+    BOOL _footerOpenAskedByJS;
+    BOOL _footerCloseAskedByJS;
     // The child view with the floor's nativeID, once React Native has added it.
     UIView *_floorView;
+    UIView *_footerFloorView;
+    // The footer has no floor to give (an auto footer): said once, not on every style change.
+    BOOL _footerFloorReported;
 }
 
 + (NSString *)secondaryViewNativeID {
     return @"cyl.refresh.secondary";
 }
 
++ (NSString *)footerSecondaryViewNativeID {
+    return @"cyl.refresh.secondary.footer";
+}
+
 // React Native sets `nativeID` on its views (UIView+React); the container has no React import, so it is read by name, with the
 // accessibilityIdentifier as the other place a host may put it.
-static BOOL CYLIsFloorView(UIView *view) {
-    NSString *name = CYLRefreshContainerView.secondaryViewNativeID;
+static BOOL CYLHasNativeID(UIView *view, NSString *name) {
     if ([view respondsToSelector:NSSelectorFromString(@"nativeID")]) {
         id value = [view valueForKey:@"nativeID"];
         if ([value isKindOfClass:NSString.class] && [value isEqualToString:name]) return YES;
@@ -33,10 +42,17 @@ static BOOL CYLIsFloorView(UIView *view) {
     return [view.accessibilityIdentifier isEqualToString:name];
 }
 
+// A view that is the content of either floor.
+static BOOL CYLIsFloorView(UIView *view) {
+    return CYLHasNativeID(view, CYLRefreshContainerView.secondaryViewNativeID) ||
+           CYLHasNativeID(view, CYLRefreshContainerView.footerSecondaryViewNativeID);
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _enabled = YES;
         _secondaryCloseTriggerOffset = 80;
+        _footerSecondaryCloseTriggerOffset = 80;
         // [EN] The header rests above the container and React Native lets children draw outside their parent: clip, as Android does.
         // [CN] 头部静止时在容器上方，而 React Native 允许子视图画到父视图外面：与 Android 一样裁剪。
         self.clipsToBounds = YES;
@@ -68,13 +84,13 @@ static BOOL CYLIsFloorView(UIView *view) {
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         if (strongSelf->_openAskedByJS) { strongSelf->_openAskedByJS = NO; return; }
-        if (strongSelf.onSecondaryOpen) strongSelf.onSecondaryOpen(@{});
+        if (strongSelf.onSecondaryOpen) strongSelf.onSecondaryOpen(@{@"edge": @"header"});
     };
     header.secondaryClosedBlock = ^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
         if (strongSelf->_closeAskedByJS) { strongSelf->_closeAskedByJS = NO; return; }
-        if (strongSelf.onSecondaryClose) strongSelf.onSecondaryClose(@{});
+        if (strongSelf.onSecondaryClose) strongSelf.onSecondaryClose(@{@"edge": @"header"});
     };
     return header;
 }
@@ -93,13 +109,36 @@ static BOOL CYLIsFloorView(UIView *view) {
         if (strongSelf->_loadAskedByJS) { strongSelf->_loadAskedByJS = NO; return; }
         if (strongSelf.onLoadMore) strongSelf.onLoadMore(@{});
     };
+    // [EN] The second floor is `CYLRefreshBackFooter`'s API: the drawn, state and normal back footers have it, the auto footer does not. The events
+    //      carry `edge: "footer"`; a floor JavaScript asked for does not call them.
+    // [CN] 二楼是 `CYLRefreshBackFooter` 的 API：手绘、状态与普通回弹尾部有，自动尾部没有。事件带 `edge: "footer"`；JavaScript 要求的二楼不回调。
+    if ([footer isKindOfClass:CYLRefreshBackFooter.class]) {
+        CYLRefreshBackFooter *backFooter = (CYLRefreshBackFooter *)footer;
+        backFooter.secondaryOpenedBlock = ^{
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) return;
+            if (strongSelf->_footerOpenAskedByJS) { strongSelf->_footerOpenAskedByJS = NO; return; }
+            if (strongSelf.onSecondaryOpen) strongSelf.onSecondaryOpen(@{@"edge": @"footer"});
+        };
+        backFooter.secondaryClosedBlock = ^{
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) return;
+            if (strongSelf->_footerCloseAskedByJS) { strongSelf->_footerCloseAskedByJS = NO; return; }
+            if (strongSelf.onSecondaryClose) strongSelf.onSecondaryClose(@{@"edge": @"footer"});
+        };
+    }
     return footer;
 }
 
-- (UIView *)floorViewIn:(UIView *)view {
+// The footer as a back footer, nil for an auto footer (no second floor there).
+- (CYLRefreshBackFooter *)backFooter {
+    return [_footer isKindOfClass:CYLRefreshBackFooter.class] ? (CYLRefreshBackFooter *)_footer : nil;
+}
+
+- (UIView *)floorViewIn:(UIView *)view withNativeID:(NSString *)name {
     for (UIView *child in view.subviews) {
-        if (CYLIsFloorView(child)) return child;
-        UIView *found = [self floorViewIn:child];
+        if (CYLHasNativeID(child, name)) return child;
+        UIView *found = [self floorViewIn:child withNativeID:name];
         if (found) return found;
     }
     return nil;
@@ -131,9 +170,14 @@ static BOOL CYLIsFloorView(UIView *view) {
 
 // The floor's content arrives as a child like the scroll view does; it becomes the header's `secondaryView` once found.
 - (void)attachFloorView {
-    if (_floorView && [_floorView isDescendantOfView:self]) return;
-    _floorView = [self floorViewIn:self];
-    _header.secondaryView = _floorView;
+    if (!_floorView || ![_floorView isDescendantOfView:self]) {
+        _floorView = [self floorViewIn:self withNativeID:CYLRefreshContainerView.secondaryViewNativeID];
+        _header.secondaryView = _floorView;
+    }
+    if (!_footerFloorView || ![_footerFloorView isDescendantOfView:self]) {
+        _footerFloorView = [self floorViewIn:self withNativeID:CYLRefreshContainerView.footerSecondaryViewNativeID];
+        [self backFooter].secondaryView = _footerFloorView;
+    }
 }
 
 - (void)applySecondary {
@@ -141,6 +185,37 @@ static BOOL CYLIsFloorView(UIView *view) {
     _header.secondaryDimension = MAX(0, _secondaryDimension);
     _header.secondaryCloseTriggerOffset = _secondaryCloseTriggerOffset > 0 ? _secondaryCloseTriggerOffset : 80;
     _header.secondaryView = _floorView;
+}
+
+// The footer's floor fields; applied again whenever the footer is made again (a style change), as the blocks are.
+- (void)applyFooterSecondary {
+    CYLRefreshBackFooter *footer = [self backFooter];
+    if (!footer) {
+        if (_footerSecondaryTriggerOffset > 0 && !_footerFloorReported) {
+            _footerFloorReported = YES;
+            NSLog(@"CYLRefreshContainer: footerSecondaryTriggerOffset: the footer style has no second floor (an auto footer), ignored");
+        }
+        return;
+    }
+    footer.secondaryTriggerOffset = MAX(0, _footerSecondaryTriggerOffset);
+    footer.secondaryDimension = MAX(0, _footerSecondaryDimension);
+    footer.secondaryCloseTriggerOffset = _footerSecondaryCloseTriggerOffset > 0 ? _footerSecondaryCloseTriggerOffset : 80;
+    footer.secondaryView = _footerFloorView;
+}
+
+- (void)applyFooterSecondaryOpen {
+    CYLRefreshBackFooter *footer = [self backFooter];
+    if (!_loadMoreEnabled || !_scrollView || !footer || _footerSecondaryOpen == footer.secondaryOpen) return;
+    if (_footerSecondaryOpen) {
+        _footerOpenAskedByJS = YES;
+        [footer openSecondary];
+        // Refused (loading, no scroll view): no opened block will come.
+        if (!footer.secondaryOpen) _footerOpenAskedByJS = NO;
+    } else {
+        _footerCloseAskedByJS = YES;
+        [footer closeSecondary];
+        if (!footer.secondaryOpen) _footerCloseAskedByJS = NO;
+    }
 }
 
 - (void)applySecondaryOpen {
@@ -165,8 +240,10 @@ static BOOL CYLIsFloorView(UIView *view) {
     [self applySecondaryOpen];
     scrollView.cyl_footer = _loadMoreEnabled ? _footer : nil;
     _footer.loadsAfterNoMoreData = _loadsAfterNoMoreData;
+    [self applyFooterSecondary];
     if (_enabled) [self applyRefreshing];
     if (_loadMoreEnabled) [self applyLoading];
+    [self applyFooterSecondaryOpen];
 }
 
 - (void)applyRefreshing {
@@ -273,6 +350,26 @@ static BOOL CYLIsFloorView(UIView *view) {
 - (void)setSecondaryOpen:(BOOL)secondaryOpen {
     _secondaryOpen = secondaryOpen;
     [self applySecondaryOpen];
+}
+
+- (void)setFooterSecondaryTriggerOffset:(CGFloat)footerSecondaryTriggerOffset {
+    _footerSecondaryTriggerOffset = footerSecondaryTriggerOffset;
+    [self applyFooterSecondary];
+}
+
+- (void)setFooterSecondaryDimension:(CGFloat)footerSecondaryDimension {
+    _footerSecondaryDimension = footerSecondaryDimension;
+    [self applyFooterSecondary];
+}
+
+- (void)setFooterSecondaryCloseTriggerOffset:(CGFloat)footerSecondaryCloseTriggerOffset {
+    _footerSecondaryCloseTriggerOffset = footerSecondaryCloseTriggerOffset;
+    [self applyFooterSecondary];
+}
+
+- (void)setFooterSecondaryOpen:(BOOL)footerSecondaryOpen {
+    _footerSecondaryOpen = footerSecondaryOpen;
+    [self applyFooterSecondaryOpen];
 }
 
 - (void)setLoadsAfterNoMoreData:(BOOL)loadsAfterNoMoreData {

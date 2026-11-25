@@ -1,5 +1,6 @@
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { accessibility } from '@kit.AccessibilityKit';
+import { i18n } from '@kit.LocalizationKit';
 import { CYLTagListAddItemView } from './CYLTagListAddItemView';
 import { CYLUIContext } from '../core/CYLUIContext';
 import { CYLAnimationPlayer } from './CYLAnimationPlayer';
@@ -16,9 +17,16 @@ import {
 import { CYLMenuFoldControl, CYLMenuFoldControlPosition } from '../core/CYLMenuFoldControl';
 import { CYLMenuLocalizedString, CYLMenuResources } from '../core/CYLMenuResources';
 import { CYLTagListAccessibilityIdentifier } from '../tagviews/CYLTagListAccessibility';
-import { CYLMenuStyle, CYLTagContentAlignment, CYLTagDeleteIndicatorPlacement, CYLTagImagePlacement } from '../core/CYLMenuStyle';
+import { CYLAnimatedItemBackgroundModifier, CYLAnimatedItemBackgroundStyle } from 'cylanimateditem';
+import {
+  CYLLayoutDirection, CYLMenuStyle, CYLSectionStyleColors, CYLTagBackgroundStyle, CYLTagContentAlignment,
+  CYLTagDeleteIndicatorPlacement, CYLTagImagePlacement
+} from '../core/CYLMenuStyle';
 import { CYLConfiguration, CYLConfigurationValue } from '../core/CYLTagListConfiguration';
-import { CYLColor, CYLColorKey, CYLControlState, CYLImage, CYLSize } from '../core/CYLTypes';
+import { CYLColor, CYLColorKey, CYLControlState, CYLImage, CYLRect, CYLSize } from '../core/CYLTypes';
+
+/** The most lines a header title is given to ArkUI (`CYLHeaderTitleMaxLines.unlimited` is too large for a Text). */
+const HEADER_TITLE_LINES_CEILING: number = 1000;
 
 /** What a tag (or a fold control, or the title) shows, resolved from the list's state for one render. */
 class CYLTagRenderItem {
@@ -65,6 +73,19 @@ class CYLTagRenderItem {
   cell?: CYLTagListCell;
 }
 
+/** A section card, header band or header divider, resolved for one render: a filled, optionally rounded rectangle. */
+class CYLSectionDecoration {
+  key: string = '';
+  x: number = 0;
+  y: number = 0;
+  width: number = 0;
+  height: number = 0;
+  color: ResourceColor = CYLColor.CLEAR;
+  radius: number = 0;
+  /** The drawn background: flat, or the core's Liquid Glass tinted with `color`. */
+  background: CYLAnimatedItemBackgroundStyle = CYLAnimatedItemBackgroundStyle.flat;
+}
+
 /** A section header or footer, resolved for one render. */
 class CYLSectionRender {
   key: string = '';
@@ -76,7 +97,12 @@ class CYLSectionRender {
   fontSize: number = 14;
   fontWeight: FontWeight = FontWeight.Normal;
   textColor: ResourceColor = CYLColor.GRAY;
-  inset: number = 16;
+  insetLeft: number = 16;
+  insetRight: number = 16;
+  /** Right to left: the header row is mirrored (its views in reverse order, the title aligned to its right end). */
+  rtl: boolean = false;
+  /** The most lines of the title. */
+  maxLines: number = 1;
   indicatorColor?: string;
   indicatorWidth: number = 3;
   indicatorHeight: number = 16;
@@ -86,7 +112,9 @@ class CYLSectionRender {
   fold: CYLTagRenderItem = new CYLTagRenderItem();
   showsMore: boolean = false;
   moreImage?: ResourceStr;
-  moreColor: string = CYLColor.GRAY;
+  moreColor: ResourceColor = CYLColor.GRAY;
+  /** The section icon's tint (`CYLMenuStyle.resolvedTintColor`). */
+  iconColor: ResourceColor = CYLColor.BLACK;
   moreLabel: string = '';
   /** The clear button (`menuShowsClearButtonForSection`): a square as tall as a line of the title. */
   showsClear: boolean = false;
@@ -173,19 +201,22 @@ export struct CYLTagListView {
   @Prop @Watch('applyAnimation') animationLoops: boolean = false;
   /** Plays the animated icons again (`playAll()`). */
   controller?: CYLTagListController;
+  /** The layout direction; undefined (the default) follows the system language. */
+  layoutDirection?: CYLLayoutDirection;
   /** The list's state and API; made by the view when not given. */
   tagList?: CYLTagListState;
   onTagTap?: (tap: CYLTagTap) => void;
   onSelectionChange?: (selected: CYLIndexPath[]) => void;
   @State private items: CYLTagRenderItem[] = [];
   @State private headers: CYLSectionRender[] = [];
+  @State private decorations: CYLSectionDecoration[] = [];
   @State private footers: CYLSectionRender[] = [];
   @State private titleItem?: CYLTagRenderItem = undefined;
   @State private contentHeight: number = 0;
   /** `addItemView`'s frame [x, y, width, height] while editing (`CYLTagListState.addItemViewFrame`), else empty. */
   @State private addItemFrame: number[] = [];
   @State private addItemText: string = '';
-  @State private backgroundColorValue: string = CYLColor.WHITE;
+  @State private backgroundColorValue: ResourceColor = CYLSectionStyleColors.listBackground;
   @State private borderWidthValue: number = 0;
   @State private borderColorValue: string = CYLColor.CLEAR;
   @State private cornerRadiusValue: number = 0;
@@ -232,6 +263,8 @@ export struct CYLTagListView {
       this.scroller.scrollTo({ xOffset: 0, yOffset: offset, animation: animated });
     });
     this.controller?.attach(() => this.model.playAllAnimations());
+    this.model.layoutDirection = this.layoutDirection ??
+      (i18n.isRTL(i18n.System.getSystemLanguage()) ? CYLLayoutDirection.rtl : CYLLayoutDirection.ltr);
     this.applyAnimation();
     this.reload();
     this.refresh();
@@ -300,6 +333,7 @@ export struct CYLTagListView {
     this.frames = frames;
     this.items = items;
     this.headers = headers;
+    this.decorations = this.sectionDecorations(sections, titleHeight);
     this.footers = footers;
     this.titleItem = m.hasTitle ? this.title() : undefined;
     this.contentHeight = m.contentHeight;
@@ -308,7 +342,7 @@ export struct CYLTagListView {
     if (addFrame !== undefined) {
       this.addItemText = m.addItemView.text;
     }
-    this.backgroundColorValue = style.backgroundColor;
+    this.backgroundColorValue = style.resolvedBackgroundColor();
     this.borderWidthValue = m.containerBorderWidth;
     this.borderColorValue = m.containerBorderColor ?? CYLColor.CLEAR;
     this.cornerRadiusValue = m.containerCornerRadius;
@@ -322,9 +356,10 @@ export struct CYLTagListView {
   }
 
   /** The look of `style` in `state` on a render item. */
-  private applyStyle(r: CYLTagRenderItem, style: CYLMenuStyle, state: number): void {
+  private applyStyle(r: CYLTagRenderItem, style: CYLMenuStyle, state: number,
+    fontScale: number = this.model.fontScale): void {
     const appearance = style.appearance(state);
-    const font = style.titleFont(state, this.model.fontScale);
+    const font = style.titleFont(state, fontScale);
     r.fontSize = font.size;
     r.fontWeight = font.weight;
     r.textColor = appearance.textColor;
@@ -457,7 +492,8 @@ export struct CYLTagListView {
     section: number): CYLTagRenderItem {
     const r = new CYLTagRenderItem();
     r.section = section;
-    this.applyStyle(r, style, CYLControlState.NORMAL);
+    // A fold / More control does not grow beyond `CYLFoldControlMaxFontScale`.
+    this.applyStyle(r, style, CYLControlState.NORMAL, CYLTagFoldMetrics.cappedFontScale(this.model.fontScale));
     r.title = control.titleWhenExpanded(expanded) ?? '';
     r.image = control.showsImage(expanded) ? control.image : undefined;
     r.iconWidth = r.image !== undefined ? style.imageSize.width : 0;
@@ -483,19 +519,52 @@ export struct CYLTagListView {
     return r;
   }
 
-  private sectionFold(frame: CYLTagListSectionFrame): CYLTagRenderItem {
+  /** `onBand`: a header whose section has a band (the fold control is drawn on the band color). */
+  private sectionFold(frame: CYLTagListSectionFrame, onBand: boolean): CYLTagRenderItem {
     const m = this.model;
     const control = m.displayedFoldControl;
-    const style = CYLTagFoldMetrics.style(control, m.style.foldControlColor);
-    const r = this.foldItem(control, style, frame.expanded, m.foldSize(frame.expanded), frame.section);
+    const style = CYLTagFoldMetrics.style(control, m.style.resolvedFoldControlColor(onBand));
+    const r = this.foldItem(control, style, frame.expanded, m.headerFoldSize(frame.expanded), frame.section);
     this.finishKey(r, 's');
     return r;
+  }
+
+  /** The cards, header bands and header dividers of the sections, behind the headers and the tags. */
+  private sectionDecorations(sections: CYLTagListSectionFrame[], titleHeight: number): CYLSectionDecoration[] {
+    const style = this.model.style;
+    const result: CYLSectionDecoration[] = [];
+    const add = (kind: string, section: number, rect: CYLRect | undefined, color: ResourceColor,
+      radius: number, background: CYLAnimatedItemBackgroundStyle = CYLAnimatedItemBackgroundStyle.flat): void => {
+      if (rect === undefined) {
+        return;
+      }
+      const d = new CYLSectionDecoration();
+      d.x = rect.x;
+      d.y = rect.y + titleHeight;
+      d.width = rect.width;
+      d.height = rect.height;
+      d.color = color;
+      d.radius = radius;
+      d.background = background;
+      d.key = [kind, section, d.x, d.y, d.width, d.height, CYLColorKey(color), radius, background].join('|');
+      result.push(d);
+    };
+    sections.forEach((frame: CYLTagListSectionFrame) => {
+      add('band', frame.section, frame.headerBand, style.headerBackgroundColor ?? CYLColor.CLEAR,
+        style.headerCornerRadius);
+      const glass = style.resolvedSectionBackgroundStyle() === CYLTagBackgroundStyle.liquidGlass;
+      add('card', frame.section, frame.card, style.resolvedSectionBackgroundColor(), style.sectionCornerRadius,
+        glass ? CYLAnimatedItemBackgroundStyle.liquidGlass : CYLAnimatedItemBackgroundStyle.flat);
+      add('line', frame.section, frame.headerSeparator, style.resolvedHeaderSeparatorColor(), 0);
+    });
+    return result;
   }
 
   private header(frame: CYLTagListSectionFrame, titleHeight: number): CYLSectionRender {
     const m = this.model;
     const style = m.style;
-    const view = this.configureHeader(frame.section);
+    const onBand = frame.headerBand !== undefined;
+    const view = this.configureHeader(frame.section, onBand);
     const h = new CYLSectionRender();
     h.section = frame.section;
     h.y = frame.y + titleHeight;
@@ -505,7 +574,12 @@ export struct CYLTagListView {
     h.fontSize = view.titleLabel.font.size;
     h.fontWeight = view.titleLabel.font.weight;
     h.textColor = view.titleLabel.textColor;
-    h.inset = view.horizontalInset;
+    // A plain header without a band keeps `horizontalInset` (the view's own, which an app may change).
+    const styled = style.isInsetGrouped || style.headerBackgroundColor !== undefined;
+    h.insetLeft = styled ? frame.headerInsetLeft : view.horizontalInset;
+    h.insetRight = styled ? frame.headerInsetRight : view.horizontalInset;
+    h.rtl = frame.isRtl;
+    h.maxLines = Math.min(style.headerMaxLines, HEADER_TITLE_LINES_CEILING);
     h.indicatorColor = view.indicatorColor;
     h.indicatorWidth = view.indicatorWidth;
     h.indicatorHeight = view.indicatorHeight;
@@ -513,24 +587,25 @@ export struct CYLTagListView {
     h.showsFold = view.showsFoldButton;
     h.foldLeading = view.foldAtLeadingEdge;
     if (h.showsFold) {
-      h.fold = this.sectionFold(frame);
+      h.fold = this.sectionFold(frame, frame.headerBand !== undefined);
     }
     h.showsMore = view.showsMoreButton;
     h.moreImage = view.moreImage;
     h.moreColor = view.moreColor;
+    h.iconColor = view.iconView.tintColor;
     h.moreLabel = view.moreAccessibilityLabel;
     h.accessory = view.accessoryView;
     h.showsClear = m.showsClearButton(h.section);
     if (h.showsClear) {
       h.clearImage = (style.clearButtonImage ?? CYLMenuResources.image('cyl_trash')) as ResourceStr;
-      h.clearColor = style.clearButtonColor ?? style.headerTextColor;
+      h.clearColor = style.resolvedClearButtonColor(onBand);
       h.clearLabel = m.clearButtonLabel(h.section);
       h.clearSide = Math.min(h.height, Math.ceil(CYLTagButtonMetrics.lineHeight(style.headerFontFor(m.fontScale))));
     }
     h.key = ['h', h.showsClear, h.clearLabel, h.clearSide, CYLColorKey(h.clearColor), h.section, h.y, h.height, h.showsTitle, h.title, h.fontSize, h.fontWeight, CYLColorKey(h.textColor),
-      h.inset,
+      h.insetLeft, h.insetRight, h.rtl, h.maxLines,
       h.indicatorColor ?? '', h.indicatorWidth, h.indicatorHeight, imageKey(h.icon), h.showsFold, h.foldLeading,
-      h.fold.key, h.showsMore, h.moreColor, h.moreLabel, h.accessory !== undefined].join('|');
+      h.fold.key, h.showsMore, CYLColorKey(h.moreColor), CYLColorKey(h.iconColor), h.moreLabel, h.accessory !== undefined].join('|');
     return h;
   }
 
@@ -538,7 +613,7 @@ export struct CYLTagListView {
    * `collectionView(_:viewForSupplementaryElementOfKind:at:)` for a header (`configureHeader`): configured again only
    * when its inputs change, so that changes made to it (then `setNeedsDisplay()`) stay drawn.
    */
-  private configureHeader(section: number): CYLTagListSupplementaryView {
+  private configureHeader(section: number, onBand: boolean): CYLTagListSupplementaryView {
     const m = this.model;
     const style = m.style;
     const view = m.dequeueSupplementaryView(CYLTagListElementKindSectionHeader, section);
@@ -547,7 +622,7 @@ export struct CYLTagListView {
     const accessory = m.menuDataSource?.menuAccessoryViewForSection?.(section);
     const inputs = [m.viewGeneration, m.showsSectionHeaders, title, imageKey(icon), m.fontScale,
       m.showsHeaderFoldControl(section), m.foldControl.position, m.showsMoreButton(section),
-      m.moreButtonAccessibilityLabel(section), accessory !== undefined].join('|');
+      m.moreButtonAccessibilityLabel(section), accessory !== undefined, onBand].join('|');
     if (view.configuredInputs === inputs) {
       return view;
     }
@@ -559,7 +634,8 @@ export struct CYLTagListView {
     view.indicatorHeight = style.headerIndicatorSize.height;
     view.titleLabel.text = title;
     view.titleLabel.font = style.headerFontFor(m.fontScale);
-    view.titleLabel.textColor = style.headerTextColor;
+    view.titleLabel.textColor = style.resolvedHeaderTextColor(onBand);
+    view.iconView.tintColor = style.resolvedTintColor(onBand);
     view.iconView.image = icon;
     // Section titles hidden: the header only holds the fold control.
     view.titleLabel.isHidden = !m.showsSectionHeaders;
@@ -569,7 +645,7 @@ export struct CYLTagListView {
     view.foldAtLeadingEdge = m.foldControl.position === CYLMenuFoldControlPosition.headerLeading;
     view.showsMoreButton = m.showsMoreButton(section);
     view.moreImage = style.moreButtonImage ?? CYLMenuResources.image('cyl_more');
-    view.moreColor = style.moreButtonColor;
+    view.moreColor = style.resolvedMoreButtonColor(onBand);
     view.moreAccessibilityLabel = m.moreButtonAccessibilityLabel(section);
     return view;
   }
@@ -583,7 +659,7 @@ export struct CYLTagListView {
     f.y = frame.y + frame.height - frame.footerHeight + titleHeight;
     f.height = frame.footerHeight;
     f.showsFold = true;
-    f.fold = this.sectionFold(frame);
+    f.fold = this.sectionFold(frame, false);
     f.key = ['f', f.section, f.y, f.height, f.fold.key].join('|');
     return f;
   }
@@ -983,6 +1059,15 @@ export struct CYLTagListView {
         if (this.titleItem !== undefined) {
           this.titleView(this.titleItem)
         }
+        ForEach(this.decorations, (d: CYLSectionDecoration) => {
+          Column()
+            .width(d.width)
+            .height(d.height)
+            // Flat color, or the core's Liquid Glass (the tags' modifier) with the card's corners.
+            .attributeModifier(new CYLAnimatedItemBackgroundModifier(d.background, d.color, d.radius))
+            .accessibilityLevel('no')
+            .position({ x: d.x, y: d.y })
+        }, (d: CYLSectionDecoration) => d.key)
         ForEach(this.headers, (h: CYLSectionRender) => {
           Row({ space: 6 }) {
             if (h.showsFold && h.foldLeading) {
@@ -992,14 +1077,15 @@ export struct CYLTagListView {
               Column().width(h.indicatorWidth).height(h.indicatorHeight).backgroundColor(h.indicatorColor)
             }
             if (h.showsTitle && h.icon !== undefined) {
-              Image(h.icon).width(h.indicatorHeight).height(h.indicatorHeight).accessibilityLevel('no')
+              Image(h.icon).width(h.indicatorHeight).height(h.indicatorHeight).fillColor(h.iconColor).accessibilityLevel('no')
             }
             Text(h.showsTitle ? h.title : '')
               .fontSize(h.fontSize)
               .fontWeight(h.fontWeight)
               .fontColor(h.textColor)
-              .maxLines(1)
+              .maxLines(h.maxLines)
               .textOverflow({ overflow: TextOverflow.Ellipsis })
+              .textAlign(TextAlign.Start)
               .layoutWeight(1)
             if (h.showsClear && h.clearImage !== undefined) {
               // The section's clear button: its top and bottom the title text's, a 44 vp tap area around it.
@@ -1037,7 +1123,9 @@ export struct CYLTagListView {
           }
           .width('100%')
           .height(h.height)
-          .padding({ left: h.inset, right: h.inset })
+          // The insets are physical (the state mirrored them); the direction reverses the views and aligns the title.
+          .direction(h.rtl ? Direction.Rtl : Direction.Ltr)
+          .padding({ left: h.insetLeft, right: h.insetRight })
           .position({ x: 0, y: h.y })
         }, (h: CYLSectionRender) => h.key)
         ForEach(this.footers, (f: CYLSectionRender) => {

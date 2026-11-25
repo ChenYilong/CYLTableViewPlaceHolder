@@ -6,6 +6,7 @@
 import { CYLAnimatedItemCornerRadiusCapsule, CYLLiquidGlass } from 'cylanimateditem';
 import { CYLTagAppearance } from './CYLTagAppearance';
 import { CYLColor, CYLControlState, CYLEdgeInsets, CYLFont, CYLImage, CYLOffset, CYLSize } from './CYLTypes';
+import { CYLMenuColorLuminance } from './CYLMenuColor';
 import { CYLMenuLocalizedString, CYLMenuResources } from './CYLMenuResources';
 import { CYLTagMetrics } from './CYLTagMetrics';
 
@@ -69,6 +70,64 @@ export interface CYLTitleTextAttributes {
 }
 
 /**
+ * How a section's tags sit in the list: `insetGrouped` (the default) inside a rounded card (UITableView's inset grouped look),
+ * the header above it; `plain` (the opt-out) on the list's background.
+ */
+export enum CYLSectionStyle {
+  plain = 0,
+  insetGrouped = 1
+}
+
+/**
+ * The line at the bottom of a section header: `none` (the default) or a `line`.
+ */
+export enum CYLHeaderSeparatorStyle {
+  none = 0,
+  line = 1
+}
+
+/**
+ * The named lengths of the section style, vp.
+ */
+export class CYLSectionStyleMetrics {
+  /** The corner radius of a section card. */
+  static readonly cardCornerRadius: number = 10;
+  /** The padding between a section card and its tags. */
+  static readonly cardPadding: number = 12;
+  /** The padding between a header band and its title, leading and trailing. */
+  static readonly headerBandPadding: number = 12;
+  /** The thickness of the header divider: one hairline. */
+  static readonly separatorThickness: number = 0.5;
+}
+
+/**
+ * The relative luminance (WCAG, 0...1) above which a background counts as light, so that the default tint on it is black:
+ * 0.179 is where black and white have the same contrast ratio against it.
+ */
+export const CYLTintLuminanceThreshold: number = 0.179;
+
+/**
+ * The colors of the section style: each one follows the color mode (`resources/base` and `resources/dark`). A style whose
+ * color is undefined resolves to them; an app can also set one itself, for example `headerBand` on `headerBackgroundColor`.
+ */
+export class CYLSectionStyleColors {
+  /** The system's primary font color (`sys.color.font_primary`): black in light mode, white in dark mode. */
+  static readonly systemTint: ResourceColor = $r('sys.color.font_primary');
+  /** The section card: white; #1C1C1E in dark mode. */
+  static readonly card: ResourceColor = $r('app.color.cyl_section_card');
+  /** The header band: #EFEFF4; #2C2C2E in dark mode. */
+  static readonly headerBand: ResourceColor = $r('app.color.cyl_section_header_band');
+  /** The list background of a list whose `backgroundColor` was never set: the system background, white; black in dark mode. */
+  static readonly listBackground: ResourceColor = $r('app.color.cyl_list_background');
+  /** The list background under `insetGrouped`: #F2F2F7; black in dark mode. */
+  static readonly groupedBackground: ResourceColor = $r('app.color.cyl_section_grouped_background');
+  /** The header divider: the system separator color. */
+  static readonly separator: ResourceColor = $r('app.color.cyl_section_separator');
+  /** The tint of a Liquid Glass card with no `sectionBackgroundColor`: translucent white; translucent #1C1C1E in dark mode. */
+  static readonly glassTint: ResourceColor = $r('app.color.cyl_section_glass_tint');
+}
+
+/**
  * A tag border of one physical pixel (iOS: 1 / screen scale).
  */
 const HAIRLINE: number = 0.5;
@@ -81,6 +140,26 @@ export class CYLTagTitleMaxLines {
   static readonly single: number = 1;
   /** No limit: a title wraps onto as many lines as it needs (the MAX of the line counts). */
   static readonly unlimited: number = Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * The line limits of a section header's title (`CYLMenuStyle.headerMaxLines`): named values, never a literal in a call site.
+ */
+export class CYLHeaderTitleMaxLines {
+  /** One line, the default: a title too wide for its header is truncated. */
+  static readonly single: number = 1;
+  /** No limit: a title wraps onto as many lines as it needs. */
+  static readonly unlimited: number = Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * The layout direction of a list: `ltr` (the default) or `rtl`, which mirrors the section header (title, icon, fold /
+ * More control), the section insets, the header band, divider and card insets, and starts the rows of tags at the
+ * trailing edge.
+ */
+export enum CYLLayoutDirection {
+  ltr = 0,
+  rtl = 1
 }
 
 export class CYLMenuStyle {
@@ -215,26 +294,122 @@ export class CYLMenuStyle {
   interitemSpacing: number = 10;
   lineSpacing: number = 10;
   sectionInsets: CYLEdgeInsets = new CYLEdgeInsets(10, 16, 10, 16);
-  backgroundColor: string = CYLColor.WHITE;
+  private backgroundColorValue?: ResourceColor = undefined;
+
+  /**
+   * The list's background color: the system background by default (`CYLSectionStyleColors.listBackground`, a resource: white
+   * in light mode, black in dark mode). Under `insetGrouped` a list whose background the app never set shows the grouped
+   * background instead (`resolvedBackgroundColor()`). A color the app sets, a clear one included, wins in both modes.
+   */
+  get backgroundColor(): ResourceColor {
+    return this.backgroundColorValue ?? CYLSectionStyleColors.listBackground;
+  }
+
+  set backgroundColor(value: ResourceColor) {
+    this.backgroundColorValue = value;
+  }
+
+  /** True when the app set `backgroundColor` (a clear color counts); false while the mode-following default applies. */
+  get isBackgroundColorSet(): boolean {
+    return this.backgroundColorValue !== undefined;
+  }
+
+  // The section card, the header band and the header divider (the contract is docs/tag-section-style.md)
+  /** `insetGrouped` (the default: the section's tags inside a rounded card) or `plain` (the opt-out: no card). */
+  sectionStyle: CYLSectionStyle = CYLSectionStyle.insetGrouped;
+  /** The card's color; undefined resolves to `CYLSectionStyleColors.card`. */
+  sectionBackgroundColor?: ResourceColor = undefined;
+  /**
+   * The card's background: `flat` (the default) is the solid color; `liquidGlass` is the core's Liquid Glass material
+   * (the tags' drawing) with the card's corners, tinted with `sectionBackgroundColor`, else `CYLSectionStyleColors.glassTint`.
+   * Where the device draws no glass the card is flat (`resolvedSectionBackgroundStyle()`); the frames never change.
+   */
+  sectionBackgroundStyle: CYLTagBackgroundStyle = CYLTagBackgroundStyle.flat;
+  sectionCornerRadius: number = CYLSectionStyleMetrics.cardCornerRadius;
+  /** The padding inside the card around the tags (`insetGrouped`), vp. */
+  sectionContentInsets: CYLEdgeInsets = new CYLEdgeInsets(CYLSectionStyleMetrics.cardPadding,
+    CYLSectionStyleMetrics.cardPadding, CYLSectionStyleMetrics.cardPadding, CYLSectionStyleMetrics.cardPadding);
+  /** The header band's color; undefined: no band (today's look). `CYLSectionStyleColors.headerBand` is the usual one. */
+  headerBackgroundColor?: ResourceColor = undefined;
+  headerCornerRadius: number = 0;
+  /** A plain header's title and fold control inset from the band's edges (left and right), vp. */
+  headerContentInsets: CYLEdgeInsets = new CYLEdgeInsets(0, CYLSectionStyleMetrics.headerBandPadding, 0,
+    CYLSectionStyleMetrics.headerBandPadding);
+  headerSeparatorStyle: CYLHeaderSeparatorStyle = CYLHeaderSeparatorStyle.none;
+  /** The divider's color; undefined resolves to `CYLSectionStyleColors.separator`. */
+  headerSeparatorColor?: ResourceColor = undefined;
+  headerSeparatorThickness: number = CYLSectionStyleMetrics.separatorThickness;
+  /**
+   * The divider's leading (left) and trailing (right) inset from the column's edges, vp; undefined: it starts at the
+   * column's leading edge (the card's and the band's edge) and ends at its trailing edge: all three share the same left and right.
+   */
+  headerSeparatorInsets?: CYLEdgeInsets = undefined;
 
   // Section headers
   headerHeight: number = 36;
+  private headerMaxLinesValue: number = CYLHeaderTitleMaxLines.single;
+
+  /**
+   * The most lines a section header's title may take: default `CYLHeaderTitleMaxLines.single` (1, one line, truncated,
+   * as before). With more, a long title wraps and the header grows taller than `headerHeight` to hold the wrapped
+   * lines (`CYLHeaderTitleMaxLines.unlimited`: every line). A value that is not a whole number of 1 or more is 1.
+   */
+  get headerMaxLines(): number {
+    return this.headerMaxLinesValue;
+  }
+
+  set headerMaxLines(value: number) {
+    this.headerMaxLinesValue = Number.isFinite(value) || value === CYLHeaderTitleMaxLines.unlimited ?
+      Math.max(CYLHeaderTitleMaxLines.single, Math.floor(value)) : CYLHeaderTitleMaxLines.single;
+  }
+
   headerFont: CYLFont = CYLFont.systemFont(14);
-  headerTextColor: string = CYLColor.GRAY;
+  /**
+   * The one color of every built-in view that is not a tag (header title, section icon, fold / More control); undefined:
+   * black or white by the luminance of the background it is drawn on (`resolvedTintColor`). A color set on the title,
+   * the fold control or the More button itself wins over it for that view.
+   */
+  tintColor?: ResourceColor = undefined;
+  private headerTextColorValue?: ResourceColor = undefined;
+  private foldControlColorValue?: ResourceColor = undefined;
+  private moreButtonColorValue?: ResourceColor = undefined;
+
+  /**
+   * The section title's color: the system's primary font color (`sys.color.font_primary`, which follows dark mode, as
+   * `UIColor.label` does on iOS) until the app sets one; the color drawn by default is `resolvedHeaderTextColor`.
+   */
+  get headerTextColor(): ResourceColor {
+    return this.headerTextColorValue ?? CYLSectionStyleColors.systemTint;
+  }
+
+  set headerTextColor(value: ResourceColor) {
+    this.headerTextColorValue = value;
+  }
   headerHorizontalInset: number = 16;
 
   // Fold controls
-  foldControlColor: string = CYLColor.GRAY;
+  /** The fold controls' color: the list's one tint by default (see `headerTextColor`); a control's own color wins. */
+  get foldControlColor(): ResourceColor {
+    return this.foldControlColorValue ?? CYLSectionStyleColors.systemTint;
+  }
+
+  set foldControlColor(value: ResourceColor) {
+    this.foldControlColorValue = value;
+  }
   expandTitle: string = CYLMenuLocalizedString('CYLMenuExpand');
   foldChevronImage?: ResourceStr;
   collapseTitle: string = CYLMenuLocalizedString('CYLMenuCollapse');
 
   // The More button
   moreButtonImage?: ResourceStr;
-  /**
-   * `UIColor.secondaryLabel` in its light appearance.
-   */
-  moreButtonColor: string = CYLColor.argb(153, 60, 60, 67);
+  /** The More button's color: the list's one tint by default (see `headerTextColor`). */
+  get moreButtonColor(): ResourceColor {
+    return this.moreButtonColorValue ?? CYLSectionStyleColors.systemTint;
+  }
+
+  set moreButtonColor(value: ResourceColor) {
+    this.moreButtonColorValue = value;
+  }
 
   constructor() {
     this.storedNormal.borderColor = CYLColor.white(0.82);
@@ -393,6 +568,86 @@ export class CYLMenuStyle {
     return this.scaledFont(this.headerFont, fontScale, boldText);
   }
 
+  /** True when the section style draws the cards. */
+  get isInsetGrouped(): boolean {
+    return this.sectionStyle === CYLSectionStyle.insetGrouped;
+  }
+
+  /**
+   * The list background as drawn: the color the app set, else the grouped background under `insetGrouped`, else the system
+   * background (a resource that follows the mode).
+   */
+  resolvedBackgroundColor(): ResourceColor {
+    if (this.backgroundColorValue !== undefined) {
+      return this.backgroundColorValue;
+    }
+    return this.isInsetGrouped ? CYLSectionStyleColors.groupedBackground : CYLSectionStyleColors.listBackground;
+  }
+
+  /**
+   * The default tint (`tintColor` unset) of a built-in view drawn on `background`: black on a light one, white on a dark
+   * one (`CYLTintLuminanceThreshold`); the system mode (`systemTint`: black in light, white in dark) when the background
+   * is not known as a color: transparent, or a resource (the library's palette follows the mode as the system tint does).
+   */
+  static tintOn(background: ResourceColor | undefined): ResourceColor {
+    const luminance = CYLMenuColorLuminance(background);
+    if (luminance === undefined) {
+      return CYLSectionStyleColors.systemTint;
+    }
+    return luminance > CYLTintLuminanceThreshold ? CYLColor.BLACK : CYLColor.WHITE;
+  }
+
+  /**
+   * The tint of the built-in views as drawn: `tintColor`, else the default against what is behind them: the band color
+   * when `onBand` (a header with a band) and a band is set, else the opaque background the list paints itself
+   * (`resolvedBackgroundColor()`: the app's `backgroundColor`, the grouped background under `insetGrouped`).
+   */
+  resolvedTintColor(onBand: boolean = false): ResourceColor {
+    if (this.tintColor !== undefined) {
+      return this.tintColor;
+    }
+    return CYLMenuStyle.tintOn(onBand && this.headerBackgroundColor !== undefined ? this.headerBackgroundColor :
+    this.resolvedBackgroundColor());
+  }
+
+  /** The section title's color as drawn: the one the app set, else the tint. */
+  resolvedHeaderTextColor(onBand: boolean = false): ResourceColor {
+    return this.headerTextColorValue ?? this.resolvedTintColor(onBand);
+  }
+
+  /** The clear button's color as drawn: the one the app set, else the section title's color. */
+  resolvedClearButtonColor(onBand: boolean = false): ResourceColor {
+    return this.clearButtonColor ?? this.resolvedHeaderTextColor(onBand);
+  }
+
+  /** The fold controls' color as drawn (a control's own color still wins): the one the app set, else the tint. */
+  resolvedFoldControlColor(onBand: boolean = false): ResourceColor {
+    return this.foldControlColorValue ?? this.resolvedTintColor(onBand);
+  }
+
+  /** The More button's color as drawn: the one the app set, else the tint. */
+  resolvedMoreButtonColor(onBand: boolean = false): ResourceColor {
+    return this.moreButtonColorValue ?? this.resolvedTintColor(onBand);
+  }
+
+  /** The card's background style as drawn: `sectionBackgroundStyle`, flat where `CYLLiquidGlass.isActive()` is false. */
+  resolvedSectionBackgroundStyle(): CYLTagBackgroundStyle {
+    return this.sectionBackgroundStyle === CYLTagBackgroundStyle.liquidGlass && CYLLiquidGlass.isActive() ?
+    CYLTagBackgroundStyle.liquidGlass : CYLTagBackgroundStyle.flat;
+  }
+
+  /** The card's color as drawn: the glass tint for the drawn glass (the app's color wins), else the solid color. */
+  resolvedSectionBackgroundColor(): ResourceColor {
+    const fallback = this.resolvedSectionBackgroundStyle() === CYLTagBackgroundStyle.liquidGlass ?
+    CYLSectionStyleColors.glassTint : CYLSectionStyleColors.card;
+    return this.sectionBackgroundColor ?? fallback;
+  }
+
+  /** The divider's color as drawn. */
+  resolvedHeaderSeparatorColor(): ResourceColor {
+    return this.headerSeparatorColor ?? CYLSectionStyleColors.separator;
+  }
+
   /**
    * NSCopying.
    */
@@ -444,17 +699,31 @@ export class CYLMenuStyle {
     c.interitemSpacing = this.interitemSpacing;
     c.lineSpacing = this.lineSpacing;
     c.sectionInsets = this.sectionInsets;
-    c.backgroundColor = this.backgroundColor;
+    c.backgroundColorValue = this.backgroundColorValue;
+    c.sectionStyle = this.sectionStyle;
+    c.sectionBackgroundColor = this.sectionBackgroundColor;
+    c.sectionBackgroundStyle = this.sectionBackgroundStyle;
+    c.sectionCornerRadius = this.sectionCornerRadius;
+    c.sectionContentInsets = this.sectionContentInsets;
+    c.headerBackgroundColor = this.headerBackgroundColor;
+    c.headerCornerRadius = this.headerCornerRadius;
+    c.headerContentInsets = this.headerContentInsets;
+    c.headerSeparatorStyle = this.headerSeparatorStyle;
+    c.headerSeparatorColor = this.headerSeparatorColor;
+    c.headerSeparatorThickness = this.headerSeparatorThickness;
+    c.headerSeparatorInsets = this.headerSeparatorInsets;
     c.headerHeight = this.headerHeight;
+    c.headerMaxLines = this.headerMaxLines;
     c.headerFont = this.headerFont;
-    c.headerTextColor = this.headerTextColor;
+    c.tintColor = this.tintColor;
+    c.headerTextColorValue = this.headerTextColorValue;
     c.headerHorizontalInset = this.headerHorizontalInset;
-    c.foldControlColor = this.foldControlColor;
+    c.foldControlColorValue = this.foldControlColorValue;
     c.expandTitle = this.expandTitle;
     c.foldChevronImage = this.foldChevronImage;
     c.collapseTitle = this.collapseTitle;
     c.moreButtonImage = this.moreButtonImage;
-    c.moreButtonColor = this.moreButtonColor;
+    c.moreButtonColorValue = this.moreButtonColorValue;
     return c;
   }
 
@@ -481,6 +750,7 @@ export class CYLMenuStyle {
     style.imageSize = new CYLSize(16, 16);
     style.itemHeight = 30;
     style.backgroundColor = CYLColor.CLEAR;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 
@@ -567,6 +837,7 @@ export class CYLMenuStyle {
     style.imageTitleSpacing = 4;
     style.itemHeight = 0;
     style.backgroundColor = CYLColor.CLEAR;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 
@@ -588,6 +859,7 @@ export class CYLMenuStyle {
     style.lineSpacing = 5;
     style.itemHeight = 0;
     style.backgroundColor = CYLColor.CLEAR;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 
@@ -620,6 +892,7 @@ export class CYLMenuStyle {
     style.lineSpacing = 10;
     style.sectionInsets = new CYLEdgeInsets(12, 24, 12, 24);
     style.backgroundColor = CYLColor.CLEAR;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 
@@ -650,6 +923,7 @@ export class CYLMenuStyle {
     style.rippleColor = CYLColor.argb(255, 0xEE, 0xEE, 0xEE);
     style.rippleAlpha = 128 / 255;
     style.backgroundColor = CYLColor.CLEAR;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 
@@ -677,6 +951,7 @@ export class CYLMenuStyle {
     style.itemHeight = 32;
     style.interitemSpacing = 24;
     style.lineSpacing = 18;
+    style.sectionStyle = CYLSectionStyle.plain;
     return style;
   }
 }

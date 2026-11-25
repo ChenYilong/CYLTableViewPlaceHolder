@@ -594,7 +594,9 @@ export class CYLRefreshAutoAnimationFooterModel extends CYLRefreshAutoStateFoote
     super.cyl_stateDidChange(oldState, state);
     if (this.frames !== undefined) {
       this.frames.update(state);
-      this.cyl_updateIconViewVisible(true, [this.animationView]);
+      // iOS CYLRefreshAutoAnimationFooter: the icon takes the animation view's place and shows only while loading;
+      // otherwise the state text ("No more data") shows (it was hidden in every state before, 2026-11-25).
+      this.cyl_updateIconViewVisible(state === CYLRefreshState.Refreshing, [this.animationView]);
     }
   }
 }

@@ -23,6 +23,8 @@ const RIVE: CYLRefreshRiveOptions = {
   riveReleaseTrigger: 'advance',
   riveFinishTrigger: 'advance',
   riveRestartTrigger: 'restart',
+  // The Bow file's drawn-height table (docs/Refresh-Library-Parity.md, "Rive drawn-height table"): the header is clipped to what the file draws at each pull input.
+  riveDrawnTable: [[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]],
 };
 
 const range = (from: number, count: number) => Array.from({length: count}, (_, i) => from + i + 1);

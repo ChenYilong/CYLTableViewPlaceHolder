@@ -72,10 +72,10 @@ enum CYLFlow: CaseIterable {
     }
 }
 
-final class CYLFlowListViewController: UITableViewController {
+final class CYLFlowListViewController: CYLTagListScreenViewController {
 
     init() {
-        super.init(style: .insetGrouped)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -84,91 +84,41 @@ final class CYLFlowListViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
+        sections = makeSections()
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "flow")
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        3
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0: return CYLFlow.allCases.count
-        case 1: return 2
-        default: return 1
-        }
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case 1: return CYLScenarioLocalizedString(.sectionStatusBar)
-        case 2: return CYLScenarioLocalizedString(.sectionHUD)
-        default: return nil
-        }
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "flow", for: indexPath)
-        if indexPath.section == 2 {
-            // The HUD style: the page's loading progress, with SVProgressHUD's API.
-            var content = UIListContentConfiguration.subtitleCell()
-            content.text = CYLScenarioLocalizedString(.titleHUD)
-            content.secondaryText = "CYLPlaceholderHUD · .hud"
-            content.secondaryTextProperties.color = .secondaryLabel
-            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-            content.image = UIImage(systemName: "hourglass")
-            content.imageProperties.tintColor = .systemTeal
-            cell.contentConfiguration = content
-            cell.accessoryType = .disclosureIndicator
-            cell.accessibilityIdentifier = "hudFlow"
-            return cell
-        }
-        if indexPath.section == 1 {
-            // The red bar ported from CYLChatKit, alone or with a placeholder.
-            var content = UIListContentConfiguration.subtitleCell()
-            let missing = indexPath.row == 1
-            content.text = CYLScenarioLocalizedString(missing ? .titleMissingResource : .titleStatusBar)
-            content.secondaryText = missing ? "CYLPlaceholderResourceReporter · cyl_showsMissingResources"
-                                            : "CYLPlaceholderStatusView · statusView"
-            content.secondaryTextProperties.color = .secondaryLabel
-            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-            content.image = UIImage(systemName: "exclamationmark.circle")
-            content.imageProperties.tintColor = .systemRed
-            cell.contentConfiguration = content
-            cell.accessoryType = .disclosureIndicator
-            cell.accessibilityIdentifier = missing ? "missingResourceFlow" : "statusBarFlow"
-            return cell
-        }
-        let flow = CYLFlow.allCases[indexPath.row]
-        var content = UIListContentConfiguration.subtitleCell()
-        content.text = flow.title
-        content.secondaryText = flow.detail
-        content.secondaryTextProperties.color = .secondaryLabel
-        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-        content.image = UIImage(systemName: flow.symbol)
-        content.imageProperties.tintColor = .systemTeal
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 2 {
-            navigationController?.pushViewController(CYLHUDViewController(), animated: true)
-            return
-        }
-        if indexPath.section == 1 {
-            let next: UIViewController = indexPath.row == 1 ? CYLMissingResourceViewController() : CYLStatusBarViewController()
-            navigationController?.pushViewController(next, animated: true)
-            return
-        }
-        let flow = CYLFlow.allCases[indexPath.row]
-        let next: UIViewController = flow == .collection
-            ? CYLCollectionFlowViewController(flow: flow)
-            : CYLFlowDetailViewController(flow: flow)
-        navigationController?.pushViewController(next, animated: true)
+    private func makeSections() -> [CYLTagSection] {
+        let flows = CYLTagSection(title: CYLScenarioLocalizedString(.tabFlows), entries: CYLFlow.allCases.map { flow in
+            CYLTagEntry(title: flow.title, subtitle: flow.detail, symbol: flow.symbol) { [weak self] in
+                let next: UIViewController = flow == .collection
+                    ? CYLCollectionFlowViewController(flow: flow)
+                    : CYLFlowDetailViewController(flow: flow)
+                self?.navigationController?.pushViewController(next, animated: true)
+            }
+        })
+        // The red bar ported from CYLChatKit, alone or with a placeholder.
+        let statusBar = CYLTagSection(title: CYLScenarioLocalizedString(.sectionStatusBar), entries: [
+            CYLTagEntry(title: CYLScenarioLocalizedString(.titleStatusBar),
+                        subtitle: "CYLPlaceholderStatusView · statusView", symbol: "exclamationmark.circle", tint: .systemRed,
+                        accessibilityIdentifier: "statusBarFlow") { [weak self] in
+                self?.navigationController?.pushViewController(CYLStatusBarViewController(), animated: true)
+            },
+            CYLTagEntry(title: CYLScenarioLocalizedString(.titleMissingResource),
+                        subtitle: "CYLPlaceholderResourceReporter · cyl_showsMissingResources",
+                        symbol: "exclamationmark.circle", tint: .systemRed,
+                        accessibilityIdentifier: "missingResourceFlow") { [weak self] in
+                self?.navigationController?.pushViewController(CYLMissingResourceViewController(), animated: true)
+            },
+        ])
+        // The HUD style: the page's loading progress, with SVProgressHUD's API.
+        let hud = CYLTagSection(title: CYLScenarioLocalizedString(.sectionHUD), entries: [
+            CYLTagEntry(title: CYLScenarioLocalizedString(.titleHUD), subtitle: "CYLPlaceholderHUD · .hud",
+                        symbol: "hourglass", accessibilityIdentifier: "hudFlow") { [weak self] in
+                self?.navigationController?.pushViewController(CYLHUDViewController(), animated: true)
+            },
+        ])
+        return [flows, statusBar, hud]
     }
 }
 

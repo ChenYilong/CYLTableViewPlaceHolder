@@ -23,6 +23,10 @@ heading "Tag: Example demos". English only. The same rule lives in CollectionVie
     plain page glass looks like a flat tag. The plate is an example-side view: the library has no backdrop API (HarmonyOS and
     Android glass blur what is behind the list; iOS glass is drawn by the glass view itself), so the example draws it, never the core.
   - **The tail fold control is itself a Liquid Glass tag**, icon only (the same tag background style as the other tags).
+  - **The board is Liquid Glass too, on a gradient page.** The example's tag list sets, in ONE place (its style builder):
+    tag background style `liquidGlass`, section (board) background style `liquidGlass` (`sectionBackgroundStyle`, the rounded card
+    of the default look), a CLEAR list background and an explicit `tintColor` for the built-in header and fold views when the page
+    behind is a fixed color. The whole demo page background is a GRADIENT behind the list, to test the see-through of the glass.
   - **Fold with the tail control, icon only.** A section with more rows than `defaultVisibleRows` folds with the core's **tail**
     fold control: the last tag of the section is the expand / collapse button and shows only the chevron icon, with no More / Less
     text (`foldControl` position `tail`, content `icon`: `CYLMenuFoldControlPosition.tail` + `CYLMenuFoldControlContent.icon`,

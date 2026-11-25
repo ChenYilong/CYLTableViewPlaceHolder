@@ -21,18 +21,20 @@ export { CYLTagMetrics } from './src/main/ets/core/CYLTagMetrics';
 export { CYLTagAppearance } from './src/main/ets/core/CYLTagAppearance';
 export { CYLMenuResources, CYLMenuLocalizedString } from './src/main/ets/core/CYLMenuResources';
 export {
-  CYLMenuStyle, CYLTagTitleMaxLines, CYLTagImagePlacement, CYLTagImagePlacementIsVertical, CYLTagContentAlignment, CYLTagBackgroundStyle, CYLTagRowAlignment,
-  CYLTagDeleteIndicatorPlacement, CYLTitleTextAttributes
+  CYLMenuStyle, CYLTagTitleMaxLines, CYLHeaderTitleMaxLines, CYLLayoutDirection, CYLTagImagePlacement, CYLTagImagePlacementIsVertical, CYLTagContentAlignment, CYLTagBackgroundStyle, CYLTagRowAlignment,
+  CYLTagDeleteIndicatorPlacement, CYLTitleTextAttributes, CYLSectionStyle, CYLHeaderSeparatorStyle, CYLSectionStyleMetrics,
+  CYLSectionStyleColors, CYLTintLuminanceThreshold
 } from './src/main/ets/core/CYLMenuStyle';
 export { CYLTagColors, CYLTagColorTheme } from './src/main/ets/core/CYLTagColors';
 export { CYLImage, CYLImageIsSymbol, CYLResourceTypeSymbol, CYLColorKey } from './src/main/ets/core/CYLTypes';
-export { CYLMenuColorFromString } from './src/main/ets/core/CYLMenuColor';
+export { CYLMenuColorFromString, CYLMenuColorLuminance } from './src/main/ets/core/CYLMenuColor';
 export { CYLTag, CYLTagDataSource } from './src/main/ets/core/CYLTag';
 export {
   CYLTagModel, CYLTagGroup, CYLTagViewSectionInset, CYLTagViewCellSpacing, CYLTagDefaultListWidth
 } from './src/main/ets/core/CYLTagModel';
 export {
-  CYLMenuFoldControl, CYLMenuFoldControlPosition, CYLMenuFoldControlContent
+  CYLMenuFoldControl, CYLMenuFoldControlPosition, CYLMenuFoldControlContent, CYLFoldControlMaxFontScale,
+  CYLHeaderFoldMaxWidthFraction
 } from './src/main/ets/core/CYLMenuFoldControl';
 export {
   CYLConfiguration, CYLTagListKey, CYLMenuFoldControlKey, CYLTagSectionKey, CYLTagItemKey, CYLMenuStyleKey,

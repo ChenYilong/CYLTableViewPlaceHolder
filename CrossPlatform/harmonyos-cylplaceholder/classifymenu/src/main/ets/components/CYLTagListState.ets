@@ -2,7 +2,7 @@ import { CYLAnimatedItemLiquidGlassContentInset } from 'cylanimateditem';
 import { CYLMenuGestureState } from '../core/CYLMenuGestureState';
 import { CYLTagListCacheItem } from '../core/CYLTagListCache';
 import { CYLUIContext } from '../core/CYLUIContext';
-import { CYLTagBackgroundStyle, CYLTagTitleMaxLines } from '../core/CYLMenuStyle';
+import { CYLHeaderTitleMaxLines, CYLLayoutDirection, CYLTagBackgroundStyle, CYLTagTitleMaxLines } from '../core/CYLMenuStyle';
 /**
  * The model and controller of a `CYLTagListView`, as iOS `CYLTagListView.swift` without its UIKit views: the data
  * source and delegate, the style, selection, folding, measurement and row layout, the title, the android-tagview tag
@@ -20,10 +20,14 @@ import { CYLTagButton, CYLTagButtonPart } from '../tagviews/CYLTagButton';
 import { CYLTagListCell } from '../tagviews/CYLTagListCell';
 import { CYLMenuDataSource, CYLMenuDefaults, CYLMenuDelegate, CYLMenuItemType } from '../core/CYLMenuDataSource';
 import { CYLTagLongPressAction, CYLTagLongPressActions, CYLTagLongPressHost } from '../core/CYLTagLongPressAction';
-import { CYLMenuFoldControl, CYLMenuFoldControlContent, CYLMenuFoldControlPosition } from '../core/CYLMenuFoldControl';
+import {
+  CYLFoldControlMaxFontScale, CYLHeaderFoldMaxWidthFraction, CYLMenuFoldControl, CYLMenuFoldControlContent,
+  CYLMenuFoldControlPosition
+} from '../core/CYLMenuFoldControl';
 import { CYLMenuLocalizedString, CYLMenuResources } from '../core/CYLMenuResources';
 import {
-  CYLMenuStyle, CYLTagContentAlignment, CYLTagImagePlacement, CYLTagImagePlacementIsVertical, CYLTagRowAlignment
+  CYLHeaderSeparatorStyle, CYLMenuStyle, CYLTagContentAlignment, CYLTagImagePlacement, CYLTagImagePlacementIsVertical,
+  CYLTagRowAlignment
 } from '../core/CYLMenuStyle';
 import { CYLTag, CYLTagDataSource } from '../core/CYLTag';
 import { CYLTagAppearance } from '../core/CYLTagAppearance';
@@ -79,6 +83,12 @@ const FOLD_CONTENT_MARGIN: number = 6;
 const FOLD_MINIMUM_HEIGHT: number = 28;
 const FOLD_MINIMUM_TOUCH_WIDTH: number = 44;
 const FOLD_IMAGE_TITLE_SPACING: number = 3;
+/** The vertical padding of a section header around its title lines, vp. */
+const HEADER_VERTICAL_PADDING: number = 12;
+/** The space between the views of a header row (`CYLTagListView`'s header Row), vp. */
+const HEADER_ITEM_SPACING: number = 6;
+/** The side of a header's More button, vp. */
+const HEADER_MORE_BUTTON_SIDE: number = 24;
 const CREATE_ICON_SIDE: number = 14;
 const FOOTER_HEIGHT: number = 28;
 const TITLE_VERTICAL_INSET: number = 10;
@@ -324,8 +334,13 @@ export class CYLTagButtonMetrics {
 
 /** The looks and sizes of the fold controls (`CYLTagFoldButton`). */
 export class CYLTagFoldMetrics {
+  /** The system font scale a fold / More control is sized and drawn at: at most `CYLFoldControlMaxFontScale`. */
+  static cappedFontScale(fontScale: number): number {
+    return Math.min(fontScale, CYLFoldControlMaxFontScale);
+  }
+
   /** A borderless tag: no background, the title then the icon, in `color`. */
-  static style(control: CYLMenuFoldControl, color?: string): CYLMenuStyle {
+  static style(control: CYLMenuFoldControl, color?: ResourceColor): CYLMenuStyle {
     const style = new CYLMenuStyle();
     const font = control.font ?? CYLFont.systemFont(FOOTNOTE_SIZE);
     const tint = control.color ?? color ?? SECONDARY_LABEL;
@@ -352,10 +367,15 @@ export class CYLTagFoldMetrics {
   static inlineStyle(control: CYLMenuFoldControl, itemStyle: CYLMenuStyle): CYLMenuStyle {
     const style = itemStyle.copy();
     const normal = itemStyle.normalAppearance;
-    const tint = control.color ?? itemStyle.foldControlColor;
+    const tint = control.color ?? itemStyle.resolvedFoldControlColor();
     [CYLControlState.SELECTED, CYLControlState.DISABLED].forEach((state: number) => {
       const appearance = style.appearance(state);
-      appearance.backgroundColor = normal.backgroundColor;
+      // The normal state's UNSET background stays unset: under Liquid Glass only an explicit color tints the glass.
+      if (normal.isBackgroundColorSet) {
+        appearance.backgroundColor = normal.backgroundColor;
+      } else {
+        appearance.resetBackgroundColor();
+      }
       appearance.borderColor = normal.borderColor;
       appearance.borderWidth = normal.borderWidth;
       appearance.cornerRadius = normal.cornerRadius;
@@ -376,22 +396,37 @@ export class CYLTagFoldMetrics {
     return style;
   }
 
+  /**
+   * The width of the control's content in that state. A title-and-icon-always control measures both of its states and
+   * takes the wider (the longer of "More" and "Less"), so its size does not jump when it toggles.
+   */
+  private static contentWidth(control: CYLMenuFoldControl, expanded: boolean, style: CYLMenuStyle,
+    scale: number): number {
+    const states: boolean[] = control.content === CYLMenuFoldControlContent.titleAndIcon ? [false, true] : [expanded];
+    let width = 0;
+    states.forEach((state: boolean) => {
+      const icon = control.showsImage(state) ? control.image : undefined;
+      width = Math.max(width, CYLTagButtonMetrics.widthWithImage(control.titleWhenExpanded(state), icon, style, scale));
+    });
+    return width;
+  }
+
   /** The size the control needs in that state (at least a 44 vp wide touch target). */
   static size(control: CYLMenuFoldControl, expanded: boolean, fontScale: number = 1): CYLSize {
+    const scale = CYLTagFoldMetrics.cappedFontScale(fontScale);
     const borderless = CYLTagFoldMetrics.style(control);
-    const icon = control.showsImage(expanded) ? control.image : undefined;
-    const width = CYLTagButtonMetrics.widthWithImage(control.titleWhenExpanded(expanded), icon, borderless, fontScale);
+    const width = CYLTagFoldMetrics.contentWidth(control, expanded, borderless, scale);
     return new CYLSize(Math.max(FOLD_MINIMUM_TOUCH_WIDTH, Math.ceil(width)),
-      Math.max(FOLD_MINIMUM_HEIGHT, CYLTagButtonMetrics.height(borderless, fontScale)));
+      Math.max(FOLD_MINIMUM_HEIGHT, CYLTagButtonMetrics.height(borderless, scale)));
   }
 
   /** The inline control's size: the tags' height, and at least as wide as it is high. */
   static inlineSize(control: CYLMenuFoldControl, itemStyle: CYLMenuStyle, expanded: boolean,
     fontScale: number = 1): CYLSize {
+    const scale = CYLTagFoldMetrics.cappedFontScale(fontScale);
     const inline = CYLTagFoldMetrics.inlineStyle(control, itemStyle);
-    const icon = control.showsImage(expanded) ? control.image : undefined;
-    const side = CYLTagButtonMetrics.height(inline, fontScale);
-    const width = CYLTagButtonMetrics.widthWithImage(control.titleWhenExpanded(expanded), icon, inline, fontScale);
+    const side = CYLTagButtonMetrics.height(inline, scale);
+    const width = CYLTagFoldMetrics.contentWidth(control, expanded, inline, scale);
     return new CYLSize(Math.max(side, Math.ceil(width)), side);
   }
 }
@@ -414,7 +449,12 @@ export class CYLTagCreateItem {
   static outlinedStyle(style: CYLMenuStyle): CYLMenuStyle {
     const outlined = style.copy();
     const normal = outlined.normalAppearance;
-    normal.backgroundColor = style.backgroundColor;
+    // The list's own background, when the app set one; otherwise the tag's built-in (unset: frosted under Liquid Glass).
+    if (style.isBackgroundColorSet) {
+      normal.backgroundColor = style.backgroundColor;
+    } else {
+      normal.resetBackgroundColor();
+    }
     normal.borderColor = SEPARATOR;
     normal.borderWidth = 1;
     normal.textColor = SECONDARY_LABEL;
@@ -493,6 +533,27 @@ export class CYLTagListSectionFrame {
   foldable: boolean = false;
   expanded: boolean = false;
   items: CYLTagListItemFrame[] = [];
+  /** The section card (`CYLSectionStyle.insetGrouped`), in the list's content (below the title); undefined: none. */
+  card?: CYLRect = undefined;
+  /** The header band (`CYLMenuStyle.headerBackgroundColor`); undefined: none. */
+  headerBand?: CYLRect = undefined;
+  /** The header divider, at the header's bottom edge inside `headerHeight` (it adds no height); undefined: none. */
+  headerSeparator?: CYLRect = undefined;
+  /** The distances from the list's leading and trailing edges to the header's title and fold control. */
+  headerInsetLeft: number = 0;
+  headerInsetRight: number = 0;
+  /** True when the list lays out right to left (`CYLTagListState.layoutDirection`). */
+  isRtl: boolean = false;
+  /**
+   * The x (from the list's left edge) of the header title's leading edge: the left inset in ltr, the list width minus
+   * the right inset in rtl, where the title is aligned to its right end.
+   */
+  headerTitleLeadingX: number = 0;
+  /**
+   * The x of the header fold control's left edge when the section's header shows one, else undefined. The control sits
+   * at the trailing side (`headerTrailing`) or the leading side (`headerLeading`); rtl mirrors both.
+   */
+  headerFoldX?: number = undefined;
 }
 
 function key(section: number, item: number): string {
@@ -543,6 +604,43 @@ export class CYLTagListState implements CYLTagLongPressHost {
   selectedTagDragHandler?: (index: number, tag: CYLTag) => void;
   /** The system font scale the tags are measured at (Dynamic Type). */
   fontScale: number = 1;
+
+  private layoutDirectionStorage: CYLLayoutDirection = CYLLayoutDirection.ltr;
+
+  /**
+   * The layout direction: `ltr` by default. `rtl` mirrors the header (title, icon, fold / More control), the section
+   * insets, the card, band and divider insets and starts the rows at the trailing edge; `CYLTagListView` sets it from the
+   * system language unless the app gave one. Left-to-right frames are never changed by it.
+   */
+  get layoutDirection(): CYLLayoutDirection {
+    return this.layoutDirectionStorage;
+  }
+
+  set layoutDirection(value: CYLLayoutDirection) {
+    if (value === this.layoutDirectionStorage) {
+      return;
+    }
+    this.layoutDirectionStorage = value;
+    this.reloadLayout();
+  }
+
+  private get isRtl(): boolean {
+    return this.layoutDirectionStorage === CYLLayoutDirection.rtl;
+  }
+
+  /** `insets` with leading / trailing as left / right: right to left swaps the two sides. */
+  private physical(insets: CYLEdgeInsets): CYLEdgeInsets {
+    return this.isRtl ? new CYLEdgeInsets(insets.top, insets.right, insets.bottom, insets.left) : insets;
+  }
+
+  /** The row alignment as physical: right to left reads leading as right and trailing as left. */
+  private effectiveRowAlignment(): CYLTagRowAlignment {
+    const alignment = this.styleStorage.rowAlignment;
+    if (!this.isRtl || alignment === CYLTagRowAlignment.center) {
+      return alignment;
+    }
+    return alignment === CYLTagRowAlignment.leading ? CYLTagRowAlignment.trailing : CYLTagRowAlignment.leading;
+  }
 
   private styleStorage: CYLMenuStyle = new CYLMenuStyle();
   private titleStyleStorage: CYLMenuStyle = CYLTagListState.defaultTitleStyle();
@@ -1087,7 +1185,7 @@ export class CYLTagListState implements CYLTagLongPressHost {
     }
     const sections = this.layoutSections();
     const last = sections.length > 0 ? sections[sections.length - 1] : undefined;
-    const insets = this.styleStorage.sectionInsets;
+    const insets = this.physical(this.styleStorage.sectionInsets);
     const top = (last !== undefined ? last.y + last.height : 0) + this.titleHeight();
     return new CYLRect(insets.left, top, Math.max(0, this.layoutWidth - insets.left - insets.right),
       this.addItemView.preferredHeight);
@@ -1448,12 +1546,12 @@ export class CYLTagListState implements CYLTagLongPressHost {
       return frame;
     }
     const width = this.layoutWidth;
-    const inset = this.styleStorage.sectionInsets.left;
+    const inset = this.physical(this.styleStorage.sectionInsets).left;
     const available = Math.max(0, width - 2 * inset);
     frame.width = Math.min(available, Math.ceil(CYLTagButtonMetrics.widthWithImage(this.titleStorage,
       this.titleImageStorage, this.titleStyleStorage, this.fontScale)));
     frame.x = this.titlePositionStorage === CYLMenuTitlePosition.topCenter ? Math.floor((width - frame.width) / 2) :
-      inset;
+      (this.isRtl ? width - inset - frame.width : inset);
     frame.y = TITLE_VERTICAL_INSET;
     frame.height = height - 2 * TITLE_VERTICAL_INSET;
     return frame;
@@ -1737,8 +1835,8 @@ export class CYLTagListState implements CYLTagLongPressHost {
     const sectionWidths = measured ? this.itemWidths : this.widths(available);
     const sectionRows = measured ? this.rows : this.rowsFor(sectionWidths, available);
     const sectionHeights = measured ? this.itemHeights : this.measureItemHeights(sectionWidths);
-    const header = this.headerHeight();
     const insets = this.styleStorage.sectionInsets;
+    const card = this.cardInsets();
     let height = 0;
     for (let section = 0; section < sectionRows.length; section++) {
       let rowCount = sectionRows[section].length;
@@ -1750,7 +1848,7 @@ export class CYLTagListState implements CYLTagLongPressHost {
         const r = this.rowsFor([withFold], available);
         rowCount = r.length > 0 ? r[0].length : 0;
       }
-      height += header + insets.top + insets.bottom;
+      height += this.headerHeight(section, width, foldable) + insets.top + insets.bottom + card.top + card.bottom;
       height += this.heightOfRows(rowCount, sectionRows[section],
         section < sectionHeights.length ? sectionHeights[section] : []);
       if (foldable && this.foldControlIsInFooter) {
@@ -2114,6 +2212,10 @@ export class CYLTagListState implements CYLTagLongPressHost {
   /** Whether the section has more rows than `defaultVisibleRows` and can fold. */
   canFoldSection(section: number): boolean {
     this.measureIfNeeded();
+    // Without a known width every tag is laid out in a row of its own: that is no layout, so nothing can need a fold yet.
+    if (this.layoutWidth <= 0) {
+      return false;
+    }
     return section >= 0 && section < this.rows.length && this.canFold(this.rows[section].length);
   }
 
@@ -2725,22 +2827,123 @@ export class CYLTagListState implements CYLTagLongPressHost {
     return CYLTagFoldMetrics.size(this.foldControlStorage, expanded, this.fontScale);
   }
 
+  /**
+   * The fold control's size in a header: `foldSize`, at most `CYLHeaderFoldMaxWidthFraction` of the header's width
+   * (`width`, default the list width), so the section title keeps the rest and is the one that truncates.
+   */
+  headerFoldSize(expanded: boolean, width: number = this.layoutWidth): CYLSize {
+    const size = this.foldSize(expanded);
+    return width > 0 ? new CYLSize(Math.min(size.width, width * CYLHeaderFoldMaxWidthFraction), size.height) : size;
+  }
+
   get footerHeight(): number {
     return Math.max(FOOTER_HEIGHT, this.foldSize(false).height);
   }
 
-  headerHeight(): number {
-    const foldHeight = this.foldControlIsInHeader ? this.foldSize(false).height : 0;
+  /**
+   * The header's height: `headerHeight`, a line of the title plus its padding, or the fold control, whichever is most.
+   * With `headerMaxLines` above 1 and a `section`, a title that wraps at the width left of the header's other views makes
+   * it taller (the wrapped lines, up to the limit, plus the padding). `section` -1 (the default) is the one-line height.
+   * A fold control in the header counts only where it is shown: `foldable` says whether the section can fold at `width`
+   * (default: `canFoldSection(section)`, and true for no section), so an unfoldable section reserves nothing for it.
+   */
+  headerHeight(section: number = -1, width: number = this.layoutWidth, foldable?: boolean): number {
+    const foldShown = this.foldControlIsInHeader && (foldable ?? (section < 0 || this.canFoldSection(section)));
+    const foldHeight = foldShown ? this.foldSize(false).height : 0;
     if (!this.showsSectionHeadersStorage) {
       return foldHeight;
     }
     const font = this.styleStorage.headerFontFor(this.fontScale);
-    return Math.max(this.styleStorage.headerHeight, Math.ceil(CYLTagButtonMetrics.lineHeight(font)) + 12, foldHeight);
+    const oneLine = Math.max(this.styleStorage.headerHeight,
+      Math.ceil(CYLTagButtonMetrics.lineHeight(font)) + HEADER_VERTICAL_PADDING, foldHeight);
+    const maxLines = this.styleStorage.headerMaxLines;
+    if (maxLines <= CYLHeaderTitleMaxLines.single || section < 0 || width <= 0) {
+      return oneLine;
+    }
+    const title = this.menuDataSource?.menuTitleForSection?.(section) ?? '';
+    if (title.length === 0) {
+      return oneLine;
+    }
+    const text = CYLTagButtonMetrics.wrappedTextHeight(title, font, this.headerTitleRoom(section, width, font, foldShown), maxLines);
+    return Math.max(oneLine, Math.ceil(text) + HEADER_VERTICAL_PADDING);
+  }
+
+  /** The width a header's title has: the header's width inside its edges, less the other views of its row. */
+  private headerTitleRoom(section: number, width: number, font: CYLFont, foldShown: boolean): number {
+    const style = this.styleStorage;
+    const edges = this.headerEdgeInsets(width);
+    let room = width - edges[0] - edges[1];
+    if (foldShown) {
+      room -= this.headerFoldSize(false, width).width + HEADER_ITEM_SPACING;
+    }
+    if (style.headerIndicatorColor !== undefined) {
+      room -= style.headerIndicatorSize.width + HEADER_ITEM_SPACING;
+    }
+    if (this.menuDataSource?.menuImageForSection?.(section) !== undefined) {
+      room -= style.headerIndicatorSize.height + HEADER_ITEM_SPACING;
+    }
+    if (this.showsMoreButton(section)) {
+      room -= HEADER_MORE_BUTTON_SIDE + HEADER_ITEM_SPACING;
+    }
+    if (this.showsClearButton(section)) {
+      room -= Math.ceil(CYLTagButtonMetrics.lineHeight(font)) + HEADER_ITEM_SPACING;
+    }
+    return Math.max(1, room);
+  }
+
+  /**
+   * The section's column at the list width `width`: the list width minus `sectionInsets` (x and width; y and height are
+   * 0). The card, the header band and the divider span it. The one place the column comes from.
+   */
+  private columnAt(width: number): CYLRect {
+    const insets = this.physical(this.styleStorage.sectionInsets);
+    return new CYLRect(insets.left, 0, Math.max(0, width - insets.left - insets.right), 0);
+  }
+
+  /** The card's padding around the tags: `sectionContentInsets` under `insetGrouped`, else none. */
+  private cardInsets(): CYLEdgeInsets {
+    return this.styleStorage.isInsetGrouped ? this.physical(this.styleStorage.sectionContentInsets) : CYLEdgeInsets.ZERO;
+  }
+
+  /** The section's column at the current layout width (`sectionInsets` taken off the list width). */
+  contentColumn(section: number): CYLRect {
+    return this.columnAt(this.layoutWidth);
+  }
+
+  /**
+   * The column the tags are laid in: `contentColumn(section)`, narrowed by the card's padding under `insetGrouped`. Every
+   * tag width, row count, fold decision, height and frame takes its width and x from here.
+   */
+  tagColumn(section: number): CYLRect {
+    const column = this.contentColumn(section);
+    const card = this.cardInsets();
+    return new CYLRect(column.x + card.left, 0, Math.max(0, column.width - card.left - card.right), 0);
   }
 
   private contentWidth(width: number): number {
-    const insets = this.styleStorage.sectionInsets;
-    return Math.max(0, width - insets.left - insets.right);
+    const column = this.columnAt(width);
+    const card = this.cardInsets();
+    return Math.max(0, column.width - card.left - card.right);
+  }
+
+  /**
+   * The distances from the list's leading and trailing edges to a header's title and fold control: the tags' edges inside
+   * the card (`insetGrouped`), the band's edges plus `headerContentInsets` (a plain header with a band), else
+   * `headerHorizontalInset`.
+   */
+  private headerEdgeInsets(width: number = this.layoutWidth): number[] {
+    const style = this.styleStorage;
+    const column = this.columnAt(width);
+    const rest = Math.max(0, width - column.x - column.width);
+    if (style.isInsetGrouped) {
+      const card = this.cardInsets();
+      return [column.x + card.left, rest + card.right];
+    }
+    if (style.headerBackgroundColor !== undefined) {
+      const bandInsets = this.physical(style.headerContentInsets);
+      return [column.x + bandInsets.left, rest + bandInsets.right];
+    }
+    return [style.headerHorizontalInset, style.headerHorizontalInset];
   }
 
   private widths(contentWidth: number): number[][] {
@@ -2894,17 +3097,32 @@ export class CYLTagListState implements CYLTagLongPressHost {
     const style = this.styleStorage;
     const insets = style.sectionInsets;
     const available = this.contentWidth(this.layoutWidth);
+    const column = this.columnAt(this.layoutWidth);
+    const card = this.cardInsets();
+    const originX = this.tagColumn(0).x;
+    const headerEdges = this.headerEdgeInsets();
     const spacing = style.interitemSpacing;
-    const header = this.headerHeight();
+    const rowAlignment = this.effectiveRowAlignment();
     const result: CYLTagListSectionFrame[] = [];
     let y = 0;
     for (let section = 0; section < this.titles.length; section++) {
       const frame = new CYLTagListSectionFrame();
+      const header = this.headerHeight(section);
       frame.section = section;
       frame.y = y;
       frame.headerHeight = header;
       frame.foldable = this.canFoldSection(section);
       frame.expanded = this.isSectionExpanded(section);
+      frame.headerInsetLeft = headerEdges[0];
+      frame.headerInsetRight = headerEdges[1];
+      frame.isRtl = this.isRtl;
+      frame.headerTitleLeadingX = this.isRtl ? this.layoutWidth - headerEdges[1] : headerEdges[0];
+      if (this.showsHeaderFoldControl(section)) {
+        // At the right end for `headerTrailing` in ltr and for `headerLeading` in rtl.
+        const atRight = (this.foldControlStorage.position === CYLMenuFoldControlPosition.headerTrailing) !== this.isRtl;
+        frame.headerFoldX = atRight ? this.layoutWidth - headerEdges[1] - this.headerFoldSize(frame.expanded).width :
+          headerEdges[0];
+      }
       const visible = this.numberOfVisibleItems(section);
       const cells: CYLTagListItemFrame[] = [];
       for (let item = 0; item < visible; item++) {
@@ -2926,7 +3144,8 @@ export class CYLTagListState implements CYLTagLongPressHost {
         cells.push(cell);
       }
       const rows = this.rowsFor([cells.map((c: CYLTagListItemFrame) => c.width)], available)[0] ?? [];
-      let rowY = y + header + insets.top;
+      const cardY = y + header + insets.top;
+      let rowY = cardY + card.top;
       let index = 0;
       rows.forEach((count: number, row: number) => {
         const rowCells = cells.slice(index, index + count);
@@ -2937,15 +3156,17 @@ export class CYLTagListState implements CYLTagLongPressHost {
           rowWidth += (i > 0 ? spacing : 0) + c.width;
           rowHeight = Math.max(rowHeight, c.height);
         });
-        let x = insets.left;
-        if (style.rowAlignment === CYLTagRowAlignment.center) {
+        let x = originX;
+        if (rowAlignment === CYLTagRowAlignment.center) {
           x += Math.max(0, Math.floor((available - rowWidth) / 2));
         }
-        const trailing = style.rowAlignment === CYLTagRowAlignment.trailing;
+        // A centered row in right to left is the mirror image: the first tag of the row at its right end.
+        const trailing = rowAlignment === CYLTagRowAlignment.trailing ||
+          (this.isRtl && rowAlignment === CYLTagRowAlignment.center);
         rowCells.forEach((c: CYLTagListItemFrame) => {
           // Trailing (AndroidTagView's container_gravity="right", iOS since 58b2f335): the first tag at the trailing
           // edge, each next one before it.
-          c.x = trailing ? insets.left + available - (x - insets.left) - c.width : x;
+          c.x = trailing ? originX + available - (x - originX) - c.width : x;
           c.y = rowY + Math.floor((rowHeight - c.height) / 2);
           x += c.width + spacing;
         });
@@ -2953,7 +3174,23 @@ export class CYLTagListState implements CYLTagLongPressHost {
       });
       frame.items = cells;
       frame.footerHeight = this.showsFooterFoldControl(section) ? this.footerHeight : 0;
-      frame.height = (rowY - y) + insets.bottom + frame.footerHeight;
+      frame.height = (rowY - y) + card.bottom + insets.bottom + frame.footerHeight;
+      if (style.isInsetGrouped) {
+        frame.card = new CYLRect(column.x, cardY, column.width, rowY + card.bottom - cardY);
+      }
+      if (header > 0 && style.headerBackgroundColor !== undefined) {
+        frame.headerBand = new CYLRect(column.x, y, column.width, header);
+      }
+      if (header > 0 && style.headerSeparatorStyle === CYLHeaderSeparatorStyle.line &&
+        style.headerSeparatorThickness > 0) {
+        const separatorInsets = style.headerSeparatorInsets !== undefined ? this.physical(style.headerSeparatorInsets) :
+          undefined;
+        const left = separatorInsets !== undefined ? column.x + separatorInsets.left : column.x;
+        const right = separatorInsets !== undefined ? column.x + column.width - separatorInsets.right :
+          column.x + column.width;
+        const thickness = Math.min(style.headerSeparatorThickness, header);
+        frame.headerSeparator = new CYLRect(left, y + header - thickness, Math.max(0, right - left), thickness);
+      }
       result.push(frame);
       y += frame.height;
     }

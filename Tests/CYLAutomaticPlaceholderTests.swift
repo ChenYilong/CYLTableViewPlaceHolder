@@ -1085,7 +1085,8 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         let image = CYLPlaceholderView.image(for: .empty)
         let placeholder = CYLPlaceholderView(image: image, text: "Empty")
         XCTAssertEqual(placeholder.textLabel.textColor, UIColor.gray)
-        XCTAssertEqual(placeholder.imageView.tintColor, placeholder.tintColor)
+        // The engine resolves the icon color against the view's traits (CYLTabBarController 3c6a4d2).
+        XCTAssertEqual(placeholder.imageView.tintColor, placeholder.tintColor.resolvedColor(with: placeholder.traitCollection))
         placeholder.defaultTitleColor = .red
         placeholder.defaultIconColor = .green
         placeholder.defaultTitleFont = UIFont.systemFont(ofSize: 21)

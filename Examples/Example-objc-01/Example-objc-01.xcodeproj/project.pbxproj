@@ -159,7 +159,7 @@
 				E76F8CE52196729316F69350 /* Sources */,
 				CFB1DE6319AD56774FBB7241 /* Frameworks */,
 				FE148A5BAF949FBA084AF9FF /* Resources */,
-				6BAA03CEBFC1F8A642E8A87B /* [CP] Embed Pods Frameworks */,
+				B19BB8122F4242E16A960B26 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -219,22 +219,32 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6BAA03CEBFC1F8A642E8A87B /* [CP] Embed Pods Frameworks */ = {
+		B19BB8122F4242E16A960B26 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC01/Pods-ExampleObjC01-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC01/Pods-ExampleObjC01-resources.sh",
+				"${PODS_ROOT}/CYLAnimatedItem/CYLTabBarController/CYLAnimatedItem/Resources/CYLAnimatedItem.bundle",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/LICENSE.placeholder-third-party",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party",
+				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/LICENSE.refresh-third-party.txt",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderPrivacy.bundle",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CYLTableViewPlaceHolder.framework",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLAnimatedItem.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLTableViewPlaceHolder.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.placeholder-third-party",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.third-party",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.refresh-third-party.txt",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLTableViewPlaceHolderPrivacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC01/Pods-ExampleObjC01-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExampleObjC01/Pods-ExampleObjC01-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FA15E81FBF8B9048D809FBC4 /* [CP] Check Pods Manifest.lock */ = {

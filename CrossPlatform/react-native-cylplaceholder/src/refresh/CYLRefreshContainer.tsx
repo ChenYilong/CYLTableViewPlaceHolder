@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import { requireNativeComponent, UIManager, type StyleProp, type ViewStyle } from 'react-native';
+import { cylSecondaryEdge, type CYLRefreshSecondaryEdge } from './secondaryEdge.ts';
 
 /**
  * The creation parameters of the `rive` style (`headerStyle` / `footerStyle` `'rive'`), the same keys as the Flutter creation
@@ -22,6 +23,8 @@ export interface CYLRefreshRiveOptions {
   riveReleaseTrigger?: string;
   riveFinishTrigger?: string;
   riveRestartTrigger?: string;
+  /** Longest time in seconds the header stays open after a finish so that the end of the animation can play (default 1.5); it retracts earlier when the animation stops. */
+  riveFinishTimeout?: number;
   riveLoadingBoolean?: string;
   riveLoadingNumber?: string;
   riveLoadingNumberMaximum?: number;
@@ -69,10 +72,18 @@ export interface CYLRefreshContainerProps {
   secondaryCloseTriggerOffset?: number;
   /** Controlled like `refreshing`: true opens the second floor, false closes it; set it from `onSecondaryOpen` / `onSecondaryClose`. */
   secondaryOpen?: boolean;
-  /** Called after the second floor opened from a pull (not when `secondaryOpen` was set from JavaScript). */
-  onSecondaryOpen?: () => void;
-  /** Called after the second floor closed from a push (not when `secondaryOpen` was set from JavaScript). */
-  onSecondaryClose?: () => void;
+  /** Called after a second floor opened from a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one (Android sends the footer's `{edge: 'footer'}` and an empty body for the header). */
+  onSecondaryOpen?: (edge: CYLRefreshSecondaryEdge) => void;
+  /** Called after a second floor closed from a push (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one. */
+  onSecondaryClose?: (edge: CYLRefreshSecondaryEdge) => void;
+  /** The footer's second floor, opened by a pull up of this many points past the end (needs `loadMoreEnabled` and a back footer style, not `cupertino`; on Android also a `footerStyle` (the default auto footer has no floor); never arms while `noMoreData`); 0 (default) is none. Its content is the child with `nativeID="cyl.refresh.secondary.footer"`. */
+  footerSecondaryTriggerOffset?: number;
+  /** iOS only: the open extent of the footer's second floor; 0 (default) is the scroll view's visible height. */
+  footerSecondaryDimension?: number;
+  /** Pulling the content down this far and releasing closes the footer's second floor; default 80. */
+  footerSecondaryCloseTriggerOffset?: number;
+  /** Controlled like `secondaryOpen`, for the footer's second floor; set it from `onSecondaryOpen` / `onSecondaryClose` with `edge === 'footer'`. */
+  footerSecondaryOpen?: boolean;
   style?: StyleProp<ViewStyle>;
   /** One scroll view (`ScrollView`, `FlatList`, `SectionList`): it gets the native CYLRefresh header. */
   children: ReactNode;
@@ -103,8 +114,12 @@ const Native = isCYLRefreshContainerAvailable()
       secondaryDimension?: number;
       secondaryCloseTriggerOffset?: number;
       secondaryOpen?: boolean;
-      onSecondaryOpen?: () => void;
-      onSecondaryClose?: () => void;
+      footerSecondaryTriggerOffset?: number;
+      footerSecondaryDimension?: number;
+      footerSecondaryCloseTriggerOffset?: number;
+      footerSecondaryOpen?: boolean;
+      onSecondaryOpen?: (event: unknown) => void;
+      onSecondaryClose?: (event: unknown) => void;
       style?: StyleProp<ViewStyle>;
       children: ReactNode;
     }>(NATIVE_NAME)
@@ -133,6 +148,10 @@ export function CYLRefreshContainer({
   secondaryDimension,
   secondaryCloseTriggerOffset,
   secondaryOpen,
+  footerSecondaryTriggerOffset,
+  footerSecondaryDimension,
+  footerSecondaryCloseTriggerOffset,
+  footerSecondaryOpen,
   onSecondaryOpen,
   onSecondaryClose,
   style,
@@ -157,8 +176,12 @@ export function CYLRefreshContainer({
       secondaryDimension={secondaryDimension}
       secondaryCloseTriggerOffset={secondaryCloseTriggerOffset}
       secondaryOpen={secondaryOpen}
-      onSecondaryOpen={onSecondaryOpen}
-      onSecondaryClose={onSecondaryClose}
+      footerSecondaryTriggerOffset={footerSecondaryTriggerOffset}
+      footerSecondaryDimension={footerSecondaryDimension}
+      footerSecondaryCloseTriggerOffset={footerSecondaryCloseTriggerOffset}
+      footerSecondaryOpen={footerSecondaryOpen}
+      onSecondaryOpen={onSecondaryOpen && ((event) => onSecondaryOpen(cylSecondaryEdge(event)))}
+      onSecondaryClose={onSecondaryClose && ((event) => onSecondaryClose(cylSecondaryEdge(event)))}
       style={[{ flex: 1 }, style]}
     >
       {children}

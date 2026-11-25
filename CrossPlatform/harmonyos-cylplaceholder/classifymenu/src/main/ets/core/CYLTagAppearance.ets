@@ -9,8 +9,10 @@ function sanitized(value: number): number {
   return Number.isFinite(value) && value > 0 ? value : 0;
 }
 export class CYLTagAppearance {
-  static readonly defaultBackgroundColor: string = CYLColor.WHITE;
-  static readonly defaultTextColor: string = CYLColor.white(0.25);
+  /** White in light mode, the secondary system background (#1C1C1E) in dark mode (a resource with a dark variant), as on iOS. */
+  static readonly defaultBackgroundColor: ResourceColor = $r('app.color.cyl_tag_background');
+  /** Dark gray in light mode, white (the primary label) in dark mode. */
+  static readonly defaultTextColor: ResourceColor = $r('app.color.cyl_tag_text');
   static readonly defaultFont: CYLFont = CYLFont.systemFont(14);
 
   private storedBackgroundColor?: ResourceColor;
@@ -57,6 +59,20 @@ export class CYLTagAppearance {
 
   set font(value: CYLFont) {
     this.storedFont = value;
+  }
+
+  /**
+   * The color set on `backgroundColor`; undefined when it was never set or was reset (the built-in default applies, which
+   * is never stored). Under Liquid Glass only this color tints the glass: an unset background hands no color, so the
+   * glass keeps its frosted default tint (iOS `explicitBackgroundColor`).
+   */
+  get explicitBackgroundColor(): ResourceColor | undefined {
+    return this.storedBackgroundColor;
+  }
+
+  /** True when `backgroundColor` was set to a color (and not reset). */
+  get isBackgroundColorSet(): boolean {
+    return this.storedBackgroundColor !== undefined;
   }
 
   resetBackgroundColor(): void {

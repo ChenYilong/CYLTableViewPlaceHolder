@@ -13,7 +13,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter
  * The React Native view manager of [CYLRefreshContainerView] ("CYLRefreshContainer"): props `refreshing`, `enabled`,
  * `loadingMore`, `noMoreData`, `loadMoreEnabled`, `loadsAfterNoMoreData`, `headerStyle` / `footerStyle` with `headerRive` / `footerRive`
  * (the `rive` style's parameters) and the second floor's `secondaryTriggerOffset`, `secondaryDimension`,
- * `secondaryCloseTriggerOffset` and `secondaryOpen`, the direct events `onRefresh`, `onLoadMore`, `onSecondaryOpen` and `onSecondaryClose`.
+ * `secondaryCloseTriggerOffset` and `secondaryOpen` (the footer's: `footerSecondary...`, child nativeID `cyl.refresh.secondary.footer`), the direct events `onRefresh`, `onLoadMore`, `onSecondaryOpen` and `onSecondaryClose`.
  */
 class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
     override fun getName(): String = NAME
@@ -28,13 +28,13 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
                 @Suppress("DEPRECATION")
                 context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topLoadMore", Arguments.createMap())
             }
-            view.onSecondaryOpen = {
+            view.onSecondaryOpen = { edge ->
                 @Suppress("DEPRECATION")
-                context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topSecondaryOpen", Arguments.createMap())
+                context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topSecondaryOpen", secondaryEventBody(edge))
             }
-            view.onSecondaryClose = {
+            view.onSecondaryClose = { edge ->
                 @Suppress("DEPRECATION")
-                context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topSecondaryClose", Arguments.createMap())
+                context.getJSModule(RCTEventEmitter::class.java).receiveEvent(view.id, "topSecondaryClose", secondaryEventBody(edge))
             }
         }
 
@@ -128,6 +128,30 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
     @ReactProp(name = "secondaryOpen")
     fun setSecondaryOpen(view: CYLRefreshContainerView, open: Boolean) = view.setSecondaryOpenFromJs(open)
 
+    /**
+     * The `footerSecondaryTriggerOffset` prop (dp, default 0: no footer second floor; needs a back footer style, as iOS).
+     */
+    @ReactProp(name = "footerSecondaryTriggerOffset", defaultFloat = 0f)
+    fun setFooterSecondaryTriggerOffset(view: CYLRefreshContainerView, offset: Float) = view.setFooterSecondaryTriggerOffset(offset)
+
+    /**
+     * The `footerSecondaryDimension` prop (dp, default 0: the container's height).
+     */
+    @ReactProp(name = "footerSecondaryDimension", defaultFloat = 0f)
+    fun setFooterSecondaryDimension(view: CYLRefreshContainerView, dimension: Float) = view.setFooterSecondaryDimension(dimension)
+
+    /**
+     * The `footerSecondaryCloseTriggerOffset` prop (dp, default 80).
+     */
+    @ReactProp(name = "footerSecondaryCloseTriggerOffset", defaultFloat = 80f)
+    fun setFooterSecondaryCloseTriggerOffset(view: CYLRefreshContainerView, offset: Float) = view.setFooterSecondaryCloseTriggerOffset(offset)
+
+    /**
+     * The `footerSecondaryOpen` prop (controlled, default false).
+     */
+    @ReactProp(name = "footerSecondaryOpen")
+    fun setFooterSecondaryOpen(view: CYLRefreshContainerView, open: Boolean) = view.setFooterSecondaryOpenFromJs(open)
+
     // The floor's content (nativeID "cyl.refresh.secondary") is a child for React Native but not for the layout, see the view.
     override fun addView(parent: CYLRefreshContainerView, child: android.view.View, index: Int) = parent.addReactChild(child, index)
 
@@ -146,6 +170,13 @@ class CYLRefreshContainerManager : ViewGroupManager<CYLRefreshContainerView>() {
         )
 
     companion object {
+        /**
+         * The body of `onSecondaryOpen` / `onSecondaryClose`: the footer's floor says `{edge: 'footer'}`; the header's body stays empty
+         * (JavaScript reads a missing edge as the header).
+         */
+        internal fun secondaryEventBody(edge: String): com.facebook.react.bridge.WritableMap =
+            Arguments.createMap().also { if (edge == CYLRefreshContainerView.EDGE_FOOTER) it.putString("edge", edge) }
+
         /**
          * The name JavaScript passes to `requireNativeComponent`.
          */
