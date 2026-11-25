@@ -83,7 +83,7 @@ Rules are grouped by tag (same tags as `instructions.md`). Each line is the rule
 
 ## Tag: Example demos (`examples`)
 
-- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a title on every section header, Liquid Glass tags (the core's `backgroundStyle`), content-wide tags (as many per row as fit), a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colorful backing plate behind the list (set in one shared place), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a title on every section header, Liquid Glass tags (the core's `backgroundStyle`), content-wide tags (as many per row as fit), a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colourful page behind the list (set in one shared place; the library draws one Liquid Glass card per section, the example draws no plate; long headers use headerMaxLines 2, icon colours are static template colours through menuStyleForItem + setIconColor, never .alwaysOriginal), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
 - Use the project skill `cyl-examples` in `.agents/skills/` for demo screens.
 
 ## Tag: Code and architecture (`code`)
