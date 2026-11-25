@@ -16,6 +16,13 @@ export class CYLAnimatedItemRiveOption {
   static readonly ACTIVE_DURATION: string = 'duration';
   /** [EN] A view model trigger fired instead. [CN] 改为触发的 view model trigger。 */
   static readonly TRIGGER_PROPERTY: string = 'trigger';
+  /**
+   * [EN] "#RRGGBB" or "#RRGGBBAA" (as iOS) set on the view model color property "color" when the file loads (iOS / Android
+   *      CYLTabBarAnimationOptionRiveColor); applyColors overrides it, and restoring returns to it.
+   * [CN] 文件加载时设置到 view model 颜色属性 "color" 的 "#RRGGBB" 或 "#RRGGBBAA"（与 iOS 相同）（iOS / Android 的 CYLTabBarAnimationOptionRiveColor）；
+   *      applyColors 可覆盖它，恢复时回到它。
+   */
+  static readonly COLOR: string = 'color';
   /** [EN] A state machine boolean input (legacy files). [CN] 状态机布尔输入（旧版文件）。 */
   static readonly INPUT: string = 'input';
   /** [EN] A state machine trigger input (legacy files). [CN] 状态机 trigger 输入（旧版文件）。 */
@@ -28,6 +35,25 @@ export class CYLAnimatedItemRiveOption {
   static readonly NUMBER_INPUT: string = 'numberInput';
   /** [EN] The values the number input steps through, "3,4,5,6", cycling; without it, +1. [CN] 数字输入依次使用的值，循环；没有时 +1。 */
   static readonly NUMBER_VALUES: string = 'values';
+}
+
+/** [EN] The view model color property the `color` option sets. [CN] `color` 选项设置的 view model 颜色属性。 */
+export const CYL_RIVE_COLOR_PROPERTY_PATH: string = 'color';
+
+/**
+ * [EN] The color the `color` option asks for as Rive's ARGB integer: "#RRGGBB" (opaque) or "#RRGGBBAA", the "#" optional
+ *      (iOS CYLRiveTabBarItemAnimationView `color(hex:)`); undefined when there is none, it does not parse, or the file
+ *      plays without its view model (legacy runtime), as on iOS.
+ * [CN] `color` 选项要求的颜色（Rive 的 ARGB 整数）："#RRGGBB"（不透明）或 "#RRGGBBAA"，"#" 可省略（与 iOS 相同）；没有该选项、
+ *      无法解析或文件不使用 view model（旧版运行时）时为 undefined。
+ */
+export function cylRiveOptionColor(option: (name: string) => string | undefined): number | undefined {
+  const digits = (option(CYLAnimatedItemRiveOption.COLOR) ?? '').trim().replace(/^#/, '');
+  if (!/^([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(digits) || cylRiveUsesLegacyRuntime(option)) {
+    return undefined;
+  }
+  const rgba = digits.length === 6 ? digits + 'FF' : digits;
+  return parseInt(rgba.substring(6, 8) + rgba.substring(0, 6), 16) | 0;
 }
 
 /**
@@ -61,4 +87,19 @@ export function cylRiveUsesLegacyRuntime(option: (name: string) => string | unde
 export function cylRiveActiveDuration(value: string | undefined): number {
   const seconds = Number(value ?? '1');
   return Number.isFinite(seconds) && seconds >= 0 ? seconds : 1;
+}
+
+/** [EN] The NO window of a restart lasts at least this long (a frame), ... [CN] 重新播放的 NO 窗口至少持续这么久（一帧），…… */
+export const CYL_RIVE_MINIMUM_OFF_MS: number = 50;
+/** [EN] ... and at most this long, for a machine that never settles. [CN] ……至多这么久，用于永不稳定的状态机。 */
+export const CYL_RIVE_MAXIMUM_OFF_MS: number = 1500;
+
+/**
+ * [EN] Does the NO window of a restart end now? It lasts until the state machine has settled, so its NO pass is seen
+ *      (menu_button.riv shows its X for about 0.5 s), within the minimum and maximum. As iOS `CYLRiveInputPass.offWindowEnds`.
+ * [CN] 重新播放的 NO 窗口现在是否结束？它持续到状态机稳定，使 NO 的那一遍被看到（menu_button.riv 约 0.5 秒显示 X），范围在最小值与最大值之间。
+ *      与 iOS `CYLRiveInputPass.offWindowEnds` 相同。
+ */
+export function cylRiveOffWindowEnds(elapsedMs: number, isSettled: boolean): boolean {
+  return elapsedMs >= CYL_RIVE_MAXIMUM_OFF_MS || (elapsedMs >= CYL_RIVE_MINIMUM_OFF_MS && isSettled);
 }

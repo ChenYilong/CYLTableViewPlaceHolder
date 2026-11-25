@@ -23,11 +23,17 @@
  */
 import { Fit, Loop, RendererType, RiveAnimationView, SMINumber, ViewModelInstance, initializeRive } from '@ohos/rive';
 import { deviceInfo } from '@kit.BasicServicesKit';
+import { LifecycleController } from 'cyldeallocblockexecutor';
 import {
   CYLAnimatedItemEngineBinding, CYLAnimatedItemEngineState, CYLAnimatedItemEngineViews, CYLAnimatedItemEngines,
-  CYLAnimatedItemPlayer, CYLAnimatedItemSource, cylAnimatedItemARGBInteger, cylAnimatedItemParseHexColor
+  CYLAnimatedItemPlayer, CYLAnimatedItemSource, cylAnimatedItemARGBInteger, cylAnimatedItemParseHexColor,
+  CYL_RESOURCE_DECODE_FAILED, CYL_RESOURCE_ENGINE_LIBRARY_MISSING, CYL_RESOURCE_NOT_FOUND, CYL_RESOURCE_UNREADABLE
 } from 'cylanimateditem';
-import { CYLAnimatedItemRiveOption, cylRiveActiveDuration, cylRiveNextNumber, cylRiveUsesLegacyRuntime } from './CYLAnimatedItemRiveOptions';
+import {
+  CYL_RIVE_COLOR_PROPERTY_PATH, CYLAnimatedItemRiveOption, cylRiveActiveDuration, cylRiveNextNumber, cylRiveOffWindowEnds,
+  cylRiveOptionColor,
+  cylRiveUsesLegacyRuntime
+} from './CYLAnimatedItemRiveOptions';
 
 /** [EN] The native ABI of @ohos/rive 1.0.4. [CN] @ohos/rive 1.0.4 的原生 ABI。 */
 const CYL_RIVE_ABI: string = 'arm64-v8a';
@@ -37,8 +43,8 @@ const CYL_RIVE_LOOP_SECONDS: number = 1.5;
 const CYL_RIVE_LOOP_PAUSE_SECONDS: number = 0.4;
 /** [EN] A frame later: the state machine sees the reset or the false first. [CN] 一帧之后：状态机先看到重置或 false。 */
 const CYL_RIVE_NEXT_FRAME_MS: number = 50;
-/** [EN] A held input's off time before it goes on again, outside a loop. [CN] 循环之外，保持的输入重新打开前的关闭时间。 */
-const CYL_RIVE_INPUT_OFF_MS: number = 150;
+/** [EN] How often the NO window of a restart checks whether the machine settled (a frame). [CN] 重新播放的 NO 窗口检查状态机是否稳定的间隔（一帧）。 */
+const CYL_RIVE_OFF_POLL_MS: number = 16;
 /** [EN] Time for the first frame to be drawn before a loaded file pauses. [CN] 加载的文件暂停前绘制第一帧的时间。 */
 const CYL_RIVE_FIRST_FRAME_MS: number = 100;
 /** [EN] How often a play-once pass is checked for its end. [CN] 检查只播放一次的播放是否结束的间隔。 */
@@ -87,6 +93,8 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
   /** [EN] Played and not stopped since (the tab's "selected"). [CN] 已播放且之后未停止（相当于 Tab 的“选中”）。 */
   private active: boolean = false;
   private endWatchTimer: number = -1;
+  /** [EN] Pauses again after a redraw of new colors. [CN] 为新颜色重绘后再次暂停。 */
+  private redrawTimer: number = -1;
   private startPending: boolean = false;
   private deactivateTimer: number = -1;
   private loopTimer: number = -1;
@@ -97,6 +105,7 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
   private requestedColors?: Map<string, string>;
   private originalColors: Map<string, number> = new Map<string, number>();
   private overriddenColorPaths: Set<string> = new Set<string>();
+  private optionColorApplied: boolean = false;
 
   constructor(source: CYLAnimatedItemSource, view: RiveAnimationView) {
     super('Rive', source);
@@ -129,6 +138,53 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
     const view = this.riveView;
     if (view !== null) {
       this.cylApplyRequestedColors(view);
+      this.cylRedrawIfPaused(view);
+    }
+  }
+
+  /**
+   * [EN] A paused @ohos/rive view does not draw a view model change, so new colors on an item resting after its pass (or on
+   *      its first frame) stayed invisible until the next play (seen on the emulator: the property read back the new color,
+   *      the shape kept the old one). Runs the state machine for a frame, then pauses it again.
+   * [CN] 暂停的 @ohos/rive 视图不会绘制视图模型的变化，因此一遍播完后（或停在第一帧时）设置的新颜色要到下次播放才可见（模拟器上属性已读回新颜色，
+   *      形状仍是旧颜色）。让状态机运行一帧后再次暂停。
+   */
+  private cylRedrawIfPaused(view: RiveAnimationView): void {
+    let playing = false;
+    try {
+      playing = view.isPlaying();
+    } catch (e) {
+      return;
+    }
+    if (playing) {
+      return;
+    }
+    const machine = this.cylStateMachine(view);
+    if (machine === undefined) {
+      return;
+    }
+    this.cylCancelRedraw();
+    try {
+      this.cylPlayMachine(view, machine);
+    } catch (e) {
+      return;
+    }
+    this.redrawTimer = setTimeout(() => {
+      this.redrawTimer = -1;
+      if (this.riveView === view) {
+        if (view.controller !== null) {
+          view.controller.pauseAllAnimations();
+        } else {
+          view.pause();
+        }
+      }
+    }, CYL_RIVE_FIRST_FRAME_MS);
+  }
+
+  private cylCancelRedraw(): void {
+    if (this.redrawTimer >= 0) {
+      clearTimeout(this.redrawTimer);
+      this.redrawTimer = -1;
     }
   }
 
@@ -137,6 +193,8 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
     if (instance === null) {
       return;
     }
+    // [EN] The `color` option first, so it is the original that restoring returns to. [CN] 先应用 `color` 选项，使其成为恢复时的原值。
+    this.cylApplyOptionColor(view);
     const colors = this.requestedColors;
     if (colors !== undefined) {
       colors.forEach((text: string, path: string) => {
@@ -184,6 +242,7 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
       return;
     }
     this.active = true;
+    this.cylCancelRedraw();
     this.cylPlay(view);
   }
 
@@ -242,6 +301,32 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
     }
     const machines = view.getStateMachines();
     return machines.length > 0 ? machines[0].name : undefined;
+  }
+
+  /**
+   * [EN] The `color` option, once the view model exists: written to its "color" property and kept as that property's
+   *      original, so restoring after applyColors returns to it (iOS CYLRiveTabBarItemAnimationView `lightColor`). Moved
+   *      from CYLTableViewPlaceHolder's Rive animator (`applyLightColor`, deleted in its 3569628a).
+   * [CN] `color` 选项：视图模型存在后写入其 "color" 属性并作为该属性的原值保存，applyColors 之后恢复时回到它（iOS `lightColor`）。
+   *      从 CYLTableViewPlaceHolder 的 Rive 动画器（`applyLightColor`，在其 3569628a 中删除）迁移而来。
+   */
+  private cylApplyOptionColor(view: RiveAnimationView): void {
+    if (this.optionColorApplied) {
+      return;
+    }
+    const value = cylRiveOptionColor((name: string) => this.option(name));
+    const instance = value === undefined ? null : this.cylViewModel(view);
+    if (value === undefined || instance === null) {
+      this.optionColorApplied = value === undefined;
+      return;
+    }
+    this.optionColorApplied = true;
+    try {
+      instance.getColorProperty(CYL_RIVE_COLOR_PROPERTY_PATH).value = value;
+      this.originalColors.set(CYL_RIVE_COLOR_PROPERTY_PATH, value);
+    } catch (e) {
+      // [EN] No "color" property: the file keeps its colors, as on iOS. [CN] 没有 "color" 属性：文件保持原色，与 iOS 一致。
+    }
   }
 
   private cylViewModel(view: RiveAnimationView): ViewModelInstance | null {
@@ -354,6 +439,7 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
     }
     this.fileWaits = 0;
     this.hasPlayed = true;
+    this.cylApplyOptionColor(view);
     // [EN] Colors asked for before the file was built. [CN] 文件建好之前请求的颜色。
     if (this.requestedColors !== undefined) {
       this.cylApplyRequestedColors(view);
@@ -408,9 +494,17 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
       && this.cylHasInput(view, machine, legacyInput))) {
       this.cylPlayMachine(view, machine);
       this.cylSetActive(view, false);
+      // [EN] Play with the input off, so the machine advances and runs its false pass (menu_button.riv: hamburger -> X); a
+      //      machine that is not playing only sees false and true in one advance and stays where it was.
+      // [CN] 带着 false 播放，使状态机前进并运行 false 的那一遍（menu_button.riv：汉堡 -> X）；不在播放的状态机会在同一次前进中同时看到 false 与 true，停在原处。
+      this.cylPlayMachine(view, machine);
       const duration = cylRiveActiveDuration(this.option(CYLAnimatedItemRiveOption.ACTIVE_DURATION));
       this.startPending = true;
-      this.deactivateTimer = setTimeout(() => {
+      // [EN] Half a loop pass while looping a held input, so the machine spends real time closed; otherwise until the false
+      //      pass has settled (at least 50 ms, at most 1500 ms), polled every frame.
+      // [CN] 循环保持的输入时为半个循环周期，使状态机真正停留在关闭状态；否则等到 false 的那一遍稳定（至少 50 ms，至多 1500 ms），每帧轮询。
+      const fixedOffMs: number = this.loopsValue && duration <= 0 ? CYL_RIVE_LOOP_SECONDS * 500 : -1;
+      const turnOn = (): void => {
         this.deactivateTimer = -1;
         this.startPending = false;
         if (this.riveView !== view) {
@@ -425,9 +519,12 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
             }
           }, duration * 1000);
         }
-        // [EN] Half a loop pass while looping a held input, so the machine spends real time closed; otherwise a frame.
-        // [CN] 循环保持的输入时为半个循环周期，使状态机真正停留在关闭状态；否则为一帧。
-      }, this.loopsValue && duration <= 0 ? CYL_RIVE_LOOP_SECONDS * 500 : CYL_RIVE_INPUT_OFF_MS);
+      };
+      if (fixedOffMs >= 0) {
+        this.deactivateTimer = setTimeout(turnOn, fixedOffMs);
+      } else {
+        this.cylWaitForOffPass(view, 0, turnOn);
+      }
     } else {
       this.cylReset(view);
       view.play();
@@ -520,6 +617,7 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
   }
 
   private cylCancelTimers(): void {
+    this.cylCancelRedraw();
     this.cylCancelDeactivate();
     this.cylCancelLoop();
     this.cylCancelEndWatch();
@@ -537,6 +635,29 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
       clearTimeout(this.loopTimer);
       this.loopTimer = -1;
     }
+  }
+
+  /**
+   * [EN] Calls `turnOn` when the NO window ends (`cylRiveOffWindowEnds`), polling `isPlaying()` every frame on the
+   *      cancellable `deactivateTimer`.
+   * [CN] 在 NO 窗口结束（`cylRiveOffWindowEnds`）时调用 `turnOn`，在可取消的 `deactivateTimer` 上每帧轮询 `isPlaying()`。
+   */
+  private cylWaitForOffPass(view: RiveAnimationView, elapsedMs: number, turnOn: () => void): void {
+    this.deactivateTimer = setTimeout(() => {
+      this.deactivateTimer = -1;
+      const elapsed: number = elapsedMs + CYL_RIVE_OFF_POLL_MS;
+      let settled = true;
+      try {
+        settled = this.riveView !== view || !view.isPlaying();
+      } catch (e) {
+        settled = true;
+      }
+      if (cylRiveOffWindowEnds(elapsed, settled)) {
+        turnOn();
+      } else {
+        this.cylWaitForOffPass(view, elapsed, turnOn);
+      }
+    }, CYL_RIVE_OFF_POLL_MS);
   }
 
   private cylCancelDeactivate(): void {
@@ -557,6 +678,7 @@ export class CYLAnimatedItemRivePlayer extends CYLAnimatedItemPlayer {
 export struct CYLAnimatedItemRiveView {
   state: CYLAnimatedItemEngineState = new CYLAnimatedItemEngineState();
   private unlisten?: () => void;
+  private cylLifecycle: LifecycleController<CYLAnimatedItemRiveView> | undefined = undefined;
   private binding: CYLAnimatedItemEngineBinding = new CYLAnimatedItemEngineBinding();
   private riveView: RiveAnimationView | null = null;
   private bytes: ArrayBuffer | null = null;
@@ -565,18 +687,26 @@ export struct CYLAnimatedItemRiveView {
   private unusable: boolean = false;
 
   aboutToAppear(): void {
+    this.cylLifecycle = new LifecycleController<CYLAnimatedItemRiveView>(this);
+    this.cylLifecycle.registry.addDeallocCallback<CYLAnimatedItemRiveView>((owner: CYLAnimatedItemRiveView) => owner.cylTeardown(), { key: 'cyl.rive.teardown' });
+    this.cylLifecycle.aboutToAppear();
     this.unlisten = this.state.listen(() => this.cylStateChanged());
     try {
       cylEnsureRiveInitialized();
     } catch (e) {
       this.unusable = true;
-      this.binding.failed(this.state);
+      this.binding.failed(this.state, CYL_RESOURCE_ENGINE_LIBRARY_MISSING);
       return;
     }
     this.cylReadFile();
   }
 
   aboutToDisappear(): void {
+    this.cylLifecycle?.aboutToDisappear();
+  }
+
+  // [EN] The teardown block (CYLDeallocBlockExecutor), run by `aboutToDisappear`. [CN] 销毁块（CYLDeallocBlockExecutor），由 `aboutToDisappear` 运行。
+  private cylTeardown(): void {
     this.unlisten?.();
     this.binding.release();
     this.riveView = null;
@@ -602,13 +732,13 @@ export struct CYLAnimatedItemRiveView {
     this.bytes = null;
     if (/^https?:\/\//i.test(source.path)) {
       // [EN] @ohos/rive reads bytes only; remote files are not supported yet. [CN] @ohos/rive 只读取字节；尚不支持远程文件。
-      this.binding.failed(this.state);
+      this.binding.failed(this.state, CYL_RESOURCE_UNREADABLE);
       return;
     }
     const context = this.getUIContext().getHostContext();
     const content = context === undefined ? undefined : source.rawFileContent(context.resourceManager);
     if (content === undefined) {
-      this.binding.failed(this.state);
+      this.binding.failed(this.state, CYL_RESOURCE_NOT_FOUND);
       return;
     }
     this.bytes = content.buffer.slice(content.byteOffset, content.byteOffset + content.byteLength) as ArrayBuffer;
@@ -631,7 +761,7 @@ export struct CYLAnimatedItemRiveView {
       this.loaded = true;
       this.binding.ready(this.state, new CYLAnimatedItemRivePlayer(source, view));
     } catch (e) {
-      this.binding.failed(this.state);
+      this.binding.failed(this.state, CYL_RESOURCE_DECODE_FAILED);
     }
   }
 

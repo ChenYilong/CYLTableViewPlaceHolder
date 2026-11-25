@@ -7,7 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "cylplaceholder": "file:../cylplaceholder",
+    "@cyl/classifymenu": "file:../classifymenu",
     "cylanimateditem": "file:../cylanimateditem",
+    "cyldeallocblockexecutor": "file:../cyldeallocblockexecutor",
     "cylanimateditem_lottie": "file:../cylanimateditem_lottie",
     "cylanimateditem_pag": "file:../cylanimateditem_pag",
     "cylanimateditemrive": "file:../cylanimateditemrive",
