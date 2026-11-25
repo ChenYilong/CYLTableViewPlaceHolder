@@ -82,6 +82,21 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
 
     let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .tail, content: .icon))
 
+    /// Dark content on the light gradient, light content on the dark one, whatever the system would pick from the mid-tone
+    /// gradient under the bar (iOS 26 and later choose by the content behind it; the same build showed both colours, task log
+    /// 2026-11-26). `traitCollection` is the page's own, so a live light / dark switch follows. The navigation controller
+    /// (`CYLScenarioNavigationController`) and the tab bar controller consult this page.
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        traitCollection.userInterfaceStyle == .dark ? .lightContent : .darkContent
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
