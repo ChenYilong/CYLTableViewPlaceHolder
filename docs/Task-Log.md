@@ -2358,3 +2358,11 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
   4. Captures at `26f7e20d`: `docs/assets/ios-27.2-iphone18pro-sim-ph-taglist-glass-plate-gradient-{scenarios,animations,flows,refresh-icons}-{light,dark}-26f7e20d-20261125.png` and two one-column sheets (`...-scenarios-flows-light-dark-...-sheet.png`, `...-animations-refresh-icons-light-dark-...-sheet.png`); Refresh icons has no symbol icons (no tint to show); check_screenshots ok.
   5. Checks: full suite 383 tests, 0 failures; `scripts/framework-build.sh` exit 0 (0 warnings); Example-Scenarios builds; `ios-api-map --check` current (877/877); `check_doc_comments.py` ok; `update-docs-navigation.py` run; `docs/Examples.md` updated in both languages.
   6. Simulator: app terminated and ADAFD92B shut down at the end (only that UDID).
+
+
+### TODO（进行中）：Flows「Keep table header」页面只显示一个 X / TODO (in progress): Flows "Keep table header" page shows only an X (2026-11-25, Mac)
+
+- Context: worktrees `/tmp/xpa/ph-d17-{a,b,c,tip}` (detached at 6e86ecad, 999049e7, f1c22755, deb2172d), own simulator "PH defect17" (UDID in `/tmp/xpa/ph-d17.udid`), branch `feat/android-refresh-port-followup`, no new branch or PR.
+- Defect (capture agent, Example-Scenarios, iOS 27.2 simulator): Flows list (`CYLFlowListViewController`, tag list) -> tag "Keep table header" (issue #17 demo) pushes a page that shows only an X; the search bar sits at y=66 under the navigation bar; the "No matching results" placeholder has a 0x0 frame (accessibility tree).
+- Requirement: find whether it is (a) pre-existing before the tag-list conversion, (b) caused by the conversion, or (c) caused by the engine pin move (CYLTabBarController e62659cf -> 09bde3ca) or ClassifyMenu. Build Example-Scenarios (clean DerivedData per commit) at 6e86ecad, 999049e7, f1c22755 and the branch tip; capture the page at each; find the first bad commit and the cause in code; fix minimally with a test if it is in this repo, else report cause and evidence. Full suite on own simulator (baseline 383/0), ios-api-map --check, check_doc_comments.py. At the end: terminate the app, shut down and delete own simulator only.
+- Prompt: the coordinator's brief for this task (as above; Chinese owner rule in `docs/instructions/macos.md`, "Simulator rules").
