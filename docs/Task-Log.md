@@ -2206,3 +2206,12 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **Advisor scores (judgement, section 'Progress scoreboard, all platforms (2026-11-25, advisor)' in docs/Refresh-Library-Parity.md):** iOS ~95, Android 94 (at risk after the pin move), HarmonyOS 85, Flutter ~85, React Native 72, mini program ~87.
 - **Dispatch:** Mac Sonnet agent A (iOS CI jobs run locally, `@objc` forwarders, Rive early-end test); Mac Sonnet agent B (RN / Flutter iOS items on the spare simulator); Windows session: Android build at `e62659cf`, HarmonyOS Feed footer, HarmonyOS Rive header parity, `loadsAfterNoMoreData`, `onSecondaryOpened`, push `e391bdcd`; last: corner-radius survey (docs only).
 - **TODO.**
+
+### 进行中：iOS 核心行（agent A）：CI 替身、`@objc` 丢失、Rive 提前结束测试 / TODO: iOS core row (agent A): CI stand-in, `@objc` loss, Rive early-end test (2026-11-25, Mac, worktree `/tmp/xpa/ph-agentA`)
+
+- **Context:** branch `feat/android-refresh-port-followup`, no new branch or PR, head `a563b540`; simulator ADAFD92B only (agent B uses 54428A7C). The deductions are those of the iOS core row in docs/Refresh-Library-Parity.md, section 'Progress scoreboard, all platforms (2026-11-25, advisor)'. Parent entry: 'advisor scores every platform, optimise to 100'.
+- **Owner prompt (verbatim):** continue TODO (missing points): opus advisor点评目前全平台接口实现得分 以及下一步计划与建议。并立即让默认模型sonnet按照建议去实现。将得分优化到100转发合适任务给其他session 直接使用本机环境进行测试，iOS在macos机器，其余在windows机器。转发任务给相应session无需等待ci结果。
+- **EN:** see the parent entry; this agent does the iOS core row.
+- **Sub-task 1, CI stand-in (TODO):** run every job of `.github/workflows/ios.yml` locally on the current head (including Example-objc-01 / -02, and the iOS 15 jobs as far as this Xcode allows); diagnose the Example-objc-01 / -02 failures of run 45389973115; fix what fails.
+- **Sub-task 2, `@objc` loss (TODO):** `onResourceMissing`, `showsImageWhenAnimationEnds`, `isShowingImageAfterAnimationEnd` lost `@objc` in `999049e7`; add forwarders only for a real Objective-C caller or a listed API row, else a migration note; keep `ios-api-map.py --check` current.
+- **Sub-task 3, Rive early-end test (TODO):** a unit test that the Rive stop report ends the finish hold early and that a hold ended early does not end the next refresh.
