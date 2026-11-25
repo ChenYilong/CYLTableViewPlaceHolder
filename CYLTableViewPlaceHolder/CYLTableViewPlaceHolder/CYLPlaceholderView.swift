@@ -720,11 +720,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] The short name this view reported as missing, if any. [CN] 本视图报告为缺失的资源短名（如有）。
     private var reportedResource: String?
 
-    /**
-     * Called with the resource name and the reason (`file not found`, `unreadable`) when this view's animation file is
-     * missing; the red status bar shows the same report (`CYLPlaceholderResourceReporter`, docs/Status-Bar.md).
-     */
-    @objc open var onResourceMissing: ((String, String) -> Void)?
+    // [EN] `onResourceMissing(resource, reason)` is declared by `CYLAnimatedItemView` (CYLTabBarController d0aadcd7), which
+    //      calls it for the item's own failures; this view also calls it for the missing file it reports to the red status
+    //      bar (`CYLPlaceholderResourceReporter`, docs/Status-Bar.md), with the short name and `file not found` / `unreadable`.
+    // [CN] `onResourceMissing(resource, reason)` 由 `CYLAnimatedItemView` 声明（CYLTabBarController d0aadcd7），引擎在条目自身失败时调用；
+    //      本视图在向红色状态栏报告缺失文件时也调用它（短名与 `file not found` / `unreadable`）。
 
     /**
      * NO (the default): the view fills the frame it is given and centers its content, as before. YES: it also reports its
@@ -807,43 +807,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         @objc(isTapInteractive) get { isTapInteractionEnabled && tapHandler != nil }
     }
 
-    /**
-     * [EN] Whether the still image replaces the animation when a play-once animation ends (Android, HarmonyOS and the Mini
-     *      Program's `showsImageWhenAnimationEnds`, CYLTabBarController b13b88f1; iOS `CYLAnimatedItemView` has only the
-     *      `onAnimationEnd` callback, which this view uses). Off by default, so the last frame stays; for an animation
-     *      whose last frame is empty. Only an engine that reports the end (`CYLTabBarItemAnimationPlayer.onEnded`) triggers
-     *      it; the next play, stop or last-frame request shows the animation again.
-     * [CN] 播放一次的动画结束后，是否用静态图替换动画（Android、鸿蒙与小程序的 `showsImageWhenAnimationEnds`，CYLTabBarController b13b88f1；
-     *      iOS 的 `CYLAnimatedItemView` 只有 `onAnimationEnd` 回调，本视图使用它）。默认关闭，停在最后一帧；用于最后一帧为空的动画。
-     *      只有能报告结束的引擎（`CYLTabBarItemAnimationPlayer.onEnded`）才会触发；下一次播放、停止或显示最后一帧时重新显示动画。
-     */
-    @objc open var showsImageWhenAnimationEnds = false {
-        didSet {
-            guard showsImageWhenAnimationEnds != oldValue else { return }
-            onAnimationEnd = showsImageWhenAnimationEnds ? { [weak self] in self?.cyl_showImageInsteadOfAnimation() } : nil
-            if !showsImageWhenAnimationEnds { cyl_showAnimationAgain() }
-        }
-    }
-
-    /**
-     * [EN] Whether the still image shows in the animation's place (`showsImageWhenAnimationEnds` took effect). Internal, for tests.
-     * [CN] 静态图是否正替代动画显示（`showsImageWhenAnimationEnds` 已生效）。内部使用，供测试。
-     */
-    private(set) var isShowingImageAfterAnimationEnd = false
-
-    private func cyl_showImageInsteadOfAnimation() {
-        guard showsImageWhenAnimationEnds, let animationView = animationView else { return }
-        isShowingImageAfterAnimationEnd = true
-        animationView.isHidden = true
-        imageView.isHidden = false
-    }
-
-    private func cyl_showAnimationAgain() {
-        guard isShowingImageAfterAnimationEnd else { return }
-        isShowingImageAfterAnimationEnd = false
-        animationView?.isHidden = false
-        imageView.isHidden = true
-    }
+    // [EN] `showsImageWhenAnimationEnds` and `isShowingImageAfterAnimationEnd` are declared and handled by
+    //      `CYLAnimatedItemView` itself (CYLTabBarController d0aadcd7); this view only passes the flag on.
+    // [CN] `showsImageWhenAnimationEnds` 与 `isShowingImageAfterAnimationEnd` 由 `CYLAnimatedItemView` 自己声明并处理
+    //      （CYLTabBarController d0aadcd7）；本视图只转发该开关。
 
     /**
      * How many times the animation plays each time it starts: 0 loops until stopped (`animationLoops`), N plays N times.
@@ -1268,7 +1235,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         axis = horizontal ? .horizontal : .vertical
         if horizontal { textLabel.textAlignment = .natural }
         if let color = colors[CYLPlaceholderItemTitleColor] { textLabel.textColor = color }
-        if let color = colors[CYLPlaceholderItemIconColor] { imageView.tintColor = color }
+        if let color = colors[CYLPlaceholderItemIconColor] { cyl_setIconColor(color) }
         if let color = colors[CYLPlaceholderItemBackgroundColor] { backgroundColor = color }
         if let font = font { textLabel.font = font }
         let explicitValues: [String: Any?] = [
@@ -1313,6 +1280,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     private func cyl_placeholderSetUp() {
+        // [EN] The icon follows `tintColor` until a color is set (see `cyl_setIconColor`). [CN] 设置颜色之前图标跟随 `tintColor`（见 `cyl_setIconColor`）。
+        cyl_setIconColor(nil)
         // [EN] See CYLPlaceholderItemImageView: relayout and the static image follow values set on the subviews.
         // [CN] 见 CYLPlaceholderItemImageView：子视图上设置的值会触发重新布局并同步静态图片。
         if object_getClass(imageView) == UIImageView.self { object_setClass(imageView, CYLPlaceholderItemImageView.self) }
@@ -1464,7 +1433,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             normalImage = imageView.image
             normalTitle = textLabel.text
             normalTitleColor = textLabel.textColor
-            normalIconColor = imageView.tintColor
+            normalIconColor = ownedIconColor
             normalBackgroundColor = backgroundColor
             normalTitleFont = textLabel.font
             normalImageHidden = imageView.isHidden && !cyl_animationCoversImage
@@ -1492,7 +1461,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             textLabel.text = normalTitle
             textLabel.isHidden = normalTitleHidden
             textLabel.textColor = normalTitleColor
-            imageView.tintColor = normalIconColor
+            cyl_setIconColor(normalIconColor)
             backgroundColor = normalBackgroundColor
             textLabel.font = normalTitleFont
             for key in CYLPlaceholderAppearanceKeys {
@@ -1698,6 +1667,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     open override func tintColorDidChange() {
         super.tintColorDidChange()
+        // [EN] The engine keeps the tint it was given (`applyIconTintColor`); give it the new one. [CN] 引擎保留收到的 tint（`applyIconTintColor`），把新的交给它。
+        if ownedIconColor == nil { applyIconTintColor(tintColor) }
         // Like the FlatDesign button: an icon without an explicit or appearance color follows the tint color.
         cyl_applyAppearance()
     }
@@ -1707,7 +1678,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     private func cyl_appearanceTargetValue(for key: String) -> Any? {
         switch key {
         case "titleColor": return textLabel.textColor
-        case "iconColor": return imageView.tintColor
+        case "iconColor": return ownedIconColor
         case "backgroundColor": return backgroundColor
         default: return textLabel.font
         }
@@ -1717,7 +1688,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         let value = CYLPlaceholderNilIfNull(value)
         switch key {
         case "titleColor": textLabel.textColor = value as? UIColor
-        case "iconColor": imageView.tintColor = value as? UIColor
+        case "iconColor": cyl_setIconColor(value as? UIColor)
         case "backgroundColor": backgroundColor = value as? UIColor
         default:
             if let font = value as? UIFont { textLabel.font = font }
@@ -1727,7 +1698,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // YES when the value is still the one the appearance layers set (or the inherited tint for the icon).
     private func cyl_ownsAppearanceValue(_ current: Any?, for key: String) -> Bool {
         let applied = appearanceAppliedValues?[key]
-        if key == "iconColor" && applied is NSNull { return CYLPlaceholderSameValue(current, tintColor) }
+        if key == "iconColor" && applied is NSNull { return CYLPlaceholderNilIfNull(current) == nil }
         return CYLPlaceholderSameValue(current, applied)
     }
 
@@ -2418,6 +2389,32 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         animationStopped = true
         animationShowsLastFrame = true
         cyl_updateAnimationPlayback()
+    }
+
+    private var ownedIconColor: UIColor?
+
+    /**
+     * [EN] Sets the icon color this view owns (nil: the icon follows `tintColor`). Since CYLTabBarController 3c6a4d2 the engine
+     *      paints the icon with its own built-in color (`UIColor.label` when normal) on every state or trait change, so the color
+     *      goes to the engine as the subclass level (`applyIconTintColor(_:)`), which the engine keeps applying.
+     * [CN] 设置本视图拥有的图标颜色（nil：图标跟随 `tintColor`）。自 CYLTabBarController 3c6a4d2 起，引擎在每次状态或 trait 变化时用自己的
+     *      内置颜色（普通状态为 `UIColor.label`）为图标着色，所以颜色以子类层（`applyIconTintColor(_:)`）交给引擎，由引擎持续应用。
+     */
+    private func cyl_setIconColor(_ color: UIColor?) {
+        ownedIconColor = color
+        applyIconTintColor(color ?? tintColor)
+        if color == nil { imageView.tintColor = nil }
+    }
+
+    /**
+     * [EN] Shows the animation again in place of the still image after its end. The engine's own helper is private; switching
+     *      `showsImageWhenAnimationEnds` off and on again does the same through its public API.
+     * [CN] 重新显示动画，替换结束后显示的静态图。引擎自己的方法是私有的；关闭再打开 `showsImageWhenAnimationEnds` 通过其公开接口达到同样效果。
+     */
+    private func cyl_showAnimationAgain() {
+        guard isShowingImageAfterAnimationEnd else { return }
+        showsImageWhenAnimationEnds = false
+        showsImageWhenAnimationEnds = true
     }
 
     private func cyl_leaveSeekMode() {
