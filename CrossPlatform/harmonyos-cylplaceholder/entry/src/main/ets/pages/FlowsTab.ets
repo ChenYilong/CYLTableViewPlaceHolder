@@ -47,8 +47,6 @@ export const FLOWS: Flow[] = [
 const TITLE_LINES: number = 3;
 /** The rows a section shows before More. */
 const VISIBLE_ROWS: number = 2;
-/** Tags in a row of the list. */
-const TAGS_PER_ROW: number = 2;
 
 /** A row of a section: its title, the detail line shown on a long press and the icon. */
 class FlowRow {
@@ -122,7 +120,7 @@ function buildTagList(sections: FlowSection[]): CYLTagListState {
   list.defaultVisibleRows = VISIBLE_ROWS;
   list.foldControl = new CYLMenuFoldControl(CYLMenuFoldControlPosition.headerTrailing, CYLMenuFoldControlContent.iconAndTitle);
   const style = new CYLMenuStyle();
-  style.numberOfItemsPerRow = TAGS_PER_ROW;
+  // numberOfItemsPerRow stays 0: a tag is as wide as its content and a row holds as many tags as fit.
   style.titleMaxLines = TITLE_LINES;
   list.style = style;
   list.longPressAction = CYLTagLongPressActions.callout;
