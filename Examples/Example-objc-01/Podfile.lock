@@ -8,19 +8,19 @@ PODS:
     - CYLAnimatedItem/Core
 
 DEPENDENCIES:
-  - CYLAnimatedItem (from `https://github.com/ChenYilong/CYLTabBarController.git`, commit `09bde3ca4a965e19be916f216df99b3d1a8c5d17`)
+  - CYLAnimatedItem (from `https://github.com/ChenYilong/CYLTabBarController.git`, commit `6f563ef4f34bcde96f10022d3f0d5f949a7c3a62`)
   - CYLTableViewPlaceHolder (from `../..`)
 
 EXTERNAL SOURCES:
   CYLAnimatedItem:
-    :commit: 09bde3ca4a965e19be916f216df99b3d1a8c5d17
+    :commit: 6f563ef4f34bcde96f10022d3f0d5f949a7c3a62
     :git: https://github.com/ChenYilong/CYLTabBarController.git
   CYLTableViewPlaceHolder:
     :path: "../.."
 
 CHECKOUT OPTIONS:
   CYLAnimatedItem:
-    :commit: 09bde3ca4a965e19be916f216df99b3d1a8c5d17
+    :commit: 6f563ef4f34bcde96f10022d3f0d5f949a7c3a62
     :git: https://github.com/ChenYilong/CYLTabBarController.git
 
 SPEC CHECKSUMS:
