@@ -6,6 +6,7 @@ import { CYLRefreshAutoNormalFooterModel } from '../main/ets/refresh/CYLRefreshC
 import { cylAutoFooterItemShown } from '../main/ets/refresh/CYLRefreshComponent';
 import { CYLRefreshDrawnFooterModel } from '../main/ets/refresh/drawn/CYLRefreshDrawnHeader';
 import {
+  CYLRefreshRiveDrawnTable,
   CYLRefreshRiveDriver,
   CYLRefreshRiveHeaderModel,
   CYLRefreshRiveStyle
@@ -64,6 +65,94 @@ function driven(style: CYLRefreshRiveStyle): CYLRefreshRiveHeaderModel {
 }
 
 export default function refreshRiveTest() {
+  describe('CYLRefreshRiveStyle finish rule', () => {
+    it('holds finishTimeout when the style has an end part, finishDuration otherwise', 0, () => {
+      const bow = bowStyle();
+      expect(bow.finishTimeout).assertEqual(1.5);
+      expect(bow.playsFinish).assertTrue();
+      const header = driven(bow);
+      expect(header.onRefreshFinishing(true)).assertEqual(1.5);
+      bow.finishTimeout = 3;
+      expect(header.onRefreshFinishing(true)).assertEqual(3);
+      header.onStatus(CYLRefreshPhase.Finishing, CYLRefreshPhase.Idle);
+      const plain = new CYLRefreshRiveStyle('Plain.riv');
+      expect(plain.playsFinish).assertFalse();
+      const plainHeader = driven(plain);
+      plainHeader.finishDuration = 0.4;
+      expect(plainHeader.onRefreshFinishing(true)).assertEqual(0.4);
+      plainHeader.onStatus(CYLRefreshPhase.Finishing, CYLRefreshPhase.Idle);
+    });
+
+    it('hides the view for the collapse and shows it at the next pull', 0, () => {
+      const header = driven(bowStyle());
+      const seen: boolean[] = [];
+      header.cyl_setHiddenListener((h: boolean) => seen.push(h));
+      header.onStatus(CYLRefreshPhase.Refreshing, CYLRefreshPhase.Finishing);
+      header.onRefreshFinishing(true);
+      expect(header.cyl_collapseHidden).assertFalse();
+      header.onStatus(CYLRefreshPhase.Finishing, CYLRefreshPhase.Idle);
+      expect(header.cyl_collapseHidden).assertTrue();
+      header.onStatus(CYLRefreshPhase.Idle, CYLRefreshPhase.PullToRefresh);
+      expect(header.cyl_collapseHidden).assertFalse();
+      expect(JSON.stringify(seen)).assertEqual('[true,false]');
+    });
+  });
+
+  describe('CYLRefreshRiveDrawnTable', () => {
+    const bow: number[][] = [[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]];
+    const near = (a: number | null, b: number): boolean => a !== null && Math.abs(a - b) < 1e-9;
+
+    it('interpolates linearly and holds the end values', 0, () => {
+      const table = CYLRefreshRiveDrawnTable.parse(bow);
+      expect(table.isEmpty).assertFalse();
+      expect(table.pairs.length).assertEqual(7);
+      expect(near(table.fraction(0), 0)).assertTrue();
+      expect(near(table.fraction(30), 0)).assertTrue();
+      expect(near(table.fraction(31.8), 0.14)).assertTrue();
+      expect(near(table.fraction(30.9), 0.07)).assertTrue();
+      expect(near(table.fraction(37.85), (0.43 + 0.66) / 2)).assertTrue();
+      expect(near(table.fraction(50), 1)).assertTrue();
+      expect(near(table.fraction(80), 1)).assertTrue();
+    });
+
+    it('treats one pair as constant and no table as no clip', 0, () => {
+      const one = CYLRefreshRiveDrawnTable.parse([[10, 0.5]]);
+      expect(one.fraction(-5)).assertEqual(0.5);
+      expect(one.fraction(99)).assertEqual(0.5);
+      const bad: Object[] = [CYLRefreshRiveDrawnTable.parse(null), CYLRefreshRiveDrawnTable.parse(undefined),
+        CYLRefreshRiveDrawnTable.parse([]), CYLRefreshRiveDrawnTable.parse('x'),
+        CYLRefreshRiveDrawnTable.parse([['a', 1], [1]]), CYLRefreshRiveDrawnTable.EMPTY];
+      for (const t of bad) {
+        const table = t as CYLRefreshRiveDrawnTable;
+        expect(table.isEmpty).assertTrue();
+        expect(table.fraction(40)).assertEqual(null);
+      }
+    });
+
+    it('ignores malformed pairs, sorts and clamps the fractions', 0, () => {
+      const table = CYLRefreshRiveDrawnTable.parse([[50, 2], 'bad', [10], [10, 'x'], [NaN, 0.5], [20, Infinity],
+        [30, -1], [40, 0.5, 9], null]);
+      expect(JSON.stringify(table.pairs)).assertEqual('[[30,0],[40,0.5],[50,1]]');
+      expect(near(table.fraction(35), 0.25)).assertTrue();
+      expect(JSON.stringify(CYLRefreshRiveDrawnTable.of([[2, 0.4], [1, 0.2]]).pairs)).assertEqual('[[1,0.2],[2,0.4]]');
+    });
+
+    it('follows the pull input last sent, held through the refresh and 0 after the reset', 0, () => {
+      const style = bowStyle();
+      style.drawnTable = CYLRefreshRiveDrawnTable.parse(bow);
+      const header = driven(style);
+      const driver = new RecordingDriver();
+      header.cyl_attachDriver(driver);
+      const seen: Array<number | null> = [];
+      header.cyl_setDrawnListener((f: number | null) => seen.push(f));
+      header.onScrollingWithOffset(200, 1, true);
+      expect(header.cyl_drawnFraction).assertEqual(1);
+      header.onScrollingWithOffset(0, 0, true);
+      expect(header.cyl_drawnFraction).assertEqual(0);
+      expect(seen.length).assertEqual(2);
+      expect(new CYLRefreshRiveHeaderModel(bowStyle()).cyl_drawnFraction).assertEqual(null);
+    });
+  });
   describe('CYLRefreshRiveStyle', () => {
     it('maps the pull to the pull input', 0, () => {
       const bow = bowStyle();

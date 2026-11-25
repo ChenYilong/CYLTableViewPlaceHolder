@@ -28,6 +28,7 @@ import {
   CYLRefreshOriginalHeaderModel,
   CYLRefreshPhoenixFooterModel,
   CYLRefreshPhoenixHeaderModel,
+  CYLRefreshRiveDrawnTable,
   CYLRefreshRiveHeaderModel,
   CYLRefreshRiveStyle,
   CYLRefreshScrollViewModel,
@@ -149,6 +150,8 @@ function riveStyle(method: string): CYLRefreshRiveStyle | null {
       style.fitsWidth = true;
       style.pullInput = 'pull';
       style.pullInputMinimum = 10;
+      // The file draws black at the bottom at a low pull: clip to the drawn part (docs/Refresh-Library-Parity.md).
+      style.drawnTable = CYLRefreshRiveDrawnTable.of([[30, 0], [31.8, 0.14], [35.9, 0.43], [39.8, 0.66], [43.6, 0.82], [47.3, 0.94], [50, 1]]);
       style.releaseTrigger = 'advance';
       style.finishTrigger = 'advance';
       style.restartTrigger = 'restart';

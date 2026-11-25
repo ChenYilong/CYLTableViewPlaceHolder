@@ -2197,3 +2197,10 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **EN:** the advisor decides the Bow END black bars from the context.
 - **Result:** accept, under the owner's own rule (only one file, Bow, still has the END black; Halloween's was our bug and is fixed in `b04700f7`). Logged as a revisable advisor recommendation, not an owner decision. `finishTimeout` stays 1.5 s, no example changed. Full reasoning, the visible iOS / Android difference and the revisit trigger (Android Bow with the 500 ms early hide off): docs/Refresh-Library-Parity.md, section 'Rive drawn-height table'.
 - **DONE.**
+
+### 已完成（代码，未上机）：HarmonyOS 的 Rive 绘制高度表 / Done (code, not run on a device): HarmonyOS Rive drawn-height table
+
+- **中文：** `CYLRefreshRiveDrawnTable`（parse / of / fraction / pairs / EMPTY）与 `CYLRefreshRiveStyle.drawnTable` 已加入；头部模型 `cyl_drawnFraction` 跟随最后发送的下拉输入；示例的 Rive 视图用顶部对齐、`clip(true)` 的 Stack 裁剪（ArkTS 可以裁剪，不是平台限制）；Bow 样式带上表，`pullInputMinimum` 仍为 10。主机单元测试 4 个。未改 `finishTimeout` 与提前隐藏逻辑；Android 的“结束保持前 500 ms 隐藏”未移植，屏幕效果未验证。
+- **EN:** `CYLRefreshRiveDrawnTable` (parse / of / fraction / pairs / EMPTY) and `CYLRefreshRiveStyle.drawnTable` added; the header model's `cyl_drawnFraction` follows the pull input last sent; the example's Rive view clips with a top-aligned `Stack` and `clip(true)` (ArkTS can clip, so no platform limit); the Bow style carries the table, `pullInputMinimum` stays 10. 4 host unit tests. `finishTimeout` and the early-hide logic are untouched; Android's 500 ms hide before the finish hold ends is not ported; the on-screen result is unverified. Details: docs/Refresh-Library-Parity.md, 'Rive drawn-height table'.
+- **W3 (2026-11-25):** also `finishTimeout` (default 1.5, Android's value, option plumbing on `CYLRefreshRiveStyle`, finish rule in `onRefreshFinishing`) and the early hide 500 ms before the hold ends (`cyl_collapseHidden`, example view opacity 0 / hidden). 2 more host tests. / **W3:** 同上：`finishTimeout` 与结束保持前 500 ms 提前隐藏已移植，另加 2 个主机测试；上机效果与 END 黑行测量未做。
+- **DONE (code).**
