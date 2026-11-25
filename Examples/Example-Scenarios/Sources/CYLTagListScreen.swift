@@ -5,8 +5,9 @@
 //  A sectioned index screen drawn with CollectionViewClassifyMenu's tag list (`CYLTagListView`) instead of a grouped
 //  table (docs/instructions/examples.md, "Sectioned lists in demos use the tag list"): one tag list, one section per
 //  group, the section title is the header, a tag shows the main title and the icon only, a long section folds behind
-//  the core's More control at the trailing edge of the section header (`.headerTrailing`, "More" and the chevron; expanded,
-//  the chevron turned), a tap does what the replaced row did and leaves nothing selected, and a long press
+//  the core's tail fold control: the last tag of the section is the expand / collapse button (`.tail`, `.icon`: a circle
+//  with the chevron, no text; expanded, the chevron turned; sections that fit show none), a tap does what the
+//  replaced row did and leaves nothing selected, and a long press
 //  shows the secondary line in the tag list's own callout (`menuSubtitleForItem`, `CYLTagLongPressActions.callout`).
 //  Examples only: the library itself does not depend on CollectionViewClassifyMenu.
 //
@@ -32,8 +33,9 @@ struct CYLTagSection {
     let entries: [CYLTagEntry]
 }
 
-/// A soft diagonal gradient of four hues behind a tag list, so the Liquid Glass tags have something to refract; the colours
-/// follow light and dark mode.
+/// The colourful backing plate (背景板) behind a tag list: a saturated diagonal gradient of four hues, clearly visible behind the
+/// whole list, so the Liquid Glass tags and the tail fold control (also glass, the core copies the tag style) have something to
+/// refract; the colours follow light and dark mode.
 final class CYLTagListBackdropView: UIView {
     override class var layerClass: AnyClass { CAGradientLayer.self }
 
@@ -56,10 +58,10 @@ final class CYLTagListBackdropView: UIView {
     private func updateColors() {
         let dark = traitCollection.userInterfaceStyle == .dark
         let colors: [UIColor] = dark
-            ? [UIColor(red: 0.20, green: 0.10, blue: 0.40, alpha: 1), UIColor(red: 0.05, green: 0.25, blue: 0.45, alpha: 1),
-               UIColor(red: 0.05, green: 0.35, blue: 0.30, alpha: 1), UIColor(red: 0.45, green: 0.15, blue: 0.25, alpha: 1)]
-            : [UIColor(red: 0.80, green: 0.72, blue: 1.00, alpha: 1), UIColor(red: 0.62, green: 0.84, blue: 1.00, alpha: 1),
-               UIColor(red: 0.65, green: 0.95, blue: 0.82, alpha: 1), UIColor(red: 1.00, green: 0.78, blue: 0.80, alpha: 1)]
+            ? [UIColor(red: 0.45, green: 0.20, blue: 0.85, alpha: 1), UIColor(red: 0.10, green: 0.45, blue: 0.85, alpha: 1),
+               UIColor(red: 0.05, green: 0.60, blue: 0.50, alpha: 1), UIColor(red: 0.85, green: 0.25, blue: 0.45, alpha: 1)]
+            : [UIColor(red: 0.62, green: 0.48, blue: 1.00, alpha: 1), UIColor(red: 0.30, green: 0.68, blue: 1.00, alpha: 1),
+               UIColor(red: 0.30, green: 0.88, blue: 0.62, alpha: 1), UIColor(red: 1.00, green: 0.50, blue: 0.60, alpha: 1)]
         (layer as! CAGradientLayer).colors = colors.map { $0.cgColor }
     }
 }
@@ -76,13 +78,13 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     /// Shown instead of the list while there is no section, should the bundle be missing.
     var emptyView: UIView?
 
-    let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .headerTrailing, content: .iconAndTitle))
+    let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .tail, content: .icon))
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so a soft colourful
-        // gradient sits behind the list (examples only; the tag list itself stays transparent).
+        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so a colourful
+        // backing plate sits behind the whole list (examples only; the tag list itself stays transparent).
         let backdrop = CYLTagListBackdropView()
         backdrop.frame = view.bounds
         backdrop.autoresizingMask = [.flexibleWidth, .flexibleHeight]
