@@ -33,9 +33,9 @@ struct CYLTagSection {
     let entries: [CYLTagEntry]
 }
 
-/// The colourful backing plate (背景板) behind a tag list: a saturated diagonal gradient of four hues, clearly visible behind the
-/// whole list, so the Liquid Glass tags and the tail fold control (also glass, the core copies the tag style) have something to
-/// refract; the colours follow light and dark mode.
+/// The page background of a tag list screen: a saturated diagonal gradient of four hues over the whole screen, behind everything,
+/// so the glass plate, the Liquid Glass tags and the tail fold control (also glass) have something to refract; the colours
+/// follow light and dark mode.
 final class CYLTagListBackdropView: UIView {
     override class var layerClass: AnyClass { CAGradientLayer.self }
 
@@ -66,6 +66,31 @@ final class CYLTagListBackdropView: UIView {
     }
 }
 
+/// The liquid-glass backing plate (背景板) behind a tag list: a rounded glass container over the gradient page (`UIGlassEffect`
+/// on iOS 26 and later, a flat translucent rounded view below), the glass tags and the glass tail control sit on top of it.
+/// Examples only; the core draws no plate.
+final class CYLTagListPlateView: UIView {
+    static let cornerRadius: CGFloat = 28
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = false
+        if #available(iOS 26.0, *) {
+            let glass = UIVisualEffectView(effect: UIGlassEffect())
+            glass.cornerConfiguration = .corners(radius: .fixed(Self.cornerRadius))
+            glass.frame = bounds
+            glass.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            addSubview(glass)
+        } else {
+            backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.35)
+            layer.cornerRadius = Self.cornerRadius
+            layer.cornerCurve = .continuous
+        }
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+}
+
 /// Base class of the sectioned index screens: set `sections` (before the view loads or later, then `reloadSections()`).
 class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMenuDelegate {
 
@@ -83,8 +108,8 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so a colourful
-        // backing plate sits behind the whole list (examples only; the tag list itself stays transparent).
+        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so the page is a
+        // colourful gradient (examples only; the tag list itself stays transparent) and a glass plate sits behind the list.
         let backdrop = CYLTagListBackdropView()
         backdrop.frame = view.bounds
         backdrop.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -106,10 +131,17 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
         tagList.menuDataSource = self
         tagList.menuDelegate = self
         tagList.translatesAutoresizingMaskIntoConstraints = false
+        let plate = CYLTagListPlateView()
+        plate.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(plate)
         view.addSubview(tagList)
         let guide = view.safeAreaLayoutGuide
         bottomConstraint = tagList.bottomAnchor.constraint(equalTo: guide.bottomAnchor)
         NSLayoutConstraint.activate([
+            plate.topAnchor.constraint(equalTo: tagList.topAnchor),
+            plate.bottomAnchor.constraint(equalTo: tagList.bottomAnchor),
+            plate.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 8),
+            plate.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -8),
             tagList.topAnchor.constraint(equalTo: guide.topAnchor),
             bottomConstraint!,
             tagList.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
