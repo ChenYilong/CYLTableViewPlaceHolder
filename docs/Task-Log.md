@@ -2443,3 +2443,11 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
   4. Counts: `Tests/run-tests.rb` 383 tests: first run 1 failure (`CYLRefreshDrivenStylesTests.testEveryDrawnFooterStyleRunsAFullLoadUnderTheDrivenLayout`, "classic", calls 0 vs 1, a timing-based spin test), second run 383 / 0 failures; I did not investigate the flake further. `scripts/framework-build.sh` exit 0 (the log has 17 `warning:` lines, not classified); root project, Example-objc-01, -objc-02, -SwiftUI, Example-Scenarios BUILD SUCCEEDED; ios-api-map --check 877 / 877; check_doc_comments 1308 / 1308; update-docs-navigation run; check_screenshots ok.
   5. Captures `docs/assets/ios-27.2-iphone18pro-sim-ph-statusbar-engine-b0887513-*-aa102c73-20261126.png` (8 originals) and a one-column sheet.
   6. Simulator: app terminated and ADAFD92B shut down (only that UDID).
+
+## 2026-11-26 Flaky test CYLRefreshDrivenStylesTests footer full load: root cause and deterministic fix (TODO)
+
+- **Context:** branch `feat/android-refresh-port-followup` (no new branch or PR), base `75ef94ab`. `CYLRefreshDrivenStylesTests.testEveryDrawnFooterStyleRunsAFullLoadUnderTheDrivenLayout` failed once in two full runs ("classic", calls 0 vs 1), passed on the rerun. Static reading: after `layout.release()` the back footer calls `refreshingBlock` from the completion of `UIView.animate(withDuration: fastAnimationDuration)` (0.25 s), while the test waits a fixed `spin()` of 0.4 s and then asserts `calls == 1`.
+- **Prompt (verbatim summary):** find the root cause of the flaky test and make it deterministic; decide test flaw or core race (core bugs are fixed in the core); wait on the actual condition with a generous timeout, no sleeps; prove it with at least 30 iterations of only this class before and after, with and without CPU load (`yes > /dev/null` x4); one full-suite run (baseline 383/0) and `scripts/ios-api-map.py --check`; simulator ADAFD92B only.
+- **EN:** same as above.
+- **Acceptance:** 100 = root cause named with evidence, test waits on the condition, 30+ iterations pass with and without load after the fix (before-fix counts reported honestly), full suite 383/0, api-map ok, simulator shut down. 60 = fix without a reproduced before-failure.
+- **TODO:** (1) before counts. (2) fix. (3) after counts. (4) full suite + api-map. (5) commit, push, DONE.
