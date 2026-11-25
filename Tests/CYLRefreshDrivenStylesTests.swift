@@ -101,7 +101,8 @@ final class CYLRefreshDrivenStylesTests: XCTestCase {
             XCTAssertGreaterThan(drawnPixels(header), 0, "\(style.name) draws while pulled")
 
             layout.release()
-            spin()
+            // The refreshing block runs in the completion of the 0.25 s inset animation, so wait for the call itself.
+            XCTAssertTrue(spin(until: { calls == 1 }, timeout: 8), "\(style.name) calls the refreshing block")
             XCTAssertEqual(header.phase, .refreshing, style.name)
             XCTAssertEqual(calls, 1, style.name)
             XCTAssertGreaterThan(drawnPixels(header), 0, "\(style.name) draws while refreshing")
@@ -148,7 +149,8 @@ final class CYLRefreshDrivenStylesTests: XCTestCase {
             XCTAssertGreaterThan(drawnPixels(footer), 0, "\(style.name) draws while pulled")
 
             layout.release()
-            spin()
+            // The refreshing block runs in the completion of the 0.25 s inset animation, so wait for the call itself.
+            XCTAssertTrue(spin(until: { calls == 1 }, timeout: 8), "\(style.name) calls the refreshing block")
             XCTAssertEqual(footer.phase, .refreshing, style.name)
             XCTAssertEqual(calls, 1, style.name)
             XCTAssertGreaterThan(drawnPixels(footer), 0, "\(style.name) draws while loading")
@@ -168,7 +170,7 @@ final class CYLRefreshDrivenStylesTests: XCTestCase {
         spin(0.1)
         layout.drive(offset: -8, dragging: true)
         layout.release()
-        spin()
+        XCTAssertTrue(spin(until: { calls == 1 }, timeout: 8), "the footer calls the refreshing block")
         XCTAssertTrue(footer.isRefreshing)
         XCTAssertEqual(calls, 1)
         footer.endRefreshing()
