@@ -443,6 +443,9 @@ Rules: Dart is the authority (Flutter keeps the scrolling and the phase machine)
 | event | `onSecondaryOpen` | `{}` | The floor finished opening from a pull (not from the prop). |
 | event | `onSecondaryClose` | `{}` | The floor finished closing from a push or a pull (not from the prop). |
 | child | `nativeID="cyl.refresh.secondary"` | any native view | The floor's content: the container takes the child view with this `nativeID` as the header's `secondaryView` (placed behind the header above the list, as iOS does) and looks for the scroll view in its other children. No such child: the pull still opens and reports the events, the floor is empty. |
+| prop (iOS only) | `footerSecondaryTriggerOffset`, `footerSecondaryDimension`, `footerSecondaryCloseTriggerOffset`, `footerSecondaryOpen` | number, number, number (default 80), boolean | The footer's second floor (`CYLRefreshBackFooter`'s own API; a pull up past the end opens it below the list; needs `loadMoreEnabled`, a back footer style (not the `cupertino` auto footer) and no `noMoreData`). `footerSecondaryOpen` is controlled like `secondaryOpen` and has its own state, so a footer floor never opens the header floor through JavaScript state. **Android: TODO (Windows task), no footer floor there yet.** |
+| event body | `edge` | `'header'` or `'footer'` | `onSecondaryOpen` / `onSecondaryClose` carry which floor; the TypeScript wrapper calls the callback with it, a missing edge is `'header'` (Android). |
+| child (iOS only) | `nativeID="cyl.refresh.secondary.footer"` | any native view | The footer floor's content (the footer's `secondaryView`). |
 
 JavaScript owns `secondaryOpen` as state: set it true in `onSecondaryOpen` and false in `onSecondaryClose`, as `refreshing` is set in `onRefresh`.
 
