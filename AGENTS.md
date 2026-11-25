@@ -79,6 +79,11 @@ Rules are grouped by tag (same tags as `instructions.md`). Each line is the rule
 - **Option 2: hand the test to a macOS session.** If option 1 fails, forward the arm64-only tests to an active `Mac…` session (Apple silicon is arm64) with the build, HAP, steps and expected result; with no macOS session, record them as a `TODO`. ([details](docs/instructions/harmonyos.md#agentsmd-harmonyos-ide-preparation-and-emulator-prerequisites-added-2026-11-16))
 - Until one option has passed, report Rive and PAG playback as not verified on x86_64 (still images only), and say in every report and screenshot footer which part ran on x86_64 and which needs arm64. ([details](docs/instructions/harmonyos.md#agentsmd-harmonyos-ide-preparation-and-emulator-prerequisites-added-2026-11-16))
 
+## Tag: Example demos (`examples`)
+
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
+- Use the project skill `cyl-examples` in `.agents/skills/` for demo screens.
+
 ## Tag: Code and architecture (`code`)
 
 - Public headers under `CYLTableViewPlaceHolder/` define the current API. ([details](docs/instructions/code.md#agentsmd-source-of-truth))

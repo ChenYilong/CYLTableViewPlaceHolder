@@ -5,7 +5,7 @@ integrated refresh component, and an iOS example. It inherits the vault's root
 instructions. Read `AGENTS.md` before changing the project.
 
 Rules are grouped by tag. Each line is a summary; follow its link to `docs/instructions/<tag>.md` for the full rule when
-the tag or keyword matches the task. Tags: `behavioral`, `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
+the tag or keyword matches the task. Tags: `behavioral`, `workflow`, `testing`, `ci`, `windows`, `macos`, `harmonyos`, `examples`, `code`, `l10n-a11y`, `docs`, `git`. Agent rules: `AGENTS.md` (same tags).
 
 ## Tag: Behavioral guidelines (`behavioral`)
 
@@ -62,6 +62,10 @@ The HarmonyOS port, DevEco Studio, the emulator, arm64-only Rive and PAG. Full t
   - Subsections: [HarmonyOS accessibility and localization (owner's rule, 2026-11-16)](docs/instructions/harmonyos.md#harmonyos-accessibility-and-localization-owners-rule-2026-11-16).
 - [HarmonyOS: IDE preparation and emulator prerequisites (added 2026-11-16)](docs/instructions/harmonyos.md#harmonyos-ide-preparation-and-emulator-prerequisites-added-2026-11-16): Before any HarmonyOS work (building, installing or running a HAP, taking emulator screenshots), check these:
   - Subsections: [Rive and PAG: tests that only run on arm64 (owner's rule, 2026-11-22)](docs/instructions/harmonyos.md#rive-and-pag-tests-that-only-run-on-arm64-owners-rule-2026-11-22).
+
+## Tag: Example demos (`examples`)
+
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, More / Less, a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number). ([details](docs/instructions/examples.md))
 
 ## Tag: Code and architecture (`code`)
 
