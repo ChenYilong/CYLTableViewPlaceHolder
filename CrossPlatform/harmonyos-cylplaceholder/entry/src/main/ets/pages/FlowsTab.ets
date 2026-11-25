@@ -121,7 +121,8 @@ function buildTagList(sections: FlowSection[]): CYLTagListState {
   list.selectionMode = CYLMenuSelectionMode.none;
   list.isScrollEnabled = false;
   list.defaultVisibleRows = VISIBLE_ROWS;
-  list.foldControl = new CYLMenuFoldControl(CYLMenuFoldControlPosition.headerTrailing, CYLMenuFoldControlContent.iconAndTitle);
+  // The tail control: the last tag of a section is the expand / collapse button and shows only the chevron icon.
+  list.foldControl = new CYLMenuFoldControl(CYLMenuFoldControlPosition.tail, CYLMenuFoldControlContent.icon);
   const style = new CYLMenuStyle();
   // numberOfItemsPerRow stays 0: a tag is as wide as its content and a row holds as many tags as fit.
   style.titleMaxLines = TITLE_LINES;

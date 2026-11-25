@@ -18,7 +18,15 @@ heading "Tag: Example demos". English only. The same rule lives in CollectionVie
     in one shared place per example, and make the glass visible in captures (a colorful background behind the list when the page
     background is plain).
   - **Every section header has a title**: a group without a natural title gets a localized one (never an empty header).
-  - A section with more rows than `defaultVisibleRows` uses the core's **More / Less** fold control.
+  - **A colorful backing plate behind the list.** An example tag list sits on a colorful backing plate (a gradient or an image
+    behind the list, set in ONE shared place per example), so that the Liquid Glass tags and the glass tail control are visible; on a
+    plain page glass looks like a flat tag. The plate is an example-side view: the library has no backdrop API (HarmonyOS and
+    Android glass blur what is behind the list; iOS glass is drawn by the glass view itself), so the example draws it, never the core.
+  - **The tail fold control is itself a Liquid Glass tag**, icon only (the same tag background style as the other tags).
+  - **Fold with the tail control, icon only.** A section with more rows than `defaultVisibleRows` folds with the core's **tail**
+    fold control: the last tag of the section is the expand / collapse button and shows only the chevron icon, with no More / Less
+    text (`foldControl` position `tail`, content `icon`: `CYLMenuFoldControlPosition.tail` + `CYLMenuFoldControlContent.icon`,
+    JSON `"foldControl": {"position": "tail", "content": "icon"}`). Never use the header trailing More / Less control in an example.
   - A tap on a tag does exactly what a tap on the replaced cell did (open the screen). The tag does not stay selected.
   - A **long press** shows the secondary line in a small floating callout with an arrow, through the tag list's
     long-press action API (`menuSubtitleForItem` / item key `subtitle`, `longPressAction` `"callout"`). Never draw a popup

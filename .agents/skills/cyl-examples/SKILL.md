@@ -1,6 +1,6 @@
 ---
 name: cyl-examples
-description: Build example (demo) screens in the CYL projects. A demo that needs a sectioned list uses CollectionViewClassifyMenu's tag list (titles and icons, More / Less, tap = cell tap, long press = subtitle callout, titleMaxLines) and re-tests contact-list reordering.
+description: Build example (demo) screens in the CYL projects. A demo that needs a sectioned list uses CollectionViewClassifyMenu's tag list (titles and icons, a tail fold control (the last tag, icon only), tap = cell tap, long press = subtitle callout, titleMaxLines) and re-tests contact-list reordering.
 ---
 
 # Example (demo) screens
@@ -18,7 +18,7 @@ an inset-grouped list, ArkUI `List` with groups). Build it with the tag list, no
 1. One tag list, one section per group. The section title is the header. A tag shows the **main title and the icon only**.
    Tags use the core's Liquid Glass background style (`backgroundStyle = liquidGlass`). Every section header must have a title (add a localized one for an untitled group). Tags are content-wide: leave
    `numberOfItemsPerRow` at 0 so a row holds as many tags as fit.
-2. More than `defaultVisibleRows` rows in a section: the core's More / Less fold control (`foldControl`, header trailing).
+2. More than `defaultVisibleRows` rows in a section: fold with the core's TAIL control, icon only: the last tag of the section is the expand / collapse button (`foldControl` position `tail`, content `icon`); no More / Less text, never the header control. The tail control is itself a Liquid Glass tag, and the list sits on a colorful backing plate (a gradient/image behind the list, set in one shared place per example; the plate is example-side, the core has no backdrop API).
 3. A tap on a tag does what the replaced cell's tap did (open the screen, select the row). Do not leave the tag selected.
 4. The secondary line (detail, subtitle) is shown on a **long press** in a small floating callout with an arrow:
    - data: `menuSubtitleForItem` on the data source, `CYLTag.subtitle`, or the item key `subtitle` in a configuration;
