@@ -10,6 +10,7 @@
 		0046BE4832B3E1EED88B085F /* CYLScenarioAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */; };
 		03D504A0D2534EC7F552DD2D /* CYLRefreshIconListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E9BBC4FD0ADE2C11ED085E /* CYLRefreshIconListViewController.swift */; };
 		0B8DC7AAF1A0D398D9E021EB /* CYLScenarioDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69719CCA062B14DEFBBA57F /* CYLScenarioDetailViewController.swift */; };
+		11D9889588C51B1430DE1634 /* CYLTagListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78368EF276F885F47451B7D /* CYLTagListScreen.swift */; };
 		145423A5B74DCE562295D8AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 088621BE87DFB283F98D1F37 /* Foundation.framework */; };
 		1651E134D9BD7EC69A6275BB /* CYLRefreshTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623D7D8C1C3530FC88F60EF /* CYLRefreshTableViewController.swift */; };
 		1E4EDAF863C06F44FA7260F2 /* CYLConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825254E575AC6B360227B7FC /* CYLConfigurationViewController.swift */; };
@@ -70,6 +71,7 @@
 		C9F1A2B3D4E5F60718293B04 /* CYLRefreshSVGASceneHeader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshSVGASceneHeader.swift; sourceTree = "<group>"; };
 		D310BE0FC2B59B42C561C71C /* CYLScenarioFeedback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioFeedback.swift; sourceTree = "<group>"; };
 		DB079383EC083523B0BF9C04 /* Pods_ExampleScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E78368EF276F885F47451B7D /* CYLTagListScreen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLTagListScreen.swift; sourceTree = "<group>"; };
 		EE9EC2431E82C46B49A75960 /* CYLScenarioAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLScenarioAppDelegate.swift; sourceTree = "<group>"; };
 		F0CCB8DB61B23135F4F94886 /* Pods-ExampleScenarios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleScenarios.release.xcconfig"; path = "Target Support Files/Pods-ExampleScenarios/Pods-ExampleScenarios.release.xcconfig"; sourceTree = "<group>"; };
 		F0E9BBC4FD0ADE2C11ED085E /* CYLRefreshIconListViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshIconListViewController.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				6382C12DADB4445478112D5F /* CYLRefreshStylesDemoViewController.swift */,
 				079331D57882E2E2E0DAD5EB /* CYLEasyRefreshDemoViewController.swift */,
 				628D72DB992C6E0ACDD940B8 /* CYLMissingResourceViewController.swift */,
+				E78368EF276F885F47451B7D /* CYLTagListScreen.swift */,
 			);
 			name = Sources;
 			path = Sources;
@@ -249,6 +252,7 @@
 				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/LICENSE.third-party",
 				"${PODS_ROOT}/../../../CYLTableViewPlaceHolder/CYLRefresh/LICENSE.refresh-third-party.txt",
 				"${PODS_CONFIGURATION_BUILD_DIR}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolderPrivacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CollectionViewClassifyMenu/CYLClassifyMenuResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RiveRuntime/runtime_ios_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -260,6 +264,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.third-party",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LICENSE.refresh-third-party.txt",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLTableViewPlaceHolderPrivacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CYLClassifyMenuResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/runtime_ios_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,6 +356,7 @@
 				AA90B2391470FF69B724B146 /* CYLRefreshStylesDemoViewController.swift in Sources */,
 				B26CABD477E78B83A3C5ADBF /* CYLEasyRefreshDemoViewController.swift in Sources */,
 				85F6265D46554D099D977172 /* CYLMissingResourceViewController.swift in Sources */,
+				11D9889588C51B1430DE1634 /* CYLTagListScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
