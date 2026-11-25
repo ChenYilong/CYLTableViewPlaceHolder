@@ -9,7 +9,8 @@ import CYLTableViewPlaceHolder
 
 /// The navigation controller of every tab. UIKit asks a navigation controller with a visible bar for its own status bar
 /// style, not for the top screen's; the tag-list screens decide their style (`CYLTagListScreenViewController`), so the top
-/// screen is consulted here. A screen that sets nothing keeps the system's pick.
+/// screen is consulted here (without it the light gradient page showed a white clock, tested 2026-11-26). A screen that sets
+/// nothing keeps the system's pick.
 final class CYLScenarioNavigationController: UINavigationController {
     override var childForStatusBarStyle: UIViewController? { topViewController }
 }
@@ -73,11 +74,6 @@ final class CYLScenarioTabBarController: CYLTabBarController {
             return page
         }
     }
-
-    /// Until the first tap the engine's `selectedViewController` is nil while the first tab is on screen, and its answer to
-    /// "which child decides the status bar" is then the LAST tab (`selectedViewController ?? viewControllers?.last`), so the
-    /// first page's style was never consulted at launch; the first tab is the one shown, so it is the fallback here.
-    override var childForStatusBarStyle: UIViewController? { selectedViewController ?? viewControllers?.first }
 
     override func viewDidLoad() {
         super.viewDidLoad()

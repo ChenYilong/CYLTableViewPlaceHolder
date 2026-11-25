@@ -85,7 +85,8 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     /// Dark content on the light gradient, light content on the dark one, whatever the system would pick from the mid-tone
     /// gradient under the bar (iOS 26 and later choose by the content behind it; the same build showed both colours, task log
     /// 2026-11-26). `traitCollection` is the page's own, so a live light / dark switch follows. The navigation controller
-    /// (`CYLScenarioNavigationController`) and the tab bar controller consult this page.
+    /// (`CYLScenarioNavigationController`) forwards to this page and the engine's tab bar controller to the shown tab (also
+    /// at launch, CYLTabBarController 01a77be5); without this rule the white clock stayed on the light gradient (tested 2026-11-26).
     override var preferredStatusBarStyle: UIStatusBarStyle {
         traitCollection.userInterfaceStyle == .dark ? .lightContent : .darkContent
     }
