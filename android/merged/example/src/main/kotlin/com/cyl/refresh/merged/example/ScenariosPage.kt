@@ -14,7 +14,6 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupMenu
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -148,64 +147,66 @@ open class ScenariosPage : StackPage() {
 
     private fun list(): View {
         val context = requireContext()
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        column.addView(languageRow(context))
         val all = CYLPlaceholderScenarioCatalog.allScenarios
         val isPermission = { s: CYLPlaceholderScenario -> CYLPlaceholderScenarioCatalog.categoryForScenario(s) == CYLPlaceholderScenarioCategory.Permission }
         val hasScreenshots = { s: CYLPlaceholderScenario -> CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(s).isNotEmpty() }
-        val sections = listOf(
+        val groups = listOf(
             R.string.merged_section_readme to all.filter { hasScreenshots(it) && !isPermission(it) },
             R.string.merged_section_permissions to all.filter(isPermission),
             R.string.merged_section_business to all.filter { !hasScreenshots(it) && !isPermission(it) },
         )
-        for ((title, scenarios) in sections) {
-            column.addView(header(context, context.t(title)))
-            for (scenario in scenarios) {
+        val sections = ArrayList<MenuSection>()
+        sections += MenuSection(context.t(R.string.merged_language), listOf(languageItem(context)))
+        for ((title, scenarios) in groups) {
+            sections += MenuSection(context.t(title), scenarios.map { scenario ->
                 val count = CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario).size
-                var detail = context.t(R.string.merged_format_components, count)
+                var subtitle = context.t(R.string.merged_format_components, count)
                 val numbers = CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)
-                if (numbers.isNotEmpty()) detail = context.t(R.string.merged_format_readme_numbers, numbers.joinToString(", ") { "#%02d".format(it) }) + " · " + detail
-                column.addView(row(context, CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), detail, "scenario-${scenario.ordinal}", symbolForScenario(context, scenario)) { push(detail(scenario)) })
-            }
+                if (numbers.isNotEmpty()) subtitle = context.t(R.string.merged_format_readme_numbers, numbers.joinToString(", ") { "#%02d".format(it) }) + " · " + subtitle
+                MenuItem(CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), subtitle, symbolForScenario(context, scenario)) { push(detail(scenario)) }
+            })
         }
         // The iOS main example (Examples/Example): pull to refresh with two custom placeholders, Auto, Styles.
-        column.addView(header(context, "Examples/Example"))
-        column.addView(row(context, "CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", "main-example") { push(mainExampleScreen()) })
+        sections += MenuSection("Examples/Example", listOf(
+            MenuItem("CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", null) { push(mainExampleScreen()) },
+        ))
         // The iOS issue reproductions Examples/Example-objc-01 and Example-objc-02.
-        column.addView(header(context, "Examples/Example-objc-01 · Example-objc-02"))
-        column.addView(row(context, "MJRefresh #1575", "Example-objc-01", "issue-1575") { push(issue1575Page()) })
-        column.addView(row(context, context.t(R.string.o2_title_collection), "Example-objc-02 · MJRefresh #1523 #1506 #1483", "issue-1523") { push(issue1523Page()) })
-        column.addView(row(context, context.t(R.string.o2_title_paging), "Example-objc-02 · MJRefresh #1430", "issue-1430") { push(issue1430Page()) })
-        column.addView(header(context, context.t(R.string.merged_section_configurations)))
-        for (name in context.assets.list("Configurations").orEmpty().sorted()) {
-            column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}", "📄") { push(configuration(name)) })
-        }
-        return ScrollView(context).apply { addView(column) }
+        sections += MenuSection("Examples/Example-objc-01 · Example-objc-02", listOf(
+            MenuItem("MJRefresh #1575", "Example-objc-01", null) { push(issue1575Page()) },
+            MenuItem(context.t(R.string.o2_title_collection), "Example-objc-02 · MJRefresh #1523 #1506 #1483", null) { push(issue1523Page()) },
+            MenuItem(context.t(R.string.o2_title_paging), "Example-objc-02 · MJRefresh #1430", null) { push(issue1430Page()) },
+        ))
+        sections += MenuSection(context.t(R.string.merged_section_configurations), context.assets.list("Configurations").orEmpty().sorted().map { name ->
+            MenuItem(name, "CYLPlaceholderStackView.fromConfiguration · JSON", "📄") { push(configuration(name)) }
+        })
+        return tagMenu(context, sections)
     }
 
     /**
-     * The Flows tab (iOS `CYLFlowListViewController`): every flow, then the HUD and the status bar, each with its icon.
+     * The Flows tab (iOS `CYLFlowListViewController`): every flow, then the status bar and the HUD, each with its icon.
      */
     internal fun flowsList(): View {
         val context = requireContext()
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        for (flow in CYLFlow.values()) {
-            column.addView(row(context, context.t(flow.title), flow.detail, "flow-${flow.name}", flow.icon) { push(flowPage(flow)) })
-        }
-        column.addView(header(context, context.t(R.string.merged_title_status_bar)))
-        column.addView(row(context, context.t(R.string.merged_title_status_bar), "CYLPlaceholderStatusView · statusView", "flow-status-bar", "!") {
-            startActivity(Intent(context, StatusBarActivity::class.java))
-        })
-        column.addView(header(context, "HUD"))
-        column.addView(row(context, context.t(R.string.merged_title_hud), "CYLPlaceholderHUD", "flow-hud", "⌛") { push(hudPage()) })
-        return ScrollView(context).apply { addView(column) }
+        return tagMenu(context, listOf(
+            MenuSection(context.t(R.string.merged_section_flows), CYLFlow.values().map { flow ->
+                MenuItem(context.t(flow.title), flow.detail, flow.icon) { push(flowPage(flow)) }
+            }),
+            MenuSection(context.t(R.string.merged_section_status_bar), listOf(
+                MenuItem(context.t(R.string.merged_title_status_bar), "CYLPlaceholderStatusView · statusView", "!") {
+                    startActivity(Intent(context, StatusBarActivity::class.java))
+                },
+            )),
+            MenuSection(context.t(R.string.merged_section_hud), listOf(
+                MenuItem(context.t(R.string.merged_title_hud), "CYLPlaceholderHUD", "⌛") { push(hudPage()) },
+            )),
+        ))
     }
 
-    private fun languageRow(context: Context): View {
+    private fun languageItem(context: Context): MenuItem {
         val languages = listOf<String?>(null) + CYLPlaceholderLocalization.supportedLanguages
         val current = CYLPlaceholderLocalization.language
         val label = current?.let { java.util.Locale.forLanguageTag(it).getDisplayName(java.util.Locale.forLanguageTag(it)) } ?: context.t(R.string.merged_follow_system)
-        return row(context, context.t(R.string.merged_language), label, "languageButton") {
+        return MenuItem(context.t(R.string.merged_language), label, null) {
             val menu = PopupMenu(context, host, Gravity.TOP or Gravity.END)
             languages.forEachIndexed { index, tag ->
                 menu.menu.add(0, index, index, tag?.let { java.util.Locale.forLanguageTag(it).let { l -> l.getDisplayName(l) } } ?: context.t(R.string.merged_follow_system))

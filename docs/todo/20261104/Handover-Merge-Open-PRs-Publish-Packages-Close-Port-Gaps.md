@@ -474,3 +474,16 @@ identified by topic; search the document for it (line numbers move).
 - CollectionViewClassifyMenu open PRs #31 to #39 when checked (stacked; some conflicting). PR #39 of this repository
   needs ClassifyMenu #37 first or a moved pin.
 
+
+## Appendix B. Hand-over pickup (Windows, 2026-11-27)
+
+- **Section 1 item 3 / section 4 row 1 is no longer local-only.** The Android example tag-list conversion was found
+  uncommitted in the Windows checkout, aligned with the current `docs/instructions/examples.md` (library section cards,
+  `headerMaxLines` 2, static template icon colour through the item style) and committed as `3d320a13` on PR #31, with
+  an emulator sheet. Score 90: a real 3-line title is not captured; the callout dismissal defect is ClassifyMenu's.
+  Details and the "kept: library demo" list: [`Task-Log.md`](../../Task-Log.md), entry "Android example: menu lists
+  become CollectionViewClassifyMenu tag lists".
+- **Section 8 row "Dark-mode glass tags unreadable":** the night-aware gradient is committed in `3d320a13` and captured
+  in dark mode (readable).
+- **Pending:** the Mac session is merging PR #35 into #31; after its push the Windows side builds and tests the three
+  non-iOS commits it brings (`4aba938c` Android, `83eec946` mini program, `ac9f3e94` HarmonyOS).
