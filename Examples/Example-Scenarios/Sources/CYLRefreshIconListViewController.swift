@@ -297,24 +297,24 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
                 guard let self = self else { return }
                 self.rows = 15
                 self.tableView.reloadData()
-                self.tableView.cyl_header?.endRefreshing()
-                self.tableView.cyl_footer?.resetNoMoreData()
+                self.tableView.cylHeader?.endRefreshing()
+                self.tableView.cylFooter?.resetNoMoreData()
             }
         }
         footer.refreshingBlock = { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard let self = self else { return }
                 if self.rows >= 45 {
-                    self.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+                    self.tableView.cylFooter?.endRefreshingWithNoMoreData()
                     return
                 }
                 self.rows += 15
                 self.tableView.reloadData()
-                self.tableView.cyl_footer?.endRefreshing()
+                self.tableView.cylFooter?.endRefreshing()
             }
         }
-        tableView.cyl_header = header
-        tableView.cyl_footer = footer
+        tableView.cylHeader = header
+        tableView.cylFooter = footer
         // The playback controls of docs/Example-Animation-Playback.md above the rows.
         controls.installAsRefreshIconControls(in: tableView)
     }
@@ -325,7 +325,7 @@ final class CYLRefreshIconDemoViewController: UITableViewController {
     }
 
     @objc private func beginRefreshing() {
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

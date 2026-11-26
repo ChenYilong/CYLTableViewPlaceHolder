@@ -19,7 +19,7 @@ import UIKit
 extension UIActivityIndicatorView.Style {
 
     // [EN] The spinner style of the refresh controls: medium. [CN] 刷新控件的菊花样式：medium。
-    static var cyl_refreshDefault: UIActivityIndicatorView.Style {
+    static var cylRefreshDefault: UIActivityIndicatorView.Style {
         return .medium
     }
 }
@@ -37,7 +37,7 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
     private weak var storedArrowView: UIImageView?
     private weak var storedLoadingView: UIActivityIndicatorView?
     private var storedIconSize: CGSize = .zero
-    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cyl_refreshDefault
+    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cylRefreshDefault
 
     // MARK: - Subviews, created on first access
 
@@ -51,7 +51,7 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
         // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
         //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
         // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
-        let arrowView = UIImageView(image: Bundle.cyl_arrowImage())
+        let arrowView = UIImageView(image: Bundle.cylArrowImage())
         addSubview(arrowView)
         storedArrowView = arrowView
         return arrowView
@@ -104,7 +104,7 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
      */
     open override func prepare() {
         super.prepare()
-        storedIndicatorStyle = .cyl_refreshDefault
+        storedIndicatorStyle = .cylRefreshDefault
     }
 
     /**
@@ -114,12 +114,12 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
         super.placeSubviews()
 
         // 箭头的中心点
-        var arrowCenterX = cyl_w * 0.5
+        var arrowCenterX = cylW * 0.5
         if let stateLabel = stateLabel, !stateLabel.isHidden {
-            let stateWidth = stateLabel.cyl_textWidth()
+            let stateWidth = stateLabel.cylTextWidth()
             var timeWidth: CGFloat = 0.0
             if let timeLabel = lastUpdatedTimeLabel, !timeLabel.isHidden {
-                timeWidth = timeLabel.cyl_textWidth()
+                timeWidth = timeLabel.cylTextWidth()
             }
             let textWidth = max(stateWidth, timeWidth)
             // [EN] iconOnTrailingSide (default NO) puts the arrow after the text. [CN] iconOnTrailingSide（默认 NO）把箭头放到文字后面。
@@ -129,13 +129,13 @@ open class CYLRefreshNormalHeader: CYLRefreshStateHeader {
                 arrowCenterX -= textWidth / 2 + labelLeftInset
             }
         }
-        let arrowCenterY = cyl_h * 0.5
+        let arrowCenterY = cylH * 0.5
         let arrowCenter = CGPoint(x: arrowCenterX, y: arrowCenterY)
 
         // 箭头
         if arrowView.constraints.isEmpty {
             let customSize = iconSize.width > 0 && iconSize.height > 0
-            arrowView.cyl_size = customSize ? iconSize : (arrowView.image?.size ?? .zero)
+            arrowView.cylSize = customSize ? iconSize : (arrowView.image?.size ?? .zero)
             arrowView.center = arrowCenter
         }
 

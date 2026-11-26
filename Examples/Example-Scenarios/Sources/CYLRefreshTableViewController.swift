@@ -39,19 +39,19 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
     /// Default
     func example01() {
         // The callback runs as soon as the control enters the refreshing state.
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             self?.loadNewData()
         }
         // Enter the refreshing state right away
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     /// Animated images
     func example02() {
         // The callback calls the target's action, that is self's loadNewData.
-        tableView.cyl_header = CYLRefreshExampleImagesHeader(refreshingTarget: self,
+        tableView.cylHeader = CYLRefreshExampleImagesHeader(refreshingTarget: self,
                                                               refreshingAction: #selector(loadNewData))
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     /// Hide the time
@@ -62,7 +62,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         // Hide the time
         label(header.lastUpdatedTimeLabel)?.isHidden = true
         header.beginRefreshing()
-        tableView.cyl_header = header
+        tableView.cylHeader = header
     }
 
     /// Hide the state and time
@@ -71,7 +71,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         label(header.lastUpdatedTimeLabel)?.isHidden = true
         label(header.stateLabel)?.isHidden = true
         header.beginRefreshing()
-        tableView.cyl_header = header
+        tableView.cylHeader = header
     }
 
     /// Custom text
@@ -88,13 +88,13 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         label(header.stateLabel)?.textColor = .systemRed
         label(header.lastUpdatedTimeLabel)?.textColor = .systemBlue
         header.beginRefreshing()
-        tableView.cyl_header = header
+        tableView.cylHeader = header
     }
 
     /// Custom refresh control
     func example06() {
-        tableView.cyl_header = CYLRefreshDIYHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader = CYLRefreshDIYHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
+        tableView.cylHeader?.beginRefreshing()
     }
 
     // MARK: - Examples: UITableView + pull up
@@ -102,7 +102,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
     /// Default
     func example11() {
         example01()
-        tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+        tableView.cylFooter = CYLRefreshAutoNormalFooter { [weak self] in
             self?.loadMoreData()
         }
     }
@@ -110,7 +110,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
     /// Animated images
     func example12() {
         example01()
-        tableView.cyl_footer = CYLRefreshExampleImagesFooter(refreshingTarget: self,
+        tableView.cylFooter = CYLRefreshExampleImagesFooter(refreshingTarget: self,
                                                               refreshingAction: #selector(loadMoreData))
     }
 
@@ -122,21 +122,21 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         // footer.triggerAutomaticallyRefreshPercent = 0.5
         // Hide the text of the refreshing state
         footer.isRefreshingTitleHidden = true
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
     }
 
     /// Everything loaded
     func example14() {
         example01()
-        tableView.cyl_footer = CYLRefreshAutoNormalFooter(refreshingTarget: self,
+        tableView.cylFooter = CYLRefreshAutoNormalFooter(refreshingTarget: self,
                                                            refreshingAction: #selector(loadLastData))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.mjResumeLoading),
                                                             style: .done, target: self, action: #selector(reset))
     }
 
     @objc private func reset() {
-        tableView.cyl_footer?.setRefreshingTarget(self, refreshingAction: #selector(loadMoreData))
-        tableView.cyl_footer?.resetNoMoreData()
+        tableView.cylFooter?.setRefreshingTarget(self, refreshingAction: #selector(loadMoreData))
+        tableView.cylFooter?.resetNoMoreData()
     }
 
     /// No automatic loading
@@ -145,7 +145,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         let footer = CYLRefreshAutoNormalFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         // No automatic loading
         footer.isAutomaticallyRefresh = false
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
     }
 
     /// Custom text
@@ -157,33 +157,33 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         footer.setTitle(CYLScenarioLocalizedString(.mjFooterNoMore), for: .noMoreData)
         label(footer.stateLabel)?.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 17))
         label(footer.stateLabel)?.textColor = .systemBlue
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
     }
 
     /// Hide after loading
     func example17() {
         example01()
-        tableView.cyl_footer = CYLRefreshAutoNormalFooter(refreshingTarget: self,
+        tableView.cylFooter = CYLRefreshAutoNormalFooter(refreshingTarget: self,
                                                            refreshingAction: #selector(loadOnceData))
     }
 
     /// Springing-back footer 01
     func example18() {
         example01()
-        tableView.cyl_footer = CYLRefreshBackNormalFooter(refreshingTarget: self,
+        tableView.cylFooter = CYLRefreshBackNormalFooter(refreshingTarget: self,
                                                            refreshingAction: #selector(loadMoreData))
         // A bottom inset…
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
         // …that the footer ignores
-        tableView.cyl_footer?.ignoredScrollViewContentInsetBottom = 30
+        tableView.cylFooter?.ignoredScrollViewContentInsetBottom = 30
     }
 
     /// Springing-back footer 02
     func example19() {
         example01()
-        tableView.cyl_footer = CYLRefreshExampleImagesBackFooter(refreshingTarget: self,
+        tableView.cylFooter = CYLRefreshExampleImagesBackFooter(refreshingTarget: self,
                                                                   refreshingAction: #selector(loadLastData))
-        tableView.cyl_footer?.isAutomaticallyChangeAlpha = true
+        tableView.cylFooter?.isAutomaticallyChangeAlpha = true
     }
 
     /// Custom control (loads automatically)
@@ -191,13 +191,13 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         example01()
         let footer = CYLRefreshDIYAutoFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         footer.autoTriggerTimes = 2
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
     }
 
     /// Custom control (springs back)
     func example21() {
         example01()
-        tableView.cyl_footer = CYLRefreshDIYBackFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+        tableView.cylFooter = CYLRefreshDIYBackFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
     }
 
     // MARK: - Examples beyond MJRefresh: animated icons on the animated-image controls
@@ -206,10 +206,10 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
     func example51() {
         let header = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
         header.setIconAnimation(bundled: "CYLRefreshArrows.gif", size: CGSize(width: 32, height: 32), for: .idle)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         footer.setIconAnimation(bundled: "CYLRefreshRing.gif", size: CGSize(width: 28, height: 28), for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -221,12 +221,12 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         header.setIconAnimation(bundled: "CYLRefreshClockwise.json", size: CGSize(width: 28, height: 28), for: .pulling)
         header.setIconAnimation(bundled: "CYLRefreshMaterialSpinner.json", size: CGSize(width: 36, height: 36),
                                 for: .refreshing)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshBackAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadLastData))
         footer.setIconAnimation(bundled: "CYLRefreshLoadMore.json", size: CGSize(width: 28, height: 28), for: .idle)
         footer.setIconAnimation(bundled: "CYLRefreshMoreDots.json", size: CGSize(width: 40, height: 24),
                                 for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -234,11 +234,11 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
     func example53() {
         let header = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
         header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32), for: .idle)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         footer.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 28, height: 28),
                                 for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -258,8 +258,8 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
             header.setIconAnimation(attributes: turning, for: .refreshing)
             footer.setIconAnimation(attributes: turning, for: .refreshing)
         }
-        tableView.cyl_header = header
-        tableView.cyl_footer = footer
+        tableView.cylHeader = header
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -268,10 +268,10 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         let header = CYLRefreshGifHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
         header.setImages(CYLRefreshExampleImages.idle, for: .idle)
         header.setImages(CYLRefreshExampleImages.refreshing, duration: 0.8, for: .refreshing)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoGifFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         footer.setImages(CYLRefreshExampleImages.refreshing, for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -286,11 +286,11 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         let header = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
         header.setIconAnimation(filePath: resting, size: size, for: .idle)
         header.setIconAnimation(filePath: turning, size: size, for: .refreshing)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         footer.setIconAnimation(filePath: resting, size: size, for: .idle)
         footer.setIconAnimation(filePath: turning, size: size, for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -302,13 +302,13 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         header.setIconAnimation(bundled: "CYLRefreshArrows.gif", size: CGSize(width: 30, height: 30), for: .pulling)
         header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32),
                                 for: .refreshing)
-        tableView.cyl_header = header
+        tableView.cylHeader = header
         let footer = CYLRefreshAutoAnimationFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
         if let resting = CYLScenarioExampleResourceURL("Animations/tab_list.svga")?.path {
             footer.setIconAnimation(filePath: resting, size: CGSize(width: 30, height: 30), for: .idle)
         }
         footer.setIconAnimation(bundled: "CYLRefreshIcon.riv", size: CGSize(width: 30, height: 30), for: .refreshing)
-        tableView.cyl_footer = footer
+        tableView.cylFooter = footer
         header.beginRefreshing()
     }
 
@@ -324,7 +324,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshDuration) { [weak self] in
             self?.tableView.reloadData()
             // End the refreshing state of the current header
-            self?.tableView.cyl_header?.endRefreshing()
+            self?.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -333,7 +333,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         data.append(Self.randomData())
         DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshDuration) { [weak self] in
             self?.tableView.reloadData()
-            self?.tableView.cyl_footer?.endRefreshing()
+            self?.tableView.cylFooter?.endRefreshing()
         }
     }
 
@@ -344,7 +344,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshDuration) { [weak self] in
             self?.tableView.reloadData()
-            self?.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+            self?.tableView.cylFooter?.endRefreshingWithNoMoreData()
         }
     }
 
@@ -355,7 +355,7 @@ final class CYLRefreshTableViewController: UITableViewController, CYLRefreshExam
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + CYLRefreshDuration) { [weak self] in
             self?.tableView.reloadData()
-            self?.tableView.cyl_footer?.isHidden = true
+            self?.tableView.cylFooter?.isHidden = true
         }
     }
 

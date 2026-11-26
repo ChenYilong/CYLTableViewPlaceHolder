@@ -30,7 +30,7 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
     private weak var storedLoadingView: UIActivityIndicatorView?
     private var storedNoMoreDataImage: UIImage?
     private var storedIconSize: CGSize = .zero
-    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cyl_refreshDefault
+    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cylRefreshDefault
 
     // MARK: - Subviews, created on first access
 
@@ -44,7 +44,7 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
         // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
         //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
         // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
-        let arrowView = UIImageView(image: Bundle.cyl_arrowImage())
+        let arrowView = UIImageView(image: Bundle.cylArrowImage())
         addSubview(arrowView)
         storedArrowView = arrowView
         return arrowView
@@ -109,7 +109,7 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
      */
     open override func prepare() {
         super.prepare()
-        storedIndicatorStyle = .cyl_refreshDefault
+        storedIndicatorStyle = .cylRefreshDefault
     }
 
     /**
@@ -120,17 +120,17 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
         placeNoMoreDataImage()
 
         // 箭头的中心点
-        var arrowCenterX = cyl_w * 0.5
+        var arrowCenterX = cylW * 0.5
         if let stateLabel = stateLabel, !stateLabel.isHidden {
-            arrowCenterX -= labelLeftInset + stateLabel.cyl_textWidth() * 0.5
+            arrowCenterX -= labelLeftInset + stateLabel.cylTextWidth() * 0.5
         }
-        let arrowCenterY = cyl_h * 0.5
+        let arrowCenterY = cylH * 0.5
         let arrowCenter = CGPoint(x: arrowCenterX, y: arrowCenterY)
 
         // 箭头
         if arrowView.constraints.isEmpty {
             let customSize = iconSize.width > 0 && iconSize.height > 0
-            arrowView.cyl_size = customSize ? iconSize : (arrowView.image?.size ?? .zero)
+            arrowView.cylSize = customSize ? iconSize : (arrowView.image?.size ?? .zero)
             arrowView.center = arrowCenter
         }
 
@@ -205,10 +205,10 @@ open class CYLRefreshBackNormalFooter: CYLRefreshBackStateFooter {
     // [EN] Shows noMoreDataImage beside the text only in the no-more-data state (one implementation in CYLRefreshFooter).
     // [CN] 仅在无更多数据状态时，在文字旁显示 noMoreDataImage（CYLRefreshFooter 中的统一实现）。
     private func updateNoMoreDataImage() {
-        cyl_updateNoMoreDataImage(noMoreDataImage)
+        updateNoMoreDataImage(noMoreDataImage)
     }
 
     private func placeNoMoreDataImage() {
-        cyl_placeNoMoreDataImage(besideLabel: stateLabel, inset: labelLeftInset, size: iconSize)
+        placeNoMoreDataImage(besideLabel: stateLabel, inset: labelLeftInset, size: iconSize)
     }
 }

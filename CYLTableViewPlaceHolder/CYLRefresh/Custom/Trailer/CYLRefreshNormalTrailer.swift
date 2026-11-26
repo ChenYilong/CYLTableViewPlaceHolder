@@ -34,7 +34,7 @@ open class CYLRefreshNormalTrailer: CYLRefreshStateTrailer {
         // [EN] System image view: MJRefresh's original arrow, kept unchanged by the owner's decision (the arrow controls keep
         //      MJRefresh's arrow logic and rotation), so CYLPlaceholderView is not used here.
         // [CN] 系统图片视图：MJRefresh 原有的箭头，按维护者决定保持原样（箭头控件保留 MJRefresh 的箭头逻辑与旋转），因此这里不使用 CYLPlaceholderView。
-        let arrowView = UIImageView(image: Bundle.cyl_trailArrowImage())
+        let arrowView = UIImageView(image: Bundle.cylTrailArrowImage())
         addSubview(arrowView)
         storedArrowView = arrowView
         return arrowView
@@ -48,12 +48,12 @@ open class CYLRefreshNormalTrailer: CYLRefreshStateTrailer {
 
         let arrowSize = arrowView.image?.size ?? .zero
         // 箭头的中心点
-        let selfCenter = CGPoint(x: cyl_w * 0.5, y: cyl_h * 0.5)
-        let arrowCenter = CGPoint(x: arrowSize.width * 0.5 + 5, y: cyl_h * 0.5)
+        let selfCenter = CGPoint(x: cylW * 0.5, y: cylH * 0.5)
+        let arrowCenter = CGPoint(x: arrowSize.width * 0.5 + 5, y: cylH * 0.5)
         let stateHidden = stateLabel?.isHidden ?? true
 
         if arrowView.constraints.isEmpty {
-            arrowView.cyl_size = arrowSize
+            arrowView.cylSize = arrowSize
             arrowView.center = stateHidden ? selfCenter : arrowCenter
         }
         arrowView.tintColor = stateLabel?.textColor
@@ -63,11 +63,11 @@ open class CYLRefreshNormalTrailer: CYLRefreshStateTrailer {
         // [EN] The state text is a vertical column right of the arrow, readable in every language.
         // [CN] 状态文字是箭头右侧的竖列，任何语言都可读。
         let arrowHidden = arrowView.isHidden
-        let stateCenterX = (cyl_w + arrowSize.width) * 0.5
-        let width = cyl_placeStateLabel(centerX: arrowHidden ? selfCenter.x : stateCenterX)
+        let stateCenterX = (cylW + arrowSize.width) * 0.5
+        let width = placeStateLabel(centerX: arrowHidden ? selfCenter.x : stateCenterX)
         // [EN] A wrapped column is wider: keep its left edge right of the arrow. [CN] 换行后竖列更宽：保持其左边缘在箭头右侧。
         let minX = arrowView.frame.maxX + 2
-        if !arrowHidden && stateCenterX - width * 0.5 < minX { cyl_placeStateLabel(centerX: minX + width * 0.5) }
+        if !arrowHidden && stateCenterX - width * 0.5 < minX { placeStateLabel(centerX: minX + width * 0.5) }
     }
 
     /**

@@ -1316,5 +1316,13 @@
  },
  "CYLRefreshRiveDrawnTable.of": {
   "ios": "`CYLRefreshRiveStyle.drawnTable` (set in code)"
+ },
+ "CYLPlaceholderLoadMoreHost": {
+  "ios": "no protocol: `CYLPlaceholderController` (internal) finds the scroll view's CYLRefresh / MJRefresh footers and trailers by class",
+  "note": "on Android the footer belongs to the refresh layout around the list, so the layout implements this interface; on iOS the footer is a subview of the scroll view"
+ },
+ "CYLPlaceholderLoadMoreHost.cyl_placeholderDidChange": {
+  "ios": "`CYLPlaceholderController.hideLoadMoreControls()` / `restoreLoadMoreControls()` (internal), called when the automatic or the `cylReloadData` placeholder shows or goes",
+  "note": "same behavior: load more is hidden while the placeholder shows and comes back with data; headers stay (issue #8)"
  }
 }

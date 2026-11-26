@@ -17,9 +17,9 @@
 import UIKit
 
 // [EN] The icon is 28 points; ChatKit draws it at 20. [CN] 图标原始为 28 点；ChatKit 以 20 点绘制。
-private let CYLPlaceholderStatusIconInset: CGFloat = 4
+private let placeholderStatusIconInset: CGFloat = 4
 // [EN] Space above and below the text when Dynamic Type makes it tall. [CN] 动态字体变大时文字上下的留白。
-private let CYLPlaceholderStatusVerticalPadding: CGFloat = 12
+private let placeholderStatusVerticalPadding: CGFloat = 12
 
 // [EN] ChatKit's pink, rgb(255, 199, 199); a dark red in Dark Mode. [CN] ChatKit 的粉红色；深色模式下为暗红色。
 private func CYLPlaceholderStatusBackgroundColor() -> UIColor {
@@ -81,7 +81,7 @@ open class CYLPlaceholderStatusView: UIView {
         if let icon = UIImage(named: "CYLPlaceholderStatusFail", in: CYLPlaceholderResourceBundle(), compatibleWith: nil) {
             attributes[CYLPlaceholderItemImage] = icon
         }
-        let inset = CYLPlaceholderStatusIconInset
+        let inset = placeholderStatusIconInset
         attributes[CYLPlaceholderItemImageInsets] = NSValue(uiEdgeInsets: UIEdgeInsets(top: inset, left: inset,
                                                                                       bottom: inset, right: inset))
         attributes[CYLPlaceholderItemTitleColor] = CYLPlaceholderStatusTextColor()
@@ -229,7 +229,7 @@ open class CYLPlaceholderStatusView: UIView {
     open override var intrinsicContentSize: CGSize {
         var height = CYLPlaceholderStatusViewHight
         let content = placeholderView.intrinsicContentSize
-        if content.height > 0 { height = max(height, ceil(content.height) + CYLPlaceholderStatusVerticalPadding) }
+        if content.height > 0 { height = max(height, ceil(content.height) + placeholderStatusVerticalPadding) }
         return CGSize(width: UIView.noIntrinsicMetric, height: height)
     }
 

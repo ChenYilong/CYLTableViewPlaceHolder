@@ -30,18 +30,18 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
     // MARK: - CYLRefreshIconAnimating
 
     /**
-     * [EN] The icon view (`cyl_iconView`). [CN] 图标视图（`cyl_iconView`）。
+     * [EN] The icon view (`refreshIconView`). [CN] 图标视图（`refreshIconView`）。
      */
     @objc open var iconView: CYLRefreshIconView {
-        cyl_iconView
+        refreshIconView
     }
 
     /**
-     * [EN] Whether an icon animation replaces the animation view (`cyl_usesIconView`).
-     * [CN] 是否由图标动画代替动画视图（`cyl_usesIconView`）。
+     * [EN] Whether an icon animation replaces the animation view (`usesRefreshIconView`).
+     * [CN] 是否由图标动画代替动画视图（`usesRefreshIconView`）。
      */
     @objc open var usesIconView: Bool {
-        cyl_usesIconView
+        usesRefreshIconView
     }
 
     /**
@@ -50,7 +50,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
     @discardableResult
     @objc(setIconAnimationAttributes:forState:)
     open func setIconAnimation(attributes: [String: Any]?, for state: CYLRefreshState) -> Self {
-        cyl_setIconAnimation(attributes: attributes, for: state)
+        applyIconAnimation(attributes: attributes, for: state)
         return self
     }
 
@@ -60,7 +60,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
     @discardableResult
     @objc(setIconAnimationFilePath:size:forState:)
     open func setIconAnimation(filePath: String, size: CGSize, for state: CYLRefreshState) -> Self {
-        cyl_setIconAnimation(filePath: filePath, size: size, for: state)
+        applyIconAnimation(filePath: filePath, size: size, for: state)
         return self
     }
 
@@ -70,7 +70,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
     @discardableResult
     @objc(setBundledIconAnimation:size:forState:)
     open func setIconAnimation(bundled fileName: String, size: CGSize, for state: CYLRefreshState) -> Self {
-        cyl_setBundledIconAnimation(fileName, size: size, for: state)
+        setBundledIconAnimation(fileName, size: size, for: state)
         return self
     }
 
@@ -111,7 +111,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
         // [EN] One implementation for the animation header and footers (CYLRefreshComponent): the images are drawn by the
         //      icon's CYLPlaceholderView; `animationView` stays for compatibility and is hidden.
         // [CN] 动画刷新头与尾部共用一个实现（CYLRefreshComponent）：图片由图标的 CYLPlaceholderView 绘制；`animationView` 为兼容保留并隐藏。
-        cyl_setAnimationImages(images, duration: duration, for: state)
+        applyAnimationImages(images, duration: duration, for: state)
         return self
     }
 
@@ -143,7 +143,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
         get { super.pullingPercent }
         set {
             super.pullingPercent = newValue
-            cyl_showIdleAnimationFrame()
+            showIdleAnimationFrame()
         }
     }
 
@@ -163,13 +163,13 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
         } else {
             animationView.contentMode = .right
 
-            let stateWidth = stateLabel?.cyl_textWidth() ?? 0
+            let stateWidth = stateLabel?.cylTextWidth() ?? 0
             var timeWidth: CGFloat = 0.0
             if !timeHidden {
-                timeWidth = lastUpdatedTimeLabel?.cyl_textWidth() ?? 0
+                timeWidth = lastUpdatedTimeLabel?.cylTextWidth() ?? 0
             }
             let textWidth = max(stateWidth, timeWidth)
-            animationView.cyl_w = cyl_w * 0.5 - textWidth * 0.5 - labelLeftInset
+            animationView.cylW = cylW * 0.5 - textWidth * 0.5 - labelLeftInset
         }
         placeAnimationIconView()
     }
@@ -180,7 +180,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
     private func placeAnimationIconView() {
         if !usesIconView { return }
         let labels = [stateLabel, lastUpdatedTimeLabel].compactMap { $0 }
-        cyl_placeIconView(title: iconTitle(), labels: labels, visible: true, replacing: [animationView])
+        placeIconView(title: iconTitle(), labels: labels, visible: true, replacing: [animationView])
     }
 
     // [EN] The text shown after the icon: the visible state and time labels, one per line.
@@ -210,7 +210,7 @@ open class CYLRefreshAnimationHeader: CYLRefreshStateHeader, CYLRefreshIconAnima
 
             // [EN] Back to idle: the frame for the current pull. [CN] 回到空闲：显示与当前下拉距离对应的帧。
             if newValue == .idle {
-                cyl_showIdleAnimationFrame()
+                showIdleAnimationFrame()
             }
             placeAnimationIconView()
         }

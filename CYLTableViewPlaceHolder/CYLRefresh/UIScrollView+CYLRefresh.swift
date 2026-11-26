@@ -7,11 +7,11 @@
 //  给ScrollView增加下拉刷新、上拉刷新、 左滑刷新的功能
 //
 
-// [EN] The refresh controls of a scroll view (`cyl_header`, `cyl_footer`, `cyl_trailer`, auto-hide, the start header,
-//      the layout-style finish calls, the default controls and `cyl_totalDataCount`), in Swift since 2026-11-19
+// [EN] The refresh controls of a scroll view (`cylHeader`, `cylFooter`, `cylTrailer`, auto-hide, the start header,
+//      the layout-style finish calls, the default controls and `cylTotalDataCount`), in Swift since 2026-11-19
 //      (docs/Swift-Migration.md, step 6) with the same Objective-C selectors and Swift spellings.
-// [CN] 滚动视图的刷新控件（`cyl_header`、`cyl_footer`、`cyl_trailer`、自动隐藏、起始刷新头、布局风格的结束方法、默认控件与
-//      `cyl_totalDataCount`），自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 6 步），Objective-C 选择器与 Swift 写法不变。
+// [CN] 滚动视图的刷新控件（`cylHeader`、`cylFooter`、`cylTrailer`、自动隐藏、起始刷新头、布局风格的结束方法、默认控件与
+//      `cylTotalDataCount`），自 2026-11-19 起用 Swift 编写（docs/Swift-Migration.md 第 6 步），Objective-C 选择器与 Swift 写法不变。
 
 import UIKit
 import ObjectiveC
@@ -33,12 +33,12 @@ extension UIScrollView {
      * [EN] The pull-down refresh control; setting it removes the old one and inserts the new one at index 0.
      * [CN] 下拉刷新控件；设置时移除旧控件，并把新控件插入到第 0 个子视图位置。
      */
-    @objc public dynamic var cyl_header: CYLRefreshHeader? {
+    @objc(cyl_header) public dynamic var cylHeader: CYLRefreshHeader? {
         get { objc_getAssociatedObject(self, CYLRefreshKey.header) as? CYLRefreshHeader }
         set {
-            guard newValue !== cyl_header else { return }
+            guard newValue !== cylHeader else { return }
             // 删除旧的，添加新的
-            cyl_header?.removeFromSuperview()
+            cylHeader?.removeFromSuperview()
             if let header = newValue {
                 insertSubview(header, at: 0)
             }
@@ -54,12 +54,12 @@ extension UIScrollView {
      * [EN] The pull-up refresh control; setting it removes the old one and inserts the new one at index 0.
      * [CN] 上拉刷新控件；设置时移除旧控件，并把新控件插入到第 0 个子视图位置。
      */
-    @objc public dynamic var cyl_footer: CYLRefreshFooter? {
+    @objc(cyl_footer) public dynamic var cylFooter: CYLRefreshFooter? {
         get { objc_getAssociatedObject(self, CYLRefreshKey.footer) as? CYLRefreshFooter }
         set {
-            guard newValue !== cyl_footer else { return }
+            guard newValue !== cylFooter else { return }
             // 删除旧的，添加新的
-            cyl_footer?.removeFromSuperview()
+            cylFooter?.removeFromSuperview()
             if let footer = newValue {
                 insertSubview(footer, at: 0)
             }
@@ -75,12 +75,12 @@ extension UIScrollView {
      * [EN] The swipe-left refresh control; setting it removes the old one and inserts the new one at index 0.
      * [CN] 左滑刷新控件；设置时移除旧控件，并把新控件插入到第 0 个子视图位置。
      */
-    @objc public dynamic var cyl_trailer: CYLRefreshTrailer? {
+    @objc(cyl_trailer) public dynamic var cylTrailer: CYLRefreshTrailer? {
         get { objc_getAssociatedObject(self, CYLRefreshKey.trailer) as? CYLRefreshTrailer }
         set {
-            guard newValue !== cyl_trailer else { return }
+            guard newValue !== cylTrailer else { return }
             // 删除旧的，添加新的
-            cyl_trailer?.removeFromSuperview()
+            cylTrailer?.removeFromSuperview()
             if let trailer = newValue {
                 insertSubview(trailer, at: 0)
             }
@@ -96,7 +96,7 @@ extension UIScrollView {
      *      view.
      * [CN] 表格视图所有 section 的行数之和，或集合视图所有 section 的 item 数之和；其他滚动视图为 0。
      */
-    @objc public dynamic func cyl_totalDataCount() -> Int {
+    @objc(cyl_totalDataCount) public dynamic func cylTotalDataCount() -> Int {
         var totalCount = 0
         if let tableView = self as? UITableView {
             for section in 0..<max(tableView.numberOfSections, 0) {
@@ -114,7 +114,7 @@ extension UIScrollView {
 
     // [EN] The default when nothing was set: on where the bars are transparent by default.
     // [CN] 未设置时的默认值：栏默认透明的系统上开启。
-    private static var cyl_defaultAutoHide: Bool {
+    private static var cylDefaultAutoHide: Bool {
         if #available(iOS 26.0, *) { return true }
         return false
     }
@@ -123,16 +123,16 @@ extension UIScrollView {
      * [EN] `autoHideRefresh` of the header alone (also applied to a header attached later).
      * [CN] 仅刷新头的 `autoHideRefresh`（之后挂上的刷新头同样生效）。
      */
-    @objc public dynamic var cyl_autoHideRefreshHeader: Bool {
+    @objc(cyl_autoHideRefreshHeader) public dynamic var cylAutoHideRefreshHeader: Bool {
         get {
-            if let header = cyl_header { return header.autoHideRefresh }
+            if let header = cylHeader { return header.autoHideRefresh }
             let value = objc_getAssociatedObject(self, CYLRefreshKey.autoHideHeader) as? NSNumber
-            return value?.boolValue ?? UIScrollView.cyl_defaultAutoHide
+            return value?.boolValue ?? UIScrollView.cylDefaultAutoHide
         }
         set {
             objc_setAssociatedObject(self, CYLRefreshKey.autoHideHeader, NSNumber(value: newValue),
                                      .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            cyl_header?.autoHideRefresh = newValue
+            cylHeader?.autoHideRefresh = newValue
         }
     }
 
@@ -140,16 +140,16 @@ extension UIScrollView {
      * [EN] `autoHideRefresh` of the footer alone (also applied to a footer attached later).
      * [CN] 仅刷新尾的 `autoHideRefresh`（之后挂上的刷新尾同样生效）。
      */
-    @objc public dynamic var cyl_autoHideRefreshFooter: Bool {
+    @objc(cyl_autoHideRefreshFooter) public dynamic var cylAutoHideRefreshFooter: Bool {
         get {
-            if let footer = cyl_footer { return footer.autoHideRefresh }
+            if let footer = cylFooter { return footer.autoHideRefresh }
             let value = objc_getAssociatedObject(self, CYLRefreshKey.autoHideFooter) as? NSNumber
-            return value?.boolValue ?? UIScrollView.cyl_defaultAutoHide
+            return value?.boolValue ?? UIScrollView.cylDefaultAutoHide
         }
         set {
             objc_setAssociatedObject(self, CYLRefreshKey.autoHideFooter, NSNumber(value: newValue),
                                      .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            cyl_footer?.autoHideRefresh = newValue
+            cylFooter?.autoHideRefresh = newValue
         }
     }
 
@@ -158,11 +158,11 @@ extension UIScrollView {
      *      A value set before a control is attached is applied when it is attached.
      * [CN] 同时设置刷新头与刷新尾的 `autoHideRefresh`：设置时两者一起设置；读取时两者都会隐藏才为 YES。在控件挂上之前设置的值会在挂上时生效。
      */
-    @objc public dynamic var cyl_autoHideRefresh: Bool {
-        get { cyl_autoHideRefreshHeader && cyl_autoHideRefreshFooter }
+    @objc(cyl_autoHideRefresh) public dynamic var cylAutoHideRefresh: Bool {
+        get { cylAutoHideRefreshHeader && cylAutoHideRefreshFooter }
         set {
-            cyl_autoHideRefreshHeader = newValue
-            cyl_autoHideRefreshFooter = newValue
+            cylAutoHideRefreshHeader = newValue
+            cylAutoHideRefreshFooter = newValue
         }
     }
 
@@ -176,9 +176,9 @@ extension UIScrollView {
      *      `finishRefresh(delayed, success, noMoreData)`；不改尾部时调用刷新头的 `endRefreshingAfterDelay:success:`）。
      */
     @objc(cyl_endRefreshingAfterDelay:success:noMoreData:)
-    public dynamic func cyl_endRefreshing(afterDelay delay: TimeInterval, success: Bool, noMoreData: Bool) {
-        cyl_header?.endRefreshing(afterDelay: delay, success: success)
-        guard let footer = cyl_footer else { return }
+    public dynamic func cylEndRefreshing(afterDelay delay: TimeInterval, success: Bool, noMoreData: Bool) {
+        cylHeader?.endRefreshing(afterDelay: delay, success: success)
+        guard let footer = cylFooter else { return }
         // [EN] Weak, as in cyl_endLoadingMoreAfterDelay: a pending delay does not keep a torn-down footer alive.
         // [CN] 弱引用，与 cyl_endLoadingMoreAfterDelay 相同：等待中的延迟不会让已销毁的刷新尾继续存活。
         let apply: () -> Void = { [weak footer] in
@@ -202,8 +202,8 @@ extension UIScrollView {
      *      `finishLoadMore(delayed, success, noMoreData)`）。
      */
     @objc(cyl_endLoadingMoreAfterDelay:success:noMoreData:)
-    public dynamic func cyl_endLoadingMore(afterDelay delay: TimeInterval, success: Bool, noMoreData: Bool) {
-        guard let footer = cyl_footer else { return }
+    public dynamic func cylEndLoadingMore(afterDelay delay: TimeInterval, success: Bool, noMoreData: Bool) {
+        guard let footer = cylFooter else { return }
         if !noMoreData {
             footer.endRefreshing(afterDelay: delay, success: success)
             return
@@ -219,33 +219,33 @@ extension UIScrollView {
     }
 
     /**
-     * [EN] Sets `cyl_header` and `cyl_footer`, where nil, from `CYLRefreshConfig.defaultConfig`'s
+     * [EN] Sets `cylHeader` and `cylFooter`, where nil, from `CYLRefreshConfig.defaultConfig`'s
      *      `defaultHeaderCreator` / `defaultFooterCreator` (CYLRefreshLayout's default header and footer of every layout).
-     * [CN] 在 `cyl_header`、`cyl_footer` 为 nil 时，用 `CYLRefreshConfig.defaultConfig` 的 `defaultHeaderCreator` /
+     * [CN] 在 `cylHeader`、`cylFooter` 为 nil 时，用 `CYLRefreshConfig.defaultConfig` 的 `defaultHeaderCreator` /
      *      `defaultFooterCreator` 创建（对应 CYLRefreshLayout 为每个布局提供的默认刷新头与尾部）。
      */
-    @objc public dynamic func cyl_installDefaultRefreshControls() {
+    @objc(cyl_installDefaultRefreshControls) public dynamic func cylInstallDefaultRefreshControls() {
         let config = CYLRefreshConfig.default
-        if cyl_header == nil, let creator = config.defaultHeaderCreator {
-            cyl_header = creator(self)
+        if cylHeader == nil, let creator = config.defaultHeaderCreator {
+            cylHeader = creator(self)
         }
-        if cyl_footer == nil, let creator = config.defaultFooterCreator {
-            cyl_footer = creator(self)
+        if cylFooter == nil, let creator = config.defaultFooterCreator {
+            cylFooter = creator(self)
         }
     }
 
     // MARK: - Start header
 
     /**
-     * [EN] Refreshes once with `startHeader` in place of `cyl_header`, then puts `cyl_header` back when that refresh ends
+     * [EN] Refreshes once with `startHeader` in place of `cylHeader`, then puts `cylHeader` back when that refresh ends
      *      (flutter_easy_refresh's `refreshOnStart` with `refreshOnStartHeader`). `startHeader` uses its own refreshing
      *      callbacks, or the regular header's when it has none.
-     * [CN] 用 `startHeader` 代替 `cyl_header` 刷新一次，刷新结束后换回 `cyl_header`（对应 flutter_easy_refresh 的 `refreshOnStart` 与
+     * [CN] 用 `startHeader` 代替 `cylHeader` 刷新一次，刷新结束后换回 `cylHeader`（对应 flutter_easy_refresh 的 `refreshOnStart` 与
      *      `refreshOnStartHeader`）。`startHeader` 使用自己的刷新回调；没有时使用常规刷新头的回调。
      */
     @objc(cyl_beginRefreshingWithStartHeader:)
-    public dynamic func cyl_beginRefreshing(startHeader: CYLRefreshHeader?) {
-        let regular = cyl_header
+    public dynamic func cylBeginRefreshing(startHeader: CYLRefreshHeader?) {
+        let regular = cylHeader
         // [EN] Optional, as the Objective-C method checked: nil (or the regular header) refreshes the regular header.
         // [CN] 可选，与 Objective-C 方法的检查一致：nil（或常规刷新头本身）时刷新常规刷新头。
         guard let startHeader = startHeader, startHeader !== regular else {
@@ -283,11 +283,11 @@ extension UIScrollView {
             if let token = token { component.removePhaseObserver(token) }
             let delay = component.slowAnimationDuration + 0.05
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-                guard let self = self, self.cyl_header === component else { return }
-                self.cyl_header = regular
+                guard let self = self, self.cylHeader === component else { return }
+                self.cylHeader = regular
             }
         }
-        cyl_header = startHeader
+        cylHeader = startHeader
         startHeader.beginRefreshing()
     }
 }

@@ -29,8 +29,8 @@ import UIKit
 // [EN] The identities of the two bounds animations of `isCollectionViewAnimationBug` (private; the Objective-C globals of
 //      the same names were never declared in a header).
 // [CN] `isCollectionViewAnimationBug` 两个 bounds 动画的标识（私有；同名的 Objective-C 全局常量从未在头文件中声明）。
-private let CYLRefreshHeaderRefreshing2IdleBoundsKey = "CYLRefreshHeaderRefreshing2IdleBounds"
-private let CYLRefreshHeaderRefreshingBoundsKey = "CYLRefreshHeaderRefreshingBounds"
+private let refreshHeaderRefreshing2IdleBoundsKey = "CYLRefreshHeaderRefreshing2IdleBounds"
+private let refreshHeaderRefreshingBoundsKey = "CYLRefreshHeaderRefreshingBounds"
 
 // [EN] The delegate of those animations. It holds the header strongly, as the animation held the header when the header
 //      was its own delegate, so the callback always comes and removes the animation (`removedOnCompletion` is NO).
@@ -50,8 +50,8 @@ private final class CYLRefreshHeaderAnimationDelegate: NSObject, CAAnimationDele
 
 /**
  * [EN] The base class of the pull-down refresh controls: it watches the pull above the content and refreshes on
- *      release; set one as a scroll view's `cyl_header`.
- * [CN] 下拉刷新控件的基类：监视内容上方的下拉，松手时刷新；设为滚动视图的 `cyl_header` 使用。
+ *      release; set one as a scroll view's `cylHeader`.
+ * [CN] 下拉刷新控件的基类：监视内容上方的下拉，松手时刷新；设为滚动视图的 `cylHeader` 使用。
  */
 @objc(CYLRefreshHeader)
 open class CYLRefreshHeader: CYLRefreshComponent {
@@ -158,7 +158,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         get { storedIgnoredScrollViewContentInsetTop }
         set {
             storedIgnoredScrollViewContentInsetTop = newValue
-            cyl_y = -cyl_h - newValue
+            cylY = -cylH - newValue
         }
     }
 
@@ -168,6 +168,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
      * [CN] 默认是关闭状态, 如果遇到 CollectionView 的动画异常问题可以尝试打开。
      */
     @objc open var isCollectionViewAnimationBug = false
+
+    // [EN] Moves the offset frame by frame where UIKit places views from the bounds (MJRefresh #1568).
+    // [CN] 在 UIKit 按 bounds 放置视图的滚动视图中逐帧移动 offset（MJRefresh #1568）。
+    private let offsetDriver = CYLRefreshOffsetDriver()
 
     /**
      * [EN] Whether refreshing adds the header's height to the top inset, pushing the content down. Default YES; NO (and
@@ -281,7 +285,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         lastUpdatedTimeKey = CYLRefreshHeaderLastUpdatedTimeKey
 
         // 设置高度
-        cyl_h = CYLRefreshHeaderHeight
+        cylH = CYLRefreshHeaderHeight
 
         // [EN] `addsRefreshingInset` (YES) and `secondaryCloseTriggerOffset` (80) start at their defaults, as the
         //      Objective-C code wrote the ivars here. [CN] `addsRefreshingInset`（YES）与 `secondaryCloseTriggerOffset`（80）以默认值开始，
@@ -305,7 +309,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
     private var isIdleAndRetracted: Bool {
         if state != .idle || retracting { return false }
         guard let scrollView = scrollView else { return true }
-        return scrollView.cyl_offsetY >= -scrollViewOriginalInset.top - 0.5
+        return scrollView.cylOffsetY >= -scrollViewOriginalInset.top - 0.5
     }
 
     /**
@@ -319,9 +323,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
      * [EN] Places the header above the content. [CN] 把刷新头放到内容上方。
      */
     open override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil { offsetDriver.stop() }
         super.willMove(toSuperview: newSuperview)
         if scrollView != nil {
-            cyl_y = -cyl_h - ignoredScrollViewContentInsetTop
+            cylY = -cylH - ignoredScrollViewContentInsetTop
         }
     }
 
@@ -332,7 +337,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         super.placeSubviews()
 
         // 设置y值(当自己的高度发生改变了，肯定要重新调整Y值，所以放到placeSubviews方法中设置y值)
-        cyl_y = -cyl_h - ignoredScrollViewContentInsetTop + insetStart
+        cylY = -cylH - ignoredScrollViewContentInsetTop + insetStart
         applyScrollMode()
     }
 
@@ -360,8 +365,8 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         guard let view = secondaryView, let scrollView = scrollView else { return }
         if view.superview !== scrollView { scrollView.insertSubview(view, belowSubview: self) }
         let height = secondaryHeight
-        view.frame = CGRect(x: -scrollView.cyl_insetL, y: -height - ignoredScrollViewContentInsetTop,
-                            width: scrollView.cyl_w, height: height)
+        view.frame = CGRect(x: -scrollView.cylInsetL, y: -height - ignoredScrollViewContentInsetTop,
+                            width: scrollView.cylW, height: height)
     }
 
     /**
@@ -408,7 +413,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         let top = scrollViewOriginalInset.top + secondaryHeight
         UIView.animate(withDuration: secondaryDuration, animations: {
             self.setRefreshingInsetTop(top)
-            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cyl_offsetX ?? 0, y: -top)
+            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cylOffsetX ?? 0, y: -top)
         }, completion: { _ in
             self.secondaryOpenedBlock?()
         })
@@ -425,7 +430,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         let top = scrollViewOriginalInset.top
         UIView.animate(withDuration: secondaryDuration, animations: {
             self.setRefreshingInsetTop(top)
-            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cyl_offsetX ?? 0, y: -top)
+            self.scrollView?.contentOffset = CGPoint(x: self.scrollView?.cylOffsetX ?? 0, y: -top)
         }, completion: { _ in
             self.secondaryClosing = false
             self.storedSecondaryOpen = false
@@ -443,7 +448,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
     private func followOpenSecondary() {
         if secondaryClosing { return }
         let openOffsetY = -(scrollViewOriginalInset.top + secondaryHeight)
-        let pushed = (scrollView?.cyl_offsetY ?? 0) - openOffsetY
+        let pushed = (scrollView?.cylOffsetY ?? 0) - openOffsetY
         if scrollView?.isDragging == true {
             secondaryClosePending = pushed >= secondaryCloseTriggerOffset
         } else if secondaryClosePending {
@@ -470,7 +475,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         if pan.state == .ended && secondaryVelocity > 0 && secondaryTriggerOffset > 0 && !isSecondaryOpen && !isRefreshing {
             // [EN] A fast release past the refresh trigger opens the second floor. [CN] 越过刷新触发点后快速松手即打开二楼。
             let velocity = pan.velocity(in: scrollView).y
-            let pulled = -(scrollView.cyl_offsetY + scrollViewOriginalInset.top)
+            let pulled = -(scrollView.cylOffsetY + scrollViewOriginalInset.top)
             if velocity >= secondaryVelocity && pulled >= expandHeight * triggerRate {
                 openSecondary()
                 return
@@ -478,7 +483,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         }
         if pan.state == .began {
             // [EN] At the top edge: the content's top is at (or below) the header's bottom. [CN] 位于顶部边缘：内容顶部在刷新头底边或其下方。
-            dragStartedAtEdge = scrollView.cyl_offsetY <= -scrollViewOriginalInset.top + 0.5
+            dragStartedAtEdge = scrollView.cylOffsetY <= -scrollViewOriginalInset.top + 0.5
         }
     }
 
@@ -495,7 +500,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
      * [CN] 展开高度：非移动模式下为 `setExpandHeight:` 设置的值，否则为 frame 高度。
      */
     open override var expandHeight: CGFloat {
-        storedExpandHeight > 0 ? storedExpandHeight : cyl_h
+        storedExpandHeight > 0 ? storedExpandHeight : cylH
     }
 
     /**
@@ -508,10 +513,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         let expandHeight = max(0, expandHeight)
         if scrollMode == .move {
             storedExpandHeight = 0
-            cyl_h = expandHeight
+            cylH = expandHeight
         } else {
             storedExpandHeight = max(expandHeight, 1)
-            if scrollMode == .front { cyl_h = expandHeight }
+            if scrollMode == .front { cylH = expandHeight }
         }
         applyScrollMode()
     }
@@ -524,14 +529,14 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         get { super.scrollMode }
         set {
             if newValue != .move && storedExpandHeight <= 0 {
-                storedExpandHeight = cyl_h
+                storedExpandHeight = cylH
             }
             super.scrollMode = newValue
             if newValue == .move && storedExpandHeight > 0 {
                 let height = storedExpandHeight
                 storedExpandHeight = 0
-                cyl_h = height
-                cyl_y = -height - ignoredScrollViewContentInsetTop
+                cylH = height
+                cylY = -height - ignoredScrollViewContentInsetTop
                 layer.zPosition = 0
             }
             applyScrollMode()
@@ -543,25 +548,25 @@ open class CYLRefreshHeader: CYLRefreshComponent {
     private func applyScrollMode() {
         guard scrollMode != .move, let scrollView = scrollView else { return }
         let height = expandHeight
-        let offsetY = scrollView.cyl_offsetY
+        let offsetY = scrollView.cylOffsetY
         let visibleTop = offsetY + scrollViewOriginalInset.top
         let pulled = max(0, -visibleTop)
         if scrollMode == .stretch {
             // [EN] Stretch, as in CYLRefresh styles: the header is exactly the pulled area, from 0 when idle.
             // [CN] 拉伸（与 CYLRefresh styles 相同）：刷新头正好是被拉出的区域，空闲时高度为 0。
-            if abs(cyl_h - pulled) > 0.25 { cyl_h = pulled }
-            cyl_y = -pulled - ignoredScrollViewContentInsetTop
+            if abs(cylH - pulled) > 0.25 { cylH = pulled }
+            cylY = -pulled - ignoredScrollViewContentInsetTop
         } else if scrollMode == .behind {
             // [EN] Behind: pinned at the visible top behind the content, revealed as the content moves down.
             // [CN] 后置：固定在可见区域顶部、位于内容后面，内容下移时露出。
-            if abs(cyl_h - height) > 0.25 { cyl_h = height }
-            cyl_y = min(visibleTop, -height) + insetStart
+            if abs(cylH - height) > 0.25 { cylH = height }
+            cylY = min(visibleTop, -height) + insetStart
             layer.zPosition = -1
             // [EN] clipsWhenBehind: only the revealed part shows. [CN] clipsWhenBehind：只显示露出的部分。
             if clipsWhenBehind {
                 let mask = layer.mask ?? CALayer()
                 mask.backgroundColor = UIColor.black.cgColor
-                mask.frame = CGRect(x: 0, y: 0, width: cyl_w, height: min(pulled, height))
+                mask.frame = CGRect(x: 0, y: 0, width: cylW, height: min(pulled, height))
                 layer.mask = mask
             } else if layer.mask != nil && !clipsWhenBehind {
                 layer.mask = nil
@@ -571,8 +576,8 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             // [EN] Front, as in CYLRefresh styles: pinned at the top of the visible area, in front of the content, which
             //      never moves for it (no refreshing inset). [CN] 前置（与 CYLRefresh styles 相同）：固定在可见区域顶部、位于内容前面，
             //      内容不会为它移动（不加刷新 inset）。
-            if abs(cyl_h - height) > 0.25 { cyl_h = height }
-            cyl_y = visibleTop + insetStart
+            if abs(cylH - height) > 0.25 { cylH = height }
+            cylY = visibleTop + insetStart
             layer.zPosition = 1
             if let superview = superview, superview.subviews.last !== self { superview.bringSubviewToFront(self) }
         }
@@ -586,8 +591,8 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         guard !updatingRefreshInset, let scrollView = scrollView else { return }
 
         updatingRefreshInset = true
-        UIScrollView.cyl_refreshPerform({
-            scrollView.cyl_insetT = insetTop
+        UIScrollView.cylRefreshPerform({
+            scrollView.cylInsetT = insetTop
         }, cleanup: { [weak self] in
             self?.updatingRefreshInset = false
         })
@@ -607,17 +612,17 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         // [CN] insetTDelta（原始 top - 当前 top）是刷新头增加的量，系统部分的 inset 变化时（旋转会改变栏与安全区，两边一起变）它仍然正确；
         //      保存的原始 top 则不会。用当前 top 重新得出它，否则刷新头会按旧的系统 inset 计算，并在刷新结束后留下差值作为空隙。
         var original = scrollViewOriginalInset
-        original.top = scrollView.cyl_insetT + insetTDelta
+        original.top = scrollView.cylInsetT + insetTDelta
         scrollViewOriginalInset = original
 
         // sectionheader停留解决
-        var insetT = -scrollView.cyl_offsetY > original.top ? -scrollView.cyl_offsetY : original.top
+        var insetT = -scrollView.cylOffsetY > original.top ? -scrollView.cylOffsetY : original.top
         insetT = insetT > expandHeight + original.top ? expandHeight + original.top : insetT
         // 避免 CollectionView 在使用根据 Autolayout 和 内容自动伸缩 Cell, 刷新时导致的 Layout 异常渲染问题
-        if abs(scrollView.cyl_insetT - insetT) > CGFloat(Float.ulpOfOne) {
+        if abs(scrollView.cylInsetT - insetT) > CGFloat(Float.ulpOfOne) {
             setRefreshingInsetTop(insetT)
         }
-        insetTDelta = scrollViewOriginalInset.top - scrollView.cyl_insetT
+        insetTDelta = scrollViewOriginalInset.top - scrollView.cylInsetT
     }
 
     /**
@@ -644,10 +649,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         guard let scrollView = scrollView else { return }
 
         // 跳转到下一个控制器时，contentInset可能会变
-        scrollViewOriginalInset = scrollView.cyl_inset
+        scrollViewOriginalInset = scrollView.cylInset
 
         // 当前的contentOffset
-        var offsetY = scrollView.cyl_offsetY
+        var offsetY = scrollView.cylOffsetY
         // 头部控件刚好出现的offsetY
         let happenOffsetY = -scrollViewOriginalInset.top
 
@@ -680,7 +685,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             if maxPullDistance > 0 && happenOffsetY - offsetY > maxPullDistance {
                 offsetY = happenOffsetY - maxPullDistance
                 pullingPercent = maxPullDistance / triggerDistance
-                scrollView.contentOffset = CGPoint(x: scrollView.cyl_offsetX, y: offsetY)
+                scrollView.contentOffset = CGPoint(x: scrollView.cylOffsetX, y: offsetY)
             }
             self.pullingPercent = pullingPercent
             let mayArm = triggerMode == .anywhere || dragStartedAtEdge
@@ -718,24 +723,24 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         guard !updatingRefreshInset, state == .refreshing, addedRefreshingInset, movesContentWhileRefreshing,
               let scrollView = scrollView else { return }
         // FIX: issue MJRefresh#1483
-        // [EN] A footer or trailer that starts or ends loading writes its own side (cyl_insetB / L / R). Taking that write
+        // [EN] A footer or trailer that starts or ends loading writes its own side (cylInsetB / L / R). Taking that write
         //      for a new original top made the refreshing top the "original" and added the header's height again, so each
         //      refresh during a footer load left the content one header height lower.
-        // [CN] 刷新尾或 trailer 开始或结束加载时写入自己那一侧（cyl_insetB / L / R）。把这次写入当作新的原始 top，会把刷新中的 top 当作
+        // [CN] 刷新尾或 trailer 开始或结束加载时写入自己那一侧（cylInsetB / L / R）。把这次写入当作新的原始 top，会把刷新中的 top 当作
         //      “原始值”并再次加上刷新头高度，于是每次在刷新尾加载期间刷新，内容都下移一个刷新头高度。
-        if UIScrollView.cyl_isWritingSideInset { return }
-        let originalTop = scrollView.cyl_insetT
+        if UIScrollView.cylIsWritingSideInset { return }
+        let originalTop = scrollView.cylInsetT
         let refreshingTop = originalTop + expandHeight
         var original = scrollViewOriginalInset
         original.top = originalTop
         scrollViewOriginalInset = original
         let epsilon = CGFloat(Float.ulpOfOne)
         let restingAtTop = !scrollView.isTracking && !scrollView.isDecelerating &&
-            scrollView.cyl_offsetY <= -originalTop + epsilon
+            scrollView.cylOffsetY <= -originalTop + epsilon
         setRefreshingInsetTop(refreshingTop)
-        insetTDelta = originalTop - scrollView.cyl_insetT
-        if restingAtTop && scrollView.cyl_offsetY > -refreshingTop + epsilon {
-            scrollView.setContentOffset(CGPoint(x: scrollView.cyl_offsetX, y: -refreshingTop), animated: false)
+        insetTDelta = originalTop - scrollView.cylInsetT
+        if restingAtTop && scrollView.cylOffsetY > -refreshingTop + epsilon {
+            scrollView.setContentOffset(CGPoint(x: scrollView.cylOffsetX, y: -refreshingTop), animated: false)
         }
     }
 
@@ -768,7 +773,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
 
     private func headerEndingAction() {
         // [EN] resetsFooterAfterRefresh: a successful refresh lets the footer load again. [CN] 刷新成功后加载尾可再次加载。
-        if resetsFooterAfterRefresh && lastRefreshSucceeded, let footer = scrollView?.cyl_footer, footer.isNoMoreData {
+        if resetsFooterAfterRefresh && lastRefreshSucceeded, let footer = scrollView?.cylFooter, footer.isNoMoreData {
             footer.resetNoMoreData()
         }
         // 保存刷新时间
@@ -785,11 +790,31 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             return
         }
 
+        // FIX: MJRefresh #1568: see CYLRefreshOffsetDriver.isNeeded(for:).
+        if !isCollectionViewAnimationBug, slowAnimationDuration > 0, let scrollView = scrollView,
+           CYLRefreshOffsetDriver.isNeeded(for: scrollView) {
+            let from = scrollView.cylOffsetY
+            setRefreshingInsetTop(scrollView.cylInsetT + insetTDelta)
+            scrollView.cylOffsetY = from
+            UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
+                self.endRefreshingAnimationBeginAction?()
+                if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
+            })
+            offsetDriver.move(scrollView, from: from, to: max(from, -scrollView.adjustedContentInset.top),
+                              duration: slowAnimationDuration) { [weak self] in
+                guard let self = self else { return }
+                self.retracting = false
+                self.pullingPercent = 0.0
+                self.endRefreshingCompletionBlock?()
+            }
+            return
+        }
+
         // 默认使用 UIViewAnimation 动画
         if !isCollectionViewAnimationBug {
             // 恢复inset和offset
             UIView.animate(withDuration: slowAnimationDuration, delay: 0, options: reboundAnimationOptions, animations: {
-                self.setRefreshingInsetTop((self.scrollView?.cyl_insetT ?? 0) + self.insetTDelta)
+                self.setRefreshingInsetTop((self.scrollView?.cylInsetT ?? 0) + self.insetTDelta)
 
                 self.endRefreshingAnimationBeginAction?()
                 // 自动调整透明度
@@ -816,7 +841,7 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         // 由于修改 Inset 会导致 self.pullingPercent 联动设置 self.alpha, 故提前获取 alpha 值, 后续用于还原 alpha 动画
         let viewAlpha = alpha
 
-        setRefreshingInsetTop((scrollView?.cyl_insetT ?? 0) + insetTDelta)
+        setRefreshingInsetTop((scrollView?.cylInsetT ?? 0) + insetTDelta)
         // 禁用交互, 如果不禁用可能会引起渲染问题.
         scrollView?.isUserInteractionEnabled = false
 
@@ -829,9 +854,9 @@ open class CYLRefreshHeader: CYLRefreshComponent {
         boundsAnimation.fillMode = .both
         boundsAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         boundsAnimation.delegate = CYLRefreshHeaderAnimationDelegate(header: self)
-        boundsAnimation.setValue(CYLRefreshHeaderRefreshing2IdleBoundsKey, forKey: "identity")
+        boundsAnimation.setValue(refreshHeaderRefreshing2IdleBoundsKey, forKey: "identity")
 
-        scrollView?.layer.add(boundsAnimation, forKey: CYLRefreshHeaderRefreshing2IdleBoundsKey)
+        scrollView?.layer.add(boundsAnimation, forKey: refreshHeaderRefreshing2IdleBoundsKey)
 
         endRefreshingAnimationBeginAction?()
         // 自动调整透明度的动画
@@ -857,6 +882,19 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             return
         }
         addedRefreshingInset = true
+        // FIX: MJRefresh #1568: see CYLRefreshOffsetDriver.isNeeded(for:).
+        if !isCollectionViewAnimationBug, !startsRefreshingWithoutAnimation, fastAnimationDuration > 0, let scrollView = scrollView,
+           CYLRefreshOffsetDriver.isNeeded(for: scrollView), scrollView.panGestureRecognizer.state != .cancelled {
+            let top = scrollViewOriginalInset.top + expandHeight
+            insetTDelta = scrollViewOriginalInset.top - top
+            let from = scrollView.cylOffsetY
+            setRefreshingInsetTop(top)
+            scrollView.cylOffsetY = from
+            offsetDriver.move(scrollView, from: from, to: -top, duration: fastAnimationDuration) { [weak self] in
+                self?.executeRefreshingCallback()
+            }
+            return
+        }
         // 默认使用 UIViewAnimation 动画
         if !isCollectionViewAnimationBug {
             UIView.animate(withDuration: fastAnimationDuration, animations: {
@@ -901,8 +939,8 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             boundsAnimation.fillMode = .both
             boundsAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             boundsAnimation.delegate = CYLRefreshHeaderAnimationDelegate(header: self)
-            boundsAnimation.setValue(CYLRefreshHeaderRefreshingBoundsKey, forKey: "identity")
-            scrollView?.layer.add(boundsAnimation, forKey: CYLRefreshHeaderRefreshingBoundsKey)
+            boundsAnimation.setValue(refreshHeaderRefreshingBoundsKey, forKey: "identity")
+            scrollView?.layer.add(boundsAnimation, forKey: refreshHeaderRefreshingBoundsKey)
         } else {
             executeRefreshingCallback()
         }
@@ -911,10 +949,10 @@ open class CYLRefreshHeader: CYLRefreshComponent {
     // MARK: - Chaining
 
     /**
-     * [EN] Sets the header as `scrollView.cyl_header` and returns it. [CN] 设为 `scrollView.cyl_header` 并返回自身。
+     * [EN] Sets the header as `scrollView.cylHeader` and returns it. [CN] 设为 `scrollView.cylHeader` 并返回自身。
      */
-    open override func cyl_link(to scrollView: UIScrollView) -> Self {
-        scrollView.cyl_header = self
+    open override func link(to scrollView: UIScrollView) -> Self {
+        scrollView.cylHeader = self
         return self
     }
 
@@ -922,12 +960,12 @@ open class CYLRefreshHeader: CYLRefreshComponent {
 
     fileprivate func boundsAnimationDidStop(_ anim: CAAnimation) {
         let identity = anim.value(forKey: "identity") as? String
-        if identity == CYLRefreshHeaderRefreshing2IdleBoundsKey {
+        if identity == refreshHeaderRefreshing2IdleBoundsKey {
             retracting = false
             pullingPercent = 0.0
             scrollView?.isUserInteractionEnabled = true
             endRefreshingCompletionBlock?()
-        } else if identity == CYLRefreshHeaderRefreshingBoundsKey {
+        } else if identity == refreshHeaderRefreshingBoundsKey {
             // 避免出现 end 先于 Refreshing 状态
             if state != .idle {
                 let top = scrollViewOriginalInset.top + expandHeight
@@ -945,12 +983,12 @@ open class CYLRefreshHeader: CYLRefreshComponent {
             executeRefreshingCallback()
         }
 
-        if scrollView?.layer.animation(forKey: CYLRefreshHeaderRefreshing2IdleBoundsKey) != nil {
-            scrollView?.layer.removeAnimation(forKey: CYLRefreshHeaderRefreshing2IdleBoundsKey)
+        if scrollView?.layer.animation(forKey: refreshHeaderRefreshing2IdleBoundsKey) != nil {
+            scrollView?.layer.removeAnimation(forKey: refreshHeaderRefreshing2IdleBoundsKey)
         }
 
-        if scrollView?.layer.animation(forKey: CYLRefreshHeaderRefreshingBoundsKey) != nil {
-            scrollView?.layer.removeAnimation(forKey: CYLRefreshHeaderRefreshingBoundsKey)
+        if scrollView?.layer.animation(forKey: refreshHeaderRefreshingBoundsKey) != nil {
+            scrollView?.layer.removeAnimation(forKey: refreshHeaderRefreshingBoundsKey)
         }
     }
 }

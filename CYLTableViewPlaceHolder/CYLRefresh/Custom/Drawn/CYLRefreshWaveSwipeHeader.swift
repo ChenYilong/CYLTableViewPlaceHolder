@@ -782,7 +782,11 @@ open class CYLRefreshWaveSwipeHeader: CYLRefreshDrawnHeader, CYLRefreshValueAnim
         if input >= 1.0 {
             return 1.0
         }
-        if input <= 0.0 {
+        // FIX: issue MJRefresh#1615
+        // [EN] Defensive: NaN is neither >= 1 nor <= 0, and Int(NaN) would trap; it counts as 0. The fast-pull stress test
+        //      (Tests/CYLRefreshFastPullTests.swift) did not reach this with NaN.
+        // [CN] 防御性处理：NaN 既不 >= 1 也不 <= 0，Int(NaN) 会崩溃；按 0 处理。快速下拉压力测试（Tests/CYLRefreshFastPullTests.swift）未以 NaN 走到这里。
+        if !(input > 0.0) {
             return 0.0
         }
         let values = fastOutSlowValues

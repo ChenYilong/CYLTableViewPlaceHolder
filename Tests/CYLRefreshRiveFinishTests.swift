@@ -5,11 +5,11 @@
 //  [EN] The finish rule of the `rive` style (docs/Refresh-Library-Parity.md, "The rive style: creation parameters", `riveFinishTimeout`):
 //       when the refresh ends the style's finish part starts at once and the header keeps its refreshing height until the animation
 //       reports its end or the timeout passes, then it retracts. RiveRuntime is not part of this test target, so a drawn header that
-//       behaves as `CYLRefreshRiveHeader` does (it holds for `onRefreshFinishing:` and calls `cyl_finishAnimationDidEnd()` when
+//       behaves as `CYLRefreshRiveHeader` does (it holds for `onRefreshFinishing:` and calls `finishAnimationDidEnd()` when
 //       Rive stops) stands in for it; the parameter is read by the real `CYLRefreshRiveOptions`.
 //  [CN] `rive` 样式的结束规则（`riveFinishTimeout`）：刷新结束时样式的结束部分立即开始，刷新头保持刷新时的高度，直到动画报告结束或超时，
 //       然后收回。测试目标不含 RiveRuntime，所以用行为与 `CYLRefreshRiveHeader` 相同的绘制刷新头代替（按 `onRefreshFinishing:` 停留，
-//       Rive 停止时调用 `cyl_finishAnimationDidEnd()`）；参数由真实的 `CYLRefreshRiveOptions` 读取。
+//       Rive 停止时调用 `finishAnimationDidEnd()`）；参数由真实的 `CYLRefreshRiveOptions` 读取。
 //
 
 import XCTest
@@ -111,7 +111,7 @@ final class CYLRefreshRiveFinishTests: XCTestCase {
         XCTAssertEqual(header.phase, .finishing)
         spin(0.2)
         XCTAssertEqual(header.phase, .finishing)
-        header.cyl_finishAnimationDidEnd()
+        header.finishAnimationDidEnd()
         XCTAssertNotEqual(header.phase, .finishing)
         XCTAssertTrue(spin(until: { header.state == .idle }, timeout: 3), "retracts without waiting for the 5 s timeout")
         layout.removeFromSuperview()
@@ -120,7 +120,7 @@ final class CYLRefreshRiveFinishTests: XCTestCase {
     func testAnEarlyEndDoesNotEndTheNextRefreshWhenTheOldTimerFires() {
         let (layout, header) = refreshing(timeout: 0.5)
         header.endRefreshing()
-        header.cyl_finishAnimationDidEnd()
+        header.finishAnimationDidEnd()
         XCTAssertTrue(spin(until: { header.state == .idle }, timeout: 3))
         let h = header.expandHeight
         layout.drive(offset: h + 5, dragging: true)
@@ -129,7 +129,7 @@ final class CYLRefreshRiveFinishTests: XCTestCase {
         XCTAssertEqual(header.phase, .refreshing)
         spin(0.7)
         XCTAssertEqual(header.phase, .refreshing, "the first hold's timer must not end the second refresh")
-        header.cyl_finishAnimationDidEnd()
+        header.finishAnimationDidEnd()
         XCTAssertNotEqual(header.phase, .finishing, "no hold is running while refreshing: ending it does nothing")
         XCTAssertTrue(header.isRefreshing)
         layout.removeFromSuperview()
@@ -137,7 +137,7 @@ final class CYLRefreshRiveFinishTests: XCTestCase {
 
     func testTheEndOfTheAnimationWhenNoHoldRunsDoesNothing() {
         let (layout, header) = refreshing(timeout: 1)
-        header.cyl_finishAnimationDidEnd()
+        header.finishAnimationDidEnd()
         XCTAssertEqual(header.phase, .refreshing)
         layout.removeFromSuperview()
     }
@@ -161,7 +161,7 @@ final class CYLRefreshRiveFinishTests: XCTestCase {
         XCTAssertEqual(footer.phase, .finishing)
         spin(0.3)
         XCTAssertEqual(footer.phase, .finishing, "held for the style's time")
-        style.cyl_finishAnimationDidEnd()
+        style.finishAnimationDidEnd()
         XCTAssertTrue(spin(until: { footer.state == .idle }, timeout: 3), "the style's end releases the footer's hold")
         layout.removeFromSuperview()
     }

@@ -71,25 +71,25 @@ final class CYLRefreshContainerViewTests: XCTestCase {
     func testTheFirstScrollViewBelowTheContainerGetsTheClassicHeader() {
         let (container, scrollView) = container()
         XCTAssertTrue(container.scrollView === scrollView)
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshNormalHeader)
-        XCTAssertNil(scrollView.cyl_footer, "no footer until loadMoreEnabled, as on Android")
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshNormalHeader)
+        XCTAssertNil(scrollView.cylFooter, "no footer until loadMoreEnabled, as on Android")
         XCTAssertTrue(container.clipsToBounds, "the resting header must not draw over the views above the container")
     }
 
     func testEnabledFalseRemovesTheHeaderAndTrueBringsItBack() {
         let (container, scrollView) = container()
         container.enabled = false
-        XCTAssertNil(scrollView.cyl_header)
+        XCTAssertNil(scrollView.cylHeader)
         container.enabled = true
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshNormalHeader)
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshNormalHeader)
     }
 
     func testTheFooterIsTheBackFooterWhileLoadMoreIsEnabled() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
-        XCTAssertTrue(scrollView.cyl_footer is CYLRefreshBackNormalFooter)
+        XCTAssertTrue(scrollView.cylFooter is CYLRefreshBackNormalFooter)
         container.loadMoreEnabled = false
-        XCTAssertNil(scrollView.cyl_footer)
+        XCTAssertNil(scrollView.cylFooter)
     }
 
     func testPropsSetBeforeTheScrollViewArrivesAreAppliedWhenItDoes() {
@@ -99,36 +99,36 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         container.enabled = false
         XCTAssertNil(container.scrollView)
         addScrollView(scrollView, to: container)
-        XCTAssertNil(scrollView.cyl_header, "enabled = false was set first")
-        let footer = scrollView.cyl_footer
+        XCTAssertNil(scrollView.cylHeader, "enabled = false was set first")
+        let footer = scrollView.cylFooter
         XCTAssertTrue(footer is CYLRefreshBackNormalFooter)
         XCTAssertEqual(footer?.loadsAfterNoMoreData, true)
     }
 
     func testAPullStartedByTheUserSendsOnRefreshOnce() {
         let (_, scrollView) = container()
-        scrollView.cyl_header?.beginRefreshing()
+        scrollView.cylHeader?.beginRefreshing()
         waitUntil { refreshEvents == 1 }
         XCTAssertEqual(refreshEvents, 1)
-        XCTAssertTrue(scrollView.cyl_header?.isRefreshing == true)
-        scrollView.cyl_header?.endRefreshing()
-        waitUntil { scrollView.cyl_header?.isRefreshing != true }
+        XCTAssertTrue(scrollView.cylHeader?.isRefreshing == true)
+        scrollView.cylHeader?.endRefreshing()
+        waitUntil { scrollView.cylHeader?.isRefreshing != true }
         XCTAssertEqual(refreshEvents, 1)
-        XCTAssertFalse(scrollView.cyl_header?.isRefreshing == true)
+        XCTAssertFalse(scrollView.cylHeader?.isRefreshing == true)
     }
 
     func testRefreshingSetFromJavaScriptShowsTheStateWithoutCallingOnRefresh() {
         let (container, scrollView) = container()
         var blockRuns = 0
-        countRuns(of: scrollView.cyl_header) { blockRuns += 1 }
+        countRuns(of: scrollView.cylHeader) { blockRuns += 1 }
         container.refreshing = true
         // The block runs once the inset animation completes; JavaScript must not be told, and the one-shot flag is used up by it.
         waitUntil { blockRuns == 1 }
-        XCTAssertTrue(scrollView.cyl_header?.isRefreshing == true)
+        XCTAssertTrue(scrollView.cylHeader?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0, "a value JavaScript set does not call onRefresh back")
         container.refreshing = false
-        waitUntil { scrollView.cyl_header?.isRefreshing != true }
-        XCTAssertFalse(scrollView.cyl_header?.isRefreshing == true)
+        waitUntil { scrollView.cylHeader?.isRefreshing != true }
+        XCTAssertFalse(scrollView.cylHeader?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0)
     }
 
@@ -137,20 +137,20 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         container.refreshing = true
         addScrollView(scrollView, to: container)
         spin()
-        XCTAssertTrue(scrollView.cyl_header?.isRefreshing == true)
+        XCTAssertTrue(scrollView.cylHeader?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0)
     }
 
     func testALoadStartedByTheUserSendsOnLoadMoreOnce() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
-        scrollView.cyl_footer?.beginRefreshing()
+        scrollView.cylFooter?.beginRefreshing()
         waitUntil { loadMoreEvents == 1 }
         XCTAssertEqual(loadMoreEvents, 1)
-        XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
+        XCTAssertTrue(scrollView.cylFooter?.isRefreshing == true)
         container.loadingMore = false
-        waitUntil { scrollView.cyl_footer?.isRefreshing != true }
-        XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
+        waitUntil { scrollView.cylFooter?.isRefreshing != true }
+        XCTAssertFalse(scrollView.cylFooter?.isRefreshing == true)
         XCTAssertEqual(loadMoreEvents, 1)
     }
 
@@ -158,50 +158,50 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
         var blockRuns = 0
-        countRuns(of: scrollView.cyl_footer) { blockRuns += 1 }
+        countRuns(of: scrollView.cylFooter) { blockRuns += 1 }
         container.loadingMore = true
         waitUntil { blockRuns == 1 }
-        XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
+        XCTAssertTrue(scrollView.cylFooter?.isRefreshing == true)
         XCTAssertEqual(loadMoreEvents, 0)
         container.loadingMore = false
-        waitUntil { scrollView.cyl_footer?.isRefreshing != true }
-        XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
+        waitUntil { scrollView.cylFooter?.isRefreshing != true }
+        XCTAssertFalse(scrollView.cylFooter?.isRefreshing == true)
     }
 
     func testNoMoreDataShowsTheStateEndsALoadAndResets() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
-        scrollView.cyl_footer?.beginRefreshing()
+        scrollView.cylFooter?.beginRefreshing()
         waitUntil { loadMoreEvents == 1 }
-        XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
+        XCTAssertTrue(scrollView.cylFooter?.isRefreshing == true)
         // JavaScript ends a last load with loadingMore false and noMoreData true together, in either order.
         container.noMoreData = true
         container.loadingMore = false
-        waitUntil { scrollView.cyl_footer?.isNoMoreData == true && scrollView.cyl_footer?.isRefreshing != true }
-        XCTAssertEqual(scrollView.cyl_footer?.isNoMoreData, true)
-        XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
+        waitUntil { scrollView.cylFooter?.isNoMoreData == true && scrollView.cylFooter?.isRefreshing != true }
+        XCTAssertEqual(scrollView.cylFooter?.isNoMoreData, true)
+        XCTAssertFalse(scrollView.cylFooter?.isRefreshing == true)
         container.noMoreData = false
-        XCTAssertEqual(scrollView.cyl_footer?.isNoMoreData, false)
+        XCTAssertEqual(scrollView.cylFooter?.isNoMoreData, false)
     }
 
     func testNoMoreDataFalseFirstThenLoadingMoreFalseAlsoEndsInNoMoreData() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
-        scrollView.cyl_footer?.beginRefreshing()
+        scrollView.cylFooter?.beginRefreshing()
         waitUntil { loadMoreEvents == 1 }
         container.loadingMore = false
         container.noMoreData = true
-        waitUntil { scrollView.cyl_footer?.isNoMoreData == true && scrollView.cyl_footer?.isRefreshing != true }
-        XCTAssertEqual(scrollView.cyl_footer?.isNoMoreData, true)
-        XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
+        waitUntil { scrollView.cylFooter?.isNoMoreData == true && scrollView.cylFooter?.isRefreshing != true }
+        XCTAssertEqual(scrollView.cylFooter?.isNoMoreData, true)
+        XCTAssertFalse(scrollView.cylFooter?.isRefreshing == true)
     }
 
     func testLoadsAfterNoMoreDataReachesTheFooter() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
-        XCTAssertEqual(scrollView.cyl_footer?.loadsAfterNoMoreData, false)
+        XCTAssertEqual(scrollView.cylFooter?.loadsAfterNoMoreData, false)
         container.loadsAfterNoMoreData = true
-        XCTAssertEqual(scrollView.cyl_footer?.loadsAfterNoMoreData, true)
+        XCTAssertEqual(scrollView.cylFooter?.loadsAfterNoMoreData, true)
     }
 
     func testANewScrollViewReplacesTheOldOneAndTheOldOneLosesTheHeader() {
@@ -212,7 +212,7 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let new = UIScrollView(frame: container.bounds)
         addScrollView(new, to: container)
         XCTAssertTrue(container.scrollView === new)
-        XCTAssertTrue(new.cyl_header is CYLRefreshNormalHeader)
+        XCTAssertTrue(new.cylHeader is CYLRefreshNormalHeader)
     }
 
     func testHeaderStyleAndFooterStyleChooseTheLookAndAnUnknownNameIsClassic() {
@@ -220,23 +220,23 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         container.loadMoreEnabled = true
         container.headerStyle = "phoenix"
         container.footerStyle = "taurus"
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshPhoenixHeader)
-        XCTAssertTrue(scrollView.cyl_footer is CYLRefreshTaurusFooter)
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshPhoenixHeader)
+        XCTAssertTrue(scrollView.cylFooter is CYLRefreshTaurusFooter)
         container.headerStyle = "rainbow"
         container.footerStyle = nil
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshNormalHeader)
-        XCTAssertTrue(scrollView.cyl_footer is CYLRefreshBackNormalFooter)
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshNormalHeader)
+        XCTAssertTrue(scrollView.cylFooter is CYLRefreshBackNormalFooter)
         // [EN] A style set before the scroll view arrives is applied when it does. [CN] 滚动视图出现之前设置的样式，在它出现时生效。
         let (late, lateScrollView) = self.container(attach: false)
         late.headerStyle = "delivery"
         addScrollView(lateScrollView, to: late)
-        XCTAssertTrue(lateScrollView.cyl_header is CYLRefreshDeliveryHeader)
+        XCTAssertTrue(lateScrollView.cylHeader is CYLRefreshDeliveryHeader)
     }
 
     func testAStyledHeaderStillCallsOnRefreshOnce() {
         let (container, scrollView) = container()
         container.headerStyle = "material"
-        scrollView.cyl_header?.beginRefreshing()
+        scrollView.cylHeader?.beginRefreshing()
         waitUntil { refreshEvents == 1 }
         XCTAssertEqual(refreshEvents, 1)
     }

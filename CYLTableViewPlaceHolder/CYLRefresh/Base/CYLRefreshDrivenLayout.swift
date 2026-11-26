@@ -75,21 +75,21 @@ open class CYLRefreshDrivenLayout: UIView {
     }
 
     /**
-     * [EN] The attached refresh header (`cyl_header`); nil removes it. Android: `cyl_header`.
-     * [CN] 挂上的刷新头（`cyl_header`）；nil 表示移除。对应 Android 的 `cyl_header`。
+     * [EN] The attached refresh header (`cylHeader`); nil removes it. Android: `cylHeader`.
+     * [CN] 挂上的刷新头（`cylHeader`）；nil 表示移除。对应 Android 的 `cylHeader`。
      */
     @objc open var header: CYLRefreshHeader? {
-        get { drivenScrollView.cyl_header }
-        set { drivenScrollView.cyl_header = newValue; forwardSecondaryBlocks() }
+        get { drivenScrollView.cylHeader }
+        set { drivenScrollView.cylHeader = newValue; forwardSecondaryBlocks() }
     }
 
     /**
-     * [EN] The attached refresh footer (`cyl_footer`); nil removes it. Android: `cyl_footer`.
-     * [CN] 挂上的刷新尾（`cyl_footer`）；nil 表示移除。对应 Android 的 `cyl_footer`。
+     * [EN] The attached refresh footer (`cylFooter`); nil removes it. Android: `cylFooter`.
+     * [CN] 挂上的刷新尾（`cylFooter`）；nil 表示移除。对应 Android 的 `cylFooter`。
      */
     @objc open var footer: CYLRefreshFooter? {
-        get { drivenScrollView.cyl_footer }
-        set { drivenScrollView.cyl_footer = newValue; forwardSecondaryBlocks() }
+        get { drivenScrollView.cylFooter }
+        set { drivenScrollView.cylFooter = newValue; forwardSecondaryBlocks() }
     }
 
     // [EN] Whether the last fed offset pulled the footer (negative), for the release. [CN] 最近一次输入的偏移是否在上拉刷新尾（负数），供抬起时使用。
@@ -109,7 +109,7 @@ open class CYLRefreshDrivenLayout: UIView {
         if dragging && !drivenScrollView.drivenDragging {
             header?.dragStartedAtEdge = startedAtEdge
             (footer as? CYLRefreshBackFooter)?.dragStartedAtEdge = startedAtEdge
-            (footer as? CYLRefreshAutoFooter)?.cyl_drivenDragBegan()
+            (footer as? CYLRefreshAutoFooter)?.drivenDragBegan()
         }
         // [EN] As Android's `drive`: a pull up clears "no more data" when `loadsAfterNoMoreData` is on.
         // [CN] 与 Android 的 `drive` 相同：`loadsAfterNoMoreData` 打开时，上拉清除“无更多数据”。
@@ -132,7 +132,7 @@ open class CYLRefreshDrivenLayout: UIView {
     //      只有滚动后才看得到（真实滚动视图在底部时由内容滚到那里）。
     func applyDrivenOffset() {
         var pulled = -drivenOffset
-        if let footer = footer, footer.isNoMoreData { pulled = max(pulled, footer.cyl_h) }
+        if let footer = footer, footer.isNoMoreData { pulled = max(pulled, footer.cylH) }
         // [EN] An open second floor holds the content scrolled by the floor's extent (a header floor above the content, a
         //      footer floor below it), whatever pull is fed: the floor's own opening animation ends there.
         // [CN] 打开的二楼让内容保持滚动二楼的高度（刷新头的二楼在内容上方，刷新尾的二楼在内容下方），无论输入的拉动是多少：
@@ -155,7 +155,7 @@ open class CYLRefreshDrivenLayout: UIView {
         drivenScrollView.drivenDragging = false
         header?.scrollViewContentOffsetDidChange(nil)
         footer?.scrollViewContentOffsetDidChange(nil)
-        if footerPulled { (footer as? CYLRefreshAutoFooter)?.cyl_drivenReleased() }
+        if footerPulled { (footer as? CYLRefreshAutoFooter)?.drivenReleased() }
     }
 
     // MARK: - Second floor

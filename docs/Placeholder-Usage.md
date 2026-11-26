@@ -34,7 +34,7 @@
 | block API 支持 `UITableView` 和 `UICollectionView`，无需替换已有的 `reloadData`；`cyl_reloadData` 和 delegate API 同样可用。 | The block API supports `UITableView` and `UICollectionView` and does not require replacing existing `reloadData` calls; `cyl_reloadData` and the delegate API work as well. |
 
 ```swift
-tableView.cyl_placeholderViewBlock({ tableView in
+tableView.cylPlaceholderViewBlock({ tableView in
     tableView.isScrollEnabled = false
     return CYLPlaceholderView()
 }, backToNormalBlock: { tableView in
@@ -43,7 +43,7 @@ tableView.cyl_placeholderViewBlock({ tableView in
 
 // [CN] 取消自动占位；若占位视图正在显示，会调用恢复 block。
 // [EN] Cancel the automatic placeholder; if one is showing, the restore block is called.
-tableView.cyl_placeholderViewBlock(nil)
+tableView.cylPlaceholderViewBlock(nil)
 ```
 
 | 中文 | English |
@@ -269,7 +269,7 @@ func frameForPlaceHolderView(in tableView: UITableView) -> CGRect {
 ```swift
 @objc(frameForPlaceHolderViewInTableView:)
 func frameForPlaceHolderView(in tableView: UITableView) -> CGRect {
-    let top = tableView.cyl_footer?.frame.maxY ?? 0
+    let top = tableView.cylFooter?.frame.maxY ?? 0
     return CGRect(x: 0, y: top, width: tableView.bounds.width, height: max(0, tableView.bounds.height - top))
 }
 ```
@@ -325,7 +325,7 @@ class MyTableView: UITableView, CYLTableViewPlaceHolderDelegate { /* ... */ }
 | 使用方法：仅需使用 `cyl_reloadData` 代替 `reloadData` 即可。 | Usage: just use `cyl_reloadData` instead of `reloadData`. |
 
 ```swift
-tableView.cyl_reloadData()
+tableView.cylReloadData()
 ```
 
 | 中文 | English |

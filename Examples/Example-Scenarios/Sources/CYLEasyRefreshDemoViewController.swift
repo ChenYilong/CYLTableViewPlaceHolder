@@ -119,7 +119,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
         footer = CYLRefreshBackNormalFooter.attach(to: tableView, target: self, action: #selector(loadByTen))
         count = 0
         reloadCounted()
-        tableView.cyl_beginRefreshing(startHeader: CYLRefreshCupertinoHeader())
+        tableView.cylBeginRefreshing(startHeader: CYLRefreshCupertinoHeader())
     }
 
     /// paging_page.dart: a server of 45 items, 10 per page, 2 seconds per request; refresh on start.
@@ -147,7 +147,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
 
     @objc private func refreshScrollMode() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.tableView.cyl_header?.endRefreshing()
+            self?.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -243,13 +243,13 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
     // MARK: - Taps and callbacks
 
     /// Refresh: back to 10 rows after 2 seconds, and the footer can load again. Ends the header that is attached now
-    /// (`cyl_header`): during refresh on start that is the start header, not `header`.
+    /// (`cylHeader`): during refresh on start that is the start header, not `header`.
     @objc private func refreshCounted() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             guard let self = self else { return }
             self.count = 10
             self.reloadCounted()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
             self.footer?.resetNoMoreData()
         }
     }
@@ -279,7 +279,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             guard let self = self else { return }
             self.refreshCount += 1
             self.reloadTriggerMode()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -304,7 +304,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             self.tableView.reloadData()
             self.tableView.layoutIfNeeded()
             let offset = self.tableView.contentOffset
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
             self.tableView.contentOffset = CGPoint(x: offset.x, y: offset.y + self.tableView.contentSize.height - before)
             if first == 1 { self.header?.isHidden = true }
         }
