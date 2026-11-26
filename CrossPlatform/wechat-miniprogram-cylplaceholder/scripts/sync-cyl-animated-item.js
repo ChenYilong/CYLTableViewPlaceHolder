@@ -3,6 +3,8 @@
 // docs/Animated-Item.md allows a copy of src/cyl-animated-item). Copied unchanged:
 //   src/cyl-animated-item/           the component and its render model (cyl_animated_item_model.js, placeholder image)
 //   src/cyl-animation-placeholder/   the default of its abstract nodes (cyl-lottie-view, cyl-pag-view, …)
+//   src/cyl-dealloc-block-executor/  upstream's vendored CYLDeallocBlockExecutor (MIT, its own LICENSE and VENDORED.md),
+//                                    which cyl-animated-item requires from b0887513 on (lifecycle and animation events)
 //   test/cyl_animated_item.test.js   upstream's node tests of the model (run by `npm test`)
 // plus the upstream src/LICENSE as LICENSE.CYLTabBarController in both folders and src/cyl-animated-item/UPSTREAM_COMMIT.
 // Never edit the copied files: adapt this package's components instead, and run this script again after the Cartfile
@@ -22,6 +24,7 @@ const UPSTREAM = 'CrossPlatform/wechat-miniprogram-cyltabbar'
 const COPIES = [
   { from: `${UPSTREAM}/src/cyl-animated-item`, to: 'src/cyl-animated-item' },
   { from: `${UPSTREAM}/src/cyl-animation-placeholder`, to: 'src/cyl-animation-placeholder' },
+  { from: `${UPSTREAM}/src/cyl-dealloc-block-executor`, to: 'src/cyl-dealloc-block-executor' },
 ]
 const TEST = { from: `${UPSTREAM}/test/cyl_animated_item.test.js`, to: 'test/cyl_animated_item.test.js' }
 const LICENSE = { from: `${UPSTREAM}/src/LICENSE`, name: 'LICENSE.CYLTabBarController' }

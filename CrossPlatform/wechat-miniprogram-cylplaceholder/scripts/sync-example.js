@@ -22,7 +22,7 @@ function copyDir(from, to, filter = () => true) {
 
 const pkg = path.resolve(__dirname, '..')
 const components = path.join(pkg, 'example/miniprogram/components')
-for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status', 'cyl-refresh', 'cyl-animated-item', 'cyl-animation-placeholder']) {
+for (const name of ['cyl-placeholder', 'cyl-placeholder-hud', 'cyl-placeholder-status', 'cyl-refresh', 'cyl-animated-item', 'cyl-animation-placeholder', 'cyl-dealloc-block-executor']) {
   const from = path.join(pkg, 'src', name)
   const to = path.join(components, name)
   fs.rmSync(to, { recursive: true, force: true })
