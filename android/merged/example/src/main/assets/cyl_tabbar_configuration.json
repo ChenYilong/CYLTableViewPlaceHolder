@@ -7,6 +7,25 @@
   "CYLTabBarControllerStyleType": "default",
   "CYLTabBarControllerTitlePositionAdjustment": "{0, -2}",
   "CYLTabBarControllerShowsAllTabs": true,
+  "CYLTabBarControllerIconRenderingMode": "template",
+  "CYLTabBarControllerThemeIdentifier": "light",
+  "CYLTabBarControllerDarkThemeIdentifier": "dark",
+  "CYLTabBarControllerThemes": {
+    "light": {
+      "CYLTabBarBackgroundColor": "#F9F9F9",
+      "CYLTabBarItemIconColor": "#8E8E93",
+      "CYLTabBarItemTitleColor": "#8E8E93",
+      "CYLTabBarItemSelectedIconColor": "#007AFF",
+      "CYLTabBarItemSelectedTitleColor": "#007AFF"
+    },
+    "dark": {
+      "CYLTabBarBackgroundColor": "#1C1C1E",
+      "CYLTabBarItemIconColor": "#8E8E93",
+      "CYLTabBarItemTitleColor": "#8E8E93",
+      "CYLTabBarItemSelectedIconColor": "#0A84FF",
+      "CYLTabBarItemSelectedTitleColor": "#0A84FF"
+    }
+  },
   "CYLTabBarControllerTabBarItemsAttributes": [
     {
       "CYLTabBarItemIdentifier": "placeholder",
