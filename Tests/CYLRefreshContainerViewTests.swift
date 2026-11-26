@@ -203,6 +203,70 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         XCTAssertEqual(loadMoreEvents, 1, "a load started by the user afterwards is still reported")
     }
 
+    // [EN] The second floor set from JavaScript and set back quickly (inside the open or close animation): no floor event may reach
+    //      JavaScript, and the floor ends in the state JavaScript asked for last.
+    // [CN] JavaScript 设置二楼后很快又改回（在打开或关闭动画内）：二楼事件不能回调 JavaScript，二楼最终处于 JavaScript 最后要求的状态。
+    private func floorEvents(of container: CYLRefreshContainerView) -> () -> (opened: Int, closed: Int) {
+        var opened = 0, closed = 0
+        container.onSecondaryOpen = { _ in opened += 1 }
+        container.onSecondaryClose = { _ in closed += 1 }
+        return { (opened, closed) }
+    }
+
+    func testSecondaryOpenTrueThenFalseQuicklySendsNoFloorEventAndEndsClosed() {
+        let (container, scrollView) = container()
+        let events = floorEvents(of: container)
+        container.secondaryOpen = true
+        container.secondaryOpen = false
+        waitUntil(timeout: 3) { scrollView.cylHeader?.isSecondaryOpen == false && scrollView.cylHeader?.phase == .idle }
+        spin(0.5)
+        XCTAssertEqual(events().opened, 0, "an open JavaScript asked for is not reported")
+        XCTAssertEqual(events().closed, 0, "a close JavaScript asked for is not reported")
+        XCTAssertEqual(scrollView.cylHeader?.isSecondaryOpen, false, "the floor ends closed, as JavaScript asked last")
+    }
+
+    func testSecondaryOpenFalseThenTrueQuicklyFromAnOpenFloorEndsOpen() {
+        let (container, scrollView) = container()
+        let events = floorEvents(of: container)
+        container.secondaryOpen = true
+        waitUntil { scrollView.cylHeader?.phase == .secondaryOpen }
+        container.secondaryOpen = false
+        container.secondaryOpen = true
+        spin(1.0)
+        XCTAssertEqual(events().opened, 0)
+        XCTAssertEqual(events().closed, 0)
+        XCTAssertEqual(scrollView.cylHeader?.isSecondaryOpen, true, "the floor ends open, as JavaScript asked last")
+    }
+
+    func testFooterSecondaryOpenTrueThenFalseQuicklySendsNoFloorEventAndEndsClosed() {
+        let (container, scrollView) = container()
+        container.loadMoreEnabled = true
+        let events = floorEvents(of: container)
+        container.footerSecondaryOpen = true
+        container.footerSecondaryOpen = false
+        spin(1.0)
+        let footer = scrollView.cylFooter as? CYLRefreshBackFooter
+        XCTAssertNotNil(footer, "the default footer is a back footer, which has the floor")
+        XCTAssertEqual(events().opened, 0)
+        XCTAssertEqual(events().closed, 0)
+        XCTAssertEqual(footer?.isSecondaryOpen, false, "the floor ends closed, as JavaScript asked last")
+    }
+
+    func testFooterSecondaryOpenFalseThenTrueQuicklyFromAnOpenFloorEndsOpen() {
+        let (container, scrollView) = container()
+        container.loadMoreEnabled = true
+        let events = floorEvents(of: container)
+        let footer = scrollView.cylFooter as? CYLRefreshBackFooter
+        container.footerSecondaryOpen = true
+        waitUntil { footer?.phase == .secondaryOpen }
+        container.footerSecondaryOpen = false
+        container.footerSecondaryOpen = true
+        spin(1.0)
+        XCTAssertEqual(events().opened, 0)
+        XCTAssertEqual(events().closed, 0)
+        XCTAssertEqual(footer?.isSecondaryOpen, true, "the floor ends open, as JavaScript asked last")
+    }
+
     func testNoMoreDataShowsTheStateEndsALoadAndResets() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true

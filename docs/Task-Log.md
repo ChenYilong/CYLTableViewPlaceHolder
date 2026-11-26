@@ -37,6 +37,7 @@
 | [2026-11-27 Mini program: cyl-animated-item copy synced to the Cartfile pin b0887513 (TODO)](#2026-11-27-mini-program-cyl-animated-item-copy-synced-to-the-cartfile-pin-b0887513-todo) | [2026-11-27 Mini program: cyl-animated-item copy synced to the Cartfile pin b0887513 (TODO)](#2026-11-27-mini-program-cyl-animated-item-copy-synced-to-the-cartfile-pin-b0887513-todo) |
 | [2026-11-27 Hand-over iOS TODOs 8 and 9 (section 5.6.3) (DONE](#2026-11-27-hand-over-ios-todos-8-and-9-section-563-done--not-needed) | [not needed)](#2026-11-27-hand-over-ios-todos-8-and-9-section-563-done--not-needed) |
 | [2026-11-27 React Native iOS: second-floor flags, same race as `refreshing`? (TODO)](#2026-11-27-react-native-ios-second-floor-flags-same-race-as-refreshing-todo) | [2026-11-27 React Native iOS: second-floor flags, same race as `refreshing`? (TODO)](#2026-11-27-react-native-ios-second-floor-flags-same-race-as-refreshing-todo) |
+| [2026-11-27 React Native iOS: second-floor flags (DONE)](#2026-11-27-react-native-ios-second-floor-flags-done) | [2026-11-27 React Native iOS: second-floor flags (DONE)](#2026-11-27-react-native-ios-second-floor-flags-done) |
 
 <!-- docs-navigation:end -->
 
@@ -2672,3 +2673,10 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **Prompt (verbatim):** "floor" (answer to the offer: write a failing-first test for the second-floor flag race, then fix it if the test confirms it).
 - **Acceptance:** 100 = a test shows whether JavaScript setting `secondaryOpen` true then false (and false then true) quickly sends a stray `onSecondaryOpen` / `onSecondaryClose`, for the header and the footer; if it does, the fix makes it pass, the container class and the full suite stay green, simulator shut down. 60 = the race is confirmed or ruled out by a test.
 - **TODO:** (1) read the floor code. (2) failing-first test. (3) fix if red. (4) suite, commit, push, DONE.
+
+## 2026-11-27 React Native iOS: second-floor flags (DONE)
+
+- **Finding (failing-first tests, `Tests/CYLRefreshContainerViewTests.swift`):** no stray floor event when JavaScript sets `secondaryOpen` / `footerSecondaryOpen` true then false quickly (header and footer tests passed before any change). A different defect instead: false then true quickly from an open floor left the floor **closed** while JavaScript said open (red: `testSecondaryOpenFalseThenTrueQuicklyFromAnOpenFloorEndsOpen`, `isSecondaryOpen` false). Cause: the core marks the floor closed only when the close animation ends, so the setter saw "still open" and did nothing, and nothing applied the value afterwards.
+- **Fix (`CrossPlatform/react-native-cylplaceholder/ios/CYLRefreshContainerView.m`):** (1) the closed block of a close JavaScript asked for applies the last `secondaryOpen` / `footerSecondaryOpen` again; (2) a close is not started while one is running (`CYLRefreshPhaseSecondaryClosing`); (3) the four one-shot flags became counts of JavaScript requests whose block has not run (`_opensAskedByJS`, `_closesAskedByJS`, footer twins). The first version with flags kept the floor state right but sent one stray `onSecondaryOpen` (the first open's late completion used up the re-open's flag): every started open / close runs its block exactly once, in an order the animations decide, so a count is order-proof.
+- **Tests:** four new (header and footer, true→false and false→true); container class 21 / 21; full suite 409 tests, 0 failures (ADAFD92B, iOS 27.2, Xcode 27.2); simulator shut down.
+- **Score:** 95 / 100: on the simulator only through unit tests (no React Native app run of the floor); a style change (`headerStyle`) while a floor animation runs keeps counts that belong to the replaced header (not checked, rare).
