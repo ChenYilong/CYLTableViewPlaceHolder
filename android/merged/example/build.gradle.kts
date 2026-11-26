@@ -48,6 +48,8 @@ dependencies {
     // The Rive refresh styles of the CYLRefresh section.
     implementation(project(":merged-rive"))
     implementation("io.github.chenyilong:cyltabbar")
+    // CollectionViewClassifyMenu's tag list, the example's menu and index screens (only the example, never the core).
+    implementation(project(":classifymenu"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
     testImplementation(libs.androidx.recyclerview)

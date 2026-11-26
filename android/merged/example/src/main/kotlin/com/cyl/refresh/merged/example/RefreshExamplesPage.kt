@@ -16,7 +16,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,11 +106,9 @@ class RefreshExamplesPage : StackPage() {
 
     override fun root(): View {
         val context = requireContext()
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; tag = "refreshExamples" }
-        for (exam in examples) {
-            column.addView(header(context, context.t(exam.header)))
-            exam.titles.forEachIndexed { i, title ->
-                column.addView(row(context, context.t(title), "${exam.page} - ${exam.methods[i]}", "refresh-${exam.methods[i]}") {
+        val menu = tagMenu(context, examples.map { exam ->
+            MenuSection(context.t(exam.header), exam.titles.mapIndexed { i, title ->
+                MenuItem(context.t(title), "${exam.page} - ${exam.methods[i]}", null) {
                     val name = context.t(title)
                     push(when {
                         exam.header == R.string.merged_mj_section_collection && i == 2 ->
@@ -125,12 +122,13 @@ class RefreshExamplesPage : StackPage() {
                         exam.header == R.string.merged_easy_section -> easyPage(name, exam.methods[i])
                         else -> tablePage(name, exam.methods[i])
                     })
-                })
-            }
-        }
+                }
+            })
+        })
+        menu.tag = "refreshExamples"
         // Pull down to refresh, pull up to load: each ends 2 seconds later.
         return CYLRefreshLayout(context).apply {
-            setRefreshContent(ScrollView(context).apply { addView(column) })
+            setRefreshContent(menu)
             val header = CYLRefreshNormalHeader(context)
             cyl_header = header
             header.refreshingBlock = { later(2000) { header.endRefreshing() } }

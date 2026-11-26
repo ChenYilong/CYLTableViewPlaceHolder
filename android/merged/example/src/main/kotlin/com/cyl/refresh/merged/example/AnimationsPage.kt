@@ -41,7 +41,7 @@ class AnimationsPage : StackPage() {
 
     override fun root(): View {
         val context = requireContext()
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; background = plateDrawable(context) }
         column.addView(LinearLayout(context).apply {
             gravity = Gravity.END
             addView(Button(context).apply {
@@ -51,19 +51,20 @@ class AnimationsPage : StackPage() {
             })
         })
         val sections = sections(context)
-        if (sections.isEmpty()) column.addView(header(context, context.t(R.string.merged_text_no_animations)))
-        for (section in sections) {
-            column.addView(header(context, section.title))
-            for (name in section.fileNames) {
+        if (sections.isEmpty()) {
+            column.addView(header(context, context.t(R.string.merged_text_no_animations)))
+            return ScrollView(context).apply { setBackgroundColor(Color.WHITE); addView(column) }
+        }
+        // One tag per file; the long press shows its size.
+        column.addView(tagMenu(context, sections.map { section ->
+            MenuSection(section.title, section.fileNames.map { name ->
                 val path = "${section.folder}/$name"
                 val bytes = runCatching { context.assets.openFd(path).use { it.length } }
                     .getOrElse { context.assets.open(path).use { it.available().toLong() } }
-                column.addView(row(context, name, Formatter.formatShortFileSize(context, bytes), "animation-$name") {
-                    push(detail(section.folder, name))
-                })
-            }
-        }
-        return ScrollView(context).apply { setBackgroundColor(Color.WHITE); addView(column) }
+                MenuItem(name, Formatter.formatShortFileSize(context, bytes), null) { push(detail(section.folder, name)) }
+            })
+        }), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        return column
     }
 
     private fun notice(): View {
