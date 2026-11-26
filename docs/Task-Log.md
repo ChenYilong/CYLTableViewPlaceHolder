@@ -28,6 +28,7 @@
 | [2026-11-26 CI failures: Docs navigation, iOS 15 runtime, Unit tests (DONE)](#2026-11-26-ci-failures-docs-navigation-ios-15-runtime-unit-tests-done) | [2026-11-26 CI failures: Docs navigation, iOS 15 runtime, Unit tests (DONE)](#2026-11-26-ci-failures-docs-navigation-ios-15-runtime-unit-tests-done) |
 | [2026-11-26 CI failures: Unit tests and the three Animation jobs of run 45566803410 (TODO)](#2026-11-26-ci-failures-unit-tests-and-the-three-animation-jobs-of-run-45566803410-todo) | [2026-11-26 CI failures: Unit tests and the three Animation jobs of run 45566803410 (TODO)](#2026-11-26-ci-failures-unit-tests-and-the-three-animation-jobs-of-run-45566803410-todo) |
 | [2026-11-26 Hand-over document: iOS chapter, iOS table cells, whole-project score (TODO)](#2026-11-26-hand-over-document-ios-chapter-ios-table-cells-whole-project-score-todo) | [2026-11-26 Hand-over document: iOS chapter, iOS table cells, whole-project score (TODO)](#2026-11-26-hand-over-document-ios-chapter-ios-table-cells-whole-project-score-todo) |
+| [2026-11-26 Hand-over document: iOS chapter, iOS table cells, whole-project score (DONE)](#2026-11-26-hand-over-document-ios-chapter-ios-table-cells-whole-project-score-done) | [2026-11-26 Hand-over document: iOS chapter, iOS table cells, whole-project score (DONE)](#2026-11-26-hand-over-document-ios-chapter-ios-table-cells-whole-project-score-done) |
 
 <!-- docs-navigation:end -->
 
@@ -2504,3 +2505,9 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **EN:** write mainly the iOS chapter of the English hand-over document in `docs/todo/<year><month><week>/` (one file only; append if it exists); the file name tells the successor what to do next; record every open TODO, major defect and undecided question; an advisor scores progress and release readiness out of 100 with the missing points; a table of all open branches (link, progress percent, TODOs) and a table of all bugs (why not fixed, plan, idea, document links); push to this branch and send the owner the GitHub https link.
 - **Acceptance:** 100 = the one file has the iOS chapter, filled iOS cells, iOS bug rows, the full open-item annex, the single whole-project score, stale facts corrected, pushed, link sent. 60 = iOS chapter and score pushed.
 - **TODO:** (1) inventory. (2) advisor score. (3) append, push, DONE.
+
+## 2026-11-26 Hand-over document: iOS chapter, iOS table cells, whole-project score (DONE)
+
+- Appended to the single file `docs/todo/20261104/Handover-Merge-Open-PRs-Publish-Packages-Close-Port-Gaps.md` (week 04: `ceil(26 / 7)`): iOS priorities, iOS chapter 5.6, iOS cells of the branch table, iOS and further bug rows, Appendix A (other open TODOs), whole-project advisor score (progress 84, release readiness 50; estimates, not measurements), and two corrections (iOS engine pin is `b0887513`; the CI sentence about run 45566803410).
+- Evidence: relative links in the file resolve (checked by script), one file in the folder. Documents only, no build or test run for this change.
+- Limits: this Task-Log was swept by headings and keywords for the appendix, not read line by line; entries are marked "unverified" where nothing proves them.
