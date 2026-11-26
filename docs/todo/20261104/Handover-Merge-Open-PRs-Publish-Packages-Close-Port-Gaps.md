@@ -487,3 +487,21 @@ identified by topic; search the document for it (line numbers move).
   in dark mode (readable).
 - **Pending:** the Mac session is merging PR #35 into #31; after its push the Windows side builds and tests the three
   non-iOS commits it brings (`4aba938c` Android, `83eec946` mini program, `ac9f3e94` HarmonyOS).
+
+## Appendix C. Hand-over pickup (Mac, 2026-11-27)
+
+- **iOS priority 1 / section 5.6.2 done: PR #35 is merged into #31** (`43031e59`, pushed with `7d8d0dd4`). The engine pin
+  stays `b0887513` (`0d43bc9f` not taken). #35's Swift rename is applied to the code #31 added since the merge base; the
+  generated Objective-C selectors keep `cyl_` (`docs/Swift-Naming.md`, last section). `ruby Tests/run-tests.rb`: 403 tests,
+  0 failures (383 before). PR #35 can be closed as contained once CI is green (owner's call). Section 8 rows "PR #35
+  fixes missing", "Success still image is the info symbol", "31 upstream issues not investigated" and the Example-SwiftUI
+  iOS 27 row are now on #31 (the SwiftUI fix is unverified on iOS 27: its UI test was not run).
+- **iOS priority 4 / section 8 row "JavaScript sets `refreshing` true then false" done:** the React Native iOS wrapper
+  reports onRefresh / onLoadMore only while the control is in `CYLRefreshPhaseRefreshing` and JavaScript did not ask for
+  it; two failing-first tests.
+- **Non-iOS commits from #35 that the Windows session must verify on #31:** `4aba938c` (Android), `83eec946` (mini
+  program), `ac9f3e94` (HarmonyOS). Asked on 2026-11-27.
+- **Still open for iOS:** priority 2 (green macOS CI on the new head), priority 3 (run 45566803410: the local suite is
+  green at the new head, CI not yet), `Examples/Example-Scenarios/Podfile.lock` still at `ec710a4a` (Podfile
+  `b0887513`), the Example-SwiftUI UI test on iOS 27. Details: [`Task-Log.md`](../../Task-Log.md), entry "2026-11-27
+  Hand-over iOS priority 1 … (DONE)".

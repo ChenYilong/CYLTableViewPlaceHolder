@@ -132,6 +132,25 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         XCTAssertEqual(refreshEvents, 0)
     }
 
+    // [EN] JavaScript sets `refreshing` true, then false before the begin's block runs (it runs in the completion of the 0.25 s
+    //      inset animation, after the end): the late block must not report onRefresh, and a later pull by the user still does.
+    // [CN] JavaScript 先把 `refreshing` 设为 true，在开始的刷新块运行前又设为 false（刷新块在 0.25 秒 inset 动画完成时运行，晚于结束）：
+    //      迟到的刷新块不能回调 onRefresh，之后用户的下拉仍要回调。
+    func testRefreshingTrueThenFalseBeforeTheBlockRunsDoesNotCallOnRefresh() {
+        let (container, scrollView) = container()
+        var blockRuns = 0
+        countRuns(of: scrollView.cylHeader) { blockRuns += 1 }
+        container.refreshing = true
+        container.refreshing = false
+        waitUntil { blockRuns == 1 }
+        XCTAssertEqual(blockRuns, 1, "the block of the begin still runs")
+        XCTAssertEqual(refreshEvents, 0, "a refresh JavaScript began and ended does not call onRefresh back")
+        waitUntil { scrollView.cylHeader?.isRefreshing != true }
+        scrollView.cylHeader?.beginRefreshing()
+        waitUntil { refreshEvents == 1 }
+        XCTAssertEqual(refreshEvents, 1, "a pull by the user afterwards is still reported")
+    }
+
     func testRefreshingSetBeforeTheScrollViewArrivesStartsWhenItDoes() {
         let (container, scrollView) = container(attach: false)
         container.refreshing = true
@@ -166,6 +185,22 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         container.loadingMore = false
         waitUntil { scrollView.cylFooter?.isRefreshing != true }
         XCTAssertFalse(scrollView.cylFooter?.isRefreshing == true)
+    }
+
+    // [EN] The same for `loadingMore`: true then false before the footer's block runs. [CN] `loadingMore` 同理：在刷新尾的刷新块运行前先 true 后 false。
+    func testLoadingMoreTrueThenFalseBeforeTheBlockRunsDoesNotCallOnLoadMore() {
+        let (container, scrollView) = container()
+        container.loadMoreEnabled = true
+        var blockRuns = 0
+        countRuns(of: scrollView.cylFooter) { blockRuns += 1 }
+        container.loadingMore = true
+        container.loadingMore = false
+        waitUntil(timeout: 3) { blockRuns == 1 }
+        XCTAssertEqual(loadMoreEvents, 0, "a load JavaScript began and ended does not call onLoadMore back")
+        waitUntil { scrollView.cylFooter?.isRefreshing != true }
+        scrollView.cylFooter?.beginRefreshing()
+        waitUntil { loadMoreEvents == 1 }
+        XCTAssertEqual(loadMoreEvents, 1, "a load started by the user afterwards is still reported")
     }
 
     func testNoMoreDataShowsTheStateEndsALoadAndResets() {

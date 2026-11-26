@@ -8,7 +8,9 @@
 @implementation CYLRefreshContainerView {
     CYLRefreshHeader *_header;
     CYLRefreshFooter *_footer;
-    // The refresh JavaScript asked for runs its refreshing block too; that block must not call the event back.
+    // The refresh JavaScript asked for runs its refreshing block too; that block must not call the event back. The flag holds
+    // until JavaScript ends the refresh, and a block that runs after the end (true then false within the 0.25 s inset
+    // animation) is dropped because the control is no longer in CYLRefreshPhaseRefreshing (CYLRefreshShouldReport).
     BOOL _refreshAskedByJS;
     BOOL _loadAskedByJS;
     // The floor opened or closed because JavaScript set `secondaryOpen`: the matching event is not sent.
@@ -66,6 +68,15 @@ static BOOL CYLIsFloorView(UIView *view) {
 //      is reported once with a log line). Their refreshing blocks call the events back unless JavaScript asked for the refresh.
 // [CN] 所选样式的刷新头与刷新尾（CYLRefreshStyleFactory；未设置样式即经典样式且不报告，未知样式用一行日志报告一次）。
 //      除非是 JavaScript 要求的刷新，它们的刷新块会回调事件。
+// [EN] Whether a refreshing block reports its event: not for a refresh JavaScript asked for, and not for a block that runs after
+//      the refresh already ended (JavaScript set the value back within the begin's 0.25 s inset animation; the control is then
+//      idle or finishing, not refreshing).
+// [CN] 刷新块是否回调事件：JavaScript 要求的刷新不回调；刷新已结束后才运行的刷新块也不回调（JavaScript 在开始的 0.25 秒 inset 动画内
+//      把值改回，此时控件处于空闲或结束停留，而不是刷新中）。
+static BOOL CYLRefreshShouldReport(CYLRefreshComponent *component, BOOL askedByJS) {
+    return !askedByJS && component.phase == CYLRefreshPhaseRefreshing;
+}
+
 - (CYLRefreshHeader *)makeHeader {
     __weak __typeof(self) weakSelf = self;
     NSString *styleName = _headerStyle;
@@ -74,10 +85,11 @@ static BOOL CYLIsFloorView(UIView *view) {
         if (!styleName) return;
         NSLog(@"CYLRefreshContainer: headerStyle: %@, using classic", reason);
     }];
+    __weak CYLRefreshHeader *weakHeader = header;
     header.refreshingBlock = ^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
-        if (strongSelf->_refreshAskedByJS) { strongSelf->_refreshAskedByJS = NO; return; }
+        if (!CYLRefreshShouldReport(weakHeader, strongSelf->_refreshAskedByJS)) return;
         if (strongSelf.onRefresh) strongSelf.onRefresh(@{});
     };
     header.secondaryOpenedBlock = ^{
@@ -103,10 +115,11 @@ static BOOL CYLIsFloorView(UIView *view) {
         NSLog(@"CYLRefreshContainer: footerStyle: %@, using classic", reason);
     }];
     footer.loadsAfterNoMoreData = _loadsAfterNoMoreData;
+    __weak CYLRefreshFooter *weakFooter = footer;
     footer.refreshingBlock = ^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
-        if (strongSelf->_loadAskedByJS) { strongSelf->_loadAskedByJS = NO; return; }
+        if (!CYLRefreshShouldReport(weakFooter, strongSelf->_loadAskedByJS)) return;
         if (strongSelf.onLoadMore) strongSelf.onLoadMore(@{});
     };
     // [EN] The second floor is `CYLRefreshBackFooter`'s API: the drawn, state and normal back footers have it, the auto footer does not. The events
