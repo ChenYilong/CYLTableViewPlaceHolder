@@ -122,7 +122,7 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         var blockRuns = 0
         countRuns(of: scrollView.cylHeader) { blockRuns += 1 }
         container.refreshing = true
-        // The block runs once the inset animation completes; JavaScript must not be told, and the one-shot flag is used up by it.
+        // The block runs once the inset animation completes; JavaScript must not be told (the flag holds until JavaScript ends it).
         waitUntil { blockRuns == 1 }
         XCTAssertTrue(scrollView.cylHeader?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0, "a value JavaScript set does not call onRefresh back")
