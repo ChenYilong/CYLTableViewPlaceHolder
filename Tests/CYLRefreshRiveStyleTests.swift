@@ -247,15 +247,15 @@ final class CYLRefreshRiveStyleTests: XCTestCase {
         // [EN] The style arrives before its parameters (props are set in any order): classic first, then the Rive header. [CN] 样式先于参数到达（属性顺序不定）：先是经典，然后换成 Rive 刷新头。
         container.headerStyle = "rive"
         container.footerStyle = "rive"
-        XCTAssertFalse(scrollView.cyl_header is FakeRiveHeader)
+        XCTAssertFalse(scrollView.cylHeader is FakeRiveHeader)
         container.headerRive = bow
         container.footerRive = bow
-        XCTAssertTrue(scrollView.cyl_header is FakeRiveHeader)
-        XCTAssertTrue(scrollView.cyl_footer is FakeRiveFooter)
+        XCTAssertTrue(scrollView.cylHeader is FakeRiveHeader)
+        XCTAssertTrue(scrollView.cylFooter is FakeRiveFooter)
         // [EN] The parameters of a style that is not `rive` change nothing. [CN] 样式不是 `rive` 时，参数不起作用。
         container.headerStyle = "phoenix"
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshPhoenixHeader)
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshPhoenixHeader)
         container.headerRive = ["riveFile": "Other"]
-        XCTAssertTrue(scrollView.cyl_header is CYLRefreshPhoenixHeader)
+        XCTAssertTrue(scrollView.cylHeader is CYLRefreshPhoenixHeader)
     }
 }

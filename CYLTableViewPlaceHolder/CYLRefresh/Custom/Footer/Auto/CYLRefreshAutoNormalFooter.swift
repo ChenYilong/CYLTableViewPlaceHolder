@@ -25,7 +25,7 @@ open class CYLRefreshAutoNormalFooter: CYLRefreshAutoStateFooter {
     // [EN] Weak, as in Objective-C: the footer's subviews own the spinner. [CN] 弱引用，与 Objective-C 相同：菊花由刷新尾的子视图持有。
     private weak var storedLoadingView: UIActivityIndicatorView?
     private var storedNoMoreDataImage: UIImage?
-    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cyl_refreshDefault
+    private var storedIndicatorStyle: UIActivityIndicatorView.Style = .cylRefreshDefault
 
     /**
      * [EN] The spinner shown while loading, created on first access and hidden when stopped; style it here.
@@ -73,7 +73,7 @@ open class CYLRefreshAutoNormalFooter: CYLRefreshAutoStateFooter {
      */
     open override func prepare() {
         super.prepare()
-        storedIndicatorStyle = .cyl_refreshDefault
+        storedIndicatorStyle = .cylRefreshDefault
     }
 
     /**
@@ -86,11 +86,11 @@ open class CYLRefreshAutoNormalFooter: CYLRefreshAutoStateFooter {
         if !loadingView.constraints.isEmpty { return }
 
         // 圈圈
-        var loadingCenterX = cyl_w * 0.5
+        var loadingCenterX = cylW * 0.5
         if !isRefreshingTitleHidden {
-            loadingCenterX -= (stateLabel?.cyl_textWidth() ?? 0) * 0.5 + labelLeftInset
+            loadingCenterX -= (stateLabel?.cylTextWidth() ?? 0) * 0.5 + labelLeftInset
         }
-        let loadingCenterY = cyl_h * 0.5
+        let loadingCenterY = cylH * 0.5
         loadingView.center = CGPoint(x: loadingCenterX, y: loadingCenterY)
     }
 
@@ -120,10 +120,10 @@ open class CYLRefreshAutoNormalFooter: CYLRefreshAutoStateFooter {
     // [EN] Shows noMoreDataImage beside the text only in the no-more-data state (one implementation in CYLRefreshFooter).
     // [CN] 仅在无更多数据状态时，在文字旁显示 noMoreDataImage（CYLRefreshFooter 中的统一实现）。
     private func updateNoMoreDataImage() {
-        cyl_updateNoMoreDataImage(noMoreDataImage)
+        updateNoMoreDataImage(noMoreDataImage)
     }
 
     private func placeNoMoreDataImage() {
-        cyl_placeNoMoreDataImage(besideLabel: stateLabel, inset: labelLeftInset, size: .zero)
+        placeNoMoreDataImage(besideLabel: stateLabel, inset: labelLeftInset, size: .zero)
     }
 }

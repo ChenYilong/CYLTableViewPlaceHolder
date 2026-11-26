@@ -103,13 +103,13 @@ pod 'CYLTableViewPlaceHolder', '~> 1.1.0'
 
 | 中文 | English |
 | --- | --- |
-| 核心用 Swift 编写，下面的示例都是 Swift，来自或对照 `Examples/Example-Scenarios/Sources` 与 `Tests/`；Objective-C 调用方仍然可用（接口是 `@objc`），写法对照见 [Swift-Guide.md](docs/Swift-Guide.md)。注意：Objective-C 不能再继承 CYLRefresh 控件、`CYLPlaceholderView` 和 `CYLPlaceholderStackView`（破坏性变更，见 [Swift-Migration.md](docs/Swift-Migration.md) 与 [CHANGELOG.md](CHANGELOG.md)）。 | The core is written in Swift, and the samples below are Swift, taken from or checked against `Examples/Example-Scenarios/Sources` and `Tests/`; Objective-C callers still work (the API is `@objc`), and the spelling table is in [Swift-Guide.md](docs/Swift-Guide.md). Note: Objective-C can no longer subclass the CYLRefresh controls, `CYLPlaceholderView` and `CYLPlaceholderStackView` (a breaking change, see [Swift-Migration.md](docs/Swift-Migration.md) and [CHANGELOG.md](CHANGELOG.md)). |
+| 核心用 Swift 编写，下面的示例都是 Swift，来自或对照 `Examples/Example-Scenarios/Sources` 与 `Tests/`；Objective-C 调用方仍然可用（接口是 `@objc`），写法对照见 [Swift-Guide.md](docs/Swift-Guide.md)；Swift 命名规则（自有类型成员无前缀，系统类型扩展成员为 `cylHeader` 这类写法，Objective-C 选择子不变）见 [Swift-Naming.md](docs/Swift-Naming.md)。注意：Objective-C 不能再继承 CYLRefresh 控件、`CYLPlaceholderView` 和 `CYLPlaceholderStackView`（破坏性变更，见 [Swift-Migration.md](docs/Swift-Migration.md) 与 [CHANGELOG.md](CHANGELOG.md)）。 | The core is written in Swift, and the samples below are Swift, taken from or checked against `Examples/Example-Scenarios/Sources` and `Tests/`; Objective-C callers still work (the API is `@objc`), and the spelling table is in [Swift-Guide.md](docs/Swift-Guide.md); the Swift naming rule (no prefix on members of the library's own types, `cylHeader`-style names on system-type extensions, Objective-C selectors unchanged) is in [Swift-Naming.md](docs/Swift-Naming.md). Note: Objective-C can no longer subclass the CYLRefresh controls, `CYLPlaceholderView` and `CYLPlaceholderStackView` (a breaking change, see [Swift-Migration.md](docs/Swift-Migration.md) and [CHANGELOG.md](CHANGELOG.md)). |
 | **占位视图**：列表为空时显示返回的视图，有数据时调用恢复闭包。`UITableView` 与 `UICollectionView` 通用；闭包若引用控制器请用弱引用。 | **Placeholder view**: the returned view shows while the list is empty, and the restore closure runs when there is data. It works for `UITableView` and `UICollectionView`; use a weak reference if the closure references the controller. |
 
 ```swift
 import CYLTableViewPlaceHolder
 
-tableView.cyl_placeholderViewBlock({ tableView in
+tableView.cylPlaceholderViewBlock({ tableView in
     tableView.isScrollEnabled = false
     // [CN] 也可返回自定义视图
     // [EN] You can also return a custom view
@@ -120,7 +120,7 @@ tableView.cyl_placeholderViewBlock({ tableView in
 
 // [CN] 取消自动占位；若占位视图正在显示，会调用恢复闭包。
 // [EN] Cancel the automatic placeholder; if one is showing, the restore closure is called.
-tableView.cyl_placeholderViewBlock(nil)
+tableView.cylPlaceholderViewBlock(nil)
 ```
 
 | 中文 | English |
@@ -145,7 +145,7 @@ let placeholder = CYLPlaceholderStackView(scenario: .retryOrContactSupport, acti
         self?.navigationController?.pushViewController(SupportViewController(), animated: true)
     },
 ])
-tableView.cyl_placeholderViewBlock({ _ in placeholder })
+tableView.cylPlaceholderViewBlock({ _ in placeholder })
 ```
 
 | 中文 | English |
@@ -161,7 +161,7 @@ class ViewController: UIViewController, CYLTableViewPlaceHolderDelegate {
     }
 
     func reload() {
-        tableView.cyl_reloadData()
+        tableView.cylReloadData()
     }
 }
 ```
@@ -171,12 +171,12 @@ class ViewController: UIViewController, CYLTableViewPlaceHolderDelegate {
 | **刷新**：内置 `CYLRefresh`，类名前缀 `CYL`，分类属性前缀 `cyl_`。所有样式见下文“[内置刷新组件](#内置刷新组件--built-in-refresh-components)”。 | **Refresh**: the built-in `CYLRefresh`, with the class prefix `CYL` and the category property prefix `cyl_`. All styles are listed under "[Built-in refresh components](#内置刷新组件--built-in-refresh-components)" below. |
 
 ```swift
-tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
     // [CN] 加载数据，完成后调用 endRefreshing
     // [EN] Load the data, then call endRefreshing when done
     self?.loadNewData()
 }
-tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+tableView.cylFooter = CYLRefreshAutoNormalFooter { [weak self] in
     // [CN] 加载更多数据，完成后调用 endRefreshing
     // [EN] Load more data, then call endRefreshing when done
     self?.loadMoreData()
@@ -197,10 +197,10 @@ CYLPlaceholderHUD.dismiss()  // [CN] 或 / [EN] or CYLPlaceholderHUD.showError(s
 
 // [CN] 状态红条：断网时自动显示在视图控制器的 view 顶端（导航栏下方）
 // [EN] The status bar: shown automatically at the top of the view controller's view (below the navigation bar) while offline
-cyl_showsStatusViewWhenOffline = true
+cylShowsStatusViewWhenOffline = true
 // [CN] 选择同时显示、只显示红条或只显示占位图
 // [EN] Choose both, only the bar or only the placeholder
-cyl_setStatusDisplay(.all, animated: true)
+cylSetStatusDisplay(.all, animated: true)
 ```
 
 ![HUD 的 10 种状态：方框是一个 CYLPlaceholderView / The 10 HUD states: the box is one CYLPlaceholderView](assets/cyl-placeholder-hud-states.png)

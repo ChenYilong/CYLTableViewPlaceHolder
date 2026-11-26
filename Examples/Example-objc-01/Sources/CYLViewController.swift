@@ -14,7 +14,7 @@ class CYLViewController: UIViewController {
         self?.title = "Refreshing"
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             guard let self = self else { return }
-            self.collectionView.cyl_header?.endRefreshing()
+            self.collectionView.cylHeader?.endRefreshing()
             self.collectionView.reloadData()
             self.title = "Finished"
         }
@@ -41,7 +41,7 @@ class CYLViewController: UIViewController {
         collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
-        collectionView.cyl_header = refreshHeader
+        collectionView.cylHeader = refreshHeader
     }
 
     override func viewWillAppear(_ animated: Bool) {

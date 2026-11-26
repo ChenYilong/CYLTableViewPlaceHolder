@@ -7,13 +7,13 @@
 //       a report before the finish is ignored, the first one during the finish ends the hold early and only once, the end of the
 //       hold disarms the gate, and a hold that ended early (or by its timer) never ends the next refresh, whose own finish arms
 //       the gate again. RiveRuntime is not part of this test target, so a drawn header wired to the gate exactly as the Rive
-//       header is (armed in `onStatus(.finishing)`, disarmed in `.idle`, the report calls `cyl_finishAnimationDidEnd()`) stands in
+//       header is (armed in `onStatus(.finishing)`, disarmed in `.idle`, the report calls `finishAnimationDidEnd()`) stands in
 //       for it. Not covered here: Rive's own callback (`CYLRiveStopReportingViewModel.player(pausedWithModel:)` /
 //       `player(stoppedWithModel:)`) reaching `onStop`, which needs RiveRuntime.
 //  [CN] Rive 的暂停 / 停止报告与结束停留之间的开关（`CYLRefreshRiveFinishLatch`，由 `CYLRefreshRiveHeader` 使用）：结束之前的报告被忽略，
 //       结束期间的第一个报告让停留提前结束且只有一次，停留结束时开关关闭，提前结束（或由定时器结束）的停留不会结束下一次刷新，
 //       下一次刷新的结束会重新启动开关。测试目标不含 RiveRuntime，所以用与 Rive 刷新头接线方式相同的绘制刷新头代替
-//       （`onStatus(.finishing)` 启动、`.idle` 关闭，报告调用 `cyl_finishAnimationDidEnd()`）。这里没有覆盖：Rive 自己的回调
+//       （`onStatus(.finishing)` 启动、`.idle` 关闭，报告调用 `finishAnimationDidEnd()`）。这里没有覆盖：Rive 自己的回调
 //       （`CYLRiveStopReportingViewModel.player(pausedWithModel:)` / `player(stoppedWithModel:)`）到达 `onStop`，那需要 RiveRuntime。
 //
 
@@ -42,7 +42,7 @@ final class LatchedFinishingHeader: CYLRefreshDrawnHeader {
     /// What `CYLRiveStopReportingViewModel.onStop` triggers. [CN] `CYLRiveStopReportingViewModel.onStop` 触发的内容。
     func riveStopped() {
         guard latch.consumeStop() else { return }
-        cyl_finishAnimationDidEnd()
+        finishAnimationDidEnd()
     }
 
     var isArmed: Bool { latch.isArmed }

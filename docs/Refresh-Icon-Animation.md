@@ -43,11 +43,11 @@
 let header = CYLRefreshAnimationHeader { [weak self] in self?.reload() }
 header.setIconAnimation(bundled: "CYLPlaceholderRefresh.json", size: CGSize(width: 28, height: 28), for: .idle)
 header.setIconAnimation(bundled: "CYLPlaceholderProgress.pag", size: CGSize(width: 32, height: 32), for: .refreshing)
-tableView.cyl_header = header
+tableView.cylHeader = header
 
 let footer = CYLRefreshAutoAnimationFooter { [weak self] in self?.loadMore() }
 footer.setIconAnimation(filePath: gifPath, size: CGSize(width: 32, height: 32), for: .refreshing)
-tableView.cyl_footer = footer
+tableView.cylFooter = footer
 ```
 
 ## 播放策略 / Playback policy

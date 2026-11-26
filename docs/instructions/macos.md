@@ -71,11 +71,16 @@ iOS examples are written in Swift; the library stays Objective-C. The core adapt
    notification names drop the `Notification` suffix, and factory methods become initializers
    or `static` members. Example from that guide: `-cyl_showBadgeValue:animationType:` is
    called as `cyl_showBadgeValue(_:animationType:)`.
-3. **`cyl_` members stay `cyl_` in Swift.** Category methods and properties keep the prefix
-   (`scrollView.cyl_header`, `scrollView.cyl_footer`, `beginRefreshing()`), and so do
-   Swift extensions of system types written in this repository (`Color(cyl_hexString:)`).
-   Look up how CYLTabBarController adapted the equivalent method before inventing a
-   spelling, and record the result in `docs/Swift-Guide.md`.
+3. **Swift names follow the static analysis (SonarCloud swift:S100/S115/S116, 2026-11-22, user's decision).** See
+   [`docs/Swift-Naming.md`](../Swift-Naming.md). Members of the library's own types have no prefix
+   (`header.link(to:)`, `control.setStateTitle(_:for:)`): the type is the namespace. Members of extensions on
+   system types keep the prefix without the underscore (`scrollView.cylHeader`, `tableView.cylReloadData()`,
+   `Color(cylHexString:)`), because same-named extension members of two modules are ambiguous in Swift and collide
+   silently as Objective-C categories. The Objective-C selector never changes: write `@objc(cyl_header)` explicitly, and
+   keep an explicit `@objc(cyl_…)` on Objective-C-visible members of UIKit subclasses even when the Swift name lost the
+   prefix. `CYL` type names stay. File-private Swift constants are lowerCamel (`scenarioIconSide`); constants
+   Objective-C reads stay `CYL` in the `.h` / `.m`. Prove a rename with a before/after diff of the generated
+   `CYLTableViewPlaceHolder-Swift.h` (identical except for intended changes).
 4. **Underscores in protocol methods.** Swift method names should not contain underscores.
    For a method that has already shipped, never rename it and never add `NS_SWIFT_NAME` to
    it, which would change an existing Swift API. Add a second method whose name is the same
@@ -164,7 +169,8 @@ cross-platform rule in [testing.md, "Emulator run rules"](testing.md#emulator-ru
 
 - iOS examples are written in Swift (the library stays Objective-C). When a Swift call
   reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
-  declarations, `cyl_` members keep their prefix, and underscored protocol methods get an
+  declarations, Swift names follow SonarCloud S100/S115/S116 (`docs/Swift-Naming.md`: own-type members
+  without a prefix, system-type extension members `cylName` with `@objc(cyl_name)`), and underscored protocol methods get an
   underscore-free sibling instead of a rename. Follow CYLTabBarController's
   `docs/Swift-Guide.md` and record verified spellings in `docs/Swift-Guide.md`. See
   "Swift examples and a Swift-friendly core" in `instructions.md`.

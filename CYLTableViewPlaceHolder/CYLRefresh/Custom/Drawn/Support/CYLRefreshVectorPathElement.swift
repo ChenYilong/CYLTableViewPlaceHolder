@@ -51,19 +51,19 @@ open class CYLRefreshVectorPathElement: CYLRefreshVectorElement {
         let knownCommands = CharacterSet(charactersIn: "MmLlCcVvHhAaSsQqTtZz")
         var foundCmd: Bool
         repeat {
-            var command = dataScanner.cyl_scanCharacters(from: knownCommands)
+            var command = dataScanner.cylScanCharacters(from: knownCommands)
             foundCmd = command != nil
             if let scanned = command, (scanned as NSString).length > 1 {
                 // Take only one char (it can happen that multiple commands are consecutive, as "ZM" - so we only want to get the "Z")
                 let tooManyChars = (scanned as NSString).length - 1
                 command = (scanned as NSString).substring(to: 1)
-                dataScanner.cyl_moveBack(tooManyChars)
+                dataScanner.cylMoveBack(tooManyChars)
             }
             if let command = command {
                 if command == "z" || command == "Z" {
                     lastCurve = CYLRefreshVectorPathsParser.readCloseCommand(Scanner(string: command), path: path,
                                                                             relativeTo: lastCurve.p)
-                } else if let cmdArgs = dataScanner.cyl_scanUpToCharacters(from: knownCommands) {
+                } else if let cmdArgs = dataScanner.cylScanUpToCharacters(from: knownCommands) {
                     let cmdScanner = Scanner(string: command + cmdArgs)
                     let parser = CYLRefreshVectorPathsParser.self
                     switch command {

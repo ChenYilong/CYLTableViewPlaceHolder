@@ -39,7 +39,7 @@ extension Scanner {
                                                          AutoreleasingUnsafeMutablePointer<NSString?>?) -> ObjCBool
     private typealias CYLScanDoubleIMP = @convention(c) (Scanner, Selector, UnsafeMutablePointer<Double>?) -> ObjCBool
 
-    private func cyl_scan(_ name: String, set: CharacterSet) -> String? {
+    private func cylScan(_ name: String, set: CharacterSet) -> String? {
         let selector = NSSelectorFromString(name)
         let function = unsafeBitCast(method(for: selector), to: CYLScanSetIMP.self)
         var result: NSString?
@@ -47,25 +47,25 @@ extension Scanner {
     }
 
     // [EN] `-scanCharactersFromSet:intoString:`. [CN] `-scanCharactersFromSet:intoString:`。
-    func cyl_scanCharacters(from set: CharacterSet) -> String? {
-        cyl_scan("scanCharactersFromSet:intoString:", set: set)
+    func cylScanCharacters(from set: CharacterSet) -> String? {
+        cylScan("scanCharactersFromSet:intoString:", set: set)
     }
 
     // [EN] `-scanUpToCharactersFromSet:intoString:`. [CN] `-scanUpToCharactersFromSet:intoString:`。
-    func cyl_scanUpToCharacters(from set: CharacterSet) -> String? {
-        cyl_scan("scanUpToCharactersFromSet:intoString:", set: set)
+    func cylScanUpToCharacters(from set: CharacterSet) -> String? {
+        cylScan("scanUpToCharactersFromSet:intoString:", set: set)
     }
 
     // [EN] `-scanString:intoString:` without the result. [CN] 不取结果的 `-scanString:intoString:`。
     @discardableResult
-    func cyl_scanString(_ string: String) -> Bool {
+    func cylScanString(_ string: String) -> Bool {
         let selector = NSSelectorFromString("scanString:intoString:")
         let function = unsafeBitCast(method(for: selector), to: CYLScanStringIMP.self)
         return function(self, selector, string as NSString, nil).boolValue
     }
 
     // [EN] `-scanDouble:` (CGFloat is double on every supported device). [CN] `-scanDouble:`（所有支持的设备上 CGFloat 都是 double）。
-    func cyl_scanDouble() -> Double? {
+    func cylScanDouble() -> Double? {
         let selector = NSSelectorFromString("scanDouble:")
         let function = unsafeBitCast(method(for: selector), to: CYLScanDoubleIMP.self)
         var value: Double = 0
@@ -73,7 +73,7 @@ extension Scanner {
     }
 
     // [EN] `scanLocation -= count`, through key-value coding. [CN] 通过键值编码执行 `scanLocation -= count`。
-    func cyl_moveBack(_ count: Int) {
+    func cylMoveBack(_ count: Int) {
         if let location = value(forKey: "scanLocation") as? Int {
             setValue(location - count, forKey: "scanLocation")
         }
@@ -124,13 +124,13 @@ enum CYLRefreshVectorPathsParser {
         // [EN] The original drains an autorelease pool here: Apple's scanCharactersFromSet makes many temporary objects.
         // [CN] 原实现在这里使用自动释放池：Apple 的 scanCharactersFromSet 会产生大量临时对象。
         autoreleasepool {
-            _ = scanner.cyl_scanCharacters(from: whitespace)
+            _ = scanner.cylScanCharacters(from: whitespace)
         }
     }
 
     static func readCommaAndWhitespace(_ scanner: Scanner) {
         readWhitespace(scanner)
-        scanner.cyl_scanString(",")
+        scanner.cylScanString(",")
         readWhitespace(scanner)
     }
 
@@ -159,7 +159,7 @@ enum CYLRefreshVectorPathsParser {
     // moveto: ( "M" | "m" ) wsp* moveto-argument-sequence
     static func readMoveto(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                            isRelative: Bool) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Mm")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Mm")) != nil else {
             assertionFailure("failed to scan move to command")
             return .point(origin)
         }
@@ -191,7 +191,7 @@ enum CYLRefreshVectorPathsParser {
     }
 
     static func readCoordinate(_ scanner: Scanner) -> CGFloat {
-        guard let value = scanner.cyl_scanDouble() else {
+        guard let value = scanner.cylScanDouble() else {
             assertionFailure("invalid coord")
             return 0
         }
@@ -201,7 +201,7 @@ enum CYLRefreshVectorPathsParser {
     // lineto: ( "L" | "l" ) wsp* lineto-argument-sequence
     static func readLineToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                               isRelative: Bool) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Ll")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Ll")) != nil else {
             assertionFailure("failed to scan line to command")
             return .point(origin)
         }
@@ -230,7 +230,7 @@ enum CYLRefreshVectorPathsParser {
     // quadratic-bezier-curveto: ( "Q" | "q" ) wsp* quadratic-bezier-curveto-argument-sequence
     static func readQuadraticCurveToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                                         isRelative: Bool) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Qq")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Qq")) != nil else {
             assertionFailure("failed to scan quadratic curve to command")
             return .point(origin)
         }
@@ -267,7 +267,7 @@ enum CYLRefreshVectorPathsParser {
     // smooth-quadratic-bezier-curveto: ( "T" | "t" ) wsp* smooth-quadratic-bezier-curveto-argument-sequence
     static func readSmoothQuadraticCurveToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                                               withPrevCurve prevCurve: CYLRefreshCurve) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Tt")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Tt")) != nil else {
             assertionFailure("failed to scan smooth quadratic curve to command")
             return prevCurve
         }
@@ -304,7 +304,7 @@ enum CYLRefreshVectorPathsParser {
     // curveto: ( "C" | "c" ) wsp* curveto-argument-sequence
     static func readCurveToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                                isRelative: Bool) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Cc")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Cc")) != nil else {
             assertionFailure("failed to scan curve to command")
             return .point(origin)
         }
@@ -344,7 +344,7 @@ enum CYLRefreshVectorPathsParser {
     // smooth-curveto: ( "S" | "s" ) wsp* smooth-curveto-argument-sequence
     static func readSmoothCurveToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                                      withPrevCurve prevCurve: CYLRefreshCurve, isRelative: Bool) -> CYLRefreshCurve {
-        let ok = scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Ss")) != nil
+        let ok = scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Ss")) != nil
         assert(ok, "failed to scan smooth curve to command")
         if !ok { return prevCurve }
         readWhitespace(scanner)
@@ -395,7 +395,7 @@ enum CYLRefreshVectorPathsParser {
 
     // vertical-lineto: ( "V" | "v" ) wsp* vertical-lineto-argument-sequence
     static func readVerticalLineToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint) -> CYLRefreshCurve {
-        let ok = scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Vv")) != nil
+        let ok = scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Vv")) != nil
         assert(ok, "failed to scan vertical line to command")
         if !ok { return .point(origin) }
         readWhitespace(scanner)
@@ -415,7 +415,7 @@ enum CYLRefreshVectorPathsParser {
 
     // horizontal-lineto: ( "H" | "h" ) wsp* horizontal-lineto-argument-sequence
     static func readHorizontalLineToCmd(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Hh")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Hh")) != nil else {
             assertionFailure("failed to scan horizontal line to command")
             return .point(origin)
         }
@@ -424,7 +424,7 @@ enum CYLRefreshVectorPathsParser {
     }
 
     static func readCloseCommand(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint) -> CYLRefreshCurve {
-        guard scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Zz")) != nil else {
+        guard scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Zz")) != nil else {
             assertionFailure("failed to scan close command")
             return .point(origin)
         }
@@ -434,7 +434,7 @@ enum CYLRefreshVectorPathsParser {
 
     static func readEllipticalArcArguments(_ scanner: Scanner, path: CGMutablePath, relativeTo origin: CGPoint,
                                            isRelative: Bool) -> CYLRefreshCurve {
-        let ok = scanner.cyl_scanCharacters(from: CharacterSet(charactersIn: "Aa")) != nil
+        let ok = scanner.cylScanCharacters(from: CharacterSet(charactersIn: "Aa")) != nil
         assert(ok, "failed to scan arc to command")
         if !ok { return .point(origin) }
         var endPoint = readEllipticalArcArgumentsSequence(scanner, path: path, relativeTo: origin)

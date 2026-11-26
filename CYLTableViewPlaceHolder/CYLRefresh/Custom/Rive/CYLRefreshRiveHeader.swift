@@ -388,7 +388,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
     // [CN] 结束触发器之后状态机已稳定或动画已停止：结束部分已播放完，立即收回。
     private func finishAnimationStopped() {
         guard finishLatch.consumeStop() else { return }
-        cyl_finishAnimationDidEnd()
+        finishAnimationDidEnd()
     }
 
     // [EN] After a refresh the header retracts while it is still on screen. Going back to the file's first state at once (`reset()`, the pull

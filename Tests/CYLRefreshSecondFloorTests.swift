@@ -232,7 +232,7 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
         let (container, scrollView, floor) = container()
         container.secondaryTriggerOffset = 140
         container.secondaryDimension = 260
-        let header = scrollView.cyl_header as? CYLRefreshHeader
+        let header = scrollView.cylHeader as? CYLRefreshHeader
         XCTAssertTrue(container.scrollView === scrollView, "the floor's child is not taken for the scroll view")
         XCTAssertTrue(header?.secondaryView === floor)
         XCTAssertEqual(header?.secondaryTriggerOffset ?? 0, 140, accuracy: 0.01)
@@ -246,7 +246,7 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
 
     func testSecondaryOpenSetFromJavaScriptOpensAndClosesWithoutCallingTheEventsBack() {
         let (container, scrollView, _) = container()
-        let header = scrollView.cyl_header as? CYLRefreshHeader
+        let header = scrollView.cylHeader as? CYLRefreshHeader
         header?.secondaryAnimationDuration = 0.05
         container.secondaryTriggerOffset = 140
         container.secondaryOpen = true
@@ -292,7 +292,7 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
         header.secondaryCloseTriggerOffset = 80
         var closed = 0
         header.secondaryClosedBlock = { closed += 1 }
-        scrollView.cyl_header = header
+        scrollView.cylHeader = header
         scrollView.layoutIfNeeded()
         header.openSecondary()
         waitUntil { header.isSecondaryOpen && abs(scrollView.contentOffset.y + 300) < 1 }
@@ -311,7 +311,7 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
 
     func testAFloorOpenedByTheHeaderItselfSendsOnSecondaryOpenOnceAndOnSecondaryCloseOnce() {
         let (container, scrollView, _) = container()
-        let header = scrollView.cyl_header as? CYLRefreshHeader
+        let header = scrollView.cylHeader as? CYLRefreshHeader
         header?.secondaryAnimationDuration = 0.05
         container.secondaryTriggerOffset = 140
         header?.openSecondary()
@@ -335,7 +335,7 @@ final class CYLRefreshSecondFloorTests: XCTestCase {
         container.addSubview(scrollView)
         container.layoutIfNeeded()
         spin(0.1)
-        XCTAssertTrue((scrollView.cyl_header as? CYLRefreshHeader)?.isSecondaryOpen == true)
+        XCTAssertTrue((scrollView.cylHeader as? CYLRefreshHeader)?.isSecondaryOpen == true)
         XCTAssertEqual(secondaryOpenEvents, 0)
     }
 }

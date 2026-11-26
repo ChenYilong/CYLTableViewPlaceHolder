@@ -39,12 +39,12 @@ import CYLTabBarController
 // MARK: - Helpers
 
 // [EN] The gap between the icon and the title of a horizontal item. [CN] 横向排列时图标与标题的间距。
-private let CYLPlaceholderHorizontalSpacing: CGFloat = 5
-private let CYLPlaceholderAnimationsDirectory = "Animations"
+private let placeholderHorizontalSpacing: CGFloat = 5
+private let placeholderAnimationsDirectory = "Animations"
 // [EN] The appearance layers' keys. [CN] 外观层级的 key。
-private let CYLPlaceholderAppearanceKeys = ["titleColor", "iconColor", "backgroundColor", "titleFont"]
+private let placeholderAppearanceKeys = ["titleColor", "iconColor", "backgroundColor", "titleFont"]
 // [EN] Marks a value the caller changed while selected. [CN] 标记选中期间被调用方修改的值。
-private let CYLPlaceholderCustomizedMarker: NSString = "CYLPlaceholderCustomized"
+private let placeholderCustomizedMarker: NSString = "CYLPlaceholderCustomized"
 
 // [EN] The animation type keys, by value: the same strings as the exported `CYLPlaceholderItem<Type>…` constants, which
 //      carry a deprecation warning when their engine is not in the build (meant for apps, not for this file).
@@ -350,7 +350,7 @@ final class CYLPlaceholderItemImageView: UIImageView {
         set {
             super.image = newValue
             let owner = superview
-            (owner as? CYLPlaceholderView)?.cyl_imageViewDidSetImage(newValue)
+            (owner as? CYLPlaceholderView)?.imageViewDidSetImage(newValue)
             owner?.setNeedsLayout()
         }
     }
@@ -586,7 +586,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc open dynamic var badgeValue: String? {
         get { storedBadgeValue }
-        set { cyl_setBadgeValue(newValue) }
+        set { setBadgeValue(newValue) }
     }
 
     /**
@@ -608,14 +608,14 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * Drawn behind the selected item. Resizable images fill the item; others are centered.
      */
     @objc open dynamic var selectionIndicatorImage: UIImage? {
-        didSet { cyl_updateSelectionIndicator() }
+        didSet { updateSelectionIndicator() }
     }
 
     /**
      * The tint of `selectionIndicatorImage`.
      */
     @objc open dynamic var selectionIndicatorTintColor: UIColor? {
-        didSet { cyl_updateSelectionIndicator() }
+        didSet { updateSelectionIndicator() }
     }
 
     /**
@@ -625,28 +625,28 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * the icon follows `tintColor`. Default title color for the normal state.
      */
     @objc open dynamic var defaultTitleColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default icon color for the normal state.
      */
     @objc open dynamic var defaultIconColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default background color for the normal state.
      */
     @objc open dynamic var defaultBackgroundColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default title font for the normal state.
      */
     @objc open dynamic var defaultTitleFont: UIFont? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
@@ -668,42 +668,42 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * Default title color for the selected state. Can be customized via UIAppearance proxy.
      */
     @objc open dynamic var defaultSelectedTitleColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default icon color for the selected state.
      */
     @objc open dynamic var defaultSelectedIconColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default background color for the selected state.
      */
     @objc open dynamic var defaultSelectedBackgroundColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default title font for the selected state.
      */
     @objc open dynamic var defaultSelectedTitleFont: UIFont? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default selection indicator image.
      */
     @objc open dynamic var defaultSelectionIndicatorImage: UIImage? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
      * Default selection indicator tint color.
      */
     @objc open dynamic var defaultSelectionIndicatorTintColor: UIColor? {
-        didSet { cyl_applyAppearance() }
+        didSet { applyAppearance() }
     }
 
     /**
@@ -772,7 +772,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * Called on the main thread.
      */
     @objc open var tapHandler: ((CYLPlaceholderView) -> Void)? {
-        didSet { cyl_updateTapAccessibility() }
+        didSet { updateTapAccessibility() }
     }
 
     /**
@@ -783,8 +783,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         @objc(isTapInteractionEnabled) get { storedTapInteractionEnabled }
         set {
             storedTapInteractionEnabled = newValue
-            if !newValue { cyl_setTapHighlighted(false) }
-            cyl_updateTapAccessibility()
+            if !newValue { setTapHighlighted(false) }
+            updateTapAccessibility()
         }
     }
 
@@ -824,7 +824,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             if newValue < 0 || storedAnimationRepeatCount == newValue { return }
             storedAnimationRepeatCount = newValue
             super.animationLoops = newValue == 0
-            cyl_updateAnimationPlayback()
+            updateAnimationPlayback()
         }
     }
 
@@ -840,7 +840,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             // [EN] Only a change of kind (loop or not) writes the count; a count N > 1 stays. [CN] 只有类型变化（循环与否）才写入次数；N > 1 保持不变。
             if (storedAnimationRepeatCount == 0) != newValue {
                 storedAnimationRepeatCount = newValue ? 0 : 1
-                cyl_updateAnimationPlayback()
+                updateAnimationPlayback()
             }
         }
     }
@@ -932,7 +932,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     private var appliedBadgeAccessibilityValue: String?
     // [EN] Read by the tests through KVC. [CN] 测试通过 KVC 读取。
     @objc private(set) var selectionIndicatorView: UIImageView?
-    // Appearance layers (see cyl_applyAppearance()), keyed by titleColor / iconColor / backgroundColor / titleFont.
+    // Appearance layers (see applyAppearance()), keyed by titleColor / iconColor / backgroundColor / titleFont.
     // nil until the view is set up, so a call during the base class's initializer does nothing.
     private var appearanceBaselineValues = [String: Any]()
     private var appearanceExplicitValues = [String: Any]()
@@ -947,7 +947,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        cyl_placeholderSetUp()
+        placeholderSetUp()
     }
 
     /**
@@ -958,7 +958,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        cyl_placeholderSetUp()
+        placeholderSetUp()
     }
 
     /**
@@ -1235,7 +1235,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         axis = horizontal ? .horizontal : .vertical
         if horizontal { textLabel.textAlignment = .natural }
         if let color = colors[CYLPlaceholderItemTitleColor] { textLabel.textColor = color }
-        if let color = colors[CYLPlaceholderItemIconColor] { cyl_setIconColor(color) }
+        if let color = colors[CYLPlaceholderItemIconColor] { setIconColor(color) }
         if let color = colors[CYLPlaceholderItemBackgroundColor] { backgroundColor = color }
         if let font = font { textLabel.font = font }
         let explicitValues: [String: Any?] = [
@@ -1267,8 +1267,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         // when the placeholder itself is an accessibility element
         imageView.isAccessibilityElement = false
         textLabel.isAccessibilityElement = false
-        cyl_configureAnimations()
-        NotificationCenter.default.addObserver(self, selector: #selector(cyl_reduceMotionChanged(_:)),
+        configureAnimations()
+        NotificationCenter.default.addObserver(self, selector: #selector(reduceMotionChanged(_:)),
                                                name: UIAccessibility.reduceMotionStatusDidChangeNotification, object: nil)
         setNeedsLayout()
     }
@@ -1279,25 +1279,25 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         NotificationCenter.default.removeObserver(self)
     }
 
-    private func cyl_placeholderSetUp() {
-        // [EN] The icon follows `tintColor` until a color is set (see `cyl_setIconColor`). [CN] 设置颜色之前图标跟随 `tintColor`（见 `cyl_setIconColor`）。
-        cyl_setIconColor(nil)
+    private func placeholderSetUp() {
+        // [EN] The icon follows `tintColor` until a color is set (see `setIconColor`). [CN] 设置颜色之前图标跟随 `tintColor`（见 `setIconColor`）。
+        setIconColor(nil)
         // [EN] See CYLPlaceholderItemImageView: relayout and the static image follow values set on the subviews.
         // [CN] 见 CYLPlaceholderItemImageView：子视图上设置的值会触发重新布局并同步静态图片。
         if object_getClass(imageView) == UIImageView.self { object_setClass(imageView, CYLPlaceholderItemImageView.self) }
         if object_getClass(titleLabel) == UILabel.self { object_setClass(titleLabel, CYLPlaceholderItemLabel.self) }
         // [EN] The base class makes every item a button for VoiceOver with the identifier "CYLAnimatedItemView" and its
         //      label hidden. A placeholder is not an element by default, its label reads on its own, and a tap event
-        //      makes it a button (cyl_updateTapAccessibility), as before.
+        //      makes it a button (updateTapAccessibility), as before.
         // [CN] 基类把每个条目都设为带 "CYLAnimatedItemView" 标识的 VoiceOver 按钮并隐藏标签。占位图默认不是无障碍元素，标签单独朗读，设置点击事件后
-        //      才是按钮（cyl_updateTapAccessibility），与以前相同。
+        //      才是按钮（updateTapAccessibility），与以前相同。
         isAccessibilityElement = false
         accessibilityTraits = .none
         accessibilityIdentifier = nil
         imageView.accessibilityElementsHidden = false
         titleLabel.isAccessibilityElement = true
         axis = .vertical
-        addTarget(self, action: #selector(cyl_handleTouchUpInside), for: .touchUpInside)
+        addTarget(self, action: #selector(handleTouchUpInside), for: .touchUpInside)
         imageView.clipsToBounds = false
         imageView.contentMode = .scaleAspectFit
         imageView.image = CYLPlaceholderView.image(for: .empty)
@@ -1312,9 +1312,9 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         label.adjustsFontForContentSizeCategory = true
         // The built-in values are the bottom appearance layer; values set directly on the labels later win.
         var applied = [String: Any]()
-        for key in CYLPlaceholderAppearanceKeys {
+        for key in placeholderAppearanceKeys {
             // The icon inherits the tint color unless a color is configured.
-            let value: Any = key == "iconColor" ? NSNull() : (cyl_appearanceTargetValue(for: key) ?? NSNull())
+            let value: Any = key == "iconColor" ? NSNull() : (appearanceTargetValue(for: key) ?? NSNull())
             appearanceBaselineValues[key] = value
             applied[key] = value
             appearanceNormalValues[key] = value
@@ -1335,7 +1335,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         badgeLabel.isAccessibilityElement = true
         itemAttributes = [:]
         // Observe dynamic type changes
-        NotificationCenter.default.addObserver(self, selector: #selector(cyl_contentSizeCategoryChanged(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryChanged(_:)),
                                                name: UIContentSizeCategory.didChangeNotification, object: nil)
     }
 
@@ -1384,14 +1384,14 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     // MARK: Static image
 
-    func cyl_imageViewDidSetImage(_ image: UIImage?) {
+    func imageViewDidSetImage(_ image: UIImage?) {
         // [EN] The base class shows `image`, `selectedImage` or its placeholder in `imageView`; any other image was set by
         //      this class or the app, and becomes the base class's static image, so the base class keeps showing it.
         // [CN] 基类在 `imageView` 中显示 `image`、`selectedImage` 或占位图；其他图片由本类或应用设置，成为基类的静态图片，基类会继续显示它。
         if syncingImage || image === self.image { return }
         if let image = image, image === selectedImage || image === placeholderImage { return }
         syncingImage = true
-        cyl_preservingIconVisibility {
+        preservingIconVisibility {
             self.image = image
         }
         syncingImage = false
@@ -1399,7 +1399,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     // [EN] YES while a ready animation covers the static image (the base class hides `imageView` then).
     // [CN] 就绪的动画覆盖静态图片时为 YES（此时基类隐藏 `imageView`）。
-    private var cyl_animationCoversImage: Bool {
+    private var animationCoversImage: Bool {
         #if CYL_ANIMATION_ENGINE_AVAILABLE
         guard let view = animationView else { return false }
         return !CYLTabBarItemAnimationIsLoading(view)
@@ -1411,10 +1411,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] Runs `changes` (which let the base class update the icon) and keeps an icon the caller hid hidden: the base
     //      class shows `imageView` whenever no animation covers it.
     // [CN] 执行 `changes`（其中基类会更新图标），并保持调用方隐藏的图标仍然隐藏：没有动画覆盖时基类总是显示 `imageView`。
-    private func cyl_preservingIconVisibility(_ changes: () -> Void) {
-        let hiddenByCaller = imageView.isHidden && imageView.image != nil && !cyl_animationCoversImage
+    private func preservingIconVisibility(_ changes: () -> Void) {
+        let hiddenByCaller = imageView.isHidden && imageView.image != nil && !animationCoversImage
         changes()
-        if hiddenByCaller && !cyl_animationCoversImage && !imageView.isHidden { imageView.isHidden = true }
+        if hiddenByCaller && !animationCoversImage && !imageView.isHidden { imageView.isHidden = true }
     }
 
     // MARK: Selection
@@ -1424,10 +1424,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override var isSelected: Bool {
         get { super.isSelected }
-        set { cyl_setSelected(newValue) }
+        set { setSelected(newValue) }
     }
 
-    private func cyl_setSelected(_ selected: Bool) {
+    private func setSelected(_ selected: Bool) {
         if super.isSelected == selected { return }
         if selected {
             normalImage = imageView.image
@@ -1436,54 +1436,54 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             normalIconColor = ownedIconColor
             normalBackgroundColor = backgroundColor
             normalTitleFont = textLabel.font
-            normalImageHidden = imageView.isHidden && !cyl_animationCoversImage
+            normalImageHidden = imageView.isHidden && !animationCoversImage
             normalTitleHidden = textLabel.isHidden
             normalHasSelectedTrait = accessibilityTraits.contains(.selected)
             // [EN] The base class shows `selectedImage` (the configured selected image) when there is one.
             // [CN] 有选中图片（配置的 `selectedImage`）时由基类显示。
             super.isSelected = true
-            imageView.isHidden = cyl_animationCoversImage || (selectedImage == nil && normalImageHidden)
+            imageView.isHidden = animationCoversImage || (selectedImage == nil && normalImageHidden)
             if let title = selectedTitle {
                 textLabel.text = title
                 textLabel.isHidden = false
             }
             // Explicit selected values, then the selected appearance defaults, then the normal values.
-            for key in CYLPlaceholderAppearanceKeys {
-                let value = cyl_desiredAppearanceValue(for: key)
-                cyl_setAppearanceTargetValue(value, for: key)
+            for key in placeholderAppearanceKeys {
+                let value = desiredAppearanceValue(for: key)
+                setAppearanceTargetValue(value, for: key)
                 appearanceAppliedValues?[key] = value ?? NSNull()
             }
             accessibilityTraits.insert(.selected)
         } else {
             super.isSelected = false
             imageView.image = normalImage
-            imageView.isHidden = normalImageHidden || cyl_animationCoversImage
+            imageView.isHidden = normalImageHidden || animationCoversImage
             textLabel.text = normalTitle
             textLabel.isHidden = normalTitleHidden
             textLabel.textColor = normalTitleColor
-            cyl_setIconColor(normalIconColor)
+            setIconColor(normalIconColor)
             backgroundColor = normalBackgroundColor
             textLabel.font = normalTitleFont
-            for key in CYLPlaceholderAppearanceKeys {
-                let restored: Any = cyl_appearanceTargetValue(for: key) ?? NSNull()
+            for key in placeholderAppearanceKeys {
+                let restored: Any = appearanceTargetValue(for: key) ?? NSNull()
                 let normal = appearanceNormalValues[key]
                 // Owned again only when the restored value is the one the appearance layers produced.
                 if CYLPlaceholderSameValue(restored, normal) ||
                     (key == "iconColor" && normal is NSNull && CYLPlaceholderSameValue(restored, tintColor)) {
                     appearanceAppliedValues?[key] = normal
-                    if normal is NSNull { cyl_setAppearanceTargetValue(nil, for: key) }
+                    if normal is NSNull { setAppearanceTargetValue(nil, for: key) }
                 } else {
-                    appearanceAppliedValues?[key] = CYLPlaceholderCustomizedMarker
+                    appearanceAppliedValues?[key] = placeholderCustomizedMarker
                 }
             }
-            cyl_applyAppearance()
+            applyAppearance()
             if !normalHasSelectedTrait { accessibilityTraits.remove(.selected) }
         }
-        cyl_updateSelectionIndicator()
+        updateSelectionIndicator()
         setNeedsLayout()
     }
 
-    private func cyl_updateSelectionIndicator() {
+    private func updateSelectionIndicator() {
         // Use explicit selection indicator image, then appearance proxy default
         let indicatorImage = selectionIndicatorImage ?? defaultSelectionIndicatorImage
         let indicatorTintColor = selectionIndicatorTintColor ?? defaultSelectionIndicatorTintColor
@@ -1515,7 +1515,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     // Applies `CYLPlaceholderBadgeAppearance` like CYLTabBarController's `_updateBadgeAppearance`: a value still equal to
     // the one applied before follows the shared appearance; one the caller changed on `badgeLabel` is left alone.
-    private func cyl_applyBadgeAppearance() {
+    private func applyBadgeAppearance() {
         let appearance = CYLPlaceholderBadgeAppearance.shared()
         let label = badgeLabel
         if let font = appearance.font, label.font.isEqual(appliedBadgeFont), !label.font.isEqual(font) {
@@ -1534,7 +1534,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         if label.backgroundColor?.isEqual(appearance.backgroundColor) == true { appliedBadgeBackgroundColor = label.backgroundColor }
     }
 
-    private func cyl_setBadgeValue(_ badgeValue: String?) {
+    private func setBadgeValue(_ badgeValue: String?) {
         if storedBadgeValue == badgeValue { return }
         let appearance = CYLPlaceholderBadgeAppearance.shared()
         let animate = appearance.animatesChanges && appearance.animationDuration > 0 && badgeValue != nil &&
@@ -1552,7 +1552,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         badgeLabel.text = badgeValue
         badgeLabel.isHidden = badgeValue == nil
         if badgeValue != nil {
-            cyl_applyBadgeAppearance()
+            applyBadgeAppearance()
             let container: UIView
             if let existing = badgeContainerView {
                 container = existing
@@ -1656,12 +1656,12 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             setNeedsLayout()
         }
         if let previous = previousTraitCollection, traitCollection.userInterfaceStyle != previous.userInterfaceStyle {
-            cyl_configureAnimations()
-            cyl_updateAnimationPlayback()
+            configureAnimations()
+            updateAnimationPlayback()
         }
         // Update selection indicator for trait changes when selected
         if isSelected && (selectionIndicatorImage != nil || defaultSelectionIndicatorImage != nil) {
-            cyl_updateSelectionIndicator()
+            updateSelectionIndicator()
         }
     }
 
@@ -1670,12 +1670,12 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         // [EN] The engine keeps the tint it was given (`applyIconTintColor`); give it the new one. [CN] 引擎保留收到的 tint（`applyIconTintColor`），把新的交给它。
         if ownedIconColor == nil { applyIconTintColor(tintColor) }
         // Like the FlatDesign button: an icon without an explicit or appearance color follows the tint color.
-        cyl_applyAppearance()
+        applyAppearance()
     }
 
     // MARK: Appearance layers
 
-    private func cyl_appearanceTargetValue(for key: String) -> Any? {
+    private func appearanceTargetValue(for key: String) -> Any? {
         switch key {
         case "titleColor": return textLabel.textColor
         case "iconColor": return ownedIconColor
@@ -1684,11 +1684,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         }
     }
 
-    private func cyl_setAppearanceTargetValue(_ value: Any?, for key: String) {
+    private func setAppearanceTargetValue(_ value: Any?, for key: String) {
         let value = CYLPlaceholderNilIfNull(value)
         switch key {
         case "titleColor": textLabel.textColor = value as? UIColor
-        case "iconColor": cyl_setIconColor(value as? UIColor)
+        case "iconColor": setIconColor(value as? UIColor)
         case "backgroundColor": backgroundColor = value as? UIColor
         default:
             if let font = value as? UIFont { textLabel.font = font }
@@ -1696,14 +1696,14 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     // YES when the value is still the one the appearance layers set (or the inherited tint for the icon).
-    private func cyl_ownsAppearanceValue(_ current: Any?, for key: String) -> Bool {
+    private func ownsAppearanceValue(_ current: Any?, for key: String) -> Bool {
         let applied = appearanceAppliedValues?[key]
         if key == "iconColor" && applied is NSNull { return CYLPlaceholderNilIfNull(current) == nil }
         return CYLPlaceholderSameValue(current, applied)
     }
 
     // Normal: explicit item value, appearance default, built-in value (the icon follows the tint color).
-    private func cyl_normalAppearanceValue(for key: String) -> Any? {
+    private func normalAppearanceValue(for key: String) -> Any? {
         if let explicitValue = appearanceExplicitValues[key] { return explicitValue }
         let defaultValue: Any?
         switch key {
@@ -1717,8 +1717,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     // Selected: explicit selected value, selected appearance default, the normal value.
-    private func cyl_desiredAppearanceValue(for key: String) -> Any? {
-        if !isSelected { return cyl_normalAppearanceValue(for: key) }
+    private func desiredAppearanceValue(for key: String) -> Any? {
+        if !isSelected { return normalAppearanceValue(for: key) }
         let selectedValue: Any?
         switch key {
         case "titleColor": selectedValue = selectedTitleColor ?? defaultSelectedTitleColor
@@ -1727,10 +1727,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         default: selectedValue = selectedTitleFont ?? defaultSelectedTitleFont
         }
         if let value = selectedValue { return value }
-        return cyl_normalSnapshot(for: key)
+        return normalSnapshot(for: key)
     }
 
-    private func cyl_normalSnapshot(for key: String) -> Any? {
+    private func normalSnapshot(for key: String) -> Any? {
         switch key {
         case "titleColor": return normalTitleColor
         case "iconColor": return normalIconColor
@@ -1739,7 +1739,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         }
     }
 
-    private func cyl_setNormalSnapshot(_ value: Any?, for key: String) {
+    private func setNormalSnapshot(_ value: Any?, for key: String) {
         switch key {
         case "titleColor": normalTitleColor = value as? UIColor
         case "iconColor": normalIconColor = value as? UIColor
@@ -1749,33 +1749,33 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     }
 
     // Re-applies the layers to every value the library still owns: one the caller set directly is left alone.
-    private func cyl_applyAppearance() {
+    private func applyAppearance() {
         guard appearanceAppliedValues != nil else { return }
-        for key in CYLPlaceholderAppearanceKeys {
-            let normal = cyl_normalAppearanceValue(for: key)
+        for key in placeholderAppearanceKeys {
+            let normal = normalAppearanceValue(for: key)
             if isSelected {
                 // Keep the normal snapshot current, so deselecting shows the latest appearance.
-                let snapshot = cyl_normalSnapshot(for: key)
+                let snapshot = normalSnapshot(for: key)
                 if CYLPlaceholderSameValue(snapshot, appearanceNormalValues[key]) && (normal != nil || key != "titleFont") {
-                    cyl_setNormalSnapshot(normal, for: key)
+                    setNormalSnapshot(normal, for: key)
                     appearanceNormalValues[key] = normal ?? NSNull()
                 }
             }
-            let current = cyl_appearanceTargetValue(for: key)
-            if !cyl_ownsAppearanceValue(current, for: key) { continue }
-            let desired = cyl_desiredAppearanceValue(for: key)
+            let current = appearanceTargetValue(for: key)
+            if !ownsAppearanceValue(current, for: key) { continue }
+            let desired = desiredAppearanceValue(for: key)
             if key == "titleFont" && desired == nil { continue }
-            if !CYLPlaceholderSameValue(current, desired) { cyl_setAppearanceTargetValue(desired, for: key) }
+            if !CYLPlaceholderSameValue(current, desired) { setAppearanceTargetValue(desired, for: key) }
             appearanceAppliedValues?[key] = desired ?? NSNull()
             if !isSelected { appearanceNormalValues[key] = desired ?? NSNull() }
         }
-        cyl_updateSelectionIndicator()
+        updateSelectionIndicator()
     }
 
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
         if reportedResource != nil { CYLPlaceholderResourceReporter.shared.sourceDidMove(self) }
-        cyl_applyAppearance()
+        applyAppearance()
     }
 
     // MARK: Animation file
@@ -1795,7 +1795,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         if path.isEmpty { return false }
         let resolved = (path as NSString).isAbsolutePath ? path : (CYLPlaceholderView.path(forBundledAnimation: path) ?? path)
         if !FileManager.default.fileExists(atPath: resolved) {
-            cyl_applyResourceReport((path, "file not found"))
+            applyResourceReport((path, "file not found"))
             return false
         }
         let previous = itemAttributes
@@ -1808,12 +1808,12 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         attributes[CYLPlaceholderItemAnimationFilePath] = resolved
         if attributes[CYLPlaceholderItemAnimationSize] == nil { attributes[CYLPlaceholderItemAnimationSize] = [64, 64] }
         itemAttributes = attributes
-        cyl_configureAnimations()
+        configureAnimations()
         if animationView == nil {
             // [EN] No animator plays it (always the case without the engine): keep the icon, as Android does.
             // [CN] 没有动画器可播放（没有引擎时总是如此）：保留图标，与 Android 相同。
             itemAttributes = previous
-            cyl_configureAnimations()
+            configureAnimations()
             return false
         }
         setNeedsLayout()
@@ -1823,7 +1823,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] The animation file of the item attributes (the engine-specific keys first, then the generic ones), with its
     //      size and options; nil when there is none or it is invalid.
     // [CN] item 属性中的动画文件（先看各引擎专用的 key，再看通用 key）及其尺寸与选项；没有或无效时返回 nil。
-    private func cyl_animationURL(from attributes: [String: Any]) -> (url: URL, size: CGSize, options: NSDictionary, resource: String)? {
+    private func animationURL(from attributes: [String: Any]) -> (url: URL, size: CGSize, options: NSDictionary, resource: String)? {
         let sources = [
             [CYLPlaceholderTypeKey.gifURL, CYLPlaceholderTypeKey.gifFilePath, CYLPlaceholderTypeKey.gifSize],
             [CYLPlaceholderTypeKey.lottieURL, CYLPlaceholderTypeKey.lottieFilePath, CYLPlaceholderTypeKey.lottieSize],
@@ -1880,14 +1880,14 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             NSLog("CYLTableViewPlaceHolder: animation options must be a dictionary.")
             return nil
         }
-        cyl_validateAnimationOptions(options, forExtension: fileURL.pathExtension.lowercased())
+        validateAnimationOptions(options, forExtension: fileURL.pathExtension.lowercased())
         let resource = (source as? String) ?? fileURL.absoluteString
         return (CYLPlaceholderAnimationURLWithOptions(fileURL, options), size, options, resource)
     }
 
     // [EN] Color overrides for the current appearance: `CYLPlaceholderItemAnimationColors`, plus the dark colors in Dark
     //      Mode. [CN] 当前外观下的颜色覆盖：`CYLPlaceholderItemAnimationColors`，深色模式下再加上深色颜色。
-    private func cyl_animationColors(for attributes: [String: Any], url: URL) -> [String: UIColor] {
+    private func animationColorOverrides(for attributes: [String: Any], url: URL) -> [String: UIColor] {
         var animationColors = [String: UIColor]()
         var colorSources = [Any]()
         if let colors = attributes[CYLPlaceholderItemAnimationColors] { colorSources.append(colors) }
@@ -1909,7 +1909,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         return animationColors
     }
 
-    private func cyl_configureAnimations() {
+    private func configureAnimations() {
         var attributes = itemAttributes
         if traitCollection.userInterfaceStyle == .dark {
             let pairs = [
@@ -1938,9 +1938,9 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
                 }
             }
         }
-        let animation = cyl_animationURL(from: attributes)
+        let animation = animationURL(from: attributes)
         animationContentMode = CYLPlaceholderAnimationContentMode(animation?.options)
-        animationColors = animation.map { cyl_animationColors(for: attributes, url: $0.url) }
+        animationColors = animation.map { animationColorOverrides(for: attributes, url: $0.url) }
         // [EN] The `animationSpeed` option is the per-item form of CYLTabBarController's `tabBarItemAnimationSpeed`; a speed
         //      set later with setPlaceholderAnimationSpeed(_:) wins.
         // [CN] `animationSpeed` 选项是 CYLTabBarController `tabBarItemAnimationSpeed` 的单项形式；之后用 setPlaceholderAnimationSpeed(_:) 设置的速度优先。
@@ -1952,7 +1952,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         super.animationSpeed = explicitAnimationSpeed ?? optionAnimationSpeed ?? 1
         super.animationLoops = animationRepeatCount == 0
         itemAnimationSize = animation?.size ?? .zero
-        cyl_preservingIconVisibility {
+        preservingIconVisibility {
             // [EN] Clear first, so the new size applies and the file is always loaded again (a trait change, a new file).
             // [CN] 先清空，使新尺寸生效并总是重新加载文件（外观变化、新文件）。
             self.animationURL = nil
@@ -1961,7 +1961,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
                 self.animationURL = animation.url
             }
         }
-        cyl_reportMissingResource(of: animation?.url, named: animation?.resource)
+        reportMissingResource(of: animation?.url, named: animation?.resource)
         setNeedsLayout()
     }
 
@@ -1969,7 +1969,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     //      error. A resource that loads, changes or goes away clears its entry. Without the runtime a static image shows,
     //      which is intended, so that is not reported. [CN] 把缺失或不可读的动画文件报告给红色状态条（引擎会吞掉这个错误）；
     //      资源加载成功、更换或消失时清除其条目。没有运行时则显示静态图片（预期行为），不报告。
-    private func cyl_reportMissingResource(of url: URL?, named resource: String?) {
+    private func reportMissingResource(of url: URL?, named resource: String?) {
         var missing: (name: String, reason: String)?
         if let url = url, let resource = resource {
             let file = CYLPlaceholderAnimationFileURL(url)
@@ -1981,10 +1981,10 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
                 }
             }
         }
-        cyl_applyResourceReport(missing)
+        applyResourceReport(missing)
     }
 
-    private func cyl_applyResourceReport(_ missing: (name: String, reason: String)?) {
+    private func applyResourceReport(_ missing: (name: String, reason: String)?) {
         let reporter = CYLPlaceholderResourceReporter.shared
         let name = missing.map { CYLPlaceholderResourceReporter.shortName(of: $0.name) }
         if let old = reportedResource, old != name { reporter.resolve(resource: old, source: self) }
@@ -2001,17 +2001,17 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * [CN] 重新创建动画视图（保持调用方隐藏的图标仍隐藏），再应用 item 的缩放方式、颜色与播放策略。
      */
     open override func reloadAnimation() {
-        cyl_stopRepeatTimer()
-        cyl_preservingIconVisibility {
+        stopRepeatTimer()
+        preservingIconVisibility {
             super.reloadAnimation()
         }
-        cyl_configureAnimationPlayer()
-        cyl_updateAnimationPlayback()
+        configureAnimationPlayer()
+        updateAnimationPlayback()
     }
 
     // [EN] Applies what the base class does not: the content mode and the color overrides of the item attributes.
     // [CN] 应用基类不处理的部分：item 属性中的缩放方式与颜色覆盖。
-    private func cyl_configureAnimationPlayer() {
+    private func configureAnimationPlayer() {
         #if CYL_ANIMATION_ENGINE_AVAILABLE
         guard let view = animationView, let player = animationPlayer else { return }
         view.contentMode = animationContentMode
@@ -2041,7 +2041,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override func cylAnimationViewDidLoad(_ animationView: UIView) {
         super.cylAnimationViewDidLoad(animationView)
-        if animationView === self.animationView { cyl_updateAnimationPlayback() }
+        if animationView === self.animationView { updateAnimationPlayback() }
     }
 
     /**
@@ -2049,8 +2049,8 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * [CN] 动画失败：基类移除动画，并保持调用方隐藏的图标仍隐藏。
      */
     open override func cylAnimationViewDidFail(_ animationView: UIView, error: Error?) {
-        if animationView === self.animationView { cyl_stopRepeatTimer() }
-        cyl_preservingIconVisibility {
+        if animationView === self.animationView { stopRepeatTimer() }
+        preservingIconVisibility {
             super.cylAnimationViewDidFail(animationView, error: error)
         }
         setNeedsLayout()
@@ -2060,7 +2060,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // MARK: Measuring and layout
 
     // [EN] The size an animation is laid out at. [CN] 动画的布局尺寸。
-    private var cyl_animationBoxSize: CGSize {
+    private var animationBoxSize: CGSize {
         if itemAnimationSize.width > 0 && itemAnimationSize.height > 0 { return itemAnimationSize }
         if iconSize.width > 0 && iconSize.height > 0 { return iconSize }
         return CGSize(width: 24, height: 24)
@@ -2070,45 +2070,45 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     //      animation, or the static image or placeholder standing in for it, aspect fit), so the layout is the same with or
     //      without an animation engine.
     // [CN] item 属性配置了动画文件时为 YES：此时图标尺寸即动画尺寸，无论其中显示的是动画，还是代替它的静态图片或占位图（等比缩放），因此有无动画引擎布局都相同。
-    private var cyl_reservesAnimationBox: Bool {
+    private var reservesAnimationBox: Bool {
         itemAnimationSize.width > 0 && itemAnimationSize.height > 0
     }
 
     // [EN] YES when the animation view shows: it is hidden only with a static image the caller hid.
     // [CN] 动画视图是否显示：只有在调用方隐藏了静态图片时才隐藏。
-    private var cyl_showsAnimationView: Bool {
-        animationView != nil && (imageView.image == nil || !imageView.isHidden || cyl_animationCoversImage)
+    private var showsAnimationView: Bool {
+        animationView != nil && (imageView.image == nil || !imageView.isHidden || animationCoversImage)
     }
 
     // [EN] The title offset: the item's own, else the appearance's, as in CYLFlatDesignTabBarButton.
     // [CN] 标题偏移：优先使用 item 自己的，否则使用外观的，与 CYLFlatDesignTabBarButton 相同。
-    private var cyl_titleOffset: UIOffset {
+    private var resolvedTitleOffset: UIOffset {
         itemTitleOffset == .zero ? defaultTitlePositionAdjustment : itemTitleOffset
     }
 
-    private func cyl_textSize(_ text: String, width: CGFloat, font: UIFont) -> CGSize {
+    private func textSize(_ text: String, width: CGFloat, font: UIFont) -> CGSize {
         (text as NSString).boundingRect(with: CGSize(width: width, height: .greatestFiniteMagnitude),
                                         options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil).size
     }
 
     // The item's content (image or animation, gap, title with its chrome) measured for a width, shared by the layout and
     // the intrinsic content size so the two cannot disagree.
-    private func cyl_itemSize(forWidth width: CGFloat) -> CGSize {
-        let showAnimation = cyl_showsAnimationView
+    private func itemSize(forWidth width: CGFloat) -> CGSize {
+        let showAnimation = showsAnimationView
         let hasImage = (imageView.image != nil && !imageView.isHidden) || showAnimation
         let text = textLabel.text ?? ""
         let hasTitle = !text.isEmpty && !textLabel.isHidden
         let insets = hasTitle ? titleContentInsets : .zero
         let textWidth = max(0, width - insets.left - insets.right)
-        let titleSize = hasTitle ? cyl_textSize(text, width: textWidth, font: textLabel.font) : .zero
-        let imageSize = (showAnimation || (hasImage && cyl_reservesAnimationBox)) ? cyl_animationBoxSize :
+        let titleSize = hasTitle ? textSize(text, width: textWidth, font: textLabel.font) : .zero
+        let imageSize = (showAnimation || (hasImage && reservesAnimationBox)) ? animationBoxSize :
             (hasImage ? (imageView.image?.size ?? .zero) : .zero)
         if horizontal {
             let imageInsets = itemImageInsets
             let icon = hasImage ? CGSize(width: max(0, imageSize.width - imageInsets.left - imageInsets.right),
                                          height: max(0, imageSize.height - imageInsets.top - imageInsets.bottom)) : .zero
-            let gap = hasImage && hasTitle ? CYLPlaceholderHorizontalSpacing : 0
-            let measured = hasTitle ? cyl_textSize(text, width: max(0, width - icon.width - gap), font: textLabel.font) : .zero
+            let gap = hasImage && hasTitle ? placeholderHorizontalSpacing : 0
+            let measured = hasTitle ? textSize(text, width: max(0, width - icon.width - gap), font: textLabel.font) : .zero
             return CGSize(width: icon.width + gap + ceil(measured.width), height: max(icon.height, ceil(measured.height)))
         }
         var height = imageSize.height + (hasImage && hasTitle ? 24 : 0) + ceil(titleSize.height) + (hasImage && hasTitle ? 2 : 0)
@@ -2125,11 +2125,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     //      starting at the icon's center, and covered the text beside it.
     // [CN] 某个宽度下实际使用的边距：`contentMargin`，视图放不下内容加两侧边距时缩小。之前 30 点的刷新图标会得到零宽度的 item，动画停留在
     //      初始 frame（从图标中心开始），盖住旁边的文字。
-    private func cyl_margin(forWidth width: CGFloat) -> CGFloat {
+    private func effectiveMargin(forWidth width: CGFloat) -> CGFloat {
         let margin = max(0, contentMargin)
         // [EN] Text wraps to the space inside the margins; only content that cannot shrink (an image or animation) wider
         //      than that space takes margin away. [CN] 文字在边距内换行；只有无法缩小且超出该空间的内容（图片或动画）才会占用边距。
-        let content = ceil(cyl_itemSize(forWidth: max(0, width - 2 * margin)).width)
+        let content = ceil(itemSize(forWidth: max(0, width - 2 * margin)).width)
         if content <= width - 2 * margin { return margin }
         return max(0, (width - content) / 2)
     }
@@ -2138,7 +2138,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * [EN] The content's size for a width limit (the item with its title chrome). [CN] 给定宽度上限时内容的尺寸（含标题装饰）。
      */
     open override func contentSizeThatFits(_ size: CGSize) -> CGSize {
-        cyl_itemSize(forWidth: max(0, size.width))
+        itemSize(forWidth: max(0, size.width))
     }
 
     /**
@@ -2153,7 +2153,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
         guard reportsContentSize else { return bounds.size }
         let limit = size.width > 0 && size.width.isFinite ? size.width : 0
-        return cyl_reportedContentSize(maxWidth: limit)
+        return reportedContentSize(maxWidth: limit)
     }
 
     /**
@@ -2161,17 +2161,17 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override var intrinsicContentSize: CGSize {
         if !reportsContentSize { return CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric) }
-        return cyl_reportedContentSize(maxWidth: 0)
+        return reportedContentSize(maxWidth: 0)
     }
 
     /**
      * [EN] The content with its margins within `maxWidth`; 0 uses `preferredMaxLayoutWidth`, else the screen width.
      * [CN] `maxWidth` 内带边距的内容尺寸；0 时使用 `preferredMaxLayoutWidth`，否则使用屏幕宽度。
      */
-    private func cyl_reportedContentSize(maxWidth limit: CGFloat) -> CGSize {
+    private func reportedContentSize(maxWidth limit: CGFloat) -> CGSize {
         let maxWidth = limit > 0 ? limit : (preferredMaxLayoutWidth > 0 ? preferredMaxLayoutWidth : UIScreen.main.bounds.width)
         let margin = max(0, contentMargin)
-        let size = cyl_itemSize(forWidth: max(0, maxWidth - 2 * margin))
+        let size = itemSize(forWidth: max(0, maxWidth - 2 * margin))
         if size.height <= 0 { return .zero }
         return CGSize(width: min(maxWidth, ceil(size.width) + 2 * margin), height: ceil(size.height))
     }
@@ -2182,40 +2182,40 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override func layoutContent(in rect: CGRect) {
         if rect.isEmpty { return }
-        let width = max(0, rect.width - 2 * cyl_margin(forWidth: rect.width))
-        let itemHeight = cyl_itemSize(forWidth: width).height
+        let width = max(0, rect.width - 2 * effectiveMargin(forWidth: rect.width))
+        let itemHeight = itemSize(forWidth: width).height
         let item = CGRect(x: rect.minX + (rect.width - width) / 2, y: rect.minY + (rect.height - itemHeight) / 2,
                           width: width, height: itemHeight)
         itemFrame = item
         selectionIndicatorView?.frame = item
         if item.isEmpty { return }
-        cyl_layoutItem(in: item)
+        layoutItem(in: item)
     }
 
     // UI adapted from CYLFlatDesignTabBarButton, CYLTabBarController (MIT).
     // Copyright (c) 2026 CYLTabBarController, https://github.com/ChenYilong/CYLTabBarController.
-    private func cyl_layoutItem(in item: CGRect) {
+    private func layoutItem(in item: CGRect) {
         let imageView = self.imageView
         let titleLabel = self.titleLabel
         let animationView = self.animationView
         // [EN] The base class hides the image view under a ready animation, which is the same flag as a caller hiding the
         //      icon, so the layout must not read it as "no icon" and hide the animation too.
         // [CN] 基类会在就绪的动画下隐藏图片视图，这与调用方隐藏图标是同一个属性，因此布局不能把它当作“没有图标”而把动画也隐藏。
-        let imageHiddenByCaller = imageView.isHidden && !cyl_animationCoversImage
+        let imageHiddenByCaller = imageView.isHidden && !animationCoversImage
         animationView?.isHidden = imageView.image != nil && imageHiddenByCaller
         let animationShows = animationView.map { !$0.isHidden } ?? false
         let isShowImageView = (imageView.image != nil && !imageView.isHidden) || animationShows
         let isShowTitleLabel = !(titleLabel.text ?? "").isEmpty && !titleLabel.isHidden
         var box = CGSize.zero
-        if animationShows || (isShowImageView && cyl_reservesAnimationBox) {
-            box = cyl_animationBoxSize
+        if animationShows || (isShowImageView && reservesAnimationBox) {
+            box = animationBoxSize
         } else if isShowImageView {
             box = imageView.image?.size ?? .zero
         }
 
         if horizontal {
-            cyl_layoutHorizontally(in: item, iconBox: box, showingImage: isShowImageView, title: isShowTitleLabel)
-            cyl_layoutBadge(anchoredToImage: isShowImageView)
+            layoutHorizontally(in: item, iconBox: box, showingImage: isShowImageView, title: isShowTitleLabel)
+            layoutBadge(anchoredToImage: isShowImageView)
             return
         }
 
@@ -2227,7 +2227,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         let titleInsets = isShowTitleLabel ? titleContentInsets : .zero
         let titleAreaWidth = max(0, itemWidth - titleInsets.left - titleInsets.right)
         let title = isShowTitleLabel ? (titleLabel.text ?? "") : "height"
-        let titleSize = cyl_textSize(title, width: titleAreaWidth, font: titleLabel.font)
+        let titleSize = textSize(title, width: titleAreaWidth, font: titleLabel.font)
         let titleLabelWidth = min(titleAreaWidth, ceil(titleSize.width))
         let titleLabelHeight = ceil(titleSize.height)
         var titleLabelX = (itemWidth - titleLabelWidth) / 2
@@ -2235,7 +2235,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         if !isShowImageView {
             titleLabelY = titleInsets.top + (itemHeight - titleInsets.top - titleInsets.bottom - titleLabelHeight) / 2
         }
-        let titleOffset = cyl_titleOffset
+        let titleOffset = resolvedTitleOffset
         titleLabelX += titleOffset.horizontal
         titleLabelY += titleOffset.vertical
         titleLabel.frame = CGRect(x: item.minX + titleLabelX, y: item.minY + titleLabelY,
@@ -2269,11 +2269,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         } else {
             imageView.frame = CGRect(origin: item.origin, size: .zero)
         }
-        cyl_layoutBadge(anchoredToImage: isShowImageView)
+        layoutBadge(anchoredToImage: isShowImageView)
     }
 
     // [EN] The icon at the leading edge, then the title; both centered vertically. [CN] 图标在前缘，标题在后，二者垂直居中。
-    private func cyl_layoutHorizontally(in item: CGRect, iconBox box: CGSize, showingImage showImage: Bool, title showTitle: Bool) {
+    private func layoutHorizontally(in item: CGRect, iconBox box: CGSize, showingImage showImage: Bool, title showTitle: Bool) {
         let width = item.width
         let height = item.height
         var imageSize = CGSize.zero
@@ -2281,11 +2281,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             imageSize = CGSize(width: max(0, box.width - itemImageInsets.left - itemImageInsets.right),
                                height: max(0, box.height - itemImageInsets.top - itemImageInsets.bottom))
         }
-        let titleX = showImage ? imageSize.width + CYLPlaceholderHorizontalSpacing : 0
+        let titleX = showImage ? imageSize.width + placeholderHorizontalSpacing : 0
         let titleWidth = max(0, width - titleX)
         var titleHeight: CGFloat = 0
         if showTitle {
-            titleHeight = ceil(cyl_textSize(titleLabel.text ?? "", width: titleWidth, font: titleLabel.font).height)
+            titleHeight = ceil(textSize(titleLabel.text ?? "", width: titleWidth, font: titleLabel.font).height)
         }
         let rightToLeft = effectiveUserInterfaceLayoutDirection == .rightToLeft
         var imageFrame = CGRect(x: 0, y: (height - imageSize.height) / 2, width: imageSize.width, height: imageSize.height)
@@ -2295,7 +2295,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             titleFrame.origin.x = width - titleFrame.maxX
         }
         imageFrame = imageFrame.offsetBy(dx: itemImageOffset.horizontal, dy: itemImageOffset.vertical)
-        let titleOffset = cyl_titleOffset
+        let titleOffset = resolvedTitleOffset
         titleFrame = titleFrame.offsetBy(dx: titleOffset.horizontal, dy: titleOffset.vertical)
         imageFrame = imageFrame.offsetBy(dx: item.minX, dy: item.minY)
         titleFrame = titleFrame.offsetBy(dx: item.minX, dy: item.minY)
@@ -2306,7 +2306,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         titleBackgroundView?.isHidden = true
     }
 
-    private func cyl_layoutBadge(anchoredToImage isShowImageView: Bool) {
+    private func layoutBadge(anchoredToImage isShowImageView: Bool) {
         // Badge dimensions and top-right placement follow CYLBadgeView (MIT).
         guard !badgeLabel.isHidden else { return }
         let appearance = CYLPlaceholderBadgeAppearance.shared()
@@ -2329,7 +2329,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // Validates animation options for a given file extension/backend.
     // Returns YES if options are valid, NO otherwise. Logs warnings for unsupported options.
     @discardableResult
-    private func cyl_validateAnimationOptions(_ options: NSDictionary, forExtension fileExtension: String) -> Bool {
+    private func validateAnimationOptions(_ options: NSDictionary, forExtension fileExtension: String) -> Bool {
         if options.count == 0 { return true }
         let names = options.allKeys.map { "\($0)" }
         let supported: [String: (label: String, keys: Set<String>)] = [
@@ -2361,34 +2361,34 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * Motion.
      */
     @objc open func playPlaceholderAnimation() {
-        cyl_leaveSeekMode()
-        cyl_showAnimationAgain()
+        leaveSeekMode()
+        showAnimationAgain()
         animationStopped = false
         animationShowsLastFrame = false
         animationRestartPending = true
-        cyl_updateAnimationPlayback()
+        updateAnimationPlayback()
     }
 
     /**
      * Stop playback and show the resting frame until explicitly replayed (also `stopAnimation`).
      */
     @objc open func stopPlaceholderAnimation() {
-        cyl_leaveSeekMode()
-        cyl_showAnimationAgain()
+        leaveSeekMode()
+        showAnimationAgain()
         animationStopped = true
         animationShowsLastFrame = false
-        cyl_updateAnimationPlayback()
+        updateAnimationPlayback()
     }
 
     /**
      * Stop and show the last frame when supported (also `showAnimationLastFrame`).
      */
     @objc open func showPlaceholderAnimationLastFrame() {
-        cyl_leaveSeekMode()
-        cyl_showAnimationAgain()
+        leaveSeekMode()
+        showAnimationAgain()
         animationStopped = true
         animationShowsLastFrame = true
-        cyl_updateAnimationPlayback()
+        updateAnimationPlayback()
     }
 
     private var ownedIconColor: UIColor?
@@ -2404,16 +2404,16 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     open override func applyIconTintColor(_ color: UIColor?) {
         super.applyIconTintColor(color)
-        cyl_reapplyAnimationColors()
+        reapplyAnimationColors()
     }
 
     // [EN] The engine's pass on state, appearance, tint and trait changes and when the animation view loads. [CN] 引擎在状态、外观、tint、trait 变化以及动画视图加载时的执行入口。
     open override func applyItemAppearance() {
         super.applyItemAppearance()
-        cyl_reapplyAnimationColors()
+        reapplyAnimationColors()
     }
 
-    private func cyl_reapplyAnimationColors() {
+    private func reapplyAnimationColors() {
         #if CYL_ANIMATION_ENGINE_AVAILABLE
         guard let colors = animationColors, !colors.isEmpty, let player = animationPlayer,
               player.responds(to: #selector(CYLTabBarItemAnimationPlayer.applyColors(_:traitCollection:))) else { return }
@@ -2428,7 +2428,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * [CN] 设置本视图拥有的图标颜色（nil：图标跟随 `tintColor`）。自 CYLTabBarController 3c6a4d2 起，引擎在每次状态或 trait 变化时用自己的
      *      内置颜色（普通状态为 `UIColor.label`）为图标着色，所以颜色以子类层（`applyIconTintColor(_:)`）交给引擎，由引擎持续应用。
      */
-    private func cyl_setIconColor(_ color: UIColor?) {
+    private func setIconColor(_ color: UIColor?) {
         ownedIconColor = color
         applyIconTintColor(color ?? tintColor)
         if color == nil { imageView.tintColor = nil }
@@ -2439,13 +2439,13 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      *      `showsImageWhenAnimationEnds` off and on again does the same through its public API.
      * [CN] 重新显示动画，替换结束后显示的静态图。引擎自己的方法是私有的；关闭再打开 `showsImageWhenAnimationEnds` 通过其公开接口达到同样效果。
      */
-    private func cyl_showAnimationAgain() {
+    private func showAnimationAgain() {
         guard isShowingImageAfterAnimationEnd else { return }
         showsImageWhenAnimationEnds = false
         showsImageWhenAnimationEnds = true
     }
 
-    private func cyl_leaveSeekMode() {
+    private func leaveSeekMode() {
         if animationSeekProgress == nil { return }
         animationSeekProgress = nil
         animationRestingProgress = 0
@@ -2496,7 +2496,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         animationStopped = true
         animationShowsLastFrame = false
         animationSeekProgress = progress
-        cyl_updateAnimationPlayback()
+        updateAnimationPlayback()
         return true
         #else
         return false
@@ -2523,9 +2523,9 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] Plays while the view is on screen, visible, not stopped and Reduce Motion is off; otherwise shows the resting
     //      frame, the last frame or the seek position. The base class plays.
     // [CN] 视图在屏幕上、可见、未停止且未开启“减弱动态效果”时播放；否则显示静止帧、最后一帧或定位的位置。由基类播放。
-    private func cyl_updateAnimationPlayback() {
+    private func updateAnimationPlayback() {
         #if CYL_ANIMATION_ENGINE_AVAILABLE
-        cyl_stopRepeatTimer()
+        stopRepeatTimer()
         guard let player = animationPlayer else { return }
         if animationShowsLastFrame {
             super.showAnimationLastFrame()
@@ -2542,7 +2542,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
             }
             animationRestartPending = false
             super.playAnimation()
-            cyl_startRepeatTimerIfNeeded()
+            startRepeatTimerIfNeeded()
         } else {
             super.stopAnimation()
         }
@@ -2552,7 +2552,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // [EN] A repeat count N > 1: the player plays once and is replayed N - 1 times when it reaches the end (it must
     //      report its progress, as Lottie and PAG do). 0 is `animationLoops`, handled by the base class.
     // [CN] 重复次数 N > 1：播放器播放一次，播放到末尾时再重播 N - 1 次（播放器需要提供进度，如 Lottie 与 PAG）。0 即 `animationLoops`，由基类处理。
-    private func cyl_startRepeatTimerIfNeeded() {
+    private func startRepeatTimerIfNeeded() {
         #if CYL_ANIMATION_ENGINE_AVAILABLE
         guard animationRepeatCount > 1,
               animationPlayer?.responds(to: #selector(getter: CYLTabBarItemAnimationPlayer.progress)) == true else { return }
@@ -2572,7 +2572,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         #endif
     }
 
-    private func cyl_stopRepeatTimer() {
+    private func stopRepeatTimer() {
         repeatTimer?.invalidate()
         repeatTimer = nil
     }
@@ -2582,7 +2582,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     // A placeholder with a tap event is a button for VoiceOver, Voice Control and Switch Control; with interaction
     // turned off it is a dimmed ("not enabled") button, as a disabled UIButton. Without a tap event the traits it added
     // are removed again.
-    private func cyl_updateTapAccessibility() {
+    private func updateTapAccessibility() {
         var traits = accessibilityTraits
         if tapHandler != nil {
             if !traits.contains(.button) {
@@ -2627,28 +2627,28 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      * [CN] 不使用基类的无障碍设置（带标题的按钮）：占位图是装饰；有内容或标签时是元素；只有设置点击事件时才是按钮。
      */
     open override func updateItemAccessibility() {
-        cyl_updateTapAccessibility()
+        updateTapAccessibility()
     }
 
     // [EN] `UIControlEventTouchUpInside` (sent by the base class's tracking or by the touches below) runs the tap event.
     // [CN] `UIControlEventTouchUpInside`（由基类的跟踪或下面的触摸处理发送）执行点击事件。
-    @objc private func cyl_handleTouchUpInside() {
+    @objc private func handleTouchUpInside() {
         performTap()
     }
 
     // [EN] YES when the control handles touches: a tap event, or the base class's delegate or drag. Otherwise touches pass
     //      through, as they did before the placeholder became a control.
     // [CN] 控件是否处理触摸：有点击事件，或设置了基类的代理或拖拽。否则触摸穿透，与占位图成为控件之前相同。
-    private var cyl_handlesTouches: Bool {
+    private var handlesTouches: Bool {
         isTapInteractive || delegate != nil || isDragEnabled
     }
 
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let hit = super.hitTest(point, with: event)
-        return (hit === self && !cyl_handlesTouches) ? nil : hit
+        return (hit === self && !handlesTouches) ? nil : hit
     }
 
-    private func cyl_setTapHighlighted(_ requested: Bool) {
+    private func setTapHighlighted(_ requested: Bool) {
         var highlighted = requested
         if highlighted && tapHighlightStyle == .none { highlighted = false }
         if storedTapHighlighted == highlighted { return }
@@ -2680,7 +2680,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         if !highlighted { highlightAlphas = nil }
     }
 
-    private func cyl_touchIsInside(_ touches: Set<UITouch>) -> Bool {
+    private func touchIsInside(_ touches: Set<UITouch>) -> Bool {
         // [EN] A little slop around the view, as UIButton allows. [CN] 与 UIButton 一样，允许在视图外有少许容差。
         guard let point = touches.first?.location(in: self) else { return false }
         return bounds.insetBy(dx: -24, dy: -24).contains(point)
@@ -2694,46 +2694,46 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     //      （UIControl）跟踪；否则与以前一样沿响应链传递。
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isTapInteractive {
-            if cyl_handlesTouches {
+            if handlesTouches {
                 super.touchesBegan(touches, with: event)
             } else {
                 next?.touchesBegan(touches, with: event)
             }
             return
         }
-        cyl_setTapHighlighted(true)
+        setTapHighlighted(true)
     }
 
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isTapInteractive {
-            if cyl_handlesTouches {
+            if handlesTouches {
                 super.touchesMoved(touches, with: event)
             } else {
                 next?.touchesMoved(touches, with: event)
             }
             return
         }
-        cyl_setTapHighlighted(cyl_touchIsInside(touches))
+        setTapHighlighted(touchIsInside(touches))
     }
 
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isTapInteractive {
-            if cyl_handlesTouches {
+            if handlesTouches {
                 super.touchesEnded(touches, with: event)
             } else {
                 next?.touchesEnded(touches, with: event)
             }
             return
         }
-        let inside = cyl_touchIsInside(touches)
-        cyl_setTapHighlighted(false)
+        let inside = touchIsInside(touches)
+        setTapHighlighted(false)
         if inside { sendActions(for: .touchUpInside) }
     }
 
     open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        cyl_setTapHighlighted(false)
+        setTapHighlighted(false)
         if isTapInteractive { return }
-        if cyl_handlesTouches {
+        if handlesTouches {
             super.touchesCancelled(touches, with: event)
         } else {
             next?.touchesCancelled(touches, with: event)
@@ -2742,22 +2742,22 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
 
     // MARK: Visibility
 
-    @objc private func cyl_contentSizeCategoryChanged(_ notification: Notification) {
+    @objc private func contentSizeCategoryChanged(_ notification: Notification) {
         setNeedsLayout()
     }
 
-    @objc private func cyl_reduceMotionChanged(_ notification: Notification) {
-        cyl_updateAnimationPlayback()
+    @objc private func reduceMotionChanged(_ notification: Notification) {
+        updateAnimationPlayback()
     }
 
     open override var isHidden: Bool {
-        didSet { cyl_updateAnimationPlayback() }
+        didSet { updateAnimationPlayback() }
     }
 
     open override func didMoveToWindow() {
         super.didMoveToWindow()
         if reportedResource != nil { CYLPlaceholderResourceReporter.shared.sourceDidMove(self) }
-        cyl_updateAnimationPlayback()
+        updateAnimationPlayback()
     }
 
     // MARK: Bundled art and text
@@ -2825,7 +2825,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
      */
     @objc open class func bundledAnimationFileNames() -> [String] {
         guard let resourcePath = CYLPlaceholderResourceBundle()?.resourcePath else { return [] }
-        let directory = (resourcePath as NSString).appendingPathComponent(CYLPlaceholderAnimationsDirectory)
+        let directory = (resourcePath as NSString).appendingPathComponent(placeholderAnimationsDirectory)
         let extensions: Set<String> = ["json", "lottie", "pag", "riv", "gif"]
         let names = (try? FileManager.default.contentsOfDirectory(atPath: directory)) ?? []
         return names.filter { extensions.contains(($0 as NSString).pathExtension.lowercased()) }
@@ -2840,7 +2840,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     open class func path(forBundledAnimation fileName: String) -> String? {
         if fileName.isEmpty || (fileName as NSString).lastPathComponent != fileName { return nil }
         guard let path = CYLPlaceholderResourceBundle()?.path(forResource: fileName, ofType: nil,
-                                                               inDirectory: CYLPlaceholderAnimationsDirectory) else { return nil }
+                                                               inDirectory: placeholderAnimationsDirectory) else { return nil }
         return FileManager.default.fileExists(atPath: path) ? path : nil
     }
 }

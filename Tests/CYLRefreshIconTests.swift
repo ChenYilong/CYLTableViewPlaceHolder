@@ -56,7 +56,7 @@ final class CYLRefreshIconTests: XCTestCase {
         // [CN] 箭头控件是图标改造前的代码：箭头图片、按状态旋转箭头与菊花。
         let header = CYLRefreshNormalHeader(refreshingBlock: {})
         layOut(header)
-        XCTAssertEqual(header.arrowView.image, Bundle.cyl_arrowImage())
+        XCTAssertEqual(header.arrowView.image, Bundle.cylArrowImage())
         XCTAssertFalse(header.arrowView.isHidden)
         XCTAssertTrue(header.arrowView.transform.isIdentity, "idle: the arrow points down")
         header.state = .pulling
@@ -69,7 +69,7 @@ final class CYLRefreshIconTests: XCTestCase {
 
         let backFooter = CYLRefreshBackNormalFooter(refreshingBlock: {})
         layOut(backFooter)
-        XCTAssertEqual(backFooter.arrowView.image, Bundle.cyl_arrowImage())
+        XCTAssertEqual(backFooter.arrowView.image, Bundle.cylArrowImage())
         backFooter.state = .pulling
         XCTAssertTrue(backFooter.arrowView.transform.isIdentity, "pulling: the footer arrow turns down")
         backFooter.state = .refreshing
@@ -90,7 +90,7 @@ final class CYLRefreshIconTests: XCTestCase {
 
         let trailer = CYLRefreshNormalTrailer(refreshingBlock: {})
         layOut(trailer)
-        XCTAssertEqual(trailer.arrowView.image, Bundle.cyl_trailArrowImage())
+        XCTAssertEqual(trailer.arrowView.image, Bundle.cylTrailArrowImage())
         assertNoIcon(in: trailer)
     }
 
@@ -188,7 +188,7 @@ final class CYLRefreshIconTests: XCTestCase {
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 320, height: 200))
         scrollView.contentSize = CGSize(width: 1600, height: 200)
         let trailer = CYLRefreshNormalTrailer(refreshingBlock: {})
-        scrollView.cyl_trailer = trailer
+        scrollView.cylTrailer = trailer
         let label: UILabel = trailer.stateLabel
 
         trailer.setTitle("释放查看图文详情", for: .idle)
@@ -218,7 +218,7 @@ final class CYLRefreshIconTests: XCTestCase {
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         scrollView.contentSize = CGSize(width: 320, height: 1000)
         let header = CYLRefreshNormalHeader(refreshingBlock: {})
-        scrollView.cyl_header = header
+        scrollView.cylHeader = header
         layOut(header)
         if #available(iOS 26.0, *) {
             XCTAssertTrue(header.autoHideRefresh, "on by default where the navigation bar is transparent by default")
@@ -420,15 +420,15 @@ final class CYLRefreshIconTests: XCTestCase {
         scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         scrollView.contentSize = CGSize(width: 320, height: 1000)
         // [EN] Set before attaching: applied when the controls arrive. [CN] 挂上之前设置：控件挂上时生效。
-        scrollView.cyl_autoHideRefreshHeader = false
-        scrollView.cyl_autoHideRefreshFooter = true
+        scrollView.cylAutoHideRefreshHeader = false
+        scrollView.cylAutoHideRefreshFooter = true
         let header = CYLRefreshNormalHeader(refreshingBlock: {})
         let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
-        scrollView.cyl_header = header
-        scrollView.cyl_footer = footer
+        scrollView.cylHeader = header
+        scrollView.cylFooter = footer
         XCTAssertFalse(header.autoHideRefresh)
         XCTAssertTrue(footer.autoHideRefresh)
-        XCTAssertFalse(scrollView.cyl_autoHideRefresh, "YES only when both hide")
+        XCTAssertFalse(scrollView.cylAutoHideRefresh, "YES only when both hide")
         footer.layoutIfNeeded()
         scrollView.contentOffset = CGPoint(x: 0, y: 0)
         XCTAssertNotNil(footer.layer.mask, "idle footer below the bottom bar: hidden")
@@ -442,9 +442,9 @@ final class CYLRefreshIconTests: XCTestCase {
         scrollView.contentOffset = CGPoint(x: 0, y: 0)
         XCTAssertNotNil(footer.layer.mask, "idle again and out of view: hidden")
 
-        scrollView.cyl_autoHideRefresh = true
-        XCTAssertTrue(header.autoHideRefresh && footer.autoHideRefresh && scrollView.cyl_autoHideRefresh)
-        scrollView.cyl_autoHideRefresh = false
+        scrollView.cylAutoHideRefresh = true
+        XCTAssertTrue(header.autoHideRefresh && footer.autoHideRefresh && scrollView.cylAutoHideRefresh)
+        scrollView.cylAutoHideRefresh = false
         XCTAssertFalse(header.autoHideRefresh || footer.autoHideRefresh)
         XCTAssertNil(footer.layer.mask, "off: never masked")
         XCTAssertFalse(footer.isHidden, "hidden is never touched")
