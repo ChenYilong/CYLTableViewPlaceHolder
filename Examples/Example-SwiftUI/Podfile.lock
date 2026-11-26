@@ -9,7 +9,7 @@ PODS:
   - SwiftUIIntrospect (26.0.0)
 
 DEPENDENCIES:
-  - CYLAnimatedItem (from `https://github.com/ChenYilong/CYLTabBarController.git`, commit `09bde3ca4a965e19be916f216df99b3d1a8c5d17`)
+  - CYLAnimatedItem (from `https://github.com/ChenYilong/CYLTabBarController.git`, commit `b0887513a3c9221af4257884d5d5740baaa8e76b`)
   - CYLTableViewPlaceHolder (from `../..`)
   - SwiftUIIntrospect (= 26.0.0)
 
@@ -19,14 +19,14 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   CYLAnimatedItem:
-    :commit: 09bde3ca4a965e19be916f216df99b3d1a8c5d17
+    :commit: b0887513a3c9221af4257884d5d5740baaa8e76b
     :git: https://github.com/ChenYilong/CYLTabBarController.git
   CYLTableViewPlaceHolder:
     :path: "../.."
 
 CHECKOUT OPTIONS:
   CYLAnimatedItem:
-    :commit: 09bde3ca4a965e19be916f216df99b3d1a8c5d17
+    :commit: b0887513a3c9221af4257884d5d5740baaa8e76b
     :git: https://github.com/ChenYilong/CYLTabBarController.git
 
 SPEC CHECKSUMS:
@@ -34,6 +34,6 @@ SPEC CHECKSUMS:
   CYLTableViewPlaceHolder: 067199f54056c001b64841832293f8a3067e3c86
   SwiftUIIntrospect: 74b21afe4589aa3979192844ac1cbba381712e61
 
-PODFILE CHECKSUM: 4d2c405c77b6779f7175f9f0272c0f3a6282dc00
+PODFILE CHECKSUM: e07cb77105061627d49ec3defb1f4e1e4d558815
 
 COCOAPODS: 1.17.0

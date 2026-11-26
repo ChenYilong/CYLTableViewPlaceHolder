@@ -67,7 +67,7 @@ The HarmonyOS port, DevEco Studio, the emulator, arm64-only Rive and PAG. Full t
 
 ## Tag: Example demos (`examples`)
 
-- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colorful backing plate behind the list (set in one shared place), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number), a title on every section header, content-wide tags, and the Liquid Glass tag style (`backgroundStyle`, never faked). ([details](docs/instructions/examples.md))
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colourful page behind the list (set in one shared place; the library draws one Liquid Glass card per section, the example draws no plate; long headers use headerMaxLines 2, icon colours are static template colours through menuStyleForItem + setIconColor, never .alwaysOriginal), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number), a title on every section header, content-wide tags, and the Liquid Glass tag style (`backgroundStyle`, never faked). ([details](docs/instructions/examples.md))
 
 ## Tag: Code and architecture (`code`)
 

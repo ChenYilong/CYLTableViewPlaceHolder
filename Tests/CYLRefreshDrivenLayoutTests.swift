@@ -24,6 +24,17 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         RunLoop.main.run(until: Date(timeIntervalSinceNow: seconds))
     }
 
+    // [EN] Polls for a state an animation completion produces (a busy CI runner stretches animations); the assertions after it
+    //      report a timeout. [CN] 轮询由动画完成产生的状态（繁忙的 CI 机器会拉长动画）；超时由其后的断言报告。
+    @discardableResult
+    private func waitUntil(timeout: TimeInterval = 15, _ condition: () -> Bool) -> Bool {
+        let deadline = Date(timeIntervalSinceNow: timeout)
+        while !condition() && deadline.timeIntervalSinceNow > 0 {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+        }
+        return condition()
+    }
+
     private func driven(_ header: CYLRefreshHeader = CYLRefreshHeader(refreshingBlock: {})) -> (CYLRefreshDrivenLayout, CYLRefreshHeader) {
         let layout = CYLRefreshDrivenLayout(frame: window.bounds)
         window.addSubview(layout)
@@ -55,13 +66,13 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         let (layout, header) = driven(CYLRefreshHeader(refreshingBlock: { calls += 1 }))
         layout.drive(offset: header.expandHeight + 5, dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertEqual(header.phase, .refreshing)
         XCTAssertTrue(header.isRefreshing)
         XCTAssertEqual(calls, 1)
         header.endRefreshing(success: false)
         XCTAssertFalse(header.lastRefreshSucceeded)
-        spin(1.5)
+        waitUntil { header.phase == .idle }
         XCTAssertEqual(header.phase, .idle)
     }
 
@@ -159,12 +170,12 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         XCTAssertEqual(calls, 0)
         layout.drive(offset: -(footer.expandHeight + 5), dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertEqual(footer.phase, .refreshing)
         XCTAssertTrue(footer.isRefreshing)
         XCTAssertEqual(calls, 1)
         footer.endRefreshing()
-        spin(1.5)
+        waitUntil { footer.phase == .idle }
         XCTAssertEqual(footer.phase, .idle)
         XCTAssertEqual(calls, 1)
     }
@@ -180,11 +191,11 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         layout.drive(offset: 0, dragging: false)
         layout.drive(offset: -8, dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertTrue(footer.isRefreshing)
         XCTAssertEqual(calls, 1)
         footer.endRefreshing()
-        spin(1.5)
+        waitUntil { !footer.isRefreshing }
         XCTAssertFalse(footer.isRefreshing)
     }
 
@@ -194,9 +205,9 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         let layout = drivenFooter(footer)
         layout.drive(offset: -8, dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         footer.endRefreshing()
-        spin(1.5)
+        waitUntil { !footer.isRefreshing }
         XCTAssertEqual(calls, 1)
         // [EN] The trigger count of the drag is used up: a release with no new drag does not load. [CN] 本次拖动的触发次数已用完：没有新拖动的抬起不再加载。
         layout.release()
@@ -205,7 +216,7 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         layout.drive(offset: 0, dragging: false)
         layout.drive(offset: -8, dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 2 }
         XCTAssertEqual(calls, 2)
     }
 
@@ -227,10 +238,10 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         let layout = drivenFooter(footer)
         layout.drive(offset: -(footer.expandHeight + 5), dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertEqual(calls, 1)
         footer.endRefreshingWithNoMoreData()
-        spin()
+        waitUntil { footer.isNoMoreData }
         XCTAssertTrue(footer.isNoMoreData)
         XCTAssertEqual(footer.state, .noMoreData)
         layout.drive(offset: -(footer.expandHeight + 5), dragging: true)
@@ -254,7 +265,7 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         XCTAssertFalse(footer.isNoMoreData)
         XCTAssertEqual(footer.phase, .releaseToRefresh)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertTrue(footer.isRefreshing)
         XCTAssertEqual(calls, 1)
     }
@@ -268,7 +279,7 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         spin()
         layout.drive(offset: -8, dragging: true)
         layout.release()
-        spin()
+        waitUntil { calls == 1 }
         XCTAssertFalse(footer.isNoMoreData)
         XCTAssertEqual(calls, 1)
     }
@@ -301,19 +312,19 @@ final class CYLRefreshDrivenLayoutTests: XCTestCase {
         XCTAssertEqual(header.phase, .releaseToRefresh)
         XCTAssertEqual(footer.phase, .idle)
         layout.release()
-        spin()
+        waitUntil { headerCalls == 1 }
         XCTAssertTrue(header.isRefreshing)
         XCTAssertFalse(footer.isRefreshing)
         XCTAssertEqual(headerCalls, 1)
         header.endRefreshing(success: true)
-        spin(1.5)
+        waitUntil { header.phase == .idle }
         XCTAssertEqual(header.phase, .idle)
         layout.drive(offset: 0, dragging: false)
         layout.drive(offset: -(footer.expandHeight + 5), dragging: true)
         XCTAssertEqual(footer.phase, .releaseToRefresh)
         XCTAssertEqual(header.phase, .idle)
         layout.release()
-        spin()
+        waitUntil { footerCalls == 1 }
         XCTAssertTrue(footer.isRefreshing)
         XCTAssertFalse(header.isRefreshing)
         XCTAssertEqual(footerCalls, 1)

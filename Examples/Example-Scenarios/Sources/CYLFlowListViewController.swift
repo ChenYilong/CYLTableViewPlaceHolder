@@ -155,12 +155,12 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
             let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 56))
             searchBar.placeholder = CYLScenarioLocalizedString(.searchPlaceholder)
             tableView.tableHeaderView = searchBar
-            tableView.cyl_reloadData()
+            // The first `cyl_reloadData()` waits for `viewDidLayoutSubviews()`: the delegate frame is read from the
+            // table's bounds, which are still zero here.
         case .keepSectionHeaders:
-            tableView.cyl_reloadData()
+            break
         case .scrollable:
             setUpRefreshHeader(usesDelegateAPI: true)
-            tableView.cyl_reloadData()
         case .switchStates:
             setUpStateSwitcher()
             installPlaceholderBlock()
@@ -180,6 +180,21 @@ final class CYLFlowDetailViewController: UITableViewController, CYLTableViewPlac
         case .collection:
             installPlaceholderBlock()
         }
+    }
+
+    /// The size the delegate-API flows last asked the placeholder for; the custom frame is not updated by itself.
+    private var placeholderLayoutSize = CGSize.zero
+
+    /// The delegate API takes its frame from the table's bounds (`frameForPlaceHolderView(in:)`), which are zero in
+    /// `viewDidLoad()` (the placeholder was 0 x 0 and drew only a broken image). Ask again once the table has its size,
+    /// and again when the size changes (rotation, split view).
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard flow == .keepTableHeader || flow == .keepSectionHeaders || flow == .scrollable else { return }
+        let size = tableView.bounds.size
+        guard size.width > 0, size.height > 0, size != placeholderLayoutSize else { return }
+        placeholderLayoutSize = size
+        tableView.cyl_reloadData()
     }
 
     // MARK: Block API

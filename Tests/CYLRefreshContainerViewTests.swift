@@ -30,6 +30,24 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         RunLoop.main.run(until: Date(timeIntervalSinceNow: seconds))
     }
 
+    // [EN] Polls for a state an animation completion produces: the refreshing block runs in the completion of the 0.25 s inset
+    //      animation, so a fixed spin races it on a busy CI runner (the iOS 15 job). The assertions after it report a timeout.
+    // [CN] 轮询由动画完成产生的状态：刷新块在 0.25 秒 inset 动画完成时运行，固定时长的 spin 在繁忙的 CI 机器上会与之竞争（iOS 15 任务）。
+    @discardableResult
+    private func waitUntil(timeout: TimeInterval = 15, _ condition: () -> Bool) -> Bool {
+        let deadline = Date(timeIntervalSinceNow: timeout)
+        while !condition() && deadline.timeIntervalSinceNow > 0 {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+        }
+        return condition()
+    }
+
+    /// Counts the runs of a header's or footer's refreshing block (the container's own block still runs first).
+    private func countRuns(of component: CYLRefreshComponent?, _ counter: @escaping () -> Void) {
+        let container = component?.refreshingBlock
+        component?.refreshingBlock = { container?(); counter() }
+    }
+
     /// A container with a scroll view one wrapper deep, as React Native builds it (RCTScrollView > RCTCustomScrollView).
     private func container(attach: Bool = true) -> (CYLRefreshContainerView, UIScrollView) {
         let container = CYLRefreshContainerView(frame: window.bounds)
@@ -90,23 +108,26 @@ final class CYLRefreshContainerViewTests: XCTestCase {
     func testAPullStartedByTheUserSendsOnRefreshOnce() {
         let (_, scrollView) = container()
         scrollView.cyl_header?.beginRefreshing()
-        spin()
+        waitUntil { refreshEvents == 1 }
         XCTAssertEqual(refreshEvents, 1)
         XCTAssertTrue(scrollView.cyl_header?.isRefreshing == true)
         scrollView.cyl_header?.endRefreshing()
-        spin(0.8)
+        waitUntil { scrollView.cyl_header?.isRefreshing != true }
         XCTAssertEqual(refreshEvents, 1)
         XCTAssertFalse(scrollView.cyl_header?.isRefreshing == true)
     }
 
     func testRefreshingSetFromJavaScriptShowsTheStateWithoutCallingOnRefresh() {
         let (container, scrollView) = container()
+        var blockRuns = 0
+        countRuns(of: scrollView.cyl_header) { blockRuns += 1 }
         container.refreshing = true
-        spin()
+        // The block runs once the inset animation completes; JavaScript must not be told, and the one-shot flag is used up by it.
+        waitUntil { blockRuns == 1 }
         XCTAssertTrue(scrollView.cyl_header?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0, "a value JavaScript set does not call onRefresh back")
         container.refreshing = false
-        spin(0.8)
+        waitUntil { scrollView.cyl_header?.isRefreshing != true }
         XCTAssertFalse(scrollView.cyl_header?.isRefreshing == true)
         XCTAssertEqual(refreshEvents, 0)
     }
@@ -124,11 +145,11 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
         scrollView.cyl_footer?.beginRefreshing()
-        spin()
+        waitUntil { loadMoreEvents == 1 }
         XCTAssertEqual(loadMoreEvents, 1)
         XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
         container.loadingMore = false
-        spin(0.8)
+        waitUntil { scrollView.cyl_footer?.isRefreshing != true }
         XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
         XCTAssertEqual(loadMoreEvents, 1)
     }
@@ -136,12 +157,14 @@ final class CYLRefreshContainerViewTests: XCTestCase {
     func testLoadingMoreSetFromJavaScriptShowsTheStateWithoutCallingOnLoadMore() {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
+        var blockRuns = 0
+        countRuns(of: scrollView.cyl_footer) { blockRuns += 1 }
         container.loadingMore = true
-        spin()
+        waitUntil { blockRuns == 1 }
         XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
         XCTAssertEqual(loadMoreEvents, 0)
         container.loadingMore = false
-        spin(0.8)
+        waitUntil { scrollView.cyl_footer?.isRefreshing != true }
         XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
     }
 
@@ -149,12 +172,12 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
         scrollView.cyl_footer?.beginRefreshing()
-        spin()
+        waitUntil { loadMoreEvents == 1 }
         XCTAssertTrue(scrollView.cyl_footer?.isRefreshing == true)
         // JavaScript ends a last load with loadingMore false and noMoreData true together, in either order.
         container.noMoreData = true
         container.loadingMore = false
-        spin(0.8)
+        waitUntil { scrollView.cyl_footer?.isNoMoreData == true && scrollView.cyl_footer?.isRefreshing != true }
         XCTAssertEqual(scrollView.cyl_footer?.isNoMoreData, true)
         XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
         container.noMoreData = false
@@ -165,10 +188,10 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let (container, scrollView) = container()
         container.loadMoreEnabled = true
         scrollView.cyl_footer?.beginRefreshing()
-        spin()
+        waitUntil { loadMoreEvents == 1 }
         container.loadingMore = false
         container.noMoreData = true
-        spin(0.8)
+        waitUntil { scrollView.cyl_footer?.isNoMoreData == true && scrollView.cyl_footer?.isRefreshing != true }
         XCTAssertEqual(scrollView.cyl_footer?.isNoMoreData, true)
         XCTAssertFalse(scrollView.cyl_footer?.isRefreshing == true)
     }
@@ -214,7 +237,7 @@ final class CYLRefreshContainerViewTests: XCTestCase {
         let (container, scrollView) = container()
         container.headerStyle = "material"
         scrollView.cyl_header?.beginRefreshing()
-        spin()
+        waitUntil { refreshEvents == 1 }
         XCTAssertEqual(refreshEvents, 1)
     }
 }

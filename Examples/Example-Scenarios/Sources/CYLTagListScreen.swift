@@ -33,9 +33,9 @@ struct CYLTagSection {
     let entries: [CYLTagEntry]
 }
 
-/// The colourful backing plate (背景板) behind a tag list: a saturated diagonal gradient of four hues, clearly visible behind the
-/// whole list, so the Liquid Glass tags and the tail fold control (also glass, the core copies the tag style) have something to
-/// refract; the colours follow light and dark mode.
+/// The page background of a tag list screen: a saturated diagonal gradient of four hues over the whole screen, behind everything,
+/// so the glass section cards, the Liquid Glass tags and the tail fold control (also glass) have something to refract; the colours
+/// follow light and dark mode.
 final class CYLTagListBackdropView: UIView {
     override class var layerClass: AnyClass { CAGradientLayer.self }
 
@@ -73,6 +73,8 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     static let defaultVisibleRows = 3
     /// The most lines a tag title wraps onto, the app's choice (the placeholder example uses 3).
     static let titleMaxLines = 3
+    /// The most lines a section header title wraps onto (`CYLMenuStyle.headerMaxLines`).
+    static let headerMaxLines = 2
 
     var sections: [CYLTagSection] = []
     /// Shown instead of the list while there is no section, should the bundle be missing.
@@ -80,11 +82,28 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
 
     let tagList = CYLTagListView(foldControl: CYLMenuFoldControl(position: .tail, content: .icon))
 
+    /// Dark content on the light gradient, light content on the dark one, whatever the system would pick from the mid-tone
+    /// gradient under the bar (iOS 26 and later choose by the content behind it; the same build showed both colours, task log
+    /// 2026-11-26). `traitCollection` is the page's own, so a live light / dark switch follows. The navigation controller
+    /// (`CYLScenarioNavigationController`) forwards to this page and the engine's tab bar controller to the shown tab (also
+    /// at launch, CYLTabBarController 01a77be5); without this rule the white clock stayed on the light gradient (tested 2026-11-26).
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        traitCollection.userInterfaceStyle == .dark ? .lightContent : .darkContent
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so a colourful
-        // backing plate sits behind the whole list (examples only; the tag list itself stays transparent).
+        // Glass shows what is behind it: a plain grouped background makes it look like the flat tag, so the page is a
+        // colourful gradient (examples only; the tag list itself stays transparent). The plate behind each section is the
+        // library's own section card (`sectionStyle` insetGrouped, the default), drawn as Liquid Glass below.
         let backdrop = CYLTagListBackdropView()
         backdrop.frame = view.bounds
         backdrop.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -93,10 +112,15 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
         // 0 items per row: a tag is as wide as its content and a row holds as many tags as fit.
         style.numberOfItemsPerRow = 0
         style.titleMaxLines = Self.titleMaxLines
+        // A long section header wraps onto at most two lines instead of ending in an ellipsis.
+        style.headerMaxLines = Self.headerMaxLines
         // The one Liquid Glass parameter (docs/tag-liquid-glass.md of CollectionViewClassifyMenu): glass where the system
         // draws it (iOS 27 and later, iOS 26 without `UIDesignRequiresCompatibility`), the flat tag elsewhere.
         style.backgroundStyle = .liquidGlass
         style.backgroundColor = .clear
+        // The card behind each section's tags is the library's (docs/tag-section-style.md): Liquid Glass too, so the
+        // gradient page shows through it; flat where the system cannot draw glass.
+        style.sectionBackgroundStyle = .liquidGlass
         tagList.style = style
         tagList.defaultVisibleRows = Self.defaultVisibleRows
         // A tap reports through the delegate and leaves the tag unselected.
@@ -136,8 +160,11 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
         if bottomConstraint?.constant != -inset { bottomConstraint?.constant = -inset }
     }
 
+    private var itemStyles: [IndexPath: CYLMenuStyle] = [:]
+
     /// Reloads the tag list after `sections` changed, and swaps in `emptyView` while there is nothing to list.
     func reloadSections() {
+        itemStyles.removeAll()
         tagList.reloadMenuData()
         guard let emptyView = emptyView else { return }
         if sections.isEmpty, emptyView.superview == nil {
@@ -172,9 +199,22 @@ class CYLTagListScreenViewController: UIViewController, CYLMenuDataSource, CYLMe
     }
 
     func menuImageForItem(at indexPath: IndexPath) -> UIImage? {
-        let entry = entry(at: indexPath)
-        // System image on a tag: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-        return entry.symbol.flatMap { UIImage(systemName: $0) }?.withTintColor(entry.tint, renderingMode: .alwaysOriginal)
+        // System image on a tag: a row icon, not a placeholder, so CYLPlaceholderView does not apply. A template image: the
+        // colour comes from the tag style (`menuStyleForItem`), so the core can adapt it to the glass (dark mode).
+        entry(at: indexPath).symbol.flatMap { UIImage(systemName: $0) }?.withRenderingMode(.alwaysTemplate)
+    }
+
+    /// The list style with the entry's icon colour; one copy per tag, kept until the next reload (the core asks for the same
+    /// object while nothing changes).
+    func menuStyleForItem(at indexPath: IndexPath) -> CYLMenuStyle? {
+        if let style = itemStyles[indexPath] { return style }
+        let style = tagList.style.copy() as! CYLMenuStyle
+        // The lists use selection mode none, so the normal state is the only one drawn.
+        // A STATIC colour (the light-mode value): the core lifts only explicit static colours under dark glass; a dynamic system
+        // colour is left as it is (CYLIconContrast).
+        style.setIconColor(entry(at: indexPath).tint.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)), for: .normal)
+        itemStyles[indexPath] = style
+        return style
     }
 
     func menuIdentifierForItem(at indexPath: IndexPath) -> String {
