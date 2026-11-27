@@ -142,7 +142,11 @@ enum CYLRefreshVectorPathsParser {
         readWhitespace(scanner)
         while !scanner.isAtEnd {
             readWhitespace(scanner)
-            // FIXME: wasn't originally, but maybe should be: origin = isRelative ? lastCoord : origin;
+            // [EN] Not reached with CYLRefreshVectorPathElement: it gives this parser one command per scanner, and the moveto argument
+            //      sequence reads every coordinate pair to the end. A later relative "m" is its own command, and the element passes the
+            //      last point as its origin, as the SVG grammar requires (the upstream FIXME asked for that; 2026-11-27).
+            // [CN] 经由 CYLRefreshVectorPathElement 调用时不会执行到这里：它为每个命令单独创建 scanner，moveto 参数序列会读完全部坐标对。
+            //      之后的相对 "m" 是独立命令，元素会把上一个点作为它的起点，符合 SVG 语法（即上游 FIXME 想要的行为；2026-11-27）。
             lastCurve = readMovetoDrawto(scanner, path: path, relativeTo: origin, isRelative: isRelative)
         }
         return lastCurve
