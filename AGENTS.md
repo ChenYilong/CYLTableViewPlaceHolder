@@ -168,6 +168,12 @@ Every rule has a tag. Each tag has a visible heading with its summary; the full 
 - Never scan the contents of every file under `docs/`, and never read a document under `docs/` in full unless the owner explicitly names that document and asks for a full read, or authorizes it.
 - Full rule: at reference of this tag (not required; do not read by default).
 
+## Reply greeting (tag: `reply-greeting`)
+
+- Start every reply with `Hi, <OS>/<folder>:`, then answer. `<OS>` is the session's operating system; `<folder>` is the name of the session's working folder.
+- Example: a macOS session in `/Volumes/obsidian/chenyilong/chenyilong/CYLTabBarController` starts with `Hi, macOS/CYLTabBarController:`.
+- Full rule: at reference of this tag (not required; do not read by default).
+
 ## Tag reference
 
 | Tag | Heading | Reference (not required; do not read by default) |
@@ -185,3 +191,4 @@ Every rule has a tag. Each tag has a visible heading with its summary; the full 
 | `docs` | Documentation scenario | [reference](docs/instructions/docs.md) (not required; do not read by default) |
 | `git` | Git and commits | [reference](docs/instructions/git.md) (not required; do not read by default) |
 | `docs-lookup` | Finding the document a prompt refers to | [reference](docs/instructions/docs-lookup.md) (not required; do not read by default) |
+| `reply-greeting` | Reply greeting | [reference](docs/instructions/reply-greeting.md) (not required; do not read by default) |
