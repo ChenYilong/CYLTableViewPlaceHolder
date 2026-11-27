@@ -2708,3 +2708,19 @@ Date 2026-11-25, branch `worktree-resmissing` (from `origin/feat/android-refresh
 - **EN:** continue the open TODOs: the advisor (Opus) reviews the current API implementation score of every platform and gives the next plan; the default model implements it right away, aiming at 100; forward fitting tasks to the other sessions, each testing on its own machine (iOS on macOS, the rest on Windows), without waiting for CI. The integrator tests its own work; keep only compile checks, do not run the full suites.
 - **Owner's rule (new, confirmed here):** compile checks only for work handed between sessions; no full test suites; no waiting for CI.
 - **Acceptance:** 100 = advisor scores per platform recorded, the plan's Mac items done with a compile check each, the Windows items forwarded, every remaining gap a TODO with a score. 60 = scores and plan recorded, items forwarded, first Mac items done.
+- **Advisor scores (2026-11-27, estimates from today's evidence, not measurements; "100 pending" = code complete, verification owed by CI or the integrator):**
+
+  | Platform | 11-25 | Now | What blocks 100 |
+  | --- | --- | --- | --- |
+  | iOS core | ~95 | 97 | Full iOS CI never ran (no runner); Rive stop → `onStop` untested; `restartAnimation()` super unchecked at `b0887513`; FIXME / HACK; root `Example`, PAGEnterprise not compiled |
+  | React Native | 72 | 78 | iOS drawn-footer loading frames; iOS Rive early end; ~2 s Rive blank (`isOpaque = false` untried); Rive style not seen in RN; `loadsAfterNoMoreData` + typecheck stubs (Windows) |
+  | Android | 94 | 94 | Engine-follow CI breaks on upstream pushes (owner's resolver rule); tab-bar skin ignores a runtime light/dark switch (CYLTabBarController, 60); drawn-footer colours unverified; resource-missing strings (Windows); 5 CYLRefreshLayout issues |
+  | HarmonyOS | 85 | 86 | ViewModel bypass (Windows); 3 gesture / animator API rows; Feed "No more data" at 30 rows never seen; no CI |
+  | Flutter | ~85 | 86 | iOS host compiles now; missing example pages; Android single-placeholder `message` returns no view; spinner style from the creation parameter; late `onSecondaryOpened` |
+  | Mini program | ~87 | 90 | Item synced to `b0887513`, DevTools renders, `registry.js` error gone; open: dark mode, other sizes, PAG / Rive variants show still images |
+
+- **Limit of the new rule:** with compile checks only, a gap that reads "not seen" or "not run" cannot reach 100; such rows are written "100 pending integrator test", never 100.
+- **Mac plan (in order):** (1) scoreboard (this entry, the iOS row of `Refresh-Library-Parity.md`); (2) FIXME / HACK; (3) `restartAnimation()` and super; (4) Rive stop → `onStop` test in the animation runner (compile only); (5) React Native iOS container: drawn-footer loading frames, Rive early end, `isOpaque = false`. Later, compile only: root `Example`, PAGEnterprise. Compile check: `CYL_TEST_ACTION=build-for-testing ruby Tests/run-tests.rb`, examples with `xcodebuild build` into a new empty derived-data folder.
+- **Forwarded:** Windows (Flutter example pages, Android single `message`, spinner style, late `onSecondaryOpened`; HarmonyOS Feed "No more data" at 30 rows, 3 gesture rows; mini program dark mode and one more size; Android drawn-footer colours); `winsCYLTabBarController` (Android tab-bar skin after a runtime mode switch).
+- **Step 1 DONE:** the iOS row of `Refresh-Library-Parity.md` (2026-11-25 scoreboard) updated; other rows left to the Windows session.
+
