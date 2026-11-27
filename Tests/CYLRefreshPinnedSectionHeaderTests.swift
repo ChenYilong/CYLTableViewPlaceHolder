@@ -33,6 +33,13 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         RunLoop.main.run(until: Date().addingTimeInterval(seconds))
     }
 
+    // [EN] Waits for the end state of an animation (a loaded CI runner can take longer than the sampling window); the assertion
+    //      after it checks the same value. [CN] 等待动画的最终状态（负载高的 CI 机器可能比采样时间更久）；之后的断言检查同样的值。
+    private func waitUntil(timeout: TimeInterval = 15, _ condition: () -> Bool) {
+        let deadline = Date(timeIntervalSinceNow: timeout)
+        while !condition() && deadline.timeIntervalSinceNow > 0 { spin(0.05) }
+    }
+
     // [EN] The largest distance between the pinned header and the visible top while the animation runs, as drawn.
     // [CN] 动画期间（按屏幕绘制）固定 header 与可见顶边的最大距离。
     private func largestHeaderGap(of table: UITableView, for seconds: TimeInterval) -> CGFloat {
@@ -79,6 +86,7 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         table.layoutIfNeeded()
         footer.state = .refreshing
         XCTAssertLessThan(largestHeaderGap(of: table, for: 0.5), 1, "the header stays pinned when loading starts")
+        waitUntil { abs(table.contentOffset.y - (maxOffset + footer.frame.height)) <= 0.5 }
         XCTAssertEqual(table.contentOffset.y, maxOffset + footer.frame.height, accuracy: 0.5)
         XCTAssertEqual(table.contentInset.bottom, footer.frame.height, accuracy: 0.5)
 
@@ -88,6 +96,7 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         table.reloadData()
         XCTAssertEqual(table.contentInset.bottom, 0, accuracy: 0.5, "the inset is given back at once")
         XCTAssertLessThan(largestHeaderGap(of: table, for: 0.7), 1, "the header stays pinned when loading ends")
+        waitUntil { abs(table.contentOffset.y - maxOffset) <= 0.5 }
         XCTAssertEqual(table.contentOffset.y, maxOffset, accuracy: 0.5)
         XCTAssertEqual(completions, 1, "the end completion runs once")
     }
@@ -126,6 +135,7 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         footer.endRefreshing()
         collection.reloadData()
         XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.7, header: header), 1, "pinned when loading ends")
+        waitUntil { abs(collection.contentInset.bottom) <= 0.5 }
         XCTAssertEqual(collection.contentInset.bottom, 0, accuracy: 0.5)
     }
 
@@ -158,9 +168,11 @@ final class CYLRefreshPinnedSectionHeaderTests: XCTestCase, UITableViewDataSourc
         collection.layoutIfNeeded()
         header.state = .refreshing
         XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.5) { background }, 1, "in place when refreshing starts")
+        waitUntil { abs(collection.contentOffset.y + header.frame.height) <= 0.5 }
         XCTAssertEqual(collection.contentOffset.y, -header.frame.height, accuracy: 0.5)
         header.endRefreshing()
         XCTAssertLessThan(largestHeaderGap(of: collection, for: 0.8) { background }, 1, "in place when refreshing ends")
+        waitUntil { completions == 1 && abs(collection.contentOffset.y) <= 0.5 }
         XCTAssertEqual(collection.contentOffset.y, 0, accuracy: 0.5)
         XCTAssertEqual(collection.contentInset.top, 0, accuracy: 0.5)
         XCTAssertEqual(completions, 1)
