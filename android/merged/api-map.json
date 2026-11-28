@@ -901,7 +901,7 @@
  },
  "CYLPlaceholderView badgeValue": {
   "status": "done",
-  "android": "CYLPlaceholderView.badgeValue"
+  "android": "CYLPlaceholderView.placeholderBadgeValue"
  },
  "CYLPlaceholderView contentMargin": {
   "status": "done",

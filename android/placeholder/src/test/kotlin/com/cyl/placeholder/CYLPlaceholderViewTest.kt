@@ -39,13 +39,13 @@ class CYLPlaceholderViewTest {
     @Test
     fun aBadgeShowsDotsNumbersAndTexts() {
         val view = CYLPlaceholderView(context, CYLPlaceholderStyle.Inbox, "Inbox")
-        view.badgeValue = "3"
+        view.placeholderBadgeValue = "3"
         assertEquals(View.VISIBLE, view.badgeLabel.visibility)
         assertEquals("3", view.badgeLabel.text.toString())
         assertEquals("Inbox, 3", view.contentDescription)
-        view.badgeValue = ""
+        view.placeholderBadgeValue = ""
         assertEquals("", view.badgeLabel.text.toString())
-        view.badgeValue = null
+        view.placeholderBadgeValue = null
         assertEquals(View.GONE, view.badgeLabel.visibility)
     }
 
@@ -221,12 +221,12 @@ class CYLPlaceholderViewTest {
         val wasAnimating = appearance.animatesChanges
         try {
             appearance.animatesChanges = true
-            view.badgeValue = "7"
+            view.placeholderBadgeValue = "7"
             assertEquals("starts small", 0.6f, view.badgeLabel.scaleX, 0.001f)
             org.robolectric.shadows.ShadowLooper.idleMainLooper(1, java.util.concurrent.TimeUnit.SECONDS)
             assertEquals("ends at its size", 1f, view.badgeLabel.scaleX, 0.001f)
             appearance.animatesChanges = false
-            view.badgeValue = "8"
+            view.placeholderBadgeValue = "8"
             assertEquals("no pop when off", 1f, view.badgeLabel.scaleX, 0.001f)
         } finally {
             appearance.animatesChanges = wasAnimating
