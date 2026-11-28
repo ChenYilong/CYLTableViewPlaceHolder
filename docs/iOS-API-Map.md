@@ -1270,7 +1270,7 @@
 | `CYLPlaceholderView.contentMargin` (var) | The margin around the content, in dp (`contentMargin`): the view's padding. | `CYLPlaceholderView` `contentMargin` |  |
 | `CYLPlaceholderView.preferredMaxLayoutWidth` (var) | The widest the text lays out, in px, or 0 for no limit (`preferredMaxLayoutWidth`). | `CYLPlaceholderView` `preferredMaxLayoutWidth` |  |
 | `CYLPlaceholderView.reportsContentSize` (var) | false (the default, as on iOS): the view fills the room it is given (a wrap-content size up to its limit) and centers its content. | `CYLPlaceholderView` `reportsContentSize` |  |
-| `CYLPlaceholderView.badgeValue` (var) | The badge's value: null for none, "" for a dot, else the text (`badgeValue`). | `CYLPlaceholderView` `badgeValue` |  |
+| `CYLPlaceholderView.placeholderBadgeValue` (var) | The badge's value: null for none, "" for a dot, else the text (iOS `badgeValue`). | `CYLPlaceholderView` `badgeValue` |  |
 | `CYLPlaceholderView.badgeCenterOffset` (var) | The badge's offset from the icon's top right corner, in dp, x and y (`badgeCenterOffset`). | `CYLPlaceholderView` `badgeCenterOffset` |  |
 | `CYLPlaceholderView.tapHandler` (var) | Called when the placeholder is tapped (`tapHandler`); setting it makes the placeholder a button. | `CYLPlaceholderView` `tapHandler` |  |
 | `CYLPlaceholderView.tapInteractionEnabled` (var) | Whether taps reach [tapHandler] (`tapInteractionEnabled`). | `CYLPlaceholderView` `tapInteractionEnabled` |  |

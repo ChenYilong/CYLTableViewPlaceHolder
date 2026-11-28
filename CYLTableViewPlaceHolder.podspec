@@ -116,6 +116,9 @@ Pod::Spec.new do |s|
 
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
+    # CYLBadge's public header imports "CYLUtils.h" (a quoted import with no search path of its own) and CYLAnimatedItem imports CYLBadge:
+    # the module build of CYLAnimatedItem from this target fails without the CYLUtils pod's headers (module CYLUtilsKit) on the path.
+    'HEADER_SEARCH_PATHS' => '$(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CYLUtils/CYLUtilsKit.framework/Headers"',
     'WARNING_CFLAGS' => [
       '-Werror=undeclared-selector',
       '-Werror=incomplete-implementation',

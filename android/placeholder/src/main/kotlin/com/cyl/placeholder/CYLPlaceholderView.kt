@@ -526,8 +526,12 @@ class CYLPlaceholderView @JvmOverloads constructor(
         super.onMeasure(fill(widthMeasureSpec), fill(heightMeasureSpec))
     }
 
-    /** The badge's value: null for none, "" for a dot, else the text (`badgeValue`). */
-    var badgeValue: String? = null
+    /**
+     * The badge's value: null for none, "" for a dot, else the text (iOS `badgeValue`). Named `placeholderBadgeValue` here because the
+     * engine's `CYLAnimatedItemView` has a final `badgeValue` of its own (the item badge through `:cylbadge`), which would otherwise be
+     * hidden; this one draws [badgeLabel].
+     */
+    var placeholderBadgeValue: String? = null
         set(value) {
             val changed = field != value
             field = value
@@ -552,7 +556,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
         val animatorScale = runCatching {
             android.provider.Settings.Global.getFloat(context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
         }.getOrDefault(1f)
-        if (badgeValue == null || !appearance.animatesChanges || appearance.animationDuration <= 0 || !isAttachedToWindow ||
+        if (placeholderBadgeValue == null || !appearance.animatesChanges || appearance.animationDuration <= 0 || !isAttachedToWindow ||
             animatorScale == 0f) return
         badgeLabel.animate().cancel()
         badgeLabel.scaleX = 0.6f

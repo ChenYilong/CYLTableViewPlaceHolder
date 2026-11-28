@@ -68,7 +68,7 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
   end
   refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
   target.build_configurations.each do |config|
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\" \"#{root}/CrossPlatform/react-native-cylplaceholder/ios\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{root}/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder\" \"#{root}/CYLTableViewPlaceHolder/CYLPlaceholderHUD\" \"#{root}/CrossPlatform/react-native-cylplaceholder/ios\" \"${PODS_CONFIGURATION_BUILD_DIR}/CYLUtils/CYLUtilsKit.framework/Headers\""
     # CYLPlaceholderNetworkMonitor uses NWPathMonitor (Network.framework, the podspec's `frameworks`).
     config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -framework Network'
     # CYLPlaceholderView, CYLPlaceholderLocalization, CYLPlaceholderNetworkMonitor, the legacy cyl_reloadData category,
