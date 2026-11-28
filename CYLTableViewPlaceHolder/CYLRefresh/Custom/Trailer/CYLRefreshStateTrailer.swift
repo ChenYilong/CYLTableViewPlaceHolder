@@ -7,10 +7,10 @@
 //
 
 // [EN] Swift since 2026-11-20 (docs/Swift-Migration.md, step 10), with the same Objective-C API (`stateLabel`,
-//      `setTitle:forState:`, `titleForState:`, `cyl_placeStateLabelAtCenterX:`, Swift `cyl_placeStateLabel(centerX:)`) and
+//      `setTitle:forState:`, `titleForState:`, `cyl_placeStateLabelAtCenterX:`, Swift `placeStateLabel(centerX:)`) and
 //      the same texts and vertical text layout.
 // [CN] 自 2026-11-20 起用 Swift 编写（docs/Swift-Migration.md 第 10 步），Objective-C API（`stateLabel`、`setTitle:forState:`、
-//      `titleForState:`、`cyl_placeStateLabelAtCenterX:`，Swift 为 `cyl_placeStateLabel(centerX:)`）以及文字与竖排布局均不变。
+//      `titleForState:`、`cyl_placeStateLabelAtCenterX:`，Swift 为 `placeStateLabel(centerX:)`）以及文字与竖排布局均不变。
 
 import UIKit
 
@@ -33,8 +33,8 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
      */
     @objc open var stateLabel: UILabel! {
         if let label = storedStateLabel { return label }
-        // [EN] `+[UILabel cyl_label]`, which Swift imports as `cyl_()`. [CN] 即 `+[UILabel cyl_label]`，Swift 导入为 `cyl_()`。
-        let label = UILabel.cyl_()
+        // [EN] `+[UILabel cyl_label]`, which Swift calls `cylLabel()`. [CN] 即 `+[UILabel cyl_label]`，Swift 中为 `cylLabel()`。
+        let label = UILabel.cylLabel()
         label.numberOfLines = 0
         addSubview(label)
         storedStateLabel = label
@@ -49,8 +49,8 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
     @discardableResult
     open func setTitle(_ title: String?, for state: CYLRefreshState) -> Self {
         guard let title = title else { return self }
-        cyl_setStateTitle(title, for: state)
-        stateLabel.text = cyl_stateTitle(for: self.state)
+        setStateTitle(title, for: state)
+        stateLabel.text = stateTitle(for: self.state)
         return self
     }
 
@@ -60,14 +60,14 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
      */
     @objc(titleForState:)
     open func title(for state: CYLRefreshState) -> String? {
-        cyl_stateTitle(for: state)
+        stateTitle(for: state)
     }
 
     private func textConfiguration() {
         // 初始化文字
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshTrailerIdleText), for: .idle)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshTrailerPullingText), for: .pulling)
-        setTitle(Bundle.cyl_localizedString(forKey: CYLRefreshTrailerPullingText), for: .refreshing)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshTrailerIdleText), for: .idle)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshTrailerPullingText), for: .pulling)
+        setTitle(Bundle.cylLocalizedString(forKey: CYLRefreshTrailerPullingText), for: .refreshing)
     }
 
     // MARK: - Overrides
@@ -101,7 +101,7 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
             if newValue == oldState { return }
             super.state = newValue
             // 设置状态文字
-            stateLabel.text = cyl_stateTitle(for: newValue)
+            stateLabel.text = stateTitle(for: newValue)
         }
     }
 
@@ -112,7 +112,7 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
         super.placeSubviews()
 
         if stateLabel.isHidden { return }
-        cyl_placeStateLabel(centerX: cyl_w * 0.5)
+        placeStateLabel(centerX: cylW * 0.5)
     }
 
     // MARK: - Vertical text
@@ -144,11 +144,11 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
      */
     @objc(cyl_placeStateLabelAtCenterX:)
     @discardableResult
-    open func cyl_placeStateLabel(centerX: CGFloat) -> CGFloat {
+    open func placeStateLabel(centerX: CGFloat) -> CGFloat {
         let label: UILabel = stateLabel
         if !label.constraints.isEmpty { return label.frame.width }
         label.transform = .identity
-        let height = cyl_h
+        let height = cylH
         let column = ceil(label.font.pointSize)
         let center = CGPoint(x: centerX, y: height * 0.5)
         let flip = flipsHorizontally ? CGAffineTransform(scaleX: -1, y: 1) : .identity
@@ -172,8 +172,8 @@ open class CYLRefreshStateTrailer: CYLRefreshTrailer {
     }
 
     /**
-     * [EN] None: the state label is flipped together with its rotation in `cyl_placeStateLabel(centerX:)`; flipping it
-     *      here would drop the rotation. [CN] 无：状态文字的翻转与旋转一起在 `cyl_placeStateLabel(centerX:)` 中设置；在这里翻转会丢掉旋转。
+     * [EN] None: the state label is flipped together with its rotation in `placeStateLabel(centerX:)`; flipping it
+     *      here would drop the rotation. [CN] 无：状态文字的翻转与旋转一起在 `placeStateLabel(centerX:)` 中设置；在这里翻转会丢掉旋转。
      */
     open override var flipsHorizontallyInOppositeLayoutDirectionViews: [UIView] {
         []

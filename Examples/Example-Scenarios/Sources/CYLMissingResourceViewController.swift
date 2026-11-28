@@ -3,7 +3,7 @@
 //  Example-Scenarios
 //
 //  A placeholder whose animation file does not exist. The engine swallows that error; the core names the file in the red bar
-//  under the navigation bar (`cyl_showsMissingResources`, `CYLPlaceholderResourceReporter`): one file reads
+//  under the navigation bar (`cylShowsMissingResources`, `CYLPlaceholderResourceReporter`): one file reads
 //  "Missing resource: Demo.pag (file not found)", several read "Missing resources: Demo.pag +1 more". "Add" adds another
 //  missing file; "Load" gives the placeholder a file that exists, which clears its entry.
 //
@@ -39,9 +39,9 @@ final class CYLMissingResourceViewController: UITableViewController {
         fix.accessibilityIdentifier = "missingResourceFix"
         navigationItem.rightBarButtonItems = [fix, add]
         // The bar names the missing files of this page.
-        cyl_showsMissingResources = true
+        cylShowsMissingResources = true
         // An empty table shows the placeholder, which asks for a file that is not there.
-        tableView.cyl_placeholderViewBlock({ [weak self] _ in
+        tableView.cylPlaceholderViewBlock({ [weak self] _ in
             let attributes: [String: Any] = [
                 CYLPlaceholderItemTitle: CYLScenarioLocalizedString(.titleMissingResource),
                 CYLPlaceholderItemAnimationFilePath: "/nonexistent/Animations/Demo.pag",

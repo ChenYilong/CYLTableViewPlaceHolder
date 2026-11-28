@@ -34,15 +34,15 @@ final class CYLSectionsViewController: UIViewController, UITableViewDataSource, 
         tableView.accessibilityIdentifier = "sectionsTable"
         view.addSubview(tableView)
 
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             self?.title = CYLObjC02LocalizedString(.titleHeaderRefreshing)
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLSectionsDuration) { [weak self] in
                 guard let self = self else { return }
                 self.tableView.reloadData()
-                self.tableView.cyl_header?.endRefreshing(completionBlock: { [weak self] in
+                self.tableView.cylHeader?.endRefreshing(completionBlock: { [weak self] in
                     guard let self = self else { return }
                     self.refreshCount += 1
-                    self.cyl_setStatusTitle(CYLObjC02LocalizedFormat(.formatHeaderCompleted, self.refreshCount))
+                    self.cylSetStatusTitle(CYLObjC02LocalizedFormat(.formatHeaderCompleted, self.refreshCount))
                 })
             }
         }
@@ -54,7 +54,7 @@ final class CYLSectionsViewController: UIViewController, UITableViewDataSource, 
     }
 
     @objc private func startRefresh() {
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     // MARK: - UITableViewDataSource

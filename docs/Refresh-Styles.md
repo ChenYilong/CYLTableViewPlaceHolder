@@ -31,12 +31,12 @@
 | `CYLRefresh` 源码位于 `CYLTableViewPlaceHolder/CYLRefresh/`，可直接修改，无需安装额外的刷新 Pod。导入 `CYLTableViewPlaceHolder.h` 后： | The `CYLRefresh` source is in `CYLTableViewPlaceHolder/CYLRefresh/` and can be modified directly; no extra refresh pod is needed. After importing `CYLTableViewPlaceHolder.h`: |
 
 ```swift
-tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
     // [CN] 加载数据，完成后调用 endRefreshing
     // [EN] Load the data, then call endRefreshing when done
     self?.loadNewData()
 }
-tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+tableView.cylFooter = CYLRefreshAutoNormalFooter { [weak self] in
     // [CN] 加载更多数据，完成后调用 endRefreshing
     // [EN] Load more data, then call endRefreshing when done
     self?.loadMoreData()
@@ -67,15 +67,15 @@ tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
 ```swift
 // [CN] iOS 26 之前的系统上手动开启：刷新结束后自动隐藏刷新头
 // [EN] Turn it on yourself before iOS 26: the header hides once the refresh ends
-tableView.cyl_header?.autoHideRefresh = true
+tableView.cylHeader?.autoHideRefresh = true
 // [CN] 刷新头、刷新尾分开或一起设置（挂上控件之前设置也会生效）
 // [EN] Header and footer separately or together (also before the controls are attached)
-tableView.cyl_autoHideRefreshHeader = true
-tableView.cyl_autoHideRefreshFooter = false
-tableView.cyl_autoHideRefresh = true
+tableView.cylAutoHideRefreshHeader = true
+tableView.cylAutoHideRefreshFooter = false
+tableView.cylAutoHideRefresh = true
 // [CN] 恢复 MJRefresh 的行为：收回后的刷新头保持可见
 // [EN] MJRefresh's behavior: the retracted header stays visible
-tableView.cyl_header?.autoHideRefresh = false
+tableView.cylHeader?.autoHideRefresh = false
 ```
 
 ![刷新结束后导航栏下没有刷新头：example01、04、11 / No header under the navigation bar after the refresh: example01, 04, 11](../assets/cyl-refresh-idle-hidden.png)
@@ -83,18 +83,18 @@ tableView.cyl_header?.autoHideRefresh = false
 #### 下拉刷新 01：默认 / Pull-down refresh 01: Default
 
 ```swift
-tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
     // [CN] 进入刷新状态后会自动调用这个闭包
     // [EN] Called automatically once the control enters the refreshing state
     self?.loadNewData()
 }
 // [CN] 或者：进入刷新状态后调用 target 的 action，即 loadNewData
 // [EN] Or: once it enters the refreshing state, call the target's action, that is loadNewData
-tableView.cyl_header = CYLRefreshNormalHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
+tableView.cylHeader = CYLRefreshNormalHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
 
 // [CN] 马上进入刷新状态
 // [EN] Enter the refreshing state right away
-tableView.cyl_header?.beginRefreshing()
+tableView.cylHeader?.beginRefreshing()
 ```
 
 ![下拉刷新 01：默认 / Pull-down refresh 01: Default](../assets/cyl-refresh-example01.png)
@@ -110,7 +110,7 @@ let header = CYLRefreshGifHeader(refreshingTarget: self, refreshingAction: #sele
 header.setImages(idleImages, for: .idle)
 header.setImages(pullingImages, for: .pulling)
 header.setImages(refreshingImages, for: .refreshing)
-tableView.cyl_header = header
+tableView.cylHeader = header
 ```
 
 ![下拉刷新 02：GIF 帧图片 / Pull-down refresh 02: GIF frame images](../assets/cyl-refresh-example02.png)
@@ -161,7 +161,7 @@ header.lastUpdatedTimeLabel.textColor = .blue
 #### 下拉刷新 06：自定义刷新控件 / Pull-down refresh 06: Custom refresh control
 
 ```swift
-tableView.cyl_header = CYLRefreshDIYHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
+tableView.cylHeader = CYLRefreshDIYHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
 // [CN] 实现见示例中的 CYLRefreshDIYControls.swift（CYLRefreshHeader 的子类）
 // [EN] See CYLRefreshDIYControls.swift in the example (a subclass of CYLRefreshHeader)
 ```
@@ -171,14 +171,14 @@ tableView.cyl_header = CYLRefreshDIYHeader(refreshingTarget: self, refreshingAct
 #### 上拉加载 01：默认 / Pull-up loading 01: Default
 
 ```swift
-tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+tableView.cylFooter = CYLRefreshAutoNormalFooter { [weak self] in
     // [CN] 进入刷新状态后会自动调用这个闭包
     // [EN] Called automatically once the control enters the refreshing state
     self?.loadMoreData()
 }
 // [CN] 或者：进入刷新状态后调用 loadMoreData
 // [EN] Or: call loadMoreData once it enters the refreshing state
-tableView.cyl_footer = CYLRefreshAutoNormalFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+tableView.cylFooter = CYLRefreshAutoNormalFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
 ```
 
 ![上拉加载 01：默认 / Pull-up loading 01: Default](../assets/cyl-refresh-example11-footer.png)
@@ -190,7 +190,7 @@ let footer = CYLRefreshAutoGifFooter(refreshingTarget: self, refreshingAction: #
 // [CN] 刷新中状态的动画图片
 // [EN] The animated images of the refreshing state
 footer.setImages(refreshingImages, for: .refreshing)
-tableView.cyl_footer = footer
+tableView.cylFooter = footer
 ```
 
 ![上拉加载 02：动画图片 / Pull-up loading 02: Animated images](../assets/cyl-refresh-example12-footer.png)
@@ -242,7 +242,7 @@ footer.stateLabel.textColor = .blue
 ```swift
 // [CN] 隐藏上拉加载控件
 // [EN] Hide the pull-up control
-tableView.cyl_footer?.isHidden = true
+tableView.cylFooter?.isHidden = true
 ```
 
 ![上拉加载 07：加载后隐藏 / Pull-up loading 07: Hide after loading](../assets/cyl-refresh-example17-footer.png)
@@ -250,11 +250,11 @@ tableView.cyl_footer?.isHidden = true
 #### 上拉加载 08：自动回弹 01 / Pull-up loading 08: Springing back 01
 
 ```swift
-tableView.cyl_footer = CYLRefreshBackNormalFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+tableView.cylFooter = CYLRefreshBackNormalFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
 // [CN] 底部 inset 不计入控件位置
 // [EN] A bottom inset that the footer ignores
 tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
-tableView.cyl_footer?.ignoredScrollViewContentInsetBottom = 30
+tableView.cylFooter?.ignoredScrollViewContentInsetBottom = 30
 ```
 
 ![上拉加载 08：自动回弹 01 / Pull-up loading 08: Springing back 01](../assets/cyl-refresh-example18-footer.png)
@@ -266,7 +266,7 @@ let footer = CYLRefreshBackGifFooter(refreshingTarget: self, refreshingAction: #
 footer.setImages(idleImages, for: .idle)
 footer.setImages(pullingImages, for: .pulling)
 footer.setImages(refreshingImages, for: .refreshing)
-tableView.cyl_footer = footer
+tableView.cylFooter = footer
 ```
 
 ![上拉加载 09：自动回弹 02 / Pull-up loading 09: Springing back 02](../assets/cyl-refresh-example19-footer.png)
@@ -274,7 +274,7 @@ tableView.cyl_footer = footer
 #### 上拉加载 10：自定义控件（自动加载） / Pull-up loading 10: Custom control (loads automatically)
 
 ```swift
-tableView.cyl_footer = CYLRefreshDIYAutoFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+tableView.cylFooter = CYLRefreshDIYAutoFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
 // [CN] CYLRefreshAutoFooter 的子类，见 CYLRefreshDIYControls.swift
 // [EN] A subclass of CYLRefreshAutoFooter; see CYLRefreshDIYControls.swift
 ```
@@ -284,7 +284,7 @@ tableView.cyl_footer = CYLRefreshDIYAutoFooter(refreshingTarget: self, refreshin
 #### 上拉加载 11：自定义控件（自动回弹） / Pull-up loading 11: Custom control (springs back)
 
 ```swift
-tableView.cyl_footer = CYLRefreshDIYBackFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
+tableView.cylFooter = CYLRefreshDIYBackFooter(refreshingTarget: self, refreshingAction: #selector(loadMoreData))
 // [CN] CYLRefreshBackFooter 的子类，见 CYLRefreshDIYControls.swift
 // [EN] A subclass of CYLRefreshBackFooter; see CYLRefreshDIYControls.swift
 ```
@@ -294,11 +294,11 @@ tableView.cyl_footer = CYLRefreshDIYBackFooter(refreshingTarget: self, refreshin
 #### UICollectionView 01：上下拉刷新 / UICollectionView 01: Pull down and up
 
 ```swift
-collectionView.cyl_header = CYLRefreshNormalHeader {
+collectionView.cylHeader = CYLRefreshNormalHeader {
     // [CN] 下拉刷新
     // [EN] Pull down
 }
-collectionView.cyl_footer = CYLRefreshBackNormalFooter {
+collectionView.cylFooter = CYLRefreshBackNormalFooter {
     // [CN] 上拉加载
     // [EN] Pull up
 }
@@ -311,7 +311,7 @@ collectionView.cyl_footer = CYLRefreshBackNormalFooter {
 #### UICollectionView 02：左拉刷新 / UICollectionView 02: Pull left
 
 ```swift
-collectionView.cyl_trailer = CYLRefreshNormalTrailer {
+collectionView.cylTrailer = CYLRefreshNormalTrailer {
     // [CN] 拉过最后一页后松手
     // [EN] Pull past the last page and release
 }
@@ -326,7 +326,7 @@ collectionView.cyl_trailer = CYLRefreshNormalTrailer {
 #### WKWebView 01：下拉刷新 / WKWebView 01: Pull-down refresh
 
 ```swift
-webView.scrollView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+webView.scrollView.cylHeader = CYLRefreshNormalHeader { [weak self] in
     self?.webView.reload()
 }
 ```
@@ -374,7 +374,7 @@ let header = CYLRefreshGifHeader(refreshingTarget: self, refreshingAction: #sele
 header.setImages(idleImages, for: .idle)
 header.setImages(pullingImages, for: .pulling)
 header.setImages(refreshingImages, for: .refreshing)
-tableView.cyl_header = header
+tableView.cylHeader = header
 
 // [CN] 通用名称，效果相同 / [EN] The general names, with the same result
 let animationHeader = CYLRefreshAnimationHeader(refreshingTarget: self, refreshingAction: #selector(loadNewData))
@@ -474,7 +474,7 @@ let trailer = CYLRefreshNormalTrailer {
     // [EN] Load more data, then call endRefreshing when done
 }
 trailer.isAutomaticallyRefresh = true
-collectionView.cyl_trailer = trailer
+collectionView.cylTrailer = trailer
 ```
 
 | 中文 | English |

@@ -30,18 +30,18 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
     // MARK: - CYLRefreshIconAnimating
 
     /**
-     * [EN] The icon view (`cyl_iconView`). [CN] 图标视图（`cyl_iconView`）。
+     * [EN] The icon view (`refreshIconView`). [CN] 图标视图（`refreshIconView`）。
      */
     @objc open var iconView: CYLRefreshIconView {
-        cyl_iconView
+        refreshIconView
     }
 
     /**
-     * [EN] Whether an icon animation replaces the animation view (`cyl_usesIconView`).
-     * [CN] 是否由图标动画代替动画视图（`cyl_usesIconView`）。
+     * [EN] Whether an icon animation replaces the animation view (`usesRefreshIconView`).
+     * [CN] 是否由图标动画代替动画视图（`usesRefreshIconView`）。
      */
     @objc open var usesIconView: Bool {
-        cyl_usesIconView
+        usesRefreshIconView
     }
 
     /**
@@ -50,7 +50,7 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
     @discardableResult
     @objc(setIconAnimationAttributes:forState:)
     open func setIconAnimation(attributes: [String: Any]?, for state: CYLRefreshState) -> Self {
-        cyl_setIconAnimation(attributes: attributes, for: state)
+        applyIconAnimation(attributes: attributes, for: state)
         return self
     }
 
@@ -60,7 +60,7 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
     @discardableResult
     @objc(setIconAnimationFilePath:size:forState:)
     open func setIconAnimation(filePath: String, size: CGSize, for state: CYLRefreshState) -> Self {
-        cyl_setIconAnimation(filePath: filePath, size: size, for: state)
+        applyIconAnimation(filePath: filePath, size: size, for: state)
         return self
     }
 
@@ -70,7 +70,7 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
     @discardableResult
     @objc(setBundledIconAnimation:size:forState:)
     open func setIconAnimation(bundled fileName: String, size: CGSize, for state: CYLRefreshState) -> Self {
-        cyl_setBundledIconAnimation(fileName, size: size, for: state)
+        setBundledIconAnimation(fileName, size: size, for: state)
         return self
     }
 
@@ -111,7 +111,7 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
         // [EN] One implementation for the animation header and footers (CYLRefreshComponent): the images are drawn by the
         //      icon's CYLPlaceholderView; `animationView` stays for compatibility and is hidden.
         // [CN] 动画刷新头与尾部共用一个实现（CYLRefreshComponent）：图片由图标的 CYLPlaceholderView 绘制；`animationView` 为兼容保留并隐藏。
-        cyl_setAnimationImages(images, duration: duration, for: state)
+        applyAnimationImages(images, duration: duration, for: state)
         return self
     }
 
@@ -143,7 +143,7 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
         get { super.pullingPercent }
         set {
             super.pullingPercent = newValue
-            cyl_showIdleAnimationFrame()
+            showIdleAnimationFrame()
         }
     }
 
@@ -162,13 +162,13 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
             animationView.contentMode = .center
         } else {
             animationView.contentMode = .right
-            animationView.cyl_w = cyl_w * 0.5 - labelLeftInset - (stateLabel?.cyl_textWidth() ?? 0) * 0.5
+            animationView.cylW = cylW * 0.5 - labelLeftInset - (stateLabel?.cylTextWidth() ?? 0) * 0.5
         }
         // [EN] An icon animation takes the animation view's place (centered or next to the text) and hides with it.
         // [CN] 图标动画替换 动画视图（居中或紧挨文字），并与其一同隐藏。
         // [EN] The state text goes into the icon's CYLPlaceholderView, so icon and text are one centered view.
         // [CN] 状态文字放进图标的 CYLPlaceholderView，图标与文字是一个整体并居中。
-        cyl_placeIconView(title: stateHidden ? nil : stateLabel?.text, labels: [stateLabel].compactMap { $0 },
+        placeIconView(title: stateHidden ? nil : stateLabel?.text, labels: [stateLabel].compactMap { $0 },
                           visible: state != .noMoreData, replacing: [animationView])
     }
 
@@ -185,10 +185,10 @@ open class CYLRefreshBackAnimationFooter: CYLRefreshBackStateFooter, CYLRefreshI
             super.state = newValue
 
             if newValue == .idle {
-                cyl_showIdleAnimationFrame()
+                showIdleAnimationFrame()
             }
             setNeedsLayout()
-            cyl_updateIconView(visible: newValue != .noMoreData, replacing: [animationView])
+            updateIconView(visible: newValue != .noMoreData, replacing: [animationView])
         }
     }
 

@@ -7,6 +7,14 @@ import UIKit
 import CYLTabBarController
 import CYLTableViewPlaceHolder
 
+/// The navigation controller of every tab. UIKit asks a navigation controller with a visible bar for its own status bar
+/// style, not for the top screen's; the tag-list screens decide their style (`CYLTagListScreenViewController`), so the top
+/// screen is consulted here (without it the light gradient page showed a white clock, tested 2026-11-26). A screen that sets
+/// nothing keeps the system's pick.
+final class CYLScenarioNavigationController: UINavigationController {
+    override var childForStatusBarStyle: UIViewController? { topViewController }
+}
+
 /// Five tabs and a plus button with a page of its own, modeled on CYLTabBarController's Objective-C demo and created the
 /// examples' default way ("Integrating CYLTabBarController in the examples"): the tabs, their titles and images and the
 /// plus button come from `CYLScenarioExample.bundle/TabBar/tabbar.json`, the pages from `CYLTabBarPageRegistry`.
@@ -38,7 +46,7 @@ final class CYLScenarioTabBarController: CYLTabBarController {
             CYLTabBarPageRegistry.shared.register(factory: { _ in
                 let root = page.make()
                 root.title = CYLScenarioLocalizedString(page.title)
-                let navigation = UINavigationController(rootViewController: root)
+                let navigation = CYLScenarioNavigationController(rootViewController: root)
                 navigation.navigationBar.prefersLargeTitles = true
                 return navigation
             }, forPageIdentifier: page.identifier)

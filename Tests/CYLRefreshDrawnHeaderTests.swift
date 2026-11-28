@@ -46,9 +46,9 @@ private final class CYLDrawnDemoTableController: UITableViewController {
  *      rendered pull. [CN] 可以声称手指按下的滚动视图，使只在拖动时绘制的样式（BezierRadar）在渲染的上拉中也绘制。
  */
 private final class CYLDraggingScrollView: UIScrollView {
-    var cyl_fakeDragging = false
+    var fakeDragging = false
 
-    override var isDragging: Bool { cyl_fakeDragging || super.isDragging }
+    override var isDragging: Bool { fakeDragging || super.isDragging }
 }
 
 /**
@@ -139,12 +139,12 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             let before = scrollView.contentInset
             let header: CYLRefreshComponent = style.attach(to: scrollView)
             XCTAssertTrue(header is CYLRefreshDrawnHeader)
-            XCTAssertTrue(scrollView.cyl_header === header)
+            XCTAssertTrue(scrollView.cylHeader === header)
             XCTAssertGreaterThan(header.expandHeight, 0, "\(style)")
             spin(0.05)
             var y: CGFloat = 0
             while y >= -220 {
-                scrollView.contentOffset = CGPoint(x: 0, y: y - scrollView.cyl_inset.top)
+                scrollView.contentOffset = CGPoint(x: 0, y: y - scrollView.cylInset.top)
                 header.layoutIfNeeded()
                 header.setNeedsDisplay()
                 header.layer.displayIfNeeded()
@@ -152,10 +152,10 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             }
             render(header)
             var invalid: [String] = []
-            scrollView.contentOffset = CGPoint(x: 0, y: -scrollView.cyl_inset.top)
+            scrollView.contentOffset = CGPoint(x: 0, y: -scrollView.cylInset.top)
             spin(0.1)
             collectInvalidLayers(header.layer, path: "idle", into: &invalid)
-            scrollView.contentOffset = CGPoint(x: 0, y: -scrollView.cyl_inset.top - 60)
+            scrollView.contentOffset = CGPoint(x: 0, y: -scrollView.cylInset.top - 60)
             spin(0.1)
             collectInvalidLayers(header.layer, path: "pulled", into: &invalid)
             header.beginRefreshing()
@@ -168,7 +168,7 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             spin(1.8)
             render(header)
             XCTAssertEqual(header.state, .idle, "\(style)")
-            scrollView.cyl_header = nil
+            scrollView.cylHeader = nil
             XCTAssertEqual(scrollView.contentInset.top, before.top, accuracy: 0.5, "\(style) leaves the inset as it found it")
             scrollView.removeFromSuperview()
         }
@@ -194,22 +194,22 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
 
     func testAModeSwitchDuringARefreshStillRestoresTheInset() {
         let scrollView = self.scrollView()
-        let top = scrollView.cyl_inset.top
+        let top = scrollView.cylInset.top
         let header = CYLRefreshNormalHeader.attach(to: scrollView)
         spin(0.05)
         header.beginRefreshing()
         spin(0.5)
-        XCTAssertGreaterThan(scrollView.cyl_inset.top, top + 1, "refreshing pushed the content down")
+        XCTAssertGreaterThan(scrollView.cylInset.top, top + 1, "refreshing pushed the content down")
         header.scrollMode = .front
         header.endRefreshing()
         spin(0.8)
-        XCTAssertEqual(scrollView.cyl_inset.top, top, accuracy: 0.5, "the added inset is removed although the mode changed")
+        XCTAssertEqual(scrollView.cylInset.top, top, accuracy: 0.5, "the added inset is removed although the mode changed")
 
         header.scrollMode = .move
         header.addsRefreshingInset = false
         header.beginRefreshing()
         spin(0.5)
-        XCTAssertEqual(scrollView.cyl_inset.top, top, accuracy: 0.5, "addsRefreshingInset NO keeps the content in place")
+        XCTAssertEqual(scrollView.cylInset.top, top, accuracy: 0.5, "addsRefreshingInset NO keeps the content in place")
         header.endRefreshing()
         spin(0.5)
     }
@@ -221,14 +221,14 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
         for style in styles {
             let scrollView = UIScrollView(frame: window.bounds)
             scrollView.contentSize = CGSize(width: 375, height: 2000)
-            let top = scrollView.cyl_inset.top
+            let top = scrollView.cylInset.top
             let header = style.init()
             header.attach(to: scrollView)
             header.beginRefreshing()
             window.addSubview(scrollView)
             spin(0.6)
             XCTAssertTrue(header.isRefreshing, "\(style)")
-            XCTAssertGreaterThan(scrollView.cyl_inset.top, top + 1, "\(style) pushes the content down")
+            XCTAssertGreaterThan(scrollView.cylInset.top, top + 1, "\(style) pushes the content down")
             header.endRefreshing()
             spin(0.6)
             scrollView.removeFromSuperview()
@@ -305,7 +305,7 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             footer.refreshingBlock = { loads += 1 }
             XCTAssertNotNil(footer.style, "\(cls)")
             XCTAssertTrue(footer.style?.superview === footer, "\(cls) hosts its style")
-            XCTAssertGreaterThan(footer.cyl_h, 0, "\(cls) takes the style's height")
+            XCTAssertGreaterThan(footer.cylH, 0, "\(cls) takes the style's height")
             XCTAssertNil(footer.style?.layer.mask, "\(cls): the hosted style is never auto-hidden")
 
             // Pull: the style follows the distance pulled past the content's bottom.
@@ -367,10 +367,10 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             let bottom: CGFloat = 600 - 360
             for moment in ["pull", "loading"] {
                 if moment == "pull" {
-                    scrollView.cyl_fakeDragging = true
-                    scrollView.contentOffset = CGPoint(x: 0, y: bottom + footer.cyl_h * 0.8)
+                    scrollView.fakeDragging = true
+                    scrollView.contentOffset = CGPoint(x: 0, y: bottom + footer.cylH * 0.8)
                 } else {
-                    scrollView.cyl_fakeDragging = false
+                    scrollView.fakeDragging = false
                     footer.beginRefreshing()
                 }
                 RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.8))
@@ -400,17 +400,17 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
             scrollView.contentOffset = CGPoint(x: 0, y: -116)
             // A real release: drag past the trigger, then let go.
             let maxOffset = max(-116, contentHeight + 83 - 874)
-            scrollView.cyl_fakeDragging = true
-            scrollView.contentOffset = CGPoint(x: 0, y: maxOffset + footer.cyl_h * 1.3)
-            scrollView.cyl_fakeDragging = false
-            scrollView.contentOffset = CGPoint(x: 0, y: maxOffset + footer.cyl_h * 1.25)
+            scrollView.fakeDragging = true
+            scrollView.contentOffset = CGPoint(x: 0, y: maxOffset + footer.cylH * 1.3)
+            scrollView.fakeDragging = false
+            scrollView.contentOffset = CGPoint(x: 0, y: maxOffset + footer.cylH * 1.25)
             RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.8))
             NSLog("CYLDEBUG content=%@ state=%ld offset=%.1f insetB=%.1f drag=%.1f styleH=%.1f footerH=%.1f",
                   NSNumber(value: Double(contentHeight)), footer.state.rawValue, Double(scrollView.contentOffset.y),
-                  Double(scrollView.contentInset.bottom), Double(footer.style?.dragOffset ?? 0), Double(footer.style?.cyl_h ?? 0),
-                  Double(footer.cyl_h))
+                  Double(scrollView.contentInset.bottom), Double(footer.style?.dragOffset ?? 0), Double(footer.style?.cylH ?? 0),
+                  Double(footer.cylH))
             XCTAssertEqual(footer.state, .refreshing, "content \(contentHeight)")
-            XCTAssertGreaterThan(footer.style?.dragOffset ?? 0, footer.cyl_h * 0.5, "content \(contentHeight): the style still sees the open footer")
+            XCTAssertGreaterThan(footer.style?.dragOffset ?? 0, footer.cylH * 0.5, "content \(contentHeight): the style still sees the open footer")
             footer.endRefreshing()
             window.isHidden = true
         }
@@ -421,9 +421,9 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
     func testMaterialColorsAndSize() {
         let header = CYLRefreshMaterialHeader()
         XCTAssertEqual(header.progressSize, .default)
-        let defaultHeight = header.cyl_h
+        let defaultHeight = header.cylH
         header.progressSize = .large
-        XCTAssertGreaterThan(header.cyl_h, defaultHeight, "LARGE is a bigger circle")
+        XCTAssertGreaterThan(header.cylH, defaultHeight, "LARGE is a bigger circle")
         let colors: [UIColor] = [.red, .green]
         header.colorSchemeColors = colors
         XCTAssertEqual(header.colorSchemeColors, colors)
@@ -444,7 +444,7 @@ final class CYLRefreshDrawnHeaderTests: XCTestCase {
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         scrollView.contentSize = CGSize(width: 320, height: 2000)
         let footer = CYLRefreshBallPulseFooter(refreshingBlock: {})
-        scrollView.cyl_footer = footer
+        scrollView.cylFooter = footer
         footer.animatingColor = .orange
         footer.state = .refreshing
         XCTAssertTrue(footer.isRefreshing)

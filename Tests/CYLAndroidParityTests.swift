@@ -87,8 +87,8 @@ final class CYLAndroidParityTests: XCTestCase {
     }
 
     /**
-     * [EN] Android: CYLTableViewPlaceHolderTest (`RecyclerView.cyl_placeholderView`).
-     * [CN] Android：CYLTableViewPlaceHolderTest（`RecyclerView.cyl_placeholderView`）。
+     * [EN] Android: CYLTableViewPlaceHolderTest (`RecyclerView.cylPlaceholderView`).
+     * [CN] Android：CYLTableViewPlaceHolderTest（`RecyclerView.cylPlaceholderView`）。
      */
     func testTheListReportsThePlaceholderItShows() {
         let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480), style: .plain)
@@ -99,17 +99,17 @@ final class CYLAndroidParityTests: XCTestCase {
         self.window = window
         window.addSubview(table)
         window.isHidden = false
-        XCTAssertNil(table.cyl_placeholderView, "no placeholder before the block API is used")
+        XCTAssertNil(table.cylPlaceholderView, "no placeholder before the block API is used")
 
         let placeholder = UIView()
-        table.cyl_placeholderViewBlock { _ in placeholder }
+        table.cylPlaceholderViewBlock { _ in placeholder }
         table.reloadData()
-        XCTAssertTrue(waitFor { table.cyl_placeholderView === placeholder }, "an empty list reports the placeholder it shows")
+        XCTAssertTrue(waitFor { table.cylPlaceholderView === placeholder }, "an empty list reports the placeholder it shows")
 
         rows.rows = 3
         table.reloadData()
-        XCTAssertTrue(waitFor { table.cyl_placeholderView == nil }, "data came: the placeholder goes")
-        table.cyl_placeholderViewBlock(nil)
+        XCTAssertTrue(waitFor { table.cylPlaceholderView == nil }, "data came: the placeholder goes")
+        table.cylPlaceholderViewBlock(nil)
     }
 
     /**

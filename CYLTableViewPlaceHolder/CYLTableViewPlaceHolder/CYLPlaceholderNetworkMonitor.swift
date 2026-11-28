@@ -123,7 +123,7 @@ open class CYLPlaceholderNetworkMonitor: NSObject {
             DispatchQueue.main.async { [weak self] in
                 // [EN] Ignore an update a cancelled monitor had queued. [CN] 忽略已取消的监测器排队中的更新。
                 guard let self = self, self.pathMonitor != nil, self.generation == generation else { return }
-                self.cyl_setStatus(status, constrained: constrained, expensive: expensive)
+                self.setStatus(status, constrained: constrained, expensive: expensive)
             }
         }
         pathMonitor = monitor
@@ -138,7 +138,7 @@ open class CYLPlaceholderNetworkMonitor: NSObject {
         guard let monitor = pathMonitor else { return }
         pathMonitor = nil
         monitor.cancel()
-        cyl_setStatus(.unknown, constrained: false, expensive: false)
+        setStatus(.unknown, constrained: false, expensive: false)
     }
 
     /**
@@ -182,7 +182,7 @@ open class CYLPlaceholderNetworkMonitor: NSObject {
     // [EN] Applies an update on the main queue; reports only real changes. The tests call it by its selector.
     // [CN] 在主队列应用更新；只报告真正的变化。测试通过其选择器直接调用。
     @objc(cyl_setStatus:constrained:expensive:)
-    private func cyl_setStatus(_ status: CYLPlaceholderNetworkStatus, constrained: Bool, expensive: Bool) {
+    private func setStatus(_ status: CYLPlaceholderNetworkStatus, constrained: Bool, expensive: Bool) {
         let statusChanged = status != networkStatus
         let costChanged = constrained != storedConstrained || expensive != storedExpensive
         // [EN] Key-value observers see every update, as with the Objective-C property setters.

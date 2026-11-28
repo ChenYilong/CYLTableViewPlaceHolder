@@ -17,7 +17,7 @@ import UIKit
 
 /**
  * Collects the animation resources that are missing and says which ones, for the red status bar. Use it on the main
- * thread; `CYLPlaceholderView` reports to `shared`, and a view controller shows it with `cyl_showsMissingResources`.
+ * thread; `CYLPlaceholderView` reports to `shared`, and a view controller shows it with `cylShowsMissingResources`.
  */
 @objc(CYLPlaceholderResourceReporter)
 public final class CYLPlaceholderResourceReporter: NSObject {

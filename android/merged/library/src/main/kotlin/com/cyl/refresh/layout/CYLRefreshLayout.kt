@@ -37,6 +37,7 @@ import androidx.core.view.NestedScrollingChildHelper
 import androidx.core.view.NestedScrollingParent
 import androidx.core.view.NestedScrollingParentHelper
 import androidx.core.view.ViewCompat
+import com.cyl.placeholder.CYLPlaceholderLoadMoreHost
 import com.cyl.refresh.layout.api.RefreshComponent
 import com.cyl.refresh.layout.api.RefreshContent
 import com.cyl.refresh.layout.api.RefreshFooter
@@ -75,7 +76,7 @@ import kotlin.math.pow
 open class CYLRefreshLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : ViewGroup(context, attrs), RefreshLayout, NestedScrollingParent {
+) : ViewGroup(context, attrs), RefreshLayout, NestedScrollingParent, CYLPlaceholderLoadMoreHost {
 
     // MARK: - Fields (the Java version's names, so subclasses and tools keep working)
 
@@ -1672,6 +1673,29 @@ open class CYLRefreshLayout @JvmOverloads constructor(
     override fun setReboundInterpolator(interpolator: Interpolator): RefreshLayout = apply { mReboundInterpolator = interpolator }
 
     override fun setReboundDuration(duration: Int): RefreshLayout = apply { mReboundDuration = duration }
+
+    /**
+     * The load-more setting (enabled, set by the app) saved while a list's placeholder shows, or null.
+     */
+    private var mLoadMoreBeforePlaceholder: Pair<Boolean, Boolean>? = null
+
+    /**
+     * An empty list has nothing more to load: load more is off while its placeholder shows (pull to refresh stays),
+     * and the app's setting returns when the placeholder goes, as iOS hides footers over an empty list.
+     */
+    override fun cyl_placeholderDidChange(list: View, showing: Boolean) {
+        if (showing) {
+            if (mLoadMoreBeforePlaceholder == null) mLoadMoreBeforePlaceholder = mEnableLoadMore to mManualLoadMore
+            mEnableLoadMore = false
+            mManualLoadMore = true
+        } else {
+            mLoadMoreBeforePlaceholder?.let { (enabled, manual) ->
+                mEnableLoadMore = enabled
+                mManualLoadMore = manual
+            }
+            mLoadMoreBeforePlaceholder = null
+        }
+    }
 
     override fun setEnableLoadMore(enabled: Boolean): RefreshLayout = apply {
         mManualLoadMore = true

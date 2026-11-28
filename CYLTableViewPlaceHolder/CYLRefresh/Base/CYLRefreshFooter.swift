@@ -23,8 +23,8 @@
 import UIKit
 
 /**
- * [EN] The base class of the pull-up (load more) controls; set one as a scroll view's `cyl_footer`.
- * [CN] 上拉加载更多控件的基类；设为滚动视图的 `cyl_footer` 使用。
+ * [EN] The base class of the pull-up (load more) controls; set one as a scroll view's `cylFooter`.
+ * [CN] 上拉加载更多控件的基类；设为滚动视图的 `cylFooter` 使用。
  */
 @objc(CYLRefreshFooter)
 open class CYLRefreshFooter: CYLRefreshComponent {
@@ -159,14 +159,14 @@ open class CYLRefreshFooter: CYLRefreshComponent {
         super.prepare()
 
         // 设置自己的高度
-        cyl_h = CYLRefreshFooterHeight
+        cylH = CYLRefreshFooterHeight
     }
 
     /**
-     * [EN] Sets the footer as `scrollView.cyl_footer` and returns it. [CN] 设为 `scrollView.cyl_footer` 并返回自身。
+     * [EN] Sets the footer as `scrollView.cylFooter` and returns it. [CN] 设为 `scrollView.cylFooter` 并返回自身。
      */
-    open override func cyl_link(to scrollView: UIScrollView) -> Self {
-        scrollView.cyl_footer = self
+    open override func link(to scrollView: UIScrollView) -> Self {
+        scrollView.cylFooter = self
         return self
     }
 
@@ -179,7 +179,7 @@ open class CYLRefreshFooter: CYLRefreshComponent {
     open override func isReadyToAutoHide() -> Bool {
         if state != .idle && state != .noMoreData { return false }
         guard let scrollView = scrollView else { return true }
-        let visibleBottom = scrollView.cyl_offsetY + scrollView.bounds.height - scrollViewOriginalInset.bottom
+        let visibleBottom = scrollView.cylOffsetY + scrollView.bounds.height - scrollViewOriginalInset.bottom
         return frame.minY >= visibleBottom - 0.5
     }
 
@@ -232,7 +232,7 @@ extension CYLRefreshFooter {
      * [CN] 仅在无更多数据状态时显示 `image`（nil 表示隐藏）；图片或状态变化时调用。
      */
     @objc(cyl_updateNoMoreDataImage:)
-    public func cyl_updateNoMoreDataImage(_ image: UIImage?) {
+    public func updateNoMoreDataImage(_ image: UIImage?) {
         let show = image != nil && state == .noMoreData
         if show && noMoreDataImageView == nil {
             // [EN] A system UIImageView, not CYLPlaceholderView: it sits beside stateLabel in place of the system
@@ -254,11 +254,11 @@ extension CYLRefreshFooter {
      *      from `placeSubviews`. [CN] 把图片放在 `label` 文字左侧（间距 `inset`），尺寸为 `size`，为零时使用图片自身尺寸；在 `placeSubviews` 中调用。
      */
     @objc(cyl_placeNoMoreDataImageBesideLabel:inset:size:)
-    public func cyl_placeNoMoreDataImage(besideLabel label: UILabel?, inset: CGFloat, size: CGSize) {
+    public func placeNoMoreDataImage(besideLabel label: UILabel?, inset: CGFloat, size: CGSize) {
         guard let imageView = noMoreDataImageView, !imageView.isHidden else { return }
-        imageView.cyl_size = (size.width > 0 && size.height > 0) ? size : (imageView.image?.size ?? .zero)
-        var centerX = cyl_w * 0.5
-        if let label = label, !label.isHidden { centerX -= inset + label.cyl_textWidth() * 0.5 }
-        imageView.center = CGPoint(x: centerX, y: cyl_h * 0.5)
+        imageView.cylSize = (size.width > 0 && size.height > 0) ? size : (imageView.image?.size ?? .zero)
+        var centerX = cylW * 0.5
+        if let label = label, !label.isHidden { centerX -= inset + label.cylTextWidth() * 0.5 }
+        imageView.center = CGPoint(x: centerX, y: cylH * 0.5)
     }
 }

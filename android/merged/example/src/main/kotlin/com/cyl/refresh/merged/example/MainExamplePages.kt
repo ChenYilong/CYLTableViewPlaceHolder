@@ -20,7 +20,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -315,26 +314,30 @@ private fun StackPage.automaticPage(): View {
  */
 private fun StackPage.stylesPage(): View {
     val context = requireContext()
-    val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-    for (style in CYLPlaceholderStyle.values()) {
-        // The bundled image name is a technical identifier and stays as it is.
-        column.addView(row(context, CYLPlaceholderView.imageNameForStyle(style), null, "style-${style.name}") { push(messagesPage(style, customImage = false)) })
-    }
-    column.addView(row(context, context.t(R.string.ex_style_custom_image), null, "style-custom-image") { push(messagesPage(CYLPlaceholderStyle.Empty, customImage = true)) })
-    column.addView(row(context, context.t(R.string.ex_style_flat_design_code), null, "style-flat-code") { flatDesignItem(fromFile = false) })
-    column.addView(row(context, context.t(R.string.ex_style_flat_design_plist), null, "style-flat-file") { flatDesignItem(fromFile = true) })
-    listOf(
+    // The bundled image name is a technical identifier and stays as it is.
+    val styles = CYLPlaceholderStyle.values().map { style ->
+        MenuItem(CYLPlaceholderView.imageNameForStyle(style), null, null) { push(messagesPage(style, customImage = false)) }
+    } + MenuItem(context.t(R.string.ex_style_custom_image), null, null) { push(messagesPage(CYLPlaceholderStyle.Empty, customImage = true)) }
+    val flatDesign = listOf(
+        MenuItem(context.t(R.string.ex_style_flat_design_code), null, null) { flatDesignItem(fromFile = false) },
+        MenuItem(context.t(R.string.ex_style_flat_design_plist), null, null) { flatDesignItem(fromFile = true) },
+    )
+    val badges = listOf(
         R.string.ex_style_badge_dot to (CYLPlaceholderBadgeStyle.Dot to null),
         R.string.ex_style_badge_number to (CYLPlaceholderBadgeStyle.Number to "105"),
         R.string.ex_style_badge_text to (CYLPlaceholderBadgeStyle.Text to context.t(R.string.ex_badge_new)),
-    ).forEachIndexed { i, (title, badge) ->
-        column.addView(row(context, context.t(title), null, "style-badge-$i") {
+    ).map { (title, badge) ->
+        MenuItem(context.t(title), null, null) {
             val placeholder = CYLPlaceholderView(context, CYLPlaceholderStyle.NotificationsOff, CYLPlaceholderMessage.NoNotifications)
             placeholder.showBadgeWithStyle(badge.first, badge.second)
             push(page(context, bar(context, context.t(R.string.ex_title_badge_preview)), placeholder))
-        })
+        }
     }
-    return page(context, bar(context, context.t(R.string.ex_title_styles)), ScrollView(context).apply { addView(column) })
+    return page(context, bar(context, context.t(R.string.ex_title_styles)), tagMenu(context, listOf(
+        MenuSection(context.t(R.string.ex_title_styles), styles),
+        MenuSection("FlatDesign", flatDesign),
+        MenuSection(context.t(R.string.ex_title_badge_preview), badges),
+    )))
 }
 
 /**
@@ -386,17 +389,15 @@ private fun StackPage.messagesPage(style: CYLPlaceholderStyle, customImage: Bool
         }
         push(page(context, bar(context, context.t(R.string.ex_action_preview)), placeholder))
     }
-    val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-    for (message in CYLPlaceholderMessage.values()) {
+    val messages = CYLPlaceholderMessage.values().map { message ->
         val text = CYLPlaceholderView.localizedTextForMessage(context, message)
-        column.addView(row(context, text, null, "message-${message.name}") { preview(text, message) })
-    }
-    column.addView(row(context, context.t(R.string.ex_custom_text), null, "message-custom") {
+        MenuItem(text, null, null) { preview(text, message) }
+    } + MenuItem(context.t(R.string.ex_custom_text), null, null) {
         val field = EditText(context).apply { hint = context.t(R.string.ex_custom_text_placeholder) }
         AlertDialog.Builder(context).setTitle(context.t(R.string.ex_custom_text)).setView(field)
             .setNegativeButton(context.t(R.string.ex_action_cancel), null)
             .setPositiveButton(context.t(R.string.ex_action_preview)) { _, _ -> preview(field.text.toString(), null) }
             .show()
-    })
-    return page(context, bar(context, context.t(R.string.ex_title_choose_message)), ScrollView(context).apply { addView(column) })
+    }
+    return page(context, bar(context, context.t(R.string.ex_title_choose_message)), tagMenu(context, listOf(MenuSection(context.t(R.string.ex_title_choose_message), messages))))
 }

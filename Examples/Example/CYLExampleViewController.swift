@@ -6,7 +6,7 @@
 //  Copyright © 2015年 https://github.com/ChenYilong . All rights reserved.
 //
 //  [EN] Swift translation of ViewController.h/.m. Reproduces issues #2, #3 and #6 (instructions.md): every pull to
-//  refresh toggles between five random rows and an empty table; an empty `cyl_reloadData()` asks
+//  refresh toggles between five random rows and an empty table; an empty `cylReloadData()` asks
 //  `makePlaceHolderView()` (CYLTableViewPlaceHolderDelegate), which picks one of two custom placeholders at random.
 //  [CN] ViewController.h/.m 的 Swift 版本，复现 #2、#3、#6：下拉刷新在 5 行随机数据与空表之间切换，
 //  空表时 `makePlaceHolderView()` 随机返回两种自定义占位图之一。
@@ -45,7 +45,7 @@ final class CYLExampleViewController: UITableViewController, CYLTableViewPlaceHo
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        tableView.cyl_reloadData()
+        tableView.cylReloadData()
     }
 
     @objc private func showPlaceholderDemo() {
@@ -55,11 +55,11 @@ final class CYLExampleViewController: UITableViewController, CYLTableViewPlaceHo
     private func setUpCYLRefresh() {
         // [EN] The refreshing block runs as soon as the header enters the refreshing state.
         // [CN] 设置回调（一旦进入刷新状态就会调用这个 refreshingBlock）
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             self?.loadNewData()
         }
         // [EN] Start refreshing right away. [CN] 马上进入刷新状态
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 
     // MARK: - UITableViewDataSource
@@ -92,8 +92,8 @@ final class CYLExampleViewController: UITableViewController, CYLTableViewPlaceHo
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.duration) { [weak self] in
             guard let self = self else { return }
             // [EN] Reload the table, then end the header's refreshing state. [CN] 刷新表格，结束刷新状态
-            self.tableView.cyl_reloadData()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylReloadData()
+            self.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -106,7 +106,7 @@ final class CYLExampleViewController: UITableViewController, CYLTableViewPlaceHo
 
     private func taoBaoStylePlaceHolder() -> UIView {
         CYLXTNetReloader(frame: .zero) { [weak self] in
-            self?.tableView.cyl_header?.beginRefreshing()
+            self?.tableView.cylHeader?.beginRefreshing()
         }
     }
 
@@ -119,6 +119,6 @@ final class CYLExampleViewController: UITableViewController, CYLTableViewPlaceHo
     // MARK: - CYLWeChatStylePlaceHolderDelegate
 
     func emptyOverlayClicked(_ sender: Any?) {
-        tableView.cyl_header?.beginRefreshing()
+        tableView.cylHeader?.beginRefreshing()
     }
 }

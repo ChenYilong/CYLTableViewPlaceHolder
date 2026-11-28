@@ -9,7 +9,7 @@ extension UIViewController {
 
     /// A short confirmation: an alert that closes itself after a second, also announced to VoiceOver so a VoiceOver
     /// user hears it even if the alert closes before focus reaches it.
-    func cyl_showFeedback(_ message: String) {
+    func cylShowFeedback(_ message: String) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         present(alert, animated: true)
         UIAccessibility.post(notification: .announcement, argument: message)

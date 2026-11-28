@@ -61,25 +61,25 @@ final class CYLCollectionViewController: UICollectionViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLDuration) { [weak self] in
                 guard let self = self else { return }
                 self.collectionView.reloadData()
-                self.collectionView.cyl_header?.endRefreshing()
+                self.collectionView.cylHeader?.endRefreshing()
                 self.headerRefreshCount += 1
-                self.cyl_setStatusTitle(CYLObjC02LocalizedFormat(.formatHeaderCompleted, self.headerRefreshCount))
+                self.cylSetStatusTitle(CYLObjC02LocalizedFormat(.formatHeaderCompleted, self.headerRefreshCount))
             }
         }
-        collectionView.cyl_header = header
+        collectionView.cylHeader = header
         header.isCollectionViewAnimationBug = true
-        collectionView.cyl_footer = CYLRefreshBackNormalFooter { [weak self] in
+        collectionView.cylFooter = CYLRefreshBackNormalFooter { [weak self] in
             self?.title = CYLObjC02LocalizedString(.titleFooterRefreshing)
             DispatchQueue.main.asyncAfter(deadline: .now() + CYLFooterDuration) { [weak self] in
                 guard let self = self else { return }
                 self.collectionView.reloadData()
                 // `-noMoreData` (UI tests): the load returns nothing new and the footer shows "no more data".
                 if ProcessInfo.processInfo.arguments.contains("-noMoreData") {
-                    self.collectionView.cyl_footer?.endRefreshingWithNoMoreData()
+                    self.collectionView.cylFooter?.endRefreshingWithNoMoreData()
                 } else {
-                    self.collectionView.cyl_footer?.endRefreshing()
+                    self.collectionView.cylFooter?.endRefreshing()
                 }
-                self.cyl_setStatusTitle(CYLObjC02LocalizedString(.titleFooterCompleted))
+                self.cylSetStatusTitle(CYLObjC02LocalizedString(.titleFooterCompleted))
             }
         }
     }
@@ -96,7 +96,7 @@ final class CYLCollectionViewController: UICollectionViewController {
     @objc(collectionView:numberOfItemsInSection:)
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Show the footer only when there are items.
-        collectionView.cyl_footer?.isHidden = colors.isEmpty
+        collectionView.cylFooter?.isHidden = colors.isEmpty
         return colors.count
     }
 
@@ -114,7 +114,7 @@ final class CYLCollectionViewController: UICollectionViewController {
 
 extension UIViewController {
     /// Shows a status in the navigation title and announces it to VoiceOver.
-    func cyl_setStatusTitle(_ status: String) {
+    func cylSetStatusTitle(_ status: String) {
         title = status
         UIAccessibility.post(notification: .announcement, argument: status)
     }

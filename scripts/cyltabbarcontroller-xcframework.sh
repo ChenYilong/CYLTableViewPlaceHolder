@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Usage: scripts/cyltabbarcontroller-xcframework.sh [simulator|all]
 #
-# Builds Carthage/Build/CYLTabBarController.xcframework and, for commits that split it out, CYLAnimatedItem.xcframework:
+# Builds Carthage/Build/CYLTabBarController.xcframework and, for commits that split them out, CYLAnimatedItem.xcframework
+# and (since 8f0302d6) CYLBadge.xcframework and CYLUtilsKit.xcframework, which CYLAnimatedItem links:
 # the dependency the CYLTableViewPlaceHolderFramework target, the
 # main example and Tests/run-tests.rb link (CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView).
 # Same layout as `carthage bootstrap --use-xcframeworks --platform iOS`, without needing Carthage: checks out the commit
@@ -45,6 +46,13 @@ destinations=('generic/platform=iOS Simulator')
 schemes_dir="$CHECKOUT/CYLTabBarController.xcodeproj/xcshareddata/xcschemes"
 split=0
 [[ -f "$schemes_dir/CYLAnimatedItem.xcscheme" ]] && split=1
+# CYLAnimatedItem/Core depends on CYLBadge, which depends on CYLUtils (module CYLUtilsKit): frameworks of their own, built the
+# same way, only when the commit has their schemes.
+lower=()
+for scheme in CYLUtilsKit CYLBadge; do
+  [[ -f "$schemes_dir/$scheme.xcscheme" ]] && lower+=("$scheme")
+done
+lower_args=()
 tabbar_args=()
 item_args=()
 for destination in "${destinations[@]}"; do
@@ -59,6 +67,12 @@ for destination in "${destinations[@]}"; do
       -destination "$destination" -archivePath "$WORK/$name-item.xcarchive" -derivedDataPath "$WORK/DerivedData" \
       SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO BUILD_LIBRARY_FOR_DISTRIBUTION=NO -quiet
     item_args+=(-framework "$WORK/$name-item.xcarchive/Products/Library/Frameworks/CYLAnimatedItem.framework")
+    for scheme in "${lower[@]+"${lower[@]}"}"; do
+      xcodebuild archive -project "$CHECKOUT/CYLTabBarController.xcodeproj" -scheme "$scheme" \
+        -destination "$destination" -archivePath "$WORK/$name-$scheme.xcarchive" -derivedDataPath "$WORK/DerivedData" \
+        SKIP_INSTALL=NO CODE_SIGNING_ALLOWED=NO BUILD_LIBRARY_FOR_DISTRIBUTION=NO -quiet
+      lower_args+=("$scheme" -framework "$WORK/$name-$scheme.xcarchive/Products/Library/Frameworks/$scheme.framework")
+    done
   else
     # Older layout: CYLTabBarController-Framework compiles CYLAnimatedItemView and the animation engine but marks their
     # headers as project headers, so the framework does not ship them (docs/Task-Log.md, TODO for upstream). Copy them
@@ -69,7 +83,7 @@ for destination in "${destinations[@]}"; do
   fi
   tabbar_args+=(-framework "$framework")
 done
-rm -rf "$OUTPUT" "$ITEM_OUTPUT" Carthage/Build/.CYLTabBarController.*
+rm -rf "$OUTPUT" "$ITEM_OUTPUT" Carthage/Build/CYLBadge.xcframework Carthage/Build/CYLUtilsKit.xcframework Carthage/Build/.CYLTabBarController.*
 mkdir -p Carthage/Build
 # No .swiftinterface: the same Xcode builds this framework and its users, which then load the binary .swiftmodule. Swift 6.2
 # (Xcode 26.6) crashed rebuilding CYLTabBarController's module from its interface ("Redundant conformance requirements
@@ -78,5 +92,15 @@ xcodebuild -create-xcframework "${tabbar_args[@]}" -allow-internal-distribution 
 if [[ "$split" == 1 ]]; then
   xcodebuild -create-xcframework "${item_args[@]}" -allow-internal-distribution -output "$ITEM_OUTPUT"
 fi
+# lower_args holds "<scheme> -framework <path>" triples, one per scheme and destination: create one xcframework per scheme.
+for scheme in "${lower[@]+"${lower[@]}"}"; do
+  args=()
+  i=0
+  while [[ $i -lt ${#lower_args[@]} ]]; do
+    [[ "${lower_args[$i]}" != "$scheme" ]] || args+=("${lower_args[$((i + 1))]}" "${lower_args[$((i + 2))]}")
+    i=$((i + 3))
+  done
+  xcodebuild -create-xcframework "${args[@]}" -allow-internal-distribution -output "Carthage/Build/$scheme.xcframework"
+done
 touch "$STAMP"
 echo "$OUTPUT ($SHA, $SLICES)"

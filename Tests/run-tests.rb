@@ -108,6 +108,11 @@ Dir.mktmpdir('cyl-placeholder-tests-') do |dir|
     use_frameworks!
     target 'PlaceholderTests' do
       pod 'CYLAnimatedItem/Engine', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      # The commit splits CYLBadge and CYLUtils out (CYLAnimatedItem/Core depends on them; CYLUtils needs CYLDeallocBlockExecutor ~> 1.4,
+      # which is not on the trunk): pinned the same way.
+      pod 'CYLBadge', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      pod 'CYLUtils', :git => 'https://github.com/ChenYilong/CYLTabBarController.git', :commit => '#{tabbar_sha}'
+      pod 'CYLDeallocBlockExecutor', :git => 'https://github.com/ChenYilong/CYLDeallocBlockExecutor.git', :commit => '4276a6dab5a428ccc3a5f3f347eab991881fb97c'
     end
     post_install do |installer|
       installer.pods_project.targets.each do |pod_target|

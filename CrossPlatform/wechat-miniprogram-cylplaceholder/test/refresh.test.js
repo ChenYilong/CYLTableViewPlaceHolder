@@ -93,6 +93,51 @@ test('finish phase and trailer texts', () => {
   assert.strictEqual(R.stateText('trailer', S.Pulling, 'en'), 'Release to see details')
 })
 
+
+test('cyl-refresh: no load more while a cyl-placeholder shows inside it (iOS hides footers over the placeholder)', () => {
+  let definition = null
+  global.Component = (options) => { definition = options }
+  delete require.cache[require.resolve('../src/cyl-refresh/index.js')]
+  require('../src/cyl-refresh/index.js')
+  delete global.Component
+  const relation = definition.relations['../cyl-placeholder/index']
+  assert.strictEqual(relation.type, 'descendant')
+  const props = {}
+  for (const [key, value] of Object.entries(definition.properties)) props[key] = value && typeof value === 'object' && 'value' in value ? value.value : value
+  const loads = []
+  const refresh = Object.assign({
+    data: Object.assign({}, props, definition.data),
+    setData(data) { Object.assign(this.data, data) },
+    triggerEvent(name) { if (name === 'loadmore') loads.push(name) },
+  }, definition.methods)
+  relation.linked.call(refresh)
+  assert.strictEqual(refresh.data.placeholderShown, true, 'the footer is hidden while the placeholder shows')
+  assert.strictEqual(refresh._footerActive(), false)
+  refresh.onScrollToLower()
+  refresh._beginFooter()
+  assert.deepStrictEqual(loads, [], 'no load more over the placeholder')
+  relation.unlinked.call(refresh)
+  assert.strictEqual(refresh.data.placeholderShown, false, 'the footer returns with the data')
+  refresh._beginFooter()
+  assert.deepStrictEqual(loads, ['loadmore'])
+  // Two placeholders (Loading, then RetryButton) swapped by wx:if/wx:elif: shown until both are gone.
+  relation.linked.call(refresh)
+  relation.linked.call(refresh)
+  relation.unlinked.call(refresh)
+  assert.strictEqual(refresh.data.placeholderShown, true)
+  relation.unlinked.call(refresh)
+  assert.strictEqual(refresh.data.placeholderShown, false)
+})
+
+test('cyl-placeholder declares the cyl-refresh ancestor relation', () => {
+  let definition = null
+  global.Component = (options) => { definition = options }
+  delete require.cache[require.resolve('../src/cyl-placeholder/index.js')]
+  require('../src/cyl-placeholder/index.js')
+  delete global.Component
+  assert.strictEqual(definition.relations['../cyl-refresh/index'].type, 'ancestor')
+})
+
 test('cyl-refresh forwards the PAG and Rive wasm paths, and the example wires both engines', () => {
   const fs = require('node:fs')
   const path = require('node:path')

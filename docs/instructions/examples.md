@@ -18,10 +18,8 @@ heading "Tag: Example demos". English only. The same rule lives in CollectionVie
     in one shared place per example, and make the glass visible in captures (a colorful background behind the list when the page
     background is plain).
   - **Every section header has a title**: a group without a natural title gets a localized one (never an empty header).
-  - **A colorful backing plate behind the list.** An example tag list sits on a colorful backing plate (a gradient or an image
-    behind the list, set in ONE shared place per example), so that the Liquid Glass tags and the glass tail control are visible; on a
-    plain page glass looks like a flat tag. The plate is an example-side view: the library has no backdrop API (HarmonyOS and
-    Android glass blur what is behind the list; iOS glass is drawn by the glass view itself), so the example draws it, never the core.
+  - **Colourful page, library plate.** The page behind the list is colourful (a gradient or an image, set in one shared place per example). The library draws the plate itself, one Liquid Glass card per section (sectionStyle insetGrouped, the default, with sectionBackgroundStyle = liquidGlass); the example draws no plate.
+  - **Headers and icon colours.** Long headers use headerMaxLines 2 (a named constant); icon colours are static colours passed through the item style (menuStyleForItem + setIconColor), template images, never .alwaysOriginal.
   - **The tail fold control is itself a Liquid Glass tag**, icon only (the same tag background style as the other tags).
   - **The board is Liquid Glass too, on a gradient page.** The example's tag list sets, in ONE place (its style builder):
     tag background style `liquidGlass`, section (board) background style `liquidGlass` (`sectionBackgroundStyle`, the rounded card
