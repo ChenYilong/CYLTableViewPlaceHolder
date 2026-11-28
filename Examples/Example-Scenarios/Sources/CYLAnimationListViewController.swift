@@ -5,12 +5,15 @@
 //  Every animation bundled in CYLTableViewPlaceHolder.bundle/Animations, grouped by engine, read with
 //  `CYLPlaceholderView.bundledAnimationFileNames()`. Each row shows one file as the reserved component of a
 //  `CYLPlaceholderStackView`; "Sources" shows NOTICE.animations (source, commit, license, SHA-256 of each file).
+//  Each engine's section says whether its animator registered itself (CYLAnimatedItem's registry: each engine subspec
+//  registers on load, nothing to call); "Engines" shows the registry's report (registered, missing, conflicts).
 //
 
 import UIKit
 import CYLTableViewPlaceHolder
+import CYLAnimatedItem
 
-final class CYLAnimationListViewController: UITableViewController {
+final class CYLAnimationListViewController: CYLTagListScreenViewController {
 
     private struct Section {
         let title: String
@@ -19,24 +22,35 @@ final class CYLAnimationListViewController: UITableViewController {
         var folder: URL?
     }
 
-    private static let engines: [(fileExtension: String, title: String)] = [
-        ("json", "Lottie · CYLTableViewPlaceHolder/LottieSwift"),
-        ("pag", "PAG · CYLTableViewPlaceHolder/PAG"),
-        ("riv", "Rive · CYLTableViewPlaceHolder/Rive"),
-        ("gif", "GIF · Core"),
+    /// The engine identifier (CYLTabBarItemAnimatorRegistry) and the subspec that brings it, per file extension.
+    private static let engines: [(fileExtension: String, identifier: String, subspec: String)] = [
+        ("json", "Lottie", "CYLTableViewPlaceHolder/LottieSwift"),
+        ("pag", "PAG", "CYLTableViewPlaceHolder/PAG"),
+        ("riv", "Rive", "CYLTableViewPlaceHolder/Rive"),
+        ("svga", "SVGA", "CYLTableViewPlaceHolder/SVGA"),
+        ("gif", "GIF", "CYLTableViewPlaceHolder/GIF"),
     ]
 
-    private let sections: [Section] = {
+    /// "Lottie · CYLTableViewPlaceHolder/LottieSwift · Registered", or "Not in this build" without that engine.
+    private static func engineTitle(identifier: String, subspec: String) -> String {
+        let registered = CYLTabBarItemAnimatorRegistry.isAnimatorRegistered(withIdentifier: identifier)
+        let status = CYLScenarioLocalizedString(registered ? .engineRegistered : .engineMissing)
+        return "\(identifier) · \(subspec) · \(status)"
+    }
+
+    private let groups: [Section] = {
         let names = CYLPlaceholderView.bundledAnimationFileNames()
         var sections: [Section] = engines.compactMap { engine in
             let files = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }
-            return files.isEmpty ? nil : Section(title: engine.title, fileNames: files, folder: nil)
+            guard !files.isEmpty else { return nil }
+            let title = CYLAnimationListViewController.engineTitle(identifier: engine.identifier, subspec: engine.subspec)
+            return Section(title: title, fileNames: files, folder: nil)
         }
         // The example's own animations: no placeholder meaning (a mascot, a scene, widget demos), so they live in the
         // example bundle, not in the core bundle (CYLScenarioExample.bundle/Animations/NOTICE.animations).
         if let folder = CYLScenarioExampleResourceURL("Animations") {
             let files = ((try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? [])
-                .filter { ["json", "pag", "riv", "gif"].contains(($0 as NSString).pathExtension) }
+                .filter { ["json", "pag", "riv", "svga", "gif"].contains(($0 as NSString).pathExtension) }
                 .sorted()
             if !files.isEmpty {
                 sections.append(Section(title: "CYLScenarioExample.bundle/Animations", fileNames: files, folder: folder))
@@ -45,15 +59,13 @@ final class CYLAnimationListViewController: UITableViewController {
         return sections
     }()
 
-    private func path(at indexPath: IndexPath) -> String? {
-        let section = sections[indexPath.section]
-        let name = section.fileNames[indexPath.row]
+    private func path(of name: String, in section: Section) -> String? {
         guard let folder = section.folder else { return CYLPlaceholderView.path(forBundledAnimation: name) }
         return folder.appendingPathComponent(name).path
     }
 
     init() {
-        super.init(style: .insetGrouped)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -62,14 +74,58 @@ final class CYLAnimationListViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "animation")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionSources),
-                                                            style: .plain, target: self, action: #selector(showNotice))
+        sections = makeSections()
         // The empty state of this list, should the bundle be missing.
-        tableView.cyl_placeholderViewBlock({ _ in
-            CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
-        })
+        emptyView = CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
+        super.viewDidLoad()
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionSources), style: .plain, target: self,
+                            action: #selector(showNotice)),
+            UIBarButtonItem(title: CYLScenarioLocalizedString(.actionEngines), style: .plain, target: self,
+                            action: #selector(showEngines)),
+        ]
+    }
+
+    private func makeSections() -> [CYLTagSection] {
+        groups.map { group in
+            CYLTagSection(title: group.title, entries: group.fileNames.map { name in
+                let path = self.path(of: name, in: group)
+                let bytes = path.flatMap { try? FileManager.default.attributesOfItem(atPath: $0)[.size] as? NSNumber }
+                return CYLTagEntry(title: name,
+                                   subtitle: ByteCountFormatter.string(fromByteCount: bytes?.int64Value ?? 0, countStyle: .file)) { [weak self] in
+                    self?.open(name, in: group)
+                }
+            })
+        }
+    }
+
+    /// The page of one file: house.riv moves only when its number input Rooms changes, so its page sets Rooms by hand
+    /// and by loop; every other file is one reserved component with the playback controls.
+    private func open(_ name: String, in section: Section) {
+        let examplePath = section.folder == nil ? nil : path(of: name, in: section)
+        if name == CYLRiveRoomsViewController.fileName, let examplePath = examplePath {
+            navigationController?.pushViewController(CYLRiveRoomsViewController(path: examplePath), animated: true)
+            return
+        }
+        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
+                                                 animated: true)
+    }
+
+    /// The registry's report: every registered engine, the known engines missing from this build and any conflict.
+    @objc private func showEngines() {
+        showText(CYLTabBarItemAnimatorRegistry.registrationReport(), title: CYLScenarioLocalizedString(.actionEngines))
+    }
+
+    private func showText(_ text: String, title: String) {
+        let controller = UIViewController()
+        controller.title = title
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
+        textView.text = text
+        controller.view = textView
+        controller.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(controller, animated: true)
     }
 
     @objc private func showNotice() {
@@ -77,61 +133,45 @@ final class CYLAnimationListViewController: UITableViewController {
             .flatMap { CYLPlaceholderView.path(forBundledAnimation: $0) }
             .map { (($0 as NSString).deletingLastPathComponent as NSString).appendingPathComponent("NOTICE.animations") }
             .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }
-        let controller = UIViewController()
-        controller.title = "NOTICE.animations"
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
-        textView.text = notice ?? CYLScenarioLocalizedString(.textNoticeMissing)
-        controller.view = textView
-        controller.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(controller, animated: true)
+        showText(notice ?? CYLScenarioLocalizedString(.textNoticeMissing), title: "NOTICE.animations")
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
-    }
+    /// `-CYLRiveRoomsPage` opens the house.riv Rooms page at launch (screenshots and UI checks).
+    private var openedRoomsPage = false
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].fileNames.count
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section].title
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "animation", for: indexPath)
-        let name = sections[indexPath.section].fileNames[indexPath.row]
-        let path = self.path(at: indexPath)
-        let bytes = path.flatMap { try? FileManager.default.attributesOfItem(atPath: $0)[.size] as? NSNumber }
-        var content = UIListContentConfiguration.subtitleCell()
-        content.text = name
-        content.secondaryText = ByteCountFormatter.string(fromByteCount: bytes?.int64Value ?? 0, countStyle: .file)
-        content.secondaryTextProperties.color = .secondaryLabel
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let section = sections[indexPath.section]
-        let name = section.fileNames[indexPath.row]
-        let examplePath = section.folder == nil ? nil : path(at: indexPath)
-        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
-                                                 animated: true)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !openedRoomsPage, ProcessInfo.processInfo.arguments.contains("-CYLRiveRoomsPage"),
+              let folder = CYLScenarioExampleResourceURL("Animations") else { return }
+        openedRoomsPage = true
+        let path = folder.appendingPathComponent(CYLRiveRoomsViewController.fileName).path
+        navigationController?.pushViewController(CYLRiveRoomsViewController(path: path), animated: false)
     }
 }
 
-/// One bundled animation as the reserved component; it replays every 4 seconds and on "Replay".
+/// One bundled animation as the reserved component, with the playback controls of docs/Example-Animation-Playback.md:
+/// "Play all" (and "Replay") restart from progress 0, the speed slider and the loop switch apply live, all through the
+/// core (`playPlaceholderAnimation()`, `setPlaceholderAnimationSpeed(_:)`, `animationRepeatCount`). Spinners loop by
+/// default; one-shot demos play once and rest on their last frame.
 final class CYLAnimationDetailViewController: UIViewController {
 
     private let fileName: String
     /// The full path of an example-bundle animation; nil for a core one.
     private let examplePath: String?
     private var placeholder: CYLPlaceholderStackView?
-    private var replayTimer: Timer?
+    private lazy var controls = CYLPlaybackControlsView(loops: Self.loopsByDefault(fileName))
+
+    /// Whether a file is a spinner, which loops by default (one-shot demos do not); the same list as the HarmonyOS
+    /// and Android examples.
+    static func loopsByDefault(_ fileName: String) -> Bool {
+        ["Loading", "Spinner", "Progress", "Throbber", "Activity", "Ring", "Dots", "Cycle", "Arc", "Clockwise",
+         "Uploading", "Infinity"].contains { fileName.contains($0) }
+    }
+
+    /// Files drawn for a dark background: libpag's moonlight.pag is white artwork made for its black composition
+    /// background, which PAGView does not draw (libpag has no background API), so on the white page it is invisible.
+    /// Their page is black with a white title (example only; docs/HarmonyOS.md, Q12).
+    static let darkBackdropFileNames: Set<String> = ["CYLScenarioExampleMoonlight.pag"]
 
     init(fileName: String, examplePath: String? = nil) {
         self.fileName = fileName
@@ -149,6 +189,7 @@ final class CYLAnimationDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let darkBackdrop = Self.darkBackdropFileNames.contains(fileName)
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: CYLScenarioLocalizedString(.actionReplay),
                                                             style: .plain, target: self, action: #selector(replay))
@@ -162,10 +203,13 @@ final class CYLAnimationDetailViewController: UIViewController {
                 CYLPlaceholderItemStyle: CYLPlaceholderStyle.image.rawValue,
                 CYLPlaceholderItemAnimationFilePath: examplePath,
                 CYLPlaceholderItemAnimationSize: [180, 180],
-                CYLPlaceholderItemAnimationRepeatCount: 0,
+                CYLPlaceholderItemAnimationRepeatCount: controls.loops ? 0 : 1,
             ]
             if (fileName as NSString).pathExtension == "riv" {
                 attributes[CYLPlaceholderItemAnimationOptions] = ["legacy": "1"]
+            }
+            if darkBackdrop {
+                attributes[CYLPlaceholderItemTitleColor] = UIColor.white
             }
             component = CYLPlaceholderComponent(attributes: attributes, action: nil)
         } else {
@@ -174,24 +218,36 @@ final class CYLAnimationDetailViewController: UIViewController {
                                                 size: CGSize(width: 180, height: 180), action: nil)
         }
         let placeholder = CYLPlaceholderStackView(components: [component], actions: nil)
-        placeholder.frame = view.bounds
-        placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        placeholder.placeholderView.animationRepeatCount = controls.loops ? 0 : 1
+        if darkBackdrop {
+            placeholder.backgroundColor = .black
+        }
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(placeholder)
         self.placeholder = placeholder
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Placeholder animations play once when they appear; replay them so the demo keeps moving.
-        replayTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: true) { [weak self] _ in
-            self?.replay()
+        controls.onPlayAll = { [weak self] in self?.replay() }
+        controls.onSpeed = { [weak self] speed in
+            _ = self?.placeholder?.placeholderView.setPlaceholderAnimationSpeed(speed)
         }
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        replayTimer?.invalidate()
-        replayTimer = nil
+        controls.onLoop = { [weak self] loops in
+            guard let view = self?.placeholder?.placeholderView else { return }
+            view.animationRepeatCount = loops ? 0 : 1
+            // A one-shot animation that already finished starts again, so the switch shows its effect at once.
+            if loops { view.playPlaceholderAnimation() }
+        }
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(controls)
+        let guide = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            placeholder.topAnchor.constraint(equalTo: guide.topAnchor),
+            placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            controls.topAnchor.constraint(equalTo: placeholder.bottomAnchor, constant: 16),
+            controls.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 20),
+            controls.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -20),
+            controls.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -16),
+        ])
     }
 
     @objc private func replay() {

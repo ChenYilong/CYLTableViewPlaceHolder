@@ -14,7 +14,6 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupMenu
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -27,6 +26,7 @@ import com.cyl.placeholder.CYLPlaceholderAction
 import com.cyl.placeholder.CYLPlaceholderComponent
 import com.cyl.placeholder.CYLPlaceholderConfiguration_fromJSON
 import com.cyl.placeholder.CYLPlaceholderLocalization
+import com.cyl.placeholder.CYLPlaceholderPermission
 import com.cyl.placeholder.CYLPlaceholderScenario
 import com.cyl.placeholder.CYLPlaceholderScenarioCategory
 import com.cyl.placeholder.CYLPlaceholderScenarioCatalog
@@ -84,17 +84,26 @@ abstract class StackPage : Fragment() {
      */
     protected abstract fun root(): View
 
-    internal fun row(context: Context, title: String, subtitle: String?, id: String, onClick: () -> Unit) = LinearLayout(context).apply {
-        orientation = LinearLayout.VERTICAL
+    internal fun row(context: Context, title: String, subtitle: String?, id: String, icon: String? = null, onClick: () -> Unit) = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
         setPadding(context.dp(16f), context.dp(10f), context.dp(16f), context.dp(10f))
         minimumHeight = context.dp(56f)
         gravity = Gravity.CENTER_VERTICAL
         tag = id
         contentDescription = listOfNotNull(title, subtitle).joinToString(", ")
-        addView(TextView(context).apply { text = title; textSize = 17f; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
-        subtitle?.let {
-            addView(TextView(context).apply { text = it; textSize = 13f; setTextColor(Color.GRAY); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        // The iOS rows' leading SF Symbol, as a teal text glyph (emoji where none fits), like the HarmonyOS example.
+        icon?.let {
+            addView(TextView(context).apply {
+                text = it; textSize = 20f; setTextColor(Color.rgb(0x30, 0xB0, 0xC7)); gravity = Gravity.CENTER
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }, LinearLayout.LayoutParams(context.dp(40f), ViewGroup.LayoutParams.WRAP_CONTENT))
         }
+        val texts = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        texts.addView(TextView(context).apply { text = title; textSize = 17f; importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        subtitle?.let {
+            texts.addView(TextView(context).apply { text = it; textSize = 13f; setTextColor(Color.GRAY); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO })
+        }
+        addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         isClickable = true
         isFocusable = true
         setBackgroundResource(android.R.drawable.list_selector_background)
@@ -130,7 +139,7 @@ abstract class StackPage : Fragment() {
  * The Scenarios tab (the iOS example's first tab): every scenario of the placeholder catalog in three sections, the
  * configuration files, and a language button. A row opens the scenario's page; the system back button returns.
  */
-class ScenariosPage : StackPage() {
+open class ScenariosPage : StackPage() {
 
     override fun root(): View = list()
 
@@ -138,46 +147,66 @@ class ScenariosPage : StackPage() {
 
     private fun list(): View {
         val context = requireContext()
-        val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-        column.addView(languageRow(context))
         val all = CYLPlaceholderScenarioCatalog.allScenarios
         val isPermission = { s: CYLPlaceholderScenario -> CYLPlaceholderScenarioCatalog.categoryForScenario(s) == CYLPlaceholderScenarioCategory.Permission }
         val hasScreenshots = { s: CYLPlaceholderScenario -> CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(s).isNotEmpty() }
-        val sections = listOf(
+        val groups = listOf(
             R.string.merged_section_readme to all.filter { hasScreenshots(it) && !isPermission(it) },
             R.string.merged_section_permissions to all.filter(isPermission),
             R.string.merged_section_business to all.filter { !hasScreenshots(it) && !isPermission(it) },
         )
-        for ((title, scenarios) in sections) {
-            column.addView(header(context, context.t(title)))
-            for (scenario in scenarios) {
+        val sections = ArrayList<MenuSection>()
+        sections += MenuSection(context.t(R.string.merged_language), listOf(languageItem(context)))
+        for ((title, scenarios) in groups) {
+            sections += MenuSection(context.t(title), scenarios.map { scenario ->
                 val count = CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario).size
-                var detail = context.t(R.string.merged_format_components, count)
+                var subtitle = context.t(R.string.merged_format_components, count)
                 val numbers = CYLPlaceholderScenarioCatalog.readmeScreenshotNumbersForScenario(scenario)
-                if (numbers.isNotEmpty()) detail = context.t(R.string.merged_format_readme_numbers, numbers.joinToString(", ") { "#%02d".format(it) }) + " · " + detail
-                column.addView(row(context, CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), detail, "scenario-${scenario.ordinal}") { push(detail(scenario)) })
-            }
+                if (numbers.isNotEmpty()) subtitle = context.t(R.string.merged_format_readme_numbers, numbers.joinToString(", ") { "#%02d".format(it) }) + " · " + subtitle
+                MenuItem(CYLPlaceholderScenarioCatalog.localizedNameForScenario(context, scenario), subtitle, symbolForScenario(context, scenario)) { push(detail(scenario)) }
+            })
         }
-        column.addView(header(context, context.t(R.string.merged_section_flows)))
-        for (flow in CYLFlow.values()) {
-            column.addView(row(context, context.t(flow.title), flow.detail, "flow-${flow.name}") { push(flowPage(flow)) })
-        }
-        column.addView(row(context, context.t(R.string.merged_title_hud), null, "flow-hud") { push(hudPage()) })
-        column.addView(row(context, context.t(R.string.merged_title_status_bar), null, "flow-status-bar") {
-            startActivity(Intent(context, StatusBarActivity::class.java))
+        // The iOS main example (Examples/Example): pull to refresh with two custom placeholders, Auto, Styles.
+        sections += MenuSection("Examples/Example", listOf(
+            MenuItem("CYLTableViewPlaceHolder", "#2 #3 #6 · ${context.t(R.string.ex_action_auto)} #11", null) { push(mainExampleScreen()) },
+        ))
+        // The iOS issue reproductions Examples/Example-objc-01 and Example-objc-02.
+        sections += MenuSection("Examples/Example-objc-01 · Example-objc-02", listOf(
+            MenuItem("MJRefresh #1575", "Example-objc-01", null) { push(issue1575Page()) },
+            MenuItem(context.t(R.string.o2_title_collection), "Example-objc-02 · MJRefresh #1523 #1506 #1483", null) { push(issue1523Page()) },
+            MenuItem(context.t(R.string.o2_title_paging), "Example-objc-02 · MJRefresh #1430", null) { push(issue1430Page()) },
+        ))
+        sections += MenuSection(context.t(R.string.merged_section_configurations), context.assets.list("Configurations").orEmpty().sorted().map { name ->
+            MenuItem(name, "CYLPlaceholderStackView.fromConfiguration · JSON", "📄") { push(configuration(name)) }
         })
-        column.addView(header(context, context.t(R.string.merged_section_configurations)))
-        for (name in context.assets.list("Configurations").orEmpty().sorted()) {
-            column.addView(row(context, name, "CYLPlaceholderStackView.fromConfiguration · JSON", "configuration-${name.substringBeforeLast('.')}") { push(configuration(name)) })
-        }
-        return ScrollView(context).apply { addView(column) }
+        return tagMenu(context, sections)
     }
 
-    private fun languageRow(context: Context): View {
+    /**
+     * The Flows tab (iOS `CYLFlowListViewController`): every flow, then the status bar and the HUD, each with its icon.
+     */
+    internal fun flowsList(): View {
+        val context = requireContext()
+        return tagMenu(context, listOf(
+            MenuSection(context.t(R.string.merged_section_flows), CYLFlow.values().map { flow ->
+                MenuItem(context.t(flow.title), flow.detail, flow.icon) { push(flowPage(flow)) }
+            }),
+            MenuSection(context.t(R.string.merged_section_status_bar), listOf(
+                MenuItem(context.t(R.string.merged_title_status_bar), "CYLPlaceholderStatusView · statusView", "!") {
+                    startActivity(Intent(context, StatusBarActivity::class.java))
+                },
+            )),
+            MenuSection(context.t(R.string.merged_section_hud), listOf(
+                MenuItem(context.t(R.string.merged_title_hud), "CYLPlaceholderHUD", "⌛") { push(hudPage()) },
+            )),
+        ))
+    }
+
+    private fun languageItem(context: Context): MenuItem {
         val languages = listOf<String?>(null) + CYLPlaceholderLocalization.supportedLanguages
         val current = CYLPlaceholderLocalization.language
         val label = current?.let { java.util.Locale.forLanguageTag(it).getDisplayName(java.util.Locale.forLanguageTag(it)) } ?: context.t(R.string.merged_follow_system)
-        return row(context, context.t(R.string.merged_language), label, "languageButton") {
+        return MenuItem(context.t(R.string.merged_language), label, null) {
             val menu = PopupMenu(context, host, Gravity.TOP or Gravity.END)
             languages.forEachIndexed { index, tag ->
                 menu.menu.add(0, index, index, tag?.let { java.util.Locale.forLanguageTag(it).let { l -> l.getDisplayName(l) } } ?: context.t(R.string.merged_follow_system))
@@ -304,3 +333,38 @@ class ScenariosPage : StackPage() {
         return page(context, bar(context, name), content)
     }
 }
+
+/**
+ * The Flows tab (the iOS example's third tab): the flows, the status bar and the HUD of the Scenarios page's helpers.
+ */
+class FlowsPage : ScenariosPage() {
+    override fun root(): View = flowsList()
+}
+
+/**
+ * The list icon of a scenario (iOS `symbol(for:)`): its permission, else the action it offers, as a text glyph.
+ */
+internal fun symbolForScenario(context: Context, scenario: CYLPlaceholderScenario): String {
+    when (CYLPlaceholderScenarioCatalog.permissionForScenario(scenario)) {
+        CYLPlaceholderPermission.Location -> return "📍"
+        CYLPlaceholderPermission.Camera -> return "📷"
+        CYLPlaceholderPermission.PhotoLibrary -> return "🖼"
+        CYLPlaceholderPermission.Microphone -> return "🎙"
+        CYLPlaceholderPermission.Contacts -> return "👥"
+        CYLPlaceholderPermission.Calendar -> return "📅"
+        CYLPlaceholderPermission.Bluetooth -> return "📡"
+        CYLPlaceholderPermission.Notifications -> return "🔕"
+        else -> Unit
+    }
+    if (CYLPlaceholderScenarioCatalog.categoryForScenario(scenario) == CYLPlaceholderScenarioCategory.Permission) return "🔒"
+    val actions = CYLPlaceholderScenarioCatalog.componentsForScenario(context, scenario).mapNotNull { it.action }
+    return when {
+        CYLPlaceholderAction.ContactSupport in actions -> "🎧"
+        CYLPlaceholderAction.OpenSettings in actions -> "⚙"
+        CYLPlaceholderAction.GoShopping in actions -> "🛒"
+        CYLPlaceholderAction.Done in actions -> "✓"
+        CYLPlaceholderAction.Retry in actions || CYLPlaceholderScenarioCatalog.backgroundActionForScenario(scenario) != null -> "↻"
+        else -> "⬚"
+    }
+}
+

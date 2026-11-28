@@ -1,0 +1,2 @@
+.page { height: 100vh; }
+.section__header { text-transform: none; }

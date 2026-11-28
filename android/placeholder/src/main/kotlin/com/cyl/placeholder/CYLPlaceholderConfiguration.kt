@@ -24,6 +24,11 @@ private fun CYLPlaceholderConfigurationErrorHandler?.fail(message: String): Noth
     return null
 }
 
+private fun CYLPlaceholderConfigurationErrorHandler?.failed(message: String): Boolean {
+    this?.invoke(CYLPlaceholderConfigurationError(message))
+    return false
+}
+
 private fun snake(name: String) = name.replace(Regex("(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])"), "_").lowercase()
 
 private fun drawableId(context: Context, name: String): Int =
@@ -63,18 +68,58 @@ private fun unwrap(value: Any?): Any? = when (value) {
 }
 
 /**
- * The local file a configuration is read from: a path, or "asset:name" in the app's assets. Only ".json" is read; a
- * property list is an iOS format.
+ * An XML property list (the iOS `.plist` format): dict, array, string, integer, real, true, false and date (as text);
+ * data is skipped. Null when the text is not a property list.
+ */
+fun CYLPlaceholderConfiguration_fromPropertyList(text: String): Any? = runCatching {
+    val parser = android.util.Xml.newPullParser()
+    parser.setInput(java.io.StringReader(text))
+    fun next(): Int { var event = parser.next(); while (event == org.xmlpull.v1.XmlPullParser.TEXT && parser.isWhitespace) event = parser.next(); return event }
+    fun value(): Any? {
+        val name = parser.name
+        return when (name) {
+            "dict" -> {
+                val map = LinkedHashMap<String, Any?>()
+                while (next() == org.xmlpull.v1.XmlPullParser.START_TAG) {
+                    require(parser.name == "key")
+                    val key = parser.nextText()
+                    next()
+                    map[key] = value()
+                }
+                map
+            }
+            "array" -> {
+                val list = ArrayList<Any?>()
+                while (next() == org.xmlpull.v1.XmlPullParser.START_TAG) list += value()
+                list
+            }
+            "string", "date" -> parser.nextText()
+            "integer" -> parser.nextText().trim().toLong().let { if (it in Int.MIN_VALUE..Int.MAX_VALUE) it.toInt() else it }
+            "real" -> parser.nextText().trim().toDouble()
+            "true" -> { next(); true }
+            "false" -> { next(); false }
+            "data" -> { parser.nextText(); null }
+            else -> error("unknown plist element $name")
+        }
+    }
+    var event = parser.eventType
+    while (event != org.xmlpull.v1.XmlPullParser.START_TAG || parser.name == "plist") event = parser.next()
+    value()
+}.getOrNull()
+
+/**
+ * The local file a configuration is read from: a path, or "asset:name" in the app's assets: a ".json" file or an XML
+ * ".plist" (property list), as on iOS.
  */
 internal fun readConfigurationFile(context: Context, path: String, error: CYLPlaceholderConfigurationErrorHandler?): Map<String, Any?>? {
-    if (path.lowercase().endsWith(".plist")) return error.fail("A property list is an iOS format; use a .json file.")
     val text = runCatching {
         if (path.startsWith("asset:")) context.assets.open(path.removePrefix("asset:")).bufferedReader().use { it.readText() }
         else File(path).readText()
     }.getOrElse { return error.fail("The configuration file cannot be read: ${it.message}") }
-    val parsed = CYLPlaceholderConfiguration_fromJSON(text)
+    val plist = path.lowercase().endsWith(".plist")
+    val parsed = if (plist) CYLPlaceholderConfiguration_fromPropertyList(text) else CYLPlaceholderConfiguration_fromJSON(text)
     @Suppress("UNCHECKED_CAST")
-    return parsed as? Map<String, Any?> ?: error.fail("The configuration file is not a JSON object.")
+    return parsed as? Map<String, Any?> ?: error.fail(if (plist) "The configuration file is not a property list dictionary." else "The configuration file is not a JSON object.")
 }
 
 private fun styleFromValue(value: Any?): CYLPlaceholderStyle? {
@@ -117,6 +162,14 @@ private fun applyConfiguration(component: CYLPlaceholderComponent, map: Map<Stri
         if (count < 0 || count > 10000) { error.fail("repeatCount must be 0 (loop) or more, \"loop\" or \"once\"."); return false }
         component.animationRepeatCount = count
     }
+    map["animationLoops"]?.let {
+        if (it !is Boolean) { error.fail("animationLoops must be true or false."); return false }
+        component.animationLoops = it
+    }
+    map["animationSpeed"]?.let {
+        if (it !is Number || !it.toDouble().isFinite() || it.toDouble() <= 0) { error.fail("animationSpeed must be a positive number."); return false }
+        component.animationSpeed = it.toFloat()
+    }
     map["spacingBefore"]?.let {
         if (it !is Number || !it.toDouble().isFinite() || it.toDouble() < 0) { error.fail("spacingBefore must be a number of points."); return false }
         component.spacingBefore = it.toFloat()
@@ -136,7 +189,7 @@ private fun applyConfiguration(component: CYLPlaceholderComponent, map: Map<Stri
  * A component from a configuration dictionary (iOS `+[CYLPlaceholderComponent componentWithDictionary:error:]`):
  * "type" ("icon", "hint", "button", "separator" or "item"), "title" / "titleKey", "action", and the fields of
  * "icon" (style, size, animation), "button" (buttonStyle) and "item" (attributes); every type takes
- * "interactionEnabled", "highlightStyle", "repeatCount", "spacingBefore" and "accessibilityIdentifier". Null, with the
+ * "interactionEnabled", "highlightStyle", "repeatCount", "animationLoops", "animationSpeed", "spacingBefore" and "accessibilityIdentifier". Null, with the
  * reason given to [error], when a value is invalid.
  */
 fun CYLPlaceholderComponent.Companion.componentWithDictionary(context: Context, dictionary: Map<String, Any?>?, error: CYLPlaceholderConfigurationErrorHandler? = null): CYLPlaceholderComponent? {
@@ -157,8 +210,13 @@ fun CYLPlaceholderComponent.Companion.componentWithDictionary(context: Context, 
             if (dictionary.containsKey("size")) side = sizeFromValue(dictionary["size"])?.first ?: return error.fail("A component size must be [width, height] or a number.")
             val animation = string(dictionary["animation"])
             if (animation != null && CYLPlaceholderScenarioCatalog.allAnimationFileNames().none { it == animation }) return error.fail("Bundled animation $animation was not found.")
-            val image = drawableId(context, "cyl_placeholder_" + snake(style.name))
-            CYLPlaceholderComponent.icon(image, title, side.toFloat(), style != CYLPlaceholderStyle.Empty, action)
+            if (animation != null) {
+                // As iOS does (`bundledAnimationParts`): a named animation plays over the style's image, its fallback.
+                CYLPlaceholderComponent.componentWithBundledAnimation(animation, style, title, side.toFloat(), action)
+            } else {
+                val image = drawableId(context, "cyl_placeholder_" + snake(style.name))
+                CYLPlaceholderComponent.icon(image, title, side.toFloat(), style != CYLPlaceholderStyle.Empty, action)
+            }
         }
         "hint" -> CYLPlaceholderComponent.hintComponentWithText(title ?: "")
         "button" -> {
@@ -269,8 +327,16 @@ fun CYLPlaceholderStatusView.Companion.fromConfiguration(context: Context, confi
 
 /**
  * A placeholder view from item keys (iOS `-[CYLPlaceholderView initWithItemAttributes:imageBundle:error:]`):
- * "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name) and
- * "CYLPlaceholderItemTitleColor". There is no image bundle: names are drawable resources.
+ * "CYLPlaceholderItemTitle", "CYLPlaceholderItemImage" (a drawable resource, a Drawable or a drawable name),
+ * "CYLPlaceholderItemStyle" / "CYLPlaceholderItemMessage" (the built-in icon / text when no image / title is set),
+ * "CYLPlaceholderItemImagePositionAdjustment" / "CYLPlaceholderItemTitlePositionAdjustment" ([x, y] in dp), the colors
+ * "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemIconColor", "CYLPlaceholderItemBackgroundColor" and their
+ * "CYLPlaceholderItemSelected…" variants (a color int or "#RRGGBB"), "CYLPlaceholderItemTitleFontSize" (sp, Android takes
+ * no UIFont), an animation file ("CYLPlaceholderItemAnimationFilePath" or the Lottie / PAG / Rive / GIF file keys, played
+ * by CYLTabBarController's CYLAnimatedItem engine when the app adds the animation library), "CYLPlaceholderItemAnimationRepeatCount", "CYLPlaceholderItemInteractionEnabled",
+ * "CYLPlaceholderItemTapHighlightStyle" ("dim", "shrink", "none"), "CYLPlaceholderItemAccessibilityIdentifier" (the
+ * view's tag) and "CYLPlaceholderItemAccessibilityLabel". Every key is kept in [CYLPlaceholderView.itemAttributes].
+ * There is no image bundle: names are drawable resources.
  */
 fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes: Map<String, Any?>?, error: CYLPlaceholderConfigurationErrorHandler? = null): CYLPlaceholderView? {
     if (attributes == null) return error.fail("The item attributes must be a dictionary.")
@@ -283,13 +349,25 @@ fun CYLPlaceholderView.Companion.fromItemAttributes(context: Context, attributes
         is String -> drawableId(context, value).takeIf { it != 0 }?.let { ContextCompat.getDrawable(context, it) } ?: return error.fail("The image $value was not found.")
         else -> return error.fail("CYLPlaceholderItemImage must be a drawable, a resource or a name.")
     }
-    val view = CYLPlaceholderView(context, image, title as CharSequence?)
-    when (val titleColor = attributes["CYLPlaceholderItemTitleColor"]) {
-        null -> Unit
-        is Int -> view.defaultTitleColor = titleColor
-        is String -> view.defaultTitleColor = color(titleColor) ?: return error.fail("CYLPlaceholderItemTitleColor is not a color.")
-        else -> return error.fail("CYLPlaceholderItemTitleColor must be a color.")
+    // "CYLPlaceholderItemStyle" and "CYLPlaceholderItemMessage" give the built-in icon and text when no image or title is
+    // set: the iOS raw value (an Int), the name ("warning") or the enum.
+    val style: CYLPlaceholderStyle? = when (val value = attributes["CYLPlaceholderItemStyle"]) {
+        null -> null
+        is CYLPlaceholderStyle -> value
+        is Number -> CYLPlaceholderStyle.values().getOrNull(value.toInt()) ?: return error.fail("CYLPlaceholderItemStyle ${value.toInt()} is not a style.")
+        is String -> CYLPlaceholderStyle.values().firstOrNull { it.name.equals(value, ignoreCase = true) } ?: return error.fail("CYLPlaceholderItemStyle $value is not a style.")
+        else -> return error.fail("CYLPlaceholderItemStyle must be a style.")
     }
+    val message: CYLPlaceholderMessage? = when (val value = attributes["CYLPlaceholderItemMessage"]) {
+        null -> null
+        is CYLPlaceholderMessage -> value
+        is Number -> CYLPlaceholderMessage.values().getOrNull(value.toInt()) ?: return error.fail("CYLPlaceholderItemMessage ${value.toInt()} is not a message.")
+        is String -> CYLPlaceholderMessage.values().firstOrNull { it.name.equals(value, ignoreCase = true) } ?: return error.fail("CYLPlaceholderItemMessage $value is not a message.")
+        else -> return error.fail("CYLPlaceholderItemMessage must be a message.")
+    }
+    val view = CYLPlaceholderView(context, image ?: style?.let { CYLPlaceholderView.imageForStyle(context, it) },
+        (title as CharSequence?) ?: message?.let { CYLPlaceholderView.localizedTextForMessage(context, it) })
+    if (!view.applyItemAttributes(context, attributes, error)) return null
     return view
 }
 
@@ -339,4 +417,85 @@ fun Activity.cyl_applyStatusConfiguration(configuration: Map<String, Any?>?, err
 fun Activity.cyl_applyStatusConfigurationWithContentsOfURL(path: String, error: CYLPlaceholderConfigurationErrorHandler? = null): Boolean {
     val configuration = readConfigurationFile(this, path, error) ?: return false
     return cyl_applyStatusConfiguration(configuration, error)
+}
+
+/**
+ * Applies the item keys other than the image, style, message and title to [this] (offsets, colors, font size, repeat
+ * count, interaction, highlight, accessibility, animation file, images) and records every key in [itemAttributes];
+ * false (after [error]) when a value is wrong. Used by [fromItemAttributes] and CYLPlaceholderStatusView.
+ */
+internal fun CYLPlaceholderView.applyItemAttributes(context: Context, attributes: Map<String, Any?>, error: CYLPlaceholderConfigurationErrorHandler?): Boolean {
+    val view = this
+    fun offset(key: String): FloatArray? = when (val value = attributes[key]) {
+        null -> null
+        is FloatArray -> value.takeIf { it.size == 2 }
+        is List<*> -> value.mapNotNull { (it as? Number)?.toFloat() }.takeIf { it.size == 2 }?.toFloatArray()
+        else -> null
+    }
+    for (key in listOf("CYLPlaceholderItemImagePositionAdjustment", "CYLPlaceholderItemTitlePositionAdjustment")) {
+        if (attributes[key] != null && offset(key) == null) return error.failed("$key must be two numbers, x and y in dp.")
+    }
+    offset("CYLPlaceholderItemImagePositionAdjustment")?.let {
+        view.imageView.translationX = it[0] * context.resources.displayMetrics.density
+        view.imageView.translationY = it[1] * context.resources.displayMetrics.density
+    }
+    offset("CYLPlaceholderItemTitlePositionAdjustment")?.let { view.defaultTitlePositionAdjustment = it }
+    val colors = listOf<Pair<String, (Int) -> Unit>>(
+        "CYLPlaceholderItemTitleColor" to { view.defaultTitleColor = it },
+        "CYLPlaceholderItemIconColor" to { view.defaultIconColor = it },
+        "CYLPlaceholderItemBackgroundColor" to { view.defaultBackgroundColor = it },
+        "CYLPlaceholderItemSelectedTitleColor" to { view.defaultSelectedTitleColor = it },
+        "CYLPlaceholderItemSelectedIconColor" to { view.defaultSelectedIconColor = it },
+        "CYLPlaceholderItemSelectedBackgroundColor" to { view.defaultSelectedBackgroundColor = it },
+    )
+    for ((key, apply) in colors) {
+        when (val value = attributes[key]) {
+            null -> Unit
+            is Int -> apply(value)
+            is String -> apply(color(value) ?: return error.failed("$key is not a color."))
+            else -> return error.failed("$key must be a color.")
+        }
+    }
+    when (val size = attributes["CYLPlaceholderItemTitleFontSize"]) {
+        null -> Unit
+        is Number -> if (size.toFloat() > 0f) view.defaultTitleFont = size.toFloat() else return error.failed("CYLPlaceholderItemTitleFontSize must be positive.")
+        else -> return error.failed("CYLPlaceholderItemTitleFontSize must be a number.")
+    }
+    when (val count = attributes["CYLPlaceholderItemAnimationRepeatCount"]) {
+        null -> Unit
+        is Number -> view.animationRepeatCount = count.toInt()
+        else -> return error.failed("CYLPlaceholderItemAnimationRepeatCount must be a number.")
+    }
+    when (val enabled = attributes["CYLPlaceholderItemInteractionEnabled"]) {
+        null -> Unit
+        is Boolean -> view.tapInteractionEnabled = enabled
+        else -> return error.failed("CYLPlaceholderItemInteractionEnabled must be a boolean.")
+    }
+    when (val style = attributes["CYLPlaceholderItemTapHighlightStyle"]) {
+        null -> Unit
+        is CYLPlaceholderTapHighlightStyle -> view.tapHighlightStyle = style
+        is String -> view.tapHighlightStyle = CYLPlaceholderTapHighlightStyle.values().firstOrNull { it.name.equals(style, ignoreCase = true) }
+            ?: return error.failed("CYLPlaceholderItemTapHighlightStyle must be dim, shrink or none.")
+        else -> return error.failed("CYLPlaceholderItemTapHighlightStyle must be a style.")
+    }
+    string(attributes["CYLPlaceholderItemAccessibilityIdentifier"])?.let { view.tag = it }
+    string(attributes["CYLPlaceholderItemAccessibilityLabel"])?.let { view.accessibilityLabel = it }
+    // The first animation file an animator of the CYLAnimatedItem engine plays (its library is in the app) replaces the
+    // icon; the icon stays when none does (as iOS).
+    val animationKeys = listOf("CYLPlaceholderItemAnimationFilePath", "CYLPlaceholderItemLottieFilePath", "CYLPlaceholderItemPAGFilePath",
+        "CYLPlaceholderItemRiveFilePath", "CYLPlaceholderItemGIFFilePath")
+    animationKeys.firstNotNullOfOrNull { string(attributes[it]) }?.let { view.setAnimationFile(it) }
+    // "CYLPlaceholderItemImages" (drawables) with "CYLPlaceholderItemAnimationDuration" (seconds): one animated icon.
+    when (val images = attributes["CYLPlaceholderItemImages"]) {
+        null -> Unit
+        is List<*> -> {
+            val drawables = images.filterIsInstance<Drawable>()
+            if (drawables.isEmpty() || drawables.size != images.size) return error.failed("CYLPlaceholderItemImages must be a list of drawables.")
+            val duration = (attributes["CYLPlaceholderItemAnimationDuration"] as? Number)?.toDouble() ?: (drawables.size * 0.1)
+            view.setAnimationImages(drawables, duration)
+        }
+        else -> return error.failed("CYLPlaceholderItemImages must be a list of drawables.")
+    }
+    view.itemAttributes = view.itemAttributes + attributes.filterValues { it != null }.mapValues { it.value!! }
+    return true
 }

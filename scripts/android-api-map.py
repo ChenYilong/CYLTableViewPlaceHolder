@@ -21,6 +21,7 @@ JSON 中的符号在头文件中已不存在、或 JSON 中的状态无效时失
 状态：done（行为相同）、partial（部分行为，见说明）、planned（尚未移植）、n/a（仅 iOS：没有 Android 对应物的 UIKit 分类、
 Lottie / PAG / Rive 运行库等，不计入完成率）。完成率 = (done + 0.5 * partial) / (所有非 n/a 的符号)。
 """
+import importlib.util
 import json
 import os
 import re
@@ -31,7 +32,9 @@ HEADERS_ROOT = os.path.join(ROOT, 'CYLTableViewPlaceHolder')
 MAP_PATH = os.path.join(ROOT, 'android', 'merged', 'api-map.json')
 DOC_PATH = os.path.join(ROOT, 'docs', 'Android-API-Map.md')
 STATUSES = ('done', 'partial', 'planned', 'n/a')
-# [EN] Private headers (the podspec's private_header_files). [CN] 私有头文件（podspec 的 private_header_files）。
+# [EN] Private headers (the podspec's private_header_files), and internal headers that are public only so the module's
+#      Swift files can read them (not API; see each header's comment).
+# [CN] 私有头文件（podspec 的 private_header_files），以及只为让模块内 Swift 文件读取而公开的内部头文件（不是 API，见各头文件注释）。
 PRIVATE = {
     'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderItemAnimationService.h',
     'CYLTableViewPlaceHolder/CYLPlaceholderAnimation/CYLPlaceholderItemAnimationEngine.h',
@@ -62,7 +65,7 @@ def public_headers():
     headers = []
     for folder, _, files in os.walk(HEADERS_ROOT):
         for name in files:
-            path = os.path.relpath(os.path.join(folder, name), ROOT)
+            path = os.path.relpath(os.path.join(folder, name), ROOT).replace(os.sep, '/')
             if name.endswith('.h') and path not in PRIVATE and not name.startswith('_'):
                 headers.append(path)
     return sorted(headers)
@@ -250,7 +253,7 @@ def document(rows, mapping):
         header_rows = by_header[header]
         done = sum(1 for r in header_rows if mapping.get(r['key'], {}).get('status') == 'done')
         out += ['## `%s`' % header.replace('CYLTableViewPlaceHolder/', '', 1), '',
-                '| iOS API | Android API | 状态 Status | 说明 / Note |', '|:---|:---|:---|:---|']
+                '| iOS API | Android API | 状态 / Status | 说明 / Note |', '|:---|:---|:---|:---|']
         for row in header_rows:
             entry = mapping.get(row['key'], {})
             status = entry.get('status', 'planned')
@@ -264,28 +267,37 @@ def document(rows, mapping):
     return '\n'.join(out)
 
 
-NAV_BLOCKS = (re.compile(r'<!-- binding:start -->.*?<!-- binding:end -->\n*', re.S),
-              re.compile(r'## 目录 / Contents\n*<!-- navigation:start -->.*?<!-- navigation:end -->\n*', re.S))
+NAV_BLOCKS = (re.compile(r'<!-- docs-navigation:start -->.*?<!-- docs-navigation:end -->\n*', re.S),
+              re.compile(r'<!-- docs-binding:start -->.*?<!-- docs-binding:end -->\n*', re.S))
 
 
 def without_navigation(text):
-    """[EN] The document without the blocks scripts/update-docs-navigation.py writes. [CN] 去掉 update-docs-navigation.py 写入的块。"""
+    """
+    [EN] The document without the blocks scripts/update-docs-navigation.py writes.
+    [CN] 去掉 update-docs-navigation.py 写入的块。
+    """
     for pattern in NAV_BLOCKS:
         text = pattern.sub('', text)
     return re.sub(r'\n+', '\n', text)
 
 
 def with_navigation_of(existing, text):
-    """[EN] Keeps the navigation blocks of the existing document in the new text. [CN] 把现有文档的导航块保留到新文本中。"""
-    binding = NAV_BLOCKS[0].search(existing or '')
-    contents = NAV_BLOCKS[1].search(existing or '')
-    if binding:
-        text = text.replace('<!-- bound-classes: none -->\n', '<!-- bound-classes: none -->\n' + binding.group(0), 1)
-    if contents:
-        first = text.find('\n## ')
-        if first >= 0:
-            text = text[:first + 1] + contents.group(0) + text[first + 1:]
-    return text
+    """
+    [EN] The text with the navigation and binding blocks of scripts/update-docs-navigation.py, filled the way that script
+         fills them (after the `bound-classes` line), so both scripts agree on the document. `existing` is unused and kept
+         for the callers.
+    [CN] 在 `bound-classes` 一行之后加入 update-docs-navigation.py 的导航块与绑定块，内容与该脚本生成的相同，两个脚本对文档的结果一致。
+         `existing` 未使用，为调用方保留。
+    """
+    spec = importlib.util.spec_from_file_location('update_docs_navigation', os.path.join(ROOT, 'scripts', 'update-docs-navigation.py'))
+    navigation = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(navigation)
+    marker = re.search(r'<!--\s*bound-classes:.*?-->\n', text)
+    if marker and navigation.NAV[0] not in text:
+        blocks = '\n%s\n%s\n\n%s\n%s\n' % (navigation.NAV[0], navigation.NAV[1], navigation.BIND[0], navigation.BIND[1])
+        text = text[:marker.end()] + blocks + text[marker.end():]
+    text = navigation.replace_block(text, navigation.NAV, navigation.navigation_rows(text))
+    return navigation.replace_block(text, navigation.BIND, navigation.binding_rows(text))
 
 
 def problems_of(rows, mapping):
@@ -305,7 +317,7 @@ def check(rows, mapping, text, problems):
     current = open(DOC_PATH, encoding='utf-8').read() if os.path.exists(DOC_PATH) else ''
     if problems:
         print('\n'.join(problems))
-    if without_navigation(current).rstrip('\n') != without_navigation(text).rstrip('\n'):
+    if current.rstrip('\n') != text.rstrip('\n'):
         problems.append('%s is out of date: run python3 scripts/android-api-map.py' % os.path.relpath(DOC_PATH, ROOT))
         print(problems[-1])
     if not problems:
@@ -333,7 +345,7 @@ def main():
         return 0
     mapping = load_map()
     problems = problems_of(rows, mapping)
-    text = document(rows, mapping)
+    text = with_navigation_of('', document(rows, mapping))
     if '--check' in sys.argv:
         return check(rows, mapping, text, problems)
     return write(rows, mapping, text, problems)

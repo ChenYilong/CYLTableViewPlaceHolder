@@ -109,4 +109,6 @@
     <string name="cyl_placeholder_scenario_notification_permission_denied_title">通知已關閉</string>
     <string name="cyl_placeholder_scenario_notification_permission_denied_hint">請在設定中開啟通知，才能及時收到訊息。</string>
     <string name="cyl_placeholder_status_network_unavailable">目前網路無法使用，請檢查你的網路設定</string>
+    <string name="cyl_placeholder_resource_missing">缺少資源：%1$s（%2$s）</string>
+    <string name="cyl_placeholder_resources_missing">Missing resources: %1$s +%2$d more</string>
 </resources>

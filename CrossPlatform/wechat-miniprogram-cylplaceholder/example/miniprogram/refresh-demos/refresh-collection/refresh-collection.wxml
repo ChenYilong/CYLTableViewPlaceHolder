@@ -1,0 +1,24 @@
+<view class="page">
+  <!-- CYLRefreshHorizontalCollectionViewController: 5 full-width pages at y = 150, 200 high, paging; pull left past
+       the last page to open the test page (CYLRefreshNormalTrailer). -->
+  <block wx:if="{{horizontal}}">
+    <cyl-refresh-trailer class="hpager" height="200px" paging-enabled="{{true}}" bind:trailer="onTrailer">
+      <view wx:for="{{pages}}" wx:key="id" class="hpager__page" style="background: {{item.color}}"
+            bindtap="onItem" data-index="{{index}}" aria-role="button" aria-label="{{item.label}}"></view>
+    </cyl-refresh-trailer>
+  </block>
+
+  <!-- CYLRefreshCollectionViewController / PinHeader: 80×80 items, insets 20, spacing 20, a purple 30pt section
+       header. Normal header + back footer (example31) or animated icons (example32). -->
+  <cyl-refresh wx:else id="refresh" header="{{setup.header}}" footer="back"
+               header-icons="{{setup.headerIcons}}" footer-icons="{{setup.footerIcons}}"
+               footer-hidden="{{colors.length === 0}}" generic:animation="cyl-lottie"
+               bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+    <view class="grid__header"></view>
+    <view class="grid">
+      <view wx:for="{{colors}}" wx:key="id" class="grid__item" style="background: {{item.color}}"
+            hover-class="grid__item--pressed" bindtap="onItem" data-index="{{index}}"
+            aria-role="button" aria-label="{{item.label}}"></view>
+    </view>
+  </cyl-refresh>
+</view>

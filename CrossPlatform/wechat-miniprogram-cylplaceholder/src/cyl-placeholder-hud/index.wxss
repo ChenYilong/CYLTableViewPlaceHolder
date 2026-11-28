@@ -1,0 +1,26 @@
+/* The box follows CYLPlaceholderHUD: 14px corner radius, 100px minimum size, a 56px animation. */
+.hud { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9999; display: flex; align-items: center;
+  justify-content: center; opacity: 0; transition-property: opacity; }
+.hud--in { opacity: 1; }
+.hud--out { opacity: 0; }
+.hud--pass { pointer-events: none; }
+.hud--pass .hud__box { pointer-events: auto; }
+.hud--mask-None, .hud--mask-Clear { background: transparent; }
+.hud--mask-Black { background: rgba(0, 0, 0, 0.5); }
+.hud--mask-Gradient { background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%); }
+.hud__box { max-width: 260px; box-sizing: border-box; padding: 16px;
+  border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.hud__box--Automatic, .hud__box--Light { background: rgba(255, 255, 255, 0.96); color: #1c1c1e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12); }
+.hud__box--Dark { background: rgba(28, 28, 30, 0.92); color: #ffffff; }
+@media (prefers-color-scheme: dark) {
+  .hud__box--Automatic { background: rgba(28, 28, 30, 0.92); color: #ffffff; }
+}
+/* cyl-animated-item pads its 56px icon by 4px (a 44px touch target); the negative margin keeps the box metrics. */
+.hud__icon-wrap { display: flex; margin: -4px; }
+.hud__animated-icon { display: block; }
+.hud__glyph { width: 56px; height: 56px; line-height: 56px; font-size: 40px; text-align: center; }
+.hud__progress { width: 140px; height: 6px; margin: 25px 0; border-radius: 3px; background: rgba(128, 128, 128, 0.25); overflow: hidden; }
+.hud__progress-bar { height: 100%; background: #007aff; transition: width 0.2s; }
+.hud__status { margin-top: 10px; font-size: 15px; line-height: 20px; text-align: center; }
+.hud__custom { display: block; width: 228px; }

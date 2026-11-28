@@ -1,0 +1,19 @@
+/* CYLRefresh header and footer (see refresh.wxml). */
+.cyl-refresh { height: 54px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+.cyl-refresh--footer { height: 44px; }
+.cyl-refresh__arrow { font-size: 22px; color: #8e8e93; margin-right: 10px; transition: transform 0.2s; }
+.cyl-refresh__arrow--up { transform: rotate(180deg); }
+.cyl-refresh__spinner { width: 20px; height: 20px; margin-right: 10px; }
+.cyl-refresh__gif { width: 28px; height: 28px; margin-right: 10px; }
+.cyl-refresh__text { font-size: 14px; color: #8e8e93; }
+
+/* A segmented control (UISegmentedControl). */
+.segmented { display: flex; flex-direction: row; padding: 2px; border-radius: 9px; background: #e3e3e8; }
+.segmented__item { flex: 1; padding: 5px 4px; border-radius: 7px; text-align: center; font-size: 13px; line-height: 18px;
+  color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.segmented__item--selected { background: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+@media (prefers-color-scheme: dark) {
+  .segmented { background: #2c2c2e; }
+  .segmented__item { color: #fff; }
+  .segmented__item--selected { background: #636366; }
+}

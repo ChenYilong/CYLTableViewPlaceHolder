@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="srl_content_empty">CYLRefreshLayout中没有找到内容视图。您是否忘记在xml布局文件中添加？</string>
+    </resources>

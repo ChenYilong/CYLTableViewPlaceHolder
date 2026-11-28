@@ -1,7 +1,10 @@
 /* The merged example's tab titles (docs/Android-Port.md, step 3). */
 "tab.placeholder" = "Заглушка";
-"tab.svpulltorefresh" = "SVPull";
-"tab.ultraptr" = "Ultra обновление";
-"tab.smartrefresh" = "SmartRefresh";
+"tab.loadmore" = "Ещё";
+"tab.storehouse" = "StoreHouse";
+"tab.cylrefresh" = "CYLRefresh";
 "tab.feed" = "Лента";
 "tab.refresh" = "Обновление";
+"tab.animations" = "Анимации";
+"tab.scenarios" = "Сценарии";
+"tab.flows" = "Сценарии взаимодействия";

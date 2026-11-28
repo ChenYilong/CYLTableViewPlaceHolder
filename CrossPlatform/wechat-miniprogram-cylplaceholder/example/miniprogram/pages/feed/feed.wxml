@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="bar">
+    <view class="bar__button bar__button--icon" hover-class="bar__button--pressed" bindtap="onRefreshIcons"
+          aria-role="button" aria-label="{{refreshIconsLabel}}">⟳</view>
+  </view>
+  <view class="content">
+    <cyl-refresh id="refresh" header="animation" footer="auto" header-icons="{{headerIcons}}" footer-icons="{{footerIcons}}"
+                 footer-hidden="{{loading || !rows.length}}" generic:animation="cyl-lottie"
+                 bind:refresh="onRefresh" bind:loadmore="onLoadMore">
+      <view class="plain">
+        <view wx:for="{{rows}}" wx:key="*this" class="cell cell--icon">
+          <view class="cell__icon avatar">👤</view>
+          <view class="cell__text">
+            <text class="cell__title">{{item}}</text>
+            <text class="cell__subtitle">{{hint}}</text>
+          </view>
+        </view>
+      </view>
+      <cyl-placeholder wx:if="{{loading}}" scenario="Loading" generic:animation="cyl-lottie" animated="{{true}}" interactive="{{false}}" />
+      <cyl-placeholder wx:elif="{{!rows.length}}" scenario="RetryButton" generic:animation="cyl-lottie" animated="{{true}}"
+                       bind:action="onPlaceholderAction" />
+    </cyl-refresh>
+  </view>
+</view>

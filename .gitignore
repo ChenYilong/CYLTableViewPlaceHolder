@@ -81,6 +81,8 @@ playground.xcworkspace
 
 # Carthage
 Carthage/Build
+Carthage/Checkouts
+android/.classifymenu/
 
 # fastlane
 fastlane/report.xml
@@ -94,3 +96,11 @@ Example-Shared/PAGResources/*/
 Example-SwiftUI-Rive/AnimatedApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 Example-SwiftUI-Rive/SwiftUI Animations/
 Example-loadTabBarIconsFroNework/
+
+# From CYLTabBarController .gitignore (local mini program tool checkouts)
+CrossPlatform/LottieWMC/
+CrossPlatform/RiveViewer-miniapp/
+
+# Claude Code agent worktrees (machine-local)
+.claude/worktrees/
+.claude/*.log

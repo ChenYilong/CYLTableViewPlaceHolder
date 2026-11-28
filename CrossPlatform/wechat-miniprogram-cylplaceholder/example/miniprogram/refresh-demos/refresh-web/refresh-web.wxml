@@ -1,0 +1,34 @@
+<view class="page" style="padding-top: {{statusBarHeight}}px">
+  <view class="content">
+    <cyl-refresh id="refresh" header="animation" footer="none" header-icons="{{headerIcons}}"
+                 automatically-change-alpha="{{true}}" generic:animation="cyl-lottie" bind:refresh="onRefresh">
+      <!-- A rendering of the GitHub page the iOS WKWebView loads (the page is not loadable in a mini program). -->
+      <view class="web">
+        <view class="web__address" bindtap="onCopyURL" aria-role="link" aria-label="{{url}}">
+          <text class="web__lock">🔒</text><text class="web__url">{{url}}</text>
+        </view>
+        <view class="web__body {{loaded ? '' : 'web__body--loading'}}">
+          <view class="web__repo"><text class="web__owner">CoderMJLee</text> / <text class="web__name">MJRefresh</text></view>
+          <view class="web__about">An easy way to use pull-to-refresh.</view>
+          <view class="web__h1">MJRefresh</view>
+          <view class="web__p">An easy way to use pull-to-refresh and pull-up-to-load on any UIScrollView: UITableView, UICollectionView, UIWebView and WKWebView.</view>
+          <view class="web__h2">Contents</view>
+          <view class="web__li">• Getting Started: Features, Installation, Who's using, Classes</view>
+          <view class="web__li">• Comment API: MJRefreshComponent, MJRefreshHeader, MJRefreshFooter, MJRefreshAutoFooter, MJRefreshTrailer</view>
+          <view class="web__li">• Examples: reference, the drop-down refresh, the pull-up load, UICollectionView, WKWebView</view>
+          <view class="web__h2">Installation</view>
+          <view class="web__code">pod 'MJRefresh'</view>
+          <view class="web__h2">Example</view>
+          <view class="web__code">self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+[self.tableView.mj_header beginRefreshing];</view>
+          <view class="web__h2">License</view>
+          <view class="web__p">MJRefresh is released under the MIT license.</view>
+          <view wx:if="{{loadedAt}}" class="web__stamp">{{loadedAt}}</view>
+        </view>
+      </view>
+    </cyl-refresh>
+  </view>
+  <!-- Bottom-right overlay, both 200×50: the warning (gray 0.3) at h − 160 and the red back button at h − 100. -->
+  <view class="warning">{{warning}}</view>
+  <view class="back" hover-class="back--pressed" bindtap="onBack" aria-role="button">{{back}}</view>
+</view>

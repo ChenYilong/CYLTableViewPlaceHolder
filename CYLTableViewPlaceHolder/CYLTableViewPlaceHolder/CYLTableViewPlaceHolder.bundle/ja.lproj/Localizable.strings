@@ -110,3 +110,5 @@
 
 /* Status bar (CYLPlaceholderStatusView, from CYLChatKit) */
 "CYLPlaceholderStatusNetworkUnavailable" = "ネットワークに接続できません。ネットワーク設定を確認してください";
+"CYLPlaceholderResourceMissing" = "リソースが見つかりません：%@（%@）";
+"CYLPlaceholderResourcesMissing" = "リソースが見つかりません：%1$@ ほか%2$ld件";

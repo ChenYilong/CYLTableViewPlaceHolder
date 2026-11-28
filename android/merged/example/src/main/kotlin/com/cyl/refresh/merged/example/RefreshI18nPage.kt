@@ -9,7 +9,7 @@ import com.cyl.refresh.CYLRefreshConfig
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 import java.util.Locale
 
 /**
@@ -21,7 +21,7 @@ import java.util.Locale
 internal fun RefreshExamplesPage.i18nPage(title: String): View {
     val context = requireContext()
     val languages = listOf("zh-Hans", "zh-Hant", "en", "ru", "ko", "uk", "ja")
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
 
     // The header and footer read their texts when they are made.
     fun makeComponents() {

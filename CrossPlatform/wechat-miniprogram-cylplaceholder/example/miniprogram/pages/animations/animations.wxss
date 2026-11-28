@@ -1,0 +1,5 @@
+/* The section headers are file paths: keep their case, unlike the uppercase headers of app.wxss. */
+.section__header { text-transform: none; }
+/* One line, cut at the end with an ellipsis, as the iOS and HarmonyOS lists (UITableViewCell truncates the tail). */
+.cell__title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { padding: 120px 24px; text-align: center; font-size: 17px; color: #8e8e93; }

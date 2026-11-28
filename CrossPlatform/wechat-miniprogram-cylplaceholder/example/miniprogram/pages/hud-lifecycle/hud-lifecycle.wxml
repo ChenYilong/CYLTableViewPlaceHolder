@@ -1,0 +1,19 @@
+<!-- CYLHUDLifecycleViewController: a plain list with CYLRefresh (CYLRefreshNormalHeader, CYLRefreshAutoNormalFooter),
+     the RetryButton placeholder while it is empty, and the page's own HUD. -->
+<view class="page">
+  <view class="list" id="hudLifecycle">
+    <cyl-refresh id="refresh" header="normal" footer="auto" footer-hidden="{{!rows.length}}"
+                 bind:refresh="onHeaderRefresh" bind:loadmore="onFooterRefresh">
+      <view wx:if="{{rows.length}}" class="plain">
+        <view wx:for="{{rows}}" wx:key="id" class="cell">
+          <text class="cell__title">{{item.title}}</text>
+        </view>
+      </view>
+      <view wx:else class="placeholder" style="height: {{placeholderHeight}}px">
+        <cyl-placeholder scenario="RetryButton" generic:animation="cyl-lottie" animated="{{true}}"
+                         bind:action="onPlaceholderAction" />
+      </view>
+    </cyl-refresh>
+  </view>
+  <cyl-placeholder-hud id="hud" />
+</view>

@@ -1,0 +1,20 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "The CYLTableViewPlaceHolder example for HarmonyOS: a 1:1 copy of the iOS Examples/Example-Scenarios.",
+  "main": "",
+  "author": "ChenYilong",
+  "license": "MIT",
+  "dependencies": {
+    "cylplaceholder": "file:../cylplaceholder",
+    "@cyl/classifymenu": "file:../classifymenu",
+    "cylanimateditem": "file:../cylanimateditem",
+    "cyldeallocblockexecutor": "file:../cyldeallocblockexecutor",
+    "cylanimateditem_lottie": "file:../cylanimateditem_lottie",
+    "cylanimateditem_pag": "file:../cylanimateditem_pag",
+    "cylanimateditemrive": "file:../cylanimateditemrive",
+    "@ohos/lottie": "^2.0.38",
+    "@tencent/libpag": "4.5.102",
+    "@ohos/rive": "1.0.4"
+  }
+}

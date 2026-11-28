@@ -21,7 +21,7 @@ import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * The Feed tab (iOS `CYLFeedViewController`): a list like a real one. The first load shows the loading scenario, a pull
@@ -67,7 +67,7 @@ class FeedPage : Fragment() {
         val list = RecyclerView(context).apply { layoutManager = LinearLayoutManager(context); adapter = posts }
         // The list sits in a frame so its placeholder takes the list's place inside the refresh layout's content.
         val content = FrameLayout(context).apply { addView(list, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)) }
-        val layout = SmartRefreshLayout(context)
+        val layout = CYLRefreshLayout(context)
         layout.setRefreshContent(content)
         val header = CYLRefreshNormalHeader(context)
         val footer = CYLRefreshAutoNormalFooter(context)

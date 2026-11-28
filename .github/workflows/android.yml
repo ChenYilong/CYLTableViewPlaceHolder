@@ -1,0 +1,136 @@
+# Android CI: the unit tests of the Kotlin core (android/placeholder, android/merged) and a build of the example. The
+# GitHub-hosted Ubuntu runner ships the Android SDK with its licenses accepted. See docs/CI-CD.md.
+name: Android
+
+on:
+  pull_request:
+    paths: [ 'android/**', 'CrossPlatform/react-native-cylplaceholder/android/**', '.github/workflows/android.yml' ]
+  push:
+    branches: [ master ]
+    paths: [ 'android/**', 'CrossPlatform/react-native-cylplaceholder/android/**', '.github/workflows/android.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.head_ref == 'feat/android-refresh-port-followup' && github.sha || github.ref }}
+  # The long-lived port branch gets one group per commit: a newer push neither cancels the running check nor replaces
+  # the pending one (GitHub keeps one pending run per group and cancels the older pending run, which shows no steps).
+  # Every other branch keeps one group per ref and cancels the superseded run.
+  cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}
+
+jobs:
+  unit-tests:
+    name: Android unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+      # Robolectric downloads the Android framework jar of each SDK level it runs (android-all-instrumented) into
+      # ~/.m2/repository on first use. Maven Central answered the shared runner address with "HTTP 429 Too Many
+      # Requests" (CI 2026-11-22, PR #31: every Robolectric test failed, the retry too), so the jars are cached between
+      # runs; the key changes with the Robolectric version.
+      - name: Cache the Robolectric Android jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('android/gradle/libs.versions.toml') }}
+      # CYLTabBarController for Android, built from source at its latest commit across all branches (instructions.md,
+      # "Depending on CYLTabBarController"): the core module :placeholder depends on its :cylanimateditem
+      # (CYLAnimatedItemView and the animation engine) and the example on its tab bar, so it is cloned before every
+      # Gradle call and passed with -PcylTabBarDir.
+      - name: CYLTabBarController at its latest commit
+        working-directory: .
+        run: |
+          LINE=$(bash scripts/resolve-cyltabbarcontroller-commit.sh | tail -1)
+          SHA=${LINE%% *}
+          echo "CYLTabBarController $LINE"
+          git clone --quiet --filter=blob:none --no-checkout https://github.com/ChenYilong/CYLTabBarController.git "$RUNNER_TEMP/CYLTabBarController"
+          git -C "$RUNNER_TEMP/CYLTabBarController" checkout --quiet "$SHA"
+      # CollectionViewClassifyMenu's Android module (the tag list of the example's menu screens), at the commit pinned in
+      # android/classifymenu.commit (commit c0b183de of its feat/glass-backdrop branch, never a branch or a version). Only :merged-example uses it.
+      # Cloned before every Gradle call and passed with -PcylClassifyMenuDir; the clone is retried because the shared
+      # runner address is sometimes refused (the same care as the Gradle downloads below).
+      - name: CollectionViewClassifyMenu at its pinned commit
+        working-directory: .
+        run: |
+          SHA=$(tr -d '[:space:]' < android/classifymenu.commit)
+          echo "CollectionViewClassifyMenu $SHA"
+          fetch_pinned() {
+            rm -rf "$RUNNER_TEMP/CollectionViewClassifyMenu"
+            git clone --quiet --filter=blob:none --no-checkout https://github.com/ChenYilong/CollectionViewClassifyMenu.git "$RUNNER_TEMP/CollectionViewClassifyMenu" &&
+              git -C "$RUNNER_TEMP/CollectionViewClassifyMenu" sparse-checkout set android/merged/library &&
+              { git -C "$RUNNER_TEMP/CollectionViewClassifyMenu" cat-file -e "$SHA^{commit}" 2>/dev/null || git -C "$RUNNER_TEMP/CollectionViewClassifyMenu" fetch --quiet origin "$SHA"; } &&
+              git -C "$RUNNER_TEMP/CollectionViewClassifyMenu" checkout --quiet "$SHA"
+          }
+          for wait in 0 30 90; do
+            sleep "$wait"
+            if fetch_pinned; then exit 0; fi
+            echo "Could not fetch CollectionViewClassifyMenu; retrying."
+          done
+          exit 1
+      - name: Unit tests (placeholder, CYLRefresh)
+        # On a cold cache Robolectric fetches from Google's Maven Central mirror instead of repo1.maven.org, which
+        # rate-limits GitHub runners (robolectric.dependency.repo.url is read by every JVM that Gradle starts here).
+        env:
+          JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2
+        # Up to two retries (three attempts), only when Gradle could not download a plugin or dependency (seen on CI
+        # 2026-11-22 and on PR #31 runs 45278544433 and 45282480036, 2026-11-24: "Plugin
+        # [id: 'org.jetbrains.kotlin.android', version: '2.0.21'] was not found" at line 1 of CYLTabBarController's
+        # Example-Android/build.gradle.kts; the next run of the same code passed, so it is the runner's network, not
+        # the code, and one retry after 60 s was not always enough); test failures fail at once.
+        run: |
+          set -o pipefail
+          run_tests() {
+            bash ./gradlew --no-daemon --continue "$@" \
+              -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" \
+              -PcylClassifyMenuDir="$RUNNER_TEMP/CollectionViewClassifyMenu" \
+              :placeholder:testDebugUnitTest \
+              :merged:testDebugUnitTest \
+              :merged-example:testDebugUnitTest \
+              :merged-rive:compileDebugKotlin 2>&1 | tee "$RUNNER_TEMP/gradle-tests.log"
+          }
+          if run_tests; then exit 0; fi
+          for wait in 60 180; do
+            if ! grep -qE "was not found in any of the following sources|Could not resolve|Could not GET|Could not download|MavenArtifactFetcher" "$RUNNER_TEMP/gradle-tests.log"; then
+              exit 1
+            fi
+            echo "Gradle could not download a plugin or dependency; retrying with --refresh-dependencies after ${wait} s."
+            sleep "$wait"
+            if run_tests --refresh-dependencies; then exit 0; fi
+          done
+          exit 1
+      - name: Build the example
+        run: bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" -PcylClassifyMenuDir="$RUNNER_TEMP/CollectionViewClassifyMenu" :merged-example:assembleDebug
+      # The React Native library (CrossPlatform/react-native-cylplaceholder/android) depends on this repository's
+      # :merged (io.github.chenyilong:cyltableviewplaceholder-refresh), which depends on :placeholder and
+      # CYLTabBarController's :cylanimateditem (with its :cylbadge and :cylutils); all of them are published to the local Maven repository first
+      # (docs/Refresh-Library-Parity.md, hand-off item 9). Its own build uses another Android Gradle plugin version,
+      # so it is a separate Gradle build (-p), not part of this composite.
+      - name: Publish the native components to the local Maven repository
+        run: |
+          bash ./gradlew --no-daemon -PcylTabBarDir="$RUNNER_TEMP/CYLTabBarController/Example-Android" \
+            -PcylClassifyMenuDir="$RUNNER_TEMP/CollectionViewClassifyMenu" \
+            :placeholder:publishToMavenLocal :merged:publishToMavenLocal
+          bash ./gradlew --no-daemon -p "$RUNNER_TEMP/CYLTabBarController/Example-Android" :cylutils:publishToMavenLocal :cylbadge:publishToMavenLocal :cylanimateditem:publishToMavenLocal
+      - name: React Native library unit tests
+        env:
+          JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2
+        run: bash ./gradlew --no-daemon -p "$GITHUB_WORKSPACE/CrossPlatform/react-native-cylplaceholder/android" testDebugUnitTest
+      - name: Test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-reports
+          path: |
+            android/**/build/reports/tests/
+            CrossPlatform/react-native-cylplaceholder/android/build/reports/tests/

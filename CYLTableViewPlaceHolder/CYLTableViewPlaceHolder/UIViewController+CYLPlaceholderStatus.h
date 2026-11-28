@@ -13,6 +13,14 @@
 //       一个参数 `cyl_statusDisplay` 决定显示什么：状态条加占位图、只显示状态条、只显示占位图或都不显示。`cyl_showsStatusViewWhenOffline`
 //       让网络监测（`CYLPlaceholderNetworkMonitor`）自动添加和移除状态条。
 //
+//  [EN] Swift since 2026-11-19: the category is in `UIViewController+CYLPlaceholderStatus.swift` and the
+//       `UIScrollView (CYLPlaceholderVisibility)` category in `UIScrollView+CYLPlaceholder.swift`; both are declared here
+//       for Objective-C callers only. The `CYLPlaceholderStatusDisplay` options (used by Objective-C callers) stay here in
+//       Objective-C, made Swift-compatible (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该分类用 Swift 编写（`UIViewController+CYLPlaceholderStatus.swift`），`UIScrollView (CYLPlaceholderVisibility)`
+//       分类也用 Swift 编写（`UIScrollView+CYLPlaceholder.swift`）；两者在这里只为 Objective-C 调用方声明。`CYLPlaceholderStatusDisplay`
+//       选项（Objective-C 调用方会用到）保留在 Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderStatusView.h"
@@ -41,6 +49,17 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
     CYLPlaceholderStatusDisplayAll = CYLPlaceholderStatusDisplayStatusBar | CYLPlaceholderStatusDisplayPlaceholder,
 };
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIViewController+CYLPlaceholderStatus.swift`, the same selectors). This
+//      declaration is for Objective-C callers only: Swift reads the Swift extension itself (`__swift__` is defined while
+//      Swift imports the header), so the two never meet.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIViewController+CYLPlaceholderStatus.swift`，选择器不变）。这里的声明只供 Objective-C 调用方使用：
+//      Swift 直接读取 Swift 扩展（Swift 导入头文件时定义了 `__swift__`），两者不会冲突。
+#ifndef __swift__
+/*!
+ * [EN] The status bar of a view controller (a network bar by default) and the display rules that decide when it and
+ *      the placeholder show; declared for Objective-C callers only, implemented in Swift.
+ * [CN] 视图控制器的状态条（默认为网络提示条），以及决定它与占位图何时显示的规则；只为 Objective-C 调用方声明，用 Swift 实现。
+ */
 @interface UIViewController (CYLPlaceholderStatus)
 
 /*!
@@ -96,13 +115,31 @@ typedef NS_OPTIONS(NSUInteger, CYLPlaceholderStatusDisplay) {
     NS_SWIFT_NAME(cyl_applyStatusConfiguration(contentsOf:));
 
 @end
+#endif
 
+// [EN] Implemented in Swift since 2026-11-19 (`UIScrollView+CYLPlaceholder.swift`, the same selectors); declared for
+//      Objective-C callers only, like the category above.
+// [CN] 自 2026-11-19 起用 Swift 实现（`UIScrollView+CYLPlaceholder.swift`，选择器不变）；与上面的分类一样只为 Objective-C 调用方声明。
+#ifndef __swift__
+/*!
+ * [EN] Whether a list's placeholder may show, and the placeholder it shows now.
+ * [CN] 列表的占位图是否可以显示，以及当前显示的占位图。
+ */
 @interface UIScrollView (CYLPlaceholderVisibility)
 /*!
  * [EN] YES keeps the placeholder from showing even when the list is empty; NO (the default) shows it as before.
  *      `cyl_statusDisplay` sets it. [CN] YES 时即使列表为空也不显示占位图；NO（默认）与以前相同。由 `cyl_statusDisplay` 设置。
  */
 @property (nonatomic) BOOL cyl_placeholderHidden;
+/*!
+ * [EN] The placeholder shown for this list now, or nil: the view of `cyl_placeholderViewBlock:` (or of the delegate API,
+ *      `cyl_reloadData`) while the list is empty. Updates are applied on the next run loop turn, so read it after the
+ *      reload has been laid out. The same as Android's `RecyclerView.cyl_placeholderView`.
+ * [CN] 当前为该列表显示的占位图，没有则为 nil：列表为空时 `cyl_placeholderViewBlock:`（或委托接口 `cyl_reloadData`）提供的视图。更新在下一次
+ *      run loop 应用，请在刷新布局后读取。与 Android 的 `RecyclerView.cyl_placeholderView` 相同。
+ */
+@property (nonatomic, readonly, nullable) UIView *cyl_placeholderView;
 @end
+#endif
 
 NS_ASSUME_NONNULL_END

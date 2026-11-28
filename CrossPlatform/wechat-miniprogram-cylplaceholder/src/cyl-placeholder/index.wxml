@@ -1,0 +1,46 @@
+<view class="cyl-placeholder {{compact ? 'cyl-placeholder--compact' : ''}}" bindtap="onBackgroundTap" aria-role="{{hasBackgroundAction ? 'button' : ''}}">
+  <view class="cyl-placeholder__stack">
+    <block wx:for="{{items}}" wx:key="index">
+      <view class="cyl-placeholder__item" style="margin-top: {{item.spacingBefore != null ? item.spacingBefore : (index === 0 ? 0 : 12)}}px">
+        <!-- icon: CYLTabBarController's cyl-animated-item draws the animation once its engine is ready, else the
+             static icon, else its placeholder; the title stays below it. The box keeps the accessibility element
+             (role and label); the animated item inside is hidden from screen readers so it is not read twice. -->
+        <view wx:if="{{item.type === 'icon'}}" class="cyl-placeholder__icon-box" id="{{item.accessibilityIdentifier || ''}}"
+              hover-class="{{item.tappable ? item.hoverClass : 'none'}}"
+              catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
+              aria-role="{{item.tappable ? 'button' : 'img'}}" aria-label="{{item.title}}">
+          <view class="cyl-placeholder__icon-wrap" aria-hidden="true">
+            <cyl-animated-item class="cyl-placeholder__animated-icon" id="cyl-animated-{{index}}" data-index="{{index}}"
+                               bind:animationcomplete="onAnimationComplete"
+                               image="{{item.image ? imageFolder + item.image + '.png' : ''}}"
+                               animation-url="{{animated && item.animation ? animationFolder + item.animation : ''}}"
+                               shows-image-when-animation-ends="{{!!item.showsImageWhenAnimationEnds}}"
+                               icon-size="{{item.side}}" loop="{{item.ownLoop !== null ? item.ownLoop : (loop === null ? item.defaultLoop : loop)}}" speed="{{speed}}"
+                               accessibility-label="{{item.title}}"
+                               title="{{item.title}}" axis="vertical" title-color="#333333" title-font-size="{{16}}"
+                               title-line-height="{{22}}" title-spacing="{{12}}" title-lines="{{0}}" icon-tint="{{item.tinted ? '#8c8c8c' : ''}}"
+                               generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                               generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+          </view>
+        </view>
+        <text wx:elif="{{item.type === 'text'}}" class="cyl-placeholder__title"
+              style="{{item.size ? 'font-size:' + item.size + 'px;' : ''}}{{item.color ? 'color:' + item.color : ''}}">{{item.text}}</text>
+        <text wx:elif="{{item.type === 'hint'}}" class="cyl-placeholder__hint">{{item.text}}</text>
+        <view wx:elif="{{item.type === 'separator'}}" class="cyl-placeholder__separator">
+          <view class="cyl-placeholder__line" />
+          <text class="cyl-placeholder__separator-text">{{item.text}}</text>
+          <view class="cyl-placeholder__line" />
+        </view>
+        <view wx:elif="{{item.type === 'button'}}" id="{{item.accessibilityIdentifier || ''}}"
+              class="cyl-placeholder__button cyl-placeholder__button--{{item.style}}"
+              hover-class="{{item.hoverClass}}" catchtap="onItemTap" data-index="{{index}}"
+              aria-role="button" aria-disabled="{{!item.tappable}}" aria-label="{{item.title}}">{{item.title}}</view>
+        <!-- item: a title drawn with raw item attributes (configuration "item" type) -->
+        <view wx:elif="{{item.type === 'item'}}" id="{{item.accessibilityIdentifier || ''}}" class="cyl-placeholder__raw-item"
+              style="color: {{item.color || '#333'}}; background: {{item.backgroundColor || 'transparent'}}; border-radius: {{item.cornerRadius}}px; {{item.padding ? 'padding: ' + item.padding + ';' : ''}} min-width: {{item.minWidth}}px"
+              hover-class="{{item.tappable ? item.hoverClass : 'none'}}" catchtap="{{item.tappable ? 'onItemTap' : ''}}" data-index="{{index}}"
+              aria-role="{{item.tappable ? 'button' : 'text'}}" aria-label="{{item.title}}">{{item.title}}</view>
+      </view>
+    </block>
+  </view>
+</view>

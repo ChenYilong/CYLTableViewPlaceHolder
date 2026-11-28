@@ -1,0 +1,39 @@
+<view wx:if="{{shown}}"
+      class="hud hud--mask-{{view.maskType}} {{view.visible ? 'hud--in' : 'hud--out'}} {{view.blocksTouches ? '' : 'hud--pass'}}"
+      style="transition-duration: {{view.visible ? view.fadeIn : view.fadeOut}}s; {{view.maskType === 'Custom' ? 'background:' + view.backgroundLayerColor : ''}}"
+      catchtap="onMaskTap" catchtouchmove="{{view.blocksTouches ? 'noop' : ''}}">
+  <view class="hud__box hud__box--{{view.style}}" catchtap="noop"
+        style="border-radius: {{view.cornerRadius}}px; min-width: {{view.minimumSize}}px; min-height: {{view.minimumSize}}px; transform: translate({{view.offsetX}}px, {{view.offsetY}}px); {{view.style === 'Custom' ? 'background:' + view.hudBackgroundColor + '; color:' + view.foregroundColor : ''}}"
+        aria-role="alert" aria-label="{{view.status || defaultStatus}}">
+    <block wx:if="{{view.state === 'Custom'}}">
+      <cyl-placeholder class="hud__custom" compact="{{true}}" scenario="{{view.scenario}}" components="{{view.components}}"
+                       language="{{language}}" bind:action="onAction"
+                       generic:animation="animation" generic:cyl-pag-view="cyl-pag-view"
+                       generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+    </block>
+    <block wx:else>
+      <!-- Loading: loadingAnimationFileName through cyl-animated-item once its engine is ready, else the CYLRefreshActivity
+           GIF. The box is the accessibility element (alert with the status), so the item is hidden from screen readers. -->
+      <view wx:if="{{view.state === 'Loading'}}" class="hud__icon-wrap" aria-hidden="true">
+        <cyl-animated-item class="hud__animated-icon" image="{{loadingImage}}" animation-url="{{view.loadingAnimation}}"
+                           icon-size="{{56}}" loop="{{true}}" accessibility-label="{{view.status || defaultStatus}}"
+                           generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                           generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+      </view>
+      <view wx:elif="{{view.state === 'Progress'}}" class="hud__progress">
+        <view class="hud__progress-bar" style="width: {{view.percent}}%; {{view.style === 'Custom' ? 'background:' + view.foregroundColor : ''}}" />
+      </view>
+      <text wx:elif="{{view.state === 'Success'}}" class="hud__glyph">✓</text>
+      <text wx:elif="{{view.state === 'Error'}}" class="hud__glyph">✕</text>
+      <text wx:elif="{{view.state === 'Info'}}" class="hud__glyph">i</text>
+      <view wx:elif="{{view.state === 'Image'}}" class="hud__icon-wrap" aria-hidden="true">
+        <cyl-animated-item class="hud__animated-icon" image="{{icon.image}}" animation-url="{{icon.animationUrl}}"
+                           icon-size="{{56}}" loop="{{true}}" accessibility-label="{{view.status || defaultStatus}}"
+                           generic:cyl-lottie-view="animation" generic:cyl-pag-view="cyl-pag-view"
+                           generic:cyl-rive-view="cyl-rive-view" generic:cyl-svga-view="cyl-svga-view" />
+      </view>
+      <text wx:if="{{view.state === 'Progress'}}" class="hud__status">{{view.status ? view.status + ' ' : ''}}{{view.percent}}%</text>
+      <text wx:elif="{{view.status || view.state === 'Loading'}}" class="hud__status">{{view.status || defaultStatus}}</text>
+    </block>
+  </view>
+</view>

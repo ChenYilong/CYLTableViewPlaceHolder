@@ -10,14 +10,14 @@
 import UIKit
 import CYLTableViewPlaceHolder
 
-final class CYLScenarioListViewController: UITableViewController {
+final class CYLScenarioListViewController: CYLTagListScreenViewController {
 
-    private struct Section {
+    private struct Group {
         let title: String
         let scenarios: [CYLPlaceholderScenario]
     }
 
-    private let sections: [Section] = {
+    private let groups: [Group] = {
         let all = CYLPlaceholderScenarioCatalog.allScenarios.compactMap { CYLPlaceholderScenario(rawValue: $0.intValue) }
         // A missing permission is its own category, not a network failure; it gets its own section.
         let isPermission = { CYLPlaceholderScenarioCatalog.category(for: $0) == .permission }
@@ -26,14 +26,17 @@ final class CYLScenarioListViewController: UITableViewController {
         let permissions = all.filter(isPermission)
         let business = all.filter { !hasScreenshots($0) && !isPermission($0) }
         return [
-            Section(title: CYLScenarioLocalizedString(.sectionReadme), scenarios: readme),
-            Section(title: CYLScenarioLocalizedString(.sectionPermissions), scenarios: permissions),
-            Section(title: CYLScenarioLocalizedString(.sectionBusiness), scenarios: business),
+            Group(title: CYLScenarioLocalizedString(.sectionReadme), scenarios: readme),
+            Group(title: CYLScenarioLocalizedString(.sectionPermissions), scenarios: permissions),
+            Group(title: CYLScenarioLocalizedString(.sectionBusiness), scenarios: business),
         ]
     }()
 
+    /// The last section lists the configuration files (CYLConfigurationViewController).
+    private let configurations = CYLConfigurationFiles.urls()
+
     init() {
-        super.init(style: .insetGrouped)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -42,72 +45,35 @@ final class CYLScenarioListViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
         navigationItem.rightBarButtonItem = CYLScenarioLanguage.barButtonItem()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "scenario")
-        tableView.accessibilityIdentifier = "scenarioList"
+        sections = makeSections()
+        super.viewDidLoad()
+        tagList.accessibilityIdentifier = "scenarioList"
     }
 
-    /// The last section lists the configuration files (CYLConfigurationViewController).
-    private let configurations = CYLConfigurationFiles.urls()
-
-    private func isConfigurationSection(_ section: Int) -> Bool {
-        section == sections.count
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count + 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        isConfigurationSection(section) ? configurations.count : sections[section].scenarios.count
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        isConfigurationSection(section) ? CYLScenarioLocalizedString(.sectionConfigurations) : sections[section].title
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "scenario", for: indexPath)
-        if isConfigurationSection(indexPath.section) {
+    private func makeSections() -> [CYLTagSection] {
+        var result = groups.map { group in
+            CYLTagSection(title: group.title, entries: group.scenarios.map { scenario in
+                CYLTagEntry(title: CYLPlaceholderScenarioCatalog.localizedName(for: scenario),
+                            subtitle: Self.detail(for: scenario), symbol: Self.symbol(for: scenario),
+                            accessibilityIdentifier: "scenario-\(scenario.rawValue)") { [weak self] in
+                    self?.navigationController?.pushViewController(CYLScenarioDetailViewController(scenario: scenario),
+                                                                   animated: true)
+                }
+            })
+        }
+        result.append(CYLTagSection(title: CYLScenarioLocalizedString(.sectionConfigurations),
+                                    entries: configurations.map { url in
             // File names and initializer names are identifiers and are not translated.
-            let url = configurations[indexPath.row]
-            var content = UIListContentConfiguration.subtitleCell()
-            content.text = url.lastPathComponent
-            content.secondaryText = url.pathExtension == "plist" ? "CYLPlaceholderStackView(contentsOf:actions:) · plist"
-                : "CYLPlaceholderStackView(contentsOf:) / (configuration:) · JSON"
-            content.secondaryTextProperties.color = .secondaryLabel
-            // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-            content.image = UIImage(systemName: "doc.text")
-            content.imageProperties.tintColor = .systemTeal
-            cell.contentConfiguration = content
-            cell.accessoryType = .disclosureIndicator
-            cell.accessibilityIdentifier = "configuration-\(url.deletingPathExtension().lastPathComponent)"
-            return cell
-        }
-        let scenario = sections[indexPath.section].scenarios[indexPath.row]
-        var content = UIListContentConfiguration.subtitleCell()
-        content.text = CYLPlaceholderScenarioCatalog.localizedName(for: scenario)
-        content.secondaryText = Self.detail(for: scenario)
-        content.secondaryTextProperties.color = .secondaryLabel
-        // System image on a list cell: a row icon, not a placeholder, so CYLPlaceholderView does not apply.
-        content.image = UIImage(systemName: Self.symbol(for: scenario))
-        content.imageProperties.tintColor = .systemTeal
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-        cell.accessibilityIdentifier = "scenario-\(scenario.rawValue)"
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if isConfigurationSection(indexPath.section) {
-            let next = CYLConfigurationViewController(url: configurations[indexPath.row])
-            navigationController?.pushViewController(next, animated: true)
-            return
-        }
-        let scenario = sections[indexPath.section].scenarios[indexPath.row]
-        navigationController?.pushViewController(CYLScenarioDetailViewController(scenario: scenario), animated: true)
+            CYLTagEntry(title: url.lastPathComponent,
+                        subtitle: url.pathExtension == "plist" ? "CYLPlaceholderStackView(contentsOf:actions:) · plist"
+                            : "CYLPlaceholderStackView(contentsOf:) / (configuration:) · JSON",
+                        symbol: "doc.text",
+                        accessibilityIdentifier: "configuration-\(url.deletingPathExtension().lastPathComponent)") { [weak self] in
+                self?.navigationController?.pushViewController(CYLConfigurationViewController(url: url), animated: true)
+            }
+        }))
+        return result
     }
 
     /// "README #01, #02 · 3 components", or only the component count for a business case.

@@ -1,0 +1,72 @@
+# Runs Core's unit tests on an iOS 15.x simulator, built at the 15.0 deployment target (the lowest the Xcode 26/27 SDKs
+# allow; iOS 12 is no longer buildable because the pinned CYLAnimatedItem pod needs iOS 13+). When the runner cannot
+# install an iOS 15 runtime, the tests still build at 15.0 and run on the newest iPhone simulator, with a warning.
+# See docs/CI-CD.md.
+name: iOS 15 runtime
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios15-${{ github.head_ref == 'feat/android-refresh-port-followup' && github.sha || github.ref }}
+  # The long-lived port branch gets one group per commit: a newer push neither cancels the running check nor replaces
+  # the pending one (GitHub keeps one pending run per group and cancels the older pending run, which shows no steps).
+  # Every other branch keeps one group per ref and cancels the superseded run.
+  cancel-in-progress: ${{ github.head_ref != 'feat/android-refresh-port-followup' }}
+
+jobs:
+  probe:
+    name: iOS 15 runtime
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-26' }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Environment
+        run: |
+          uname -m
+          xcodebuild -version
+          xcrun simctl list runtimes
+      - name: Install and boot an iOS 15 simulator
+        id: simulator
+        run: |
+          destination=$(bash scripts/install-ios15-simulator.sh | tail -1) || destination=""
+          case "$destination" in
+            platform=*) echo "destination=$destination" >> "$GITHUB_OUTPUT" ;;
+            *)
+              id=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          best = None
+          for runtime, devices in json.load(sys.stdin)["devices"].items():
+              m = re.search(r"iOS-(\d+)-(\d+)", runtime)
+              if not m:
+                  continue
+              version = (int(m.group(1)), int(m.group(2)))
+              for device in devices:
+                  if device["name"].startswith("iPhone") and (best is None or version > best[0]):
+                      best = (version, device["udid"])
+          print(best[1] if best else "")')
+              echo "::warning::No iOS 15 simulator runtime could be installed on this runner; the unit tests are built for iOS 15.0 and run on the newest iPhone simulator instead."
+              echo "destination=platform=iOS Simulator,id=$id" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+      - name: Unit tests on iOS 15, built at deployment target 15.0
+        env:
+          DESTINATION: ${{ steps.simulator.outputs.destination }}
+          TEST_DEPLOYMENT_TARGET: "15.0"
+        run: |
+          ruby -e 'require "xcodeproj"' || sudo gem install xcodeproj
+          pod --version || sudo gem install cocoapods
+          set -o pipefail
+          mkdir -p build
+          ruby Tests/run-tests.rb 2>&1 | tee build/ios15-unit-tests.log
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        if: always()
+        with:
+          name: ios15-unit-tests-log
+          path: build/ios15-unit-tests.log
+          if-no-files-found: ignore

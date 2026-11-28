@@ -1,0 +1,7 @@
+page { background: #fff; }
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 16px; }
+
+@media (prefers-color-scheme: dark) {
+  page { background: #000; }
+}

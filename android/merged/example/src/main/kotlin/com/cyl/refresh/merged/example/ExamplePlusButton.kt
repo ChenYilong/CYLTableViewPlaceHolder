@@ -47,6 +47,9 @@ class ExamplePlusButton(context: Context) : CYLPlusButton(context) {
         // Raised: its top is above the tab bar's top.
         override fun multiplierOfTabBarHeight(tabBarHeight: Float) = 0.3f
 
+        // After the third tab (Flows), as in the iOS and HarmonyOS examples: Scenarios, Animations, Flows, +, Feed, Refresh.
+        override fun indexOfPlusButtonInTabBar() = 3
+
         override fun plusChildViewController(): Fragment = page
 
         override fun tabBarContext() = "CYLRefreshMergedExample"

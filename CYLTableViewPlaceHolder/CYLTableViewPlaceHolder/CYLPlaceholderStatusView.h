@@ -14,6 +14,12 @@
 //       图标与文字改由本库的图标加标题组件 CYLPlaceholderView 横向排列绘制（`CYLPlaceholderItemContentAxis`）。红色背景是本视图，
 //       组件是它的子视图。视图控制器通过 `cyl_statusDisplay`（UIViewController+CYLPlaceholderStatus.h）显示它，与占位图相互独立。
 //
+//  [EN] Swift since 2026-11-19: the class is in `CYLPlaceholderStatusView.swift`. The delegate protocol, the height
+//       constants (FOUNDATION_EXPORT symbols, defined in `CYLPlaceholderStatusViewSupport.m`) and the block type stay here
+//       in Objective-C, made Swift-compatible (docs/Swift-Migration.md, rule 6).
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLPlaceholderStatusView.swift`）。代理协议、高度常量（FOUNDATION_EXPORT 符号，定义在
+//       `CYLPlaceholderStatusViewSupport.m`）与回调类型保留在 Objective-C 中并兼容 Swift（docs/Swift-Migration.md 第 6 条）。
+//
 
 #import <UIKit/UIKit.h>
 #import "CYLPlaceholderView.h"
@@ -52,60 +58,16 @@ FOUNDATION_EXPORT const CGFloat CYLPlaceholderStatusViewHeight;
  */
 typedef void (^CYLPlaceholderStatusViewTapHandler)(CYLPlaceholderStatusView *statusView);
 
-@interface CYLPlaceholderStatusView : UIView
-
 /*!
- * [EN] Told about taps, as in CYLChatKit. [CN] 接收点击，与 CYLChatKit 相同。
+ * [EN] The status bar. The class is Swift since 2026-11-19 (`CYLPlaceholderStatusView.swift`) with the same Objective-C
+ *      API: `delegate`, `-initWithFrame:` (the network bar), `-initWithItemAttributes:error:` (Swift
+ *      `init(itemAttributes:)`), `+networkUnavailableItemAttributes`, `-initWithConfiguration:error:` (Swift
+ *      `init(configuration:)`), `placeholderView`, `text` and `tapHandler`; `-initWithCoder:` is unavailable. Objective-C
+ *      code that messages it imports the umbrella header `CYLTableViewPlaceHolder.h`, which brings the generated Swift
+ *      header.
+ * [CN] 状态条。该类自 2026-11-19 起用 Swift 编写（`CYLPlaceholderStatusView.swift`），Objective-C API 不变。需要调用它的 Objective-C
+ *      代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@property (nonatomic, weak, nullable) id<CYLPlaceholderStatusViewDelegate> delegate;
-
-/*!
- * [EN] The network bar of CYLChatKit: the failure icon and the localized "Network unavailable, Check network"
- *      (`CYLPlaceholderStatusNetworkUnavailable` in the core strings). [CN] CYLChatKit 的网络提示条：失败图标与本地化的
- *      “当前网络不可用，请检查你的网络设置”（核心文案 `CYLPlaceholderStatusNetworkUnavailable`）。
- */
-- (instancetype)initWithFrame:(CGRect)frame;
-/*!
- * [EN] A bar with its own icon and title: CYLPlaceholderView item attributes (`CYLPlaceholderItemTitle`,
- *      `CYLPlaceholderItemImage`, `CYLPlaceholderItemTitleColor`, `CYLPlaceholderItemBackgroundColor` for the red…);
- *      missing keys take the network bar's values, and the layout is always horizontal. Nil when they are invalid.
- * [CN] 自定义图标与标题的状态条：CYLPlaceholderView 的 item 属性；缺少的键使用网络提示条的值，布局总是横向。属性无效时返回 nil。
- */
-- (nullable instancetype)initWithItemAttributes:(NSDictionary<NSString *, id> *)attributes
-                                          error:(NSError * _Nullable * _Nullable)error
-    NS_SWIFT_NAME(init(itemAttributes:));
-/*!
- * [EN] The item attributes of the network bar, to start a custom one from. [CN] 网络提示条的 item 属性，可在此基础上自定义。
- */
-@property (class, nonatomic, readonly) NSDictionary<NSString *, id> *networkUnavailableItemAttributes;
-/*!
- * [EN] A bar from a configuration dictionary (JSON or property list): "text", "textKey" (a key of the core strings,
- *      "text" being its fallback), "image" (an image name in the core bundle or "system:<SF Symbol>"), "titleColor" and
- *      "backgroundColor" (color strings such as "#FFC7C7"), "accessibilityIdentifier"; missing keys keep the network
- *      bar's values. Nil, with `error`, when a value is invalid. See docs/Status-Bar.md.
- * [CN] 根据配置字典（JSON 或属性列表）创建状态条："text"、"textKey"（核心文案 key，"text" 为其后备）、"image"（核心 bundle 中的图片名或
- *      "system:<SF Symbol>"）、"titleColor" 与 "backgroundColor"（颜色字符串，如 "#FFC7C7"）、"accessibilityIdentifier"；缺少的键使用
- *      网络提示条的值。值无效时返回 nil 并设置 `error`。见 docs/Status-Bar.md。
- */
-- (nullable instancetype)initWithConfiguration:(NSDictionary<NSString *, id> *)configuration
-                                         error:(NSError * _Nullable * _Nullable)error
-    NS_SWIFT_NAME(init(configuration:));
-- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
-
-/*!
- * [EN] The icon and the title, laid out horizontally; a subview filling the bar. [CN] 横向排列的图标与标题；铺满状态条的子视图。
- */
-@property (nonatomic, strong, readonly) CYLPlaceholderView *placeholderView;
-/*!
- * [EN] The title shown; setting it updates the bar. [CN] 显示的文字；设置后更新状态条。
- */
-@property (nonatomic, copy, nullable) NSString *text;
-/*!
- * [EN] Runs on a tap, after the delegate. With neither a handler nor a delegate, the bar is plain text for VoiceOver;
- *      with one, it is a button. [CN] 点击时在代理之后执行。没有处理也没有代理时，状态条对 VoiceOver 是普通文字；有其一时是按钮。
- */
-@property (nonatomic, copy, nullable) CYLPlaceholderStatusViewTapHandler tapHandler;
-
-@end
+@class CYLPlaceholderStatusView;
 
 NS_ASSUME_NONNULL_END

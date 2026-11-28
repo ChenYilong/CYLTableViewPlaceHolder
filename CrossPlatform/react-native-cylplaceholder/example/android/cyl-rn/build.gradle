@@ -1,0 +1,30 @@
+// [EN] Compiles the sources of ../../android (react-native-cylplaceholder's native half) with this app's Android Gradle plugin.
+// [CN] 用本应用的 Android Gradle 插件编译 ../../android（react-native-cylplaceholder 的原生部分）的源码。
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+
+android {
+    namespace "com.cyl.placeholder.reactnative"
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig { minSdk rootProject.ext.minSdkVersion }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+        // The refresh kernel is built with a newer Kotlin than React Native 0.76's 1.9.
+        freeCompilerArgs += ["-Xskip-metadata-version-check"]
+    }
+    sourceSets {
+        main {
+            manifest.srcFile "../../../android/src/main/AndroidManifest.xml"
+            java.srcDirs = ["../../../android/src/main/kotlin"]
+        }
+    }
+}
+
+dependencies {
+    api "io.github.chenyilong:cyltableviewplaceholder-refresh:${findProperty("cylPlaceholderVersion") ?: "0.1.0"}"
+    compileOnly "com.facebook.react:react-android"
+}

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "",
+  "disableScroll": true,
+  "usingComponents": {
+    "cyl-refresh": "/components/cyl-refresh/index",
+    "cyl-svga": "/libs/cyl-svga-miniprogram/cyl-svga/index",
+    "style-canvas": "./styles/style-canvas/index"
+  }
+}

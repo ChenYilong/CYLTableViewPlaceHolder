@@ -46,7 +46,7 @@ final class CYLScenarioDetailViewController: UITableViewController {
                             action: #selector(clear)),
             interactionItem(),
         ]
-        tableView.cyl_placeholderViewBlock({ [weak self] _ in
+        tableView.cylPlaceholderViewBlock({ [weak self] _ in
             self?.makePlaceholder()
         })
         tableView.reloadData()
@@ -88,10 +88,10 @@ final class CYLScenarioDetailViewController: UITableViewController {
                 UIApplication.shared.open(url)
             },
             .goShopping: { [weak self] _, _ in
-                self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackGoShopping))
+                self?.cylShowFeedback(CYLScenarioLocalizedString(.feedbackGoShopping))
             },
             .chooseManually: { [weak self] _, _ in
-                self?.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackChooseManually))
+                self?.cylShowFeedback(CYLScenarioLocalizedString(.feedbackChooseManually))
             },
             .done: { [weak self] _, _ in self?.navigationController?.popViewController(animated: true) },
         ])
@@ -105,7 +105,7 @@ final class CYLScenarioDetailViewController: UITableViewController {
             self.isLoading = false
             self.rows = 12
             self.tableView.reloadData()
-            self.cyl_showFeedback(CYLScenarioLocalizedString(.feedbackRetry))
+            self.cylShowFeedback(CYLScenarioLocalizedString(.feedbackRetry))
         }
     }
 
@@ -144,6 +144,9 @@ final class CYLSupportViewController: UIViewController {
                                     size: CGSize(width: 120, height: 120), action: nil),
             CYLPlaceholderComponent.hint(text: CYLScenarioLocalizedString(.supportText)),
         ], actions: nil)
+        // `hintLabel` (Android's `CYLPlaceholderStackView.hintLabel`) reaches the hint's label: the support text wraps
+        // over as many lines as it needs.
+        placeholder.hintLabel?.numberOfLines = 0
         placeholder.frame = view.bounds
         placeholder.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         placeholder.accessibilityIdentifier = "supportPage"

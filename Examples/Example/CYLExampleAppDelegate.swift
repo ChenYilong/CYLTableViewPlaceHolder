@@ -32,7 +32,6 @@ final class CYLExampleAppDelegate: UIResponder, UIApplicationDelegate {
 /// UIScene lifecycle: iOS 26 apps built with a current SDK must adopt it, or UIKit stops at launch.
 /// Named in Info.plist (UIApplicationSceneManifest) as `CYLSceneDelegate`; `@objc(CYLSceneDelegate)` keeps that
 /// Objective-C class name independent of the Swift module name.
-@available(iOS 13.0, *)
 @objc(CYLSceneDelegate)
 final class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -41,7 +40,11 @@ final class CYLSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UINavigationController(rootViewController: CYLExampleViewController())
+        // [EN] `-localizationCheck` shows the example table's lookup check instead of the demo (CYLPlaceholderExampleLocalization.swift).
+        // [CN] `-localizationCheck` 时显示示例字符串表查找检查，而不是演示（见 CYLPlaceholderExampleLocalization.swift）。
+        let root: UIViewController = ProcessInfo.processInfo.arguments.contains("-localizationCheck")
+            ? CYLPlaceholderExampleLocalizationCheckViewController() : CYLExampleViewController()
+        window.rootViewController = UINavigationController(rootViewController: root)
         window.backgroundColor = .white
         window.makeKeyAndVisible()
         self.window = window

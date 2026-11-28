@@ -1,0 +1,11 @@
+# Keeps the GitHub Actions of .github/workflows up to date (OpenSSF Scorecard "Dependency-Update-Tool", MJRefresh #1624).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"

@@ -1,0 +1,44 @@
+{
+  "name": "cyl-placeholder-miniprogram",
+  "version": "0.2.0",
+  "description": "CYLTableViewPlaceHolder for WeChat Mini Program: cyl-placeholder (the 35 scenarios of CYLPlaceholderScenarioCatalog), cyl-placeholder-hud, cyl-placeholder-status, cyl-refresh (MJRefresh-compatible pull-to-refresh: normal, animation, Cupertino, listener and DIY headers and footers, trigger modes, second floor, finish phase) and cyl-refresh-trailer, localized in 7 languages; icons and animations drawn by CYLTabBarController's cyl-animated-item (engines through abstract nodes, no animation library dependency)",
+  "license": "MIT",
+  "author": "ChenYilong <luohanchenyilong@163.com>",
+  "homepage": "https://github.com/ChenYilong/CYLTableViewPlaceHolder/tree/master/CrossPlatform/wechat-miniprogram-cylplaceholder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChenYilong/CYLTableViewPlaceHolder.git",
+    "directory": "CrossPlatform/wechat-miniprogram-cylplaceholder"
+  },
+  "keywords": [
+    "miniprogram",
+    "placeholder",
+    "empty-state",
+    "pull-to-refresh",
+    "refresh",
+    "hud",
+    "CYLTableViewPlaceHolder",
+    "CYLRefresh"
+  ],
+  "miniprogram": "src",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "LICENSE.CYLChatKit",
+    "LICENSE.material-design-icons",
+    "LICENSE.placeholder-third-party",
+    "NOTICE.material-design-icons"
+  ],
+  "scripts": {
+    "import-android": "node scripts/import-android-resources.js",
+    "sync-example": "node scripts/sync-example.js",
+    "sync-animated-item": "node scripts/sync-cyl-animated-item.js",
+    "test": "node --test \"test/*.test.js\"",
+    "success-timing": "node scripts/success-timing-screenshots.js"
+  },
+  "devDependencies": {
+    "miniprogram-automator": "^0.13.0"
+  }
+}

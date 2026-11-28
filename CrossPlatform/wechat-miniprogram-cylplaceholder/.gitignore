@@ -1,0 +1,16 @@
+node_modules/
+miniprogram_npm/
+# Copied from src/ by scripts/sync-example.js (also run by the DevTools beforeCompile hook).
+example/miniprogram/components/cyl-placeholder/
+example/miniprogram/components/cyl-placeholder-hud/
+example/miniprogram/components/cyl-placeholder-status/
+example/miniprogram/components/cyl-refresh/
+example/miniprogram/components/cyl-animated-item/
+example/miniprogram/components/cyl-animation-placeholder/
+example/miniprogram/components/cyl-dealloc-block-executor/
+example/miniprogram/libs/
+example/miniprogram/refresh-engines/libs/
+example/miniprogram/refresh-engines/assets/
+project.private.config.json
+# scripts/success-timing-screenshots.js output (default folder).
+out/

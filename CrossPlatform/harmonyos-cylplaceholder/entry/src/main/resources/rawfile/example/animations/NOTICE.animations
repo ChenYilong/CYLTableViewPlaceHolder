@@ -1,0 +1,143 @@
+Animations of the Example-Scenarios demo that do not mean a placeholder state (a mascot, a scene, widget demos),
+so they stay out of the core bundle (instructions.md, "Bundled animations"). Unmodified; renamed after their content.
+
+CYLScenarioExampleMascot.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/mascot.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  480e8c22c9df6b6f9f4c235455fd2b373fd9574c98a42d5af9411c70d124ebb4
+
+CYLScenarioExampleLightSwitch.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/light_switch.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  d1e4227b1c9817d07466bf52255d4aec22cf73654d0d875e48a7e2a0826a62c2
+
+CYLScenarioExampleMoonlight.pag
+  source:  https://github.com/Tencent/libpag (eb4412aa58d7e26d50c33689d7e3508dbc355528)
+  path:    assets/moonlight.pag
+  license: Apache-2.0 (LICENSE.libpag)
+  sha256:  747ac418aab921de3c22f9814fa74ec641bfcfaf99a0bddb8d11ff222166fc75
+
+CYLScenarioExampleExplore.riv
+  source:  https://github.com/rive-app/rive-ios (5838c5758739870e15eb5be159641012c4fe1fe7)
+  path:    Example-iOS/Assets/explore.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  409f4d21b44c9793026955de88ef5c36d4a6fdb311085b2e9ce513a76f4750b4
+
+CYLScenarioExampleRating.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/rating_animation.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  2a85d71429e69424415a552fade7b590724c4c03a2426d5fdacc949dc12570f0
+
+CYLScenarioExampleTruck.riv
+  source:  https://github.com/rive-app/rive-ios (454ad8908c4f800910d424a8e27c808a0496f163)
+  path:    Example-iOS/Assets/truck.riv
+  license: MIT (LICENSE.rive-ios)
+  sha256:  af37da1ba63af80a7cbbfeed520acdb070b547f2fdff2e1d37c2b3e0d8b2714b
+
+Refresh animations of flutter_easy_refresh's Rive style packages (https://github.com/xuelongqy/flutter_easy_refresh,
+dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862; the packages are MIT, LICENSE.flutter_easy_refresh), played by the core's
+CYLRefreshRiveHeader on the Refresh tab. Each file keeps the license of its original author; unmodified; renamed.
+
+CYLScenarioExampleRefreshBow.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_bow/assets/bow.riv
+  origin:  "Bow Pull to Refresh", https://github.com/phucho2306/RivePullToRefresh (43af69a590196ba336e6134829d125d855c4de4b)
+  license: MIT (LICENSE.RivePullToRefresh, Copyright (c) 2024 phucho236)
+  sha256:  b3dc89ae9a64017655d0599347e22e025d0a32069d154c4c49919d6a42c28351
+
+CYLScenarioExampleRefreshBubbles.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_bubbles/assets/bubbles.riv
+  origin:  "Pull to Refresh" by JcToon, https://rive.app/community/3146-6725-pull-to-refresh/
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  e652f4afa6eea33728210e661fa474324f32a1bf5badd0ad7b72eb78af0d102d
+
+CYLScenarioExampleRefreshHalloween.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_halloween/assets/halloween.riv
+  origin:  "Pull to refresh halloween" by JcToon, https://rive.app/community/68-95-pull-to-refresh-halloween
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  f1e434fd80dc6d41bce3b35546d36e6c25e23cffe242bcbef24e2c6480476d2f
+
+CYLScenarioExampleRefreshSkating.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_skating/assets/skating.riv
+  origin:  "Pull-to-refresh Animation Example" by Dante, https://rive.app/community/2233-4412-pull-to-refresh-animation-example
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  e563f100cfa82b29e4af13e4ad887ae931725b50f87fc535c7f77b40ab6f9b92
+
+CYLScenarioExampleRefreshSpace.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_space/assets/space_reload.riv
+  origin:  Flare-Flutter, https://github.com/2d-inc/Flare-Flutter (3c3146429418eaae09b20704a48754f7b5b53e82)
+  license: MIT (LICENSE.Flare-Flutter, Copyright (c) 2018 2D, Inc)
+  sha256:  61bb12096756586208cc4d3899fc1d3f4f733d98d65af1ba96753f89bde16624
+
+CYLScenarioExampleRefreshSquats.riv
+  source:  https://github.com/xuelongqy/flutter_easy_refresh (dcdbb8143e1277fc02eeef6a3ccb61a8fc0e2862)
+  path:    packages/easy_refresh_squats/assets/lumberjack_squats.riv
+  origin:  "Lumberjack Squats" by Dante, https://rive.app/community/980-1894-lumberjack-squats
+  license: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), Rive community file
+  sha256:  0f5cff48fe330a8daee360548b732e0e2fcf91166509d40917b45a3c68f133c9
+
+CYLScenarioExampleTruncated.gif
+  test fixture for the GIF decode fallback (docs/HarmonyOS.md, TODO "GIF decode fallback", E12): the first 1214
+  bytes of CYLPlaceholderNoFavorites.gif (the whole first frame, then the start of the second image, no trailer), so
+  the frame list does not decode but the first frame does; made by cutting the file, no other change
+  source:  https://github.com/ChenYilong/CYLTabBarController (0f9b56e7ac92c6a3a3c98bd8c4df1e4964cb00b3)
+  path:    Example-GIF/GIFApp/Resources/tab_star.gif
+  license: MIT (LICENSE.CYLTabBarController)
+  sha256:  01c5485f5734696d83dcfc7e06b819a213b6c5cd077c76935b6a10f8f782225a
+
+CYLScenarioExampleBroken.gif
+  test fixture for the GIF decode fallback (E12): a GIF89a header followed by 32 bytes of 0xFF and the SHA-256 of
+  "CYLScenarioExampleBroken" twice: no image decoder can read it, so the placeholder keeps its fallback image
+  source:  generated for this project (no third-party content)
+  license: MIT (this project's LICENSE)
+  sha256:  72199f94cc525ed02df17514ff3b83aa6d9e13f47a05a504f3210e946506326b
+
+CYLScenarioExampleHouse.riv
+  source:  https://github.com/ChenYilong/CYLTabBarController (341caebb5538e0b98a3f8f4110e77f2be6f68ecd)
+  path:    Example-SwiftUI-Rive/AnimatedApp/RiveAssets/house.riv (the Design+Code course "SwiftUI Animations", Meng To)
+  license: no license file in the course download; copyright of the original author (see that repository's
+           Example-SwiftUI-Rive/README.md, "Source and license"); same owner, used as a demo only
+  sha256:  632474611244a3ea9cdf455719624bcc0e6684de09f734ade923fe474ba94039
+
+tab_activity.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_activity.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_life_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  484d71ebabefa2a57b8171a8abb2efab4ccd54a830a0623e55d9fec2c85364ce
+
+tab_chat.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_chat.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_lvju_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  a35292641c53961e118e212002b88e5210347a54d2f47ed7eca172f239e70449
+
+tab_home.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_home.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_home_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  37b39729c88d45446f4fdc4d91df92ae109d5fe10832e7ff80f117730769e6a7
+
+tab_list.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_list.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_find_house_list_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  ce8d0a0433c04972dd95a242479cf3ae2e86642cbdfe0f9f9b005002717af3e0
+
+tab_profile.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_profile.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_my_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  f2483d7ae4868e7f9f8f8b452242758ed15a76202c07907dcf659dd6c06c29e6
+
+tab_search.svga
+  source:  https://github.com/ChenYilong/CYLTabBarController (4f73209c0d357d42b55fcb2e2fa2ccb174220a2d), Example-SwiftUI-Rive/AnimatedApp/SVGAAssets/tab_search.svga
+  origin:  https://github.com/kongpf8848/Animation app/src/main/assets/svga/tab_search_select.svga (unmodified, renamed)
+  license: Apache License 2.0 (the kongpf8848/Animation repository's license; the same license text as LICENSE.libpag's Apache-2.0 part)
+  sha256:  1dfb5b4f81e599b8e686cbb5f768264ac4afacc5b6252e461e0b9c1d04ded1a7

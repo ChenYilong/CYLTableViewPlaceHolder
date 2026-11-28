@@ -2,6 +2,8 @@ package com.cyl.placeholder
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -36,6 +38,18 @@ class CYLPlaceholderStackViewTest {
         assertEquals("Go shopping", view.button?.text.toString())
         view.button?.performClick()
         assertEquals(CYLPlaceholderAction.GoShopping, action)
+    }
+
+    @Test
+    fun successScenarioStillImageIsTheCheckMark() {
+        // [EN] The Success scenario's still image is the check mark (shown once its animation ends), not the info icon.
+        // [CN] Success 场景的静态图是对勾（动画结束后显示），不是信息图标。
+        val icon = CYLPlaceholderScenarioCatalog.componentsForScenario(context, CYLPlaceholderScenario.Success).first { it.image != 0 }
+        assertEquals(R.drawable.cyl_placeholder_check_circle, icon.image)
+        assertTrue("Success hands back to the still image", icon.showsImageWhenAnimationEnds)
+        val others = CYLPlaceholderScenario.entries.filter { it != CYLPlaceholderScenario.Success }
+            .flatMap { CYLPlaceholderScenarioCatalog.componentsForScenario(context, it) }
+        assertTrue("only Success turns it on", others.none { it.showsImageWhenAnimationEnds })
     }
 
     @Test
@@ -122,5 +136,60 @@ class CYLPlaceholderStackViewTest {
         val played = CYLPlaceholderScenario.values().flatMap { CYLPlaceholderScenarioCatalog.animationFileNamesForScenario(it) }
             .filter { it.endsWith(".json") || it.endsWith(".gif") }.distinct()
         assertEquals(emptyList<String>(), played.filter { it.startsWith("CYLPlaceholder") && it !in bundled })
+    }
+
+    @Test
+    fun everyIconItemIsACYLPlaceholderView() {
+        // The one component that shows an icon with a title and plays every animation type.
+        val view = CYLPlaceholderStackView(context, CYLPlaceholderScenario.NoSearchResults)
+        val item = view.componentViews.first()
+        assertTrue("the icon item is a CYLPlaceholderView", item is CYLPlaceholderView)
+        assertSame((item as CYLPlaceholderView).imageView, view.imageView)
+        assertSame(item.textLabel, view.titleLabel)
+        val own = CYLPlaceholderStackView(context, listOf(CYLPlaceholderComponent.text("Only text"), CYLPlaceholderComponent.hintComponentWithText("hint")))
+        assertTrue(own.componentViews.first() is CYLPlaceholderView)
+        assertEquals("Only text", own.titleLabel.text.toString())
+        assertEquals("no visible icon", android.view.View.GONE, own.imageView.visibility)
+    }
+
+    /** iOS e8e9eb6: a scenario's bundled animation plays once by default, a spinner loops, a set count wins. */
+    @Test
+    fun scenarioAnimationsPlayOnceByDefaultAndSpinnersLoop() {
+        val catalog = CYLPlaceholderScenarioCatalog
+        assertEquals(1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", null))
+        assertEquals(1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderSuccess.riv", null))
+        for (spinner in listOf("CYLPlaceholderLoading.pag", "CYLRefreshMaterialSpinner.json", "CYLPlaceholderProgress.pag",
+                "CYLRefreshThrobber.gif", "CYLRefreshActivity.gif", "CYLRefreshRing.gif", "CYLRefreshDots.json",
+                "CYLRefreshCycle.json", "CYLRefreshArc.json", "CYLRefreshClockwise.json", "CYLPlaceholderUploading.gif",
+                "CYLPlaceholderLoadingInfinity.json")) {
+            assertEquals(spinner, 0, catalog.scenarioAnimationRepeatCount(spinner, null))
+        }
+        val component = CYLPlaceholderComponent.icon(0, "Title")
+        assertEquals("not set: the default", 1, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", component))
+        component.animationRepeatCount = 3
+        assertEquals("set: wins", 3, catalog.scenarioAnimationRepeatCount("CYLPlaceholderLoading.pag", component))
+        component.animationRepeatCount = 0
+        assertEquals("set to loop: wins", 0, catalog.scenarioAnimationRepeatCount("CYLPlaceholderEmpty.json", component))
+        // Every bundled scenario file is either a spinner or plays once.
+        assertTrue(catalog.allAnimationFileNames().any { !catalog.animationLoopsByDefault(it) })
+    }
+
+    /** iOS `tapHighlightStyle`: a finger on a component with an action dims or shrinks it, None leaves it. */
+    @Test
+    fun componentTapHighlightStyles() {
+        fun touch(view: android.view.View, action: Int) = view.dispatchTouchEvent(android.view.MotionEvent.obtain(0, 0, action, 1f, 1f, 0))
+        for ((style, alpha, scale) in listOf(Triple(CYLPlaceholderTapHighlightStyle.Dim, 0.5f, 1f),
+                Triple(CYLPlaceholderTapHighlightStyle.Shrink, 1f, 0.95f), Triple(CYLPlaceholderTapHighlightStyle.None, 1f, 1f))) {
+            val button = CYLPlaceholderComponent.buttonComponentWithTitle("Retry", CYLPlaceholderButtonStyle.Filled, CYLPlaceholderAction.Retry)
+            button.tapHighlightStyle = style
+            val stack = CYLPlaceholderStackView(context, listOf(button))
+            val view = stack.componentViewForAction(CYLPlaceholderAction.Retry)!!
+            touch(view, android.view.MotionEvent.ACTION_DOWN)
+            assertEquals("$style alpha", alpha, view.alpha, 0.001f)
+            assertEquals("$style scale", scale, view.scaleX, 0.001f)
+            touch(view, android.view.MotionEvent.ACTION_UP)
+            assertEquals(1f, view.alpha, 0.001f)
+            assertEquals(1f, view.scaleX, 0.001f)
+        }
     }
 }

@@ -13,3 +13,6 @@
 "CYLObjC02HintRefresh" = "刷新列表并回到第 2 页。";
 "CYLObjC02HintLastPage" = "滚动到最后一页。";
 "CYLObjC02FormatPage" = "第 %ld 页";
+"CYLObjC02TitleSections" = "分组";
+"CYLObjC02FormatSection" = "第 %ld 组";
+"CYLObjC02HintRefreshSections" = "刷新列表。";

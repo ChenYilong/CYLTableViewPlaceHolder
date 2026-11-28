@@ -1,0 +1,6 @@
+/* Room for the custom tab bar and its raised plus button. */
+.flows { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+.section__spacer { height: 18px; }
+/* exclamationmark.circle in systemRed: a "!" in a red ring. */
+.flows__icon--red { width: 20px; height: 20px; margin: 3px 15px 3px 3px; border: 2px solid #ff3b30; border-radius: 50%;
+  box-sizing: border-box; color: #ff3b30; font-size: 13px; font-weight: 700; }

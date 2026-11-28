@@ -1,0 +1,190 @@
+import type { ReactElement, ReactNode } from 'react';
+import { requireNativeComponent, UIManager, type StyleProp, type ViewStyle } from 'react-native';
+import { cylSecondaryEdge, type CYLRefreshSecondaryEdge } from './secondaryEdge.ts';
+
+/**
+ * The creation parameters of the `rive` style (`headerStyle` / `footerStyle` `'rive'`), the same keys as the Flutter creation
+ * parameters and Android (docs/Refresh-Library-Parity.md, "The rive style: creation parameters"). Only `riveFile` is required; a name left
+ * out is skipped by the header. Without the Rive runtime or a readable file the native side makes the classic style and logs one line.
+ */
+export interface CYLRefreshRiveOptions {
+  /** An absolute path, or the name (with or without `.riv`) or relative path of an app asset. */
+  riveFile: string;
+  riveArtboard?: string;
+  riveStateMachine?: string;
+  riveTriggerOffset?: number;
+  riveMinimumHeight?: number;
+  riveFitsWidth?: boolean;
+  rivePullInput?: string;
+  rivePullInputMinimum?: number;
+  rivePullInputMaximum?: number;
+  rivePullInputStart?: number;
+  rivePullInputRefreshingValue?: number;
+  riveReleaseTrigger?: string;
+  riveFinishTrigger?: string;
+  riveRestartTrigger?: string;
+  /** Longest time in seconds the header stays open after a finish so that the end of the animation can play (default 1.5); it retracts earlier when the animation stops. */
+  riveFinishTimeout?: number;
+  riveLoadingBoolean?: string;
+  riveLoadingNumber?: string;
+  riveLoadingNumberMaximum?: number;
+  riveLoadingNumberFinished?: number;
+  riveLoadingNumberDuration?: number;
+  rivePullAnimation?: string;
+  riveTriggerAnimation?: string;
+  riveLoadingAnimation?: string;
+  riveIdleAnimation?: string;
+  /** [pullInput, drawnFraction] pairs sorted by input: the share of the header the file draws; the rest is clipped from the top. Default: no clip. */
+  riveDrawnTable?: number[][];
+}
+
+/** The properties of the native container `CYLRefreshContainer`. */
+export interface CYLRefreshContainerProps {
+  /** Shows the refreshing state while true, as `RefreshControl.refreshing`. */
+  refreshing: boolean;
+  /** Called when the user pulls the header (not when `refreshing` was set from JavaScript). */
+  onRefresh: () => void;
+  /** Whether the pull is on, default true. */
+  enabled?: boolean;
+  /** Whether the native footer (load more) is on, default false. Android and iOS. */
+  loadMoreEnabled?: boolean;
+  /** Shows the footer's loading state while true, as `refreshing` does for the header. */
+  loadingMore?: boolean;
+  /** Shows "no more data" in the footer while true; set together with `loadingMore: false` to end a load with it. */
+  noMoreData?: boolean;
+  /** Called when the footer starts loading (not when `loadingMore` was set from JavaScript). */
+  onLoadMore?: () => void;
+  /** A pull past the end loads again after "no more data" (`CYLRefreshFooter.loadsAfterNoMoreData`), default false. Android and iOS. */
+  loadsAfterNoMoreData?: boolean;
+  /** The header's look on iOS and Android (`classic` default, `cupertino`, `material`, `bezierRadar`, `bezierCircle`, `delivery`, `phoenix`, `taurus`, `rive` with `headerRive`); an unknown name is the default one. */
+  headerStyle?: string;
+  /** The footer's look, the same names as `headerStyle`. */
+  footerStyle?: string;
+  /** The `rive` header's parameters (read while `headerStyle` is `'rive'`). iOS and Android, the same keys; Android needs the optional `:merged-rive` module. */
+  headerRive?: CYLRefreshRiveOptions;
+  /** The `rive` footer's parameters (read while `footerStyle` is `'rive'`). */
+  footerRive?: CYLRefreshRiveOptions;
+  /** The pull, in points (dp on Android), past which a release opens the second floor instead of refreshing; 0 (default) is no second floor. Same names on iOS and Android. */
+  secondaryTriggerOffset?: number;
+  /** The open extent of the second floor; 0 (default) is the scroll view's visible height. */
+  secondaryDimension?: number;
+  /** Pushing the content up this far and releasing closes the second floor; default 80. */
+  secondaryCloseTriggerOffset?: number;
+  /** Controlled like `refreshing`: true opens the second floor, false closes it; set it from `onSecondaryOpen` / `onSecondaryClose`. */
+  secondaryOpen?: boolean;
+  /** Called after a second floor opened from a pull (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one (Android sends the footer's `{edge: 'footer'}` and an empty body for the header). */
+  onSecondaryOpen?: (edge: CYLRefreshSecondaryEdge) => void;
+  /** Called after a second floor closed from a push (not when `secondaryOpen` / `footerSecondaryOpen` was set from JavaScript); `edge` says which one. */
+  onSecondaryClose?: (edge: CYLRefreshSecondaryEdge) => void;
+  /** The footer's second floor, opened by a pull up of this many points past the end (needs `loadMoreEnabled` and a back footer style, not `cupertino`; on Android also a `footerStyle` (the default auto footer has no floor); never arms while `noMoreData`); 0 (default) is none. Its content is the child with `nativeID="cyl.refresh.secondary.footer"`. */
+  footerSecondaryTriggerOffset?: number;
+  /** iOS only: the open extent of the footer's second floor; 0 (default) is the scroll view's visible height. */
+  footerSecondaryDimension?: number;
+  /** Pulling the content down this far and releasing closes the footer's second floor; default 80. */
+  footerSecondaryCloseTriggerOffset?: number;
+  /** Controlled like `secondaryOpen`, for the footer's second floor; set it from `onSecondaryOpen` / `onSecondaryClose` with `edge === 'footer'`. */
+  footerSecondaryOpen?: boolean;
+  style?: StyleProp<ViewStyle>;
+  /** One scroll view (`ScrollView`, `FlatList`, `SectionList`): it gets the native CYLRefresh header. */
+  children: ReactNode;
+}
+
+const NATIVE_NAME = 'CYLRefreshContainer';
+
+/** Whether the app was built with the native container (the iOS and Android halves of this package). */
+export function isCYLRefreshContainerAvailable(): boolean {
+  return UIManager.getViewManagerConfig?.(NATIVE_NAME) != null;
+}
+
+const Native = isCYLRefreshContainerAvailable()
+  ? requireNativeComponent<{
+      refreshing: boolean;
+      enabled: boolean;
+      loadMoreEnabled: boolean;
+      loadingMore: boolean;
+      noMoreData: boolean;
+      onRefresh: () => void;
+      onLoadMore?: () => void;
+      loadsAfterNoMoreData: boolean;
+      headerStyle?: string;
+      footerStyle?: string;
+      headerRive?: CYLRefreshRiveOptions;
+      footerRive?: CYLRefreshRiveOptions;
+      secondaryTriggerOffset?: number;
+      secondaryDimension?: number;
+      secondaryCloseTriggerOffset?: number;
+      secondaryOpen?: boolean;
+      footerSecondaryTriggerOffset?: number;
+      footerSecondaryDimension?: number;
+      footerSecondaryCloseTriggerOffset?: number;
+      footerSecondaryOpen?: boolean;
+      onSecondaryOpen?: (event: unknown) => void;
+      onSecondaryClose?: (event: unknown) => void;
+      style?: StyleProp<ViewStyle>;
+      children: ReactNode;
+    }>(NATIVE_NAME)
+  : null;
+
+/**
+ * Wraps one scroll view in the native CYLRefresh container: on iOS the scroll view's `cyl_header`, on Android a
+ * `CYLRefreshLayout` around it, so the native headers and their phase machine do the pulling. The second floor's content is a
+ * child view with `nativeID="cyl.refresh.secondary"` beside the scroll view. Returns null when the app has
+ * no native half (use `CYLRefresh`, the JavaScript implementation, then; `isCYLRefreshContainerAvailable()` tells).
+ */
+export function CYLRefreshContainer({
+  refreshing,
+  onRefresh,
+  enabled = true,
+  loadMoreEnabled = false,
+  loadingMore = false,
+  noMoreData = false,
+  onLoadMore,
+  loadsAfterNoMoreData = false,
+  headerStyle,
+  footerStyle,
+  headerRive,
+  footerRive,
+  secondaryTriggerOffset,
+  secondaryDimension,
+  secondaryCloseTriggerOffset,
+  secondaryOpen,
+  footerSecondaryTriggerOffset,
+  footerSecondaryDimension,
+  footerSecondaryCloseTriggerOffset,
+  footerSecondaryOpen,
+  onSecondaryOpen,
+  onSecondaryClose,
+  style,
+  children,
+}: CYLRefreshContainerProps): ReactElement | null {
+  if (Native == null) return null;
+  return (
+    <Native
+      refreshing={refreshing}
+      enabled={enabled}
+      onRefresh={onRefresh}
+      loadMoreEnabled={loadMoreEnabled}
+      loadingMore={loadingMore}
+      noMoreData={noMoreData}
+      onLoadMore={onLoadMore}
+      loadsAfterNoMoreData={loadsAfterNoMoreData}
+      headerStyle={headerStyle}
+      footerStyle={footerStyle}
+      headerRive={headerRive}
+      footerRive={footerRive}
+      secondaryTriggerOffset={secondaryTriggerOffset}
+      secondaryDimension={secondaryDimension}
+      secondaryCloseTriggerOffset={secondaryCloseTriggerOffset}
+      secondaryOpen={secondaryOpen}
+      footerSecondaryTriggerOffset={footerSecondaryTriggerOffset}
+      footerSecondaryDimension={footerSecondaryDimension}
+      footerSecondaryCloseTriggerOffset={footerSecondaryCloseTriggerOffset}
+      footerSecondaryOpen={footerSecondaryOpen}
+      onSecondaryOpen={onSecondaryOpen && ((event) => onSecondaryOpen(cylSecondaryEdge(event)))}
+      onSecondaryClose={onSecondaryClose && ((event) => onSecondaryClose(cylSecondaryEdge(event)))}
+      style={[{ flex: 1 }, style]}
+    >
+      {children}
+    </Native>
+  );
+}

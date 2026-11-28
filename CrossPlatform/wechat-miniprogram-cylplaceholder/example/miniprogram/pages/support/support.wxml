@@ -1,0 +1,4 @@
+<!-- CYLSupportViewController: a full-screen stack of two components. -->
+<view class="page" id="supportPage">
+  <cyl-placeholder components="{{components}}" language="{{language}}" generic:animation="cyl-lottie" animated="{{true}}" />
+</view>

@@ -4,16 +4,19 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.SystemClock
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import com.scwang.smart.refresh.layout.api.RefreshFooter
-import com.scwang.smart.refresh.layout.api.RefreshHeader
-import com.scwang.smart.refresh.layout.api.RefreshKernel
-import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.constant.RefreshState
-import com.scwang.smart.refresh.layout.constant.SpinnerStyle
-import com.scwang.smart.refresh.layout.simple.SimpleComponent
+import android.widget.TextView
+import com.cyl.refresh.merged.R
+import com.cyl.refresh.layout.api.RefreshFooter
+import com.cyl.refresh.layout.api.RefreshHeader
+import com.cyl.refresh.layout.api.RefreshKernel
+import com.cyl.refresh.layout.api.RefreshLayout
+import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.layout.constant.SpinnerStyle
+import com.cyl.refresh.layout.simple.SimpleComponent
 
 /**
  * The twelve-spoke spinner of the iOS system (`UIActivityIndicatorView`): spokes appear as you pull and one fading tail
@@ -187,11 +190,23 @@ open class CYLRefreshCupertinoFooter(context: Context) : CYLRefreshAutoFooter(CY
  */
 internal class CYLDrawnFooterView(private val styleHeader: RefreshHeader) : SimpleComponent(styleHeader.view.context, null, 0), RefreshFooter {
 
+    /**
+     * The "no more data" text (iOS `CYLRefreshDrawnFooter` shows the label only in that state, from `CYLRefresh.strings`): the same
+     * localized string as the classic footer's `srl_footer_nothing`; the hosted style is hidden while it shows.
+     */
+    internal val noMoreDataLabel = TextView(styleHeader.view.context).apply {
+        text = context.getString(R.string.srl_footer_nothing)
+        gravity = Gravity.CENTER
+        setTextColor(0xff666666.toInt())
+        visibility = GONE
+    }
+
     init {
         // The header draws upside down, so its drawing grows from the footer's edge.
         styleHeader.view.scaleY = -1f
         (styleHeader.view.parent as? ViewGroup)?.removeView(styleHeader.view)
         addView(styleHeader.view, RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        addView(noMoreDataLabel, RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { addRule(RelativeLayout.CENTER_IN_PARENT) })
     }
 
     override val spinnerStyle: SpinnerStyle get() = styleHeader.spinnerStyle
@@ -222,7 +237,13 @@ internal class CYLDrawnFooterView(private val styleHeader: RefreshHeader) : Simp
     override fun onStateChanged(refreshLayout: RefreshLayout, oldState: RefreshState, newState: RefreshState) =
         styleHeader.onStateChanged(refreshLayout, headerStateOf(oldState), headerStateOf(newState))
 
-    override fun setNoMoreData(noMoreData: Boolean): Boolean = false
+    // true: the layout then treats the footer as one that supports "no more data" (false printed a stack trace and left the
+    // footer drawing the style as if there were more).
+    override fun setNoMoreData(noMoreData: Boolean): Boolean {
+        styleHeader.view.visibility = if (noMoreData) INVISIBLE else VISIBLE
+        noMoreDataLabel.visibility = if (noMoreData) VISIBLE else GONE
+        return true
+    }
 
     private fun headerStateOf(state: RefreshState): RefreshState = when (state) {
         RefreshState.PullUpToLoad -> RefreshState.PullDownToRefresh
@@ -245,15 +266,16 @@ open class CYLRefreshDrawnFooter(
     val style: CYLRefreshDrawnHeader,
 ) : CYLRefreshBackFooter(CYLDrawnFooterView(style.view as RefreshHeader)) {
     /**
-     * The header styles a footer class draws, by footer class (`styleClass`).
+     * A footer that draws a new header of [styleClass] (`+styleClass`, iOS `init` of a subclass): the class needs a
+     * constructor that takes a Context, as every drawn header has.
      */
-    companion object {
-        /**
-         * The style header class a subclass draws, or null for a footer given its style (`styleClass`).
-         */
-        @JvmStatic
-        val styleClass: Class<out CYLRefreshDrawnHeader>? = null
-    }
+    constructor(context: Context, styleClass: Class<out CYLRefreshDrawnHeader>) :
+        this(styleClass.getConstructor(Context::class.java).newInstance(context))
+
+    /**
+     * The header class this footer draws (`styleClass`): CYLRefreshMaterialHeader for CYLRefreshMaterialFooter, and so on.
+     */
+    val styleClass: Class<out CYLRefreshDrawnHeader> get() = style.javaClass
 }
 
 /**

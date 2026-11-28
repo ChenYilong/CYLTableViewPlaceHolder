@@ -192,7 +192,7 @@ enum class CYLRefreshState {
 }
 
 /**
- * How the component moves with the pull (`CYLRefreshScrollMode`); on Android, SmartRefreshLayout's spinner style.
+ * How the component moves with the pull (`CYLRefreshScrollMode`); on Android, CYLRefreshLayout's spinner style.
  */
 enum class CYLRefreshScrollMode {
     /**

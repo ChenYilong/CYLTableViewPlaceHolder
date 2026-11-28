@@ -12,6 +12,7 @@
 //  - easyTriggerMode: sample/trigger_mode_page.dart (IndicatorTriggerMode).
 //  - easyRefreshOnStart: sample/refresh_on_start_page.dart (refreshOnStartHeader).
 //  - easyPaging: sample/paging_page.dart (easy_paging: 45 items, 10 per page).
+//  - easyScrollMode: the four CYLRefreshScrollMode values on one list (a tap on a mode row switches the header).
 //  - easyListener: sample/listener_header_page.dart (a header that draws nothing; the page shows the pull).
 //  - easyChat: sample/chat_page.dart (pull at the top for earlier messages, the position kept).
 //  - easyUserProfile: sample/user_profile_page.dart (the indicator behind the content, IndicatorPosition.behind).
@@ -55,6 +56,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
         case "easyTriggerMode": setUpTriggerMode()
         case "easyRefreshOnStart": setUpRefreshOnStart()
         case "easyPaging": setUpPaging()
+        case "easyScrollMode": setUpScrollMode()
         case "easyListener": setUpListener()
         case "easyChat": setUpChat()
         default: setUpUserProfile()
@@ -117,10 +119,44 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
         footer = CYLRefreshBackNormalFooter.attach(to: tableView, target: self, action: #selector(loadByTen))
         count = 0
         reloadCounted()
-        tableView.cyl_beginRefreshing(startHeader: CYLRefreshCupertinoHeader())
+        tableView.cylBeginRefreshing(startHeader: CYLRefreshCupertinoHeader())
     }
 
     /// paging_page.dart: a server of 45 items, 10 per page, 2 seconds per request; refresh on start.
+    /// The four scroll modes of a header, in the order of `CYLRefreshScrollMode`, with their names.
+    private static let scrollModes: [(mode: CYLRefreshScrollMode, name: CYLScenarioL10n)] = [
+        (.move, .easyScrollMove), (.stretch, .easyScrollStretch), (.front, .easyScrollFront), (.behind, .easyScrollBehind),
+    ]
+
+    /// Scroll modes: a classic header and footer over 30 rows; the first four rows are the modes, a tap makes one the header's.
+    private func setUpScrollMode() {
+        header = CYLRefreshNormalHeader.attach(to: tableView, target: self, action: #selector(refreshScrollMode))
+        footer = CYLRefreshBackNormalFooter.attach(to: tableView, target: self, action: #selector(loadScrollMode))
+        count = 30
+        reloadScrollMode()
+    }
+
+    private func reloadScrollMode() {
+        let current = header?.scrollMode
+        rows = Self.scrollModes.map { entry in
+            let name = CYLScenarioLocalizedString(entry.name)
+            return entry.mode == current ? String(format: CYLScenarioLocalizedString(.easyScrollSelected), name) : name
+        } + (0..<count).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0 + 1) }
+        tableView.reloadData()
+    }
+
+    @objc private func refreshScrollMode() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.tableView.cylHeader?.endRefreshing()
+        }
+    }
+
+    @objc private func loadScrollMode() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.footer?.endRefreshing()
+        }
+    }
+
     private func setUpPaging() {
         let normal = CYLRefreshNormalHeader()
         normal.attach(to: tableView)
@@ -135,7 +171,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             }
         }
         paging.itemsDidChange = { [weak self] paging in
-            self?.rows = (paging.items as? [Int] ?? []).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0) }
+            self?.rows = (paging.items as? [Int] ?? []).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0) }
             self?.tableView.reloadData()
         }
         self.paging = paging
@@ -188,7 +224,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
     // MARK: - Data
 
     private func reloadCounted() {
-        rows = (0..<count).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0 + 1) }
+        rows = (0..<count).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0 + 1) }
         tableView.reloadData()
     }
 
@@ -200,20 +236,20 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             String(format: CYLScenarioLocalizedString(.easyLoadCount), loadCount),
             CYLScenarioLocalizedString(headerOnEdge ? .easyHeaderOnEdge : .easyHeaderAnywhere),
             CYLScenarioLocalizedString(footerOnEdge ? .easyFooterOnEdge : .easyFooterAnywhere),
-        ] + (0..<count).map { String(format: CYLScenarioLocalizedString(.smartTestDataRow), $0 + 1) }
+        ] + (0..<count).map { String(format: CYLScenarioLocalizedString(.refreshStyleTestDataRow), $0 + 1) }
         tableView.reloadData()
     }
 
     // MARK: - Taps and callbacks
 
     /// Refresh: back to 10 rows after 2 seconds, and the footer can load again. Ends the header that is attached now
-    /// (`cyl_header`): during refresh on start that is the start header, not `header`.
+    /// (`cylHeader`): during refresh on start that is the start header, not `header`.
     @objc private func refreshCounted() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             guard let self = self else { return }
             self.count = 10
             self.reloadCounted()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
             self.footer?.resetNoMoreData()
         }
     }
@@ -243,7 +279,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             guard let self = self else { return }
             self.refreshCount += 1
             self.reloadTriggerMode()
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
         }
     }
 
@@ -268,7 +304,7 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
             self.tableView.reloadData()
             self.tableView.layoutIfNeeded()
             let offset = self.tableView.contentOffset
-            self.tableView.cyl_header?.endRefreshing()
+            self.tableView.cylHeader?.endRefreshing()
             self.tableView.contentOffset = CGPoint(x: offset.x, y: offset.y + self.tableView.contentSize.height - before)
             if first == 1 { self.header?.isHidden = true }
         }
@@ -291,7 +327,8 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
         var content = cell.defaultContentConfiguration()
         content.text = rows[indexPath.row]
         cell.contentConfiguration = content
-        let switches = method == "easyTriggerMode" && (indexPath.row == 2 || indexPath.row == 3)
+        let switches = (method == "easyTriggerMode" && (indexPath.row == 2 || indexPath.row == 3)) ||
+            (method == "easyScrollMode" && indexPath.row < Self.scrollModes.count)
         cell.accessibilityTraits = switches ? .button : .staticText
         cell.selectionStyle = switches ? .default : .none
         return cell
@@ -299,6 +336,12 @@ final class CYLEasyRefreshDemoViewController: UITableViewController, CYLRefreshE
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if method == "easyScrollMode" {
+            guard indexPath.row < Self.scrollModes.count else { return }
+            header?.scrollMode = Self.scrollModes[indexPath.row].mode
+            reloadScrollMode()
+            return
+        }
         guard method == "easyTriggerMode" else { return }
         if indexPath.row == 2, let header = header {
             header.triggerMode = header.triggerMode == .onEdge ? .anywhere : .onEdge

@@ -1,18 +1,32 @@
 PODS:
+  - CYLAnimatedItem (1.100.0):
+    - CYLAnimatedItem/Core (= 1.100.0)
+  - CYLAnimatedItem/Core (1.100.0)
   - CYLTableViewPlaceHolder (1.1.0):
     - CYLTableViewPlaceHolder/Core (= 1.1.0)
-  - CYLTableViewPlaceHolder/Core (1.1.0)
+  - CYLTableViewPlaceHolder/Core (1.1.0):
+    - CYLAnimatedItem/Core
 
 DEPENDENCIES:
+  - CYLAnimatedItem (from `https://github.com/ChenYilong/CYLTabBarController.git`, commit `b0887513a3c9221af4257884d5d5740baaa8e76b`)
   - CYLTableViewPlaceHolder (from `../..`)
 
 EXTERNAL SOURCES:
+  CYLAnimatedItem:
+    :commit: b0887513a3c9221af4257884d5d5740baaa8e76b
+    :git: https://github.com/ChenYilong/CYLTabBarController.git
   CYLTableViewPlaceHolder:
     :path: "../.."
 
-SPEC CHECKSUMS:
-  CYLTableViewPlaceHolder: 1b38326531501ef6f52a526f05877919d33e0c76
+CHECKOUT OPTIONS:
+  CYLAnimatedItem:
+    :commit: b0887513a3c9221af4257884d5d5740baaa8e76b
+    :git: https://github.com/ChenYilong/CYLTabBarController.git
 
-PODFILE CHECKSUM: fc04102f1d6240072c4703af5849ab356b1125fc
+SPEC CHECKSUMS:
+  CYLAnimatedItem: 443fbb54f49dbed33a3a333915398ee1c597ae21
+  CYLTableViewPlaceHolder: 067199f54056c001b64841832293f8a3067e3c86
+
+PODFILE CHECKSUM: 052510fe02afe7e30a57052ebd157f8179911588
 
 COCOAPODS: 1.17.0

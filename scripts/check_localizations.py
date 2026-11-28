@@ -7,6 +7,17 @@
 - A localization header next to a bundle (`#define <Prefix>L10n<Name> @"<key>"`) names only keys of its table, and
   every key of the table has a macro. A Swift example's `*Localization.swift` next to a bundle does the same with
   the cases of its `<Prefix>L10n` key enum (`case name = "<key>"`), as Swift cannot use function-like macros.
+- Every layer (a bundle with `.lproj` folders) has its own lookup macro next to the bundle: a function-like
+  `#define <Prefix>LocalizedString(` in a `*Localization.h`, or a Swift `func <Prefix>LocalizedString(` in a
+  `*Localization.swift`; and the repository has at least two different lookup macros (instructions.md, "Lookup
+  macros: one per layer, at least two per project").
+- Example layers (a Swift `<Prefix>L10n` enum next to a bundle): every key the example's code uses
+  (`<Prefix>LocalizedString(.case)`, `<Prefix>LocalizedFormat(.case, ...)`, `<Prefix>L10n.case`, in the Swift and
+  Objective-C sources of the example's folder) is a case of the enum and exists in every language of the table; the
+  bundle has every language of the core bundle (the core's seven); and the lookup follows
+  `CYLPlaceholderLocalization.effectiveLanguage`, so one language switch changes both layers. The run-time half is each
+  example's `<Prefix>LocalizationSelfCheck()` (`-localizationCheck`, run by scripts/ci-build-example.sh and the
+  Example-objc-02 UI test `CYLLocalizationUITests`).
 
 Usage: python3 scripts/check_localizations.py [repository root]. Exits 1 and lists every problem otherwise.
 """
@@ -16,12 +27,18 @@ import re
 import sys
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent)
-SKIP = {'.git', 'Pods', 'build', 'DerivedData', 'node_modules'}
+# Carthage/ holds third-party checkouts (CYLTabBarController), checked by their own repositories.
+SKIP = {'.git', 'Pods', 'build', 'DerivedData', 'node_modules', 'Carthage'}
 ENTRY = re.compile(r'^\s*"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;\s*$')
 FORMAT = re.compile(r'%(?:\d+\$)?[-+ #0]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j)?[@dDiuUxXoOfeEgGcCsSp]')
 MACRO = re.compile(r'^\s*#define\s+\w+L10n\w+\s+@"([^"]+)"', re.M)
 SWIFT_ENUM = re.compile(r'^\s*enum\s+\w+L10n\b[^{]*\{(.*?)^\}', re.M | re.S)
 SWIFT_CASE = re.compile(r'^\s*case\s+\w+\s*=\s*"([^"]+)"', re.M)
+SWIFT_NAMED_CASE = re.compile(r'^\s*case\s+(\w+)\s*=\s*"([^"]+)"', re.M)
+SWIFT_ENUM_NAME = re.compile(r'^\s*enum\s+(\w+L10n)\b', re.M)
+CORE_BUNDLE = 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLTableViewPlaceHolder.bundle'
+LOOKUP_MACRO = re.compile(r'^\s*#define\s+(\w+LocalizedString)\s*\(', re.M)
+LOOKUP_FUNC = re.compile(r'^\s*(?:public\s+|internal\s+)?func\s+(\w+LocalizedString)\s*\(', re.M)
 problems = []
 
 
@@ -48,12 +65,83 @@ def parse(path):
     return dict(entries)
 
 
+def android_asset_table(path):
+    """An Android example's `assets/Localization/<language>.lproj/*.strings`: the layout CYLTabBarController's Android
+    configuration reader expects (instructions.md, "Integrating CYLTabBarController in the examples"), not an iOS
+    bundle."""
+    parts = path.relative_to(ROOT).parts
+    return (parts[0] == 'android' and path.parent.suffix == '.lproj' and path.parent.parent.name == 'Localization'
+            and path.parent.parent.parent.name == 'assets')
+
+
+
+def example_root(bundle):
+    """The example folder of a bundle: the nearest folder above it that holds an .xcodeproj, else its parent."""
+    for folder in [bundle.parent, *bundle.parent.parents]:
+        if folder == ROOT:
+            break
+        if any(folder.glob('*.xcodeproj')):
+            return folder
+    return bundle.parent
+
+
+def check_example_usage(bundle, source, table, reference):
+    """Every key an example's code uses is a case of its key enum and is in every language of the table."""
+    text = source.read_text(encoding='utf-8')
+    enum = SWIFT_ENUM_NAME.search(text)
+    lookup = LOOKUP_FUNC.search(text)
+    if not enum or not lookup:
+        return 0
+    cases = {name: key for body in SWIFT_ENUM.findall(text) for name, key in SWIFT_NAMED_CASE.findall(body)}
+    prefix = lookup.group(1)[:-len('LocalizedString')]
+    uses = re.compile(r'\b(?:%sLocalized(?:String|Format)\(\s*\.(\w+)|%s\.(\w+))' % (re.escape(prefix), re.escape(enum.group(1))))
+    used = {}
+    root = example_root(bundle)
+    for path in sorted(p for p in root.rglob('*') if p.suffix in {'.swift', '.m'} and visible(p) and p.is_file()):
+        for number, line in enumerate(path.read_text(encoding='utf-8', errors='replace').splitlines(), 1):
+            for match in uses.finditer(line):
+                name = match.group(1) or match.group(2)
+                if name in {'allCases', 'init', 'rawValue'}:
+                    continue
+                used.setdefault(name, f'{path.relative_to(ROOT)}:{number}')
+    languages = sorted(bundle.glob('*.lproj'))
+    tables = {d.name: parse(d / f'{table}.strings') for d in languages if (d / f'{table}.strings').exists()}
+    for name, where in sorted(used.items()):
+        key = cases.get(name)
+        if key is None:
+            problems.append(f'{where}: {enum.group(1)}.{name} is not a case of {enum.group(1)} in {source.relative_to(ROOT)}')
+            continue
+        for language, entries in sorted(tables.items()):
+            if key not in entries:
+                problems.append(f'{where}: key {key} ({enum.group(1)}.{name}) is missing in {language}/{table}.strings')
+    if 'CYLPlaceholderLocalization.effectiveLanguage' not in text:
+        problems.append(f'{source.relative_to(ROOT)}: the lookup does not follow CYLPlaceholderLocalization.effectiveLanguage')
+    core = ROOT / CORE_BUNDLE
+    if core.is_dir():
+        missing = sorted({d.name for d in core.glob('*.lproj')} - {d.name for d in languages})
+        if missing:
+            problems.append(f'{bundle.relative_to(ROOT)}: missing the core languages {", ".join(missing)}')
+    return len(used)
+
 for path in sorted(p for p in ROOT.rglob('*') if p.suffix in {'.strings', '.stringsdict', '.xcstrings'} and visible(p)):
+    if android_asset_table(path):
+        continue
     if path.parent.suffix != '.lproj' or path.parent.parent.suffix != '.bundle':
         problems.append(f'{path.relative_to(ROOT)}: localization file outside <language>.lproj in a .bundle')
 
 bundles = sorted(p for p in ROOT.rglob('*.bundle') if p.is_dir() and visible(p) and any(p.glob('*.lproj')))
+lookups = set()
 for bundle in bundles:
+    layer_lookups = set()
+    for header in bundle.parent.glob('*Localization.h'):
+        layer_lookups |= set(LOOKUP_MACRO.findall(header.read_text(encoding='utf-8')))
+    for source in bundle.parent.glob('*Localization.swift'):
+        layer_lookups |= set(LOOKUP_FUNC.findall(source.read_text(encoding='utf-8')))
+    if not layer_lookups:
+        problems.append(f'{bundle.relative_to(ROOT)}: this layer has no lookup macro (a *Localization.h with '
+                        f'#define <Prefix>LocalizedString( or a *Localization.swift with func <Prefix>LocalizedString( '
+                        f'next to the bundle)')
+    lookups |= layer_lookups
     tables = sorted({f.stem for f in bundle.glob('*.lproj/*.strings')})
     for table in tables:
         reference_path = bundle / 'en.lproj' / f'{table}.strings'
@@ -95,8 +183,16 @@ for bundle in bundles:
                 problems.append(f'{source.relative_to(ROOT)}: key {key} is not in {table}.strings')
             for key in sorted(reference.keys() - cases):
                 problems.append(f'{source.relative_to(ROOT)}: no case for {table}.strings key {key}')
+            used = check_example_usage(bundle, source, table, reference)
+            print(f'{source.relative_to(ROOT)}: {used} key(s) used in code, each in all '
+                  f'{len(list(bundle.glob("*.lproj")))} languages')
     print(f'{bundle.relative_to(ROOT)}: {len(tables)} table(s), '
           f'{len(list(bundle.glob("*.lproj")))} language(s)')
+
+if bundles and len(lookups) < 2:
+    problems.append(f'only {len(lookups)} lookup macro(s) ({", ".join(sorted(lookups)) or "none"}); the project needs '
+                    f'the core macro and at least one example macro, each reading its own bundle')
+print(f'Lookup macros: {", ".join(sorted(lookups))}')
 
 if problems:
     print('\n'.join(problems))

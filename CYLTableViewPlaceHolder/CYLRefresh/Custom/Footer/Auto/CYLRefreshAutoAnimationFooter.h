@@ -11,6 +11,18 @@
 //  [CN] MJRefresh 文档中“动画图片”控件的通用命名：按状态设置图片序列（`setAnimationImages:forState:`），或通过
 //       `CYLRefreshIconAnimating` 设置图标动画（GIF、Lottie、PAG、Rive）。`CYLRefreshAutoGifFooter` 作为子类保留，其 `gifView` 与 `setImages:…` 调用这里的方法。
 //
+//  [EN] Swift since 2026-11-19: the class is in `CYLRefreshAutoAnimationFooter.swift` (docs/Swift-Migration.md, step 9), with the same
+//       Objective-C API (`animationView`, `setAnimationImages:duration:forState:`, `setAnimationImages:forState:`, the
+//       `CYLRefreshIconAnimating` conformance).
+//       Objective-C code that uses it imports the umbrella header `CYLTableViewPlaceHolder.h`, which brings the
+//       generated Swift header; this header keeps the forward declaration. Objective-C cannot subclass a Swift class:
+//       subclasses are written in Swift.
+//  [CN] 自 2026-11-19 起该类用 Swift 编写（`CYLRefreshAutoAnimationFooter.swift`，docs/Swift-Migration.md 第 9 步），
+//       Objective-C API 不变（`animationView`、`setAnimationImages:duration:forState:`、`setAnimationImages:forState:`、
+//       `CYLRefreshIconAnimating` 协议）。
+//       使用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）；本头文件保留前向声明。
+//       Objective-C 不能继承 Swift 类：子类请用 Swift 编写。
+//
 
 #import "CYLRefreshAutoStateFooter.h"
 #import "CYLRefreshIconView.h"
@@ -18,28 +30,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- * [EN] Animated images (`setAnimationImages:forState:`), or an icon animation (GIF, Lottie, PAG or Rive) through
- *      `CYLRefreshIconAnimating`, which takes the animation view's place with the same layout.
- * [CN] 动画图片（`setAnimationImages:forState:`），或通过 `CYLRefreshIconAnimating` 设置的图标动画（GIF、Lottie、PAG、Rive），后者以相同布局替换动画视图。
+ * [EN] Animated images (`setAnimationImages:forState:`, `animationView`), or an icon animation (GIF, Lottie, PAG or
+ *      Rive) through `CYLRefreshIconAnimating`, which takes the animation view's place with the same layout.
+ *      The class is Swift (`CYLRefreshAutoAnimationFooter.swift`); Objective-C code that messages it imports the umbrella header
+ *      `CYLTableViewPlaceHolder.h`, which brings the generated Swift header.
+ * [CN] 动画图片（`setAnimationImages:forState:`、`animationView`），或通过 `CYLRefreshIconAnimating` 设置的图标动画（GIF、Lottie、PAG、Rive），
+ *      后者以相同布局替换动画视图。
+ *      该类用 Swift 编写（`CYLRefreshAutoAnimationFooter.swift`）；需要调用它的 Objective-C 代码请导入总头文件 `CYLTableViewPlaceHolder.h`（其中导入生成的 Swift 头文件）。
  */
-@interface CYLRefreshAutoAnimationFooter : CYLRefreshAutoStateFooter <CYLRefreshIconAnimating>
-
-/*!
- * [EN] The image view that plays the per-state images. [CN] 播放各状态动画图片的图片视图。
- */
-@property (weak, nonatomic, readonly) UIImageView *animationView;
-
-/*!
- * [EN] Sets the images of `state`, played in `duration` seconds; a single image is shown still. The control grows to
- *      the first image's height. [CN] 设置 `state` 状态的动画图片，在 `duration` 秒内播放一遍；只有一张时静止显示。控件高度随第一张图片增大。
- */
-- (instancetype)setAnimationImages:(NSArray<UIImage *> *)images duration:(NSTimeInterval)duration forState:(CYLRefreshState)state;
-
-/*!
- * [EN] The same, 0.1 seconds per image. [CN] 同上，每张图片 0.1 秒。
- */
-- (instancetype)setAnimationImages:(NSArray<UIImage *> *)images forState:(CYLRefreshState)state;
-
-@end
+@class CYLRefreshAutoAnimationFooter;
 
 NS_ASSUME_NONNULL_END

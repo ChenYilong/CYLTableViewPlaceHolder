@@ -1,0 +1,71 @@
+// Third-party refresh code (Apache-2.0, see the package's LICENSE.refresh-third-party.txt) translated to
+// Kotlin; the JVM signatures match the Java version.
+package com.cyl.refresh.header.falsify
+
+import com.cyl.refresh.merged.R
+
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.util.AttributeSet
+import android.view.Gravity
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.makeMeasureSpec
+import android.widget.TextView
+import com.cyl.refresh.layout.api.RefreshHeader
+import com.cyl.refresh.layout.api.RefreshKernel
+import com.cyl.refresh.layout.api.RefreshLayout
+import com.cyl.refresh.layout.constant.RefreshState
+import com.cyl.refresh.layout.simple.SimpleComponent
+import com.cyl.refresh.layout.util.CYLRefreshUtil
+
+/**
+ * The empty header and footer's base: draws nothing at run time and a dashed outline in the layout editor
+ * (`FalsifyAbstract`).
+ */
+abstract class FalsifyAbstract protected constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+    SimpleComponent(context, attrs, defStyleAttr), RefreshHeader {
+
+    /**
+     * The layout's kernel, once initialized.
+     */
+    @JvmField protected var mRefreshKernel: RefreshKernel? = null
+
+    init {
+        // Draws nothing: hidden from accessibility services.
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+        // Only in the layout editor's preview, so its cost does not matter.
+        if (!isInEditMode) return
+        val d = CYLRefreshUtil.dp2px(5f)
+        val paint = Paint().apply {
+            style = Paint.Style.STROKE
+            color = 0xcccccccc.toInt()
+            strokeWidth = CYLRefreshUtil.dp2px(1f).toFloat()
+            pathEffect = DashPathEffect(floatArrayOf(d.toFloat(), d.toFloat(), d.toFloat(), d.toFloat()), 1f)
+        }
+        canvas.drawRect(d.toFloat(), d.toFloat(), (width - d).toFloat(), (bottom - d).toFloat(), paint)
+        val textView = TextView(context)
+        textView.text = context.getString(R.string.srl_component_falsify, javaClass.simpleName, CYLRefreshUtil.px2dp(height))
+        textView.setTextColor(0xcccccccc.toInt())
+        textView.gravity = Gravity.CENTER
+        textView.measure(makeMeasureSpec(width, EXACTLY), makeMeasureSpec(height, EXACTLY))
+        textView.layout(0, 0, width, height)
+        textView.draw(canvas)
+    }
+
+    override fun onInitialized(kernel: RefreshKernel, height: Int, maxDragHeight: Int) {
+        mRefreshKernel = kernel
+    }
+
+    override fun onReleased(refreshLayout: RefreshLayout, height: Int, maxDragHeight: Int) {
+        mRefreshKernel?.let {
+            it.setState(RefreshState.None)
+            it.setState(RefreshState.RefreshFinish)
+        }
+    }
+}

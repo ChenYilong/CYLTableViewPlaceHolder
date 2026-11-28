@@ -1,0 +1,41 @@
+name: flutter_cylplaceholder
+description: "CYLTableViewPlaceHolder for Flutter: a placeholder item (animation plus title) over CYLTabBarController's CYLAnimationView"
+version: 0.0.1
+homepage: https://github.com/ChenYilong/CYLTableViewPlaceHolder
+license: MIT
+publish_to: none
+
+environment:
+  sdk: ^3.13.7
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # [EN] CYLTabBarController is not on pub.dev: its Flutter package is taken by commit, the one the Cartfile pins
+  #      (scripts/resolve-cyltabbarcontroller-commit.sh --write rewrites `ref`).
+  # [CN] CYLTabBarController 不在 pub.dev 上：其 Flutter 包按 Cartfile 固定的 commit 获取（脚本会重写 `ref`）。
+  flutter_cyltabbar:
+    git:
+      url: https://github.com/ChenYilong/CYLTabBarController.git
+      ref: e3898040d8d54466b158c243a6f635094d0342d6
+      path: CrossPlatform/flutter_cyltabbar
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      # [EN] The Android half (android/) and the iOS half (ios/) host the native CYLPlaceholderView, CYLPlaceholderStackView and
+      #      CYLPlaceholderHUD; the other platforms use the Dart implementation until their native halves exist
+      #      (docs/Refresh-Library-Parity.md, "Native bridge map").
+      # [CN] Android 一半（android/）与 iOS 一半（ios/）承载原生的 CYLPlaceholderView、CYLPlaceholderStackView 与 CYLPlaceholderHUD；
+      #      其他平台在原生一半完成前使用 Dart 实现。
+      android:
+        package: com.cyl.placeholder.flutter_cylplaceholder
+        pluginClass: FlutterCylplaceholderPlugin
+      ios:
+        pluginClass: FlutterCylplaceholderPlugin

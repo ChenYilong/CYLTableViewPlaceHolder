@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="srl_content_empty">The content view in CYLRefreshLayout is empty. Do you forget to add it in xml layout file?</string>
+    </resources>

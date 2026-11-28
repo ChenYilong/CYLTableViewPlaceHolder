@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+/*!
+ * [EN] The legacy placeholder API: a table view's data source that adopts it gets its placeholder from
+ *      `makePlaceHolderView` when `cyl_reloadData` finds the table empty.
+ * [CN] 旧的占位图接口：采用该协议的表格数据源，在 `cyl_reloadData` 发现表格为空时通过 `makePlaceHolderView`
+ *      提供占位图。
+ */
 @protocol CYLTableViewPlaceHolderDelegate <NSObject>
 
 @required

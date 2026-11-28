@@ -1,0 +1,16 @@
+@import "../flow-detail/refresh.wxss";
+
+page { background: #fff; }
+.page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.bar { background: #f2f2f7; }
+.list { flex: 1; height: 0; }
+.placeholder { min-height: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.status__bubble { color: #007aff; }
+/* UIToolbar: a translucent bar at the bottom with the segmented control centered. */
+.toolbar { padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: rgba(249, 249, 249, 0.94);
+  border-top: 1px solid rgba(0, 0, 0, 0.15); }
+.toolbar .segmented__item { font-size: 12px; }
+@media (prefers-color-scheme: dark) {
+  page, .page, .bar { background: #000; }
+  .toolbar { background: rgba(22, 22, 24, 0.94); border-top-color: rgba(255, 255, 255, 0.15); }
+}

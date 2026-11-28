@@ -1,0 +1,263 @@
+package com.cyl.placeholder.flutter_cylplaceholder
+
+import android.content.Context
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.FrameLayout
+import com.cyl.refresh.CYLRefreshBackFooter
+import com.cyl.refresh.CYLRefreshComponent
+import com.cyl.refresh.CYLRefreshDrivenLayout
+import com.cyl.refresh.CYLRefreshFooter
+import com.cyl.refresh.CYLRefreshHeader
+import com.cyl.refresh.CYLRefreshStateHeader
+import com.cyl.refresh.CYLRefreshStyle
+import com.cyl.refresh.cyl_footer
+import com.cyl.refresh.cyl_header
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.platform.PlatformView
+import io.flutter.plugin.platform.PlatformViewFactory
+import kotlin.math.max
+import kotlin.math.roundToInt
+
+/** The log tag of this file (the permanent diagnostic log of [CYLRefreshPlatformView.fitSlot] and the unknown-style warning). */
+private const val TAG = "CYLRefreshView"
+
+/**
+ * The second floor lives on [CYLRefreshHeader] and on [CYLRefreshBackFooter], not on the shared base [CYLRefreshComponent]; a footer of
+ * another kind has none (the calls do nothing).
+ */
+private fun CYLRefreshComponent.setUpSecondary(content: View, trigger: Float, dimension: Float, closeTrigger: Float?, opened: () -> Unit, closed: () -> Unit) {
+    when (this) {
+        is CYLRefreshHeader -> {
+            secondaryView = content
+            secondaryTriggerOffset = trigger
+            secondaryDimension = dimension
+            closeTrigger?.let { secondaryCloseTriggerOffset = it }
+            secondaryOpenedBlock = { opened() }
+            secondaryClosedBlock = { closed() }
+        }
+        is CYLRefreshBackFooter -> {
+            secondaryView = content
+            secondaryTriggerOffset = trigger
+            secondaryDimension = dimension
+            closeTrigger?.let { secondaryCloseTriggerOffset = it }
+            secondaryOpenedBlock = { opened() }
+            secondaryClosedBlock = { closed() }
+        }
+        else -> Unit
+    }
+}
+
+private fun CYLRefreshComponent.openSecondaryFloor() {
+    when (this) {
+        is CYLRefreshHeader -> openSecondary()
+        is CYLRefreshBackFooter -> openSecondary()
+        else -> Unit
+    }
+}
+
+private fun CYLRefreshComponent.closeSecondaryFloor() {
+    when (this) {
+        is CYLRefreshHeader -> closeSecondary()
+        is CYLRefreshBackFooter -> closeSecondary()
+        else -> Unit
+    }
+}
+
+/**
+ * The creation parameter `scrollMode` (the `.name` of Dart's `CYLRefreshScrollMode`; `stretch` is accepted too, the host's own spelling):
+ * how the slot sizes the native indicator. [pinned] modes (front, behind) keep it at its own height at the slot's far edge; move and
+ * stretch size the layout to the pull. `locator` and anything else is not a native mode ([fromKey] returns null).
+ */
+enum class CYLRefreshSlotMode(val key: String, val pinned: Boolean) {
+    Move("move", false), Stretch("stretch", false), Front("front", true), Behind("behind", true);
+
+    companion object {
+        fun fromKey(key: Any?): CYLRefreshSlotMode? = values().firstOrNull { it.key == key }
+    }
+}
+
+/**
+ * Creates the platform view of the native refresh header or footer: a `CYLRefreshDrivenLayout` (the driven mode of the refresh
+ * kernel) with the header of the creation parameter `style` (`classic` is the `CYLRefreshNormalHeader`; see [CYLRefreshStyle]; `rive` also reads the `rive...` keys, `riveFile` first, and is classic with one log line without the optional `:merged-rive` module, a `riveFile` or a readable file), or with the
+ * footer of that style (`CYLRefreshBackNormalFooter` for classic) when the creation parameters say `footer: true` (and optionally
+ * `loadsAfterNoMoreData: true`). A missing or unknown `style` is classic and one warning is logged. The drawn styles may also get
+ * `scrollMode` (`move`, `stretch`, `front`, `behind`; missing or unknown is move, an unknown one logged once), `expandHeight` (dp, the indicator's open height; missing or 0 keeps the style's own) and
+ * `secondaryTriggerOffset` (dp; above 0 turns the second floor on), `secondaryDimension`, `secondaryCloseTriggerOffset`, `foregroundColor` (the drawing, the layout's accent color) and `backgroundColor` (the layout's primary color), ARGB integers; a
+ * missing or non-number value leaves the style's own color. The Dart side feeds the pull through the view's channel.
+ */
+class CYLRefreshPlatformViewFactory(private val messenger: BinaryMessenger) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
+        val params = args as? Map<*, *>
+        val key = params?.get("style")
+        val style = CYLRefreshStyle.fromKey(key) ?: CYLRefreshStyle.Classic.also {
+            // An unknown or missing style falls back to classic and is reported once per view, never thrown.
+            Log.w(TAG, "Unknown refresh style $key for view $viewId: using classic.")
+        }
+        val modeKey = params?.get("scrollMode")
+        // A missing key is the default (move) and needs no word; an unknown value falls back to move and is reported once per view.
+        val scrollMode = CYLRefreshSlotMode.fromKey(modeKey) ?: CYLRefreshSlotMode.Move.also {
+            if (modeKey != null) Log.w(TAG, "Unknown refresh scrollMode $modeKey for view $viewId: using move.")
+        }
+        return CYLRefreshPlatformView(context, viewId, messenger, footer = params?.get("footer") == true, loadsAfterNoMoreData = params?.get("loadsAfterNoMoreData") == true, style = style,
+            foregroundColor = (params?.get("foregroundColor") as? Number)?.toInt(), backgroundColor = (params?.get("backgroundColor") as? Number)?.toInt(),
+            scrollMode = scrollMode, expandHeight = (params?.get("expandHeight") as? Number)?.toFloat() ?: 0f,
+            secondaryTriggerOffset = (params?.get("secondaryTriggerOffset") as? Number)?.toFloat() ?: 0f,
+            secondaryDimension = (params?.get("secondaryDimension") as? Number)?.toFloat() ?: 0f,
+            secondaryCloseTriggerOffset = (params?.get("secondaryCloseTriggerOffset") as? Number)?.toFloat(), riveParameters = params)
+    }
+
+    companion object {
+        /** The view type the Dart side asks for. */
+        const val VIEW_TYPE = "flutter_cylplaceholder/CYLRefreshView"
+    }
+}
+
+/**
+ * One native refresh header or footer in a Flutter widget. The channel `flutter_cylplaceholder/CYLRefreshView/<id>` carries from
+ * Dart "drive" (`offset` in logical pixels, negative for a footer, `dragging`, `startedAtEdge`: [CYLRefreshDrivenLayout.drive]),
+ * "release" ([CYLRefreshDrivenLayout.release]), "finishRefresh" (`success`: ends the refresh the way the caller always must; a
+ * footer's `noMoreData: true` ends the load and shows "no more data") and, footer only, "noMoreData" (`value`: shows it without a
+ * load, or clears it), and back "onPhase" (`phase` and `oldPhase`, the lower camel case names of `CYLRefreshPhase`) and
+ * "onRefreshing" (the component started to refresh).
+ */
+class CYLRefreshPlatformView(context: Context, viewId: Int, messenger: BinaryMessenger, footer: Boolean = false, loadsAfterNoMoreData: Boolean = false, style: CYLRefreshStyle = CYLRefreshStyle.Classic,
+    foregroundColor: Int? = null, backgroundColor: Int? = null, private val scrollMode: CYLRefreshSlotMode = CYLRefreshSlotMode.Move, expandHeight: Float = 0f,
+    secondaryTriggerOffset: Float = 0f, secondaryDimension: Float = 0f, secondaryCloseTriggerOffset: Float? = null, riveParameters: Map<*, *>? = null) :
+    PlatformView, MethodChannel.MethodCallHandler {
+    private val channel = MethodChannel(messenger, "${CYLRefreshPlatformViewFactory.VIEW_TYPE}/$viewId")
+    private val density = context.resources.displayMetrics.density
+    private val layout = CYLRefreshDrivenLayout(context)
+    private val container = FrameLayout(context)
+
+    /** The header, or in footer mode the [CYLRefreshFooter], the view hosts. */
+    internal val component: CYLRefreshComponent =
+        if (footer) style.newFooter(context, riveParameters).also { it.loadsAfterNoMoreData = loadsAfterNoMoreData } else style.newHeader(context, riveParameters)
+
+    init {
+        component.addPhaseObserver { _, old, new ->
+            // Refreshing holds the indicator open, so the slot grows to the whole view (and shrinks again when it closes).
+            fitSlot()
+            emit("onPhase", mapOf("phase" to lowerCamel(new.name), "oldPhase" to lowerCamel(old.name)))
+        }
+        layout.onBeforeDraw = { fitSlot() }
+        component.refreshingHandler = { emit("onRefreshing", null) }
+        when (component) {
+            is CYLRefreshFooter -> layout.cyl_footer = component
+            is CYLRefreshHeader -> layout.cyl_header = component
+        }
+        // The Dart slot keeps one open height of this view and shows its bottom (header) or top (footer) `pull` points.
+        container.addView(layout, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
+        container.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (bottom - top != oldBottom - oldTop || right - left != oldRight - oldLeft) fitSlot()
+        }
+        // The Dart `expandHeight` (dp) is the indicator's open height, in place of the native default (54 dp for the classic header),
+        // so the native indicator and the Dart slot agree and no gap is left at the slot's edge. Missing or 0: the style's own.
+        if (expandHeight > 0f) {
+            val px = (expandHeight * density).roundToInt()
+            if (component is CYLRefreshFooter) layout.setFooterHeightPx(px) else layout.setHeaderHeightPx(px)
+        }
+        // The Dart drawn styles' colors: the layout's accent color is the drawing and its primary color the background
+        // (`setPrimaryColors(primary, accent)` of every drawn header; the drawn footer forwards them to its header).
+        foregroundColor?.let { component.colorAccent = it }
+        backgroundColor?.let { component.colorPrimary = it }
+        // The second floor (contract "Row 7 and 8 native contract"): the core opens it only with a view, and its content is a Flutter
+        // widget, so the native floor is an empty view. The creation parameters are dp (logical pixels); a trigger of 0 or less: no floor.
+        if (secondaryTriggerOffset > 0f) {
+            component.setUpSecondary(View(context), secondaryTriggerOffset, secondaryDimension, secondaryCloseTriggerOffset,
+                opened = { emit("onSecondaryOpened", null) }, closed = { emit("onSecondaryClosed", null) })
+        }
+        channel.setMethodCallHandler(this)
+    }
+
+    override fun getView(): View = container
+
+    /**
+     * Fits the indicator to the Dart slot (the same cause and fix as iOS `CYLRefreshDrivenHost.updateSlot`): Dart shows the bottom
+     * (header) or top (footer) `pull` points of a view, and the layout moves the header by the pull inside itself, so the layout is
+     * sized to the pull ([CYLRefreshDrivenLayout.slotHeight]) and anchored at that edge. The rule, the same on iOS: the indicator keeps
+     * its INTRINSIC height, at the slot's edge, and the layout is never shorter than it while refreshing; a layout thinner than the
+     * indicator is moved by [CYLRefreshDrivenLayout.anchorShift] so the header cannot slide away from the edge. The pull is the
+     * layout's own ([CYLRefreshDrivenLayout.shownPull]), not Dart's last offset: the rebound after a release moves it without any call,
+     * so this also runs before every frame (the layout's `onBeforeDraw`). Suspected cause of the clipped deep pull (read from the code,
+     * to be confirmed with the batch's log, see the Task-Log hand-off W2): a layout that kept the height of the deepest pull while the
+     * spinner rebounded put the header outside the view, and a layout as thin as an early pull measured the header (and its title)
+     * at a few pixels. Logging: `adb shell setprop log.tag.CYLRefreshView DEBUG`, then `adb logcat -s CYLRefreshView`.
+     */
+    private fun fitSlot() {
+        val full = container.height
+        if (full <= 0) return
+        val footerMode = component is CYLRefreshFooter
+        val held = component.isRefreshing || (component as? CYLRefreshFooter)?.noMoreData == true
+        val params = layout.layoutParams as FrameLayout.LayoutParams
+        val shown = layout.shownPull
+        // Front and behind (the slot rule): the indicator is pinned at its own height at the far edge of a layout as tall as the whole
+        // slot (Dart slides or covers the view itself); move and stretch: the layout is the pull, anchored at the near edge.
+        val behind = scrollMode.pinned
+        // A pinned layout is at least as tall as the pull (W3: one open height clipped the indicator, which sits at the pull inside the layout
+        // and is only moved by the shift, to a sliver of 2 * extent - pull pixels).
+        val height = if (behind) max(full, shown) else CYLRefreshDrivenLayout.slotHeight(full, shown, held, layout.indicatorExtent)
+        val gravity = if (footerMode != behind) Gravity.TOP else Gravity.BOTTOM
+        if (params.height != height || params.gravity != gravity) {
+            params.height = height
+            params.gravity = gravity
+            layout.layoutParams = params
+        }
+        val shift = (if (behind) CYLRefreshDrivenLayout.behindShift(shown, layout.indicatorExtent, footerMode)
+            else CYLRefreshDrivenLayout.anchorShift(height, shown, footerMode)).toFloat()
+        if (layout.translationY != shift) layout.translationY = shift
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            val title = (component as? CYLRefreshStateHeader)?.stateLabel
+            Log.d(TAG, "fit view=${container.width}x$full layout=$height shown=$shown shift=$shift extent=${layout.indicatorExtent} title=${title?.width}x${title?.height} lines=${title?.lineCount} held=$held")
+        }
+    }
+
+    // Dart is the authority of the second floor and replaces this view by the floor's own widget right after it sent `openSecondary`, so the
+    // native `onSecondaryOpened` may come after the view was disposed (or never be heard): no event is sent after dispose, and Dart never waits for one.
+    private var disposed = false
+
+    private fun emit(method: String, arguments: Any?) {
+        if (!disposed) channel.invokeMethod(method, arguments)
+    }
+
+    override fun dispose() {
+        disposed = true
+        channel.setMethodCallHandler(null)
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        val footer = component as? CYLRefreshFooter
+        when (call.method) {
+            "drive" -> {
+                val offset = call.argument<Number>("offset") ?: return result.error("bad_arguments", "drive needs an offset.", null)
+                layout.drive((offset.toDouble() * density).roundToInt(), call.argument<Boolean>("dragging") == true, call.argument<Boolean>("startedAtEdge") != false)
+                fitSlot()
+            }
+            // A no-op while open or refreshing (open) and unless open (close): the core's floor already ignores the repeats.
+            "openSecondary" -> if (!component.isRefreshing) component.openSecondaryFloor()
+            "closeSecondary" -> component.closeSecondaryFloor()
+            "release" -> {
+                layout.release()
+                fitSlot()
+            }
+            "finishRefresh" -> {
+                if (footer != null && call.argument<Boolean>("noMoreData") == true) footer.endRefreshingWithNoMoreData()
+                else component.endRefreshingWithSuccess(call.argument<Boolean>("success") != false)
+                fitSlot()
+            }
+            "noMoreData" -> {
+                if (footer == null) return result.error("not_a_footer", "noMoreData needs a footer view.", null)
+                if (call.argument<Boolean>("value") == true) footer.noticeNoMoreData() else footer.resetNoMoreData()
+                fitSlot()
+            }
+            else -> return result.notImplemented()
+        }
+        result.success(null)
+    }
+
+    private fun lowerCamel(name: String) = name.replaceFirstChar { it.lowercaseChar() }
+}

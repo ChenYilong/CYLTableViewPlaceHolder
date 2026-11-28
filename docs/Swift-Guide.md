@@ -1,40 +1,70 @@
-# Using CYLTableViewPlaceHolder from Swift
+# 在 Swift 中使用 CYLTableViewPlaceHolder / Using CYLTableViewPlaceHolder from Swift
 
-The library is Objective-C. This page records how it is called from Swift and the rules for keeping it
-Swift-friendly (the rules themselves are in `instructions.md`, "Swift examples and a Swift-friendly core").
-It mirrors CYLTabBarController's
-[`docs/Swift-Guide.md`](https://github.com/ChenYilong/CYLTabBarController/blob/master/docs/Swift-Guide.md),
-whose "Objective-C → Swift 命名对照" section is the model for the naming pattern below.
+<!-- bound-classes: CYLPlaceholderView, CYLPlaceholderStackView, CYLPlaceholderHUD, CYLPlaceholderStatusView, CYLPlaceholderNetworkMonitor, CYLPlaceholderLocalization, CYLRefreshNormalHeader, CYLRefreshAnimationHeader -->
 
-## Setup
+<!-- docs-navigation:start -->
 
-Import the module: `import CYLTableViewPlaceHolder`. The example Podfiles use `use_frameworks!`, so no bridging
-header is needed. Open the `.xcworkspace`, not the `.xcodeproj`.
+| 中文 | English |
+| --- | --- |
+| [配置](#配置--setup) | [Setup](#配置--setup) |
+| [命名模式](#命名模式--naming-pattern) | [Naming pattern](#命名模式--naming-pattern) |
+| [已由本仓库 Swift 代码验证的写法](#已由本仓库-swift-代码验证的写法--spellings-verified-by-swift-code-in-this-repository) | [Spellings verified by Swift code in this repository](#已由本仓库-swift-代码验证的写法--spellings-verified-by-swift-code-in-this-repository) |
+| [含下划线的协议方法](#含下划线的协议方法--protocol-methods-that-contain-underscores) | [Protocol methods that contain underscores](#含下划线的协议方法--protocol-methods-that-contain-underscores) |
+| [未完成事项](#未完成事项--open-items) | [Open items](#未完成事项--open-items) |
+| [示例跟随核心（作者，2026-11-13）](#示例跟随核心作者2026-11-13--examples-follow-the-core-owner-2026-11-13) | [Examples follow the core (owner, 2026-11-13)](#示例跟随核心作者2026-11-13--examples-follow-the-core-owner-2026-11-13) |
 
-## Naming pattern
+<!-- docs-navigation:end -->
+
+<!-- docs-binding:start -->
+
+| 类 / Class | 头文件 / Header |
+| --- | --- |
+| `CYLPlaceholderView` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h) |
+| `CYLPlaceholderStackView` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStackView.h) |
+| `CYLPlaceholderHUD` | [`CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.h`](../CYLTableViewPlaceHolder/CYLPlaceholderHUD/CYLPlaceholderHUD.h) |
+| `CYLPlaceholderStatusView` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderStatusView.h) |
+| `CYLPlaceholderNetworkMonitor` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderNetworkMonitor.h) |
+| `CYLPlaceholderLocalization` | [`CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h`](../CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderLocalization.h) |
+| `CYLRefreshNormalHeader` | [`CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h`](../CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/CYLRefreshNormalHeader.h) |
+| `CYLRefreshAnimationHeader` | [`CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h`](../CYLTableViewPlaceHolder/CYLRefresh/Custom/Header/CYLRefreshAnimationHeader.h) |
+
+<!-- docs-binding:end -->
+
+| 中文 | English |
+| --- | --- |
+| 本库是 Objective-C 编写的。本页记录如何从 Swift 调用它，以及保持它对 Swift 友好的规则（规则本身在 `instructions.md` 的 “Swift examples and a Swift-friendly core”）。它对应 CYLTabBarController 的 [`docs/Swift-Guide.md`](https://github.com/ChenYilong/CYLTabBarController/blob/master/docs/Swift-Guide.md)，其中 “Objective-C → Swift 命名对照” 一节是下面命名模式的范本。 | The library is Objective-C. This page records how it is called from Swift and the rules for keeping it Swift-friendly (the rules themselves are in `instructions.md`, "Swift examples and a Swift-friendly core"). It mirrors CYLTabBarController's [`docs/Swift-Guide.md`](https://github.com/ChenYilong/CYLTabBarController/blob/master/docs/Swift-Guide.md), whose "Objective-C → Swift 命名对照" section is the model for the naming pattern below. |
+
+## 配置 / Setup
+
+| 中文 | English |
+| --- | --- |
+| 导入模块：`import CYLTableViewPlaceHolder`。示例的 Podfile 使用 `use_frameworks!`，因此不需要桥接头文件。打开 `.xcworkspace`，而不是 `.xcodeproj`。 | Import the module: `import CYLTableViewPlaceHolder`. The example Podfiles use `use_frameworks!`, so no bridging header is needed. Open the `.xcworkspace`, not the `.xcodeproj`. |
+
+## 命名模式 / Naming pattern
 
 | Objective-C | Swift |
 | --- | --- |
-| `With…`, `For…`, `At…`, `Of…` in a selector | argument label |
-| enum value `CYLXxxStyleFoo` | `.foo` (type prefix dropped) |
-| notification name with a `Notification` suffix | name without the suffix |
-| factory `+xWithY:` | initializer `init(y:)` or a `static` member |
-| category member `cyl_name` | stays `cyl_name` (the prefix is kept) |
+| 选择器中的 `With…`、`For…`、`At…`、`Of…` / `With…`, `For…`, `At…`, `Of…` in a selector | 参数标签 / argument label |
+| 枚举值 `CYLXxxStyleFoo` / enum value `CYLXxxStyleFoo` | `.foo`（去掉类型前缀 / type prefix dropped） |
+| 带 `Notification` 后缀的通知名 / notification name with a `Notification` suffix | 去掉后缀的名字 / name without the suffix |
+| 工厂方法 `+xWithY:` / factory `+xWithY:` | 初始化方法 `init(y:)` 或 `static` 成员 / initializer `init(y:)` or a `static` member |
+| 分类成员 `cyl_name` / category member `cyl_name` | 系统类型扩展上的成员：`cylName`，Objective-C 选择子仍为 `cyl_name`（`@objc(cyl_name)`）；本库自有类型上的成员：去掉前缀（`name`）。见 [Swift-Naming.md](Swift-Naming.md)（2026-11-22，按 SonarCloud swift:S100/S115/S116）。 / A member of an extension on a system type: `cylName`, with the Objective-C selector still `cyl_name` (`@objc(cyl_name)`); a member of the library's own type: no prefix (`name`). See [Swift-Naming.md](Swift-Naming.md) (2026-11-22, following SonarCloud swift:S100/S115/S116). |
 
-## Spellings verified by Swift code in this repository
+## 已由本仓库 Swift 代码验证的写法 / Spellings verified by Swift code in this repository
 
-Each row appears in a Swift example that the `Demo` CI jobs compile (`Examples/Example`, `Examples/Example-Scenarios`,
-`Examples/Example-SwiftUI`, `Examples/Example-objc-01`, `Examples/Example-objc-02`). The placeholder, scenario, refresh
-icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), where all five demos compiled.
+| 中文 | English |
+| --- | --- |
+| 2026-11-22：按 [Swift-Naming.md](Swift-Naming.md) 改名后，本表的 Swift 写法随之更新；Objective-C 选择子不变（生成的 `-Swift.h` 与改名前逐字相同）。新写法已在本机 Xcode 27.2 编译五个示例并运行 218 个单元测试验证；下面引用的 CI 运行早于改名，新写法的 CI 确认待 PR #35 的 Demo 任务。 | 2026-11-22: after the rename in [Swift-Naming.md](Swift-Naming.md), the Swift spellings in this table are updated; Objective-C selectors are unchanged (the generated `-Swift.h` is identical to the one before the rename). The new spellings were verified locally with Xcode 27.2 by building the five examples and running the 218 unit tests; the CI runs cited below predate the rename, and CI confirmation of the new spellings waits for PR #35's Demo jobs. |
+| 每一行都出现在 `Demo` CI 任务编译的 Swift 示例中（`Examples/Example`、`Examples/Example-Scenarios`、`Examples/Example-SwiftUI`、`Examples/Example-objc-01`、`Examples/Example-objc-02`）。占位图、场景、刷新图标和状态栏这几行由运行 42958376976（提交 44e16c4）确认，那次五个示例全部编译通过。刷新图标、MJRefresh 示例移植和 HUD 这几行由运行 44717720309（提交 a4d92a1）确认，那次五个示例全部编译通过；2026-11-22 又在本机 Xcode 27.2（iOS 27.2 模拟器）上编译并运行了 `Examples/Example-Scenarios`。 | Each row appears in a Swift example that the `Demo` CI jobs compile (`Examples/Example`, `Examples/Example-Scenarios`, `Examples/Example-SwiftUI`, `Examples/Example-objc-01`, `Examples/Example-objc-02`). The placeholder, scenario, refresh icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), where all five demos compiled. The refresh icon, MJRefresh example port and HUD rows were confirmed by run 44717720309 (commit a4d92a1), where all five demos compiled; on 2026-11-22 `Examples/Example-Scenarios` was also built and run with the local Xcode 27.2 (iOS 27.2 simulator). |
 
 | Objective-C | Swift |
 | --- | --- |
 | `+[CYLRefreshNormalHeader headerWithRefreshingBlock:]` | `CYLRefreshNormalHeader { … }` |
 | `+[CYLRefreshBackNormalFooter footerWithRefreshingBlock:]` | `CYLRefreshBackNormalFooter { … }` |
 | `+[CYLRefreshAutoNormalFooter footerWithRefreshingBlock:]` | `CYLRefreshAutoNormalFooter { … }` |
-| `UIScrollView.cyl_header`, `.cyl_footer` | `scrollView.cyl_header`, `scrollView.cyl_footer` (optional) |
+| `UIScrollView.cyl_header`, `.cyl_footer` | `scrollView.cylHeader`, `scrollView.cylFooter`（可选 / optional） |
 | `-beginRefreshing`, `-endRefreshing` | `beginRefreshing()`, `endRefreshing()` |
-| Swift extension in `Example-SwiftUI` | `Color(cyl_hexString:)` (prefix kept on a system type) |
+| `Example-SwiftUI` 中的 Swift 扩展 / Swift extension in `Example-SwiftUI` | `Color(cyl_hexString:)`（系统类型上保留前缀 / prefix kept on a system type） |
 | `-[CYLPlaceholderView initWithStyle:message:]`, `…Style:text:`, `…Image:text:` | `CYLPlaceholderView(style:message:)`, `(style:text:)`, `(image:text:)` |
 | `-initWithItemAttributes:imageBundle:error:`, `-initWithItemContentsOfURL:imageBundle:error:` | `try CYLPlaceholderView(itemAttributes:imageBundle:)`, `try CYLPlaceholderView(itemContentsOf:imageBundle:)` |
 | `-showBadgeWithStyle:value:` | `showBadge(with:value:)` |
@@ -42,56 +72,51 @@ icon and status bar rows were confirmed by run 42958376976 (commit 44e16c4), whe
 | `+bundledAnimationFileNames`, `+pathForBundledAnimation:` | `CYLPlaceholderView.bundledAnimationFileNames()`, `.path(forBundledAnimation:)` |
 | `-playPlaceholderAnimation` | `placeholderView.playPlaceholderAnimation()` |
 | `tapInteractionEnabled` (`getter=isTapInteractionEnabled`) | `isTapInteractionEnabled` |
-| `-[UITableView cyl_reloadData]`, `-cyl_placeholderViewBlock:` | `tableView.cyl_reloadData()`, `cyl_placeholderViewBlock({ … })` (parentheses, not a trailing closure) |
+| `-[UITableView cyl_reloadData]`, `-cyl_placeholderViewBlock:` | `tableView.cylReloadData()`, `cylPlaceholderViewBlock({ … })`（用圆括号，不用尾随闭包 / parentheses, not a trailing closure） |
 | `CYLTableViewPlaceHolderDelegate -makePlaceHolderView` | `@objc(makePlaceHolderView) func makePlaceHolderView() -> UIView` |
 | `-[CYLPlaceholderStackView initWithScenario:actions:]`, `…Components:actions:` | `CYLPlaceholderStackView(scenario:actions:)`, `(components:actions:)` |
 | `-initWithConfiguration:actions:error:`, `-initWithContentsOfURL:actions:error:` | `try CYLPlaceholderStackView(configuration:actions:)`, `try CYLPlaceholderStackView(contentsOf:actions:)` |
 | `-appendComponent:` | `append(_:)` |
 | `+[CYLPlaceholderComponent componentWithBundledAnimation:fallbackStyle:title:size:action:]`, `+hintComponentWithText:` | `CYLPlaceholderComponent(bundledAnimation:fallbackStyle:title:size:action:)`, `CYLPlaceholderComponent.hint(text:)` |
-| `CYLPlaceholderScenarioCatalog` class methods | `CYLPlaceholderScenarioCatalog.allScenarios`, `.localizedName(for:)`, `.localizedTitle(for:)`, `.components(for:)`, `.category(for:)`, `.permission(for:)` |
+| `CYLPlaceholderScenarioCatalog` 类方法 / `CYLPlaceholderScenarioCatalog` class methods | `CYLPlaceholderScenarioCatalog.allScenarios`, `.localizedName(for:)`, `.localizedTitle(for:)`, `.components(for:)`, `.category(for:)`, `.permission(for:)` |
 | `CYLPlaceholderLocalization.language` | `CYLPlaceholderLocalization.language` (`String?`), `.effectiveLanguage` |
-| `UIViewController.cyl_statusView` (`null_resettable`) | `cyl_statusView` (`CYLPlaceholderStatusView!`) |
-| `cyl_statusDisplay`, `-cyl_setStatusDisplay:animated:` | `cyl_statusDisplay`, `cyl_setStatusDisplay(_:animated:)`; options `.all`, `.statusBar`, `.placeholder` |
-| `cyl_showsStatusViewWhenOffline` | `cyl_showsStatusViewWhenOffline` |
-| `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `try cyl_applyStatusConfiguration(contentsOf:)` |
+| `UIViewController.cyl_statusView` (`null_resettable`) | `cylStatusView` (`CYLPlaceholderStatusView!`) |
+| `cyl_statusDisplay`, `-cyl_setStatusDisplay:animated:` | `cylStatusDisplay`, `cylSetStatusDisplay(_:animated:)`；选项 / options `.all`, `.statusBar`, `.placeholder` |
+| `cyl_showsStatusViewWhenOffline` | `cylShowsStatusViewWhenOffline` |
+| `cyl_showsMissingResources` | `cylShowsMissingResources` |
+| `-cyl_applyStatusConfigurationWithContentsOfURL:error:` | `try cylApplyStatusConfiguration(contentsOf:)` |
 | `CYLPlaceholderStatusViewDelegate -statusViewClicked:` | `@objc(statusViewClicked:) func statusViewClicked(_ sender: Any)` |
 | `+[CYLPlaceholderNetworkMonitor sharedMonitor]`, `+nameForStatus:` | `CYLPlaceholderNetworkMonitor.shared`, `.name(for:)` |
+| `CYLRefreshIconAnimating`（`CYLRefreshAnimationHeader` 等 / and friends） | `setIconAnimation(bundled:size:for:)`, `setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)`, `CYLRefreshAnimationHeader.bundledIconAnimationFileNames` |
+| `-cyl_linkTo:`, `-cyl_autoChangeTransparency:`, `+[CYLRefreshConfig defaultConfig]` | `link(to:)`, `autoChangeTransparency(_:)`, `CYLRefreshConfig.default` |
+| `+headerWithRefreshingTarget:refreshingAction:`, `-setTitle:forState:`, `-setRefreshingTarget:refreshingAction:`, `-setAnimationDisabled` | `init(refreshingTarget:refreshingAction:)`, `setTitle(_:for:)`, `setRefreshingTarget(_:refreshingAction:)`, `setAnimationDisabled()` |
+| `automaticallyChangeAlpha`, `automaticallyRefresh`, `refreshingTitleHidden`, `collectionViewAnimationBug`, `autoTriggerTimes`, `ignoredScrollViewContentInsetBottom`, `UIScrollView.cyl_trailer` | `isAutomaticallyChangeAlpha`, `isAutomaticallyRefresh`, `isRefreshingTitleHidden`, `isCollectionViewAnimationBug`, `autoTriggerTimes`, `ignoredScrollViewContentInsetBottom`, `scrollView.cylTrailer` |
+| 自定义刷新控件子类 / custom refresh control subclass | `override func prepare()`, `override func placeSubviews()`，用 `didSet` 观察 / observe with `didSet` `state`, `pullingPercent` |
+| `+[CYLPlaceholderHUD sharedHUD]`, `-initWithContainerView:` | `CYLPlaceholderHUD.shared`, `CYLPlaceholderHUD(containerView:)` |
+| HUD 显示方法 / HUD show methods | `show()`, `show(status:)`, `show(progress:status:)`, `showSuccess(status:)`, `showError(status:)`, `showInfo(status:)`, `show(image:status:)`, `show(components:actions:)`, `show(scenario:actions:)` |
+| HUD 关闭与设置 / HUD dismissal and settings | `popActivity()`, `dismiss(withDelay:)`, `isHapticsEnabled` |
+| 场景 / scenario HUD, `+animationFileNamesForScenario:` | `.hud`, `CYLPlaceholderScenarioCatalog.animationFileNames(for:)`, `.components(for:)` |
 
-Add a row only after Swift code that uses it has compiled in CI. APIs without a Swift call site yet (for example
-`exclusiveWithOtherRefresh`, `setHandler(_:for:)`, `performAction(_:)`, `componentView(for:)`,
-`CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed. The refresh icon
-spellings moved to `CYLRefreshIconAnimating` on the animation header and footers (`CYLRefreshAnimationHeader` and friends; the MJRefresh `Gif` names are subclasses) (`setIconAnimation(bundled:size:for:)`,
-`setIconAnimation(filePath:size:for:)`, `setIconAnimation(attributes:for:)`,
-`CYLRefreshAnimationHeader.bundledIconAnimationFileNames`); they return to the table once CI compiles them there.
-The MJRefresh example port in `Examples/Example-Scenarios` (the "Refresh" tab) adds these spellings, also pending CI:
-`cyl_link(to:)` and `cyl_autoChangeTransparency(_:)` (new `NS_SWIFT_NAME` on `-cyl_linkTo:` and
-`-cyl_autoChangeTransparency:`), `CYLRefreshConfig.default` (`NS_SWIFT_NAME(default)` on `defaultConfig`),
-`init(refreshingTarget:refreshingAction:)`, `setTitle(_:for:)`, `setRefreshingTarget(_:refreshingAction:)`,
-`setAnimationDisabled()`, `isAutomaticallyChangeAlpha`, `isAutomaticallyRefresh`, `isRefreshingTitleHidden`,
-`isCollectionViewAnimationBug`, `autoTriggerTimes`, `ignoredScrollViewContentInsetBottom`, `cyl_trailer`, and
-subclasses that override `prepare()`, `placeSubviews()` and observe `state` / `pullingPercent` with `didSet`.
+| 中文 | English |
+| --- | --- |
+| 只有在使用某个写法的 Swift 代码已在 CI 中编译通过后才添加一行。尚无 Swift 调用点的 API（例如 `exclusiveWithOtherRefresh`、`setHandler(_:for:)`、`performAction(_:)`、`componentView(for:)`、`CYLPlaceholderStatusView(frame:)` 以及状态栏的 `init(itemAttributes:)`）不列出。`CYLPlaceholderHUD.setStatus(_:)` 也尚无 Swift 调用点。 | Add a row only after Swift code that uses it has compiled in CI. APIs without a Swift call site yet (for example `exclusiveWithOtherRefresh`, `setHandler(_:for:)`, `performAction(_:)`, `componentView(for:)`, `CYLPlaceholderStatusView(frame:)` and `init(itemAttributes:)` of the status bar) are not listed. `CYLPlaceholderHUD.setStatus(_:)` has no Swift call site yet either. |
 
-## Protocol methods that contain underscores
+## 含下划线的协议方法 / Protocol methods that contain underscores
 
-`CYLPlaceholderItemAnimationPlayableView` declares `cyl_playAnimationView` and similar methods with
-`NS_SWIFT_NAME(playAnimation())`. They were introduced in the same unreleased change, so naming them once is
-correct. A method that has already shipped is not renamed and does not get `NS_SWIFT_NAME`; it gets an
-underscore-free sibling (see the rule in `instructions.md`).
+| 中文 | English |
+| --- | --- |
+| `CYLPlaceholderItemAnimationPlayableView` 声明了 `cyl_playAnimationView` 等方法，并带有 `NS_SWIFT_NAME(playAnimation())`。它们是在同一个尚未发布的改动中引入的，所以一次性为其命名是正确的。已经发布的方法不改名，也不加 `NS_SWIFT_NAME`；而是增加一个不含下划线的同级方法（见 `instructions.md` 中的规则）。 | `CYLPlaceholderItemAnimationPlayableView` declares `cyl_playAnimationView` and similar methods with `NS_SWIFT_NAME(playAnimation())`. They were introduced in the same unreleased change, so naming them once is correct. A method that has already shipped is not renamed and does not get `NS_SWIFT_NAME`; it gets an underscore-free sibling (see the rule in `instructions.md`). |
 
-## Open items
+## 未完成事项 / Open items
 
-Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C
-examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods).
+| 中文 | English |
+| --- | --- |
+| 在 `docs/issue-progress.md` 的 “Swift examples and a Swift-friendly core” 下跟踪：迁移 Objective-C 示例，以及审查公开头文件（可空性覆盖、`NS_SWIFT_NAME`、带下划线的协议方法）。 | Tracked in `docs/issue-progress.md` under "Swift examples and a Swift-friendly core": migrating the Objective-C examples, and auditing the public headers (nullability coverage, `NS_SWIFT_NAME`, underscored protocol methods). |
 
-The HUD (`CYLPlaceholderHUD`, `docs/Placeholder-HUD.md`) adds these spellings, pending CI: `CYLPlaceholderHUD.shared`,
-`CYLPlaceholderHUD(containerView:)`, `show()`, `show(status:)`, `show(progress:status:)`, `setStatus(_:)`,
-`showSuccess(status:)`, `showError(status:)`, `showInfo(status:)`, `show(image:status:)`, `show(components:actions:)`,
-`show(scenario:actions:)`, `popActivity()`, `dismiss(withDelay:)`, `isHapticsEnabled`, the scenario `.hud`, and
-`CYLPlaceholderScenarioCatalog.animationFileNames(for:)` / `components(for:)`.
+## 示例跟随核心（作者，2026-11-13） / Examples follow the core (owner, 2026-11-13)
 
-## Examples follow the core (owner, 2026-11-13)
-
-The spellings above are the core's choice under the Swift coding standard. When the core's Swift API changes (the
-Swift migration in `docs/Swift-Migration.md`, or any refactor), the examples are updated to the new spelling in the
-same change; an example's old call site never keeps an old spelling, alias or shim in the core. See `instructions.md`,
-"Examples have the lowest weight".
+| 中文 | English |
+| --- | --- |
+| 上面的写法是核心按 Swift 编码规范作出的选择。当核心的 Swift API 改变时（`docs/Swift-Migration.md` 中的 Swift 迁移，或任何重构），示例在同一个改动中更新为新写法；绝不为了示例的旧调用点而在核心中保留旧写法、别名或垫片。见 `instructions.md` 的 “Examples have the lowest weight”。 | The spellings above are the core's choice under the Swift coding standard. When the core's Swift API changes (the Swift migration in `docs/Swift-Migration.md`, or any refactor), the examples are updated to the new spelling in the same change; an example's old call site never keeps an old spelling, alias or shim in the core. See `instructions.md`, "Examples have the lowest weight". |
+| 更多 Swift 写法：`tableView.cylPlaceholderView`、`placeholder.setAnimationFile(_:)`、`stack.imageView`、`stack.titleLabel`、`stack.hintLabel`、`stack.button`、`CYLPlaceholderComponent.text(_:fontSize:color:)`、`CYLPlaceholderConfigurationError`（`CYLPlaceholderConfigurationErrorDomain` 的 NS_ERROR_ENUM）、`CYLPlaceholderItemImages`、`CYLPlaceholderItemAnimationDuration`，以及 `CYLRefreshFlyHeader.mountainView` / `flyView` / `floatView`。 | More Swift spellings: `tableView.cylPlaceholderView`, `placeholder.setAnimationFile(_:)`, `stack.imageView`, `stack.titleLabel`, `stack.hintLabel`, `stack.button`, `CYLPlaceholderComponent.text(_:fontSize:color:)`, `CYLPlaceholderConfigurationError` (the NS_ERROR_ENUM of `CYLPlaceholderConfigurationErrorDomain`), `CYLPlaceholderItemImages`, `CYLPlaceholderItemAnimationDuration`, and `CYLRefreshFlyHeader.mountainView` / `flyView` / `floatView`. |
+| CYLRefresh 共享的状态与图片 API 在 Swift 中写作：`CYLRefreshStateHeader`、`CYLRefreshAutoStateFooter` 和 `CYLRefreshStateTrailer` 上的 `header.title(for: .pulling)`（与 `CYLRefreshBackStateFooter` 相同）、`control.setStateTitle(_:for:)` / `control.stateTitle(for:)`、`control.applyAnimationImages(_:duration:for:)` / `control.animationImages(for:)`、`control.applyIconAnimation(filePath:size:for:)`、`control.setBundledIconAnimation(_:size:for:)`，以及 `footer.updateNoMoreDataImage(_:)` / `footer.placeNoMoreDataImage(besideLabel:inset:size:)`。 | CYLRefresh's shared state and image API is spelled in Swift as: `header.title(for: .pulling)` on `CYLRefreshStateHeader`, `CYLRefreshAutoStateFooter` and `CYLRefreshStateTrailer` (as on `CYLRefreshBackStateFooter`), `control.setStateTitle(_:for:)` / `control.stateTitle(for:)`, `control.applyAnimationImages(_:duration:for:)` / `control.animationImages(for:)`, `control.applyIconAnimation(filePath:size:for:)`, `control.setBundledIconAnimation(_:size:for:)`, and `footer.updateNoMoreDataImage(_:)` / `footer.placeNoMoreDataImage(besideLabel:inset:size:)`. |

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 import CYLTableViewPlaceHolder
 
 /// The example table's text in the language the core uses, else English, else the key.
@@ -121,30 +122,44 @@ enum CYLScenarioL10n: String, CaseIterable {
     case mjLottieStates = "CYLScenarioMJLottieStates"
     case mjPagRing = "CYLScenarioMJPagRing"
     case mjRiveIcon = "CYLScenarioMJRiveIcon"
+    case mjSVGAIcon = "CYLScenarioMJSVGAIcon"
     case mjGifFrames = "CYLScenarioMJGifFrames"
     case mjMixedEngines = "CYLScenarioMJMixedEngines"
     case mjCollectionIcons = "CYLScenarioMJCollectionIcons"
-    case smartSection = "CYLScenarioSmartSection"
-    case smartClassics = "CYLScenarioSmartClassics"
-    case smartClassicsFooter = "CYLScenarioSmartClassicsFooter"
-    case smartBezierRadarFooter = "CYLScenarioSmartBezierRadarFooter"
-    case smartMaterialFooter = "CYLScenarioSmartMaterialFooter"
-    case smartDeliveryFooter = "CYLScenarioSmartDeliveryFooter"
-    case smartPhoenixFooter = "CYLScenarioSmartPhoenixFooter"
-    case smartTaurusFooter = "CYLScenarioSmartTaurusFooter"
-    case smartRiveBow = "CYLScenarioSmartRiveBow"
-    case smartRiveBubbles = "CYLScenarioSmartRiveBubbles"
-    case smartRiveHalloween = "CYLScenarioSmartRiveHalloween"
-    case smartRiveSkating = "CYLScenarioSmartRiveSkating"
-    case smartRiveSpace = "CYLScenarioSmartRiveSpace"
-    case smartRiveSquats = "CYLScenarioSmartRiveSquats"
-    case smartRiveSpaceFooter = "CYLScenarioSmartRiveSpaceFooter"
+    case refreshStyleSection = "CYLScenarioRefreshStyleSection"
+    case refreshStyleClassics = "CYLScenarioRefreshStyleClassics"
+    case refreshStyleClassicsFooter = "CYLScenarioRefreshStyleClassicsFooter"
+    case refreshStyleBezierRadarFooter = "CYLScenarioRefreshStyleBezierRadarFooter"
+    case refreshStyleMaterialFooter = "CYLScenarioRefreshStyleMaterialFooter"
+    case refreshStyleDeliveryFooter = "CYLScenarioRefreshStyleDeliveryFooter"
+    case refreshStylePhoenixFooter = "CYLScenarioRefreshStylePhoenixFooter"
+    case refreshStyleTaurusFooter = "CYLScenarioRefreshStyleTaurusFooter"
+    case refreshStyleRiveBow = "CYLScenarioRefreshStyleRiveBow"
+    case refreshStyleRiveBubbles = "CYLScenarioRefreshStyleRiveBubbles"
+    case refreshStyleRiveHalloween = "CYLScenarioRefreshStyleRiveHalloween"
+    case refreshStyleRiveSkating = "CYLScenarioRefreshStyleRiveSkating"
+    case refreshStyleRiveSpace = "CYLScenarioRefreshStyleRiveSpace"
+    case refreshStyleRiveSquats = "CYLScenarioRefreshStyleRiveSquats"
+    case refreshStyleRiveSpaceFooter = "CYLScenarioRefreshStyleRiveSpaceFooter"
+    case refreshStyleSVGABow = "CYLScenarioRefreshStyleSVGABow"
+    case refreshStyleSVGABubbles = "CYLScenarioRefreshStyleSVGABubbles"
+    case refreshStyleSVGAHalloween = "CYLScenarioRefreshStyleSVGAHalloween"
+    case refreshStyleSVGASkating = "CYLScenarioRefreshStyleSVGASkating"
+    case refreshStyleSVGASpace = "CYLScenarioRefreshStyleSVGASpace"
+    case refreshStyleSVGASquats = "CYLScenarioRefreshStyleSVGASquats"
+    case refreshStyleSVGASpaceFooter = "CYLScenarioRefreshStyleSVGASpaceFooter"
     case easySection = "CYLScenarioEasySection"
     case easyCupertino = "CYLScenarioEasyCupertino"
     case easySecondary = "CYLScenarioEasySecondary"
     case easyTriggerMode = "CYLScenarioEasyTriggerMode"
     case easyRefreshOnStart = "CYLScenarioEasyRefreshOnStart"
     case easyPaging = "CYLScenarioEasyPaging"
+    case easyScrollMode = "CYLScenarioEasyScrollMode"
+    case easyScrollMove = "CYLScenarioEasyScrollMove"
+    case easyScrollStretch = "CYLScenarioEasyScrollStretch"
+    case easyScrollFront = "CYLScenarioEasyScrollFront"
+    case easyScrollBehind = "CYLScenarioEasyScrollBehind"
+    case easyScrollSelected = "CYLScenarioEasyScrollSelected"
     case easyListener = "CYLScenarioEasyListener"
     case easyChat = "CYLScenarioEasyChat"
     case easyUserProfile = "CYLScenarioEasyUserProfile"
@@ -159,28 +174,28 @@ enum CYLScenarioL10n: String, CaseIterable {
     case easyHeaderAnywhere = "CYLScenarioEasyHeaderAnywhere"
     case easyFooterOnEdge = "CYLScenarioEasyFooterOnEdge"
     case easyFooterAnywhere = "CYLScenarioEasyFooterAnywhere"
-    case smartThemeDefault = "CYLScenarioSmartThemeDefault"
-    case smartThemeOrange = "CYLScenarioSmartThemeOrange"
-    case smartThemeRed = "CYLScenarioSmartThemeRed"
-    case smartThemeGreen = "CYLScenarioSmartThemeGreen"
-    case smartThemeBlue = "CYLScenarioSmartThemeBlue"
-    case smartTapToRestore = "CYLScenarioSmartTapToRestore"
-    case smartTapToSwitch = "CYLScenarioSmartTapToSwitch"
-    case smartTestData = "CYLScenarioSmartTestData"
-    case smartTestDataRow = "CYLScenarioSmartTestDataRow"
-    case smartDelivery = "CYLScenarioSmartDelivery"
-    case smartDropBox = "CYLScenarioSmartDropBox"
-    case smartPhoenix = "CYLScenarioSmartPhoenix"
-    case smartTaurus = "CYLScenarioSmartTaurus"
-    case smartBezierRadar = "CYLScenarioSmartBezierRadar"
-    case smartBezierCircle = "CYLScenarioSmartBezierCircle"
-    case smartStoreHouse = "CYLScenarioSmartStoreHouse"
-    case smartWaveSwipe = "CYLScenarioSmartWaveSwipe"
-    case smartOriginal = "CYLScenarioSmartOriginal"
-    case smartMaterial = "CYLScenarioSmartMaterial"
-    case smartGameHitBlock = "CYLScenarioSmartGameHitBlock"
-    case smartGameBattleCity = "CYLScenarioSmartGameBattleCity"
-    case smartFly = "CYLScenarioSmartFly"
+    case refreshStyleThemeDefault = "CYLScenarioRefreshStyleThemeDefault"
+    case refreshStyleThemeOrange = "CYLScenarioRefreshStyleThemeOrange"
+    case refreshStyleThemeRed = "CYLScenarioRefreshStyleThemeRed"
+    case refreshStyleThemeGreen = "CYLScenarioRefreshStyleThemeGreen"
+    case refreshStyleThemeBlue = "CYLScenarioRefreshStyleThemeBlue"
+    case refreshStyleTapToRestore = "CYLScenarioRefreshStyleTapToRestore"
+    case refreshStyleTapToSwitch = "CYLScenarioRefreshStyleTapToSwitch"
+    case refreshStyleTestData = "CYLScenarioRefreshStyleTestData"
+    case refreshStyleTestDataRow = "CYLScenarioRefreshStyleTestDataRow"
+    case refreshStyleDelivery = "CYLScenarioRefreshStyleDelivery"
+    case refreshStyleDropBox = "CYLScenarioRefreshStyleDropBox"
+    case refreshStylePhoenix = "CYLScenarioRefreshStylePhoenix"
+    case refreshStyleTaurus = "CYLScenarioRefreshStyleTaurus"
+    case refreshStyleBezierRadar = "CYLScenarioRefreshStyleBezierRadar"
+    case refreshStyleBezierCircle = "CYLScenarioRefreshStyleBezierCircle"
+    case refreshStyleStoreHouse = "CYLScenarioRefreshStyleStoreHouse"
+    case refreshStyleWaveSwipe = "CYLScenarioRefreshStyleWaveSwipe"
+    case refreshStyleOriginal = "CYLScenarioRefreshStyleOriginal"
+    case refreshStyleMaterial = "CYLScenarioRefreshStyleMaterial"
+    case refreshStyleGameHitBlock = "CYLScenarioRefreshStyleGameHitBlock"
+    case refreshStyleGameBattleCity = "CYLScenarioRefreshStyleGameBattleCity"
+    case refreshStyleFly = "CYLScenarioRefreshStyleFly"
     case mjRandomData = "CYLScenarioMJRandomData"
     case mjPush = "CYLScenarioMJPush"
     case mjModal = "CYLScenarioMJModal"
@@ -214,9 +229,22 @@ enum CYLScenarioL10n: String, CaseIterable {
     case titleScrollable = "CYLScenarioTitleScrollable"
     case titleCollection = "CYLScenarioTitleCollection"
     case actionReplay = "CYLScenarioActionReplay"
+    case playbackPlayAll = "CYLScenarioPlaybackPlayAll"
+    case playbackSpeed = "CYLScenarioPlaybackSpeed"
+    case playbackLoop = "CYLScenarioPlaybackLoop"
+    case riveRoomsTitle = "CYLScenarioRiveRoomsTitle"
+    case riveRoomsPlaceholder = "CYLScenarioRiveRoomsPlaceholder"
+    case riveRoomsValue = "CYLScenarioRiveRoomsValue"
+    case riveRoomsPicker = "CYLScenarioRiveRoomsPicker"
+    case riveRoomsSlider = "CYLScenarioRiveRoomsSlider"
+    case riveRoomsLoop = "CYLScenarioRiveRoomsLoop"
+    case riveRoomsHint = "CYLScenarioRiveRoomsHint"
     case actionClear = "CYLScenarioActionClear"
     case actionAdd = "CYLScenarioActionAdd"
     case actionSources = "CYLScenarioActionSources"
+    case engineRegistered = "CYLScenarioEngineRegistered"
+    case engineMissing = "CYLScenarioEngineMissing"
+    case actionEngines = "CYLScenarioActionEngines"
     case actionPublish = "CYLScenarioActionPublish"
     case feedbackRetry = "CYLScenarioFeedbackRetry"
     case feedbackGoShopping = "CYLScenarioFeedbackGoShopping"
@@ -263,6 +291,9 @@ enum CYLScenarioL10n: String, CaseIterable {
     case textRefreshHint = "CYLScenarioTextRefreshHint"
     case sectionStatusBar = "CYLScenarioSectionStatusBar"
     case titleStatusBar = "CYLScenarioTitleStatusBar"
+    case titleMissingResource = "CYLScenarioTitleMissingResource"
+    case missingResourceAdd = "CYLScenarioMissingResourceAdd"
+    case missingResourceFix = "CYLScenarioMissingResourceFix"
     case statusModeBoth = "CYLScenarioStatusModeBoth"
     case statusModeBar = "CYLScenarioStatusModeBar"
     case statusModePlaceholder = "CYLScenarioStatusModePlaceholder"
@@ -289,9 +320,87 @@ private enum CYLScenarioLocalizationBundle {
         container?.path(forResource: language, ofType: "lproj").flatMap(Bundle.init(path:))
     }
 
+    /// Every entry of one language's table, read from that `.lproj` alone; empty when it is missing.
+    static func tableEntries(language: String) -> [String: String] {
+        guard let path = languageBundle(language)?.path(forResource: table, ofType: "strings") else { return [:] }
+        return NSDictionary(contentsOfFile: path) as? [String: String] ?? [:]
+    }
+
     static func string(for key: String) -> String {
         let english = languageBundle("en")?.localizedString(forKey: key, value: key, table: table) ?? key
         let preferred = languageBundle(CYLPlaceholderLocalization.effectiveLanguage)
         return preferred?.localizedString(forKey: key, value: english, table: table) ?? english
+    }
+}
+
+// MARK: - Localization self-check
+
+/// Checks this example's lookup in every core language, from inside the app (the bundle is the app's):
+/// for each language of `CYLPlaceholderLocalization.supportedLanguages` it sets the core language, checks that
+/// `CYLPlaceholderLocalization.effectiveLanguage` follows, and that every `CYLScenarioL10n` key resolves through
+/// `CYLScenarioLocalizedString` to that language's own table value, read straight from its `.lproj` (so a key missing
+/// in one language, or a lookup that ignores the language switch, is reported). An unknown language must fall back to
+/// English. The core language is restored afterwards. Returns the number of lookups and the problems found.
+func CYLScenarioLocalizationSelfCheck() -> (lookups: Int, problems: [String]) {
+    let saved = CYLPlaceholderLocalization.language
+    defer { CYLPlaceholderLocalization.language = saved }
+    var problems: [String] = []
+    var lookups = 0
+    let languages = CYLPlaceholderLocalization.supportedLanguages
+    for language in languages + ["xx"] {
+        CYLPlaceholderLocalization.language = language
+        let expected = languages.contains(language) ? language : "en"
+        if CYLPlaceholderLocalization.effectiveLanguage != expected {
+            problems.append("\(language): effectiveLanguage is \(CYLPlaceholderLocalization.effectiveLanguage), not \(expected)")
+            continue
+        }
+        let table = CYLScenarioLocalizationBundle.tableEntries(language: expected)
+        if table.isEmpty {
+            problems.append("\(expected).lproj/\(CYLScenarioLocalizationBundle.table).strings is missing or empty")
+            continue
+        }
+        for key in CYLScenarioL10n.allCases {
+            lookups += 1
+            let value = CYLScenarioLocalizedString(key)
+            guard let translation = table[key.rawValue] else {
+                problems.append("\(expected): no value for \(key.rawValue)")
+                continue
+            }
+            if value != translation || value == key.rawValue {
+                problems.append("\(language): \(key.rawValue) resolved to \"\(value)\", the table has \"\(translation)\"")
+            }
+        }
+    }
+    return (lookups, problems)
+}
+
+/// Shown instead of the demo when the app starts with `-localizationCheck`: runs
+/// `CYLScenarioLocalizationSelfCheck()`, prints `CYL_LOCALIZATION_CHECK PASS <lookups>` (or `FAIL` and each problem) for
+/// `xcrun simctl launch --console`, shows the result in a label (accessibility identifier `CYLLocalizationCheckResult`)
+/// for UI tests, and with `-exitAfterLocalizationCheck` exits with status 0 or 1 once printed.
+final class CYLScenarioLocalizationCheckViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        let result = CYLScenarioLocalizationSelfCheck()
+        let passed = result.problems.isEmpty && result.lookups > 0
+        let summary = "CYL_LOCALIZATION_CHECK \(passed ? "PASS" : "FAIL") \(result.lookups)"
+        print(([summary] + result.problems).joined(separator: "\n"))
+        fflush(stdout)
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.text = ([summary] + result.problems.prefix(20)).joined(separator: "\n")
+        label.accessibilityIdentifier = "CYLLocalizationCheckResult"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+        if ProcessInfo.processInfo.arguments.contains("-exitAfterLocalizationCheck") {
+            exit(passed ? 0 : 1)
+        }
     }
 }

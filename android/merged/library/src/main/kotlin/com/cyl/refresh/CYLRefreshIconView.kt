@@ -1,7 +1,6 @@
 package com.cyl.refresh
 
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
@@ -11,12 +10,14 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.cyl.placeholder.CYLPlaceholderView
+import com.cyl.animateditem.CYLSize
 import com.cyl.refresh.merged.R
 
 /**
  * The icon of a refresh component: one animation (or image sequence) per state, with an optional title (iOS
- * `CYLRefreshIconView`). It shows them through a [CYLPlaceholderView], so animations play with the players registered
- * by `CYLPlaceholderView.registerAnimationFactory`.
+ * `CYLRefreshIconView`). It shows them through a [CYLPlaceholderView], so animation files play with the animation engine of
+ * CYLTabBarController's CYLAnimatedItem once the app adds the animation library (Lottie, libpag, rive-android; GIF
+ * needs none), or with a factory registered by `CYLPlaceholderView.registerAnimationFactory`.
  */
 class CYLRefreshIconView(context: Context) : FrameLayout(context) {
 
@@ -32,7 +33,12 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     /**
      * The view that shows the icon and the title (`placeholderView`).
      */
-    val placeholderView: CYLPlaceholderView = CYLPlaceholderView(context).apply { contentMargin = 0f }
+    val placeholderView: CYLPlaceholderView = CYLPlaceholderView(context).apply {
+        reportsContentSize = true
+        contentMargin = 0f
+        // The icon follows the pull and the refresh; it does not play by itself.
+        autoPlaysAnimation = false
+    }
 
     init {
         // Decorative: the component's state text is what accessibility services read.
@@ -76,8 +82,7 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     var title: String? = null
         set(value) {
             field = value
-            placeholderView.textLabel.text = value
-            placeholderView.textLabel.visibility = if (value.isNullOrEmpty()) GONE else VISIBLE
+            placeholderView.title = value
         }
 
     /**
@@ -87,6 +92,15 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         set(value) {
             field = value
             if (value > 0f) placeholderView.defaultTitleFont = value
+        }
+
+    /**
+     * The title's typeface, or null for the default (the family and weight of the iOS `titleFont`).
+     */
+    var titleTypeface: android.graphics.Typeface? = null
+        set(value) {
+            field = value
+            placeholderView.defaultTitleTypeface = value
         }
 
     /**
@@ -113,6 +127,50 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
     var scrubsWhilePulling: Boolean = true
 
     /**
+     * The playback rate of the icon's animation, 1 by default, applied live (the examples' speed slider,
+     * docs/Example-Animation-Playback.md; HarmonyOS `CYLRefreshIconViewModel.animationSpeed`). Animation files play
+     * at it through the engine; image frames are shown [DURATION] / speed long. Values that are not positive and finite
+     * are ignored.
+     */
+    var animationSpeed: Float = 1f
+        set(value) {
+            if (!value.isFinite() || value <= 0f || value == field) return
+            field = value
+            placeholderView.animationSpeed = value
+            // Image frames have no rate: they are built again with the new frame duration.
+            reloadShownFrames()
+        }
+
+    /**
+     * Whether the icon loops while it plays (refreshing), true by default; false plays it once and rests on its last
+     * frame (the examples' loop switch; HarmonyOS `loopsWhilePlaying`). Applied live.
+     */
+    var loopsWhilePlaying: Boolean = true
+        set(value) {
+            field = value
+            placeholderView.animationRepeatCount = if (value) 0 else 1
+        }
+
+    /**
+     * Restarts the shown icon from its first frame with the current speed and loop (the examples' Play all;
+     * HarmonyOS `replayAnimation()`).
+     */
+    fun replayAnimation() {
+        if (shownState == null) return
+        placeholderView.animationSpeed = animationSpeed
+        placeholderView.animationRepeatCount = if (loopsWhilePlaying) 0 else 1
+        placeholderView.stopPlaceholderAnimation()
+        placeholderView.playPlaceholderAnimation()
+    }
+
+    private fun reloadShownFrames() {
+        val state = shownState ?: return
+        if ((attributes[state]?.get(IMAGES) as? List<*>).isNullOrEmpty()) return
+        shownState = null
+        updateForState(state)
+    }
+
+    /**
      * Shows and plays the icon of [state] (`updateForState:`); a state without one keeps the last icon.
      */
     fun updateForState(state: CYLRefreshState) {
@@ -120,25 +178,16 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
         val icon = attributes[state] ?: return
         shownState = state
         val size = icon[SIZE] as? FloatArray
-        val density = resources.displayMetrics.density
-        size?.let {
-            placeholderView.imageView.layoutParams = placeholderView.imageView.layoutParams.apply {
-                width = (it[0] * density).toInt()
-                height = (it[1] * density).toInt()
-            }
-        }
+        // The inherited iconSizeDp rebuilds the animation view: set only on a change.
+        size?.let { CYLSize(it[0], it[1]) }?.takeIf { it != placeholderView.iconSizeDp }?.let { placeholderView.iconSizeDp = it }
         @Suppress("UNCHECKED_CAST")
         val images = icon[IMAGES] as? List<Drawable>
         val path = icon[ANIMATION_FILE_PATH] as? String
         when {
-            images != null && images.isNotEmpty() -> {
-                val frames = AnimationDrawable()
-                val each = ((((icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) * 1000) / images.size).toInt()
-                images.forEach { frames.addFrame(it, each) }
-                frames.isOneShot = false
-                placeholderView.imageView.setImageDrawable(frames)
-                placeholderView.imageView.visibility = VISIBLE
-                if (state == CYLRefreshState.Refreshing || !scrubsWhilePulling) frames.start()
+            // Image frames and animation files both play through CYLPlaceholderView, the one animation component.
+            images != null && images.isNotEmpty() -> if (placeholderView.setAnimationImages(images, ((icon[DURATION] as? Number)?.toDouble() ?: (images.size * 0.1)) / animationSpeed) &&
+                (state == CYLRefreshState.Refreshing || !scrubsWhilePulling)) {
+                placeholderView.playPlaceholderAnimation()
             }
             path != null -> if (placeholderView.setAnimationFile(path) && (state == CYLRefreshState.Refreshing || !scrubsWhilePulling)) {
                 placeholderView.playPlaceholderAnimation()
@@ -151,18 +200,14 @@ class CYLRefreshIconView(context: Context) : FrameLayout(context) {
      */
     fun updateForPullingPercent(pullingPercent: Float) {
         if (!scrubsWhilePulling) return
-        val percent = pullingPercent.coerceIn(0f, 1f)
-        (placeholderView.imageView.drawable as? AnimationDrawable)?.let { frames ->
-            if (frames.numberOfFrames > 0 && !frames.isRunning) frames.selectDrawable(((frames.numberOfFrames - 1) * percent).toInt())
-        }
-        placeholderView.setPlaceholderAnimationProgress(percent)
+        placeholderView.setPlaceholderAnimationProgress(pullingPercent.coerceIn(0f, 1f))
     }
 
     /**
      * The keys of an icon's attributes, and the iOS attribute makers (`CYLRefreshIconView (CYLRefreshIconAttributes)`).
      */
     companion object {
-        /** The animation file a registered player plays. */
+        /** The animation file the animation engine (or a registered factory) plays. */
         const val ANIMATION_FILE_PATH = "CYLPlaceholderItemAnimationFilePath"
 
         /** The image frames, a list of drawables. */
@@ -256,10 +301,7 @@ fun CYLRefreshComponent.cyl_setIconImages(images: List<Drawable>, duration: Doub
 fun CYLRefreshComponent.cyl_showIconImageFrameOf(images: List<Drawable>?, pullingPercent: Float) {
     if (images.isNullOrEmpty()) return
     val index = ((images.size - 1) * pullingPercent.coerceIn(0f, 1f)).toInt()
-    cyl_iconView.placeholderView.imageView.apply {
-        setImageDrawable(images[index])
-        visibility = View.VISIBLE
-    }
+    cyl_iconView.placeholderView.setAnimationImages(listOf(images[index]))
 }
 
 /**

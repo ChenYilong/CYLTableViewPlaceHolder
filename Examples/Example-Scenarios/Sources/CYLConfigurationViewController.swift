@@ -61,7 +61,7 @@ final class CYLConfigurationViewController: UIViewController {
         for action in names {
             handlers[action] = { [weak self] _, action in
                 let title = CYLPlaceholderScenarioCatalog.localizedTitle(for: action) ?? action.rawValue
-                self?.cyl_showFeedback(CYLScenarioLocalizedFormat(.formatActionTapped, title))
+                self?.cylShowFeedback(CYLScenarioLocalizedFormat(.formatActionTapped, title))
             }
         }
         return handlers

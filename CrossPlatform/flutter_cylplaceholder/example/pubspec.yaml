@@ -1,0 +1,34 @@
+name: flutter_cylplaceholder_example
+description: "Demonstrates flutter_cylplaceholder: CYLRefresh and CYLPlaceholderView."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_cylplaceholder:
+    path: ../
+  # Plugin of the animation engine (the iOS / Android registration of CYLAnimationView), taken like the package does.
+  flutter_cyltabbar:
+    git:
+      url: https://github.com/ChenYilong/CYLTabBarController.git
+      ref: e3898040d8d54466b158c243a6f635094d0342d6
+      path: CrossPlatform/flutter_cyltabbar
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  config:
+    enable-swift-package-manager: false
+  uses-material-design: true
+  # The animation files of the demos (with their license and NOTICE), kept next to the example so every platform's port
+  # takes the same files. CYLAnimationView finds a file by name in the native bundle (iOS main bundle, Android assets):
+  # copy them there too (docs/Refresh-Library-Parity.md, "Demo porting map").
+  assets:
+    - assets/animations/

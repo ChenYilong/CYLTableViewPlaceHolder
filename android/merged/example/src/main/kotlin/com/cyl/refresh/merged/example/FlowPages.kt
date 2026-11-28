@@ -25,18 +25,18 @@ import com.cyl.refresh.CYLRefreshAutoNormalFooter
 import com.cyl.refresh.CYLRefreshNormalHeader
 import com.cyl.refresh.cyl_footer
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /**
  * The flows of the iOS example's Flows tab (`CYLFlow`): each shows a placeholder API in a real list.
  */
-internal enum class CYLFlow(val title: Int, val detail: String, val scenario: CYLPlaceholderScenario) {
-    SwitchStates(R.string.merged_title_switch_states, "cyl_reloadData #3", CYLPlaceholderScenario.NoContent),
-    KeepTableHeader(R.string.merged_title_keep_table_header, "frameForPlaceHolderViewInTableView #17", CYLPlaceholderScenario.NoSearchResults),
-    KeepSectionHeaders(R.string.merged_title_keep_section_headers, "frameForPlaceHolderViewInTableView #16", CYLPlaceholderScenario.NoMessages),
-    RefreshControls(R.string.merged_title_refresh_controls, "cyl_header + cyl_footer #8", CYLPlaceholderScenario.NoNotifications),
-    Scrollable(R.string.merged_title_scrollable, "enableScrollWhenPlaceHolderViewShowing", CYLPlaceholderScenario.TextOnly),
-    Collection(R.string.merged_title_collection, "cyl_placeholderViewBlock #11", CYLPlaceholderScenario.NoFavorites),
+internal enum class CYLFlow(val title: Int, val detail: String, val scenario: CYLPlaceholderScenario, val icon: String) {
+    SwitchStates(R.string.merged_title_switch_states, "cyl_reloadData #3", CYLPlaceholderScenario.NoContent, "⟲"),
+    KeepTableHeader(R.string.merged_title_keep_table_header, "frameForPlaceHolderViewInTableView #17", CYLPlaceholderScenario.NoSearchResults, "▤"),
+    KeepSectionHeaders(R.string.merged_title_keep_section_headers, "frameForPlaceHolderViewInTableView #16", CYLPlaceholderScenario.NoMessages, "☰"),
+    RefreshControls(R.string.merged_title_refresh_controls, "cyl_header + cyl_footer #8", CYLPlaceholderScenario.NoNotifications, "⇩"),
+    Scrollable(R.string.merged_title_scrollable, "enableScrollWhenPlaceHolderViewShowing", CYLPlaceholderScenario.TextOnly, "↕"),
+    Collection(R.string.merged_title_collection, "cyl_placeholderViewBlock #11", CYLPlaceholderScenario.NoFavorites, "⊞"),
 }
 
 /**
@@ -143,7 +143,7 @@ internal fun ScenariosPage.flowPage(flow: CYLFlow): View {
     }
 
     val content: View = if (flow == CYLFlow.Scrollable || flow == CYLFlow.RefreshControls) {
-        SmartRefreshLayout(context).apply {
+        CYLRefreshLayout(context).apply {
             setRefreshContent(frame)
             val header = CYLRefreshNormalHeader(context)
             cyl_header = header

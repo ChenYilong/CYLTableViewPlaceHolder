@@ -1,0 +1,73 @@
+platform :ios, '15.0'
+
+ENV['SWIFT_VERSION'] = '5'
+
+project 'Runner.xcodeproj', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  # [EN] Static: CYLTabBarController is a static framework. [CN] 静态链接：CYLTabBarController 是静态 framework。
+  use_frameworks! :linkage => :static
+
+  # [EN] The pods the plugins need, from the sources this repository pins (CYLTabBarController's `CYLAnimatedItem` engine at the commit of
+  #      the Cartfile, `:git` + `:commit`; the environment variable CYL_TAB_BAR_CONTROLLER_GIT points `:git` at a local clone) and
+  #      CYLTableViewPlaceHolder from this repository (`:path`). The Lottie subspec plays the placeholder animation of the demos.
+  # [CN] 插件所需的 pod，来源为本仓库固定的版本：CYLTabBarController 的 `CYLAnimatedItem` 引擎取 Cartfile 固定的提交（`:git` + `:commit`；
+  #      环境变量 CYL_TAB_BAR_CONTROLLER_GIT 可把 `:git` 指向本地克隆），CYLTableViewPlaceHolder 取本仓库（`:path`）。
+  #      Lottie 子库用于播放示例中的占位动画。
+  repository_root = File.expand_path('../../../..', __dir__)
+  tab_bar_git = ENV['CYL_TAB_BAR_CONTROLLER_GIT'] || 'https://github.com/ChenYilong/CYLTabBarController.git'
+  tab_bar_commit = File.read(File.join(repository_root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
+  pod 'CYLTabBarController', :git => tab_bar_git, :commit => tab_bar_commit
+  pod 'CYLAnimatedItem/Engine', :git => tab_bar_git, :commit => tab_bar_commit
+  # [EN] The commit splits CYLBadge and CYLUtils out (CYLAnimatedItem/Core depends on them), not on the trunk either.
+  # [CN] 该提交把 CYLBadge 与 CYLUtils 拆为独立 pod（CYLAnimatedItem/Core 依赖它们），同样不在 trunk。
+  pod 'CYLBadge', :git => tab_bar_git, :commit => tab_bar_commit
+  pod 'CYLUtils', :git => tab_bar_git, :commit => tab_bar_commit
+  # [EN] CYLTabBarController/Core needs CYLDeallocBlockExecutor ~> 1.4, which is not on CocoaPods trunk: the same commit as
+  #      Examples/Example-Scenarios/Podfile. [CN] CYLTabBarController/Core 依赖 CYLDeallocBlockExecutor ~> 1.4，该版本不在 CocoaPods trunk：
+  #      与 Examples/Example-Scenarios/Podfile 使用同一提交。
+  pod 'CYLDeallocBlockExecutor', :git => 'https://github.com/ChenYilong/CYLDeallocBlockExecutor.git', :commit => '4276a6dab5a428ccc3a5f3f347eab991881fb97c'
+  pod 'CYLTableViewPlaceHolder/LottieSwift', :path => repository_root
+  # The rive refresh style (style: 'rive') draws with RiveRuntime; without this subspec it is the classic style with one log line.
+  pod 'CYLTableViewPlaceHolder/Rive', :path => repository_root
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+  end
+  # [EN] AGENTS.md ("Xcode projects"): every pod at iOS 15.0. [CN] AGENTS.md（Xcode projects）：所有 pod 使用 iOS 15.0。
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "15.0"
+    end
+  end
+end

@@ -54,7 +54,8 @@ class CYLPlaceholderComponent private constructor(
         internal set
 
     /**
-     * How a tap on the component is shown (`tapHighlightStyle`); kept for views that show taps.
+     * How a finger on a component with an action is shown in the stack view (`tapHighlightStyle`): Dim (default),
+     * Shrink or None.
      */
     var tapHighlightStyle: CYLPlaceholderTapHighlightStyle = CYLPlaceholderTapHighlightStyle.Dim
 
@@ -79,22 +80,68 @@ class CYLPlaceholderComponent private constructor(
     var interactionEnabled: Boolean = true
 
     /**
-     * How often an animated icon repeats (`animationRepeatCount`); Android shows the static icon, so it is kept for
-     * apps that play the animation themselves.
+     * How often the item's animation repeats (`animationRepeatCount`), 0 for ever: the stack view's
+     * CYLPlaceholderView plays it. A scenario's bundled animation plays once unless it is a spinner (iOS
+     * `componentWithBundledAnimation:`, 2026-11-19, [CYLPlaceholderScenarioCatalog.animationLoopsByDefault]); a value set
+     * here wins.
      */
     var animationRepeatCount: Int = 0
+        set(value) {
+            field = value
+            animationRepeatCountIsSet = true
+        }
+
+    /**
+     * Whether the item's animation loops: the same as [animationRepeatCount] being 0 (true) or 1 (false), the name
+     * CYLTabBarController's `CYLAnimatedItemView` uses.
+     */
+    var animationLoops: Boolean
+        get() = animationRepeatCount != 1
+        set(value) { animationRepeatCount = if (value) 0 else 1 }
+
+    /**
+     * The item animation's playback speed, 1 by default (`animationSpeed`); the stack view's CYLPlaceholderView applies
+     * it when it is not 1. A value that is not positive is ignored.
+     */
+    var animationSpeed: Float = 1f
+        set(value) { if (value > 0f && value.isFinite()) field = value }
+
+    /**
+     * Whether the still image replaces the item's play-once animation when it ends (CYLAnimatedItemView
+     * `showsImageWhenAnimationEnds`, CYLTabBarController b13b88f1); off by default, so the last frame stays. For an
+     * animation whose last frame is empty: the Success scenario's icon turns it on, so its check mark shows afterwards.
+     */
+    var showsImageWhenAnimationEnds: Boolean = false
+
+    /** Whether [animationRepeatCount] was set, so the scenario default does not replace it. */
+    internal var animationRepeatCountIsSet: Boolean = false
+        private set
+
+    /**
+     * The other iOS item keys of a component made by [componentWithAttributes], kept as given.
+     */
+    private var extraAttributes: Map<String, Any> = emptyMap()
 
     /**
      * The component's description with the iOS keys (`attributes`): "CYLPlaceholderItemTitle",
-     * "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize".
+     * "CYLPlaceholderItemImage" (a drawable resource), "CYLPlaceholderItemTitleColor", "CYLPlaceholderItemTitleFontSize",
+     * and every other item key given to [componentWithAttributes] (see [CYLPlaceholderView.Companion.fromItemAttributes]).
      */
     val attributes: Map<String, Any>
         get() = buildMap {
+            putAll(extraAttributes)
             title?.let { put(TITLE, it) }
             if (image != 0) put(IMAGE, image)
             if (titleColor != 0) put(TITLE_COLOR, titleColor)
             if (titleSizeSp != 0f) put(TITLE_FONT_SIZE, titleSizeSp)
         }
+
+    /**
+     * Whether the stack view shows this component as a [CYLPlaceholderView] made from [attributes]: it has item keys
+     * beyond the title, image, title color and size (an animation file, other colors, accessibility...).
+     */
+    internal val usesItemAttributes: Boolean
+        get() = kind == Kind.Item && extraAttributes.keys.any { it !in BASIC_KEYS }
 
     /**
      * Makes components with the iOS factory names.
@@ -104,6 +151,7 @@ class CYLPlaceholderComponent private constructor(
         private const val IMAGE = "CYLPlaceholderItemImage"
         private const val TITLE_COLOR = "CYLPlaceholderItemTitleColor"
         private const val TITLE_FONT_SIZE = "CYLPlaceholderItemTitleFontSize"
+        private val BASIC_KEYS = setOf(TITLE, IMAGE, TITLE_COLOR, TITLE_FONT_SIZE)
 
         /**
          * A component from [attributes] with the iOS keys (see [CYLPlaceholderComponent.attributes]), running [action]
@@ -113,7 +161,26 @@ class CYLPlaceholderComponent private constructor(
         fun componentWithAttributes(attributes: Map<String, Any>, action: String?): CYLPlaceholderComponent = CYLPlaceholderComponent(
             Kind.Item, (attributes[IMAGE] as? Int) ?: 0, true, ICON_SIDE, attributes[TITLE] as? CharSequence,
             (attributes[TITLE_FONT_SIZE] as? Number)?.toFloat() ?: 0f, (attributes[TITLE_COLOR] as? Int) ?: 0, null, action,
-        )
+        ).apply { extraAttributes = attributes.filterKeys { it !in BASIC_KEYS } }
+
+        /**
+         * A bundled animation, [fileName] in the placeholder's `CYLPlaceholderAnimations` assets (the iOS
+         * CYLTableViewPlaceHolder.bundle), [side] dp, over the image of [fallbackStyle], with an optional [title],
+         * running [action] when tapped (`componentWithBundledAnimation:fallbackStyle:title:size:action:`). The fallback
+         * shows until the animation is ready and when no animator plays the file (the app added no engine). It plays
+         * once, a spinner loops (animationLoopsByDefault), as on iOS.
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun componentWithBundledAnimation(fileName: String, fallbackStyle: CYLPlaceholderStyle, title: CharSequence?, side: Float = ICON_SIDE,
+                                          action: String? = null): CYLPlaceholderComponent =
+            CYLPlaceholderComponent(Kind.Item, 0, fallbackStyle != CYLPlaceholderStyle.Empty, side, title, 0f, 0, null, action).apply {
+                extraAttributes = mapOf(
+                    "CYLPlaceholderItemStyle" to fallbackStyle,
+                    "CYLPlaceholderItemAnimationFilePath" to "asset:${CYLPlaceholderStackView.ANIMATION_FOLDER}/$fileName",
+                    "CYLPlaceholderItemAnimationRepeatCount" to if (CYLPlaceholderScenarioCatalog.animationLoopsByDefault(fileName)) 0 else 1,
+                )
+            }
 
         /**
          * An icon of [side] dp with an optional [title] below it, running [action] when tapped. The iOS

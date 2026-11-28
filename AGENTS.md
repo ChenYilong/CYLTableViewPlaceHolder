@@ -4,257 +4,191 @@ This repository contains an Objective-C iOS table-view placeholder library,
 the integrated `CYLRefresh` component, and an example application. Read
 `instructions.md` and the relevant project skill before changing code.
 
-## Record every task in docs first
+## Instruction format
 
-- Before starting any task, record it as a `TODO` in the fitting document in `docs/` (`docs/Task-Log.md` when none
-  fits): date, branch, the user's original prompt verbatim, the user's requirements and the detailed context. Commit
-  and push that entry before the work, so an interrupted task keeps its context. When the task ends, mark the entry
-  done with the commits and the verification; keep it. See `instructions.md`, "Record every task in docs before
-  starting it".
+Every rule has a tag. Each tag has a visible heading with its summary; the full text is in `docs/instructions/<tag>.md`, linked in the final table as `reference` (not required; do not read by default): open it only when a task touches the tag (a keyword of the tag appears in the task). Instruction files (this file, `instructions.md`, `docs/instructions.md`, `CLAUDE.md`) stay under 200 lines; what does not fit goes into the tag's file in `docs/instructions/`. Except for the final table, no other part of this file may contain links.
 
-## Another project as a source (translations and ports)
+## Behavioral guidelines (tag: `behavioral`)
 
-- When the docs link to another project's GitHub repository as the source of a translation or port, bring in its open
-  pull requests (merge them before translating, or translate them afterwards and merge them in) and keep a table of
-  its open issues in the task's document (issue link, description, status, `TODO` by default); fix each issue's
-  counterpart here and rescore after every fix until 100. Translation starts once the issues reach 60. Every platform.
-  See "Translating or porting another project" in `instructions.md`.
+- **You must read the `behavioral` reference doc in full, every line, before any task (owner's rule, 2026-11-22).** Its rules
+  (think before coding, simplicity first, surgical changes, goal-driven execution) apply to every task; do not skim or summarize it.
+- Full rule: at reference of this tag (not required; do not read by default).
 
-## SKILLS
+## Task workflow (tag: `workflow`)
 
-TODO: please install following docs 开发者工具 Skills
- https://developers.weixin.qq.com/miniprogram/dev/devtools/Skills.html
+- Before starting any task, record it as a `TODO` in the fitting document in `docs/` (`docs/Task-Log.md` when none fits): date, branch, the user's original prompt verbatim, the user's requirements and the detailed context.
+- **Check the other sessions first** (step one of every task): list them and read their tasks; if one edits the same branch, check whether the task duplicates theirs and settle it with that session before changing anything.
+- **Start with `TODO` and the branch:** the session's first reply begins with a `TODO` line naming the task and the current branch.
+- **Score against acceptance criteria:** the `TODO` entry states what full marks (100) and a pass (60) are.
+- **A hung emulator is restarted:** when a shared emulator stays hung or does not open, tell the other sessions first, then restart it from the command line without asking (restart is the first strategy); say "done" after.
+- When the docs link to another project's GitHub repository as the source of a translation or port, bring in its open pull requests (merge them first, or translate and merge them afterwards) and keep a table of its open pull requests and issues with their status.
+- Use the project skills in `.agents/skills/`: `cyl-api-map` (API locations), `cyl-xcode-compat` (project settings), `cyl-verify` (verification), `cyl-docs` (documentation), `cyl-package-licenses` (licenses), `ios-accessibility` / `accessibility-audit` / `ios-localization`, and `cyl-session-roles` before every task.
+- Before starting a task, check the active session names: `Mac…` sessions (case-insensitive) mainly develop and test iOS, `Win…` sessions the other platforms; give each platform part to the fitting session, or finish alone when none exists.
+- Full rule: at reference of this tag (not required; do not read by default).
 
-## Source of truth
+## Testing scenario (tag: `testing`)
+
+- **Read before any emulator or simulator run (mandatory, owner's rule, 2026-11-25):** Emulator run rules. In short: after a test and its screenshots are finished, immediately kill the app and the emulator process; start the emulator again only when it is needed. Never leave the app or the emulator process running after the task is done (do not kill an emulator another session is using; tell it "done").
+- **Screenshots are enforced:** every stitched image is made with `python3 scripts/screenshot_sheet.py`, originals are named `<platform>-...-<commit>-<yyyymmdd>`, and `python3 scripts/check_screenshots.py` must pass before every commit that adds an image.
+- WeChat DevTools Skills (`https://developers.weixin.qq.com/miniprogram/dev/devtools/Skills.html`): run `wechatide` (WeChat DevTools 2.02.2607032 or later) to install the skill for the agent, authorize the client once, and use it to build, run and screenshot the mini program.
+- Screenshots (local and CI/CD): take them at key moments (a `TODO` can go, a pull request can merge, a result meets its expectation), crop to the key detail, and stitch them into a portrait sheet with an English header, captions and a footer.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## CI/CD scenario (tag: `ci`)
+
+- CI/CD (`instructions.md`, "CI/CD"): iOS jobs on GitHub run on macOS 26 by default (`vars.MACOS_RUNNER || 'macos-26'`).
+- Every CI run that builds code must provide a screenshot of each example running (artifacts `example-screenshot-*` from the `Demo` jobs, shown inline by the `Example screenshots` job and its pull request comment).
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Windows scenario (tag: `windows`)
+
+- Windows sessions (Android, HarmonyOS, mini program) read first: HarmonyOS, Testing (shared emulators, screenshots), Session roles.
+- Git Bash: `adb` device paths need `MSYS_NO_PATHCONV=1`; Windows `hdc` needs native backslash paths; PowerShell scripts with non-ASCII text are saved as UTF-8 with a BOM.
+- The x86_64 HarmonyOS emulator installs only the `emulator` target HAP (no arm64-only Rive / PAG libraries): `scripts/build.sh emulator`, then `cylanimateditem/tools/cyl_hap_x86_64.py install`.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## macOS-only scenario (tag: `macos`)
+
+- macOS sessions own iOS (Xcode, simulator, CocoaPods, `pod install` / `Podfile.lock`) and the arm64-only tests handed over by Windows sessions (Rive and PAG rule).
+- The library supports iOS 15.0 and later (raised from 12.0 on 2026-11-20, the owner's decision: "raise iOS .spec the minimum to iOS 15"; CHANGELOG.md); the podspec says `15.0`.
+- Preserve the Xcode project format: `objectVersion = 46`, `compatibilityVersion = "Xcode 3.2"`, explicit file references, and a shared scheme.
+- The main example (`Examples/Example`, Swift) embeds the project's own framework target (`CYLTableViewPlaceHolderFramework`, module `CYLTableViewPlaceHolder`) and does not require `pod install`.
+- Examples contain no Objective-C. When Swift needs a better spelling of a core API, add a Swift naming macro (`NS_SWIFT_NAME`, `NS_REFINED_FOR_SWIFT`, `NS_SWIFT_UNAVAILABLE`) next to the Objective-C declaration; never change the Objective-C API itself for Swift.
+- iOS examples are written in Swift (the library stays Objective-C).
+- Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION` to select an installed simulator.
+- Xcode 27's simulator SDK requires a deployment target of at least 15.0 during builds.
+- **Before running a simulator, read the simulator rules (owner's rule, 2026-11-25; the original wording is in the `macos` reference doc):** the same rule as the emulator run rules on all platforms. After a simulator run (tests, screenshots), immediately terminate the app and shut down the simulator (your own UDIDs only, never `simctl shutdown all`); boot it again on the next use; never leave the app or the simulator running after the task.
+- **Run scripts with bash, not zsh (added 2026-11-16).** The interactive shell is zsh, which does not split an unquoted variable into words, so scripts that rely on word splitting break under it:
+  - run a script file with `bash script.sh` (shebang `#!/usr/bin/env bash`), never `zsh` or `sh`; run a one-off multi-line command as `bash -c '...'` or a heredoc piped to `bash`.
+  - in zsh, when bash is not possible, use arrays (`files=(a b)`, `"${files[@]}"`) or `${=var}` to split on purpose;
+  - quote every expansion (`"$var"`) unless splitting is wanted.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## HarmonyOS scenario (tag: `harmonyos`)
+
+- HarmonyOS (HarmonyOS 6.0.1, API 21): the API matches iOS, the example is a 1:1 copy of the iOS example, and the implementation is migrated from the Kotlin source under `android/`.
+- HarmonyOS IDE and emulator setup (prerequisites; the region set to China in DevEco Studio's `country.region.xml`, which must say `<countryregion name="CN"/>`): skill `cyl-harmonyos-setup`.
+- HarmonyOS accessibility and localization: all HarmonyOS code supports screen readers and localization (add it first where missing); UI tests find controls by accessibility label or localized text before ids.
+- Before any HarmonyOS work (building, installing or running a HAP, taking emulator screenshots), check these:
+  - **DevEco Studio is installed**: `/Applications/DevEco-Studio.app` (DevEco Studio 6.0).
+  - **The region is China.** The emulator (Device Manager, emulator images) is only offered when DevEco Studio's region is China.
+  - **An emulator image is installed and the emulator starts**: the Mate 70 Pro image under `~/.Huawei/Emulator/deployed`, started with `Emulator -hvd "Mate 70 Pro"` (full command in the details), with hardware virtualization available.
+  - **Signing is not needed on the emulator**: it installs the unsigned `entry-default-unsigned.hap` (`hdc install -r`).
+- **x86_64 emulator: install a HAP without the arm64-only Rive and PAG libraries.** The Windows (and Intel) emulator is x86_64, but `@ohos/rive` and `@tencent/libpag` ship arm64-v8a libraries only, so build the `emulator` target (`scripts/build.sh emulator`):
+  - **Build the emulator target:** `entry/build-profile.json5` has an `emulator` target that leaves out every arm64-v8a library (and an `emulatorTest` build mode for `ohosTest`).
+  - **Install:** `python3 CrossPlatform/harmonyos-cylplaceholder/cylanimateditem/tools/cyl_hap_x86_64.py install <app.hap>` reads the device ABIs, leaves out the libraries it cannot load and runs `hdc install -r`.
+  - **At run time:** `CYLAnimatedItemEngines` reads `deviceInfo.abiList`; without arm64-v8a, `canPlay` is false for Rive and PAG and the item shows its still image (`isSupportedOnDevice`, `unsupportedReason`), unless a debug build has the x86_64 debug engine kit.
+  - **What x86_64 verifies:** Lottie, SVGA and GIF playback, still images, placeholders, `showsImageWhenAnimationEnds` with Lottie or SVGA, layout, dark mode, accessibility and localization; Rive and PAG playback need arm64 or the debug kit below.
+- `@ohos/rive` and `@tencent/libpag` ship native libraries for arm64-v8a only, so Rive and PAG playback cannot be tested on the x86_64 HarmonyOS emulator today.
+- **Option 1: x86_64 libraries in CYLTabBarController's CYLAnimatedItemView.** CYLTabBarController's HarmonyOS CYLAnimatedItem brings in x86_64 builds of the Rive and PAG libraries from their GitHub sources (licenses kept) and plays them on the x86_64 emulator.
+  - **Guard condition:** the architecture of the running system: the x86_64 libraries are used only when the device ABI list (`deviceInfo.abiList`) is x86_64 (no arm64-v8a).
+  - **Order of work:** first the x86_64 build must compile and must not crash or break any other feature; only then make Rive and PAG playback work correctly.
+  - **Debug guard:** until option 1 has passed its tests, it is also guarded by a debug build option (debug builds only), because today it only matters when running on the emulator.
+  - **Debug guard removed (2026-11-23):** option 1 passed (Rive and PAG 4.5.102 play on the x86_64 emulator, no crash) and the owner approved removing the guard; CYLTabBarController `269eff24` loads the kit in debug and release builds, still only when `cyl_hap_x86_64.py install` added it and the device is x86_64.
+- **Option 2: hand the test to a macOS session.** If option 1 fails, forward the arm64-only tests to an active `Mac…` session (Apple silicon is arm64) with the build, HAP, steps and expected result; with no macOS session, record them as a `TODO`.
+- Until one option has passed, report Rive and PAG playback as not verified on x86_64 (still images only), and say in every report and screenshot footer which part ran on x86_64 and which needs arm64.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Example demos (tag: `examples`)
+
+- A demo screen that needs a sectioned list (table view with sections) uses CollectionViewClassifyMenu's tag list: titles and icons only, a title on every section header, Liquid Glass tags (the core's `backgroundStyle`), content-wide tags (as many per row as fit), a tail fold control (the last tag is the expand / collapse button, icon only, itself a Liquid Glass tag), a colorful page behind the list (set in one shared place; the library draws one Liquid Glass card per section, the example draws no plate; long headers use headerMaxLines 2, icon colors are static template colors through menuStyleForItem + setIconColor, never .alwaysOriginal), a tap = the cell's tap, a long press = the subtitle in a callout with an arrow, `titleMaxLines` for wrapping titles (never a magic number).
+- Use the project skill `cyl-examples` in `.agents/skills/` for demo screens.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Code and architecture (tag: `code`)
 
 - Public headers under `CYLTableViewPlaceHolder/` define the current API.
-- `README.md` documents integration and usage; `docs/issue-progress.md` records
-  issue history and known limits. If they disagree, verify the code and update
-  the affected documentation.
-- Use the project skills in `.agents/skills/`: `cyl-api-map` for API locations,
-  `cyl-xcode-compat` for project settings, `cyl-verify` for verification, and
-  `cyl-docs` for documentation changes; `ios-accessibility`, `accessibility-audit` and `ios-localization` (copied from
-  CYLTabBarController, with their upstream licenses) for accessibility and localization work.
+- `README.md` documents integration and usage; `docs/issue-progress.md` records issue history and known limits.
+- **Icon and title: CYLAnimatedItemView only.** A view or page that shows only an icon and a title draws it with CYLTabBarController's `CYLAnimatedItemView` (`cyl-animated-item` in the mini program), not a `CYLPlaceholderStackView`.
+- Follow the English naming rules in `instructions.md`: new project-owned classes use `CYL`; UIKit category files use `+CYL`; category methods and properties use `cyl_`, except required system overrides.
+- Do not rename existing public symbols, serialized keys, or resources without assessing compatibility and obtaining approval for breaking changes.
+- Preserve third-party copyright, license text, and original attribution.
+- Public API documentation comments (`instructions.md`, "Code conventions"): every public declaration has one, placed directly above it.
+- Reuse `CYLPlaceholderView` in the core (`instructions.md`, "Reuse CYLPlaceholderView in the core"): core features show icons and text through `CYLPlaceholderView`, the packaged icon-and-title view, instead of fully custom views.
+- Always search for image-setting code (`setImages`, `setImage`, `.image =`, `animationImages`, `UIImageView`) and prefer `CYLPlaceholderView`'s image API (`CYLPlaceholderItemImage`, `CYLPlaceholderComponent`) over setting images directly.
+- CYLTabBarController is always a CocoaPods dependency pinned to its **latest commit by timestamp across all branches** (`:git` plus `:commit`, never a version, tag or branch); resolve it with `scripts/resolve-cyltabbarcontroller-commit.sh`.
+- In the example layer, CYLTabBarController is integrated by default with a PlusButton that opens its own plus child view controller (`plusChildViewController`), initialized from a local configuration file.
+- The example's plus button bulges by default: its top edge is above the tab bar's (`CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset`, tappable through `touchableAreaOutsets`); a flat plus button only when the task asks for it.
+- CYLRefresh is the only refresh library and refresh kernel on every platform: no example or core module depends on MJRefresh, SVPullToRefresh, CYLRefreshLayout, android-Ultra-Pull-To-Refresh or easy_refresh; a missing feature is added to CYLRefresh.
+- `CYLPlaceholderHUD` is the only HUD kernel on every platform, its code in one folder (`CYLPlaceholderHUD/` on iOS, `hud/` on Android and HarmonyOS, `cyl-placeholder-hud/` in the mini program); no other HUD library.
+- Fix bugs in the core first (`instructions.md`, "Fix bugs in the core first"): the core is the code published to a package registry (CocoaPods, Maven / Gradle, npm, ohpm, pub.dev).
+- Animation bugs (`instructions.md`, "Animation bugs: record, screenshot, fix in CYLTabBarController"): record the bug first, screenshot it second, and fix it in CYLTabBarController's animation component, not in an example.
+- Examples have the lowest weight (`instructions.md`, "Examples have the lowest weight"; `docs/Swift-Migration.md`): when a core change breaks an example, fix the example in the same change; an example is never a reason for a shim or a weaker core API.
+- License in every published package (`instructions.md`, "License in every published package"): every package published to an external registry (CocoaPods, Carthage, Maven, npm, ohpm, pub.dev, ...) carries the project's license inside it; `scripts/check_package_licenses.py` checks it.
+- Ready-made placeholder animations live in `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
+- Animation examples (`instructions.md`, "Animation playback controls in examples"): every example page that shows animations has a "Play all" that restarts them from progress 0, a speed slider and a loop switch, applied live.
+- Full rule: at reference of this tag (not required; do not read by default).
 
-## Naming and compatibility
+## Localization and accessibility (tag: `l10n-a11y`)
 
-- Follow the English naming rules in `instructions.md`: new project-owned
-  classes use `CYL`; UIKit category files use `+CYL`; category methods and
-  properties use `cyl_`, except required system overrides.
-- Do not rename existing public symbols, serialized keys, or resources without
-  assessing compatibility and obtaining approval for breaking changes.
-- Preserve third-party copyright, license text, and original attribution. Do
-  not replace an author's name with the project author's name.
-- The library supports iOS 12.0; preserve that minimum in the podspec and
-  guard newer APIs. Runnable projects' Podfiles follow the iOS 15.0 rules in
-  `instructions.md`; their CocoaPods dependencies consequently require iOS 15.
-- Preserve the Xcode project format: `objectVersion = 46`,
-  `compatibilityVersion = "Xcode 3.2"`, explicit file references, and a shared
-  scheme. Do not copy device identifiers or signing credentials from another
-  machine.
+- Localization is several files and always needs a file structure: on iOS, `<language>.lproj` folders inside a `.bundle`, never loose `.strings` files or hard-coded user-facing text.
+- Accessibility is required everywhere (VoiceOver, Voice Control, Switch Control, Full Keyboard Access, Dynamic Type, Reduce Motion, Bold Text): every control and text is an element with a localized label, trait and value; fix gaps when you meet them.
+- Resources follow the localization split: the core reads only its bundle through `CYLPlaceholderResourceBundle()` / `CYLPlaceholderResourceURL(path)`, each example only its own bundle through its own lookup.
+- Full rule: at reference of this tag (not required; do not read by default).
 
-- Public API documentation comments (`instructions.md`, "Code conventions"): every public declaration has one,
-  placed directly above it. Several lines are one block comment, never stacked `///` lines: `/*! … */` in
-  Objective-C headers (shown for Objective-C and the generated Swift interface), `/** … */` in Swift (Swift does
-  not read `/*!`); other platforms follow their official style (KDoc / Javadoc / TSDoc `/** */`, Dart `///`).
-  Single-line documentation comments of the public API use the same three-line block (`/*!`, ` * text`, ` */`; `/**`
-  in Swift), never `/*! text */` on one line and never a trailing `/**< */`, `/*!< */`, `///<` or `//` after a
-  declaration or enum value. Each public file uses one comment format for short and long comments. Every platform and
-  language uses its documentation tool's block form the same way: `/** */` for Kotlin, Java, TypeScript, JavaScript,
-  Rust and C# (with XML tags), a triple-quoted docstring on its own lines for Python, `/* */` for Go; a language
-  without a block form (Dart) uses its only documentation form throughout the file. **The official rules decide**:
-  where an item differs from a language's official documentation rules, the official rule wins (Go `//` doc comments
-  per go.dev/doc/comment, Rust `///` per the Rust Style Guide, C# `///` with XML tags per Microsoft Learn, Python
-  docstrings per PEP 257; Objective-C, Swift, Kotlin, Java, TypeScript, JavaScript and Dart agree with the rule). See
-  the table in `instructions.md`, "Documentation comments on public API".
-  `scripts/check_doc_comments.py` checks it in CI.
+## Documentation scenario (tag: `docs`)
 
-- Reuse `CYLPlaceholderView` in the core (`instructions.md`, "Reuse CYLPlaceholderView in the core"): core
-  features show icons and text through `CYLPlaceholderView`, the packaged icon-and-title view, instead of fully
-  custom views. "The packaged icon and title" means `CYLPlaceholderView`, not `CYLPlaceholderStackView`; every element
-  inside a stack view is a `CYLPlaceholderView`. A custom view needs explicit approval.
-- Always search for image-setting code (`setImages`, `setImage`, `.image =`, `animationImages`, `UIImageView`) and
-  prefer `CYLPlaceholderView`'s image API (`CYLPlaceholderItemImage`, `CYLPlaceholderComponent`,
-  `-cyl_setIconImages:duration:forState:`) over a system `UIImage` on a `UIImageView`. Where system image setting is
-  unavoidable, a comment next to it says why `CYLPlaceholderView` is not used.
+- **Instruction files are organized by tags (owner's rule, 2026-11-22).** Every instruction file (`instructions.md`, `AGENTS.md`, `CLAUDE.md`, each folder `instructions.md`, `.github/copilot-instructions.md`) groups its content under visible `## Tag: <name>` headings (never hidden or collapsed) and stays within 200 lines. When a tag's content would push a file past 200 lines, the overflow moves to `docs/instructions/<tag>.md` (English only, one file per tag, outside the bilingual docs rule and the docs navigation) and the file keeps a one-line summary with a relative link, so the details are read when the tag or keyword comes up.
+- `README.md` and every document in `docs/` are bilingual (two-column Chinese | English tables, Chinese / English headings, `[CN]` / `[EN]` code comments); read only the English part.
+- Update relevant documentation and skills with user-visible changes.
+- Full rule: at reference of this tag (not required; do not read by default).
 
-## Project and verification
+## Git and commits (tag: `git`)
 
-- The main example (`Examples/Example`, Swift) embeds the project's own framework target
-  (`CYLTableViewPlaceHolderFramework`, module `CYLTableViewPlaceHolder`) and does not require the
-  former external refresh Pod or `pod install`. Keep the source files, the resource bundle,
-  privacy manifest, and third-party license in the framework target, the app and the podspec.
-- Examples contain no Objective-C. When Swift needs a better spelling of a core API, add a Swift
-  naming macro (`NS_SWIFT_NAME`, `NS_REFINED_FOR_SWIFT`, `NS_SWIFT_UNAVAILABLE`) next to the
-  Objective-C declaration; never change the Objective-C interface itself.
-- CYLTabBarController is always a CocoaPods dependency. This project depends on its **latest commit by
-  timestamp across all branches** (often not `master`), as `:git` plus `:commit`, never a version, tag or
-  branch; resolve it with `scripts/resolve-cyltabbarcontroller-commit.sh` before every build. A project
-  named CYLTabBarController uses `:path` relative to the folder holding its podspec instead. See
-  "Depending on CYLTabBarController" in `instructions.md`.
-- In the example layer, CYLTabBarController is integrated by default with a PlusButton that has a plus child
-  view controller (`plusChildViewController`, its own page) and is initialized from a local configuration file in
-  the example's own `.bundle` (`CYLTabBarController(configurationFile:)`; `CYLTabBarControllerPlusButton` with
-  `CYLTabBarItemPageIdentifier`), unless a task says otherwise. See "Integrating CYLTabBarController in the
-  examples" in `instructions.md`.
-- The example's plus button bulges by default: its top edge is above the tab bar's top edge
-  (`CYLPlusButtonCenterYMultiplier` / `CYLPlusButtonCenterYOffset`, tappable through `touchableAreaOutsets`); a flat
-  plus button needs the task to ask for it.
-- Every example Podfile (`Examples/*/Podfile`) also contains `pod 'MJRefresh', '<latest version>'`, the
-  highest stable version on the CocoaPods trunk, set with `scripts/resolve-mjrefresh-version.sh` before every
-  build (CI does it in `scripts/ci-build-example.sh`) and check the examples compile. If the newest MJRefresh
-  breaks a build, fix the code in `CYLRefresh/` until it builds; never pin an older MJRefresh. See "Depending
-  on MJRefresh in the examples" in `instructions.md`.
-- Examples have the lowest weight (`instructions.md`, "Examples have the lowest weight"; `docs/Swift-Migration.md`):
-  when a core change (the Swift migration or a refactor) breaks an example, fix the example first, freely and in the
-  same change. An example's usage is never a compatibility constraint and never a reason for an alias, a shim, a
-  wrapper or a lower-quality Swift API in the core; the Swift coding standard decides.
-- iOS examples are written in Swift (the library stays Objective-C). When a Swift call
-  reads like Objective-C, adapt the core: nullability, `NS_SWIFT_NAME` on new
-  declarations, `cyl_` members keep their prefix, and underscored protocol methods get an
-  underscore-free sibling instead of a rename. Follow CYLTabBarController's
-  `docs/Swift-Guide.md` and record verified spellings in `docs/Swift-Guide.md`. See
-  "Swift examples and a Swift-friendly core" in `instructions.md`.
-- `README.md` and every document in `docs/` are bilingual (`中文 | English` two-column tables,
-  `## 中文 / English` headings, `[CN]` / `[EN]` code comments); read only the English part. Attachments go
-  in an `assets/` folder next to the document and are linked relatively. Run
-  `python3 scripts/update-docs-navigation.py` after any change to them and never edit the generated
-  navigation by hand. See "Bilingual documentation" in `instructions.md`.
-- Localization is several files and always needs a file structure: on iOS,
-  `<language>.lproj` folders inside a `.bundle`, never loose `.strings` files
-  or hard-coded user-facing text. Several bundles are allowed, one per owner.
-  The core bundle, `CYLTableViewPlaceHolder.bundle` (placeholder table
-  `Localizable.strings`, refresh table `CYLRefresh.strings`), always stays and
-  changes only additively. Each example keeps its text in its own bundle in the
-  example folder, read through macros defined in a localization header. The core
-  also has its own lookup macro. A project must define at least two different
-  lookup macros, one per layer (core and example), each reading its own bundle;
-  names carry the owner's prefix and never reuse another library's, such as
-  CYLTabBarController's `CYLLocalizedString`. Every language must have every key
-  of `en`. Other platforms follow the same
-  structure. See "Localization" in `instructions.md`.
-- Accessibility is required everywhere (VoiceOver, Voice Control, Switch Control, Dynamic Type, Reduce Motion): every
-  control and text is an element with a localized label, trait and value; decorations are hidden; tappable placeholders
-  are buttons (not enabled when interaction is off); Reduce Motion is honored; tests find elements by label first. A
-  change without it is not done. See "Accessibility" in `instructions.md` and the `ios-accessibility` and
-  `accessibility-audit` skills.
-- Resources follow the localization split: the core reads only its bundle through `CYLPlaceholderResourceBundle()` /
-  `CYLPlaceholderResourceURL(path)`, each example only its own bundle through its own lookup.
-- Ready-made placeholder animations live in
-  `CYLTableViewPlaceHolder.bundle/Animations/`, named `CYLPlaceholder<Scenario>.<ext>`.
-  Add only animations whose content means a placeholder state (loading, empty,
-  failed, missing permission, an offered action, done), never mascots, scenes or
-  widget demos, which go to the example that uses them, in its own `.bundle`. The core bundle holds
-  only placeholder resources. Add only files with a redistributable license, unmodified, and record each
-  one's source repository, commit, path, license and SHA-256 in
-  `Animations/NOTICE.animations`, shipping the license text next to it. One exception (approved 2026-11-12):
-  a background fill baked into a file (an artboard fill, a "BG" shape) may be made transparent by setting
-  its alpha to 0 and nothing else, when the license allows modification; NOTICE then records the change
-  and both the original and the new SHA-256 (e.g. `CYLRefreshIcon.riv`).
-  Keep the total small: every app that uses Core carries these files.
-- Run `ruby Tests/run-tests.rb` for relevant simulator tests. Use `DESTINATION`
-  to select an installed simulator. Build the example and validate the
-  podspec when their integration changes; see `cyl-verify`.
-- CI/CD (`instructions.md`, "CI/CD"): iOS jobs on GitHub run on macOS 26 by default
-  (`vars.MACOS_RUNNER || 'macos-26'`). Always read CYLTabBarController's
-  [`.github/workflows/ios.yml`](https://github.com/ChenYilong/CYLTabBarController/blob/master/.github/workflows/ios.yml)
-  first to confirm the runner environment. Local runs (the developer's own Mac,
-  not GitHub CI/CD, running the simulator and Xcode directly) ignore this and
-  assume macOS 27 with Xcode 27.
-- Xcode 27's simulator SDK requires a deployment target of at least 15.0 during
-  builds. Override the build target for that toolchain instead of changing the
-  library's iOS 12.0 minimum.
-- Screenshots (local and CI/CD): take them at key moments (a `TODO` or "Linux" note can go, a pull request can be
-  merged, or the result meets the expectation with no bug); crop to the key detail; stitch several details vertically
-  (top to bottom) first, then two columns, a single row last (at most three per row); store every image in `docs/` (embedded
-  in the fitting document, committed); when the result is right, update the README section with the platform, the
-  OS / simulator / SDK versions, the commit and the time; use clear original images. See "Screenshots of local
-  builds and CI/CD" in `instructions.md`.
-- Animation examples (`instructions.md`, "Animation playback controls in examples"): every example page that shows
-  animations has a "Play all" that restarts them from progress 0, a speed slider and a loop switch, applied live and
-  combinable; every platform's examples (iOS, Android, React Native, Flutter, mini programs, HarmonyOS); change the
-  core when needed. Pages and status: `docs/Example-Animation-Playback.md`.
-- Every CI run that builds code must provide a screenshot of each example
-  running (artifacts `example-screenshot-*` from the `Demo` jobs, shown inline
-  by the `Example screenshots` job and its pull request comment). Link them
-  when reporting CI results. If none can be produced, first fix the CI to
-  produce it; if that still fails, state the concrete reason. See "CI example
-  screenshots" in `instructions.md`.
-- Update relevant documentation and skills with user-visible changes. Explain
-  what could not be verified; do not claim a visual behavior from compilation.
-
-## Commit readiness
-
-- **Before every Commitizen-style (`git cz`) commit**, run this first in the repository root, so the vault's auto sync does not commit or push in the middle of it:
-
-  ```sh
-  touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC
-  ```
-
-  The vault's `git_sync.py` checks `.git/NO_AUTO_SYNC`; the hooks path alone never paused it.
-
-  If `.git/hooks` does not exist, `mkdir -p` creates it first so `touch`
-  always succeeds.
-
-- Before every commit, update `.gitignore`: add any ignore pattern from
-  CYLTabBarController's `.gitignore` that is missing (changing only its project
-  name to `CYLTableViewPlaceHolder`), and make sure every generated or
-  machine-local file of the change is ignored. Already tracked files stay
-  tracked. See "`.gitignore` before every commit" in `instructions.md`.
-- Before a Commitizen-style commit, follow the commit-message hook instructions
-  in `instructions.md`; inspect an existing hook before replacing it.
-- Before every commit, audit the changed code and the project's comparison,
-  issue-progress, and implementation-status documents.
-- In the most relevant existing document under `docs/`, keep a `TODO` entry for
-  every tracked item below 100% complete and verified. Include its current
-  score, concrete remaining work, implementation and verification notes, and
-  any known defects or optimization opportunities.
-- Review API design explicitly: record compatibility and migration risks,
-  ambiguous or inconsistent keys, unsupported behavior, and lifecycle or
-  accessibility gaps. Reserved keys, stubs, compilation, and unverified visual
-  behavior do not qualify as completion.
-- Update scores only when supported by implementation and test evidence. Before
-  staging, verify that each sub-100 item in the relevant score tables has a
-  matching `TODO` entry and that the documented limitations match the code.
-- Every commit message must contain the owner's line `By @ChenYilong <luohanchenyilong@163.com>`, on
-  its own line at the end of the body (before trailers such as `Co-Authored-By:`), exactly once. See
-  "Author line in every commit message" in `instructions.md`; the commit-msg hook there appends it.
-- Use an English Conventional Commit subject compatible with Commitizen. The
-  subject summarizes completed work; put details and pending work in the body.
-  If the detailed description exceeds 50 characters, create or update a
-  suitable document under `docs/` and link it in the commit body. Reuse the
-  existing tracker and avoid duplicate documents.
-- Follow the Commitizen defaults: `{type}{scope}: {emoji}{subject}`, emojis
-  enabled, no predefined scopes, and a 3–64 character message. The interactive
- examples separate the emoji from the subject with a space. The
-  type list is `test`, `feat`, `fix`, `chore`, `docs`, `refactor`, `style`,
-  `ci`, `perf`; `release` is defined but not listed. Default emojis are
-  `chore` 🤖, `ci` 🎡, `docs` ✏️, `feat` 🎸, `fix` 🐛, `perf` ⚡️,
-  `refactor` 💡, `style` 💄, `test` 💍, and `release` 🏹. Follow established
-  project emoji mappings where they differ (e.g. CYLTabBarController uses
-  `feat: ✨`, `docs: 📝`, `chore: 🔧`, and `refactor: ♻️`). The question
-  sequence is `type`, `scope`, `subject`, `body`, `breaking`, `issues`, and
-  `lerna`;
-  prompts cover optional scope, imperative subject, longer description,
-  breaking changes, issue references, and affected packages.
-
-## Git
-
-- Never commit AppleDouble files named `._*`. Follow the vault's cleanup rule
-  before Git commands and check staged paths before committing.
+- **Before any git operation, read the `git` reference doc in full (owner's rule, 2026-11-22).** Commit, push, pull, branch, merge, rebase, tag, pull request: read the whole file first, every time, then run the git command.
+- **Before every Commitizen-style (`git cz`) commit**, run `touch .git/NO_AUTO_SYNC && mkdir -p .git/hooks && touch .git/hooks/NO_AUTO_SYNC` in the repository root, so the vault's auto sync pauses.
+- Before every commit, update `.gitignore`: add the patterns from CYLTabBarController's `.gitignore` that are missing (project name changed to `CYLTableViewPlaceHolder`) and ignore every generated or machine-local file of the change.
+- Before a Commitizen-style commit, follow the commit-message hook instructions in `instructions.md`; inspect an existing hook before replacing it.
+- Before every commit, audit the changed code and the project's comparison, issue-progress, and implementation-status documents.
+- In the most relevant existing document under `docs/`, keep a `TODO` entry for every tracked item below 100% complete and verified.
+- Review API design explicitly: record compatibility and migration risks, ambiguous or inconsistent keys, unsupported behavior, and lifecycle or accessibility gaps.
+- Update scores only when supported by implementation and test evidence.
+- Every commit message contains the owner's line `By @ChenYilong <luohanchenyilong@163.com>` exactly once, on its own line at the end of the body (before trailers such as `Co-Authored-By:`).
+- Use an English Conventional Commit subject compatible with Commitizen.
+- **git cz style, English only:** every commit uses the `git cz` (Commitizen) format with its default types and emojis, and the whole message (subject, body, scope, merge and cherry-pick messages) is English with no Chinese characters.
+- Follow the Commitizen defaults: `{type}{scope}: {emoji}{subject}`, emojis enabled, no predefined scopes, and a 3–64 character message.
+- Never commit AppleDouble files named `._*`. Follow the vault's cleanup rule before Git commands and check staged paths before committing.
 - Do not overwrite another person's changes or rewrite pushed history.
-- On any branch other than `master` or `main`, commit and push as soon as the
-  work is written, without asking the user first. Still follow the commit
-  readiness rules above. On `master` or `main`, do not commit or push unless
-  the user asks.
-- Every time you create a branch, open a pull request for it right away, without
-  asking (`instructions.md`, "A pull request for every new branch"). The base is
-  the branch it was created from, first; `main` or `master` only when that is the
-  source branch or the source branch is gone. Pass `--base` explicitly.
-- Commit through a branch and a pull request by default, so CI runs
-  (`docs/CI-CD.md`): branch from `master`, `touch .git/NO_AUTO_SYNC` (the path the vault's auto sync checks),
-  commit, push the branch, and open a pull request against its source branch (here `master`). Do not
-  commit directly to `master` unless the user asks. Do not merge a pull request
-  without the user's approval, and not before the `iOS` workflow is green.
-- Follow the current task's instructions for commits, branches, and pull
-  requests when they differ from the default above.
+- On any branch other than `master` or `main`, commit and push as soon as the work is written, without asking the user first.
+- Every time you create a branch, open a pull request for it right away, without asking (`instructions.md`, "A pull request for every new branch").
+- Commit through a branch and a pull request by default, so CI runs (`docs/CI-CD.md`): branch, `touch .git/NO_AUTO_SYNC`, commit, push and open a pull request against the source branch; never merge without the owner's approval and a green `iOS` workflow.
+- Follow the current task's instructions for commits, branches, and pull requests when they differ from the default above.
+- **Every branch with commits has an open pull request (added 2026-11-16).** After creating a branch, any commit on it must be in a pull request.
+  - **Before every commit**, check that the current branch has an open pull request (`gh pr list --state open --head <branch>`).
+  - **Target branch**: the branch of the pull request that was active (open) before this one was created; only when there is none, `master` (or `main`).
+  - **More than two open pull requests: ask first.** When more than two pull requests are open, ask the owner before creating another branch and pull request; otherwise keep committing on the current branch.
+  - Push only to branches that have an open pull request; do not recreate a branch that was deleted after its pull request was closed or merged.
+  - **Commit and push at the end of every turn (added 2026-11-16).** When a turn ends on a branch other than `master` or `main`, commit and push the work right away, without asking.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Finding the document a prompt refers to (tag: `docs-lookup`)
+
+- When a prompt mentions a related document without naming it, find it in memory and the conversation context first: prefer the file mentioned most often and most recently.
+- If it is still unclear which document is meant, create a new document instead of searching for one.
+- Never scan the contents of every file under `docs/`, and never read a document under `docs/` in full unless the owner explicitly names that document and asks for a full read, or authorizes it.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Reply greeting (tag: `reply-greeting`)
+
+- Start every reply with `Hi, <OS>/<folder>:`, then answer. `<OS>` is the session's operating system; `<folder>` is the name of the session's working folder.
+- Example: a macOS session in `/Volumes/obsidian/chenyilong/chenyilong/CYLTabBarController` starts with `Hi, macOS/CYLTabBarController:`.
+- Full rule: at reference of this tag (not required; do not read by default).
+
+## Tag reference
+
+| Tag | Heading | Reference (not required; do not read by default) |
+|:---|:---|:---|
+| `behavioral` | Behavioral guidelines | [reference](docs/instructions/behavioral.md) (not required; do not read by default) |
+| `workflow` | Task workflow | [reference](docs/instructions/workflow.md) (not required; do not read by default) |
+| `testing` | Testing scenario | [reference](docs/instructions/testing.md) (not required; do not read by default) |
+| `ci` | CI/CD scenario | [reference](docs/instructions/ci.md) (not required; do not read by default) |
+| `windows` | Windows scenario | [reference](docs/instructions/windows.md) (not required; do not read by default) |
+| `macos` | macOS-only scenario | [reference](docs/instructions/macos.md) (not required; do not read by default) |
+| `harmonyos` | HarmonyOS scenario | [reference](docs/instructions/harmonyos.md) (not required; do not read by default) |
+| `examples` | Example demos | [reference](docs/instructions/examples.md) (not required; do not read by default) |
+| `code` | Code and architecture | [reference](docs/instructions/code.md) (not required; do not read by default) |
+| `l10n-a11y` | Localization and accessibility | [reference](docs/instructions/l10n-a11y.md) (not required; do not read by default) |
+| `docs` | Documentation scenario | [reference](docs/instructions/docs.md) (not required; do not read by default) |
+| `git` | Git and commits | [reference](docs/instructions/git.md) (not required; do not read by default) |
+| `docs-lookup` | Finding the document a prompt refers to | [reference](docs/instructions/docs-lookup.md) (not required; do not read by default) |
+| `reply-greeting` | Reply greeting | [reference](docs/instructions/reply-greeting.md) (not required; do not read by default) |

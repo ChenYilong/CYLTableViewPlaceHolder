@@ -12,10 +12,13 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cyl.placeholder.CYLPlaceholderNetworkMonitor
 import com.cyl.placeholder.CYLPlaceholderStatusDisplay
+import com.cyl.placeholder.CYLPlaceholderView
 import com.cyl.placeholder.CYLPlaceholderStatusView
 import com.cyl.placeholder.CYLPlaceholderStatusViewDelegate
 import com.cyl.placeholder.cyl_applyStatusConfigurationWithContentsOfURL
@@ -81,8 +84,15 @@ class StatusBarActivity : AppCompatActivity(), CYLPlaceholderStatusViewDelegate 
         }
         network = Button(this).apply { tag = "statusFollowNetwork"; text = t(R.string.merged_status_follow_network); setOnClickListener { toggleNetwork() } }
         val files = Button(this).apply { text = t(R.string.merged_action_show_file); setOnClickListener { showFiles(this) } }
+        // [EN] An animation file that is not in the assets: the red bar names it ("Missing resource: ... (file not found)").
+        val missing = Button(this).apply {
+            tag = "statusMissingResource"
+            text = t(R.string.merged_status_missing_resource)
+            setOnClickListener { CYLPlaceholderView(this@StatusBarActivity).setAnimationFile("asset:CYLPlaceholderAnimations/CYLMissingDemo.pag") }
+        }
         val buttons = LinearLayout(this).apply {
             gravity = Gravity.END
+            addView(missing)
             addView(network)
             addView(files)
         }
@@ -98,6 +108,13 @@ class StatusBarActivity : AppCompatActivity(), CYLPlaceholderStatusViewDelegate 
             addView(bottom)
         }
         setContentView(root)
+        // [EN] Edge-to-edge (targetSdk 35): the content frame starts at the screen top, under the status and action bars,
+        // where the bar would be clipped; push the frame below them so the bar sits directly under the action bar.
+        val content = findViewById<ViewGroup>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
+            view.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
+            insets
+        }
         // The placeholder covers the list's own frame, so the modes stay in reach.
         cyl_placeholderScrollView = list
         cyl_statusView.delegate = this

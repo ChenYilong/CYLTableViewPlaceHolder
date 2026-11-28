@@ -14,7 +14,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.cyl.refresh.cyl_header
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.cyl.refresh.layout.CYLRefreshLayout
 
 /*
  * MJWKWebViewController and MJWebViewViewController of MJRefresh's example layer (MIT; originally created by MJ Lee,
@@ -29,7 +29,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 internal fun RefreshExamplesPage.webPage(): View {
     val context = requireContext()
     val density = context.resources.displayMetrics.density
-    val layout = SmartRefreshLayout(context)
+    val layout = CYLRefreshLayout(context)
     val header = ExampleImagesHeader(context)
     val web = WebView(context).apply {
         tag = "refreshWeb"

@@ -13,3 +13,6 @@
 "CYLObjC02HintRefresh" = "Refreshes the table and returns to page 2.";
 "CYLObjC02HintLastPage" = "Scrolls to the last page.";
 "CYLObjC02FormatPage" = "Page %ld";
+"CYLObjC02TitleSections" = "Sections";
+"CYLObjC02FormatSection" = "Section %ld";
+"CYLObjC02HintRefreshSections" = "Refreshes the table.";

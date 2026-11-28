@@ -109,4 +109,6 @@
     <string name="cyl_placeholder_scenario_notification_permission_denied_title">Notifications are off</string>
     <string name="cyl_placeholder_scenario_notification_permission_denied_hint">Turn on notifications in Settings to get messages in time.</string>
     <string name="cyl_placeholder_status_network_unavailable">Network unavailable, Check network</string>
+    <string name="cyl_placeholder_resource_missing">Missing resource: %1$s (%2$s)</string>
+    <string name="cyl_placeholder_resources_missing">Missing resources: %1$s +%2$d more</string>
 </resources>

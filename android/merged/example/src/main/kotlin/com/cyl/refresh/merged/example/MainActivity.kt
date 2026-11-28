@@ -1,9 +1,11 @@
 package com.cyl.refresh.merged.example
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import com.cyl.tabbar.CYLPlusButton
 import com.cyl.tabbar.CYLTabBarConfiguration
 import com.cyl.tabbar.CYLTabBarController
@@ -22,6 +24,11 @@ class MainActivity : AppCompatActivity() {
         CYLPlusButton.registerPlusButton(ExamplePlusButton.Provider)
         val controller = CYLTabBarController.tabBarControllerWithConfigurationFile(this, "cyl_tabbar_configuration.json")
         setContentView(controller.view)
+        // Android 15 draws the app edge to edge: the status bar area shows the light window background, while the
+        // DarkActionBar theme asks for light status bar icons (white on white, nearly invisible). Dark icons in the
+        // light theme, light icons in the dark one.
+        val night = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !night
     }
 }
 
@@ -36,6 +43,8 @@ object ExamplePages {
      */
     private val icons = mapOf(
         "tray" to android.R.drawable.ic_menu_agenda,
+        "rectangle" to android.R.drawable.ic_menu_agenda,
+        "arrow.triangle" to android.R.drawable.ic_menu_share,
         "arrow" to android.R.drawable.ic_menu_rotate,
         "sparkles" to android.R.drawable.btn_star,
         "bubble" to android.R.drawable.ic_menu_send,
@@ -49,13 +58,16 @@ object ExamplePages {
         if (registered) return
         registered = true
         CYLTabBarConfiguration.imageResolver = CYLTabBarConfiguration.CYLTabBarImageResolver { context: Context, name: String ->
-            val symbol = name.removePrefix("system:").substringBefore('.')
-            ContextCompat.getDrawable(context, icons[symbol] ?: android.R.drawable.ic_menu_help)
+            val symbol = name.removePrefix("system:")
+            val drawable = icons[symbol.split('.').take(2).joinToString(".")] ?: icons[symbol.substringBefore('.')]
+            ContextCompat.getDrawable(context, drawable ?: android.R.drawable.ic_menu_help)
         }
         val registry = CYLTabBarPageRegistry.sharedRegistry
         registry.registerPageProvider({ _, _ -> ScenariosPage() }, listOf("placeholder"))
-        registry.registerPageProvider({ _, _ -> SVPullToRefreshPage() }, listOf("svpulltorefresh"))
-        registry.registerPageProvider({ _, _ -> UltraPullToRefreshPage() }, listOf("ultraptr"))
+        registry.registerPageProvider({ _, _ -> AnimationsPage() }, listOf("animations"))
+        // The iOS example's Flows tab; the former Load more and StoreHouse tabs are in the Refresh tab's examples and
+        // the refresh styles page.
+        registry.registerPageProvider({ _, _ -> FlowsPage() }, listOf("flows"))
         registry.registerPageProvider({ _, _ -> RefreshExamplesPage() }, listOf("refresh"))
         registry.registerPageProvider({ _, _ -> FeedPage() }, listOf("feed"))
     }

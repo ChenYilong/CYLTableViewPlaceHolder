@@ -7,6 +7,7 @@ require 'xcodeproj'
 root = File.expand_path('..', __dir__)
 core_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLTableViewPlaceHolder')
 refresh_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLRefresh')
+hud_dir = File.join(root, 'CYLTableViewPlaceHolder/CYLPlaceholderHUD')
 visible = ->(path) { !File.basename(path).start_with?('._') }
 
 Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
@@ -29,20 +30,47 @@ Dir.mktmpdir('cyl-placeholder-accessibility-') do |dir|
     config.build_settings['INFOPLIST_KEY_UILaunchScreen_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UIApplicationSceneManifest_Generation'] = 'YES'
     config.build_settings['INFOPLIST_KEY_UISupportedInterfaceOrientations'] = 'UIInterfaceOrientationPortrait'
-    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\""
+    config.build_settings['HEADER_SEARCH_PATHS'] = "\"#{refresh_dir}/**\" \"#{core_dir}\" \"#{hud_dir}\""
+    # CYLPlaceholderView is Swift (2026-11-19): the module is named like the pod (so the Objective-C files find
+    # CYLTableViewPlaceHolder-Swift.h), the bridging header plays the pod's umbrella header for the Swift file, and the
+    # CYLAnimatedItem framework always has the engine.
+    config.build_settings['SWIFT_VERSION'] = '5.0'
+    config.build_settings['PRODUCT_MODULE_NAME'] = 'CYLTableViewPlaceHolder'
+    config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] = File.join(dir, 'AccessibilityHost-Bridging-Header.h')
+    config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) CYL_ANIMATION_ENGINE_AVAILABLE'
   end
+  File.write(File.join(dir, 'AccessibilityHost-Bridging-Header.h'), "#import \"CYLTableViewPlaceHolder.h\"\n")
   ui.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'org.cyl.placeholder.accessibility.uitests'
     config.build_settings['TEST_TARGET_NAME'] = 'AccessibilityHost'
+    config.build_settings['SWIFT_VERSION'] = '5.0'
   end
 
-  sources = [File.join(root, 'Tests/AccessibilityHost/main.m')] +
-            Dir.glob(File.join(core_dir, '*.m')).select(&visible) +
-            Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible)
+  # The host app and the UI tests are Swift (docs/Swift-Migration.md, step 13); the host compiles into the library's
+  # module, so it uses the library without an import.
+  sources = Dir.glob(File.join(root, 'Tests/AccessibilityHost/*.swift')).select(&visible) +
+            Dir.glob(File.join(core_dir, '*.{m,swift}')).select(&visible) +
+            Dir.glob(File.join(refresh_dir, '**/*.m')).select(&visible) +
+            # The CYLRefresh Swift files except the Rive header, which needs RiveRuntime (as in the podspec's Core).
+            Dir.glob(File.join(refresh_dir, '**/*.swift')).reject { |path| path.include?('/Custom/Rive/') }.select(&visible) +
+            Dir.glob(File.join(hud_dir, '*.{m,swift}')).select(&visible)
   sources.sort.each { |path| app.source_build_phase.add_file_reference(project.main_group.new_file(path)) }
   # One resource bundle holds the placeholder and refresh localizations and images.
   app.resources_build_phase.add_file_reference(project.main_group.new_file(File.join(core_dir, 'CYLTableViewPlaceHolder.bundle')))
-  ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.m')))
+  # CYLPlaceholderView is a subclass of CYLTabBarController's CYLAnimatedItemView: link and embed its framework.
+  system('bash', File.join(root, 'scripts/cyltabbarcontroller-xcframework.sh'), 'simulator') || abort('CYLTabBarController.xcframework failed to build')
+  # Newer CYLTabBarController commits split CYLAnimatedItem into its own framework, and (since 8f0302d6) CYLBadge and CYLUtilsKit
+  # (which CYLAnimatedItem links) too; link and embed each one that was built.
+  embed = app.new_copy_files_build_phase('Embed Frameworks')
+  embed.symbol_dst_subfolder_spec = :frameworks
+  %w[CYLTabBarController CYLAnimatedItem CYLBadge CYLUtilsKit].each do |name|
+    path = File.join(root, "Carthage/Build/#{name}.xcframework")
+    next unless File.exist?(path)
+    ref = project.main_group.new_file(path)
+    app.frameworks_build_phase.add_file_reference(ref)
+    embed.add_file_reference(ref).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+  end
+  ui.source_build_phase.add_file_reference(project.main_group.new_file(File.join(root, 'Tests/CYLPlaceholderAccessibilityUITests.swift')))
   project.save
 
   scheme = Xcodeproj::XCScheme.new

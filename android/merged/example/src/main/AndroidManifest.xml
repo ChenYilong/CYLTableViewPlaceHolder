@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- The web refresh examples (example40/41) load a web page. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- SVGAPlayer-Android's manifest declares allowBackup and label; the app's own win. -->
     <application
+        android:allowBackup="true"
+        tools:replace="android:allowBackup,android:label"
         android:label="@string/merged_app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">

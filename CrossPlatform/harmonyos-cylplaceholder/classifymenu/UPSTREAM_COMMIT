@@ -1,0 +1,4 @@
+# Copied by scripts/sync-harmonyos-classifymenu.sh. Do not edit this folder: re-run the script instead.
+repository=https://github.com/ChenYilong/CollectionViewClassifyMenu
+commit=bbe569514eab77292d8ad8d03b3a83e5e1648283
+path=harmony/classifymenu

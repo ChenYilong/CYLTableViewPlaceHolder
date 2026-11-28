@@ -1,8 +1,0 @@
-views:
-  - type: table
-    name: Files
-    filters:
-      and:
-        - file.inFolder("CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderAnimation")
-    order:
-      - file.name

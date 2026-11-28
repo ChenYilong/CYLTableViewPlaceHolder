@@ -1,0 +1,22 @@
+.page { height: 100vh; display: flex; flex-direction: column; background: #fff; }
+.content { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+/* Plain table rows; the background lets the content cover a "behind" header. */
+.rows { background: #fff; }
+.row { padding: 12px 16px; font-size: 16px; line-height: 20px; }
+.progress { display: block; height: 4px; }
+/* systemTeal banner, title2 white centered. */
+.banner { height: 160px; display: flex; align-items: center; justify-content: center; background: #30b0c7;
+  color: #fff; font-size: 22px; }
+/* The second floor: systemIndigo, a centered vertical stack with spacing 16. */
+.floor { position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 10; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; background: #5856d6; transform: translateY(-100%);
+  transition: transform 0.3s ease-out; }
+.floor--open { transform: translateY(0); }
+.floor__title { font-size: 28px; color: #fff; }
+.floor__close { margin-top: 16px; padding: 6px 8px; font-size: 17px; color: #fff; }
+@media (prefers-color-scheme: dark) {
+  .page, .rows { background: #000; }
+  .row { color: #fff; }
+  .floor { background: #5e5ce6; }
+  .banner { background: #40c8e0; }
+}
