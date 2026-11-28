@@ -417,13 +417,13 @@ typedef NS_ENUM(NSInteger, CYLPlaceholderTapHighlightStyle) {
  */
 typedef NS_ENUM(NSInteger, CYLPlaceholderBadgeStyle) {
     /*!
-     * [EN] No badge: hides the badge (`badgeValue` becomes nil); the value is ignored.
-     * [CN] 无角标：隐藏角标（`badgeValue` 置为 nil），忽略传入的值。
+     * [EN] No badge: hides the badge (`placeholderBadgeValue` becomes nil); the value is ignored.
+     * [CN] 无角标：隐藏角标（`placeholderBadgeValue` 置为 nil），忽略传入的值。
      */
     CYLPlaceholderBadgeStyleNone,
     /*!
-     * [EN] A dot of 8 x 8 points without text (`badgeValue` becomes an empty string); the value is ignored.
-     * [CN] 8 x 8 点、不带文字的圆点（`badgeValue` 置为空字符串），忽略传入的值。
+     * [EN] A dot of 8 x 8 points without text (`placeholderBadgeValue` becomes an empty string); the value is ignored.
+     * [CN] 8 x 8 点、不带文字的圆点（`placeholderBadgeValue` 置为空字符串），忽略传入的值。
      */
     CYLPlaceholderBadgeStyleDot,
     /*!
