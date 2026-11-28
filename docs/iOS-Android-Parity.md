@@ -1210,7 +1210,7 @@ Scoring: a row is TODO when it has no Android counterpart yet or its note names 
 | `CYLPlaceholderView` | An icon (or an animation) above a text, with an optional badge and tap. | `com.cyl.placeholder.CYLPlaceholderView` — fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations |
 | `CYLPlaceholderView` `imageView` | The icon: the inherited `iconView`. | `CYLPlaceholderView.imageView` |
 | `CYLPlaceholderView` `textLabel` | The text: the inherited `titleView`; set it through `title`. | `CYLPlaceholderView.textLabel` |
-| `CYLPlaceholderView` `badgeValue` | The badge's value: null for none, "" for a dot, else the text. | `CYLPlaceholderView.badgeValue` |
+| `CYLPlaceholderView` `badgeValue` | The badge's value: null for none, "" for a dot, else the text. | `CYLPlaceholderView.placeholderBadgeValue` |
 | `CYLPlaceholderView` `badgeLabel` | The badge's label. | `CYLPlaceholderView.badgeLabel` |
 | `CYLPlaceholderView` `badgeCenterOffset` | The badge's offset from the icon's top right corner, in dp, x and y. | `CYLPlaceholderView.badgeCenterOffset` |
 | `CYLPlaceholderView` `-showBadgeWithStyle:value:` | Shows a badge of [style] with [value]. | `CYLPlaceholderView.showBadgeWithStyle(style, value)` |
