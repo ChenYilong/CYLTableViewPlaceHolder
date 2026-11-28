@@ -5458,8 +5458,8 @@
    "header": "CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h",
    "kind": "property",
    "owner": "CYLPlaceholderView",
-   "name": "badgeValue",
-   "key": "CYLPlaceholderView badgeValue"
+   "name": "placeholderBadgeValue",
+   "key": "CYLPlaceholderView placeholderBadgeValue"
   },
   {
    "header": "CYLTableViewPlaceHolder/CYLTableViewPlaceHolder/CYLPlaceholderView.h",
