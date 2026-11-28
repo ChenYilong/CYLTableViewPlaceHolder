@@ -582,9 +582,11 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     @objc public let badgeLabel = UILabel()
 
     /**
-     * A nil value hides the badge; an empty string displays a dot.
+     * A nil value hides the badge; an empty string displays a dot. Named `placeholderBadgeValue` because
+     * `CYLAnimatedItemView` has a `badgeValue` of its own (the item badge, drawn by CYLBadge on `badgeAnchorView`), which is
+     * not `open` and cannot be overridden; this one draws `badgeLabel`.
      */
-    @objc open dynamic var badgeValue: String? {
+    @objc open dynamic var placeholderBadgeValue: String? {
         get { storedBadgeValue }
         set { setBadgeValue(newValue) }
     }
@@ -1581,7 +1583,7 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
         // [CN] 现在它直接是控件的子视图（原来的内部条目视图已删除）：同时从无障碍树中隐藏，否则仍会与元素并列出现。
         badgeLabel.accessibilityElementsHidden = placeholderIsAccessibilityElement
         badgeContainerView?.accessibilityElementsHidden = placeholderIsAccessibilityElement
-        if let badgeValue = badgeValue {
+        if let badgeValue = placeholderBadgeValue {
             let description = badgeValue.isEmpty ?
                 CYLPlaceholderLocalizedStringForKey("CYLPlaceholderBadgeNewContent", "New content") : badgeValue
             badgeLabel.accessibilityLabel = description
@@ -1625,19 +1627,19 @@ open class CYLPlaceholderView: CYLAnimatedItemView {
     open func showBadge(with style: CYLPlaceholderBadgeStyle, value: String?) -> Bool {
         switch style {
         case .none:
-            badgeValue = nil
+            placeholderBadgeValue = nil
             return true
         case .dot:
-            badgeValue = ""
+            placeholderBadgeValue = ""
             return true
         case .text:
             if let value = value, !value.isEmpty {
-                badgeValue = value
+                placeholderBadgeValue = value
                 return true
             }
         case .number:
             if let value = value, !value.isEmpty, let number = CYLPlaceholderScanInt64(value) {
-                badgeValue = number <= 0 ? nil : (number > 99 ? "99+" : String(number))
+                placeholderBadgeValue = number <= 0 ? nil : (number > 99 ? "99+" : String(number))
                 return true
             }
         @unknown default:

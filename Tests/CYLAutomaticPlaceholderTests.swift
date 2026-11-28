@@ -300,7 +300,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         placeholder.frame = CGRect(x: 0, y: 0, width: 320, height: 480)
         placeholder.accessibilityValue = "Existing"
         placeholder.badgeCenterOffset = CGPoint(x: 3, y: 5)
-        placeholder.badgeValue = ""
+        placeholder.placeholderBadgeValue = ""
         placeholder.layoutIfNeeded()
         placeholder.imageView.superview?.layoutIfNeeded()
         XCTAssertFalse(placeholder.badgeLabel.isHidden)
@@ -310,30 +310,30 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         XCTAssertGreaterThan(placeholder.accessibilityValue?.count ?? 0, 0)
         XCTAssertEqual(placeholder.badgeLabel.accessibilityLabel, placeholder.accessibilityValue)
         XCTAssertTrue(placeholder.badgeLabel.isAccessibilityElement)
-        placeholder.badgeValue = "123"
+        placeholder.placeholderBadgeValue = "123"
         placeholder.imageView.superview?.layoutIfNeeded()
         XCTAssertGreaterThan(placeholder.badgeLabel.bounds.size.width, 8)
         XCTAssertEqual(placeholder.accessibilityValue, "123")
-        placeholder.badgeValue = nil
+        placeholder.placeholderBadgeValue = nil
         XCTAssertTrue(placeholder.badgeLabel.isHidden)
         XCTAssertEqual(placeholder.accessibilityValue, "Existing")
-        placeholder.badgeValue = "New"
+        placeholder.placeholderBadgeValue = "New"
         placeholder.accessibilityValue = "Custom"
-        placeholder.badgeValue = "Updated"
-        placeholder.badgeValue = nil
+        placeholder.placeholderBadgeValue = "Updated"
+        placeholder.placeholderBadgeValue = nil
         XCTAssertEqual(placeholder.accessibilityValue, "Custom")
         placeholder.badgeCenterOffset = CGPoint(x: CGFloat.nan, y: 1)
         XCTAssertEqual(placeholder.badgeCenterOffset.x, 3, accuracy: 0.01)
         XCTAssertTrue(placeholder.showBadge(with: .dot, value: nil))
-        XCTAssertEqual(placeholder.badgeValue, "")
+        XCTAssertEqual(placeholder.placeholderBadgeValue, "")
         XCTAssertTrue(placeholder.showBadge(with: .number, value: "105"))
-        XCTAssertEqual(placeholder.badgeValue, "99+")
+        XCTAssertEqual(placeholder.placeholderBadgeValue, "99+")
         XCTAssertFalse(placeholder.showBadge(with: .number, value: "3x"))
-        XCTAssertEqual(placeholder.badgeValue, "99+")
+        XCTAssertEqual(placeholder.placeholderBadgeValue, "99+")
         XCTAssertTrue(placeholder.showBadge(with: .text, value: "New"))
-        XCTAssertEqual(placeholder.badgeValue, "New")
+        XCTAssertEqual(placeholder.placeholderBadgeValue, "New")
         XCTAssertTrue(placeholder.showBadge(with: .number, value: "0"))
-        XCTAssertNil(placeholder.badgeValue)
+        XCTAssertNil(placeholder.placeholderBadgeValue)
         XCTAssertFalse(placeholder.showBadge(with: .text, value: ""))
         XCTAssertTrue(placeholder.showBadge(with: .none, value: nil))
     }
@@ -1215,13 +1215,13 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         shared.textColor = .red
         shared.font = UIFont.boldSystemFont(ofSize: 15)
         let placeholder = CYLPlaceholderView(image: nil, text: "Inbox")
-        placeholder.badgeValue = "3"
+        placeholder.placeholderBadgeValue = "3"
         XCTAssertEqual(placeholder.badgeLabel.textColor, UIColor.red)
         XCTAssertEqual(placeholder.badgeLabel.font.pointSize, 15, accuracy: 0.01)
         placeholder.badgeLabel.textColor = .green // customized directly
         shared.textColor = .blue
         shared.font = UIFont.boldSystemFont(ofSize: 11)
-        placeholder.badgeValue = "4"
+        placeholder.placeholderBadgeValue = "4"
         XCTAssertEqual(placeholder.badgeLabel.textColor, UIColor.green)
         XCTAssertEqual(placeholder.badgeLabel.font.pointSize, 11, accuracy: 0.01)
         shared.textColor = savedText
@@ -1231,20 +1231,20 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         let element = try XCTUnwrap(makePlaceholder([CYLPlaceholderItemTitle: "Inbox"]).view)
         XCTAssertTrue(element.isAccessibilityElement)
         element.accessibilityValue = "Synced"
-        element.badgeValue = "2"
+        element.placeholderBadgeValue = "2"
         XCTAssertEqual(element.accessibilityValue, "Synced, 2")
         XCTAssertFalse(element.badgeLabel.isAccessibilityElement)
-        element.badgeValue = nil
+        element.placeholderBadgeValue = nil
         XCTAssertEqual(element.accessibilityValue, "Synced")
 
         // Badge state changes are synchronous even when the change is animated.
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         window.addSubview(element)
-        element.badgeValue = "5"
-        element.badgeValue = "6"
+        element.placeholderBadgeValue = "5"
+        element.placeholderBadgeValue = "6"
         XCTAssertEqual(element.badgeLabel.text, "6")
         XCTAssertFalse(element.badgeLabel.isHidden)
-        element.badgeValue = nil
+        element.placeholderBadgeValue = nil
         XCTAssertTrue(element.badgeLabel.isHidden)
         XCTAssertTrue(element.badgeLabel.transform.isIdentity)
     }

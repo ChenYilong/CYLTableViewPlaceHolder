@@ -4,6 +4,12 @@
 
 ### Breaking changes / 破坏性变更
 
+- `CYLPlaceholderView.badgeValue` is now `placeholderBadgeValue` (iOS, Swift and Objective-C, and Android): the newest
+  CYLAnimatedItemView has a `badgeValue` of its own (the item badge drawn by CYLBadge), which cannot be overridden. The
+  placeholder's label badge (`badgeLabel`, `showBadgeWithStyle:value:`) is unchanged; `badgeValue` now reaches the engine's
+  badge. (Owner's decision, 2026-11-28.) / `CYLPlaceholderView.badgeValue` 现为 `placeholderBadgeValue`（iOS 的 Swift 与
+  Objective-C，以及 Android）：最新的 CYLAnimatedItemView 自带 `badgeValue`（由 CYLBadge 绘制的 item 角标），无法重写。占位视图的
+  标签角标（`badgeLabel`、`showBadgeWithStyle:value:`）不变；`badgeValue` 现在指向引擎的角标。（所有者决定，2026-11-28。）
 - The minimum iOS version is now **iOS 15.0** (was 12.0): the podspec says `s.platform = :ios, '15.0'`, the framework
   project's `IPHONEOS_DEPLOYMENT_TARGET` is 15.0, and the Lottie, LottieSwift and Rive subspecs no longer set a lower
   target. Apps that still support iOS 12-14 must stay on the previous release. The reason: the CYLAnimatedItem dependency
