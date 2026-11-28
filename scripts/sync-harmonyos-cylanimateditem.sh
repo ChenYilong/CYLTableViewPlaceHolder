@@ -3,7 +3,7 @@
 #
 # [EN] Copies CYLTabBarController's HarmonyOS CYLAnimatedItem module (CrossPlatform/harmonyos-cyltabbar/cylanimateditem,
 #      ohpm package `cylanimateditem`, component `CYLAnimatedItemView` with its GIF and SVGA engines) and its engine
-#      modules cylanimateditem_lottie, cylanimateditem_pag cylanimateditem_rive and cylanimateditemrive (Rive engine implementation) at the commit the Cartfile pins into
+#      modules cylanimateditem_lottie, cylanimateditem_pag cylanimateditem_rive, cylanimateditemrive (Rive engine implementation) and cyldeallocblockexecutor at the commit the Cartfile pins (or cyltabbar-harmony.commit) into
 #      CrossPlatform/harmonyos-cylplaceholder/<module>, and writes that commit into each UPSTREAM_COMMIT.
 #      The module is not published to ohpm yet, so this repository takes it by commit, as CYLTabBarController's
 #      docs/Animated-Item.md describes ("copy, or depend with `file:` on, the cylanimateditem folder at a pinned
@@ -16,9 +16,21 @@
 #      并把该 commit 写入其中的 UPSTREAM_COMMIT。复制的文件保持上游原样（MIT，ChenYilong，自带 LICENSE），不要修改；--check 只比较。
 set -euo pipefail
 cd "$(dirname "$0")/.."
-MODULES=(cylanimateditem cylanimateditem_lottie cylanimateditem_pag cylanimateditem_rive cylanimateditemrive)
+MODULES=(cylanimateditem cylanimateditem_lottie cylanimateditem_pag cylanimateditem_rive cylanimateditemrive cyldeallocblockexecutor)
 CHECKOUT=$(bash scripts/cyltabbarcontroller-checkout.sh | tail -n 1)
-SHA=$(git -C "$CHECKOUT" rev-parse HEAD)
+# [EN] The HarmonyOS copy may be pinned to its own commit, newer than the Cartfile's: the tag list vendored from
+#      CollectionViewClassifyMenu (scripts/sync-harmonyos-classifymenu.sh) needs the engine commit it was built against.
+#      CrossPlatform/harmonyos-cylplaceholder/cyltabbar-harmony.commit holds that commit; without the file the Cartfile's
+#      commit is used. The Cartfile (iOS, Android) is not touched.
+# [CN] 鸿蒙端的副本可以固定在自己的 commit（比 Cartfile 的新）：从 CollectionViewClassifyMenu 复制来的 tag list 需要它构建时用的引擎 commit。
+PIN_FILE=CrossPlatform/harmonyos-cylplaceholder/cyltabbar-harmony.commit
+if [[ -f "$PIN_FILE" ]]; then
+  SHA=$(grep -E '^[0-9a-f]{40}$' "$PIN_FILE" | head -n 1)
+  [[ -n "$SHA" ]] || { echo "error: $PIN_FILE holds no 40-character commit" >&2; exit 1; }
+  git -C "$CHECKOUT" cat-file -e "$SHA^{commit}" 2>/dev/null || git -C "$CHECKOUT" fetch --quiet origin "$SHA" >&2
+else
+  SHA=$(git -C "$CHECKOUT" rev-parse HEAD)
+fi
 STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 # [EN] Build outputs of a local DevEco / hvigor build are git-ignored and not part of the copy; a Windows checkout
