@@ -48,7 +48,7 @@ include(":merged-example")
 project(":merged-example").projectDir = file("merged/example")
 
 // CollectionViewClassifyMenu's Android module (its tag list: the example's menu and index screens), at the commit pinned in
-// classifymenu.commit (commit c0b183de of its feat/glass-backdrop branch, never a branch or a version). Only :merged-example uses it; the core modules
+// classifymenu.commit (commit 9b62c229 of its claude/android-tag-badge-rename branch, never a branch or a version). Only :merged-example uses it; the core modules
 // :placeholder and :merged do not. Where it comes from, first match wins:
 // 1. -PcylClassifyMenuDir=<a CollectionViewClassifyMenu checkout> (CI passes a clone of the pinned commit);
 // 2. otherwise scripts/classifymenu-checkout.sh checks the pinned commit out into android/.classifymenu.

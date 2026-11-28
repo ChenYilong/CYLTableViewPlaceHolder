@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: scripts/classifymenu-checkout.sh
 #
-# Checks out the CollectionViewClassifyMenu commit pinned in android/classifymenu.commit (commit c0b183de of its feat/glass-backdrop
+# Checks out the CollectionViewClassifyMenu commit pinned in android/classifymenu.commit (commit 9b62c229 of its claude/android-tag-badge-rename
 # branch, which contains its PR #37; never a branch or a version) into android/.classifymenu/CollectionViewClassifyMenu (a sparse, blobless clone: only the Android
 # module android/merged/library) and prints that folder. android/settings.gradle.kts runs it when -PcylClassifyMenuDir is
 # not given; only the example app (:merged-example) uses the module. CYL_CLASSIFYMENU_URL overrides the repository. The last
