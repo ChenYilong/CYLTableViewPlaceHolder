@@ -18,5 +18,5 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 #      :merged 是刷新库（React Native 与 Flutter 需要）。
 TAB="$(bash "$ROOT/scripts/cyltabbarcontroller-checkout.sh" | tail -n 1)/Example-Android"
 bash "$ROOT/android/gradlew" --no-daemon -p "$ROOT/android" -PcylTabBarDir="$TAB" :placeholder:publishToMavenLocal :merged:publishToMavenLocal :merged-rive:publishToMavenLocal
-bash "$ROOT/android/gradlew" --no-daemon -p "$TAB" :cylanimateditem:publishToMavenLocal
+bash "$ROOT/android/gradlew" --no-daemon -p "$TAB" :cylutils:publishToMavenLocal :cylbadge:publishToMavenLocal :cylanimateditem:publishToMavenLocal
 echo "Published to $HOME/.m2/repository/io/github/chenyilong"
