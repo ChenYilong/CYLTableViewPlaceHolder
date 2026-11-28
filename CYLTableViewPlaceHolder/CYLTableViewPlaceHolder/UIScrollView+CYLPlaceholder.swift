@@ -9,12 +9,12 @@
 //      that keeps placeholders above the keyboard, and `UIScrollView (CYLPlaceholderVisibility)`. Swift since 2026-11-19
 //      with the same Objective-C API (selectors, the swizzled `cyl_ph_*` selectors). What Swift cannot express stays in
 //      `UIScrollView+CYLPlaceholderSupport.m` (docs/Swift-Migration.md, rule 6): `+load`, which calls
-//      `cyl_ph_installAutomaticPlaceholder(exceptionGuard:)` below, and the `@try` / `@finally` that keeps the batch depth
+//      `cylPlaceholderInstallAutomaticPlaceholder(exceptionGuard:)` below, and the `@try` / `@finally` that keeps the batch depth
 //      right when a batch update throws an Objective-C exception. The block types stay in the public headers.
 // [CN] 自动占位图（UITableView 与 UICollectionView 的 `cyl_placeholderViewBlock:`）、让占位图保持在键盘上方的键盘跟踪，以及
 //      `UIScrollView (CYLPlaceholderVisibility)`。自 2026-11-19 起用 Swift 编写，Objective-C API 不变（选择器、被交换的 `cyl_ph_*` 选择器）。
 //      Swift 无法表达的部分保留在 `UIScrollView+CYLPlaceholderSupport.m` 中（docs/Swift-Migration.md 第 6 条）：`+load`（调用下面的
-//      `cyl_ph_installAutomaticPlaceholder(exceptionGuard:)`），以及批量更新抛出 Objective-C 异常时保证批量深度正确的 `@try` / `@finally`。
+//      `cylPlaceholderInstallAutomaticPlaceholder(exceptionGuard:)`），以及批量更新抛出 Objective-C 异常时保证批量深度正确的 `@try` / `@finally`。
 //      block 类型保留在公开头文件中。
 
 import UIKit
@@ -35,8 +35,8 @@ private enum CYLPlaceholderKey {
 
 // MARK: - Visible area (top bar, home indicator, keyboard)
 
-// [EN] The keyboard tracker, shared by both placeholder paths (`cyl_placeholderViewBlock:` and the legacy `cyl_reloadData`).
-// [CN] 键盘跟踪，两条占位图路径（`cyl_placeholderViewBlock:` 与旧的 `cyl_reloadData`）共用。
+// [EN] The keyboard tracker, shared by both placeholder paths (`cyl_placeholderViewBlock:` and the legacy `cylReloadData`).
+// [CN] 键盘跟踪，两条占位图路径（`cyl_placeholderViewBlock:` 与旧的 `cylReloadData`）共用。
 enum CYLPlaceholderVisibleArea {
 
     // [EN] Posted after the keyboard's frame changes, so shown placeholders frame themselves above it again.
@@ -110,6 +110,9 @@ final class CYLPlaceholderController: NSObject {
     var batchCallDepth = 0
     var scheduled = false
     var generation = 0
+    // [EN] The footers and trailers this controller hid while the placeholder shows (shown again when it goes).
+    // [CN] 占位图显示期间由本控制器隐藏的刷新尾与 trailer（占位图移除时重新显示）。
+    private let hiddenLoadMoreControls = NSHashTable<UIView>.weakObjects()
 
     // [EN] Set from `+load` (`UIScrollView+CYLPlaceholderSupport.m`). [CN] 由 `+load` 设置（`UIScrollView+CYLPlaceholderSupport.m`）。
     static var exceptionGuard: CYLPlaceholderExceptionGuard?
@@ -127,8 +130,8 @@ final class CYLPlaceholderController: NSObject {
         objc_getAssociatedObject(scrollView, CYLPlaceholderKey.controller) as? CYLPlaceholderController
     }
 
-    // [EN] Whether the scroll view uses the automatic placeholder (the legacy `cyl_reloadData` then leaves it alone).
-    // [CN] 滚动视图是否使用自动占位图（此时旧的 `cyl_reloadData` 不再处理它）。
+    // [EN] Whether the scroll view uses the automatic placeholder (the legacy `cylReloadData` then leaves it alone).
+    // [CN] 滚动视图是否使用自动占位图（此时旧的 `cylReloadData` 不再处理它）。
     static func isEnabled(for scrollView: UIScrollView) -> Bool {
         controller(for: scrollView)?.provider != nil
     }
@@ -190,8 +193,48 @@ final class CYLPlaceholderController: NSObject {
         constraints[3].constant = -insets.bottom
     }
 
+    // [EN] The load-more controls (footers and trailers of CYLRefresh or MJRefresh): an empty list has nothing more to
+    //      load, and with a zero content size a footer would sit at the top, over the placeholder. Headers stay (issue #8).
+    // [CN] 加载更多类控件（CYLRefresh 或 MJRefresh 的刷新尾与 trailer）：空列表没有更多可加载；内容高度为 0 时刷新尾会
+    //      跑到顶部、压在占位图上。刷新头保留（issue #8）。
+    private static let loadMoreClasses: [AnyClass] =
+        ["CYLRefreshFooter", "CYLRefreshTrailer", "MJRefreshFooter", "MJRefreshTrailer"].compactMap { NSClassFromString($0) }
+
+    static func isLoadMoreControl(_ view: UIView) -> Bool {
+        loadMoreClasses.contains { view.isKind(of: $0) }
+    }
+
+    // [EN] Hides every visible load-more control of `scrollView` and records it in `hidden` (the legacy
+    //      `cylReloadData` placeholder uses it too).
+    // [CN] 隐藏 `scrollView` 中所有可见的加载更多控件并记入 `hidden`（旧的 `cylReloadData` 占位图也使用）。
+    static func hideLoadMoreControls(of scrollView: UIScrollView, recordingIn hidden: NSHashTable<UIView>) {
+        for subview in scrollView.subviews where !subview.isHidden && isLoadMoreControl(subview) {
+            subview.isHidden = true
+            hidden.add(subview)
+        }
+    }
+
+    // [EN] Shows again the controls recorded in `hidden` that are still in `scrollView`, then forgets them.
+    // [CN] 重新显示 `hidden` 中仍在 `scrollView` 里的控件，然后清空记录。
+    static func restoreLoadMoreControls(of scrollView: UIScrollView?, recordedIn hidden: NSHashTable<UIView>) {
+        for control in hidden.allObjects where control.superview === scrollView {
+            control.isHidden = false
+        }
+        hidden.removeAllObjects()
+    }
+
+    func hideLoadMoreControls() {
+        guard let scrollView = scrollView else { return }
+        CYLPlaceholderController.hideLoadMoreControls(of: scrollView, recordingIn: hiddenLoadMoreControls)
+    }
+
+    func restoreLoadMoreControls() {
+        CYLPlaceholderController.restoreLoadMoreControls(of: scrollView, recordedIn: hiddenLoadMoreControls)
+    }
+
     func removeView() {
         guard let shown = view else { return }
+        restoreLoadMoreControls()
         NSLayoutConstraint.deactivate(constraints)
         constraints = []
         shown.removeFromSuperview()
@@ -224,9 +267,9 @@ final class CYLPlaceholderController: NSObject {
             controller.scheduled = false
             guard let provider = controller.provider, let scrollView = controller.scrollView,
                   controller.batchDepth == 0 else { return }
-            // [EN] `cyl_placeholderHidden` (set by `cyl_statusDisplay`) keeps it away even for an empty list.
-            // [CN] `cyl_placeholderHidden`（由 `cyl_statusDisplay` 设置）使空列表也不显示占位图。
-            if !controller.isEmpty() || scrollView.cyl_placeholderHidden {
+            // [EN] `cylPlaceholderHidden` (set by `cylStatusDisplay`) keeps it away even for an empty list.
+            // [CN] `cylPlaceholderHidden`（由 `cylStatusDisplay` 设置）使空列表也不显示占位图。
+            if !controller.isEmpty() || scrollView.cylPlaceholderHidden {
                 controller.removeView()
                 return
             }
@@ -255,6 +298,7 @@ final class CYLPlaceholderController: NSObject {
             }
             controller.updateVisibleArea()
             CYLPlaceholderController.bringPlaceholderToFront(view, in: scrollView)
+            controller.hideLoadMoreControls()
         }
     }
 }
@@ -263,7 +307,7 @@ final class CYLPlaceholderController: NSObject {
 
 // [EN] Exchanges each original with its replacement; adds the replacement as the original when only a superclass had it.
 // [CN] 交换原方法与替换方法；原方法只在父类中实现时，把替换实现添加为原方法。
-private func cyl_ph_swizzle(_ cls: AnyClass, _ pairs: [(original: Selector, replacement: Selector)]) {
+private func cylPlaceholderSwizzle(_ cls: AnyClass, _ pairs: [(original: Selector, replacement: Selector)]) {
     for pair in pairs {
         guard let oldMethod = class_getInstanceMethod(cls, pair.original),
               let newMethod = class_getInstanceMethod(cls, pair.replacement) else { continue }
@@ -279,40 +323,40 @@ extension UIScrollView {
 
     // [EN] Swizzles both classes once (a `static let` runs its initializer once, as `dispatch_once` did).
     // [CN] 两个类只交换一次（`static let` 的初始化只执行一次，与 `dispatch_once` 相同）。
-    private static let cyl_ph_installation: Void = {
-        cyl_ph_swizzle(UITableView.self, [
-            (#selector(UITableView.reloadData), #selector(UITableView.cyl_ph_reloadData)),
-            (#selector(setter: UITableView.dataSource), #selector(UITableView.cyl_ph_setDataSource(_:))),
-            (#selector(UITableView.beginUpdates), #selector(UITableView.cyl_ph_beginUpdates)),
-            (#selector(UITableView.endUpdates), #selector(UITableView.cyl_ph_endUpdates)),
-            (#selector(UITableView.insertSections(_:with:)), #selector(UITableView.cyl_ph_insertSections(_:with:))),
-            (#selector(UITableView.deleteSections(_:with:)), #selector(UITableView.cyl_ph_deleteSections(_:with:))),
-            (#selector(UITableView.reloadSections(_:with:)), #selector(UITableView.cyl_ph_reloadSections(_:with:))),
-            (#selector(UITableView.moveSection(_:toSection:)), #selector(UITableView.cyl_ph_moveSection(_:toSection:))),
-            (#selector(UITableView.insertRows(at:with:)), #selector(UITableView.cyl_ph_insertRows(at:with:))),
-            (#selector(UITableView.deleteRows(at:with:)), #selector(UITableView.cyl_ph_deleteRows(at:with:))),
-            (#selector(UITableView.reloadRows(at:with:)), #selector(UITableView.cyl_ph_reloadRows(at:with:))),
-            (#selector(UITableView.moveRow(at:to:)), #selector(UITableView.cyl_ph_moveRow(at:to:))),
+    private static let cylPlaceholderInstallation: Void = {
+        cylPlaceholderSwizzle(UITableView.self, [
+            (#selector(UITableView.reloadData), #selector(UITableView.cylPlaceholderReloadData)),
+            (#selector(setter: UITableView.dataSource), #selector(UITableView.cylPlaceholderSetDataSource(_:))),
+            (#selector(UITableView.beginUpdates), #selector(UITableView.cylPlaceholderBeginUpdates)),
+            (#selector(UITableView.endUpdates), #selector(UITableView.cylPlaceholderEndUpdates)),
+            (#selector(UITableView.insertSections(_:with:)), #selector(UITableView.cylPlaceholderInsertSections(_:with:))),
+            (#selector(UITableView.deleteSections(_:with:)), #selector(UITableView.cylPlaceholderDeleteSections(_:with:))),
+            (#selector(UITableView.reloadSections(_:with:)), #selector(UITableView.cylPlaceholderReloadSections(_:with:))),
+            (#selector(UITableView.moveSection(_:toSection:)), #selector(UITableView.cylPlaceholderMoveSection(_:toSection:))),
+            (#selector(UITableView.insertRows(at:with:)), #selector(UITableView.cylPlaceholderInsertRows(at:with:))),
+            (#selector(UITableView.deleteRows(at:with:)), #selector(UITableView.cylPlaceholderDeleteRows(at:with:))),
+            (#selector(UITableView.reloadRows(at:with:)), #selector(UITableView.cylPlaceholderReloadRows(at:with:))),
+            (#selector(UITableView.moveRow(at:to:)), #selector(UITableView.cylPlaceholderMoveRow(at:to:))),
             (#selector(UITableView.performBatchUpdates(_:completion:)),
-             #selector(UITableView.cyl_ph_performBatchUpdates(_:completion:))),
-            (NSSelectorFromString("reconfigureRowsAtIndexPaths:"), #selector(UITableView.cyl_ph_reconfigureRows(at:)))
+             #selector(UITableView.cylPlaceholderPerformBatchUpdates(_:completion:))),
+            (NSSelectorFromString("reconfigureRowsAtIndexPaths:"), #selector(UITableView.cylPlaceholderReconfigureRows(at:)))
         ])
-        cyl_ph_swizzle(UICollectionView.self, [
-            (#selector(UICollectionView.reloadData), #selector(UICollectionView.cyl_ph_reloadData)),
-            (#selector(setter: UICollectionView.dataSource), #selector(UICollectionView.cyl_ph_setDataSource(_:))),
-            (#selector(UICollectionView.insertSections(_:)), #selector(UICollectionView.cyl_ph_insertSections(_:))),
-            (#selector(UICollectionView.deleteSections(_:)), #selector(UICollectionView.cyl_ph_deleteSections(_:))),
-            (#selector(UICollectionView.reloadSections(_:)), #selector(UICollectionView.cyl_ph_reloadSections(_:))),
+        cylPlaceholderSwizzle(UICollectionView.self, [
+            (#selector(UICollectionView.reloadData), #selector(UICollectionView.cylPlaceholderReloadData)),
+            (#selector(setter: UICollectionView.dataSource), #selector(UICollectionView.cylPlaceholderSetDataSource(_:))),
+            (#selector(UICollectionView.insertSections(_:)), #selector(UICollectionView.cylPlaceholderInsertSections(_:))),
+            (#selector(UICollectionView.deleteSections(_:)), #selector(UICollectionView.cylPlaceholderDeleteSections(_:))),
+            (#selector(UICollectionView.reloadSections(_:)), #selector(UICollectionView.cylPlaceholderReloadSections(_:))),
             (#selector(UICollectionView.moveSection(_:toSection:)),
-             #selector(UICollectionView.cyl_ph_moveSection(_:toSection:))),
-            (#selector(UICollectionView.insertItems(at:)), #selector(UICollectionView.cyl_ph_insertItems(at:))),
-            (#selector(UICollectionView.deleteItems(at:)), #selector(UICollectionView.cyl_ph_deleteItems(at:))),
-            (#selector(UICollectionView.reloadItems(at:)), #selector(UICollectionView.cyl_ph_reloadItems(at:))),
-            (#selector(UICollectionView.moveItem(at:to:)), #selector(UICollectionView.cyl_ph_moveItem(at:to:))),
+             #selector(UICollectionView.cylPlaceholderMoveSection(_:toSection:))),
+            (#selector(UICollectionView.insertItems(at:)), #selector(UICollectionView.cylPlaceholderInsertItems(at:))),
+            (#selector(UICollectionView.deleteItems(at:)), #selector(UICollectionView.cylPlaceholderDeleteItems(at:))),
+            (#selector(UICollectionView.reloadItems(at:)), #selector(UICollectionView.cylPlaceholderReloadItems(at:))),
+            (#selector(UICollectionView.moveItem(at:to:)), #selector(UICollectionView.cylPlaceholderMoveItem(at:to:))),
             (#selector(UICollectionView.performBatchUpdates(_:completion:)),
-             #selector(UICollectionView.cyl_ph_performBatchUpdates(_:completion:))),
+             #selector(UICollectionView.cylPlaceholderPerformBatchUpdates(_:completion:))),
             (NSSelectorFromString("reconfigureItemsAtIndexPaths:"),
-             #selector(UICollectionView.cyl_ph_reconfigureItems(at:)))
+             #selector(UICollectionView.cylPlaceholderReconfigureItems(at:)))
         ])
     }()
 
@@ -321,13 +365,13 @@ extension UIScrollView {
     // [CN] `+load` 的唯一入口（`UIScrollView+CYLPlaceholderSupport.m` 声明了该选择器）：保存异常 guard，开始跟踪键盘，并只交换一次
     //      UITableView 与 UICollectionView 的方法。
     @objc(cyl_ph_installAutomaticPlaceholderWithExceptionGuard:)
-    static func cyl_ph_installAutomaticPlaceholder(exceptionGuard: @escaping CYLPlaceholderExceptionGuard) {
+    static func cylPlaceholderInstallAutomaticPlaceholder(exceptionGuard: @escaping CYLPlaceholderExceptionGuard) {
         CYLPlaceholderController.exceptionGuard = exceptionGuard
         CYLPlaceholderVisibleArea.startTrackingKeyboard()
-        _ = cyl_ph_installation
+        _ = cylPlaceholderInstallation
     }
 
-    var cyl_ph_controller: CYLPlaceholderController? {
+    var cylPlaceholderController: CYLPlaceholderController? {
         CYLPlaceholderController.controller(for: self)
     }
 }
@@ -344,19 +388,19 @@ extension UITableView {
      *      表格视图或其持有者。
      */
     @objc(cyl_placeholderViewBlock:)
-    public func cyl_placeholderViewBlock(_ placeholderViewBlock: CYLTablePlaceholderViewBlock?) {
-        cyl_placeholderViewBlock(placeholderViewBlock, backToNormalBlock: nil)
+    public func cylPlaceholderViewBlock(_ placeholderViewBlock: CYLTablePlaceholderViewBlock?) {
+        cylPlaceholderViewBlock(placeholderViewBlock, backToNormalBlock: nil)
     }
 
     /**
-     * [EN] Like `cyl_placeholderViewBlock(_:)`, and also sets the block called when the placeholder is removed (the table
+     * [EN] Like `cylPlaceholderViewBlock(_:)`, and also sets the block called when the placeholder is removed (the table
      *      view has content again); nil for both turns the automatic placeholder off.
-     * [CN] 与 `cyl_placeholderViewBlock(_:)` 相同，并设置占位图被移除（表格视图重新有内容）时调用的 block；两者都为 nil 时关闭自动占位图。
+     * [CN] 与 `cylPlaceholderViewBlock(_:)` 相同，并设置占位图被移除（表格视图重新有内容）时调用的 block；两者都为 nil 时关闭自动占位图。
      */
     @objc(cyl_placeholderViewBlock:backToNormalBlock:)
-    public func cyl_placeholderViewBlock(_ placeholderViewBlock: CYLTablePlaceholderViewBlock?,
+    public func cylPlaceholderViewBlock(_ placeholderViewBlock: CYLTablePlaceholderViewBlock?,
                                          backToNormalBlock: CYLTablePlaceholderNormalBlock?) {
-        if placeholderViewBlock != nil { cyl_removeLegacyPlaceholder() }
+        if placeholderViewBlock != nil { cylRemoveLegacyPlaceholder() }
         let provider = placeholderViewBlock.map { block in
             { (view: UIScrollView) -> UIView? in block(unsafeDowncast(view, to: UITableView.self)) }
         }
@@ -372,25 +416,25 @@ extension UITableView {
     //      exactly what the caller passed, nil included. [CN] 索引集合与索引路径数组保持为 Objective-C 对象（`NSIndexSet?`、
     //      `NSArray?`），原方法收到的正是调用方传入的值，包括 nil。
 
-    @objc fileprivate dynamic func cyl_ph_reloadData() {
-        cyl_ph_reloadData()
-        cyl_ph_controller?.scheduleUpdate()
+    @objc fileprivate dynamic func cylPlaceholderReloadData() {
+        cylPlaceholderReloadData()
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_setDataSource:)
-    fileprivate dynamic func cyl_ph_setDataSource(_ source: UITableViewDataSource?) {
-        cyl_ph_setDataSource(source)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderSetDataSource(_ source: UITableViewDataSource?) {
+        cylPlaceholderSetDataSource(source)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
-    @objc fileprivate dynamic func cyl_ph_beginUpdates() {
-        cyl_ph_beginUpdates()
-        if let controller = cyl_ph_controller, controller.batchCallDepth == 0 { controller.batchDepth += 1 }
+    @objc fileprivate dynamic func cylPlaceholderBeginUpdates() {
+        cylPlaceholderBeginUpdates()
+        if let controller = cylPlaceholderController, controller.batchCallDepth == 0 { controller.batchDepth += 1 }
     }
 
-    @objc fileprivate dynamic func cyl_ph_endUpdates() {
-        cyl_ph_endUpdates()
-        let controller = cyl_ph_controller
+    @objc fileprivate dynamic func cylPlaceholderEndUpdates() {
+        cylPlaceholderEndUpdates()
+        let controller = cylPlaceholderController
         if let controller = controller, controller.batchCallDepth == 0, controller.batchDepth > 0 {
             controller.batchDepth -= 1
         }
@@ -398,70 +442,70 @@ extension UITableView {
     }
 
     @objc(cyl_ph_insertSections:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_insertSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
-        cyl_ph_insertSections(sections, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderInsertSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderInsertSections(sections, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_deleteSections:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_deleteSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
-        cyl_ph_deleteSections(sections, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderDeleteSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderDeleteSections(sections, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reloadSections:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_reloadSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
-        cyl_ph_reloadSections(sections, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReloadSections(_ sections: NSIndexSet?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderReloadSections(sections, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_moveSection:toSection:)
-    fileprivate dynamic func cyl_ph_moveSection(_ section: Int, toSection newSection: Int) {
-        cyl_ph_moveSection(section, toSection: newSection)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderMoveSection(_ section: Int, toSection newSection: Int) {
+        cylPlaceholderMoveSection(section, toSection: newSection)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_insertRowsAtIndexPaths:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_insertRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
-        cyl_ph_insertRows(at: indexPaths, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderInsertRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderInsertRows(at: indexPaths, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_deleteRowsAtIndexPaths:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_deleteRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
-        cyl_ph_deleteRows(at: indexPaths, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderDeleteRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderDeleteRows(at: indexPaths, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reloadRowsAtIndexPaths:withRowAnimation:)
-    fileprivate dynamic func cyl_ph_reloadRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
-        cyl_ph_reloadRows(at: indexPaths, with: animation)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReloadRows(at indexPaths: NSArray?, with animation: UITableView.RowAnimation) {
+        cylPlaceholderReloadRows(at: indexPaths, with: animation)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_moveRowAtIndexPath:toIndexPath:)
-    fileprivate dynamic func cyl_ph_moveRow(at indexPath: NSIndexPath?, to newIndexPath: NSIndexPath?) {
-        cyl_ph_moveRow(at: indexPath, to: newIndexPath)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderMoveRow(at indexPath: NSIndexPath?, to newIndexPath: NSIndexPath?) {
+        cylPlaceholderMoveRow(at: indexPath, to: newIndexPath)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reconfigureRowsAtIndexPaths:)
-    fileprivate dynamic func cyl_ph_reconfigureRows(at indexPaths: NSArray?) {
-        cyl_ph_reconfigureRows(at: indexPaths)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReconfigureRows(at indexPaths: NSArray?) {
+        cylPlaceholderReconfigureRows(at: indexPaths)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_performBatchUpdates:completion:)
-    fileprivate dynamic func cyl_ph_performBatchUpdates(_ updates: (@convention(block) () -> Void)?,
+    fileprivate dynamic func cylPlaceholderPerformBatchUpdates(_ updates: (@convention(block) () -> Void)?,
                                                         completion: (@convention(block) (Bool) -> Void)?) {
-        guard let controller = cyl_ph_controller, controller.provider != nil else {
-            cyl_ph_performBatchUpdates(updates, completion: completion)
+        guard let controller = cylPlaceholderController, controller.provider != nil else {
+            cylPlaceholderPerformBatchUpdates(updates, completion: completion)
             return
         }
         var wrappedUpdates: (@convention(block) () -> Void)?
         if let updates = updates {
             wrappedUpdates = { [weak self] in
-                let current = self?.cyl_ph_controller
+                let current = self?.cylPlaceholderController
                 current?.batchDepth += 1
                 CYLPlaceholderController.perform(updates) {
                     if let current = current, current.batchDepth > 0 { current.batchDepth -= 1 }
@@ -471,11 +515,11 @@ extension UITableView {
         }
         let wrappedCompletion: @convention(block) (Bool) -> Void = { [weak self] finished in
             completion?(finished)
-            self?.cyl_ph_controller?.scheduleUpdate()
+            self?.cylPlaceholderController?.scheduleUpdate()
         }
         controller.batchCallDepth += 1
         CYLPlaceholderController.perform({
-            self.cyl_ph_performBatchUpdates(wrappedUpdates, completion: wrappedCompletion)
+            self.cylPlaceholderPerformBatchUpdates(wrappedUpdates, completion: wrappedCompletion)
         }, finally: {
             controller.batchCallDepth -= 1
         })
@@ -495,17 +539,17 @@ extension UICollectionView {
      *      强引用集合视图或其持有者。
      */
     @objc(cyl_placeholderViewBlock:)
-    public func cyl_placeholderViewBlock(_ placeholderViewBlock: CYLCollectionPlaceholderViewBlock?) {
-        cyl_placeholderViewBlock(placeholderViewBlock, backToNormalBlock: nil)
+    public func cylPlaceholderViewBlock(_ placeholderViewBlock: CYLCollectionPlaceholderViewBlock?) {
+        cylPlaceholderViewBlock(placeholderViewBlock, backToNormalBlock: nil)
     }
 
     /**
-     * [EN] Like `cyl_placeholderViewBlock(_:)`, and also sets the block called when the placeholder is removed (the
+     * [EN] Like `cylPlaceholderViewBlock(_:)`, and also sets the block called when the placeholder is removed (the
      *      collection view has content again); nil for both turns the automatic placeholder off.
-     * [CN] 与 `cyl_placeholderViewBlock(_:)` 相同，并设置占位图被移除（集合视图重新有内容）时调用的 block；两者都为 nil 时关闭自动占位图。
+     * [CN] 与 `cylPlaceholderViewBlock(_:)` 相同，并设置占位图被移除（集合视图重新有内容）时调用的 block；两者都为 nil 时关闭自动占位图。
      */
     @objc(cyl_placeholderViewBlock:backToNormalBlock:)
-    public func cyl_placeholderViewBlock(_ placeholderViewBlock: CYLCollectionPlaceholderViewBlock?,
+    public func cylPlaceholderViewBlock(_ placeholderViewBlock: CYLCollectionPlaceholderViewBlock?,
                                          backToNormalBlock: CYLCollectionPlaceholderNormalBlock?) {
         let provider = placeholderViewBlock.map { block in
             { (view: UIScrollView) -> UIView? in block(unsafeDowncast(view, to: UICollectionView.self)) }
@@ -518,82 +562,82 @@ extension UICollectionView {
 
     // MARK: Replacements (swizzled with the originals; calling one calls the original)
 
-    @objc fileprivate dynamic func cyl_ph_reloadData() {
-        cyl_ph_reloadData()
-        cyl_ph_controller?.scheduleUpdate()
+    @objc fileprivate dynamic func cylPlaceholderReloadData() {
+        cylPlaceholderReloadData()
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_setDataSource:)
-    fileprivate dynamic func cyl_ph_setDataSource(_ source: UICollectionViewDataSource?) {
-        cyl_ph_setDataSource(source)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderSetDataSource(_ source: UICollectionViewDataSource?) {
+        cylPlaceholderSetDataSource(source)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_insertSections:)
-    fileprivate dynamic func cyl_ph_insertSections(_ sections: NSIndexSet?) {
-        cyl_ph_insertSections(sections)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderInsertSections(_ sections: NSIndexSet?) {
+        cylPlaceholderInsertSections(sections)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_deleteSections:)
-    fileprivate dynamic func cyl_ph_deleteSections(_ sections: NSIndexSet?) {
-        cyl_ph_deleteSections(sections)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderDeleteSections(_ sections: NSIndexSet?) {
+        cylPlaceholderDeleteSections(sections)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reloadSections:)
-    fileprivate dynamic func cyl_ph_reloadSections(_ sections: NSIndexSet?) {
-        cyl_ph_reloadSections(sections)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReloadSections(_ sections: NSIndexSet?) {
+        cylPlaceholderReloadSections(sections)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_moveSection:toSection:)
-    fileprivate dynamic func cyl_ph_moveSection(_ section: Int, toSection newSection: Int) {
-        cyl_ph_moveSection(section, toSection: newSection)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderMoveSection(_ section: Int, toSection newSection: Int) {
+        cylPlaceholderMoveSection(section, toSection: newSection)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_insertItemsAtIndexPaths:)
-    fileprivate dynamic func cyl_ph_insertItems(at indexPaths: NSArray?) {
-        cyl_ph_insertItems(at: indexPaths)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderInsertItems(at indexPaths: NSArray?) {
+        cylPlaceholderInsertItems(at: indexPaths)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_deleteItemsAtIndexPaths:)
-    fileprivate dynamic func cyl_ph_deleteItems(at indexPaths: NSArray?) {
-        cyl_ph_deleteItems(at: indexPaths)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderDeleteItems(at indexPaths: NSArray?) {
+        cylPlaceholderDeleteItems(at: indexPaths)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reloadItemsAtIndexPaths:)
-    fileprivate dynamic func cyl_ph_reloadItems(at indexPaths: NSArray?) {
-        cyl_ph_reloadItems(at: indexPaths)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReloadItems(at indexPaths: NSArray?) {
+        cylPlaceholderReloadItems(at: indexPaths)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_moveItemAtIndexPath:toIndexPath:)
-    fileprivate dynamic func cyl_ph_moveItem(at indexPath: NSIndexPath?, to newIndexPath: NSIndexPath?) {
-        cyl_ph_moveItem(at: indexPath, to: newIndexPath)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderMoveItem(at indexPath: NSIndexPath?, to newIndexPath: NSIndexPath?) {
+        cylPlaceholderMoveItem(at: indexPath, to: newIndexPath)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_reconfigureItemsAtIndexPaths:)
-    fileprivate dynamic func cyl_ph_reconfigureItems(at indexPaths: NSArray?) {
-        cyl_ph_reconfigureItems(at: indexPaths)
-        cyl_ph_controller?.scheduleUpdate()
+    fileprivate dynamic func cylPlaceholderReconfigureItems(at indexPaths: NSArray?) {
+        cylPlaceholderReconfigureItems(at: indexPaths)
+        cylPlaceholderController?.scheduleUpdate()
     }
 
     @objc(cyl_ph_performBatchUpdates:completion:)
-    fileprivate dynamic func cyl_ph_performBatchUpdates(_ updates: (@convention(block) () -> Void)?,
+    fileprivate dynamic func cylPlaceholderPerformBatchUpdates(_ updates: (@convention(block) () -> Void)?,
                                                         completion: (@convention(block) (Bool) -> Void)?) {
-        guard let controller = cyl_ph_controller, controller.provider != nil else {
-            cyl_ph_performBatchUpdates(updates, completion: completion)
+        guard let controller = cylPlaceholderController, controller.provider != nil else {
+            cylPlaceholderPerformBatchUpdates(updates, completion: completion)
             return
         }
         var wrappedUpdates: (@convention(block) () -> Void)?
         if let updates = updates {
             wrappedUpdates = { [weak self] in
-                let current = self?.cyl_ph_controller
+                let current = self?.cylPlaceholderController
                 current?.batchDepth += 1
                 CYLPlaceholderController.perform(updates) {
                     if let current = current, current.batchDepth > 0 { current.batchDepth -= 1 }
@@ -601,9 +645,9 @@ extension UICollectionView {
                 }
             }
         }
-        cyl_ph_performBatchUpdates(wrappedUpdates) { [weak self] finished in
+        cylPlaceholderPerformBatchUpdates(wrappedUpdates) { [weak self] finished in
             completion?(finished)
-            self?.cyl_ph_controller?.scheduleUpdate()
+            self?.cylPlaceholderController?.scheduleUpdate()
         }
         controller.scheduleUpdate()
     }
@@ -615,27 +659,27 @@ extension UIScrollView {
 
     /**
      * [EN] YES keeps the placeholder from showing even when the list is empty; NO (the default) shows it as before.
-     *      `cyl_statusDisplay` sets it. [CN] YES 时即使列表为空也不显示占位图；NO（默认）与以前相同。由 `cyl_statusDisplay` 设置。
+     *      `cylStatusDisplay` sets it. [CN] YES 时即使列表为空也不显示占位图；NO（默认）与以前相同。由 `cylStatusDisplay` 设置。
      */
-    @objc public var cyl_placeholderHidden: Bool {
+    @objc(cyl_placeholderHidden) public var cylPlaceholderHidden: Bool {
         get { (objc_getAssociatedObject(self, CYLPlaceholderKey.hidden) as? NSNumber)?.boolValue ?? false }
         set {
-            if newValue == cyl_placeholderHidden { return }
+            if newValue == cylPlaceholderHidden { return }
             objc_setAssociatedObject(self, CYLPlaceholderKey.hidden, newValue ? NSNumber(value: true) : nil,
                                      .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            cyl_ph_controller?.scheduleUpdate()
+            cylPlaceholderController?.scheduleUpdate()
         }
     }
 
     /**
-     * [EN] The placeholder shown for this list now, or nil: the view of `cyl_placeholderViewBlock(_:)` (or of the delegate
-     *      API, `cyl_reloadData`) while the list is empty. Updates are applied on the next run loop turn, so read it after
-     *      the reload has been laid out. The same as Android's `RecyclerView.cyl_placeholderView`.
-     * [CN] 当前为该列表显示的占位图，没有则为 nil：列表为空时 `cyl_placeholderViewBlock(_:)`（或委托接口 `cyl_reloadData`）提供的视图。
-     *      更新在下一次 run loop 应用，请在刷新布局后读取。与 Android 的 `RecyclerView.cyl_placeholderView` 相同。
+     * [EN] The placeholder shown for this list now, or nil: the view of `cylPlaceholderViewBlock(_:)` (or of the delegate
+     *      API, `cylReloadData`) while the list is empty. Updates are applied on the next run loop turn, so read it after
+     *      the reload has been laid out. The same as Android's `RecyclerView.cylPlaceholderView`.
+     * [CN] 当前为该列表显示的占位图，没有则为 nil：列表为空时 `cylPlaceholderViewBlock(_:)`（或委托接口 `cylReloadData`）提供的视图。
+     *      更新在下一次 run loop 应用，请在刷新布局后读取。与 Android 的 `RecyclerView.cylPlaceholderView` 相同。
      */
-    @objc public var cyl_placeholderView: UIView? {
-        if let view = cyl_ph_controller?.view { return view }
+    @objc(cyl_placeholderView) public var cylPlaceholderView: UIView? {
+        if let view = cylPlaceholderController?.view { return view }
         // [EN] The delegate API (UITableView+CYLTableViewPlaceHolder) keeps its view under its own key, read by name as
         //      before. [CN] 委托接口（UITableView+CYLTableViewPlaceHolder）以自己的 key 保存视图，与以前一样按名称读取。
         let legacy = NSSelectorFromString("placeHolderView")

@@ -11,6 +11,7 @@
 | [与占位图组合](#与占位图组合--combined-with-the-placeholder) | [Combined with the placeholder](#与占位图组合--combined-with-the-placeholder) |
 | [网络检测](#网络检测--network-detection) | [Network detection](#网络检测--network-detection) |
 | [资源缺失](#资源缺失--missing-resource) | [Missing resource](#资源缺失--missing-resource) |
+| [资源缺失的调试守卫](#资源缺失的调试守卫--debug-guard-of-the-missing-resource-bar) | [Debug guard of the missing-resource bar](#资源缺失的调试守卫--debug-guard-of-the-missing-resource-bar) |
 | [资源缺失监视（Android）](#资源缺失监视android--missing-resource-monitor-android) | [Missing resource monitor (Android)](#资源缺失监视android--missing-resource-monitor-android) |
 | [演示](#演示--demo) | [Demo](#演示--demo) |
 | [限制](#限制--limits) | [Limits](#限制--limits) |
@@ -65,15 +66,15 @@
 
 ```swift
 // [CN] 红条 + 占位图 / [EN] the bar and the placeholder
-tableView.cyl_placeholderViewBlock({ _ in CYLPlaceholderStackView(scenario: .networkUnavailable, actions: nil) })
-cyl_statusView.delegate = self            // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
-cyl_setStatusDisplay(.all, animated: true)
+tableView.cylPlaceholderViewBlock({ _ in CYLPlaceholderStackView(scenario: .networkUnavailable, actions: nil) })
+cylStatusView.delegate = self            // [CN] 与 CYLChatKit 相同 / [EN] as in CYLChatKit
+cylSetStatusDisplay(.all, animated: true)
 // [CN] 只显示红条 / [EN] only the bar
-cyl_statusDisplay = .statusBar
+cylStatusDisplay = .statusBar
 // [CN] 断网时自动显示红条 / [EN] the bar while offline
-cyl_showsStatusViewWhenOffline = true
+cylShowsStatusViewWhenOffline = true
 // [CN] 配置文件 / [EN] a configuration file
-try cyl_applyStatusConfiguration(contentsOf: url)
+try cylApplyStatusConfiguration(contentsOf: url)
 ```
 
 ```json

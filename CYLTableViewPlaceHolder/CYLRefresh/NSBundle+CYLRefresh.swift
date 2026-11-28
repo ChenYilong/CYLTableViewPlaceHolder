@@ -37,7 +37,7 @@ extension Bundle {
      *      （`<language>.lproj/CYLRefresh.strings`）；CYLRefresh.bundle 已不存在。应用未包含它时为 nil（并输出日志）。
      */
     @objc(cyl_refreshBundle)
-    public dynamic class func cyl_refresh() -> Bundle! {
+    public dynamic class func cylRefresh() -> Bundle! {
         // [EN] The one lookup of CYLTableViewPlaceHolder.bundle, shared with the placeholder (CYLPlaceholderResourceBundle).
         // [CN] 与占位图共用对 CYLTableViewPlaceHolder.bundle 的唯一查找（CYLPlaceholderResourceBundle）。
         CYLPlaceholderResourceBundle()
@@ -48,7 +48,7 @@ extension Bundle {
      *      after the first call.
      * [CN] 刷新头与刷新尾的箭头：库 bundle 中的 `CYLRefreshArrow@2x.png`，按模板渲染，首次调用后缓存。
      */
-    @objc public dynamic class func cyl_arrowImage() -> UIImage! {
+    @objc(cyl_arrowImage) public dynamic class func cylArrowImage() -> UIImage! {
         if CYLRefreshBundleCache.arrowImage == nil {
             CYLRefreshBundleCache.arrowImage = templateImage(named: "CYLRefreshArrow@2x")
         }
@@ -60,7 +60,7 @@ extension Bundle {
      *      first call.
      * [CN] trailer 的箭头：库 bundle 中的 `CYLRefreshTrailArrow@2x.png`，按模板渲染，首次调用后缓存。
      */
-    @objc public dynamic class func cyl_trailArrowImage() -> UIImage! {
+    @objc(cyl_trailArrowImage) public dynamic class func cylTrailArrowImage() -> UIImage! {
         if CYLRefreshBundleCache.trailArrowImage == nil {
             CYLRefreshBundleCache.trailArrowImage = templateImage(named: "CYLRefreshTrailArrow@2x")
         }
@@ -72,7 +72,7 @@ extension Bundle {
     private class func templateImage(named name: String) -> UIImage? {
         // [EN] Through the method, as `[self cyl_refreshBundle]` did, so a replaced implementation is used.
         // [CN] 与 `[self cyl_refreshBundle]` 一样通过该方法读取，替换后的实现也会生效。
-        guard let path = cyl_refresh()?.path(forResource: name, ofType: "png") else { return nil }
+        guard let path = cylRefresh()?.path(forResource: name, ofType: "png") else { return nil }
         return UIImage(contentsOfFile: path)?.withRenderingMode(.alwaysTemplate)
     }
 
@@ -81,8 +81,8 @@ extension Bundle {
      * [CN] 不带回退值的 `cyl_localizedStringForKey:value:`。
      */
     @objc(cyl_localizedStringForKey:)
-    public dynamic class func cyl_localizedString(forKey key: String) -> String {
-        cyl_localizedString(forKey: key, value: nil)
+    public dynamic class func cylLocalizedString(forKey key: String) -> String {
+        cylLocalizedString(forKey: key, value: nil)
     }
 
     /**
@@ -95,7 +95,7 @@ extension Bundle {
      *      `value`。
      */
     @objc(cyl_localizedStringForKey:value:)
-    public dynamic class func cyl_localizedString(forKey key: String, value: String?) -> String {
+    public dynamic class func cylLocalizedString(forKey key: String, value: String?) -> String {
         let config = CYLRefreshConfig.default
         let table = config.i18nFilename
 
@@ -111,7 +111,7 @@ extension Bundle {
 
             // 获取 CYLRefresh 自有的语言包
             if CYLRefreshBundleCache.systemI18nBundle == nil {
-                CYLRefreshBundleCache.systemI18nBundle = cyl_defaultI18nBundle(language: language)
+                CYLRefreshBundleCache.systemI18nBundle = cylDefaultI18nBundle(language: language)
             }
         }
         var value = value
@@ -126,7 +126,7 @@ extension Bundle {
 
     // [EN] The library's `.lproj` for a language: en, zh-Hans, zh-Hant (zh-Hant, zh-HK, zh-TW), ja, ko, ru, uk, else en.
     // [CN] 某语言对应的库内 `.lproj`：en、zh-Hans、zh-Hant（zh-Hant、zh-HK、zh-TW）、ja、ko、ru、uk，其他为 en。
-    private class func cyl_defaultI18nBundle(language: String?) -> Bundle? {
+    private class func cylDefaultI18nBundle(language: String?) -> Bundle? {
         let language = language ?? ""
         let folder: String
         if language.hasPrefix("en") {
@@ -145,13 +145,13 @@ extension Bundle {
             folder = "en"
         }
         // 从统一资源包 CYLTableViewPlaceHolder.bundle 中查找资源
-        guard let path = Bundle.cyl_refresh()?.path(forResource: folder, ofType: "lproj") else { return nil }
+        guard let path = Bundle.cylRefresh()?.path(forResource: folder, ofType: "lproj") else { return nil }
         return Bundle(path: path)
     }
 
     // [EN] Clears the language bundles; `CYLRefreshConfig.languageCode` calls it when the language changes.
     // [CN] 清除语言包缓存；`CYLRefreshConfig.languageCode` 在语言改变时调用。
-    static func cyl_resetLanguageResourceCache() {
+    static func cylResetLanguageResourceCache() {
         CYLRefreshBundleCache.defaultI18nBundle = nil
         CYLRefreshBundleCache.systemI18nBundle = nil
     }

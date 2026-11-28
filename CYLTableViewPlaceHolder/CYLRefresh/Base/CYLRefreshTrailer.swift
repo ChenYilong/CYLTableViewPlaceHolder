@@ -22,8 +22,8 @@ import UIKit
 /**
  * [EN] The base class of the horizontal controls at the trailing end of the content: swiping past the end and
  *      releasing runs the refreshing callback (for example to open details); set one as a scroll view's
- *      `cyl_trailer`.
- * [CN] 位于内容末端的横向控件基类：越过末端滑动并松手时执行刷新回调（例如打开详情）；设为滚动视图的 `cyl_trailer` 使用。
+ *      `cylTrailer`.
+ * [CN] 位于内容末端的横向控件基类：越过末端滑动并松手时执行刷新回调（例如打开详情）；设为滚动视图的 `cylTrailer` 使用。
  */
 @objc(CYLRefreshTrailer)
 open class CYLRefreshTrailer: CYLRefreshComponent {
@@ -143,16 +143,16 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
         if state == .refreshing { return }
 
         guard let scrollView = scrollView else { return }
-        scrollViewOriginalInset = scrollView.cyl_inset
+        scrollViewOriginalInset = scrollView.cylInset
 
         // 当前的contentOffset
-        let currentOffsetX = scrollView.cyl_offsetX
+        let currentOffsetX = scrollView.cylOffsetX
         // 尾部控件刚好出现的offsetX
         let happenOffsetX = self.happenOffsetX
         // 如果是向右滚动到看不见右边控件，直接返回
         if currentOffsetX <= happenOffsetX { return }
 
-        let pullingPercent = (currentOffsetX - happenOffsetX) / (cyl_w * triggerRate)
+        let pullingPercent = (currentOffsetX - happenOffsetX) / (cylW * triggerRate)
 
         // 如果已全部加载，仅设置pullingPercent，然后返回
         if state == .noMoreData {
@@ -169,7 +169,7 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
         if scrollView.isDragging {
             self.pullingPercent = pullingPercent
             // 普通 和 即将刷新 的临界点
-            let normal2pullingOffsetX = happenOffsetX + cyl_w * triggerRate
+            let normal2pullingOffsetX = happenOffsetX + cylW * triggerRate
 
             if state == .idle && currentOffsetX > normal2pullingOffsetX {
                 state = .pulling
@@ -190,7 +190,7 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
         if state != .idle && state != .pulling { return false }
         // Content narrower than the view keeps the pull-and-release behavior.
         if widthForContentBreakView <= 0 { return false }
-        if scrollView?.cyl_header?.isRefreshing == true || scrollView?.cyl_footer?.isRefreshing == true { return false }
+        if scrollView?.cylHeader?.isRefreshing == true || scrollView?.cylFooter?.isRefreshing == true { return false }
         if pullingPercent < triggerAutomaticallyRefreshPercent { return false }
 
         // Only while moving toward the end, so bouncing back does not trigger again.
@@ -239,7 +239,7 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
                         self.endRefreshingAnimationBeginAction?()
 
                         if let scrollView = self.scrollView {
-                            scrollView.cyl_insetR -= self.lastRightDelta
+                            scrollView.cylInsetR -= self.lastRightDelta
                         }
                         // 自动调整透明度
                         if self.isAutomaticallyChangeAlpha { self.alpha = 0.0 }
@@ -255,29 +255,29 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
                 let deltaW = widthForContentBreakView
                 // 刚刷新完毕
                 if oldState == .refreshing && deltaW > 0, let scrollView = scrollView,
-                   scrollView.cyl_totalDataCount() != lastRefreshCount {
-                    scrollView.cyl_offsetX = scrollView.cyl_offsetX
+                   scrollView.cylTotalDataCount() != lastRefreshCount {
+                    scrollView.cylOffsetX = scrollView.cylOffsetX
                 }
             } else if newValue == .refreshing {
                 refreshGeneration &+= 1
                 let generation = refreshGeneration
                 // 记录刷新前的数量
-                lastRefreshCount = scrollView?.cyl_totalDataCount() ?? 0
+                lastRefreshCount = scrollView?.cylTotalDataCount() ?? 0
 
                 UIView.animate(withDuration: fastAnimationDuration, animations: {
-                    var right = self.cyl_w + self.scrollViewOriginalInset.right
+                    var right = self.cylW + self.scrollViewOriginalInset.right
                     let deltaW = self.widthForContentBreakView
                     // 如果内容宽度小于view的宽度
                     if deltaW < 0 {
                         right -= deltaW
                     }
-                    self.lastRightDelta = right - (self.scrollView?.cyl_insetR ?? 0)
-                    self.scrollView?.cyl_insetR = right
+                    self.lastRightDelta = right - (self.scrollView?.cylInsetR ?? 0)
+                    self.scrollView?.cylInsetR = right
 
                     // 设置滚动位置
                     if let scrollView = self.scrollView {
                         var offset = scrollView.contentOffset
-                        offset.x = self.happenOffsetX + self.cyl_w
+                        offset.x = self.happenOffsetX + self.cylW
                         scrollView.setContentOffset(offset, animated: false)
                     }
                 }, completion: { _ in
@@ -297,12 +297,12 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
         super.scrollViewContentSizeDidChange(change)
 
         // 内容的宽度
-        let contentWidth = (scrollView?.cyl_contentW ?? 0) + ignoredScrollViewContentInsetRight
+        let contentWidth = (scrollView?.cylContentW ?? 0) + ignoredScrollViewContentInsetRight
         // 表格的宽度
-        let scrollWidth = (scrollView?.cyl_w ?? 0) - scrollViewOriginalInset.left - scrollViewOriginalInset.right +
+        let scrollWidth = (scrollView?.cylW ?? 0) - scrollViewOriginalInset.left - scrollViewOriginalInset.right +
             ignoredScrollViewContentInsetRight
         // 设置位置和尺寸
-        cyl_x = max(contentWidth, scrollWidth)
+        cylX = max(contentWidth, scrollWidth)
     }
 
     /**
@@ -312,9 +312,9 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
     open override func placeSubviews() {
         super.placeSubviews()
 
-        cyl_h = scrollView?.cyl_h ?? 0
+        cylH = scrollView?.cylH ?? 0
         // 设置自己的宽度
-        cyl_w = CYLRefreshTrailWidth
+        cylW = CYLRefreshTrailWidth
     }
 
     /**
@@ -332,8 +332,8 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
                 oldScrollView.alwaysBounceHorizontal = previousHorizontalBounce
             }
             if !oldScrollView.alwaysBounceVertical {
-                oldScrollView.alwaysBounceVertical = previousVerticalBounce || oldScrollView.cyl_header != nil ||
-                    oldScrollView.cyl_footer != nil
+                oldScrollView.alwaysBounceVertical = previousVerticalBounce || oldScrollView.cylHeader != nil ||
+                    oldScrollView.cylFooter != nil
             }
         }
 
@@ -354,10 +354,10 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
     // MARK: - Chaining
 
     /**
-     * [EN] Sets the trailer as `scrollView.cyl_trailer` and returns it. [CN] 设为 `scrollView.cyl_trailer` 并返回自身。
+     * [EN] Sets the trailer as `scrollView.cylTrailer` and returns it. [CN] 设为 `scrollView.cylTrailer` 并返回自身。
      */
-    open override func cyl_link(to scrollView: UIScrollView) -> Self {
-        scrollView.cyl_trailer = self
+    open override func link(to scrollView: UIScrollView) -> Self {
+        scrollView.cylTrailer = self
         return self
     }
 
@@ -384,6 +384,6 @@ open class CYLRefreshTrailer: CYLRefreshComponent {
      * [EN] A trailer opens sideways: its open size is its width. [CN] trailer 横向展开：展开尺寸是它的宽度。
      */
     open override var expandHeight: CGFloat {
-        cyl_w
+        cylW
     }
 }

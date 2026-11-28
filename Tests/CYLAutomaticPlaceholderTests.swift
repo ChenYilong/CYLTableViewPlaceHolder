@@ -145,8 +145,8 @@ private class AutomaticTestSource: NSObject, UITableViewDataSource, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
     }
-    // [EN] Only `cyl_reloadData` asks, and only the test that sets `legacyView` calls it.
-    // [CN] 只有 `cyl_reloadData` 会调用，且只有设置了 `legacyView` 的测试调用它。
+    // [EN] Only `cylReloadData` asks, and only the test that sets `legacyView` calls it.
+    // [CN] 只有 `cylReloadData` 会调用，且只有设置了 `legacyView` 的测试调用它。
     func makePlaceHolderView() -> UIView { legacyView ?? UIView() }
 }
 
@@ -469,7 +469,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         window.addSubview(table)
         table.dataSource = source
         let placeholder = UIView()
-        table.cyl_placeholderViewBlock { _ in placeholder }
+        table.cylPlaceholderViewBlock { _ in placeholder }
         table.reloadData()
         drainUpdates()
         table.layoutIfNeeded()
@@ -482,7 +482,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         NotificationCenter.default.post(name: UIResponder.keyboardWillHideNotification, object: nil, userInfo: nil)
         table.layoutIfNeeded()
         XCTAssertEqual(placeholder.frame.height, 480, accuracy: 0.1, "the keyboard hides: the whole table again")
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
     }
 
     func testTableReloadInsertDeleteAndCancellation() {
@@ -491,7 +491,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         table.dataSource = source
         let placeholder = UIView()
         var restores = 0
-        table.cyl_placeholderViewBlock({ view in
+        table.cylPlaceholderViewBlock({ view in
             view.isScrollEnabled = false
             return placeholder
         }, backToNormalBlock: { view in
@@ -517,7 +517,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         table.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         drainUpdates()
         XCTAssertIdentical(placeholder.superview, table)
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
         XCTAssertNil(placeholder.superview)
         XCTAssertEqual(restores, 2)
         table.reloadData()
@@ -533,7 +533,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         collection.dataSource = source
         let placeholder = UIView()
         var restores = 0
-        collection.cyl_placeholderViewBlock({ _ in placeholder }, backToNormalBlock: { _ in restores += 1 })
+        collection.cylPlaceholderViewBlock({ _ in placeholder }, backToNormalBlock: { _ in restores += 1 })
         collection.reloadData()
         drainUpdates()
         XCTAssertIdentical(placeholder.superview, collection)
@@ -550,7 +550,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         }, completion: nil)
         drainUpdates()
         XCTAssertIdentical(placeholder.superview, collection)
-        collection.cyl_placeholderViewBlock(nil)
+        collection.cylPlaceholderViewBlock(nil)
         XCTAssertEqual(restores, 2)
     }
 
@@ -559,16 +559,16 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         source.legacyView = UIView()
         let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         table.dataSource = source
-        table.cyl_reloadData()
+        table.cylReloadData()
         XCTAssertIdentical(source.legacyView?.superview, table)
         let view = UIView()
-        table.cyl_placeholderViewBlock { _ in view }
-        table.cyl_reloadData()
+        table.cylPlaceholderViewBlock { _ in view }
+        table.cylReloadData()
         drainUpdates()
         XCTAssertNil(source.legacyView?.superview)
         XCTAssertIdentical(view.superview, table)
-        table.cyl_placeholderViewBlock(nil)
-        table.cyl_reloadData()
+        table.cylPlaceholderViewBlock(nil)
+        table.cylReloadData()
         XCTAssertIdentical(source.legacyView?.superview, table)
     }
 
@@ -577,8 +577,8 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         let table = UITableView()
         table.dataSource = source
         var calls = 0
-        table.cyl_placeholderViewBlock { _ in calls += 1; return UIView() }
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock { _ in calls += 1; return UIView() }
+        table.cylPlaceholderViewBlock(nil)
         drainUpdates()
         XCTAssertEqual(calls, 0)
     }
@@ -589,16 +589,16 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         table.dataSource = source
         let first = UIView()
         let replacement = UIView()
-        table.cyl_placeholderViewBlock({ _ in first }, backToNormalBlock: { view in
-            view.cyl_placeholderViewBlock { _ in replacement }
+        table.cylPlaceholderViewBlock({ _ in first }, backToNormalBlock: { view in
+            view.cylPlaceholderViewBlock { _ in replacement }
         })
         drainUpdates()
         XCTAssertIdentical(first.superview, table)
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
         drainUpdates()
         XCTAssertNil(first.superview)
         XCTAssertIdentical(replacement.superview, table)
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
     }
 
     func testDefaultPlaceholderLoadsResources() {
@@ -1009,7 +1009,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
         table.dataSource = source
         let view = UIView()
-        table.cyl_placeholderViewBlock { _ in view }
+        table.cylPlaceholderViewBlock { _ in view }
         table.reloadData()
         drainUpdates()
         XCTAssertIdentical(view.superview, table)
@@ -1029,7 +1029,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         wait(for: [batchExecuted], timeout: 15)
         drainUpdates()
         XCTAssertIdentical(view.superview, table)
-        table.cyl_placeholderViewBlock(nil)
+        table.cylPlaceholderViewBlock(nil)
     }
 
     func testAutomaticPlaceholderStaysBelowRefreshControls() throws {
@@ -1039,19 +1039,75 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
                                           collectionViewLayout: UICollectionViewFlowLayout())
         collection.dataSource = source
         collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-        collection.cyl_header = CYLRefreshNormalHeader(refreshingBlock: {})
-        collection.cyl_footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        collection.cylHeader = CYLRefreshNormalHeader(refreshingBlock: {})
+        collection.cylFooter = CYLRefreshAutoNormalFooter(refreshingBlock: {})
         let view = UIView()
-        collection.cyl_placeholderViewBlock { _ in view }
+        collection.cylPlaceholderViewBlock { _ in view }
         collection.reloadData()
         drainUpdates()
         let subviews = collection.subviews
         let placeholderIndex = subviews.firstIndex(of: view)
         XCTAssertNotNil(placeholderIndex)
         let index = try XCTUnwrap(placeholderIndex)
-        XCTAssertGreaterThan(subviews.firstIndex { $0 === collection.cyl_footer } ?? NSNotFound, index)
-        XCTAssertGreaterThan(subviews.firstIndex { $0 === collection.cyl_header } ?? NSNotFound, index)
-        collection.cyl_placeholderViewBlock(nil)
+        XCTAssertGreaterThan(subviews.firstIndex { $0 === collection.cylFooter } ?? NSNotFound, index)
+        XCTAssertGreaterThan(subviews.firstIndex { $0 === collection.cylHeader } ?? NSNotFound, index)
+        collection.cylPlaceholderViewBlock(nil)
+    }
+
+    // [EN] An empty list has nothing more to load: its footer and trailer hide while the placeholder shows (the header
+    //      stays, issue #8) and show again with the data; a footer the app hid itself stays hidden.
+    // [CN] 空列表没有更多可加载：占位图显示期间刷新尾与 trailer 隐藏（刷新头保留，issue #8），数据恢复后重新显示；应用自己隐藏的刷新尾保持隐藏。
+    func testLoadMoreControlsHideWhileThePlaceholderShows() {
+        let source = AutomaticTestSource()
+        let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        table.dataSource = source
+        let header = CYLRefreshNormalHeader(refreshingBlock: {})
+        let footer = CYLRefreshAutoNormalFooter(refreshingBlock: {})
+        let trailer = CYLRefreshNormalTrailer(refreshingBlock: {})
+        table.cylHeader = header
+        table.cylFooter = footer
+        table.cylTrailer = trailer
+        let view = UIView()
+        table.cylPlaceholderViewBlock { _ in view }
+        table.reloadData()
+        drainUpdates()
+        XCTAssertIdentical(view.superview, table)
+        XCTAssertTrue(footer.isHidden, "no load-more footer over an empty list")
+        XCTAssertTrue(trailer.isHidden, "no load-more trailer over an empty list")
+        XCTAssertFalse(header.isHidden, "pull to refresh stays on an empty list")
+
+        source.count = 3
+        table.reloadData()
+        drainUpdates()
+        XCTAssertNil(view.superview)
+        XCTAssertFalse(footer.isHidden, "the footer returns with the data")
+        XCTAssertFalse(trailer.isHidden)
+
+        footer.isHidden = true
+        source.count = 0
+        table.reloadData()
+        drainUpdates()
+        source.count = 3
+        table.reloadData()
+        drainUpdates()
+        XCTAssertTrue(footer.isHidden, "a footer the app hid stays hidden")
+        table.cylPlaceholderViewBlock(nil)
+    }
+
+    func testLegacyPlaceholderHidesTheFooterToo() {
+        let source = AutomaticTestSource()
+        source.legacyView = UIView()
+        let table = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        table.dataSource = source
+        let footer = CYLRefreshBackNormalFooter(refreshingBlock: {})
+        table.cylFooter = footer
+        table.cylReloadData()
+        XCTAssertIdentical(source.legacyView?.superview, table)
+        XCTAssertTrue(footer.isHidden)
+        source.count = 2
+        table.cylReloadData()
+        XCTAssertNil(source.legacyView?.superview)
+        XCTAssertFalse(footer.isHidden)
     }
 
     func testCollectionSectionsAndFrameLayoutWithOffset() {
@@ -1062,7 +1118,7 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         collection.dataSource = source
         collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         let view = UIView()
-        collection.cyl_placeholderViewBlock { _ in view }
+        collection.cylPlaceholderViewBlock { _ in view }
         collection.reloadData()
         drainUpdates()
         collection.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
@@ -1078,14 +1134,15 @@ final class CYLAutomaticPlaceholderTests: XCTestCase {
         collection.reloadSections(IndexSet(integer: 1))
         drainUpdates()
         XCTAssertIdentical(view.superview, collection)
-        collection.cyl_placeholderViewBlock(nil)
+        collection.cylPlaceholderViewBlock(nil)
     }
 
     func testAppearanceDefaultsApplyLiveAndKeepExplicitValues() throws {
         let image = CYLPlaceholderView.image(for: .empty)
         let placeholder = CYLPlaceholderView(image: image, text: "Empty")
         XCTAssertEqual(placeholder.textLabel.textColor, UIColor.gray)
-        XCTAssertEqual(placeholder.imageView.tintColor, placeholder.tintColor)
+        // The engine resolves the icon color against the view's traits (CYLTabBarController 3c6a4d2).
+        XCTAssertEqual(placeholder.imageView.tintColor, placeholder.tintColor.resolvedColor(with: placeholder.traitCollection))
         placeholder.defaultTitleColor = .red
         placeholder.defaultIconColor = .green
         placeholder.defaultTitleFont = UIFont.systemFont(ofSize: 21)

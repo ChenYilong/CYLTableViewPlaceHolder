@@ -251,30 +251,30 @@ final class CYLHUDLifecycleViewController: UITableViewController {
         tableView.accessibilityIdentifier = "hudLifecycle"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "item")
         // Failed: the placeholder with a "Retry" button, shown only while the list is empty.
-        tableView.cyl_placeholderViewBlock({ [weak self] _ in
+        tableView.cylPlaceholderViewBlock({ [weak self] _ in
             CYLPlaceholderStackView(scenario: .retryButton, actions: [
                 .retry: { _, _ in self?.loadFirstPage() },
             ])
         })
         // Loaded: pull down to refresh, pull up to load more.
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self?.items = Array(1...15)
-                self?.tableView.cyl_reloadData()
-                self?.tableView.cyl_header?.endRefreshing()
-                self?.tableView.cyl_footer?.resetNoMoreData()
+                self?.tableView.cylReloadData()
+                self?.tableView.cylHeader?.endRefreshing()
+                self?.tableView.cylFooter?.resetNoMoreData()
             }
         }
-        tableView.cyl_footer = CYLRefreshAutoNormalFooter { [weak self] in
+        tableView.cylFooter = CYLRefreshAutoNormalFooter { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 guard let self = self else { return }
                 let next = self.items.count + 1
                 self.items += Array(next..<(next + 10))
-                self.tableView.cyl_reloadData()
+                self.tableView.cylReloadData()
                 if self.items.count >= 45 {
-                    self.tableView.cyl_footer?.endRefreshingWithNoMoreData()
+                    self.tableView.cylFooter?.endRefreshingWithNoMoreData()
                 } else {
-                    self.tableView.cyl_footer?.endRefreshing()
+                    self.tableView.cylFooter?.endRefreshing()
                 }
             }
         }
@@ -294,7 +294,7 @@ final class CYLHUDLifecycleViewController: UITableViewController {
                 self.hud.dismiss()
                 self.items = Array(1...15)
             }
-            self.tableView.cyl_reloadData()
+            self.tableView.cylReloadData()
         }
     }
 

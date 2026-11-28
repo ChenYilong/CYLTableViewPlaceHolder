@@ -401,7 +401,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
     }
 
     internal var tintsIcon = true
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /**
      * Whether the animation (a file or an image sequence) plays by itself while the view is on screen, true by default;
@@ -434,23 +434,23 @@ class CYLPlaceholderView @JvmOverloads constructor(
 
     /** The text color (`defaultTitleColor`). */
     @ColorInt var defaultTitleColor: Int = Color.rgb(0x8E, 0x8E, 0x93)
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The icon color (`defaultIconColor`). */
     @ColorInt var defaultIconColor: Int = ACCENT
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The background color (`defaultBackgroundColor`). */
     @ColorInt var defaultBackgroundColor: Int = Color.TRANSPARENT
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The text size in sp (`defaultTitleFont`, the size of the iOS UIFont). */
     var defaultTitleFont: Float = 17f
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The text's typeface, or null for the default (the family and weight of the iOS `defaultTitleFont`). */
     var defaultTitleTypeface: android.graphics.Typeface? = null
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The text's offset in dp, x and y (`defaultTitlePositionAdjustment`). */
     var defaultTitlePositionAdjustment: FloatArray = floatArrayOf(0f, 0f)
@@ -462,19 +462,19 @@ class CYLPlaceholderView @JvmOverloads constructor(
 
     /** The text color when selected, or 0 for [defaultTitleColor] (`defaultSelectedTitleColor`). */
     @ColorInt var defaultSelectedTitleColor: Int = 0
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The icon color when selected, or 0 for [defaultIconColor] (`defaultSelectedIconColor`). */
     @ColorInt var defaultSelectedIconColor: Int = 0
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The background color when selected, or 0 for [defaultBackgroundColor] (`defaultSelectedBackgroundColor`). */
     @ColorInt var defaultSelectedBackgroundColor: Int = 0
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The text size in sp when selected, or 0 for [defaultTitleFont] (`defaultSelectedTitleFont`). */
     var defaultSelectedTitleFont: Float = 0f
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The image drawn behind a selected placeholder by default (`defaultSelectionIndicatorImage`). */
     var defaultSelectionIndicatorImage: Drawable? = null
@@ -484,15 +484,15 @@ class CYLPlaceholderView @JvmOverloads constructor(
 
     /** The image drawn behind a selected placeholder (`selectionIndicatorImage`). */
     var selectionIndicatorImage: Drawable? = null
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** The tint of the selection image (`selectionIndicatorTintColor`). */
     @ColorInt var selectionIndicatorTintColor: Int = 0
-        set(value) { field = value; refreshColors() }
+        set(value) { field = value; refreshPlaceholderColors() }
 
     /** Whether the placeholder is selected (`selected`); it also selects the view, which shows `selectedImage`. */
     var selectedState: Boolean = false
-        set(value) { field = value; isSelected = value; refreshColors() }
+        set(value) { field = value; isSelected = value; refreshPlaceholderColors() }
 
     /** The margin around the content, in dp (`contentMargin`): the view's padding. */
     var contentMargin: Float = 16f
@@ -650,7 +650,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
             image?.let { put("CYLPlaceholderItemImage", it) }
         }
         refreshTap()
-        refreshColors()
+        refreshPlaceholderColors()
     }
 
     private fun applyContentMargin() {
@@ -663,7 +663,7 @@ class CYLPlaceholderView @JvmOverloads constructor(
         animationLoops = animationRepeatCount != 1
     }
 
-    private fun refreshColors() {
+    private fun refreshPlaceholderColors() {
         val selected = selectedState
         val title = if (selected && defaultSelectedTitleColor != 0) defaultSelectedTitleColor else defaultTitleColor
         val icon = if (selected && defaultSelectedIconColor != 0) defaultSelectedIconColor else defaultIconColor

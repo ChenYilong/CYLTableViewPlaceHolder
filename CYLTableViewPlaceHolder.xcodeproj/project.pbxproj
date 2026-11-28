@@ -159,8 +159,14 @@
 		C0A1B2C3D4E5F60718293A03 /* CYLTabBarController.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */; };
 		C0A1B2C3D4E5F60718293A04 /* CYLTabBarController.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C0A1B2C3D4E5F60718293A12 /* CYLAnimatedItem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; };
+		C0A1B2C3D4E5F60718293B12 /* CYLBadge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293B11 /* CYLBadge.xcframework */; };
+		C0A1B2C3D4E5F60718293C12 /* CYLUtilsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293C11 /* CYLUtilsKit.xcframework */; };
 		C0A1B2C3D4E5F60718293A13 /* CYLAnimatedItem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; };
+		C0A1B2C3D4E5F60718293B13 /* CYLBadge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293B11 /* CYLBadge.xcframework */; };
+		C0A1B2C3D4E5F60718293C13 /* CYLUtilsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293C11 /* CYLUtilsKit.xcframework */; };
 		C0A1B2C3D4E5F60718293A14 /* CYLAnimatedItem.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0A1B2C3D4E5F60718293B14 /* CYLBadge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293B11 /* CYLBadge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0A1B2C3D4E5F60718293C14 /* CYLUtilsKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A1B2C3D4E5F60718293C11 /* CYLUtilsKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C1A2B3C4D5E6F70819203A01 /* CYLPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F70819203A02 /* CYLPlaceholderView.swift */; };
 		C1A2B3C4D5E6F70819203A03 /* CYLPlaceholderItemStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F70819203A04 /* CYLPlaceholderItemStackView.swift */; };
 		C516B4D2C05CD33369DA2655 /* CYLRefreshDrawnFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4679CA9F7EC02AEA0C677F6A /* CYLRefreshDrawnFooter.swift */; };
@@ -221,6 +227,8 @@
 				8D4C11596E4D4AD17BA36C00 /* CYLTableViewPlaceHolder.framework in Embed Frameworks */,
 				C0A1B2C3D4E5F60718293A04 /* CYLTabBarController.xcframework in Embed Frameworks */,
 				C0A1B2C3D4E5F60718293A14 /* CYLAnimatedItem.xcframework in Embed Frameworks */,
+				C0A1B2C3D4E5F60718293B14 /* CYLBadge.xcframework in Embed Frameworks */,
+				C0A1B2C3D4E5F60718293C14 /* CYLUtilsKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -371,6 +379,8 @@
 		C02E9A1280C5E6A5CA678E2A /* CYLRefreshMaterialHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CYLRefreshMaterialHeader.h; sourceTree = "<group>"; };
 		C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLTabBarController.xcframework; path = Carthage/Build/CYLTabBarController.xcframework; sourceTree = SOURCE_ROOT; };
 		C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLAnimatedItem.xcframework; path = Carthage/Build/CYLAnimatedItem.xcframework; sourceTree = SOURCE_ROOT; };
+		C0A1B2C3D4E5F60718293B11 /* CYLBadge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLBadge.xcframework; path = Carthage/Build/CYLBadge.xcframework; sourceTree = SOURCE_ROOT; };
+		C0A1B2C3D4E5F60718293C11 /* CYLUtilsKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CYLUtilsKit.xcframework; path = Carthage/Build/CYLUtilsKit.xcframework; sourceTree = SOURCE_ROOT; };
 		C1A2B3C4D5E6F70819203A02 /* CYLPlaceholderView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderView.swift; sourceTree = "<group>"; };
 		C1A2B3C4D5E6F70819203A04 /* CYLPlaceholderItemStackView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLPlaceholderItemStackView.swift; sourceTree = "<group>"; };
 		C200F206AF47ADA6FA3055A0 /* CYLRefreshAnimationHeader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CYLRefreshAnimationHeader.swift; sourceTree = "<group>"; };
@@ -425,6 +435,8 @@
 				D9B587752F2A1F0032014EA4 /* SpriteKit.framework in Frameworks */,
 				C0A1B2C3D4E5F60718293A02 /* CYLTabBarController.xcframework in Frameworks */,
 				C0A1B2C3D4E5F60718293A12 /* CYLAnimatedItem.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293B12 /* CYLBadge.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293C12 /* CYLUtilsKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +448,8 @@
 				59C3D0A3A565785138A753B3 /* CYLTableViewPlaceHolder.framework in Frameworks */,
 				C0A1B2C3D4E5F60718293A03 /* CYLTabBarController.xcframework in Frameworks */,
 				C0A1B2C3D4E5F60718293A13 /* CYLAnimatedItem.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293B13 /* CYLBadge.xcframework in Frameworks */,
+				C0A1B2C3D4E5F60718293C13 /* CYLUtilsKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -769,6 +783,8 @@
 			children = (
 				C0A1B2C3D4E5F60718293A01 /* CYLTabBarController.xcframework */,
 				C0A1B2C3D4E5F60718293A11 /* CYLAnimatedItem.xcframework */,
+				C0A1B2C3D4E5F60718293B11 /* CYLBadge.xcframework */,
+				C0A1B2C3D4E5F60718293C11 /* CYLUtilsKit.xcframework */,
 				5B0EA6D4B478301B17518048 /* iOS */,
 				FA758383F348F5CEE18E8703 /* libPods-CYLTableViewPlaceHolder.a */,
 			);

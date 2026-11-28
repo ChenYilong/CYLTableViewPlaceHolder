@@ -43,6 +43,14 @@ target 'Runner' do
   tab_bar_commit = File.read(File.join(repository_root, 'Cartfile'))[/^github "ChenYilong\/CYLTabBarController" "([0-9a-f]{40})"/, 1] || abort('Cartfile pins no CYLTabBarController commit')
   pod 'CYLTabBarController', :git => tab_bar_git, :commit => tab_bar_commit
   pod 'CYLAnimatedItem/Engine', :git => tab_bar_git, :commit => tab_bar_commit
+  # [EN] The commit splits CYLBadge and CYLUtils out (CYLAnimatedItem/Core depends on them), not on the trunk either.
+  # [CN] 该提交把 CYLBadge 与 CYLUtils 拆为独立 pod（CYLAnimatedItem/Core 依赖它们），同样不在 trunk。
+  pod 'CYLBadge', :git => tab_bar_git, :commit => tab_bar_commit
+  pod 'CYLUtils', :git => tab_bar_git, :commit => tab_bar_commit
+  # [EN] CYLTabBarController/Core needs CYLDeallocBlockExecutor ~> 1.4, which is not on CocoaPods trunk: the same commit as
+  #      Examples/Example-Scenarios/Podfile. [CN] CYLTabBarController/Core 依赖 CYLDeallocBlockExecutor ~> 1.4，该版本不在 CocoaPods trunk：
+  #      与 Examples/Example-Scenarios/Podfile 使用同一提交。
+  pod 'CYLDeallocBlockExecutor', :git => 'https://github.com/ChenYilong/CYLDeallocBlockExecutor.git', :commit => '4276a6dab5a428ccc3a5f3f347eab991881fb97c'
   pod 'CYLTableViewPlaceHolder/LottieSwift', :path => repository_root
   # The rive refresh style (style: 'rive') draws with RiveRuntime; without this subspec it is the classic style with one log line.
   pod 'CYLTableViewPlaceHolder/Rive', :path => repository_root

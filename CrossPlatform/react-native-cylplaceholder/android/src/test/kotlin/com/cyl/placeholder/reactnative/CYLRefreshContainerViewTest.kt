@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.cyl.refresh.CYLRefreshAutoNormalFooter
+import com.cyl.refresh.CYLRefreshBackFooter
 import com.cyl.refresh.CYLRefreshBackNormalFooter
 import com.cyl.refresh.CYLRefreshFooter
 import com.cyl.refresh.CYLRefreshHeader
@@ -357,5 +358,137 @@ class CYLRefreshContainerViewTest {
         assertEquals(120f, view.cyl_header!!.secondaryTriggerOffset, 0f)
         assertEquals(300f, view.cyl_header!!.secondaryDimension, 0f)
         assertEquals(60f, view.cyl_header!!.secondaryCloseTriggerOffset, 0f)
+    }
+
+    // --- the footer's second floor (nativeID "cyl.refresh.secondary.footer") and riveFinishTimeout ---
+
+    private fun footerFloorContent(): android.view.View = android.view.View(activity).also {
+        it.setTag(com.facebook.react.R.id.view_tag_native_id, CYLRefreshContainerView.FOOTER_SECONDARY_NATIVE_ID)
+    }
+
+    @Test
+    fun theFooterSecondaryNativeIdChildIsTheFooterFloorAndTheHeaderFloorIsUntouched() {
+        val view = CYLRefreshContainerView(activity)
+        val scroll = ScrollView(activity)
+        val headerFloor = floorContent()
+        val footerFloor = footerFloorContent()
+        view.addReactChild(scroll, 0)
+        view.addReactChild(footerFloor, 1)
+        view.addReactChild(headerFloor, 2)
+        view.setFooterStyle("classic")
+        view.applyStyles()
+        activity.setContentView(view)
+        idle(100)
+        assertEquals(3, view.reactChildCount)
+        assertEquals("the footer floor is not a child of the layout", null, footerFloor.parent)
+        assertTrue((view.cyl_footer as CYLRefreshBackFooter).secondaryView === footerFloor)
+        assertTrue(view.cyl_header!!.secondaryView === headerFloor)
+        view.removeReactChildAt(1)
+        assertEquals(null, (view.cyl_footer as CYLRefreshBackFooter).secondaryView)
+        assertTrue(view.cyl_header!!.secondaryView === headerFloor)
+    }
+
+    @Test
+    fun footerSecondaryPropsReachTheBackFooterAndSurviveAStyleChange() {
+        val view = container()
+        view.setFooterSecondaryTriggerOffset(120f)
+        view.setFooterSecondaryDimension(300f)
+        view.setFooterSecondaryCloseTriggerOffset(60f)
+        view.setFooterStyle("classic")
+        view.applyStyles()
+        val footer = view.cyl_footer as CYLRefreshBackFooter
+        assertEquals(120f, footer.secondaryTriggerOffset, 0f)
+        assertEquals(300f, footer.secondaryDimension, 0f)
+        assertEquals(60f, footer.secondaryCloseTriggerOffset, 0f)
+        // The header's floor is a separate one.
+        assertEquals(0f, view.cyl_header!!.secondaryTriggerOffset, 0f)
+    }
+
+    @Test
+    fun footerSecondaryOpenFromJsHasNoEventAndANativeOpenOrCloseReportsTheFooterEdge() {
+        val view = CYLRefreshContainerView(activity)
+        view.addReactChild(ScrollView(activity), 0)
+        view.addReactChild(footerFloorContent(), 1)
+        view.setFooterStyle("classic")
+        view.applyStyles()
+        activity.setContentView(view)
+        idle(100)
+        val events = ArrayList<String>()
+        view.onSecondaryOpen = { events.add("open:$it") }
+        view.onSecondaryClose = { events.add("close:$it") }
+        val footer = view.cyl_footer as CYLRefreshBackFooter
+        view.setFooterSecondaryOpenFromJs(true)
+        idle(1500)
+        assertTrue(footer.secondaryOpen)
+        view.setFooterSecondaryOpenFromJs(false)
+        idle(1500)
+        assertFalse(footer.secondaryOpen)
+        assertEquals("by the prop: no events", emptyList<String>(), events)
+        footer.openSecondary()
+        idle(1500)
+        footer.closeSecondary()
+        idle(1500)
+        assertEquals(listOf("open:footer", "close:footer"), events)
+    }
+
+    @Test
+    fun theHeaderFloorEventsStillCarryTheHeaderEdge() {
+        val view = CYLRefreshContainerView(activity)
+        view.addReactChild(ScrollView(activity), 0)
+        view.addReactChild(floorContent(), 1)
+        activity.setContentView(view)
+        idle(100)
+        val events = ArrayList<String>()
+        view.onSecondaryOpen = { events.add("open:$it") }
+        view.onSecondaryClose = { events.add("close:$it") }
+        view.cyl_header!!.openSecondary()
+        idle(1500)
+        view.cyl_header!!.closeSecondary()
+        idle(1500)
+        assertEquals(listOf("open:header", "close:header"), events)
+    }
+
+    @Test
+    fun footerSecondaryOpenNeedsABackFooterAndTheFloorContent() {
+        val auto = CYLRefreshContainerView(activity)
+        auto.addReactChild(ScrollView(activity), 0)
+        auto.addReactChild(footerFloorContent(), 1)
+        activity.setContentView(auto)
+        idle(100)
+        assertTrue("the default footer is the auto one", auto.cyl_footer is CYLRefreshAutoNormalFooter)
+        auto.setFooterSecondaryTriggerOffset(100f)
+        auto.setFooterSecondaryOpenFromJs(true)
+        idle(500)
+        val noContent = container()
+        noContent.setFooterStyle("classic")
+        noContent.applyStyles()
+        noContent.setFooterSecondaryOpenFromJs(true)
+        assertFalse((noContent.cyl_footer as CYLRefreshBackFooter).secondaryOpen)
+    }
+
+    @Test
+    fun riveFinishTimeoutInHeaderRiveAndFooterRiveReachesTheBuilder() {
+        val timeouts = ArrayList<Double>()
+        CYLRefreshRiveSupport.builder = object : CYLRefreshRiveBuilding {
+            override fun header(context: android.content.Context, options: CYLRefreshRiveOptions): CYLRefreshHeader? { timeouts.add(options.finishTimeout); return null }
+            override fun footer(context: android.content.Context, options: CYLRefreshRiveOptions): CYLRefreshFooter? { timeouts.add(options.finishTimeout); return null }
+        }
+        try {
+            val view = container()
+            view.setHeaderStyle("rive")
+            view.setHeaderRive(mapOf("riveFile" to "Bow", "riveFinishTimeout" to 2.5))
+            view.setFooterStyle("rive")
+            view.setFooterRive(mapOf("riveFile" to "Bow", "riveFinishTimeout" to 3))
+            view.applyStyles()
+            assertEquals(listOf(2.5, 3.0), timeouts)
+            timeouts.clear()
+            val unset = container()
+            unset.setHeaderStyle("rive")
+            unset.setHeaderRive(mapOf("riveFile" to "Bow"))
+            unset.applyStyles()
+            assertEquals("the default stays 1.5", listOf(1.5), timeouts)
+        } finally {
+            CYLRefreshRiveSupport.builder = null
+        }
     }
 }

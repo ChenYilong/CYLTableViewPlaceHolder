@@ -33,6 +33,9 @@ RCT_EXPORT_VIEW_PROPERTY(footerRive, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(secondaryTriggerOffset, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(secondaryDimension, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(secondaryOpen, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(footerSecondaryTriggerOffset, CGFloat)
+RCT_EXPORT_VIEW_PROPERTY(footerSecondaryDimension, CGFloat)
+RCT_EXPORT_VIEW_PROPERTY(footerSecondaryOpen, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onSecondaryOpen, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSecondaryClose, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onRefresh, RCTDirectEventBlock)
@@ -41,6 +44,11 @@ RCT_EXPORT_VIEW_PROPERTY(onLoadMore, RCTDirectEventBlock)
 // The close trigger is 80 unless JavaScript says otherwise (an unset prop arrives as nil).
 RCT_CUSTOM_VIEW_PROPERTY(secondaryCloseTriggerOffset, CGFloat, CYLRefreshContainerView) {
     view.secondaryCloseTriggerOffset = json ? [RCTConvert CGFloat:json] : 80;
+}
+
+// The same for the footer floor's close trigger.
+RCT_CUSTOM_VIEW_PROPERTY(footerSecondaryCloseTriggerOffset, CGFloat, CYLRefreshContainerView) {
+    view.footerSecondaryCloseTriggerOffset = json ? [RCTConvert CGFloat:json] : 80;
 }
 
 // `enabled` is on unless JavaScript says otherwise (an unset prop arrives as nil), as Android's `defaultBoolean = true`.

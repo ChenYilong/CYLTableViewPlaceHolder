@@ -281,11 +281,12 @@ open class CYLRefreshMaterialHeader: CYLRefreshDrawnHeader, CYLRefreshValueAnima
 
         var distance = max(0, (offset - circleSize) / 2)
 
-        // 公式 y = M(1-8^(-x/H))；M 能够达到的最大值，H 接近最大值的点
-        let M = circleSize * 3
-        let H = circleSize * 6
+        // 公式 y = M(1-8^(-x/H))；M 能够达到的最大值（maxDistance），H 接近最大值的点（nearMaxDistance）
+        // [EN] y = M(1-8^(-x/H)): M is the largest value reached (maxDistance), H the point near it (nearMaxDistance).
+        let maxDistance = circleSize * 3
+        let nearMaxDistance = circleSize * 6
         let x = distance
-        let y = M * (1 - pow(8, -x / H))
+        let y = maxDistance * (1 - pow(8, -x / nearMaxDistance))
 
         distance = y
 
@@ -524,7 +525,11 @@ open class CYLRefreshMaterialHeader: CYLRefreshDrawnHeader, CYLRefreshValueAnima
         if input >= 1.0 {
             return 1.0
         }
-        if input <= 0.0 {
+        // FIX: issue MJRefresh#1615
+        // [EN] Defensive: NaN is neither >= 1 nor <= 0, and Int(NaN) would trap; it counts as 0. The fast-pull stress test
+        //      (Tests/CYLRefreshFastPullTests.swift) did not reach this with NaN.
+        // [CN] 防御性处理：NaN 既不 >= 1 也不 <= 0，Int(NaN) 会崩溃；按 0 处理。快速下拉压力测试（Tests/CYLRefreshFastPullTests.swift）未以 NaN 走到这里。
+        if !(input > 0.0) {
             return 0.0
         }
         let values = Self.fastOutSlowValues

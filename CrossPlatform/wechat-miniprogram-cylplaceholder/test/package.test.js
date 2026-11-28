@@ -27,7 +27,8 @@ test('the entry is the index.js of the built folder and exports the API', () => 
 
 test('every relative require names a file, as a plain statement', () => {
   for (const file of walk(src).filter((name) => name.endsWith('.js'))) {
-    const text = fs.readFileSync(file, 'utf8')
+    // Whole-line comments are not code: the vendored cyl-dealloc-block-executor explains the rule with `...require('./x')`.
+    const text = fs.readFileSync(file, 'utf8').replace(/^\s*\/\/.*$/gm, '')
     // A mini program resolves no folder to its index.js (Node does).
     for (const match of text.matchAll(/require\((['"])(\.[^'"]+)\1\)/g)) {
       const target = path.join(path.dirname(file), match[2])

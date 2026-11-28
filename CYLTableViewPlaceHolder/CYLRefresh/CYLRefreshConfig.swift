@@ -50,7 +50,7 @@ public final class CYLRefreshConfig: NSObject {
             }
             storedLanguageCode = newValue
             // 重置语言资源
-            Bundle.cyl_resetLanguageResourceCache()
+            Bundle.cylResetLanguageResourceCache()
             NotificationCenter.default.post(name: .CYLRefreshDidChangeLanguage, object: self)
         }
     }
@@ -68,17 +68,17 @@ public final class CYLRefreshConfig: NSObject {
     @objc public var i18nBundle: Bundle?
 
     /**
-     * [EN] Makes the header `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none
+     * [EN] Makes the header `-[UIScrollView cylInstallDefaultRefreshControls]` installs where a scroll view has none
      *      (CYLRefreshLayout's `setDefaultRefreshHeaderCreator`). Default nil.
-     * [CN] 生成 `-[UIScrollView cyl_installDefaultRefreshControls]` 为没有刷新头的滚动视图安装的刷新头（对应 CYLRefreshLayout 的
+     * [CN] 生成 `-[UIScrollView cylInstallDefaultRefreshControls]` 为没有刷新头的滚动视图安装的刷新头（对应 CYLRefreshLayout 的
      *      `setDefaultRefreshHeaderCreator`）。默认 nil。
      */
     @objc public var defaultHeaderCreator: ((UIScrollView) -> CYLRefreshHeader?)?
 
     /**
-     * [EN] Makes the footer `-[UIScrollView cyl_installDefaultRefreshControls]` installs where a scroll view has none
+     * [EN] Makes the footer `-[UIScrollView cylInstallDefaultRefreshControls]` installs where a scroll view has none
      *      (CYLRefreshLayout's `setDefaultRefreshFooterCreator`). Default nil.
-     * [CN] 生成 `-[UIScrollView cyl_installDefaultRefreshControls]` 为没有尾部的滚动视图安装的尾部（对应 CYLRefreshLayout 的
+     * [CN] 生成 `-[UIScrollView cylInstallDefaultRefreshControls]` 为没有尾部的滚动视图安装的尾部（对应 CYLRefreshLayout 的
      *      `setDefaultRefreshFooterCreator`）。默认 nil。
      */
     @objc public var defaultFooterCreator: ((UIScrollView) -> CYLRefreshFooter?)?

@@ -206,7 +206,7 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
     private var currentInput: Double = 0
     private let drawnMask = CALayer()
     // [EN] YES from the finish trigger until the animation stops or the hold ends. [CN] 从触发结束触发器到动画停止或停留结束期间为 YES。
-    private var awaitsFinishEnd = false
+    private var finishLatch = CYLRefreshRiveFinishLatch()
     // [EN] The poll that ends the post-refresh retract (see `beginRetract`); nil when the header is not retracting. [CN] 结束刷新后收回阶段的轮询（见 `beginRetract`）；未收回时为 nil。
     private var retractTimer: Timer?
 
@@ -356,11 +356,11 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
         case .finishing:
             stopLoadingNumber()
             // [EN] The end of the animation plays while the header is held open (`onRefreshFinishing:`). [CN] 刷新头被保持展开（`onRefreshFinishing:`）期间播放动画的结束部分。
-            awaitsFinishEnd = style.playsFinish
+            finishLatch.arm(playsFinish: style.playsFinish)
             if let input = style.loadingNumber { viewModel.setInput(input, value: style.loadingNumberFinished) }
             if let trigger = style.finishTrigger { viewModel.triggerInput(trigger) }
         case .idle:
-            awaitsFinishEnd = false
+            finishLatch.disarm()
             guard rivePlaysRefresh else { break }
             if CYLRefreshRiveRetract.keepsArt(pullAnimation: style.pullAnimation, idleAnimation: style.idleAnimation) {
                 beginRetract()
@@ -380,16 +380,15 @@ public final class CYLRefreshRiveHeader: CYLRefreshDrawnHeader {
      *      `finishDuration`. [CN] 刷新结束后刷新头保持展开的时间：样式有结束部分要播放时为 `finishTimeout`，否则为 `finishDuration`。
      */
     override public func onRefreshFinishing(_ success: Bool) -> CGFloat {
-        guard awaitsFinishEnd, let style = riveStyle else { return super.onRefreshFinishing(success) }
+        guard finishLatch.isArmed, let style = riveStyle else { return super.onRefreshFinishing(success) }
         return CGFloat(max(style.finishTimeout, finishDuration))
     }
 
     // [EN] The state machine settled or the animation stopped after the finish trigger: the end part has played, retract now.
     // [CN] 结束触发器之后状态机已稳定或动画已停止：结束部分已播放完，立即收回。
     private func finishAnimationStopped() {
-        guard awaitsFinishEnd else { return }
-        awaitsFinishEnd = false
-        cyl_finishAnimationDidEnd()
+        guard finishLatch.consumeStop() else { return }
+        finishAnimationDidEnd()
     }
 
     // [EN] After a refresh the header retracts while it is still on screen. Going back to the file's first state at once (`reset()`, the pull

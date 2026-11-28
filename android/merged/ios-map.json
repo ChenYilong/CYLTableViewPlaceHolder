@@ -1169,7 +1169,7 @@
  },
  "CYLPlaceholderComponent.showsImageWhenAnimationEnds": {
   "ios": "`CYLPlaceholderComponent` `showsImageWhenAnimationEnds`",
-  "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView has no such property, only onAnimationEnd); on for the Success icon"
+  "note": "forwarded to `CYLPlaceholderView.showsImageWhenAnimationEnds` by CYLPlaceholderStackView (iOS CYLAnimatedItemView declares `showsImageWhenAnimationEnds` itself since CYLTabBarController d0aadcd7); on for the Success icon"
  },
  "CYLRefreshStyle": {
   "ios": "`CYLRefreshStyle`",
@@ -1293,6 +1293,10 @@
   "ios": "`CYLPlaceholderResourceReporter` `onResourceMissing`",
   "note": "Android installs the engine's global listener by reflection until the engine commit is in every resolvable commit; iOS detects missing files itself at the pin 12ed11ff"
  },
+ "CYLPlaceholderResourceMonitor.enabled": {
+  "ios": "`CYLPlaceholderResourceReporter` `isEnabled`",
+  "note": "the debug guard: iOS decides from `#if DEBUG` (settable); Android from the app's debuggable flag (`null`), or forced by `true` / `false`"
+ },
  "CYLPlaceholderResourceMonitor.attach": {
   "ios": "`UIViewController` `cyl_showsMissingResources`",
   "note": "Android hooks one view's `onResourceMissing`; iOS turns the bar on per view controller"
@@ -1316,5 +1320,13 @@
  },
  "CYLRefreshRiveDrawnTable.of": {
   "ios": "`CYLRefreshRiveStyle.drawnTable` (set in code)"
+ },
+ "CYLPlaceholderLoadMoreHost": {
+  "ios": "no protocol: `CYLPlaceholderController` (internal) finds the scroll view's CYLRefresh / MJRefresh footers and trailers by class",
+  "note": "on Android the footer belongs to the refresh layout around the list, so the layout implements this interface; on iOS the footer is a subview of the scroll view"
+ },
+ "CYLPlaceholderLoadMoreHost.cyl_placeholderDidChange": {
+  "ios": "`CYLPlaceholderController.hideLoadMoreControls()` / `restoreLoadMoreControls()` (internal), called when the automatic or the `cylReloadData` placeholder shows or goes",
+  "note": "same behavior: load more is hidden while the placeholder shows and comes back with data; headers stay (issue #8)"
  }
 }

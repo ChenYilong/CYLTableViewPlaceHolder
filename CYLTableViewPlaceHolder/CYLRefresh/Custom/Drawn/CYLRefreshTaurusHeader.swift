@@ -282,7 +282,9 @@ open class CYLRefreshTaurusHeader: CYLRefreshDrawnHeader {
         let cof = (width + xOffset) / timeSpan
         var time = loadingAnimationTime
 
-        // HORRIBLE HACK FOR REVERS ANIMATION THAT SHOULD WORK LIKE RESTART ANIMATION
+        // [EN] The loading clock runs backwards in the reverse half of the animation; mirroring the time makes the wind lines keep
+        //      flying the same way, as on a restart (upstream Taurus behaviour, kept on purpose; was marked HACK there).
+        // [CN] 动画反向的一半里加载时间会倒退；把时间镜像后风线仍朝同一方向飞，相当于重新开始（上游 Taurus 的行为，有意保留；上游标为 HACK）。
         if lastAnimationTime - loadingAnimationTime > 0 {
             inverseDirection = true
             // take time from 0 to end of animation time

@@ -139,42 +139,42 @@ final class CYLPlaceholderResourceReporterTests: XCTestCase {
 
     func testThePageShowsTheRedBarAndTheOfflineTextWins() {
         let controller = hostedTableController()
-        XCTAssertNil(controller.cyl_statusView.superview, "off by default")
-        controller.cyl_showsMissingResources = true
-        XCTAssertNil(controller.cyl_statusView.superview, "nothing is missing")
+        XCTAssertNil(controller.cylStatusView.superview, "off by default")
+        controller.cylShowsMissingResources = true
+        XCTAssertNil(controller.cylStatusView.superview, "nothing is missing")
         reporter.report(resource: "Folder/a.pag", reason: "file not found", source: nil)
         controller.view.layoutIfNeeded()
-        XCTAssertEqual(controller.cyl_statusView.superview, controller.view)
-        XCTAssertEqual(controller.cyl_statusView.text, "Missing resource: a.pag (file not found)")
+        XCTAssertEqual(controller.cylStatusView.superview, controller.view)
+        XCTAssertEqual(controller.cylStatusView.text, "Missing resource: a.pag (file not found)")
         XCTAssertGreaterThanOrEqual(controller.additionalSafeAreaInsets.top, CYLPlaceholderStatusViewHight)
 
         let shared = CYLPlaceholderNetworkMonitor.shared
-        controller.cyl_showsStatusViewWhenOffline = true
+        controller.cylShowsStatusViewWhenOffline = true
         CYLSetNetworkStatus(shared, .notReachable)
-        XCTAssertEqual(controller.cyl_statusView.text, "Network unavailable, Check network", "offline wins")
+        XCTAssertEqual(controller.cylStatusView.text, "Network unavailable, Check network", "offline wins")
         CYLSetNetworkStatus(shared, .reachableViaWiFi)
-        XCTAssertEqual(controller.cyl_statusView.text, "Missing resource: a.pag (file not found)",
+        XCTAssertEqual(controller.cylStatusView.text, "Missing resource: a.pag (file not found)",
                        "the resource text returns with the network")
         reporter.resolve(resource: "a.pag", source: nil)
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.6))
-        XCTAssertNil(controller.cyl_statusView.superview, "cleared when the resource loads")
+        XCTAssertNil(controller.cylStatusView.superview, "cleared when the resource loads")
         XCTAssertEqual(controller.additionalSafeAreaInsets.top, 0, accuracy: 0.01)
-        XCTAssertEqual(controller.cyl_statusView.text, "Network unavailable, Check network", "the bar's own text is back")
-        controller.cyl_showsStatusViewWhenOffline = false
+        XCTAssertEqual(controller.cylStatusView.text, "Network unavailable, Check network", "the bar's own text is back")
+        controller.cylShowsStatusViewWhenOffline = false
         shared.stopMonitoring()
     }
 
     func testAnotherPagesViewsDoNotShowOnThisPage() throws {
         let controller = hostedTableController()
-        controller.cyl_showsMissingResources = true
+        controller.cylShowsMissingResources = true
         let other = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         window.addSubview(other)
         reporter.report(resource: "elsewhere.pag", reason: "file not found", source: other)
-        XCTAssertNil(controller.cyl_statusView.superview)
+        XCTAssertNil(controller.cylStatusView.superview)
         let mine = UIView()
         controller.view.addSubview(mine)
         reporter.report(resource: "mine.pag", reason: "unreadable", source: mine)
-        XCTAssertEqual(controller.cyl_statusView.text, "Missing resource: mine.pag (unreadable)")
+        XCTAssertEqual(controller.cylStatusView.text, "Missing resource: mine.pag (unreadable)")
     }
 }

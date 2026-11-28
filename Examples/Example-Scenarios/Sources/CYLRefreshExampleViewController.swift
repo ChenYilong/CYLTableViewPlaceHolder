@@ -121,18 +121,18 @@ final class CYLRefreshExampleViewController: UITableViewController {
         tableView.accessibilityIdentifier = "refreshExamples"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "example")
         // Pull down to refresh
-        tableView.cyl_header = CYLRefreshNormalHeader { [weak self] in
+        tableView.cylHeader = CYLRefreshNormalHeader { [weak self] in
             // Simulates a delayed load, so endRefreshing comes 2 seconds later (remove the delay in a real app).
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self?.tableView.cyl_header?.endRefreshing()
+                self?.tableView.cylHeader?.endRefreshing()
             }
         }
         // Fades automatically (hides under the navigation bar).
-        tableView.cyl_header?.isAutomaticallyChangeAlpha = true
+        tableView.cylHeader?.isAutomaticallyChangeAlpha = true
         // Pull up to load
-        tableView.cyl_footer = CYLRefreshBackNormalFooter { [weak self] in
+        tableView.cylFooter = CYLRefreshBackNormalFooter { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self?.tableView.cyl_footer?.endRefreshing()
+                self?.tableView.cylFooter?.endRefreshing()
             }
         }
     }

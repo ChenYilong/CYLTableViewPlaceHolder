@@ -150,7 +150,7 @@ final class CYLRefreshDrivenHost {
         let height = container.bounds.height
         guard height > 0 else { return }
         if let open = params.expandHeight, abs(component.expandHeight - open) > 0.5 {
-            if let header = component as? CYLRefreshHeader { header.setExpandHeight(open) } else { component.cyl_h = open }
+            if let header = component as? CYLRefreshHeader { header.setExpandHeight(open) } else { component.cylH = open }
         }
         let open = component.expandHeight
         let held = component.isRefreshing || (component as? CYLRefreshFooter)?.isNoMoreData == true

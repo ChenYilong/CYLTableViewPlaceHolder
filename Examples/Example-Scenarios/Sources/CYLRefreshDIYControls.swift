@@ -102,7 +102,7 @@ final class CYLRefreshDIYHeader: CYLRefreshHeader {
     override func prepare() {
         super.prepare()
         // The control's height
-        cyl_h = 50
+        cylH = 50
         views.add(to: self, logo: true)
     }
 
@@ -111,10 +111,10 @@ final class CYLRefreshDIYHeader: CYLRefreshHeader {
         super.placeSubviews()
         // Between the switch and the spinner (72 pt each side), so long texts shrink instead of running under them.
         views.label.frame = bounds.insetBy(dx: 72, dy: 0)
-        views.toggle.center = CGPoint(x: 40, y: cyl_h * 0.5)
+        views.toggle.center = CGPoint(x: 40, y: cylH * 0.5)
         views.logo.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: 100)
-        views.logo.center = CGPoint(x: cyl_w * 0.5, y: -views.logo.bounds.height + 20)
-        views.loading.center = CGPoint(x: cyl_w - 30, y: cyl_h * 0.5)
+        views.logo.center = CGPoint(x: cylW * 0.5, y: -views.logo.bounds.height + 20)
+        views.loading.center = CGPoint(x: cylW - 30, y: cylH * 0.5)
     }
 
     // The refresh state
@@ -153,7 +153,7 @@ final class CYLRefreshDIYAutoFooter: CYLRefreshAutoFooter {
 
     override func prepare() {
         super.prepare()
-        cyl_h = 50
+        cylH = 50
         views.add(to: self, logo: false)
     }
 
@@ -161,8 +161,8 @@ final class CYLRefreshDIYAutoFooter: CYLRefreshAutoFooter {
         super.placeSubviews()
         // Between the switch and the spinner (72 pt each side), so long texts shrink instead of running under them.
         views.label.frame = bounds.insetBy(dx: 72, dy: 0)
-        views.toggle.center = CGPoint(x: cyl_w - 40, y: cyl_h - 20)
-        views.loading.center = CGPoint(x: 30, y: cyl_h * 0.5)
+        views.toggle.center = CGPoint(x: cylW - 40, y: cylH - 20)
+        views.loading.center = CGPoint(x: 30, y: cylH * 0.5)
     }
 
     override var state: CYLRefreshState {
@@ -195,7 +195,7 @@ final class CYLRefreshDIYBackFooter: CYLRefreshBackFooter {
 
     override func prepare() {
         super.prepare()
-        cyl_h = 50
+        cylH = 50
         views.add(to: self, logo: true)
     }
 
@@ -203,10 +203,10 @@ final class CYLRefreshDIYBackFooter: CYLRefreshBackFooter {
         super.placeSubviews()
         // Between the switch and the spinner (72 pt each side), so long texts shrink instead of running under them.
         views.label.frame = bounds.insetBy(dx: 72, dy: 0)
-        views.toggle.center = CGPoint(x: 40, y: cyl_h * 0.5)
+        views.toggle.center = CGPoint(x: 40, y: cylH * 0.5)
         views.logo.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: 100)
-        views.logo.center = CGPoint(x: cyl_w * 0.5, y: cyl_h + views.logo.bounds.height * 0.5)
-        views.loading.center = CGPoint(x: cyl_w - 30, y: cyl_h * 0.5)
+        views.logo.center = CGPoint(x: cylW * 0.5, y: cylH + views.logo.bounds.height * 0.5)
+        views.loading.center = CGPoint(x: cylW - 30, y: cylH * 0.5)
     }
 
     override var state: CYLRefreshState {

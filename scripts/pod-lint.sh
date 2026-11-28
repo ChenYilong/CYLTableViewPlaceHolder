@@ -25,7 +25,17 @@ case "$command" in
     # Core depends on the CYLAnimatedItem pod (CYLTabBarController repository, not on the trunk yet), linted from the
     # commit the Cartfile pins.
     tabbar=$(scripts/cyltabbarcontroller-checkout.sh)
-    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests --include-podspecs="$tabbar/CYLAnimatedItem.podspec" "$@"
+    # The pinned commit splits CYLBadge and CYLUtils out (CYLAnimatedItem/Core -> CYLBadge -> CYLUtils -> CYLDeallocBlockExecutor ~> 1.4),
+    # none on the trunk: lint them from the same checkout, and CYLDeallocBlockExecutor from the commit the Podfiles pin (its podspec
+    # names a tag that does not exist, so a copy with a :commit source is used).
+    dealloc_commit=4276a6dab5a428ccc3a5f3f347eab991881fb97c
+    deps=$(mktemp -d "${TMPDIR:-/tmp}/cyl-pod-lint.XXXXXX")
+    trap 'rm -rf "$deps"' EXIT
+    git clone --quiet --filter=blob:none --no-checkout https://github.com/ChenYilong/CYLDeallocBlockExecutor.git "$deps/dealloc"
+    git -C "$deps/dealloc" show "$dealloc_commit:CYLDeallocBlockExecutor.podspec" |
+      sed -E "s|:tag => s\.version\.to_s|:commit => '$dealloc_commit'|" > "$deps/CYLDeallocBlockExecutor.podspec"
+    grep -q ":commit => '$dealloc_commit'" "$deps/CYLDeallocBlockExecutor.podspec" || { echo "error: could not pin CYLDeallocBlockExecutor" >&2; exit 1; }
+    pod lib lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests --include-podspecs="{$tabbar/CYLAnimatedItem.podspec,$tabbar/CYLBadge.podspec,$tabbar/CYLUtils.podspec,$deps/CYLDeallocBlockExecutor.podspec}" "$@"
     ;;
   spec)
     pod spec lint "$PODSPEC" --allow-warnings --platforms=ios --skip-tests "$@"
@@ -56,7 +66,10 @@ case "$command" in
     mkdir -p "$work/Carthage/Build"
     cp -R Carthage/Build/CYLTabBarController.xcframework "$work/Carthage/Build/"
     # Newer commits split CYLAnimatedItem out of CYLTabBarController-Framework (the framework target links both).
-    [[ ! -d Carthage/Build/CYLAnimatedItem.xcframework ]] || cp -R Carthage/Build/CYLAnimatedItem.xcframework "$work/Carthage/Build/"
+    # Since 8f0302d6 CYLAnimatedItem links CYLBadge and CYLUtilsKit, which are frameworks of their own.
+    for framework in CYLAnimatedItem CYLBadge CYLUtilsKit; do
+      [[ ! -d Carthage/Build/$framework.xcframework ]] || cp -R "Carthage/Build/$framework.xcframework" "$work/Carthage/Build/"
+    done
     rm -f "$work/Cartfile" "$work/Cartfile.resolved"
     # Carthage runs `xcodebuild -list` on every Xcode project it finds; the Flutter example's Runner project needs generated
     # Swift packages that a clean copy lacks, and no part of CrossPlatform is built into the framework.

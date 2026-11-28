@@ -47,6 +47,33 @@ project(":merged-rive").projectDir = file("merged/library/rive")
 include(":merged-example")
 project(":merged-example").projectDir = file("merged/example")
 
+// CollectionViewClassifyMenu's Android module (its tag list: the example's menu and index screens), at the commit pinned in
+// classifymenu.commit (commit c0b183de of its feat/glass-backdrop branch, never a branch or a version). Only :merged-example uses it; the core modules
+// :placeholder and :merged do not. Where it comes from, first match wins:
+// 1. -PcylClassifyMenuDir=<a CollectionViewClassifyMenu checkout> (CI passes a clone of the pinned commit);
+// 2. otherwise scripts/classifymenu-checkout.sh checks the pinned commit out into android/.classifymenu.
+// Its own dependency, io.github.chenyilong:cyltabbarcontroller-animateditem, resolves through the CYLTabBarController
+// composite below.
+val cylClassifyMenuDir: String = providers.gradleProperty("cylClassifyMenuDir").orNull ?: run {
+    val repository = rootDir.parentFile
+    val script = repository.resolve("scripts/classifymenu-checkout.sh")
+    val process = ProcessBuilder("bash", script.path).directory(repository).redirectErrorStream(false).start()
+    val output = process.inputStream.bufferedReader().readText().trim()
+    val error = process.errorStream.bufferedReader().readText().trim()
+    if (process.waitFor() != 0) {
+        throw GradleException("scripts/classifymenu-checkout.sh failed: $error")
+    }
+    output.lines().last()
+}
+if (!file(cylClassifyMenuDir).resolve("android/merged/library/build.gradle.kts").exists()) {
+    throw GradleException(
+        "CollectionViewClassifyMenu's android/merged/library was not found at '$cylClassifyMenuDir'. Pass " +
+            "-PcylClassifyMenuDir=<clone>, or run scripts/classifymenu-checkout.sh in the repository root.",
+    )
+}
+include(":classifymenu")
+project(":classifymenu").projectDir = file(cylClassifyMenuDir).resolve("android/merged/library")
+
 // CYLTabBarController for Android, built from source (a Gradle composite build) at a commit, since its modules are not
 // on Maven Central yet and its repository has no Gradle build at the root, so a JitPack commit reference cannot build
 // it. It brings two modules:

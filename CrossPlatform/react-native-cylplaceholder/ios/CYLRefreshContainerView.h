@@ -72,14 +72,29 @@ typedef void (^CYLRefreshContainerEventBlock)(NSDictionary *body);
 /** [EN] Controlled like `refreshing`: YES opens the floor, NO closes it; a change made from JS does not call the events back. [CN] 与 `refreshing` 一样由 JS 控制：YES 打开二楼，NO 关闭；JS 引起的变化不回调事件。 */
 @property (nonatomic, assign) BOOL secondaryOpen;
 
-/** [EN] Called after the floor opened from a pull (not from `secondaryOpen`). [CN] 二楼由下拉打开后调用（`secondaryOpen` 引起的不调用）。 */
+/** [EN] Called after a floor opened from a pull (not from `secondaryOpen` / `footerSecondaryOpen`); the body is `{edge: "header"}` or `{edge: "footer"}`. [CN] 二楼由拉动打开后调用（`secondaryOpen` / `footerSecondaryOpen` 引起的不调用）；body 为 `{edge: "header"}` 或 `{edge: "footer"}`。 */
 @property (nonatomic, copy, nullable) CYLRefreshContainerEventBlock onSecondaryOpen;
 
-/** [EN] Called after the floor closed from a push (not from `secondaryOpen`). [CN] 二楼由上推关闭后调用（`secondaryOpen` 引起的不调用）。 */
+/** [EN] Called after a floor closed from a push (not from the `...Open` props); the body carries `edge` as `onSecondaryOpen` does. [CN] 二楼由推动关闭后调用（`...Open` 属性引起的不调用）；body 与 `onSecondaryOpen` 一样带 `edge`。 */
 @property (nonatomic, copy, nullable) CYLRefreshContainerEventBlock onSecondaryClose;
 
 /** [EN] The `nativeID` of the child view that is the floor's content; the container makes it the header's `secondaryView`. [CN] 作为二楼内容的子视图的 `nativeID`；容器把它设为刷新头的 `secondaryView`。 */
 @property (class, nonatomic, readonly) NSString *secondaryViewNativeID;
+
+/** [EN] The footer's second floor (iOS only; `CYLRefreshBackFooter`'s own API, so a back footer style: the auto footer of `cupertino` has none, one log line): a pull up of this many points past the end (then a release) opens it below the list instead of loading; 0 (default) turns it off. It never arms while `noMoreData` is set, and needs `loadMoreEnabled`. [CN] 刷新尾的二楼（仅 iOS；用 `CYLRefreshBackFooter` 自身的 API，因此只适用于回弹式尾部样式：`cupertino` 的自动尾部没有二楼，记录一行日志）：越过底部上拉这么多点后松手即在列表下方打开，而不是加载；0（默认）关闭。`noMoreData` 为真时不会触发，且需要 `loadMoreEnabled`。 */
+@property (nonatomic, assign) CGFloat footerSecondaryTriggerOffset;
+
+/** [EN] The open extent of the footer floor in points; 0 (default) is the scroll view's visible height. [CN] 刷新尾二楼打开后的高度（点）；0（默认）为滚动视图的可见高度。 */
+@property (nonatomic, assign) CGFloat footerSecondaryDimension;
+
+/** [EN] Pulling the content down this far and releasing closes the footer floor; default 80 (also when set to 0 or less). [CN] 把内容下拉这么远再松手即关闭刷新尾二楼；默认 80（设为 0 或更小时同样取 80）。 */
+@property (nonatomic, assign) CGFloat footerSecondaryCloseTriggerOffset;
+
+/** [EN] Controlled like `secondaryOpen`, for the footer floor; a change made from JS does not call the events back. [CN] 与 `secondaryOpen` 一样由 JS 控制，对应刷新尾二楼；JS 引起的变化不回调事件。 */
+@property (nonatomic, assign) BOOL footerSecondaryOpen;
+
+/** [EN] The `nativeID` of the child view that is the footer floor's content; the container makes it the footer's `secondaryView`. [CN] 作为刷新尾二楼内容的子视图的 `nativeID`；容器把它设为刷新尾的 `secondaryView`。 */
+@property (class, nonatomic, readonly) NSString *footerSecondaryViewNativeID;
 
 /** [EN] The scroll view the container found and attached the header and footer to, nil until React Native has added it. [CN] 容器找到并挂上头尾的滚动视图；React Native 添加之前为 nil。 */
 @property (nonatomic, weak, readonly, nullable) UIScrollView *scrollView;

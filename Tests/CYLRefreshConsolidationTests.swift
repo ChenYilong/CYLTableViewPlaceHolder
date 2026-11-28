@@ -28,9 +28,9 @@ final class CYLRefreshConsolidationTests: XCTestCase {
         XCTAssertEqual(backFooter.title(for: .pulling), "Pull")
         XCTAssertEqual(trailer.title(for: .pulling), "Pull")
         for control in [header, autoFooter, backFooter, trailer] as [CYLRefreshComponent] {
-            XCTAssertEqual(control.cyl_stateTitle(for: .pulling), "Pull", "\(type(of: control))")
-            control.cyl_setStateTitle(nil, for: .pulling)
-            XCTAssertEqual(control.cyl_stateTitle(for: .pulling), "Pull", "nil is ignored: \(type(of: control))")
+            XCTAssertEqual(control.stateTitle(for: .pulling), "Pull", "\(type(of: control))")
+            control.setStateTitle(nil, for: .pulling)
+            XCTAssertEqual(control.stateTitle(for: .pulling), "Pull", "nil is ignored: \(type(of: control))")
         }
     }
 
@@ -43,9 +43,9 @@ final class CYLRefreshConsolidationTests: XCTestCase {
         autoFooter.setAnimationImages([tall, tall], for: .refreshing)
         backFooter.setAnimationImages([tall, tall], for: .refreshing)
         for control in [header, autoFooter, backFooter] as [CYLRefreshComponent] {
-            XCTAssertEqual(control.cyl_animationImages(for: .refreshing)?.count ?? 0, 2, "\(type(of: control))")
+            XCTAssertEqual(control.animationImages(for: .refreshing)?.count ?? 0, 2, "\(type(of: control))")
             XCTAssertGreaterThanOrEqual(control.bounds.size.height, 90, "grows to the tallest image: \(type(of: control))")
-            XCTAssertTrue(control.cyl_usesIconView, "the images become the icon: \(type(of: control))")
+            XCTAssertTrue(control.usesRefreshIconView, "the images become the icon: \(type(of: control))")
         }
     }
 

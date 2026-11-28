@@ -13,7 +13,7 @@ import UIKit
 import CYLTableViewPlaceHolder
 import CYLAnimatedItem
 
-final class CYLAnimationListViewController: UITableViewController {
+final class CYLAnimationListViewController: CYLTagListScreenViewController {
 
     private struct Section {
         let title: String
@@ -38,7 +38,7 @@ final class CYLAnimationListViewController: UITableViewController {
         return "\(identifier) · \(subspec) · \(status)"
     }
 
-    private let sections: [Section] = {
+    private let groups: [Section] = {
         let names = CYLPlaceholderView.bundledAnimationFileNames()
         var sections: [Section] = engines.compactMap { engine in
             let files = names.filter { ($0 as NSString).pathExtension == engine.fileExtension }
@@ -59,15 +59,13 @@ final class CYLAnimationListViewController: UITableViewController {
         return sections
     }()
 
-    private func path(at indexPath: IndexPath) -> String? {
-        let section = sections[indexPath.section]
-        let name = section.fileNames[indexPath.row]
+    private func path(of name: String, in section: Section) -> String? {
         guard let folder = section.folder else { return CYLPlaceholderView.path(forBundledAnimation: name) }
         return folder.appendingPathComponent(name).path
     }
 
     init() {
-        super.init(style: .insetGrouped)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -76,18 +74,41 @@ final class CYLAnimationListViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
+        sections = makeSections()
+        // The empty state of this list, should the bundle be missing.
+        emptyView = CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "animation")
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(title: CYLScenarioLocalizedString(.actionSources), style: .plain, target: self,
                             action: #selector(showNotice)),
             UIBarButtonItem(title: CYLScenarioLocalizedString(.actionEngines), style: .plain, target: self,
                             action: #selector(showEngines)),
         ]
-        // The empty state of this list, should the bundle be missing.
-        tableView.cyl_placeholderViewBlock({ _ in
-            CYLPlaceholderView(style: .folderOff, text: CYLScenarioLocalizedString(.textNoAnimations))
-        })
+    }
+
+    private func makeSections() -> [CYLTagSection] {
+        groups.map { group in
+            CYLTagSection(title: group.title, entries: group.fileNames.map { name in
+                let path = self.path(of: name, in: group)
+                let bytes = path.flatMap { try? FileManager.default.attributesOfItem(atPath: $0)[.size] as? NSNumber }
+                return CYLTagEntry(title: name,
+                                   subtitle: ByteCountFormatter.string(fromByteCount: bytes?.int64Value ?? 0, countStyle: .file)) { [weak self] in
+                    self?.open(name, in: group)
+                }
+            })
+        }
+    }
+
+    /// The page of one file: house.riv moves only when its number input Rooms changes, so its page sets Rooms by hand
+    /// and by loop; every other file is one reserved component with the playback controls.
+    private func open(_ name: String, in section: Section) {
+        let examplePath = section.folder == nil ? nil : path(of: name, in: section)
+        if name == CYLRiveRoomsViewController.fileName, let examplePath = examplePath {
+            navigationController?.pushViewController(CYLRiveRoomsViewController(path: examplePath), animated: true)
+            return
+        }
+        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
+                                                 animated: true)
     }
 
     /// The registry's report: every registered engine, the known engines missing from this build and any conflict.
@@ -125,46 +146,6 @@ final class CYLAnimationListViewController: UITableViewController {
         openedRoomsPage = true
         let path = folder.appendingPathComponent(CYLRiveRoomsViewController.fileName).path
         navigationController?.pushViewController(CYLRiveRoomsViewController(path: path), animated: false)
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].fileNames.count
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section].title
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "animation", for: indexPath)
-        let name = sections[indexPath.section].fileNames[indexPath.row]
-        let path = self.path(at: indexPath)
-        let bytes = path.flatMap { try? FileManager.default.attributesOfItem(atPath: $0)[.size] as? NSNumber }
-        var content = UIListContentConfiguration.subtitleCell()
-        content.text = name
-        content.secondaryText = ByteCountFormatter.string(fromByteCount: bytes?.int64Value ?? 0, countStyle: .file)
-        content.secondaryTextProperties.color = .secondaryLabel
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let section = sections[indexPath.section]
-        let name = section.fileNames[indexPath.row]
-        let examplePath = section.folder == nil ? nil : path(at: indexPath)
-        // house.riv moves only when its number input Rooms changes: its page sets Rooms by hand and by loop.
-        if name == CYLRiveRoomsViewController.fileName, let examplePath = examplePath {
-            navigationController?.pushViewController(CYLRiveRoomsViewController(path: examplePath), animated: true)
-            return
-        }
-        navigationController?.pushViewController(CYLAnimationDetailViewController(fileName: name, examplePath: examplePath),
-                                                 animated: true)
     }
 }
 
