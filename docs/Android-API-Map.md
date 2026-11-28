@@ -1210,7 +1210,7 @@
 | `CYLPlaceholderView` | `com.cyl.placeholder.CYLPlaceholderView` | done | fromItemAttributes / fromItemContentsOfURL apply every item key; an icon + title view (a CYLAnimatedItemView) with badges, selection, taps and animations |
 | `CYLPlaceholderView` `imageView` | `CYLPlaceholderView.imageView` | done |  |
 | `CYLPlaceholderView` `textLabel` | `CYLPlaceholderView.textLabel` | done |  |
-| `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderView.badgeValue` | done |  |
+| `CYLPlaceholderView` `badgeValue` | `CYLPlaceholderView.placeholderBadgeValue` | done |  |
 | `CYLPlaceholderView` `badgeLabel` | `CYLPlaceholderView.badgeLabel` | done |  |
 | `CYLPlaceholderView` `badgeCenterOffset` | `CYLPlaceholderView.badgeCenterOffset` | done |  |
 | `CYLPlaceholderView` `-showBadgeWithStyle:value:` | `CYLPlaceholderView.showBadgeWithStyle(style, value)` | done |  |
