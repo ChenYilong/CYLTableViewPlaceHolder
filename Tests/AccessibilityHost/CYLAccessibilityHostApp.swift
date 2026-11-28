@@ -31,7 +31,7 @@ private final class CYLAccessibilityHostViewController: UIViewController {
             assertionFailure("\(error)")
         }
         element.accessibilityValue = "Synced"
-        element.badgeValue = "3"
+        element.placeholderBadgeValue = "3"
         element.badgeLabel.accessibilityIdentifier = "elementBadge"
 
         // 2. A plain placeholder inside an accessible container: the badge is read on its own.
@@ -92,8 +92,8 @@ private final class CYLAccessibilityHostViewController: UIViewController {
     }
 
     @objc private func clearBadges() {
-        element.badgeValue = nil
-        grouped.badgeValue = nil
+        element.placeholderBadgeValue = nil
+        grouped.placeholderBadgeValue = nil
     }
 }
 

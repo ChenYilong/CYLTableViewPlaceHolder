@@ -899,7 +899,7 @@
   "status": "done",
   "android": "CYLPlaceholderView.badgeLabel"
  },
- "CYLPlaceholderView badgeValue": {
+ "CYLPlaceholderView placeholderBadgeValue": {
   "status": "done",
   "android": "CYLPlaceholderView.placeholderBadgeValue"
  },
