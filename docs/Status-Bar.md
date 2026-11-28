@@ -12,6 +12,7 @@
 | [网络检测](#网络检测--network-detection) | [Network detection](#网络检测--network-detection) |
 | [资源缺失](#资源缺失--missing-resource) | [Missing resource](#资源缺失--missing-resource) |
 | [资源缺失监视（Android）](#资源缺失监视android--missing-resource-monitor-android) | [Missing resource monitor (Android)](#资源缺失监视android--missing-resource-monitor-android) |
+| [资源缺失（HarmonyOS）](#资源缺失harmonyos--missing-resource-harmonyos) | [Missing resource (HarmonyOS)](#资源缺失harmonyos--missing-resource-harmonyos) |
 | [演示](#演示--demo) | [Demo](#演示--demo) |
 | [限制](#限制--limits) | [Limits](#限制--limits) |
 
