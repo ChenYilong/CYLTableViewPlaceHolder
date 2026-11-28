@@ -1293,6 +1293,10 @@
   "ios": "`CYLPlaceholderResourceReporter` `onResourceMissing`",
   "note": "Android installs the engine's global listener by reflection until the engine commit is in every resolvable commit; iOS detects missing files itself at the pin 12ed11ff"
  },
+ "CYLPlaceholderResourceMonitor.enabled": {
+  "ios": "`CYLPlaceholderResourceReporter` `isEnabled`",
+  "note": "the debug guard: iOS decides from `#if DEBUG` (settable); Android from the app's debuggable flag (`null`), or forced by `true` / `false`"
+ },
  "CYLPlaceholderResourceMonitor.attach": {
   "ios": "`UIViewController` `cyl_showsMissingResources`",
   "note": "Android hooks one view's `onResourceMissing`; iOS turns the bar on per view controller"

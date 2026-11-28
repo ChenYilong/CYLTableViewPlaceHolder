@@ -11,6 +11,7 @@
 | [与占位图组合](#与占位图组合--combined-with-the-placeholder) | [Combined with the placeholder](#与占位图组合--combined-with-the-placeholder) |
 | [网络检测](#网络检测--network-detection) | [Network detection](#网络检测--network-detection) |
 | [资源缺失](#资源缺失--missing-resource) | [Missing resource](#资源缺失--missing-resource) |
+| [资源缺失的调试守卫](#资源缺失的调试守卫--debug-guard-of-the-missing-resource-bar) | [Debug guard of the missing-resource bar](#资源缺失的调试守卫--debug-guard-of-the-missing-resource-bar) |
 | [资源缺失监视（Android）](#资源缺失监视android--missing-resource-monitor-android) | [Missing resource monitor (Android)](#资源缺失监视android--missing-resource-monitor-android) |
 | [资源缺失（HarmonyOS）](#资源缺失harmonyos--missing-resource-harmonyos) | [Missing resource (HarmonyOS)](#资源缺失harmonyos--missing-resource-harmonyos) |
 | [演示](#演示--demo) | [Demo](#演示--demo) |
@@ -118,6 +119,13 @@ Texts of the two keys, for the core tables of every platform (`CYLPlaceholderRes
 | ko | `리소스 누락: %@ (%@)` | `리소스 누락: %1$@ 외 %2$ld개` |
 | ru | `Отсутствует ресурс: %@ (%@)` | `Отсутствуют ресурсы: %1$@ и ещё %2$ld` |
 | uk | `Відсутній ресурс: %@ (%@)` | `Відсутні ресурси: %1$@ та ще %2$ld` |
+
+## 资源缺失的调试守卫 / Debug guard of the missing-resource bar
+
+| 中文 | English |
+| --- | --- |
+| 红条的资源缺失逻辑只在调试构建中运行，发布构建不报告、不做额外的文件检查：iOS `CYLPlaceholderResourceReporter.isEnabled`（`#if DEBUG`，构建时确定，可手动设置）；Android `CYLPlaceholderResourceMonitor.enabled`（`null` 时看应用是否可调试，`ApplicationInfo.FLAG_DEBUGGABLE`，由应用的构建类型在构建时设置；库自己的 `BuildConfig.DEBUG` 在被应用使用时总是 false，所以不用它）；HarmonyOS `CYLPlaceholderResourceReporter.enabled`（`BuildProfile.DEBUG`）。`true` / `false` 可强制（测试，或想在发布构建里保留红条的宿主）。 | The missing-resource logic of the red bar runs only in debug builds; a release build reports nothing and makes no extra file checks: iOS `CYLPlaceholderResourceReporter.isEnabled` (`#if DEBUG`, decided at build time, settable); Android `CYLPlaceholderResourceMonitor.enabled` (when `null`, whether the app is debuggable, `ApplicationInfo.FLAG_DEBUGGABLE`, which the app's build type sets when it is built; a library's own `BuildConfig.DEBUG` is always false once an app uses it, so it is not used); HarmonyOS `CYLPlaceholderResourceReporter.enabled` (`BuildProfile.DEBUG`). `true` / `false` force it (tests, or a host that wants the bar in a release build). |
+| 验证：Android `:placeholder:testDebugUnitTest` 72/72（新增 2 个：发布应用不报告而可调试应用报告、`enabled = false` 关闭）。iOS 的 `#if DEBUG` 与新增测试 `testTheGuardTurnsTheLogicOffInAReleaseBuild` 在 Windows 上未编译、未运行，交给 Mac 会话。 | Verified: Android `:placeholder:testDebugUnitTest` 72/72 (2 new: a release app reports nothing and a debuggable one does, `enabled = false` turns it off). The iOS `#if DEBUG` and the new test `testTheGuardTurnsTheLogicOffInAReleaseBuild` were not compiled or run on Windows; the Mac session does that. |
 
 ## 资源缺失监视（Android） / Missing resource monitor (Android)
 
